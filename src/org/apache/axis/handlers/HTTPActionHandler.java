@@ -87,7 +87,13 @@ public class HTTPActionHandler extends BasicHandler
         String URL = req.getServletPath();
         Debug.Print(3, "URL: " + URL );
 
-        if ( URL.endsWith(".jws") ) {
+        String   opt     = (String) getOption("JWSProcessor");
+        boolean  skipJWS = false ;
+        if ( opt != null && (opt.equals("0") || opt.equalsIgnoreCase("NO") ||
+                             opt.equalsIgnoreCase("OFF")) )
+          skipJWS = true ;
+
+        if ( !skipJWS && URL.endsWith(".jws") ) {
             String pathName = context.getRealPath( URL );
             Debug.Print(2, "Path: " + pathName );
             msgContext.setProperty( "JWSFileName", pathName );

@@ -59,6 +59,8 @@ import java.net.*;
 import java.io.*;
 import java.util.*;
 
+import org.apache.axis.utils.Options ;
+
 /**
  *
  * @author Doug Davis (dug@us.ibm.com)
@@ -71,74 +73,52 @@ import org.apache.axis.utils.Debug ;
 
 public class AdminClient {
   public static void main(String args[]) {
-
-    String hdr = "POST /axis/servlet/AxisServlet HTTP/1.0\n" +
-                 "Host: localhost:8080\n" +
-                 "Content-Type: text/xml;charset=utf-8\n" +
-                 "SOAPAction: AdminService\n";
-
-    String msg = null ;
-
     try {
-      /* Parse the command line  */
-      /***************************/
-      String  host    = "localhost" ;
-      String  servlet = "/axis/servlet/AxisServlet" ;
-      int     port    = 8080 ;
+      Options opts = new Options( args );
+
+      Debug.setDebugLevel( opts.isFlagSet('d') );
+
+      args = opts.getRemainingArgs();
+
+      if ( args == null ) {
+        System.err.println( "Usage: AdminClient xml-files | list" );
+        System.exit(1);
+      }
 
       for ( int i = 0 ; i < args.length ; i++ ) {
-        if ( args[i].charAt(0) == '-' )
-          switch( args[i].toLowerCase().charAt(1) ) {
-            case 'd': Debug.incDebugLevel();
-                      break ;
-            case 'h': if ( args[i].length() > 2 )
-                        host = args[i].substring(2);
-                      break ;
-            case 'l': if ( args[i].length() > 2 ) {
-                        URL tmpurl = new URL(args[i].substring(2));
-                        host = tmpurl.getHost();
-                        port = tmpurl.getPort();
-                        servlet = tmpurl.getFile();
-                      }
-                      break ;
-            case 'p': if ( args[i].length() > 2 )
-                        port = Integer.parseInt(args[i].substring(2));
-                      break ;
-            case 's': if ( args[i].length() > 2 )
-                        servlet = args[i].substring(2);
-                      if ( servlet != null && servlet.charAt(0) != '/' )
-                        servlet = "/" + servlet ;
-                      break ;
-            default: System.err.println( "Unknown option '" +
-                                         args[i].charAt(1) + "'" );
-                     System.exit(1);
-          }
+        InputStream input = null ;
+
+        if ( args[i].equals("list") ) {
+          System.out.println( "Doing a list" );
+          String str = "<list/>" ;
+          input = new ByteArrayInputStream( str.getBytes() );
+        }
         else {
-          InputStream    input = null ;
-          long           length ;
-        
           System.out.println( "Processing file: " + args[i] );
           input = new FileInputStream( args[i] );
-
-          String          url = "http://" + host + ":" + port + servlet ;
-          HTTPMessage     hMsg       = new HTTPMessage( url, "AdminService" );
-          MessageContext  msgContext = new MessageContext();
-          Message         inMsg      = new Message( input, "InputStream" );
-          Message         outMsg     = null ;
-          msgContext.setRequestMessage( inMsg );
-
-          hMsg.invoke( msgContext );
-
-          outMsg = msgContext.getResponseMessage();
-          input.close();
-          System.err.println( outMsg.getAs( "String" ) );
         }
+
+        HTTPMessage     hMsg       = new HTTPMessage( opts.getURL(), 
+                                                      "AdminService" );
+        MessageContext  msgContext = new MessageContext();
+        Message         inMsg      = new Message( input, "InputStream" );
+        Message         outMsg     = null ;
+        msgContext.setRequestMessage( inMsg );
+
+        if ( opts.isFlagSet('t') > 0 ) hMsg.doLocal = true ;
+        hMsg.setUserID( opts.getUser() );
+        hMsg.setPassword( opts.getPassword() );
+
+        hMsg.invoke( msgContext );
+
+        outMsg = msgContext.getResponseMessage();
+        input.close();
+        System.err.println( outMsg.getAs( "String" ) );
       }
     }
     catch( Exception e ) {
       System.err.println( e );
       e.printStackTrace( System.err );
     }
-  };
-
+  }
 };
