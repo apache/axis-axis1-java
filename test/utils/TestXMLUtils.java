@@ -4,12 +4,18 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.message.SOAPHandler;
+import org.apache.axis.encoding.DeserializationContextImpl;
+import org.apache.axis.encoding.DeserializationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
+import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.SAXParser;
+import javax.xml.soap.SOAPEnvelope;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -281,10 +287,74 @@ public class TestXMLUtils extends TestCase
         String output = org.apache.axis.utils.DOM2Writer.nodeToString(doc,false);
         assertTrue(output.indexOf("http://www.w3.org/XML/1998/namespace")==-1);
     }
+    
+    public void testDOMXXE() throws Exception
+    {
+        StringBuffer sb = new StringBuffer();
+        sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+        sb.append("<!DOCTYPE project [");
+        sb.append("<!ENTITY buildxml SYSTEM \"file:build.xml\">");
+        sb.append("]>");
+        sb.append("<xsd:schema targetNamespace=\"http://tempuri.org\"");
+        sb.append("            xmlns=\"http://tempuri.org\"");
+        sb.append("            xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">");
+        sb.append("  <xsd:annotation>");
+        sb.append("    <xsd:documentation xml:lang=\"en\">");
+        sb.append("      &buildxml;");
+        sb.append("      Purchase order schema for Example.com.");
+        sb.append("      Copyright 2000 Example.com. All rights reserved.");
+        sb.append("    </xsd:documentation>");
+        sb.append("  </xsd:annotation>");
+        sb.append("</xsd:schema>");
+
+        StringReader strReader = new StringReader(sb.toString());
+        InputSource inputsrc = new InputSource(strReader);
+        Document doc = XMLUtils.newDocument(inputsrc);
+        String output = org.apache.axis.utils.DOM2Writer.nodeToString(doc,false);
+    }
+
+    String msg = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+        "<!DOCTYPE project [" +
+        "<!ENTITY buildxml SYSTEM \"file:build.xml\">" +
+        "]>" +
+        "<SOAP-ENV:Envelope " +
+        "xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" " +
+        "xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\" > " +
+        "<SOAP-ENV:Body>\n" +
+        "&buildxml;" +
+        "<echo:Echo xmlns:echo=\"EchoService\">\n" +
+        "<symbol>IBM</symbol>\n" +
+        "</echo:Echo>\n" +
+        "</SOAP-ENV:Body></SOAP-ENV:Envelope>\n";
+    
+    public void testSAXXXE1() throws Exception
+    {
+        StringReader strReader = new StringReader(msg);
+        InputSource inputsrc = new InputSource(strReader);
+        SAXParser parser = XMLUtils.getSAXParser();
+        parser.getParser().parse(inputsrc);
+    }
+
+    public void testSAXXXE2() throws Exception
+    {
+        StringReader strReader2 = new StringReader(msg);
+        InputSource inputsrc2 = new InputSource(strReader2);
+        SAXParser parser2 = XMLUtils.getSAXParser();
+        parser2.getXMLReader().parse(inputsrc2);
+    }
+        
+    public void testSAXXXE3() throws Exception
+    {
+        StringReader strReader3 = new StringReader(msg);
+        DeserializationContext dser = new DeserializationContextImpl(
+            new InputSource(strReader3), null, org.apache.axis.Message.REQUEST);
+        dser.parse();
+        SOAPEnvelope env = dser.getEnvelope();
+    }
 
     public static void main(String[] args) throws Exception
     {
         TestXMLUtils test = new TestXMLUtils("TestXMLUtils");
-        test.testDOM2Writer();
+        test.testSAXXXE3();
     }
 }

@@ -112,6 +112,10 @@ public class XMLUtils {
     private static SAXParserFactory       saxFactory;
     private static Stack                  saxParsers = new Stack();
 
+    private static java.io.PrintStream os = System.out;
+    private static String empty = new String("");
+    private static ByteArrayInputStream bais = new ByteArrayInputStream(empty.getBytes());
+
     static {
         // Initialize SAX Parser factory defaults
         initSAXFactory(null, true, false);
@@ -248,9 +252,10 @@ public class XMLUtils {
 
         try {
             SAXParser parser = saxFactory.newSAXParser();
-            parser.getXMLReader().
-                    setFeature("http://xml.org/sax/features/namespace-prefixes",
-                            false);
+parser.getParser().setEntityResolver(new DefaultEntityResolver());
+            XMLReader reader = parser.getXMLReader(); 
+            reader.setEntityResolver(new DefaultEntityResolver());
+            reader.setFeature("http://xml.org/sax/features/namespace-prefixes", false);
             return parser;
         } catch (ParserConfigurationException e) {
             log.error(Messages.getMessage("parserConfigurationException00"), e);
@@ -314,6 +319,7 @@ public class XMLUtils {
         synchronized (dbf) {
             db = dbf.newDocumentBuilder();
         }
+        db.setEntityResolver(new DefaultEntityResolver());
         db.setErrorHandler( new ParserErrorHandler() );
         return( db.parse( inp ) );
     }
@@ -708,5 +714,9 @@ public class XMLUtils {
 
     public static final String base64encode(byte[] bytes) {
         return new String(Base64.encode(bytes));
+    }
+
+    public static InputSource getEmptyInputSource() {
+        return new InputSource(bais);
     }
 }
