@@ -81,15 +81,15 @@ public class DebugHandler extends BasicHandler {
                                                         "Debug");
             
             if (header != null) {
-                /*
-                int debugVal = 
-                      ((Integer)header
-                             .getValueAsType(SOAPTypeMappingRegistry.XSD_INT))
-                      .intValue();
+                Integer i = ((Integer)header
+                             .getValueAsType(SOAPTypeMappingRegistry.XSD_INT));
+                if (i == null)
+                    throw new AxisFault("Couldn't convert value to int");
+                
+                int debugVal = i.intValue();
                 Debug.Print( 1, "Setting debug level to: " + debugVal );
                 Debug.setDebugLevel(debugVal);
                 header.setProcessed(true);
-                */
             }
         }
         catch( Exception e ) {

@@ -128,7 +128,7 @@ public class DeserializationContext extends DefaultHandler
         envelope.setRecorder(recorder);
         envelope.setMessageType(messageType);
         
-        pushElementHandler(new EnvelopeHandler());
+        pushElementHandler(new EnvelopeHandler(new EnvelopeBuilder()));
     }
     
     public DeserializationContext(InputSource is, MessageContext ctx, 

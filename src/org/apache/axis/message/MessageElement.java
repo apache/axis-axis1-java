@@ -65,6 +65,7 @@ import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
+import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.MessageContext;
 import org.apache.axis.utils.Debug;
 import org.apache.axis.utils.QName;
@@ -88,8 +89,6 @@ public class MessageElement
     
     protected DeserializationContext context;
     
-    // The java Object value of this element.  This is either set by
-    // deserialization, or by the user creating a message.
     protected QName typeQName = null;
     
     protected Vector qNameAttrs = null;
@@ -194,10 +193,23 @@ public class MessageElement
     public SAX2EventRecorder getRecorder() { return recorder; }
     public void setRecorder(SAX2EventRecorder rec) { recorder = rec; }
     
-    public Object getValueAsType(QName type)
+    public Object getValueAsType(QName type) throws Exception
     {
-        // !!! TODO : Implement
-        return null;
+        if (context == null)
+            throw new Exception(
+             "No deserialization context to use in getValueAsType()!");
+        
+        TypeMappingRegistry tmr = context.getTypeMappingRegistry();
+        Deserializer dser = tmr.getDeserializer(type);
+        if (dser == null)
+            throw new Exception("No deserializer for requested type " +
+                                type);
+        
+        context.pushElementHandler(new EnvelopeHandler(dser));
+        
+        publishToHandler(context);
+        
+        return dser.getValue();
     }
     
     protected static class QNameAttr {
