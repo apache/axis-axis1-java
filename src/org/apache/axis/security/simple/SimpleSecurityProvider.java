@@ -58,6 +58,7 @@ package org.apache.axis.security.simple;
 import org.apache.axis.security.SecurityProvider;
 import org.apache.axis.security.AuthenticatedUser;
 import org.apache.axis.MessageContext;
+import org.apache.axis.Constants;
 import org.apache.log4j.Category;
 import org.apache.log4j.Priority;
 
@@ -76,12 +77,23 @@ public class SimpleSecurityProvider implements SecurityProvider {
     static Category category =
             Category.getInstance(SimpleSecurityProvider.class.getName());
 
-    static HashMap users = null;
-    static HashMap perms = null;
+    HashMap users = null;
+    HashMap perms = null;
+
+    boolean initialized = false;
 
     // load the users list
-    static {
-        File userFile = new File("users.lst");
+    private synchronized void initialize(MessageContext msgContext)
+    {
+        if (initialized) return;
+
+        String configPath = msgContext.getStrProp(Constants.MC_CONFIGPATH);
+        if (configPath == null) {
+            configPath = "";
+        } else {
+            configPath += File.separator;
+        }
+        File userFile = new File(configPath + "users.lst");
         if (userFile.exists()) {
             users = new HashMap();
 
@@ -108,8 +120,10 @@ public class SimpleSecurityProvider implements SecurityProvider {
 
             } catch( Exception e ) {
                 category.error( e );
+                return;
             }
         }
+        initialized = true;
     }
 
     /** Authenticate a user from a username/password pair.
@@ -119,6 +133,11 @@ public class SimpleSecurityProvider implements SecurityProvider {
      * @return an AuthenticatedUser or null
      */
     public AuthenticatedUser authenticate(MessageContext msgContext) {
+
+        if (!initialized) {
+            initialize(msgContext);
+        }
+
         String username = msgContext.getStrProp(MessageContext.USERID);
         String password = msgContext.getStrProp(MessageContext.PASSWORD);
 
