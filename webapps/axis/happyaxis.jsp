@@ -4,7 +4,9 @@
 </head>
 <body bgcolor='#ffffff'>
 <%@ page import="java.io.InputStream,
-                 java.io.IOException"
+                 java.io.IOException,
+                 javax.xml.parsers.SAXParser,
+                 javax.xml.parsers.SAXParserFactory"
     session="false" %>
 <%!
 
@@ -103,8 +105,15 @@
         }
     }
 
+    /**
+     * get the location of a class
+     * @param out
+     * @param clazz
+     * @return the jar file or path where a class was found
+     * @throws IOException
+     */
 
-    String getLocation(JspWriter out, 
+    String getLocation(JspWriter out,
                        Class clazz) throws IOException {
         try {
             java.net.URL url = clazz.getProtectionDomain().getCodeSource().getLocation();
@@ -195,6 +204,38 @@
             return 1;
         }
     }
+
+
+    /**
+     *  get servlet version string
+     *
+     */
+
+    public String getServletVersion() {
+        ServletContext context=getServletConfig().getServletContext();
+        int major = context.getMajorVersion();
+        int minor = context.getMinorVersion();
+        return Integer.toString(major) + '.' + Integer.toString(minor);
+    }
+
+    /**
+     *
+     * @return the classname of the parser
+     */
+    public String getParserName() throws JspException {
+        try {
+            // Create a JAXP SAXParser
+            SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
+            SAXParser saxParser = saxParserFactory.newSAXParser();
+
+            // check to what is in the classname
+            String saxParserName = saxParser.getClass().getName();
+            return saxParserName;
+        } catch (Exception e) {
+            throw new JspException(e);
+        }
+    }
+
     %>
 <html><head><title>Axis Happiness Page</title></head>
 <body>
@@ -313,7 +354,7 @@
     out.write("</h3>");
     //hint if anything is missing
     if(needed>0 || wanted>0 ) {
-       out.write(getInstallHints(request));
+        out.write(getInstallHints(request));
     }
 
     %>
@@ -322,16 +363,27 @@
     web service will work, because there are many configuration options that we do
     not check for. These tests are <i>necessary</i> but not <i>sufficient</i>
     <hr>
+
+    <h2>Examining Application Server</h2>
+    <%
+        String servletVersion=getServletVersion();
+        String xmlParser=getParserName();
+
+    %>
+    <table>
+        <tr><td>Servlet version</td><td><%= servletVersion %></td></tr>
+        <tr><td>XML Parser</td><td><%= xmlParser %></td></tr>
+    </table>
+
     <h2>Examining System Properties</h2>
 <%
     /** 
      * Dump the system properties
      */
-    java.util.Enumeration e;
+    java.util.Enumeration e=null;
     try {
         e= System.getProperties().propertyNames();
     } catch (SecurityException se) {
-        e=null;
     }
     if(e!=null) {
         out.write("<pre>");
