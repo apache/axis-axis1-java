@@ -120,7 +120,7 @@ public class SOAPService extends SimpleTargetedChain
      * Our ServiceDescription.  Holds pretty much all the interesting
      * metadata about this service.
      */
-    private ServiceDesc serviceDescription = null;
+    private ServiceDesc serviceDescription = new ServiceDesc();
 
     /**
      * SOAPRequestHandler is used to inject SOAP semantics just before
@@ -255,18 +255,10 @@ public class SOAPService extends SimpleTargetedChain
     }
 
     public int getStyle() {
-        if (serviceDescription == null) {
-            serviceDescription = new ServiceDesc();
-        }
-
         return serviceDescription.getStyle();
     }
 
     public void setStyle(int style) {
-        if (serviceDescription == null) {
-            serviceDescription = new ServiceDesc();
-        }
-
         serviceDescription.setStyle(style);
     }
 
@@ -275,6 +267,10 @@ public class SOAPService extends SimpleTargetedChain
     }
 
     public void setServiceDescription(ServiceDesc serviceDescription) {
+        if (serviceDescription == null) {
+            // FIXME: Throw NPE?
+            return;
+        }
         this.serviceDescription = serviceDescription;
     }
 

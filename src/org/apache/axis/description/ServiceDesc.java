@@ -81,58 +81,9 @@ public class ServiceDesc {
     /** This becomes true once we've added some operations */
     private boolean hasOperationData = false;
 
-    /**
-     * Fill in what we can of the service description by introspecting a
-     * Java class.  Only do this if we haven't already been filled in.
-     */
-    public void loadServiceDescByIntrospection(Class jc, TypeMapping tm)
-    {
-        if (hasOperationData)
-            return;
-
-        ArrayList allowedMethods = null;
-        Method [] methods = jc.getDeclaredMethods();
-
-        for (int i = 0; i < methods.length; i++) {
-            String methodName = methods[i].getName();
-
-            // Skip it if it's not allowed
-            // FIXME : Should NEVER allow java.lang methods to be
-            // called directly, right?
-            if ((allowedMethods != null) &&
-                !allowedMethods.contains(methodName))
-                continue;
-
-            // Make an OperationDesc for each method
-            Method method = methods[i];
-            OperationDesc operation = new OperationDesc();
-            operation.setName(methodName);
-            Class [] paramTypes = method.getParameterTypes();
-            String [] paramNames =
-                    JavaUtils.getParameterNamesFromDebugInfo(method);
-            for (int k = 0; k < paramTypes.length; k++) {
-                Class type = paramTypes[k];
-                ParameterDesc paramDesc = new ParameterDesc();
-                if (paramNames != null) {
-                    paramDesc.setName(paramNames[k+1]);
-                } else {
-                    paramDesc.setName("in" + k);
-                }
-                Class heldClass = JavaUtils.getHolderValueType(type);
-                if (heldClass != null) {
-                    paramDesc.setMode(ParameterDesc.INOUT);
-                    paramDesc.setTypeQName(tm.getTypeQName(heldClass));
-                } else {
-                    paramDesc.setMode(ParameterDesc.IN);
-                    paramDesc.setTypeQName(tm.getTypeQName(type));
-                }
-                operation.addParameter(paramDesc);
-            }
-            addOperationDesc(operation);
-        }
-
-        hasOperationData = true;
-    }
+    /** List of allowed methods */
+    /** null allows everything, an empty ArrayList allows nothing */
+    private ArrayList allowedMethods = null;
 
     /** Style */
     private int style = STYLE_RPC;
@@ -164,6 +115,12 @@ public class ServiceDesc {
     private HashMap name2OperationsMap = null;
     private HashMap qname2OperationMap = null;
 
+    /**
+     * Default constructor
+     */
+    public ServiceDesc() {
+    }
+
     public int getStyle() {
         return style;
     }
@@ -192,6 +149,14 @@ public class ServiceDesc {
 
     public void setWSDLFile(String wsdlFileName) {
         this.wsdlFileName = wsdlFileName;
+    }
+
+    public ArrayList getAllowedMethods() {
+        return allowedMethods;
+    }
+
+    public void setAllowedMethods(ArrayList allowedMethods) {
+        this.allowedMethods = allowedMethods;
     }
 
     public void addOperationDesc(OperationDesc operation)
@@ -278,5 +243,58 @@ public class ServiceDesc {
         }
 
         return (OperationDesc)qname2OperationMap.get(qname);
+    }
+
+    /**
+     * Fill in what we can of the service description by introspecting a
+     * Java class.  Only do this if we haven't already been filled in.
+     */
+    public void loadServiceDescByIntrospection(Class jc, TypeMapping tm)
+    {
+        if (hasOperationData)
+            return;
+
+        Method [] methods = jc.getDeclaredMethods();
+
+        for (int i = 0; i < methods.length; i++) {
+            String methodName = methods[i].getName();
+
+            // Skip it if it's not allowed
+            // FIXME : This should, if allowedMethods is null, search up the
+            //         inheritance/interface tree until we get to stop
+            //         classes?
+            if ((allowedMethods != null) &&
+                !allowedMethods.contains(methodName))
+                continue;
+
+            // Make an OperationDesc for each method
+            Method method = methods[i];
+            OperationDesc operation = new OperationDesc();
+            operation.setName(methodName);
+            Class [] paramTypes = method.getParameterTypes();
+            String [] paramNames =
+                    JavaUtils.getParameterNamesFromDebugInfo(method);
+            for (int k = 0; k < paramTypes.length; k++) {
+                Class type = paramTypes[k];
+                ParameterDesc paramDesc = new ParameterDesc();
+                if (paramNames != null) {
+                    paramDesc.setName(paramNames[k+1]);
+                } else {
+                    paramDesc.setName("in" + k);
+                }
+                Class heldClass = JavaUtils.getHolderValueType(type);
+                if (heldClass != null) {
+                    paramDesc.setMode(ParameterDesc.INOUT);
+                    paramDesc.setTypeQName(tm.getTypeQName(heldClass));
+                } else {
+                    paramDesc.setMode(ParameterDesc.IN);
+                    paramDesc.setTypeQName(tm.getTypeQName(type));
+                }
+                operation.addParameter(paramDesc);
+            }
+            addOperationDesc(operation);
+        }
+
+        hasOperationData = true;
     }
 }

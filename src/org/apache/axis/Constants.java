@@ -139,37 +139,27 @@ public class Constants {
     }
 
     /**
-     * getValue
-     * This utility routine returns the value of the attribute represented by the qname
-     * namespaceURI:localPart.  If the namespaceURI is one of the current known namespaces
-     * (like URI_CURRENT_SCHEMA_XSD), then all of the known qnames for this item are 
-     * searched.
-     * @param attributes are the attributes to search
-     * @param namespaceURI is the current known namespace for the attribute name
+     * This utility routine returns the value of an attribute which might
+     * be in one of several namespaces.
+     *
+     * @param attributes the attributes to search
+     * @param search an array of namespace URI strings to search
      * @param localPart is the local part of the attribute name
      * @return the value of the attribute or null
      */
-    public static String getValue(Attributes attributes, String namespaceURI, String localPart) {
-        if (attributes == null || namespaceURI == null || localPart == null)
+    public static String getValue(Attributes attributes,
+                                  String [] search,
+                                  String localPart) {
+        if (attributes == null || search == null || localPart == null)
             return null;
-        String[] search = null;
-        if (namespaceURI.equals(URI_CURRENT_SOAP_ENC)) 
-            search = URIS_SOAP_ENC;
-        else if (namespaceURI.equals(URI_CURRENT_SOAP_ENV))
-            search = URIS_SOAP_ENV;
-        else if (namespaceURI.equals(URI_CURRENT_SCHEMA_XSD))
-            search = URIS_SCHEMA_XSD;
-        else if (namespaceURI.equals(URI_CURRENT_SCHEMA_XSI))
-            search = URIS_SCHEMA_XSI;
-        else
-            search = new String[] {namespaceURI};
-        // Now look for an attribute value
+
         for (int i=0; i < search.length; i++) {
             String value = attributes.getValue(search[i], localPart);
             if (value != null) {
                 return value;
             }
         }
+
         return null;
     }
 

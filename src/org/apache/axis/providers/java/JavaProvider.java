@@ -242,7 +242,8 @@ public abstract class JavaProvider extends BasicProvider
             SOAPEnvelope   reqEnv  = (SOAPEnvelope)reqMsg.getSOAPEnvelope();
             Message        resMsg  = msgContext.getResponseMessage();
             SOAPEnvelope   resEnv  = (resMsg == null) ?
-                                     new SOAPEnvelope() :
+                                     new SOAPEnvelope(msgContext.
+                                                        getSOAPConstants()) :
                                      (SOAPEnvelope)resMsg.getSOAPEnvelope();
 
             // get the response message again! It may have been explicitly set!

@@ -57,6 +57,7 @@ package org.apache.axis.message;
 
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
+import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.SerializationContext;
@@ -619,15 +620,17 @@ public class MessageElement implements SOAPElement
          * whatever encoding style is in scope....
          */ 
         if (encodingStyle != null) {
+            SOAPConstants soapConstants = context.getMessageContext().
+                                                        getSOAPConstants();
             if (parent == null) {
                 // don't emit an encoding style if its "" (literal)
                 if (!encodingStyle.equals("")) { 
-                    setAttribute(Constants.URI_CURRENT_SOAP_ENV,
+                    setAttribute(soapConstants.getEnvelopeURI(),
                                  Constants.ATTR_ENCODING_STYLE,
                                  encodingStyle);
                 }
             } else if (!encodingStyle.equals(parent.getEncodingStyle())) {
-                setAttribute(Constants.URI_CURRENT_SOAP_ENV,
+                setAttribute(soapConstants.getEnvelopeURI(),
                              Constants.ATTR_ENCODING_STYLE,
                              encodingStyle);
             }

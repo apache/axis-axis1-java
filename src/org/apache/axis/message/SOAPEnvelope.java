@@ -58,6 +58,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.configuration.NullProvider;
 import org.apache.axis.client.AxisClient;
 import org.apache.axis.encoding.DeserializationContext;
@@ -87,6 +88,7 @@ public class SOAPEnvelope extends MessageElement
     public Vector headers = new Vector();
     public Vector bodyElements = new Vector();
     public Vector trailers = new Vector();
+    private SOAPConstants soapConstants;
 
     // This is a hint to any service description to tell it what
     // "type" of message we are.  This might be "request", "response",
@@ -98,16 +100,23 @@ public class SOAPEnvelope extends MessageElement
     
     public SOAPEnvelope()
     {
-        this(true);
+        this(true, SOAPConstants.SOAP11_CONSTANTS);
     }
-  
-    public SOAPEnvelope(boolean registerPrefixes)
+
+    public SOAPEnvelope(SOAPConstants soapConstants)
     {
+        this(true, soapConstants);
+    }
+
+    public SOAPEnvelope(boolean registerPrefixes, SOAPConstants soapConstants)
+    {
+        this.soapConstants = soapConstants;
+
         if (registerPrefixes) {
             if (namespaces == null)
                 namespaces = new ArrayList();
-            
-            namespaces.add(new Mapping(Constants.URI_SOAP_ENV,
+
+            namespaces.add(new Mapping(soapConstants.getEnvelopeURI(),
                                        Constants.NSPREFIX_SOAP_ENV));
             namespaces.add(new Mapping(Constants.URI_CURRENT_SCHEMA_XSD,
                                        Constants.NSPREFIX_SCHEMA_XSD));
@@ -392,7 +401,7 @@ public class SOAPEnvelope extends MessageElement
         
         Enumeration enum;
         
-        context.startElement(new QName(Constants.URI_SOAP_ENV,
+        context.startElement(new QName(soapConstants.getEnvelopeURI(),
                                        Constants.ELEM_ENVELOPE), attributes);
         
         if (log.isDebugEnabled())
@@ -401,7 +410,7 @@ public class SOAPEnvelope extends MessageElement
         
         if (!headers.isEmpty()) {
             // Output <SOAP-ENV:Header>
-            context.startElement(new QName(Constants.URI_SOAP_ENV,
+            context.startElement(new QName(soapConstants.getEnvelopeURI(),
                                            Constants.ELEM_HEADER), null);
             enum = headers.elements();
             while (enum.hasMoreElements()) {
@@ -421,7 +430,7 @@ public class SOAPEnvelope extends MessageElement
         }
 
         // Output <SOAP-ENV:Body>
-        context.startElement(new QName(Constants.URI_SOAP_ENV,
+        context.startElement(new QName(soapConstants.getEnvelopeURI(),
                                        Constants.ELEM_BODY), null);
         enum = bodyElements.elements();
         while (enum.hasMoreElements()) {
