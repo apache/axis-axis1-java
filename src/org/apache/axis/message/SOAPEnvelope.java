@@ -148,7 +148,11 @@ public class SOAPEnvelope extends MessageElement
                      Constants.ATTR_ENCODING_STYLE,
                      encodingStyleURI);
     }
-    
+
+    public String getEncodingStyleURI() {
+        return encodingStyleURI;
+    }
+
     public Vector getBodyElements() throws AxisFault
     {
         return bodyElements;
