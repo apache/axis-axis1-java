@@ -148,6 +148,8 @@ public abstract class TestClient {
             // verify the result
             verify(method, toSend, got);
 
+        } catch (AxisFault af) {
+            verify(method, toSend, af.getFaultString());
         } catch (Exception e) {
             verify(method, toSend, e);
         }
