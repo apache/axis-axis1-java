@@ -1,0 +1,199 @@
+<?xml version="1.0"?>
+
+<!-- ===================================================================
+
+   Build file for Soap
+
+Notes:
+   This is a build file for use with the Jakarta Ant build tool.
+
+Prerequisites:
+
+   jakarta-ant from http://jakarta.apache.org
+   xml-xerces from http://xml.apache.org
+   JavaMail from http://java.sun.com/products/javamail/
+   Java Activation Framework
+       from http://java.sun.com/products/beans/glasgow/jaf.html
+
+Optional additions:
+
+   http://www.alphaworks.ibm.com/tech/xmitoolkit
+   http://oss.software.ibm.com/developerworks/opensource/pop3/index.html
+   http://oss.software.ibm.com/developerworks/opensource/smtp/index.html
+   http://java.sun.com/products/jsse/
+   
+Build Instructions:
+   To build, run
+
+     java org.apache.tools.ant.Main <target>
+
+   on the directory where this file is located with the target you want.
+
+Most useful targets:
+
+ - compile  -> creates the "soap.jar" package in "./build/lib"
+ - javadocs -> creates the javadocs in "./build/javadocs"
+ - dist     -> creates the complete binary distribution
+ - srcdist  -> creates the complete src distribution
+
+Authors:
+  Sam Ruby <rubys@us.ibm.com>
+
+
+Copyright:
+  Copyright (c) 2000 Apache Software Foundation.
+
+==================================================================== -->
+
+<project default="compile" basedir=".">
+
+  <target name="init">
+    <property name="name" value="soap"/>
+    <property name="Name" value="Soap"/>
+    <property name="version" value="2.0"/>
+    <property name="year" value="2000"/>
+
+    <property name="build.compiler" value="classic"/>
+    <property name="debug" value="off"/>
+
+    <property name="src.dir" value="./src"/>
+    <property name="docs.dir" value="./docs"/>
+    <property name="samples.dir" value="./samples"/>
+
+    <property name="packages" value="org.*"/>
+
+    <property name="build.file" value="build.xml"/>
+
+    <property name="build.dir" value="./build"/>
+    <property name="build.dest" value="./build/classes"/>
+    <property name="build.lib" value="./build/lib"/>
+    <property name="build.samples" value="./build/samples"/>
+    <property name="build.javadocs" value="./build/javadocs"/>
+
+    <property name="webapps" value="./webapps"/>
+
+    <property name="dist.dir" value="./soap-2_0"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Prepares the build directory                                        -->
+  <!-- =================================================================== -->
+  <target name="prepare" depends="init">
+    <mkdir dir="${build.dir}"/>
+    <available property="bsf.present" classname="com.ibm.bsf.BSFManager" />
+    <available property="xmi.present" classname="com.ibm.xmi.job.Job" />
+    <available property="pop3.present" 
+      classname="com.ibm.network.mail.pop3.event.StatusListener" />
+    <available property="smtp.present" 
+      classname="com.ibm.network.mail.smtp.protocol.CoreProtocolBean" />
+    <available property="ejb.present" classname="javax.ejb.SessionBean" />
+    <available property="ssl.present" classname="javax.net.ssl.SSLSocket" />
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Compiles the source directory                                       -->
+  <!-- =================================================================== -->
+  <target name="compile" depends="prepare">
+    <mkdir dir="${build.dest}"/>
+    <javac srcdir="${src.dir}" destdir="${build.dest}" debug="${debug}">
+      <exclude name="**/InvokeBSF.java" unless="bsf.present" />
+      <exclude name="**/*SMTP*.java" unless="smtp.present" />
+      <exclude name="**/*SMTP*.java" unless="pop3.present" />
+      <exclude name="**/POP*.java" unless="smtp.present" />
+      <exclude name="**/POP*.java" unless="pop3.present" />
+      <exclude name="**/XMI*.java" unless="xmi.present" />
+      <exclude name="**/*EJB*.java" unless="ejb.present" />
+      <exclude name="**/SSLUtils.java" unless="ssl.present" />
+      <exclude name="**/axis/**/*.java" />
+    </javac>
+    <mkdir dir="${build.lib}"/>
+    <jar jarfile="${build.lib}/${name}.jar" basedir="${build.dest}" 
+         excludes="**/axis/**/*" />
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Compiles beta Axis                                                  -->
+  <!-- =================================================================== -->
+  <target name="axis" depends="prepare">
+    <mkdir dir="${build.dest}"/>
+    <javac srcdir="${src.dir}" destdir="${build.dest}" debug="${debug}">
+      <include name="**/axis/**/*.java" />
+    </javac>
+    <mkdir dir="${build.lib}"/>
+    <jar jarfile="${build.lib}/axis.jar" basedir="${build.dest}" 
+         includes="**/axis/**/*" />
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Compiles the samples                                                -->
+  <!-- =================================================================== -->
+  <target name="samples" depends="compile">
+    <javac srcdir="." destdir="${build.dir}" 
+           classpath="${build.lib}/${name}.jar" debug="${debug}">
+      <include name="samples/**/**.java" />
+      <exclude name="samples/**/*SMTP*.java" unless="smtp.present" />
+    </javac>
+    <copydir src="${samples.dir}" dest="${build.samples}" />
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Creates the API documentation                                       -->
+  <!-- =================================================================== -->
+  <target name="javadocs" depends="prepare">
+    <mkdir dir="${build.javadocs}"/>
+    <javadoc2 packagenames="${packages}"
+              sourcepath="${src.dir}"
+              destdir="${build.javadocs}"
+              author="true"
+              version="true"
+              use="true"
+              windowtitle="${Name} API"
+              doctitle="${Name}"
+              bottom="Copyright &#169; ${year} Apache XML Project. All Rights Reserved."
+    />
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Creates the binary distribution                                            -->
+  <!-- =================================================================== -->
+  <target name="dist" depends="compile, javadocs, samples">
+    <mkdir dir="${dist.dir}"/>
+    <mkdir dir="${dist.dir}/docs"/>
+    <mkdir dir="${dist.dir}/docs/apiDocs"/>
+    <mkdir dir="${dist.dir}/lib"/>
+    <mkdir dir="${dist.dir}/samples"/>
+    <mkdir dir="${dist.dir}/webapps"/>
+
+    <copydir src="${build.javadocs}" dest="${dist.dir}/docs/apiDocs"/>
+    <copydir src="${build.lib}" dest="${dist.dir}/lib"/>
+    <copydir src="${build.samples}" dest="${dist.dir}/samples"/>
+    <copydir src="${docs.dir}" dest="${dist.dir}/docs"/>
+    <copydir src="${webapps}" dest="${dist.dir}/webapps"/>
+
+    <copyfile src="LICENSE" dest="${dist.dir}/LICENSE"/>
+    <copyfile src="README" dest="${dist.dir}/README"/>
+    <copyfile src="ReleaseNotes.html" dest="${dist.dir}/ReleaseNotes.html"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Creates the source distribution                                            -->
+  <!-- =================================================================== -->
+  <target name="srcdist" depends="init">
+    <mkdir dir="${dist.dir}"/>
+    <mkdir dir="${dist.dir}/src"/>
+
+    <copydir src="${src.dir}" dest="${dist.dir}/src"/>
+
+    <copyfile src="LICENSE" dest="${dist.dir}/LICENSE"/>
+    <copyfile src="${build.file}" dest="${dist.dir}/${build.file}"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Cleans everything                                                   -->
+  <!-- =================================================================== -->
+  <target name="clean" depends="init">
+    <deltree dir="${build.dir}"/>
+    <deltree dir="${dist.dir}"/>
+  </target>
+
+</project>
