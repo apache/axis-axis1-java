@@ -20,6 +20,7 @@ public class PackageTests extends TestCase
         TestSuite suite = new TestSuite();
 
         suite.addTestSuite(TestDeser.class);
+        suite.addTestSuite(TestDeser1999.class);
         suite.addTestSuite(TestDeser2000.class);
         suite.addTestSuite(TestDeser2001.class);
         suite.addTestSuite(TestSer.class);
