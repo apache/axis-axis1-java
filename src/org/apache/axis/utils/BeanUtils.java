@@ -71,7 +71,6 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.components.i18n.*;
 import org.apache.commons.logging.Log;
 
 public class BeanUtils {

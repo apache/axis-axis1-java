@@ -58,7 +58,6 @@ package org.apache.axis.utils ;
 import org.apache.axis.Constants;
 
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.components.i18n.*;
 import org.apache.commons.logging.Log;
 
 import org.w3c.dom.Attr;

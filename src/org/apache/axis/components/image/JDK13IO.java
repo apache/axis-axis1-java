@@ -55,8 +55,8 @@
 
 package org.apache.axis.components.image;
 
-import org.apache.axis.components.i18n.Messages;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import java.awt.Component;
 import java.awt.Graphics;

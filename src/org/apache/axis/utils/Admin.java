@@ -71,7 +71,6 @@ import org.apache.axis.encoding.SerializationContextImpl;
 import org.apache.axis.server.AxisServer;
 
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.components.i18n.*;
 import org.apache.commons.logging.Log;
 
 import org.w3c.dom.Document;

@@ -67,10 +67,10 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.AxisFault;
 
 import org.apache.axis.server.AxisServer;
+import org.apache.axis.utils.Messages;
 
 import org.apache.commons.logging.Log;
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.components.i18n.Messages;
 
 /**
  * SimpleJMSWorker is a worker thread that processes messages that are

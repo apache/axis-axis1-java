@@ -69,9 +69,9 @@ import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.MethodTarget;
 import org.apache.axis.encoding.DeserializerImpl;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.components.i18n.Messages;
 import org.apache.commons.logging.Log;
 
 import org.xml.sax.Attributes;

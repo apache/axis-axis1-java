@@ -63,9 +63,9 @@ import org.apache.axis.message.SAXOutputter;
 import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.Part;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.components.i18n.Messages;
 import org.apache.commons.logging.Log;
 
 import org.xml.sax.Attributes;

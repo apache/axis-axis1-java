@@ -53,8 +53,9 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.components.i18n;
+package org.apache.axis.utils;
 
+import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
@@ -66,49 +67,82 @@ import java.util.ResourceBundle;
  * @author Richard A. Sitze
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
-public class DefaultMessageBundle implements MessageBundle {
+public final class Messages {
     public static final String DEFAULT_PROPERTIES_RESOURCE_NAME =
         "org.apache.axis.utils.axisNLS";
 
     // Message resource bundle.
-    private static ResourceBundle messageBundle = null;
+    private static ResourceBundle _messageBundle = null;
 
+    
+    /**
+     * Get the resource bundle that contains AXIS translatable messages.
+     * 
+     * This is ONLY done when it is needed.  If no messages are printed
+     * (for example, only WSDL2java is being run in non-verbose mode)
+     * then there is no need to read the properties file.
+     */
+    public static ResourceBundle getMessageBundle() {
+        if (_messageBundle == null) {
+            _messageBundle = ResourceBundle.getBundle(DEFAULT_PROPERTIES_RESOURCE_NAME);
+        }
+        return _messageBundle;
+    } // getMessageBundle
 
     /**
      * Get the message with the given key.
      * There are no arguments for this message.
      */
-    public String getMessage(String key)
+    public static String getMessage(String key)
             throws MissingResourceException {
-        if (messageBundle == null) {
-            initializeMessageBundle();
-        }
-        
-        return messageBundle.getString(key);
+        return getMessageBundle().getString(key);
     } // getMessage
-    
-    /**
-     * Get the resource bundle that contains all
-     * of the AXIS translatable messages.
-     * 
-     * This is currently ONLY used by TestMessages... which verifies
-     * axisNLS.properties.  So, it will return the first in the message
-     * list (axisNLS.properties)... name changed to reflect.
-     */
-    public static ResourceBundle getMessageResourceBundle() {
-        if (messageBundle == null) {
-            initializeMessageBundle();
-        }
-        return messageBundle;
-    } // getMessageResourceBundle
+
 
     /**
-     * Load the resource bundle messages from the properties file.
-     * This is ONLY done when it is needed.  If no messages are
-     * printed (for example, only Wsdl2java is being run in non-
-     * verbose mode) then there is no need to read the properties file.
+     * Get the message with the given key.  If an argument is specified
+     * in the message (in the format of "{0}") then fill in that argument
+     * with the value of var.
      */
-    private static void initializeMessageBundle() {
-        messageBundle = ResourceBundle.getBundle(DEFAULT_PROPERTIES_RESOURCE_NAME);
-    } // initializeMessageBundle
+    public static String getMessage(String key, String var)
+            throws MissingResourceException {
+        String[] args = {var};
+        return MessageFormat.format(getMessage(key), args);
+    } // getMessage
+
+
+    /**
+     * Get the message with the given key.  If arguments are specified
+     * in the message (in the format of "{0} {1}") then fill them in
+     * with the values of var1 and var2, respectively.
+     */
+    public static String getMessage(String key, String var1, String var2)
+            throws MissingResourceException {
+        String[] args = {var1, var2};
+        return MessageFormat.format(getMessage(key), args);
+    } // getMessage
+
+
+    /**
+     * Get the message with the given key.  If arguments are specified
+     * in the message (in the format of "{0} {1}") then fill them in
+     * with the values of var1 and var2, respectively.
+     */
+    public static String getMessage(String key, String var1, String var2, String var3)
+            throws MissingResourceException {
+        return MessageFormat.format(getMessage(key), new String[]{var1, var2, var3});
+    } // getMessage
+
+
+    /**
+     * Get the message with the given key.  Replace each "{X}" in the
+     * message with vars[X].  If there are more vars than {X}'s, then
+     * the extra vars are ignored.  If there are more {X}'s than vars,
+     * then a java.text.ParseException (subclass of RuntimeException)
+     * is thrown.
+     */
+    public static String getMessage(String key, String[] vars)
+            throws MissingResourceException {
+        return MessageFormat.format(getMessage(key), vars);
+    } // getMessage
 }

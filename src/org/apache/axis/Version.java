@@ -56,8 +56,8 @@
 package org.apache.axis;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.client.Call;
-import org.apache.axis.components.i18n.Messages;
 
 /**
  * Little utility to get the version and build date of the axis.jar.

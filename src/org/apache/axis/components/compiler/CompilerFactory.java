@@ -57,11 +57,11 @@ package org.apache.axis.components.compiler;
 
 import org.apache.axis.AxisProperties;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.commons.discovery.tools.SPInterface;
 
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.components.i18n.Messages;
 import org.apache.commons.logging.Log;
 
 
