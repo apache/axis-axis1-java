@@ -58,6 +58,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.encoding.SerializationContext;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -194,15 +195,16 @@ public class WSDDTypeMapping
     {
         if (typeQName != null) {
             if (!WSDDConstants.WSDD_JAVA.equals(typeQName.getNamespaceURI())) {
-                throw new ClassNotFoundException("Found languageSpecificType namespace '" +
-                    typeQName.getNamespaceURI() + "', expected '" +
-                    WSDDConstants.WSDD_JAVA + "'");
+                throw new ClassNotFoundException(JavaUtils.
+                             getMessage("badTypeNamespace00",
+                                        typeQName.getNamespaceURI(),
+                                        WSDDConstants.WSDD_JAVA));
             }
 
             return Class.forName(typeQName.getLocalPart());
         }
         
-        throw new ClassNotFoundException("No type QName for mapping?");
+        throw new ClassNotFoundException(JavaUtils.getMessage("noTypeQName00"));
     }
 
     /**
