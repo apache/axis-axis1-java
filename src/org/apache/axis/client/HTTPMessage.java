@@ -92,6 +92,7 @@ public class HTTPMessage {
 
   // For testing
   public boolean doLocal = false ;
+  private static Handler localServer = null ;
 
   public HTTPMessage() {
   }
@@ -167,12 +168,13 @@ public class HTTPMessage {
     Message              reqMsg = new Message( reqEnv, "SOAPEnvelope" );
     MessageContext       msgContext = new MessageContext( reqMsg );
 
-    Document doc = XMLUtils.newDocument();
-
     // For testing - skip HTTP layer
     if ( doLocal ) {
-      client = new org.apache.axis.server.AxisServer();
-      client.init();
+      if ( localServer == null ) {
+        localServer = new org.apache.axis.server.AxisServer();
+        localServer.init();
+      }
+      client = localServer;
       msgContext.setTargetService( action );
     }
     else {
