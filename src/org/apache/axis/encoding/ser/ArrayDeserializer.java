@@ -344,10 +344,13 @@ public class ArrayDeserializer extends DeserializerImpl
                 // Create an ArrayListExtension class to store the ArrayList
                 // plus converted objects.
                 ArrayList list = new ArrayListExtension(arrayClass, length);
-                // ArrayList lacks a setSize(), so...
-                for (int i = 0; i < length; i++) {
-                    list.add(null);
-                }
+
+                // This is expensive as our array may not grown this big.
+                // Prevents problems when XML claims a huge size
+                // that it doesn't actually fill.
+                //for (int i = 0; i < length; i++) {
+                //    list.add(null);
+                //}
                 value = list;
 
             }
@@ -378,17 +381,17 @@ public class ArrayDeserializer extends DeserializerImpl
                         Messages.getMessage("badOffset00", offset));
             }
 
-            curIndex = 
+            curIndex =
                 convertToIndex(offset.substring(leftBracketIndex + 1,
                                                 rightBracketIndex),
                                "badOffset00");
         }
-        
+
         if (log.isDebugEnabled()) {
             log.debug("Exit: ArrayDeserializer::startElement()");
         }
     }
-    
+
 
     /**
      * onStartChild is called on each child element.
@@ -750,7 +753,8 @@ public class ArrayDeserializer extends DeserializerImpl
             }                
         }
         ArrayListExtension(Class arrayClass, int length) {
-            super(length);
+            // Sanity check the array size, 50K is big enough to start
+            super(length > 50000 ? 50000 : length);
             this.arrayClass = arrayClass;
             // Don't use the array class as a hint 
             // if it can't be instantiated
