@@ -78,7 +78,7 @@ public class SOAPService extends SimpleTargetedChain
      * XML storage eventually.
      * 
      */
-    private transient TypeMappingRegistry typeMap = new TypeMappingRegistry();
+    private transient TypeMappingRegistry typeMap = new SOAPTypeMappingRegistry();
     
     /** Standard, no-arg constructor.
      */
