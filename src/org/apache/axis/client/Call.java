@@ -1172,14 +1172,14 @@ public class Call implements javax.xml.rpc.Call {
             throw new AxisFault( JavaUtils.getMessage("noOperation00") );
         try {
             return this.invoke(operationName.getNamespaceURI(),
-                    operationName.getLocalPart(), getParamList(params));
+                    operationName.getLocalPart(), params);
         }
         catch( AxisFault af) {
             throw af;
         }
         catch( Exception exp ) {
             //if ( exp instanceof AxisFault ) throw (AxisFault) exp ;
-
+            exp.printStackTrace();
             throw new AxisFault( JavaUtils.getMessage("errorInvoking00", "\n" + exp) );
         }
     }
@@ -1197,7 +1197,7 @@ public class Call implements javax.xml.rpc.Call {
      */
     public void invokeOneWay(Object[] params) {
         try {
-            invoke( getParamList(params) );
+            invoke( params );
         }
         catch( Exception exp ) {
             throw new JAXRPCException( exp.toString() );
@@ -1333,7 +1333,6 @@ public class Call implements javax.xml.rpc.Call {
 
         // If we never set-up any names... then just return what was passed in
         //////////////////////////////////////////////////////////////////////
-        log.debug( "getParamList number of params: " + params.length);
         log.debug( "operation=" + operation);
         if(operation != null) log.debug("operation.getNumParams()=" +operation.getNumParams());
         if ( operation.getNumParams() == 0 ) return( params );
@@ -1343,10 +1342,12 @@ public class Call implements javax.xml.rpc.Call {
         /////////////////////////////////////////////////////////////////////
         numParams = operation.getNumInParams();
 
-        if ( numParams != params.length )
+        if ( params == null || numParams != params.length )
             throw new JAXRPCException(
                     JavaUtils.getMessage("parmMismatch00",
                     "" + params.length, "" + numParams) );
+
+        log.debug( "getParamList number of params: " + params.length);
 
         // All ok - so now produce an array of RPCParams
         //////////////////////////////////////////////////
@@ -1360,14 +1361,20 @@ public class Call implements javax.xml.rpc.Call {
                 continue ;
 
             QName paramQName = param.getQName();
-            RPCParam p = new RPCParam(paramQName.getNamespaceURI(),
+            RPCParam rpcParam = null;
+            Object p = params[j++];
+            if(p instanceof RPCParam) {
+                rpcParam = (RPCParam)p;
+            } else {
+                rpcParam = new RPCParam(paramQName.getNamespaceURI(),
                                       paramQName.getLocalPart(),
-                                      params[j++] );
+                                      p );
+            }
             // Attach the ParameterDescription to the RPCParam
             // so that the serializer can use the (javaType, xmlType) 
             // information.
-            p.setParamDesc(param);
-            result.add( p );
+            rpcParam.setParamDesc(param);
+            result.add( rpcParam );
         }
 
         return( result.toArray() );
@@ -1607,7 +1614,7 @@ public class Call implements javax.xml.rpc.Call {
             throw new AxisFault(JavaUtils.getMessage("mustSpecifyParms"));
         }
 
-        RPCElement  body = new RPCElement(namespace, method, args);
+        RPCElement  body = new RPCElement(namespace, method, getParamList(args));
 
         Object ret = invoke( body );
 
