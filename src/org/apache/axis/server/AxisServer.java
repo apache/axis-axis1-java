@@ -57,7 +57,7 @@ package org.apache.axis.server ;
 
 import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisInternalServices;
+import org.apache.axis.AxisProperties;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.Handler;
 import org.apache.axis.Message;
@@ -67,6 +67,8 @@ import org.apache.axis.client.AxisClient;
 import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
+
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import java.util.Map;
@@ -78,9 +80,9 @@ import java.util.Map;
 public class AxisServer extends AxisEngine
 {
     protected static Log log =
-        AxisInternalServices.getLog(AxisServer.class.getName());
+        LogFactory.getLog(AxisServer.class.getName());
     private static Log tlog =
-        AxisInternalServices.getLog("org.apache.axis.TIME");
+        LogFactory.getLog("org.apache.axis.TIME");
 
     private static AxisServerFactory factory = null;
     

@@ -53,7 +53,7 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.utils.bytecode;
+package org.apache.axis.components.bytecode;
 
 import serp.bytecode.BCClass;
 import serp.bytecode.BCMethod;
@@ -76,7 +76,7 @@ import java.io.IOException;
  *       (Does not work!!! but compiles clean!!!)
  *
  * @author <a href="mailto:dims@yahoo.com">Davanum Srinivas</a>
- * @version $Revision$ $Date$
+ * @version $Revision: 1.2 $ $Date: 2002/06/12 13:48:18 $
  */
 public class Serp implements Extractor {
 

@@ -57,7 +57,7 @@ package org.apache.axis.providers.java;
 
 import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisInternalServices;
+import org.apache.axis.AxisProperties;
 import org.apache.axis.AxisServiceConfig;
 import org.apache.axis.Handler;
 import org.apache.axis.Message;
@@ -74,7 +74,10 @@ import org.apache.axis.enum.Scope;
 import org.apache.axis.Constants;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.deployment.wsdd.WSDDConstants;
+
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
+
 import org.w3c.dom.Document;
 import org.apache.axis.deployment.wsdd.WSDDService;
 
@@ -96,7 +99,7 @@ import java.net.URL;
 public abstract class JavaProvider extends BasicProvider
 {
     protected static Log log =
-        AxisInternalServices.getLog(JavaProvider.class.getName());
+        LogFactory.getLog(JavaProvider.class.getName());
 
     public static final String OPTION_CLASSNAME = "className";
     public static final String OPTION_ALLOWEDMETHODS = "allowedMethods";

@@ -60,13 +60,16 @@ package org.apache.axis.message;
  * @author Glen Daniels (gdaniels@allaire.com)
  */
 
-import org.apache.axis.AxisInternalServices;
+import org.apache.axis.AxisProperties;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.enum.Style;
+
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -75,7 +78,7 @@ import javax.xml.namespace.QName;
 public class BodyBuilder extends SOAPHandler
 {
     protected static Log log =
-        AxisInternalServices.getLog(BodyBuilder.class.getName());
+        LogFactory.getLog(BodyBuilder.class.getName());
 
     private SOAPBodyElement element;
     boolean gotRPCElement = false;

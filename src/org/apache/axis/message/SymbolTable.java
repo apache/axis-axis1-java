@@ -55,7 +55,9 @@
 
 package org.apache.axis.message;
 
-import org.apache.axis.AxisInternalServices;
+import org.apache.axis.AxisProperties;
+
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import java.util.ArrayList;
@@ -69,7 +71,7 @@ import java.util.HashMap;
 public class SymbolTable
 {
     protected static Log log =
-        AxisInternalServices.getLog(SymbolTable.class.getName());
+        LogFactory.getLog(SymbolTable.class.getName());
 
     protected static final int TABLE_SIZE = 101;
     protected Entry[] fBuckets = new Entry[TABLE_SIZE];

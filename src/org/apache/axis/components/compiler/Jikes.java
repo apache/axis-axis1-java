@@ -53,11 +53,12 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.utils.compiler;
+package org.apache.axis.components.compiler;
 
+import org.apache.axis.AxisProperties;
 import org.apache.axis.utils.JavaUtils;
 
-import org.apache.axis.AxisInternalServices;
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import java.io.BufferedInputStream;
@@ -75,14 +76,14 @@ import java.util.StringTokenizer;
  * NOTE: inspired by the Apache Jasper implementation.
  * @author <a href="mailto:dims@yahoo.com">Davanum Srinivas</a>
  * @author <a href="mailto:stefano@apache.org">Stefano Mazzocchi</a>
- * @version $Revision$ $Date$
+ * @version $Revision: 1.10 $ $Date: 2002/07/02 18:07:35 $
  * @since 2.0
  */
 
 public class Jikes extends AbstractCompiler
 {
     protected static Log log =
-            AxisInternalServices.getLog(Jikes.class.getName());
+            LogFactory.getLog(Jikes.class.getName());
     
     static final int OUTPUT_BUFFER_SIZE = 1024;
     static final int BUFFER_SIZE = 512;

@@ -20,7 +20,7 @@
  * 3. The end-user documentation included with the redistribution,
  *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
- *    Apache Software Foundation (http://www.apache.org/)."
+ *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
  *    if and wherever such third-party acknowledgments normally appear.
  *
@@ -53,27 +53,44 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis;
+package org.apache.axis.components.compiler;
 
+import org.apache.axis.AxisProperties;
+import org.apache.axis.utils.ClassUtils;
+import org.apache.axis.utils.JavaUtils;
+
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 
 /**
- * @author Richard A. Sitze
+ * This class implements a factory to instantiate a Compiler.
+ * @author <a href="mailto:dims@yahoo.com">Davanum Srinivas</a>
+ * @author <a href="mailto:stefano@apache.org">Stefano Mazzocchi</a>
+ * @version $Revision: 1.10 $ $Date: 2002/07/02 18:07:35 $
+ * @since 2.0
  */
-public class AxisInternalServices {
-    private static LogFactory logFactory = LogFactory.getFactory();
+public class CompilerFactory {
+    protected static Log log =
+        LogFactory.getLog(CompilerFactory.class.getName());
 
-    public static Log getLog(String name) {
-        return logFactory.getLog(name);
-    }
-
-    /**
-     * Central access point for AXIS to obtain "global" configuration properties.
-     * To be extended in the future... or replaced with non-global properties.
-     */
-    public static String getGlobalProperty(String property) {
-        return System.getProperty(property);
-    }
+        public static Compiler getCompiler()
+        {
+            String compilerClassName = System.getProperty("axis.Compiler");
+            log.debug("axis.Compiler:" + compilerClassName);
+            if (compilerClassName != null) {
+                try {
+                    Class compilerClass = ClassUtils.forName(compilerClassName);
+                    if (Compiler.class.isAssignableFrom(compilerClass))
+                        return (Compiler)compilerClass.newInstance();
+                } catch (Exception e) {
+                    // If something goes wrong here, should we just fall
+                    // through and use the default one?
+                    log.error(JavaUtils.getMessage("exception00"), e);
+                }
+            }
+            log.debug(JavaUtils.getMessage("defaultCompiler"));
+            Compiler compiler = new Javac();
+            return compiler;
+        }
 }

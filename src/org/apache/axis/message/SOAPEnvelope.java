@@ -55,7 +55,7 @@
 package org.apache.axis.message;
 
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisInternalServices;
+import org.apache.axis.AxisProperties;
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
@@ -68,6 +68,7 @@ import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Mapping;
 
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import org.xml.sax.InputSource;
@@ -82,11 +83,12 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
 
+
 public class SOAPEnvelope extends MessageElement
     implements javax.xml.soap.SOAPEnvelope
 {
     protected static Log log =
-        AxisInternalServices.getLog(SOAPEnvelope.class.getName());
+        LogFactory.getLog(SOAPEnvelope.class.getName());
 
     private SOAPHeader header;
     private SOAPBody body;

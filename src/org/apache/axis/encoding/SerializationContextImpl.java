@@ -56,7 +56,7 @@
 package org.apache.axis.encoding;
 
 import org.apache.axis.AxisEngine;
-import org.apache.axis.AxisInternalServices;
+import org.apache.axis.AxisProperties;
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
@@ -73,6 +73,7 @@ import org.apache.axis.utils.Mapping;
 import org.apache.axis.utils.NSStack;
 import org.apache.axis.utils.XMLUtils;
 
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import org.w3c.dom.Attr;
@@ -106,7 +107,7 @@ import java.util.Stack;
 public class SerializationContextImpl implements SerializationContext
 {
     protected static Log log =
-            AxisInternalServices.getLog(SerializationContextImpl.class.getName());
+            LogFactory.getLog(SerializationContextImpl.class.getName());
 
     private NSStack nsStack = new NSStack();
     private boolean writingStartTag = false;

@@ -55,10 +55,10 @@
 
 package org.apache.axis ;
 
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.utils.JavaUtils;
 
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import javax.xml.namespace.QName;
@@ -76,7 +76,7 @@ import java.util.Hashtable;
  */
 public class FaultableHandler extends BasicHandler {
     protected static Log log =
-        AxisInternalServices.getLog(FaultableHandler.class.getName());
+        LogFactory.getLog(FaultableHandler.class.getName());
 
     protected Handler    workHandler ;
 

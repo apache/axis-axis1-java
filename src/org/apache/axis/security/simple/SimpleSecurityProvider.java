@@ -55,12 +55,14 @@
 
 package org.apache.axis.security.simple;
 
-import org.apache.axis.AxisInternalServices;
+import org.apache.axis.AxisProperties;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
 import org.apache.axis.security.AuthenticatedUser;
 import org.apache.axis.security.SecurityProvider;
 import org.apache.axis.utils.JavaUtils;
+
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import java.io.File;
@@ -76,7 +78,7 @@ import java.util.StringTokenizer;
  */
 public class SimpleSecurityProvider implements SecurityProvider {
     protected static Log log =
-        AxisInternalServices.getLog(SimpleSecurityProvider.class.getName());
+        LogFactory.getLog(SimpleSecurityProvider.class.getName());
 
     HashMap users = null;
     HashMap perms = null;

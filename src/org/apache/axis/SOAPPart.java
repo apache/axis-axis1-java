@@ -55,7 +55,6 @@
 
 package org.apache.axis ;
 
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.DeserializationContextImpl;
 import org.apache.axis.encoding.SerializationContext;
@@ -66,6 +65,7 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.SOAPUtils;
 import org.apache.axis.transport.http.HTTPConstants;
 
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import org.xml.sax.InputSource;
@@ -96,7 +96,7 @@ import java.util.Iterator;
 public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
 {
     protected static Log log =
-        AxisInternalServices.getLog(SOAPPart.class.getName());
+        LogFactory.getLog(SOAPPart.class.getName());
 
     private static final int FORM_STRING       = 1;
     private static final int FORM_INPUTSTREAM  = 2;

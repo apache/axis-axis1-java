@@ -60,16 +60,19 @@ package org.apache.axis.message;
  * @author Glen Daniels (gdaniels@allaire.com)
  */
 
-import org.apache.axis.AxisInternalServices;
+import org.apache.axis.AxisProperties;
 import org.apache.axis.encoding.DeserializationContext;
+
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 public class HeaderBuilder extends SOAPHandler
 {
     protected static Log log =
-        AxisInternalServices.getLog(HeaderBuilder.class.getName());
+        LogFactory.getLog(HeaderBuilder.class.getName());
 
     private SOAPHeaderElement header;
     private SOAPEnvelope envelope;

@@ -53,11 +53,13 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.utils.compiler;
+package org.apache.axis.components.compiler;
 
-import org.apache.axis.AxisInternalServices;
+import org.apache.axis.AxisProperties;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
+
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import java.io.BufferedReader;
@@ -78,14 +80,14 @@ import java.util.StringTokenizer;
  *
  * @author <a href="mailto:dims@yahoo.com">Davanum Srinivas</a>
  * @author <a href="mailto:stefano@apache.org">Stefano Mazzocchi</a>
- * @version $Revision$ $Date$
+ * @version $Revision: 1.12 $ $Date: 2002/07/02 18:07:35 $
  * @since 2.0
  */
 
 public class Javac extends AbstractCompiler
 {
     protected static Log log =
-        AxisInternalServices.getLog(Javac.class.getName());
+        LogFactory.getLog(Javac.class.getName());
 
     public final static String CLASSIC_CLASS = "sun.tools.javac.Main";
     public final static String MODERN_CLASS = "com.sun.tools.javac.Main";

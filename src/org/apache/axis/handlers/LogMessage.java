@@ -55,10 +55,11 @@
 
 package org.apache.axis.handlers;
 
-import org.apache.axis.AxisInternalServices;
+import org.apache.axis.AxisProperties;
 import org.apache.axis.MessageContext;
 import org.apache.axis.utils.JavaUtils;
 
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 
@@ -69,7 +70,7 @@ import org.apache.commons.logging.Log;
 public class LogMessage extends BasicHandler
 {
     protected static Log log =
-        AxisInternalServices.getLog(LogMessage.class.getName());
+        LogFactory.getLog(LogMessage.class.getName());
 
     public void invoke(MessageContext context)
     {

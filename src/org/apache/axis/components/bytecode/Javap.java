@@ -53,9 +53,11 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.utils.bytecode;
+package org.apache.axis.components.bytecode;
 
-import org.apache.axis.AxisInternalServices;
+import org.apache.axis.AxisProperties;
+
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import java.io.BufferedReader;
@@ -76,7 +78,7 @@ import java.util.Vector;
  */
 public class Javap implements Extractor {
     protected static Log log =
-            AxisInternalServices.getLog(ExtractorFactory.class.getName());
+            LogFactory.getLog(ExtractorFactory.class.getName());
 
     private static Map cache = new HashMap();
 

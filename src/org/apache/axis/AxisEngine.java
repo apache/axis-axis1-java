@@ -62,6 +62,8 @@ import org.apache.axis.session.Session;
 import org.apache.axis.session.SimpleSession;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.cache.ClassCache;
+
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import javax.xml.namespace.QName;
@@ -81,7 +83,7 @@ import java.util.Enumeration;
 public abstract class AxisEngine extends BasicHandler
 {
     protected static Log log =
-        AxisInternalServices.getLog(AxisEngine.class.getName());
+        LogFactory.getLog(AxisEngine.class.getName());
 
     // Engine property names
     public static final String PROP_XML_DECL = "sendXMLDeclaration";

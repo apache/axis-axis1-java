@@ -56,17 +56,18 @@
 package org.apache.axis.handlers ;
 
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisInternalServices;
+import org.apache.axis.AxisProperties;
 import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
 import org.apache.axis.security.AuthenticatedUser;
 import org.apache.axis.security.SecurityProvider;
 import org.apache.axis.utils.JavaUtils;
 
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
-
 import java.util.StringTokenizer;
+
 
 /**
  * Just a simple Authorization Handler to see if the user
@@ -82,7 +83,7 @@ import java.util.StringTokenizer;
  */
 public class SimpleAuthorizationHandler extends BasicHandler {
     protected static Log log =
-        AxisInternalServices.getLog(SimpleAuthorizationHandler.class.getName());
+        LogFactory.getLog(SimpleAuthorizationHandler.class.getName());
 
     /**
      * Authorize the user and targetService from the msgContext

@@ -57,13 +57,15 @@ package org.apache.axis.providers.java;
 
 import org.apache.commons.logging.Log;
 
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.AxisFault;
+import org.apache.axis.AxisProperties;
 import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
-
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
+
+import org.apache.axis.components.logger.LogFactory;
+import org.apache.commons.logging.Log;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -79,7 +81,7 @@ import java.util.Properties;
 public class EJBProvider extends RPCProvider
 {
     protected static Log log =
-        AxisInternalServices.getLog(EJBProvider.class.getName());
+        LogFactory.getLog(EJBProvider.class.getName());
 
     public static final String OPTION_BEANNAME = "beanJndiName";
     public static final String OPTION_HOMEINTERFACENAME = "homeInterfaceName";

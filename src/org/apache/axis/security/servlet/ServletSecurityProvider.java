@@ -55,17 +55,20 @@
 
 package org.apache.axis.security.servlet;
 
-import org.apache.axis.AxisInternalServices;
+import org.apache.axis.AxisProperties;
 import org.apache.axis.MessageContext;
 import org.apache.axis.security.AuthenticatedUser;
 import org.apache.axis.security.SecurityProvider;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.JavaUtils;
+
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.util.HashMap;
+
 
 /**
  * A ServletSecurityProvider, combined with the ServletAuthenticatedUser
@@ -80,7 +83,7 @@ import java.util.HashMap;
  */
 public class ServletSecurityProvider implements SecurityProvider {
     protected static Log log =
-        AxisInternalServices.getLog(ServletSecurityProvider.class.getName());
+        LogFactory.getLog(ServletSecurityProvider.class.getName());
 
     static HashMap users = null;
 

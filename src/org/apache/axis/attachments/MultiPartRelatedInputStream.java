@@ -54,10 +54,12 @@
  */
 package org.apache.axis.attachments;
 
-import org.apache.axis.AxisInternalServices;
+import org.apache.axis.AxisProperties;
 import org.apache.axis.Part;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.JavaUtils;
+
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import javax.activation.DataHandler;
@@ -72,7 +74,7 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
 
     /** Field log           */
     protected static Log log =
-            AxisInternalServices.getLog(MultiPartRelatedInputStream.class.getName());
+            LogFactory.getLog(MultiPartRelatedInputStream.class.getName());
 
     /** Field MIME_MULTIPART_RELATED           */
     public static final String MIME_MULTIPART_RELATED = "multipart/related";

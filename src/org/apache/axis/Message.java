@@ -55,13 +55,13 @@
 
 package org.apache.axis;
 
-import org.apache.axis.AxisInternalServices;
 import org.apache.axis.attachments.Attachments;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import javax.xml.soap.SOAPMessage;
@@ -88,7 +88,7 @@ import java.util.Iterator;
  */
 public class Message extends javax.xml.soap.SOAPMessage {
     protected static Log log =
-        AxisInternalServices.getLog(Message.class.getName());
+        LogFactory.getLog(Message.class.getName());
 
     public static final String REQUEST = "request";
     public static final String RESPONSE = "response";

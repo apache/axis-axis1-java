@@ -59,9 +59,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.lang.reflect.Method;
 
-import org.apache.axis.AxisInternalServices;
-import org.apache.axis.enum.Style;
+import org.apache.axis.AxisProperties;
+
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
+
+import org.apache.axis.enum.Style;
+
 
 /**
  * An OperationDesc is an abstract description of an operation on a service.
@@ -73,7 +77,7 @@ import org.apache.commons.logging.Log;
 public class OperationDesc {
 
     protected static Log log =
-        AxisInternalServices.getLog(OperationDesc.class.getName());
+        LogFactory.getLog(OperationDesc.class.getName());
 
     /** The service we're a part of */
     private ServiceDesc parent;

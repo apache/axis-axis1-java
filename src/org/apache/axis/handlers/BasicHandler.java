@@ -55,12 +55,13 @@
 package org.apache.axis.handlers;
 
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisInternalServices;
+import org.apache.axis.AxisProperties;
 import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.LockableHashtable;
 
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import org.w3c.dom.Document;
@@ -82,7 +83,7 @@ import java.util.List;
  */
 public abstract class BasicHandler implements Handler {
     protected static Log log =
-        AxisInternalServices.getLog(BasicHandler.class.getName());
+        LogFactory.getLog(BasicHandler.class.getName());
 
     protected Hashtable options;
     protected String name;
@@ -224,6 +225,6 @@ public abstract class BasicHandler implements Handler {
      * Hook to axis service... for now hardwire
      */
     protected static final String getGlobalProperty(String property) {
-        return AxisInternalServices.getGlobalProperty(property);
+        return AxisProperties.getGlobalProperty(property);
     }
 }

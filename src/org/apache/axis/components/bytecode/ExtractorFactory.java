@@ -53,15 +53,39 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.utils.bytecode;
+package org.apache.axis.components.bytecode;
 
-import java.lang.reflect.Method;
+import org.apache.axis.AxisProperties;
+import org.apache.axis.utils.ClassUtils;
+import org.apache.axis.utils.JavaUtils;
+
+import org.apache.axis.components.logger.LogFactory;
+import org.apache.commons.logging.Log;
+
 
 /**
- * This class defines a Extractor interface.
+ * This class implements a factory to instantiate bytecode Extractor.
  * @author <a href="mailto:dims@yahoo.com">Davanum Srinivas</a>
- * @version $Revision$ $Date$
+ * @version $Revision: 1.5 $ $Date: 2002/07/02 18:07:35 $
  */
-public interface Extractor {
-    public String[] getParameterNamesFromDebugInfo(Method method);
+public class ExtractorFactory {
+    protected static Log log =
+            LogFactory.getLog(ExtractorFactory.class.getName());
+
+    public static Extractor getExtractor() {
+        String extractorClassName =
+                System.getProperty("axis.Extractor",org.apache.axis.components.bytecode.TechTrader.class.getName());
+        log.debug("axis.Extractor:" + extractorClassName);
+        Extractor extractor = null;
+        try {
+            Class extractorClass = ClassUtils.forName(extractorClassName);
+            if (Extractor.class.isAssignableFrom(extractorClass))
+                return (Extractor) extractorClass.newInstance();
+        } catch (Exception e) {
+            // If something goes wrong here, should we just fall
+            // through and use the default one?
+            log.error(JavaUtils.getMessage("exception00"), e);
+        }
+        return extractor;
+    }
 }

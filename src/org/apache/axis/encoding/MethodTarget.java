@@ -60,17 +60,18 @@ import org.xml.sax.SAXException;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 
-import org.apache.axis.AxisInternalServices;
-import org.apache.axis.encoding.Target;
+import org.apache.axis.AxisProperties;
 import org.apache.axis.utils.JavaUtils;
 
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
+
 
 // Target is set via a method call.  The set method places the value in the field.
 public class MethodTarget implements Target
 {
     protected static Log log =
-        AxisInternalServices.getLog(MethodTarget.class.getName());
+        LogFactory.getLog(MethodTarget.class.getName());
 
     private Object targetObject;
     private Method targetMethod;

@@ -53,7 +53,7 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.utils.compiler;
+package org.apache.axis.components.compiler;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -66,7 +66,7 @@ import java.util.ArrayList;
  * This class implements the functionality common to all Java compilers.
  * @author <a href="mailto:dims@yahoo.com">Davanum Srinivas</a>
  * @author <a href="mailto:stefano@apache.org">Stefano Mazzocchi</a>
- * @version $Revision$ $Date$
+ * @version $Revision: 1.3 $ $Date: 2002/06/06 14:35:58 $
  * @since 2.0
  */
 public abstract class AbstractCompiler implements Compiler {
