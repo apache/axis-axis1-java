@@ -159,13 +159,14 @@ public class VectorDeserializer extends DeserializerImpl implements Deserializer
         QName itemType = context.getTypeFromAttributes(namespace,
                                                        localName,
                                                        attributes);
-        if (itemType == null)
-            throw new SAXException(JavaUtils.getMessage("noType01"));
-        
         // Get the deserializer
-        Deserializer dSer = context.getDeserializerForType(itemType);
-        if (dSer == null)
-            throw new SAXException(JavaUtils.getMessage("noType01"));
+        Deserializer dSer = null;
+        if (itemType != null) {
+           dSer = context.getDeserializerForType(itemType);
+        }
+        if (dSer == null) {
+            dSer = new DeserializerImpl();
+        }
 
         // When the value is deserialized, inform us.
         // Need to pass the index because multi-ref stuff may 
