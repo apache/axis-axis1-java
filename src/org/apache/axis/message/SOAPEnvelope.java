@@ -71,6 +71,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.rpc.namespace.QName;
@@ -127,20 +128,14 @@ public class SOAPEnvelope extends MessageElement
         setDirty(true);
     }
 
-    public SOAPEnvelope(InputStream input) {
-        try {
-            InputSource is = new InputSource(input);
-            DeserializationContext dser = null ;
-            AxisClient     tmpEngine = new AxisClient(new NullProvider());
-            MessageContext msgContext = new MessageContext(tmpEngine);
-            dser = new DeserializationContextImpl(is, msgContext,
+    public SOAPEnvelope(InputStream input) throws SAXException {
+        InputSource is = new InputSource(input);
+        DeserializationContext dser = null ;
+        AxisClient     tmpEngine = new AxisClient(new NullProvider());
+        MessageContext msgContext = new MessageContext(tmpEngine);
+        dser = new DeserializationContextImpl(is, msgContext,
                                               Message.REQUEST, this );
-            dser.parse();
-        }
-        catch( Exception e ) {
-            log.error(JavaUtils.getMessage("exception00"), e);
-            throw new RuntimeException( e.toString() );
-        }
+        dser.parse();
     }
     
     public String getMessageType()
