@@ -35,7 +35,7 @@ import java.io.OutputStream;
 public class ByteArray extends OutputStream {
 
     protected static double DEFAULT_CACHE_INCREMENT = 2.5;
-    protected static int DEFAULT_RESIDENT_SIZE = 1 * 1024 * 1024; // 1 MB
+    protected static int DEFAULT_RESIDENT_SIZE = 512 * 1024 * 1024; // 512 MB
     protected static boolean DEFAULT_ENABLE_BACKING_STORE = true;
     protected static int WORKING_BUFFER_SIZE = 8192;
 
@@ -319,8 +319,6 @@ public class ByteArray extends OutputStream {
         if (cache != null) {
             byte[] v = cache;
             int fp = cache_fp;
-            cache = null;
-            cache_fp = 0;
             return new ByteArrayInputStream(v, 0, fp);
         } else if (bs_handle != null) {
             return createBackingStoreInputStream();

@@ -261,7 +261,6 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
                         "\"?>").getBytes());
             }
             ((ByteArray) currentMessage).writeTo(os);
-            ((ByteArray) currentMessage).discardBuffer();
         } else {
             Writer writer = new OutputStreamWriter(os,charEncoding);
             writer = new BufferedWriter(new PrintWriter(writer));
