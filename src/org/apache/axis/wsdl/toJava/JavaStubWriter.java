@@ -607,10 +607,13 @@ public class JavaStubWriter extends JavaWriter {
                     needComma = true;
                 }
                 if (p.getMode() == Parameter.IN) {
-                    pw.print(wrapPrimitiveType(p.getType(), javifiedName));
+                    pw.print(Utils.wrapPrimitiveType(p.getType(),
+                            javifiedName));
                 }
                 else { 
-                    pw.print(wrapPrimitiveType(p.getType(), javifiedName + ".value"));
+                    pw.print(
+                            Utils.wrapPrimitiveType(p.getType(),
+                            javifiedName + ".value"));
                 }
             }
         }
@@ -693,17 +696,17 @@ public class JavaStubWriter extends JavaWriter {
             // If that fails, use JavaUtils.convert()
             pw.println("            try {");
             pw.println("                " + target +
-                       getResponseString(type, source));
+                       Utils.getResponseString(type, source));
             pw.println("            } catch (java.lang.Exception e) {");
             pw.println("                " + target +
-                       getResponseString(type, 
+                       Utils.getResponseString(type, 
                                          "org.apache.axis.utils.JavaUtils.convert(" +
                                          source + ", " + 
                                          type.getName() + ".class)"));
             pw.println("            }"); 
         } else {
             pw.println("              " + target +
-                       getResponseString(type, source));
+                       Utils.getResponseString(type, source));
         }
     }
 } // class JavaStubWriter

@@ -183,9 +183,9 @@ public class JavaBindingWriter implements Generator {
                 String fileName = Utils.getJavaLocalName(bEntry.getName())
                         + "Impl.java";
                 try {
-                // NOTE:  Where does the fileExists method really belong?
-                    if (!((JavaWriter) stubWriter).fileExists (fileName,
-                            binding.getQName().getNamespaceURI())) {
+                    if (!Utils.fileExists(fileName,
+                            binding.getQName().getNamespaceURI(),
+                            emitter.getNamespaces())) {
                         implWriter = getJavaImplWriter(
                                 emitter, bEntry, symbolTable);
                     }

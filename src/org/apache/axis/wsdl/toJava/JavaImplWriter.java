@@ -176,7 +176,7 @@ public class JavaImplWriter extends JavaWriter {
             if (param.getMode() == Parameter.OUT) {
                 pw.print("        " + Utils.xmlNameToJava(param.getName())
                         + ".value = ");
-                if ( isPrimitiveType(param.getType()) ) {
+                if ( Utils.isPrimitiveType(param.getType()) ) {
                     if ( "boolean".equals(paramType) ) {
                         pw.print("false");
                     } else if ("byte".equals(paramType)) {
@@ -239,7 +239,7 @@ public class JavaImplWriter extends JavaWriter {
         if (parms.returnType != null) {
             pw.print("        return ");
 
-            if (isPrimitiveType(parms.returnType)) {
+            if (Utils.isPrimitiveType(parms.returnType)) {
                 String returnType = parms.returnType.getName();
                 if ("boolean".equals(returnType)) {
                     pw.println("false;");

@@ -59,8 +59,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import java.util.HashMap;
-
 import javax.wsdl.QName;
 
 import org.apache.axis.utils.JavaUtils;
@@ -263,61 +261,6 @@ public abstract class JavaWriter implements Generator {
     } // writeComment
 
     /**
-     * A simple map of the primitive types and their holder objects
-     */
-    private static HashMap TYPES = new HashMap(7);
-
-    static {
-        TYPES.put("int", "Integer");
-        TYPES.put("float", "Float");
-        TYPES.put("boolean", "Boolean");
-        TYPES.put("double", "Double");
-        TYPES.put("byte", "Byte");
-        TYPES.put("short", "Short");
-        TYPES.put("long", "Long");
-    }
-
-    /**
-     * Return a string with "var" wrapped as an Object type if needed
-     */
-    protected String wrapPrimitiveType(TypeEntry type, String var) {
-        String objType = type == null ? null : (String) TYPES.get(type.getName());
-        if (objType != null) {
-            return "new " + objType + "(" + var + ")";
-        } else if (type != null && 
-                   type.getName().equals("byte[]") &&
-                   type.getQName().getLocalPart().equals("hexBinary")) {
-            // Need to wrap byte[] in special Hex object to get the correct serialization
-            return "new org.apache.axis.encoding.Hex(" + var + ")";
-        } else {
-            return var;
-        }
-    } // wrapPrimitiveType
-
-    /**
-     * Return the Object variable 'var' cast to the appropriate type
-     * doing the right thing for the primitive types.
-     */
-    protected String getResponseString(TypeEntry type, String var) {
-        if (type == null) {
-            return ";";
-        }
-        else {
-            String objType = (String) TYPES.get(type.getName());
-            if (objType != null) {
-                return "((" + objType + ") " + var + ")." + type.getName() + "Value();";
-            }
-            else {
-                return "(" + type.getName() + ") " + var + ";";
-            }
-        }
-    } // getResponseString
-
-    protected boolean isPrimitiveType(TypeEntry type) {
-        return TYPES.get(type.getName()) != null;
-    }
-
-    /**
      * Initialize the deployment document, spit out preamble comments
      * and opening tag.
      */
@@ -356,16 +299,6 @@ public abstract class JavaWriter implements Generator {
             pw.println("    xmlns=\"" + Constants.URI_WSDD +"\">");
         }
     } // initializeDeploymentDoc
-
-    /**
-     * Does the given file already exist?
-     */
-    protected boolean fileExists (String name, String namespace) throws IOException
-    {
-        String packageName = emitter.getNamespaces().getAsDir(namespace);
-        String fullName = packageName + name;
-        return new File (fullName).exists();
-    } // fileExists
 
     /**
      * Write the body of the file.  This is what extenders of this class must
