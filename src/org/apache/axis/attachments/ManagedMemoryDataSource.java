@@ -54,7 +54,6 @@
  */
 package org.apache.axis.attachments;
 
-import org.apache.axis.AxisProperties;
 import org.apache.axis.InternalException;
 import org.apache.axis.MessageContext;
 import org.apache.axis.utils.JavaUtils;

@@ -54,7 +54,6 @@
  */
 package org.apache.axis.attachments;
 
-import org.apache.axis.AxisProperties;
 import org.apache.axis.Part;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.JavaUtils;

@@ -65,8 +65,7 @@ import java.util.StringTokenizer;
 
 import javax.activation.*;
 
-import org.apache.axis.AxisProperties;
-import org.apache.axis.transport.http.HTTPConstants;
+//import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.JavaUtils;
 
 import org.apache.axis.components.logger.LogFactory;
@@ -342,7 +341,7 @@ public class DimeBodyPart {
         byte[] fixedHeader = new byte[12];
 
         //VERSION
-        fixedHeader[0] = (DimeMultiPart.CURRENT_VERSION << 3) & 0xf8;
+        fixedHeader[0] = (byte)((DimeMultiPart.CURRENT_VERSION << 3) & 0xf8);
 
         // B, E, and C
         fixedHeader[0] |= (byte) ((position & (byte) 0x6)
