@@ -213,9 +213,10 @@ public class tcpmon extends JFrame {
         in     = inSocket.getInputStream();
         out    = outSocket.getOutputStream();
         for ( ;; ) {
-          // len = in.available();
-          // if ( len == 0 ) len = 1 ;
-          len = in.read(buffer,0,4096); // len);
+          len = in.available();
+          if ( len == 0 ) len = 1 ;
+          if ( len > 4096 ) len = 4096 ;
+          len = in.read(buffer,0,len);
           if ( len == -1 ) break ;
           textArea.append( new String( buffer, 0, len ) );
           out.write( buffer, 0, len );
