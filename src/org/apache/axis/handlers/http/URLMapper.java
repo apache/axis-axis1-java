@@ -79,9 +79,12 @@ public class URLMapper extends BasicHandler
                                               HTTPConstants.MC_HTTP_SERVLETREQUEST);
             
             // Assumes "/" + servicename
-            String path = req.getPathInfo().substring(1);
+            String path = req.getPathInfo();
+            if ((path != null) && (path.length() > 1)) {
+                path = path.substring(1);
     
-            msgContext.setTargetService( path );
+                msgContext.setTargetService( path );
+            }
         }
 
         Debug.Print( 1, "Exit : URLMapper::invoke" );
