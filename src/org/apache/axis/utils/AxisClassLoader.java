@@ -68,13 +68,13 @@ import java.util.Hashtable ;
  * @author Doug Davis (dug@us.ibm.com)
  */
 public class AxisClassLoader extends ClassLoader {
-  static Hashtable list = null ;
+  static Hashtable list = new Hashtable() ;
 
   public AxisClassLoader() {
     super();
   }
 
-  public synchronized void registerClass( String name, String classFile )
+  public void registerClass( String name, String classFile )
       throws FileNotFoundException, IOException
   {
     /* Load the class file the *.class file */
@@ -91,8 +91,13 @@ public class AxisClassLoader extends ClassLoader {
     /*************************************/
     byte[] data = baos.toByteArray();
     Class  cls  = defineClass( name, data, 0, data.length );
-    if ( list == null ) list = new Hashtable();
 
+    /* And finally register it */
+    /***************************/
+    registerClass( name, cls );
+  }
+
+  public synchronized void registerClass( String name, Class cls ) {
     /* And finally register it */
     /***************************/
     list.put( name, cls );
@@ -101,8 +106,7 @@ public class AxisClassLoader extends ClassLoader {
   public synchronized void deregisterClass( String name ) {
     /* Deregister the passed in className */
     /**************************************/
-    if ( list != null )
-      list.remove( name);
+    list.remove( name);
   }
 
   public Class loadClass(String name) throws ClassNotFoundException {
@@ -118,6 +122,8 @@ public class AxisClassLoader extends ClassLoader {
     }
 
     ClassLoader cl = this.getClass().getClassLoader();
-    return( cl.loadClass( name ) );
+    Class cls = cl.loadClass( name );
+    registerClass( name, cls );
+    return cls;
   }
 };
