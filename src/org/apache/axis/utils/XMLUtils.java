@@ -81,7 +81,6 @@ public class XMLUtils {
         "javax.xml.parsers.SAXParserFactory";
 
     private static DocumentBuilderFactory dbf = getDOMFactory();
-    private static Stack                  documentBuilders = new Stack();
     private static SAXParserFactory       saxFactory;
     private static Stack                  saxParsers = new Stack();
     private static DefaultHandler doNothingContentHandler = new DefaultHandler();
@@ -93,6 +92,19 @@ public class XMLUtils {
 
     protected static boolean enableParserReuse = false;
 
+    private static class ThreadLocalDocumentBuilder extends ThreadLocal {
+        protected Object initialValue() {
+            try {
+                return getDOMFactory().newDocumentBuilder();
+            } catch (ParserConfigurationException e) {
+                log.error(Messages.getMessage("parserConfigurationException00"),
+                        e);
+            }
+            return null; 
+        }
+    }     
+    private static ThreadLocalDocumentBuilder documentBuilder = new ThreadLocalDocumentBuilder(); 
+    
     static {
         // Initialize SAX Parser factory defaults
         initSAXFactory(null, true, false);
@@ -215,16 +227,7 @@ public class XMLUtils {
      * @throws ParserConfigurationException
      */
     public static DocumentBuilder getDocumentBuilder() throws ParserConfigurationException {
-        synchronized (documentBuilders) {
-            if (!documentBuilders.empty()) {
-                return (DocumentBuilder) documentBuilders.pop();
-            }
-        }
-        DocumentBuilder db = null;
-        synchronized (dbf) {
-            db = dbf.newDocumentBuilder();
-        }
-        return db;
+        return (DocumentBuilder) documentBuilder.get();
     }
 
     /**
@@ -232,20 +235,17 @@ public class XMLUtils {
      * @param db
      */
     public static void releaseDocumentBuilder(DocumentBuilder db) {
-        synchronized (documentBuilders) {
-            try {
-                db.setErrorHandler(null); // setting implementation default
-            } catch (Throwable t) {
-                log.debug("Failed to set ErrorHandler to null on DocumentBuilder",
-                          t);
-            }
-            try {
-                db.setEntityResolver(null); // setting implementation default
-            } catch (Throwable t) {
-                log.debug("Failed to set EntityResolver to null on DocumentBuilder",
-                          t);
-            }
-            documentBuilders.push(db);
+        try {
+            db.setErrorHandler(null); // setting implementation default
+        } catch (Throwable t) {
+            log.debug("Failed to set ErrorHandler to null on DocumentBuilder",
+                    t);
+        }
+        try {
+            db.setEntityResolver(null); // setting implementation default
+        } catch (Throwable t) {
+            log.debug("Failed to set EntityResolver to null on DocumentBuilder",
+                    t);
         }
     }
 
