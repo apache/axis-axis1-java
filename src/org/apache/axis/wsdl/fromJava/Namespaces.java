@@ -191,7 +191,7 @@ public class Namespaces extends HashMap {
         }
 
         if (clsName.lastIndexOf('.') == -1) {
-            return protocol + "://" + "DefaultNamespace";
+            return protocol + "://" + "DefaultNamespace/";
         }
 
         String packageName = clsName.substring(0, clsName.lastIndexOf('.'));
@@ -220,7 +220,7 @@ public class Namespaces extends HashMap {
                                                        String protocol) {
 
         if ((packageName == null) || packageName.equals("")) {
-            return protocol + "://" + "DefaultNamespace";
+            return protocol + "://" + "DefaultNamespace/";
         }
 
         StringTokenizer st = new StringTokenizer(packageName, ".");
@@ -243,7 +243,7 @@ public class Namespaces extends HashMap {
             sb.append(word);
         }
 
-        return protocol + "://" + sb.toString();
+        return protocol + "://" + sb.toString() + "/";
     }
 
     /**
