@@ -173,58 +173,6 @@ public class GetQuote1 {
         return ((Float) result).floatValue();
     } // getQuote2
 
-    /**
-     * This method does the same thing that getQuote1 does, but in
-     * addition it reuses the Call object to make another call.
-     */
-    public float getQuote3(String args[]) throws Exception {
-        Options opts = new Options(args);
-
-        args = opts.getRemainingArgs();
-
-        if (args == null) {
-            System.err.println("Usage: GetQuote <symbol>");
-            System.exit(1);
-        }
-
-        /* Define the service QName and port QName */
-        /*******************************************/
-        QName servQN = new QName("urn:xmltoday-delayed-quotes",
-                "GetQuoteService");
-        QName portQN = new QName("urn:xmltoday-delayed-quotes", "GetQuote");
-
-        /* Now use those QNames as pointers into the WSDL doc */
-        /******************************************************/
-        Service service = ServiceFactory.newInstance().createService(
-                new URL("file:samples/stock/GetQuote.wsdl"), servQN);
-        Call call = service.createCall(portQN, "getQuote");
-
-        /* Strange - but allows the user to change just certain portions of */
-        /* the URL we're gonna use to invoke the service.  Useful when you  */
-        /* want to run it thru tcpmon (ie. put  -p81 on the cmd line).      */
-        /********************************************************************/
-        opts.setDefaultURL(call.getTargetEndpointAddress());
-        call.setTargetEndpointAddress(opts.getURL());
-
-        /* Define some service specific properties */
-        /*******************************************/
-        call.setProperty(Call.USERNAME_PROPERTY, opts.getUser());
-        call.setProperty(Call.PASSWORD_PROPERTY, opts.getPassword());
-
-        /* Get symbol and invoke the service */
-        /*************************************/
-        Object result = call.invoke(new Object[] {symbol = args[0]});
-
-        /* Reuse the Call object for a different call */
-        /**********************************************/
-        call.setOperationName(new QName("urn:xmltoday-delayed-quotes", "test"));
-        call.removeAllParameters();
-        call.setReturnType(XMLType.XSD_STRING);
-
-        System.out.println(call.invoke(new Object[]{}));
-        return ((Float) result).floatValue();
-    } // getQuote3
-
     public static void main(String args[]) throws Exception {
         String    save_args[] = new String[args.length];
         float     val;
@@ -242,13 +190,6 @@ public class GetQuote1 {
         System.out.println("Manually");
         System.arraycopy(save_args, 0, args, 0, args.length);
         val = gq.getQuote2(args);
-        System.out.println(gq.symbol + ": " + val);
-
-        /* Call the getQuote() that uses Axis's generated WSDL */
-        /*******************************************************/
-        System.out.println("WSDL + Reuse Call");
-        System.arraycopy(save_args, 0, args, 0, args.length);
-        val = gq.getQuote3(args);
         System.out.println(gq.symbol + ": " + val);
     } // main
 }
