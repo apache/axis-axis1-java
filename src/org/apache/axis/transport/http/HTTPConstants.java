@@ -149,4 +149,17 @@ public class HTTPConstants {
     /** HTTP header field values
      */
     public static final String HEADER_DEFAULT_CHAR_ENCODING = "iso-8859-1";
+    
+    /**
+     * AXIS servlet plugin parameter names.
+     */
+    
+    public static final String PLUGIN_NAME = "transport.http.plugin.pluginName";
+    public static final String PLUGIN_SERVICE_NAME = "transport.http.plugin.serviceName";
+    public static final String PLUGIN_IS_DEVELOPMENT = "transport.http.plugin.isDevelopment";
+    public static final String PLUGIN_ENABLE_LIST = "transport.http.plugin.enableList";
+    public static final String PLUGIN_ENGINE = "transport.http.plugin.engine";
+    public static final String PLUGIN_WRITER = "transport.http.plugin.writer";
+    public static final String PLUGIN_LOG = "transport.http.plugin.log";
+    public static final String PLUGIN_EXCEPTION_LOG = "transport.http.plugin.exceptionLog";
 }
