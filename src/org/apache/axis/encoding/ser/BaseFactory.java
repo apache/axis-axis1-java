@@ -55,6 +55,7 @@
 package org.apache.axis.encoding.ser;
 
 import org.apache.axis.utils.ClassUtils;
+import org.apache.axis.utils.cache.MethodCache;
 
 import javax.xml.namespace.QName;
 import java.util.Map;
@@ -69,48 +70,14 @@ import java.lang.reflect.Method;
  */
 public abstract class BaseFactory {
     /**
-     * Cache for Methods
-     */
-    transient protected ThreadLocal methodCache = new ThreadLocal();
-
-    /**
-     * Returns the per thread hashmap (for method caching)  
-     */
-    private Map getMethodCache() {
-        Map map = (Map) methodCache.get();
-        if (map == null) {
-            map = new HashMap();
-            methodCache.set(map);
-        }
-        return map;
-    }
-
-    /**
      * Returns the the specified method - if any.
      */
     protected Method getMethod(Class clazz, String methodName) {
-        String className = clazz.getName();
-        Map cache = getMethodCache();
         Method method = null;
-        
-        // Check the cache first.
-        if (cache.containsKey(className)) {
-            method = (Method) cache.get(clazz);
-            return method;
-        }
         try {
-            method = clazz.getMethod(methodName, new Class[]{String.class, Class.class, QName.class});
+            method = MethodCache.getInstance().getMethod(clazz, methodName, new Class[]{String.class, Class.class, QName.class});
         } catch (NoSuchMethodException e) {
         }
-        if (method == null) {
-            try {
-                Class helper = ClassUtils.forName(clazz.getName() + "_Helper");
-                method = helper.getMethod(methodName, new Class[]{String.class, Class.class, QName.class});
-            } catch (NoSuchMethodException e) {
-            } catch (ClassNotFoundException e) {
-            }
-        }
-        cache.put(className, method);
         return method;
     }
 }

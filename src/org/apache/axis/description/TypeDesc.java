@@ -59,6 +59,7 @@ import org.apache.axis.utils.BeanPropertyDescriptor;
 import org.apache.axis.utils.BeanUtils;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.Messages;
+import org.apache.axis.utils.cache.MethodCache;
 
 import javax.xml.namespace.QName;
 import java.lang.reflect.Method;
@@ -119,22 +120,9 @@ public class TypeDesc {
         }
         
         try {
-            Method getTypeDesc = null;
-            try {
-                getTypeDesc =
-                    cls.getMethod("getTypeDesc", noClasses);
-            } catch (NoSuchMethodException e) {}
-            if (getTypeDesc == null) {
-                // Look for a Helper Class
-                Class helper = ClassUtils.forName(cls.getName() + "_Helper");
-                try {
-                    getTypeDesc =
-                        helper.getMethod("getTypeDesc", noClasses);
-                } catch (NoSuchMethodException e) {}
-            }
+            Method getTypeDesc = MethodCache.getInstance().getMethod(cls, "getTypeDesc", noClasses);
             if (getTypeDesc != null) {
-                return (TypeDesc)getTypeDesc.invoke(null,
-                                                    noObjects);
+                return (TypeDesc)getTypeDesc.invoke(null, noObjects);
             }
         } catch (Exception e) {
         }
