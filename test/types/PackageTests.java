@@ -74,6 +74,9 @@ public class PackageTests extends TestCase
         TestSuite suite = new TestSuite();
 
         suite.addTestSuite(TestNonNegativeInteger.class);
+        suite.addTestSuite(TestPositiveInteger.class);
+        suite.addTestSuite(TestNonPositiveInteger.class);
+        suite.addTestSuite(TestNegativeInteger.class);
         suite.addTestSuite(TestNormalizedString.class);
         suite.addTestSuite(TestToken.class);
         suite.addTestSuite(TestUnsignedLong.class);

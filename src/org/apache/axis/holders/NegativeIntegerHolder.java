@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -52,63 +52,35 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.types;
 
-import java.math.BigInteger;
+package org.apache.axis.holders;
 
-import java.util.Random;
+import org.apache.axis.types.NegativeInteger;
 
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.Messages;
+import javax.xml.rpc.holders.Holder;
 
 /**
- * Custom class for supporting primitive XSD data type nonNegativeInteger
+ * Class NegativeIntegerHolder
  *
- * @author Russell Butek <butek@us.ibm.com>
- * @see <a href="http://www.w3.org/TR/xmlschema-2/#nonNegativeInteger">XML Schema 3.3.20</a>
  */
-public class NonNegativeInteger extends BigInteger {
+public final class NegativeIntegerHolder implements Holder {
 
-    public NonNegativeInteger(byte[] val) {
-        super(val);
-        checkValidity();
-    } // ctor
-
-    public NonNegativeInteger(int signum, byte[] magnitude) {
-        super(signum, magnitude);
-        checkValidity();
-    } // ctor
-
-    public NonNegativeInteger(int bitLength, int certainty, Random rnd) {
-        super(bitLength, certainty, rnd);
-        checkValidity();
-    } // ctor
-
-    public NonNegativeInteger(int numBits, Random rnd) {
-        super(numBits, rnd);
-        checkValidity();
-    } // ctor
-
-    public NonNegativeInteger(String val) {
-        super(val);
-        checkValidity();
-    }
-
-    public NonNegativeInteger(String val, int radix) {
-        super(val, radix);
-        checkValidity();
-    } // ctor
+    /** Field _value */
+    public NegativeInteger value;
 
     /**
-     * validate the value against the xsd definition
+     * Constructor NegativeIntegerHolder
      */
-    private BigInteger zero = new BigInteger("0");
-    private void checkValidity() {
-        if (compareTo(zero) < 0) {
-            throw new NumberFormatException(
-                    Messages.getMessage("badNonNegInt00")
-                    + ":  " + this);
-        }
-    } // checkValidity
+    public NegativeIntegerHolder() {
+    }
 
-} // class NonNegativeInteger
+    /**
+     * Constructor NegativeIntegerHolder
+     *
+     * @param value
+     */
+    public NegativeIntegerHolder(NegativeInteger value) {
+        this.value = value;
+    }
+}
+

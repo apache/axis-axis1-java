@@ -464,6 +464,30 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                                            Constants.XSD_NONNEGATIVEINTEGER),
              true);
 
+        // a xsd:negativeInteger
+        myRegister(Constants.XSD_NEGATIVEINTEGER, org.apache.axis.types.NegativeInteger.class,
+             new SimplePrimitiveSerializerFactory(org.apache.axis.types.NegativeInteger.class,
+                                                  Constants.XSD_NEGATIVEINTEGER),
+             new SimpleDeserializerFactory(org.apache.axis.types.NegativeInteger.class,
+                                           Constants.XSD_NEGATIVEINTEGER),
+             true);
+
+        // a xsd:positiveInteger
+        myRegister(Constants.XSD_POSITIVEINTEGER, org.apache.axis.types.PositiveInteger.class,
+             new SimplePrimitiveSerializerFactory(org.apache.axis.types.PositiveInteger.class,
+                                                  Constants.XSD_POSITIVEINTEGER),
+             new SimpleDeserializerFactory(org.apache.axis.types.PositiveInteger.class,
+                                           Constants.XSD_POSITIVEINTEGER),
+             true);
+
+        // a xsd:nonPositiveInteger
+        myRegister(Constants.XSD_NONPOSITIVEINTEGER, org.apache.axis.types.NonPositiveInteger.class,
+             new SimplePrimitiveSerializerFactory(org.apache.axis.types.NonPositiveInteger.class,
+                                                  Constants.XSD_NONPOSITIVEINTEGER),
+             new SimpleDeserializerFactory(org.apache.axis.types.NonPositiveInteger.class,
+                                           Constants.XSD_NONPOSITIVEINTEGER),
+             true);
+
         // a xsd:Name
         myRegister(Constants.XSD_NAME, org.apache.axis.types.Name.class,
                    new SimplePrimitiveSerializerFactory(org.apache.axis.types.Name.class,

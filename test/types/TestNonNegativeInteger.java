@@ -119,4 +119,11 @@ public class TestNonNegativeInteger extends TestCase {
        runPassTest("0");
     }
 
+    /**
+    * Test that a number below MinInclusive fails
+    */
+    public void testBelowMinExclusive() throws Exception {
+       runFailTest("-1");
+    }
+
 }
