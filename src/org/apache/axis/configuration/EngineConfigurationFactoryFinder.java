@@ -150,9 +150,9 @@ public class EngineConfigurationFactoryFinder
                             ClassLoaders.getAppLoaders(mySpi, myFactory, true);
                 
                         NameDiscoverers nameDiscoverers = new NameDiscoverers();
-                        nameDiscoverers.addResourceNameDiscover(new DiscoverServiceNames(loaders));
-                        nameDiscoverers.addResourceNameDiscover(new DiscoverNamesInManagedProperties());
                         nameDiscoverers.addResourceNameDiscover(new DiscoverOldNamesInManagedProperties());
+                        nameDiscoverers.addResourceNameDiscover(new DiscoverNamesInManagedProperties());
+                        nameDiscoverers.addResourceNameDiscover(new DiscoverServiceNames(loaders));
                             
                         ResourceNameIterator it = nameDiscoverers.findResourceNames(mySpi.getName());
                 
