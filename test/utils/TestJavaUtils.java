@@ -101,6 +101,13 @@ public class TestJavaUtils extends TestCase
     }
     
     /**
+     * Test for Bug 17994 - wsdl2java generates code with reserved words as variable names
+     */ 
+    public void testXmlNameToJava2() {
+        assertEquals("_abstract", JavaUtils.xmlNameToJava("abstract"));
+    }
+    
+    /**
      * test the convert() function 
      * verify that we can convert to the Collection, List, and Set interfaces
      */ 
