@@ -4,6 +4,7 @@ import junit.framework.TestCase;
 
 import org.apache.axis.*;
 import org.apache.axis.handlers.soap.*;
+import org.apache.axis.encoding.*;
 import org.apache.axis.message.*;
 import org.apache.axis.server.*;
 import org.apache.axis.registries.*;
@@ -34,11 +35,16 @@ public class TestRPC extends TestCase {
     private AxisServer engine = new AxisServer();
     private HandlerRegistry hr;
     private Handler RPCDispatcher;
+    private TypeMappingRegistry tmr;
+
+    private String SOAPAction = "urn:reverse";
+    private String methodNS   = null;
 
     public TestRPC(String name) {
         super(name);
         engine.init();
-        hr = (HandlerRegistry)  engine.getOption(Constants.HANDLER_REGISTRY);
+        hr = (HandlerRegistry) engine.getOption(Constants.HANDLER_REGISTRY);
+        tmr = (TypeMappingRegistry)engine.getOption(Constants.TYPEMAP_REGISTRY);
         RPCDispatcher = hr.find("RPCDispatcher");
         // Debug.setDebugLevel(5);
     }
@@ -49,57 +55,81 @@ public class TestRPC extends TestCase {
      * @param request XML body of the request
      * @return Deserialized result
      */
-    private final Object rpc(String soapAction, String request) {
+    private final Object rpc(String method, Object[] parms) {
 
-        // Wrap request in a SOAP envelope
-        Message reqMessage = new Message(header+request+footer, "String");
+        // Construct the soap request
+        SOAPEnvelope envelope = new SOAPEnvelope();
+        RPCElement body = new RPCElement(method);
+        body.setNamespaceURI(methodNS);
+        envelope.addBodyElement(body);
+        for (int i=0; i<parms.length; i++) {
+            body.addParam(new RPCParam("arg"+i, parms[i]));
+        }
 
         // Create a message context with the action and message
         MessageContext msgContext = new MessageContext();
-        msgContext.setRequestMessage(reqMessage);
-        msgContext.setTargetService(soapAction);
+        msgContext.setRequestMessage(new Message(envelope, "SOAPEnvelope"));
+        msgContext.setTargetService(SOAPAction);
 
+        // Invoke the Axis engine
         try {
-            // Invoke the Axis engine
             engine.invoke(msgContext);
-
-            // Extract the response Envelope
-            Message message = msgContext.getResponseMessage();
-            SOAPEnvelope envelope = (SOAPEnvelope)message.getAs("SOAPEnvelope");
-            assertNotNull("envelope", envelope);
-
-            // Extract the body from the envelope
-            RPCElement body = (RPCElement)envelope.getFirstBody();
-            assertNotNull("body", body);
-
-            // Extract the list of parameters from the body
-            Vector arglist = body.getParams();
-            assertNotNull("arglist", arglist);
-            assert("param.size()>0", arglist.size()>0);
-
-            // Return the first parameter
-            RPCParam param = (RPCParam) arglist.get(0);
-            return param.getValue();
         } catch (AxisFault af) {
             return af;
         }
+
+        // Extract the response Envelope
+        Message message = msgContext.getResponseMessage();
+        envelope = (SOAPEnvelope)message.getAs("SOAPEnvelope");
+        assertNotNull("envelope", envelope);
+
+        // Extract the body from the envelope
+        body = (RPCElement)envelope.getFirstBody();
+        assertNotNull("body", body);
+
+        // Extract the list of parameters from the body
+        Vector arglist = body.getParams();
+        assertNotNull("arglist", arglist);
+        assert("param.size()>0", arglist.size()>0);
+
+        // Return the first parameter
+        RPCParam param = (RPCParam) arglist.get(0);
+        return param.getValue();
     }
 
     /**
      * Test a simple method that reverses a string
      */
-    public void testReverse() {
-        // Register the reverse service
+    public void testReverseString() throws Exception {
+        // Register the reverseString service
         SOAPService reverse = new SOAPService(RPCDispatcher, "RPCDispatcher");
         reverse.addOption("className", "test.RPCDispatch.Service");
-        reverse.addOption("methodName", "reverse");
-        hr.add("urn:reverse", reverse);
-        
-        // Invoke the service
-        Object response = 
-           rpc("urn:reverse", "<reverse><arg>abc</arg></reverse>");
+        reverse.addOption("methodName", "reverseString");
+        hr.add(SOAPAction, reverse);
 
-        // Verify the result
-        assertEquals("cba", response);
+        // invoke the service and verify the result
+        assertEquals("cba", rpc("reverseString", new Object[] {"abc"}));
+    }
+
+    /**
+     * Test a method that reverses a data structure
+     */
+    public void testReverseData() throws Exception {
+        // Register the reverseData service
+        SOAPService reverse = new SOAPService(RPCDispatcher, "RPCDispatcher");
+        reverse.addOption("className", "test.RPCDispatch.Service");
+        reverse.addOption("methodName", "reverseData");
+        hr.add(SOAPAction, reverse);
+
+        // register the Data class
+        QName qn = new QName("http://xml.apache.org/Axis", "TestRPC");
+        Class cls = Data.class;
+        tmr.addSerializer(cls, qn, new BeanSerializer(cls));
+        tmr.addDeserializerFactory(qn, cls, BeanSerializer.getFactory(cls));
+
+        // invoke the service and verify the result
+        Data input    = new Data(5, "abc", 3);
+        Data expected = new Data(3, "cba", 5);
+        assertEquals(expected, rpc("reverseData", new Object[] {input}));
     }
 }
