@@ -1722,12 +1722,20 @@ public class SymbolTable {
                          }
                          element = (org.w3c.dom.Element) partType.getNode();
                      } else if(part.getElementName() != null) {
-                         TypeEntry partElement = getElement(part.getElementName());
-                         if(partElement.getDimensions().length()>0){
-                             dims = partElement.getDimensions();
-                             partElement = partElement.getRefType();
-                         }
+                         TypeEntry partElement = getElement(part.getElementName()).getRefType();
                          element = (org.w3c.dom.Element) partElement.getNode();
+                         QName name = getInnerCollectionComponentQName(element);
+                         if(name != null){
+                            dims += "[]";
+                            partElement = getType(name);
+                            element = (org.w3c.dom.Element) partElement.getNode();
+                         } else {
+                             name = getInnerTypeQName(element);
+                             if(name != null) {
+                                 partElement = getType(name);
+                                 element = (org.w3c.dom.Element) partElement.getNode();
+                             }
+                         }
                      }
                      org.w3c.dom.Element e = (org.w3c.dom.Element)XMLUtils.findNode(element, new QName(Constants.URI_DIME_CONTENT, "mediaType"));
                      if(e != null){
@@ -1835,7 +1843,7 @@ public class SymbolTable {
                     String dims = typeEntry.getDimensions(); 
                     if(dims.length() <=0 && typeEntry.getRefType() != null) {
                         Node node = typeEntry.getRefType().getNode();
-                        if(getCollectionComponentQName(node)!=null)
+                        if(getInnerCollectionComponentQName(node)!=null)
                             dims += "[]";    
                     }
                     bEntry.setMIMEInfo(op.getName(), content.getPart(), content.getType(), dims);
@@ -2312,7 +2320,7 @@ public class SymbolTable {
         }
     } // symbolTablePut
 
-    private static QName getCollectionComponentQName(Node node) {
+    private static QName getInnerCollectionComponentQName(Node node) {
         if (node == null) {
             return null;
         }
@@ -2324,7 +2332,27 @@ public class SymbolTable {
         // Dive into the node if necessary
         NodeList children = node.getChildNodes();
         for(int i=0;i<children.getLength();i++){
-            name = getCollectionComponentQName(children.item(i));
+            name = getInnerCollectionComponentQName(children.item(i));
+            if(name != null)
+                return name;
+        }
+        return null;
+    }
+
+    private static QName getInnerTypeQName(Node node) {
+        if (node == null) {
+            return null;
+        }
+        
+        BooleanHolder forElement = new BooleanHolder();
+        QName name = Utils.getTypeQName(node, forElement, true);
+        if(name != null)
+            return name;
+
+        // Dive into the node if necessary
+        NodeList children = node.getChildNodes();
+        for(int i=0;i<children.getLength();i++){
+            name = getInnerTypeQName(children.item(i));
             if(name != null)
                 return name;
         }
