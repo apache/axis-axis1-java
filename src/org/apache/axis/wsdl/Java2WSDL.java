@@ -392,7 +392,7 @@ public class Java2WSDL {
         
         // Default to SOAP 1.2 JAX-RPC mapping
         if (emitter.getDefaultTypeMapping() == null) {
-            emitter.setDefaultTypeMapping(DefaultSOAP12TypeMappingImpl.create());
+            emitter.setDefaultTypeMapping(DefaultTypeMappingImpl.getSingleton());
         }            
     }
 
