@@ -119,14 +119,24 @@ public class ServicesTest extends HttpUnitTestBase{
     }
 
     /**
-     * @todo we get the error 500 here. Shouldnt a 404 be more correct?
+     * A missing wsdl page should be a 404 error; though it is
+     * returning 500 as of 2002-08-13
      * @throws Exception
      */
     public void testInvalidServiceWsdlRaisesError() throws Exception {
         WebRequest request = new GetMethodWebRequest(invalid_service+"?wsdl");
         // "The AXIS engine could not find a target service to invoke!");
-        expectErrorCode(request,500);
+        expectErrorCode(request,404);
 
+    }
+
+    /**
+     * test version call
+     * @throws Exception
+     */
+    public void testVersion() throws Exception {
+        WebRequest request = new GetMethodWebRequest(services+"/Version?wsdl");
+        assertStringInBody(request,"<wsdl:definitions");
     }
 
 }
