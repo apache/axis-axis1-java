@@ -107,6 +107,7 @@ Copyright:
       <exclude name="**/org/apache/axis/transport/configuration/EngineConfigurationFactoryServlet.java" unless="servlet.present"/>
       <exclude name="**/org/apache/axis/transport/http/CommonsHTTPSender.java" unless="commons-httpclient.present"/>
       <exclude name="**/org/apache/axis/transport/jms/*" unless="jms.present"/>
+      <exclude name="**/org/apache/axis/components/jms/*" unless="jms.present"/>
       <exclude name="**/org/apache/axis/server/JNDIAxisServerFactory.java" unless="servlet.present"/>
       <exclude name="**/org/apache/axis/security/servlet/*" unless="servlet.present"/>
       <exclude name="**/javax/xml/soap/*.java" unless="attachments.present"/>

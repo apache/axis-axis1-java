@@ -66,12 +66,8 @@ import javax.jms.QueueConnectionFactory;
 import javax.jms.TopicConnectionFactory;
 import javax.jms.JMSException;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-
-import org.apache.axis.utils.ClassUtils;
-import org.apache.axis.utils.BeanUtils;
-import org.apache.axis.utils.BeanPropertyDescriptor;
+import org.apache.axis.components.jms.JMSVendorAdapterFactory;
+import org.apache.axis.components.jms.JMSVendorAdapter;
 
 /**
  * JMSConnectorFactory is a factory class for creating JMSConnectors. It can
@@ -159,90 +155,29 @@ public class JMSConnectorFactory
         String clientID = MapUtils.removeStringProperty(connectorConfig,
                                     JMSConstants.CLIENT_ID,
                                     null);
+        String domain = MapUtils.removeStringProperty(connectorConfig,
+                                    JMSConstants.DOMAIN,
+                                    JMSConstants.DOMAIN_DEFAULT);
 
         if(cfConfig == null)
             throw new IllegalArgumentException("noCfConfig");
 
-        ConnectionFactory factory = null;
-        Context context = null;
-        if(cfConfig.containsKey(JMSConstants.CONNECTION_FACTORY_JNDI_NAME))
+        JMSVendorAdapter adapter = JMSVendorAdapterFactory.getJMSVendorAdapter();
+        if(domain.equals(JMSConstants.DOMAIN_QUEUE))
         {
-            context = getContext(cfConfig);
-            factory = getConnectionFactoryFromJNDI(cfConfig, context);
-        }
-        else if(cfConfig.containsKey(JMSConstants.CONNECTION_FACTORY_CLASS))
-        {
-            factory = getConnectionFactoryFromBean(cfConfig);
-        }
-        else
-            throw new IllegalArgumentException("invalidCfConfig");
-
-        if(factory instanceof QueueConnectionFactory)
-        {
-            return new QueueConnector((QueueConnectionFactory)factory,
+            return new QueueConnector(adapter.getQueueConnectionFactory(cfConfig),
                                       numRetries, numSessions, connectRetryInterval,
                                       interactRetryInterval, timeoutTime,
-                                      allowReceive, clientID, username, password, context);
+                                      allowReceive, clientID, username, password,
+                                      adapter);
         }
-        else // (factory instanceof TopicConnectionFactory)
+        else // domain is Topic
         {
-            return new TopicConnector((TopicConnectionFactory)factory,
+            return new TopicConnector(adapter.getTopicConnectionFactory(cfConfig),
                                       numRetries, numSessions, connectRetryInterval,
                                       interactRetryInterval, timeoutTime,
-                                      allowReceive, clientID, username, password, context);
+                                      allowReceive, clientID, username, password,
+                                      adapter);
         }
     }
-
-    private static ConnectionFactory getConnectionFactoryFromBean(HashMap cfConfig)
-        throws Exception
-    {
-        String classname = (String)cfConfig.get(JMSConstants.CONNECTION_FACTORY_CLASS);
-        Class factoryClass = ClassUtils.forName(classname);
-        ConnectionFactory factory = (ConnectionFactory)factoryClass.newInstance();
-        callSetters(cfConfig, factoryClass, factory);
-        return factory;
-
-    }
-
-    private static Context getContext(HashMap cfConfig)
-        throws Exception
-    {
-        Hashtable environment = new Hashtable(cfConfig);
-        return new InitialContext(environment);
-    }
-
-    private static ConnectionFactory getConnectionFactoryFromJNDI(HashMap cfConfig, Context context)
-        throws Exception
-    {
-        String jndiName = (String)cfConfig.get(JMSConstants.CONNECTION_FACTORY_JNDI_NAME);
-        return (ConnectionFactory)context.lookup(jndiName);
-    }
-
-    private static void callSetters(HashMap cfConfig,
-                                    Class factoryClass,
-                                    ConnectionFactory factory)
-      throws Exception
-    {
-        BeanPropertyDescriptor[] bpd = BeanUtils.getPd(factoryClass);
-        for(int i = 0; i < bpd.length; i++)
-        {
-            BeanPropertyDescriptor thisBPD = bpd[i];
-            String propName = thisBPD.getName();
-            if(cfConfig.containsKey(propName))
-            {
-                Object value = cfConfig.get(propName);
-                String validType = thisBPD.getType().getName();
-                if(!value.getClass().getName().equals(validType))
-                    throw new IllegalArgumentException("badType");
-                if(!thisBPD.isWriteable())
-                    throw new IllegalArgumentException("notWriteable");
-                if(thisBPD.isIndexed())
-                    throw new IllegalArgumentException("noIndexedSupport");
-                thisBPD.set(factory, value);
-            }
-        }
-    }
-
-
-
 }

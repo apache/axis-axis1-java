@@ -72,9 +72,9 @@ import javax.jms.MessageProducer;
 import javax.jms.JMSException;
 import javax.jms.Destination;
 
-import javax.naming.Context;
-
 import java.util.HashMap;
+
+import org.apache.axis.components.jms.JMSVendorAdapter;
 
 /**
  * QueueConnector is a concrete JMSConnector subclass that specifically handles
@@ -97,15 +97,15 @@ public class QueueConnector extends JMSConnector
                           String clientID,
                           String username,
                           String password,
-                          Context context)
+                          JMSVendorAdapter adapter)
         throws JMSException
     {
         super(factory, numRetries, numSessions, connectRetryInterval,
               interactRetryInterval, timeoutTime, allowReceive, clientID,
-              username, password, context);
+              username, password, adapter);
     }
 
-    protected JMSEndpoint internalCreateEndpoint(String destination)
+    public JMSEndpoint createEndpoint(String destination)
     {
         return new QueueEndpoint(destination);
     }
@@ -160,9 +160,9 @@ public class QueueConnector extends JMSConnector
     }
 
     private Queue createQueue(QueueSession session, String subject)
-        throws JMSException
+        throws Exception
     {
-        return session.createQueue(subject);
+        return m_adapter.getQueue(session, subject);
     }
 
     private QueueReceiver createReceiver(QueueSession session,
@@ -248,7 +248,7 @@ public class QueueConnector extends JMSConnector
         }
 
         Destination getDestination(Session session)
-            throws JMSException
+            throws Exception
         {
             return createQueue((QueueSession)session, m_queueName);
         }
@@ -321,7 +321,7 @@ public class QueueConnector extends JMSConnector
 
         protected ListenerSession createListenerSession(javax.jms.Connection connection,
                                                         Subscription subscription)
-            throws JMSException
+            throws Exception
         {
             QueueSession session = createQueueSession((QueueConnection)connection,
                                                       subscription.m_ackMode);
