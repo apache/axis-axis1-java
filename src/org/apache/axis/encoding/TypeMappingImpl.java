@@ -163,7 +163,7 @@ public class TypeMappingImpl implements TypeMapping
      * @return  String[] of namespace URIs for the supported encoding 
      * styles and XML schema namespaces.
      */
-    public String[] getSupportedNamespaces() {
+    public String[] getSupportedEncodings() {
         return (String[]) namespaces.toArray();
     }
 
@@ -174,7 +174,7 @@ public class TypeMappingImpl implements TypeMapping
      *
      * @param namespaceURIs String[] of namespace URI's                
      */
-    public void setSupportedNamespaces(String[] namespaceURIs) {
+    public void setSupportedEncodings(String[] namespaceURIs) {
         namespaces.clear();
         for (int i =0; i< namespaceURIs.length; i++) {
             if (!namespaces.contains(namespaceURIs[i])) {

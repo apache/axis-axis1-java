@@ -109,7 +109,8 @@ public abstract class GenericHandler implements Handler {
      *
      * @return true/false
      */
-    public void handleFault(MessageContext context) {
+    public boolean handleFault(MessageContext context) {
+        return true;
     }
 
     /**

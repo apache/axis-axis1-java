@@ -86,4 +86,17 @@ public interface SOAPMessageContext extends MessageContext {
      *     operation is not supported
      */
     public abstract void setMessage(SOAPMessage message);
+
+    /**
+     * Gets the SOAP actor roles associated with an execution of the HandlerChain and its contained Handler instances.
+     * Note that SOAP actor roles apply to the SOAP node and are managed using HandlerChain.setRoles and
+     * HandlerChain.getRoles. Handler instances in the HandlerChain use this information about the SOAP actor roles
+     * to process the SOAP header blocks. Note that the SOAP actor roles are invariant during the processing of
+     * SOAP message through the HandlerChain.
+     *
+     * @return Array of URIs for SOAP actor roles
+     * @see javax.xml.rpc.handler.HandlerChain#setRoles(java.lang.String[]) HandlerChain.setRoles(java.lang.String[])
+     * @see javax.xml.rpc.handler.HandlerChain#getRoles() HandlerChain.getRoles()
+     */
+    public abstract String[] getRoles();
 }

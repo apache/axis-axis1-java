@@ -109,7 +109,7 @@ public interface Handler {
      *         message.
      * @throws JAXRPCException - if any handler specific runtime error
      */
-    public void handleFault(MessageContext context);
+    public boolean handleFault(MessageContext context);
 
     /**
      * The init method to enable the Handler instance to initialize itself. The

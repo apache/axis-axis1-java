@@ -58,24 +58,24 @@ import javax.xml.rpc.namespace.QName;
 import javax.xml.soap.Detail;
 
 /**
- * SOAPFault exception class is used for the mapping of the
+ * SOAPFaultException exception class is used for the mapping of the
  * SOAP faults. If the use attribute in the soap:fault is
- * literal, the soap:fault maps to the SOAPFault exception.
+ * literal, the soap:fault maps to the SOAPFaultException exception.
  * This class extends the exception class java.lang.Exception
  * and is declared as a checked exception in the service
  * definition interface.
  */
-public class SOAPFault extends RuntimeException {
+public class SOAPFaultException extends RuntimeException {
 
     /**
-     *  Constructor for SOAPFault
+     *  Constructor for SOAPFaultException
      *  <p>
      *  @param  faultcode    Qualified name of the faultcode
      *  @param  faultstring  The faultstring element of the SOAP fault
      *  @param  faultactor   faultactor element of the SOAP fault
      *  @param  detail       detail element of the SOAP fault
      */
-    public SOAPFault(QName faultcode, String faultstring, String faultactor,
+    public SOAPFaultException(QName faultcode, String faultstring, String faultactor,
                      Detail detail) {
         super(faultstring);
         this.faultcode = faultcode;

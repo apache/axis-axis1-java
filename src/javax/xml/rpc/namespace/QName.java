@@ -168,6 +168,36 @@ public final class QName {
     }
 
     /**
+     * Returns a QName holding the value of the specified String. The string must be in the form returned by the
+     * QName.toString() method, i.e. "{namespaceURI}localPart", with the "{namespaceURI}" part being optional.
+     * This method doesn't do a full validation of the resulting QName. In particular, it doesn't check that the
+     * resulting namespace URI is a legal URI (per RFC 2396 and RFC 2732), nor that the resulting local part is a
+     * legal NCName per the XML Namespaces specification.
+     *
+     * @param s the string to be parsed
+     * @throws java.lang.IllegalArgumentException If the specified String cannot be parsed as a QName
+     * @return QName corresponding to the given String
+     */
+    public static QName valueOf(String s) {
+        if ((s == null) || s.equals("")) {
+            throw new IllegalArgumentException("invalid QName literal");
+        }
+        if (s.charAt(0) == '{') {
+            int i = s.indexOf('}');
+            if (i == -1) {
+                throw new IllegalArgumentException("invalid QName literal");
+            }
+            if (i == s.length() - 1) {
+                throw new IllegalArgumentException("invalid QName literal");
+            } else {
+                return new QName(s.substring(1, i), s.substring(i + 1));
+            }
+        } else {
+            return new QName(s);
+        }
+    }
+
+    /**
      * Returns a hash code value for this QName object.
      *
      * @return a hash code value for this Qname object

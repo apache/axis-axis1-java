@@ -91,7 +91,7 @@ public final class CLArgsParser
      * <code>null</code> if no command line option is found.
      *
      * @param id the command line option id
-     * @return the {@link CLOption) with the specified id, or
+     * @return the {@link CLOption} with the specified id, or
      *    <code>null</code> if no CLOption is found.
      * @see CLOption
      */
@@ -105,7 +105,7 @@ public final class CLArgsParser
      * <code>null</code> if no command line option is found.
      *
      * @param name the command line option name
-     * @return the {@link CLOption) with the specified name, or
+     * @return the {@link CLOption} with the specified name, or
      *    <code>null</code> if no CLOption is found.
      * @see CLOption
      */
@@ -248,7 +248,7 @@ public final class CLArgsParser
                 continue;
             }
 
-            final int[] incompatible = descriptor.getIncompatble();
+            final int[] incompatible = descriptor.getIncompatible();
 
             checkIncompatible( arguments, incompatible, i );
         }

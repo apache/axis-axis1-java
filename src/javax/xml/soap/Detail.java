@@ -61,15 +61,15 @@ import java.util.Iterator;
  * objects give detailed error information that is application-specific and
  * related to the <code>SOAPBody</code> object that contains it.
  * <P>
- * A <code>Detail</code> object, which is part of a <code>SOAPFault</code>
- * object, can be retrieved using the method <code>SOAPFault.getDetail</code>.
+ * A <code>Detail</code> object, which is part of a <code>SOAPFaultException</code>
+ * object, can be retrieved using the method <code>SOAPFaultException.getDetail</code>.
  * The <code>Detail</code> interface provides two methods. One creates a new
  * <code>DetailEntry</code> object and also automatically adds it to
  * the <code>Detail</code> object. The second method gets a list of the
  * <code>DetailEntry</code> objects contained in a <code>Detail</code>
  * object.
  * <P>
- * The following code fragment, in which <i>sf</i> is a <code>SOAPFault</code>
+ * The following code fragment, in which <i>sf</i> is a <code>SOAPFaultException</code>
  * object, gets its <code>Detail</code> object (<i>d</i>), adds a new
  * <code>DetailEntry</code> object to <i>d</i>, and then gets a list of all the
  * <code>DetailEntry</code> objects in <i>d</i>. The code also creates a

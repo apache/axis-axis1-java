@@ -85,15 +85,15 @@ class TypeMappingDelegate extends TypeMappingImpl {
 
     // Delegate or throw an exception
     
-    public String[] getSupportedNamespaces() {
+    public String[] getSupportedEncodings() {
         if (delegate != null)
-            return delegate.getSupportedNamespaces();
+            return delegate.getSupportedEncodings();
         return null;
     }
 
-    public void setSupportedNamespaces(String[] namespaceURIs) {
+    public void setSupportedEncodings(String[] namespaceURIs) {
         if (delegate != null)
-            delegate.setSupportedNamespaces(namespaceURIs);
+            delegate.setSupportedEncodings(namespaceURIs);
     }
     
     public void register(Class javaType, QName xmlType, 

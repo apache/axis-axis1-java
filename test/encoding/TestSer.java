@@ -68,7 +68,7 @@ public class TestSer extends TestCase {
         // Create a TypeMapping and register the specialized Type Mapping
         TypeMappingRegistry reg = context.getTypeMappingRegistry();
         TypeMapping tm = (TypeMapping) reg.createTypeMapping();
-        tm.setSupportedNamespaces(new String[] {Constants.URI_CURRENT_SOAP_ENC});
+        tm.setSupportedEncodings(new String[] {Constants.URI_CURRENT_SOAP_ENC});
         reg.register(Constants.URI_CURRENT_SOAP_ENC, tm);
 
         QName dataQName = new QName("typeNS", "Data");

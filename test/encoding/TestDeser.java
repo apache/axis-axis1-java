@@ -62,7 +62,7 @@ public class TestDeser extends TestCase {
 
         TypeMappingRegistry tmr = server.getTypeMappingRegistry();
         TypeMapping tm = (TypeMapping) tmr.createTypeMapping();
-        tm.setSupportedNamespaces(new String[] {Constants.URI_CURRENT_SOAP_ENC});
+        tm.setSupportedEncodings(new String[] {Constants.URI_CURRENT_SOAP_ENC});
         tmr.register(Constants.URI_CURRENT_SOAP_ENC, tm);
         tm.register(java.lang.String[].class, 
                     new QName("urn:me", "ArrayOfString"),
