@@ -95,11 +95,25 @@ public class GetQuote {
       call.setServiceDescription(sd);
       
       if ( opts.isFlagSet('t') > 0 ) call.doLocal = true ;
+
       call.setUserID( opts.getUser() );
       call.setPassword( opts.getPassword() );
-      Float res = (Float) call.invoke( 
-        "http://schemas.xmlsoap.org/soap/envelope/", "getQuote",
-        new Object[] {symbol} );
+
+      // useful option for profiling - perhaps we should remove before
+      // shipping?
+      String countOption = opts.isValueSet('c');
+      int count=1;
+      if ( countOption != null) {
+        count=Integer.valueOf(countOption).intValue();
+        System.out.println("Iterating " + count + " times");
+      }
+
+      Float res = new Float(0.0F);
+      for (int i=0; i<count; i++) {
+        res = (Float) call.invoke( 
+          "http://schemas.xmlsoap.org/soap/envelope/", "getQuote",
+          new Object[] {symbol} );
+      }
 
       System.out.println( symbol + ": " + res );
     }
