@@ -87,6 +87,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
+import java.util.HashSet;
 
 /**
 * This is Wsdl2java's deploy Writer.  It writes the deploy.wsdd file.
@@ -346,7 +347,7 @@ public class JavaDeployWriter extends JavaWriter {
                          + binding.getPortType().getQName().getLocalPart() + "\"/>");
 
 
-        String methodList = "";
+        HashSet allowedMethods = new HashSet();
         if (!emitter.isSkeletonWanted()) {
             Iterator operationsIterator = binding.getBindingOperations().iterator();
             for (; operationsIterator.hasNext();) {
@@ -362,7 +363,7 @@ public class JavaDeployWriter extends JavaWriter {
                     continue;
                 }
 
-                methodList = methodList + " " + javaOperName;
+                allowedMethods.add(javaOperName);
 
                 // We pass "" as the namespace argument because we're just
                 // interested in the return type for now.
@@ -397,11 +398,21 @@ public class JavaDeployWriter extends JavaWriter {
         }
 
         pw.print("      <parameter name=\"allowedMethods\" value=\"");
-        if (methodList.length() == 0) {
+        if (allowedMethods.isEmpty()) {
             pw.println("*\"/>");
         }
         else {
-            pw.println(methodList.substring(1) + "\"/>");
+            boolean first = true;
+            for (Iterator i = allowedMethods.iterator(); i.hasNext();) {
+                String method = (String) i.next();
+                if (first) {
+                    pw.print(method);
+                    first = false;
+                } else {
+                    pw.print(" " + method);
+                }
+            }
+            pw.println("\"/>");
         }
 
         Scope scope = emitter.getScope();
