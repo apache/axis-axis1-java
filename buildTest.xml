@@ -105,15 +105,17 @@ Copyright:
   <!-- Runs the JUnit package testcases -->
   <!-- =================================================================== -->
   <target name="junit" if="junit.present">
+    <available file="${axis.home}/junit-exclude-tests.txt" property="junit-exclude-tests.present"/>
     <junit printsummary="yes" haltonfailure="${test.functional.fail}" fork="yes">
       <jvmarg value="-Xbootclasspath:${sun.boot.class.path}"/>
       <classpath refid="classpath" />
       <formatter type="xml" />
       <batchtest todir="${test.functional.reportdir}">
-        <fileset dir="${build.dir}/classes" excludesfile="${axis.home}/junit-exclude-tests.txt">
+        <fileset dir="${build.dir}/classes">
           <!-- Convention: each package that's being tested
                 has its own test class collecting all the tests -->
           <include name="**/PackageTests.class" />
+          <excludesfile name="${axis.home}/junit-exclude-tests.txt" if="junit-exclude-tests.present"/> 
           <!-- <include name="**/test/*TestSuite.class"/> -->
         </fileset>
       </batchtest>
@@ -170,6 +172,7 @@ Copyright:
       <arg line="${deploy.xml.property}"/>
     </java>
 
+    <available file="${axis.home}/junit-exclude-tests.txt" property="junit-exclude-tests.present"/>
     <!-- now, run the actual test -->
     <junit dir="${axis.home}" printsummary="yes" haltonfailure="${test.functional.fail}" fork="yes">
       <!-- See if this helps with Gump test failures -->
@@ -191,8 +194,9 @@ Copyright:
       <jvmarg value="-Dtest.functional.ServicePort=${test.functional.ServicePort}"/>
       <classpath refid="classpath" />
       <formatter type="xml" usefile="${test.functional.usefile}"/>
+      <available file="${axis.home}/junit-exclude-tests.txt" property="junit-exclude-tests.present"/>
       <batchtest todir="${test.functional.reportdir}">
-        <fileset dir="${build.dest}" excludesfile="${axis.home}/junit-exclude-tests.txt">
+        <fileset dir="${build.dest}">
           <!-- Convention: each package that's being tested
                 has its own test class collecting all the tests -->
               <include name="**/FunctionalTests.class" />
@@ -202,6 +206,7 @@ Copyright:
               <exclude name="**/WhiteMesaSoap12TestSvcTestCase.class"/>
               <exclude name="**/test/wsdl/attachments/**/*.class" unless="attachments.present" />
 	      <exclude name="**/test/wsdl/adaptive/**/*.class"/>
+          <excludesfile name="${axis.home}/junit-exclude-tests.txt" if="junit-exclude-tests.present"/> 
         </fileset>
       </batchtest>
     </junit>
@@ -213,16 +218,18 @@ Copyright:
   </target>
 
   <target name="junit-functional-secure" if="junit.present" depends="junit-functional-prepare,start-signature-signing-and-verification">
+    <available file="${axis.home}/junit-exclude-tests.txt" property="junit-exclude-tests.present"/>
     <!-- now, run the actual test -->
     <junit dir="${axis.home}" printsummary="yes" haltonfailure="${test.functional.fail}" fork="yes">
       <classpath refid="classpath" />
       <formatter type="xml" usefile="${test.functional.usefile}"/>
       <batchtest todir="${test.functional.reportdir}">
-        <fileset dir="${build.dest}" excludesfile="${axis.home}/junit-exclude-tests.txt">
+        <fileset dir="${build.dest}">
           <!-- Convention: each package that's being tested
                 has its own test class collecting all the tests -->
               <include name="**/TestBidBuySample.class" />
               <exclude name="**/Interop3TestCase.class"/>
+              <excludesfile name="${axis.home}/junit-exclude-tests.txt" if="junit-exclude-tests.present"/> 
         </fileset>
       </batchtest>
     </junit>

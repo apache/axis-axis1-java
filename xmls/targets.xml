@@ -586,17 +586,19 @@
       <param name="admin.file" value="${deploy.xml.property}"/>
    </antcall>
 
+   <available file="${axis.home}/junit-exclude-tests.txt" property="junit-exclude-tests.present"/>
    <junit dir="${axis.home}" printsummary="yes" haltonfailure="${test.functional.fail}" fork="yes">
       <classpath refid="classpath" />
       <formatter type="xml" usefile="${test.functional.usefile}"/>
       <batchtest todir="${test.functional.reportdir}">
-        <fileset dir="${build.dest}" excludesfile="${axis.home}/junit-exclude-tests.txt">
+        <fileset dir="${build.dest}">
            <include name="${extraTestCases}/*TestCase.class" />
            <include name="${extraTestCases}/**/*TestCase.class" />
            <include name="${componentName}/*TestCase.class" />
            <include name="${componentName}/**/*TestCase.class" />
            <include name="${componentName}/**/PackageTests.class" />
            <!-- <include name="${componentName}/**/test/*TestSuite.class"/> -->
+           <excludesfile name="${axis.home}/junit-exclude-tests.txt" if="junit-exclude-tests.present"/> 
         </fileset>
       </batchtest>
    </junit>
