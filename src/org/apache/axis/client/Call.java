@@ -55,14 +55,34 @@
 
 package org.apache.axis.client ;
 
+import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
+import org.apache.axis.Message;
+import org.apache.axis.MessageContext;
 import org.apache.axis.Constants;
 import org.apache.axis.encoding.ServiceDescription;
+import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.rpc.encoding.XMLType;
 import org.apache.axis.rpc.namespace.QName;
+import org.apache.axis.configuration.FileProvider;
+import org.apache.axis.encoding.DeserializerFactory;
+import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.Serializer;
+import org.apache.axis.message.SOAPBodyElement;
+import org.apache.axis.message.SOAPFaultElement;
+import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.message.SOAPHeader;
+import org.apache.axis.message.RPCElement;
+import org.apache.axis.transport.http.HTTPTransport;
+
+import org.apache.log4j.Category;
 
 import java.util.Vector ;
+import java.util.Hashtable ;
+import java.util.Enumeration ;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 /**
  * Axis' JAXRPC Dynamic Invocation Interface implementation of the Call
@@ -74,21 +94,123 @@ import java.util.Vector ;
  */
 
 public class Call implements org.apache.axis.rpc.Call {
-    private QName              portTypeName  = null ;
-    private ServiceClient      client        = null ;
-    private ServiceDescription serviceDesc   = null ;
-    private String             operationName = null ;
-    private Vector             paramNames    = null ;
-    private Vector             paramTypes    = null ;
-    private Vector             paramModes    = null ;
+    static Category category = Category.getInstance(Call.class.getName());
+
+    private QName              portTypeName    = null ;
+    private ServiceDescription serviceDesc     = null ;
+    private String             operationName   = null ;
+    private Vector             paramNames      = null ;
+    private Vector             paramTypes      = null ;
+    private Vector             paramModes      = null ;
+
+    private AxisEngine         engine          = null ;
+    private MessageContext     msgContext      = null ;
+
+    // Collection of properties to store and put in MessageContext at
+    // invoke() time
+    private Hashtable          myProperties    = null ;
+
+    private int                timeout         = 0 ;
+    private boolean            maintainSession = false ;
+
+    // Our Transport, if any
+    private Transport          transport       = null ;
+    private String             transportName   = null ;
+
+    // A place to store output parameters
+    private Vector             outParams       = null;
+
+    // A place to store any client-specified headers
+    private Vector             myHeaders       = null;
+
+
+    /***************************************************************
+     * Static stuff
+     */
+
+    public static final String TRANSPORT_PROPERTY="java.protocol.handler.pkgs";
+
+    /**
+     * A Hashtable mapping protocols (Strings) to Transports (classes)
+     */
+    private static Hashtable transports  = new Hashtable();
+    private static boolean   initialized = false;
+
+    private static FileProvider configProvider = 
+                           new FileProvider(Constants.CLIENT_CONFIG_FILE);
+
+    /** Register a Transport that should be used for URLs of the specified
+     * protocol.
+     *
+     * @param protocol the URL protocol (i.e. "tcp" for "tcp://" urls)
+     * @param transportClass the class of a Transport type which will be used
+     *                       for matching URLs.
+     */
+    public static void setTransportForProtocol(String protocol,
+                                               Class transportClass) {
+        if (Transport.class.isAssignableFrom(transportClass))
+            transports.put(protocol, transportClass);
+        else
+            throw new NullPointerException();
+    }
+
+    /**
+     * Set up the default transport URL mappings.
+     *
+     * This must be called BEFORE doing non-standard URL parsing (i.e. if you
+     * want the system to accept a "local:" URL).  This is why the Options class
+     * calls it before parsing the command-line URL argument.
+     */
+    public static synchronized void initialize() {
+        if (!initialized) {
+            addTransportPackage("org.apache.axis.transport");
+
+            setTransportForProtocol("local", 
+                         org.apache.axis.transport.local.LocalTransport.class);
+            setTransportForProtocol("http", HTTPTransport.class);
+            setTransportForProtocol("https", HTTPTransport.class);
+
+            initialized = true;
+        }
+    }
+
+    /** Add a package to the system protocol handler search path.  This
+     * enables users to create their own URLStreamHandler classes, and thus
+     * allow custom protocols to be used in Axis (typically on the client
+     * command line).
+     *
+     * For instance, if you add "samples.transport" to the packages property,
+     * and have a class samples.transport.tcp.Handler, the system will be able
+     * to parse URLs of the form "tcp://host:port..."
+     *
+     * @param packageName the package in which to search for protocol names.
+     */
+    public static synchronized void addTransportPackage(String packageName) {
+        String currentPackages = System.getProperty(TRANSPORT_PROPERTY);
+        if (currentPackages == null) {
+            currentPackages = "";
+        } else {
+            currentPackages += "|";
+        }
+        currentPackages += packageName;
+
+        System.setProperty(TRANSPORT_PROPERTY, currentPackages);
+    }
+
+    /*
+     * END STATICS
+     ***********************************************************************/
+
 
     /**
      * Default constructor - not much else to say.
      */
     public Call() {
-        client = new ServiceClient();
         serviceDesc = new ServiceDescription(null, true);
-        client.setServiceDescription( serviceDesc );
+        engine = new AxisClient(configProvider);
+
+        msgContext = new MessageContext(engine);
+        if ( !initialized ) initialize();
     }
 
     /**
@@ -133,26 +255,6 @@ public class Call implements org.apache.axis.rpc.Call {
         paramNames.add( paramName );
         paramTypes.add( paramType.getType() );
         paramModes.add( new Integer(parameterMode) );
-
-/*
-        switch( parameterMode ) {
-            case PARAM_MODE_IN: paramNames.add( paramName );
-                                paramTypes.add( qn );
-                                paramModes.add( PARAM_MODE_IN );
-                     break ;
-
-            case PARAM_MODE_OUT: paramNames.add( paramName );
-                    
-                     serviceDesc.addOutputParam( paramName,
-                         new org.apache.axis.utils.QName(qn.getNamespaceURI(),
-                                                         qn.getLocalPart() ) );
-                     break ;
-
-            case PARAM_MODE_INOUT:
-            default:                // Unsupported - but can't throw anything!
-                      throw new RuntimeException( "Unsupport parameter type" );
-        }
-        */
     }
 
     /**
@@ -171,7 +273,9 @@ public class Call implements org.apache.axis.rpc.Call {
      * Clears the list of parameters.
      */
     public void removeAllParameters() {
-        serviceDesc.removeAllParams();
+        paramNames.clear();
+        paramTypes.clear();
+        paramModes.clear();
     }
 
     /**
@@ -222,10 +326,19 @@ public class Call implements org.apache.axis.rpc.Call {
      */
     public void setTargetEndpointAddress(java.net.URL address) {
         try {
-            client.setURL( address.toString() );
+            String protocol = address.getProtocol();
+            Transport transport = getTransportForProtocol(protocol);
+            if (transport == null)
+                throw new AxisFault("Call.setTargetEndpointAddress",
+                        "No transport mapping for protocol: " + protocol,
+                        null, null);
+            transport.setUrl(address.toString());
+            setTransport(transport);
         }
         catch( org.apache.axis.AxisFault exp ) {
             // do what?
+            // throw new AxisFault("Call.setTargetEndpointAddress",
+                    //"Malformed URL Exception: " + e.getMessage(), null, null);
         }
     }
 
@@ -236,7 +349,8 @@ public class Call implements org.apache.axis.rpc.Call {
      */
     public java.net.URL getTargetEndpointAddress() {
         try {
-            return( new java.net.URL(client.getURL()) );
+            if ( transport == null ) return( null );
+            return( new java.net.URL( transport.getUrl() ) );
         }
         catch( Exception exp ) {
             return( null );
@@ -253,7 +367,10 @@ public class Call implements org.apache.axis.rpc.Call {
      * @param value Value of the property
      */
     public void setProperty(String name, Object value) {
-        client.set( name, value );
+        if (name == null || value == null) return;
+        if (myProperties == null) 
+            myProperties = new Hashtable();
+        myProperties.put(name, value);
     }
 
     /**
@@ -263,7 +380,8 @@ public class Call implements org.apache.axis.rpc.Call {
      * @return Object value of the property - or null
      */
     public Object getProperty(String name) {
-        return( client.get( name ) );
+        return (name == null || myProperties == null) ? null :
+                                                        myProperties.get(name);
     }
 
     /**
@@ -272,7 +390,8 @@ public class Call implements org.apache.axis.rpc.Call {
      * @param name name of the property to remove
      */
     public void removeProperty(String name) {
-        client.remove( name );
+        if ( name == null || myProperties == null ) return ;
+        myProperties.remove( name );
     }
 
     /**
@@ -287,11 +406,11 @@ public class Call implements org.apache.axis.rpc.Call {
         if ( operationName == null )
             throw new java.rmi.RemoteException( "No operation name specified" );
         try {
-            String ns = (String) client.get( Constants.NAMESPACE );
+            String ns = (String) getProperty( Constants.NAMESPACE );
             if ( ns == null )
-                return( client.invoke(operationName,getParamList(params)) );
+                return( this.invoke(operationName,getParamList(params)) );
             else
-                return( client.invoke(ns,operationName,getParamList(params)) );
+                return( this.invoke(ns,operationName,getParamList(params)) );
         }
         catch( Exception exp ) {
             throw new java.rmi.RemoteException( "Error invoking operation",
@@ -368,4 +487,385 @@ public class Call implements org.apache.axis.rpc.Call {
 
         return( result.toArray() );
     }
+
+    // Old ServiceClient stuff
+    /**
+     * Set the Transport 
+     *
+     * @param transport the Transport object we'll use to set up
+     *                  MessageContext properties.
+     */
+    public void setTransport(Transport trans) {
+        transport = trans;
+        if (category.isInfoEnabled())
+            category.info("Transport is " + transport);
+    }
+
+    /**
+     * Set the name of the transport chain to use.
+     */
+    public void setTransportName(String name) {
+        transportName = name ;
+        if ( transport != null )
+            transport.setTransportName( name );
+    }
+
+    /** Get the Transport registered for the given protocol.
+     *
+     * @param protocol a protocol such as "http" or "local" which may
+     *                 have a Transport object associated with it.
+     * @return the Transport registered for this protocol, or null if none.
+     */
+    public Transport getTransportForProtocol(String protocol)
+    {
+        Class transportClass = (Class)transports.get(protocol);
+        Transport ret = null;
+        if (transportClass != null) {
+            try {
+                ret = (Transport)transportClass.newInstance();
+            } catch (InstantiationException e) {
+            } catch (IllegalAccessException e) {
+            }
+        }
+        return ret;
+    }
+
+    /**
+     * Set timeout in our MessageContext.
+     *
+     * @param value the maximum amount of time, in milliseconds
+     */
+    public void setTimeout (int value) {
+        timeout = value;
+    }
+
+    /**
+     * Get timeout from our MessageContext.
+     *
+     * @return value the maximum amount of time, in milliseconds
+     */
+    public int getTimeout () {
+        return timeout;
+    }
+
+    /**
+     * Directly set the request message in our MessageContext.
+     *
+     * This allows custom message creation.
+     *
+     * @param msg the new request message.
+     */
+    public void setRequestMessage(Message msg) {
+        msgContext.setRequestMessage(msg);
+    }
+
+    /**
+     * Directly get the response message in our MessageContext.
+     *
+     * Shortcut for having to go thru the msgContext
+     *
+     * @return the response Message object in the msgContext
+     */
+    public Message getResponseMessage() {
+        return msgContext.getResponseMessage();
+    }
+
+    /**
+     * Determine whether we'd like to track sessions or not.
+     *
+     * This just passes through the value into the MessageContext.
+     *
+     * @param yesno true if session state is desired, false if not.
+     */
+    public void setMaintainSession (boolean yesno) {
+        maintainSession = yesno;
+    }
+
+    /**
+     * Obtain a reference to our MessageContext.
+     *
+     * @return the MessageContext.
+     */
+    public MessageContext getMessageContext () {
+        return msgContext;
+    }
+
+    /**
+     * Add a header which should be inserted into each outgoing message
+     * we generate.
+     *
+     * @param header a SOAPHeader to be inserted into messages
+     */
+    public void addHeader(SOAPHeader header)
+    {
+        if (myHeaders == null) {
+            myHeaders = new Vector();
+        }
+        myHeaders.add(header);
+    }
+
+    /**
+     * Clear the list of headers which we insert into each message
+     */
+    public void clearHeaders()
+    {
+        myHeaders = null;
+    }
+
+    /**
+     * Map a type for serialization.
+     *
+     * @param _class the Java class of the data type.
+     * @param qName the xsi:type QName of the associated XML type.
+     * @param serializer a Serializer which will be used to write the XML.
+     */
+    public void addSerializer(Class _class, org.apache.axis.utils.QName qName, Serializer serializer){
+        TypeMappingRegistry typeMap = msgContext.getTypeMappingRegistry();
+        typeMap.addSerializer(_class, qName, serializer);
+    }
+
+    /**
+     * Map a type for deserialization.
+     *
+     * @param qName the xsi:type QName of an XML Schema type.
+     * @param _class the class of the associated Java data type.
+     * @param deserializerFactory a factory which can create deserializer
+     *                            instances for this type.
+     */
+    public void addDeserializerFactory(org.apache.axis.utils.QName qName, Class _class,
+                                       DeserializerFactory deserializerFactory){
+        TypeMappingRegistry typeMap = msgContext.getTypeMappingRegistry();
+        typeMap.addDeserializerFactory(qName, _class, deserializerFactory);
+    }
+
+    /************************************************
+     * Invocation
+     */
+
+    /** Invoke the service with a custom SOAPEnvelope.
+     *
+     * @param env a SOAPEnvelope to send.
+     * @exception AxisFault
+     */
+    public SOAPEnvelope invoke(SOAPEnvelope env) throws AxisFault
+    {
+        msgContext.reset();
+        msgContext.setRequestMessage(new Message(env));
+        invoke();
+        return msgContext.getResponseMessage().getAsSOAPEnvelope();
+    }
+
+    /** Invoke an RPC service with a method name and arguments.
+     *
+     * This will call the service, serializing all the arguments, and
+     * then deserialize the return value.
+     *
+     * @param namespace the desired namespace URI of the method element
+     * @param method the method name
+     * @param args an array of Objects representing the arguments to the
+     *             invoked method.  If any of these objects are RPCParams,
+     *             Axis will use the embedded name of the RPCParam as the
+     *             name of the parameter.  Otherwise, we will serialize
+     *             each argument as an XML element called "arg<n>".
+     * @return a deserialized Java Object containing the return value
+     * @exception AxisFault
+     */
+    public Object invoke( String namespace, String method, Object[] args ) throws AxisFault {
+        category.debug("Enter: Call::invoke(ns, meth, args)" );
+        RPCElement  body = new RPCElement(namespace, method, args, serviceDesc);
+        Object ret = invoke( body );
+        category.debug("Exit: Call::invoke(ns, meth, args)" );
+        return ret;
+    }
+
+    /** Convenience method to invoke a method with a default (empty)
+     * namespace.  Calls invoke() above.
+     *
+     * @param method the method name
+     * @param args an array of Objects representing the arguments to the
+     *             invoked method.  If any of these objects are RPCParams,
+     *             Axis will use the embedded name of the RPCParam as the
+     *             name of the parameter.  Otherwise, we will serialize
+     *             each argument as an XML element called "arg<n>".
+     * @return a deserialized Java Object containing the return value
+     * @exception AxisFault
+     */
+    public Object invoke( String method, Object [] args ) throws AxisFault
+    {
+        return invoke("", method, args);
+    }
+
+    /** Invoke an RPC service with a pre-constructed RPCElement.
+     *
+     * @param body an RPCElement containing all the information about
+     *             this call.
+     * @return a deserialized Java Object containing the return value
+     * @exception AxisFault
+     */
+    public Object invoke( RPCElement body ) throws AxisFault {
+        category.debug("Enter: Call::invoke(RPCElement)" );
+        SOAPEnvelope         reqEnv = new SOAPEnvelope();
+        SOAPEnvelope         resEnv = null ;
+        Message              reqMsg = new Message( reqEnv );
+        Message              resMsg = null ;
+        Vector               resArgs = null ;
+        Object               result = null ;
+
+        // Clear the output params
+        outParams = null;
+
+        // If we have headers to insert, do so now.
+        if (myHeaders != null) {
+            for (int i = 0; i < myHeaders.size(); i++) {
+                reqEnv.addHeader((SOAPHeader)myHeaders.get(i));
+            }
+        }
+
+        String uri = null;
+        if (serviceDesc != null) uri = serviceDesc.getEncodingStyleURI();
+        if (uri != null) reqEnv.setEncodingStyleURI(uri);
+
+        msgContext.setRequestMessage(reqMsg);
+        msgContext.setResponseMessage(resMsg);
+
+        reqEnv.addBodyElement(body);
+        reqEnv.setMessageType(ServiceDescription.REQUEST);
+
+        if ( body.getPrefix() == null )       body.setPrefix( "m" );
+        if ( body.getNamespaceURI() == null ) {
+            throw new AxisFault("Call.invoke", "Cannot invoke Call with null namespace URI for method "+body.getMethodName(),
+                    null, null);
+        } else if (msgContext.getServiceHandler() == null) {
+            msgContext.setTargetService(body.getNamespaceURI());
+        }
+
+
+        if (category.isDebugEnabled()) {
+            StringWriter writer = new StringWriter();
+            try {
+                SerializationContext ctx = new SerializationContext(writer,
+                                                                   msgContext);
+                reqEnv.output(ctx);
+                writer.close();
+            } catch (Exception e) {
+                e.printStackTrace(new PrintWriter(writer));
+            } finally {
+                category.debug(writer.getBuffer().toString());
+            }
+        }
+
+        try {
+            invoke();
+        }
+        catch( Exception e ) {
+            category.error( e );
+            if ( !(e instanceof AxisFault ) ) e = new AxisFault( e );
+            throw (AxisFault) e ;
+        }
+
+        resMsg = msgContext.getResponseMessage();
+
+        if (resMsg == null)
+            throw new AxisFault(new Exception("Null response message!"));
+
+        /** This must happen before deserialization...
+         */
+        resMsg.setMessageType(ServiceDescription.RESPONSE);
+
+        resEnv = (SOAPEnvelope)resMsg.getAsSOAPEnvelope();
+
+        SOAPBodyElement respBody = resEnv.getFirstBody();
+        if (respBody instanceof SOAPFaultElement) {
+            throw ((SOAPFaultElement)respBody).getAxisFault();
+        }
+
+        body = (RPCElement)resEnv.getFirstBody();
+        resArgs = body.getParams();
+
+        if (resArgs != null && resArgs.size() > 0) {
+            RPCParam param = (RPCParam)resArgs.get(0);
+            result = param.getValue();
+
+            /**
+             * Are there out-params?  If so, return a Vector instead.
+             */
+            if (resArgs.size() > 1) {
+                outParams = new Vector();
+                for (int i = 1; i < resArgs.size(); i++) {
+                    outParams.add(resArgs.get(i));
+                }
+            }
+        }
+
+        category.debug("Exit: Call::invoke(RPCElement)" );
+        return( result );
+    }
+
+    /**
+     * Set engine option.
+     */
+    public void addOption(String name, Object value) {
+        engine.addOption(name, value);
+    }
+
+    /**
+     * Invoke this Call with its established MessageContext
+     * (perhaps because you called this.setRequestMessage())
+     *
+     * @exception AxisFault
+     */
+    public void invoke() throws AxisFault {
+        category.debug("Enter: Service::invoke()" );
+
+        msgContext.reset();
+
+        msgContext.setTimeout(timeout);
+
+        if (myProperties != null) {
+            Enumeration enum = myProperties.keys();
+            while (enum.hasMoreElements()) {
+                String name = (String) enum.nextElement();
+                Object value = myProperties.get(name);
+                msgContext.setProperty(name, value);
+            }
+        }
+
+        msgContext.setServiceDescription(serviceDesc);
+        msgContext.setMaintainSession(maintainSession);
+
+        // set up message context if there is a transport
+        if (transport != null) {
+            transport.setupMessageContext(msgContext, this, this.engine);
+        }
+        else
+            msgContext.setTransportName( transportName );
+
+        try {
+            engine.invoke( msgContext );
+
+            if (transport != null)
+                transport.processReturnedMessageContext(msgContext);
+        }
+        catch( AxisFault fault ) {
+            category.error( fault );
+            throw fault ;
+        }
+
+        category.debug("Exit: Service::invoke()" );
+    }
+
+    /**
+     * Get the output parameters (if any) from the last invocation.
+     *
+     * NOTE that the params returned are all RPCParams, containing
+     * name and value - if you want the value, you'll need to call
+     * param.getValue().
+     *
+     * @return a Vector of RPCParams
+     */
+    public Vector getOutputParams()
+    {
+        return this.outParams;
+    }
+
 }
