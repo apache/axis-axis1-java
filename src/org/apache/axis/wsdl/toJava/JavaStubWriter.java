@@ -492,9 +492,9 @@ public class JavaStubWriter extends JavaWriter {
         // Style: document or RPC
         int style = bEntry.getBindingStyle();
         if (style == BindingEntry.STYLE_DOCUMENT) {
-            pw.println("        call.setProperty(org.apache.axis.client.Call.OPERATION_STYLE_PROPERTY, \"document\");");
+            pw.println("        call.setOperationStyle(\"document\");");
         } else {
-            pw.println("        call.setProperty(org.apache.axis.client.Call.OPERATION_STYLE_PROPERTY, \"rpc\");");
+            pw.println("        call.setOperationStyle(\"rpc\");");
         }
             
         
