@@ -1,12 +1,12 @@
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,6 +16,9 @@
 
 package org.apache.axis.client ;
 
+import javax.xml.namespace.QName;
+import javax.xml.rpc.handler.HandlerChain;
+
 import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
@@ -24,14 +27,11 @@ import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.configuration.EngineConfigurationFactoryFinder;
-import org.apache.axis.handlers.HandlerChainImpl;
 import org.apache.axis.handlers.HandlerInfoChainFactory;
-import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.handlers.soap.MustUnderstandChecker;
+import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
-
-import javax.xml.namespace.QName;
 
 /**
  * Provides the equivalent of an "Axis engine" on the client side.
@@ -45,7 +45,7 @@ import javax.xml.namespace.QName;
 public class AxisClient extends AxisEngine {
     protected static Log log =
             LogFactory.getLog(AxisClient.class.getName());
-    
+
     MustUnderstandChecker checker = new MustUnderstandChecker(null);
 
     public AxisClient(EngineConfiguration config) {
@@ -134,42 +134,74 @@ public class AxisClient extends AxisEngine {
                     h.invoke(msgContext);
 
                 /* Process the JAXRPC Handlers */
-                invokeJAXRPCHandlers(msgContext);
+                /*******************************/
+                HandlerChain handlerImpl = getJAXRPChandlerChain(msgContext);
+                boolean result = true;
+                try {
+                    if (handlerImpl != null) {
+                        result = handlerImpl.handleRequest(msgContext);
+                    }
 
-                /** Process the Transport Specific stuff
-                 *
-                 * NOTE: Somewhere in here there is a handler which actually
-                 * sends the message and receives a response.  Generally
-                 * this is the pivot point in the Transport chain.
-                 */
-                hName = msgContext.getTransportName();
-                if ( hName != null && (h = getTransport( hName )) != null ) {
-                    h.invoke(msgContext);
-                }
-                else {
-                    throw new AxisFault(
-                            Messages.getMessage("noTransport00", hName));
+                    if (result) {
+                            /** Process the Transport Specific stuff
+                            *
+                            * NOTE: Somewhere in here there is a handler which actually
+                            * sends the message and receives a response.  Generally
+                            * this is the pivot point in the Transport chain.
+                            */
+                           hName = msgContext.getTransportName();
+                           if ( hName != null && (h = getTransport( hName )) != null ) {
+                               try {
+                                   h.invoke(msgContext);
+                               } catch (AxisFault e) {
+                                   // server-side processing went wrong
+                                   msgContext.setPastPivot(true);
+                                   if (handlerImpl != null) {
+                                       // invoke handleFault on JAXRPC Handlers
+                                       handlerImpl.handleFault(msgContext);
+                                   }
+                                   throw e;
+                               }
+                           }
+                           else {
+                               throw new AxisFault(
+                                       Messages.getMessage("noTransport00", hName));
+                           }
+                    } else {
+                        msgContext.setPastPivot(true);
+                    }
+                    /********************************************/
+                    /*               Pivot past                 */
+                    /********************************************/
+
+                    if ((handlerImpl != null) && !msgContext.isPropertyTrue(Call.ONE_WAY)) {
+                        handlerImpl.handleResponse(msgContext);
+                    }
+
+                } catch (RuntimeException e) {
+                    throw AxisFault.makeFault(e);
+                } finally {
+                    if (handlerImpl != null) {
+                        handlerImpl.destroy();
+                    }
                 }
 
                 if (!msgContext.isPropertyTrue(Call.ONE_WAY)) {
-
-                    /* Process the JAXRPC Handlers */
-                    invokeJAXRPCHandlers(msgContext);
-                    
                     /* Process the Global Response Chain */
-                    /***********************************/
+                    /** ******************************** */
                     if ((h = getGlobalResponse()) != null) {
                         h.invoke(msgContext);
                     }
 
-                    if ( service != null ) {
+                    if (service != null) {
                         h = service.getResponseHandler();
-                        if ( h != null ) {
+                        if (h != null) {
                             h.invoke(msgContext);
                         }
                     }
 
-                    // Do SOAP Semantics checks here - this needs to be a call to
+                    // Do SOAP Semantics checks here - this needs to be a call
+                    // to
                     // a pluggable object/handler/something
                     if (msgContext.isPropertyTrue(Call.CHECK_MUST_UNDERSTAND, true)) {
                         checker.invoke(msgContext);
@@ -179,9 +211,12 @@ public class AxisClient extends AxisEngine {
 
         } catch ( Exception e ) {
             // Should we even bother catching it ?
-            log.debug(Messages.getMessage("exception00"), e);
-            throw AxisFault.makeFault(e);
-
+            if (e instanceof AxisFault) {
+                throw (AxisFault) e;
+            } else {
+                log.debug(Messages.getMessage("exception00"), e);
+                throw AxisFault.makeFault(e);
+            }
         } finally {
             // restore previous state
             setCurrentMessageContext(previousContext);
@@ -192,20 +227,23 @@ public class AxisClient extends AxisEngine {
         }
     }
 
-    protected void invokeJAXRPCHandlers(MessageContext context){
+    /**
+     * @param context Stores the Service, port QName and optionnaly a HandlerInfoChainFactory
+     * @return Returns a HandlerChain if one has been specified
+     */
+    protected HandlerChain getJAXRPChandlerChain(MessageContext context) {
         java.util.List chain = null;
         HandlerInfoChainFactory hiChainFactory = null;
         boolean clientSpecified = false;
 
-        Service service
-                = (Service)context.getProperty(Call.WSDL_SERVICE);
+        Service service = (Service) context.getProperty(Call.WSDL_SERVICE);
         if(service == null) {
-            return;
+            return null;
         }
 
         QName portName = (QName) context.getProperty(Call.WSDL_PORT_NAME);
         if(portName == null) {
-            return;
+            return null;
         }
 
         javax.xml.rpc.handler.HandlerRegistry registry;
@@ -230,19 +268,10 @@ public class AxisClient extends AxisEngine {
         }
 
         if (hiChainFactory == null) {
-            return;
+            return null;
         }
 
-        HandlerChainImpl impl =
-                (HandlerChainImpl) hiChainFactory.createHandlerChain();
-
-        if(!context.getPastPivot()) {
-            impl.handleRequest(context);
-        }
-        else {
-            impl.handleResponse(context);
-        }
-        impl.destroy();
+        return hiChainFactory.createHandlerChain();
     }
-}
 
+}

@@ -128,7 +128,11 @@ public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler
     }
 
     public void destroy() {
-        for (int i = 0; i < size(); i++) {
+        int endIdx = size() - 1;
+        if (falseIndex != -1) {
+            endIdx = falseIndex;
+        }
+        for (int i = endIdx; i >= 0; i--) {
             getHandlerInstance(i).destroy();
         }
         falseIndex = -1;
