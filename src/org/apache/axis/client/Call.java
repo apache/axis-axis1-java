@@ -895,6 +895,14 @@ public class Call implements javax.xml.rpc.Call {
     }
 
     /**
+     * Set the QName of the return element
+     * 
+     * NOT part of JAX-RPC
+     */ 
+    public void setReturnQName(QName qname) {
+        operation.setReturnQName(qname);
+    }
+    /**
      * Sets the desired return Java Class.  This is a convenience method
      * which will cause the Call to automatically convert return values
      * into a desired class if possible.  For instance, we return object
@@ -1894,10 +1902,18 @@ public class Call implements javax.xml.rpc.Call {
                 // GD 03/15/02 : We're now checking for invalid metadata
                 // config at the top of this method, so don't need to do it
                 // here.  Check for void return, though.
+                boolean findReturnParam = false;
                 if (!XMLType.AXIS_VOID.equals(returnType)) {
-                    RPCParam param = (RPCParam)resArgs.get(0);
-                    result = param.getValue();
-                    outParamStart = 1;
+                    if (operation.getReturnQName() == null) {
+                        // Assume the first param is the return
+                        RPCParam param = (RPCParam)resArgs.get(0);
+                        result = param.getValue();
+                        outParamStart = 1;
+                    } else {
+                        // If the QName of the return value was given to us, look
+                        // through the result arguments to find the right name
+                        findReturnParam = true;
+                    }
                 }
 
                 for (int i = outParamStart; i < resArgs.size(); i++) {
@@ -1912,8 +1928,17 @@ public class Call implements javax.xml.rpc.Call {
                         value = JavaUtils.convert(value, javaType);
                     }
 
-                    outParams.put(param.getQName(), value);
-                    outParamsList.add(value);
+                    // Check if this parameter is our return 
+                    // otherwise just add it to our outputs
+                    if (findReturnParam &&
+                          operation.getReturnQName().equals(param.getQName())) {
+                        // found it!
+                        result = value;
+                        findReturnParam = false;
+                    } else {
+                        outParams.put(param.getQName(), value);
+                        outParamsList.add(value);
+                    }
                 }
             }
         } else {
