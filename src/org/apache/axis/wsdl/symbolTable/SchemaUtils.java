@@ -1750,4 +1750,30 @@ public class SchemaUtils {
 
         return isSimpleSchemaType(qname.getLocalPart());
     }
+
+    /**
+     * Returns the base type of a given type with its symbol table.
+     * This logic is extracted from JavaTypeWriter's constructor() method
+     * for reusing.
+     * 
+     * @param type 
+     * @param symbolTable 
+     * @return 
+     */
+    public static TypeEntry getBaseType(TypeEntry type, SymbolTable symbolTable) {
+        Node node = type.getNode();     
+        TypeEntry base = getComplexElementExtensionBase(
+                node, symbolTable);
+        if (base == null) {
+            base = getComplexElementRestrictionBase(node, symbolTable);
+        }                    
+        
+        if (base == null) {
+            QName baseQName = getSimpleTypeBase(node);                        
+            if (baseQName != null) {
+                base = symbolTable.getType(baseQName);
+            }
+        }
+        return base;
+    }
 }
