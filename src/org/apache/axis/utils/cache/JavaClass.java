@@ -65,15 +65,32 @@ import java.lang.reflect.Method;
  */
 public class JavaClass {
 
+    private static Hashtable classes = new Hashtable();
     private Hashtable methods = new Hashtable();
 
     private Class jc;
+
+    /**
+     * Find (or create if necessary) a JavaClass associated with a given
+     * class
+     */
+    public static synchronized JavaClass find(Class jc) {
+        JavaClass result = (JavaClass) classes.get(jc);
+
+        if (result == null) {
+            result = new JavaClass(jc);
+            classes.put(jc, result);
+        }
+
+        return result;
+    }
 
     /**
      * Create a cache entry for this java.lang.Class
      */
     public JavaClass(Class jc) {
         this.jc = jc;
+        classes.put(jc, this);
     }
     
     /**

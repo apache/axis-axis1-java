@@ -219,7 +219,7 @@ public abstract class JavaProvider extends BasicProvider {
             Object obj        = getServiceObject(msgContext,
                                                  service,
                                                  clsName);
-            JavaClass jc	  = new JavaClass(obj.getClass());
+            JavaClass jc	  = JavaClass.find(obj.getClass());
 
             Message        reqMsg  = msgContext.getRequestMessage();
             SOAPEnvelope   reqEnv  = (SOAPEnvelope)reqMsg.getAsSOAPEnvelope();
@@ -277,7 +277,7 @@ public abstract class JavaProvider extends BasicProvider {
             throw (AxisFault) exp ;
         }
 
-        JavaClass jc	  = new JavaClass(obj.getClass());
+        JavaClass jc	  = JavaClass.find(obj.getClass());
         String  allowedMethods = getServiceAllowedMethods(service);
 
         /** ??? Should we enforce setting methodName?  As it was,
