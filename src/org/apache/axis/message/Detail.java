@@ -69,7 +69,7 @@ import java.util.Iterator;
  *
  * @author Davanum Srinivas (dims@yahoo.com)
  */
-public class Detail extends SOAPFaultElement implements javax.xml.soap.Detail {
+public class Detail extends SOAPFault implements javax.xml.soap.Detail {
 
     public Detail(String namespace, String localName, String prefix,
                   Attributes attrs, DeserializationContext context) {

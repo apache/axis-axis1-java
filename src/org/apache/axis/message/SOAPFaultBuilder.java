@@ -81,7 +81,7 @@ import java.util.Iterator;
  */
 public class SOAPFaultBuilder extends SOAPHandler implements Callback
 {
-    protected SOAPFaultElement element;
+    protected SOAPFault element;
     protected DeserializationContext context;
     static HashMap fields = new HashMap();
     
@@ -99,7 +99,7 @@ public class SOAPFaultBuilder extends SOAPHandler implements Callback
         fields.put(Constants.ELEM_FAULT_DETAIL, null);
     }
     
-    public SOAPFaultBuilder(SOAPFaultElement element,
+    public SOAPFaultBuilder(SOAPFault element,
                             DeserializationContext context) {
         this.element = element;
         this.context = context;

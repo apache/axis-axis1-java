@@ -152,9 +152,9 @@ public class BodyBuilder extends SOAPHandler
          */
         if (localName.equals(Constants.ELEM_FAULT) &&
             namespace.equals(msgContext.getSOAPConstants().getEnvelopeURI())) {
-            element = new SOAPFaultElement(namespace, localName, prefix,
+            element = new SOAPFault(namespace, localName, prefix,
                                            attributes, context);
-            handler = new SOAPFaultBuilder((SOAPFaultElement)element,
+            handler = new SOAPFaultBuilder((SOAPFault)element,
                                            context);
         } else if (!gotRPCElement) {
             if (isRoot &&
