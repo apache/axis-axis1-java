@@ -612,7 +612,7 @@ public class SymbolTable {
                     if (!importedFiles.contains(url)) {
                         importedFiles.add(url);
                         String filename = url.toString();
-                        populate(context, null,
+                        populate(url, null,
                                 XMLUtils.newDocument(filename), filename);
                     }
                 }
