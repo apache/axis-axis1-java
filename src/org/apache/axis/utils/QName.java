@@ -114,7 +114,13 @@ public class QName {
     
     public boolean equals(Object p1) {
         if (!(p1 instanceof QName)) return false;
-        if (!namespaceURI.equals(((QName)p1).namespaceURI)) return false;
+
+        if (namespaceURI == null) {
+            if (((QName)p1).namespaceURI != null) return false;
+        } else {
+            if (!namespaceURI.equals(((QName)p1).namespaceURI)) return false;
+        }
+
         return localPart.equals(((QName)p1).localPart);
     };
     

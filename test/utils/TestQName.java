@@ -64,36 +64,8 @@ public class TestQName extends TestCase
         //Element elem = new MockElement();        
         ////QName qname5 = new QName("PREFIX:LOCALPART", elem);
 
-        /*
-        *  This first test causes a NullPointerException.  I don't think it 
-        *  should, but I know why it does.  If you have an instance of QName 
-        *  that was constructed with the no-args constructor, then its 
-        *  namespaceURI and localPart fields will be null.  When you call the 
-        *  equals(Object o) method, it compares those values between two 
-        *  instances of QName using the String.equals() method.  This causes a 
-        *  NullPointerException when the "empty" QName's namespaceURI field is 
-        *  accessed for the comparison. 
-        *
-        *  If you switch them around so that the QName doing the comparison 
-        *  (the one whose equals() method is called) has non-null fields, then
-        *  you will not get a NullPointerException.
-        *
-        *  Suggestions:
-        *  1. Initialize QName's fields to empty strings instead of letting them
-        *  be nulls.
-        *
-        *  2. explicity throw or implicitly handle NullPointerExceptions under
-        *  this condition.
-        */
-        boolean passed = false;
-        try {
-            assert(!qname1.equals(qname2));
-        }
-        catch (NullPointerException npe) {
-            passed = true; // this should not really be a pass, but this is the 
-                           // behavior the class currently exhibits.
-        }
-        assert(passed);
+        // the following should NOT throw a NullPointerException
+        assert(!qname1.equals(qname2));
        
         //Note: this test is comparing the same two QName objects as above, but
         //due to the order and the implementation of the QName.equals() method,
