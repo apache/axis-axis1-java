@@ -133,25 +133,7 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
      * @param value
      */
     public void addMimeHeader(String header, String value) {
-
-        if (null == header) {
-            throw new IllegalArgumentException(
-                    JavaUtils.getMessage("headerNotNull"));
-        }
-
-        header = header.trim();
-
-        if (header.length() == 0) {
-            throw new IllegalArgumentException(
-                    JavaUtils.getMessage("headerNotEmpty"));
-        }
-
-        if (null == value) {
-            throw new IllegalArgumentException(
-                    JavaUtils.getMessage("headerValueNotNull"));
-        }
-
-        mimeHeaders.setHeader(header.toLowerCase(), value);
+        mimeHeaders.setHeader(header, value);
     }
 
     /**

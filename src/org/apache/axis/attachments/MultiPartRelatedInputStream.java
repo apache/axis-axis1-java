@@ -505,7 +505,7 @@ public class MultiPartRelatedInputStream extends java.io.FilterInputStream {
                             new javax.mail.internet.InternetHeaders(
                                     boundaryDelimitedStream);
 
-                    contentId = headers.getHeader("Content-ID", null);
+                    contentId = headers.getHeader("Content-Id", null);
 
                     if (contentId != null) {
                         contentId = contentId.trim();

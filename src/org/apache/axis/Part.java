@@ -84,14 +84,21 @@ import org.apache.axis.transport.http.HTTPConstants;
 public interface Part
 {
     /**
+     * Gets all the values of the <CODE>MimeHeader</CODE> object
+     * in this <CODE>SOAPPart</CODE> object that is identified by
+     * the given <CODE>String</CODE>.
+     * @param   name  the name of the header; example:
+     *     "Content-Type"
+     * @return a <CODE>String</CODE> array giving all the values for
+     *     the specified header
+     * @see #setMimeHeader(java.lang.String, java.lang.String) setMimeHeader(java.lang.String, java.lang.String)
+     */
+    public abstract String[] getMimeHeader(String name);
+
+    /**
      * Add the specified MIME header, as per JAXM.
      */
     public void addMimeHeader (String header, String value);
-
-    /**
-     * Get the specified MIME header.
-     */
-    public String getFirstMimeHeader (String header);
 
     /**
      * Content location.
