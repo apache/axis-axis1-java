@@ -168,6 +168,13 @@ public class Emitter {
     private ServiceDesc serviceDesc2;
     private String soapAction = "DEFAULT";
 
+    /** DEPRECATED - Indicates style=rpc use=encoded */
+    public static final int MODE_RPC = 0;
+    /** DEPRECATED - Indicates style=document use=literal */
+    public static final int MODE_DOCUMENT = 1;
+    /** DEPRECATED - Indicates style=wrapped use=literal */
+    public static final int MODE_DOC_WRAPPED = 2;
+
     /**
      * Construct Emitter.
      * Set the contextual information using set* methods
@@ -1743,28 +1750,98 @@ public class Emitter {
         this.defaultTM = defaultTM;
     }
 
+
+         
+
+    /**
+     * getStyle
+     * @return Style setting (Style.RPC, Style.DOCUMENT, Style.WRAPPED, etc.)
+     */
     public Style getStyle() {
         return style;
     }
 
+    /**
+     * setStyle
+     * @param value String representing a style ("document", "rpc", "wrapped")
+     * Note that the case of the string is not important. "document" and "DOCUMENT"
+     * are both treated as document style.
+     * If the value is not a know style, the default setting is used.
+     * See org.apache.axis.enum.Style for a description of the interaction between
+     * Style/Use
+     */
     public void setStyle(String value) {
         style = Style.getStyle(value);
     }
 
+    /**
+     * setStyle
+     * @param value Style setting
+     */
     public void setStyle(Style value) {
         style = value;
     }
 
+    /**
+     * getUse
+     * @return Use setting (Use.ENCODED, Use.LITERAL)
+     */
     public Use getUse() {
         return use;
     }
 
+    /**
+     * setUse
+     * @param value String representing a use ("literal", "encoded")
+     * Note that the case of the string is not important. "literal" and "LITERAL"
+     * are both treated as literal use.
+     * If the value is not a know use, the default setting is used.
+     * See org.apache.axis.enum.Style for a description of the interaction between
+     * Style/Use
+     */
     public void setUse(String value) {
         use = Use.getUse(value);
     }
 
+    /**
+     * setUse
+     * @param value Use setting
+     */
     public void setUse(Use value) {
         use = value;
+    }
+
+    /**
+     * setMode (sets style and use)
+     * @deprecated (use setStyle and setUse)
+     */
+    public void setMode(int mode) {
+        if (mode == MODE_RPC) {
+            setStyle(Style.RPC);
+            setUse(Use.ENCODED);
+        } else if (mode == MODE_DOCUMENT) {
+            setStyle(Style.DOCUMENT);
+            setUse(Use.LITERAL);
+        } else if (mode == MODE_DOC_WRAPPED) {
+            setStyle(Style.WRAPPED);
+            setUse(Use.LITERAL);
+        }
+    }
+
+    /** 
+     * getMode (gets the mode based on the style setting)
+     * @deprecated (use getStyle and getUse)
+     * @return returns the mode (-1 if invalid)
+     */
+    public int getMode() {
+        if (style == Style.RPC) {
+            return MODE_RPC;
+        } else if (style == Style.DOCUMENT) {
+            return MODE_DOCUMENT;
+        } else if (style == Style.WRAPPED) {
+            return MODE_DOC_WRAPPED;
+        }
+        return -1;
     }
 
     public ServiceDesc getServiceDesc() {
