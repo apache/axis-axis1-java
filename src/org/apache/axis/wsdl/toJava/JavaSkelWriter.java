@@ -87,7 +87,7 @@ public class JavaSkelWriter extends JavaWriter {
             BindingEntry bEntry,
             SymbolTable symbolTable) {
         super(emitter, bEntry, "Skeleton", "java",
-                JavaUtils.getMessage("genSkel00"));
+                JavaUtils.getMessage("genSkel00"), "skeleton");
         this.bEntry = bEntry;
         this.binding = bEntry.getBinding();
         this.symbolTable = symbolTable;

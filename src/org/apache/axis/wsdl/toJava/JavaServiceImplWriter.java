@@ -87,7 +87,7 @@ public class JavaServiceImplWriter extends JavaWriter {
             ServiceEntry sEntry,
             SymbolTable symbolTable) {
         super(emitter, sEntry, "", "java",
-                JavaUtils.getMessage("genService00"));
+                JavaUtils.getMessage("genService00"), "service");
         this.service = sEntry.getService();
         this.symbolTable = symbolTable;
     } // ctor

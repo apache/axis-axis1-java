@@ -85,7 +85,7 @@ public class JavaTestCaseWriter extends JavaWriter {
             ServiceEntry sEntry,
             SymbolTable symbolTable) {
         super(emitter, sEntry, "TestCase", "java",
-                JavaUtils.getMessage("genTest00"));
+                JavaUtils.getMessage("genTest00"), "testCase");
         this.service = sEntry.getService();
         this.symbolTable = symbolTable;
     } // ctor

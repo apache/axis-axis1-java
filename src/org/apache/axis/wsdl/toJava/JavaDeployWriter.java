@@ -86,7 +86,7 @@ public class JavaDeployWriter extends JavaWriter {
                 new QName(definition.getTargetNamespace(), "deploy"),
                 "",
                 "wsdd",
-                JavaUtils.getMessage("genDeploy00"));
+                JavaUtils.getMessage("genDeploy00"), "deploy");
         this.definition = definition;
         this.symbolTable = symbolTable;
     } // ctor

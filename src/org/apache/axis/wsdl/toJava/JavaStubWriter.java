@@ -98,7 +98,7 @@ public class JavaStubWriter extends JavaWriter {
             BindingEntry bEntry,
             SymbolTable symbolTable) {
         super(emitter, bEntry, "Stub", "java",
-                JavaUtils.getMessage("genStub00"));
+                JavaUtils.getMessage("genStub00"), "stub");
         this.bEntry = bEntry;
         this.binding = bEntry.getBinding();
         this.symbolTable = symbolTable;

@@ -98,7 +98,7 @@ public class JavaImplWriter extends JavaWriter {
             BindingEntry bEntry,
             SymbolTable symbolTable) {
         super(emitter, bEntry, "Impl", "java",
-                JavaUtils.getMessage("genImpl00"));
+                JavaUtils.getMessage("genImpl00"), "skeletonImpl");
         this.binding = bEntry.getBinding();
         this.symbolTable = symbolTable;
         this.bEntry = bEntry;

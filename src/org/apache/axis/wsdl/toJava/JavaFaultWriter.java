@@ -75,7 +75,7 @@ public class JavaFaultWriter extends JavaWriter {
      * Constructor.
      */
     protected JavaFaultWriter(Emitter emitter, QName qname, Fault fault, SymbolTable symbolTable) {
-        super(emitter, qname, "", "java", JavaUtils.getMessage("genFault00"));
+        super(emitter, qname, "", "java", JavaUtils.getMessage("genFault00"), "fault");
         this.fault = fault;
         this.symbolTable = symbolTable;
     } // ctor

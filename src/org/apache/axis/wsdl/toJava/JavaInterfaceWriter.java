@@ -80,7 +80,7 @@ public class JavaInterfaceWriter extends JavaWriter {
     protected JavaInterfaceWriter(
             Emitter emitter,
             PortTypeEntry ptEntry, SymbolTable symbolTable) {
-        super(emitter, ptEntry, "", "java", JavaUtils.getMessage("genIface00"));
+        super(emitter, ptEntry, "", "java", JavaUtils.getMessage("genIface00"), "interface");
         this.ptEntry = ptEntry;
         this.portType = ptEntry.getPortType();
         this.symbolTable = symbolTable;

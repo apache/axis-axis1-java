@@ -82,7 +82,7 @@ public class JavaUndeployWriter extends JavaWriter {
                 new QName(definition.getTargetNamespace(), "undeploy"),
                 "",
                 "wsdd",
-                JavaUtils.getMessage("genUndeploy00"));
+                JavaUtils.getMessage("genUndeploy00"), "undeploy");
         this.definition = definition;
         this.symbolTable = symbolTable;
     } // ctor

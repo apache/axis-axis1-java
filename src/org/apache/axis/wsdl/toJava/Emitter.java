@@ -110,8 +110,7 @@ public class Emitter {
     protected String outputDir = null;
     protected String packageName = null;
     protected byte scope = NO_EXPLICIT_SCOPE;
-    protected ArrayList classList = new ArrayList();
-    protected ArrayList fileList = new ArrayList();
+    protected GeneratedFileInfo fileInfo = new GeneratedFileInfo(); 
     protected Namespaces namespaces = null;
     protected HashMap delaySetMap = null;
     protected WriterFactory writerFactory = null;
@@ -378,16 +377,24 @@ public class Emitter {
      * This method returns a list of all generated class names.
      */
     public List getGeneratedClassNames() {
-        return this.classList;
+        return this.fileInfo.getClassNames();
     }
 
     /**
      * This method returns a list of all generated file names.
      */
     public List getGeneratedFileNames() {
-        return this.fileList;
+        return this.fileInfo.getFileNames();
     }
 
+    /**
+     * This method returns an object which contains of all generated files
+     * including the class name, filename and a type string.
+     */ 
+    public GeneratedFileInfo getGeneratedFileInfo() {
+        return this.fileInfo;
+    }
+    
     //////////////////////////////
     //
     // Methods using types (non WSDL)
