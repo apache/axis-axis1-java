@@ -178,16 +178,37 @@
 
         String [] params = { arg0, arg1, arg2, arg3, arg4 };
         for (int i=0; i<5; i++) {
-            if (params[i]!=null) params[i]=params[i].replaceAll("\\\\","\\\\\\\\");
-            if (params[i]!=null) params[i]=params[i].replaceAll("%20"," ");
+            if (params[i]!=null) params[i]=replaceAll(params[i],"%20"," ");
         }
 
-        if (arg0!=null) strPattern = strPattern.replaceAll("\\{0\\}",params[0]);
-        if (arg1!=null) strPattern = strPattern.replaceAll("\\{1\\}",params[1]);
-        if (arg2!=null) strPattern = strPattern.replaceAll("\\{2\\}",params[2]);
-        if (arg3!=null) strPattern = strPattern.replaceAll("\\{3\\}",params[3]);
-        if (arg4!=null) strPattern = strPattern.replaceAll("\\{4\\}",params[4]);
+        if (arg0!=null) strPattern = replaceAll(strPattern,"{0}",params[0]);
+        if (arg1!=null) strPattern = replaceAll(strPattern,"{1}",params[1]);
+        if (arg2!=null) strPattern = replaceAll(strPattern,"{2}",params[2]);
+        if (arg3!=null) strPattern = replaceAll(strPattern,"{3}",params[3]);
+        if (arg4!=null) strPattern = replaceAll(strPattern,"{4}",params[4]);
 
         return strPattern;
+    }
+
+    String replaceAll(String source, String pattern, String replace)
+    {
+        int i=0;
+        boolean ret = false;
+        StringBuffer buf = new StringBuffer();
+
+        int lenSource  = source.length();
+        int lenPattern = pattern.length();
+
+        for (i=0; i<lenSource; i++) {
+            ret = source.regionMatches(i, pattern, 0, lenPattern);
+            if (ret) {
+                buf.append(source.substring(0,i));
+                buf.append(replace);
+                buf.append(source.substring(i+3));
+                source = replaceAll(buf.toString(), pattern, replace);
+                break;
+            }
+        }
+        return source;
     }
 %>
