@@ -76,7 +76,7 @@ public class JWSHandler extends BasicHandler
 
         /** If there's already a targetService just return.
          */
-        if ( msgContext.getTargetService() == null ) {
+        if ( msgContext.getServiceHandler() == null ) {
             HttpServlet        servlet = (HttpServlet) msgContext.getProperty(
                                                HTTPConstants.MC_HTTP_SERVLET);
             ServletConfig      config  = servlet.getServletConfig();

@@ -72,10 +72,9 @@ public class URLMapper extends BasicHandler
     {
         Debug.Print( 1, "Enter: URLMapper::invoke" );
 
-        /** If there's already a targetService (ie. JWSProcessor) then
-         *  just return.
+        /** If there's already a targetService then just return.
          */
-        if ( msgContext.getTargetService() == null ) {
+        if ( msgContext.getServiceHandler() == null ) {
             HttpServletRequest req = (HttpServletRequest) msgContext.getProperty(
                                               HTTPConstants.MC_HTTP_SERVLETREQUEST);
             
