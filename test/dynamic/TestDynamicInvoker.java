@@ -59,6 +59,7 @@ import junit.framework.TestCase;
 import org.apache.axis.AxisFault;
 import samples.client.DynamicInvoker;
 
+import java.io.InterruptedIOException;
 import java.net.ConnectException;
 
 public class TestDynamicInvoker extends TestCase {
@@ -77,6 +78,7 @@ public class TestDynamicInvoker extends TestCase {
             if (re instanceof AxisFault) {
                 AxisFault fault = (AxisFault) re;
                 if (fault.detail instanceof ConnectException ||
+                    fault.detail instanceof InterruptedIOException ||
                     (fault.getFaultString().indexOf("Connection timed out") != -1) ||
                     fault.getFaultCode().getLocalPart().equals("HTTP")) {
                     System.err.println("getTemp HTTP error: " + fault);
@@ -101,6 +103,7 @@ public class TestDynamicInvoker extends TestCase {
             if (re instanceof AxisFault) {
                 AxisFault fault = (AxisFault) re;
                 if (fault.detail instanceof ConnectException ||
+                    fault.detail instanceof InterruptedIOException ||
                     fault.getFaultCode().getLocalPart().equals("HTTP")) {
                     System.err.println("getQuote HTTP error: " + fault);
                     return;
@@ -124,6 +127,7 @@ public class TestDynamicInvoker extends TestCase {
             if (re instanceof AxisFault) {
                 AxisFault fault = (AxisFault) re;
                 if (fault.detail instanceof ConnectException ||
+                    fault.detail instanceof InterruptedIOException ||
                     fault.getFaultCode().getLocalPart().equals("HTTP")) {
                     System.err.println("round4XSD HTTP error: " + fault);
                     return;
@@ -150,6 +154,7 @@ public class TestDynamicInvoker extends TestCase {
             if (re instanceof AxisFault) {
                 AxisFault fault = (AxisFault) re;
                 if (fault.detail instanceof ConnectException ||
+                    fault.detail instanceof InterruptedIOException ||
                     fault.getFaultCode().getLocalPart().equals("HTTP")) {
                     System.err.println("MathService HTTP error: " + fault);
                     return;

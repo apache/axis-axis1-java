@@ -190,7 +190,7 @@ public class DynamicInvoker {
         Binding binding = port.getBinding();
         Call call = dpf.createCall(QName.valueOf(portName),
                                    QName.valueOf(operationName));
-
+        ((org.apache.axis.client.Call)call).setTimeout(new Integer(15*1000));
         // Output types and names
         Vector outNames = new Vector();
 
