@@ -1007,9 +1007,7 @@ public class SerializationContextImpl implements SerializationContext
         nsStack.pop();
 
         if (writingStartTag) {
-            writer.write("></");
-            writer.write(elementQName);
-            writer.write('>');
+            writer.write("/>");
             if (pretty) writer.write('\n');
             writingStartTag = false;
             return;
