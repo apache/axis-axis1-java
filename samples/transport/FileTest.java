@@ -20,6 +20,7 @@ import org.apache.axis.encoding.* ;
 public class FileTest {
   public static void main(String args[]) throws Exception {
     FileReader  reader = new FileReader();
+    reader.setDaemon(true);
     reader.start();
 
     Options opts = new Options( args );
