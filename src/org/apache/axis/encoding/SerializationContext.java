@@ -699,7 +699,9 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
                           Boolean sendType)
         throws IOException
     {
-        serialize( elemQName, attributes, value, xmlType, Boolean.valueOf(sendNull), sendType);
+        serialize( elemQName, attributes, value, xmlType, 
+                   (sendNull) ? Boolean.TRUE : Boolean.FALSE, 
+                   sendType);
     }
 
     /**
