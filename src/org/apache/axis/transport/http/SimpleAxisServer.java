@@ -458,7 +458,7 @@ public class SimpleAxisServer implements Runnable {
             } catch (InterruptedIOException iie) {
                 break;
             } catch (Exception e) {
-                log.error("Exception: ", e);
+                log.error(JavaUtils.getMessage("exception00"), e);
             } finally {
                 try {
                     if (socket!=null) socket.close();
@@ -799,7 +799,7 @@ public class SimpleAxisServer implements Runnable {
         try {
             opts = new Options(args);
         } catch (MalformedURLException e) {
-            log.error("MalformedURLException", e);
+            log.error(JavaUtils.getMessage("malformedURLException00"), e);
             return;
         }
 
@@ -809,7 +809,7 @@ public class SimpleAxisServer implements Runnable {
             sas.setServerSocket(ss);
             sas.run();
         } catch (Exception e) {
-            log.error("Exception", e);
+            log.error(JavaUtils.getMessage("exception00"), e);
             return;
         }
 

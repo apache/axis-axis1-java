@@ -799,7 +799,7 @@ public class Admin
             }
         }
         catch( AxisFault af ) {
-            log.error( af.dumpToString() );
+            log.error( JavaUtils.getMessage("axisFault01", af.dumpToString()) );
             throw af;
         }
         catch( Exception e ) {

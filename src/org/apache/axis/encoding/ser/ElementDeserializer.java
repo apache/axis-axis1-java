@@ -75,6 +75,8 @@ import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.DeserializerImpl;
 
+import org.apache.axis.utils.JavaUtils;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -105,7 +107,7 @@ public class ElementDeserializer extends DeserializerImpl implements Deserialize
             }
         }
         catch( Exception exp ) {
-            log.error("Exception: transforming to SAXException: ", exp);
+            log.error(JavaUtils.getMessage("exception00"), exp);
             throw new SAXException( exp );
         }
     }

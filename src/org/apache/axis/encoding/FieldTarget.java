@@ -63,6 +63,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 import org.apache.axis.encoding.Target;
+import org.apache.axis.utils.JavaUtils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -94,11 +95,11 @@ public class FieldTarget implements Target
         try {
             targetField.set(targetObject, value);
         } catch (IllegalAccessException accEx) {
-            log.error("IllegalAccessException: transforming to SAXException: ",
+            log.error(JavaUtils.getMessage("illegalAccessException00"),
                       accEx);
             throw new SAXException(accEx);
         } catch (IllegalArgumentException argEx) {
-            log.error("IllegalArgumentException: transforming to SAXException: ",
+            log.error(JavaUtils.getMessage("illegalArgumentException00"),
                       argEx);
             throw new SAXException(argEx);
         }

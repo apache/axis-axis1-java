@@ -563,7 +563,7 @@ public class Call implements javax.xml.rpc.Call {
             }
         }
         catch( Exception exp ) {
-            log.error("Exception: ", exp);
+            log.error(JavaUtils.getMessage("exception00"), exp);
             // do what?
             // throw new AxisFault("Call.setTargetEndpointAddress",
             //"Malformed URL Exception: " + e.getMessage(), null, null);
@@ -1234,7 +1234,7 @@ public class Call implements javax.xml.rpc.Call {
 
             attachments.setAttachmentParts(attachmentParts);
             }catch(org.apache.axis.AxisFault ex){
-              log.debug(ex);
+              log.debug(JavaUtils.getMessage("axisFault00"), ex);
               throw  new RuntimeException(ex.getMessage());
             }
         }
@@ -1384,7 +1384,7 @@ public class Call implements javax.xml.rpc.Call {
 
         if (log.isDebugEnabled()) {
             log.debug(JavaUtils.getMessage("enter00", 
-                "Call::invoke(ns, meth, args)") );
+                                           "Call::invoke(ns, meth, args)") );
         }
 
         RPCElement  body = new RPCElement(namespace, method, args);
@@ -1393,7 +1393,7 @@ public class Call implements javax.xml.rpc.Call {
 
         if (log.isDebugEnabled()) {
             log.debug(JavaUtils.getMessage("exit00", 
-                "Call::invoke(ns, meth, args)") );
+                                           "Call::invoke(ns, meth, args)") );
         }
 
         return ret;
@@ -1430,7 +1430,7 @@ public class Call implements javax.xml.rpc.Call {
     public Object invoke( RPCElement body ) throws AxisFault {
         if (log.isDebugEnabled()) {
             log.debug(JavaUtils.getMessage("enter00", 
-                "Call::invoke(RPCElement)") );
+                                           "Call::invoke(RPCElement)") );
         }
 
         SOAPEnvelope         reqEnv = new SOAPEnvelope();
@@ -1464,7 +1464,7 @@ public class Call implements javax.xml.rpc.Call {
             invoke();
         }
         catch( Exception e ) {
-            log.error( e );
+            log.error( JavaUtils.getMessage("exception00"), e );
             throw AxisFault.makeFault(e);
         }
 
@@ -1474,7 +1474,7 @@ public class Call implements javax.xml.rpc.Call {
             body = (RPCElement)resEnv.getFirstBody();
             resArgs = body.getParams();
         } catch (Exception e) {
-            log.error(e);
+            log.error(JavaUtils.getMessage("exception00"), e);
             throw AxisFault.makeFault(e);
         }
 
@@ -1516,7 +1516,7 @@ public class Call implements javax.xml.rpc.Call {
 
         if (log.isDebugEnabled()) {
             log.debug(JavaUtils.getMessage("exit00",
-                "Call::invoke(RPCElement)") );
+                                           "Call::invoke(RPCElement)") );
         }
 
         return( result );

@@ -279,7 +279,7 @@ public abstract class AxisEngine extends BasicHandler
         try {
             tmr = config.getTypeMappingRegistry();
         } catch (ConfigurationException e) {
-            log.error(e);
+            log.error(JavaUtils.getMessage("axisConfigurationException00"), e);
         }
 
         return tmr;

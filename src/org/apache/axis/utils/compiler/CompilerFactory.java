@@ -55,6 +55,8 @@
 
 package org.apache.axis.utils.compiler;
 
+import org.apache.axis.utils.JavaUtils;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -81,7 +83,7 @@ public class CompilerFactory {
                 } catch (Exception e) {
                     // If something goes wrong here, should we just fall
                     // through and use the default one?
-                    log.error(e.getLocalizedMessage(),e);
+                    log.error(JavaUtils.getMessage("exception00"), e);
                 }
             }
             log.debug("Using default compiler Javac");

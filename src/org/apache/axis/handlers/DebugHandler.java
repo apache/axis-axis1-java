@@ -97,7 +97,7 @@ public class DebugHandler extends BasicHandler {
             }
         }
         catch( Exception e ) {
-            log.error( e );
+            log.error( JavaUtils.getMessage("exception00"), e );
             throw AxisFault.makeFault(e);
         }
         log.debug(JavaUtils.getMessage("exit00", "DebugHandler::invoke") );

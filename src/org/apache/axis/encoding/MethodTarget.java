@@ -61,6 +61,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 
 import org.apache.axis.encoding.Target;
+import org.apache.axis.utils.JavaUtils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -87,15 +88,15 @@ public class MethodTarget implements Target
         try {
             targetMethod.invoke(targetObject, new Object [] { value });
         } catch (IllegalAccessException accEx) {
-            log.error("IllegalAccessException: transforming to SAXException: ",
+            log.error(JavaUtils.getMessage("illegalAccessException00"),
                       accEx);
             throw new SAXException(accEx);
         } catch (IllegalArgumentException argEx) {
-            log.error("IllegalArgumentException: transforming to SAXException: ",
+            log.error(JavaUtils.getMessage("illegalArgumentException00"),
                       argEx);
             throw new SAXException(argEx);
         } catch (InvocationTargetException targetEx) {
-            log.error("InvocationTargetException: transforming to SAXException: ",
+            log.error(JavaUtils.getMessage("invocationTargetException00"),
                       targetEx);
             throw new SAXException(targetEx);
         }

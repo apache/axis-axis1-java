@@ -342,7 +342,7 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource
                     diskCacheFile=null;
                     cachediskstream= null;
                     maxCached= java.lang.Integer.MAX_VALUE; 
-                    log.info("No disk access using memory only.", se);
+                    log.info(JavaUtils.getMessage("nodisk00"), se);
                 }
             }
         }

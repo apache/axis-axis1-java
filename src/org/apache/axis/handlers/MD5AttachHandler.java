@@ -155,7 +155,7 @@ public class MD5AttachHandler extends org.apache.axis.handlers.BasicHandler {
             msgContext.setResponseMessage( msg );
         }
         catch ( Exception e ) {
-            log.error( e );
+            log.error( JavaUtils.getMessage("exception00"), e );
             throw AxisFault.makeFault(e);
         }
         log.debug(JavaUtils.getMessage("exit00", "EchoHandler::invoke") );

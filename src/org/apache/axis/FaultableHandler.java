@@ -108,7 +108,7 @@ public class FaultableHandler extends BasicHandler {
             workHandler.invoke( msgContext );
         }
         catch( Exception e ) {
-            log.error( e );
+            log.error( JavaUtils.getMessage("exception00"), e );
             AxisFault fault = AxisFault.makeFault(e);
 
             AxisEngine engine = msgContext.getAxisEngine();

@@ -100,7 +100,7 @@ public class LogHandler extends BasicHandler {
 
                 pw.close();
             } catch( Exception e ) {
-                log.error( e );
+                log.error( JavaUtils.getMessage("exception00"), e );
                 throw AxisFault.makeFault(e);
             }
         }
@@ -117,7 +117,7 @@ public class LogHandler extends BasicHandler {
             pw.println( "=====================" );
             pw.close();
         } catch( Exception e ) {
-            log.error( e );
+            log.error( JavaUtils.getMessage("exception00"), e );
         }
         log.debug(JavaUtils.getMessage("exit00", "LogHandler::undo") );
     }

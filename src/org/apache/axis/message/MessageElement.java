@@ -569,7 +569,7 @@ public class MessageElement
             return getAsString();
         }
         catch( Exception exp ) {
-            log.error("Exception: ", exp);
+            log.error(JavaUtils.getMessage("exception00"), exp);
             return null;
         }
     }
