@@ -118,13 +118,14 @@ public class FileProvider implements EngineConfiguration {
     public FileProvider(String basepath, String filename) {
         this.basepath = basepath;
         this.filename = filename;
-        readOnly = !(new File(basepath, filename)).canWrite();
+        File file = new File(basepath, filename);
+        readOnly = file.canRead() & !file.canWrite();
 
         /*
-         * If file is readable but not writeable, log informational message
+         * If file is read-only, log informational message
          * as configuration changes will not persist.
          */
-        if (readOnly && (new File(basepath, filename)).canRead()) {
+        if (readOnly) {
             category.info(JavaUtils.getMessage("readOnlyConfigFile"));
         }
     }
