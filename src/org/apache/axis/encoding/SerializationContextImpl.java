@@ -96,7 +96,6 @@ public class SerializationContextImpl implements SerializationContext
     /** The SOAP context we're using */
     private SOAPConstants soapConstants = SOAPConstants.SOAP11_CONSTANTS;
 
-    private boolean pretty = false;
     private static QName multirefQName = new QName("","multiRef");
     private static Class[] SERIALIZER_CLASSES =
             new Class[] {String.class, Class.class, QName.class};
@@ -111,7 +110,17 @@ public class SerializationContextImpl implements SerializationContext
      * serializations of identical objects).
      */
     private boolean doMultiRefs = false;
+    
+    /**
+     * Should I disable the pretty xml completely.
+     */ 
+    private boolean disablePrettyXML = false;
 
+    /**
+     * current setting for pretty
+     */ 
+    private boolean pretty = false;
+    
     /**
      * Should I send an XML declaration?
      */
@@ -225,6 +234,11 @@ public class SerializationContextImpl implements SerializationContext
             if (shouldSendMultiRefs != null)
                 doMultiRefs = shouldSendMultiRefs.booleanValue();
             
+            Boolean shouldDisablePrettyXML =
+                  (Boolean)msgContext.getProperty(AxisEngine.PROP_DISABLE_PRETTY_XML);
+            if (shouldDisablePrettyXML != null)
+                disablePrettyXML = shouldDisablePrettyXML.booleanValue();
+            
             boolean sendTypesDefault = sendXSIType;
 
             // A Literal use operation overrides the above settings. Don't
@@ -278,7 +292,9 @@ public class SerializationContextImpl implements SerializationContext
      * @param pretty true/false
      */
     public void setPretty(boolean pretty) {
-        this.pretty = pretty;
+        if(!disablePrettyXML) {
+            this.pretty = pretty;
+        }
     }
 
     /**
