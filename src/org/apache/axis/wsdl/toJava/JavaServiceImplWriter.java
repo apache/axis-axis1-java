@@ -166,7 +166,7 @@ public class JavaServiceImplWriter extends JavaWriter {
             pw.println("    }" );
             pw.println("" );
 
-            pw.println("    public " + bindingType + " get" + portName + "() {");
+            pw.println("    public " + bindingType + " get" + portName + "() throws javax.xml.rpc.JAXRPCException {");
             pw.println("       java.net.URL endpoint;");
             pw.println("        try {");
             pw.println("            endpoint = new java.net.URL(" + portName + "_address);");
@@ -178,7 +178,7 @@ public class JavaServiceImplWriter extends JavaWriter {
             pw.println("        return get" + portName + "(endpoint);");
             pw.println("    }");
             pw.println();
-            pw.println("    public " + bindingType + " get" + portName + "(java.net.URL portAddress) {");
+            pw.println("    public " + bindingType + " get" + portName + "(java.net.URL portAddress) throws javax.xml.rpc.JAXRPCException {");
             pw.println("        try {");
             pw.println("            return new " + stubClass + "(portAddress, this);");
             pw.println("        }");

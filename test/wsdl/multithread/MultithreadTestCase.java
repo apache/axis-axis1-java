@@ -4,6 +4,8 @@ import java.net.ConnectException;
 
 import java.rmi.RemoteException;
 
+import javax.xml.rpc.JAXRPCException;
+
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
@@ -84,7 +86,12 @@ public class MultithreadTestCase extends TestCase {
     } // class Run
 
     public void testMultithreading() {
-        binding = new AddressBookService().getAddressBook();
+        try {
+            binding = new AddressBookService().getAddressBook();
+        }
+        catch (JAXRPCException jre) {
+            throw new AssertionFailedError("JAXRPCException caught: " + jre);
+        }
         assertTrue("binding is null", binding != null);
         ((AddressBookSOAPBindingStub) binding).setMaintainSession(true);
         Thread[] threads = new Thread[100];

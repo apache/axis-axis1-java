@@ -7,6 +7,8 @@
 
 package test.wsdl.types;
 
+import javax.xml.rpc.JAXRPCException;
+
 import javax.xml.rpc.holders.BigDecimalHolder;
 import javax.xml.rpc.holders.BigIntegerHolder;
 import javax.xml.rpc.holders.BooleanClassHolder;
@@ -65,7 +67,13 @@ public class VerifyTestCase extends junit.framework.TestCase {
     }
 
     public void testTypeTest() {
-        TypeTest binding = new TypeTestService().getTypeTest();
+        TypeTest binding;
+        try {
+            binding = new TypeTestService().getTypeTest();
+        }
+        catch (JAXRPCException jre) {
+            throw new junit.framework.AssertionFailedError("JAX-RPC Exception caught: " + jre);
+        }
         assertTrue("binding is null", binding != null);
         try {
             binding.allPrimitivesIn("hi", new java.math.BigInteger("5"), 0, (long) 0, (short) 0, new java.math.BigDecimal(6), (float) 0, (double) 0, true, (byte) 0, new QName("hi", "ho"), new java.util.Date(), new byte[]{(byte) 5}, new byte[]{(byte) 6}, "hi ho", new Boolean(true), new Float(0), new Double(0), new java.math.BigDecimal(7), new Integer(0), new Short((short) 0), new Byte[]{new Byte((byte) 7)});

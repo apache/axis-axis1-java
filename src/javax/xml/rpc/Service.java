@@ -94,6 +94,20 @@ public interface Service
         throws JAXRPCException;
 
     /**
+     * The getPort method returns a dynamic proxy for a default service port. A service client uses this dynamic 
+     * proxy to invoke operations on the target service port. The serviceDefInterface specifies the service definition 
+     * interface that is supported by the created dynamic proxy.
+     *
+     * @param serviceDefInterface - Service definition interface supported by the dynamic proxy
+     *
+     * @return Dynamic proxy object that supports the service definition interface that extends the java.rmi.Remote
+     *
+     * @throws JAXRPCException - If the service class fails to create a dynamic proxy
+     */
+    public java.rmi.Remote getPort(Class serviceDefInterface)
+            throws JAXRPCException;
+
+    /**
      * Creates a Call instance.
      *
      * @param - The qualified name for the target service port
@@ -115,6 +129,19 @@ public interface Service
      * @throws JAXRPCException - If the Service class fails to create a Call object
      */
     public Call createCall(QName portName, String operationName)
+        throws JAXRPCException;
+
+    /**
+     * Creates a Call instance.
+     *
+     * @param portName - The qualified name for the target service port
+     * @param operationName - QName of the operation for which this Call object is created.
+     *
+     * @return Call object
+     *
+     * @throws JAXRPCException - If the Service class fails to create a Call object
+     */
+    public Call createCall(QName portName, QName operationName)
         throws JAXRPCException;
 
     /**

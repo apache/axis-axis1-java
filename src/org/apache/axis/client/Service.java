@@ -247,6 +247,18 @@ public class Service implements javax.xml.rpc.Service {
     }
 
     /**
+     * Not implemented yet
+     *
+     * @param  proxyInterface  ...
+     * @return java.rmi.Remote ...
+     * @throws JAXRPCException If there's an error
+     */
+    public java.rmi.Remote getPort(Class proxyInterface)
+            throws JAXRPCException {
+        return null;
+    }
+
+    /**
      * Return an object which acts as a dynamic proxy for the passed
      * interface class.  This is a more "dynamic" version in that it
      * doesn't actually require WSDL, simply an endpoint address.
@@ -345,6 +357,25 @@ public class Service implements javax.xml.rpc.Service {
 
         org.apache.axis.client.Call call=new org.apache.axis.client.Call(this);
         call.setOperation( portName, operationName );
+        return( call );
+    }
+
+    /**
+     * Creates a new Call object - will prefill as much info from the WSDL
+     * as it can.  Right now it's target URL, SOAPAction, Parameter types,
+     * and return type of the Web Service.
+     *
+     * @param  portName        PortName in the WSDL doc to search for
+     * @param  operationName   Operation(method) that's going to be invoked
+     * @return Call            Used for invoking the Web Service
+     * @throws JAXRPCException If there's an error
+     */
+    public javax.xml.rpc.Call createCall(QName portName,
+                                         QName operationName)
+                           throws JAXRPCException {
+
+        org.apache.axis.client.Call call=new org.apache.axis.client.Call(this);
+        call.setOperation( portName, operationName.getLocalPart() );
         return( call );
     }
 
