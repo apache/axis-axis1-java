@@ -1637,14 +1637,14 @@ public class Emitter {
     private void writeDeploymentXML() {
         try {
             PrintWriter deployPW = printWriter("deploy.xml");
-            this.fileList.add("deploy.xml");
+            this.fileList.add(packageDirName + "deploy.xml");
 
             if (bVerbose) {
                 System.out.println("Generating deployment document: deploy.xml");
             }
             initializeDeploymentDoc(deployPW, "deploy");
             PrintWriter undeployPW = printWriter("undeploy.xml");
-            this.fileList.add("undeploy.xml");
+            this.fileList.add(packageDirName + "undeploy.xml");
 
             if (bVerbose) {
                 System.out.println("Generating deployment document: undeploy.xml");
