@@ -325,14 +325,14 @@ public class Message {
             try {
                 os.write(mSOAPPart.getAsBytes());
             } catch (java.io.IOException e) {
-                System.err.println(e);
+                log.error("IOException: ", e);
                 e.printStackTrace();
             }
         } else {
             try {
                 mAttachments.writeContentToStream(os);
             } catch (java.lang.Exception e) {
-                System.err.println(e);
+                log.error("Exception: ", e);
                 e.printStackTrace();
             }
         }

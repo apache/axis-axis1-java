@@ -221,7 +221,7 @@ public abstract class AxisEngine extends BasicHandler
         try {
             config.writeEngineConfig(this);
         } catch (Exception e) {
-            System.err.println(JavaUtils.getMessage("saveConfigFail00"));
+            log.error(JavaUtils.getMessage("saveConfigFail00"));
             e.printStackTrace();
         }
     }

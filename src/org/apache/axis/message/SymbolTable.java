@@ -55,6 +55,9 @@
 
 package org.apache.axis.message;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -63,7 +66,10 @@ import java.util.HashMap;
  * out to make it easier for me to see what was going on,
  * I'll add them back in later
  */
-public class SymbolTable {
+public class SymbolTable
+{
+    static Log log =
+            LogFactory.getLog(SymbolTable.class.getName());
 
     protected static final int TABLE_SIZE = 101;
     protected Entry[] fBuckets = new Entry[TABLE_SIZE];
@@ -107,7 +113,7 @@ public class SymbolTable {
         }
         Entry entry = new Entry(symbol, fBuckets[bucket]);
         fBuckets[bucket] = entry;
-        System.out.println("Symbol '" + symbol + "' is index " + bucket);
+        log.debug("Symbol '" + symbol + "' is index " + bucket);
         return bucket;
         */
     }
@@ -129,7 +135,7 @@ public class SymbolTable {
         }
         Entry entry = new Entry(buffer, offset, length, fBuckets[bucket]);
         fBuckets[bucket] = entry;
-        System.out.println("Symbol '" + entry.symbol + "' is index " + bucket);
+        log.debug("Symbol '" + entry.symbol + "' is index " + bucket);
         return bucket;
         */
     }

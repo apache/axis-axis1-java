@@ -57,6 +57,9 @@ package org.apache.axis.encoding;
 
 import org.apache.axis.Constants;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import javax.xml.rpc.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
 
@@ -86,7 +89,10 @@ import java.util.HashMap;
  * Default TypeMapping or another TypeMapping
  * 
  */
-public class TypeMappingImpl implements TypeMapping { 
+public class TypeMappingImpl implements TypeMapping
+{
+    static Log log =
+            LogFactory.getLog(TypeMappingImpl.class.getName());
 
     public class Pair {
         public Class javaType;
@@ -377,7 +383,7 @@ public class TypeMappingImpl implements TypeMapping {
      * @return xmlType qname or null
      */
     public QName getTypeQName(Class javaType) {
-        //System.out.println("getTypeQName javaType =" + javaType);
+        //log.debug("getTypeQName javaType =" + javaType);
         QName xmlType = null;
         Pair pair = (Pair) class2Pair.get(javaType);
         if (pair == null && delegate != null) {
@@ -386,7 +392,7 @@ public class TypeMappingImpl implements TypeMapping {
             xmlType = pair.xmlType;
         }
         
-        //System.out.println("getTypeQName xmlType =" + xmlType);
+        //log.debug("getTypeQName xmlType =" + xmlType);
         return xmlType;
     }
     
@@ -396,7 +402,7 @@ public class TypeMappingImpl implements TypeMapping {
      * @return javaType class or type
      */
     public Class getClassForQName(QName xmlType) {
-        //System.out.println("getClassForQName xmlType =" + xmlType);
+        //log.debug("getClassForQName xmlType =" + xmlType);
         Class javaType = null;
         Pair pair = (Pair) qName2Pair.get(xmlType);
         if (pair == null && delegate != null) {
@@ -405,7 +411,7 @@ public class TypeMappingImpl implements TypeMapping {
             javaType = pair.javaType;
         }
 
-        //System.out.println("getClassForQName javaType =" + javaType);
+        //log.debug("getClassForQName javaType =" + javaType);
         return javaType;
     }
 }

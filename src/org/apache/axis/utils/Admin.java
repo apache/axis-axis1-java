@@ -68,8 +68,10 @@ import org.apache.axis.encoding.ser.*;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.server.AxisServer;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -94,8 +96,8 @@ import java.util.Vector;
  * @author Doug Davis (dug@us.ibm.com)
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
-public class Admin {
-
+public class Admin
+{
     static Log log =
             LogFactory.getLog(Admin.class.getName());
 
@@ -174,7 +176,7 @@ public class Admin {
         Element[] result = new Element[1];
         result[0] = doc.getDocumentElement();
         log.debug(JavaUtils.getMessage("exit00", "Admin:AdminService") );
-        return( result );
+        return result;
     }
 
     protected static Document processWSDD(AxisEngine engine, Element root)
@@ -294,7 +296,7 @@ public class Admin {
             }
 
             if (action.equals("quit")) {
-                System.err.println(JavaUtils.getMessage("quitRequest00"));
+                log.error(JavaUtils.getMessage("quitRequest00"));
                 if (msgContext != null) {
                     // put a flag into message context so listener will exit after
                     // sending response
@@ -386,7 +388,7 @@ public class Admin {
             e.printStackTrace();
             throw AxisFault.makeFault(e);
         }
-        return( doc );
+        return doc;
     }
 
     /** Get an XML document representing this engine's configuration.
@@ -734,26 +736,26 @@ public class Admin {
 
         if ( args.length < 2 || !(args[0].equals("client") ||
                                   args[0].equals("server")) ) {
-            System.err.println( JavaUtils.getMessage("usage00", "Admin client|server <xml-file>") + "\n" );
+            log.error( JavaUtils.getMessage("usage00", "Admin client|server <xml-file>") );
 
-            System.err.println( JavaUtils.getMessage("where00", "<xml-file>") );
-            System.err.println( "<deploy>" );
+            log.error( JavaUtils.getMessage("where00", "<xml-file>") );
+            log.error( "<deploy>" );
             /*
-            System.err.println( "  <transport name=a request=\"a,b,c\" sender=\"s\"");
-            System.err.println( "                    response=\"d,e\"/>" );
+            log.error( "  <transport name=a request=\"a,b,c\" sender=\"s\"");
+            log.error( "                    response=\"d,e\"/>" );
             */
-            System.err.println( "  <handler name=a class=className/>" );
-            System.err.println( "  <chain name=a flow=\"a,b,c\" />" );
-            System.err.println( "  <chain name=a request=\"a,b,c\" pivot=\"d\"" );
-            System.err.println( "                  response=\"e,f,g\" />" );
-            System.err.println( "  <service name=a handler=b />" );
-            System.err.println( "</deploy>" );
-            System.err.println( "<undeploy>" );
-            System.err.println( "  <handler name=a/>" );
-            System.err.println( "  <chain name=a/>" );
-            System.err.println( "  <service name=a/>" );
-            System.err.println( "</undeploy>\n" );
-            System.err.println( "<list/>\n" );
+            log.error( "  <handler name=a class=className/>" );
+            log.error( "  <chain name=a flow=\"a,b,c\" />" );
+            log.error( "  <chain name=a request=\"a,b,c\" pivot=\"d\"" );
+            log.error( "                  response=\"e,f,g\" />" );
+            log.error( "  <service name=a handler=b />" );
+            log.error( "</deploy>" );
+            log.error( "<undeploy>" );
+            log.error( "  <handler name=a/>" );
+            log.error( "  <chain name=a/>" );
+            log.error( "  <service name=a/>" );
+            log.error( "</undeploy>" );
+            log.error( "<list/>" );
 
 
             // throw an Exception which will go uncaught!  this way, a test suite
@@ -775,7 +777,7 @@ public class Admin {
 
         try {
             for ( i = 1 ; i < args.length ; i++ ) {
-                System.out.println( JavaUtils.getMessage("process00", args[i]) );
+                log.info( JavaUtils.getMessage("process00", args[i]) );
                 Document doc = XMLUtils.newDocument( new FileInputStream( args[i] ) );
                 admin.process(msgContext, doc.getDocumentElement());
             }
@@ -786,7 +788,7 @@ public class Admin {
             throw e;
         }
         catch( Exception e ) {
-            System.err.println( JavaUtils.getMessage("errorProcess00", args[i]) );
+            log.error( JavaUtils.getMessage("errorProcess00", args[i]) );
             e.printStackTrace( System.err );
             //System.exit( 1 );
             throw e;

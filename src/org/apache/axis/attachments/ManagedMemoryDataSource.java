@@ -54,10 +54,13 @@
  */
 
 package org.apache.axis.attachments;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
 import org.apache.axis.InternalException;
 import org.apache.axis.MessageContext; 
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.File; 
 
 /**
@@ -70,7 +73,11 @@ import java.io.File;
  * TODO TODO TODO need to delete cached out data sources after a service ends.
  */
 
-public class ManagedMemoryDataSource implements  javax.activation.DataSource {
+public class ManagedMemoryDataSource implements  javax.activation.DataSource
+{
+    static Log log =
+            LogFactory.getLog(ManagedMemoryDataSource.class.getName());
+
     protected String contentType = "application/octet-stream"; //Is the default.
     java.io.InputStream ss = null; //The incoming source stream.
     public static final  int MAX_MEMORY_DISK_CACHED = -1;
@@ -84,8 +91,6 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource {
     
                              //Memory is allocated in these size chunks.
     public static final int READ_CHUNK_SZ = 32 * 1024 ;
-    static Log log =
-            LogFactory.getLog(ManagedMemoryDataSource.class.getName());
 
     protected boolean debugEnabled= false; //Log debugging if true.        
 
@@ -625,7 +630,7 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource {
 
         }
         catch ( java.lang.Exception e) {
-            System.err.println(e);
+            log.error("Caught Exception", e);
             e.printStackTrace();
         }
     }

@@ -68,8 +68,10 @@ import org.apache.axis.session.SimpleSession;
 import org.apache.axis.utils.Options;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.w3c.dom.Document;
 
 import java.io.IOException;
@@ -456,7 +458,7 @@ public class SimpleAxisServer implements Runnable {
                 }
             }
         }
-        System.out.println(JavaUtils.getMessage("quit00", "SimpleAxisServer"));
+        log.info(JavaUtils.getMessage("quit00", "SimpleAxisServer"));
     }
 
     // ASCII character mapping to lower case

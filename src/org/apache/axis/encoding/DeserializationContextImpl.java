@@ -71,8 +71,10 @@ import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.NSStack;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
@@ -294,7 +296,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
         
         String nsURI = getNamespaceURI(qNameStr.substring(0, i));
         
-        //System.out.println("namespace = " + nsURI);
+        //log.debug("namespace = " + nsURI);
         
         if (nsURI == null)
             return null;
@@ -395,13 +397,13 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
         try { 
             dserF = (DeserializerFactory) getTypeMapping().getDeserializer(xmlType);
         } catch (JAXRPCException e) {
-            System.out.println("!! No Factory for " + xmlType);
+            log.error("!! No Factory for " + xmlType);
         }
         if (dserF != null) {
             try {
                 dser = (Deserializer) dserF.getDeserializerAs(Constants.AXIS_SAX);
             } catch (JAXRPCException e) {
-                System.out.println("!! No Deserializer for " + xmlType);
+                log.error("!! No Deserializer for " + xmlType);
             }
         }
         return dser;

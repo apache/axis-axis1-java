@@ -65,6 +65,9 @@ import org.apache.axis.encoding.ser.BaseSerializerFactory;
 import org.apache.axis.encoding.ser.BaseDeserializerFactory;
 import org.apache.axis.encoding.*;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import javax.xml.rpc.namespace.QName;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -83,6 +86,9 @@ public class WSDDDeployment
     extends WSDDElement
     implements WSDDTypeMappingContainer, EngineConfiguration
 {
+    static Log log =
+            LogFactory.getLog(WSDDDeployment.class.getName());
+
     private HashMap handlers = new HashMap();
     private HashMap services = new HashMap();
     private HashMap transports = new HashMap();
@@ -309,14 +315,14 @@ public class WSDDDeployment
             //
             // The BaseSerializerFactory createFactory() method is a utility
             // that does this for us.
-            //System.out.println("start creating sf and df");
+            //log.debug("start creating sf and df");
             if (mapping.getSerializerName() != null &&
                 !mapping.getSerializerName().equals("")) {
                 ser = BaseSerializerFactory.createFactory(mapping.getSerializer(),
                                                           mapping.getLanguageSpecificType(),
                                                           mapping.getQName());
             }
-            //System.out.println("set ser factory");
+            //log.debug("set ser factory");
 
             if (mapping.getDeserializerName() != null &&
                 !mapping.getDeserializerName().equals("")) {
@@ -324,9 +330,9 @@ public class WSDDDeployment
                                                           mapping.getLanguageSpecificType(),
                                                           mapping.getQName());
             }
-            //System.out.println("set dser factory");
+            //log.debug("set dser factory");
             tm.register( mapping.getLanguageSpecificType(), mapping.getQName(), ser, deser);
-            //System.out.println("registered");
+            //log.debug("registered");
         }
         catch (Exception e) {
             throw new WSDDException(e);

@@ -79,7 +79,7 @@ public class MD5AttachHandler extends org.apache.axis.handlers.BasicHandler {
     public void invoke(MessageContext msgContext) throws AxisFault {
         log.debug(JavaUtils.getMessage("enter00", "EchoHandler::invoke") );
         try {
-            // System.err.println("IN MD5");        
+            // log.debug("IN MD5");        
             Message  msg = msgContext.getRequestMessage();
             org.apache.axis.SOAPPart soapPart = (org.apache.axis.SOAPPart) msg.getSOAPPart();
             org.apache.axis.message.SOAPEnvelope env = (org.apache.axis.message.SOAPEnvelope) soapPart.getAsSOAPEnvelope();
@@ -102,16 +102,16 @@ public class MD5AttachHandler extends org.apache.axis.handlers.BasicHandler {
 
                 startTime = Long.parseLong(startTimeStr);
             }
-            // System.err.println("GOTIT");
+            // log.debug("GOTIT");
 
             long receivedTime = System.currentTimeMillis();
             long elapsedTime = -1;
 
-            // System.err.println(startTime);            
-            // System.err.println(receivedTime);            
+            // log.debug("startTime=" + startTime);
+            // log.debug("receivedTime=" + receivedTime);            
             if (startTime > 0) elapsedTime = receivedTime - startTime;
             String elapsedTimeStr = elapsedTime + "";
-            // System.err.println(elapsedTimeStr);            
+            // log.debug("elapsedTimeStr=" + elapsedTimeStr);            
 
             java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
             java.io.InputStream attachmentStream =  dh.getInputStream();
@@ -144,7 +144,7 @@ public class MD5AttachHandler extends org.apache.axis.handlers.BasicHandler {
             String MD5String = org.apache.axis.encoding.Base64.encode(md.digest());
             String senddata = " elapsedTime=" + elapsedTimeStr + " MD5=" + MD5String;
 
-            // System.err.println(senddata);            
+            // log.debug("senddata=" + senddata);            
             paramElement.appendChild( paramElement.getOwnerDocument().createTextNode(senddata));
 
             sbe = new org.apache.axis.message.SOAPBodyElement(sbElement);
