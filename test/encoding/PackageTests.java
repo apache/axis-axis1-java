@@ -35,6 +35,7 @@ public class PackageTests extends TestCase
         suite.addTestSuite(TestAttributes.class);
         suite.addTestSuite(TestBeanDeser.class);
         suite.addTestSuite(TestBeanDeser2.class);
+        suite.addTestSuite(TestBeanDeser3.class);
         suite.addTestSuite(TestRoundTrip.class);
         suite.addTestSuite(TestOmittedValues.class);
         suite.addTestSuite(TestMultiRefIdentity.class);

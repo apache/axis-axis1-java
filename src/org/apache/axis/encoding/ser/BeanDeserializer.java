@@ -263,7 +263,7 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
         }
 
         // Get the child's xsi:type if available
-        QName childXMLType = context.getTypeFromXSITypeAttr(namespace, 
+        QName childXMLType = context.getTypeFromAttributes(namespace, 
                                                             localName,
                                                             attributes);
 
