@@ -83,6 +83,7 @@ public class Java2WsdlAntTask extends Task
     private String exclude = null;
     private String stopClasses = null;
     private String tm = "1.1";
+    private String style = null;
 
     // The method executing the task
     public void execute() throws BuildException {
@@ -98,6 +99,7 @@ public class Java2WsdlAntTask extends Task
             log("\texcluded:" + exclude, Project.MSG_VERBOSE);
             log("\tstopClasses:" + stopClasses, Project.MSG_VERBOSE);
             log("\ttypeMappingVersion:" + tm, Project.MSG_VERBOSE);
+            log("\tstyle:" + style, Project.MSG_VERBOSE);
             
             // Instantiate the emitter
             Emitter emitter = new Emitter();
@@ -121,7 +123,13 @@ public class Java2WsdlAntTask extends Task
             } else {
                 emitter.setDefaultTypeMapping(DefaultSOAP12TypeMappingImpl.create());
             }
-
+            if (style != null) {
+                if (style.equalsIgnoreCase("DOCUMENT")) {
+                    emitter.setMode(Emitter.MODE_DOCUMENT);
+                } else if (style.equalsIgnoreCase("RPC")) {
+                    emitter.setMode(Emitter.MODE_RPC);
+                }
+            }
             emitter.setIntfNamespace(namespace);
             emitter.setLocationUrl(location);
             emitter.setUseInheritedMethods(useInheritedMethods);
@@ -177,6 +185,11 @@ public class Java2WsdlAntTask extends Task
     // The setter for the "stopClasses" attribute
     public void setStopClasses(String stopClasses) {
         this.stopClasses = stopClasses;
+    }
+
+    // The setter for the "style" attribute
+    public void setStyle(String style) {
+        this.style = style;
     }
 
     /** the command arguments */
