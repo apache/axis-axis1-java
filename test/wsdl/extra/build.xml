@@ -87,6 +87,9 @@ Copyright:
     <copy file="ExtraClassesTestCase.java" overwrite="true"
           todir="${build.dir}/work/test/wsdl/extra"/>
 
+	<!-- Clean up old classes -->
+    <delete dir="${build.dir}/classes/test/wsdl/extra" />
+
     <!-- Compile the test case -->
     <javac srcdir="${build.dir}/work" destdir="${build.dest}" fork="${javac.fork}"
            debug="${debug}">
