@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<xsd:schema 
+    targetNamespace="http://www.xyz.net/schemas/arraytest/innerdata/1.0"
+    xmlns:innerdata="http://www.xyz.net/schemas/arraytest/innerdata/1.0"    
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+    <xsd:import namespace="http://schemas.xmlsoap.org/soap/encoding/"/>
+    <xsd:import namespace="http://schemas.xmlsoap.org/wsdl/"/>
+
+    <xsd:complexType name="innerDataArrType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">custom object array</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:restriction base="soapenc:Array">
+                <xsd:attribute ref="soapenc:arrayType"
+                    wsdl:arrayType="innerdata:innerDataType[]">
+                </xsd:attribute>
+            </xsd:restriction>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="innerDataType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">
+                custom object
+            </xsd:documentation>
+        </xsd:annotation>     
+        <xsd:sequence>
+            <xsd:element name="trDescr" type="innerdata:trDescrType" />
+        </xsd:sequence>
+    </xsd:complexType>
+            
+    <xsd:simpleType name="trDescrType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">element of custom object</xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+        </xsd:restriction>
+    </xsd:simpleType>
+
+
+</xsd:schema>
