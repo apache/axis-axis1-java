@@ -209,38 +209,53 @@ public class ArraySerializer implements Serializer {
             }
         }
         
-        AttributesImpl attrs;
-        if (attributes != null) {
-            if (attributes instanceof AttributesImpl) {
-                attrs = (AttributesImpl)attributes;
+        // Are we encoded?
+        boolean isEncoded = context.getMessageContext().isEncoded();
+        
+        if (isEncoded) {
+            AttributesImpl attrs;
+            if (attributes != null) {
+                if (attributes instanceof AttributesImpl) {
+                    attrs = (AttributesImpl)attributes;
+                } else {
+                    attrs = new AttributesImpl(attributes);
+                }
             } else {
-                attrs = new AttributesImpl(attributes);
+                attrs = new AttributesImpl();
             }
-        } else {
-            attrs = new AttributesImpl();
-        }
-
-        if (attrs.getIndex(Constants.URI_CURRENT_SOAP_ENC,
-                           Constants.ATTR_ARRAY_TYPE) == -1) {
-            String encprefix = context.getPrefixForURI(Constants.URI_CURRENT_SOAP_ENC);
-            attrs.addAttribute(Constants.URI_CURRENT_SOAP_ENC, 
-                                  Constants.ATTR_ARRAY_TYPE,
-                                  encprefix + ":arrayType",
-                                  "CDATA",
-                                  arrayType);
+            
+            if (attrs.getIndex(Constants.URI_CURRENT_SOAP_ENC,
+                               Constants.ATTR_ARRAY_TYPE) == -1) {
+                String encprefix = 
+                       context.getPrefixForURI(Constants.URI_CURRENT_SOAP_ENC);
+                attrs.addAttribute(Constants.URI_CURRENT_SOAP_ENC, 
+                                   Constants.ATTR_ARRAY_TYPE,
+                                   encprefix + ":arrayType",
+                                   "CDATA",
+                                   arrayType);
+            }
+            
+            // Force type to be SOAP_ARRAY for all array serialization.
+            int typeI = attrs.getIndex(Constants.URI_CURRENT_SCHEMA_XSI,
+                                       "type");
+            if (typeI != -1) {
+                attrs.removeAttribute(typeI);
+                attributes = context.setTypeAttribute(attrs,
+                                                      Constants.SOAP_ARRAY);
+            } else {
+                attributes = attrs;
+            }
         }
         
-        // Force type to be SOAP_ARRAY for all array serialization.
-        int typeI = attrs.getIndex(Constants.URI_CURRENT_SCHEMA_XSI,
-                                   "type");
-        if (typeI != -1) {
-            attrs.removeAttribute(typeI);
-            attributes = context.setTypeAttribute(attrs, Constants.SOAP_ARRAY);
-        } else {
-            attributes = attrs;
-        }
+        // For non-encoded (literal) use, each item is named with the QName
+        // we got in the arguments.  For encoded, we write an element with
+        // that QName, and then each item is an <item> inside that.
+        QName elementName = name;
         
-        context.startElement(name, attributes);
+        if (isEncoded) {
+            context.startElement(name, attributes);
+            elementName = new QName("","item");
+        }
 
         if (dim2Len < 0) {
             // Normal case, serialize each array element
@@ -248,7 +263,7 @@ public class ArraySerializer implements Serializer {
                 Object aValue = (list == null) ? Array.get(value, index) : list.get(index);
                 Class aClass = (aValue == null) ? null : aValue.getClass();
                 
-                context.serialize(new QName("","item"), null, aValue, aClass);
+                context.serialize(elementName, null, aValue, aClass);
             }
         } else {
             // Serialize as a 2 dimensional array
@@ -256,13 +271,13 @@ public class ArraySerializer implements Serializer {
                 for (int index2 = 0; index2 < dim2Len; index2++) {
                     Object aValue = Array.get(Array.get(value, index), index2);
                     Class aClass = (aValue == null) ? null : aValue.getClass();
-                    context.serialize(new QName("","item"), null, aValue, aClass);
+                    context.serialize(elementName, null, aValue, aClass);
                 }
             }
         }
 
-        
-        context.endElement();
+        if (isEncoded)
+            context.endElement();
     }
 
     public String getMechanismType() { return Constants.AXIS_SAX; }

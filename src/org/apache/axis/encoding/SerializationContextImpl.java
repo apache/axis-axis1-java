@@ -334,7 +334,14 @@ public class SerializationContextImpl implements SerializationContext
         return msgContext.getCurrentMessage();
     }
 
-    /** 
+    /**
+     * Get the MessageContext we're operating with
+     */
+    public MessageContext getMessageContext() {
+        return msgContext;
+    }
+
+    /**
      * Convert QName to a string of the form <prefix>:<localpart>
      * @param QName
      * @return prefixed qname representation for serialization.
