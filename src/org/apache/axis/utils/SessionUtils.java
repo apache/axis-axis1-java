@@ -123,17 +123,11 @@ public class SessionUtils {
     /**
      * Method getEntropy
      *
-     * @return a unique string
+     * @return a nominally unique string
      */
     private static String getEntropy() {
         if (null == thisHost) {
-            try {
-                thisHost = java.net.InetAddress.getLocalHost().getHostName();
-            } catch (java.net.UnknownHostException e) {
-                log.error(Messages.getMessage("javaNetUnknownHostException00"),
-                        e);
-                thisHost = "localhost";
-            }
+            thisHost=NetworkUtils.getLocalHostname();
         }
         StringBuffer s = new StringBuffer();
 

@@ -20,6 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StringUtils {
+    private StringUtils() {
+    }
+
     /**
      * An empty immutable <code>String</code> array.
      */
