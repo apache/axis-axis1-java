@@ -195,7 +195,7 @@ public class ParamReader
             readShort(); // descriptor_index
             int index = readShort(); // index
 
-            if (names != null) {
+            if (names != null && index < 2 * len) {
                 names[index] = resolveUtf8(n);
             }
         }
