@@ -460,10 +460,10 @@ public class MessageContext {
      */
     public void setTargetService(String tServ) throws AxisFault {
         log.debug("MessageContext: setTargetService(" + tServ+")");
-        targetService = tServ ;
 
-        if (targetService == null)
+        if (tServ == null) {
             setService(null);
+        }
         else {
             try {
                 setService(getAxisEngine().getService(tServ));
@@ -474,6 +474,7 @@ public class MessageContext {
                 }
             }
         }
+        targetService = tServ;
     }
 
     /** ServiceHandler is the handler that is the "service".  This handler
@@ -490,7 +491,8 @@ public class MessageContext {
     {
         log.debug("MessageContext: setServiceHandler("+sh+")");
         serviceHandler = sh;
-        if (sh != null && sh instanceof SOAPService) {
+        if (sh != null) {
+            targetService = sh.getName();
             SOAPService service = (SOAPService)sh;
             TypeMappingRegistry tmr = service.getTypeMappingRegistry();
             setTypeMappingRegistry(tmr);
