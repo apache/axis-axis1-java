@@ -73,7 +73,7 @@ import org.apache.commons.logging.LogFactory;
  * @author Rick Rineholt 
  */
 public class MD5AttachHandler extends org.apache.axis.handlers.BasicHandler {
-    static Log log =
+    protected static Log log =
         LogFactory.getLog(MD5AttachHandler.class.getName());
 
     public void invoke(MessageContext msgContext) throws AxisFault {

@@ -90,8 +90,8 @@ import org.apache.commons.logging.LogFactory;
  */
 public class MapDeserializer extends DeserializerImpl implements Deserializer  {
 
-    static Log log =
-            LogFactory.getLog(MapDeserializer.class.getName());
+    protected static Log log =
+        LogFactory.getLog(MapDeserializer.class.getName());
 
     // Fixed objects to act as hints to the set() callback
     public static final Object KEYHINT = new Object();

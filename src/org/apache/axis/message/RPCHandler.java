@@ -84,8 +84,8 @@ import java.util.Vector;
 
 public class RPCHandler extends SOAPHandler
 {
-    static Log log =
-            LogFactory.getLog(RPCHandler.class.getName());
+    protected static Log log =
+        LogFactory.getLog(RPCHandler.class.getName());
     
     private RPCElement call;
     private RPCParam currentParam;

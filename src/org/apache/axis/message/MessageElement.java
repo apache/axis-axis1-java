@@ -64,8 +64,10 @@ import org.apache.axis.encoding.SerializationContextImpl;
 import org.apache.axis.utils.Mapping;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
@@ -83,8 +85,8 @@ import java.util.Vector;
 
 public class MessageElement
 {
-    static Log log =
-            LogFactory.getLog(MessageElement.class.getName());
+    protected static Log log =
+        LogFactory.getLog(MessageElement.class.getName());
 
     protected String    name ;
     protected String    prefix ;
@@ -567,8 +569,8 @@ public class MessageElement
             return getAsString();
         }
         catch( Exception exp ) {
-            exp.printStackTrace();
-            return( null );
+            log.error("Exception: ", exp);
+            return null;
         }
     }
 

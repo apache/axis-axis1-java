@@ -86,8 +86,8 @@ import java.util.StringTokenizer;
  * @author Doug Davis (dug@us.ibm.com)
  */
 public class HTTPSender extends BasicHandler {
-    static Log log =
-            LogFactory.getLog(HTTPSender.class.getName());
+    protected static Log log =
+        LogFactory.getLog(HTTPSender.class.getName());
 
     public void invoke(MessageContext msgContext) throws AxisFault {
         if (log.isDebugEnabled()) {

@@ -70,8 +70,8 @@ import java.io.IOException;
  */
 public class ConfigurationException extends IOException {
 
-    private static Log log =
-                LogFactory.getLog(ConfigurationException.class.getName());
+    protected static Log log =
+        LogFactory.getLog(ConfigurationException.class.getName());
 
     /**
      * Construct a ConfigurationException from a String.  The string is wrapped
@@ -91,10 +91,7 @@ public class ConfigurationException extends IOException {
 
         // Log the exception the first time it appears.
         if (!(e instanceof ConfigurationException)) {
-            log.debug(e);
-            StringWriter writer = new StringWriter();
-            e.printStackTrace(new PrintWriter(writer));
-            log.debug(writer.getBuffer().toString());
+            log.debug("Exception: ", e);
         }
     }
 }

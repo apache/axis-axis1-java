@@ -75,8 +75,8 @@ import java.util.StringTokenizer;
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
 public class SimpleSecurityProvider implements SecurityProvider {
-    static Log log =
-            LogFactory.getLog(SimpleSecurityProvider.class.getName());
+    protected static Log log =
+        LogFactory.getLog(SimpleSecurityProvider.class.getName());
 
     HashMap users = null;
     HashMap perms = null;

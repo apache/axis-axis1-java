@@ -72,8 +72,8 @@ import org.apache.commons.logging.LogFactory;
  * @author Doug Davis (dug@us.ibm.com)
  */
 public class DebugHandler extends BasicHandler {
-    static Log log =
-            LogFactory.getLog(DebugHandler.class.getName());
+    protected static Log log =
+        LogFactory.getLog(DebugHandler.class.getName());
 
     public void invoke(MessageContext msgContext) throws AxisFault {
         log.debug(JavaUtils.getMessage("enter00", "DebugHandler::invoke") );

@@ -78,8 +78,8 @@ import org.apache.commons.logging.LogFactory;
  * @author Sam Ruby (rubys@us.ibm.com)
  */
 public class SimpleAuthenticationHandler extends BasicHandler {
-    static Log log =
-            LogFactory.getLog(SimpleAuthenticationHandler.class.getName());
+    protected static Log log =
+        LogFactory.getLog(SimpleAuthenticationHandler.class.getName());
 
     /**
      * Authenticate the user and password from the msgContext

@@ -113,8 +113,8 @@ import java.util.HashSet;
  */
 public class SimpleSessionHandler extends BasicHandler
 {
-    static Log log =
-            LogFactory.getLog(SimpleSessionHandler.class.getName());
+    protected static Log log =
+        LogFactory.getLog(SimpleSessionHandler.class.getName());
 
     public static final String SESSION_ID = "SimpleSession.id";
     public static final String SESSION_NS = "http://xml.apache.org/axis/session";

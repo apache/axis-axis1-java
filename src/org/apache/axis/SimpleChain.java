@@ -84,8 +84,8 @@ import java.util.Vector;
  * @author Glyn Normington (norm@uk.ibm.com)
  */
 public class SimpleChain extends BasicHandler implements Chain {
-    static Log log =
-            LogFactory.getLog(SimpleChain.class.getName());
+    protected static Log log =
+        LogFactory.getLog(SimpleChain.class.getName());
 
     protected Vector handlers = new Vector();
     protected boolean invoked = false;

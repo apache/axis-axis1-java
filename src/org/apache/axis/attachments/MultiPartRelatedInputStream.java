@@ -71,7 +71,11 @@ import org.apache.commons.logging.LogFactory;
  /** This simulates the multipart stream 
   *
   */
-public class MultiPartRelatedInputStream extends java.io.FilterInputStream {
+public class MultiPartRelatedInputStream extends java.io.FilterInputStream
+{
+    protected static Log log =
+            LogFactory.getLog(MultiPartRelatedInputStream.class.getName());
+
     public static final String MIME_MULTIPART_RELATED = "multipart/related";
     protected java.util.HashMap parts =  new java.util.HashMap();
     protected java.util.LinkedList orderedParts =  new java.util.LinkedList();
@@ -88,9 +92,6 @@ public class MultiPartRelatedInputStream extends java.io.FilterInputStream {
               //Still open and a reference to read data in a later attachment occurs.
     protected String contentLocation= null;          
     protected String contentId= null;
-
-    static Log log =
-            LogFactory.getLog(MultiPartRelatedInputStream.class.getName());
 
     /**
      * Multipart stream.

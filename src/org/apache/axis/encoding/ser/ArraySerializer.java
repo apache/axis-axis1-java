@@ -99,10 +99,10 @@ import java.beans.IntrospectionException;
  * Multi-reference stuff:
  * @author Rich Scheuerle (scheu@us.ibm.com)
  */
-public class ArraySerializer implements Serializer {
-
-    static Log log =
-            LogFactory.getLog(ArraySerializer.class.getName());
+public class ArraySerializer implements Serializer
+{
+    protected static Log log =
+        LogFactory.getLog(ArraySerializer.class.getName());
 
     /**
      * Serialize an element that is an array.

@@ -72,8 +72,8 @@ import org.w3c.dom.Document;
  * @author Doug Davis (dug@us.ibm.com)
  */
 public class EchoHandler extends BasicHandler {
-    static Log log =
-            LogFactory.getLog(EchoHandler.class.getName());
+    protected static Log log =
+        LogFactory.getLog(EchoHandler.class.getName());
 
     public void invoke(MessageContext msgContext) throws AxisFault {
         log.debug(JavaUtils.getMessage("enter00", "EchoHandler::invoke") );

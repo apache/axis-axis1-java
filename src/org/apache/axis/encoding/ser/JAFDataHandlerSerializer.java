@@ -96,8 +96,8 @@ import org.w3c.dom.Document;
  */
 public class JAFDataHandlerSerializer implements Serializer {
 
-    static Log log =
-            LogFactory.getLog(JAFDataHandlerSerializer.class.getName());
+    protected static Log log =
+        LogFactory.getLog(JAFDataHandlerSerializer.class.getName());
 
     /**
      * Serialize a JAF DataHandler quantity.

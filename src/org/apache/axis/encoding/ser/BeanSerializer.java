@@ -77,11 +77,13 @@ import org.apache.axis.wsdl.fromJava.ClassRep;
 import org.apache.axis.wsdl.fromJava.FieldRep;
 import org.apache.axis.wsdl.fromJava.Types;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.beans.IntrospectionException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
 
@@ -103,8 +105,8 @@ import java.util.Iterator;
  */
 public class BeanSerializer implements Serializer, Serializable {
 
-    static Log log =
-            LogFactory.getLog(BeanSerializer.class.getName());
+    protected static Log log =
+        LogFactory.getLog(BeanSerializer.class.getName());
 
     private static final Object[] noArgs = new Object[] {};  // For convenience
 
@@ -201,7 +203,7 @@ public class BeanSerializer implements Serializer, Serializable {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Exception: transforming to IOException: ", e);
             throw new IOException(e.toString());
         }
 

@@ -86,8 +86,8 @@ import java.util.Hashtable;
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
 public class FileProvider implements EngineConfiguration {
-    private static Log log =
-       LogFactory.getLog(FileProvider.class.getName());
+    protected static Log log =
+        LogFactory.getLog(FileProvider.class.getName());
 
     protected String sep = System.getProperty("file.separator");
 

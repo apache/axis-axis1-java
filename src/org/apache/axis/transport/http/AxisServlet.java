@@ -94,14 +94,16 @@ import java.util.HashMap;
  *
  * @author Doug Davis (dug@us.ibm.com)
  */
-public class AxisServlet extends HttpServlet {
+public class AxisServlet extends HttpServlet
+{
+    protected static Log log =
+        LogFactory.getLog(AxisServlet.class.getName());
+
     // These have default values.
     private String transportName = "http";
     private AxisEngine engine = null;
     private ServletSecurityProvider securityProvider = null;
 
-    static Log log =
-            LogFactory.getLog(AxisServlet.class.getName());
     /**
      * Should we enable the "?list" functionality on GETs?  (off by
      * default because deployment information is a potential security
@@ -208,7 +210,7 @@ public class AxisServlet extends HttpServlet {
                         JavaUtils.getMessage("error00") + "</h2>");
                 writer.println("<p>" +
                         JavaUtils.getMessage("somethingWrong00") + "</p>");
-                writer.println("<pre>" + fault.dumpToString() + " </pre>");
+                writer.println("<pre>" + fault.toString() + " </pre>");
                 return;
             }
         }
@@ -363,8 +365,7 @@ public class AxisServlet extends HttpServlet {
                         JavaUtils.getMessage("error00") + "</h2>");
                 writer.println("<p>" +
                         JavaUtils.getMessage("somethingWrong00") + "</p>");
-                writer.println("<pre>" + fault.dumpToString() + 
-                               " </pre>");
+                writer.println("<pre>" + fault.toString() + " </pre>");
             } catch (Exception e) {
                 res.setContentType("text/html");
                 writer.println("<h2>" +

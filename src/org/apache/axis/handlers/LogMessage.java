@@ -68,8 +68,8 @@ import org.apache.commons.logging.LogFactory;
  */
 public class LogMessage extends BasicHandler
 {
-    static Log log =
-            LogFactory.getLog(LogMessage.class.getName());
+    protected static Log log =
+        LogFactory.getLog(LogMessage.class.getName());
 
     public void invoke(MessageContext context)
     {

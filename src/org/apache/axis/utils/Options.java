@@ -71,8 +71,8 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 public class Options {
-    static Log log =
-            LogFactory.getLog(Options.class.getName());
+    protected static Log log =
+        LogFactory.getLog(Options.class.getName());
 
     String  args[]     = null ;
     Vector  usedArgs   = null ;

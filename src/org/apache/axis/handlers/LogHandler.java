@@ -72,8 +72,8 @@ import java.io.PrintWriter;
  * @author Doug Davis (dug@us.ibm.com)
  */
 public class LogHandler extends BasicHandler {
-    static Log log =
-            LogFactory.getLog(LogHandler.class.getName());
+    protected static Log log =
+        LogFactory.getLog(LogHandler.class.getName());
 
     long start = 0;
 

@@ -76,8 +76,8 @@ import java.net.URL;
  * @author Sam Ruby <rubys@us.ibm.com>
  */
 public class LocalSender extends BasicHandler {
-    static Log log =
-            LogFactory.getLog(LocalSender.class.getName());
+    protected static Log log =
+        LogFactory.getLog(LocalSender.class.getName());
 
     private volatile AxisServer server;
 

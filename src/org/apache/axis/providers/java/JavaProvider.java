@@ -86,9 +86,10 @@ import java.lang.reflect.InvocationTargetException;
  * @author Doug Davis (dug@us.ibm.com)
  * @author Carl Woolf (cwoolf@macromedia.com)
  */
-public abstract class JavaProvider extends BasicProvider {
-    static Log log =
-            LogFactory.getLog(JavaProvider.class.getName());
+public abstract class JavaProvider extends BasicProvider
+{
+    protected static Log log =
+        LogFactory.getLog(JavaProvider.class.getName());
 
 
     // from the original stubbed-out JavaProvider...

@@ -98,10 +98,10 @@ import java.beans.IntrospectionException;
  * @author Rich Scheuerle (scheu@us.ibm.com)
  */
 public class ArrayDeserializer extends DeserializerImpl 
-    implements Deserializer  {
-
-    static Log log =
-            LogFactory.getLog(ArrayDeserializer.class.getName());
+    implements Deserializer
+{
+    protected static Log log =
+        LogFactory.getLog(ArrayDeserializer.class.getName());
 
     public QName arrayType = null;
     public int curIndex = 0;

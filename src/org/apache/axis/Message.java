@@ -78,8 +78,8 @@ import java.lang.reflect.InvocationTargetException;
  * @author Rick Rineholt 
  */
 public class Message {
-    static Log log =
-            LogFactory.getLog(Message.class.getName());
+    protected static Log log =
+        LogFactory.getLog(Message.class.getName());
 
     public static final String REQUEST = "request";
     public static final String RESPONSE = "response";
@@ -326,14 +326,12 @@ public class Message {
                 os.write(mSOAPPart.getAsBytes());
             } catch (java.io.IOException e) {
                 log.error("IOException: ", e);
-                e.printStackTrace();
             }
         } else {
             try {
                 mAttachments.writeContentToStream(os);
             } catch (java.lang.Exception e) {
                 log.error("Exception: ", e);
-                e.printStackTrace();
             }
         }
     }

@@ -97,8 +97,8 @@ import java.util.jar.Manifest;
  */
 public class JWSProcessor extends BasicHandler
 {
-    static Log log =
-            LogFactory.getLog(JWSProcessor.class.getName());
+    protected static Log log =
+        LogFactory.getLog(JWSProcessor.class.getName());
 
 
     public void invoke(MessageContext msgContext) throws AxisFault

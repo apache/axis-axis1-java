@@ -93,8 +93,8 @@ import java.util.Hashtable;
  * @author Rob Jellinghaus (robj@unrealities.com)
  */
 public class SimpleAxisServer implements Runnable {
-    static Log log =
-            LogFactory.getLog(SimpleAxisServer.class.getName());
+    protected static Log log =
+        LogFactory.getLog(SimpleAxisServer.class.getName());
 
 
     // session state.
@@ -458,7 +458,7 @@ public class SimpleAxisServer implements Runnable {
             } catch (InterruptedIOException iie) {
                 break;
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error("Exception: ", e);
             } finally {
                 try {
                     if (socket!=null) socket.close();
@@ -799,7 +799,7 @@ public class SimpleAxisServer implements Runnable {
         try {
             opts = new Options(args);
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            log.error("MalformedURLException", e);
             return;
         }
 
@@ -809,7 +809,7 @@ public class SimpleAxisServer implements Runnable {
             sas.setServerSocket(ss);
             sas.run();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Exception", e);
             return;
         }
 

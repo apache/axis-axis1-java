@@ -75,8 +75,8 @@ import org.apache.commons.logging.LogFactory;
  */
 public class HTTPActionHandler extends BasicHandler
 {
-    static Log log =
-            LogFactory.getLog(HTTPActionHandler.class.getName());
+    protected static Log log =
+        LogFactory.getLog(HTTPActionHandler.class.getName());
 
     public void invoke(MessageContext msgContext) throws AxisFault
     {

@@ -65,9 +65,10 @@ import org.apache.commons.logging.LogFactory;
  /**
   * This class takes the input stream and turns it multiple streams. 
   */
-public class BoundaryDelimitedStream extends java.io.FilterInputStream {
-    static Log log =
-            LogFactory.getLog(BoundaryDelimitedStream.class.getName());
+public class BoundaryDelimitedStream extends java.io.FilterInputStream
+{
+    protected static Log log =
+        LogFactory.getLog(BoundaryDelimitedStream.class.getName());
 
     protected byte[] boundary = null;
     int boundaryLen = 0;  //The boundary length.

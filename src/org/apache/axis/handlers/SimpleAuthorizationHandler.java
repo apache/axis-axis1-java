@@ -81,8 +81,8 @@ import java.util.StringTokenizer;
  * @author Sam Ruby (rubys@us.ibm.com)
  */
 public class SimpleAuthorizationHandler extends BasicHandler {
-    static Log log =
-            LogFactory.getLog(SimpleAuthorizationHandler.class.getName());
+    protected static Log log =
+        LogFactory.getLog(SimpleAuthorizationHandler.class.getName());
 
     /**
      * Authorize the user and targetService from the msgContext

@@ -75,8 +75,8 @@ import org.xml.sax.SAXException;
 
 public class BodyBuilder extends SOAPHandler
 {
-    static Log log =
-            LogFactory.getLog(BodyBuilder.class.getName());
+    protected static Log log =
+        LogFactory.getLog(BodyBuilder.class.getName());
 
     private SOAPBodyElement element;
     boolean gotRPCElement = false;

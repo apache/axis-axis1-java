@@ -59,10 +59,18 @@ import org.xml.sax.SAXException;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
+
 import org.apache.axis.encoding.Target;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 // Target is set via a method call.  The set method places the value in the field.
-public class MethodTarget implements Target {
+public class MethodTarget implements Target
+{
+    protected static Log log =
+        LogFactory.getLog(MethodTarget.class.getName());
+
     private Object targetObject;
     private Method targetMethod;
     private static final Class [] objArg = new Class [] { Object.class };
@@ -79,13 +87,16 @@ public class MethodTarget implements Target {
         try {
             targetMethod.invoke(targetObject, new Object [] { value });
         } catch (IllegalAccessException accEx) {
-            accEx.printStackTrace();
+            log.error("IllegalAccessException: transforming to SAXException: ",
+                      accEx);
             throw new SAXException(accEx);
         } catch (IllegalArgumentException argEx) {
-            argEx.printStackTrace();
+            log.error("IllegalArgumentException: transforming to SAXException: ",
+                      argEx);
             throw new SAXException(argEx);
         } catch (InvocationTargetException targetEx) {
-            targetEx.printStackTrace();
+            log.error("InvocationTargetException: transforming to SAXException: ",
+                      targetEx);
             throw new SAXException(targetEx);
         }
     }

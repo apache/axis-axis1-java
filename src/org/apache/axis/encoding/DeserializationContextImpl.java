@@ -99,8 +99,8 @@ import java.util.Stack;
 
 public class DeserializationContextImpl extends DefaultHandler implements DeserializationContext
 {
-    static Log log =
-            LogFactory.getLog(DeserializationContextImpl.class.getName());
+    protected static Log log =
+        LogFactory.getLog(DeserializationContextImpl.class.getName());
     
     
     private NSStack namespaces = new NSStack();

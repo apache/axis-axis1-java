@@ -85,10 +85,10 @@ import org.apache.commons.logging.LogFactory;
  * @author Carsten Ziegeler (cziegeler@apache.org)
  * Modified by @author Rich scheuerle <scheu@us.ibm.com>
  */
-public class VectorDeserializer extends DeserializerImpl implements Deserializer  {
-
-    static Log log =
-            LogFactory.getLog(VectorDeserializer.class.getName());
+public class VectorDeserializer extends DeserializerImpl implements Deserializer
+{
+    protected static Log log =
+        LogFactory.getLog(VectorDeserializer.class.getName());
 
     public int curIndex = 0;
 

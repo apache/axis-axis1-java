@@ -77,10 +77,10 @@ import java.util.StringTokenizer;
  * @since 2.0
  */
 
-public class Javac extends AbstractCompiler {
-
-  static Log log =
-            LogFactory.getLog(Javac.class.getName());
+public class Javac extends AbstractCompiler
+{
+  protected static Log log =
+      LogFactory.getLog(Javac.class.getName());
     
   public final static String CLASSIC_CLASS = "sun.tools.javac.Main";
   public final static String MODERN_CLASS = "com.sun.tools.javac.Main";

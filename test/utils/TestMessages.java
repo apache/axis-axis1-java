@@ -104,7 +104,7 @@ public class TestMessages extends TestCase {
     } // testTestMessages
 
 
-    private final String LS = System.getProperty("line.separator");
+    private static final String LS = System.getProperty("line.separator");
 
     private String errors = "";
 

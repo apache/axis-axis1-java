@@ -57,6 +57,7 @@ package org.apache.axis.attachments;
 
 import org.apache.axis.InternalException;
 import org.apache.axis.MessageContext; 
+import org.apache.axis.utils.JavaUtils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -75,8 +76,8 @@ import java.io.File;
 
 public class ManagedMemoryDataSource implements  javax.activation.DataSource
 {
-    static Log log =
-            LogFactory.getLog(ManagedMemoryDataSource.class.getName());
+    protected static Log log =
+        LogFactory.getLog(ManagedMemoryDataSource.class.getName());
 
     protected String contentType = "application/octet-stream"; //Is the default.
     java.io.InputStream ss = null; //The incoming source stream.
@@ -385,12 +386,15 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource
         return ret;
     }
 
+    // inner classes cannot have static declarations...
+    protected static Log is_log =
+        LogFactory.getLog(Instream.class.getName());
+
     /** Inner class to handle getting an input stream to this data source
      *  Handles creating an input stream to the source.
      */
-    private class Instream extends java.io.InputStream {
-     Log log =
-            LogFactory.getLog(Instream.class.getName());
+    private class Instream extends java.io.InputStream
+    {
         protected int bread = 0; //bytes read
         java.io.FileInputStream fin = null;  //The real stream.
         int currentIndex = 0;  //The position in the list were we are reading from.
@@ -411,7 +415,7 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource
 
             int ret= totalsz - bread;
 
-            if(debugEnabled) log.debug("available()= "+ ret + ".");
+            if(debugEnabled) is_log.debug("available()= "+ ret + ".");
 
             return ret;
         }
@@ -433,7 +437,7 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource
          * Not supported.
          */
         public boolean markSupported() {
-            if(debugEnabled) log.debug("markSupported()= "+ false + ".");
+            if(debugEnabled) is_log.debug("markSupported()= "+ false + ".");
             return false;
         }
 
@@ -441,14 +445,14 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource
          * Not supported.
          */
         public void mark(int readlimit){
-            if(debugEnabled) log.debug("mark()");
+            if(debugEnabled) is_log.debug("mark()");
         }
 
         /**
          * Not supported.
          */
         public void reset() throws java.io.IOException {
-            if(debugEnabled) log.debug("reset()");
+            if(debugEnabled) is_log.debug("reset()");
             throw new java.io.IOException("Reset and mark not supported!");
         }
 
@@ -459,7 +463,7 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource
 
         public long skip(long skipped) throws java.io.IOException {
 
-            if(debugEnabled) log.debug("skip(" +skipped+ ").");
+            if(debugEnabled) is_log.debug("skip(" +skipped+ ").");
 
             if(deleted) throw new java.io.IOException("Resource has been deleted.");
             if(readClosed) throw new java.io.IOException("Stream is closed.");
@@ -496,7 +500,7 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource
                 bread += skipped;
             }
 
-            if(debugEnabled) log.debug("skipped " +skipped+ ".");
+            if(debugEnabled) is_log.debug("skipped " +skipped+ ".");
             return skipped;
         }
 
@@ -508,7 +512,7 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource
          */
 
         public int read(byte[] b, int off, int len) throws java.io.IOException {
-            if(debugEnabled) log.debug(hashCode() + "read(" + off + ", " + len +")");
+            if(debugEnabled) is_log.debug(hashCode() + "read(" + off + ", " + len +")");
             if(deleted) throw new java.io.IOException("Resource has been deleted.");
             if(readClosed) throw new java.io.IOException("Stream is closed.");
             if (b == null) throw new InternalException(
@@ -526,7 +530,7 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource
                 if ( bread == totalsz) return -1;
                 java.util.List ml = memorybuflist;
                  len = Math.min(len, totalsz - bread); //Only return the number of bytes in the data store that is left.
-                 if(debugEnabled) log.debug("len= " + len);                 
+                 if(debugEnabled) is_log.debug("len= " + len);                 
 
 
                 if ( ml != null) {
@@ -553,30 +557,30 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource
                 }
 
                     if (bwritten == 0 && null != diskCacheFile) {
-                    if(debugEnabled) log.debug("reading from disk" + len);                 
+                    if(debugEnabled) is_log.debug("reading from disk" + len);                 
                     if (null == fin ) { //we are now reading from disk.
-                    if(debugEnabled) log.debug("open bread=" + diskCacheFile.getCanonicalPath());                 
-                    if(debugEnabled) log.debug("open bread=" + bread);                 
+                    if(debugEnabled) is_log.debug("open bread=" + diskCacheFile.getCanonicalPath());                 
+                    if(debugEnabled) is_log.debug("open bread=" + bread);                 
                         fin = new java.io.FileInputStream( diskCacheFile);
                         if(bread >0) fin.skip(bread); //Skip what we've read so far.
                     }
 
                     if(cachediskstream  != null){
-                        if(debugEnabled) log.debug("flushing");                 
+                        if(debugEnabled) is_log.debug("flushing");                 
                         cachediskstream.flush();  
                     }
 
-                   if(debugEnabled){ log.debug("flushing");                 
-                       log.debug("len=" + len);                 
-                       log.debug("off=" + off);                 
-                       log.debug("b.length=" + b.length);                 
+                   if(debugEnabled){ is_log.debug("flushing");                 
+                       is_log.debug("len=" + len);                 
+                       is_log.debug("off=" + off);                 
+                       is_log.debug("b.length=" + b.length);                 
                     }
                     bwritten = fin.read(b, off, len);
                 }
                 if ( bwritten > 0) bread += bwritten;
             }
 
-            if(debugEnabled) log.debug( hashCode() +"read " + bwritten);
+            if(debugEnabled) is_log.debug( hashCode() +"read " + bwritten);
             return bwritten;
         }
 
@@ -585,7 +589,7 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource
          */
 
         public synchronized void close() throws java.io.IOException {
-            if(debugEnabled) log.debug("close()");
+            if(debugEnabled) is_log.debug("close()");
             if(!readClosed){
                 readers.remove(this);
                 readClosed= true;
@@ -630,8 +634,7 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource
 
         }
         catch ( java.lang.Exception e) {
-            log.error("Caught Exception", e);
-            e.printStackTrace();
+            log.error(JavaUtils.getMessage("exception00"), e);
         }
     }
 }

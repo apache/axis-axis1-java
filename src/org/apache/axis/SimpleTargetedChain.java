@@ -74,8 +74,8 @@ import java.util.Enumeration;
  */
 public class SimpleTargetedChain extends SimpleChain implements TargetedChain
 {
-   static Log log =
-            LogFactory.getLog(SimpleTargetedChain.class.getName());
+   protected static Log log =
+      LogFactory.getLog(SimpleTargetedChain.class.getName());
 
    protected Handler    requestHandler ;
    protected Handler    pivotHandler ;

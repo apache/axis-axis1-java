@@ -70,9 +70,10 @@ import java.beans.PropertyDescriptor;
  * that the values in it can be modified.
  * @author Rich Scheuerle <scheu@us.ibm.com>
  **/
-class BeanPropertyDescriptor {
-    static Log log =
-            LogFactory.getLog(BeanPropertyDescriptor.class.getName());
+class BeanPropertyDescriptor
+{
+    protected static Log log =
+        LogFactory.getLog(BeanPropertyDescriptor.class.getName());
 
     private String name;
     private Method getter;

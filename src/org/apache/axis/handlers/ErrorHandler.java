@@ -69,8 +69,8 @@ import org.apache.commons.logging.LogFactory;
  * @author Glen Daniels (gdaniels@allaire.com)
  */
 public class ErrorHandler extends BasicHandler {
-    static Log log =
-            LogFactory.getLog(ErrorHandler.class.getName());
+    protected static Log log =
+        LogFactory.getLog(ErrorHandler.class.getName());
 
     public void invoke(MessageContext msgContext) throws AxisFault {
         log.debug(JavaUtils.getMessage("enter00", "ErrorHandler::invoke") );

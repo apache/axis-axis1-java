@@ -71,8 +71,8 @@ import org.apache.commons.logging.LogFactory;
  */
 public class URLMapper extends BasicHandler
 {
-    static Log log =
-            LogFactory.getLog(URLMapper.class.getName());
+    protected static Log log =
+        LogFactory.getLog(URLMapper.class.getName());
 
     public void invoke(MessageContext msgContext) throws AxisFault
     {

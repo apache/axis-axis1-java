@@ -61,6 +61,10 @@ import org.apache.axis.deployment.DeployableItem;
 import org.apache.axis.encoding.*;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.Constants;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
@@ -75,6 +79,9 @@ import java.io.StringReader;
  */
 public class WSDDDocument
 {
+    protected static Log log =
+        LogFactory.getLog(WSDDDocument.class.getName());
+
     private Document doc;
 
     private WSDDDeployment deployment;
@@ -134,7 +141,7 @@ public class WSDDDocument
         try {
             deployment.writeToContext(context);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Caught Exception while writing to context: ", e);
         }
         try {
             writer.close();

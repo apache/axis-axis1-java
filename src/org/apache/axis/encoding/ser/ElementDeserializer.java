@@ -75,13 +75,19 @@ import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.DeserializerImpl;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * Deserializer for DOM elements
  *
  * @author Glen Daniels (gdaniels@macromedia.com)
  * Modified by @author Rich scheuerle <scheu@us.ibm.com>
  */
-public class ElementDeserializer extends DeserializerImpl implements Deserializer  {
+public class ElementDeserializer extends DeserializerImpl implements Deserializer
+{
+    protected static Log log =
+        LogFactory.getLog(ElementDeserializer.class.getName());
 
     public final void onEndElement(String namespace, String localName,
                                    DeserializationContext context)
@@ -99,7 +105,7 @@ public class ElementDeserializer extends DeserializerImpl implements Deserialize
             }
         }
         catch( Exception exp ) {
-            exp.printStackTrace();
+            log.error("Exception: transforming to SAXException: ", exp);
             throw new SAXException( exp );
         }
     }

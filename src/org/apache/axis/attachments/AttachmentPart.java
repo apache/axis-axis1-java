@@ -82,7 +82,8 @@ import java.io.IOException;
 import org.apache.axis.transport.http.HTTPConstants ;
 
 public class AttachmentPart extends Part {
-    static Log log = LogFactory.getLog(Message.class.getName());
+    protected static Log log =
+        LogFactory.getLog(AttachmentPart.class.getName());
 
     javax.activation.DataHandler datahandler= null;
     
