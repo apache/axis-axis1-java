@@ -64,6 +64,7 @@ import org.apache.axis.attachments.Attachments;
 import org.apache.axis.client.Call;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.description.TypeDesc;
+import org.apache.axis.description.OperationDesc;
 import org.apache.axis.encoding.ser.BaseSerializerFactory;
 import org.apache.axis.enum.Use;
 import org.apache.axis.handlers.soap.SOAPService;
@@ -274,13 +275,22 @@ public class SerializationContextImpl implements SerializationContext
                     sendXSIType = false ;
             }
 
-            // A Literal use service overrides the above settings. Don't
+            // A Literal use operation overrides the above settings. Don't
             // send xsi:type, and don't do multiref in that case.
-            SOAPService service = msgContext.getService();
-            if (service != null) {
-                if (service.getUse() != Use.ENCODED) {
+            OperationDesc operation = msgContext.getOperation();
+            if (operation != null) {
+                if (operation.getUse() != Use.ENCODED) {
                     sendXSIType = false;
                     doMultiRefs = false;
+                }
+            } else {
+                // A Literal use service overrides the above settings. 
+                SOAPService service = msgContext.getService();
+                if (service != null) {
+                    if (service.getUse() != Use.ENCODED) {
+                        sendXSIType = false;
+                        doMultiRefs = false;
+                    }
                 }
             }
         }
