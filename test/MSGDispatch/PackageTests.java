@@ -53,7 +53,7 @@
  * <http://www.apache.org/>.
  */
 
-package MSGDispatch;
+package test.MSGDispatch;
 
 import junit.framework.TestCase;
 import junit.framework.Test;
@@ -72,6 +72,8 @@ public class PackageTests extends TestCase {
     public static Test suite() throws Exception {
         TestSuite suite = new TestSuite();
 
-        suite.addTestSuite(TestMessageService);
+        suite.addTestSuite(TestMessageService.class);
+        
+        return suite;
     }
 }
