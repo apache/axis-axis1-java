@@ -257,7 +257,8 @@ public class Service implements javax.xml.rpc.Service {
         if ( port == null )
             throw new JAXRPCException( "Can't find port: " + portName );
 
-        PortType portType = wsdlDefinition.getPortType( qn );
+        Binding   binding  = port.getBinding();
+        PortType  portType = binding.getPortType();
         if ( portType == null )
             throw new JAXRPCException( "Can't find portType: " + portName );
 
@@ -296,7 +297,7 @@ public class Service implements javax.xml.rpc.Service {
      * @throws JAXRPCException If there's an error
      */
     public javax.xml.rpc.Call createCall(QName portName, 
-                                               String operationName)
+                                         String operationName)
                            throws JAXRPCException {
         javax.wsdl.QName qn = new javax.wsdl.QName( portName.getNamespaceURI(),
                                                     portName.getLocalPart() );
@@ -307,7 +308,11 @@ public class Service implements javax.xml.rpc.Service {
         if ( port == null )
             throw new JAXRPCException( "Can't find port: " + portName );
 
-        PortType  portType = wsdlDefinition.getPortType( qn );
+        Binding   binding  = port.getBinding();
+        PortType  portType = binding.getPortType();
+        if ( portType == null )
+            throw new JAXRPCException( "Can't find portType: " + portName );
+
         List operations = portType.getOperations();
         if ( operations == null )
             throw new JAXRPCException( "Can't find operation: " + 
@@ -345,7 +350,6 @@ public class Service implements javax.xml.rpc.Service {
 
         // Get the SOAPAction
         ////////////////////////////////////////////////////////////////////
-        Binding          binding = port.getBinding();
         BindingOperation bop = binding.getBindingOperation(operationName,
                                                            null, null);
         list = bop.getExtensibilityElements();
@@ -395,6 +399,11 @@ public class Service implements javax.xml.rpc.Service {
 
                 String           name  = part.getName();
                 javax.wsdl.QName type  = part.getTypeName();
+
+                if ( type == null )
+                    throw new JAXRPCException( "Type attribute on Part '" +
+                                               name + "' isn't set" );
+
                 QName            tmpQN = new QName( type.getNamespaceURI(),
                                                     type.getLocalPart());
                 XMLType          xmlType = new XMLType(tmpQN);
