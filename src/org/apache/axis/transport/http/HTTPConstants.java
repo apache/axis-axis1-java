@@ -108,6 +108,11 @@ public class HTTPConstants {
     public static String MC_HTTP_SERVLETLOCATION= "transport.http.servletLocation";
     public static String MC_HTTP_SERVLETPATHINFO= "transport.http.servletPathInfo";
 
+    /**
+     * @deprecated Should use org.apache.axis.client.Call.SOAPACTION_URI_PROPERTY instead.
+     */
+    public static String MC_HTTP_SOAPACTION = org.apache.axis.client.Call.SOAPACTION_URI_PROPERTY;
+
     /** HTTP header field values
      */
     public static final String HEADER_DEFAULT_CHAR_ENCODING = "iso-8859-1";
