@@ -335,7 +335,7 @@ public class Wsdl2javaTestSuite extends TestSuite {
             AdminClient.main(new String[] {"list"});
 
             // Clean up the test environment
-            this.cleanTest();
+            //this.cleanTest(); // commented out while debugging.
 
             // Stop the SimpleAxisServer
             System.out.println("Stopping test http server.");
