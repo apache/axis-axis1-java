@@ -12,9 +12,9 @@
 <property file="${axis.home}/build.properties"/>
 <property file="${user.home}/build.properties"/>
 
-<property name="axis.version" value="1.1RC1" />
+<property name="axis.version" value="1.1RC2" />
 <!-- This should be the version # above with dots replaced by underscores -->
-<property name="axis.dirname" value="1_1RC1" />
+<property name="axis.dirname" value="1_1RC2" />
 
 <property name="name" value="axis" />
 <property name="Name" value="Axis" />
