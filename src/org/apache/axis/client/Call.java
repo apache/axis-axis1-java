@@ -200,9 +200,6 @@ public class Call implements javax.xml.rpc.Call {
     // The desired return Java type, so we can do conversions if needed
     private Class              returnJavaType  = null;
 
-    // If a parameter is sent as a header, this flag will be set to true;
-    private boolean            headerParameters = false;
-
     public static final String SEND_TYPE_ATTR    = "send_type_attr" ;
     public static final String TRANSPORT_NAME    = "transport_name" ;
     public static final String TRANSPORT_PROPERTY= "java.protocol.handler.pkgs";
@@ -2173,19 +2170,22 @@ public class Call implements javax.xml.rpc.Call {
             } else {
                 // No direct config, so try the namespace of the first body.
                 reqMsg = msgContext.getRequestMessage();
-                reqEnv = reqMsg.getSOAPEnvelope();
 
-                SOAPBodyElement body = reqEnv.getFirstBody();
+                if (reqMsg != null) {
+                    reqEnv = reqMsg.getSOAPEnvelope();
 
-                // Does this make any sense to anyone?  If not, we should remove it.
-                // --Glen 03/16/02
-                //if ( body.getPrefix() == null )       body.setPrefix( "m" );
-                if ( body.getNamespaceURI() == null ) {
-                    throw new AxisFault("Call.invoke",
-                                        Messages.getMessage("cantInvoke00", body.getName()),
-                                        null, null);
-                } else {
-                    msgContext.setTargetService(body.getNamespaceURI());
+                    SOAPBodyElement body = reqEnv.getFirstBody();
+
+                    // Does this make any sense to anyone?  If not, we should remove it.
+                    // --Glen 03/16/02
+                    //if ( body.getPrefix() == null )       body.setPrefix( "m" );
+                    if ( body.getNamespaceURI() == null ) {
+                        throw new AxisFault("Call.invoke",
+                                            Messages.getMessage("cantInvoke00", body.getName()),
+                                            null, null);
+                    } else {
+                        msgContext.setTargetService(body.getNamespaceURI());
+                    }
                 }
             }
 
@@ -2201,13 +2201,16 @@ public class Call implements javax.xml.rpc.Call {
                     msgContext.getTargetService()));
         }
 
-        reqEnv = msgContext.getRequestMessage().getSOAPEnvelope();
-
-         // If we have headers to insert, do so now.
-        for (int i = 0 ; myHeaders != null && i < myHeaders.size() ; i++ ) {
-             reqEnv.addHeader((SOAPHeaderElement)myHeaders.get(i));
+        Message requestMessage = msgContext.getRequestMessage();
+        if (requestMessage != null) {
+            reqEnv = requestMessage.getSOAPEnvelope();
+            
+            // If we have headers to insert, do so now.
+            for (int i = 0 ; myHeaders != null && i < myHeaders.size() ; i++ ) {
+                reqEnv.addHeader((SOAPHeaderElement)myHeaders.get(i));
+            }
         }
-
+        
         // set up transport if there is one
         if (transport != null) {
             transport.setupMessageContext(msgContext, this, service.getEngine());
@@ -2282,7 +2285,7 @@ public class Call implements javax.xml.rpc.Call {
         Thread thread = new Thread(runnable);
         thread.start();
     }
-
+    
     /**
      * Get the output parameters (if any) from the last invocation.
      *
