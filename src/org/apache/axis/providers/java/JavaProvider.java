@@ -311,8 +311,10 @@ public abstract class JavaProvider extends BasicProvider
             SOAPEnvelope   resEnv;
 
             // If we didn't have a response message, make sure we set one up
+            // with the appropriate versions of SOAP and Schema
             if (resMsg == null) {
-                resEnv  = new SOAPEnvelope(msgContext.getSOAPConstants());
+                resEnv  = new SOAPEnvelope(msgContext.getSOAPConstants(),
+                                           msgContext.getSchemaVersion());
 
                 resMsg = new Message(resEnv);
                 msgContext.setResponseMessage( resMsg );

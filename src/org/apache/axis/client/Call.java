@@ -1567,7 +1567,8 @@ public class Call implements javax.xml.rpc.Call {
             /* ok, we're doing Messaging, so build up the message */
             /******************************************************/
             isMsg = true ;
-            env = new SOAPEnvelope(msgContext.getSOAPConstants());
+            env = new SOAPEnvelope(msgContext.getSOAPConstants(),
+                                   msgContext.getSchemaVersion());
 
             if ( !(params[0] instanceof SOAPEnvelope) )
                 for ( i = 0 ; i < params.length ; i++ )
@@ -2128,7 +2129,8 @@ public class Call implements javax.xml.rpc.Call {
         }
 
         SOAPEnvelope         reqEnv =
-                new SOAPEnvelope(msgContext.getSOAPConstants());
+                new SOAPEnvelope(msgContext.getSOAPConstants(),
+                                 msgContext.getSchemaVersion());
         SOAPEnvelope         resEnv = null ;
         Message              reqMsg = new Message( reqEnv );
         Message              resMsg = null ;

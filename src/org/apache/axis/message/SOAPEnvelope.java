@@ -58,6 +58,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.schema.SchemaVersion;
 import org.apache.axis.client.AxisClient;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.configuration.NullProvider;
@@ -91,6 +92,7 @@ public class SOAPEnvelope extends MessageElement
 
     public Vector trailers = new Vector();
     private SOAPConstants soapConstants;
+    private SchemaVersion schemaVersion = SchemaVersion.SCHEMA_2001;
 
     // This is a hint to any service description to tell it what
     // "type" of message we are.  This might be "request", "response",
@@ -110,9 +112,23 @@ public class SOAPEnvelope extends MessageElement
         this(true, soapConstants);
     }
 
+    public SOAPEnvelope(SOAPConstants soapConstants,
+                        SchemaVersion schemaVersion)
+    {
+        this(true, soapConstants, schemaVersion);
+    }
+
     public SOAPEnvelope(boolean registerPrefixes, SOAPConstants soapConstants)
     {
+        this (registerPrefixes, soapConstants, SchemaVersion.SCHEMA_2001);
+    }
+    
+    public SOAPEnvelope(boolean registerPrefixes,
+                        SOAPConstants soapConstants,
+                        SchemaVersion schemaVersion)
+    {    
         this.soapConstants = soapConstants;
+        this.schemaVersion = schemaVersion;
         header = new SOAPHeader(this, soapConstants);
         body = new SOAPBody(this, soapConstants);
 
@@ -122,15 +138,15 @@ public class SOAPEnvelope extends MessageElement
 
             namespaces.add(new Mapping(soapConstants.getEnvelopeURI(),
                                        Constants.NS_PREFIX_SOAP_ENV));
-            namespaces.add(new Mapping(Constants.URI_DEFAULT_SCHEMA_XSD,
+            namespaces.add(new Mapping(schemaVersion.getXsdURI(),
                                        Constants.NS_PREFIX_SCHEMA_XSD));
-            namespaces.add(new Mapping(Constants.URI_DEFAULT_SCHEMA_XSI,
+            namespaces.add(new Mapping(schemaVersion.getXsiURI(),
                                        Constants.NS_PREFIX_SCHEMA_XSI));
         }
 
         setDirty(true);
     }
-
+    
     public SOAPEnvelope(InputStream input) throws SAXException {
         InputSource is = new InputSource(input);
         header = new SOAPHeader(this, soapConstants); // soapConstants = null!
@@ -417,6 +433,14 @@ public class SOAPEnvelope extends MessageElement
 
     public void setSoapConstants(SOAPConstants soapConstants) {
         this.soapConstants = soapConstants;
+    }
+
+    public SchemaVersion getSchemaVersion() {
+        return schemaVersion;
+    }
+
+    public void setSchemaVersion(SchemaVersion schemaVersion) {
+        this.schemaVersion = schemaVersion;
     }
 
     // JAXM methods
