@@ -177,6 +177,7 @@ Copyright:
       <!-- Pass the parser settings -->
       <jvmarg value="-Djavax.xml.parsers.DocumentBuilderFactory=${javax.xml.parsers.DocumentBuilderFactory}"/>
       <jvmarg value="-Djavax.xml.parsers.SAXParserFactory=${javax.xml.parsers.SAXParserFactory}"/>
+      <jvmarg value="-Xbootclasspath:${sun.boot.class.path}"/>
 
       <!-- Pass through the proxy parameters -->
       <jvmarg value="-Dhttp.proxyHost=${http.proxyHost}"/>
