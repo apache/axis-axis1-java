@@ -88,7 +88,9 @@ public class JavaFaultWriter extends JavaWriter {
 
         Vector params = new Vector();
 
-        symbolTable.partStrings(params, fault.getMessage().getOrderedParts(null));
+        // XXX  Have to get use information (literal/encoded) for fault from
+        // XXX  BindingEntry, which we don't have the QName for
+        symbolTable.partStrings(params, fault.getMessage().getOrderedParts(null), false);
 
         // Write data members of the exception and getter methods for them
         for (int i = 0; i < params.size(); i += 2) {

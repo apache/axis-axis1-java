@@ -138,7 +138,7 @@ public class Call implements javax.xml.rpc.Call {
     private Vector             paramNames      = null ;
     private Vector             paramTypes      = null ;
     private Vector             paramModes      = null ;
-    private String             encodingStyle   = null ;
+    private String             encodingStyle   = Constants.URI_SOAP_ENC ;
     private QName              returnType      = null ;
 
     private MessageContext     msgContext      = null ;
@@ -1106,6 +1106,7 @@ public class Call implements javax.xml.rpc.Call {
         }
 
         RPCElement  body = new RPCElement(namespace, method, args);
+        
         Object ret = invoke( body );
 
         if (category.isDebugEnabled()) {
