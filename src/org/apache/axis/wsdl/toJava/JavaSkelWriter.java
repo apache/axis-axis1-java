@@ -59,6 +59,7 @@ import java.io.PrintWriter;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.ArrayList;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingInput;
@@ -75,6 +76,7 @@ import javax.wsdl.extensions.soap.SOAPOperation;
 import javax.xml.namespace.QName;
 
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
+import org.apache.axis.wsdl.symbolTable.FaultInfo;
 import org.apache.axis.wsdl.symbolTable.Parameter;
 import org.apache.axis.wsdl.symbolTable.Parameters;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
@@ -141,6 +143,7 @@ public class JavaSkelWriter extends JavaClassWriter {
         // Initialize operation parameter names
         pw.println("    static {");
         pw.println("        org.apache.axis.description.OperationDesc _oper;");
+        pw.println("        org.apache.axis.description.FaultDesc _fault;");
         pw.println("        org.apache.axis.description.ParameterDesc [] _params;");
         List operations = binding.getBindingOperations();
         for (int i = 0; i < operations.size(); ++i) {
@@ -258,6 +261,48 @@ public class JavaSkelWriter extends JavaClassWriter {
                 pw.println("            _myOperations.put(\"" + javaOpName + "\", new java.util.ArrayList());");
                 pw.println("        }");
                 pw.println("        ((java.util.List)_myOperations.get(\"" + javaOpName + "\")).add(_oper);");
+            }
+
+            // Now generate FaultDesc
+            if (bEntry.getFaults() != null) {
+                ArrayList faults = (ArrayList) bEntry.getFaults().get(bindingOper);
+                if (faults != null) {
+
+                    // Operation was not created if there were no parameters
+                    if (parameters == null) {
+                        String opName = bindingOper.getOperation().getName();
+                        String javaOpName = Utils.xmlNameToJava(opName);
+                        pw.println("        _oper = " +
+                                   "new org.apache.axis.description.OperationDesc();");
+                        pw.println("        _oper.setName(\"" +
+                                   javaOpName + "\");");
+                    }
+                    // Create FaultDesc items for each fault
+                    Iterator it = faults.iterator();
+                    while (it.hasNext()) {
+                        FaultInfo faultInfo = (FaultInfo) it.next();
+                        QName faultQName = faultInfo.getQName();
+                        QName faultXMLType = faultInfo.getXMLType();
+                        String className = 
+                            Utils.getFullExceptionName(
+                               faultInfo.getMessage(), symbolTable);
+                        pw.println("        _fault = " +
+                                   "new org.apache.axis.description.FaultDesc();");
+                        if (faultQName != null) {
+                            pw.println("        _fault.setQName(" +
+                                       Utils.getNewQName(faultQName)  + ");");
+                        }
+                        if (className != null) {
+                            pw.println("        _fault.setClassName(\"" +
+                                       className + "\");");
+                        }
+                        if (faultXMLType != null) {
+                            pw.println("        _fault.setXmlType(" +
+                                       Utils.getNewQName(faultXMLType)  + ");");
+                        }
+                        pw.println("        _oper.addFault(_fault);");
+                    }
+                }
             }
         }
         pw.println("    }");
