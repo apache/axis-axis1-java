@@ -124,8 +124,6 @@ public class Emitter {
     private boolean bEmitTestCase = false;
     private boolean bVerbose = false;
     private boolean bGenerateImports = true;
-    private String packageName = null;
-    private String packageDirName = "";
     private String outputDir = null;
     private byte scope = NO_EXPLICIT_SCOPE;
     private ArrayList classList = new ArrayList();

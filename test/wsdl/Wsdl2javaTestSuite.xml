@@ -98,6 +98,23 @@
         <mapping namespace="http://soapinterop.org/" package="interop.testb"/>
         <mapping namespace="http://soapinterop.org/xsd" package="interop.testb"/>
     </wsdl2java>
+
+    <!-- More information at: http://www.whitemesa.com/interop/proposalC.html -->
+    <!--
+    <wsdl2java url="http://www.whitemesa.com/interop/echoHeaderBindings.wsdl"
+               output="build/work"
+               testcase="no"
+               deployscope="none"
+               skeleton="yes"
+               messagecontext="no"
+               verbose="yes"
+               noimports="no">
+        <mapping namespace="http://soapinterop.org/" package="interop.echoheader"/>
+        <mapping namespace="http://soapinterop.org/xsd" package="interop.echoheader"/>
+    </wsdl2java>
+    -->
+
+    <!-- More information at: http://www.whitemesa.net/  -->
     <!--
     <wsdl2java url="http://www.whitemesa.net/wsdl/std/echoheadersvc.wsdl"
                output="build/work"
@@ -105,13 +122,51 @@
                deployscope="none"
                skeleton="yes"
                messagecontext="no"
-               noimports="no"
-               verbose="no"
+               verbose="yes"
                noimports="no">
         <mapping namespace="http://soapinterop.org/" package="interop.echoheadersvc"/>
         <mapping namespace="http://soapinterop.org/xsd" package="interop.echoheadersvc"/>
     </wsdl2java>
     -->
+
+    <!-- http://www.mssoapinterop.org/stk/roundBC.htm -->
+    <wsdl2java url="http://mssoapinterop.org/stk/InteropB.wsdl"
+               output="build/work"
+               testcase="no"
+               deployscope="none"
+               skeleton="yes"
+               messagecontext="no"
+               verbose="no"
+               noimports="no">
+        <mapping namespace="http://soapinterop.org/" package="mssoapinterop.interopb"/>
+        <mapping namespace="http://soapinterop.org/xsd" package="mssoapinterop.interopb"/>
+    </wsdl2java>
+    <!--
+    <wsdl2java url="http://mssoapinterop.org/stk/InteropBtyped.wsdl"
+               output="build/work"
+               testcase="no"
+               deployscope="none"
+               skeleton="yes"
+               messagecontext="no"
+               verbose="yes"
+               noimports="no">
+        <mapping namespace="http://soapinterop.org/" package="mssoapinterop.interopbtyped"/>
+        <mapping namespace="http://soapinterop.org/xsd" package="mssoapinterop.interopbtyped"/>
+    </wsdl2java>
+    -->
+    <wsdl2java url="http://mssoapinterop.org/stk/InteropC.wsdl"
+               output="build/work"
+               testcase="no"
+               deployscope="none"
+               skeleton="yes"
+               messagecontext="no"
+               verbose="no"
+               noimports="no">
+        <mapping namespace="http://soapinterop.org" package="mssoapinterop.interopc"/>
+        <mapping namespace="http://soapinterop.org/" package="mssoapinterop.interopc"/>
+        <mapping namespace="http://soapinterop.org/xsd" package="mssoapinterop.interopc"/>
+    </wsdl2java>
+
   </target>
 </project>
 
