@@ -71,6 +71,7 @@ import javax.wsdl.Service;
 import javax.wsdl.extensions.soap.SOAPAddress;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.XMLUtils;
 
 /**
 * This is Wsdl2java's service implementation writer.
@@ -210,7 +211,8 @@ public class JavaServiceImplWriter extends JavaWriter {
         for (ListIterator li = extensibilityList.listIterator(); li.hasNext();) {
             Object obj = li.next();
             if (obj instanceof SOAPAddress) {
-                return ((SOAPAddress) obj).getLocationURI();
+                return XMLUtils.xmlEncodeString(
+                        ((SOAPAddress) obj).getLocationURI());
             }
         }
         // didn't find it
