@@ -58,7 +58,7 @@ package samples.echo ;
 import org.apache.axis.encoding.Hex;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.HashMap;
 
 /**
@@ -158,7 +158,7 @@ public class EchoService {
     /**
      * This method accepts a Date/Time and echoes it back to the client.
      */
-    public Date echoDate(Date input) {
+    public Calendar echoDate(Calendar input) {
         return input;
     }
 

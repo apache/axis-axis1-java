@@ -125,9 +125,11 @@ public abstract class TestClient {
            obj2 = ((Hex) obj2).getBytes();
        }
 
-       if (obj1 instanceof Date && obj2 instanceof Date)
-           if (Math.abs(((Date)obj1).getTime()-((Date)obj2).getTime())<1000)
+       if (obj1 instanceof Calendar && obj2 instanceof Calendar) {
+           if (Math.abs(((Calendar)obj1).getTime().getTime() - ((Calendar)obj2).getTime().getTime()) < 1000) {
                return true;
+           }
+       }
 
        if ((obj1 instanceof Map) && (obj2 instanceof Map)) {
            Map map1 = (Map)obj1;
@@ -353,12 +355,11 @@ public abstract class TestClient {
                 }
             }
         }
-        Date inputDate = null;
+        Calendar inputDate = Calendar.getInstance();
+        inputDate.setTimeZone(TimeZone.getTimeZone("GMT"));
+        inputDate.setTime(new Date());
         {
             try {
-                SimpleDateFormat zulu = new SimpleDateFormat("yyyy-MM-dd");
-                zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
-                inputDate = zulu.parse(zulu.format(new Date()));
                 output = binding.echoDate(inputDate);
                 verify("echoDate", inputDate, output);
             } catch (Exception e) {
