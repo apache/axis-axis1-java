@@ -648,7 +648,11 @@ public class XMLUtils {
             return ((SAXSource) source).getInputSource();
         } else if (source instanceof DOMSource) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            Element domElement = (Element)((DOMSource)source).getNode();
+            Node node = ((DOMSource)source).getNode();
+            if (node instanceof Document) {
+                node = ((Document)node).getDocumentElement();
+            }
+            Element domElement = (Element)node;
             PrettyElementToStream(domElement, baos);
             InputSource  isource = new InputSource(source.getSystemId());
             isource.setByteStream(new ByteArrayInputStream(baos.toByteArray()));
