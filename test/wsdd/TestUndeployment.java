@@ -42,9 +42,9 @@ public class TestUndeployment extends TestCase
             "</deployment>";
     
     static final String undeployDoc =
-            "<deployment xmlns=\"http://xml.apache.org/axis/wsdd/\">\n" +
+            "<undeployment xmlns=\"http://xml.apache.org/axis/wsdd/\">\n" +
             " <handler name=\"other\"/>\n" +
-            "</deployment>";
+            "</undeployment>";
 
     public TestUndeployment (String name) {
         super(name);
@@ -72,7 +72,7 @@ public class TestUndeployment extends TestCase
 
         InputStream is = new StringBufferInputStream(undeployDoc);
         WSDDDocument doc = new WSDDDocument(XMLUtils.newDocument(is));
-        server.undeployWSDD(doc);
+        server.deployWSDD(doc);
         
         handler = server.getHandler("other");
         assertNull("Undeployed handler is still available", handler);
