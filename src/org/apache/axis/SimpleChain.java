@@ -154,7 +154,8 @@ public class SimpleChain extends BasicHandler implements Chain {
 
     public void addHandler(Handler handler) {
         if (handler == null)
-            throw new NullPointerException(JavaUtils.getMessage("exception01"));
+            throw new NullPointerException(
+                    JavaUtils.getMessage("nullHandler00", "SimpleChain::addHandler"));
         
         if ( handlers == null ) handlers = new Vector();
         handlers.add( handler );
