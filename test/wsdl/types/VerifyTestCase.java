@@ -27,6 +27,7 @@ import javax.xml.rpc.holders.FloatHolder;
 import javax.xml.rpc.holders.IntegerWrapperHolder;
 import javax.xml.rpc.holders.IntHolder;
 import javax.xml.rpc.holders.LongHolder;
+import javax.xml.rpc.holders.ObjectHolder;
 import javax.xml.rpc.holders.QNameHolder;
 import javax.xml.rpc.holders.ShortWrapperHolder;
 import javax.xml.rpc.holders.ShortHolder;
@@ -176,8 +177,14 @@ public class VerifyTestCase extends junit.framework.TestCase {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
         try {
+            EnumHolder value = new EnumHolder();
+            binding.enumOut(value);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+        try {
             Enum value = null;
-            value = binding.enumOut();
+            value = binding.enumReturn();
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
@@ -192,7 +199,13 @@ public class VerifyTestCase extends junit.framework.TestCase {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
         }
         try {
-            String[] value = binding.arrayOut();
+            ArrayHolder value = new ArrayHolder();
+            binding.arrayOut(value);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
+        }
+        try {
+            String[] value = binding.arrayReturn();
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
         }
@@ -207,7 +220,13 @@ public class VerifyTestCase extends junit.framework.TestCase {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
         }
         try {
-            int[][][] value = binding.arrayMOut();
+            ArrayMHolder value = new ArrayMHolder();
+            binding.arrayMOut(value);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
+        }
+        try {
+            int[][][] value = binding.arrayMReturn();
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
         }
@@ -226,8 +245,14 @@ public class VerifyTestCase extends junit.framework.TestCase {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
         try {
+            ComplexAllHolder value = new ComplexAllHolder();
+            binding.complexAllOut(value);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+        try {
             ComplexAll value = null;
-            value = binding.complexAllOut();
+            value = binding.complexAllReturn();
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
@@ -247,8 +272,14 @@ public class VerifyTestCase extends junit.framework.TestCase {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
         try {
+            ComplexSequenceHolder value = new ComplexSequenceHolder();
+            binding.complexSequenceOut(value);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+        try {
             ComplexSequence value = null;
-            value = binding.complexSequenceOut();
+            value = binding.complexSequenceReturn();
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
@@ -290,8 +321,14 @@ public class VerifyTestCase extends junit.framework.TestCase {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
         try {
+            ElemWComplexHolder value = new ElemWComplexHolder();
+            binding.elemWComplexOut(value);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+        try {
             ElemWComplex value = null;
-            value = binding.elemWComplexOut();
+            value = binding.elemWComplexReturn();
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
@@ -317,8 +354,14 @@ public class VerifyTestCase extends junit.framework.TestCase {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
         try {
+            ComplexWComplexHolder value = new ComplexWComplexHolder();
+            binding.complexWComplexOut(value);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+        try {
             ComplexWComplex value = null;
-            value = binding.complexWComplexOut();
+            value = binding.complexWComplexReturn();
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
@@ -328,12 +371,18 @@ public class VerifyTestCase extends junit.framework.TestCase {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
         try {
-            binding.anyInout(new javax.xml.rpc.holders.ObjectHolder(new java.lang.String("yo ho ho")));
+            binding.anyInout(new ObjectHolder(new java.lang.String("yo ho ho")));
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
         try {
-            java.lang.Object value = binding.anyOut();
+            ObjectHolder value = new ObjectHolder();
+            binding.anyOut(value);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+        try {
+            java.lang.Object value = binding.anyReturn();
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
@@ -356,8 +405,14 @@ public class VerifyTestCase extends junit.framework.TestCase {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
         try {
+            AnimalHolder value = new AnimalHolder();
+            binding.animalOut(value);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+        try {
             Animal value = null;
-            value = binding.animalOut();
+            value = binding.animalReturn();
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
@@ -372,8 +427,14 @@ public class VerifyTestCase extends junit.framework.TestCase {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
         try {
+            CatHolder value = new CatHolder();
+            binding.catOut(value);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+        try {
             Cat value = null;
-            value = binding.catOut();
+            value = binding.catReturn();
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }

@@ -184,6 +184,8 @@ public class JavaImplWriter extends JavaWriter {
                     pw.print("new java.math.BigDecimal(-3)");
                 } else if (paramType.equals("java.math.BigInteger")) {
                     pw.print("new java.math.BigInteger(\"-3\")");
+                } else if (paramType.equals("java.lang.Object")) {
+                    pw.print("new java.lang.String()");
                 } else if (paramType.equals("byte[]")) {
                     pw.print("new byte[0]");
                 } else if (paramType.equals("java.lang.Byte[]")) {
@@ -192,8 +194,22 @@ public class JavaImplWriter extends JavaWriter {
                     pw.print("java.util.Calendar.getInstance()");
                 } else if (paramType.equals("javax.xml.rpc.namespace.QName")) {
                     pw.print("new javax.xml.rpc.namespace.QName(\"\", \"\")");
+                } else if (paramType.endsWith("[]")) {
+                    pw.print("new "
+                             + JavaUtils.replace(paramType, "[]", "[0]"));
                 } else {
-                    pw.print("new " + paramType + "()");
+                    // We have some constructed type.
+                    Vector v = SchemaUtils.getEnumerationBaseAndValues(
+                            param.getType().getNode(), symbolTable);
+
+                    if (v != null) {
+                        // This constructed type is an enumeration.  Use the first one.
+                        String enumeration = (String) v.get(1);
+                        pw.print(paramType + "." + enumeration);
+                    } else {
+                        // This constructed type is a normal type, instantiate it.
+                        pw.print("new " + paramType + "()");
+                    }
                 }
                 pw.println(";");
             }
