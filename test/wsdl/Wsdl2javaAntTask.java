@@ -92,7 +92,7 @@ public class Wsdl2javaAntTask extends Task
     private String output = "." ;
     private String deployScope = "";
     private String url = "";
-    private String tm = "1.2";
+    private String tm = "1.1";
     private long timeout = 45000;
     
     /**
