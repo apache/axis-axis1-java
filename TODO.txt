@@ -19,7 +19,7 @@ CLIENT API
 
 JAX-RPC COMPATIBILITY
 ---------------------
-* <Rich> Implement serializer/deserializer framework compliance
+X <Rich> Implement serializer/deserializer framework compliance
 
 PERFORMANCE
 -----------
@@ -75,6 +75,11 @@ WSDL2Java
 
 ! <> Need to handle collections of objects (max occurs > 1).
 
+! <> Need to register array types and enum types in the stub and deploy.wsdd. 
+     Registering array types if the remote (non-AXIS) services sets the 
+     type attribute to the array type name instead of soapenc:array.
+     See samples.echo.testClient
+
 Java2WSDL
 ---------
 X <> Plug new framework into autogen mechanism
@@ -91,6 +96,8 @@ X <> Plug new framework into autogen mechanism
    </wsdl:message>
 
 ! <> Support generating schema for custom serializers
+
+! <> Support generation of deploy.wsdd from Java2WSDL
 
 
 GENERAL / UNCATEGORIZED

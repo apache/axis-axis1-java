@@ -143,6 +143,10 @@ public class SimpleDeserializer extends DeserializerImpl {
                            DeserializationContext context)
         throws SAXException
     {
+        if (isNil) {
+            value = null;
+            return;
+        }
         try {
             value = makeValue(val.toString());
         } catch (InvocationTargetException ite) {

@@ -74,7 +74,7 @@ public class WSDDTypeMapping
     extends WSDDElement
 {
     protected QName qname = null;
-        protected String serializer = null;
+    protected String serializer = null;
     protected String deserializer = null;
     protected QName typeQName = null;
     protected String ref = null;

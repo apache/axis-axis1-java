@@ -327,21 +327,21 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
             } else if (myQName.equals(Constants.SOAP_ARRAY)) {
                 typeQName = Constants.SOAP_ARRAY;
             } else if (myQName.equals(Constants.SOAP_STRING)) {
-                typeQName = Constants.XSD_STRING;
+                typeQName = Constants.SOAP_STRING;
             } else if (myQName.equals(Constants.SOAP_BOOLEAN)) {
-                typeQName = Constants.XSD_BOOLEAN;
+                typeQName = Constants.SOAP_BOOLEAN;
             } else if (myQName.equals(Constants.SOAP_DOUBLE)) {
-                typeQName = Constants.XSD_DOUBLE;
+                typeQName = Constants.SOAP_DOUBLE;
             } else if (myQName.equals(Constants.SOAP_FLOAT)) {
-                typeQName = Constants.XSD_FLOAT;
+                typeQName = Constants.SOAP_FLOAT;
             } else if (myQName.equals(Constants.SOAP_INT)) {
-                typeQName = Constants.XSD_INT;
+                typeQName = Constants.SOAP_INT;
             } else if (myQName.equals(Constants.SOAP_LONG)) {
-                typeQName = Constants.XSD_LONG;
+                typeQName = Constants.SOAP_LONG;
             } else if (myQName.equals(Constants.SOAP_SHORT)) {
-                typeQName = Constants.XSD_SHORT;
+                typeQName = Constants.SOAP_SHORT;
             } else if (myQName.equals(Constants.SOAP_BYTE)) {
-                typeQName = Constants.XSD_BYTE;
+                typeQName = Constants.SOAP_BYTE;
             }
         }
 

@@ -84,6 +84,7 @@ public class WSDDService
     public TypeMappingRegistry tmr = null;
     
     private Vector faultFlows = new Vector();
+    private Vector typeMappings = new Vector();
     
     private String descriptionURL;
 
@@ -241,7 +242,11 @@ public class WSDDService
             service.setName(getQName().getLocalPart());
         service.setOptions(getParametersTable());
 
+        if (tmr == null) {
+            tmr = new TypeMappingRegistryImpl();
+        }
         service.setTypeMappingRegistry(tmr);
+        tmr.delegate(registry.getTypeMappingRegistry());
 
         WSDDFaultFlow [] faultFlows = getFaultFlows();
         if (faultFlows != null && faultFlows.length > 0) {
@@ -302,6 +307,7 @@ public class WSDDService
                                                           mapping.getQName());
             }
             tm.register( mapping.getLanguageSpecificType(), mapping.getQName(), ser, deser);
+            typeMappings.add(mapping);
         } catch (ClassNotFoundException e) {
             throw new WSDDException(e);
         } catch (Exception e) {
@@ -330,6 +336,9 @@ public class WSDDService
         writeParamsToContext(context);
 
         if (tmr != null) {
+            for (int i=0; i < typeMappings.size(); i++) {
+                ((WSDDTypeMapping) typeMappings.elementAt(i)).writeToContext(context);
+            }
             // RJS_TEMP
             // Need to provide a writeTypeMappingsToContext
             //tmr.dumpToSerializationContext(context);

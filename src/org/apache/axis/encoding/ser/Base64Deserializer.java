@@ -79,6 +79,13 @@ import org.apache.axis.encoding.Base64;
  */
 public class Base64Deserializer extends DeserializerImpl implements Deserializer  {
 
+    public QName xmlType;
+    public Class javaType;
+    public Base64Deserializer(Class javaType, QName xmlType) {
+        this.xmlType = xmlType;
+        this.javaType = javaType;
+    }
+
     /**
      * Handle any characters found in the data
      */
@@ -86,6 +93,14 @@ public class Base64Deserializer extends DeserializerImpl implements Deserializer
         throws SAXException
     {
         value = Base64.decode(chars, start, end);
+        if (javaType == Byte[].class) {
+            Byte[] data = new Byte[ ((byte[])value).length ];
+            for (int i=0; i<data.length; i++) {
+                byte b = ((byte[]) value)[i];
+                data[i] = new Byte(b);
+            }
+            value = data;
+        }
     }
     
     /**
@@ -96,6 +111,12 @@ public class Base64Deserializer extends DeserializerImpl implements Deserializer
         throws SAXException
     {
         super.onEndElement(namespace,localName, context);
-        if (value == null) value = new byte[0];
+        if (value == null) {
+            if (javaType == byte[].class) {
+                value = new byte[0];
+            } else {
+                value = new Byte[0];
+            }
+        }
     }
 }

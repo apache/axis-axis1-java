@@ -61,11 +61,12 @@ package org.apache.axis.encoding;
  */
 public interface TypeMappingRegistry extends javax.xml.rpc.encoding.TypeMappingRegistry {
     /**
-     * Return the default TypeMapping
-     * (According to the JAX-RPC rep, this will be in javax.xml.rpc.encoding.TypeMappingRegistry for version 0.7)
-     * @return TypeMapping or null
-     **/
-    public javax.xml.rpc.encoding.TypeMapping getDefaultTypeMapping();
+     * delegate
+     *
+     * Changes the contained type mappings to delegate to 
+     * their corresponding types in the secondary TMR.
+     */
+    public void delegate(TypeMappingRegistry secondaryTMR);
 }
 
 

@@ -1091,9 +1091,11 @@ public class Call implements javax.xml.rpc.Call {
 
         // If a TypeMapping is not available, add one.
         TypeMapping tm = (TypeMapping) tmr.getTypeMapping(Constants.URI_CURRENT_SOAP_ENC); 
+        TypeMapping defaultTM = (TypeMapping) tmr.getDefaultTypeMapping(); 
         try {
-            if (tm == null) {
+            if (tm == null || tm == defaultTM ) {
                 tm = (TypeMapping) tmr.createTypeMapping();
+                tm.setSupportedEncodings(new String[] {Constants.URI_CURRENT_SOAP_ENC});
                 tmr.register(tm, new String[] {Constants.URI_CURRENT_SOAP_ENC});
             }
             if (!force && tm.getClassForQName(xmlType) != null) 

@@ -122,20 +122,91 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
 
     private DefaultTypeMappingImpl() {
         super(null);
-        delegateIfNotFound = false;
+        delegate = null;
+
+        // Notes:
+        // 1) If the soap11Ser flag is set, then the SOAP 1.1 format is sent
+        //    over the wire.  Otherwise SOAP 1.2 format is used over the wire.
+        // 2) The registration statements are order dependent.  The last one
+        //    wins.  So if two javaTypes of String are registered, the serializer
+        //    factory for the last one registered will be chosen.  Likewise
+        //    if two javaTypes for XSD_DATE are registered, the deserializer 
+        //    factory for the last one registered will be chosen.
+        // 3) Even if the SOAP 1.1 format is used over the wire, an 
+        //    attempt is made to receive SOAP 1.2 format from the wire.
+        //    This is the reason why the soap encoded primitives are 
+        //    registered without serializers.
+        boolean soap11Ser =  Constants.URI_CURRENT_SOAP_ENC.equals(Constants.URI_SOAP_ENC);
+
+        // SOAP Encoded strings are treated as primitives.  Everything else is not.
+        // Note that only deserializing is supported if we are flowing SOAP 1.1 over the wire
+        myRegister(Constants.SOAP_STRING,     java.lang.String.class,     null, null, true, soap11Ser); 
+        myRegister(Constants.SOAP_BOOLEAN,    java.lang.Boolean.class,    null, null, false, soap11Ser);
+        myRegister(Constants.SOAP_DOUBLE,     java.lang.Double.class,     null, null, false, soap11Ser);
+        myRegister(Constants.SOAP_FLOAT,      java.lang.Float.class,      null, null, false, soap11Ser);
+        myRegister(Constants.SOAP_INT,        java.lang.Integer.class,    null, null, false, soap11Ser);
+        myRegister(Constants.SOAP_INTEGER,    java.math.BigInteger.class, null, null, false, soap11Ser);
+        myRegister(Constants.SOAP_DECIMAL,    java.math.BigDecimal.class, null, null, false, soap11Ser);
+        myRegister(Constants.SOAP_LONG,       java.lang.Long.class,       null, null, false, soap11Ser);
+        myRegister(Constants.SOAP_SHORT,      java.lang.Short.class,      null, null, false, soap11Ser);
+        myRegister(Constants.SOAP_BYTE,       java.lang.Byte.class,       null, null, false, soap11Ser);
+
+
+        // SOAP 1.1
+        // byte[] -ser-> XSD_BASE64
+        // Byte[] -ser-> array of Byte
+        // XSD_BASE64 -deser-> byte[]
+        // SOAP_BASE64 -deser->byte[]
+        //
+        // SOAP 1.2
+        // byte[] -ser-> XSD_BASE64
+        // Byte[] -ser-> SOAP_BASE64
+        // XSD_BASE64 -deser-> byte[]
+        // SOAP_BASE64 -deser->Byte[]
+        if (soap11Ser) {
+            myRegister(Constants.SOAP_BASE64,     byte[].class, 
+                       new Base64SerializerFactory(byte[].class,Constants.SOAP_BASE64 ),
+                       new Base64DeserializerFactory(byte[].class,Constants.SOAP_BASE64),
+                       true, true);      
+            myRegister(Constants.SOAP_ARRAY,     java.lang.Byte[].class,       
+                       new ArraySerializerFactory(),
+                       new ArrayDeserializerFactory(),true);
+        } else {
+            myRegister(Constants.SOAP_BASE64,     java.lang.Byte[].class,     
+                       new Base64SerializerFactory(java.lang.Byte[].class,Constants.SOAP_BASE64 ),
+                       new Base64DeserializerFactory(java.lang.Byte[].class, Constants.SOAP_BASE64),
+                       true);
+        }
+        myRegister(Constants.XSD_BASE64,     byte[].class,                                   
+                   new Base64SerializerFactory(byte[].class,Constants.XSD_BASE64 ),
+                   new Base64DeserializerFactory(byte[].class,Constants.XSD_BASE64),true);
+
+
+        if (soap11Ser) {
+            // If SOAP 1.1 over the wire, then map wrapper classes to XSD primitives.
+            // Even though the java class is an object, since these are all 
+            // xsd primitives, treat them as a primitive.
+            myRegister(Constants.XSD_STRING,     java.lang.String.class,     null, null, true); 
+            myRegister(Constants.XSD_BOOLEAN,    java.lang.Boolean.class,    null, null, true);
+            myRegister(Constants.XSD_DOUBLE,     java.lang.Double.class,     null, null, true);
+            myRegister(Constants.XSD_FLOAT,      java.lang.Float.class,      null, null, true);
+            myRegister(Constants.XSD_INT,        java.lang.Integer.class,    null, null, true);
+            myRegister(Constants.XSD_INTEGER,    java.math.BigInteger.class, null, null, true);
+            myRegister(Constants.XSD_DECIMAL,    java.math.BigDecimal.class, null, null, true);
+            myRegister(Constants.XSD_LONG,       java.lang.Long.class,       null, null, true);
+            myRegister(Constants.XSD_SHORT,      java.lang.Short.class,      null, null, true);
+            myRegister(Constants.XSD_BYTE,       java.lang.Byte.class,       null, null, true);
+        }
 
         // The XSD Primitives are mapped to java primitives.
-        // The corresponding SOAP-ENC primitives are mapped to the wrapper classes.
-        myRegister(Constants.XSD_BOOLEAN,    boolean.class,              null, null, true);
+        myRegister(Constants.XSD_BOOLEAN,    boolean.class,              null, null,true);
         myRegister(Constants.XSD_DOUBLE,     double.class,               null, null,true);
         myRegister(Constants.XSD_FLOAT,      float.class,                null, null,true);
         myRegister(Constants.XSD_INT,        int.class,                  null, null,true);
         myRegister(Constants.XSD_LONG,       long.class,                 null, null,true);
         myRegister(Constants.XSD_SHORT,      short.class,                null, null,true);
         myRegister(Constants.XSD_BYTE,       byte.class,                 null, null,true);
-        myRegister(Constants.XSD_STRING,     java.lang.String.class,     null, null,true);
-        myRegister(Constants.XSD_INTEGER,    java.math.BigInteger.class, null, null,true);
-        myRegister(Constants.XSD_DECIMAL,    java.math.BigDecimal.class, null, null,true);
+
         myRegister(Constants.XSD_QNAME,      javax.xml.rpc.namespace.QName.class,
                    new BeanSerializerFactory(javax.xml.rpc.namespace.QName.class,
                                              Constants.XSD_QNAME),
@@ -154,10 +225,6 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
         myRegister(Constants.XSD_DATE,       java.util.Date.class,                           
                    new DateSerializerFactory(java.util.Date.class,Constants.XSD_DATE),
                    new DateDeserializerFactory(java.util.Date.class,Constants.XSD_DATE),true);
-
-        myRegister(Constants.XSD_BASE64,     byte[].class,                                   
-                   new Base64SerializerFactory(),
-                   new Base64DeserializerFactory(),true);
         myRegister(Constants.XSD_HEXBIN,     Hex.class,   
                    new HexSerializerFactory(),
                    new HexDeserializerFactory(),true);
@@ -189,70 +256,41 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
         myRegister(Constants.SOAP_ARRAY,     java.util.ArrayList.class,               
                    new ArraySerializerFactory(),
                    new ArrayDeserializerFactory(), false);
-
-        // Register the SOAP Primitives if we SOAP 1.2 over the wire.
-        // (Currently URI_CURRENT_SOAP_ENC is set to SOAP 1.1)
-        if (Constants.URI_CURRENT_SOAP_ENC.equals(Constants.URI_SOAP12_ENC)) {
-            // SOAP Encoded strings are treated as primitives.  Everything else is not.
-            myRegister(Constants.SOAP_STRING,     java.lang.String.class,     null, null, true); 
-            myRegister(Constants.SOAP_BOOLEAN,    java.lang.Boolean.class,    null, null, false);
-            myRegister(Constants.SOAP_DOUBLE,     java.lang.Double.class,     null, null, false);
-            myRegister(Constants.SOAP_FLOAT,      java.lang.Float.class,      null, null, false);
-            myRegister(Constants.SOAP_INT,        java.lang.Integer.class,    null, null, false);
-            myRegister(Constants.SOAP_INTEGER,    java.math.BigInteger.class, null, null, false);
-            myRegister(Constants.SOAP_DECIMAL,    java.math.BigDecimal.class, null, null, false);
-            myRegister(Constants.SOAP_LONG,       java.lang.Long.class,       null, null, false);
-            myRegister(Constants.SOAP_SHORT,      java.lang.Short.class,      null, null, false);
-            myRegister(Constants.SOAP_BYTE,       java.lang.Byte.class,       null, null, false);
-            // Note that a SOAP_BASE64 is mapped to a Byte[] not a byte[].  This is 
-            // the reason why the array serialization is used.
-            myRegister(Constants.SOAP_BASE64,     java.lang.Byte[].class,       
-                       new ArraySerializerFactory(),
-                       new ArrayDeserializerFactory(),true);
-
-        } else {
-            // Even though the java class is an object, since these are all 
-            // xsd primitives, treat them as a primitive.
-            myRegister(Constants.XSD_STRING,     java.lang.String.class,     null, null, true); 
-            myRegister(Constants.XSD_BOOLEAN,    java.lang.Boolean.class,    null, null, true);
-            myRegister(Constants.XSD_DOUBLE,     java.lang.Double.class,     null, null, true);
-            myRegister(Constants.XSD_FLOAT,      java.lang.Float.class,      null, null, true);
-            myRegister(Constants.XSD_INT,        java.lang.Integer.class,    null, null, true);
-            myRegister(Constants.XSD_INTEGER,    java.math.BigInteger.class, null, null, true);
-            myRegister(Constants.XSD_DECIMAL,    java.math.BigDecimal.class, null, null, true);
-            myRegister(Constants.XSD_LONG,       java.lang.Long.class,       null, null, true);
-            myRegister(Constants.XSD_SHORT,      java.lang.Short.class,      null, null, true);
-            myRegister(Constants.XSD_BYTE,       java.lang.Byte.class,       null, null, true);
-
-            // Need to accept a SOAP_BASE64 over the wire...which maps to byte[].         
-            // Note that this is serialized over the wire as XSD_BASE64.
-            myRegister(Constants.SOAP_BASE64,    byte[].class,       
-                       null,
-                       new Base64DeserializerFactory(),true);
-            myRegister(Constants.XSD_BASE64,     byte[].class,                                   
-                       new Base64SerializerFactory(),
-                       new Base64DeserializerFactory(),true);
-        }
-
     }
 
     /**
      * Construct TypeMapping for all the [xmlType, javaType] for all of the
      * known xmlType namespaces
+     * @param xmlType is the QName type
+     * @param javaType is the java type
+     * @param sf is the serializer factory (if null, the simple factory is used)
+     * @param df is the deserializer factory (if null, the simple factory is used)
+     * @param primitive indicates whether the item is a primitive (allows for sharing of serializers)
+     * @param onlyDeserFactory indicates if only deserialization is desired.
      */   
     protected void myRegister(QName xmlType, Class javaType,
                               SerializerFactory sf, DeserializerFactory df, boolean primitive) {
+        myRegister(xmlType, javaType, sf, df, primitive, false);
+    }
+    protected void myRegister(QName xmlType, Class javaType,
+                              SerializerFactory sf, DeserializerFactory df, 
+                              boolean primitive, boolean onlyDeserFactory) {
 
         // If factories are not specified, use the Simple serializer/deserializer factories.
         if (sf == null && df == null) {
-            if (primitive) {
-                sf = new SimplePrimitiveSerializerFactory(javaType, xmlType);
-            } else {
-                sf = new SimpleNonPrimitiveSerializerFactory(javaType, xmlType);
+            if (!onlyDeserFactory) {
+                if (primitive) {
+                    sf = new SimplePrimitiveSerializerFactory(javaType, xmlType);
+                } else {
+                    sf = new SimpleNonPrimitiveSerializerFactory(javaType, xmlType);
+                }
             }
             df = new SimpleDeserializerFactory(javaType, xmlType);
         }
-
+        if (onlyDeserFactory) {
+            sf = null;
+        }
+        
         // Register all known flavors of the namespace.
         try {
             if (xmlType.getNamespaceURI().equals(Constants.URI_CURRENT_SCHEMA_XSD)) {
