@@ -65,7 +65,6 @@ import javax.wsdl.WSDLException;
 
 import org.apache.axis.utils.JavaUtils;
 
-import org.apache.axis.wsdl.symbolTable.BaseTypeMapping;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
 import org.apache.axis.wsdl.symbolTable.MessageEntry;
@@ -77,6 +76,10 @@ import org.apache.axis.wsdl.symbolTable.TypeEntry;
 
 import org.w3c.dom.Document;
 
+/**
+ * This is a class with no documentation.
+ *
+ */
 public class Parser {
 
     protected boolean debug   = false;
@@ -272,7 +275,7 @@ public class Parser {
         generate(symbolTable);
     } // run
 
-    private void generate(SymbolTable symbolTable) throws IOException, WSDLException {
+    private void generate(SymbolTable symbolTable) throws IOException {
         Definition def = symbolTable.getDefinition();
         genFactory.generatorPass(def, symbolTable);
         if (isDebug()) {

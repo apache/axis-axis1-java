@@ -55,7 +55,6 @@
 
 package org.apache.axis.encoding.ser;
 
-import org.apache.axis.AxisProperties;
 import org.apache.axis.MessageContext;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.DeserializerImpl;

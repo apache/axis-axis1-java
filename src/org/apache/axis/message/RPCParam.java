@@ -202,8 +202,14 @@ public class RPCParam
         Class javaType = value == null ? null: value.getClass();
         QName xmlType = null;
         if (paramDesc != null) {
-            javaType = paramDesc.getJavaType() != null ? 
-                paramDesc.getJavaType(): javaType;
+            if (javaType == null) {
+                javaType = paramDesc.getJavaType() != null ?
+                    paramDesc.getJavaType(): javaType;
+            } else if (!(javaType.equals(paramDesc.getJavaType()))) {
+                // This must (assumedly) be a polymorphic type - in ALL
+                // such cases, we must send an xsi:type attribute.
+                wantXSIType = true;
+            }
             xmlType = paramDesc.getTypeQName();
         }
         context.serialize(qname,  // element qname
