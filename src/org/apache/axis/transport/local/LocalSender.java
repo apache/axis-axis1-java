@@ -59,6 +59,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.attachments.Attachments;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.message.SOAPEnvelope;
@@ -125,8 +126,14 @@ public class LocalSender extends BasicHandler {
         }
         
         Message serverRequest = new Message(msgStr);
-        serverRequest.getAttachmentsImpl().setAttachmentParts(
-          clientRequest.getAttachmentsImpl().getAttachments());
+
+        Attachments serverAttachments = serverRequest.getAttachmentsImpl();
+        Attachments clientAttachments = clientRequest.getAttachmentsImpl();
+
+        if (null != clientAttachments && null != serverAttachments) {
+            serverAttachments.setAttachmentParts(clientAttachments.getAttachments());
+        }
+
         serverContext.setRequestMessage(serverRequest);
 
 // END FIX: http://nagoya.apache.org/bugzilla/show_bug.cgi?id=17161
