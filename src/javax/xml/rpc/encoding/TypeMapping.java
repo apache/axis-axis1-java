@@ -84,7 +84,7 @@ public interface TypeMapping {
      *
      * @param namespaceURIs String[] of namespace URI's                
      */
-    public String[] setSupportedEncodings(String[] namespaceURIs);
+    public void setSupportedEncodings(String[] namespaceURIs);
 
     /**
      * Registers SerializerFactory and DeserializerFactory for a 
