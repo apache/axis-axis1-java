@@ -482,9 +482,11 @@ public class Emitter {
             //  - we found its definition (getNode())
             //  - it is referenced 
             //  - it is not a base java type
+            //  - it is a Type (not an Element)
             // (Note that types that are arrays are passed to getWriter
             //  because they may require a Holder)
-            if (type.getNode() != null &&   
+            if (type.getNode() != null && 
+                type instanceof Type &&
                 type.isReferenced() && 
                 type.getBaseType() == null) {
                 Writer writer = writerFactory.getWriter(type, symbolTable);

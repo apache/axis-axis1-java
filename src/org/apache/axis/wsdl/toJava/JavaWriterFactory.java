@@ -157,17 +157,20 @@ public class JavaWriterFactory implements WriterFactory {
     } // getWriter
 
     /**
-     * Fill in the names of each SymTabEntry with the javaified name
+     * Fill in the names of each SymTabEntry with the javaified name.
+     * Note: This method also ensures that anonymous types are 
+     * given unique java type names.
      */
     private void javifyNames(SymbolTable symbolTable) {
+        int uniqueNum = 0;
+        HashMap anonQNames = new HashMap();
         Iterator it = symbolTable.getHashMap().values().iterator();
         while (it.hasNext()) {
             Vector v = (Vector) it.next();
             for (int i = 0; i < v.size(); ++i) {
                 SymTabEntry entry = (SymTabEntry) v.elementAt(i);
 
-                // If it's a type, then use the referenced type's QName to generate this type's
-                // name.
+                // Use the type or the referenced type's QName to generate the java name.      
                 if (entry instanceof TypeEntry) {
                     TypeEntry tEntry = (TypeEntry) entry;
                     String dims = tEntry.getDimensions();
@@ -177,7 +180,28 @@ public class JavaWriterFactory implements WriterFactory {
                         dims += tEntry.getDimensions();
                         refType = tEntry.getRefType();
                     }
-                    entry.setName(symbolTable.getJavaName(tEntry.getQName()) + dims);
+                    // Get the QName to javify
+                    QName typeQName = tEntry.getQName();
+                    if (typeQName.getLocalPart().lastIndexOf('.') >= 0) {
+                        // This is an anonymous type name.
+                        // Axis uses '.' as a nesting token to generate
+                        // unique qnames for anonymous types.
+                        // Only consider the localName after the last '.' when
+                        // generating the java name
+                        String localName = typeQName.getLocalPart();
+                        localName = localName.substring(localName.lastIndexOf('.')+1);
+                        typeQName = new QName(typeQName.getNamespaceURI(), localName);
+                        // If there is already an existing type, there will be a 
+                        // collision.  If there is an existing anon type, there will be a 
+                        // collision.  In both cases, the java type name should be mangled.
+                        if (symbolTable.getType(typeQName) != null ||
+                            anonQNames.get(typeQName) != null) {
+                            localName += "ANON" + uniqueNum++;
+                            typeQName = new QName(typeQName.getNamespaceURI(), localName);
+                        } 
+                        anonQNames.put(typeQName, typeQName);
+                    }
+                    entry.setName(symbolTable.getJavaName(typeQName) + dims);
                 }
 
                 // If it is not a type, then use this entry's QName to generate its name.
@@ -245,6 +269,15 @@ public class JavaWriterFactory implements WriterFactory {
                         if (entry instanceof Element) {
                             entry.setName(mangleName(entry.getName(),
                                     "_ElemType"));
+                            // If this global element was defined using 
+                            // an anonymous type, then need to change the
+                            // java name of the anonymous type to match.
+                            QName anonQName = new QName(entry.getQName().getNamespaceURI(),
+                                                        "." + entry.getQName().getLocalPart());
+                            TypeEntry anonType = symbolTable.getType(anonQName);
+                            if (anonType != null) {
+                                anonType.setName(entry.getName());
+                            }
                         }
                         else if (entry instanceof TypeEntry) {
                             // Search all other types for java names that match this one.
@@ -508,6 +541,20 @@ public class JavaWriterFactory implements WriterFactory {
                                 p.type.setDynamicVar(
                                         JavaTypeWriter.HOLDER_IS_NEEDED,
                                         new Boolean(true));
+
+                                // If the type is a DefinedElement, need to 
+                                // set HOLDER_IS_NEEDED on the anonymous type.
+                                QName anonQName = SchemaUtils.
+                                    getElementAnonQName(p.type.getNode());
+                                if (anonQName != null) {
+                                    TypeEntry anonType = 
+                                        symbolTable.getType(anonQName);
+                                    if (anonType != null) {
+                                        anonType.setDynamicVar(
+                                            JavaTypeWriter.HOLDER_IS_NEEDED,
+                                            new Boolean(true));
+                                    }                                    
+                                }
                             }
                         }
                     }

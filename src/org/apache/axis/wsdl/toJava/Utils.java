@@ -97,93 +97,6 @@ public class Utils {
         return name;
     } // capitalizeFirstChar
 
-
-
-    /**
-     * Some QNames represent base types.  This routine returns the 
-     * name of the base java type or null.
-     * (These mappings based on JSR-101 version 0.6 Public Draft)
-     * ----------------------------------------------------------
-     * Note that the Schema simple types map to different java types
-     * depending on whether the nillable flag is set.  This routine
-     * assumes nillable is false.
-     * ----------------------------------------------------------
-     * @param QName
-     */
-    /*
-    public static String getBaseJavaName(QName qName) {
-        String localName = qName.getLocalPart();
-        if (Constants.isSchemaXSD(qName.getNamespaceURI())) {
-            if (localName.equals("string")) {
-                return "java.lang.String";
-            } else if (localName.equals("integer")) {
-                return "java.math.BigInteger";
-            } else if (localName.equals("int")) {
-                return "int";
-            } else if (localName.equals("long")) {
-                return "long";
-            } else if (localName.equals("short")) {
-                return "short";
-            } else if (localName.equals("decimal")) {
-                return "java.math.BigDecimal";
-            } else if (localName.equals("float")) {
-                return "float";
-            } else if (localName.equals("double")) {
-                return "double";
-            } else if (localName.equals("boolean")) {
-                return "boolean";
-            } else if (localName.equals("byte")) {
-                return "byte";
-            } else if (localName.equals("QName")) {
-                return "javax.xml.rpc.namespace.QName";
-            } else if (localName.equals("dateTime")) {
-                return "java.util.Date";             // Should be Calendar, but Calendar is abstract!
-            } else if (localName.equals("base64Binary")) {
-                return "byte[]";
-            } else if (localName.equals("hexBinary")) {
-                return "byte[]";
-            } else if (localName.equals("date")) {   // Not defined in JSR-101
-                return "java.util.Date";
-            } else if (localName.equals("void")) {   // Not defined in JSR-101
-                return "void";
-            } else if (localName.equals("anyType")) { 
-                return "java.lang.Object";
-            }
-        }
-        else if (Constants.isSOAP_ENC(qName.getNamespaceURI())) {
-            if (localName.equals("string")) {
-                return "java.lang.String";
-            } else if (localName.equals("int")) {
-                return "java.lang.Integer";
-            } else if (localName.equals("short")) {
-                return "java.lang.Short";
-            } else if (localName.equals("decimal")) {
-                return "java.math.BigDecimal";
-            } else if (localName.equals("float")) {
-                return "java.lang.Float";
-            } else if (localName.equals("double")) {
-                return "java.lang.Double";
-            } else if (localName.equals("boolean")) {
-                return "java.lang.Boolean";
-            } else if (localName.equals("base64")) {
-                return "java.lang.Byte[]";
-            } else if (localName.equals("byte")) {     
-                return "java.lang.Byte";
-            } else if (localName.equals("Array")) {    // Support for JAX-RPC Array
-                return "Object[]";
-            } else if (localName.equals("Vector")) {   // Not defined in JSR-101
-                return "java.util.Vector";
-            }
-        }
-        // special "java" namesapce means straight java types
-        // So "java:void" maps to "void"
-        else if (qName.getNamespaceURI().equals("java")) {  // Not defined in JSR-101
-            return localName;
-        }
-        return null;
-    }
-    */
-
     /**
      * getNillableQName returns the QName to use if the nillable=true
      * attribute is used.                             
@@ -327,7 +240,23 @@ public class Utils {
         // the complexType may be anonymous, which is why the getScopedAttribute
         // method is used.
         if (localName == null) {
-            localName = getScopedAttribute(node, "name");
+            localName = "";
+            Node search = node.getParentNode();
+            while(search != null) {
+                QName kind = getNodeQName(search);
+                if (kind.getLocalPart().equals("schema")) {
+                    search = null;
+                } else if (kind.getLocalPart().equals("element")) {
+                    localName = "." + getNodeNameQName(search).getLocalPart();
+                    search = search.getParentNode();
+                } else if (kind.getLocalPart().equals("complexType") ||
+                           kind.getLocalPart().equals("simpleType")) {
+                    localName = getNodeNameQName(search).getLocalPart() + localName;
+                    search = null;
+                } else {
+                    search = search.getParentNode();
+                }
+            }            
         }
         if (localName == null)
             return null;
@@ -707,6 +636,16 @@ public class Utils {
                 }
             }
         }
+        
+        // Get the anonymous type of the element
+        QName anonQName = SchemaUtils.getElementAnonQName(type);
+        if (anonQName != null) {
+            TypeEntry anonType = symbolTable.getType(anonQName);
+            if (anonType != null && !types.contains(anonType)) {
+                types.add(anonType);
+            }
+        }
+
         // Process extended types
         TypeEntry extendType = SchemaUtils.getComplexElementExtensionBase(type, symbolTable);
         if (extendType != null) {

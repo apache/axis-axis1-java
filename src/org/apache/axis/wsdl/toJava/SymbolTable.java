@@ -613,21 +613,8 @@ public class SymbolTable {
      */
     private void createTypeFromDef(Node node, boolean isElement,
             boolean belowSchemaLevel) throws IOException {
-        // See if this is an anonymous complexType for a global element
-        // If it is, the element in the dictionary is used.
-        QName qName = null;
-        TypeEntry anonType = null;
-        if (!isElement &&
-            Utils.getAttribute(node, "name") == null) {
-            qName = Utils.getNodeNameQName(node);
-            if (qName != null &&
-                getElement(qName) != null) {  // Element exists in dictionary so use it.
-                return;
-            }
-        }
-
         // Get the QName of the node's name attribute value
-        qName = Utils.getNodeNameQName(node);
+        QName qName = Utils.getNodeNameQName(node);
         if (qName != null) {
 
             // If the qname is already registered as a base type,
