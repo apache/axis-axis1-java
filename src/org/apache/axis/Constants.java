@@ -137,6 +137,8 @@ public class Constants {
   //////////////////////////////////////////////////////////////////////////
   public static String URI_DEBUG = "http://xml.apache.org/axis/debug" ;
 
+  public static String MC_REALPATH = "realpath";
+
   /** The global input/out chains */
   public static String GLOBAL_INPUT        = "global.input" ;
   public static String GLOBAL_OUTPUT       = "global.output" ;

@@ -169,6 +169,12 @@ public class AxisServlet extends HttpServlet {
       if ( tmp != null ) 
         msgContext.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, tmp );
 
+      /* Save the real path */
+      /**********************/
+      String realpath = context.getRealPath(req.getServletPath());
+      if (realpath != null) 
+        msgContext.setProperty(Constants.MC_REALPATH, realpath);
+
       /* Invoke the Axis engine... */
       /*****************************/
       engine.invoke( msgContext );

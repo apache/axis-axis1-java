@@ -128,12 +128,12 @@ public class DefaultHandlerRegistry extends SupplierRegistry {
       this.add( "EchoHandler"  , new EchoHandler() );
 
       c = new SimpleChain();
+      c.addHandler( this.find( "JWSHandler" ) );
       c.addHandler( this.find( "debug" ) );
       this.add( "global.input", c );
 
       c = new SimpleChain();
       c.addHandler( this.find( "HTTPAuth" ) );
-      c.addHandler( this.find( "JWSHandler" ) );
       c.addHandler( this.find( "HTTPAction" ) );
       this.add( "HTTP.input", c );
 
