@@ -44,6 +44,7 @@ import org.apache.axis.Handler;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.SimpleTargetedChain;
+import org.apache.axis.client.Service;
 import org.apache.axis.management.ServiceAdmin;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.description.OperationDesc;
@@ -768,7 +769,10 @@ public class AxisServlet extends AxisServletBase {
             // No content, so just indicate accepted
             res.setStatus(202);
         }
-
+        
+        // reset last Call object associated with the current thread
+        Service.clearCall();
+        
         if (isDebug) {
             log.debug("Response sent.");
             log.debug("Exit: doPost()");
