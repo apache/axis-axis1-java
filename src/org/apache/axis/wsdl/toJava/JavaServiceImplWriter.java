@@ -63,6 +63,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Vector;
 
 import javax.wsdl.Binding;
 import javax.wsdl.Port;
@@ -108,6 +109,12 @@ public class JavaServiceImplWriter extends JavaWriter {
         // output comments
         writeComment(pw, service.getDocumentationElement());
 
+        // Used to construct the getPort(Class) method.
+        Vector getPortIfaces = new Vector();
+        Vector getPortStubClasses = new Vector();
+        Vector getPortPortNames = new Vector();
+        boolean printGetPortNotice = false;
+
         // get ports
         Map portMap = service.getPorts();
         Iterator portIterator = portMap.values().iterator();
@@ -147,6 +154,17 @@ public class JavaServiceImplWriter extends JavaWriter {
             // Otherwise it is the binding name.
             String bindingType = bEntry.hasLiteral() ?
                     bEntry.getName() : ptEntry.getName();
+
+            // getPort(Class) must return a stub for an interface.  Collect all
+            // the port interfaces so the getPort(Class) method can be constructed.
+            if (getPortIfaces.contains(bindingType)) {
+                printGetPortNotice = true;
+            }
+            else {
+                getPortIfaces.add(bindingType);
+                getPortStubClasses.add(stubClass);
+                getPortPortNames.add(portName);
+            }
 
             // Get endpoint address and validate it
             String address = getAddressFromPort(p);
@@ -197,6 +215,43 @@ public class JavaServiceImplWriter extends JavaWriter {
             pw.println("        }");
             pw.println("    }");
         }
+
+        // Build the getPort method.
+        pw.println();
+        pw.println("    /**");
+        pw.println("     * " + JavaUtils.getMessage("getPortDoc00"));
+        pw.println("     * " + JavaUtils.getMessage("getPortDoc01"));
+        pw.println("     * " + JavaUtils.getMessage("getPortDoc02"));
+        if (printGetPortNotice) {
+            pw.println("     * " + JavaUtils.getMessage("getPortDoc03"));
+            pw.println("     * " + JavaUtils.getMessage("getPortDoc04"));
+        }
+        pw.println("     */");
+        pw.println("    public java.rmi.Remote getPort(Class serviceEndpointInterface) throws javax.xml.rpc.ServiceException {");
+        if (getPortIfaces.size() == 0) {
+            pw.println("        throw new javax.xml.rpc.ServiceException(\""
+                    + JavaUtils.getMessage("noStub") + "  \" + (serviceEndpointInterface == null ? \"null\" : serviceEndpointInterface.getName()));");
+        }
+        else {
+            pw.println("        try {");
+            for (int i = 0; i < getPortIfaces.size(); ++i) {
+                String iface = (String) getPortIfaces.get(i);
+                String stubClass = (String) getPortStubClasses.get(i);
+                String portName = (String) getPortPortNames.get(i);
+                pw.println("            if (" + iface + ".class.isAssignableFrom(serviceEndpointInterface)) {");
+                pw.println("                return new " + stubClass + "(new java.net.URL(" + portName + "_address), this);");
+                pw.println("            }");
+            }
+            pw.println("        }");
+            pw.println("        catch (Throwable t) {");
+            pw.println("            throw new javax.xml.rpc.ServiceException(t);");
+            pw.println("        }");
+            pw.println("        throw new javax.xml.rpc.ServiceException(\""
+                    + JavaUtils.getMessage("noStub") + "  \" + (serviceEndpointInterface == null ? \"null\" : serviceEndpointInterface.getName()));");
+        }
+        pw.println("    }");
+        pw.println();
+
         // all done
         pw.println("}");
         pw.close();
