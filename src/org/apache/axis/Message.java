@@ -323,8 +323,10 @@ public class Message {
       is = new InputSource(new StringReader(getAsString()));
     }
     
-    ThreadedSAXAdapter parser = 
-        new ThreadedSAXAdapter(new org.apache.xerces.parsers.SAXParser(), is);
+    // ThreadedSAXAdapter parser = 
+    //    new ThreadedSAXAdapter(new org.apache.xerces.parsers.SAXParser(), is);
+    SAXAdapter parser = 
+        new SAXAdapter(new org.apache.xerces.parsers.SAXParser(), is);
     parser.setServiceDescription(serviceDesc);
     SOAPEnvelope env = parser.getEnvelope();
     env.setMessageType(messageType);
