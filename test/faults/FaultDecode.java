@@ -74,7 +74,7 @@ import javax.xml.namespace.QName;
  * This class tests Fault deserialization.
  *
  * @author Mark Roder <mroder@wamnet.com>
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 
 public class FaultDecode extends TestCase {

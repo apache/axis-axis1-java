@@ -74,7 +74,7 @@ import java.util.Iterator;
  * writing an AxisEngine's state back out to whatever storage medium is in use.
  *
  * @author Glyn Normington (glyn@apache.org)
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 public interface EngineConfiguration {
     /**

@@ -112,7 +112,7 @@ import java.util.Set;
  * one, if it hasn't been "touched" (i.e. had a getProperty() or setProperty()
  * performed) in longer than its timeout, we remove it from the collection.</p>
  *
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 public class SimpleSessionHandler extends BasicHandler
 {

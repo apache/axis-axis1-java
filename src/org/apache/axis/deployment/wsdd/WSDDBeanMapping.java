@@ -71,7 +71,7 @@ import java.io.IOException;
  *
  * &lt;beanMapping qname="prefix:local" languageSpecificType="java:class"/&gt;
  *
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 public class WSDDBeanMapping
     extends WSDDTypeMapping

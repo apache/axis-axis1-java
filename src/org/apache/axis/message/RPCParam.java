@@ -71,7 +71,7 @@ import java.util.ArrayList;
 
 /** An RPC parameter
  *
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 public class RPCParam implements Serializable
 {

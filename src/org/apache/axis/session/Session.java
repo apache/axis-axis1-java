@@ -62,7 +62,7 @@ import java.util.Enumeration;
  *
  * This is extremely basic at the moment.
  *
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 public interface Session
 {

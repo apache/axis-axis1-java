@@ -79,7 +79,7 @@ import java.util.Locale;
 /** A Fault body element.
  *
  * @author Sam Ruby (rubys@us.ibm.com)
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  * @author Tom Jordahl (tomj@macromedia.com)
  */
 public class SOAPFault extends SOAPBodyElement implements javax.xml.soap.SOAPFault

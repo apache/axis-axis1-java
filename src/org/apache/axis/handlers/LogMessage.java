@@ -62,7 +62,7 @@ import org.apache.commons.logging.Log;
 
 /** This handler simply prints a custom message to the debug log.
  *
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 public class LogMessage extends BasicHandler
 {

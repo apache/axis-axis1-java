@@ -72,7 +72,7 @@ import java.io.IOException;
  * 
  * Right now just starts and stops the server.
  * 
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  * @author Steve Loughran
  * xdoclet tags are not active yet; keep web.xml in sync
  * @web.servlet name="AdminServlet"  display-name="Axis Admin Servlet"  load-on-startup="100"

@@ -64,7 +64,7 @@ import java.util.Enumeration;
 /**
  * An HTTP/Servlet implementation of Axis sessions.
  *
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 public class AxisHttpSession implements Session
 {

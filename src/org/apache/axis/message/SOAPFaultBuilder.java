@@ -77,7 +77,7 @@ import java.rmi.RemoteException;
  * Build a Fault body element.
  * 
  * @author Sam Ruby (rubys@us.ibm.com)
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  * @author Tom Jordahl (tomj@macromedia.com)
  */
 public class SOAPFaultBuilder extends SOAPHandler implements Callback

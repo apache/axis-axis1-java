@@ -69,7 +69,7 @@ import java.io.IOException;
 /**
  * Serializer for DOM elements
  *
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  * Modified by @author Rich scheuerle <scheu@us.ibm.com>
  */
 

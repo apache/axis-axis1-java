@@ -63,7 +63,7 @@ import org.apache.commons.logging.Log;
  *
  * This is purely for deployment naming at this point.
  *
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 public class Transport extends SimpleTargetedChain
 {

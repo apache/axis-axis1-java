@@ -70,7 +70,7 @@ import java.util.Map;
  *
  * !!! QUESTION : Does this class need to play any ClassLoader tricks?
  * 
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */ 
 
 public class JNDIAxisServerFactory extends DefaultAxisServerFactory {

@@ -73,7 +73,7 @@ import org.apache.axis.utils.JavaUtils;
  * on a dynamic proxy using this invocation handler, we simply turn it into
  * a SOAP request.
  *
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  * @author Cédric Chabanois (cchabanois@ifrance.com)
  */
 public class AxisClientProxy implements InvocationHandler {

@@ -17,7 +17,7 @@ import java.io.StringBufferInputStream;
 /**
  * Test WSDD undeployment.
  * 
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */ 
 public class TestUndeployment extends TestCase
 {

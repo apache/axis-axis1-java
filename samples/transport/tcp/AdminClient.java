@@ -66,7 +66,7 @@ import org.apache.axis.configuration.SimpleProvider;
  *
  * @author Rob Jellinghaus (robj@unrealities.com)
  * @author Doug Davis (dug@us.ibm.com)
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 
 public class AdminClient extends org.apache.axis.client.AdminClient {

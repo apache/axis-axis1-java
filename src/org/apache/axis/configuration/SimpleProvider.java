@@ -81,7 +81,7 @@ import java.util.Iterator;
  * configuration (like the default WSDD) and then quickly add stuff without
  * changing the WSDD document.
  *
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 public class SimpleProvider implements EngineConfiguration
 {

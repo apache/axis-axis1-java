@@ -85,7 +85,7 @@ import java.util.Iterator;
  * A simple ConfigurationProvider that uses the Admin class to read +
  * write XML files.
  *
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  * @author Glyn Normington (glyn@apache.org)
  */
 public class FileProvider implements WSDDEngineConfiguration {

@@ -92,7 +92,7 @@ import java.util.Set;
 /** Utility class to deal with Java language related issues, such
  * as type conversions.
  *
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 public class JavaUtils
 {

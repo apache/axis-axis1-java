@@ -77,7 +77,7 @@ import java.util.ArrayList;
  * values used to indicate frame boundaries.
  *
  * @author James Snell
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  * @author Sam Ruby (rubys@us.ibm.com)
  */
 public class NSStack {

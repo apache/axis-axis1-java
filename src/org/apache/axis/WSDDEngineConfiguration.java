@@ -64,7 +64,7 @@ import org.apache.axis.deployment.wsdd.WSDDDeployment;
  *
  * @author Richard Sitze (rsitze@apache.org)
  * @author Glyn Normington (glyn@apache.org)
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 public interface WSDDEngineConfiguration extends EngineConfiguration {
     public WSDDDeployment getDeployment();

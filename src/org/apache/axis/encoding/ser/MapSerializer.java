@@ -76,7 +76,7 @@ import java.util.Map;
  * deserialize Maps using the <code>SOAP-ENC</code>
  * encoding style.<p>
  *
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  * Modified by @author Rich Scheuerle (scheu@us.ibm.com)
  */
 

@@ -62,7 +62,7 @@ import org.apache.axis.security.AuthenticatedUser;
  * AuthenticatedUser interface, for use with a default Axis installation
  * and the SimpleSecurityProvider.
  *
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 public class SimpleAuthenticatedUser implements AuthenticatedUser {
     private String name;

@@ -77,7 +77,7 @@ import java.util.HashMap;
  * do automatically), authentication and role information will come from
  * your servlet engine.
  *
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 public class ServletSecurityProvider implements SecurityProvider {
     protected static Log log =

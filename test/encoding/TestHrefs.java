@@ -15,7 +15,7 @@ import java.util.Vector;
  * Test deserialization of SOAP messages with references, by putting the
  * actual value in various places in the message.
  *
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 public class TestHrefs extends TestCase {
 

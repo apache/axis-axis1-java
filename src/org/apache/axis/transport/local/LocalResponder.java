@@ -66,7 +66,7 @@ import org.apache.commons.logging.Log;
  * Tiny Handler which just makes sure to Stringize the outgoing
  * Message to appropriately use serializers on the server side.
  *
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 public class LocalResponder extends BasicHandler {
     protected static Log log =

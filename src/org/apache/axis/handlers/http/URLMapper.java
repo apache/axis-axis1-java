@@ -65,7 +65,7 @@ import org.apache.commons.logging.Log;
 /** An <code>URLMapper</code> attempts to use the extra path info
  * of this request as the service name.
  *
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 public class URLMapper extends BasicHandler
 {

@@ -58,7 +58,7 @@ package org.apache.axis;
 /**
  * Base interface for doing an action to Handlers with a MessageContext.
  *
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 public interface HandlerIterationStrategy {
     public void visit(Handler handler, MessageContext msgContext)

@@ -70,7 +70,7 @@ import java.util.Iterator;
 /**
  * A do-nothing ConfigurationProvider
  *
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 public class NullProvider implements EngineConfiguration
 {

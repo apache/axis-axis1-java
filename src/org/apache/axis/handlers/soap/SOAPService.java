@@ -99,7 +99,7 @@ import java.util.Vector;
  * invocation.  It has an request chain, an response chain, and a pivot-point,
  * and handles the SOAP semantics when invoke()d.
  *
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  * @author Doug Davis (dug@us.ibm.com)
  */
 public class SOAPService extends SimpleTargetedChain

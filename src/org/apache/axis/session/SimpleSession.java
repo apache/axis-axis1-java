@@ -61,7 +61,7 @@ import java.util.Hashtable;
 /**
  * A trivial session implementation.
  *
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 public class SimpleSession implements Session
 {

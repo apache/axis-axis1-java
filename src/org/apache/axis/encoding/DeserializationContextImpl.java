@@ -93,7 +93,7 @@ import java.util.HashMap;
 import java.lang.reflect.Method;
 
 /**
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  * Re-architected for JAX-RPC Compliance by:
  * @author Rich Scheuerle (scheu@us.ibm.com)
  */

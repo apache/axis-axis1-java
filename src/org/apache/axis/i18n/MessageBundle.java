@@ -67,7 +67,7 @@ import java.util.ResourceBundle;
  * 
  * @author Richard A. Sitze (rsitze@us.ibm.com)
  * @author Karl Moss (kmoss@macromedia.com)
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Glen Daniels (gdaniels@apache.org)
  */
 public class MessageBundle {
     private boolean loaded = false;
