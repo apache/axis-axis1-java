@@ -58,11 +58,14 @@
 package org.apache.axis.handlers ;
 
 import java.io.* ;
+import java.util.* ;
 import java.sql.Time ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
 
 public class LogHandler implements Handler {
+  protected Hashtable  options ;
+
   public void init() {
   }
 
@@ -112,7 +115,31 @@ public class LogHandler implements Handler {
     return( false );
   }
 
-  public QName[] getBlocksHandled() {
-    return( null );
+  /**
+   * Add the given option (name/value) to this handler's bag of options
+   */
+  public void addOption(String name, Object value) {
+    if ( options == null ) options = new Hashtable();
+    options.put( name, value );
   }
+
+  /**
+   * Returns the option corresponding to the 'name' given
+   */
+  public Object getOption(String name) {
+    if ( options == null ) return( null );
+    return( options.get(name) );
+  }
+
+  /**
+   * Return the entire list of options
+   */
+  public Hashtable getOptions() {
+    return( options );
+  }
+
+  public void setOptions(Hashtable opts) {
+    options = opts ;
+  }
+
 };

@@ -82,6 +82,19 @@ public class Admin {
     }
   }
 
+  private void getOptions(Element root, Handler handler) {
+    NodeList  list = root.getElementsByTagName( "option" );
+
+    for ( int i = 0 ; list != null && i < list.getLength() ; i++ ) {
+      Element elem  = (Element) list.item(i);
+      String  name  = elem.getAttribute( "name" );
+      String  value = elem.getAttribute( "value" );
+
+      if ( name != null && value != null )
+        handler.addOption( name, value );
+    }
+  }
+
   public void process(Document doc) {
     try {
       init();
@@ -91,9 +104,10 @@ public class Admin {
       if ( !action.equals("deploy") && !action.equals("undeploy") ) 
         Error( "Root element must be 'deploy' or 'undeploy'" );
   
-      NodeList list = root.getElementsByTagName("*");
+      NodeList list = root.getChildNodes();
       for ( int loop = 0 ; loop < list.getLength() ; loop++ ) {
         Node node = list.item(loop);
+        if ( node.getNodeType() != Node.ELEMENT_NODE ) continue ;
         Element  elem    = (Element) node ;
         // if ( elem.getNodeType != ELEMENT_NODE ) continue ;
         String   type    = elem.getTagName();
@@ -120,6 +134,7 @@ public class Admin {
           System.out.println( "Deploying handler: " + name );
           h = hr.find( name );
           if ( h == null ) h = (Handler) Class.forName(cls).newInstance();
+          getOptions( elem, h );
           hr.add( name, h );
         }
         else if ( type.equals( "chain" ) ) {
@@ -130,21 +145,23 @@ public class Admin {
           if ( flow != null && flow.length() > 0 ) {
             Chain    c       = (Chain) hr.find( name );
 
-            if ( c == null ) hr.add( name, (c = new SimpleChain()) );
+            if ( c == null ) c = new SimpleChain();
             else             c.clear();
 
             StringTokenizer st = new StringTokenizer( flow, " \t\n\r\f," );
             while ( st.hasMoreElements() )
               c.addHandler( hr.find( st.nextToken() ) );
+            getOptions( elem, c );
+            hr.add( name, c );
           }
           else {
-            StringTokenizer st = null ;
-            SimpleTargetedChain           cc = new SimpleTargetedChain();
-            Chain           c  = null ;
+            StringTokenizer      st = null ;
+            SimpleTargetedChain  cc = null ;
+            Chain                c  = null ;
 
             cc = (SimpleTargetedChain) hr.find( name );
 
-            if ( cc == null ) hr.add( name, (cc = new SimpleTargetedChain()));
+            if ( cc == null ) cc = new SimpleTargetedChain();
             else              cc.clear();
   
             st = new StringTokenizer( input, " \t\n\r\f," );
@@ -160,6 +177,8 @@ public class Admin {
             cc.setOutputChain( c );
             while ( st.hasMoreElements() )
               c.addHandler( hr.find( st.nextToken() ) );
+            getOptions( elem, cc );
+            hr.add( name, cc );
           }
         }
         else if ( type.equals( "service" ) ) {
@@ -167,6 +186,7 @@ public class Admin {
           System.out.println( "Deploying service: " + name );
           if ( hr.find(handler) == null )
             Error( "Can't find '" + handler + "' to deploy as a service");
+          getOptions( elem, hr.find( handler ) );
           sr.add( name, hr.find( handler ) );
         }
         else 

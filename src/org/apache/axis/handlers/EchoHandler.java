@@ -57,6 +57,7 @@
 
 package org.apache.axis.handlers ;
 
+import java.util.* ;
 import org.w3c.dom.* ;
 import org.xml.sax.InputSource ;
 import org.apache.xerces.parsers.* ;
@@ -68,6 +69,8 @@ import org.apache.axis.utils.* ;
 import org.apache.axis.message.* ;
 
 public class EchoHandler implements Handler {
+  protected Hashtable  options ;
+
   public void init() {
   }
 
@@ -75,10 +78,16 @@ public class EchoHandler implements Handler {
   }
 
   public void invoke(MessageContext msgContext) throws AxisFault {
-    System.err.println("In: EchoHandler");
-    Message  msg = msgContext.getIncomingMessage();
-    SOAPEnvelope env = (SOAPEnvelope) msg.getAs( "SOAPEnvelope" );
-    msgContext.setOutgoingMessage( new Message( env, "SOAPEnvelope" ) );
+    try {
+      System.err.println("In: EchoHandler");
+      Message  msg = msgContext.getIncomingMessage();
+      SOAPEnvelope env = (SOAPEnvelope) msg.getAs( "SOAPEnvelope" );
+      msgContext.setOutgoingMessage( new Message( env, "SOAPEnvelope" ) );
+    }
+    catch( Exception e ) {
+      e.printStackTrace();
+      throw new AxisFault( e );
+    }
   }
 
   public void undo(MessageContext msgContext) {
@@ -89,7 +98,31 @@ public class EchoHandler implements Handler {
     return( false );
   }
 
-  public QName[] getBlocksHandled() {
-    return( null );
+  /**
+   * Add the given option (name/value) to this handler's bag of options
+   */
+  public void addOption(String name, Object value) {
+    if ( options == null ) options = new Hashtable();
+    options.put( name, value );
   }
+
+  /**
+   * Returns the option corresponding to the 'name' given
+   */
+  public Object getOption(String name) {
+    if ( options == null ) return( null );
+    return( options.get(name) );
+  }
+
+  /**
+   * Return the entire list of options
+   */
+  public Hashtable getOptions() {
+    return( options );
+  }
+
+  public void setOptions(Hashtable opts) {
+    options = opts ;
+  }
+
 };

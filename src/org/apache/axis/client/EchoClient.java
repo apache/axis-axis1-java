@@ -76,8 +76,9 @@ public class EchoClient {
                  "SOAP-ENV:mustUnderstand=\"1\"> 5 </t:Transaction>" +
                  "</SOAP-ENV:Header>\n" +
                  "<SOAP-ENV:Body>\n" +
-                 "<ns1:list xmlns:ns1=\"urn:xml-soap-service-management-service\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\n" +
-                 "</ns1:list>\n" +
+                 "<m:GetLastTradePrice xmlns:m=\"Some-URI\">" +
+                 "<symbol>IBM</symbol>" +
+                 "</m:GetLastTradePrice>" +
                  "</SOAP-ENV:Body>\n" +
                  "</SOAP-ENV:Envelope>" ;
 

@@ -24,7 +24,7 @@
  *    Alternately, this acknowledgment may appear in the software itself,
  *    if and wherever such third-party acknowledgments normally appear.
  *
- * 4. The names "Axis" and "Apache Software Foundation" must
+ * 4. The names "Xerces" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
  *    software without prior written permission. For written 
  *    permission, please contact apache@apache.org.
@@ -55,65 +55,58 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.handlers ;
+package org.apache.axis.message ;
 
-import java.io.* ;
+// !!!!***** Just a placeholder until we get the real stuff ***!!!!!
+
 import java.util.* ;
 import org.w3c.dom.* ;
-import org.apache.axis.* ;
-import org.apache.axis.utils.* ;
+import org.xml.sax.InputSource ;
+import org.apache.xerces.parsers.* ;
+import org.apache.xerces.framework.* ;
+import org.apache.xml.serialize.* ;
+import org.apache.xerces.parsers.* ;
+import org.apache.xerces.dom.* ;
+import org.apache.axis.message.* ;
 
-public class AdminHandler implements Handler {
-  public Hashtable  options ;
+public class RPCArg {
+  protected String   namespace ;
+  protected String   namespaceURI ;
+  protected String   name ;
+  protected String   value ;         // only support String for now
 
-  public void init() {
+  public RPCArg() {} 
+
+  public RPCArg(Element elem) {
+    namespace = elem.getPrefix();
+    namespaceURI = elem.getNamespaceURI();
+    name = elem.getLocalName();
+    value = elem.getFirstChild().getNodeValue();
   }
 
-  public void cleanup() {
+  public String getNamespace() { return( namespace ); }
+  public void   setNamespace(String ns) { namespace = ns ; }
+
+  public String getNamespaceURI() { return( namespaceURI ); }
+  public void   setNamespaceURI(String nsuri) { namespaceURI = nsuri ; }
+
+  public String getName() { return( name ); }
+  public void   setName(String name) { this.name = name ; }
+
+  public String getValue() { return( value ); }
+  public void   setValue(String val) { value = val ; }
+
+  public Element getAsXML(Document doc) {
+    Element   root ;
+
+    if ( namespace != null ) {
+      root = doc.createElementNS(namespace, namespace + ":" + name );
+      root.setAttribute( "xmlns:" + namespace, namespaceURI );
+    }
+    else {
+      root = doc.createElement( name );
+    }
+    root.appendChild( doc.createTextNode( value ) );
+    return( root );
   }
-
-  public void invoke(MessageContext msgContext) throws AxisFault {
-    System.err.println("In AdminHandler");
-
-    Document doc = (Document) msgContext.getIncomingMessage().getAs("Document");
-    Admin    admin = new Admin();
-
-    admin.process( doc );
-    Message msg = new Message( "Done processing deployment data", "String" );
-    msgContext.setOutgoingMessage( msg );
-  }
-
-  public void undo(MessageContext msgContext) { }
-
-  public boolean canHandleBlock(QName qname) {
-    return( false );
-  }
-
-  /**
-   * Add the given option (name/value) to this handler's bag of options
-   */
-  public void addOption(String name, Object value) {
-    if ( options == null ) options = new Hashtable();
-    options.put( name, value );
-  }
-
-  /**
-   * Returns the option corresponding to the 'name' given
-   */
-  public Object getOption(String name) {
-    if ( options == null ) return( null );
-    return( options.get(name) );
-  }
-
-  /**
-   * Return the entire list of options
-   */
-   public Hashtable getOptions() {
-     return( options );
-   }
- 
-  public void setOptions(Hashtable opts) {
-    this.options = opts ;
-  }
-
 };

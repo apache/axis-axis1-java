@@ -71,10 +71,9 @@ import org.apache.axis.utils.* ;
 
 
 public class SOAPEnvelope {
-  String       prefix ;
-  ArrayList    headers ;
-  SOAPBody     body ;    
-
+  protected String       prefix ;
+  protected ArrayList    headers ;
+  protected SOAPBody     body ;    
 
   public SOAPEnvelope() {
   }
@@ -97,8 +96,11 @@ public class SOAPEnvelope {
                                         Constants.ELEM_HEADER );
     if ( list != null && list.getLength() > 0 ) { 
       Element h = (Element) list.item(0);
-      list = h.getElementsByTagName("*");
+      // list = h.getElementsByTagName("*");
+      list = h.getChildNodes();
       for ( i = 0 ; i < list.getLength() ; i++ ) {
+        Node n = list.item(i);
+        if ( n.getNodeType() != Node.ELEMENT_NODE ) continue ;
         h = (Element) list.item(i);
         if ( headers == null ) headers = new ArrayList();
         headers.add( new SOAPHeader( h ) );
@@ -109,13 +111,16 @@ public class SOAPEnvelope {
                                         Constants.ELEM_BODY );
     if ( list != null && list.getLength() > 0 ) { 
       Element h = (Element) list.item(0);
-      list = h.getElementsByTagName("*");
-      body = new SOAPBody( (Element) list.item(0) );
+      list = h.getChildNodes();
+      if ( list != null ) {
+        for ( i = 0 ; i < list.getLength() ; i++ ) {
+          Node n = list.item(i);
+          if ( n.getNodeType() != Node.ELEMENT_NODE ) continue ;
+          body = new SOAPBody( (Element) n );
+          break ;
+        }
+      }
     }
-  }
-
-  public SOAPBody getBody() {
-    return( body );
   }
 
   public SOAPHeader[] getHeaders() {
@@ -126,6 +131,14 @@ public class SOAPEnvelope {
   public void addHeader(SOAPHeader header) {
     if ( headers == null ) headers = new ArrayList();
     headers.add( header );
+  }
+
+  public SOAPBody getBody() { return( body ); }
+  public void     setBody(SOAPBody b) { body = b ; }
+
+  public RPCBody  getAsRPCBody() {
+    if ( body instanceof RPCBody ) return( (RPCBody) body );
+    return( (RPCBody) (body = new RPCBody( getBody()) ) );
   }
 
   public Document getAsDOM() {

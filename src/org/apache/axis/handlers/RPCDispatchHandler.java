@@ -55,72 +55,70 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis ;
+package org.apache.axis.handlers ;
 
 import java.util.* ;
+import java.lang.reflect.* ;
+import org.w3c.dom.* ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
+import org.apache.axis.message.* ;
 
-public class SimpleTargetedChain implements Handler {
-  protected Chain      inputChain ;
-  protected Handler    pivotHandler ;
-  protected Chain      outputChain ;
+public class RPCDispatchHandler implements Handler {
   protected Hashtable  options ;
 
-  public void init() { 
-    if ( inputChain   != null )   inputChain.init();
-    if ( pivotHandler != null ) pivotHandler.init();
-    if ( outputChain  != null )  outputChain.init();
+  public void init() {
   }
 
   public void cleanup() {
-    if ( inputChain   != null )   inputChain.cleanup();
-    if ( pivotHandler != null ) pivotHandler.cleanup();
-    if ( outputChain  != null )  outputChain.cleanup();
   }
 
-  /**
-   * Invoke the input chain, pivot handler and output chain.  If there's
-   * a fault we need to make sure that we undo any completed handler
-   * that has been successfully invoked and then rethrow the fault.
-   */
   public void invoke(MessageContext msgContext) throws AxisFault {
-    if ( inputChain != null ) inputChain.invoke( msgContext );
+    System.err.println("In RPCDispatchHandler");
+
+    Document  doc = (Document) msgContext.getIncomingMessage().getAs("Document");
+
+    // Find the service we're invoking
+    Handler service = (Handler) msgContext.getProperty( "ServiceHandler" );
+
+    // Now get the service specific info 
+    String  cls    = (String) service.getOption( "className" );
+    String  method = (String) service.getOption( "methodName" );
+
+    
     try {
-      if ( pivotHandler != null ) pivotHandler.invoke( msgContext );
+      Class        c = Class.forName(cls);
+      Object       o = c.newInstance();
+      SOAPEnvelope env = null ;
+      env = (SOAPEnvelope) msgContext.getIncomingMessage().getAs("SOAPEnvelope");
+      RPCBody body = env.getAsRPCBody();
+      System.err.println( "Method: " + body.getMethodName() );
+      Vector    args = body.getArgs();
+      String    str  = ((RPCArg)args.get(0)).getValue();
+      Float    result ;
+
+      Method m = c.getMethod( body.getMethodName(), new Class[] {str.getClass()} );
+      result = (Float) m.invoke( o, new Object[] { str } );
+      System.err.println("result=" + result );
+
+      Message msg = new Message( result.toString(), "String" );
+      msgContext.setOutgoingMessage( msg );
     }
     catch( Exception e ) {
-      if ( !(e instanceof AxisFault ) )
-        e = new AxisFault( e );
-      if ( inputChain != null ) inputChain.undo( msgContext );
-      throw (AxisFault) e ;
+      e.printStackTrace();
+      throw new AxisFault( e );
     }
-    try {
-      if ( outputChain != null )  outputChain.invoke( msgContext );
-    }
-    catch( Exception e ) {
-      if ( !(e instanceof AxisFault ) )
-        e = new AxisFault( e );
-      if ( pivotHandler != null ) pivotHandler.undo( msgContext );
-      if ( inputChain   != null )   inputChain.undo( msgContext );
-      throw (AxisFault) e ;
-    }
+
+    // Right now its just an echo - but I'll add more once the
+    // reader/writer is there
   }
 
-  /**
-   * Undo all of the work - in reverse order.
-   */
-  public void undo(MessageContext msgContext) {
-    System.err.println( "In SimpleTargetedChain:undo" );
-    if ( outputChain   != null )   outputChain.undo( msgContext );
-    if ( pivotHandler  != null )  pivotHandler.undo( msgContext );
-    if ( inputChain    != null )    inputChain.undo( msgContext );
+  public void undo(MessageContext msgContext) { 
+    System.err.println( "In DispatchHandler:undo" );
   }
 
   public boolean canHandleBlock(QName qname) {
-    return( (inputChain==null)   ? false : inputChain.canHandleBlock(qname) ||
-            (pivotHandler==null) ? false : pivotHandler.canHandleBlock(qname) ||
-            (outputChain==null)  ? false : outputChain.canHandleBlock(qname) );
+    return( false );
   }
 
   /**
@@ -149,23 +147,4 @@ public class SimpleTargetedChain implements Handler {
   public void setOptions(Hashtable opts) {
     options = opts ;
   }
-
-  public Chain getInputChain() { return( inputChain ); }
-
-  public void setInputChain(Chain inChain) { inputChain = inChain ; }
-
-  public Handler getPivotHandler() { return( pivotHandler ); }
-
-  public void setPivotHandler(Handler handler) { pivotHandler = handler ; }
-
-  public Chain getOutputChain() { return( outputChain ); }
-
-  public void setOutputChain(Chain outChain) { outputChain = outChain ; }
-  
-  public void clear() {
-    inputChain = null ;
-    pivotHandler = null ;
-    outputChain = null ;
-  }
-
 };
