@@ -121,7 +121,7 @@ transport="http://schemas.xmlsoap.org/soap/http"/>
          <wsdl:input>
 
             <wsdlsoap:body 
-encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="validate" 
+encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="urn:ram" 
 use="encoded"/>
 
          </wsdl:input>
