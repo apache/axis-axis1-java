@@ -361,7 +361,7 @@ Copyright:
              <fileset dir="${axis.home}" >
                 <patternset>
                  <include name="test/**/build.xml"/>
-                 <include name="test/httpunit/build.xml"/>
+                 <exclude name="test/httpunit/build.xml"/>
                  <exclude name="test/wsdl/interop3/compound1/build.xml" />
                  <exclude name="test/wsdl/interop3/compound2/build.xml" />
                  <exclude name="test/wsdl/interop3/docLit/build.xml" />
