@@ -327,27 +327,32 @@ public class SerializationContext
         }
         
         if (pretty) for (int i=0; i<indent; i++) writer.write(' ');
-        StringBuffer buf = new StringBuffer();
         String elementQName = qName2String(qName);
-        buf.append("<");
+        writer.write("<");
         
-        buf.append(elementQName);
+        writer.write(elementQName);
         
         if (attributes != null) {
             for (int i = 0; i < attributes.getLength(); i++) {
-                buf.append(" " + attributes.getQName(i) + "=\"" +
-                           attributes.getValue(i) +"\"");
+                writer.write(" ");
+                writer.write(attributes.getQName(i));
+                writer.write("=\"");
+                writer.write(attributes.getValue(i));
+                writer.write("\"");
             }
         }
         
         ArrayList currentMappings = nsStack.peek();
         for (int i = 0; i < currentMappings.size(); i++) {
             Mapping map = (Mapping)currentMappings.get(i);
-            buf.append(" xmlns");
+            writer.write(" xmlns");
             if (!map.getPrefix().equals("")) {
-                buf.append(":" + map.getPrefix());
+                writer.write(":");
+                writer.write(map.getPrefix());
             }
-            buf.append("=\"" + map.getNamespaceURI() + "\"");
+            writer.write("=\"");
+            writer.write(map.getNamespaceURI());
+            writer.write("\"");
         }
 
         writingStartTag = true;
@@ -355,7 +360,6 @@ public class SerializationContext
         elementStack.push(elementQName);
         nsStack.push();
 
-        writer.write(buf.toString());
         writer.flush();
         onlyXML=true;
     }
