@@ -1,0 +1,11 @@
+Document for TRL proposal
+
+Last update: 2000/01/30
+Author: Ryo Neyama (neyama@trl.ibm.co.jp)
+
+1. Required jar files
+  xerces.jar (Xerces 1.2.3)
+  servlet.jar (Servlet 2.2)
+  xss4j.jar (XSS4J 20010129; Required for digsig example)
+    http://www.alphaworks.ibm.com/tech/xmlsecuritysuite
+2. How to run the example
