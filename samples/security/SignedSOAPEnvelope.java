@@ -149,7 +149,7 @@ public class SignedSOAPEnvelope extends SOAPEnvelope {
             sig.sign(privateKey);
 
             Canonicalizer c14n = Canonicalizer.getInstance(Canonicalizer.ALGO_ID_C14N_WITH_COMMENTS);
-            byte[] canonicalMessage = c14n.canonicalizeDocument(doc);
+            byte[] canonicalMessage = c14n.canonicalizeSubtree(doc);
 
             InputSource is = new InputSource(new java.io.ByteArrayInputStream(canonicalMessage));
             DeserializationContextImpl dser = null;
