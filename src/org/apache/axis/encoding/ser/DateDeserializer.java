@@ -119,23 +119,23 @@ public class DateDeserializer extends SimpleDeserializer {
             
         }
         
-        // convert what we have validated so far
-        try {
-            result = zulu.parse(source == null ? null :
-                                (source.substring(0,10)) );
-        } catch (Exception e) {
-            throw new NumberFormatException(e.toString());
-        }
-
-        // support dates before the Christian era
-        if (bc) {
-            synchronized (calendar) {
+        synchronized (calendar) {
+            // convert what we have validated so far
+            try {
+                result = zulu.parse(source == null ? null :
+                                    (source.substring(0,10)) );
+            } catch (Exception e) {
+                throw new NumberFormatException(e.toString());
+            }
+            
+            // support dates before the Christian era
+            if (bc) {
                 calendar.setTime(result);
                 calendar.set(Calendar.ERA, GregorianCalendar.BC);
                 result = calendar.getTime();
             }
         }
-        
+
         return result;
     }
 }
