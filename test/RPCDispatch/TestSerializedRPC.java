@@ -45,7 +45,7 @@ public class TestSerializedRPC extends TestCase {
 
     private SimpleProvider provider = new SimpleProvider();
     private AxisServer engine = new AxisServer(provider);
-    
+
     String firstParamName = null;
     String secondParamName = null;
 
@@ -60,7 +60,7 @@ public class TestSerializedRPC extends TestCase {
         reverse.setOption("className", "test.RPCDispatch.Service");
         reverse.setOption("allowedMethods", "*");
         provider.deployService(SOAPAction, reverse);
-        
+
         // And deploy the type mapping
         Class javaType = Data.class;
         QName xmlType = new QName("urn:foo", "Data");
@@ -78,14 +78,14 @@ public class TestSerializedRPC extends TestCase {
         ServiceDesc desc = new ServiceDesc();
         desc.loadServiceDescByIntrospection(Service.class, tm);
         reverse.setServiceDescription(desc);
-        
+
         // Now we've got the service description loaded up.  We're going to
         // be testing parameter dispatch by name, so if debug info isn't
         // compiled into the Service class, the names are going to be "in0",
         // etc.  Make sure they match.
         OperationDesc oper = desc.getOperationByName("concatenate");
         assertNotNull(oper);
-        
+
         firstParamName = oper.getParameter(0).getName();
         secondParamName = oper.getParameter(1).getName();
     }
@@ -103,7 +103,7 @@ public class TestSerializedRPC extends TestCase {
 
         // Create the message context
         MessageContext msgContext = new MessageContext(engine);
-        
+
         // Set the dispatch either by SOAPAction or methodNS
         String methodNS = "urn:dont.match.me";
         if (setService) {
@@ -120,7 +120,7 @@ public class TestSerializedRPC extends TestCase {
                         bodyElemFoot + footer;
         msgContext.setRequestMessage(new Message(msgStr));
         msgContext.setTypeMappingRegistry(engine.getTypeMappingRegistry());
-        
+
         // Invoke the Axis engine
         try {
             engine.invoke(msgContext);
@@ -162,7 +162,7 @@ public class TestSerializedRPC extends TestCase {
         // invoke the service and verify the result
         assertEquals("Did not reverse the string as expected", "cba", rpc("reverseString", arg, false));
     }
-    
+
     /**
      * Test a method that reverses a data structure
      */
@@ -174,7 +174,7 @@ public class TestSerializedRPC extends TestCase {
         Data expected = new Data(3, "cba", 5);
         assertEquals("Did not reverse data as expected", expected, rpc("reverseData", arg, true));
     }
-    
+
     /**
      * Test a method that reverses a data structure
      */
@@ -208,30 +208,54 @@ public class TestSerializedRPC extends TestCase {
         String arg = "<arg0 xmlns:foo=\"urn:foo\">";
         arg += "<field1>5</field1><field2>abc</field2><field3>3</field3>";
         arg += "</arg0>";
-        
+
         // invoke the service and verify the result
         assertEquals("Did not echo arg correctly.", arg, rpc("argAsDOM", arg, true));
     }
-    
+
     /**
      * Test overloaded method dispatch without the benefit of xsi:types
-     */ 
+     */
     public void testOverloadedMethodDispatch() throws Exception
     {
-        // invoke the service and verify the result
+        // invoke the service for each overloaded method, and verify the results
+
+        // boolean
         String arg = "<arg0>true</arg0>";
-        Boolean expected = Boolean.TRUE;
-        assertEquals("Overloaded method test failed with a boolean", 
-                     expected, 
-                     rpc("overloaded", arg, true));        
-        
+        Object expected = Boolean.TRUE;
+        assertEquals("Overloaded method test failed with a boolean",
+                     expected,
+                     rpc("overloaded", arg, true));
+
+        // boolean, string
+        arg = "<arg0>true</arg0><arg1>hello world</arg1>";
+        expected = Boolean.TRUE + "hello world";
+        assertEquals("Overloaded method test failed with boolean, string",
+                     expected,
+                     rpc("overloaded", arg, true));
+
+        // string, boolean
+        arg = "<arg0>hello world</arg0><arg1>true</arg1>";
+        expected = "hello world" + Boolean.TRUE;
+        assertEquals("Overloaded method test failed with string, boolean",
+                     expected,
+                     rpc("overloaded", arg, true));
+
+        // int
         arg = "<arg0>5</arg0>";
-        Integer expectedInt = new Integer(5);
-        assertEquals("Overloaded method test failed with an int", 
-                     expectedInt, 
-                     rpc("overloaded", arg, true));        
+        expected = new Integer(5);
+        assertEquals("Overloaded method test failed with an int",
+                     expected,
+                     rpc("overloaded", arg, true));
+
+        // int, string
+        arg = "<arg0>5</arg0><arg1>hello world</arg1>";
+        expected = 5 + "hello world";
+        assertEquals("Overloaded method test failed with int, string",
+                     expected,
+                     rpc("overloaded", arg, true));
     }
-    
+
     public static void main(String args[]) {
       try {
         TestSerializedRPC tester = new TestSerializedRPC("Test Serialized RPC");
