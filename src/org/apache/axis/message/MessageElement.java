@@ -223,8 +223,28 @@ public class MessageElement
     public void setRecorder(SAX2EventRecorder rec) { recorder = rec; }
 
     public MessageElement getParent() { return parent; }
-    public void setParent(MessageElement parent) { this.parent = parent; }
-
+    public void setParent(MessageElement parent) 
+    { 
+        this.parent = parent;
+        if (parent != null) {
+            parent.addChild(this);
+        }
+    }
+    
+    private ArrayList children = null;
+    
+    public void addChild(MessageElement el)
+    {
+        if (children == null)
+            children = new ArrayList();
+        children.add(el);
+    }
+    
+    public ArrayList getChildren()
+    {
+        return children;
+    }
+    
     public void setContentsIndex(int index)
     {
         startContentsIndex = index;

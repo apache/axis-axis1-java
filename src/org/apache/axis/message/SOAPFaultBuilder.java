@@ -62,9 +62,12 @@ import org.apache.axis.encoding.ValueReceiver;
 import org.apache.axis.utils.QFault;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+import org.w3c.dom.Element;
 
 import javax.xml.rpc.namespace.QName;
 import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /** 
  * Build a Fault body element.
@@ -83,7 +86,7 @@ public class SOAPFaultBuilder extends SOAPHandler implements ValueReceiver
         fields.put("faultcode", SOAPTypeMappingRegistry.XSD_STRING);
         fields.put("faultstring", SOAPTypeMappingRegistry.XSD_STRING);
         fields.put("faultactor", SOAPTypeMappingRegistry.XSD_STRING);
-        fields.put("details", null);
+        fields.put("detail", null);
     }
     
     public SOAPFaultBuilder(SOAPFaultElement element,
@@ -111,8 +114,29 @@ public class SOAPFaultBuilder extends SOAPHandler implements ValueReceiver
         }
         
         return currentDeser;
-    } 
-    
+    }
+
+    public void onEndChild(String namespace, String localName,
+                           DeserializationContext context)
+            throws SAXException {
+        if ("detail".equals(localName)) {
+            MessageElement el = context.getCurElement();
+            ArrayList children = el.getChildren();
+            if (children != null) {
+                Element [] elements = new Element [children.size()];
+                for (int i = 0; i < elements.length; i++) {
+                    try {
+                        elements[i] = ((MessageElement)children.get(i)).
+                                                                    getAsDOM();
+                    } catch (Exception e) {
+                        throw new SAXException(e);
+                    }
+                }
+                fault.setFaultDetails(elements);
+            }
+        }
+    }
+
     public void valueReady(Object value, Object hint)
     {
         String name = (String)hint;

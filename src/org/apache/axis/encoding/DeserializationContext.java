@@ -156,7 +156,11 @@ public class DeserializationContext extends DefaultHandler
     }
     
     MessageElement curElement;
-    
+
+    public MessageElement getCurElement() {
+        return curElement;
+    }
+
     public void setCurElement(MessageElement el)
     {
         curElement = el;

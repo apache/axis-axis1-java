@@ -55,25 +55,41 @@
 package test.faults;
 
 import junit.framework.TestCase;
+import junit.framework.TestResult;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import junit.textui.TestRunner;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.utils.QFault;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPFaultElement;
 import org.apache.axis.server.AxisServer;
+import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 
 /**
- * This class tests a case where the fault is not filled in..
+ * This class tests Fault deserialization.
  *
  * @author Mark Roder <mroder@wamnet.com>
+ * @author Glen Daniels (gdaniels@macromedia.com)
  */
 
 public class FaultDecode extends TestCase {
-
+    public static final String FAULT_CODE = "Some.FaultCode";
+    public static final String FAULT_STRING = "This caused a fault";
+    public static final String DETAIL_ENTRY_TEXT =
+        "This was a really bad thing";
+    
     public FaultDecode(String name) {
         super(name);
     } // ctor
+    
+    public static Test suite() {
+        return new TestSuite(FaultDecode.class);
+    }
 
     public void testFault() throws Exception {
         String messageText = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" soap:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">"
@@ -82,9 +98,9 @@ public class FaultDecode extends TestCase {
             + "</soap:Header> "
             + "<soap:Body>  "
             + "     <soap:Fault>"
-            + "              <faultcode>Some.FaultCode</faultcode>"
-            + "              <faultstring>This caused a fault</faultstring>"
-            + "              <detail>This was a really bad thing</detail>"
+            + "          <faultcode>" + FAULT_CODE + "</faultcode>"
+            + "          <faultstring>" + FAULT_STRING + "</faultstring>"
+            + "          <detail><d1>" + DETAIL_ENTRY_TEXT + "</d1></detail>"
             + "     </soap:Fault>"
             + "</soap:Body>"
             + "</soap:Envelope>";
@@ -94,20 +110,44 @@ public class FaultDecode extends TestCase {
         message.setMessageContext(new MessageContext(server));
 
         SOAPEnvelope envelope = (SOAPEnvelope) message.getSOAPPart().getAsSOAPEnvelope();
-        this.assertNotNull("envelope", envelope);
+        assertNotNull("envelope", envelope);
 
         SOAPBodyElement respBody = envelope.getFirstBody();
-        this.assertTrue("respBody should be a SOAPFaultElement", respBody
+        assertTrue("respBody should be a SOAPFaultElement", respBody
                         instanceof SOAPFaultElement);
         AxisFault aFault = ((SOAPFaultElement) respBody).getAxisFault();
 
-        //Leave in until getFaultDetails is tested
-        System.out.println(aFault);
-
-        this.assertNotNull("Fault should not be null", aFault);
-        this.assertNotNull("faultCode should not be null", aFault.getFaultCode());
-        this.assertNotNull("faultString should not be null", aFault.getFaultString());
-        //7 Nov 01 comment out to get tests to pass to allow this to be integrated
-        //this.assertNotNull("faultDetails should not be null", aFault.getFaultDetails());
+        assertNotNull("Fault should not be null", aFault);
+        
+        QFault faultCode = aFault.getFaultCode();
+        assertNotNull("faultCode should not be null", faultCode);
+        assertEquals("faultCode should match",
+                     faultCode.getLocalPart(), 
+                     "Some.FaultCode");
+        
+        String faultString = aFault.getFaultString();
+        assertNotNull("faultString should not be null", faultString);
+        assertEquals("faultString should match", faultString,
+                     FAULT_STRING);
+        
+        Element [] details = aFault.getFaultDetails();
+        assertNotNull("faultDetails should not be null", details);
+        assertEquals("details should have exactly one element", details.length, 
+                     1);
+        
+        Element el = details[0];
+        assertEquals("detail entry tag name should match",
+                     el.getLocalName(), "d1");
+        
+        Text text = (Text)el.getFirstChild();
+        assertEquals("detail entry string should match",
+                     text.getData(), DETAIL_ENTRY_TEXT);
+        
     } // testFault
+    
+    public static void main(String[] args) throws Exception {
+        FaultDecode tester = new FaultDecode("test");
+        TestRunner runner = new TestRunner();
+        runner.doRun(tester.suite(), false);
+    }
 }
