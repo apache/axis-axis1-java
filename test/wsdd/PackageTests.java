@@ -18,7 +18,8 @@ public class PackageTests extends TestCase {
 
         suite.addTestSuite(TestGlobalConfiguration.class);
         suite.addTestSuite(TestScopeOption.class);
-        
+        suite.addTestSuite(TestOptions.class);
+
         return suite;
     }
 }
