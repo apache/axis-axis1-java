@@ -392,8 +392,15 @@ public class JavaStubWriter extends JavaWriter {
 
 
             QName qn = p.type.getQName();
+            String localName = null;
+            if (p.type instanceof BaseJavaType) {
+                localName = qn.getLocalPart();
+            }
+            else {
+                localName = Utils.getJavaLocalName(p.type.getName());
+            }
             String typeString = "new org.apache.axis.encoding.XMLType( new javax.xml.rpc.namespace.QName(\"" + qn.getNamespaceURI() + "\", \"" +
-                    Utils.getJavaLocalName(p.type.getName()) + "\"))";
+                    localName + "\"))";
             if (p.mode == Parameters.Parameter.IN) {
                 pw.println("        call.addParameter(\"" + p.name + "\", " + typeString + ", org.apache.axis.client.Call.PARAM_MODE_IN);");
             }
@@ -407,8 +414,15 @@ public class JavaStubWriter extends JavaWriter {
         // set output type
         if (parms.returnType != null) {
             QName qn = parms.returnType.getQName();
+            String localName = null;
+            if (parms.returnType instanceof BaseJavaType) {
+                localName = qn.getLocalPart();
+            }
+            else {
+                localName = Utils.getJavaLocalName(parms.returnType.getName());
+            }
             String outputType = "new org.apache.axis.encoding.XMLType(new javax.xml.rpc.namespace.QName(\"" + qn.getNamespaceURI() + "\", \"" +
-              Utils.getJavaLocalName(parms.returnType.getName()) + "\"))";
+              localName + "\"))";
             pw.println("        call.setReturnType(" + outputType + ");");
 
             pw.println();
