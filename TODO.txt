@@ -10,46 +10,46 @@ owner (if any) in "<>" brackets.  Example:
 
 BETA 3 MUST DO LIST
 -------------------
-Bugzillas for beta 3: (must:  must fix; nice:  it would be nice to have; post:  post beta 3; pend:  pending more info, maybe beta 3)
-7132 - nice - Glen
-7407 - nice - Rich?
-8419 - post
-8423 - pend - Glen
-8435 - post
-8476 - must - Rich
-8480 - pend - Glen
-8481 - pend - Glen
-8578 - post
-8598 - nice - Rich
-8646 - must - ?
-8680 - close, fixed?
-9045 - pend - Glen
-9239 - must - dims
-9393 - must - Rich
-9405 - must - Tom
-9452 - post
-9473 - post
-9642 - nice - Russell
-9659 - pend - Glen
-9665 - nice - Rich
-9667 - dup of 9665
-9717 - must - Tom
-9767 - must - Russell
-9773 - post
-9780 - must - Rick
-9815 - nice - ?
-9818 - nice - Rich
-9826 - nice - Glen
-9874 - nice - dims
-9875 - must - Rich
-9881 - post
-9882 - nice - Russell
-9952 - must - Glyn
-9966 - nice - Tom (like 9717)
-9967 - nice - Tom (like 9717 and 9966)
-9987 - must - Glen
-9992 - must - dims
-10003 - post
+Bugzillas for beta 3:  must:  must fix; nice:  it would be nice to have; post:  post beta 3; pend:  pending more info, maybe beta 3.  The left column is there to give us a quick picture:  M is a must, _ is anything else, * means the bug is fixed.
+_ 7132 - nice - Glen
+_ 7407 - nice - Rich?
+_ 8419 - post
+_ 8423 - pend - Glen
+_ 8435 - post
+M 8476 - must - Rich
+_ 8480 - pend - Glen
+_ 8481 - pend - Glen
+_ 8578 - post
+_ 8598 - nice - Rich
+M 8646 - must - ?
+_ 8680 - close, fixed?
+_ 9045 - pend - Glen
+M 9239 - must - dims
+M 9393 - must - Rich
+M 9405 - must - Tom
+_ 9452 - post
+_ 9473 - post
+_ 9642 - nice - Russell
+_ 9659 - pend - Glen
+_ 9665 - nice - Rich
+_ 9667 - dup of 9665
+M 9717 - must - Tom
+M 9767 - must - Russell
+_ 9773 - post
+M 9780 - must - Rick
+_ 9815 - nice - ?
+_ 9818 - nice - Rich
+_ 9826 - nice - Glen
+_ 9874 - nice - dims
+M 9875 - must - Rich
+_ 9881 - post
+_ 9882 - nice - Russell
+* 9952 - must - Glyn
+_ 9966 - nice - Tom (like 9717)
+_ 9967 - nice - Tom (like 9717 and 9966)
+M 9987 - must - Glen
+M 9992 - must - dims
+_ 10003 - post
 
 
 MESSAGE PARSING / ENCODING
