@@ -138,7 +138,7 @@ public class RPCProvider extends JavaProvider
                 // igors: better check if bodyEl.getID() != null
                 // to make sure this loop does not step on SOAP-ENC objects
                 // that follow the parameters! FIXME?
-                if (bodyEl.isRoot() && operation != null) {
+                if (bodyEl.isRoot() && operation != null && bodyEl.getID() == null) {
                     ParameterDesc param = operation.getParameter(bNum);
                     // at least do not step on non-existent parameters!
                     if(param != null) {
