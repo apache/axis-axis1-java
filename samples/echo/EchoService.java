@@ -150,7 +150,7 @@ public class EchoService {
     }
 
     /**
-     * This method accepts a boolean and echoes it back to the client.
+     * This method accepts a BigDecimal and echoes it back to the client.
      */
     public BigDecimal echoDecimal(BigDecimal input) {
         return input;
@@ -160,6 +160,13 @@ public class EchoService {
      * This method accepts a boolean and echoes it back to the client.
      */
     public boolean echoBoolean(boolean input) {
+        return input;
+    }
+    
+    /**
+     * This method accepts a Map and echoes it back to the client.
+     */
+    public HashMap echoMap(HashMap input) {
         return input;
     }
 }
