@@ -402,9 +402,9 @@ public class JavaStubWriter extends JavaWriter {
             return;
         }
         
-//        if (type instanceof Element) {
-//            return;
-//        }
+        if (type instanceof Element) {
+            return;
+        }
         
         if ( firstSer ) {
             pw.println("            Class cls;" );
@@ -467,7 +467,13 @@ public class JavaStubWriter extends JavaWriter {
         for (int i = 0; i < parms.list.size(); ++i) {
             Parameter p = (Parameter) parms.list.get(i);
 
+            // We need to use the Qname of the actual type, not the QName of the element
             QName qn = p.type.getQName();
+            if (p.type instanceof DefinedElement) {
+                Node node = symbolTable.getTypeEntry(p.type.getQName(), true).getNode();
+                qn = Utils.getNodeTypeRefQName(node, "type");
+            }
+
             String typeString = "new javax.xml.rpc.namespace.QName(\"" +
                     qn.getNamespaceURI() + "\", \"" +
                     qn.getLocalPart() + "\")";
@@ -491,7 +497,13 @@ public class JavaStubWriter extends JavaWriter {
         }
         // set output type
         if (parms.returnType != null) {
+            // We need to use the Qname of the actual type, not the QName of the element
             QName qn = parms.returnType.getQName();
+            if (parms.returnType instanceof DefinedElement) {
+                Node node = symbolTable.getTypeEntry(parms.returnType.getQName(), true).getNode();
+                qn = Utils.getNodeTypeRefQName(node, "type");
+            }
+            
             String outputType = "new javax.xml.rpc.namespace.QName(\"" +
                 qn.getNamespaceURI() + "\", \"" +
                 qn.getLocalPart() + "\")";
