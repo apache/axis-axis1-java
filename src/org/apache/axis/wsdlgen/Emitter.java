@@ -113,6 +113,7 @@ public class Emitter {
 
     private Class cls;
     private String allowedMethods;
+    private boolean useInheritedMethods = false;
     private String intfNS;          
     private String implNS;
     private String locationUrl;
@@ -405,7 +406,13 @@ public class Emitter {
 
         portType.setQName(new javax.wsdl.QName(intfNS, clsName + "PortType"));
 
-        Method[] methods = cls.getDeclaredMethods();
+        /** @todo should introduce allowInterfaces, to publish all methods from a interface */
+        /** @todo if allowedMethods is specified always look for inherited methods as well?? */
+        Method[] methods;
+        if (useInheritedMethods & (allowedMethods != null) && (allowedMethods.trim().length() > 0))
+          methods = cls.getMethods();
+        else
+          methods = cls.getDeclaredMethods();
 
         for(int i = 0, j = methods.length; i < j; i++) {
             if (allowedMethods != null) {
@@ -677,6 +684,14 @@ public class Emitter {
     public void setAllowedMethods(String allowedMethods) {
         this.allowedMethods = allowedMethods;
     }
+    
+    public boolean getUseInheritedMethods() {
+        return useInheritedMethods;
+    }    
+
+    public void setUseInheritedMethods(boolean useInheritedMethods) {
+        this.useInheritedMethods = useInheritedMethods;
+    }    
 
     /**
      * get the packagename to namespace map
