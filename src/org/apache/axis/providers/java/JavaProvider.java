@@ -327,7 +327,7 @@ public abstract class JavaProvider extends BasicProvider
             emitter.setAllowedMethods(allowedMethods);
             emitter.setIntfNamespace(url);
             emitter.setLocationUrl(url);
-            emitter.setServiceDesc(msgContext.getService().getServiceDescription());
+            emitter.setServiceDesc(msgContext.getService().getInitializedServiceDesc(msgContext));
             emitter.setTypeMapping((TypeMapping)msgContext.getTypeMappingRegistry().
                                    getTypeMapping(Constants.URI_CURRENT_SOAP_ENC));
             emitter.setDefaultTypeMapping((TypeMapping)msgContext.getTypeMappingRegistry().

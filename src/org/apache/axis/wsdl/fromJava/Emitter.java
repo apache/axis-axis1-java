@@ -143,8 +143,6 @@ public class Emitter {
 
     private ServiceDesc serviceDesc;
 
-    private Java2WSDLFactory factory;  // Factory for obtaining user extensions
-
     /**
      * Construct Emitter.
      * Set the contextual information using set* methods
@@ -152,7 +150,6 @@ public class Emitter {
      */
     public Emitter () {
       namespaces = new Namespaces();
-      factory = new DefaultFactory();
       exceptionMsg = new HashMap();
     }
 
@@ -317,7 +314,7 @@ public class Emitter {
         // Write interface header
         writeDefinitions(def, intfNS);
         types = new Types(def, tm, defaultTM, namespaces,
-                          intfNS, factory, stopClasses);
+                          intfNS, stopClasses);
         Binding binding = writeBinding(def, true);
         writePortType(def, binding);
         writeService(def, binding);
@@ -341,7 +338,7 @@ public class Emitter {
         // Write interface header
         writeDefinitions(def, intfNS);
         types = new Types(def, tm, defaultTM, namespaces,
-                          intfNS, factory, stopClasses);
+                          intfNS, stopClasses);
         Binding binding = writeBinding(def, true);
         writePortType(def, binding);
         return def;
@@ -568,7 +565,7 @@ public class Emitter {
                                                           binding,
                                                           thisOper);
             Operation oper = bindingOper.getOperation();
-            writeMessages(def, oper, thisOper, bindingOper);
+            writeMessages(def, oper, thisOper);
             portType.addOperation(oper);
         }
 
@@ -583,8 +580,9 @@ public class Emitter {
      * @param oper
      * @throws Exception
      */
-    private void writeMessages(Definition def, Operation oper,
-            OperationDesc desc, BindingOperation bindingOper)
+    private void writeMessages(Definition def,
+                               Operation oper,
+                               OperationDesc desc)
             throws Exception{
         Input input = def.createInput();
 
@@ -1023,37 +1021,6 @@ public class Emitter {
         catch (Exception ex) {
             ex.printStackTrace();
         }
-    }
-
-    /**
-     * Sets the <code>Java2WSDLFactory Class</code> to use
-     * @param className the name of the factory <code>Class</code>
-     */
-    public void setFactory(String className) {
-        try {
-            ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            factory = (Java2WSDLFactory)
-                Class.forName(className, true,cl).newInstance();
-        }
-        catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    /**
-     * Sets the <code>Java2WSDLFactory Class</code> to use
-     * @param factory is the factory Class
-     */
-    public void setFactory(Java2WSDLFactory factory) {
-        this.factory = factory;
-    }
-
-    /**
-     * Returns the <code>Java2WSDLFactory Class</code>
-     * @return the <code>Class</code>
-     */
-    public Java2WSDLFactory getFactory() {
-        return factory;
     }
 
    /**

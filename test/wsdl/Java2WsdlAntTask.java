@@ -58,7 +58,6 @@ import org.apache.axis.wsdl.fromJava.Emitter;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
-import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.DefaultTypeMappingImpl;
 import org.apache.axis.encoding.DefaultSOAP12TypeMappingImpl;
 
@@ -80,7 +79,6 @@ public class Java2WsdlAntTask extends Task
     private String className = "." ;
     private String servicePortName = null ;
     private String implClass = null;
-    private String factory   = null;
     private boolean useInheritedMethods = false;
     private String exclude = null;
     private String stopClasses = null;
@@ -96,7 +94,6 @@ public class Java2WsdlAntTask extends Task
             log("\toutput:" + output, Project.MSG_VERBOSE);
             log("\tclassName:" + className, Project.MSG_VERBOSE);
             log("\timplClass:" + implClass, Project.MSG_VERBOSE);
-            log("\tfactory:"   + factory,   Project.MSG_VERBOSE);
             log("\tinheritance:" + useInheritedMethods, Project.MSG_VERBOSE);
             log("\texcluded:" + exclude, Project.MSG_VERBOSE);
             log("\tstopClasses:" + stopClasses, Project.MSG_VERBOSE);
@@ -114,8 +111,6 @@ public class Java2WsdlAntTask extends Task
             emitter.setCls(className);
             if (implClass != null)
                 emitter.setImplCls(implClass);
-            if (factory != null)
-                emitter.setFactory(factory);
             if (exclude != null)
                 emitter.setDisallowedMethods(exclude);
             if (stopClasses != null)
@@ -157,11 +152,6 @@ public class Java2WsdlAntTask extends Task
     // The setter for the "implClass" attribute
     public void setImplClass(String parameter) {
         this.implClass = parameter;
-    }
-
-    // The setter for the "factory" attribute
-    public void setFactory(String parameter) {
-        this.factory = parameter;
     }
 
     // The setter for the "servicePortName" attribute
