@@ -190,8 +190,11 @@ public abstract class BaseSerializerFactory
      */
     protected Serializer getSpecialized(String mechanismType) {
         if (javaType != null && xmlType != null) {
-            if (getSerializer == null) {
-                getSerializer = getSerializerMethod(javaType);
+            // Ensure that getSerializerMethod is called only once.
+            synchronized (this) {
+                if (getSerializer == null) {
+                    getSerializer = getSerializerMethod(javaType);
+                }
             }
             if (getSerializer != null) {
                 try {

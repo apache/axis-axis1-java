@@ -165,8 +165,11 @@ public abstract class BaseDeserializerFactory
      */
     protected Deserializer getSpecialized(String mechanismType) {
         if (javaType != null && xmlType != null) {
-            if (getDeserializer == null) {
-                getDeserializer = getDeserializerMethod(javaType);    
+            // Ensure that getDeserializerMethod is called only once.
+            synchronized (this) {
+                if (getDeserializer == null) {
+                    getDeserializer = getDeserializerMethod(javaType);    
+                }
             }
             if (getDeserializer != null) {
                 try {
