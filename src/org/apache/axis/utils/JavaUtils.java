@@ -616,7 +616,7 @@ public class JavaUtils
      */
     static final String keywords[] =
     {
-        "abstract",  "boolean",      "break",      "byte",      "case",
+        "assert",    "abstract",  "boolean",      "break",      "byte",      "case",
         "catch",     "char",         "class",      "const",     "continue",
         "default",   "do",           "double",     "else",      "extends",
         "false",     "final",        "finally",    "float",     "for",
@@ -1152,7 +1152,7 @@ public class JavaUtils
     } // mimeToJava
 
     //avoid testing and possibly failing everytime.
-    private static boolean checkForAttchmentSupport = true;
+    private static boolean checkForAttachmentSupport = true;
     private static boolean attachmentSupportEnabled = false;
 
     /**
@@ -1162,9 +1162,9 @@ public class JavaUtils
      */
     public static synchronized boolean isAttachmentSupported() {
 
-        if (checkForAttchmentSupport) {
+        if (checkForAttachmentSupport) {
             //aviod testing and possibly failing everytime.
-            checkForAttchmentSupport = false;
+            checkForAttachmentSupport = false;
             try {
                 // Attempt to resolve DataHandler and MimeMultipart and
                 // javax.xml.transform.Source, all necessary for full
