@@ -349,6 +349,8 @@ public class HTTPSender extends BasicHandler {
                 .append("\r\n")
                 .append( HTTPConstants.HEADER_ACCEPT ) //Limit to the types that are meaningful to us.
                 .append( ": ")
+                .append( HTTPConstants.HEADER_ACCEPT_APPL_SOAP)
+                .append( ", ")
                 .append( HTTPConstants.HEADER_ACCEPT_APPLICATION_DIME)
                 .append( ", ")
                 .append( HTTPConstants.HEADER_ACCEPT_MULTIPART_RELATED)

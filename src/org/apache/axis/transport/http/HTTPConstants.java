@@ -107,6 +107,7 @@ public class HTTPConstants {
 
     public static final String HEADER_ACCEPT = "Accept";
     public static final String HEADER_ACCEPT_TEXT_ALL = "text/*";
+    public static final String HEADER_ACCEPT_APPL_SOAP = "application/soap+xml";
     public static final String HEADER_ACCEPT_MULTIPART_RELATED = "multipart/related";
     public static final String HEADER_ACCEPT_APPLICATION_DIME = "application/dime";
     
