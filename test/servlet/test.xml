@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="Web App Test" default="default" basedir=".">
+  <description>
+    Test a Web application with HttpUnit. Based on example code in 
+    Java Development with Ant, Hatcher and Loughran, 2001.
+    Customised for Axis by Steve Loughran.
+    1. Needs XSLT support from Xalan to generate the reports.
+    2. To run a single test, set testcase=the name of the test.
+    3. default URL is http://localhost:8080/axis ; set the 
+       axis.url property to target a different system.
+  </description>
+  
+<!-- BEGIN TOPLEVEL DECLARATIONS -->
+  <!-- Load the application specific settings -->
+  <!-- #Project specific props -->
+  <property file="build.properties"/>
+  
+  <property name="build.dir" location="build"/>
+      
+  <!-- ========================================================== -->
+  <!-- Test settings                                              -->
+  <!-- ========================================================== -->
+  <property name="test.dir" location="${build.dir}/test"/>
+  <property name="test.classes.dir" location="${test.dir}/classes"/>
+  <property name="test.data.dir" location="${test.dir}/data"/>
+  <property name="test.reports.dir" location="${test.dir}/reports"/>
+
+  <property name="axis.url" value="http://localhost:8080/axis"/>
+  
+  <path id="test.compile.classpath">
+    <fileset dir="lib" includes="**/*.jar" />
+  </path>
+    
+  <path id="test.classpath">
+    <path refid="test.compile.classpath"/>
+    <pathelement location="${test.classes.dir}"/>
+  </path>    
+  <!-- END TOPLEVEL DECLARATIONS -->
+  
+  <!-- Public Targets -->
+
+  <target name="default" 
+    depends="test"
+    description="test axis on a server"
+    />
+
+  <!-- cleanup target -->
+  <target name="clean" description="cleanup">
+   <delete dir="${build.dir}" />
+  </target>
+
+  
+  <!-- init configures things -->
+  <target name="init" >
+    <mkdir dir="${test.dir}" />
+    <mkdir dir="${test.classes.dir}" />
+    <mkdir dir="${test.data.dir}" />
+    <mkdir dir="${test.reports.dir}" />
+  </target>
+  
+    <!-- compile the java sources using the compilation classpath -->
+  <target name="compile-tests" depends="init">
+    <mkdir dir="${test.classes.dir}"/>
+    <property name="build.debuglevel" value="lines,vars,source"/> 
+    <javac destdir="${test.classes.dir}"
+           debug="${build.debug}"
+           includeAntRuntime="false"
+           srcdir="src">
+      <classpath refid="test.compile.classpath"/>
+    </javac>
+  </target>
+  
+   <!-- this is our test suite for httpunit -->
+
+  <target name="test"
+      depends="compile-tests" 
+      description="test axis on a server" >
+    <junit printsummary="false"
+           errorProperty="test.failed"
+           failureProperty="test.failed"
+           haltonfailure="false"
+           fork="true">
+      <classpath 
+        refid="test.classpath"/>
+      <sysproperty key="server.url" 
+        value="${axis.url}"/>
+      <formatter type="xml"/>
+      <formatter type="brief" usefile="false"/>
+      <test name="${testcase}" if="testcase"/>
+      <batchtest todir="${test.data.dir}" unless="testcase">
+        <fileset dir="src" includes="**/*Test.java"/>
+      </batchtest>
+    </junit>
+    
+    <!-- generate any test reports -->
+    <junitreport todir="${test.data.dir}">
+      <fileset dir="${test.data.dir}">
+        <include name="TEST-*.xml"/>
+      </fileset>
+      <report format="frames" todir="${test.reports.dir}"/>
+    </junitreport>
+    
+    <!-- then bail out when things go bad -->
+    <fail message="Functional tests failed - see the report"
+      if="test.failed"/>
+  </target>
+
+    
+</project>
+
