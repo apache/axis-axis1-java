@@ -17,6 +17,7 @@
 package org.apache.axis.providers.java;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 
 import javax.naming.Context;
@@ -441,23 +442,48 @@ public class EJBProvider extends RPCProvider
     }
 
     /**
-     * Fill in a service description with the correct impl class
-     * and typemapping set.  
+     * Override the default implementation such that we can include
+     * special handling for {@link java.rmi.ServerException}.
+     * <p/>
+     * Converts {@link java.rmi.ServerException} exceptions to
+     * {@link InvocationTargetException} exceptions with the same cause.
+     * This allows the axis framework to create a SOAP fault.
+     * </p>
+     *
+     * @see org.apache.axis.providers.java.RPCProvider#invokeMethod(org.apache.axis.MessageContext, java.lang.reflect.Method, java.lang.Object, java.lang.Object[])
      */
-//    public void initServiceDesc(SOAPService service, MessageContext msgContext)
-//            throws AxisFault
-//    {
-//        // the service class used to fill service description is the EJB Remote/Local Interface
-//        // we add EJBObject and EJBLocalObject as stop classes because we
-//        // don't want any of their methods in the wsdl ...
-//        ServiceDesc serviceDescription = service.getServiceDescription();
-//        ArrayList stopClasses = serviceDescription.getStopClasses();
-//        if (stopClasses == null)
-//            stopClasses = new ArrayList();                  
-//        stopClasses.add("javax.ejb.EJBObject");
-//        stopClasses.add("javax.ejb.EJBLocalObject");
-//        serviceDescription.setStopClasses(stopClasses);
-//        super.initServiceDesc(service,msgContext);
-//    }
+    protected Object invokeMethod(MessageContext msgContext, Method method,
+                                  Object obj, Object[] argValues)
+            throws Exception {
+        try {
+            return super.invokeMethod(msgContext, method, obj, argValues);
+        } catch (InvocationTargetException ite) {
+            Throwable cause = getCause(ite);
+            if (cause instanceof java.rmi.ServerException) {
+                throw new InvocationTargetException(getCause(cause));
+            }
+            throw ite;
+        }
+    }
 
+    /**
+     * Get the cause of an exception, using reflection so that
+     * it still works under JDK 1.3
+     *
+     * @param original the original exception
+     * @return the cause of the exception, or the given exception if the cause cannot be discovered.
+     */
+    private Throwable getCause(Throwable original) {
+        try {
+            Method method = original.getClass().getMethod("getCause", null);
+            Throwable cause = (Throwable) method.invoke(original, null);
+            if (cause != null) {
+                return cause;
+            }
+        } catch (NoSuchMethodException nsme) {
+            // ignore, this occurs under JDK 1.3 
+        } catch (Throwable t) {
+        }
+        return original;
+    }
 }
