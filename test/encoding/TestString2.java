@@ -51,8 +51,11 @@ public class TestString2 extends TestCase {
         
         String result = (String)output.getObjectValue();
         assertNotNull("No value for testParam param", result);
-        
         assertEquals("Expected result not received.", expected, result);
+
+        String nodeValue = output.getValue();
+        assertNotNull("No node value for testParam param", nodeValue);
+        assertEquals(expected, nodeValue);
     }
 
     private void runtest(String value) throws Exception {

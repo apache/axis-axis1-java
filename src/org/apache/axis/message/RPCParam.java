@@ -205,4 +205,9 @@ public class RPCParam extends MessageElement implements Serializable
     protected void outputImpl(SerializationContext context) throws Exception {
         serialize(context);
     }
+
+    public String getValue() {
+        return getValueDOM();
+    }
+
 }
