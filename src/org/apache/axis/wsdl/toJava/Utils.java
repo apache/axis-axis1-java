@@ -730,15 +730,64 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
     } // hasMIME
 
     private static HashMap constructorMap = new HashMap(50);
+    private static HashMap constructorThrowMap = new HashMap(50);
     static {
+        //  Type maps to a valid initialization value for that type
+        //      Type var = new Type(arg)
+        // Where "Type" is the key and "new Type(arg)" is the string stored
+        // Used in emitting test cases and server skeletons.
+        constructorMap.put("int", "0");
+        constructorMap.put("float", "0");
         constructorMap.put("boolean", "true");
+        constructorMap.put("double", "0");
+        constructorMap.put("byte", "(byte)0");
+        constructorMap.put("short", "(short)0");
+        constructorMap.put("long", "0");
+        constructorMap.put("java.lang.Boolean", "new java.lang.Boolean(false)");
+        constructorMap.put("java.lang.Byte", "new java.lang.Byte((byte)0)");
+        constructorMap.put("java.lang.Double", "new java.lang.Double(0)");
+        constructorMap.put("java.lang.Float", "new java.lang.Float(0)");
+        constructorMap.put("java.lang.Integer", "new java.lang.Integer(0)");
+        constructorMap.put("java.lang.Long", "new java.lang.Long(0)");
+        constructorMap.put("java.lang.Short", "new java.lang.Short((short)0)");
+        constructorMap.put("java.math.BigDecimal", "new java.math.BigDecimal(0)");
+        constructorMap.put("java.math.BigInteger", "new java.math.BigInteger(\"0\")");
+        constructorMap.put("java.lang.Object", "new java.lang.String()");
+        constructorMap.put("byte[]", "new byte[0]");
+        constructorMap.put("java.util.Calendar", "java.util.Calendar.getInstance()");
+        constructorMap.put("javax.xml.namespace.QName", "new javax.xml.namespace.QName(\"http://double-double\", \"toil-and-trouble\")");
+
+        // These constructors throw exception
+        constructorThrowMap.put("org.apache.axis.types.Time", "new org.apache.axis.types.Time(\"15:45:45.275Z\")");
+        constructorThrowMap.put("org.apache.axis.types.UnsignedLong", "new org.apache.axis.types.UnsignedLong(0)");
+        constructorThrowMap.put("org.apache.axis.types.UnsignedInt", "new org.apache.axis.types.UnsignedInt(0)");
+        constructorThrowMap.put("org.apache.axis.types.UnsignedShort", "new org.apache.axis.types.UnsignedShort(0)");
+        constructorThrowMap.put("org.apache.axis.types.UnsignedByte", "new org.apache.axis.types.UnsignedByte(0)");
+        constructorThrowMap.put("org.apache.axis.types.URI", "new org.apache.axis.types.URI(\"urn:testing\")");
+        constructorThrowMap.put("org.apache.axis.types.Year", "new org.apache.axis.types.Year(2000)");
+        constructorThrowMap.put("org.apache.axis.types.Month", "new org.apache.axis.types.Month(1)");
+        constructorThrowMap.put("org.apache.axis.types.Day", "new org.apache.axis.types.Day(1)");
+        constructorThrowMap.put("org.apache.axis.types.YearMonth", "new org.apache.axis.types.YearMonth(2000,1)");
+        constructorThrowMap.put("org.apache.axis.types.MonthDay", "new org.apache.axis.types.MonthDay(1, 1)");
     }
+    
+    
     /**
      * Return a constructor for the provided Parameter
+     * This string will be suitable for assignment:
+     * <p>
+     *    Foo var = <i>string returned</i>
+     * <p>
+     * Handles basic java types (int, float, etc), wrapper types (Integer, etc)
+     * and certain java.math (BigDecimal, BigInteger) types.
+     * Will also handle all Axis specific types (org.apache.axis.types.*)
+     * <p>
+     * Caller should expect to wrap the construction in a try/catch block
+     * if bThrow is set to <i>true</i>.
      * 
-     * @param param
+     * @param param info about the parameter we need a constructor for
      * @param symbolTable used to lookup enumerations
-     * @param bThrow returns true if contructor needs try/catch block
+     * @param bThrow set to true if contructor needs try/catch block
      */ 
     static String getConstructorForParam(Parameter param, 
                                          SymbolTable symbolTable,
@@ -746,95 +795,56 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
         
         String paramType = param.getType().getName();
         String mimeType = param.getMIMEType();
-        String out;
+        String out = null;
         
-        if ( Utils.isPrimitiveType(param.getType()) ) {
-             if ( "boolean".equals(paramType) ) {
-                 out = "true";
-             } else if ("byte".equals(paramType)) {
-                 out = "(byte)0";
-             } else if ("short".equals(paramType)) {
-                 out = "(short)0";
-             } else {
-                 out = "0";
-             }
-        } else if (mimeType != null) {
+        // Handle mime types
+        if (mimeType != null) {
             if (mimeType.equals("image/gif") ||
-                mimeType.equals("image/jpeg")) {
-                out = "null";
+                    mimeType.equals("image/jpeg")) {
+                return "null";
             }
             else if (mimeType.equals("text/xml") ||
-                     mimeType.equals("application/xml")) {
-                out = "new javax.xml.transform.stream.StreamSource()";
+                    mimeType.equals("application/xml")) {
+                return "new javax.xml.transform.stream.StreamSource()";
             }
             else {
-                out = "new " + Utils.getParameterTypeName(param) + "()";
+                return "new " + Utils.getParameterTypeName(param) + "()";
             }
-         } else if (paramType.equals("java.lang.Boolean")) {
-             out = "new java.lang.Boolean(false)";
-         } else if (paramType.equals("java.lang.Byte")) {
-             out = "new java.lang.Byte((byte)0)";
-         } else if (paramType.equals("java.lang.Double")) {
-             out = "new java.lang.Double(0)";
-         } else if (paramType.equals("java.lang.Float")) {
-             out = "new java.lang.Float(0)";
-         } else if (paramType.equals("java.lang.Integer")) {
-             out = "new java.lang.Integer(0)";
-         } else if (paramType.equals("java.lang.Long")) {
-             out = "new java.lang.Long(0)";
-         } else if (paramType.equals("java.lang.Short")) {
-             out = "new java.lang.Short((short)0)";
-         } else if (paramType.equals("java.math.BigDecimal")) {
-             out = "new java.math.BigDecimal(0)";
-         } else if (paramType.equals("java.math.BigInteger")) {
-             out = "new java.math.BigInteger(\"0\")";
-         } else if (paramType.equals("java.lang.Object")) {
-             out = "new java.lang.String()";
-         } else if (paramType.equals("byte[]")) {
-             out = "new byte[0]";
-         } else if (paramType.equals("java.util.Calendar")) {
-             out = "java.util.Calendar.getInstance()";
-         } else if (paramType.equals("javax.xml.namespace.QName")) {
-             out = "new javax.xml.namespace.QName(\"http://double-double\", \"toil-and-trouble\")";
-         } else if (paramType.endsWith("[]")) {
-             out = "new " + JavaUtils.replace(paramType, "[]", "[0]");
-         } else if (paramType.equals("org.apache.axis.types.Time")) {
-             out = "new org.apache.axis.types.Time(\"15:45:45.275Z\")";
-         } else if (paramType.equals("org.apache.axis.types.UnsignedLong")) {
-             bThrow.value = true;
-             out = "new org.apache.axis.types.UnsignedLong(0)";
-         } else if (paramType.equals("org.apache.axis.types.UnsignedInt")) {
-             bThrow.value = true;
-             out = "new org.apache.axis.types.UnsignedInt(0)";
-         } else if (paramType.equals("org.apache.axis.types.UnsignedShort")) {
-             bThrow.value = true;
-             out = "new org.apache.axis.types.UnsignedShort(0)";
-         } else if (paramType.equals("org.apache.axis.types.UnsignedByte")) {
-             bThrow.value = true;
-             out = "new org.apache.axis.types.UnsignedByte(0)";
-         } else if (paramType.equals("org.apache.axis.types.URI")) {
-             bThrow.value = true;
-             out = "new org.apache.axis.types.URI(\"urn:testing\")";
-         } else {
-
-             // We have some constructed type.
-             Vector v = Utils.getEnumerationBaseAndValues(
-                     param.getType().getNode(), symbolTable);
-
-             if (v != null) {
-
-                 // This constructed type is an enumeration.  Use the first one.
-                 String enumeration = (String)
-                     JavaEnumTypeWriter.getEnumValueIds(v).get(0);
-                 out = paramType + "." + enumeration;
-             } else {
-
-                 // This constructed type is a normal type, instantiate it.
-                 out = "new " + paramType + "()";
-             }
-         }
+        }
         
-        return out;
+        // Look up paramType in the table
+        out = (String) constructorMap.get(paramType);
+        if (out != null) {
+            return out;
+        }
+        
+        // Look up paramType in the table of constructors that can throw exceptions
+        out = (String) constructorThrowMap.get(paramType);
+        if (out != null) {
+            bThrow.value = true;
+            return out;
+        }
+        
+        // Handle arrays
+        if (paramType.endsWith("[]")) {
+            return "new " + JavaUtils.replace(paramType, "[]", "[0]");
+        }
+
+        /*** We have some constructed type. */
+        
+        // Check for enumeration
+        Vector v = Utils.getEnumerationBaseAndValues(
+                param.getType().getNode(), symbolTable);
+        if (v != null) {
+            // This constructed type is an enumeration.  Use the first one.
+            String enumeration = (String)
+                    JavaEnumTypeWriter.getEnumValueIds(v).get(0);
+            return paramType + "." + enumeration;
+        }
+        
+        // This constructed type is a normal type, instantiate it.
+        return "new " + paramType + "()";
+        
     }
 
 } // class Utils

@@ -388,6 +388,11 @@
     <part name="unsignedShort" type="xsd:unsignedShort"/>
     <part name="unsignedByte" type="xsd:unsignedByte"/>
     <part name="anyURI" type="xsd:anyURI"/>
+    <part name="gYear" type="xsd:gYear"/>
+    <part name="gMonth" type="xsd:gMonth"/>
+    <part name="gDay" type="xsd:gDay"/>
+    <part name="gYearMonth" type="xsd:gYearMonth"/>
+    <part name="gMonthDay" type="xsd:gMonthDay"/>
   </message>
   <message name="inputBoolean">
     <part name="inBoolean" type="xsd:boolean"/>
@@ -587,6 +592,56 @@
   <message name="outputAnyURI">
     <part name="outAnyURI" type="xsd:anyURI"/>
     <part name="anyURI" type="xsd:anyURI"/>
+  </message>
+
+  <message name="inputYear">
+    <part name="inYear" type="xsd:gYear"/>
+    <part name="Year" type="xsd:gYear"/>
+  </message>
+
+  <message name="outputYear">
+    <part name="outYear" type="xsd:gYear"/>
+    <part name="Year" type="xsd:gYear"/>
+  </message>
+
+  <message name="inputMonth">
+    <part name="inMonth" type="xsd:gMonth"/>
+    <part name="Month" type="xsd:gMonth"/>
+  </message>
+
+  <message name="outputMonth">
+    <part name="outMonth" type="xsd:gMonth"/>
+    <part name="Month" type="xsd:gMonth"/>
+  </message>
+
+  <message name="inputDay">
+    <part name="inDay" type="xsd:gDay"/>
+    <part name="Day" type="xsd:gDay"/>
+  </message>
+
+  <message name="outputDay">
+    <part name="outDay" type="xsd:gDay"/>
+    <part name="Day" type="xsd:gDay"/>
+  </message>
+
+  <message name="inputYearMonth">
+    <part name="inYearMonth" type="xsd:gYearMonth"/>
+    <part name="YearMonth" type="xsd:gYearMonth"/>
+  </message>
+
+  <message name="outputYearMonth">
+    <part name="outYearMonth" type="xsd:gYearMonth"/>
+    <part name="YearMonth" type="xsd:gYearMonth"/>
+  </message>
+
+  <message name="inputMonthDay">
+    <part name="inMonthDay" type="xsd:gMonthDay"/>
+    <part name="MonthDay" type="xsd:gMonthDay"/>
+  </message>
+
+  <message name="outputMonthDay">
+    <part name="outMonthDay" type="xsd:gMonthDay"/>
+    <part name="MonthDay" type="xsd:gMonthDay"/>
   </message>
 
   <message name="inputSoapString">
@@ -1016,6 +1071,26 @@
     <operation name="methodAnyURI">
       <input message="tns:inputAnyURI"/>
       <output message="tns:outputAnyURI"/>
+    </operation>    
+    <operation name="methodYear">
+      <input message="tns:inputYear"/>
+      <output message="tns:outputYear"/>
+    </operation>    
+    <operation name="methodMonth">
+      <input message="tns:inputMonth"/>
+      <output message="tns:outputMonth"/>
+    </operation>    
+    <operation name="methodDay">
+      <input message="tns:inputDay"/>
+      <output message="tns:outputDay"/>
+    </operation>    
+    <operation name="methodYearMonth">
+      <input message="tns:inputYearMonth"/>
+      <output message="tns:outputYearMonth"/>
+    </operation>    
+    <operation name="methodMonthDay">
+      <input message="tns:inputMonthDay"/>
+      <output message="tns:outputMonthDay"/>
     </operation>    
     <operation name="methodSoapString">
       <input message="tns:inputSoapString"/>
@@ -2127,6 +2202,81 @@
       </output>
     </operation>    
     <operation name="methodAnyURI">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>    
+    <operation name="methodYear">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>    
+    <operation name="methodMonth">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>    
+    <operation name="methodDay">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>    
+    <operation name="methodYearMonth">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>    
+    <operation name="methodMonthDay">
       <soap:operation soapAction=""/>
       <input>
         <soap:body
