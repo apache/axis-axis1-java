@@ -254,11 +254,20 @@ public class TypeMappingRegistry implements Serializer {
         // Search implemented interfaces
         if (!cls.isInterface()) {
             Class [] interfaces = cls.getInterfaces();
+            // Walk the interface list WITHOUT checking parents
             for (int i = 0 ; i < interfaces.length ; i++ ) { 
-                ser = findSerializer(interfaces[i]);
+                ser = getSerializer(interfaces[i]);
                 if (ser != null)
                     return ser;
             }
+            
+            // and if that didn't work, check all the parents (and their
+            // parents...)
+            for (int i = 0 ; i < interfaces.length ; i++ ) { 
+                ser = findSerializer(interfaces[i].getSuperclass());
+                if (ser != null)
+                    return ser;
+            }            
         }
         
         // Search up the inheritance tree from here
