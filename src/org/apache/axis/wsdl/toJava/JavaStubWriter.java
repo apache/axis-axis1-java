@@ -54,9 +54,9 @@
  */
 package org.apache.axis.wsdl.toJava;
 
-import org.apache.axis.utils.Messages;
 import org.apache.axis.enum.Style;
 import org.apache.axis.enum.Use;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.CollectionTE;
 import org.apache.axis.wsdl.symbolTable.Element;
@@ -723,12 +723,15 @@ public class JavaStubWriter extends JavaClassWriter {
         }
         pw.println();
 
+        // Set the headers
+        pw.println("        setRequestHeaders(_call);");
+
         // Invoke the operation
         if (oneway) {
             pw.print("        _call.invokeOneWay(");
         }
         else {
-            pw.print("        java.lang.Object _resp = _call.invoke(");
+        	pw.print("        java.lang.Object _resp = _call.invoke(");
         }
         pw.print("new java.lang.Object[] {");
         writeParameters(pw, parms);
@@ -773,10 +776,12 @@ public class JavaStubWriter extends JavaClassWriter {
         pw.println("        if (_resp instanceof java.rmi.RemoteException) {");
         pw.println("            throw (java.rmi.RemoteException)_resp;");
         pw.println("        }");
-
+ 
         int allOuts = parms.outputs + parms.inouts;
         if (allOuts > 0) {
             pw.println("        else {");
+            pw.println("            getResponseHeaders(_call);");
+        
             if (allOuts == 1) {
                 if (parms.returnParam != null) {
                     writeOutputAssign(pw, "return ", parms.returnParam.getType(),
@@ -821,6 +826,8 @@ public class JavaStubWriter extends JavaClassWriter {
 
             }
             pw.println("        }");
+        } else {
+            pw.println("        getResponseHeaders(_call);");
         }
     } // writeResponseHandling
 
