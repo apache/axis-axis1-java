@@ -33,6 +33,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
+import java.net.URL;
+import java.net.MalformedURLException;
+import java.net.URLClassLoader;
 
 /**
  * This class wraps the Sun's Javac Compiler.
@@ -54,9 +57,7 @@ public class Javac extends AbstractCompiler
     private boolean modern = false;
 
     public Javac() {
-
-        // Use reflection to be able to build on all JDKs
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        ClassLoader cl = getClassLoader();
         try {
             ClassUtils.forName(MODERN_CLASS, true, cl);
             modern = true;
@@ -74,6 +75,26 @@ public class Javac extends AbstractCompiler
                 (modern ? MODERN_CLASS : CLASSIC_CLASS)));
     }
 
+    private ClassLoader getClassLoader() {
+        // Use reflection to be able to build on all JDKs
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+
+        URL toolsURL = null;
+        String tools = System.getProperty("java.home");
+        if (tools != null) {
+            File f = new File(tools + "/../lib/tools.jar");
+            if (f.exists()) {
+                try {
+                    toolsURL = f.toURL();
+                    cl = new URLClassLoader(new URL[]{toolsURL}, cl);
+                } catch (MalformedURLException e) {
+                }
+            }
+        }
+        
+        return cl;
+    }
+
     /**
      * Compile a source file yielding a loadable class file.
      *
@@ -85,7 +106,8 @@ public class Javac extends AbstractCompiler
 
         try {
             // Create an instance of the compiler, redirecting output to err
-            Class c = ClassUtils.forName("sun.tools.javac.Main");
+            Class c = ClassUtils.forName("sun.tools.javac.Main", true, getClassLoader());
+            
             Constructor cons =
                 c.getConstructor(new Class[] { OutputStream.class,
                                                String.class });
