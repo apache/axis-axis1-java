@@ -145,6 +145,12 @@ public class JavaTestCaseWriter extends JavaWriter {
         pw.close();
     } // finish
 
+    // Methods may be overloaded.  If we just grab the method name
+    // for the test method names, we could end up with duplicates.
+    // The quick-and-easy solution is to have a test counter so that
+    // each test method has a number.
+    private int counter = 1;
+
     private final void writeServiceTestCode(
             String portName, PortType portType, PortTypeEntry ptEntry,
             Binding binding, BindingEntry bEntry) throws IOException {
@@ -152,7 +158,7 @@ public class JavaTestCaseWriter extends JavaWriter {
         while (ops.hasNext()) {
             Operation op = (Operation) ops.next();
             OperationType type = op.getStyle();
-            Parameters params = bEntry.getParameters(op.getName());
+            Parameters params = bEntry.getParameters(op);
 
             // These operation types are not supported.  The signature
             // will be a string stating that fact.
@@ -163,7 +169,7 @@ public class JavaTestCaseWriter extends JavaWriter {
             }
 
             String javaOpName = Utils.xmlNameToJavaClass(op.getName());
-            String testMethodName = "test" + portName + javaOpName;
+            String testMethodName = "test" + counter++ + portName + javaOpName;
             pw.println("    public void " + testMethodName + "() {");
 
             // If there is not literal use, the interface name is the portType name.

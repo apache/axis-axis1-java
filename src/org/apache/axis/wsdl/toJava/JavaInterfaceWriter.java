@@ -129,7 +129,7 @@ public class JavaInterfaceWriter extends JavaWriter {
      */
     private void writeOperation(Operation operation) throws IOException {
         writeComment(pw, operation.getDocumentationElement());
-        Parameters parms = bEntry.getParameters(operation.getName());
+        Parameters parms = bEntry.getParameters(operation);
         pw.println(parms.signature + ";");
     } // writeOperation
 

@@ -107,8 +107,8 @@ public class BindingEntry extends SymTabEntry {
     /**
      * Get the Parameters object for the given operation.
      */
-    public Parameters getParameters(String operationName) {
-        return (Parameters) parameters.get(operationName);
+    public Parameters getParameters(Operation operation) {
+        return (Parameters) parameters.get(operation);
     } // getParameters
 
     /**
