@@ -248,6 +248,21 @@ public class VerifyTestCase extends junit.framework.TestCase {
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
+        try {
+            binding.anyIn(new java.lang.String("hi ho"));
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+        try {
+            binding.anyInout(new javax.xml.rpc.holders.ObjectClassHolder(new java.lang.String("yo ho ho")));
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+        try {
+            java.lang.Object value = binding.anyOut();
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
     }
 }
 
