@@ -59,7 +59,8 @@ import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
-import java.io.InputStream ;
+
+import java.io.InputStream;
 
 /** A Body element.
  * 

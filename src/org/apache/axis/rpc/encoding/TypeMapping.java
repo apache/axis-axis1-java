@@ -4,8 +4,8 @@
 // package javax.xml.rpc ;
 package org.apache.axis.rpc.encoding ;
 
-import org.apache.axis.rpc.JAXRPCException ;
-import org.apache.axis.rpc.namespace.QName ;
+import org.apache.axis.rpc.JAXRPCException;
+import org.apache.axis.rpc.namespace.QName;
 
 public interface TypeMapping {
     public java.util.Iterator getSupportedEncodings();

@@ -54,15 +54,9 @@
  */
 package org.apache.axis.deployment.wsdd;
 
-import java.util.Hashtable;
-
-import org.apache.axis.deployment.SimpleDeploymentManager;
 import org.apache.axis.deployment.DeploymentException;
-import org.apache.axis.Handler;
-import org.apache.axis.Constants;
+import org.apache.axis.deployment.SimpleDeploymentManager;
 import org.apache.axis.utils.QName;
-import org.apache.axis.encoding.TypeMappingRegistry;
-import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 
 
 /**

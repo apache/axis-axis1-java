@@ -4,9 +4,9 @@
 // package javax.xml.rpc ;
 package org.apache.axis.rpc.encoding ;
 
-import org.apache.axis.rpc.JAXRPCException ;
+import org.apache.axis.rpc.JAXRPCException;
 
-import java.util.Iterator ;
+import java.util.Iterator;
 
 public interface TypeMappingRegistry extends java.io.Serializable {
     public void registry(TypeMapping mapping, String namespaceURI)

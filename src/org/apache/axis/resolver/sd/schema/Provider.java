@@ -1,10 +1,11 @@
 package org.apache.axis.resolver.sd.schema;
 
-import java.util.HashMap;
 import org.apache.axis.Handler;
-import org.apache.axis.utils.QName;
 import org.apache.axis.resolver.Resolver;
+import org.apache.axis.utils.QName;
 import org.xml.sax.helpers.DefaultHandler;
+
+import java.util.HashMap;
 
 /**
  * Providers are pluggable.  They must register here in order

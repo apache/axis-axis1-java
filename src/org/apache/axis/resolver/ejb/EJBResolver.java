@@ -1,10 +1,10 @@
 package org.apache.axis.resolver.ejb;
 
 import org.apache.axis.Handler;
+import org.apache.axis.providers.java.EJBProvider;
 import org.apache.axis.resolver.Resolver;
 import org.apache.axis.resolver.ResolverContext;
 import org.apache.axis.resolver.ResolverException;
-import org.apache.axis.providers.java.EJBProvider;
 
 /**
  * @author James Snell (jasnell@us.ibm.com)

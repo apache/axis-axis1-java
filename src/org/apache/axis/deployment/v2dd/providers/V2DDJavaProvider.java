@@ -69,11 +69,10 @@
  */
 package org.apache.axis.deployment.v2dd.providers;
 
-import org.apache.axis.providers.BasicProvider;
-import org.apache.axis.deployment.v2dd.V2DDProvider;
 import org.apache.axis.deployment.v2dd.V2DDConstants;
+import org.apache.axis.deployment.v2dd.V2DDProvider;
+import org.apache.axis.providers.BasicProvider;
 import org.apache.axis.providers.java.JavaProvider;
-
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 

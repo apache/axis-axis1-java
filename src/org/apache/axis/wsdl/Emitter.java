@@ -78,16 +78,12 @@ import javax.wsdl.Port;
 import javax.wsdl.PortType;
 import javax.wsdl.QName;
 import javax.wsdl.Service;
-import javax.wsdl.WSDLException;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;

@@ -1,9 +1,10 @@
 package org.apache.axis.resolver;
 
-import java.util.Vector;
-import java.util.Iterator;
-import java.util.HashMap;
 import org.apache.axis.Handler;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Vector;
 
 /**
  * This is the primary top level resolver in Axis.

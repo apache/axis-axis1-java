@@ -1,8 +1,7 @@
 package org.apache.axis.transport.http ;
 
+import java.io.IOException;
 import java.io.InputStream; 
-import java.io.IOException; 
-import java.io.EOFException; 
 
 public class NonBlockingBufferedInputStream extends InputStream {
 

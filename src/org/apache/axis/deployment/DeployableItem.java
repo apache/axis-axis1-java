@@ -54,8 +54,8 @@
  */
 package org.apache.axis.deployment;
 
-import org.apache.axis.utils.QName;
 import org.apache.axis.Handler;
+import org.apache.axis.utils.QName;
 
 
 /**

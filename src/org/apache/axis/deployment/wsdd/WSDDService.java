@@ -54,20 +54,15 @@
  */
 package org.apache.axis.deployment.wsdd;
 
-import java.net.URL;
-
-import org.w3c.dom.Element;
+import org.apache.axis.Handler;
+import org.apache.axis.TargetedChain;
+import org.apache.axis.deployment.DeploymentRegistry;
+import org.apache.axis.description.ServiceDescription;
+import org.apache.axis.utils.QName;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import org.apache.axis.Handler;
-import org.apache.axis.Chain;
-import org.apache.axis.TargetedChain;
-import org.apache.axis.utils.QName;
-import org.apache.axis.deployment.DeploymentRegistry;
-import org.apache.axis.deployment.DeployableItem;
-import org.apache.axis.description.ServiceDescription;
 
 
 /**

@@ -1,12 +1,21 @@
 package org.apache.axis.resolver.jws;
 
+import org.apache.axis.Handler;
+import org.apache.axis.resolver.Resolver;
+import org.apache.axis.resolver.ResolverContext;
+import org.apache.axis.resolver.ResolverException;
+import org.apache.axis.transport.http.HTTPConstants;
+import org.apache.axis.utils.AxisClassLoader;
+import sun.tools.javac.Main;
+
+import javax.servlet.http.HttpServlet;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.FileReader;
-import java.io.FileOutputStream;
 import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.StringTokenizer;
@@ -14,14 +23,6 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
-import javax.servlet.http.HttpServlet;
-import org.apache.axis.Handler;
-import org.apache.axis.resolver.Resolver;
-import org.apache.axis.resolver.ResolverContext;
-import org.apache.axis.resolver.ResolverException;
-import org.apache.axis.utils.AxisClassLoader;
-import org.apache.axis.transport.http.HTTPConstants;
-import sun.tools.javac.Main;
 
 /**
  * The JWSResolver checks to see if a JWS file has been compiled

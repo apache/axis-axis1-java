@@ -54,14 +54,13 @@
  */
 package org.apache.axis.deployment.wsdd;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-
-import org.apache.axis.Handler;
 import org.apache.axis.Chain;
-import org.apache.axis.utils.QName;
+import org.apache.axis.Handler;
 import org.apache.axis.deployment.DeploymentRegistry;
+import org.apache.axis.utils.QName;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 
 /**

@@ -1,7 +1,7 @@
 package org.apache.axis.resolver;
 
-import java.io.StringWriter;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 
 /**
  * @author James Snell (jasnell@us.ibm.com)

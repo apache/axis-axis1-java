@@ -1,9 +1,10 @@
 package org.apache.axis.resolver.sd.schema;
 
-import java.util.Vector;
-import java.util.Iterator;
 import org.apache.axis.Handler;
 import org.apache.axis.SimpleChain;
+
+import java.util.Iterator;
+import java.util.Vector;
 
 /**
  * @author James Snell (jasnell@us.ibm.com)

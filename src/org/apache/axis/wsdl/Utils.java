@@ -57,9 +57,7 @@ package org.apache.axis.wsdl;
 import org.w3c.dom.Node;
 
 import javax.wsdl.QName;
-
 import java.text.Collator;
-
 import java.util.Arrays;
 import java.util.Locale;
 
