@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -102,35 +102,69 @@ public class HTTPDispatchHandler extends BasicHandler {
 
       if (tmpURL.getProtocol().equalsIgnoreCase("https")) {
         if ( (port = tmpURL.getPort()) == -1 ) port = 443;
+        String tunnelHost = System.getProperty("https.proxyHost");
+        String tunnelPortString = System.getProperty("https.proxyPort");
+        String tunnelUsername = System.getProperty("https.proxyUsername");
+        String tunnelPassword = System.getProperty("https.proxyPassword");
         try {
-          Class SSLSocketFactoryClass =  
+          Class SSLSocketFactoryClass =
             Class.forName("javax.net.ssl.SSLSocketFactory");
           Class SSLSocketClass = Class.forName("javax.net.ssl.SSLSocket");
-          Class[] createSocketMethodParamTypes = 
-            new Class[] {String.class, Integer.TYPE};
-          Method createSocketMethod = 
-            SSLSocketFactoryClass.getMethod("createSocket", 
-                                            createSocketMethodParamTypes);
-          Method getDefaultMethod = 
-            SSLSocketFactoryClass.getMethod("getDefault", new
-          Class[] {});
-          Method startHandshakeMethod = 
+          Method createSocketMethod =
+            SSLSocketFactoryClass.getMethod("createSocket",
+                                            new Class[] {String.class, Integer.TYPE});
+          Method getDefaultMethod =
+            SSLSocketFactoryClass.getMethod("getDefault", new Class[] {});
+          Method startHandshakeMethod =
             SSLSocketClass.getMethod("startHandshake", new Class[] {});
           Object factory = getDefaultMethod.invoke(null, new Object[] {});
-          Object sslSocket = createSocketMethod .invoke(factory, 
-                               new Object[] {host, new Integer(port)});
+          Object sslSocket = null;
+          if (tunnelHost == null || tunnelHost.equals("")) {
+            // direct SSL connection
+            sslSocket = createSocketMethod .invoke(factory,
+                                 new Object[] {host, new Integer(port)});
+          } else {
+            // SSL tunnelling through proxy server
+            Method createSocketMethod2 =
+              SSLSocketFactoryClass.getMethod("createSocket",
+                                              new Class[] {Socket.class, String.class, Integer.TYPE, Boolean.TYPE});
+            int tunnelPort = (tunnelPortString != null? (Integer.parseInt(tunnelPortString) < 0? 443: Integer.parseInt(tunnelPortString)): 443);
+            Object tunnel = createSocketMethod .invoke(factory,
+                                 new Object[] {tunnelHost, new Integer(tunnelPort)});
+            // The tunnel handshake method (condensed and made reflexive)
+            OutputStream tunnelOutputStream = (OutputStream)SSLSocketClass.getMethod("getOutputStream", new Class[] {}).invoke(tunnel, new Object[] {});
+            PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(tunnelOutputStream)));
+            out.print("CONNECT " + host + ":" + port + " HTTP/1.0\n\r\n\r");
+            out.flush();
+            InputStream tunnelInputStream = (InputStream)SSLSocketClass.getMethod("getInputStream", new Class[] {}).invoke(tunnel, new Object[] {});
+            //BufferedReader in = new BufferedReader(new InputStreamReader(tunnelInputStream));
+            //DataInputStream in = new DataInputStream(tunnelInputStream);
+            Debug.Print(1, "Is tunnelInputStream null? " + String.valueOf(tunnelInputStream == null));
+            String replyStr = ""; int i;
+            while ((i = tunnelInputStream.read()) != '\n' && i != '\r' && i != -1) { replyStr += String.valueOf((char)i); Debug.Print(1, "got a character in reply, so far: " + replyStr); }
+            if (!replyStr.startsWith("HTTP/1.0 200") && !replyStr.startsWith("HTTP/1.1 200")) {
+              throw new IOException("Unable to tunnel through " + tunnelHost + ":" + tunnelPort + ".  Proxy returns \"" + replyStr + "\"");
+            }
+            // End of condensed reflective tunnel handshake method
+            sslSocket = createSocketMethod2.invoke(factory,
+                                 new Object[] {tunnel, host, new Integer(port), new Boolean(true)});
+            Debug.Print( 1, "Set up SSL tunnelling through " + tunnelHost + ":" +tunnelPort);
+          }
           // must shake out hidden errors!
-          startHandshakeMethod.invoke(sslSocket, new Object[] {}); 
+          startHandshakeMethod.invoke(sslSocket, new Object[] {});
           sock = (Socket)sslSocket;
         } catch (ClassNotFoundException cnfe) {
-          Debug.Print( 1, "SSL feature disallowed: support files not " +
-                          "installed or present in classpath");
+          Debug.Print( 1, "SSL feature disallowed: JSSE files not installed or present in classpath");
           throw new AxisFault(cnfe);
+        } catch (NumberFormatException nfe) {
+          Debug.Print( 1, "Proxy port number, \"" + tunnelPortString + "\", incorrectly formatted");
+          throw new AxisFault(nfe);
         }
         Debug.Print( 1, "Created an SSL connection");
       } else {
         if ((port = tmpURL.getPort()) == -1 ) port = 80;
         sock    = new Socket( host, port );
+        Debug.Print( 1, "Created an insecure HTTP connection");
       }
 
       reqEnv  = (String) msgContext.getRequestMessage().getAs("String");
@@ -140,22 +174,22 @@ public class HTTPDispatchHandler extends BasicHandler {
       String        otherHeaders = null ;
       String        userID = null ;
       String        passwd = null ;
-      
+
       userID = msgContext.getStrProp( MessageContext.USERID );
       passwd = msgContext.getStrProp( MessageContext.PASSWORD );
 
       if ( userID != null )
-        otherHeaders = HTTPConstants.HEADER_AUTHORIZATION + ": Basic " + 
-                       Base64.encode( (userID + ":" + 
-                       ((passwd == null) ? "" : passwd) ).getBytes() ) + 
+        otherHeaders = HTTPConstants.HEADER_AUTHORIZATION + ": Basic " +
+                       Base64.encode( (userID + ":" +
+                       ((passwd == null) ? "" : passwd) ).getBytes() ) +
                        "\n" ;
 
-      String  header = HTTPConstants.HEADER_POST + " " + 
-                         tmpURL.getFile() + " HTTP/1.0\n" +
-                       HTTPConstants.HEADER_CONTENT_LENGTH + ": " + 
+      String  header = HTTPConstants.HEADER_POST + " " +
+                         ((tmpURL.getFile() == null || tmpURL.getFile().equals(""))? "/": tmpURL.getFile()) + " HTTP/1.0\n" +
+                       HTTPConstants.HEADER_CONTENT_LENGTH + ": " +
                                           + reqEnv.length() + "\n" +
                        HTTPConstants.HEADER_CONTENT_TYPE + ": text/xml\n" +
-                       (otherHeaders == null ? "" : otherHeaders) + 
+                       (otherHeaders == null ? "" : otherHeaders) +
                        HTTPConstants.HEADER_SOAP_ACTION+": \""+action+"\"\n\n";
 
       out.write( header.getBytes() );
@@ -198,12 +232,12 @@ public class HTTPDispatchHandler extends BasicHandler {
             int start = name.indexOf( ' ' ) + 1 ;
             int end   = name.indexOf( ' ', start ) ;
             rc = Integer.parseInt( name.substring(start, end) );
-            msgContext.setProperty( HTTPConstants.MC_HTTP_STATUS_CODE, 
+            msgContext.setProperty( HTTPConstants.MC_HTTP_STATUS_CODE,
                                     new Integer(rc) );
-            msgContext.setProperty( HTTPConstants.MC_HTTP_STATUS_MESSAGE, 
+            msgContext.setProperty( HTTPConstants.MC_HTTP_STATUS_MESSAGE,
                                     name.substring(end+1));
           }
-          else 
+          else
             headers.put( name, value );
           len = 0 ;
         }
@@ -236,7 +270,7 @@ public class HTTPDispatchHandler extends BasicHandler {
       e.printStackTrace();
       if ( !(e instanceof AxisFault) ) e = new AxisFault(e);
       throw (AxisFault) e ;
-    } 
+    }
     Debug.Print( 1, "Exit: HTTPDispatchHandler::invoke" );
   }
 
