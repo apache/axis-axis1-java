@@ -232,11 +232,18 @@ public class JavaServiceImplWriter extends JavaClassWriter {
                 }
 
                 if (url == null) {
-                    throw new IOException(Messages.getMessage("emitFail03",
-                            new String[]{
-                                portName,
-                                className,
-                                address}));
+                    if (emitter.isAllowInvalidURL()) {
+                        // Unchecked URL mode
+                        System.err.println(Messages.getMessage("emitWarnInvalidURL01", new String[] {portName, className, address}));
+                    } else {
+                        // Checked URL mode :
+                        // URL invalid -> Exception
+                        throw new IOException(Messages.getMessage("emitFail03",
+                                new String[]{
+                                    portName,
+                                    className,
+                                    address}));                        
+                    }
                 }
             }
 

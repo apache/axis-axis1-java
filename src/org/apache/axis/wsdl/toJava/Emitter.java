@@ -94,6 +94,9 @@ public class Emitter extends Parser {
     /** Use JAX-RPC 1.1 type mappings */
     private boolean useJaxRPC11Mappings = false;
 
+    /** Check if URL endpoints are valid or not */
+    private boolean allowInvalidURL = false;
+
     /** Field packageName */
     private String packageName = null;
 
@@ -974,4 +977,17 @@ public class Emitter extends Parser {
 		this.implementationClassName = implementationClassName;
 	}
 
+    /**
+     * @return Returns the allowInvalidURL.
+     */
+    public boolean isAllowInvalidURL() {
+        return allowInvalidURL;
+    }
+
+    /**
+     * @param allowInvalidURL The allowInvalidURL to set.
+     */
+    public void setAllowInvalidURL(boolean allowInvalidURL) {
+        this.allowInvalidURL = allowInvalidURL;
+    }
 }
