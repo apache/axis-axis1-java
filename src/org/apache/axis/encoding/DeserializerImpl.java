@@ -64,13 +64,17 @@ public class DeserializerImpl extends SOAPHandler
 
     protected QName defaultType = null;
 
-    boolean componentsReadyFlag = false;
+    protected boolean componentsReadyFlag = false;
 
     /**
      * A set of sub-deserializers whose values must complete before our
      * value is complete.
      */ 
     private HashSet activeDeserializers = new HashSet();
+
+    protected boolean isHref = false;
+    protected boolean isNil = false;  // xsd:nil attribute is set to true
+    protected String id = null;  // Set to the id of the element
 
     public DeserializerImpl() {
     }
@@ -162,8 +166,9 @@ public class DeserializerImpl extends SOAPHandler
      */
     public void registerValueTarget(Target target)
     {
-        if (targets == null)
+        if (targets == null) {
             targets = new Vector();
+        }
         
         targets.addElement(target);
     }
@@ -197,11 +202,13 @@ public class DeserializerImpl extends SOAPHandler
      */
     public void moveValueTargets(Deserializer other)
     {
-        if ((other == null) || (other.getValueTargets() == null))
+        if ((other == null) || (other.getValueTargets() == null)) {
             return;
+        }
         
-        if (targets == null)
+        if (targets == null) {
             targets = new Vector();
+        }
         
         Enumeration e = other.getValueTargets().elements();
         while (e.hasMoreElements()) {
@@ -269,10 +276,7 @@ public class DeserializerImpl extends SOAPHandler
         dSer.registerValueTarget(new CallbackTarget(this, dSer));
     }
 
-    protected boolean isHref = false;
-    protected boolean isNil  = false;  // xsd:nil attribute is set to true
-    protected String id = null;  // Set to the id of the element
-    
+
     /** 
      * Subclasses may override these
      */
