@@ -16,13 +16,20 @@
   </taskdef>
 
   <target name="main">
+    <!-- Use this to check the classpath if the ANT Task fails... -->
+    <!--
     <property name="test-classpath.property" refid="test-classpath"/>
     <echo message="Classpath for wsdl2java task : ${test-classpath.property}"/>
+    -->
     
     <!-- AddressBook Sample -->
     <wsdl2java url="samples/addr/AddressBook.wsdl"
-               deployscope="session"
                output="build/work"
+               deployscope="session"
+               skeleton="yes"
+               messagecontext="no"
+               noimports="no"
+               verbose="no"
                testcase="no">
         <mapping namespace="urn:AddressFetcher2" package="samples.addr"/>
     </wsdl2java>
@@ -30,6 +37,11 @@
     <!-- Import Test -->
     <wsdl2java url="test/import_/import.wsdl"
                output="build/work"
+               deployscope="none"
+               skeleton="yes"
+               messagecontext="no"
+               noimports="no"
+               verbose="no"
                testcase="yes">
         <mapping namespace="urn:import" package="test.import"/>
         <mapping namespace="urn:importBinding1" package="test.import.binding1"/>
@@ -39,6 +51,11 @@
     <!-- InOut Sample -->
     <wsdl2java url="test/inout/inout.wsdl"
                output="build/work"
+               deployscope="none"
+               skeleton="yes"
+               messagecontext="no"
+               noimports="no"
+               verbose="no"
                testcase="no">
         <mapping namespace="http://www.ibm.com/inout" package="test.inout"/>
     </wsdl2java>
@@ -47,6 +64,11 @@
     <!--     http://www.xmethods.net/ilab/           -->
     <wsdl2java url="http://www.xmethods.net/tmodels/InteropTest.wsdl"
                output="build/work"
+               deployscope="none"
+               skeleton="yes"
+               messagecontext="no"
+               noimports="no"
+               verbose="no"
                testcase="no">
         <mapping namespace="http://soapinterop.org/" package="net.xmethods"/>
         <mapping namespace="http://soapinterop.org/xsd" package="net.xmethods"/>
@@ -56,12 +78,22 @@
     <!--     http://www.whitemesa.com/interop.htm    -->
     <wsdl2java url="http://www.whitemesa.com/interop/InteropTest.wsdl"
                output="build/work"
+               deployscope="none"
+               skeleton="yes"
+               messagecontext="no"
+               noimports="no"
+               verbose="no"
                testcase="no">
         <mapping namespace="http://soapinterop.org/" package="interop.test"/>
         <mapping namespace="http://soapinterop.org/xsd" package="interop.test"/>
     </wsdl2java>
     <wsdl2java url="http://www.whitemesa.com/interop/InteropTestB.wsdl"
                output="build/work"
+               deployscope="none"
+               skeleton="yes"
+               messagecontext="no"
+               noimports="no"
+               verbose="no"
                testcase="no">
         <mapping namespace="http://soapinterop.org/" package="interop.testb"/>
         <mapping namespace="http://soapinterop.org/xsd" package="interop.testb"/>
@@ -70,6 +102,11 @@
     <wsdl2java url="http://www.whitemesa.net/wsdl/std/echoheadersvc.wsdl"
                output="build/work"
                testcase="no"
+               deployscope="none"
+               skeleton="yes"
+               messagecontext="no"
+               noimports="no"
+               verbose="no"
                noimports="no">
         <mapping namespace="http://soapinterop.org/" package="interop.echoheadersvc"/>
         <mapping namespace="http://soapinterop.org/xsd" package="interop.echoheadersvc"/>

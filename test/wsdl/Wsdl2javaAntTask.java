@@ -110,6 +110,9 @@ public class Wsdl2javaAntTask extends Task
             else if ("session".equalsIgnoreCase(deployScope)) {
                 emitter.setScope(Emitter.SESSION_SCOPE);
             }
+            else if ("none".equalsIgnoreCase(deployScope)) {
+                emitter.setScope(Emitter.NO_EXPLICIT_SCOPE);
+            }
             else {
                 log("Unrecognized scope:  " + deployScope + ".  Ignoring it.", Project.MSG_VERBOSE);
             }
