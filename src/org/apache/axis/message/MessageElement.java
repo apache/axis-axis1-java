@@ -1,12 +1,12 @@
 /*
  * Copyright 2001-2004 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -110,7 +110,7 @@ public class MessageElement extends NodeImpl implements SOAPElement,
 
     /** No-arg constructor for building messages?
      */
-    public MessageElement() 
+    public MessageElement()
     {
     }
 
@@ -128,7 +128,7 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         addMapping(new Mapping(namespace, prefix));
     }
 
-    public MessageElement(Name eltName) 
+    public MessageElement(Name eltName)
     {
         this(eltName.getLocalName(),eltName.getPrefix(), eltName.getURI());
     }
@@ -139,7 +139,7 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         objectValue = value;
     }
 
-    public MessageElement(QName name) 
+    public MessageElement(QName name)
     {
         this(name.getNamespaceURI(), name.getLocalPart());
     }
@@ -230,7 +230,7 @@ public class MessageElement extends NodeImpl implements SOAPElement,
                 encodingStyle = null;
 
             // If we have an encoding style, and are not a MESSAGE style
-            // operation (in other words - we're going to do some data 
+            // operation (in other words - we're going to do some data
             // binding), AND we're SOAP 1.2, check the encoding style against
             // the ones we've got type mappings registered for.  If it isn't
             // registered, throw a DataEncodingUnknown fault as per the
@@ -253,6 +253,16 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         }
     }
 
+    /**
+     * Retrieve the DeserializationContext associated with this MessageElement
+     *
+     * @return The DeserializationContext associated with this MessageElement
+     */
+    public DeserializationContext getDeserializationContext()
+    {
+        return context;
+    }
+
     /** !!! TODO : Make sure this handles multiple targets
      */
     Deserializer fixupDeserializer;
@@ -267,7 +277,7 @@ public class MessageElement extends NodeImpl implements SOAPElement,
     {
         return fixupDeserializer;
     }
- 
+
     public void setEndIndex(int endIndex)
     {
         endEventIndex = endIndex;
@@ -301,7 +311,7 @@ public class MessageElement extends NodeImpl implements SOAPElement,
      * specified. And, cloning <code>Document</code>,
      * <code>DocumentType</code>, <code>Entity</code>, and
      * <code>Notation</code> nodes is implementation dependent.
-     * 
+     *
      * @param deep If <code>true</code>, recursively clone the subtree under
      *             the specified node; if <code>false</code>, clone only the node
      *             itself (and its attributes, if it is an <code>Element</code>).
@@ -404,7 +414,7 @@ public class MessageElement extends NodeImpl implements SOAPElement,
     {
         removeContents();
     }
-    
+
     /**
      * Obtain an Attributes collection consisting of all attributes
      * for this MessageElement, including namespace declarations.
@@ -414,13 +424,13 @@ public class MessageElement extends NodeImpl implements SOAPElement,
     public Attributes getCompleteAttributes() {
         if (namespaces == null)
             return attributes;
-        
+
         AttributesImpl attrs = null;
         if (attributes == NullAttributes.singleton)
             attrs = new AttributesImpl();
         else
             attrs = new AttributesImpl(attributes);
-        
+
         for (Iterator iterator = namespaces.iterator(); iterator.hasNext();) {
             Mapping mapping = (Mapping) iterator.next();
             String prefix = mapping.getPrefix();
@@ -433,7 +443,7 @@ public class MessageElement extends NodeImpl implements SOAPElement,
 
     public String getName() { return( name ); }
     public void setName(String name) { this.name = name; }
-    
+
     public QName getQName() { return new QName(namespaceURI, name); }
     public void setQName(QName qName) {
         this.name = qName.getLocalPart();
@@ -523,7 +533,7 @@ public class MessageElement extends NodeImpl implements SOAPElement,
      *     there was a problem in the encoding style being set.
      * @see #getEncodingStyle() getEncodingStyle()
      */
-    public void setEncodingStyle(String encodingStyle) throws SOAPException { 
+    public void setEncodingStyle(String encodingStyle) throws SOAPException {
         if (encodingStyle == null) {
             encodingStyle = "";
         }
@@ -546,7 +556,7 @@ public class MessageElement extends NodeImpl implements SOAPElement,
     public void addChild(MessageElement el) throws SOAPException
     {
         if (objectValue != null) {
-            SOAPException exc = 
+            SOAPException exc =
                 new SOAPException(Messages.getMessage("valuePresent"));
             log.error(Messages.getMessage("valuePresent"), exc);
             throw exc;
@@ -561,11 +571,11 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         return children;
     }
 
-    public void setContentsIndex(int index) 
+    public void setContentsIndex(int index)
     {
         startContentsIndex = index;
     }
- 
+
     public void setNSMappings(ArrayList namespaces)
     {
         this.namespaces = namespaces;
@@ -666,12 +676,12 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         this.objectValue = newValue;
     }
 
-    public Object getValueAsType(QName type) throws Exception 
+    public Object getValueAsType(QName type) throws Exception
     {
         return getValueAsType(type, null);
     }
 
-    public Object getValueAsType(QName type, Class cls) throws Exception 
+    public Object getValueAsType(QName type, Class cls) throws Exception
     {
         if (context == null)
             throw new Exception(Messages.getMessage("noContext00"));
@@ -773,7 +783,7 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         message = env;
     }
 
-    public SOAPEnvelope getEnvelope() 
+    public SOAPEnvelope getEnvelope()
     {
         return message;
     }
@@ -793,7 +803,7 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         return (MessageElement)obj;
     }
 
-    public Document getAsDocument() throws Exception 
+    public Document getAsDocument() throws Exception
     {
         String elementString = getAsString();
 
@@ -822,7 +832,7 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         return writer.getBuffer().toString();
     }
 
-    public Element getAsDOM() throws Exception 
+    public Element getAsDOM() throws Exception
     {
         return getAsDocument().getDocumentElement();
     }
@@ -835,7 +845,7 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         recorder.replay(startEventIndex, endEventIndex, handler);
     }
 
-    public void publishContents(ContentHandler handler) throws SAXException 
+    public void publishContents(ContentHandler handler) throws SAXException
     {
         if (recorder == null)
             throw new SAXException(Messages.getMessage("noRecorder00"));
@@ -898,7 +908,7 @@ public class MessageElement extends NodeImpl implements SOAPElement,
 
     /** Subclasses can override
      */
-    protected void outputImpl(SerializationContext context) throws Exception 
+    protected void outputImpl(SerializationContext context) throws Exception
     {
         if (textRep != null) {
             boolean oldPretty = context.getPretty();
@@ -926,7 +936,7 @@ public class MessageElement extends NodeImpl implements SOAPElement,
                 Mapping mapping = (Mapping) i.next();
                 context.registerPrefixForURI(mapping.getPrefix(), mapping.getNamespaceURI());
             }
-        }            
+        }
 
         if (objectValue != null) {
             context.serialize(new QName(namespaceURI, name),
@@ -955,7 +965,7 @@ public class MessageElement extends NodeImpl implements SOAPElement,
     }
 
     public void addMapping(Mapping map) {
-        if (namespaces == null) 
+        if (namespaces == null)
             namespaces = new ArrayList();
         namespaces.add(map);
     }
@@ -963,7 +973,7 @@ public class MessageElement extends NodeImpl implements SOAPElement,
     // JAXM SOAPElement methods...
 
     public SOAPElement addChildElement(Name name) throws SOAPException {
-        MessageElement child = new MessageElement(name.getLocalName(), 
+        MessageElement child = new MessageElement(name.getLocalName(),
                                                   name.getPrefix(),
                                                   name.getURI());
         addChild(child);
@@ -1130,7 +1140,7 @@ public class MessageElement extends NodeImpl implements SOAPElement,
 
     /**
      * Convenience method to get the first matching child for a given QName.
-     * 
+     *
      * @param qname
      * @return
      */
@@ -1216,8 +1226,8 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         if(index < 0){ // not found
             String uri = "";
             String localname  = name;
-            String qname = name;     
-            String type = "CDDATA";  
+            String qname = name;
+            String type = "CDDATA";
             impl.addAttribute(uri,localname,qname,type,value);
         }else{         // found
             impl.setLocalName(index, value);
@@ -1300,9 +1310,9 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         return null;
     }
 
-    public void setAttributeNS(String namespaceURI, String qualifiedName, 
-                               String value) 
-        throws DOMException 
+    public void setAttributeNS(String namespaceURI, String qualifiedName,
+                               String value)
+        throws DOMException
     {
         AttributesImpl attributes = makeAttributesEditable();
         String localName =  qualifiedName.substring(qualifiedName.indexOf(":")+1, qualifiedName.length());
@@ -1321,8 +1331,8 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         return null;  //TODO: Fix this for SAAJ 1.2 Implementation
     }
 
-    public NodeList getElementsByTagNameNS(String namespaceURI, 
-                                           String localName) 
+    public NodeList getElementsByTagNameNS(String namespaceURI,
+                                           String localName)
     {
         return getElementsNS(this,namespaceURI,localName);
     }
@@ -1350,7 +1360,7 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         }
         return matches;
     }
-    
+
     public Node item(int index) {
         if(children !=null && children.size() > index){
             return (Node)children.get(index);
@@ -1358,14 +1368,14 @@ public class MessageElement extends NodeImpl implements SOAPElement,
             return null;
         }
     }
-    
+
     /**
      * The number of nodes in the list. The range of valid child node indices
      * is 0 to <code>length-1</code> inclusive.
      *
      * @since SAAJ 1.2 : Nodelist Interface
      */
-    public int getLength() 
+    public int getLength()
     {
         return (children == null) ? 0 : children.size();
     }
@@ -1373,13 +1383,13 @@ public class MessageElement extends NodeImpl implements SOAPElement,
     // setEncodingStyle implemented above
 
     // getEncodingStyle() implemented above
-    
+
     MessageElement findElement(Vector vec, String namespace,
-                               String localPart) 
+                               String localPart)
     {
         if (vec.isEmpty())
             return null;
-     
+
         QName qname = new QName(namespace, localPart);
         Enumeration e = vec.elements();
         MessageElement element;
@@ -1388,11 +1398,11 @@ public class MessageElement extends NodeImpl implements SOAPElement,
             if (element.getQName().equals(qname))
                 return element;
         }
-        
+
         return null;
     }
-    
-    public boolean equals(Object obj) 
+
+    public boolean equals(Object obj)
     {
         if (obj == null || !(obj instanceof MessageElement))
             return false;
@@ -1436,8 +1446,8 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         org.w3c.dom.NodeList children = element.getChildNodes();
         for(int i = 0; i < children.getLength(); i++){
             org.w3c.dom.Node child = children.item(i);
-            if(child.getNodeType()==TEXT_NODE || 
-               child.getNodeType()==CDATA_SECTION_NODE || 
+            if(child.getNodeType()==TEXT_NODE ||
+               child.getNodeType()==CDATA_SECTION_NODE ||
                child.getNodeType()==COMMENT_NODE ) {
                 MessageElement childElement = new MessageElement((CharacterData)child);
                 parent.appendChild(childElement);
