@@ -167,8 +167,9 @@ public class TypeDesc {
                 if (superDesc != null) {
                     FieldDesc [] parentFields = superDesc.getFields(true);
                     FieldDesc [] ret = new FieldDesc[parentFields.length + fields.length];
-                    System.arraycopy(fields, 0, ret, 0, fields.length);
-                    System.arraycopy(parentFields, 0, ret, fields.length, parentFields.length);
+                    System.arraycopy(parentFields, 0, ret, 0, parentFields.length);
+                    System.arraycopy(fields, 0, ret, parentFields.length, fields.length);
+                    fields = ret;
                 }
             }
         }
