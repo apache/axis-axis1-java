@@ -67,6 +67,7 @@ import org.apache.axis.message.EnvelopeBuilder;
 import org.apache.axis.Message;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.DeserializationContextImpl;
+import org.xml.sax.Attributes;
 
 import java.util.Iterator;
 
@@ -147,5 +148,18 @@ public class TestMessageElement extends TestCase {
                          children.next());
         }
         assertTrue("Unexpected child", !children.hasNext());
+    }
+
+    public void testGetCompleteAttributes() throws Exception {
+        MessageElement me = 
+            new MessageElement("http://www.wolfram.com","Test");
+        me.addNamespaceDeclaration("pre", "http://www.wolfram2.com");
+        Attributes attrs = me.getCompleteAttributes();
+        assertEquals(attrs.getLength(), 1);
+    }
+    
+    public static void main(String[] args) throws Exception {
+        TestMessageElement tester = new TestMessageElement("TestMessageElement");
+        tester.testGetCompleteAttributes();
     }
 }
