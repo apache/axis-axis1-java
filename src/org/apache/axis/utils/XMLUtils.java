@@ -56,6 +56,7 @@
 package org.apache.axis.utils ;
 
 import org.apache.axis.Constants;
+import org.apache.log4j.Category;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CharacterData;
 import org.w3c.dom.Document;
@@ -64,9 +65,12 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
+import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -206,7 +210,9 @@ public class XMLUtils {
 
     public static Document newDocument(InputSource inp) {
         try {
-            return( dbf.newDocumentBuilder().parse( inp ) );
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            db.setErrorHandler( new ParserErrorHandler() );
+            return( db.parse( inp ) );
         }
         catch( Exception e ) {
             e.printStackTrace();
@@ -421,5 +427,40 @@ public class XMLUtils {
     }
     return strBuf.toString();
   }
+    
+    public static class ParserErrorHandler implements ErrorHandler {
+        static Category category =
+                Category.getInstance(ParserErrorHandler.class.getName());
+        /**
+         * Returns a string describing parse exception details
+         */
+        private String getParseExceptionInfo(SAXParseException spe) {
+            String systemId = spe.getSystemId();
+            if (systemId == null) {
+                systemId = "null";
+            }
+            String info = "URI=" + systemId +
+                " Line=" + spe.getLineNumber() +
+                ": " + spe.getMessage();
+            return info;
+        }
 
+        // The following methods are standard SAX ErrorHandler methods.
+        // See SAX documentation for more info.
+
+        public void warning(SAXParseException spe) throws SAXException {
+            if (category.isDebugEnabled())
+                category.debug( JavaUtils.getMessage("warning00", getParseExceptionInfo(spe)));
+        }
+        
+        public void error(SAXParseException spe) throws SAXException {
+            String message = "Error: " + getParseExceptionInfo(spe);
+            throw new SAXException(message);
+        }
+
+        public void fatalError(SAXParseException spe) throws SAXException {
+            String message = "Fatal Error: " + getParseExceptionInfo(spe);
+            throw new SAXException(message);
+        }
+    }
  }
