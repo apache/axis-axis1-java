@@ -229,7 +229,7 @@ public abstract class TestClient {
           new SOAPStruct(3, "three", 3.3F)});
         test("Void        ", null);
         test("Base64      ", "Base64".getBytes());
-        test("Hex         ", new org.apache.axis.encoding.Hex("3344"));
+        test("HexBinary   ", new org.apache.axis.encoding.Hex("3344"));
         test("Date        ", new Date());
         test("Decimal     ", new BigDecimal("3.14159"));
         test("Boolean     ", Boolean.TRUE);

@@ -59,6 +59,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 
+import org.apache.axis.encoding.Hex;
+
 /**
  * Test implementation of the echo interop service.  Original description of
  * this was found at http://www.xmethods.net/ilab/ .  The current definition
@@ -146,7 +148,7 @@ public class EchoService {
     /**
      * This methods accepts a hex object and echoes it back to the client.
      */
-    public org.apache.axis.encoding.Hex echoHex(org.apache.axis.encoding.Hex input) {
+    public Hex echoHexBinary(Hex input) {
         return input;
     }
 
