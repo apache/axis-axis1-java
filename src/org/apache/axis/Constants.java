@@ -163,11 +163,16 @@ public class Constants {
     public static String getValue(Attributes attributes,
                                   String [] search,
                                   String localPart) {
-        if (attributes == null || attributes.getLength() == 0 || search == null || localPart == null)
+        if (attributes == null || search == null || localPart == null) {
             return null;
-
+        }
+        
         int len = attributes.getLength();
-
+        
+        if (len == 0) {
+            return null;
+        }
+        
         for (int i=0; i < len; i++) {
             if (attributes.getLocalName(i).equals(localPart)) {
                 String uri = attributes.getURI(i);
@@ -176,7 +181,7 @@ public class Constants {
                 }
             }
         }
-
+        
         return null;
     }
 

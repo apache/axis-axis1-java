@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
+import java.util.List;
 
 /**
  * Implementation of a SOAP Envelope
@@ -655,25 +656,27 @@ public class SOAPEnvelope extends MessageElement
         super.setOwnerDocument(sp);
         if(body != null) {
             body.setOwnerDocument(sp);
-            setOwnerDocumentForChildren(((NodeImpl)body).getChildNodes(), sp);
+            setOwnerDocumentForChildren(((NodeImpl)body).children, sp);
         }
         if(header != null){
             header.setOwnerDocument(sp);
-            setOwnerDocumentForChildren(((NodeImpl)body).getChildNodes(), sp);
+            setOwnerDocumentForChildren(((NodeImpl)body).children, sp);
         }
     }
     
-    private void setOwnerDocumentForChildren(NodeList children, org.apache.axis.SOAPPart sp) {
-    	if (children == null)
-    		return;
-        for (int i = 0; i < children.getLength(); i++) {
-            NodeImpl node = (NodeImpl) children.item(i);
-    		node.setOwnerDocument(sp);
-            setOwnerDocumentForChildren(node.getChildNodes(), sp);  // recursively
+    private void setOwnerDocumentForChildren(List children, org.apache.axis.SOAPPart sp) {
+    	if (children == null) {
+            return;
+        }
+        int size = children.size();
+        for (int i = 0; i < size; i++) {
+            NodeImpl node = (NodeImpl) children.get(i);
+            node.setOwnerDocument(sp);
+            setOwnerDocumentForChildren(node.children, sp);  // recursively
     	}
     }
 
-    public  String getValue() {
+    public String getValue() {
         return getValueDOM();
     }
     
