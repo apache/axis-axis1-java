@@ -113,6 +113,16 @@ public class BeanDeserializer extends DeserializerImpl implements Deserializer, 
             BeanPropertyDescriptor descriptor = pd[i];
             propertyMap.put(descriptor.getName(), descriptor);
         }
+        // create a value
+        try {
+            value=javaType.newInstance();
+        } catch (Exception e) {
+/*
+            throw new SAXException(JavaUtils.getMessage("cantCreateBean00", 
+                                                        javaType.getName(), 
+                                                        e.toString()));
+*/
+        }
     }
 
     /**
@@ -255,13 +265,15 @@ public class BeanDeserializer extends DeserializerImpl implements Deserializer, 
                                DeserializationContext context)
             throws SAXException {
 
-        // create a value
-        try {
-            value=javaType.newInstance();
-        } catch (Exception e) {
-            throw new SAXException(JavaUtils.getMessage("cantCreateBean00", 
-                                                  javaType.getName(), 
-                                                  e.toString()));
+        if (value == null) {
+            // create a value
+            try {
+                value=javaType.newInstance();
+            } catch (Exception e) {
+                throw new SAXException(JavaUtils.getMessage("cantCreateBean00", 
+                                                            javaType.getName(), 
+                                                            e.toString()));
+            }
         }
 
         // If no type description meta data, there are no attributes,
