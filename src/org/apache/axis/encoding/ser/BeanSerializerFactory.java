@@ -91,6 +91,14 @@ public class BeanSerializerFactory extends BaseSerializerFactory {
         if (JavaUtils.isEnumClass(javaType)) {
             serClass = EnumSerializer.class;
         }
+        
+        typeDesc = TypeDesc.getTypeDescForClass(javaType);
+
+        if (typeDesc != null) {
+            propertyDescriptor = typeDesc.getPropertyDescriptors();
+        } else {
+            propertyDescriptor = BeanUtils.getPd(javaType, null);
+        }
     }
 
     public javax.xml.rpc.encoding.Serializer getSerializerAs(String mechanismType)
@@ -109,16 +117,6 @@ public class BeanSerializerFactory extends BaseSerializerFactory {
 
         if (serClass == EnumSerializer.class) {
            return super.getGeneralPurpose(mechanismType);
-        }
-
-        if (propertyDescriptor == null && firstCall) {
-            typeDesc = TypeDesc.getTypeDescForClass(javaType);
-
-            if (typeDesc != null) {
-                propertyDescriptor = typeDesc.getPropertyDescriptors();
-            } else {
-                propertyDescriptor = BeanUtils.getPd(javaType, null);
-            }
         }
 
         return new BeanSerializer(javaType, xmlType, typeDesc, 

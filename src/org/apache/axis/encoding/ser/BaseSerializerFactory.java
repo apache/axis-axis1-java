@@ -98,7 +98,6 @@ public abstract class BaseSerializerFactory
     protected Class javaType = null;
     protected Constructor serClassConstructor = null;
     protected Method getSerializer = null;
-    protected boolean firstCall = true;
 
     /**
      * Constructor
@@ -148,7 +147,6 @@ public abstract class BaseSerializerFactory
                                      serClass.getName()),
                 e);
         }
-        firstCall = false;
         return ser;
     }
     
@@ -158,13 +156,10 @@ public abstract class BaseSerializerFactory
      */
     protected Serializer getGeneralPurpose(String mechanismType) {
         if (javaType != null && xmlType != null) {
-            if (serClassConstructor == null && firstCall) {
-                try {
-                    serClassConstructor = 
-                        serClass.getConstructor(
-                            new Class[] {Class.class, QName.class});
-                } catch (NoSuchMethodException e) {}
+            if (serClassConstructor == null) {
+                serClassConstructor = getConstructor(serClass);
             }
+
             if (serClassConstructor != null) {
                 try {
                     return (Serializer) 
@@ -177,33 +172,26 @@ public abstract class BaseSerializerFactory
         }
         return null;
     }
-
+    
+   /**
+    * return constructor for class if any
+    */ 
+    private Constructor getConstructor(Class clazz) {
+        try {
+           return clazz.getConstructor(
+                   new Class[] {Class.class, QName.class});
+        } catch (NoSuchMethodException e) {}
+        return null;
+    }
+    
     /**
      * Obtains a serializer by invoking getSerializer method in the 
      * javaType class or its Helper class.
      */
     protected Serializer getSpecialized(String mechanismType) {
         if (javaType != null && xmlType != null) {
-            if (getSerializer == null && firstCall) {
-                try {
-                    getSerializer = 
-                        javaType.getMethod("getSerializer",
-                                           new Class[] {String.class, 
-                                                        Class.class, 
-                                                        QName.class});
-                } catch (NoSuchMethodException e) {}
-                if (getSerializer == null) {
-                    try {
-                        Class helper = ClassUtils.forName(
-                            javaType.getName() + "_Helper");
-                        getSerializer =
-                            helper.getMethod("getSerializer", 
-                                             new Class[] {String.class, 
-                                                          Class.class, 
-                                                          QName.class});
-                    } catch (NoSuchMethodException e) {
-                    } catch (ClassNotFoundException e) {}
-                }
+            if (getSerializer == null) {
+                getSerializer = getSerializerMethod(javaType);
             }
             if (getSerializer != null) {
                 try {
@@ -218,6 +206,34 @@ public abstract class BaseSerializerFactory
             }
         }
         return null;
+    }
+
+    /**
+     * Returns the "getSerializer" method if any.
+     */
+    private Method getSerializerMethod(Class clazz) {
+        Method method = null;
+        try {
+            method = 
+                clazz.getMethod("getSerializer",
+                                   new Class[] {String.class, 
+                                                Class.class, 
+                                                QName.class});
+        } catch (NoSuchMethodException e) {}
+        
+        if (method == null) {
+            try {
+                Class helper = ClassUtils.forName(
+                    clazz.getName() + "_Helper");
+                method =
+                    helper.getMethod("getSerializer", 
+                                     new Class[] {String.class, 
+                                                  Class.class, 
+                                                  QName.class});
+            } catch (NoSuchMethodException e) {
+            } catch (ClassNotFoundException e) {}
+        }
+        return method;
     }
 
     /**

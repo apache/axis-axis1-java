@@ -85,6 +85,9 @@ public class BeanDeserializerFactory extends BaseDeserializerFactory {
         if (JavaUtils.isEnumClass(javaType)) {
             deserClass = EnumDeserializer.class;
         }
+
+        typeDesc = TypeDesc.getTypeDescForClass(javaType);
+        propertyMap = getProperties(javaType, typeDesc);
     }
 
    /**
@@ -119,11 +122,6 @@ public class BeanDeserializerFactory extends BaseDeserializerFactory {
 
         if (deserClass == EnumSerializer.class) {
            return super.getGeneralPurpose(mechanismType);
-        }
-
-        if (propertyMap == null && firstCall) {
-            typeDesc = TypeDesc.getTypeDescForClass(javaType);
-            propertyMap = getProperties(javaType, typeDesc);
         }
 
         return new BeanDeserializer(javaType, xmlType, typeDesc, propertyMap);
