@@ -53,73 +53,47 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.attachments;
+package org.apache.axis.encoding;
 
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+
+import javax.xml.rpc.namespace.QName;
+import java.io.IOException;
+import javax.activation.DataHandler;
 import org.apache.axis.Part;
+import org.apache.axis.attachments.Attachments;
+import org.apache.axis.Constants;
+import org.xml.sax.Attributes;
+import org.xml.sax.helpers.AttributesImpl;
 
 /**
- * Access the Attachments of a Message.  This interface essentially
- * firewalls the rest of Axis from any dependencies on javax.activation.
- * <p>
- * If javax.activation is not available, this is the *only* class that
- * will be compiled in org.apache.axis.attachments.
+ * General purpose serializer/deserializerFactory for an arbitrary java bean.
  *
- * @author Rob Jellinghaus (robj@unrealities.com)
- * @author Rick Rineholt
+ * @author Rick Rineholt 
  */
+public class JAFDataHandlerSerializer implements Serializer {
 
-public interface Attachments {
-    /**
-     * This method should look at a refernce and determine if it is a CID: or url
-     * to look for attachment.
-     * @param  The reference in the xml that referers to an attachment.
-     * @return The part associated with the attachment.
-     */ 
-    public Part getAttachmentByReference(String reference) throws org.apache.axis.AxisFault;
-    
-    /**
-     * Create a new attachment Part in this Message.
-     * Will actually, and always, return an AttachmentPart.
-     * @param The part that is referenced 
-     */ 
-    public Part createAttachmentPart(Object part) throws org.apache.axis.AxisFault;
-
-    /**
-     * From the complex stream return the SOAP part. 
-     * @return will return the root part if the stream is supported,
-     *         otherwise null.
-     */ 
-    public Part getRootPart();
-
-    /**
-     * Get the content length of the stream. 
-     */ 
-    public int getContentLength() throws org.apache.axis.AxisFault;
-
-    /**
-     * Write the content to the stream. 
-     */ 
-    public void writeContentToStream(java.io.OutputStream os) throws org.apache.axis.AxisFault;
-
-    /**
-     * Write the content to the stream. 
-     */ 
-    public String getContentType()throws org.apache.axis.AxisFault;
-
-    /**
-     *This is the number of attachments.
-     **/
-    public int getAttachmentCount();
-
-    /**
-     * Determine if an object is to be treated as an attchment. 
-     *
-     * @param value the value that is to be determined if
-     * its an attachment.
-     *
-     * @return True if value should be treated as an attchment. 
+    /** 
+     * Serialize a JAF DataHandler quantity.
      */
+    public void serialize(QName name, Attributes attributes,
+                          Object value, SerializationContext context)
+        throws IOException
+    {
+        DataHandler dh= (DataHandler)value;
+            //Add the attachment content to the message.
+        Attachments attachments= context.getCurrentMessage().getAttachments();
+        Part attachmentPart= attachments.createAttachmentPart(dh);
+        String href= attachmentPart.getContentId();
 
-    public boolean isAttachment( Object value);
-    
+        AttributesImpl attrs = new AttributesImpl();
+        if (attributes != null)
+            attrs.setAttributes(attributes); //copy the existing ones.
+        attrs.addAttribute("", Constants.ATTR_HREF, "href",
+                               "CDATA", href);
+
+        context.startElement(name, attrs);
+        context.endElement(); //There is no data to so end the element.
+    }
 }

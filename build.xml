@@ -186,6 +186,7 @@ Copyright:
       <exclude name="org/apache/axis/attachments/AttachmentPart.java" unless="attachments.present"/>
       <exclude name="org/apache/axis/attachments/AttachmentUtils.java" unless="attachments.present"/>
       <exclude name="org/apache/axis/attachments/MimeUtils.java" unless="attachments.present"/>
+      <exclude name="org/apache/axis/encoding/JAFDataHandlerSerializer.java" unless="attachments.present"/>
       <exclude name="org/apache/axis/attachments/ManagedMemoryDataSource.java" unless="attachments.present"/>
       <exclude name="org/apache/axis/handlers/MD5AttachHandler.java" unless="attachments.present"/>
       <exclude name="org/apache/axis/attachments/MultiPartRelatedInputStream.java" unless="attachments.present"/>
@@ -238,6 +239,7 @@ Copyright:
       <exclude name="**/old/**/*.java" />
       <exclude name="samples/userguide/example2/Calculator.java"/>
       <exclude name="samples/addr/*.java" />
+      <exclude name="samples/attachments/**/*.java" unless="attachments.present"/>
     </javac>
   </target>
 
