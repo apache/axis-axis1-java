@@ -102,6 +102,9 @@ Copyright:
       <exclude name="**/org/apache/axis/transport/http/AdminServlet.java" unless="servlet.present"/>
       <exclude name="**/org/apache/axis/transport/http/AxisHttpSession.java" unless="servlet.present"/>
       <exclude name="**/org/apache/axis/transport/http/AxisServlet.java" unless="servlet.present"/>
+      <exclude name="**/org/apache/axis/transport/http/AxisServletBase.java" unless="servlet.present"/>
+      <exclude name="**/org/apache/axis/transport/http/ServletEndpointContextImpl.java" unless="servlet.present"/>
+      <exclude name="**/org/apache/axis/transport/configuration/EngineConfigurationFactoryServlet.java" unless="servlet.present"/>
       <exclude name="**/org/apache/axis/transport/http/CommonsHTTPSender.java" unless="commons-httpclient.present"/>
       <exclude name="**/org/apache/axis/server/JNDIAxisServerFactory.java" unless="servlet.present"/>
       <exclude name="**/org/apache/axis/security/servlet/*" unless="servlet.present"/>
@@ -483,14 +486,17 @@ Copyright:
       description="Create the source distribution">
     <copy todir="${dist.dir}">
       <fileset dir=".">
-        <include name="build.xml"/>
+        <include name="*.xml"/>
+        <include name="*.html"/>
         <include name="README"/>
         <include name="docs/**"/>
         <include name="lib/**"/>
         <include name="samples/**"/>
         <include name="src/**"/>
         <include name="test/**"/>
+        <include name="tools/**"/>
         <include name="webapps/**"/>
+        <include name="xmls/**"/>
 
         <exclude name="**/CVS/**"/>
       </fileset>
