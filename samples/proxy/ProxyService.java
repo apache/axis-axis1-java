@@ -23,6 +23,7 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.SimpleTargetedChain;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
+import org.apache.axis.message.SOAPEnvelope;
 import org.w3c.dom.Document;
 import samples.transport.tcp.TCPSender;
 import samples.transport.tcp.TCPTransport;
@@ -39,10 +40,13 @@ public class ProxyService {
     /**
      * Process the given message, treating it as raw XML.
      */
-    public Document proxyService(MessageContext msgContext)
+    public void proxyService(SOAPEnvelope env1, SOAPEnvelope env2)
         throws AxisFault
     {
         try {
+            // Get the current Message Context
+            MessageContext msgContext = MessageContext.getCurrentContext();
+            
             // Look in the message context for our service
             Handler self = msgContext.getService();
             
@@ -73,9 +77,6 @@ public class ProxyService {
             Message msg = call.getResponseMessage();
 
             msgContext.setResponseMessage(msg);
-        
-            // return null so MsgProvider will not muck with our response
-            return null;
         }
         catch( Exception exp ) {
             throw AxisFault.makeFault( exp );
