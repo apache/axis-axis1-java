@@ -313,6 +313,7 @@ public class TypeDesc implements Serializable {
                     if (ignoreNS || qname.getNamespaceURI().
                                         equals(xmlName.getNamespaceURI())) {
                         result = field.getFieldName();
+                        break;
                     }
                 }
             }
