@@ -91,6 +91,15 @@
           </xsd:all>
           <xsd:attribute name="attr" type="typens:enum" />
           <xsd:attribute name="parmAttr" type="typens:StringParameter" />
+          <xsd:attribute name="enumAttr">
+            <xsd:simpleType>
+              <xsd:restriction base="xsd:string">
+                <xsd:enumeration value="one"/>                      
+                <xsd:enumeration value="two"/>                    
+                <xsd:enumeration value="three"/>                    
+              </xsd:restriction>
+            </xsd:simpleType>
+          </xsd:attribute>
         </xsd:complexType>
       </xsd:element>
 
