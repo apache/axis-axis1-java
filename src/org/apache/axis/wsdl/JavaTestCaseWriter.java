@@ -269,7 +269,7 @@ public class JavaTestCaseWriter extends JavaWriter {
                     count++;
                     Fault f = (Fault) i.next();
                     pw.print(" catch (");
-                    pw.print(f.getName());
+                    pw.print(Utils.getExceptionName(f));
                     pw.println(" e" + count + ") {");
                     pw.print("            ");
                     pw.println("throw new junit.framework.AssertionFailedError(\"" + f.getName() + " Exception caught: \" + e" + count + ");");

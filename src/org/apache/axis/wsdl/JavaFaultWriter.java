@@ -84,19 +84,29 @@ public class JavaFaultWriter extends JavaWriter {
      * Write the body of the Fault file.
      */
     protected void writeFileBody() throws IOException {
-        pw.println("public class " + className + " extends Exception {");
+        pw.println("public class " + className + " extends org.apache.axis.AxisFault {");
 
         Vector params = new Vector();
 
         symbolTable.partStrings(params, fault.getMessage().getOrderedParts(null));
 
-        for (int i = 0; i < params.size(); i += 2)
-            pw.println("    public " + ((Type) params.get(i)).getName() + " " + params.get(i + 1) + ";");
+        // Write data members of the exception and getter methods for them
+        for (int i = 0; i < params.size(); i += 2) {
+            String type = ((Type) params.get(i)).getName();
+            String variable = (String) params.get(i + 1);
+            pw.println("    public " + type + " " + variable + ";");
+            pw.println("    public " + type + " get" + Utils.capitalizeFirstChar(variable) + "() {");
+            pw.println("        return this." + variable + ";");
+            pw.println("    }");
+        }
 
+        // Default contructor
         pw.println();
         pw.println("    public " + className + "() {");
         pw.println("    }");
         pw.println();
+        
+        // contructor that initializes data
         if (params.size() > 0) {
             pw.print("      public " + className + "(");
             for (int i = 0; i < params.size(); i += 2) {
@@ -111,6 +121,8 @@ public class JavaFaultWriter extends JavaWriter {
             }
             pw.println("    }");
         }
+        
+        // Done with class
         pw.println("}");
         pw.close();
     } // writeFileBody

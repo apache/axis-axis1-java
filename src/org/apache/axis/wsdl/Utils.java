@@ -59,6 +59,8 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.NamedNodeMap;
 
 import javax.wsdl.QName;
+import javax.wsdl.Fault;
+import javax.wsdl.Message;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.Collator;
@@ -72,6 +74,7 @@ import java.util.Vector;
  * This class contains static utility methods for the emitter.
  *
  * @author Rich Scheuerle  (scheu@us.ibm.com)
+ * @author Tom Jordahl (tomj@macromedia.com)
  */
 public class Utils {
 
@@ -510,6 +513,34 @@ public class Utils {
         else
             return typeValue + "Holder";
     } // holder
+
+    /**
+     * Given a fault, return the Java class name of the exception to be
+     * generated from this fault
+     * 
+     * @param fault - The WSDL fault object
+     * @return A Java class name for the fault
+     */ 
+    public static String getExceptionName(Fault fault) {
+        /**
+         * Use the message name as the fault class name,
+         * fall back to fault name if there isn't a message part
+         * 
+         * NOTE: JAX-RPC version 0.5 says to use the message name, but
+         * hopefully this will change to use the fault name, which makes
+         * a good deal more sense (tomj@macromedia.com)
+         */ 
+        Message faultMessage = fault.getMessage();
+        String exceptionName;
+        if (faultMessage != null) {
+            String faultMessageName = faultMessage.getQName().getLocalPart();
+            exceptionName = Utils.capitalizeFirstChar(Utils.xmlNameToJava(faultMessageName));
+        } else {
+            exceptionName = Utils.capitalizeFirstChar(Utils.xmlNameToJava(fault.getName()));
+        }
+        return exceptionName;
+    }
+
 
     /**
      * If the specified node represents a supported JAX-RPC complexType/element,

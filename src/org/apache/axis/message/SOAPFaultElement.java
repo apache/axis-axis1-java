@@ -64,10 +64,11 @@ import org.xml.sax.Attributes;
 import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
 
-/** An Fault body element.
+/** A Fault body element.
  * 
  * @author Sam Ruby (rubys@us.ibm.com)
  * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Tom Jordahl (tomj@macromedia.com)
  */
 public class SOAPFaultElement extends SOAPBodyElement
 {
@@ -94,46 +95,50 @@ public class SOAPFaultElement extends SOAPBodyElement
                                        this.getName()),
                              attributes);
 
-        if (fault.getFaultCode() != null) {
-            // Do this BEFORE starting the element, so the prefix gets
-            // registered if needed.
-            String faultCode = context.qName2String(fault.getFaultCode());
-            context.startElement(Constants.QNAME_FAULTCODE, null);
-            context.writeSafeString(faultCode);
-            context.endElement();
-        }
-        
-        if (fault.getFaultString() != null) {
-            context.startElement(Constants.QNAME_FAULTSTRING, null);
-            context.writeSafeString(fault.getFaultString());
-            context.endElement();
-        }
-        
-        if (fault.getFaultActor() != null) {
-            context.startElement(Constants.QNAME_FAULTACTOR, null);
-            context.writeSafeString(fault.getFaultActor());
-            context.endElement();
-        }
-        
-        Element[] faultDetails = fault.getFaultDetails();
-        if (faultDetails != null) {
-            context.startElement(Constants.QNAME_FAULTDETAILS, null);
-            for (int i = 0; i < faultDetails.length; i++) {
-                context.writeDOMElement(faultDetails[i]);
+        // XXX - Can fault be anything but an AxisFault here?
+         if (fault instanceof AxisFault) {
+            AxisFault axisFault = (AxisFault) fault; 
+            if (axisFault.getFaultCode() != null) {
+                // Do this BEFORE starting the element, so the prefix gets
+                // registered if needed.
+                String faultCode = context.qName2String(axisFault.getFaultCode());
+                context.startElement(Constants.QNAME_FAULTCODE, null);
+                context.writeSafeString(faultCode);
+                context.endElement();
             }
-            context.endElement();
-        }
         
+            if (axisFault.getFaultString() != null) {
+                context.startElement(Constants.QNAME_FAULTSTRING, null);
+                context.writeSafeString(axisFault.getFaultString());
+                context.endElement();
+            }
+        
+            if (axisFault.getFaultActor() != null) {
+                context.startElement(Constants.QNAME_FAULTACTOR, null);
+                context.writeSafeString(axisFault.getFaultActor());
+                context.endElement();
+            }
+        
+            Element[] faultDetails = axisFault.getFaultDetails();
+            if (faultDetails != null) {
+                context.startElement(Constants.QNAME_FAULTDETAILS, null);
+                for (int i = 0; i < faultDetails.length; i++) {
+                    context.writeDOMElement(faultDetails[i]);
+                }
+                context.endElement();
+            }
+        }
+
         context.endElement();
     }
     
-    public AxisFault getAxisFault()
+    public AxisFault getFault()
     {
         if (fault == null) fault = new AxisFault();
         return fault;
     }
     
-    public void setAxisFault(AxisFault fault)
+    public void setFault(AxisFault fault)
     {
         this.fault = fault;
     }

@@ -115,7 +115,7 @@ public class FaultDecode extends TestCase {
         SOAPBodyElement respBody = envelope.getFirstBody();
         assertTrue("respBody should be a SOAPFaultElement", respBody
                         instanceof SOAPFaultElement);
-        AxisFault aFault = ((SOAPFaultElement) respBody).getAxisFault();
+        AxisFault aFault = ((SOAPFaultElement) respBody).getFault();
 
         assertNotNull("Fault should not be null", aFault);
         

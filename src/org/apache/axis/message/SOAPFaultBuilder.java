@@ -55,6 +55,7 @@
 package org.apache.axis.message;
 
 import org.apache.axis.AxisFault;
+import org.apache.axis.Constants;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
@@ -63,6 +64,7 @@ import org.apache.axis.utils.QFault;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 
 import javax.xml.rpc.namespace.QName;
 import java.util.HashMap;
@@ -74,26 +76,62 @@ import java.util.Iterator;
  * 
  * @author Sam Ruby (rubys@us.ibm.com)
  * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Tom Jordahl (tomj@macromedia.com)
  */
 public class SOAPFaultBuilder extends SOAPHandler implements ValueReceiver
 {
     protected SOAPFaultElement element;
-    protected AxisFault fault;
     protected DeserializationContext context;
     static HashMap fields = new HashMap();
+    
+    // Fault data
+    protected String faultClassName = null;
+    protected QFault faultCode = null;
+    protected String faultString = null;
+    protected String faultActor = null;
+    protected Element[] faultDetails;
 
     static {
-        fields.put("faultcode", SOAPTypeMappingRegistry.XSD_STRING);
-        fields.put("faultstring", SOAPTypeMappingRegistry.XSD_STRING);
-        fields.put("faultactor", SOAPTypeMappingRegistry.XSD_STRING);
-        fields.put("detail", null);
+        fields.put(Constants.ELEM_FAULT_CODE, SOAPTypeMappingRegistry.XSD_STRING);
+        fields.put(Constants.ELEM_FAULT_STRING, SOAPTypeMappingRegistry.XSD_STRING);
+        fields.put(Constants.ELEM_FAULT_ACTOR, SOAPTypeMappingRegistry.XSD_STRING);
+        fields.put(Constants.ELEM_FAULT_DETAIL, null);
     }
     
     public SOAPFaultBuilder(SOAPFaultElement element,
                             DeserializationContext context) {
         this.element = element;
         this.context = context;
-        fault = element.getAxisFault();
+    }
+
+    /**
+     * Final call back where we can populate the exception with data.
+     */ 
+    public void endElement(String namespace, String localName,
+                           DeserializationContext context)
+            throws SAXException {
+        super.endElement(namespace, localName, context);
+        
+        if (faultClassName != null) {
+            try {
+                Class exClass = Class.forName(faultClassName);
+                // XXX-tomj: Is this dangerous?  
+                // What if the client exception class isn't derived from AxisFault?
+                // Should we just use Exception and declare Call.invoke() to
+                // throw AxisFault and Exception?
+                AxisFault faultException = (AxisFault) exClass.newInstance();
+                element.setFault(faultException);
+            }
+            catch (Exception e) {
+                // just throw an AxisFault
+                AxisFault f  = new AxisFault(faultCode, faultString, faultActor, faultDetails);
+                element.setFault(f);
+            }
+
+        } else {
+            AxisFault f  = new AxisFault(faultCode, faultString, faultActor, faultDetails);
+            element.setFault(f);
+        }
     }
 
     public SOAPHandler onStartChild(String namespace,
@@ -119,7 +157,7 @@ public class SOAPFaultBuilder extends SOAPHandler implements ValueReceiver
     public void onEndChild(String namespace, String localName,
                            DeserializationContext context)
             throws SAXException {
-        if ("detail".equals(localName)) {
+        if (Constants.ELEM_FAULT_DETAIL.equals(localName)) {
             MessageElement el = context.getCurElement();
             ArrayList children = el.getChildren();
             if (children != null) {
@@ -128,11 +166,15 @@ public class SOAPFaultBuilder extends SOAPHandler implements ValueReceiver
                     try {
                         elements[i] = ((MessageElement)children.get(i)).
                                                                     getAsDOM();
+                        if (elements[i].getLocalName().equals("exceptionName")) {
+                            Text text = (Text)elements[i].getFirstChild();
+                            faultClassName = text.getData();
+                        }
                     } catch (Exception e) {
                         throw new SAXException(e);
                     }
                 }
-                fault.setFaultDetails(elements);
+                faultDetails = elements;
             }
         }
     }
@@ -140,19 +182,19 @@ public class SOAPFaultBuilder extends SOAPHandler implements ValueReceiver
     public void valueReady(Object value, Object hint)
     {
         String name = (String)hint;
-        if (name.equals("faultcode")) {
+        if (name.equals(Constants.ELEM_FAULT_CODE)) {
             QName qname = context.getQNameFromString((String)value);
             if (qname != null) {
                 //??when would QName make sense, this would be app specific
-                fault.setFaultCode(new QFault(qname));
+                faultCode = new QFault(qname);
             } else {
                 //?? Where would namespace come from
-                fault.setFaultCode(new QFault("",(String) value));
+                faultCode = new QFault("",(String) value);
             }
-        } else if (name.equals("faultstring")) {
-            fault.setFaultString((String)value);
-        } else if (name.equals("faultactor")) {
-            fault.setFaultActor((String)value);
+        } else if (name.equals(Constants.ELEM_FAULT_STRING)) {
+            faultString = (String) value;
+        } else if (name.equals(Constants.ELEM_FAULT_ACTOR)) {
+            faultActor = (String) value;
         }
         
     }

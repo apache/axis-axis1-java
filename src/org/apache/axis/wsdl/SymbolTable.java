@@ -646,7 +646,7 @@ public class SymbolTable {
         Iterator i = faults.values().iterator();
         while (i.hasNext()) {
             Fault fault = (Fault) i.next();
-            String exceptionName = Utils.capitalizeFirstChar(Utils.xmlNameToJava((String) fault.getName()));
+            String exceptionName = Utils.getExceptionName(fault);
             if (parameters.faultString == null)
                 parameters.faultString = exceptionName;
             else

@@ -168,11 +168,10 @@ public class Emitter {
             symbolTable = new SymbolTable(namespaces);
             emit(def, doc);
 
-            // Output deploy.xml and undeploy.xml outside of the recursive emit method.
-            if (bEmitSkeleton) {
-                Writer writer = writerFactory.getWriter(def, symbolTable);
-                writer.write();
-            }
+            // Output extra stuff (deployment files and faults) 
+            // outside of the recursive emit method.
+            Writer writer = writerFactory.getWriter(def, symbolTable);
+            writer.write();
         }
         catch (Throwable t) {
             t.printStackTrace();
@@ -279,6 +278,13 @@ public class Emitter {
      */
     public void generateSkeleton(boolean value) {
         this.bEmitSkeleton = value;
+    }
+
+    /**
+     * Indicate if we should be emitting server side code and deploy/undeploy
+     */ 
+    public boolean getGenerateSkeleton() {
+        return bEmitSkeleton;
     }
 
     /**
