@@ -345,7 +345,6 @@ public class MessageElement implements SOAPElement, Serializable
         }
         return typeQName;
     }
-    public void setType(QName qName) { typeQName = qName; }
 
     public SAX2EventRecorder getRecorder() { return recorder; }
     public void setRecorder(SAX2EventRecorder rec) { recorder = rec; }
@@ -816,59 +815,6 @@ public class MessageElement implements SOAPElement, Serializable
         if (namespaces == null) 
             namespaces = new ArrayList();
         namespaces.add(map);
-    }
-
-    /*
-     * Handle transient fields.
-     * NB. order of writes in writeObject must match order of reads in
-     * readObject.
-     */
-
-    private void writeObject(ObjectOutputStream out) throws IOException {
-        if (typeQName == null) {
-            out.writeBoolean(false);
-        } else {
-            out.writeBoolean(true);
-            out.writeObject(typeQName.getNamespaceURI());
-            out.writeObject(typeQName.getLocalPart());
-        }
-
-        if (attributes == null) {
-            attributes = new AttributesImpl();
-        }
-        int n = attributes.getLength();
-        out.writeInt(n);
-        for (int i = 0; i < n; i++) {
-            out.writeObject(attributes.getLocalName(i));
-            out.writeObject(attributes.getQName(i));
-            out.writeObject(attributes.getURI(i));
-            out.writeObject(attributes.getType(i));
-            out.writeObject(attributes.getValue(i));
-        }
-        out.defaultWriteObject();
-    }
-
-    private void readObject(ObjectInputStream in)
-        throws IOException, ClassNotFoundException {
-
-        if (in.readBoolean()) {
-            typeQName = new QName((String)in.readObject(),
-                                  (String)in.readObject());
-        } else {
-            typeQName = null;
-        }
-
-        AttributesImpl attributes = makeAttributesEditable();
-        int n = in.readInt();
-        for (int i = 0; i < n; i++) {
-            String localName = (String)in.readObject();
-            String qName = (String)in.readObject();
-            String uri = (String)in.readObject();
-            String type = (String)in.readObject();
-            String value = (String)in.readObject();
-            attributes.addAttribute(uri, localName, qName, type, value);
-        }
-        in.defaultReadObject();
     }
 
     // JAXM Node methods...
