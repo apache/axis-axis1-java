@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights 
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
+ *    notice, this list of conditions and the following disclaimer. 
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:
+ *    if any, must include the following acknowledgment:  
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written
+ *    software without prior written permission. For written 
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -145,7 +145,7 @@ public class tcpmon extends JFrame {
                 tmp = tport.getText();
                 if ( tmp != null && !tmp.equals("") )
                 tPort = Integer.parseInt(tmp );
-                new Listener( noteb, null, lPort, tHost, tPort,
+                new Listener( noteb, null, lPort, tHost, tPort, 
                 proxyBox.isSelected() );
 
                 port.setText(null);
@@ -222,8 +222,8 @@ public class tcpmon extends JFrame {
         OutputStream  out = null ;
         boolean       xmlFormat ;
 
-        public SocketRR(Socket inputSocket, InputStream inputStream,
-                        Socket outputSocket, OutputStream outputStream,
+        public SocketRR(Socket inputSocket, InputStream inputStream, 
+                        Socket outputSocket, OutputStream outputStream, 
                         JTextArea _textArea, boolean format) {
             inSocket = inputSocket ;
             in       = inputStream ;
@@ -357,7 +357,7 @@ public class tcpmon extends JFrame {
                 int count = listener.connections.size();
                 listener.tableModel.insertRow(count+1, new Object[] { "Active",
                                               time,
-                                              fromHost,
+                                              fromHost, 
                                               "---" });
                 listener.connections.add( this );
                 inputText  = new JTextArea( null, null, 20, 80 );
@@ -424,26 +424,20 @@ public class tcpmon extends JFrame {
                         end   = bufferedData.indexOf( ' ', start );
                         String tmp = bufferedData.substring( start, end );
                         if ( tmp.charAt(0) == '/' ) tmp = tmp.substring(1);
-                             /* This code is broken, as far as RobJ can tell.
-                                Typically tmp here is something like "/axis/AxisServlet"
-                                which *has* no host or port to get!  hence this code crashes.
                         url = new URL( tmp );
-System.out.println("Trying to make URL for string '"+tmp+"'; bufferedData:\n"+bufferedData);
                         targetHost = url.getHost();
                         targetPort = url.getPort();
                         if ( targetPort == -1 ) targetPort = 80 ;
                         int index = listener.connections.indexOf( this );
-                        listener.tableModel.setValueAt( targetHost, index+1,
+                        listener.tableModel.setValueAt( targetHost, index+1, 
                                                         OUTHOST_COLUMN );
 
                         bufferedData = bufferedData.substring( 0, start) +
                                        url.getFile() +
                                        bufferedData.substring( end );
-                              */
                     }
                 }
 
-                if ( targetPort == -1 ) targetPort = 80 ;
                 outSocket = new Socket(targetHost, targetPort );
                 
                 tmpIn2  = outSocket.getInputStream();
@@ -457,9 +451,9 @@ System.out.println("Trying to make URL for string '"+tmp+"'; bufferedData:\n"+bu
 
                 boolean format = listener.xmlFormatBox.isSelected();
 
-                rr1 = new SocketRR( inSocket, tmpIn1, outSocket,
+                rr1 = new SocketRR( inSocket, tmpIn1, outSocket, 
                                     tmpOut2, inputText, format );
-                rr2 = new SocketRR( outSocket, tmpIn2, inSocket,
+                rr2 = new SocketRR( outSocket, tmpIn2, inSocket, 
                                     tmpOut1, outputText, format );
 
                 while( rr1.isAlive() || rr2.isAlive() ) {
@@ -535,7 +529,7 @@ System.out.println("Trying to make URL for string '"+tmp+"'; bufferedData:\n"+bu
 
         final public Vector connections = new Vector();
 
-        public Listener(JTabbedPane _notebook, String name,
+        public Listener(JTabbedPane _notebook, String name, 
                         int listenPort, String host, int targetPort,
                         boolean isProxy)
         {
@@ -593,7 +587,7 @@ System.out.println("Trying to make URL for string '"+tmp+"'; bufferedData:\n"+bu
             tableModel = new DefaultTableModel(new String[] {"State",
                                                "Time",
                                                "Request Host",
-                                               "Target Host"},
+                                               "Target Host"}, 
                                                0 );
 
             connectionTable = new JTable(1,2);
@@ -742,7 +736,7 @@ System.out.println("Trying to make URL for string '"+tmp+"'; bufferedData:\n"+bu
             pane1.setDividerLocation( 150 );
             add( pane1, BorderLayout.CENTER );
 
-            //
+            // 
             /////////////////////////////////////////////////////////////////////
             sel.setSelectionInterval(0,0);
             outPane.setDividerLocation( 150 );
@@ -836,7 +830,7 @@ System.out.println("Trying to make URL for string '"+tmp+"'; bufferedData:\n"+bu
                     
                     rc = Integer.parseInt( portField.getText() );
                     out.write( (new String("Listen Port: " + rc + "\n" )).getBytes() );
-                    out.write( (new String("Target Host: " + hostField.getText() +
+                    out.write( (new String("Target Host: " + hostField.getText() + 
                                            "\n" )).getBytes() );
                     rc = Integer.parseInt( tPortField.getText() );
                     out.write( (new String("Target Port: " + rc + "\n" )).getBytes() );
@@ -866,10 +860,10 @@ System.out.println("Trying to make URL for string '"+tmp+"'; bufferedData:\n"+bu
 
         if ( listenPort != 0 ) {
             if ( targetHost == null )
-                new Listener( notebook, null, listenPort,
+                new Listener( notebook, null, listenPort, 
                               targetHost, targetPort, true );
             else
-                new Listener( notebook, null, listenPort,
+                new Listener( notebook, null, listenPort, 
                               targetHost, targetPort, false );
             notebook.setSelectedIndex( 1 );
         }
