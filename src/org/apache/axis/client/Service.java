@@ -426,7 +426,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
     public javax.xml.rpc.Call createCall(QName portName)
                             throws ServiceException {
         Call call = (org.apache.axis.client.Call)createCall();
-        call.setPortTypeName( portName );
+        call.setPortName( portName );
 
         // We can't prefill information if WSDL is not specified,
         // So just return the call that we just created.
