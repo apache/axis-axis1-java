@@ -28,6 +28,7 @@ Copyright:
   <path id="test-classpath">
     <pathelement location="${build.dest}" />
     <pathelement path="${java.class.path}" />
+    <pathelement location="${java.home}/../lib/tools.jar"/>
     <fileset dir="../java/lib">
      <include name="*.jar"/>
     </fileset>
