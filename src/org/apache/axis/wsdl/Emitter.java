@@ -289,8 +289,7 @@ public class Emitter {
         if (bVerbose)
             System.out.println("Generating portType interface: " + nameValue + ".java");
 
-        interfacePW.println("public interface " + nameValue + " extends java.rmi.Remote");
-        interfacePW.println("{");
+        interfacePW.println("public interface " + nameValue + " extends java.rmi.Remote {");
 
         HashMap portTypeInfo = new HashMap();
         List operations = portType.getOperations();
@@ -317,8 +316,7 @@ public class Emitter {
                 new FileWriter(nameValue + ".java"));
         if (bVerbose)
             System.out.println("Generating server-side PortType interface: " + nameValue + ".java");
-        interfacePW.println("public interface " + nameValue + " extends java.rmi.Remote");
-        interfacePW.println("{");
+        interfacePW.println("public interface " + nameValue + " extends java.rmi.Remote {");
 
         List operations = portType.getOperations();
 
@@ -535,8 +533,8 @@ public class Emitter {
      */
     private void constructSignatures(Parameters parms, String name) {
         int allOuts = parms.outputs + parms.inouts;
-        String signature = "    public " + parms.returnType + " " + name + " (";
-        String axisSig = "    public " + parms.returnType + " " + name + " (";
+        String signature = "    public " + parms.returnType + " " + name + "(";
+        String axisSig = "    public " + parms.returnType + " " + name + "(";
         String skelSig = null;
 
         if (allOuts == 0)
@@ -641,8 +639,7 @@ public class Emitter {
         String exceptionName = capitalize(operation.getName());
         PrintWriter pw = new PrintWriter(new FileWriter(exceptionName + ".java"));
 
-        pw.println("public class " + exceptionName + " extends Exception");
-        pw.println("{");
+        pw.println("public class " + exceptionName + " extends Exception {");
 
         Vector params = new Vector();
 
@@ -652,8 +649,7 @@ public class Emitter {
             pw.println("    public " + params.get(i) + " " + params.get(i + 1) + ";");
 
         pw.println();
-        pw.println("    public " + exceptionName + " ()");
-        pw.println("    {");
+        pw.println("    public " + exceptionName + "() }");
         pw.println("    }");
         pw.println();
         if (params.size() > 0) {
@@ -662,8 +658,7 @@ public class Emitter {
                 if (i != 0) pw.print(", ");
                 pw.print(params.get(i) + " " + params.get(i + 1));
             }
-            pw.println(")");
-            pw.println("    {");
+            pw.println(") {");
             for (int i = 1; i < params.size(); i += 2) {
                 String variable = (String) params.get(i);
 
@@ -707,19 +702,16 @@ public class Emitter {
         if (bVerbose)
             System.out.println("Generating client-side stub: " + stubName + ".java");
 
-        stubPW.println("public class " + stubName + " extends org.apache.axis.wsdl.Stub implements " + portTypeName);
-        stubPW.println("{");
-        stubPW.println("    private org.apache.axis.client.ServiceClient call = new org.apache.axis.client.ServiceClient (new org.apache.axis.transport.http.HTTPTransport ());");
-        stubPW.println("    private java.util.Hashtable properties = new java.util.Hashtable ();");
+        stubPW.println("public class " + stubName + " extends org.apache.axis.wsdl.Stub implements " + portTypeName + "{");
+        stubPW.println("    private org.apache.axis.client.ServiceClient call = new org.apache.axis.client.ServiceClient(new org.apache.axis.transport.http.HTTPTransport());");
+        stubPW.println("    private java.util.Hashtable properties = new java.util.Hashtable();");
         stubPW.println();
-        stubPW.println("    public " + stubName + " (java.net.URL endpointURL) throws org.apache.axis.SerializationException");
-        stubPW.println("    {");
+        stubPW.println("    public " + stubName + "(java.net.URL endpointURL) throws org.apache.axis.SerializationException {");
         stubPW.println("         this();");
-        stubPW.println("         call.set (org.apache.axis.transport.http.HTTPTransport.URL, endpointURL.toString());");
+        stubPW.println("         call.set(org.apache.axis.transport.http.HTTPTransport.URL, endpointURL.toString());");
         stubPW.println("    }");
 
-        stubPW.println("    public " + stubName + " () throws org.apache.axis.SerializationException");
-        stubPW.println("    {");
+        stubPW.println("    public " + stubName + "() throws org.apache.axis.SerializationException {");
 
         HashSet types = complexTypesInClass(portType);
         Iterator it = types.iterator();
@@ -729,45 +721,37 @@ public class Emitter {
 
         stubPW.println("    }");
         stubPW.println();
-        stubPW.println("    public void _setProperty (String name, Object value)");
-        stubPW.println("    {");
-        stubPW.println("        properties.put (name, value);");
+        stubPW.println("    public void _setProperty(String name, Object value) {");
+        stubPW.println("        properties.put(name, value);");
         stubPW.println("    }");
         stubPW.println();
         stubPW.println("    // From org.apache.axis.wsdl.Stub");
-        stubPW.println("    public Object _getProperty (String name)");
-        stubPW.println("    {");
-        stubPW.println("        return properties.get (name);");
+        stubPW.println("    public Object _getProperty(String name) {");
+        stubPW.println("        return properties.get(name);");
         stubPW.println("    }");
         stubPW.println();
         stubPW.println("    // From org.apache.axis.wsdl.Stub");
-        stubPW.println("    public void _setTargetEndpoint (java.net.URL address)");
-        stubPW.println("    {");
-        stubPW.println("        call.set (org.apache.axis.transport.http.HTTPTransport.URL, address.toString ());");
+        stubPW.println("    public void _setTargetEndpoint(java.net.URL address) {");
+        stubPW.println("        call.set(org.apache.axis.transport.http.HTTPTransport.URL, address.toString());");
         stubPW.println("    }");
         stubPW.println();
         stubPW.println("    // From org.apache.axis.wsdl.Stub");
-        stubPW.println("    public java.net.URL _getTargetEndpoint ()");
-        stubPW.println("    {");
-        stubPW.println("        try");
-        stubPW.println("        {");
-        stubPW.println("            return new java.net.URL ((String)call.get (org.apache.axis.transport.http.HTTPTransport.URL));");
+        stubPW.println("    public java.net.URL _getTargetEndpoint() {");
+        stubPW.println("        try {");
+        stubPW.println("            return new java.net.URL((String) call.get (org.apache.axis.transport.http.HTTPTransport.URL));");
         stubPW.println("        }");
-        stubPW.println("        catch (java.net.MalformedURLException mue)");
-        stubPW.println("        {");
+        stubPW.println("        catch (java.net.MalformedURLException mue) {");
         stubPW.println("            return null; // ???");
         stubPW.println("        }");
         stubPW.println("    }");
         stubPW.println();
         stubPW.println("    // From org.apache.axis.wsdl.Stub");
-        stubPW.println("    public synchronized void setMaintainSession (boolean session)");
-        stubPW.println("    {");
-        stubPW.println("        call.setMaintainSession (session);");
+        stubPW.println("    public synchronized void setMaintainSession(boolean session) {");
+        stubPW.println("        call.setMaintainSession(session);");
         stubPW.println("    }");
         stubPW.println();
         stubPW.println("    // From javax.naming.Referenceable");
-        stubPW.println("    public javax.naming.Reference getReference ()");
-        stubPW.println("    {");
+        stubPW.println("    public javax.naming.Reference getReference() {");
         stubPW.println("        return null; // ???");
         stubPW.println("    }");
         stubPW.println();
@@ -784,18 +768,15 @@ public class Emitter {
             if (bMessageContext) {
                 implType = portTypeName + "Axis impl";
             }
-            skelPW.println("public class " + skelName);
-            skelPW.println("{");
+            skelPW.println("public class " + skelName + "{");
             skelPW.println("    private " + implType + ";");
             skelPW.println();
             // RJB WARNING! - is this OK?
-            skelPW.println("    public " + skelName + "()");
-            skelPW.println("    {");
-            skelPW.println("        this.impl = new " + name + "Impl ();");
+            skelPW.println("    public " + skelName + "() {");
+            skelPW.println("        this.impl = new " + name + "Impl();");
             skelPW.println("    }");
             skelPW.println();
-            skelPW.println("    public " + skelName + " (" + implType + ")");
-            skelPW.println("    {");
+            skelPW.println("    public " + skelName + "(" + implType + ") {");
             skelPW.println("        this.impl = impl;");
             skelPW.println("    }");
             skelPW.println();
@@ -848,16 +829,14 @@ public class Emitter {
     private void writeSerializationInit(PrintWriter pw, String type) throws IOException {
         Element e = (Element) complexType(type).getParentNode();
         String namespace = e.getAttribute("targetNamespace");
-        pw.println("        try");
-        pw.println("        {");
-        pw.println("            org.apache.axis.utils.QName qn1 = new org.apache.axis.utils.QName (\"" + namespace + "\", \"" + type + "\");");
+        pw.println("        try {");
+        pw.println("            org.apache.axis.utils.QName qn1 = new org.apache.axis.utils.QName(\"" + namespace + "\", \"" + type + "\");");
         pw.println("            Class cls = " + type + ".class;");
-        pw.println("            call.addSerializer (cls, qn1, new org.apache.axis.encoding.BeanSerializer (cls));");
-        pw.println("            call.addDeserializerFactory (qn1, cls, org.apache.axis.encoding.BeanSerializer.getFactory ());");
+        pw.println("            call.addSerializer(cls, qn1, new org.apache.axis.encoding.BeanSerializer(cls));");
+        pw.println("            call.addDeserializerFactory(qn1, cls, org.apache.axis.encoding.BeanSerializer.getFactory());");
         pw.println("        }");
-        pw.println("        catch (Throwable t)");
-        pw.println("        {");
-        pw.println("            throw new org.apache.axis.SerializationException (\"" + type + "\", t);");
+        pw.println("        catch (Throwable t) {");
+        pw.println("            throw new org.apache.axis.SerializationException(\"" + type + "\", t);");
         pw.println("        }");
         pw.println();
     } // writeSerializationInit
@@ -881,13 +860,13 @@ public class Emitter {
      */
     private void writeStubOperation(String name, Parameters parms, String soapAction,
                                     String namespace, PrintWriter pw) {
-        pw.println(parms.signature);
-        pw.println("    {");
-        pw.println("        if (call.get (org.apache.axis.transport.http.HTTPTransport.URL) == null)");
-        pw.println("            throw new org.apache.axis.NoEndPointException ();");
+        pw.println(parms.signature + "{");
+        pw.println("        if (call.get(org.apache.axis.transport.http.HTTPTransport.URL) == null) {");
+        pw.println("            throw new org.apache.axis.NoEndPointException();");
+        pw.println("        }");
 
-        pw.println("        call.set (org.apache.axis.transport.http.HTTPTransport.ACTION, \"" + soapAction + "\");");
-        pw.print("        Object resp = call.invoke (");
+        pw.println("        call.set(org.apache.axis.transport.http.HTTPTransport.ACTION, \"" + soapAction + "\");");
+        pw.print("        Object resp = call.invoke(");
 
         // Namespace
         pw.print("\"" + namespace + "\"");
@@ -907,21 +886,21 @@ public class Emitter {
             else
                 needComma = true;
             if (p.mode == Parameter.IN)
-                pw.print("new org.apache.axis.message.RPCParam (\"" + p.name +
+                pw.print("new org.apache.axis.message.RPCParam(\"" + p.name +
                         "\", " + wrapPrimitiveType(p.type, p.name) + ")");
             else if (p.mode == Parameter.INOUT)
-                pw.print("new org.apache.axis.message.RPCParam (\"" + p.name +
+                pw.print("new org.apache.axis.message.RPCParam(\"" + p.name +
                         "\", " + p.name + "._value)");
         }
         pw.println("});");
         pw.println();
-        pw.println("        if (resp instanceof java.rmi.RemoteException)");
+        pw.println("        if (resp instanceof java.rmi.RemoteException) {");
         pw.println("            throw (java.rmi.RemoteException)resp;");
+        pw.println("        }");
 
         int allOuts = parms.outputs + parms.inouts;
         if (allOuts > 0) {
-            pw.println("        else");
-            pw.println("        {");
+            pw.println("        else {");
             if (allOuts == 1) {
                 if (parms.inouts == 1) {
                     // There is only one output and it is an inout, so the resp object
@@ -944,7 +923,7 @@ public class Emitter {
                 // call.getOutputParams ().  Pull the Objects from the appropriate place -
                 // resp or call.getOutputParms - and put them in the appropriate place,
                 // either in a holder or as the return value.
-                pw.println("            java.util.Vector output = call.getOutputParams ();");
+                pw.println("            java.util.Vector output = call.getOutputParams();");
                 int outdex = 0;
                 boolean firstInoutIsResp = (parms.outputs == 0);
                 for (int i = 0; i < parms.list.size (); ++i) {
@@ -955,7 +934,7 @@ public class Emitter {
                         pw.println ("            " + p.name + "._value = " + getResponseString(p.type,  "resp"));
                         }
                         else {
-                            pw.println ("            " + p.name + "._value = " + getResponseString(p.type, "((org.apache.axis.message.RPCParam) output.get(" + outdex++ + ")).getValue ()"));
+                            pw.println ("            " + p.name + "._value = " + getResponseString(p.type, "((org.apache.axis.message.RPCParam) output.get(" + outdex++ + ")).getValue()"));
                         }
                     }
                     
@@ -981,9 +960,9 @@ public class Emitter {
             Parameter p = (Parameter) parms.list.get(i);
 
             if (p.mode == Parameter.INOUT)
-                pw.println("        " + p.type + "Holder " + p.name + "Holder = new " + p.type + "Holder (" + p.name + ");");
+                pw.println("        " + p.type + "Holder " + p.name + "Holder = new " + p.type + "Holder(" + p.name + ");");
             else if (p.mode == Parameter.OUT)
-                pw.println("        " + p.type + "Holder " + p.name + "Holder = new " + p.type + "Holder ();");
+                pw.println("        " + p.type + "Holder " + p.name + "Holder = new " + p.type + "Holder();");
         }
 
         // Call the real implementation
@@ -1029,14 +1008,14 @@ public class Emitter {
             }
             else {
                 // There are more than 1 output parts, so create a Vector to put them into.
-                pw.println("        org.apache.axis.server.ParamList list = new org.apache.axis.server.ParamList ();");
+                pw.println("        org.apache.axis.server.ParamList list = new org.apache.axis.server.ParamList();");
                 if (parms.outputs > 0)
-                    pw.println("        list.add (new org.apache.axis.message.RPCParam (\"" + parms.returnName + "\", ret));");
+                    pw.println("        list.add(new org.apache.axis.message.RPCParam(\"" + parms.returnName + "\", ret));");
                 for (int i = 0; i < parms.list.size(); ++i) {
                     Parameter p = (Parameter) parms.list.get(i);
 
                     if (p.mode != Parameter.IN)
-                        pw.println("        list.add (new org.apache.axis.message.RPCParam (\"" + p.name + "\", " + p.name + "Holder._value));");
+                        pw.println("        list.add(new org.apache.axis.message.RPCParam(\"" + p.name + "\", " + p.name + "Holder._value));");
                 }
                 pw.println("        return list;");
             }
@@ -1071,8 +1050,7 @@ public class Emitter {
         // imports (none right now)
 
         // declare class
-        servicePW.println("public class " + serviceName);
-        servicePW.println("{");
+        servicePW.println("public class " + serviceName + "{");
 
         // get ports
         Map portMap = service.getPorts();
@@ -1361,8 +1339,7 @@ public class Emitter {
         if (bVerbose)
             System.out.println("Generating type implementation: " + nameValue + ".java");
 
-        typePW.println("public class " + nameValue + " implements java.io.Serializable");
-        typePW.println("{");
+        typePW.println("public class " + nameValue + " implements java.io.Serializable {");
 
         Vector elements = findNameValues(node, "element");
 
@@ -1370,17 +1347,15 @@ public class Emitter {
             typePW.println("    public " + elements.get(i) + " " + elements.get(i + 1) + ";");
 
         typePW.println();
-        typePW.println("    public " + nameValue + " ()");
-        typePW.println("    {");
+        typePW.println("    public " + nameValue + "() {");
         typePW.println("    }");
         typePW.println();
-        typePW.print("    public " + nameValue + " (");
+        typePW.print("    public " + nameValue + "(");
         for (int i = 0; i < elements.size(); i += 2) {
             if (i != 0) typePW.print(", ");
             typePW.print((String) elements.get(i) + " " + elements.get(i + 1));
         }
-        typePW.println(")");
-        typePW.println("    {");
+        typePW.println(") {");
         for (int i = 1; i < elements.size(); i += 2) {
             String variable = (String) elements.get(i);
 
@@ -1393,13 +1368,11 @@ public class Emitter {
             String name = (String) elements.get(i + 1);
             String capName = capitalize(name);
 
-            typePW.println("    public " + type + " get" + capName + " ()");
-            typePW.println("    {");
+            typePW.println("    public " + type + " get" + capName + "() {");
             typePW.println("        return " + name + ";");
             typePW.println("    }");
             typePW.println();
-            typePW.println("    public void set" + capName + " (" + type + " " + name + ")");
-            typePW.println("    {");
+            typePW.println("    public void set" + capName + "(" + type + " " + name + ") {");
             typePW.println("        this." + name + " = " + name + ";");
             typePW.println("    }");
             typePW.println();
@@ -1420,16 +1393,13 @@ public class Emitter {
         if (bVerbose)
             System.out.println("Generating type implementation holder: " + typeName + "Holder.java");
 
-        pw.println("public final class " + typeName + "Holder implements java.io.Serializable");
-        pw.println("{");
+        pw.println("public final class " + typeName + "Holder implements java.io.Serializable {");
         pw.println("    public " + typeName + " _value;");
         pw.println();
-        pw.println("    public " + typeName + "Holder ()");
-        pw.println("    {");
+        pw.println("    public " + typeName + "Holder() {");
         pw.println("    }");
         pw.println();
-        pw.println("    public " + typeName + "Holder (" + typeName + " value)");
-        pw.println("    {");
+        pw.println("    public " + typeName + "Holder(" + typeName + " value) {");
         pw.println("        this._value = value;");
         pw.println("    }");
         pw.println();
@@ -1580,10 +1550,10 @@ public class Emitter {
     private String getResponseString(String type, String var) {
         String objType = (String) TYPES.get(type);
         if (objType != null) {
-            return "((" + objType + ")" + var + ")." + type + "Value();";
+            return "((" + objType + ") " + var + ")." + type + "Value();";
         }
         else {
-            return "(" + type + ")" + var + ";";
+            return "(" + type + ") " + var + ";";
         }
     }
 
