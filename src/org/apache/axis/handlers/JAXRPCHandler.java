@@ -32,13 +32,15 @@ public class JAXRPCHandler extends BasicHandler {
 
     HandlerChainImpl impl = null;
 
+    public void init() {
+        super.init();
+        String className = (String) getOption("className");
+        impl = new HandlerChainImpl();
+        impl.addNewHandler(className, getOptions());
+    }
+    
     public void invoke(MessageContext msgContext) throws AxisFault {
         log.debug("Enter: JAXRPCHandler::enter invoke");
-        if (impl == null) {
-            String className = (String) getOption("className");
-            impl = new HandlerChainImpl();
-            impl.addNewHandler(className, getOptions());
-        }
         if (!msgContext.getPastPivot()) {
             impl.handleRequest(msgContext);
         } else {
