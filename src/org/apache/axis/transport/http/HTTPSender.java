@@ -346,7 +346,7 @@ public class HTTPSender extends BasicHandler {
 
             header.append("\r\n");
 
-            out.write( header.toString().getBytes() );
+            out.write( header.toString().getBytes(HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING) );
             reqMessage.writeContentToStream(out);
             out.flush();
 
@@ -397,15 +397,15 @@ public class HTTPSender extends BasicHandler {
                         buf.close();
                         byte[]hdata= buf.toByteArray();
                         buf.reset();
-                        name = new String( hdata, 0, colonIndex );
-                        value = new String( hdata, colonIndex+1, len-1-colonIndex );
+                        name = new String( hdata, 0, colonIndex, HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING );
+                        value = new String( hdata, colonIndex+1, len-1-colonIndex, HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING );
                         colonIndex = -1 ;
                     }
                     else {
                         buf.close();
                         byte[]hdata= buf.toByteArray();
                         buf.reset();
-                        name = new String( hdata, 0, len );
+                        name = new String( hdata, 0, len, HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING );
                         value = "" ;
                     }
 
