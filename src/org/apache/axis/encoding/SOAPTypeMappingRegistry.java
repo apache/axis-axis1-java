@@ -76,7 +76,7 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
     public static final QName XSD_SHORT = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "short");
     public static final QName XSD_BYTE = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "byte");
     public static final QName XSD_DECIMAL = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "decimal");
-    public static final QName XSD_BASE64 = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "base64");
+    public static final QName XSD_BASE64 = new QName(Constants.URI_SOAP_ENC, "base64");
 
     public static final QName SOAP_STRING = new QName(Constants.URI_SOAP_ENC, "string");
     public static final QName SOAP_BOOLEAN = new QName(Constants.URI_SOAP_ENC, "boolean");

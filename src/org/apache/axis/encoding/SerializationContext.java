@@ -138,8 +138,10 @@ public class SerializationContext
         if (prefix == null)
             prefix = (String)pendingNSMappings.get(uri);
         
-        if (prefix == null && uri.equals(Constants.URI_SOAP_ENC))
+        if (prefix == null && uri.equals(Constants.URI_SOAP_ENC)) {
             prefix = Constants.NSPREFIX_SOAP_ENC;
+            registerPrefixForURI(prefix, uri);
+        }
         
         if (prefix == null) {
             prefix = "ns" + lastPrefixIndex++;
