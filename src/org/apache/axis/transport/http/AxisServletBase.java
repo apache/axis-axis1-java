@@ -93,15 +93,15 @@ public class AxisServletBase extends HttpServlet {
         LogFactory.getLog(AxisServlet.class.getName());
     private static boolean isDebug = false;
 
-	/**
-	 *  count number of service requests in progrss
-	 */
-	private static int loadCounter = 0;
+    /**
+     *  count number of service requests in progress
+     */
+    private static int loadCounter = 0;
 
-	/**
-	 *  and a lock
-	 */
-	private static Object loadCounterLock = new Object();
+    /**
+     *  and a lock
+     */
+    private static Object loadCounterLock = new Object();
 
     /**
      * name of the axis engine to use in the servlet context
@@ -206,12 +206,12 @@ public class AxisServletBase extends HttpServlet {
      */
     private static AxisServer retrieveEngine(ServletContext context) {
         Object contextObject = context.getAttribute(ATTR_AXIS_ENGINE);
-		if (contextObject instanceof AxisServer) {
-			return (AxisServer) contextObject;
-		}
-		else {
-			return null;
-		}
+        if (contextObject instanceof AxisServer) {
+            return (AxisServer) contextObject;
+        }
+        else {
+            return null;
+        }
      }
 
 
@@ -245,16 +245,16 @@ public class AxisServletBase extends HttpServlet {
     }
 
 
-	/**
-	 *  get a count of the # of services running. This is only
+    /**
+     *  get a count of the # of services running. This is only
      *  ever an approximate number in a busy system
-	 *
-	 * @return    The TotalServiceCount value
-	 */
+     *
+     * @return    The TotalServiceCount value
+     */
 
-	public static int getLoadCounter() {
-			return loadCounter;
-	}
+    public static int getLoadCounter() {
+            return loadCounter;
+    }
 
     /**
      * thread safe lock counter increment
@@ -284,13 +284,13 @@ public class AxisServletBase extends HttpServlet {
      * @throws IOException something different went wrong
      */
     protected void service(HttpServletRequest req, HttpServletResponse resp)
-		throws ServletException, IOException {
-		incLockCounter();
-		try {
-			super.service(req, resp);
-		}
-		finally {
-			decLockCounter();
-		}
-	}
+        throws ServletException, IOException {
+        incLockCounter();
+        try {
+            super.service(req, resp);
+        }
+        finally {
+            decLockCounter();
+        }
+    }
 }
