@@ -145,10 +145,7 @@ public class XmlBeanSerializer implements Serializer {
                     schema = schemas[0];
                 } else {
                     String stNS = docType.getName().getNamespaceURI();
-                    //System.out.println("target NS " + stNS);
                     for (int j = 0; j < schemas.length; j++) {
-                        /*System.out.println("comparing schema namespace "
-                          + schemas[j].getTargetNamespace());*/
                         if (stNS.equals(schemas[j].getTargetNamespace())) {
                             schema = schemas[j];
                             break;
