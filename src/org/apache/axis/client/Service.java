@@ -55,13 +55,6 @@
 
 package org.apache.axis.client ;
 
-/**
- * Axis' JAXRPC Dynamic Invocation Interface implementation of the Service
- * interface.
- *
- * @author Doug Davis (dug@us.ibm.com)
- */
-
 import java.net.URL ;
 import java.lang.String ;
 import java.util.Map ;
@@ -71,6 +64,7 @@ import java.util.Iterator ;
 import java.util.HashSet ;
 
 import java.io.InputStream ;
+import java.io.FileInputStream ;
 
 import org.apache.axis.utils.XMLUtils ;
 
@@ -91,26 +85,54 @@ import com.ibm.wsdl.xml.WSDLReader ;
 import com.ibm.wsdl.extensions.soap.SOAPAddress ;
 import com.ibm.wsdl.extensions.soap.SOAPOperation ;
 
+/**
+ * Axis' JAXRPC Dynamic Invoation Interface implementation of the Service
+ * interface.
+ *
+ * The Service class should be used a the starting point for access
+ * SOAP Web Services.  Typically, a Service will be created with a WSDL
+ * document and along with a serviceName you can then ask for a Call
+ * object that will allow you to invoke a Web Service.
+ *
+ * @author Doug Davis (dug@us.ibm.com)
+ */
+
 public class Service implements org.apache.axis.rpc.Service {
     private URL                 wsdlLocation   = null ;
     private Definition          wsdlDefinition = null ;
     private javax.wsdl.Service  wsdlService    = null ;
 
+    /**
+     * Constructs a new Service object - this assumes the caller will set
+     * the appropriate fields by hand rather than getting them from the
+     * WSDL.
+     *
+     * @exception JAXRPCException If there's an error
+     */
     public Service() throws JAXRPCException { 
         this.wsdlLocation   = null ;
         this.wsdlDefinition = null ;
     }
 
-    public Service(URL WSDLdoc, QName serviceName) throws JAXRPCException {
+    /**
+     * Constructs a new Service object for the service in the WSDL document 
+     * pointed to by the wsdlDoc URL and serviceName parameters.
+     *
+     * @param wsdlDoc          URL of the WSDL document
+     * @param serviceName      Qualified name of the desired service
+     * @throws JAXRPCExceptionIif there's an error finding or parsing the WSDL
+     */
+    public Service(URL wsdlDoc, QName serviceName) throws JAXRPCException {
         try {
-            org.w3c.dom.Document doc = XMLUtils.newDocument(WSDLdoc.toString());
+            // Start by reading in the WSDL using WSDL4J
+            org.w3c.dom.Document doc = XMLUtils.newDocument(wsdlDoc.toString());
             WSDLReader           reader = new WSDLReader();
             Definition           def    = reader.readWSDL( null, doc );
 
-            this.wsdlLocation   = WSDLdoc ;
+            this.wsdlLocation   = wsdlDoc ;
             this.wsdlDefinition = def ;
 
-            // grrr!
+            // grrr!  Too many flavors of QName
             String           ns = serviceName.getNamespaceURI();
             String           lp = serviceName.getLocalPart();
             javax.wsdl.QName qn = new javax.wsdl.QName( ns, lp );
@@ -122,21 +144,34 @@ public class Service implements org.apache.axis.rpc.Service {
         }
         catch( Exception exp ) {
             throw new JAXRPCException( "Error processing WSDL document: " + 
-                                       WSDLdoc + "\n" + exp.toString() );
+                                       wsdlDoc + "\n" + exp.toString() );
         }
     }
 
+    /**
+     * Constructs a new Service object for the service in the WSDL document
+     * pointed to by the wsdlLocation and serviceName parameters.  This is
+     * just like the previous constructor but instead of URL the 
+     * wsdlLocation parameter points to a file on the filesystem relative
+     * to the current directory.
+     *
+     * @param  wsdlLocation    Location of the WSDL relative to the current dir
+     * @param  serviceName     Qualified name of the desired service
+     * @throws JAXRPCException If there's an error finding or parsing the WSDL
+     */
     public Service(String wsdlLocation, QName serviceName) 
                            throws JAXRPCException {
         try {
-            org.w3c.dom.Document doc = XMLUtils.newDocument(wsdlLocation);
+            // Start by reading in the WSDL using WSDL4J
+            FileInputStream      fis = new FileInputStream(wsdlLocation);
+            org.w3c.dom.Document doc = XMLUtils.newDocument(fis);
             WSDLReader           reader = new WSDLReader();
             Definition           def    = reader.readWSDL( null, doc );
 
             this.wsdlLocation = new URL(wsdlLocation) ;
             this.wsdlDefinition = def ;
 
-            // grrr!
+            // grrr!  Too many flavors of QName
             String           ns = serviceName.getNamespaceURI();
             String           lp = serviceName.getLocalPart();
             javax.wsdl.QName qn = new javax.wsdl.QName( ns, lp );
@@ -156,9 +191,20 @@ public class Service implements org.apache.axis.rpc.Service {
         }
     }
 
+    /**
+     * Constructs a new Service object for the service in the WSDL document
+     * in the wsdlInputStream and serviceName parameters.  This is
+     * just like the previous constructor but instead of reading the WSDL
+     * from a file (or from a URL) it is in the passed in InputStream.
+     *
+     * @param  wsdlInputStream InputStream containing the WSDL
+     * @param  serviceName     Qualified name of the desired service
+     * @throws JAXRPCException If there's an error finding or parsing the WSDL
+     */
     public Service(InputStream wsdlInputStream, QName serviceName) 
                            throws JAXRPCException {
         try {
+            // Start by reading in the WSDL using WSDL4J
             org.w3c.dom.Document doc = XMLUtils.newDocument(wsdlInputStream);
             WSDLReader           reader = new WSDLReader();
             Definition           def    = reader.readWSDL( null, doc );
@@ -166,7 +212,7 @@ public class Service implements org.apache.axis.rpc.Service {
             this.wsdlLocation   = null ;
             this.wsdlDefinition = def ;
 
-            // grrr!
+            // grrr!  Too many flavors of QName
             String           ns = serviceName.getNamespaceURI();
             String           lp = serviceName.getLocalPart();
             javax.wsdl.QName qn = new javax.wsdl.QName( ns, lp );
@@ -182,12 +228,27 @@ public class Service implements org.apache.axis.rpc.Service {
         }
     }
 
+    /**
+     * Not implemented yet
+     *
+     * @param  portName        ...
+     * @param  proxyInterface  ...
+     * @return java.rmi.Remote ...
+     * @throws JAXRPCException If there's an error
+     */
     public java.rmi.Remote getPort(QName portName, Class proxyInterface)
                            throws JAXRPCException {
-        // Not implemented yet 
         return( null );
     }
 
+    /**
+     * Creates a new Call object - will prefill as much info from the WSDL
+     * as it can.  Right now it's just the target URL of the Web Service.
+     *
+     * @param  portName        PortName in the WSDL doc to search for
+     * @return Call            Used for invoking the Web Service
+     * @throws JAXRPCException If there's an error
+     */
     public org.apache.axis.rpc.Call createCall(QName portName) 
                             throws JAXRPCException {
         javax.wsdl.QName qn = new javax.wsdl.QName( portName.getNamespaceURI(),
@@ -227,6 +288,16 @@ public class Service implements org.apache.axis.rpc.Service {
         return( call );
     }
 
+    /**
+     * Creates a new Call object - will prefill as much info from the WSDL
+     * as it can.  Right now it's target URL, SOAPAction, Parameter types,
+     * and return type of the Web Service.
+     *
+     * @param  portName        PortName in the WSDL doc to search for
+     * @param  operationName   Operation(method) that's going to be invoked
+     * @return Call            Used for invoking the Web Service
+     * @throws JAXRPCException If there's an error
+     */
     public org.apache.axis.rpc.Call createCall(QName portName, 
                                                String operationName)
                            throws JAXRPCException {
@@ -303,23 +374,47 @@ public class Service implements org.apache.axis.rpc.Service {
         return( call );
     }
 
+    /**
+     * Creates a new Call object with no prefilled data.  This assumes
+     * that the caller will set everything manually - no checking of
+     * any kind will be done against the WSDL.
+     *
+     * @return Call            Used for invoking the Web Service
+     * @throws JAXRPCException If there's an error
+     */
     public org.apache.axis.rpc.Call createCall() throws JAXRPCException {
         return( new org.apache.axis.client.Call() );
     }
 
+    /**
+     * Returns the location of the WSDL document used to prefill the data
+     * (if one was used at all).
+     *
+     * @return URL URL pointing to the WSDL doc
+     */
     public URL getWSDLDocumentLocation() {
         return wsdlLocation ;
     }
 
+    /**
+     * Returns the qualified name of the service (if one is set).
+     *
+     * @return QName Fully qualified name of this service.
+     */
     public QName getServiceName() {
-        // not implemented yet
         if ( wsdlService == null ) return( null );
         javax.wsdl.QName  qn = wsdlService.getQName();
         return( new QName( qn.getNamespaceURI(), qn.getLocalPart() ) );
     }
 
+    /**
+     * Returns an Iterator that can be used to get all of the ports
+     * specified in the WSDL file associated with this Service (if there
+     * is a WSDL file).
+     *
+     * @return Iterator The ports specified in the WSDL file
+     */
     public Iterator getPorts() {
-        // not implemented yet
         if ( wsdlService == null ) return( null );
         Map       map  = wsdlService.getPorts();
 
@@ -339,8 +434,12 @@ public class Service implements org.apache.axis.rpc.Service {
         return( ports.iterator() );
     }
 
+    /**
+     * Not implemented yet
+     *
+     * @return Reference ...
+     */
     public javax.naming.Reference getReference() {
-        // not implementated yet
         return( null );
     }
 }
