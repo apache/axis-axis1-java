@@ -575,6 +575,8 @@ Copyright:
       <include name="samples/**/*.java" />
       <include name="test/**/*.java" />
       <exclude name="test/wsdl/interop3/**/*.java" />
+      <exclude name="test/wsdl/interop3/**/*.java" />
+      <exclude name="samples/ws-i/scm/**/*.java" />
     </javac>
 
   </target>
