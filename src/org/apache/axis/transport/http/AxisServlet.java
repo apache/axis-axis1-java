@@ -56,6 +56,7 @@
 package org.apache.axis.transport.http ;
 
 import java.io.*;
+import java.util.Enumeration;
 import javax.servlet.* ;
 import javax.servlet.http.* ;
 import org.apache.axis.* ;
@@ -126,6 +127,18 @@ public class AxisServlet extends HttpServlet {
                         res.getWriter().close();
                     }
                 } else {
+                    Enumeration enum = req.getParameterNames();
+                    if (enum.hasMoreElements()) {
+                        String methodName = req.getParameter("method");
+                        SOAPEnvelope env = new SOAPEnvelope();
+                        RPCElement rpcElem = new RPCElement(methodName);
+                        while (enum.hasMoreElements()) {
+                            String param = (String)enum.nextElement();
+                            String value = req.getParameter(param);
+                            RPCParam rp = new RPCParam(param,
+
+                        }
+                    }
                     res.setContentType("text/html");
                     res.getWriter().println("<h1>" + req.getRequestURI() +
                             "</h1>");

@@ -265,8 +265,8 @@ public class ServiceClient {
             Transport transport = getTransportForProtocol(protocol);
             if (transport == null)
                 throw new AxisFault("ServiceClient.setURL", "No transport mapping for protocol: " + protocol, null, null);
+            transport.setUrl(endpointURL);
             setTransport(transport);
-            set(MessageContext.TRANS_URL, endpointURL);
         } catch (MalformedURLException e) {
             throw new AxisFault("ServiceClient.setURL", "Malformed URL Exception: " + e.getMessage(), null, null);
         }

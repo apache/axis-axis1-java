@@ -82,10 +82,10 @@ public class HTTPTransport extends Transport
     static public String URL = MessageContext.TRANS_URL;
     static public String ACTION = HTTPConstants.MC_HTTP_SOAPACTION;
     
-    private String url;
     private String action;
     
     public HTTPTransport () {
+        transportName = "http";
     }
     
     /**
@@ -93,6 +93,7 @@ public class HTTPTransport extends Transport
      */
     public HTTPTransport (String url, String action)
     {
+        transportName = "http";
         this.url = url;
         this.action = action;
     }
@@ -104,13 +105,12 @@ public class HTTPTransport extends Transport
      * @param engine the engine containing the registries
      * @throws AxisFault if service cannot be found
      */
-    public void setupMessageContext (MessageContext mc, ServiceClient serviceClient, AxisEngine engine)
+    public void setupMessageContextImpl(MessageContext mc,
+                                        ServiceClient serviceClient,
+                                        AxisEngine engine)
         throws AxisFault
     {
-        if (url != null) mc.setProperty(URL, url);
         if (action != null) mc.setProperty(ACTION, action);
-        
-        mc.setTransportName(transportName == null ? "http" : transportName);
         
         // Allow the SOAPAction to determine the service, if the service
         // (a) has not already been determined, and (b) if a service matching
