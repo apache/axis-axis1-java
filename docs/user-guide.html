@@ -377,6 +377,8 @@ Guide</a>), which means it may have any/all of: a request flow, a pivot Handler
 (which for a service is called a "provider"), and a response flow. In this case, 
 our provider is "java:RPC", which is built into Axis, and indicates a Java RPC 
 service. The actual class which handles this is <b>org.apache.axis.providers.java.RPCProvider</b>. 
+We'll go into more detail later on the different styles of services and their 
+providers. 
 <p>We need to tell the RPCProvider that it should instantiate and call the correct 
   class (e.g. samples.userguide.example3.MyService), and we do so by including 
   &lt;parameter> tags, giving the service one parameter to configure the class 
@@ -476,63 +478,126 @@ Add an option as follows:
 <p><b>WARNING: enabling remote administration may give unauthorized parties
 access to your machine. If you do this, please make sure to add security
 to your configuration!</b>
-<h3>Writing and Deploying Document-Style Message Services</h3>
-<p>The SOAP specification allows for message-oriented services as well as RPC. 
-  RPC defines strict encoding rules for passing serialized objects as method parameters 
-  and return values. Message services can receive and return arbitrary XML messages 
-  in the SOAP Body. If you want to work with the raw XML of the incoming and outgoing 
-  SOAP Bodies, write a message service.</p>
-<h4>What, Exactly, Is a Message Service?</h4>
-<p>I don't know. This is a very confusing subject and I haven't read enough of 
-  the SOAP spec. Axis developer people, help? Is it &quot;any service that does 
-  not use RPC&quot;? Is it &quot;all SOAP services, including those using RPC, 
-  which is really just a restricted form of SOAP messaging?&quot;</p>
-<h4>Method Signatures for a Message Service</h4>
-<p>Axis makes it easy to work with the raw XML in the SOAP Body. Message services 
-  are handled by <code>org.apache.axis.providers.java.MsgProvider</code>, which 
-  expects a class with one method having one of the following three signatures:</p>
-<p><code>public Element [] method(Vector v);<br>
-  public Document method(Document doc);<br>
-  public void method(MessageContext mc);</code></p>
-<p>Note: in future versions of Axis, the first method will likely be revised to 
-  one of the following:</p>
-<p><code>public Element [] method(Element[] e);<br>
-  public Vector method(Vector v);</code></p>
-<p>The first version allows multiple SOAP Body Elements (child elements of the 
-  SOAP Body); the second assumes that the request and response SOAP Bodies will 
-  each have only one SOAP Element. The third method signature leaves your method 
-  to dig all necessary information out of the MessageContext object, which essentially 
-  lets you get at everything Axis knows about the request and response.</p>
-<h4>Deploying a Message Service</h4>
-<p>A sample message service can be found in
-<a href="../samples/message/MessageService.java">samples/message/MessageService.java</a>. 
+<h3>Service Styles - RPC, Document, Wrapped, and Message</h3>
+<p>There are four &quot;styles&quot; of service in Axis 1.0. <b>RPC</b> services 
+  use the SOAP RPC conventions, and also the SOAP &quot;section 5&quot; encoding. 
+  <b>Document</b> services do not use any encoding (so in particular, you won't 
+  see multiref object serialization or SOAP-style arrays on the wire) but DO still 
+  do XML&lt;-&gt;Java databinding. <b>Wrapped</b> services are just like document 
+  services, except that rather than binding the entire SOAP body into one big 
+  structure, they &quot;unwrap&quot; it into individual parameters. <b>Message</b> 
+  services receive and return arbitrary XML in the SOAP Envelope without any type 
+  mapping / data binding. If you want to work with the raw XML of the incoming 
+  and outgoing SOAP Envelopes, write a message service.</p>
+<h4>RPC services</h4>
+RPC services are the default in Axis. They are what you get when you deploy services 
+with &lt;service ... provider=&quot;java:RPC&quot;&gt; or &lt;service ... style=&quot;RPC&quot;&gt;. 
+RPC services follow the SOAP RPC and encoding rules, which means that the XML 
+for an RPC service will look like the &quot;echoString&quot; example above - each 
+RPC invocation is modeled as an outer element which matches the operation name, 
+containing inner elements each of which maps to a parameter of the operation. 
+Axis will deserialize XML into Java objects which can be fed to your service, 
+and will serialize the returned Java object(s) from your service back into XML. 
+Since RPC services default to the soap section 5 encoding rules, objects will 
+be encoded via &quot;multi-ref&quot; serialization, which allows object graphs 
+to be encoded. (see the SOAP spec for more on multi-ref serialization) 
+<h4>Document / Wrapped services </h4>
+<p>Document services and wrapped services are similar in that neither uses the 
+  SOAP encoding for data, it's just plain old XML schema. In both cases, however, 
+  Axis still &quot;binds&quot; Java representations to the XML (see the <a href="#DataMapping">databinding</a> 
+  section for more), so you end up dealing with Java objects, not directly with 
+  XML constructs.</p>
+<p>A good place to start in describing the difference between document and wrapped 
+  services is with a sample SOAP message containing a purchase order:</p>
+<pre class="xml">&lt;soap:Envelope xmlns="http://xml.apache.org/axis/wsdd/"
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+  &lt;soap:Body&gt;
+    &lt;myNS:PurchaseOrder xmlns:myNS=&quot;http://commerce.com/PO&quot;&gt;
+      &lt;item&gt;SK001&lt;/item&gt;
+      &lt;quantity&gt;1&lt;/quantity&gt;
+      &lt;description&gt;Sushi Knife&lt;/description&gt;
+    &lt;/myNS:PurchaseOrder&gt;
+  &lt;/soap:Body&gt;
+&lt;/soap:Envelope&gt;
+</pre>
+<p>The relevant schema for the PurchaseOrder looks like this:</p>
+<pre class="xml">&lt;schema targetNamespace=&quot;http://commerce.com/PO&quot;>
+  &lt;complexType name=&quot;POType&quot;&gt;
+    &lt;sequence&gt;
+      &lt;element name=&quot;item&quot; type=&quot;xsd:string&quot;/&gt;
+      &lt;element name=&quot;quantity&quot; type=&quot;xsd:int&quot;/&gt;
+      &lt;element name=&quot;description&quot; type=&quot;xsd:string&quot;/&gt;
+    &lt;/sequence&gt;
+  &lt;/complexType&gt;
+  &lt;element name=&quot;PurchaseOrder&quot; type=&quot;POType&quot;/&gt;
+&lt;/deployment></pre>
+<p>For a <b>document</b> style service, this would map to a method like this:</p>
+<p class="example">public void method(PurchaseOrder po)</p>
+<p>In other words, the ENTIRE &lt;PurchaseOrder&gt; element would be handed to 
+  your method as a single bean with three fields inside it. On the other hand, 
+  for a <b>wrapped</b> style service, it would map to a method like this:</p>
+<p class="example">public void purchaseOrder(String item, int quantity, String 
+  description)</p>
+<p>Note that in the &quot;wrapped&quot; case, the &lt;PurchaseOrder&gt; element 
+  is a &quot;wrapper&quot; (hence the name) which only serves to indicate the 
+  correct operation. The arguments to our method are what we find when we &quot;unwrap&quot; 
+  the outer element and take each of the inner ones as a parameter.</p>
+<p>The document or wrapped style is indicated in WSDD as follows:</p>
+<p><span class="example">&lt;service ... style=&quot;document&quot;&gt;</span> 
+  for document style<br>
+  <span class="example">&lt;service ... style=&quot;wrapped&quot;&gt;</span> for 
+  wrapped style</p>
+<p>In most cases you won't need to worry about document or wrapped services if 
+  you are starting from a WSDL document (<a href="#WSDL">see below</a>).</p>
+<h4>Message services</h4>
+<p>Finally, we arrive at &quot;Message&quot; style services, which should be used 
+  when you want Axis to step back and let your code at the actual XML instead 
+  of turning it into Java objects. There are four valid signatures for your message-style 
+  service methods:</p>
+<p><code>public Element [] method(Element [] bodies);</code><code><br>
+  public SOAPBodyElement [] method (SOAPBodyElement [] bodies);</code><code><br>
+  public Document method(Document body);<br>
+  public void method(SOAPEnvelope req, SOAPEnvelope resp);</code> </p>
+<p>The first two will pass your method arrays of either DOM Elements or SOAPBodyElements 
+  - the arrays will contain one element for each XML element inside the &lt;soap:body&gt; 
+  in the envelope.</p>
+<p>The third signature will pass you a DOM Document representing the &lt;soap:body&gt;, 
+  and expects the same in return.</p>
+<p>The fourth signature passes you two SOAPEnvelope objects representing the request 
+  and response messages. This is the signature to use if you need to look at or 
+  modify headers in your service method. Whatever you put into the response envelope 
+  will automatically be sent back to the caller when you return. Note that the 
+  response envelope may already contain headers which have been inserted by other 
+  Handlers.</p>
+<p><b>Message Example</b></p>
+<p>A sample message service can be found in <a href="../samples/message/MessageService.java">samples/message/MessageService.java</a>. 
   The service class, <code>MessageService</code>, has one public method, <code>echoElements</code>, 
   which matches the first of the three method signatures above:</p>
-<pre class="example">public Element[] echoElements(Vector elems) </pre>
-<p>The <code>MsgProvider</code> handler calls the method with a <code>java.util.Vector</code> 
+<pre class="example">public Element[] echoElements(Element [] elems) </pre>
+<p>The <code>MsgProvider</code> handler calls the method with an array<code></code> 
   of <code>org.w3c.dom.Element</code> objects that correspond to the immediate 
-  children of the incoming message's SOAP Body. Often, this Vector will will be 
+  children of the incoming message's SOAP Body. Often, this array will contain 
   a single Element (perhaps the root element of some XML document conforming to 
   some agreed-upon schema), but the SOAP Body can handle any number of children. 
   The method returns an <code>Element[]</code> array to be returned in the SOAP 
-  body.</p>
+  body of the response message.</p>
 <p>Message services must be deployed with a WSDD file. Here is the full WSDD for 
   the <code>MessageService</code> class:</p>
 <pre class="XML">
 &lt;deployment name=&quot;test&quot; xmlns=&quot;http://xml.apache.org/axis/wsdd/&quot;
       xmlns:java=&quot;http://xml.apache.org/axis/wsdd/providers/java&quot;
       xmlns:xsi=&quot;http://www.w3.org/2000/10/XMLSchema-instance&quot;&gt;
-	&lt;service name=&quot;MessageService&quot; provider=&quot;java:MSG&quot;&gt;
+	&lt;service name=&quot;MessageService&quot; <font color="#FF0000">style=&quot;message&quot;</font>&gt;
     &lt;parameter name=&quot;className&quot; value=&quot;samples.message.MessageService&quot;/&gt;
     &lt;parameter name=&quot;allowedMethods&quot; value=&quot;echoElements&quot;/&gt;
   &lt;/service&gt;<br>&lt;/deployment&gt;</pre>
-<p>Note that the &quot;provider&quot; attribute is different from the RPC deployment 
-  example. &quot;java:MSG&quot; tells Axis that this service is to be handled 
-  by <code>org.apache.axis.providers.java.MsgProvider</code> rather than
-<code>org.apache.axis.providers.java.RPCProvider.</code></p>
-<h2>
-<a NAME="DataMapping"></a>XML &lt;-> Java Data Mapping in Axis</h2>
-
+<p>Note that the &quot;style&quot; attribute is different from the RPC deployment 
+  example. The &quot;message&quot; style tells Axis that this service is to be 
+  handled by <code>org.apache.axis.providers.java.MsgProvider</code> rather than 
+  <code>org.apache.axis.providers.java.RPCProvider</code>. </p>
+<p>You can test this service by deploying it, then running samples.message.TestMsg 
+  (look at the source to see what the test driver does).</p>
+<h2><a NAME="DataMapping"></a>XML &lt;-> Java Data Mapping in Axis</h2>
 <h3>How your Java types map to SOAP/XML types</h3>
 
 The JAX-RPC specification determines how Java types are mapped to WSDL and vice versa. 
@@ -558,21 +623,14 @@ some of the salient points.
 <tr><td>xsd:short </td><td><tt>short</tt></td></tr>
 <tr><td>xsd:string</td><td><tt>java.lang.String</tt></td></tr>
 </table>
-<p>
-
-If the WSDL says that an object can be <tt>nillable</tt>, that is the
-caller may choose to return a value of <tt>nil</tt>, then the primitive
-data types are replaced by their wrapper classes, such as Byte, Double,
-Boolean, etc. 
-
-<p>
-
-Alongside the XSD datatypes are the SOAP 'section 5' datatypes that are
-all nillable, and so only ever map to the wrapper classes. These
-datatypes date from an era before XML Schema; now that XSD is final and
-support is common, there should be no reason to write services that
-serve the SOAP datatypes rather than the XSD alternatives. 
-
+<p> If the WSDL says that an object can be <tt>nillable</tt>, that is the caller 
+  may choose to return a value of <tt>nil</tt>, then the primitive data types 
+  are replaced by their wrapper classes, such as Byte, Double, Boolean, etc. 
+<h4>SOAP Encoding Datatypes</h4>
+<p> Alongside the XSD datatypes are the SOAP 'section 5' datatypes that are all 
+  nillable, and so only ever map to the wrapper classes. These types exist because 
+  they all support the &quot;ID&quot; and &quot;HREF&quot; attributes, and so 
+  will be used when in an rpc-encoded context to support multi-ref serialization.
 <h3>Exceptions</h3>
 
 This is an area which causes plenty of confusion, and indeed, the author
