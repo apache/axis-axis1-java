@@ -98,6 +98,20 @@ public class Transport {
         setupMessageContextImpl(context, message, engine);
     }
 
+    public final void setupMessageContext(MessageContext context,
+                                          Call message,
+                                          AxisEngine engine)
+        throws AxisFault
+    {
+        if (url != null)
+            context.setProperty(MessageContext.TRANS_URL, url);
+
+        if (transportName != null)
+            context.setTransportName(transportName);
+
+        setupMessageContextImpl(context, message, engine);
+    }
+
     /**
      * Set up any transport-specific derived properties in the message context.
      * @param context the context to set up
@@ -107,6 +121,14 @@ public class Transport {
      */
     public void setupMessageContextImpl(MessageContext context,
                                         ServiceClient message,
+                                        AxisEngine engine)
+        throws AxisFault
+    {
+        // Default impl does nothing
+    }
+
+    public void setupMessageContextImpl(MessageContext context,
+                                        Call message,
                                         AxisEngine engine)
         throws AxisFault
     {
