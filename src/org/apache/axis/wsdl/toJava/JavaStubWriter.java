@@ -124,6 +124,16 @@ public class JavaStubWriter extends JavaWriter {
         pw.println("public class " + className + " extends javax.xml.rpc.Stub implements " + portTypeName + " {");
 
         pw.println("    private javax.xml.rpc.Service service = null;");
+        pw.println();
+        pw.println("    // If maintainSessionSet is true, then setMaintainSession");
+        pw.println("    // was called and it set the value of maintainSession.");
+        pw.println("    // Use that value when getting the new Call object.");
+        pw.println("    // If maintainSession HAS NOT been set, then the");
+        pw.println("    // Call object uses the default maintainSession");
+        pw.println("    // from the Service.");
+        pw.println("    private boolean maintainSessionSet = false;");
+        pw.println("    private boolean maintainSession = false;");
+        pw.println();
         pw.println("    private java.net.URL cachedEndpoint = null;");
         pw.println("    private java.util.Properties cachedProperties = new java.util.Properties();");
 
@@ -204,9 +214,8 @@ public class JavaStubWriter extends JavaWriter {
         pw.println("    }");
         pw.println();
         pw.println("    public void setMaintainSession(boolean session) {");
-        pw.println("        if (service instanceof org.apache.axis.client.Service) {");
-        pw.println("            ((org.apache.axis.client.Service) service).setMaintainSession(session);");
-        pw.println("        }");
+        pw.println("        maintainSessionSet = true;");
+        pw.println("        maintainSession = session;");
         pw.println("    }");
         pw.println();
         pw.println("    // From javax.naming.Referenceable");
@@ -218,6 +227,9 @@ public class JavaStubWriter extends JavaWriter {
         pw.println("        try {");
         pw.println("            org.apache.axis.client.Call call =");
         pw.println("                    (org.apache.axis.client.Call) this.service.createCall();");
+        pw.println("            if (maintainSessionSet) {");
+        pw.println("                call.setMaintainSession(maintainSession);");
+        pw.println("            }");
         pw.println("            if (cachedEndpoint != null) {");
         pw.println("                call.setTargetEndpointAddress(cachedEndpoint);");
         pw.println("                call.setProperty(org.apache.axis.transport.http.HTTPTransport.URL, cachedEndpoint.toString());");
