@@ -82,10 +82,12 @@ public class MessageBundleFactory {
                          DefaultMessageBundle.class);
         
         if (bundle == null) {
-            log.fatal("Unable to load messages!");
+            log.fatal(Messages.getMessage("unabletoLoadMessages00"));
         }
 
-        log.debug("axis.MessageBundle: " + bundle.getClass().getName());
+        if (log.isDebugEnabled()) {
+            log.debug("axis.MessageBundle: " + bundle.getClass().getName());
+        }
 
         return bundle;
     } // getMessageBundle
