@@ -76,7 +76,7 @@ public class AxisServlet extends HttpServlet {
   public void init() {
       String param = getInitParameter("transport.input");
       ServletContext context = getServletConfig().getServletContext();
-
+      
       if (param == null)
           param = context.getInitParameter("transport.input");
       if (param != null)
@@ -102,14 +102,12 @@ public class AxisServlet extends HttpServlet {
     ServletContext context = config.getServletContext();
     HttpSession    session = req.getSession();
 
-    Handler  engine = null ;
-
-    //Debug.setDebugLevel( 6 );
+    AxisEngine  engine = null ;
 
     /* Get or 'new' the Axis engine object */
     /***************************************/
     synchronized(context) {
-      engine = (Handler) context.getAttribute( AXIS_ENGINE );
+      engine = (AxisEngine) context.getAttribute( AXIS_ENGINE );
       if ( engine == null ) {
         engine = new AxisServer();
         engine.init();
@@ -196,8 +194,12 @@ public class AxisServlet extends HttpServlet {
     /***********************************/
     msg = msgContext.getResponseMessage();
     res.setContentType( "text/xml" );
-    String response = (String) msg.getAs("String");
-    if (msg == null) response="No data";
+    String response;
+    if (msg == null) {
+        response="No data";
+    } else {
+        response = (String)msg.getAs("String");
+    }
     res.setContentLength( response.length() );
     res.getWriter().print( response );
   }

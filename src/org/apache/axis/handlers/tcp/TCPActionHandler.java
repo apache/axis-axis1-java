@@ -128,8 +128,8 @@ public class TCPActionHandler extends BasicHandler
           // and possibly wrong.
           // ROBJ 911 What *is* the right way to get to the HandlerRegistry from here?!
           // Is it in the MessageContext?  ... let's look ...
-          Handler engine = (Handler)msgContext.getProperty(Constants.AXIS_ENGINE);
-          HandlerRegistry hr = (HandlerRegistry)engine.getOption(Constants.HANDLER_REGISTRY);
+          AxisEngine engine = (AxisEngine)msgContext.getAxisEngine();
+          HandlerRegistry hr = engine.getHandlerRegistry();
           String[] list = hr.list();
           Handler handler = null;
           for (int i = 0; i < list.length; i++) {

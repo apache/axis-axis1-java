@@ -36,13 +36,13 @@ public class TestRPC extends TestCase {
     private Handler RPCDispatcher;
 
     private String SOAPAction = "urn:reverse";
-    private String methodNS   = null;
+    private String methodNS   = SOAPAction;
 
     public TestRPC(String name) {
         super(name);
         engine.init();
-        hr = (HandlerRegistry) engine.getOption(Constants.HANDLER_REGISTRY);
-        sr = (HandlerRegistry) engine.getOption(Constants.SERVICE_REGISTRY);
+        hr = (HandlerRegistry) engine.getHandlerRegistry();
+        sr = (HandlerRegistry) engine.getServiceRegistry();
         RPCDispatcher = hr.find("RPCDispatcher");
         // Debug.setDebugLevel(5);
     }
@@ -53,7 +53,8 @@ public class TestRPC extends TestCase {
      * @param request XML body of the request
      * @return Deserialized result
      */
-    private final Object rpc(String method, Object[] parms)
+    private final Object rpc(String method, Object[] parms,
+                             boolean setService)
         throws AxisFault
     {
 
@@ -70,7 +71,9 @@ public class TestRPC extends TestCase {
         MessageContext msgContext = new MessageContext();
         msgContext.setProperty(Constants.SERVICE_REGISTRY, sr);
         msgContext.setRequestMessage(new Message(envelope, "SOAPEnvelope"));
-        msgContext.setTargetService(SOAPAction);
+        if (setService) {
+            msgContext.setTargetService(SOAPAction);
+        }
 
         // Invoke the Axis engine
         try {
@@ -109,7 +112,18 @@ public class TestRPC extends TestCase {
         sr.add(SOAPAction, reverse);
 
         // invoke the service and verify the result
-        assertEquals("cba", rpc("reverseString", new Object[] {"abc"}));
+        assertEquals("cba", rpc("reverseString", new Object[] {"abc"}, true));
+    }
+
+    public void testReverseBodyDispatch() throws Exception {
+        // Register the reverseString service
+        SOAPService reverse = new SOAPService(RPCDispatcher, "RPCDispatcher");
+        reverse.addOption("className", "test.RPCDispatch.Service");
+        reverse.addOption("methodName", "reverseString");
+        sr.add(SOAPAction, reverse);
+
+        // invoke the service and verify the result
+        assertEquals("cba", rpc("reverseString", new Object[] {"abc"}, false));
     }
 
     /**
@@ -125,7 +139,7 @@ public class TestRPC extends TestCase {
         // invoke the service and verify the result
         Data input    = new Data(5, "abc", 3);
         Data expected = new Data(3, "cba", 5);
-        assertEquals(expected, rpc("reverseData", new Object[] {input}));
+        assertEquals(expected, rpc("reverseData", new Object[] {input}, true));
     }
 
     /**
@@ -139,6 +153,6 @@ public class TestRPC extends TestCase {
         sr.add(SOAPAction, reverse);
 
         // invoke the service and verify the result
-        assertEquals(SOAPAction, rpc("targetService", new Object[] {}));
+        assertEquals(SOAPAction, rpc("targetService", new Object[] {}, true));
     }
 }

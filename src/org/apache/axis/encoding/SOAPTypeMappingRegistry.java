@@ -186,15 +186,14 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
 
         // !!! Seems a little weird to pass a null class here...?
         addDeserializerFactory(SOAP_ARRAY, null, ArraySerializer.factory);
-        /*
-        addDeserializerFactory(SOAP_STRING, se);
-        addDeserializerFactory(SOAP_BOOLEAN, se);
-        addDeserializerFactory(SOAP_DOUBLE, se);
-        addDeserializerFactory(SOAP_FLOAT, se);
-        addDeserializerFactory(SOAP_INT, se);
-        addDeserializerFactory(SOAP_LONG, se);
-        addDeserializerFactory(SOAP_SHORT, se);
-        */
+    }
+    
+    private static SOAPTypeMappingRegistry singleton = null;
+    public synchronized static SOAPTypeMappingRegistry getSingleton()
+    {
+        if (singleton == null)
+            singleton = new SOAPTypeMappingRegistry();
+        return singleton;
     }
     
 }

@@ -61,7 +61,6 @@ public class Constants {
   //  not all Engines will have notion of registries but defining these
   //  here should allow people to ask if they exist)
   //////////////////////////////////////////////////////////////////////////
-  public static String AXIS_ENGINE      = "AxisEngine" ;
   public static String HANDLER_REGISTRY = "HandlerRegistry" ;
   public static String SERVICE_REGISTRY = "ServiceRegistry" ;
   public static String TYPEMAP_REGISTRY = "TypeMapRegistry" ;

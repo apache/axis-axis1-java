@@ -56,6 +56,7 @@
 package org.apache.axis.encoding;
 
 import java.util.Hashtable;
+import java.util.Enumeration;
 import org.apache.axis.Constants;
 import org.apache.axis.utils.*;
 import org.apache.axis.utils.events.*;
