@@ -1305,13 +1305,9 @@ public class JavaGeneratorFactory implements GeneratorFactory {
             String javifiedName = Utils.xmlNameToJava(p.getName());
 
             if (p.getMode() == Parameter.IN) {
-                signature = signature + Utils.getParameterTypeName(p) + " "
-                        + javifiedName;
+                signature += Utils.getParameterTypeName(p) + " " + javifiedName;
             } else {
-                signature =
-                        signature
-                        + Utils.holder(p.getMIMEInfo(), p.getType(), emitter) + " "
-                        + javifiedName;
+                signature += Utils.holder(p, emitter) + " " + javifiedName;
             }
         }
 

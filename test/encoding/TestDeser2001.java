@@ -221,7 +221,7 @@ public class TestDeser2001 extends TestDeser {
         String offsetString = msecOffset > 0 ? "+" : "-";
         offsetString += hourOffset >= 10 ? "" + hourOffset : "0" + hourOffset;
         offsetString += ":";
-        int minOffset = Math.abs(msecOffset % MILLISECONDS_IN_HOUR);
+        int minOffset = Math.abs(msecOffset % MILLISECONDS_IN_HOUR) / MILLISECONDS_IN_MINUTE;
         if (minOffset == 0) {
             offsetString += "00";
         }

@@ -21,18 +21,7 @@ import org.apache.axis.enum.Style;
 import org.apache.axis.enum.Use;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
-import org.apache.axis.wsdl.symbolTable.BaseType;
-import org.apache.axis.wsdl.symbolTable.BindingEntry;
-import org.apache.axis.wsdl.symbolTable.CollectionTE;
-import org.apache.axis.wsdl.symbolTable.CollectionType;
-import org.apache.axis.wsdl.symbolTable.Element;
-import org.apache.axis.wsdl.symbolTable.MessageEntry;
-import org.apache.axis.wsdl.symbolTable.MimeInfo;
-import org.apache.axis.wsdl.symbolTable.Parameter;
-import org.apache.axis.wsdl.symbolTable.Parameters;
-import org.apache.axis.wsdl.symbolTable.SchemaUtils;
-import org.apache.axis.wsdl.symbolTable.SymbolTable;
-import org.apache.axis.wsdl.symbolTable.TypeEntry;
+import org.apache.axis.wsdl.symbolTable.*;
 import org.apache.commons.logging.Log;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -72,22 +61,29 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
     protected static Log log = LogFactory.getLog(Utils.class.getName());
     
     /**
+     * @see #holder(Parameter, Emitter)
+     */
+    public static String holder(TypeEntry type, Emitter emitter) {
+        Parameter arg = new Parameter();
+        // For other fields the default values will do.
+        arg.setType(type);
+        return holder(arg, emitter);
+    }    
+    /**
      * Given a type, return the Java mapping of that type's holder.
      * 
-     * @param mimeInfo 
-     * @param type     
-     * @param emitter  
-     * @return 
+     * @param p          parameter whose holder class name we want to obtain.
+     * @param emitter    the only {@link Emitter} object embodying the running
+     *                   instance of WSDL2Java.
+     * @return           the name of the holder class for <tt>p</tt>.
      */
-    public static String holder(MimeInfo mimeInfo, TypeEntry type,
-                                Emitter emitter) {
-
-        String mimeType = (mimeInfo == null)
+    public static String holder(Parameter p, Emitter emitter) {
+        String mimeType = (p.getMIMEInfo() == null)
                 ? null
-                : mimeInfo.getType();
-        String mimeDimensions = (mimeInfo == null)
+                : p.getMIMEInfo().getType();
+        String mimeDimensions = (mimeType == null)
                 ? ""
-                : mimeInfo.getDimensions();
+                : p.getMIMEInfo().getDimensions();
 
         // Add the holders that JAX-RPC forgot about - the MIME type holders.
         if (mimeType != null) {
@@ -111,7 +107,18 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
             }
         }
 
+        TypeEntry type = p.getType();
         String typeValue = type.getName();
+        // For base types that are nillable and are mapped to primitives,
+        // need to switch to the corresponding wrapper types.
+        if (p.isOmittable()
+            &&  (type instanceof BaseType
+                 ||  type instanceof DefinedElement
+                     &&  type.getRefType() instanceof BaseType)) {
+            String wrapperTypeValue = (String) TYPES.get(typeValue);
+            typeValue = wrapperTypeValue == null  ?  typeValue
+                                                  :  wrapperTypeValue;
+        }
 
         // byte[] has a reserved holders
         if (typeValue.equals("byte[]")) {

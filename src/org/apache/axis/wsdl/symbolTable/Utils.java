@@ -79,43 +79,6 @@ public class Utils {
     }
 
     /**
-     * getNillableQName returns the QName to use if the nillable=true
-     * attribute is used.
-     * For example, in JAX-RPC:
-     * The QName "xsd:int" maps to a java int.
-     * However if an element with a type="xsd:int" also has the
-     * "nillable=true" attribute, the type should be an Integer (not an int).
-     * So in these circumstances, this routine is called with xsd:int to
-     * get a suitable qname (soapenc:int) which maps to Integer.
-     * 
-     * @param qName QName
-     * @return 
-     */
-    public static QName getNillableQName(QName qName) {
-
-        QName rc = qName;
-
-        if (Constants.isSchemaXSD(rc.getNamespaceURI())) {
-            String localName = rc.getLocalPart();
-
-            if (localName.equals("int") || localName.equals("long")
-                    || localName.equals("short") || localName.equals("float")
-                    || localName.equals("double")
-                    || localName.equals("boolean")
-                    || localName.equals("byte")) {
-                rc = findQName(Constants.URI_DEFAULT_SOAP_ENC,
-                        qName.getLocalPart());
-            } else if (localName.equals("base64Binary")) {
-                rc = findQName(Constants.URI_DEFAULT_SOAP_ENC, "base64");
-            } else if (localName.equals("hexBinary")) {
-                rc = findQName(Constants.URI_DEFAULT_SCHEMA_XSD, "hexBinary");
-            }
-        }
-
-        return rc;
-    }
-
-    /**
      * Given a node, return the value of the given attribute.
      * If the attribute does not exist, searching continues through ancestor nodes until found.
      * This method is useful for finding attributes that pertain to a group of contained

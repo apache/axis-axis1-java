@@ -36,7 +36,7 @@ public class JavaHolderWriter extends JavaClassWriter {
      */
     protected JavaHolderWriter(Emitter emitter, TypeEntry type) {
 
-        super(emitter, Utils.holder(null, type, emitter), "holder");
+        super(emitter, Utils.holder(type, emitter), "holder");
 
         this.type = type;
     }    // ctor

@@ -238,11 +238,7 @@ public class JavaTestCaseWriter extends JavaClassWriter {
 
                 // if we have an out or in/out, we are passing in a holder
                 if (param.getMode() != Parameter.IN) {
-                    pw.print(
-                            "new "
-                            + Utils.holder(
-                                    param.getMIMEInfo(), param.getType(), emitter) + "(");
-
+                    pw.print("new " + Utils.holder(param, emitter) + "(");
                     suffix = ")";
                 }
 

@@ -581,22 +581,12 @@ public class JavaStubWriter extends JavaClassWriter {
                 QName paramType = Utils.getXSIType(p);
 
                 // Set the javaType to the name of the type
-                String javaType = null;
-
-                if (p.getMIMEInfo() != null) {
-                    MimeInfo mimeInfo = p.getMIMEInfo();
-
-                    javaType = JavaUtils.mimeToJava(mimeInfo.getType())
-                            + mimeInfo.getDimensions() + ".class, ";
-                } else {
-                    javaType = p.getType().getName();
-
+                String javaType = Utils.getParameterTypeName(p);
                     if (javaType != null) {
                         javaType += ".class, ";
                     } else {
                         javaType = "null, ";
                     }
-                }
 
                 // Get the text representing newing a QName for the name and type
                 String paramNameText = Utils.getNewQNameWithLastLocalPart(p.getQName());
@@ -620,21 +610,12 @@ public class JavaStubWriter extends JavaClassWriter {
                 QName returnType = Utils.getXSIType(parameters.returnParam);
 
                 // Get the javaType
-                String javaType = null;
-
-                if (parameters.returnParam.getMIMEInfo() != null) {
-                    MimeInfo mimeInfo = parameters.returnParam.getMIMEInfo();
-
-                    javaType = JavaUtils.mimeToJava(mimeInfo.getType())
-                            + mimeInfo.getDimensions();
-                } else {
-                    javaType = parameters.returnParam.getType().getName();
-                }
+                String javaType = Utils.getParameterTypeName(parameters.returnParam);
 
                 if (javaType == null) {
                     javaType = "";
                 } else {
-                    javaType = javaType + ".class";
+                    javaType += ".class";
                 }
 
                 pw.println("        oper.setReturnType("
