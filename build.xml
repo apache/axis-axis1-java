@@ -241,6 +241,9 @@ Copyright:
       <exclude name="**/old/**/*.java" />
       <exclude name="samples/userguide/example2/Calculator.java"/>
       <exclude name="samples/addr/*.java" />
+      <exclude name="samples/userguide/example6/Main.java" />
+      <exclude name="samples/userguide/example6/*Impl.java" />
+      <exclude name="samples/userguide/example6/*TestCase.java" />
       <exclude name="samples/attachments/**/*.java" unless="attachments.present"/>
     </javac>
   </target>
