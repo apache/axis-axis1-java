@@ -15,19 +15,6 @@
  */
 package org.apache.axis.wsdl.toJava;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Iterator;
-import java.util.Map;
-
-import javax.wsdl.Binding;
-import javax.wsdl.Fault;
-import javax.wsdl.Operation;
-import javax.wsdl.OperationType;
-import javax.wsdl.Port;
-import javax.wsdl.PortType;
-import javax.xml.rpc.holders.BooleanHolder;
-
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
@@ -36,6 +23,18 @@ import org.apache.axis.wsdl.symbolTable.Parameters;
 import org.apache.axis.wsdl.symbolTable.ServiceEntry;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
+
+import javax.wsdl.Binding;
+import javax.wsdl.Fault;
+import javax.wsdl.Operation;
+import javax.wsdl.OperationType;
+import javax.wsdl.Port;
+import javax.wsdl.PortType;
+import javax.xml.rpc.holders.BooleanHolder;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * This is Wsdl2java's TestCase writer.  It writes the <serviceName>TestCase.java file.

@@ -15,20 +15,19 @@
  */
 package org.apache.axis.wsdl.symbolTable;
 
+import org.apache.axis.Constants;
+import org.apache.axis.utils.XMLUtils;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+
+import javax.xml.namespace.QName;
+import javax.xml.rpc.holders.BooleanHolder;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
-
-import javax.xml.namespace.QName;
-import javax.xml.rpc.holders.BooleanHolder;
-
-import org.apache.axis.Constants;
-import org.apache.axis.utils.XMLUtils;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
 
 /**
  * This class contains static utility methods for the emitter.

@@ -73,8 +73,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import java.util.Set;
+import java.util.Vector;
 
 /**
  * This class represents a table of all of the top-level symbols from a set of WSDL Definitions and

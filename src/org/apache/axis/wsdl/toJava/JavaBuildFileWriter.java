@@ -16,13 +16,12 @@
 
 package org.apache.axis.wsdl.toJava;
 
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
+
+import javax.wsdl.Definition;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.StringTokenizer;
-
-import javax.wsdl.Definition;
-
-import org.apache.axis.wsdl.symbolTable.SymbolTable;
 
 /**
  * <p>This is Wsdl2java's build file Writer.  It writes the build.xml file.
