@@ -327,11 +327,9 @@ public class MimeUtils {
                             HTTPConstants.HEADER_CONTENT_TYPE,
                             HTTPConstants.HEADER_CONTENT_ID,
                             HTTPConstants.HEADER_CONTENT_TRANSFER_ENCODING}); i.hasNext();) {
-                    String header = (String) i.next();
-                    String values[] = part.getMimeHeader(header);
-                    for(int j=0;j<values.length;j++){
-                        messageBodyPart.setHeader(header, values[j]);
-                    }
+                    javax.xml.soap.MimeHeader header = (javax.xml.soap.MimeHeader) i.next();
+
+                     messageBodyPart.setHeader(header.getName(), header.getValue());
                 }
 
                 multipart.addBodyPart(messageBodyPart);
