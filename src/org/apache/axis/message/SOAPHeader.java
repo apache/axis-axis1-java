@@ -213,7 +213,7 @@ public class SOAPHeader extends MessageElement
             if (mc != null) {
                 if (header != null) {
                     String actor = header.getActor();
-                    ArrayList actors = mc.getAxisEngine().getActorURIs();
+                    ArrayList actors = mc.getService().getActors();
                     if ((actor != null) &&
                             !Constants.URI_SOAP11_NEXT_ACTOR.equals(actor) &&
                             (actors == null || !actors.contains(actor))) {

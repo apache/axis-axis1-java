@@ -5,28 +5,14 @@ import junit.framework.TestSuite;
 import junit.framework.Test;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
-import org.apache.axis.Handler;
-import org.apache.axis.Message;
-import org.apache.axis.MessageContext;
 import org.apache.axis.configuration.SimpleProvider;
 import org.apache.axis.providers.java.RPCProvider;
 import org.apache.axis.transport.local.LocalTransport;
 import org.apache.axis.client.Call;
 import org.apache.axis.handlers.soap.SOAPService;
-import org.apache.axis.handlers.EchoHandler;
-import org.apache.axis.handlers.BasicHandler;
-import org.apache.axis.message.RPCElement;
-import org.apache.axis.message.RPCParam;
-import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.server.AxisServer;
 
-import org.xml.sax.SAXException;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.Text;
-
-import java.util.Vector;
 import java.util.Random;
 
 import test.RPCDispatch.Data;
@@ -59,7 +45,6 @@ public class TestHeaderAttrs extends TestCase {
     private SimpleProvider provider = new SimpleProvider();
     private AxisServer engine = new AxisServer(provider);
     private LocalTransport localTransport = new LocalTransport(engine);
-    private Handler RPCDispatcher;
 
     static final String localURL = "local:///testService";
 

@@ -55,11 +55,9 @@
 package org.apache.axis.handlers;
 
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisProperties;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
 import org.apache.axis.handlers.soap.SOAPService;
-import org.apache.axis.utils.JavaUtils;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -88,10 +86,16 @@ public class JWSHandler extends BasicHandler
     JWSProcessor jws = new JWSProcessor();
     SOAPService processor = new SOAPService(jws);
 
+    boolean firstTime = true;
+
     public void invoke(MessageContext msgContext) throws AxisFault
     {
         if (log.isDebugEnabled()) {
             log.debug("Enter: JWSHandler::invoke");
+        }
+
+        if (firstTime) {
+            processor.setEngine(msgContext.getAxisEngine());
         }
 
         // FORCE the targetService to be JWS if the URL is right.

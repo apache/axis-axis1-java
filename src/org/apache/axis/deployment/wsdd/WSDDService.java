@@ -388,6 +388,8 @@ public class WSDDService
             service.setName(getQName().getLocalPart());
         service.setOptions(getParametersTable());
 
+        service.setEngine(((WSDDDeployment)registry).getEngine());
+
         if (style != Style.RPC) {
             // No Multirefs/xsi:types
             service.setOption(AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);

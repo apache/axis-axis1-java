@@ -56,7 +56,6 @@ package org.apache.axis.handlers.soap;
 
 import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisProperties;
 import org.apache.axis.Constants;
 import org.apache.axis.Handler;
 import org.apache.axis.Message;
@@ -131,6 +130,37 @@ public class SOAPService extends SimpleTargetedChain
     private AxisEngine engine;
 
     /**
+     * Actor list - these are just the service-specific ones
+     */
+    ArrayList actors = new ArrayList();
+
+    /**
+     * Get the service-specific actor list
+     * @return
+     */
+    public ArrayList getServiceActors() {
+        return actors;
+    }
+
+    /**
+     * Get the merged actor list for this service, including engine-wide
+     * actor URIs.
+     *
+     * @return
+     */
+    public ArrayList getActors() {
+        ArrayList acts = (ArrayList)actors.clone();  // ??? cache this?
+
+        // TODO: a SOAPService should always be associated with an engine,
+        // so this should never be null.... check all paths to ensure that
+        // constraint is true.
+        if (engine != null) {
+            acts.addAll(engine.getActorURIs());
+        }
+        return acts;
+    }
+
+    /**
      * SOAPRequestHandler is used to inject SOAP semantics just before
      * the pivot handler.
      */
@@ -143,13 +173,11 @@ public class SOAPService extends SimpleTargetedChain
                 this.log.debug( JavaUtils.getMessage("semanticCheck00"));
             }
 
-            // This needs to be set to the merged list of service-specific and
-            // enigne-wide actors we should be acting as.
-            ArrayList actors = msgContext.getAxisEngine().getActorURIs();
+            ArrayList acts = getActors();
 
             // 1. Check mustUnderstands
             SOAPEnvelope env = msgContext.getRequestMessage().getSOAPEnvelope();
-            Vector headers = env.getHeadersByActor(actors);
+            Vector headers = env.getHeadersByActor(acts);
             Vector misunderstoodHeaders = null;
             Enumeration enum = headers.elements();
             while (enum.hasMoreElements()) {
@@ -205,6 +233,10 @@ public class SOAPService extends SimpleTargetedChain
     {
         initHashtable(true);
         initTypeMappingRegistry();
+
+        // For now, always assume we're the ultimate destination.
+        // TODO : Handle SOAP 1.2 ultimateDestination actor as well
+        actors.add("");
     }
 
     /** Constructor with real or null request, pivot, and response

@@ -60,7 +60,6 @@ package org.apache.axis.message;
  * @author Glen Daniels (gdaniels@allaire.com)
  */
 
-import org.apache.axis.AxisProperties;
 import org.apache.axis.encoding.DeserializationContext;
 
 import org.apache.axis.components.logger.LogFactory;

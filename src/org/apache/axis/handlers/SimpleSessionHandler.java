@@ -57,7 +57,6 @@ package org.apache.axis.handlers;
 
 import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisProperties;
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
@@ -224,6 +223,8 @@ public class SimpleSessionHandler extends BasicHandler
                 // Store it away.
                 AxisEngine engine = context.getAxisEngine();
                 engine.setOption(SESSION_ID, id);
+                // Note that we processed this header!
+                header.setProcessed(true);
             } catch (Exception e) {
                 throw AxisFault.makeFault(e);
             }
