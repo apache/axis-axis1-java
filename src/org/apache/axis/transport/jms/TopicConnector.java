@@ -97,12 +97,13 @@ public class TopicConnector extends JMSConnector
                           String clientID,
                           String username,
                           String password,
-                          JMSVendorAdapter adapter)
+                          JMSVendorAdapter adapter,
+                          JMSURLHelper jmsurl)
         throws JMSException
     {
         super(factory, numRetries, numSessions, connectRetryInterval,
               interactRetryInterval, timeoutTime, allowReceive,
-              clientID, username, password, adapter);
+              clientID, username, password, adapter, jmsurl);
     }
 
     protected Connection internalConnect(ConnectionFactory connectionFactory,

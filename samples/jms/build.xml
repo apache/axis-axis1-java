@@ -35,6 +35,7 @@ Copyright:
 <project default="compile">
   <property name="axis.home" location="../.." />
   <property name="componentName" value="samples/jms" />
+  <property name="classpath"  value="../../build/classes"/>
 
     &properties;
     &paths;
@@ -46,6 +47,19 @@ Copyright:
   <target name="copy" depends="setenv"/>
 
   <target name="compile" depends="copy">
+    <!-- Create java files for the jms stub sample -->
+    <wsdl2java url="${axis.home}/samples/jms/stub/GetQuote.wsdl"
+                 output="${axis.home}/build/work"
+                 protocolHandlerPkgs="org.apache.axis.transport"
+                 deployscope="session"
+                 serverSide="no"
+                 noimports="no"
+                 verbose="yes"
+                 typeMappingVersion="1.1"
+                 testcase="no">
+          <mapping namespace="urn:xmltoday-delayed-quotes" package="samples.jms.stub.xmltoday_delayed_quotes"/>
+          <mapping namespace="urn:xmltoday-delayed-quotes" package="samples.jms.stub.xmltoday_delayed_quotes"/>
+    </wsdl2java>
 
     <javac srcdir="${axis.home}" destdir="${build.dest}" debug="${debug}" fork="${javac.fork}">
       <classpath>
@@ -55,6 +69,8 @@ Copyright:
       <exclude name="samples/jms/**/*.java" unless="jms.present"/>
       <exclude name="samples/**/*SMTP*.java" unless="smtp.present"/>
       <exclude name="**/old/**/*.java"/>
+      <include name="build/work/samples/jms/stub/xmltoday_delayed_quotes/*.java"/>
+      <exclude name="build/work/samples/jms/stub/xmltoday_delayed_quotes/*.java" unless="jms.present"/>
     </javac>
   </target>
   <target name="deploy"/>

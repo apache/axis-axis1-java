@@ -56,6 +56,8 @@
 package org.apache.axis.transport.jms;
 
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.components.jms.JMSVendorAdapter;
+import org.apache.axis.components.jms.JMSVendorAdapterFactory;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.Options;
@@ -105,11 +107,13 @@ public class SimpleJMSListener implements MessageListener
         this.doThreads = doThreads;
 
         try {
-            connector = JMSConnectorFactory.
-                                createServerConnector(connectorMap,
-                                                      cfMap,
-                                                      username,
-                                                      password);
+            // create a JMS connector using the default vendor adapter
+            JMSVendorAdapter adapter = JMSVendorAdapterFactory.getJMSVendorAdapter();
+            connector = JMSConnectorFactory.createServerConnector(connectorMap,
+                                                                  cfMap,
+                                                                  username,
+                                                                  password,
+                                                                  adapter);
         } catch (Exception e) {
             log.error(Messages.getMessage("exception00"), e);
             throw e;
@@ -142,8 +146,6 @@ public class SimpleJMSListener implements MessageListener
         {
             // pass off the message to a worker as a BytesMessage
             SimpleJMSWorker worker = new SimpleJMSWorker(this, (BytesMessage)message);
-
-            //should pool
 
             // do we allow multi-threaded workers?
             if (doThreads) {
@@ -214,6 +216,7 @@ public class SimpleJMSListener implements MessageListener
                                                            options.getUser(),
                                                            options.getPassword(),
                                                            options.isFlagSet('s') > 0);
+        listener.start();
     }
 
     public static void printUsage()

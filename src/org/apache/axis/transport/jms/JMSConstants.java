@@ -72,10 +72,38 @@ import javax.jms.Session;
  * @author Jaime Meritt  (jmeritt@sonicsoftware.com)
  * @author Richard Chung (rchung@sonicsoftware.com)
  * @author Dave Chappell (chappell@sonicsoftware.com)
+ * @author Ray Chun (rchun@sonicsoftware.com)
  */
 
 public interface JMSConstants
 {
+    public final static String PROTOCOL               = "jms";
+
+    // abbreviated version of all constants (see below for description of each constant)
+    // the short name is used in the JMS URL. the full name is used in the Axis call.
+    final static String _WAIT_FOR_RESPONSE            = "waitForResponse";
+    final static String _CLIENT_ID                    = "clientID";
+    final static String _VENDOR                       = "vendor";
+    final static String _DOMAIN                       = "domain";
+    final static String _JMS_CORRELATION_ID           = "jmsCorrelationID";
+    final static String _JMS_CORRELATION_ID_AS_BYTES  = "jmsCorrelationIDAsBytes";
+    final static String _JMS_TYPE                     = "jmsType";
+    final static String _TIME_TO_LIVE                 = "ttl";
+    final static String _PRIORITY                     = "priority";
+    final static String _DELIVERY_MODE                = "deliveryMode";
+    final static String _MESSAGE_SELECTOR             = "messageSelector";
+    final static String _ACKNOWLEDGE_MODE             = "acknowledgeMode";
+    final static String _SUBSCRIPTION_NAME            = "subscriptionName";
+    final static String _UNSUBSCRIBE                  = "unsubscribe";
+    final static String _NO_LOCAL                     = "noLocal";
+    final static String _NUM_RETRIES                  = "numRetries";
+    final static String _NUM_SESSIONS                 = "numSessions";
+    final static String _CONNECT_RETRY_INTERVAL       = "connectRetryInterval";
+    final static String _INTERACT_RETRY_INTERVAL      = "interactRetryInterval";
+    final static String _TIMEOUT_TIME                 = "timeoutTime";
+    final static String _MIN_TIMEOUT_TIME             = "minTimeoutTime";
+
+    public static String JMS_PROPERTY_PREFIX = "transport.jms.";
 
     /**
      * This is used as a key in the Call properties telling the JMS transport
@@ -86,7 +114,7 @@ public interface JMSConstants
      * The value must be a <code>java.lang.Boolean</code>.
      * See the javax.jms javadoc for information on this property.
      */
-    final static String WAIT_FOR_RESPONSE        = "transport.jms.WaitForResponse";
+    final static String WAIT_FOR_RESPONSE               = JMS_PROPERTY_PREFIX + _WAIT_FOR_RESPONSE;
 
     /**
      * <code>JMSConnectorFactory</code> parameter valid for either domain.  This should
@@ -96,19 +124,19 @@ public interface JMSConstants
      * The value must be a <code>java.lang.String</code>.
      * See the javax.jms javadoc for information on this property.
      */
-    final static String CLIENT_ID               = "transport.jms.ClientID";
+    final static String CLIENT_ID                       = JMS_PROPERTY_PREFIX + _CLIENT_ID;
 
-    final static String DESTINATION     = "transport.jms.Destination";
+    // there is no short version
+    final static String DESTINATION                     = JMS_PROPERTY_PREFIX + "Destination";
 
-    final static String CONNECTOR       = "transport.jms.Connector";
+    final static String VENDOR                          = JMS_PROPERTY_PREFIX + _VENDOR;
+    public final static String JNDI_VENDOR_ID           = "JNDI";
 
-    final static String DOMAIN          = "transport.jms.Domain";
+    final static String DOMAIN                          = JMS_PROPERTY_PREFIX + _DOMAIN;
 
-    final static String DOMAIN_QUEUE    = "QUEUE";
-
-    final static String DOMAIN_TOPIC    = "TOPIC";
-
-    final static String DOMAIN_DEFAULT  = DOMAIN_QUEUE;
+    final static String DOMAIN_QUEUE                    = "QUEUE";
+    final static String DOMAIN_TOPIC                    = "TOPIC";
+    final static String DOMAIN_DEFAULT                  = DOMAIN_QUEUE;
 
     /**
      * Key for properties used in the <code>send</code> and <code>call</code>
@@ -116,35 +144,35 @@ public interface JMSConstants
      * The value must be a <code>java.lang.String</code>.
      * See the javax.jms javadoc for information on this property.
      */
-    final static String JMS_CORRELATION_ID              = "transport.jms.JMSCorrelationID";
+    final static String JMS_CORRELATION_ID              = JMS_PROPERTY_PREFIX + _JMS_CORRELATION_ID;
     /**
      * Key for properties used in the <code>send</code> and <code>call</code>
      * methods.  It is valid for either domain.
      * The value must be a <code>byte[]</code>.
      * See the javax.jms javadoc for information on this property.
      */
-    final static String JMS_CORRELATION_ID_AS_BYTES     = "transport.jms.JMSCorrelationIDAsBytes";
+    final static String JMS_CORRELATION_ID_AS_BYTES     = JMS_PROPERTY_PREFIX + _JMS_CORRELATION_ID_AS_BYTES;
     /**
      * Key for properties used in the <code>send</code> and <code>call</code>
      * methods.  It is valid for either domain.
      * The value must be a <code>java.lang.String</code>.
      * See the javax.jms javadoc for information on this property.
      */
-    final static String JMS_TYPE                        = "transport.jms.JMSType";
+    final static String JMS_TYPE                        = JMS_PROPERTY_PREFIX + _JMS_TYPE;
     /**
      * Key for properties used in the <code>send</code> and <code>call</code>
      * methods.  It is valid for either domain.
      * The value must be a <code>java.lang.Long</code>.
      * See the javax.jms javadoc for information on this property.
      */
-    final static String TIME_TO_LIVE                    = "transport.jms.TimeToLive";
+    final static String TIME_TO_LIVE                    = JMS_PROPERTY_PREFIX + _TIME_TO_LIVE;
     /**
      * Key for properties used in the <code>send</code> and <code>call</code>
      * methods.  It is valid for either domain.
      * The value must be a <code>java.lang.Integer</code>.
      * See the javax.jms javadoc for information on this property.
      */
-    final static String PRIORITY                        = "transport.jms.Priority";
+    final static String PRIORITY                        = JMS_PROPERTY_PREFIX + _PRIORITY;
     /**
      * Key for properties used in the <code>send</code> and <code>call</code>
      * methods.  It is valid for either domain.
@@ -152,9 +180,13 @@ public interface JMSConstants
      * DeliveryMode.NON_PERSISTENT or DeliveryMode.PERSISTENT.
      * See the javax.jms javadoc for information on this property.
      */
-    final static String DELIVERY_MODE                   = "transport.jms.DeliveryMode";
+    final static String DELIVERY_MODE                   = JMS_PROPERTY_PREFIX + _DELIVERY_MODE;
 
+    final static String DELIVERY_MODE_PERSISTENT        = "Persistent";
+    final static String DELIVERY_MODE_NONPERSISTENT     = "Nonpersistent";
+    final static String DELIVERY_MODE_DISCARDABLE       = "Discardable";
     final static int DEFAULT_DELIVERY_MODE              = DeliveryMode.NON_PERSISTENT;
+
     final static int DEFAULT_PRIORITY                   = Message.DEFAULT_PRIORITY;
     final static long DEFAULT_TIME_TO_LIVE              = Message.DEFAULT_TIME_TO_LIVE;
 
@@ -164,7 +196,7 @@ public interface JMSConstants
      * The value must be a <code>java.lang.String</code>.
      * See the javax.jms javadoc for information on this property.
      */
-    final static String MESSAGE_SELECTOR                = "transport.jms.MessageSelector";
+    final static String MESSAGE_SELECTOR                = JMS_PROPERTY_PREFIX + _MESSAGE_SELECTOR;
     /**
      * Key for properties used in the <code>registerListener</code>
      * method.  It is valid for either domain.
@@ -173,7 +205,7 @@ public interface JMSConstants
      * or Session.CLIENT_ACKNOWLEDGE.
      * See the javax.jms javadoc for information on this property.
      */
-    final static String ACKNOWLEDGE_MODE                = "transport.jms.AcknowledgeMode";
+    final static String ACKNOWLEDGE_MODE                = JMS_PROPERTY_PREFIX + _ACKNOWLEDGE_MODE;
 
     /**
      * value for ACKNOWLEDGE_MODE if left unset.  It is equal to
@@ -187,7 +219,7 @@ public interface JMSConstants
      * method.  It is valid for the PubSub domain.
      * The value must be a <code>java.lang.String</code>.
      */
-    final static String SUBSCRIPTION_NAME               = "transport.jms.SubscriptionName";
+    final static String SUBSCRIPTION_NAME               = JMS_PROPERTY_PREFIX + _SUBSCRIPTION_NAME;
     /**
      * Key for properties used in the <code>registerListener</code>
      * method.  It is valid for the PubSub domain.
@@ -195,61 +227,70 @@ public interface JMSConstants
      * (deleted from the broker) when unregistered.
      * The value must be a <code>java.lang.Boolean</code>.
      */
-    final static String UNSUBSCRIBE                     = "transport.jms.Unsubscribe";
+    final static String UNSUBSCRIBE                     = JMS_PROPERTY_PREFIX + _UNSUBSCRIBE;
     /**
      * Key for properties used in the <code>registerListener</code>
      * method.  It is valid for the PubSub domain.
      * The value must be a <code>java.lang.Boolean</code>.
      */
-    final static String NO_LOCAL                        = "transport.jms.NoLocal";
+    final static String NO_LOCAL                        = JMS_PROPERTY_PREFIX + _NO_LOCAL;
 
     final static boolean DEFAULT_NO_LOCAL               = false;
     final static boolean DEFAULT_UNSUBSCRIBE            = false;
 
-
     /**
      * Key for properties used in the <code>createConnector</code>
      * method.  It changes the behavior of the wsclient.
      * The value must be a <code>java.lang.Integer</code>.
      */
-    final static String NUM_RETRIES  = "transport.jms.NumRetries";
+    final static String NUM_RETRIES                     = JMS_PROPERTY_PREFIX + _NUM_RETRIES;
     /**
      * Key for properties used in the <code>createConnector</code>
      * method.  It changes the behavior of the wsclient.
      * The value must be a <code>java.lang.Integer</code>.
      */
-    final static String NUM_SESSIONS = "transport.jms.NumSessions";
+    final static String NUM_SESSIONS                    = JMS_PROPERTY_PREFIX + _NUM_SESSIONS;
     /**
      * Key for properties used in the <code>createConnector</code>
      * method.  It changes the behavior of the wsclient.
      * The value must be a <code>java.lang.Long</code>.
      */
-    final static String CONNECT_RETRY_INTERVAL = "transport.jms.ConnectRetryInterval";
+    final static String CONNECT_RETRY_INTERVAL           = JMS_PROPERTY_PREFIX + _CONNECT_RETRY_INTERVAL;
     /**
      * Key for properties used in the <code>createConnector</code>
      * method.  It changes the behavior of the wsclient.
      * The value must be a <code>java.lang.Long</code>.
      */
-    final static String INTERACT_RETRY_INTERVAL = "transport.jms.InteractRetryInterval";
+    final static String INTERACT_RETRY_INTERVAL           = JMS_PROPERTY_PREFIX + _INTERACT_RETRY_INTERVAL;
     /**
      * Key for properties used in the <code>createConnector</code>
      * method.  It changes the behavior of the wsclient.
      * The value must be a <code>java.lang.Long</code>.
      */
-    final static String TIMEOUT_TIME = "transport.jms.TimeoutTime";
+    final static String TIMEOUT_TIME                      = JMS_PROPERTY_PREFIX + _TIMEOUT_TIME;
     /**
      * Key for properties used in the <code>createConnector</code>
      * method.  It changes the behavior of the wsclient.
      * The value must be a <code>java.lang.Long</code>.
      */
-    final static String MIN_TIMEOUT_TIME = "transport.jms.MinTimeoutTime";
+    final static String MIN_TIMEOUT_TIME                  = JMS_PROPERTY_PREFIX + _MIN_TIMEOUT_TIME;
 
-    final static int DEFAULT_NUM_RETRIES       = 5;
-    final static int DEFAULT_NUM_SESSIONS      = 5;
+    final static int DEFAULT_NUM_RETRIES      = 5;
+    final static int DEFAULT_NUM_SESSIONS     = 5;
 
-    final static long DEFAULT_CONNECT_RETRY_INTERVAL    = 2000;
-    final static long DEFAULT_TIMEOUT_TIME     = 5000;
-    final static long DEFAULT_MIN_TIMEOUT_TIME = 1000;
+    final static long DEFAULT_CONNECT_RETRY_INTERVAL  = 2000;
+    final static long DEFAULT_TIMEOUT_TIME            = 5000;
+    final static long DEFAULT_MIN_TIMEOUT_TIME        = 1000;
     final static long DEFAULT_INTERACT_RETRY_INTERVAL = 250;
 
+    // key used to store the JMS connector in the message context
+    final static String CONNECTOR       = JMS_PROPERTY_PREFIX + "Connector";
+
+    // key used to store the JMS vendor adapter in the message context
+    final static String VENDOR_ADAPTER  = JMS_PROPERTY_PREFIX + "VendorAdapter";
+
+    // key used to store the JMS URL string in the message context
+    final static String JMS_URL         = JMS_PROPERTY_PREFIX + "EndpointAddress";
+
+    final static String ADAPTER_POSTFIX = "VendorAdapter";
 }

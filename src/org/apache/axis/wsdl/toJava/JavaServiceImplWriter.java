@@ -72,6 +72,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.Vector;
 
 /**
@@ -134,7 +135,7 @@ public class JavaServiceImplWriter extends JavaClassWriter {
                 throw new IOException(Messages.getMessage("emitFailNoBinding01",
                         new String[] {p.getName()}));
             }
-            
+
             BindingEntry bEntry =
                     symbolTable.getBindingEntry(binding.getQName());
             if (bEntry == null) {
@@ -156,7 +157,7 @@ public class JavaServiceImplWriter extends JavaClassWriter {
 
             // JSR 101 indicates that the name of the port used
             // in the java code is the name of the wsdl:port.  It
-            // does not indicate what should occur if the 
+            // does not indicate what should occur if the
             // wsdl:port name is not a java identifier.  The
             // TCK depends on the case-sensitivity being preserved,
             // and the interop tests have port names that are not
@@ -185,13 +186,51 @@ public class JavaServiceImplWriter extends JavaClassWriter {
                 throw new IOException(Messages.getMessage("emitFail02",
                         portName, className));
             }
-            try {
-                new URL(address);
+
+            try
+            {
+                new java.net.URL(address);
             }
             catch (MalformedURLException e) {
-                throw new IOException(Messages.getMessage("emitFail03",
-                        new String[] {portName, className, address}));
+                // this exception may be due to an unrecognized protocol
+                // so try to instantiate the protocol handler directly
+                // and use that to create the URL
+
+                java.net.URL url = null;
+                java.net.URLStreamHandler handler = null;
+
+                String handlerPkgs = System.getProperty("java.protocol.handler.pkgs");
+                if (handlerPkgs != null)
+                {
+                    int protIndex = address.indexOf(":");
+                    if (protIndex > 0)
+                    {
+                        String protocol = address.substring(0,protIndex);
+                        StringTokenizer st = new StringTokenizer(handlerPkgs, "|");
+                        while (st.hasMoreTokens())
+                        {
+                            String pkg = st.nextToken();
+                            String handlerClass = pkg + "." + protocol + ".Handler"; 
+                            try
+                            {
+                                Class c = Class.forName(handlerClass);
+                                handler = (java.net.URLStreamHandler)c.newInstance();
+                                url = new java.net.URL(null, address, handler);
+                                
+                                break;
+                            }
+                            catch (Exception e2) 
+                            {
+                                url = null;
+                            }
+                        }
+                    }
+                }
+                if (url == null)
+                    throw new IOException(Messages.getMessage("emitFail03",
+                            new String[] {portName, className, address}));
             }
+
             writeAddressInfo(pw, portName, address, p);
             String wsddServiceName = portName + "WSDDServiceName";
             writeWSDDServiceNameInfo(pw, wsddServiceName, portName);

@@ -60,46 +60,71 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.MessageContext;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Transport;
+import org.apache.axis.components.jms.JMSVendorAdapter;
+import org.apache.axis.components.jms.JMSVendorAdapterFactory;
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.transport.jms.JMSConstants;
 import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 
 import javax.jms.Destination;
+import java.util.Collection;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Vector;
 
 /**
  * JMSTransport is the JMS-specific implemenation of org.apache.axis.client.Transport.
  *   It implements the setupMessageContextImpl() function to set JMS-specific message
- *   context fields and transport chains. Connector and connection factory
+ *   context fields and transport chains.
+ *
+ * There are two
+ *   Connector and connection factory
  *   properties are passed in during instantiation and are in turn passed through
  *   when creating a connector.
  *
  * @author Jaime Meritt  (jmeritt@sonicsoftware.com)
  * @author Richard Chung (rchung@sonicsoftware.com)
  * @author Dave Chappell (chappell@sonicsoftware.com)
+ * @author Ray Chun (rchun@sonicsoftware.com)
  */
 public class JMSTransport extends Transport
 {
     protected static Log log =
             LogFactory.getLog(JMSTransport.class.getName());
 
-    private HashMap connectors;
-    private HashMap connectorProps;
-    private HashMap connectionFactoryProps;
-    private JMSConnector defaultConnector;
-    private HashMap passwords;
-    private Object connectorLock;
+    private static HashMap vendorConnectorPools = new HashMap();
 
+    private HashMap defaultConnectorProps;
+    private HashMap defaultConnectionFactoryProps;
+
+    static
+    {
+        // add a shutdown hook to close JMS connections
+        Runtime.getRuntime().addShutdownHook(
+            new Thread()
+            {
+                public void run()
+                {
+                    JMSTransport.closeAllConnectors();
+                }
+            }
+        );
+    }
+
+    public JMSTransport()
+    {
+        transportName = "JMSTransport";
+    }
+
+    // this cons is provided for clients that instantiate the JMSTransport directly
     public JMSTransport(HashMap connectorProps,
                         HashMap connectionFactoryProps)
     {
-        transportName = "JMSTransport";
-        connectors = new HashMap();
-        passwords = new HashMap();
-        this.connectorProps = connectorProps;
-        this.connectionFactoryProps = connectionFactoryProps;
-        connectorLock = new Object();
+        this();
+        defaultConnectorProps = connectorProps;
+        defaultConnectionFactoryProps = connectionFactoryProps;
     }
 
     /**
@@ -114,39 +139,76 @@ public class JMSTransport extends Transport
                                         AxisEngine engine)
         throws AxisFault
     {
-        String username = message.getUsername();
+        if (log.isDebugEnabled()) {
+            log.debug("Enter: JMSTransport::setupMessageContextImpl");
+        }
+
         JMSConnector connector = null;
-        try
+        HashMap connectorProperties = null;
+        HashMap connectionFactoryProperties = null;
+
+        JMSVendorAdapter vendorAdapter = null;
+        JMSURLHelper jmsurl = null;
+
+        // a security context is required to create/use JMSConnectors
+        String username = message.getUsername();
+        String password = message.getPassword();
+
+        // the presence of an endpoint address indicates whether the client application
+        //  is instantiating the JMSTransport directly (deprecated) or indirectly via JMS URL
+        String endpointAddr = message.getTargetEndpointAddress();
+        if (endpointAddr != null)
         {
-            if(username == null)
+            try
             {
-                initConnectorIfNecessary();
-                connector = defaultConnector;
-            }
-            else
-            {
-                String password = message.getPassword();
-                synchronized(connectorLock)
+                // performs minimal validation ('jms:/destination?...')
+                jmsurl = new JMSURLHelper(new java.net.URL(endpointAddr));
+
+                // lookup the appropriate vendor adapter
+                String vendorId = jmsurl.getVendor();
+                if (vendorId == null)
+                    vendorId = JMSConstants.JNDI_VENDOR_ID;
+
+                if (log.isDebugEnabled())
+                    log.debug("JMSTransport.setupMessageContextImpl(): endpt=" + endpointAddr +
+                              ", vendor=" + vendorId);
+
+                vendorAdapter = JMSVendorAdapterFactory.getJMSVendorAdapter(vendorId);
+                if (vendorAdapter == null)
                 {
-                    if(connectors.containsKey(username))
-                    {
-                        String oldPassword = (String)passwords.get(username);
-                        if(password.equals(oldPassword))
-                            connector = (JMSConnector)connectors.get(username);
-                        else
-                            throw new AxisFault("badUserPass");
-                    }
-                    else
-                    {
-                        connector = createConnector(username, password);
-                        connectors.put(username, connector);
-                        // I should really md5 hash these
-                        passwords.put(username, password);
-                    }
+                    throw new AxisFault("cannotLoadAdapterClass:" + vendorId);
                 }
+
+                // populate the connector and connection factory properties tables
+                connectorProperties = vendorAdapter.getJMSConnectorProperties(jmsurl);
+                connectionFactoryProperties = vendorAdapter.getJMSConnectionFactoryProperties(jmsurl);
+            }
+            catch (java.net.MalformedURLException e)
+            {
+                log.error(Messages.getMessage("malformedURLException00"), e);
+                throw new AxisFault(Messages.getMessage("malformedURLException00"), e);
             }
         }
-        catch(Exception e)
+        else
+        {
+            // the JMSTransport was instantiated directly, use the default adapter
+            vendorAdapter = JMSVendorAdapterFactory.getJMSVendorAdapter();
+            if (vendorAdapter == null)
+            {
+                throw new AxisFault("cannotLoadAdapterClass");
+            }
+
+            // use the properties passed in to the constructor
+            connectorProperties = defaultConnectorProps;
+            connectionFactoryProperties = defaultConnectionFactoryProps;
+        }
+
+        try
+        {
+            connector = JMSConnectorManager.getInstance().getConnector(connectorProperties, connectionFactoryProperties,
+                                                           username, password, vendorAdapter);
+        }
+        catch (Exception e)
         {
             log.error(Messages.getMessage("cannotConnectError"), e);
 
@@ -155,67 +217,16 @@ public class JMSTransport extends Transport
             throw new AxisFault("cannotConnect", e);
         }
 
+        // store these in the context for later use
         context.setProperty(JMSConstants.CONNECTOR, connector);
+        context.setProperty(JMSConstants.VENDOR_ADAPTER, vendorAdapter);
 
-        //I would like to use the following, but that requires JMS-URL syntax
-        //which I don't have so I will rely on message properties for now
-        //String destination = message.getTargetEndpointAddress();
+        // vendors may populate the message context
+        vendorAdapter.setupMessageContext(context, message, jmsurl);
 
-        Object tmp = message.getProperty(JMSConstants.DESTINATION);
-        if(tmp != null && (tmp instanceof String || tmp instanceof Destination))
-            context.setProperty(JMSConstants.DESTINATION, tmp);
-        else
-            context.removeProperty(JMSConstants.DESTINATION);
-
-        tmp = message.getProperty(JMSConstants.WAIT_FOR_RESPONSE);
-        if(tmp != null && tmp instanceof Boolean)
-            context.setProperty(JMSConstants.WAIT_FOR_RESPONSE, tmp);
-        else
-            context.removeProperty(JMSConstants.WAIT_FOR_RESPONSE);
-
-        tmp = message.getProperty(JMSConstants.DELIVERY_MODE);
-        if(tmp != null && tmp instanceof Integer)
-            context.setProperty(JMSConstants.DELIVERY_MODE, tmp);
-        else
-            context.removeProperty(JMSConstants.DELIVERY_MODE);
-
-        tmp = message.getProperty(JMSConstants.PRIORITY);
-        if(tmp != null && tmp instanceof Integer)
-            context.setProperty(JMSConstants.PRIORITY, tmp);
-        else
-            context.removeProperty(JMSConstants.PRIORITY);
-
-        tmp = message.getProperty(JMSConstants.TIME_TO_LIVE);
-        if(tmp != null && tmp instanceof Long)
-            context.setProperty(JMSConstants.TIME_TO_LIVE, tmp);
-        else
-            context.removeProperty(JMSConstants.TIME_TO_LIVE);
-
-    }
-
-    private void initConnectorIfNecessary()
-        throws Exception
-    {
-        if(defaultConnector != null)
-            return;
-        synchronized(connectorLock)
-        {
-            //this is to catch a race issue when n threads do the null check
-            //before one of them actually creates the default connector
-            if(defaultConnector != null)
-                return;
-            defaultConnector = createConnector(null, null);
+        if (log.isDebugEnabled()) {
+            log.debug("Exit: JMSTransport::setupMessageContextImpl");
         }
-    }
-
-    private JMSConnector createConnector(String username, String password)
-        throws Exception
-    {
-        JMSConnector connector = JMSConnectorFactory.
-                createClientConnector(connectorProps, connectionFactoryProps,
-                                      username, password);
-        connector.start();
-        return connector;
     }
 
     /**
@@ -223,17 +234,75 @@ public class JMSTransport extends Transport
      */
     public void shutdown()
     {
-        synchronized(connectorLock)
-        {
-            if(defaultConnector != null)
-                defaultConnector.shutdown();
+        if (log.isDebugEnabled()) {
+            log.debug("Enter: JMSTransport::shutdown");
+        }
 
-            Iterator connectorIter = connectors.values().iterator();
-            while(connectorIter.hasNext())
-            {
-                ((JMSConnector)connectorIter.next()).shutdown();
-            }
+        closeAllConnectors();
+
+        if (log.isDebugEnabled()) {
+            log.debug("Exit: JMSTransport::shutdown");
         }
     }
 
+    /**
+     * Closes all JMS connectors
+     */
+    public static void closeAllConnectors()
+    {
+        if (log.isDebugEnabled()) {
+            log.debug("Enter: JMSTransport::closeAllConnectors");
+        }
+
+        JMSConnectorManager.getInstance().closeAllConnectors();
+
+        if (log.isDebugEnabled()) {
+            log.debug("Exit: JMSTransport::closeAllConnectors");
+        }
+    }
+
+    /**
+     * Closes JMS connectors that match the specified endpoint address
+     *
+     * @param endpointAddr the JMS endpoint address
+     * @param username
+     * @param password
+     */
+    public static void closeMatchingJMSConnectors(String endpointAddr, String username, String password)
+    {
+        if (log.isDebugEnabled()) {
+            log.debug("Enter: JMSTransport::closeMatchingJMSConnectors");
+        }
+
+        try
+        {
+            JMSURLHelper jmsurl = new JMSURLHelper(new java.net.URL(endpointAddr));
+            String vendorId = jmsurl.getVendor();
+
+            JMSVendorAdapter vendorAdapter = null;
+            if (vendorId == null)
+                vendorId = JMSConstants.JNDI_VENDOR_ID;
+            vendorAdapter = JMSVendorAdapterFactory.getJMSVendorAdapter(vendorId);
+
+            // the vendor adapter may not exist
+            if (vendorAdapter == null)
+                return;
+
+            // determine the set of properties to be used for matching the connection
+            HashMap connectorProps = vendorAdapter.getJMSConnectorProperties(jmsurl);
+            HashMap cfProps = vendorAdapter.getJMSConnectionFactoryProperties(jmsurl);
+
+            JMSConnectorManager.getInstance().closeMatchingJMSConnectors(connectorProps, cfProps,
+                                                                         username, password,
+                                                                         vendorAdapter);
+        }
+        catch (java.net.MalformedURLException e)
+        {
+            log.warn(Messages.getMessage("malformedURLException00"), e);
+        }
+
+        if (log.isDebugEnabled()) {
+            log.debug("Exit: JMSTransport::closeMatchingJMSConnectors");
+        }
+    }
 }

@@ -56,22 +56,129 @@
 package org.apache.axis.transport.jms;
 
 import org.apache.axis.components.jms.JMSVendorAdapter;
-import org.apache.axis.components.jms.JMSVendorAdapterFactory;
+import org.apache.axis.components.logger.LogFactory;
+import org.apache.commons.logging.Log;
 
+import javax.jms.QueueConnectionFactory;
+import javax.jms.TopicConnectionFactory;
+
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Vector;
 
 /**
  * JMSConnectorFactory is a factory class for creating JMSConnectors. It can
- *   create both client connectors and server connectors. A server connector
+ *   create both client connectors and server connectors.  A server connector
  *   is configured to allow asynchronous message receipt, while a client
  *   connector is not.
+ *
+ * JMSConnectorFactory can also be used to select an appropriately configured
+ *   JMSConnector from an existing pool of connectors.
  *
  * @author Jaime Meritt  (jmeritt@sonicsoftware.com)
  * @author Richard Chung (rchung@sonicsoftware.com)
  * @author Dave Chappell (chappell@sonicsoftware.com)
+ * @author Ray Chun (rchun@sonicsoftware.com)
  */
-public class JMSConnectorFactory
+public abstract class JMSConnectorFactory
 {
+    protected static Log log =
+            LogFactory.getLog(JMSConnectorFactory.class.getName());
+
+    /**
+     * Performs an initial check on the connector properties, and then defers
+     * to the vendor adapter for matching on the vendor-specific connection factory.
+     *
+     * @param connectors the list of potential matches
+     * @param connectorProps the set of properties to be used for matching the connector
+     * @param cfProps the set of properties to be used for matching the connection factory
+     * @param username the user requesting the connector
+     * @param password the password associated with the requesting user
+     * @param adapter the vendor adapter specified in the JMS URL
+     * @return a JMSConnector that matches the specified properties
+     */
+     public static JMSConnector matchConnector(java.util.Set connectors,
+                                               HashMap connectorProps,
+                                               HashMap cfProps,
+                                               String username,
+                                               String password,
+                                               JMSVendorAdapter adapter)
+    {
+        java.util.Iterator iter = connectors.iterator();
+        while (iter.hasNext())
+        {
+            JMSConnector conn = (JMSConnector) iter.next();
+
+            // username
+            String connectorUsername = conn.getUsername();
+            if (!( ((connectorUsername == null) && (username == null)) ||
+                   ((connectorUsername != null) && (username != null) && (connectorUsername.equals(username))) ))
+                continue;
+
+            // password
+            String connectorPassword = conn.getPassword();
+            if (!( ((connectorPassword == null) && (password == null)) ||
+                   ((connectorPassword != null) && (password != null) && (connectorPassword.equals(password))) ))
+                continue;
+
+            // num retries
+            int connectorNumRetries = conn.getNumRetries();
+            String propertyNumRetries = (String)connectorProps.get(JMSConstants.NUM_RETRIES);
+            int numRetries = JMSConstants.DEFAULT_NUM_RETRIES;
+            if (propertyNumRetries != null)
+                numRetries = Integer.parseInt(propertyNumRetries);
+            if (connectorNumRetries != numRetries)
+                continue;
+
+            // client id
+            String connectorClientID = conn.getClientID();
+            String clientID = (String)connectorProps.get(JMSConstants.CLIENT_ID);
+            if (!( ((connectorClientID == null) && (clientID == null))
+                   ||
+                   ((connectorClientID != null) && (clientID != null) && connectorClientID.equals(clientID)) ))
+                continue;
+
+            // domain
+            String connectorDomain = (conn instanceof QueueConnector) ? JMSConstants.DOMAIN_QUEUE : JMSConstants.DOMAIN_TOPIC;
+            String propertyDomain = (String)connectorProps.get(JMSConstants.DOMAIN);
+            String domain = JMSConstants.DOMAIN_DEFAULT;
+            if (propertyDomain != null)
+                domain = propertyDomain;
+            if (!( ((connectorDomain == null) && (domain == null))
+                   ||
+                   ((connectorDomain != null) && (domain != null) && connectorDomain.equalsIgnoreCase(domain)) ))
+                continue;
+
+            // the connection factory must also match for the connector to be reused
+            JMSURLHelper jmsurl = conn.getJMSURL();
+            if (adapter.isMatchingConnectionFactory(conn.getConnectionFactory(), jmsurl, cfProps))
+            {
+                // attempt to reserve the connector
+                try
+                {
+                    JMSConnectorManager.getInstance().reserve(conn);
+
+                    if (log.isDebugEnabled()) {
+                        log.debug("JMSConnectorFactory: Found matching connector");
+                    }
+                }
+                catch (Exception e)
+                {
+                    // ignore. the connector may be in the process of shutting down, so try the next element
+                    continue;
+                }
+
+                return conn;
+            }
+        }
+
+        if (log.isDebugEnabled()) {
+            log.debug("JMSConnectorFactory: No matching connectors found");
+        }
+
+        return null;
+    }
+
     /**
      * Static method to create a server connector. Server connectors can
      *   accept incoming requests.
@@ -84,13 +191,14 @@ public class JMSConnectorFactory
      * @throws Exception
      */
     public static JMSConnector createServerConnector(HashMap connectorConfig,
-                                                     HashMap cfConfig,
-                                                     String username,
-                                                     String password)
+                                              HashMap cfConfig,
+                                              String username,
+                                              String password,
+                                              JMSVendorAdapter adapter)
         throws Exception
     {
         return createConnector(connectorConfig, cfConfig, true,
-                               username, password);
+                               username, password, adapter);
     }
 
     /**
@@ -105,20 +213,22 @@ public class JMSConnectorFactory
      * @throws Exception
      */
     public static JMSConnector createClientConnector(HashMap connectorConfig,
-                                                     HashMap cfConfig,
-                                                     String username,
-                                                     String password)
+                                              HashMap cfConfig,
+                                              String username,
+                                              String password,
+                                              JMSVendorAdapter adapter)
         throws Exception
     {
         return createConnector(connectorConfig, cfConfig, false,
-                               username, password);
+                               username, password, adapter);
     }
 
     private static JMSConnector createConnector(HashMap connectorConfig,
                                                 HashMap cfConfig,
                                                 boolean allowReceive,
                                                 String username,
-                                                String password)
+                                                String password,
+                                                JMSVendorAdapter adapter)
         throws Exception
     {
         if(connectorConfig != null)
@@ -150,17 +260,19 @@ public class JMSConnectorFactory
                                     JMSConstants.DOMAIN,
                                     JMSConstants.DOMAIN_DEFAULT);
 
+        // this will be set if the target endpoint address was set on the Axis call
+        JMSURLHelper jmsurl = (JMSURLHelper)connectorConfig.get(JMSConstants.JMS_URL);
+
         if(cfConfig == null)
             throw new IllegalArgumentException("noCfConfig");
 
-        JMSVendorAdapter adapter = JMSVendorAdapterFactory.getJMSVendorAdapter();
         if(domain.equals(JMSConstants.DOMAIN_QUEUE))
         {
             return new QueueConnector(adapter.getQueueConnectionFactory(cfConfig),
                                       numRetries, numSessions, connectRetryInterval,
                                       interactRetryInterval, timeoutTime,
                                       allowReceive, clientID, username, password,
-                                      adapter);
+                                      adapter, jmsurl);
         }
         else // domain is Topic
         {
@@ -168,7 +280,7 @@ public class JMSConnectorFactory
                                       numRetries, numSessions, connectRetryInterval,
                                       interactRetryInterval, timeoutTime,
                                       allowReceive, clientID, username, password,
-                                      adapter);
+                                      adapter, jmsurl);
         }
     }
 }
