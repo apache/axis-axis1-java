@@ -1,7 +1,7 @@
 /*
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -67,8 +67,15 @@ import java.net.Authenticator;
 import java.util.HashMap;
 
 /**
- * Simple Ant task for running Wsdl2java utility. 
- *
+ * Ant task for running Wsdl2java utility. It is still not ready for
+ * end users, though that is the final intent.
+ * This task does no dependency checking; files are generated whether they
+ * need to be or not. 
+ * As well as the nested parameters, this task uses  the file 
+ * <tt>NStoPkg.properties</tt> in the project base directory
+ * for namespace mapping
+ * @ant.task category="xml"
+ * @author steve loughran
  * @author Davanum Srinivas (dims@yahoo.com)
  */
 public class Wsdl2javaAntTask extends Task
@@ -87,29 +94,69 @@ public class Wsdl2javaAntTask extends Task
     private String url = "";
     private String tm = "1.2";
     private long timeout = 45000;
+    
+    /**
+     * do we print a stack trace when something goes wrong?
+     */
+    private boolean printStackTraceOnFailure=false;
+    /**
+     * what action to take when there was a failure and the source was some
+     * URL
+     */
+    private boolean failOnNetworkErrors=false;    
+
+    /**
+     * validation code
+     * @throws  BuildException  if validation failed
+     */ 
+    protected void validate() 
+            throws BuildException {
+        if(url==null || url.length()==0) {
+            throw new BuildException("No url specified");
+        }
+        if(timeout<-1) {
+            throw new BuildException("negative timeout supplied");
+        }
+        File outdir=new File(output);
+        if(!outdir.isDirectory() || !outdir.exists()) {
+            throw new BuildException("output directory is not valid");
+        }
+            
+    }
+    
+    /**
+     * trace out parameters
+     * @param level to log at
+     * @see org.apache.tools.ant.Project#log
+     */
+    public void traceParams(int logLevel) {
+        log("Running Wsdl2javaAntTask with parameters:", logLevel);
+        log("\tverbose:" + verbose, logLevel);
+        log("\tserver-side:" + server, logLevel);
+        log("\tskeletonDeploy:" + skeletonDeploy, logLevel);
+        log("\thelperGen:" + helperGen, logLevel);
+        log("\tfactory:" + factory, logLevel);
+        log("\ttestCase:" + testCase, logLevel);
+        log("\tnoImports:" + noImports, logLevel);
+        log("\tNStoPkg:" + namespaceMap, logLevel);
+        log("\toutput:" + output, logLevel);
+        log("\tdeployScope:" + deployScope, logLevel);
+        log("\tURL:" + url, logLevel);
+        log("\tall:" + all, logLevel);
+        log("\ttypeMappingVersion:" + tm, logLevel);
+        log("\ttimeout:" + timeout, logLevel);
+        log("\tfailOnNetworkErrors:" + failOnNetworkErrors, logLevel);
+        log("\tprintStackTraceOnFailure:" + printStackTraceOnFailure, logLevel);
+    }    
 
     /**
      * The method executing the task
      * @throws  BuildException  if validation or execution failed
-     */
+     */ 
     public void execute() throws BuildException {
+        traceParams(Project.MSG_VERBOSE);
+        validate();
         try {
-            log("Running Wsdl2javaAntTask with parameters:", Project.MSG_VERBOSE);
-            log("\tverbose:" + verbose, Project.MSG_VERBOSE);
-            log("\tserver-side:" + server, Project.MSG_VERBOSE);
-            log("\tskeletonDeploy:" + skeletonDeploy, Project.MSG_VERBOSE);
-            log("\thelperGen:" + helperGen, Project.MSG_VERBOSE);
-            log("\tfactory:" + factory, Project.MSG_VERBOSE);
-            log("\ttestCase:" + testCase, Project.MSG_VERBOSE);
-            log("\tnoImports:" + noImports, Project.MSG_VERBOSE);
-            log("\tNStoPkg:" + namespaceMap, Project.MSG_VERBOSE);
-            log("\toutput:" + output, Project.MSG_VERBOSE);
-            log("\tdeployScope:" + deployScope, Project.MSG_VERBOSE);
-            log("\tURL:" + url, Project.MSG_VERBOSE);
-            log("\tall:" + all, Project.MSG_VERBOSE);
-            log("\ttypeMappingVersion:" + tm, Project.MSG_VERBOSE);
-            log("\ttimeout:" + timeout, Project.MSG_VERBOSE);
-
             // Instantiate the emitter
             Emitter emitter = new Emitter();
 
@@ -137,6 +184,7 @@ public class Wsdl2javaAntTask extends Task
             emitter.setSkeletonWanted(skeletonDeploy);
             emitter.setVerbose(verbose);
             emitter.setTypeMappingVersion(tm);
+            //TODO: extract this and make it an attribute
             emitter.setNStoPkg(project.resolveFile("NStoPkg.properties"));
             emitter.setTimeout(timeout);
 
@@ -149,17 +197,30 @@ public class Wsdl2javaAntTask extends Task
                 if (url.startsWith("http://")) {
                     // What we have is either a network error or invalid XML -
                     // the latter most likely an HTML error page.  This makes
-                    // it impossible to continue with the test, so issue
-                    // a warning, and return without reporting a fatal error.
-                    log(e.toString(), Project.MSG_WARN);
-                    return;
+                    // it impossible to continue with the test, so we stop here
+                    if(!failOnNetworkErrors) {
+                        // test mode, issue a warning, and return without
+                        //reporting a fatal error.
+                        log(e.toString(), Project.MSG_WARN);
+                        return;
+                    } else {
+                        //in 'consumer' mode, bail out with the URL
+                        throw new BuildException("Could not build "+url,e);
+                    }
+                } else {
+                    throw e;
                 }
-                throw e;
             }
+        } catch (BuildException b) {
+            throw b;
         } catch (Throwable t) {
-            t.printStackTrace();
-            throw new BuildException("Error while running " + getClass().getName(), t); 
+            if(printStackTraceOnFailure) {
+                traceParams(Project.MSG_INFO);
+                t.printStackTrace();
+            }
+            throw new BuildException("Error while generating WSDL for "+url,t); 
         }
+
     }
 
     /**
@@ -167,39 +228,39 @@ public class Wsdl2javaAntTask extends Task
      *
      *@param  verbose  The new verbose value
      */   
-    public void setVerbose(String parameter) {
-        this.verbose = Project.toBoolean(parameter);
+    public void setVerbose(boolean verbose) {
+        this.verbose = verbose;
     }
 
     /**
      *  emit server-side bindings for web service; default=false
      */
-    public void setServerSide(String parameter) {
-        this.server = Project.toBoolean(parameter);
+    public void setServerSide(boolean parameter) {
+        this.server = parameter;
     }
 
     /**
      * deploy skeleton (true) or implementation (false) in deploy.wsdd. 
      * Default is false.  Assumes server-side="true".     
      */
-    public void setSkeletonDeploy(String parameter) {
-        this.skeletonDeploy = Project.toBoolean(parameter);
+    public void setSkeletonDeploy(boolean parameter) {
+        this.skeletonDeploy = parameter;
     }
 
     /**
      * flag for automatic Junit testcase generation
      * default is false
      */
-    public void setTestCase(String parameter) {
-        this.testCase = Project.toBoolean(parameter);
+    public void setTestCase(boolean parameter) {
+        this.testCase = parameter;
     }
 
     /**
      * Turn on/off Helper class generation;
      * default is false
      */
-    public void setHelperGen(String parameter) {
-        this.helperGen = Project.toBoolean(parameter);
+    public void setHelperGen(boolean parameter) {
+        this.helperGen = parameter;
     }
 
     /**
@@ -214,14 +275,14 @@ public class Wsdl2javaAntTask extends Task
      * only generate code for the immediate WSDL document,
      * and not imports; default=false;
      */
-    public void setNoImports(String parameter) {
-        this.noImports = Project.toBoolean(parameter);
+    public void setNoImports(boolean parameter) {
+        this.noImports = parameter;
     }
 
     /**
      * output directory for emitted files 
      */
-    public void setOutput(File parameter) {
+    public void setOutput(File parameter) throws BuildException {
         try {
             this.output = parameter.getCanonicalPath();
         } catch (IOException ioe) {
@@ -249,8 +310,8 @@ public class Wsdl2javaAntTask extends Task
      * flag to generate code for all elements, even unreferenced ones
      * default=false;
      */
-    public void setAll(String parameter) {
-        this.all = Project.toBoolean(parameter);
+    public void setAll(boolean parameter) {
+        this.all = parameter;
     }
 
     /**
@@ -264,12 +325,16 @@ public class Wsdl2javaAntTask extends Task
      * timeout in seconds for URL retrieval; default is 45 seconds.
      * Set this to -1 to disable timeouts altogether: other negative values
      * are not allowed)
+     * TODO: normally format conversions are failures, but because this method
+     * ignored such errors, we have to keep going. Maybe it could be escalated to 
+     * a failure in end-user versions.
      */
     public void setTimeout(String parameter) {
         try {
             this.timeout = new Long(parameter).longValue();
         } catch (NumberFormatException e) {
             // Sorry, stick with default.
+            log("Could not convert "+parameter+" to a number", Project.MSG_WARN);
         }
     }
 
