@@ -390,6 +390,7 @@ public class ServiceClient {
         if (uri != null) reqEnv.setEncodingStyleURI(uri);
         
         msgContext.setRequestMessage(reqMsg);
+        msgContext.setServiceDescription(this.serviceDesc);
         
         reqEnv.addBodyElement(body);
         reqEnv.setMessageType(ServiceDescription.REQUEST);

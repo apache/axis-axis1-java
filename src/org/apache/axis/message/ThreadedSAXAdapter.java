@@ -49,9 +49,10 @@ public class ThreadedSAXAdapter extends SOAPSAXHandler
     }
     
     public ThreadedSAXAdapter(InputSource inputSource,
-                              MessageContext msgContext)
+                              MessageContext msgContext,
+                              String messageType)
     {
-        super(msgContext);
+        super(msgContext, messageType);
         _parser = XMLUtils.getSAXParser();
         this.inputSource = inputSource;
     }

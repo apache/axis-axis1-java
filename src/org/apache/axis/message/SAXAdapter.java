@@ -19,9 +19,10 @@ public class SAXAdapter extends SOAPSAXHandler
     InputSource inputSource;
 
     public SAXAdapter(InputSource inputSource,
-                      MessageContext msgContext)
+                      MessageContext msgContext,
+                      String messageType)
     {
-        super(msgContext);
+        super(msgContext, messageType);
         _parser = XMLUtils.getSAXParser();
         this.inputSource = inputSource;
     }

@@ -282,7 +282,7 @@ public class Message {
       is = new InputSource(new StringReader(getAsString()));
     }
     
-    SAXAdapter parser = new SAXAdapter(is, msgContext);
+    SAXAdapter parser = new SAXAdapter(is, msgContext, messageType);
     SOAPEnvelope env = parser.getEnvelope();
     env.setMessageType(messageType);
     

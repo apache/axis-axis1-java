@@ -77,12 +77,15 @@ public class DeserializationContext
     public Hashtable idMappings = new Hashtable();
     
     private MessageContext msgContext;
+    private String messageType;
 
     public DeserializationContext(SOAPSAXHandler baseHandler, 
-                                  MessageContext msgContext)
+                                  MessageContext msgContext,
+                                  String messageType)
     {
         this.baseHandler = baseHandler;
         this.msgContext  = msgContext;
+        this.messageType = messageType;
     }
     
     public SOAPSAXHandler getSAXHandler()
@@ -98,6 +101,11 @@ public class DeserializationContext
     public String getNamespaceURI(String prefix)
     {
         return (String)baseHandler.getNamespaceURI(prefix);
+    }
+    
+    public String getMessageType()
+    {
+        return messageType;
     }
     
     public QName getQNameFromString(String qNameStr)

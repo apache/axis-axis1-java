@@ -183,10 +183,10 @@ public abstract class SOAPSAXHandler extends DefaultHandler
     // Body factory.
     ElementFactory bodyFactory = new BodyFactory();
 
-    public SOAPSAXHandler(MessageContext msgContext)
+    public SOAPSAXHandler(MessageContext msgContext, String messageType)
     {
         envelope = new SOAPEnvelope(this);
-        this.context = new DeserializationContext(this,msgContext);
+        this.context = new DeserializationContext(this,msgContext,messageType);
     }
     
     public int getState()
