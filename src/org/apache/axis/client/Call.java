@@ -947,16 +947,7 @@ public class Call implements javax.xml.rpc.Call {
         if (operation == null)
             operation = new OperationDesc();
 
-        // In order to allow any Call to be re-used, Axis
-        // chooses to allow parameters to be added when
-        // parmAndRetReq==false.  This does not conflict with
-        // JSR 101 which indicates an exception MAY be thrown.
-
-        //if (parmAndRetReq) {
         ParameterDesc param = new ParameterDesc();
-        param.setQName(new QName(paramName.getNamespaceURI(),Utils.getLastLocalPart(paramName.getLocalPart())));
-        param.setTypeQName( xmlType );
-        param.setJavaType( javaType );
         byte mode = ParameterDesc.IN;
         if (parameterMode == ParameterMode.INOUT) {
             mode = ParameterDesc.INOUT;
@@ -964,13 +955,12 @@ public class Call implements javax.xml.rpc.Call {
             mode = ParameterDesc.OUT;
         }
         param.setMode(mode);
+        param.setQName(new QName(paramName.getNamespaceURI(),Utils.getLastLocalPart(paramName.getLocalPart())));
+        param.setTypeQName( xmlType );
+        param.setJavaType( javaType );
 
         operation.addParameter(param);
         parmAndRetReq = true;
-        //}
-        //else {
-        //throw new JAXRPCException(Messages.getMessage("noParmAndRetReq"));
-        //}
     }
 
     /**
