@@ -67,7 +67,7 @@ import javax.wsdl.QName;
 public abstract class Type extends TypeEntry {
 
     /**
-     * Create a Type object for an xml construct name that represents a base java type
+     * Create a Type object for an xml construct name that represents a base type
      */
     protected Type(QName pqName) {
         super(pqName);
@@ -82,7 +82,7 @@ public abstract class Type extends TypeEntry {
     }
        
     /**
-     * Create a Type object for an xml construct that is not a base java type
+     * Create a Type object for an xml construct that is not a base type
      */  
     protected Type(QName pqName, Node pNode) {
         super(pqName, pNode);

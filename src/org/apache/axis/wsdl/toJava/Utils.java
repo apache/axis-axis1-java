@@ -106,6 +106,7 @@ public class Utils {
      * ----------------------------------------------------------
      * @param QName
      */
+    /*
     public static String getBaseJavaName(QName qName) {
         String localName = qName.getLocalPart();
         if (Constants.isSchemaXSD(qName.getNamespaceURI())) {
@@ -177,6 +178,7 @@ public class Utils {
         }
         return null;
     }
+    */
 
     /**
      * getNillableQName returns the QName to use if the nillable=true

@@ -74,7 +74,7 @@ import org.apache.axis.encoding.DeserializerImpl;
  * @author Rich Scheuerle <scheu@us.ibm.com>
  */
 public class HexDeserializerFactory extends BaseDeserializerFactory {
-    public HexDeserializerFactory() {
-        super(HexDeserializer.class, false);  // Can't share deserializers     
+    public HexDeserializerFactory(Class javaType, QName xmlType) {
+        super(HexDeserializer.class, false, xmlType, javaType);  // Can't share deserializers     
     }
 }

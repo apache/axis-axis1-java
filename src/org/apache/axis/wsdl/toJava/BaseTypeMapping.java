@@ -52,71 +52,22 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
+package org.apache.axis.wsdl.toJava;
 
-package org.apache.axis.encoding.ser;
 
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
+import org.w3c.dom.Node;
 
-import javax.xml.rpc.namespace.QName;
-import java.io.IOException;
-
-import org.apache.axis.encoding.Serializer;
-import org.apache.axis.encoding.SerializerFactory;
-import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.encoding.DeserializerFactory;
-import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.DeserializerImpl;
-import org.apache.axis.encoding.Hex;
+import javax.wsdl.QName;
 
 /**
- * Deserializer for hexBinary.
- *
- * @author Davanum Srinivas <dims@yahoo.com>
- * Modified by @author Rich scheuerle <scheu@us.ibm.com>
- * @see <a href="http://www.w3.org/TR/xmlschema-2/#hexBinary">XML Schema 3.2.16</a>
+ * Get the base language name for a qname
  */
-public class HexDeserializer extends DeserializerImpl implements Deserializer  {
-
-    public QName xmlType;
-    public Class javaType;
-
-    StringBuffer buf = null;
-
-    public HexDeserializer(Class javaType, QName xmlType) {
-        this.xmlType = xmlType;
-        this.javaType = javaType;
-    }
+public abstract class BaseTypeMapping  {
     /**
-     * Handle any characters found in the data
+     * If the qname is registered in the target language,
+     * return the name of the registered type.
+     * @param QName representing a type
+     * @return name of the registered type or null if not registered.
      */
-    public void characters(char [] chars, int start, int end)
-        throws SAXException
-    {
-        // Characters are collected in a buffer because 
-        // SAX may chunk the data.
-        if (buf == null) {
-            buf = new StringBuffer();
-        }
-        buf.append(chars, start, end);
-    }
-    
-    /**
-     * Return something even if no characters were found.
-     */
-    public void onEndElement(String namespace, String localName,
-                             DeserializationContext context)
-        throws SAXException
-    {
-        if (buf != null) {
-            if (javaType == byte[].class) {
-                value = Hex.decode(buf.toString());
-            } else {
-                value = new Hex(buf.toString());
-            }
-        }
-        super.onEndElement(namespace,localName, context);
-        if (value == null) value = new Hex("");
-    }
-}
+     public abstract String getBaseName(QName qName);
+};

@@ -73,6 +73,7 @@ import org.apache.axis.encoding.DeserializerImpl;
 import org.apache.axis.encoding.Hex;
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
+import org.apache.axis.encoding.Base64;
 /**
  * Serializer for hexBinary.
  *
@@ -82,6 +83,13 @@ import org.w3c.dom.Document;
  */
 public class HexSerializer implements Serializer {
 
+    public QName xmlType;
+    public Class javaType;
+    public HexSerializer(Class javaType, QName xmlType) {
+        this.xmlType = xmlType;
+        this.javaType = javaType;
+    }
+
     /**
      * Serialize a Hex quantity.
      */
@@ -89,10 +97,13 @@ public class HexSerializer implements Serializer {
                           Object value, SerializationContext context)
         throws IOException
     {
-        Hex data = (Hex) value;
-
         context.startElement(name, attributes);
-        context.writeString(data.toString());
+        if (javaType == Hex.class) {
+            context.writeString(((Hex) value).toString());
+        } else {
+            context.writeString(Hex.encode((byte[]) value));
+        }
+
         context.endElement();
     }
 

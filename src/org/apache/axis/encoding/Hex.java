@@ -74,6 +74,10 @@ public class Hex extends Object{
         m_value = decode(string);
     }
 
+    public Hex(byte[] bytes){
+        m_value = bytes;
+    }
+
     public byte[] getBytes(){
         return m_value;
     }

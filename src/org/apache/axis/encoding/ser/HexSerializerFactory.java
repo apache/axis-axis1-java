@@ -74,7 +74,7 @@ import org.apache.axis.encoding.DeserializerImpl;
  * @author Rich Scheuerle <scheu@us.ibm.com>
  */
 public class HexSerializerFactory extends BaseSerializerFactory {
-    public HexSerializerFactory() {
-        super(HexSerializer.class, true);  // Share HexSerializer instance
+    public HexSerializerFactory(Class javaType, QName xmlType) {
+        super(HexSerializer.class, true, xmlType, javaType);  // Share HexSerializer instance
     }
 }
