@@ -2,6 +2,7 @@
         <basename property="fileName" file="${file}"/>
         <dirname property="dirName" file="${file}"/>
         <echo message="Dir: ${dirName} File: ${fileName}"/>
+        <ant antfile="${file}" target="compile" />
   </target>
 
   <target name="buildThem">
@@ -26,6 +27,11 @@
         <contains string="${ant.version}" substring="Apache Ant version"/>
       </and>
     </condition>
+
+    <mkdir dir="${build.dir}"/>
+    <mkdir dir="${build.dest}"/>
+    <mkdir dir="${build.lib}"/>
+    <mkdir dir="${build.dir}/work"/>
 
     <available property="servlet.present"
       classname="javax.servlet.Servlet"
@@ -105,10 +111,6 @@
   </target>
 
   <target name="printEnv" depends="setenv" >
-
-    <mkdir dir="${build.dir}"/>
-    <mkdir dir="${build.dest}"/>
-    <mkdir dir="${build.lib}"/>
 
     <echo message="-----------------------------------------------------------------"/>
     <echo message="       Build environment for ${Name} ${axis.version} [${year}]   "/>
@@ -270,7 +272,7 @@
   <!-- Prepares the JUnit functional test -->
   <!-- =================================================================== -->
   <target name="component-junit-functional-prepare" if="junit.present">
-          <mkdir dir="${axis.home}/${test.functional.reportdir}" />
+          <mkdir dir="${test.functional.reportdir}" />
           <path id="deploy.xml.files">
                 <fileset dir="${build.dir}">
                   <include name="work/${componentName}/**/deploy.wsdd"/>
@@ -314,11 +316,15 @@
 
 </target>
 
-<target name="execute-Component"  depends="setenv" >
+<target name="execute-Component"  depends="transport-layer" >
     <runaxisfunctionaltests
       url="http://localhost:8088"
       startTarget1="start-functional-test-tcp-server"
       startTarget2="start-functional-test-http-server"
       testTarget="component-junit-functional"
       stopTarget="stop-functional-test-http-server" />
+</target>
+
+<target name="transport-layer" depends="setenv" >
+  <ant antfile="${axis.home}/samples/transport/buildComponent.xml" target="compile" />
 </target>
