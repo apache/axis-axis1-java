@@ -99,7 +99,7 @@ public class Emitter extends Parser {
 //    public static final byte SCOPE_SESSION      = (byte)Scope.SESSION.getValue();
 
     protected HashMap namespaceMap = new HashMap();
-    protected String typeMappingVersion = "1.2";
+    protected String typeMappingVersion = "1.1";
     protected BaseTypeMapping baseTypeMapping = null;
     protected Namespaces namespaces = null;
     protected String NStoPkgFilename = "NStoPkg.properties";
