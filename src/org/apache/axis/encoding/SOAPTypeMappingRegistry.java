@@ -16,7 +16,7 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
     public static final QName XSD_INT = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "int");
     public static final QName XSD_LONG = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "long");
     public static final QName XSD_SHORT = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "short");
-    public static final QName XSD_DATE = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "timeinstant");
+    public static final QName XSD_DATE = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "timeInstant");
     public static final QName XSD_DECIMAL = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "decimal");
 
     public static final QName SOAP_STRING = new QName(Constants.URI_SOAP_ENC, "string");
