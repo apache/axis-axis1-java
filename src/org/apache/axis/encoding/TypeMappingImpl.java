@@ -189,8 +189,8 @@ public class TypeMappingImpl implements TypeMapping
      * pair is registered.
      * @param javaType - Class of the Java type
      * @param xmlType - Qualified name of the XML data type
-     * @return: false if either javaType or xmlType is null
-     * or if the pair is not specifically registered.
+     * @return: 
+     * false if the pair is not specifically registered.
      * For example if called with (java.lang.String[], soapenc:Array)
      * this routine will return false because this pair is
      * probably not specifically registered.
@@ -200,7 +200,9 @@ public class TypeMappingImpl implements TypeMapping
      */
     public boolean isRegistered(Class javaType, QName xmlType) {
         if (javaType == null || xmlType == null) {
-            return false;
+            // REMOVED_FOR_TCK
+            // return false;
+            throw new JAXRPCException();
         }
         if (pair2SF.keySet().contains(new Pair(javaType, xmlType))) {
             return true;
@@ -294,12 +296,6 @@ public class TypeMappingImpl implements TypeMapping
         }
         return sf;
     }
-    public javax.xml.rpc.encoding.SerializerFactory
-        getSerializer(Class javaType)
-        throws JAXRPCException
-    {
-        return getSerializer(javaType, null);
-    }
 
     /**
      * Gets the DeserializerFactory registered for the specified pair
@@ -332,11 +328,7 @@ public class TypeMappingImpl implements TypeMapping
         }
         return df;
     }
-    public javax.xml.rpc.encoding.DeserializerFactory
-        getDeserializer(QName xmlType)
-        throws JAXRPCException {
-        return getDeserializer(null, xmlType);
-    }
+
 
     /**
      * Removes the SerializerFactory registered for the specified
@@ -347,11 +339,13 @@ public class TypeMappingImpl implements TypeMapping
      *
      * @throws JAXRPCException - If there is error in
      * removing the registered SerializerFactory
-     * java.lang.IllegalArgumentException -
-     * If invalid or unsupported XML/Java type is specified
      */
     public void removeSerializer(Class javaType, QName xmlType)
         throws JAXRPCException {
+        if (javaType == null || xmlType == null) {
+            throw new JAXRPCException();
+        }
+
         Pair pair = new Pair(javaType, xmlType);
         pair2SF.remove(pair);
     }
@@ -365,11 +359,12 @@ public class TypeMappingImpl implements TypeMapping
      *
      * @throws JAXRPCException - If there is error in
      * removing the registered DeserializerFactory
-     * java.lang.IllegalArgumentException -
-     * If invalid or unsupported XML/Java type is specified
      */
     public void removeDeserializer(Class javaType, QName xmlType)
         throws JAXRPCException {
+        if (javaType == null || xmlType == null) {
+            throw new JAXRPCException();
+        }
         Pair pair = new Pair(javaType, xmlType);
         pair2DF.remove(pair);
     }
@@ -413,5 +408,42 @@ public class TypeMappingImpl implements TypeMapping
 
         //log.debug("getClassForQName javaType =" + javaType);
         return javaType;
+    }
+
+    /**
+     * Gets the SerializerFactory registered for the Java type.    
+     *
+     * @param javaType - Class of the Java type
+     *
+     * @return Registered SerializerFactory
+     *
+     * @throws JAXRPCException - If there is no registered SerializerFactory
+     * for this pair of Java type and XML data type
+     * java.lang.IllegalArgumentException -
+     * If invalid or unsupported XML/Java type is specified
+     */
+    public javax.xml.rpc.encoding.SerializerFactory
+        getSerializer(Class javaType)
+        throws JAXRPCException
+    {
+        return getSerializer(javaType, null);
+    }
+
+    /**
+     * Gets the DeserializerFactory registered for the xmlType.
+     *
+     * @param xmlType - Qualified name of the XML data type
+     *
+     * @return Registered DeserializerFactory
+     *
+     * @throws JAXRPCException - If there is no registered DeserializerFactory
+     * for this pair of Java type and  XML data type
+     * java.lang.IllegalArgumentException -
+     * If invalid or unsupported XML/Java type is specified
+     */
+    public javax.xml.rpc.encoding.DeserializerFactory
+        getDeserializer(QName xmlType)
+        throws JAXRPCException {
+        return getDeserializer(null, xmlType);
     }
 }
