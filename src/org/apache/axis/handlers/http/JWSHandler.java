@@ -73,27 +73,32 @@ public class JWSHandler extends BasicHandler
     public void invoke(MessageContext msgContext) throws AxisFault
     {
         Debug.Print( 1, "Enter: JWSHandler::invoke" );
-        
-        HttpServlet        servlet = (HttpServlet) msgContext.getProperty(
-                                             HTTPConstants.MC_HTTP_SERVLET);
-        ServletConfig      config  = servlet.getServletConfig();
-        ServletContext     context = config.getServletContext();
-        HttpServletRequest req = (HttpServletRequest) msgContext.getProperty(
-                                        HTTPConstants.MC_HTTP_SERVLETREQUEST);
-        String URL = req.getServletPath();
-        Debug.Print(3, "URL: " + URL );
 
-        String   opt     = (String) getOption("JWSProcessor");
-        boolean  skipJWS = false ;
-        if ( opt != null && (opt.equals("0") || opt.equalsIgnoreCase("NO") ||
-                             opt.equalsIgnoreCase("OFF")) )
-          skipJWS = true ;
-
-        if ( !skipJWS && URL.endsWith(".jws") ) {
-            String pathName = context.getRealPath( URL );
-            Debug.Print(2, "Path: " + pathName );
-            msgContext.setProperty( "JWSFileName", pathName );
-            msgContext.setTargetService( Constants.JWSPROCESSOR_TARGET ) ;
+        /** If there's already a targetService just return.
+         */
+        if ( msgContext.getTargetService() == null ) {
+            HttpServlet        servlet = (HttpServlet) msgContext.getProperty(
+                                               HTTPConstants.MC_HTTP_SERVLET);
+            ServletConfig      config  = servlet.getServletConfig();
+            ServletContext     context = config.getServletContext();
+            HttpServletRequest req = (HttpServletRequest)msgContext.getProperty(
+                                          HTTPConstants.MC_HTTP_SERVLETREQUEST);
+            String URL = req.getServletPath();
+            Debug.Print(3, "URL: " + URL );
+    
+            String   opt     = (String) getOption("JWSProcessor");
+            boolean  skipJWS = false ;
+            Debug.Print(3, "JWSProcessor Opt: " + opt );
+            if (opt != null && (opt.equals("0") || opt.equalsIgnoreCase("NO") ||
+                                 opt.equalsIgnoreCase("OFF")) )
+              skipJWS = true ;
+    
+            if ( !skipJWS && URL.endsWith(".jws") ) {
+                String pathName = context.getRealPath( URL );
+                Debug.Print(2, "Path: " + pathName );
+                msgContext.setProperty( "JWSFileName", pathName );
+                msgContext.setTargetService( Constants.JWSPROCESSOR_TARGET ) ;
+            }
         }
 
         Debug.Print( 1, "Exit : JWSHandler::invoke" );

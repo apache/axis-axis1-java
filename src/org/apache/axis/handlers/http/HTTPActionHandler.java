@@ -78,27 +78,33 @@ public class HTTPActionHandler extends BasicHandler
     public void invoke(MessageContext msgContext) throws AxisFault
     {
         Debug.Print( 1, "Enter: HTTPActionHandler::invoke" );
-        String action = (String) msgContext.getProperty(
-                                            HTTPConstants.MC_HTTP_SOAPACTION);
-        Debug.Print( 2, "  HTTP SOAPAction: " + action );
-        
-        /** The idea is that this handler only goes in the chain IF this
-         * service does a mapping between SOAPAction and target.  Therefore
-         * if we get here with no action, we're in trouble.
-         */
-        if (action == null)
-            throw new AxisFault( "Server.NoHTTPAction",
-                "No HTTPAction property in context",
-                null, null );
-        
-        action = action.trim();
 
-        if (action.charAt(0) == '\"') {
-            // assert(action.endsWith("\"")
-            action = action.substring(1, action.length() - 1);
+        /** If there's already a targetService (ie. JWSProcessor) then
+         *  just return.
+         */
+        if ( msgContext.getTargetService() == null ) {
+            String action = (String) msgContext.getProperty(
+                                              HTTPConstants.MC_HTTP_SOAPACTION);
+            Debug.Print( 2, "  HTTP SOAPAction: " + action );
+            
+            /** The idea is that this handler only goes in the chain IF this
+             * service does a mapping between SOAPAction and target.  Therefore
+             * if we get here with no action, we're in trouble.
+             */
+            if (action == null)
+                throw new AxisFault( "Server.NoHTTPAction",
+                    "No HTTPAction property in context",
+                    null, null );
+            
+            action = action.trim();
+    
+            if (action.charAt(0) == '\"') {
+                // assert(action.endsWith("\"")
+                action = action.substring(1, action.length() - 1);
+            }
+            msgContext.setTargetService( action );
         }
 
-        msgContext.setTargetService( action );
         Debug.Print( 1, "Exit : HTTPActionHandler::invoke" );
     }
 
