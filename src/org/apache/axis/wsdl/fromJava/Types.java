@@ -328,12 +328,16 @@ public class Types {
     public String writeType(Class type) throws Exception {
       
         // Quick return if schema type
-        if (isSimpleSchemaType(type))
-            return Constants.NSPREFIX_SCHEMA_XSD + ":" +
-                    getTypeQName(type).getLocalPart();
-        if (isSimpleSoapEncodingType(type))
-            return Constants.NSPREFIX_SOAP_ENC + ":" +
-                    getTypeQName(type).getLocalPart();
+        if (isSimpleType(type)) {
+            QName qName = getWsdlQName(getTypeQName(type));
+            if (Constants.isSchemaXSD(qName.getNamespaceURI())) {
+                return Constants.NSPREFIX_SCHEMA_XSD + ":" +
+                    qName.getLocalPart();
+            } else {
+                return Constants.NSPREFIX_SOAP_ENC + ":" +
+                    qName.getLocalPart();
+            }
+        }
 
         // look up the serializer in the TypeMappingRegistry
         Serializer ser = null;
@@ -602,7 +606,7 @@ public class Types {
               type == java.lang.Long.class ||
               type == java.lang.Short.class ||
               type == java.math.BigDecimal.class ||
-              type == java.lang.Byte[].class);
+              type == byte[].class);
     }
 
     /**

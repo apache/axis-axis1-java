@@ -28,7 +28,6 @@ import javax.xml.rpc.holders.BigIntegerHolder;
 import javax.xml.rpc.holders.BooleanHolder;
 import javax.xml.rpc.holders.BooleanWrapperHolder;
 import javax.xml.rpc.holders.ByteArrayHolder;
-import javax.xml.rpc.holders.ByteWrapperArrayHolder;
 import javax.xml.rpc.holders.ByteHolder;
 import javax.xml.rpc.holders.CalendarHolder;
 import javax.xml.rpc.holders.DoubleHolder;
@@ -114,7 +113,7 @@ public class DynamicProxyTestCase extends TestCase {
                     new BigDecimal(0),
                     new Integer(0),
                     new Short((short)0),
-                    new Byte[0]);
+                    new byte[0]);
         }
         catch (RemoteException re) {
             re.printStackTrace();
@@ -155,7 +154,7 @@ public class DynamicProxyTestCase extends TestCase {
                     new BigDecimalHolder(new BigDecimal(0)),
                     new IntegerWrapperHolder(new Integer(0)),
                     new ShortWrapperHolder(new Short((short)0)),
-                    new ByteWrapperArrayHolder(new Byte[0]));
+                    new ByteArrayHolder(new byte[0]));
         }
         catch (RemoteException re) {
             re.printStackTrace();
@@ -197,7 +196,7 @@ public class DynamicProxyTestCase extends TestCase {
                     new BigDecimalHolder(), 
                     new IntegerWrapperHolder(), 
                     new ShortWrapperHolder(), 
-                    new ByteWrapperArrayHolder());
+                    new ByteArrayHolder());
         }
         catch (RemoteException re) {
             throw new AssertionFailedError("Remote Exception caught: " + re);
