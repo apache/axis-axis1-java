@@ -328,6 +328,7 @@ Copyright:
     <mkdir dir="${build.javadocs}"/>
     <javadoc packagenames="${packages}"
              sourcepath="${src.dir}"
+             classpathref="classpath"
              destdir="${build.javadocs}"
              author="true"
              version="true"
