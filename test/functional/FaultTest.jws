@@ -52,75 +52,20 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.soap;
-
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPException;
-import javax.xml.messaging.Endpoint;
-
-import org.apache.axis.client.Call;
-import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.utils.Messages;
-import org.apache.axis.attachments.Attachments;
-
-import java.util.Iterator;
 
 /**
- * SOAP Connection implementation
+ * This is a JWS which demonstrates Exceptions.
  *
- * @author Davanum Srinivas (dims@yahoo.com)
+ * @author Davanum Srinivas (dims@apache.org)
  */
-public class SOAPConnectionImpl extends javax.xml.soap.SOAPConnection {
-    boolean closed = false;
-    
+public class FaultTest {
     /**
-     * Sends the given message to the specified endpoint and
-     * blocks until it has returned the response.
-     * @param   request the <CODE>SOAPMessage</CODE>
-     *     object to be sent
-     * @param   endpoint a <CODE>URLEndpoint</CODE>
-     *     object giving the URL to which the message should be
-     *     sent
-     * @return the <CODE>SOAPMessage</CODE> object that is the
-     *     response to the message that was sent
-     * @throws  SOAPException if there is a SOAP error
+     * Echo a bean.
+     *
+     * @param bean
+     * @return the bean
      */
-    public SOAPMessage call(SOAPMessage request, Object endpoint)
-        throws SOAPException {
-        if(closed){
-            throw new SOAPException(Messages.getMessage("connectionClosed00"));
-        }
-        try {
-            Call call = new Call(endpoint.toString());
-            ((org.apache.axis.Message)request).setMessageContext(call.getMessageContext());
-            SOAPEnvelope env = ((org.apache.axis.Message)request).getSOAPEnvelope();
-            Attachments attachments = ((org.apache.axis.Message)
-                    request).getAttachmentsImpl();
-            Iterator iterator = attachments.getAttachments().iterator();
-            while(iterator.hasNext()){
-                Object attachment = iterator.next();
-                call.addAttachmentPart(attachment);
-            }
-            call.setReturnClass(SOAPMessage.class);
-            call.invoke(env);
-            return call.getResponseMessage();
-        } catch (java.net.MalformedURLException mue){
-            throw new SOAPException(mue);
-        } catch (org.apache.axis.AxisFault af){
-            throw new SOAPException(af);
-        } catch (java.rmi.RemoteException re){
-            throw new SOAPException(re);
-        }
-    }
-
-    /**
-     * Closes this <CODE>SOAPConnection</CODE> object.
-     * @throws  SOAPException if there is a SOAP error
-     */
-    public void close() throws SOAPException {
-        if(closed){
-            throw new SOAPException(Messages.getMessage("connectionClosed00"));
-        }
-        closed = true;
+    public String echo(String s) throws Exception {
+        throw new Exception("Exception from echo"); 
     }
 }

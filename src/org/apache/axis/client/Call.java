@@ -2396,7 +2396,8 @@ public class Call implements javax.xml.rpc.Call {
 
         SOAPBodyElement respBody = resEnv.getFirstBody();
         if (respBody instanceof SOAPFault) {
-            throw ((SOAPFault)respBody).getFault();
+            if(returnJavaType == null || returnJavaType != javax.xml.soap.SOAPMessage.class) 
+                throw ((SOAPFault)respBody).getFault();
         }
     }
 

@@ -60,6 +60,7 @@ Copyright:
   <mkdir dir="${axis.home}/build/jws" />
   <copy file="${axis.home}/test/functional/AltStockQuoteService.jws" todir="${axis.home}/build/jws" />
   <copy file="${axis.home}/test/functional/GlobalTypeTest.jws" todir="${axis.home}/build/jws"/>
+  <copy file="${axis.home}/test/functional/FaultTest.jws" todir="${axis.home}/build/jws"/>
 </target>
 
 <target name="junit-functional-prepare" if="junit.present">
