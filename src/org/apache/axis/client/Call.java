@@ -959,7 +959,8 @@ public class Call implements org.apache.axis.rpc.Call {
     public void invoke() throws AxisFault {
         category.debug("Enter: Call::invoke()" );
 
-        msgContext.reset();
+        // Don't want to reset - this will erase the cookies!
+        // msgContext.reset();
 
         if (myProperties != null) {
             Enumeration enum = myProperties.keys();

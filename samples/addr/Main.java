@@ -124,11 +124,9 @@ public class Main {
             ab1 = abs.getAddressBook(serviceURL);
         }
         Object ret = doit (ab1);
-        /*
         if (ret != null) {
             throw new Exception("non-session test expected null response, got "+ret);
         }
-        */
 
         System.err.println ("\n\nUsing proxy with session maintenance.");
         AddressBook ab2 = null;

@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AddressBookSOAPBindingImpl implements AddressBook {
-    static private Map addresses = new HashMap();
+    private Map addresses = new HashMap();
 
     public void addEntry(java.lang.String name, Address address) throws java.rmi.RemoteException {
         this.addresses.put(name, address);
