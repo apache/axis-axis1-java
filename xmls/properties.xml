@@ -72,7 +72,7 @@ them.
 <property name="test.functional.local" value="yes" />
 <property name="test.functional.both" value="no" />
 <property name="test.functional.usefile" value="true" />
-<property name="test.functional.reportdir" value="test-reports" />
+<property name="test.functional.reportdir" location="${axis.home}/test-reports" />
 <property name="test.functional.SimpleAxisPort" value="8080" />
 <property name="test.functional.fail" value="yes" />
 
