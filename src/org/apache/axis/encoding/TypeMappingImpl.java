@@ -95,8 +95,20 @@ public class TypeMappingImpl implements TypeMapping {
             this.xmlType = xmlType;
         }
         public boolean equals(Object o) {
+            if (o == null) return false;
             Pair p = (Pair) o;
-            return (p.xmlType.equals(this.xmlType) && p.javaType.equals(this.javaType));
+            if (p.xmlType == null) {
+                if (this.xmlType != null)
+                    return false;
+            } else {
+                if (!p.xmlType.equals(this.xmlType))
+                    return false;
+            }
+            if (p.javaType == null) {
+                return (this.javaType == null);
+            } else {
+                return (p.javaType.equals(this.javaType));
+            }
         }
         public int hashCode() {
             return javaType.hashCode();
