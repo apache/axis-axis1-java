@@ -227,6 +227,9 @@ public class SOAPService extends SimpleTargetedChain
             Debug.Print( 3, "No service/pivot" );
         }
         
+        // OK, we're past the pivot, so let the MessageContext know.
+        msgContext.setPastPivot(true);
+        
         h = getResponseHandler();
         if ( h != null ) {
             Debug.Print( 2, "Invoking response chain" );
