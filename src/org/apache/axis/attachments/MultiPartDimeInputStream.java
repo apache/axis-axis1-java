@@ -201,7 +201,7 @@ public class MultiPartDimeInputStream extends  MultiPartInputStream {
                       
                     DataHandler dh = new DataHandler(
                       new ManagedMemoryDataSource(dimeDelimitedStream,
-                      1024, type, true));
+                      ManagedMemoryDataSource.MAX_MEMORY_DISK_CACHED, type, true));
 
                     AttachmentPart ap = new AttachmentPart(dh);
 

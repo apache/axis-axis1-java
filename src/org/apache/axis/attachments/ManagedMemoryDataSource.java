@@ -81,11 +81,14 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
     /** Field ss           */
     java.io.InputStream ss = null;             // The incoming source stream.
 
+    /** Field MIN_MEMORY_DISK_CACHED           */
+    public static final int MIN_MEMORY_DISK_CACHED = -1;
+
     /** Field MAX_MEMORY_DISK_CACHED           */
-    public static final int MAX_MEMORY_DISK_CACHED = -1;
+    public static final int MAX_MEMORY_DISK_CACHED = 16 * 1024;
 
     /** Field maxCached           */
-    protected int maxCached = 16 * 1024;       // max in memory cached. Default.
+    protected int maxCached = MAX_MEMORY_DISK_CACHED;       // max in memory cached. Default.
 
     // If set the file the disk is cached to.
 
@@ -120,7 +123,6 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
     /**
      * Create a new boundary stream;
      * @param ss is the source input stream that is used to create this data source..
-     * @param readbufsz lets you have some control over the amount of buffering.
      * @param maxCached  This is the max memory that is to be used to cache the data.
      * @param contentType the mime type for this data stream.
      *   by buffering you can some effiency in searching.
@@ -136,7 +138,6 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
     /**
      * Create a new boundary stream;
      * @param ss is the source input stream that is used to create this data source..
-     * @param readbufsz lets you have some control over the amount of buffering.
      * @param maxCached  This is the max memory that is to be used to cache the data.
      * @param contentType the mime type for this data stream.
      *   by buffering you can some effiency in searching.
@@ -155,7 +156,7 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
             this.contentType = contentType;
         }
 
-        if (maxCached < MAX_MEMORY_DISK_CACHED) {
+        if (maxCached < MIN_MEMORY_DISK_CACHED) {
             throw new IllegalArgumentException(
                     Messages.getMessage("badMaxCached", "" + maxCached));
         }
@@ -591,9 +592,8 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
 
         /**
          * Read a byte from the stream.
-         * @param byte to read or -1 if no more data.
          *
-         * @return
+         * @return byte read or -1 if no more data.
          *
          * @throws java.io.IOException
          */
@@ -652,9 +652,8 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
 
         /**
          * Skip bytes in the stream.
-         * @param the number of bytes to skip.
-         *
-         * @param skipped
+         * 
+         * @param skipped the number of bytes to skip.
          *
          * @return
          *

@@ -398,7 +398,7 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
                 java.io.ByteArrayInputStream bais =
                         new java.io.ByteArrayInputStream(s.getBytes());
                 datahandler = new DataHandler(new ManagedMemoryDataSource(bais,
-                        1024, contentType, true));
+                        ManagedMemoryDataSource.MAX_MEMORY_DISK_CACHED, contentType, true));
                 contentObject = object;
                 return;
             } catch (java.io.IOException io) {
@@ -409,7 +409,7 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
         } else if (object instanceof java.io.InputStream) {
                 try {
                     datahandler = new DataHandler(new ManagedMemoryDataSource((java.io.InputStream)object,
-                            1024, contentType, true));
+                            ManagedMemoryDataSource.MAX_MEMORY_DISK_CACHED, contentType, true));
                     contentObject = object;
                     return;
                 } catch (java.io.IOException io) {
