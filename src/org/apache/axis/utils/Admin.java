@@ -202,11 +202,18 @@ public class Admin
                     InetAddress myAddr = InetAddress.getLocalHost();
                     InetAddress remoteAddr =
                             InetAddress.getByName(remoteIP);
+                    if(log.isDebugEnabled()) {
+                        log.debug("Comparing remote caller " + remoteAddr +" to "+ myAddr);
+                    }
 
-                    if (!myAddr.equals(remoteAddr))
+
+                    if (!myAddr.equals(remoteAddr)) {
+                        log.error(Messages.getMessage("noAdminAccess01",
+                                remoteAddr.toString()));
                         throw new AxisFault("Server.Unauthorized",
                            Messages.getMessage("noAdminAccess00"),
                            null, null);
+                    }
                 } catch (UnknownHostException e) {
                     throw new AxisFault("Server.UnknownHost",
                         Messages.getMessage("unknownHost00"),
@@ -224,6 +231,7 @@ public class Admin
         }
 
         // Else fault
+        // TODO: Better handling here
         throw new Exception("FIXME");
     }
 
