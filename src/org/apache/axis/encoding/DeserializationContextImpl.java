@@ -795,6 +795,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Lexica
         }
 
         if (startOfMappingsPos == -1) {
+            namespaces.push();
             startOfMappingsPos = getCurrentRecordPos();
         }
 
@@ -929,9 +930,12 @@ public class DeserializationContextImpl extends DefaultHandler implements Lexica
             }
         }
 
-        namespaces.push();
-
-        startOfMappingsPos = -1;
+        if (startOfMappingsPos != -1) {
+            startOfMappingsPos = -1;
+        } else {
+            // Push an empty frame if there are no mappings
+            namespaces.push();
+        }
 
         if (log.isDebugEnabled()) {
             log.debug("Exit: DeserializationContextImpl::startElement()");
