@@ -21,31 +21,36 @@ public class TestQFault extends TestCase
     public void testQFaultConstructorWith3Params()
     {
         QFault qfault = new QFault("xsl","include","extra");
-        assertTrue(qfault instanceof QName);
-        assertTrue(qfault instanceof QFault);
-        assertEquals("include.extra", qfault.getLocalPart());
+        assertTrue("qfault not instance of QName", qfault instanceof QName);
+        assertTrue("qfault not instance of QFault", qfault instanceof QFault); // ?? is this necessary?  It cannot help but be a QFault
+        assertEquals("LocalPart is not 'include.extra', it is: " + qfault.getLocalPart(),
+                     "include.extra", qfault.getLocalPart());
     }   
     
     public void testQFaultConstructorWithQFaultParam()
     {
         QFault qfault = new QFault("rdf","title");
         QFault qfaultWithMinorCode = new QFault(qfault,"extraBits");
-        assertTrue(qfaultWithMinorCode instanceof QFault);
-        assertEquals("title.extraBits", qfaultWithMinorCode.getLocalPart());
+        assertTrue("qfault not instanceof QFault", qfaultWithMinorCode instanceof QFault); // ?? is this necessary?  It cannot help but be a QFault
+        assertEquals("LocalPart is not 'title.extraBits', it is: " + qfaultWithMinorCode.getLocalPart(),
+                     "title.extraBits", qfaultWithMinorCode.getLocalPart());
     }   
     
     public void testQFaultConstructorWithQNameParam()
     {
         QName qname = new QFault("rdf", "title");
         QFault qfault = new QFault(qname, "someCode");
-        assertEquals("title.someCode", qfault.getLocalPart());
+        assertEquals("LocalPart is not 'title.someCode', it is: " + qfault.getLocalPart(),
+                     "title.someCode", qfault.getLocalPart());
     }   
     
     public void testAppendMinorCode()
     {
         QFault qfault = new QFault("rdf","title");
         qfault.appendMinorCode("minor-code");
-        assertEquals("rdf", qfault.getNamespaceURI());
-        assertEquals("title.minor-code", qfault.getLocalPart());
+        assertEquals("Namespace URI is not 'rdf', it is: " + qfault.getNamespaceURI(),
+                     "rdf", qfault.getNamespaceURI());
+        assertEquals("LocalPart is not 'title.minor-code', it is: " + qfault.getLocalPart(),
+                     "title.minor-code", qfault.getLocalPart());
     }   
 }
