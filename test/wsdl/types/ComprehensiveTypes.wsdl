@@ -70,6 +70,23 @@
         </xsd:choice>
       </xsd:complexType>
 
+      <!-- Test proper construction of types with names that match common java.lang classes -->
+      <xsd:complexType name="Object">
+        <xsd:sequence>
+           <xsd:element name="test" type="xsd:string" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="String">
+        <xsd:sequence>
+           <xsd:element name="test" type="xsd:string" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="Class">
+        <xsd:sequence>
+           <xsd:element name="test" type="xsd:string" />
+        </xsd:sequence>
+      </xsd:complexType>
+
       <xsd:element name="elemWComplex">
         <xsd:complexType>
           <xsd:all>
@@ -91,6 +108,9 @@
             <xsd:element name="optArray" minOccurs="0" maxOccurs="1" type="typens:array" />
             <xsd:element name="byteArray" type="typens:array_of_base64" />
             <xsd:element name="parm" type="typens:StringParameter" />
+            <xsd:element name="myObject" type="typens:Object" />
+            <xsd:element name="myString" type="typens:String" />
+            <xsd:element name="myClass" type="typens:Class" />
           </xsd:all>
           <xsd:attribute name="attr" type="typens:enum" />
           <xsd:attribute name="parmAttr" type="typens:StringParameter" />

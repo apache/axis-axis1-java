@@ -428,7 +428,7 @@ public class JavaBeanWriter extends JavaClassWriter {
         if (type.isSimpleType() && simpleValueType != null) {
             pw.println("    // " + JavaUtils.getMessage("needToString"));
             String wrapper = JavaUtils.getWrapper(simpleValueType);
-            pw.println("    public String toString() {");
+            pw.println("    public java.lang.String toString() {");
             if (wrapper != null) {
                 pw.println("        return new " + wrapper + "(value).toString();");
             } else {
@@ -528,8 +528,8 @@ public class JavaBeanWriter extends JavaClassWriter {
      
         // The __equalsCalc field and synchronized method are necessary
         // in case the object has direct or indirect references to itself.
-        pw.println("    private Object __equalsCalc = null;");
-        pw.println("    public synchronized boolean equals(Object obj) {");
+        pw.println("    private java.lang.Object __equalsCalc = null;");
+        pw.println("    public synchronized boolean equals(java.lang.Object obj) {");
 
         // First do the general comparison checks
         pw.println("        if (!(obj instanceof " + className + ")) return false;");
@@ -655,7 +655,7 @@ public class JavaBeanWriter extends JavaClassWriter {
                 pw.println("                 i<java.lang.reflect.Array.getLength(" + get +
                            Utils.capitalizeFirstChar(variable) + "());");
                 pw.println("                 i++) {");
-                pw.println("                Object obj = java.lang.reflect.Array.get(" +
+                pw.println("                java.lang.Object obj = java.lang.reflect.Array.get(" +
                            get +
                            Utils.capitalizeFirstChar(variable) + "(), i);");
                 pw.println("                if (obj != null &&");

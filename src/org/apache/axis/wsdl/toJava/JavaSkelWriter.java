@@ -129,7 +129,7 @@ public class JavaSkelWriter extends JavaClassWriter {
         pw.println("    /**");
         pw.println("    * Returns List of OperationDesc objects with this name");
         pw.println("    */");
-        pw.println("    public static java.util.List getOperationDescByName(String methodName) {");
+        pw.println("    public static java.util.List getOperationDescByName(java.lang.String methodName) {");
         pw.println("        return (java.util.List)_myOperations.get(methodName);");
         pw.println("    }");
         pw.println();

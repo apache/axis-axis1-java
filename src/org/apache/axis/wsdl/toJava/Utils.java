@@ -460,13 +460,13 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
     private static HashMap TYPES = new HashMap(7);
 
     static {
-        TYPES.put("int", "Integer");
-        TYPES.put("float", "Float");
-        TYPES.put("boolean", "Boolean");
-        TYPES.put("double", "Double");
-        TYPES.put("byte", "Byte");
-        TYPES.put("short", "Short");
-        TYPES.put("long", "Long");
+        TYPES.put("int", "java.lang.Integer");
+        TYPES.put("float", "java.lang.Float");
+        TYPES.put("boolean", "java.lang.Boolean");
+        TYPES.put("double", "java.lang.Double");
+        TYPES.put("byte", "java.lang.Byte");
+        TYPES.put("short", "java.lang.Short");
+        TYPES.put("long", "java.lang.Long");
     }
 
     /**
