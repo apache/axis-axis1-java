@@ -1818,7 +1818,7 @@ public class tcpmon extends JFrame {
     }
 
 
-    public tcpmon(int listenPort, String targetHost, int targetPort) {
+    public tcpmon(int listenPort, String targetHost, int targetPort, boolean embedded) {
         super ( getMessage("tcpmon00", "TCPMonitor") );
 
         notebook = new JTabbedPane();
@@ -1856,26 +1856,17 @@ public class tcpmon extends JFrame {
                 }
             }
         }
-
+        
+        if(!embedded) {
+            this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        }
         this.pack();
         this.setSize( 600, 600 );
         this.setVisible( true );
     }
-
-    protected void processWindowEvent(WindowEvent event) {
-        switch ( event.getID() ) {
-        case WindowEvent.WINDOW_CLOSING:
-            exit();
-            break ;
-
-        default:
-            super.processWindowEvent(event);
-            break ;
-        }
-    }
-
-    private void exit() {
-        System.exit(0);
+    
+    public tcpmon(int listenPort, String targetHost, int targetPort) {
+        this(listenPort, targetHost, targetPort, false);
     }
 
     public void setInputPort(int port) {
