@@ -184,7 +184,6 @@ public class HTTPSender extends BasicHandler {
 
         String userID = null;
         String passwd = null;
-        String reqEnv = null;
 
         userID = msgContext.getUsername();
         passwd = msgContext.getPassword();
@@ -473,7 +472,13 @@ public class HTTPSender extends BasicHandler {
         if (log.isDebugEnabled()) {
             log.debug(Messages.getMessage("xmlSent00"));
             log.debug("---------------------------------------------------");
-            log.debug(header + reqEnv);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            try {
+                reqMessage.writeTo(baos);
+            } catch (SOAPException e) {
+                log.error(Messages.getMessage("exception00"), e);
+            }
+            log.debug(header + new String(baos.toByteArray()));
         }
 
         return inp;
