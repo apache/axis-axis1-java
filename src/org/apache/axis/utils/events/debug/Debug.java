@@ -76,8 +76,8 @@ public class Debug implements Event, EventListener {
         level = l;
     }
     
-    public static void notify(int level, String message) {
-        if (level >= this.level && on) {
+    public static void notify(int lvl, String message) {
+        if (level >= lvl && on) {
             Debug debug = new Debug(message);
             EventNotifier.notify(debug);
         }
@@ -88,8 +88,12 @@ public class Debug implements Event, EventListener {
     private String message;
     private int lvl;
     
+    public Debug(String message) {
+       this.message = message;
+    }
+    
     public Debug(int level, String message) {
-        message = message;
+        this.message = message;
         lvl = level;
     }
     
