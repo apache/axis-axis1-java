@@ -328,7 +328,7 @@ Copyright:
       <exclude name="test/lib/*.java"/>
       <exclude name="test/inout/*.java" />
       <exclude name="test/wsdl/*/*.java" />
-      <exclude name="test/wsdl/interop3/groupE/**/*.java" />
+      <exclude name="test/wsdl/interop3/**/*.java" />
       <exclude name="test/wsdl/Wsdl2javaTestSuite.java" unless="servlet.present"/>
       <exclude name="test/md5attach/*.java" unless="attachments.present"/>
     </javac>
