@@ -165,7 +165,7 @@ public class JavaUtils
      * format of "{0}") then fill in that argument with the value of var.
      */
     public static String getMessage(String key, String var)
-            throws MissingResourceException, ParseException {
+            throws MissingResourceException {
         String[] args = {var};
         return MessageFormat.format(getMessage(key), args);
     } // getMessage
@@ -175,7 +175,7 @@ public class JavaUtils
      * format of "{0} {1}") then fill them in with the values of var1 and var2, respectively.
      */
     public static String getMessage(String key, String var1, String var2)
-            throws MissingResourceException, ParseException {
+            throws MissingResourceException {
         String[] args = {var1, var2};
         return MessageFormat.format(getMessage(key), args);
     } // getMessage
@@ -186,7 +186,7 @@ public class JavaUtils
      * than vars, then a java.text.ParseException (subclass of RuntimeException) is thrown.
      */
     public static String getMessage(String key, String[] vars)
-            throws MissingResourceException, ParseException {
+            throws MissingResourceException {
         return MessageFormat.format(getMessage(key), vars);
     } // getMessage
 
