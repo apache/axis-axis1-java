@@ -1641,13 +1641,20 @@ public class Emitter {
                     ? oper.getAllInParams()
                     : oper.getAllOutParams();
 
+            String defaultNamespace = oper.getParent().getDefaultNamespace();
             if (!request) {
-                String retName;
-
+                QName retName;
+                
                 if (oper.getReturnQName() == null) {
-                    retName = oper.getName() + "Return";
+                    retName = new QName(oper.getName() + "Return");
                 } else {
-                    retName = oper.getReturnQName().getLocalPart();
+                    if (defaultNamespace
+                            .equals(oper.getReturnQName().getNamespaceURI())) {
+                        retName =
+                                new QName(oper.getReturnQName().getLocalPart());
+                    } else {
+                        retName = oper.getReturnQName();
+                    }
                 }
 
                 types.writeWrappedParameter(sequence, retName,
@@ -1661,12 +1668,18 @@ public class Emitter {
                 // avoid headers
                 if (!parameter.isInHeader() && !parameter.isOutHeader())
                 {
+                    QName paramName = parameter.getQName();
+                    if (oper.getReturnQName() != null && defaultNamespace
+                            .equals(paramName.getNamespaceURI())) {
+                        paramName = new QName(oper.getReturnQName()
+                                .getLocalPart());
+                    }
                     types.writeWrappedParameter(sequence,
-                                                parameter.getName(), // QName??
+                                                paramName,
                                                 parameter.getTypeQName(),
                                                 parameter.getJavaType());
                 }
-            }
+            }       
         }
 
         // Finally write the part itself
