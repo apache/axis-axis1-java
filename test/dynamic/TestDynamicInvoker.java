@@ -57,6 +57,9 @@ package test.dynamic;
 
 import samples.client.DynamicInvoker;
 import junit.framework.TestCase;
+import org.apache.axis.AxisFault;
+
+import java.net.ConnectException;
 
 public class TestDynamicInvoker extends TestCase {
     public TestDynamicInvoker(String name) {
@@ -64,14 +67,38 @@ public class TestDynamicInvoker extends TestCase {
     } // ctor
 
     public void test1() throws Exception {
-        String[] args = new String[]{"http://www.xmethods.net/sd/2001/TemperatureService.wsdl", "getTemp", "02067"};
-        DynamicInvoker invoker = new DynamicInvoker();
-        invoker.main(args);
+        try {
+            String[] args = new String[]{"http://www.xmethods.net/sd/2001/TemperatureService.wsdl", "getTemp", "02067"};
+            DynamicInvoker invoker = new DynamicInvoker();
+            invoker.main(args);
+        }  catch (java.rmi.RemoteException re) {
+            if (re instanceof AxisFault) {
+                AxisFault fault = (AxisFault) re;
+                if (fault.detail instanceof ConnectException ||
+                    fault.getFaultCode().getLocalPart().equals("HTTP")) {
+                    System.err.println("TerraService HTTP error: " + fault);
+                    return;
+                }
+            }
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
+        }
     }
 
     public void test2() throws Exception {
-        String[] args = new String[]{"http://services.xmethods.net/soap/urn:xmethods-delayed-quotes.wsdl", "getQuote", "IBM"};
-        DynamicInvoker invoker = new DynamicInvoker();
-        invoker.main(args);
+        try {
+            String[] args = new String[]{"http://services.xmethods.net/soap/urn:xmethods-delayed-quotes.wsdl", "getQuote", "IBM"};
+            DynamicInvoker invoker = new DynamicInvoker();
+            invoker.main(args);
+        }  catch (java.rmi.RemoteException re) {
+            if (re instanceof AxisFault) {
+                AxisFault fault = (AxisFault) re;
+                if (fault.detail instanceof ConnectException ||
+                    fault.getFaultCode().getLocalPart().equals("HTTP")) {
+                    System.err.println("TerraService HTTP error: " + fault);
+                    return;
+                }
+            }
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
+        }
     }
 }
