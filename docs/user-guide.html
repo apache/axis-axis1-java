@@ -695,6 +695,9 @@ emit a MessageContext parameter to skeleton methods
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -N, --NStoPkg &lt;argument>=&lt;value>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 mapping of namespace to package
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; -p, --package &lt;argument&gt;<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+override all namespace to package mappings, use this package name instead<br>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -o, --output &lt;argument>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 output directory for emitted files
@@ -745,6 +748,13 @@ as above, we could provide the same information in NStoPkg.properties:
 (Note that the colon must be escaped in the properties file.)
 <p>If an entry for a given mapping exists both on the command line and
 in the properties file, the command line entry takes precedence.
+<h5>
+-p, --package &lt;argument&gt;</h5>
+This is a shorthand option to map all namespaces in a WSDL document to the
+same Java package name. &nbsp;This can be useful, but dangerous. &nbsp;You
+must make sure that you understand the effects of doing this. &nbsp;For instance
+there may be multiple types with the same name in different namespaces. &nbsp;It
+is an error to use the --NStoPkg switch and --package at the same time.<br>
 <h5>
 -o, --output &lt;argument></h5>
 The root directory for all emitted files.
