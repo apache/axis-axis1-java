@@ -58,13 +58,43 @@ package org.apache.axis.utils ;
 import java.io.* ;
 import org.w3c.dom.* ;
 import javax.xml.parsers.* ;
-import org.apache.xml.serialize.* ;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.*;
+import javax.xml.transform.stream.*;
 import org.xml.sax.* ;
 import org.apache.axis.Constants;
 
 public class XMLUtils {
   private static DocumentBuilder        db  ;
   private static DocumentBuilderFactory dbf = init();
+  private static SAXParserFactory       saxFactory;
+  
+  static {
+    // Initialize SAX Parser factory defaults
+    initSAXFactory(null, true, false);
+  }
+                                             
+  /** Initialize the SAX parser factory.
+   * 
+   * @param factoryClassName The class name of the desired SAXParserFactory
+   *                         implementation.  Will be assigned to the system
+   *                         property <b>javax.xml.parsers.SAXParserFactory</b>.
+   * @param namespaceAware true if we want a namespace-aware parser (which we do)
+   * @param validating true if we want a validating parser
+   * 
+   */
+  public static void initSAXFactory(String factoryClassName,
+                                     boolean namespaceAware,
+                                     boolean validating)
+  {
+      if (factoryClassName != null) {
+        System.setProperty("javax.xml.parsers.SAXParserFactory",
+                           factoryClassName);
+      }
+      saxFactory = SAXParserFactory.newInstance();
+      saxFactory.setNamespaceAware(namespaceAware);
+      saxFactory.setValidating(validating);
+  }
 
   public static DocumentBuilderFactory init() {
     Document               doc = null ;
@@ -78,6 +108,24 @@ public class XMLUtils {
       e.printStackTrace();
     }
     return( dbf );
+  }
+  
+  /** Get a SAX parser instance from the JAXP factory.
+   * 
+   * @return a SAXParser instance.
+   */
+  public static SAXParser getSAXParser() {
+    // Might want to cache the parser (on a per-thread basis, as I don't think
+    // SAX parsers are thread-safe)...
+    try {
+      return saxFactory.newSAXParser();
+    } catch (ParserConfigurationException e) {
+      e.printStackTrace();
+      return null;
+    } catch (SAXException se) {
+      se.printStackTrace();
+      return null;
+    }
   }
 
   public static Document newDocument() {
@@ -114,44 +162,41 @@ public class XMLUtils {
     }
   }
 
+  /** Obtain a JAXP Transformer.
+   * 
+   * (I'm assuming that using the transformer API is the accepted JAXP-style
+   *  way to do XML serialization)
+   * 
+   * @return a JAXP Transformer
+   */
+  public static Transformer getTransformer()
+  {
+      try {
+          TransformerFactory factory = TransformerFactory.newInstance();
+          return factory.newTransformer();
+      } catch (TransformerConfigurationException e) {
+          e.printStackTrace();
+          return null;
+      }
+  }
+  
   public static String DocumentToString(Document doc) {
-    try {
-      StringWriter sw     = new StringWriter();
-      OutputFormat format = new OutputFormat();
-      format.setPreserveSpace(true);
-      XMLSerializer  xs = new XMLSerializer( sw, format );
-      xs.serialize( (Document) doc );
-      sw.close();
-      return(sw.toString() );
-    }
-    catch( Exception e ) {
-      e.printStackTrace();
-    }
-    return( null );
+      return ElementToString(doc.getDocumentElement());
   }
 
   public static void DocumentToStream(Document doc, OutputStream out) {
-    try {
-      OutputFormat format = new OutputFormat();
-      format.setPreserveSpace(true);
-      XMLSerializer  xs = new XMLSerializer( out, format );
-      xs.serialize( (Document) doc );
-    }
-    catch( Exception e ) {
-      e.printStackTrace();
-    }
+      ElementToStream(doc.getDocumentElement(), out);
   }
 
   public static String ElementToString(Element element) {
       try {
-          StringWriter sw = new StringWriter();
-          OutputFormat format = new OutputFormat();
-          format.setPreserveSpace(true);
-          format.setOmitXMLDeclaration(true);
-          XMLSerializer xs = new XMLSerializer(sw, format);
-          xs.serialize((Element)element);
-          sw.close();
-          return(sw.toString() );
+        StringWriter sw = new StringWriter();
+        DOMSource source = new DOMSource(element);
+        StreamResult result = new StreamResult(sw);
+        Transformer transformer = getTransformer();
+        transformer.transform(source, result);
+        sw.close();
+        return sw.toString();
       } 
       catch( Exception e) {
           e.printStackTrace();
@@ -161,14 +206,14 @@ public class XMLUtils {
   
   public static void ElementToStream(Element element, OutputStream out) {
     try {
-      OutputFormat format = new OutputFormat();
-      format.setPreserveSpace(true);
-      XMLSerializer  xs = new XMLSerializer( out, format );
-      xs.serialize((Element)element);
+      Transformer transformer = getTransformer();
+      DOMSource source = new DOMSource(element);
+      StreamResult result = new StreamResult(out);
+      transformer.transform(source, result);
     }
     catch( Exception e ) {
       e.printStackTrace();
-    }      
+    }
   }
   
   public static String getInnerXMLString(Element element) {

@@ -5,7 +5,6 @@ import org.apache.axis.message.*;
 import org.apache.axis.encoding.*;
 import org.apache.axis.utils.QName;
 import org.xml.sax.InputSource;
-import org.apache.xerces.parsers.SAXParser;
 import java.io.*;
 import java.util.*;
 
@@ -67,7 +66,7 @@ public class TestSer
             TypeMappingRegistry reg = msgContext.getTypeMappingRegistry();
             reg.addDeserializerFactory(dataQName, Data.class, DataSer.getFactory());
             
-            SAXAdapter adapter = new SAXAdapter(new SAXParser(), new InputSource(reader), msgContext);
+            SAXAdapter adapter = new SAXAdapter(new InputSource(reader), msgContext);
             SOAPEnvelope env = adapter.getEnvelope();
             env.setMessageType(ServiceDescription.REQUEST);
             
