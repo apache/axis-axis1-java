@@ -141,7 +141,47 @@ public class XMLUtils {
     }
   }
 
-  public static String getPrefix(String uri, Element e) {
+  public static String ElementToString(Element element) {
+      try {
+          StringWriter sw = new StringWriter();
+          OutputFormat format = new OutputFormat();
+          format.setPreserveSpace(true);
+          format.setOmitXMLDeclaration(true);
+          XMLSerializer xs = new XMLSerializer(sw, format);
+          xs.serialize((Element)element);
+          sw.close();
+          return(sw.toString() );
+      } 
+      catch( Exception e) {
+          e.printStackTrace();
+      }
+      return( null );
+  }
+  
+  public static void ElementToStream(Element element, OutputStream out) {
+    try {
+      OutputFormat format = new OutputFormat();
+      format.setPreserveSpace(true);
+      XMLSerializer  xs = new XMLSerializer( out, format );
+      xs.serialize((Element)element);
+    }
+    catch( Exception e ) {
+      e.printStackTrace();
+    }      
+  }
+  
+  public static String getInnerXMLString(Element element) {
+      String elementString = ElementToString(element);
+      int start, end;
+      start = elementString.indexOf(">") + 1;
+      end = elementString.lastIndexOf("</");
+      if (end > 0) 
+          return elementString.substring(start,end);
+      else 
+          return null;
+  }
+  
+  public static String getPrefix(String uri, Node e) {
       while (e != null && (e.getNodeType() == Element.ELEMENT_NODE)) {
           NamedNodeMap attrs = e.getAttributes();
           for (int n = 0; n < attrs.getLength(); n++) {
@@ -152,7 +192,23 @@ public class XMLUtils {
                   return name.substring(6);
               }
           }
-          e = (Element)e.getParentNode();
+          e = e.getParentNode();
+      }
+      return null;
+  }
+
+  public static String getNamespace(String prefix, Node e) {
+      while (e != null && (e.getNodeType() == Node.ELEMENT_NODE)) {
+          NamedNodeMap attrs = e.getAttributes();
+          for (int n = 0; n < attrs.getLength(); n++) {
+              Attr a = (Attr)attrs.item(n);
+              String name;
+              if ((name = a.getName()).equals("xmlns:" + prefix)) {
+                  return a.getNodeValue();
+              }
+          }
+          
+          e = e.getParentNode();
       }
       return null;
   }
