@@ -159,7 +159,9 @@ public class SAX2EventRecorder {
     }
     
     public void replay(ContentHandler handler) throws SAXException {
-        replay(0, events.getLength() - 1, handler);
+        if (events.getLength() > 0) {
+            replay(0, events.getLength() - 1, handler);
+        }
     }
     
     public void replay(int start, int stop, ContentHandler handler) throws SAXException {
