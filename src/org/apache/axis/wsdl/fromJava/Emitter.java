@@ -218,6 +218,7 @@ public class Emitter {
         }
 
         serviceDesc.setStopClasses(stopClasses);
+        serviceDesc.setAllowedMethods(allowedMethods);
         serviceDesc.setDisallowedMethods(disallowedMethods);
 
         Document doc = null;

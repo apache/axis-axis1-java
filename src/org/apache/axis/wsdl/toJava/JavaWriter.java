@@ -95,6 +95,7 @@ public abstract class JavaWriter implements Writer {
     protected Emitter     emitter;
     protected QName       qname;
     protected Namespaces  namespaces;
+    protected String      rootName; // No suffix...
     protected String      className;
     protected String      fileName;
     protected String      packageName;
@@ -116,8 +117,8 @@ public abstract class JavaWriter implements Writer {
         this.emitter     = emitter;
         this.qname       = entry.getQName();
         this.namespaces  = emitter.getNamespaces();
-        this.className   = Utils.getJavaLocalName(entry.getName())
-                + (suffix == null ? "" : suffix);
+        this.rootName    = Utils.getJavaLocalName(entry.getName());
+        this.className   = rootName + (suffix == null ? "" : suffix);
         this.fileName    = className + '.' + extension;
         this.packageName = Utils.getJavaPackageName(entry.getName());
         this.message     = message;

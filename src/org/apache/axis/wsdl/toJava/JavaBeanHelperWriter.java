@@ -156,7 +156,8 @@ public class JavaBeanHelperWriter extends JavaWriter {
             boolean wroteFieldType = false;
             pw.println("    // " + JavaUtils.getMessage("typeMeta"));
             pw.println("    private static org.apache.axis.description.TypeDesc typeDesc =");
-            pw.println("        new org.apache.axis.description.TypeDesc();");
+            pw.println("        new org.apache.axis.description.TypeDesc(" +
+                       rootName + ".class);");
             pw.println();
             pw.println("    static {");
 
