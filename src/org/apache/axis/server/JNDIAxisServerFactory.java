@@ -130,21 +130,43 @@ public class JNDIAxisServerFactory extends DefaultAxisServerFactory {
                 
             // THIS IS NOT ACCEPTABLE JNDI NAMING...
             String name = servletContext.getRealPath("/WEB-INF/Server");
+
+// The following was submitted as a patch, but I don't believe this
+// is going to produce a valid JNDI name of ANY sort... yuck.
+// This would produce a URL, not a path name.
+//
+// Since it appears, from comments above, that this entire scheme is
+// broken, then for now I'll simply check for a null-name to prevent
+// possible NPE on WebLogic.
+//
+// What ARE we doing here?!?!
+//            
+//            if (name == null) {
+//                try {
+//                    name = servletContext.getResource("/WEB-INF/Server").toString();
+//                } catch (Exception e) {
+//                    // ignore
+//                }
+//            }
                 
             // We've got JNDI, so try to find an AxisServer at the
             // specified name.
-            try {
-                server = (AxisServer)context.lookup(name);
-            } catch (NamingException e) {
-                // Didn't find it.
-                server = super.getServer(environment);
+            if (name != null) {
                 try {
-                    context.bind(name, server);
-                } catch (NamingException e1) {
-                    // !!! Couldn't do it, what should we do here?
+                    server = (AxisServer)context.lookup(name);
+                } catch (NamingException e) {
+                    // Didn't find it.
+                    server = super.getServer(environment);
+                    try {
+                        context.bind(name, server);
+                    } catch (NamingException e1) {
+                        // !!! Couldn't do it, what should we do here?
+                    }
                 }
             }
-        } else {
+        }
+        
+        if (server == null) {
             server = super.getServer(environment);
         }
 

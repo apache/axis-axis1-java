@@ -175,8 +175,18 @@ public class AxisServlet extends AxisServletBase {
             JavaUtils.isTrueExplicitly(getOption(context, INIT_PROPERTY_ENABLE_LIST, null));
 
         jwsClassDir = getOption(context, INIT_PROPERTY_JWS_CLASS_DIR, null);
+
+        /**
+         * There are DEFINITATE problems here if
+         * getHomeDir and/or getDefaultJWSClassDir return null
+         * (as they could with WebLogic).
+         * This needs to be reexamined in the future, but this
+         * should fix any NPE's in the mean time.
+         */
         if (jwsClassDir != null) {
-            jwsClassDir = getHomeDir()+ jwsClassDir;
+            if (getHomeDir() != null) {
+                jwsClassDir = getHomeDir() + jwsClassDir;
+            }
         } else {
             jwsClassDir = getDefaultJWSClassDir();
         }
@@ -843,16 +853,16 @@ public class AxisServlet extends AxisServletBase {
                       req.getHeader( HTTPConstants.HEADER_CONTENT_TYPE));
             log.debug("HEADER_CONTENT_LOCATION:" +
                       req.getHeader( HTTPConstants.HEADER_CONTENT_LOCATION));
-            log.debug("Constants.MC_HOME_DIR:" +
-                      getHomeDir());
+            log.debug("Constants.MC_HOME_DIR:" + String.valueOf(getHomeDir()));
             log.debug("Constants.MC_RELATIVE_PATH:"+req.getServletPath());
-            log.debug("HTTPConstants.MC_HTTP_SERVLETLOCATION:"+ getWebInfPath() );
+            
+            log.debug("HTTPConstants.MC_HTTP_SERVLETLOCATION:"+ String.valueOf(getWebInfPath()));
             log.debug("HTTPConstants.MC_HTTP_SERVLETPATHINFO:" +
                       req.getPathInfo() );
             log.debug("HTTPConstants.HEADER_AUTHORIZATION:" +
                       req.getHeader(HTTPConstants.HEADER_AUTHORIZATION));
             log.debug("Constants.MC_REMOTE_ADDR:"+req.getRemoteAddr());
-            log.debug("configPath:" + getWebInfPath());
+            log.debug("configPath:" + String.valueOf(getWebInfPath()));
         }
 
         /* Set the Transport */
@@ -938,7 +948,9 @@ public class AxisServlet extends AxisServletBase {
      * @return directory for JWS files
      */
     protected String getDefaultJWSClassDir() {
-        return getWebInfPath() + File.separator +  "jwsClasses";
+        return (getWebInfPath() == null)
+               ? null  // ??? what is a good FINAL default for WebLogic?
+               : getWebInfPath() + File.separator +  "jwsClasses";
     }
 
     /**
