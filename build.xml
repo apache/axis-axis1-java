@@ -151,9 +151,6 @@ Copyright:
     <copy file="${commons-discovery.jar}" toDir="${build.lib}"/>
     <copy file="${log4j-core.jar}" toDir="${build.lib}"/>
 
-<!-- stub in my task generations -->
-    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}" antfile="buildPreTestTaskdefs.xml" />
-
      <!--  Build the new org.apache.axis.tools.ant stuff -->
      <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/tools" antfile="build.xml" />
      <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/tools" antfile="build.xml" target="test"/>
@@ -243,42 +240,6 @@ Copyright:
     <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}" antfile="buildTest.xml" target="junit">
       <property name="junit.present" value="${junit.present}"/>
     </ant>
-  </target>
-
-  <!-- =================================================================== -->
-  <!-- Functional tests, no dependencies (for no-build testing)            -->
-  <!-- =================================================================== -->
-  <target name="functional-tests-only" depends="printEnv"
-    description="functional tests without a rebuild; the Axis Ant task must be in ANT_HOME/lib"
-    >
-
-    <!-- The Axis Ant task must be built (into ANT_HOME/lib)... -->
-    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/test" antfile="build_functional_tests.xml" target="functional-tests-only"/>
-
-    <!--
-    ...and then the functional tests can be run.  If this step yields a
-    "can't find class test.functional.ant.RunAxisFunctionalTestsTask",
-    verify that your Ant classpath contains ANT_HOME/lib.
-    -->
-
-  </target>
-
-  <target name="functional-tests-secure-only" depends="printEnv"
-    description="functional secure tests without a rebuild;"
-    >
-    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/test" antfile="build_functional_tests.xml" target="functional-tests-secure-only"/>
-  </target>
-
-
-  <!-- =================================================================== -->
-  <!-- Functional tests, no server (for testing under debugger)            -->
-  <!-- =================================================================== -->
-  <target name="functional-tests-noserver" depends="compile, buildFunctional"
-    description="functional tests, no server">
-    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/test" antfile="build_functional_tests.xml" target="junit-functional-noserver">
-      <property name="test.functional.usefile" value="${test.functional.usefile}"/>
-    </ant>
-
   </target>
 
   <target name="runComponentTests" depends="compile, buildTest">
