@@ -1458,15 +1458,18 @@ public class Call implements javax.xml.rpc.Call {
             return;
 
         transportPackages.add(packageName);
-
-        StringBuffer currentPackages = new StringBuffer();
-        for (Iterator i = transportPackages.iterator(); i.hasNext();) {
-            String thisPackage = (String) i.next();
-            currentPackages.append(thisPackage);
-            currentPackages.append('|');
-        }
-
-        AxisProperties.setProperty(TRANSPORT_PROPERTY, currentPackages.toString());
+        
+        // the following isn't safe/secure, and it's not clear that it's necessary.
+        // particularly in light of the AxisProperties model.
+//
+//        StringBuffer currentPackages = new StringBuffer();
+//        for (Iterator i = transportPackages.iterator(); i.hasNext();) {
+//            String thisPackage = (String) i.next();
+//            currentPackages.append(thisPackage);
+//            currentPackages.append('|');
+//        }
+//
+//        System.setProperty(TRANSPORT_PROPERTY, currentPackages.toString());
     }
 
     /**
