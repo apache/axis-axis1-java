@@ -680,7 +680,6 @@ public class tcpmon extends JFrame {
 
                 if ( listener.isProxyBox.isSelected() || HTTPProxyHost != null ) {
                     // Check if we're a proxy
-                    int          ch ;
                     byte[]       b = new byte[1];
                     buf = new StringBuffer();
                     String       s ;

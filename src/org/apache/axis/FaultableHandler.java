@@ -111,7 +111,7 @@ public class FaultableHandler extends BasicHandler {
             log.info(JavaUtils.getMessage("toAxisFault00"), e );
             AxisFault fault = AxisFault.makeFault(e);
 
-            AxisEngine engine = msgContext.getAxisEngine();
+//            AxisEngine engine = msgContext.getAxisEngine();
 
             /** Index off fault code.
              *

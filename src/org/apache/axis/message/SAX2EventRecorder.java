@@ -194,7 +194,7 @@ public class SAX2EventRecorder {
                 handler.endPrefixMapping(st.getSymbol(events.get(n, 1)));
                 break;
             case STATE_START_ELEMENT:
-                int attrIdx = events.get(n,4);
+//                int attrIdx = events.get(n,4);
                 
                 handler.startElement(st.getSymbol(events.get(n,1)), 
                                      st.getSymbol(events.get(n,2)),

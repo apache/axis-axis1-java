@@ -1149,7 +1149,6 @@ public class SymbolTable {
             // See if we can map all the XML types to java(?) types
             // if we can, we use these as the types
             Node node = null;
-            Element e;
             if (typeName != null) {
                 // Since we can't (yet?) make the Axis engine generate the right
                 // XML for literal parts that specify the type attribute,

@@ -332,7 +332,7 @@ public class BeanDeserializer extends DeserializerImpl implements Deserializer, 
             if (fieldName == null)
                 continue;
 
-            String attrName = attributes.getLocalName(i);
+//            String attrName = attributes.getLocalName(i);
 
             // look for the attribute property
             BeanPropertyDescriptor bpd =

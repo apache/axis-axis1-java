@@ -116,8 +116,6 @@ public class JavaImplWriter extends JavaWriter {
      * Write the body of the binding's stub file.
      */
     protected void writeFileBody() throws IOException {
-        PortType portType = binding.getPortType();
-        PortTypeEntry ptEntry = symbolTable.getPortTypeEntry(portType.getQName());
 
         pw.print("public class " + className + getExtendsText() + getImplementsText());
         pw.println(" {");
