@@ -120,28 +120,14 @@ public class TypeMappingDelegate implements TypeMapping {
         return getDeserializer(null, xmlType);
     }
 
-    /**
-     * always throws an exception
-     * @param javaType
-     * @param xmlType
-     * @throws JAXRPCException
-     */
     public void removeSerializer(Class javaType, QName xmlType)
         throws JAXRPCException {
-        throw new JAXRPCException(
-                Messages.getMessage("delegatedTypeMapping"));
+        delegate.removeSerializer(javaType, xmlType);
     }
 
-    /**
-     * always throws an exception
-     * @param javaType
-     * @param xmlType
-     * @throws JAXRPCException
-     */
     public void removeDeserializer(Class javaType, QName xmlType)
         throws JAXRPCException {
-        throw new JAXRPCException(
-                Messages.getMessage("delegatedTypeMapping"));
+        delegate.removeDeserializer(javaType, xmlType);
     }
 
    public boolean isRegistered(Class javaType, QName xmlType) {
