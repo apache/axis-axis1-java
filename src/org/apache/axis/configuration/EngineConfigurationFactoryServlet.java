@@ -148,12 +148,13 @@ public class EngineConfigurationFactoryServlet
          */
         String webInfPath = ctx.getRealPath("/WEB-INF");
  
-            FileProvider config = null ;
+        FileProvider config = null ;
 
-            if (webInfPath == null || !(new File(webInfPath,
-                                                 SERVER_CONFIG_FILE)).exists()){
-                InputStream is = ctx.getResourceAsStream("/WEB-INF/"+
-                                                     SERVER_CONFIG_FILE);
+        if (webInfPath == null || !(new File(webInfPath,
+                                             SERVER_CONFIG_FILE)).exists()){
+            InputStream is =
+                ctx.getResourceAsStream("/WEB-INF/"+ SERVER_CONFIG_FILE);
+
             if (is == null) {
                 log.error(JavaUtils.getMessage
                           ("servletEngineWebInfError01", 
@@ -162,15 +163,7 @@ public class EngineConfigurationFactoryServlet
                 config = new FileProvider(is);
             }
         }
-        if ( config == null ) {
-            try {
-                config = new FileProvider(webInfPath,
-                                          SERVER_CONFIG_FILE);
-            } catch (ConfigurationException ex) {
-                log.error(JavaUtils.getMessage
-                          ("servletEngineWebInfError00"), ex);
-            }
-        }
+
         return config;
     }
 }
