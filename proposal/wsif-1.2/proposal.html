@@ -1,0 +1,1237 @@
+<html xmlns:v="urn:schemas-microsoft-com:vml"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=ProgId content=Word.Document>
+<meta name=Generator content="Microsoft Word 9">
+<meta name=Originator content="Microsoft Word 9">
+<link rel=File-List href="./wsif%20for%20Apache_files/filelist.xml">
+<link rel=Edit-Time-Data href="./wsif%20for%20Apache_files/editdata.mso">
+<!--[if !mso]>
+<style>
+v\:* {behavior:url(#default#VML);}
+o\:* {behavior:url(#default#VML);}
+w\:* {behavior:url(#default#VML);}
+.shape {behavior:url(#default#VML);}
+</style>
+<![endif]-->
+<title>WSIF</title>
+<!--[if gte mso 9]><xml>
+ <o:DocumentProperties>
+  <o:Author>Paul Fremantle</o:Author>
+  <o:LastAuthor>Paul Fremantle</o:LastAuthor>
+  <o:Revision>3</o:Revision>
+  <o:TotalTime>219</o:TotalTime>
+  <o:Created>2002-04-03T14:39:00Z</o:Created>
+  <o:LastSaved>2002-04-03T14:43:00Z</o:LastSaved>
+  <o:Pages>7</o:Pages>
+  <o:Words>2021</o:Words>
+  <o:Characters>11525</o:Characters>
+  <o:Company>IBM</o:Company>
+  <o:Lines>96</o:Lines>
+  <o:Paragraphs>23</o:Paragraphs>
+  <o:CharactersWithSpaces>14153</o:CharactersWithSpaces>
+  <o:Version>9.2720</o:Version>
+ </o:DocumentProperties>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <w:WordDocument>
+  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel>
+ </w:WordDocument>
+</xml><![endif]-->
+<style>
+<!--
+ /* Font Definitions */
+@font-face
+	{font-family:Courier;
+	panose-1:0 0 0 0 0 0 0 0 0 0;
+	mso-font-charset:0;
+	mso-generic-font-family:modern;
+	mso-font-format:other;
+	mso-font-pitch:fixed;
+	mso-font-signature:3 0 0 0 1 0;}
+@font-face
+	{font-family:Wingdings;
+	panose-1:5 0 0 0 0 0 0 0 0 0;
+	mso-font-charset:2;
+	mso-generic-font-family:auto;
+	mso-font-pitch:variable;
+	mso-font-signature:0 268435456 0 0 -2147483648 0;}
+@font-face
+	{font-family:"Lucida Console";
+	panose-1:2 11 6 9 4 5 4 2 2 4;
+	mso-font-charset:0;
+	mso-generic-font-family:modern;
+	mso-font-pitch:fixed;
+	mso-font-signature:-2147482993 6144 0 0 31 0;}
+ /* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-parent:"";
+	margin:0cm;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+h1
+	{mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0cm;
+	margin-bottom:3.0pt;
+	margin-left:0cm;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:1;
+	font-size:16.0pt;
+	font-family:Arial;
+	mso-font-kerning:16.0pt;}
+h2
+	{mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0cm;
+	margin-bottom:3.0pt;
+	margin-left:0cm;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:2;
+	font-size:12.0pt;
+	mso-bidi-font-size:14.0pt;
+	font-family:Arial;
+	font-style:italic;}
+h3
+	{mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0cm;
+	margin-bottom:3.0pt;
+	margin-left:0cm;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:3;
+	font-size:11.0pt;
+	mso-bidi-font-size:13.0pt;
+	font-family:Arial;}
+p.MsoCaption, li.MsoCaption, div.MsoCaption
+	{mso-style-next:Normal;
+	margin-top:6.0pt;
+	margin-right:0cm;
+	margin-bottom:6.0pt;
+	margin-left:0cm;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-weight:bold;
+	font-style:italic;
+	mso-bidi-font-style:normal;}
+span.MsoEndnoteReference
+	{vertical-align:super;}
+p.MsoEndnoteText, li.MsoEndnoteText, div.MsoEndnoteText
+	{margin:0cm;
+	margin-bottom:.0001pt;
+	text-align:justify;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-ansi-language:EN-US;}
+p.MsoBodyText, li.MsoBodyText, div.MsoBodyText
+	{margin:0cm;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	mso-bidi-font-size:5.5pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-ansi-language:EN-US;}
+a:link, span.MsoHyperlink
+	{color:blue;
+	text-decoration:underline;
+	text-underline:single;}
+a:visited, span.MsoHyperlinkFollowed
+	{color:purple;
+	text-decoration:underline;
+	text-underline:single;}
+p.CodeNumbered, li.CodeNumbered, div.CodeNumbered
+	{mso-style-name:"Code Numbered+";
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:144.0pt;
+	margin-bottom:.0001pt;
+	text-indent:-18.0pt;
+	mso-pagination:widow-orphan;
+	mso-layout-grid-align:none;
+	text-autospace:none;
+	font-size:10.0pt;
+	mso-bidi-font-size:8.0pt;
+	font-family:"Lucida Console";
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	mso-ansi-language:EN-US;}
+p.DefaultText, li.DefaultText, div.DefaultText
+	{mso-style-name:"Default Text";
+	margin:0cm;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	mso-layout-grid-align:none;
+	text-autospace:none;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-ansi-language:EN-US;}
+p.TableText, li.TableText, div.TableText
+	{mso-style-name:"Table Text";
+	margin:0cm;
+	margin-bottom:.0001pt;
+	text-align:right;
+	mso-pagination:widow-orphan;
+	mso-layout-grid-align:none;
+	text-autospace:none;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	mso-ansi-language:EN-US;}
+@page Section1
+	{size:595.3pt 841.9pt;
+	margin:72.0pt 90.0pt 72.0pt 90.0pt;
+	mso-header-margin:35.4pt;
+	mso-footer-margin:35.4pt;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+ /* List Definitions */
+@list l0
+	{mso-list-id:39745342;
+	mso-list-type:simple;
+	mso-list-template-ids:766280526;}
+@list l0:level1
+	{mso-level-text:%1;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:18.0pt;
+	mso-level-legacy-space:0cm;
+	margin-left:144.0pt;
+	text-indent:-18.0pt;
+	font-family:"Times New Roman";}
+@list l1
+	{mso-list-id:105972393;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1753329502 67698703 67698713 67698715 67698703 67698713 67698715 67698703 67698713 67698715;}
+@list l1:level1
+	{mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l2
+	{mso-list-id:142505187;
+	mso-list-type:simple;
+	mso-list-template-ids:766280526;}
+@list l2:level1
+	{mso-level-text:%1;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:18.0pt;
+	mso-level-legacy-space:0cm;
+	margin-left:144.0pt;
+	text-indent:-18.0pt;
+	font-family:"Times New Roman";}
+@list l3
+	{mso-list-id:376050677;
+	mso-list-type:simple;
+	mso-list-template-ids:766280526;}
+@list l3:level1
+	{mso-level-text:%1;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:18.0pt;
+	mso-level-legacy-space:0cm;
+	margin-left:144.0pt;
+	text-indent:-18.0pt;
+	font-family:"Times New Roman";}
+@list l4
+	{mso-list-id:479536201;
+	mso-list-type:hybrid;
+	mso-list-template-ids:1912352964 67698703 67698713 67698715 67698703 67698713 67698715 67698703 67698713 67698715;}
+@list l4:level1
+	{mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l5
+	{mso-list-id:820343618;
+	mso-list-type:simple;
+	mso-list-template-ids:766280526;}
+@list l5:level1
+	{mso-level-text:%1;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:18.0pt;
+	mso-level-legacy-space:0cm;
+	margin-left:144.0pt;
+	text-indent:-18.0pt;
+	font-family:"Times New Roman";}
+@list l6
+	{mso-list-id:826167827;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-803992628 67698689 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l6:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	font-family:Symbol;}
+@list l7
+	{mso-list-id:1212418661;
+	mso-list-type:hybrid;
+	mso-list-template-ids:232836018 67698689 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l7:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:18.0pt;
+	mso-level-number-position:left;
+	margin-left:18.0pt;
+	text-indent:-18.0pt;
+	font-family:Symbol;}
+@list l8
+	{mso-list-id:1231233923;
+	mso-list-type:simple;
+	mso-list-template-ids:766280526;}
+@list l8:level1
+	{mso-level-text:%1;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:18.0pt;
+	mso-level-legacy-space:0cm;
+	margin-left:144.0pt;
+	text-indent:-18.0pt;
+	font-family:"Times New Roman";}
+@list l9
+	{mso-list-id:1405907102;
+	mso-list-type:simple;
+	mso-list-template-ids:766280526;}
+@list l9:level1
+	{mso-level-text:%1;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:18.0pt;
+	mso-level-legacy-space:0cm;
+	margin-left:144.0pt;
+	text-indent:-18.0pt;
+	font-family:"Times New Roman";}
+@list l10
+	{mso-list-id:1446922390;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1231900820 67698703 67698713 67698715 67698703 67698713 67698715 67698703 67698713 67698715;}
+@list l10:level1
+	{mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l11
+	{mso-list-id:1663191444;
+	mso-list-type:simple;
+	mso-list-template-ids:766280526;}
+@list l11:level1
+	{mso-level-text:%1;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:18.0pt;
+	mso-level-legacy-space:0cm;
+	margin-left:144.0pt;
+	text-indent:-18.0pt;
+	font-family:"Times New Roman";}
+@list l12
+	{mso-list-id:1828202370;
+	mso-list-type:simple;
+	mso-list-template-ids:766280526;}
+@list l12:level1
+	{mso-level-text:%1;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:18.0pt;
+	mso-level-legacy-space:0cm;
+	margin-left:144.0pt;
+	text-indent:-18.0pt;
+	font-family:"Times New Roman";}
+@list l13
+	{mso-list-id:1941788590;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-88597958 67698689 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l13:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	font-family:Symbol;}
+@list l14
+	{mso-list-id:2085952855;
+	mso-list-type:hybrid;
+	mso-list-template-ids:2114485260 67698689 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l14:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	font-family:Symbol;}
+@list l15
+	{mso-list-id:2108692297;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-498561860 -1 -1 -1 -1 -1 -1 -1 -1 -1;}
+@list l15:level1
+	{mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l16
+	{mso-list-id:2129617687;
+	mso-list-type:simple;
+	mso-list-template-ids:766280526;}
+@list l16:level1
+	{mso-level-text:%1;
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	mso-level-legacy:yes;
+	mso-level-legacy-indent:18.0pt;
+	mso-level-legacy-space:0cm;
+	margin-left:144.0pt;
+	text-indent:-18.0pt;
+	font-family:"Times New Roman";}
+@list l17
+	{mso-list-id:2141263826;
+	mso-list-type:hybrid;
+	mso-list-template-ids:790111752 -1 -1 -1 -1 -1 -1 -1 -1 -1;}
+@list l17:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	font-family:Symbol;}
+ol
+	{margin-bottom:0cm;}
+ul
+	{margin-bottom:0cm;}
+-->
+</style>
+<!--[if gte mso 9]><xml>
+ <o:shapedefaults v:ext="edit" spidmax="2050">
+  <o:colormru v:ext="edit" colors="#ddd"/>
+ </o:shapedefaults></xml><![endif]--><!--[if gte mso 9]><xml>
+ <o:shapelayout v:ext="edit">
+  <o:idmap v:ext="edit" data="1"/>
+ </o:shapelayout></xml><![endif]-->
+</head>
+
+<body lang=EN-GB link=blue vlink=purple style='tab-interval:36.0pt'>
+
+<div class=Section1>
+
+<h1>Web Services Invocation Framework – introduction, design, motivation and
+architecture</h1>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<h2>Introduction</h2>
+
+<p class=MsoNormal>The Web Service Invocation Framework (WSIF) is a simple Java
+API for invoking Web services, no matter how or where the services are
+provided. It has all the features identified in the discussion above:</p>
+
+<ul style='margin-top:0cm' type=disc>
+ <li class=MsoNormal style='mso-list:l14 level1 lfo10;tab-stops:list 36.0pt'>It
+     has an API that provides binding independent access to any Web service. </li>
+ <li class=MsoNormal style='mso-list:l14 level1 lfo10;tab-stops:list 36.0pt'>It
+     allows stubless (completely dynamic) invocation of Web services. This
+     allows invocation of services based on examination of the meta-data at
+     runtime – for example in a test client.</li>
+ <li class=MsoNormal style='mso-list:l14 level1 lfo10;tab-stops:list 36.0pt'>An
+     updated implementation of a binding can be plugged into WSIF at runtime. </li>
+ <li class=MsoNormal style='mso-list:l14 level1 lfo10;tab-stops:list 36.0pt'>A
+     new binding can be plugged in at runtime, using the provider concept.</li>
+ <li class=MsoNormal style='mso-list:l14 level1 lfo10;tab-stops:list 36.0pt'>It
+     allows the choice of a binding to be deferred until runtime. </li>
+ <li class=MsoNormal style='mso-list:l14 level1 lfo10;tab-stops:list 36.0pt'>It
+     is closely based on WSDL, so it can invoke any service that can be
+     described in WSDL.</li>
+</ul>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<h2>Background - recap on WSDL</h2>
+
+<p class=MsoNormal>The Web Services Description Language (<a
+href="http://www.w3.org/TR/WSDL">http://www.w3.org/TR/WSDL</a>) is inherently
+extensible – from the beginning the designers built in a separation between the
+interface and implementation of services in WSDL.</p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal>In WSDL a service is defined in three distinct parts:</p>
+
+<ol style='margin-top:0cm' start=1 type=1>
+ <li class=MsoNormal style='mso-list:l4 level1 lfo11;tab-stops:list 36.0pt'>The
+     <i style='mso-bidi-font-style:normal'>PortType</i>. The PortType defines
+     the abstract interface offered by the service. A PortType defines a set of
+     <i style='mso-bidi-font-style:normal'>Operations</i>. Each operation can
+     be In-Out (request-response), In-Only, Out-Only and Out-In
+     (Solicit-Response). Each operation defines the input and/or output <i
+     style='mso-bidi-font-style:normal'>Messages</i>. A message is defined as a
+     set of <i style='mso-bidi-font-style:normal'>Parts</i> and each part has a
+     schema-defined type.</li>
+ <li class=MsoNormal style='mso-list:l4 level1 lfo11;tab-stops:list 36.0pt'>The<b
+     style='mso-bidi-font-weight:normal'><i style='mso-bidi-font-style:normal'>
+     </i></b><i style='mso-bidi-font-style:normal'>Binding.</i> A binding
+     defines how to map between the abstract PortType and a real service format
+     and protocol. For example, the SOAP binding defines the encoding style,
+     the SOAPAction header, the namespace of the body (the targetURI), and so
+     forth.</li>
+ <li class=MsoNormal style='mso-list:l4 level1 lfo11;tab-stops:list 36.0pt'>The
+     <i style='mso-bidi-font-style:normal'>Port. </i>This defines the actual
+     location (endpoint) of the available service – for example, the HTTP URL
+     on which a SOAP service is available.</li>
+</ol>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal>In WSDL today, each Port has one and only one binding, and
+each binding has a single PortType. Conversely (and more importantly), each
+Service (PortType) can have multiple Ports, each which represents an
+alternative location and binding for accessing that service.</p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal>We set out to mirror WSDL when we designed WSIF – because we
+wanted an API based on WSDL rather than directly on SOAP. WSIF is effectively a
+framework for plugging in support for transports and formats. These are called
+Providers in WSIF, and the most obvious provider is for SOAP. </p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal>Adding <i>extensibility elements </i>to WSDL allows the
+creation of descriptions of other service implementations than SOAP. Typically,
+WebServices are implemented using existing application components – such as
+Java classes, Enterprise JavaBeans, or COM objects. These components are also
+sometimes <i>wrappers</i> onto legacy systems, such as mainframe transaction
+systems. By extending WSDL to describe the existing component models, we can
+capture the dependence relationship between the exposed SOAP-available service
+and the underlying component, and the fact that the two available
+implementations are actually the same business service. In fact, adding
+extensibility elements for existing components does something more – it adds
+the description capability of the services oriented architecture to the
+existing component model.</p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<h2>Motivation</h2>
+
+<p class=MsoNormal>The motivation for WSIF is that we wanted to see the
+“Services Oriented Architecture” as wider than just SOAP. On the one hand there
+are a number of different protocols, transports and distributed computing
+technologies that offer more than SOAP does today – especially in terms of
+management, transactions, security and other Quality of Service (QoS) features.
+While SOAP is catching up quickly, the main issue is actually one of
+investment. Many companies have an investment in technologies such as CORBA
+that they wish to use and keep. On the other hand, Web Services and SOAP have a
+unique advantage – an infrastructure for description and discovery. Anyone can
+download a WSDL document they have found either in a UDDI directory or in an
+inspection document, and use a commonly available tool to generate code that
+uses that service, whether it is on a local network or across the Internet. The
+common availability of this description language is also fuelling the growth of
+other tools – for example the development of languages for composing and
+choreographing services together (for example XLANG and WSFL). </p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal>We really wanted to make the extensibility and structure of
+WSDL real. WSDL allows us to describe existing systems using extensibility
+elements. For example, we have written WSDL extensions to describe transactions
+in CICS and IMS using connectors, calls to remote stateless session Enterprise
+JavaBeans, as well as SOAP and non-SOAP messages over JMS-based messaging
+systems. However, while describing things is useful, it isn’t<span
+style="mso-spacerun: yes">  </span>as useful as executing them! </p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal>WSDL today is not <i>just</i> a description layer – it has a
+real implementation in tools that can use WSDL descriptions to generate stubs
+that can access the services. So if we add descriptions of non-SOAP systems, we
+are in danger of losing that benefit. WSIF addresses that. Effectively it is a
+pluggable framework, which allows <i>providers </i>to be plugged in. A <i>provider</i>
+is code that supports a WSDL extension and allows invocation of the service
+through that particular implementation. This means that the client code is
+independent of the implementation, and only dependent on the PortType of the
+service. WSIF also allows late binding, where a new provider and description
+are made available at runtime, and the existing client can then utilize the new
+implementation. Finally WSIF allows the client to delegate the choice of port
+to the infrastructure and runtime, which can allow the implementation to be
+chosen on the basis of quality of service characteristics or business policy.</p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal>And the structure of WSDL allows there to be multiple
+implementations for a Web Service, multiple Ports that share the same PortType.
+In other words, WSDL allows the same interface to have bindings to SOAP and
+IIOP. We wanted our API to allow the same client code to access any available
+binding – if the code was written to the PortType then it would be a deployment
+or configuration setting (or a code choice) which port and binding was used. </p>
+
+<h2>Requirements</h2>
+
+<ol style='margin-top:0cm' start=1 type=1>
+ <li class=MsoNormal style='mso-list:l10 level1 lfo14;tab-stops:list 36.0pt'>Support
+     any valid WSDL extensions.</li>
+ <li class=MsoNormal style='mso-list:l10 level1 lfo14;tab-stops:list 36.0pt'>Support
+     dynamic invocation of WSDL-described services</li>
+ <li class=MsoNormal style='mso-list:l10 level1 lfo14;tab-stops:list 36.0pt'>Support
+     an API based on WSDL PortTypes.</li>
+ <li class=MsoNormal style='mso-list:l10 level1 lfo14;tab-stops:list 36.0pt'>Allow
+     late binding to different formats and transports</li>
+ <li class=MsoNormal style='mso-list:l10 level1 lfo14;tab-stops:list 36.0pt'>Support
+     both compiled and dynamic approaches</li>
+ <li class=MsoNormal style='mso-list:l10 level1 lfo14;tab-stops:list 36.0pt'>Support
+     minimum code deployment scenarios (n providers, no per-service code)</li>
+ <li class=MsoNormal style='mso-list:l10 level1 lfo14;tab-stops:list 36.0pt'>Support
+     different in-memory representations of service request data. </li>
+</ol>
+
+<h2>Usage</h2>
+
+<p class=MsoNormal>There are two ways of using WSIF. WSIF offers both a
+stub-based model and a dynamic invocation interface (DII). </p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<h3>Stub model</h3>
+
+<p class=MsoNormal>The stub-based model allows users to use the normal
+programming model to call business methods on Services. There is a standardised
+Java mapping from WSDL defined interfaces into Java defined interfaces – in the
+JAX-RPC standard. There was some effort to integrate the WSIF model with
+JAX-RPC through the JCP/JSR process, but it was felt that WSIF was too
+experimental to include at that point. What we have done is a
+loose-integration. JAX-RPC defines the Service Definition Interface – the
+business interface of the stubs. WSIF also defines an interface to use the same
+SDI as JAX-RPC. So, although WSIF and JAX-RPC do not share interfaces, they do
+share tooling (e.g. Axis WSDL2Java). </p>
+
+<p class=MsoNormal><i><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></i></p>
+
+<p class=MsoCaption>Figure <!--[if supportFields]><span style='mso-element:
+field-begin'></span><span style="mso-spacerun: yes"> </span>SEQ Figure \*
+ARABIC <span style='mso-element:field-separator'></span><![endif]-->1<!--[if supportFields]><span
+style='mso-element:field-end'></span><![endif]--> - example of using the stub
+model with WSIF</p>
+
+<p class=MsoNormal><!--[if gte vml 1]><o:wrapblock><v:shapetype id="_x0000_t202"
+  coordsize="21600,21600" o:spt="202" path="m0,0l0,21600,21600,21600,21600,0xe">
+  <v:stroke joinstyle="miter"/>
+  <v:path gradientshapeok="t" o:connecttype="rect"/>
+ </v:shapetype><v:shape id="_x0000_s1026" type="#_x0000_t202" style='position:absolute;
+  margin-left:5.55pt;margin-top:0;width:675pt;height:66pt;z-index:1;
+  mso-position-vertical:top' fillcolor="#ddd">
+  <v:textbox>
+   <![if !mso]>
+   <table cellpadding=0 cellspacing=0 width="100%">
+    <tr>
+     <td><![endif]>
+     <div>
+     <p class=CodeNumbered style='margin-left:18.0pt;mso-list:l0 level1 lfo8'><![if !supportLists]><b><span
+     lang=EN-US style='font-family:"Times New Roman"'>1<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+     </span></span></b><![endif]><b><span lang=EN-US>WSIFService sq =
+     ServiceFactory.newInstance().<br>
+     <span style='mso-tab-count:1'>   </span>getService(“http://my.com/svcs/stockquote.wsdl”);<o:p></o:p></span></b></p>
+     <p class=CodeNumbered style='margin-left:18.0pt;mso-list:l0 level1 lfo8'><![if !supportLists]><b><span
+     lang=EN-US style='font-family:"Times New Roman"'>2<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+     </span></span></b><![endif]><b><span lang=EN-US>MyService mySvcStub =
+     sq.getStub(&quot;soap&quot;, MyService.class);<o:p></o:p></span></b></p>
+     <p class=CodeNumbered style='margin-left:18.0pt;mso-list:l0 level1 lfo8'><![if !supportLists]><b><span
+     lang=EN-US style='font-family:"Times New Roman"'>3<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+     </span></span></b><![endif]><b><span lang=EN-US>mySvcStub.myMethod();<o:p></o:p></span></b></p>
+     <p class=MsoCaption><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+     <p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+     <p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+     </div>
+     <![if !mso]></td>
+    </tr>
+   </table>
+   <![endif]></v:textbox>
+  <w:wrap type="topAndBottom"/>
+ </v:shape><![endif]--><![if !vml]><span style='mso-ignore:vglayout'>
+ <table cellpadding=0 cellspacing=0 align=left>
+  <tr>
+   <td width=7 height=0></td>
+  </tr>
+  <tr>
+   <td></td>
+   <td><img width=903 height=91 src="./wsif%20for%20Apache_files/image001.gif"
+   alt="Text Box: 1&#9;WSIFService sq = ServiceFactory.newInstance().&#13;&#10;&#9;getService(“http://my.com/svcs/stockquote.wsdl”);&#13;&#10;2&#9;MyService mySvcStub = sq.getStub(&quot;soap&quot;, MyService.class);&#13;&#10;3&#9;mySvcStub.myMethod();&#13;&#10;&#13;&#10;&#13;&#10;&#13;&#10;"
+   v:shapes="_x0000_s1026"></td>
+  </tr>
+ </table>
+ </span><![endif]><!--[if gte vml 1]></o:wrapblock><![endif]--><br
+style='mso-ignore:vglayout' clear=ALL>
+<![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<br style='mso-ignore:vglayout' clear=ALL>
+
+<h3>Dynamic Invocation Interface</h3>
+
+<p class=MsoNormal>The DII is modelled very closely on WSDL. In WSDL, an
+operation has an input message and optionally an output or fault messages.</p>
+
+<p class=MsoNormal>In WSIF, we navigate a similar hierarchy. There is a close
+correspondence. In fact our first iteration was a one-for-one correspondence,
+but we refactored to be more logical and (slightly) simpler. </p>
+
+<p class=MsoNormal>The correspondence is shown in <span style='mso-field-code:
+"REF _Ref4527912 \\h"'>Figure 2 - Correspondence of WSDL and WSIF entities<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000C0000005F0052006500660034003500320037003900310032000000</w:data>
+</xml><![endif]--></span>.</p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoCaption><a name="_Ref4527912">Figure </a><!--[if supportFields]><span
+style='mso-bookmark:_Ref4527912'></span><span style='mso-element:field-begin'></span><span
+style='mso-bookmark:_Ref4527912'><span style="mso-spacerun: yes"> </span>SEQ
+Figure \* ARABIC <span style='mso-element:field-separator'></span></span><![endif]--><span
+style='mso-bookmark:_Ref4527912'>2</span><!--[if supportFields]><span
+style='mso-bookmark:_Ref4527912'></span><span style='mso-element:field-end'></span><![endif]--><span
+style='mso-bookmark:_Ref4527912'> - Correspondence of WSDL and WSIF entities</span></p>
+
+<table border=1 cellspacing=0 cellpadding=0 bgcolor="#e0e0e0" style='background:
+ #E0E0E0;border-collapse:collapse;border:none;mso-border-alt:double windowtext 1.5pt;
+ mso-padding-alt:0cm 5.4pt 0cm 5.4pt'>
+ <tr>
+  <td width=284 valign=top style='width:213.05pt;border-top:double 1.5pt;
+  border-left:double 1.5pt;border-bottom:solid .5pt;border-right:solid .5pt;
+  border-color:windowtext;background:#999999;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal><b>WSDL<o:p></o:p></b></p>
+  </td>
+  <td width=284 valign=top style='width:213.05pt;border-top:double windowtext 1.5pt;
+  border-left:none;border-bottom:solid windowtext .5pt;border-right:double windowtext 1.5pt;
+  mso-border-left-alt:solid windowtext .5pt;background:#999999;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal><b>WSIF<o:p></o:p></b></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=284 valign=top style='width:213.05pt;border-top:none;border-left:
+  double windowtext 1.5pt;border-bottom:solid windowtext .5pt;border-right:
+  solid windowtext .5pt;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>(WSIL/UDDI)</p>
+  </td>
+  <td width=284 valign=top style='width:213.05pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:double windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>WSIFServiceFactory or JNDI</p>
+  </td>
+ </tr>
+ <tr>
+  <td width=284 valign=top style='width:213.05pt;border-top:none;border-left:
+  double windowtext 1.5pt;border-bottom:solid windowtext .5pt;border-right:
+  solid windowtext .5pt;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>Service</p>
+  </td>
+  <td width=284 valign=top style='width:213.05pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:double windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>WSIFService</p>
+  </td>
+ </tr>
+ <tr>
+  <td width=284 valign=top style='width:213.05pt;border-top:none;border-left:
+  double windowtext 1.5pt;border-bottom:solid windowtext .5pt;border-right:
+  solid windowtext .5pt;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>Port</p>
+  </td>
+  <td width=284 valign=top style='width:213.05pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:double windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>WSIFPort</p>
+  </td>
+ </tr>
+ <tr>
+  <td width=284 valign=top style='width:213.05pt;border-top:none;border-left:
+  double windowtext 1.5pt;border-bottom:solid windowtext .5pt;border-right:
+  solid windowtext .5pt;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>Binding</p>
+  </td>
+  <td width=284 valign=top style='width:213.05pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:double windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=284 valign=top style='width:213.05pt;border-top:none;border-left:
+  double windowtext 1.5pt;border-bottom:solid windowtext .5pt;border-right:
+  solid windowtext .5pt;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>Operation</p>
+  </td>
+  <td width=284 valign=top style='width:213.05pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:double windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>WSIFOperation</p>
+  </td>
+ </tr>
+ <tr>
+  <td width=284 valign=top style='width:213.05pt;border-top:none;border-left:
+  double windowtext 1.5pt;border-bottom:solid windowtext .5pt;border-right:
+  solid windowtext .5pt;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>Message</p>
+  </td>
+  <td width=284 valign=top style='width:213.05pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext .5pt;border-right:double windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>WSIFMessage</p>
+  </td>
+ </tr>
+ <tr>
+  <td width=284 valign=top style='width:213.05pt;border-top:none;border-left:
+  double windowtext 1.5pt;border-bottom:double windowtext 1.5pt;border-right:
+  solid windowtext .5pt;mso-border-top-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>Part</p>
+  </td>
+  <td width=284 valign=top style='width:213.05pt;border-top:none;border-left:
+  none;border-bottom:double windowtext 1.5pt;border-right:double windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal style='page-break-after:avoid'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+  </td>
+ </tr>
+</table>
+
+<p class=MsoCaption><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal>To use the DII, you need to:</p>
+
+<p class=MsoNormal style='margin-left:18.0pt;text-indent:-18.0pt;mso-list:l7 level1 lfo12;
+tab-stops:list 18.0pt'><![if !supportLists]><span style='font-family:Symbol'>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]>select a port</p>
+
+<p class=MsoNormal style='margin-left:18.0pt;text-indent:-18.0pt;mso-list:l7 level1 lfo12;
+tab-stops:list 18.0pt'><![if !supportLists]><span style='font-family:Symbol'>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]>create an operation</p>
+
+<p class=MsoNormal style='margin-left:18.0pt;text-indent:-18.0pt;mso-list:l7 level1 lfo12;
+tab-stops:list 18.0pt'><![if !supportLists]><span style='font-family:Symbol'>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]>create and populate the in message</p>
+
+<p class=MsoNormal style='margin-left:18.0pt;text-indent:-18.0pt;mso-list:l7 level1 lfo12;
+tab-stops:list 18.0pt'><![if !supportLists]><span style='font-family:Symbol'>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]>execute the operation</p>
+
+<p class=MsoNormal style='margin-left:18.0pt;text-indent:-18.0pt;mso-list:l7 level1 lfo12;
+tab-stops:list 18.0pt'><![if !supportLists]><span style='font-family:Symbol'>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]>read the response data from the out message</p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal>A simple example is shown below in <span style='mso-field-code:
+"REF _Ref4528478 \\h"'>Figure 3 - Example of using the dynamic invocation
+interface<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000C0000005F0052006500660034003500320038003400370038000000</w:data>
+</xml><![endif]--></span>.</p>
+
+<p class=MsoCaption><a name="_Ref4528478">Figure </a><!--[if supportFields]><span
+style='mso-bookmark:_Ref4528478'></span><span style='mso-element:field-begin'></span><span
+style='mso-bookmark:_Ref4528478'><span style="mso-spacerun: yes"> </span>SEQ
+Figure \* ARABIC <span style='mso-element:field-separator'></span></span><![endif]--><span
+style='mso-bookmark:_Ref4528478'>3</span><!--[if supportFields]><span
+style='mso-bookmark:_Ref4528478'></span><span style='mso-element:field-end'></span><![endif]--><span
+style='mso-bookmark:_Ref4528478'> - Example of using the dynamic invocation
+interface</span></p>
+
+<p class=MsoNormal><!--[if gte vml 1]><o:wrapblock><v:shape id="_x0000_s1027"
+  type="#_x0000_t202" style='position:absolute;margin-left:0;margin-top:0;
+  width:585pt;height:111.7pt;z-index:2;mso-position-horizontal:inside;
+  mso-position-vertical:top' fillcolor="#ddd">
+  <v:textbox>
+   <![if !mso]>
+   <table cellpadding=0 cellspacing=0 width="100%">
+    <tr>
+     <td><![endif]>
+     <div>
+     <p class=CodeNumbered style='margin-left:18.0pt;mso-list:l5 level1 lfo3'><![if !supportLists]><b><span
+     lang=EN-US style='font-family:"Times New Roman"'>1<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+     </span></span></b><![endif]><b><span lang=EN-US>WSIFService sq =
+     ServiceFactory.newInstance().<br>
+     <span style='mso-tab-count:1'>   </span>getService(“<a
+     href="http://my.com/svcs/stockquote.wsdl" target="_parent"><span
+     style='color:windowtext;text-decoration:none;text-underline:none'>http://my.com/svcs/stockquote.wsdl</span></a>”);<o:p></o:p></span></b></p>
+     <p class=CodeNumbered style='margin-left:18.0pt;mso-list:l5 level1 lfo3'><![if !supportLists]><b><span
+     lang=EN-US style='font-family:"Times New Roman"'>2<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+     </span></span></b><![endif]><b><span lang=EN-US>WSIFPort defPort =
+     sq.getPort();<o:p></o:p></span></b></p>
+     <p class=CodeNumbered style='margin-left:18.0pt;mso-list:l5 level1 lfo3'><![if !supportLists]><b><span
+     lang=EN-US style='font-family:"Times New Roman"'>3<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+     </span></span></b><![endif]><b><span lang=EN-US>WSIFOperation getQ =
+     defPort.createOperation(“getQuote”);<o:p></o:p></span></b></p>
+     <p class=CodeNumbered style='margin-left:18.0pt;mso-list:l5 level1 lfo3'><![if !supportLists]><b><span
+     lang=EN-US style='font-family:"Times New Roman"'>4<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+     </span></span></b><![endif]><b><span lang=EN-US>WSIFMessage inMessage =
+     getQ.createInputMessage();<o:p></o:p></span></b></p>
+     <p class=CodeNumbered style='margin-left:18.0pt;mso-list:l5 level1 lfo3'><![if !supportLists]><b><span
+     lang=EN-US style='font-family:"Times New Roman"'>5<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+     </span></span></b><![endif]><b><span lang=EN-US>inMessage.setStringPart(“symbol”,
+     “IBM”);<o:p></o:p></span></b></p>
+     <p class=CodeNumbered style='margin-left:18.0pt;mso-list:l5 level1 lfo3'><![if !supportLists]><b><span
+     lang=EN-US style='font-family:"Times New Roman"'>6<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+     </span></span></b><![endif]><b><span lang=EN-US>…<o:p></o:p></span></b></p>
+     <p class=CodeNumbered style='margin-left:18.0pt;mso-list:l5 level1 lfo3'><![if !supportLists]><b><span
+     lang=EN-US style='font-family:"Times New Roman"'>7<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+     </span></span></b><![endif]><b><span lang=EN-US>getQ.executeRequestResponse(inMessage,
+     outMsg, fltMsg);<o:p></o:p></span></b></p>
+     <p class=CodeNumbered style='margin-left:18.0pt;mso-list:l5 level1 lfo3'><![if !supportLists]><b><span
+     lang=EN-US style='font-family:"Times New Roman"'>8<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+     </span></span></b><![endif]><b><span lang=EN-US>outMessage.getFloatPart(“value”);<o:p></o:p></span></b></p>
+     <p class=CodeNumbered style='margin-left:0cm;text-indent:0cm;mso-list:
+     none'><b><span lang=EN-US><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></b></p>
+     </div>
+     <![if !mso]></td>
+    </tr>
+   </table>
+   <![endif]></v:textbox>
+  <w:wrap type="topAndBottom"/>
+ </v:shape><![endif]--><![if !vml]><img width=783 height=152
+ src="./wsif%20for%20Apache_files/image002.gif"
+ alt="Text Box: 1&#9;WSIFService sq = ServiceFactory.newInstance().&#13;&#10;&#9;getService(“http://my.com/svcs/stockquote.wsdl”);&#13;&#10;2&#9;WSIFPort defPort = sq.getPort();&#13;&#10;3&#9;WSIFOperation getQ = defPort.createOperation(“getQuote”);&#13;&#10;4&#9;WSIFMessage inMessage = getQ.createInputMessage();&#13;&#10;5&#9;inMessage.setStringPart(“symbol”, “IBM”);&#13;&#10;6&#9;…&#13;&#10;7&#9;getQ.executeRequestResponse(inMessage, outMsg, fltMsg);&#13;&#10;8&#9;outMessage.getFloatPart(“value”);&#13;&#10;&#13;&#10;"
+ v:shapes="_x0000_s1027"><![endif]><!--[if gte vml 1]></o:wrapblock><![endif]--><br
+style='mso-ignore:vglayout' clear=ALL>
+<![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<br style='mso-ignore:vglayout' clear=ALL>
+
+<h2>Architecture</h2>
+
+<p class=MsoNormal>The architecture of WSIF is based on a number of factories.
+The reason for using factories is that we wanted to hide whether the objects
+used were “static” or “dynamic”. In the static case, the objects are generated
+to satisfy that particular port, message or operation. This allows a very fast
+implementation to be built. In the dynamic case, the objects use the WSDL
+description at runtime to handle the particular port, operation or message
+handling. Currently WSIF mainly uses dynamic objects, as this is how we
+implemented them initially. We actually envisage several different levels of
+dynamism:</p>
+
+<ul style='margin-top:0cm' type=disc>
+ <li class=MsoNormal style='mso-list:l13 level1 lfo13;tab-stops:list 36.0pt'>Fully
+     dynamic. This might be used, for example, in a flow control engine, where
+     a flow description is provided as an XML document. The flow engine manipulates
+     messages before sending them on to other operations to create a new
+     aggregate service. The deployed code is one provider per binding
+     type.<span style="mso-spacerun: yes">  </span>(<i>b </i>artefacts where <i>b</i>
+     is the number of different WSDL binding extensions).</li>
+ <li class=MsoNormal style='mso-list:l13 level1 lfo13;tab-stops:list 36.0pt'>Semi-dynamic:
+     the messages (which define the PortType) are compiled, but the bindings
+     are dynamic. This requires code-deployment based on the PortType, plus one
+     provider per binding type. The compiled messages have to be redeployed
+     when the interface changes. (<i>p</i> + <i>b</i> artefacts – where <i>p </i>is
+     the number of PortTypes)</li>
+ <li class=MsoNormal style='mso-list:l13 level1 lfo13;tab-stops:list 36.0pt'>Static:
+     the ports are also compiled. In this case the default ports that were
+     defined at tooling time are compiled. The code deployment is one entity
+     per binding instance. (<i>p</i> x <i>b</i> artefacts)</li>
+</ul>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<h2>Experimental Stuff</h2>
+
+<p class=MsoNormal>Currently there are a number of areas we are involved in
+exploring with WSIF.</p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<h3>Asynchronous request response. </h3>
+
+<p class=MsoNormal>We currently have an async request response model, where the
+response is handled in a different thread of execution from the request.</p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal>Basically, the caller defines a callback object (<i>handler</i>),
+which is called when the response is received. </p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal>The request message is sent, and the handler object is
+passed to the WSIFOperation. WSIF provides a correlation service to store the
+handlers against a given correlation id.<span style="mso-spacerun: yes"> 
+</span>The WSIFOperation calls the WSIF correlation service, which stores
+itself (and the handler) against the correlation id of the request. This all
+takes place within the current transaction. If the user has specified a
+transactional queue, then the work is done within the current WebSphere
+transaction.</p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal>The WSIFOperation and WSIFResponseHandler objects are
+serializable so that any state the handler object has can be persisted in case
+of system failure between the request and response. The correlation service is pluggable
+so that a transactional, persistent correlation service can be provided for
+high-availability.</p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal>When the response comes at some later point, a listener
+thread picks it up and passes it to the stored WSIFOperation. The operation
+contains the logic to demarshall the response into a WSIFMessage, and then it
+executes the handler method executeAsyncResponse with the outMessage. The
+listener thread is running on a different transaction from the original
+request, and so the response is a separate transaction from the request.</p>
+
+<p class=MsoBodyText><span lang=EN-US><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoBodyText><span lang=EN-US><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<p class=MsoBodyText><span lang=EN-US>Example</span></p>
+
+<p class=MsoNormal><!--[if gte vml 1]><o:wrapblock><v:shape id="_x0000_s1029"
+  type="#_x0000_t202" style='position:absolute;margin-left:15.3pt;margin-top:0;
+  width:940.5pt;height:286.45pt;z-index:3;mso-position-vertical:top'
+  o:allowoverlap="f">
+  <v:textbox>
+   <![if !mso]>
+   <table cellpadding=0 cellspacing=0 width="100%">
+    <tr>
+     <td><![endif]>
+     <div>
+     <p class=MsoBodyText><span lang=EN-US><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+     <p class=MsoBodyText><span lang=EN-US>A <i>handler </i>is designed to
+     understand the response message and use the response values. The handler
+     implements the <i style='mso-bidi-font-style:normal'>WSIFResponseHandler </i>interface.</span></p>
+     <p class=MsoBodyText><span lang=EN-US><span style="mso-spacerun:
+     yes"> </span></span></p>
+     <p class=CodeNumbered style='mso-list:l8 level1 lfo16'><![if !supportLists]><span
+     lang=EN-US style='font-family:"Times New Roman"'>1<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+     </span></span><![endif]><span lang=EN-US>public class QuoteHandler
+     implements WSIFResponseHandler<span style="mso-spacerun: yes">  </span>{</span></p>
+     <p class=CodeNumbered style='mso-list:l8 level1 lfo16'><![if !supportLists]><span
+     lang=EN-US style='font-family:"Times New Roman"'>2<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+     </span></span><![endif]><span lang=EN-US><span style="mso-spacerun:
+     yes">       </span></span></p>
+     <p class=CodeNumbered style='mso-list:l8 level1 lfo16'><![if !supportLists]><span
+     lang=EN-US style='font-family:"Times New Roman"'>3<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+     </span></span><![endif]><span lang=EN-US>protected String symbol = null;
+     // local storage of the symbol we wanted quoted</span></p>
+     <p class=CodeNumbered style='mso-list:l8 level1 lfo16'><![if !supportLists]><span
+     lang=EN-US style='font-family:"Times New Roman"'>4<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+     </span></span><![endif]><span lang=EN-US>public void setSymbol(String
+     value) { symbol = value };<span style="mso-spacerun: yes">   </span></span></p>
+     <p class=CodeNumbered style='mso-list:l8 level1 lfo16'><![if !supportLists]><span
+     lang=EN-US style='font-family:"Times New Roman"'>5<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+     </span></span><![endif]><span lang=EN-US>public void
+     executeAsyncResponse(WSIFMessage out, WSIFMessage fault) {</span></p>
+     <p class=CodeNumbered style='mso-list:l8 level1 lfo16'><![if !supportLists]><span
+     lang=EN-US style='font-family:"Times New Roman"'>6<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+     </span></span><![endif]><span lang=EN-US><span style="mso-spacerun:
+     yes">         </span>// this simplified example assumes no failures and
+     that the symbol has been set correctly</span></p>
+     <p class=CodeNumbered style='mso-list:l8 level1 lfo16'><![if !supportLists]><span
+     lang=EN-US style='font-family:"Times New Roman"'>7<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+     </span></span><![endif]><span lang=EN-US><span style='mso-tab-count:1'>      </span>float
+     quoteValue = out.getPart(“quote”);</span></p>
+     <p class=CodeNumbered style='mso-list:l8 level1 lfo16'><![if !supportLists]><span
+     lang=EN-US style='font-family:"Times New Roman"'>8<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+     </span></span><![endif]><span lang=EN-US><span style='mso-tab-count:1'>      </span>updateQuoteDB(symbol,
+     quoteValue);</span></p>
+     <p class=CodeNumbered style='mso-list:l8 level1 lfo16'><![if !supportLists]><span
+     lang=EN-US style='font-family:"Times New Roman"'>9<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+     </span></span><![endif]><span lang=EN-US>}</span></p>
+     <p class=MsoBodyText><span lang=EN-US><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+     <p class=MsoBodyText><span lang=EN-US>The service invocation looks like
+     this:</span></p>
+     <p class=MsoBodyText><span lang=EN-US><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+     <p class=CodeNumbered style='mso-list:l11 level1 lfo17'><![if !supportLists]><span
+     lang=EN-US style='font-family:"Times New Roman"'>1<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+     </span></span><![endif]><span lang=EN-US>String symbol = “IBM”;</span></p>
+     <p class=CodeNumbered style='mso-list:l11 level1 lfo17'><![if !supportLists]><span
+     lang=EN-US style='font-family:"Times New Roman"'>2<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+     </span></span><![endif]><span lang=EN-US>QuoteHandler quoteHandler = new
+     QuoteHandler();</span></p>
+     <p class=CodeNumbered style='mso-list:l11 level1 lfo17'><![if !supportLists]><span
+     lang=EN-US style='font-family:"Times New Roman"'>3<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+     </span></span><![endif]><span lang=EN-US>quoteHandler.setSymbol(symbol);
+     // the handler needs to know the symbol when it gets executed later.</span></p>
+     <p class=CodeNumbered style='mso-list:l11 level1 lfo17'><![if !supportLists]><span
+     lang=EN-US style='font-family:"Times New Roman"'>4<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+     </span></span><![endif]><span lang=EN-US><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+     <p class=CodeNumbered style='mso-list:l11 level1 lfo17'><![if !supportLists]><span
+     lang=EN-US style='font-family:"Times New Roman"'>5<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+     </span></span><![endif]><span lang=EN-US>WSIFMessage inMessage;</span></p>
+     <p class=CodeNumbered style='mso-list:l11 level1 lfo17'><![if !supportLists]><span
+     lang=EN-US style='font-family:"Times New Roman"'>6<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+     </span></span><![endif]><span lang=EN-US>WSIFOperation quoteOperation;</span></p>
+     <p class=CodeNumbered style='mso-list:l11 level1 lfo17'><![if !supportLists]><span
+     lang=EN-US style='font-family:"Times New Roman"'>7<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+     </span></span><![endif]><span lang=EN-US>…</span></p>
+     <p class=CodeNumbered style='mso-list:l11 level1 lfo17'><![if !supportLists]><span
+     lang=EN-US style='font-family:"Times New Roman"'>8<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+     </span></span><![endif]><span lang=EN-US>inMessage.setXXXPart(…) // set up
+     inMessage for invocation</span></p>
+     <p class=CodeNumbered style='mso-list:l11 level1 lfo17'><![if !supportLists]><span
+     lang=EN-US style='font-family:"Times New Roman"'>9<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+     </span></span><![endif]><span lang=EN-US>quoteOperation.executeAsyncRequestResponse(inMessage,
+     quoteHandler);</span></p>
+     <p class=MsoBodyText><span lang=EN-US><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+     <p class=MsoBodyText><span lang=EN-US><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+     </div>
+     <![if !mso]></td>
+    </tr>
+   </table>
+   <![endif]></v:textbox>
+  <w:wrap type="topAndBottom"/>
+ </v:shape><![endif]--><![if !vml]><span style='mso-ignore:vglayout'>
+ <table cellpadding=0 cellspacing=0 align=left>
+  <tr>
+   <td width=20 height=0></td>
+  </tr>
+  <tr>
+   <td></td>
+   <td><img width=1257 height=385 src="./wsif%20for%20Apache_files/image003.gif"
+   alt="Text Box: A handler is designed to understand the response message and use the response values. The handler implements the WSIFResponseHandler interface.&#13;&#10; &#13;&#10;1&#9;public class QuoteHandler implements WSIFResponseHandler  {&#13;&#10;2&#9;       &#13;&#10;3&#9;protected String symbol = null; // local storage of the symbol we wanted quoted&#13;&#10;4&#9;public void setSymbol(String value) { symbol = value };   &#13;&#10;5&#9;public void executeAsyncResponse(WSIFMessage out, WSIFMessage fault) {&#13;&#10;6&#9;         // this simplified example assumes no failures and that the symbol has been set correctly&#13;&#10;7&#9;&#9;float quoteValue = out.getPart(“quote”);&#13;&#10;8&#9;&#9;updateQuoteDB(symbol, quoteValue);&#13;&#10;9&#9;}&#13;&#10;&#13;&#10;The service invocation looks like this:&#13;&#10;&#13;&#10;1&#9;String symbol = “IBM”;&#13;&#10;2&#9;QuoteHandler quoteHandler = new QuoteHandler();&#13;&#10;3&#9;quoteHandler.setSymbol(symbol); // the handler needs to know the symbol when it gets executed later.&#13;&#10;4&#9;&#13;&#10;5&#9;WSIFMessage inMessage;&#13;&#10;6&#9;WSIFOperation quoteOperation;&#13;&#10;7&#9;…&#13;&#10;8&#9;inMessage.setXXXPart(…) // set up inMessage for invocation&#13;&#10;9&#9;quoteOperation.executeAsyncRequestResponse(inMessage, quoteHandler);&#13;&#10;&#13;&#10;&#13;&#10;"
+   v:shapes="_x0000_s1029"></td>
+  </tr>
+ </table>
+ </span><![endif]><!--[if gte vml 1]></o:wrapblock><![endif]--><br
+style='mso-ignore:vglayout' clear=ALL>
+<![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<br style='mso-ignore:vglayout' clear=ALL>
+
+<h3>Context</h3>
+
+<p class=MsoNormal>We also wanted to support the idea of setting and using
+context. There has been some discussion in the WS-Description working group of
+the W3C on this topic, but no actual syntax or semantics yet.</p>
+
+<p class=MsoNormal>For example, a SOAP/HTTP port may require an HTTP username
+and password. This information is specific to the invocation, but not usually a
+parameter of the service. In general, context is defined as a set of name-value
+pairs. However, as WebServices tend to define the types of data using XML
+Schema types, we choose to represent the name-value pairs of the context using
+the same representation that “WSIFMessages” use – namely a set of named Parts,
+each of which equates to an instance of an XML Schema type. This is slightly
+more overhead than using a “properties” concept, but more in keeping with the
+rest of WSDL and WSIF.</p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal>The methods <b style='mso-bidi-font-weight:normal'>setContext</b>
+and <b style='mso-bidi-font-weight:normal'>getContext</b> on a WSIFPort and
+WSIFOperation allow the application programmer or stub to pass context
+information to the binding. The Port implementation may use this context – for
+example to update a SOAP header. There is no definition of how a Port may
+utilize the context. </p>
+
+<p class=MsoBodyText><span lang=EN-US><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></span></p>
+
+<h2>Ideas/Futures</h2>
+
+<p class=MsoNormal>There are a number of areas we are working on:</p>
+
+<ol style='margin-top:0cm' start=1 type=1>
+ <li class=MsoNormal style='mso-list:l1 level1 lfo18;tab-stops:list 36.0pt'>Refactoring
+     to separate transport and formatting. We have defined a WSIFFormatter
+     class to allow access to the formatting of data from a message to a native
+     format.</li>
+ <li class=MsoNormal style='mso-list:l1 level1 lfo18;tab-stops:list 36.0pt'>Abstract
+     tree representation of the data. Currently we mainly use compiled classes
+     from the schema to carry the service parameters in the WSIFMessage.
+     However, in the WebServices Gateway (a user of WSIF – see<span
+     style="mso-spacerun: yes">  </span><a
+     href="http://www7b.software.ibm.com/wsdd/downloads/wsgw/wsgw.html">http://www7b.software.ibm.com/wsdd/downloads/wsgw/wsgw.html</a>),
+     we use an abstract tree notation called “JROM” which closely maps to XML
+     Schema. This approach is still in research.</li>
+ <li class=MsoNormal style='mso-list:l1 level1 lfo18;tab-stops:list 36.0pt'>More
+     and better providers</li>
+ <li class=MsoNormal style='mso-list:l1 level1 lfo18;tab-stops:list 36.0pt'>WSIF
+     in C/C++</li>
+</ol>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<h2>Credits</h2>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal>The main contributors to the WSIF release are (in alphabetical
+order). </p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p class=MsoNormal><i><span lang=EN-US style='mso-ansi-language:EN-US'>Aleksander
+A. Slominski<o:p></o:p></span></i></p>
+
+<p class=MsoNormal><i><span lang=EN-US style='mso-ansi-language:EN-US'>Anthony
+Elder<o:p></o:p></span></i></p>
+
+<p class=MsoNormal><i><span lang=EN-US style='mso-ansi-language:EN-US'>Dieter
+Koenig<o:p></o:p></span></i></p>
+
+<p class=MsoNormal><i><span lang=EN-US style='mso-ansi-language:EN-US'>Gerhard
+Pfau<o:p></o:p></span></i></p>
+
+<p class=MsoNormal><i><span lang=EN-US style='mso-ansi-language:EN-US'>Jeremy
+Hughes<o:p></o:p></span></i></p>
+
+<p class=MsoNormal><i><span lang=EN-US style='mso-ansi-language:EN-US'>Mark
+Whitlock<o:p></o:p></span></i></p>
+
+<p class=MsoNormal><i><span lang=EN-US style='mso-ansi-language:EN-US'>Matthew
+J. Duftler<o:p></o:p></span></i></p>
+
+<p class=MsoNormal><i><span lang=EN-US style='mso-ansi-language:EN-US'>Michael
+Beisiegel<o:p></o:p></span></i></p>
+
+<p class=MsoNormal><i><span lang=EN-US style='mso-ansi-language:EN-US'>Nirmal
+Mukhi<o:p></o:p></span></i></p>
+
+<p class=MsoNormal><i><span lang=EN-US style='mso-ansi-language:EN-US'>Owen
+Burroughs<o:p></o:p></span></i></p>
+
+<p class=MsoNormal><i><span lang=EN-US style='mso-ansi-language:EN-US'>Paul
+Fremantle<o:p></o:p></span></i></p>
+
+<p class=MsoNormal><i><span lang=EN-US style='mso-ansi-language:EN-US'>Piotr
+Przybylski<o:p></o:p></span></i></p>
+
+<p class=MsoNormal><i><span lang=EN-US style='mso-ansi-language:EN-US'>Sanjiva
+Weerawarana</span></i><i><span lang=EN-US style='font-size:10.0pt;font-family:
+Courier'> </span><o:p></o:p></i></p>
+
+<p class=MsoNormal><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+</div>
+
+</body>
+
+</html>
