@@ -573,11 +573,11 @@ public class Round4XSDTestTestCase extends junit.framework.TestCase {
         assertTrue("binding is null", binding != null);
 
         try {
-            test.wsdl.interop4.groupi._echoAnyElement_inputAny input = new test.wsdl.interop4.groupi._echoAnyElement_inputAny();
+            test.wsdl.interop4.groupi.__echoAnyElement_inputAny input = new test.wsdl.interop4.groupi.__echoAnyElement_inputAny();
             org.apache.axis.message.MessageElement [] _any = new org.apache.axis.message.MessageElement [1];
             _any[0] = new org.apache.axis.message.MessageElement("hello", "world");
             input.set_any(_any);
-            test.wsdl.interop4.groupi._echoAnyElementResponse_return value = null;
+            test.wsdl.interop4.groupi.__echoAnyElementResponse_return value = null;
             value = binding.echoAnyElement(input);
             assertEquals(value.get_any()[0].toString(), _any[0].toString());
         }

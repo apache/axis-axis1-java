@@ -298,8 +298,6 @@ public class Utils {
         // This routine may be called for complexType elements.  In some cases,
         // the complexType may be anonymous, which is why the getScopedAttribute
         // method is used.
-        if (localName == null) {
-            localName = "";
 
             Node search = node.getParentNode();
 
@@ -312,17 +310,16 @@ public class Utils {
                         || kind.getLocalPart().equals("attribute")) {
                     localName = SymbolTable.ANON_TOKEN
                             + getNodeNameQName(search).getLocalPart();
-                    search = search.getParentNode();
+                    search = null;
                 } else if (kind.getLocalPart().equals("complexType")
                         || kind.getLocalPart().equals("simpleType")) {
                     localName = getNodeNameQName(search).getLocalPart()
-                            + localName;
+                            + SymbolTable.ANON_TOKEN + localName;
                     search = null;
                 } else {
                     search = search.getParentNode();
                 }
             }
-        }
 
         if (localName == null) {
             return null;
@@ -414,8 +411,16 @@ public class Utils {
                 } else if (!maxOccursValue.equals("1")
                         || !minOccursValue.equals("1")) {
                     String localPart = qName.getLocalPart();
-
-                    localPart += "[" + maxOccursValue + "]";
+                    String range = "[";
+                    if (!minOccursValue.equals("1")) {
+                        range += minOccursValue;
+                    }
+                    range += ",";
+                    if (!maxOccursValue.equals("1")) {
+                        range += maxOccursValue;
+                    }
+                    range += "]";
+                    localPart += range;
                     qName = findQName(qName.getNamespaceURI(), localPart);
                 }
             }
@@ -799,5 +804,25 @@ public class Utils {
 
         return prefix + ":" + qname.getLocalPart() + "\" xmlns:" + prefix
                 + "=\"" + qname.getNamespaceURI();
+    }
+    
+    public static String genQNameAttributeStringWithLastLocalPart(QName qname, String prefix) {
+        String lastLocalPart = getLastLocalPart(qname.getLocalPart());
+        if ((qname.getNamespaceURI() == null)
+                || qname.getNamespaceURI().equals("")) {
+            return lastLocalPart;
+        }
+
+        return prefix + ":" + lastLocalPart + "\" xmlns:" + prefix
+                + "=\"" + qname.getNamespaceURI();
+    }
+
+    public static String getLastLocalPart(String localPart) {
+        int anonymousDelimitorIndex = localPart.lastIndexOf('>');
+        if (anonymousDelimitorIndex > -1) {
+            localPart = localPart.substring(anonymousDelimitorIndex + 1);
+        }
+        return localPart;
+        
     }
 }

@@ -56,7 +56,7 @@ import test.wsdl.types.comprehensive_types.EnumString;
 import test.wsdl.types.comprehensive_types.PersionCat;
 import test.wsdl.types.comprehensive_types.Simple;
 import test.wsdl.types.comprehensive_types.SimpleFwd;
-import test.wsdl.types.comprehensive_types.ComplexWComplex_stock_quote;
+import test.wsdl.types.comprehensive_types._complexWComplex_stock_quote;
 import test.wsdl.types.comprehensive_types.StringParameter;
 import test.wsdl.types.comprehensive_types.Time;
 import test.wsdl.types.comprehensive_types.Yarn;
@@ -446,7 +446,7 @@ public class VerifyTestCase extends junit.framework.TestCase {
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("elemWComplexReturn Exception caught: " + re );
         }
-        ComplexWComplex_stock_quote stockQuote = new ComplexWComplex_stock_quote();
+        _complexWComplex_stock_quote stockQuote = new _complexWComplex_stock_quote();
         Time time = new Time();
         time.setDST(false);
         stockQuote.setTime(time);

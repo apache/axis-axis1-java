@@ -647,7 +647,7 @@ public class JavaStubWriter extends JavaClassWriter {
                 }
 
                 // Get the text representing newing a QName for the name and type
-                String paramNameText = Utils.getNewQName(p.getQName());
+                String paramNameText = Utils.getNewQNameWithLastLocalPart(p.getQName());
                 String paramTypeText = Utils.getNewQName(paramType);
 
                 // Generate the addParameter call with the
@@ -693,7 +693,7 @@ public class JavaStubWriter extends JavaClassWriter {
 
                 if (returnQName != null) {
                     pw.println("        oper.setReturnQName("
-                            + Utils.getNewQName(returnQName) + ");");
+                            + Utils.getNewQNameWithLastLocalPart(returnQName) + ");");
                 }
 
                 if (parameters.returnParam.isOutHeader()) {
@@ -1194,7 +1194,7 @@ public class JavaStubWriter extends JavaClassWriter {
                     }
 
                     String javifiedName = Utils.xmlNameToJava(p.getName());
-                    String qnameName = Utils.getNewQName(p.getQName());
+                    String qnameName = Utils.getNewQNameWithLastLocalPart(p.getQName());
 
                     pw.println("            java.util.Map _output;");
                     pw.println(
@@ -1212,7 +1212,7 @@ public class JavaStubWriter extends JavaClassWriter {
                 for (int i = 0; i < parms.list.size(); ++i) {
                     Parameter p = (Parameter) parms.list.get(i);
                     String javifiedName = Utils.xmlNameToJava(p.getName());
-                    String qnameName = Utils.getNewQName(p.getQName());
+                    String qnameName = Utils.getNewQNameWithLastLocalPart(p.getQName());
 
                     if (p.getMode() != Parameter.IN) {
                         writeOutputAssign(pw, javifiedName + ".value = ",
