@@ -112,14 +112,25 @@ public class LocalSender extends BasicHandler {
 
         // copy the request, and force its format to String in order to
         // exercise the serializers.
-        String msgStr = clientContext.getRequestMessage().getSOAPPartAsString();
+
+// START FIX: http://nagoya.apache.org/bugzilla/show_bug.cgi?id=17161
+
+        Message clientRequest = clientContext.getRequestMessage();
+        
+        String msgStr = clientRequest.getSOAPPartAsString();
 
         if (log.isDebugEnabled()) {
             log.debug(Messages.getMessage("sendingXML00", "LocalSender"));
             log.debug(msgStr);
         }
+        
+        Message serverRequest = new Message(msgStr);
+        serverRequest.getAttachmentsImpl().setAttachmentParts(
+          clientRequest.getAttachmentsImpl().getAttachments());
+        serverContext.setRequestMessage(serverRequest);
 
-        serverContext.setRequestMessage(new Message(msgStr));
+// END FIX: http://nagoya.apache.org/bugzilla/show_bug.cgi?id=17161
+
         serverContext.setTransportName("local");
 
         // Also copy authentication info if present
