@@ -55,6 +55,17 @@
 
 package org.apache.axis.utils;
 
+import org.apache.axis.attachments.AttachmentPart;
+import org.apache.axis.components.image.ImageIO;
+import org.apache.axis.components.image.ImageIOFactory;
+import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.types.HexBinary;
+import org.apache.commons.logging.Log;
+
+import javax.activation.DataHandler;
+import javax.xml.soap.SOAPException;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
 import java.awt.Image;
 import java.beans.Introspector;
 import java.io.IOException;
@@ -63,7 +74,6 @@ import java.io.StringReader;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.text.Collator;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -75,21 +85,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.Vector;
-
-import javax.activation.DataHandler;
-import javax.xml.soap.SOAPException;
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
-import org.apache.axis.attachments.AttachmentPart;
-import org.apache.axis.components.image.ImageIO;
-import org.apache.axis.components.image.ImageIOFactory;
-import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.types.HexBinary;
-import org.apache.commons.logging.Log;
 
 /** Utility class to deal with Java language related issues, such
  * as type conversions.
@@ -248,6 +244,11 @@ public class JavaUtils
         // Convert between Calendar and Date
         if (arg instanceof Calendar && destClass == Date.class) {
             return ((Calendar) arg).getTime();
+        }
+
+        // Convert between Calendar and java.sql.Date
+        if (arg instanceof Calendar && destClass == java.sql.Date.class) {
+            return new java.sql.Date(((Calendar) arg).getTime().getTime());
         }
 
         // Convert between HashMap and Hashtable
@@ -517,6 +518,10 @@ public class JavaUtils
 
             // Allow mapping of Calendar to Date
             if (Calendar.class.isAssignableFrom(src) && dest == Date.class)
+                return true;
+
+            // Allow mapping of Calendar to java.sql.Date
+            if (Calendar.class.isAssignableFrom(src) && dest == java.sql.Date.class)
                 return true;
         }
         
