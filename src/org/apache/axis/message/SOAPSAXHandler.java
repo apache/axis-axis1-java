@@ -95,6 +95,7 @@ public abstract class SOAPSAXHandler extends DefaultHandler
     private static final int TARGET_NONE    = 0;
     private static final int TARGET_HEADER  = 1;
     private static final int TARGET_BODY    = 2;
+    private static final int TARGET_ID      = 3;
     
     protected int state = INITIAL_STATE;
     private boolean parsedEnvelope = false;
@@ -105,6 +106,7 @@ public abstract class SOAPSAXHandler extends DefaultHandler
     // target element (header or body)
     private String targetNS = null;
     private String targetName = null;
+    private String targetID = null;
     private int targetType = TARGET_NONE;
     private MessageElement targetElement = null;
     private boolean foundTarget = false;
@@ -197,6 +199,22 @@ public abstract class SOAPSAXHandler extends DefaultHandler
         parse();
     }
     
+    public MessageElement parseForID(String id)
+    {
+        if (state == FINISHED)
+            return null;
+        
+        targetID = id;
+        targetType = TARGET_ID;
+        
+        // Because we set the target, this will stop once we hit the
+        // desired element.
+        parse();
+        
+        targetType = TARGET_NONE;
+        
+        return targetElement;
+    }
     
     public SOAPHeader parseForHeader(String namespace, String localPart)
     {
@@ -230,7 +248,7 @@ public abstract class SOAPSAXHandler extends DefaultHandler
         this.targetType = TARGET_BODY;
 
         // Because we set the target, this will stop once we hit the
-        // desired header.
+        // desired body element.
         parse();
         
         this.targetType = TARGET_NONE;
@@ -487,6 +505,14 @@ public abstract class SOAPSAXHandler extends DefaultHandler
             // Let the event stream run until the end of this element,
             // sending the events to an appropriate handler.
             if (element != null) {
+                
+                if (targetType == TARGET_ID) {
+                    if (targetID.equals(element.getID())) {
+                        targetElement = element;
+                        foundTarget = true;
+                    }
+                }
+                
                 element.setEnvelope(envelope);
                 pushElementHandler(element.getContentHandler());
                 element.setPrefix(namespaces.getPrefix(namespace));
