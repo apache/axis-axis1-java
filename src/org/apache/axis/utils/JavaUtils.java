@@ -1180,6 +1180,9 @@ public class JavaUtils
             }
             log.debug(Messages.getMessage("attachEnabled") + "  " +
                     attachmentSupportEnabled);
+            if(!attachmentSupportEnabled) {
+                log.warn(Messages.getMessage("attachDisabled"));
+            }
         }
 
         return attachmentSupportEnabled;
