@@ -64,6 +64,7 @@ import javax.xml.namespace.QName;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Hashtable;
 
 /**
  * A TypeDesc represents a Java<->XML data binding.  It is essentially
@@ -75,12 +76,27 @@ import java.util.Map;
 public class TypeDesc {
     public static final Class [] noClasses = new Class [] {};
     public static final Object[] noObjects = new Object[] {};
+    
+    /** A map of class -> TypeDesc */
+    private static Map classMap = new Hashtable();
 
     /** Have we already introspected for the special "any" property desc? */
     private boolean lookedForAny = false;
 
     public TypeDesc(Class javaClass) {
         this.javaClass = javaClass;
+    }
+    
+    /**
+     * Static function to explicitly register a type description for
+     * a given class.
+     * 
+     * @param cls the Class we're registering metadata about
+     * @param td the TypeDesc containing the metadata
+     */ 
+    public static void registerTypeDescForClass(Class cls, TypeDesc td)
+    {
+        classMap.put(cls, td);
     }
 
     /**
@@ -96,6 +112,12 @@ public class TypeDesc {
      */
     public static TypeDesc getTypeDescForClass(Class cls)
     {
+        // First see if we have one explicitly registered
+        TypeDesc result = (TypeDesc)classMap.get(cls);
+        if (result != null) {
+            return result;
+        }
+        
         try {
             Method getTypeDesc = null;
             try {
