@@ -111,7 +111,12 @@ public class SimpleChain extends BasicHandler implements Chain {
 
     private void doVisiting(MessageContext msgContext,
                             HandlerIterationStrategy visitor) throws AxisFault {
-        category.debug(JavaUtils.getMessage("enter00", "SimpleChain::invoke"));
+
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("enter00", 
+                "SimpleChain::invoke"));
+        }
+
         int i = 0 ;
         try {
             Vector localHandlers;
@@ -131,7 +136,11 @@ public class SimpleChain extends BasicHandler implements Chain {
                 ((Handler) handlers.elementAt( i )).undo( msgContext );
             throw (AxisFault) e ;
         }
-        category.debug(JavaUtils.getMessage("exit00", "SimpleChain::invoke"));
+
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("exit00", 
+                "SimpleChain::invoke"));
+        }
     }
 
     /**
@@ -139,10 +148,17 @@ public class SimpleChain extends BasicHandler implements Chain {
      * later on has faulted - in reverse order.
      */
     public void undo(MessageContext msgContext) {
-        category.debug(JavaUtils.getMessage("enter00", "SimpleChain::undo"));
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("enter00", 
+                "SimpleChain::undo"));
+        }
+
         for ( int i = handlers.size()-1 ; i >= 0 ; i-- )
             ((Handler) handlers.elementAt( i )).undo( msgContext );
-        category.debug(JavaUtils.getMessage("exit00", "SimpleChain::undo"));
+
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("exit00", "SimpleChain::undo"));
+        }
     }
 
     public boolean canHandleBlock(QName qname) {
@@ -183,7 +199,10 @@ public class SimpleChain extends BasicHandler implements Chain {
     }
 
     public Element getDeploymentData(Document doc) {
-        category.debug( JavaUtils.getMessage("enter00","SimpleChain::getDeploymentData") );
+        if (category.isDebugEnabled()) {
+            category.debug( JavaUtils.getMessage("enter00",
+                "SimpleChain::getDeploymentData") );
+        }
 
         Element  root = doc.createElementNS("", "chain" );
 
@@ -211,7 +230,11 @@ public class SimpleChain extends BasicHandler implements Chain {
             }
         }
 
-        category.debug(JavaUtils.getMessage("exit00", "SimpleChain::getDeploymentData") );
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("exit00", 
+                "SimpleChain::getDeploymentData") );
+        }
+
         return( root );
     }
 };

@@ -96,14 +96,19 @@ public class AxisClient extends AxisEngine
      * handler for the desired service and invoke() it.
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
-        category.debug(JavaUtils.getMessage("enter00", "AxisClient::invoke") );
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("enter00", 
+                "AxisClient::invoke") );
+        }
 
         String  hName = null ;
         Handler h     = null ;
 
         try {
             hName = msgContext.getStrProp( MessageContext.ENGINE_HANDLER );
-            category.debug( "EngineHandler: " + hName );
+            if (category.isDebugEnabled()) {
+                category.debug( "EngineHandler: " + hName );
+            }
 
             if ( hName != null ) {
                 h = getHandler( hName );
@@ -183,12 +188,18 @@ public class AxisClient extends AxisEngine
             if ( !(e instanceof AxisFault) ) e = new AxisFault( e );
             throw (AxisFault) e ;
         }
-        category.debug(JavaUtils.getMessage("exit00", "AxisClient::invoke") );
+
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("exit00", 
+                "AxisClient::invoke") );
+        }
     };
 
     public void undo(MessageContext msgContext) {
-        category.debug(JavaUtils.getMessage("enter00", "AxisClient::undo") );
-        category.debug(JavaUtils.getMessage("exit00", "AxisClient::undo") );
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("enter00", "AxisClient::undo"));
+            category.debug(JavaUtils.getMessage("exit00", "AxisClient::undo") );
+        }
     }
 }
 

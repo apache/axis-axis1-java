@@ -1024,10 +1024,20 @@ public class Call implements javax.xml.rpc.Call {
      */
     public Object invoke(String namespace, String method, Object[] args)
                     throws AxisFault {
-        category.debug(JavaUtils.getMessage("enter00", "Call::invoke(ns, meth, args)") );
+
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("enter00", 
+                "Call::invoke(ns, meth, args)") );
+        }
+
         RPCElement  body = new RPCElement(namespace, method, args);
         Object ret = invoke( body );
-        category.debug(JavaUtils.getMessage("exit00", "Call::invoke(ns, meth, args)") );
+
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("exit00", 
+                "Call::invoke(ns, meth, args)") );
+        }
+
         return ret;
     }
 
@@ -1060,8 +1070,11 @@ public class Call implements javax.xml.rpc.Call {
      * @exception AxisFault
      */
     public Object invoke( RPCElement body ) throws AxisFault {
-        category.debug(JavaUtils.getMessage("enter00", 
-                                            "Call::invoke(RPCElement)") );
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("enter00", 
+                "Call::invoke(RPCElement)") );
+        }
+
         SOAPEnvelope         reqEnv = new SOAPEnvelope();
         SOAPEnvelope         resEnv = null ;
         Message              reqMsg = new Message( reqEnv );
@@ -1136,8 +1149,11 @@ public class Call implements javax.xml.rpc.Call {
             }
         }
 
-        category.debug(JavaUtils.getMessage("exit00",
-                                            "Call::invoke(RPCElement)") );
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("exit00",
+                "Call::invoke(RPCElement)") );
+        }
+
         return( result );
     }
 
@@ -1168,7 +1184,9 @@ public class Call implements javax.xml.rpc.Call {
      * @exception AxisFault
      */
     public void invoke() throws AxisFault {
-        category.debug(JavaUtils.getMessage("enter00", "Call::invoke()") );
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("enter00", "Call::invoke()") );
+        }
 
         Message      reqMsg  = null ;
         SOAPEnvelope reqEnv  = null ;
@@ -1213,7 +1231,10 @@ public class Call implements javax.xml.rpc.Call {
         } else if (msgContext.getServiceHandler() == null) {
             msgContext.setTargetService(body.getNamespaceURI());
         }
-        category.debug("TargetService:" + msgContext.getTargetService());
+
+        if (category.isDebugEnabled()) {
+            category.debug("TargetService:" + msgContext.getTargetService());
+        }
 
         // set up transport if there is one
         if (transport != null) {
@@ -1248,7 +1269,9 @@ public class Call implements javax.xml.rpc.Call {
             throw fault ;
         }
 
-        category.debug(JavaUtils.getMessage("exit00", "Call::invoke()") );
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("exit00", "Call::invoke()") );
+        }
     }
 
     /**

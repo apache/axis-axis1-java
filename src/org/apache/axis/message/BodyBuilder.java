@@ -111,7 +111,11 @@ public class BodyBuilder extends SOAPHandler
 
         if (isRoot &&
             context.getMessageContext().getServiceHandler() == null) {
-            category.debug( JavaUtils.getMessage("dispatching00", namespace));
+
+            if (category.isDebugEnabled()) {
+                category.debug(JavaUtils.getMessage("dispatching00",namespace));
+            }
+
             context.getMessageContext().setTargetService(namespace);
         }
         
