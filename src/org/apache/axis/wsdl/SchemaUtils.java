@@ -135,7 +135,7 @@ public class SchemaUtils {
 
                 // Process each of the element nodes under the group node
                 Vector v = new Vector();
-                NodeList elements = children.item(1).getChildNodes();
+                NodeList elements = groupNode.getChildNodes();
                 for (int i=0; i < elements.getLength(); i++) {
                     QName elementKind = Utils.getNodeQName(elements.item(i));
                     if (elementKind != null &&
