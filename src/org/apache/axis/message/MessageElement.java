@@ -214,7 +214,9 @@ public class MessageElement extends DeserializerBase
             // No type inline, so check service description.
             ServiceDescription serviceDesc = context.getServiceDescription();
             if (serviceDesc != null) {
-                setType(serviceDesc.getParamTypeByName(getEnvelope().getMessageType(),
+                SOAPEnvelope env = getEnvelope();
+                if ( env != null )
+                  setType(serviceDesc.getParamTypeByName(env.getMessageType(),
                                                              name));
             }
         }
