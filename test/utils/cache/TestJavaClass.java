@@ -38,21 +38,30 @@ public class TestJavaClass extends TestCase
         JavaClass jcVec = new JavaClass(v);
         JavaClass jcST = new JavaClass(st);
 
-        Method countTkns = jcST.getMethod("countTokens", 0);
-        Method nextTkn = jcST.getMethod("nextToken", 1);
+        Method countTkns = jcST.getMethod("countTokens")[0];
+        Method nextTkn = jcST.getMethod("nextToken")[0];
 
-        Method add1 = jcVec.getMethod("add", 1);
-        Method add2 = jcVec.getMethod("add", 2);
+        Method[] adds = jcVec.getMethod("add");
 
         assertEquals("countTkns name was not 'countTokens', it is: " + countTkns.getName(),
                      "countTokens", countTkns.getName());
         assertEquals("nextTkn name was not 'nextToken', it is: " + nextTkn.getName(),
                      "nextToken", nextTkn.getName());
 
-        assertEquals("Return type was not 'boolean', it was: " + add1.getReturnType().getName(),
-                     "boolean", add1.getReturnType().getName());
-        assertEquals("Return type was not 'void', it was: " + add2.getReturnType().getName(),
-                     "void", add2.getReturnType().getName());
+        assertEquals("There are not 2 add methods as expected, there are " + adds.length, 2, adds.length);
+
+        for (int i = 0; i < adds.length; ++i) {
+            if (adds[i].getReturnType().equals(boolean.class)) {
+                assertEquals("Unexpected boolean add signature",
+                   "public synchronized boolean java.util.Vector.add(java.lang.Object)",
+                   adds[i].toString());
+            }
+            else {
+                assertEquals("Unexpected void add signature",
+                    "public void java.util.Vector.add(int,java.lang.Object)",
+                    adds[i].toString());
+            }
+        }
     }
 
     public void testNoSuchMethod()
@@ -60,22 +69,7 @@ public class TestJavaClass extends TestCase
         Class v = new java.util.Vector().getClass(); 
         JavaClass jcVec = new JavaClass(v);
 
-        Method add7 = jcVec.getMethod("add", 7);
-        assertNull("add7 was not null", add7);
-    }
-
-    public void testUnknownNumberOfArgs()
-    {
-        Class v = new java.util.Vector().getClass(); 
-        JavaClass jcVec = new JavaClass(v);
-
-        Method add7 = jcVec.getMethod("add", -1);
-        assertNull("add7 was not null", add7);
-
-        Method insertElementAt = jcVec.getMethod("insertElementAt", -1);
-        assertEquals("Length was not 2, it was: " + insertElementAt.getParameterTypes().length,
-                     2, insertElementAt.getParameterTypes().length);
-        assertEquals("Return type was not 'void', it was: " + insertElementAt.getReturnType().getName(),
-                     "void", insertElementAt.getReturnType().getName());
+        Method[] gorp = jcVec.getMethod("gorp");
+        assertNull("gorp was not null", gorp);
     }
 }

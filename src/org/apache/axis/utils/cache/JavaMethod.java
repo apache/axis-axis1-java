@@ -65,9 +65,7 @@ import java.util.Vector;
  */
 public class JavaMethod {
 
-    // at most, one of the following two are non-null, depending
-    // on the number of methods by this name found in the class
-    private Method unique = null;
+    // The list of the methods in the given class with the given name.
     private Method[] methods = null;
 
     /**
@@ -77,50 +75,29 @@ public class JavaMethod {
      */
     public JavaMethod(Class jc, String name) {
         Method[] methods = jc.getMethods();
-        Vector workinglist = null;
+        Vector workinglist = new Vector();
 
         // scan for matching names, saving the match if it is unique,
         // otherwise accumulating a list
         for (int i=0; i<methods.length; i++) {
             if (methods[i].getName().equals(name)) {
-                if (unique != null) {
-                    workinglist = new Vector();
-                    workinglist.addElement(unique);
-                    workinglist.addElement(methods[i]);
-                    unique = null;
-                } else if (workinglist != null) {
-                    workinglist.addElement(methods[i]);
-                } else {
-                    unique = methods[i];
-                }
+                workinglist.addElement(methods[i]);
             }
         }
 
         // If a list was found, convert it into an array
-        if (workinglist != null) {
+        if (workinglist.size() > 0) {
             this.methods = new Method[workinglist.size()];
             workinglist.copyInto(this.methods);
         }
     }
     
     /**
-     * Attempt to find the closest matching method based on the number
-     * of arguments only.  Note: if there are multiple matches, one
-     * will be picked randomly.  If the name is unique, it is simply
-     * returned without checking as attempts to invoke a method based
-     * on this will undoubtably fail anyway.
-     * @param numargs number of arguments.  Use -1 to indicate "don't care".
-     * @return closest match
+     * Lookup a method based on name.  This method returns an array just in
+     * case there is more than one.
+     * @param name name of method
      */
-    public Method getMethod(int numargs) {
-        if (methods != null) {
-            for (int i=0; i<methods.length; i++) {
-                if (methods[i].getParameterTypes().length == numargs) {
-                    return methods[i];
-                }
-            }
-        } 
-
-        return unique;
+    public Method[] getMethod() {
+        return methods;
     }
 };

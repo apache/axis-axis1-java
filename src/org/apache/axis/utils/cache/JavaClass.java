@@ -101,17 +101,17 @@ public class JavaClass {
     }
 
     /**
-     * Lookup a method based on name and number of arguments
+     * Lookup a method based on name.  This method returns an array just in
+     * case there is more than one.
      * @param name name of method
-     * @param numargs number of arguments
      */
-    public Method getMethod(String name, int numargs) {
+    public Method[] getMethod(String name) {
         JavaMethod jm = (JavaMethod) methods.get(name);
 
         if (jm == null) {
             methods.put(name, jm=new JavaMethod(jc, name));
         }
 
-        return jm.getMethod(numargs);
+        return jm.getMethod();
     }
 };
