@@ -116,8 +116,7 @@ public class AxisServlet extends HttpServlet {
      * real world, this would probably be gotten from the servlet
      * configuration.
      */
-    msgContext.setProperty(MessageContext.TARGET_SERVICE, Constants.SERVLET_TARGET);
-    
+    msgContext.setTargetService( Constants.SERVLET_TARGET );
 
     /* Save the SOAPAction header in the MessageContext bag - this will */
     /* be used to tell the Axis Engine which service is being invoked.  */

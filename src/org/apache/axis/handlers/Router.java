@@ -59,7 +59,7 @@ import org.apache.axis.registries.HandlerRegistry;
 import org.apache.axis.utils.Debug;
 
 /** A <code>Router</code> is a Handler which has only one purpose in life:
- * to look up the TARGET_SERVICE property in the passed MessageContext, then look
+ * to look up the TargetService field in the passed MessageContext, then look
  * up a Handler under that name in the ServiceRegistry.  Then it passes
  * the MessageContext off to that Handler.
  * 
@@ -75,7 +75,7 @@ public class Router extends BasicHandler
         if (registry == null)
             throw new AxisFault(new NullPointerException("Router: No registry property in context!"));
         
-        String target = (String)msgContext.getProperty(MessageContext.TARGET_SERVICE);
+        String target = msgContext.getTargetService();
         if (target == null)
             throw new AxisFault(new NullPointerException("Router: No target property in context!"));
         
@@ -84,12 +84,9 @@ public class Router extends BasicHandler
         if (h == null)
             throw new AxisFault(new Exception("Router: Couldn't find service '" + target + "' in the registry!"));
         
-        // Make sure next dispatch, if any, is clean so we don't loop back.
-        msgContext.clearProperty(MessageContext.TARGET_SERVICE);
-        
         h.invoke(msgContext);
 
-        msgContext.setProperty(MessageContext.TARGET_SERVICE, target);
+        msgContext.setTargetService(target);
         Debug.Print( 1, "Exit : Router::invoke" );
     }
 
@@ -98,16 +95,13 @@ public class Router extends BasicHandler
         Debug.Print( 1, "Enter: Router::undo" );
         HandlerRegistry registry = (HandlerRegistry)msgContext.getProperty(Constants.SERVICE_REGISTRY);
         
-        String target = (String)msgContext.getProperty(MessageContext.TARGET_SERVICE);
+        String target = msgContext.getTargetService();
         
         Handler h = registry.find( target );
 
-        // Make sure next dispatch, if any, is clean so we don't loop back.
-        msgContext.clearProperty(MessageContext.TARGET_SERVICE);
-        
         h.undo(msgContext);
 
-        msgContext.setProperty(MessageContext.TARGET_SERVICE, target);
+        msgContext.setTargetService(target);
         Debug.Print( 1, "Exit: Router::undo" );
     }
 }

@@ -58,13 +58,13 @@ import org.apache.axis.*;
 import org.apache.axis.utils.Debug;
 import org.apache.axis.transport.http.HTTPConstants;
 
-/** An <code>HTTPActionHandler</code> simply sets the context's TARGET_SERVICE
+/** An <code>HTTPActionHandler</code> simply sets the context's TargetService
  * property from the HTTPAction property.  We expect there to be a
  * Router on the chain after us, to dispatch to the service named in
  * the SOAPAction.
  * 
  * In the real world, this might do some more complex mapping of
- * SOAPAction to a TARGET_SERVICE.
+ * SOAPAction to a TargetService.
  * 
  * @author Glen Daniels (gdaniels@allaire.com)
  * @author Doug Davis (dug@us.ibm.com)
@@ -82,7 +82,7 @@ public class HTTPActionHandler extends BasicHandler
                                  "No HTTPAction property in context",
                                  null, null );
 
-        msgContext.setProperty(MessageContext.TARGET_SERVICE, action);
+        msgContext.setTargetService( action );
         Debug.Print( 1, "Exit : HTTPActionHandler::invoke" );
     }
 
