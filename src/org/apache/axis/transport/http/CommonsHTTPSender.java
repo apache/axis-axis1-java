@@ -58,7 +58,6 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.components.net.BooleanHolder;
 import org.apache.axis.components.net.TransportClientProperties;
 import org.apache.axis.components.net.TransportClientPropertiesFactory;
 import org.apache.axis.encoding.Base64;
@@ -66,13 +65,16 @@ import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.utils.Messages;
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HttpConnection;
-import org.apache.commons.httpclient.HttpState;
+import org.apache.commons.httpclient.HostConfiguration;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpConnectionManager;
+import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.logging.Log;
 
 import java.io.ByteArrayOutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
@@ -86,7 +88,15 @@ public class CommonsHTTPSender extends BasicHandler {
 
     /** Field log           */
     protected static Log log =
-            LogFactory.getLog(CommonsHTTPSender.class.getName());
+        LogFactory.getLog(CommonsHTTPSender.class.getName());
+
+    private HttpConnectionManager connectionManager;
+    
+    public CommonsHTTPSender() {
+        // should pull settings for pool size, timeouts from
+        // declarative configuration
+        connectionManager = new MultiThreadedHttpConnectionManager();
+    }
 
     /**
      * invoke creates a socket connection, sends the request SOAP message and then
@@ -97,86 +107,89 @@ public class CommonsHTTPSender extends BasicHandler {
      * @throws AxisFault
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
-
+        PostMethod method = null;
+        
         if (log.isDebugEnabled()) {
             log.debug(Messages.getMessage("enter00",
-                    "CommonsHTTPSender::invoke"));
+                                          "CommonsHTTPSender::invoke"));
         }
         try {
-            BooleanHolder useFullURL = new BooleanHolder(false);
-            StringBuffer otherHeaders = new StringBuffer();
             URL targetURL =
-                    new URL(msgContext.getStrProp(MessageContext.TRANS_URL));
-            String host = targetURL.getHost();
-            int port = targetURL.getPort();
-            HttpConnection conn = null;
-            HttpState state = new HttpState();
+                new URL(msgContext.getStrProp(MessageContext.TRANS_URL));
 
-            // create socket based on the url protocol type
-            if (targetURL.getProtocol().equalsIgnoreCase("https")) {
-                conn = getSecureConnection(state, host, port);
-            } else {
-                conn = getConnection(state, host, port);
-            }
-            PostMethod method = new PostMethod(targetURL.getFile());
+            // no need to retain these, as the cookies/credentials are
+            // stored in the message context across multiple requests.
+            // the underlying connection manager, however, is retained
+            // so sockets get recycled when possible.
+            HttpClient httpClient = new HttpClient(connectionManager);
 
-            addContextInfo(method, conn, state, msgContext, targetURL);
+            HostConfiguration hostConfiguration = getHostConfiguration(httpClient, targetURL);
+
+            method = new PostMethod(targetURL.toString());
+
+            addContextInfo(method, httpClient, msgContext, targetURL);
             Message reqMessage = msgContext.getRequestMessage();
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
             reqMessage.writeTo(baos);
-            method.setRequestBody(new String(baos.toByteArray(), "UTF-8"));
-            method.execute(state, conn);
-            int returnCode = method.getStatusCode();
+            method.setRequestBody(bytesAsString(baos.toByteArray()));
+            method.setUseExpectHeader(false); // workaround for
+                                              // outbound chunking bug
+                                              // in httpclient
+            
+            int returnCode = httpClient.executeMethod(method);
             String contentType = null;
             String contentLocation = null;
             String contentLength = null;
 
             if (method.getResponseHeader(HTTPConstants.HEADER_CONTENT_TYPE)
-                    != null) {
+                != null) {
                 contentType = method.getResponseHeader(
-                        HTTPConstants.HEADER_CONTENT_TYPE).getValue();
+                    HTTPConstants.HEADER_CONTENT_TYPE).getValue();
             }
             if (method.getResponseHeader(HTTPConstants.HEADER_CONTENT_LOCATION)
-                    != null) {
+                != null) {
                 contentLocation = method.getResponseHeader(
-                        HTTPConstants.HEADER_CONTENT_LOCATION).getValue();
+                    HTTPConstants.HEADER_CONTENT_LOCATION).getValue();
             }
             if (method.getResponseHeader(HTTPConstants.HEADER_CONTENT_LENGTH)
-                    != null) {
+                != null) {
                 contentLength = method.getResponseHeader(
-                        HTTPConstants.HEADER_CONTENT_LENGTH).getValue();
+                    HTTPConstants.HEADER_CONTENT_LENGTH).getValue();
             }
             contentType = (null == contentType)
-                    ? null
-                    : contentType.trim();
+                ? null
+                : contentType.trim();
             if ((returnCode > 199) && (returnCode < 300)) {
 
                 // SOAP return is OK - so fall through
             } else if ((contentType != null) && !contentType.equals("text/html")
-                    && ((returnCode > 499) && (returnCode < 600))) {
+                       && ((returnCode > 499) && (returnCode < 600))) {
 
                 // SOAP Fault should be in here - so fall through
             } else {
                 String statusMessage = method.getStatusText();
                 AxisFault fault = new AxisFault("HTTP",
-                        "(" + returnCode + ")"
-                        + statusMessage, null,
-                        null);
+                                                "(" + returnCode + ")"
+                                                + statusMessage, null,
+                                                null);
 
                 fault.setFaultDetailString(Messages.getMessage("return01",
-                        "" + returnCode, method.getResponseBodyAsString()));
+                                                               "" + returnCode, method.getResponseBodyAsString()));
                 throw fault;
             }
             Message outMsg = new Message(method.getResponseBodyAsStream(),
-                    false, contentType, contentLocation);
-
+                                         false, contentType, contentLocation);
+            // no need to invoke method.releaseConnection here, as that will
+            // happen automatically when the response body is read.
+            // issue: what if the stream is never closed?  Are we certain
+            // that InputStream.close() always gets called?
             outMsg.setMessageType(Message.RESPONSE);
             msgContext.setResponseMessage(outMsg);
             if (log.isDebugEnabled()) {
                 if (null == contentLength) {
                     log.debug("\n"
-                            + Messages.getMessage("no00", "Content-Length"));
+                              + Messages.getMessage("no00", "Content-Length"));
                 }
                 log.debug("\n" + Messages.getMessage("xmlRecd00"));
                 log.debug("-----------------------------------------------");
@@ -198,10 +211,20 @@ public class CommonsHTTPSender extends BasicHandler {
             log.debug(e);
             throw AxisFault.makeFault(e);
         }
+        
         if (log.isDebugEnabled()) {
             log.debug(Messages.getMessage("exit00",
-                    "CommonsHTTPSender::invoke"));
+                                          "CommonsHTTPSender::invoke"));
         }
+    }
+
+    private static String bytesAsString(byte[] b) {
+        try {
+            return new String(b, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            // always supported
+            throw new IllegalStateException(e.getMessage());
+        } // end of try-catch
     }
 
     /**
@@ -222,124 +245,66 @@ public class CommonsHTTPSender extends BasicHandler {
         return cookie;
     }
 
-    /**
-     * creates a secure HttpConnection.
-     *
-     * @param state HttpState
-     * @param host host name/ip
-     * @param port port
-     *
-     * @return a secure connection
-     *
-     * @throws Exception
-     */
-    private HttpConnection getSecureConnection(
-            HttpState state, String host, int port) throws Exception {
-        TransportClientProperties tcp = TransportClientPropertiesFactory.create("https");
-
-        if (port == -1) {
-            port = 443;
-        }
-
+    private HostConfiguration getHostConfiguration(HttpClient client, URL targetURL) {
+        boolean isSecure = targetURL.getProtocol().equalsIgnoreCase("http");
+        TransportClientProperties tcp = TransportClientPropertiesFactory.create(targetURL.getProtocol()); // http or https
+        int port = targetURL.getPort();
         boolean hostInNonProxyList =
-                isHostInNonProxyList(host, tcp.getNonProxyHosts());
+            isHostInNonProxyList(targetURL.getHost(), tcp.getNonProxyHosts());
 
-        if (tcp.getProxyHost().length() == 0 || hostInNonProxyList) {
-            return new HttpConnection(host, port, true);
-        } else {
-
-            // Default proxy port is 80, even for https
-            int tunnelPort = ((tcp.getProxyPort().length() != 0)
-                              ? Integer.parseInt(tcp.getProxyPort())
-                              : 80);
-
-            if (tunnelPort < 0)
-                tunnelPort = 80;
-                
-            if (tcp.getProxyUser().length() != 0) {
-                Credentials proxyCred =
-                        new UsernamePasswordCredentials(tcp.getProxyUser(),
-                                                        tcp.getProxyPassword());
-
-                state.setProxyCredentials(null, proxyCred);
-            }
-
-            return new HttpConnection(tcp.getProxyHost(), tunnelPort, host, port, true);
-        }
-    }
-
-    /**
-     * creates a non-secure connection.
-     *
-     * @param state HttpState
-     * @param host host name/ip
-     * @param port port
-     *
-     * @return a non-secure connection.
-     *
-     * @throws Exception
-     */
-    private HttpConnection getConnection(HttpState state, String host, int port)
-            throws Exception {
-        TransportClientProperties tcp = TransportClientPropertiesFactory.create("http");
-
-        boolean hostInNonProxyList =
-                isHostInNonProxyList(host, tcp.getNonProxyHosts());
-
+        HostConfiguration config = new HostConfiguration();
+        
         if (port == -1) {
-            port = 80;
+            port = 80;          // even for https
         }
         if (tcp.getProxyHost().length() == 0 ||
             tcp.getProxyPort().length() == 0 ||
             hostInNonProxyList) {
-            return new HttpConnection(host, port);
+            config.setHost(targetURL.getHost(), port, targetURL.getProtocol());
         } else {
             if (tcp.getProxyUser().length() != 0) {
                 Credentials proxyCred =
-                        new UsernamePasswordCredentials(tcp.getProxyUser(),
-                                                        tcp.getProxyPassword());
-
-                state.setProxyCredentials(null, proxyCred);
+                    new UsernamePasswordCredentials(tcp.getProxyUser(),
+                                                    tcp.getProxyPassword());
+                client.getState().setProxyCredentials(null, proxyCred);
             }
-            return new HttpConnection(tcp.getProxyHost(),
-                                      new Integer(tcp.getProxyPort()).intValue(), host,
-                                      port);
+            int proxyPort = new Integer(tcp.getProxyPort()).intValue();
+            config.setProxy(tcp.getProxyHost(), proxyPort);
         }
+        return config;
     }
 
     /**
      * Extracts info from message context.
      *
      * @param method Post method
-     * @param conn a valid connection
-     * @param state HttpState
+     * @param httpClient The client used for posting
      * @param msgContext the message context
      * @param tmpURL the url to post to.
      *
      * @throws Exception
      */
     private void addContextInfo(
-            PostMethod method, HttpConnection conn, HttpState state, MessageContext msgContext, URL tmpURL)
-            throws Exception {
+        PostMethod method, HttpClient httpClient, MessageContext msgContext, URL tmpURL)
+        throws Exception {
 
         // optionally set a timeout for the request
         if (msgContext.getTimeout() != 0) {
-            conn.setSoTimeout(msgContext.getTimeout());
+            httpClient.setTimeout(msgContext.getTimeout());
         }
 
         // Get SOAPAction, default to ""
         String action = msgContext.useSOAPAction()
-                ? msgContext.getSOAPActionURI()
-                : "";
+            ? msgContext.getSOAPActionURI()
+            : "";
 
         if (action == null) {
             action = "";
         }
         Message msg = msgContext.getRequestMessage();
         method.setRequestHeader(new Header(HTTPConstants.HEADER_CONTENT_TYPE,
-                msg.getContentType(msgContext.getSOAPConstants())));
+                                           msg.getContentType(msgContext.getSOAPConstants())));
         method.setRequestHeader(new Header(HTTPConstants.HEADER_SOAP_ACTION, "\"" + action + "\""));
-        method.setUseDisk(false);
         String userID = msgContext.getUsername();
         String passwd = msgContext.getPassword();
 
@@ -358,7 +323,7 @@ public class CommonsHTTPSender extends BasicHandler {
         }
         if (userID != null) {
             Credentials cred = new UsernamePasswordCredentials(userID, passwd);
-            state.setCredentials(null, cred);
+            httpClient.getState().setCredentials(null, cred);
 
             // The following 3 lines should NOT be required. But Our SimpleAxisServer fails
             // during all-tests if this is missing.
@@ -370,9 +335,9 @@ public class CommonsHTTPSender extends BasicHandler {
         // don't forget the cookies!
         if (msgContext.getMaintainSession()) {
             String cookie =
-                    (String) msgContext.getProperty(HTTPConstants.HEADER_COOKIE);
+                (String) msgContext.getProperty(HTTPConstants.HEADER_COOKIE);
             String cookie2 =
-                    (String) msgContext.getProperty(HTTPConstants.HEADER_COOKIE2);
+                (String) msgContext.getProperty(HTTPConstants.HEADER_COOKIE2);
 
             if (cookie != null) {
                 method.addRequestHeader(HTTPConstants.HEADER_COOKIE, cookie);
@@ -384,7 +349,7 @@ public class CommonsHTTPSender extends BasicHandler {
 
         // process user defined headers for information.
         Hashtable userHeaderTable =
-                (Hashtable) msgContext.getProperty(HTTPConstants.REQUEST_HEADERS);
+            (Hashtable) msgContext.getProperty(HTTPConstants.REQUEST_HEADERS);
 
         if (userHeaderTable != null) {
             for (java.util.Iterator e = userHeaderTable.entrySet().iterator();
@@ -428,9 +393,9 @@ public class CommonsHTTPSender extends BasicHandler {
 
             if (log.isDebugEnabled()) {
                 log.debug(Messages.getMessage("match00",
-                        new String[]{"HTTPSender",
-                                     host,
-                                     pattern}));
+                                              new String[]{"HTTPSender",
+                                                           host,
+                                                           pattern}));
             }
             if (match(pattern, host, false)) {
                 return true;
@@ -482,7 +447,7 @@ public class CommonsHTTPSender extends BasicHandler {
                     return false;    // Character mismatch
                 }
                 if (!isCaseSensitive
-                        && (Character.toUpperCase(ch)
+                    && (Character.toUpperCase(ch)
                         != Character.toUpperCase(strArr[i]))) {
                     return false;    // Character mismatch
                 }
@@ -495,12 +460,12 @@ public class CommonsHTTPSender extends BasicHandler {
 
         // Process characters before first star
         while ((ch = patArr[patIdxStart]) != '*'
-                && (strIdxStart <= strIdxEnd)) {
+               && (strIdxStart <= strIdxEnd)) {
             if (isCaseSensitive && (ch != strArr[strIdxStart])) {
                 return false;    // Character mismatch
             }
             if (!isCaseSensitive
-                    && (Character.toUpperCase(ch)
+                && (Character.toUpperCase(ch)
                     != Character.toUpperCase(strArr[strIdxStart]))) {
                 return false;    // Character mismatch
             }
@@ -525,7 +490,7 @@ public class CommonsHTTPSender extends BasicHandler {
                 return false;    // Character mismatch
             }
             if (!isCaseSensitive
-                    && (Character.toUpperCase(ch)
+                && (Character.toUpperCase(ch)
                     != Character.toUpperCase(strArr[strIdxEnd]))) {
                 return false;    // Character mismatch
             }
@@ -573,12 +538,12 @@ public class CommonsHTTPSender extends BasicHandler {
                 for (int j = 0; j < patLength; j++) {
                     ch = patArr[patIdxStart + j + 1];
                     if (isCaseSensitive
-                            && (ch != strArr[strIdxStart + i + j])) {
+                        && (ch != strArr[strIdxStart + i + j])) {
                         continue strLoop;
                     }
                     if (!isCaseSensitive && (Character
-                            .toUpperCase(ch) != Character
-                            .toUpperCase(strArr[strIdxStart + i + j]))) {
+                                             .toUpperCase(ch) != Character
+                                             .toUpperCase(strArr[strIdxStart + i + j]))) {
                         continue strLoop;
                     }
                 }
