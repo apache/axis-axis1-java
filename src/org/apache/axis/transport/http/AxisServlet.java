@@ -84,6 +84,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.Enumeration;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  *
@@ -140,11 +142,14 @@ public class AxisServlet extends HttpServlet {
                     new FileProvider(webInfPath,
                                      Constants.SERVER_CONFIG_FILE);
 
-            // Obtain an AxisServer using the AxisServerFactory.  This will
-            // first check JNDI to see if there's a server at the specified
-            // name, which in this case is our WEB-INF path plus "/AxisServer".
-            // (servlet 2.3 has a getServletContextName() API which might be
-            // better used here)
+            Map environment = new HashMap();
+            environment.put("servletContext", getServletContext());
+            environment.put("provider", provider);
+
+            // Obtain an AxisServer by using whatever AxisServerFactory is
+            // registered.  The default one will just use the provider we
+            // passed in, and presumably JNDI ones will use the ServletContext
+            // to figure out a JNDI name to look up.
             //
             // The point of doing this rather than just creating the server
             // manually with the provider above is that we will then support
@@ -152,9 +157,8 @@ public class AxisServlet extends HttpServlet {
             // container, and pre-registered in JNDI at deployment time.  It
             // also means we put the standard configuration pattern in one
             // place.
-            getServletContext().setAttribute("AxisEngine",
-                        AxisServerFactory.getServer(webInfPath + "/AxisServer",
-                                                    provider));
+            getServletContext().setAttribute("AxisEngine", 
+                                             AxisServer.getServer(environment));
         }
         return (AxisServer)getServletContext().getAttribute("AxisEngine");
     }

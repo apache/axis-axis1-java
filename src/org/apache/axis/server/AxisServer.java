@@ -68,6 +68,8 @@ import org.apache.axis.configuration.FileProvider;
 import org.apache.axis.utils.AxisClassLoader;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
+
+import java.util.Map;
 /**
  *
  * @author Doug Davis (dug@us.ibm.com)
@@ -77,6 +79,36 @@ public class AxisServer extends AxisEngine
 {
     static Category category =
             Category.getInstance(AxisServer.class.getName());
+
+    private static AxisServerFactory factory = null;
+    
+    public static AxisServer getServer(Map environment) throws AxisFault
+    {
+        if (factory == null) {
+            String factoryClassName = System.getProperty("axis.ServerFactory");
+            System.err.println("Server factory class = " + factoryClassName);
+            if (factoryClassName != null) {
+                try {
+                    Class factoryClass = Class.forName(factoryClassName);
+                    System.err.println("Got Class");
+                    if (AxisServerFactory.class.isAssignableFrom(factoryClass))
+                        factory = (AxisServerFactory)factoryClass.newInstance();
+                } catch (Exception e) {
+                    // If something goes wrong here, should we just fall
+                    // through and use the default one?
+                    e.printStackTrace(System.err);
+                }
+            }
+            
+            if (factory == null) {
+                factory = new DefaultAxisServerFactory();
+            }
+        }
+        
+        System.err.println("factory is " + factory);
+        
+        return factory.getServer(environment);                
+    }
 
     /**
      * the AxisClient to be used by outcalling Services
