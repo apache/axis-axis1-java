@@ -48,6 +48,7 @@ public class TestArrayListConversions extends TestCase {
     Handler disp = hr.find("RPCDispatcher");    
     SOAPService service = new SOAPService(disp, "RPCDispatcher");
     service.addOption("className", "test.encoding.TestArrayListConversions");
+    service.addOption("methodName", "*");
     
     server.deployService(SERVICE_NAME, service);
     

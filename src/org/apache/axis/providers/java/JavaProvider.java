@@ -182,6 +182,27 @@ public abstract class JavaProvider extends BasicProvider {
         String  clsName    = (String) service.getOption( "className" );
         String  methodName = (String) service.getOption( "methodName" );
         
+        if ((clsName == null) || clsName.equals(""))
+          throw new AxisFault("Server.NoClassForService",
+            "No 'className' option was configured for the service '" +
+               serviceName + "'",
+            null, null);
+        
+        /** ??? Should we enforce setting methodName?  As it was,
+         * if it's null, we allowed any method.  This seems like it might
+         * be considered somewhat insecure (it's an easy mistake to
+         * make).  Tossing an Exception if it's not set, and using "*"
+         * to explicitly indicate "any method" is probably better.
+         */
+        if ((methodName == null) || methodName.equals(""))
+          throw new AxisFault("Server.NoMethodConfig",
+            "No 'methodName' option was configured for the service '" +
+               serviceName + "'",
+            null, null);
+        
+        if (methodName.equals("*"))
+          methodName = null;
+        
         try {
             /* We know we're doing a Java/RPC call so we can ask for the */
             /* SOAPBody as an RPCBody and process it accordingly.        */
