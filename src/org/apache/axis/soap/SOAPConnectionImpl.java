@@ -15,9 +15,9 @@
  */
 package org.apache.axis.soap;
 
+import org.apache.axis.Message;
 import org.apache.axis.attachments.Attachments;
 import org.apache.axis.client.Call;
-import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.utils.Messages;
 
 import javax.xml.soap.SOAPException;
@@ -70,8 +70,6 @@ public class SOAPConnectionImpl extends javax.xml.soap.SOAPConnection {
         try {
             Call call = new Call(endpoint.toString());
             ((org.apache.axis.Message)request).setMessageContext(call.getMessageContext());
-            call.getMessageContext().setProperty(SOAPMessage.CHARACTER_SET_ENCODING, request.getProperty(SOAPMessage.CHARACTER_SET_ENCODING));
-            SOAPEnvelope env = ((org.apache.axis.Message)request).getSOAPEnvelope();
             Attachments attachments = ((org.apache.axis.Message)
                     request).getAttachmentsImpl();
             if (attachments != null) {
@@ -88,7 +86,7 @@ public class SOAPConnectionImpl extends javax.xml.soap.SOAPConnection {
             
             call.setTimeout(timeout);
             call.setReturnClass(SOAPMessage.class);
-            call.invoke(env);
+            call.invoke((Message) request);
             return call.getResponseMessage();
         } catch (java.net.MalformedURLException mue){
             throw new SOAPException(mue);
