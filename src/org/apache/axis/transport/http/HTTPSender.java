@@ -328,6 +328,8 @@ public class HTTPSender extends BasicHandler {
                     outMsg = new Message( inp );
                 }
 
+                outMsg.setMessageType(org.apache.axis.encoding.
+                                                 ServiceDescription.RESPONSE);
                 msgContext.setResponseMessage( outMsg );
                 
                 // if we are maintaining session state,
