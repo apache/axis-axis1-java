@@ -254,7 +254,7 @@ public class TestCaseEmitter {
                     if ( "boolean".equals( params.returnType ) ) {
                         writer.println("assertTrue(\"Value is still false\", value != false);");
                     } else {
-                        writer.println("\"Value is still -3\", assertTrue(value != -3);");
+                        writer.println("assertTrue(\"Value is still -3\", value != -3);");
                     }
                 } else {
                     writer.println("assertTrue(\"Value is null\", value != null);");
