@@ -89,6 +89,9 @@ Copyright:
     <pathelement location="${xerces.jar}"/>
     <pathelement location="${junit.jar}"/>
     <pathelement location="${wsdl4j.jar}"/>
+    <fileset dir="./lib">
+     <include name="*.jar"/>
+    </fileset>
     <pathelement path="${java.class.path}"/>
   </path>
 
