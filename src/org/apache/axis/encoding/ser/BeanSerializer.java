@@ -199,7 +199,11 @@ public class BeanSerializer implements Serializer, Serializable {
                             ? baseJavaType : propValue.getClass();
                         context.serialize(qname,
                                           null,
-                                          propValue, javaType);
+                                          propValue,
+                                          javaType,
+                                          context.getQNameForClass(javaType),
+                                          true,
+                                          true);
                     } else {
                         // Collection of properties: serialize each one
                         int j=0;
