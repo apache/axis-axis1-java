@@ -83,7 +83,7 @@ public class SerializationContext
     
     int lastPrefixIndex = 1;
     
-    TypeMappingRegistry mappingRegistry = new SOAPTypeMappingRegistry();
+    private TypeMappingRegistry mappingRegistry = null;
     
     public SerializationContext(Writer writer)
     {
@@ -97,6 +97,8 @@ public class SerializationContext
     
     public TypeMappingRegistry getTypeMappingRegistry()
     {
+        if (mappingRegistry == null) 
+            mappingRegistry = new SOAPTypeMappingRegistry();
         return mappingRegistry;
     }
     
@@ -140,13 +142,13 @@ public class SerializationContext
     
     public QName getQNameForClass(Class cls)
     {
-        return mappingRegistry.getTypeQName(cls);
+        return getMappingRegistry().getTypeQName(cls);
     }
     
     public void serialize(QName qName, Attributes attributes, Object value)
         throws IOException
     {
-        mappingRegistry.serialize(qName, attributes, value, this);
+        getMappingRegistry().serialize(qName, attributes, value, this);
     }
     
     public void startElement(QName qName, Attributes attributes)
