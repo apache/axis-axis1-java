@@ -60,7 +60,7 @@ import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
 import org.apache.axis.providers.java.RPCProvider;
 import org.apache.axis.transport.http.HTTPConstants;
-import org.apache.axis.utils.AxisClassLoader;
+import org.apache.axis.utils.JWSClassLoader;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.utils.compiler.Compiler;
@@ -70,12 +70,7 @@ import org.apache.log4j.Category;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.List;
@@ -250,12 +245,17 @@ public class JWSProcessor extends BasicHandler
                          JavaUtils.getMessage("badCompile00", jFile),
                         null, new Element[] { root } );
                 }
-                AxisClassLoader.removeClassLoader( clsName );
+                JWSClassLoader.removeClassLoader( clsName );
             }
-            AxisClassLoader cl = msgContext.getClassLoader();
-            if ( !cl.isClassRegistered(clsName) )
-                cl.registerClass( clsName, cFile );
-            msgContext.setClassLoader( cl );
+
+            JWSClassLoader cl = JWSClassLoader.getClassLoader(clsName);
+            if (cl == null) {
+                cl = new JWSClassLoader(clsName,
+                                        msgContext.getClassLoader(),
+                                        cFile);
+            }
+
+            msgContext.setClassLoader(cl);
 
             /* Create a new RPCProvider - this will be the "service"   */
             /* that we invoke.                                                */
