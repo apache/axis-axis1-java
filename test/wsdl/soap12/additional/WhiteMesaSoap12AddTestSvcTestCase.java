@@ -191,7 +191,7 @@ public class WhiteMesaSoap12AddTestSvcTestCase extends junit.framework.TestCase 
                   echoSimpleTypesAsStructOfSchemaTypes(STRING_VAL,
                                                        new Integer(INT_VAL),
                                                        new Float(FLOAT_VAL),
-                                                       new Object());
+                                                       "another string");
         assertEquals(Constants.XSD_STRING, value.getType1());
         assertEquals(Constants.XSD_INT, value.getType2());
         assertEquals(Constants.XSD_FLOAT, value.getType3());
@@ -241,7 +241,7 @@ public class WhiteMesaSoap12AddTestSvcTestCase extends junit.framework.TestCase 
         // Test operation
         java.lang.String value = null;
         value = binding.echoString(STRING_VAL);
-        assertEquals(STRING_VAL, value);
+        assertEquals(STRING_VAL.toUpperCase(), value);
     }
 
     public void test10Soap12AddTestDocUpperPortEchoSenderFault() throws Exception {
