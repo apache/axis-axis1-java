@@ -246,11 +246,9 @@ public class Message {
     return ret;
   }
   public int getContentLength() throws org.apache.axis.AxisFault{ //This will have to give way someday to HTTP Chunking but for now kludge.
-    int ret= 0; 
-    if(mAttachments == null ||   0== mAttachments.getAttachmentCount()){
-      ret= mSOAPPart.getAsBytes().length; 
-    }else{
-        ret= mAttachments.getContentLength();
+      int ret= mSOAPPart.getAsBytes().length; //Force serialization if it hasn't happend it. //Rick Rineholt fix this later.
+      if(mAttachments != null &&   0 < mAttachments.getAttachmentCount()){
+          ret= mAttachments.getContentLength();
     }
     return ret;
   }

@@ -54,6 +54,7 @@
  */
 
 package org.apache.axis.attachments;
+import org.apache.log4j.Category;
 
 /**
  * @author Rick Rineholt 
@@ -78,6 +79,15 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
     protected static final int BOUNDARY_NOT_FOUND = Integer.MAX_VALUE;
                                    // Where in the stream a boundary is located.
     int boundaryPos = BOUNDARY_NOT_FOUND;
+
+    static int streamCount= 0; //number of streams produced.
+    protected synchronized static int newStreamNo(){
+        return ++ streamCount;
+    }
+    protected int streamNo=-1; //Keeps track of stream
+
+    static Category category =
+            Category.getInstance(BoundaryDelimitedStream.class.getName());
 
     /**
      * Gets the next stream. From the previous using the same buffer size to read.
@@ -106,6 +116,8 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
     protected BoundaryDelimitedStream(BoundaryDelimitedStream prev,
       int readbufsz ) {
         super (prev.is);
+
+        streamNo= newStreamNo();
         boundary = prev.boundary;
         boundaryLen = prev.boundaryLen;
         boundaryBufLen = prev.boundaryBufLen;
@@ -132,6 +144,7 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
      BoundaryDelimitedStream( java.io.InputStream is, byte[] boundary,
       int readbufsz) throws org.apache.axis.AxisFault {
         super (is);
+        streamNo= newStreamNo();
         closed = false;
         this.is = is;
         this.boundary = boundary;
@@ -140,8 +153,6 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
           //allways leave room for at least a 2x boundary
           //Most mime boundaries are 40 bytes or so.
         this.readbufsz = Math.max( (boundaryBufLen) * 2, readbufsz); 
-                                                                    
-
     }
      
     /**
@@ -159,6 +170,7 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
         if (readbuf == null) { //Allocate the buffer.
             readbuf = new byte[Math.max(len, readbufsz ) ];
             readBufEnd = is.read(readbuf);
+            if( readBufEnd < 0) throw new java.io.IOException( "End of stream encountered before final boundary marker."); 
             readBufPos = 0;
                                                        //Finds the boundary pos.
             boundaryPos = boundaryPosition( readbuf, 0, readBufEnd);
@@ -190,6 +202,8 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
                 System.arraycopy(readbuf, readBufPos, dstbuf, 0, movecnt);
                 //Read in the new data.
                 int readcnt = is.read(dstbuf, movecnt, dstbuf.length - movecnt);
+                
+                if( readcnt < 0) throw new java.io.IOException( "End of stream encountered before final boundary marker."); 
 
                 readBufEnd = readcnt + movecnt;
                 readbuf = dstbuf;
@@ -204,16 +218,17 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
         //read till we get the amount or the stream is finished.
         while ( !eos && bwritten < len );
 
-        if (false) {
+        if (category.isDebugEnabled()) {
             if (bwritten  > 0) {
                 byte tb[] = new byte[bwritten];
 
                 System.arraycopy(b, off, tb, 0, bwritten);
-                System.err.println("read(" + bwritten + ") \"" + 
+                category.debug("Read " + bwritten +
+                " from BoundaryDelimitedStream:"+ streamNo+"\"" + 
                 new String(tb) + "\"");
-                System.err.flush();
             }
         }
+
         return bwritten;
     }
 
