@@ -71,6 +71,8 @@ public class Constants {
   public static String NSPREFIX_SCHEMA_XSI = "xsi" ;
   public static String NSPREFIX_SCHEMA_XSD = "xsd" ;
 
+
+  public static String AXIS_NS = "http://xml.apache.org/axis/";
   public static String URI_SOAP_ENV =
                                "http://schemas.xmlsoap.org/soap/envelope/" ;
   public static String URI_SOAP_ENC =
