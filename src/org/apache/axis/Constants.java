@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights 
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -98,8 +98,8 @@ public class Constants {
     "http://www.w3.org/2001/XMLSchema-instance";
   public static final String URI_2001_SCHEMA_XSD =
     "http://www.w3.org/2001/XMLSchema";
-  public static final String URI_CURRENT_SCHEMA_XSI = URI_1999_SCHEMA_XSI;
-  public static final String URI_CURRENT_SCHEMA_XSD = URI_1999_SCHEMA_XSD;
+  public static final String URI_CURRENT_SCHEMA_XSI = URI_2001_SCHEMA_XSI;
+  public static final String URI_CURRENT_SCHEMA_XSD = URI_2001_SCHEMA_XSD;
   
   public static final String[] URIS_SCHEMA_XSI = {
     URI_1999_SCHEMA_XSI,
