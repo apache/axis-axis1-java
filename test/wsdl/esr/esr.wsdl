@@ -1,0 +1,62 @@
+<?xml version="1.0" ?>
+
+<definitions 
+    name="esr types test"
+    targetNamespace="urn:esr.wsdl.test"
+    xmlns:tns="urn:esr.wsdl.test"
+    xmlns:typens="urn:comprehensive-types.types.wsdl.test"
+    xmlns:typens2="urn:comprehensive-types2.types.wsdl.test"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+  <!-- message declns -->
+  <message name='EsrTest.esrRequest'>
+    <part name='value' type='xsd:short'/>
+  </message>
+  <message name='EsrTest.esrResponse'>
+    <part name='echoVal' type='xsd:short'/>
+    <part name='sqrtVal' type='xsd:double'/>
+  </message>
+
+  <!-- port type declns -->
+  <portType name='EsrTest'>
+    <operation name='esrInOut' parameterOrder='value echoVal sqrtVal'>
+      <input message='tns:EsrTest.esrRequest' />
+      <output message='tns:EsrTest.esrResponse' />
+    </operation>
+  </portType>
+
+  <!-- binding declns -->
+  <binding name="EsrTestBinding" type="tns:EsrTest">
+    <soap:binding
+        style="rpc"
+        transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="esrInOut">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+  </binding>
+
+  <!-- service decln -->
+  <service name="EsrTestService">
+    <port name="EsrTest" binding="tns:EsrTestBinding">
+      <soap:address location="http://localhost:8080/axis/services/EsrTest"/>
+    </port>
+  </service>
+
+</definitions>
+
