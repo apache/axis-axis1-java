@@ -172,7 +172,7 @@ public class SimpleAxisServer implements Runnable {
             msgContext.setServiceDescription(null);
             msgContext.setTargetService(null);
             msgContext.setResponseMessage(null);
-            msgContext.clearProperties();
+            msgContext.reset();
             //msgContext.setProperty("transport", "HTTPTransport");
             msgContext.setTransportName(transportName);
             
