@@ -63,16 +63,10 @@ import org.apache.axis.client.Transport;
 import org.apache.axis.components.jms.JMSVendorAdapter;
 import org.apache.axis.components.jms.JMSVendorAdapterFactory;
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.transport.jms.JMSConstants;
 import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 
-import javax.jms.Destination;
-import java.util.Collection;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Vector;
 
 /**
  * JMSTransport is the JMS-specific implemenation of org.apache.axis.client.Transport.
