@@ -55,12 +55,15 @@
 package org.apache.axis.deployment.wsdd;
 
 import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.encoding.SerializationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import javax.xml.rpc.namespace.QName;
 import java.io.Serializable;
+import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -71,426 +74,95 @@ import java.util.Vector;
 public abstract class WSDDElement
     implements Serializable
 {
-
-    /** XXX */
-    private Element element;
-
-    /** XXX */
-    private Hashtable children;
+    /** If we have documentation, it goes here */
+    private WSDDDocumentation documentation = null;
+    
+    private String name;
 
     /**
-     * Create a new element in DOM and wrap it in WSDD
-     * @param doc (Document) XXX
-     * @param parent (Node) XXX
-     * @param name (String) XXX
-     * @throws WSDDException XXX
-     */
-    public WSDDElement(Document doc, Node parent, String name)
-        throws WSDDException
+     * Default constructor
+     */ 
+    public WSDDElement()
     {
-        element = doc.createElementNS(WSDDConstants.WSDD_NS, name);
-        validateCandidateElement(element, name);
-        parent.appendChild(element);
     }
-
+    
     /**
      * Create an element in WSDD that wraps an extant DOM element
      * @param e (Element) XXX
      * @param name (String) XXX
      * @throws WSDDException XXX
      */
-    public WSDDElement(Element e, String name)
+    public WSDDElement(Element e)
         throws WSDDException
     {
-
-        validateCandidateElement(e, name);
-
-        element = e;
+        validateCandidateElement(e);
     }
 
     /**
-     *
-     * @param e XXX
-     * @param name XXX
-     * @throws WSDDException XXX
+     * Return the element name of a particular subclass.
+     */ 
+    abstract protected QName getElementName();
+    
+    /**
+     * Make sure everything looks kosher with the element name.
      */
-    private static void validateCandidateElement(Element e, String name)
+    private void validateCandidateElement(Element e)
         throws WSDDException
     {
-
+        QName name = getElementName();
+        
         if ((null == e) || (null == e.getNamespaceURI())
                 || (null == e.getLocalName())
-                ||!e.getNamespaceURI().equals(WSDDConstants.WSDD_NS)
-                ||!e.getLocalName().equals(name)) {
-            throw new WSDDException("Invalid WSDD Element");
+                ||!e.getNamespaceURI().equals(name.getNamespaceURI())
+                ||!e.getLocalName().equals(name.getLocalPart())) {
+            throw new WSDDException("Invalid WSDD Element '" + e.getLocalName() + "'");
         }
     }
 
-    /**
-     *
-     * @return XXX
-     */
-    public Element getElement()
+    public Element getChildElement(Element e, String name)
     {
-        return element;
+        Element [] elements = getChildElements(e, name);
+        if (elements.length == 0)
+            return null;
+        return elements[0];
     }
-
-    /**
-     *
-     * @return XXX
-     */
-    public String elementToString()
+    
+    public Element [] getChildElements(Element e, String name)
     {
-        return org.apache.axis.utils.XMLUtils.ElementToString(element);
+        NodeList nl = e.getChildNodes();
+        Vector els = new Vector();
+        
+        for (int i = 0; i < nl.getLength(); i++) {
+            Node thisNode = nl.item(i);
+            if (!(thisNode instanceof Element))
+                continue;
+            
+            Element el = (Element)thisNode;
+            if (el.getLocalName().equals(name)) {
+                els.add(el);
+            }
+        }
+        
+        Element [] elements = new Element [els.size()];
+        els.toArray(elements);
+
+        return elements;
     }
-
+    
     /**
-     *
-     * @return the newly created / tree-ified item,
-	 *          so that the caller might mutate it
-     */
-    public WSDDDocumentation createDocumentation()
-    {
-        removeDocumentation();
-
-        WSDDElement c = createChild(WSDDDocumentation.class);
-
-        return (WSDDDocumentation) c;
-    }
-
-    /**
-     *
-     */
-    public void removeDocumentation()
-    {
-        removeChild(getDocumentation());
-    }
-
-    /**
-     *
-     * @return XXX
+     * Get documentation (if any) for this WSDDElement.
+     * 
+     * @return the WSDDDocumentation object associated with this element, or
+     *         null.
      */
     public WSDDDocumentation getDocumentation()
     {
-
-        WSDDElement[] e = createArray("documentation",
-                                      WSDDDocumentation.class);
-
-        if (e.length == 0) {
-            return null;
-        }
-
-        return (WSDDDocumentation) e[0];
+        return documentation;
     }
 
     /**
-     *
-     * @param name XXX
-     * @return XXX
-     */
-    public String getAttribute(String name)
-    {
-        return element.getAttribute(name);
-    }
-
-    /**
-     *
-     * @param name XXX
-     * @param value XXX
-     */
-    public void setAttribute(String name, String value)
-    {
-
-        try {
-            element.setAttribute(name, value);
-        }
-        catch (Exception e) {
-
-            // fail stoically
-        }
-    }
-
-    /**
-     *
-     * @param name XXX
-     */
-    public void removeAttribute(String name)
-    {
-
-        try {
-            element.removeAttribute(name);
-        }
-        catch (Exception e) {
-
-            // fail stoically
-        }
-    }
-
-    /**
-     *
-     * @param name XXX
-     * @return XXX
-     */
-    public String getAttributeNS(String nameSpaceUri, String localName)
-    {
-        return element.getAttributeNS(nameSpaceUri, localName);
-    }
-
-    /**
-     *
-     * @param name XXX
-     * @param value XXX
-     */
-    public void setAttributeNS(String nameSpaceUri,
-								String prefix,
-								String localName,
-								String value)
-    {
-		String usePrefix;
-		String oldPrefix;
-		String oldNsUri;
-
-		// generate a prefix if it is absent
-		if (null == prefix || prefix.equals(""))
-		{
-			usePrefix = XMLUtils.getNewPrefix(element.getOwnerDocument(),
-								nameSpaceUri);
-		}
-		else
-		{
-			oldPrefix = XMLUtils.getPrefix(nameSpaceUri, element);
-
-			// always use 'xmlns' as it is a special-case
-			if (prefix.equals("xmlns"))
-			{
-				usePrefix = prefix;
-			}
-			// if no pre-existing one for this nsUri, then use the supplied prefix
-			//   unless that prefix maps to some (other) nsUri
-			else if (null == oldPrefix && null == XMLUtils.getNamespace(prefix, element))
-			{
-				usePrefix = prefix;
-			}
-			// duh. use the supplied prefix if this nsUri already had this one
-			else if (null != oldPrefix && oldPrefix.equals(prefix))
-			{
-				usePrefix = prefix;
-			}
-			else
-			{
-				usePrefix = XMLUtils.getNewPrefix(element.getOwnerDocument(),
-							nameSpaceUri);
-			}
-		}
-
-        try
-		{
-			/*********
-			System.out.println("About to saNS with " +
-					nameSpaceUri + " " +
-					usePrefix + ":" + localName + " "+
-					value);
-					*********/
-            element.setAttributeNS(nameSpaceUri, usePrefix + ":" + localName,
-								value);
-        }
-        catch (Exception e)
-		{
-			// What to do here?
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     *
-     * @param name XXX
-     */
-    public void removeAttributeNS(String nameSpace, String localName)
-    {
-
-        try {
-            element.removeAttributeNS(nameSpace, localName);
-        }
-        catch (Exception e) {
-
-            // fail stoically
-        }
-    }
-
-    /**
-     * Remove element from DOM and its wrapper from WSDD
-     * @param w XXX
-     */
-    public void removeChild(WSDDElement w)
-    {
-
-        if (null == w) {
-            return;
-        }
-
-        Element e = w.getElement();
-
-        if ((null == e) || (null == children)) {
-            return;
-        }
-
-        children.remove(e);
-        e.getParentNode().removeChild(e);
-    }
-
-    /**
-     *
-     * @param ww XXX
-     */
-    public void removeChildren(WSDDElement[] ww)
-    {
-
-        for (int i = 0; i < ww.length; i++) {
-            removeChild(ww[i]);
-        }
-    }
-
-    /**
-     * Insert element at this node in the DOM and in WSDD
-     * @param type XXX
-     * @return XXX
-     */
-    public WSDDElement createChild(Class type)
-    {
-
-        try {
-            Class[]     cc = { Document.class, Node.class };
-            Object[]    oo = { element.getOwnerDocument(), element };
-            WSDDElement w  =
-                (WSDDElement) type.getConstructor(cc).newInstance(oo);
-
-            addChild(w);
-
-            return w;
-        }
-        catch (Exception e) {
-			e.printStackTrace();
-            return null;
-        }
-    }
-
-    /**
-     * Insert extant WSDD element at this node of the WSDD
-     * @param w XXX
-     */
-    protected void addChild(WSDDElement w)
-    {
-
-        if (children == null) {
-            children = new Hashtable();
-        }
-
-        children.put(w.getElement(), w);
-        
-        Document doc = element.getOwnerDocument();
-        if (w.getElement().getOwnerDocument().equals(doc))
-            return;
-        
-        Node newEl = element.getOwnerDocument().importNode(w.getElement(), true);
-        element.appendChild(newEl);
-    }
-
-    /**
-     *
-     * @param e XXX
-     * @return XXX
-     */
-    protected WSDDElement getChild(Element e)
-    {
-
-        if (children == null) {
-            return null;
-        }
-
-        return (WSDDElement) children.get(e);
-    }
-
-    /**
-     *
-     * @param e XXX
-     * @return XXX
-     */
-    protected boolean hasChild(Element e)
-    {
-
-        if (children == null) {
-            return false;
-        }
-
-        return children.containsKey(e);
-    }
-
-    /**
-     * Used to create an array of child elements of a particular type
-     * @param name XXX
-     * @param type XXX
-     * @return XXX
-     */
-    WSDDElement[] createArray(String name, Class type)
-    {
-
-        String[] names = { name };
-        Class[]  types = { type };
-
-        return createArray(names, types);
-    }
-
-    /**
-     * Used to create an array of child elements of a particular type
-     *     NB: Result-array could possibly become stale, eg if its elements
-     *          are removed from DOM or WSDD trees
-     * @param names XXX
-     * @param types XXX
-     * @return XXX
-     */
-    WSDDElement[] createArray(String[] names, Class[] types)
-    {
-
-        try {
-            NodeList nl = element.getChildNodes();
-            Vector   v  = new Vector();
-
-            for (int n = 0; n < nl.getLength(); n++) {
-                if (nl.item(n).getNodeType() == Element.ELEMENT_NODE) {
-                    Element e = (Element) nl.item(n);
-
-                    if (e.getNamespaceURI().equals(WSDDConstants.WSDD_NS)) {
-                        for (int i = 0; i < names.length; i++) {
-                            if (e.getLocalName().equals(names[i])) {
-                                if (hasChild(e)) {
-                                    v.addElement(getChild(e));
-                                }
-                                else {
-                                    Class[]     c = { Element.class };
-                                    Object[]    o = { e };
-                                    WSDDElement w = null;
-
-                                    w = (WSDDElement) types[i]
-                                        .getConstructor(c).newInstance(o);
-
-                                    addChild(w);
-                                    v.addElement(w);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            Object[]      obj = v.toArray();
-            WSDDElement[] ret = new WSDDElement[obj.length];
-
-            System.arraycopy(obj, 0, ret, 0, obj.length);
-
-            return ret;
-        }
-        catch (Exception e) {
-            return null;
-        }
-    }
+     * Write this element out to a SerializationContext
+     */ 
+    abstract public void writeToContext(SerializationContext context)
+        throws IOException;
 }

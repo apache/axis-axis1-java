@@ -62,5 +62,6 @@ package org.apache.axis.deployment.wsdd;
  * @author Glen Daniels (gdaniels@macromedia.com)
  */ 
 public interface WSDDTypeMappingContainer {
-    public WSDDTypeMapping createTypeMapping();
+    public void addTypeMapping(WSDDTypeMapping mapping)
+           throws WSDDException;
 }

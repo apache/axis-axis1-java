@@ -57,9 +57,7 @@ package org.apache.axis;
 
 import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.deployment.DeploymentException;
-import org.apache.axis.deployment.simple.SimpleHandler;
 import org.apache.axis.deployment.wsdd.*;
-import org.apache.axis.deployment.wsdd.providers.WSDDJavaProvider;
 import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.encoding.Serializer;
@@ -71,6 +69,8 @@ import org.apache.axis.registries.SupplierRegistry;
 import org.apache.axis.session.Session;
 import org.apache.axis.session.SimpleSession;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.providers.java.RPCProvider;
+import org.apache.axis.providers.java.MsgProvider;
 import org.apache.log4j.Category;
 
 import javax.xml.rpc.namespace.QName;
@@ -333,9 +333,10 @@ public abstract class AxisEngine extends BasicHandler
     {
         handler.setName(key);
         WSDDDocument doc = (WSDDDocument)myRegistry.getConfigDocument();
-        WSDDHandler newHandler = doc.getDeployment().createHandler();
+        WSDDHandler newHandler = new WSDDHandler();
         newHandler.setName(key);
-        newHandler.setType("java:" + handler.getClass().getName());
+        newHandler.setType(new QName(WSDDConstants.WSDD_JAVA,
+                                     handler.getClass().getName()));
         myRegistry.deployHandler(newHandler);
     }
 
@@ -358,18 +359,24 @@ public abstract class AxisEngine extends BasicHandler
         service.setName(key);
         service.setEngine(this);
         
-        WSDDDocument doc = (WSDDDocument)myRegistry.getConfigDocument();
-        WSDDService newService = doc.getDeployment().createService();
+        WSDDService newService = new WSDDService();
         newService.setName(key);
         newService.setOptionsHashtable(service.getOptions());
-        WSDDProvider provider = newService.createProvider(WSDDJavaProvider.class);
-        provider.setAttribute("type", "java:" + service.getPivotHandler().getClass().getName());
-        provider.setProviderAttribute("className", (String)service.getOption("className"));
+        newService.setCachedService(service);
         
-        myRegistry.deployHandler(newService);
-
-        myRegistry.deployService(new SimpleHandler(new QName("", key),
-                                                   service));
+        Handler pivot = service.getPivotHandler();
+        if (pivot instanceof RPCProvider) {
+            newService.setProviderQName(WSDDConstants.JAVARPC_PROVIDER);
+        } else if (pivot instanceof MsgProvider) {
+            newService.setProviderQName(WSDDConstants.JAVAMSG_PROVIDER);
+        } else {
+            newService.setParameter("handlerClass", pivot.getClass().getName());
+            newService.setProviderQName(WSDDConstants.HANDLER_PROVIDER);
+        }
+//        WSDDProvider provider = newService.createProvider(WSDDJavaRPCProvider.class);
+//        provider.setAttribute("type", "java:" + service.getPivotHandler().getClass().getName());
+//        provider.setProviderAttribute("className", (String)service.getOption("className"));
+        myRegistry.deployService(newService);
     }
 
     /**
@@ -384,12 +391,19 @@ public abstract class AxisEngine extends BasicHandler
     /**
      * Deploy a Transport
      */
-    public void deployTransport(String key, Handler transport)
+    public void deployTransport(String key, SimpleTargetedChain transport)
         throws DeploymentException
     {
         transport.setName(key);
-        myRegistry.deployTransport(new SimpleHandler(new QName("", transport.getName()),
-                                                     transport));
+        WSDDTransport wt = new WSDDTransport();
+        wt.setName(key);
+        wt.setOptionsHashtable(transport.getOptions());
+        // !!! Request flow?
+        // !!! Response flow?
+        wt.setPivotQName(new QName(WSDDConstants.WSDD_JAVA,
+                                   transport.getPivotHandler().getClass().getName()));
+        
+        myRegistry.deployTransport(wt);
     }
 
     /**

@@ -58,12 +58,14 @@ import org.apache.axis.Handler;
 import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.deployment.wsdd.providers.WSDDBsfProvider;
 import org.apache.axis.deployment.wsdd.providers.WSDDComProvider;
-import org.apache.axis.deployment.wsdd.providers.WSDDJavaProvider;
+import org.apache.axis.deployment.wsdd.providers.WSDDJavaRPCProvider;
 import org.apache.axis.deployment.wsdd.providers.WSDDHandlerProvider;
+import org.apache.axis.deployment.wsdd.providers.WSDDJavaMsgProvider;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import javax.xml.rpc.namespace.QName;
 import java.util.Hashtable;
 
 
@@ -79,7 +81,6 @@ import java.util.Hashtable;
  * @author James Snell
  */
 public abstract class WSDDProvider
-    extends WSDDDeployableItem
 {
 
 // ** STATIC PROVIDER REGISTRY ** //
@@ -88,10 +89,9 @@ public abstract class WSDDProvider
     private static Hashtable providers = new Hashtable();
 
     static {
-        providers.put(WSDDConstants.WSDD_JAVA, WSDDJavaProvider.class);
-        providers.put(WSDDConstants.WSDD_COM, WSDDComProvider.class);
-        providers.put(WSDDConstants.WSDD_BSF, WSDDBsfProvider.class);
-        providers.put(WSDDConstants.WSDD_HANDLER, WSDDHandlerProvider.class);
+        providers.put(WSDDConstants.JAVARPC_PROVIDER, new WSDDJavaRPCProvider());
+        providers.put(WSDDConstants.JAVAMSG_PROVIDER, new WSDDJavaMsgProvider());
+        providers.put(WSDDConstants.HANDLER_PROVIDER, new WSDDHandlerProvider());
     }
 
     /**
@@ -106,100 +106,11 @@ public abstract class WSDDProvider
 
     /**
      *
-     * @param uri XXX
-     * @return XXX
-     */
-    public static Class getProviderClass(String uri)
-    {
-        return (Class) providers.get(uri);
-    }
-
-    /**
-     *
-     * @param uri XXX
-     * @return XXX
-     */
-    public static boolean hasProviderClass(String uri)
-    {
-        return providers.containsKey(uri);
-    }
-
-////////////////////////////////////
-
-    /**
-     * Wrap an extant DOM element in WSDD
-	 *
-     * @param e (Element) XXX
-     * @throws WSDDException XXX
-     */
-    public WSDDProvider(Element e)
-        throws WSDDException
-    {
-        super(e, "provider");
-    }
-
-    /**
-     *
-     * Create a new DOM element and wrap in WSDD
-     *
-     * @param d (Document) XXX
-     * @param n (Node) XXX
-     * @throws WSDDException XXX
-     */
-    public WSDDProvider(Document d, Node n)
-        throws WSDDException
-    {
-        super(d, n, "provider");
-    }
-
-    abstract protected Element getProviderElement()
-    	throws WSDDException;
-
-	/**
-	 *
-	 * @param name XXX
-	 * @return XXX
-	 */
-	public String getProviderAttribute(String name)
-		throws WSDDException
-	{
-		Element element = getProviderElement();
-
-	    return element.getAttribute(name);
-	}
-
-	/**
-	 *
-	 * @param name XXX
-	 * @param value XXX
-	 */
-	public void setProviderAttribute(String name, String value)
-		throws WSDDException
-	{
-		Element element = getProviderElement();
-
-	    try {
-	        element.setAttribute(name, value);
-	    }
-	    catch (Exception e) {
-
-	        throw new WSDDException(e);
-	    }
-	}
-
-
-    /**
-     *
      * @return XXX
      */
     public WSDDOperation[] getOperations()
     {
-        WSDDElement[]   e = createArray("operation", WSDDOperation.class);
-        WSDDOperation[] t = new WSDDOperation[e.length];
-
-        System.arraycopy(e, 0, t, 0, e.length);
-
-        return t;
+        return null;
     }
 
     /**
@@ -211,44 +122,30 @@ public abstract class WSDDProvider
     {
         WSDDOperation[] t = getOperations();
 
-        for (int n = 0; n < t.length; n++) {
-            if (t[n].getName().equals(name)) {
-                return t[n];
-            }
-        }
-
         return null;
     }
 
     /**
      *
-     * @param name XXX
-     * @return the newly created / tree-ified item,
-	 *          so that the caller might mutate it
-     */
-    public WSDDOperation createOperation()
-    {
-        return (WSDDOperation) createChild(WSDDOperation.class);
-    }
-
-    /**
-     *
-     */
-    public void removeOperation(WSDDOperation victim)
-    {
-        removeChild(victim);
-    }
-
-    /**
-     *
      * @param registry XXX
      * @return XXX
      * @throws Exception XXX
      */
-    public Handler getInstance(DeploymentRegistry registry)
+    public static Handler getInstance(QName providerType,
+                               WSDDService service,
+                               DeploymentRegistry registry)
         throws Exception
     {
-        return newProviderInstance(registry);
+        if (providerType == null)
+            throw new WSDDException("Null provider type passed to WSDDProvider!");
+        
+        WSDDProvider provider = (WSDDProvider)providers.get(providerType);
+        if (provider == null) {
+            throw new WSDDException("No provider type matches QName '" +
+                                    providerType + "'");
+        }
+        
+        return provider.newProviderInstance(service, registry);
     }
 
     /**
@@ -257,6 +154,7 @@ public abstract class WSDDProvider
      * @return XXX
      * @throws Exception XXX
      */
-    public abstract Handler newProviderInstance(DeploymentRegistry registry)
+    public abstract Handler newProviderInstance(WSDDService service,
+                                                DeploymentRegistry registry)
         throws Exception;
 }

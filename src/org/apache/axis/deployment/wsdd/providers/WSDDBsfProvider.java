@@ -55,10 +55,12 @@
 package org.apache.axis.deployment.wsdd.providers;
 
 import org.apache.axis.Handler;
+import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.deployment.wsdd.WSDDConstants;
 import org.apache.axis.deployment.wsdd.WSDDException;
 import org.apache.axis.deployment.wsdd.WSDDProvider;
+import org.apache.axis.deployment.wsdd.WSDDService;
 import org.apache.axis.providers.BSFProvider;
 import org.apache.axis.providers.BasicProvider;
 import org.apache.axis.utils.XMLUtils;
@@ -68,6 +70,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.xml.rpc.namespace.QName;
+import java.io.IOException;
 
 
 /**
@@ -76,104 +79,38 @@ import javax.xml.rpc.namespace.QName;
 public class WSDDBsfProvider
     extends WSDDProvider
 {
-
-    /**
-     *
-     * Wrap an extant DOM element in WSDD
-     *
-     * @param e (Element) XXX
-     * @throws WSDDException XXX
-     */
-    public WSDDBsfProvider(Element e)
-        throws WSDDException
-    {
-        super(e);
-    }
-
-    /**
-     *
-     * Create a new DOM element and wrap in WSDD
-     *
-     * @param d (Document) XXX
-     * @param n (Node) XXX
-     * @throws WSDDException XXX
-     */
-    public WSDDBsfProvider(Document d, Node n)
-        throws WSDDException
-    {
-        super(d, n);
-
-	    Element specificProvider =
-	    	d.createElementNS(WSDDConstants.WSDD_BSF, "bsf:provider");
-	    getElement().appendChild(specificProvider);
-    }
-
-    protected Element getProviderElement()
-    	throws WSDDException
-    {
-	    Element prov =
-	        (Element) getElement()
-	            .getElementsByTagNameNS(WSDDConstants.WSDD_BSF, "provider")
-	            .item(0);
-
-	    if (prov == null) {
-	        throw new WSDDException(
-	            "The BSF Provider requires the presence of a bsf:provider element in the WSDD");
-	    }
-
-    	return prov;
-    }
-
-    /**
-     *
-     * @param registry XXX
-     * @return XXX
-     * @throws Exception XXX
-     */
-    public Handler newProviderInstance(DeploymentRegistry registry)
+    public Handler newProviderInstance(WSDDService service,
+                                       DeploymentRegistry registry)
         throws Exception
     {
-        Class _class = getJavaClass();
-
-        if (_class == null) {
-            _class = Class.forName("org.apache.axis.handlers.providers.BSFProvider");
-        }
-
-        BasicProvider provider = (BasicProvider) _class.newInstance();
-
-        // set the basic java provider deployment options
-        Element prov = getProviderElement();
-
-        String option = prov.getAttribute("language");
+        Handler provider = new org.apache.axis.providers.BSFProvider();
+        
+        String option = service.getParameter("language");
 
         if (!option.equals("")) {
             provider.addOption(BSFProvider.OPTION_LANGUAGE, option);
         }
 
-        option = prov.getAttribute("src");
+        option = service.getParameter("src");
 
         if (!option.equals("")) {
             provider.addOption(BSFProvider.OPTION_SRC, option);
         }
 
-        option = XMLUtils.getInnerXMLString(prov);
+        // !!! What to do here?
+        //option = XMLUtils.getInnerXMLString(prov);
 
         if (!option.equals("")) {
             provider.addOption(BSFProvider.OPTION_SCRIPT, option);
         }
 
-        // collect the information about the operations
-        NodeList nl =
-            getElement().getElementsByTagNameNS(WSDDConstants.WSDD_NS,
-                                                "operation");
-
-        for (int n = 0; n < nl.getLength(); n++) {
-            Element op = (Element) nl.item(n);
-
-            provider.addOperation(op.getAttribute("name"),
-                                  new QName(op.getAttribute("qName"), op));
-        }
-
         return provider;
+    }
+
+    /**
+     * Write this element out to a SerializationContext
+     */
+    public void writeToContext(SerializationContext context)
+            throws IOException {
     }
 }

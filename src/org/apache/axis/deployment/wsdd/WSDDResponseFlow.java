@@ -58,14 +58,22 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import javax.xml.rpc.namespace.QName;
+
 
 /**
  *
  */
 public class WSDDResponseFlow
-    extends WSDDFlow
+    extends WSDDChain
 {
-
+    /**
+     * Default constructor
+     */ 
+    public WSDDResponseFlow()
+    {
+    }
+    
     /**
      *
      * @param e (Element) XXX
@@ -74,19 +82,10 @@ public class WSDDResponseFlow
     public WSDDResponseFlow(Element e)
         throws WSDDException
     {
-        super(e, "responseFlow");
+        super(e);
     }
 
-    /**
-     *
-     * @param d (Document) XXX
-     * @param n (Node) XXX
-     * @throws WSDDException XXX
-     */
-    public WSDDResponseFlow(Document d, Node n)
-        throws WSDDException
-    {
-        super(d, n, "responseFlow");
+    protected QName getElementName() {
+        return WSDDConstants.RESPFLOW_QNAME;
     }
-
 }

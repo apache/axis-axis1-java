@@ -52,49 +52,27 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
+package org.apache.axis.deployment.wsdd.providers;
 
-package org.apache.axis.deployment.simple;
-
-import org.apache.axis.deployment.DeployableItem;
-import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.Handler;
+import org.apache.axis.deployment.DeploymentRegistry;
+import org.apache.axis.deployment.wsdd.WSDDProvider;
+import org.apache.axis.deployment.wsdd.WSDDService;
 
-import javax.xml.rpc.namespace.QName;
 
 /**
- * SimpleHandler is just a holder for pre-made Handlers
- * (just like SimpleSupplier) which follows our DeployableItem interface.
- * 
- * This is used for dealing with processing old-style XML config (see
- * Admin.java for usages).
  *
- * @author Glen Daniels (gdaniels@macromedia.com)
  */
-public class SimpleHandler implements DeployableItem {
-    QName qName;
-    Handler handler;
-    
-    public SimpleHandler(QName qName, Handler handler)
+public class WSDDJavaRPCProvider
+    extends WSDDProvider
+{
+    /**
+     *
+     */
+    public Handler newProviderInstance(WSDDService service,
+                                       DeploymentRegistry registry)
+        throws Exception
     {
-        this.qName = qName;
-        this.handler = handler;
-    }
-    /**
-     *
-     * @return XXX
-     */
-    public QName getQName() {
-        return qName;
-    }
-
-    /**
-     *
-     * @param registry XXX
-     * @return XXX
-     * @throws Exception XXX
-     */
-    public Handler getInstance(DeploymentRegistry registry)
-            throws Exception {
-        return handler;
+        return new org.apache.axis.providers.java.RPCProvider();
     }
 }

@@ -59,12 +59,19 @@ import org.apache.axis.Handler;
 import org.apache.axis.deployment.wsdd.WSDDGlobalConfiguration;
 import org.apache.axis.deployment.wsdd.WSDDDocument;
 import org.apache.axis.deployment.wsdd.WSDDHandler;
+import org.apache.axis.deployment.wsdd.WSDDConstants;
+import org.apache.axis.deployment.wsdd.WSDDService;
+import org.apache.axis.deployment.wsdd.WSDDTransport;
+import org.apache.axis.deployment.wsdd.WSDDTypeMapping;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.encoding.SerializationContext;
 import org.w3c.dom.Document;
 
 import javax.xml.rpc.namespace.QName;
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.io.IOException;
 
 
 /**
@@ -111,9 +118,8 @@ public class SimpleDeploymentManager
     public void deploy(DeploymentDocument deployment)
         throws DeploymentException
     {
-        if (doc == null)
-            doc = deployment;
         deployment.deploy(this);
+        doc = deployment;
     }
 
     /**
@@ -165,9 +171,7 @@ public class SimpleDeploymentManager
     public void deployHandler(DeployableItem item)
         throws DeploymentException
     {
-        if (doc == null) doc = new WSDDDocument();
         handlers.put(item.getQName(), item);
-        doc.importItem(item);
     }
 
     /**
@@ -178,9 +182,7 @@ public class SimpleDeploymentManager
     public void deployService(DeployableItem item)
         throws DeploymentException
     {
-        if (doc == null) doc = new WSDDDocument();
         services.put(item.getQName(), item);
-        doc.importItem(item);
     }
 
     /**
@@ -191,9 +193,7 @@ public class SimpleDeploymentManager
     public void deployTransport(DeployableItem item)
         throws DeploymentException
     {
-        if (doc == null) doc = new WSDDDocument();
         transports.put(item.getQName(), item);
-        doc.importItem(item);
     }
 
     /**
@@ -305,7 +305,9 @@ public class SimpleDeploymentManager
     public TypeMappingRegistry getTypeMappingRegistry(String encodingStyle)
         throws DeploymentException
     {
-
+        if (encodingStyle == null)
+            encodingStyle = "";
+        
         TypeMappingRegistry tmr =
             (TypeMappingRegistry) mappings.get(encodingStyle);
 
@@ -330,5 +332,36 @@ public class SimpleDeploymentManager
     public void removeTypeMappingRegistry(String encodingStyle)
     {
         mappings.remove(encodingStyle);
+    }
+    
+    public void writeToContext(SerializationContext context)
+        throws IOException
+    {
+        context.registerPrefixForURI("", WSDDConstants.WSDD_NS);
+        context.registerPrefixForURI("java", WSDDConstants.WSDD_JAVA);
+        context.startElement(new QName(WSDDConstants.WSDD_NS, "deployment"),
+                             null);
+        Iterator i = handlers.values().iterator();
+        while (i.hasNext()) {
+            WSDDHandler handler = (WSDDHandler)i.next();
+            handler.writeToContext(context);
+        }
+        
+        i = services.values().iterator();
+        while (i.hasNext()) {
+            WSDDService service = (WSDDService)i.next();
+            service.writeToContext(context);
+        }
+        
+        i = transports.values().iterator();
+        while (i.hasNext()) {
+            WSDDTransport transport = (WSDDTransport)i.next();
+            transport.writeToContext(context);
+        }
+        
+        TypeMappingRegistry tmr = getTypeMappingRegistry("");
+        tmr.dumpToSerializationContext(context);
+        
+        context.endElement();
     }
 }

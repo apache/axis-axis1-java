@@ -57,8 +57,10 @@ package org.apache.axis.deployment.wsdd;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.apache.axis.encoding.SerializationContext;
 
 import javax.xml.rpc.namespace.QName;
+import java.io.IOException;
 
 /**
  *
@@ -66,7 +68,6 @@ import javax.xml.rpc.namespace.QName;
 public class WSDDOperation
     extends WSDDElement
 {
-
     /**
      *
      * @param e (Element) XXX
@@ -75,54 +76,17 @@ public class WSDDOperation
     public WSDDOperation(Element e)
         throws WSDDException
     {
-        super(e, "operation");
+        super(e);
     }
 
     /**
-     *
-     * @param d (Document) XXX
-     * @param n (Node) XXX
-     * @throws WSDDException XXX
+     * Write this element out to a SerializationContext
      */
-    public WSDDOperation(Document d, Node n)
-        throws WSDDException
-    {
-        super(d, n, "operation");
+    public void writeToContext(SerializationContext context)
+            throws IOException {
     }
 
-    /**
-     *
-     * @return XXX
-     */
-    public String getName()
-    {
-        return getAttribute("name");
-    }
-
-    /**
-     *
-     * @param name XXX
-     */
-    public void setName(String name)
-    {
-        setAttribute("name", name);
-    }
-
-    /**
-     *
-     * @return XXX
-     */
-    public QName getQName()
-    {
-        return new QName(getAttribute("qName"), getElement());
-    }
-
-    /**
-     *
-     * @param name XXX
-     */
-    public void setQName(QName name)
-    {
-        setAttribute("qName", name.toString());
+    protected QName getElementName() {
+        return new QName("", "operation");
     }
 }

@@ -57,34 +57,50 @@ package org.apache.axis.deployment.wsdd;
 import org.apache.axis.Handler;
 import org.apache.axis.TargetedChain;
 import org.apache.axis.FaultableHandler;
+import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.handlers.soap.SOAPService;
-import org.apache.axis.encoding.TypeMappingRegistry;
-import org.apache.axis.encoding.SOAPTypeMappingRegistry;
-import org.apache.axis.encoding.Serializer;
-import org.apache.axis.encoding.DeserializerFactory;
+import org.apache.axis.encoding.*;
 import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.deployment.DeploymentException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.rpc.namespace.QName;
+import java.util.Vector;
+import java.io.IOException;
 
 
 /**
  *
  */
 public class WSDDService
-    extends WSDDDeployableItem
+    extends WSDDTargetedChain
     implements WSDDTypeMappingContainer
 {
-    public static final QName DEFAULT_QNAME =
-            new QName(WSDDConstants.WSDD_JAVA,
-                      "org.apache.axis.handlers.soap.SOAPService");
-    
     public TypeMappingRegistry tmr = null;
+    
+    private Vector faultFlows = new Vector();
+    
+    private String descriptionURL;
 
+    private SOAPService cachedService = null;
+    
+    /**
+     * Our provider - used to figure out which Handler we use as a service
+     * pivot (see getInstance() below)
+     */ 
+    private QName providerQName;
+
+    /**
+     * Default constructor
+     */ 
+    public WSDDService()
+    {
+    }
+    
     /**
      *
      * @param e (Element) XXX
@@ -93,250 +109,63 @@ public class WSDDService
     public WSDDService(Element e)
         throws WSDDException
     {
-        super(e, "service");
-    }
-
-    /**
-     *
-     * @param d (Document) XXX
-     * @param n (Node) XXX
-     * @throws WSDDException XXX
-     */
-    public WSDDService(Document d, Node n)
-        throws WSDDException
-    {
-        super(d, n, "service");
-    }
-
-    /**
-     *
-     * @return XXX
-     */
-    public QName getType()
-    {
-        QName type = super.getType();
-
-        if (type == null) {
-            type = DEFAULT_QNAME;
+        super(e);
+        
+        Element [] typeMappings = getChildElements(e, "typeMapping");
+        for (int i = 0; i < typeMappings.length; i++) {
+            WSDDTypeMapping typeMapping = new WSDDTypeMapping(typeMappings[i]);
+            addTypeMapping(typeMapping);
+        }
+        
+        Element reqFlowEl = getChildElement(e, "requestFlow");
+        if (reqFlowEl != null) {
+            WSDDRequestFlow reqFlow = new WSDDRequestFlow(reqFlowEl);
+            setRequestFlow(reqFlow);
         }
 
-        return type;
+        Element respFlowEl = getChildElement(e, "responseFlow");
+        if (respFlowEl != null) {
+            WSDDResponseFlow respFlow = new WSDDResponseFlow(respFlowEl);
+            setResponseFlow(respFlow);
+        }
+        
+        String typeStr = e.getAttribute("provider");
+        if (typeStr != null && !typeStr.equals(""))
+            providerQName = XMLUtils.getQNameFromString(typeStr, e);
     }
 
+    protected QName getElementName()
+    {
+        return WSDDConstants.SERVICE_QNAME;
+    }
+    
     /**
-     *
-     * @return XXX
+     * Get any service description URL which might be associated with this
+     * service.
+     * 
+     * @return a String containing a URL, or null.
      */
     public String getServiceDescriptionURL()
     {
-        return getAttribute("description");
+        return descriptionURL;
     }
 
     /**
-     *
-     * @param sdUrl XXX
+     * Set the service description URL for this service.
+     * 
+     * @param sdUrl a String containing a URL
      */
     public void setServiceDescriptionURL(String sdUrl)
     {
-        setAttribute("description", sdUrl);
+        descriptionURL = sdUrl;
     }
 
-    /**
-     *
-     * @return XXX
-     */
-    public WSDDTypeMapping[] getTypeMappings()
-    {
-        WSDDElement[]     e = createArray("typeMapping",
-                                          WSDDTypeMapping.class);
-        WSDDTypeMapping[] t = new WSDDTypeMapping[e.length];
-
-        System.arraycopy(e, 0, t, 0, e.length);
-
-        return t;
+    public QName getProviderQName() {
+        return providerQName;
     }
 
-    /**
-     *
-     * @param name XXX
-     * @return XXX
-     */
-    public WSDDTypeMapping getTypeMapping(String name)
-    {
-        WSDDTypeMapping[] t = getTypeMappings();
-
-        for (int n = 0; n < t.length; n++) {
-            if (t[n].getName().equals(name)) {
-                return t[n];
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     *
-     * @param name XXX
-     * @return the newly created / tree-ified item,
-	 *          so that the caller might mutate it
-     */
-    public WSDDTypeMapping createTypeMapping()
-    {
-        return (WSDDTypeMapping) createChild(WSDDTypeMapping.class);
-    }
-
-    /**
-     *
-     */
-    public void removeTypeMapping(WSDDTypeMapping victim)
-    {
-        removeChild(victim);
-    }
-
-    /**
-     *
-     * @return XXX
-     */
-    public WSDDRequestFlow getRequestFlow()
-    {
-        WSDDElement[] e = createArray("requestFlow", WSDDRequestFlow.class);
-
-        if (e.length != 0) {
-            return (WSDDRequestFlow) e[0];
-        }
-
-        return null;
-    }
-
-    /**
-     *
-     * @return the newly created / tree-ified item,
-	 *          so that the caller might mutate it
-     */
-    public WSDDRequestFlow createRequestFlow()
-    {
-        removeRequestFlow();
-
-        return (WSDDRequestFlow) createChild(WSDDRequestFlow.class);
-    }
-
-    /**
-     *
-     */
-    public void removeRequestFlow()
-    {
-        removeChild(getRequestFlow());
-    }
-
-    /**
-     *
-     * @return XXX
-     */
-    public WSDDProvider getProvider()
-    {
-        NodeList nl =
-            getElement().getElementsByTagNameNS(WSDDConstants.WSDD_NS,
-                                                "provider");
-        Element  e  = (Element) nl.item(0);
-
-		if (null == e) return null;
-
-        Node     ex = null;
-
-        ex = e.getFirstChild();
-
-        while (ex != null) {
-            if (ex.getNodeType() == Element.ELEMENT_NODE) {
-                if (ex.getLocalName().equals("provider")) {
-                    break;
-                }
-            }
-
-            ex = ex.getNextSibling();
-        }
-
-        if (ex == null) {
-            return null;
-        }
-        else {
-            if (hasChild(e)) {
-                return (WSDDProvider) getChild(e);
-            }
-            else {
-				try
-				{
-	                String      exuri = ex.getNamespaceURI();
-	                Class       c     = WSDDProvider.getProviderClass(exuri);
-	                Class[]     cs    = { Element.class };
-	                Object[]    p     = { e };
-	                WSDDElement w     =
-	                    (WSDDElement) c.getConstructor(cs).newInstance(p);
-
-	                addChild(w);
-
-	                return (WSDDProvider) w;
-				}
-				catch (Exception exception)
-				{
-					return null;
-				}
-            }
-        }
-    }
-
-    /**
-     *
-     * @return the newly created / tree-ified item,
-	 *          so that the caller might mutate it
-     */
-    public WSDDProvider createProvider(Class providerSubclass)
-    {
-        removeProvider();
-
-        return (WSDDProvider) createChild(providerSubclass);
-    }
-
-    /**
-     *
-     */
-    public void removeProvider()
-    {
-        removeChild(getProvider());
-    }
-
-    /**
-     *
-     * @return XXX
-     */
-    public WSDDResponseFlow getResponseFlow()
-    {
-        WSDDElement[] e = createArray("responseFlow", WSDDResponseFlow.class);
-
-        if (e.length != 0) {
-            return (WSDDResponseFlow) e[0];
-        }
-
-        return null;
-    }
-
-    /**
-     *
-     * @return the newly created / tree-ified item,
-	 *          so that the caller might mutate it
-     */
-    public WSDDResponseFlow createResponseFlow()
-    {
-        removeResponseFlow();
-
-        return (WSDDResponseFlow) createChild(WSDDResponseFlow.class);
-    }
-
-    /**
-     *
-     */
-    public void removeResponseFlow()
-    {
-        removeChild(getResponseFlow());
+    public void setProviderQName(QName providerQName) {
+        this.providerQName = providerQName;
     }
 
     /**
@@ -345,11 +174,8 @@ public class WSDDService
      */
     public WSDDFaultFlow[] getFaultFlows()
     {
-        WSDDElement[]   e = createArray("faultFlow", WSDDFaultFlow.class);
-        WSDDFaultFlow[] t = new WSDDFaultFlow[e.length];
-
-        System.arraycopy(e, 0, t, 0, e.length);
-
+        WSDDFaultFlow[] t = new WSDDFaultFlow[faultFlows.size()];
+        faultFlows.toArray(t);
         return t;
     }
 
@@ -358,36 +184,17 @@ public class WSDDService
      * @param name XXX
      * @return XXX
      */
-    public WSDDFaultFlow getFaultFlow(String name)
+    public WSDDFaultFlow getFaultFlow(QName name)
     {
         WSDDFaultFlow[] t = getFaultFlows();
 
         for (int n = 0; n < t.length; n++) {
-            if (t[n].getName().equals(name)) {
+            if (t[n].getQName().equals(name)) {
                 return t[n];
             }
         }
 
         return null;
-    }
-
-    /**
-     *
-     * @param name XXX
-     * @return the newly created / tree-ified item,
-	 *          so that the caller might mutate it
-     */
-    public WSDDFaultFlow createFaultFlow()
-    {
-        return (WSDDFaultFlow) createChild(WSDDFaultFlow.class);
-    }
-
-    /**
-     *
-     */
-    public void removeFaultFlow(WSDDFaultFlow victim)
-    {
-        removeChild(victim);
     }
 
     /**
@@ -399,46 +206,31 @@ public class WSDDService
     public Handler getInstance(DeploymentRegistry registry)
         throws Exception
     {
-        SOAPService   service  = (SOAPService)super.makeNewInstance(registry);
-        WSDDFlow      request  = getRequestFlow();
-        WSDDFlow      response = getResponseFlow();
+        if (cachedService != null) {
+            return cachedService;
+        }
+        
+        SOAPService   service  = new SOAPService();
+        service.setOptions(getParametersTable());
+        
+        WSDDChain     request  = getRequestFlow();
+        WSDDChain      response = getResponseFlow();
         
         if (request != null) {
             service.setRequestHandler(request.getInstance(registry));
         }
         
-        service.setPivotHandler(getProvider().getInstance(registry));
+        //service.setPivotHandler(getProvider().getInstance(registry));
+        Handler providerHandler = WSDDProvider.getInstance(providerQName,
+                                                           this,
+                                                           registry);
+        if (providerHandler == null)
+            throw new WSDDException("Couldn't construct provider.");
+        
+        service.setPivotHandler(providerHandler);
         
         if (response != null) {
             service.setResponseHandler(response.getInstance(registry));
-        }
-        
-        if (tmr == null) {
-            tmr = new TypeMappingRegistry();
-            tmr.setParent(registry.getTypeMappingRegistry(""));
-            
-            WSDDTypeMapping [] mappings = getTypeMappings();
-            for (int n = 0; n < mappings.length; n++) {
-                WSDDTypeMapping     mapping = mappings[n];
-                
-                Serializer          ser   = null;
-                DeserializerFactory deser = null;
-                
-                ser   = (Serializer) mapping.getSerializer().newInstance();
-                deser =
-                        (DeserializerFactory) mapping.getDeserializer()
-                        .newInstance();
-                
-                if (ser != null) {
-                    tmr.addSerializer(mapping.getLanguageSpecificType(),
-                                      mapping.getQName(), ser);
-                }
-                
-                if (deser != null) {
-                    tmr.addDeserializerFactory(mapping.getQName(), mapping
-                                                                   .getLanguageSpecificType(), deser);
-                }
-            }
         }
         
         service.setTypeMappingRegistry(tmr);
@@ -449,10 +241,71 @@ public class WSDDService
             for (int i = 0; i < faultFlows.length; i++) {
                 WSDDFaultFlow flow = faultFlows[i];
                 Handler faultHandler = flow.getInstance(registry);
-                wrapper.addOption("fault-" + flow.getName(), faultHandler);
+                wrapper.addOption("fault-" + flow.getQName().getLocalPart(), faultHandler);
             }
         }
         
+        cachedService = service;
         return service;
+    }
+    
+    public void addTypeMapping(WSDDTypeMapping mapping)
+        throws WSDDException
+    {
+        if (tmr == null)
+            tmr = new TypeMappingRegistry();
+
+        try {
+            Serializer          ser   = null;
+            DeserializerFactory deser = null;
+        
+            ser   = (Serializer) mapping.getSerializer().newInstance();
+            deser =
+                    (DeserializerFactory) mapping.getDeserializer()
+                    .newInstance();
+        
+            if (ser != null) {
+                tmr.addSerializer(mapping.getLanguageSpecificType(),
+                                  mapping.getQName(), ser);
+            }
+        
+            if (deser != null) {
+                tmr.addDeserializerFactory(mapping.getQName(), mapping
+                                                               .getLanguageSpecificType(), deser);
+            }
+        } catch (InstantiationException e) {
+            throw new WSDDException(e);
+        } catch (IllegalAccessException e) {
+            throw new WSDDException(e);
+        } catch (ClassNotFoundException e) {
+            throw new WSDDException(e);
+        }
+    }
+
+    /**
+     * Write this element out to a SerializationContext
+     */
+    public void writeToContext(SerializationContext context)
+            throws IOException {
+        AttributesImpl attrs = new AttributesImpl();
+        QName name = getQName();
+        if (name != null) {
+            attrs.addAttribute("", "name", "name",
+                               "CDATA", context.qName2String(name));
+        }
+        if (providerQName != null) {
+            attrs.addAttribute("", "provider", "provider",
+                               "CDATA", context.qName2String(providerQName));
+        }
+        
+        context.startElement(WSDDConstants.SERVICE_QNAME, attrs);
+        writeFlowsToContext(context);
+        writeParamsToContext(context);
+        context.endElement();
+    }
+    
+    public void setCachedService(SOAPService service)
+    {
+        cachedService = service;
     }
 }

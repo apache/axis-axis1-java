@@ -55,10 +55,16 @@
 package org.apache.axis.deployment.wsdd;
 
 import org.apache.axis.Handler;
+import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.deployment.DeploymentRegistry;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.xml.sax.helpers.AttributesImpl;
+
+import javax.xml.rpc.namespace.QName;
+import java.io.IOException;
 
 
 /**
@@ -68,6 +74,13 @@ public class WSDDHandler
     extends WSDDDeployableItem
 {
     /**
+     * Default constructor
+     */ 
+    public WSDDHandler()
+    {
+    }
+    
+    /**
      *
      * @param e (Element) XXX
      * @throws WSDDException XXX
@@ -75,44 +88,29 @@ public class WSDDHandler
     public WSDDHandler(Element e)
         throws WSDDException
     {
-        super(e, "handler");
+        super(e);
     }
 
-    /**
-     *
-     * @param d (Document) XXX
-     * @param n (Node) XXX
-     * @throws WSDDException XXX
-     */
-    public WSDDHandler(Document d, Node n)
-        throws WSDDException
+    protected QName getElementName()
     {
-        super(d, n, "handler");
+        return WSDDConstants.HANDLER_QNAME;
     }
 
-    /**
-     *
-     * @param d (Document) XXX
-     * @param n (Node) XXX
-     * @param subClass (String) XXX
-     * @throws WSDDException XXX
-     */
-    public WSDDHandler(Document d, Node n, String subClass)
-        throws WSDDException
+    public void writeToContext(SerializationContext context)
+        throws IOException
     {
-        super(d, n, subClass);
-    }
-
-    /**
-     *
-     * @param e (Element) XXX
-     * @param n (String) XXX
-     * @throws WSDDException XXX
-     */
-    public WSDDHandler(Element e, String n)
-        throws WSDDException
-    {
-        super(e, n);
+        AttributesImpl attrs = new AttributesImpl();
+        QName name = getQName();
+        if (name != null) {
+            attrs.addAttribute("", "name", "name",
+                               "CDATA", context.qName2String(name));
+        }
+        attrs.addAttribute("", "type", "type",
+                           "CDATA", context.qName2String(getType()));
+        context.startElement(new QName(WSDDConstants.WSDD_NS, "handler"), 
+                             attrs);
+        writeParamsToContext(context);
+        context.endElement();
     }
 
     /**

@@ -57,6 +57,10 @@ package org.apache.axis.deployment.wsdd;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.apache.axis.encoding.SerializationContext;
+
+import javax.xml.rpc.namespace.QName;
+import java.io.IOException;
 
 
 /**
@@ -65,7 +69,13 @@ import org.w3c.dom.Node;
 public class WSDDDocumentation
     extends WSDDElement
 {
-
+    private String value;
+ 
+    protected QName getElementName()
+    {
+        return WSDDConstants.DOC_QNAME;
+    }
+    
     /**
      *
      * @param e (Element) XXX
@@ -74,19 +84,7 @@ public class WSDDDocumentation
     public WSDDDocumentation(Element e)
         throws WSDDException
     {
-        super(e, "documentation");
-    }
-
-    /**
-     *
-     * @param d (Document) XXX
-     * @param n (Node) XXX
-     * @throws WSDDException XXX
-     */
-    public WSDDDocumentation(Document d, Node n)
-        throws WSDDException
-    {
-        super(d, n, "documentation");
+        super(e);
     }
 
     /**
@@ -95,10 +93,7 @@ public class WSDDDocumentation
      */
     public String getValue()
     {
-		Node node = getElement().getFirstChild();
-		if (null == node) return "";
-		
-        return node.getNodeValue();
+        return value;
     }
 
     /**
@@ -107,17 +102,17 @@ public class WSDDDocumentation
      */
     public void setValue(String value)
     {
-        Node node = getElement().getFirstChild();
-        if (null == node) 
-		{
-			Element element = getElement();
-			Node childTextNode = element.getOwnerDocument().createTextNode(value);
-			element.appendChild(childTextNode);
-			
-		}
-        else 
-        {
-        	getElement().getFirstChild().setNodeValue(value);
-        }
+        this.value = value;
+    }
+
+    /**
+     * Write this element out to a SerializationContext
+     */ 
+    public void writeToContext(SerializationContext context)
+            throws IOException
+    {
+        context.startElement(WSDDConstants.DOC_QNAME, null);
+        context.writeString(value);
+        context.endElement();
     }
 }

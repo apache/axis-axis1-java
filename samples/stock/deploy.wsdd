@@ -10,7 +10,7 @@
  <deployment 	name="test" xmlns="http://xml.apache.org/axis/wsdd/" 
 			xmlns:java="http://xml.apache.org/axis/wsdd/providers/java"
 			xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance">
-  <service name="urn:xmltoday-delayed-quotes">
+  <service name="urn:xmltoday-delayed-quotes" provider="java:RPC">
     <parameter name="className" value="samples.stock.StockQuoteService" />
     <parameter name="methodName" value="getQuote" />
     <parameter name="allowedRoles" value="user1,user2"/>
@@ -19,22 +19,14 @@
       <handler type="java:org.apache.axis.handlers.SimpleAuthenticationHandler" />
       <handler type="java:org.apache.axis.handlers.SimpleAuthorizationHandler" />
     </requestFlow>
-
-    <provider type="java:org.apache.axis.providers.java.RPCProvider" >
-     <java:provider className="samples.stock.StockQuoteService"/>
-    </provider>
   </service>
 
-  <service name="urn:cominfo">
+  <service name="urn:cominfo" provider="java:RPC">
     <parameter name="className" value="samples.stock.ComInfoService" />
     <parameter name="methodName" value="getInfo" />
     <parameter name="allowedRoles" value="user3"/>
 
     <requestFlow type="checks"/>
-
-    <provider type="java:org.apache.axis.providers.java.RPCProvider" >
-     <java:provider className="samples.stock.ComInfoService"/>
-    </provider>
   </service>
  </deployment>
 

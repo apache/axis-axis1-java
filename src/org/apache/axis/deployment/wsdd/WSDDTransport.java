@@ -56,6 +56,7 @@ package org.apache.axis.deployment.wsdd;
 
 import org.apache.axis.Handler;
 import org.apache.axis.TargetedChain;
+import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.transport.http.HTTPSender;
 import org.apache.axis.deployment.DeploymentRegistry;
@@ -63,19 +64,25 @@ import org.apache.axis.deployment.DeploymentException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.rpc.namespace.QName;
+import java.io.IOException;
 
 
 /**
  *
  */
 public class WSDDTransport
-    extends WSDDDeployableItem
+    extends WSDDTargetedChain
 {
-    public static final QName DEFAULT_QNAME =
-            new QName(WSDDConstants.WSDD_JAVA, "org.apache.axis.SimpleTargetedChain");
-
+    /**
+     * Default constructor
+     */ 
+    public WSDDTransport()
+    {
+    }
+    
     /**
      *
      * @param e (Element) XXX
@@ -84,214 +91,33 @@ public class WSDDTransport
     public WSDDTransport(Element e)
         throws WSDDException
     {
-        super(e, "transport");
+        super(e);
+    }
+
+    protected QName getElementName() {
+        return WSDDConstants.TRANSPORT_QNAME;
     }
 
     /**
-     *
-     * @param d (Document) XXX
-     * @param n (Node) XXX
-     * @throws WSDDException XXX
+     * Write this element out to a SerializationContext
      */
-    public WSDDTransport(Document d, Node n)
-        throws WSDDException
-    {
-        super(d, n, "transport");
-    }
-
-    /**
-     *
-     * @return XXX
-     */
-    public WSDDRequestFlow getRequestFlow()
-    {
-        WSDDElement[] e = createArray("requestFlow", WSDDRequestFlow.class);
-
-        if (e.length != 0) {
-            return (WSDDRequestFlow) e[0];
-        }
-
-        return null;
-    }
-
-    /**
-     *
-     * @return the newly created / tree-ified item,
-	 *          so that the caller might mutate it
-     */
-    public WSDDRequestFlow createRequestFlow()
-    {
-        removeRequestFlow();
-
-        return (WSDDRequestFlow) createChild(WSDDRequestFlow.class);
-    }
-
-    /**
-     *
-     */
-    public void removeRequestFlow()
-    {
-        removeChild(getRequestFlow());
-    }
-
-    /**
-     *
-     * @return XXX
-     */
-    public WSDDResponseFlow getResponseFlow()
-    {
-
-        WSDDElement[] e = createArray("responseFlow", WSDDResponseFlow.class);
-
-        if (e.length != 0) {
-            return (WSDDResponseFlow) e[0];
-        }
-
-        return null;
-    }
-
-    /**
-     *
-     * @return the newly created / tree-ified item,
-	 *          so that the caller might mutate it
-     */
-    public WSDDResponseFlow createResponseFlow()
-    {
-        removeResponseFlow();
-
-        return (WSDDResponseFlow) createChild(WSDDResponseFlow.class);
-    }
-
-    /**
-     *
-     */
-    public void removeResponseFlow()
-    {
-        removeChild(getResponseFlow());
-    }
-
-    /**
-     *
-     * @return XXX
-     */
-    public WSDDFaultFlow[] getFaultFlows()
-    {
-
-        WSDDElement[]   e = createArray("faultFlow", WSDDFaultFlow.class);
-        WSDDFaultFlow[] t = new WSDDFaultFlow[e.length];
-
-        System.arraycopy(e, 0, t, 0, e.length);
-
-        return t;
-    }
-
-    /**
-     *
-     * @param name XXX
-     * @return XXX
-     */
-    public WSDDFaultFlow getFaultFlow(String name)
-    {
-
-        WSDDFaultFlow[] t = getFaultFlows();
-
-        for (int n = 0; n < t.length; n++) {
-            if (t[n].getName().equals(name)) {
-                return t[n];
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     *
-     * @param name XXX
-     * @return the newly created / tree-ified item,
-	 *          so that the caller might mutate it
-     */
-    public WSDDFaultFlow createFaultFlow()
-    {
-        return (WSDDFaultFlow) createChild(WSDDFaultFlow.class);
-    }
-
-    /**
-     *
-     */
-    public void removeFaultFlow(WSDDFaultFlow victim)
-    {
-        removeChild(victim);
-    }
-
-    public QName getType()
-    {
-        QName type = super.getType();
-
-        if (type == null) {
-            type = DEFAULT_QNAME;
-        }
-
-        return type;
-    }
-
-    /**
-     *
-     * @param type XXX
-     */
-    public void setType(String type) throws WSDDException
-    {
-        throw new WSDDException("Transport disallows setting of Type");
-    }
-
-    /*********************************************************
-     * Oops, the schema disallows the use Type attribute in Transport
-    public String getType()
-    {
-
-        String type = super.getType();
-
-        if (type.equals("")) {
-            type = "java:org.apache.axis.SimpleTargetedChain";
-        }
-
-        return type;
-    }
-     **************************************************************
-     */
-
-    /**
-     *
-     * @param pivot XXX
-     * @param registry XXX
-     * @return XXX
-     * @throws Exception XXX
-     */
-    public Handler getInstance(DeploymentRegistry registry)
-        throws Exception
-    {
-        Handler       h = super.makeNewInstance(registry);
-        TargetedChain c = (TargetedChain) h;
-
-            WSDDFlow req = getRequestFlow();
-            if (req != null)
-                c.setRequestHandler(req.getInstance(registry));
-        
-        Handler pivot = null;
-        QName pivotName = XMLUtils.getQNameFromString(getAttribute("pivot"), getElement());
-        if (pivotName != null) {
-            if (WSDDConstants.WSDD_JAVA.equals(pivotName.getNamespaceURI())) {
-                pivot = (Handler)Class.forName(pivotName.getLocalPart()).newInstance();
-            } else {
-                pivot = registry.getHandler(pivotName);
-            }
+    public void writeToContext(SerializationContext context)
+            throws IOException {
+        AttributesImpl attrs = new AttributesImpl();
+        QName name = getQName();
+        if (name != null) {
+            attrs.addAttribute("", "name", "name",
+                               "CDATA", context.qName2String(name));
         }
         
-        c.setPivotHandler(pivot);
-
-        WSDDFlow resp = getResponseFlow();
-        if (resp != null)
-            c.setResponseHandler(getResponseFlow().getInstance(registry));
-
-        return c;
+        name = getPivotQName();
+        if (name != null) {
+            attrs.addAttribute("", "pivot", "pivot",
+                               "CDATA", context.qName2String(name));
+        }
+        
+        context.startElement(WSDDConstants.TRANSPORT_QNAME, attrs);
+        writeFlowsToContext(context);
+        context.endElement();
     }
 }

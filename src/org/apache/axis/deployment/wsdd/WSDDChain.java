@@ -56,12 +56,16 @@ package org.apache.axis.deployment.wsdd;
 
 import org.apache.axis.Chain;
 import org.apache.axis.Handler;
+import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.deployment.DeploymentRegistry;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.rpc.namespace.QName;
+import java.util.Vector;
+import java.io.IOException;
 
 
 /**
@@ -71,8 +75,15 @@ import javax.xml.rpc.namespace.QName;
 public class WSDDChain
     extends WSDDHandler
 {
-    public static final QName DEFAULT_QNAME =
-            new QName(WSDDConstants.WSDD_JAVA, "org.apache.axis.SimpleChain");
+    private Vector handlers = new Vector();
+    
+    /**
+     * Default constructor
+     */ 
+    public WSDDChain()
+    {
+    }
+    
     /**
      *
      * @param e (Element) XXX
@@ -81,86 +92,64 @@ public class WSDDChain
     public WSDDChain(Element e)
         throws WSDDException
     {
-        super(e, "chain");
-    }
-
-    /**
-     *
-     * @param d (Document) XXX
-     * @param n (Node) XXX
-     * @throws WSDDException XXX
-     */
-    public WSDDChain(Document d, Node n)
-        throws WSDDException
-    {
-        super(d, n, "chain");
-    }
-
-    /**
-     *
-     * @return XXX
-     */
-    public WSDDHandler[] getHandlers()
-    {
-
-        WSDDElement[] w = createArray("handler", WSDDHandler.class);
-        WSDDHandler[] h = new WSDDHandler[w.length];
-
-        System.arraycopy(w, 0, h, 0, w.length);
-
-        return h;
-    }
-
-    /**
-     *
-     * @param name XXX
-     * @return XXX
-     */
-    public WSDDHandler getHandler(String name)
-    {
-        WSDDHandler[] h = getHandlers();
-
-        for (int n = 0; n < h.length; n++) {
-            if (h[n].getName().equals(name)) {
-                return h[n];
+        super(e);
+        
+        // If we're simply a reference to an existing chain, return.
+        // !!! should check to make sure it's a valid chain?
+        if (type != null)
+            return;
+        
+        Element [] elements = getChildElements(e, "handler");
+        if (elements.length != 0) {
+            for (int i = 0; i < elements.length; i++) {
+                WSDDHandler handler = new WSDDHandler(elements[i]);
+                addHandler(handler);
+            }
+        }
+        
+        elements = getChildElements(e, "chain");
+        if (elements.length != 0) {
+            for (int i = 0; i < elements.length; i++) {
+                WSDDChain chain = new WSDDChain(elements[i]);
+                addHandler(chain);
             }
         }
 
-        return null;
+        if (handlers.isEmpty())
+            throw new WSDDException("No handlers in " + 
+                                    getElementName().getLocalPart() +
+                                    " '" + getQName() + "'");
     }
-
-    /**
-     *
-     * @param name XXX
-     * @return the newly created / tree-ified item,
-	 *          so that the caller might mutate it
-     */
-    public WSDDHandler createHandler()
+    
+    protected QName getElementName()
     {
-        return (WSDDHandler) createChild(WSDDHandler.class);
+        return WSDDConstants.CHAIN_QNAME;
+    }
+    
+    /**
+     * Add a Handler to the chain (at the end)
+     */ 
+    public void addHandler(WSDDHandler handler)
+    {
+        handlers.add(handler);
     }
 
     /**
-     *
+     * Obtain our handler list
+     * 
+     * @return a Vector containing our Handlers
+     */
+    public Vector getHandlers()
+    {
+        return handlers;
+    }
+
+    /**
+     * Remove a Handler from the chain
      */
     public void removeHandler(WSDDHandler victim)
     {
-        removeChild(victim);
-    }
-
-    /**
-     *
-     * @return XXX
-     */
-    public QName getType()
-    {
-        QName type = super.getType();
-
-        if (type == null) {
-            type = DEFAULT_QNAME;
-        }
-
-        return type;
+        handlers.remove(victim);
     }
 
     /**
@@ -172,14 +161,12 @@ public class WSDDChain
     public Handler getInstance(DeploymentRegistry registry)
         throws Exception
     {
-
         try {
-            Handler       h        = super.getInstance(registry);
-            Chain         c        = (Chain) h;
-            WSDDHandler[] handlers = getHandlers();
+            Chain         c        = new org.apache.axis.SimpleChain();
 
-            for (int n = 0; n < handlers.length; n++) {
-                c.addHandler(handlers[n].getInstance(registry));
+            for (int n = 0; n < handlers.size(); n++) {
+                WSDDHandler handler = (WSDDHandler)handlers.get(n); 
+                c.addHandler(handler.getInstance(registry));
             }
 
             return c;
@@ -187,5 +174,30 @@ public class WSDDChain
         catch (Exception e) {
             return null;
         }
+    }
+    
+    /**
+     * Write this element out to a SerializationContext
+     */ 
+    public void writeToContext(SerializationContext context)
+        throws IOException
+    {
+        AttributesImpl attrs = new AttributesImpl();
+        QName name = getQName();
+        if (name != null) {
+            attrs.addAttribute("", "name", "name",
+                               "CDATA", context.qName2String(name));
+        }
+        if (getType() != null) {
+            attrs.addAttribute("", "type", "type",
+                           "CDATA", context.qName2String(getType()));
+        }
+        
+        context.startElement(getElementName(), attrs);
+        for (int n = 0; n < handlers.size(); n++) {
+            WSDDHandler handler = (WSDDHandler)handlers.get(n); 
+            handler.writeToContext(context);
+        } 
+        context.endElement();
     }
 }
