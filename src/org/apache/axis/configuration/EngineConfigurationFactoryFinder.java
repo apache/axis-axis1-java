@@ -56,14 +56,15 @@
 package org.apache.axis.configuration;
 
 import java.lang.reflect.Method;
-import java.util.Enumeration;
 
 import org.apache.axis.EngineConfigurationFactory;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.commons.discovery.ClassInfo;
-import org.apache.commons.discovery.ClassLoaders;
-import org.apache.commons.discovery.ServiceDiscovery;
+import org.apache.commons.discovery.ResourceClassIterator;
+import org.apache.commons.discovery.ResourceNameIterator;
+import org.apache.commons.discovery.resource.ClassLoaders;
+import org.apache.commons.discovery.resource.classes.DiscoverClasses;
+import org.apache.commons.discovery.resource.names.DiscoverServiceNames;
 import org.apache.commons.discovery.tools.ClassUtils;
 import org.apache.commons.logging.Log;
 
@@ -132,19 +133,23 @@ public class EngineConfigurationFactoryFinder
          * recreate on each call is critical to gaining
          * the right class loaders.  Do not cache.
          */
-        ServiceDiscovery sd =
-            new ServiceDiscovery(ClassLoaders.getAppLoaders(mySpi, myFactory, true));
-
         Object[] params = new Object[] { obj };
 
         /**
          * Find and examine each service
          */
-        EngineConfigurationFactory factory = null;
+        ClassLoaders loaders =
+            ClassLoaders.getAppLoaders(mySpi, myFactory, true);
 
-        Enumeration services = sd.find(mySpi.getName());
-        while (factory == null  &&  services.hasMoreElements()) {
-            Class service = ((ClassInfo)services.nextElement()).getResourceClass();
+        ResourceNameIterator it =
+            new DiscoverServiceNames(loaders).findResourceNames(mySpi.getName());
+
+        ResourceClassIterator services =
+            new DiscoverClasses(loaders).findResourceClasses(it);
+
+        EngineConfigurationFactory factory = null;
+        while (factory == null  &&  services.hasNext()) {
+            Class service = services.nextResourceClass().loadClass();
 
             factory = newFactory(service, newFactoryParamTypes, params);
         }
