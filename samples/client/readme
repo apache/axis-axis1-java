@@ -16,3 +16,5 @@ To run the DynamicInvoker sample, you must do the following:
     Finally, to run the client, run:
         java samples.client.DynamicInvoker http://www.xmethods.net/sd/2001/TemperatureService.wsdl getTemp 02067
         java samples.client.DynamicInvoker http://services.xmethods.net/soap/urn:xmethods-delayed-quotes.wsdl getQuote IBM
+	java samples.client.DynamicInvoker http://mssoapinterop.org/asmx/xsd/round4XSD.wsdl echoString "Hello World!!!"
+	java samples.client.DynamicInvoker http://samples.gotdotnet.com/quickstart/aspplus/samples/services/MathService/VB/MathService.asmx?WSDL Add 3 4
