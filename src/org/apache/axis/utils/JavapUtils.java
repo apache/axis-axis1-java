@@ -171,7 +171,7 @@ public class JavapUtils
 
             Runtime rt = Runtime.getRuntime();
             // The -l option is used to access the local variables.
-            Process pr = rt.exec("javap -classpath " + cp + " -private -l " + cls.getName());
+            Process pr = rt.exec("javap -classpath \"" + cp + "\" -private -l " + cls.getName());
 
             //BufferedReader ebr = new BufferedReader(new InputStreamReader(pr.getErrorStream()));
             //if (ebr != null) {
