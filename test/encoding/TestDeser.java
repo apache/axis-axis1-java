@@ -271,6 +271,17 @@ public class TestDeser extends TestCase {
                     new Short((short)3));
     }
 
+    public void testQName() throws Exception {
+        String ns = "http://test";
+        String local = "bar";
+
+        deserialize("<result xmlns:foo=\"" + ns + "\" xsi:type=\"xsd:QName\">foo:" + local + "</result>",
+                    new QName(ns, local));
+
+        deserialize("<result xmlns:foo=\"" + ns + "\" xsi:type=\"xsd:QName\">\n     foo:" + local + "   \r\n        </result>",
+                    new QName(ns, local));
+    }
+
     public void testArray() throws Exception {
         Vector v = new Vector();
         v.addElement("abc");
