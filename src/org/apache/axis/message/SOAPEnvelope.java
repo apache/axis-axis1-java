@@ -198,6 +198,16 @@ public class SOAPEnvelope
             handler.parseToEnd();
     }
     
+    public MessageElement getElementByID(String id)
+    {
+        MessageElement el = (MessageElement)idMapping.get(id);
+        if ((el != null) || (handler == null))
+            return el;  // Got it, or else don't have anything to parse.
+        
+        // Must find it...
+        return handler.parseForID(id);
+    }
+    
     public SOAPHeader getHeaderByName(String namespace, String localPart)
     {
         SOAPHeader header = (SOAPHeader)findElement(headers, namespace, localPart);
@@ -217,7 +227,7 @@ public class SOAPEnvelope
         return (SOAPBodyElement)findElement(bodyElements, namespace, localPart);
     }
     
-    public MessageElement findElement(Vector vec, String namespace,
+    protected MessageElement findElement(Vector vec, String namespace,
                                   String localPart)
     {
         if (vec.isEmpty())
