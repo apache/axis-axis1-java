@@ -55,47 +55,34 @@
 
 package samples.security;
 
+import org.apache.axis.MessageContext;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
-import org.apache.axis.utils.Options;
-
-import java.io.*;
-import java.security.cert.X509Certificate;
-import java.security.KeyStore;
-import java.security.PrivateKey;
-
-import org.apache.axis.*;
-import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPBodyElement;
-import org.apache.axis.message.MessageElement;
-import org.apache.axis.message.SOAPHeader;
-import org.apache.axis.client.ServiceClient;
-import org.apache.axis.utils.*;
-import org.apache.xml.security.signature.XMLSignature;
-import org.w3c.dom.Element;
-import org.w3c.dom.Document;
+import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.utils.Options;
+import org.apache.axis.utils.XMLUtils;
 
-public class Client
-{
+public class Client {
     static void main(String[] args) throws Exception {
         Options opts = new Options(args);
 
-	Service service = new Service();
-	Call call = (Call) service.createCall();
-	call.setTargetEndpointAddress(new java.net.URL(opts.getURL()));
+        Service service = new Service();
+        Call call = (Call) service.createCall();
+        call.setTargetEndpointAddress(new java.net.URL(opts.getURL()));
 
         SOAPEnvelope env = new SOAPEnvelope();
-        SOAPBodyElement sbe = new SOAPBodyElement(XMLUtils.StringToElement("http://localhost:8080/LogTestService","testMethod", ""));
+        SOAPBodyElement sbe = new SOAPBodyElement(XMLUtils.StringToElement("http://localhost:8080/LogTestService", "testMethod", ""));
         env.addBodyElement(sbe);
 
-        env = new SignedSOAPEnvelope(env,"http://xml-security");
+        env = new SignedSOAPEnvelope(env, "http://xml-security");
 
         System.out.println("\n============= Request ==============");
         XMLUtils.PrettyElementToStream(env.getAsDOM(), System.out);
 
-	call.invoke(env);
+        call.invoke(env);
 
-	MessageContext mc = call.getMessageContext();
+        MessageContext mc = call.getMessageContext();
         System.out.println("\n============= Response ==============");
         XMLUtils.PrettyElementToStream(mc.getResponseMessage().getSOAPEnvelope().getAsDOM(), System.out);
     }
