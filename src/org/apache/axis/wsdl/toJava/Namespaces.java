@@ -71,6 +71,19 @@ public class Namespaces extends HashMap {
     private String defaultPackage = null;
 
     /**
+     * Toknens in a namespace that are treated as package name part separators.
+     */
+    private static final char[] pkgSeparators = { '.', ':' };
+    private static final char javaPkgSeparator = pkgSeparators[0];
+
+    private static String normalizePackageName(String pkg, char separator)
+    {
+        for(int i=0; i<pkgSeparators.length; i++)
+           pkg = pkg.replace(pkgSeparators[i], separator);
+        return pkg;
+    }
+
+    /**
      * Instantiate a Namespaces object whose packages will all reside under root.
      */
     public Namespaces(String root) {
@@ -102,10 +115,10 @@ public class Namespaces extends HashMap {
         if (defaultPackage != null) {
             return defaultPackage;
         }
-        Object value = super.get(key);
+        String value = (String)super.get(key);
         if (value == null) {
-            value = Utils.makePackageName((String) key);
-            put(key, value);
+            value = (String)Utils.makePackageName(key);
+            put(key, normalizePackageName(value,javaPkgSeparator));
         }
         return (String) value;
     } // getCreate
@@ -129,7 +142,7 @@ public class Namespaces extends HashMap {
     public String toDir(String pkg) {
         String dir = null;
         if (pkg != null) {
-            pkg = pkg.replace('.', File.separatorChar);
+            pkg = normalizePackageName(pkg,File.separatorChar);
         }
         if (root == null) {
             dir = pkg;
@@ -186,9 +199,9 @@ public class Namespaces extends HashMap {
 
     /**
      * Set a package name that overrides the namespace map
-     * 
+     *
      * @param a java package name (e.g. com.foo)
-     */ 
+     */
     public void setDefaultPackage(String defaultPackage) {
         this.defaultPackage = defaultPackage;
     }
