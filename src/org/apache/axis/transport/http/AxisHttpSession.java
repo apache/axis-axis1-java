@@ -55,6 +55,7 @@
 
 package org.apache.axis.transport.http;
 
+import org.apache.axis.session.Session;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -62,7 +63,7 @@ import javax.servlet.http.HttpSession;
  * 
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
-public class AxisHttpSession
+public class AxisHttpSession implements Session
 {
     private HttpSession rep;
     
@@ -97,6 +98,15 @@ public class AxisHttpSession
     public void put(String key, Object value)
     {
         rep.setAttribute(key, value);
+    }
+    
+    /** Remove a property from the session
+     * 
+     * @param key the name of the property desired.
+     */
+    public void remove(String key)
+    {
+        rep.removeAttribute(key);
     }
     
     /** Set the session's time-to-live.
