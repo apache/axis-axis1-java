@@ -79,10 +79,9 @@ public class ArraySerializer implements Serializer
         MessageContext msgContext = context.getMessageContext();
         SchemaVersion schema = SchemaVersion.SCHEMA_2001;
         SOAPConstants soap = SOAPConstants.SOAP11_CONSTANTS;
-        boolean encoded = true;
+        boolean encoded = context.isEncoded();
         
         if (msgContext != null) {
-            encoded = msgContext.isEncoded();
             schema = msgContext.getSchemaVersion();
             soap = msgContext.getSOAPConstants();
         }
@@ -346,9 +345,7 @@ public class ArraySerializer implements Serializer
 
                     // Serialize the element.
                     context.serialize(elementName, serializeAttr, aValue,
-                                      componentQName, // prefered type QName
-                                      true,   // Send null values
-                                      null);  // Respect default type config
+                                      componentQName); // prefered type QName
                 }
             } else {
                 for (Iterator iterator = list.iterator(); iterator.hasNext();) {
@@ -356,9 +353,7 @@ public class ArraySerializer implements Serializer
 
                     // Serialize the element.
                     context.serialize(elementName, serializeAttr, aValue,
-                                      componentQName, // prefered type QName
-                                      true,   // Send null values
-                                      null);  // Respect default type config
+                                      componentQName); // prefered type QName
 
                 }
             }
@@ -367,7 +362,7 @@ public class ArraySerializer implements Serializer
             for (int index = 0; index < len; index++) {
                 for (int index2 = 0; index2 < dim2Len; index2++) {
                     Object aValue = Array.get(Array.get(value, index), index2);
-                    context.serialize(elementName, null, aValue, componentQName, true, null);
+                    context.serialize(elementName, null, aValue, componentQName);
                 }
             }
         }

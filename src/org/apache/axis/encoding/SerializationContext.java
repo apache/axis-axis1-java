@@ -129,9 +129,15 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
     private boolean sendXMLDecl = true;
 
     /**
-     * Should I send xsi:type attributes?
+     * Should I send xsi:type attributes?  By default, yes.
      */
     private boolean sendXSIType = true;
+
+    /**
+     * Send an element with an xsi:nil="true" attribute for null
+     * variables (if Boolean.TRUE), or nothing (if Boolean.FALSE).
+     */
+    private Boolean sendNull = Boolean.TRUE;
 
     /**
      * A place to hold objects we cache for multi-ref serialization, and
@@ -467,7 +473,7 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
      * @return a <code>String</code> value
      */
     public String getEncodingStyle() {
-        return msgContext == null ? Use.ENCODED.getEncoding() : msgContext.getEncodingStyle();
+        return msgContext == null ? Use.DEFAULT.getEncoding() : msgContext.getEncodingStyle();
     }
 
     /**
@@ -476,7 +482,7 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
      * @return a <code>boolean</code> value
      */
     public boolean isEncoded() {
-        return msgContext == null ? true : msgContext.isEncoded();
+        return Constants.isSOAP_ENC(getEncodingStyle());
     }
 
     /**
@@ -622,13 +628,10 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
      * directly or serialized as an mult-ref'd item)
      * The value is an Object, which may be a wrapped primitive, the
      * javaType is the actual unwrapped object type.
-     * The xmlType (if specified) is the QName of the type that is used to set
-     * xsi:type.  If not specified, xsi:type is set by using the javaType to
+     * xsi:type is set by using the javaType to
      * find an appopriate xmlType from the TypeMappingRegistry.
-     * The sendNull flag indicates whether null values should be sent over the
-     * wire (default is to send such values with xsi:nil="true").
-     * The sendType flag indicates whether the xsi:type flag should be sent
-     * (default is true).
+     * Null values and the xsi:type flag will be sent or not depending 
+     * on previous configuration of this SerializationContext.
      * @param elemQName is the QName of the element
      * @param attributes are additional attributes
      * @param value is the object to serialize
@@ -637,7 +640,32 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
                           Attributes attributes,
                           Object value)
         throws IOException {
-        serialize(elemQName, attributes, value, null, true, null);
+        serialize(elemQName, attributes, value, null, null, null);
+    }
+
+    /**
+     * Serialize the indicated value as an element with the name
+     * indicated by elemQName.
+     * The attributes are additional attribute to be serialized on the element.
+     * The value is the object being serialized.  (It may be serialized
+     * directly or serialized as an mult-ref'd item)
+     * The value is an Object, which may be a wrapped primitive, the
+     * javaType is the actual unwrapped object type.
+     * The xmlType is the QName of the type that is used to set
+     * xsi:type.  If not specified, xsi:type is set by using the javaType to
+     * find an appopriate xmlType from the TypeMappingRegistry.
+     * Null values and the xsi:type flag will be sent or not depending 
+     * on previous configuration of this SerializationContext.
+     * @param elemQName is the QName of the element
+     * @param attributes are additional attributes
+     * @param value is the object to serialize
+     */
+    public void serialize(QName elemQName,
+                          Attributes attributes,
+                          Object value,
+                          QName xmlType)
+        throws IOException {
+        serialize(elemQName, attributes, value, xmlType, null, null);
     }
 
     /**
@@ -659,6 +687,9 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
      * @param xmlType is the qname of the type or null.
      * @param sendNull determines whether to send null values.
      * @param sendType determines whether to set xsi:type attribute.
+     *
+     * @deprecated use serialize(QName, Attributes, Object, QName,
+     * Boolean, Boolean) instead.
      */
     public void serialize(QName elemQName,
                           Attributes attributes,
@@ -668,13 +699,54 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
                           Boolean sendType)
         throws IOException
     {
-        boolean shouldSendType = (sendType == null) ? shouldSendXSIType() :
-            sendType.booleanValue();
+        serialize( elemQName, attributes, value, xmlType, Boolean.valueOf(sendNull), sendType);
+    }
+
+    /**
+     * Serialize the indicated value as an element with the name
+     * indicated by elemQName.
+     * The attributes are additional attribute to be serialized on the element.
+     * The value is the object being serialized.  (It may be serialized
+     * directly or serialized as an mult-ref'd item)
+     * The value is an Object, which may be a wrapped primitive.
+     * The xmlType (if specified) is the QName of the type that is used to set
+     * xsi:type.
+     * The sendNull flag indicates whether to end an element with an xsi:nil="true" attribute for null
+     * variables (if Boolean.TRUE), or nothing (if Boolean.FALSE).
+     * The sendType flag indicates whether the xsi:type flag should be sent
+     * (default is true).
+     * @param elemQName is the QName of the element
+     * @param attributes are additional attributes
+     * @param value is the object to serialize
+     * @param xmlType is the qname of the type or null.
+     * @param sendNull determines whether to send null values.
+     * @param sendType determines whether to set xsi:type attribute.
+     */
+    public void serialize(QName elemQName,
+                          Attributes attributes,
+                          Object value,
+                          QName xmlType,
+                          Boolean sendNull,
+                          Boolean sendType)
+        throws IOException
+    {
+        boolean sendXSITypeCache = sendXSIType;
+        if (sendType != null) {
+            sendXSIType = sendType.booleanValue();
+        }
+        boolean shouldSendType = shouldSendXSIType();
+
+        Boolean sendNullCache = this.sendNull;
+        if (sendNull != null) {
+            this.sendNull = sendNull;
+        } else {
+            sendNull = this.sendNull;
+        }
 
         if (value == null) {
             // If the value is null, the element is
             // passed with xsi:nil="true" to indicate that no object is present.
-            if (sendNull) {
+            if (this.sendNull.booleanValue()) {
                 AttributesImpl attrs = new AttributesImpl();
                 if (attributes != null && 0 < attributes.getLength())
                     attrs.setAttributes(attributes);
@@ -686,6 +758,8 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
                 startElement(elemQName, attrs);
                 endElement();
             }
+            sendXSIType = sendXSITypeCache;
+            this.sendNull = sendNullCache;
             return;
         }
 
@@ -703,6 +777,8 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
 
                 //No need to add to mulitRefs. Attachment data stream handled by
                 // the message;
+                sendXSIType = sendXSITypeCache;
+                this.sendNull = sendNullCache;
                 return;
             }
         }
@@ -750,6 +826,8 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
                     attrs.addAttribute("", Constants.ATTR_ID, "id", "CDATA",
                                        id);
                     serializeActual(elemQName, attrs, value, xmlType, sendType);
+                    sendXSIType = sendXSITypeCache;
+                    this.sendNull = sendNullCache;
                     return;
                 }
 
@@ -786,6 +864,8 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
 
             startElement(elemQName, attrs);
             endElement();
+            sendXSIType = sendXSITypeCache;
+            this.sendNull = sendNullCache;
             return;
         }
 
@@ -799,6 +879,7 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
 
         // Actually serialize the value.  (i.e. not an href like above)
         serializeActual(elemQName, attributes, value, xmlType, sendType);
+        sendXSIType = sendXSITypeCache;
     }
 
     /**
@@ -871,7 +952,7 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
                 // ascertain the type in these circumstances (though Axis does).
                 serialize(multirefQName, attrs, mri.value,
                           mri.xmlType,
-                          true,
+                          this.sendNull,
                           Boolean.TRUE);   // mri.sendType
             }
 
@@ -1280,7 +1361,7 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
                 TypeDesc typedesc = TypeDesc.getTypeDescForClass(value.getClass());
                 if (typedesc != null) {
                     QName qname = typedesc.getXmlType();
-                    if (qname != null) {
+                    if (shouldSendType && qname != null) {
                         writeXMLType = qname;
                     }
                 }

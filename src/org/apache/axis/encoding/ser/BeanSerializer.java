@@ -103,11 +103,10 @@ public class BeanSerializer implements Serializer, Serializable {
         Attributes beanAttrs = getObjectAttributes(value, attributes, context);
 
         // Get the encoding style
-        String encodingStyle = context.getEncodingStyle();
-        boolean isEncoded = Constants.isSOAP_ENC(encodingStyle);
+        boolean isEncoded = context.isEncoded();
 
         // check whether we have and xsd:any namespace="##any" type
-        boolean suppressElement = !context.isEncoded() &&
+        boolean suppressElement = !isEncoded &&
                                   name.getNamespaceURI().equals("") &&
                                   name.getLocalPart().equals("any");
 
@@ -176,9 +175,7 @@ public class BeanSerializer implements Serializer, Serializable {
                         context.serialize(qname,
                                           null,
                                           propValue,
-                                          xmlType,
-                                          true,
-                                          null);
+                                          xmlType);
                     } else {
                         // Collection of properties: serialize each one
                         int j=0;
@@ -193,8 +190,7 @@ public class BeanSerializer implements Serializer, Serializable {
                             }
                             if (j >= 0) {
                                 context.serialize(qname, null,
-                                                  propValue, xmlType,
-                                                  true, null);
+                                                  propValue, xmlType);
                             }
                         }
                     }

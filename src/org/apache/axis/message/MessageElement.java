@@ -1243,7 +1243,7 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         if (objectValue != null) {
             outputContext.serialize(new QName(namespaceURI, name),
                               attributes,
-                              objectValue, null, false, null);
+                              objectValue);
             return;
         }
 

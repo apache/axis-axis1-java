@@ -178,7 +178,7 @@ public class RPCParam extends MessageElement implements Serializable
                           null,   // no extra attrs
                           value,  // value
                           xmlType, // java/xml type
-                          true, wantXSIType); 
+                          Boolean.TRUE, wantXSIType); 
     }
 
     private void writeObject(ObjectOutputStream out)
