@@ -57,17 +57,15 @@ package org.apache.axis.transport.http;
 
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
-import javax.servlet.http.HttpServletRequest;
+
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.MessageContext;
 import org.apache.axis.server.AxisServer;
-import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.Admin;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
-
 import org.w3c.dom.Document;
 
 /**

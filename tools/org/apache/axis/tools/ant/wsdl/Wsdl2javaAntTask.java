@@ -53,20 +53,17 @@
  */
 package org.apache.axis.tools.ant.wsdl;
 
-import org.apache.axis.enum.Scope;
-import org.apache.axis.utils.DefaultAuthenticator;
-import org.apache.axis.wsdl.toJava.Emitter;
-import org.apache.tools.ant.AntClassLoader;
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.Task;
-import org.apache.tools.ant.types.Path;
-import org.apache.axis.utils.ClassUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.Authenticator;
 import java.util.HashMap;
+
+import org.apache.axis.enum.Scope;
+import org.apache.axis.utils.DefaultAuthenticator;
+import org.apache.axis.wsdl.toJava.Emitter;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.Task;
 
 /*
  * IMPORTANT: see Java2WsdlAntTask on how to javadoc this task and rebuild

@@ -55,24 +55,24 @@
 
 package org.apache.axis.encoding.ser;
 
+import java.io.IOException;
+
+import javax.activation.DataHandler;
+import javax.xml.namespace.QName;
+
 import org.apache.axis.Constants;
 import org.apache.axis.Part;
-import org.apache.axis.client.Call;
 import org.apache.axis.attachments.Attachments;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.Serializer;
+import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.fromJava.Types;
-import org.apache.axis.soap.SOAPConstants;
 import org.apache.commons.logging.Log;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
-
-import javax.activation.DataHandler;
-import javax.xml.namespace.QName;
-import java.io.IOException;
 
 /**
  * JAFDataHandler Serializer

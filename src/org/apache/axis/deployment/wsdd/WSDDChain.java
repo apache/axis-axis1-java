@@ -54,18 +54,18 @@
  */
 package org.apache.axis.deployment.wsdd;
 
+import java.io.IOException;
+import java.util.Vector;
+
+import javax.xml.namespace.QName;
+
 import org.apache.axis.Chain;
 import org.apache.axis.ConfigurationException;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.Handler;
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.utils.Messages;
 import org.w3c.dom.Element;
 import org.xml.sax.helpers.AttributesImpl;
-
-import javax.xml.namespace.QName;
-import java.io.IOException;
-import java.util.Vector;
 
 
 /**

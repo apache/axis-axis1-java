@@ -56,8 +56,6 @@ package org.apache.axis.encoding.ser;
  */
 
 
-import org.apache.axis.encoding.ser.BaseSerializerFactory;
-import org.apache.axis.encoding.ser.ElementSerializer;
 
 /**
  * SerializerFactory for DOM Document

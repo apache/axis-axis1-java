@@ -55,13 +55,8 @@
 
 package org.apache.axis.components.jms;
 
-import org.apache.axis.client.Call;
-import org.apache.axis.transport.jms.JMSConnector;
-import org.apache.axis.transport.jms.JMSConnectorFactory;
-import org.apache.axis.transport.jms.JMSConstants;
-import org.apache.axis.transport.jms.JMSURLHelper;
-import org.apache.axis.MessageContext;
-import org.apache.axis.client.Call;
+import java.util.HashMap;
+import java.util.Hashtable;
 
 import javax.jms.ConnectionFactory;
 import javax.jms.Queue;
@@ -72,10 +67,9 @@ import javax.jms.TopicConnectionFactory;
 import javax.jms.TopicSession;
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
+
+import org.apache.axis.transport.jms.JMSConstants;
+import org.apache.axis.transport.jms.JMSURLHelper;
 
 /**
  * Uses JNDI to locate ConnectionFactory and Destinations

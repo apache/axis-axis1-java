@@ -55,6 +55,21 @@
 
 package org.apache.axis.transport.http ;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.lang.reflect.Method;
+import java.net.HttpURLConnection;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpUtils;
+import javax.xml.soap.SOAPException;
+
 import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
 import org.apache.axis.ConfigurationException;
@@ -68,29 +83,11 @@ import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.security.servlet.ServletSecurityProvider;
-import org.apache.axis.utils.Admin;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.commons.logging.Log;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpUtils;
-import javax.xml.soap.SOAPException;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.lang.reflect.Method;
-import java.net.HttpURLConnection;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Iterator;
 
 /**
  *
