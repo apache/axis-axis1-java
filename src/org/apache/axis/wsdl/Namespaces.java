@@ -60,6 +60,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.apache.axis.utils.JavaUtils;
+
 /**
 * This class is essentially a HashMap of <namespace, package name> pairs with
 * a few extra wizzbangs.
@@ -160,8 +162,8 @@ public class Namespaces extends HashMap {
         pkg = "";
         while (st.hasMoreTokens()) {
             String token = st.nextToken();
-            if (Utils.isJavaKeyword(token)) {
-                token = Utils.makeNonJavaKeyword(token);
+            if (JavaUtils.isJavaKeyword(token)) {
+                token = JavaUtils.makeNonJavaKeyword(token);
             }
             pkg = pkg + token;
             if (st.hasMoreTokens()) {

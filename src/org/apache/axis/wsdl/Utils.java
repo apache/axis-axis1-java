@@ -63,12 +63,11 @@ import javax.wsdl.Fault;
 import javax.wsdl.Message;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.Collator;
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.Vector;
+
+import org.apache.axis.utils.JavaUtils;
 
 
 /**
@@ -385,46 +384,6 @@ public class Utils {
     }
 
     /**
-     * These are java keywords as specified at the following URL (sorted alphabetically).
-     * http://java.sun.com/docs/books/jls/second_edition/html/lexical.doc.html#229308
-     */
-    static final String keywords[] =
-    {
-        "abstract",     "boolean",   "break",      "byte",     "case",
-        "catch",        "char",      "class",      "const",    "continue",
-        "default",      "do",        "double",     "else",     "extends",
-        "false",        "final",     "finally",    "float",    "for",
-        "goto",         "if",        "implements", "import",   "instanceof",
-        "int",          "interface", "long",       "native",   "new",
-        "package",      "private",   "protected",  "public",   "return",
-        "short",        "static",    "strictfp",   "super",    "switch",
-        "synchronized", "this",      "throw",      "throws",   "transient",
-        "true",         "try",       "void",       "volatile", "while"
-    };
-
-    /** Collator for comparing the strings */
-    static final Collator englishCollator = Collator.getInstance(Locale.ENGLISH);
-
-    /** Use this character as suffix */
-    static final char keywordPrefix = '_';
-
-    /**
-     * checks if the input string is a valid java keyword.
-     * @return boolean true/false
-     */
-    public static boolean isJavaKeyword(String keyword) {
-      return (Arrays.binarySearch(keywords, keyword, englishCollator) >= 0);
-    }
-
-    /**
-     * Turn a java keyword string into a non-Java keyword string.  (Right now
-     * this simply means appending an underscore.)
-     */
-    public static String makeNonJavaKeyword(String keyword){
-        return  keywordPrefix + keyword;
-     }
-
-    /**
      * Map an XML name to a valid Java identifier
      */
     public static String xmlNameToJava(String name)
@@ -460,8 +419,8 @@ public class Utils {
         String newName = result.toString();
         
         // check for Java keywords
-        if (isJavaKeyword(newName))
-            newName = makeNonJavaKeyword(newName);
+        if (JavaUtils.isJavaKeyword(newName))
+            newName = JavaUtils.makeNonJavaKeyword(newName);
         
         return newName;
     }
@@ -507,8 +466,8 @@ public class Utils {
         StringBuffer sb = new StringBuffer(80);
         for(int i = words.length-1; i >= 0; --i) {
             String word = words[i];
-            if (isJavaKeyword(word)) {
-                word = makeNonJavaKeyword(word);
+            if (JavaUtils.isJavaKeyword(word)) {
+                word = JavaUtils.makeNonJavaKeyword(word);
             }
             // seperate with dot
             if( i != words.length-1 )

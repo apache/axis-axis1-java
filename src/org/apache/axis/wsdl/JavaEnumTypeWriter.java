@@ -128,8 +128,8 @@ public class JavaEnumTypeWriter extends JavaWriter {
         // A public static variable is generated for each enumeration value.
         for (int i=1; i < elements.size(); i++) {
             String variable = (String) elements.get(i);
-            if (Utils.isJavaKeyword(variable)) {
-                variable = Utils.makeNonJavaKeyword(variable);
+            if (JavaUtils.isJavaKeyword(variable)) {
+                variable = JavaUtils.makeNonJavaKeyword(variable);
             }
             pw.println("    public static final " + javaName + " " + variable
                            + " = new " + javaName + "(_" + elements.get(i) + ");");

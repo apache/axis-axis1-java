@@ -59,9 +59,12 @@ import org.apache.log4j.Category;
 
 import java.lang.reflect.Array;
 
+import java.text.Collator;
 import java.text.MessageFormat;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
@@ -136,6 +139,46 @@ public class JavaUtils
         
         return arg;
     }
+
+    /**
+     * These are java keywords as specified at the following URL (sorted alphabetically).
+     * http://java.sun.com/docs/books/jls/second_edition/html/lexical.doc.html#229308
+     */
+    static final String keywords[] =
+    {
+        "abstract",     "boolean",   "break",      "byte",     "case",
+        "catch",        "char",      "class",      "const",    "continue",
+        "default",      "do",        "double",     "else",     "extends",
+        "false",        "final",     "finally",    "float",    "for",
+        "goto",         "if",        "implements", "import",   "instanceof",
+        "int",          "interface", "long",       "native",   "new",
+        "package",      "private",   "protected",  "public",   "return",
+        "short",        "static",    "strictfp",   "super",    "switch",
+        "synchronized", "this",      "throw",      "throws",   "transient",
+        "true",         "try",       "void",       "volatile", "while"
+    };
+
+    /** Collator for comparing the strings */
+    static final Collator englishCollator = Collator.getInstance(Locale.ENGLISH);
+
+    /** Use this character as suffix */
+    static final char keywordPrefix = '_';
+
+    /**
+     * checks if the input string is a valid java keyword.
+     * @return boolean true/false
+     */
+    public static boolean isJavaKeyword(String keyword) {
+      return (Arrays.binarySearch(keywords, keyword, englishCollator) >= 0);
+    }
+
+    /**
+     * Turn a java keyword string into a non-Java keyword string.  (Right now
+     * this simply means appending an underscore.)
+     */
+    public static String makeNonJavaKeyword(String keyword){
+        return  keywordPrefix + keyword;
+     }
 
     // Message resource bundle.
     private static ResourceBundle messages = null;

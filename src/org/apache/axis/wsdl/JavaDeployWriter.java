@@ -170,11 +170,9 @@ public class JavaDeployWriter extends JavaWriter {
      * Write out deployment instructions for given WSDL binding
      */
     private void writeDeployBinding(Binding binding) throws IOException {
-        QName bindingQName = binding.getQName();
-        String packageName = namespaces.getCreate(bindingQName.getNamespaceURI());
+        BindingEntry bEntry = symbolTable.getBindingEntry(binding.getQName());
         pw.println("      <parameter name=\"className\" value=\""
-                         + packageName + "."
-                         + bindingQName.getLocalPart() + "Skeleton" + "\"/>");
+                         + bEntry.getName() + "Skeleton" + "\"/>");
 
         String methodList = "";
         Iterator operationsIterator = binding.getBindingOperations().iterator();
