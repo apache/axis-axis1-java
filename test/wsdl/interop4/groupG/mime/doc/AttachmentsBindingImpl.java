@@ -21,6 +21,6 @@ public class AttachmentsBindingImpl implements test.wsdl.interop4.groupG.mime.do
     }
 
     public org.apache.axis.attachments.OctetStream echoBase64AsAttachment(test.wsdl.interop4.groupG.mime.doc.xsd.Binary in) throws java.rmi.RemoteException {
-        return new org.apache.axis.attachments.OctetStream(in.getValue());
+        return new org.apache.axis.attachments.OctetStream(in.get_value());
     }
 }

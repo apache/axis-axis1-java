@@ -92,7 +92,7 @@ public class MimeDOCInteropTestCase extends junit.framework.TestCase {
         test.wsdl.interop4.groupG.mime.doc.xsd.Binary output = null;
         output = binding.echoAttachmentAsBase64(input);
         // TBD - validate results
-        assertTrue(Arrays.equals(input.getBytes(), output.getValue()));
+        assertTrue(Arrays.equals(input.getBytes(), output.get_value()));
     }
 
     public void test4MimeDOCSoapPortEchoBase64AsAttachment() throws Exception {
