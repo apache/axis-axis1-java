@@ -29,6 +29,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPMessage;
 
 import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
@@ -566,6 +567,16 @@ public class AxisServlet extends AxisServletBase {
             msgContext.setRequestMessage(requestMsg);
             String url = req.getRequestURL().toString();
             msgContext.setProperty(MessageContext.TRANS_URL, url);
+            // put character encoding of request to message context
+            // in order to reuse it during the whole process.   
+            String requestEncoding;
+            try {
+                requestEncoding = (String) requestMsg.getProperty(SOAPMessage.CHARACTER_SET_ENCODING);
+                if (requestEncoding != null) {
+                    msgContext.setProperty(SOAPMessage.CHARACTER_SET_ENCODING, requestEncoding);
+                }
+            } catch (SOAPException e1) {
+            }
 
             try {
                 /**
@@ -616,12 +627,14 @@ public class AxisServlet extends AxisServletBase {
                 responseMsg = msgContext.getResponseMessage();
                 if (responseMsg == null) {
                     responseMsg = new Message(fault);
+                    ((org.apache.axis.SOAPPart) responseMsg.getSOAPPart()).getMessage().setMessageContext(msgContext);
                 }
             } catch (Exception e) {
                 //other exceptions are internal trouble
                 responseMsg = msgContext.getResponseMessage();
                 res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 responseMsg = convertExceptionToAxisFault(e, responseMsg);
+                ((org.apache.axis.SOAPPart) responseMsg.getSOAPPart()).getMessage().setMessageContext(msgContext);
             }
         } catch (AxisFault fault) {
             processAxisFault(fault);
@@ -629,6 +642,7 @@ public class AxisServlet extends AxisServletBase {
             responseMsg = msgContext.getResponseMessage();
             if (responseMsg == null) {
                 responseMsg = new Message(fault);
+                ((org.apache.axis.SOAPPart) responseMsg.getSOAPPart()).getMessage().setMessageContext(msgContext);
             }
         }
         
@@ -639,6 +653,14 @@ public class AxisServlet extends AxisServletBase {
         /* Send response back along the wire...  */
         /***********************************/
         if (responseMsg != null) {
+            // synchronize the character encoding of request and response
+            String responseEncoding = (String) msgContext.getProperty(SOAPMessage.CHARACTER_SET_ENCODING);
+            if (responseEncoding != null) {
+                try {
+                    responseMsg.setProperty(SOAPMessage.CHARACTER_SET_ENCODING, responseEncoding);
+                } catch (SOAPException e) {
+                }
+            }
             //determine content type from message response
             contentType = responseMsg.getContentType(msgContext.getSOAPConstants());
             sendResponse(contentType, res, responseMsg);
