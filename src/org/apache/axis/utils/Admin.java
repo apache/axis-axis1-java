@@ -55,38 +55,32 @@
 
 package org.apache.axis.utils ;
 
-import org.apache.axis.*;
-import org.apache.axis.providers.java.RPCProvider;
-import org.apache.axis.providers.java.MsgProvider;
-import org.apache.axis.deployment.wsdd.*;
-import org.apache.axis.deployment.DeploymentException;
-import org.apache.axis.deployment.DeploymentRegistry;
+import org.apache.axis.AxisEngine;
+import org.apache.axis.AxisFault;
+import org.apache.axis.Constants;
+import org.apache.axis.EngineConfiguration;
+import org.apache.axis.Handler;
+import org.apache.axis.MessageContext;
 import org.apache.axis.client.AxisClient;
 import org.apache.axis.configuration.FileProvider;
-import org.apache.axis.encoding.*;
-import org.apache.axis.encoding.ser.*;
-import org.apache.axis.handlers.soap.SOAPService;
-import org.apache.axis.handlers.BasicHandler;
+import org.apache.axis.deployment.wsdd.WSDDConstants;
+import org.apache.axis.deployment.wsdd.WSDDDeployment;
+import org.apache.axis.deployment.wsdd.WSDDDocument;
+import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.SerializationContextImpl;
 import org.apache.axis.server.AxisServer;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-import javax.xml.rpc.namespace.QName;
 import java.io.FileInputStream;
-import java.io.StringWriter;
-import java.io.StringReader;
 import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Hashtable;
-import java.util.StringTokenizer;
 import java.util.Vector;
 
 /**
@@ -100,70 +94,6 @@ public class Admin
 {
     protected static Log log =
         LogFactory.getLog(Admin.class.getName());
-
-    /**
-     * Fill in options for a given handler.
-     *
-     * @param root the element containing the options
-     * @param handler the Handler to set options on
-     */
-    private static void getOptions(Element root, Handler handler) {
-        NodeList  list = root.getElementsByTagName("option");
-        for ( int i = 0 ; list != null && i < list.getLength() ; i++ ) {
-            Element elem  = (Element) list.item(i);
-            String  name  = elem.getAttribute( "name" );
-            String  value = elem.getAttribute( "value" );
-
-            if ( name != null && value != null )
-                handler.setOption( name, value );
-        }
-    }
-
-    private static void getOptions(Element root, Hashtable table) {
-        NodeList  list = root.getElementsByTagName("option");
-        for ( int i = 0 ; list != null && i < list.getLength() ; i++ ) {
-            Element elem  = (Element) list.item(i);
-            String  name  = elem.getAttribute( "name" );
-            String  value = elem.getAttribute( "value" );
-
-            if ( name != null && value != null )
-                table.put( name, value );
-        }
-    }
-
-    /**
-     * Register a set of type mappings for a service.
-     *
-     * @param root the Element containing the service configuration
-     * @param service the SOAPService we're working with.
-     */
-    private static void registerTypeMappings(Element root, WSDDService service)
-        throws Exception
-    {
-        NodeList list = root.getElementsByTagName("beanMappings");
-        for (int i = 0; list != null && i < list.getLength(); i++) {
-            Element el = (Element)list.item(i);
-            registerTypes(el, service, true);
-        }
-
-        list = root.getElementsByTagName("typeMappings");
-        for (int i = 0; list != null && i < list.getLength(); i++) {
-            Element el = (Element)list.item(i);
-            registerTypes(el, service, false);
-        }
-    }
-
-    private static void registerTypes(Element root,
-                                      WSDDTypeMappingContainer container,
-                                      boolean isBean)
-        throws Exception
-    {
-        NodeList list = root.getChildNodes();
-        for (int i = 0; (list != null) && (i < list.getLength()); i++) {
-            if (!(list.item(i) instanceof Element)) continue;
-            registerTypeMapping((Element)list.item(i), container, isBean);
-        }
-    }
 
     /**
      * Process a given XML document - needs cleanup.
@@ -292,7 +222,6 @@ public class Admin
         }
         
         String rootNS = root.getNamespaceURI();
-        String rootName = root.getLocalName();
         AxisEngine engine = msgContext.getAxisEngine();
         
         // If this is WSDD, process it correctly.
@@ -300,136 +229,8 @@ public class Admin
             return processWSDD(msgContext, engine, root);
         }
 
-        // Not WSDD, use old code.
-        // 
-        // NOTE : THIS CODE IS DEPRECATED AND WILL DISAPPEAR BY
-        //        BETA 1.  YOU SHOULD SWITCH TO WSDD.
-        //
-        Document doc = null ;
-
-        try {
-            String            action = rootName;
-            ClassLoader   cl     = msgContext.getClassLoader();
-
-            if ( !action.equals("clientdeploy") && !action.equals("deploy") &&
-                 !action.equals("undeploy") &&
-                 !action.equals("list") &&
-                 !action.equals("quit") &&
-                 !action.equals("passwd"))
-                throw new AxisFault( "Admin.error",
-                    JavaUtils.getMessage("badRootElem00"),
-                    null, null );
-
-
-            if (action.equals("passwd")) {
-                String newPassword = root.getFirstChild().getNodeValue();
-                engine.setAdminPassword(newPassword);
-                doc = XMLUtils.newDocument();
-                doc.appendChild( root = doc.createElementNS("", "Admin" ) );
-                root.appendChild( doc.createTextNode( JavaUtils.getMessage("done00") ) );
-                return doc;
-            }
-
-            if (action.equals("quit")) {
-                log.error(JavaUtils.getMessage("quitRequest00"));
-                if (msgContext != null) {
-                    // put a flag into message context so listener will exit after
-                    // sending response
-                    msgContext.setProperty(msgContext.QUIT_REQUESTED, "true");
-                }
-                doc = XMLUtils.newDocument();
-                doc.appendChild( root = doc.createElementNS("", "Admin" ) );
-                root.appendChild( doc.createTextNode( JavaUtils.getMessage("quit00", "") ) );
-                return doc;
-            }
-
-            if ( action.equals("list") ) {
-                return listConfig(engine);
-            }
-
-            if (action.equals("clientdeploy")) {
-                // set engine to client engine
-                engine = engine.getClientEngine();
-            }
-            
-            WSDDDeployment dep = null;
-            try {
-                FileProvider config = (FileProvider)engine.getConfig();
-                dep = config.getDeployment();
-            } catch (Exception e) {
-                // This will catch NPEs and ClassCastExceptions, either of
-                // which means the engine isn't configurable.
-            }
-
-            NodeList list = root.getChildNodes();
-            for ( int loop = 0 ; loop < list.getLength() ; loop++ ) {
-                Node     node    = list.item(loop);
-
-                if ( node.getNodeType() != Node.ELEMENT_NODE ) continue ;
-
-                Element  elem    = (Element) node ;
-                String   type    = elem.getTagName();
-                String   name    = elem.getAttribute("name");
-
-                if ( action.equals( "undeploy" ) ) {
-                    if ( type.equals("service") ) {
-
-                        if (log.isDebugEnabled())
-                            log.debug( JavaUtils.getMessage("undeploy00",
-                                                            type + ": " + name) );
-
-                        dep.undeployService( new QName(null,name) );
-                    }
-                    else if ( type.equals("handler") || type.equals("chain") ) {
-                        if (log.isDebugEnabled())
-                            log.debug( JavaUtils.getMessage("undeploy00",
-                                                            type + ": " + name) );
-                        dep.undeployHandler( new QName(null,name) );
-                    }
-                    else
-                        throw new AxisFault( "Admin.error",
-                            JavaUtils.getMessage("unknownType00", type),
-                            null, null );
-                    continue ;
-                }
-                
-                if ( type.equals( "handler" ) ) {
-                    registerHandler(elem, dep);
-                }
-                else if ( type.equals( "chain" ) ) {
-                    registerChain(elem, dep);
-                }
-                else if ( type.equals( "service" ) ) {
-                    registerService(elem, dep, engine instanceof AxisServer);
-                }
-                else if (type.equals("transport")) {
-                    registerTransport(elem, dep);
-                }
-
-                // A streamlined means of deploying both a serializer and a deserializer
-                // for a bean at the same time.
-                else if ( type.equals( "beanMappings" ) ) {
-                    registerTypes(elem, dep, true);
-                }
-                else if (type.equals("typeMappings")) {
-                    registerTypes(elem, dep, false);
-                } else
-                    throw new AxisFault( "Admin.error",
-                        JavaUtils.getMessage("unknownType01", action + ": " + type),
-                        null, null );
-            }
-            
-            engine.saveConfiguration();
-
-            doc = XMLUtils.newDocument();
-            doc.appendChild( root = doc.createElementNS("", "Admin" ) );
-            root.appendChild( doc.createTextNode( JavaUtils.getMessage("done00") ) );
-        }
-        catch( Exception e ) {
-            log.error(JavaUtils.getMessage("exception00"), e);
-            throw AxisFault.makeFault(e);
-        }
-        return doc;
+        // Else fault
+        throw new Exception("FIXME");
     }
 
     /** Get an XML document representing this engine's configuration.
@@ -464,320 +265,6 @@ public class Admin
         } catch (IOException e) {
             return null;
         }
-    }
-
-    /**
-     * Deploy a chain described in XML into an AxisEngine.
-     *
-     * @param elem the <chain> element
-     * @param engine the AxisEngine in which to deploy
-     */
-    public static void registerChain(Element elem,
-                                     WSDDDeployment deployment)
-        throws Exception
-    {
-        Handler tmpH = null;
-        String hName;
-
-        String   name    = elem.getAttribute( "name" );
-        String   flow    = elem.getAttribute( "flow" );
-        String   request   = elem.getAttribute( "request" );
-        String   pivot   = elem.getAttribute( "pivot" );
-        String   response  = elem.getAttribute( "response" );
-        Hashtable options = new Hashtable();
-
-        if ("".equals(flow)) flow = null;
-        if ("".equals(request)) request = null;
-        if ("".equals(response)) response = null;
-        if ("".equals(pivot)) pivot = null;
-        if ("".equals(name)) name = null;
-
-        if (flow != null) {
-            if (log.isDebugEnabled())
-                log.debug( JavaUtils.getMessage("deployChain00", name) );
-
-            Vector names = new Vector();
-
-            getOptions( elem, options );
-            
-            WSDDChain chain = new WSDDChain();
-            chain.setName(name);
-            chain.setOptionsHashtable(options);
-
-            StringTokenizer st = new StringTokenizer( flow, " \t\n\r\f," );
-            while ( st.hasMoreElements() ) {
-                String handlerName = st.nextToken();
-                WSDDHandler handler = new WSDDHandler();
-                //handler.setName(handlerName);
-                handler.setType(new QName("", handlerName));
-                chain.addHandler(handler);
-            }
-
-            deployment.deployHandler(chain);
-        }
-    }
-
-    /**
-     * Deploy a service described in XML into an AxisEngine.
-     *
-     * @param elem the <service> element
-     * @param engine the AxisEngine in which to deploy
-     */
-    public static void registerService(Element elem,
-                                       WSDDDeployment deployment,
-                                       boolean isServer)
-        throws Exception
-    {
-        String   name    = elem.getAttribute( "name" );
-        String   request   = elem.getAttribute( "request" );
-        String   pivot   = elem.getAttribute( "pivot" );
-        String   response  = elem.getAttribute( "response" );
-
-        if ( request  != null && request.equals("") )  request = null ;
-        if ( response != null && response.equals("") ) response = null ;
-        if ( pivot  != null && pivot.equals("") )  pivot = null ;
-        if ( name != null && name.equals("") ) name = null ;
-
-        if (log.isDebugEnabled())
-            log.debug( JavaUtils.getMessage("deployService01", name) );
-
-        String            hName = null ;
-        Handler            tmpH = null ;
-        StringTokenizer      st = null ;
-
-        if ( pivot == null && request == null && response == null )
-            throw new AxisFault( "Admin.error",
-                JavaUtils.getMessage("noChains00"),
-                null, null );
-
-        WSDDService serv = new WSDDService();
-
-        serv.setName(name);
-        
-        if ( request != null && !"".equals(request) ) {
-            st = new StringTokenizer( request, " \t\n\r\f," );
-            WSDDRequestFlow req = new WSDDRequestFlow();
-            serv.setRequestFlow(req);
-            while ( st.hasMoreElements() ) {
-                hName = st.nextToken();
-                WSDDHandler h = new WSDDHandler();
-                h.setType(new QName("",hName));
-                req.addHandler(h);
-            }
-        }
-
-        Hashtable opts = new Hashtable();
-        getOptions( elem, opts );
-        serv.setOptionsHashtable(opts);
-        
-        /**
-         * Pivots only make sense on the server.
-         */ 
-        if (isServer) {
-            Handler pivotHandler = deployment.getHandler(new QName("", pivot));
-            if (pivotHandler == null)
-                throw new AxisFault(JavaUtils.getMessage("noPivot00", pivot));
-            Class pivotClass = pivotHandler.getClass();
-            if (pivotClass == RPCProvider.class) {
-                serv.setProviderQName(WSDDConstants.JAVARPC_PROVIDER);
-            } else if (pivotClass == MsgProvider.class) {
-                serv.setProviderQName(WSDDConstants.JAVAMSG_PROVIDER);
-            } else {
-                serv.setParameter("handlerClass", pivotClass.getName());
-                serv.setProviderQName(WSDDConstants.HANDLER_PROVIDER);
-            }
-        }
-
-        if ( response != null && !"".equals(response) ) {
-            st = new StringTokenizer( response, " \t\n\r\f," );
-            WSDDResponseFlow resp = new WSDDResponseFlow();
-            serv.setResponseFlow(resp);
-            while ( st.hasMoreElements() ) {
-                hName = st.nextToken();
-                WSDDHandler h = new WSDDHandler();
-                h.setType(new QName("", hName));
-                resp.addHandler(h);
-            }
-        }
-
-        try {
-            registerTypeMappings(elem, serv);
-        } catch (Exception e) {
-            throw AxisFault.makeFault(e);
-        }
-
-        deployment.deployService(serv);
-    }
-
-    /**
-     * Deploy a handler described in XML into an AxisEngine.
-     *
-     * @param elem the <handler> element
-     */
-    public static void registerHandler(Element elem,
-                                       WSDDDeployment deployment)
-        throws Exception
-    {
-        ClassLoader   cl = Thread.currentThread().getContextClassLoader();
-        String   name    = elem.getAttribute( "name" );
-
-        WSDDHandler handler;
-
-        if ( name != null && name.equals("") ) name = null ;
-
-        String   cls   = elem.getAttribute( "class" );
-        if ( cls != null && cls.equals("") ) cls = null ;
-
-        if (log.isDebugEnabled())
-            log.debug( JavaUtils.getMessage("deployHandler00", name) );
-
-        handler = new WSDDHandler();
-
-        handler.setQName(new QName(null, name));
-        getOptions( elem, handler.getParametersTable() );
-
-        deployment.deployHandler(handler);
-    }
-
-    /**
-     * Deploy a transport described in XML into an AxisEngine.
-     *
-     * @param elem the <transport> element
-     */
-    public static void registerTransport(Element elem,
-                                         WSDDDeployment deployment)
-        throws Exception
-    {
-        String   name    = elem.getAttribute( "name" );
-        String   request   = elem.getAttribute( "request" );
-        String   sender   = elem.getAttribute( "pivot" );
-        String   response  = elem.getAttribute( "response" );
-        Hashtable options = new Hashtable();
-
-        if ( request  != null && request.equals("") )  request = null ;
-        if ( response != null && response.equals("") ) response = null ;
-        if ( sender  != null && sender.equals("") )  sender = null ;
-        if ( name != null && name.equals("") ) name = null ;
-
-        if (log.isDebugEnabled())
-            log.debug( JavaUtils.getMessage("deployTransport00", name) );
-
-        StringTokenizer      st = null ;
-        Vector reqNames = new Vector();
-        Vector respNames = new Vector();
-
-        WSDDTransport transport = new WSDDTransport();
-        
-        transport.setName(name);
-
-        if (request != null) {
-            WSDDRequestFlow req = new WSDDRequestFlow();
-            transport.setRequestFlow(req);
-            st = new StringTokenizer( request, " \t\n\r\f," );
-            while ( st.hasMoreElements() ) {
-                WSDDHandler h = new WSDDHandler();
-                h.setType(new QName("", st.nextToken()));
-                req.addHandler(h);
-            }
-        }
-
-        if (response != null) {
-            WSDDResponseFlow resp = new WSDDResponseFlow();
-            transport.setResponseFlow(resp);
-            st = new StringTokenizer( response, " \t\n\r\f," );
-            while ( st.hasMoreElements() ) {
-                WSDDHandler h = new WSDDHandler();
-                h.setType(new QName("", st.nextToken()));
-                resp.addHandler(h);
-            }
-        }
-
-        getOptions( elem, options );
-        transport.setOptionsHashtable(options);
-
-        deployment.deployTransport(transport);
-    }
-
-    /**
-     * Deploy a type mapping described in XML.
-     *
-     * @param root the type mapping element.
-     * @param map the TypeMappingRegistry which gets this mapping.
-     */
-    private static void registerTypeMapping(Element elem,
-                                            WSDDTypeMappingContainer container,
-                                            boolean isBean)
-        throws Exception
-    {
-        WSDDTypeMapping mapping = new WSDDTypeMapping();
-        
-        // Retrieve classname attribute
-        String classname = elem.getAttribute("classname");
-        
-        if ((classname == null) || classname.equals(""))
-            throw new AxisFault("Server.Admin.error",
-                JavaUtils.getMessage("noClassname00"),
-                null, null);
-
-        // Resolve class name
-
-        Class cls;
-        QName qn;
-
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        try {
-            cls = cl.loadClass(classname);
-        } catch (Exception e) {
-            throw new AxisFault( "Admin.error", e.toString(), null, null);
-        }
-
-        mapping.setLanguageSpecificType(cls);
-        
-        if (isBean) {
-            // Resolve qname based on prefix and localpart
-
-            String namespaceURI = elem.getNamespaceURI();
-            String localName    = elem.getLocalName();
-            qn = new QName(namespaceURI, localName);
-
-            log.debug( JavaUtils.getMessage("registerTypeMap00", "" + qn, classname));
-
-            // register both serializers and deserializers for this bean
-            mapping.setQName(qn);
-            mapping.setSerializer(BeanSerializerFactory.class);
-            mapping.setDeserializer(BeanDeserializerFactory.class);
-        } else {
-            String typeName = elem.getAttribute("type");
-            int idx = typeName.indexOf(':');
-            String prefix = typeName.substring(0, idx);
-            String localPart = typeName.substring(idx + 1);
-
-            qn = new QName(XMLUtils.getNamespace(prefix, elem), localPart);
-
-            mapping.setQName(qn);
-            classname = elem.getAttribute("serializer");
-            log.debug( JavaUtils.getMessage("serializer00", classname));
-            try {
-                cls = cl.loadClass(classname);
-                mapping.setSerializer(cls);
-            } catch (Exception e) {
-                throw new AxisFault( "Admin.error",
-                    JavaUtils.getMessage("noSerializer01", e.toString()),
-                    null, null);
-            }
-            classname = elem.getAttribute("deserializerFactory");
-            log.debug( JavaUtils.getMessage("deserFact00", classname));
-            try {
-                cls = cl.loadClass(classname);
-                mapping.setDeserializer(cls);
-            } catch (Exception e) {
-                throw new AxisFault( "Admin.error",
-                    JavaUtils.getMessage("noDeserFact00", e.toString()),
-                    null, null);
-            }
-        }
-
-        container.deployTypeMapping(mapping);
     }
 
     public static void main(String args[]) throws Exception {
