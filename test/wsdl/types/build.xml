@@ -63,7 +63,7 @@ Copyright:
 
    <copy todir="${build.dir}/work/test/wsdl/types" overwrite="yes">
       <fileset dir="${axis.home}/test/wsdl/types">
-        <include name="*TestCase.java"/>
+        <include name="**/*TestCase.java"/>
         <include name="*Impl.java"/>
       </fileset>
     </copy>
