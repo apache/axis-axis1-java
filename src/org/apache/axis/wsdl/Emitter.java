@@ -508,7 +508,7 @@ public class Emitter {
 
         this.fileList.add(packageDirName + fileName);
 
-        if (packageName == null) {
+        if (packageName == null||packageName.trim().length()==0) {
             this.classList.add(nameValue);
         } else {
             this.classList.add(packageName + "." + nameValue);
@@ -546,7 +546,7 @@ public class Emitter {
 
         this.fileList.add(packageDirName + fileName);
 
-        if (packageName == null) {
+        if (packageName == null||packageName.trim().length()==0) {
             this.classList.add(nameValue);
         } else {
             this.classList.add(packageName + "." + nameValue);
@@ -929,7 +929,7 @@ public class Emitter {
         String fileName = exceptionName + ".java";
 
         // check to make sure we haven't already emitted this fault
-        if (packageName == null) {
+        if (packageName == null||packageName.trim().length()==0) {
             if ( this.classList.contains(exceptionName) ) {
                 return exceptionName;
             }
@@ -941,7 +941,7 @@ public class Emitter {
 
         this.fileList.add(packageDirName + fileName);
 
-        if (packageName == null) {
+        if (packageName == null||packageName.trim().length()==0) {
             this.classList.add(exceptionName);
         } else {
             this.classList.add(packageName + "." + exceptionName);
@@ -1026,7 +1026,7 @@ public class Emitter {
 
         this.fileList.add(packageDirName + stubFileName);
 
-        if (packageName == null) {
+        if (packageName == null||packageName.trim().length()==0) {
             this.classList.add(stubName);
         } else {
             this.classList.add(packageName + "." + stubName);
@@ -1113,7 +1113,7 @@ public class Emitter {
 
             this.fileList.add(packageDirName + skelFileName);
 
-            if (packageName == null) {
+            if (packageName == null||packageName.trim().length()==0) {
                 this.classList.add(skelName);
             } else {
                 this.classList.add(packageName + "." + skelName);
@@ -1146,7 +1146,7 @@ public class Emitter {
 
             this.fileList.add(packageDirName + implFileName);
 
-            if (packageName == null) {
+            if (packageName == null||packageName.trim().length()==0) {
                 this.classList.add(implName);
             } else {
                 this.classList.add(packageName + "." + implName);
@@ -1516,7 +1516,7 @@ public class Emitter {
 
         this.fileList.add(packageDirName + fileName);
 
-        if (packageName == null) {
+        if (packageName == null||packageName.trim().length()==0) {
             this.classList.add(serviceName);
         } else {
             this.classList.add(packageName + "." + serviceName);
@@ -1535,7 +1535,7 @@ public class Emitter {
 
             this.fileList.add(packageDirName + testCaseFileName);
 
-            if (packageName == null) {
+            if (packageName == null||packageName.trim().length()==0) {
                 this.classList.add(testCase);
             } else {
                 this.classList.add(packageName + "." + testCase);
@@ -1669,14 +1669,20 @@ public class Emitter {
     private void writeDeploymentXML() {
         try {
             PrintWriter deployPW = printWriter("deploy.xml");
-            this.fileList.add(packageDirName + "deploy.xml");
+            if(packageDirName == null || packageDirName.trim().length()==0)
+                this.fileList.add("deploy.xml");
+            else
+                this.fileList.add(packageDirName + "deploy.xml");
 
             if (bVerbose) {
                 System.out.println("Generating deployment document: deploy.xml");
             }
             initializeDeploymentDoc(deployPW, "deploy");
             PrintWriter undeployPW = printWriter("undeploy.xml");
-            this.fileList.add(packageDirName + "undeploy.xml");
+            if(packageDirName == null || packageDirName.trim().length()==0)
+                this.fileList.add("undeploy.xml");
+            else
+                this.fileList.add(packageDirName + "undeploy.xml");
 
             if (bVerbose) {
                 System.out.println("Generating deployment document: undeploy.xml");
@@ -1811,7 +1817,7 @@ public class Emitter {
      * Write out deployment instructions for given WSDL binding
      */
     private void writeDeployBinding(PrintWriter deployPW, Binding binding) throws IOException {
-        if (packageName == null) {
+        if (packageName == null||packageName.trim().length()==0) {
             deployPW.println("      <option name=\"className\" value=\""
                              + binding.getQName().getLocalPart() + "Skeleton" + "\"/>");
         }
@@ -1896,15 +1902,15 @@ public class Emitter {
         }
 
         String javaName = type.getJavaLocalName();
-
         String fileName = javaName + ".java";
 
-        this.fileList.add(packageDirName + fileName);
-
-       if (packageName == null) {
+       if (type.getJavaPackageName() == null||type.getJavaPackageName().trim().length()==0) {
            this.classList.add(javaName);
+           this.fileList.add(fileName);
        } else {
-           this.classList.add(type.getJavaPackageName() + "." + javaName);
+           String complexJavaName = type.getJavaPackageName() + "." + javaName; 
+           this.classList.add(complexJavaName);
+           this.fileList.add(complexJavaName.replace('.','/')+".java");
        }
         PrintWriter typePW = printWriter(fileName, type.getJavaPackageName());
 
@@ -1983,12 +1989,14 @@ public class Emitter {
         String javaName = eType.getJavaLocalName();
 
         String fileName = javaName + ".java";
-        this.fileList.add(packageDirName + fileName);
 
-       if (packageName == null) {
+       if (eType.getJavaPackageName() == null||eType.getJavaPackageName().trim().length()==0) {
            this.classList.add(javaName);
+           this.fileList.add(fileName);
        } else {
-           this.classList.add(eType.getJavaPackageName() + "." + javaName);
+           String enumJavaName = eType.getJavaPackageName() + "." + javaName;
+           this.classList.add(enumJavaName);
+           this.fileList.add(enumJavaName.replace('.','/')+".java");
        }
 
         PrintWriter typePW = printWriter(fileName, eType.getJavaPackageName());
@@ -2015,12 +2023,13 @@ public class Emitter {
 
         String fileName = javaName + "Holder.java";
 
-        this.fileList.add(packageDirName + fileName);
-
-        if (packageName == null) {
-            this.classList.add(javaName);
+        if (type.getJavaPackageName() == null||type.getJavaPackageName().trim().length()==0) {
+            this.classList.add(javaName + "Holder");
+            this.fileList.add(javaName + "Holder.java");
         } else {
-            this.classList.add(type.getJavaPackageName() + "." + javaName + "Holder");
+            String holderJavaName = type.getJavaPackageName() + "." + javaName + "Holder"; 
+            this.classList.add(holderJavaName);
+            this.fileList.add(holderJavaName.replace('.','/')+".java");
         }
 
         PrintWriter pw = printWriter(fileName, type.getJavaPackageName());
@@ -2251,7 +2260,7 @@ public class Emitter {
 
         // print package declaration
         if (pkgName == null) {
-          if (packageName != null) {
+          if (packageName != null && packageName.trim().length()>0) {
               pw.println("package " + packageName + ";");
               pw.println();
           }
