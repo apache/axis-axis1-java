@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -52,45 +52,55 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.utils;
-
+package org.apache.axis.components.net;
 
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.components.session.SessionGenerator;
+import org.apache.axis.utils.ClassUtils;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
 
-import org.apache.axis.AxisProperties;
-import org.apache.axis.SOAPPart;
+/**
+ * Class SessionGeneratorFactory
+ *
+ * @author Davanum Srinivas (dims@apache.org)
+ */
+public class SessionGeneratorFactory {
 
-
-public class SOAPUtils {
+    /** Field log           */
     protected static Log log =
-        LogFactory.getLog(SOAPUtils.class.getName());
+            LogFactory.getLog(SessionGeneratorFactory.class.getName());
 
-    static String thisHost = null;
+    private static SessionGenerator generator = null;
 
-    private static int count = (int) (Math.random() * 100);
+    /**
+     * Returns a copy of the environment's default session generator factory.
+     *
+     * @return SessionGenerator
+     */
+    public static synchronized SessionGenerator getFactory() {
 
-    public static String getNewContentIdValue() {
-        int lcount;
+        String sessionGeneratorClassName =
+                System.getProperty("axis.sessionGenerator",
+                        "org.apache.axis.components.session.DefaultSessionGenerator");
 
-        synchronized (org.apache.axis.utils.SOAPUtils.class  ) {
-            lcount = ++count;
-        }
-        if (null == thisHost) {
-            try {
-                thisHost = java.net.InetAddress.getLocalHost().getHostName();
+        log.debug("axis.sessionGenerator:" + sessionGeneratorClassName);
+        SocketFactory extractor = null;
+
+        try {
+            if (generator == null) {
+                Class sessionGeneratorClass =
+                        ClassUtils.forName(sessionGeneratorClassName);
+
+                if (SessionGenerator.class.isAssignableFrom(sessionGeneratorClass)) {
+                    generator = (SessionGenerator) sessionGeneratorClass.newInstance();
+                }
             }
-            catch (java.net.UnknownHostException e) {
-                log.error(JavaUtils.getMessage("javaNetUnknownHostException00"), e);
-
-                thisHost = "localhost";
-            }
+        } catch (Exception e) {
+            // If something goes wrong here, should we just fall
+            // through and use the default one?
+            log.error(JavaUtils.getMessage("exception00"), e);
         }
-
-        StringBuffer s = new StringBuffer();
-
-        // Unique string is <hashcode>.<currentTime>.apache-soap.<hostname>
-        s.append( lcount).append(s.hashCode()).append('.').append(System.currentTimeMillis()).append(".AXIS@").append(thisHost);
-        return s.toString();
+        return generator;
     }
 }
