@@ -131,6 +131,7 @@ Copyright:
       <exclude name="**/org/apache/axis/transport/http/AxisServlet.java" unless="servlet.present"/>
       <exclude name="**/org/apache/axis/transport/http/AxisServletBase.java" unless="servlet.present"/>
       <exclude name="**/org/apache/axis/transport/http/AxisHTTPSessionListener.java" unless="servlet.present"/>
+      <exclude name="**/org/apache/axis/transport/http/JettyAxisServer.java" unless="jetty.present"/>
       <exclude name="**/org/apache/axis/transport/http/FilterPrintWriter.java" unless="servlet.present"/>
       <exclude name="**/org/apache/axis/transport/http/ServletEndpointContextImpl.java" unless="servlet.present"/>
       <exclude name="**/org/apache/axis/transport/http/QSWSDLHandler.java" unless="servlet.present"/>

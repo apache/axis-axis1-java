@@ -139,6 +139,13 @@
       classname="javax.net.ssl.SSLSocketFactory"
       classpathref="classpath"/>
 
+    <condition property="jetty.present" >
+      <and>
+        <available classname="javax.servlet.Servlet" classpathref="classpath" />
+        <available classname="org.mortbay.http.HttpServer" classpathref="classpath" />
+      </and>
+    </condition>
+
     <condition property="jdk14.jsse.present" >
       <and>
         <available classname="javax.net.ssl.X509TrustManager" classpathref="classpath" />
@@ -343,6 +350,7 @@
     <echo message="ibm.jsse.present=${ibm.jsse.present}" />
     <echo message="jimi.present=${jimi.present}" />
     <echo message="jms.present=${jms.present}" />
+    <echo message="jetty.present=${jetty.present}" />
     <echo message="jdk14.jsse.present=${jdk14.jsse.present}" />
     <echo message="mailapi.present=${mailapi.present}" />
     <echo message="regexp.present=${regexp.present}" />
