@@ -279,9 +279,13 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
 
                     if (elemType.getDimensions().length() > 1 &&
                             (elemType.getClass() == DefinedType.class)) {
-                        // SOAP array, don't write type.
+                        // If we have a DefinedType with dimensions, it must
+                        // be a SOAP array derived type.  In this case, use
+                        // the refType's QName for the metadata.
                         xmlType = elemType.getRefType().getQName();
                     } else {
+                        // Otherwise, use the type at the end of the ref
+                        // chain.
                         while (elemType.getRefType() != null) {
                             elemType = elemType.getRefType();
                         }
