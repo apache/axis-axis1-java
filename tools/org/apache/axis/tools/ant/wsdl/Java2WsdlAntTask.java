@@ -118,7 +118,7 @@ public class Java2WsdlAntTask extends Task
         log("\tmethods:" + methods, logLevel);
         log("\textraClasses:" + extraClasses, logLevel);
         log("\tsoapAction:" + soapAction, logLevel);
-        log("\t:classpath" + classpath, logLevel);
+        log("\tclasspath:" + classpath, logLevel);
       
 }
 
@@ -147,7 +147,7 @@ public class Java2WsdlAntTask extends Task
                     getProject(),
                     classpath,
                     false);
-            log("Using CLASSPATH " + cl.getClasspath(),
+            log("Using CLASSPATH: " + cl.getClasspath(),
                     Project.MSG_VERBOSE);
             ClassUtils.setDefaultClassLoader(cl);
             //add extra classes to the classpath when the classpath attr is not null
