@@ -195,12 +195,15 @@ public class TestXMLUtils extends TestCase
     
     public void testGetNamespace()
     {
-        Document doc = XMLUtils.newDocument();
-       
-        Element elem = doc.createElement("svg"); 
-        elem.setAttribute("xmlns:svg", "\"http://www.w3.org/2000/svg\""); 
+        String testDoc = "<svg xmlns:svg=\"http://www.w3.org/2000/svg\"/>"; 
+        InputSource inputsrc = new InputSource(new StringReader(testDoc));
+        Document doc = XMLUtils.newDocument(inputsrc);
+        assertNotNull(doc);
         
-        String expected = "\"http://www.w3.org/2000/svg\"";
+        NodeList nl = doc.getElementsByTagName("svg");
+        Element elem = (Element)nl.item(0);
+
+        String expected = "http://www.w3.org/2000/svg";
         String result = XMLUtils.getNamespace("svg", elem);
         assertEquals(expected, result);
     }
