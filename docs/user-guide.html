@@ -24,7 +24,7 @@ h1 {  margin-left: -30px}
 
 <h1>
 Axis User's Guide</h1>
-<i>Alpha 3 Version</i>
+<i>Beta 1 Version</i> 
 <h3>
 Table of Contents</h3>
 
@@ -139,67 +139,30 @@ the Apache bug tracking and feature-request database.
 What's in this release?</h3>
 This release includes the following features:
 <ul>
-<li>
-SOAP 1.1 compliant engine</li>
-
-<li>
-Flexible configuration / deployment system</li>
-
-<li>
-Support for "drop-in" deployment of SOAP services (JWS)</li>
-
-<li>
-Support for all basic types, and a type mapping system for defining new
-serializers/deserializers</li>
-
-<li>
-Automatic serialization/deserialization of Java Beans</li>
-
-<li>
-Automatic two-way conversions between Java "List" collections and SOAP
-Arrays</li>
-
-<li>
-Providers for RPC and message based SOAP services</li>
-
-<li>
-Automatic WSDL generation from deployed services</li>
-
-<li>
-WSDL2Java tool for building Java proxies and skeletons from WSDL documents</li>
-
-<li>
-Java2WSDL tool for building WSDL from Java classes.</li>
-
-<li>
-Preliminary security extensions, which can integrate with Servlet 2.2 security/roles</li>
-
-<li>
-An EJB provider for accessing EJB's as Web Services</li>
-
-<li>
-HTTP servlet-based transport</li>
-
-<li>
-Standalone version of the server (with HTTP support)</li>
-
-<li>
-Examples, including a client and server for the soapbuilders community
-interoperability tests</li>
+  <li> SOAP 1.1 compliant engine</li>
+  <li> Flexible configuration / deployment system</li>
+  <li> Support for "drop-in" deployment of SOAP services (JWS)</li>
+  <li> Support for all basic types, and a type mapping system for defining new 
+    serializers/deserializers</li>
+  <li> Automatic serialization/deserialization of Java Beans</li>
+  <li> Automatic two-way conversions between Java "List" collections and SOAP 
+    Arrays</li>
+  <li> Providers for RPC and message based SOAP services</li>
+  <li> Automatic WSDL generation from deployed services</li>
+  <li> WSDL2Java tool for building Java proxies and skeletons from WSDL documents</li>
+  <li> Java2WSDL tool for building WSDL from Java classes.</li>
+  <li> Preliminary security extensions, which can integrate with Servlet 2.2 security/roles</li>
+  <li>Preliminary support for the <b>SOAP with Attachments</b> specification</li>
+  <li> An EJB provider for accessing EJB's as Web Services</li>
+  <li> HTTP servlet-based transport</li>
+  <li> Standalone version of the server (with HTTP support)</li>
+  <li> Examples, including a client and server for the soapbuilders community 
+    interoperability tests</li>
 </ul>
 
-<h3>
-What's missing?</h3>
+<h3> What's missing?</h3>
 
-<ul>
-<li>
-Support for the SOAP with Attachments specification</li>
-
-<li>
-Support for the SOAP actor attribute</li>
-
-</ul>
-All of these items are on the list for the final release.
+<p>TBD</p>
 <h2>
 <a NAME="Installation"></a>Installing Axis and Using this Guide</h2>
 See the <a href="install.html">Axis Installation Guide</a>
@@ -214,7 +177,7 @@ that your CLASSPATH includes (note:  if you build axis from a CVS checkout, thes
 <li>xml-axis-beta1/lib/tt-bytecode.jar</li>
 <li>xml-axis-beta1/lib/wsdl4j.jar</li>
 <li>xml-axis-beta1/ # for the sample code</li>
-<li>An XML parser such as xerces</li>
+  <li>A JAXP-1.1 compliant XML parser such as xerces or crimson</li>
 </ul>
 <h2>
 <a NAME="ConsumingServices"></a>Consuming Web Services with Axis</h2>
@@ -320,30 +283,41 @@ that the echoString method returns a String, so we expect to get one back
 from client.invoke(). Let's take a moment and investigate how this happens,
 which sheds light on a potential problem (to which, of course, we have
 a solution - so don't fret :)).
-<p>Here's what a typical response might look like to the echoString method:
-<div class="xml">&lt;?xml version="1.0" encoding="UTF-8"?> &lt;SOAP-ENV:Envelope
-xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> &lt;SOAP-ENV:Body>
-&lt;ns1:echoStringResponse xmlns:ns1="http://soapinterop.org/"> &lt;result
-<font color="#FF0000">xsi:type="xsd:string"</font>>Hello!&lt;/result>
-&lt;/ns1:echoStringResponse> &lt;/SOAP-ENV:Body> &lt;/SOAP-ENV:Envelope></div>
-Take a look at the section which we've highlighted in red - that attribute
-is a schema <b>type declaration</b>, which Axis uses to figure out that
-the contents of that element are, in this case, deserializable into a Java
-String object. Many toolkits put this kind of explicit typing information
-in the XML to make the message "self-describing". On the other hand, some
-toolkits return responses that look like this:
-<div class="xml">&lt;?xml version="1.0" encoding="UTF-8"?> &lt;SOAP-ENV:Envelope
-xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> &lt;SOAP-ENV:Body>
-&lt;ns1:echoStringResponse xmlns:ns1="http://soapinterop.org/"> &lt;result>Hello,
-I'm a string!&lt;/result> &lt;/ns1:echoStringResponse> &lt;/SOAP-ENV:Body>
-&lt;/SOAP-ENV:Envelope></div>
-There's no type in the message, so how do we know what Java object we should
+<p>Here's what a typical response might look like to the echoString method: </p>
+<div class="xml">
+<pre>&lt;?xml version="1.0" encoding="UTF-8"?><br> &lt;SOAP-ENV:Envelope xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+                    xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"> 
+  &lt;SOAP-ENV:Body>
+   &lt;ns1:echoStringResponse xmlns:ns1="http://soapinterop.org/"> 
+    &lt;result <font color="#FF0000">xsi:type="xsd:string"</font>>Hello!&lt;/result>
+   &lt;/ns1:echoStringResponse> 
+  &lt;/SOAP-ENV:Body>
+ &lt;/SOAP-ENV:Envelope></pre>
+  </div>
+<p>Take a look at the section which we've highlighted in <font color="#FF0000">red</font> 
+- that attribute is a schema <b>type declaration</b>, which Axis uses to figure 
+out that the contents of that element are, in this case, deserializable into a 
+Java String object. Many toolkits put this kind of explicit typing information 
+in the XML to make the message "self-describing". On the other hand, some toolkits 
+return responses that look like this: </p>
+<div class="xml">
+  <pre>&lt;?xml version="1.0" encoding="UTF-8"?>
+&lt;SOAP-ENV:Envelope xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                   xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+ &lt;SOAP-ENV:Body>
+  &lt;ns1:echoStringResponse xmlns:ns1="http://soapinterop.org/">
+   &lt;result>Hello, I'm a string!&lt;/result>
+  &lt;/ns1:echoStringResponse>
+ &lt;/SOAP-ENV:Body>
+&lt;/SOAP-ENV:Envelope></pre>
+</div>
+<p>There's no type in the message, so how do we know what Java object we should
 deserialize the &lt;result> element into? The answer is <b>metadata</b>
 - data about data. In this case, we need a <b>description</b> of the service
 that tells us what to expect as the return type. Here's how to do it on
-the client side in Axis:
+the client side in Axis:</p>
 <div class="example">
 <pre>&nbsp; call.setReturnType( org.apache.axis.encoding.XMLType.XSD_STRING );</pre>
 </div>
@@ -402,12 +376,12 @@ custom type mappings, or control which Handlers get invoked when people
 are using your service.
 <h4>
 <a NAME="descriptors"></a>Deploying via descriptors</h4>
-To really use the flexibility available to you in Axis, you should get
+<p>To really use the flexibility available to you in Axis, you should get
 familiar with the Axis <b>Web Service Deployment Descriptor (WSDD)</b>
 format. A deployment descriptor contains a bunch of things you want to
 "deploy" into Axis - i.e. make available to the Axis engine. The most common
 thing to deploy is a Web Service, so let's start by taking a look at a
-deployment descriptor for a basic service (this file is <a href="../samples/userguide/example3/deploy.wsdd">samples/userguide/example3/deploy.wsdd</a>):
+deployment descriptor for a basic service (this file is <a href="../samples/userguide/example3/deploy.wsdd">samples/userguide/example3/deploy.wsdd</a>):</p>
 <div class="example">
 <pre>&lt;deployment xmlns="http://xml.apache.org/axis/wsdd/"
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
