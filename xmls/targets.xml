@@ -297,7 +297,7 @@
 
     <!-- first, put the JWS where the functional test can see it -->
     <mkdir dir="${axis.home}/build/jws" />
-    <copy file="${axis.home}samples/stock/StockQuoteService.jws" todir="${axis.home}/build/jws" />
+    <copy file="${axis.home}/samples/stock/StockQuoteService.jws" todir="${axis.home}/build/jws" />
     <copy file="${axis.home}/test/functional/AltStockQuoteService.jws" todir="${axis.home}/build/jws" />
     <copy file="${axis.home}/test/functional/GlobalTypeTest.jws" todir="${axis.home}/build/jws"/>
 
