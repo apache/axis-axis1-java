@@ -280,6 +280,8 @@ public class MessageContext {
      */
     public void setCurrentMessage(Message curMsg)
     {
+        curMsg.setMessageContext(this);
+
         if (havePassedPivot) {
             responseMessage = curMsg;
         } else {
