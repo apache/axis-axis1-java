@@ -741,37 +741,37 @@ public class MessageContext implements SOAPMessageContext {
      *  (if it has been so configured - will our deployment
      *   tool do this by default?  - todo by Jacek)
      */
-    public static String ENGINE_HANDLER      = "engine.handler";
+    public final static String ENGINE_HANDLER      = "engine.handler";
 
     /** This String is the URL that the message came to
      */
-    public static String TRANS_URL           = "transport.url";
+    public final static String TRANS_URL           = "transport.url";
 
     /** Has a quit been requested? Hackish... but useful... -- RobJ */
-    public static String QUIT_REQUESTED = "quit.requested";
+    public final static String QUIT_REQUESTED = "quit.requested";
 
     /** Place to store an AuthenticatedUser */
-    public static String AUTHUSER            = "authenticatedUser";
+    public final static String AUTHUSER            = "authenticatedUser";
 
     /** If on the client - this is the Call object */
-    public static String CALL                = "call_object" ;
+    public final static String CALL                = "call_object" ;
 
     /** Are we doing Msg vs RPC? - For Java Binding */
-    public static String IS_MSG              = "isMsg" ;
+    public final static String IS_MSG              = "isMsg" ;
 
     /** The directory where in coming attachments are created. */
-    public static String ATTACHMENTS_DIR   = "attachments.directory" ;
+    public final static String ATTACHMENTS_DIR   = "attachments.directory" ;
 
     /** The value of the property is used by service WSDL generation (aka ?WSDL)
      * For the service's interface namespace if not set TRANS_URL property is used.
      */
-    public static String WSDLGEN_INTFNAMESPACE      = "axis.wsdlgen.intfnamespace";
+    public final static String WSDLGEN_INTFNAMESPACE      = "axis.wsdlgen.intfnamespace";
 
     /** The value of the property is used by service WSDL generation (aka ?WSDL)
      * For the service's location if not set TRANS_URL property is used.
      *  (helps provide support through proxies.
      */
-    public static String WSDLGEN_SERV_LOC_URL      = "axis.wsdlgen.serv.loc.url";
+    public final static String WSDLGEN_SERV_LOC_URL      = "axis.wsdlgen.serv.loc.url";
 
     /** The value of the property is used by service WSDL generation (aka ?WSDL)
      *  Set this property to request a certain level of HTTP.
@@ -780,7 +780,7 @@ public class MessageContext implements SOAPMessageContext {
      *  The values MUST use org.apache.axis.transport.http.HTTPConstants.HEADER_PROTOCOL_11
      *    for HTTP 1.1
      */
-    public static String HTTP_TRANSPORT_VERSION  = "axis.transport.version";
+    public final static String HTTP_TRANSPORT_VERSION  = "axis.transport.version";
 
     /*
      * IMPORTANT.
