@@ -534,7 +534,7 @@ public class TypeMappingImpl implements TypeMapping
         //log.debug("getTypeQName javaType =" + javaType);
         if (javaType == null)
             return null;
-        
+       
         QName xmlType = null;
         Pair pair = (Pair) class2Pair.get(javaType);
         if (pair == null && delegate != null) {
@@ -543,41 +543,41 @@ public class TypeMappingImpl implements TypeMapping
             xmlType = pair.xmlType;
         }
 
+        /* If auto-typing is on and the array has the default SOAP_ARRAY QName,
+         * then generate a namespace for this array intelligently.   Also
+         * register it's javaType and xmlType. List classes and derivitives
+         * can't be used because they should be serialized as an anyType array.
+         */
+        if ( doAutoTypes && 
+             javaType != List.class &&
+             !List.class.isAssignableFrom(javaType) &&
+             xmlType != null &&
+             xmlType.equals(Constants.SOAP_ARRAY) )
+        {
+            xmlType = new QName(
+                Namespaces.makeNamespace( javaType.getName() ),
+                Types.getLocalNameFromFullName( javaType.getName() ) );
+                
+            register( javaType,
+                      xmlType, 
+                      new ArraySerializerFactory(),
+                      new ArrayDeserializerFactory() );
+        }
+        
         // Can only detect arrays via code
         if (xmlType == null && (javaType.isArray() ||
             javaType == List.class ||
             List.class.isAssignableFrom(javaType))) {
 
-            /* If auto-typing is on, generate a namespace for this array
-             * intelligently, then register it's javaType and xmlType. Also
-             * make sure the class isn't derived from List, because they
-             * should be serialized as an anyType array.
-             */
-            if ( doAutoTypes && 
-                 javaType != List.class &&
-                 !List.class.isAssignableFrom(javaType) )
-            {
-                xmlType = new QName(
-                    Namespaces.makeNamespace( javaType.getName() ),
-                    Types.getLocalNameFromFullName( javaType.getName() ) );
-                
-                register( javaType,
-                          xmlType, 
-                          new ArraySerializerFactory(),
-                          new ArrayDeserializerFactory() );
-            }
-            else
-            {
-                // get the registered array if any
-                pair = (Pair) class2Pair.get(Object[].class);
-                // TODO: it always returns the last registered one,
-                //  so that's why the soap 1.2 typemappings have to 
-                //  move to an other registry to differentiate them
-                if (pair != null) {
-                    xmlType = pair.xmlType;
-                } else {
-                    xmlType = Constants.SOAP_ARRAY;
-                }
+            // get the registered array if any
+            pair = (Pair) class2Pair.get(Object[].class);
+            // TODO: it always returns the last registered one,
+            //  so that's why the soap 1.2 typemappings have to 
+            //  move to an other registry to differentiate them
+            if (pair != null) {
+                xmlType = pair.xmlType;
+            } else {
+                xmlType = Constants.SOAP_ARRAY;
             }
         }
         

@@ -190,6 +190,9 @@ public class Namespaces extends HashMap {
      * @return namespace namespace String
      */
     public static String makeNamespace (String clsName, String protocol) {
+        if ( clsName.startsWith("[L") )
+            clsName = clsName.substring( 2, clsName.length() - 1 );
+            
         if (clsName.lastIndexOf('.') == -1)
             return protocol + "://" + "DefaultNamespace";
         String packageName = clsName.substring(0, clsName.lastIndexOf('.'));
