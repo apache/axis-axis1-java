@@ -99,7 +99,7 @@ public class AxisServlet extends HttpServlet {
       }
     }
 
-    /* Place the incoming message in the MessagContext object - notice */
+    /* Place the Request message in the MessagContext object - notice */
     /* that we just leave it as a 'ServletRequest' object and let the  */
     /* Message processing routine convert it - we don't do it since we */
     /* don't know how it's going to be used - perhaps it might not     */
@@ -113,7 +113,7 @@ public class AxisServlet extends HttpServlet {
     msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST, req );
     msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETRESPONSE, res );
     
-    msgContext.setIncomingMessage( msg );
+    msgContext.setRequestMessage( msg );
     
     /** Set the target which tells the engine where to dispatch.  In the
      * real world, this would probably be gotten from the servlet
@@ -123,7 +123,7 @@ public class AxisServlet extends HttpServlet {
 
     /* Save the SOAPAction header in the MessageContext bag - this will */
     /* be used to tell the Axis Engine which service is being invoked.  */
-    /* This will save us the trouble of having to parse the incoming    */
+    /* This will save us the trouble of having to parse the Request     */
     /* message - although we will need to double-check later on that    */
     /* the SOAPAction header does in fact match the URI in the body.    */
     /* (is this last stmt true???)                                      */
@@ -176,12 +176,12 @@ public class AxisServlet extends HttpServlet {
         res.setStatus( HttpServletResponse.SC_INTERNAL_SERVER_ERROR );
       if ( !(e instanceof AxisFault) )
         e = new AxisFault( e );
-      msgContext.setOutgoingMessage( new Message(e, "AxisFault") );
+      msgContext.setResponseMessage( new Message(e, "AxisFault") );
     }
 
     /* Send it back along the wire...  */
     /***********************************/
-    msg = msgContext.getOutgoingMessage();
+    msg = msgContext.getResponseMessage();
     res.setContentType( "text/xml" );
     res.getWriter().println( msg !=  null ? msg.getAs("String") : "No data" );
   }

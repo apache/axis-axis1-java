@@ -108,32 +108,32 @@ public class MessageContext {
     public MessageContext() {}
 
     public MessageContext( Message inMsg ) {
-        setIncomingMessage( inMsg );
+        setRequestMessage( inMsg );
     }
 
     /**
      * Placeholder.
      */
-    public Message getIncomingMessage() { 
+    public Message getRequestMessage() { 
         return inMessage ; 
     };
 
     /**
      * Placeholder.
      */
-    public void setIncomingMessage(Message inMsg) { 
+    public void setRequestMessage(Message inMsg) { 
         inMessage = inMsg ; 
     };
 
     /**
      * Placeholder.
      */
-    public Message getOutgoingMessage() { return outMessage ; }
+    public Message getResponseMessage() { return outMessage ; }
 
     /**
      * Placeholder.
      */
-    public void setOutgoingMessage(Message inMsg) { 
+    public void setResponseMessage(Message inMsg) { 
         outMessage = inMsg ;
     };
 

@@ -68,9 +68,9 @@ public class EchoHandler extends BasicHandler {
     public void invoke(MessageContext msgContext) throws AxisFault {
         Debug.Print( 1, "Enter: EchoHandler::invoke" );
         try {
-            Message  msg = msgContext.getIncomingMessage();
+            Message  msg = msgContext.getRequestMessage();
             SOAPEnvelope env = (SOAPEnvelope) msg.getAs( "SOAPEnvelope" );
-            msgContext.setOutgoingMessage( new Message( env, "SOAPEnvelope" ) );
+            msgContext.setResponseMessage( new Message( env, "SOAPEnvelope" ) );
         }
         catch( Exception e ) {
             Debug.Print( 1, e );

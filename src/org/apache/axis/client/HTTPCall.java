@@ -164,7 +164,7 @@ public class HTTPCall {
       throw (AxisFault) e ;
     }
 
-    resMsg = msgContext.getOutgoingMessage();
+    resMsg = msgContext.getResponseMessage();
     Document doc = (Document) resMsg.getAs("Document");
     body = new RPCBody( doc.getDocumentElement() );
     resArgs = body.getArgs();

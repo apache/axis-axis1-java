@@ -72,7 +72,7 @@ import org.apache.axis.handlers.* ;
 public class MsgDispatchHandler extends BasicHandler {
   /**
    * This is pretty much a pass-thru to the util.Admin tool.  This will just
-   * take the incoming xml file and call the Admin processing.
+   * take the Request xml file and call the Admin processing.
    */
   public void invoke(MessageContext msgContext) throws AxisFault {
     Debug.Print( 1, "Enter: MsgDispatcherHandler::invoke" );
@@ -97,7 +97,7 @@ public class MsgDispatchHandler extends BasicHandler {
       Class[]         argClasses = new Class[2];
       Object[]        argObjects = new Object[2];
 
-      Message       reqMsg  = msgContext.getIncomingMessage();
+      Message       reqMsg  = msgContext.getRequestMessage();
       SOAPEnvelope  reqEnv  = (SOAPEnvelope) reqMsg.getAs("SOAPEnvelope");
       SOAPBody      reqBody = reqEnv.getFirstBody();
   
@@ -113,7 +113,7 @@ public class MsgDispatchHandler extends BasicHandler {
       SOAPBody      resBody = new SOAPBody( retDoc );
       SOAPEnvelope  resEnv  = new SOAPEnvelope( resBody );
       Message       resMsg = new Message( resEnv, "SOAPEnvelope" );
-      msgContext.setOutgoingMessage( resMsg );
+      msgContext.setResponseMessage( resMsg );
     }
     catch( Exception exp ) {
       exp.printStackTrace();

@@ -72,7 +72,7 @@ public class DebugHandler extends BasicHandler {
     public void invoke(MessageContext msgContext) throws AxisFault {
         Debug.Print( 1, "Enter: DebugHandler::invoke" );
         try {
-            Message       msg = msgContext.getIncomingMessage();
+            Message       msg = msgContext.getRequestMessage();
             SOAPEnvelope  env = (SOAPEnvelope) msg.getAs( "SOAPEnvelope" );
             Vector        headers = null ;
             

@@ -125,11 +125,11 @@ public class AdminClient {
           MessageContext  msgContext = new MessageContext();
           Message         inMsg      = new Message( input, "InputStream" );
           Message         outMsg     = null ;
-          msgContext.setIncomingMessage( inMsg );
+          msgContext.setRequestMessage( inMsg );
 
           hMsg.invoke( msgContext );
 
-          outMsg = msgContext.getOutgoingMessage();
+          outMsg = msgContext.getResponseMessage();
           input.close();
           System.err.println( outMsg.getAs( "String" ) );
         }

@@ -135,7 +135,7 @@ public class HTTPMessage {
 
   public void invoke( MessageContext mc ) throws AxisFault {
     Debug.Print( 1, "Enter: HTTPMessage.invoke" );
-    Message              inMsg = mc.getIncomingMessage();
+    Message              inMsg = mc.getRequestMessage();
 
     SOAPEnvelope         reqEnv = null ;
 
@@ -188,11 +188,11 @@ public class HTTPMessage {
       throw fault ;
     }
 
-    Message       resMsg = msgContext.getOutgoingMessage();
+    Message       resMsg = msgContext.getResponseMessage();
     SOAPEnvelope  resEnv = (SOAPEnvelope) resMsg.getAs( "SOAPEnvelope" );
     SOAPBody      resBody = resEnv.getFirstBody();
 
-    mc.setOutgoingMessage( new Message(resBody.getAsDocument(), "Document") );
+    mc.setResponseMessage( new Message(resBody.getAsDocument(), "Document") );
 
     Debug.Print( 1, "Exit: HTTPMessage.invoke" );
   }
