@@ -70,6 +70,7 @@ import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.TypeMappingRegistryImpl;
 import org.apache.axis.encoding.ser.BaseDeserializerFactory;
 import org.apache.axis.encoding.ser.BaseSerializerFactory;
+import org.apache.axis.enum.Style;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.providers.java.JavaProvider;
 import org.apache.axis.utils.JavaUtils;
@@ -102,7 +103,7 @@ public class WSDDService
     private String descriptionURL;
 
     /** Style - document or RPC (the default) */
-    private int style = ServiceDesc.STYLE_RPC;
+    private Style style = Style.DEFAULT;
 
     private SOAPService cachedService = null;
 
@@ -141,16 +142,9 @@ public class WSDDService
 
         String styleStr = e.getAttribute(ATTR_STYLE);
         if (styleStr != null && !styleStr.equals("")) {
-            style = ServiceDesc.getStyleFromString(styleStr);
+            style = Style.getStyle(styleStr, Style.DEFAULT);
             desc.setStyle(style);
-            switch (style) {
-                case ServiceDesc.STYLE_MESSAGE:
-                    providerQName = WSDDConstants.QNAME_JAVAMSG_PROVIDER;
-                    break;
-                default:
-                    providerQName = WSDDConstants.QNAME_JAVARPC_PROVIDER;
-                    break;
-            }
+            providerQName = style.getProvider();
         }
 
         String streamStr = e.getAttribute(ATTR_STREAMING);
@@ -217,9 +211,7 @@ public class WSDDService
                 Class cls = cl.loadClass(className);
                 desc.setImplClass(cls);
                 initTMR();
-                String encStyle = (desc.getStyle() == ServiceDesc.STYLE_RPC) ?
-                    Constants.URI_DEFAULT_SOAP_ENC : "";
-                desc.setTypeMapping(getTypeMapping(encStyle));
+                desc.setTypeMapping(getTypeMapping(desc.getStyle().getEncoding()));
             } catch (Exception ex) {
             }
         }
@@ -289,7 +281,7 @@ public class WSDDService
     /**
      * Get the service style - document or RPC
      */
-    public int getStyle() {
+    public Style getStyle() {
         return style;
     }
 
@@ -300,7 +292,7 @@ public class WSDDService
     /**
      * Set the service style - document or RPC
      */
-    public void setStyle(int style) {
+    public void setStyle(Style style) {
         this.style = style;
     }
 
@@ -394,7 +386,7 @@ public class WSDDService
             service.setName(getQName().getLocalPart());
         service.setOptions(getParametersTable());
 
-        if (style != ServiceDesc.STYLE_RPC) {
+        if (style != Style.RPC) {
             // No Multirefs/xsi:types
             service.setOption(AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);
             service.setOption(AxisEngine.PROP_SEND_XSI, Boolean.FALSE);
@@ -435,10 +427,7 @@ public class WSDDService
             // use the style of the service to map doc/lit or rpc/enc
             String encodingStyle = mapping.getEncodingStyle();
             if (encodingStyle == null) {
-                if (style == ServiceDesc.STYLE_RPC)
-                    encodingStyle =Constants.URI_DEFAULT_SOAP_ENC;
-                else
-                    encodingStyle = Constants.URI_LITERAL_ENC;  // literal
+                encodingStyle = style.getEncoding();
             }
             TypeMapping tm = (TypeMapping) tmr.getTypeMapping(encodingStyle);
             TypeMapping df = (TypeMapping) tmr.getDefaultTypeMapping();
@@ -495,9 +484,9 @@ public class WSDDService
             attrs.addAttribute("", ATTR_PROVIDER, ATTR_PROVIDER,
                                "CDATA", context.qName2String(providerQName));
         }
-        if (style != ServiceDesc.STYLE_RPC) {
+        if (style != Style.DEFAULT) {
             attrs.addAttribute("", ATTR_STYLE, ATTR_STYLE,
-                               "CDATA", ServiceDesc.getStringFromStyle(style));
+                               "CDATA", style.getName());
         }
 
         context.startElement(WSDDConstants.QNAME_SERVICE, attrs);

@@ -53,10 +53,9 @@
  */
 package test.wsdl;
 
-import org.apache.axis.providers.java.JavaProvider;
+import org.apache.axis.enum.Scope;
 import org.apache.axis.utils.DefaultAuthenticator;
 import org.apache.axis.wsdl.toJava.Emitter;
-import org.apache.axis.providers.java.JavaProvider;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -111,21 +110,15 @@ public class Wsdl2javaAntTask extends Task
             // Instantiate the emitter
             Emitter emitter = new Emitter();
 
-            if (JavaProvider.OPTION_SCOPE_APPLICATION.equalsIgnoreCase(deployScope)) {
-                emitter.setScope(JavaProvider.BYTE_SCOPE_APPLICATION);
-            }
-            else if (JavaProvider.OPTION_SCOPE_REQUEST.equalsIgnoreCase(deployScope)) {
-                emitter.setScope(JavaProvider.BYTE_SCOPE_REQUEST);
-            }
-            else if (JavaProvider.OPTION_SCOPE_SESSION.equalsIgnoreCase(deployScope)) {
-                emitter.setScope(JavaProvider.BYTE_SCOPE_SESSION);
-            }
-            else if ("none".equalsIgnoreCase(deployScope)) {
-                emitter.setScope(JavaProvider.BYTE_SCOPE_NOT_EXPLICIT);
-            }
-            else {
+            Scope scope = Scope.getScope(deployScope, null);
+            if (scope != null) {
+                emitter.setScope(scope);
+            } else if ("none".equalsIgnoreCase(deployScope)) {
+                /* leave default (null, or not-explicit) */;
+            } else {
                 log("Unrecognized scope:  " + deployScope + ".  Ignoring it.", Project.MSG_VERBOSE);
             }
+            
             if (!namespaceMap.isEmpty()) {
                 emitter.setNamespaceMap(namespaceMap);
             }

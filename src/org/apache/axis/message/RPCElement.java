@@ -62,6 +62,7 @@ import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.enum.Style;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.wsdl.toJava.Utils;
@@ -115,7 +116,7 @@ public class RPCElement extends SOAPBodyElement
             // IF we're doc/literal... we can't count on the element name
             // being the method name.
             elementIsFirstParam = (operations[0].getStyle() ==
-                                   ServiceDesc.STYLE_DOCUMENT);
+                                   Style.DOCUMENT);
         }
 
         this.operations = operations;
@@ -268,12 +269,10 @@ public class RPCElement extends SOAPBodyElement
     protected void outputImpl(SerializationContext context) throws Exception
     {
         MessageContext msgContext = context.getMessageContext();
-        boolean isRPC = true;
-        if (msgContext != null &&
-                (msgContext.getOperationStyle() != ServiceDesc.STYLE_RPC) &&
-                (msgContext.getOperationStyle() != ServiceDesc.STYLE_WRAPPED)) {
-                isRPC = false;
-        }
+        boolean isRPC =
+            (msgContext == null  ||
+             msgContext.getOperationStyle() == Style.RPC  ||
+             msgContext.getOperationStyle() == Style.WRAPPED);
 
         if (isRPC) {
             // Set default namespace if appropriate (to avoid prefix mappings

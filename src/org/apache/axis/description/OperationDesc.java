@@ -58,6 +58,8 @@ import javax.xml.rpc.namespace.QName;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.lang.reflect.Method;
+
+import org.apache.axis.enum.Style;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -89,7 +91,7 @@ public class OperationDesc {
     private Method method;
 
     /** This operation's style.  If null, we default to our parent's */
-    private Integer style;
+    private Style style = null;
 
     /** The number of "in" params (i.e. IN or INOUT) for this operation */
     private int numInParams = 0;
@@ -182,25 +184,25 @@ public class OperationDesc {
         this.soapAction = soapAction;
     }
 
-    public void setStyle(int style)
+    public void setStyle(Style style)
     {
-        this.style = new Integer(style);
+        this.style = style;
     }
 
     /**
      * Return the style of the operation, defaulting to the parent
      * ServiceDesc's style if we don't have one explicitly set.
      */
-    public int getStyle()
+    public Style getStyle()
     {
         if (style == null) {
             if (parent != null) {
                 return parent.getStyle();
             }
-            return ServiceDesc.STYLE_RPC; // Default
+            return Style.DEFAULT; // Default
         }
 
-        return style.intValue();
+        return style;
     }
 
     public void addParameter(ParameterDesc param)

@@ -61,6 +61,7 @@ import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.providers.java.RPCProvider;
 import org.apache.axis.transport.http.HTTPConstants;
+import org.apache.axis.enum.Scope;
 import org.apache.axis.utils.JWSClassLoader;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
@@ -282,7 +283,7 @@ public class JWSProcessor extends BasicHandler
                 // Take the setting for the scope option from the handler
                 // parameter named "scope"
                 String scope = (String)getOption(RPCProvider.OPTION_SCOPE);
-                if (scope == null) scope = RPCProvider.OPTION_SCOPE_DEFAULT;
+                if (scope == null) scope = Scope.DEFAULT.getName();
                 rpc.setOption(RPCProvider.OPTION_SCOPE, scope);
 
                 // Set up service description

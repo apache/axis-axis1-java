@@ -64,7 +64,7 @@ import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ParameterDesc;
-import org.apache.axis.description.ServiceDesc;
+import org.apache.axis.enum.Style;
 import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.SerializationContextImpl;
@@ -157,10 +157,10 @@ public class Call implements javax.xml.rpc.Call {
     private String             username        = null;
     private String             password        = null;
     private boolean            maintainSession = false;
-    private int                operationStyle  = ServiceDesc.STYLE_RPC;
+    private Style              operationStyle  = Style.DEFAULT;
+    private String             encodingStyle   = operationStyle.getEncoding();
     private boolean            useSOAPAction   = false;
     private String             SOAPActionURI   = null;
-    private String             encodingStyle   = Constants.URI_DEFAULT_SOAP_ENC;
     private Integer            timeout         = null;
 
     private OperationDesc      operation       = new OperationDesc();
@@ -365,7 +365,7 @@ public class Call implements javax.xml.rpc.Call {
                 return new Boolean(getMaintainSession());
             }
             else if (name.equals(OPERATION_STYLE_PROPERTY)) {
-                return ServiceDesc.getStringFromStyle(getOperationStyle());
+                return getOperationStyle().getName();
             }
             else if (name.equals(SOAPACTION_USE_PROPERTY)) {
                 return new Boolean(useSOAPAction());
@@ -462,7 +462,7 @@ public class Call implements javax.xml.rpc.Call {
      * @exception IllegalArgumentException if operationStyle is not "rpc" or "document".
      */
     public void setOperationStyle(String operationStyle) {
-        this.operationStyle = ServiceDesc.getStyleFromString(operationStyle);
+        this.operationStyle = Style.getStyle(operationStyle, Style.DEFAULT);
 
 /*  Not being used for now... --GD
         throw new IllegalArgumentException(JavaUtils.getMessage(
@@ -475,7 +475,7 @@ public class Call implements javax.xml.rpc.Call {
     /**
      * Get the operation style.
      */
-    public int getOperationStyle() {
+    public Style getOperationStyle() {
         return operationStyle;
     } // getOperationStyle
 
@@ -516,7 +516,7 @@ public class Call implements javax.xml.rpc.Call {
      */
     public void setEncodingStyle(String namespaceURI) {
         encodingStyle = (namespaceURI == null)
-                        ? ""
+                        ? Constants.URI_LITERAL_ENC
                         : namespaceURI;
     }
 

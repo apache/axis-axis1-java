@@ -60,7 +60,7 @@ import org.apache.axis.utils.CLOptionDescriptor;
 import org.apache.axis.utils.CLUtil;
 import org.apache.axis.utils.JavaUtils;
 
-import org.apache.axis.providers.java.JavaProvider;
+import org.apache.axis.enum.Scope;
 
 import org.apache.axis.wsdl.gen.Parser;
 import org.apache.axis.wsdl.gen.WSDL2;
@@ -193,11 +193,7 @@ public class WSDL2Java extends WSDL2 {
                 break;
 
             case SKELETON_DEPLOY_OPT:
-                String skeletonDeploy = option.getArgument(0);
-                if (skeletonDeploy.equalsIgnoreCase("true"))
-                    emitter.setSkeletonWanted(true);
-                else
-                    emitter.setSkeletonWanted(false);
+                emitter.setSkeletonWanted(JavaUtils.isTrueExplicitly(option.getArgument(0)));
                 // --skeletonDeploy assumes --server-side, so fall thru
 
             case SERVER_OPT:
@@ -224,20 +220,19 @@ public class WSDL2Java extends WSDL2 {
                 break;
 
             case SCOPE_OPT:
-                String scope = option.getArgument();
-                if (JavaProvider.OPTION_SCOPE_APPLICATION.equals(scope)) {
-                    emitter.setScope(JavaProvider.BYTE_SCOPE_APPLICATION);
-                }
-                else if (JavaProvider.OPTION_SCOPE_REQUEST.equals(scope)) {
-                    emitter.setScope(JavaProvider.BYTE_SCOPE_REQUEST);
-                }
-                else if (JavaProvider.OPTION_SCOPE_SESSION.equals(scope)) {
-                    emitter.setScope(JavaProvider.BYTE_SCOPE_SESSION);
-                }
-                else {
+                String arg = option.getArgument();
+                
+                // Provide 'null' default, prevents logging internal error.
+                // we have something different to report here.
+                Scope scope = Scope.getScope(arg, null);
+                
+                if (scope != null) {
+                    emitter.setScope(scope);
+                } else {
                     System.err.println(
-                            JavaUtils.getMessage("badScope00", scope));
+                            JavaUtils.getMessage("badScope00", arg));
                 }
+
                 break;
 
             case TEST_OPT:
