@@ -15,6 +15,7 @@ BETA 2 MUST DO LIST
 ! <Russell> beta1-to-beta2 document
 ! <Glen?> Fix comprehensive types' skeleton bug
 ! <Russell?> Grow the FAQ
+! <> Make sure the gump build works
 
 MESSAGE PARSING / ENCODING
 --------------------------
