@@ -232,6 +232,8 @@ public class RPCHandler extends SOAPHandler
                     "noDeser01", localName,"" + type));
         }
 
+        dser.setDefaultType(type);
+
         dser.registerValueTarget(
              new FieldTarget(currentParam,
                  RPCParam.getValueField()));
