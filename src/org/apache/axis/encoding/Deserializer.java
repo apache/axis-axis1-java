@@ -449,12 +449,14 @@ public class Deserializer extends SOAPHandler
         // If this element has an id, then associate the value with the id.
         // Subsequent hrefs to the id will obtain the value directly.
         // This is necessary for proper multi-reference deserialization.
-        String id = context.curElement.getAttributeValue("id");
-        if (id != null) {
-            context.addObjectById(id, value);
-            if (category.isDebugEnabled()) {
-                category.debug("Put deserialized value=" + value + " for id= "+ id);
-            }     
+        if (context.curElement != null) {
+            String id = context.curElement.getAttributeValue("id");
+            if (id != null) {
+                context.addObjectById(id, value);
+                if (category.isDebugEnabled()) {
+                    category.debug("Put deserialized value=" + value + " for id= "+ id);
+                }     
+            }
         }
     }
 }

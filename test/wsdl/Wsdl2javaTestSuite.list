@@ -2,6 +2,7 @@ samples/addr/AddressBook.wsdl
 test/arrays/ArrayTest.wsdl
 test/inout/inout.wsdl
 test/multiref/MultiRefTest.wsdl
+test/sequence/SequenceTest.wsdl
 http://www.whitemesa.com/interop/InteropTest.wsdl
 #http://www.whitemesa.com/interop/InteropTestB.wsdl
 #http://www.whitemesa.com/interop/InteropTestC.wsdl
