@@ -26,7 +26,7 @@ _ 8598 - nice - Rich
 M 8646 - must - ?
 _ 8680 - close, fixed?
 _ 9045 - pend - Glen
-M 9239 - must - dims
+* 9239 - must - dims
 M 9393 - must - Rich
 M 9405 - must - Tom
 _ 9452 - post
@@ -50,7 +50,7 @@ _ 9882 - nice - Russell
 _ 9966 - nice - Tom (like 9717)
 _ 9967 - nice - Tom (like 9717 and 9966)
 M 9987 - must - Glen
-M 9992 - must - dims
+* 9992 - must - dims
 _ 10003 - post
 
 
