@@ -98,6 +98,8 @@ public class MessageElement
     protected SAX2EventRecorder recorder = null;
     protected int startEventIndex = 0;
     protected int endEventIndex = -1;
+    
+    public ArrayList namespaces = null;
 
     /** No-arg constructor for building messages?
      */
@@ -111,17 +113,22 @@ public class MessageElement
         name = localPart;
     }
     
-    MessageElement(String namespace, String localPart,
+    MessageElement(String namespace, String localPart, String qName,
                    Attributes attributes, DeserializationContext context)
     {
         if (DEBUG_LOG) {
-            System.out.println("New MessageElement (" + this + ") named " + localPart);
+            System.out.println("New MessageElement (" + this + ") named " + qName);
             for (int i = 0; attributes != null && i < attributes.getLength(); i++) {
                 System.out.println("  " + attributes.getQName(i) + " = '" + attributes.getValue(i) + "'");
             }
         }
         this.namespaceURI = namespace;
         this.name = localPart;
+        
+        int idx = qName.indexOf(":");
+        if (idx > 0)
+            this.prefix = qName.substring(0, idx);
+        
         this.context = context;
         this.startEventIndex = context.getCurrentRecordPos();
         this.recorder = context.getRecorder();
@@ -259,8 +266,6 @@ public class MessageElement
      */
     public final void output(SerializationContext context) throws Exception
     {
-        context.registerPrefixForURI(prefix, namespaceURI);
-        //stem.out.println("In output (" + this.getName() + ")");
         if (recorder != null) {
             recorder.replay(startEventIndex, endEventIndex, new SAXOutputter(context));
             return;

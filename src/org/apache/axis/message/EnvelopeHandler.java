@@ -13,9 +13,11 @@ import org.apache.axis.encoding.DeserializationContext;
 
 public class EnvelopeHandler extends SOAPHandler
 {
-    public SOAPHandler onStartChild(String namespace, String localName,
-                                     Attributes attributes,
-                                     DeserializationContext context)
+    public SOAPHandler onStartChild(String namespace,
+                                    String localName,
+                                    String prefix,
+                                    Attributes attributes,
+                                    DeserializationContext context)
         throws SAXException
     {
         return new EnvelopeBuilder();

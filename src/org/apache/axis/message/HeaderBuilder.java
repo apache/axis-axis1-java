@@ -14,13 +14,14 @@ public class HeaderBuilder extends SOAPHandler
     private SOAPHeader header;
     
     public SOAPHandler onStartChild(String namespace,
-                             String localName,
-                             Attributes attributes,
-                             DeserializationContext context)
+                                    String localName,
+                                    String prefix,
+                                    Attributes attributes,
+                                    DeserializationContext context)
         throws SAXException
     {
-        header = new SOAPHeader(namespace, localName,
-                                           attributes, context);
+        header = new SOAPHeader(namespace, localName, prefix,
+                                attributes, context);
         return null;
     }
     

@@ -12,10 +12,10 @@ public class RPCElement extends SOAPBodyElement
     protected String methodName;    
     protected Vector params = new Vector();
     
-    public RPCElement(String namespace, String localName,
+    public RPCElement(String namespace, String localName, String prefix,
                       Attributes attributes, DeserializationContext context)
     {
-        super(namespace, localName, attributes, context);
+        super(namespace, localName, prefix, attributes, context);
         methodName = localName;
     }
     

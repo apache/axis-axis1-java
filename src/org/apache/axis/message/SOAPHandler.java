@@ -29,9 +29,19 @@ public class SOAPHandler extends DefaultHandler
     {
     }
     
-    public SOAPHandler onStartChild(String namespace, String localName,
+    public final SOAPHandler onStartChild(String namespace, String localName,
                              Attributes attributes,
                              DeserializationContext context)
+        throws SAXException
+    {
+        return null;
+    }
+    
+    public SOAPHandler onStartChild(String namespace, 
+                                    String localName,
+                                    String prefix,
+                                    Attributes attributes,
+                                    DeserializationContext context)
         throws SAXException
     {
         return null;

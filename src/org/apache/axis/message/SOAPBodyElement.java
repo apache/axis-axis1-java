@@ -67,10 +67,11 @@ public class SOAPBodyElement extends MessageElement
 {
     public SOAPBodyElement(String namespace,
                            String localPart,
+                           String prefix,
                            Attributes attributes,
                            DeserializationContext context)
     {
-        super(namespace, localPart, attributes, context);
+        super(namespace, localPart, prefix, attributes, context);
     }
     
     public SOAPBodyElement()

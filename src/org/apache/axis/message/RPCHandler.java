@@ -65,9 +65,11 @@ public class RPCHandler extends SOAPHandler
         }
     }
 
-    public SOAPHandler onStartChild(String namespace, String localName,
-                             Attributes attributes,
-                             DeserializationContext context)
+    public SOAPHandler onStartChild(String namespace,
+                                    String localName,
+                                    String prefix,
+                                    Attributes attributes,
+                                    DeserializationContext context)
         throws SAXException
     {
         /** Potential optimizations:

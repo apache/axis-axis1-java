@@ -476,20 +476,19 @@ public class DeserializationContext extends DefaultHandler
         if (recorder != null)
             recorder.startElement(namespace, localName, qName,
                                   attributes);
+        
+        String prefix = "";
+        int idx = qName.indexOf(":");
+        if (idx > 0)
+            prefix = qName.substring(0, idx);
 
         if (!handlerStack.isEmpty()) {
             nextHandler = getTopHandler().onStartChild(namespace,
                                                        localName,
+                                                       prefix,
                                                        attributes,
                                                        this);
         }
-        /*else {
-            nextHandler = initialFactory.getHandler(namespace,
-                                                localName,
-                                                attributes,
-                                                this);
-        }
-        */
         
         if (nextHandler == null)
             nextHandler = nullHandler;
