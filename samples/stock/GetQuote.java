@@ -124,7 +124,7 @@ public class GetQuote {
       System.out.println( symbol + ": " + res );
     }
     catch( Exception e ) {
-      System.err.println( e );
+      e.printStackTrace();
     }
   };
 

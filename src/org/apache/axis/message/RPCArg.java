@@ -69,7 +69,7 @@ import org.apache.axis.message.* ;
  * @author Doug Davis (dug@us.ibm.com)
  */
 public class RPCArg {
-  protected String   namespace ;
+  protected String   prefix ;
   protected String   namespaceURI ;
   protected String   name ;
   protected String   value ;         // only support String for now
@@ -77,7 +77,7 @@ public class RPCArg {
   public RPCArg() {} 
 
   public RPCArg(Element elem) {
-    namespace = elem.getPrefix();
+    prefix = elem.getPrefix();
     namespaceURI = elem.getNamespaceURI();
     name = elem.getLocalName();
     value = elem.getFirstChild().getNodeValue();
@@ -93,8 +93,8 @@ public class RPCArg {
     setValue( value );
   }
 
-  public String getNamespace() { return( namespace ); }
-  public void   setNamespace(String ns) { namespace = ns ; }
+  public String getPrefix() { return( prefix ); }
+  public void   setPrefix(String p) { prefix = p ; }
 
   public String getNamespaceURI() { return( namespaceURI ); }
   public void   setNamespaceURI(String nsuri) { namespaceURI = nsuri ; }
@@ -108,9 +108,9 @@ public class RPCArg {
   public Element getAsXML(Document doc) {
     Element   root ;
 
-    if ( namespace != null ) {
-      root = doc.createElementNS(namespace, namespace + ":" + name );
-      root.setAttribute( "xmlns:" + namespace, namespaceURI );
+    if ( prefix != null ) {
+      root = doc.createElementNS(prefix, prefix + ":" + name );
+      root.setAttribute( "xmlns:" + prefix, namespaceURI );
     }
     else {
       root = doc.createElement( name );

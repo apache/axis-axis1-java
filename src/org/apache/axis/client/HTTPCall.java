@@ -58,6 +58,8 @@
 package org.apache.axis.client ;
 
 import java.util.* ;
+import org.w3c.dom.* ;
+import org.apache.xerces.dom.DocumentImpl ;
 import org.apache.axis.* ;
 import org.apache.axis.message.* ;
 import org.apache.axis.handlers.* ;
@@ -122,6 +124,21 @@ public class HTTPCall {
     body.setPrefix( "m" );
     body.setNamespaceURI( action );
     reqEnv.addBody( body );
+
+    // Until we have chains on the client force a debug header if needed
+    if ( Debug.getDebugLevel() > 0  ) {
+      SOAPHeader  header = new SOAPHeader();
+      header.setPrefix("d");
+      header.setName("Debug");
+      header.setNamespaceURI( "http://xml.apache.org/axis/debug" );
+      header.setActor( "http://schemas.xmlsoap.org/soap/actor/next" );
+      Document doc = new DocumentImpl();
+      Node node = doc.createTextNode( "" + Debug.getDebugLevel() );
+      header.addDataNode( node );
+  
+      reqEnv.addHeader( header );
+    }
+
     msgContext.setProperty( "HTTP_URL", url );   // horrible name!
     msgContext.setProperty( "HTTP_ACTION", action );   // horrible name!
     try {
@@ -129,9 +146,10 @@ public class HTTPCall {
       client.invoke( msgContext );
       client.cleanup();
     }
-    catch( AxisFault fault ) {
-      Debug.Print( 1,  fault );
-      throw fault ;
+    catch( Exception e ) {
+      Debug.Print( 1, e );
+      if ( !(e instanceof AxisFault ) ) e = new AxisFault( e );
+      throw (AxisFault) e ;
     }
 
     resMsg = msgContext.getOutgoingMessage();

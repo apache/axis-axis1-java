@@ -71,15 +71,18 @@ import org.apache.axis.utils.* ;
  */
 public class SOAPHeader {
   protected String    name ;
-  protected String    namespace ;
+  protected String    prefix ;
   protected String    namespaceURI ;
   protected boolean   mustUnderstand ;
   protected String    actor ;
   protected ArrayList data ;
 
+  public SOAPHeader() {
+  }
+
   public SOAPHeader(Element elem) {
     String  value ;
-    namespace = elem.getPrefix();
+    prefix = elem.getPrefix();
     namespaceURI = elem.getNamespaceURI();
     name = elem.getLocalName();
     value = elem.getAttributeNS( Constants.URI_SOAP_ENV,
@@ -91,22 +94,25 @@ public class SOAPHeader {
   }
 
   public String getName() { return( name ); }
-  public void   setName(String n) { name = n; }
+  public void setName(String n) { name = n; }
 
-  public String getNamespace() { return( namespace ); }
-  public void   setNamespace(String ns) { namespace = ns; }
+  public String getPrefix() { return( prefix ); }
+  public void setPrefix(String p) { prefix = p; }
 
   public String getNamespaceURI() { return( namespaceURI ); }
-  public void   setNamespaceURI(String nsuri) { namespaceURI = nsuri ; }
+  public void setNamespaceURI(String nsuri) { namespaceURI = nsuri ; }
 
   public boolean getMustUnderstand() { return( mustUnderstand ); }
-  public void    setMustUnderstand(boolean b) { mustUnderstand = b ; }
+  public void setMustUnderstand(boolean b) { mustUnderstand = b ; }
 
-  public String  getActor() { return( actor ); }
-  public void    setActor(String a) { actor = a ; }
+  public String getActor() { return( actor ); }
+  public void setActor(String a) { actor = a ; }
 
-  public Node[]    getData() { return( (Node[]) data.toArray() ); }
-  public void      addDataNode(Node n) { data.add(n); };
+  public Node[] getData() { return( (Node[]) data.toArray() ); }
+  public void addDataNode(Node n) { 
+    if ( data == null ) data = new ArrayList();
+    data.add(n); 
+  };
 
   public void setData(NodeList nl) { 
     data = null ;
@@ -116,9 +122,8 @@ public class SOAPHeader {
   }
 
   public Element getAsXML(Document doc) {
-    Element   root = doc.createElementNS(namespace, namespace + ":" +
-                                         name );
-    root.setAttribute( "xmlns:" + namespace, namespaceURI );
+    Element   root = doc.createElementNS(prefix, prefix + ":" + name );
+    root.setAttribute( "xmlns:" + prefix, namespaceURI );
     if ( mustUnderstand )
       root.setAttributeNS( Constants.URI_SOAP_ENV,
                            Constants.ATTR_MUST_UNDERSTAND,
