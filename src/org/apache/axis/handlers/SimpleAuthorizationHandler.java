@@ -73,7 +73,12 @@ import java.util.StringTokenizer;
  * specified in the Bag in the MessageContext is allowed to preform this
  * action.
  *
- * Just look for 'user' and 'action' in a file called 'perms.lst'
+ * Look at the <code>allowedRoles</code> handler parameter to determine if
+ * user has rights to access the service
+ *
+ * The <code>allowByDefault</code> handler parameter can be used to authorize
+ * all users if the parameter is set to true and the <code>allowedRoles</code>
+ * access control list is not specified.
  *
  * Replace this with your 'real' Authorization code.
  *
