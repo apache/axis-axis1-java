@@ -171,7 +171,7 @@ public class Call implements javax.xml.rpc.Call {
     // A place to store any client-specified headers
     private Vector             myHeaders       = null;
 
-    public static final String SEND_TYPE_ATTR    = "send_type_attr" ;
+    public static final String SEND_TYPE_ATTR    = AxisEngine.PROP_SEND_XSI;
 
     /**
      * This is the name of a property to set the transport of the message
