@@ -1947,11 +1947,13 @@ public class SymbolTable {
                              }
                          }
                      }
-                     org.w3c.dom.Element e = (org.w3c.dom.Element)XMLUtils.findNode(element, new QName(Constants.URI_DIME_CONTENT, "mediaType"));
-                     if(e != null){
-                         String value = e.getAttribute("value");
-                         bEntry.setOperationDIME(operation.getName());
-                         bEntry.setMIMEInfo(operation.getName(), part.getName(), value, dims);
+                     if(element != null) {
+                         org.w3c.dom.Element e = (org.w3c.dom.Element)XMLUtils.findNode(element, new QName(Constants.URI_DIME_CONTENT, "mediaType"));
+                         if(e != null){
+                             String value = e.getAttribute("value");
+                             bEntry.setOperationDIME(operation.getName());
+                             bEntry.setMIMEInfo(operation.getName(), part.getName(), value, dims);
+                         }
                      }
                  }
              }
