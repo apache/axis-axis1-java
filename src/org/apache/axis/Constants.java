@@ -130,6 +130,10 @@ public class Constants {
 
     /** The name of the field which accepts xsd:any content in Beans */
     public static final String ANYCONTENT = "_any";
+    /**
+     * The size of the buffer size for
+     */
+    public static final int HTTP_TXR_BUFFER_SIZE = 8 * 1024;
 
     /**
      * Returns true if SOAP_ENV Namespace
@@ -692,4 +696,11 @@ public class Constants {
      * also needs updating.
      */
     public static final String JWS_DEFAULT_FILE_EXTENSION = ".jws";
+
+    /**
+     * the default timeout for messages
+     * @since Axis1.2
+     */
+    public static final int DEFAULT_MESSAGE_TIMEOUT=60*1000*10;
+
 }
