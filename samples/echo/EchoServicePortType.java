@@ -19,7 +19,7 @@ public interface EchoServicePortType extends java.rmi.Remote {
     public void echoVoid() throws java.rmi.RemoteException;
     public byte[] echoBase64(byte[] input) throws java.rmi.RemoteException;
     public byte[] echoHexBinary(byte[] input) throws java.rmi.RemoteException;
-    public java.util.Date echoDate(java.util.Date input) throws java.rmi.RemoteException;
+    public java.util.Calendar echoDate(java.util.Calendar input) throws java.rmi.RemoteException;
     public java.math.BigDecimal echoDecimal(java.math.BigDecimal input) throws java.rmi.RemoteException;
     public boolean echoBoolean(boolean input) throws java.rmi.RemoteException;
     public java.util.Map echoMap(java.util.Map input) throws java.rmi.RemoteException;
