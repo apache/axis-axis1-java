@@ -163,6 +163,7 @@ public class TestSrcContent extends TestCase {
                                        + "java\\1src\\1org\\1apache\\1axis\\1"
                                        + "(?!utils\\1tcpmon\\.java"
                                        + "|providers\\1BSFProvider\\.java"
+                                       + "|ime\\1internal\\1util\\1uuid\\1TestUUID\\.java"
                                        + "|utils\\1CLArgsParser\\.java"
                                        + "|transport\\1jms\\1SimpleJMSListener\\.java"
                                        + "|Version\\.java"

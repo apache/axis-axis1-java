@@ -12,28 +12,28 @@ import java.util.Map;
  * 
  * @author James M Snell (jasnell@us.ibm.com)
  */
-public interface ConfigurableMessageExchange 
-    extends MessageExchange {
+public interface ConfigurableMessageExchange
+        extends MessageExchange {
 
     public void enableFeature(String featureId);
-  
+
     public void disableFeature(String featureId);
-  
+
     public boolean isFeatureEnabled(String featureId);
-  
+
     public void setProperty(
-        String propertyId, 
-        Object propertyValue);  
-  
+            String propertyId,
+            Object propertyValue);
+
     public Object getProperty(
-        String propertyId);
-    
+            String propertyId);
+
     public Object getProperty(
-        String propertyId,
-        Object defaultValue);
-    
+            String propertyId,
+            Object defaultValue);
+
     public Map getProperties();
-  
+
     public void clearProperties();
 
 }

@@ -10,15 +10,16 @@ import java.io.Serializable;
  * @author James M Snell (jasnell@us.ibm.com)
  */
 public class MessageExchangeCorrelator
-  implements Serializable {
+        implements Serializable {
 
     private String identifier;
 
-    private MessageExchangeCorrelator() {}
-  
+    private MessageExchangeCorrelator() {
+    }
+
     public MessageExchangeCorrelator(
-        String identifier) {
-            this.identifier = identifier;
+            String identifier) {
+        this.identifier = identifier;
     }
 
     public String getIdentifier() {

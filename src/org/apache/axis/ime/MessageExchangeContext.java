@@ -1,7 +1,8 @@
 package org.apache.axis.ime;
 
-import java.io.Serializable;
 import org.apache.axis.MessageContext;
+
+import java.io.Serializable;
 
 /**
  * Note: the only challenge with making this class serializable
@@ -14,48 +15,49 @@ import org.apache.axis.MessageContext;
  * @author James M Snell (jasnell@us.ibm.com)
  */
 public final class MessageExchangeContext
-  implements Serializable {
+        implements Serializable {
 
     public static MessageExchangeContext newInstance(
-        MessageExchangeCorrelator correlator,
-        MessageExchangeStatusListener statusListener,
-        MessageExchangeReceiveListener receiveListener,
-        MessageExchangeFaultListener faultListener,
-        MessageContext context) {
-            MessageExchangeContext mectx = 
-              new MessageExchangeContext();
-            mectx.correlator = correlator;
-            mectx.statusListener = statusListener;
-            mectx.receiveListener = receiveListener;
-            mectx.faultListener = faultListener;
-            mectx.context = context;
-            return mectx;
+            MessageExchangeCorrelator correlator,
+            MessageExchangeStatusListener statusListener,
+            MessageExchangeReceiveListener receiveListener,
+            MessageExchangeFaultListener faultListener,
+            MessageContext context) {
+        MessageExchangeContext mectx =
+                new MessageExchangeContext();
+        mectx.correlator = correlator;
+        mectx.statusListener = statusListener;
+        mectx.receiveListener = receiveListener;
+        mectx.faultListener = faultListener;
+        mectx.context = context;
+        return mectx;
     }
-  
+
     protected MessageExchangeCorrelator correlator;
     protected MessageExchangeStatusListener statusListener;
     protected MessageExchangeReceiveListener receiveListener;
     protected MessageExchangeFaultListener faultListener;
     protected MessageContext context;
-  
-    protected MessageExchangeContext() {}
-    
+
+    protected MessageExchangeContext() {
+    }
+
     public MessageExchangeCorrelator getMessageExchangeCorrelator() {
         return this.correlator;
     }
-    
+
     public MessageExchangeReceiveListener getMessageExchangeReceiveListener() {
         return this.receiveListener;
     }
-    
+
     public MessageExchangeStatusListener getMessageExchangeStatusListener() {
         return this.statusListener;
     }
-  
+
     public MessageExchangeFaultListener getMessageExchangeFaultListener() {
         return this.faultListener;
     }
-    
+
     public MessageContext getMessageContext() {
         return this.context;
     }

@@ -10,15 +10,15 @@ package org.apache.axis.ime;
 public interface MessageExchangeLifecycle {
 
     public void init();
-  
+
     public void shutdown();
-  
+
     public void shutdown(boolean force);
-  
+
     public void awaitShutdown()
-        throws InterruptedException;
-  
+            throws InterruptedException;
+
     public void awaitShutdown(long timeout)
-        throws InterruptedException;
+            throws InterruptedException;
 
 }
