@@ -224,6 +224,7 @@ public class VerifyTestCase extends junit.framework.TestCase {
         }
         String[] strValue = new String[] {"abc", "def"};
         String[][] optArray = new String[][] {strValue};
+        byte[][] byteArray = new byte[][] { new byte[] {'a', 'b', 'c'}, new byte[] {'x', 'y', 'z'} };
         B b = new B();
         A a = new A();
         a.setC(3);
@@ -242,6 +243,7 @@ public class VerifyTestCase extends junit.framework.TestCase {
         elemWComplex.setEnum7( EnumByte.value1);
         elemWComplex.setNested( b);
         elemWComplex.setOptArray( optArray );
+        elemWComplex.setByteArray( byteArray );
         try {
             binding.elemWComplexIn(elemWComplex);
         } catch (java.rmi.RemoteException re) {

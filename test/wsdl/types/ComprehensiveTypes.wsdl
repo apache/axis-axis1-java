@@ -38,6 +38,14 @@
         </xsd:complexContent>
       </xsd:complexType>
 
+      <xsd:complexType name="array_of_base64">
+        <xsd:complexContent>
+          <xsd:restriction base="soapenc:Array">
+            <xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:base64Binary[]"/>
+          </xsd:restriction>
+        </xsd:complexContent>
+      </xsd:complexType>
+
       <xsd:complexType name="complexAll">
         <xsd:all>
           <xsd:element name="areaCode" type="xsd:int"/>
@@ -69,6 +77,7 @@
             <xsd:element name="enum7" type="typens:enumByte"/>
             <xsd:element name="nested" type="typens2:b"/>
             <xsd:element name="optArray" minOccurs="0" maxOccurs="1" type="typens:array" />
+            <xsd:element name="byteArray" type="typens:array_of_base64" />
           </xsd:all>
         </xsd:complexType>
       </xsd:element>
