@@ -235,6 +235,9 @@ public class DeserializationContextImpl extends DefaultHandler implements Lexica
                 parser.setProperty("http://xml.org/sax/properties/lexical-handler", this);
                 parser.parse(inputSource, this);
 
+                // cleanup - so that the parser can be reused.
+                parser.setProperty("http://xml.org/sax/properties/lexical-handler", null);
+
                 // only release the parser for reuse if there wasn't an
                 // error.  While parsers should be reusable, don't trust
                 // parsers that died to clean up appropriately.
