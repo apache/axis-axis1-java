@@ -118,7 +118,7 @@ public class WSDDChain
         if (handlers.isEmpty())
             throw new WSDDException(JavaUtils.getMessage("noHandlersInChain00", 
                                     getElementName().getLocalPart(),
-                                    getQName().toString()));
+                                    (getQName()!=null)?getQName().toString():"null"));
     }
     
     protected QName getElementName()
