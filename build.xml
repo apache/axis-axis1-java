@@ -67,6 +67,7 @@ Copyright:
   <property name="year" value="2002"/>
 
   <property name="jaxrpc" value="jaxrpc"/>
+  <property name="saaj" value="saaj"/>
 
   <!-- debug flag for ant javac, values are "on" and "off" -->
   <property name="debug" value="on"/>  
@@ -317,6 +318,10 @@ Copyright:
     </jar>
     <jar jarfile="${build.lib}/${jaxrpc}.jar" basedir="${build.dest}" >
       <include name="javax/**"/>
+      <exclude name="javax/xml/soap/**"/>
+    </jar>
+    <jar jarfile="${build.lib}/${saaj}.jar" basedir="${build.dest}" >
+      <include name="javax/xml/soap/**"/>
     </jar>
     <copy file="${wsdl4j.jar}" toDir="${build.lib}"/>
     <copy file="${commons-logging.jar}" toDir="${build.lib}"/>
@@ -344,6 +349,7 @@ Copyright:
       <classpath>
         <pathelement location="${build.lib}/${name}.jar"/>
         <pathelement location="${build.lib}/${jaxrpc}.jar"/>
+        <pathelement location="${build.lib}/${saaj}.jar"/>
         <path refid="classpath"/>
       </classpath>
       <include name="test/wsdl/*.java" />
@@ -399,6 +405,7 @@ Copyright:
       <classpath>
         <pathelement location="${build.lib}/${name}.jar"/>
         <pathelement location="${build.lib}/${jaxrpc}.jar"/>
+        <pathelement location="${build.lib}/${saaj}.jar"/>
         <path refid="classpath"/>
       </classpath>
       <include name="samples/**/*.java" />
@@ -432,6 +439,7 @@ Copyright:
       <classpath>
         <pathelement location="${build.lib}/${name}.jar"/>
         <pathelement location="${build.lib}/${jaxrpc}.jar"/>
+        <pathelement location="${build.lib}/${saaj}.jar"/>
         <path refid="classpath"/>
       </classpath>
       <include name="test/**/*.java" />
