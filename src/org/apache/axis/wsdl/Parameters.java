@@ -80,9 +80,6 @@ public class Parameters {
     // The signature that the skeleton will use
     public String skelSignature = null;
 
-    // The signature that the skeleton impl
-    public String axisSignature = null;
-
     // The numbers of the respective parameters
     public int inputs = 0;
     public int inouts = 0;
@@ -94,7 +91,6 @@ public class Parameters {
                 + "\nfaultString = " + faultString
                 + "\nsignature = " + signature
                 + "\nskelSignature = " + skelSignature
-                + "\naxisSignature = " + axisSignature
                 + "\n(inputs, inouts, outputs) = (" + inputs + ", " + inouts + ", " + outputs + ")"
                 + "\nlist = " + list;
     } // toString

@@ -68,7 +68,6 @@ import javax.wsdl.QName;
 */
 public class JavaPortTypeWriter implements Writer {
     private Writer interfaceWriter = null;
-    private Writer serviceInterfaceWriter = null;
 
     /**
      * Constructor.
@@ -82,9 +81,6 @@ public class JavaPortTypeWriter implements Writer {
         if (ptEntry.isReferenced()) {
             interfaceWriter =
               new JavaInterfaceWriter(emitter, ptEntry, symbolTable);
-            if (emitter.bEmitSkeleton && emitter.bMessageContext) {
-                serviceInterfaceWriter = new JavaServiceInterfaceWriter(emitter, ptEntry, symbolTable);
-            }
         }
     } // ctor
 
@@ -94,9 +90,6 @@ public class JavaPortTypeWriter implements Writer {
     public void write() throws IOException {
         if (interfaceWriter != null) {
             interfaceWriter.write();
-        }
-        if (serviceInterfaceWriter != null) {
-            serviceInterfaceWriter.write();
         }
     } // write
 } // class JavaPortTypeWriter

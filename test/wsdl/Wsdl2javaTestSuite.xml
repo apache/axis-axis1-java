@@ -33,7 +33,6 @@
                output="build/work"
                deployscope="session"
                skeleton="yes"
-               messagecontext="no"
                noimports="no"
                verbose="no"
                testcase="no">
@@ -45,7 +44,6 @@
                output="build/work"
                deployscope="session"
                skeleton="yes"
-               messagecontext="no"
                noimports="no"
                verbose="no"
                testcase="no">
@@ -58,7 +56,6 @@
                output="build/work"
                deployscope="session"
                skeleton="yes"
-               messagecontext="no"
                noimports="no"
                verbose="no"
                testcase="no">
@@ -91,7 +88,6 @@
                output="build/work"
                deployscope="session"
                skeleton="yes"
-               messagecontext="no"
                noimports="no"
                verbose="no"
                testcase="no">
@@ -103,7 +99,6 @@
                output="build/work"
                deployscope="session"
                skeleton="yes"
-               messagecontext="no"
                noimports="no"
                verbose="no"
                testcase="no">
@@ -117,7 +112,6 @@
                output="build/work"
                deployscope="none"
                skeleton="yes"
-               messagecontext="no"
                noimports="no"
                verbose="no"
                testcase="yes">
@@ -131,7 +125,6 @@
                output="build/work"
                deployscope="none"
                skeleton="yes"
-               messagecontext="no"
                noimports="no"
                verbose="no"
                testcase="yes">
@@ -148,7 +141,6 @@
                output="build/work"
                deployscope="none"
                skeleton="yes"
-               messagecontext="no"
                noimports="no"
                verbose="no"
                testcase="no">
@@ -161,7 +153,6 @@
                output="build/work"
                deployscope="none"
                skeleton="yes"
-               messagecontext="no"
                noimports="no"
                verbose="no"
                testcase="no">
@@ -175,7 +166,6 @@
                output="build/work"
                deployscope="none"
                skeleton="yes"
-               messagecontext="no"
                noimports="no"
                verbose="no"
                testcase="no">
@@ -186,7 +176,6 @@
                output="build/work"
                deployscope="none"
                skeleton="yes"
-               messagecontext="no"
                noimports="no"
                verbose="no"
                testcase="no">
@@ -201,7 +190,6 @@
                testcase="no"
                deployscope="none"
                skeleton="yes"
-               messagecontext="no"
                verbose="yes"
                noimports="no">
         <mapping namespace="http://soapinterop.org/" package="interop.echoheader"/>
@@ -215,7 +203,6 @@
                testcase="no"
                deployscope="none"
                skeleton="yes"
-               messagecontext="no"
                verbose="no"
                noimports="no">
         <mapping namespace="http://soapinterop.org/" package="interop.echoheadersvc"/>
@@ -228,7 +215,6 @@
                testcase="no"
                deployscope="none"
                skeleton="yes"
-               messagecontext="no"
                verbose="no"
                noimports="no">
         <mapping namespace="http://soapinterop.org/" package="mssoapinterop.interopb"/>
@@ -240,7 +226,6 @@
                testcase="no"
                deployscope="none"
                skeleton="yes"
-               messagecontext="no"
                verbose="yes"
                noimports="no">
         <mapping namespace="http://soapinterop.org/" package="mssoapinterop.interopbtyped"/>
@@ -252,7 +237,6 @@
                testcase="no"
                deployscope="none"
                skeleton="yes"
-               messagecontext="no"
                verbose="no"
                noimports="no">
         <mapping namespace="http://soapinterop.org" package="mssoapinterop.interopc"/>
@@ -266,7 +250,6 @@
                testcase="yes"
                deployscope="none"
                skeleton="yes"
-               messagecontext="no"
                verbose="no"
                noimports="no">
         <mapping namespace="http://www.capeclear.com/AirportWeather.wsdl" package="test.clash"/>
@@ -279,7 +262,6 @@
                testcase="yes"
                deployscope="none"
                skeleton="yes"
-               messagecontext="no"
                verbose="no"
                noimports="no">
         <mapping namespace="http://test.com/wsdl/faults" package="test.faults.wsdl"/>
@@ -291,7 +273,6 @@
                testcase="no"
                deployscope="none"
                skeleton="yes"
-               messagecontext="no"
                verbose="no"
                noimports="no">
         <mapping namespace="urn:uddi-org:api" package="org.uddi.api"/>
@@ -302,7 +283,6 @@
                testcase="no"
                deployscope="none"
                skeleton="yes"
-               messagecontext="no"
                verbose="no"
                noimports="no">
         <mapping namespace="urn:uddi-org:api" package="org.uddi.api"/>
@@ -316,7 +296,6 @@
                testcase="no"
                deployscope="none"
                skeleton="yes"
-               messagecontext="no"
                verbose="no"
                noimports="no">
         <mapping namespace="urn:vgx-realtime" package="com.velocigen.thor"/>
@@ -329,7 +308,6 @@
                testcase="no"
                deployscope="none"
                skeleton="yes"
-               messagecontext="no"
                verbose="no"
                noimports="no">
     </wsdl2java>
@@ -342,7 +320,6 @@
                testcase="no"
                deployscope="none"
                skeleton="yes"
-               messagecontext="no"
                verbose="yes"
                noimports="no">
     </wsdl2java>
@@ -353,7 +330,6 @@
                output="build/work"
                deployscope="none"
                skeleton="no"
-               messagecontext="no"
                noimports="no"
                verbose="no"
                testcase="no">
@@ -366,7 +342,6 @@
                output="build/work"
                deployscope="none"
                skeleton="yes"
-               messagecontext="no"
                noimports="no"
                verbose="yes"
                testcase="yes">
@@ -380,7 +355,6 @@
                testcase="no"
                deployscope="none"
                skeleton="yes"
-               messagecontext="no"
                verbose="yes"
                noimports="no">
     </wsdl2java>
@@ -390,7 +364,6 @@
                testcase="no"
                deployscope="none"
                skeleton="yes"
-               messagecontext="no"
                verbose="yes"
                noimports="no">
     </wsdl2java>
