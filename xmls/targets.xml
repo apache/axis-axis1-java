@@ -182,6 +182,10 @@
       </and>
     </condition>
 
+    <condition property="sun.codec.present" >
+      <available classname="sun.awt.image.codec.JPEGImageEncoderImpl" classpathref="classpath" />
+    </condition>
+
     <condition property="jimi.present" >
       <available classname="com.sun.jimi.core.Jimi" classpathref="classpath" />
     </condition>
