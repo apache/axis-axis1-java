@@ -54,17 +54,16 @@
  */
 package org.apache.axis.rpc.holders;
 
-// NOTE!!!  QName is supposed to be javax.xml.rpc.namespace.QName, but until
-// support this type, QName will remain a String.
+import org.apache.axis.rpc.namespace.QName;
 
 public final class QNameHolder implements java.io.Serializable {
 
-    public String _value;
+    public QName _value;
 
     public QNameHolder () {
     }
 
-    public QNameHolder (String value) {
+    public QNameHolder (QName value) {
         this._value = value;
     }
 }
