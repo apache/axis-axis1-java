@@ -107,9 +107,6 @@ Copyright:
   <target name="copy"/>
 
 <!-- =========================================================================== -->
-  <taskdef name="foreach" classname="test.functional.ant.ForeachTask">
-	<classpath refid="classpath"/>
-  </taskdef>
 
   <target name="compile" depends="printEnv,copy">
     <!-- Compile the sample code -->
