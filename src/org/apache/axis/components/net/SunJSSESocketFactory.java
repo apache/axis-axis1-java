@@ -79,7 +79,7 @@ import java.util.Hashtable;
  *
  * @author Davanum Srinivas (dims@yahoo.com)
  */
-public class SunJSSESocketFactory extends DefaultSocketFactory {
+public class SunJSSESocketFactory extends DefaultSocketFactory implements SecureSocketFactory {
 
     /** Field keystoreType           */
     private String keystoreType;
