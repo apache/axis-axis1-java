@@ -845,6 +845,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
      */
     private String constructSignature(Parameters parms, String opName) {
         String name  = Utils.xmlNameToJava(opName);
+
         String ret = parms.returnType == null ? "void" : parms.returnType.getName();
         String signature = "    public " + ret + " " + name + "(";
 

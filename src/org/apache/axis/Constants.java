@@ -74,12 +74,12 @@ public class Constants {
     public static final String NS_PREFIX_SCHEMA_XSD = "xsd" ;
     public static final String NS_PREFIX_WSDL       = "wsdl" ;
     public static final String NS_PREFIX_WSDL_SOAP  = "wsdlsoap";
+    public static final String NS_PREFIX_XMLSOAP    = "apachesoap";
 
 
     // Axis Namespaces
     public static final String NS_URI_AXIS = "http://xml.apache.org/axis/";
     public static final String NS_URI_XMLSOAP = "http://xml.apache.org/xml-soap";
-
 
 
     //

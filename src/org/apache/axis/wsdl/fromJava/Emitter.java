@@ -489,6 +489,11 @@ public class Emitter {
                          Constants.URI_DEFAULT_SCHEMA_XSD);
         namespaces.putPrefix(Constants.URI_DEFAULT_SCHEMA_XSD,
                              Constants.NS_PREFIX_SCHEMA_XSD);
+
+        def.addNamespace(Constants.NS_PREFIX_XMLSOAP,
+                         Constants.NS_URI_XMLSOAP);
+        namespaces.putPrefix(Constants.NS_URI_XMLSOAP,
+                             Constants.NS_PREFIX_XMLSOAP);
     }
 
    /**
