@@ -210,29 +210,32 @@ public class ArraySerializer implements Serializer {
         }
         
         Attributes attrs = attributes;
+
+        if (attributes != null) {
+            AttributesImpl attrImpl = null;
         
-        if (attributes != null &&
-            attributes.getIndex(Constants.URI_CURRENT_SOAP_ENC,
-                                Constants.ATTR_ARRAY_TYPE) == -1) {
-            String encprefix = context.getPrefixForURI(Constants.URI_CURRENT_SOAP_ENC);
-            AttributesImpl attrImpl = new AttributesImpl(attributes);
-            attrImpl.addAttribute(Constants.URI_CURRENT_SOAP_ENC, 
-                                  Constants.ATTR_ARRAY_TYPE,
-                                  encprefix + ":arrayType",
-                                  "CDATA",
-                                  arrayType);
-            attrs = attrImpl;
-        }
+            if (attributes.getIndex(Constants.URI_CURRENT_SOAP_ENC,
+                                    Constants.ATTR_ARRAY_TYPE) == -1) {
+                String encprefix = context.getPrefixForURI(Constants.URI_CURRENT_SOAP_ENC);
+                attrImpl = new AttributesImpl(attributes);
+                attrImpl.addAttribute(Constants.URI_CURRENT_SOAP_ENC, 
+                                      Constants.ATTR_ARRAY_TYPE,
+                                      encprefix + ":arrayType",
+                                      "CDATA",
+                                      arrayType);
+                attrs = attrImpl;
+            }
 
-        // Force type to be SOAP_ARRAY for all array serialization.
-        int typeI = attributes.getIndex(Constants.URI_CURRENT_SCHEMA_XSI,
-                                        "type");
-        if (typeI != -1) {
-            AttributesImpl attrImpl = new AttributesImpl(attrs);
-            attrImpl.removeAttribute(typeI);
-            attrs = context.setTypeAttribute(attrImpl, Constants.SOAP_ARRAY);
+            // Force type to be SOAP_ARRAY for all array serialization.
+            int typeI = attributes.getIndex(Constants.URI_CURRENT_SCHEMA_XSI,
+                                            "type");
+            if (typeI != -1) {
+                if (attrImpl == null)
+                    attrImpl = new AttributesImpl(attributes);
+                attrImpl.removeAttribute(typeI);
+                attrs = context.setTypeAttribute(attrImpl, Constants.SOAP_ARRAY);
+            }
         }
-
         
         context.startElement(name, attrs);
 
