@@ -182,14 +182,14 @@ public class JavaWriterFactory implements WriterFactory {
                     }
                     // Get the QName to javify
                     QName typeQName = tEntry.getQName();
-                    if (typeQName.getLocalPart().lastIndexOf('.') >= 0) {
+                    if (typeQName.getLocalPart().lastIndexOf(SymbolTable.ANON_TOKEN) >= 0) {
                         // This is an anonymous type name.
-                        // Axis uses '.' as a nesting token to generate
+                        // Axis uses '>' as a nesting token to generate
                         // unique qnames for anonymous types.
-                        // Only consider the localName after the last '.' when
+                        // Only consider the localName after the last '>' when
                         // generating the java name
                         String localName = typeQName.getLocalPart();
-                        localName = localName.substring(localName.lastIndexOf('.')+1);
+                        localName = localName.substring(localName.lastIndexOf(SymbolTable.ANON_TOKEN)+1);
                         typeQName = new QName(typeQName.getNamespaceURI(), localName);
                         // If there is already an existing type, there will be a 
                         // collision.  If there is an existing anon type, there will be a 
@@ -273,7 +273,7 @@ public class JavaWriterFactory implements WriterFactory {
                             // an anonymous type, then need to change the
                             // java name of the anonymous type to match.
                             QName anonQName = new QName(entry.getQName().getNamespaceURI(),
-                                                        "." + entry.getQName().getLocalPart());
+                                                        SymbolTable.ANON_TOKEN + entry.getQName().getLocalPart());
                             TypeEntry anonType = symbolTable.getType(anonQName);
                             if (anonType != null) {
                                 anonType.setName(entry.getName());

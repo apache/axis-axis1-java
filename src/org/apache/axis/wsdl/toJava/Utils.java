@@ -247,7 +247,7 @@ public class Utils {
                 if (kind.getLocalPart().equals("schema")) {
                     search = null;
                 } else if (kind.getLocalPart().equals("element")) {
-                    localName = "." + getNodeNameQName(search).getLocalPart();
+                    localName = SymbolTable.ANON_TOKEN + getNodeNameQName(search).getLocalPart();
                     search = search.getParentNode();
                 } else if (kind.getLocalPart().equals("complexType") ||
                            kind.getLocalPart().equals("simpleType")) {

@@ -169,10 +169,20 @@ public class JavaDeployWriter extends JavaWriter {
                 process = false;
             }
 
+            // If a root Element named Foo has an anon type, the 
+            // anon type is named ">Foo".  The following hack
+            // uses the name "Foo" so that the right qname gets 
+            // registered.
+            String localPart = type.getQName().getLocalPart();
+            if (localPart.startsWith(SymbolTable.ANON_TOKEN)) {
+                localPart = localPart.substring(1);
+            }
+            QName qName = new QName(type.getQName().getNamespaceURI(), localPart);
+
             if (process) {
                 pw.println("      <typeMapping");
-                pw.println("        xmlns:ns=\"" + type.getQName().getNamespaceURI() + "\"");
-                pw.println("        qname=\"ns:" + type.getQName().getLocalPart() + '"');
+                pw.println("        xmlns:ns=\"" + qName.getNamespaceURI() + "\"");
+                pw.println("        qname=\"ns:" + qName.getLocalPart() + '"');
                 pw.println("        type=\"java:" + type.getName() + '"');
                 if (type.getName().endsWith("[]")) {
                     pw.println("        serializer=\"org.apache.axis.encoding.ser.ArraySerializerFactory\"");

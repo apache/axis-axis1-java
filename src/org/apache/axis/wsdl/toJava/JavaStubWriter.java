@@ -433,7 +433,16 @@ public class JavaStubWriter extends JavaWriter {
         }
         firstSer = false ;
 
-        QName qname = type.getQName();
+        // If a root Element named Foo has an anon type, the 
+        // anon type is named ">Foo".  The following hack
+        // uses the name "Foo" so that the right qname gets 
+        // registered.
+        String localPart = type.getQName().getLocalPart();
+        if (localPart.startsWith(SymbolTable.ANON_TOKEN)) {
+            localPart = localPart.substring(1);
+        }
+        QName qname = new QName(type.getQName().getNamespaceURI(), localPart);
+
         pw.println("            qName = new javax.xml.rpc.namespace.QName(\""
                    + qname.getNamespaceURI() + "\", \"" + qname.getLocalPart()
                    + "\");");
