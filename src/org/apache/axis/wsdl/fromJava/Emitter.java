@@ -690,6 +690,9 @@ public class Emitter {
         ArrayList operations = serviceDesc.getOperations();
         for (Iterator i = operations.iterator(); i.hasNext();) {
             OperationDesc thisOper = (OperationDesc)i.next();
+            if (!allowedMethod(thisOper.getName())) 
+                continue;
+
             BindingOperation bindingOper = writeOperation(def,
                                                           binding,
                                                           thisOper);
@@ -1616,5 +1619,14 @@ public class Emitter {
 
     public void setServiceDesc(ServiceDesc serviceDesc) {
         this.serviceDesc = serviceDesc;
+    }
+
+    private boolean allowedMethod(String name) {
+        boolean allowed = false;
+        if (allowedMethods == null || allowedMethods.contains(name))
+            allowed = true;
+        if (allowed && disallowedMethods != null && disallowedMethods.contains(name)) 
+            allowed = false;
+        return allowed;
     }
 }
