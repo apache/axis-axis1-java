@@ -90,7 +90,6 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.rpc.JAXRPCException;
 
 import java.io.IOException;
-import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -484,7 +483,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Lexica
      * @return TypeMapping or null
      */
     public TypeMappingRegistry getTypeMappingRegistry() {
-        return (TypeMappingRegistry) msgContext.getTypeMappingRegistry();
+        return msgContext.getTypeMappingRegistry();
     }
 
     /**
@@ -1020,8 +1019,23 @@ public class DeserializationContextImpl extends DefaultHandler implements Lexica
                      java.lang.String systemId)
               throws SAXException
     {
-        if (recorder != null)
+        /* It is possible for a malicious user to send us bad stuff in
+           the <!DOCTYPE ../> tag that will cause a denial of service
+           Example:
+           <?xml version="1.0" ?>
+            <!DOCTYPE foobar [
+                <!ENTITY x0 "hello">
+                <!ENTITY x1 "&x0;&x0;">
+                <!ENTITY x2 "&x1;&x1;">
+                  ...
+                <!ENTITY x99 "&x98;&x98;">
+                <!ENTITY x100 "&x99;&x99;">
+            ]>
+        */
+        throw new SAXException(Messages.getMessage("noInstructions00"));
+        /* if (recorder != null)
             recorder.startDTD(name, publicId, systemId);
+        */
     }
     
     public void endDTD()
