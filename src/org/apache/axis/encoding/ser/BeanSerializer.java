@@ -56,6 +56,7 @@
 package org.apache.axis.encoding.ser;
 
 import org.apache.axis.AxisFault;
+import org.apache.axis.AxisInternalServices;
 import org.apache.axis.Constants;
 import org.apache.axis.description.FieldDesc;
 import org.apache.axis.description.TypeDesc;
@@ -67,7 +68,6 @@ import org.apache.axis.utils.BeanUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.wsdl.fromJava.Types;
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
@@ -91,7 +91,7 @@ import java.util.List;
 public class BeanSerializer implements Serializer, Serializable {
 
     protected static Log log =
-        LogFactory.getLog(BeanSerializer.class.getName());
+        AxisInternalServices.getLog(BeanSerializer.class.getName());
 
     QName xmlType;
     Class javaType;

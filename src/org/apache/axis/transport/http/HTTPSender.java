@@ -190,19 +190,19 @@ public class HTTPSender extends BasicHandler {
         }
 
         // Get https.proxyXXX settings
-        String tunnelHost = AxisInternalServices.getGlobalProperty("https.proxyHost");
-        String tunnelPortStr = AxisInternalServices.getGlobalProperty("https.proxyPort");
-        String nonProxyHosts = AxisInternalServices.getGlobalProperty("https.nonProxyHosts");
+        String tunnelHost = getGlobalProperty("https.proxyHost");
+        String tunnelPortStr = getGlobalProperty("https.proxyPort");
+        String nonProxyHosts = getGlobalProperty("https.nonProxyHosts");
 
         // Use http.proxyXXX settings if https.proxyXXX is not set
         if (tunnelHost == null) {
-            tunnelHost = AxisInternalServices.getGlobalProperty("http.proxyHost");
+            tunnelHost = getGlobalProperty("http.proxyHost");
         }
         if (tunnelPortStr == null) {
-            tunnelPortStr = AxisInternalServices.getGlobalProperty("http.proxyPort");
+            tunnelPortStr = getGlobalProperty("http.proxyPort");
         }
         if (nonProxyHosts == null) {
-            nonProxyHosts = AxisInternalServices.getGlobalProperty("http.nonProxyHosts");
+            nonProxyHosts = getGlobalProperty("http.nonProxyHosts");
         }
 
         boolean hostInNonProxyList = isHostInNonProxyList(host, nonProxyHosts);
@@ -224,7 +224,7 @@ public class HTTPSender extends BasicHandler {
             Object factory = null;
 
             // Hook in a different SSL socket factory
-            String socketFactoryClass = AxisInternalServices.getGlobalProperty("axis.socketFactory");
+            String socketFactoryClass = getGlobalProperty("axis.socketFactory");
             if (socketFactoryClass != null) {
                 try {
                     Class c1 = ClassUtils.forName(socketFactoryClass);
@@ -272,14 +272,14 @@ public class HTTPSender extends BasicHandler {
                 PrintWriter out = new PrintWriter(
                         new BufferedWriter(
                                 new OutputStreamWriter(tunnelOutputStream)));
-                String tunnelUser = AxisInternalServices.getGlobalProperty("https.proxyUser");
-                String tunnelPassword = AxisInternalServices.getGlobalProperty("https.proxyPassword");
+                String tunnelUser = getGlobalProperty("https.proxyUser");
+                String tunnelPassword = getGlobalProperty("https.proxyPassword");
 
                 if (tunnelUser == null) {
-                    tunnelUser = AxisInternalServices.getGlobalProperty("http.proxyUser");
+                    tunnelUser = getGlobalProperty("http.proxyUser");
                 }
                 if (tunnelPassword == null) {
-                    tunnelPassword = AxisInternalServices.getGlobalProperty("http.proxyPassword");
+                    tunnelPassword = getGlobalProperty("http.proxyPassword");
                 }
 
                 // More secure version... engage later?
@@ -400,12 +400,12 @@ public class HTTPSender extends BasicHandler {
             String host, int port, StringBuffer otherHeaders, BooleanHolder useFullURL)
             throws IOException {
         Socket sock = null;
-        String proxyHost = AxisInternalServices.getGlobalProperty("http.proxyHost");
-        String proxyPort = AxisInternalServices.getGlobalProperty("http.proxyPort");
-        String nonProxyHosts = AxisInternalServices.getGlobalProperty("http.nonProxyHosts");
+        String proxyHost = getGlobalProperty("http.proxyHost");
+        String proxyPort = getGlobalProperty("http.proxyPort");
+        String nonProxyHosts = getGlobalProperty("http.nonProxyHosts");
         boolean hostInNonProxyList = isHostInNonProxyList(host, nonProxyHosts);
-        String proxyUsername = AxisInternalServices.getGlobalProperty("http.proxyUser");
-        String proxyPassword = AxisInternalServices.getGlobalProperty("http.proxyPassword");
+        String proxyUsername = getGlobalProperty("http.proxyUser");
+        String proxyPassword = getGlobalProperty("http.proxyPassword");
 
         if (proxyUsername != null) {
             StringBuffer tmpBuf = new StringBuffer();
