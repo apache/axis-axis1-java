@@ -61,6 +61,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.FileNotFoundException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLDecoder;
@@ -145,10 +146,18 @@ public class JWSHandler extends BasicHandler
             /***************************************************************/
             String   jwsFile = realpath;
             String rel = msgContext.getStrProp(Constants.MC_RELATIVE_PATH);
+
+            // Check for file existance, report error with
+            // relative path to avoid giving out directory info.
+            File  f2 = new File( jwsFile );
+            if (!f2.exists()) {
+                throw new FileNotFoundException(rel);
+            }
+
             if (rel.charAt(0) == '/') {
                 rel = rel.substring(1);
             }
-            
+
             int lastSlash = rel.lastIndexOf('/');
             String dir = null;
             
@@ -194,8 +203,7 @@ public class JWSHandler extends BasicHandler
             }
             
             File  f1 = new File( cFile );
-            File  f2 = new File( jwsFile );
-            
+
             /* Get the class */
             /*****************/
             String clsName = null ;
