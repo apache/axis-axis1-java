@@ -39,54 +39,9 @@ public class SOAPEncoding implements Serializer {
                           Object value, SerializationContext context)
         throws IOException
     {
-        QName xsitype = null;
-        Class type = null;
-        
+        context.startElement(qname, attributes);
         if (value != null) {
-            type = value.getClass();
-        } else {
-            // !!! add xsi:null attribute
-        }
-        
-        if (type != null) {
-            if (qname == null) {
-                qname = (QName)namemap.get(type);
-            }
-            xsitype = (QName)typemap.get(type);
-        }
-        
-        Attributes attrs = attributes;
-        String str = context.qName2String(xsitype);
-        
-        if (xsitype != null) {
-            // !!! should check if we're writing types or not?
-            AttributesImpl impl = new AttributesImpl();
-            boolean gotType = false;
-            
-            if (attributes != null) {
-                for (int i = 0; i < attributes.getLength(); i++) {
-                    impl.addAttribute(attributes.getURI(i),
-                                      attributes.getLocalName(i),
-                                      attributes.getQName(i), "CDATA",
-                                      attributes.getValue(i));
-                    if (attributes.getURI(i).equals(Constants.URI_CURRENT_SCHEMA_XSI) &&
-                        attributes.getLocalName(i).equals("type"))
-                        gotType = true;
-                }
-            }
-            
-            if (!gotType) {
-                impl.addAttribute(Constants.URI_CURRENT_SCHEMA_XSI,
-                               "type", "xsi:type",
-                               "CDATA", str);
-            }
-            
-            attrs = impl;
-        }
-
-        context.startElement(qname, attrs);
-        if (value != null) {
-            if (type.equals(String.class))
+            if (value instanceof String)
                 context.writeString(
                                 XMLUtils.xmlEncodeString(value.toString()));
             else
