@@ -164,7 +164,7 @@ that your CLASSPATH includes (note:  if you build axis from a CVS checkout, thes
 <li>xml-axis-beta2/lib/jaxrpc.jar</li>
 <li>xml-axis-beta2/lib/saaj.jar</li>
 <li>xml-axis-beta2/lib/commons-logging.jar</li>
-<li>xml-axis-beta2/lib/tt-bytecode.jar</li>
+<li>xml-axis-beta2/lib/commons-dicovery.jar</li>
 <li>xml-axis-beta2/lib/wsdl4j.jar</li>
   <li>xml-axis-beta2/ <i><font color="#9966FF">(for the sample code)</font></i></li>
   <li>A JAXP-1.1 compliant XML parser such as xerces or crimson</li>
@@ -400,10 +400,11 @@ service. The actual class which handles this is <b>org.apache.axis.providers.jav
   ...
 &lt;/service&gt;</pre>
 <h4>Using the AdminClient</h4>
-Once we have this file, we need to send it to an Axis server in order to
-actually deploy the described service. We do this with the AdminClient,
-or the "org.apache.axis.client.AdminClient" class. An invocation of the
-AdminClient looks like this:
+Once we have this file, we need to send it to an Axis server in order to actually 
+deploy the described service. We do this with the AdminClient, or the "org.apache.axis.client.AdminClient" 
+class. If you have deployed Axis on a server other than Tomcat, you may need to 
+use the -p <em>&lt;port&gt;</em> argument. The default port is 8080.  
+A typical invocation of the AdminClient looks like this: 
 <pre class="example">% java org.apache.axis.client.AdminClient deploy.wsdd
 &lt;Admin>Done processing&lt;/Admin></pre>
 This command has now made our service accessible via SOAP. Check it out
