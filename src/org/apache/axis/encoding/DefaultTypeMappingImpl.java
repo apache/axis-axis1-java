@@ -123,8 +123,12 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
         // String FIRST.
         if (JavaUtils.isAttachmentSupported()) {
             myRegister(Constants.MIME_PLAINTEXT, java.lang.String.class,
-                    new JAFDataHandlerSerializerFactory(),
-                    new JAFDataHandlerDeserializerFactory(), false);
+                    new JAFDataHandlerSerializerFactory(
+                            java.lang.String.class,
+                            Constants.MIME_PLAINTEXT),
+                    new JAFDataHandlerDeserializerFactory(
+                            java.lang.String.class,
+                            Constants.MIME_PLAINTEXT), false);
         }
 
         // SOAP Encoded strings are treated as primitives.
@@ -358,14 +362,26 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
         // (note that MIME_PLAINTEXT was registered near the top)
         if (JavaUtils.isAttachmentSupported()) {
             myRegister(Constants.MIME_IMAGE, java.awt.Image.class,
-                    new JAFDataHandlerSerializerFactory(),
-                    new JAFDataHandlerDeserializerFactory(), false);
+                    new JAFDataHandlerSerializerFactory(
+                            java.awt.Image.class,
+                            Constants.MIME_IMAGE),
+                    new JAFDataHandlerDeserializerFactory(
+                            java.awt.Image.class,
+                            Constants.MIME_IMAGE), false);
             myRegister(Constants.MIME_MULTIPART, javax.mail.internet.MimeMultipart.class,
-                    new JAFDataHandlerSerializerFactory(),
-                    new JAFDataHandlerDeserializerFactory(), false);
+                    new JAFDataHandlerSerializerFactory(
+                            javax.mail.internet.MimeMultipart.class,
+                            Constants.MIME_MULTIPART),
+                    new JAFDataHandlerDeserializerFactory(
+                            javax.mail.internet.MimeMultipart.class,
+                            Constants.MIME_MULTIPART), false);
             myRegister(Constants.MIME_SOURCE, javax.xml.transform.Source.class,
-                    new JAFDataHandlerSerializerFactory(),
-                    new JAFDataHandlerDeserializerFactory(), false);
+                    new JAFDataHandlerSerializerFactory(
+                            javax.xml.transform.Source.class,
+                            Constants.MIME_SOURCE),
+                    new JAFDataHandlerDeserializerFactory(
+                            javax.xml.transform.Source.class,
+                            Constants.MIME_SOURCE), false);
             myRegister(Constants.MIME_DATA_HANDLER, javax.activation.DataHandler.class,
                     new JAFDataHandlerSerializerFactory(),
                     new JAFDataHandlerDeserializerFactory(), false);

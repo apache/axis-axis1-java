@@ -55,54 +55,45 @@
 
 package org.apache.axis.encoding.ser;
 
+import org.apache.axis.attachments.MimeMultipartDataSource;
+
 import org.apache.axis.components.logger.LogFactory;
+
+import org.apache.axis.encoding.SerializationContext;
+
+import org.apache.axis.utils.JavaUtils;
 
 import org.apache.commons.logging.Log;
 
-import java.awt.Image;
+import org.xml.sax.Attributes;
+
+import java.io.IOException;
+
+import javax.activation.DataHandler;
 
 import javax.mail.internet.MimeMultipart;
 
 import javax.xml.namespace.QName;
 
-import javax.xml.transform.Source;
-
 /**
- * A JAFDataHandlerDeserializer Factory
- *
- *  @author Rich Scheuerle (scheu@us.ibm.com)
+ * MimeMultipartDataHandler Serializer
+ * @author Russell Butek (butek@us.ibm.com)
  */
-public class JAFDataHandlerDeserializerFactory extends BaseDeserializerFactory {
+public class MimeMultipartDataHandlerSerializer extends JAFDataHandlerSerializer {
+
     protected static Log log =
-            LogFactory.getLog(JAFDataHandlerDeserializerFactory.class.getName());
+        LogFactory.getLog(MimeMultipartDataHandlerSerializer.class.getName());
 
-    public JAFDataHandlerDeserializerFactory(Class javaType, QName xmlType) {
-        super(getDeserializerClass(javaType, xmlType), xmlType, javaType);
-        log.debug("Enter/Exit: JAFDataHandlerDeserializerFactory(" + javaType + ", "
-                + xmlType + ")");
-    }
-    public JAFDataHandlerDeserializerFactory() {
-        super(JAFDataHandlerDeserializer.class);
-        log.debug("Enter/Exit: JAFDataHandlerDeserializerFactory()");
-    }
-
-    private static Class getDeserializerClass(Class javaType, QName xmlType) {
-        Class deser;
-        if (Image.class.isAssignableFrom(javaType)) {
-            deser = ImageDataHandlerDeserializer.class;
+    /**
+     * Serialize a Source DataHandler quantity.
+     */
+    public void serialize(QName name, Attributes attributes,
+                          Object value, SerializationContext context)
+        throws IOException
+    {
+        if (value != null) {
+            DataHandler dh = new DataHandler(new MimeMultipartDataSource("Multipart", (MimeMultipart) value));
+            super.serialize(name, attributes, dh, context);
         }
-        else if (String.class.isAssignableFrom(javaType)) {
-            deser = PlainTextDataHandlerDeserializer.class;
-        }
-        else if (Source.class.isAssignableFrom(javaType)) {
-            deser = SourceDataHandlerDeserializer.class;
-        }
-        else if (MimeMultipart.class.isAssignableFrom(javaType)) {
-            deser = MimeMultipartDataHandlerDeserializer.class;
-        }
-        else {
-            deser = JAFDataHandlerDeserializer.class;
-        }
-        return deser;
-    } // getDeserializerClass
-}
+    } // serialize
+} // class MimeMultipartDataHandlerSerializer

@@ -6,6 +6,7 @@
     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
     xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
     xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+    xmlns:apache="http://xml.apache.org/xml-soap"
     targetNamespace="urn:attachments.wsdl.test"
     xmlns:tns="urn:attachments.wsdl.test">
   <types>
@@ -54,14 +55,14 @@
   <portType name="pt1">
 <!--
     <operation name="GetCompanyInfo">
-      <input message="tns:m1"/>
-      <output message="tns:m2"/>
-    </operation>
-    <operation name="GetCompanyInfo2">
-      <input message="tns:m2"/>
-      <output message="tns:m1"/>
+      <input message="tns:pt1"/>
+      <output message="tns:pt2"/>
     </operation>
 -->
+    <operation name="GetCompanyInfo2">
+      <input message="tns:pt2"/>
+      <output message="tns:pt1"/>
+    </operation>
     <operation name="inputPlainText">
       <input message="tns:pt3"/>
       <output message="tns:empty"/>
@@ -111,7 +112,7 @@
             <soap:body parts="body" use="literal"/>
           </mime:part>
           <mime:part>
-            <mime:content part="docs" type="text/html"/>
+            <mime:content part="docs" type="text/plain"/>
           </mime:part>
           <mime:part>
             <mime:content part="logo" type="image/gif"/>
@@ -120,6 +121,7 @@
         </mime:multipartRelated>
       </output>
     </operation>
+-->
     <operation name="GetCompanyInfo2">
       <soap:operation soapAction="http://example.com/GetCompanyInfo2"/>
       <input>
@@ -140,7 +142,6 @@
         <soap:body use="literal"/>
       </output>
     </operation>
--->
     <operation name="inputPlainText">
       <soap:operation soapAction=""/>
       <input>

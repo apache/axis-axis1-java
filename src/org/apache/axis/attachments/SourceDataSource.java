@@ -52,57 +52,73 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
+package org.apache.axis.attachments;
 
-package org.apache.axis.encoding.ser;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
-import org.apache.axis.components.logger.LogFactory;
-
-import org.apache.commons.logging.Log;
-
-import java.awt.Image;
-
-import javax.mail.internet.MimeMultipart;
-
-import javax.xml.namespace.QName;
+import javax.activation.DataSource;
 
 import javax.xml.transform.Source;
 
-/**
- * A JAFDataHandlerDeserializer Factory
- *
- *  @author Rich Scheuerle (scheu@us.ibm.com)
- */
-public class JAFDataHandlerDeserializerFactory extends BaseDeserializerFactory {
-    protected static Log log =
-            LogFactory.getLog(JAFDataHandlerDeserializerFactory.class.getName());
+import javax.xml.transform.stream.StreamSource;
 
-    public JAFDataHandlerDeserializerFactory(Class javaType, QName xmlType) {
-        super(getDeserializerClass(javaType, xmlType), xmlType, javaType);
-        log.debug("Enter/Exit: JAFDataHandlerDeserializerFactory(" + javaType + ", "
-                + xmlType + ")");
-    }
-    public JAFDataHandlerDeserializerFactory() {
-        super(JAFDataHandlerDeserializer.class);
-        log.debug("Enter/Exit: JAFDataHandlerDeserializerFactory()");
-    }
+public class SourceDataSource implements DataSource {
+    public static final String CONTENT_TYPE = "text/xml";
 
-    private static Class getDeserializerClass(Class javaType, QName xmlType) {
-        Class deser;
-        if (Image.class.isAssignableFrom(javaType)) {
-            deser = ImageDataHandlerDeserializer.class;
+    private final String name;
+    private final String contentType;
+    private byte[] data;
+    private ByteArrayInputStream is;
+    private ByteArrayOutputStream os;
+
+    public SourceDataSource(String name, StreamSource data) {
+        this(name, CONTENT_TYPE, data);
+    } // ctor
+
+    public SourceDataSource(String name, String contentType, StreamSource data) {
+        this.name = name;
+        this.contentType = contentType == null ? CONTENT_TYPE : contentType;
+        os = new ByteArrayOutputStream();
+        try {
+            if (data != null) {
+                InputStream is = data.getInputStream();
+                if (is != null && is.available() > 0) {
+                    byte[] bytes = new byte[is.available()];
+                    is.read(bytes);
+                    os.write(bytes);
+                }
+            }
         }
-        else if (String.class.isAssignableFrom(javaType)) {
-            deser = PlainTextDataHandlerDeserializer.class;
+        catch (Exception e) {
+            // Is this sufficient?
         }
-        else if (Source.class.isAssignableFrom(javaType)) {
-            deser = SourceDataHandlerDeserializer.class;
+    } // ctor
+
+    public String getName() {
+        return name;
+    } // getName
+
+    public String getContentType() {
+        return contentType;
+    } // getContentType
+
+    public InputStream getInputStream() throws IOException {
+        if (os.size() != 0) {
+            data = os.toByteArray();
+            os.reset();
         }
-        else if (MimeMultipart.class.isAssignableFrom(javaType)) {
-            deser = MimeMultipartDataHandlerDeserializer.class;
+        return new ByteArrayInputStream(data == null ? new byte[0] : data);
+    } // getInputStream
+
+    public OutputStream getOutputStream() throws IOException {
+        if (os.size() != 0) {
+            data = os.toByteArray();
+            os.reset();
         }
-        else {
-            deser = JAFDataHandlerDeserializer.class;
-        }
-        return deser;
-    } // getDeserializerClass
-}
+        return os;
+    } // getOutputStream
+} // class SourceDataSource
