@@ -41,6 +41,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.net.URL;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 
@@ -676,6 +677,12 @@ public class HTTPSender extends BasicHandler {
 
         outMsg = new Message( new SocketInputStream(inp, sock), false,
                               contentType, contentLocation);
+        // Transfer HTTP headers of HTTP message to MIME headers of SOAP message
+        MimeHeaders mimeHeaders = outMsg.getMimeHeaders();
+        for (Enumeration e = headers.keys(); e.hasMoreElements(); ) {
+            String key = (String) e.nextElement();
+            mimeHeaders.addHeader(key, ((String) headers.get(key)).trim());
+        }        
         outMsg.setMessageType(Message.RESPONSE);
         msgContext.setResponseMessage(outMsg);
         if (log.isDebugEnabled()) {
