@@ -497,7 +497,7 @@ public abstract class SOAPSAXHandler extends DefaultHandler
                     }
                     return;
                 }
-                throw new SAXException("Wanted <SOAP-ENV:envelope> element, got <" + qName + ">");
+                throw new SAXException("Wanted <SOAP-ENV:Envelope> element, got <" + qName + ">");
 
             case IN_ENVELOPE:
                 if (namespace.equals(Constants.URI_SOAP_ENV)) {
