@@ -176,9 +176,12 @@ public class RPCElement extends SOAPBodyElement
                 String lc = Utils.xmlNameToJava(name);
                 operations = serviceDesc.getOperationsByName(lc);
             }
-        } else {
-            // if we don't have a service (i.e. for client side), the operation
-            // may already be set in the message context.
+        }
+
+        // if we don't have a service that has the operations,
+        // (i.e. for client side), the operation
+        // may already be set in the message context.
+        if (operations == null) {
             OperationDesc oper = msgContext.getOperation();
             if (oper != null) {
                 operations = new OperationDesc [] { oper };
