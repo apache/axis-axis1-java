@@ -144,10 +144,12 @@ public class BeanDeserializer extends DeserializerImpl implements Deserializer, 
         // capitalization of the first character.
         String localNameUp = BeanSerializer.format(localName, BeanSerializer.FORCE_UPPER);
         String localNameLo = BeanSerializer.format(localName, BeanSerializer.FORCE_LOWER);
+        String mangledName = JavaUtils.xmlNameToJava(localName);
         for (int i=0; i<pd.length; i++) {
             if (pd[i].getWriteMethod() == null ) continue ;
             if (pd[i].getName().equals(localNameUp) ||
-                pd[i].getName().equals(localNameLo)) {
+                pd[i].getName().equals(localNameLo) ||
+                pd[i].getName().equals(mangledName)) {
 
                 // determine the QName for this child element
                 TypeMapping tm = context.getTypeMapping();
