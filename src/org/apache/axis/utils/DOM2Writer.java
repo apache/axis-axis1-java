@@ -115,11 +115,12 @@ public class DOM2Writer
             out.println("\"?>");
         }
         NSStack namespaceStack = new NSStack();
-        print(node, namespaceStack, out, pretty, 0);
+        print(node, namespaceStack, node, out, pretty, 0);
         out.flush();
     }
 
     private static void print(Node node, NSStack namespaceStack,
+    						  Node startnode,
                               PrintWriter out, boolean pretty,
                               int indent)
     {
@@ -143,7 +144,7 @@ public class DOM2Writer
 
                     for (int i = 0; i < numChildren; i++)
                     {
-                        print(children.item(i), namespaceStack, out,
+                        print(children.item(i), namespaceStack, startnode, out,
                               pretty, indent);
                     }
                 }
@@ -185,7 +186,7 @@ public class DOM2Writer
 
                     if (!prefixIsDeclared)
                     {
-                        printNamespaceDecl(node, namespaceStack, out);
+                        printNamespaceDecl(node, namespaceStack, startnode, out);
                     }
                 }
 
@@ -221,7 +222,7 @@ public class DOM2Writer
 
                         if (!prefixIsDeclared)
                         {
-                            printNamespaceDecl(attr, namespaceStack, out);
+                            printNamespaceDecl(attr, namespaceStack, startnode, out);
                         }
                     }
                 }
@@ -243,7 +244,7 @@ public class DOM2Writer
 
                     for (int i = 0; i < numChildren; i++)
                     {
-                        print(children.item(i), namespaceStack, out, pretty,
+                        print(children.item(i), namespaceStack, startnode, out, pretty,
                               indent + 1);
                     }
                 }
@@ -332,6 +333,7 @@ public class DOM2Writer
 
     private static void printNamespaceDecl(Node node,
                                            NSStack namespaceStack,
+										   Node startnode,
                                            PrintWriter out)
     {
         switch (node.getNodeType())
@@ -339,13 +341,13 @@ public class DOM2Writer
         case Node.ATTRIBUTE_NODE :
             {
                 printNamespaceDecl(((Attr)node).getOwnerElement(), node,
-                                   namespaceStack, out);
+                                   namespaceStack, startnode, out);
                 break;
             }
 
         case Node.ELEMENT_NODE :
             {
-                printNamespaceDecl((Element)node, node, namespaceStack, out);
+                printNamespaceDecl((Element)node, node, namespaceStack, startnode, out);
                 break;
             }
         }
@@ -353,6 +355,7 @@ public class DOM2Writer
 
     private static void printNamespaceDecl(Element owner, Node node,
                                            NSStack namespaceStack,
+                                           Node startnode,
                                            PrintWriter out)
     {
         String namespaceURI = node.getNamespaceURI();
@@ -361,7 +364,7 @@ public class DOM2Writer
         if (!(namespaceURI.equals(Constants.NS_URI_XMLNS) && prefix.equals("xmlns")) &&
             !(namespaceURI.equals(Constants.NS_URI_XML) && prefix.equals("xml")))
         {
-            if (XMLUtils.getNamespace(prefix, owner) == null)
+            if (XMLUtils.getNamespace(prefix, owner, startnode) == null)
             {
                 out.print(" xmlns:" + prefix + "=\"" + namespaceURI + '\"');
             }
