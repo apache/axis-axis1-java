@@ -953,7 +953,14 @@ public class SymbolTable {
         // then they are out parameters.
         if (outputs.size() == 2) {
             parameters.returnType = (TypeEntry) outputs.get(0);
-            parameters.returnName = (String) outputs.get(1);
+            if (parameters.returnType instanceof DefinedElement) {
+                parameters.returnName = Utils.getAxisQName( 
+                        ((DefinedElement)parameters.returnType).getQName());
+            } else {
+                parameters.returnName = 
+                     new javax.xml.rpc.namespace.QName(null, 
+                                                       (String)outputs.get(1));
+            }
             ++parameters.outputs;
         }
         else {

@@ -138,11 +138,11 @@ public class JavaSkelWriter extends JavaWriter {
         pw.println("    }");
 
         // Initialize operation parameter names & modes
-        pw.println("    public String getParameterName(String opName, int i) {");
+        pw.println("    public javax.xml.rpc.namespace.QName getParameterName(String opName, int i) {");
         pw.println("        return skel.getParameterName(opName, i);");
         pw.println("    }");
         pw.println();
-        pw.println("    public static String getParameterNameStatic(String opName, int i) {");
+        pw.println("    public static javax.xml.rpc.namespace.QName getParameterNameStatic(String opName, int i) {");
         pw.println("        init();");
         pw.println("        return skel.getParameterName(opName, i);");
         pw.println("    }");
@@ -186,15 +186,18 @@ public class JavaSkelWriter extends JavaWriter {
                 // The invoked java name of the operation is stored.
                 String opName = Utils.xmlNameToJava(operation.getOperation().getName());
                 pw.println("        skel.add(\"" + opName + "\",");
-                pw.println("                 new String[] {");
+                pw.println("                 new javax.xml.rpc.namespace.QName[] {");
                 if (parameters.returnType != null) {
-                    pw.println("                   \"" + parameters.returnName + "\",");
+                    pw.println("                   " + 
+                               Utils.getNewQName(parameters.returnName) + ",");
                 } else {
                     pw.println("                   null,");
                 }
                 for (int j=0; j < parameters.list.size(); j++) {
                     Parameter p = (Parameter) parameters.list.get(j);
-                    pw.println("                   \"" + p.getName() + "\",");
+                    pw.println("                   " + 
+                       Utils.getNewQName(Utils.getAxisQName(p.getQName())) +
+                       ",");
                 }
                 pw.println("                 },"); 
                 pw.println("                 new javax.xml.rpc.ParameterMode[] {");

@@ -621,6 +621,9 @@ public class JavaStubWriter extends JavaWriter {
                         p = (Parameter) parms.list.get(++i);
                     }
                     String javifiedName = Utils.xmlNameToJava(p.getName());
+                    String qnameName = Utils.getNewQName(
+                                       Utils.getAxisQName(p.getQName()));
+                               
                     pw.println("            java.util.Map output;");
                     pw.println("            output = call.getOutputParams();");
                     // If expecting an array, need to call convert(..) because
@@ -632,14 +635,14 @@ public class JavaStubWriter extends JavaWriter {
                         pw.println("            // REVISIT THIS!");
                         pw.println("            " + javifiedName
                                     + ".value = (" + p.type.getName()
-                                    + ") org.apache.axis.utils.JavaUtils.convert(output.get(\""
-                                    + p.getName() + "\"), " + p.type.getName()
+                                    + ") org.apache.axis.utils.JavaUtils.convert(output.get("
+                                    + qnameName + "), " + p.type.getName()
                                     + ".class);");
                     }
                     else {
                         pw.println("            " + javifiedName + ".value = "
                                 + getResponseString(p.type,
-                                "output.get(\"" + p.getName() + "\")"));
+                                "output.get(" + qnameName + ")"));
                     }
                 }
                 else {
@@ -672,6 +675,8 @@ public class JavaStubWriter extends JavaWriter {
                 for (int i = 0; i < parms.list.size (); ++i) {
                     Parameter p = (Parameter) parms.list.get (i);
                     String javifiedName = Utils.xmlNameToJava(p.getName());
+                    String qnameName = Utils.getNewQName(
+                            Utils.getAxisQName(p.getQName()));
                     if (p.mode != Parameter.IN) {
                         if (firstInoutIsResp) {
                             firstInoutIsResp = false;
@@ -682,13 +687,13 @@ public class JavaStubWriter extends JavaWriter {
                                 pw.println("             // REVISIT THIS!");
                                 pw.println ("            " + javifiedName
                                         + ".value = (" + p.type.getName()
-                                        + ") org.apache.axis.utils.JavaUtils.convert(output.get(\"" + p.getName() + "\"), "
+                                        + ") org.apache.axis.utils.JavaUtils.convert(output.get(" + qnameName + "), "
                                         + p.type.getName() + ".class);");
                             }
                             else {
                                 pw.println ("            " + javifiedName +
                                             ".value = " +
-                                            getResponseString(p.type,  "output.get(\"" + p.getName() + "\")"));
+                                            getResponseString(p.type,  "output.get(" + qnameName + ")"));
                             }
                         }
                         else {
@@ -700,13 +705,13 @@ public class JavaStubWriter extends JavaWriter {
                                 pw.println ("            " + javifiedName
                                             + ".value = (" + p.type.getName()
                                             + ") org.apache.axis.utils.JavaUtils.convert("
-                                            + "output.get(\"" + p.getName() + "\"), "
+                                            + "output.get(" + qnameName + "), "
                                             + p.type.getName() + ".class);");
                             }
                             else {
                                 pw.println ("            " + javifiedName
                                             + ".value = " + getResponseString(p.type,
-                                    "output.get(\"" + p.getName() + "\")"));
+                                    "output.get(" + qnameName + ")"));
                             }
                         }
                     }
@@ -724,7 +729,7 @@ public class JavaStubWriter extends JavaWriter {
                         pw.println("             return ("
                                 + parms.returnType.getName() + ")"
                                 + "org.apache.axis.utils.JavaUtils.convert(output.get("
-                                + parms.returnName + "),"
+                                + Utils.getNewQName(parms.returnName) + "),"
                                 + parms.returnType.getName()+".class);");
                     } else if (parms.returnType != null) {
                         pw.println("             return " + getResponseString(parms.returnType, "resp"));

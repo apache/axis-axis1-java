@@ -9,6 +9,8 @@
 
 package samples.echo;
 
+import javax.xml.rpc.namespace.QName;
+
 public class EchoServiceBindingStub extends org.apache.axis.client.Stub implements samples.echo.EchoServicePortType {
     private java.util.Vector cachedSerClasses = new java.util.Vector();
     private java.util.Vector cachedSerQNames = new java.util.Vector();
@@ -567,9 +569,12 @@ public class EchoServiceBindingStub extends org.apache.axis.client.Stub implemen
         else {
             java.util.Map output;
             output = call.getOutputParams();
-            outputString.value = (java.lang.String) output.get("outputString");
-            outputInteger.value = ((Integer) output.get("outputInteger")).intValue();
-            outputFloat.value = ((Float) output.get("outputFloat")).floatValue();
+            outputString.value = (java.lang.String)output.get(
+                    new QName(null, "outputString"));
+            outputInteger.value = ((Integer)output.get(
+                    new QName(null, "outputInteger"))).intValue();
+            outputFloat.value = ((Float) output.get(
+                    new QName(null, "outputFloat"))).floatValue();
         }
     }
 

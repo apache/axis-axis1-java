@@ -56,6 +56,7 @@ package org.apache.axis.wsdl;
 
 import java.util.HashMap;
 import javax.xml.rpc.ParameterMode;
+import javax.xml.rpc.namespace.QName;
 
 /**
  * Provides Base function implementation for the Skeleton interface    
@@ -73,13 +74,13 @@ public class SkeletonImpl implements Skeleton {
     }
 
     class MetaInfo {
-        String[] names;
+        QName[] names;
         ParameterMode[] modes;
         String inputNamespace;
         String outputNamespace;
 	String soapAction;
 
-        MetaInfo(String[] names, ParameterMode[] modes, String inputNamespace,
+        MetaInfo(QName[] names, ParameterMode[] modes, String inputNamespace,
                 String outputNamespace, String soapAction) {
             this.names = names;
             this.modes = modes;
@@ -94,10 +95,25 @@ public class SkeletonImpl implements Skeleton {
      * The first name in the array is either the return name (which
      * should be set to null if there is no return name)
      **/
-    public void add(String operation, String[] names, ParameterMode[] modes,
+    public void add(String operation, QName[] names, ParameterMode[] modes,
             String inputNamespace, String outputNamespace, String soapAction) {
         table.put(operation, new MetaInfo(names, modes, inputNamespace, 
                 outputNamespace, soapAction));
+    }
+
+    /**
+     * Convenience method which allows passing an array of Strings which
+     * will be converted into QNames with no namespace.
+     **/
+    public void add(String operation, String[] names, ParameterMode[] modes,
+            String inputNamespace, String outputNamespace, String soapAction) {
+        QName [] qnames = new QName [names.length];
+        for (int i = 0; i < names.length; i++) {
+            QName qname = new QName(null, names[i]);
+            qnames[i] = qname;
+        }
+        add(operation, qnames, modes, inputNamespace, 
+            outputNamespace, soapAction);
     }
 
     /**
@@ -105,7 +121,7 @@ public class SkeletonImpl implements Skeleton {
      * operation.  Use -1 to get the return type name
      * Returns null if problems occur or the parameter is not known.
      */
-    public String getParameterName(String operationName, int n) {
+    public QName getParameterName(String operationName, int n) {
         MetaInfo value = (MetaInfo) table.get(operationName);
         if (value == null ||
             value.names == null ||
