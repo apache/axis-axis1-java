@@ -88,10 +88,10 @@ public class SAX2EventRecorder {
         return events.add(STATE_END_ELEMENT, p1, p2, p3, Z);
     }
     public int characters(char[] p1, int p2, int p3) {
-        return events.add(STATE_CHARACTERS, new String(p1, p2, p3), Z,Z,Z);
+        return events.add(STATE_CHARACTERS, new CharData(p1, p2, p3), Z, Z, Z);
     }
     public int ignorableWhitespace(char[] p1, int p2, int p3) {
-        return events.add(STATE_IGNORABLE_WHITESPACE, new String(p1, p2, p3), Z,Z,Z);
+        return events.add(STATE_IGNORABLE_WHITESPACE, new CharData(p1, p2, p3), Z,Z,Z);
     }
     public int processingInstruction(String p1, String p2) {
         return events.add(STATE_PROCESSING_INSTRUCTION, p1, p2, Z,Z);
@@ -123,7 +123,7 @@ public class SAX2EventRecorder {
     public void comment(char[] ch,
                     int start,
                     int length) {
-        events.add(STATE_COMMENT, new String(ch, start, length), Z, Z, Z);
+        events.add(STATE_COMMENT, new CharData(ch, start, length), Z, Z, Z);
     }
     
     public int newElement(MessageElement elem) {
@@ -167,12 +167,12 @@ public class SAX2EventRecorder {
                                    (String)events.get(n,3));
                 
             } else if (event == STATE_CHARACTERS) {
-                char chars[] = ((String)(events.get(n,1))).toCharArray();
-                handler.characters(chars, 0, chars.length);
+                CharData charData = (CharData)events.get(n,1);
+                handler.characters(charData.data, charData.off, charData.len);
                 
             } else if (event == STATE_IGNORABLE_WHITESPACE) {
-                char chars[] = ((String)(events.get(n,1))).toCharArray();
-                handler.ignorableWhitespace(chars, 0, chars.length);
+                CharData charData = (CharData)events.get(n,1);
+                handler.ignorableWhitespace(charData.data, charData.off, charData.len);
                 
             } else if (event == STATE_PROCESSING_INSTRUCTION) {
                 handler.processingInstruction((String)events.get(n,1),
@@ -217,8 +217,8 @@ public class SAX2EventRecorder {
                 lexicalHandler.endCDATA();
             
             } else if (event == STATE_COMMENT && lexicalHandler != null) {
-                char chars[] = ((String)(events.get(n,1))).toCharArray();
-                lexicalHandler.comment(chars, 0, chars.length);             
+                CharData charData = (CharData)events.get(n,1);
+                lexicalHandler.comment(charData.data, charData.off, charData.len);
             
             } else if (event == STATE_NEWELEMENT) {
                 if (handler instanceof DeserializationContext) {
@@ -261,4 +261,17 @@ public class SAX2EventRecorder {
         }
     }
 /////////////////////////////////////////////
+
+    private static class CharData {
+        char [] data;
+        int off;
+        int len;
+        public CharData(char[] data, int off, int len) {
+            this.data = new char[len];
+            System.arraycopy(data, off, this.data, 0, len);
+            this.off = 0;
+            this.len = len;
+        }
+    }
+            
 }
