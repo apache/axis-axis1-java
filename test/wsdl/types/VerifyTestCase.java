@@ -333,7 +333,9 @@ public class VerifyTestCase extends junit.framework.TestCase {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
         StockQuote stockQuote = new StockQuote();
-        stockQuote.setTime(new Time());
+        Time time = new Time();
+        time.setDST(false);
+        stockQuote.setTime(time);
         stockQuote.setChange(new SimpleFwd("5"));
         stockQuote.setPctchange("100%");
         stockQuote.setBid("9");

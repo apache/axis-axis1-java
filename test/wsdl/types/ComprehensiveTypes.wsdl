@@ -95,9 +95,11 @@
       </xsd:element>
 
       <xsd:complexType name="time">
-        <xsd:restriction base="xsd:string">
-          <xsd:attribute name="DST" type="xsd:boolean" />
-        </xsd:restriction>
+        <xsd:simpleContent>
+          <xsd:extension base="xsd:string">
+            <xsd:attribute name="DST" type="xsd:boolean" />
+          </xsd:extension>
+        </xsd:simpleContent>
       </xsd:complexType>
 
       <xsd:complexType name="complexWComplex">
