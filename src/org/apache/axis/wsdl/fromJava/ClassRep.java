@@ -146,9 +146,11 @@ import javax.xml.rpc.ParameterMode;
  *       | type
  *       +--------------> Class
  *
+ * Note: all classes extend BaseRep where meta data information can be stored.
+ * 
  * @author Rich Scheuerle  (scheu@us.ibm.com)
  */
-public class ClassRep {
+public class ClassRep extends BaseRep {
     
     private String   _name       = "";
     private boolean  _isInterface= false;
@@ -298,20 +300,20 @@ public class ClassRep {
             // add each method in this class to the list
             for (int i=0; i < m.length; i++) {
                 int mod = m[i].getModifiers();
-                if (Modifier.isPublic(mod)) {
+                if (Modifier.isPublic(mod) && !Modifier.isStatic(mod)) {
                     String methodName = m[i].getName();
                     // Ignore the getParameterName/getParameterMode methods from the Skeleton class
                     if (((methodName.equals("getParameterName") ||
-                          methodName.equals("getParameterNameStatic") ||
-                          methodName.equals("getParameterMode") ||
-                          methodName.equals("getParameterModeStatic")) &&
+                          methodName.equals("getParameterMode")) &&
                          (Skeleton.class).isAssignableFrom(m[i].getDeclaringClass()))) {
                         continue;  // skip it
                     }
                     Class[] types = getParameterTypes(m[i]);
                     String[] names = getParameterNames(m[i], implClass);
                     ParameterMode[] modes = getParameterModes(m[i], implClass);
-                    _methods.add(new MethodRep(m[i], types, modes, names));
+                    MethodRep methodRep = new MethodRep(m[i], types, modes, names);
+                    getMethodMetaData(methodRep, m[i], implClass);
+                    _methods.add(methodRep);
                 }
             }
             
@@ -657,6 +659,81 @@ public class ClassRep {
         return modes;
     }
 
+
+    /**
+     * Gets additional meta data and sets it on the MethodRep.            
+     * @param methodRep is the target MethodRep.                
+     * @param method is the Method to search.                
+     * @param implClass  If the first search fails, the corresponding  
+     *                   Method in this class is searched.           
+     */ 
+    protected void getMethodMetaData(MethodRep methodRep, Method method, Class implClass) {
+        
+        if (getMethodMetaDataFromSkeleton(methodRep, method)) {
+            return;
+        }
+                
+        // If failed, try getting a method of the impl class
+        if (implClass != null) {
+            Method m = null;
+            try {
+                m = implClass.getDeclaredMethod(method.getName(), method.getParameterTypes());
+            } catch (Exception e) {}
+            if (m == null) { 
+                try {
+                    m = implClass.getMethod(method.getName(), method.getParameterTypes());
+                } catch (Exception e) {}
+            }
+            if (m != null) {
+                getMethodMetaDataFromSkeleton(methodRep, m);
+            }
+        }            
+        return;
+    }
+
+
+    /**
+     * Gets additional meta data and sets it on the MethodRep.            
+     * @param methodRep is the target MethodRep.                
+     * @param method is the Method to search.               
+     * @return true if the method is part of a skeleton.
+     */ 
+    protected boolean getMethodMetaDataFromSkeleton(MethodRep methodRep, Method method) {
+        Class cls = method.getDeclaringClass();
+        Class skel = Skeleton.class;
+        if (!cls.isInterface() && skel.isAssignableFrom(cls)) {
+            try {
+                Method m = cls.getMethod("getInputNamespaceStatic",
+                                         new Class [] {String.class});
+                if (m != null) {
+                    String value = (String) m.invoke(null, new Object[] {method.getName()});
+                    if (value != null) {
+                        methodRep.setMetaData("inputNamespace", value);
+                    }
+                }
+
+                m = cls.getMethod("getOutputNamespaceStatic",
+                                  new Class [] {String.class});
+                if (m != null) {
+                    String value = (String) m.invoke(null, new Object[] {method.getName()});
+                    if (value != null) {
+                        methodRep.setMetaData("outputNamespace", value);
+                    }
+                }
+                m = cls.getMethod("getSOAPAction",
+                                  new Class [] {String.class});
+                if (m != null) {
+                    String value = (String) m.invoke(null, new Object[] {method.getName()});
+                    if (value != null) {
+                        methodRep.setMetaData("soapAction", value);
+                    }
+                }
+            } catch (Exception e) {
+            }
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Determines if the Property in the class has been compliant accessors. If so returns true,

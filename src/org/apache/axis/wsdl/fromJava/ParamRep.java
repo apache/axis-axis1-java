@@ -62,7 +62,7 @@ import javax.xml.rpc.ParameterMode;
  * user provided code to affect the emitted wsdl file.  (See ClassRep)
  * @author Rich Scheuerle  (scheu@us.ibm.com)
  */
-public class ParamRep {
+public class ParamRep extends BaseRep {
     
     public static short IN    = 0;
     public static short OUT   = 1;

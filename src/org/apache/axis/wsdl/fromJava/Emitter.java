@@ -567,7 +567,7 @@ public class Emitter {
 
         for(int i=0; i<methods.size(); i++) {
             MethodRep method = (MethodRep) methods.elementAt(i);
-            Operation oper = writeOperation(def, binding, method.getName());
+            Operation oper = writeOperation(def, binding, method);
             writeMessages(def, oper, method);
             portType.addOperation(oper);
         }
@@ -633,16 +633,16 @@ public class Emitter {
      *
      * @param def  
      * @param binding                        
-     * @param operName                        
+     * @param methodRep  - Representation of the method                      
      * @throws Exception
      */
     private Operation writeOperation(Definition def, 
                                      Binding binding, 
-                                     String operName) {
+                                     MethodRep methodRep) {
         Operation oper = def.createOperation();
-        oper.setName(operName);
+        oper.setName(methodRep.getName());
         oper.setUndefined(false);
-        writeBindingOperation(def, binding, oper);
+        writeBindingOperation(def, binding, oper, methodRep);
         return oper;
     }
 
@@ -650,12 +650,14 @@ public class Emitter {
      *
      * @param def  
      * @param binding                        
-     * @param oper                        
+     * @param oper      
+     * @param methodRep  - Representation of the method                           
      * @throws Exception
      */
     private void writeBindingOperation (Definition def, 
                                         Binding binding, 
-                                        Operation oper) {
+                                        Operation oper,
+                                        MethodRep methodRep) {
         BindingOperation bindingOper = def.createBindingOperation();
         BindingInput bindingInput = def.createBindingInput();
         BindingOutput bindingOutput = def.createBindingOutput();
@@ -663,7 +665,11 @@ public class Emitter {
         bindingOper.setName(oper.getName());
 
         SOAPOperation soapOper = new SOAPOperationImpl();
-        soapOper.setSoapActionURI("");
+        String soapAction = methodRep.getMetaData("soapAction");
+        if (soapAction == null) {
+            soapAction = "";
+        }
+        soapOper.setSoapActionURI(soapAction);
         
         // Until we have per-operation configuration, this will always be
         // the same as the binding default.
@@ -671,16 +677,33 @@ public class Emitter {
         
         bindingOper.addExtensibilityElement(soapOper);
 
-        SOAPBody soapBody = new SOAPBodyImpl();
-        soapBody.setUse("encoded");
+        // Input SOAP Body
+        SOAPBody soapBodyIn = new SOAPBodyImpl();
+        soapBodyIn.setUse("encoded");
         if (targetService == null)
-            soapBody.setNamespaceURI(intfNS);
+            soapBodyIn.setNamespaceURI(intfNS);
         else
-            soapBody.setNamespaceURI(targetService);
-        soapBody.setEncodingStyles(encodingList);
-
-        bindingInput.addExtensibilityElement(soapBody);
-        bindingOutput.addExtensibilityElement(soapBody);
+            soapBodyIn.setNamespaceURI(targetService);
+        String namespace = methodRep.getMetaData("inputNamespace");
+        if (namespace != null) {
+            soapBodyIn.setNamespaceURI(namespace);
+        }
+        soapBodyIn.setEncodingStyles(encodingList);
+        bindingInput.addExtensibilityElement(soapBodyIn);
+        
+        // Output SOAP Body
+        SOAPBody soapBodyOut = new SOAPBodyImpl();
+        soapBodyOut.setUse("encoded");
+        if (targetService == null)
+            soapBodyOut.setNamespaceURI(intfNS);
+        else
+            soapBodyOut.setNamespaceURI(targetService);
+        namespace = methodRep.getMetaData("outputNamespace");
+        if (namespace != null) {
+            soapBodyOut.setNamespaceURI(namespace);
+        }
+        soapBodyOut.setEncodingStyles(encodingList);
+        bindingOutput.addExtensibilityElement(soapBodyOut);
 
         bindingOper.setBindingInput(bindingInput);
         bindingOper.setBindingOutput(bindingOutput);
