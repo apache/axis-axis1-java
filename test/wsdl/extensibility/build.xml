@@ -65,7 +65,7 @@ Copyright:
                output="${axis.home}/build/work"
                deployscope="session"
                serverSide="yes"
-               skeletonDeploy="yes"
+               skeletonDeploy="no"
                testcase="yes">
         <mapping namespace="urn:ExtensibilityQuery" package="test.wsdl.extensibility"/>
     </wsdl2java>

@@ -7,7 +7,6 @@ xmlns:tns="urn:ExtensibilityQuery" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
     <xsd:schema attributeFormDefault="qualified"
     elementFormDefault="qualified" targetNamespace="urn:ExtensibilityQuery">
 
-
       <xsd:complexType name="ExtensibilityType">
         <xsd:sequence>
           <xsd:any namespace="##any"/>
