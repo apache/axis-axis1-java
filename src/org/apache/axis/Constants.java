@@ -500,7 +500,7 @@ public class Constants {
                                   new QName(URI_SOAP12_ENV, "VersionMismatch");
 
     public static final QName FAULT_SOAP12_DATAENCODINGUNKNOWN =
-                                  new QName(URI_SOAP12_ENV, "DataEncodingUnknow");
+                                  new QName(URI_SOAP12_ENV, "DataEncodingUnknown");
 
     public static final QName FAULT_SOAP12_SENDER =
                                   new QName(URI_SOAP12_ENV, "Sender");
