@@ -1121,7 +1121,7 @@ public class Emitter {
                                                  Object.class,
                                                  Constants.XSD_ANYTYPE,
                                                  false, false);
-            types.writeSchemaElement(qname, el);
+            types.writeSchemaTypeDecl(qname, el);
             
             Part part = def.createPart();
             part.setName("part");
@@ -1401,7 +1401,7 @@ public class Emitter {
                                                  param.getJavaType(),
                                                  param.getTypeQName(),
                                                  false, false);
-            types.writeSchemaElement(qname, el);
+            types.writeSchemaElementDecl(qname, el);
             
             part.setName(param.getName());
             part.setElementName(qname);

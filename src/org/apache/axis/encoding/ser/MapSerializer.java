@@ -89,6 +89,7 @@ public class MapSerializer implements Serializer
     private static final QName QNAME_KEY = new QName("","key");
     private static final QName QNAME_ITEM = new QName("", "item");
     private static final QName QNAME_VALUE = new QName("", "value");
+    private static final QName QNAME_ITEMTYPE = new QName(Constants.NS_URI_XMLSOAP, "item");    
 
     /** Serialize a Map
      *
@@ -178,7 +179,7 @@ public class MapSerializer implements Serializer
         element3.setAttribute("nillable", "true");
         element3.setAttribute("type", "xsd:string");
         seq2.appendChild(element3);
-        types.writeSchemaElement(Constants.SOAP_MAP, itemType);
+        types.writeSchemaTypeDecl(QNAME_ITEMTYPE, itemType);
 
         return complexType;
     }

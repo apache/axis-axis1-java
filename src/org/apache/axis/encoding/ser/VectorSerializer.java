@@ -154,7 +154,7 @@ public class VectorSerializer implements Serializer
     public Element writeSchema(Class javaType, Types types) throws Exception {
         Element complexType = types.createElement("complexType");
         complexType.setAttribute("name", "Vector");
-        types.writeSchemaElement(Constants.SOAP_VECTOR, complexType);
+        types.writeSchemaTypeDecl(Constants.SOAP_VECTOR, complexType);
         Element seq = types.createElement("sequence");
         complexType.appendChild(seq);
 
