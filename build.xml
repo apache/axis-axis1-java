@@ -197,16 +197,27 @@ Copyright:
 
   <target name="buildTest" depends="compile" if="junit.present" unless="tests.built">
     <echo message="junit package found ..."/>
+     <antcall target="buildJunit"/>
+     <antcall target="buildFunctional"/>
+    <property name="tests.built" value="yes"/>
+    <echo message="Tests property set ${tests.built}"/>
+  </target>
+
+  <target name="buildJunit" depends="compile" if="junit.present">
+    <echo message="junit package found ..."/>
      <antcall target="my-forking-ant">
        <param name="dir" value="${axis.home}"/>
        <param name="file" value="buildTest.xml"/>
-       <param name="target" value="compile"/>
+       <param name="target" value="compileJunit"/>
      </antcall>
-    <!--
-      <ant antfile="${axis.home}/buildTest.xml" target="compile"/>
-    -->
-    <property name="tests.built" value="yes"/>
-    <echo message="Tests property set ${tests.built}"/>
+  </target>
+  <target name="buildFunctional" depends="compile" if="junit.present">
+    <echo message="junit package found ..."/>
+     <antcall target="my-forking-ant">
+       <param name="dir" value="${axis.home}"/>
+       <param name="file" value="buildTest.xml"/>
+       <param name="target" value="compileFunctional"/>
+     </antcall>
   </target>
 
   <!-- =================================================================== -->
@@ -226,7 +237,7 @@ Copyright:
   <!-- =================================================================== -->
   <!-- Runs the JUnit package testcases -->
   <!-- =================================================================== -->
-  <target name="junit" depends="buildTest" if="junit.present" >
+  <target name="junit" depends="buildJunit" if="junit.present" >
     <mkdir dir="${test.functional.reportdir}" />
     <ant antfile="${axis.home}/buildTest.xml" target="junit"/>
   </target>
@@ -259,7 +270,7 @@ Copyright:
   <!-- =================================================================== -->
   <!-- Functional tests, no server (for testing under debugger)            -->
   <!-- =================================================================== -->
-  <target name="functional-tests-noserver" depends="compile, buildTest"
+  <target name="functional-tests-noserver" depends="compile, buildFunctional"
     description="functional tests, no server">
     <ant antfile="test/build_functional_tests.xml" target="junit-functional-noserver">
       <property name="test.functional.usefile" value="${test.functional.usefile}"/>
@@ -274,7 +285,7 @@ Copyright:
   <!-- =================================================================== -->
   <!-- Functional tests, with server                                       -->
   <!-- =================================================================== -->
-  <target name="functional-tests" depends="buildTest" description="functional tests">
+  <target name="functional-tests" depends="buildFunctional" description="functional tests">
     <ant antfile="${axis.home}/buildTest.xml" target="functional-tests"/>
   </target>
 
@@ -309,7 +320,7 @@ Copyright:
   <!-- =================================================================== -->
   <!-- Build/Test EVERYTHING from scratch!                                 -->
   <!-- =================================================================== -->
-  <target name="all" depends="dist, functional-tests"
+  <target name="all" depends="dist, junit, functional-tests"
       description="do everything: distribution build and functional tests"
     />
 
@@ -358,7 +369,7 @@ Copyright:
     </copy>
   </target>
 
-  <target name="dist" depends="compile, javadocsdist, samples, buildTest, junit"
+  <target name="dist" depends="compile, javadocsdist, samples, junit"
     description="create the full binary distribution">
     <mkdir dir="${dist.dir}"/>
     <mkdir dir="${dist.dir}/lib"/>
