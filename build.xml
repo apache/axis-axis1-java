@@ -65,6 +65,8 @@ Copyright:
   <property name="Name" value="Axis"/>
   <property name="year" value="2001"/>
 
+  <property name="jaxrpc" value="jaxrpc"/>
+
   <!-- debug flag for ant javac, values are "on" and "off" -->
   <property name="debug" value="off"/>  
 
@@ -265,8 +267,10 @@ Copyright:
   
     <jar jarfile="${build.lib}/${name}.jar" basedir="${build.dest}" >
       <include name="org/**" />
-      <include name="javax/**"/>
       <include name="log4j.properties"/>
+    </jar>
+    <jar jarfile="${build.lib}/${jaxrpc}.jar" basedir="${build.dest}" >
+      <include name="javax/**"/>
     </jar>
     <copy file="${wsdl4j.jar}" toDir="${build.lib}"/>
     <copy file="${commons-logging.jar}" toDir="${build.lib}"/>
@@ -291,6 +295,7 @@ Copyright:
            debug="${debug}">
       <classpath>
         <pathelement location="${build.lib}/${name}.jar"/>
+        <pathelement location="${build.lib}/${jaxrpc}.jar"/>
         <path refid="classpath"/>
       </classpath>
       <include name="samples/**/*.java" />
@@ -322,6 +327,7 @@ Copyright:
            debug="${debug}">
       <classpath>
         <pathelement location="${build.lib}/${name}.jar"/>
+        <pathelement location="${build.lib}/${jaxrpc}.jar"/>
         <path refid="classpath"/>
       </classpath>
       <include name="test/**/*.java" />
