@@ -71,7 +71,6 @@ import org.xml.sax.helpers.DefaultHandler;
 public class RPCParam extends MessageElement
 {
     private static boolean DEBUG_LOG = false;
-    private DeserializerBase deserializer = null;
     
     // Who's your daddy?
     RPCElement myRPCElement;
@@ -117,105 +116,7 @@ public class RPCParam extends MessageElement
         return super.getEnvelope();
     }
     
-    public void startElement(String namespace, String localName,
-                             String qName, Attributes attributes)
-        throws SAXException
-    {
-        if (DEBUG_LOG) {
-            System.err.println("Start element in RPCParam.");
-        }
-        typeQName = context.getTypeFromAttributes(attributes);
-
-        // !!! This check might not be complete; in the case of
-        //     a multi-ref, we might need to check BOTH the name
-        //     of the element with the href AND the referenced
-        //     one.  Right now this will just check the referenced one.
-        if (typeQName == null) {
-            QName myQName = new QName(namespace, localName);
-            if (myQName.equals(SOAPTypeMappingRegistry.SOAP_ARRAY)) {
-                typeQName = SOAPTypeMappingRegistry.SOAP_ARRAY;
-            } else if (myQName.equals(SOAPTypeMappingRegistry.SOAP_INT)) {
-                typeQName = SOAPTypeMappingRegistry.XSD_INT;
-            } else if (myQName.equals(SOAPTypeMappingRegistry.SOAP_BOOLEAN)) {
-                typeQName = SOAPTypeMappingRegistry.XSD_BOOLEAN;
-            } else if (myQName.equals(SOAPTypeMappingRegistry.SOAP_SHORT)) {
-                typeQName = SOAPTypeMappingRegistry.XSD_SHORT;
-            }
-        }
-        
-        if (typeQName == null) {
-            // No type inline, so check service description.
-            ServiceDescription serviceDesc = context.getServiceDescription();
-            if (serviceDesc != null) {
-                setType(serviceDesc.getParamTypeByName(getEnvelope().getMessageType(),
-                                                             name));
-            }
-        }
-        
-        /** !!! If we have a service description and this is an
-        * explicitly-typed param, we might want to check here to
-        * see if the xsi:type val is indeed a subtype of the type
-        * we expect from the service description.
-        */
-        
-        DeserializerBase dSer = getContentHandler(context);
-        
-        context.getSAXHandler().replaceElementHandler(dSer);
-        
-        dSer.startElement(namespace,localName,qName,attributes);
-    }
-    
-    public DeserializerBase getContentHandler(DeserializationContext context)
-    {
-        // Look up type and return an appropriate deserializer
-        if (typeQName != null) {
-            deserializer = context.getDeserializer(typeQName);
-            if (DEBUG_LOG) {
-                System.err.println(typeQName + " maps to " + deserializer);
-            }
-            if (deserializer != null) {
-                return deserializer;
-            }
-        }
-        
-        // If we couldn't find one, just record...
-        
-        /** !!! Is it possible that we'll do this now, but
-         * later on we'll figure out the type (via some OOB
-         * means)?  In that case we want an easy way to
-         * squirt these SAX events to a deserializer.
-         */
-        if (DEBUG_LOG) {
-            System.err.println("Creating recorder for " + this.getName());
-        }
-        value = new ElementRecorder();
-        return (ElementRecorder)value;
-    }
-    
-    public Object getValue()
-    {
-        if (value instanceof ElementRecorder) {
-            // !!! Lazy deserialization here... We have the SAX events,
-            //     but haven't run them through a deserializer yet.
-            StringWriter xml = new StringWriter();
-            try {
-               SerializationContext xmlContext = new SerializationContext(xml, context.getMessageContext());
-               ((ElementRecorder)value).outputChildren(xmlContext);
-            } catch (Exception e) {
-               if (DEBUG_LOG) e.printStackTrace();
-               return null;
-            }
-            return xml.getBuffer().toString();
-        }
-        
-        if (deserializer != null) {
-            value = deserializer.getValue();
-            deserializer = null;
-        }
-        
-        return value;
-    }
-    
+   
     public void output(SerializationContext context) throws IOException
     {
         AttributesImpl attrs;

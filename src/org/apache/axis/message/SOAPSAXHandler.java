@@ -421,7 +421,6 @@ public abstract class SOAPSAXHandler extends DefaultHandler
                 if (rec instanceof ElementRecorder) {
                     ((ElementRecorder)rec).publishToHandler(context.getSAXHandler());
                 } else {
-                    System.out.println("Setting value to " + rec.getValue());
                     elementHandler.setValue(rec.getValue());
                 }
                 
@@ -575,9 +574,12 @@ public abstract class SOAPSAXHandler extends DefaultHandler
                     handler = context.getHandlerForID(element.getID());
                     if (handler == null) {
                         handler = element.getContentHandler();
-                    } /* else {
-                        System.out.println("found it " + handler);
-                    } */
+                    }  else {
+                        if (DEBUG_LOG) {
+                            System.out.println("found handler for ID " + element.getID() + " : " + handler);
+                        }
+                        element.setContentHandler(handler);
+                    }
                 } else {
                     handler = element.getContentHandler();
                 }
