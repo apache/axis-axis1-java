@@ -120,7 +120,8 @@ Copyright:
 
 
 <target name="xdocs" depends="probe-xdocs"
-  description="Run xdoclet over the ant tasks to create doc pages">
+  description="Run xdoclet over the ant tasks to create doc pages"
+  if="xdocs.found">
   <echo>
     running xdocs with classpath=${xdoclet.extra.classpath.asprop}
   </echo>  
