@@ -275,7 +275,7 @@ public class Constants {
     public static final String URI_SOAP11_NEXT_ACTOR =
                                      "http://schemas.xmlsoap.org/soap/actor/next" ;
     public static final String URI_SOAP12_NEXT_ACTOR =
-                                     "http://www.w3.org/2002/12/soap-envelope/actor/next";
+                                     "http://www.w3.org/2002/12/soap-envelope/role/next";
 
     public static final String URI_SOAP12_FAULT =
                                      "http://www.w3.org/2002/12/soap-faults";
