@@ -15,6 +15,12 @@ MESSAGE PARSING / ENCODING
 CLIENT API
 ----------
 
+SCHEMA SUPPORT
+--------------
+! <> Support qualified/unqualified flags for elements + attributes
+      (this also relates to WSDL2Java and type metadata)
+
+
 JAX-RPC COMPATIBILITY
 ---------------------
 ! <> Implement Service.getCalls() method. (maybe)
