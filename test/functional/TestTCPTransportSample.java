@@ -68,6 +68,7 @@ import samples.transport.tcp.GetQuote;
 import samples.transport.tcp.TCPSender;
 
 import javax.xml.rpc.ParameterMode;
+import javax.xml.rpc.namespace.QName;
 
 import java.net.URL;
 
@@ -105,8 +106,7 @@ public class TestTCPTransportSample extends TestCase {
             service.getEngine().deployTransport("tcp", c);
 
             call.setTargetEndpointAddress( new URL("tcp://localhost:8088") );
-            call.setOperationName( "getQuote" );
-            call.setProperty( Call.NAMESPACE, "urn:xmltoday-delayed-quotes" );
+            call.setOperationName( new QName("urn:xmltoday-delayed-quotes", "getQuote") );
             call.addParameter( "symbol", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN );
             call.setReturnType( XMLType.XSD_FLOAT );
 

@@ -158,7 +158,6 @@ public class Call implements javax.xml.rpc.Call {
     // A place to store any client-specified headers
     private Vector             myHeaders       = null;
 
-    public static final String NAMESPACE         = "namespace" ;
     public static final String SEND_TYPE_ATTR    = "send_type_attr" ;
     public static final String TIMEOUT           = "timeout" ;
     public static final String TRANSPORT_NAME    = "transport_name" ;
@@ -436,7 +435,6 @@ public class Call implements javax.xml.rpc.Call {
 
         // Get the body's namespace URI and encoding style
         ////////////////////////////////////////////////////////////////////
-        this.removeProperty( org.apache.axis.client.Call.NAMESPACE );
         this.setEncodingStyle( null );
         BindingInput bIn = bop.getBindingInput();
         if ( bIn != null ) {
@@ -445,10 +443,6 @@ public class Call implements javax.xml.rpc.Call {
                 Object obj = list.get(i);
                 if ( obj instanceof SOAPBody ) { 
                     SOAPBody sBody  = (SOAPBody) obj ;
-                    String   tmp     = sBody.getNamespaceURI();
-                    if ( tmp != null )
-                        this.setProperty( org.apache.axis.client.Call.NAMESPACE, 
-                                          tmp );
                     list = sBody.getEncodingStyles();
                     if ( list != null && list.size() > 0 )
                         this.setEncodingStyle( (String) list.get(0) );
@@ -753,15 +747,8 @@ public class Call implements javax.xml.rpc.Call {
         if ( operationName == null )
             throw new AxisFault( JavaUtils.getMessage("noOperation00") );
         try {
-            String ns = (String) getProperty( Call.NAMESPACE );
-            if ( ns == null ) {
-                return this.invoke(
-                        operationName.getLocalPart(), getParamList(params));
-            }
-            else {
-                return this.invoke(
-                        ns, operationName.getLocalPart(), getParamList(params));
-            }
+            return this.invoke(operationName.getNamespaceURI(),
+                    operationName.getLocalPart(), getParamList(params));
         }
         catch( AxisFault af) {
             throw af;

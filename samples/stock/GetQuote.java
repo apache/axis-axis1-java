@@ -64,6 +64,7 @@ import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.Options;
 
 import javax.xml.rpc.ParameterMode;
+import javax.xml.rpc.namespace.QName;
 
 import java.net.URL;
 
@@ -107,8 +108,7 @@ public class GetQuote {
           Call     call    = (Call) service.createCall();
 
           call.setTargetEndpointAddress( url );
-          call.setOperationName( "getQuote" );
-          call.setProperty( Call.NAMESPACE, "urn:xmltoday-delayed-quotes" );
+          call.setOperationName( new QName("urn:xmltoday-delayed-quotes", "getQuote") );
           call.addParameter( "symbol", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN );
           call.setReturnType( XMLType.XSD_FLOAT );
 

@@ -9,6 +9,7 @@ import org.apache.axis.encoding.XMLType;
 import org.apache.axis.utils.Options;
 
 import javax.xml.rpc.ParameterMode;
+import javax.xml.rpc.namespace.QName;
 
 /** Tests the simple File transport.  To run:
  *      java org.apache.axis.utils.Admin client client_deploy.xml
@@ -42,9 +43,8 @@ public class FileTest {
         SimpleTargetedChain c = new SimpleTargetedChain(new FileSender());
         engine.deployTransport("FileTransport", c);
 
-        call.setOperationName( "getQuote" );
+        call.setOperationName( new QName("urn:xmltoday-delayed-quotes", "getQuote") );
         call.addParameter( "symbol", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN );
-        call.setProperty( Call.NAMESPACE, "urn:xmltoday-delayed-quotes" );
         call.setReturnType( XMLType.XSD_FLOAT );
         call.setTransport( new FileTransport() );
         call.setProperty(Transport.USER, opts.getUser() );
