@@ -420,14 +420,12 @@ public class ArraySerializer implements Serializer
         if (isArray(javaType)) {
             String dimString = "[]";
             componentType = getComponentType(javaType);
-            if (isArray(componentType)) {
-                while (isArray(componentType)) {
-                    dimString += "[]";
-                    componentType = getComponentType(componentType);
-                }
-            } else {
-                types.writeType(componentType,null);
+            while (isArray(componentType)) {
+                dimString += "[]";
+                componentType = getComponentType(componentType);
             }
+            types.writeType(componentType,null);
+
             componentTypeName =
                     types.getQNameString(types.getTypeQName(componentType)) +
                     dimString;
