@@ -143,7 +143,8 @@ public class HTTPCall {
     MessageContext       msgContext = new MessageContext( reqMsg );
     Vector               resBodies = null ;
     Vector               resArgs = null ;
-    RPCArg               arg ;
+    RPCArg               arg  = null ;
+    Object               result = null ;
 
     hMsg.setUserID( userID );
     hMsg.setPassword( passwd );
@@ -168,9 +169,10 @@ public class HTTPCall {
     Document doc = (Document) resMsg.getAs("Document");
     body = new RPCBody( doc.getRootElement() );
     resArgs = body.getArgs();
-    arg = (RPCArg) resArgs.get(0);
+    if ( args != null && resArgs.size() > 0 )
+      result = (String) ((RPCArg) resArgs.get(0)).getValue() ;
     Debug.Print( 1, "Exit: HTTPCall.invoke" );
-    return( (String) arg.getValue() );
+    return( result );
   }
 
 }

@@ -127,11 +127,21 @@ public class SOAPHeader {
   }
 
   public Element getAsXML() {
-    Element  root = new Element( name, prefix, namespaceURI );
-    if ( mustUnderstand )
-      root.addAttribute( Constants.ATTR_MUST_UNDERSTAND, "1" );
-    if ( actor != null )
-      root.addAttribute( Constants.ATTR_ACTOR, actor );
+    Element    root = new Element( name, prefix, namespaceURI );
+    Namespace  ns   = null ;
+    Attribute  attr = null ;
+    if ( mustUnderstand ) {
+      ns = Namespace.getNamespace( Constants.NSPREFIX_SOAP_ENV, 
+                                   Constants.URI_SOAP_ENV );
+      attr = new Attribute(Constants.ATTR_MUST_UNDERSTAND, "1", ns );
+      root.addAttribute( attr );
+    }
+    if ( actor != null ) {
+      ns = Namespace.getNamespace( Constants.NSPREFIX_SOAP_ENV, 
+                                   Constants.URI_SOAP_ENV );
+      attr = new Attribute( Constants.ATTR_ACTOR, actor, ns );
+      root.addAttribute( attr );
+    }
     for ( int i = 0 ; data != null && i < data.size() ; i++ ) {
       Object o = data.get(i);
       if ( o instanceof String )
