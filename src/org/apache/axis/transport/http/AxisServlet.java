@@ -823,7 +823,8 @@ public class AxisServlet extends HttpServlet
     
     /**
      * Retrieve option, in order of precedence:
-     * System property, servlet init param, context init param.
+     * (Managed) System property (see discovery.ManagedProperty),
+     * servlet init param, context init param.
      * Use of system properties is discouraged in production environments,
      * as it overrides everything else.
      */
