@@ -62,6 +62,8 @@ package javax.xml.rpc;
  */
 public class JAXRPCException extends Exception {
 
+    Throwable cause;
+    
     /**
      * Constructs a new exception with null as its detail message. 
      */
@@ -70,10 +72,40 @@ public class JAXRPCException extends Exception {
     /**
      * Constructs a new exception with the specified detail message. 
      *
-     * @param exp
+     * @param message exception message
      */
-    public JAXRPCException(String exp) {
-        super(exp);
+    public JAXRPCException(String message) {
+        super(message);
+    }
+    
+    /**
+     * Constructs a new exception which wraps another exception.
+     * 
+     * @param cause the exception to wrap
+     */ 
+    public JAXRPCException(Throwable cause) {
+        this.cause = cause;
+    }
+    
+    /**
+     * Contructs a new exception with the specified detail message and
+     * wraps another exception.
+     * 
+     * @param message exception message
+     * @param cause the exception to wrap
+     */ 
+    public JAXRPCException(String message, Throwable cause) {
+        super(message);
+        this.cause = cause;
+    }
+
+    /**
+     * Returns the exception wrapped by this JAXRPCException
+     * 
+     * @return exception or null if none.
+     */ 
+    public Throwable getCause() {
+        return cause;
     }
 }
 
