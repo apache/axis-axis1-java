@@ -1,0 +1,338 @@
+<?xml version="1.0"?>
+
+<definitions name="SOAP-12-TestDefinitions"
+	targetNamespace="http://whitemesa.net/wsdl/soap12-test"
+	xmlns="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:enc="http://www.w3.org/2002/12/soap-encoding"
+	xmlns:tns="http://whitemesa.net/wsdl/soap12-test"
+	xmlns:types="http://example.org/ts-tests/xsd"
+	xmlns:test="http://example.org/ts-tests"
+	xmlns:iop="http://soapinterop.org/"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+	<types>
+
+		<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://example.org/ts-tests/xsd">
+
+			<complexType name="SOAPStruct">
+				<all>
+					<element name="varString" type="xsd:string"/>
+					<element name="varInt" type="xsd:int"/>
+					<element name="varFloat" type="xsd:float"/>
+				</all>
+			</complexType>
+
+		</schema>
+
+		<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://example.org/ts-tests/xsd">
+
+			<!-- added to support test xmlp-10 -->
+			<complexType name="SOAPStructInputs">
+				<sequence>
+					<element name="input1" type="anyType" />
+					<element name="input2" type="anyType" />
+					<element name="input3" type="anyType" />
+					<element name="input4" type="anyType" />
+				</sequence>
+			</complexType>
+			<complexType name="SOAPStructTypes">
+				<sequence>
+					<element name="type1" type="QName" />
+					<element name="type2" type="QName" />
+					<element name="type3" type="QName" />
+					<element name="type4" type="QName" />
+				</sequence>
+			</complexType>
+
+		</schema>
+
+		<schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://soapinterop.org/">
+
+			<!-- xmlp-2 getTime -->
+			<element name="time" type="time"/>
+
+			<!-- xmlp-7 echoSenderFault -->
+			<element name="echoSenderFault" />
+
+			<!-- xmlp-8 echoReceiverFault -->
+			<element name="echoReceiverFault" />
+
+			<!-- xmlp-13 thru 19 echoString doc/lit operation -->
+			<element name="echoString">
+				<complexType>
+					<sequence>
+						<element minOccurs="0" maxOccurs="1" name="inputString" type="string" />
+					</sequence>
+				</complexType>
+			</element>
+			<element name="echoStringResponse">
+				<complexType>
+					<sequence>
+ 						<element minOccurs="0" maxOccurs="1" name="return" type="string" />
+					</sequence>
+				</complexType>
+			</element>
+
+		</schema>
+
+	</types>
+
+	<!-- xmlp-5, xmlp-6 echoVoid rpc operation -->
+	<message name="echoVoidRequest" />
+	<message name="echoVoidResponse" />
+
+	<!-- xmlp-4 echoSimpleTypesAsStruct rpc operation -->
+	<message name="echoSimpleTypesAsStructRequest">
+		<part name="inputString" type="xsd:string"/>
+		<part name="inputInteger" type="xsd:int"/>
+		<part name="inputFloat" type="xsd:float"/>
+	</message>
+	<message name="echoSimpleTypesAsStructResponse">
+		<part name="return" type="types:SOAPStruct"/>
+	</message>
+
+	<!-- xmlp-1, xmlp-9 echoString rpc operation -->
+	<message name="echoStringRequest">
+		<part name="inputString" type="xsd:string"/>
+	</message>
+	<message name="echoStringResponse">
+		<part name="return" type="xsd:string"/>
+	</message>
+
+	<!-- xmlp-10 echoSimpleTypesAsStructOfSchemaTypesRequest rpc operation -->
+	<message name="echoSimpleTypesAsStructOfSchemaTypesRequest">
+		<part name="input1" type="xsd:anyType"/>
+		<part name="input2" type="xsd:anyType"/>
+		<part name="input3" type="xsd:anyType"/>
+		<part name="input4" type="xsd:anyType"/>
+	</message>
+	<message name="echoSimpleTypesAsStructOfSchemaTypesResponse">
+		<part name="return" type="test:PolyMorphStruct"/>
+	</message>
+
+	<!-- xmlp-11 echoInteger rpc operation -->
+	<message name="echoIntegerRequest">
+		<part name="inputInteger" type="xsd:int"/>
+	</message>
+	<message name="echoIntegerResponse">
+		<part name="return" type="xsd:int"/>
+	</message>
+
+	<!-- xmlp-3 getTime rpc operation -->
+	<message name="getTimeRpcResponse">
+		<part name="return" type="xsd:time"/>
+	</message>
+
+	<!-- xmlp-2 getTime doc/lit operation -->
+	<message name="getTimeDocResponse">
+		<part name="time" element="iop:time"/>
+	</message>
+
+	<!-- xmlp-13 thru 19 echoString doc/lit operation -->
+	<message name="echoStringDocRequest">
+		<part name="inElement" element="iop:echoString" />
+	</message>
+	<message name="echoStringDocResponse">
+		<part name="outElement" element="iop:echoStringResponse" />
+	</message>
+
+	<!-- xmlp-7 echoSenderFault operation -->
+	<message name="echoSenderFaultRequest">
+		<part name="inElement" element="iop:echoSenderFault" />
+	</message>
+	<message name="echoSenderFaultResponse" />
+
+	<!-- xmlp-8 echoReceiverFault operation -->
+	<message name="echoReceiverFaultRequest">
+		<part name="inElement" element="iop:echoReceiverFault" />
+	</message>
+	<message name="echoReceiverFaultResponse" />
+
+  	<portType name="Soap12AddTestPortTypeDoc">
+		<!-- xmlp-2 getTime operation -->
+    		<operation name="getTime">
+       			<output message="tns:getTimeDocResponse" />
+    		</operation>
+		<!-- xmlp-13 thru xmlp-19 echoString doc/literal operation -->
+		<operation name="echoString">
+			<input message="tns:echoStringDocRequest" />
+			<output message="tns:echoStringDocResponse" />
+		</operation>
+		<!-- xmlp-7 echoSenderFault doc/literal operation -->
+		<operation name="echoSenderFault">
+			<input message="tns:echoSenderFaultRequest" />
+			<output message="tns:echoSenderFaultResponse" />
+		</operation>
+		<!-- xmlp-8 echoReceiverFault doc/literal operation -->
+		<operation name="echoReceiverFault">
+			<input message="tns:echoReceiverFaultRequest" />
+			<output message="tns:echoReceiverFaultResponse" />
+		</operation>
+	</portType>
+
+	<portType name="Soap12AddTestPortTypeRpc">
+
+		<!-- xmlp-5, xmlp-6 echoVoid rpc operation -->
+		<operation name="echoVoid">
+			<input message="tns:echoVoidRequest" name="echoVoid"/>
+			<output message="tns:echoVoidResponse" name="echoVoidResponse"/>
+		</operation>
+
+
+		<!-- xmlp-4 echoSimpleTypesAsStruct rpc operation -->
+		<operation name="echoSimpleTypesAsStruct" parameterOrder="inputString inputInteger inputFloat">
+			<input message="tns:echoSimpleTypesAsStructRequest"/>
+			<output message="tns:echoSimpleTypesAsStructResponse"/>
+		</operation>
+
+
+		<!-- xmlp-1, xmlp-9 echoString rpc operation -->
+		<operation name="echoString" parameterOrder="inputString">
+			<input message="tns:echoStringRequest" name="echoString"/>
+			<output message="tns:echoStringResponse" name="echoStringResponse"/>
+		</operation>
+
+		<!-- xmlp-10 echoSimpleTypesAsStructOfSchemaTypes rpc operation -->
+		<operation name="echoSimpleTypesAsStructOfSchemaTypes" parameterOrder="input1 input2 input3 input4">
+			<input message="tns:echoSimpleTypesAsStructOfSchemaTypesRequest"/>
+			<output message="tns:echoSimpleTypesAsStructOfSchemaTypesResponse"/>
+		</operation>
+
+		<!-- xmlp-11 echoInteger rpc operation -->
+		<operation name="echoInteger" parameterOrder="inputInteger">
+			<input message="tns:echoIntegerRequest" name="echoInteger"/>
+			<output message="tns:echoIntegerResponse" name="echoIntegerResponse"/>
+		</operation>
+
+		<!-- xmlp-3 getTime rpc operation -->
+		<operation name="getTime">
+			<output message="tns:getTimeRpcResponse" name="getTimeRpcResponse"/>
+		</operation>
+
+	</portType>
+
+  	<binding name="Soap12AddTestDocBinding" type="tns:Soap12AddTestPortTypeDoc">
+    		<soap12:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+    		<operation name="getTime">
+      			<soap12:operation style="document" />
+      			<output>
+        			<soap12:body use="literal" />
+      			</output>
+    		</operation>
+		<operation name="echoString">
+			<soap12:operation style="document" />
+			<input>
+				<soap12:body use="literal" />
+			</input>
+			<output>
+				<soap12:body use="literal" />
+			</output>
+		</operation>
+		<operation name="echoSenderFault">
+			<soap12:operation style="document" />
+			<input>
+				<soap12:body use="literal" />
+			</input>
+			<output>
+				<soap12:body use="literal" />
+			</output>
+		</operation>
+		<operation name="echoReceiverFault">
+			<soap12:operation style="document" />
+			<input>
+				<soap12:body use="literal" />
+			</input>
+			<output>
+				<soap12:body use="literal" />
+			</output>
+		</operation>
+	</binding>
+
+	<binding name="Soap12AddTestRpcBinding" type="tns:Soap12AddTestPortTypeRpc">
+		<soap12:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+		<!-- xmlp-5, xmlp-6 echoVoid rpc operation -->
+		<operation name="echoVoid">
+			<soap12:operation/>
+			<input>
+				<soap12:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://www.w3.org/2002/12/soap-encoding"/>
+			</input>
+			<output>
+				<soap12:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://www.w3.org/2002/12/soap-encoding"/>
+			</output>
+		</operation>
+
+		<!-- xmlp-4 echoSimpleTypesAsStruct rpc operation -->
+		<operation name="echoSimpleTypesAsStruct">
+			<soap12:operation/>
+			<input>
+				<soap12:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://www.w3.org/2002/12/soap-encoding"/>
+			</input>
+			<output>
+				<soap12:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://www.w3.org/2002/12/soap-encoding"/>
+			</output>
+		</operation>
+
+		<!-- xmlp-3 getTime rpc operation -->
+		<operation name="getTime">
+			<soap12:operation/>
+			<output>
+				<soap12:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://www.w3.org/2002/12/soap-encoding"/>
+			</output>
+		</operation>
+
+		<!-- xmlp-1, xmlp-9 echoString rpc operation -->
+		<operation name="echoString">
+			<soap12:operation/>
+			<input>
+				<soap12:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://www.w3.org/2002/12/soap-encoding"/>
+			</input>
+			<output>
+				<soap12:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://www.w3.org/2002/12/soap-encoding"/>
+			</output>
+		</operation>
+
+		<!-- xmlp-10 echoSimpleTypesAsStructOfSchemaTypes rpc operation -->
+		<operation name="echoSimpleTypesAsStructOfSchemaTypes">
+			<soap12:operation/>
+			<input>
+				<soap12:body use="encoded" namespace="http://example.org/ts-tests" encodingStyle="http://www.w3.org/2002/12/soap-encoding"/>
+			</input>
+			<output>
+				<soap12:body use="encoded" namespace="http://example.org/ts-tests" encodingStyle="http://www.w3.org/2002/12/soap-encoding"/>
+			</output>
+		</operation>
+
+		<!-- xmlp-11 echoInteger rpc operation -->
+		<operation name="echoInteger">
+			<soap12:operation/>
+			<input>
+				<soap12:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://www.w3.org/2002/12/soap-encoding"/>
+			</input>
+			<output>
+				<soap12:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://www.w3.org/2002/12/soap-encoding"/>
+			</output>
+		</operation>
+
+	</binding>
+
+
+	<service name="WhiteMesaSoap12AddTestSvc">
+
+  		<port name="Soap12AddTestDocPort" binding="tns:Soap12AddTestDocBinding">
+    			<soap12:address location="http://www.whitemesa.net/soap12/add-test-doc"/>
+  		</port>
+  		<port name="Soap12AddTestDocIntermediaryPort" binding="tns:Soap12AddTestDocBinding">
+    			<soap12:address location="http://www.whitemesa.net/soap12/add-test-doc-int"/>
+  		</port>
+  		<port name="Soap12AddTestDocUpperPort" binding="tns:Soap12AddTestDocBinding">
+    			<soap12:address location="http://www.whitemesa.net/soap12/add-test-doc-int-uc"/>
+  		</port>
+  		<port name="Soap12AddTestRpcPort" binding="tns:Soap12AddTestRpcBinding">
+    			<soap12:address location="http://www.whitemesa.net/soap12/add-test-rpc"/>
+  		</port>
+
+	</service>
+
+</definitions>

@@ -48,8 +48,8 @@ public class TestDeser extends TestCase {
     private final String SOAP_HEAD =
         "<?xml version=\"1.0\"?>\n" +
         "<soap:Envelope " +
-          "xmlns:soap=\"http://www.w3.org/2002/06/soap-envelope\" " +
-          "xmlns:soapenc=\"http://www.w3.org/2002/06/soap-encoding\" " +
+          "xmlns:soap=\"http://www.w3.org/2002/12/soap-envelope\" " +
+          "xmlns:soapenc=\"http://www.w3.org/2002/12/soap-encoding\" " +
           "xmlns:this=\"http://encoding.test\" " +
           "xmlns:xsi=\"" + Constants.URI_DEFAULT_SCHEMA_XSI + "\" " +
           "xmlns:xsd=\"" + Constants.URI_DEFAULT_SCHEMA_XSD + "\">\n";

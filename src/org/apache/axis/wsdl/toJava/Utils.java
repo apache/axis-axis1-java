@@ -77,6 +77,7 @@ import javax.wsdl.Message;
 import javax.wsdl.Operation;
 import javax.wsdl.Part;
 import javax.wsdl.extensions.ExtensibilityElement;
+import javax.wsdl.extensions.UnknownExtensibilityElement;
 import javax.wsdl.extensions.soap.SOAPBody;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.holders.BooleanHolder;
@@ -627,6 +628,14 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
                     SOAPBody body = (SOAPBody) elem;
                     ns = body.getNamespaceURI();
                     break;
+                } else if (elem instanceof UnknownExtensibilityElement) {
+                    //TODO: After WSDL4J supports soap12, change this code
+                    UnknownExtensibilityElement unkElement = (UnknownExtensibilityElement) elem;
+                    QName name = unkElement.getElementType();
+                    if(name.getNamespaceURI().equals(Constants.URI_WSDL12_SOAP) && 
+                       name.getLocalPart().equals("body")){
+                        ns = unkElement.getElement().getAttribute("namespace");
+                    }                    
                 }
             }
         }
