@@ -12,7 +12,7 @@ public class WSDLInteropTestDocLitPortBindingImpl implements test.wsdl.interop3.
         return param0;
     }
 
-    public test.wsdl.interop3.docLitParam.xsd.ArrayOfstringLiteral echoStringArray(test.wsdl.interop3.docLitParam.xsd.ArrayOfstringLiteral param0) throws java.rmi.RemoteException {
+    public test.wsdl.interop3.docLitParam.xsd.ArrayOfstring_Literal echoStringArray(test.wsdl.interop3.docLitParam.xsd.ArrayOfstring_Literal param0) throws java.rmi.RemoteException {
         return param0;
     }
 
