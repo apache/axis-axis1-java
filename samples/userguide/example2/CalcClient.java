@@ -53,14 +53,18 @@
  * <http://www.apache.org/>.
  */
 
-package samples.userguide.example2;
-
 import org.apache.axis.client.ServiceClient;
+import org.apache.axis.utils.Options;
 
 public class CalcClient
 {
    public static void main(String [] args) throws Exception {
-       String endpoint = "http://localhost:8080/axis/Calculator.jws";
+       Options options = new Options(args);
+       
+       String endpoint = "http://localhost:" + options.getPort() +
+                         "/axis/Calculator.jws";
+       
+       args = options.getRemainingArgs();
        
        if (args.length != 3) {
            System.err.println("Usage: CalcClient <add|subtract> arg1 arg2");
