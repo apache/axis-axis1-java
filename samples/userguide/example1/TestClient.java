@@ -65,7 +65,7 @@ public class TestClient
    public static void main(String [] args) {
        try {
            String endpoint = 
-                    "http://nagoya.apache.org:5049/axis/servlet/AxisServlet";
+                    "http://nagoya.apache.org:5049/axis/services/echo";
      
            Service  service = new Service();
            Call     call    = (Call) service.createCall();
