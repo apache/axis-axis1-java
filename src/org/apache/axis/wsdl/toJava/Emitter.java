@@ -109,7 +109,7 @@ public class Emitter {
     protected Document doc = null;
     protected Definition def = null;
     protected boolean bDebug = false;
-    protected boolean bEmitSkeleton = false;
+    protected boolean bEmitServer = false;
     protected boolean bDeploySkeleton = true;  
     protected boolean bEmitTestCase = false;
     protected boolean bVerbose = false;
@@ -275,15 +275,15 @@ public class Emitter {
      * Turn on/off server skeleton creation
      * @param boolean value
      */
-    public void generateSkeleton(boolean value) {
-        this.bEmitSkeleton = value;
+    public void generateServerSide(boolean value) {
+        this.bEmitServer = value;
     }
 
     /**
      * Indicate if we should be emitting server side code and deploy/undeploy
      */ 
-    public boolean getGenerateSkeleton() {
-        return bEmitSkeleton;
+    public boolean getGenerateServerSide() {
+        return bEmitServer;
     }
 
     /**

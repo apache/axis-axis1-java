@@ -98,7 +98,7 @@ public class JavaDefinitionWriter implements Writer {
      * Write other items from the definition as needed.
      */
     public void write() throws IOException {
-        if (emitter.getGenerateSkeleton()) {
+        if (emitter.getGenerateServerSide()) {
             deployWriter.write();
             undeployWriter.write();
         }

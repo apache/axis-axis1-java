@@ -96,8 +96,10 @@ public class JavaBindingWriter implements Writer {
             stubWriter = new JavaStubWriter(emitter, bEntry, symbolTable);
 
             // Skeleton and Impl writers
-            if (emitter.bEmitSkeleton) {
-                skelWriter = new JavaSkelWriter(emitter, bEntry, symbolTable);
+            if (emitter.bEmitServer) {
+                if (emitter.bDeploySkeleton) {
+                    skelWriter = new JavaSkelWriter(emitter, bEntry, symbolTable);
+                }
                 String fileName = Utils.getJavaLocalName(bEntry.getName())
                         + "Impl.java";
                 try {

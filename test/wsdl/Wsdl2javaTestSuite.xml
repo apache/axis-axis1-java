@@ -32,7 +32,7 @@
     <wsdl2java url="samples/addr/AddressBook.wsdl"
                output="build/work"
                deployscope="session"
-               skeleton="yes"
+               serverSide="yes"
                noimports="no"
                verbose="no"
                typeMappingVersion="1.1"
@@ -50,7 +50,7 @@
    <wsdl2java url="build/work/samples/userguide/example6/WidgetPrice.wsdl"
                output="build/work"
                deployscope="session"
-               skeleton="yes"
+               serverSide="yes"
                noimports="no"
                verbose="no"
                testcase="yes">
@@ -60,7 +60,7 @@
     <!-- Multiple-binding test with different literal usage -->
     <wsdl2java url="test/wsdl/multibinding/multibinding.wsdl"
                output="build/work"
-               skeleton="yes"
+               serverSide="yes"
                testcase="yes">
     </wsdl2java>
 
@@ -68,7 +68,7 @@
     <wsdl2java url="test/wsdl/multiref/MultiRefTest.wsdl"
                output="build/work"
                deployscope="session"
-               skeleton="yes"
+               serverSide="yes"
                noimports="no"
                verbose="no"
                testcase="no">
@@ -79,14 +79,14 @@
     <wsdl2java url="test/wsdl/multithread/AddressBook.wsdl"
                output="build/work"
                deployscope="session"
-               skeleton="yes">
+               serverSide="yes">
     </wsdl2java>
 
     <!-- Operation style test (oneway, request/response, -->
     <!-- solicit/response, notification -->
     <wsdl2java url="test/wsdl/opStyles/opStyles.wsdl"
                output="build/work"
-               skeleton="yes"
+               serverSide="yes"
                testcase="yes">
     </wsdl2java>
 
@@ -94,7 +94,7 @@
     <wsdl2java url="test/wsdl/refattr/refattr.wsdl"
                output="build/work"
                deployscope="session"
-               skeleton="yes"
+               serverSide="yes"
                noimports="no"
                verbose="no"
                testcase="no">
@@ -142,7 +142,7 @@
     <wsdl2java url="build/work/test/wsdl/roundtrip/Roundtrip.wsdl"
                output="build/work"
                deployscope="session"
-               skeleton="yes"
+               serverSide="yes"
                noimports="no"
                verbose="no"
                testcase="no">
@@ -153,7 +153,7 @@
     <wsdl2java url="test/wsdl/sequence/SequenceTest.wsdl"
                output="build/work"
                deployscope="session"
-               skeleton="yes"
+               serverSide="yes"
                noimports="no"
                verbose="no"
                testcase="no">
@@ -186,7 +186,7 @@
     <wsdl2java url="build/work/test/wsdl/sequence/SequenceTest.wsdl"
                output="build/work"
                deployscope="session"
-               skeleton="yes"
+               serverSide="yes"
                noimports="no"
                verbose="no"
                testcase="no">
@@ -197,7 +197,7 @@
     <wsdl2java url="test/wsdl/arrays/ArrayTest.wsdl"
                output="build/work"
                deployscope="session"
-               skeleton="yes"
+               serverSide="yes"
                noimports="no"
                verbose="no"
                testcase="no">
@@ -209,7 +209,7 @@
     <wsdl2java url="test/wsdl/inheritance/InheritanceTest.wsdl"
                output="build/work"
                deployscope="session"
-               skeleton="yes"
+               serverSide="yes"
                noimports="no"
                verbose="no"
                testcase="no">
@@ -243,7 +243,7 @@
     <wsdl2java url="build/work/test/wsdl/inheritance/InheritanceTest.wsdl"
                output="build/work"
                deployscope="session"
-               skeleton="yes"
+               serverSide="yes"
                noimports="no"
                verbose="no"
                testcase="no">
@@ -274,7 +274,7 @@
     <wsdl2java url="test/wsdl/marrays/MArrayTest.wsdl"
                output="build/work"
                deployscope="session"
-               skeleton="yes"
+               serverSide="yes"
                testcase="yes">
         <mapping namespace="urn:MArrayTests" package="test.wsdl.marrays"/>
     </wsdl2java>
@@ -283,7 +283,7 @@
     <wsdl2java url="test/wsdl/marrays/MArrayTest.wsdl"
                output="build/work"
                deployscope="session"
-               skeleton="yes"
+               serverSide="yes"
                testcase="yes">
         <mapping namespace="urn:MArrayTests" package="test.wsdl.marrays"/>
     </wsdl2java>
@@ -294,7 +294,7 @@
     <wsdl2java url="test/wsdl/_import/Import.wsdl"
                output="build/work"
                deployscope="none"
-               skeleton="yes"
+               serverSide="yes"
                noimports="no"
                verbose="no"
                testcase="yes">
@@ -307,7 +307,7 @@
     <wsdl2java url="test/wsdl/_import/Import.wsdl"
                output="build/work"
                deployscope="none"
-               skeleton="yes"
+               serverSide="yes"
                noimports="no"
                verbose="no"
                testcase="yes">
@@ -323,7 +323,7 @@
     <wsdl2java url="test/wsdl/inout/inout.wsdl"
                output="build/work"
                deployscope="none"
-               skeleton="yes"
+               serverSide="yes"
                noimports="no"
                verbose="no"
                testcase="no">
@@ -335,7 +335,7 @@
     <wsdl2java url="http://www.xmethods.net/tmodels/InteropTest.wsdl"
                output="build/work"
                deployscope="none"
-               skeleton="yes"
+               serverSide="yes"
                noimports="no"
                verbose="no"
                testcase="no">
@@ -348,7 +348,7 @@
     <wsdl2java url="http://www.whitemesa.com/interop/InteropTest.wsdl"
                output="build/work"
                deployscope="none"
-               skeleton="yes"
+               serverSide="yes"
                noimports="no"
                verbose="no"
                testcase="no">
@@ -358,7 +358,7 @@
     <wsdl2java url="http://www.whitemesa.com/interop/InteropTestB.wsdl"
                output="build/work"
                deployscope="none"
-               skeleton="yes"
+               serverSide="yes"
                noimports="no"
                verbose="no"
                testcase="no">
@@ -371,7 +371,7 @@
                output="build/work"
                testcase="no"
                deployscope="none"
-               skeleton="yes"
+               serverSide="yes"
                verbose="no"
                noimports="no">
         <mapping namespace="http://soapinterop.org/" package="interop.echoheadersvc"/>
@@ -383,7 +383,7 @@
                output="build/work"
                testcase="no"
                deployscope="none"
-               skeleton="yes"
+               serverSide="yes"
                verbose="no"
                noimports="no">
         <mapping namespace="http://soapinterop.org/" package="mssoapinterop.interopb"/>
@@ -394,7 +394,7 @@
                output="build/work"
                testcase="no"
                deployscope="none"
-               skeleton="yes"
+               serverSide="yes"
                verbose="no"
                noimports="no">
         <mapping namespace="http://soapinterop.org/" package="mssoapinterop.interopbtyped"/>
@@ -405,7 +405,7 @@
                output="build/work"
                testcase="no"
                deployscope="none"
-               skeleton="yes"
+               serverSide="yes"
                verbose="no"
                noimports="no">
         <mapping namespace="http://soapinterop.org" package="mssoapinterop.interopc"/>
@@ -434,7 +434,7 @@
     <!-- Steps 1, 2 and 4: -->
     <wsdl2java url="http://www.whitemesa.com/r3/import1.wsdl"
                output="build/work"
-               skeleton="yes">
+               serverSide="yes">
         <mapping namespace="http://soapinterop.org/" package="test.wsdl.interop3.import1"/>
         <mapping namespace="http://soapinterop.org/definitions/" package="test.wsdl.interop3.import1.definitions"/>
     </wsdl2java>
@@ -457,7 +457,7 @@
     </java2wsdl>
     <wsdl2java url="build/work/test/wsdl/interop3/import1.wsdl"
                output="build/work"
-               skeleton="yes">
+               serverSide="yes">
         <mapping namespace="http://soapinterop.org/" package="test.wsdl.interop3.import1.step6"/>
         <mapping namespace="http://soapinterop.org/definitions/" package="test.wsdl.interop3.import1.step6.definitions"/>
     </wsdl2java>
@@ -472,7 +472,7 @@
     <!-- Steps 1, 2 and 4: -->
     <wsdl2java url="http://www.whitemesa.com/r3/import2.wsdl"
                output="build/work"
-               skeleton="yes">
+               serverSide="yes">
         <mapping namespace="http://soapinterop.org/main/" package="test.wsdl.interop3.import2"/>
         <mapping namespace="http://soapinterop.org/definitions/" package="test.wsdl.interop3.import2.definitions"/>
         <mapping namespace="http://soapinterop.org/xsd" package="test.wsdl.interop3.import2.xsd"/>
@@ -497,7 +497,7 @@
     </java2wsdl>
     <wsdl2java url="build/work/test/wsdl/interop3/import2.wsdl"
                output="build/work"
-               skeleton="yes">
+               serverSide="yes">
         <mapping namespace="http://soapinterop.org/main/" package="test.wsdl.interop3.import2.step6"/>
         <mapping namespace="http://soapinterop.org/definitions/" package="test.wsdl.interop3.import2.step6.definitions"/>
         <mapping namespace="http://soapinterop.org/xsd" package="test.wsdl.interop3.import2.step6.xsd"/>
@@ -513,7 +513,7 @@
     <!-- Steps 1, 2 and 4: -->
     <wsdl2java url="http://www.dolphinharbor.org/services/R3Import2/service.wsdl"
                output="build/work"
-               skeleton="yes">
+               serverSide="yes">
         <mapping namespace="http://soapinterop.org/main/" package="test.wsdl.interop3.absimport2"/>
         <mapping namespace="http://soapinterop.org/definitions/" package="test.wsdl.interop3.absimport2.definitions"/>
         <mapping namespace="http://soapinterop.org/xsd" package="test.wsdl.interop3.absimport2.xsd"/>
@@ -538,7 +538,7 @@
     </java2wsdl>
     <wsdl2java url="build/work/test/wsdl/interop3/absimport2.wsdl"
                output="build/work"
-               skeleton="yes">
+               serverSide="yes">
         <mapping namespace="http://soapinterop.org/main/" package="test.wsdl.interop3.absimport2.step6"/>
         <mapping namespace="http://soapinterop.org/definitions/" package="test.wsdl.interop3.absimport2.step6.definitions"/>
         <mapping namespace="http://soapinterop.org/xsd" package="test.wsdl.interop3.absimport2.step6.xsd"/>
@@ -554,7 +554,7 @@
     <!-- Steps 1, 2 and 4: -->
     <wsdl2java url="http://www.whitemesa.com/r3/import3.wsdl"
                output="build/work"
-               skeleton="yes">
+               serverSide="yes">
         <mapping namespace="http://soapinterop.org/main2/" package="test.wsdl.interop3.import3"/>
         <mapping namespace="http://soapinterop.org/definitions/" package="test.wsdl.interop3.import3.definitions"/>
         <mapping namespace="http://soapinterop.org/xsd" package="test.wsdl.interop3.import3.xsd"/>
@@ -581,7 +581,7 @@
     </java2wsdl>
     <wsdl2java url="build/work/test/wsdl/interop3/import3.wsdl"
                output="build/work"
-               skeleton="yes">
+               serverSide="yes">
         <mapping namespace="http://soapinterop.org/main/" package="test.wsdl.interop3.import3.step6"/>
         <mapping namespace="http://soapinterop.org/definitions/" package="test.wsdl.interop3.import3.step6.definitions"/>
         <mapping namespace="http://soapinterop.org/xsd" package="test.wsdl.interop3.import3.step6.xsd"/>
@@ -597,7 +597,7 @@
     <wsdl2java url="test/wsdl/clash/clash.wsdl"
                output="build/work"
                testcase="yes"
-               skeleton="yes">
+               serverSide="yes">
     </wsdl2java>
 
     <!-- WSDL fault generation test -->
@@ -605,7 +605,7 @@
                output="build/work"
                testcase="yes"
                deployscope="none"
-               skeleton="yes"
+               serverSide="yes"
                verbose="no"
                noimports="no">
         <mapping namespace="http://test.com/wsdl/faults" package="test.wsdl.faults"/>
@@ -617,7 +617,7 @@
                output="build/work"
                testcase="no"
                deployscope="none"
-               skeleton="yes"
+               serverSide="yes"
                verbose="no"
                noimports="no">
         <mapping namespace="urn:uddi-org:api" package="org.uddi.api"/>
@@ -627,7 +627,7 @@
                output="build/work"
                testcase="no"
                deployscope="none"
-               skeleton="yes"
+               serverSide="yes"
                verbose="no"
                noimports="no">
         <mapping namespace="urn:uddi-org:api" package="org.uddi.api"/>
@@ -640,7 +640,7 @@
                output="build/work"
                testcase="no"
                deployscope="none"
-               skeleton="yes"
+               serverSide="yes"
                verbose="no"
                noimports="no">
     </wsdl2java>
@@ -649,7 +649,7 @@
     <wsdl2java url="test/wsdl/filegen/FileGen.wsdl"
                output="build/work"
                deployscope="none"
-               skeleton="no"
+               serverSide="no"
                noimports="no"
                verbose="no"
                testcase="no">
@@ -659,7 +659,7 @@
     <!-- Same test as above but this time the -a flag is turned on -->
     <wsdl2java url="test/wsdl/filegen/FileGen.wsdl"
                output="build/work"
-               skeleton="no"
+               serverSide="no"
                all="yes">
         <mapping namespace="http://test.com/reference" package="test.wsdl.filegenAll"/>
     </wsdl2java>
@@ -668,7 +668,7 @@
     <wsdl2java url="test/wsdl/names/JavaNames.wsdl"
                output="build/work"
                deployscope="none"
-               skeleton="yes"
+               serverSide="yes"
                noimports="no"
                verbose="no"
                testcase="yes">
@@ -678,14 +678,14 @@
     <!-- This is (OK, "will be") a comprehensive test of XML schema types -->
     <wsdl2java url="test/wsdl/types/ComprehensiveTypes.wsdl"
                output="build/work"
-               skeleton="yes"
+               serverSide="yes"
                testcase="yes">
     </wsdl2java>
 
     <!-- This tests parameterOrder.  -->
     <wsdl2java url="test/wsdl/parameterOrder/parameterOrder.wsdl"
                output="build/work"
-               skeleton="yes"
+               serverSide="yes"
                testcase="yes">
     </wsdl2java>
 
@@ -697,7 +697,7 @@
     <wsdl2java url="test/wsdl/literal/SalesRankNPrice.wsdl"
                output="build/work"
                verbose="no"
-               skeleton="no"
+               serverSide="no"
                testcase="no">
         <mapping namespace="http://www.PerfectXML.com/NETWebSvcs/BookService" package="test.wsdl.literal"/>
                
@@ -711,7 +711,7 @@
                output="build/work"
                testcase="no"
                deployscope="none"
-               skeleton="yes"
+               serverSide="yes"
                verbose="no"
                noimports="no">
         <mapping namespace="urn:vgx-realtime" package="com.velocigen.thor"/>
@@ -721,7 +721,7 @@
                output="build/work"
                testcase="no"
                deployscope="none"
-               skeleton="yes"
+               serverSide="yes"
                verbose="yes"
                noimports="no">
     </wsdl2java>
@@ -732,7 +732,7 @@
                output="build/work"
                testcase="no"
                deployscope="none"
-               skeleton="yes"
+               serverSide="yes"
                verbose="yes"
                noimports="no">
         <mapping namespace="http://soapinterop.org/" package="interop.echoheader"/>
@@ -752,7 +752,7 @@
                output="build/work"
                testcase="no"
                deployscope="none"
-               skeleton="yes"
+               serverSide="yes"
                verbose="yes"
                noimports="no">
     </wsdl2java>
@@ -766,7 +766,7 @@
                output="build/work"
                testcase="no"
                deployscope="none"
-               skeleton="yes"
+               serverSide="yes"
                verbose="yes"
                noimports="no">
     </wsdl2java>
