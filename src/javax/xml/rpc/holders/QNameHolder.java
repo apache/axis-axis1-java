@@ -56,14 +56,30 @@ package javax.xml.rpc.holders;
 
 import javax.xml.rpc.namespace.QName;
 
+/**
+ * Class QNameHolder
+ *
+ * @author
+ * @version 0.1
+ */
 public final class QNameHolder implements java.io.Serializable {
 
+    /** Field _value           */
     public QName _value;
 
-    public QNameHolder () {
-    }
+    /**
+     * Constructor QNameHolder
+     */
+    public QNameHolder() {}
 
-    public QNameHolder (QName value) {
+    /**
+     * Constructor QNameHolder
+     *
+     * @param value
+     */
+    public QNameHolder(QName value) {
         this._value = value;
     }
 }
+
+

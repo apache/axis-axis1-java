@@ -54,14 +54,30 @@
  */
 package javax.xml.rpc.holders;
 
+/**
+ * Class ByteHolder
+ *
+ * @author
+ * @version 0.1
+ */
 public final class ByteHolder implements java.io.Serializable {
 
+    /** Field _value           */
     public byte _value;
 
-    public ByteHolder () {
-    }
+    /**
+     * Constructor ByteHolder
+     */
+    public ByteHolder() {}
 
-    public ByteHolder (byte value) {
+    /**
+     * Constructor ByteHolder
+     *
+     * @param value
+     */
+    public ByteHolder(byte value) {
         this._value = value;
     }
 }
+
+

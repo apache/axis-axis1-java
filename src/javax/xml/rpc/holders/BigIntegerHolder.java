@@ -56,14 +56,30 @@ package javax.xml.rpc.holders;
 
 import java.math.BigInteger;
 
+/**
+ * Class BigIntegerHolder
+ *
+ * @author
+ * @version 0.1
+ */
 public final class BigIntegerHolder implements java.io.Serializable {
 
+    /** Field _value           */
     public BigInteger _value;
 
-    public BigIntegerHolder () {
-    }
+    /**
+     * Constructor BigIntegerHolder
+     */
+    public BigIntegerHolder() {}
 
-    public BigIntegerHolder (BigInteger value) {
+    /**
+     * Constructor BigIntegerHolder
+     *
+     * @param value
+     */
+    public BigIntegerHolder(BigInteger value) {
         this._value = value;
     }
 }
+
+
