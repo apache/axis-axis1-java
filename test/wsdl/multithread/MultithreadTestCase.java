@@ -11,6 +11,9 @@ import junit.framework.TestCase;
 
 import org.apache.axis.AxisFault;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import samples.addr.AddressBook;
 import samples.addr.AddressBookServiceLocator;
 import samples.addr.AddressBookSOAPBindingStub;
@@ -27,6 +30,9 @@ import samples.addr.StateType;
 */
 
 public class MultithreadTestCase extends TestCase {
+    private static Log log =
+            LogFactory.getLog(MultithreadTestCase.class.getName());
+
     private AddressBook binding;
 
     public MultithreadTestCase(String name) {
@@ -79,6 +85,10 @@ public class MultithreadTestCase extends TestCase {
                 // likely to have something to do with bad AXIS runtime.
                 if (!(t instanceof AxisFault &&
                         ((AxisFault) t).detail instanceof ConnectException)) {
+
+                    // Log a stack trace as we may not be so lucky next time!
+                    log.fatal("Throwable caught: ", t);
+
                     setError(new AssertionFailedError("Throwable caught: " + t));
                 }
             }
