@@ -239,6 +239,7 @@ Copyright:
       </classpath>
       <include name="test/**/*.java" />
       <exclude name="test/inout/*.java" />
+      <exclude name="test/multiref/*.java" />
       <exclude name="test/wsdl/Wsdl2javaTestSuite.java" unless="servlet.present"/>
     </javac>
   </target>
