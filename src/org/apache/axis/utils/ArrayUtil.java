@@ -26,6 +26,13 @@ public class ArrayUtil {
         public int dimension;       
     }
         
+    public static class NonConvertable {
+        public NonConvertable() { }            
+    }
+    
+    /** An object indicating that the conversion is not possible */
+    public static final NonConvertable NON_CONVERTABLE = new NonConvertable();
+    
     /**
      * Convert ArrayOfT to T[].
      * @param obj        the object of type ArrayOfT to convert
@@ -45,9 +52,9 @@ public class ArrayUtil {
             BeanPropertyDescriptor pd = null;                   
             pd = getArrayComponentPD(obj.getClass());           
             if (pd == null) {
-                return null;
+                return NON_CONVERTABLE;
             }
-            Object comp = pd.get(obj);              
+            Object comp = pd.get(obj);
             if (comp == null) {
                 return null;
             }
@@ -156,7 +163,7 @@ public class ArrayUtil {
                 }
             }
             cls = cls.getSuperclass();
-        }           
+        }
         
         if (count == 1) {
             return bpd;
