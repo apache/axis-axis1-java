@@ -535,7 +535,11 @@ public class BeanSerializer implements Serializer, Serializable {
                     // the attribute may be more sophisticated.  For example, don't
                     // serialize if the attribute matches the default value.
                     if (propValue != null) {
-                        setAttributeProperty(propValue, qname, attrs, context);
+                        setAttributeProperty(propValue,
+                                             qname,
+                                             field.getXmlType(), 
+                                             attrs,
+                                             context);
                     }
                 }
             }
@@ -549,9 +553,9 @@ public class BeanSerializer implements Serializer, Serializable {
 
     private void setAttributeProperty(Object propValue,
                                       QName qname,
-                                      AttributesImpl attrs,
+                                      QName xmlType, AttributesImpl attrs,
                                       SerializationContext context) throws Exception {
-        String propString = context.getValueAsString(propValue, null);
+        String propString = context.getValueAsString(propValue, xmlType);
         String namespace = qname.getNamespaceURI();
         String localName = qname.getLocalPart();
 

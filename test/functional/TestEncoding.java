@@ -13,6 +13,10 @@ import java.net.URL;
 public class TestEncoding extends TestCase {
     Call call = null;
 
+    public TestEncoding(String s) {
+        super(s);
+    }
+
     protected void setUp() throws Exception {
         if (call == null) {
             Service service = new Service();
