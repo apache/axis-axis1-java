@@ -125,7 +125,8 @@ public class JavaTestCaseWriter extends JavaClassWriter {
         pw.println("(java.lang.String name) {");
         pw.println("        super(name);");
         pw.println("    }");
-
+        pw.println("");
+        
         // get ports
         Map portMap = sEntry.getService().getPorts();
         Iterator portIterator = portMap.values().iterator();
@@ -154,9 +155,18 @@ public class JavaTestCaseWriter extends JavaClassWriter {
                 portName = Utils.xmlNameToJavaClass(portName);
             }
 
+            pw.println("    public void test"+portName+"WSDL() throws Exception {");
+            pw.println("        javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();");
+            pw.println("        java.net.URL url = new java.net.URL(new " + sEntry.getName() + "Locator" + "().get" + portName + "Address() + \"?WSDL\");");
+            pw.println("        javax.xml.rpc.Service service = serviceFactory.createService(url, new " + sEntry.getName() + "Locator().getServiceName());");
+            pw.println("        assertTrue(service != null);");
+            pw.println("    }");
+            pw.println("");
+    
             PortType portType = binding.getPortType();
 
             writeComment(pw, p.getDocumentationElement());
+
             writeServiceTestCode(pw, portName, portType, bEntry);
         }
     }    // writeFileBody
