@@ -111,23 +111,23 @@ public class MsgProvider extends JavaProvider {
         OperationDesc operation = msgContext.getOperation();
         SOAPService service = msgContext.getService();
         ServiceDesc serviceDesc = service.getServiceDescription();
+        QName opQName = null;
         
         if (operation == null) {
             Vector bodyElements = reqEnv.getBodyElements();
             if(bodyElements.size() > 0) {
                 MessageElement element = (MessageElement) bodyElements.get(0);
                 if (element != null) {
-                    QName qname = new QName(element.getNamespaceURI(),
+                    opQName = new QName(element.getNamespaceURI(),
                             element.getLocalName());
-                    operation = serviceDesc.getOperationByElementQName(qname);
+                    operation = serviceDesc.getOperationByElementQName(opQName);
                 }
             }
         }
 
         if (operation == null) {
             throw new AxisFault(Messages.getMessage("noOperationForQName",
-                                                    reqEnv.getFirstBody().
-                                                        getQName().toString()));
+                                opQName == null ? "null" : opQName.toString()));
         }
         
         Method method = operation.getMethod();
