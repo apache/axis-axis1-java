@@ -91,7 +91,7 @@ public abstract class SOAPConnection {
      *     response to the message that was sent
      * @throws  SOAPException if there is a SOAP error
      */
-    public abstract SOAPMessage call(SOAPMessage request, Endpoint endpoint)
+    public abstract SOAPMessage call(SOAPMessage request, Object endpoint)
         throws SOAPException;
 
     /**

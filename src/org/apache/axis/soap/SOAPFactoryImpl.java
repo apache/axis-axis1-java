@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -52,27 +52,18 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package javax.xml.soap;
+package org.apache.axis.soap;
+
+import javax.xml.soap.Name;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPException;
 
 /**
- * <P><CODE>SOAPElementFactory</CODE> is a factory for XML
- * fragments that will eventually end up in the SOAP part. These
- * fragments can be inserted as children of the <CODE>
- * SOAPHeader</CODE> or <CODE>SOAPBody</CODE> or <CODE>
- * SOAPEnvelope</CODE>.</P>
+ * SOAP Element Factory implementation
  *
- * <P>Elements created using this factory do not have the
- * properties of an element that lives inside a SOAP header
- * document. These elements are copied into the XML document tree
- * when they are inserted.</P>
- * @deprecated Use javax.xml.soap.SOAPFactory for creating SOAPElements.
+ * @author Davanum Srinivas (dims@yahoo.com)
  */
-public class SOAPElementFactory {
-
-    private SOAPElementFactory(SOAPFactory soapfactory) {
-        sf = soapfactory;
-    }
-
+public class SOAPFactoryImpl extends javax.xml.soap.SOAPFactory {
     /**
      * Create a <CODE>SOAPElement</CODE> object initialized with
      * the given <CODE>Name</CODE> object.
@@ -82,10 +73,10 @@ public class SOAPElementFactory {
      *     created
      * @throws  SOAPException if there is an error in
      *     creating the <CODE>SOAPElement</CODE> object
-     * @deprecated Use javax.xml.soap.SOAPFactory for creating SOAPElements.
      */
-    public SOAPElement create(Name name) throws SOAPException {
-        return sf.createElement(name);
+    public SOAPElement createElement(Name name) throws SOAPException {
+        //TODO: Flesh this out.
+        return null;
     }
 
     /**
@@ -97,10 +88,10 @@ public class SOAPElementFactory {
      *     created
      * @throws  SOAPException if there is an error in
      *     creating the <CODE>SOAPElement</CODE> object
-     * @deprecated Use javax.xml.soap.SOAPFactory for creating SOAPElements.
      */
-    public SOAPElement create(String localName) throws SOAPException {
-        return sf.createElement(localName);
+    public SOAPElement createElement(String localName) throws SOAPException {
+        //TODO: Flesh this out.
+        return null;
     }
 
     /**
@@ -117,30 +108,28 @@ public class SOAPElementFactory {
      *     created
      * @throws  SOAPException if there is an error in
      *     creating the <CODE>SOAPElement</CODE> object
-     * @deprecated Use javax.xml.soap.SOAPFactory for creating SOAPElements.
      */
-    public SOAPElement create(
+    public SOAPElement createElement(
             String localName, String prefix, String uri) throws SOAPException {
-        return sf.createElement(localName, prefix, uri);
+        //TODO: Flesh this out.
+        return null;
     }
 
-    /**
-     * Creates a new instance of <CODE>
-     * SOAPElementFactory</CODE>.
-     * @return a new instance of a <CODE>
-     *     SOAPElementFactory</CODE>
-     * @throws  SOAPException if there was an error creating
-     *     the default <CODE>SOAPElementFactory
-     * @deprecated
-     */
-    public static SOAPElementFactory newInstance() throws SOAPException {
-        try {
-            return new SOAPElementFactory(SOAPFactory.newInstance());
-        } catch (Exception exception) {
-            throw new SOAPException("Unable to create SOAP Element Factory: "
-                    + exception.getMessage());
-        }
+    public javax.xml.soap.Detail createDetail()
+            throws SOAPException {
+        //TODO: Flesh this out.
+        return null;
     }
 
-    private SOAPFactory sf;
+    public Name createName(String s, String s1, String s2)
+            throws SOAPException {
+        //TODO: Flesh this out.
+        return null;
+    }
+
+    public Name createName(String s)
+            throws SOAPException {
+        //TODO: Flesh this out.
+        return null;
+    }
 }
