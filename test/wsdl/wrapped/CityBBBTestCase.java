@@ -22,11 +22,9 @@ public class CityBBBTestCase extends junit.framework.TestCase {
         assertTrue("binding is null", binding != null);
 
         try {
-            GetAttractionResponse value = null;
-            GetAttraction request = new GetAttraction();
-            request.setAttname("Christmas");
-            value = binding.getAttraction(request);
-            System.out.println("OID:" + value.get_return().getOID());
+            Attraction value = binding.getAttraction("Christmas");
+            assertEquals("OID value was wrong", value.getOID(),
+                         CityBBBBindingImpl.OID_STRING);
         }
         catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);

@@ -54,6 +54,8 @@
  */
 package org.apache.axis.description;
 
+import javax.xml.rpc.namespace.QName;
+
 /**
  * An AttributeDesc is a FieldDesc for an Java field mapping to an
  * XML attribute
@@ -63,5 +65,15 @@ package org.apache.axis.description;
 public class AttributeDesc extends FieldDesc {
     public AttributeDesc() {
         super(false);
+    }
+
+    /**
+     * Set the XML attribute's name, without giving it a namespace.
+     *
+     * This is the most common usage for AttributeDescs.
+     */
+    public void setAttributeName(String name)
+    {
+        setXmlName(new QName("", name));
     }
 }

@@ -380,27 +380,34 @@ public class BeanSerializer implements Serializer, Serializable {
         Vector fields = clsRep.getFields();
         for (int i=0; i < fields.size(); i++) {
             FieldRep field = (FieldRep) fields.elementAt(i);
-            
+
+            String name = field.getName();
+
             if (typeDesc != null) {
                 FieldDesc fieldDesc = typeDesc.getFieldByName(field.getName());
                 if (fieldDesc != null) {
                     if (!fieldDesc.isElement()) {
-                        // !!! Need to get the QName right, and can only
-                        //     pass strings???
-                        writeAttribute(types, field.getName(),
+                        QName attrName = typeDesc.getAttributeNameForField(
+                                                    field.getName());
+                        writeAttribute(types, attrName.getLocalPart(),
                                        field.getType(), 
                                        complexType);
                     } else {
-                        // MEN WORKING!!!!
+                        QName xmlName = typeDesc.getElementNameForField(
+                                field.getName());
+                        if (xmlName != null) {
+                            if (xmlName.getNamespaceURI() != "") {
+                                // Throw an exception until we can emit
+                                // schema for this correctly?
+                            }
+                            name = xmlName.getLocalPart();
+                        }
                     }
                     return true;
                 }
             }
 
-            writeField(types, field.getName(), 
-                       field.getType(), 
-                       field.getIndexed(), 
-                       all);
+            writeField(types, name, field.getType(), field.getIndexed(), all);
         }
         // done
         return true;
