@@ -2168,6 +2168,10 @@ public class Call implements javax.xml.rpc.Call {
 
         resEnv = resMsg.getSOAPEnvelope();
         SOAPBodyElement bodyEl = resEnv.getFirstBody();
+        if (bodyEl == null) {
+            return null;
+        }
+        
         if (bodyEl instanceof RPCElement) {
             try {
                 resArgs = ((RPCElement) bodyEl).getParams();
@@ -2207,7 +2211,8 @@ public class Call implements javax.xml.rpc.Call {
 
                 boolean findReturnParam = false;
                 QName returnParamQName = null;
-                if (operation != null) operation.getReturnQName();
+                if (operation != null)
+                    returnParamQName = operation.getReturnQName();
 
                 if (!XMLType.AXIS_VOID.equals(getReturnType())) {
                     if (returnParamQName == null) {
