@@ -73,6 +73,7 @@ import org.apache.log4j.Category;
 
 import javax.xml.rpc.namespace.QName;
 import java.util.Hashtable;
+import java.beans.IntrospectionException;
 
 /**
  * An <code>AxisEngine</code> is the base class for AxisClient and
@@ -311,6 +312,7 @@ public abstract class AxisEngine extends BasicHandler
                                     Class cls,
                                     DeserializerFactory deserFactory,
                                     Serializer serializer)
+        throws IntrospectionException
     {
         category.info(JavaUtils.getMessage("registerTypeMap00",
                 qName.toString(), cls.getName()));

@@ -88,7 +88,8 @@ public class JAFDataHandlerDeserializer extends Deserializer implements Serializ
      */
     public static class Factory implements DeserializerFactory {
       
-        public Deserializer getDeserializer(Class cls) {
+        public void setJavaClass(Class cls) {}
+        public Deserializer getDeserializer() {
             return new JAFDataHandlerDeserializer();
         }
 

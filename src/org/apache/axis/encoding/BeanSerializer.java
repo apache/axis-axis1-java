@@ -55,6 +55,7 @@
 
 package org.apache.axis.encoding;
 
+import org.apache.axis.InternalException;
 import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
@@ -129,7 +130,7 @@ public class BeanSerializer extends Deserializer
      */
     public BeanSerializer(Class cls) {
         super();
-        this.cls = cls;
+        setCls(cls);
     }
 
     /**
@@ -137,8 +138,7 @@ public class BeanSerializer extends Deserializer
      * Equivalent to calling setCls(cls) on a new instance.
      */
     public BeanSerializer(Class cls, short format) {
-        super();
-        this.cls = cls;
+        this(cls);
         if (format > FORCE_LOWER ||
             format < PROPERTY_NAME)
             format = PROPERTY_NAME;
@@ -149,8 +149,7 @@ public class BeanSerializer extends Deserializer
      * Constructor that takes a class and a PropertyDescriptor array
      */
     public BeanSerializer(Class cls, PropertyDescriptor[] pd) {
-        super();
-        this.cls = cls;
+        this(cls);
         this.pd = processPropertyDescriptors(pd,cls);
     }
 
@@ -328,24 +327,42 @@ public class BeanSerializer extends Deserializer
      * class.  Caches the PropertyDescriptor
      */
     public static class BeanDeserFactory implements DeserializerFactory {
-        private Hashtable propertyDescriptors = new Hashtable();
+        private static Hashtable propertyDescriptors = new Hashtable();
+        private MyPropertyDescriptor [] pd;
       
-        public Deserializer getDeserializer(Class cls) {
-            MyPropertyDescriptor [] pd =
-                  (MyPropertyDescriptor [])propertyDescriptors.get(cls);
+        private Class cls;
+        private DeserializerFactory realDeserializerFactory;
+
+        public void setJavaClass(Class cls) throws IntrospectionException {
+            if ( (this.cls != null) && (this.cls != cls) ) {
+                throw new InternalException("Attempt to change class");
+            }
+
+            this.cls = cls;
+
+            pd = (MyPropertyDescriptor [])propertyDescriptors.get(cls);
             if (pd == null) {
-                try {
-                    PropertyDescriptor[] rawPd = Introspector.getBeanInfo(cls).getPropertyDescriptors();
-                    pd = processPropertyDescriptors(rawPd, cls);
-                } catch (IntrospectionException e) {
-                    return null;
-                }
+                PropertyDescriptor[] rawPd = 
+                    Introspector.getBeanInfo(cls).getPropertyDescriptors();
+                pd = processPropertyDescriptors(rawPd, cls);
                 propertyDescriptors.put(cls, pd);
             }
 
-            // If an enum class.  Return the Deserializer for Enumeration
+            // If an enum class, use that factory class instead...
             if (isEnumClass(cls)) {
-                return EnumSerializer.getFactory().getDeserializer(cls);
+                realDeserializerFactory = EnumSerializer.getFactory(cls);
+            }                
+        }
+
+        public Deserializer getDeserializer() {
+
+            // If this factory is just a proxy, use the real deserializer
+            // instead.
+            //
+            // Question: wouldn't it be better to require the deployer to use
+            // the right factory in the first place?
+            if (realDeserializerFactory != null) {
+                return realDeserializerFactory.getDeserializer();
             }                
 
             BeanSerializer bs = new BeanSerializer();

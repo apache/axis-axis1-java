@@ -68,6 +68,7 @@ import org.apache.axis.message.SOAPHeader;
 import org.apache.log4j.Category;
 
 import javax.xml.rpc.namespace.QName;
+import java.beans.IntrospectionException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Vector;
@@ -410,10 +411,13 @@ public class ServiceClient {
      * @param _class the class of the associated Java data type.
      * @param deserializerFactory a factory which can create deserializer
      *                            instances for this type.
+     * @throws IntrospectionException _class is not compatible with the
+     *                            specified deserializer.
      */
     public void addDeserializerFactory(QName qName,
                                        Class _class,
                                        DeserializerFactory deserializerFactory)
+        throws IntrospectionException
     {
         call.addDeserializerFactory(qName, _class, deserializerFactory);
     }

@@ -20,7 +20,8 @@ public class DataSer extends Deserializer implements Serializer
     public static final String FLOATMEMBER = "floatMember";
     
     public static class DataSerFactory implements DeserializerFactory {
-        public Deserializer getDeserializer(Class cls) {
+        public void setJavaClass(Class cls) {};
+        public Deserializer getDeserializer() {
             return new DataSer();
         }
     }

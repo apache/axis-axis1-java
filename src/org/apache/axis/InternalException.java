@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -53,27 +53,54 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.encoding;
+package org.apache.axis;
 
-import java.beans.IntrospectionException;
+import org.apache.log4j.Category;
+import java.io.StringWriter;
+import java.io.PrintWriter;
 
 /**
- * DeserializerFactories produce preconfigured deserializers designed
- * to convert an XML Element into the desired Java Class.
+ * Encapsulates exceptions for "should never occur" situations.  Extends
+ * RuntimeException so it need not explicitly be caught.  Logs the exception
+ * as a fatal error, and if debug is enabled, includes the full stack trace.
+ *
+ * @author Sam Ruby (rubys@us.ibm.com)
+ * @author Glyn Normington (glyn_normington@uk.ibm.com)
  */
-public interface DeserializerFactory extends java.io.Serializable {
+public class InternalException extends RuntimeException {
+
+    private static Category category =
+                Category.getInstance(InternalException.class.getName());
 
     /**
-     * Specifify the class to be returned by the deserializer produced
-     * by this factory.
-     * @param cls the desired class
-     * @exception IntrospectionException unable to introspect the desired
-     * class or the class has the wrong type signature for its intended use.
+     * Construct an Internal Exception from a String.  The string is wrapped
+     * in an exception, enabling a stack traceback to be obtained.
+     * @param message String form of the error
      */
-    public void setJavaClass(Class cls) throws IntrospectionException;
+    public InternalException(String message) {
+        this(new Exception(message));
+    }
 
     /**
-     * Obtain the desired deserializer. 
+     * Construct an Internal Exception from an Exception.
+     * @param exception original exception which was unexpected
      */
-    public Deserializer getDeserializer();
+    public InternalException(Exception e) {
+        super(e.toString());
+
+        // if the exception is merely bubbling up the stack, only log the
+        // event if debug is turned on.
+        if (!(e instanceof InternalException)) {
+            category.fatal(e);
+        } else {
+            category.debug(e);
+        }
+
+        // if the debug is enabled, add a stack trace.
+        if (category.isDebugEnabled()) {
+            StringWriter writer = new StringWriter();
+            e.printStackTrace(new PrintWriter(writer));
+            category.debug(writer.getBuffer().toString());
+        }
+    }
 }

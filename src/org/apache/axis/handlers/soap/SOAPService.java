@@ -76,6 +76,7 @@ import org.w3c.dom.Element;
 import javax.xml.rpc.namespace.QName;
 import java.util.Enumeration;
 import java.util.Vector;
+import java.beans.IntrospectionException;
 
 /** A <code>SOAPService</code> is a Handler which encapsulates a SOAP
  * invocation.  It has an request chain, an response chain, and a pivot-point,
@@ -340,6 +341,7 @@ public class SOAPService extends SimpleTargetedChain
                                     Class cls,
                                     DeserializerFactory deserFactory,
                                     Serializer serializer)
+        throws IntrospectionException
     {
         if (deserFactory != null)
             typeMap.addDeserializerFactory(qName, cls, deserFactory);

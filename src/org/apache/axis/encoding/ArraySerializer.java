@@ -71,6 +71,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import java.beans.IntrospectionException;
+
 /** An ArraySerializer handles serializing and deserializing SOAP
  * arrays.
  * 
@@ -100,7 +102,8 @@ public class ArraySerializer extends Deserializer
     }
 
     public static class Factory implements DeserializerFactory {
-        public Deserializer getDeserializer(Class cls) {
+        public void setJavaClass(Class cls) {}
+        public Deserializer getDeserializer() {
             return new ArraySerializer();
         }
     }

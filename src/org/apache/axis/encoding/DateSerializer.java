@@ -85,7 +85,7 @@ public class DateSerializer implements Serializer {
         zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
     }
 
-    static class DateDeser extends SOAPTypeMappingRegistry.BasicDeser {
+    static class DateDeser extends BasicDeserializer {
         public Object makeValue(String source) { 
             Date result;
             boolean bc = false;
@@ -193,7 +193,8 @@ public class DateSerializer implements Serializer {
     }
 
     static public class DateDeserializerFactory implements DeserializerFactory {
-        public Deserializer getDeserializer(Class cls) {return new DateDeser();}
+        public void setJavaClass(Class cls) {}
+        public Deserializer getDeserializer() {return new DateDeser();}
     }
 
     /** 
