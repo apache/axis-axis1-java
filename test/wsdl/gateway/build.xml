@@ -1,0 +1,112 @@
+<?xml version="1.0" ?>
+<!DOCTYPE project [
+        <!ENTITY properties SYSTEM "file:../../../xmls/properties.xml">
+        <!ENTITY paths  SYSTEM "file:../../../xmls/path_refs.xml">
+        <!ENTITY taskdefs SYSTEM "file:../../../xmls/taskdefs.xml">
+        <!ENTITY taskdefs_post_compile SYSTEM "file:../../../xmls/taskdefs_post_compile.xml">
+        <!ENTITY targets SYSTEM "file:../../../xmls/targets.xml">
+]>
+
+<!-- ===================================================================
+<description>
+   Test/Sample Component file for Axis
+
+Notes:
+   This is a build file for use with the Jakarta Ant build tool.
+
+Prerequisites:
+
+   jakarta-ant from http://jakarta.apache.org
+
+Build Instructions:
+   To compile
+        ant compile
+   To execute
+        ant run
+
+Author:
+  Matt Seibert mseibert@us.ibm.com
+
+Copyright:
+  Copyright (c) 2002-2003 Apache Software Foundation.
+</description>
+==================================================================== -->
+
+<project default="compile">
+
+<property name="axis.home" location="../../.." />
+<property name="componentName" value="test/wsdl/gateway" />
+        &properties;
+        &paths;
+        &taskdefs;
+        &taskdefs_post_compile;
+        &targets;
+
+<target name="clean">
+    <echo message="componentName is ${componentName}"/>
+    <echo message="Removing ${build.dir}/**/test/wsdl/gateway" />
+    <delete dir="${build.dir}/classes/test/wsdl/gateway"/>
+    <delete dir="${build.dir}/work/test/wsdl/gateway"/>
+</target>
+
+<!-- main target, always start from scratch -->
+<target name="compile" depends="setenv, clean">
+  <echo message="Compiling test.wsdl.gateway"/>
+  
+    <!-- Compile the test classes for Java2WSDL -->
+    <javac srcdir="${axis.home}/test/wsdl/gateway" 
+           destdir="${build.dest}" 
+           fork="${javac.fork}"
+           debug="${debug}">
+      <classpath refid="classpath" />
+      <include name="Gateway.java" />
+      <include name="MyClass.java" />
+      <include name="OutClass.java" />
+    </javac>
+    
+    <mkdir dir="${build.dir}/work/test/wsdl/gateway"/>
+    
+    <!-- Generate WSDL from java -->
+    <java2wsdl output="${build.dir}/work/test/wsdl/gateway/Gateway.wsdl"
+               className= "test.wsdl.gateway.Gateway"
+               extraClasses="test.wsdl.gateway.MyClass, test.wsdl.gateway.OutClass"
+               namespace="http://test.com/gateway"
+               location="http://localhost:8080/axis/services/Gateway">
+        <mapping package="test.wsdl.gateway" namespace="http://test.com/gateway" />
+    </java2wsdl>
+    
+    <!-- Verify files generated based on everything in WSDL -->
+    <wsdl2java url="${build.dir}/work/test/wsdl/gateway/Gateway.wsdl"
+               output="${axis.home}/build/work"
+               serverSide="yes"
+               all="yes"
+               verbose="no"
+               testcase="no">
+        <mapping namespace="http://test.com/gateway" package="test.wsdl.gateway"/>
+    </wsdl2java>
+
+    <!-- Copy the test case -->
+    <copy file="GatewayServiceTestCase.java" overwrite="true"
+          todir="${build.dir}/work/test/wsdl/gateway"/>
+
+    <!-- Copy the binding impl case -->
+    <copy file="GatewaySoapBindingImpl.java" overwrite="true"
+          todir="${build.dir}/work/test/wsdl/gateway"/>
+
+	<!-- Clean up old classes -->
+    <delete dir="${build.dir}/classes/test/wsdl/gateway" />
+
+    <!-- Compile the test case -->
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" fork="${javac.fork}"
+           debug="${debug}">
+      <classpath refid="classpath" />
+      <include name="test/wsdl/gateway/*.java" />
+    </javac>
+
+</target>
+
+<target name="run" >
+  <antcall target="execute-Component" />
+</target>
+
+</project>
