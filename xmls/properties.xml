@@ -3,6 +3,7 @@
 <property environment="env"/>
 <!-- workaround for those IDEs that dont set ant.home as per the ant script -->
 <property name="ant.home" value="env.ANT_HOME" />
+<property name="ant.required.version" value="1.5" />
 
 <property name="axis.version" value="beta3+" />
 <property name="name" value="axis" />
