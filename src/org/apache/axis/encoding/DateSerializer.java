@@ -84,7 +84,7 @@ public class DateSerializer implements Serializer {
     }
 
     static class DateDeser extends SOAPTypeMappingRegistry.BasicDeser {
-        Object makeValue(String source) { 
+        public Object makeValue(String source) { 
             Date result;
 
             // validate fixed portion of format
