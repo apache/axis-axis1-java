@@ -1410,4 +1410,15 @@ import java.io.Serializable;
     }
     return true;
   }
+    
+    /**
+     * Returns a hash-code value for this URI.  The hash code is based upon all
+     * of the URI's components, and satisfies the general contract of the
+     * {@link java.lang.Object#hashCode() Object.hashCode} method. </p>
+     *
+     * @return  A hash-code value for this URI
+     */
+    public int hashCode() {
+        return toString().toLowerCase().hashCode();        
+    }
 }
