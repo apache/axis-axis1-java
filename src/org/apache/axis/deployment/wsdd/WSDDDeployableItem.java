@@ -314,12 +314,12 @@ public abstract class WSDDDeployableItem
 
             if (c != null) {
                 h = (Handler)createInstance(c);
+
+                if (h != null) {
+                    h.setOptions(getParametersTable());
+                }
             } else {
                 h = registry.getHandler(getType());
-            }
-
-            if (h != null) {
-                h.setOptions(getParametersTable());
             }
 
             return h;
