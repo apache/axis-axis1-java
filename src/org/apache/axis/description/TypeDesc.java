@@ -308,9 +308,6 @@ public class TypeDesc {
      */
     public String getFieldNameForElement(QName qname, boolean ignoreNS)
     {
-        if (fields == null)
-            return null;
-
         // have we already computed the answer to this question?
         if (fieldElementMap != null) {
             String cached = (String) fieldElementMap.get(qname);
@@ -322,7 +319,7 @@ public class TypeDesc {
         String localPart = qname.getLocalPart();
 
         // check fields in this class
-        for (int i = 0; i < fields.length; i++) {
+        for (int i = 0; fields != null && i < fields.length; i++) {
             FieldDesc field = fields[i];
             if (field.isElement()) {
                 QName xmlName = field.getXmlName();
@@ -361,12 +358,9 @@ public class TypeDesc {
      */
     public String getFieldNameForAttribute(QName qname)
     {
-        if (fields == null)
-            return null;
-
         String possibleMatch = null;
 
-        for (int i = 0; i < fields.length; i++) {
+        for (int i = 0; fields != null && i < fields.length; i++) {
             FieldDesc field = fields[i];
             if (!field.isElement()) {
                 // It's an attribute, so if we have a solid match, return
