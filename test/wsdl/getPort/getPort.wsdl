@@ -1,0 +1,77 @@
+<?xml version="1.0" ?>
+<definitions name="urn:getPort.wsdl.test"
+             targetNamespace="urn:getPort.wsdl.test"
+             xmlns:tns="urn:getPort.wsdl.test"
+             xmlns:xsd="http://www.w3.org/1999/XMLSchema"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+  <message name="empty"/>
+
+  <portType name="one"/>
+  <portType name="two"/>
+  <portType name="three"/>
+
+  <binding name="bindingOne" type="tns:one">
+    <soap:binding style="rpc"
+                  transport="http://schemas.xmlsoap.org/soap/http"/>
+  </binding>
+  <binding name="bindingTwo" type="tns:two">
+    <soap:binding style="rpc"
+                  transport="http://schemas.xmlsoap.org/soap/http"/>
+  </binding>
+  <binding name="bindingThree" type="tns:three">
+    <soap:binding style="rpc"
+                  transport="http://schemas.xmlsoap.org/soap/http"/>
+  </binding>
+  <binding name="bindingAnotherOne" type="tns:one">
+    <soap:binding style="rpc"
+                  transport="http://schemas.xmlsoap.org/soap/http"/>
+  </binding>
+
+  <service name="empty"/>
+  <service name="serviceA">
+    <documentation>
+    Service with all ports unique.
+    </documentation>
+    <port name="portOne" binding="tns:bindingOne">
+      <soap:address location="http://localhost:8080/axis/services/portOne"/>
+    </port>
+    <port name="portTwo" binding="tns:bindingTwo">
+      <soap:address location="http://localhost:8080/axis/services/portTwo"/>
+    </port>
+    <port name="portThree" binding="tns:bindingThree">
+      <soap:address location="http://localhost:8080/axis/services/portThree"/>
+    </port>
+  </service>
+  <service name="serviceB">
+    <documentation>
+    Service with two ports (portTwo, portTwoA) that share the same portType via the same binding.
+    </documentation>
+    <port name="portOne" binding="tns:bindingOne">
+      <soap:address location="http://localhost:8080/axis/services/portOne"/>
+    </port>
+    <port name="portTwo" binding="tns:bindingTwo">
+      <soap:address location="http://localhost:8080/axis/services/portTwo"/>
+    </port>
+    <port name="portTwoA" binding="tns:bindingTwo">
+      <soap:address location="http://localhost:8080/axis/services/portTwo"/>
+    </port>
+  </service>
+  <service name="serviceC">
+    <documentation>
+    Service with two ports (portTwo, portThree) that share the same portType via different bindings.
+    </documentation>
+    <port name="portOne" binding="tns:bindingOne">
+      <soap:address location="http://localhost:8080/axis/services/portOne"/>
+    </port>
+    <port name="portTwo" binding="tns:bindingTwo">
+      <soap:address location="http://localhost:8080/axis/services/portTwo"/>
+    </port>
+    <port name="portThree" binding="tns:bindingAnotherOne">
+      <soap:address location="http://localhost:8080/axis/services/portFour"/>
+    </port>
+  </service>
+
+</definitions>
+

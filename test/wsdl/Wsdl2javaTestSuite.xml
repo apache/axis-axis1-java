@@ -716,6 +716,13 @@
                testcase="yes">
     </wsdl2java>
 
+    <!-- This tests the getPort method in generated services.  -->
+    <wsdl2java url="test/wsdl/getPort/getPort.wsdl"
+               output="build/work"
+               serverSide="yes"
+               testcase="no">
+    </wsdl2java>
+
     <!-- This tests .NET document/literal WSDL.
          We get this WSDL file from the internet on purpose,
          file is only for reference.
