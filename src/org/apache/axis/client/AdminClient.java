@@ -69,6 +69,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Vector;
+import org.apache.axis.deployment.wsdd.WSDDConstants;
 
 /**
  * An admin client object that can be used both from the command line
@@ -140,7 +141,7 @@ public class AdminClient
 
     public String list() throws Exception { 
         log.debug( JavaUtils.getMessage("doList00") );
-        String               str   = "<m:list xmlns:m=\"http://xml.apache.org/axis/wsdd/\"/>" ;
+        String               str   = "<m:list xmlns:m=\"" + WSDDConstants.WSDD_NS + "\"/>" ;
         ByteArrayInputStream input = new ByteArrayInputStream(str.getBytes());
         return process(input);
     }
@@ -150,27 +151,29 @@ public class AdminClient
         return quit();
     }
 
+    protected static final String ROOT_UNDEPLOY= WSDDConstants.UNDEPLOY_QNAME.getLocalPart(); 
+
     public String quit() throws Exception { 
         log.debug(JavaUtils.getMessage("doQuit00"));
-        String               str   = "<m:quit xmlns:m=\"http://xml.apache.org/axis/wsdd/\"/>";
+        String               str   = "<m:quit xmlns:m=\"" + WSDDConstants.WSDD_NS + "\"/>";
         ByteArrayInputStream input = new ByteArrayInputStream(str.getBytes());
         return process(input);
     }
 
     public String undeployHandler(String handlerName) throws Exception { 
         log.debug(JavaUtils.getMessage("doQuit00"));
-        String               str   = "<m:undeployment xmlns:m=\"http://xml.apache.org/axis/wsdd/\">" +
+        String               str   = "<m:"+ROOT_UNDEPLOY +" xmlns:m=\"" + WSDDConstants.WSDD_NS + "\">" +
                                      "<handler name=\"" + handlerName + "\"/>"+
-                                     "</m:undeploy>" ;
+                                     "</m:"+ROOT_UNDEPLOY +">" ;
         ByteArrayInputStream input = new ByteArrayInputStream(str.getBytes());
         return process(input);
     }
 
     public String undeployService(String serviceName) throws Exception { 
         log.debug(JavaUtils.getMessage("doQuit00"));
-        String               str   = "<m:undeployment xmlns:m=\"http://xml.apache.org/axis/wsdd/\">" +
+        String               str   = "<m:"+ROOT_UNDEPLOY +" xmlns:m=\"" + WSDDConstants.WSDD_NS + "\">" +
                                      "<service name=\"" + serviceName + "\"/>"+
-                                     "</m:undeploy>" ;
+                                     "</m:"+ROOT_UNDEPLOY +">" ;
         ByteArrayInputStream input = new ByteArrayInputStream(str.getBytes());
         return process(input);
     }
