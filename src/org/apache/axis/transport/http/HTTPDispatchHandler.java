@@ -242,12 +242,14 @@ public class HTTPDispatchHandler extends BasicHandler {
             name = new String( buf, 0, len );
             value = "" ;
           }
-          Debug.Print( 2, name + value );
-          if ( msgContext.getProperty(HTTPConstants.MC_HTTP_STATUS_CODE) == null ) {
+          Debug.Print( 1, name + value );
+          if ( msgContext.getProperty(HTTPConstants.MC_HTTP_STATUS_CODE)==null){
             // Reader status code
             int start = name.indexOf( ' ' ) + 1 ;
-            int end   = name.indexOf( ' ', start ) ;
-            rc = Integer.parseInt( name.substring(start, end) );
+            String tmp = name.substring(start).trim();
+            int end   = tmp.indexOf( ' ' );
+            if ( end != -1 ) tmp = tmp.substring( 0, end );
+            rc = Integer.parseInt( tmp );
             msgContext.setProperty( HTTPConstants.MC_HTTP_STATUS_CODE,
                                     new Integer(rc) );
             msgContext.setProperty( HTTPConstants.MC_HTTP_STATUS_MESSAGE,
