@@ -70,7 +70,7 @@ import org.apache.axis.encoding.TypeMappingRegistry;
  * AxisServer.  Handles common functionality like dealing with the
  * handler/service registries and loading properties.
  *
- * @author Glen Daniels (gdaniels@allaire.com)
+ * @author Glen Daniels (gdaniels@macromedia.com)
  */
 public abstract class AxisEngine extends BasicHandler
 {
