@@ -21,13 +21,15 @@
         </xsd:restriction>
       </xsd:simpleType>
 
-      <xsd:complexType name="phone">
-        <xsd:all>
-            <xsd:element name="areaCode" type="xsd:int"/>
-            <xsd:element name="exchange" type="xsd:string"/>
-            <xsd:element name="number" type="xsd:string"/>
-        </xsd:all>
-      </xsd:complexType>
+      <xsd:element name="phone">
+        <xsd:complexType>
+          <xsd:all>
+              <xsd:element name="areaCode" type="xsd:int"/>
+              <xsd:element name="exchange" type="xsd:string"/>
+              <xsd:element name="number" type="xsd:string"/>
+          </xsd:all>
+        </xsd:complexType>
+      </xsd:element>
 
       <xsd:complexType name="address">
         <xsd:all>
@@ -36,7 +38,7 @@
             <xsd:element name="city" type="xsd:string"/>
             <xsd:element name="state" type="typens:stateType"/>
             <xsd:element name="zip" type="xsd:int"/>
-            <xsd:element name="phoneNumber" type="typens:phone"/>
+            <xsd:element ref="typens:phone"/>
         </xsd:all>
       </xsd:complexType>
     </xsd:schema>
