@@ -168,36 +168,38 @@ public class BeanSerializer implements Serializer, Serializable {
                 }
 
                 Method readMethod = propertyDescriptor[i].getReadMethod();
-                Class baseJavaType = readMethod.getReturnType();
-                Class javaType;
-                if (readMethod != null && 
-                    readMethod.getParameterTypes().length == 0) {
-                    // Normal case: serialize the value
-                    Object propValue = readMethod.invoke(value,noArgs);
-                    javaType = (propValue == null || baseJavaType.isPrimitive())
-                        ? baseJavaType : propValue.getClass();
-                    context.serialize(qname,
-                                      null,
-                                      propValue, javaType);
-                } else {
-                    // Collection of properties: serialize each one
-                    int j=0;
-                    while(j >= 0) {
-                        Object propValue = null;
-                        try {
-                            propValue = 
-                                readMethod.invoke(value,
-                                     new Object[] { new Integer(j) });
-                            j++;
-                        } catch (Exception e) {
-                            j = -1;
-                        }
-                        if (j >= 0) {
-                            javaType = (propValue == null || 
-                                        baseJavaType.isPrimitive())
-                                ? baseJavaType : propValue.getClass();
-                            context.serialize(qname, null,
-                                              propValue, javaType);
+                // if there is a read method for a property
+                if(readMethod != null) {
+                    Class baseJavaType = readMethod.getReturnType();
+                    Class javaType;
+                    if (readMethod.getParameterTypes().length == 0) {
+                        // Normal case: serialize the value
+                        Object propValue = readMethod.invoke(value,noArgs);
+                        javaType = (propValue == null || baseJavaType.isPrimitive())
+                            ? baseJavaType : propValue.getClass();
+                        context.serialize(qname,
+                                          null,
+                                          propValue, javaType);
+                    } else {
+                        // Collection of properties: serialize each one
+                        int j=0;
+                        while(j >= 0) {
+                            Object propValue = null;
+                            try {
+                                propValue = 
+                                    readMethod.invoke(value,
+                                         new Object[] { new Integer(j) });
+                                j++;
+                            } catch (Exception e) {
+                                j = -1;
+                            }
+                            if (j >= 0) {
+                                javaType = (propValue == null || 
+                                            baseJavaType.isPrimitive())
+                                    ? baseJavaType : propValue.getClass();
+                                context.serialize(qname, null,
+                                                  propValue, javaType);
+                            }
                         }
                     }
                 }
