@@ -69,16 +69,52 @@ Copyright:
   <property name="dist.dir" value="./axis-1_0"/>
 
   <!-- =================================================================== -->
+  <!-- Determine what dependencies are present                             -->
+  <!-- =================================================================== -->
+  <path id="classpath">
+    <pathelement location="${servlet.jar}"/>
+    <pathelement location="${xerces.jar}"/>
+    <pathelement path="${java.class.path}"/>
+  </path>
+
+  <target name="setenv">
+    <available property="xerces.present"
+      classname="org.apache.xml.serialize.XMLSerializer"
+      classpathref="classpath"/>
+
+    <available property="servlet.present"
+      classname="javax.servlet.Servlet"
+      classpathref="classpath"/>
+
+    <echo message="--- Build environment for ${Name} ---" />
+    <echo message="--- Flags (Note: If the {property name} is displayed, "/>
+    <echo message="           then the component is not present)" />
+    <echo message=""/>
+    <echo message="--- Required Libraries ---" />
+    <echo message="xerces.present=${xerces.present}" />
+    <echo message=""/>
+    <echo message="--- Optional Libraries ---" />
+    <echo message="servlet.present=${servlet.present}" />
+    <echo message=""/>
+    <echo message="--- Property values" />
+    <echo message="debug=${debug}" />
+
+    <uptodate property="javadoc.required"
+              targetfile="${build.lib}/${name}.jar">
+      <srcfiles dir="${build.dir}" includes="**/*.html" />
+    </uptodate>
+  </target>
+
+  <!-- =================================================================== -->
   <!-- Compiles the source directory                                       -->
   <!-- =================================================================== -->
-  <target name="compile">
+  <target name="compile" depends="setenv">
     <mkdir dir="${build.dest}"/>
-    <javac srcdir="${src.dir}" destdir="${build.dest}" debug="${debug}">
-       <classpath>
-         <pathelement path="${java.class.path}"/>
-         <pathelement location="${servlet.jar}"/>
-         <pathelement location="${xerces.jar}"/>
-       </classpath>
+
+    <javac srcdir="${src.dir}" destdir="${build.dest}" debug="${debug}"
+      classpathref="classpath">
+      <exclude name="org/apache/axis/handlers/HTTP*" unless="servlet.present"/>
+      <exclude name="org/apache/axis/transport/http/*" unless="servlet.present"/>
     </javac>
 
     <mkdir dir="${build.lib}"/>
@@ -113,14 +149,7 @@ Copyright:
   <!-- Creates the API documentation                                       -->
   <!-- =================================================================== -->
 
-  <target name="check-javadocs">
-    <uptodate property="javadoc.required"
-              targetfile="${build.lib}/${name}.jar">
-      <srcfiles dir="${build.dir}" includes="**/*.html" />
-    </uptodate>
-  </target>
-
-  <target name="javadocs" depends="check-javadocs" if="javadoc.required">
+  <target name="javadocs" depends="setenv" if="javadoc.required">
     <mkdir dir="${build.javadocs}"/>
     <javadoc packagenames="${packages}"
              sourcepath="${src.dir}"
