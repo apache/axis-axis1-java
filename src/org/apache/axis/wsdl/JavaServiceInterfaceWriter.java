@@ -62,6 +62,8 @@ import java.util.List;
 import javax.wsdl.Operation;
 import javax.wsdl.PortType;
 
+import org.apache.axis.utils.JavaUtils;
+
 /**
 * This is Wsdl2java's service writer.  It writes the <serviceName>.java file.
 */
@@ -76,7 +78,8 @@ public class JavaServiceInterfaceWriter extends JavaWriter {
             Emitter emitter,
             PortType portType,
             HashMap operationParameters) {
-        super(emitter, portType.getQName(), "AXIS", "java", "Generating server-side PortType interface:  ");
+        super(emitter, portType.getQName(), "AXIS", "java",
+                JavaUtils.getMessage("genIface01"));
         this.portType = portType;
         this.operationParameters = operationParameters;
     } // ctor

@@ -79,6 +79,8 @@ import org.w3c.dom.Node;
 import com.ibm.wsdl.extensions.soap.SOAPBody;
 import com.ibm.wsdl.extensions.soap.SOAPOperation;
 
+import org.apache.axis.utils.JavaUtils;
+
 /**
 * This is Wsdl2java's stub writer.  It writes the <BindingName>Stub.java
 * file which contains the <bindingName>Stub class.
@@ -94,7 +96,8 @@ public class JavaStubWriter extends JavaWriter {
             Emitter emitter,
             Binding binding,
             HashMap operationParameters) {
-        super(emitter, binding.getQName(), "Stub", "java", "Generating client-side stub:  ");
+        super(emitter, binding.getQName(), "Stub", "java",
+                JavaUtils.getMessage("genStub00"));
         this.binding = binding;
         this.operationParameters = operationParameters;
     } // ctor
@@ -104,7 +107,8 @@ public class JavaStubWriter extends JavaWriter {
      */
     protected void writeFileBody() throws IOException {
         if (operationParameters == null)
-            throw new IOException("Emitter failure.  Can't find portType operation parameters for binding " + qname);
+            throw new IOException(
+                    JavaUtils.getMessage("emitFail01", "" + qname));
 
         PortType portType = binding.getPortType();
         String name = Utils.xmlNameToJava(qname.getLocalPart());
@@ -149,17 +153,20 @@ public class JavaStubWriter extends JavaWriter {
         pw.println("        properties.put(name, value);");
         pw.println("    }");
         pw.println();
-        pw.println("    // From javax.xml.rpc.Stub");
+        pw.println("    // " +
+                JavaUtils.getMessage("from00", "javax.xml.rpc.Stub"));
         pw.println("    public Object _getProperty(String name) {");
         pw.println("        return properties.get(name);");
         pw.println("    }");
         pw.println();
-        pw.println("    // From javax.xml.rpc.Stub");
+        pw.println("    // " +
+                JavaUtils.getMessage("from00", "javax.xml.rpc.Stub"));
         pw.println("    public void _setTargetEndpoint(java.net.URL address) {");
         pw.println("        call.setProperty(org.apache.axis.transport.http.HTTPTransport.URL, address.toString());");
         pw.println("    }");
         pw.println();
-        pw.println("    // From javax.xml.rpc.Stub");
+        pw.println("    // " +
+                JavaUtils.getMessage("from00", "javax.xml.rpc.Stub"));
         pw.println("    public java.net.URL _getTargetEndpoint() {");
         pw.println("        try {");
         pw.println("            return new java.net.URL((String) call.getProperty(org.apache.axis.transport.http.HTTPTransport.URL));");
@@ -169,7 +176,8 @@ public class JavaStubWriter extends JavaWriter {
         pw.println("        }");
         pw.println("    }");
         pw.println();
-        pw.println("    // From javax.xml.rpc.Stub");
+        pw.println("    // " +
+                JavaUtils.getMessage("from00", "javax.xml.rpc.Stub"));
         pw.println("    public synchronized void setMaintainSession(boolean session) {");
         pw.println("        call.setMaintainSession(session);");
         pw.println("    }");

@@ -61,6 +61,8 @@ import java.util.Vector;
 import javax.wsdl.Fault;
 import javax.wsdl.QName;
 
+import org.apache.axis.utils.JavaUtils;
+
 /**
 * This is Wsdl2java's Fault Writer.  It writes the <faultName>.java file.
 * NOTE:  this must be rewritten.  It doesn't follow JAX-RPC.
@@ -72,7 +74,7 @@ public class JavaFaultWriter extends JavaWriter {
      * Constructor.
      */
     protected JavaFaultWriter(Emitter emitter, QName qname, Fault fault) {
-        super(emitter, qname, "", "java", "Generating Fault class:  ");
+        super(emitter, qname, "", "java", JavaUtils.getMessage("genFault00"));
         this.fault = fault;
     } // ctor
 

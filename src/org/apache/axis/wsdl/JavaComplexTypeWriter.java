@@ -60,6 +60,8 @@ import java.util.Vector;
 
 import javax.wsdl.QName;
 
+import org.apache.axis.utils.JavaUtils;
+
 import org.w3c.dom.Node;
 
 /**
@@ -75,7 +77,8 @@ public class JavaComplexTypeWriter extends JavaWriter {
     protected JavaComplexTypeWriter(
             Emitter emitter,
             Type type, Vector elements) {
-        super(emitter, type.getQName(), "", "java", "Generating type implementation:  ");
+        super(emitter, type.getQName(), "", "java",
+                JavaUtils.getMessage("genType00"));
         this.type = type;
         this.elements = elements;
     } // ctor

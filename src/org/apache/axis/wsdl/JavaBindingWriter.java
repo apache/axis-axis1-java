@@ -61,6 +61,8 @@ import java.util.HashMap;
 import javax.wsdl.Binding;
 import javax.wsdl.QName;
 
+import org.apache.axis.utils.JavaUtils;
+
 /**
 * This is Wsdl2java's Binding Writer.  It writes the following files, as appropriate:
 * <bindingName>Stub.java, <bindingName>Skeleton.java, <bindingName>Impl.java.
@@ -90,7 +92,8 @@ public class JavaBindingWriter implements Writer {
                 }
             }
             catch (IOException ioe) {
-                System.err.println("Error determining if " + fileName + " already exists.  Will not generate this file.");
+                System.err.println(
+                        JavaUtils.getMessage("fileExistError00", fileName));
             }
         }
     } // ctor

@@ -67,6 +67,8 @@ import javax.wsdl.Port;
 import javax.wsdl.PortType;
 import javax.wsdl.Service;
 
+import org.apache.axis.utils.JavaUtils;
+
 /**
 * This is Wsdl2java's TestCase writer.  It writes the <serviceName>TestCase.java file.
 */
@@ -81,7 +83,8 @@ public class JavaTestCaseWriter extends JavaWriter {
             Emitter emitter,
             Service service,
             HashMap portTypeOperationParameters) {
-        super(emitter, service.getQName(), "TestCase", "java", "Generating service test case:  ");
+        super(emitter, service.getQName(), "TestCase", "java",
+                JavaUtils.getMessage("genTest00"));
         this.service = service;
         this.portTypeOperationParameters = portTypeOperationParameters;
     } // ctor
@@ -149,7 +152,9 @@ public class JavaTestCaseWriter extends JavaWriter {
         pw.print(portName);
         pw.println("();");
 
-        pw.println("        assertTrue(\"Binding is null\", binding != null);");
+        pw.println("        assertTrue(\"" +
+                JavaUtils.getMessage("null00", "binding") +
+                "\", binding != null);");
 
         this.writePortTestCode(portType);
 

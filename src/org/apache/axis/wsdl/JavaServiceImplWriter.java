@@ -70,6 +70,8 @@ import javax.wsdl.Service;
 
 import com.ibm.wsdl.extensions.soap.SOAPAddress;
 
+import org.apache.axis.utils.JavaUtils;
+
 /**
 * This is Wsdl2java's service writer.  It writes the <serviceName>.java file.
 */
@@ -82,7 +84,8 @@ public class JavaServiceImplWriter extends JavaWriter {
     protected JavaServiceImplWriter(
             Emitter emitter,
             Service service) {
-        super(emitter, service.getQName(), "", "java", "Generating service class:  ");
+        super(emitter, service.getQName(), "", "java",
+                JavaUtils.getMessage("genService00"));
         this.service = service;
     } // ctor
 
@@ -118,18 +121,20 @@ public class JavaServiceImplWriter extends JavaWriter {
             String address = getAddressFromPort(p);
             if (address == null) {
                 // now what?
-                throw new IOException("Emitter failure.  Can't find endpoint address in port " + portName + " in service " + className);
+                throw new IOException(JavaUtils.getMessage("emitFail02",
+                        portName, className));
             }
             try {
                 URL ep = new URL(address);
             }
             catch (MalformedURLException e) {
-                throw new IOException("Emitter failure.  Invalid endpoint address in port " + portName + " in service " + className + ": " + address);
+                throw new IOException(JavaUtils.getMessage("emitFail03",
+                        new String[] {portName, className, address}));
             }
 
             // Write out the get<PortName> methods
             pw.println();
-            pw.println("    // Use to get a proxy class for " + portName);
+            pw.println("    // " + JavaUtils.getMessage("getProxy00", portName));
             writeComment(pw, p.getDocumentationElement());
             pw.println("    private final java.lang.String " + portName + "_address = \"" + address + "\";");
 
@@ -146,7 +151,8 @@ public class JavaServiceImplWriter extends JavaWriter {
             pw.println("            endpoint = new java.net.URL(" + portName + "_address);");
             pw.println("        }");
             pw.println("        catch (java.net.MalformedURLException e) {");
-            pw.println("            return null; // unlikely as URL was validated in wsdl2java");
+            pw.println("            return null; // " +
+                    JavaUtils.getMessage("unlikely00"));
             pw.println("        }");
             pw.println("        return get" + portName + "(endpoint);");
             pw.println("    }");

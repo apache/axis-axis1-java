@@ -74,6 +74,8 @@ import javax.wsdl.Part;
 import javax.wsdl.PortType;
 import javax.wsdl.QName;
 
+import org.apache.axis.utils.JavaUtils;
+
 import org.w3c.dom.Node;
 
 import com.ibm.wsdl.extensions.soap.SOAPBody;
@@ -94,7 +96,8 @@ public class JavaImplWriter extends JavaWriter {
             Emitter emitter,
             Binding binding,
             HashMap operationParameters) {
-        super(emitter, binding.getQName(), "Impl", "java", "Generating server-side implementation template:  ");
+        super(emitter, binding.getQName(), "Impl", "java",
+                JavaUtils.getMessage("genImpl00"));
         this.binding = binding;
         this.operationParameters = operationParameters;
     } // ctor
@@ -104,7 +107,8 @@ public class JavaImplWriter extends JavaWriter {
      */
     protected void writeFileBody() throws IOException {
         if (operationParameters == null)
-            throw new IOException("Emitter failure.  Can't find portType operation parameters for binding " + qname);
+            throw new IOException(
+                    JavaUtils.getMessage("emitFail01", "" + qname));
 
         PortType portType = binding.getPortType();
         String portTypeName = emitter.emitFactory.getJavaName(portType.getQName());

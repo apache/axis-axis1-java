@@ -58,6 +58,8 @@ import java.io.IOException;
 
 import java.util.Vector;
 
+import org.apache.axis.utils.JavaUtils;
+
 import org.w3c.dom.Node;
 
 /**
@@ -73,7 +75,8 @@ public class JavaEnumTypeWriter extends JavaWriter {
     protected JavaEnumTypeWriter(
             Emitter emitter,
             Type type, Vector elements) {
-        super(emitter, type.getQName(), "", "java", "Generating type implementation:  ");
+        super(emitter, type.getQName(), "", "java",
+                JavaUtils.getMessage("genType00"));
         this.type = type;
         this.elements = elements;
     } // ctor
@@ -108,7 +111,7 @@ public class JavaEnumTypeWriter extends JavaWriter {
         pw.println("");
 
         // A protected constructor is used to create the static enumeration values
-        pw.println("    // Constructor");
+        pw.println("    // " + JavaUtils.getMessage("ctor00"));
         pw.println("    protected " + javaName + "(" + baseType + " value) {");
         pw.println("        _value_ = value;");
         pw.println("        _table_.put(_value_,this);");

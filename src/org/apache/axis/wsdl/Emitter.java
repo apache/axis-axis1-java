@@ -56,6 +56,7 @@ package org.apache.axis.wsdl;
 
 import com.ibm.wsdl.xml.WSDLReader;
 
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 
 import org.w3c.dom.Document;
@@ -148,14 +149,15 @@ public class Emitter {
      */
     public void emit(String uri) throws IOException {
         if (bVerbose)
-            System.out.println("Parsing XML File: " + uri);
+            System.out.println(JavaUtils.getMessage("parsing00", uri));
 
         try {
             emit(XMLUtils.newDocument(uri));
         }
         catch (Throwable t) {
             t.printStackTrace();
-            System.out.println("Error in parsing: " + t.getMessage());
+            System.out.println(
+                    JavaUtils.getMessage("parseError00", t.getMessage()));
         }
     } // emit
 
@@ -182,7 +184,8 @@ public class Emitter {
         }
         catch (Throwable t) {
             t.printStackTrace();
-            System.out.println("Error in parsing: " + t.getMessage());
+            System.out.println(
+                    JavaUtils.getMessage("parseError00", t.getMessage()));
         }
     } // emit
 
@@ -194,7 +197,7 @@ public class Emitter {
         if (doc != null) {
             emitFactory.buildTypes(doc);
             if (bVerbose) {
-                System.out.println("Types:");
+                System.out.println(JavaUtils.getMessage("types00"));
                 emitFactory.dump();
             }
             // Output Java classes for types
@@ -510,7 +513,7 @@ public class Emitter {
                 Map allInputs = inputMsg.getParts();
                 Collection orderedInputs = inputMsg.getOrderedParts(parameterOrder);
                 if (allInputs.size() != orderedInputs.size()) {
-                    throw new IOException("Emitter failure.  All input parts must be listed in the parameterOrder attribute of " + operation.getName());
+                    throw new IOException(JavaUtils.getMessage("emitFail00"));
                 }
             }
         }
@@ -551,7 +554,7 @@ public class Emitter {
                     addOutParm(outputs, outdex, parameters, true);
                 }
                 else {
-                    System.err.println("!!! " + name + " not found as an input OR an output part!");
+                    System.err.println(JavaUtils.getMessage("noPart00", name));
                 }
             }
         }

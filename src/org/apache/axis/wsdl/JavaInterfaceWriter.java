@@ -63,6 +63,8 @@ import java.util.Iterator;
 import javax.wsdl.Operation;
 import javax.wsdl.PortType;
 
+import org.apache.axis.utils.JavaUtils;
+
 /**
 * This is Wsdl2java's PortType Writer.  It writes the <portTypeName>.java file
 * which contains the <portTypeName> interface.
@@ -77,7 +79,8 @@ public class JavaInterfaceWriter extends JavaWriter {
     protected JavaInterfaceWriter(
             Emitter emitter,
             PortType portType, HashMap operationParameters) {
-        super(emitter, portType.getQName(), "", "java", "Generating portType interface:  ");
+        super(emitter, portType.getQName(), "", "java",
+                JavaUtils.getMessage("genIface00"));
         this.portType = portType;
         this.operationParameters = operationParameters;
     } // ctor

@@ -68,6 +68,8 @@ import javax.wsdl.QName;
 import com.ibm.wsdl.extensions.soap.SOAPBody;
 import com.ibm.wsdl.extensions.soap.SOAPOperation;
 
+import org.apache.axis.utils.JavaUtils;
+
 /**
 * This is Wsdl2java's skeleton writer.  It writes the <BindingName>Skeleton.java
 * file which contains the <bindingName>Skeleton class.
@@ -83,7 +85,8 @@ public class JavaSkelWriter extends JavaWriter {
             Emitter emitter,
             Binding binding,
             HashMap operationParameters) {
-        super(emitter, binding.getQName(), "Skeleton", "java", "Generating server-side skeleton:  ");
+        super(emitter, binding.getQName(), "Skeleton", "java",
+                JavaUtils.getMessage("genSkel00"));
         this.binding = binding;
         this.operationParameters = operationParameters;
     } // ctor
@@ -93,7 +96,8 @@ public class JavaSkelWriter extends JavaWriter {
      */
     protected void writeFileBody() throws IOException {
         if (operationParameters == null)
-            throw new IOException("Emitter failure.  Can't find portType operation parameters for binding " + qname);
+            throw new IOException(
+                    JavaUtils.getMessage("emitFail01", "" + qname));
 
         PortType portType = binding.getPortType();
         String portTypeName = emitter.emitFactory.getJavaName(portType.getQName());
