@@ -258,7 +258,7 @@ public abstract class JavaProvider extends BasicProvider
                            resEnv, jc, obj);
         }
         catch( Exception exp ) {
-            log.error( JavaUtils.getMessage("exception00"), exp );
+            log.debug( JavaUtils.getMessage("exception00"), exp );
             throw AxisFault.makeFault(exp);
         }
         if (log.isDebugEnabled())
