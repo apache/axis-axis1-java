@@ -182,8 +182,12 @@ public class BodyBuilder extends SOAPHandler
                 if (msgContext != null && !msgContext.isHighFidelity() &&
                         (operations == null || operations.length == 1)) {
                     ((RPCElement)element).setNeedDeser(false);
+                    boolean isResponse = false;
+                    if (msgContext.getCurrentMessage() != null &&
+                                Message.RESPONSE.equals(msgContext.getCurrentMessage().getMessageType()))
+                        isResponse = true;
                     handler = new RPCHandler((RPCElement)element,
-                                             Message.RESPONSE.equals(msgContext.getCurrentMessage().getMessageType()));
+                                             isResponse);
                     if (operations != null) {
                         ((RPCHandler)handler).setOperation(operations[0]);
                         msgContext.setOperation(operations[0]);
