@@ -67,6 +67,11 @@ import org.apache.commons.discovery.base.Environment;
 import org.apache.commons.discovery.base.SPInterface;
 import org.apache.commons.discovery.tools.ManagedProperties;
 
+import org.apache.axis.components.logger.LogFactory;
+import org.apache.commons.logging.Log;
+
+import org.apache.axis.utils.JavaUtils;
+
 
 /**
  * <p>Configuration properties for AXIS.
@@ -99,62 +104,73 @@ import org.apache.commons.discovery.tools.ManagedProperties;
  * @author Richard A. Sitze
  */
 public class AxisProperties {
+    protected static Log log =
+        LogFactory.getLog(AxisProperties.class.getName());
+
     public static Environment getDiscoverEnvironment() {
         return new Environment(getCommonsGroupContext());
     }
     
     public static Object newInstance(Class spiClass, String defaultClass)
-        throws DiscoveryException,
-               InstantiationException,
-               IllegalAccessException,
-               NoSuchMethodException,
-               InvocationTargetException
     {
-        SPInterface spi = new SPInterface(spiClass);
-        return DiscoverClass.newInstance(getDiscoverEnvironment(),
-                                         spi,
-                                         (String) null,
-                                         spi.createImplClass(defaultClass));
+        Object object;
+        try {
+            SPInterface spi = new SPInterface(spiClass);
+            object = DiscoverClass.newInstance(getDiscoverEnvironment(),
+                                               spi,
+                                               (String) null,
+                                               spi.createImplClass(defaultClass));
+        } catch (Exception e) {
+            log.error(JavaUtils.getMessage("exception00"), e);
+            object = null;
+        }
+        return object;
     }
     
     public static Object newInstance(Class spiClass, Class defaultClass)
-        throws DiscoveryException,
-               InstantiationException,
-               IllegalAccessException,
-               NoSuchMethodException,
-               InvocationTargetException
     {
-        SPInterface spi = new SPInterface(spiClass);
-        return DiscoverClass.newInstance(getDiscoverEnvironment(),
-                                         spi,
-                                         (String) null,
-                                         spi.createImplClass(defaultClass));
+        Object object;
+        try {
+            SPInterface spi = new SPInterface(spiClass);
+            object = DiscoverClass.newInstance(getDiscoverEnvironment(),
+                                               spi,
+                                               (String) null,
+                                               spi.createImplClass(defaultClass));
+        } catch (Exception e) {
+            log.error(JavaUtils.getMessage("exception00"), e);
+            object = null;
+        }
+        return object;
     }
 
     public static Object newInstance(SPInterface spi, String defaultClass)
-        throws DiscoveryException,
-               InstantiationException,
-               IllegalAccessException,
-               NoSuchMethodException,
-               InvocationTargetException
     {
-        return DiscoverClass.newInstance(getDiscoverEnvironment(),
-                                         spi,
-                                         (String) null,
-                                         spi.createImplClass(defaultClass));
+        Object object;
+        try {
+            object = DiscoverClass.newInstance(getDiscoverEnvironment(),
+                                               spi,
+                                               (String) null,
+                                               spi.createImplClass(defaultClass));
+        } catch (Exception e) {
+            log.error(JavaUtils.getMessage("exception00"), e);
+            object = null;
+        }
+        return object;
     }
 
     public static Object newInstance(SPInterface spi, Class defaultClass)
-        throws DiscoveryException,
-               InstantiationException,
-               IllegalAccessException,
-               NoSuchMethodException,
-               InvocationTargetException
     {
-        return DiscoverClass.newInstance(getDiscoverEnvironment(),
-                                         spi,
-                                         (String) null,
-                                         spi.createImplClass(defaultClass));
+        Object object;
+        try {
+            object = DiscoverClass.newInstance(getDiscoverEnvironment(),
+                                               spi,
+                                               (String) null,
+                                               spi.createImplClass(defaultClass));
+        } catch (Exception e) {
+            log.error(JavaUtils.getMessage("exception00"), e);
+            object = null;
+        }
+        return object;
     }
 
 

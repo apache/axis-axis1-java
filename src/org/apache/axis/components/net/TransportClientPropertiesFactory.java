@@ -80,23 +80,17 @@ public class TransportClientPropertiesFactory {
 
     public static TransportClientProperties create(String protocol)
     {
-        TransportClientProperties tcp = null;
+        TransportClientProperties tcp =
+            (TransportClientProperties)cache.get(protocol);
         
-        try {
-            tcp = (TransportClientProperties)cache.get(protocol);
-            
-            if (tcp == null) {
-                tcp = (TransportClientProperties)
-                    AxisProperties.newInstance(TransportClientProperties.class,
-                                               (Class)defaults.get(protocol));
+        if (tcp == null) {
+            tcp = (TransportClientProperties)
+                AxisProperties.newInstance(TransportClientProperties.class,
+                                           (Class)defaults.get(protocol));
 
-                if (tcp != null) {
-                    cache.put(protocol, tcp);
-                }
+            if (tcp != null) {
+                cache.put(protocol, tcp);
             }
-        } catch (Exception e) {
-            log.error(JavaUtils.getMessage("exception00"), e);
-            tcp = null;
         }
         
         return tcp;
