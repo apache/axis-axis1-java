@@ -739,7 +739,7 @@ public class JavaBeanWriter extends JavaClassWriter {
 
                 // we're generating code that will obtain a reference to an enumeration: use the
                 // class forString interface, not the constructor.  Bug 19069
-                pw.println("        " + returnString + simpleValueType
+                pw.println("        " + returnString + " " + simpleValueType
                         + ".fromString(_value);");
             } else {
                 pw.println("        " + returnString + " new "
