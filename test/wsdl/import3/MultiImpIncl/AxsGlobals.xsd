@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema
+  targetNamespace="http://www.axsone.com/webdemo/exec/schemas/AxsGlobals"
+  xmlns:tns="http://www.axsone.com/webdemo/exec/schemas/AxsGlobals"
+  xmlns="http://www.w3.org/2001/XMLSchema">
+
+  <complexType name="UserContextType">
+    <sequence>
+      <element name="SYS_USER" minOccurs="0"/>
+      <element name="GROUP_ID" minOccurs="0"/>
+      <element name="DBMAP" minOccurs="0"/>
+      <element name="ENTITY" type="string" minOccurs="0"/>
+    </sequence>
+  </complexType>
+
+  <complexType name="UserRequestType">
+    <complexContent>
+      <extension base="tns:UserContextType">
+        <sequence>
+          <element name="HOST_USER" type="string" minOccurs="0"/>
+          <element name="HOST_PWD" type="string" minOccurs="0"/>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+
+  <complexType name="UserResponseType">
+    <complexContent>
+      <extension base="tns:UserContextType">
+        <sequence>
+        </sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+  
+  <simpleType name="positiveInteger">
+    <restriction base="integer">
+    </restriction> 	
+  </simpleType>
+  
+  <simpleType name="nonNegativeInteger">
+      <restriction base="integer">
+      </restriction> 	
+  </simpleType>
+  
+  <simpleType name="SortDirectionType">
+    <restriction base="string">
+      <enumeration value="ASCENDING"/>
+      <enumeration value="DESCENDING"/>
+    </restriction>
+  </simpleType>
+   
+ </schema>

@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<definitions name="coarignxDataService"
+  targetNamespace="http://www.axsone.com/webdemo/exec/schemas/multiImpInclDataService"
+  xmlns:tns="http://www.axsone.com/webdemo/exec/schemas/multiImpInclDataService"
+  xmlns="http://schemas.xmlsoap.org/wsdl/"
+  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+  xmlns:cmp="http://www.axsone.com/webdemo/exec/schemas/cmp/comp"
+  xmlns:ses="http://www.axsone.com/webdemo/exec/schemas/session">
+
+  <import
+    namespace="http://www.axsone.com/webdemo/exec/schemas/cmp/comp"
+    location="../cmp/comp.xsd"/>
+
+  <import
+    namespace="http://www.axsone.com/webdemo/exec/schemas/session"
+    location="../../session.xsd"/>
+
+  <message name="DataRequestMessage">
+    <part name="header" element="ses:Session"/>
+    <part name="body" element="cmp:DataRequest"/>
+  </message>
+
+  <message name="DataResponseMessage">
+    <part name="header" element="ses:Session"/>
+    <part name="body" element="cmp:DataRequestResponse"/>
+  </message>
+
+  <portType name="multiImpInclDataPortType">
+    <operation name="DataOperation">
+      <input message="tns:DataRequestMessage"/>
+      <output message="tns:DataResponseMessage"/>
+    </operation>
+  </portType>
+
+  <binding name="multiImpInclDataBinding" type="tns:multiImpInclDataPortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="DataOperation">
+      <soap:operation soapAction="http://www.axsone.com/webdemo/exec/schemas/cmp/comp"/>
+      <input>
+        <soap:header part="header" use="literal"/>
+        <soap:body parts="body" use="literal"/>
+      </input>
+      <output>
+        <soap:header part="header" use="literal"/>
+        <soap:body parts="body" use="literal"/>
+      </output>
+    </operation>
+  </binding>  
+
+  <service name="multiImpInclService">
+    <port name="multiImpInclPort" binding="tns:multiImpInclDataBinding">
+      <soap:address location="http://www.axsone.com/blahblahblah"/>
+    </port>
+  </service>
+</definitions>
+

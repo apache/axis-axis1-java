@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema 
+  targetNamespace="http://www.axsone.com/webdemo/exec/schemas/CompoGlobals"
+  xmlns:tns="http://www.axsone.com/webdemo/exec/schemas/CompoGlobals"
+  xmlns="http://www.w3.org/2001/XMLSchema"
+  xmlns:axs="http://www.axsone.com/webdemo/exec/schemas/AxsGlobals">
+
+  <import
+    namespace="http://www.axsone.com/webdemo/exec/schemas/AxsGlobals"
+    schemaLocation="../AxsGlobals.xsd"/>
+
+ 
+  <simpleType name="DocActions">
+    <restriction base="string">
+      <enumeration value="VALIDT"/>
+      <enumeration value="PROCES"/>
+      <enumeration value="VALIDH"/>
+      <enumeration value="DELETE"/>
+      <enumeration value="UPDATE"/>
+      <enumeration value="PREADD"/>
+      <enumeration value="PREDEL"/>
+      <enumeration value="INIT"/>
+    </restriction>
+  </simpleType>
+
+  <simpleType name="DocRowType">
+    <restriction base="string">
+      <enumeration value="All"/>
+      <enumeration value="Header"/>
+      <enumeration value="Line"/>
+    </restriction>
+  </simpleType>
+
+  <simpleType name="RawDataIndicatorType">
+    <restriction base="string">
+      <enumeration value="X"/>
+      <enumeration value="C"/>
+      <enumeration value="K"/>
+      <enumeration value="I"/>
+      <enumeration value="F"/>
+      <enumeration value="D"/>
+      <enumeration value="Y"/>
+      <enumeration value="S"/>
+    </restriction>
+  </simpleType>
+
+  <simpleType name="YesNoSpaceType">
+    <restriction base="string">
+      <enumeration value="Y"/>
+      <enumeration value="N"/>
+      <enumeration value=" "/>
+    </restriction>
+  </simpleType>
+
+  <simpleType name="RowsRequestedType">
+    <restriction base="axs:positiveInteger"> 
+    </restriction>
+  </simpleType>
+
+  <complexType name="AllRequestsType">
+    <all>
+      <element name="user_context" type="axs:UserRequestType" minOccurs="0"/>
+      <element name="rows_requested" type="tns:RowsRequestedType" minOccurs="0"/>
+      <element name="raw_data_indicator" type="tns:RawDataIndicatorType" minOccurs="0"/>
+      <element name="completion_indication" type="tns:YesNoSpaceType" minOccurs="0"/>
+      <element name="form_name" type="string" minOccurs="0"/>
+      <element name="caller_id" type="string" minOccurs="0"/>
+      <element name="item_number" type="axs:nonNegativeInteger" minOccurs="0"/> 
+      <element name="ticket_id" type="string" minOccurs="0"/>
+    </all>
+  </complexType>
+
+  <complexType name="AllResponsesType">
+    <sequence>
+      <element name="user_context" type="axs:UserResponseType"/>
+      <element name="server_version" type="string"/>
+      <element name="client_version" type="string"/>
+      <element name="completion_indication" type="tns:YesNoSpaceType"/>
+      <element name="form_name" type="string" minOccurs="0"/>
+      <element name="buffer_format_rows_in_buffer" type="axs:nonNegativeInteger"/>
+    </sequence>
+  </complexType>
+
+  <complexType name="DataRequestType">
+    <sequence>
+      <element name="request" type="tns:AllRequestsType"/>
+      <element name="action_type" type="tns:DocActions"/>
+    </sequence>
+  </complexType>
+
+  <complexType name="DataResponseType">
+    <complexContent>
+      <extension base="tns:AllResponsesType">
+        <sequence>
+          <element name="action_type" type="tns:DocActions"/>
+	</sequence>
+      </extension>
+    </complexContent>
+  </complexType>
+</schema>

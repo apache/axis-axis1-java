@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<schema 
+  targetNamespace="http://www.axsone.com/webdemo/exec/schemas/cmp/comp" 
+  xmlns:tns="http://www.axsone.com/webdemo/exec/schemas/cmp/comp" 
+  xmlns:tbl01="http://www.axsone.com/webdemo/exec/schemas/tbl1/aritem" 
+  xmlns:tbl02="http://www.axsone.com/webdemo/exec/schemas/tbl2/coarignx" 
+  xmlns="http://www.w3.org/2001/XMLSchema"> 
+ 
+  <import 
+    namespace="http://www.axsone.com/webdemo/exec/schemas/tbl1/aritem" 
+    schemaLocation="../tbl1/aritem.xsd"/> 
+  <import 
+    namespace="http://www.axsone.com/webdemo/exec/schemas/tbl2/coarignx" 
+    schemaLocation="../tbl2/coarignx.xsd"/> 
+ 
+  
+     <complexType name="OneRowType"> 
+       <all> 
+         <element name="ARITEM" type="tbl01:AritemAllFieldsType" minOccurs="0"/> 
+         <element name="COARIGNX" type="tbl02:CoarignxAllFieldsType" minOccurs="0"/> 
+       </all> 
+       <attribute ref="tns:rowType" use="optional" default="All"/> 
+     </complexType> 
+    
+     <complexType name="MultiRowType"> 
+       <sequence> 
+         <element name="row" type="tns:OneRowType" minOccurs="0" maxOccurs="unbounded"/> 
+       </sequence> 
+     </complexType> 
+    
+     <element name="ViewCOARIGNX_Transaction"> 
+       <complexType> 
+         <sequence> 
+           <element name="let" type="tns:letType" minOccurs="0"/> 
+           <element name="input_rows" type="tns:MultiRowType" minOccurs="0"/> 
+           <element name="return" type="tns:MultiRowType"/> 
+         </sequence> 
+       </complexType> 
+     </element> 
+    
+     <element name="ViewCOARIGNX_VIEW_FOR_ITEM_UPDATE_COMPONENTRows" type="tns:MultiRowType"/> 
+
+<!-- 
+  <complexType name="OneRowType"> 
+    <all> 
+      <element name="ARITEM" type="tbl01:AllFieldsType" minOccurs="0"/> 
+      <element name="COARIGNX" type="tbl02:AllFieldsType" minOccurs="0"/> 
+    </all> 
+    <attribute ref="tns:rowType" use="optional" default="All"/> 
+  </complexType> 
+ 
+  <complexType name="MultiRowType"> 
+    <sequence> 
+      <element name="row" type="tns:OneRowType" minOccurs="0" maxOccurs="unbounded"/> 
+    </sequence> 
+  </complexType> 
+ 
+  <element name="ViewCOARIGNX_VIEW_FOR_ITEM_UPDATE_COMPONENTTransaction"> 
+    <complexType> 
+      <sequence> 
+        <element name="let" type="tns:letType" minOccurs="0"/> 
+        <element name="input_rows" type="tns:MultiRowType" minOccurs="0"/> 
+        <element name="return" type="tns:MultiRowType"/> 
+      </sequence> 
+    </complexType> 
+  </element> 
+ 
+  <element name="ViewCOARIGNX_VIEW_FOR_ITEM_UPDATE_COMPONENTRows" type="tns:MultiRowType"/> 
+  
+-->  
+  
+  
+</schema> 

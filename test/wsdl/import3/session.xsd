@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema
+  targetNamespace="http://www.axsone.com/webdemo/exec/schemas/session"
+  xmlns:tns="http://www.axsone.com/webdemo/exec/schemas/session"
+  xmlns="http://www.w3.org/2001/XMLSchema">
+
+  <annotation>
+    <documentation xml:lang="en">
+      Session info type definition for AXS-One financial Web Services.
+      Copyright 2001 AXS-One Inc. All rights reserved.
+    </documentation>
+  </annotation>
+
+  <element name="Session">
+    <complexType>
+      <all>
+        <element name="SessionId" type="string" minOccurs="0"/>
+        <element name="ServerId" type="string" minOccurs="0"/>
+        <element name="MaintainState" type="boolean" minOccurs="0"/>
+      </all>
+    </complexType>
+  </element>
+</schema>

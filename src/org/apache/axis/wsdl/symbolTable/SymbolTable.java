@@ -107,6 +107,7 @@ import org.apache.axis.Constants;
 
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.utils.URLHashSet;
 
 import org.apache.axis.wsdl.gen.Generator;
 
@@ -352,6 +353,13 @@ public class SymbolTable {
             throw new IOException(JavaUtils.getMessage("cantGetDoc00", uri));
         }
         this.wsdlURI = uri;
+        try {
+            File f = new File(uri);
+            if(f.exists()){
+                uri = f.toURL().toString();
+            }
+        } catch (Exception e){
+        }
         populate(uri, doc);
     } // populate
 
@@ -478,7 +486,7 @@ public class SymbolTable {
      * has the problem.  If we're on the primary WSDL file, then we don't know the name and
      * filename will be null.  But we know the names of all imported files.
      */
-    private HashSet importedFiles = new HashSet();
+    private URLHashSet importedFiles = new URLHashSet();
     private void populate(URL context, Definition def, Document doc,
             String filename) throws IOException {
         if (doc != null) {
@@ -560,7 +568,7 @@ public class SymbolTable {
             String contextFileName = contextURL.getFile();
             String parentName = new File(contextFileName).getParent();
             if (parentName != null) {
-                return new URL("file", "",  parentName + "/" + path);
+                return URLHashSet.normalize(new URL("file", "",  parentName + "/" + path));
             } 
         }
         return new URL("file", "", path);
@@ -1921,5 +1929,4 @@ public class SymbolTable {
                     JavaUtils.getMessage("alreadyExists00", "" + name));
         }
     } // symbolTablePut
-
 } // class SymbolTable
