@@ -425,10 +425,13 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
             javax.xml.rpc.Stub stub = (javax.xml.rpc.Stub) Proxy.newProxyInstance(classLoader,
                     new Class[]{proxyInterface, javax.xml.rpc.Stub.class},
                     new AxisClientProxy(call, portName));
-            ((org.apache.axis.client.Stub) stub).setPortName(portName);
+            if(stub instanceof org.apache.axis.client.Stub){
+                ((org.apache.axis.client.Stub) stub).setPortName(portName);
+            }
             return (Remote) stub;
         } catch (Exception e) {
-            throw new ServiceException(e);
+            throw new ServiceException(
+                    Messages.getMessage("wsdlError00", "" + "", "\n" + e));
         }
     } // getPort
 
