@@ -81,6 +81,7 @@ import java.util.HashMap;
 public class Wsdl2javaAntTask extends Task
 {
     private boolean verbose = false;
+    private boolean debug = false;
     private boolean server = false;
     private boolean skeletonDeploy = false;
     private boolean testCase = false;
@@ -132,6 +133,7 @@ public class Wsdl2javaAntTask extends Task
     public void traceParams(int logLevel) {
         log("Running Wsdl2javaAntTask with parameters:", logLevel);
         log("\tverbose:" + verbose, logLevel);
+        log("\tdebug:" + debug, logLevel);
         log("\tserver-side:" + server, logLevel);
         log("\tskeletonDeploy:" + skeletonDeploy, logLevel);
         log("\thelperGen:" + helperGen, logLevel);
@@ -183,6 +185,7 @@ public class Wsdl2javaAntTask extends Task
             emitter.setServerSide(server);
             emitter.setSkeletonWanted(skeletonDeploy);
             emitter.setVerbose(verbose);
+            emitter.setDebug(debug);
             emitter.setTypeMappingVersion(tm);
             //TODO: extract this and make it an attribute
             emitter.setNStoPkg(project.resolveFile("NStoPkg.properties"));
@@ -231,6 +234,15 @@ public class Wsdl2javaAntTask extends Task
     public void setVerbose(boolean verbose) {
         this.verbose = verbose;
     }
+
+    /**
+     *  flag for debug output; default=false
+     *
+     *@param  debug  The new debug value
+     */   
+    public void setDebug(boolean debug) {
+        this.debug = debug;
+    } 
 
     /**
      *  emit server-side bindings for web service; default=false

@@ -273,7 +273,7 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
                     
                     // Some special handling for arrays
                     TypeEntry elemType = elem.getType();
-                    if (elemType.getRefType() != null) {
+                    while (elemType.getRefType() != null) {
                         elemType = elemType.getRefType();
                     }
                     QName xmlType = elemType.getQName();
