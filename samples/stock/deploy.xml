@@ -11,9 +11,9 @@
   <handler name="authen"  class="org.apache.axis.handlers.SimpleAuthenticationHandler" />
   <handler name="author"  class="org.apache.axis.handlers.SimpleAuthorizationHandler" />
   <chain   name="checks"  flow="authen,author" />
-  <chain   name="rpc"     flow="checks,RPCDispatcher" />
+  <chain   name="stock"   flow="checks,RPCDispatcher" />
 
-  <service name="urn:xmltoday-delayed-quotes" pivot="rpc" >
+  <service name="urn:xmltoday-delayed-quotes" pivot="stock" >
     <option name="className" value="samples.stock.StockQuoteService" />
     <option name="methodName" value="getQuote" />
   </service>
