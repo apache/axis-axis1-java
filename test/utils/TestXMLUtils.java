@@ -77,10 +77,7 @@ public class TestXMLUtils extends TestCase
     * This test method is somewhat complex, but it solves a problem people have
     * asked me about, which is how to unit test a method that has void return
     * type but writes its output to an output stream.  So half the reason for
-    * creating and using it here is as a reference point.  <i>Note</i>, the
-    * XMLUtils class does not omit the XML declaration when it does
-    * ElementToStream, which is different behavior from its toString() method.
-    * Might mention that to te developers.
+    * creating and using it here is as a reference point.
     */
     public void testElementToStream() throws IOException
     {
@@ -116,12 +113,7 @@ public class TestXMLUtils extends TestCase
         //don't forget to close this end of the pipe (ConsumerPipe closes the other end).
         out.close();
         
-        /* 
-        * Unlike toString(), the XML declaration is not ommitted so we check to
-        * make sure it's there.
-        */
-        assert(result.startsWith("<?xml version=")); 
-        assert(result.endsWith(expected));
+        assertEquals(expected, result);
     }
     
     /**
