@@ -81,45 +81,23 @@ public class TestCaseEmitter {
 
     private final PrintWriter writer;
     private final String className;
-    private final String packageName;
     private final Emitter emitter;
     private int state = IMPORTS;
 
-    public TestCaseEmitter(PrintWriter testCase, String packageName, String className, Emitter emit) {
+    public TestCaseEmitter(PrintWriter testCase, String className, Emitter emit) {
         this.emitter = emit;
         this.writer = testCase;
         this.className = className;
-        if (packageName == null) {
-            this.packageName = null;
-        } else {
-            this.packageName = packageName;
-        }
-        this.initFile();
     }
 
-    private final void initFile() {
-         if (this.packageName != null) {
-            writer.print("package ");
-            writer.print(this.packageName);
-            writer.println(";");
-        }
-
-        writer.println();
-    }
-
-    public final void writeHeader(String filename) {
+    public final void writeHeader(String filename, String namespace) {
         if (this.state > IMPORTS) {
             throw new IllegalStateException("You cannot write the header now!");
         }
 
+        emitter.writeFileHeader(filename, namespace, writer);
         this.state = HEADER;
-        writer.println("/**");
-        writer.print(" * ");
-        writer.println(filename);
-        writer.println(" *");
-        writer.println(" * This file was auto-generated from WSDL");
-        writer.println(" * by the Apache Axis Wsdl2java emitter.");
-        writer.println(" */");
+
         writer.print("public class ");
         writer.print(this.className);
         writer.println(" extends junit.framework.TestCase {");
@@ -182,7 +160,8 @@ public class TestCaseEmitter {
         while (ops.hasNext()) {
             writer.println("        try {");
             Operation op = (Operation) ops.next();
-            Emitter.Parameters params = this.emitter.parameters(op);
+            String namespace = (String) emitter.getNamespaces().get(port.getQName().getNamespaceURI());
+            Emitter.Parameters params = this.emitter.parameters(op, namespace);
 
             if ( !"void".equals( params.returnType ) ) {
                 writer.print(INDENT);
