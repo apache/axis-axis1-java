@@ -109,6 +109,7 @@ public class Emitter {
     protected boolean bEmitTestCase = false;
     protected boolean bVerbose = false;
     protected boolean bGenerateImports = true;
+    protected boolean bGenerateAll = false;
     protected String outputDir = null;
     protected String packageName = null;
     protected byte scope = NO_EXPLICIT_SCOPE;
@@ -208,8 +209,7 @@ public class Emitter {
                     // that didn't contain a binding, merely a service that referred
                     // to a non-existent binding.  Don't bother writing it.
                     // If this isn't a SOAP binding, don't bother writing it, either.
-                    if (binding.isUndefined() ||
-                        bEntry.getBindingType() != BindingEntry.TYPE_SOAP) {
+                    if (binding.isUndefined()) {
                         continue;
                     }
                     writer = writerFactory.getWriter(binding, symbolTable);
@@ -304,6 +304,17 @@ public class Emitter {
     public void generateImports(boolean generateImports) {
         this.bGenerateImports = generateImports;
     } // generateImports
+
+    /**
+     * By default, code is generated only for referenced elements.
+     * Call generateAll(true) and WSDL2Java will generate code for all
+     * elements in the scope regardless of whether they are
+     * referenced.  Scope means:  by default, all WSDL files; if
+     * generateImports(false), then only the immediate WSDL file.
+     */
+     public void generateAll(boolean all) {
+         bGenerateAll = all;
+     } // generateAll
 
     /**
      * Turn on/off debug messages.

@@ -95,7 +95,12 @@ public class JavaWriterFactory implements WriterFactory {
         this.symbolTable = symbolTable;
         javifyNames(symbolTable);
         resolveNameClashes(symbolTable);
-        ignoreNonSOAPBindingPortTypes(symbolTable);
+        if (emitter.bGenerateAll) {
+            setAllReferencesToTrue();
+        }
+        else {
+            ignoreNonSOAPBindings(symbolTable);
+        }
         constructSignatures(symbolTable);
         determineIfHoldersNeeded(symbolTable);
     } // writerPass
@@ -319,9 +324,25 @@ public class JavaWriterFactory implements WriterFactory {
     }
 
     /**
-     * If a binding's type is not TYPE_SOAP, then we don't use that binding's portType.
+     * The --all flag is set on the command line (or generateAll(true) is called on WSDL2Java).
+     * Set all symbols as referenced.
      */
-    private void ignoreNonSOAPBindingPortTypes(SymbolTable symbolTable) {
+    private void setAllReferencesToTrue() {
+        Iterator it = symbolTable.getHashMap().values().iterator();
+        while (it.hasNext()) {
+            Vector v = (Vector) it.next();
+            for (int i = 0; i < v.size(); ++i) {
+                SymTabEntry entry = (SymTabEntry) v.elementAt(i);
+                entry.setIsReferenced(true);
+            }
+        }
+    } // setAllReferencesToTrue
+
+    /**
+     * If a binding's type is not TYPE_SOAP, then we don't use that binding
+     * or that binding's portType.
+     */
+    private void ignoreNonSOAPBindings(SymbolTable symbolTable) {
 
         // Look at all uses of the portTypes.  If none of the portType's bindings are of type
         // TYPE_SOAP, then turn off that portType's isReferenced flag.
@@ -352,6 +373,8 @@ public class JavaWriterFactory implements WriterFactory {
                         }
                     }
                     else {
+                        bEntry.setIsReferenced(false);
+
                         // If a binding is not of type TYPE_SOAP, then mark its portType as
                         // unused ONLY if it hasn't already been marked as used.
                         if (!usedPortTypes.contains(ptEntry)) {
@@ -368,7 +391,7 @@ public class JavaWriterFactory implements WriterFactory {
             PortTypeEntry ptEntry = (PortTypeEntry) unusedPortTypes.get(i);
             ptEntry.setIsReferenced(false);
         }
-    } // ignoreNonSOAPBindingPortTypes
+    } // ignoreNonSOAPBindings
 
     private void constructSignatures(SymbolTable symbolTable) {
         Iterator it = symbolTable.getHashMap().values().iterator();

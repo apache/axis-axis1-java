@@ -53,34 +53,47 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.wsdl.toJava;
-
-import java.util.HashMap;
-
-import javax.wsdl.PortType;
-import javax.wsdl.QName;
-
 /**
-* This class represents a WSDL portType.  It encompasses the WSDL4J PortType object so it can
-* reside in the SymbolTable.  It also adds the parameter information, which is missing from the
-* WSDL4J PortType object.
-*/
-public class PortTypeEntry extends SymTabEntry {
-    private PortType portType;
+ * This tests the file generation of only the items that are referenced in WSDL
+ * 
+ */ 
+package test.wsdl.filegen;
+
+import java.io.File;
+
+import java.util.HashSet;
+import java.util.Set;
+
+public class AllOptionTestCase extends FileGenTestCase {
+    public AllOptionTestCase(String name) {
+        super(name);
+    }
 
     /**
-     * Construct a PortTypeEntry from a WSDL4J PortType object and a HashMap of Parameters objects,
-     * keyed off of the operation name.
+     * List of files which should be generated.
      */
-    public PortTypeEntry(PortType portType) {
-        super(portType.getQName());
-        this.portType = portType;
-    } // ctor
+    protected Set shouldExist() {
+        HashSet set = new HashSet();
+        set.add("Address.java");
+        set.add("InvalidTickerFaultMessage.java");
+        set.add("OpFault.java");
+        set.add("PortTypeNotSoap.java");
+        set.add("PortTypeSoap.java");
+        set.add("ReferenceHttpGetStub.java");
+        set.add("ReferenceService.java");
+        set.add("ReferenceServiceLocator.java");
+        set.add("ReferenceSoapBindingStub.java");
+        set.add("StateType.java");
+        return set;
+    } // shouldExist
 
     /**
-     * Get this entry's PortType object.
+     * The directory containing the files that should exist.
      */
-    public PortType getPortType() {
-        return portType;
-    } // getPortType
-} // class PortTypeEntry
+    protected String rootDir() {
+        return "build" + File.separator + "work" + File.separator + 
+                "test" + File.separator + "wsdl" + File.separator +
+                "filegenAll";
+    } // rootDir
+
+} // class AllOptionTestCase
