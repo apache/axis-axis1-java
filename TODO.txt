@@ -29,7 +29,27 @@ Bugzillas for beta 3: (must:  must fix; nice:  it would be nice to have; post:  
 9405 - must - Tom
 9452 - post
 9473 - post
-9642 ...
+9642 - nice - Russell
+9659 - pend - Glen
+9665 - nice - Rich
+9667 - dup of 9665
+9717 - must - Tom
+9767 - must - Russell
+9773 - post
+9780 - must - Rick
+9815 - nice - ?
+9818 - nice - Rich
+9826 - nice - Glen
+9874 - nice - dims
+9875 - must - Rich
+9881 - post
+9882 - nice - Russell
+9952 - must - Glyn
+9966 - nice - Tom (like 9717)
+9967 - nice - Tom (like 9717 and 9966)
+9987 - must - Glen
+9992 - must - dims
+10003 - post
 
 
 MESSAGE PARSING / ENCODING
