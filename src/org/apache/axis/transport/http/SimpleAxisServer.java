@@ -160,6 +160,7 @@ public class SimpleAxisServer implements Runnable {
         // buffers for the headers we care about
         StringBuffer soapAction = new StringBuffer();
         StringBuffer httpRequest = new StringBuffer();
+        StringBuffer fileName = new StringBuffer();
         StringBuffer cookie = new StringBuffer();
         StringBuffer cookie2 = new StringBuffer();
         
@@ -205,7 +206,7 @@ public class SimpleAxisServer implements Runnable {
                     is.setInputStream(socket.getInputStream());
                     // parse all headers into hashtable
                     int contentLength = parseHeaders(is, soapAction, httpRequest,
-                        cookie, cookie2);
+                        fileName, cookie, cookie2);
                     is.setContentLength(contentLength);
 
                     // if get, then return simpleton document as response
@@ -227,6 +228,8 @@ public class SimpleAxisServer implements Runnable {
                     msgContext.setTargetService(soapActionString);
                     msgContext.setProperty(HTTPConstants.MC_HTTP_SOAPACTION,
                                            soapActionString);
+                    msgContext.setProperty(Constants.MC_REALPATH,
+                                           fileName.toString());
                     
                     // set up session, if any
                     if (doSessions) {
@@ -401,6 +404,7 @@ public class SimpleAxisServer implements Runnable {
     private int parseHeaders(InputStream is,
                              StringBuffer soapAction,
                              StringBuffer httpRequest,
+                             StringBuffer fileName,
                              StringBuffer cookie,
                              StringBuffer cookie2)
       throws IOException
@@ -417,12 +421,21 @@ public class SimpleAxisServer implements Runnable {
         
         // which does it begin with?
         httpRequest.delete(0, httpRequest.length());
+        fileName.delete(0, fileName.length());
+        
         if (buf[0] == getHeader[0]) {
             httpRequest.append("GET");
             // return immediately, don't look for more headers
             return 0;
         } else if (buf[0] == postHeader[0]) {
             httpRequest.append("POST");
+            for (int i = 0; i < n - 6; i++) {
+                char c = (char)(buf[i + 6] & 0x7f);
+                if (c == ' ')
+                    break;
+                fileName.append(c);
+            }
+            Debug.Print(2, "SimpleAxisServer: req filename='" + fileName.toString() + "'");
         } else {
             throw new IOException("Cannot handle non-GET, non-POST request");
         }
