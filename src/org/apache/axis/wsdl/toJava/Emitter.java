@@ -89,6 +89,8 @@ public class Emitter extends Parser {
     
     private boolean bBuildFileGeneration = false;
 
+    private boolean typeCollisionProtection = true;
+
     /** Field packageName */
     private String packageName = null;
 
@@ -882,4 +884,20 @@ public class Emitter extends Parser {
     public void generateAll(boolean all) {
         setAllWanted(all);
     }    // generateAll
+    
+    /**
+     * Get the type collision protection setting
+     * @return
+     */
+    public boolean isTypeCollisionProtection(){
+        return this.typeCollisionProtection;
+    }
+    
+    /**
+     * Enable/disable type collision protection
+     * @param value
+     */
+    public void setTypeCollisionProtection(boolean value){
+        this.typeCollisionProtection = value;
+    }
 }

@@ -608,21 +608,23 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                 typeQName = new QName(typeQName.getNamespaceURI(),
                         localName);
 
-                // If there is already an existing type,
-                // there will be a collision.
-                // If there is an existing anon type,
-                // there will be a  collision.
-                // In both cases, mangle the name.
-                symbolTable.getType(typeQName);
-
-                if (anonQNames.get(typeQName) != null) {
-                    localName += "Type" + uniqueNum++;
-                    typeQName =
-                    new QName(typeQName.getNamespaceURI(),
-                            localName);
+                if (emitter.isTypeCollisionProtection()) {
+                    // If there is already an existing type,
+                    // there will be a collision.
+                    // If there is an existing anon type,
+                    // there will be a  collision.
+                    // In both cases, mangle the name.
+                    symbolTable.getType(typeQName);
+                    
+                    if (anonQNames.get(typeQName) != null) {
+                        localName += "Type" + uniqueNum++;
+                        typeQName =
+                            new QName(typeQName.getNamespaceURI(),
+                                      localName);
+                    }
+                    
+                    anonQNames.put(typeQName, typeQName);
                 }
-
-                anonQNames.put(typeQName, typeQName);
 
                 // Now set the name with the constructed qname
                 tEntry.setName(emitter.getJavaName(typeQName));
