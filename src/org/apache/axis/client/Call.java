@@ -1071,6 +1071,11 @@ public class Call implements javax.xml.rpc.Call {
                 break ;
             }
         }
+
+        // Indicate that the parameters and return no longer
+        // need to be specified with addParameter calls.
+        parmAndRetReq = false;
+        return;
     }
 
     /**
