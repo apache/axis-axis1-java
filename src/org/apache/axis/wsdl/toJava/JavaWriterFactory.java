@@ -271,19 +271,19 @@ public class JavaWriterFactory implements WriterFactory {
                         // else if (entry instanceof MessageEntry) {
                         //     we don't care about messages
                         // }
-                         else if (entry instanceof BindingEntry) {
-                             BindingEntry bEntry = (BindingEntry) entry;
+                        else if (entry instanceof BindingEntry) {
+                            BindingEntry bEntry = (BindingEntry) entry;
 
-                             // If there is no literal use, then we never see a
-                             // class named directly from the binding name.  They
-                             // all have suffixes:  Stub, Skeleton, Impl.
-                             // If there IS literal use, then the SDI will be
-                             // named after the binding name, so there is the
-                             // possibility of a name clash.
-                             if (bEntry.hasLiteral()) {
-                                 entry.setName(mangleName(entry.getName(),
-                                         "_Binding"));
-                             }
+                            // If there is no literal use, then we never see a
+                            // class named directly from the binding name.  They
+                            // all have suffixes:  Stub, Skeleton, Impl.
+                            // If there IS literal use, then the SDI will be
+                            // named after the binding name, so there is the
+                            // possibility of a name clash.
+                            if (bEntry.hasLiteral()) {
+                                entry.setName(mangleName(entry.getName(),
+                                        "_Binding"));
+                            }
                         }
                     }
                 }
