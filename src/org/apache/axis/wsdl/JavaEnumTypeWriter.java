@@ -54,58 +54,49 @@
  */
 package org.apache.axis.wsdl;
 
-import java.util.HashMap;
+import java.io.IOException;
 
-import javax.wsdl.Binding;
-import javax.wsdl.PortType;
-import javax.wsdl.Service;
+import java.util.Vector;
+
+import org.w3c.dom.Node;
 
 /**
-* This is Wsdl2java's implementation of the WriterFactory.
+* This is Wsdl2java's Complex Type Writer.  It writes the <typeName>.java file.
 */
-
-public class JavaWriterFactory implements WriterFactory {
-    private Emitter emitter;
+public class JavaEnumTypeWriter extends JavaWriter {
+    private Type type;
+    private Vector elements;
 
     /**
-     * Default constructor.  Note that this class is unusable until setEmitter
-     * is called.
+     * Constructor.
      */
-    public JavaWriterFactory() {
+    protected JavaEnumTypeWriter(
+            Emitter emitter,
+            Type type, Vector elements) {
+        super(emitter, type.getQName(), "", "java", "Generating type implementation:  ");
+        this.type = type;
+        this.elements = elements;
     } // ctor
 
-    /**
-     * Provide the emitter object to this class.
+   /**
+     * Generate the binding for the given enumeration type.
+     * The values vector contains the base type (first index) and
+     * the values (subsequent Strings)
      */
-    public void setEmitter(Emitter emitter) {
-        this.emitter = emitter;
-    } // setEmitter
+    protected void writeFileBody() throws IOException {
+        Node node = type.getNode();
 
-    /**
-     * Return Wsdl2java's JavaPortTypeWriter object.
-     */
-    public Writer getWriter(PortType portType, HashMap operationParameters) {
-        return new JavaPortTypeWriter(emitter, portType, operationParameters);
-    } // getWriter
+        // The first index is the base type.  Get its java name.
+        String baseType = ((Type) elements.get(0)).getJavaName();
 
-    /**
-     * Return Wsdl2java's JavaBindingWriter object.
-     */
-    public Writer getWriter(Binding binding, HashMap operationParameters) {
-        return new JavaBindingWriter(emitter, binding, operationParameters);
-    } // getWriter
+        pw.println("public class " + className + " implements java.io.Serializable {");
+        for (int i=1; i < elements.size(); i++) {
+            pw.println("    public static final " + baseType + " _" + elements.get(i)
+                           + " = \"" + elements.get(i) + "\";");
+        }
 
-    /**
-     * Return Wsdl2java's JavaServiceWriter object.
-     */
-    public Writer getWriter(Service service, HashMap portTypeOperationParameters) {
-        return new JavaServiceWriter(emitter, service, portTypeOperationParameters);
-    } // getWriter
+        pw.println("}");
+        pw.close();
+    } // writeOperation
 
-    /**
-     * Return Wsdl2java's JavaTypeWriter object.
-     */
-    public Writer getWriter(Type type) {
-        return new JavaTypeWriter(emitter, type);
-    } // getWriter
-} // class JavaWriterFactory
+} // class JavaEnumTypeWriter

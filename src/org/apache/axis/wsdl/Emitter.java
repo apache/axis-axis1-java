@@ -835,18 +835,11 @@ public class Emitter {
 
             HashMap portTypeInfo = (HashMap) portTypesInfo.get(binding.getPortType());
 
-            writeBinding(binding, portTypeInfo);
+            HashMap operationParameters = (HashMap) portTypesInfo.get(binding.getPortType());
+            Writer writer = writerFactory.getWriter(binding, operationParameters);
+            writer.write();
         }
     } // writeBindings
-
-    /**
-     * Generate a stub and a skeleton for the given binding tag.
-     */
-    private void writeBinding(Binding binding, HashMap portTypeInfo) throws IOException {
-        HashMap operationParameters = (HashMap) portTypesInfo.get(binding.getPortType());
-        Writer writer = writerFactory.getWriter(binding, operationParameters);
-        writer.write();
-    } // writeBinding
 
     /**
      * Create the service class or classes
@@ -856,17 +849,10 @@ public class Emitter {
         Iterator i = services.values().iterator();
 
         while (i.hasNext()) {
-            Service s = (Service) i.next();
-            writeService(s);
-        }
-    }
-
-    /**
-     * Write out a single service class
-     */
-    private void writeService(Service service) throws IOException {
-        Writer writer = writerFactory.getWriter(service, portTypesInfo);
-        writer.write();
+            Service service = (Service) i.next();
+            Writer writer = writerFactory.getWriter(service, portTypesInfo);
+            writer.write();
+       }
     }
 
     /**
@@ -1052,158 +1038,11 @@ public class Emitter {
         while (i.hasNext()) {
             Type type = (Type) i.next();
             if (type.isDefined() && type.getBaseType() == null) {
-                writeType(type);
-                writeHolder(type);
+                Writer writer = writerFactory.getWriter(type);
+                writer.write();
             }
         }
     } // writeTypes
-
-    /**
-     * Generate the binding for the given type.
-     */
-    private void writeType(Type type) throws IOException {
-
-        Node node = type.getNode();
-
-        // Generate the proper class for either "complex" or "enumeration" types
-        Vector v = emitFactory.getComplexElementTypesAndNames(node);
-        if (v != null)
-            writeComplexType(type, v);
-        else {
-            v = emitFactory.getEnumerationBaseAndValues(node);
-            if (v != null) {
-                writeEnumType(type, v);
-            }
-        }
-    } // writeType
-
-   /**
-     * Generate the binding for the given complex type.
-     * The elements vector contains the Types (even indices) and
-     * element names (odd indices) of the contained elements
-     */
-    private void writeComplexType(Type type, Vector elements) throws IOException {
-        Node node = type.getNode();
-
-        // We are only interested in the java names of the types, so replace the
-        // Types in the list with their java names.
-        for (int i=0; i < elements.size(); i+=2) {
-            elements.setElementAt(((Type) elements.get(i)).getJavaName(), i);
-        }
-
-        String javaName = type.getJavaLocalName();
-
-        PrintWriter typePW = printWriter(type.getQName(), null, "java", "Generating type implementation:  ");
-
-        writeFileHeader(javaName + ".java", type.getJavaPackageName(), typePW);
-        typePW.println("public class " + javaName + " implements java.io.Serializable {");
-
-        for (int i = 0; i < elements.size(); i += 2) {
-            String variable = (String) elements.get(i + 1);
-            if (Utils.isJavaKeyword(variable)) {
-                variable = Utils.makeNonJavaKeyword(variable);
-            }
-            typePW.println("    private " + elements.get(i) + " " + variable + ";");
-        }
-
-        typePW.println();
-        typePW.println("    public " + javaName + "() {");
-        typePW.println("    }");
-        typePW.println();
-        if (elements.size() > 0) {
-            typePW.print("    public " + javaName + "(");
-            for (int i = 0; i < elements.size(); i += 2) {
-                if (i != 0) typePW.print(", ");
-                String variable = (String) elements.get(i + 1);
-                if (Utils.isJavaKeyword(variable)) {
-                    variable = Utils.makeNonJavaKeyword(variable);
-                }
-                typePW.print((String) elements.get(i) + " " + variable);
-            }
-            typePW.println(") {");
-            for (int i = 1; i < elements.size(); i += 2) {
-                String variable = (String) elements.get(i);
-                if (Utils.isJavaKeyword(variable)) {
-                    variable = Utils.makeNonJavaKeyword(variable);
-                }
-                typePW.println("        this." + variable + " = " + variable + ";");
-            }
-            typePW.println("    }");
-        }
-        typePW.println();
-        for (int i = 0; i < elements.size(); i += 2) {
-            String typeName = (String) elements.get(i);
-            String name = (String) elements.get(i + 1);
-            String capName = Utils.capitalize(name);
-
-            if (Utils.isJavaKeyword(name)) {
-                name = Utils.makeNonJavaKeyword(name);
-            }
-            typePW.println("    public " + typeName + " get" + capName + "() {");
-            typePW.println("        return " + name + ";");
-            typePW.println("    }");
-            typePW.println();
-            typePW.println("    public void set" + capName + "(" + typeName + " " + name + ") {");
-            typePW.println("        this." + name + " = " + name + ";");
-            typePW.println("    }");
-            typePW.println();
-        }
-        typePW.println("}");
-        typePW.close();
-    } // writeComplexType
-
-   /**
-     * Generate the binding for the given enumeration type.
-     * The values vector contains the base type (first index) and
-     * the values (subsequent Strings)
-     */
-    private void writeEnumType(Type eType, Vector values) throws IOException {
-
-        Node node = eType.getNode();
-
-        // The first index is the base type.  Get its java name.
-        String baseType = ((Type) values.get(0)).getJavaName();
-
-        String javaName = eType.getJavaLocalName();
-
-        PrintWriter typePW = printWriter(eType.getQName(), null, "java", "Generating enum type implementation:  ");
-
-        writeFileHeader(javaName + ".java", eType.getJavaPackageName(), typePW);
-        typePW.println("public class " + javaName + " implements java.io.Serializable {");
-        for (int i=1; i < values.size(); i++) {
-            typePW.println("    public static final " + baseType + " _" + values.get(i)
-                           + " = \"" + values.get(i) + "\";");
-        }
-
-        typePW.println("}");
-        typePW.close();
-    } // writeEnumType
-
-    /**
-     * Generate the holder for the given complex type.
-     */
-    private void writeHolder(Type type) throws IOException {
-        Node node = type.getNode();
-        String javaName = type.getJavaLocalName();
-
-        PrintWriter pw = printWriter(type.getQName(), "Holder", "java", "Generating type implementation holder:  ");
-
-        writeFileHeader(javaName + "Holder.java", type.getJavaPackageName(), pw);
-        pw.println("public final class " + javaName + "Holder implements java.io.Serializable {");
-        pw.println("    public " + javaName + " _value;");
-        pw.println();
-        pw.println("    public " + javaName + "Holder() {");
-        pw.println("    }");
-        pw.println();
-        pw.println("    public " + javaName + "Holder(" + javaName + " value) {");
-        pw.println("        this._value = value;");
-        pw.println("    }");
-        pw.println();
-        pw.println("    // ??? what else?");
-        pw.println("}");
-        pw.close();
-    } // writeHolder
-
 
     //
     // Methods using types (non WSDL)

@@ -54,58 +54,57 @@
  */
 package org.apache.axis.wsdl;
 
-import java.util.HashMap;
+import java.io.IOException;
 
-import javax.wsdl.Binding;
-import javax.wsdl.PortType;
-import javax.wsdl.Service;
+import java.util.Vector;
+
+import javax.wsdl.QName;
+
+import org.w3c.dom.Node;
 
 /**
-* This is Wsdl2java's implementation of the WriterFactory.
+* This is Wsdl2java's Type Writer.  It writes the following files, as appropriate:
+* <typeName>.java, <typeName>Holder.java.
 */
-
-public class JavaWriterFactory implements WriterFactory {
-    private Emitter emitter;
+public class JavaTypeWriter implements Writer {
+    Writer typeWriter = null;
+    Writer holderWriter = null;
 
     /**
-     * Default constructor.  Note that this class is unusable until setEmitter
-     * is called.
+     * Constructor.
      */
-    public JavaWriterFactory() {
+    protected JavaTypeWriter(
+            Emitter emitter,
+            Type type) {
+        QName typeQName = new QName(type.getQName().getNamespaceURI(), type.getJavaLocalName());
+        type.setQName (typeQName);
+
+        // Determine what sort of type this is and instantiate the appropriate Writer.
+        Node node = type.getNode();
+
+        // Generate the proper class for either "complex" or "enumeration" types
+        Vector v = emitter.getTypeFactory().getComplexElementTypesAndNames(node);
+        if (v != null) {
+            typeWriter = new JavaComplexTypeWriter(emitter, type, v);
+        }
+        else {
+            v = emitter.getTypeFactory().getEnumerationBaseAndValues(node);
+            if (v != null) {
+                typeWriter = new JavaEnumTypeWriter(emitter, type, v);
+            }
+        }
+
+        holderWriter = new JavaHolderWriter(emitter, type);
     } // ctor
 
     /**
-     * Provide the emitter object to this class.
+     * Write all the service bindnigs:  service and testcase.
      */
-    public void setEmitter(Emitter emitter) {
-        this.emitter = emitter;
-    } // setEmitter
+    public void write() throws IOException {
+        typeWriter.write();
+        if (holderWriter != null) {
+            holderWriter.write();
+        }
+    } // write
 
-    /**
-     * Return Wsdl2java's JavaPortTypeWriter object.
-     */
-    public Writer getWriter(PortType portType, HashMap operationParameters) {
-        return new JavaPortTypeWriter(emitter, portType, operationParameters);
-    } // getWriter
-
-    /**
-     * Return Wsdl2java's JavaBindingWriter object.
-     */
-    public Writer getWriter(Binding binding, HashMap operationParameters) {
-        return new JavaBindingWriter(emitter, binding, operationParameters);
-    } // getWriter
-
-    /**
-     * Return Wsdl2java's JavaServiceWriter object.
-     */
-    public Writer getWriter(Service service, HashMap portTypeOperationParameters) {
-        return new JavaServiceWriter(emitter, service, portTypeOperationParameters);
-    } // getWriter
-
-    /**
-     * Return Wsdl2java's JavaTypeWriter object.
-     */
-    public Writer getWriter(Type type) {
-        return new JavaTypeWriter(emitter, type);
-    } // getWriter
-} // class JavaWriterFactory
+} // class JavaTypeWriter

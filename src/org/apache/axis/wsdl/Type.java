@@ -100,6 +100,13 @@ public class Type {
     }
 
     /**
+     * Set the QName
+     */
+    public void setQName(QName qName) {
+        this.qName = qName;
+    }
+
+    /**
      * Query Java Mapping Name
      */
     public String getJavaName() {

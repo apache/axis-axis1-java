@@ -54,58 +54,40 @@
  */
 package org.apache.axis.wsdl;
 
-import java.util.HashMap;
-
-import javax.wsdl.Binding;
-import javax.wsdl.PortType;
-import javax.wsdl.Service;
+import java.io.IOException;
 
 /**
-* This is Wsdl2java's implementation of the WriterFactory.
+* This is Wsdl2java's Holder Writer.  It writes the <typeName>Holder.java file.
 */
-
-public class JavaWriterFactory implements WriterFactory {
-    private Emitter emitter;
+public class JavaHolderWriter extends JavaWriter {
+    private Type type;
 
     /**
-     * Default constructor.  Note that this class is unusable until setEmitter
-     * is called.
+     * Constructor.
      */
-    public JavaWriterFactory() {
+    protected JavaHolderWriter(Emitter emitter, Type type) {
+        super(emitter, type.getQName(), "Holder", "java", "Generating type implementation holder:  ");
+        this.type = type;
     } // ctor
 
     /**
-     * Provide the emitter object to this class.
+     * Generate the holder for the given complex type.
      */
-    public void setEmitter(Emitter emitter) {
-        this.emitter = emitter;
-    } // setEmitter
+    protected void writeFileBody() throws IOException {
+        String holderType = qname.getLocalPart();
+        pw.println("public final class " + className + " implements java.io.Serializable {");
+        pw.println("    public " + holderType + " _value;");
+        pw.println();
+        pw.println("    public " + className + "() {");
+        pw.println("    }");
+        pw.println();
+        pw.println("    public " + className + "(" + holderType + " value) {");
+        pw.println("        this._value = value;");
+        pw.println("    }");
+        pw.println();
+        pw.println("    // ??? what else?");
+        pw.println("}");
+        pw.close();
+    } // writeOperation
 
-    /**
-     * Return Wsdl2java's JavaPortTypeWriter object.
-     */
-    public Writer getWriter(PortType portType, HashMap operationParameters) {
-        return new JavaPortTypeWriter(emitter, portType, operationParameters);
-    } // getWriter
-
-    /**
-     * Return Wsdl2java's JavaBindingWriter object.
-     */
-    public Writer getWriter(Binding binding, HashMap operationParameters) {
-        return new JavaBindingWriter(emitter, binding, operationParameters);
-    } // getWriter
-
-    /**
-     * Return Wsdl2java's JavaServiceWriter object.
-     */
-    public Writer getWriter(Service service, HashMap portTypeOperationParameters) {
-        return new JavaServiceWriter(emitter, service, portTypeOperationParameters);
-    } // getWriter
-
-    /**
-     * Return Wsdl2java's JavaTypeWriter object.
-     */
-    public Writer getWriter(Type type) {
-        return new JavaTypeWriter(emitter, type);
-    } // getWriter
-} // class JavaWriterFactory
+} // class JavaHolderWriter
