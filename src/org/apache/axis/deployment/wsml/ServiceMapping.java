@@ -85,8 +85,11 @@ public class ServiceMapping implements DeploymentDocument {
     public Document getDOMDocument() throws DeploymentException {
         return null;
     }
-    
-    public void importItem(DeployableItem item) throws DeploymentException {
-        throw new DeploymentException(JavaUtils.getMessage("notImplemented00", "importItem"));
+
+    /**
+     * Undeploy the contents of this document from the given registry.
+     */
+    public void undeploy(DeploymentRegistry registry)
+            throws DeploymentException {
     }
 }

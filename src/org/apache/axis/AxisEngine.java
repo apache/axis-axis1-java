@@ -389,6 +389,12 @@ public abstract class AxisEngine extends BasicHandler
         }
     }
     
+    public void undeployWSDD(WSDDDocument doc)
+        throws DeploymentException
+    {
+        doc.undeploy(myRegistry);
+    }
+    
     /**
      * Deploy a Handler into our handler registry
      */
