@@ -60,15 +60,14 @@ import java.io.*;
 import java.util.*;
 
 import org.apache.axis.AxisFault ;
-import org.apache.axis.client.ServiceClient ;
+import org.apache.axis.Constants ;
+import org.apache.axis.client.Service ;
 import org.apache.axis.client.Transport ;
 import org.apache.axis.transport.http.HTTPConstants;
-import org.apache.axis.message.RPCParam ;
+import org.apache.axis.rpc.Call ;
+import org.apache.axis.encoding.XMLType ;
 
 import org.apache.axis.utils.Options ;
-import org.apache.axis.utils.QName ;
-import org.apache.axis.encoding.ServiceDescription;
-import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 
 /**
  *
@@ -88,23 +87,25 @@ public class GetQuote {
         System.exit(1);
       }
 
-      String namespace = "urn:xmltoday-delayed-quotes";
       symbol = args[0] ;
 
-      ServiceClient call = new ServiceClient(opts.getURL());
-      ServiceDescription sd = new ServiceDescription("stockQuotes", true);
-      sd.addInputParam("symbol", SOAPTypeMappingRegistry.XSD_STRING);
-      sd.setOutputType(SOAPTypeMappingRegistry.XSD_FLOAT);
-      call.setServiceDescription(sd);
-      
+      Service  service = new Service();
+      Call     call    = service.createCall();
+
+      call.setTargetEndpointAddress( new URL(opts.getURL()) );
+      call.setOperationName( "getQuote" );
+      call.setProperty( Constants.NAMESPACE, "urn:xmltoday-delayed-quotes" );
+      call.addParameter( "symbol", XMLType.XSD_STRING, Call.PARAM_MODE_IN );
+      call.setReturnType( XMLType.XSD_FLOAT );
+
       // TESTING HACK BY ROBJ
       if (symbol.equals("XXX_noaction")) {
           symbol = "XXX";
-          call.set(HTTPConstants.MC_HTTP_SOAPACTION, "");
+          call.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, "" );
       }
 
-      call.set( Transport.USER, opts.getUser() );
-      call.set( Transport.PASSWORD, opts.getPassword() );
+      call.setProperty( Transport.USER, opts.getUser() );
+      call.setProperty( Transport.PASSWORD, opts.getPassword() );
 
       // useful option for profiling - perhaps we should remove before
       // shipping?
@@ -117,8 +118,7 @@ public class GetQuote {
 
       Float res = new Float(0.0F);
       for (int i=0; i<count; i++) {
-          Object ret = call.invoke(
-          namespace, "getQuote", new Object[] {symbol} );
+          Object ret = call.invoke( new Object[] {symbol} );
           if (ret instanceof String) {
               System.out.println("Received problem response from server: "+ret);
               throw new AxisFault("", (String)ret, null, null);
