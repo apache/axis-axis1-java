@@ -335,6 +335,8 @@ public class Message extends javax.xml.soap.SOAPMessage
                           ex);
                 throw new RuntimeException(ex.getMessage());
             }
+        } else if (contentType != null && contentType.startsWith("multipart")){
+            throw new RuntimeException(Messages.getMessage("noAttachments"));
         }
 
         // text/xml
