@@ -57,9 +57,6 @@ package org.apache.axis.configuration;
 
 import org.apache.axis.EngineConfigurationFactory;
 import org.apache.axis.EngineConfiguration;
-import javax.xml.rpc.namespace.QName;
-import org.apache.axis.Handler;
-import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.Constants;
 
 /**
@@ -135,44 +132,6 @@ public class DefaultEngineConfigurationFactory implements EngineConfigurationFac
             return new FileProvider(serverConfigFile);
         } else {
             return userFactory.getServerEngineConfig();
-        }
-    }
-   
-    /**
-     * Get a default client engine configuration plus the specified
-     * transport Handler. This method is particularly useful for testcases.
-     *
-     * @param name a QName that identifies the transport
-     * @param transport a Handler for the transport
-     * @return a client EngineConfiguration
-     */
-    public EngineConfiguration getClientEngineConfigWithTransport(QName qname,
-                                                                  Handler transport) {
-        if (userFactory == null) {
-            SimpleProvider config = new SimpleProvider(new FileProvider(clientConfigFile));
-            config.deployTransport(qname, transport);
-            return config;
-        } else {
-            return userFactory.getClientEngineConfigWithTransport(qname, transport);
-        }
-    }
-
-    /**
-     * Get a default server engine configuration plus the specified
-     * service Handler. This method is particularly useful for testcases.
-     *
-     * @param name a QName that identifies the service
-     * @param service a Handler for the service
-     * @return a server EngineConfiguration
-     */
-    public EngineConfiguration getServerEngineConfigWithService(QName qname,
-                                                                Handler service) {
-        if (userFactory == null) {
-            SimpleProvider config = new SimpleProvider(new FileProvider(serverConfigFile));
-            config.deployService(qname, (SOAPService)service);
-            return config;
-        } else {
-            return userFactory.getServerEngineConfigWithService(qname, service);
         }
     }
 }

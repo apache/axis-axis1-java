@@ -57,7 +57,9 @@ package samples.transport.tcp ;
 
 import org.apache.axis.client.Call;
 import org.apache.axis.SimpleTargetedChain;
+import org.apache.axis.EngineConfiguration;
 import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
+import org.apache.axis.configuration.SimpleProvider;
 
 import javax.xml.rpc.namespace.QName;
 
@@ -75,10 +77,15 @@ public class AdminClient extends org.apache.axis.client.AdminClient {
         Call.addTransportPackage("samples.transport");
         Call.setTransportForProtocol("tcp", TCPTransport.class);
 
+        // Deploy the transport on top of the default client configuration.
+        EngineConfiguration defaultConfig = 
+            (new DefaultEngineConfigurationFactory()).
+            getClientEngineConfig();
+        SimpleProvider config = new SimpleProvider(defaultConfig);
         SimpleTargetedChain c = new SimpleTargetedChain(new TCPSender());
+        config.deployTransport("tcp", c);
 
-        AdminClient.setDefaultConfiguration((new DefaultEngineConfigurationFactory())
-            .getClientEngineConfigWithTransport(new QName(null, "tcp"), c));
+        AdminClient.setDefaultConfiguration(config);
 
         try {
             org.apache.axis.client.AdminClient client =

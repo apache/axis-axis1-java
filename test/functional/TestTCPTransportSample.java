@@ -64,6 +64,7 @@ import org.apache.axis.client.Service;
 import org.apache.axis.encoding.XMLType;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
+import org.apache.axis.configuration.SimpleProvider;
 import org.apache.log4j.Category;
 import samples.transport.tcp.AdminClient;
 import samples.transport.tcp.GetQuote;
@@ -101,10 +102,13 @@ public class TestTCPTransportSample extends TestCase {
             tester.getQuote(new String [] { "-ltcp://localhost:8088", "XXX" });
             String   symbol = "XXX"; // args[0] ;
 
-            SimpleTargetedChain c = new SimpleTargetedChain(new TCPSender());
-            EngineConfiguration config =
+            EngineConfiguration defaultConfig =
                 (new DefaultEngineConfigurationFactory()).
-                getClientEngineConfigWithTransport(new QName(null, "tcp"), c);
+                getClientEngineConfig();
+            SimpleProvider config = new SimpleProvider(defaultConfig);
+            SimpleTargetedChain c = new SimpleTargetedChain(new TCPSender());
+            config.deployTransport("tcp", c);
+
             Service service = new Service(config);
 
             Call     call    = (Call) service.createCall();
