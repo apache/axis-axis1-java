@@ -54,11 +54,10 @@
  */
 package org.apache.axis.wsdl;
 
-import org.apache.avalon.excalibur.cli.CLArgsParser;
-import org.apache.avalon.excalibur.cli.CLOption;
-import org.apache.avalon.excalibur.cli.CLOptionDescriptor;
-import org.apache.avalon.excalibur.cli.CLUtil;
-
+import org.apache.axis.utils.CLArgsParser;
+import org.apache.axis.utils.CLOption;
+import org.apache.axis.utils.CLOptionDescriptor;
+import org.apache.axis.utils.CLUtil;
 import org.apache.axis.utils.JavaUtils;
 
 import org.apache.axis.wsdl.toJava.Emitter;

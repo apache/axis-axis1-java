@@ -146,10 +146,11 @@ public class TestSrcContent extends TestCase {
                                        "org\\.apache\\.log4j", false),
 
             // Verify that axis java files do not use System.out.println
-            // or System.err.println, expect:
+            // or System.err.println, except:
             //   - utils/tcpmon.java
             //   - client/AdminClient.java
             //   - providers/BSFProvider.java
+            //   - utils/CLArgsParser.java
             //   - Version.java
             //   - tooling in 'org/apache/axis/wsdl'
             //
@@ -158,6 +159,7 @@ public class TestSrcContent extends TestCase {
                                        + "(?!utils\\1tcpmon\\.java"
                                        + "|client\\1AdminClient\\.java"
                                        + "|providers\\1BSFProvider\\.java"
+                                       + "|utils\\1CLArgsParser\\.java"
                                        + "|Version\\.java"
                                        + "|wsdl\\1)"
                                        + "([a-zA-Z0-9_]+\\1)*"
