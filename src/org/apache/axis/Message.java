@@ -449,11 +449,18 @@ public class Message extends javax.xml.soap.SOAPMessage
      */
     public String getContentType(SOAPConstants sc) throws AxisFault {
         boolean soap12 = false;
-        // Support of SOAP 1.2 HTTP binding
-        SOAPEnvelope envelope = getSOAPEnvelope();
-        if (envelope != null) {
-            if (envelope.getSOAPConstants() == SOAPConstants.SOAP12_CONSTANTS) {
+        
+        if(sc != null) {
+            if(sc == SOAPConstants.SOAP12_CONSTANTS) {
                 soap12 = true;
+            }
+        } else {
+            // Support of SOAP 1.2 HTTP binding
+            SOAPEnvelope envelope = getSOAPEnvelope();
+            if (envelope != null) {
+                if (envelope.getSOAPConstants() == SOAPConstants.SOAP12_CONSTANTS) {
+                    soap12 = true;
+                }
             }
         }
 
