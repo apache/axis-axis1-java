@@ -56,16 +56,10 @@
 package org.apache.axis.encoding;
 
 import org.apache.axis.Constants;
-import org.apache.axis.deployment.wsdd.WSDDConstants;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 
-import javax.xml.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
 
-import java.beans.IntrospectionException;
-import java.io.IOException;
-import java.io.PrintStream;
 import java.util.HashMap;
 
 /**
@@ -340,11 +334,11 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
     /**
      * Removes the TypeMapping for the namespace.
      *
-     * @param typeMapping- The type mapping   to remove
+     * @param mapping The type mapping to remove
      * @return true if found and removed
      */
     public boolean removeTypeMapping(
-                                     javax.xml.rpc.encoding.TypeMapping mapping) {
+                                  javax.xml.rpc.encoding.TypeMapping mapping) {
         String[] ns = getRegisteredEncodingStyleURIs();
         boolean rc = false;
         for (int i=0; i < ns.length; i++) {

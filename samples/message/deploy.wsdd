@@ -1,7 +1,8 @@
 <deployment name="test" xmlns="http://xml.apache.org/axis/wsdd/" 
             xmlns:java="http://xml.apache.org/axis/wsdd/providers/java"
             xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance">
-  <service name="MessageService" provider="java:MSG">
+  <!-- note that either style="message" OR provider="java:MSG" both work -->
+  <service name="MessageService" style="message">
     <parameter name="className" value="samples.message.MessageService" />
     <parameter name="allowedMethods" value="echoElements" />
   </service>
