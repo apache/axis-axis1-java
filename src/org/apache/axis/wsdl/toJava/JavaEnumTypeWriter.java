@@ -55,6 +55,7 @@
 package org.apache.axis.wsdl.toJava;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import java.util.Vector;
 
@@ -67,7 +68,7 @@ import org.w3c.dom.Node;
 /**
 * This is Wsdl2java's Complex Type Writer.  It writes the <typeName>.java file.
 */
-public class JavaEnumTypeWriter extends JavaWriter {
+public class JavaEnumTypeWriter extends JavaClassWriter {
     private TypeEntry type;
     private Vector elements;
 
@@ -77,20 +78,26 @@ public class JavaEnumTypeWriter extends JavaWriter {
     protected JavaEnumTypeWriter(
             Emitter emitter,
             TypeEntry type, Vector elements) {
-        super(emitter, type, "", "java",
-                JavaUtils.getMessage("genType00"), "enumType");
+        super(emitter, type.getName(), "enumType");
         this.type = type;
         this.elements = elements;
     } // ctor
+
+    /**
+     * Return "implements java.io.Serializable ".
+     */
+    protected String getImplementsText() {
+        return "implements java.io.Serializable ";
+    } // getImplementsText
 
    /**
      * Generate the binding for the given enumeration type.
      * The values vector contains the base type (first index) and
      * the values (subsequent Strings)
      */
-    protected void writeFileBody() throws IOException {
+    protected void writeFileBody(PrintWriter pw) throws IOException {
         // Get the java name of the type
-        String javaName = Utils.getJavaLocalName(type.getName());
+        String javaName = getClassName();
 
         // The first index is the base type.
         // The base type could be a non-object, if so get the corresponding Class.
@@ -142,10 +149,6 @@ public class JavaEnumTypeWriter extends JavaWriter {
             else
                 ids.add(elements.get(i));
         }
-
-        // Note:
-        // This class conforms to the JSR 101 Version 0.6 Public Draft
-        pw.println("public class " + javaName + " implements java.io.Serializable {");
 
         // Each object has a private _value_ variable to store the base value
         pw.println("    private " + baseType + " _value_;");
@@ -229,9 +232,6 @@ public class JavaEnumTypeWriter extends JavaWriter {
             pw.println("    public String toString() { return _value_;}");
         else                            
             pw.println("    public String toString() { return String.valueOf(_value_);}");
-        pw.println("}");
-
-        pw.close();
-    } // writeOperation
+    } // writeFileBody
 
 } // class JavaEnumTypeWriter

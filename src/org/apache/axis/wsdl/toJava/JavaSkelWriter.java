@@ -54,13 +54,11 @@
  */
 package org.apache.axis.wsdl.toJava;
 
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.wsdl.symbolTable.BindingEntry;
-import org.apache.axis.wsdl.symbolTable.Element;
-import org.apache.axis.wsdl.symbolTable.Parameter;
-import org.apache.axis.wsdl.symbolTable.Parameters;
-import org.apache.axis.wsdl.symbolTable.SymbolTable;
-import org.apache.axis.wsdl.symbolTable.TypeEntry;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import java.util.Iterator;
+import java.util.List;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingInput;
@@ -68,19 +66,26 @@ import javax.wsdl.BindingOperation;
 import javax.wsdl.BindingOutput;
 import javax.wsdl.Operation;
 import javax.wsdl.OperationType;
+
 import javax.wsdl.extensions.ExtensibilityElement;
+
 import javax.wsdl.extensions.soap.SOAPBody;
 import javax.wsdl.extensions.soap.SOAPOperation;
+
 import javax.xml.rpc.namespace.QName;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
+
+import org.apache.axis.wsdl.symbolTable.BindingEntry;
+import org.apache.axis.wsdl.symbolTable.Element;
+import org.apache.axis.wsdl.symbolTable.Parameter;
+import org.apache.axis.wsdl.symbolTable.Parameters;
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
+import org.apache.axis.wsdl.symbolTable.TypeEntry;
 
 /**
 * This is Wsdl2java's skeleton writer.  It writes the <BindingName>Skeleton.java
 * file which contains the <bindingName>Skeleton class.
 */
-public class JavaSkelWriter extends JavaWriter {
+public class JavaSkelWriter extends JavaClassWriter {
     private BindingEntry bEntry;
     private Binding binding;
     private SymbolTable symbolTable;
@@ -92,32 +97,30 @@ public class JavaSkelWriter extends JavaWriter {
             Emitter emitter,
             BindingEntry bEntry,
             SymbolTable symbolTable) {
-        super(emitter, bEntry, "Skeleton", "java",
-                JavaUtils.getMessage("genSkel00"), "skeleton");
+        super(emitter, bEntry.getName() + "Skeleton", "skeleton");
         this.bEntry = bEntry;
         this.binding = bEntry.getBinding();
         this.symbolTable = symbolTable;
     } // ctor
 
     /**
+     * Returns "implements <SEI>, org.apache.axis.wsdl.Skeleton ".
+     */
+    protected String getImplementsText() {
+        return "implements " + bEntry.getDynamicVar(JavaBindingWriter.INTERFACE_NAME)
+                + ", org.apache.axis.wsdl.Skeleton ";
+    } // getImplementsText
+
+    /**
      * Write the body of the binding's stub file.
      */
-    protected void writeFileBody() throws IOException {
-//        PortType portType = binding.getPortType();
-//        PortTypeEntry ptEntry =
-//                symbolTable.getPortTypeEntry(portType.getQName());
-
+    protected void writeFileBody(PrintWriter pw) throws IOException {
         String portTypeName = (String) bEntry.getDynamicVar(JavaBindingWriter.INTERFACE_NAME);
+        String implType = portTypeName + " impl";
         boolean isRPC = true;
         if (bEntry.getBindingStyle() == BindingEntry.STYLE_DOCUMENT) {
             isRPC = false;
         }
-
-        // The skeleton implements the portType and the WSDL2Java emitter skeleton
-        String implType = portTypeName + " impl";
-        pw.println("public class " + className + " implements " + portTypeName + ",");
-        pw.println("    org.apache.axis.wsdl.Skeleton {"); 
-
         // Declare private impl and skeleton base delegates
         pw.println("    private " + implType + ";");
         pw.println("    private static java.util.Map _myOperations = new java.util.Hashtable();");
@@ -304,18 +307,17 @@ public class JavaSkelWriter extends JavaWriter {
                 pw.println();
             }
             else {
-                writeOperation(
+                writeOperation(pw,
                         operation, parameters, soapAction, namespace, isRPC);
             }
         }
-        pw.println("}");
-        pw.close();
     } // writeFileBody
 
     /**
      * Write the skeleton code for the given operation.
      */
     private void writeOperation(
+            PrintWriter pw,
             BindingOperation operation,
             Parameters parms,
             String soapAction,
@@ -357,6 +359,5 @@ public class JavaSkelWriter extends JavaWriter {
         pw.println("    }");
         pw.println();
     } // writeSkeletonOperation
-
 
 } // class JavaSkelWriter

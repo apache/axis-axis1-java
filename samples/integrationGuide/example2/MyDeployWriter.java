@@ -55,9 +55,9 @@
 package samples.integrationGuide.example2;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.wsdl.Definition;
-import javax.wsdl.QName;
 
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 
@@ -66,11 +66,16 @@ import org.apache.axis.wsdl.toJava.JavaWriter;
 
 public class MyDeployWriter extends JavaWriter {
 
+    private String filename;
+
     public MyDeployWriter(Emitter emitter, Definition definition,
             SymbolTable symbolTable) {
-        super(emitter,
-                new QName(definition.getTargetNamespace(), "deploy"),
-                "", "useless", "Generating deploy.useless", "deploy");
+        super(emitter, "deploy");
+
+        // Create the fully-qualified file name
+        String dir = emitter.getNamespaces().getAsDir(
+                definition.getTargetNamespace());
+        filename = dir + "deploy.useless";
     } // ctor
 
     public void generate() throws IOException {
@@ -79,16 +84,20 @@ public class MyDeployWriter extends JavaWriter {
         }
     } // generate
 
+    protected String getFileName() {
+        return filename;
+    } // getFileName
+
     /**
      * Override the common JavaWriter header to a no-op.
      */
-    protected void writeFileHeader() throws IOException {
+    protected void writeFileHeader(PrintWriter pw) throws IOException {
     } // writeFileHeader
 
     /**
      * Write the service list file.
      */
-    protected void writeFileBody() throws IOException {
+    protected void writeFileBody(PrintWriter pw) throws IOException {
         MyEmitter myEmitter = (MyEmitter) emitter;
         if (myEmitter.getSong() == MyEmitter.RUM) {
             pw.println("Yo!  Ho!  Ho!  And a bottle of rum.");
@@ -99,6 +108,5 @@ public class MyDeployWriter extends JavaWriter {
         else {
             pw.println("Feelings...  Nothing more than feelings...");
         }
-        pw.close(); // Note:  this really should be done in JavaWriter.
     } // writeFileBody
 } // class MyDeployWriter

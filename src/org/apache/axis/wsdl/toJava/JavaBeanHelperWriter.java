@@ -55,6 +55,7 @@
 package org.apache.axis.wsdl.toJava;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import java.util.Vector;
 import java.util.HashMap;
@@ -73,11 +74,12 @@ import org.w3c.dom.Node;
 /**
  * This is Wsdl2java's Helper Type Writer.  It writes the <typeName>.java file.
  */
-public class JavaBeanHelperWriter extends JavaWriter {
+public class JavaBeanHelperWriter extends JavaClassWriter {
     protected TypeEntry type;
     protected Vector elements;
     protected Vector attributes;
     protected TypeEntry extendType;
+    protected PrintWriter wrapperPW = null;
     protected Vector elementMetaData = null;
 
     /**
@@ -94,8 +96,7 @@ public class JavaBeanHelperWriter extends JavaWriter {
                                    Vector elements,
                                    TypeEntry extendType,
                                    Vector attributes) {
-        super(emitter, type, "_Helper", "java",
-              JavaUtils.getMessage("genType00"), "helper");
+        super(emitter, type.getName() + "_Helper", "helper");
         this.type = type;
         this.elements = elements;
         this.attributes = attributes;
@@ -103,31 +104,74 @@ public class JavaBeanHelperWriter extends JavaWriter {
     } // ctor
 
     /**
-     * Generate the binding for the given complex type.
-     * The elements vector contains the Types (even indices) and
-     * element names (odd indices) of the contained elements
+     * The bean helper class may be its own class, or it may be
+     * embedded within the bean class.  If it's embedded within the
+     * bean class, the JavaBeanWriter will set JavaBeanHelperWriter's
+     * PrintWriter to its own.
      */
-    protected void writeFileBody() throws IOException {
+    protected void setPrintWriter(PrintWriter pw) {
+        this.wrapperPW = pw;
+    } // setPrintWriter
 
-        if (!embeddedCode) {
-            pw.println("public class " + className + " {");
+    /**
+     * The default behaviour (of super.getPrintWriter) is, given the
+     * file name, create a PrintWriter for it.  If the bean helper
+     * that this class is generating is embedded within a bean, then
+     * the PrintWriter returned by this method is the JavaBeanWriter's
+     * PrintWriter.  Otherwise super.getPrintWriter is called.
+     */
+    protected PrintWriter getPrintWriter(String filename) throws IOException {
+        return wrapperPW == null ? super.getPrintWriter(filename) : wrapperPW;
+    } // getPrintWriter
+
+    /**
+     * Only write the file header if the bean helper is not wrapped
+     * within a bean.
+     */
+    protected void writeFileHeader(PrintWriter pw) throws IOException {
+        if (wrapperPW == null) {
+            super.writeFileHeader(pw);
         }
+    } // writeFileHeader
 
-        writeMetaData();
-        writeSerializer();
-        writeDeserializer();
+    /**
+     * Generate the file body for the bean helper.
+     */
+    protected void writeFileBody(PrintWriter pw) throws IOException {
+        writeMetaData(pw);
+        writeSerializer(pw);
+        writeDeserializer(pw);
+    } // writeFileBody
 
-        if (!embeddedCode) {
-            pw.println("}");
+    /**
+     * Only write the file footer if the bean helper is not
+     * wrapped within a bean.
+     */
+    protected void writeFileFooter(PrintWriter pw) throws IOException {
+        if (wrapperPW == null) {
+            super.writeFileFooter(pw);
+        }
+    } // writeFileFooter
+
+    /**
+     * Only close the PrintWriter if the PrintWriter belongs to
+     * this class.  If the bean helper is embedded within a bean
+     * then the PrintWriter belongs to JavaBeanWriter and THAT
+     * class is responsible for closing the PrintWriter.
+     */
+    protected void closePrintWriter(PrintWriter pw) {
+        // If the output of this writer is wrapped within
+        // another writer (JavaBeanWriter), then THAT
+        // writer will close the PrintWriter, not this one.
+        if (wrapperPW == null) {
             pw.close();
         }
-        
-    } // writeFileBody
+    } // closePrintWriter
 
     /**
      * write MetaData code
      */
-    protected void writeMetaData() throws IOException {
+    protected void writeMetaData(PrintWriter pw) throws IOException {
         // Collect elementMetaData
         if (elements != null) {
             for (int i = 0; i < elements.size(); i++) {
@@ -171,7 +215,7 @@ public class JavaBeanHelperWriter extends JavaWriter {
             pw.println("    // " + JavaUtils.getMessage("typeMeta"));
             pw.println("    private static org.apache.axis.description.TypeDesc typeDesc =");
             pw.println("        new org.apache.axis.description.TypeDesc(" +
-                       rootName + ".class);");
+                       Utils.getJavaLocalName(type.getName()) + ".class);");
             pw.println();
             pw.println("    static {");
 
@@ -235,7 +279,7 @@ public class JavaBeanHelperWriter extends JavaWriter {
      * write Serializer getter code and pass in meta data to avoid
      * undo introspection.
      */
-    protected void writeSerializer() throws IOException {
+    protected void writeSerializer(PrintWriter pw) throws IOException {
         String typeDesc = null;
         if (attributes != null || elementMetaData != null) {
             typeDesc = "typeDesc";
@@ -254,7 +298,7 @@ public class JavaBeanHelperWriter extends JavaWriter {
         pw.println("        return ");
         pw.println("          new " + ser +"(");
         pw.println("            _javaType, _xmlType, " + typeDesc + ");");
-        pw.println("    };");
+        pw.println("    }");
         pw.println();
     }
 
@@ -262,7 +306,7 @@ public class JavaBeanHelperWriter extends JavaWriter {
      * write Deserializer getter code and pass in meta data to avoid
      * undo introspection.
      */
-    protected void writeDeserializer()  throws IOException {
+    protected void writeDeserializer(PrintWriter pw)  throws IOException {
         String typeDesc = null;
         if (attributes != null || elementMetaData != null) {
             typeDesc = "typeDesc";
@@ -281,7 +325,7 @@ public class JavaBeanHelperWriter extends JavaWriter {
         pw.println("        return ");
         pw.println("          new " + dser + "(");
         pw.println("            _javaType, _xmlType, " + typeDesc + ");");
-        pw.println("    };");
+        pw.println("    }");
         pw.println();
     }
 } // class JavaBeanHelperWriter

@@ -59,24 +59,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import javax.wsdl.QName;
-
 import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.deployment.wsdd.WSDDConstants;
 
 import org.apache.axis.wsdl.gen.Generator;
-
-import org.apache.axis.wsdl.symbolTable.SymTabEntry;
-import org.apache.axis.wsdl.symbolTable.TypeEntry;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 /**
-* All of Wsdl2java's Writer implementations do some common stuff.  All this
-* common stuff resides in this abstract base class.  All that extensions to
-* this class have to do is implement writeFileBody.
-*
 * Emitter knows about WSDL writers, one each for PortType, Binding, Service,
 * Definition, Type.  But for some of these WSDL types, Wsdl2java generates
 * multiple files.  Each of these files has a corresponding writer that extends
@@ -84,139 +74,155 @@ import org.w3c.dom.Node;
 * etc.) each calls a file writer (JavaStubWriter, JavaSkelWriter, etc.) for
 * each file that that WSDL generates.
 *
-* For example, when Emitter calls JavaWriterFactory for a Binding Writer, it
+* <p>For example, when Emitter calls JavaWriterFactory for a Binding Writer, it
 * returns a JavaBindingWriter.  JavaBindingWriter, in turn, contains a
 * JavaStubWriter, JavaSkelWriter, and JavaImplWriter since a Binding may cause
 * a stub, skeleton, and impl template to be generated.
 *
-* Note that the writers that are given to Emitter by JavaWriterFactory DO NOT
+* <p>Note that the writers that are given to Emitter by JavaWriterFactory DO NOT
 * extend JavaWriter.  They simply implement Writer and delegate the actual
 * task of writing to extensions of JavaWriter.
+*
+* <p>All of Wsdl2java's Writer implementations follow a common behaviour.
+* JavaWriter is the abstract base class that dictates this common behaviour.
+* This behaviour is primarily placed within the generate method.  The generate
+* method calls, in succession (note:  the starred methods are the ones you are
+* probably most interested in):
+* <dl>
+*   <dt> * getFileName
+*   <dd> This is an abstract method that must be implemented by the subclass.
+*        It returns the fully-qualified file name.
+*   <dt> isFileGenerated(file)
+*   <dd> You should not need to override this method.  It checks to see whether
+*        this file is in the List returned by emitter.getGeneratedFileNames.
+*   <dt> registerFile(file)
+*   <dd> You should not need to override this method.  It registers this file by
+*        calling emitter.getGeneratedFileInfo().add(...).
+*   <dt> * verboseMessage(file)
+*   <dd> You may override this method if you want to provide more information.
+*        The generate method only calls verboseMessage if verbose is turned on.
+*   <dt> getPrintWriter(file)
+*   <dd> You should not need to override this method.  Given the file name, it
+*        creates a PrintWriter for it.
+*   <dt> * writeFileHeader(pw)
+*   <dd> You may want to override this method.  The default implementation
+*        generates nothing.
+*   <dt> * writeFileBody(pw)
+*   <dd> This is an abstract method that must be implemented by the subclass.
+*        This is where the body of a file is generated.
+*   <dt> * writeFileFooter(pw)
+*   <dd> You may want to override this method.  The default implementation
+*        generates nothing.
+*   <dt> closePrintWriter(pw)
+*   <dd> You should not need to override this method.  It simply closes the
+*        PrintWriter.
+* </dl>
 */
-
 public abstract class JavaWriter implements Generator {
-    protected Emitter     emitter;
-    protected QName       qname;
-    protected Namespaces  namespaces;
-    protected String      rootName; // No suffix...
-    protected String      className;
-    protected String      fileName;
-    protected String      packageName;
-    protected PrintWriter pw;
-    protected String      message;
-    protected String      type;
-    protected boolean     embeddedCode = false;
+    protected Emitter emitter;
+    protected String  type;
 
     /**
-     * Constructor.  Use this one to pass in a Type.  Type contains QName and java name.
+     * Constructor.
      */
-    protected JavaWriter(
-            Emitter emitter,
-            SymTabEntry entry,
-            String suffix,
-            String extension,
-            String message, 
-            String type) {
-        this.emitter     = emitter;
-        this.qname       = entry.getQName();
-        this.namespaces  = emitter.getNamespaces();
-        this.rootName    = Utils.getJavaLocalName(entry.getName());
-        this.className   = rootName + (suffix == null ? "" : suffix);
-        this.fileName    = className + '.' + extension;
-        this.packageName = Utils.getJavaPackageName(entry.getName());
-        this.message     = message;
-        this.type        = type;
-    } // ctor
-
-
-    /**
-     * Constructor.  Use Set up all the variables needed to write a file.
-     */
-    protected JavaWriter(
-            Emitter emitter,
-            QName qname,
-            String suffix,
-            String extension,
-            String message, 
-            String type) {
-        this.emitter     = emitter;
-        this.qname       = qname;
-        this.namespaces  = emitter.getNamespaces();
-        this.className   = qname.getLocalPart() + (suffix == null ? "" : suffix);
-        this.fileName    = className + '.' + extension;
-        this.packageName = namespaces.getCreate(qname.getNamespaceURI());
-        this.message     = message;
-        this.type        = type;
+    protected JavaWriter(Emitter emitter, String type) {
+        this.emitter = emitter;
+        this.type    = type;
     } // ctor
 
     /**
-     * Generate into an existing class with PrinterWriter pw
-     */
-    public void generate(PrintWriter pw) throws IOException {
-        embeddedCode = true;  // Indicated embedded
-        String packageDirName = namespaces.toDir(packageName);
-        String path = packageDirName + fileName;
-        String fqClass = packageName + "." + className;
-        
-        // Check for duplicates, probably the result of namespace mapping
-        if (emitter.getGeneratedClassNames().contains(fqClass)) {
-            throw new IOException(JavaUtils.getMessage("duplicateClass00", fqClass));
-        }
-        if (emitter.getGeneratedFileNames().contains(path)) {
-            throw new IOException(JavaUtils.getMessage("duplicateFile00", path));
-        }
-        
-        emitter.getGeneratedFileInfo().add(path, fqClass, type);
-        this.pw = pw;
-        writeFileBody();
-    }
-
-    /**
-     * Create the file, write the header, write the body.
+     * Generate a file.
      */
     public void generate() throws IOException {
-        String packageDirName = namespaces.toDir(packageName);
-        String path = packageDirName + fileName;
-        String fqClass = packageName + "." + className;
-
-        // Check for duplicates, probably the result of namespace mapping
-        if (emitter.getGeneratedClassNames().contains(fqClass)) {
-            throw new IOException(JavaUtils.getMessage("duplicateClass00", fqClass));
+        String file = getFileName();
+        if (isFileGenerated(file)) {
+            throw new IOException(JavaUtils.getMessage("duplicateFile00", file));
         }
-        if (emitter.getGeneratedFileNames().contains(path)) {
-            throw new IOException(JavaUtils.getMessage("duplicateFile00", path));
-        }
-        
-        emitter.getGeneratedFileInfo().add(path, fqClass, type);
-        namespaces.mkdir(packageName);
-        File file = new File(packageDirName, fileName);
+        registerFile(file);
         if (emitter.isVerbose()) {
-            System.out.println(message + ":  " + file.getPath());
+            System.out.println(verboseMessage(file));
         }
-        pw = new PrintWriter(new FileWriter(file));
-        writeFileHeader();
-        writeFileBody();
+        PrintWriter pw = getPrintWriter(file);
+        writeFileHeader(pw);
+        writeFileBody(pw);
+        writeFileFooter(pw);
+        closePrintWriter(pw);
     } // generate
 
     /**
-     * Write a common header, including the package name.
+     * This method must be implemented by a subclass.  It
+     * returns the fully-qualified name of the file to be
+     * generated.
      */
-    protected void writeFileHeader() throws IOException {
-        pw.println("/**");
-        pw.println(" * " + fileName);
-        pw.println(" *");
-        pw.println(" * " + JavaUtils.getMessage("wsdlGenLine00"));
-        pw.println(" * " + JavaUtils.getMessage("wsdlGenLine01"));
-        pw.println(" */");
-        pw.println();
+    protected abstract String getFileName();
 
-        // print package declaration
-        pw.println("package " + packageName + ";");
-        pw.println();
+    /**
+     * You should not need to override this method. It checks
+     * to see whether the given file is in the List returned
+     * by emitter.getGeneratedFileNames.
+     */
+    protected boolean isFileGenerated(String file) {
+        return emitter.getGeneratedFileNames().contains(file);
+    } // isFileGenerated
+
+    /**
+     * You should not need to override this method.
+     * It registers the given file by calling
+     * emitter.getGeneratedFileInfo().add(...).
+     */
+    protected void registerFile(String file) {
+        emitter.getGeneratedFileInfo().add(file, null, type);
+    } // registerFile
+
+    /**
+     * Return the string:  "Generating <file>".  Override this
+     * method if you want to provide more information.
+     */
+    protected String verboseMessage(String file) {
+        return JavaUtils.getMessage("generating", file);
+    } // verboseMessage
+
+    /**
+     * You should not need to override this method.
+     * Given the file name, it creates a PrintWriter for it.
+     */
+    protected PrintWriter getPrintWriter(String filename) throws IOException {
+        File file = new File(filename);
+        File parent = new File(file.getParent());
+        parent.mkdirs();
+        return new PrintWriter(new FileWriter(file));
+    } // getPrintWriter
+
+    /**
+     * This method is intended to be overridden as necessary
+     * to generate file header information.  This default
+     * implementation does nothing.
+     */
+    protected void writeFileHeader(PrintWriter pw) throws IOException {
     } // writeFileHeader
 
     /**
-     * output documentation element as a Java comment.
+     * This method must be implemented by a subclass.  This
+     * is where the body of a file is generated.
+     */
+    protected abstract void writeFileBody(PrintWriter pw) throws IOException;
+
+    /**
+     * You may want to override this method.  This default
+     * implementation generates nothing.
+     */
+    protected void writeFileFooter(PrintWriter pw) throws IOException {
+    } // writeFileFooter
+
+    /**
+     * Close the print writer.
+     */
+    protected void closePrintWriter(PrintWriter pw) {
+        pw.close();
+    } // closePrintWriter
+
+    /**
+     * Output a documentation element as a Java comment.
      */
     protected void writeComment(PrintWriter pw, Element element) {
         // This controls how many characters per line
@@ -259,51 +265,5 @@ public abstract class JavaWriter implements Generator {
             pw.println("     */");
         }
     } // writeComment
-
-    /**
-     * Initialize the deployment document, spit out preamble comments
-     * and opening tag.
-     */
-    protected void initializeDeploymentDoc(String deploymentOpName) throws IOException {
-        if ("deploy".equals(deploymentOpName)) {
-            pw.println(JavaUtils.getMessage("deploy00"));
-        }
-        else {
-            pw.println(JavaUtils.getMessage("deploy01"));
-        }
-        pw.println(JavaUtils.getMessage("deploy02"));
-        if ("deploy".equals(deploymentOpName)) {
-            pw.println(JavaUtils.getMessage("deploy03"));
-        }
-        else {
-            pw.println(JavaUtils.getMessage("deploy04"));
-        }
-        pw.println(JavaUtils.getMessage("deploy05"));
-        pw.println(JavaUtils.getMessage("deploy06"));
-        if ("deploy".equals(deploymentOpName)) {
-            pw.println(JavaUtils.getMessage("deploy07"));
-        }
-        else {
-            pw.println(JavaUtils.getMessage("deploy08"));
-        }
-        pw.println(JavaUtils.getMessage("deploy09"));
-        pw.println();
-        if ("deploy".equals(deploymentOpName)) {
-            pw.println("<deployment");
-            pw.println("    xmlns=\"" + WSDDConstants.URI_WSDD +"\"");
-            pw.println("    xmlns:" + WSDDConstants.NS_PREFIX_WSDD_JAVA + "=\"" +
-                       WSDDConstants.URI_WSDD_JAVA +"\">");
-        }
-        else {
-            pw.println("<undeployment");
-            pw.println("    xmlns=\"" + WSDDConstants.URI_WSDD +"\">");
-        }
-    } // initializeDeploymentDoc
-
-    /**
-     * Write the body of the file.  This is what extenders of this class must
-     * implement
-     */
-    protected abstract void writeFileBody() throws IOException;
 
 } // abstract class JavaWriter

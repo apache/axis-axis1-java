@@ -55,6 +55,7 @@
 package org.apache.axis.wsdl.toJava;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -81,7 +82,7 @@ import org.apache.axis.wsdl.symbolTable.SymbolTable;
 /**
 * This is Wsdl2java's TestCase writer.  It writes the <serviceName>TestCase.java file.
 */
-public class JavaTestCaseWriter extends JavaWriter {
+public class JavaTestCaseWriter extends JavaClassWriter {
     private ServiceEntry sEntry;
     private SymbolTable symbolTable;
 
@@ -92,33 +93,29 @@ public class JavaTestCaseWriter extends JavaWriter {
             Emitter emitter,
             ServiceEntry sEntry,
             SymbolTable symbolTable) {
-        super(emitter, sEntry, "TestCase", "java",
-                JavaUtils.getMessage("genTest00"), "testCase");
+        super(emitter, sEntry.getName() + "TestCase", "testCase");
         this.sEntry = sEntry;
         this.symbolTable = symbolTable;
     } // ctor
 
     /**
-     * Write the common header plus the ctors.
+     * Returns "extends junit.framework.TestCase ".
      */
-    protected void writeFileHeader() throws IOException {
-        super.writeFileHeader();
-
-        pw.print("public class ");
-        pw.print(this.className);
-        pw.println(" extends junit.framework.TestCase {");
-
-        pw.print("    public ");
-        pw.print(this.className);
-        pw.println("(String name) {");
-        pw.println("        super(name);");
-        pw.println("    }");
-    } // writeFileHeader
+    protected String getExtendsText() {
+        return "extends junit.framework.TestCase ";
+    } // getExtendsText
 
     /**
      * Write the body of the TestCase file.
      */
-    protected void writeFileBody() throws IOException {
+    protected void writeFileBody(PrintWriter pw) throws IOException {
+        // Write the constructor
+        pw.print("    public ");
+        pw.print(getClassName());
+        pw.println("(String name) {");
+        pw.println("        super(name);");
+        pw.println("    }");
+
         // get ports
         Map portMap = sEntry.getService().getPorts();
         Iterator portIterator = portMap.values().iterator();
@@ -140,17 +137,9 @@ public class JavaTestCaseWriter extends JavaWriter {
                     symbolTable.getPortTypeEntry(portType.getQName());
 
             writeComment(pw, p.getDocumentationElement());
-            writeServiceTestCode(portName, portType, ptEntry, binding, bEntry);
+            writeServiceTestCode(pw, portName, portType, ptEntry, binding, bEntry);
         }
-        finish();
     } // writeFileBody
-
-    public final void finish() {
-        pw.println("}");
-        pw.println();
-        pw.flush();
-        pw.close();
-    } // finish
 
     // Methods may be overloaded.  If we just grab the method name
     // for the test method names, we could end up with duplicates.
@@ -158,7 +147,7 @@ public class JavaTestCaseWriter extends JavaWriter {
     // each test method has a number.
     private int counter = 1;
 
-    private final void writeServiceTestCode(
+    private final void writeServiceTestCode(PrintWriter pw,
             String portName, PortType portType, PortTypeEntry ptEntry,
             Binding binding, BindingEntry bEntry) throws IOException {
         Iterator ops = portType.getOperations().iterator();
@@ -180,7 +169,7 @@ public class JavaTestCaseWriter extends JavaWriter {
             pw.println("    public void " + testMethodName + "() {");
 
             String bindingType = (String) bEntry.getDynamicVar(JavaBindingWriter.INTERFACE_NAME);
-            writeBindingAssignment(bindingType, portName);
+            writeBindingAssignment(pw, bindingType, portName);
 
             pw.println("        try {");
             if (params.returnType != null) {
@@ -321,7 +310,7 @@ public class JavaTestCaseWriter extends JavaWriter {
         }
     } // writeServiceTestCode
 
-    public final void writeBindingAssignment(
+    public final void writeBindingAssignment(PrintWriter pw,
             String bindingType, String portName) throws IOException {
         pw.println("        " + bindingType + " binding;");
         pw.println("        try {");

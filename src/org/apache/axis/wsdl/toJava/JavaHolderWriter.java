@@ -55,6 +55,7 @@
 package org.apache.axis.wsdl.toJava;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.wsdl.QName;
 
@@ -65,31 +66,36 @@ import org.apache.axis.wsdl.symbolTable.TypeEntry;
 /**
 * This is Wsdl2java's Holder Writer.  It writes the <typeName>Holder.java file.
 */
-public class JavaHolderWriter extends JavaWriter {
+public class JavaHolderWriter extends JavaClassWriter {
     private TypeEntry type;
 
     /**
      * Constructor.
      */
     protected JavaHolderWriter(Emitter emitter, TypeEntry type) {
-        super(
-                emitter,
-                new QName(
-                        type.getQName().getNamespaceURI(),
-                        Utils.holder(type, emitter).substring(
-                        Utils.holder(type, emitter).lastIndexOf('.') + 1)),
-                null,
-                "java",
-                JavaUtils.getMessage("genHolder00"), "holder");
+        super(emitter, Utils.holder(type, emitter), "holder");
         this.type = type;
     } // ctor
 
     /**
+     * Return "public final ".
+     */
+    protected String getClassModifiers() {
+        return super.getClassModifiers() + "final ";
+    } // getClassModifiers
+
+    /**
+     * Return "implements javax.xml.rpc.holders.Holder ".
+     */
+    protected String getImplementsText() {
+        return "implements javax.xml.rpc.holders.Holder ";
+    } // getImplementsText
+
+    /**
      * Generate the holder for the given complex type.
      */
-    protected void writeFileBody() throws IOException {
+    protected void writeFileBody(PrintWriter pw) throws IOException {
         String holderType = Utils.getJavaLocalName(type.getName());
-        pw.println("public final class " + className + " implements javax.xml.rpc.holders.Holder {");
         pw.println("    public " + holderType + " value;");
         pw.println();
         pw.println("    public " + className + "() {");
@@ -100,8 +106,6 @@ public class JavaHolderWriter extends JavaWriter {
         pw.println("    }");
         pw.println();
         pw.println("    // ?++?");
-        pw.println("}");
-        pw.close();
     } // writeOperation
 
 } // class JavaHolderWriter

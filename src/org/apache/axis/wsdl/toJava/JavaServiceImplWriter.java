@@ -55,6 +55,7 @@
 package org.apache.axis.wsdl.toJava;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -80,7 +81,7 @@ import org.apache.axis.wsdl.symbolTable.SymbolTable;
 * This is Wsdl2java's service implementation writer.
 * It writes the <serviceName>Locator.java file.
 */
-public class JavaServiceImplWriter extends JavaWriter {
+public class JavaServiceImplWriter extends JavaClassWriter {
     private ServiceEntry sEntry;
     private SymbolTable  symbolTable;
 
@@ -91,23 +92,30 @@ public class JavaServiceImplWriter extends JavaWriter {
             Emitter emitter,
             ServiceEntry sEntry,
             SymbolTable symbolTable) {
-        super(emitter, sEntry, "Locator", "java",
-                JavaUtils.getMessage("genService00"), "service");
+        super(emitter, sEntry.getName() + "Locator", "service");
         this.sEntry = sEntry;
         this.symbolTable = symbolTable;
     } // ctor
 
     /**
+     * Returns "extends org.apache.axis.client.Service ".
+     */
+    protected String getExtendsText() {
+        return "extends org.apache.axis.client.Service ";
+    } // getExtendsText
+
+    /**
+     * Returns "implements <serviceInterface>".
+     */
+    protected String getImplementsText() {
+        return "implements " + sEntry.getName() + ' ';
+    } // getImplementsText
+
+    /**
      * Write the body of the service file.
      */
-    protected void writeFileBody() throws IOException {
+    protected void writeFileBody(PrintWriter pw) throws IOException {
         Service service = sEntry.getService();
-
-        // declare class
-        pw.println("public class " + className
-                + " extends org.apache.axis.client.Service implements "
-                + sEntry.getName() + " {");
-
         // output comments
         writeComment(pw, service.getDocumentationElement());
 
@@ -250,10 +258,6 @@ public class JavaServiceImplWriter extends JavaWriter {
         }
         pw.println("    }");
         pw.println();
-
-        // all done
-        pw.println("}");
-        pw.close();
     } // writeFileBody
 
 } // class JavaServiceImplWriter

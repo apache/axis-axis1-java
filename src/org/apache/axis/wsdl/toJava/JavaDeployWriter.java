@@ -54,18 +54,12 @@
  */
 package org.apache.axis.wsdl.toJava;
 
-import org.apache.axis.Constants;
-import org.apache.axis.deployment.wsdd.WSDDConstants;
-import org.apache.axis.providers.java.JavaProvider;
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.wsdl.symbolTable.BindingEntry;
-import org.apache.axis.wsdl.symbolTable.CollectionType;
-import org.apache.axis.wsdl.symbolTable.DefinedElement;
-import org.apache.axis.wsdl.symbolTable.Element;
-import org.apache.axis.wsdl.symbolTable.Parameter;
-import org.apache.axis.wsdl.symbolTable.Parameters;
-import org.apache.axis.wsdl.symbolTable.SymbolTable;
-import org.apache.axis.wsdl.symbolTable.TypeEntry;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Vector;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
@@ -75,10 +69,23 @@ import javax.wsdl.OperationType;
 import javax.wsdl.Port;
 import javax.wsdl.QName;
 import javax.wsdl.Service;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Vector;
+
+import org.apache.axis.Constants;
+
+import org.apache.axis.deployment.wsdd.WSDDConstants;
+
+import org.apache.axis.providers.java.JavaProvider;
+
+import org.apache.axis.utils.JavaUtils;
+
+import org.apache.axis.wsdl.symbolTable.BindingEntry;
+import org.apache.axis.wsdl.symbolTable.CollectionType;
+import org.apache.axis.wsdl.symbolTable.DefinedElement;
+import org.apache.axis.wsdl.symbolTable.Element;
+import org.apache.axis.wsdl.symbolTable.Parameter;
+import org.apache.axis.wsdl.symbolTable.Parameters;
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
+import org.apache.axis.wsdl.symbolTable.TypeEntry;
 
 /**
 * This is Wsdl2java's deploy Writer.  It writes the deploy.java file.
@@ -93,15 +100,15 @@ public class JavaDeployWriter extends JavaWriter {
     public JavaDeployWriter(Emitter emitter,
                                Definition definition,
                                SymbolTable symbolTable) {
-        super(emitter,
-                new QName(definition.getTargetNamespace(), "deploy"),
-                "",
-                "wsdd",
-                JavaUtils.getMessage("genDeploy00"), "deploy");
+        super(emitter, "deploy");
         this.definition = definition;
         this.symbolTable = symbolTable;
     } // ctor
 
+    /**
+     * Generate deploy.wsdd.  Only generate it if the emitter
+     * is generating server-side mappings.
+     */
     public void generate() throws IOException {
         if (emitter.isServerSide()) {
             super.generate();
@@ -109,25 +116,45 @@ public class JavaDeployWriter extends JavaWriter {
     } // generate
 
     /**
+     * Return the fully-qualified name of the deploy.wsdd file
+     * to be generated.
+     */
+    protected String getFileName() {
+        String dir = emitter.getNamespaces().getAsDir(
+                definition.getTargetNamespace());
+        return dir + "deploy.wsdd";
+    } // getFileName
+
+    /**
      * Replace the default file header with the deployment doc file header.
      */
-    protected void writeFileHeader() throws IOException {
-        initializeDeploymentDoc("deploy");
+    protected void writeFileHeader(PrintWriter pw) throws IOException {
+        pw.println(JavaUtils.getMessage("deploy00"));
+        pw.println(JavaUtils.getMessage("deploy02"));
+        pw.println(JavaUtils.getMessage("deploy03"));
+        pw.println(JavaUtils.getMessage("deploy05"));
+        pw.println(JavaUtils.getMessage("deploy06"));
+        pw.println(JavaUtils.getMessage("deploy07"));
+        pw.println(JavaUtils.getMessage("deploy09"));
+        pw.println();
+        pw.println("<deployment");
+        pw.println("    xmlns=\"" + WSDDConstants.URI_WSDD +"\"");
+        pw.println("    xmlns:" + WSDDConstants.NS_PREFIX_WSDD_JAVA + "=\"" +
+                   WSDDConstants.URI_WSDD_JAVA +"\">");
     } // writeFileHeader
 
     /**
-     * Write the body of the deploy.xml file.
+     * Write the body of the deploy.wsdd file.
      */
-    protected void writeFileBody() throws IOException {
-        writeDeployServices();
+    protected void writeFileBody(PrintWriter pw) throws IOException {
+        writeDeployServices(pw);
         pw.println("</deployment>");
-        pw.close();
     } // writeFileBody
 
     /**
      * Write out deployment and undeployment instructions for each WSDL service
      */
-    protected void writeDeployServices() throws IOException {
+    protected void writeDeployServices(PrintWriter pw) throws IOException {
         //deploy the ports on each service
         Map serviceMap = definition.getServices();
         for (Iterator mapIterator = serviceMap.values().iterator();
@@ -151,7 +178,7 @@ public class JavaDeployWriter extends JavaWriter {
                 if (bEntry.getBindingType() != BindingEntry.TYPE_SOAP) {
                     continue;
                 }
-                writeDeployPort(myPort);
+                writeDeployPort(pw, myPort);
             }
         }
     } //writeDeployServices
@@ -159,7 +186,7 @@ public class JavaDeployWriter extends JavaWriter {
     /**
      * Write out bean mappings for each type
      */
-    protected void writeDeployTypes(boolean hasLiteral) throws IOException {
+    protected void writeDeployTypes(PrintWriter pw, boolean hasLiteral) throws IOException {
         Vector types = symbolTable.getTypes();
 
         pw.println();
@@ -213,7 +240,7 @@ public class JavaDeployWriter extends JavaWriter {
                     serializerFactory = "org.apache.axis.encoding.ser.BeanSerializerFactory";
                     deserializerFactory = "org.apache.axis.encoding.ser.BeanDeserializerFactory";
                 }
-                writeTypeMapping(namespaceURI, localPart, javaType, serializerFactory,
+                writeTypeMapping(pw, namespaceURI, localPart, javaType, serializerFactory,
                                  deserializerFactory, encodingStyle);
                 }
         }
@@ -222,7 +249,7 @@ public class JavaDeployWriter extends JavaWriter {
     /**
      * Raw routine that writes out the typeMapping.
      */
-    protected void writeTypeMapping(String namespaceURI, String localPart, String javaType,
+    protected void writeTypeMapping(PrintWriter pw, String namespaceURI, String localPart, String javaType,
                                     String serializerFactory, String deserializerFactory,
                                     String encodingStyle) throws IOException {
         pw.println("      <typeMapping");
@@ -238,7 +265,7 @@ public class JavaDeployWriter extends JavaWriter {
     /**
      * Write out deployment and undeployment instructions for given WSDL port
      */
-    protected void writeDeployPort(Port port) throws IOException {
+    protected void writeDeployPort(PrintWriter pw, Port port) throws IOException {
         Binding binding = port.getBinding();
         BindingEntry bEntry = symbolTable.getBindingEntry(binding.getQName());
         String serviceName = port.getName();
@@ -260,9 +287,8 @@ public class JavaDeployWriter extends JavaWriter {
                 + "\" provider=\"" + prefix +":RPC"
                 + "\"" + styleStr + ">");
 
-        writeDeployBinding(binding);
-        writeDeployTypes(hasLiteral);
-
+        writeDeployBinding(pw, binding);
+        writeDeployTypes(pw, hasLiteral);
 
         pw.println("  </service>");
     } //writeDeployPort
@@ -270,7 +296,7 @@ public class JavaDeployWriter extends JavaWriter {
     /**
      * Write out deployment instructions for given WSDL binding
      */
-    protected void writeDeployBinding(Binding binding) throws IOException {
+    protected void writeDeployBinding(PrintWriter pw, Binding binding) throws IOException {
         BindingEntry bEntry = symbolTable.getBindingEntry(binding.getQName());
         String className = bEntry.getName();
         if (emitter.isSkeletonWanted())
@@ -313,7 +339,7 @@ public class JavaDeployWriter extends JavaWriter {
                         returnQName = Utils.getWSDLQName(params.returnName);
 
                     // Write the operation metadata
-                    writeOperation(javaOperName, elementQName, returnQName,
+                    writeOperation(pw, javaOperName, elementQName, returnQName,
                                    params);
                 }
             }
@@ -341,7 +367,8 @@ public class JavaDeployWriter extends JavaWriter {
     /**
      * Raw routine that writes out the operation and parameters.
      */
-    protected void writeOperation(String javaOperName,
+    protected void writeOperation(PrintWriter pw,
+                                  String javaOperName,
                                   QName elementQName,
                                   QName returnQName,
                                   Parameters params) {
@@ -367,7 +394,7 @@ public class JavaDeployWriter extends JavaWriter {
             QName paramType = null;
 
             // Get the parameter type QName
-            if (typeEntry instanceof DefinedElement && 
+            if (typeEntry instanceof DefinedElement &&
                 typeEntry.getRefType() != null) {
                 paramType = typeEntry.getRefType().getQName();
             } else {

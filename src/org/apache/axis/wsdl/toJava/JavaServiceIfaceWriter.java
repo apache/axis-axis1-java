@@ -55,6 +55,7 @@
 package org.apache.axis.wsdl.toJava;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -73,7 +74,7 @@ import org.apache.axis.wsdl.symbolTable.SymbolTable;
 /**
 * This is Wsdl2java's service writer.  It writes the <serviceName>.java file.
 */
-public class JavaServiceIfaceWriter extends JavaWriter {
+public class JavaServiceIfaceWriter extends JavaClassWriter {
     private Service service;
     private SymbolTable symbolTable;
 
@@ -84,20 +85,29 @@ public class JavaServiceIfaceWriter extends JavaWriter {
             Emitter emitter,
             ServiceEntry sEntry,
             SymbolTable symbolTable) {
-        super(emitter, sEntry, "", "java",
-                JavaUtils.getMessage("genService00"), "service");
+        super(emitter, sEntry.getName(), "service");
         this.service = sEntry.getService();
         this.symbolTable = symbolTable;
     } // ctor
 
     /**
+     * Returns "interface ".
+     */
+    protected String getClassText() {
+        return "interface ";
+    } // getClassString
+
+    /**
+     * Returns "extends javax.xml.rpc.Service ".
+     */
+    protected String getExtendsText() {
+        return "extends javax.xml.rpc.Service ";
+    } // getExtendsText
+
+    /**
      * Write the body of the service file.
      */
-    protected void writeFileBody() throws IOException {
-        // declare class
-        pw.println("public interface " + className
-                + " extends javax.xml.rpc.Service {");
-
+    protected void writeFileBody(PrintWriter pw) throws IOException {
         // output comments
         writeComment(pw, service.getDocumentationElement());
 
@@ -151,9 +161,6 @@ public class JavaServiceIfaceWriter extends JavaWriter {
             pw.println("    public " + bindingType + " get" + portName
                     + "(java.net.URL portAddress) throws javax.xml.rpc.ServiceException;");
         }
-        // all done
-        pw.println("}");
-        pw.close();
     } // writeFileBody
 
 } // class JavaServiceIfaceWriter

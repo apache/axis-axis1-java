@@ -55,6 +55,7 @@
 package org.apache.axis.wsdl.toJava;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import java.util.Vector;
 
@@ -70,7 +71,7 @@ import org.apache.axis.wsdl.symbolTable.SymbolTable;
 * This is Wsdl2java's Fault Writer.  It writes the <faultName>.java file.
 * NOTE:  this must be rewritten.  It doesn't follow JAX-RPC.
 */
-public class JavaFaultWriter extends JavaWriter {
+public class JavaFaultWriter extends JavaClassWriter {
     private Fault fault;
     private SymbolTable symbolTable;
 
@@ -78,25 +79,22 @@ public class JavaFaultWriter extends JavaWriter {
      * Constructor.
      */
     protected JavaFaultWriter(Emitter emitter, QName qname, Fault fault, SymbolTable symbolTable) {
-        super(emitter, qname, "", "java", JavaUtils.getMessage("genFault00"), "fault");
-
-        // Need to adjust the className and fileName to make sure they are consistent with
-        // the full name.  The alternative is to pass a 'dummy' qname into JavaFaultWriter,
-        // which is not appropriate.
-        String fullName = Utils.getFullExceptionName(fault, emitter);
-        className = fullName.substring(fullName.lastIndexOf(".") + 1);
-        fileName = className + ".java";
-
+        super(emitter, Utils.getFullExceptionName(fault, emitter), "fault");
         this.fault = fault;
         this.symbolTable = symbolTable;
     } // ctor
 
     /**
+     * Return "extends org.apache.axis.AxisFault ".
+     */
+    protected String getExtendsText() {
+        return "extends org.apache.axis.AxisFault ";
+    } // getExtendsText
+
+    /**
      * Write the body of the Fault file.
      */
-    protected void writeFileBody() throws IOException {
-        pw.println("public class " + className + " extends org.apache.axis.AxisFault {");
-
+    protected void writeFileBody(PrintWriter pw) throws IOException {
         Vector params = new Vector();
 
         // XXX  Have to get use information (literal/encoded) for fault from
@@ -142,10 +140,6 @@ public class JavaFaultWriter extends JavaWriter {
             }
             pw.println("    }");
         }
-        
-        // Done with class
-        pw.println("}");
-        pw.close();
     } // writeFileBody
 
 } // class JavaFaultWriter
