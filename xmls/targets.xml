@@ -609,5 +609,6 @@
   </target>
 
   <target name="transport-layer" depends="setenv" >
-    <ant inheritAll="false" dir="${axis.home}/samples/transport" antfile="build.xml" target="compile" />
+    <ant inheritAll="true" dir="${axis.home}/samples/transport" 
+      antfile="build.xml" target="compile" />
   </target>
