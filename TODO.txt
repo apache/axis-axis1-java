@@ -65,6 +65,8 @@ DOCUMENTATION
 
 SOAP SPEC COMPLIANCE
 --------------------
+! <> Implement MU-checks on client(response) side - for SOAP 1.1+
+! <> Add support to allow an Axis node to be an intermediary - SOAP 1.1+
 
 SAMPLES
 -------
