@@ -133,8 +133,10 @@ public class SOAPHeader extends MessageElement
     public javax.xml.soap.SOAPHeaderElement addHeaderElement(Name name)
         throws SOAPException {
         SOAPHeaderElement headerElement = new SOAPHeaderElement(name);
-        headerElement.setEnvelope(getEnvelope());
+        SOAPEnvelope envelope = getEnvelope();
+        headerElement.setEnvelope(envelope);
         addHeader(headerElement);
+        envelope.setDirty(true);
         return headerElement;
     }
     

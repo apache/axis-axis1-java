@@ -16,55 +16,6 @@
       <parameter name="className" value="test.wsdl.extensibility.ExtensibilityQueryBindingSkeleton"/>
       <parameter name="allowedMethods" value="*"/>
       <parameter name="scope" value="Session"/>
-
-      <typeMapping
-        xmlns:ns="urn:ExtensibilityQuery"
-        qname="ns:ExtensibilityType"
-        type="java:test.wsdl.extensibility.ExtensibilityType"
-        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
-        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
-        encodingStyle=""
-      />
-      
-      <typeMapping
-        qname="query:QueryResultElement"
-        type="java:test.wsdl.extensibility._QueryResultElement"
-        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
-        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
-        encodingStyle=""
-      />
-
-      <typeMapping
-        qname="query:QueryResultType"
-        type="java:test.wsdl.extensibility.QueryResultType"
-        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
-        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
-        encodingStyle=""
-      />
-
-      <typeMapping
-        qname="query:ResultListType"
-        type="java:test.wsdl.extensibility.ResultListType"
-        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
-        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
-        encodingStyle=""
-      />
-
-        <typeMapping
-           qname="query:BookType"
-           type="java:test.wsdl.extensibility.BookType"
-           serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
-           deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
-           encodingStyle=""
-        />
-
-        <typeMapping
-           qname="query:FindBooksQueryExpressionElement"
-           type="java:test.wsdl.extensibility._FindBooksQueryExpressionElement"
-           serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
-           deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
-           encodingStyle=""
-        />
     </service>
 
 

@@ -182,17 +182,26 @@ public class SchemaUtils {
             return v;
         } else {
             // This may be a simpleType, return the type with the name "value"
-            QName simpleQName = getSimpleTypeBase(node);
+            QName[] simpleQName = getContainedSimpleTypes(node);
             if (simpleQName != null) {
-                TypeEntry simpleType = symbolTable.getType(simpleQName);
-                if (simpleType != null) {
-                    Vector v = new Vector();
-                    ElementDecl elem = new ElementDecl();
-                    elem.setType(simpleType);
-                    elem.setName(new javax.xml.namespace.QName("", "value"));
-                    v.add(elem);
-                    return v;
-                }
+                Vector v = null;
+		for (int i = 0; i < simpleQName.length; i++) {    
+                    TypeEntry simpleType = symbolTable.getType(simpleQName[i]);
+                    if (simpleType != null) {
+			if (v == null) {
+			    v = new Vector();
+		        }
+                        ElementDecl elem = new ElementDecl();
+                        elem.setType(simpleType);
+			if (simpleQName.length > 1) {
+                            elem.setName(new javax.xml.namespace.QName("", simpleQName[i].getLocalPart() + "Value"));
+			} else {
+                            elem.setName(new javax.xml.namespace.QName("", "value"));
+			}
+                        v.add(elem);
+                    }
+		}
+                return v;
             }
         }
         return null;
@@ -543,7 +552,14 @@ public class SchemaUtils {
      * the QName of the simpleType base is returned.
      */
     public static QName getSimpleTypeBase(Node node) {
-        QName baseQName = null;
+	QName[] qname = getContainedSimpleTypes(node);
+	if (qname != null && qname.length > 0) {
+	    return qname[0];
+        }
+	return null;
+    }
+    public static QName[] getContainedSimpleTypes(Node node) {
+        QName[] baseQNames = null;
 
         if (node == null) {
             return null;
@@ -566,9 +582,12 @@ public class SchemaUtils {
             // (There may be other #text nodes, which we will ignore).
             NodeList children = node.getChildNodes();
             Node restrictionNode = null;
+            Node unionNode = null;
             for (int j = 0; j < children.getLength() && restrictionNode == null; j++) {
                 if (isXSDNode(children.item(j), "restriction")) {
                     restrictionNode = children.item(j);
+                } else if (isXSDNode(children.item(j), "union")) {
+                    unionNode = children.item(j);
                 }
             }
 
@@ -576,11 +595,15 @@ public class SchemaUtils {
             // (the base attribute contains this type).
             
             if (restrictionNode != null) {
-                baseQName = Utils.getTypeQName(restrictionNode, new BooleanHolder(), false);
+		baseQNames = new QName[1];
+                baseQNames[0] = Utils.getTypeQName(restrictionNode, new BooleanHolder(), false);
+            }
+            if (unionNode != null) {
+                baseQNames = Utils.getMemberTypeQNames(unionNode);
             }
             
             // Look for enumeration elements underneath the restriction node
-            if (baseQName != null && restrictionNode != null) {
+            if (baseQNames != null && restrictionNode != null && unionNode != null) {
                 NodeList enums = restrictionNode.getChildNodes();
                 for (int i=0; i < enums.getLength(); i++) {
                     if (isXSDNode(enums.item(i), "enumeration")) {
@@ -591,7 +614,7 @@ public class SchemaUtils {
                 }
             }
         }
-        return baseQName;
+        return baseQNames;
     }
 
     /**

@@ -37,7 +37,6 @@ public class ExtensibilityQueryTestCase extends junit.framework.TestCase {
         try {
             ExtensibilityQueryLocator locator = new ExtensibilityQueryLocator();
             binding = locator.getExtensibilityQueryPort();
-            addDynamicTypeMappings(locator.getEngine());
             deployServer();
         }
         catch (javax.xml.rpc.ServiceException jre) {
@@ -53,60 +52,42 @@ public class ExtensibilityQueryTestCase extends junit.framework.TestCase {
 
         try {
             ExtensibilityType expression = new ExtensibilityType(); 
-            _FindBooksQueryExpressionElement bookQuery = new _FindBooksQueryExpressionElement(); 
             BookType book = new BookType();
             book.setSubject("all");
-            bookQuery.setBookQuery(book);
-            MessageElement el = new MessageElement("foo", "Bar", bookQuery);
+            QName elementName = _FindBooksQueryExpressionElement.getTypeDesc().getFields()[0].getXmlName();
+            MessageElement el = new MessageElement(elementName.getNamespaceURI(), elementName.getLocalPart(), book);
             expression.set_any(new MessageElement [] { el });
             // call the operation
             ExtensibilityType any = binding.query(expression);
             // validate results
             MessageElement [] anyContent = any.get_any();
             assertEquals(1, anyContent.length);
-            _QueryResultElement resEl = (_QueryResultElement )anyContent[0].getObjectValue();
-            assertNotNull("QueryResultElement back from anyContent[0].getObjectValue()", resEl);
-            ResultListType result = resEl.getResultList();
-            assertNotNull("ResultListType back from getResultList()", result);
+            ResultListType result = (ResultListType)anyContent[0].getObjectValue(ResultListType.class);
+            root.debug("Message " + result + ": " + anyContent[0].toString());
+            assertNotNull("ResultListType back from getResultList() is null", result);
             QueryResultType[] queryResult = result.getResult();
             assertTrue(queryResult.length == 2); 
             isValid(queryResult[0], "Computer Science", "The Grid"); 
             isValid(queryResult[1], "English", "The Oxford Dictionary"); 
         }
-        catch (java.rmi.RemoteException re) {
-            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
+        catch (Exception e) {
+            e.printStackTrace();
+            throw new junit.framework.AssertionFailedError("Exception caught: " + e);
         }
     }
 
     private void isValid(QueryResultType result, String name, String value) {
+        Logger root = Logger.getRootLogger();
+        root.debug("Name: " + result.getName()); 
+        root.debug("Value: " + result.getValue()); 
         assertTrue(result.getName().equals(name));
         assertTrue(result.getValue().equals(value));
+        assertTrue(result.getStatus().equals(StatusType.MORE));
         Calendar now = Calendar.getInstance();
         Calendar then = result.getTime();
         assertTrue("Time check failed.  Result time = " + then + ", current time = " + now, then.before(now));
         assertTrue(result.getQueryType().getNamespaceURI().equals("urn:QueryType"));
         assertTrue(result.getQueryType().getLocalPart().equals("BookQuery"));
-    }
-
-    private void addDynamicTypeMappings(AxisEngine engine) throws Exception {
-        TypeMappingRegistry registry = engine.getTypeMappingRegistry(); 
-        TypeMapping mapping = registry.createTypeMapping();
-        addBeanMapping(mapping, "FindBooksQueryExpressionElement", _FindBooksQueryExpressionElement.class);
-        addBeanMapping(mapping, "BookType", BookType.class);
-        addBeanMapping(mapping, "ResultListType", ResultListType.class);
-        addBeanMapping(mapping, "QueryResultType", QueryResultType.class);
-        addBeanMapping(mapping, "QueryResultElement", _QueryResultElement.class);
-        registry.register("",mapping);
-        EngineConfiguration config = engine.getConfig();
-        config.writeEngineConfig(engine);
-    }
-
-    private void addBeanMapping(TypeMapping mapping, String localName, Class javaClass) {
-        QName qname = new QName("urn:QueryTypes", localName);
-        mapping.register(javaClass,
-                         qname,
-                         new BeanSerializerFactory(javaClass, qname),
-                         new BeanDeserializerFactory(javaClass, qname));
     }
 
     private void deployServer() {

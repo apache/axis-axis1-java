@@ -74,6 +74,7 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.NSStack;
 import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.description.TypeDesc;
 import org.apache.commons.logging.Log;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -89,6 +90,7 @@ import javax.xml.rpc.JAXRPCException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.lang.reflect.Method;
 
 /**
  * @author Glen Daniels (gdaniels@macromedia.com)
@@ -110,6 +112,10 @@ public class DeserializationContextImpl extends DefaultHandler implements Lexica
     private NSStack namespaces = new NSStack();
 
     private Locator locator;
+
+    // Class used for deserialization using class metadata from 
+    // downstream deserializers
+    private Class destClass;
 
     // for performance reasons, keep the top of the stack separate from
     // the remainder of the handlers, and therefore readily available.
@@ -136,6 +142,10 @@ public class DeserializationContextImpl extends DefaultHandler implements Lexica
     private MessageElement curElement;
 
     protected int startOfMappingsPos = -1;
+
+    private static final Class[] DESERIALIZER_CLASSES =
+            new Class[] {String.class, Class.class, QName.class};
+    private static final String DESERIALIZER_METHOD = "getDeserializer";
     
     // This is a hack to associate the first schema namespace we see with
     // the correct SchemaVersion.  It assumes people won't often be mixing
@@ -469,6 +479,64 @@ public class DeserializationContextImpl extends DefaultHandler implements Lexica
             }
         }
         return dser;
+    }
+    
+    /**
+     * Convenience method to get the Deserializer for a specific
+     * java class from its meta data.
+     * @param cls is the Class used to find the deserializer 
+     * @return Deserializer
+     */
+    public Deserializer getDeserializerForClass(Class cls) {
+        if (cls == null) {
+           cls = destClass;
+        }
+        if (cls == null) {
+            return null;
+        }
+        if (cls.isArray()) {
+            cls = cls.getComponentType();
+        }
+        if (javax.xml.rpc.holders.Holder.class.isAssignableFrom(cls)) {
+            try {
+                cls = cls.getField("value").getType();
+            } catch (Exception e) {
+            }
+        }
+        Deserializer dser = null;
+        try {
+            Method method = cls.getMethod(DESERIALIZER_METHOD, DESERIALIZER_CLASSES);
+            if (method != null) {
+                TypeDesc typedesc = TypeDesc.getTypeDescForClass(cls);
+                if (typedesc != null) {
+                    dser = (Deserializer) method.invoke(null,
+                        new Object[] {msgContext.getEncodingStyle(), cls, typedesc.getXmlType()});
+                }
+            }
+        } catch (Exception e) {
+            log.error(Messages.getMessage("noDeser00", cls.getName()));
+        }
+        return dser;
+    }
+
+     /**
+     * Allows the destination class to be set so that downstream
+     * deserializers like ArrayDeserializer can pick it up when
+     * deserializing its components using getDeserializerForClass
+     * @param destClass is the Class of the component to be deserialized 
+     */
+    public void setDestinationClass(Class destClass) {
+        this.destClass = destClass;
+    }
+
+    /**
+     * Allows the destination class to be retrieved so that downstream
+     * deserializers like ArrayDeserializer can pick it up when
+     * deserializing its components using getDeserializerForClass
+     * @return the Class of the component to be deserialized 
+     */
+    public Class getDestinationClass() {
+        return destClass;
     }
 
     /**

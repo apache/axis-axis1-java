@@ -38,8 +38,16 @@ xmlns:tns="urn:QueryTypes" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
         <xsd:attribute name="value" type="xsd:string"/>
         <xsd:attribute name="time" type="xsd:dateTime"/>
         <xsd:attribute name="queryType" type="xsd:QName"/>
+        <xsd:attribute name="status" type="tns:StatusType"/>
       </xsd:complexType>
 
+      <xsd:simpleType name="StatusType">
+        <xsd:restriction base="xsd:string">
+          <xsd:enumeration value="MORE"/>
+          <xsd:enumeration value="LESS"/>
+        </xsd:restriction>
+      </xsd:simpleType>
+      
     </xsd:schema>
   </types>
 </definitions>

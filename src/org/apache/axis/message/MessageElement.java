@@ -519,13 +519,24 @@ public class MessageElement implements SOAPElement, Serializable
      * Returns value of the node as an object of registered type.
      * @return Object of proper type, or null if no mapping could be found.
      */
-    public Object getObjectValue(){
+    public Object getObjectValue() {
+        Object obj = null;
+        try {
+            obj = getObjectValue(null);
+        } catch (Exception e) {
+            log.debug("getValue()", e);
+        }
+        return obj;
+    }
+
+    /**
+     * Returns value of the node as an object of registered type.
+     * @param cls Class that contains top level deserializer metadata
+     * @return Object of proper type, or null if no mapping could be found.
+     */
+    public Object getObjectValue(Class cls) throws Exception {
         if (objectValue == null) {
-            try {
-                objectValue = getValueAsType(getType());
-            } catch (Exception e) {
-                log.debug("getValue()", e);
-            }
+            objectValue = getValueAsType(getType(), cls);
         }
         return objectValue;
     }
@@ -561,10 +572,19 @@ public class MessageElement implements SOAPElement, Serializable
 
     public Object getValueAsType(QName type) throws Exception
     {
+        return getValueAsType(type, null);
+    }
+    public Object getValueAsType(QName type, Class cls) throws Exception
+    {
         if (context == null)
             throw new Exception(Messages.getMessage("noContext00"));
 
-        Deserializer dser = context.getDeserializerForType(type);
+        Deserializer dser = null;
+        if (cls == null) {
+            dser = context.getDeserializerForType(type);
+        } else {
+            dser = context.getDeserializerForClass(cls);
+        }
         if (dser == null)
             throw new Exception(Messages.getMessage("noDeser00", "" + type));
 

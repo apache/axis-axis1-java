@@ -508,8 +508,13 @@ public class XMLUtils {
 
     public static String getNamespace(String prefix, Node e) {
         while (e != null && (e.getNodeType() == Node.ELEMENT_NODE)) {
-            Attr attr =
-                ((Element)e).getAttributeNodeNS(Constants.NS_URI_XMLNS, prefix);
+            Attr attr = null;
+            if (prefix == null) {
+                attr = ((Element)e).getAttributeNode("xmlns");
+            } else {
+                attr = ((Element)e).getAttributeNodeNS(Constants.NS_URI_XMLNS, 
+                                                       prefix);
+            }
             if (attr != null) return attr.getValue();
             e = e.getParentNode();
         }
@@ -523,6 +528,19 @@ public class XMLUtils {
      * @return a QName generated from the given string representation
      */
     public static QName getQNameFromString(String str, Node e) {
+        return getQNameFromString(str, e, false);
+    }
+    /**
+     * Return a QName when passed a string like "foo:bar" by mapping
+     * the "foo" prefix to a namespace in the context of the given Node.
+     * If default namespace is found it is returned as part of the QName.
+     *
+     * @return a QName generated from the given string representation
+     */
+    public static QName getFullQNameFromString(String str, Node e) {
+        return getQNameFromString(str, e, true);
+    }
+    private static QName getQNameFromString(String str, Node e, boolean defaultNS) {
         if (str == null || e == null)
             return null;
 
@@ -534,6 +552,11 @@ public class XMLUtils {
                 return null;
             return new QName(ns, str.substring(idx + 1));
         } else {
+            if (defaultNS) {
+                String ns = getNamespace(null, e);
+                if (ns != null) 
+                    return new QName(ns, str);
+            }
             return new QName("", str);
         }
     }

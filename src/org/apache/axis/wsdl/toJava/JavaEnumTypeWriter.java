@@ -67,6 +67,7 @@ import java.util.Vector;
 */
 public class JavaEnumTypeWriter extends JavaClassWriter {
     private Vector elements;
+    private TypeEntry type;
 
     /**
      * Constructor.
@@ -76,6 +77,7 @@ public class JavaEnumTypeWriter extends JavaClassWriter {
             TypeEntry type, Vector elements) {
         super(emitter, type.getName(), "enumType");
         this.elements = elements;
+        this.type = type;
     } // ctor
 
     /**
@@ -243,6 +245,41 @@ public class JavaEnumTypeWriter extends JavaClassWriter {
         }
         
        pw.println("    public java.lang.Object readResolve() throws java.io.ObjectStreamException { return fromValue(_value_);}");
+
+       pw.println("    public static org.apache.axis.encoding.Serializer getSerializer(");
+       pw.println("           java.lang.String mechType, ");
+       pw.println("           java.lang.Class _javaType,  ");
+       pw.println("           javax.xml.namespace.QName _xmlType) {");
+       pw.println("        return ");
+       pw.println("          new org.apache.axis.encoding.ser.EnumSerializer(");
+       pw.println("            _javaType, _xmlType);");
+       pw.println("    }");
+       pw.println("    public static org.apache.axis.encoding.Deserializer getDeserializer(");
+       pw.println("           java.lang.String mechType, ");
+       pw.println("           java.lang.Class _javaType,  ");
+       pw.println("           javax.xml.namespace.QName _xmlType) {");
+       pw.println("        return ");
+       pw.println("          new org.apache.axis.encoding.ser.EnumDeserializer(");
+       pw.println("            _javaType, _xmlType);");
+       pw.println("    }");
+
+        pw.println("    // " + Messages.getMessage("typeMeta"));
+        pw.println("    private static org.apache.axis.description.TypeDesc typeDesc =");
+        pw.println("        new org.apache.axis.description.TypeDesc(" +
+                   Utils.getJavaLocalName(type.getName()) + ".class);");
+        pw.println();
+
+        pw.println("    static {");
+        pw.println("        typeDesc.setXmlType(" + Utils.getNewQName(type.getQName()) + ");");
+        pw.println("    }");
+        pw.println("    /**");
+        pw.println("     * " + Messages.getMessage("returnTypeMeta"));
+        pw.println("     */");
+        pw.println("    public static org.apache.axis.description.TypeDesc getTypeDesc() {");
+        pw.println("        return typeDesc;");
+        pw.println("    }");
+        pw.println();
+
     } // writeFileBody
 
     /**

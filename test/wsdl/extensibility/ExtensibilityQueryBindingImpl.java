@@ -29,81 +29,55 @@ import javax.xml.namespace.QName;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.PrintWriter;
 import java.rmi.RemoteException;
 import java.util.Calendar;
 import java.util.Vector;
-
+import org.apache.axis.components.logger.LogFactory;
+import org.apache.commons.logging.Log;
 
 public class ExtensibilityQueryBindingImpl implements ExtensibilityQueryPortType {
     private final static String[] books = new String[] { "The Grid", "The Oxford Dictionary" }; 
     private final static String[] subjects = new String[] { "Computer Science", "English" }; 
+    protected static Log log =
+            LogFactory.getLog(ExtensibilityQueryBindingImpl.class.getName());
 
     public ExtensibilityType query(ExtensibilityType query) throws RemoteException {
         ExtensibilityType result = new ExtensibilityType();
-        Object obj = query.get_any()[0].getObjectValue();
-        if (obj instanceof _FindBooksQueryExpressionElement) {
-            BookType bookQuery = ((_FindBooksQueryExpressionElement)obj).getBookQuery();
+        Object obj = null;
+        try {
+            obj = query.get_any()[0].getObjectValue(BookType.class);
+        } catch (Exception e) {
+            StringWriter writer = new StringWriter();
+            PrintWriter out = new PrintWriter(writer);
+            log.error("Error converting query: " + writer.toString());
+            throw new RemoteException(e.toString());
+        }
+        log.error("Incoming MessageContext " + obj + " : " + query.get_any()[0].toString());
+        if (obj instanceof BookType) {
+            BookType bookQuery = (BookType)obj;
             String subject = bookQuery.getSubject();
             if (!"all".equals(subject)) {
                 throw new RemoteException("ExtensibilityQueryBindingImpl: Book subject query should be all, instead was " + subject);
             }
-            _QueryResultElement resultElement = new _QueryResultElement();
             ResultListType resultList = new ResultListType();
-            resultElement.setResultList(resultList);
             QueryResultType[] queryResult = new QueryResultType[books.length];
             for (int i = 0; i < books.length; i++) {
                 queryResult[i] = new QueryResultType();
                 queryResult[i].setName(subjects[i]);
+                queryResult[i].setStatus(StatusType.MORE);
                 queryResult[i].setValue(books[i]);
                 queryResult[i].setTime(Calendar.getInstance());
                 queryResult[i].setQueryType(new QName("urn:QueryType","BookQuery"));
             }
             resultList.setResult(queryResult);
-            MessageElement me = new MessageElement("foo", "bar", resultElement);
+            QName elementName = _QueryResultElement.getTypeDesc().getFields()[0].getXmlName();
+            MessageElement me = new MessageElement(elementName.getNamespaceURI(), elementName.getLocalPart(), resultList);
+            log.debug("Outgoing message: " + me.toString());
             result.set_any(new MessageElement [] { me });
         } else {
-            throw new RemoteException("Failed to get FindBooksQueryExpressionElement. Got: " + obj.getClass().getName() + ":" + obj.toString());
+            throw new RemoteException("Failed to get FindBooksQueryExpressionElement. Got: " + obj);
         }
         return result;
-    }
-}
-
-class ObjectSerializer {
-    static Log logger =
-           LogFactory.getLog(ObjectSerializer.class.getName());
-
-    static Object toObject(Element element) throws Exception {
-       MessageContext currentContext = MessageContext.getCurrentContext();
-       MessageContext messageContext = new MessageContext(currentContext.getAxisEngine()); 
-       messageContext.setTypeMappingRegistry(currentContext.getTypeMappingRegistry());
-       messageContext.setEncodingStyle("");
-       messageContext.setProperty(Call.SEND_TYPE_ATTR, Boolean.FALSE);
-       SOAPEnvelope message = new SOAPEnvelope();
-       Document doc = XMLUtils.newDocument();
-       Element operationWrapper = doc.createElementNS("urn:operationNS","operation"); 
-       doc.appendChild(operationWrapper); 
-       Node node = doc.importNode(element,true);
-       operationWrapper.appendChild(node);
-
-       message.addBodyElement(new SOAPBodyElement(operationWrapper));
-       
-       StringWriter stringWriter = new StringWriter(); 
-       SerializationContext context = new SerializationContextImpl(stringWriter, messageContext);
-       context.setDoMultiRefs(false);
-       message.output(context);
-       stringWriter.close();
-       String messageString = stringWriter.getBuffer().toString();
-       logger.debug(messageString);
-       Reader reader = new StringReader(messageString);
-       DeserializationContext deserializer = new DeserializationContextImpl(new InputSource(reader),
-                                                                           messageContext, 
-                                                                           Message.REQUEST);
-       deserializer.parse();
-       SOAPEnvelope env = deserializer.getEnvelope();
-       
-       RPCElement rpcElem = (RPCElement)env.getFirstBody();
-       Vector parameters = rpcElem.getParams();
-       RPCParam param = (RPCParam) parameters.get(0);
-       return param.getValue();
     }
 }
