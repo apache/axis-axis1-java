@@ -56,6 +56,7 @@
 package org.apache.axis.handlers ;
 
 import org.apache.axis.AxisFault;
+import org.apache.axis.AxisInternalServices;
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
@@ -64,7 +65,6 @@ import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.utils.JavaUtils;
 
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -73,7 +73,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class DebugHandler extends BasicHandler {
     protected static Log log =
-        LogFactory.getLog(DebugHandler.class.getName());
+        AxisInternalServices.getLog(DebugHandler.class.getName());
 
     public static final String NS_URI_DEBUG = "http://xml.apache.org/axis/debug";
     

@@ -3,8 +3,8 @@ package test.wsdl.multithread;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 import org.apache.axis.AxisFault;
+import org.apache.axis.AxisInternalServices;
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import samples.addr.Address;
 import samples.addr.AddressBook;
 import samples.addr.AddressBookSOAPBindingStub;
@@ -25,7 +25,7 @@ import java.net.ConnectException;
 
 public class MultithreadTestCase extends TestCase {
     private static Log log =
-            LogFactory.getLog(MultithreadTestCase.class.getName());
+            AxisInternalServices.getLog(MultithreadTestCase.class.getName());
 
     private AddressBook binding;
     private static int successCount = 0;

@@ -55,13 +55,13 @@
 package org.apache.axis.handlers.http;
 
 import org.apache.axis.AxisFault;
+import org.apache.axis.AxisInternalServices;
 import org.apache.axis.MessageContext;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.JavaUtils;
 
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 
 /** An <code>URLMapper</code> attempts to use the extra path info
@@ -72,7 +72,7 @@ import org.apache.commons.logging.LogFactory;
 public class URLMapper extends BasicHandler
 {
     protected static Log log =
-        LogFactory.getLog(URLMapper.class.getName());
+        AxisInternalServices.getLog(URLMapper.class.getName());
 
     public void invoke(MessageContext msgContext) throws AxisFault
     {

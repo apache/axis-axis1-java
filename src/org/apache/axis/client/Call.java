@@ -57,6 +57,7 @@ package org.apache.axis.client ;
 
 import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
+import org.apache.axis.AxisInternalServices;
 import org.apache.axis.Constants;
 import org.apache.axis.Handler;
 import org.apache.axis.InternalException;
@@ -84,7 +85,6 @@ import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.transport.http.HTTPTransport;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingInput;
@@ -140,9 +140,9 @@ import java.util.Vector;
 
 public class Call implements javax.xml.rpc.Call {
     protected static Log log =
-        LogFactory.getLog(Call.class.getName());
+        AxisInternalServices.getLog(Call.class.getName());
     private static Log tlog =
-        LogFactory.getLog("org.apache.axis.TIME");
+        AxisInternalServices.getLog("org.apache.axis.TIME");
 
     private boolean            parmAndRetReq   = true ;
     private Service            service         = null ;
@@ -1383,7 +1383,7 @@ public class Call implements javax.xml.rpc.Call {
     public static synchronized void addTransportPackage(String packageName) {
         if (transportPackages == null) {
             transportPackages = new ArrayList();
-            String currentPackages = AxisEngine.getGlobalProperty(TRANSPORT_PROPERTY);
+            String currentPackages = AxisInternalServices.getGlobalProperty(TRANSPORT_PROPERTY);
             if (currentPackages != null) {
                 StringTokenizer tok = new StringTokenizer(currentPackages,
                                                           "|");

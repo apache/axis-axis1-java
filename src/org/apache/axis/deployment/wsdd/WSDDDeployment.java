@@ -55,6 +55,7 @@
 package org.apache.axis.deployment.wsdd;
 
 import org.apache.axis.AxisEngine;
+import org.apache.axis.AxisInternalServices;
 import org.apache.axis.ConfigurationException;
 import org.apache.axis.Constants;
 import org.apache.axis.EngineConfiguration;
@@ -69,7 +70,6 @@ import org.apache.axis.encoding.ser.BaseDeserializerFactory;
 import org.apache.axis.encoding.ser.BaseSerializerFactory;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
@@ -92,7 +92,7 @@ public class WSDDDeployment
     implements WSDDTypeMappingContainer, EngineConfiguration
 {
     protected static Log log =
-        LogFactory.getLog(WSDDDeployment.class.getName());
+        AxisInternalServices.getLog(WSDDDeployment.class.getName());
 
     private HashMap handlers = new HashMap();
     private HashMap services = new HashMap();

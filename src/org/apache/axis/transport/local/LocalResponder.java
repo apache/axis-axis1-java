@@ -56,11 +56,11 @@
 package org.apache.axis.transport.local;
 
 import org.apache.axis.AxisFault;
+import org.apache.axis.AxisInternalServices;
 import org.apache.axis.MessageContext;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Tiny Handler which just makes sure to Stringize the outgoing
@@ -70,7 +70,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class LocalResponder extends BasicHandler {
     protected static Log log =
-        LogFactory.getLog(LocalResponder.class.getName());
+        AxisInternalServices.getLog(LocalResponder.class.getName());
 
     public void invoke(MessageContext msgContext) throws AxisFault {
         if (log.isDebugEnabled()) {

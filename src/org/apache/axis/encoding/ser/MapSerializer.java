@@ -55,13 +55,13 @@
 
 package org.apache.axis.encoding.ser;
 
+import org.apache.axis.AxisInternalServices;
 import org.apache.axis.Constants;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.wsdl.fromJava.Types;
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
 
@@ -83,7 +83,7 @@ import java.util.Map;
 public class MapSerializer implements Serializer
 {
     protected static Log log =
-        LogFactory.getLog(MapSerializer.class.getName());
+        AxisInternalServices.getLog(MapSerializer.class.getName());
 
     // QNames we deal with
     private static final QName QNAME_KEY = new QName("","key");

@@ -58,7 +58,6 @@ package org.apache.axis;
 import org.apache.axis.utils.JavaUtils;
 
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import java.io.StringWriter;
 import java.io.PrintWriter;
@@ -74,7 +73,7 @@ import java.io.PrintWriter;
 public class InternalException extends RuntimeException {
 
     protected static Log log =
-        LogFactory.getLog(InternalException.class.getName());
+            AxisInternalServices.getLog(InternalException.class.getName());
 
     /**
      * Attribute which controls whether or not logging of such events should

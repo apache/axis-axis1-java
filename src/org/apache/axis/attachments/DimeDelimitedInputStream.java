@@ -58,10 +58,10 @@ package org.apache.axis.attachments;
 
 import java.io.IOException;
 
+import org.apache.axis.AxisInternalServices;
 import org.apache.axis.utils.JavaUtils;
 
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.axis.AxisFault;
 import org.apache.axis.utils.JavaUtils;
 
@@ -101,7 +101,7 @@ import org.apache.axis.utils.JavaUtils;
  */
 public class DimeDelimitedInputStream extends java.io.FilterInputStream {
     protected static Log log =
-        LogFactory.getLog(DimeDelimitedInputStream.class.getName());
+        AxisInternalServices.getLog(DimeDelimitedInputStream.class.getName());
 
     java.io.InputStream is = null; //The source input stream.
     boolean closed = true; //The stream has been closed.
