@@ -398,8 +398,12 @@ public class HTTPSender extends BasicHandler {
             header.append("\r\n");
         }
 
-        if (null != otherHeaders)
-            header.append(otherHeaders); //Add other headers to the end.
+        if (null != otherHeaders) {
+            //Add other headers to the end.
+            //for pre java1.4 support, we have to turn the string buffer argument into
+            //a string before appending.
+            header.append(otherHeaders.toString()); 
+        }
 
 
         header.append("\r\n"); //The empty line to start the BODY.
