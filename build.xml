@@ -149,6 +149,10 @@ Copyright:
 <!-- stub in my task generations -->
     <ant antfile="buildPreTestTaskdefs.xml" />
 
+     <!--  Build the new org.apache.axis.tools.ant stuff -->
+     <ant antfile="tools/build.xml" />
+     <ant antfile="tools/build.xml" target="test"/>
+
     <antcall target="post-compile"/>
   </target>
 
