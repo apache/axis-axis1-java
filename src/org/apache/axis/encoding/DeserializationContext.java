@@ -552,7 +552,7 @@ public class DeserializationContext extends DefaultHandler
      */
     public TypeMapping getTypeMapping()
     {
-        if (msgContext == null) {
+        if (msgContext == null || msgContext.getTypeMappingRegistry() == null) {
             return (TypeMapping) new org.apache.axis.encoding.TypeMappingRegistryImpl().getTypeMapping(
                     null);
         }
