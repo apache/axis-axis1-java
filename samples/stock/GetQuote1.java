@@ -61,34 +61,34 @@ import java.io.FileInputStream;
 import org.apache.axis.AxisFault ;
 import org.apache.axis.Constants ;
 import org.apache.axis.client.Service ;
-import org.apache.axis.rpc.Call ;
-import org.apache.axis.encoding.XMLType ;
-import org.apache.axis.rpc.namespace.QName ;
-
 import org.apache.axis.client.Transport ;
+import org.apache.axis.encoding.XMLType ;
+import org.apache.axis.rpc.Call ;
+import org.apache.axis.rpc.namespace.QName ;
 import org.apache.axis.transport.http.HTTPConstants;
-
 import org.apache.axis.utils.Options ;
 
 /**
+ * This version of the ever so popular GetQuote shows how to use the
+ * Axis client APIs with and without WSDL.  The first flavor (getQuote1)
+ * will use WSDL to prefill all of the data about the remote service.
+ * The second one (getQuote2) will do it all manually.  Either way the
+ * service is invoked it should produce the exact same request XML and
+ * of course same results.
+ *
+ * This sample supports the use of the standard options too (-p ...)
  *
  * @author Doug Davis (dug@us.ibm.com.com)
  */
 public class GetQuote1 {
-    public  String symbol ;
+    public  String   symbol ;
     
-    public float getQuote (String args[]) throws Exception {
-      // Define the service QName and port QName
-      /////////////////////////////////////////////////////////////////////////
-      QName servQN = new QName("urn:xmltoday-delayed-quotes","GetQuoteService");
-      QName portQN = new QName("urn:xmltoday-delayed-quotes","GetQuote");
-
-      Service service = new Service( new URL("file:GetQuote.wsdl"), servQN );
-      Call    call    = service.createCall( portQN, "getQuote" );
-
-      Options opts = new Options( args );
-      opts.setDefaultURL( call.getTargetEndpointAddress() );
-      call.setTargetEndpointAddress( new URL(opts.getURL()) );
+    /**
+     * This will use the WSDL to prefill all of the info needed to make
+     * the call.  All that's left is filling in the args to invoke().
+     */
+    public float getQuote1(String args[]) throws Exception {
+      Options  opts = new Options( args );
 
       args = opts.getRemainingArgs();
 
@@ -97,11 +97,76 @@ public class GetQuote1 {
         System.exit(1);
       }
 
-      // Define some service and Axis specific properties
-      ////////////////////////////////////////////////////////////////////////
+      /* Define the service QName and port QName */
+      /*******************************************/
+      QName servQN = new QName("urn:xmltoday-delayed-quotes","GetQuoteService");
+      QName portQN = new QName("urn:xmltoday-delayed-quotes","GetQuote");
+
+      /* Now use those QNames as pointers into the WSDL doc */
+      /******************************************************/
+      Service service = new Service( new URL("file:GetQuote.wsdl"), servQN );
+      Call    call    = service.createCall( portQN, "getQuote" );
+
+      /* Strange - but allows the user to change just certain portions of */
+      /* the URL we're gonna use to invoke the service.  Useful when you  */
+      /* want to run it thru tcpmon (ie. put  -p81 on the cmd line).      */
+      /********************************************************************/
+      opts.setDefaultURL( call.getTargetEndpointAddress() );
+      call.setTargetEndpointAddress( new URL(opts.getURL()) );
+
+      /* Define some service specific properties */
+      /*******************************************/
       call.setProperty( Transport.USER, opts.getUser() );
       call.setProperty( Transport.PASSWORD, opts.getPassword() );
 
+      /* Get symbol and invoke the service */
+      /*************************************/
+      Object result = call.invoke( new Object[] { symbol = args[0] } );
+
+      return( ((Float) result).floatValue() );
+    }
+
+    /**
+     * This will do everything manually (ie. no WSDL).
+     */
+    public float getQuote2(String args[]) throws Exception {
+      Options  opts    = new Options( args );
+
+      args = opts.getRemainingArgs();
+
+      if ( args == null ) {
+        System.err.println( "Usage: GetQuote <symbol>" );
+        System.exit(1);
+      }
+
+      /* Create default/empty Service and Call object */
+      /************************************************/
+      Service  service = new Service();
+      Call     call    = service.createCall();
+
+      /* Strange - but allows the user to change just certain portions of */
+      /* the URL we're gonna use to invoke the service.  Useful when you  */
+      /* want to run it thru tcpmon (ie. put  -p81 on the cmd line).      */
+      /********************************************************************/
+      opts.setDefaultURL( "http://localhost:8080/axis/servlet/AxisServlet" );
+
+      /* Set all of the stuff that would normally come from WSDL */
+      /***********************************************************/
+      call.setTargetEndpointAddress( new URL(opts.getURL()) );
+      call.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, "getQuote" );
+      call.setProperty( Constants.NAMESPACE, "urn:xmltoday-delayed-quotes" );
+      call.setEncodingStyle( "http://schemas.xmlsoap.org/soap/encoding/" );
+      call.setOperationName( "getQuote" );
+      call.addParameter( "symbol", XMLType.XSD_STRING, Call.PARAM_MODE_IN );
+      call.setReturnType( XMLType.XSD_FLOAT );
+
+      /* Define some service specific properties */
+      /*******************************************/
+      call.setProperty( Transport.USER, opts.getUser() );
+      call.setProperty( Transport.PASSWORD, opts.getPassword() );
+
+      /* Get symbol and invoke the service */
+      /*************************************/
       Object result = call.invoke( new Object[] { symbol = args[0] } );
 
       return( ((Float) result).floatValue() );
@@ -109,9 +174,21 @@ public class GetQuote1 {
 
     public static void main(String args[]) {
       try {
-          GetQuote1 gq = new GetQuote1();
-          float val = gq.getQuote(args);
-          System.out.println(gq.symbol + ": " + val);
+          String    save_args[] = new String[args.length];
+          float     val ;
+          GetQuote1 gq  = new GetQuote1();
+
+          /* Call the getQuote() that uses the WDSL */
+          /******************************************/
+          System.arraycopy( args, 0, save_args, 0, args.length );
+          val = gq.getQuote1( args );
+          System.out.println( gq.symbol + ": " + val );
+
+          /* Call the getQuote() that does it all manually */
+          /*************************************************/
+          System.arraycopy( save_args, 0, args, 0, args.length );
+          val = gq.getQuote2( args );
+          System.out.println( gq.symbol + ": " + val );
       }
       catch( Exception e ) {
           if ( e instanceof AxisFault ) {
