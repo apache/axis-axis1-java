@@ -61,6 +61,8 @@ Wsdl2java
 
 ! <> Do we need a Wsdl2java Exception?
 
+! <> Need to handle collections of objects (max occurs > 1).
+
 
 GENERAL / UNCATEGORIZED
 -----------------------
