@@ -238,6 +238,7 @@ public class Deserializer extends SOAPHandler
     
     private int startIdx = 0;
     private int endIdx = -1;
+    private boolean isHref = false;
     
     /** Subclasses override this
      */
@@ -279,6 +280,8 @@ public class Deserializer extends SOAPHandler
     {
         String href = attributes.getValue("href");
         if (href != null) {
+            isHref = true;
+            
             Object ref = context.getObjectByRef(href);
             
             if (DEBUG_LOG) {
@@ -299,12 +302,19 @@ public class Deserializer extends SOAPHandler
             
             // !!! INSERT DEALING WITH ATTACHMENTS STUFF HERE?
         } else {
+            isHref = false;
             onStartElement(namespace, localName, qName, attributes,
                            context);
         }
     }
     
-    public void endElement(String namespace, String localName,
+    /**
+     * Subclasses override this to do custom functionality at the
+     * end of their enclosing element.  This will NOT be called
+     * for HREFs...
+     * 
+     */
+    public void onEndElement(String namespace, String localName,
                            DeserializationContext context)
         throws SAXException
     {
@@ -328,6 +338,14 @@ public class Deserializer extends SOAPHandler
                                          so);
             value = writer.getBuffer().toString();
         }
+    }
+    
+    public final void endElement(String namespace, String localName,
+                           DeserializationContext context)
+        throws SAXException
+    {
+        if (!isHref)
+            onEndElement(namespace, localName, context);
         valueComplete();
     }
 }
