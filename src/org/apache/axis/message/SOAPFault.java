@@ -36,6 +36,7 @@ import javax.xml.soap.SOAPException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+import java.util.Iterator;
 
 /** A Fault body element.
  *
@@ -48,6 +49,7 @@ public class SOAPFault extends SOAPBodyElement implements javax.xml.soap.SOAPFau
     protected AxisFault fault;
     protected String prefix;
     private java.util.Locale locale;
+    protected Detail detail = null;
     
     public SOAPFault(String namespace, String localName, String prefix,
                      Attributes attrs, DeserializationContext context)
@@ -62,7 +64,7 @@ public class SOAPFault extends SOAPBodyElement implements javax.xml.soap.SOAPFau
     }
     
     public void outputImpl(SerializationContext context)
-            throws IOException
+            throws Exception
     {
         SOAPConstants soapConstants = context.getMessageContext() == null ?
                                         SOAPConstants.SOAP11_CONSTANTS :
@@ -166,6 +168,13 @@ public class SOAPFault extends SOAPBodyElement implements javax.xml.soap.SOAPFau
                 for (int i = 0; i < faultDetails.length; i++) {
                     context.writeDOMElement(faultDetails[i]);
                 }
+
+                if (detail!= null) {
+                    for (Iterator it = detail.getChildren().iterator(); it.hasNext();) {
+                        ((NodeImpl)it.next()).output(context);
+                    }
+                }
+        
                 context.endElement();
             }
         }
@@ -360,11 +369,12 @@ public class SOAPFault extends SOAPBodyElement implements javax.xml.soap.SOAPFau
      * @return a detail element contructed from the AxisFault details
      * @throws SOAPException
      */
-    private static Detail convertToDetail(AxisFault fault)
+    private Detail convertToDetail(AxisFault fault)
             throws SOAPException
     {
-        Detail detail = new Detail(fault);
+        detail = new Detail();
         Element[] darray = fault.getFaultDetails();
+        fault.setFaultDetail(new Element[]{});
         for (int i = 0; i < darray.length; i++)
         {
             Element detailtEntryElem = darray[i];

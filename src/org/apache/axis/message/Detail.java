@@ -30,21 +30,9 @@ import java.util.Iterator;
  *
  * @author Davanum Srinivas (dims@yahoo.com)
  */
-public class Detail extends SOAPFault implements javax.xml.soap.Detail {
-
-    public Detail(String namespace, String localName, String prefix,
-                  Attributes attrs, DeserializationContext context)
-            throws AxisFault
-    {
-        super(namespace, localName, prefix, attrs, context);
-    }
+public class Detail extends SOAPFaultElement implements javax.xml.soap.Detail {
 
     public Detail() {
-        super(new AxisFault());
-    }
-
-    public Detail(AxisFault fault) {
-        super(fault);
     }
 
     /**
@@ -57,13 +45,6 @@ public class Detail extends SOAPFault implements javax.xml.soap.Detail {
     public DetailEntry addDetailEntry(Name name) throws SOAPException {
         org.apache.axis.message.DetailEntry entry = new org.apache.axis.message.DetailEntry(name);
         addChildElement(entry);
-        if(fault != null) {
-            try {
-                fault.addFaultDetail(entry.getAsDOM());
-            } catch (Exception e) {
-                throw new SOAPException(e);
-            }
-        }
         return entry;
     }
 

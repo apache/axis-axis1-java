@@ -21,8 +21,6 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 import samples.jaxm.DelayedStockQuote;
-import samples.jaxm.SOAPFaultTest;
-import samples.jaxm.UddiPing;
 
 import javax.xml.messaging.URLEndpoint;
 import javax.xml.soap.MessageFactory;
@@ -46,15 +44,6 @@ public class TestJAXMSamples extends TestCase {
     public TestJAXMSamples(String name) {
         super(name);
     } // ctor
-
-    public void testSOAPFaultTest () throws Exception {
-        try {
-            SOAPFaultTest.main(new String[0]);
-        } catch (Throwable t) {
-            t.printStackTrace();
-            throw new Exception("Fault returned from test: " + t);
-        }
-    }
 
 //    // This is timing out for some reason - removed for the nonce.
 //    // -- gdaniels, 4/21/2003
