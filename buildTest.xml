@@ -370,8 +370,6 @@ Copyright:
       testTarget="batch-junit-functional"
       stopTarget="stop-functional-test-http-server" />
 
-    <echo message="Return to buildTest.xml"/>
-
     <ant antfile="${axis.home}/test/functional/build.xml" target="run"/>
    </target>
 
