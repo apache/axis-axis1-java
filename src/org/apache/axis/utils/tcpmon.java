@@ -905,18 +905,18 @@ public class tcpmon extends JFrame {
                     // looping forever since no one closed the 1st one.
                     // while( !rr2.isDone() ) 
                     if (null != rr1 && rr1.isDone()) {
-                        if ( index >= 0 ) {
+                        if ( index >= 0  && rr2 != null) {
                             listener.tableModel.setValueAt(getMessage("resp00", "Resp"),
                                 1 + index, STATE_COLUMN );
-                            rr1 = null;
                         }
+                       rr1 = null;
                     }
                     if (null != rr2 && rr2.isDone()) {
-                        if ( index >= 0 ) {
+                        if ( index >= 0 && rr1 != null ) {
                             listener.tableModel.setValueAt(getMessage("req00", "Req"),
                                 1 + index, STATE_COLUMN );
-                            rr2 = null;
                         }
+                        rr2 = null;
                     }
 
                     //  Thread.sleep( 10 );
