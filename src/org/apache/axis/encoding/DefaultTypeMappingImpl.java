@@ -79,6 +79,8 @@ import org.apache.axis.encoding.ser.SimpleDeserializerFactory;
 import org.apache.axis.encoding.ser.SimpleSerializerFactory;
 import org.apache.axis.encoding.ser.VectorDeserializerFactory;
 import org.apache.axis.encoding.ser.VectorSerializerFactory;
+import org.apache.axis.encoding.ser.DocumentDeserializerFactory;
+import org.apache.axis.encoding.ser.DocumentSerializerFactory;
 import org.apache.axis.schema.SchemaVersion;
 import org.apache.axis.types.HexBinary;
 import org.apache.axis.utils.JavaUtils;
@@ -336,6 +338,12 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
         myRegister(Constants.SOAP_ELEMENT,   org.w3c.dom.Element.class,
                    new ElementSerializerFactory(),
                    new ElementDeserializerFactory());
+
+        // Use the Document Serializeration for Document's
+        myRegister(Constants.SOAP_DOCUMENT,   org.w3c.dom.Document.class,
+                   new DocumentSerializerFactory(),
+                   new DocumentDeserializerFactory());
+
         myRegister(Constants.SOAP_VECTOR,    java.util.Vector.class,
                    new VectorSerializerFactory(java.util.Vector.class,
                                                Constants.SOAP_VECTOR),
