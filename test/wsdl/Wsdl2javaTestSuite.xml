@@ -34,6 +34,18 @@
         <mapping namespace="urn:AddressFetcher2" package="samples.addr"/>
     </wsdl2java>
 
+    <!-- MultiRef Sample -->
+    <wsdl2java url="test/multiref/MultiRefTest.wsdl"
+               output="build/work"
+               deployscope="session"
+               skeleton="yes"
+               messagecontext="no"
+               noimports="no"
+               verbose="no"
+               testcase="no">
+        <mapping namespace="urn:MultiRefTest2" package="test.multiref"/>
+    </wsdl2java>
+
     <!-- Import Test 1:  some namespace->package mappings from the -->
     <!--                 command line, some generated.             -->
     <wsdl2java url="test/import_/Import.wsdl"

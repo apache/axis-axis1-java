@@ -1,0 +1,181 @@
+<?xml version="1.0" ?>
+
+<definitions name="urn:MultiRefTest"
+             targetNamespace="urn:MultiRefTest2"
+             xmlns:tns="urn:MultiRefTest2"
+             xmlns:typens="urn:MultiRefTest2"
+             xmlns:xsd="http://www.w3.org/1999/XMLSchema"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+  <!-- type defs -->
+  <types>
+    <xsd:schema targetNamespace="urn:MultiRefTest2"
+                xmlns:xsd="http://www.w3.org/1999/XMLSchema">
+
+      <xsd:complexType name="node">
+        <xsd:all>
+            <xsd:element name="left" type="typens:node" xsd:nillable="true"/>
+            <xsd:element name="right" type="typens:node" xsd:nillable="true"/>
+            <xsd:element name="data" type="xsd:int"/>
+        </xsd:all>
+      </xsd:complexType>
+    </xsd:schema>
+  </types>
+
+  <!-- message declns -->
+  <message name="InNodes">
+    <part name="root" type="typens:node"/>
+  </message>
+  <message name="OutNodes">
+    <part name="root" type="typens:node"/>
+    <part name="rc" type="xsd:int"/>
+  </message>
+  <message name="InNodes2">
+    <part name="root1" type="typens:node"/>
+    <part name="root2" type="typens:node"/>
+  </message>
+  <message name="OutNodes2">
+    <part name="root1" type="typens:node"/>
+    <part name="root2" type="typens:node"/>
+    <part name="rc" type="xsd:int"/>
+  </message>
+
+  <!-- port type declns -->
+  <portType name="MultiRefTest">
+    <operation name="testSimpleTree">
+      <input  message="tns:InNodes"/>
+      <output message="tns:OutNodes"/>
+    </operation>
+    <operation name="testDiamond">
+      <input  message="tns:InNodes"/>
+      <output message="tns:OutNodes"/>
+    </operation>
+    <operation name="testLoop">
+      <input  message="tns:InNodes"/>
+      <output message="tns:OutNodes"/>
+    </operation>
+    <operation name="testSelfRef">
+      <input  message="tns:InNodes"/>
+      <output message="tns:OutNodes"/>
+    </operation>
+    <operation name="testSameArgs">
+      <input  message="tns:InNodes2"/>
+      <output message="tns:OutNodes2"/>
+    </operation>
+    <operation name="testArgsRefSameNode">
+      <input  message="tns:InNodes2"/>
+      <output message="tns:OutNodes2"/>
+    </operation>
+    <operation name="testArgsRefEachOther">
+      <input  message="tns:InNodes2"/>
+      <output message="tns:OutNodes2"/>
+    </operation>
+  </portType>
+
+  <!-- binding declns -->
+  <binding name="MultiRefTestSOAPBinding" type="tns:MultiRefTest">
+    <soap:binding style="rpc"
+                  transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="testSimpleTree">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="encoded"
+                   namespace="urn:MultiRefTest2"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="encoded"
+                   namespace="urn:MultiRefTest2"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="testDiamond">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="encoded"
+                   namespace="urn:MultiRefTest2"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="encoded"
+                   namespace="urn:MultiRefTest2"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="testLoop">
+      <soap:operation soapAction=""/>
+      <input>
+         <soap:body use="encoded"
+                   namespace="urn:MultiRefTest2"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="encoded"
+                   namespace="urn:MultiRefTest2"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="testSelfRef">
+      <soap:operation soapAction=""/>
+      <input>
+         <soap:body use="encoded"
+                   namespace="urn:MultiRefTest2"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="encoded"
+                   namespace="urn:MultiRefTest2"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="testSameArgs">
+      <soap:operation soapAction=""/>
+      <input>
+         <soap:body use="encoded"
+                   namespace="urn:MultiRefTest2"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="encoded"
+                   namespace="urn:MultiRefTest2"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="testArgsRefSameNode">
+      <soap:operation soapAction=""/>
+      <input>
+         <soap:body use="encoded"
+                   namespace="urn:MultiRefTest2"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="encoded"
+                   namespace="urn:MultiRefTest2"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="testArgsRefEachOther">
+      <soap:operation soapAction=""/>
+      <input>
+         <soap:body use="encoded"
+                   namespace="urn:MultiRefTest2"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="encoded"
+                   namespace="urn:MultiRefTest2"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+  </binding>
+
+  <!-- service decln -->
+  <service name="MultiRefTestService">
+    <port name="MultiRefTest" binding="tns:MultiRefTestSOAPBinding">
+      <soap:address location="http://localhost:8080/axis/services/MultiRefTest"/>
+    </port>
+  </service>
+
+</definitions>
+
