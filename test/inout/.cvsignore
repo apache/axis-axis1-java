@@ -1,0 +1,8 @@
+deploy.xml
+Inout.java
+InoutService.java
+InoutSOAPBindingSkeleton.java
+InoutSOAPBindingStub.java
+TestFailed.java
+undeploy.xml
+xml_soap_address_demo
