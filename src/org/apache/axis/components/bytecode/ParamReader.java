@@ -116,7 +116,7 @@ public class ParamReader extends FilterInputStream {
         while (n > 0) {
             int c = (int) skip(n);
             if (c < 0)
-                throw new EOFException();
+                throw new EOFException("Unexcepted EOF");
             n -= c;
         }
     }

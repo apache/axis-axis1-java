@@ -56,6 +56,7 @@ package org.apache.axis.components.bytecode;
 
 import org.apache.commons.logging.Log;
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.utils.JavaUtils;
 
 import java.lang.reflect.Method;
 import java.io.InputStream;
@@ -85,7 +86,7 @@ public class Builtin implements Extractor {
             names = new ParamReader(in).getArgNames(method.getName());
         } catch (IOException e) {
             // log it and move on
-            log.info(e);
+            log.info(JavaUtils.getMessage("error00") + ":" + e);
         }
 
         return names;
