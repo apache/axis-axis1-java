@@ -145,6 +145,7 @@ public class LocalSender extends BasicHandler {
                 // This enables "local:///AdminService" and the like to work.
                 serverContext.setTargetService(file);
             } catch (Exception e) {
+                throw AxisFault.makeFault(e);
             }
         }
 
