@@ -109,7 +109,7 @@ public class LocalTransport extends Transport
      */
     public void setupMessageContext (MessageContext mc, ServiceClient serv, AxisEngine engine)
     {
-        mc.setTransportName("local");
+        mc.setTransportName(transportName == null ? "local" : transportName);
         if (server != null)
             mc.setProperty(LOCAL_SERVER, server);
     }
