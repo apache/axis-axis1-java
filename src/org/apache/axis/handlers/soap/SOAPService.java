@@ -64,9 +64,9 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.SimpleTargetedChain;
 import org.apache.axis.providers.java.MsgProvider;
 import org.apache.axis.encoding.DeserializerFactory;
-import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.encoding.TypeMappingRegistryImpl;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeader;
 import org.apache.axis.utils.JavaUtils;
@@ -102,7 +102,7 @@ public class SOAPService extends SimpleTargetedChain
 
     /** Service-specific type mappings
      */
-    private TypeMappingRegistry typeMap;
+    private TypeMappingRegistry tmr;
     
     /**
      * SOAPRequestHandler is used to inject SOAP semantics just before
@@ -189,18 +189,19 @@ public class SOAPService extends SimpleTargetedChain
     }
 
     private void initTypeMappingRegistry() {
-        typeMap = new TypeMappingRegistry();
-        typeMap.setParent(SOAPTypeMappingRegistry.getSingleton());
+        tmr = new TypeMappingRegistryImpl();
+        // The TMR has the SOAP/XSD in the default TypeMapping
+        //tmr.setParent(SOAPTypeMappingRegistry.getSingleton());
     }
     
     public TypeMappingRegistry getTypeMappingRegistry()
     {
-        return typeMap;
+        return tmr;
     }
     
     public void setTypeMappingRegistry(TypeMappingRegistry map)
     {
-        typeMap = map;
+        tmr = map;
     }
     
     /** Convenience constructor for wrapping SOAP semantics around
@@ -214,12 +215,10 @@ public class SOAPService extends SimpleTargetedChain
     
     /** Tell this service which engine it's deployed to.
      *
-     * The main result of this right now is to set up type mapping
-     * relationships.
      */
     public void setEngine(AxisEngine engine)
     {
-      typeMap.setParent(engine.getTypeMappingRegistry());
+      tmr = engine.getTypeMappingRegistry();
     }
 
     /**
@@ -267,30 +266,6 @@ public class SOAPService extends SimpleTargetedChain
      */
     public void stop()
     {
-    }
-    
-    /**
-     * Register a new service type mapping
-     */
-    public void registerTypeMapping(QName qName,
-                                    Class cls,
-                                    DeserializerFactory deserFactory,
-                                    Serializer serializer)
-        throws IntrospectionException
-    {
-        if (deserFactory != null)
-            typeMap.addDeserializerFactory(qName, cls, deserFactory);
-        if (serializer != null)
-            typeMap.addSerializer(cls, qName, serializer);
-    }
-        
-    /**
-     * Unregister a service type mapping
-     */
-    public void unregisterTypeMapping(QName qName, Class cls)
-    {
-        typeMap.removeDeserializer(qName);
-        typeMap.removeSerializer(cls);
     }
     
     /**

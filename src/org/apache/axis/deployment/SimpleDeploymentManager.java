@@ -64,12 +64,14 @@ import org.apache.axis.deployment.wsdd.WSDDConstants;
 import org.apache.axis.deployment.wsdd.WSDDService;
 import org.apache.axis.deployment.wsdd.WSDDTransport;
 import org.apache.axis.deployment.wsdd.WSDDTypeMapping;
-import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.encoding.TypeMappingRegistryImpl;
+import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.SerializationContext;
 import org.w3c.dom.Document;
 
 import javax.xml.rpc.namespace.QName;
+import javax.xml.rpc.JAXRPCException;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Enumeration;
@@ -94,7 +96,7 @@ public class SimpleDeploymentManager
     Hashtable transports = new Hashtable();
 
     /** Storage for our TypeMappingRegistries */
-    Hashtable mappings;
+    TypeMappingRegistry tmr = null;
     
     /** The deployment document we're rooted off of.
      * This will be updated as new items are deployed into the registry.
@@ -106,14 +108,16 @@ public class SimpleDeploymentManager
      */
     public SimpleDeploymentManager()
     {
-        mappings = new Hashtable();
+        tmr = new TypeMappingRegistryImpl();
 
-        try {
-            mappings.put(Constants.URI_SOAP_ENC, new SOAPTypeMappingRegistry());
-        } catch (Exception e) {
-            // if this ever occurs, we have an internal error
-            throw new InternalException(e);
-        }
+        // The TypeMappingRegistry already has a default TypeMapping, so 
+        // the following is not needed.
+        //try {
+        //    mappings.put(Constants.URI_CURRENT_SOAP_ENC, new TypeMappingRegistryImpl());
+        //} catch (Exception e) {
+        //    // if this ever occurs, we have an internal error
+        //    throw new InternalException(e);
+        //}
     }
 
     /**
@@ -353,43 +357,56 @@ public class SimpleDeploymentManager
     }
 
     /**
-     * return the named mapping registry
+     * Get the configured TypeMappingRegistry which contains
+     * the TypeMapping objects
+     * @return TypeMappingRegistry
+     */
+    public TypeMappingRegistry getTypeMappingRegistry() {
+        return tmr;
+    }
+    /**
+     * return the named type mapping
      * @param encodingStyle XXX
      * @return XXX
      * @throws DeploymentException XXX
      */
-    public TypeMappingRegistry getTypeMappingRegistry(String encodingStyle)
+    public TypeMapping getTypeMapping(String encodingStyle)
         throws DeploymentException
     {
         if (encodingStyle == null)
             encodingStyle = "";
         
-        TypeMappingRegistry tmr =
-            (TypeMappingRegistry) mappings.get(encodingStyle);
+        TypeMapping tm = (TypeMapping) tmr.getTypeMapping(encodingStyle);
 
-        return tmr;
+        return tm;
     }
 
+    
     /**
      * adds a new mapping registry
      * @param encodingStyle XXX
      * @param tmr XXX
      */
-    public void addTypeMappingRegistry(String encodingStyle,
-                                       TypeMappingRegistry tmr)
+    public void addTypeMapping(String encodingStyle,
+                               TypeMapping tm)
     {
-        mappings.put(encodingStyle, tmr);
+        try {
+            TypeMapping existingTM = (TypeMapping) tmr.getTypeMapping(encodingStyle);
+            if (existingTM == tm) 
+                return;
+            tmr.register(tm, new String[] {encodingStyle});
+        } catch (Exception e) {}
     }
 
     /**
      * remove the named mapping registry
      * @param encodingStyle XXX
      */
-    public void removeTypeMappingRegistry(String encodingStyle)
+    public void removeTypeMapping(String encodingStyle)
     {
-        mappings.remove(encodingStyle);
+        tmr.removeTypeMapping(encodingStyle);
     }
-    
+
     public void writeToContext(SerializationContext context)
         throws IOException
     {
@@ -419,9 +436,10 @@ public class SimpleDeploymentManager
             WSDDTransport transport = (WSDDTransport)i.next();
             transport.writeToContext(context);
         }
-        
-        TypeMappingRegistry tmr = getTypeMappingRegistry("");
-        tmr.dumpToSerializationContext(context);
+
+        // The TypeMappings should be written out as part of the
+        // service.writeToContext()
+        //        context.dumpToSerializationContext();
         
         context.endElement();
     }

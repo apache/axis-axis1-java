@@ -59,7 +59,6 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
-import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeader;
 import org.apache.axis.utils.JavaUtils;
@@ -84,7 +83,7 @@ public class DebugHandler extends BasicHandler {
 
             if (header != null) {
                 Integer i = ((Integer)header
-                             .getValueAsType(SOAPTypeMappingRegistry.XSD_INT));
+                             .getValueAsType(Constants.XSD_INT));
                 if (i == null)
                     throw new AxisFault(JavaUtils.getMessage("cantConvert03"));
 

@@ -380,37 +380,6 @@ public class ServiceClient {
         call.clearHeaders();
     }
 
-    /**
-     * Map a type for serialization.
-     *
-     * @param _class the Java class of the data type.
-     * @param qName the xsi:type QName of the associated XML type.
-     * @param serializer a Serializer which will be used to write the XML.
-     */
-    public void addSerializer(Class _class,
-                              QName qName,
-                              Serializer serializer) {
-        call.addSerializer(_class, qName, serializer);
-    }
-
-    /**
-     * Map a type for deserialization.
-     *
-     * @param qName the xsi:type QName of an XML Schema type.
-     * @param _class the class of the associated Java data type.
-     * @param deserializerFactory a factory which can create deserializer
-     *                            instances for this type.
-     * @throws IntrospectionException _class is not compatible with the
-     *                            specified deserializer.
-     */
-    public void addDeserializerFactory(QName qName,
-                                       Class _class,
-                                       DeserializerFactory deserializerFactory)
-        throws IntrospectionException
-    {
-        call.addDeserializerFactory(qName, _class, deserializerFactory);
-    }
-
     /************************************************
      * Invocation
      */

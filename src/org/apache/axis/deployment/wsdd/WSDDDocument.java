@@ -130,7 +130,7 @@ public class WSDDDocument
 
     public Document getDOMDocument() throws DeploymentException {
         StringWriter writer = new StringWriter();
-        SerializationContext context = new SerializationContext(writer, null);
+        SerializationContext context = new SerializationContextImpl(writer, null);
         context.setPretty(true);
         try {
             deployment.writeToContext(context);

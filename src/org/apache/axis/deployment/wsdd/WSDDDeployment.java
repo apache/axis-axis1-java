@@ -60,6 +60,8 @@ import org.w3c.dom.NodeList;
 import org.apache.axis.Constants;
 import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.deployment.DeploymentException;
+import org.apache.axis.encoding.ser.BaseSerializerFactory;
+import org.apache.axis.encoding.ser.BaseDeserializerFactory;
 import org.apache.axis.encoding.*;
 
 import javax.xml.rpc.namespace.QName;
@@ -172,6 +174,7 @@ public class WSDDDeployment
     public void deployToRegistry(DeploymentRegistry registry)
         throws DeploymentException
     {
+
         WSDDGlobalConfiguration global = getGlobalConfiguration();
 
         if (global != null) {
@@ -194,7 +197,6 @@ public class WSDDDeployment
         for (int n = 0; n < services.length; n++) {
             services[n].deployToRegistry(registry);
         }
-
         for (int n = 0; n < mappings.length; n++) {
             WSDDTypeMapping     mapping = mappings[n];
             deployMappingToRegistry(mapping, registry);
@@ -205,35 +207,57 @@ public class WSDDDeployment
                                                DeploymentRegistry registry)
             throws DeploymentException
     {
-        TypeMappingRegistry tmr     =
-                registry.getTypeMappingRegistry(mapping.getEncodingStyle());
-
-        if (tmr == null) {
-            tmr = new TypeMappingRegistry();
-            tmr.setParent(SOAPTypeMappingRegistry.getSingleton());
-
-            registry.addTypeMappingRegistry(mapping.getEncodingStyle(),
-                                            tmr);
-        }
-
-        Serializer          ser   = null;
-        DeserializerFactory deser = null;
-
         try {
-            ser   = (Serializer) mapping.getSerializer().newInstance();
-            deser =
-                (DeserializerFactory) mapping.getDeserializer()
-                    .newInstance();
+            //System.out.println(mapping.getQName() + " " +
+            //                   mapping.getLanguageSpecificType() + " " +
+            //                   mapping.getSerializer() + " " + 
+            //                   mapping.getDeserializer() + " " +
+            //                   mapping.getEncodingStyle());
 
-            if (ser != null) {
-                tmr.addSerializer(mapping.getLanguageSpecificType(),
-                                  mapping.getQName(), ser);
+            TypeMappingRegistry tmr     = 
+                registry.getTypeMappingRegistry();
+            
+            TypeMapping tm = (TypeMapping) tmr.getTypeMapping(mapping.getEncodingStyle());
+            TypeMapping df = (TypeMapping) tmr.getDefaultTypeMapping();
+            if (tm == null || tm == df) {
+                tm = (TypeMapping) tmr.createTypeMapping();
+                String namespace = mapping.getEncodingStyle();
+                if (mapping.getEncodingStyle() == null) {
+                    namespace = Constants.URI_CURRENT_SOAP_ENC;
+                }
+                tm.setSupportedEncodings(new String[] {namespace});
+                tmr.register(tm, new String[] {namespace});
             }
-
-            if (deser != null) {
-                tmr.addDeserializerFactory(mapping.getQName(), mapping
-                    .getLanguageSpecificType(), deser);
+            
+            SerializerFactory   ser   = null;
+            DeserializerFactory deser = null;
+            
+            // Try to construct a serializerFactory by introspecting for the
+            // following:
+            // public static create(Class javaType, QName xmlType)
+            // public <constructor>(Class javaType, QName xmlType)
+            // public <constructor>()
+            // 
+            // The BaseSerializerFactory createFactory() method is a utility 
+            // that does this for us.
+            //System.out.println("start creating sf and df");
+            if (mapping.getSerializerName() != null &&
+                !mapping.getSerializerName().equals("")) {
+                ser = BaseSerializerFactory.createFactory(mapping.getSerializer(), 
+                                                          mapping.getLanguageSpecificType(),
+                                                          mapping.getQName());
             }
+            //System.out.println("set ser factory");
+            
+            if (mapping.getDeserializerName() != null &&
+                !mapping.getDeserializerName().equals("")) {
+                deser = BaseDeserializerFactory.createFactory(mapping.getDeserializer(), 
+                                                          mapping.getLanguageSpecificType(),
+                                                          mapping.getQName());
+            }
+            //System.out.println("set dser factory");
+            tm.register( mapping.getLanguageSpecificType(), mapping.getQName(), ser, deser);
+            //System.out.println("registered");
         }
         catch (Exception e) {
             throw new DeploymentException(e);
