@@ -99,6 +99,17 @@ public class AxisServlet extends HttpServlet {
         if (realpath != null) {
             msgContext.setProperty(Constants.MC_REALPATH, realpath);
 
+            /* Set the Transport */
+            /*********************/
+            msgContext.setTransportName(transportName);
+
+            /* Save some HTTP specific info in the bag in case a handler needs it */
+            /**********************************************************************/
+            msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLET, this );
+            msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST, req );
+            msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETRESPONSE, res );
+            msgContext.setProperty(Constants.MC_REMOTE_ADDR, req.getRemoteAddr());
+
             try {
                 String url = req.getScheme() + "://" +
                         req.getServerName() + ":" +

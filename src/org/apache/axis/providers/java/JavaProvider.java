@@ -259,7 +259,7 @@ public abstract class JavaProvider extends BasicProvider {
         /* Now get the service (RPC) specific info  */
         /********************************************/
         String  clsName    = (String) service.getOption( "className" );
-        String  methodName = (String) service.getOption( "methodName" );
+        String  allowedMethods = getServiceAllowedMethods(service);
 
         if ((clsName == null) || clsName.equals(""))
           throw new AxisFault("Server.NoClassForService",
@@ -273,14 +273,15 @@ public abstract class JavaProvider extends BasicProvider {
          * make).  Tossing an Exception if it's not set, and using "*"
          * to explicitly indicate "any method" is probably better.
          */
-        if ((methodName == null) || methodName.equals(""))
+        if ((allowedMethods == null) || allowedMethods.equals(""))
           throw new AxisFault("Server.NoMethodConfig",
-            "No 'methodName' option was configured for the service '" +
+            "No '" + getServiceAllowedMethodsOptionName() +
+               "' option was configured for the service '" +
                serviceName + "'",
             null, null);
 
-        if (methodName.equals("*"))
-          methodName = null;
+        if (allowedMethods.equals("*"))
+          allowedMethods = null;
 
         try {
             /* We know we're doing a Java/RPC call so we can ask for the */
@@ -293,7 +294,7 @@ public abstract class JavaProvider extends BasicProvider {
             String url = msgContext.getStrProp(MessageContext.TRANS_URL);
             String urn = (String)msgContext.getTargetService();
             String description = "Some service or other";
-            Document doc = WSDLUtils.writeWSDLDoc(cls,
+            Document doc = WSDLUtils.writeWSDLDoc(cls, allowedMethods,
                     url, urn, description, msgContext);
 
             msgContext.setProperty("WSDL", doc);

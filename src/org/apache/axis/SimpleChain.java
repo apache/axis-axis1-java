@@ -57,6 +57,8 @@ package org.apache.axis ;
 
 import java.util.* ;
 import org.apache.axis.* ;
+import org.apache.axis.strategies.InvocationStrategy;
+import org.apache.axis.strategies.WSDLGenStrategy;
 import org.apache.axis.utils.* ;
 import org.apache.axis.handlers.*;
 
@@ -80,17 +82,33 @@ public class SimpleChain extends BasicHandler implements Chain {
             ((Handler) handlers.elementAt( i )).cleanup();
     }
 
+    static InvocationStrategy iVisitor = new InvocationStrategy();
+    static WSDLGenStrategy wsdlVisitor = new WSDLGenStrategy();
+
     /**
      * Iterate over the chain invoking each handler.  If there's a fault
      * then call 'undo' for each completed handler in reverse order, then 
      * rethrow the exception.
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
+        doVisiting(msgContext, iVisitor);
+    }
+
+    /**
+     * Iterate over the chain letting each handler have a crack at
+     * contributing to a WSDL description.
+     */
+    public void generateWSDL(MessageContext msgContext) throws AxisFault {
+        doVisiting(msgContext, wsdlVisitor);
+    }
+
+    private void doVisiting(MessageContext msgContext,
+                            HandlerIterationStrategy visitor) throws AxisFault {
         Debug.Print( 1, "Enter: SimpleChain::invoke" );
         int i = 0 ;
         try {
             for ( i = 0 ; handlers!= null && i<handlers.size() ; i++ )
-                ((Handler) handlers.elementAt( i )).invoke( msgContext );
+                visitor.visit((Handler)handlers.elementAt( i ), msgContext);
         }
         catch( Exception e ) {
             // undo in reverse order - rethrow
@@ -183,19 +201,5 @@ public class SimpleChain extends BasicHandler implements Chain {
 
         Debug.Print( 1, "Exit: SimpleChain::getDeploymentData" );
         return( root );
-    }
-
-    public void generateWSDL(MessageContext msgContext) throws AxisFault {
-        Debug.Print( 1, "Enter: SimpleChain::editWSDL" );
-        try {
-            for ( int i = 0 ; handlers!= null && i<handlers.size() ; i++ )
-                ((Handler) handlers.elementAt( i )).generateWSDL( msgContext );
-        } catch( Exception e ) {
-            Debug.Print( 1, e );
-            if( !(e instanceof AxisFault ) )
-                e = new AxisFault( e );
-            throw (AxisFault) e ;
-        }
-        Debug.Print( 1, "Exit: SimpleChain::editWSDL" );
     }
 };
