@@ -99,23 +99,23 @@ public class TestJAXRPCSamples extends TestCase {
         AdminClient.main(args);
     } // doTestStockNoAction
 
-    public void testGetQuote() throws Exception {
-        try {
-            log.info("Testing JAX-RPC GetQuote1 sample.");
-            log.info("Testing deployment...");
-            doTestDeploy();
-            log.info("Testing service...");
-            doTestGetQuoteXXX();
-            doTestGetQuoteMain();
-            log.info("Testing undeployment...");
-            doTestUndeploy();
-            log.info("Test complete.");
-        }
-        catch (Throwable t) {
-            t.printStackTrace();
-            throw new Exception("Fault returned from test: " + t);
-        }
-    } // testGetQuote
+//    public void testGetQuote() throws Exception {
+//        try {
+//            log.info("Testing JAX-RPC GetQuote1 sample.");
+//            log.info("Testing deployment...");
+//            doTestDeploy();
+//            log.info("Testing service...");
+//            doTestGetQuoteXXX();
+//            doTestGetQuoteMain();
+//            log.info("Testing undeployment...");
+//            doTestUndeploy();
+//            log.info("Test complete.");
+//        }
+//        catch (Throwable t) {
+//            t.printStackTrace();
+//            throw new Exception("Fault returned from test: " + t);
+//        }
+//    } // testGetQuote
 
     public void testGetInfo() throws Exception {
         try {

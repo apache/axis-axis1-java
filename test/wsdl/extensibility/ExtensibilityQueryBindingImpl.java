@@ -46,8 +46,8 @@ public class ExtensibilityQueryBindingImpl implements ExtensibilityQueryPortType
     public ExtensibilityType query(ExtensibilityType query) throws RemoteException {
         ExtensibilityType result = new ExtensibilityType();
         Object obj = query.getAny();
-        if (obj instanceof BookType) {
-            BookType bookQuery = (BookType) obj;
+        if (obj instanceof FindBooksQueryExpressionElement) {
+            BookType bookQuery = ((FindBooksQueryExpressionElement)obj).getBookQuery();
             String subject = bookQuery.getSubject();
             if (!"all".equals(subject)) {
                 throw new RemoteException("ExtensibilityQueryBindingImpl: Book subject query should be all, instead was " + subject);
@@ -66,7 +66,7 @@ public class ExtensibilityQueryBindingImpl implements ExtensibilityQueryPortType
             resultList.setResult(queryResult);
             result.setAny(resultElement);
         } else {
-            throw new RemoteException("Failed to get book type. Got: " + obj.getClass().getName() + ":" + obj.toString());
+            throw new RemoteException("Failed to get FindBooksQueryExpressionElement. Got: " + obj.getClass().getName() + ":" + obj.toString());
         }
         return result;
     }

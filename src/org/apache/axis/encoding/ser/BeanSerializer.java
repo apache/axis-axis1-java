@@ -60,7 +60,6 @@ import org.apache.axis.Constants;
 import org.apache.axis.description.FieldDesc;
 import org.apache.axis.description.TypeDesc;
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.AttributeSerializationContextImpl;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.utils.BeanPropertyDescriptor;
 import org.apache.axis.utils.BeanUtils;
@@ -78,7 +77,6 @@ import javax.xml.namespace.QName;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.List;
@@ -211,7 +209,7 @@ public class BeanSerializer implements Serializer, Serializable {
                         context.serialize(qname,
                                           null,
                                           propValue,
-                                          context.getQNameForClass(javaType),
+                                          context.getQNameForClass(propertyDescriptor[i].getType()),
                                           true,
                                           null);
                     } else {
@@ -232,6 +230,20 @@ public class BeanSerializer implements Serializer, Serializable {
                             }
                         }
                     }
+                }
+            }
+
+            BeanPropertyDescriptor anyDesc = typeDesc == null ? null :
+                    typeDesc.getAnyDesc();
+            if (anyDesc != null) {
+                // If we have "extra" content here, get the value and serialize
+                // it with the element name matching the type name for now.
+                Object anyVal = anyDesc.get(value);
+                if (anyVal != null) {
+                    QName typeQName = context.getQNameForClass(anyVal.getClass());
+                    context.serialize(typeQName, null,
+                                      anyVal, typeQName,
+                                      false, Boolean.TRUE);
                 }
             }
         } catch (InvocationTargetException ite) {
@@ -499,13 +511,7 @@ public class BeanSerializer implements Serializer, Serializable {
                                       QName qname,
                                       AttributesImpl attrs,
                                       SerializationContext context) throws Exception {
-        StringWriter writer = new StringWriter();
-        SerializationContext attributeContext = new AttributeSerializationContextImpl(writer, context);
-        attributeContext.serialize(qname,
-                                   null,
-                                   propValue);
-        writer.close();
-        String propString = writer.getBuffer().toString();
+        String propString = context.getValueAsString(propValue, null);
         String namespace = qname.getNamespaceURI();
         String localName = qname.getLocalPart();
 

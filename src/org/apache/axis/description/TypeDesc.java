@@ -74,8 +74,10 @@ import java.util.Map;
  */
 public class TypeDesc {
     public static final Class [] noClasses = new Class [] {};
-    public static final Object[] noObjects = new Object[] {}; 
+    public static final Object[] noObjects = new Object[] {};
 
+    /** Have we already introspected for the special "any" property desc? */
+    private boolean lookedForAny = false;
 
     public TypeDesc(Class javaClass) {
         this.javaClass = javaClass;
@@ -133,9 +135,18 @@ public class TypeDesc {
     private boolean _hasAttributes = false;
 
     /** Introspected property descriptors */
-    private BeanPropertyDescriptor[] propertyDescriptor = null; 
+    private BeanPropertyDescriptor[] propertyDescriptors = null;
     /** Map with key = property descriptor name, value = descriptor */
     private Map propertyMap = null;
+
+    /**
+     * Indication if this type has support for xsd:any.
+     */
+    private BeanPropertyDescriptor anyDesc = null;
+
+    public BeanPropertyDescriptor getAnyDesc() {
+        return anyDesc;
+    }
 
     /**
      * Obtain the current array of FieldDescs
@@ -374,17 +385,30 @@ public class TypeDesc {
      * @return PropertyDescriptor
      */
     public BeanPropertyDescriptor[] getPropertyDescriptors() {
-        // Return the propertyDescriptor if already set.
+        // Return the propertyDescriptors if already set.
         // If not set, use BeanUtils.getPd to get the property descriptions.
         //
         // Since javaClass is a generated class, there
         // may be a faster way to set the property descriptions than
         // using BeanUtils.getPd.  But for now calling getPd is sufficient.
-        if (propertyDescriptor == null) {
-            propertyDescriptor = BeanUtils.getPd(javaClass, this);
+        if (propertyDescriptors == null) {
+            propertyDescriptors = BeanUtils.getPd(javaClass, this);
+            if (!lookedForAny) {
+                anyDesc = BeanUtils.getAnyContentPD(javaClass);
+                lookedForAny = true;
+            }
         }
-        return propertyDescriptor;
+        return propertyDescriptors;
     }
+
+    public BeanPropertyDescriptor getAnyContentDescriptor() {
+        if (!lookedForAny) {
+            anyDesc = BeanUtils.getAnyContentPD(javaClass);
+            lookedForAny = true;
+        }
+        return anyDesc;
+    }
+
     /**
      * Get/Cache the property descriptor map
      * @return Map with key=propertyName, value=descriptor
@@ -396,13 +420,13 @@ public class TypeDesc {
         }
 
         // Make sure properties exist
-        if (propertyDescriptor == null) {
+        if (propertyDescriptors == null) {
             getPropertyDescriptors();  
         }
         // Build the map
         propertyMap = new HashMap();
-        for (int i = 0; i < propertyDescriptor.length; i++) {
-            BeanPropertyDescriptor descriptor = propertyDescriptor[i];
+        for (int i = 0; i < propertyDescriptors.length; i++) {
+            BeanPropertyDescriptor descriptor = propertyDescriptors[i];
             propertyMap.put(descriptor.getName(), descriptor);
         }
         return propertyMap;

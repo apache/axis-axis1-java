@@ -10,11 +10,9 @@ package test.wsdl.extensibility;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.AxisEngine;
 import org.apache.axis.client.AdminClient;
-import org.apache.axis.client.Stub;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.ser.BeanSerializerFactory;
 import org.apache.axis.encoding.ser.BeanDeserializerFactory;
-import org.apache.axis.encoding.ser.BeanDeserializer;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -57,7 +55,8 @@ public class ExtensibilityQueryTestCase extends junit.framework.TestCase {
             bookQuery.setBookQuery(book);
             expression.setAny(bookQuery); 
             ExtensibilityType any = binding.query(expression);
-            ResultListType result = (ResultListType) any.getAny();
+            QueryResultElement resEl = (QueryResultElement ) any.getAny();
+            ResultListType result = resEl.getResultList();
             QueryResultType[] queryResult = result.getResult();
             assertTrue(queryResult.length == 2); 
             isValid(queryResult[0], "Computer Science", "The Grid"); 
@@ -85,6 +84,7 @@ public class ExtensibilityQueryTestCase extends junit.framework.TestCase {
         addBeanMapping(mapping, "BookType", BookType.class);
         addBeanMapping(mapping, "resultList", ResultListType.class);
         addBeanMapping(mapping, "QueryResultType", QueryResultType.class);
+        addBeanMapping(mapping, "QueryResultElement", QueryResultElement.class);
         registry.register("",mapping);
         EngineConfiguration config = engine.getConfig();
         config.writeEngineConfig(engine);

@@ -72,6 +72,7 @@ import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.Base64;
+import org.apache.axis.encoding.SimpleValueSerializer;
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
 
@@ -82,7 +83,7 @@ import org.w3c.dom.Document;
  * Modified by @author Rich Scheuerle <scheu@us.ibm.com>
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#base64Binary">XML Schema 3.2.16</a>
  */
-public class Base64Serializer implements Serializer {
+public class Base64Serializer implements SimpleValueSerializer {
 
     public QName xmlType;
     public Class javaType;
@@ -98,6 +99,12 @@ public class Base64Serializer implements Serializer {
                           Object value, SerializationContext context)
         throws IOException
     {
+        context.startElement(name, attributes);
+        context.writeString(getValueAsString(value, context));
+        context.endElement();
+    }
+
+    public String getValueAsString(Object value, SerializationContext context) {
         byte[] data = null;
         if (javaType == byte[].class) {
             data = (byte[]) value;
@@ -110,9 +117,7 @@ public class Base64Serializer implements Serializer {
             }
         }
 
-        context.startElement(name, attributes);
-        context.writeString(Base64.encode(data, 0, data.length));
-        context.endElement();
+        return Base64.encode(data, 0, data.length);
     }
 
     public String getMechanismType() { return Constants.AXIS_SAX; }

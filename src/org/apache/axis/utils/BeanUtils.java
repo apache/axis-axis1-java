@@ -55,6 +55,7 @@
 package org.apache.axis.utils;
 
 import org.apache.axis.InternalException;
+import org.apache.axis.Constants;
 import org.apache.axis.description.TypeDesc;
 import org.apache.axis.description.FieldDesc;
 
@@ -99,36 +100,38 @@ public class BeanUtils {
             final Class secJavaType = javaType;
 
             // Need doPrivileged access to do introspection.
-            PropertyDescriptor[] rawPd = 
-                (PropertyDescriptor[]) 
-                AccessController.doPrivileged(
-                    new PrivilegedAction() {
-                        public Object run() {
-                            PropertyDescriptor[] result = null;
-                            try {
-                                // privileged code goes here
-                                Class superClass = secJavaType.getSuperclass();
-                                if(superClass == Exception.class) {
-                                    result = Introspector.
-                                        getBeanInfo(secJavaType,Exception.class).
-                                        getPropertyDescriptors();
-                                } else {
-                                    // privileged code goes here
-                                    result = Introspector.
-                                        getBeanInfo(secJavaType).
-                                        getPropertyDescriptors();
-                                }
-                            } catch (java.beans.IntrospectionException Iie) {
-                            }
-                            return result;
-                        }
-                    });
+            PropertyDescriptor[] rawPd = getPropertyDescriptors(secJavaType);
             pd = processPropertyDescriptors(rawPd,javaType,typeDesc);
         } catch (Exception e) {
             // this should never happen
             throw new InternalException(e);
         }
         return pd;
+    }
+
+    private static PropertyDescriptor[] getPropertyDescriptors(final Class secJavaType) {
+        return (PropertyDescriptor[])AccessController.doPrivileged(
+                new PrivilegedAction() {
+                    public Object run() {
+                        PropertyDescriptor[] result = null;
+                        try {
+                            // privileged code goes here
+                            Class superClass = secJavaType.getSuperclass();
+                            if(superClass == Exception.class) {
+                                result = Introspector.
+                                        getBeanInfo(secJavaType,Exception.class).
+                                        getPropertyDescriptors();
+                            } else {
+                                // privileged code goes here
+                                result = Introspector.
+                                        getBeanInfo(secJavaType).
+                                        getPropertyDescriptors();
+                            }
+                        } catch (java.beans.IntrospectionException Iie) {
+                        }
+                        return result;
+                    }
+                });
     }
 
     /**
@@ -196,6 +199,9 @@ public class BeanUtils {
 
         try {
             for (int i=0; i < rawPd.length; i++) {
+                // Skip the special "any" field
+                if (rawPd[i].getName().equals(Constants.ANYCONTENT))
+                    continue;
                 pd.add(new BeanPropertyDescriptor(rawPd[i]));
             }
 
@@ -271,5 +277,15 @@ public class BeanUtils {
         }
 
         return myPd;
+    }
+
+    public static BeanPropertyDescriptor getAnyContentPD(Class javaType) {
+        PropertyDescriptor [] pds = getPropertyDescriptors(javaType);
+        for (int i = 0; i < pds.length; i++) {
+            PropertyDescriptor pd = pds[i];
+            if (pd.getName().equals(Constants.ANYCONTENT))
+                return new BeanPropertyDescriptor(pd);
+        }
+        return null;
     }
 }

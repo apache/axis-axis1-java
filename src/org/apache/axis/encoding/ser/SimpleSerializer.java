@@ -60,8 +60,8 @@ import org.apache.axis.Constants;
 import org.apache.axis.description.FieldDesc;
 import org.apache.axis.description.TypeDesc;
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.SimpleType;
+import org.apache.axis.encoding.SimpleValueSerializer;
 import org.apache.axis.utils.BeanPropertyDescriptor;
 import org.apache.axis.utils.BeanUtils;
 import org.apache.axis.utils.JavaUtils;
@@ -74,16 +74,26 @@ import org.xml.sax.helpers.AttributesImpl;
 import javax.xml.namespace.QName;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.TimeZone;
+
 /**
  * Serializer for primitives and anything simple whose value is obtained with toString()
  *
  * @author Rich Scheuerle <dims@yahoo.com>
  */
-public class SimpleSerializer implements Serializer {
+public class SimpleSerializer implements SimpleValueSerializer {
+    private static SimpleDateFormat zulu =
+       new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+                         //  0123456789 0 123456789
+
+    static {
+        zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
+    }
 
     public QName xmlType;
     public Class javaType;
-    
+
     private BeanPropertyDescriptor[] propertyDescriptor = null;
     private TypeDesc typeDesc = null;
 
@@ -110,11 +120,11 @@ public class SimpleSerializer implements Serializer {
             if (typeDesc == null) {
                 typeDesc = TypeDesc.getTypeDescForClass(javaType);
             }
-            // Get the cached propertyDescriptor from the type or 
+            // Get the cached propertyDescriptor from the type or
             // generate a fresh one.
             if (typeDesc != null) {
                 propertyDescriptor = typeDesc.getPropertyDescriptors();
-            } else {   
+            } else {
                 propertyDescriptor = BeanUtils.getPd(javaType, null);
             }
         }
@@ -138,39 +148,38 @@ public class SimpleSerializer implements Serializer {
         // get any attributes
         if (value instanceof SimpleType)
             attributes = getObjectAttributes(value, attributes, context);
-        
+
         context.startElement(name, attributes);
         if (value != null) {
-            // We could have separate serializers/deserializers to take
-            // care of Float/Double cases, but it makes more sence to
-            // put them here with the rest of the java lang primitives.
-            if (value instanceof Float ||
-                value instanceof Double) {
-                double data = 0.0;
-                if (value instanceof Float) {
-                    data = ((Float) value).doubleValue();
-                } else {
-                    data = ((Double) value).doubleValue();
-                }
-                if (Double.isNaN(data)) {
-                    context.writeString("NaN");
-                } else if (data == Double.POSITIVE_INFINITY) {
-                    context.writeString("INF");
-                } else if (data == Double.NEGATIVE_INFINITY) {
-                    context.writeString("-INF");
-                } else {
-                    context.writeString(value.toString());
-                }
-            } else if (value instanceof String) {
-                context.writeString(
-                                    XMLUtils.xmlEncodeString(value.toString()));
-            } else if (value instanceof SimpleType) {
-                context.writeString(value.toString());
-            } else {
-                context.writeString(value.toString());
-            }
+            context.writeString(getValueAsString(value, context));
         }
         context.endElement();
+    }
+
+    public String getValueAsString(Object value, SerializationContext context) {
+        // We could have separate serializers/deserializers to take
+        // care of Float/Double cases, but it makes more sence to
+        // put them here with the rest of the java lang primitives.
+        if (value instanceof Float ||
+            value instanceof Double) {
+            double data = 0.0;
+            if (value instanceof Float) {
+                data = ((Float) value).doubleValue();
+            } else {
+                data = ((Double) value).doubleValue();
+            }
+            if (Double.isNaN(data)) {
+                return "NaN";
+            } else if (data == Double.POSITIVE_INFINITY) {
+                return "INF";
+            } else if (data == Double.NEGATIVE_INFINITY) {
+                return "-INF";
+            }
+        } else if (value instanceof String) {
+            return XMLUtils.xmlEncodeString((String)value);
+        }
+
+        return value.toString();
     }
 
     private Attributes getObjectAttributes(Object value,
@@ -209,14 +218,14 @@ public class SimpleSerializer implements Serializer {
                     Object propValue = propertyDescriptor[i].get(value);
                     // If the property value does not exist, don't serialize
                     // the attribute.  In the future, the decision to serializer
-                    // the attribute may be more sophisticated.  For example, don't 
+                    // the attribute may be more sophisticated.  For example, don't
                     // serialize if the attribute matches the default value.
                     if (propValue != null) {
-                        String propString = propValue.toString();
-                        
+                        String propString = getValueAsString(propValue, context);
+
                         String namespace = qname.getNamespaceURI();
                         String localName = qname.getLocalPart();
-                        
+
                         attrs.addAttribute(namespace,
                                            localName,
                                            context.qName2String(qname),
@@ -232,7 +241,7 @@ public class SimpleSerializer implements Serializer {
 
         return attrs;
     }
-    
+
     public String getMechanismType() { return Constants.AXIS_SAX; }
 
     /**
@@ -248,7 +257,7 @@ public class SimpleSerializer implements Serializer {
         // Let the caller generate WSDL if this is not a SimpleType
         if (!SimpleType.class.isAssignableFrom(javaType))
             return false;
-        
+
         // ComplexType representation of SimpleType bean class
         Element complexType = types.createElement("complexType");
         types.writeSchemaElement(xmlType, complexType);
@@ -259,7 +268,7 @@ public class SimpleSerializer implements Serializer {
         complexType.appendChild(simpleContent);
         Element extension = types.createElement("extension");
         simpleContent.appendChild(extension);
-        
+
         // Get the base type from the "value" element of the bean
         String base = "string";
         for (int i=0; i<propertyDescriptor.length; i++) {
@@ -305,15 +314,15 @@ public class SimpleSerializer implements Serializer {
             Class type = bpd.getType();
             // Attribute must extend a simple type, enum or SimpleType
             if (!types.isAcceptableAsAttribute(type)) {
-                throw new AxisFault(JavaUtils.getMessage("AttrNotSimpleType01", 
+                throw new AxisFault(JavaUtils.getMessage("AttrNotSimpleType01",
                         type.getName()));
-            }            
+            }
             base = types.writeType(type);
             extension.setAttribute("base", base);
         }
 
         // done
         return true;
-        
+
     }
 }

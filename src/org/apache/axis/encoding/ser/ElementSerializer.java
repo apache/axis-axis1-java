@@ -56,9 +56,7 @@
 package org.apache.axis.encoding.ser;
 
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 import org.w3c.dom.Element;
-import org.w3c.dom.Document;
 
 import javax.xml.namespace.QName;
 
@@ -67,12 +65,7 @@ import java.io.IOException;
 import org.apache.axis.Constants;
 import org.apache.axis.wsdl.fromJava.Types;
 import org.apache.axis.encoding.Serializer;
-import org.apache.axis.encoding.SerializerFactory;
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.encoding.DeserializerFactory;
-import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.utils.JavaUtils;
 
 /**
@@ -83,7 +76,6 @@ import org.apache.axis.utils.JavaUtils;
  */
 
 public class ElementSerializer implements Serializer {
-
     /**
      * Serialize a DOM Element
      */

@@ -1138,44 +1138,19 @@ public class SerializationContextImpl implements SerializationContext
             }
 
             SerializerInfo info = null;
-//            // If the javaType is abstract, try getting a
-//            // serializer that matches the value's class.
-//            if (javaType != null &&
-//                !javaType.isPrimitive() &&
-//                !javaType.isArray() &&
-//                !isPrimitive(value, javaType) &&
-//                Modifier.isAbstract(javaType.getModifiers())) {
-//                info = getSerializer(value.getClass(), value);
-//                if (info != null) {
-//                    // Successfully found a serializer for the derived object.
-//                    // Must serialize the type.
-//                    shouldSendType = true;
-//                    xmlType = null;
-//                }
-//            }
-            // Try getting a serializer for the prefered xmlType
-            if (info == null && xmlType != null) {
-                info = getSerializer(javaType, xmlType);
+            // if we're looking for xsd:anyType, accept anything...
+            if (Constants.XSD_ANYTYPE.equals(xmlType)) {
+                xmlType = null;
+                shouldSendType = true;
             }
 
-            // If a serializer was not found using the preferred xmlType,
-            // try getting any serializer.
-            if (info == null) {
-                info = getSerializer(javaType, value);
-                // Must send type if it does not match preferred type
-                if ((xmlType != null) && (sendType != null)){
-                    shouldSendType = true;
-                }
-                xmlType = null;
-            }
+            // Try getting a serializer for the prefered xmlType
+            info = getSerializer(javaType, xmlType);
 
             if ( info != null ) {
-
                 // Send the xmlType if indicated.
                 if (shouldSendType) {
-                    if (xmlType == null) {
-                        xmlType = tm.getTypeQName(info.javaType);
-                    }
+                    xmlType = ((TypeMappingImpl)tm).getXMLType(info.javaType, xmlType);
                     attributes = setTypeAttribute(attributes, xmlType);
                 }
                 // The multiref QName is our own fake name.
@@ -1211,13 +1186,29 @@ public class SerializationContextImpl implements SerializationContext
         SerializerFactory  serFactory  = null ;
         TypeMapping tm = getTypeMapping();
 
-        try {
-            if (!javaType.getName().equals("java.lang.Object") &&
-                tm.isRegistered(javaType, xmlType)) {
-                serFactory = (SerializerFactory) tm.getSerializer(javaType, xmlType);
-            }
-        } catch(JAXRPCException e) {}
+        while (javaType != null) {
+            serFactory = (SerializerFactory) tm.getSerializer(javaType, xmlType);
+            if (serFactory != null)
+                break;
 
+            // Walk my interfaces...
+            Class [] interfaces = javaType.getInterfaces();
+            if (interfaces != null) {
+                for (int i = 0; i < interfaces.length; i++) {
+                    Class iface = interfaces[i];
+                    serFactory = (SerializerFactory) tm.getSerializer(iface,
+                                                                      xmlType);
+                    if (serFactory != null)
+                        break;
+                }
+            }
+
+            // Finally, head to my superclass
+            if (serFactory != null)
+                break;
+
+            javaType = javaType.getSuperclass();
+        }
 
         // Using the serialization factory, create a serializer
         Serializer ser = null;
@@ -1232,81 +1223,9 @@ public class SerializationContextImpl implements SerializationContext
         return info;
     }
 
-    /**
-     * getSerializer
-     * Attempts to get a serializer for the indicated type. Failure to
-     * find a serializer causes the code to look backwards through the
-     * inheritance list.  Continued failured results in an attempt to find
-     * a serializer for the type of the value.
-     * @param javaType is the type of the object
-     * @param value is the object (which may have a different type due to conversions)
-     * @return found class/serializer or null
-     **/
-    private SerializerInfo getSerializer(Class javaType, Object value) {
-        SerializerInfo info = null;
-        SerializerFactory  serFactory  = null ;
-        TypeMapping tm = getTypeMapping();
-
-        // Classes is a list of the inherited interfaces to
-        // check
-        ArrayList  classes = null;
-        boolean firstPass = true;
-
-        // Search for a class that has a serializer factory
-        Class _class  = javaType;
-        while( _class != null ) {
-            try {
-                if (!_class.getName().equals("java.lang.Object")) {
-                        serFactory = (SerializerFactory) tm.getSerializer(_class);
-                }
-            } catch(JAXRPCException e) {
-                // For now continue if JAXRPCException
-            }
-            if (serFactory  != null) {
-                break ;
-            }
-            if ( classes == null ) {
-                classes = new ArrayList();
-            }
-            Class[] ifaces = _class.getInterfaces();
-            for (int i = 0 ; i < ifaces.length ; i++ ) {
-                classes.add( ifaces[i] );
-            }
-            _class = _class.getSuperclass();
-
-            // Add any non-null (and non-Object) class.  We skip
-            // the Object class.
-            if ( _class != null &&
-                 !_class.getName().equals("java.lang.Object")) {
-                classes.add( _class );
-            }
-
-            _class = (!classes.isEmpty()) ?
-                (Class) classes.remove( 0 ) :
-                null;
-
-            // If failed to find a serializerfactory
-            // using the javaType, then use the real class of the value
-            if (_class == null &&
-                value != null &&
-                value.getClass() != javaType &&
-                firstPass) {
-                firstPass = false;
-                _class = value.getClass();
-            }
-        }
-
-        // Using the serialization factory, create a serializer
-        Serializer ser = null;
-        if ( serFactory != null ) {
-            ser = (Serializer) serFactory.getSerializerAs(Constants.AXIS_SAX);
-        }
-        if (ser != null) {
-            info = new SerializerInfo();
-            info.ser = ser;
-            info.javaType = _class;
-        }
-        return info;
+    public String getValueAsString(Object value, QName xmlType) throws IOException {
+        SerializerInfo info = getSerializer(value.getClass(), xmlType);
+        SimpleValueSerializer ser = (SimpleValueSerializer)info.ser;
+        return ser.getValueAsString(value, this);
     }
-
 }

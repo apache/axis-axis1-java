@@ -79,11 +79,11 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
 
     /**
      * Constructor.
-     * @param emitter   
+     * @param emitter
      * @param type        The type representing this class
      * @param elements    Vector containing the Type and name of each property
      * @param extendType  The type representing the extended class (or null)
-     * @param attributes  Vector containing the attribute types and names    
+     * @param attributes  Vector containing the attribute types and names
      */
     protected JavaBeanHelperWriter(
                                    Emitter emitter,
@@ -129,7 +129,7 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
     } // registerFile
 
     /**
-     * Return the string:  "Generating <file>". 
+     * Return the string:  "Generating <file>".
      * only if we are going to generate a new file.
      */
     protected String verboseMessage(String file) {
@@ -195,7 +195,7 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
                 // String elemName = elem.getName().getLocalPart();
                 // String javaName = Utils.xmlNameToJava(elemName);
 
-                // Changed the code to write meta data 
+                // Changed the code to write meta data
                 // for all of the elements in order to
                 // support sequences. Defect 9060
 
@@ -210,7 +210,7 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
                 //  - the element name is qualified (has a namespace uri)
                 // its also needed if:
                 //  - the element has the minoccurs flag set
-                //if (!javaName.equals(elemName) || 
+                //if (!javaName.equals(elemName) ||
                 //    Character.isUpperCase(javaName.charAt(0)) ||
                 //!elem.getName().getNamespaceURI().equals("") ||
                 //elem.getMinOccursIs0()) {
@@ -229,7 +229,7 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
                    Utils.getJavaLocalName(type.getName()) + ".class);");
         pw.println();
 
-        // Add attribute and element field descriptors    
+        // Add attribute and element field descriptors
         if (attributes != null || elementMetaData != null) {
             boolean wroteFieldType = false;
             pw.println("    static {");
@@ -247,7 +247,7 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
                     pw.println("field = new org.apache.axis.description.AttributeDesc();");
                     pw.println("        field.setFieldName(\"" + fieldName + "\");");
                     pw.print("        field.setXmlName(");
-                    pw.print("new javax.xml.namespace.QName(\""); 
+                    pw.print("new javax.xml.namespace.QName(\"");
                     pw.print(attrName.getNamespaceURI() +  "\", \"");
                     pw.println(attrName.getLocalPart() + "\"));");
                     pw.println("        typeDesc.addFieldDesc(field);");
@@ -257,6 +257,11 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
             if (elementMetaData != null) {
                 for (int i=0; i<elementMetaData.size(); i++) {
                     ElementDecl elem = (ElementDecl) elementMetaData.elementAt(i);
+
+                    if (elem.getAnyElement()) {
+                        continue;
+                    }
+
                     String elemLocalName = elem.getName().getLocalPart();
                     String fieldName = Utils.xmlNameToJava(elemLocalName);
                     QName xmlName = elem.getName();

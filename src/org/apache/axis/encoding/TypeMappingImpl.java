@@ -294,8 +294,8 @@ public class TypeMappingImpl implements TypeMapping
      */
     public javax.xml.rpc.encoding.SerializerFactory
         getSerializer(Class javaType, QName xmlType)
-        throws JAXRPCException
-    {
+        throws JAXRPCException {
+
         javax.xml.rpc.encoding.SerializerFactory sf = null;
 
         // If the xmlType was not provided, get one
@@ -307,7 +307,8 @@ public class TypeMappingImpl implements TypeMapping
                 return null;
             }
 
-            // If we're doing autoTyping, we can use the default.
+            // If we're doing autoTyping, and we got a type in the right
+            // namespace, we can use the default serializer.
             if (doAutoTypes &&
                     xmlType.getNamespaceURI().equals(Constants.NS_URI_JAVA)) {
                 return new BeanSerializerFactory(javaType, xmlType);
@@ -319,11 +320,16 @@ public class TypeMappingImpl implements TypeMapping
 
         // Now get the serializer with the pair
         sf = (javax.xml.rpc.encoding.SerializerFactory) pair2SF.get(pair);
-        // If not successful, use the xmlType to get
-        // another pair.  For some xmlTypes (like SOAP_ARRAY)
-        // all of the possible javaTypes are not registered.
+
+        // If not successful, use the javaType to get another Pair unless
+        // we've got an array, in which case make sure we get the
+        // ArraySerializer.
         if (sf == null) {
-            pair = (Pair) qName2Pair.get(pair.xmlType);
+            if (javaType.isArray()) {
+                pair = (Pair) qName2Pair.get(Constants.SOAP_ARRAY);
+            } else {
+                pair = (Pair) class2Pair.get(pair.javaType);
+            }
             if (pair != null) {
                 sf = (javax.xml.rpc.encoding.SerializerFactory) pair2SF.get(pair);
             }
@@ -334,6 +340,76 @@ public class TypeMappingImpl implements TypeMapping
                 delegate.getSerializer(javaType, xmlType);
         }
         return sf;
+    }
+
+    /**
+     * Get the exact XML type QName which will be used when serializing a
+     * given Class to a given type QName.  In other words, if we have:
+     *
+     * Class        TypeQName
+     * ----------------------
+     * Base         myNS:Base
+     * Child        myNS:Child
+     *
+     * and call getXMLType(Child.class, BASE_QNAME), we should get
+     * CHILD_QNAME.
+     *
+     * @param javaType
+     * @param xmlType
+     * @return
+     * @throws JAXRPCException
+     */
+    public QName getXMLType(Class javaType, QName xmlType)
+        throws JAXRPCException
+    {
+        javax.xml.rpc.encoding.SerializerFactory sf = null;
+
+        // If the xmlType was not provided, get one
+        if (xmlType == null) {
+            xmlType = getTypeQName(javaType);
+
+            // If we couldn't find one, we're hosed, since getTypeQName()
+            // already asked all of our delegates.
+            if (xmlType == null) {
+                return null;
+            }
+
+            // If we're doing autoTyping, we can use the default.
+            if (doAutoTypes &&
+                    xmlType.getNamespaceURI().equals(Constants.NS_URI_JAVA)) {
+                return xmlType;
+            }
+        }
+
+        // Try to get the serializer associated with this pair
+        Pair pair = new Pair(javaType, xmlType);
+
+        // Now get the serializer with the pair
+        sf = (javax.xml.rpc.encoding.SerializerFactory) pair2SF.get(pair);
+
+        // If not successful, use the xmlType to get
+        // another pair.  For some xmlTypes (like SOAP_ARRAY)
+        // all of the possible javaTypes are not registered.
+        if (sf == null) {
+            if (javaType.isArray()) {
+                pair = (Pair) qName2Pair.get(pair.xmlType);
+            } else {
+                pair = (Pair) class2Pair.get(pair.javaType);
+            }
+            if (pair != null) {
+                sf = (javax.xml.rpc.encoding.SerializerFactory) pair2SF.get(pair);
+            }
+        }
+
+        if (sf == null && delegate != null) {
+            return ((TypeMappingImpl)delegate).getXMLType(javaType, xmlType);
+        }
+
+        if (pair != null) {
+            xmlType = pair.xmlType;
+        }
+
+        return xmlType;
     }
 
     /**
@@ -439,7 +515,7 @@ public class TypeMappingImpl implements TypeMapping
     public QName getTypeQName(Class javaType) {
         //log.debug("getTypeQName javaType =" + javaType);
         if (javaType == null)
-            return null;
+        return null;
 
         QName xmlType = null;
         Pair pair = (Pair) class2Pair.get(javaType);
@@ -495,7 +571,7 @@ public class TypeMappingImpl implements TypeMapping
     }
 
     /**
-     * Gets the SerializerFactory registered for the Java type.    
+     * Gets the SerializerFactory registered for the Java type.
      *
      * @param javaType - Class of the Java type
      *
