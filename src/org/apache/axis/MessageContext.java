@@ -217,5 +217,12 @@ public class MessageContext {
             bag.remove(propName);
         }
     }
+    
+    public void clearProperties()
+    {
+        if (bag != null) {
+            bag.clear();
+        }
+    }
 
 };
