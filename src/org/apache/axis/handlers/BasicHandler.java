@@ -113,6 +113,15 @@ public abstract class BasicHandler implements Handler {
         if ( options == null ) options = new Hashtable();
         options.put( name, value );
     }
+    
+    /**
+     * Old version of setOption()
+     * 
+     * @deprecated replaced by setOption, to be more consistent
+     */ 
+    public void addOption(String name, Object value) {
+        setOption(name, value);
+    }
 
     /**
      * Returns the option corresponding to the 'name' given

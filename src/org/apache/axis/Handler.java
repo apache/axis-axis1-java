@@ -104,6 +104,13 @@ public interface Handler extends Serializable {
      * Add the given option (name/value) to this handler's bag of options
      */
     public void setOption(String name, Object value);
+    
+    /**
+     * Old version of setOption()
+     * 
+     * @deprecated replaced by setOption, to be more consistent
+     */ 
+    public void addOption(String name, Object value);
 
     /**
      * Returns the option corresponding to the 'name' given
