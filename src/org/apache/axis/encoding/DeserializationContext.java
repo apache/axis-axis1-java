@@ -323,8 +323,13 @@ public class DeserializationContext extends DefaultHandler
         MessageElement ret = null;
         if((idMap !=  null)){
             IDResolver resolver = (IDResolver)idMap.get(id);
-            if(resolver != null)
-               ret = (MessageElement)resolver.getReferencedObject(id);
+            if(resolver != null) {
+                try {
+                    ret = (MessageElement)resolver.getReferencedObject(id);
+                } catch (ClassCastException e) {
+                    // No can do.
+                }
+            }
         }
         
         return ret;
