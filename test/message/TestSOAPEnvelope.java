@@ -81,7 +81,7 @@ public class TestSOAPEnvelope extends TestCase {
         Name n = env.createName("local", "pref", "urn:blah");
         assertEquals("local part of name did not match", "local",
                      n.getLocalName());
-        assertEquals("qname of name did not match", "urn:blah:local",
+        assertEquals("qname of name did not match", "{urn:blah}local",
                      n.getQualifiedName());
         assertEquals("prefix of name did not match", "pref",
                      n.getPrefix());

@@ -43,8 +43,19 @@ public class TestQName extends TestCase
     public void testToString()
     {
         QName qname = new QName("PREFIX", "LOCALPART");
-        assertEquals("qname was not the same as 'PREFIX:LOCALPART', it was: " + qname.toString(),
-                     "PREFIX:LOCALPART", qname.toString());
+        assertEquals("qname was not the same as '{PREFIX}LOCALPART', it was: " + qname.toString(),
+                     "{PREFIX}LOCALPART", qname.toString());
+    }
+
+    public void testNullQname()
+    {
+        QName qname1 = new QName("LOCALPART");
+        QName qname2 = new QName(null, "LOCALPART");
+        QName qname3 = new QName("", "LOCALPART");
+
+        assertEquals("omitted namespace ", "LOCALPART", qname1.toString());
+        assertEquals("null namespace ", "LOCALPART", qname2.toString());
+        assertEquals("empty namespace ", "LOCALPART", qname3.toString());
     }
 
     public void testEquals()
