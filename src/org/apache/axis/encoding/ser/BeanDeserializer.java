@@ -256,6 +256,10 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
                 if (!((dSer != null) && (dSer instanceof ArrayDeserializer)) ||
                         propDesc.getType().isArray()) {
                     collectionIndex++;
+                    dSer.registerValueTarget(new BeanPropertyTarget(value,
+                            propDesc, collectionIndex));
+                    addChildDeserializer(dSer);
+                    return (SOAPHandler)dSer;
                 }
             }
             return null;
