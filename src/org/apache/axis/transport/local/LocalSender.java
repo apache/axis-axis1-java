@@ -116,9 +116,12 @@ public class LocalSender extends BasicHandler {
             try {
                 URL url = new URL(transURL);
                 String file = url.getFile();
-                if (file.length()>0 && file.charAt(0)=='/') file = file.substring(1);
+                if (file.length()>0 && file.charAt(0)=='/') {
+                    file = file.substring(1);
+                }
                 serverContext.setProperty(Constants.MC_REALPATH, file);
-                
+                serverContext.setProperty(MessageContext.TRANS_URL,
+                                          "local:///" + file);
                 // This enables "local:///AdminService" and the like to work.
                 serverContext.setTargetService(file);
             } catch (Exception e) {
