@@ -801,7 +801,9 @@ public class MessageElement implements SOAPElement,
             children.remove(i);
             removed = true;
         }
-        setDirty(removed);
+        if (removed) {
+            setDirty(removed);
+        }
     }
 
     public List getChildren()
