@@ -87,6 +87,9 @@ Copyright:
   <!-- Compiles the source directory                                       -->
   <!-- =================================================================== -->
   <target name="compile" depends="printEnv" unless="compile.built">
+    <depend srcdir="${src.dir}" destdir="${build.dest}"
+            cache="${build.dir}/dependencycache" closure="no">
+    </depend>  
     <javac srcdir="${src.dir}" destdir="${build.dest}" debug="${debug}"
       deprecation="${deprecation}"
       classpathref="classpath">
