@@ -78,11 +78,14 @@ public class VerifyFilesTestCase extends FileGenTestCase {
         HashSet set = new HashSet();
         set.add("BindingAllLit.java");
         set.add("BindingAllLitImpl.java");
+        set.add("BindingAllLitSkeleton.java");
         set.add("BindingAllLitStub.java");
         set.add("BindingNoLitImpl.java");
+        set.add("BindingNoLitSkeleton.java");
         set.add("BindingNoLitStub.java");
         set.add("BindingSomeLit.java");
         set.add("BindingSomeLitImpl.java");
+        set.add("BindingSomeLitSkeleton.java");
         set.add("BindingSomeLitStub.java");
         set.add("MbPT.java");
         set.add("MbService.java");
