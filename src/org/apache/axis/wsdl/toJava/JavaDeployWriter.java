@@ -56,11 +56,9 @@ package org.apache.axis.wsdl.toJava;
 
 import java.io.IOException;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
-import java.util.List;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
@@ -72,8 +70,6 @@ import javax.wsdl.QName;
 import javax.wsdl.Service;
 import javax.wsdl.Part;
 import javax.wsdl.Input;
-
-import org.w3c.dom.Node;
 
 import org.apache.axis.Constants;
 import org.apache.axis.utils.JavaUtils;
@@ -256,90 +252,92 @@ public class JavaDeployWriter extends JavaWriter {
                          + className + "\"/>");
 
         String methodList = "";
-        Iterator operationsIterator = binding.getBindingOperations().iterator();
-        for (; operationsIterator.hasNext();) {
-            BindingOperation bindingOper = (BindingOperation) operationsIterator.next();
-            Operation operation = bindingOper.getOperation();
-            OperationType type = operation.getStyle();
-            String javaOperName = JavaUtils.xmlNameToJava(operation.getName());
-            String operationName = operation.getName();
+        if (!emitter.getDeploySkeleton()) {
+            Iterator operationsIterator = binding.getBindingOperations().iterator();
+            for (; operationsIterator.hasNext();) {
+                BindingOperation bindingOper = (BindingOperation) operationsIterator.next();
+                Operation operation = bindingOper.getOperation();
+                OperationType type = operation.getStyle();
+                String javaOperName = JavaUtils.xmlNameToJava(operation.getName());
+                String operationName = operation.getName();
 
-            // These operation types are not supported.  The signature
-            // will be a string stating that fact.
-            if (type != OperationType.NOTIFICATION
-                    && type != OperationType.SOLICIT_RESPONSE) {
-                methodList = methodList + " " + javaOperName;
-            }
-
-            // We pass "" as the namespace argument because we're just
-            // interested in the return type for now.
-            Parameters params =
-                    symbolTable.getOperationParameters(operation, "", bEntry);
-            if (params != null) {
-
-                pw.print("      <operation name=\"" + javaOperName + "\"");
-
-                QName elementQName = null;
-                Input input = operation.getInput();
-                if (input != null) {
-                    Map parts = input.getMessage().getParts();
-                    if (parts != null && !parts.isEmpty()) {
-                        Iterator i = parts.values().iterator();
-                        Part p = (Part) i.next();
-                        elementQName = p.getElementName();
-                    }
-                    if (elementQName == null) {
-                        // FIXME - get namespace from WSDL?
-                        elementQName = new QName("", operationName);
-                    }
-                    QName defaultQName = new QName("", javaOperName);
-                    if (! defaultQName.equals(elementQName)) {
-                        pw.print(" qname=\"" +
-                                 Utils.genQNameAttributeString(elementQName, "operNS") +
-                                 "\"");
-                    }
+                // These operation types are not supported.  The signature
+                // will be a string stating that fact.
+                if (type != OperationType.NOTIFICATION
+                        && type != OperationType.SOLICIT_RESPONSE) {
+                    methodList = methodList + " " + javaOperName;
                 }
-                QName returnQName = null;
-                if (params.returnName != null)
-                    returnQName = Utils.getWSDLQName(params.returnName);
-                if (returnQName != null) {
-                    pw.print(" returnQName=\"" +
-                             Utils.genQNameAttributeString(returnQName, "retNS") +
-                             "\"");
-                }
-                pw.println(">");
 
-                Vector paramList = params.list;
-                for (int i = 0; i < paramList.size(); i++) {
-                    Parameter param = (Parameter) paramList.elementAt(i);
-                    QName paramQName = param.getQName();
-                    TypeEntry typeEntry = param.getType();
-                    QName paramType;
-                    if (typeEntry instanceof DefinedElement) {
-                        paramType = typeEntry.getRefType().getQName();
-                    } else {
-                        paramType = typeEntry.getQName();
+                // We pass "" as the namespace argument because we're just
+                // interested in the return type for now.
+                Parameters params =
+                        symbolTable.getOperationParameters(operation, "", bEntry);
+                if (params != null) {
+
+                    pw.print("      <operation name=\"" + javaOperName + "\"");
+
+                    QName elementQName = null;
+                    Input input = operation.getInput();
+                    if (input != null) {
+                        Map parts = input.getMessage().getParts();
+                        if (parts != null && !parts.isEmpty()) {
+                            Iterator i = parts.values().iterator();
+                            Part p = (Part) i.next();
+                            elementQName = p.getElementName();
+                        }
+                        if (elementQName == null) {
+                            // FIXME - get namespace from WSDL?
+                            elementQName = new QName("", operationName);
+                        }
+                        QName defaultQName = new QName("", javaOperName);
+                        if (! defaultQName.equals(elementQName)) {
+                            pw.print(" qname=\"" +
+                                    Utils.genQNameAttributeString(elementQName, "operNS") +
+                                    "\"");
+                        }
                     }
-                    pw.print("        <parameter");
-                    if (paramQName == null || "".equals(paramQName.getNamespaceURI())) {
-                        pw.print(" name=\"" + param.getName() + "\"" );
-                    } else {
-                        pw.print(" qname=\"" +
-                                Utils.genQNameAttributeString(paramQName,
-                                        "pns") + "\"");
+                    QName returnQName = null;
+                    if (params.returnName != null)
+                        returnQName = Utils.getWSDLQName(params.returnName);
+                    if (returnQName != null) {
+                        pw.print(" returnQName=\"" +
+                                Utils.genQNameAttributeString(returnQName, "retNS") +
+                                "\"");
                     }
-                    pw.print(" type=\"" +
+                    pw.println(">");
+
+                    Vector paramList = params.list;
+                    for (int i = 0; i < paramList.size(); i++) {
+                        Parameter param = (Parameter) paramList.elementAt(i);
+                        QName paramQName = param.getQName();
+                        TypeEntry typeEntry = param.getType();
+                        QName paramType;
+                        if (typeEntry instanceof DefinedElement) {
+                            paramType = typeEntry.getRefType().getQName();
+                        } else {
+                            paramType = typeEntry.getQName();
+                        }
+                        pw.print("        <parameter");
+                        if (paramQName == null || "".equals(paramQName.getNamespaceURI())) {
+                            pw.print(" name=\"" + param.getName() + "\"" );
+                        } else {
+                            pw.print(" qname=\"" +
+                                    Utils.genQNameAttributeString(paramQName,
+                                            "pns") + "\"");
+                        }
+                        pw.print(" type=\"" +
                                 Utils.genQNameAttributeString(paramType,
                                         "tns") + "\"");
-                    if (param.getMode() != Parameter.IN) {
-                        String mode = getModeString(param.getMode());
-                        pw.print(" mode=\"" + mode + "\"");
+                        if (param.getMode() != Parameter.IN) {
+                            String mode = getModeString(param.getMode());
+                            pw.print(" mode=\"" + mode + "\"");
+                        }
+
+                        pw.println("/>");
                     }
 
-                    pw.println("/>");
+                    pw.println("      </operation>");
                 }
-
-                pw.println("      </operation>");
             }
         }
 
