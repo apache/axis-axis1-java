@@ -58,6 +58,7 @@ import org.apache.axis.encoding.DefaultSOAPEncodingTypeMappingImpl;
 import org.apache.axis.encoding.DefaultTypeMappingImpl;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.enum.Scope;
+import org.apache.axis.i18n.Messages;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.wsdl.gen.GeneratorFactory;
@@ -88,12 +89,14 @@ import java.util.Properties;
  * @author Steve Graham (sggraham@us.ibm.com)
  */
 public class Emitter extends Parser {
+	
+	public static final String DEFAULT_NSTOPKG_FILE = "NStoPkg.properties";
+	
     protected HashMap namespaceMap = new HashMap();
     protected String typeMappingVersion = "1.1";
     protected BaseTypeMapping baseTypeMapping = null;
     protected Namespaces namespaces = null;
-    protected String NStoPkgFilename = "NStoPkg.properties";
-    protected File NStoPkgFile = null;
+    protected String NStoPkgFilename = null;
 
     private boolean bEmitServer = false;
     private boolean bDeploySkeleton = false;
@@ -249,12 +252,7 @@ public class Emitter extends Parser {
         }
     } // setNStoPkg
 
-    /**
-     * Set the NStoPkg mappings file.
-     */
-    public void setNStoPkg(File NStoPkgFile) {
-        this.NStoPkgFile = NStoPkgFile;
-    } // setNStoPkg
+
 
     /**
      * Set a map of namespace -> Java package names
@@ -422,36 +420,72 @@ public class Emitter extends Parser {
         }
     } // setup
 
+
     /**
-     * Look for a NStoPkg.properties file in the CLASSPATH.  If it exists,
-     * then collect the namespace->package mappings from it.
+	 * Tries to load the namespace-to-package mapping file.
+	 * <ol>
+	 *   <li>if a file name is explicitly set using <code>setNStoPkg()</code>, tries
+	 *      to load the mapping from this file. If this fails, the built-in default
+	 *      mapping is used.
+	 * 
+	 *    <li>if no file name is set, tries to load the file <code>DEFAULT_NSTOPKG_FILE</code>
+	 *       as a java resource. If this fails, the built-in dfault mapping is used.
+	 * </ol>
+	 * 
+	 * @param namespaces  a hashmap which is filled with the namespace-to-package mapping
+	 *    in this method
+	 * 
+	 * @see #setNStoPkg(String)
+	 * @see #DEFAULT_NSTOPKG_FILE
+	 * @see org.apache.axis.utils.ClassUtils#getResourceAsStream(java.lang.Class,String)
+	 * 
      */
     private void getNStoPkgFromPropsFile(HashMap namespaces)
     {
-        try {
-            Properties mappings = new Properties();
-            if (NStoPkgFile != null) {
-                try {
-                    mappings.load(new FileInputStream(NStoPkgFilename));
-                } catch (Throwable t) {
-                    mappings.load(ClassUtils.getResourceAsStream(
-                            Emitter.class, NStoPkgFilename));
-                }
-            }
-            else {
+
+        Properties mappings = new Properties();
+        if (NStoPkgFilename != null) {
+            try {
                 mappings.load(new FileInputStream(NStoPkgFilename));
-            }
-            Enumeration keys = mappings.propertyNames();
-            while (keys.hasMoreElements()) {
-                try {
-                    String key = (String) keys.nextElement();
-                    namespaces.put(key, mappings.getProperty(key));
-                }
-                catch (Throwable t) {
-                }
+                System.out.println(
+                  Messages.getMessage("nsToPkgFileLoaded00", NStoPkgFilename)
+                );
+            } catch (Throwable t) {
+				// loading the custom mapping file failed. We do not try
+				// to load the mapping from a default mapping file. 
+				System.err.println(
+                        Messages.getMessage("nsToPkgFileNotFound00", NStoPkgFilename)
+                );
             }
         }
-        catch (Throwable t) {
+        else {
+            try {
+                mappings.load(new FileInputStream(DEFAULT_NSTOPKG_FILE));
+                System.out.println(
+                  Messages.getMessage("nsToPkgFileLoaded00", DEFAULT_NSTOPKG_FILE)
+                );
+            } catch (Throwable t) {
+            	try {
+                    mappings.load(ClassUtils.getResourceAsStream(
+                        Emitter.class, DEFAULT_NSTOPKG_FILE));
+                    System.out.println(
+                      Messages.getMessage("nsToPkgDefaultFileLoaded00", DEFAULT_NSTOPKG_FILE)
+                    );
+
+            	} catch(Throwable t1) {
+					// loading the default mapping file failed. The built-in default
+					// mapping is used 
+					System.err.println(
+                            Messages.getMessage("nsToPkgDefaultFileNotFound00", DEFAULT_NSTOPKG_FILE)
+                    );                		
+            	}        
+            }
+        }
+
+        Enumeration keys = mappings.propertyNames();
+        while (keys.hasMoreElements()) {
+            String key = (String) keys.nextElement();
+            namespaces.put(key, mappings.getProperty(key));
         }
     } // getNStoPkgFromPropsFile
 
