@@ -174,8 +174,7 @@ public class JavaBeanWriter extends JavaWriter {
             String capName = Utils.capitalizeFirstChar(name);
 
             String get = "get";
-            if (typeName.equals("boolean") ||
-                typeName.startsWith("boolean["))
+            if (typeName.equals("boolean"))
                 get = "is";
 
             pw.println("    public " + typeName + " " + get + capName + "() {");
