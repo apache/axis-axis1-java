@@ -79,9 +79,9 @@ public class GetQuote {
     
   // helper function; does all the real work
     public float getQuote (String args[]) throws Exception {
-        System.setProperty("java.protocol.handler.pkgs", "samples.transport");
+      ServiceClient.addTransportPackage("samples.transport");
 
-        Options opts = new Options( args );
+      Options opts = new Options( args );
 
       Debug.setDebugLevel( opts.isFlagSet( 'd' ) );
 
