@@ -382,7 +382,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                            StringBuffer sb = new StringBuffer(localName);
                            int aidx = -1;
                            while (
-                             (aidx = sb.indexOf(
+                             (aidx = sb.toString().indexOf(
                                SymbolTable.ANON_TOKEN)) > -1) {
                                  sb.replace(aidx, aidx+SymbolTable.ANON_TOKEN.length(), "_");
                            }
