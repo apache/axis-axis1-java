@@ -4,9 +4,32 @@
         <!ENTITY paths  SYSTEM "file:../../xmls/path_refs.xml">
         <!ENTITY taskdefs SYSTEM "file:../../xmls/taskdefs.xml">
         <!ENTITY taskdefs_post_compile SYSTEM "file:../../xmls/taskdefs_post_compile.xml">
+        <!ENTITY targets SYSTEM "file:../../xmls/targets.xml">
 ]>
 
 <!-- ===================================================================
+<description>
+   Test/Sample Component file for Axis
+
+Notes:
+   This is a build file for use with the Jakarta Ant build tool.
+
+Prerequisites:
+
+   jakarta-ant from http://jakarta.apache.org
+
+Build Instructions:
+   To compile
+        ant compile
+   To execute
+        ant run
+
+Author:
+  Matt Seibert mseibert@us.ibm.com
+
+Copyright:
+  Copyright (c) 2002-2003 Apache Software Foundation.
+</description>
 ==================================================================== -->
 
 <project default="compile">
@@ -15,6 +38,7 @@
         &paths;
         &taskdefs;
 	&taskdefs_post_compile;
+	&targets;
 
 <target name="clean"/>
 
