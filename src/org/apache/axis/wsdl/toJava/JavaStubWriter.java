@@ -189,6 +189,7 @@ public class JavaStubWriter extends JavaClassWriter {
         pw.println("        } else {");
         pw.println("            super.service = service;");
         pw.println("        }");
+        pw.println("        ((org.apache.axis.client.Service)super.service).setTypeMappingVersion(\"" + emitter.getTypeMappingVersion() + "\");");
 
         List deferredBindings = new ArrayList();
 
