@@ -376,4 +376,16 @@ Copyright:
      </foreach>
     </target>
 
+    <!-- generate a report from all the tests. 
+        requires Xalan or other XSLT engine in ant\lib-->
+    <target name="create-test-report" >
+      <mkdir dir="${test.reports.dir}"/>
+      <junitreport todir="${test.functional.reportdir}">
+        <fileset dir="${test.functional.reportdir}">
+          <include name="TEST-*.xml"/>
+        </fileset>
+        <report format="frames" todir="${test.reports.dir}"/>
+      </junitreport>
+    </target>
+
 </project>
