@@ -56,18 +56,19 @@
 package org.apache.axis.transport.http;
 
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.components.threadpool.ThreadPool;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.session.Session;
 import org.apache.axis.session.SimpleSession;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.Options;
+import org.apache.axis.collections.LRUMap;
 import org.apache.commons.logging.Log;
 
-import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Hashtable;
+import java.util.Map;
 
 /**
  * This is a simple implementation of an HTTP server for processing
@@ -77,6 +78,7 @@ import java.util.Hashtable;
  *
  * @author Sam Ruby (ruby@us.ibm.com)
  * @author Rob Jellinghaus (robj@unrealities.com)
+ * @author Alireza Taherkordi (a_taherkordi@users.sourceforge.net)
  */
 public class SimpleAxisServer implements Runnable {
     protected static Log log =
@@ -85,13 +87,18 @@ public class SimpleAxisServer implements Runnable {
     // session state.
     // This table maps session keys (random numbers) to SimpleAxisSession objects.
     //
-    // There is NO CLEANUP of this table at present, and if clients are not
+    // There is a simple LRU based session cleanup mechanism, but if clients are not
     // passing cookies, then a new session will be created for *every* request.
-    // This is the biggest impediment to any kind of real SimpleAxisServer use.
-    // So, if this becomes objectionable, we will implement some simpleminded
-    // cleanup (perhaps just a cap on max # of sessions, and some kind of LRU
-    // cleanup policy).
-    private Hashtable sessions = new Hashtable();
+    private Map sessions;
+    //Maximum capacity of the LRU Map used for session cleanup
+    private int maxSessions;
+    public static final int MAX_SESSIONS_DEFAULT = 100;
+
+    public static ThreadPool getPool() {
+        return pool;
+    }
+
+    private static ThreadPool pool;
 
     // Are we doing threads?
     private static boolean doThreads = true;
@@ -99,6 +106,40 @@ public class SimpleAxisServer implements Runnable {
     // Are we doing sessions?
     // Set this to false if you don't want any session overhead.
     private static boolean doSessions = true;
+
+    public SimpleAxisServer() {
+        this(ThreadPool.DEFAULT_MAX_THREADS);
+    }
+
+    /**
+     * @param maxPoolSize maximum thread pool size
+     */
+    public SimpleAxisServer(int maxPoolSize) {
+        this(maxPoolSize, MAX_SESSIONS_DEFAULT);
+    }
+    
+    /**
+     * Constructor
+     * @param maxSessions maximum sessions
+     */
+    public SimpleAxisServer(int maxPoolSize, int maxSessions) {
+        this.maxSessions = maxSessions;
+        sessions = new LRUMap(maxSessions);
+        pool = new ThreadPool(maxPoolSize);
+    }
+
+    public int getMaxSessions() {
+        return maxSessions;
+    }
+
+    /**
+     * @param maxSessions maximum sessions
+     */
+    public void setMaxSessions(int maxSessions) {
+        this.maxSessions = maxSessions;
+        ((LRUMap)sessions).setMaximumSize(maxSessions);
+    }
+    //---------------------------------------------------
 
     protected boolean isSessionUsed() {
         return doSessions;
@@ -113,6 +154,7 @@ public class SimpleAxisServer implements Runnable {
     }
 
     protected Session createSession(String cooky) {
+
         // is there a session already?
         Session session = null;
         if (sessions.containsKey(cooky)) {
@@ -135,7 +177,7 @@ public class SimpleAxisServer implements Runnable {
     // Axis server (shared between instances)
     private static AxisServer myAxisServer = null;
 
-    protected static synchronized AxisServer getAxisServer() {
+    public static synchronized AxisServer getAxisServer() {
         if (myAxisServer == null) {
             myAxisServer = new AxisServer();
         }
@@ -167,9 +209,7 @@ public class SimpleAxisServer implements Runnable {
             if (socket != null) {
                 SimpleAxisWorker worker = new SimpleAxisWorker(this, socket);
                 if (doThreads) {
-                    Thread thread = new Thread(worker);
-                    thread.setDaemon(true);
-                    thread.start();
+                    pool.addWorker(worker);
                 } else {
                     worker.run();
                 }
@@ -195,12 +235,6 @@ public class SimpleAxisServer implements Runnable {
      */
     public void setServerSocket(ServerSocket serverSocket) {
         this.serverSocket = serverSocket;
-        try {
-            Class [] clazzParms = new Class[]{boolean.class};
-            Object[] parms = new Object[] {Boolean.TRUE};
-            Method m = this.serverSocket.getClass().getMethod("setReuseAddress", clazzParms);
-            m.invoke(this.serverSocket, parms);
-        } catch (Exception e) {}
     }
 
     /**
@@ -247,15 +281,14 @@ public class SimpleAxisServer implements Runnable {
         log.info(Messages.getMessage("quit00", "SimpleAxisServer"));
 
         // Kill the JVM, which will interrupt pending accepts even on linux.
-        System.exit(0);
+        //System.exit(0);
+        pool.shutdown();
     }
 
     /**
      * Server process.
      */
     public static void main(String args[]) {
-
-        SimpleAxisServer sas = new SimpleAxisServer();
 
         Options opts = null;
         try {
@@ -264,6 +297,15 @@ public class SimpleAxisServer implements Runnable {
             log.error(Messages.getMessage("malformedURLException00"), e);
             return;
         }
+
+        String maxPoolSize = opts.isValueSet('t');
+        if (maxPoolSize==null) maxPoolSize = ThreadPool.DEFAULT_MAX_THREADS + "";
+
+        String maxSessions = opts.isValueSet('m');
+        if (maxSessions==null) maxSessions = MAX_SESSIONS_DEFAULT + "";
+
+        SimpleAxisServer sas = new SimpleAxisServer(Integer.parseInt(maxPoolSize),
+                                                        Integer.parseInt(maxSessions));
 
         try {
             doThreads = (opts.isFlagSet('t') > 0);
@@ -292,6 +334,5 @@ public class SimpleAxisServer implements Runnable {
             log.error(Messages.getMessage("exception00"), e);
             return;
         }
-
     }
 }

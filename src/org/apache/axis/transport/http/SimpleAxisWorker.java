@@ -183,9 +183,20 @@ public class SimpleAxisWorker implements Runnable {
     }
 
     /**
+     * Run method
+     */ 
+    public void run() {
+        try {
+            execute();
+        } finally {
+            SimpleAxisServer.getPool().workerDone(this, false);
+        }
+    }
+    
+    /**
      * The main workhorse method.
      */
-    public void run() {
+    public void execute () {
         byte buf[] = new byte[BUFSIZ];
         // create an Axis server
         AxisServer engine = server.getAxisServer();
