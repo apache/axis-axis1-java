@@ -59,6 +59,7 @@ import java.io.*;
 import java.util.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.AttributesImpl;
+import org.apache.axis.Constants;
 import org.apache.axis.message.*;
 import org.apache.axis.utils.*;
 import org.apache.axis.MessageContext;
@@ -110,6 +111,9 @@ public class SerializationContext
         
         if (prefix == null)
             prefix = (String)pendingNSMappings.get(uri);
+        
+        if (prefix == null && uri.equals(Constants.URI_SOAP_ENC))
+            prefix = Constants.NSPREFIX_SOAP_ENC;
         
         if (prefix == null) {
             prefix = "ns" + lastPrefixIndex++;
