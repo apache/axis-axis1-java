@@ -56,6 +56,7 @@
 package org.apache.axis.configuration;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
@@ -224,8 +225,16 @@ public class EngineConfigurationFactoryFinder
         } else {
             try {
                 return (EngineConfigurationFactory)method.invoke(null, param);
-            } catch (NoClassDefFoundError e) {
-                //Ignore if servlet classes are not in classpath.
+            } catch (InvocationTargetException e) {
+                if (e.getTargetException() instanceof java.lang.NoClassDefFoundError) {
+                    log.debug(Messages.getMessage("engineConfigInvokeNewFactory",
+                                                  service.getName(),
+                                                  requiredMethod), e);
+                } else {
+                    log.warn(Messages.getMessage("engineConfigInvokeNewFactory",
+                                                  service.getName(),
+                                                  requiredMethod), e);
+                }
             } catch (Exception e) {
                 log.warn(Messages.getMessage("engineConfigInvokeNewFactory",
                                               service.getName(),
