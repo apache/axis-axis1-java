@@ -2485,6 +2485,11 @@ public class SymbolTable {
         Iterator it = nestedTypes.iterator();
         while (it.hasNext()) {
             TypeEntry nestedType = (TypeEntry) it.next();
+            TypeEntry refType = entry.getRefType();
+            if (refType != null && !refType.equals(nestedType) && nestedType.isOnlyLiteralReferenced())
+            {  
+                nestedType.setOnlyLiteralReference(false);
+            }
             if (!nestedType.isReferenced()) {
                 //setTypeReferences(nestedType, doc, literal);
                 if(nestedType != entry)
