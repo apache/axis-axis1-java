@@ -1,5 +1,3 @@
-package org.apache.axis.encoding;
-
 /*
  * The Apache Software License, Version 1.1
  *
@@ -54,6 +52,7 @@ package org.apache.axis.encoding;
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
+package org.apache.axis.encoding;
 
 import org.apache.axis.attachments.Attachments; 
 
