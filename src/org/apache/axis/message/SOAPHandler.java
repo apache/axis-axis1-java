@@ -32,7 +32,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.soap.SOAPException;
-import java.io.CharArrayWriter;
 
 public class SOAPHandler extends DefaultHandler
 {
@@ -40,8 +39,6 @@ public class SOAPHandler extends DefaultHandler
     private MessageElement[] myElements;
     private int myIndex = 0;
 
-    private final CharArrayWriter val = new CharArrayWriter();
-    
     public SOAPHandler() {
     }
 
@@ -109,19 +106,6 @@ public class SOAPHandler extends DefaultHandler
         throws SAXException
     {
         if (myElement != null) {
-
-            if (val.size() > 0) {
-                String s = StringUtils.strip(val.toString());
-                val.reset();
-                if(s.length()>0){
-                    try {
-                        myElement.addTextNode(s);
-                    } catch (SOAPException e) {
-                        throw new SAXException(e);
-                    }
-                }
-            }
-
             if (myElements != null) {
                 myElements[myIndex] = myElement;
             }
@@ -146,7 +130,8 @@ public class SOAPHandler extends DefaultHandler
     {
     }
 
-    public void characters(char[] chars, int start, int end) throws SAXException {
-        val.write(chars, start, end);
+    public void characters(char[] chars, int start, int end) 
+        throws SAXException
+    {
     }
 }
