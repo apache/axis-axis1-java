@@ -110,10 +110,24 @@ public class JavaServiceImplWriter extends JavaWriter {
         while (portIterator.hasNext()) {
             Port p = (Port) portIterator.next();
             Binding binding = p.getBinding();
+            if (binding == null) {
+                throw new IOException(JavaUtils.getMessage("emitFailNoBinding01",
+                        new String[] {p.getName()}));
+            }
+            
             BindingEntry bEntry =
                     symbolTable.getBindingEntry(binding.getQName());
+            if (bEntry == null) {
+                throw new IOException(JavaUtils.getMessage("emitFailNoBindingEntry01",
+                        new String[] {binding.getQName().toString()}));
+            }
+
             PortTypeEntry ptEntry = symbolTable.getPortTypeEntry(
                     binding.getPortType().getQName());
+            if (ptEntry == null) {
+                throw new IOException(JavaUtils.getMessage("emitFailNoPortType01",
+                        new String[] {binding.getPortType().getQName().toString()}));
+            }
 
             // If this isn't an SOAP binding, skip it
             if (bEntry.getBindingType() != BindingEntry.TYPE_SOAP) {
