@@ -263,8 +263,12 @@ public class Java2WsdlAntTask extends Task
      * should be physically imported into the generated WSDL.
      * @param parameter
      */
-    public void setImportSchema(File parameter) throws java.io.IOException {
-        this.importSchema = parameter.toURL().toString();
+    public void setImportSchema(File parameter) throws BuildException {
+        try {
+            this.importSchema = parameter.toURL().toString();
+        } catch (java.io.IOException ioe) {
+            throw new BuildException(ioe);
+        }
     }
 
     /**
