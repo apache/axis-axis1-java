@@ -194,11 +194,19 @@ public class StringUtils {
      * @return the stripped String, <code>null</code> if null String input
      */
     public static String strip(String str, String stripChars) {
-        if (isEmpty(str)) {
+        if (str == null) {
             return str;
         }
-        str = stripStart(str, stripChars);
-        return stripEnd(str, stripChars);
+        int len = str.length();
+        if (len == 0) {
+            return str;
+        }
+        int start = getStripStart(str, stripChars);
+        if (start == len) {
+            return "";
+        }
+        int end = getStripEnd(str, stripChars);
+        return (start == 0 && end == len) ? str : str.substring(start, end);
     }
 
     /**
@@ -226,9 +234,14 @@ public class StringUtils {
      * @return the stripped String, <code>null</code> if null String input
      */
     public static String stripStart(String str, String stripChars) {
+        int start = getStripStart(str, stripChars);
+        return (start <= 0) ? str : str.substring(start);
+    }
+
+    private static int getStripStart(String str, String stripChars) {
         int strLen;
         if (str == null || (strLen = str.length()) == 0) {
-            return str;
+            return -1;
         }
         int start = 0;
         if (stripChars == null) {
@@ -236,13 +249,13 @@ public class StringUtils {
                 start++;
             }
         } else if (stripChars.length() == 0) {
-            return str;
+            return start;
         } else {
             while ((start != strLen) && (stripChars.indexOf(str.charAt(start)) != -1)) {
                 start++;
             }
         }
-        return str.substring(start);
+        return start;
     }
 
     /**
@@ -270,22 +283,26 @@ public class StringUtils {
      * @return the stripped String, <code>null</code> if null String input
      */
     public static String stripEnd(String str, String stripChars) {
+        int end = getStripEnd(str, stripChars);
+        return (end < 0) ? str : str.substring(0, end);
+    }
+
+    private static int getStripEnd(String str, String stripChars) {
         int end;
         if (str == null || (end = str.length()) == 0) {
-            return str;
+            return -1;
         }
-
         if (stripChars == null) {
             while ((end != 0) && Character.isWhitespace(str.charAt(end - 1))) {
                 end--;
             }
         } else if (stripChars.length() == 0) {
-            return str;
+            return end;
         } else {
             while ((end != 0) && (stripChars.indexOf(str.charAt(end - 1)) != -1)) {
                 end--;
             }
         }
-        return str.substring(0, end);
+        return end;
     }
 }
