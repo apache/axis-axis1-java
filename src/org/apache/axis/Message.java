@@ -74,6 +74,7 @@ import java.io.Writer;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
+import java.util.Collections;
 
 /**
  * A complete SOAP (and/or XML-RPC, eventually) message.
@@ -562,13 +563,13 @@ public class Message extends javax.xml.soap.SOAPMessage
      */
     public Iterator getAttachments(){
         try {
-					 	if (mAttachments != null && 0 != mAttachments.getAttachmentCount()) {
+            if (mAttachments != null && 0 != mAttachments.getAttachmentCount()) {
            		return mAttachments.getAttachments().iterator();
-					   }
+			}
         } catch (AxisFault af){
             log.error(Messages.getMessage("exception00"), af);
         }
-        return null;
+        return Collections.EMPTY_LIST.iterator();
     }
 
     /**
