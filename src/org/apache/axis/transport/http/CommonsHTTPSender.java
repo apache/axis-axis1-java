@@ -47,7 +47,11 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.net.URL;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.StringTokenizer;
+
+import javax.xml.soap.MimeHeader;
+import javax.xml.soap.MimeHeaders;
 
 /**
  * This class uses Jakarta Commons's HttpClient to call a SOAP server.
@@ -349,6 +353,15 @@ public class CommonsHTTPSender extends BasicHandler {
             method.addRequestHeader(HTTPConstants.HEADER_AUTHORIZATION, "Basic " + Base64.encode(tmpBuf.toString().getBytes()));
         }
         
+        // Transfer MIME headers of SOAPMessage to HTTP headers. 
+        MimeHeaders mimeHeaders = msg.getMimeHeaders();
+        if (mimeHeaders != null) {
+            for (Iterator i = mimeHeaders.getAllHeaders(); i.hasNext(); ) {
+                MimeHeader mimeHeader = (MimeHeader) i.next();
+                method.addRequestHeader(mimeHeader.getName(), mimeHeader.getValue());
+            }
+        }
+
         // process user defined headers for information.
         Hashtable userHeaderTable =
         (Hashtable) msgContext.getProperty(HTTPConstants.REQUEST_HEADERS);
