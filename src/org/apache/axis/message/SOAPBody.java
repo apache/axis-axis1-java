@@ -91,7 +91,9 @@ public class SOAPBody extends MessageElement
     }
 
     public void detachNode() {
-        ((SOAPEnvelope)parent).removeBody();
+        if (parent != null) {
+            ((SOAPEnvelope)parent).removeBody();
+        }
         super.detachNode();
     }
    
