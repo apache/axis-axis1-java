@@ -64,6 +64,7 @@ import org.w3c.dom.DOMException;
  *   that is a comment.
  *
  * @author Davanum Srinivas (dims@yahoo.com)
+ * @author Heejune Ahn      (cityboy@tmax.co.kr)
  */
 public class Text extends MessageElement implements javax.xml.soap.Text {
 
@@ -89,39 +90,128 @@ public class Text extends MessageElement implements javax.xml.soap.Text {
         return false;
     }
 
-    public org.w3c.dom.Text splitText(int offset) throws DOMException {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    /**
+     * Implementation of DOM TEXT Interface
+     * *************************************************************
+     */
+
+    // Overriding the MessageElement Method, where it throws exeptions.
+    public String getNodeValue() throws DOMException {
+        return textRep.getNodeValue();
     }
 
-    public int getLength() {
-        return 0;  //TODO: Fix this for SAAJ 1.2 Implementation
+    // Overriding the MessageElement Method, where it throws exeptions.
+    public void setNodeValue(String nodeValue) throws DOMException{
+        textRep.setNodeValue(nodeValue);
     }
 
-    public void deleteData(int offset, int count) throws DOMException {
-        //TODO: Fix this for SAAJ 1.2 Implementation
+    /**
+     * Use the textRep, and convert it to org.apache.axis.Text
+     * in order to keep the Axis SOAP strcture after operation
+     *
+     * This work would be easier if constructor, Text(org.w3c.dom.Text)
+     * is defined
+     *
+     * @since SAAJ 1.2
+     * @param offset
+     * @return
+     * @throws DOMException
+     */
+    public org.w3c.dom.Text splitText(int offset) throws DOMException
+    {
+        int length = textRep.getLength();
+        // take the first part, and save the second part for new Text
+        // length check and exception will be thrown here, no need to duplicated check
+        String tailData = textRep.substringData(offset,length);
+        textRep.deleteData(offset,length);
+
+        // insert the first part again as a new node
+        Text tailText = new Text(tailData);
+        org.w3c.dom.Node myParent = (org.w3c.dom.Node)getParentNode();
+        if(myParent != null){
+            org.w3c.dom.NodeList brothers = (org.w3c.dom.NodeList)myParent.getChildNodes();
+            for(int i = 0;i  < brothers.getLength(); i++){
+                if(brothers.item(i).equals(this)){
+                    myParent.insertBefore(tailText, this);
+                    return tailText;
+                }
+            }
+        }
+        return tailText;
     }
 
+    /**
+     * @since SAAJ 1.2
+     */
     public String getData() throws DOMException {
-        return textRep.getData();  //TODO: Fix this for SAAJ 1.2 Implementation
+        return textRep.getData();
     }
 
-    public String substringData(int offset, int count) throws DOMException {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    /**
+     * @since SAAJ 1.2
+     */
+    public void setData(String data) throws DOMException  {
+        textRep.setData(data);
     }
 
-    public void replaceData(int offset, int count, String arg) throws DOMException {
-        //TODO: Fix this for SAAJ 1.2 Implementation
+    /**
+     * @since SAAJ 1.2
+     *
+     * @return
+     */
+    public int getLength(){
+        return textRep.getLength();
     }
 
-    public void insertData(int offset, String arg) throws DOMException {
-        //TODO: Fix this for SAAJ 1.2 Implementation
+    /**
+     * @since SAAJ 1.2
+     * @param offset
+     * @param count
+     * @return
+     * @throws DOMException
+     */
+    public String substringData(int offset, int count)throws DOMException {
+        return textRep.substringData(offset,count);
     }
 
+    /**
+     *
+     * @since SAAJ 1.2
+     * @param arg
+     * @throws DOMException
+     */
     public void appendData(String arg) throws DOMException {
-        //TODO: Fix this for SAAJ 1.2 Implementation
+        textRep.appendData(arg);
     }
 
-    public void setData(String data) throws DOMException {
-        //TODO: Fix this for SAAJ 1.2 Implementation
+    /**
+     * @since SAAJ 1.2
+     * @param offset
+     * @param arg
+     * @throws DOMException
+     */
+    public void insertData(int offset,  String arg)throws DOMException {
+        textRep.insertData(offset, arg);
+    }
+
+    /**
+     * @since SAAJ 1.2
+     * @param offset
+     * @param count
+     * @param arg
+     * @throws DOMException
+     */
+    public void replaceData(int offset, int count, String arg) throws DOMException   {
+        textRep.replaceData(offset, count, arg);
+    }
+
+    /**
+     * @since SAAJ 1.2
+     * @param offset
+     * @param count
+     * @throws DOMException
+     */
+    public void deleteData(int offset, int count) throws DOMException {
+        textRep.deleteData(offset, count);
     }
 }

@@ -60,6 +60,7 @@ import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.DeserializationContextImpl;
 import org.apache.axis.encoding.SerializationContextImpl;
 import org.apache.axis.message.InputStreamBody;
+import org.apache.axis.message.SOAPDocumentImpl;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.message.MimeHeaders;
@@ -116,6 +117,7 @@ import java.util.Vector;
  * @author Rob Jellinghaus (robj@unrealities.com)
  * @author Doug Davis (dug@us.ibm.com)
  * @author Glen Daniels (gdaniels@allaire.com)
+ * @author Heejune Ahn (cityboy@tmax.co.kr)
  */
 public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
 {
@@ -870,172 +872,276 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
         }
     }
 
-    public DOMImplementation getImplementation() {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    /**
+     *  Implementation of org.w3c.Document
+     *  Most of methods will be implemented using the delgate
+     *  instance of SOAPDocumentImpl
+     *  This is for two reasons:
+     *  - possible change of message classes, by extenstion of xerces implementation
+     *  - we cannot extends SOAPPart (multiple inheritance),
+     *    since it is defined as Abstract class
+     * ***********************************************************
+     */
+
+    private Document document = new SOAPDocumentImpl(this);
+    /**
+     *  @since SAAJ 1.2
+     */
+    public Document getSOAPDocument(){
+        if(document == null){
+            document = new SOAPDocumentImpl(this);
+        }
+        return document;
+    }
+
+    /**
+     * @return
+     */
+    public DocumentType getDoctype(){
+        return document.getDoctype();
+    }
+
+    /**
+     * @return
+     */
+    public DOMImplementation getImplementation(){
+        return document.getImplementation();
+    }
+
+    /**
+     * SOAPEnvelope is the Document Elements of this XML docuement
+     * @return
+     */
+    protected Document mDocument;
+
+    public Element getDocumentElement()
+    {
+        try{
+            return getEnvelope();
+        }catch(SOAPException se){
+            return null;
+        }
+    }
+
+    /**
+     *
+     * @param tagName
+     * @return
+     * @throws DOMException
+     */
+    public Element createElement(String tagName) throws DOMException {
+        return document.createElement(tagName);
     }
 
     public DocumentFragment createDocumentFragment() {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
-    }
-
-    public DocumentType getDoctype() {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
-    }
-
-    public Element getDocumentElement() {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
-    }
-
-    public Attr createAttribute(String name) throws DOMException {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
-    }
-
-    public CDATASection createCDATASection(String data) throws DOMException {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
-    }
-
-    public Comment createComment(String data) {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
-    }
-
-    public Element createElement(String tagName) throws DOMException {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
-    }
-
-    public Element getElementById(String elementId) {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
-    }
-
-    public EntityReference createEntityReference(String name) throws DOMException {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
-    }
-
-    public Node importNode(Node importedNode, boolean deep) throws DOMException {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
-    }
-
-    public NodeList getElementsByTagName(String tagname) {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+        return document.createDocumentFragment();
     }
 
     public Text createTextNode(String data) {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+        return document.createTextNode(data);
     }
 
-    public Attr createAttributeNS(String namespaceURI, String qualifiedName) throws DOMException {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    public Comment createComment(String data){
+        return document.createComment(data);
     }
 
-    public Element createElementNS(String namespaceURI, String qualifiedName) throws DOMException {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    public CDATASection createCDATASection(String data) throws DOMException {
+        return document.createCDATASection(data);
+    }
+
+    public ProcessingInstruction createProcessingInstruction(String target, String data)
+    throws DOMException {
+        return document.createProcessingInstruction(target,data);
+    }
+
+    public Attr createAttribute(String name)throws DOMException {
+        return document.createAttribute(name);
+    }
+
+    public EntityReference createEntityReference(String name) throws DOMException {
+        return document.createEntityReference(name);
+    }
+
+    public NodeList getElementsByTagName(String tagname) {
+        return document.getElementsByTagName(tagname);
+    }
+
+    public Node importNode(Node importedNode, boolean deep)
+    throws DOMException {
+        return document.importNode(importedNode, deep);
+    }
+
+    public Element createElementNS(String namespaceURI, String qualifiedName)
+    throws DOMException {
+        return document.createElementNS(namespaceURI, qualifiedName);
+    }
+
+    public Attr createAttributeNS(String namespaceURI, String qualifiedName)
+    throws DOMException {
+        return document.createAttributeNS(namespaceURI, qualifiedName);
     }
 
     public NodeList getElementsByTagNameNS(String namespaceURI, String localName) {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+        return document.getElementsByTagNameNS(namespaceURI,localName);
     }
 
-    public ProcessingInstruction createProcessingInstruction(String target, String data) throws DOMException {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    public Element getElementById(String elementId){
+        return document.getElementById(elementId);
     }
 
-    public short getNodeType() {
-        return 0;  //TODO: Fix this for SAAJ 1.2 Implementation
+    /////////////////////////////////////////////////////////////
+
+    public String getEncoding()
+    {
+        throw new UnsupportedOperationException("Not yet implemented.69");
     }
 
-    public void normalize() {
-        //TODO: Fix this for SAAJ 1.2 Implementation
+    public  void setEncoding(String s)
+    {
+        throw new UnsupportedOperationException("Not yet implemented.70");
     }
 
-    public boolean hasAttributes() {
-        return false;  //TODO: Fix this for SAAJ 1.2 Implementation
+    public  boolean getStandalone()
+    {
+        throw new UnsupportedOperationException("Not yet implemented.71");
     }
 
-    public boolean hasChildNodes() {
-        return false;  //TODO: Fix this for SAAJ 1.2 Implementation
+
+    public  void setStandalone(boolean flag)
+    {
+        throw new UnsupportedOperationException("Not yet implemented.72");
     }
 
-    public String getLocalName() {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    public  boolean getStrictErrorChecking()
+    {
+        throw new UnsupportedOperationException("Not yet implemented.73");
     }
 
-    public String getNamespaceURI() {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+
+    public  void setStrictErrorChecking(boolean flag)
+    {
+        throw new UnsupportedOperationException("Not yet implemented. 74");
     }
 
-    public String getNodeName() {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+
+    public  String getVersion()
+    {
+        throw new UnsupportedOperationException("Not yet implemented. 75");
+    }
+
+
+    public  void setVersion(String s)
+    {
+        throw new UnsupportedOperationException("Not yet implemented.76");
+    }
+
+
+    public  Node adoptNode(Node node)
+    throws DOMException
+    {
+        throw new UnsupportedOperationException("Not yet implemented.77");
+    }
+
+    /**
+     *  Node Implementation
+     */
+
+    public String getNodeName(){
+        return document.getNodeName();
     }
 
     public String getNodeValue() throws DOMException {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+        return document.getNodeValue();
     }
 
-    public String getPrefix() {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    public void setNodeValue(String nodeValue) throws DOMException{
+        document.setNodeValue(nodeValue);
     }
 
-    public void setNodeValue(String nodeValue) throws DOMException {
-        //TODO: Fix this for SAAJ 1.2 Implementation
+    public short getNodeType() {
+        return document.getNodeType();
     }
 
-    public void setPrefix(String prefix) throws DOMException {
-        //TODO: Fix this for SAAJ 1.2 Implementation
-    }
-
-    public Document getOwnerDocument() {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
-    }
-
-    public NamedNodeMap getAttributes() {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
-    }
-
-    public Node getFirstChild() {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
-    }
-
-    public Node getLastChild() {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
-    }
-
-    public Node getNextSibling() {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
-    }
-
-    public Node getParentNode() {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
-    }
-
-    public Node getPreviousSibling() {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
-    }
-
-    public Node cloneNode(boolean deep) {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    public Node getParentNode(){
+        return  document.getParentNode();
     }
 
     public NodeList getChildNodes() {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+        return document.getChildNodes();
     }
 
-    public boolean isSupported(String feature, String version) {
-        return false;  //TODO: Fix this for SAAJ 1.2 Implementation
+    public Node getFirstChild() {
+        return document.getFirstChild();
     }
 
-    public Node appendChild(Node newChild) throws DOMException {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    public Node getLastChild(){
+        return document.getLastChild();
     }
 
-    public Node removeChild(Node oldChild) throws DOMException {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    public Node getPreviousSibling(){
+        return document.getPreviousSibling();
+    }
+
+    public Node getNextSibling(){
+        return document.getNextSibling();
+    }
+
+    public NamedNodeMap getAttributes(){
+        return document.getAttributes();
+    }
+
+    public Document getOwnerDocument(){
+        return document.getOwnerDocument();
     }
 
     public Node insertBefore(Node newChild, Node refChild) throws DOMException {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+        return document.insertBefore(newChild, refChild);
     }
 
     public Node replaceChild(Node newChild, Node oldChild) throws DOMException {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+        return document.replaceChild(newChild, oldChild);
+    }
+
+    public Node removeChild(Node oldChild) throws DOMException {
+        return document.removeChild(oldChild);
+    }
+
+    public Node appendChild(Node newChild) throws DOMException {
+        return document.appendChild(newChild);
+    }
+
+    public boolean hasChildNodes(){
+        return document.hasChildNodes();
+    }
+    public Node cloneNode(boolean deep) {
+        return document.cloneNode(deep);
+    }
+
+    public void normalize(){
+        document.normalize();
+    }
+
+    public boolean isSupported(String feature, String version){
+        return document.isSupported(feature, version);
+    }
+
+    public String getNamespaceURI() {
+        return document.getNamespaceURI();
+    }
+
+    public String getPrefix() {
+        return document.getPrefix();
+    }
+
+    public void setPrefix(String prefix) throws DOMException {
+        document.setPrefix(prefix);
+    }
+    public String getLocalName() {
+        return document.getLocalName();
+    }
+
+    public boolean hasAttributes(){
+        return document.hasAttributes();
     }
 }
 

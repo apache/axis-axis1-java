@@ -85,6 +85,8 @@ import java.util.Locale;
 public class SOAPFault extends SOAPBodyElement implements javax.xml.soap.SOAPFault
 {
     protected AxisFault fault;
+    protected String prefix;
+    private java.util.Locale locale;
     
     public SOAPFault(String namespace, String localName, String prefix,
                      Attributes attrs, DeserializationContext context)
@@ -364,20 +366,30 @@ public class SOAPFault extends SOAPBodyElement implements javax.xml.soap.SOAPFau
         return detail;
     }
 
-    public void setFaultCode(Name name) throws SOAPException {
-        //TODO: Fix this for SAAJ 1.2 Implementation
+    public void setFaultCode(Name faultCodeQName) throws SOAPException {
+        String uri = faultCodeQName.getURI();
+        String local = faultCodeQName.getLocalName();
+        String prefix = faultCodeQName.getPrefix();
+
+        this.prefix = prefix;
+        QName qname = new QName(uri,local);
+        fault.setFaultCode(qname);
     }
 
     public Name getFaultCodeAsName() {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+        QName qname = fault.getFaultCode();
+        String uri = qname.getNamespaceURI();
+        String local = qname.getLocalPart();
+        return new PrefixedQName(uri, local, prefix);
     }
 
-    public void setFaultString(String s, Locale locale) throws SOAPException {
-        //TODO: Fix this for SAAJ 1.2 Implementation
+    public void setFaultString(String faultString, Locale locale) throws SOAPException {
+        fault.setFaultString(faultString);
+        this.locale = locale;
     }
 
     public Locale getFaultStringLocale() {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+        return locale;
     }
 
     /**
