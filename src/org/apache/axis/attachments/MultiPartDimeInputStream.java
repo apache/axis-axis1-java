@@ -101,8 +101,6 @@ public class MultiPartDimeInputStream extends  MultiPartInputStream {
         super(null); //don't cache this stream.
         soapStream = dimeDelimitedStream = new DimeDelimitedInputStream(is); //The Soap stream must always be first
         contentId = dimeDelimitedStream.getContentId();
-        if(contentId == null)
-            contentId = org.apache.axis.utils.SOAPUtils.getNewContentIdValue();
     }
 
     public Part getAttachmentByReference(final String[] id)
@@ -191,8 +189,6 @@ public class MultiPartDimeInputStream extends  MultiPartInputStream {
             if (null != dimeDelimitedStream) {
                 do {
                     String contentId = dimeDelimitedStream.getContentId();
-                    if(contentId == null)
-                        contentId = org.apache.axis.utils.SOAPUtils.getNewContentIdValue();
                     String type = dimeDelimitedStream.getType();
 
                     if (type != null && !dimeDelimitedStream.getDimeTypeNameFormat().equals(DimeTypeNameFormat.MIME)) {
@@ -206,7 +202,7 @@ public class MultiPartDimeInputStream extends  MultiPartInputStream {
                     AttachmentPart ap = new AttachmentPart(dh);
 
                     if (contentId != null) 
-                        ap.setMimeHeader(HTTPConstants.HEADER_CONTENT_ID, contentId); 
+                        ap.addMimeHeader(HTTPConstants.HEADER_CONTENT_ID, contentId); 
 
                     addPart(contentId, "", ap);
 

@@ -54,7 +54,6 @@ public class MD5AttachTest {
         //Add the attachment content to the message.
         org.apache.axis.attachments.Attachments attachments = msg.getAttachmentsImpl();
         org.apache.axis.Part attachmentPart = attachments.createAttachmentPart(dh);
-        attachmentPart.setContentId(org.apache.axis.utils.SOAPUtils.getNewContentIdValue());
         String href = attachmentPart.getContentId();
         //Have the parameter element set an href attribute to the attachment.
         paramElement.setAttribute(org.apache.axis.Constants.ATTR_HREF, href);

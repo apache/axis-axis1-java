@@ -162,6 +162,10 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
                     rootPartContentId = rootPartContentId.substring(0,
                             rootPartContentId.length() - 1);
                 }
+
+                if (!rootPartContentId.startsWith("cid:")) {
+                    rootPartContentId = "cid:" + rootPartContentId;
+                }
             }
 
             // if start is null then the first attachment is the rootpart
@@ -235,6 +239,12 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
                     }
 
                     contentId = contentId.trim();
+
+                    if (!contentId.startsWith("cid:")) {
+                        contentId =
+                                "cid:"
+                                + contentId;        // make sure its identified as cid
+                    }
                 }
 
                 contentLocation =
@@ -287,12 +297,12 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
                     AttachmentPart ap = new AttachmentPart(dh);
 
                     if (contentId != null) {
-                        ap.setMimeHeader(HTTPConstants.HEADER_CONTENT_ID,
+                        ap.addMimeHeader(HTTPConstants.HEADER_CONTENT_ID,
                                 contentId);
                     }
 
                     if (contentLocation != null) {
-                        ap.setMimeHeader(HTTPConstants.HEADER_CONTENT_LOCATION,
+                        ap.addMimeHeader(HTTPConstants.HEADER_CONTENT_LOCATION,
                                 contentLocation);
                     }
 
@@ -509,6 +519,10 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
                                     contentId.substring(0, contentId.length() - 1);
                         }
 
+                        if (!contentId.startsWith("cid:")) {
+                            contentId = "cid:" + contentId;
+                        }
+
                         contentId = contentId.trim();
                     }
 
@@ -551,12 +565,12 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
                     AttachmentPart ap = new AttachmentPart(dh);
 
                     if (contentId != null) {
-                        ap.setMimeHeader(HTTPConstants.HEADER_CONTENT_ID,
+                        ap.addMimeHeader(HTTPConstants.HEADER_CONTENT_ID,
                                 contentId);
                     }
 
                     if (contentLocation != null) {
-                        ap.setMimeHeader(HTTPConstants.HEADER_CONTENT_LOCATION,
+                        ap.addMimeHeader(HTTPConstants.HEADER_CONTENT_LOCATION,
                                 contentLocation);
                     }
 
