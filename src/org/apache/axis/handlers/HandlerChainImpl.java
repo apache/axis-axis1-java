@@ -66,6 +66,7 @@ import javax.xml.rpc.handler.soap.SOAPMessageContext;
 import javax.xml.rpc.soap.SOAPFaultException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class HandlerChainImpl extends ArrayList {
     protected List handlerInfos = new ArrayList();
@@ -80,9 +81,11 @@ public class HandlerChainImpl extends ArrayList {
             add(newHandler(getHandlerInfo(i)));
     }
 
-    public void addNewHandler(String className) {
+    public void addNewHandler(String className, Map config) {
         try {
-            HandlerInfo handlerInfo = new HandlerInfo(ClassUtils.forName(className), null, null);
+            HandlerInfo handlerInfo = new HandlerInfo(ClassUtils.forName(className),
+                                                      config,
+                                                      null);
             handlerInfos.add(handlerInfo);
             add(newHandler(handlerInfo));
         } catch (Exception ex) {
