@@ -7,3 +7,6 @@ junit*
 bin
 .project
 .classpath
+buildit.bat
+testit.bat
+GetQuote.wsdl
