@@ -261,12 +261,12 @@ public class SOAPBody extends MessageElement
     public java.util.Iterator getChildElements(Name name) {
         Vector v = new Vector();
         Enumeration e = bodyElements.elements();
-        SOAPHeaderElement header;
+        SOAPBodyElement bodyEl;
         while (e.hasMoreElements()) {
-            header = (SOAPHeaderElement)e.nextElement();
-            if (header.getNamespaceURI().equals(name.getURI()) &&
-                header.getName().equals(name.getLocalName())) {
-                v.addElement(header);
+            bodyEl = (SOAPBodyElement)e.nextElement();
+            if (bodyEl.getNamespaceURI().equals(name.getURI()) &&
+                bodyEl.getName().equals(name.getLocalName())) {
+                v.addElement(bodyEl);
             }
         }
         return v.iterator();
