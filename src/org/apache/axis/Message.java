@@ -183,6 +183,25 @@ public class Message extends javax.xml.soap.SOAPMessage {
      *                        or AxisFault.
      * @param bodyInStream is true if initialContents is an InputStream
      *                     containing just the SOAP body (no SOAP-ENV).
+     * @param headers Mime Headers.
+     */
+    public Message(Object initialContents, boolean bodyInStream, MimeHeaders headers) {
+        setup(initialContents, bodyInStream, (String) null, (String) null, headers);
+    }
+    
+    /**
+     * Construct a Message, using the provided initialContents as the
+     * contents of the Message's SOAPPart.
+     * <p>
+     * Eventually, genericize this to
+     * return the RootPart instead, which will have some kind of
+     * EnvelopeFactory to enable support for things other than SOAP.
+     * But that all will come later, with lots of additional refactoring.
+     *
+     * @param initialContents may be String, byte[], InputStream, SOAPEnvelope,
+     *                        or AxisFault.
+     * @param bodyInStream is true if initialContents is an InputStream
+     *                     containing just the SOAP body (no SOAP-ENV).
      */
     public Message(Object initialContents, MimeHeaders headers) {
         setup(initialContents, true, (String) null, (String) null, headers);
