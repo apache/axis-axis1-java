@@ -94,7 +94,7 @@ public class SOAPHeader extends MessageElement
     SOAPHeader(SOAPEnvelope env, SOAPConstants soapConsts) {
         super(Constants.ELEM_HEADER,
               Constants.NS_PREFIX_SOAP_ENV,
-              soapConsts.getEnvelopeURI());
+              soapConsts != null? soapConsts.getEnvelopeURI() : SOAPConstants.SOAP11_CONSTANTS.getEnvelopeURI());
         soapConstants = soapConsts;
         try {
             setParentElement(env);
