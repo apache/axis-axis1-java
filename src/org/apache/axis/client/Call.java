@@ -437,9 +437,14 @@ public class Call implements javax.xml.rpc.Call {
                 String           name  = part.getName();
                 javax.wsdl.QName type  = part.getTypeName();
 
-                if ( type == null )
-                    throw new JAXRPCException(
-                            JavaUtils.getMessage("typeNotSet00", name) );
+                if ( type == null ) {
+                    type = part.getElementName();
+                    if ( type != null ) 
+                      type = new javax.wsdl.QName("java","org.w3c.dom.Element");
+                    else
+                      throw new JAXRPCException(
+                                  JavaUtils.getMessage("typeNotSet00", name) );
+                }
 
                 QName     tmpQN = new QName( type.getNamespaceURI(),
                                              type.getLocalPart());
@@ -467,6 +472,14 @@ public class Call implements javax.xml.rpc.Call {
                         continue ;
 
                 javax.wsdl.QName type  = part.getTypeName();
+                if ( type == null ) {
+                    type = part.getElementName();
+                    if ( type != null ) 
+                      type = new javax.wsdl.QName("java","org.w3c.dom.Element");
+                    else
+                      throw new JAXRPCException(
+                            JavaUtils.getMessage("typeNotSet00", "<return>") );
+                }
                 QName    tmpQN = new QName( type.getNamespaceURI(),
                                             type.getLocalPart());
                 XMLType  xmlType = new org.apache.axis.encoding.XMLType(tmpQN);
