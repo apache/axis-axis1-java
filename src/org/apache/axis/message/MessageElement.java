@@ -58,7 +58,6 @@ package org.apache.axis.message;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
 import org.apache.axis.configuration.NullProvider;
-import org.apache.axis.client.AxisClient;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
@@ -444,11 +443,8 @@ public class MessageElement
     public String toString() {
         try {
             StringWriter  writer = new StringWriter();
-            SerializationContext serContext = null ;
-            AxisClient     tmpEngine = new AxisClient(new NullProvider());
-            tmpEngine.setOption(tmpEngine.PROP_XML_DECL, new Boolean(false));
-            MessageContext msgContext = new MessageContext(tmpEngine);
-            serContext = new SerializationContext(writer, msgContext);
+            SerializationContext serContext = new SerializationContext(writer, 
+                                                                       null);
             this.output(serContext);
             return( writer.toString() );
         }
