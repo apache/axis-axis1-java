@@ -352,6 +352,15 @@
             <xsd:element name="d" type="typens2:a" />
           </xsd:sequence>
         </xsd:complexType>
+
+	<!-- Test for a WS-I-like type that we used to fail on. -->
+        <xsd:complexType name="SimpleAnyURIType">
+          <xsd:simpleContent>
+            <xsd:extension base="xsd:anyURI">
+            </xsd:extension>
+          </xsd:simpleContent>
+        </xsd:complexType>
+
     </xsd:schema>
 
   </types>
@@ -592,6 +601,16 @@
   <message name="outputAnyURI">
     <part name="outAnyURI" type="xsd:anyURI"/>
     <part name="anyURI" type="xsd:anyURI"/>
+  </message>
+
+  <message name="inputSimpleAnyURI">
+    <part name="inAnyURI" type="typens2:SimpleAnyURIType"/>
+    <part name="anyURI" type="typens2:SimpleAnyURIType"/>
+  </message>
+
+  <message name="outputSimpleAnyURI">
+    <part name="outAnyURI" type="typens2:SimpleAnyURIType"/>
+    <part name="anyURI" type="typens2:SimpleAnyURIType"/>
   </message>
 
   <message name="inputYear">
@@ -1067,11 +1086,15 @@
     <operation name="methodUnsignedByte">
       <input message="tns:inputUnsignedByte"/>
       <output message="tns:outputUnsignedByte"/>
-    </operation>    
+    </operation>
     <operation name="methodAnyURI">
       <input message="tns:inputAnyURI"/>
       <output message="tns:outputAnyURI"/>
-    </operation>    
+    </operation>
+    <operation name="methodSimpleAnyURI">
+      <input message="tns:inputSimpleAnyURI"/>
+      <output message="tns:outputSimpleAnyURI"/>
+    </operation>
     <operation name="methodYear">
       <input message="tns:inputYear"/>
       <output message="tns:outputYear"/>
@@ -2202,6 +2225,21 @@
       </output>
     </operation>    
     <operation name="methodAnyURI">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>    
+    <operation name="methodSimpleAnyURI">
       <soap:operation soapAction=""/>
       <input>
         <soap:body
