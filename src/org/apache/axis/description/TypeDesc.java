@@ -60,6 +60,9 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.BeanUtils;
 import org.apache.axis.utils.BeanPropertyDescriptor;
 
+import org.apache.axis.components.logger.LogFactory;
+import org.apache.commons.logging.Log;
+
 import javax.xml.namespace.QName;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -131,6 +134,9 @@ public class TypeDesc {
     /** A cache of FieldDescs by name */
     private HashMap fieldNameMap = new HashMap();
     
+    /** A cache of FieldDescs by Element QName */
+    private HashMap fieldElementMap = null;
+    
     /** Are there any fields which are serialized as attributes? */
     private boolean _hasAttributes = false;
 
@@ -182,6 +188,7 @@ public class TypeDesc {
         fieldNameMap = new HashMap();
         fields = newFields;
         _hasAttributes = false;
+        fieldElementMap = null;
         
         for (int i = 0; i < newFields.length; i++) {
             FieldDesc field = newFields[i];
@@ -280,32 +287,48 @@ public class TypeDesc {
         if (fields == null)
             return null;
 
-        String localPart = qname.getLocalPart();
-        int    localHash = localPart.hashCode();
+        // have we already computed the answer to this question?
+        if (fieldElementMap != null) {
+            String cached = (String) fieldElementMap.get(qname);
+            if (cached != null) return cached;
+        }
 
+        String result = null;
+
+        String localPart = qname.getLocalPart();
+
+        // check fields in this class
         for (int i = 0; i < fields.length; i++) {
             FieldDesc field = fields[i];
-            if (field.isElement() && localHash == field.getXmlLocalHash()) {
+            if (field.isElement()) {
                 QName xmlName = field.getXmlName();
                 if (localPart.equals(xmlName.getLocalPart())) {
                     if (ignoreNS || qname.getNamespaceURI().
                                         equals(xmlName.getNamespaceURI())) {
-                        return field.getFieldName();
+                        result = field.getFieldName();
                     }
                 }
             }
         }
         
         // check superclasses if they exist
-        Class cls = javaClass.getSuperclass();
-        if (cls != null && !cls.getName().startsWith("java.")) {
-            TypeDesc superDesc = getTypeDescForClass(cls);
-            if (superDesc != null) {
-                return superDesc.getFieldNameForElement(qname, ignoreNS);
+        if (result == null) {
+            Class cls = javaClass.getSuperclass();
+            if (cls != null && !cls.getName().startsWith("java.")) {
+                TypeDesc superDesc = getTypeDescForClass(cls);
+                if (superDesc != null) {
+                    result = superDesc.getFieldNameForElement(qname, ignoreNS);
+                }
             }
         }
 
-        return null;
+        // cache the answer away for quicker retrieval next time.
+        if (result != null) {
+            if (fieldElementMap == null) fieldElementMap = new HashMap();
+            fieldElementMap.put(qname, result);
+        }
+
+        return result;
     }
     
     /**
@@ -426,6 +449,7 @@ public class TypeDesc {
         if (propertyDescriptors == null) {
             getPropertyDescriptors();  
         }
+
         // Build the map
         propertyMap = new HashMap();
         for (int i = 0; i < propertyDescriptors.length; i++) {
