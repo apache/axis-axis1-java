@@ -5,7 +5,7 @@ import java.net.URL;
 import org.apache.log4j.Category;
 import org.apache.log4j.Priority;
 
-import org.apache.axis.rpc.holders.StringHolder;
+import javax.xml.rpc.holders.StringHolder;
 import org.apache.axis.utils.Options;
 
 import junit.framework.TestCase;
