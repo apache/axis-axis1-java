@@ -29,6 +29,8 @@ import org.apache.commons.logging.Log;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -300,6 +302,30 @@ public class TypeMappingImpl implements TypeMapping
 
         // Now get the serializer with the pair
         sf = (javax.xml.rpc.encoding.SerializerFactory) pair2SF.get(pair);
+
+        // Need to look into hierarchy of component type.
+        // ex) java.util.GregorianCalendar[]
+        //     -> java.util.Calendar[]
+        if (sf == null && javaType.isArray()) {
+            int dimension = 1;
+            Class componentType = javaType.getComponentType();
+            while (componentType.isArray()) {
+                dimension += 1;
+                componentType = componentType.getComponentType();
+            }
+            int[] dimensions = new int[dimension];
+            componentType = componentType.getSuperclass();
+            Class superJavaType = null;
+            while (componentType != null) {
+    			superJavaType = Array.newInstance(componentType, dimensions).getClass();
+                pair = new Pair(superJavaType, xmlType);
+                sf = (javax.xml.rpc.encoding.SerializerFactory) pair2SF.get(pair);
+                if (sf != null) {
+                    break;
+                }
+                componentType = componentType.getSuperclass();
+            }
+        }
 
         if (sf == null && delegate != null) {
             sf = delegate.getSerializer(javaType, xmlType);
