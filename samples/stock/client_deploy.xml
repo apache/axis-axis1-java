@@ -4,8 +4,8 @@
 <!--      from the same dir that the Axis client will run in    -->
 <!-- This file will be replaced by WSDD once it's ready         -->
 
-<deploy>
+<m:deploy xmlns:m="AdminService">
   <handler name="log" class="org.apache.axis.handlers.LogHandler" />
 
   <service name="urn:xmltoday-delayed-quotes" input="log" output="log" />
-</deploy>
+</m:deploy>

@@ -88,11 +88,13 @@ public class HTTPSender extends BasicHandler {
     try {
       String   host ;
       int      port   = 80 ;
-      String   action = msgContext.getStrProp(HTTPConstants.MC_HTTP_SOAPACTION);
       URL      tmpURL = new URL( targetURL );
       byte[]   buf    = new byte[4097];
       int      rc     = 0 ;
-
+        
+        String   action = msgContext.getStrProp(HTTPConstants.MC_HTTP_SOAPACTION);
+        if (action == null) action = "";
+        
       host = tmpURL.getHost();
       if ( (port = tmpURL.getPort()) == -1 ) port = 80;
 
@@ -223,11 +225,13 @@ public class HTTPSender extends BasicHandler {
             .append( "\r\n" )
             .append( HTTPConstants.HEADER_CONTENT_TYPE )
             .append( ": text/xml\r\n" )
-            .append( (otherHeaders == null ? "" : otherHeaders.toString()) )
+            .append( (otherHeaders == null ? "" : otherHeaders.toString()))
             .append( HTTPConstants.HEADER_SOAP_ACTION )
             .append( ": \"" )
             .append( action )
-            .append( "\"\r\n\r\n" );
+            .append( "\"\r\n");
+        
+        header.append("\r\n");
 
       out.write( header.toString().getBytes() );
       out.write( reqEnv.getBytes() );

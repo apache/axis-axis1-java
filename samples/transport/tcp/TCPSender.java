@@ -53,7 +53,7 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.transport.tcp;
+package samples.transport.tcp;
 
 import java.io.* ;
 import java.net.* ;
@@ -86,7 +86,6 @@ public class TCPSender extends BasicHandler {
     String   reqEnv    = null ;
 
     targetURL = msgContext.getStrProp( MessageContext.TRANS_URL);
-System.out.println(targetURL);
     try {
       // This is a totally random, temporary URL specification:
       // http://host:port/service-name ??????? hmmmmmm

@@ -237,6 +237,10 @@ Copyright:
     <ant antfile="test/build_functional_tests.xml" />
   </target>
 
+  <!-- All tests -->
+  <target name="all-tests" depends="junit, functional-tests">
+  </target>
+
   <!-- =================================================================== -->
   <!-- Creates the API documentation                                       -->
   <!-- =================================================================== -->

@@ -147,7 +147,7 @@ public class TestClient {
 
             // issue the request
             String receipt = (String) call.invoke(
-                "http://www.soapinterop.org/Bid", "Buy",
+                "http://www.soapinterop.org/Buy", "Buy",
                 new Object[] {new RPCParam("PO", po)} );
 
             System.out.println(receipt);

@@ -96,13 +96,6 @@ public class FileReader extends Thread {
         MessageContext  msgContext = new MessageContext(server);
         msgContext.setRequestMessage( msg );
 
-        // SOAPAction hack
-        byte[]  buf = new byte[50];
-        fis.read( buf, 0, 50 );
-        String action = new String( buf );
-        msgContext.setTargetService( action.trim() );
-        // end of hack
-
         try {
             server.invoke( msgContext );
             msg = msgContext.getResponseMessage();
@@ -114,7 +107,7 @@ public class FileReader extends Thread {
             msg.setMessageContext(msgContext);
         }
         
-        buf = (byte[]) msg.getAsBytes();
+        byte[] buf = (byte[]) msg.getAsBytes();
         FileOutputStream fos = new FileOutputStream( "xml" + thisNum + ".res" );
         fos.write( buf );
         fos.close();

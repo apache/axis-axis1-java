@@ -7,11 +7,11 @@
 <!--      after the axis server is running                        -->
 <!-- This file will be replaced by WSDD once it's ready           -->
 
-<undeploy>
+<m:undeploy xmlns:m="AdminService">
   <handler name="authen"  />
   <handler name="author"  />
   <chain   name="checks"  />
   <chain   name="rpc"  />
   <service name="urn:xmltoday-delayed-quotes" handler="rpc" />
   <service name="urn:cominfo" handler="rpc" />
-</undeploy>
+</m:undeploy>

@@ -60,65 +60,83 @@ import java.io.*;
 import java.util.*;
 
 import org.apache.axis.AxisFault ;
-import org.apache.axis.client.http.AdminClient;
-import org.apache.axis.utils.Debug ;
-import org.apache.axis.utils.Options ;
-import org.apache.axis.utils.QName ;
+import samples.transport.tcp.AdminClient;
+import samples.transport.tcp.TCPTransport;
+import org.apache.axis.client.ServiceClient;
 import org.apache.axis.encoding.ServiceDescription;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 
 import junit.framework.TestCase;
 
-import samples.stock.GetQuote;
-
 /** Test the stock sample code.
  */
-public class TestStockSample extends TestCase {
+public class TestTCPTransportSample extends TestCase {
     
-    public TestStockSample(String name) {
+    public TestTCPTransportSample(String name) {
         super(name);
     }
     
-    public void doTestStockJWS () throws Exception {
-        String[] args = { "-uuser1", "-wpass1", "XXX", "-sjws/StockQuoteService.jws" };
-        float val = new GetQuote().getQuote(args);
-        assertEquals("TestStockSample.doTestStockJWS(): stock price should be 66.25", val, 66.25, 0.01);
-    }
-    
     public void doTestDeploy () throws Exception {
-        String[] args = { "samples/stock/deploy.xml" };
+        String[] args = { "-p8088", "samples/stock/deploy.xml" };
         new AdminClient().doAdmin(args);
-    }
-    
-    public void doTestStock () throws Exception {
-        String[] args = { "-uuser1", "-wpass1", "XXX" };
-        float val = new GetQuote().getQuote(args);
-        assertEquals("TestStockSample.doTestStock(): stock price is 55.25", val, 55.25, 0.01);
-    }
-    
-    public void doTestStockNoAction () throws Exception {
-        String[] args = { "-uuser1", "-wpass1", "XXX_noaction" };
-        float val = new GetQuote().getQuote(args);
-        assertEquals("TestStockSample.doTestStock(): stock price is 55.25", val, 55.25, 0.01);
     }
     
     public void doTestUndeploy () throws Exception {
-        String[] args = { "samples/stock/undeploy.xml" };
+        String[] args = { "-p8088", "samples/stock/undeploy.xml" };
         new AdminClient().doAdmin(args);
     }
     
-    
-    public void testStockService () throws Exception {
+    public void doTestStock() throws Exception {
         try {
-            System.out.println("Testing stock sample.");
-            System.out.println("Testing JWS...");
-            doTestStockJWS();
+            System.out.println("Testing TCP stock service...");
+            String   symbol = "XXX"; // args[0] ;
+            URL url = null;
+            // parse host, port out of URL by hand
+            // what to do about that URL format issue.....
+            try {
+                url = new URL("http://localhost:8088"); // (opts.getURL());
+            } catch (IOException ex) {
+                System.err.println("URL "+url+" hosed: "+ex);
+                System.exit(1);
+            }
+            
+            ServiceClient call   = new ServiceClient
+                ( new TCPTransport(url.getHost(), ""+url.getPort()) );
+            
+            // reconstruct URL
+            ServiceDescription sd = new ServiceDescription("stockQuotes", true);
+            sd.addOutputParam("return", SOAPTypeMappingRegistry.XSD_FLOAT);
+            call.setServiceDescription(sd);
+            
+            Float res = new Float(0.0F);
+            //      for (int i=0; i<count; i++) {
+            Object ret = call.invoke(
+                "urn:xmltoday-delayed-quotes", "getQuote",
+                new Object[] {symbol} );
+            if (ret instanceof Float) {
+                res = (Float) ret;
+                // System.out.println( symbol + ": " + res );
+                assertEquals("TestTCPTransportSample: stock price should be 55.25", res.floatValue(), 55.25, 0.000001);
+            } else {
+                throw new Exception("Bad return value from TCP stock test: "+ret);
+            }
+        }
+        
+        //    }
+        catch( Exception e ) {
+            if ( e instanceof AxisFault ) ((AxisFault)e).dump();
+            e.printStackTrace();
+            throw new Exception("Fault returned from TCP stock test: "+e);
+        }
+    }
+    
+    public void testTCPTransportSample () throws Exception {
+        try {
+            System.out.println("Testing TCP transport.");
             System.out.println("Testing deployment...");
             doTestDeploy();
             System.out.println("Testing service...");
             doTestStock();
-            System.out.println("Testing service with SOAPAction: \"\"...");
-            doTestStockNoAction();
             System.out.println("Testing undeployment...");
             doTestUndeploy();
             System.out.println("Test complete.");

@@ -91,10 +91,16 @@ public class TestTransportSample extends TestCase {
         Admin.main(args);
     }
     
+    /* NOT RECOMMENDED -- this calls out to xmltoday.com which is flaky.
+       Do not do this in regular regression tests since it can result in
+       spurious failures due to no fault of Axis code. -- RobJ
+    
     public void doTestIBM () throws Exception {
         String[] args = { "IBM" };
         FileTest.main(args);
     }
+    
+     */
     
     public void doTestXXX () throws Exception {
         String[] args = { "XXX" };
@@ -108,8 +114,10 @@ public class TestTransportSample extends TestCase {
             doTestClientDeploy();
             System.out.println("Testing deployment...");
             doTestDeploy();
+            /*
             System.out.println("Testing service with symbol IBM...");
             doTestIBM();
+             */
             System.out.println("Testing service with symbol XXX...");
             doTestXXX();
             System.out.println("Test complete.");

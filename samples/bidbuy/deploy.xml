@@ -7,7 +7,7 @@
 <!--      after the axis server is running                      -->
 <!-- This file will be replaced by WSDD once it's ready         -->
 
-<deploy>
+<m:deploy xmlns:m="AdminService">
   <chain   name="bid"     flow="RPCDispatcher" />
 
   <service name="http://www.soapinterop.org/RequestForQuote" pivot="bid" >
@@ -64,4 +64,4 @@
     <reg:Service classname="samples.bidbuy.Service"/>
   </bean>
 
-</deploy>
+</m:deploy>

@@ -7,7 +7,7 @@
 <!--      after the axis server is running                      -->
 <!-- This file will be replaced by WSDD once it's ready         -->
 
-<deploy>
+<m:deploy xmlns:m="AdminService">
   <handler name="authen"  class="org.apache.axis.handlers.SimpleAuthenticationHandler" />
   <handler name="author"  class="org.apache.axis.handlers.SimpleAuthorizationHandler" />
   <chain   name="checks"  flow="authen,author" />
@@ -21,4 +21,4 @@
     <option name="className" value="samples.stock.ComInfoService" />
     <option name="methodName" value="getInfo" />
   </service>
-</deploy>
+</m:deploy>

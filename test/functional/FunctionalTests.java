@@ -24,15 +24,17 @@ System.out.println("Creating FunctionalTests suite.");
         // BROKEN AS OF RIGHT NOW, 11:26 PST 20010531 -- RobJ
         // suite.addTestSuite(TestMiscSample.class);
         
-        // test of the TCP transport
-        // ... should be removed?
-        suite.addTestSuite(TestTCPEcho.class);
-        
-        // transport sample test
-        suite.addTestSuite(TestTransportSample.class);
-
         // stock sample test
+        // run this BEFORE ALL OTHER TESTS to minimize confusion;
+        // this will run the JWS test first, and we want to know that
+        // nothing else has been deployed
         suite.addTestSuite(TestStockSample.class);
+
+        // TCP transport sample test
+        suite.addTestSuite(TestTCPTransportSample.class);
+        
+        // file transport sample test
+        suite.addTestSuite(TestTransportSample.class);
 
         // bid-buy test
         suite.addTestSuite(TestBidBuySample.class);

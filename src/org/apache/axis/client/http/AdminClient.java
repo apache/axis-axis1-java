@@ -55,20 +55,8 @@
 
 package org.apache.axis.client.http ;
 
-import java.net.*;
-import java.io.*;
-import java.util.*;
-
 import org.apache.axis.utils.Options ;
-import org.apache.axis.encoding.SerializationContext ;
-import org.apache.axis.message.SOAPEnvelope ;
-import org.apache.axis.message.SOAPBodyElement ;
 import org.apache.axis.client.ServiceClient;
-import org.apache.axis.client.Transport;
-import org.apache.axis.Message ;
-import org.apache.axis.MessageContext ;
-import org.apache.axis.utils.Debug ;
-import org.apache.axis.encoding.ServiceDescription;
 import org.apache.axis.transport.http.HTTPConstants;
 
 /**
@@ -78,83 +66,28 @@ import org.apache.axis.transport.http.HTTPConstants;
  * @author Doug Davis (dug@us.ibm.com)
  */
 
-public class AdminClient {
-
-    // Temporary home until we find something better.
-    static {
-        // System.out.println("Registering URL stream handler factory.");
-        URL.setURLStreamHandlerFactory(Transport.getURLStreamHandlerFactory());
-    }
+public class AdminClient extends org.apache.axis.client.AdminClient {
 
     public static void main(String args[]) {
         try {
-            new AdminClient().doAdmin(args);
+            new org.apache.axis.client.http.AdminClient().doAdmin(args);
         }
         catch( Exception e ) {
             System.err.println( e );
             e.printStackTrace( System.err );
         }
     }
-    
-    // do the real work, and throw exception if fubar
-    // this is reused by the TestHTTPDeploy functional tests
-    public void doAdmin (String[] args)
-        throws Exception
-    {
-        Options opts = new Options( args );
-        
-        Debug.setDebugLevel( opts.isFlagSet('d') );
-        
-        args = opts.getRemainingArgs();
-        
-        if ( args == null ) {
-            System.err.println( "Usage: AdminClient xml-files | list" );
-            System.exit(1);
-        }
-        
-        for ( int i = 0 ; i < args.length ; i++ ) {
-            InputStream input = null ;
-            
-            if ( args[i].equals("list") ) {
-                System.out.println( "Doing a list" );
-                String str = "<list/>" ;
-                input = new ByteArrayInputStream( str.getBytes() );
-            } else if (args[i].equals("quit")) {
-                System.out.println("Doing a quit");
-                String str = "<quit/>";
-                input = new ByteArrayInputStream(str.getBytes());
-            }
-            else {
-                System.out.println( "Processing file: " + args[i] );
-                input = new FileInputStream( args[i] );
-            }
-            
-            ServiceClient     client       =
-                new ServiceClient(opts.getURL());
-            
-            /** Set the action in case it's HTTP
-             */
-            client.set(HTTPConstants.MC_HTTP_SOAPACTION, "AdminService");
-            
-            Message         inMsg      = new Message( input, true );
-            client.setRequestMessage( inMsg );
-            
-            if ( opts.isFlagSet('t') > 0 ) client.doLocal = true ;
-            client.set( Transport.USER, opts.getUser() );
-            client.set( Transport.PASSWORD, opts.getPassword() );
-            
-            client.invoke();
-            
-            Message outMsg = client.getMessageContext().getResponseMessage();
-            client.getMessageContext().setServiceDescription(new ServiceDescription("Admin", false));
-            input.close();
-            SOAPEnvelope envelope = (SOAPEnvelope) outMsg.getAsSOAPEnvelope();
-            SOAPBodyElement body = envelope.getFirstBody();
-            StringWriter writer = new StringWriter();
-            SerializationContext ctx = new SerializationContext(writer, client.getMessageContext());
-            body.output(ctx);
-            System.out.println(writer.toString());
-        }
+
+    /**
+     * create an appropriate ServiceClient
+     */
+    public ServiceClient getServiceClient (Options opts, String[] args) throws Exception {
+        ServiceClient client = new ServiceClient(opts.getURL());
+        /** Set the action
+         */
+        client.set(HTTPConstants.MC_HTTP_SOAPACTION, "AdminService");
+        return client;
     }
+        
 }
 
