@@ -152,7 +152,8 @@ public class WSDDDeployment
         throws WSDDException
     {
         typeMappings.add(typeMapping);
-        deployMapping(typeMapping);
+        if (tmrDeployed)
+            deployMapping(typeMapping);
     }
 
     /**
@@ -259,8 +260,6 @@ public class WSDDDeployment
             throws WSDDException
     {
         try {
-            TypeMappingRegistry tmr = getTypeMappingRegistry();
-
             TypeMapping tm = (TypeMapping) tmr.getTypeMapping(mapping.getEncodingStyle());
             TypeMapping df = (TypeMapping) tmr.getDefaultTypeMapping();
             if (tm == null || tm == df) {
@@ -444,10 +443,18 @@ public class WSDDDeployment
 
     TypeMappingRegistry tmr = new TypeMappingRegistryImpl();
     public TypeMapping getTypeMapping(String encodingStyle) throws ConfigurationException {
-        return (TypeMapping)tmr.getTypeMapping(encodingStyle);
+        return (TypeMapping)getTypeMappingRegistry().getTypeMapping(encodingStyle);
     }
 
+    private boolean tmrDeployed = false;
     public TypeMappingRegistry getTypeMappingRegistry() throws ConfigurationException {
+        if (false == tmrDeployed) {
+            for (int i = 0; i < typeMappings.size(); i++) {
+                WSDDTypeMapping mapping = (WSDDTypeMapping)typeMappings.get(i);
+                deployMapping(mapping);
+            }
+            tmrDeployed = true;
+        }
         return tmr;
     }
 
