@@ -232,7 +232,6 @@ Copyright:
   <target name="cleanAddr">
     <delete file="samples/addr/AddressBook.java" />
     <delete file="samples/addr/AddressBookService.java" />
-    <delete file="samples/addr/AddressBookSOAPBindingImpl.java" />
     <delete file="samples/addr/AddressBookSOAPBindingSkeleton.java" />
     <delete file="samples/addr/AddressBookSOAPBindingStub.java" />
     <delete file="samples/addr/Address.java" />
