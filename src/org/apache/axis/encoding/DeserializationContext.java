@@ -206,7 +206,7 @@ public class DeserializationContext extends DefaultHandler
         
         // OK, this is a QName, so look up the prefix in our current mappings.
         
-        int i = qNameStr.indexOf(":");
+        int i = qNameStr.indexOf(':');
         if (i == -1)
             return null;
         
