@@ -82,6 +82,8 @@ import java.util.Hashtable ;
 import java.util.Enumeration ;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URL;
+import java.net.MalformedURLException;
 
 /**
  * Axis' JAXRPC Dynamic Invocation Interface implementation of the Call
@@ -157,6 +159,27 @@ public class Call implements org.apache.axis.rpc.Call {
     public Call() {
         setEngine( new AxisClient(configProvider) );
         if ( !initialized ) initialize();
+    }
+
+    /**
+     * Build a call from a URL string
+     *
+     * @param url the target endpoint URL
+     * @exception MalformedURLException
+     */
+    public Call(String url) throws MalformedURLException {
+        this();
+        setTargetEndpointAddress(new URL(url));
+    }
+
+    /**
+     * Build a call from a URL
+     *
+     * @param url the target endpoint URL
+     */
+    public Call(URL url) {
+        this();
+        setTargetEndpointAddress(url);
     }
 
     /**
