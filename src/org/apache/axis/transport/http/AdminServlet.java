@@ -102,7 +102,7 @@ public class AdminServlet extends AxisServletBase {
         if (cmd != null) {
             //who called?
             String callerIP=request.getRemoteAddr();
-            if (!isProduction()) {
+            if (isDevelopment()) {
                 //only in dev mode do these command work
                 if (cmd.equals("start")) {
                     log.info(JavaUtils.getMessage("adminServiceStart", callerIP));
@@ -127,7 +127,7 @@ public class AdminServlet extends AxisServletBase {
             buffer.append(JavaUtils.getMessage("serverStop00"));
         }
         //add commands
-        if(!isProduction()) {
+        if(isDevelopment()) {
             buffer.append("<p><a href=\"AdminServlet?cmd=start\">start server</a>\n");
             buffer.append("<p><a href=\"AdminServlet?cmd=stop\">stop server</a>\n");
         }
