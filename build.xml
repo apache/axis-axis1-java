@@ -108,7 +108,14 @@ Copyright:
   
   <property name="tools.jar" location="${java.home}/../lib/tools.jar"/>
   <property name="axis.lib.dir" location="lib"/>
-  
+
+  <!-- Place Holder for proxy settings -->
+  <property name="http.proxyHost" value=""/>
+  <property name="http.proxyPort" value=""/>
+  <property name="http.nonProxyHosts" value=""/>
+  <property name="http.proxyUser" value=""/>
+  <property name="http.proxyPassword" value=""/>
+
   <!-- =================================================================== -->
   <!-- Determine what dependencies are present                             -->
   <!-- =================================================================== -->

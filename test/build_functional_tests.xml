@@ -93,13 +93,11 @@ Copyright:
     <!-- now, run the actual test -->
     <junit dir="." printsummary="yes" haltonfailure="${test.functional.fail}" fork="yes">
       <!-- Pass through the proxy parameters -->
-      <!--
       <jvmarg value="-Dhttp.proxyHost=${http.proxyHost}"/>
       <jvmarg value="-Dhttp.proxyPort=${http.proxyPort}"/>
       <jvmarg value="-Dhttp.nonProxyHosts=${http.nonProxyHosts}"/>
       <jvmarg value="-Dhttp.proxyUser=${http.proxyUser}"/>
       <jvmarg value="-Dhttp.proxyPassword=${http.proxyPassword}"/>
-      -->
       <classpath refid="test-classpath" />
       <formatter type="xml" usefile="${test.functional.usefile}"/>
       <batchtest todir="${test.functional.reportdir}">
