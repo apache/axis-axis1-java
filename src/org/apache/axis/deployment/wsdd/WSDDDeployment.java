@@ -60,7 +60,7 @@ public class WSDDDeployment
     private HashMap handlers = new HashMap();
     private HashMap services = new HashMap();
     private HashMap transports = new HashMap();
-    private ArrayList typeMappings = new ArrayList();
+    private HashMap typeMappings = new HashMap();
     private WSDDGlobalConfiguration globalConfig = null;
     
     /** Mapping of namespaces -> services */
@@ -154,7 +154,12 @@ public class WSDDDeployment
     public void deployTypeMapping(WSDDTypeMapping typeMapping)
         throws WSDDException
     {
-        typeMappings.add(typeMapping);
+        QName qname = typeMapping.getQName();
+        String encoding = typeMapping.getEncodingStyle();
+
+        // We have to include the encoding in the key
+        // because otherwise we would overwrite exiting mappings
+        typeMappings.put(qname + encoding, typeMapping);
 
         if (tmrDeployed)
             deployMapping(typeMapping);
@@ -269,7 +274,7 @@ public class WSDDDeployment
             service.deployToRegistry(target);
         }
 
-        i = typeMappings.iterator();
+        i = typeMappings.values().iterator();
         while (i.hasNext()) {
             WSDDTypeMapping mapping = (WSDDTypeMapping) i.next();
             target.deployTypeMapping(mapping);
@@ -354,7 +359,7 @@ public class WSDDDeployment
             transport.writeToContext(context);
         }
 
-        i = typeMappings.iterator();
+        i = typeMappings.values().iterator();
         while (i.hasNext()) {
             WSDDTypeMapping mapping = (WSDDTypeMapping)i.next();
             mapping.writeToContext(context);
@@ -383,7 +388,7 @@ public class WSDDDeployment
     public WSDDTypeMapping[] getTypeMappings()
     {
         WSDDTypeMapping[] t = new WSDDTypeMapping[typeMappings.size()];
-        typeMappings.toArray(t);
+        typeMappings.values().toArray(t);
         return t;
     }
 
@@ -485,7 +490,7 @@ public class WSDDDeployment
     private boolean tmrDeployed = false;
     public TypeMappingRegistry getTypeMappingRegistry() throws ConfigurationException {
         if (false == tmrDeployed) {
-            Iterator i = typeMappings.iterator();
+            Iterator i = typeMappings.values().iterator();
             while (i.hasNext()) {
                 WSDDTypeMapping mapping = (WSDDTypeMapping) i.next();
                 deployMapping(mapping);
