@@ -59,6 +59,7 @@ import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
 import org.apache.axis.ConfigurationException;
 import org.apache.axis.Constants;
+import org.apache.axis.Handler;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.components.logger.LogFactory;
@@ -84,6 +85,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -231,8 +233,6 @@ public class AxisServlet extends AxisServletBase {
                 realpath = request.getServletPath();
             }
 
-            boolean wsdlRequested = false;
-            boolean listRequested = false;
             boolean hasParameters = request.getParameterNames().hasMoreElements();
 
             //JWS pages are special; they are the servlet path and there
@@ -242,19 +242,15 @@ public class AxisServlet extends AxisServletBase {
             if(isJWSPage) {
                 pathInfo= request.getServletPath();
             }
-
-            // check first if we are doing WSDL or a list operation
-            String queryString = request.getQueryString();
-            if (queryString != null) {
-                if (queryString.equalsIgnoreCase("wsdl")) {
-                    wsdlRequested = true;
-                } else if (queryString.equalsIgnoreCase("list")) {
-                    listRequested = true;
-                }
+            
+            // Try to execute a query string plugin and return upon success.
+            
+            if (processQuery (request, response, writer) == true) {
+                 return;
             }
-
+            
             boolean hasNoPath = (pathInfo == null || pathInfo.equals(""));
-            if (!wsdlRequested && !listRequested && hasNoPath) {
+            if (hasNoPath) {
                 // If the user requested the servlet (i.e. /axis/servlet/AxisServlet)
                 // with no service name, present the user with a list of deployed
                 // services to be helpful
@@ -279,46 +275,29 @@ public class AxisServlet extends AxisServletBase {
 
                 msgContext.setProperty(MessageContext.TRANS_URL, url);
 
+                // See if we can locate the desired service.  If we
+                // can't, return a 404 Not Found.  Otherwise, just
+                // print the placeholder message.
 
-                if (wsdlRequested) {
-                    // Do WSDL generation
-                    processWsdlRequest(msgContext, response, writer);
-                } else if (listRequested) {
-                    // Do list, if it is enabled
-                    processListRequest(response, writer);
-                } else if (hasParameters) {
-                    // If we have ?method=x&param=y in the URL, make a stab
-                    // at invoking the method with the parameters specified
-                    // in the URL
+                String serviceName;
+                if (pathInfo.startsWith("/")) {
+                    serviceName = pathInfo.substring(1);
+                } else {
+                    serviceName = pathInfo;
+                }
 
-                    processMethodRequest(msgContext, request, response, writer);
+                SOAPService s = engine.getService(serviceName);
+                if (s == null) {
+                    //no service: report it
+                    if(isJWSPage) {
+                        reportCantGetJWSService(request, response, writer);
+                    } else {
+                        reportCantGetAxisService(request, response, writer);
+                    }
 
                 } else {
-
-                    // See if we can locate the desired service.  If we
-                    // can't, return a 404 Not Found.  Otherwise, just
-                    // print the placeholder message.
-
-                    String serviceName;
-                    if (pathInfo.startsWith("/")) {
-                        serviceName = pathInfo.substring(1);
-                    } else {
-                        serviceName = pathInfo;
-                    }
-
-                    SOAPService s = engine.getService(serviceName);
-                    if (s == null) {
-                        //no service: report it
-                        if(isJWSPage) {
-                            reportCantGetJWSService(request, response, writer);
-                        } else {
-                            reportCantGetAxisService(request, response, writer);
-                        }
-
-                    } else {
-                        //print a snippet of service info.
-                        reportServiceInfo(response, writer, s, serviceName);
-                    }
+                    //print a snippet of service info.
+                    reportServiceInfo(response, writer, s, serviceName);
                 }
             } else {
                 // We didn't have a real path in the request, so just
@@ -424,149 +403,6 @@ public class AxisServlet extends AxisServletBase {
     }
     
     /**
-     * scan through the request for parameters, invoking the endpoint
-     * if we get a method param. If there was no method param then the
-     * response is set to a 400 Bad Request and some error text
-     * @param msgContext current message
-     * @param request incoming requests
-     * @param response response to generate
-     * @param writer output stream
-     * @throws AxisFault if anything goes wrong during method execution
-     */
-    protected void processMethodRequest(MessageContext msgContext,
-                                        HttpServletRequest request,
-                                        HttpServletResponse response,
-                                        PrintWriter writer) throws AxisFault {
-        Enumeration enum = request.getParameterNames();
-        String method = null;
-        String args = "";
-        while (enum.hasMoreElements()) {
-            String param = (String) enum.nextElement();
-            if (param.equalsIgnoreCase("method")) {
-                method = request.getParameter(param);
-            } else {
-                args += "<" + param + ">" +
-                    request.getParameter(param) +
-                    "</" + param + ">";
-            }
-        }
-
-        if (method == null) {
-            response.setContentType("text/html");
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            writer.println("<h2>" +
-                           Messages.getMessage("error00") +
-                           ":  " +
-                           Messages.getMessage("invokeGet00") +
-                           "</h2>");
-            writer.println("<p>" +
-                           Messages.getMessage("noMethod01") +
-                           "</p>");
-        } else {
-            invokeEndpointFromGet(msgContext, response, writer, method, args);
-
-        }
-    }
-
-    /**
-     * handle a ?wsdl request
-     * @param msgContext message context so far
-     * @param response response to write to
-     * @param writer output stream
-     * @throws AxisFault when anything other than a Server.NoService fault is reported
-     * during WSDL generation
-     */
-    protected void processWsdlRequest(MessageContext msgContext,
-                                      HttpServletResponse response,
-                                      PrintWriter writer) throws AxisFault {
-        AxisEngine engine = getEngine();
-        try {
-            engine.generateWSDL(msgContext);
-            Document doc = (Document) msgContext.getProperty("WSDL");
-            if (doc != null) {
-                response.setContentType("text/xml");
-                XMLUtils.DocumentToWriter(doc, writer);
-            } else {
-                if (log.isDebugEnabled()) {
-                    log.debug("processWsdlRequest: failed to create WSDL");
-                }
-                reportNoWSDL(response, writer, "noWSDL02", null);
-            }
-        } catch (AxisFault axisFault) {
-            //the no-service fault is mapped to a no-wsdl error
-            if(axisFault.getFaultCode() .equals(Constants.QNAME_NO_SERVICE_FAULT_CODE)) {
-                //which we log
-                processAxisFault(axisFault);
-                //then report under a 404 error
-                response.setStatus(HttpURLConnection.HTTP_NOT_FOUND);
-                reportNoWSDL(response, writer, "noWSDL01", axisFault);
-            } else {
-                //all other faults get thrown
-                throw axisFault;
-            }
-        }
-    }
-
-    /**
-     * invoke an endpoint from a get request by building an XML request and
-     * handing it down. If anything goes wrong, we generate an XML formatted
-     * axis fault
-     * @param msgContext current message
-     * @param response to return data
-     * @param writer output stream
-     * @param method method to invoke (may be null)
-     * @param args argument list in XML form
-     * @throws AxisFault iff something goes wrong when turning the response message
-     * into a SOAP string.
-     */
-    protected void invokeEndpointFromGet(MessageContext msgContext,
-                                       HttpServletResponse response,
-                                       PrintWriter writer,
-                                       String method,
-                                       String args) throws AxisFault {
-        String body =
-            "<" + method + ">" + args + "</" + method + ">";
-
-        String msgtxt =
-            "<SOAP-ENV:Envelope" +
-            " xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
-            "<SOAP-ENV:Body>" + body + "</SOAP-ENV:Body>" +
-            "</SOAP-ENV:Envelope>";
-
-        Message responseMsg=null;
-        try {
-            ByteArrayInputStream istream =
-                new ByteArrayInputStream(msgtxt.getBytes(XMLUtils.httpAuthCharEncoding));
-
-            AxisEngine engine = getEngine();
-            Message msg = new Message(istream, false);
-            msgContext.setRequestMessage(msg);
-            engine.invoke(msgContext);
-            responseMsg = msgContext.getResponseMessage();
-            //turn off caching for GET requests
-            response.setHeader("Cache-Control", "no-cache");
-            response.setHeader("Pragma", "no-cache");
-            if (responseMsg == null) {
-                //tell everyone that something is wrong
-                throw new Exception(Messages.getMessage("noResponse01"));
-            }
-        } catch (AxisFault fault) {
-            processAxisFault(fault);
-            configureResponseFromAxisFault(response, fault);
-            if (responseMsg == null) {
-                responseMsg = new Message(fault);
-            }
-        } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            responseMsg = convertExceptionToAxisFault(e,responseMsg);
-        }
-        //this call could throw an AxisFault. We delegate it up, because
-        //if we cant write the message there is not a lot we can do in pure SOAP terms.
-        response.setContentType("text/xml");
-        writer.println(responseMsg.getSOAPPartAsString());
-    }
-
-    /**
      * print a snippet of service info.
      * @param service service
      * @param writer output channel
@@ -588,47 +424,7 @@ public class AxisServlet extends AxisServletBase {
                 Messages.getMessage("perhaps00") +
                 "</i>");
     }
-
-    /**
-     * respond to the ?list command.
-     * if enableList is set, we list the engine config. If it isnt, then an
-     * error is written out
-     * @param response
-     * @param writer
-     * @throws AxisFault
-     */
-    protected void processListRequest(HttpServletResponse response, PrintWriter writer) throws AxisFault {
-        AxisEngine engine = getEngine();
-        if (enableList) {
-            Document doc = Admin.listConfig(engine);
-            if (doc != null) {
-                response.setContentType("text/xml");
-                XMLUtils.DocumentToWriter(doc, writer);
-            } else {
-                //error code is 404
-                response.setStatus(HttpURLConnection.HTTP_NOT_FOUND);
-                response.setContentType("text/html");
-                writer.println("<h2>" +
-                               Messages.getMessage("error00") +
-                               "</h2>");
-                writer.println("<p>" +
-                               Messages.getMessage("noDeploy00") +
-                               "</p>");
-            }
-        } else {
-            // list not enable, return error
-            //error code is, what, 401
-            response.setStatus(HttpURLConnection.HTTP_FORBIDDEN);
-            response.setContentType("text/html");
-            writer.println("<h2>" +
-                           Messages.getMessage("error00") +
-                           "</h2>");
-            writer.println("<p><i>?list</i> " +
-                           Messages.getMessage("disabled00") +
-                           "</p>");
-        }
-    }
-
+    
     /**
      * report that we have no WSDL
      * @param res
@@ -1164,4 +960,108 @@ public class AxisServlet extends AxisServletBase {
         }
         return ret;
     }
+    
+    /**
+     * Attempts to invoke a plugin for the query string supplied in the URL.
+     *
+     * @param request the servlet's HttpServletRequest object.
+     * @param response the servlet's HttpServletResponse object.
+     * @param writer the servlet's PrintWriter object.
+     */
+    
+    private boolean processQuery (HttpServletRequest request, HttpServletResponse response,
+          PrintWriter writer) throws AxisFault {
+          // Attempt to instantiate a plug-in handler class for the query string
+          // handler classes defined in the HTTP transport.
+          
+          String path = request.getServletPath();
+          String queryString = request.getQueryString();
+          String serviceName;
+          AxisEngine engine = getEngine();
+          Handler httpTransport = engine.getTransport ("http");
+          Iterator i = httpTransport.getOptions().keySet().iterator();
+          
+          if (queryString == null) {
+               return false;
+          }
+          
+          serviceName = request.getRequestURI().substring
+               (request.getRequestURI().indexOf (path) + path.length() + 1);
+          
+          while (i.hasNext() == true) {
+               String queryHandler = (String) i.next();
+               
+               if (queryHandler.startsWith ("qs:") == true) {
+                    // Only attempt to match the query string with transport
+                    // parameters prefixed with "qs:".
+                    
+                    String handlerName = queryHandler.substring
+                         (queryHandler.indexOf (":") + 1).toLowerCase();
+                    
+                    // Determine the name of the plugin to invoke by using all text
+                    // in the query string up to the first occurence of &, =, or the
+                    // whole string if neither is present.
+                    
+                    int length = 0;
+                    boolean firstParamFound = false;
+                    
+                    while (firstParamFound == false && length < queryString.length()) {
+                         char ch = queryString.charAt (length++);
+                         
+                         if (ch == '&' || ch == '=') {
+                              firstParamFound = true;
+                              
+                              --length;
+                         }
+                    }
+                    
+                    if (length < queryString.length()) {
+                         queryString = queryString.substring (0, length);
+                    }
+                    
+                    if (queryString.toLowerCase().equals (handlerName) == true) {
+                         // Query string matches a defined query string handler name.
+                         
+                         try {
+                              // Attempt to dynamically load the query string handler
+                              // and its "invoke" method.
+                              
+                              MessageContext msgContext = createMessageContext (engine, request, response);
+                              Class plugin = Class.forName ((String) httpTransport.getOption (queryHandler));
+                              Method pluginMethod = plugin.getDeclaredMethod ("invoke",
+                                new Class[] { msgContext.getClass() });
+                              String url = HttpUtils.getRequestURL (request).toString();
+                              
+                              // Place various useful servlet-related objects in
+                              // the MessageContext object being delivered to the
+                              // plugin.
+                              
+                              msgContext.setProperty (MessageContext.TRANS_URL, url);
+                              msgContext.setProperty (HTTPConstants.PLUGIN_SERVICE_NAME, serviceName);
+                              msgContext.setProperty (HTTPConstants.PLUGIN_NAME, handlerName);
+                              msgContext.setProperty (HTTPConstants.PLUGIN_IS_DEVELOPMENT, new Boolean (isDevelopment()));
+                              msgContext.setProperty (HTTPConstants.PLUGIN_ENABLE_LIST, new Boolean (enableList));
+                              msgContext.setProperty (HTTPConstants.PLUGIN_ENGINE, engine);
+                              msgContext.setProperty (HTTPConstants.PLUGIN_WRITER, writer);
+                              msgContext.setProperty (HTTPConstants.PLUGIN_LOG, log);
+                              msgContext.setProperty (HTTPConstants.PLUGIN_EXCEPTION_LOG, exceptionLog);
+                              
+                              // Invoke the plugin.
+                              
+                              pluginMethod.invoke (plugin.newInstance(), new Object[] { msgContext });
+                              
+                              writer.close();
+                              
+                              return true;
+                         }
+                         
+                         catch (Exception e) {
+                              reportTroubleInGet (e, response, writer);
+                         }
+                    }
+               }
+          }
+          
+          return false;
+     }
 }
