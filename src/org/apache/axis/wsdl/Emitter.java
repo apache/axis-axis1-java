@@ -256,21 +256,17 @@ public class Emitter {
     {
         try {
             ResourceBundle mappings = ResourceBundle.getBundle("NStoPkg");
-System.out.println("mappings = " + mappings);
             Enumeration keys = mappings.getKeys();
             while (keys.hasMoreElements()) {
                 try {
                     String key = (String) keys.nextElement();
-System.out.println("<" + key + ", " + mappings.getString(key) + ">");
                     namespaces.put(key, mappings.getString(key));
                 }
                 catch (Throwable t) {
-t.printStackTrace();
                 }
             }
         }
         catch (Throwable t) {
-t.printStackTrace();
         }
     } // getNStoPkgFromPropsFile
 
