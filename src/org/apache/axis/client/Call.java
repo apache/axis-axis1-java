@@ -1118,23 +1118,9 @@ public class Call implements javax.xml.rpc.Call {
         }
 
         resMsg = msgContext.getResponseMessage();
-
-        if (resMsg == null)
-            throw new AxisFault(JavaUtils.getMessage("nullResponse00"));
-
-        /** This must happen before deserialization...
-         */
-        resMsg.setMessageType(Message.RESPONSE);
-
         resEnv = (SOAPEnvelope)resMsg.getSOAPPart().getAsSOAPEnvelope();
-
-        SOAPBodyElement respBody = resEnv.getFirstBody();
-        if (respBody instanceof SOAPFaultElement) {
-            throw ((SOAPFaultElement)respBody).getFault();
-        }
-
-        body = (RPCElement)resEnv.getFirstBody();
         try {
+            body = (RPCElement)resEnv.getFirstBody();
             resArgs = body.getParams();
         } catch (Exception e) {
             category.error(e);
@@ -1265,15 +1251,26 @@ public class Call implements javax.xml.rpc.Call {
             }
         }
 
-        try {
-            service.getEngine().invoke( msgContext );
-
-            if (transport != null)
-                transport.processReturnedMessageContext(msgContext);
-        }
-        catch( AxisFault fault ) {
-            category.error( fault );
-            throw fault ;
+        service.getEngine().invoke( msgContext );
+        
+        if (transport != null)
+            transport.processReturnedMessageContext(msgContext);
+        
+        Message resMsg = msgContext.getResponseMessage();
+        
+        if (resMsg == null)
+            throw new AxisFault(JavaUtils.getMessage("nullResponse00"));
+        
+        /** This must happen before deserialization...
+         */
+        resMsg.setMessageType(Message.RESPONSE);
+        
+        SOAPEnvelope resEnv = (SOAPEnvelope)resMsg.getSOAPPart().
+                getAsSOAPEnvelope();
+        
+        SOAPBodyElement respBody = resEnv.getFirstBody();
+        if (respBody instanceof SOAPFaultElement) {
+            throw ((SOAPFaultElement)respBody).getFault();
         }
 
         if (category.isDebugEnabled()) {
