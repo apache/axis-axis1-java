@@ -51,7 +51,7 @@ Copyright:
 <target name="copy" depends="setenv"/>
 
 <target name="compile" depends="copy">
-  <echo message="Compilibg test.wsdl.oneway"/>
+  <echo message="Compiling test.wsdl.oneway"/>
     <!-- Oneway Test -->
     <!-- Generate Java From WSDL -->
     <wsdl2java url="${axis.home}/test/wsdl/oneway/oneway.wsdl"

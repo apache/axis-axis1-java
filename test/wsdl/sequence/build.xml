@@ -51,7 +51,7 @@ Copyright:
 <target name="copy" depends="setenv"/>
 
 <target name="compile" depends="copy">
-  <echo message="Compilibg test.wsdl.sequence"/>
+  <echo message="Compiling test.wsdl.sequence"/>
     <!-- Sequence Test -->
     <!-- Generate Java From WSDL -->
     <wsdl2java url="${axis.home}/test/wsdl/sequence/SequenceTest.wsdl"
