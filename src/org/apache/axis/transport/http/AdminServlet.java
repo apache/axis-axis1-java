@@ -76,6 +76,10 @@ import org.apache.commons.logging.Log;
  * Right now just starts and stops the server.
  * 
  * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Steve Loughran
+ * xdoclet tags are not active yet; keep web.xml in sync
+ * @web.servlet name="AdminServlet"  display-name="Axis Admin Servlet"  load-on-startup="100"
+ * @web.servlet-mapping url-pattern="/servlet/AdminServlet"
  */
 public class AdminServlet extends AxisServletBase {
 

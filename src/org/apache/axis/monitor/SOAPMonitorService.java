@@ -82,7 +82,7 @@ import javax.servlet.http.HttpServletResponse;
  * the server socket (so the applet will know how to 
  * connect back to the server).
  *
- * Each time a socket conneciton is established, a new 
+ * Each time a socket connection is established, a new 
  * thread is created to handle communications from the 
  * applet.
  *
@@ -93,6 +93,10 @@ import javax.servlet.http.HttpServletResponse;
  * display by the applet.
  *
  * @author Brian Price (pricebe@us.ibm.com)
+ * xdoclet tags are not active yet; keep web.xml in sync
+ * @web.servlet name="SOAPMonitorService"  display-name="SOAPMonitorService"  load-on-startup="100"
+ * @web.servlet-mapping url-pattern="/SOAPMonitor"
+ * @web.servlet-init-param name="SOAPMonitorPort" value="5001"
  */
 
 public class SOAPMonitorService extends HttpServlet {
