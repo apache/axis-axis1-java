@@ -72,7 +72,8 @@ public class MimeHeaders extends javax.xml.soap.MimeHeaders
     public MimeHeaders(javax.xml.soap.MimeHeaders h) {
         Iterator iterator = h.getAllHeaders();
         while (iterator.hasNext()) {
-            headers.add(iterator.next());
+            MimeHeader hdr = (MimeHeader) iterator.next();
+            addHeader(hdr.getName(), hdr.getValue());
         }
     }
 
@@ -81,17 +82,27 @@ public class MimeHeaders extends javax.xml.soap.MimeHeaders
         for (int i = 0; i < size; i++) {
             Object key = in.readObject();
             Object value = in.readObject();
-            headers.add(new MimeHeader((String) key, (String)value));
+            addHeader((String)key, (String)value);
         }
     }
 
     public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeInt(headers.size());
-        Iterator iterator = headers.iterator();
+        out.writeInt(getHeaderSize());
+        Iterator iterator = getAllHeaders();
         while (iterator.hasNext()) {
             MimeHeader hdr = (MimeHeader) iterator.next();
             out.writeObject(hdr.getName());
             out.writeObject(hdr.getValue());
         }
+    }
+
+    private int getHeaderSize() {
+        int size = 0;
+        Iterator iterator = getAllHeaders();
+        while (iterator.hasNext()) {
+            iterator.next();
+            size++;
+        }
+        return size;
     }
 }
