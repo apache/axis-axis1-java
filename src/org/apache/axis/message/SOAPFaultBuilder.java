@@ -118,6 +118,10 @@ public class SOAPFaultBuilder extends SOAPHandler implements ValueReceiver
                 Class exClass = Class.forName(faultClassName);
                 if (AxisFault.class.isAssignableFrom(exClass)) {
                     f = (AxisFault) exClass.newInstance();
+                    f.setFaultCode(faultCode);
+                    f.setFaultString(faultString);
+                    f.setFaultActor(faultActor);
+                    f.setFaultDetail(faultDetails);
                 }
             }
             catch (Exception e) {
