@@ -57,6 +57,7 @@ package org.apache.axis.client ;
 
 import java.util.* ;
 import org.w3c.dom.* ;
+import org.apache.xerces.dom.DocumentImpl ;
 
 import org.apache.axis.* ;
 import org.apache.axis.message.* ;
@@ -79,8 +80,13 @@ import org.apache.axis.transport.http.HTTPDispatchHandler;
 // Only supports String
 
 public class HTTPMessage {
-  private String  url ;
-  private String  action ;
+  private String  url    = null ;
+  private String  action = null ;
+  private String  userID = null ;
+  private String  passwd = null ;
+
+  // For testing
+  public boolean doLocal = false ;
 
   public HTTPMessage() {
   }
@@ -102,6 +108,22 @@ public class HTTPMessage {
     this.action = action ;
   }
 
+  public void setUserID(String user) {
+    this.userID = user ;
+  }
+
+  public String getUserID() {
+    return( userID );
+  }
+
+  public void setPassword(String pass) {
+    this.passwd = pass ;
+  }
+
+  public String getPassword() {
+    return( passwd );
+  }
+
   public static void invoke(String url, String act, MessageContext mc ) 
       throws AxisFault
   {
@@ -115,23 +137,47 @@ public class HTTPMessage {
     Debug.Print( 1, "Enter: HTTPMessage.invoke" );
     Message              inMsg = mc.getIncomingMessage();
 
-    Document             doc = (Document) inMsg.getAs("Document");
-    Element              root = doc.getDocumentElement();
-    SOAPBody             reqBody = new SOAPBody( root );
-    SOAPEnvelope         reqEnv = new SOAPEnvelope();
+    SOAPEnvelope         reqEnv = null ;
+
+    if ( inMsg.getCurrentForm().equals("SOAPEnvelope") )
+      reqEnv = (SOAPEnvelope) inMsg.getAs("SOAPEnvelope");
+    else {
+      reqEnv = new SOAPEnvelope();
+      SOAPBody  body = new SOAPBody( (Document) inMsg.getAs("Document") );
+      reqEnv.addBody( body );
+    }
+
     Handler              client = new HTTPDispatchHandler();
     Message              reqMsg = new Message( reqEnv, "SOAPEnvelope" );
     MessageContext       msgContext = new MessageContext( reqMsg );
 
-    reqEnv.addBody( reqBody );
+    // For testing - skip HTTP layer
+    if ( doLocal ) {
+      client = new org.apache.axis.server.SimpleAxisEngine();
+      msgContext.setProperty( MessageContext.TARGET_SERVICE, action );
+    }
 
-    // if ( Debug.DebugOn(1) ) {
-      // Debug.Print( 1, "Request Message:" );
-      // Debug.Print( 1, (String) reqMsg.getAs("String") );
-    // }
+    if ( true ) { // Debug.getDebugLevel() > 0  ) {
+      SOAPHeader  header = new SOAPHeader();
+      header.setPrefix("d");
+      header.setName("Debug");
+      header.setNamespaceURI( Constants.URI_DEBUG );
+      header.setActor( Constants.URI_NEXT_ACTOR );
+      Document doc = new DocumentImpl();
+      Node node = doc.createTextNode( "" + Debug.getDebugLevel() );
+      header.addDataNode( node );
+
+      reqEnv.addHeader( header );
+    }
 
     msgContext.setProperty( MessageContext.TRANS_URL, url );
     msgContext.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, action );
+    if ( userID != null ) {
+      msgContext.setProperty( MessageContext.USERID, userID );
+      if ( passwd != null )
+        msgContext.setProperty( MessageContext.PASSWORD, passwd );
+    }
+
     try {
       client.init();
       client.invoke( msgContext );

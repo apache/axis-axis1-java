@@ -59,6 +59,7 @@ package org.apache.axis.message ;
 
 import java.util.* ;
 import org.w3c.dom.* ;
+import org.apache.xerces.dom.DocumentImpl ;
 import org.xml.sax.InputSource ;
 import org.apache.axis.message.* ;
 
@@ -66,7 +67,7 @@ import org.apache.axis.message.* ;
  *
  * @author Doug Davis (dug@us.ibm.com)
  */
-public class RPCBody extends SOAPBody {
+public class RPCBody { 
   protected String    methodName ;
   protected String    prefix ;
   protected String    namespaceURI ;
@@ -144,6 +145,11 @@ public class RPCBody extends SOAPBody {
       root.appendChild( arg.getAsXML(doc) );
     }
     return( root );
+  }
+
+  public SOAPBody getAsSOAPBody() {
+    Document doc = new DocumentImpl();
+    return( new SOAPBody( getAsXML(doc) ) );
   }
 
 };

@@ -53,77 +53,58 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.client ;
+package samples.misc ;
 
 import java.net.*;
 import java.io.*;
 import java.util.*;
 
+import org.apache.axis.*;
+import org.apache.axis.utils.Debug ;
+import org.apache.axis.utils.Options ;
+import org.apache.axis.client.HTTPMessage ;
+import org.apache.axis.server.SimpleAxisEngine;
+
 /**
  *
  * @author Doug Davis (dug@us.ibm.com)
+ * @author Glen Daniels (gdaniels@allaire.com)
  */
 public class TestClient {
-
   public static void main(String args[]) {
-
-    String hdr = "POST /axis/servlet/AxisServlet HTTP/1.0\n" +
-                 "Host: localhost:8080\n" +
-                 "Content-Type: text/xml;charset=utf-8\n" ;
-
-    String action = null ;
-
-    String msg = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/1999/XMLSchema\">\n" +
-                 "<SOAP-ENV:Body>\n" +
-                 "<ns1:list xmlns:ns1=\"urn:xml-soap-service-management-service\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\n" +
-                 "</ns1:list>\n" +
-                 "</SOAP-ENV:Body>\n" +
-                 "</SOAP-ENV:Envelope>" ;
-
     try {
-      String  host = "localhost" ;
-      int     port = 8080 ;
+      Options      opts    = new Options( args );
+      String       url     = opts.getURL();
+      String       action  = "EchoService" ;
 
-      for ( int i = 0 ; i < args.length ; i++ ) {
-        if ( args[i].charAt(0) == '-' ) {
-          switch( args[i].toLowerCase().charAt(1) ) {
-            case 'h': if ( args[i].length() > 2 )
-                        host = args[i].substring(2);
-                      break ;
-            case 'p': if ( args[i].length() > 2 )
-                        port = Integer.parseInt(args[i].substring(2));
-                      break ;
-            default: System.err.println( "Unknown option '" + 
-                                         args[i].charAt(1) + "'" );
-                     System.exit(1);
-          }
-        }
-        else
-          action = "SOAPAction: " + args[i] + "\n" ;
-      }
+      Debug.setDebugLevel( opts.isFlagSet( 'd' ) );
 
-      if ( action == null ) {
-        System.err.println( "Missing action arg" );
-        System.exit(1);
-      }
+      args = opts.getRemainingArgs();
+      if ( args != null ) action = args[0];
 
-      String         cl = "Content-Length: " + msg.length() + "\n\n" ;
-      Socket         sock = new Socket( host, port );
-      InputStream    inp = sock.getInputStream();
-      OutputStream   out = sock.getOutputStream();
-      byte           b ;
+      HTTPMessage  hMsg    = new HTTPMessage( url, action );
 
-      out.write( hdr.getBytes() );
-      out.write( action.getBytes() );
-      out.write( cl.getBytes() );
-      out.write( msg.getBytes() );
+      if ( opts.isFlagSet('t') > 0 ) hMsg.doLocal = true ;
 
-      while ( (b = (byte) inp.read()) != -1 ) 
-        System.out.write( b );
+      String       msg     = "<m:GetLastTradePrice xmlns:m=\"Some-URI\">\n" +
+                             "<symbol>IBM</symbol>\n" +
+                             "</m:GetLastTradePrice>\n" ;
+
+      MessageContext msgContext = new MessageContext();
+      Message        inMsg      = new Message( msg, "String" );
+      Message        outMsg     = null ;
+
+      System.out.println( "Request:\n" + msg );
+        
+      msgContext.setIncomingMessage( inMsg );
+      hMsg.invoke( msgContext );
+      outMsg = msgContext.getOutgoingMessage();
+
+      System.out.println( "Response:\n" + outMsg.getAs( "String" ) );
     }
     catch( Exception e ) {
-      System.err.println( e );
+      if ( e instanceof AxisFault ) ((AxisFault)e).dump();
+      else e.printStackTrace();
     }
   };
-
 };

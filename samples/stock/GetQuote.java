@@ -59,6 +59,7 @@ import java.net.*;
 import java.io.*;
 import java.util.*;
 
+import org.apache.axis.AxisFault ;
 import org.apache.axis.client.HTTPCall ;
 import org.apache.axis.utils.Debug ;
 import org.apache.axis.utils.Options ;
@@ -86,6 +87,7 @@ public class GetQuote {
       String   symbol = args[0] ;
       HTTPCall call   = new HTTPCall( opts.getURL(), 
                                       "urn:xmltoday-delayed-quotes" );
+      if ( opts.isFlagSet('t') > 0 ) call.doLocal = true ;
       call.setUserID( opts.getUser() );
       call.setPassword( opts.getPassword() );
       String res = (String) call.invoke( "getQuote", new Object[] {symbol} );
@@ -93,6 +95,7 @@ public class GetQuote {
       System.out.println( symbol + ": " + res );
     }
     catch( Exception e ) {
+      if ( e instanceof AxisFault ) ((AxisFault)e).dump();
       e.printStackTrace();
     }
   };
