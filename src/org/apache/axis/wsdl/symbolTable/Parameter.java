@@ -190,7 +190,7 @@ public class Parameter {
      */
     public void setMode(byte mode) {
 
-        if (mode <= INOUT & mode >= IN) {
+        if (mode <= INOUT && mode >= IN) {
             this.mode = mode;
         }
     }
