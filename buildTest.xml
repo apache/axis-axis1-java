@@ -159,7 +159,7 @@ Copyright:
   <!-- =================================================================== -->
   <!-- Runs the JUnit functional test -->
   <!-- =================================================================== -->
-  <target name="junit-functional" if="junit.present" depends="junit-functional-prepare,start-signature-signing-and-verification">
+  <target name="junit-functional" if="junit.present" depends="junit-functional-prepare">
     <java classname="org.apache.axis.client.AdminClient" fork="yes">
       <classpath refid="classpath" />
       <arg line="${deploy.xml.property}"/>
@@ -230,7 +230,7 @@ Copyright:
     <runaxisfunctionaltests
       url="http://localhost:8088"
       startTarget1="start-functional-test-tcp-server"
-      startTarget2="start-functional-test-http-server"
+      startTarget2="start-functional-test-http-server-secure"
       testTarget="junit-functional-secure"
       stopTarget="stop-functional-test-http-server-secure" />
 
