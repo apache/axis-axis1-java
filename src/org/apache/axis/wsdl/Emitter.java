@@ -85,6 +85,7 @@ import javax.wsdl.Port;
 import javax.wsdl.PortType;
 import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
+import javax.wsdl.QName;
 
 import org.apache.axis.utils.XMLUtils;
 
@@ -94,7 +95,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
- 
+
 import com.ibm.wsdl.xml.WSDLReader;
 import com.ibm.wsdl.extensions.soap.SOAPAddress;
 import com.ibm.wsdl.extensions.soap.SOAPOperation;
@@ -160,7 +161,7 @@ public class Emitter {
                 new File(packageDirName).mkdirs();
             else
                 new File(outputDir + File.separatorChar + packageDirName).mkdirs();
-            
+
             if (bVerbose && packageName != null) {
                 System.out.println("Using package name: " + packageName);
             }
@@ -256,7 +257,8 @@ public class Emitter {
     //
 
     /**
-     * This method returns a set of all the complex types in a given PortType.  The elements of the returned HashSet are Strings.
+     * This method returns a set of all the complex types in a given PortType.
+     * The elements of the returned HashSet are Strings.
      */
     private HashSet complexTypesInClass(PortType portType) {
         HashSet types = new HashSet();
@@ -374,7 +376,7 @@ public class Emitter {
      * Generate the interface for the given port type.
      */
     private HashMap writePortType(PortType portType) throws IOException {
-        String nameValue = portType.getQName().getLocalPart();
+        String nameValue = xmlNameToJava(portType.getQName().getLocalPart());
         String fileName = nameValue + ".java";
         PrintWriter interfacePW = printWriter (fileName);
         if (bVerbose)
@@ -403,7 +405,7 @@ public class Emitter {
      * Generate the server-side (Axis) interface for the given port type.
      */
     private void writeAxisPortType(PortType portType) throws IOException {
-        String nameValue = portType.getQName().getLocalPart() + "Axis";
+        String nameValue = xmlNameToJava(portType.getQName().getLocalPart()) + "Axis";
         String fileName = nameValue + ".java";
         PrintWriter interfacePW = printWriter(fileName);
         if (bVerbose)
@@ -713,7 +715,13 @@ public class Emitter {
                 v.add(part.getName());
             } else {
                 if (part.getTypeName() != null) {
-                    v.add(type(part.getTypeName().getLocalPart()));
+                    // Handle the special "java" namespace for types
+                    QName typeName = part.getTypeName();
+                    if (typeName.getNamespaceURI().equalsIgnoreCase("java")) {
+                        v.add(typeName.getLocalPart());
+                    } else {
+                        v.add(type(typeName.getLocalPart()));
+                    }
                     v.add(part.getName());
                 }
             }
@@ -750,7 +758,7 @@ public class Emitter {
      * the fault.
      */
     private String fault(Fault operation) throws IOException {
-        String exceptionName = capitalize(operation.getName());
+        String exceptionName = capitalize(xmlNameToJava(operation.getName()));
         String fileName = exceptionName + ".java";
         PrintWriter pw = printWriter(fileName);
 
@@ -819,7 +827,7 @@ public class Emitter {
             throw new IOException("Emitter failure.  Can't find interal classes for portType for binding " + binding.getQName());
 
         PortType portType = binding.getPortType();
-        String name = binding.getQName().getLocalPart();
+        String name = xmlNameToJava(binding.getQName().getLocalPart());
         String portTypeName = portType.getQName().getLocalPart();
 
         String stubName = name + "Stub";
@@ -893,7 +901,7 @@ public class Emitter {
             skelPW = printWriter(skelFileName);
             String implType = portTypeName + " impl";
             String implName = name + "Impl";
-            
+
             if (bVerbose)
                 System.out.println("Generating server-side skeleton: " + skelFileName);
             if (bMessageContext) {
@@ -1213,7 +1221,7 @@ public class Emitter {
      * Write out a single service class
      */
     private void writeService(Service service) throws IOException {
-        String serviceName = service.getQName().getLocalPart();
+        String serviceName = xmlNameToJava(service.getQName().getLocalPart());
         String fileName = serviceName + ".java";
         PrintWriter servicePW = printWriter(fileName);
         if (bVerbose)
@@ -1777,7 +1785,8 @@ public class Emitter {
                 || localName.equals("float")
                 || localName.equals("double")
                 || localName.equals("boolean")
-                || localName.equals("byte"))
+                || localName.equals("byte")
+                || localName.equals("void"))
             return localName;
         else
             return capitalize(localName);
@@ -1795,6 +1804,20 @@ public class Emitter {
         }
         return name;
     } // capitalize
+
+    /**
+     * Map an XML name to a valid Java identifier
+     */
+    private String xmlNameToJava(String name)
+    {
+        char[] nameArray = name.toCharArray();
+        for(int j = 0, len = name.length(); j < len; ++j) {
+            char c = nameArray[j];
+            if( !Character.isLetterOrDigit(c) && c != '_' )
+                nameArray[j] = '_';
+        }
+        return new String(nameArray);
+    }
 
     /**
      * A simple map of the primitive types and their holder objects
