@@ -227,6 +227,13 @@ public abstract class JavaProvider extends BasicProvider {
                                      new SOAPEnvelope() :
                                      (SOAPEnvelope)resMsg.getAsSOAPEnvelope();
 
+            // get the response message again! It may have been explicitly set!
+            // (by, say, a proxy service :-) -- RobJ
+            if (msgContext.getResponseMessage() == null) {
+                resMsg = new Message(resEnv);
+                msgContext.setResponseMessage( resMsg );
+            }
+
             /** If the class knows what it should be exporting,
             * respect its wishes.
             */
@@ -236,13 +243,6 @@ public abstract class JavaProvider extends BasicProvider {
 
             processMessage(msgContext, clsName, allowedMethods, reqEnv,
                            resEnv, jc, obj);
-
-            // get the response message again! It may have been explicitly set!
-            // (by, say, a proxy service :-) -- RobJ
-            if (msgContext.getResponseMessage() == null) {
-                resMsg = new Message(resEnv);
-                msgContext.setResponseMessage( resMsg );
-            }
         }
         catch( Exception exp ) {
             category.error( exp );
