@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001-2003 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001-2004 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -70,7 +70,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.StringTokenizer;
 import java.util.Vector;
 
 /**
@@ -473,30 +472,6 @@ public class JavaBeanWriter extends JavaClassWriter {
         pw.println();
     }
 
-    
-    /**
-     * Takes out new lines and wraps at Javadoc tags
-     * @param documentation the raw comments from schema
-     * @param addTab if true adds a tab character when wrapping (methods)
-     */
-    private String getJavadocDescriptionPart(String documentation, boolean addTab) {
-        String doc = "";
-        if (documentation == null) return doc;
-        if (documentation.trim().length() == 0) return doc;
-
-        StringTokenizer st2 = new StringTokenizer(documentation.trim(), "\n");
-
-        while (st2.hasMoreTokens()) {
-            String line = st2.nextToken().trim();
-            doc += line + " ";
-        }
-        StringTokenizer st = new StringTokenizer(doc.trim(), "@");
-        String newComments = st.nextToken();
-        while (st.hasMoreTokens()) {
-            newComments += "\n" + (addTab ? "\t" : "") + " * @" + st.nextToken().trim();
-        }
-        return newComments;
-    }
     
     /**
      * Writes the default constructor.

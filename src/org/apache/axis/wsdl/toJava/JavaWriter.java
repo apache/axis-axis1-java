@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001-2003 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001-2004 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -63,6 +63,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.StringTokenizer;
 
 /**
  * Emitter knows about WSDL writers, one each for PortType, Binding, Service,
@@ -118,6 +119,9 @@ import java.io.PrintWriter;
  */
 public abstract class JavaWriter implements Generator {
 
+    /** This controls how many characters per line for javadoc comments */
+    protected final static int LINE_LENGTH = 65;
+    
     /** Field emitter */
     protected Emitter emitter;
 
@@ -270,15 +274,73 @@ public abstract class JavaWriter implements Generator {
     }    // closePrintWriter
 
     /**
+     * Takes out new lines and wraps at Javadoc tags
+     * @param documentation the raw comments from schema
+     * @param addTab if true adds a tab character when wrapping (methods)
+     */
+    protected String getJavadocDescriptionPart(String documentation, boolean addTab) {
+        if (documentation == null) {
+            return "";
+        }
+
+        String doc = documentation.trim();
+
+        if (documentation.trim().length() == 0) {
+            //nothing to do
+            return doc;
+        }
+        
+        // make @ tags start a new line (for javadoc tags mostly)
+        // it will have a bad impact on e-mail address and such, but oh well
+        // you should probobly be spam proofing your e-mail anyway
+        StringTokenizer st = new StringTokenizer(doc, "@");
+        StringBuffer newComments;
+        if (st.hasMoreTokens()) {
+            newComments = new StringBuffer(st.nextToken());
+            while (st.hasMoreTokens()) {
+                newComments.append(addTab ? "\n    * @" : "\n * @");
+                newComments.append(st.nextToken().trim());
+            }
+        } else {
+            newComments = new StringBuffer(doc);
+        }
+        newComments.insert(0, addTab ? "    * " : " * ");
+        
+        // tweak comment ending tags by insterting a 
+        // space between the star and the slash, BUG13407
+        int pos = newComments.indexOf("*/");
+        while (pos >= 0) {
+            newComments.insert(pos + 1, ' ');
+            pos = newComments.indexOf("*/");
+        }
+        
+        // now pretty it up based on column length
+        int lineStart = 0;
+        int newlinePos = 0;
+        while (lineStart < newComments.length()) {
+            lineStart = newlinePos + 1;
+            newlinePos = newComments.indexOf("\n", lineStart);
+            if (newlinePos == -1) {
+                newlinePos = newComments.length();
+            }
+            if ((lineStart - newlinePos) > LINE_LENGTH) {
+                lineStart += LINE_LENGTH;
+                while (!Character.isWhitespace(newComments.charAt(lineStart++)));
+                newComments.insert(lineStart, addTab ? "\n    *" : "\n *");
+                lineStart += addTab ? 7 : 3;
+            }
+        }
+        
+        return newComments.toString();
+    }
+    
+    /**
      * Output a documentation element as a Java comment.
      * 
      * @param pw      
      * @param element 
      */
-    protected void writeComment(PrintWriter pw, Element element) {
-
-        // This controls how many characters per line
-        final int LINE_LENGTH = 65;
+    protected void writeComment(PrintWriter pw, Element element, boolean addTab) {
 
         if (element == null) {
             return;
@@ -292,33 +354,14 @@ public abstract class JavaWriter implements Generator {
 
         String comment = child.getNodeValue();
 
-        // Strip out stuff that will really mess up our comments
-        comment = comment.replace('\r', ' ');
-        comment = comment.replace('\n', ' ');
-
         if (comment != null) {
             int start = 0;
 
             pw.println();    // blank line
 
-            // make the comment look pretty
-            while (start < comment.length()) {
-                int end = start + LINE_LENGTH;
-
-                if (end > comment.length()) {
-                    end = comment.length();
-                }
-
-                // look for next whitespace
-                while ((end < comment.length())
-                        && !Character.isWhitespace(comment.charAt(end))) {
-                    end++;
-                }
-
-                pw.println("    // " + comment.substring(start, end).trim());
-
-                start = end + 1;
-            }
+            pw.println(addTab ? "    /**" : "/**");
+            pw.println(getJavadocDescriptionPart(comment, addTab));
+            pw.println(addTab ? "     */" : " */");
         }
     }                        // writeComment
 }    // abstract class JavaWriter

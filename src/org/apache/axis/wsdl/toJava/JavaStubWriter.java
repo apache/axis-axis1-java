@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001-2003 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001-2004 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1024,7 +1024,7 @@ public class JavaStubWriter extends JavaClassWriter {
                                 Parameters parms, String soapAction,
                                 String opStyle, boolean oneway, int opIndex) {
 
-        writeComment(pw, operation.getDocumentationElement());
+        writeComment(pw, operation.getDocumentationElement(), true);
         pw.println(parms.signature + " {");
         pw.println("        if (super.cachedEndpoint == null) {");
         pw.println(
