@@ -48,7 +48,7 @@ Copyright:
     <delete dir="${build.dir}/work/${componentName}"/>
 </target>
 
-<target name="copy" depends="setenv"/>
+<target name="copy" depends="setenv,clean"/>
 
 <target name="compile" depends="copy">
   <echo message="Compilig test.wsdl.literal"/>
