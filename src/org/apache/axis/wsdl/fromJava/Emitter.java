@@ -33,6 +33,7 @@ import org.apache.axis.description.ParameterDesc;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.encoding.DefaultTypeMappingImpl;
 import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.encoding.DefaultSOAPEncodingTypeMappingImpl;
 import org.apache.axis.enum.Style;
 import org.apache.axis.enum.Use;
 import org.apache.axis.utils.ClassUtils;
@@ -2521,7 +2522,12 @@ public class Emitter {
      */
     public TypeMapping getDefaultTypeMapping() {
         if (defaultTM == null) {
-            defaultTM = DefaultTypeMappingImpl.getSingleton();
+            if (use == Use.ENCODED) {
+                // Use the one with SOAP encoded types
+                defaultTM = DefaultSOAPEncodingTypeMappingImpl.createWithDelegate();
+            } else {
+                defaultTM = DefaultTypeMappingImpl.getSingleton();
+            }
         }
         return defaultTM;
     }

@@ -37,23 +37,18 @@ public class DefaultSOAPEncodingTypeMappingImpl extends DefaultTypeMappingImpl {
      */
     public static TypeMapping create() {
         if (tm == null) {
-            tm = new DefaultSOAPEncodingTypeMappingImpl(false);
+            tm = new DefaultSOAPEncodingTypeMappingImpl();
         }
         return tm;
     }
     
-    public static TypeMapping createWithDelegate(boolean UseJaxRPC11Mappings) {
-        TypeMapping ret = new DefaultSOAPEncodingTypeMappingImpl(UseJaxRPC11Mappings);
+    public static TypeMapping createWithDelegate() {
+        TypeMapping ret = new DefaultSOAPEncodingTypeMappingImpl();
         ret.setDelegate(DefaultTypeMappingImpl.getSingleton());
         return ret;
     }
 
     protected DefaultSOAPEncodingTypeMappingImpl() {
-        this(false);
-    }
-    
-    protected DefaultSOAPEncodingTypeMappingImpl(boolean UseJaxRPC11Mappings) {
-        super(UseJaxRPC11Mappings);
         registerSOAPTypes();
     }
 
@@ -74,6 +69,7 @@ public class DefaultSOAPEncodingTypeMappingImpl extends DefaultTypeMappingImpl {
         myRegisterSimple(Constants.SOAP_LONG, java.lang.Long.class);
         myRegisterSimple(Constants.SOAP_SHORT, java.lang.Short.class);
         myRegisterSimple(Constants.SOAP_BYTE, java.lang.Byte.class);
+
         myRegister(Constants.SOAP_BASE64,     byte[].class,
                    new Base64SerializerFactory(byte[].class,
                                                Constants.SOAP_BASE64 ),

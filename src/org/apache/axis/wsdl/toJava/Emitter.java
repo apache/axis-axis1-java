@@ -92,7 +92,7 @@ public class Emitter extends Parser {
     private boolean typeCollisionProtection = true;
 
     /** Use JAX-RPC 1.1 type mappings */
-    private boolean useJaxRPC11Mappings = false;
+    //private boolean useJaxRPC11Mappings = false;
 
     /** Check if URL endpoints are valid or not */
     private boolean allowInvalidURL = false;
@@ -399,24 +399,31 @@ public class Emitter extends Parser {
     }
 
     /**
+     * <B>WARNING: NOT IMPLEMENTED</B>
+     * <p>
      * Turn on the JAX-RPC 1.1 type mappings, which maps
      * various XML Schema types to java types (string, BigInteger, Calendar, etc).
      * <p>
-     * Axis has custom types (in org.apache.axis.types) that are used by
-     * default.
+     * Axis has custom types (in org.apache.axis.types) that are used by default.
      */
+/*
     public void setUseJaxRPC11Mappings(boolean b) {
         useJaxRPC11Mappings = b;
     }
+*/
 
     /**
+     * <B>WARNING: NOT IMPLEMENTED</B>
+     * <p>
      * Will this emitter use the JAX-RPC 1.1 type mappings for
      * the types that aren't directly mappable to Java.
      * @return TRUE if we are using the JAX-RPC 1.1 mappings.
      */
-    public boolean getsetUseJaxRPC11Mappings() {
+/*
+    public boolean getUseJaxRPC11Mappings() {
         return useJaxRPC11Mappings;
     }
+*/
 
     /**
      * Sets the <code>WriterFactory Class</code> to use
@@ -752,7 +759,7 @@ public class Emitter extends Parser {
         baseTypeMapping = new BaseTypeMapping() {
 
             final TypeMapping defaultTM =
-                    DefaultSOAPEncodingTypeMappingImpl.createWithDelegate(useJaxRPC11Mappings);
+                    DefaultSOAPEncodingTypeMappingImpl.createWithDelegate();
 
             public String getBaseName(QName qNameIn) {
 

@@ -93,12 +93,12 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
      */
     public static synchronized TypeMapping getSingleton() {
         if (tm == null) {
-            tm = new DefaultTypeMappingImpl(false);
+            tm = new DefaultTypeMappingImpl();
         }
         return tm;
     }
 
-    protected DefaultTypeMappingImpl(boolean dojaxrpc11) {
+    protected DefaultTypeMappingImpl() {
         super(null);
         delegate = null;
 
@@ -563,7 +563,7 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                                              Constants.XSD_SCHEMA)
         );
         
-        if (jaxrpc11Compliance || dojaxrpc11) {
+        if (jaxrpc11Compliance) {
             // Table 4-1 of the JAXRPC 1.1 spec
             myRegisterSimple(Constants.XSD_UNSIGNEDINT, long.class);    
             myRegisterSimple(Constants.XSD_UNSIGNEDSHORT, int.class);    
