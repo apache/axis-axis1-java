@@ -93,6 +93,7 @@ import org.apache.axis.encoding.SerializationContext;
 public class ServiceClient {
     // Client transports
     private static Transport defaultTransport = null;
+    private static Hashtable transports = new Hashtable();
                                                         
     // keep prop hashtable small
     private Hashtable properties = new Hashtable(10);
@@ -161,15 +162,17 @@ public class ServiceClient {
         defaultTransport = transport;
     }
     
+    public static void setTransportForProtocol(String protocol, Transport transport)
+    {
+        transports.put(protocol, transport);
+    }
+    
     public Transport getTransportForProtocol(String protocol)
     {
-      if (defaultTransport != null)
-        return defaultTransport;
-      
       if (protocol.equals("http"))
         return new HTTPTransport();
       
-      return null;
+      return (Transport)transports.get(protocol);
     }
     
     /**

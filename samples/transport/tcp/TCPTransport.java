@@ -55,6 +55,7 @@
 
 package samples.transport.tcp;
 
+import java.net.URL;
 import java.util.* ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.Debug ;
@@ -99,15 +100,32 @@ public class TCPTransport extends Transport
     {
         mc.setTransportName("tcp");
         
+        try {
+          String urlString = mc.getStrProp(MessageContext.TRANS_URL);
+          if (urlString != null) {
+            URL url = new URL(urlString);
+            mc.setProperty(HOST, url.getHost());
+            mc.setProperty(PORT, new Integer(url.getPort()).toString());
+          }
+        } catch (java.net.MalformedURLException e) {
+          // Do nothing here?
+        }
+
+        if (host != null) serv.set(HOST, host);
+        if (port != null) serv.set(PORT, port);
+
+        Debug.Print(3, "Port = " + mc.getStrProp(PORT));
+        Debug.Print(3, "Host = " + mc.getStrProp(HOST));
+        
         // kind of ugly... fake up a "http://host:port/" url to send down the chain
         // ROBJ TODO: clean this up so we use TCP transport properties all the way down
         // use serviceclient properties if any, otherwise use ours
-        if (host != null) serv.set(HOST, host);
-        if (port != null) serv.set(PORT, port);
+        /*
         String url = "http://"+serv.get(HOST)+":"+serv.get(PORT);
         
         Debug.Print(4, "TCPTransport set URL to '" + url + "'");
         mc.setProperty(MessageContext.TRANS_URL, url);
+        */
     }
 }
 

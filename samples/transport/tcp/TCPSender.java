@@ -87,88 +87,15 @@ public class TCPSender extends BasicHandler {
 
     targetURL = msgContext.getStrProp( MessageContext.TRANS_URL);
     try {
-      // This is a totally random, temporary URL specification:
-      // http://host:port/service-name ??????? hmmmmmm
-      URL      tmpURL = new URL( targetURL );
-      String   host   = tmpURL.getHost();
-      int      port   = tmpURL.getPort();
+      String   host   = msgContext.getStrProp(TCPTransport.HOST);
+      int      port   = Integer.parseInt(msgContext.getStrProp(TCPTransport.PORT));
       byte[]   buf    = new byte[4097];
       int      rc     = 0 ;
 
       Socket             sock = null ;
 
-      /* comment out SSL stuff for now
-      
-      if (tmpURL.getProtocol().equalsIgnoreCase("https")) {
-        if ( (port = tmpURL.getPort()) == -1 ) port = 443;
-        String tunnelHost = System.getProperty("https.proxyHost");
-        String tunnelPortString = System.getProperty("https.proxyPort");
-        String tunnelUsername = System.getProperty("https.proxyUsername");
-        String tunnelPassword = System.getProperty("https.proxyPassword");
-        try {
-          Class SSLSocketFactoryClass =
-            Class.forName("javax.net.ssl.SSLSocketFactory");
-          Class SSLSocketClass = Class.forName("javax.net.ssl.SSLSocket");
-          Method createSocketMethod =
-            SSLSocketFactoryClass.getMethod("createSocket",
-                                            new Class[] {String.class, Integer.TYPE});
-          Method getDefaultMethod =
-            SSLSocketFactoryClass.getMethod("getDefault", new Class[] {});
-          Method startHandshakeMethod =
-            SSLSocketClass.getMethod("startHandshake", new Class[] {});
-          Object factory = getDefaultMethod.invoke(null, new Object[] {});
-          Object sslSocket = null;
-          if (tunnelHost == null || tunnelHost.equals("")) {
-            // direct SSL connection
-            sslSocket = createSocketMethod .invoke(factory,
-                                 new Object[] {host, new Integer(port)});
-          } else {
-            // SSL tunnelling through proxy server
-            Method createSocketMethod2 =
-              SSLSocketFactoryClass.getMethod("createSocket",
-                                              new Class[] {Socket.class, String.class, Integer.TYPE, Boolean.TYPE});
-            int tunnelPort = (tunnelPortString != null? (Integer.parseInt(tunnelPortString) < 0? 443: Integer.parseInt(tunnelPortString)): 443);
-            Object tunnel = createSocketMethod .invoke(factory,
-                                 new Object[] {tunnelHost, new Integer(tunnelPort)});
-            // The tunnel handshake method (condensed and made reflexive)
-            OutputStream tunnelOutputStream = (OutputStream)SSLSocketClass.getMethod("getOutputStream", new Class[] {}).invoke(tunnel, new Object[] {});
-            PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(tunnelOutputStream)));
-            out.print("CONNECT " + host + ":" + port + " HTTP/1.0\n\r\n\r");
-            out.flush();
-            InputStream tunnelInputStream = (InputStream)SSLSocketClass.getMethod("getInputStream", new Class[] {}).invoke(tunnel, new Object[] {});
-            //BufferedReader in = new BufferedReader(new InputStreamReader(tunnelInputStream));
-            //DataInputStream in = new DataInputStream(tunnelInputStream);
-            Debug.Print(1, "Is tunnelInputStream null? " + String.valueOf(tunnelInputStream == null));
-            String replyStr = ""; int i;
-            while ((i = tunnelInputStream.read()) != '\n' && i != '\r' && i != -1) { replyStr += String.valueOf((char)i); Debug.Print(1, "got a character in reply, so far: " + replyStr); }
-            if (!replyStr.startsWith("HTTP/1.0 200") && !replyStr.startsWith("HTTP/1.1 200")) {
-              throw new IOException("Unable to tunnel through " + tunnelHost + ":" + tunnelPort + ".  Proxy returns \"" + replyStr + "\"");
-            }
-            // End of condensed reflective tunnel handshake method
-            sslSocket = createSocketMethod2.invoke(factory,
-                                 new Object[] {tunnel, host, new Integer(port), new Boolean(true)});
-            Debug.Print( 1, "Set up SSL tunnelling through " + tunnelHost + ":" +tunnelPort);
-          }
-          // must shake out hidden errors!
-          startHandshakeMethod.invoke(sslSocket, new Object[] {});
-          sock = (Socket)sslSocket;
-        } catch (ClassNotFoundException cnfe) {
-          Debug.Print( 1, "SSL feature disallowed: JSSE files not installed or present in classpath");
-          throw new AxisFault(cnfe);
-        } catch (NumberFormatException nfe) {
-          Debug.Print( 1, "Proxy port number, \"" + tunnelPortString + "\", incorrectly formatted");
-          throw new AxisFault(nfe);
-        }
-        Debug.Print( 1, "Created an SSL connection");
-      } else {
-       */
-      
-        sock    = new Socket( host, port );
-        Debug.Print( 1, "Created an insecure HTTP connection");
-      
-      /*
-      }
-       */
+      sock    = new Socket( host, port );
+      Debug.Print( 1, "Created an insecure HTTP connection");
 
       reqEnv  = (String) msgContext.getRequestMessage().getAsString();
       
@@ -176,48 +103,6 @@ public class TCPSender extends BasicHandler {
 
       BufferedInputStream inp = new BufferedInputStream(sock.getInputStream());
       OutputStream  out  = sock.getOutputStream();
-      
-      /*
-      StringBuffer  otherHeaders = new StringBuffer();
-      String        userID = null ;
-      String        passwd = null ;
-
-      userID = msgContext.getStrProp( MessageContext.USERID );
-      passwd = msgContext.getStrProp( MessageContext.PASSWORD );
-
-      if ( userID != null ) {
-        StringBuffer tmpBuf = new StringBuffer();
-        tmpBuf.append( userID )
-              .append( ":" )
-              .append( (passwd == null) ? "" : passwd) ;
-        otherHeaders.append( HTTPConstants.HEADER_AUTHORIZATION )
-                    .append( ": Basic " )
-                    .append( Base64.encode( tmpBuf.toString().getBytes() ) )
-                    .append("\n" );
-      }
-     
-      StringBuffer header = new StringBuffer();
-
-      header.append( HTTPConstants.HEADER_POST )
-            .append(" " )
-            .append( ((tmpURL.getFile() == null ||
-                       tmpURL.getFile().equals(""))? "/": tmpURL.getFile()) )
-            .append( " HTTP/1.0\r\n" )
-            .append( HTTPConstants.HEADER_CONTENT_LENGTH )
-            .append( ": " )
-            .append(reqEnv.length() )
-            .append( "\r\n" )
-            .append( HTTPConstants.HEADER_CONTENT_TYPE )
-            .append( ": text/xml\r\n" )
-            .append( (otherHeaders == null ? "" : otherHeaders.toString()) )
-            .append( HTTPConstants.HEADER_SOAP_ACTION )
-            .append( ": \"" )
-            .append( action )
-            .append( "\"\r\n\r\n" );
-
-      out.write( header.toString().getBytes() );
-      
-       */
       
       byte[] bytes = reqEnv.getBytes();
       String length = "" + bytes.length + "\r\n";
@@ -229,53 +114,6 @@ public class TCPSender extends BasicHandler {
       Debug.Print( 1, "---------------------------------------------------");
       Debug.Print( 1, reqEnv );
 
-      /*
-      byte       lastB=0, b ;
-      int        len = 0 ;
-      int        colonIndex = -1 ;
-      Hashtable  headers = new Hashtable();
-      String     name, value ;
-
-      // Need to add logic for getting the version # and the return code
-      // but that's for tomorrow!
-
-      for ( ;; ) {
-        if ( (b = (byte) inp.read()) == -1 ) break ;
-        if ( b != '\r' && b != '\n' ) {
-          if ( b == ':' ) colonIndex = len ;
-          lastB = (buf[len++] = b);
-        }
-        else if ( b == '\r' )
-          continue ;
-        else {
-          if ( len == 0 ) break ;
-          if ( colonIndex != -1 ) {
-            name = new String( buf, 0, colonIndex );
-            value = new String( buf, colonIndex+1, len-1-colonIndex );
-          }
-          else {
-            name = new String( buf, 0, len );
-            value = "" ;
-          }
-          Debug.Print( 1, name + value );
-          if ( msgContext.getProperty(HTTPConstants.MC_HTTP_STATUS_CODE)==null){
-            // Reader status code
-            int start = name.indexOf( ' ' ) + 1 ;
-            String tmp = name.substring(start).trim();
-            int end   = tmp.indexOf( ' ' );
-            if ( end != -1 ) tmp = tmp.substring( 0, end );
-            rc = Integer.parseInt( tmp );
-            msgContext.setProperty( HTTPConstants.MC_HTTP_STATUS_CODE,
-                                    new Integer(rc) );
-            msgContext.setProperty( HTTPConstants.MC_HTTP_STATUS_MESSAGE,
-                                    name.substring(end+1));
-          }
-          else
-            headers.put( name.toLowerCase(), value );
-          len = 0 ;
-        }
-      }
-       */
       if ( Debug.getDebugLevel() > 8 ) {
         // Special case - if the debug level is this high then something
         // really bad must be going on - so just dump the input stream
