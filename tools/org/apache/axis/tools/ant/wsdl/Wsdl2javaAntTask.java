@@ -60,7 +60,6 @@ import org.apache.axis.wsdl.toJava.Emitter;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
-import org.apache.tools.ant.types.EnumeratedAttribute;
 
 import java.io.File;
 import java.io.IOException;
@@ -126,6 +125,8 @@ public class Wsdl2javaAntTask extends Task
     private long timeout = 45000;
     private File  namespaceMappingFile=null;
     private MappingSet mappings = new MappingSet();
+    private String username=null;
+    private String password=null;
 
     /**
      * do we print a stack trace when something goes wrong?
@@ -183,7 +184,10 @@ public class Wsdl2javaAntTask extends Task
         log("\ttimeout:" + timeout, logLevel);
         log("\tfailOnNetworkErrors:" + failOnNetworkErrors, logLevel);
         log("\tprintStackTraceOnFailure:" + printStackTraceOnFailure, logLevel);
-        log("\tnamespaceMappingFile"+namespaceMappingFile, logLevel);
+        log("\tnamespaceMappingFile:"+namespaceMappingFile, logLevel);
+        log("\tusername:" + username, logLevel);
+        log("\t:password" + password, logLevel);
+        traceNetworkSettings(logLevel);
     }
 
     /**
@@ -234,7 +238,7 @@ public class Wsdl2javaAntTask extends Task
             emitter.setNStoPkg(namespaceMappingFile);
             emitter.setTimeout(timeout);
 
-            Authenticator.setDefault(new DefaultAuthenticator(null,null));
+            Authenticator.setDefault(new DefaultAuthenticator(username,password));
 
             log("WSDL2Java " + url, Project.MSG_INFO);
             try {
@@ -429,6 +433,58 @@ public class Wsdl2javaAntTask extends Task
 
     }
     */
+
+    /**
+     * should the task fail the build if there is a network error?
+     * optional: defaults to false
+     * @param failOnNetworkErrors
+     */
+    public void setFailOnNetworkErrors(boolean failOnNetworkErrors) {
+        this.failOnNetworkErrors = failOnNetworkErrors;
+    }
+
+    /**
+     * should we print a stack trace on failure?
+     * Optional, default=true.
+     * @param printStackTraceOnFailure
+     */
+    public void setPrintStackTraceOnFailure(boolean printStackTraceOnFailure) {
+        this.printStackTraceOnFailure = printStackTraceOnFailure;
+    }
+
+    /**
+     * set any username required for BASIC authenticated access to the WSDL;
+     * optional.
+     * @param username
+     */
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+
+    /**
+     * set any password required for BASIC authenticated access to the WSDL;
+     * optional; only used if username is set
+     * @param password
+     * @see #username
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    private void traceSystemSetting(String setting,int logLevel) {
+        String value=System.getProperty(setting);
+        log("\t"+setting+"=" + value, logLevel);
+    }
+
+    private void traceNetworkSettings(int logLevel) {
+        traceSystemSetting("http.proxyHost",logLevel);
+        traceSystemSetting("http.proxyPort", logLevel);
+        traceSystemSetting("http.proxyUser", logLevel);
+        traceSystemSetting("http.proxyPassword", logLevel);
+        traceSystemSetting("socks.proxyHost", logLevel);
+        traceSystemSetting("socks.proxyPort", logLevel);
+    }
 }
 
 
