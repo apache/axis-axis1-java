@@ -135,6 +135,7 @@ Copyright:
       deprecation="${deprecation}"
       classpathref="classpath">
       <exclude name="**/old/**/*" />
+      <exclude name="**/bak/**"/>
       <exclude name="org/apache/axis/handlers/HTTP*" unless="servlet.present"/>
       <exclude name="org/apache/axis/transport/http/*" unless="servlet.present"/>
     </javac>
@@ -161,9 +162,6 @@ Copyright:
       <exclude name="samples/**/*SMTP*.java" unless="smtp.present" />
       <exclude name="**/old/**/*.java" />
     </javac>
-    <copy todir="${build.samples}">
-      <fileset dir="${samples.dir}"/>
-    </copy>
   </target>
 
   <!-- =================================================================== -->
