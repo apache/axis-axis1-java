@@ -772,7 +772,7 @@ public class JavaBeanWriter extends JavaClassWriter {
 
             if (enableSetters) {
                 if (isUnion()) {
-                    pw.println("    public void setValue(" + typeName
+                    pw.println("    public void set" + capName + "(" + typeName
                             + " value) {");
                     writeSimpleTypeSetter(typeName);
                 } else {
