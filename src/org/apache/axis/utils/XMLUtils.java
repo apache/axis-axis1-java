@@ -140,4 +140,20 @@ public class XMLUtils {
       e.printStackTrace();
     }
   }
+
+  public static String getPrefix(String uri, Element e) {
+      while (e != null && (e.getNodeType() == Element.ELEMENT_NODE)) {
+          NamedNodeMap attrs = e.getAttributes();
+          for (int n = 0; n < attrs.getLength(); n++) {
+              Attr a = (Attr)attrs.item(n);
+              String name;
+              if ((name = a.getName()).startsWith("xmlns:") &&
+                  a.getNodeValue().equals(uri)) {
+                  return name.substring(6);
+              }
+          }
+          e = (Element)e.getParentNode();
+      }
+      return null;
+  }
 }
