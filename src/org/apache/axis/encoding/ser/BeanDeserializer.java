@@ -214,7 +214,7 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
         QName qn = null;
         Deserializer dSer = null;
         MessageContext messageContext = context.getMessageContext();
-        if (propDesc == null && !messageContext.isEncoded()) {
+        if (propDesc == null) {
             // try to put unknown elements into a SOAPElement property, if
             // appropriate
             propDesc = getAnyPropertyDesc();
