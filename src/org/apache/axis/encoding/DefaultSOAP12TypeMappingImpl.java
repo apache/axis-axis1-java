@@ -56,34 +56,8 @@
 package org.apache.axis.encoding;
 
 import org.apache.axis.Constants;
-
-import javax.xml.rpc.namespace.QName;
-import javax.xml.rpc.JAXRPCException;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import org.apache.axis.encoding.ser.ArraySerializerFactory;
-import org.apache.axis.encoding.ser.ArrayDeserializerFactory;
-import org.apache.axis.encoding.ser.BeanSerializerFactory;
-import org.apache.axis.encoding.ser.BeanDeserializerFactory;
-import org.apache.axis.encoding.ser.DateSerializerFactory;
-import org.apache.axis.encoding.ser.DateDeserializerFactory;
-import org.apache.axis.encoding.ser.Base64SerializerFactory;
 import org.apache.axis.encoding.ser.Base64DeserializerFactory;
-import org.apache.axis.encoding.ser.MapSerializerFactory;
-import org.apache.axis.encoding.ser.MapDeserializerFactory;
-import org.apache.axis.encoding.ser.HexSerializerFactory;
-import org.apache.axis.encoding.ser.HexDeserializerFactory;
-import org.apache.axis.encoding.ser.ElementSerializerFactory;
-import org.apache.axis.encoding.ser.ElementDeserializerFactory;
-import org.apache.axis.encoding.ser.VectorDeserializerFactory;
-import org.apache.axis.encoding.ser.SimpleDeserializerFactory;
-import org.apache.axis.encoding.ser.SimplePrimitiveSerializerFactory;
-import org.apache.axis.encoding.ser.SimpleNonPrimitiveSerializerFactory;
-import java.util.Vector;
-import java.util.Hashtable;
-import java.util.List;
+import org.apache.axis.encoding.ser.Base64SerializerFactory;
 
 /**
  * @author Rich Scheuerle (scheu@us.ibm.com)

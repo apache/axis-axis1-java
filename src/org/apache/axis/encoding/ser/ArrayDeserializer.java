@@ -55,35 +55,23 @@
 
 package org.apache.axis.encoding.ser;
 
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.AttributesImpl;
-
-import javax.xml.rpc.namespace.QName;
-import java.io.IOException;
-import org.apache.axis.message.SOAPHandler;
-import org.apache.axis.encoding.Serializer;
-import org.apache.axis.encoding.SerializerFactory;
-import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.encoding.DeserializerTarget;
-import org.apache.axis.encoding.DeserializerFactory;
-import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.DeserializerImpl;
 import org.apache.axis.Constants;
+import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.encoding.Deserializer;
+import org.apache.axis.encoding.DeserializerImpl;
+import org.apache.axis.encoding.DeserializerTarget;
+import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
 
-import java.lang.reflect.Array;
+import javax.xml.rpc.namespace.QName;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Stack;
-import java.util.Vector;
-import java.util.List;
 import java.util.StringTokenizer;
-import java.beans.IntrospectionException;
 
 
 /**
@@ -547,7 +535,7 @@ public class ArrayDeserializer extends DeserializerImpl
      * For example "[2]" returns 2.
      * For example "[2,3]" depends on the size of the multiple dimensions.
      *   if the dimensions are "[3,5]" then 13 is returned (2*5) + 3.
-     * @param string representing index text
+     * @param text representing index text
      * @param exceptKey exception message key
      * @return index 
      */
@@ -630,7 +618,7 @@ public class ArrayDeserializer extends DeserializerImpl
 
     /**
      * Converts multiple index to single index.
-     * @param Array list of multiple indices
+     * @param indexArray list of multiple indices
      * @return single index
      */
     private int toSingleIndex(ArrayList indexArray) {

@@ -64,10 +64,11 @@ import java.lang.reflect.Field;
 import java.text.Collator;
 import java.text.MessageFormat;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.Collection;
+import java.util.Iterator;
 
 /** Utility class to deal with Java language related issues, such
  * as type conversions.
@@ -213,7 +214,7 @@ public class JavaUtils
 
 
         // Return if no conversion is available
-        if (!(arg instanceof List ||
+        if (!(arg instanceof Collection ||
               (arg != null && arg.getClass().isArray())) &&
             ((destHeldType == null && argHeldType == null) ||
              (destHeldType != null && argHeldType != null))) {
@@ -268,7 +269,7 @@ public class JavaUtils
         if (arg.getClass().isArray()) {
             length = Array.getLength(arg);
         } else {
-            length = ((List) arg).size();
+            length = ((Collection) arg).size();
         }
         if (destClass.isArray()) {
             if (destClass.getComponentType().isPrimitive()) {
@@ -281,8 +282,10 @@ public class JavaUtils
                         Array.set(array, i, Array.get(arg, i));
                     }
                 } else {
-                    for (int i = 0; i < length; i++) {
-                        Array.set(array, i, ((List) arg).get(i));
+                    int idx = 0;
+                    for (Iterator i = ((Collection)arg).iterator();
+                            i.hasNext();) {
+                        Array.set(array, idx++, i.next());
                     }
                 }
                 destValue = array;
@@ -303,18 +306,20 @@ public class JavaUtils
                                            destClass.getComponentType());
                     }
                 } else {
-                    for (int i = 0; i < length; i++) {
-                        array[i] = convert(((List) arg).get(i),
+                    int idx = 0;
+                    for (Iterator i = ((Collection)arg).iterator();
+                            i.hasNext();) {
+                        array[idx++] = convert(i.next(),
                                            destClass.getComponentType());
                     }
                 }
                 destValue = array;
             }
         }
-        else if (List.class.isAssignableFrom(destClass)) {
-            List newList = null;
+        else if (Collection.class.isAssignableFrom(destClass)) {
+            Collection newList = null;
             try {
-                newList = (List)destClass.newInstance();
+                newList = (Collection)destClass.newInstance();
             } catch (Exception e) {
                 // Couldn't build one for some reason... so forget it.
                 return arg;
@@ -325,8 +330,9 @@ public class JavaUtils
                     newList.add(Array.get(arg, j));
                 }
             } else {
-                for (int j = 0; j < length; j++) {
-                    newList.add(((List) arg).get(j));
+                for (Iterator j = ((Collection)arg).iterator();
+                            j.hasNext();) {
+                    newList.add(j.next());
                 }
             }
             destValue = newList;
@@ -369,8 +375,8 @@ public class JavaUtils
                 return true;
             
             // If it's List -> Array or vice versa, we're good.
-            if ((List.class.isAssignableFrom(src) || src.isArray()) &&
-                (List.class.isAssignableFrom(dest) || dest.isArray()))
+            if ((Collection.class.isAssignableFrom(src) || src.isArray()) &&
+                (Collection.class.isAssignableFrom(dest) || dest.isArray()))
                 return true;
             
             if ((src == Hex.class && dest == byte[].class) ||

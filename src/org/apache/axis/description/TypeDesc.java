@@ -58,9 +58,8 @@ package org.apache.axis.description;
 import org.apache.axis.encoding.ser.BeanSerializer;
 
 import javax.xml.rpc.namespace.QName;
-import java.util.HashMap;
-import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 
 /**
  * A TypeDesc represents a Java<->XML data binding.  It is essentially
@@ -113,8 +112,13 @@ public class TypeDesc {
         return null;
     }
 
+    /** The Java class for this type */
     private Class javaClass = null;
-    
+
+    /** The XML type QName for this type */
+    private QName xmlType = null;
+
+    /** The various fields in here */
     private FieldDesc [] fields;
 
     /** A cache of FieldDescs by name */
@@ -343,5 +347,13 @@ public class TypeDesc {
      */
     public boolean hasAttributes() {
         return _hasAttributes;
+    }
+
+    public QName getXmlType() {
+        return xmlType;
+    }
+
+    public void setXmlType(QName xmlType) {
+        this.xmlType = xmlType;
     }
 }
