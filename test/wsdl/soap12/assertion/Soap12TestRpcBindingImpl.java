@@ -42,7 +42,7 @@ public class Soap12TestRpcBindingImpl implements test.wsdl.soap12.assertion.Soap
     }
 
     public float[] echoFloatArray(float[] inputFloatArray) throws java.rmi.RemoteException {
-        return null;
+        return inputFloatArray;
     }
 
     public java.lang.String[] echoStringArray(java.lang.String[] inputStringArray) throws java.rmi.RemoteException {
