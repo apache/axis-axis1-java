@@ -148,7 +148,7 @@ public class AxisClient extends AxisEngine
                 if ( hName != null && (h = sr.find( hName )) != null ) {
                     if ( h instanceof SimpleTargetedChain ) {
                         service = (SimpleTargetedChain) h ;
-                        h = service.getRequestChain();
+                        h = service.getRequestHandler();
                     }
                     if ( h != null ) h.invoke( msgContext );
                 }
@@ -182,7 +182,7 @@ public class AxisClient extends AxisEngine
                     h.invoke(msgContext);
                 
                 if ( service != null ) {
-                    h = service.getResponseChain();
+                    h = service.getResponseHandler();
                     if ( h != null )
                         h.invoke(msgContext);
                 }

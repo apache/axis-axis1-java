@@ -141,7 +141,8 @@ public class SimpleChain extends BasicHandler implements Chain {
   }
 
   public Handler[] getHandlers() {
-    return( (Handler[]) handlers.toArray() );
+    Handler [] ret = new Handler[handlers.size()];
+    return( (Handler[]) handlers.toArray(ret) );
   }
 
   public Element getDeploymentData(Document doc) {

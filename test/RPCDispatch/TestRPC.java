@@ -160,4 +160,15 @@ public class TestRPC extends TestCase {
         // invoke the service and verify the result
         assertEquals(SOAPAction, rpc("targetService", new Object[] {}, true));
     }
+    
+    public static void main(String args[])
+    {
+      try {
+        TestRPC tester = new TestRPC("RPC test");
+        tester.testReverseString();
+        tester.testReverseData();
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
 }

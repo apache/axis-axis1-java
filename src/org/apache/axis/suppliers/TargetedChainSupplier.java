@@ -52,68 +52,95 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.deployment.wsdd;
 
-import org.w3c.dom.Element; 
-import org.apache.axis.Handler;
-import org.apache.axis.Chain;
-import org.apache.axis.TargetedChain;
-import org.apache.axis.deployment.DeploymentRegistry;
-import org.apache.axis.deployment.DeployableItem;
+package org.apache.axis.suppliers;
 
-public class WSDDTransport extends WSDDDeployableItem implements DeployableItem { 
+import java.util.Hashtable;
+import java.util.Vector;
+import java.util.Enumeration;
+import org.apache.axis.Supplier;
+import org.apache.axis.*;
+import org.apache.axis.utils.Debug;
+import org.apache.axis.registries.HandlerRegistry;
+
+/** A <code>TargetedChainSupplier</code>
+ * 
+ * @author Glen Daniels (gdaniels@macromedia.com)
+ */
+public class TargetedChainSupplier implements Supplier
+{
+    String _myName;
+    Hashtable _options;
+    Vector _requestNames;
+    Vector _responseNames;
+    String _pivotName;
+    HandlerRegistry _registry;
     
-    public WSDDTransport(Element e) throws WSDDException { super(e, "transport"); }
+    SimpleTargetedChain _chain = null;
     
-    public WSDDRequestFlow getRequestFlow() {
-        WSDDElement[] e = createArray("requestFlow", WSDDRequestFlow.class);
-        if (e.length != 0) {
-            return (WSDDRequestFlow)e[0];
-        } 
-        return null;
+    public TargetedChainSupplier(String myName,
+                                 Vector requestNames,
+                                 Vector responseNames,
+                                 String pivotName,
+                                 Hashtable options,
+                                 HandlerRegistry registry)
+    {
+        _myName = myName;
+        _requestNames = requestNames;
+        _responseNames = responseNames;
+        _pivotName = pivotName;
+        _options = options;
+        _registry = registry;
     }
     
-    public WSDDResponseFlow getResponseFlow() {
-        WSDDElement[] e = createArray("responseFlow", WSDDResponseFlow.class);
-        if (e.length != 0) {
-            return (WSDDResponseFlow)e[0];
-        } 
-        return null;
+    private void addHandlersToChain(Vector names, Chain chain)
+    {
+      Enumeration e = names.elements();
+      while (e.hasMoreElements()) {
+        String hName = (String)e.nextElement();
+        Handler h = _registry.find(hName);
+        chain.addHandler(h);
+      }
     }
     
-    public WSDDFaultFlow[] getFaultFlows() {
-        WSDDElement[] e = createArray("faultFlow", WSDDFaultFlow.class);
-        WSDDFaultFlow[] t = new WSDDFaultFlow[e.length];
-        System.arraycopy(e,0,t,0,e.length);
-        return t;
-    }
-    
-    public WSDDFaultFlow getFaultFlow(String name) {
-        WSDDFaultFlow[] t = getFaultFlows();
-        for (int n = 0; n < t.length; n++) {
-            if (t[n].getName().equals(name))
-                return t[n];
-        } 
-        return null;
-    }
-   
-    public String getType() {
-        String type = super.getType();
-        if (type.equals(""))
-            type = "java:org.apache.axis.SimpleTargedChain";
-        return type;
-    }
-    
-    public Handler newInstance(DeploymentRegistry registry) throws Exception {
-        return newInstance(null, registry);
-    }
-    
-    public Handler newInstance(Handler pivot, DeploymentRegistry registry) throws Exception {
-        Handler h = super.makeNewInstance(registry);
-        TargetedChain c = (TargetedChain)h;
-        c.setRequestHandler(getRequestFlow().newInstance(registry));
-        c.setPivotHandler(pivot);
-        c.setResponseHandler(getResponseFlow().newInstance(registry));
-        return c;
+    public Handler getHandler()
+    {
+      if (_chain == null) {
+        Debug.Print(2, "TargetedChainSupplier: Building chain '" + _myName + 
+                       "'");
+
+        Handler h;
+        SimpleTargetedChain c = new SimpleTargetedChain();
+        c.setOptions(_options);
+        c.setName(_myName);
+        
+        if (_requestNames.size() == 1) {
+          h = _registry.find((String)_requestNames.elementAt(0));
+          c.setRequestHandler(h);
+        } else {
+          Chain chain = new SimpleChain();
+          addHandlersToChain(_requestNames, chain);
+        }
+        
+        h = _registry.find(_pivotName);
+        if (h == null)
+          return null;  // Should maybe throw an exception here?
+        c.setPivotHandler(h);
+
+        if (_responseNames.size() == 1) {
+          h = _registry.find((String)_responseNames.elementAt(0));
+          c.setRequestHandler(h);
+        } else {
+          Chain chain = new SimpleChain();
+          addHandlersToChain(_responseNames, chain);
+        }
+        
+        _chain = c;
+      }
+      
+      Debug.Print(2, "TargetedChainSupplier: Returning chain '" + _myName + 
+                     "'");
+      
+      return _chain;
     }
 }
