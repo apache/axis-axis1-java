@@ -127,9 +127,19 @@ public abstract class TestClient {
            Set keys1 = map1.keySet();
            Set keys2 = map2.keySet();
            if (!(keys1.equals(keys2))) return false;
+
+           // Check map1 is a subset of map2.
            Iterator i = keys1.iterator();
            while (i.hasNext()) {
                Object key = i.next();
+               if (!equals(map1.get(key), map2.get(key)))
+                   return false;
+           }
+
+           // Check map2 is a subset of map1.
+           Iterator j = keys2.iterator();
+           while (j.hasNext()) {
+               Object key = j.next();
                if (!equals(map1.get(key), map2.get(key)))
                    return false;
            }
