@@ -298,10 +298,12 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
         if(document == null) {
             NodeImpl node = getParent();
             while(node != null) {
-                if(node.getOwnerDocument() != null) {
-                    return node.getOwnerDocument();
+                Document doc = node.getOwnerDocument();
+                if (doc == null) {
+                    node = node.getParent();
+                } else {
+                    return doc;
                 }
-                node = node.getParent();
             }
         }
         return document;
@@ -488,8 +490,10 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
      *                                  this node.
      */
     public Node removeChild(Node oldChild) throws DOMException {
+        if (children == null) {
+            return null;
+        }
         boolean removed = false;
-        initializeChildren();
         final Iterator itr = children.iterator();
         while (itr.hasNext()) {
             final Node node = (Node) itr.next();
