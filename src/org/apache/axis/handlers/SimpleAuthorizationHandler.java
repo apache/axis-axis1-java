@@ -101,7 +101,7 @@ public class SimpleAuthorizationHandler extends BasicHandler {
             String userID = st.nextToken();
             String action = (st.hasMoreTokens()) ? st.nextToken() : "";
 
-            Debug.Print( 1, "User '" + userID + "' authorized to: " + action );
+            Debug.Print( 1, "User '", userID, "' authorized to: ", action );
 
             // if we haven't seen this user before, create an entry 
             if (!entries.containsKey(userID))
@@ -130,8 +130,8 @@ public class SimpleAuthorizationHandler extends BasicHandler {
     String userID = (String) msgContext.getProperty( MessageContext.USERID );
     String action = msgContext.getTargetService();
 
-    Debug.Print( 1, "User: '" + userID + "'" );
-    Debug.Print( 1, "Action: '" + action + "'" );
+    Debug.Print( 1, "User: '", userID, "'" );
+    Debug.Print( 1, "Action: '", action, "'" );
 
     if (entries != null) { // perm.list exists
 
@@ -143,7 +143,7 @@ public class SimpleAuthorizationHandler extends BasicHandler {
       }
     }
 
-    Debug.Print( 1, "User '" + userID + "' authorized to: " + action );
+    Debug.Print( 1, "User '", userID, "' authorized to: ", action );
 
     Debug.Print( 1, "Exit: SimpleAuthorizationHandler::invoke" );
   }
