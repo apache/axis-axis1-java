@@ -56,9 +56,11 @@
 package org.apache.axis.encoding.ser;
 
 import org.apache.axis.Constants;
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.SerializerFactory;
 import org.apache.axis.utils.Messages;
+import org.apache.commons.logging.Log;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
@@ -76,6 +78,9 @@ import java.util.Vector;
 public abstract class BaseSerializerFactory extends BaseFactory
     implements SerializerFactory {
 
+    protected static Log log =
+            LogFactory.getLog(BaseSerializerFactory.class.getName());
+    
     transient static Vector mechanisms = null;
     
     protected Class serClass = null;
@@ -157,8 +162,18 @@ public abstract class BaseSerializerFactory extends BaseFactory
                         serClassConstructor.newInstance(
                             new Object[] {javaType, xmlType});
                 } catch (InstantiationException e) {
+                    if(log.isDebugEnabled()) {
+                        log.debug(org.apache.axis.utils.Messages.getMessage("exception00"), e);
+                    }
                 } catch (IllegalAccessException e) {
-                } catch (InvocationTargetException e) {}
+                    if(log.isDebugEnabled()) {
+                        log.debug(org.apache.axis.utils.Messages.getMessage("exception00"), e);
+                    }
+                } catch (InvocationTargetException e) {
+                    if(log.isDebugEnabled()) {
+                        log.debug(org.apache.axis.utils.Messages.getMessage("exception00"), e);
+                    }
+                }
             }
         }
         return null;
@@ -192,7 +207,14 @@ public abstract class BaseSerializerFactory extends BaseFactory
                                           javaType, 
                                           xmlType});
                 } catch (IllegalAccessException e) {
-                } catch (InvocationTargetException e) {}
+                    if(log.isDebugEnabled()) {
+                        log.debug(org.apache.axis.utils.Messages.getMessage("exception00"), e);
+                    }
+                } catch (InvocationTargetException e) {
+                    if(log.isDebugEnabled()) {
+                        log.debug(org.apache.axis.utils.Messages.getMessage("exception00"), e);
+                    }
+                }
             }
         }
         return null;
@@ -251,8 +273,18 @@ public abstract class BaseSerializerFactory extends BaseFactory
                 method.invoke(null, 
                               new Object[] {javaType, xmlType});
         } catch (NoSuchMethodException e) {
+            if(log.isDebugEnabled()) {
+                log.debug(org.apache.axis.utils.Messages.getMessage("exception00"), e);
+            }
         } catch (IllegalAccessException e) {
-        } catch (InvocationTargetException e) {}
+            if(log.isDebugEnabled()) {
+                log.debug(org.apache.axis.utils.Messages.getMessage("exception00"), e);
+            }
+        } catch (InvocationTargetException e) {
+            if(log.isDebugEnabled()) {
+                log.debug(org.apache.axis.utils.Messages.getMessage("exception00"), e);
+            }
+        }
 
         if (sf == null) {
             try {
@@ -262,9 +294,22 @@ public abstract class BaseSerializerFactory extends BaseFactory
                     constructor.newInstance(
                         new Object[] {javaType, xmlType});
             } catch (NoSuchMethodException e) {
+                if(log.isDebugEnabled()) {
+                    log.debug(org.apache.axis.utils.Messages.getMessage("exception00"), e);
+                }
             } catch (InstantiationException e) {
+                if(log.isDebugEnabled()) {
+                    log.debug(org.apache.axis.utils.Messages.getMessage("exception00"), e);
+                }
             } catch (IllegalAccessException e) {
-            } catch (InvocationTargetException e) {}
+                if(log.isDebugEnabled()) {
+                    log.debug(org.apache.axis.utils.Messages.getMessage("exception00"), e);
+                }
+            } catch (InvocationTargetException e) {
+                if(log.isDebugEnabled()) {
+                    log.debug(org.apache.axis.utils.Messages.getMessage("exception00"), e);
+                }
+            }
         }
         
         if (sf == null) {
