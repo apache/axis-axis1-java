@@ -38,6 +38,7 @@ Table of Contents</h3>
 <br><a href="#Compile And Run">Compile and Run</a>
 <br><a href="#Internationalization">Internationalization</a>
 <br><a href="#Adding Testcases">Adding Testcases</a>
+<br><a href="#TestStructure">Test and Samples Structure</a>
 <br><a href="#CodeChecks">Adding Source Code Checks</a>
 <br><a href="#Debugging">Debugging</a>
 <br><a href="#TCK">Running the JAX-RPC Compatibility Tests</a>
@@ -629,6 +630,7 @@ the file to ease translation.</font></li>
 
 <h2>
 <a NAME="Adding Testcases"></a><font color="#000000">Adding Testcases</font></h2>
+<P>See Also: <a href="#TestStructure">Test and Samples Structure</a></P>
 <font color="#000000"><b>Editor's Note: </b>We need more effort to streamline
 and simplify the addition of tests.&nbsp; We also need to think about categorizing
 tests as the test bucket grows.</font>
@@ -672,6 +674,9 @@ own directory in the <tt>xml-axis/java/test</tt> directory</font></li>
 and existing tests, and then modify the test to suit your needs.&nbsp;
 This approach is becoming more complicated as the different kinds of tests
 grow.</font>
+<P>
+A good "non-wsdl" test for reference is test/saaj.
+</P>
 <h4>
 <font color="#000000">Creating a WSDL Test</font></h4>
 <font color="#000000">Here are the steps that I used to create the <tt>sequence</tt>
@@ -683,19 +688,16 @@ test:</font>
 <font color="#000000">Created a <tt>xml-axis/java/test/wsdl/sequence</tt>
 directory.</font></li>
 
-<br>&nbsp;
+<br>
 <li>
 <font color="#000000">Created a <tt>SequenceTest.wsdl</tt> file defining
 the webservice.</font></li>
-
-<br>&nbsp;
+<BR>
 <li>
 <font color="#000000">Ran the Wsdl2java emitter to create java files:</font></li>
-
-<br>&nbsp;
 <p><tt><font color="#993366">java org.apache.axis.wsdl.Wsdl2java -t -s
 SequenceTest.wsdl</font></tt>
-<br>&nbsp;
+<br>
 <ol>
 <li>
 <font color="#000000">The -t option causes the emitter to generate a *TestCase.java
@@ -719,33 +721,18 @@ and *SOAPBindingImpl.java).&nbsp; My sequence test has an another file
 due to some additional logic that I needed.</font></li>
 </ol>
 <tt><font color="#993366"></font></tt>
-<br>&nbsp;
+<BR>
 <li>
-<font color="#000000">The <tt>test/build_functional_tests.xml</tt> file
-controls the building of the tests.&nbsp; Locate the "wsdl-setup" target.&nbsp;
-You will see a clause that runs the Wsdl2java code:</font></li>
-
-
-<br>&nbsp;
-<p><tt><font color="#993366">&lt;ant antfile="test/wsdl/Wsdl2javaTestSuite.xml"/&gt;</font></tt>
-<p><font color="#000000">Following this clause you will see some clauses
-that copy java files from the test directories.&nbsp; If you have additional
-files, you may need to copy them over.&nbsp; Examine the clause that I
-added to copy over SequenceInfo.java.</font>
-<br>&nbsp;
-<li>
-<font color="#000000">Now go to the <tt>test/wsdl/Wsdl2javaTestSuite.xml
-</tt>file.&nbsp;
-This file contains the clauses to run wsdl2java.&nbsp; Add a wsdl2java
-clause.&nbsp; Here is the one for SequenceTest:</font></li>
-
-
-<br>&nbsp;
+<font color="#000000">The <tt>test/wsdl/sequence/build.xml</tt> file
+controls the building of this test.&nbsp; Locate the "compile" target.&nbsp;
+Add a clause that runs the Wsdl2java code.  I would recommend stealing something from the
+test/wsdl/roundtrip/build.xml file (it does a LOT of wsdl2java and java2wsdl calls).
+Here is the one for SequenceTest:</font></li>
 <p><tt><font color="#663366">&nbsp;&nbsp;&nbsp; </font><font color="#993366">&lt;!--
 Sequence Test --></font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp; &lt;wsdl2java url="test/wsdl/sequence/SequenceTest.wsdl"</font></tt>
+<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp; &lt;wsdl2java url="${axis.home}/test/wsdl/sequence/SequenceTest.wsdl"</font></tt>
 <br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-output="build/work"</font></tt>
+output="${axis.home}/build/work"</font></tt>
 <br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 deployscope="session"</font></tt>
 <br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -761,7 +748,15 @@ testcase="no"></font></tt>
 <br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 &lt;mapping namespace="urn:SequenceTest2" package="test.wsdl.sequence"/&gt;</font></tt>
 <br><tt><font color="#993366">&nbsp;&nbsp;&nbsp; &lt;/wsdl2java></font></tt>
-<br>&nbsp;
+<br>
+<li>
+<font color="#000000">Enable the <font color="#993366">run</font><font color="#000000"> target in the new
+ build.xml file.</font> You need to choose from the execute-Component and the (soon to be introduced) 
+execute-Simple-Test target.  These control HOW the test is invoked when run as a single component.  
+The <font color="#993366">execute-Component</font> sets up the tcp-server and http-server prior to running the test, as 
+well as handles deploying and services that may be needed.  The <font color="#993366">execute-Simple-test</font> 
+simply invokes the raw test class file.<BR>
+<BR>
 <li>
 <font color="#000000">Done.&nbsp; Run </font><tt><font color="#993366">ant
 functional-tests</font><font color="#000000"> </font></tt><font color="#000000">to
@@ -769,6 +764,21 @@ verify.&nbsp; Check in your test.</font></li>
 
 <br>&nbsp;</ol>
 
+<h2><a NAME="TestStructure"></a>Test Structure</H2>
+<a href="AxisTestRedesign.html">The Test and Samples Redesign Document is here</a><BR>
+<P>
+As of Axis 1.0, RC1, we have moved to a "componentized" test structure.  Instead of having one high-level large 
+recursive function, there are smaller, simple "component" build.xml files in the leaf level of the test/** and 
+samples/** trees.</P>
+<P>
+These "component" files have a common layout. Their primary targets are:<BR>
+<UL>
+<LI>clean - reset the build destination(s)
+<LI>compile - javac, wsdl2java, java2wsdl instructions
+<LI>run - "executes" the test
+</UL>
+</P>
+<P>A "sample" test xml file can be found in test/templateTest</P>
 <h2>
 <a NAME="CodeChecks"></a>Adding Source Code Checks</h2>
 The Axis build performs certain automated checks of the files in the
