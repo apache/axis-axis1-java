@@ -319,8 +319,15 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
             return;
         }
 
-        writer.write(this.getAsString());
-        // easy, huh?
+        String xml = this.getAsString();
+        if(inclXmlDecl){
+            if(!xml.startsWith("<?xml")){
+                writer.write("<?xml version=\"1.0\" encoding=\"");
+                writer.write(currentEncoding);
+                writer.write("\"?>");
+            }
+        }
+        writer.write(xml);
     }
 
     /**
