@@ -294,7 +294,7 @@ public class WsdlAttributes {
                     int faultBodyType = USE_ENCODED;
 
                     Iterator faultIter =
-                            ((BindingFault)faultMapIter.next()).getExtensibilityElements().iterator();
+                            bFault.getExtensibilityElements().iterator();
                     for (; faultIter.hasNext();) {
                         Object obj = faultIter.next();
                         if (obj instanceof SOAPBody) {
