@@ -1,8 +1,7 @@
 /*
  * The Apache Software License, Version 1.1
  *
- *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights 
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -48,42 +47,37 @@
  * ====================================================================
  *
  * This software consists of voluntary contributions made by many
- * individuals on behalf of the Apache Software Foundation and was
- * originally based on software copyright (c) 1999, International
- * Business Machines, Inc., http://www.ibm.com.  For more
+ * individuals on behalf of the Apache Software Foundation.  For more
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.handlers ;
+package org.apache.axis.handlers;
 
-import org.apache.axis.* ;
-import org.apache.axis.utils.* ;
-import org.apache.axis.message.* ;
+import org.apache.axis.*;
+import org.apache.axis.registries.SimpleServiceRegistry;
+import org.apache.axis.utils.Debug;
 
-/**
- *
- * @author Doug Davis (dug@us.ibm.com)
+/** An <code>HTTPActionHandler</code> simply sets the context's TARGET
+ * property from the HTTPAction property.  We expect there to be a
+ * Router on the chain after us, to dispatch to the service named in
+ * the SOAPAction.
+ * 
+ * In the real world, this might do some more complex mapping of
+ * SOAPAction to a TARGET.
+ * 
+ * @author Glen Daniels (gdaniels@allaire.com)
  */
-public class EchoHandler extends BasicHandler {
+public class HTTPActionHandler extends BasicHandler
+{
+    public void invoke(MessageContext msgContext) throws AxisFault
+    {
+        Debug.Print( 1, "Enter: HTTPActionHandler::invoke" );
+        String action = (String)msgContext.getProperty(Constants.MC_HTTP_SOAPACTION);
+        if (action == null)
+            throw new AxisFault(new NullPointerException("HTTPActionHandler: No HTTPAction property in context!"));
 
-    public void invoke(MessageContext msgContext) throws AxisFault {
-        Debug.Print( 1, "Enter: EchoHandler::invoke" );
-        try {
-            Message  msg = msgContext.getIncomingMessage();
-            SOAPEnvelope env = (SOAPEnvelope) msg.getAs( "SOAPEnvelope" );
-            msgContext.setOutgoingMessage( new Message( env, "SOAPEnvelope" ) );
-        }
-        catch( Exception e ) {
-            Debug.Print( 1, e );
-            throw new AxisFault( e );
-        }
-        Debug.Print( 1, "Exit: EchoHandler::invoke" );
+        msgContext.setProperty(Constants.MC_TARGET, action);
+        Debug.Print( 1, "Exit : HTTPActionHandler::invoke" );
     }
-
-    public void undo(MessageContext msgContext) {
-        Debug.Print( 1, "Enter: EchoHandler::undo" );
-        Debug.Print( 1, "Exit: EchoHandler::undo" );
-    }
-
-};
+}

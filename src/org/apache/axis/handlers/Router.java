@@ -1,8 +1,7 @@
 /*
  * The Apache Software License, Version 1.1
  *
- *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights 
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -48,42 +47,46 @@
  * ====================================================================
  *
  * This software consists of voluntary contributions made by many
- * individuals on behalf of the Apache Software Foundation and was
- * originally based on software copyright (c) 1999, International
- * Business Machines, Inc., http://www.ibm.com.  For more
+ * individuals on behalf of the Apache Software Foundation.  For more
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.handlers ;
+package org.apache.axis.handlers;
 
-import org.apache.axis.* ;
-import org.apache.axis.utils.* ;
-import org.apache.axis.message.* ;
+import org.apache.axis.*;
+import org.apache.axis.registries.SimpleServiceRegistry;
+import org.apache.axis.utils.Debug;
 
-/**
- *
- * @author Doug Davis (dug@us.ibm.com)
+/** A <code>Router</code> is a Handler which has only one purpose in life:
+ * to look up the TARGET property in the passed MessageContext, then look
+ * up a Handler under that name in the ServiceRegistry.  Then it passes
+ * the MessageContext off to that Handler.
+ * 
+ * @author Glen Daniels (gdaniels@allaire.com)
  */
-public class EchoHandler extends BasicHandler {
+public class Router extends BasicHandler
+{
+    public void invoke(MessageContext msgContext) throws AxisFault
+    {
+        Debug.Print( 1, "Enter: Router::invoke" );
+        SimpleServiceRegistry registry = (SimpleServiceRegistry)msgContext.getProperty(Constants.SERVICE_REGISTRY);
+        if (registry == null)
+            throw new AxisFault(new NullPointerException("Router: No registry property in context!"));
+        
+        String target = (String)msgContext.getProperty(Constants.MC_TARGET);
+        if (target == null)
+            throw new AxisFault(new NullPointerException("Router: No target property in context!"));
+        
+        Handler h = registry.find( target );
 
-    public void invoke(MessageContext msgContext) throws AxisFault {
-        Debug.Print( 1, "Enter: EchoHandler::invoke" );
-        try {
-            Message  msg = msgContext.getIncomingMessage();
-            SOAPEnvelope env = (SOAPEnvelope) msg.getAs( "SOAPEnvelope" );
-            msgContext.setOutgoingMessage( new Message( env, "SOAPEnvelope" ) );
-        }
-        catch( Exception e ) {
-            Debug.Print( 1, e );
-            throw new AxisFault( e );
-        }
-        Debug.Print( 1, "Exit: EchoHandler::invoke" );
+        if (h == null)
+            throw new AxisFault(new Exception("Router: Couldn't find service '" + target + "' in the registry!"));
+        
+        // Make sure next dispatch, if any, is clean so we don't loop back.
+        msgContext.clearProperty(Constants.MC_TARGET);
+        
+        h.invoke(msgContext);
+        Debug.Print( 1, "Exit : Router::invoke" );
     }
-
-    public void undo(MessageContext msgContext) {
-        Debug.Print( 1, "Enter: EchoHandler::undo" );
-        Debug.Print( 1, "Exit: EchoHandler::undo" );
-    }
-
-};
+}

@@ -57,62 +57,24 @@
 
 package org.apache.axis.handlers ;
 
-import java.util.* ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
 
 /**
  *
  * @author Doug Davis (dug@us.ibm.com)
+ * @author Glen Daniels (gdaniels@allaire.com)
  */
-public class ErrorHandler implements Handler {
-  protected Hashtable  options ;
+public class ErrorHandler extends BasicHandler {
 
-  public void init() {
-  }
+    public void invoke(MessageContext msgContext) throws AxisFault {
+        Debug.Print( 1, "Enter: ErrorHandler::invoke" );
+        throw new AxisFault( "Server.Whatever", "ERROR", null, null );
+    }
 
-  public void cleanup() {
-  }
-
-  public void invoke(MessageContext msgContext) throws AxisFault {
-    Debug.Print( 1, "Enter: ErrorHandler::invoke" );
-    throw new AxisFault( "Server.Whatever", "ERROR", null, null );
-  }
-
-  public void undo(MessageContext msgContext) {
-    Debug.Print( 1, "Enter: ErrorHandler::undo" );
-    Debug.Print( 1, "Exit: ErrorHandler::undo" );
-  }
-
-  public boolean canHandleBlock(QName qname) {
-    return( false );
-  }
-
-  /**
-   * Add the given option (name/value) to this handler's bag of options
-   */
-  public void addOption(String name, Object value) {
-    if ( options == null ) options = new Hashtable();
-    options.put( name, value );
-  }
-
-  /**
-   * Returns the option corresponding to the 'name' given
-   */
-  public Object getOption(String name) {
-    if ( options == null ) return( null );
-    return( options.get(name) );
-  }
-
-  /**
-   * Return the entire list of options
-   */
-  public Hashtable getOptions() {
-    return( options );
-  }
-
-  public void setOptions(Hashtable opts) {
-    options = opts ;
-  }
+    public void undo(MessageContext msgContext) {
+        Debug.Print( 1, "Enter: ErrorHandler::undo" );
+        Debug.Print( 1, "Exit: ErrorHandler::undo" );
+    }
 
 };
