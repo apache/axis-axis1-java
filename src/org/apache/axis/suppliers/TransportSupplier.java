@@ -57,102 +57,29 @@ package org.apache.axis.suppliers;
 
 import java.util.Hashtable;
 import java.util.Vector;
-import java.util.Enumeration;
-import org.apache.axis.Supplier;
 import org.apache.axis.*;
-import org.apache.axis.utils.Debug;
 import org.apache.axis.registries.HandlerRegistry;
+import org.apache.axis.server.Transport;
 
-/** A <code>TargetedChainSupplier</code>
+/** This supplier knows how to construct Transports in particular.
  * 
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
-public class TargetedChainSupplier implements Supplier
+public class TransportSupplier extends TargetedChainSupplier
 {
-    String _myName;
-    Hashtable _options;
-    Vector _requestNames;
-    Vector _responseNames;
-    String _pivotName;
-    HandlerRegistry _registry;
-    
-    SimpleTargetedChain _chain = null;
-    
-    public TargetedChainSupplier(String myName,
+    public TransportSupplier(String myName,
                                  Vector requestNames,
                                  Vector responseNames,
                                  String pivotName,
                                  Hashtable options,
                                  HandlerRegistry registry)
     {
-        _myName = myName;
-        _requestNames = requestNames;
-        _responseNames = responseNames;
-        _pivotName = pivotName;
-        _options = options;
-        _registry = registry;
-    }
-    
-    private void addHandlersToChain(Vector names, Chain chain)
-    {
-      if (names == null)
-        return;
-      
-      Enumeration e = names.elements();
-      while (e.hasMoreElements()) {
-        String hName = (String)e.nextElement();
-        Handler h = _registry.find(hName);
-        chain.addHandler(h);
-      }
+      super(myName, requestNames, responseNames, pivotName,
+            options, registry);
     }
     
     public SimpleTargetedChain getNewChain()
     {
-      return new SimpleTargetedChain();
-    }
-    
-    public Handler getHandler()
-    {
-      if (_chain == null) {
-        Debug.Print(2, "TargetedChainSupplier: Building chain '" + _myName + 
-                       "'");
-
-        Handler h;
-        SimpleTargetedChain c = getNewChain();
-        c.setOptions(_options);
-        c.setName(_myName);
-        
-        if (!_requestNames.isEmpty()) {
-          if (_requestNames.size() == 1) {
-            h = _registry.find((String)_requestNames.elementAt(0));
-            c.setRequestHandler(h);
-          } else {
-            Chain chain = new SimpleChain();
-            addHandlersToChain(_requestNames, chain);
-            c.setRequestHandler(chain);
-          }
-        }
-        
-        h = _registry.find(_pivotName);
-        c.setPivotHandler(h);
-
-        if (!_responseNames.isEmpty()) {
-          if (_responseNames.size() == 1) {
-            h = _registry.find((String)_responseNames.elementAt(0));
-            c.setResponseHandler(h);
-          } else {
-            Chain chain = new SimpleChain();
-            addHandlersToChain(_responseNames, chain);
-            c.setResponseHandler(chain);
-          }
-        }
-        
-        _chain = c;
-      }
-      
-      Debug.Print(2, "TargetedChainSupplier: Returning chain '" + _myName + 
-                     "'");
-      
-      return _chain;
+      return new Transport();
     }
 }

@@ -133,15 +133,19 @@ public class Admin {
                   throws AxisFault
   {
     Debug.Print( 1, "Enter: Admin:AdminService" );
-    Document doc = process( msgContext, xml );
+    Document doc = process( msgContext, xml.getDocumentElement() );
     Debug.Print( 1, "Exit: Admin:AdminService" );
     return( doc );
   }
 
-  public Document process(MessageContext msgContext, Document doc) throws AxisFault {
-    return( process( msgContext, doc.getDocumentElement() ) );
-  }
-  
+  /** Process an engine configuration file by deploying appropriate stuff
+   * into the specified AxisEngine, and then telling it to save itself
+   * when we're done.
+   * 
+   * @param doc an XML document containing an Axis engine configuration
+   * @param engine the AxisEngine in which to deploy
+   * @exception Exception (should be DeploymentException?)
+   */
   public static void processEngineConfig(Document doc, AxisEngine engine)
     throws Exception
   {
@@ -157,9 +161,21 @@ public class Admin {
     
     nl = el.getElementsByTagName("transports");
     deploy(nl, engine);
-      
+    
+    engine.saveConfiguration();
   }
   
+  /** Deploy a set of individual items.
+   * 
+   * NOTE: as it stands this doesn't care about the relationship between
+   * these items and the enclosing tag.  We shouldn't really allow <service>
+   * deployment underneath the <transports> tag, for instance.  Since this
+   * is going to mutate some more, this is the simple way to do it for now.
+   * 
+   * @param nl a DOM NodeList of deployable items.
+   * @param engine the AxisEngine into which we deploy.
+   * @exception Exception (should be DeploymentException?)
+   */
   static void deploy(NodeList nl, AxisEngine engine) throws Exception
   {
     for (int i = 0; i < nl.getLength(); i++) {
@@ -192,14 +208,16 @@ public class Admin {
    * The meat of the Admin service.  Process an xML document rooted with
    * a "deploy", "undeploy", "list", or "quit" element.
    * 
-   * @param msgContext the MessageContext we're servicing
+   * @param msgContext the MessageContext we're processing
    * @param root the root Element of the XML
    * @return an XML Document indicating the results.
    */
-  public Document process(MessageContext msgContext, Element root) throws AxisFault {
+  public Document process(MessageContext msgContext, Element root)
+    throws AxisFault
+  {
     Document doc = null ;
 
-    AxisEngine engine =  msgContext.getAxisEngine();
+    AxisEngine engine = msgContext.getAxisEngine();
     HandlerRegistry hr = engine.getHandlerRegistry();
     HandlerRegistry sr = engine.getServiceRegistry();
 
@@ -228,24 +246,7 @@ public class Admin {
         }
         
       if ( action.equals("list") ) {
-        doc = XMLUtils.newDocument();
-        
-        Element tmpEl = doc.createElement("engineConfig");
-        doc.appendChild(tmpEl);
-        
-        Element el = doc.createElement("handlers");
-        list(el, engine.getHandlerRegistry());
-        tmpEl.appendChild(el);
-        
-        el = doc.createElement("services");
-        list(el, engine.getServiceRegistry());
-        tmpEl.appendChild(el);
-        
-        el = doc.createElement("transports");
-        list(el, engine.getTransportRegistry());
-        tmpEl.appendChild(el);
-
-        return( doc );
+        return listConfig(engine);
       }
   
       NodeList list = root.getChildNodes();
@@ -298,6 +299,8 @@ public class Admin {
                                "Unknown type to " + action + ": " + type,
                                null, null );
       }
+      engine.saveConfiguration();
+      
       doc = XMLUtils.newDocument();
       doc.appendChild( root = doc.createElement( "Admin" ) );
       root.appendChild( doc.createTextNode( "Done processing" ) );
@@ -310,14 +313,44 @@ public class Admin {
     return( doc );
   }
   
-  /**
-   * Return an XML Element containing the engine's handler or service
-   * configuration.
+  /** Get an XML document representing this engine's configuration.
    * 
-   * @param doc the XML Document within which to work.
-   * @param engine the AxisEngine to query
-   * @param doServices true if we should return service configuration,
-   *                   otherwise we return handler configuration.
+   * This document is suitable for saving and reloading into the
+   * engine.
+   * 
+   * @param engine the AxisEngine to work with
+   * @return an XML document holding the engine config
+   * @exception AxisFault
+   */
+  public static Document listConfig(AxisEngine engine)
+    throws AxisFault
+  {
+    Document doc = XMLUtils.newDocument();
+    
+    Element tmpEl = doc.createElement("engineConfig");
+    doc.appendChild(tmpEl);
+    
+    Element el = doc.createElement("handlers");
+    list(el, engine.getHandlerRegistry());
+    tmpEl.appendChild(el);
+    
+    el = doc.createElement("services");
+    list(el, engine.getServiceRegistry());
+    tmpEl.appendChild(el);
+    
+    el = doc.createElement("transports");
+    list(el, engine.getTransportRegistry());
+    tmpEl.appendChild(el);
+
+    return( doc );
+  }
+  
+  /**
+   * Return an XML Element containing the configuration info for one
+   * of the engine's Handler registries.
+   * 
+   * @param root the Element to work with (same as the one we return)
+   * @param registry the registry to write into this Element
    * @return Element our config element, suitable for pumping back through
    *                 Admin processing later, to redeploy.
    */
@@ -600,7 +633,7 @@ public class Admin {
     getOptions( elem, options );
     
     HandlerRegistry hr = engine.getHandlerRegistry();
-    TargetedChainSupplier supp = new TargetedChainSupplier(name,
+    TargetedChainSupplier supp = new TransportSupplier(name,
                                                            reqNames,
                                                            respNames,
                                                            sender,
@@ -703,7 +736,7 @@ public class Admin {
       for ( i = 1 ; i < args.length ; i++ ) {
         System.out.println( "Processing '" + args[i] + "'" );
         Document doc = XMLUtils.newDocument( new FileInputStream( args[i] ) );
-        admin.process(msgContext, doc);
+        admin.process(msgContext, doc.getDocumentElement());
       }
     }
     catch( AxisFault e ) {
