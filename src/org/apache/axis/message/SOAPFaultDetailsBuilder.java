@@ -32,6 +32,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 import javax.xml.namespace.QName;
+import java.util.Iterator;
 
 /**
  * Handle deserializing fault details.
@@ -118,6 +119,18 @@ public class SOAPFaultDetailsBuilder extends SOAPHandler implements Callback
                 }
             }
 
+            if (faultDesc == null) {
+                Iterator i = op.getFaults().iterator();
+                while(i.hasNext()) {
+                    FaultDesc fdesc = (FaultDesc) i.next();
+                    if(fdesc.getClassName().equals(name)) {
+                        faultDesc = fdesc;  
+                        faultXmlType = fdesc.getXmlType();
+                        break;
+                    }
+                }
+            }
+            
             // Set the class if we found a description
             if (faultDesc != null) {
                 try {
