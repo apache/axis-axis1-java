@@ -201,6 +201,11 @@ public abstract class AxisEngine extends BasicHandler
 
     }
 
+    /**
+     * cleanup routine removes application scoped objects
+     * There is a small risk of this being called more than once
+     * so the cleanup should be designed to resist that event
+     */
     public void cleanup() {
         super.cleanup();
 
@@ -214,6 +219,7 @@ public abstract class AxisEngine extends BasicHandler
                 if (obj != null && obj instanceof ServiceLifecycle) {
                     ((ServiceLifecycle)obj).destroy();
                 }
+                session.remove(key);
             }
         }
     }
