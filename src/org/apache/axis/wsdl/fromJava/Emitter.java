@@ -493,8 +493,13 @@ public class Emitter {
 
         Service service = def.createService();
 
-        service.setQName(
-           new javax.wsdl.QName(implNS, getServiceName()+"Service"));
+        if (getServiceName().equals(clsName)) {
+            service.setQName(
+                new javax.wsdl.QName(implNS, getServiceName() + "Service"));
+        } else {
+            service.setQName(
+                new javax.wsdl.QName(implNS, getServiceName()));
+        }
         def.addService(service);
 
         Port port = def.createPort();
@@ -798,8 +803,6 @@ public class Emitter {
 
     /**
      * Sets the <code>Class</code> to export.
-     * If the class looks like a skeleton class, do some searching to find the
-     * interface class and try and locate and implementation class.                 
      * @param cls the <code>Class</code> to export
      * @param name service name
      */

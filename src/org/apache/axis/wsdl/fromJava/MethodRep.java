@@ -90,7 +90,7 @@ public class MethodRep {
     public MethodRep(Method method, Class[] types, short[] modes, String[] paramNames) {
         _name = method.getName();
         String retName = "return";
-        if ((paramNames != null) && (paramNames[0] != null)) {
+        if ((paramNames != null) && (paramNames[0] != null) && !paramNames.equals("")) {
             retName = paramNames[0];
         }
         _returns = new ParamRep(retName, method.getReturnType(), ParamRep.OUT);
