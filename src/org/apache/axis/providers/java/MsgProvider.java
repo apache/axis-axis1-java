@@ -82,7 +82,7 @@ public class MsgProvider extends JavaProvider {
      * take the Request xml file and call the Admin processing.
      */
     public void processMessage (MessageContext msgContext,
-                                String clsName,
+                                String serviceUrn,
                                 String methodName,
                                 SOAPEnvelope reqEnv,
                                 SOAPEnvelope resEnv,
@@ -114,7 +114,7 @@ public class MsgProvider extends JavaProvider {
          * looking at the URL (transport-level dispatch), or even after looking
          * into the SOAP message itself...)
          */
-        if (clsName.equals("org.apache.axis.utils.Admin")) {
+        if (serviceUrn.equals("org.apache.axis.utils.Admin")) {
             ServiceDescription sd = new ServiceDescription("Admin", false);
             msgContext.setServiceDescription(sd);
         }

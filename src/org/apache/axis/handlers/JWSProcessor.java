@@ -55,6 +55,12 @@
 package org.apache.axis.handlers;
 
 import java.io.* ;
+import java.util.StringTokenizer;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.jar.*;
+import java.net.URL;
+import java.net.URLClassLoader;
 
 import org.apache.axis.* ;
 import org.apache.axis.utils.Debug ;
@@ -97,8 +103,10 @@ public class JWSProcessor extends BasicHandler
             Runtime  rt      = Runtime.getRuntime();
             String   jwsFile = msgContext.getStrProp(Constants.MC_REALPATH);
             Debug.Print( 2, "jwsFile: " + jwsFile );
-            String   jFile   = jwsFile.substring(0, jwsFile.length()-3) + "java" ;
-            String   cFile   = jwsFile.substring(0, jwsFile.length()-3) + "class" ;
+            String   jFile   = jwsFile.substring(0, jwsFile.length()-3) +
+                    "java" ;
+            String   cFile   = jwsFile.substring(0, jwsFile.length()-3) +
+                    "class" ;
             Debug.Print( 2, "jFile: " + jFile );
             Debug.Print( 2, "cFile: " + cFile );
 
@@ -143,12 +151,12 @@ public class JWSProcessor extends BasicHandler
 
                 args = new String[] { "-d", outdir,
                           "-classpath",
-                          System.getProperty("java.class.path" ),
+                          getDefaultClasspath(msgContext),
                           jFile };
                 boolean           result   = compiler.compile( args );
 
-                /* Delete the temporary *.java file and check the return code */
-                /**************************************************************/
+                /* Delete the temporary *.java file and check return code */
+                /**********************************************************/
                 (new File(jFile)).delete();
 
                 if ( !result ) {
@@ -191,7 +199,7 @@ public class JWSProcessor extends BasicHandler
             msgContext.setServiceHandler( rpc );
 
             rpc.addOption( "className", clsName );
-            
+
             /** For now, allow all methods - we probably want to have a way to
             * configure this in the future.
             */
@@ -222,4 +230,105 @@ public class JWSProcessor extends BasicHandler
         Debug.Print( 1, "Enter: JWSProcessor::undo" );
         Debug.Print( 1, "Exit: JWSProcessor::undo" );
     }
+
+    private String getDefaultClasspath(MessageContext msgContext)
+    {
+        StringBuffer classpath = new StringBuffer();
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+
+        while(cl != null)
+        {
+            if(cl instanceof URLClassLoader)
+            {
+                URL[] urls = ((URLClassLoader) cl).getURLs();
+
+                for(int i=0; i < urls.length; i++)
+                {
+                    classpath.append(urls[i].getPath());
+                    classpath.append(File.pathSeparatorChar);
+
+
+                    // if its a jar extract Class-Path entries from manifest
+                    File file = new File(urls[i].getFile());
+                    if(file.isFile())
+                    {
+                        FileInputStream fis = null;
+
+                        try
+                        {
+                            fis = new FileInputStream(file);
+
+                            if(isJar(fis))
+                            {
+                                JarFile jar = new JarFile(file);
+                                Manifest manifest = jar.getManifest();
+                                if (manifest != null)
+                                {
+                                    Attributes attributes = manifest.
+                                            getMainAttributes();
+                                    if (attributes != null)
+                                    {
+                                        String s = attributes.
+                           getValue(java.util.jar.Attributes.Name.CLASS_PATH);
+                                        String base = file.getParent();
+
+                                        if (s != null)
+                                        {
+                                            StringTokenizer st =
+                                                  new StringTokenizer(s, " ");
+                                            while(st.hasMoreTokens())
+                                            {
+                                                String t = st.nextToken();
+                                                classpath.append(base +
+                                                      File.separatorChar + t);
+                                                classpath.append(
+                                                      File.pathSeparatorChar);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        catch(IOException ioe)
+                        {
+                            if(fis != null)
+                                try {
+                                    fis.close();
+                                } catch (IOException ioe2) {}
+                        }
+                    }
+                }
+            }
+
+            cl = cl.getParent();
+        }
+
+        // boot classpath isn't found in above search
+        if(System.getProperty("sun.boot.class.path") != null)
+        {
+            classpath.append(System.getProperty("sun.boot.class.path"));
+        }
+
+        return classpath.toString();
+    }
+
+    // an exception or emptiness signifies not a jar
+    public static boolean isJar(InputStream is)
+    {
+        try
+        {
+            JarInputStream jis = new JarInputStream(is);
+            if(jis.getNextEntry() != null)
+            {
+                return true;
+            }
+        }
+        catch(IOException ioe)
+        {
+        }
+
+        return false;
+    }
+
+
 }

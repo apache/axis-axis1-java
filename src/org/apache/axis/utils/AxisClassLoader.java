@@ -74,7 +74,7 @@ public class AxisClassLoader extends ClassLoader {
     Hashtable classCache          = new Hashtable() ;
 
     public AxisClassLoader() {
-        super();
+        super(Thread.currentThread().getContextClassLoader());
     }
 
     static public AxisClassLoader getClassLoader() {

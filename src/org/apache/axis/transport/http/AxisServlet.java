@@ -79,12 +79,12 @@ public class AxisServlet extends HttpServlet {
     public void init() {
         String param = getInitParameter("transport.name");
         ServletContext context = getServletConfig().getServletContext();
-        
+
         if (param == null)
             param = context.getInitParameter("transport.name");
         if (param != null)
             transportName = param;
-        
+
         engine = (AxisEngine)context.getAttribute(AXIS_ENGINE);
     }
 
@@ -96,9 +96,9 @@ public class AxisServlet extends HttpServlet {
         HandlerRegistry hr = engine.getHandlerRegistry();
 
         String realpath = context.getRealPath(req.getServletPath());
-        if (realpath != null) {
+        if (realpath != null && req.getPathInfo() != null) {
             msgContext.setProperty(Constants.MC_REALPATH, realpath);
-        
+
             try {
                 String url = req.getScheme() + "://" +
                         req.getServerName() + ":" +
@@ -144,7 +144,7 @@ public class AxisServlet extends HttpServlet {
             "transport name appears to be '<b>" + transportName + "</b>'");
         res.getWriter().println("</html>");
     }
-    
+
     public void doPost(HttpServletRequest req, HttpServletResponse res)
         throws ServletException, IOException {
         ServletConfig  config  = getServletConfig();
@@ -153,12 +153,12 @@ public class AxisServlet extends HttpServlet {
 
         if (engine == null)
             engine = (AxisEngine)context.getAttribute(AXIS_ENGINE);
-        
+
         if (engine == null) {
             // !!! should return a SOAP fault...
             throw new ServletException("Couldn't find AxisEngine!");
         }
-        
+
         /* Place the Request message in the MessagContext object - notice */
         /* that we just leave it as a 'ServletRequest' object and let the  */
         /* Message processing routine convert it - we don't do it since we */
@@ -183,7 +183,7 @@ public class AxisServlet extends HttpServlet {
         msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST, req );
         msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETRESPONSE, res );
         msgContext.setProperty(Constants.MC_REMOTE_ADDR, req.getRemoteAddr());
-        
+
         /* Save the SOAPAction header in the MessageContext bag - this will */
         /* be used to tell the Axis Engine which service is being invoked.  */
         /* This will save us the trouble of having to parse the Request     */
@@ -196,7 +196,7 @@ public class AxisServlet extends HttpServlet {
         /********************************************************************/
         String  tmp ;
         tmp = (String) req.getHeader( HTTPConstants.HEADER_SOAP_ACTION );
-        
+
         try {
             /** Technically, if we don't find this header, we should probably fault.
             * It's required in the SOAP HTTP binding.
@@ -206,13 +206,13 @@ public class AxisServlet extends HttpServlet {
                     "No SOAPAction header!",
                     null, null );
             }
-            
+
             if ( "".equals(tmp) )
                 tmp = req.getContextPath(); // Is this right?
-            
+
             if ( tmp != null )
                 msgContext.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, tmp );
-            
+
             // Create a Session wrapper for the HTTP session.
             // These can/should be pooled at some point.  (Sam is Watching! :-)
             msgContext.setSession(new AxisHttpSession(req.getSession()));
@@ -220,7 +220,7 @@ public class AxisServlet extends HttpServlet {
             /* Save the real path */
             /**********************/
             String realpath = context.getRealPath(req.getServletPath());
-            if (realpath != null) 
+            if (realpath != null)
                 msgContext.setProperty(Constants.MC_REALPATH, realpath);
 
             /* Invoke the Axis engine... */

@@ -70,167 +70,175 @@ import org.w3c.dom.Document;
  * envelope body processing to subclass via abstract processMessage method.
  *
  * @author Doug Davis (dug@us.ibm.com)
+ * @author Carl Woolf (cwoolf@macromedia.com)
  */
 public abstract class JavaProvider extends BasicProvider {
-    
+
     // from the original stubbed-out JavaProvider...
     // not quite sure what these are for but it is to do with WSDD... -- RobJ
     public static final String OPTION_CLASSNAME = "className";
     public static final String OPTION_IS_STATIC = "isStatic";
     public static final String OPTION_CLASSPATH = "classPath";
-    
+
     private static final boolean DEBUG_LOG = false;
-    
+
+    private String classNameOption = "className";
+    private String allowedMethodsOption = "methodName";
+
     /**
      * Get the service object whose method actually provides the service.
      * May look up in session table.
      */
-    public Object getServiceObject (MessageContext msgContext, Handler service, JavaClass jc, String clsName)
+    public Object getServiceObject (MessageContext msgContext, Handler service,
+                                    Object so_factory, String clsName)
         throws Exception
     {
         String serviceName = msgContext.getTargetService();
-        
-        // scope can be "Request", "Session", "Application" (as with Apache SOAP)
+
+        // scope can be "Request", "Session", "Application"
+        // (as with Apache SOAP)
         String scope = (String)service.getOption("scope");
         if (scope == null) {
             // default is Request scope
             scope = "Request";
         }
-        
+
         if (scope.equals("Request")) {
-            
+
             // make a one-off
-            return jc.getJavaClass().newInstance();
-            
+            return getNewServiceObject(so_factory);
+
         } else if (scope.equals("Session")) {
-            
+
             // look in incoming session
             if (msgContext.getSession() != null) {
                 // store service objects in session, indexed by class name
                 Object obj = msgContext.getSession().get(serviceName);
                 if (obj == null) {
-                    obj = jc.getJavaClass().newInstance();
+                    obj = getNewServiceObject(so_factory);
                     msgContext.getSession().set(serviceName, obj);
                 }
                 return obj;
             } else {
                 // was no incoming session, sigh, treat as request scope
-                return jc.getJavaClass().newInstance();
+                return getNewServiceObject(so_factory);
             }
-            
+
         } else if (scope.equals("Application")) {
-            
+
             // MUST be AxisEngine here!
             AxisEngine engine = msgContext.getAxisEngine();
             if (engine.getApplicationSession() != null) {
                 // store service objects in session, indexed by class name
                 Object obj = engine.getApplicationSession().get(serviceName);
                 if (obj == null) {
-                    obj = jc.getJavaClass().newInstance();
+                    obj = getNewServiceObject(so_factory);
                     engine.getApplicationSession().set(serviceName, obj);
                 }
                 return obj;
             } else {
                 // was no incoming session, sigh, treat as request scope
-                return jc.getJavaClass().newInstance();
+                return getNewServiceObject(so_factory);
             }
-            
+
         } else {
-            
+
             // NOTREACHED
             return null;
-            
+
         }
     }
-    
-    
+
     /**
      * Process the current message.  Side-effect resEnv to create return value.
      *
      * @param msgContext self-explanatory
      * @param clsName the class name of the ServiceHandler
-     * @param methodName the method name of ditto
+     * @param allowedMethods the 'method name' of ditto
      * @param reqEnv the request envelope
      * @param resEnv the response envelope
      * @param jc the JavaClass of the service object
      * @param obj the service object itself
      */
     public abstract void processMessage (MessageContext msgContext,
-                                         String clsName,
-                                         String methodName,
+                                         String serviceUrn,
+                                         String allowedMethods,
                                          SOAPEnvelope reqEnv,
                                          SOAPEnvelope resEnv,
                                          JavaClass jc,
                                          Object obj)
         throws Exception;
-    
-    
+
+
     /**
      * Invoke the message by obtaining various common fields, looking up
      * the service object (via getServiceObject), and actually processing
      * the message (via processMessage).
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
-        Debug.Print( 1, "Enter: JavaProvider::invoke (for provider "+this+")" );
-        
+        Debug.Print(1, "Enter: JavaProvider::invoke (for provider "+this+")");
+
         /* Find the service we're invoking so we can grab it's options */
         /***************************************************************/
-        String serviceName = msgContext.getTargetService();
+        String serviceUrn = msgContext.getTargetService();
         Handler service = msgContext.getServiceHandler();
-        
+
         /* Now get the service (RPC) specific info  */
         /********************************************/
-        String  clsName    = (String) service.getOption( "className" );
-        String  methodName = (String) service.getOption( "methodName" );
-        
+        String  clsName    = getServiceClassName(service);
+        String  allowedMethods = getServiceAllowedMethods(service);
+
         if ((clsName == null) || clsName.equals(""))
-          throw new AxisFault("Server.NoClassForService",
-            "No 'className' option was configured for the service '" +
-               serviceName + "'",
-            null, null);
-        
-        /** ??? Should we enforce setting methodName?  As it was,
-         * if it's null, we allowed any method.  This seems like it might
-         * be considered somewhat insecure (it's an easy mistake to
-         * make).  Tossing an Exception if it's not set, and using "*"
-         * to explicitly indicate "any method" is probably better.
-         */
-        if ((methodName == null) || methodName.equals(""))
-          throw new AxisFault("Server.NoMethodConfig",
-            "No 'methodName' option was configured for the service '" +
-               serviceName + "'",
-            null, null);
-        
-        if (methodName.equals("*"))
-          methodName = null;
-        
+            throw new AxisFault("Server.NoClassForService",
+                "No '" +
+                getServiceClassNameOptionName() +
+                "' option was configured for the service '" +
+                serviceUrn + "'",
+                null, null);
+
+        /** ??? Should we enforce setting allowedMethods?  As it was,
+        * if it's null, we allowed any method.  This seems like it might
+        * be considered somewhat insecure (it's an easy mistake to
+        * make).  Tossing an Exception if it's not set, and using "*"
+        * to explicitly indicate "any method" is probably better.
+        */
+        if ((allowedMethods == null) || allowedMethods.equals(""))
+            throw new AxisFault("Server.NoMethodConfig",
+                "No '" +
+                getServiceAllowedMethodsOptionName() +
+                "' option was configured for the service '" +
+                serviceUrn + "'",
+                null, null);
+
+        if (allowedMethods.equals("*"))
+            allowedMethods = null;
+
         try {
-            /* We know we're doing a Java/RPC call so we can ask for the */
-            /* SOAPBody as an RPCBody and process it accordingly.        */
-            /*************************************************************/
             int             i ;
-            AxisClassLoader cl     = msgContext.getClassLoader();
-            JavaClass       jc     = cl.lookup(clsName);
-            Class           cls    = jc.getJavaClass();
-            Object          obj    = getServiceObject(msgContext, service, jc, clsName);
-            
-            Message         reqMsg  = msgContext.getRequestMessage();
-            SOAPEnvelope    reqEnv  = (SOAPEnvelope) reqMsg.getAsSOAPEnvelope();
-            Message         resMsg  = msgContext.getResponseMessage();
-            SOAPEnvelope    resEnv  = (resMsg == null) ?
-                new SOAPEnvelope() :
-                (SOAPEnvelope)resMsg.getAsSOAPEnvelope();
-            
+
+            Object so_factory = getServiceObjectFactory(msgContext, clsName);
+            Object obj        = getServiceObject(msgContext, service,
+                                                 so_factory, clsName);
+            JavaClass jc	  = new JavaClass(obj.getClass());
+
+            Message        reqMsg  = msgContext.getRequestMessage();
+            SOAPEnvelope   reqEnv  = (SOAPEnvelope)reqMsg.getAsSOAPEnvelope();
+            Message        resMsg  = msgContext.getResponseMessage();
+            SOAPEnvelope   resEnv  = (resMsg == null) ?
+                                     new SOAPEnvelope() :
+                                     (SOAPEnvelope)resMsg.getAsSOAPEnvelope();
+
             /** If the class knows what it should be exporting,
-             * respect its wishes.
-             */
+            * respect its wishes.
+            */
             if (obj instanceof AxisServiceConfig) {
-              methodName = ((AxisServiceConfig)obj).getMethods();
+                allowedMethods = ((AxisServiceConfig)obj).getMethods();
             }
-            
-            processMessage(msgContext, serviceName, methodName, reqEnv, resEnv, jc, obj);
-            
-            // get the response message again!  it may have been explicitly set!
+
+            processMessage(msgContext, serviceUrn, allowedMethods, reqEnv,
+                           resEnv, jc, obj);
+
+            // get the response message again! It may have been explicitly set!
             // (by, say, a proxy service :-) -- RobJ
             if (msgContext.getResponseMessage() == null) {
                 resMsg = new Message(resEnv);
@@ -242,7 +250,7 @@ public abstract class JavaProvider extends BasicProvider {
             if ( !(exp instanceof AxisFault) ) exp = new AxisFault(exp);
             throw (AxisFault) exp ;
         }
-        Debug.Print( 1, "Exit: JavaProvider::invoke (for provider "+this+")" );
+        Debug.Print( 1, "Exit: JavaProvider::invoke (for provider "+this+")");
     }
 
     public void generateWSDL(MessageContext msgContext) throws AxisFault {
@@ -305,4 +313,66 @@ public abstract class JavaProvider extends BasicProvider {
         Debug.Print( 1, "Exit: RPCDispatchHandler::undo" );
     }
 
-};
+    ///////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////
+    /////// Default methods for java classes. Override, eg, for
+    ///////   ejbeans
+    ///////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////
+
+    /**
+     * Default java service object comes from simply instantiating the
+     *   class wrapped in jc
+     *
+     */
+    protected Object getNewServiceObject(Object factory)
+        throws Exception
+    {
+        JavaClass jc = (JavaClass)factory;
+
+        return jc.getJavaClass().newInstance();
+    }
+
+    /**
+     *
+     */
+    protected String getServiceClassName(Handler service)
+    {
+        return (String) service.getOption( classNameOption );
+    }
+    /**
+     *
+     */
+    protected String getServiceAllowedMethods(Handler service)
+    {
+        return (String) service.getOption( allowedMethodsOption );
+    }
+    /**
+     *
+     */
+    protected String getServiceClassNameOptionName()
+    {
+        return classNameOption;
+    }
+    /**
+     *
+     */
+    protected String getServiceAllowedMethodsOptionName()
+    {
+        return allowedMethodsOption;
+    }
+
+    /**
+     *
+     */
+    protected Object getServiceObjectFactory(MessageContext msgContext,
+                                             String clsName)
+        throws Exception
+    {
+        AxisClassLoader cl     = msgContext.getClassLoader();
+        JavaClass       jc     = cl.lookup(clsName);
+
+        return jc;
+    }
+
+}
