@@ -8,6 +8,7 @@
 package test.wsdl.nested;
 import test.wsdl.nested.holders.PE_ADDRESSHolder;
 import test.wsdl.nested.holders.RETURNHolder;
+import org.apache.axis.message.MessageElement;
 
 public class Nested2ServiceTestCase extends junit.framework.TestCase {
     public Nested2ServiceTestCase(String name) {
@@ -37,7 +38,10 @@ public class Nested2ServiceTestCase extends junit.framework.TestCase {
             RETURN ret = rETURN.value;
             assertTrue("NAME is wrong", address.getNAME().equals("Becker Berlin"));
             assertTrue("LOGMSGNO is wrong", ret.getLOG_MSG_NO().equals("123456"));
-            assertTrue("any is wrong:" + address.getAny(), address.getAny()!=null && address.getAny().equals("Test Any"));
+            MessageElement [] any = address.get_any();
+            assertNotNull("No 'any' content", any);
+            assertTrue("any is wrong:" + any[0],
+                       any[0].getObjectValue().equals("Test Any"));
         }
         catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);

@@ -64,7 +64,6 @@ import java.lang.reflect.InvocationTargetException;
 import org.apache.commons.discovery.DiscoverClass;
 import org.apache.commons.discovery.DiscoveryException;
 import org.apache.commons.discovery.base.Environment;
-import org.apache.commons.discovery.base.ImplClass;
 import org.apache.commons.discovery.base.SPInterface;
 import org.apache.commons.discovery.tools.ManagedProperties;
 

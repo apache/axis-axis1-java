@@ -8,6 +8,9 @@
 package test.wsdl.nested;
 import test.wsdl.nested.holders.RETURNHolder;
 import test.wsdl.nested.holders.PE_ADDRESSHolder;
+import org.apache.axis.message.MessageElement;
+
+import javax.xml.namespace.QName;
 
 public class Nested2BindingImpl implements test.wsdl.nested.Nested2PortType {
     public void nestedSvc2(java.lang.String cUSTOMERNO, java.lang.String pIDISTRCHAN, java.lang.String pIDIVISION, java.lang.String pIPASSBUFFER, java.lang.String pISALESORG, PE_ADDRESSHolder pE_ADDRESS, RETURNHolder rETURN) throws java.rmi.RemoteException {
@@ -35,7 +38,9 @@ public class Nested2BindingImpl implements test.wsdl.nested.Nested2PortType {
         address.setCURRENCY_ISO("");
         address.setCOUNTRYISO("DE");
         address.setONLY_CHANGE_COMADDRESS("X");
-        address.setAny("Test Any");
+        MessageElement me = new MessageElement(new QName("foo", "bar"),
+                                               "Test Any");
+        address.set_any(new MessageElement [] { me });
 
         RETURN ret = new RETURN();
         ret.setTYPE("");

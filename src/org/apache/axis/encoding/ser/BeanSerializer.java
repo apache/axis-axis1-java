@@ -57,6 +57,7 @@ package org.apache.axis.encoding.ser;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
+import org.apache.axis.message.MessageElement;
 import org.apache.axis.description.FieldDesc;
 import org.apache.axis.description.TypeDesc;
 import org.apache.axis.encoding.SerializationContext;
@@ -236,14 +237,15 @@ public class BeanSerializer implements Serializer, Serializable {
             BeanPropertyDescriptor anyDesc = typeDesc == null ? null :
                     typeDesc.getAnyDesc();
             if (anyDesc != null) {
-                // If we have "extra" content here, get the value and serialize
-                // it with the element name matching the type name for now.
+                // If we have "extra" content here, it'll be an array
+                // of MessageElements.  Serialize each one.
                 Object anyVal = anyDesc.get(value);
-                if (anyVal != null) {
-                    QName typeQName = context.getQNameForClass(anyVal.getClass());
-                    context.serialize(typeQName, null,
-                                      anyVal, typeQName,
-                                      false, Boolean.TRUE);
+                if (anyVal != null && anyVal instanceof MessageElement[]) {
+                    MessageElement [] anyContent = (MessageElement[])anyVal;
+                    for (int i = 0; i < anyContent.length; i++) {
+                        MessageElement element = anyContent[i];
+                        element.output(context);
+                    }
                 }
             }
         } catch (InvocationTargetException ite) {

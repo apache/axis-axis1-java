@@ -176,6 +176,12 @@ public class MessageElement implements SOAPElement, Serializable
         objectValue = value;
     }
 
+    public MessageElement(QName name, Object value)
+    {
+        this(name.getNamespaceURI(), name.getLocalPart());
+        objectValue = value;
+    }
+
     public MessageElement(Element elem)
     {
         elementRep = elem;
@@ -752,7 +758,7 @@ public class MessageElement implements SOAPElement, Serializable
         if (objectValue != null) {
             context.serialize(new QName(namespaceURI, name),
                               attributes,
-                              objectValue);
+                              objectValue, null, false, Boolean.TRUE);
             return;
         }
 

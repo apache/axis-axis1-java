@@ -111,7 +111,7 @@ public class Constants {
     public static final String ENTERPRISE_LOG_CATEGORY = "org.apache.axis.enterprise";
 
     /** The name of the field which accepts xsd:any content in Beans */
-    public static final String ANYCONTENT = "any";
+    public static final String ANYCONTENT = "_any";
 
     /**
      * Returns true if SOAP_ENV Namespace

@@ -194,7 +194,7 @@ public class JavaBeanWriter extends JavaClassWriter {
                 String typeName = elem.getType().getName();
                 String variableName;
                 if (elem.getAnyElement()) {
-                    typeName = "java.lang.Object";
+                    typeName = "org.apache.axis.message.MessageElement []";
                     variableName = Constants.ANYCONTENT;
                 } else {
                     String elemName = elem.getName().getLocalPart();
