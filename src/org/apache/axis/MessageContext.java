@@ -107,41 +107,41 @@ public class MessageContext implements SOAPMessageContext {
      * message heading to the server.  If we're on the server, this is the
      * incoming message we've received from the client.
      */
-    private Message requestMessage ;
+    private Message      requestMessage;
 
     /**
      * The response message.  If we're on the server, this is the outgoing
      * message heading back to the client.  If we're on the client, this is the
      * incoming message we've received from the server.
      */
-    private Message responseMessage ;
+    private Message      responseMessage;
 
     /**
      * That unique key/name that the next router/dispatch handler should use
      * to determine what to do next.
      */
-    private String           targetService ;
+    private String       targetService;
 
     /**
      * The name of the Transport which this message was received on (or is
      * headed to, for the client).
      */
-    private String           transportName;
+    private String       transportName;
 
     /**
      * The default classloader that this service should use
      */
-    private ClassLoader  classLoader ;
+    private ClassLoader  classLoader;
 
     /**
      * The AxisEngine which this context is involved with
      */
-    private AxisEngine       axisEngine;
+    private AxisEngine   axisEngine;
 
     /**
      * A Session associated with this request.
      */
-    private Session          session;
+    private Session      session;
 
     /**
      * Should we track session state, or not?
@@ -149,24 +149,24 @@ public class MessageContext implements SOAPMessageContext {
      * Could potentially refactor this so that
      * maintainSession iff session != null...
      */
-    private boolean          maintainSession = false;
+    private boolean      maintainSession = false;
 
     /**
      * Are we doing request stuff, or response stuff?
      */
-    private boolean          havePassedPivot = false;
+    private boolean      havePassedPivot = false;
 
     /**
      * Maximum amount of time to wait on a request, in milliseconds.
      */
-    private int              timeout = 0;
+    private int          timeout = 0;
 
     /**
      * An indication of whether we require "high fidelity" recording of
      * deserialized messages for this interaction.  Defaults to true for
      * now, and can be set to false, usually at service-dispatch time.
      */
-    private boolean highFidelity = true;
+    private boolean      highFidelity = true;
 
     /**
      * Storage for an arbitrary bag of properties associated with this
@@ -189,10 +189,12 @@ public class MessageContext implements SOAPMessageContext {
     private SOAPConstants soapConstants = new SOAP11Constants();
 
     private OperationDesc currentOperation = null;
-    public OperationDesc getOperation()
+    
+    public  OperationDesc getOperation()
     {
         return currentOperation;
     }
+    
     public void setOperation(OperationDesc operation)
     {
         currentOperation = operation;
@@ -220,15 +222,15 @@ public class MessageContext implements SOAPMessageContext {
                 // Didn't find one...
             }
 
-            if (serviceHandler == null)
-                return null;
         }
 
-        ServiceDesc desc = serviceHandler.getInitializedServiceDesc(this);
-
-        if (desc != null) {
-            possibleOperations = desc.getOperationsByQName(qname);
-            setOperationStyle(desc.getStyle());
+        if (serviceHandler != null) {
+            ServiceDesc desc = serviceHandler.getInitializedServiceDesc(this);
+    
+            if (desc != null) {
+                possibleOperations = desc.getOperationsByQName(qname);
+                setOperationStyle(desc.getStyle());
+            }
         }
 
         return possibleOperations;
@@ -236,12 +238,11 @@ public class MessageContext implements SOAPMessageContext {
 
     public OperationDesc getOperationByQName(QName qname)
     {
-        if (currentOperation != null)
-            return currentOperation;
-
-        OperationDesc [] possibleOperations = getPossibleOperationsByQName(qname);
-        if (possibleOperations != null && possibleOperations.length > 0) {
-            currentOperation = possibleOperations[0];
+        if (currentOperation == null) {
+            OperationDesc [] possibleOperations = getPossibleOperationsByQName(qname);
+            if (possibleOperations != null && possibleOperations.length > 0) {
+                currentOperation = possibleOperations[0];
+            }
         }
 
         return currentOperation;
@@ -254,21 +255,27 @@ public class MessageContext implements SOAPMessageContext {
     public static MessageContext getCurrentContext() {
        return AxisEngine.getCurrentMessageContext();
     }
+    
     protected static String systemTempDir= null;
     static {
-            try{
-                systemTempDir=System.getProperty(AxisEngine.ENV_ATTACHMENT_DIR);
-            } catch(Throwable t){systemTempDir= null;}
+        try {
+            systemTempDir=System.getProperty(AxisEngine.ENV_ATTACHMENT_DIR);
+        } catch(Throwable t) {
+            systemTempDir= null;
+        }
 
-            if(systemTempDir== null)
-                try{
-                    File tf= File.createTempFile("Axis", "Axis");
-                    File dir= tf.getParentFile();
-                    if(tf.exists()) tf.delete();
-                    if(dir != null){
-                      systemTempDir= dir.getCanonicalPath();
-                    }
-                }catch(Throwable t){systemTempDir= null;}
+        if(systemTempDir== null) {
+            try {
+                File tf= File.createTempFile("Axis", "Axis");
+                File dir= tf.getParentFile();
+                if (tf.exists()) tf.delete();
+                if (dir != null) {
+                  systemTempDir= dir.getCanonicalPath();
+                }
+            } catch(Throwable t) {
+                systemTempDir= null;
+            }
+        }
     }
 
     public MessageContext(AxisEngine engine) {
@@ -726,7 +733,7 @@ public class MessageContext implements SOAPMessageContext {
                         JavaUtils.getMessage("badProp00", new String[] {
                         name, "java.lang.String", value.getClass().getName()}));
             }
-            setOperationStyle(getStyleFromString((String)value));
+            setOperationStyle(ServiceDesc.getStyleFromString((String)value));
         }
         else if (name.equals(Call.SOAPACTION_USE_PROPERTY)) {
             if (!(value instanceof Boolean)) {
@@ -803,7 +810,7 @@ public class MessageContext implements SOAPMessageContext {
                 return new Boolean(getMaintainSession());
             }
             else if (name.equals(Call.OPERATION_STYLE_PROPERTY)) {
-                return getStyleFromInt(getOperationStyle());
+                return ServiceDesc.getStringFromStyle(getOperationStyle());
             }
             else if (name.equals(Call.SOAPACTION_USE_PROPERTY)) {
                 return new Boolean(useSOAPAction());
@@ -903,7 +910,7 @@ public class MessageContext implements SOAPMessageContext {
     } // getSOAPActionURI
 
     /**
-     * Sets the encoding style to the URL passed in.
+     * Sets the encoding style to the URI passed in.
      *
      * @param namespaceURI URI of the encoding to use.
      */
@@ -939,47 +946,6 @@ public class MessageContext implements SOAPMessageContext {
         serviceHandler = null;
         havePassedPivot = false;
         currentOperation = null;
-    }
-
-    /**
-     * Utility function to convert string to operation style constants
-     *
-     * @param operationStyle "rpc", "document", or "wrapped"
-     * @return either STYLE_RPC, STYLE_DOCUMENT or STYLE_WRAPPED (all defined
-     *         in org.apache.axis.description.ServiceDesc)
-     */
-    public static int getStyleFromString(String operationStyle)
-    {
-        if ("rpc".equalsIgnoreCase(operationStyle))
-            return ServiceDesc.STYLE_RPC;
-        if ("document".equalsIgnoreCase(operationStyle))
-            return ServiceDesc.STYLE_DOCUMENT;
-        if ("wrapped".equalsIgnoreCase(operationStyle))
-            return ServiceDesc.STYLE_WRAPPED;
-
-        // Not one of the recognized values.  We're going to return RPC
-        // as the default, but log an error.
-        log.error(JavaUtils.getMessage("badStyle", operationStyle));
-
-        return ServiceDesc.STYLE_RPC;
-    }
-
-    /**
-     * Utility function to return a string representation of a style
-     * constant.
-     */
-    public static String getStyleFromInt(int style)
-    {
-        switch (style) {
-            case ServiceDesc.STYLE_RPC:
-                return "rpc";
-            case ServiceDesc.STYLE_DOCUMENT:
-                return "document";
-            case ServiceDesc.STYLE_WRAPPED:
-                return "wrapped";
-        }
-
-        return null;
     }
 
     public boolean isHighFidelity() {

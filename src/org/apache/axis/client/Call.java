@@ -359,7 +359,7 @@ public class Call implements javax.xml.rpc.Call {
                 return new Boolean(getMaintainSession());
             }
             else if (name.equals(OPERATION_STYLE_PROPERTY)) {
-                return MessageContext.getStyleFromInt(operationStyle);
+                return ServiceDesc.getStringFromStyle(operationStyle);
             }
             else if (name.equals(SOAPACTION_USE_PROPERTY)) {
                 return new Boolean(useSOAPAction());
@@ -456,8 +456,7 @@ public class Call implements javax.xml.rpc.Call {
      * @exception IllegalArgumentException if operationStyle is not "rpc" or "document".
      */
     public void setOperationStyle(String operationStyle) {
-        this.operationStyle =
-                MessageContext.getStyleFromString(operationStyle);
+        this.operationStyle = ServiceDesc.getStyleFromString(operationStyle);
 
 /*  Not being used for now... --GD
         throw new IllegalArgumentException(JavaUtils.getMessage(

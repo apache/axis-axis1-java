@@ -141,7 +141,7 @@ public class WSDDService
 
         String styleStr = e.getAttribute(ATTR_STYLE);
         if (styleStr != null && !styleStr.equals("")) {
-            style = MessageContext.getStyleFromString(styleStr);
+            style = ServiceDesc.getStyleFromString(styleStr);
             desc.setStyle(style);
             switch (style) {
                 case ServiceDesc.STYLE_MESSAGE:
@@ -497,7 +497,7 @@ public class WSDDService
         }
         if (style != ServiceDesc.STYLE_RPC) {
             attrs.addAttribute("", ATTR_STYLE, ATTR_STYLE,
-                               "CDATA", MessageContext.getStyleFromInt(style));
+                               "CDATA", ServiceDesc.getStringFromStyle(style));
         }
 
         context.startElement(WSDDConstants.QNAME_SERVICE, attrs);

@@ -58,6 +58,8 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.bytecode.ExtractorFactory;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.wsdl.Skeleton;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.rpc.namespace.QName;
 import javax.xml.rpc.holders.Holder;
@@ -77,10 +79,45 @@ import java.lang.reflect.Modifier;
  * @author Glen Daniels (gdaniels@apache.org)
  */
 public class ServiceDesc {
+    protected static Log log =
+            LogFactory.getLog(ServiceDesc.class.getName());
+
     public static final int STYLE_RPC = 0;
     public static final int STYLE_DOCUMENT = 1;
     public static final int STYLE_WRAPPED = 2;
     public static final int STYLE_MESSAGE = 3;
+    
+    private static final String[] styleStrings = { "rpc", "document", "wrapped", "message" };
+    
+    /**
+     * Utility function to return a string representation of a style
+     * constant.
+     */
+    public static String getStringFromStyle(int style)
+    {
+        return (style >= STYLE_RPC && style <= STYLE_MESSAGE) ? styleStrings[style] : null;
+    }
+
+    /**
+     * Utility function to convert string to operation style constants
+     *
+     * @param operationStyle "rpc", "document", "wrapped", or "message"
+     * @return either STYLE_RPC, STYLE_DOCUMENT or STYLE_WRAPPED (all defined
+     *         in org.apache.axis.description.ServiceDesc)
+     */
+    public static int getStyleFromString(String operationStyle)
+    {
+        for (int idx = 0; idx <= styleStrings.length; idx++)
+            if (styleStrings[idx].equalsIgnoreCase(operationStyle))
+                return idx;
+
+        // Not one of the recognized values.  We're going to return RPC
+        // as the default, but log an error.
+        log.error(JavaUtils.getMessage("badStyle", operationStyle));
+
+        return ServiceDesc.STYLE_RPC;
+    }
+
 
     /** The name of this service */
     private String name = null;
