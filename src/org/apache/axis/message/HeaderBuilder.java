@@ -116,6 +116,5 @@ public class HeaderBuilder extends SOAPHandler
     public void onEndChild(String namespace, String localName,
                            DeserializationContext context)
     {
-        envelope.addHeader(header);
     }
 }
