@@ -56,12 +56,14 @@ package org.apache.axis.ime.internal;
 
 import org.apache.axis.ime.MessageExchangeCorrelator;
 import org.apache.axis.ime.MessageExchangeEventListener;
+import java.io.Serializable;
 
 /**
  * @author James M Snell (jasnell@us.ibm.com)
  * @author Ray Chun (rchun@sonicsoftware.com)
  */
-public class MessageExchangeReceiveContext {
+public class MessageExchangeReceiveContext
+    implements Serializable {
 
     public static MessageExchangeReceiveContext newInstance(
             MessageExchangeCorrelator correlator,
@@ -74,9 +76,9 @@ public class MessageExchangeReceiveContext {
     }
 
     protected MessageExchangeEventListener listener;
-  protected MessageExchangeCorrelator correlator;
+    protected MessageExchangeCorrelator correlator;
 
-  protected MessageExchangeReceiveContext() {}
+    protected MessageExchangeReceiveContext() {}
   
     public MessageExchangeCorrelator getMessageExchangeCorrelator() {
         return this.correlator;
