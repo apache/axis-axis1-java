@@ -2,18 +2,19 @@
 <%@ page import="java.io.InputStream,
                  java.io.IOException,
                  javax.xml.parsers.SAXParser,
+                 java.lang.reflect.*,
                  javax.xml.parsers.SAXParserFactory"
    session="false" %>
  <%
     /*
  * Copyright 2002,2004 The Apache Software Foundation.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -123,7 +124,7 @@
                }
                return 0;
             }
-        } catch(NoClassDefFoundError ncdfe) { 
+        } catch(NoClassDefFoundError ncdfe) {
             String url="";
             if(homePage!=null) {
                 url="<br>  See <a href="+homePage+">"+homePage+"</a>";
@@ -134,7 +135,7 @@
                     +"</b><br> "+errorText
                     +url
                     +"<br>The root cause was: "+ncdfe.getMessage()
-                    +"<br>This can happen e.g. if "+classname+" is in" 
+                    +"<br>This can happen e.g. if "+classname+" is in"
                     +" the 'common' classpath, but a dependency like "
                     +" activation.jar is only in the webapp classpath."
                     +"<p>");
@@ -157,8 +158,8 @@
             if(location.startsWith("jar")) {
                 url = ((java.net.JarURLConnection)url.openConnection()).getJarFileURL();
                 location = url.toString();
-            } 
-            
+            }
+
             if(location.startsWith("file")) {
                 java.io.File file = new java.io.File(url.getFile());
                 return file.getAbsolutePath();
@@ -301,6 +302,28 @@
         String location = getLocation(out,saxParser.getClass());
         return location;
     }
+
+    /**
+     * Check if class implements specified interface.
+     * @param Class clazz
+     * @param String interface name
+     * @return boolean
+     */
+    private boolean implementsInterface(Class clazz, String interfaceName) {
+        if (clazz == null) {
+            return false;
+        }
+        Class[] interfaces = clazz.getInterfaces();
+        if (interfaces.length != 0) {
+            for (int i = 0; i < interfaces.length; i++) {
+                if (interfaces[i].getName().equals(interfaceName)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     %>
 <html><head><title>Axis Happiness Page</title></head>
 <body>
@@ -315,11 +338,24 @@
     /**
      * the essentials, without these Axis is not going to work
      */
-    needed=needClass(out, "javax.xml.soap.SOAPMessage",
-            "saaj.jar",
-            "SAAJ API",
-            "Axis will not work",
-            "http://xml.apache.org/axis/");
+
+    // need to check if the available version of SAAJ API meets requirements
+    String className = "javax.xml.soap.SOAPPart";
+    String interfaceName = "org.w3c.dom.Document";
+    Class clazz = classExists(className);
+    if (clazz == null || implementsInterface(clazz, interfaceName)) {
+        needed = needClass(out, "javax.xml.soap.SOAPMessage",
+        	"saaj.jar",
+                "SAAJ API",
+                "Axis will not work",
+                "http://xml.apache.org/axis/");
+    } else {
+        String location = getLocation(out, clazz);
+        out.write("<b>Error:</b> Invalid version of SAAJ API found in " +
+        location + ". Make sure that Axis' saaj.jar " +
+        "precedes " + location + " in CLASSPATH.<br />" +
+        "Axis will not work.  See <a href=\"http://ws.apache.org/axis/java/install.html\">Axis installation instructions</a> for more information<br />");
+    }
 
     needed+=needClass(out, "javax.xml.rpc.Service",
             "jaxrpc.jar",
@@ -461,7 +497,7 @@
 
     <h2>Examining System Properties</h2>
 <%
-    /** 
+    /**
      * Dump the system properties
      */
     java.util.Enumeration e=null;
