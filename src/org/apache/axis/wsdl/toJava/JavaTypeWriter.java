@@ -96,7 +96,7 @@ public class JavaTypeWriter implements Generator {
                 holderWriter = getHolderWriter(emitter, type);
             }
             
-            if (typeWriter != null) {
+            if (typeWriter != null && type instanceof Type) {
                 ((Type)type).setGenerated(true);
             }
         }
