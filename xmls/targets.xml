@@ -21,6 +21,14 @@
 
   <target name="setenv">
 
+    <condition property="ant.good">
+      <and>
+        <contains string="${ant.version}" substring="${ant.required.version}"/>
+      </and>
+    </condition>
+
+    <fail unless="ant.good" message="Improper Version of Ant" />
+
     <available property="servlet.present"
       classname="javax.servlet.Servlet"
       classpathref="classpath"/>
