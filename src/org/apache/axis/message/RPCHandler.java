@@ -152,9 +152,13 @@ public class RPCHandler extends SOAPHandler
                                                      ref.getName(),
                                                      ref.getAttributes());
         } else {
-            type = context.getTypeFromAttributes(namespace,
-                                                   localName,
-                                                   attributes);
+            // Get the element type if we have it, otherwise check xsi:type
+            type = curEl.getType();
+            if (type == null) {
+                type = context.getTypeFromAttributes(namespace,
+                                                     localName,
+                                                     attributes);
+            }
         }
 
         if (log.isDebugEnabled()) {
