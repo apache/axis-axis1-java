@@ -66,108 +66,82 @@ import org.apache.axis.registries.* ;
 /**
  *
  * @author Doug Davis (dug@us.ibm.com)
+ * @author Glen Daniels (gdaniels@allaire.com)
  */
-public class SimpleAxisEngine implements Handler {
-  /**
-   * This entry point into the SOAP server 
-   */
-  protected Hashtable options ;
+public class SimpleAxisEngine extends BasicHandler {
+    /**
+     * Find/load the registries and save them so we don't need to do this
+     * each time we're called.
+     */
+    public void init() {
+        // Load the simple handler registry and init it
+        Debug.Print( 1, "Enter: SimpleAxisEngine::init" );
+        HandlerRegistry  hr = new SimpleHandlerRegistry();
+        hr.init();
+        addOption( Constants.HANDLER_REGISTRY, hr );
 
-  /**
-   * Find/load the registries and save them so we don't need to do this
-   * each time we're called.
-   */
-  public void init() {
-    // Load the simple handler registry and init it
-    Debug.Print( 1, "Enter: SimpleAxisEngine::init" );
-    HandlerRegistry  hr = new SimpleHandlerRegistry();
-    hr.init();
-    addOption( Constants.HANDLER_REGISTRY, hr );
-
-    // Load the simple deployed services registry and init it
-    HandlerRegistry  sr = new SimpleServiceRegistry();
-    sr.init();
-    addOption( Constants.SERVICE_REGISTRY, sr );
-    Debug.Print( 1, "Exit: SimpleAxisEngine::init" );
-  }
-
-  public void cleanup() {
-  };
-
-  /**
-   * Main routine of the AXIS server.  In short we locate the appropriate
-   * handler for the desired service and invoke() it.
-   */
-  public void invoke(MessageContext msgContext) throws AxisFault {
-    Debug.Print( 1, "Enter: SimpleAxisEngine::invoke" );
-    HandlerRegistry hr = (HandlerRegistry)getOption(Constants.HANDLER_REGISTRY);
-    HandlerRegistry sr = (HandlerRegistry)getOption(Constants.SERVICE_REGISTRY);
-
-    /* The target web-server should be place in the MC_HTTP_SOAPACTION     */
-    /* entry in the bag of the msgContext object.  If it's not there we    */
-    /* need to scan the incoming message to find it.                       */
-    /***********************************************************************/
-    String action = (String) msgContext.getProperty( Constants.MC_HTTP_SOAPACTION );
-    if ( action == null ) action = "EchoService" ; // Temporary - need 2 scan
-
-    Handler h = sr.find( action );
-
-    if ( h == null ) {
-      Debug.Print( 1, "No service found by name: " + action );
-      throw new AxisFault( "Server.NoSuchService",
-                           "Service '" + action + "' was not found",
-                           null, null );
+        // Load the simple deployed services registry and init it
+        HandlerRegistry  sr = new SimpleServiceRegistry();
+        sr.init();
+        addOption( Constants.SERVICE_REGISTRY, sr );
+        Debug.Print( 1, "Exit: SimpleAxisEngine::init" );
     }
 
-    /* Place in the bag so that handlers down the line can have access to */
-    /* it - ie. can look thru it's list of options                        */
-    /**********************************************************************/
-    msgContext.setProperty( Constants.MC_SVC_HANDLER, h );
+    /**
+     * Main routine of the AXIS server.  In short we locate the appropriate
+     * handler for the desired service and invoke() it.
+     */
+    public void invoke(MessageContext msgContext) throws AxisFault {
+        Debug.Print( 1, "Enter: SimpleAxisEngine::invoke" );
+        HandlerRegistry hr = (HandlerRegistry)getOption(Constants.HANDLER_REGISTRY);
+        HandlerRegistry sr = (HandlerRegistry)getOption(Constants.SERVICE_REGISTRY);
+        
+        /** Make sure later Handlers can get this directly.
+        */
+        msgContext.setProperty(Constants.SERVICE_REGISTRY, sr);
 
-    h.init();   // ???
-    try {
-      h.invoke( msgContext );
-    }
-    catch( Exception e ) {
-      // Should we even bother catching it ?
-      if ( !(e instanceof AxisFault) ) e = new AxisFault( e );
-      throw (AxisFault) e ;
-    }
-    h.cleanup();   // ???
-    Debug.Print( 1, "Exit: SimpleAxisEngine::invoke" );
-  };
+        /** We must have a TARGET to continue.  This tells us which Handler to
+        * pull from the registry and call.  The Transport Listener is responsible
+        * for making sure this gets set, and if it isn't, we FAIL.
+        */
+        String target = (String) msgContext.getProperty( Constants.MC_TARGET );
+        if ( target == null )
+            throw new AxisFault("Server.NoTargetConfigured",
+                "AxisEngine: Couldn't find a target property in the MessageContext!",
+                null, null );
 
-  public void undo(MessageContext msgContext) {
-  };
+        Handler h = sr.find( target );
 
-  public boolean canHandleBlock(QName qname) {
-    return( false );
-  };
- 
-  /**
-   * Add the given option (name/value) to this handler's bag of options
-   */
-  public void addOption(String name, Object value) {
-    if ( options == null ) options = new Hashtable();
-    options.put( name, value );
-  }
+        if ( h == null ) {
+            Debug.Print( 1, "No service found by name: " + target );
+            throw new AxisFault( "Server.NoSuchService",
+                "Service '" + target + "' was not found",
+                null, null );
+        }
 
-  /**
-   * Returns the option corresponding to the 'name' given
-   */
-  public Object getOption(String name) {
-    if ( options == null ) return( null );
-    return( options.get(name) );
-  }
+        /* Place in the bag so that handlers down the line can have access to */
+        /* it - ie. can look thru it's list of options                        */
+        /**********************************************************************/
+        /** !!! I'm not sure this is appropriate here, since we don't
+         * necessarily know whether this is the "real" service handler or
+         * not... --Glen
+         */
+        msgContext.setProperty( Constants.MC_SVC_HANDLER, h );
+        
+        // Clear this for the next round of dispatch, if any.
+        msgContext.clearProperty( Constants.MC_TARGET );
 
-  /**
-   * Return the entire list of options
-   */
-  public Hashtable getOptions() {
-    return( options );
-  }
-  
-  public void setOptions(Hashtable opts) {
-    options = opts ;
-  }
+        h.init();   // ???
+        try {
+            h.invoke( msgContext );
+        }
+        catch( Exception e ) {
+            // Should we even bother catching it ?
+            if ( !(e instanceof AxisFault) ) e = new AxisFault( e );
+            throw (AxisFault) e ;
+        }
+        h.cleanup();   // ???
+        Debug.Print( 1, "Exit: SimpleAxisEngine::invoke" );
+    };
+
 };
