@@ -283,11 +283,16 @@ public class JavaSkelWriter extends JavaClassWriter {
                         FaultInfo faultInfo = (FaultInfo) it.next();
                         QName faultQName = faultInfo.getQName();
                         QName faultXMLType = faultInfo.getXMLType();
+                        String faultName = faultInfo.getName();
                         String className = 
                             Utils.getFullExceptionName(
                                faultInfo.getMessage(), symbolTable);
                         pw.println("        _fault = " +
                                    "new org.apache.axis.description.FaultDesc();");
+                        if (faultName != null) {
+                            pw.println("        _fault.setName(\"" +
+                                       faultName + "\");");
+                        }
                         if (faultQName != null) {
                             pw.println("        _fault.setQName(" +
                                        Utils.getNewQName(faultQName)  + ");");

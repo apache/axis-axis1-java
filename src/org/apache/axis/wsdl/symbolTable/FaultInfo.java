@@ -209,7 +209,7 @@ public class FaultInfo {
             }
             // Literal, so get the element's type
             TypeEntry entry = st.getElement(part.getElementName());
-            if (entry != null) {
+            if (entry != null && entry.getRefType() != null) {
                 return entry.getRefType().getQName();
             }
         }
