@@ -57,6 +57,7 @@ package samples.transport ;
 
 import java.io.* ;
 import java.lang.Thread ;
+import java.util.Date ;
 
 import org.apache.axis.Message ;
 import org.apache.axis.AxisFault ;
@@ -89,6 +90,11 @@ public class FileSender extends BasicHandler {
     catch( Exception e ) {
       e.printStackTrace();
     }
+    
+    long timeout = Long.MAX_VALUE;
+    if (msgContext.getTimeout()!=0) 
+      timeout=(new Date()).getTime()+msgContext.getTimeout();
+
     for (;;) {
       try {
         Thread.sleep( 100 );
@@ -106,8 +112,11 @@ public class FileSender extends BasicHandler {
         break ;
       }
       catch( Exception e ) {
+        if ((new Date().getTime())>=timeout) throw new AxisFault("timeout");
+
         // File not there - just loop
       }
+
     }
     nextNum++ ;
   }
