@@ -158,12 +158,12 @@ public class JavaTestCaseWriter extends JavaWriter {
 
     private final void writePortTestCode(PortType port) throws IOException {
         Iterator ops = port.getOperations().iterator();
-        HashMap operationParameters = (HashMap) portTypeOperationParameters.get(port);
+        HashMap operationParameters = (HashMap) portTypeOperationParameters.get(port.getQName());
         while (ops.hasNext()) {
             pw.println("        try {");
             Operation op = (Operation) ops.next();
             String namespace = (String) emitter.getNamespaces().get(port.getQName().getNamespaceURI());
-            Emitter.Parameters params = (Emitter.Parameters) operationParameters.get(op);
+            Emitter.Parameters params = (Emitter.Parameters) operationParameters.get(op.getName());
 
             if ( !"void".equals( params.returnType ) ) {
                 pw.print("            ");

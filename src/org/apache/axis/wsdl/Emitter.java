@@ -260,20 +260,25 @@ public class Emitter {
         while (i.hasNext()) {
             PortType portType = (PortType) i.next();
 
-            HashMap portTypeInfo = new HashMap();
+            // If the portType is undefined, then we're parsing a Definition
+            // that didn't contain a portType, merely a binding that referred
+            // to a non-existent port type.  Don't bother with it.
+            if (!portType.isUndefined()) {
+                HashMap portTypeInfo = new HashMap();
 
             // Remove Duplicates - happens with only a few WSDL's. No idea why!!! 
             // (like http://www.xmethods.net/tmodels/InteropTest.wsdl) 
             // TODO: Remove this patch...
             // NOTE from RJB:  this is a WSDL4J bug and the WSDL4J guys have been notified.
-            Iterator operations = (new HashSet(portType.getOperations())).iterator();
-            while(operations.hasNext()) {
-                Operation operation = (Operation) operations.next();
-                String namespace = portType.getQName().getNamespaceURI();
-                Parameters parms = parameters(operation, namespace);
-                portTypeInfo.put(operation, parms);
+                Iterator operations = (new HashSet(portType.getOperations())).iterator();
+                while(operations.hasNext()) {
+                    Operation operation = (Operation) operations.next();
+                    String namespace = portType.getQName().getNamespaceURI();
+                    Parameters parms = parameters(operation, namespace);
+                    portTypeInfo.put(operation.getName(), parms);
+                }
+                portTypesInfo.put(portType.getQName(), portTypeInfo);
             }
-            portTypesInfo.put(portType, portTypeInfo);
         }
     } // createPortTypesInfo
 
@@ -399,9 +404,15 @@ public class Emitter {
 
         while (i.hasNext()) {
             PortType portType = (PortType) i.next();
-            HashMap operationParameters = (HashMap) portTypesInfo.get(portType);
-            Writer writer = writerFactory.getWriter(portType, operationParameters);
-            writer.write();
+
+            // If the portType is undefined, then we're parsing a Definition
+            // that didn't contain a portType, merely a binding that referred
+            // to a non-existent port type.  Don't bother writing it.
+            if (!portType.isUndefined()) {
+                HashMap operationParameters = (HashMap) portTypesInfo.get(portType.getQName());
+                Writer writer = writerFactory.getWriter(portType, operationParameters);
+                writer.write();
+            }
         }
     } // writePortTypes
 
@@ -747,16 +758,20 @@ public class Emitter {
         while (i.hasNext()) {
             Binding binding = (Binding) i.next();
 
+            // If the binding is undefined, then we're parsing a Definition
+            // that didn't contain a binding, merely a service that referred
+            // to a non-existent binding.  Don't bother writing it.
+            if (!binding.isUndefined()) {
+
             // If this isn't a SOAP binding, skip it
-            if (wsdlAttr.getBindingType(binding) != WsdlAttributes.TYPE_SOAP) {
-                continue;
+                if (wsdlAttr.getBindingType(binding) != WsdlAttributes.TYPE_SOAP) {
+                    continue;
+                }
+
+                HashMap operationParameters = (HashMap) portTypesInfo.get(binding.getPortType().getQName());
+                Writer writer = writerFactory.getWriter(binding, operationParameters);
+                writer.write();
             }
-
-            HashMap portTypeInfo = (HashMap) portTypesInfo.get(binding.getPortType());
-
-            HashMap operationParameters = (HashMap) portTypesInfo.get(binding.getPortType());
-            Writer writer = writerFactory.getWriter(binding, operationParameters);
-            writer.write();
         }
     } // writeBindings
 
