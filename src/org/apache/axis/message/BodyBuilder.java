@@ -220,20 +220,6 @@ public class BodyBuilder extends SOAPHandler
                     throw new SAXException(e);
                 }
 
-                // SBFIX : If we're here with no operations, we're going to have
-                // a dispatch problem.  If SOAP12, fault.
-                if (operations == null &&
-                        (msgContext != null && !msgContext.isClient() &&
-                            (msgContext.getProperty(Constants.MC_NO_OPERATION_OK) == null)) &&
-                        soapConstants == SOAPConstants.SOAP12_CONSTANTS) {
-                    AxisFault fault =
-                            new AxisFault(Constants.FAULT_SOAP12_SENDER,
-                                    "No such procedure", null, null);
-                    fault.addFaultSubCode(
-                            Constants.FAULT_SUBCODE_PROC_NOT_PRESENT);
-                    throw new SAXException(fault);
-                }
-
                 // Only deserialize this way if there is a unique operation
                 // for this QName.  If there are overloads,
                 // we'll need to start recording.  If we're making a high-
