@@ -186,7 +186,7 @@ public class SimpleDeserializer extends DeserializerImpl {
         throws SAXException
     {
         throw new SAXException(
-                Messages.getMessage("cantHandle00", "SimpleDeser"));
+                Messages.getMessage("cantHandle00", "SimpleDeserializer"));
     }
     
     /**
