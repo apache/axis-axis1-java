@@ -91,7 +91,7 @@ public class Constants {
     public static final String URI_SOAP11_ENV =
                                 "http://schemas.xmlsoap.org/soap/envelope/" ;
     public static final String URI_SOAP12_ENV =
-                                   "http://www.w3.org/2001/12/soap-envelope";
+                                   "http://www.w3.org/2002/06/soap-envelope";
     public static final String URI_DEFAULT_SOAP_ENV = URI_SOAP11_ENV;  // SOAP 1.1 over the wire
 
     public static final String[] URIS_SOAP_ENV = {
@@ -120,7 +120,7 @@ public class Constants {
     public static final String URI_SOAP11_ENC =
                                 "http://schemas.xmlsoap.org/soap/encoding/" ;
     public static final String URI_SOAP12_ENC =
-                                   "http://www.w3.org/2001/12/soap-encoding";
+                                   "http://www.w3.org/2002/06/soap-encoding";
     public static final String URI_DEFAULT_SOAP_ENC = URI_SOAP11_ENC; // SOAP 1.1 over the wire
 
     public static final String[] URIS_SOAP_ENC = {
@@ -234,18 +234,21 @@ public class Constants {
     public static final String URI_SOAP11_NEXT_ACTOR =
                                      "http://schemas.xmlsoap.org/soap/actor/next" ;
     public static final String URI_SOAP12_NEXT_ACTOR =
-                                     "http://www.w3.org/2001/06/soap-envelope/actor/next";
+                                     "http://www.w3.org/2002/06/soap-envelope/actor/next";
 
     public static final String URI_SOAP12_FAULT =
-                                     "http://www.w3.org/2001/06/soap-faults";
+                                     "http://www.w3.org/2002/06/soap-faults";
 
     public static final String URI_SOAP12_UPGRADE =
-                                     "http://www.w3.org/2001/06/soap-upgrade";
+                                     "http://www.w3.org/2002/06/soap-upgrade";
+
+    public static final String URI_SOAP12_RPC =
+                                     "http://www.w3.org/2002/06/soap-rpc";
 
     public static final String URI_SOAP11_HTTP =
                                      "http://schemas.xmlsoap.org/soap/http";
     public static final String URI_SOAP12_HTTP =
-                                    "http://www.w3.org/2001/06/http";
+                                    "http://www.w3.org/2002/06/http";
 
     public static final String NS_URI_XMLNS = 
                                        "http://www.w3.org/2000/xmlns/";
@@ -451,6 +454,7 @@ public class Constants {
     
     
     public static final QName QNAME_LITERAL_ITEM = new QName(URI_LITERAL_ENC,"item");
+    public static final QName QNAME_RPC_RESULT = new QName(URI_SOAP12_RPC,"result");
     
     // Misc Strings
     //////////////////////////////////////////////////////////////////////////

@@ -140,17 +140,20 @@ public class RPCHandler extends SOAPHandler
             context.pushNewElement(new MessageElement(namespace,
             localName, prefix+":"+localName,attributes,context));
         }
-
-        Vector params = rpcElem.getParams();
-        
-        // This is a param.
-        currentParam = new RPCParam(namespace, localName, null);
-        rpcElem.addParam(currentParam);
         
         MessageElement curEl = context.getCurElement();
         QName type = null;
         QName qname = new QName(namespace, localName);
         ParameterDesc paramDesc = null;
+
+        Vector params = rpcElem.getParams();
+        
+        // SAR: for now, ignore RPC Result elements
+        if (qname.equals(Constants.QNAME_RPC_RESULT)) return this;
+
+        // This is a param.
+        currentParam = new RPCParam(namespace, localName, null);
+        rpcElem.addParam(currentParam);
 
         // Grab xsi:type attribute if present, on either this element or
         // the referent (if it's an href).
