@@ -57,7 +57,13 @@ public class BodyBuilder extends SOAPHandler
          */
         ServiceDescription serviceDesc = context.getMessageContext().
                                                       getServiceDescription();
-        if (!gotRPCElement &&
+
+        if (localName.equals(Constants.ELEM_FAULT) &&
+            namespace.equals(Constants.URI_SOAP_ENV)) {
+            element = new SOAPFaultElement(namespace, localName,
+                                           attributes, context);
+            handler = new SOAPFaultBuilder((SOAPFaultElement)element);
+        } else if (!gotRPCElement &&
             isRoot && 
             ((serviceDesc == null) || (serviceDesc.isRPC()))) {
             gotRPCElement = true;

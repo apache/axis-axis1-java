@@ -55,83 +55,57 @@ package org.apache.axis.message;
  * <http://www.apache.org/>.
  */
 
-import org.w3c.dom.Element;
 import org.xml.sax.*;
 import org.apache.axis.AxisFault;
-import org.apache.axis.Constants;
 import org.apache.axis.encoding.*;
-import org.apache.axis.utils.QName;
 import org.apache.axis.utils.QFault;
-import java.io.*;
 
-/** An Fault body element.
+/** 
+ * Build a Fault body element.
  * 
  * @author Sam Ruby (rubys@us.ibm.com)
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
-public class SOAPFaultElement extends SOAPBodyElement
+public class SOAPFaultBuilder extends SOAPHandler
 {
-    protected AxisFault fault;    
+    String currentSubElement;
+    Deserializer currentDeser;
     
-    public SOAPFaultElement(String namespace, String localName, Attributes attrs,
-                      DeserializationContext context)
-    {
-        super(namespace, localName, attrs, context);
+    protected SOAPFaultElement element;    
+    
+    public SOAPFaultBuilder(SOAPFaultElement element) {
+        this.element = element;
     }
-    
-    public SOAPFaultElement(AxisFault fault)
-    {
-        this.fault = fault;
-        namespaceURI = Constants.URI_SOAP_ENV;
-        name = Constants.ELEM_FAULT;
-    }
-    
-    public void outputImpl(SerializationContext context)
-        throws IOException
-    {
-        context.registerPrefixForURI(prefix, namespaceURI);
-        context.startElement(new QName(this.getNamespaceURI(), this.getName()), attributes);
 
-        if (fault.getFaultCode() != null) {
-          context.startElement(new QName(Constants.URI_SOAP_ENV, "faultcode"),
-                               null);
-          QFault code = fault.getFaultCode();
-          context.writeSafeString(context.qName2String(code));
-          context.endElement();
-        }
-    
-        if (fault.getFaultString() != null) {
-          context.startElement(new QName(Constants.URI_SOAP_ENV,
-                                         "faultstring"),
-                               null);
-          context.writeSafeString(fault.getFaultString());
-          context.endElement();
-        }
-    
-        if (fault.getFaultActor() != null) {
-          context.startElement(new QName(Constants.URI_SOAP_ENV,
-                                         "faultactor"),
-                               null);
-          context.writeSafeString(fault.getFaultActor());
-          context.endElement();
-        }
-    
-        Element[] faultDetails = fault.getFaultDetails();
-        if (faultDetails != null) {
-          //*** TBD ***
-        }
-    
-        context.endElement();
-    }
-    
-    public AxisFault getAxisFault()
+    public SOAPHandler onStartChild(String namespace,
+                                    String name,
+                                    Attributes attributes,
+                                    DeserializationContext context)
+        throws SAXException
     {
-        if (fault == null) fault = new AxisFault();
-        return fault;
+        currentSubElement = name;
+        currentDeser = context.getTypeMappingRegistry().
+                          getDeserializer(SOAPTypeMappingRegistry.XSD_STRING);
+        return currentDeser;
     }
     
-    public void setAxisFault(AxisFault fault)
+    public void onEndChild(String namespace, String localName, 
+                           DeserializationContext context)
+        throws SAXException
     {
-        this.fault = fault;
+        AxisFault fault = element.getAxisFault();
+        String value = currentDeser.getValue().toString();
+
+        if (currentSubElement.equals("faultcode")) {
+            fault.setFaultCode(new QFault(context.getQNameFromString(value)));
+        } else if (currentSubElement.equals("faultstring")) {
+            fault.setFaultString(currentDeser.getValue().toString());
+        } else if (currentSubElement.equals("faultactor")) {
+            fault.setFaultActor(currentDeser.getValue().toString());
+        } else if (currentSubElement.equals("details")) {
+            // !!! Not supported yet
+            // fault.setFaultDetails(...);
+        }
     }
+
 }
