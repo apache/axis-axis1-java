@@ -239,19 +239,19 @@ public class CommonsHTTPSender extends BasicHandler {
         }
 
         // Get https.proxyXXX settings
-        String tunnelHost = getGlobalProperty("https.proxyHost");
-        String tunnelPortStr = getGlobalProperty("https.proxyPort");
-        String nonProxyHosts = getGlobalProperty("https.nonProxyHosts");
+        String tunnelHost = getProperty("https.proxyHost");
+        String tunnelPortStr = getProperty("https.proxyPort");
+        String nonProxyHosts = getProperty("https.nonProxyHosts");
 
         // Use http.proxyXXX settings if https.proxyXXX is not set
         if (tunnelHost == null) {
-            tunnelHost = getGlobalProperty("http.proxyHost");
+            tunnelHost = getProperty("http.proxyHost");
         }
         if (tunnelPortStr == null) {
-            tunnelPortStr = getGlobalProperty("http.proxyPort");
+            tunnelPortStr = getProperty("http.proxyPort");
         }
         if (nonProxyHosts == null) {
-            nonProxyHosts = getGlobalProperty("http.nonProxyHosts");
+            nonProxyHosts = getProperty("http.nonProxyHosts");
         }
         boolean hostInNonProxyList =
                 isHostInNonProxyList(host, nonProxyHosts);
@@ -267,14 +267,14 @@ public class CommonsHTTPSender extends BasicHandler {
                     ? 80
                     : Integer.parseInt(tunnelPortStr))
                     : 80);
-            String tunnelUser = getGlobalProperty("https.proxyUser");
-            String tunnelPassword = getGlobalProperty("https.proxyPassword");
+            String tunnelUser = getProperty("https.proxyUser");
+            String tunnelPassword = getProperty("https.proxyPassword");
 
             if (tunnelUser == null) {
-                tunnelUser = getGlobalProperty("http.proxyUser");
+                tunnelUser = getProperty("http.proxyUser");
             }
             if (tunnelPassword == null) {
-                tunnelPassword = getGlobalProperty("http.proxyPassword");
+                tunnelPassword = getProperty("http.proxyPassword");
             }
             if (tunnelUser != null) {
                 Credentials proxyCred =
@@ -300,13 +300,13 @@ public class CommonsHTTPSender extends BasicHandler {
     private HttpConnection getConnection(HttpState state, String host, int port)
             throws Exception {
 
-        String proxyHost = getGlobalProperty("http.proxyHost");
-        String proxyPort = getGlobalProperty("http.proxyPort");
-        String nonProxyHosts = getGlobalProperty("http.nonProxyHosts");
+        String proxyHost = getProperty("http.proxyHost");
+        String proxyPort = getProperty("http.proxyPort");
+        String nonProxyHosts = getProperty("http.nonProxyHosts");
         boolean hostInNonProxyList =
                 isHostInNonProxyList(host, nonProxyHosts);
-        String proxyUsername = getGlobalProperty("http.proxyUser");
-        String proxyPassword = getGlobalProperty("http.proxyPassword");
+        String proxyUsername = getProperty("http.proxyUser");
+        String proxyPassword = getProperty("http.proxyPassword");
 
         if (port == -1) {
             port = 80;

@@ -350,11 +350,11 @@ public abstract class WSDDDeployableItem
                 try{
                   h.init();
                 }catch(Exception e){
-                    String msg=e + JavaUtils.LS + JavaUtils.stackToString(e);
+                    String msg=e + AxisProperties.LS + JavaUtils.stackToString(e);
                     log.debug(msg);
                     throw new ConfigurationException(e);
                 }catch(Error e){
-                    String msg=e + JavaUtils.LS + JavaUtils.stackToString(e);
+                    String msg=e + AxisProperties.LS + JavaUtils.stackToString(e);
                     log.debug(msg);
                     throw new ConfigurationException(msg);
                 }

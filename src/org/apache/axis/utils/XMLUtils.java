@@ -161,9 +161,10 @@ public class XMLUtils {
 
     /** Initialize the SAX parser factory.
      *
-     * @param factoryClassName The class name of the desired SAXParserFactory
+     * @param factoryClassName The (optional) class name of the desired SAXParserFactory
      *                         implementation.  Will be assigned to the system
      *                         property <b>javax.xml.parsers.SAXParserFactory</b>.
+     *                         If <code>null</code>, leaves current setting alone.
      * @param namespaceAware true if we want a namespace-aware parser (which we do)
      * @param validating true if we want a validating parser
      *

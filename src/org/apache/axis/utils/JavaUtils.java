@@ -94,8 +94,6 @@ import javax.xml.soap.SOAPException;
  */
 public class JavaUtils
 {
-    public static final String LS = System.getProperty("line.separator");
-
     protected static Log log =
         LogFactory.getLog(JavaUtils.class.getName());
     

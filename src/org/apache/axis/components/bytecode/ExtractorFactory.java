@@ -77,7 +77,7 @@ public class ExtractorFactory {
 
     public static Extractor getExtractor() {
         String extractorClassName =
-                System.getProperty("axis.Extractor", defaultExtractor);
+                AxisProperties.getProperty("axis.Extractor", defaultExtractor);
         
         log.debug("axis.Extractor:" + extractorClassName);
         Extractor extractor = null;

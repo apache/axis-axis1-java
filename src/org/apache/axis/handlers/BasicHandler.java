@@ -224,7 +224,7 @@ public abstract class BasicHandler implements Handler {
     /**
      * Hook to axis service... for now hardwire
      */
-    protected static final String getGlobalProperty(String property) {
-        return AxisProperties.getGlobalProperty(property);
+    protected static final String getProperty(String property) {
+        return AxisProperties.getProperty(property);
     }
 }

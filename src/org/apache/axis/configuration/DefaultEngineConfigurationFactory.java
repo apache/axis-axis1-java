@@ -99,7 +99,7 @@ public class DefaultEngineConfigurationFactory implements EngineConfigurationFac
      */
     public DefaultEngineConfigurationFactory() {
         String fClassName =
-            AxisProperties.getGlobalProperty(EngineConfigurationFactory.SYSTEM_PROPERTY_NAME);
+            AxisProperties.getProperty(EngineConfigurationFactory.SYSTEM_PROPERTY_NAME);
 
         if (fClassName != null) {
             try {
@@ -111,12 +111,12 @@ public class DefaultEngineConfigurationFactory implements EngineConfigurationFac
             }
         }
 
-        clientConfigFile = AxisProperties.getGlobalProperty("axis.ClientConfigFile");
+        clientConfigFile = AxisProperties.getProperty("axis.ClientConfigFile");
         if (clientConfigFile == null) {
             clientConfigFile = CLIENT_CONFIG_FILE;
         }
 
-        serverConfigFile = AxisProperties.getGlobalProperty("axis.ServerConfigFile");
+        serverConfigFile = AxisProperties.getProperty("axis.ServerConfigFile");
         if (serverConfigFile == null) {
             serverConfigFile = SERVER_CONFIG_FILE;
         }

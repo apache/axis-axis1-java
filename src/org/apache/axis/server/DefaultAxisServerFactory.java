@@ -87,7 +87,7 @@ public class DefaultAxisServerFactory implements AxisServerFactory {
      * a) EngineConfiguration instance, keyed to
      *    EngineConfiguration.PROPERTY_NAME in 'environment', or
      * b) EngineConfiguration class name, keyed to
-     *    AxisEngine.PROP_CONFIG_CLASS in System Properties.
+     *    AxisEngine.PROP_CONFIG_CLASS in AxisProperties.
      *    Class is instantiated if found.
      * <p>
      * If an EngineConfiguration cannot be located, the default
@@ -156,7 +156,7 @@ public class DefaultAxisServerFactory implements AxisServerFactory {
      * a) EngineConfiguration instance, keyed to
      *    EngineConfiguration.PROPERTY_NAME in 'environment', or
      * b) EngineConfiguration class name, keyed to
-     *    AxisEngine.PROP_CONFIG_CLASS in System Properties.
+     *    AxisEngine.PROP_CONFIG_CLASS in AxisProperties.
      *    Class is instantiated if found.
      */
     private static EngineConfiguration getEngineConfiguration(Map environment)
@@ -177,7 +177,7 @@ public class DefaultAxisServerFactory implements AxisServerFactory {
         if (config == null) {
             // A default engine configuration class may be set in a system
             // property. If so, try creating an engine configuration.
-            String configClass = AxisProperties.getGlobalProperty(AxisEngine.PROP_CONFIG_CLASS);
+            String configClass = AxisProperties.getProperty(AxisEngine.PROP_CONFIG_CLASS);
             if (configClass != null) {
                 try {
                     // Got one - so try to make it (which means it had better have

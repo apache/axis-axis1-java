@@ -67,6 +67,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 
+import org.apache.axis.AxisProperties;
+
 /**
  * This class is a utility to serialize a DOM node as XML. This class
  * uses the <code>DOM Level 2</code> APIs.
@@ -83,15 +85,6 @@ public class DOM2Writer
      */
     private static String NS_URI_XMLNS = "http://www.w3.org/2000/xmlns/";
     private static String NS_URI_XML = "http://www.w3.org/XML/1998/namespace";
-
-    private static final char NL = '\n';
-    private static final char CR = '\r';
-    
-    /**
-     * The prefered line separator
-     */
-    private static final String LS = System.getProperty("line.separator",
-                                                        (new Character(NL)).toString());
 
     /**
      * Return a string containing this node serialized as XML.
@@ -249,7 +242,7 @@ public class DOM2Writer
                     {
                         out.print('>');
                         if (pretty)
-                            out.print(LS);
+                            out.print(AxisProperties.LS);
                     }
 
                     for (int i = 0; i < numChildren; i++)
@@ -267,7 +260,7 @@ public class DOM2Writer
                 {
                     out.print("/>");
                     if (pretty)
-                        out.print(LS);
+                        out.print(AxisProperties.LS);
                 }
                 break;
             }
@@ -300,7 +293,7 @@ public class DOM2Writer
                 out.print(node.getNodeValue());
                 out.print("-->");
                 if (pretty)
-                    out.print(LS);
+                    out.print(AxisProperties.LS);
                 break;
             }
 
@@ -319,7 +312,7 @@ public class DOM2Writer
 
                 out.println("?>");
                 if (pretty)
-                    out.print(LS);
+                    out.print(AxisProperties.LS);
                 break;
             }
         }
@@ -334,7 +327,7 @@ public class DOM2Writer
             out.print(node.getNodeName());
             out.print('>');
             if (pretty)
-                out.print(LS);
+                out.print(AxisProperties.LS);
             hasChildren = false;
         }
     }
@@ -415,24 +408,24 @@ public class DOM2Writer
                     str.append("&quot;");
                     break;
                 }
-            case NL :
+            case AxisProperties.NL :
                 {
                     if (i > 0)
                     {
                         char lastChar = str.charAt(str.length() - 1);
 
-                        if (lastChar != CR)
+                        if (lastChar != AxisProperties.CR)
                         {
-                            str.append(LS);
+                            str.append(AxisProperties.LS);
                         }
                         else
                         {
-                            str.append(NL);
+                            str.append(AxisProperties.NL);
                         }
                     }
                     else
                     {
-                        str.append(LS);
+                        str.append(AxisProperties.LS);
                     }
                     break;
                 }

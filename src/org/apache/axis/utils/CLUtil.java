@@ -9,6 +9,8 @@
 // version 4.1 (Jan 30, 2002).  Only the package name has been changed.
 package org.apache.axis.utils;
 
+import org.apache.axis.AxisProperties;
+
 /**
  * CLUtil offers basic utility operations for use both internal and external to package.
  *
@@ -18,8 +20,6 @@ package org.apache.axis.utils;
 public final class CLUtil
 {
     private final static int        MAX_DESCRIPTION_COLUMN_LENGTH = 60;
-    
-    private static final String     LS = System.getProperty( "line.separator" );
 
     /**
      * Format options into StringBuffer and return. This is typically used to
@@ -74,7 +74,7 @@ public final class CLUtil
                 {
                     sb.append("=<value>");
                 }
-                sb.append( LS );
+                sb.append( AxisProperties.LS );
             }
 
             if( null != description )
@@ -87,12 +87,12 @@ public final class CLUtil
                         description.substring( MAX_DESCRIPTION_COLUMN_LENGTH );
                     sb.append( "\t\t" );
                     sb.append( descriptionPart );
-                    sb.append( LS );
+                    sb.append( AxisProperties.LS );
                 }
 
                 sb.append( "\t\t" );
                 sb.append( description );
-                sb.append( LS );
+                sb.append( AxisProperties.LS );
             }
         }
         return sb;

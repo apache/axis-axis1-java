@@ -265,7 +265,7 @@ public class MessageContext implements SOAPMessageContext {
     protected static String systemTempDir= null;
     static {
         try {
-            systemTempDir=AxisProperties.getGlobalProperty(AxisEngine.ENV_ATTACHMENT_DIR);
+            systemTempDir=AxisProperties.getProperty(AxisEngine.ENV_ATTACHMENT_DIR);
         } catch(Throwable t) {
             systemTempDir= null;
         }

@@ -55,16 +55,43 @@
 
 package org.apache.axis;
 
+import java.util.Properties;
+
 
 /**
  * @author Richard A. Sitze
  */
 public class AxisProperties {
+    public static final char NL = '\n';
+    public static final char CR = '\r';
+    
     /**
-     * Central access point for AXIS to obtain "global" configuration properties.
+     * The prefered line separator
+     */
+    public static final String LS = System.getProperty("line.separator",
+                                                        (new Character(NL)).toString());
+
+    /**
+     * Central access point for AXIS to obtain configuration properties.
      * To be extended in the future... or replaced with non-global properties.
      */
-    public static String getGlobalProperty(String property) {
+    public static String getProperty(String property) {
         return System.getProperty(property);
+    }
+    
+    public static String getProperty(String property, String dephault) {
+        return System.getProperty(property, dephault);
+    }
+
+    /**
+     * Central access point for AXIS to set configuration properties.
+     * To be extended in the future... or replaced with non-global properties.
+     */
+    public static Object setProperty(String property, String value) {
+        return System.setProperty(property, value);
+    }
+    
+    public static Properties getProperties() {
+        return System.getProperties();
     }
 }
