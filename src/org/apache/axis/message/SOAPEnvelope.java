@@ -59,16 +59,16 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
-import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.client.AxisClient;
 import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.Mapping;
 import org.apache.axis.utils.QName;
-import org.xml.sax.helpers.AttributesImpl;
+import org.apache.log4j.Category;
 import org.xml.sax.InputSource;
-import org.apache.axis.client.AxisClient ;
+import org.xml.sax.helpers.AttributesImpl;
 
-import java.io.InputStream ;
-import java.io.StringWriter;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -76,7 +76,8 @@ import java.util.Vector;
 
 public class SOAPEnvelope extends MessageElement
 {
-    private static boolean DEBUG_LOG = false;
+    static Category category =
+            Category.getInstance(SOAPEnvelope.class.getName());
     
     public Vector headers = new Vector();
     public Vector bodyElements = new Vector();
@@ -169,8 +170,8 @@ public class SOAPEnvelope extends MessageElement
     
     public void addHeader(SOAPHeader header)
     {
-        if (DEBUG_LOG)
-            System.out.println("Adding header to message...");
+        if (category.isDebugEnabled())
+            category.debug("Adding header to message...");
         header.setEnvelope(this);
         headers.addElement(header);
         _isDirty = true;
@@ -178,8 +179,8 @@ public class SOAPEnvelope extends MessageElement
     
     public void addBodyElement(SOAPBodyElement element)
     {
-        if (DEBUG_LOG)
-            System.out.println("Adding body element to message...");
+        if (category.isDebugEnabled())
+            category.debug("Adding body element to message...");
         element.setEnvelope(this);
         bodyElements.addElement(element);
         _isDirty = true;
@@ -187,24 +188,24 @@ public class SOAPEnvelope extends MessageElement
     
     public void removeHeader(SOAPHeader header)
     {
-        if (DEBUG_LOG)
-            System.out.println("Removing header from message...");
+        if (category.isDebugEnabled())
+            category.debug("Removing header from message...");
         headers.removeElement(header);
         _isDirty = true;
     }
     
     public void removeBodyElement(SOAPBodyElement element)
     {
-        if (DEBUG_LOG)
-            System.out.println("Removing body element from message...");
+        if (category.isDebugEnabled())
+            category.debug("Removing body element from message...");
         bodyElements.removeElement(element);
         _isDirty = true;
     }
     
     public void removeTrailer(MessageElement element)
     {
-        if (DEBUG_LOG)
-            System.out.println("Removing trailer from message...");
+        if (category.isDebugEnabled())
+            category.debug("Removing trailer from message...");
         trailers.removeElement(element);
         _isDirty = true;
     }
@@ -218,8 +219,8 @@ public class SOAPEnvelope extends MessageElement
     
     public void addTrailer(MessageElement element)
     {
-        if (DEBUG_LOG)
-            System.out.println("Adding trailer to message...");
+        if (category.isDebugEnabled())
+            category.debug("Adding trailer to message...");
         element.setEnvelope(this);
         trailers.addElement(element);
         _isDirty = true;
@@ -311,8 +312,8 @@ public class SOAPEnvelope extends MessageElement
         context.startElement(new QName(Constants.URI_SOAP_ENV,
                                        Constants.ELEM_ENVELOPE), attrs);
         
-        if (DEBUG_LOG)
-            System.out.println(headers.size() + " headers");
+        if (category.isDebugEnabled())
+            category.debug(headers.size() + " headers");
         
         if (!headers.isEmpty()) {
             // Output <SOAP-ENV:Header>

@@ -67,8 +67,6 @@ import java.lang.reflect.Field;
  */
 public class RPCParam
 {
-    private static boolean DEBUG_LOG = false;
-    
     // Who's your daddy?
     RPCElement myCall;
     

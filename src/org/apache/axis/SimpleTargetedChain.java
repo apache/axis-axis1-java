@@ -69,7 +69,7 @@ import java.util.Enumeration;
  */
 public class SimpleTargetedChain extends BasicHandler implements TargetedChain
 {
-    static Category category =
+   static Category category =
             Category.getInstance(SimpleTargetedChain.class.getName());
 
     protected Handler    requestHandler ;

@@ -80,8 +80,6 @@ public class RPCProvider extends JavaProvider {
     static Category category =
             Category.getInstance(RPCProvider.class.getName());
 
-    private static final boolean DEBUG_LOG = false;
-    
     public void processMessage (MessageContext msgContext,
                                 String serviceName,
                                 String allowedMethods,

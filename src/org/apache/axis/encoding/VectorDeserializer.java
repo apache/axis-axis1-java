@@ -58,6 +58,7 @@ package org.apache.axis.encoding;
 import org.apache.axis.*;
 import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.*;
+import org.apache.log4j.Category;
 import org.xml.sax.*;
 import java.util.Vector;
 
@@ -71,7 +72,8 @@ import java.util.Vector;
 public class VectorDeserializer extends Deserializer
 implements ValueReceiver {
 
-    private final static boolean DEBUG_LOG = false;
+    static Category category =
+            Category.getInstance(VectorDeserializer.class.getName());
 
     public static class Factory implements DeserializerFactory {
         public Deserializer getDeserializer(Class cls) {
@@ -84,8 +86,8 @@ implements ValueReceiver {
                              String qName, Attributes attributes,
                              DeserializationContext context)
     throws SAXException {
-        if (DEBUG_LOG) {
-            System.err.println("In VectorDeserializer.startElement()");
+        if (category.isDebugEnabled()) {
+            category.debug("In VectorDeserializer.startElement()");
         }
 
         if (attributes.getValue(Constants.URI_CURRENT_SCHEMA_XSI,  "nil") != null) {
@@ -94,8 +96,8 @@ implements ValueReceiver {
 
         this.value = new java.util.Vector();
 
-        if (DEBUG_LOG) {
-            System.err.println("Out VectorDeserializer.startElement()");
+        if (category.isDebugEnabled()) {
+            category.debug("Out VectorDeserializer.startElement()");
         }
     }
 
@@ -105,8 +107,8 @@ implements ValueReceiver {
                                     Attributes attributes,
                                     DeserializationContext context)
     throws SAXException {
-        if (DEBUG_LOG) {
-            System.err.println("In VectorDeserializer.onStartChild()");
+        if (category.isDebugEnabled()) {
+            category.debug("In VectorDeserializer.onStartChild()");
         }
 
         if (attributes == null)
@@ -127,16 +129,16 @@ implements ValueReceiver {
                                         getDeserializer(itemType);
         dSer.registerCallback(this, null);
 
-        if (DEBUG_LOG) {
-            System.err.println("Out VectorDeserializer.onStartChild()");
+        if (category.isDebugEnabled()) {
+            category.debug("Out VectorDeserializer.onStartChild()");
         }
         return dSer;
     }
 
     public void valueReady(Object value, Object hint)
     {
-        if (DEBUG_LOG) {
-            System.err.println("VectorDeserializer got value = " + value);
+        if (category.isDebugEnabled()) {
+            category.debug("VectorDeserializer got value = " + value);
         }
         ((Vector)this.value).add(value);
     }

@@ -2,6 +2,7 @@ package org.apache.axis.message;
 
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.QName;
+import org.apache.log4j.Category;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -10,7 +11,8 @@ import java.io.IOException;
 
 public class SAXOutputter extends DefaultHandler
 {
-    private static final boolean DEBUG_LOG = false;
+    static Category category =
+            Category.getInstance(SAXOutputter.class.getName());
     
     SerializationContext context;
     
@@ -23,8 +25,8 @@ public class SAXOutputter extends DefaultHandler
     }
     
     public void endDocument() throws SAXException {
-        if (DEBUG_LOG) {
-            System.out.println("SAXOutputter: end document.");
+        if (category.isDebugEnabled()) {
+            category.debug("SAXOutputter: end document.");
         }
     }
     
@@ -37,8 +39,8 @@ public class SAXOutputter extends DefaultHandler
     }
     
     public void characters(char[] p1, int p2, int p3) throws SAXException {
-        if (DEBUG_LOG) {
-            System.out.println("(out) characters ['" +
+        if (category.isDebugEnabled()) {
+            category.debug("(out) characters ['" +
                                new String(p1, p2, p3) + "']");
         }
         try {
@@ -65,8 +67,8 @@ public class SAXOutputter extends DefaultHandler
                              String qName, Attributes attributes)
         throws SAXException
     {
-        if (DEBUG_LOG) {
-            System.out.println("(out) startElement ['" + namespace + "' " +
+        if (category.isDebugEnabled()) {
+            category.debug("(out) startElement ['" + namespace + "' " +
                            localName + "]");
         }
 
@@ -80,8 +82,8 @@ public class SAXOutputter extends DefaultHandler
     public void endElement(String namespace, String localName, String qName)
         throws SAXException
     {
-        if (DEBUG_LOG) {
-            System.out.println("(out) endElement ['" + namespace + "' " +
+        if (category.isDebugEnabled()) {
+            category.debug("(out) endElement ['" + namespace + "' " +
                            localName + "]");
         }
         

@@ -63,6 +63,7 @@ import org.apache.axis.utils.Mapping;
 import org.apache.axis.utils.NSStack;
 import org.apache.axis.utils.QName;
 import org.apache.axis.utils.XMLUtils;
+import org.apache.log4j.Category;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -90,7 +91,8 @@ import java.util.Stack;
  */
 public class SerializationContext
 {
-    private static final boolean DEBUG_LOG = false;
+    static Category category =
+            Category.getInstance(SerializationContext.class.getName());
 
     public NSStack nsStack = new NSStack();
 
@@ -221,8 +223,8 @@ public class SerializationContext
 
     public void registerPrefixForURI(String prefix, String uri)
     {
-        if (DEBUG_LOG) {
-            System.out.println("register '" + prefix + "' - '" + uri + "'");
+        if (category.isDebugEnabled()) {
+            category.debug("register '" + prefix + "' - '" + uri + "'");
         }
 
         if ((uri != null) && (prefix != null)) {
@@ -349,8 +351,8 @@ public class SerializationContext
     public void startElement(QName qName, Attributes attributes)
         throws IOException
     {
-        if (DEBUG_LOG) {
-            System.out.println("Out: Starting element [" + qName.getNamespaceURI() + "]:" + qName.getLocalPart());
+        if (category.isDebugEnabled()) {
+            category.debug("Out: Starting element [" + qName.getNamespaceURI() + "]:" + qName.getLocalPart());
         }
 
         if (startOfDocument && sendXMLDecl) {
@@ -433,8 +435,8 @@ public class SerializationContext
     {
         String elementQName = (String)elementStack.pop();
 
-        if (DEBUG_LOG) {
-            System.out.println("Out: Ending element " + elementQName);
+        if (category.isDebugEnabled()) {
+            category.debug("Out: Ending element " + elementQName);
         }
 
         nsStack.pop();

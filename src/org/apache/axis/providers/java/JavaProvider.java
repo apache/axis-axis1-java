@@ -88,8 +88,6 @@ public abstract class JavaProvider extends BasicProvider {
     public static final String OPTION_IS_STATIC = "isStatic";
     public static final String OPTION_CLASSPATH = "classPath";
 
-    private static final boolean DEBUG_LOG = false;
-
     private String classNameOption = "className";
     private String allowedMethodsOption = "methodName";
 

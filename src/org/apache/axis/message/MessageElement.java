@@ -67,6 +67,7 @@ import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.utils.Mapping;
 import org.apache.axis.utils.QName;
 import org.apache.axis.utils.XMLUtils;
+import org.apache.log4j.Category;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
@@ -83,7 +84,8 @@ import java.util.Vector;
 
 public class MessageElement
 {
-    private static final boolean DEBUG_LOG = false;
+    static Category category =
+            Category.getInstance(MessageElement.class.getName());
 
     protected String    name ;
     protected String    prefix ;
@@ -137,10 +139,10 @@ public class MessageElement
     public MessageElement(String namespace, String localPart, String qName,
                    Attributes attributes, DeserializationContext context)
     {
-        if (DEBUG_LOG) {
-            System.out.println("New MessageElement (" + this + ") named " + qName);
+        if (category.isDebugEnabled()) {
+            category.debug("New MessageElement (" + this + ") named " + qName);
             for (int i = 0; attributes != null && i < attributes.getLength(); i++) {
-                System.out.println("  " + attributes.getQName(i) + " = '" + attributes.getValue(i) + "'");
+                category.debug("  " + attributes.getQName(i) + " = '" + attributes.getValue(i) + "'");
             }
         }
         this.namespaceURI = namespace;
@@ -275,8 +277,8 @@ public class MessageElement
         if (parent != null)
             return parent.getNamespaceURI(prefix);
 
-        if (DEBUG_LOG) {
-            System.err.println(this + " didn't find prefix '" + prefix + "'");
+        if (category.isDebugEnabled()) {
+            category.debug(this + " didn't find prefix '" + prefix + "'");
         }
 
         return null;
