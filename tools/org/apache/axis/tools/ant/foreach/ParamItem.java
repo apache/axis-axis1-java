@@ -55,6 +55,9 @@ package org.apache.axis.tools.ant.foreach;
 
 /**
  * Inner class stores <item>s with <param> lists
+ * 
+ * @author <a href="mailto:tpv@spamcop.net">Tim Vernum</a>
+ * @author Davanum Srinivas
  */
 public class ParamItem {
     private String value;
