@@ -254,6 +254,8 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
                 if (baseEType != null) {
                     String javaName = baseEType.getName();
                     if (javaName.equals("java.lang.String") ||
+                        javaName.equals("java.math.BigInteger") ||
+                        javaName.equals("java.math.BigDecimal") ||
                         javaName.equals("int") ||
                         javaName.equals("long") ||
                         javaName.equals("short") ||

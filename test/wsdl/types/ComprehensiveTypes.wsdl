@@ -83,6 +83,7 @@
             <xsd:element name="enum5" type="typens:enumDouble"/>
             <xsd:element name="enum6" type="typens:enumShort"/>
             <xsd:element name="enum7" type="typens:enumByte"/>
+            <xsd:element name="enum8" type="typens:enumInteger"/>
             <xsd:element name="soapint" type="soapenc:int"/>
             <xsd:element name="nested" type="typens2:b"/>
             <xsd:element name="D_TSENT" type="xsd:string"/> <!-- test strange name -->
@@ -261,6 +262,13 @@
         </xsd:restriction>
       </xsd:simpleType>
 
+      <xsd:simpleType name="enumInteger">
+        <xsd:restriction base="xsd:integer">
+          <xsd:enumeration value="1"/>
+          <xsd:enumeration value="2"/>                    
+          <xsd:enumeration value="3"/>                    
+        </xsd:restriction>
+      </xsd:simpleType>
 
       <xsd:simpleType name="flowDirectionType">
         <xsd:restriction base="xsd:string">
