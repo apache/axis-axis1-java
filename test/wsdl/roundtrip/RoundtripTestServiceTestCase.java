@@ -583,7 +583,6 @@ public class RoundtripTestServiceTestCase extends TestCase {
     /**
      *  Test the overloaded method getId with a StockInvestment.
      */
-    /* Disabled due to RPCProvider bug
     public void testInvestmentGetId() {
 
         try {
@@ -601,7 +600,6 @@ public class RoundtripTestServiceTestCase extends TestCase {
         }
 
     } // testInvestmentGetId
-    */
 
     /**
      *  Test to insure that a multiple array sent by a remote method can be

@@ -86,6 +86,7 @@ import javax.xml.rpc.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
 import java.io.IOException;
 import java.io.Writer;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -1005,7 +1006,23 @@ public class SerializationContextImpl implements SerializationContext
             }
 
             SerializerInfo info = null;
-            if (xmlType != null) {
+// If the javaType is abstract, try getting a
+            // serializer that matches the value's class. 
+            if (javaType != null &&
+                !javaType.isPrimitive() &&
+                !javaType.isArray() &&
+                !isPrimitive(value, javaType) &&
+                Modifier.isAbstract(javaType.getModifiers())) {
+                info = getSerializer(value.getClass(), value);
+                if (info != null) {
+                    // Successfully found a serializer for the derived object.
+                    // Must serializer the type.
+                    sendType = true;  
+                    xmlType = null;
+                }
+            }
+            // Try getting a serializer for the prefered xmlType
+            if (info == null && xmlType != null) {
                 info = getSerializer(javaType, xmlType);
             }
 
