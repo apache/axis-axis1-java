@@ -68,4 +68,5 @@ public class NoopWriter implements Writer {
      */
     public void write() throws IOException {
     } // write
+
 } // class NoopWriter

@@ -131,6 +131,9 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
         //    ser factory for the last one registered will be chosen.  Likewise
         //    if two javaTypes for XSD_DATE are registered, the deserializer 
         //    factory for the last one registered will be chosen.
+        //    Corollary:  Please be very careful with the order.  The
+        //                runtime, Java2WSDL and WSDL2Java emitters all
+        //                use this code to get type mapping information.
         // 2) Even if the SOAP 1.1 format is used over the wire, an 
         //    attempt is made to receive SOAP 1.2 format from the wire.
         //    This is the reason why the soap encoded primitives are 
@@ -161,6 +164,18 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
         myRegister(Constants.SOAP_BYTE,       java.lang.Byte.class,     
                    null, null, false, true);
 
+        // Hex binary data needs to use the hex binary serializer/deserializer
+        myRegister(Constants.XSD_HEXBIN,     Hex.class,   
+                   new HexSerializerFactory(
+                        Hex.class, Constants.XSD_HEXBIN),
+                   new HexDeserializerFactory(
+                        Hex.class, Constants.XSD_HEXBIN),true);
+        myRegister(Constants.XSD_HEXBIN,     byte[].class,
+                   new HexSerializerFactory(
+                        byte[].class, Constants.XSD_HEXBIN),
+                   new HexDeserializerFactory(
+                        byte[].class, Constants.XSD_HEXBIN),true);
+
         // SOAP 1.1
         // byte[] -ser-> XSD_BASE64
         // Byte[] -ser-> array of Byte
@@ -183,8 +198,6 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
 
 
         // If SOAP 1.1 over the wire, map wrapper classes to XSD primitives.
-        // Even though the java class is an object, since these are all 
-        // xsd primitives, treat them as a primitive.
         myRegister(Constants.XSD_STRING,     java.lang.String.class, 
                    null, null, true); 
         myRegister(Constants.XSD_BOOLEAN,    java.lang.Boolean.class, 
@@ -222,6 +235,8 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
         myRegister(Constants.XSD_BYTE,       byte.class, 
                    null, null,true);
 
+
+        // Map QNAME to the jax rpc QName class
         myRegister(Constants.XSD_QNAME,      
               javax.xml.rpc.namespace.QName.class,
               new BeanSerializerFactory(javax.xml.rpc.namespace.QName.class,
@@ -229,6 +244,8 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
               new BeanDeserializerFactory(javax.xml.rpc.namespace.QName.class,
                                         Constants.XSD_QNAME),
                    true);
+
+        // The closest match for anytype is Object
         myRegister(Constants.XSD_ANYTYPE,    java.lang.Object.class,  
                    null, null, false);
 
@@ -254,9 +271,6 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                    new DateDeserializerFactory(java.util.Date.class,
                                                Constants.XSD_DATE),
                    true);
-        myRegister(Constants.XSD_HEXBIN,     Hex.class,   
-                   new HexSerializerFactory(),
-                   new HexDeserializerFactory(),true);
 
         // Use the Map Serialization for Hashtables, Map and HashMap
         // The SOAP_MAP will be deserialized into a HashMap
@@ -290,17 +304,21 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                    false);
 
         // All array objects automatically get associated with the SOAP_ARRAY.
-        //There is no way to do this with a hash table, 
+        // There is no way to do this with a hash table, 
         // so it is done directly in getTypeQName.
         // Internally the runtime uses ArrayList objects to hold arrays...
         // which is the reason that ArrayList is associated with SOAP_ARRAY.  
         // In addition, handle all objects that implement the List interface
-        //as a SOAP_ARRAY
+        // as a SOAP_ARRAY
         myRegister(Constants.SOAP_ARRAY,     java.util.List.class,               
                    new ArraySerializerFactory(),
                    new ArrayDeserializerFactory(), 
                    false);
         myRegister(Constants.SOAP_ARRAY,     java.util.ArrayList.class,               
+                   new ArraySerializerFactory(),
+                   new ArrayDeserializerFactory(), 
+                   false);
+        myRegister(Constants.SOAP_ARRAY,     Object[].class,               
                    new ArraySerializerFactory(),
                    new ArrayDeserializerFactory(), 
                    false);

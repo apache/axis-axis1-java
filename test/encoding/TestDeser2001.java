@@ -65,12 +65,12 @@ public class TestDeser2001 extends TestDeser {
 
     public void testHex() throws Exception {
         deserialize("<result xsi:type=\"xsd:hexBinary\">50A9</result>",
-                    new Hex("50A9"));
+                    new Hex("50A9"),true);
     }
 
     public void testHexNull() throws Exception {
         deserialize("<result xsi:type=\"xsd:hexBinary\"></result>",
-                    new Hex(""));
+                    new Hex(""),true);
     }
 
     public void testMapWithNils() throws Exception {

@@ -136,11 +136,15 @@ public class SymbolTable {
 
     private boolean debug = false;
 
+    private BaseTypeMapping btm = null;
     /**
      * Construct a symbol table with the given Namespaces.
      */
-    public SymbolTable(Namespaces namespaces, boolean addImports, boolean debug) {
+    public SymbolTable(Namespaces namespaces,
+                       BaseTypeMapping btm,
+                       boolean addImports, boolean debug) {
         this.namespaces = namespaces;
+        this.btm = btm;
         this.addImports = addImports;
         this.debug = debug;
     } // ctor
@@ -605,9 +609,9 @@ public class SymbolTable {
                     TypeEntry refType = getTypeEntry(refQName, false);
                     if (refType == null) {
                         // Not defined yet, add one
-                        String baseJavaName = Utils.getBaseJavaName(refQName);
-                        if (baseJavaName != null)
-                            refType = new BaseJavaType(refQName);
+                        String baseName = btm.getBaseName(refQName);
+                        if (baseName != null)
+                            refType = new BaseType(refQName);
                         else
                             refType = new UndefinedType(refQName);
                         symbolTablePut(refType);
@@ -633,9 +637,9 @@ public class SymbolTable {
                 else {
 
                     // Create a TypeEntry representing this  type/element
-                    String baseJavaName = Utils.getBaseJavaName(qName);
-                    if (baseJavaName != null) {
-                        symbolTablePut(new BaseJavaType(qName));
+                    String baseName = btm.getBaseName(qName);
+                    if (baseName != null) {
+                        symbolTablePut(new BaseType(qName));
                     }
                     else if (!isElement) {
                         symbolTablePut(new DefinedType(qName, node));
@@ -674,9 +678,9 @@ public class SymbolTable {
                     TypeEntry collEl = getTypeEntry(typeAttr, false);
                     if (collEl == null) {
                         // Collection Element Type not defined yet, add one.
-                        String baseJavaName = Utils.getBaseJavaName(typeAttr);
-                        if (baseJavaName != null) {
-                            collEl = new BaseJavaType(typeAttr);
+                        String baseName = btm.getBaseName(typeAttr);
+                        if (baseName != null) {
+                            collEl = new BaseType(typeAttr);
                         } else {
                             collEl = new UndefinedType(typeAttr);
                         }
@@ -684,10 +688,10 @@ public class SymbolTable {
                     }
                     symbolTablePut(new CollectionType(qName, collEl, node, "[]"));
                 } else {
-                    // Add a BaseJavaType or Undefined Type/Element
-                    String baseJavaName = Utils.getBaseJavaName(qName);
-                    if (baseJavaName != null)
-                        symbolTablePut(new BaseJavaType(qName));
+                    // Add a BaseType or Undefined Type/Element
+                    String baseName = btm.getBaseName(qName);
+                    if (baseName != null)
+                        symbolTablePut(new BaseType(qName));
                     else if (forElement.value == false)
                         symbolTablePut(new UndefinedType(qName));
                     else
@@ -716,7 +720,7 @@ public class SymbolTable {
         }
 
         // The QName may represent a base java name, so check this first
-        String fullJavaName = Utils.getBaseJavaName(qName);
+        String fullJavaName = btm.getBaseName(qName);
         if (fullJavaName != null) 
             return fullJavaName;
         

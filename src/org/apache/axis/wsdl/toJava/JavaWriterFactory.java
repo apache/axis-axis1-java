@@ -70,6 +70,8 @@ import javax.wsdl.QName;
 import javax.wsdl.Service;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.encoding.DefaultSOAP12TypeMappingImpl;
 
 /**
 * This is Wsdl2java's implementation of the WriterFactory.
@@ -513,5 +515,30 @@ public class JavaWriterFactory implements WriterFactory {
             }
         }
     } // determineIfHoldersNeeded
+
+    /**
+     * Get TypeMapping to use for translating
+     * QNames to java base types
+     */
+    BaseTypeMapping btm = null;
+    public BaseTypeMapping getBaseTypeMapping() {
+        if (btm == null) {
+            btm = new BaseTypeMapping() {
+                    TypeMapping defaultTM = DefaultSOAP12TypeMappingImpl.create();
+                    public String getBaseName(QName qNameIn) {
+                        javax.xml.rpc.namespace.QName qName = 
+                            new javax.xml.rpc.namespace.QName(
+                              qNameIn.getNamespaceURI(),                                 
+                              qNameIn.getLocalPart());
+                        Class cls = defaultTM.getClassForQName(qName);
+                        if (cls == null)
+                            return null;
+                        else 
+                            return JavaUtils.getTextClassName(cls.getName());
+                    }
+                };    
+        }
+        return btm;
+    }
 
 } // class JavaWriterFactory

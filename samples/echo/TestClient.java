@@ -64,6 +64,7 @@ import org.apache.axis.encoding.ser.ArraySerializerFactory;
 import org.apache.axis.encoding.ser.ArrayDeserializerFactory;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.encoding.Hex;
 import org.apache.axis.Constants;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Options;
@@ -103,6 +104,16 @@ public abstract class TestClient {
     protected boolean equals(Object obj1, Object obj2) {
        if (obj1 == null || obj2 == null) return (obj1 == obj2);
        if (obj1.equals(obj2)) return true;
+
+       // For comparison purposes, get the array of bytes representing
+       // the Hex object.
+       if (obj1 instanceof Hex) {
+           obj1 = ((Hex) obj1).getBytes();
+       }
+       if (obj2 instanceof Hex) {
+           obj2 = ((Hex) obj2).getBytes();
+       }
+
        if (obj1 instanceof Date && obj2 instanceof Date)
            if (Math.abs(((Date)obj1).getTime()-((Date)obj2).getTime())<1000)
                return true;
@@ -121,7 +132,7 @@ public abstract class TestClient {
            }
            return true;
        }
-
+       
        if (obj1 instanceof List)
          obj1 = JavaUtils.convert(obj1, Object[].class);
        if (obj2 instanceof List)
@@ -247,7 +258,7 @@ public abstract class TestClient {
           new SOAPStruct(3, "three", 3.3F)});
         test("Void        ", null);
         test("Base64      ", "Base64".getBytes());
-        test("HexBinary   ", new org.apache.axis.encoding.Hex("3344"));
+        test("HexBinary   ", new Hex("3344"));
         test("Date        ", new Date());
         test("Decimal     ", new BigDecimal("3.14159"));
         test("Boolean     ", Boolean.TRUE);

@@ -60,10 +60,10 @@ import org.w3c.dom.Node;
 import javax.wsdl.QName;
 
 /**
- * This Type is for a QName represents a Base Java Type (i.e. xsd:string) 
+ * This Type is for a QName represents a Base Type (i.e. xsd:string represents a java.lang.String) 
  */
-public class BaseJavaType extends Type {
-    public BaseJavaType(QName pqName) {
+public class BaseType extends Type {
+    public BaseType(QName pqName) {
         super(pqName);
     }
 };

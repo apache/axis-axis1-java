@@ -84,6 +84,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Vector;
+import javax.wsdl.QName;
+
+import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.encoding.DefaultSOAP12TypeMappingImpl;
 
 /**
  * This class produces java files for stubs, skeletons, and types from a
@@ -162,7 +166,10 @@ public class Emitter {
             }
         }
 
-        symbolTable = new SymbolTable(namespaces, bGenerateImports, bDebug);
+        symbolTable = new SymbolTable(namespaces,
+                                      writerFactory.getBaseTypeMapping(),
+                                      bGenerateImports,
+                                      bDebug);
         symbolTable.add(context, def, doc);
         writerFactory.writerPass(def, symbolTable);
         if (bDebug) {
@@ -593,5 +600,30 @@ public class Emitter {
         }
 
         public void setEmitter(Emitter emitter) {}
+
+        /**
+         * Get TypeMapping to use for translating
+         * QNames to java base types
+         */
+        BaseTypeMapping btm = null;
+        public BaseTypeMapping getBaseTypeMapping() {
+            if (btm == null) {
+                btm = new BaseTypeMapping() {
+                        TypeMapping defaultTM = DefaultSOAP12TypeMappingImpl.create();
+                        public String getBaseName(QName qNameIn) {
+                            javax.xml.rpc.namespace.QName qName = 
+                                new javax.xml.rpc.namespace.QName(
+                                   qNameIn.getNamespaceURI(),                                 
+                                   qNameIn.getLocalPart());
+                            Class cls = defaultTM.getClassForQName(qName);
+                            if (cls == null)
+                                return null;
+                            else 
+                                return JavaUtils.getTextClassName(cls.getName());
+                        }
+                    };    
+            }
+            return btm;
+        }
     }
 }

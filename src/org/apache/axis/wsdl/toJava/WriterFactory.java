@@ -116,4 +116,10 @@ public interface WriterFactory {
      * Provide the Emitter to the factory.
      */
     public void setEmitter(Emitter emitter);
+
+    /**
+     * Get TypeMapping to use for translating
+     * QNames to java base types
+     */
+    public BaseTypeMapping getBaseTypeMapping();
 }
