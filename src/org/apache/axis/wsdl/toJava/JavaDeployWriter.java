@@ -241,10 +241,10 @@ public class JavaDeployWriter extends JavaWriter {
                     serializerFactory = "org.apache.axis.encoding.ser.EnumSerializerFactory";
                     deserializerFactory = "org.apache.axis.encoding.ser.EnumDeserializerFactory";
                 } else if (type.isSimpleType()) {
-                    serializerFactory = "org.apache.axis.encoding.ser.SimpleNonPrimitiveSerializerFactory";
+                    serializerFactory = "org.apache.axis.encoding.ser.SimpleSerializerFactory";
                     deserializerFactory = "org.apache.axis.encoding.ser.SimpleDeserializerFactory";
                 } else if (type.getBaseType() != null) {
-                    serializerFactory = "org.apache.axis.encoding.ser.SimplePrimitiveSerializerFactory";
+                    serializerFactory = "org.apache.axis.encoding.ser.SimpleSerializerFactory";
                     deserializerFactory = "org.apache.axis.encoding.ser.SimpleDeserializerFactory";
                 } else {
                     serializerFactory = "org.apache.axis.encoding.ser.BeanSerializerFactory";

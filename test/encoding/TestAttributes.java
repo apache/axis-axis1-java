@@ -12,7 +12,7 @@ import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.ser.BeanDeserializerFactory;
 import org.apache.axis.encoding.ser.BeanSerializerFactory;
 import org.apache.axis.encoding.ser.SimpleDeserializerFactory;
-import org.apache.axis.encoding.ser.SimpleNonPrimitiveSerializerFactory;
+import org.apache.axis.encoding.ser.SimpleSerializerFactory;
 import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.SOAPEnvelope;
@@ -147,7 +147,7 @@ public class TestAttributes extends TestCase {
         QName beanQName = new QName("typeNS", "Bean");
         tm.register(SimpleBean.class,
                     beanQName,
-                    new SimpleNonPrimitiveSerializerFactory(SimpleBean.class, beanQName),
+                    new SimpleSerializerFactory(SimpleBean.class, beanQName),
                     new SimpleDeserializerFactory(SimpleBean.class, beanQName));
 
         // Serialize the bean in to XML

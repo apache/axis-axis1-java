@@ -58,7 +58,6 @@ package org.apache.axis.encoding;
 import org.apache.axis.Constants;
 import org.apache.axis.encoding.ser.BeanSerializerFactory;
 import org.apache.axis.encoding.ser.BeanDeserializerFactory;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.Messages;
 
@@ -245,7 +244,27 @@ public class TypeMappingImpl implements TypeMapping
                          javax.xml.rpc.encoding.SerializerFactory sf,
                          javax.xml.rpc.encoding.DeserializerFactory dsf)
         throws JAXRPCException {
+        // At least a serializer or deserializer factory must be specified.
+        if (sf == null && dsf == null) {
+            throw new JAXRPCException(Messages.getMessage("badSerFac"));
+        }
 
+        internalRegister(javaType, xmlType, sf, dsf);
+    }
+
+    /**
+     * Internal version of register(), which allows null factories.
+     *
+     * @param javaType
+     * @param xmlType
+     * @param sf
+     * @param dsf
+     * @throws JAXRPCException
+     */
+    protected void internalRegister(Class javaType, QName xmlType,
+                         javax.xml.rpc.encoding.SerializerFactory sf,
+                         javax.xml.rpc.encoding.DeserializerFactory dsf)
+            throws JAXRPCException {
         // Both javaType and xmlType must be specified.
         if (javaType == null || xmlType == null) {
             throw new JAXRPCException(

@@ -85,7 +85,7 @@ public class BeanSerializerFactory extends BaseSerializerFactory {
     protected BeanPropertyDescriptor[] propertyDescriptor = null;
 
     public BeanSerializerFactory(Class javaType, QName xmlType) {
-        super(BeanSerializer.class, false, xmlType, javaType);  
+        super(BeanSerializer.class, xmlType, javaType);
         // Sometimes an Enumeration class is registered as a Bean.
         // If this is the case, silently switch to the EnumSerializer
         if (JavaUtils.isEnumClass(javaType)) {

@@ -71,10 +71,10 @@ import javax.xml.transform.Source;
 public class JAFDataHandlerSerializerFactory extends BaseSerializerFactory {
 
     public JAFDataHandlerSerializerFactory(Class javaType, QName xmlType) {
-        super(getSerializerClass(javaType, xmlType), false, xmlType, javaType); 
+        super(getSerializerClass(javaType, xmlType), xmlType, javaType);
     }
     public JAFDataHandlerSerializerFactory() {
-        super(JAFDataHandlerSerializer.class, false); 
+        super(JAFDataHandlerSerializer.class);
     }
 
     private static Class getSerializerClass(Class javaType, QName xmlType) {

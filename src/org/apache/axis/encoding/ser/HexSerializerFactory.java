@@ -76,6 +76,6 @@ import org.apache.axis.encoding.Deserializer;
  */
 public class HexSerializerFactory extends BaseSerializerFactory {
     public HexSerializerFactory(Class javaType, QName xmlType) {
-        super(HexSerializer.class, true, xmlType, javaType);  // Share HexSerializer instance
+        super(HexSerializer.class, xmlType, javaType);  // Share HexSerializer instance
     }
 }

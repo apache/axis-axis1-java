@@ -86,6 +86,6 @@ import org.apache.axis.encoding.Deserializer;
 public class MapSerializerFactory extends BaseSerializerFactory {
 
     public MapSerializerFactory(Class javaType, QName xmlType) {
-        super(MapSerializer.class, false, xmlType, javaType); 
+        super(MapSerializer.class, xmlType, javaType);
     }
 }

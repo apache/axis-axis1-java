@@ -86,6 +86,6 @@ import org.apache.axis.encoding.Deserializer;
 public class VectorSerializerFactory extends BaseSerializerFactory {
 
     public VectorSerializerFactory(Class javaType, QName xmlType) {
-        super(VectorSerializer.class, false, xmlType, javaType); 
+        super(VectorSerializer.class, xmlType, javaType);
     }
 }

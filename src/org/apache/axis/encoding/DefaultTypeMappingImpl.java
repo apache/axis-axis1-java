@@ -75,8 +75,7 @@ import org.apache.axis.encoding.ser.MapSerializerFactory;
 import org.apache.axis.encoding.ser.QNameDeserializerFactory;
 import org.apache.axis.encoding.ser.QNameSerializerFactory;
 import org.apache.axis.encoding.ser.SimpleDeserializerFactory;
-import org.apache.axis.encoding.ser.SimpleNonPrimitiveSerializerFactory;
-import org.apache.axis.encoding.ser.SimplePrimitiveSerializerFactory;
+import org.apache.axis.encoding.ser.SimpleSerializerFactory;
 import org.apache.axis.encoding.ser.VectorDeserializerFactory;
 import org.apache.axis.encoding.ser.VectorSerializerFactory;
 import org.apache.axis.utils.JavaUtils;
@@ -154,19 +153,16 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
 
         // SOAP Encoded strings are treated as primitives.
         // Everything else is not.
-        myRegisterSimple(Constants.SOAP_STRING, java.lang.String.class, true);  
-        myRegisterSimple(Constants.SOAP_BOOLEAN,
-                         java.lang.Boolean.class, false); 
-        myRegisterSimple(Constants.SOAP_DOUBLE, java.lang.Double.class, false);
-        myRegisterSimple(Constants.SOAP_FLOAT, java.lang.Float.class, false);
-        myRegisterSimple(Constants.SOAP_INT, java.lang.Integer.class, false);
-        myRegisterSimple(Constants.SOAP_INTEGER,
-                         java.math.BigInteger.class, false);
-        myRegisterSimple(Constants.SOAP_DECIMAL, java.math.BigDecimal.class,
-                         false);
-        myRegisterSimple(Constants.SOAP_LONG, java.lang.Long.class, false);
-        myRegisterSimple(Constants.SOAP_SHORT, java.lang.Short.class, false);
-        myRegisterSimple(Constants.SOAP_BYTE, java.lang.Byte.class, false);
+        myRegisterSimple(Constants.SOAP_STRING, java.lang.String.class);
+        myRegisterSimple(Constants.SOAP_BOOLEAN, java.lang.Boolean.class);
+        myRegisterSimple(Constants.SOAP_DOUBLE, java.lang.Double.class);
+        myRegisterSimple(Constants.SOAP_FLOAT, java.lang.Float.class);
+        myRegisterSimple(Constants.SOAP_INT, java.lang.Integer.class);
+        myRegisterSimple(Constants.SOAP_INTEGER, java.math.BigInteger.class);
+        myRegisterSimple(Constants.SOAP_DECIMAL, java.math.BigDecimal.class);
+        myRegisterSimple(Constants.SOAP_LONG, java.lang.Long.class);
+        myRegisterSimple(Constants.SOAP_SHORT, java.lang.Short.class);
+        myRegisterSimple(Constants.SOAP_BYTE, java.lang.Byte.class);
 
         // HexBinary binary data needs to use the hex binary serializer/deserializer
         myRegister(Constants.XSD_HEXBIN,     HexBinary.class,
@@ -242,27 +238,27 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
         */
 
         // If SOAP 1.1 over the wire, map wrapper classes to XSD primitives.
-        myRegisterSimple(Constants.XSD_STRING, java.lang.String.class, true);
-        myRegisterSimple(Constants.XSD_BOOLEAN, java.lang.Boolean.class, true);
-        myRegisterSimple(Constants.XSD_DOUBLE, java.lang.Double.class, true);
-        myRegisterSimple(Constants.XSD_FLOAT, java.lang.Float.class, true);
-        myRegisterSimple(Constants.XSD_INT, java.lang.Integer.class, true);
-        myRegisterSimple(Constants.XSD_INTEGER, java.math.BigInteger.class,
-                         true);
-        myRegisterSimple(Constants.XSD_DECIMAL, java.math.BigDecimal.class,
-                         true);
-        myRegisterSimple(Constants.XSD_LONG, java.lang.Long.class, true);
-        myRegisterSimple(Constants.XSD_SHORT, java.lang.Short.class, true);
-        myRegisterSimple(Constants.XSD_BYTE, java.lang.Byte.class, true);
+        myRegisterSimple(Constants.XSD_STRING, java.lang.String.class);
+        myRegisterSimple(Constants.XSD_BOOLEAN, java.lang.Boolean.class);
+        myRegisterSimple(Constants.XSD_DOUBLE, java.lang.Double.class);
+        myRegisterSimple(Constants.XSD_FLOAT, java.lang.Float.class);
+        myRegisterSimple(Constants.XSD_INT, java.lang.Integer.class);
+        myRegisterSimple(Constants.XSD_INTEGER, java.math.BigInteger.class
+        );
+        myRegisterSimple(Constants.XSD_DECIMAL, java.math.BigDecimal.class
+        );
+        myRegisterSimple(Constants.XSD_LONG, java.lang.Long.class);
+        myRegisterSimple(Constants.XSD_SHORT, java.lang.Short.class);
+        myRegisterSimple(Constants.XSD_BYTE, java.lang.Byte.class);
 
         // The XSD Primitives are mapped to java primitives.
-        myRegisterSimple(Constants.XSD_BOOLEAN, boolean.class, true);
-        myRegisterSimple(Constants.XSD_DOUBLE, double.class, true);
-        myRegisterSimple(Constants.XSD_FLOAT, float.class, true);
-        myRegisterSimple(Constants.XSD_INT, int.class, true);
-        myRegisterSimple(Constants.XSD_LONG, long.class, true);
-        myRegisterSimple(Constants.XSD_SHORT, short.class, true);
-        myRegisterSimple(Constants.XSD_BYTE, byte.class, true);
+        myRegisterSimple(Constants.XSD_BOOLEAN, boolean.class);
+        myRegisterSimple(Constants.XSD_DOUBLE, double.class);
+        myRegisterSimple(Constants.XSD_FLOAT, float.class);
+        myRegisterSimple(Constants.XSD_INT, int.class);
+        myRegisterSimple(Constants.XSD_LONG, long.class);
+        myRegisterSimple(Constants.XSD_SHORT, short.class);
+        myRegisterSimple(Constants.XSD_BYTE, byte.class);
 
         // Map QNAME to the jax rpc QName class
         myRegister(Constants.XSD_QNAME,
@@ -288,38 +284,38 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
 
         // Mapping for xsd:time.  Map to Axis type Time
         myRegister(Constants.XSD_TIME,       org.apache.axis.types.Time.class,
-                   new SimplePrimitiveSerializerFactory(org.apache.axis.types.Time.class,
+                   new SimpleSerializerFactory(org.apache.axis.types.Time.class,
                                              Constants.XSD_TIME),
                    new SimpleDeserializerFactory(org.apache.axis.types.Time.class,
                                                Constants.XSD_TIME)
         );
         // These are the g* types (gYearMonth, etc) which map to Axis types
         myRegister(Constants.XSD_YEARMONTH, org.apache.axis.types.YearMonth.class,
-                   new SimplePrimitiveSerializerFactory(org.apache.axis.types.YearMonth.class,
+                   new SimpleSerializerFactory(org.apache.axis.types.YearMonth.class,
                                              Constants.XSD_YEARMONTH),
                    new SimpleDeserializerFactory(org.apache.axis.types.YearMonth.class,
                                              Constants.XSD_YEARMONTH)
         );
         myRegister(Constants.XSD_YEAR, org.apache.axis.types.Year.class,
-                   new SimplePrimitiveSerializerFactory(org.apache.axis.types.Year.class,
+                   new SimpleSerializerFactory(org.apache.axis.types.Year.class,
                                              Constants.XSD_YEAR),
                    new SimpleDeserializerFactory(org.apache.axis.types.Year.class,
                                              Constants.XSD_YEAR)
         );
         myRegister(Constants.XSD_MONTH, org.apache.axis.types.Month.class,
-                   new SimplePrimitiveSerializerFactory(org.apache.axis.types.Month.class,
+                   new SimpleSerializerFactory(org.apache.axis.types.Month.class,
                                              Constants.XSD_MONTH),
                    new SimpleDeserializerFactory(org.apache.axis.types.Month.class,
                                              Constants.XSD_MONTH)
         );
         myRegister(Constants.XSD_DAY, org.apache.axis.types.Day.class,
-                   new SimplePrimitiveSerializerFactory(org.apache.axis.types.Day.class,
+                   new SimpleSerializerFactory(org.apache.axis.types.Day.class,
                                              Constants.XSD_DAY),
                    new SimpleDeserializerFactory(org.apache.axis.types.Day.class,
                                              Constants.XSD_DAY)
         );
         myRegister(Constants.XSD_MONTHDAY, org.apache.axis.types.MonthDay.class,
-                   new SimplePrimitiveSerializerFactory(org.apache.axis.types.MonthDay.class,
+                   new SimpleSerializerFactory(org.apache.axis.types.MonthDay.class,
                                              Constants.XSD_MONTHDAY),
                    new SimpleDeserializerFactory(org.apache.axis.types.MonthDay.class,
                                              Constants.XSD_MONTHDAY)
@@ -386,7 +382,7 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
 
         // xsd:token
         myRegister(Constants.XSD_TOKEN, org.apache.axis.types.Token.class,
-                   new SimplePrimitiveSerializerFactory(org.apache.axis.types.Token.class,
+                   new SimpleSerializerFactory(org.apache.axis.types.Token.class,
                                              Constants.XSD_TOKEN),
                    new SimpleDeserializerFactory(org.apache.axis.types.Token.class,
                                              Constants.XSD_TOKEN)
@@ -394,7 +390,7 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
 
         // a xsd:normalizedString
         myRegister(Constants.XSD_NORMALIZEDSTRING, org.apache.axis.types.NormalizedString.class,
-                   new SimplePrimitiveSerializerFactory(org.apache.axis.types.NormalizedString.class,
+                   new SimpleSerializerFactory(org.apache.axis.types.NormalizedString.class,
                                              Constants.XSD_NORMALIZEDSTRING),
                    new SimpleDeserializerFactory(org.apache.axis.types.NormalizedString.class,
                                              Constants.XSD_NORMALIZEDSTRING)
@@ -402,7 +398,7 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
 
         // a xsd:unsignedLong
         myRegister(Constants.XSD_UNSIGNEDLONG, org.apache.axis.types.UnsignedLong.class,
-             new SimplePrimitiveSerializerFactory(org.apache.axis.types.UnsignedLong.class,
+             new SimpleSerializerFactory(org.apache.axis.types.UnsignedLong.class,
                                                   Constants.XSD_UNSIGNEDLONG),
              new SimpleDeserializerFactory(org.apache.axis.types.UnsignedLong.class,
                                            Constants.XSD_UNSIGNEDLONG)
@@ -410,7 +406,7 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
 
         // a xsd:unsignedInt
         myRegister(Constants.XSD_UNSIGNEDINT, org.apache.axis.types.UnsignedInt.class,
-             new SimplePrimitiveSerializerFactory(org.apache.axis.types.UnsignedInt.class,
+             new SimpleSerializerFactory(org.apache.axis.types.UnsignedInt.class,
                                                   Constants.XSD_UNSIGNEDINT),
              new SimpleDeserializerFactory(org.apache.axis.types.UnsignedInt.class,
                                            Constants.XSD_UNSIGNEDINT)
@@ -418,7 +414,7 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
 
         // a xsd:unsignedShort
         myRegister(Constants.XSD_UNSIGNEDSHORT, org.apache.axis.types.UnsignedShort.class,
-             new SimplePrimitiveSerializerFactory(org.apache.axis.types.UnsignedShort.class,
+             new SimpleSerializerFactory(org.apache.axis.types.UnsignedShort.class,
                                                   Constants.XSD_UNSIGNEDSHORT),
              new SimpleDeserializerFactory(org.apache.axis.types.UnsignedShort.class,
                                            Constants.XSD_UNSIGNEDSHORT)
@@ -426,7 +422,7 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
 
         // a xsd:unsignedByte
         myRegister(Constants.XSD_UNSIGNEDBYTE, org.apache.axis.types.UnsignedByte.class,
-                   new SimplePrimitiveSerializerFactory(org.apache.axis.types.UnsignedByte.class,
+                   new SimpleSerializerFactory(org.apache.axis.types.UnsignedByte.class,
                                              Constants.XSD_UNSIGNEDBYTE),
                    new SimpleDeserializerFactory(org.apache.axis.types.UnsignedByte.class,
                                              Constants.XSD_UNSIGNEDBYTE)
@@ -434,7 +430,7 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
 
         // a xsd:nonNegativeInteger
         myRegister(Constants.XSD_NONNEGATIVEINTEGER, org.apache.axis.types.NonNegativeInteger.class,
-             new SimplePrimitiveSerializerFactory(org.apache.axis.types.NonNegativeInteger.class,
+             new SimpleSerializerFactory(org.apache.axis.types.NonNegativeInteger.class,
                                                   Constants.XSD_NONNEGATIVEINTEGER),
              new SimpleDeserializerFactory(org.apache.axis.types.NonNegativeInteger.class,
                                            Constants.XSD_NONNEGATIVEINTEGER)
@@ -442,7 +438,7 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
 
         // a xsd:negativeInteger
         myRegister(Constants.XSD_NEGATIVEINTEGER, org.apache.axis.types.NegativeInteger.class,
-             new SimplePrimitiveSerializerFactory(org.apache.axis.types.NegativeInteger.class,
+             new SimpleSerializerFactory(org.apache.axis.types.NegativeInteger.class,
                                                   Constants.XSD_NEGATIVEINTEGER),
              new SimpleDeserializerFactory(org.apache.axis.types.NegativeInteger.class,
                                            Constants.XSD_NEGATIVEINTEGER)
@@ -450,7 +446,7 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
 
         // a xsd:positiveInteger
         myRegister(Constants.XSD_POSITIVEINTEGER, org.apache.axis.types.PositiveInteger.class,
-             new SimplePrimitiveSerializerFactory(org.apache.axis.types.PositiveInteger.class,
+             new SimpleSerializerFactory(org.apache.axis.types.PositiveInteger.class,
                                                   Constants.XSD_POSITIVEINTEGER),
              new SimpleDeserializerFactory(org.apache.axis.types.PositiveInteger.class,
                                            Constants.XSD_POSITIVEINTEGER)
@@ -458,7 +454,7 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
 
         // a xsd:nonPositiveInteger
         myRegister(Constants.XSD_NONPOSITIVEINTEGER, org.apache.axis.types.NonPositiveInteger.class,
-             new SimplePrimitiveSerializerFactory(org.apache.axis.types.NonPositiveInteger.class,
+             new SimpleSerializerFactory(org.apache.axis.types.NonPositiveInteger.class,
                                                   Constants.XSD_NONPOSITIVEINTEGER),
              new SimpleDeserializerFactory(org.apache.axis.types.NonPositiveInteger.class,
                                            Constants.XSD_NONPOSITIVEINTEGER)
@@ -466,7 +462,7 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
 
         // a xsd:Name
         myRegister(Constants.XSD_NAME, org.apache.axis.types.Name.class,
-                   new SimplePrimitiveSerializerFactory(org.apache.axis.types.Name.class,
+                   new SimpleSerializerFactory(org.apache.axis.types.Name.class,
                                              Constants.XSD_NAME),
                    new SimpleDeserializerFactory(org.apache.axis.types.Name.class,
                                              Constants.XSD_NAME)
@@ -474,7 +470,7 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
 
         // a xsd:NCName
         myRegister(Constants.XSD_NCNAME, org.apache.axis.types.NCName.class,
-                   new SimplePrimitiveSerializerFactory(org.apache.axis.types.NCName.class,
+                   new SimpleSerializerFactory(org.apache.axis.types.NCName.class,
                                              Constants.XSD_NCNAME),
                    new SimpleDeserializerFactory(org.apache.axis.types.NCName.class,
                                              Constants.XSD_NCNAME)
@@ -482,7 +478,7 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
 
         // a xsd:NmToken
         myRegister(Constants.XSD_NMTOKEN, org.apache.axis.types.NMToken.class,
-                   new SimplePrimitiveSerializerFactory(org.apache.axis.types.NMToken.class,
+                   new SimpleSerializerFactory(org.apache.axis.types.NMToken.class,
                                              Constants.XSD_NMTOKEN),
                    new SimpleDeserializerFactory(org.apache.axis.types.NMToken.class,
                                              Constants.XSD_NMTOKEN)
@@ -490,7 +486,7 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
 
         // a xsd:Duration
         myRegister(Constants.XSD_DURATION, org.apache.axis.types.Duration.class,
-                   new SimplePrimitiveSerializerFactory(org.apache.axis.types.Duration.class,
+                   new SimpleSerializerFactory(org.apache.axis.types.Duration.class,
                                              Constants.XSD_DURATION),
                    new SimpleDeserializerFactory(org.apache.axis.types.Duration.class,
                                              Constants.XSD_DURATION)
@@ -498,7 +494,7 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
         
         // a xsd:anyURI
         myRegister(Constants.XSD_ANYURI, org.apache.axis.types.URI.class,
-                   new SimplePrimitiveSerializerFactory(org.apache.axis.types.URI.class,
+                   new SimpleSerializerFactory(org.apache.axis.types.URI.class,
                                              Constants.XSD_ANYURI),
                    new SimpleDeserializerFactory(org.apache.axis.types.URI.class,
                                              Constants.XSD_ANYURI)
@@ -537,20 +533,10 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
      * Register a "simple" type mapping - in other words, a
      * @param xmlType
      * @param javaType
-     * @param primitive
-     */ 
-    protected void myRegisterSimple(QName xmlType,
-                                    Class javaType,
-                                    boolean primitive) {
-        SerializerFactory sf;
+     */
+    protected void myRegisterSimple(QName xmlType, Class javaType) {
+        SerializerFactory sf = new SimpleSerializerFactory(javaType, xmlType);
         DeserializerFactory df = null;
-        if (primitive) {
-            sf = new SimplePrimitiveSerializerFactory(javaType,
-                                                      xmlType);
-        } else {
-            sf = new SimpleNonPrimitiveSerializerFactory(javaType,
-                                                         xmlType);
-        }
         if (javaType != java.lang.Object.class) {
             df = new SimpleDeserializerFactory(javaType, xmlType);
         }
@@ -579,7 +565,7 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                 for (int i=0; i < Constants.URIS_SCHEMA_XSD.length; i++) {
                     QName qName = new QName(Constants.URIS_SCHEMA_XSD[i],
                                             xmlType.getLocalPart());
-                    super.register(javaType, qName, sf, df);
+                    super.internalRegister(javaType, qName, sf, df);
                 }
             }
             else if (xmlType.getNamespaceURI().equals(
@@ -587,12 +573,12 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                 for (int i=0; i < Constants.URIS_SOAP_ENC.length; i++) {
                     QName qName = new QName(Constants.URIS_SOAP_ENC[i],
                                             xmlType.getLocalPart());
-                    super.register(javaType, qName, sf, df);
+                    super.internalRegister(javaType, qName, sf, df);
                 }
             }
             // Register with the specified xmlType.
             // This is the prefered mapping and the last registed one wins
-            super.register(javaType, xmlType, sf, df);
+            super.internalRegister(javaType, xmlType, sf, df);
         } catch (JAXRPCException e) { }
     }
 

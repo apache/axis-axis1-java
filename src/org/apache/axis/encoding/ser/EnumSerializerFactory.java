@@ -76,6 +76,6 @@ import org.apache.axis.encoding.Deserializer;
  */
 public class EnumSerializerFactory extends BaseSerializerFactory {
     public EnumSerializerFactory(Class javaType, QName xmlType) {
-        super(EnumSerializer.class, true, xmlType, javaType);  // Share EnumSerializer instance
+        super(EnumSerializer.class, xmlType, javaType);  // Share EnumSerializer instance
     }
 }

@@ -409,7 +409,7 @@ public class JavaStubWriter extends JavaClassWriter {
         pw.println("            java.lang.Class enumdf = org.apache.axis.encoding.ser.EnumDeserializerFactory.class;");
         pw.println("            java.lang.Class arraysf = org.apache.axis.encoding.ser.ArraySerializerFactory.class;");
         pw.println("            java.lang.Class arraydf = org.apache.axis.encoding.ser.ArrayDeserializerFactory.class;");
-        pw.println("            java.lang.Class simplesf = org.apache.axis.encoding.ser.SimpleNonPrimitiveSerializerFactory.class;");
+        pw.println("            java.lang.Class simplesf = org.apache.axis.encoding.ser.SimpleSerializerFactory.class;");
         pw.println("            java.lang.Class simpledf = org.apache.axis.encoding.ser.SimpleDeserializerFactory.class;");
 
         if (hasMIME) {
