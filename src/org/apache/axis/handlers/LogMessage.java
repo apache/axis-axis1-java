@@ -69,11 +69,16 @@ public class LogMessage extends BasicHandler
     static Category category =
             Category.getInstance(LogMessage.class.getName());
 
+    static {
+        category.setPriority(Priority.INFO);
+    }
+
+
     public void invoke(MessageContext context)
     {
         String msg = (String)getOption("message");
         if (msg != null)
-            category.log(Priority.FATAL, msg);  // ??? Better way to do this?
+            category.log(Priority.INFO, msg);
     }
 
     public void undo(MessageContext msgContext) {
