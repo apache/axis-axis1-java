@@ -116,6 +116,11 @@ public class SerializationContextImpl implements SerializationContext
     protected static Log log =
             LogFactory.getLog(SerializationContextImpl.class.getName());
 
+    // invariant member variable to track low-level logging requirements
+    // we cache this once per instance lifecycle to avoid repeated lookups
+    // in heavily used code.
+    private final boolean debugEnabled = log.isDebugEnabled();
+
     private NSStack nsStack = new NSStack();
     private boolean writingStartTag = false;
     private boolean onlyXML = true;
@@ -452,7 +457,7 @@ public class SerializationContextImpl implements SerializationContext
      */
     public void registerPrefixForURI(String prefix, String uri)
     {
-        if (log.isDebugEnabled()) {
+        if (debugEnabled) {
             log.debug(Messages.getMessage("register00", prefix, uri));
         }
 
@@ -901,7 +906,7 @@ public class SerializationContextImpl implements SerializationContext
         throws IOException
     {
         java.util.ArrayList vecQNames = null;
-        if (log.isDebugEnabled()) {
+        if (debugEnabled) {
             log.debug(Messages.getMessage("startElem00",
                     "[" + qName.getNamespaceURI() + "]:" + qName.getLocalPart()));
         }
@@ -1007,7 +1012,7 @@ public class SerializationContextImpl implements SerializationContext
     {
         String elementQName = (String)elementStack.pop();
 
-        if (log.isDebugEnabled()) {
+        if (debugEnabled) {
             log.debug(Messages.getMessage("endElem00", "" + elementQName));
         }
 

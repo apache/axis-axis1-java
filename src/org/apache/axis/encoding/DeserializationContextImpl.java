@@ -103,6 +103,11 @@ public class DeserializationContextImpl extends DefaultHandler implements Lexica
     protected static Log log =
             LogFactory.getLog(DeserializationContextImpl.class.getName());
 
+    // invariant member variable to track low-level logging requirements
+    // we cache this once per instance lifecycle to avoid repeated lookups
+    // in heavily used code.
+    private final boolean debugEnabled = log.isDebugEnabled();
+    
     static final SchemaVersion schemaVersions[] = new SchemaVersion [] {
         SchemaVersion.SCHEMA_1999,
         SchemaVersion.SCHEMA_2000,
@@ -757,7 +762,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Lexica
      */
     public void pushNewElement(MessageElement elem)
     {
-        if (log.isDebugEnabled()) {
+        if (debugEnabled) {
             log.debug("Pushing element " + elem.getName());
         }
 
@@ -788,7 +793,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Lexica
 
     public void pushElementHandler(SOAPHandler handler)
     {
-        if (log.isDebugEnabled()) {
+        if (debugEnabled) {
             log.debug(Messages.getMessage("pushHandler00", "" + handler));
         }
 
@@ -818,7 +823,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Lexica
             topHandler = null;
         }
 
-        if (log.isDebugEnabled()) {
+        if (debugEnabled) {
             if (result == null) {
                 log.debug(Messages.getMessage("popHandler00", "(null)"));
             } else {
@@ -850,7 +855,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Lexica
      * endDocument is invoked at the end of the document.
      */
     public void endDocument() throws SAXException {
-        if (log.isDebugEnabled()) {
+        if (debugEnabled) {
             log.debug("Enter: DeserializationContextImpl::endDocument()");
         }
         if (!doneParsing && (recorder != null)) 
@@ -858,7 +863,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Lexica
 
         doneParsing = true;
 
-        if (log.isDebugEnabled()) {
+        if (debugEnabled) {
             log.debug("Exit: DeserializationContextImpl::endDocument()");
         }
     }
@@ -878,7 +883,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Lexica
     public void startPrefixMapping(String prefix, String uri)
         throws SAXException
     {
-        if (log.isDebugEnabled()) {
+        if (debugEnabled) {
             log.debug("Enter: DeserializationContextImpl::startPrefixMapping(" + prefix + ", " + uri + ")");
         }
 
@@ -917,7 +922,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Lexica
             topHandler.startPrefixMapping(prefix, uri);
         }
 
-        if (log.isDebugEnabled()) {
+        if (debugEnabled) {
             log.debug("Exit: DeserializationContextImpl::startPrefixMapping()");
         }
     }
@@ -925,7 +930,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Lexica
     public void endPrefixMapping(String prefix)
         throws SAXException
     {
-        if (log.isDebugEnabled()) {
+        if (debugEnabled) {
             log.debug("Enter: DeserializationContextImpl::endPrefixMapping(" + prefix + ")");
         }
 
@@ -937,7 +942,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Lexica
             topHandler.endPrefixMapping(prefix);
         }
 
-        if (log.isDebugEnabled()) {
+        if (debugEnabled) {
             log.debug("Exit: DeserializationContextImpl::endPrefixMapping()");
         }
     }
@@ -995,7 +1000,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Lexica
                              String qName, Attributes attributes)
         throws SAXException
     {
-        if (log.isDebugEnabled()) {
+        if (debugEnabled) {
             log.debug("Enter: DeserializationContextImpl::startElement(" + namespace + ", " + localName + ")");
         }
 
@@ -1059,7 +1064,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Lexica
             namespaces.push();
         }
 
-        if (log.isDebugEnabled()) {
+        if (debugEnabled) {
             log.debug("Exit: DeserializationContextImpl::startElement()");
         }
     }
@@ -1070,7 +1075,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Lexica
     public void endElement(String namespace, String localName, String qName)
         throws SAXException
     {
-        if (log.isDebugEnabled()) {
+        if (debugEnabled) {
             log.debug("Enter: DeserializationContextImpl::endElement(" + namespace + ", " + localName + ")");
         }
 
@@ -1095,7 +1100,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Lexica
 
             namespaces.pop();
 
-            if (log.isDebugEnabled()) {
+            if (debugEnabled) {
                 String name = curElement != null ?
                         curElement.getClass().getName() + ":" +
                         curElement.getName() : null;
