@@ -6,9 +6,10 @@ java samples.stock.GetQuote -uuser1 -wpass1 XXX -s/axis/StockQuoteService.jws %*
 @echo Deploy everything first
 java org.apache.axis.client.AdminClient deploy.xml %*
 
-@echo These next 2 should work...
+@echo These next 3 should work...
 java samples.stock.GetQuote -uuser1 -wpass1 XXX %*
 java samples.stock.GetQuote -uuser2 XXX %*
+java samples.stock.GetInfo -uuser3 -wpass3 IBM address
 
 @echo The rest of these should fail... (nicely of course)
 java samples.stock.GetQuote XXX %*

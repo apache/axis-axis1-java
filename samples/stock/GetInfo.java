@@ -56,10 +56,13 @@
 package samples.stock ;
 
 import org.apache.axis.AxisFault;
-import org.apache.axis.client.ServiceClient;
+import org.apache.axis.client.Service;
+import org.apache.axis.client.Call;
 import org.apache.axis.client.Transport;
 import org.apache.axis.transport.http.HTTPTransport;
+import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.Options;
+import org.apache.axis.encoding.XMLType;
 
 /**
  *
@@ -79,15 +82,20 @@ public class GetInfo {
       }
 
       String  symbol = args[0] ;
-      ServiceClient call = new ServiceClient
-            (new HTTPTransport(opts.getURL(), "urn:cominfo"));
+      Service  service = new Service();
+      Call     call    = (Call) service.createCall();
 
-      call.set( Transport.USER, opts.getUser() );
-      call.set( Transport.PASSWORD, opts.getPassword() );
-      String res = (String) call.invoke(
-        "urn:cominfo", "getInfo",
-        new Object[] { args[0], args[1] } );
-      
+      call.setTargetEndpointAddress( new java.net.URL(opts.getURL()) );
+      call.setOperationName( "getInfo" );
+      call.addParameter( "symbol", XMLType.XSD_STRING, Call.PARAM_MODE_IN );
+      call.addParameter( "info", XMLType.XSD_STRING, Call.PARAM_MODE_IN );
+      call.setProperty( Call.NAMESPACE, "urn:cominfo" );
+      call.setProperty( Transport.USER, opts.getUser() );
+      call.setProperty( Transport.PASSWORD, opts.getPassword() );
+      call.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, "" );
+
+      String res = (String) call.invoke( new Object[] { args[0], args[1] } );
+
       System.out.println( symbol + ": " + res );
     }
     catch( Exception e ) {
