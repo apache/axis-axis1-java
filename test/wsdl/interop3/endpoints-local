@@ -7,7 +7,10 @@
 # You will need to build the 'interop3' target from the top level ant
 # file, then deploy the services from the build/work/test/wsdl/interop3/*
 # directories.
+
+# Group D
 #
+EmptySA=http://localhost:8080/axis/services/SoapInteropEmptySAPort
 Import1=http://localhost:8080/axis/services/SoapInteropImport1Port
 Import2=http://localhost:8080/axis/services/SoapInteropImport2Port
 Import3=http://localhost:8080/axis/services/SoapInteropImport3Port
@@ -16,9 +19,6 @@ Compound2=http://localhost:8080/axis/services/SoapInteropCompound2Port
 DocLit=http://localhost:8080/axis/services/WSDLInteropTestDocLitPort
 DocLitParam=http://localhost:8080/axis/services/WSDLInteropTestDocLitParamPort
 RpcEnc=http://localhost:8080/axis/services/WSDLInteropTestRpcEncPort
-
-# No client for this one yet
-EmptySA=
 
 # Group E
 

@@ -417,8 +417,9 @@ Copyright:
   <!-- =================================================================== -->
   <!-- Interop 3                                                           -->
   <!-- =================================================================== -->
-  <target name="interop3" depends="buildTest"
-      description="run the round3 interop tests">
+  <target name="interop3" depends=""
+      description="compile the round3 interop tests">
+    <ant dir="test/wsdl/interop3/emptysa"/>
     <ant dir="test/wsdl/interop3/import1"/>
     <ant dir="test/wsdl/interop3/import2"/>
     <ant dir="test/wsdl/interop3/import3"/>
