@@ -575,7 +575,7 @@ public class AxisServlet extends HttpServlet
                 log.error(JavaUtils.getMessage("exception00"), e);
                 // It's been suggested that a lack of SOAPAction
                 // should produce some other error code (in the 400s)...
-                res.setStatus(e.getHttpServletResponseStatus());
+                res.setStatus(getHttpServletResponseStatus(e));
                 responseMsg =
                     generateFaultResponse(msgContext.getRequestMessage(), e);
             } catch (Exception e) {
@@ -601,6 +601,21 @@ public class AxisServlet extends HttpServlet
         }
     }
     
+    /**
+     * Extract information from AxisFault and map it to a HTTP Status code.
+     * 
+     * @param af Axis Fault
+     * @return HTTP Status code.
+     */
+    private int getHttpServletResponseStatus(AxisFault af) {
+        // Should really be doing this with explicit AxisFault
+        // subclasses... --Glen
+        return af.getFaultCode().getLocalPart().equals("Server.Unauthorized")
+                ? HttpServletResponse.SC_UNAUTHORIZED
+                : HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+    }
+
+
     /**
      * Should never generate an exception, but if it does
      * we want to be able to see evidence of it for tracing purpose

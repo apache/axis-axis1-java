@@ -74,7 +74,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Vector;
 
 import javax.xml.namespace.QName;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * An exception which maps cleanly to a SOAP fault.
@@ -297,14 +296,6 @@ public class AxisFault extends java.rmi.RemoteException {
         return result;
     }
     
-    public int getHttpServletResponseStatus() {
-        // Should really be doing this with explicit AxisFault
-        // subclasses... --Glen
-        return getFaultCode().getLocalPart().equals("Server.Unauthorized")
-                ? HttpServletResponse.SC_UNAUTHORIZED
-                : HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
-    }
-
     public void output(SerializationContext context) throws Exception {
 
         SOAPEnvelope envelope = new SOAPEnvelope();

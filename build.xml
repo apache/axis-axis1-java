@@ -226,12 +226,12 @@ Copyright:
     <echo message="commons-logging.present=${commons-logging.present}" />
     <echo message="log4j.present=${log4j.present}" />
     <echo message="tt-bytecode.present=${tt-bytecode.present}" />
+    <echo message="activation.present=${activation.present}" />
     <echo message=""/>
     <echo message="--- Optional Libraries ---" />
     <echo message="servlet.present=${servlet.present}" />
     <echo message="regexp.present=${regexp.present}" />
     <echo message="junit.present=${junit.present}" />
-    <echo message="activation.present=${activation.present}" />
     <echo message="mailapi.present=${mailapi.present}" />
     <echo message="attachments.present=${attachments.present}" />
     <echo message="security.present=${security.present}" />
