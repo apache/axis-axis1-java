@@ -102,17 +102,7 @@ public class SessionUtils {
         if (random == null) {
             try {
                 Class clazz = Class.forName(randomClass);
-
                 random = (Random) clazz.newInstance();
-                long seed = System.currentTimeMillis();
-                char entropy[] = getEntropy().toCharArray();
-
-                for (int i = 0; i < entropy.length; i++) {
-                    long update = ((byte) entropy[i]) << ((i % 8) * 8);
-
-                    seed ^= update;
-                }
-                random.setSeed(seed);
             } catch (Exception e) {
                 random = new java.util.Random();
             }
@@ -120,20 +110,4 @@ public class SessionUtils {
         return (random);
     }
 
-    /**
-     * Method getEntropy
-     *
-     * @return a nominally unique string
-     */
-    private static String getEntropy() {
-        if (null == thisHost) {
-            thisHost=NetworkUtils.getLocalHostname();
-        }
-        StringBuffer s = new StringBuffer();
-
-        // Unique string
-        s.append(s.hashCode()).append('.').append(System.currentTimeMillis())
-                .append(".AXIS@").append(thisHost);
-        return s.toString();
-    }
 }
