@@ -91,7 +91,6 @@ Copyright:
         <wsdl2java url="build/work/test/wsdl/interop3/groupE/InteropTestDocLit.wsdl"
                    output="build/work"
                    deployscope="session"
-                   skeleton="no"
                    noimports="no"
                    verbose="no"
                    testcase="no">
@@ -103,7 +102,6 @@ Copyright:
         <wsdl2java url="build/work/test/wsdl/interop3/groupE/InteropTestRpcEnc.wsdl"
                    output="build/work"
                    deployscope="session"
-                   skeleton="no"
                    noimports="no"
                    verbose="no"
                    testcase="no">
@@ -115,7 +113,6 @@ Copyright:
         <wsdl2java url="build/work/test/wsdl/interop3/groupE/InteropTestList.wsdl"
                    output="build/work"
                    deployscope="session"
-                   skeleton="no"
                    noimports="no"
                    verbose="no"
                    testcase="no">

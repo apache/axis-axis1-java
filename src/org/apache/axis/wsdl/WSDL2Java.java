@@ -91,7 +91,7 @@ public class WSDL2Java {
     // Define our short one-letter option identifiers.
     protected static final int HELP_OPT = 'h';
     protected static final int VERBOSE_OPT = 'v';
-    protected static final int SKELETON_OPT = 's';
+    protected static final int SERVER_OPT = 's';
     protected static final int SKELETON_DEPLOY_OPT = 'S';
     protected static final int NAMESPACE_OPT = 'N';
     protected static final int NAMESPACE_FILE_OPT = 'f';
@@ -133,9 +133,9 @@ public class WSDL2Java {
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 VERBOSE_OPT,
                 JavaUtils.getMessage("optionVerbose00")),
-        new CLOptionDescriptor("skeleton",
+        new CLOptionDescriptor("server-side",
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
-                SKELETON_OPT,
+                SERVER_OPT,
                 JavaUtils.getMessage("optionSkel00")),
         new CLOptionDescriptor("skeletonDeploy",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
@@ -202,15 +202,15 @@ public class WSDL2Java {
      * Turn on/off server skeleton creation
      * @param boolean value
      */
-    public void generateSkeleton(boolean value) {
-        emitter.generateSkeleton(value);
+    public void generateServerSide(boolean value) {
+        emitter.generateServerSide(value);
     }
 
     /**
      * Indicate if we should be emitting server side code and deploy/undeploy
      */ 
-    public boolean getGenerateSkeleton() {
-        return emitter.getGenerateSkeleton();
+    public boolean getGenerateServerSide() {
+        return emitter.getGenerateServerSide();
     }
 
     /**
@@ -417,7 +417,8 @@ public class WSDL2Java {
      */
     public static void main(String args[]) {
         WSDL2Java wsdl2java = new WSDL2Java();
-        boolean bSkeleton = false;
+        boolean bServer = false;
+        String skeletonDeploy = null;
         boolean bTestClass = false;
         String wsdlURI = null;
         HashMap namespaceMap = new HashMap();
@@ -459,14 +460,14 @@ public class WSDL2Java {
                         wsdl2java.verbose(true);
                         break;
 
-                    case SKELETON_OPT:
-                        bSkeleton = true;
-                        wsdl2java.generateSkeleton(true);
+                    case SERVER_OPT:
+                        bServer = true;
+                        wsdl2java.generateServerSide(true);
                         break;
 
                     case SKELETON_DEPLOY_OPT:
-                        String value = option.getArgument(0);
-                        if (value.equalsIgnoreCase("true"))
+                        skeletonDeploy = option.getArgument(0);
+                        if (skeletonDeploy.equalsIgnoreCase("true"))
                             wsdl2java.deploySkeleton(true);
                         else
                             wsdl2java.deploySkeleton(false);
@@ -540,6 +541,10 @@ public class WSDL2Java {
             // validate argument combinations
             //
             if (wsdlURI == null) {
+                printUsage();
+            }
+            if (skeletonDeploy != null && !bServer) {
+                System.out.println(JavaUtils.getMessage("badSkeleton00"));
                 printUsage();
             }
             if (!namespaceMap.isEmpty() && bPackageOpt) {

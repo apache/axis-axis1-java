@@ -76,7 +76,8 @@ import java.util.HashMap;
 public class Wsdl2javaAntTask extends Task
 {
     private boolean verbose = false;
-    private boolean skeleton = false;
+    private boolean server = false;
+    private boolean skeletonDeploy = true;
     private boolean testCase = false;
     private boolean noImports = false;
     private boolean all = false;
@@ -91,7 +92,8 @@ public class Wsdl2javaAntTask extends Task
         try {
             log("Running Wsdl2javaAntTask with parameters:", Project.MSG_VERBOSE);
             log("\tverbose:" + verbose, Project.MSG_VERBOSE);
-            log("\tskeleton:" + skeleton, Project.MSG_VERBOSE);
+            log("\tserver-side:" + server, Project.MSG_VERBOSE);
+            log("\tskeletonDeploy:" + skeletonDeploy, Project.MSG_VERBOSE);
             log("\ttestCase:" + testCase, Project.MSG_VERBOSE);
             log("\tnoImports:" + noImports, Project.MSG_VERBOSE);
             log("\tNStoPkg:" + namespaceMap, Project.MSG_VERBOSE);
@@ -126,7 +128,8 @@ public class Wsdl2javaAntTask extends Task
             emitter.generateImports(!noImports);
             emitter.generateAll(all);
             emitter.setOutputDir(output);
-            emitter.generateSkeleton(skeleton);
+            emitter.generateServerSide(server);
+            emitter.deploySkeleton(skeletonDeploy);
             emitter.verbose(verbose);
             emitter.setTypeMappingVersion(tm);
             emitter.setNStoPkg(project.resolveFile("NStoPkg.properties"));
@@ -163,9 +166,14 @@ public class Wsdl2javaAntTask extends Task
         this.verbose = Project.toBoolean(parameter);
     }
 
-    // The setter for the "skeleton" attribute
-    public void setSkeleton(String parameter) {
-        this.skeleton = Project.toBoolean(parameter);
+    // The setter for the "server-side" attribute
+    public void setServerSide(String parameter) {
+        this.server = Project.toBoolean(parameter);
+    }
+
+    // The setter for the "skeletonDeploy" attribute
+    public void setSkeletonDeploy(String parameter) {
+        this.skeletonDeploy = Project.toBoolean(parameter);
     }
 
     // The setter for the "testcase" attribute
