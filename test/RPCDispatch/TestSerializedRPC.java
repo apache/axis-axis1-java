@@ -19,6 +19,7 @@ import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.server.AxisServer;
+import org.apache.axis.utils.cache.JavaClass;
 
 import org.xml.sax.SAXException;
 
@@ -78,7 +79,7 @@ public class TestSerializedRPC extends TestCase {
         tm.register(javaType, xmlType, sf, df);
 
         ServiceDesc desc = new ServiceDesc();
-        desc.loadServiceDescByIntrospection(Service.class, tm);
+        desc.loadServiceDescByIntrospection(new JavaClass(Service.class), tm);
         reverse.setServiceDescription(desc);
         
         // Now we've got the service description loaded up.  We're going to
