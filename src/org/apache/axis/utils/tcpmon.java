@@ -112,6 +112,7 @@ public class tcpmon extends JFrame {
     static private int TIME_COLUMN     = 1 ;
     static private int INHOST_COLUMN   = 2 ;
     static private int OUTHOST_COLUMN  = 3 ;
+    static private int REQ_COLUMN      = 4 ;
 
     class AdminPage extends JPanel {
         public JRadioButton  listenerButton, proxyButton ;
@@ -578,7 +579,7 @@ public class tcpmon extends JFrame {
                 listener.tableModel.insertRow(count+1, new Object[] { "Active",
                                               time,
                                               fromHost, 
-                                              listener.hostField.getText() });
+                                              listener.hostField.getText(), "" });
                 listener.connections.add( this );
                 inputText  = new JTextArea( null, null, 20, 80 );
                 inputScroll = new JScrollPane( inputText );
@@ -648,13 +649,13 @@ public class tcpmon extends JFrame {
                         start = bufferedData.indexOf( ' ' )+1;
                         while( bufferedData.charAt(start) == ' ' ) start++ ;
                         end   = bufferedData.indexOf( ' ', start );
-                        String tmp = bufferedData.substring( start, end );
-                        if ( tmp.charAt(0) == '/' ) tmp = tmp.substring(1);
+                        String urlString = bufferedData.substring( start, end );
+                        if ( urlString.charAt(0) == '/' ) urlString = urlString.substring(1);
 
                         int index = listener.connections.indexOf( this );
 
                         if ( listener.isProxyBox.isSelected() ) {
-                            url = new URL( tmp );
+                            url = new URL( urlString );
                             targetHost = url.getHost();
                             targetPort = url.getPort();
                             if ( targetPort == -1 ) targetPort = 80 ;
@@ -667,7 +668,7 @@ public class tcpmon extends JFrame {
                         }
                         else {
                             url = new URL( "http://" + targetHost + ":" + 
-                                           targetPort + "/" + tmp );
+                                           targetPort + "/" + urlString );
 
                             listener.tableModel.setValueAt( targetHost, index+1,
                                                             OUTHOST_COLUMN );
@@ -725,8 +726,22 @@ public class tcpmon extends JFrame {
                 */
 
                 int index = listener.connections.indexOf( this );
-                if ( index >= 0 )
+
+                if ( index >= 0 ) {
                     listener.tableModel.setValueAt( "Done", 1+index, STATE_COLUMN );
+
+                    // Get the beginning of the request and put it in the abbrev colum
+                    String reqText = inputText.getText(0,50);
+                    int  eol = reqText.indexOf( '\n' );
+                    if (eol > 0) {
+                        listener.tableModel.setValueAt( reqText.substring(0,eol-1),
+                                                        index+1, REQ_COLUMN );
+                    }
+                    else {
+                        listener.tableModel.setValueAt( reqText,
+                                                        index+1, REQ_COLUMN );
+                    }
+                }
             }
             catch( Exception e ) {
                 StringWriter st = new StringWriter();
@@ -852,19 +867,24 @@ public class tcpmon extends JFrame {
             /////////////////////////////////////////////////////////////////////
 
             tableModel = new DefaultTableModel(new String[] {"State",
-                                               "Time",
-                                               "Request Host",
-                                               "Target Host"}, 
+                                                             "Time",
+                                                             "Request Host",
+                                                             "Target Host", 
+                                                             "Request..."},
                                                0 );
 
             connectionTable = new JTable(1,2);
             connectionTable.setModel( tableModel );
             connectionTable.setSelectionMode(ListSelectionModel.
                                                                 MULTIPLE_INTERVAL_SELECTION);
+            // Reduce the STATE column and increase the REQ column
             TableColumn col ;
             col = connectionTable.getColumnModel().getColumn(STATE_COLUMN);
             col.setMaxWidth( col.getPreferredWidth()/2 );
+            col = connectionTable.getColumnModel().getColumn(REQ_COLUMN);
+            col.setPreferredWidth( col.getPreferredWidth()*2 );
             
+
             ListSelectionModel sel = connectionTable.getSelectionModel();
             sel.addListSelectionListener( new ListSelectionListener() {
                 public void valueChanged(ListSelectionEvent event) {
@@ -912,7 +932,7 @@ public class tcpmon extends JFrame {
                 }
                 outPane.setDividerLocation(divLoc);
                 }} );
-            tableModel.addRow( new Object[] { "---", "Most Recent", "---", "---" } );
+            tableModel.addRow( new Object[] { "---", "Most Recent", "---", "---", "---" } );
 
             JPanel  tablePane = new JPanel();
             tablePane.setLayout( new BorderLayout() );
