@@ -125,8 +125,8 @@ public class HTTPDispatchHandler extends BasicHandler {
       out.write( reqEnv.getBytes() );
 
       Debug.Print( 1, "XML sent:" );
-      Debug.Print( 1, header );
-      Debug.Print( 1, reqEnv );
+      Debug.Print( 1, "---------------------------------------------------");
+      Debug.Print( 1, header + reqEnv );
 
       byte       lastB=0, b ;
       int        len = 0 ;
@@ -176,10 +176,9 @@ public class HTTPDispatchHandler extends BasicHandler {
         Document doc = parser.build(inp);
         outMsg = new Message( doc, "Document" );
         msgContext.setResponseMessage( outMsg );
-        if ( Debug.DebugOn(2) ) {
-          Debug.Print( 2, "XML received:" );
-          Debug.Print( 2, (new XMLOutputter()).outputString(doc) );
-        }
+        Debug.Print( 1, "\nXML received:" );
+        Debug.Print( 1, "---------------------------------------------------");
+        Debug.Print( 1, (new XMLOutputter()).outputString(doc) );
       }
 
       inp.close();

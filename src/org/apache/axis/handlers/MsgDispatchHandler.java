@@ -99,11 +99,12 @@ public class MsgDispatchHandler extends BasicHandler {
       Message       reqMsg  = msgContext.getRequestMessage();
       SOAPEnvelope  reqEnv  = (SOAPEnvelope) reqMsg.getAs("SOAPEnvelope");
       SOAPBody      reqBody = reqEnv.getFirstBody();
+      Document      doc     = new Document( reqBody.getAsXML() );
   
       argClasses[0] = cl.loadClass("org.apache.axis.MessageContext");
       argClasses[1] = cl.loadClass("org.jdom.Document");
-      argObjects[0] = (Object) msgContext ;
-      argObjects[1] = (Object) reqBody.getAsDocument();
+      argObjects[0] = msgContext ;
+      argObjects[1] = doc ;
 
       Method       method = cls.getMethod( methodName, argClasses );
 

@@ -72,7 +72,7 @@ public class Options {
   // SOASS (Start of Axis Specific Stuff)
 
   String  host ;      // -h    also -l (url)
-  String  port ;      // -p
+  String  port ;      // -o
   String  servlet ;   // -s
 
   String  user ;      // -u

@@ -92,8 +92,4 @@ public class SOAPBody {
     return( root );
   }
 
-  public Document getAsDocument() {
-    return( new Document(root) );
-  }
-
 };

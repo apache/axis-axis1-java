@@ -61,6 +61,7 @@ import java.net.URL;
 
 import org.jdom.* ;
 import org.jdom.input.SAXBuilder ;
+import org.jdom.output.XMLOutputter ;
 
 /**
  * See \samples\stock\readme for info.
@@ -81,9 +82,10 @@ public class StockQuoteService {
 
     SAXBuilder   parser = new SAXBuilder();
 
-    Document doc = parser.build( url );
+    Document doc  = parser.build( url );
+    Element  elem = doc.getRootElement();
+    elem = elem.getChild( "stock_quote" );
 
-    Element      elem = doc.getRootElement ();
     List         list = elem.getChildren( "price" );
 
     elem = (Element) list.get( 0 );

@@ -129,7 +129,6 @@ public class Admin {
       for ( int loop = 0 ; loop < list.size() ; loop++ ) {
         Object node = list.get(loop);
         Element  elem    = (Element) node ;
-        // if ( elem.getNodeType != ELEMENT_NODE ) continue ;
         String   type    = elem.getName();
         String   name    = elem.getAttributeValue( "name" );
   

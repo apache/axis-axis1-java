@@ -84,7 +84,7 @@ public class Message {
    * Just something to us working...
    */
   public Message(Object origMsg, String form) {
-    Debug.Print( 1, "Enter Message ctor, form: " + form );
+    Debug.Print( 2, "Enter Message ctor, form: " + form );
     originalMessage = origMsg ;
     currentMessage = origMsg ;
     currentForm = form ;
@@ -103,7 +103,7 @@ public class Message {
   }
 
   public void setCurrentMessage(Object currMsg, String form) {
-    Debug.Print( 1, "Setting current message form to: " + form );
+    Debug.Print( 2, "Setting current message form to: " + form );
     currentMessage = currMsg ;
     currentForm = form ;
   }
@@ -112,8 +112,8 @@ public class Message {
   // now I need something quick...
 
   public Object getAs( String desiredType ) {
-    Debug.Print( 1, "Enter: Message::getAs(" +desiredType+ ")" );
-    Debug.Print( 1, " current form: " + currentForm );
+    Debug.Print( 2, "Enter: Message::getAs(" +desiredType+ ")" );
+    Debug.Print( 2, " current form: " + currentForm );
     if ( currentForm.equals( desiredType ) ) return( currentMessage );
 
     if ( desiredType.equals( "Bytes" )) return( getAsBytes() );
@@ -126,9 +126,9 @@ public class Message {
   }
 
   private byte[] getAsBytes() {
-    Debug.Print( 1, "Enter: Message::getAsByes" );
+    Debug.Print( 2, "Enter: Message::getAsByes" );
     if ( currentForm.equals("Bytes") ) {
-      Debug.Print( 1, "Exit: Message::getAsByes" );
+      Debug.Print( 2, "Exit: Message::getAsByes" );
       return( (byte[]) currentMessage );
     }
 
@@ -139,13 +139,13 @@ public class Message {
         byte[]  buf = new byte[ inp.available() ];
         inp.read( buf );
         setCurrentMessage( buf, "Bytes" );
-        Debug.Print( 1, "Exit: Message::getAsByes" );
+        Debug.Print( 2, "Exit: Message::getAsByes" );
         return( (byte[]) currentMessage );
       }
       catch( Exception e ) {
         e.printStackTrace( System.err );
       }
-      Debug.Print( 1, "Exit: Message::getAsByes" );
+      Debug.Print( 2, "Exit: Message::getAsByes" );
       return( null );
     }
 
@@ -155,7 +155,7 @@ public class Message {
         byte[] buf = new byte[req.getContentLength()];
         req.getInputStream().read( buf );
         setCurrentMessage( buf, "Bytes" );
-        Debug.Print( 1, "Exit: Message::getAsBytes" );
+        Debug.Print( 2, "Exit: Message::getAsBytes" );
         return( (byte[]) currentMessage );
       }
       catch( Exception e ) {
@@ -170,19 +170,19 @@ public class Message {
 
     if ( currentForm.equals("String") ) {
       setCurrentMessage( ((String)currentMessage).getBytes(), "Bytes" );
-      Debug.Print( 1, "Exit: Message::getAsBytes" );
+      Debug.Print( 2, "Exit: Message::getAsBytes" );
       return( (byte[]) currentMessage );
     }
 
     System.err.println("Can't convert " + currentForm + " to Bytes" );
-    Debug.Print( 1, "Exit: Message::getAsBytes" );
+    Debug.Print( 2, "Exit: Message::getAsBytes" );
     return( null );
   }
 
   private String getAsString() {
-    Debug.Print( 1, "Enter: Message::getAsString" );
+    Debug.Print( 2, "Enter: Message::getAsString" );
     if ( currentForm.equals("String") ) {
-      Debug.Print( 1, "Exit: Message::getAsString" );
+      Debug.Print( 2, "Exit: Message::getAsString" );
       return( (String) currentMessage );
     }
 
@@ -194,7 +194,7 @@ public class Message {
 
     if ( currentForm.equals("Bytes") ) {
       setCurrentMessage( new String((byte[]) currentMessage), "String" );
-      Debug.Print( 1, "Exit: Message::getAsString" );
+      Debug.Print( 2, "Exit: Message::getAsString" );
       return( (String) currentMessage );
     }
 
@@ -216,12 +216,12 @@ public class Message {
     }
 
     System.err.println("Can't convert " + currentForm + " to String" );
-    Debug.Print( 1, "Exit: Message::getAsString" );
+    Debug.Print( 2, "Exit: Message::getAsString" );
     return( null );
   }
 
   private Document getAsDocument() {
-    Debug.Print( 1, "Enter: Message::getAsDocument" );
+    Debug.Print( 2, "Enter: Message::getAsDocument" );
     if ( currentForm.equals("Document") ) return( (Document) currentMessage );
 
     SAXBuilder parser = new SAXBuilder();
@@ -259,40 +259,40 @@ public class Message {
         env.addBody( body );
 
         setCurrentMessage( env.getAsXML(), "Document" );
-        Debug.Print( 1, "Exit: Message::getAsDocument" );
+        Debug.Print( 2, "Exit: Message::getAsDocument" );
         return( (Document) currentMessage );
       }
       else if ( currentForm.equals("SOAPEnvelope") ) {
         SOAPEnvelope  env = (SOAPEnvelope) currentMessage ;
         setCurrentMessage( env.getAsXML(), "Document" );
-        Debug.Print( 1, "Exit: Message::getAsDocument" );
+        Debug.Print( 2, "Exit: Message::getAsDocument" );
         return( (Document) currentMessage );
       }
       else {
         System.err.println("Can't convert " + currentForm + " to Document" );
-        Debug.Print( 1, "Exit: Message::getAsDocument" );
+        Debug.Print( 2, "Exit: Message::getAsDocument" );
         return( null );
       }
   
       setCurrentMessage( parser.build( reader ), "Document" );
-      Debug.Print( 1, "Exit: Message::getAsDocument" );
+      Debug.Print( 2, "Exit: Message::getAsDocument" );
       return( (Document) currentMessage );
     }
     catch( Exception e ) {
       e.printStackTrace( System.err );
     }
-    Debug.Print( 1, "Exit: Message::getAsDocument" );
+    Debug.Print( 2, "Exit: Message::getAsDocument" );
     return( null );
   }
 
   private SOAPEnvelope getAsSOAPEnvelope() {
-    Debug.Print( 1, "Enter: Message::getAsSOAPEnvelope" );
+    Debug.Print( 2, "Enter: Message::getAsSOAPEnvelope" );
     if ( currentForm.equals("SOAPEnvelope") ) 
       return( (SOAPEnvelope) currentMessage );
     getAsDocument();
     setCurrentMessage( new SOAPEnvelope( (Document) currentMessage ),
                        "SOAPEnvelope" );
-    Debug.Print( 1, "Exit: Message::getAsSOAPEnvelope" );
+    Debug.Print( 2, "Exit: Message::getAsSOAPEnvelope" );
     return( (SOAPEnvelope) currentMessage );
   }
 
