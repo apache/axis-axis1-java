@@ -182,32 +182,32 @@ public abstract class AttachmentPart {
     public abstract void clearContent();
 
     /**
-     * Gets the content of this <CODE>AttachmentPart</CODE> object
-     *   as a Java object. The type of the returned Java object
-     *   depends on (1) the <CODE>DataContentHandler</CODE> object
-     *   that is used to interpret the bytes and (2) the <CODE>
-     *   Content-Type</CODE> given in the header.
+     * Gets the content of this <code>AttachmentPart</code> object as a Java
+     * object. The type of the returned Java object depends on (1) the
+     * <code>DataContentHandler</code> object that is used to interpret the bytes
+     * and (2) the <code>Content-Type</code> given in the header.
+     * <p>
+     * For the MIME content types "text/plain", "text/html" and "text/xml", the
+     * <code>DataContentHandler</code> object does the conversions to and
+     * from the Java types corresponding to the MIME types.
+     * For other MIME types,the <code>DataContentHandler</code> object
+     * can return an <code>InputStream</code> object that contains the content data
+     * as raw bytes.
+     * <p>
+     * A JAXM-compliant implementation must, as a minimum, return a
+     * <code>java.lang.String</code> object corresponding to any content
+     * stream with a <code>Content-Type</code> value of
+     * <code>text/plain</code>, a
+     * <code>javax.xml.transform.StreamSource</code> object corresponding to a
+     * content stream with a <code>Content-Type</code> value of
+     * <code>text/xml</code>, a <code>java.awt.Image</code> object
+     * corresponding to a content stream with a
+     * <code>Content-Type</code> value of <code>image/gif</code> or
+     * <code>image/jpeg</code>.  For those content types that an
+     * installed <code>DataContentHandler</code> object does not understand, the
+     * <code>DataContentHandler</code> object is required to return a
+     * <code>java.io.InputStream</code> object with the raw bytes.
      *
-     *   <P>For the MIME content types "text/plain", "text/html" and
-     *   "text/xml", the <CODE>DataContentHandler</CODE> object does
-     *   the conversions to and from the Java types corresponding to
-     *   the MIME types. For other MIME types,the <CODE>
-     *   DataContentHandler</CODE> object can return an <CODE>
-     *   InputStream</CODE> object that contains the content data as
-     *   raw bytes.</P>
-     *
-     *   <P>A JAXM-compliant implementation must, as a minimum,
-     *   return a <CODE>java.lang.String</CODE> object corresponding
-     *   to any content stream with a <CODE>Content-Type</CODE>
-     *   value of <CODE>text/plain</CODE> and a <CODE>
-     *   javax.xml.transform.StreamSource</CODE> object
-     *   corresponding to a content stream with a <CODE>
-     *   Content-Type</CODE> value of <CODE>text/xml</CODE>. For
-     *   those content types that an installed <CODE>
-     *   DataContentHandler</CODE> object does not understand, the
-     *   <CODE>DataContentHandler</CODE> object is required to
-     *   return a <CODE>java.io.InputStream</CODE> object with the
-     *   raw bytes.</P>
      * @return a Java object with the content of this <CODE>
      *     AttachmentPart</CODE> object
      * @throws  SOAPException  if there is no content set

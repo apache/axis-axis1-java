@@ -268,7 +268,7 @@ public class MessageElement implements SOAPElement
      * Obtain an Attributes collection consisting of all attributes
      * for this MessageElement, including namespace declarations.
      *
-     * @return
+     * @return Attributes collection
      */
     public Attributes getCompleteAttributes() {
         if (namespaces == null)

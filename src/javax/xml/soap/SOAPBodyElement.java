@@ -56,7 +56,7 @@ package javax.xml.soap;
 
 /**
  * A <code>SOAPBodyElement</code> object represents the contents in
- * a <code>SOAPBody</code> object.  The <code>SOAPFaultException</code> interface
+ * a <code>SOAPBody</code> object.  The <code>SOAPFault</code> interface
  * is a <code>SOAPBodyElement</code> object that has been defined.
  * <P>
  * A new <code>SOAPBodyElement</code> object can be created and added

@@ -69,7 +69,7 @@ public interface SOAPHeaderElement extends SOAPElement {
      * Sets the actor associated with this <CODE>
      * SOAPHeaderElement</CODE> object to the specified actor. The
      * default value of an actor is: <CODE>
-     * SOAPConstants.NS_URI_SOAP_ACTOR_NEXT</CODE>
+     * SOAPConstants.URI_SOAP_ACTOR_NEXT</CODE>
      * @param  actorURI  a <CODE>String</CODE> giving
      *     the URI of the actor to set
      * @see #getActor() getActor()
@@ -83,7 +83,7 @@ public interface SOAPHeaderElement extends SOAPElement {
      * SOAPHeaderElement</CODE> object.
      * @return  a <CODE>String</CODE> giving the URI of the
      *     actor
-     * @see #setActor(String) setActor()
+     * @see #setActor(java.lang.String) setActor(java.lang.String)
      */
     public abstract String getActor();
 

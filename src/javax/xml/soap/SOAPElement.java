@@ -61,7 +61,7 @@ import java.util.Iterator;
  * <code>SOAPBody</code> object, the contents in a <code>SOAPHeader</code>
  * object, the content that can follow the <code>SOAPBody</code> object in a
  * <code>SOAPEnvelope</code> object, or what can follow the detail element
- * in a <code>SOAPFaultException</code> object. It is
+ * in a <code>SOAPFault</code> object. It is
  * the base class for all of the classes that represent the SOAP objects as
  * defined in the SOAP specification.
  */

@@ -61,33 +61,33 @@ package javax.xml.soap;
  * <P>
  * A <code>SOAPBody</code> object contains <code>SOAPBodyElement</code>
  * objects, which have the content for the SOAP body.
- * A <code>SOAPFaultException</code> object, which carries status and/or
+ * A <code>SOAPFault</code> object, which carries status and/or
  * error information, is an example of a <code>SOAPBodyElement</code> object.
- * @see javax.xml.rpc.soap.SOAPFaultException SOAPFaultException
+ * @see SOAPFault SOAPFault
  */
 public interface SOAPBody extends SOAPElement {
 
     /**
-     * Creates a new <code>SOAPFaultException</code> object and adds it to
+     * Creates a new <code>SOAPFault</code> object and adds it to
      * this <code>SOAPBody</code> object.
-     * @return the new <code>SOAPFaultException</code> object
+     * @return the new <code>SOAPFault</code> object
      * @throws  SOAPException if there is a SOAP error
      */
     public abstract SOAPFault addFault() throws SOAPException;
 
     /**
-     * Indicates whether a <code>SOAPFaultException</code> object exists in
+     * Indicates whether a <code>SOAPFault</code> object exists in
      * this <code>SOAPBody</code> object.
-     * @return <code>true</code> if a <code>SOAPFaultException</code> object exists in
+     * @return <code>true</code> if a <code>SOAPFault</code> object exists in
      *     this <code>SOAPBody</code> object; <code>false</code>
      *     otherwise
      */
     public abstract boolean hasFault();
 
     /**
-     * Returns the <code>SOAPFaultException</code> object in this <code>SOAPBody</code>
+     * Returns the <code>SOAPFault</code> object in this <code>SOAPBody</code>
      * object.
-     * @return the <code>SOAPFaultException</code> object in this <code>SOAPBody</code>
+     * @return the <code>SOAPFault</code> object in this <code>SOAPBody</code>
      *    object
      */
     public abstract SOAPFault getFault();

@@ -87,7 +87,7 @@ public class ParameterMode {
     /**
      * Method toString
      *
-     * @return
+     * @return String
      */
     public String toString() {
         return mode;
