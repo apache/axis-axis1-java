@@ -72,6 +72,7 @@ import javax.wsdl.Part;
 import javax.wsdl.Input;
 
 import org.apache.axis.Constants;
+import org.apache.axis.deployment.wsdd.WSDDConstants;
 
 import org.apache.axis.utils.JavaUtils;
 
@@ -197,7 +198,7 @@ public class JavaDeployWriter extends JavaWriter {
                 String deserializerFactory;
                 String encodingStyle = "";
                 if (!hasLiteral) {
-                    encodingStyle = Constants.URI_CURRENT_SOAP_ENC;
+                    encodingStyle = Constants.NS_URI_CURRENT_SOAP_ENC;
                 }
 
                 if (javaType.endsWith("[]")) {
@@ -250,7 +251,7 @@ public class JavaDeployWriter extends JavaWriter {
 
         boolean hasLiteral = bEntry.hasLiteral();
 
-        String prefix = Constants.NSPREFIX_WSDD_JAVA;
+        String prefix = WSDDConstants.NS_PREFIX_WSDD_JAVA;
         String styleStr = "";
 
         if (hasLiteral) {

@@ -123,11 +123,11 @@ public class SOAPEnvelope extends MessageElement
                 namespaces = new ArrayList();
 
             namespaces.add(new Mapping(soapConstants.getEnvelopeURI(),
-                                       Constants.NSPREFIX_SOAP_ENV));
-            namespaces.add(new Mapping(Constants.URI_CURRENT_SCHEMA_XSD,
-                                       Constants.NSPREFIX_SCHEMA_XSD));
-            namespaces.add(new Mapping(Constants.URI_CURRENT_SCHEMA_XSI,
-                                       Constants.NSPREFIX_SCHEMA_XSI));
+                                       Constants.NS_PREFIX_SOAP_ENV));
+            namespaces.add(new Mapping(Constants.NS_URI_CURRENT_SCHEMA_XSD,
+                                       Constants.NS_PREFIX_SCHEMA_XSD));
+            namespaces.add(new Mapping(Constants.NS_URI_CURRENT_SCHEMA_XSI,
+                                       Constants.NS_PREFIX_SCHEMA_XSI));
         }
         
         setDirty(true);

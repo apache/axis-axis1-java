@@ -86,6 +86,6 @@ public class WSDDRequestFlow
     }
 
     protected QName getElementName() {
-        return WSDDConstants.REQFLOW_QNAME;
+        return WSDDConstants.QNAME_REQFLOW;
     }
 }

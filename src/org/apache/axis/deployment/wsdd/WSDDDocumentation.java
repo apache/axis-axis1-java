@@ -73,7 +73,7 @@ public class WSDDDocumentation
  
     protected QName getElementName()
     {
-        return WSDDConstants.DOC_QNAME;
+        return WSDDConstants.QNAME_DOC;
     }
     
     /**
@@ -111,7 +111,7 @@ public class WSDDDocumentation
     public void writeToContext(SerializationContext context)
             throws IOException
     {
-        context.startElement(WSDDConstants.DOC_QNAME, null);
+        context.startElement(QNAME_DOC, null);
         context.writeString(value);
         context.endElement();
     }

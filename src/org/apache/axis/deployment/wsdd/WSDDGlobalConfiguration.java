@@ -96,11 +96,11 @@ public class WSDDGlobalConfiguration
         throws WSDDException
     {
         super(e);
-        Element reqEl = getChildElement(e, "requestFlow");
+        Element reqEl = getChildElement(e, ELEM_WSDD_REQFLOW);
         if (reqEl != null) {
             requestFlow = new WSDDRequestFlow(reqEl);
         }
-        Element respEl = getChildElement(e, "responseFlow");
+        Element respEl = getChildElement(e, ELEM_WSDD_RESPFLOW);
         if (respEl != null) {
             responseFlow = new WSDDResponseFlow(respEl);
         }
@@ -108,7 +108,7 @@ public class WSDDGlobalConfiguration
     
     protected QName getElementName()
     {
-        return WSDDConstants.GLOBAL_QNAME;
+        return WSDDConstants.QNAME_GLOBAL;
     }
 
     /**
@@ -203,7 +203,7 @@ public class WSDDGlobalConfiguration
      */
     public void writeToContext(SerializationContext context)
             throws IOException {
-        context.startElement(WSDDConstants.GLOBAL_QNAME, null);
+        context.startElement(QNAME_GLOBAL, null);
         writeParamsToContext(context);
         if (requestFlow != null)
             requestFlow.writeToContext(context);

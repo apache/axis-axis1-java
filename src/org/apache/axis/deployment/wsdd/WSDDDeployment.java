@@ -216,7 +216,7 @@ public class WSDDDeployment
     {
         super(e);
 
-        Element [] elements = getChildElements(e, "handler");
+        Element [] elements = getChildElements(e, ELEM_WSDD_HANDLER);
         int i;
 
         for (i = 0; i < elements.length; i++) {
@@ -224,44 +224,44 @@ public class WSDDDeployment
             deployHandler(handler);
         }
 
-        elements = getChildElements(e, "chain");
+        elements = getChildElements(e, ELEM_WSDD_CHAIN);
         for (i = 0; i < elements.length; i++) {
             WSDDChain chain = new WSDDChain(elements[i]);
             deployHandler(chain);
         }
 
-        elements = getChildElements(e, "transport");
+        elements = getChildElements(e, ELEM_WSDD_TRANSPORT);
         for (i = 0; i < elements.length; i++) {
             WSDDTransport transport = new WSDDTransport(elements[i]);
             deployTransport(transport);
         }
 
-        elements = getChildElements(e, "service");
+        elements = getChildElements(e, ELEM_WSDD_SERVICE);
         for (i = 0; i < elements.length; i++) {
             WSDDService service = new WSDDService(elements[i]);
             deployService(service);
         }
 
-        elements = getChildElements(e, "typeMapping");
+        elements = getChildElements(e, ELEM_WSDD_TYPEMAPPING);
         for (i = 0; i < elements.length; i++) {
             WSDDTypeMapping mapping = new WSDDTypeMapping(elements[i]);
             deployTypeMapping(mapping);
         }
 
-        elements = getChildElements(e, "beanMapping");
+        elements = getChildElements(e, ELEM_WSDD_BEANMAPPING);
         for (i = 0; i < elements.length; i++) {
             WSDDBeanMapping mapping = new WSDDBeanMapping(elements[i]);
             deployTypeMapping(mapping);
         }
 
-        Element el = getChildElement(e, "globalConfiguration");
+        Element el = getChildElement(e, ELEM_WSDD_GLOBAL);
         if (el != null)
             globalConfig = new WSDDGlobalConfiguration(el);
     }
 
     protected QName getElementName()
     {
-        return WSDDConstants.DEPLOY_QNAME;
+        return QNAME_DEPLOY;
     }
 
     public void deployToRegistry(WSDDDeployment target)
@@ -305,7 +305,7 @@ public class WSDDDeployment
         try {
             String encodingStyle = mapping.getEncodingStyle();
             if (encodingStyle == null) {
-                encodingStyle = Constants.URI_CURRENT_SOAP_ENC;
+                encodingStyle = Constants.NS_URI_CURRENT_SOAP_ENC;
             }
             TypeMapping tm = (TypeMapping) tmr.getTypeMapping(encodingStyle);
             TypeMapping df = (TypeMapping) tmr.getDefaultTypeMapping();
@@ -353,10 +353,11 @@ public class WSDDDeployment
     public void writeToContext(SerializationContext context)
         throws IOException
     {
-        context.registerPrefixForURI("", WSDDConstants.WSDD_NS);
-        context.registerPrefixForURI("java", WSDDConstants.WSDD_JAVA);
-        context.startElement(new QName(WSDDConstants.WSDD_NS, "deployment"),
-                             null);
+        context.registerPrefixForURI(NS_PREFIX_WSDD, NS_URI_WSDD);
+        
+        context.registerPrefixForURI(NS_PREFIX_WSDD_JAVA, NS_URI_WSDD_JAVA);
+                                     
+        context.startElement(QNAME_DEPLOY, null);
 
         if (globalConfig != null) {
             globalConfig.writeToContext(context);

@@ -428,7 +428,7 @@ public class Emitter {
             }
 
             encodingList = new ArrayList();
-            encodingList.add(Constants.URI_CURRENT_SOAP_ENC);
+            encodingList.add(Constants.NS_URI_CURRENT_SOAP_ENC);
 
 
             // We want to produce valid SOAP 1.2 JAX-RPC
@@ -466,25 +466,25 @@ public class Emitter {
         def.addNamespace("intf", intfNS);
         def.addNamespace("impl", implNS);
 
-        def.addNamespace(Constants.NSPREFIX_WSDL_SOAP,
-                         Constants.URI_CURRENT_WSDL_SOAP);
-        namespaces.putPrefix(Constants.URI_CURRENT_WSDL_SOAP,
-                             Constants.NSPREFIX_WSDL_SOAP);
+        def.addNamespace(Constants.NS_PREFIX_WSDL_SOAP,
+                         Constants.NS_URI_CURRENT_WSDL_SOAP);
+        namespaces.putPrefix(Constants.NS_URI_CURRENT_WSDL_SOAP,
+                             Constants.NS_PREFIX_WSDL_SOAP);
 
-        def.addNamespace(Constants.NSPREFIX_WSDL,
-                         Constants.URI_CURRENT_WSDL);
-        namespaces.putPrefix(Constants.URI_CURRENT_WSDL,
-                             Constants.NSPREFIX_WSDL);
+        def.addNamespace(Constants.NS_PREFIX_WSDL,
+                         Constants.NS_URI_CURRENT_WSDL);
+        namespaces.putPrefix(Constants.NS_URI_CURRENT_WSDL,
+                             Constants.NS_PREFIX_WSDL);
 
-        def.addNamespace(Constants.NSPREFIX_SOAP_ENC,
-                         Constants.URI_CURRENT_SOAP_ENC);
-        namespaces.putPrefix(Constants.URI_CURRENT_SOAP_ENC,
-                             Constants.NSPREFIX_SOAP_ENC);
+        def.addNamespace(Constants.NS_PREFIX_SOAP_ENC,
+                         Constants.NS_URI_CURRENT_SOAP_ENC);
+        namespaces.putPrefix(Constants.NS_URI_CURRENT_SOAP_ENC,
+                             Constants.NS_PREFIX_SOAP_ENC);
 
-        def.addNamespace(Constants.NSPREFIX_SCHEMA_XSD,
-                         Constants.URI_CURRENT_SCHEMA_XSD);
-        namespaces.putPrefix(Constants.URI_CURRENT_SCHEMA_XSD,
-                             Constants.NSPREFIX_SCHEMA_XSD);
+        def.addNamespace(Constants.NS_PREFIX_SCHEMA_XSD,
+                         Constants.NS_URI_CURRENT_SCHEMA_XSD);
+        namespaces.putPrefix(Constants.NS_URI_CURRENT_SCHEMA_XSD,
+                             Constants.NS_PREFIX_SCHEMA_XSD);
     }
 
    /**
@@ -522,7 +522,7 @@ public class Emitter {
         SOAPBinding soapBinding = new SOAPBindingImpl();
         String modeStr = (mode == MODE_RPC) ? "rpc" : "document";
         soapBinding.setStyle(modeStr);
-        soapBinding.setTransportURI(Constants.URI_SOAP_HTTP);
+        soapBinding.setTransportURI(Constants.NS_URI_SOAP_HTTP);
 
         binding.addExtensibilityElement(soapBinding);
 

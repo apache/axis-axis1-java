@@ -102,21 +102,21 @@ public class WSDDOperation extends WSDDElement
         super(e);
 
         desc.setParent(parent);
-        desc.setName(e.getAttribute("name"));
+        desc.setName(e.getAttribute(ATTR_NAME));
 
-        String qNameStr = e.getAttribute("qname");
+        String qNameStr = e.getAttribute(ATTR_QNAME);
         if (qNameStr != null && !qNameStr.equals(""))
             desc.setElementQName(XMLUtils.getQNameFromString(qNameStr, e));
         
-        String retQNameStr = e.getAttribute("returnQName");
+        String retQNameStr = e.getAttribute(ATTR_RETQNAME);
         if (retQNameStr != null && !retQNameStr.equals(""))
             desc.setReturnQName(XMLUtils.getQNameFromString(retQNameStr, e));
         
-        String retTypeStr = e.getAttribute("returnType");
+        String retTypeStr = e.getAttribute(ATTR_RETTYPE);
         if (retTypeStr != null && !retTypeStr.equals(""))
             desc.setReturnType(XMLUtils.getQNameFromString(retTypeStr, e));
 
-        Element [] parameters = getChildElements(e, "parameter");
+        Element [] parameters = getChildElements(e, ELEM_WSDD_PARAM);
         for (int i = 0; i < parameters.length; i++) {
             Element paramEl = parameters[i];
             WSDDParameter parameter = new WSDDParameter(paramEl, desc);
@@ -132,23 +132,23 @@ public class WSDDOperation extends WSDDElement
         AttributesImpl attrs = new AttributesImpl();
 
         if (desc.getReturnQName() != null) {
-            attrs.addAttribute("", "returnQName", "returnQName",
+            attrs.addAttribute("", ATTR_RETQNAME, ATTR_RETQNAME,
                                "CDATA",
                                context.qName2String(desc.getReturnQName()));
         }
 
         if (desc.getReturnType() != null) {
-            attrs.addAttribute("", "returnType", "returnType",
+            attrs.addAttribute("", ATTR_RETTYPE, ATTR_RETTYPE,
                                "CDATA",
                                context.qName2String(desc.getReturnType()));
         }
 
         if (desc.getName() != null) {
-            attrs.addAttribute("", "name", "name", "CDATA", desc.getName());
+            attrs.addAttribute("", ATTR_NAME, ATTR_NAME, "CDATA", desc.getName());
         }
         
         if (desc.getElementQName() != null) {
-            attrs.addAttribute("", "qname", "qname", 
+            attrs.addAttribute("", ATTR_QNAME, ATTR_QNAME, 
                                "CDATA", 
                                context.qName2String(desc.getElementQName()));
         }
@@ -166,7 +166,7 @@ public class WSDDOperation extends WSDDElement
     }
 
     protected QName getElementName() {
-        return WSDDConstants.OPERATION_QNAME;
+        return QNAME_OPERATION;
     }
 
     public OperationDesc getOperationDesc()

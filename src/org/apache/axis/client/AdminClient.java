@@ -141,7 +141,7 @@ public class AdminClient
 
     public String list() throws Exception { 
         log.debug( JavaUtils.getMessage("doList00") );
-        String               str   = "<m:list xmlns:m=\"" + WSDDConstants.WSDD_NS + "\"/>" ;
+        String               str   = "<m:list xmlns:m=\"" + WSDDConstants.NS_URI_WSDD + "\"/>" ;
         ByteArrayInputStream input = new ByteArrayInputStream(str.getBytes());
         return process(input);
     }
@@ -151,18 +151,18 @@ public class AdminClient
         return quit();
     }
 
-    protected static final String ROOT_UNDEPLOY= WSDDConstants.UNDEPLOY_QNAME.getLocalPart(); 
+    protected static final String ROOT_UNDEPLOY= WSDDConstants.QNAME_UNDEPLOY.getLocalPart(); 
 
     public String quit() throws Exception { 
         log.debug(JavaUtils.getMessage("doQuit00"));
-        String               str   = "<m:quit xmlns:m=\"" + WSDDConstants.WSDD_NS + "\"/>";
+        String               str   = "<m:quit xmlns:m=\"" + WSDDConstants.NS_URI_WSDD + "\"/>";
         ByteArrayInputStream input = new ByteArrayInputStream(str.getBytes());
         return process(input);
     }
 
     public String undeployHandler(String handlerName) throws Exception { 
         log.debug(JavaUtils.getMessage("doQuit00"));
-        String               str   = "<m:"+ROOT_UNDEPLOY +" xmlns:m=\"" + WSDDConstants.WSDD_NS + "\">" +
+        String               str   = "<m:"+ROOT_UNDEPLOY +" xmlns:m=\"" + WSDDConstants.NS_URI_WSDD + "\">" +
                                      "<handler name=\"" + handlerName + "\"/>"+
                                      "</m:"+ROOT_UNDEPLOY +">" ;
         ByteArrayInputStream input = new ByteArrayInputStream(str.getBytes());
@@ -171,7 +171,7 @@ public class AdminClient
 
     public String undeployService(String serviceName) throws Exception { 
         log.debug(JavaUtils.getMessage("doQuit00"));
-        String               str   = "<m:"+ROOT_UNDEPLOY +" xmlns:m=\"" + WSDDConstants.WSDD_NS + "\">" +
+        String               str   = "<m:"+ROOT_UNDEPLOY +" xmlns:m=\"" + WSDDConstants.NS_URI_WSDD + "\">" +
                                      "<service name=\"" + serviceName + "\"/>"+
                                      "</m:"+ROOT_UNDEPLOY +">" ;
         ByteArrayInputStream input = new ByteArrayInputStream(str.getBytes());

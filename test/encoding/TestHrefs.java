@@ -23,8 +23,8 @@ public class TestHrefs extends TestCase {
     private String [] messageParts;
     
     public TestHrefs(String name) {
-        this(name, Constants.URI_CURRENT_SCHEMA_XSI,
-                   Constants.URI_CURRENT_SCHEMA_XSD);
+        this(name, Constants.NS_URI_CURRENT_SCHEMA_XSI,
+                   Constants.NS_URI_CURRENT_SCHEMA_XSD);
     }
 
     public TestHrefs(String name, String NS_XSI, String NS_XSD) {

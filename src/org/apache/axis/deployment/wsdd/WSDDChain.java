@@ -103,7 +103,7 @@ public class WSDDChain
         if (type != null)
             return;
         
-        Element [] elements = getChildElements(e, "handler");
+        Element [] elements = getChildElements(e, ELEM_WSDD_HANDLER);
         if (elements.length != 0) {
             for (int i = 0; i < elements.length; i++) {
                 WSDDHandler handler = new WSDDHandler(elements[i]);
@@ -111,7 +111,7 @@ public class WSDDChain
             }
         }
         
-        elements = getChildElements(e, "chain");
+        elements = getChildElements(e, ELEM_WSDD_CHAIN);
         if (elements.length != 0) {
             for (int i = 0; i < elements.length; i++) {
                 WSDDChain chain = new WSDDChain(elements[i]);
@@ -127,7 +127,7 @@ public class WSDDChain
     
     protected QName getElementName()
     {
-        return WSDDConstants.CHAIN_QNAME;
+        return WSDDConstants.QNAME_CHAIN;
     }
     
     /**
@@ -165,7 +165,7 @@ public class WSDDChain
     public Handler makeNewInstance(EngineConfiguration registry)
         throws ConfigurationException
     {
-        Chain         c        = new org.apache.axis.SimpleChain();
+        Chain c = new org.apache.axis.SimpleChain();
         
         for (int n = 0; n < handlers.size(); n++) {
             WSDDHandler handler = (WSDDHandler)handlers.get(n); 
@@ -184,11 +184,11 @@ public class WSDDChain
         AttributesImpl attrs = new AttributesImpl();
         QName name = getQName();
         if (name != null) {
-            attrs.addAttribute("", "name", "name",
+            attrs.addAttribute("", ATTR_NAME, ATTR_NAME,
                                "CDATA", context.qName2String(name));
         }
         if (getType() != null) {
-            attrs.addAttribute("", "type", "type",
+            attrs.addAttribute("", ATTR_TYPE, ATTR_TYPE,
                            "CDATA", context.qName2String(getType()));
         }
         

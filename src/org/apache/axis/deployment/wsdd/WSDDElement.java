@@ -73,6 +73,7 @@ import java.util.Vector;
  * abstract class extended by all WSDD Element classes
  */
 public abstract class WSDDElement
+    extends WSDDConstants
     implements Serializable
 {
     /** If we have documentation, it goes here */

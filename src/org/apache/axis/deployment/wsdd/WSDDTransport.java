@@ -95,7 +95,7 @@ public class WSDDTransport
     }
 
     protected QName getElementName() {
-        return WSDDConstants.TRANSPORT_QNAME;
+        return WSDDConstants.QNAME_TRANSPORT;
     }
 
     /**
@@ -106,17 +106,17 @@ public class WSDDTransport
         AttributesImpl attrs = new AttributesImpl();
         QName name = getQName();
         if (name != null) {
-            attrs.addAttribute("", "name", "name",
+            attrs.addAttribute("", ATTR_NAME, ATTR_NAME,
                                "CDATA", context.qName2String(name));
         }
         
         name = getPivotQName();
         if (name != null) {
-            attrs.addAttribute("", "pivot", "pivot",
+            attrs.addAttribute("", ATTR_PIVOT, ATTR_PIVOT,
                                "CDATA", context.qName2String(name));
         }
         
-        context.startElement(WSDDConstants.TRANSPORT_QNAME, attrs);
+        context.startElement(WSDDConstants.QNAME_TRANSPORT, attrs);
         writeFlowsToContext(context);
         context.endElement();
     }

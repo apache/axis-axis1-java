@@ -18,7 +18,7 @@ public class TestScopeOption extends TestCase
     // Two-part WSDD, with a space for scope option in the middle
     static final String doc1 = 
             "<deployment xmlns=\"http://xml.apache.org/axis/wsdd/\" " +
-                  "xmlns:java=\"" + WSDDConstants.WSDD_JAVA + "\">\n" +
+                  "xmlns:java=\"" + WSDDConstants.NS_URI_WSDD_JAVA + "\">\n" +
             " <handler type=\"java:org.apache.axis.handlers.LogHandler\" " +
                       "name=\"" + HANDLER_NAME + "\" " +
                       "scope=\"";

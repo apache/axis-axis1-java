@@ -77,22 +77,22 @@ public class WSDDParameter extends WSDDElement
         // Get the parameter's name.  If a qname is specified, use that,
         // otherwise also look for a "name" attribute.  (name specifies
         // an unqualified name)
-        String nameStr = e.getAttribute("qname");
+        String nameStr = e.getAttribute(ATTR_QNAME);
         if (nameStr != null && !nameStr.equals("")) {
             parameter.setQName(XMLUtils.getQNameFromString(nameStr, e));
         } else {
-            nameStr = e.getAttribute("name");
+            nameStr = e.getAttribute(ATTR_NAME);
             if (nameStr != null && !nameStr.equals("")) {
                 parameter.setQName(new QName(null, nameStr));
             }
         }
         
-        String modeStr = e.getAttribute("mode");
+        String modeStr = e.getAttribute(ATTR_MODE);
         if (modeStr != null && !modeStr.equals("")) {
             parameter.setMode(ParameterDesc.modeFromString(modeStr));
         }
         
-        String typeStr = e.getAttribute("type");
+        String typeStr = e.getAttribute(ATTR_TYPE);
         if (typeStr != null && !typeStr.equals("")) {
             parameter.setTypeQName(XMLUtils.getQNameFromString(typeStr, e));
         }
@@ -116,11 +116,11 @@ public class WSDDParameter extends WSDDElement
         if (qname != null) {
             if (qname.getNamespaceURI() != null &&
                 !qname.getNamespaceURI().equals("")) {
-                attrs.addAttribute("", "qname", "qname",
+                attrs.addAttribute("", ATTR_QNAME, ATTR_QNAME,
                                "CDATA",
                                context.qName2String(parameter.getQName()));
             } else {
-                attrs.addAttribute("", "name", "name", "CDATA", 
+                attrs.addAttribute("", ATTR_NAME, ATTR_NAME, "CDATA", 
                                    parameter.getQName().getLocalPart());
             }
         }
@@ -129,12 +129,12 @@ public class WSDDParameter extends WSDDElement
         byte mode = parameter.getMode();
         if (mode != ParameterDesc.IN) {
             String modeStr = ParameterDesc.getModeAsString(mode);
-            attrs.addAttribute("", "mode", "mode", "CDATA", modeStr);
+            attrs.addAttribute("", ATTR_MODE, ATTR_MODE, "CDATA", modeStr);
         }
         
         QName typeQName = parameter.getTypeQName();
         if (typeQName != null) {
-            attrs.addAttribute("", "type", "type", "CDATA",
+            attrs.addAttribute("", ATTR_TYPE, ATTR_TYPE, "CDATA",
                                context.qName2String(typeQName));            
         }
         
@@ -154,6 +154,6 @@ public class WSDDParameter extends WSDDElement
      * Return the element name of a particular subclass.
      */
     protected QName getElementName() {
-        return WSDDConstants.PARAM_QNAME;
+        return WSDDConstants.QNAME_PARAM;
     }
 }

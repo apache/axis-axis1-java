@@ -121,7 +121,7 @@ public class WSDDUndeployment
 
     private QName getQName(Element el) throws WSDDException
     {
-        String attr = el.getAttribute("name");
+        String attr = el.getAttribute(ATTR_NAME);
         if (attr == null || "".equals(attr))
             throw new WSDDException(JavaUtils.getMessage("badNameAttr00"));
         return new QName("", attr);
@@ -138,24 +138,24 @@ public class WSDDUndeployment
     {
         super(e);
         
-        Element [] elements = getChildElements(e, "handler");
+        Element [] elements = getChildElements(e, ELEM_WSDD_HANDLER);
         int i;
 
         for (i = 0; i < elements.length; i++) {
             addHandler(getQName(elements[i]));
         }
 
-        elements = getChildElements(e, "chain");
+        elements = getChildElements(e, ELEM_WSDD_CHAIN);
         for (i = 0; i < elements.length; i++) {
             addChain(getQName(elements[i]));
         }
         
-        elements = getChildElements(e, "transport");
+        elements = getChildElements(e, ELEM_WSDD_TRANSPORT);
         for (i = 0; i < elements.length; i++) {
             addTransport(getQName(elements[i]));
         }
         
-        elements = getChildElements(e, "service");
+        elements = getChildElements(e, ELEM_WSDD_SERVICE);
         for (i = 0; i < elements.length; i++) {
             addService(getQName(elements[i]));
         }
@@ -163,13 +163,13 @@ public class WSDDUndeployment
         /*
         // How to deal with undeploying mappings?
 
-        elements = getChildElements(e, "typeMapping");
+        elements = getChildElements(e, ELEM_WSDD_TYPEMAPPING);
         for (i = 0; i < elements.length; i++) {
             WSDDTypeMapping mapping = new WSDDTypeMapping(elements[i]);
             addTypeMapping(mapping);
         }
 
-        elements = getChildElements(e, "beanMapping");
+        elements = getChildElements(e, ELEM_WSDD_BEANMAPPING);
         for (i = 0; i < elements.length; i++) {
             WSDDBeanMapping mapping = new WSDDBeanMapping(elements[i]);
             addTypeMapping(mapping);
@@ -179,7 +179,7 @@ public class WSDDUndeployment
 
     protected QName getElementName()
     {
-        return WSDDConstants.UNDEPLOY_QNAME;
+        return QNAME_UNDEPLOY;
     }
 
     public void undeployFromRegistry(WSDDDeployment registry)
@@ -213,7 +213,7 @@ public class WSDDUndeployment
         throws IOException
     {
         AttributesImpl attrs = new org.xml.sax.helpers.AttributesImpl();
-        attrs.addAttribute("", "name", "name", "CDATA",
+        attrs.addAttribute("", ATTR_NAME, ATTR_NAME, "CDATA",
                            context.qName2String(qname));
          
         context.startElement(elementQName, attrs);
@@ -223,33 +223,32 @@ public class WSDDUndeployment
     public void writeToContext(SerializationContext context)
         throws IOException
     {
-        context.registerPrefixForURI("", WSDDConstants.WSDD_NS);
-        context.startElement(WSDDConstants.UNDEPLOY_QNAME,
-                             null);
+        context.registerPrefixForURI(NS_PREFIX_WSDD, NS_URI_WSDD);
+        context.startElement(WSDDConstants.QNAME_UNDEPLOY, null);
         
         Iterator i = handlers.iterator();
         QName qname;
         while (i.hasNext()) {
             qname = (QName)i.next();
-            writeElement(context, WSDDConstants.HANDLER_QNAME, qname);
+            writeElement(context, QNAME_HANDLER, qname);
         }
         
         i = chains.iterator();
         while (i.hasNext()) {
             qname = (QName)i.next();
-            writeElement(context, WSDDConstants.CHAIN_QNAME, qname);
+            writeElement(context, QNAME_CHAIN, qname);
         }
 
         i = services.iterator();
         while (i.hasNext()) {
             qname = (QName)i.next();
-            writeElement(context, WSDDConstants.SERVICE_QNAME, qname);
+            writeElement(context, QNAME_SERVICE, qname);
         }
         
         i = transports.iterator();
         while (i.hasNext()) {
             qname = (QName)i.next();
-            writeElement(context, WSDDConstants.TRANSPORT_QNAME, qname);
+            writeElement(context, QNAME_TRANSPORT, qname);
         }
         
         i = typeMappings.iterator();

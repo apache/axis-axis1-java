@@ -71,6 +71,7 @@ import org.apache.axis.encoding.TypeMappingRegistryImpl;
 import org.apache.axis.encoding.ser.BaseDeserializerFactory;
 import org.apache.axis.encoding.ser.BaseSerializerFactory;
 import org.apache.axis.handlers.soap.SOAPService;
+import org.apache.axis.providers.java.JavaProvider;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Element;
@@ -89,10 +90,7 @@ public class WSDDService
     extends WSDDTargetedChain
     implements WSDDTypeMappingContainer
 {
-    public static final QName WSDL_QNAME = new QName(WSDDConstants.WSDD_NS,
-                                                     "wsdlFile");
-
-    public TypeMappingRegistry tmr = null;
+    private TypeMappingRegistry tmr = null;
 
     private Vector faultFlows = new Vector();
     private Vector typeMappings = new Vector();
@@ -141,47 +139,47 @@ public class WSDDService
 
         desc.setName(getQName().getLocalPart());
 
-        String modeStr = e.getAttribute("style");
-        if (modeStr != null && !modeStr.equals("")) {
-            style = MessageContext.getStyleFromString(modeStr);
+        String styleStr = e.getAttribute(ATTR_STYLE);
+        if (styleStr != null && !styleStr.equals("")) {
+            style = MessageContext.getStyleFromString(styleStr);
             desc.setStyle(style);
             switch (style) {
                 case ServiceDesc.STYLE_MESSAGE:
-                    providerQName = WSDDConstants.JAVAMSG_PROVIDER;
+                    providerQName = WSDDConstants.QNAME_JAVAMSG_PROVIDER;
                     break;
                 default:
-                    providerQName = WSDDConstants.JAVARPC_PROVIDER;
+                    providerQName = WSDDConstants.QNAME_JAVARPC_PROVIDER;
                     break;
             }
         }
 
-        String streamStr = e.getAttribute("streaming");
+        String streamStr = e.getAttribute(ATTR_STREAMING);
         if (streamStr != null && streamStr.equals("on")) {
             streaming = true;
         }
 
-        Element [] operationElements = getChildElements(e, "operation");
+        Element [] operationElements = getChildElements(e, ELEM_WSDD_OPERATION);
         for (int i = 0; i < operationElements.length; i++) {
             WSDDOperation operation = new WSDDOperation(operationElements[i],
                                                         desc);
             addOperation(operation);
         }
 
-        Element [] typeMappingElements = getChildElements(e, "typeMapping");
+        Element [] typeMappingElements = getChildElements(e, ELEM_WSDD_TYPEMAPPING);
         for (int i = 0; i < typeMappingElements.length; i++) {
             WSDDTypeMapping mapping =
                     new WSDDTypeMapping(typeMappingElements[i]);
             typeMappings.add(mapping);
         }
 
-        Element [] beanMappingElements = getChildElements(e, "beanMapping");
+        Element [] beanMappingElements = getChildElements(e, ELEM_WSDD_BEANMAPPING);
         for (int i = 0; i < beanMappingElements.length; i++) {
             WSDDBeanMapping mapping =
                     new WSDDBeanMapping(beanMappingElements[i]);
             typeMappings.add(mapping);
         }
 
-        Element [] namespaceElements = getChildElements(e, "namespace");
+        Element [] namespaceElements = getChildElements(e, ELEM_WSDD_NAMESPACE);
         for (int i = 0; i < namespaceElements.length; i++) {
             // Register a namespace for this service
             String ns = XMLUtils.getChildCharacterData(namespaceElements[i]);
@@ -190,15 +188,15 @@ public class WSDDService
         if (!namespaces.isEmpty())
             desc.setNamespaceMappings(namespaces);
 
-        Element wsdlElem = getChildElement(e, "wsdlFile");
+        Element wsdlElem = getChildElement(e, ELEM_WSDD_WSDLFILE);
         if (wsdlElem != null) {
             String fileName = XMLUtils.getChildCharacterData(wsdlElem);
             desc.setWSDLFile(fileName);
         }
 
-        String typeStr = e.getAttribute("provider");
-        if (typeStr != null && !typeStr.equals(""))
-            providerQName = XMLUtils.getQNameFromString(typeStr, e);
+        String providerStr = e.getAttribute(ATTR_PROVIDER);
+        if (providerStr != null && !providerStr.equals(""))
+            providerQName = XMLUtils.getQNameFromString(providerStr, e);
 
         // call to validate standard descriptors for this service
         validateDescriptors();
@@ -211,7 +209,7 @@ public class WSDDService
      */
     public void validateDescriptors()
     {
-        String className = this.getParameter("className");
+        String className = this.getParameter(JavaProvider.OPTION_CLASSNAME);
         if (className != null) {
             try {
                 // Will this always be the right classloader?
@@ -220,13 +218,13 @@ public class WSDDService
                 desc.setImplClass(cls);
                 initTMR();
                 String encStyle = (desc.getStyle() == ServiceDesc.STYLE_RPC) ?
-                    Constants.URI_CURRENT_SOAP_ENC : "";
-                desc.setTypeMapping((TypeMapping)tmr.getTypeMapping(encStyle));
+                    Constants.NS_URI_CURRENT_SOAP_ENC : "";
+                desc.setTypeMapping(getTypeMapping(encStyle));
             } catch (Exception ex) {
             }
         }
 
-        String allowedMethods = getParameter("allowedMethods");
+        String allowedMethods = getParameter(JavaProvider.OPTION_ALLOWEDMETHODS);
         if (allowedMethods != null) {
             ArrayList methodList = new ArrayList();
             StringTokenizer tokenizer = new StringTokenizer(allowedMethods, " ,");
@@ -256,7 +254,7 @@ public class WSDDService
 
     protected QName getElementName()
     {
-        return WSDDConstants.SERVICE_QNAME;
+        return QNAME_SERVICE;
     }
 
     /**
@@ -438,9 +436,9 @@ public class WSDDService
             String encodingStyle = mapping.getEncodingStyle();
             if (encodingStyle == null) {
                 if (style == ServiceDesc.STYLE_RPC)
-                    encodingStyle =Constants.URI_CURRENT_SOAP_ENC;
+                    encodingStyle =Constants.NS_URI_CURRENT_SOAP_ENC;
                 else
-                    encodingStyle = "";  // literal
+                    encodingStyle = Constants.NS_URI_LITERAL_ENC;  // literal
             }
             TypeMapping tm = (TypeMapping) tmr.getTypeMapping(encodingStyle);
             TypeMapping df = (TypeMapping) tmr.getDefaultTypeMapping();
@@ -490,22 +488,22 @@ public class WSDDService
         AttributesImpl attrs = new AttributesImpl();
         QName name = getQName();
         if (name != null) {
-            attrs.addAttribute("", "name", "name",
+            attrs.addAttribute("", ATTR_NAME, ATTR_NAME,
                                "CDATA", context.qName2String(name));
         }
         if (providerQName != null) {
-            attrs.addAttribute("", "provider", "provider",
+            attrs.addAttribute("", ATTR_PROVIDER, ATTR_PROVIDER,
                                "CDATA", context.qName2String(providerQName));
         }
         if (style != ServiceDesc.STYLE_RPC) {
-            attrs.addAttribute("", "style", "style",
+            attrs.addAttribute("", ATTR_STYLE, ATTR_STYLE,
                                "CDATA", MessageContext.getStyleFromInt(style));
         }
 
-        context.startElement(WSDDConstants.SERVICE_QNAME, attrs);
+        context.startElement(WSDDConstants.QNAME_SERVICE, attrs);
 
         if (desc.getWSDLFile() != null) {
-            context.startElement(WSDL_QNAME, null);
+            context.startElement(QNAME_WSDLFILE, null);
             context.writeSafeString(desc.getWSDLFile());
             context.endElement();
         }
@@ -523,8 +521,7 @@ public class WSDDService
         }
 
         for (int i=0; i < namespaces.size(); i++ ) {
-            context.startElement(new QName(WSDDConstants.WSDD_NS, "namespace"),
-                                 null);
+            context.startElement(QNAME_NAMESPACE, null);
             context.writeString((String)namespaces.get(i));
             context.endElement();
         }
@@ -578,5 +575,9 @@ public class WSDDService
                 deployTypeMapping((WSDDTypeMapping)typeMappings.get(i));
             }
         }
+    }
+    
+    public TypeMapping getTypeMapping(String encodingStyle) {
+        return (TypeMapping) tmr.getTypeMapping(encodingStyle);
     }
 }

@@ -132,8 +132,8 @@ public class BodyBuilder extends SOAPHandler
          * description, which can then tell us what to create.
          */
         boolean isRoot = true;
-        String root = attributes.getValue(Constants.URI_CURRENT_SOAP_ENC,
-                                        Constants.ATTR_ROOT);
+        String root = attributes.getValue(Constants.NS_URI_CURRENT_SOAP_ENC,
+                                          Constants.ATTR_ROOT);
         if ((root != null) && root.equals("0")) isRoot = false;
 
         MessageContext msgContext = context.getMessageContext();

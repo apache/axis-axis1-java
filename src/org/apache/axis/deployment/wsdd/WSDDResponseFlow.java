@@ -86,6 +86,6 @@ public class WSDDResponseFlow
     }
 
     protected QName getElementName() {
-        return WSDDConstants.RESPFLOW_QNAME;
+        return WSDDConstants.QNAME_RESPFLOW;
     }
 }

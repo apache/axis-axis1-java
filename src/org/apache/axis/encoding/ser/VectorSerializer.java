@@ -96,8 +96,6 @@ public class VectorSerializer implements Serializer
     protected static Log log =
         LogFactory.getLog(VectorSerializer.class.getName());
 
-    private static final QName QNAME_ITEM = new QName("", "item");
-
     /** Serialize a Vector
      *
      * Walk the collection of keys, serializing each key/value pair
@@ -124,7 +122,7 @@ public class VectorSerializer implements Serializer
         for (Iterator i = vector.iterator(); i.hasNext(); )
         {
             Object item = i.next();
-            context.serialize(QNAME_ITEM,  null, item, (item!=null ? item.getClass(): null) );
+            context.serialize(Constants.QNAME_LITERAL_ITEM,  null, item, (item!=null ? item.getClass(): null) );
         }
         context.endElement();
     }

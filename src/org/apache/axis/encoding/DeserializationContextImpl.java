@@ -339,7 +339,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
         QName typeQName = null;
         
         // Check for type
-        String type = Constants.getValue(attrs, Constants.URIS_SCHEMA_XSI,
+        String type = Constants.getValue(attrs, Constants.NS_URIS_SCHEMA_XSI,
                                          "type");
         if (type != null) {
             // Return the type attribute value converted to a QName
@@ -354,7 +354,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
             // Else if the default type mapping accepts SOAP 1.1, then 
             // convert the SOAP-ENC type to the appropriate XSD Schema Type.
             QName myQName = new QName(namespace, localName);
-            if (Constants.URI_CURRENT_SOAP_ENC.equals(Constants.URI_SOAP12_ENC) &&
+            if (Constants.NS_URI_CURRENT_SOAP_ENC.equals(Constants.NS_URI_SOAP12_ENC) &&
                 Constants.isSOAP_ENC(namespace)) {
                 typeQName = myQName;
             } else if (myQName.equals(Constants.SOAP_ARRAY)) {
@@ -405,7 +405,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
         if (attrs == null) {
             return false;
         }
-        String nil = Constants.getValue(attrs, Constants.URIS_SCHEMA_XSI,
+        String nil = Constants.getValue(attrs, Constants.NS_URIS_SCHEMA_XSI,
                                         "nil");
         return (nil != null && nil.equals("true"));
     }
@@ -448,7 +448,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
          * TODO: This code doesn't yet work, but we aren't looking up the right
          * TypeMapping by just using SOAP_ENC.
          
-        String encStyle = curElement == null ? Constants.URI_CURRENT_SOAP_ENC :
+        String encStyle = curElement == null ? Constants.NS_URI_CURRENT_SOAP_ENC :
                                                curElement.getEncodingStyle();
         return (TypeMapping) tmr.getTypeMapping(encStyle);
         */

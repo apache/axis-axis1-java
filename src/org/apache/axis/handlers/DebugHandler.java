@@ -75,6 +75,8 @@ public class DebugHandler extends BasicHandler {
     protected static Log log =
         LogFactory.getLog(DebugHandler.class.getName());
 
+    public static final String NS_URI_DEBUG = "http://xml.apache.org/axis/debug";
+    
     public void invoke(MessageContext msgContext) throws AxisFault {
         log.debug("Enter: DebugHandler::invoke");
         try {
@@ -82,7 +84,7 @@ public class DebugHandler extends BasicHandler {
 
             SOAPEnvelope message = (SOAPEnvelope)msg.getSOAPEnvelope();
             SOAPHeaderElement header = message.
-                getHeaderByName(Constants.URI_DEBUG, "Debug");
+                getHeaderByName(NS_URI_DEBUG, "Debug");
 
             if (header != null) {
                 Integer i = ((Integer)header

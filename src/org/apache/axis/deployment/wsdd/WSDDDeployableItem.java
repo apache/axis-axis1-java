@@ -55,6 +55,7 @@
 package org.apache.axis.deployment.wsdd;
 
 import org.apache.axis.Handler;
+import org.apache.axis.Constants;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.ConfigurationException;
 import org.apache.axis.encoding.SerializationContext;
@@ -129,13 +130,13 @@ public abstract class WSDDDeployableItem
     {
         super(e);
         
-        String name = e.getAttribute("name");
+        String name = e.getAttribute(ATTR_NAME);
         if (name != null && !name.equals("")) {
 //            qname = XMLUtils.getQNameFromString(name, e);
             qname = new QName("", name);
         }
         
-        String typeStr = e.getAttribute("type");
+        String typeStr = e.getAttribute(ATTR_TYPE);
         if (typeStr != null && !typeStr.equals("")) {
             type = XMLUtils.getQNameFromString(typeStr, e);
         }
@@ -143,7 +144,7 @@ public abstract class WSDDDeployableItem
         // Figure out our scope - right now if a non-recognized scope
         // attribute appears, we will ignore it and use the default
         // scope.  Is this right, or should we throw an error?
-        String scopeStr = e.getAttribute("scope");
+        String scopeStr = e.getAttribute(ATTR_SCOPE);
         if (scopeStr != null) {
             for (int i = 0; i < scopeStrings.length; i++) {
                 if (scopeStr.equals(scopeStrings[i])) {
@@ -157,12 +158,12 @@ public abstract class WSDDDeployableItem
             parameters = new LockableHashtable();
         
         // Load up our params
-        Element [] paramElements = getChildElements(e, "parameter");
+        Element [] paramElements = getChildElements(e, ELEM_WSDD_PARAM);
         for (int i = 0; i < paramElements.length; i++) {
             Element param = paramElements[i];
-            String pname = param.getAttribute("name");
-            String value = param.getAttribute("value");
-            String locked = param.getAttribute("locked");
+            String pname = param.getAttribute(ATTR_NAME);
+            String value = param.getAttribute(ATTR_VALUE);
+            String locked = param.getAttribute(ATTR_LOCKED);
             parameters.put(pname, value, (locked != null &&
                                     locked.equalsIgnoreCase("true")));
         }
@@ -265,14 +266,14 @@ public abstract class WSDDDeployableItem
             String name = (String) entry.getKey();
             AttributesImpl attrs = new AttributesImpl();
             
-            attrs.addAttribute("", "name", "name", "CDATA", name);
-            attrs.addAttribute("", "value", "value", "CDATA", 
+            attrs.addAttribute("", ATTR_NAME, ATTR_NAME, "CDATA", name);
+            attrs.addAttribute("", ATTR_VALUE, ATTR_VALUE, "CDATA", 
                                    entry.getValue().toString());
             if (parameters.isKeyLocked(name)) {
-                attrs.addAttribute("", "locked", "locked", "CDATA", "true");
+                attrs.addAttribute("", ATTR_LOCKED, ATTR_LOCKED, "CDATA", "true");
             }
 
-            context.startElement(WSDDConstants.PARAM_QNAME, attrs);
+            context.startElement(QNAME_PARAM, attrs);
             context.endElement();
         }
     }
@@ -341,11 +342,11 @@ public abstract class WSDDDeployableItem
                 try{
                   h.init();
                 }catch(Exception e){
-                    String msg=e +"\n"+stackToString(e);
+                    String msg=e + NL +stackToString(e);
                     log.debug(msg);
                     throw new ConfigurationException(e);
                 }catch(Error e){
-                    String msg=e +"\n"+stackToString(e);
+                    String msg=e + NL +stackToString(e);
                     log.debug(msg);
                     throw new ConfigurationException(msg);
                 }
@@ -380,7 +381,7 @@ public abstract class WSDDDeployableItem
     {
         QName type = getType();
         if (type != null &&
-                WSDDConstants.WSDD_JAVA.equals(type.getNamespaceURI())) {
+                NS_URI_WSDD_JAVA.equals(type.getNamespaceURI())) {
             return Class.forName(type.getLocalPart());
         }
         return null;

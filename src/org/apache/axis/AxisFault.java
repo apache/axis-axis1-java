@@ -119,7 +119,7 @@ public class AxisFault extends java.rmi.RemoteException {
     public AxisFault(String code, String str,
                      String actor, Element[] details) {
         super (str);
-        setFaultCode( new QName(Constants.AXIS_NS, code));
+        setFaultCode( new QName(Constants.NS_URI_AXIS, code));
         setFaultString( str );
         setFaultActor( actor );
         setFaultDetail( details );
@@ -180,7 +180,7 @@ public class AxisFault extends java.rmi.RemoteException {
         for (int i = 0; faultDetails != null && i < faultDetails.size(); i++) {
             Element element = (Element) faultDetails.elementAt(i);
             if ("stackTrace".equals(element.getLocalName()) &&
-                Constants.AXIS_NS.equals(element.getNamespaceURI())) {
+                Constants.NS_URI_AXIS.equals(element.getNamespaceURI())) {
                 // ??? Should we replace it or just let it be?
                 return;
             }
@@ -200,7 +200,7 @@ public class AxisFault extends java.rmi.RemoteException {
         
         if ((target instanceof AxisFault) &&
             (target.getClass() != AxisFault.class)) {
-            el = XMLUtils.StringToElement(Constants.AXIS_NS, 
+            el = XMLUtils.StringToElement(Constants.NS_URI_AXIS, 
                                                   "exceptionName", 
                                                   target.getClass().getName());
             
@@ -213,7 +213,7 @@ public class AxisFault extends java.rmi.RemoteException {
         target.printStackTrace(ps);
         ps.close();
         
-        el =  XMLUtils.StringToElement(Constants.AXIS_NS, 
+        el =  XMLUtils.StringToElement(Constants.NS_URI_AXIS, 
                                        "stackTrace", 
                                        stream.toString());
 
@@ -250,7 +250,7 @@ public class AxisFault extends java.rmi.RemoteException {
     }
 
     public void setFaultCode(String code) {
-        faultCode = new QName(Constants.AXIS_NS, code);
+        faultCode = new QName(Constants.NS_URI_AXIS, code);
     }
 
     public QName getFaultCode() {

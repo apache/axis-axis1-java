@@ -37,8 +37,8 @@ public class TestDeser extends TestCase {
     private AxisServer server = new AxisServer();
 
     public TestDeser(String name) {
-        this(name, Constants.URI_CURRENT_SCHEMA_XSI,
-                   Constants.URI_CURRENT_SCHEMA_XSD);
+        this(name, Constants.NS_URI_CURRENT_SCHEMA_XSI,
+                   Constants.NS_URI_CURRENT_SCHEMA_XSD);
     }
 
     public TestDeser(String name, String NS_XSI, String NS_XSD) {
@@ -62,8 +62,8 @@ public class TestDeser extends TestCase {
 
         TypeMappingRegistry tmr = server.getTypeMappingRegistry();
         TypeMapping tm = (TypeMapping) tmr.createTypeMapping();
-        tm.setSupportedEncodings(new String[] {Constants.URI_CURRENT_SOAP_ENC});
-        tmr.register(Constants.URI_CURRENT_SOAP_ENC, tm);
+        tm.setSupportedEncodings(new String[] {Constants.NS_URI_CURRENT_SOAP_ENC});
+        tmr.register(Constants.NS_URI_CURRENT_SOAP_ENC, tm);
         tm.register(java.lang.String[].class, 
                     new QName("urn:me", "ArrayOfString"),
                     new org.apache.axis.encoding.ser.ArraySerializerFactory(),

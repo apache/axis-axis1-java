@@ -298,7 +298,7 @@ public class Types {
         if (schemaElem == null) {
           schemaElem = docHolder.createElement("schema");
           wsdlTypesElem.appendChild(schemaElem);
-          schemaElem.setAttribute("xmlns", Constants.URI_CURRENT_SCHEMA_XSD);
+          schemaElem.setAttribute("xmlns", Constants.NS_URI_CURRENT_SCHEMA_XSD);
           schemaElem.setAttribute("targetNamespace", qName.getNamespaceURI());
         }
         schemaElem.appendChild(element);
@@ -312,8 +312,8 @@ public class Types {
         if (wsdlTypesElem == null) {
             // Create a <wsdl:types> element corresponding to the wsdl namespaces.
             wsdlTypesElem = 
-                    docHolder.createElementNS(Constants.URI_CURRENT_WSDL, "types");
-            wsdlTypesElem.setPrefix(Constants.NSPREFIX_WSDL);
+                    docHolder.createElementNS(Constants.NS_URI_CURRENT_WSDL, "types");
+            wsdlTypesElem.setPrefix(Constants.NS_PREFIX_WSDL);
         }
     }
 
@@ -334,10 +334,10 @@ public class Types {
         if (isSimpleType(type)) {
             QName qName = getWsdlQName(getTypeQName(type));
             if (Constants.isSchemaXSD(qName.getNamespaceURI())) {
-                return Constants.NSPREFIX_SCHEMA_XSD + ":" +
+                return Constants.NS_PREFIX_SCHEMA_XSD + ":" +
                     qName.getLocalPart();
             } else {
-                return Constants.NSPREFIX_SOAP_ENC + ":" +
+                return Constants.NS_PREFIX_SOAP_ENC + ":" +
                     qName.getLocalPart();
             }
         }
@@ -404,13 +404,13 @@ public class Types {
             Element restriction = docHolder.createElement("restriction");
             complexContent.appendChild(restriction);
             restriction.setAttribute("base",
-                                     Constants.NSPREFIX_SOAP_ENC + ":Array");
+                                     Constants.NS_PREFIX_SOAP_ENC + ":Array");
 
             Element attribute = docHolder.createElement("attribute");
             restriction.appendChild(attribute);
             attribute.setAttribute("ref",
-                                   Constants.NSPREFIX_SOAP_ENC +":arrayType");
-            attribute.setAttribute(Constants.NSPREFIX_WSDL +":arrayType",
+                                   Constants.NS_PREFIX_SOAP_ENC +":arrayType");
+            attribute.setAttribute(Constants.NS_PREFIX_WSDL +":arrayType",
                                    componentTypeName );
         } else {
             if (isEnumClass(type)) {
@@ -703,11 +703,11 @@ public class Types {
         // generated.
         if (added) {
             String prefix = namespaces.getCreatePrefix(qName.getNamespaceURI());
-            if (prefix.equals(Constants.NSPREFIX_SOAP_ENV) ||
-                prefix.equals(Constants.NSPREFIX_SOAP_ENC) ||
-                prefix.equals(Constants.NSPREFIX_SCHEMA_XSD) ||
-                prefix.equals(Constants.NSPREFIX_WSDL) ||
-                prefix.equals(Constants.NSPREFIX_WSDL_SOAP))
+            if (prefix.equals(Constants.NS_PREFIX_SOAP_ENV) ||
+                prefix.equals(Constants.NS_PREFIX_SOAP_ENC) ||
+                prefix.equals(Constants.NS_PREFIX_SCHEMA_XSD) ||
+                prefix.equals(Constants.NS_PREFIX_WSDL) ||
+                prefix.equals(Constants.NS_PREFIX_WSDL_SOAP))
                 return false;
             else
                 return true;

@@ -78,7 +78,7 @@ import java.io.StringReader;
 /**
  * represents a WSDD Document (this is the top level object in this object model)
  */
-public class WSDDDocument
+public class WSDDDocument extends WSDDConstants
 {
     protected static Log log =
         LogFactory.getLog(WSDDDocument.class.getName());
@@ -103,7 +103,7 @@ public class WSDDDocument
     {
         this.doc = doc;
         Element docEl = doc.getDocumentElement();
-        if ("undeployment".equals(docEl.getLocalName())) {
+        if (ELEM_WSDD_UNDEPLOY.equals(docEl.getLocalName())) {
             undeployment = new WSDDUndeployment(docEl);
         } else {
             deployment = new WSDDDeployment(docEl);
@@ -117,7 +117,7 @@ public class WSDDDocument
     public WSDDDocument(Element e) throws WSDDException
     {
         doc = e.getOwnerDocument();
-        if ("undeployment".equals(e.getLocalName())) {
+        if (ELEM_WSDD_UNDEPLOY.equals(e.getLocalName())) {
             undeployment = new WSDDUndeployment(e);
         } else {
             deployment = new WSDDDeployment(e);

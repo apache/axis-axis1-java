@@ -95,25 +95,25 @@ public class WSDDTypeMapping
     public WSDDTypeMapping(Element e)
         throws WSDDException
     {
-        serializer = e.getAttribute("serializer");
-        deserializer = e.getAttribute("deserializer");
-        Attr attrNode = e.getAttributeNode("encodingStyle");
+        serializer = e.getAttribute(ATTR_SERIALIZER);
+        deserializer = e.getAttribute(ATTR_DESERIALIZER);
+        Attr attrNode = e.getAttributeNode(ATTR_ENCSTYLE);
 
         if (attrNode == null) {
-            encodingStyle = Constants.URI_CURRENT_SOAP_ENC;
+            encodingStyle = Constants.NS_URI_CURRENT_SOAP_ENC;
         } else {
             encodingStyle = attrNode.getValue();
         }
 
-        String qnameStr = e.getAttribute("qname");
+        String qnameStr = e.getAttribute(ATTR_QNAME);
         qname = XMLUtils.getQNameFromString(qnameStr, e);
 
         // JSR 109 v0.093 indicates that this attribute is named "type"
 
-        String typeStr = e.getAttribute("type");
+        String typeStr = e.getAttribute(ATTR_TYPE);
         typeQName = XMLUtils.getQNameFromString(typeStr, e);
         if (typeStr == null || typeStr.equals("")) {
-            typeStr = e.getAttribute("languageSpecificType");
+            typeStr = e.getAttribute(ATTR_LANG_SPEC_TYPE);
             typeQName = XMLUtils.getQNameFromString(typeStr, e);
         }
     }
@@ -124,24 +124,24 @@ public class WSDDTypeMapping
     public void writeToContext(SerializationContext context)
             throws IOException {
         AttributesImpl attrs = new AttributesImpl();
-        attrs.addAttribute("", "encodingStyle", "encodingStyle", "CDATA", encodingStyle);
-        attrs.addAttribute("", "serializer", "serializer", "CDATA", serializer);
-        attrs.addAttribute("", "deserializer", "deserializer", "CDATA", deserializer);
+        attrs.addAttribute("", ATTR_ENCSTYLE, ATTR_ENCSTYLE, "CDATA", encodingStyle);
+        attrs.addAttribute("", ATTR_SERIALIZER, ATTR_SERIALIZER, "CDATA", serializer);
+        attrs.addAttribute("", ATTR_DESERIALIZER, ATTR_DESERIALIZER, "CDATA", deserializer);
 
         String typeStr = context.qName2String(typeQName);
         // JSR 109 indicates that the name of this field is type
-        attrs.addAttribute("", "type", 
-                           "type", "CDATA", typeStr);
+        attrs.addAttribute("", ATTR_TYPE, ATTR_TYPE,
+                           "CDATA", typeStr);
         
         String qnameStr = context.qName2String(qname);
-        attrs.addAttribute("", "qname", "qname", "CDATA", qnameStr);
+        attrs.addAttribute("", ATTR_QNAME, ATTR_QNAME, "CDATA", qnameStr);
         
-        context.startElement(WSDDConstants.TYPE_QNAME, attrs);
+        context.startElement(QNAME_TYPEMAPPING, attrs);
         context.endElement();
     }
 
     protected QName getElementName() {
-        return WSDDConstants.TYPE_QNAME;
+        return QNAME_TYPEMAPPING;
     }
 
     /**
@@ -207,11 +207,11 @@ public class WSDDTypeMapping
         throws ClassNotFoundException
     {
         if (typeQName != null) {
-            if (!WSDDConstants.WSDD_JAVA.equals(typeQName.getNamespaceURI())) {
+            if (!NS_URI_WSDD_JAVA.equals(typeQName.getNamespaceURI())) {
                 throw new ClassNotFoundException(JavaUtils.
                              getMessage("badTypeNamespace00",
                                         typeQName.getNamespaceURI(),
-                                        WSDDConstants.WSDD_JAVA));
+                                        NS_URI_WSDD_JAVA));
             }
             String loadName = JavaUtils.getLoadableClassName(typeQName.getLocalPart());
             if (JavaUtils.getWrapper(loadName) != null) {
@@ -231,7 +231,7 @@ public class WSDDTypeMapping
     public void setLanguageSpecificType(Class javaType)
     {
         String type = javaType.getName();
-        typeQName = new QName(WSDDConstants.WSDD_JAVA, type);
+        typeQName = new QName(NS_URI_WSDD_JAVA, type);
     }
 
     /**
@@ -241,7 +241,7 @@ public class WSDDTypeMapping
      */
     public void setLanguageSpecificType(String javaType)
     {
-        typeQName = new QName(WSDDConstants.WSDD_JAVA, javaType);
+        typeQName = new QName(NS_URI_WSDD_JAVA, javaType);
     }
 
     /**

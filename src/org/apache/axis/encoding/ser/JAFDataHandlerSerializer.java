@@ -117,7 +117,7 @@ public class JAFDataHandlerSerializer implements Serializer {
             attrs.setAttributes(attributes); //copy the existing ones.
 
         int typeIndex=-1;
-        if((typeIndex = attrs.getIndex(Constants.URI_CURRENT_SCHEMA_XSI,
+        if((typeIndex = attrs.getIndex(Constants.NS_URI_CURRENT_SCHEMA_XSI,
                                 "type")) != -1){
 
             //Found a xsi:type which should not be there for attachments.

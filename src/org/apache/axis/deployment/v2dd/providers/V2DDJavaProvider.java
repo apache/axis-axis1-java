@@ -69,6 +69,8 @@ import org.w3c.dom.NodeList;
 public class V2DDJavaProvider
     extends V2DDProvider
 {
+    public static final String OPTION_CLASSNAME = "className";
+    public static final String OPTION_IS_STATIC = "isStatic";
 
     /**
      *
@@ -91,9 +93,9 @@ public class V2DDJavaProvider
                                                 "java");
         Element  java = (Element) nl.item(0);
 
-        provider.setOption(JavaProvider.OPTION_CLASSNAME,
+        provider.setOption(OPTION_CLASSNAME,
                            java.getAttribute("class"));
-        provider.setOption(JavaProvider.OPTION_IS_STATIC,
+        provider.setOption(OPTION_IS_STATIC,
                            new Boolean(java.getAttribute("isStatic")));
     }
 }

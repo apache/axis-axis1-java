@@ -61,62 +61,110 @@ import javax.xml.rpc.namespace.QName;
  */
 public class WSDDConstants
 {
-    /** XXX */
-    public final static String WSDD_NS = "http://xml.apache.org/axis/wsdd/";
+    public static final String BEAN_SERIALIZER_FACTORY = "org.apache.axis.encoding.ser.BeanSerializerFactory";
+    public static final String BEAN_DESERIALIZER_FACTORY = "org.apache.axis.encoding.ser.BeanDeserializerFactory";
 
-    /** XXX */
-    public final static String WSDD_JAVA =
-        "http://xml.apache.org/axis/wsdd/providers/java";
+    public static final String NS_URI_WSDD = "http://xml.apache.org/axis/wsdd/";
     
-    public final static String WSDD_HANDLER =
-        "http://xml.apache.org/axis/wsdd/providers/handler";
-
-    /** XXX */
-    public final static String WSDD_COM =
-        "http://xml.apache.org/axis/wsdd/providers/com";
-
-    /** XXX */
-    public final static String WSDD_BSF =
-        "http://xml.apache.org/axis/wsdd/providers/bsf";
+    // The following have a '/' appended to the end of NS_URI_WSDD_JAVA.. OK to fix?
+    // .../java/wsdd/examples/from_SOAP_v2/addressBook.wsdd
+    // .../java/wsdd/examples/from_SOAP_v2/ejbtest.wsdd
+    // .../java/wsdd/examples/from_SOAP_v2/messaging.wsdd
+    // .../java/wsdd/examples/from_SOAP_v2/mimetest.wsdd
+    // .../java/wsdd/examples/from_SOAP_v2/stockquote.wsdd
+    // .../java/wsdd/examples/from_SOAP_v2/testprovider.wsdd
+    // .../java/wsdd/examples/servcieConfiguration_examples/sce_wsddScenario0.wsdd
+    // .../java/wsdd/examples/servcieConfiguration_examples/sce_wsddScenario1.wsdd
+    // .../java/wsdd/examples/chaining_examples/ch_wsddScenario0.wsdd
+    // .../java/wsdd/examples/chaining_examples/ch_wsddScenario1.wsdd
+    // .../java/wsdd/examples/chaining_examples/ch_wsddScenario2.wsdd
+    // .../java/wsdd/examples/chaining_examples/ch_wsddScenario3.wsdd
+    // .../java/wsdd/examples/chaining_examples/ch_wsddScenario4.wsdd
+    // .../java/wsdd/examples/chaining_examples/ch_wsddScenario5.wsdd
+    // .../java/wsdd/examples/chaining_examples/ch_wsddScenario6.wsdd
+    // .../java/wsdd/examples/chaining_examples/ch_wsddScenario7.wsdd
+    // .../java/wsdd/examples/chaining_examples/ch_wsddScenario8.wsdd
+    // .../java/wsdd/examples/chaining_examples/ch_wsddScenario9.wsdd
+    // .../java/wsdd/examples/chaining_examples/ch_wsddScenario10.wsdd
+    // .../java/wsdd/examples/chaining_examples/ch_wsddScenario11.wsdd
+    // .../java/wsdd/examples/chaining_examples/ch_wsddScenario12.wsdd
+    public static final String NS_URI_WSDD_JAVA = "http://xml.apache.org/axis/wsdd/providers/java";
+    public static final String NS_URI_WSDD_HANDLER = "http://xml.apache.org/axis/wsdd/providers/handler";
+    public static final String NS_URI_WSDD_WSDD_COM = "http://xml.apache.org/axis/wsdd/providers/com";
     
-    public static final QName JAVARPC_PROVIDER = new QName(WSDD_JAVA,
-                                                        "RPC");
-    public static final QName JAVAMSG_PROVIDER = new QName(WSDD_JAVA,
-                                                        "MSG");
-    public static final QName HANDLER_PROVIDER = new QName("", "Handler");
-    public static final QName EJB_PROVIDER     = new QName(WSDD_JAVA,
-                                                           "EJB");
+    // the following namespace is used in .../java/wsdd/examples/from_SOAP_v2/calculator.wsdd
+    // BUT that namespace ends with '/', this one doesn't.  Which is right?
+    public static final String NS_URI_WSDD_WSDD_BSF = "http://xml.apache.org/axis/wsdd/providers/bsf";
+    
+    public static final String NS_PREFIX_WSDD       = "";
+    public static final String NS_PREFIX_WSDD_JAVA  = "java";
+    
+    public static final String ELEM_PROVIDER_RPC = "RPC";
+    public static final String ELEM_PROVIDER_MSG = "MSG";
+    public static final String ELEM_PROVIDER_HANDLER = "Handler";
+    public static final String ELEM_PROVIDER_EJB = "EJB";
+    
+    public static final QName QNAME_JAVARPC_PROVIDER = new QName(NS_URI_WSDD_JAVA, ELEM_PROVIDER_RPC);
+    public static final QName QNAME_JAVAMSG_PROVIDER = new QName(NS_URI_WSDD_JAVA, ELEM_PROVIDER_MSG);
+    public static final QName QNAME_HANDLER_PROVIDER = new QName("", ELEM_PROVIDER_HANDLER);
+    public static final QName QNAME_EJB_PROVIDER     = new QName(NS_URI_WSDD_JAVA, ELEM_PROVIDER_EJB);
 
-    public static final QName PARAM_QNAME = new QName(WSDD_NS,
-                                                      "parameter");
-    public static final QName DOC_QNAME = new QName(WSDD_NS,
-                                                    "documentation");
-    public static final QName DEPLOY_QNAME = new QName(WSDD_NS,
-                                                       "deployment");
-    public static final QName UNDEPLOY_QNAME = new QName(WSDD_NS,
-                                                         "undeployment");
-    public static final QName REQFLOW_QNAME = new QName(WSDD_NS,
-                                                        "requestFlow");
-    public static final QName RESPFLOW_QNAME = new QName(WSDD_NS,
-                                                         "responseFlow");
-    public static final QName FAULTFLOW_QNAME = new QName(WSDD_NS,
-                                                          "faultFlow");
-    public static final QName HANDLER_QNAME = new QName(WSDD_NS,
-                                                        "handler");
-    public static final QName CHAIN_QNAME = new QName(WSDD_NS,
-                                                      "chain");
-    public static final QName SERVICE_QNAME = new QName(WSDD_NS,
-                                                        "service");
-    public static final QName TRANSPORT_QNAME = new QName(WSDD_NS,
-                                                          "transport");
-    public static final QName GLOBAL_QNAME = new QName(WSDD_NS,
-                                                       "globalConfiguration");
-    public static final QName TYPE_QNAME = new QName(WSDD_NS,
-                                                     "typeMapping");
-    public static final QName BEANMAPPING_QNAME = new QName(WSDD_NS,
-                                                     "beanMapping");
-    public static final QName OPERATION_QNAME = new QName(WSDD_NS,
-                                                          "operation");
-    public static final QName ELEMENTMAP_QNAME = new QName(WSDD_NS,
-                                                          "elementMapping");
+
+    public static final String ELEM_WSDD_PARAM = "parameter";
+    public static final String ELEM_WSDD_DOC = "documentation";
+    public static final String ELEM_WSDD_DEPLOY = "deployment";
+    public static final String ELEM_WSDD_UNDEPLOY = "undeployment";
+    public static final String ELEM_WSDD_REQFLOW = "requestFlow";
+    public static final String ELEM_WSDD_RESPFLOW = "responseFlow";
+    public static final String ELEM_WSDD_FAULTFLOW = "faultFlow";
+    public static final String ELEM_WSDD_HANDLER = "handler";
+    public static final String ELEM_WSDD_CHAIN = "chain";
+    public static final String ELEM_WSDD_SERVICE = "service";
+    public static final String ELEM_WSDD_TRANSPORT = "transport";
+    public static final String ELEM_WSDD_GLOBAL = "globalConfiguration";
+    public static final String ELEM_WSDD_TYPEMAPPING = "typeMapping";
+    public static final String ELEM_WSDD_BEANMAPPING = "beanMapping";
+    public static final String ELEM_WSDD_OPERATION = "operation";
+    public static final String ELEM_WSDD_ELEMENTMAPPING = "elementMapping";
+    public static final String ELEM_WSDD_WSDLFILE = "wsdlFile";
+    public static final String ELEM_WSDD_NAMESPACE = "namespace";
+
+    public static final QName QNAME_PARAM = new QName(NS_URI_WSDD, ELEM_WSDD_PARAM);
+    public static final QName QNAME_DOC = new QName(NS_URI_WSDD, ELEM_WSDD_DOC);
+    public static final QName QNAME_DEPLOY = new QName(NS_URI_WSDD, ELEM_WSDD_DEPLOY);
+    public static final QName QNAME_UNDEPLOY = new QName(NS_URI_WSDD, ELEM_WSDD_UNDEPLOY);
+    public static final QName QNAME_REQFLOW = new QName(NS_URI_WSDD, ELEM_WSDD_REQFLOW);
+    public static final QName QNAME_RESPFLOW = new QName(NS_URI_WSDD, ELEM_WSDD_RESPFLOW);
+    public static final QName QNAME_FAULTFLOW = new QName(NS_URI_WSDD, ELEM_WSDD_FAULTFLOW);
+    public static final QName QNAME_HANDLER = new QName(NS_URI_WSDD, ELEM_WSDD_HANDLER);
+    public static final QName QNAME_CHAIN = new QName(NS_URI_WSDD, ELEM_WSDD_CHAIN);
+    public static final QName QNAME_SERVICE = new QName(NS_URI_WSDD, ELEM_WSDD_SERVICE);
+    public static final QName QNAME_TRANSPORT = new QName(NS_URI_WSDD, ELEM_WSDD_TRANSPORT);
+    public static final QName QNAME_GLOBAL = new QName(NS_URI_WSDD, ELEM_WSDD_GLOBAL);
+    public static final QName QNAME_TYPEMAPPING = new QName(NS_URI_WSDD, ELEM_WSDD_TYPEMAPPING);
+    public static final QName QNAME_BEANMAPPING = new QName(NS_URI_WSDD, ELEM_WSDD_BEANMAPPING);
+    public static final QName QNAME_OPERATION = new QName(NS_URI_WSDD, ELEM_WSDD_OPERATION);
+    public static final QName QNAME_ELEMENTMAPPING = new QName(NS_URI_WSDD, ELEM_WSDD_ELEMENTMAPPING);
+    public static final QName QNAME_WSDLFILE = new QName(NS_URI_WSDD, ELEM_WSDD_WSDLFILE);
+    public static final QName QNAME_NAMESPACE = new QName(NS_URI_WSDD, ELEM_WSDD_NAMESPACE);
+    
+    public static final String ATTR_LANG_SPEC_TYPE = "languageSpecificType";
+    public static final String ATTR_QNAME = "qname";
+    public static final String ATTR_NAME = "name";
+    public static final String ATTR_TYPE = "type";
+    public static final String ATTR_SCOPE = "scope";
+    public static final String ATTR_VALUE = "value";
+    public static final String ATTR_LOCKED = "locked";
+    public static final String ATTR_RETQNAME = "returnQName";
+    public static final String ATTR_RETTYPE = "returnType";
+    public static final String ATTR_MODE = "mode";
+    public static final String ATTR_STYLE = "style";
+    public static final String ATTR_STREAMING = "streaming";
+    public static final String ATTR_PROVIDER = "provider";
+    public static final String ATTR_PIVOT = "pivot";
+    public static final String ATTR_SERIALIZER = "serializer";
+    public static final String ATTR_DESERIALIZER = "deserializer";
+    public static final String ATTR_ENCSTYLE = "encodingStyle";
+    
+    public static final String NL = System.getProperty("line.separator");
 }

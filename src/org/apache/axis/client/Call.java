@@ -159,7 +159,7 @@ public class Call implements javax.xml.rpc.Call {
     private int                operationStyle  = ServiceDesc.STYLE_RPC;
     private boolean            useSOAPAction   = false;
     private String             SOAPActionURI   = null;
-    private String             encodingStyle   = Constants.URI_CURRENT_SOAP_ENC;
+    private String             encodingStyle   = Constants.NS_URI_CURRENT_SOAP_ENC;
     private Integer            timeout         = null;
 
     private OperationDesc      operation       = new OperationDesc();

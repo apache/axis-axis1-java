@@ -66,6 +66,7 @@ import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.TypeMappingRegistryImpl;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.DefaultTypeMappingImpl;
+import org.apache.axis.providers.java.JavaProvider;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeaderElement;
@@ -174,7 +175,7 @@ public class SOAPService extends SimpleTargetedChain
                         QName badQName = new QName(badHeader.getNamespaceURI(),
                                                    badHeader.getName());
                         SOAPHeaderElement newHeader = new 
-                            SOAPHeaderElement(Constants.URI_SOAP12_FAULT_NS,
+                            SOAPHeaderElement(Constants.NS_URI_SOAP12_FAULT_NS,
                                               Constants.ELEM_MISUNDERSTOOD);
                         newHeader.addAttribute(null,
                                                Constants.ATTR_QNAME,
@@ -270,7 +271,7 @@ public class SOAPService extends SimpleTargetedChain
 
     public synchronized ServiceDesc getInitializedServiceDesc(MessageContext msgContext) {
         if (serviceDescription.getImplClass() == null) {
-            String clsName = (String)getOption("className");
+            String clsName = (String)getOption(JavaProvider.OPTION_CLASSNAME);
 
             if (clsName != null) {
                 ClassLoader cl = null;
