@@ -322,9 +322,13 @@ public class Call implements javax.xml.rpc.Call {
         initialize();
     }
 
-    // fixme: why have this if we have Call(URL) ?
     /**
      * Build a call from a URL string.
+     *
+     * This is handy so that you don't have to manually call Call.initialize()
+     * in order to register custom transports.  In other words, whereas doing
+     * a new URL("local:...") would fail, new Call("local:...") works because
+     * we do the initialization of our own and any configured custom protocols. 
      *
      * @param url the target endpoint URL
      * @exception MalformedURLException
@@ -734,15 +738,12 @@ public class Call implements javax.xml.rpc.Call {
         return useSOAPAction;
     } // useSOAPAction
 
-    // fixme: this never throws IllegalArgumentException
     /**
      * Set the soapAction URI.
      *
      * @param SOAPActionURI  the new SOAP action URI
-     * @throws IllegalArgumentException if the URI is inapropreate
      */
-    public void setSOAPActionURI(String SOAPActionURI)
-            throws IllegalArgumentException {
+    public void setSOAPActionURI(String SOAPActionURI) {
         useSOAPAction = true;
         this.SOAPActionURI = SOAPActionURI;
     } // setSOAPActionURI
@@ -1819,8 +1820,6 @@ public class Call implements javax.xml.rpc.Call {
     /* End of core JAX-RPC stuff                                            */
     /************************************************************************/
 
-    // fixme: can this throw RemoteException? Is AxisFault hoovering up all the
-    //  faults?
     /**
      * Invoke the service with a custom SOAPEnvelope.
      * <p>
@@ -1829,8 +1828,7 @@ public class Call implements javax.xml.rpc.Call {
      * @param env a SOAPEnvelope to send
      * @throws AxisFault if there is any failure
      */
-    public SOAPEnvelope invoke(SOAPEnvelope env)
-                                  throws java.rmi.RemoteException {
+    public SOAPEnvelope invoke(SOAPEnvelope env) throws AxisFault {
         try {
             Message msg = null ;
 

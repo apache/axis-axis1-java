@@ -77,7 +77,6 @@ public class FileReader extends Thread {
   boolean  halted     = false ;
 
   public void run() {
-    String tmp = "" ;
     AxisServer  server = new AxisServer();
     server.init();
 
@@ -115,7 +114,7 @@ public class FileReader extends Thread {
             msg.setMessageContext(msgContext);
         }
         
-        byte[] buf = (byte[]) msg.getSOAPPartAsBytes();
+        byte[] buf = msg.getSOAPPartAsBytes();
         FileOutputStream fos = new FileOutputStream( "xml" + thisNum + ".res" );
         fos.write( buf );
         fos.close();
