@@ -76,6 +76,10 @@ public class AdminHandler implements Handler {
   public void cleanup() {
   }
 
+  /**
+   * This is pretty much a pass-thru to the util.Admin tool.  This will just
+   * take the incoming xml file and call the Admin processing.
+   */
   public void invoke(MessageContext msgContext) throws AxisFault {
     System.err.println("In AdminHandler");
 

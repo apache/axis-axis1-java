@@ -87,9 +87,10 @@ public class AxisServlet extends HttpServlet {
     ServletContext context = config.getServletContext();
     HttpSession    session = req.getSession();
 
-    // Set-up the Axis Message objects...
     Handler  engine = null ;
 
+    /* Get or 'new' the Axis engine object */
+    /***************************************/
     synchronized(context) {
       engine = (Handler) context.getAttribute( AXIS_ENGINE );
       if ( engine == null ) {
@@ -99,14 +100,31 @@ public class AxisServlet extends HttpServlet {
       }
     }
 
+    /* Place the incoming message in the MessagContext object - notice */
+    /* that we just leave it as a 'ServletRequest' object and let the  */
+    /* Message processing routine convert it - we don't do it since we */
+    /* don't know how it's going to be used - perhaps it might not     */
+    /* even need to be parsed.                                         */
+    /*******************************************************************/
     MessageContext    msgContext = new MessageContext();
     Message           msg        = new Message( req, "ServletRequest" );
 
     msgContext.setIncomingMessage( msg );
 
-    // Set some stuff in the 'bag'
+    /* Save the SOAPAction header in the MessageContext bag - this will */
+    /* be used to tell the Axis Engine which service is being invoked.  */
+    /* This will save us the trouble of having to parse the incoming    */
+    /* message - although we will need to double-check later on that    */
+    /* the SOAPAction header does in fact match the URI in the body.    */
+    /* (is this last stmt true???)                                      */
+    /* if SOAPAction is "" then use the URL                             */
+    /* if SOAPAction is null then we'll we be forced to scan the body   */
+    /*   for it.                                                        */
+    /********************************************************************/
     String  tmp ;
     tmp = (String) req.getHeader( "SOAPAction" );
+    if ( tmp != null && "".equals(tmp) )
+      tmp = req.getContextPath(); // Is this right?
     if ( tmp != null ) msgContext.setProperty( Constants.MC_TARGET, tmp );
 
     // Invoke the Axis engine...
@@ -114,10 +132,15 @@ public class AxisServlet extends HttpServlet {
       engine.invoke( msgContext );
     }
     catch( Exception e ) {
-      msgContext.setOutgoingMessage( new Message(e.toString(), "String" ) );
+      res.setStatus( HttpServletResponse.SC_INTERNAL_SERVER_ERROR );
+      // msgContext.setOutgoingMessage( new Message(e.toString(), "String" ) );
+      if ( !(e instanceof AxisFault) )
+        e = new AxisFault( e );
+      msgContext.setOutgoingMessage( new Message(e, "AxisFault") );
     }
 
-    // Send it back along the wire...
+    /* Send it back along the wire...  */
+    /***********************************/
     msg = msgContext.getOutgoingMessage();
     res.setContentType( "text/xml" );
     res.getWriter().println( msg !=  null ? msg.getAs("String") : "No data" );
