@@ -64,6 +64,8 @@ import org.apache.tools.ant.Task;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 
 /**
@@ -176,8 +178,12 @@ public class Wsdl2javaAntTask extends Task
     }
 
     // The setter for the "output" attribute
-    public void setOutput(String parameter) {
-        this.output = parameter;
+    public void setOutput(File parameter) {
+        try {
+            this.output = parameter.getCanonicalPath();
+        } catch (IOException ioe) {
+            throw new BuildException(ioe);
+        }
     }
 
     // The setter for the "deployscope" attribute
