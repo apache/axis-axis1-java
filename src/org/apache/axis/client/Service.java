@@ -889,14 +889,14 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      * Register a Transport for a particular URL.
      */
     void registerTransportForURL(URL url, Transport transport) {
-        transportImpls.put(url, transport);
+        transportImpls.put(url.toString(), transport);
     }
 
     /**
      * Get any registered Transport object for a given URL.
      */
     Transport getTransportForURL(URL url) {
-        return (Transport) transportImpls.get(url);
+        return (Transport) transportImpls.get(url.toString());
     }
 
 }
