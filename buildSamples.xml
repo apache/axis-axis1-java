@@ -51,62 +51,6 @@ Copyright:
         &taskdefs_post_compile;
 	&targets;
 
-  <target name="bidbuy" depends="setenv">
-    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/samples/bidbuy" antfile="build.xml"/>
-  </target>
-
-  <target name="echo" depends="setenv">
-    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/samples/echo" antfile="build.xml"/>
-  </target>
-
-  <target name="encoding" depends="setenv">
-    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/samples/encoding" antfile="build.xml"/>
-  </target>
-
-  <target name="message" depends="setenv">
-    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/samples/message" antfile="build.xml"/>
-  </target>
-
-  <target name="misc" depends="setenv">
-    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/samples/misc" antfile="build.xml"/>
-  </target>
-
-  <target name="stock" depends="setenv">
-    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/samples/stock" antfile="build.xml"/>
-  </target>
-
-  <target name="transport" depends="setenv">
-    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/samples/transport" antfile="build.xml"/>
-  </target>
-
-  <target name="userguide" depends="setenv">
-    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/samples/userguide" antfile="build.xml"/>
-  </target>
-
-  <target name="addr" depends="setenv">
-    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/samples/addr" antfile="build.xml"/>
-  </target>
-
-  <target name="attachments" depends="setenv">
-    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/samples/attachments" antfile="build.xml"/>
-  </target>
-
-  <target name="proxy" depends="setenv">
-    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/samples/proxy" antfile="build.xml"/>
-  </target>
-
-  <target name="security" depends="setenv">
-    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/samples/security" antfile="build.xml"/>
-  </target>
-
-  <target name="jaxrpc" depends="setenv">
-    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/samples/jaxrpc" antfile="build.xml"/>
-  </target>
-
-  <target name="jms" depends="setenv">
-    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/samples/jms" antfile="build.xml"/>
-  </target>
-
 <!-- =========================================================================== -->
   <target name="copy"/>
 
