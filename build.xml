@@ -65,6 +65,7 @@ Copyright:
   <property name="wsdl4j.jar" value="lib/wsdl4j.jar"/>
   <property name="log4j-core.jar" value="lib/log4j-core.jar"/>
   <property name="clutil.jar" value="lib/clutil.jar"/>
+
   <property name="junit.jar" value="lib/junit.jar"/>
 
   <property name="packages" value="org.*"/>
@@ -175,7 +176,9 @@ Copyright:
           toDir="${build.dest}/org/apache/axis/client"/>
     <copy file="${src.dir}/log4j.properties"
           toDir="${build.dest}"/>
+
     <copy file="${src.dir}/org/apache/axis/wsdl/test/Wsdl2javaTestSuite.list"
+
           toDir="${build.dest}/org/apache/axis/wsdl/test"/>
     <jar jarfile="${build.lib}/${name}.jar" basedir="${build.dest}" >
       <include name="org/**" />
@@ -215,6 +218,10 @@ Copyright:
     <antcall target="cleanAddr"/>
     <java classname="org.apache.axis.wsdl.Wsdl2java" dir="."
           fork="true">
+      <classpath refid="classpath"/>
+      <classpath>
+        <pathelement location="${build.dest}"/>
+      </classpath>
       <arg value="-s"/>
       <arg value="samples\addr\AddressBook.wsdl"/>
       <arg value="-p"/>
