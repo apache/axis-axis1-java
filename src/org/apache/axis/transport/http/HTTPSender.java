@@ -96,6 +96,7 @@ public class HTTPSender extends BasicHandler {
             URL      tmpURL = new URL( targetURL );
             byte[]   buf    = new byte[4097];
             int      returnCode     = 0 ;
+            boolean  useFullURL = false;
 
             // default SOAPAction to request namespaceURI/method
             String   action = msgContext.getStrProp(HTTPConstants.MC_HTTP_SOAPACTION);
@@ -112,11 +113,11 @@ public class HTTPSender extends BasicHandler {
             if ( (port = tmpURL.getPort()) == -1 ) port = 80;
 
             Socket             sock = null ;
+            String proxyHost = System.getProperty("https.proxyHost");
+            String proxyPort = System.getProperty("https.proxyPort");
 
             if (tmpURL.getProtocol().equalsIgnoreCase("https")) {
                 if ( (port = tmpURL.getPort()) == -1 ) port = 443;
-                String tunnelHost = System.getProperty("https.proxyHost");
-                String tunnelPortString = System.getProperty("https.proxyPort");
                 String tunnelUsername = System.getProperty("https.proxyUsername");
                 String tunnelPassword = System.getProperty("https.proxyPassword");
                 try {
@@ -132,7 +133,7 @@ public class HTTPSender extends BasicHandler {
                                                  SSLSocketClass.getMethod("startHandshake", new Class[] {});
                     Object factory = getDefaultMethod.invoke(null, new Object[] {});
                     Object sslSocket = null;
-                    if (tunnelHost == null || tunnelHost.equals("")) {
+                    if (proxyHost == null || proxyHost.equals("")) {
                         // direct SSL connection
                         sslSocket = createSocketMethod .invoke(factory,
                                                                new Object[] {host, new Integer(port)});
@@ -141,9 +142,9 @@ public class HTTPSender extends BasicHandler {
                         Method createSocketMethod2 =
                                                     SSLSocketFactoryClass.getMethod("createSocket",
                                                                                     new Class[] {Socket.class, String.class, Integer.TYPE, Boolean.TYPE});
-                        int tunnelPort = (tunnelPortString != null? (Integer.parseInt(tunnelPortString) < 0? 443: Integer.parseInt(tunnelPortString)): 443);
+                        int tunnelPort = (proxyPort != null? (Integer.parseInt(proxyPort) < 0? 443: Integer.parseInt(proxyPort)): 443);
                         Object tunnel = createSocketMethod .invoke(factory,
-                                                                   new Object[] {tunnelHost, new Integer(tunnelPort)});
+                                                                   new Object[] {proxyHost, new Integer(tunnelPort)});
                         // The tunnel handshake method (condensed and made reflexive)
                         OutputStream tunnelOutputStream = (OutputStream)SSLSocketClass.getMethod("getOutputStream", new Class[] {}).invoke(tunnel, new Object[] {});
                         PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(tunnelOutputStream)));
@@ -156,12 +157,12 @@ public class HTTPSender extends BasicHandler {
                         String replyStr = ""; int i;
                         while ((i = tunnelInputStream.read()) != '\n' && i != '\r' && i != -1) { replyStr += String.valueOf((char)i); }
                         if (!replyStr.startsWith("HTTP/1.0 200") && !replyStr.startsWith("HTTP/1.1 200")) {
-                            throw new IOException("Unable to tunnel through " + tunnelHost + ":" + tunnelPort + ".  Proxy returns \"" + replyStr + "\"");
+                            throw new IOException("Unable to tunnel through " + proxyHost + ":" + tunnelPort + ".  Proxy returns \"" + replyStr + "\"");
                         }
                         // End of condensed reflective tunnel handshake method
                         sslSocket = createSocketMethod2.invoke(factory,
                                                                new Object[] {tunnel, host, new Integer(port), new Boolean(true)});
-                        category.debug( "Set up SSL tunnelling through " + tunnelHost + ":" +tunnelPort);
+                        category.debug( "Set up SSL tunnelling through " + proxyHost + ":" +tunnelPort);
                     }
                     // must shake out hidden errors!
                     startHandshakeMethod.invoke(sslSocket, new Object[] {});
@@ -170,14 +171,22 @@ public class HTTPSender extends BasicHandler {
                     category.debug( "SSL feature disallowed: JSSE files not installed or present in classpath");
                     throw new AxisFault(cnfe);
                 } catch (NumberFormatException nfe) {
-                      category.debug( "Proxy port number, \"" + tunnelPortString + "\", incorrectly formatted");
+                      category.debug( "Proxy port number, \"" + proxyPort + "\", incorrectly formatted");
                       throw new AxisFault(nfe);
                 }
                 category.debug( "Created an SSL connection");
             } else {
                 if ((port = tmpURL.getPort()) == -1 ) port = 80;
-                sock    = new Socket( host, port );
-                category.debug( "Created an insecure HTTP connection");
+
+                if (proxyHost == null || proxyHost.equals("")
+                    || proxyPort == null || proxyPort.equals("")) {
+                    sock = new Socket( host, port );
+                    category.debug( "Created an insecure HTTP connection");
+                } else {
+                    sock = new Socket( proxyHost, new Integer(proxyPort).intValue() );
+                    category.debug( "Created an insecure HTTP connection using proxy "+proxyHost+" port "+proxyPort);
+                    useFullURL = true;
+                }
             }
 
             // optionally set a timeout for the request
@@ -234,10 +243,14 @@ public class HTTPSender extends BasicHandler {
             byte[] request = reqEnv.getBytes();
 
             header.append( HTTPConstants.HEADER_POST )
-             .append(" " )
-             .append( ((tmpURL.getFile() == null ||
-                        tmpURL.getFile().equals(""))? "/": tmpURL.getFile()) )
-             .append( " HTTP/1.0\r\n" )
+             .append(" " );
+            if (useFullURL == true) {
+                header.append(tmpURL.toExternalForm());
+            } else {
+                header.append( ((tmpURL.getFile() == null ||
+                        tmpURL.getFile().equals(""))? "/": tmpURL.getFile()) );
+            }
+            header.append( " HTTP/1.0\r\n" )
              .append( HTTPConstants.HEADER_CONTENT_LENGTH )
              .append( ": " )
              .append( request.length )
