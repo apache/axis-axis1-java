@@ -75,53 +75,30 @@ import samples.transport.tcp.TCPTransport;
 public class ProxyService {
     /**
      * Process the given message, treating it as raw XML.
-     * -- is this sufficient???
      */
     public Document ProxyService(MessageContext msgContext)
         throws AxisFault
     {
-        /*
-        // Look in the message context for our service...
-        // um... yeh
+        // Look in the message context for our service
         Handler self = msgContext.getServiceHandler();
         
         // what is our target URL?
         String dest = (String)self.getOption("URL");
         
-        // make a ServiceClient going in that direction
-        // (should we cache this?)
-        // (what about deployment of other transports?)
-        ServiceClient client = new ServiceClient(dest);
-        
-        // try plain old simple handoff!!!
-        client.setRequestMessage(msgContext.getRequestMessage());
-        
-        // send it!!!
-        client.invoke();
-        
-        // hmm, will reverse handoff work?
-        msgContext.setResponseMessage(client.getMessageContext().getResponseMessage());
-        
-        // return null so MsgProvider will not muck with our response
-        return null;
-         */
-        Handler self = msgContext.getServiceHandler();
-        
-        // for chat tomorrow:
-        String dest = (String)self.getOption("URL");
-        
         // use the server's client engine in case anything has been deployed to it
         ServiceClient client = new ServiceClient(msgContext.getAxisEngine().getClientEngine());
         
-          // add TCP for proxy testing
-          client.addTransportPackage("samples.transport");
-          client.setTransportForProtocol("tcp", new TCPTransport());
+        // add TCP for proxy testing
+        client.addTransportPackage("samples.transport");
+        client.setTransportForProtocol("tcp", new TCPTransport());
         
-        // NOW set the client's URL (since now we know what transports we'll want)
+        // NOW set the client's URL (since now the tcp handler exists)
         client.setURL(dest);
         
         client.setRequestMessage(msgContext.getRequestMessage());
+        
         client.invoke();
+        
         msgContext.setResponseMessage(client.getMessageContext().getResponseMessage());
         
         // return null so MsgProvider will not muck with our response
