@@ -825,14 +825,13 @@ public class SerializationContextImpl implements SerializationContext
         Serializer ser = null;
         try {
             serF = (SerializerFactory) getTypeMapping().getSerializer(javaType);
+            if (serF != null) {
+                ser = (Serializer) serF.getSerializerAs(Constants.AXIS_SAX);
+            }
         } catch (JAXRPCException e) {
         }
-        if (serF != null) {
-            try {
-                ser = (Serializer) serF.getSerializerAs(Constants.AXIS_SAX);
-            } catch (JAXRPCException e) {}
-        }
-        return null;
+
+        return ser;
     }
 
     /**
