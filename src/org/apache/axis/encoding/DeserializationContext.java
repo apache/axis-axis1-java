@@ -55,8 +55,10 @@ package org.apache.axis.encoding;
  * <http://www.apache.org/>.
  */
 
+import org.apache.axis.attachments.Attachments; 
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
+import org.apache.axis.Message;
 import org.apache.axis.message.EnvelopeBuilder;
 import org.apache.axis.message.EnvelopeHandler;
 import org.apache.axis.message.HandlerFactory;
@@ -74,6 +76,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+import org.apache.axis.AxisFault;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.rpc.namespace.QName;
@@ -313,16 +316,29 @@ public class DeserializationContext extends DefaultHandler
      * The object returned may be a MessageElement requiring deserialization or it 
      * may be a deserialized java object.
      */
-    public Object getObjectByRef(String href)
-    {
-        if ((idMap == null) || (href == null))
-            return null;
-        
-        IDResolver resolver = (IDResolver)idMap.get(href);
-        if (resolver == null)
-            return null;
-        
-        return resolver.getReferencedObject(href);
+    public Object getObjectByRef(String href) {
+        Object ret= null;
+        if(href != null){
+            if((idMap !=  null)){
+                IDResolver resolver = (IDResolver)idMap.get(href);
+                if(resolver != null)
+                   ret= resolver.getReferencedObject(href);
+            }
+            if( null == ret && !href.startsWith("#")){
+                //Could this be an attachment?
+                Message msg= null;
+                if(null != (msg=msgContext.getCurrentMessage())){
+                    Attachments attch= null;
+                    if( null != (attch= msg.getAttachments())){ 
+                        try{
+                        ret= attch.getAttachmentByReference(href);
+                        }catch(AxisFault e){};
+                    }
+                }
+            }
+        }
+
+        return ret; 
     }
     
     /**

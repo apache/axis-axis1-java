@@ -294,7 +294,7 @@ public class Deserializer extends SOAPHandler
         return null;
     }
     
-    public final void startElement(String namespace, String localName,
+    public void startElement(String namespace, String localName,
                              String qName, Attributes attributes,
                              DeserializationContext context)
         throws SAXException

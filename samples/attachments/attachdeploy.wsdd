@@ -1,0 +1,14 @@
+
+<deployment xmlns="http://xml.apache.org/axis/wsdd/" xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+  <service name="urn:EchoAttachmentsService" provider="java:RPC" >
+    <parameter name="className" value="samples.attachments.EchoAttachmentsService"/>
+    <parameter name="methodName" value="echo"/>
+    <requestFlow type="checks"/>
+  </service>
+
+ <typeMapping deserializer="org.apache.axis.encoding.JAFDataHandlerDeserializer$Factory"
+   languageSpecificType="java:javax.activation.DataHandler" qname="ns1:source"
+    serializer="org.apache.axis.encoding.JAFDataHandlerSerializer" 
+     xmlns:ns1="urn:EchoAttachmentsService"/>
+
+</deployment>

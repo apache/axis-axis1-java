@@ -141,7 +141,7 @@ public class Message {
      * the SOAP body (no SOAP-ENV).
      */
     public Message(Object initialContents, boolean bodyInStream) {
-      this(initialContents, bodyInStream, (String)null );
+      this(initialContents, bodyInStream, (String)null, (String)null );
     }
     
     /**
@@ -158,16 +158,16 @@ public class Message {
      * @param contentType this if the contentType has been already determined.  (as in the case of servlets); 
      * the SOAP body (no SOAP-ENV).
      */
-    public Message(Object initialContents, boolean bodyInStream, String contentType) {
-		setup(initialContents, bodyInStream, contentType);
+    public Message(Object initialContents, boolean bodyInStream, String contentType, String contentLocation) {
+                      setup(initialContents, bodyInStream, contentType, contentLocation);
     }
-	
+
 	/**
 	 * Construct a Message.  An overload of Message(Object, boolean),
 	 * defaulting bodyInStream to false.
 	 */
 	public Message (Object initialContents) {
-		setup(initialContents, false, null);
+		setup(initialContents, false, null, null);
 	}
 
         private static boolean checkForAttchmentSupport= true;//aviod testing and possibly failing everytime.
@@ -175,7 +175,8 @@ public class Message {
 	/**
 	 * Do the work of construction.
 	 */
-	private void setup (Object initialContents, boolean bodyInStream, String contentType) {
+	private void setup (Object initialContents, boolean bodyInStream,
+           String contentType, String contentLocation) {
         
           // Try to construct an AttachmentsImpl object for attachment functionality.
           // If there is no org.apache.axis.attachments.AttachmentsImpl class,
@@ -189,7 +190,7 @@ public class Message {
                   // take an org.apache.axis.Message!
                   Constructor attachImplConstr = attachImpl.getConstructors()[0];
                   mAttachments = (Attachments)attachImplConstr.newInstance(
-                      new Object[]{this,initialContents, contentType});
+                      new Object[]{this,initialContents, contentType, contentLocation});
 
                   mSOAPPart = (SOAPPart) mAttachments.getRootPart(); //If it can't support it, it wont have a root part.
                   
@@ -239,6 +240,7 @@ public class Message {
     }
 
   public String getContentType() throws org.apache.axis.AxisFault {
+    mSOAPPart.getAsBytes(); //Force serialization if it hasn't happend it. //Rick Rineholt fix this later.
     String ret= "text/xml; charset=utf-8";
     if(mAttachments != null && 0 != mAttachments.getAttachmentCount()){
         ret= mAttachments.getContentType();

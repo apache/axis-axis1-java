@@ -96,7 +96,7 @@ public class MimeUtils {
         return totalContentLength
             + boundaryStrLen * (totalParts + 1) //there is one more boundary than parts
             + 2 * totalParts +  //each parts data must have crlf after it.
-            +2;  // last boundary has an additional --
+            +4;  // last boundary has an additional --crlf
     }
 
     /**
@@ -216,12 +216,12 @@ public class MimeUtils {
             String rootCID = getNewContentIdValue();
 
             if (rootCID.startsWith("cid:")) rootCID = rootCID.substring(4);
-            multipart = new javax.mail.internet.MimeMultipart("related; start=\"<" + rootCID + ">\"" );
+            multipart = new javax.mail.internet.MimeMultipart("related; type=\"text/xml\"; start=\"<" + rootCID + ">\"" );
 
             javax.mail.internet.MimeBodyPart messageBodyPart = new javax.mail.internet.MimeBodyPart();
 
             messageBodyPart.setText(env);
-            messageBodyPart.setHeader("Content-Type", "text/xml; charset=utf-8" );
+            messageBodyPart.setHeader("Content-Type", "text/xml; charset=UTF-8" );
             messageBodyPart.setHeader("Content-ID", "<" + rootCID  + ">" );
             messageBodyPart.setHeader("Content-Transfer-Encoding", "8bit");
 
