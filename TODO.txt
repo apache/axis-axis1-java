@@ -18,6 +18,13 @@ CLIENT API
 JAX-RPC COMPATIBILITY
 ---------------------
 
+SOAP 1.2 SUPPORT
+----------------
+! <> Implement correct set of fault codes (4.4.5)
+! <> Implement MustUnderstand-checks first (2.6)
+! <> Implement NEXT and NONE actors (2.2)
+! <> Implement new encoding model for arrays (Adjuncts 4.4.2)
+
 PERFORMANCE
 -----------
 
