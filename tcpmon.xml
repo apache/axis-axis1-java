@@ -13,13 +13,17 @@
 
     &properties;
 
+    <property file="tcpmon.properties" />
+
     <target name="run" description="run tcpmon" >
+        <property name="tcpmon.laf" value="" />
         <java
             classname="org.apache.axis.utils.tcpmon"
             fork="true"
             failonerror="true">
+            <sysproperty key="tcpmon.laf" value="${tcpmon.laf}"/>
             <classpath>
-                <fileset dir="${build.lib}" includes="*.jar" />
+                <fileset dir="${build.lib}" includes="**/*.jar" />
             </classpath>
             </java>
 

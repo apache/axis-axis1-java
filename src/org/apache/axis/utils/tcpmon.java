@@ -75,6 +75,7 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
@@ -116,6 +117,8 @@ import java.util.Vector;
 
 /**
  * TCP monitor to log http messages and responses, both SOAP and plain HTTP.
+ * If you want to choose a different Swing look and feel, set the property
+ * tcpmon.laf to the classname of the new look and feel
  * @author Doug Davis (dug@us.ibm.com)
  * @author Steve Loughran
  */
@@ -1885,10 +1888,25 @@ public class tcpmon extends JFrame {
      * set up the L&F
      */
     private static void setupLookAndFeel(boolean nativeLookAndFeel) throws Exception {
-        UIManager.setLookAndFeel(
-                nativeLookAndFeel ? UIManager.getSystemLookAndFeelClassName()
-                    : UIManager.getCrossPlatformLookAndFeelClassName());
-        //JFrame.setDefaultLookAndFeelDecorated(true);
+        String classname= UIManager.getCrossPlatformLookAndFeelClassName();
+        if(nativeLookAndFeel) {
+            classname= UIManager.getSystemLookAndFeelClassName();
+        }
+        String lafProperty= System.getProperty("tcpmon.laf", "");
+        if(lafProperty.length()>0) {
+            classname=lafProperty;
+        }
+        try {
+            UIManager.setLookAndFeel(classname);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (UnsupportedLookAndFeelException e) {
+            e.printStackTrace();
+        }
     }
     /**
      * this is our main method
