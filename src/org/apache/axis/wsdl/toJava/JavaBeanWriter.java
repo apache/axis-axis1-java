@@ -429,7 +429,26 @@ public class JavaBeanWriter extends JavaClassWriter {
                     pw.println("        catch (org.apache.axis.types.URI.MalformedURIException mue) {");
                     pw.println("            this.value = new org.apache.axis.types.URI();");
                     pw.println("       }");
+                } 
+                else if (simpleValueType.equals("java.util.Date")) {
+                  pw.println("        try {");
+                  pw.println("            this.value = (java.text.DateFormat.getDateTimeInstance()).parse(value);");
+                  pw.println("        }");
+                  pw.println("        catch (java.text.ParseException e){");
+                  pw.println("            throw new java.lang.RuntimeException(e.toString());");
+                  pw.println("        }");
                 }
+                else if (simpleValueType.equals("java.util.Calendar")) {
+                  pw.println("        java.util.Calendar cal = java.util.Calendar.getInstance();"); 
+                  pw.println("        try {");
+                  pw.println("          java.util.Date dt = (java.text.DateFormat.getDateTimeInstance()).parse(value);");
+                  pw.println("          cal.setTime(dt);");
+                  pw.println("          this.value = cal;");
+                  pw.println("        }");
+                  pw.println("        catch (java.text.ParseException e){");
+                  pw.println("            throw new java.lang.RuntimeException(e.toString());");
+                  pw.println("        }");
+                }                
                 else {
                     pw.println("        this.value = new " +
                                simpleValueType + "(value);");
