@@ -60,6 +60,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Properties;
+
+import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.discovery.ManagedProperties;
 
 
@@ -94,15 +96,6 @@ import org.apache.commons.discovery.ManagedProperties;
  * @author Richard A. Sitze
  */
 public class AxisProperties {
-
-    public static final char NL = '\n';
-    public static final char CR = '\r';
-
-    /**
-     * The prefered line separator
-     */
-    public static final String LS = System.getProperty("line.separator",
-                                                       (new Character(NL)).toString());
 
     private static String commonsGroupContext = null;
     

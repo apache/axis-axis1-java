@@ -242,7 +242,7 @@ public class DOM2Writer
                     {
                         out.print('>');
                         if (pretty)
-                            out.print(AxisProperties.LS);
+                            out.print(JavaUtils.LS);
                     }
 
                     for (int i = 0; i < numChildren; i++)
@@ -260,7 +260,7 @@ public class DOM2Writer
                 {
                     out.print("/>");
                     if (pretty)
-                        out.print(AxisProperties.LS);
+                        out.print(JavaUtils.LS);
                 }
                 break;
             }
@@ -293,7 +293,7 @@ public class DOM2Writer
                 out.print(node.getNodeValue());
                 out.print("-->");
                 if (pretty)
-                    out.print(AxisProperties.LS);
+                    out.print(JavaUtils.LS);
                 break;
             }
 
@@ -312,7 +312,7 @@ public class DOM2Writer
 
                 out.println("?>");
                 if (pretty)
-                    out.print(AxisProperties.LS);
+                    out.print(JavaUtils.LS);
                 break;
             }
         }
@@ -327,7 +327,7 @@ public class DOM2Writer
             out.print(node.getNodeName());
             out.print('>');
             if (pretty)
-                out.print(AxisProperties.LS);
+                out.print(JavaUtils.LS);
             hasChildren = false;
         }
     }
@@ -408,24 +408,24 @@ public class DOM2Writer
                     str.append("&quot;");
                     break;
                 }
-            case AxisProperties.NL :
+            case JavaUtils.NL :
                 {
                     if (i > 0)
                     {
                         char lastChar = str.charAt(str.length() - 1);
 
-                        if (lastChar != AxisProperties.CR)
+                        if (lastChar != JavaUtils.CR)
                         {
-                            str.append(AxisProperties.LS);
+                            str.append(JavaUtils.LS);
                         }
                         else
                         {
-                            str.append(AxisProperties.NL);
+                            str.append(JavaUtils.NL);
                         }
                     }
                     else
                     {
-                        str.append(AxisProperties.LS);
+                        str.append(JavaUtils.LS);
                     }
                     break;
                 }

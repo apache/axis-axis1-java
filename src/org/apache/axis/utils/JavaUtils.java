@@ -60,6 +60,7 @@ import org.apache.axis.attachments.AttachmentPart;
 import org.apache.axis.types.HexBinary;
 
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.commons.discovery.ManagedProperties;
 import org.apache.commons.logging.Log;
 
 import java.io.IOException;
@@ -70,8 +71,11 @@ import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Locale;
+import java.util.Map;
 import java.util.MissingResourceException;
+import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Collection;
 import java.util.Iterator;
@@ -97,6 +101,17 @@ public class JavaUtils
     protected static Log log =
         LogFactory.getLog(JavaUtils.class.getName());
     
+    public static final char NL = '\n';
+
+    public static final char CR = '\r';
+
+    /**
+     * The prefered line separator
+     */
+    public static final String LS = System.getProperty("line.separator",
+                                                       (new Character(NL)).toString());
+
+
     public static Class getWrapperClass(Class primitive)
     {
         if (primitive == int.class)
