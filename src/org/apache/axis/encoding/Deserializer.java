@@ -77,13 +77,13 @@ import java.util.Vector;
  * An Axis compliant Deserializer must provide one or more
  * of the following methods:
  *
- * public <constructor>(Class javaType, QName xmlType)
- * public <constructor>()
+ * public &lt;constructor&gt;(Class javaType, QName xmlType)
+ * public &lt;constructo&gt;()
  *
  * This will allow for construction of generic factories that introspect the class
  * to determine how to construct a deserializer.
  * The xmlType, javaType arguments are filled in with the values known by the factory.
-g */
+ */
 public interface Deserializer extends javax.xml.rpc.encoding.Deserializer, Callback {
 
     /**
