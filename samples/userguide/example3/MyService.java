@@ -53,29 +53,12 @@
  * <http://www.apache.org/>.
  */
 
-package samples.userguide.example5;
+package samples.userguide.example3;
 
-public class BeanService
+public class MyService
 {
-    public String processOrder(Order order)
+    public String serviceMethod(String arg)
     {
-        String sep = System.getProperty("line.separator");
-        
-        String response = "Hi, " + order.getCustomerName() + "!" + sep;
-        
-        response += sep + "You seem to have ordered the following:" + sep;
-        
-        String [] items = order.getItemCodes();
-        int [] quantities = order.getQuantities();
-        
-        for (int i = 0; i < items.length; i++) {
-            response += sep + quantities[i] + " of item : " + items[i];
-        }
-        
-        response += sep + sep +
-                    "If this had been a real order processing system, "+
-                    "we'd probably have charged you about now.";
-        
-        return response;
+        return arg;
     }
 }

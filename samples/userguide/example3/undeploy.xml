@@ -1,0 +1,3 @@
+<admin:undeploy xmlns:admin="AdminService">
+ <service name="MyService"/>
+</admin:undeploy>

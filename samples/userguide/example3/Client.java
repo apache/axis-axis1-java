@@ -53,29 +53,39 @@
  * <http://www.apache.org/>.
  */
 
-package samples.userguide.example5;
+package samples.userguide.example3;
 
-public class BeanService
+import org.apache.axis.client.ServiceClient;
+import org.apache.axis.utils.Debug;
+import org.apache.axis.utils.Options;
+
+public class Client
 {
-    public String processOrder(Order order)
+    public static void main(String [] args)
     {
-        String sep = System.getProperty("line.separator");
-        
-        String response = "Hi, " + order.getCustomerName() + "!" + sep;
-        
-        response += sep + "You seem to have ordered the following:" + sep;
-        
-        String [] items = order.getItemCodes();
-        int [] quantities = order.getQuantities();
-        
-        for (int i = 0; i < items.length; i++) {
-            response += sep + quantities[i] + " of item : " + items[i];
+        try {
+            Options options = new Options(args);
+            
+            Debug.setDebugLevel(options.isFlagSet('d'));
+            
+            String endpointURL = options.getURL();
+            String textToSend;
+            
+            args = options.getRemainingArgs();
+            if ((args == null) || (args.length < 1)) {
+                textToSend = "<nothing>";
+            } else {
+                textToSend = args[0];
+            }
+            
+            ServiceClient client = new ServiceClient(endpointURL);
+            
+            String ret = (String)client.invoke("MyService", "serviceMethod",
+                                               new Object [] { textToSend });
+            
+            System.out.println("You typed : " + ret);
+        } catch (Exception e) {
+            System.err.println(e.toString());
         }
-        
-        response += sep + sep +
-                    "If this had been a real order processing system, "+
-                    "we'd probably have charged you about now.";
-        
-        return response;
     }
 }
