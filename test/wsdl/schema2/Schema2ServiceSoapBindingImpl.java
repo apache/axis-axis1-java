@@ -57,15 +57,15 @@ public class Schema2ServiceSoapBindingImpl implements test.wsdl.schema2.Schema2T
     }
 
     public java.math.BigInteger echoNegativeIntegerTest(java.math.BigInteger negativeInteger) throws java.rmi.RemoteException {
-        return null;
+        return negativeInteger;
     }
 
     public java.util.Calendar echoTimeTest(java.util.Calendar time) throws java.rmi.RemoteException {
-        return null;
+        return time;
     }
 
     public java.util.Calendar echoDateTest(java.util.Calendar date) throws java.rmi.RemoteException {
-        return null;
+        return date;
     }
 
 }
