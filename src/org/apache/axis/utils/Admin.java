@@ -232,7 +232,7 @@ public class Admin
 
         // Else fault
         // TODO: Better handling here
-        throw new Exception("FIXME");
+        throw new Exception(Messages.getMessage("adminServiceNoWSDD"));
     }
 
     /** Get an XML document representing this engine's configuration.
