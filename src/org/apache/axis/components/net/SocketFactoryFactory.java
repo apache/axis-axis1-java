@@ -91,7 +91,7 @@ public class SocketFactoryFactory {
 
         String socketFactoryClassName =
                 System.getProperty("axis.socketFactory",
-                        DefaultSocketFactory.class.getName());
+                        "org.apache.axis.components.net.DefaultSocketFactory");
 
         log.debug("axis.socketFactory:" + socketFactoryClassName);
         SocketFactory extractor = null;
@@ -136,7 +136,7 @@ public class SocketFactoryFactory {
 
         String socketFactoryClassName =
                 System.getProperty("axis.socketSecureFactory",
-                        JSSESocketFactory.class.getName());
+                        "org.apache.axis.components.net.JSSESocketFactory");
 
         log.debug("axis.socketSecureFactory:" + socketFactoryClassName);
         SocketFactory extractor = null;
