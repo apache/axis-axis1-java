@@ -627,11 +627,6 @@ public class SymbolTable {
                                         "unsupportedSchemaType00", qn.getLocalPart()));
                     }
 
-                    if(Constants.isSchemaXSD(qn.getNamespaceURI())) {
-                        if(qn.getLocalPart().equals("simpleRestrictionModel")) {
-                            continue;   
-                        }
-                    }
                     // last case, its some other undefined thing
                     throw new IOException(
                             Messages.getMessage(
@@ -1238,131 +1233,133 @@ public class SymbolTable {
         BooleanHolder forElement = new BooleanHolder();
         QName qName = Utils.getTypeQName(node, forElement, false);
 
-        if (qName != null) {
+        if (qName == null || (Constants.isSchemaXSD(qName.getNamespaceURI()) &&
+                qName.getLocalPart().equals("simpleRestrictionModel"))) {
+            return;
+        }
 
-            // Error check - bug 12362
-            if (qName.getLocalPart().length() == 0) {
-                String name = Utils.getAttribute(node, "name");
+        // Error check - bug 12362
+        if (qName.getLocalPart().length() == 0) {
+            String name = Utils.getAttribute(node, "name");
 
-                if (name == null) {
-                    name = "unknown";
-                }
-
-                throw new IOException(Messages.getMessage("emptyref00", name));
+            if (name == null) {
+                name = "unknown";
             }
 
-            // Get Type or Element depending on whether type attr was used.
-            TypeEntry type = getTypeEntry(qName, forElement.value);
+            throw new IOException(Messages.getMessage("emptyref00", name));
+        }
 
-            // A symbol table entry is created if the TypeEntry is not found
-            if (type == null) {
+        // Get Type or Element depending on whether type attr was used.
+        TypeEntry type = getTypeEntry(qName, forElement.value);
 
-                // See if this is a special QName for collections
-                if (qName.getLocalPart().indexOf("[") > 0) {
-                    QName containedQName = Utils.getTypeQName(node,
-                            forElement, true);
-                    TypeEntry containedTE = getTypeEntry(containedQName,
-                            forElement.value);
+        // A symbol table entry is created if the TypeEntry is not found
+        if (type == null) {
 
-                    if (!forElement.value) {
+            // See if this is a special QName for collections
+            if (qName.getLocalPart().indexOf("[") > 0) {
+                QName containedQName = Utils.getTypeQName(node,
+                        forElement, true);
+                TypeEntry containedTE = getTypeEntry(containedQName,
+                        forElement.value);
 
-                        // Case of type and maxOccurs
-                        if (containedTE == null) {
+                if (!forElement.value) {
 
-                            // Collection Element Type not defined yet, add one.
-                            String baseName = btm.getBaseName(containedQName);
+                    // Case of type and maxOccurs
+                    if (containedTE == null) {
 
-                            if (baseName != null) {
-                                containedTE = new BaseType(containedQName);
-                            } else {
-                                containedTE = new UndefinedType(containedQName);
-                            }
+                        // Collection Element Type not defined yet, add one.
+                        String baseName = btm.getBaseName(containedQName);
 
-                            symbolTablePut(containedTE);
+                        if (baseName != null) {
+                            containedTE = new BaseType(containedQName);
+                        } else {
+                            containedTE = new UndefinedType(containedQName);
                         }
 
-                        symbolTablePut(new CollectionType(qName, containedTE,
-                                node, "[]"));
-                    } else {
-
-                        // Case of ref and maxOccurs
-                        if (containedTE == null) {
-                            containedTE = new UndefinedElement(containedQName);
-
-                            symbolTablePut(containedTE);
-                        }
-
-                        symbolTablePut(new CollectionElement(qName,
-                                containedTE, node,
-                                "[]"));
+                        symbolTablePut(containedTE);
                     }
+
+                    symbolTablePut(new CollectionType(qName, containedTE,
+                            node, "[]"));
                 } else {
 
-                    // Add a BaseType or Undefined Type/Element
-                    String baseName = btm.getBaseName(qName);
+                    // Case of ref and maxOccurs
+                    if (containedTE == null) {
+                        containedTE = new UndefinedElement(containedQName);
 
-                    if (baseName != null) {
-                        symbolTablePut(new BaseType(qName));
-
-                        // bugzilla 23145: handle attribute groups
-                        // soap/encoding is treated as a "known" schema
-                        // so now let's act like we know it
-                    } else if (qName.equals(Constants.SOAP_COMMON_ATTRS11)) {
-                        symbolTablePut(new BaseType(qName));
-
-                        // the 1.1 commonAttributes type contains two attributes
-                        // make sure those attributes' types are in the symbol table
-                        // attribute name = "id" type = "xsd:ID"
-                        if (getTypeEntry(Constants.XSD_ID, false) == null) {
-                            symbolTablePut(new BaseType(Constants.XSD_ID));
-                        }
-
-                        // attribute name = "href" type = "xsd:anyURI"
-                        if (getTypeEntry(Constants.XSD_ANYURI, false) == null) {
-                            symbolTablePut(new BaseType(Constants.XSD_ANYURI));
-                        }
-                    } else if (qName.equals(Constants.SOAP_COMMON_ATTRS12)) {
-                        symbolTablePut(new BaseType(qName));
-
-                        // the 1.2 commonAttributes type contains one attribute
-                        // make sure the attribute's type is in the symbol table
-                        // attribute name = "id" type = "xsd:ID"
-                        if (getTypeEntry(Constants.XSD_ID, false) == null) {
-                            symbolTablePut(new BaseType(Constants.XSD_ID));
-                        }
-                    } else if (qName.equals(Constants.SOAP_ARRAY_ATTRS11)) {
-                        symbolTablePut(new BaseType(qName));
-
-                        // the 1.1 arrayAttributes type contains two attributes
-                        // make sure the attributes' types are in the symbol table
-                        // attribute name = "arrayType" type = "xsd:string"
-                        if (getTypeEntry(Constants.XSD_STRING, false) == null) {
-                            symbolTablePut(new BaseType(Constants.XSD_STRING));
-                        }
-
-                        // attribute name = "offset" type = "soapenc:arrayCoordinate"
-                        // which is really an xsd:string
-                    } else if (qName.equals(Constants.SOAP_ARRAY_ATTRS12)) {
-                        symbolTablePut(new BaseType(qName));
-
-                        // the 1.2 arrayAttributes type contains two attributes
-                        // make sure the attributes' types are in the symbol table
-                        // attribute name = "arraySize" type = "2003soapenc:arraySize"
-                        // which is really a hairy beast that is not
-                        // supported, yet; so let's just use string
-                        if (getTypeEntry(Constants.XSD_STRING, false) == null) {
-                            symbolTablePut(new BaseType(Constants.XSD_STRING));
-                        }
-
-                        // attribute name = "itemType" type = "xsd:QName"
-                        if (getTypeEntry(Constants.XSD_QNAME, false) == null) {
-                            symbolTablePut(new BaseType(Constants.XSD_QNAME));
-                        }
-                    } else if (forElement.value == false) {
-                        symbolTablePut(new UndefinedType(qName));
-                    } else {
-                        symbolTablePut(new UndefinedElement(qName));
+                        symbolTablePut(containedTE);
                     }
+
+                    symbolTablePut(new CollectionElement(qName,
+                            containedTE, node,
+                            "[]"));
+                }
+            } else {
+
+                // Add a BaseType or Undefined Type/Element
+                String baseName = btm.getBaseName(qName);
+
+                if (baseName != null) {
+                    symbolTablePut(new BaseType(qName));
+
+                    // bugzilla 23145: handle attribute groups
+                    // soap/encoding is treated as a "known" schema
+                    // so now let's act like we know it
+                } else if (qName.equals(Constants.SOAP_COMMON_ATTRS11)) {
+                    symbolTablePut(new BaseType(qName));
+
+                    // the 1.1 commonAttributes type contains two attributes
+                    // make sure those attributes' types are in the symbol table
+                    // attribute name = "id" type = "xsd:ID"
+                    if (getTypeEntry(Constants.XSD_ID, false) == null) {
+                        symbolTablePut(new BaseType(Constants.XSD_ID));
+                    }
+
+                    // attribute name = "href" type = "xsd:anyURI"
+                    if (getTypeEntry(Constants.XSD_ANYURI, false) == null) {
+                        symbolTablePut(new BaseType(Constants.XSD_ANYURI));
+                    }
+                } else if (qName.equals(Constants.SOAP_COMMON_ATTRS12)) {
+                    symbolTablePut(new BaseType(qName));
+
+                    // the 1.2 commonAttributes type contains one attribute
+                    // make sure the attribute's type is in the symbol table
+                    // attribute name = "id" type = "xsd:ID"
+                    if (getTypeEntry(Constants.XSD_ID, false) == null) {
+                        symbolTablePut(new BaseType(Constants.XSD_ID));
+                    }
+                } else if (qName.equals(Constants.SOAP_ARRAY_ATTRS11)) {
+                    symbolTablePut(new BaseType(qName));
+
+                    // the 1.1 arrayAttributes type contains two attributes
+                    // make sure the attributes' types are in the symbol table
+                    // attribute name = "arrayType" type = "xsd:string"
+                    if (getTypeEntry(Constants.XSD_STRING, false) == null) {
+                        symbolTablePut(new BaseType(Constants.XSD_STRING));
+                    }
+
+                    // attribute name = "offset" type = "soapenc:arrayCoordinate"
+                    // which is really an xsd:string
+                } else if (qName.equals(Constants.SOAP_ARRAY_ATTRS12)) {
+                    symbolTablePut(new BaseType(qName));
+
+                    // the 1.2 arrayAttributes type contains two attributes
+                    // make sure the attributes' types are in the symbol table
+                    // attribute name = "arraySize" type = "2003soapenc:arraySize"
+                    // which is really a hairy beast that is not
+                    // supported, yet; so let's just use string
+                    if (getTypeEntry(Constants.XSD_STRING, false) == null) {
+                        symbolTablePut(new BaseType(Constants.XSD_STRING));
+                    }
+
+                    // attribute name = "itemType" type = "xsd:QName"
+                    if (getTypeEntry(Constants.XSD_QNAME, false) == null) {
+                        symbolTablePut(new BaseType(Constants.XSD_QNAME));
+                    }
+                } else if (forElement.value == false) {
+                    symbolTablePut(new UndefinedType(qName));
+                } else {
+                    symbolTablePut(new UndefinedElement(qName));
                 }
             }
         }
