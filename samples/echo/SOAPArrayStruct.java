@@ -109,4 +109,47 @@ public class SOAPArrayStruct implements java.io.Serializable {
     public void setVarArray(java.lang.String[] varArray) {
         this.varArray = varArray;
     }
+
+    /**
+     * Equality comparison.  
+     */
+    public boolean equals(Object object) {
+        if (!(object instanceof SOAPArrayStruct)) return false;
+
+        SOAPArrayStruct that= (SOAPArrayStruct) object;
+
+        if (this.varInt != that.varInt) return false;
+        if (this.varFloat != that.varFloat) return false;
+
+        if (this.varString == null) {
+            if (that.varString != null) return false;
+        } else {
+            if (!this.varString.equals(that.varString)) return false;
+        }
+
+        if (this.varArray == null) {
+            if (that.varArray != null) return false;
+        } else if (this.varArray.length != that.varArray.length) {
+            return false;
+        } else {
+            for (int i=0; i <this.varArray.length; i++) {
+                if (this.varArray[i] == null) {
+                    if (that.varArray[i] != null) {
+                        return false;
+                    }
+                } else if (!this.varArray[i].equals(that.varArray[i])) {
+                    return false;
+                }
+            }                    
+        }
+        
+        return true;
+    };
+
+    /**
+     * Printable representation
+     */
+    public String toString() {
+        return "{" + varInt + ", \"" + varString + "\", " + varFloat + ", " + varArray +"}";
+    }
 }

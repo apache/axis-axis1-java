@@ -109,4 +109,37 @@ public class SOAPStructStruct implements java.io.Serializable {
     public void setVarStruct(SOAPStruct varStruct) {
         this.varStruct = varStruct;
     }
+
+    /**
+     * Equality comparison.  
+     */
+    public boolean equals(Object object) {
+        if (!(object instanceof SOAPStructStruct)) return false;
+
+        SOAPStructStruct that= (SOAPStructStruct) object;
+
+        if (this.varInt != that.varInt) return false;
+        if (this.varFloat != that.varFloat) return false;
+
+        if (this.varString == null) {
+            if (that.varString != null) return false;
+        } else {
+            if (!this.varString.equals(that.varString)) return false;
+        }
+
+        if (this.varStruct == null) {
+            if (that.varStruct != null) return false;
+        } else {
+            if (!this.varStruct.equals(that.varStruct)) return false;
+        }
+        
+        return true;
+    };
+
+    /**
+     * Printable representation
+     */
+    public String toString() {
+        return "{" + varInt + ", \"" + varString + "\", " + varFloat + ", " + varStruct+ "}";
+    }
 }

@@ -90,7 +90,7 @@ public abstract class SymTabEntry {
     /**
      * Get the QName of this entry.
      */
-    public QName getQName() {
+    public final QName getQName() {
         return qname;
     } // getQName
 
@@ -113,21 +113,24 @@ public abstract class SymTabEntry {
     /**
      * Is this entry referenced by any other entry in the symbol table?
      */
-    public boolean isReferenced() {
+    public final boolean isReferenced() {
         return isReferenced;
     } // isReferenced
 
     /**
      * Set the isReferenced variable, default value is true.
      */
-    public void setIsReferenced(boolean isReferenced) {
+    public final void setIsReferenced(boolean isReferenced) {
         this.isReferenced = isReferenced;
     } // setIsReferenced
 
     /**
-     * There may be information that does not exist in WSDL4J/DOM structures and does not exist in
-     * our additional structures, but that thw Writer implementation will need.  This information is
-     * most likely context-relative, so the DynamicVar map is provided for the Writers to store/
+     * There may be information that does not exist in WSDL4J/DOM 
+     * structures and does not exist in
+     * our additional structures, but that Writer implementation 
+     * will need.  This information is
+     * most likely context-relative, so the DynamicVar map is 
+     * provided for the Writers to store and
      * retrieve their particular information.
      */
     public Object getDynamicVar(Object key) {

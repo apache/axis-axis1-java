@@ -253,8 +253,12 @@ public abstract class JavaWriter implements Writer {
         String objType = type == null ? null : (String) TYPES.get(type.getName());
         if (objType != null) {
             return "new " + objType + "(" + var + ")";
-        }
-        else {
+        } else if (type != null && 
+                   type.getName().equals("byte[]") &&
+                   type.getQName().getLocalPart().equals("hexBinary")) {
+            // Need to wrap byte[] in special Hex object to get the correct serialization
+            return "new org.apache.axis.encoding.Hex(" + var + ")";
+        } else {
             return var;
         }
     } // wrapPrimitiveType

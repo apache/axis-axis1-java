@@ -80,6 +80,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.rpc.holders.StringHolder;
+import javax.xml.rpc.holders.IntHolder;
+import javax.xml.rpc.holders.FloatHolder;
+
+
 /**
  * Test Client for the echo interop service.  See the main entrypoint
  * for more details on usage.
@@ -88,13 +93,9 @@ import java.util.Set;
  */
 public abstract class TestClient {
 
-    private static Service service;
-    private static Call call;
     private static boolean addMethodToAction = false;
     private static String soapAction = "http://soapinterop.org/";
-
-    private TypeMappingRegistry tmr;
-    private TypeMapping tm;
+    private static EchoServicePortType binding = null;
 
     /**
      * Determine if two objects are equal.  Handles nulls and recursively
@@ -147,73 +148,17 @@ public abstract class TestClient {
     }
 
     /**
-     * Test an echo method.  Declares success if the response returns
-     * true with an Object.equal comparison with the object to be sent.
-     * @param method name of the method to invoke
-     * @param toSend object of the correct type to be sent
-     */
-    private void test(String type, Object toSend) {
-        String method = "echo" + type;
-
-        type = type.trim();
-
-        String arg = "input" + type;
-        String resultName = "output" + type;
-
-
-        try {
-            // set up the argument list
-            Object args[];
-            call.removeAllParameters();
-            if (toSend == null) {
-                args = new Object[] {};
-            } else {
-                // args = new Object[] {new RPCParam(arg, toSend)};
-
-                // Default return type based on what we expect
-                QName qn = tm.getTypeQName(toSend.getClass());
-
-                call.addParameter( arg, qn, ParameterMode.PARAM_MODE_IN);
-                call.setReturnType( qn );
-                args = new Object[] { toSend } ;
-            }
-
-            // set the SOAPAction, optionally appending the method name
-            String action = soapAction;
-            if (addMethodToAction) action += method;
-            call.setUseSOAPAction( true );
-            call.setSOAPActionURI( action );
-
-            // safety first
-            call.setTimeout(new Integer(60000));
-
-            // issue the request
-            call.setOperationName( new QName("http://soapinterop.org/", method.trim()) );
-            Object got= call.invoke( args );
-
-            // verify the result
-            verify(method, toSend, got);
-
-        } catch (AxisFault af) {
-            verify(method, toSend, af);
-        } catch (Exception e) {
-            verify(method, toSend, e);
-        }
-    }
-
-    /**
      * Set up the call object.
      */
     public void setURL(String url)
         throws AxisFault
     {
         try {
-            service = new Service();
-            call = (Call) service.createCall();
-            call.setTargetEndpointAddress( new java.net.URL(url) );
-            tmr = call.getMessageContext().getTypeMappingRegistry();
-        }
-        catch( Exception exp ) {
+            binding = new EchoServiceAccessLocator().
+                getEchoServicePortType(new java.net.URL(url)); 
+            ((EchoServiceBindingStub) binding).soapAction = soapAction;
+            ((EchoServiceBindingStub) binding).addMethodToAction = addMethodToAction;
+        } catch (Exception exp) {
             throw AxisFault.makeFault(exp);
         }
     }
@@ -222,56 +167,246 @@ public abstract class TestClient {
      * Execute the tests
      */
     public void execute() throws Exception {
-        // register the SOAPStruct class
-        QName ssqn = new QName("http://soapinterop.org/xsd", "SOAPStruct");
-        Class cls = SOAPStruct.class;
-        call.registerTypeMapping(cls, ssqn, BeanSerializerFactory.class, BeanDeserializerFactory.class);
-
-        // Register deserializer factories for the array types.
-        // AXIS doesn't use the array types during serialization, 
-        // so there is no need to register the serializer factories.
-        QName q = new QName("http://soapinterop.org/xsd", "ArrayOfSOAPStruct");
-        Class c = SOAPStruct[].class;
-        call.registerTypeMapping(c,q, null, ArrayDeserializerFactory.class);
-        q = new QName("http://soapinterop.org/xsd", "ArrayOfstring");
-        c = java.lang.String[].class;
-        call.registerTypeMapping(c,q, null, ArrayDeserializerFactory.class);
-        q = new QName("http://soapinterop.org/xsd", "ArrayOffloat");
-        c = float[].class;
-        call.registerTypeMapping(c,q, null, ArrayDeserializerFactory.class);
-        q = new QName("http://soapinterop.org/xsd", "ArrayOfint");
-        c = int[].class;
-        call.registerTypeMapping(c,q, null, ArrayDeserializerFactory.class);
-        tm  = (TypeMapping) tmr.getTypeMapping(Constants.URI_SOAP_ENC);
-        
         // execute the tests
-        test("String      ", "abcdefg");
-        test("StringArray ", new String[] {"abc", "def"});
-        test("Integer     ", new Integer(42));
-        test("IntegerArray", new int[] {42});
-        test("Float       ", new Float(3.7F));
-        test("FloatArray  ", new float[] {3.7F, 7F});
-        test("Struct      ", new SOAPStruct(5, "Hello", 10.3F));
-        test("StructArray ", new SOAPStruct[] {
-          new SOAPStruct(1, "one", 1.1F),
-          new SOAPStruct(2, "two", 2.2F),
-          new SOAPStruct(3, "three", 3.3F)});
-        test("Void        ", null);
-        test("Base64      ", "Base64".getBytes());
-        test("HexBinary   ", new Hex("3344"));
-        test("Date        ", new Date());
-        test("Decimal     ", new BigDecimal("3.14159"));
-        test("Boolean     ", Boolean.TRUE);
+        Object output = null;
 
+        {
+            String input = "abccdefg";
+            try {
+                output = binding.echoString(input);
+                verify("echoString", input, output);
+            } catch (Exception e) {
+                verify("echoString", input, e);
+            }
+        }
+        
+        {
+            String[] input = new String[] {"abc", "def"};
+            try {
+                output = binding.echoStringArray(input);
+                verify("echoStringArray", input, output);
+            } catch (Exception e) {
+                verify("echoStringArray", input, e);
+            }
+        }
+        
+        {
+            Integer input = new Integer(42);
+            try {
+                output = new Integer( binding.echoInteger(input.intValue()));
+                verify("echoInteger", input, output);
+            } catch (Exception e) {
+                verify("echoInteger", input, e);
+            }
+        }
+        
+        {
+            int[] input = new int[] {42};
+            try {
+                output = binding.echoIntegerArray(input);
+                verify("echoIntegerArray", input, output);
+            } catch (Exception e) {
+                verify("echoIntegerArray", input, e);
+            }
+        }
+        
+        {
+            Float input = new Float(3.7F);
+            try {
+                output = new Float(binding.echoFloat(input.floatValue()));
+                verify("echoFloat", input, output);
+            } catch (Exception e) {
+                verify("echoFloat", input, e);
+            }
+        }
+
+        {
+            float[] input = new float[] {3.7F, 7F};
+            try {
+                output = binding.echoFloatArray(input);
+                verify("echoFloatArray", input, output);
+            } catch (Exception e) {
+                verify("echoFloatArray", input, e);
+            }
+        }
+
+        {
+            SOAPStruct input = new SOAPStruct(5, "Hello", 103F);
+            try {
+                output = binding.echoStruct(input);
+                verify("echoStruct", input, output);
+            } catch (Exception e) {
+                verify("echoStruct", input, e);
+            }
+        }
+        
+        {
+            SOAPStruct[] input = new SOAPStruct[] {
+                new SOAPStruct(1, "one", 1.1F),
+                new SOAPStruct(2, "two", 2.2F),
+                new SOAPStruct(3, "three", 3.3F)};
+            try {
+                output = binding.echoStructArray(input);
+                verify("echoStructArray", input, output);
+            } catch (Exception e) {
+                verify("echoStructArray", input, e);
+            }
+        }
+
+        {
+            try {
+                binding.echoVoid();
+            } catch (Exception e) {
+                verify("echoInteger", null, e);
+            }
+        }
+
+        {
+            byte[] input = "Base64".getBytes();
+            try {
+                output = binding.echoBase64(input);
+                verify("echoBase64", input, output);
+            } catch (Exception e) {
+                verify("echoBase64", input, e);
+            }
+        }
+        
+        {
+            Hex input = new Hex("3344");
+            try {
+                output = binding.echoHexBinary(input.getBytes());
+                verify("echoHexBinary", input, output);
+            } catch (Exception e) {
+                verify("echoHexBinary", input, e);
+            }
+        }
+        
+        {
+            Date input = new Date();
+            try {
+                output = binding.echoDate(input);
+                verify("echoDate", input, output);
+            } catch (Exception e) {
+                verify("echoDate", input, e);
+            }
+        }
+        
+        {
+            BigDecimal input = new BigDecimal("3.14159");
+            try {
+                output = binding.echoDecimal(input);
+                verify("echoDecimal", input, output);
+            } catch (Exception e) {
+                verify("echoDecimal", input, e);
+            }
+        }
+        
+        {
+            Boolean input = Boolean.TRUE;
+            try {
+                output = new Boolean( binding.echoBoolean(input.booleanValue()));
+                verify("echoBoolean", input, output);
+            } catch (Exception e) {
+                verify("echoBoolean", input, e);
+            }
+        }
+        
         HashMap map = new HashMap();
         map.put(new Integer(5), "String Value");
         map.put("String Key", new Date());
-        test("Map         ", map);
+        {
+            HashMap input = map;
+            try {
+                output = binding.echoMap(input);
+                verify("echoMap", input, output);
+            } catch (Exception e) {
+                verify("echoMap", input, e);
+            }
+        }
 
         HashMap map2 = new HashMap();
         map2.put("this is the second map", new Boolean(true));
         map2.put("test", new Float(411));
-        test("MapArray    ", new HashMap [] { map, map2 });
+        {
+            HashMap[] input = new HashMap [] {map, map2 };
+            try {
+                output = binding.echoMapArray(input);
+                verify("echoMapArray", input, output);
+            } catch (Exception e) {
+                verify("echoMapArray", input, e);
+            }
+        }
+
+        {
+            SOAPStruct input = new SOAPStruct(5, "Hello", 103F);
+            try {
+                StringHolder outputString = new StringHolder();
+                IntHolder outputInteger = new IntHolder();
+                FloatHolder outputFloat = new FloatHolder();
+                binding.echoStructAsSimpleTypes(input, outputString, outputInteger, outputFloat);
+                output = new SOAPStruct(outputInteger.value,
+                                        outputString.value,
+                                        outputFloat.value);
+                verify("echoStructAsSimpleTypes", 
+                       input, output);
+            } catch (Exception e) {
+                verify("echoStructAsSimpleTypes", input, e);
+            }
+        }
+
+        {
+            SOAPStruct input = new SOAPStruct(5, "Hello", 103F);
+            try {
+                output = binding.echoSimpleTypesAsStruct(
+                   input.getVarString(), input.getVarInt(), input.getVarFloat());
+                verify("echoSimpleTypesAsStruct", 
+                       input, 
+                       output);
+            } catch (Exception e) {
+                verify("echoSimpleTypesAsStruct", input, e);
+            }
+        }
+
+        {
+            String[][] input = new String[2][2];
+            input[0][0] = "00";
+            input[0][1] = "01";
+            input[1][0] = "10";
+            input[1][1] = "11";
+            try {
+                output = binding.echo2DStringArray(input);
+                verify("echo2DStringArray", 
+                       input, 
+                       output);
+            } catch (Exception e) {
+                verify("echo2DStringArray", input, e);
+            }
+        }
+
+        {
+            SOAPStructStruct input = new SOAPStructStruct("AXIS",
+                                                          1,
+                                                          3F,
+                                                          new SOAPStruct(5, "Hello", 103F));
+            try {
+                output = binding.echoNestedStruct(input);
+                verify("echoNestedStruct", input, output);
+            } catch (Exception e) {
+                verify("echoNestedStruct", input, e);
+            }
+        }
+        {
+            SOAPArrayStruct input = new SOAPArrayStruct("AXIS",
+                                                        1,
+                                                        3F,
+                                                        new String[] {"one", "two", "three"});
+            try {
+                output = binding.echoNestedArray(input);
+                verify("echoNestedArray", input, output);
+            } catch (Exception e) {
+                verify("echoNestedArray", input, e);
+            }
+        }
     }
 
     /**

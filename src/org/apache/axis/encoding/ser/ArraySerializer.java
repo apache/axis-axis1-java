@@ -177,13 +177,14 @@ public class ArraySerializer implements Serializer {
         //     way to determine whether the arrays are multi-referenced.
         //     Thus the code is currently disabled (see enable2Dim below).
         //
-        // In the future this code may be enabled for cases that we know
-        // are safe.
-        // (More complicated processing is necessary for 3-dim arrays, etc.
-        // This initial support is mainly used to test deserialization.)
+        // Currently the support is ENABLED because it is necessary for 
+        // interoperability (echo2DStringArray).  It is 'safe' for now
+        // because Axis treats arrays as non multi-ref (see the note
+        // in SerializationContextImpl.isPrimitive(...) )
+        // More complicated processing is necessary for 3-dim arrays, etc.
         //
         int dim2Len = -1;
-        boolean enable2Dim = false;  // Disabled
+        boolean enable2Dim = true;  // Disabled
         if (enable2Dim && !dims.equals("")) {
             if (cls.isArray() && len > 0) {
                 boolean okay = true;

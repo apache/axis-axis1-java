@@ -62,6 +62,7 @@ import javax.wsdl.QName;
 import javax.wsdl.Fault;
 import javax.wsdl.Message;
 import javax.xml.rpc.holders.BooleanHolder;
+import javax.xml.rpc.holders.IntHolder;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
@@ -699,7 +700,7 @@ public class Utils {
         }
 
         // Process array element types
-        QName elementQName = SchemaUtils.getArrayElementQName(type);
+        QName elementQName = SchemaUtils.getArrayElementQName(type, new IntHolder(0));
         TypeEntry elementType = symbolTable.getType(elementQName);
         if (elementType != null) {
             if (!types.contains(elementType)) {
