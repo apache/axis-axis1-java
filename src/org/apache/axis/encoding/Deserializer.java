@@ -62,6 +62,7 @@ import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.SAX2EventRecorder;
 import org.apache.axis.message.SAXOutputter;
 import org.apache.axis.message.SOAPHandler;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -237,8 +238,8 @@ public class Deserializer extends SOAPHandler
                 Target target = (Target)e.nextElement();
                 target.set(value);
                 if (category.isDebugEnabled()) {
-                    category.debug("Set value " + value + " in target " +
-                                       target);
+                    category.debug(JavaUtils.getMessage("setValueInTarget00",
+                            "" + value, "" + target));
                 }
             }
         }
@@ -263,7 +264,7 @@ public class Deserializer extends SOAPHandler
                                                        attributes);
             
             if (category.isDebugEnabled()) {
-                category.debug("Deser got type : " + type);
+                category.debug(JavaUtils.getMessage("gotType00", "Deser", "" + type));
             }
             
             // We know we're deserializing, and we can't seem to figure
@@ -330,7 +331,9 @@ public class Deserializer extends SOAPHandler
             Object ref = context.getObjectByRef(href);
             
             if (category.isDebugEnabled()) {
-                category.debug("Got " + ref + " for ID " + href + " (Class =" + ref.getClass()+")");
+                category.debug(JavaUtils.getMessage(
+                        "gotForID00",
+                        new String[] {"" + ref, href, "" + ref.getClass()}));
             }
             
             if (ref == null) {
