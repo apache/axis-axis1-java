@@ -1110,6 +1110,7 @@ public class Emitter {
 
     protected SOAPFault writeSOAPFault(FaultDesc faultDesc) {
         SOAPFault soapFault = new com.ibm.wsdl.extensions.soap.SOAPFaultImpl();
+        soapFault.setName(faultDesc.getName());
         if (use != Use.ENCODED) {
             soapFault.setUse("literal");
             // no namespace for literal, gets it from the element
