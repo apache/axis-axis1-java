@@ -93,7 +93,7 @@ public class TypeMappingRegistry implements Serializer, Serializable {
      * Init (ie. load settings...)
      */
     public void init() {
-        // load();
+       load();
     }
 
     class SerializerDescriptor implements Serializable {
@@ -222,7 +222,7 @@ public class TypeMappingRegistry implements Serializer, Serializable {
     
     public void save() {
         if (fileName == null) return;
-
+        
         try {
             FileOutputStream out = new FileOutputStream(fileName);
             Hashtable reg = new Hashtable();
@@ -296,7 +296,9 @@ public class TypeMappingRegistry implements Serializer, Serializable {
             java.util.Enumeration e = d.keys();
             while (e.hasMoreElements()) {
                 Object key = e.nextElement();
-                out.println("    " + key + " => " + d.get(key));
+                DeserializerDescriptor desc = (DeserializerDescriptor)d.get(key);
+                String classname = (desc.cls != null) ? desc.cls.getName() : "null";
+                out.println("    " + key + " => " + classname);
             }
         }
         if (parent != null)
