@@ -115,6 +115,10 @@
       <available classname="javax.imageio.ImageIO" classpathref="classpath" />
     </condition>
 
+    <condition property="axis-ant.present" >
+      <available classname="tools.ant.foreach.ForeachTask" classpathref="classpath" />
+    </condition>
+
     <condition property="jimiAndAttachments.present">
       <and>
         <available classname="javax.activation.DataHandler" classpathref="classpath" />
@@ -168,6 +172,7 @@
     <echo message="security.present=${security.present}" />
     <echo message="jsse.present=${jsse.present}" />
     <echo message="commons-httpclient.present=${commons-httpclient.present}" />
+    <echo message="axis-ant.present=${axis-ant.present}" />
     <echo message=""/>
     <echo message="--- Property values ---" />
     <echo message="debug=${debug}" />
