@@ -222,17 +222,27 @@ public class SOAPBody extends MessageElement
     }
 
     public javax.xml.soap.SOAPFault addFault() throws SOAPException {
-        // not yet implemented
-        return null;
+        SOAPFault fault = new SOAPFault(new AxisFault());
+        addBodyElement(fault);
+        return fault;
     }
 
     public javax.xml.soap.SOAPFault getFault() {
-        // not yet implemented
-        return null;
+        try {
+            return (javax.xml.soap.SOAPFault)getBodyByName(Constants.URI_SOAP11_ENV, Constants.ELEM_FAULT);
+        } catch(AxisFault af){
+            log.fatal(JavaUtils.getMessage("exception00"), af);
+            return null;
+        }
     }
 
     public boolean hasFault() {
-        // not yet implemented
+        try {
+            if(getBodyByName(Constants.URI_SOAP11_ENV, Constants.ELEM_FAULT)!=null)
+                return true;
+        } catch(AxisFault af){
+            log.fatal(JavaUtils.getMessage("exception00"), af);
+        }
         return false;
     }
 }

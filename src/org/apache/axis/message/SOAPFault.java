@@ -237,8 +237,9 @@ public class SOAPFault extends SOAPBodyElement implements javax.xml.soap.SOAPFau
      *     application-specific error information
      */
     public javax.xml.soap.Detail getDetail() {
-        //TODO: Flesh this out.
-        return null;
+        if(this.getChildren()==null || this.getChildren().size()<=0)
+            return null;
+        return (javax.xml.soap.Detail) this.getChildren().get(0);
     }
 
     /**
@@ -255,7 +256,11 @@ public class SOAPFault extends SOAPBodyElement implements javax.xml.soap.SOAPFau
      *     <CODE>Detail</CODE> object
      */
     public javax.xml.soap.Detail addDetail() throws javax.xml.soap.SOAPException {
-        //TODO: Flesh this out.
-        return null;
+        if(getDetail()!=null){
+            throw new javax.xml.soap.SOAPException(org.apache.axis.utils.JavaUtils.getMessage("valuePresent"));
+        }
+        Detail detail = new Detail(fault);
+        addChildElement(detail);
+        return detail;
     }
 }

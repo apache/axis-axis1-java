@@ -63,6 +63,7 @@ import javax.xml.soap.DetailEntry;
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPException;
 import java.util.Iterator;
+import java.util.Vector;
 
 /**
  * Detail Container implementation
@@ -92,8 +93,9 @@ public class Detail extends SOAPFault implements javax.xml.soap.Detail {
      * @throws SOAPException  thrown when there is a problem in adding a DetailEntry object to this Detail object.
      */
     public DetailEntry addDetailEntry(Name name) throws SOAPException {
-        //TODO: Flesh this out.
-        return null;
+        DetailEntry entry = new org.apache.axis.message.DetailEntry(name);
+        addChildElement(entry);
+        return entry;
     }
 
     /**
@@ -102,7 +104,6 @@ public class Detail extends SOAPFault implements javax.xml.soap.Detail {
      *        objects in this <code>Detail</code> object
      */
     public Iterator getDetailEntries() {
-        //TODO: Flesh this out.
-        return null;
+        return this.getChildElements();
     }
 }
