@@ -221,31 +221,22 @@ Copyright:
     "can't find class test.functional.ant.RunAxisFunctionalTestsTask",
     verify that your Ant classpath contains ANT_HOME/lib.
     -->
-    <ant antfile="test/build_functional_tests.xml" />
     
   </target>
 
   <!-- =================================================================== -->
   <!-- Functional tests, no server (for testing under debugger)            -->
   <!-- =================================================================== -->
-  <target name="functional-tests-noserver" depends="setenv">
-  
-    <!-- The Axis Ant task must be built (into ANT_HOME/lib)... -->
-    <ant antfile="test/build_ant.xml" />
-    
-    <!--
-    ...and then the functional tests can be run.  If this step yields a
-    "can't find class test.functional.ant.RunAxisFunctionalTestsTask",
-    verify that your Ant classpath contains ANT_HOME/lib.
-    -->
+  <target name="functional-tests-noserver" depends="buildTest, samples">
     <ant antfile="test/build_functional_tests.xml" target="junit-functional-noserver"/>
     
   </target>
 
   <!-- =================================================================== -->
-  <!-- After junit, functional tests, if explicitly invoked                -->
+  <!-- Functional tests, with server                                       -->
   <!-- =================================================================== -->
-  <target name="functional-tests" depends="junit, samples, functional-tests-only">
+  <target name="functional-tests" depends="buildTest, samples">
+    <ant antfile="test/build_functional_tests.xml" />
   </target>
 
   <!-- =================================================================== -->
