@@ -56,32 +56,43 @@
 package org.apache.axis.utils ;
 
 /**
- *
  * @author Doug Davis (dug@us.ibm.com)
+ * @author James Snell (jasnell@us.ibm.com)
  */
 public class QName {
-  /**
-   * Template code for QName.
-   */
-  private String namespaceURI ;
-  private String localPart ;
+ 
+    private String namespaceURI ;
+    private String localPart ;
 
-  public QName() {};
-   
-  public void setNamespaceURI(String nsu) {
-    namespaceURI = nsu ;
-  };
+    public QName() {};
+    public QName(String namespaceURI, String localPart) {
+        setNamespaceURI(namespaceURI);
+        setLocalPart(localPart);
+    }
+  
+    public void setNamespaceURI(String namespaceURI) {
+        this.namespaceURI = namespaceURI ;
+    };
 
-  public String getNamespaceURI() { 
-    return( namespaceURI );
-  };
+    public String getNamespaceURI() { 
+        return( namespaceURI );
+    };
 
-  public void setLocalPart(String lp) {
-    localPart = lp ;
-  };
+    public void setLocalPart(String localPart) {
+        this.localPart = localPart ;
+    };
 
-  public String getLocalPart() {
-    return( localPart );
-  };
-
+    public String getLocalPart() {
+        return( localPart );
+    };
+    
+    public String toString() {
+        return namespaceURI + ":" + localPart;
+    };
+    
+    public boolean equals(Object p1) {
+        if (!(p1 instanceof QName)) return false;
+        return ((QName)p1).toString().equals(toString());
+    };
+    
 };
