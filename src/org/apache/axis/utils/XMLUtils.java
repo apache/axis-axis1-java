@@ -115,8 +115,10 @@ public class XMLUtils {
 
   public static String DocumentToString(Document doc) {
     try {
-      StringWriter sw = new StringWriter();
-      XMLSerializer  xs = new XMLSerializer( sw, new OutputFormat() );
+      StringWriter sw     = new StringWriter();
+      OutputFormat format = new OutputFormat();
+      format.setPreserveSpace(true);
+      XMLSerializer  xs = new XMLSerializer( sw, format );
       xs.serialize( (Document) doc );
       sw.close();
       return(sw.toString() );
@@ -129,7 +131,9 @@ public class XMLUtils {
 
   public static void DocumentToStream(Document doc, OutputStream out) {
     try {
-      XMLSerializer  xs = new XMLSerializer( out, new OutputFormat() );
+      OutputFormat format = new OutputFormat();
+      format.setPreserveSpace(true);
+      XMLSerializer  xs = new XMLSerializer( out, format );
       xs.serialize( (Document) doc );
     }
     catch( Exception e ) {
