@@ -116,7 +116,7 @@ public class Service implements javax.xml.rpc.Service {
         return( wsdlService );
     }
 
-    protected AxisClient getAxisClient() throws JAXRPCException
+    protected AxisClient getAxisClient()
     {
         return new AxisClient(configProvider);
     }
@@ -125,10 +125,8 @@ public class Service implements javax.xml.rpc.Service {
      * Constructs a new Service object - this assumes the caller will set
      * the appropriate fields by hand rather than getting them from the
      * WSDL.
-     *
-     * @exception JAXRPCException If there's an error
      */
-    public Service() throws JAXRPCException {
+    public Service() {
         engine = getAxisClient();
     }
 
@@ -137,8 +135,7 @@ public class Service implements javax.xml.rpc.Service {
      * the ConfigurationProvider which should be used to set up the
      * AxisClient.
      */
-    public Service(ConfigurationProvider configProvider)
-            throws JAXRPCException {
+    public Service(ConfigurationProvider configProvider) {
         this.configProvider = configProvider;
         engine = getAxisClient();
     }

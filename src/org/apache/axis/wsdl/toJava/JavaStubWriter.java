@@ -119,23 +119,34 @@ public class JavaStubWriter extends JavaWriter {
         }
 
         pw.println("public class " + className + " extends javax.xml.rpc.Stub implements " + portTypeName + " {");
-        pw.println("    private org.apache.axis.client.Service service = null ;");
+        pw.println("    private javax.xml.rpc.Service service = null ;");
         pw.println("    private org.apache.axis.client.Call call = null ;");
         pw.println();
-        pw.println("    public " + className + "(java.net.URL endpointURL) throws org.apache.axis.AxisFault {");
-        pw.println("         this();");
+
+        pw.println("    public " + className + "() throws org.apache.axis.AxisFault {");
+        pw.println("         this(null);");
+        pw.println("    }");
+        pw.println();
+
+        pw.println("    public " + className + "(java.net.URL endpointURL, javax.xml.rpc.Service service) throws org.apache.axis.AxisFault {");
+        pw.println("         this(service);");
         pw.println("         call.setTargetEndpointAddress( endpointURL );");
         pw.println("         call.setProperty(org.apache.axis.transport.http.HTTPTransport.URL, endpointURL.toString());");
         pw.println("    }");
+        pw.println();
 
-        pw.println("    public " + className + "() throws org.apache.axis.AxisFault {");
+        pw.println("    public " + className + "(javax.xml.rpc.Service service) throws org.apache.axis.AxisFault {");
 
         HashSet types = getTypesInPortType(portType);
         Iterator it = types.iterator();
 
         pw.println("        try {" );
-        pw.println("            service = new org.apache.axis.client.Service();");
-        pw.println("            call = (org.apache.axis.client.Call) service.createCall();");
+        pw.println("            if (service == null) {");
+        pw.println("                this.service = new org.apache.axis.client.Service();");
+        pw.println("            } else {");
+        pw.println("                this.service = service;");
+        pw.println("            }");
+        pw.println("            call = (org.apache.axis.client.Call) this.service.createCall();");
 
         while (it.hasNext()) {
             writeSerializationInit((TypeEntry) it.next());
@@ -425,7 +436,7 @@ public class JavaStubWriter extends JavaWriter {
 
         // SoapAction and Namespace
         if (soapAction != null) {
-            pw.println("        call.setProperty(\"soap.http.soapaction.use\", new Boolean(true));");
+            pw.println("        call.setProperty(\"soap.http.soapaction.use\", Boolean.TRUE);");
             pw.println("        call.setProperty(\"soap.http.soapaction.uri\", \"" + soapAction + "\");");
         }
         pw.println("        call.setProperty(call.NAMESPACE, \"" + namespace
