@@ -580,9 +580,18 @@ public class JavaStubWriter extends JavaWriter {
         }
         pw.println("        call.setOperationStyle(\"" + styleStr + "\");");
 
-        
         // Operation name
-        pw.println("        call.setOperationName(new javax.xml.rpc.namespace.QName(\"" + namespace + "\", \"" + operation.getName() + "\"));" );
+        if (styleStr.equals("wrapped")) {
+            // We need to make sure the operation name, which is what we
+            // wrap the elements in, matches the Qname of the parameter
+            // element.
+            Map partsMap = operation.getOperation().getInput().getMessage().getParts();
+            Part p = (Part)partsMap.values().iterator().next();
+            QName q = p.getElementName();
+            pw.println("        call.setOperationName(new javax.xml.rpc.namespace.QName(\"" + q.getNamespaceURI() + "\", \"" + q.getLocalPart() + "\"));" );
+        } else {
+            pw.println("        call.setOperationName(new javax.xml.rpc.namespace.QName(\"" + namespace + "\", \"" + operation.getName() + "\"));" );
+        }
         
         // Invoke the operation
         pw.println();
