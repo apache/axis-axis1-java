@@ -65,9 +65,10 @@ public class Wsdl2java
      * print usage message
      */
     private static void usage() {
-        System.out.println ("Usage: java org.apache.axis.wsdl.Wsdl2java [-skeleton] WSDL-URI");
+        System.out.println ("Usage: java org.apache.axis.wsdl.Wsdl2java [-skeleton] [-messageContext] WSDL-URI");
         System.out.println ("Switches:");
         System.out.println ("   -skeleton - emit skeleton class for web service");
+        System.out.println ("   -messageContext - emit a MessageContext parameter in skeleton");
         System.exit(-1);
     }
 
@@ -75,11 +76,16 @@ public class Wsdl2java
     public static void main(String[] args) {
         try {
             boolean bSkeleton = false;
+            boolean bMessageContext = false;
             int argcount = args.length;
             int arg = 0;
             while ( arg < (args.length-1)) {
                if( args[arg].equals("-skeleton") )	{
                     bSkeleton = true;
+                   --argcount;
+                }
+               if( args[arg].equals("-messageContext") )	{
+                    bMessageContext = true;
                    --argcount;
                 }
                 ++arg;
@@ -93,6 +99,7 @@ public class Wsdl2java
 
             Emitter emitter = new Emitter ();
             emitter.generateSkeleton(bSkeleton);
+            emitter.generateMessageContext(bMessageContext);
             emitter.emit (uri);
         }
         catch (Throwable t) {
