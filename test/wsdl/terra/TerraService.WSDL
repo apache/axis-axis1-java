@@ -1,0 +1,862 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:s0="http://terraservice.net/terraserver/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" targetNamespace="http://terraservice.net/terraserver/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://terraservice.net/terraserver/">
+      <s:element name="ConvertLonLatPtToNearestPlace">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="point" type="s0:LonLatPt" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="LonLatPt">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Lon" type="s:double" />
+          <s:element minOccurs="1" maxOccurs="1" name="Lat" type="s:double" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ConvertLonLatPtToNearestPlaceResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ConvertLonLatPtToNearestPlaceResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ConvertLonLatPtToUtmPt">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="point" type="s0:LonLatPt" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ConvertLonLatPtToUtmPtResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="ConvertLonLatPtToUtmPtResult" type="s0:UtmPt" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="UtmPt">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Zone" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="X" type="s:double" />
+          <s:element minOccurs="1" maxOccurs="1" name="Y" type="s:double" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ConvertUtmPtToLonLatPt">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="utm" type="s0:UtmPt" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ConvertUtmPtToLonLatPtResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="ConvertUtmPtToLonLatPtResult" type="s0:LonLatPt" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ConvertPlaceToLonLatPt">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="place" type="s0:Place" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="Place">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="City" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="State" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Country" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ConvertPlaceToLonLatPtResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="ConvertPlaceToLonLatPtResult" type="s0:LonLatPt" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CountPlacesInRect">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="upperleft" type="s0:LonLatPt" />
+            <s:element minOccurs="1" maxOccurs="1" name="lowerright" type="s0:LonLatPt" />
+            <s:element minOccurs="1" maxOccurs="1" name="ptype" type="s0:PlaceType" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:simpleType name="PlaceType">
+        <s:restriction base="s:string">
+          <s:enumeration value="UnknownPlaceType" />
+          <s:enumeration value="AirRailStation" />
+          <s:enumeration value="BayGulf" />
+          <s:enumeration value="CapePeninsula" />
+          <s:enumeration value="CityTown" />
+          <s:enumeration value="HillMountain" />
+          <s:enumeration value="Island" />
+          <s:enumeration value="Lake" />
+          <s:enumeration value="OtherLandFeature" />
+          <s:enumeration value="OtherWaterFeature" />
+          <s:enumeration value="ParkBeach" />
+          <s:enumeration value="PointOfInterest" />
+          <s:enumeration value="River" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="CountPlacesInRectResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="CountPlacesInRectResult" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetAreaFromPt">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="center" type="s0:LonLatPt" />
+            <s:element minOccurs="1" maxOccurs="1" name="theme" type="s0:Theme" />
+            <s:element minOccurs="1" maxOccurs="1" name="scale" type="s0:Scale" />
+            <s:element minOccurs="1" maxOccurs="1" name="displayPixWidth" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="displayPixHeight" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:simpleType name="Theme">
+        <s:restriction base="s:string">
+          <s:enumeration value="Photo" />
+          <s:enumeration value="Topo" />
+          <s:enumeration value="Relief" />
+        </s:restriction>
+      </s:simpleType>
+      <s:simpleType name="Scale">
+        <s:restriction base="s:string">
+          <s:enumeration value="Scale1mm" />
+          <s:enumeration value="Scale2mm" />
+          <s:enumeration value="Scale4mm" />
+          <s:enumeration value="Scale8mm" />
+          <s:enumeration value="Scale16mm" />
+          <s:enumeration value="Scale32mm" />
+          <s:enumeration value="Scale63mm" />
+          <s:enumeration value="Scale125mm" />
+          <s:enumeration value="Scale250mm" />
+          <s:enumeration value="Scale500mm" />
+          <s:enumeration value="Scale1m" />
+          <s:enumeration value="Scale2m" />
+          <s:enumeration value="Scale4m" />
+          <s:enumeration value="Scale8m" />
+          <s:enumeration value="Scale16m" />
+          <s:enumeration value="Scale32m" />
+          <s:enumeration value="Scale64m" />
+          <s:enumeration value="Scale128m" />
+          <s:enumeration value="Scale256m" />
+          <s:enumeration value="Scale512m" />
+          <s:enumeration value="Scale1km" />
+          <s:enumeration value="Scale2km" />
+          <s:enumeration value="Scale4km" />
+          <s:enumeration value="Scale8km" />
+          <s:enumeration value="Scale16km" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="GetAreaFromPtResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="GetAreaFromPtResult" type="s0:AreaBoundingBox" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="AreaBoundingBox">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="NorthWest" type="s0:AreaCoordinate" />
+          <s:element minOccurs="1" maxOccurs="1" name="NorthEast" type="s0:AreaCoordinate" />
+          <s:element minOccurs="1" maxOccurs="1" name="SouthWest" type="s0:AreaCoordinate" />
+          <s:element minOccurs="1" maxOccurs="1" name="SouthEast" type="s0:AreaCoordinate" />
+          <s:element minOccurs="1" maxOccurs="1" name="Center" type="s0:AreaCoordinate" />
+          <s:element minOccurs="0" maxOccurs="1" name="NearestPlace" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="OverlappingThemeInfos" type="s0:ArrayOfOverlappingThemeInfo" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="AreaCoordinate">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="TileMeta" type="s0:TileMeta" />
+          <s:element minOccurs="1" maxOccurs="1" name="Offset" type="s0:LonLatPtOffset" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="TileMeta">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Id" type="s0:TileId" />
+          <s:element minOccurs="1" maxOccurs="1" name="TileExists" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="NorthWest" type="s0:LonLatPt" />
+          <s:element minOccurs="1" maxOccurs="1" name="NorthEast" type="s0:LonLatPt" />
+          <s:element minOccurs="1" maxOccurs="1" name="SouthWest" type="s0:LonLatPt" />
+          <s:element minOccurs="1" maxOccurs="1" name="SouthEast" type="s0:LonLatPt" />
+          <s:element minOccurs="1" maxOccurs="1" name="Center" type="s0:LonLatPt" />
+          <s:element minOccurs="1" maxOccurs="1" name="Capture" type="s:dateTime" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="TileId">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Theme" type="s0:Theme" />
+          <s:element minOccurs="1" maxOccurs="1" name="Scale" type="s0:Scale" />
+          <s:element minOccurs="1" maxOccurs="1" name="Scene" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="X" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Y" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="LonLatPtOffset">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Point" type="s0:LonLatPt" />
+          <s:element minOccurs="1" maxOccurs="1" name="XOffset" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="YOffset" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfOverlappingThemeInfo">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="OverlappingThemeInfo" type="s0:OverlappingThemeInfo" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="OverlappingThemeInfo">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="LocalTheme" type="s:boolean" />
+          <s:element minOccurs="1" maxOccurs="1" name="Theme" type="s0:Theme" />
+          <s:element minOccurs="1" maxOccurs="1" name="Point" type="s0:LonLatPt" />
+          <s:element minOccurs="0" maxOccurs="1" name="ThemeName" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Capture" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="ProjectionId" type="s0:ProjectionType" />
+          <s:element minOccurs="1" maxOccurs="1" name="LoScale" type="s0:Scale" />
+          <s:element minOccurs="1" maxOccurs="1" name="HiScale" type="s0:Scale" />
+          <s:element minOccurs="0" maxOccurs="1" name="Url" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="ProjectionType">
+        <s:restriction base="s:string">
+          <s:enumeration value="Geographic" />
+          <s:enumeration value="UtmNad27" />
+          <s:enumeration value="UtmNad83" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="GetAreaFromRect">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="upperLeft" type="s0:LonLatPt" />
+            <s:element minOccurs="1" maxOccurs="1" name="lowerRight" type="s0:LonLatPt" />
+            <s:element minOccurs="1" maxOccurs="1" name="theme" type="s0:Theme" />
+            <s:element minOccurs="1" maxOccurs="1" name="scale" type="s0:Scale" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetAreaFromRectResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="GetAreaFromRectResult" type="s0:AreaBoundingBox" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetAreaFromTileId">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="id" type="s0:TileId" />
+            <s:element minOccurs="1" maxOccurs="1" name="displayPixWidth" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="displayPixHeight" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetAreaFromTileIdResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="GetAreaFromTileIdResult" type="s0:AreaBoundingBox" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetLatLonMetrics">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="point" type="s0:LonLatPt" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetLatLonMetricsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetLatLonMetricsResult" type="s0:ArrayOfThemeBoundingBox" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfThemeBoundingBox">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="ThemeBoundingBox" type="s0:ThemeBoundingBox" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ThemeBoundingBox">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Theme" type="s0:Theme" />
+          <s:element minOccurs="0" maxOccurs="1" name="ThemeName" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Sparseness" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="LoScale" type="s0:Scale" />
+          <s:element minOccurs="1" maxOccurs="1" name="HiScale" type="s0:Scale" />
+          <s:element minOccurs="1" maxOccurs="1" name="ProjectionId" type="s0:ProjectionType" />
+          <s:element minOccurs="0" maxOccurs="1" name="ProjectionName" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="WestLongitude" type="s:double" />
+          <s:element minOccurs="1" maxOccurs="1" name="NorthLatitude" type="s:double" />
+          <s:element minOccurs="1" maxOccurs="1" name="EastLongitude" type="s:double" />
+          <s:element minOccurs="1" maxOccurs="1" name="SouthLatitude" type="s:double" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetPlaceFacts">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="place" type="s0:Place" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetPlaceFactsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="GetPlaceFactsResult" type="s0:PlaceFacts" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="PlaceFacts">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Place" type="s0:Place" />
+          <s:element minOccurs="1" maxOccurs="1" name="Center" type="s0:LonLatPt" />
+          <s:element minOccurs="1" maxOccurs="1" name="AvailableThemeMask" type="s0:Themes" />
+          <s:element minOccurs="1" maxOccurs="1" name="PlaceTypeId" type="s0:PlaceType" />
+          <s:element minOccurs="1" maxOccurs="1" name="Population" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="Themes">
+        <s:list>
+          <s:simpleType>
+            <s:restriction base="s:string">
+              <s:enumeration value="Photo" />
+              <s:enumeration value="Topo" />
+              <s:enumeration value="Relief" />
+            </s:restriction>
+          </s:simpleType>
+        </s:list>
+      </s:simpleType>
+      <s:element name="GetPlaceList">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="placeName" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="MaxItems" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="imagePresence" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetPlaceListResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetPlaceListResult" type="s0:ArrayOfPlaceFacts" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfPlaceFacts">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="PlaceFacts" type="s0:PlaceFacts" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetPlaceListInRect">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="upperleft" type="s0:LonLatPt" />
+            <s:element minOccurs="1" maxOccurs="1" name="lowerright" type="s0:LonLatPt" />
+            <s:element minOccurs="1" maxOccurs="1" name="ptype" type="s0:PlaceType" />
+            <s:element minOccurs="1" maxOccurs="1" name="MaxItems" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetPlaceListInRectResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetPlaceListInRectResult" type="s0:ArrayOfPlaceFacts" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetTheme">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="theme" type="s0:Theme" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetThemeResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="GetThemeResult" type="s0:ThemeInfo" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ThemeInfo">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Theme" type="s0:Theme" />
+          <s:element minOccurs="0" maxOccurs="1" name="Name" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Description" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Supplier" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="LoScale" type="s0:Scale" />
+          <s:element minOccurs="1" maxOccurs="1" name="HiScale" type="s0:Scale" />
+          <s:element minOccurs="1" maxOccurs="1" name="ProjectionId" type="s0:ProjectionType" />
+          <s:element minOccurs="0" maxOccurs="1" name="ProjectionName" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="CopyrightNotice" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetTileMetaFromLonLatPt">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="point" type="s0:LonLatPt" />
+            <s:element minOccurs="1" maxOccurs="1" name="theme" type="s0:Theme" />
+            <s:element minOccurs="1" maxOccurs="1" name="scale" type="s0:Scale" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetTileMetaFromLonLatPtResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="GetTileMetaFromLonLatPtResult" type="s0:TileMeta" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetTileMetaFromTileId">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="id" type="s0:TileId" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetTileMetaFromTileIdResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="GetTileMetaFromTileIdResult" type="s0:TileMeta" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetTile">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="id" type="s0:TileId" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetTileResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetTileResult" type="s:base64Binary" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ArrayOfPlaceFacts" nillable="true" type="s0:ArrayOfPlaceFacts" />
+      <s:element name="ThemeInfo" type="s0:ThemeInfo" />
+    </s:schema>
+  </types>
+  <message name="ConvertLonLatPtToNearestPlaceSoapIn">
+    <part name="parameters" element="s0:ConvertLonLatPtToNearestPlace" />
+  </message>
+  <message name="ConvertLonLatPtToNearestPlaceSoapOut">
+    <part name="parameters" element="s0:ConvertLonLatPtToNearestPlaceResponse" />
+  </message>
+  <message name="ConvertLonLatPtToUtmPtSoapIn">
+    <part name="parameters" element="s0:ConvertLonLatPtToUtmPt" />
+  </message>
+  <message name="ConvertLonLatPtToUtmPtSoapOut">
+    <part name="parameters" element="s0:ConvertLonLatPtToUtmPtResponse" />
+  </message>
+  <message name="ConvertUtmPtToLonLatPtSoapIn">
+    <part name="parameters" element="s0:ConvertUtmPtToLonLatPt" />
+  </message>
+  <message name="ConvertUtmPtToLonLatPtSoapOut">
+    <part name="parameters" element="s0:ConvertUtmPtToLonLatPtResponse" />
+  </message>
+  <message name="ConvertPlaceToLonLatPtSoapIn">
+    <part name="parameters" element="s0:ConvertPlaceToLonLatPt" />
+  </message>
+  <message name="ConvertPlaceToLonLatPtSoapOut">
+    <part name="parameters" element="s0:ConvertPlaceToLonLatPtResponse" />
+  </message>
+  <message name="CountPlacesInRectSoapIn">
+    <part name="parameters" element="s0:CountPlacesInRect" />
+  </message>
+  <message name="CountPlacesInRectSoapOut">
+    <part name="parameters" element="s0:CountPlacesInRectResponse" />
+  </message>
+  <message name="GetAreaFromPtSoapIn">
+    <part name="parameters" element="s0:GetAreaFromPt" />
+  </message>
+  <message name="GetAreaFromPtSoapOut">
+    <part name="parameters" element="s0:GetAreaFromPtResponse" />
+  </message>
+  <message name="GetAreaFromRectSoapIn">
+    <part name="parameters" element="s0:GetAreaFromRect" />
+  </message>
+  <message name="GetAreaFromRectSoapOut">
+    <part name="parameters" element="s0:GetAreaFromRectResponse" />
+  </message>
+  <message name="GetAreaFromTileIdSoapIn">
+    <part name="parameters" element="s0:GetAreaFromTileId" />
+  </message>
+  <message name="GetAreaFromTileIdSoapOut">
+    <part name="parameters" element="s0:GetAreaFromTileIdResponse" />
+  </message>
+  <message name="GetLatLonMetricsSoapIn">
+    <part name="parameters" element="s0:GetLatLonMetrics" />
+  </message>
+  <message name="GetLatLonMetricsSoapOut">
+    <part name="parameters" element="s0:GetLatLonMetricsResponse" />
+  </message>
+  <message name="GetPlaceFactsSoapIn">
+    <part name="parameters" element="s0:GetPlaceFacts" />
+  </message>
+  <message name="GetPlaceFactsSoapOut">
+    <part name="parameters" element="s0:GetPlaceFactsResponse" />
+  </message>
+  <message name="GetPlaceListSoapIn">
+    <part name="parameters" element="s0:GetPlaceList" />
+  </message>
+  <message name="GetPlaceListSoapOut">
+    <part name="parameters" element="s0:GetPlaceListResponse" />
+  </message>
+  <message name="GetPlaceListInRectSoapIn">
+    <part name="parameters" element="s0:GetPlaceListInRect" />
+  </message>
+  <message name="GetPlaceListInRectSoapOut">
+    <part name="parameters" element="s0:GetPlaceListInRectResponse" />
+  </message>
+  <message name="GetThemeSoapIn">
+    <part name="parameters" element="s0:GetTheme" />
+  </message>
+  <message name="GetThemeSoapOut">
+    <part name="parameters" element="s0:GetThemeResponse" />
+  </message>
+  <message name="GetTileMetaFromLonLatPtSoapIn">
+    <part name="parameters" element="s0:GetTileMetaFromLonLatPt" />
+  </message>
+  <message name="GetTileMetaFromLonLatPtSoapOut">
+    <part name="parameters" element="s0:GetTileMetaFromLonLatPtResponse" />
+  </message>
+  <message name="GetTileMetaFromTileIdSoapIn">
+    <part name="parameters" element="s0:GetTileMetaFromTileId" />
+  </message>
+  <message name="GetTileMetaFromTileIdSoapOut">
+    <part name="parameters" element="s0:GetTileMetaFromTileIdResponse" />
+  </message>
+  <message name="GetTileSoapIn">
+    <part name="parameters" element="s0:GetTile" />
+  </message>
+  <message name="GetTileSoapOut">
+    <part name="parameters" element="s0:GetTileResponse" />
+  </message>
+  <message name="GetPlaceListHttpGetIn">
+    <part name="placeName" type="s:string" />
+    <part name="MaxItems" type="s:string" />
+    <part name="imagePresence" type="s:string" />
+  </message>
+  <message name="GetPlaceListHttpGetOut">
+    <part name="Body" element="s0:ArrayOfPlaceFacts" />
+  </message>
+  <message name="GetThemeHttpGetIn">
+    <part name="theme" type="s:string" />
+  </message>
+  <message name="GetThemeHttpGetOut">
+    <part name="Body" element="s0:ThemeInfo" />
+  </message>
+  <message name="GetPlaceListHttpPostIn">
+    <part name="placeName" type="s:string" />
+    <part name="MaxItems" type="s:string" />
+    <part name="imagePresence" type="s:string" />
+  </message>
+  <message name="GetPlaceListHttpPostOut">
+    <part name="Body" element="s0:ArrayOfPlaceFacts" />
+  </message>
+  <message name="GetThemeHttpPostIn">
+    <part name="theme" type="s:string" />
+  </message>
+  <message name="GetThemeHttpPostOut">
+    <part name="Body" element="s0:ThemeInfo" />
+  </message>
+  <portType name="TerraServiceSoap">
+    <operation name="ConvertLonLatPtToNearestPlace">
+      <input message="s0:ConvertLonLatPtToNearestPlaceSoapIn" />
+      <output message="s0:ConvertLonLatPtToNearestPlaceSoapOut" />
+    </operation>
+    <operation name="ConvertLonLatPtToUtmPt">
+      <input message="s0:ConvertLonLatPtToUtmPtSoapIn" />
+      <output message="s0:ConvertLonLatPtToUtmPtSoapOut" />
+    </operation>
+    <operation name="ConvertUtmPtToLonLatPt">
+      <input message="s0:ConvertUtmPtToLonLatPtSoapIn" />
+      <output message="s0:ConvertUtmPtToLonLatPtSoapOut" />
+    </operation>
+    <operation name="ConvertPlaceToLonLatPt">
+      <input message="s0:ConvertPlaceToLonLatPtSoapIn" />
+      <output message="s0:ConvertPlaceToLonLatPtSoapOut" />
+    </operation>
+    <operation name="CountPlacesInRect">
+      <input message="s0:CountPlacesInRectSoapIn" />
+      <output message="s0:CountPlacesInRectSoapOut" />
+    </operation>
+    <operation name="GetAreaFromPt">
+      <input message="s0:GetAreaFromPtSoapIn" />
+      <output message="s0:GetAreaFromPtSoapOut" />
+    </operation>
+    <operation name="GetAreaFromRect">
+      <input message="s0:GetAreaFromRectSoapIn" />
+      <output message="s0:GetAreaFromRectSoapOut" />
+    </operation>
+    <operation name="GetAreaFromTileId">
+      <input message="s0:GetAreaFromTileIdSoapIn" />
+      <output message="s0:GetAreaFromTileIdSoapOut" />
+    </operation>
+    <operation name="GetLatLonMetrics">
+      <input message="s0:GetLatLonMetricsSoapIn" />
+      <output message="s0:GetLatLonMetricsSoapOut" />
+    </operation>
+    <operation name="GetPlaceFacts">
+      <input message="s0:GetPlaceFactsSoapIn" />
+      <output message="s0:GetPlaceFactsSoapOut" />
+    </operation>
+    <operation name="GetPlaceList">
+      <input message="s0:GetPlaceListSoapIn" />
+      <output message="s0:GetPlaceListSoapOut" />
+    </operation>
+    <operation name="GetPlaceListInRect">
+      <input message="s0:GetPlaceListInRectSoapIn" />
+      <output message="s0:GetPlaceListInRectSoapOut" />
+    </operation>
+    <operation name="GetTheme">
+      <input message="s0:GetThemeSoapIn" />
+      <output message="s0:GetThemeSoapOut" />
+    </operation>
+    <operation name="GetTileMetaFromLonLatPt">
+      <input message="s0:GetTileMetaFromLonLatPtSoapIn" />
+      <output message="s0:GetTileMetaFromLonLatPtSoapOut" />
+    </operation>
+    <operation name="GetTileMetaFromTileId">
+      <input message="s0:GetTileMetaFromTileIdSoapIn" />
+      <output message="s0:GetTileMetaFromTileIdSoapOut" />
+    </operation>
+    <operation name="GetTile">
+      <input message="s0:GetTileSoapIn" />
+      <output message="s0:GetTileSoapOut" />
+    </operation>
+  </portType>
+  <portType name="TerraServiceHttpGet">
+    <operation name="GetPlaceList">
+      <input message="s0:GetPlaceListHttpGetIn" />
+      <output message="s0:GetPlaceListHttpGetOut" />
+    </operation>
+    <operation name="GetTheme">
+      <input message="s0:GetThemeHttpGetIn" />
+      <output message="s0:GetThemeHttpGetOut" />
+    </operation>
+  </portType>
+  <portType name="TerraServiceHttpPost">
+    <operation name="GetPlaceList">
+      <input message="s0:GetPlaceListHttpPostIn" />
+      <output message="s0:GetPlaceListHttpPostOut" />
+    </operation>
+    <operation name="GetTheme">
+      <input message="s0:GetThemeHttpPostIn" />
+      <output message="s0:GetThemeHttpPostOut" />
+    </operation>
+  </portType>
+  <binding name="TerraServiceSoap" type="s0:TerraServiceSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document" />
+    <operation name="ConvertLonLatPtToNearestPlace">
+      <soap:operation soapAction="http://terraservice.net/terraserver/ConvertLonLatPtToNearestPlace" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="ConvertLonLatPtToUtmPt">
+      <soap:operation soapAction="http://terraservice.net/terraserver/ConvertLonLatPtToUtmPt" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="ConvertUtmPtToLonLatPt">
+      <soap:operation soapAction="http://terraservice.net/terraserver/ConvertUtmPtToLonLatPt" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="ConvertPlaceToLonLatPt">
+      <soap:operation soapAction="http://terraservice.net/terraserver/ConvertPlaceToLonLatPt" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="CountPlacesInRect">
+      <soap:operation soapAction="http://terraservice.net/terraserver/CountPlacesInRect" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="GetAreaFromPt">
+      <soap:operation soapAction="http://terraservice.net/terraserver/GetAreaFromPt" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="GetAreaFromRect">
+      <soap:operation soapAction="http://terraservice.net/terraserver/GetAreaFromRect" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="GetAreaFromTileId">
+      <soap:operation soapAction="http://terraservice.net/terraserver/GetAreaFromTileId" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="GetLatLonMetrics">
+      <soap:operation soapAction="http://terraservice.net/terraserver/GetLatLonMetrics" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="GetPlaceFacts">
+      <soap:operation soapAction="http://terraservice.net/terraserver/GetPlaceFacts" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="GetPlaceList">
+      <soap:operation soapAction="http://terraservice.net/terraserver/GetPlaceList" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="GetPlaceListInRect">
+      <soap:operation soapAction="http://terraservice.net/terraserver/GetPlaceListInRect" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="GetTheme">
+      <soap:operation soapAction="http://terraservice.net/terraserver/GetTheme" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="GetTileMetaFromLonLatPt">
+      <soap:operation soapAction="http://terraservice.net/terraserver/GetTileMetaFromLonLatPt" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="GetTileMetaFromTileId">
+      <soap:operation soapAction="http://terraservice.net/terraserver/GetTileMetaFromTileId" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="GetTile">
+      <soap:operation soapAction="http://terraservice.net/terraserver/GetTile" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+  <binding name="TerraServiceHttpGet" type="s0:TerraServiceHttpGet">
+    <http:binding verb="GET" />
+    <operation name="GetPlaceList">
+      <http:operation location="/GetPlaceList" />
+      <input>
+        <http:urlEncoded />
+      </input>
+      <output>
+        <mime:mimeXml part="Body" />
+      </output>
+    </operation>
+    <operation name="GetTheme">
+      <http:operation location="/GetTheme" />
+      <input>
+        <http:urlEncoded />
+      </input>
+      <output>
+        <mime:mimeXml part="Body" />
+      </output>
+    </operation>
+  </binding>
+  <binding name="TerraServiceHttpPost" type="s0:TerraServiceHttpPost">
+    <http:binding verb="POST" />
+    <operation name="GetPlaceList">
+      <http:operation location="/GetPlaceList" />
+      <input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </input>
+      <output>
+        <mime:mimeXml part="Body" />
+      </output>
+    </operation>
+    <operation name="GetTheme">
+      <http:operation location="/GetTheme" />
+      <input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </input>
+      <output>
+        <mime:mimeXml part="Body" />
+      </output>
+    </operation>
+  </binding>
+  <service name="TerraService">
+    <port name="TerraServiceSoap" binding="s0:TerraServiceSoap">
+      <soap:address location="http://terraservice.net/TerraService.asmx" />
+    </port>
+    <port name="TerraServiceHttpGet" binding="s0:TerraServiceHttpGet">
+      <http:address location="http://terraservice.net/TerraService.asmx" />
+    </port>
+    <port name="TerraServiceHttpPost" binding="s0:TerraServiceHttpPost">
+      <http:address location="http://terraservice.net/TerraService.asmx" />
+    </port>
+  </service>
+</definitions>
