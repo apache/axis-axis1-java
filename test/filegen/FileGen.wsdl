@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://test.com/reference" 
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:serviceNS="http://test.com/reference" 
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+    xmlns="http://schemas.xmlsoap.org/wsdl/">
+ 
+  <!-- type defs -->
+  <!-- None of these types are referenced, so there shuold be no code emitted -->
+  <types>
+    <xsd:schema targetNamespace="http://test.com/reference"
+                xmlns:xsd="http://www.w3.org/1999/XMLSchema">
+
+      <xsd:simpleType name="stateType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="TX"/>                      
+            <xsd:enumeration value="IN"/>                    
+            <xsd:enumeration value="OH"/>                    
+        </xsd:restriction>
+      </xsd:simpleType>
+
+      <xsd:complexType name="address">
+        <xsd:all>
+            <xsd:element name="streetNum" type="xsd:int"/>
+            <xsd:element name="streetName" type="xsd:string"/>
+            <xsd:element name="city" type="xsd:string"/>
+            <xsd:element name="state" type="typens:stateType"/>
+            <xsd:element name="zip" type="xsd:int"/>
+        </xsd:all>
+      </xsd:complexType>
+    </xsd:schema>
+  </types>
+  
+  <!-- Messages for the SOAP operation -->
+  <message name="myopRequest">
+    <part name="argument" type="xsd:string"/>
+  </message>
+  <message name="myopResponse">
+    <part name="myopResult" type="xsd:float"/>
+  </message>
+  <!-- We should Emit an opFault Exception class -->
+  <message name="opFault">
+    <part name="info" type="xsd:string"/>
+  </message>
+
+  <!-- messages for the HTTP operation -->
+  <message name="otheropHttpGetIn">
+    <part name="ISBN" type="xsd:string" />
+  </message>
+  <message name="otheropHttpGetOut">
+    <part name="Body" element="xsd:string" />
+  </message>
+
+  <!-- unused fault, should not be emitted -->
+  <message name="InvalidTickerFaultMessage">
+    <part name="tickerSymbol" type="xsd:string"/>
+  </message>
+
+
+  <!-- SOAP portType -->
+  <portType name="PortTypeSoap">
+    <operation name="myop">
+      <input message="serviceNS:myopRequest"/>
+      <output message="serviceNS:myopResponse"/>
+      <fault message="serviceNS:opFault"/>
+    </operation>
+  </portType>
+
+  <!-- non-Soap portType, code should not be emitted for it -->
+  <portType name="PortTypeNotSoap">
+    <operation name="otherop">
+      <input message="serviceNS:otheropHttpGetIn"/>
+      <output message="serviceNS:otheropHttpGetOut"/>
+      <fault message="serviceNS:InvalidTickerFaultMessage"/>
+    </operation>
+  </portType>
+
+  <!-- SOAP binding -->
+  <binding name="ReferenceSoapBinding" type="serviceNS:PortTypeSoap">
+    <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="myop">
+      <soap:operation soapAction="" style="rpc"/>
+      <input>
+        <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace=""/>
+      </input>
+      <output>
+        <soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace=""/>
+      </output>
+      <fault>
+        <soap:fault name="opFault" use="encoded"/>
+      </fault>
+    </operation>
+  </binding>
+
+  <!-- Non-soap binding, no code should be emitted for it -->
+  <binding name="ReferenceHttpGet" type="serviceNS:PortTypeNotSoap">
+    <http:binding verb="GET" />
+    <operation name="myop">
+      <http:operation location="/GetReference" />
+      <input>
+        <http:urlEncoded />
+      </input>
+      <output>
+        <mime:mimeXml part="Body" />
+      </output>
+    </operation>
+   </binding>
+
+
+  <service name="ReferenceService">
+    <!-- SOAP port -->
+    <port name="ReferenceService" binding="serviceNS:ReferenceSoapBinding">
+      <soap:address location="http://localhost:8080/axis/services/ReferenceService"/>
+    </port>
+
+    <!-- non-Soap port, no code should be emitted for it -->
+    <port name="ReferenceHttpGet" binding="serviceNS:ReferenceHttpGet">
+      <http:address location="http://test.com/foo/bar" />
+    </port>
+
+  </service>
+</definitions>

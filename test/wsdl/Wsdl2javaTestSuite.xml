@@ -310,6 +310,18 @@
                noimports="no">
     </wsdl2java>
     -->
+
+    <!-- Verify files generated based on what is referenced in WSDL -->
+    <wsdl2java url="test/filegen/FileGen.wsdl"
+               output="build/work"
+               deployscope="none"
+               skeleton="no"
+               messagecontext="no"
+               noimports="no"
+               verbose="no"
+               testcase="no">
+        <mapping namespace="http://test.com/reference" package="test.filegen"/>
+    </wsdl2java>
     
   </target>
 </project>
