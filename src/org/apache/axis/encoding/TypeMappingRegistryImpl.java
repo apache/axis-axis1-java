@@ -136,7 +136,12 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
      */ 
     public TypeMappingRegistryImpl(TypeMapping tm) {
         mapTM = new HashMap();
-        defaultDelTM = new TypeMappingDelegate(tm);
+        // TODO: HACK ALERT!!!! need this to get test/wsdl/schema2 working  
+        if(tm instanceof DefaultJAXRPC11TypeMappingImpl){
+            defaultDelTM = tm;
+        } else {
+            defaultDelTM = new TypeMappingDelegate(tm);
+        }
         register(Constants.URI_SOAP11_ENC, new DefaultSOAPEncodingTypeMappingImpl());
     }
 
