@@ -55,33 +55,26 @@
 package javax.xml.rpc.soap;
 
 import javax.xml.rpc.namespace.QName;
-import javax.xml.soap.Detail;
 
 /**
- * SOAPFault exception class is used for the mapping of the
- * SOAP faults. If the use attribute in the soap:fault is
- * literal, the soap:fault maps to the SOAPFault exception.
- * This class extends the exception class java.lang.Exception
- * and is declared as a checked exception in the service
- * definition interface.
+ *  The class javax.xml.rpc.soap.SOAPHeaderFault represents the
+ *  mapping of SOAP Header fault as specified in soap:header element
+ *  in the SOAP binding.
  */
-public class SOAPFault extends Exception {
+public class SOAPHeaderFault extends RuntimeException {
 
     /**
-     *  Constructor for SOAPFault
-     *  <p>
+     *  Constructor for SOAPHeaderFault
      *  @param  faultcode    Qualified name of the faultcode
      *  @param  faultstring  The faultstring element of the SOAP fault
      *  @param  faultactor   faultactor element of the SOAP fault
-     *  @param  detail       detail element of the SOAP fault
      */
-    public SOAPFault(QName faultcode, String faultstring, String faultactor,
-                     Detail detail) {
+    public SOAPHeaderFault(QName faultcode, String faultstring,
+                           String faultactor) {
         super(faultstring);
         this.faultcode = faultcode;
         this.faultstring = faultstring;
         this.faultactor = faultactor;
-        this.detail = detail;
     }
 
     /**
@@ -133,14 +126,6 @@ public class SOAPFault extends Exception {
         return faultactor;
     }
 
-    /**
-     *  Gets the detail element.
-     *  @return  detail element of the SOAP fault
-     */
-    public Detail getDetail() {
-        return detail;
-    }
-
     /** Qualified name of the faultcode. */
     private QName faultcode;
 
@@ -149,7 +134,4 @@ public class SOAPFault extends Exception {
 
     /** faultactor element of the SOAP fault */
     private String faultactor;
-
-    /** detail element of the SOAP fault */
-    private Detail detail;
 }
