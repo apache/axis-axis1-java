@@ -166,7 +166,9 @@ public class DOM2Writer
                 String elPrefix = node.getPrefix();
                 String elNamespaceURI = node.getNamespaceURI();
 
-                if (elPrefix != null && elNamespaceURI != null)
+                if (elPrefix != null &&
+                        elNamespaceURI != null &&
+                        elPrefix.length() > 0)
                 {
                     boolean prefixIsDeclared = false;
 
