@@ -38,8 +38,6 @@
   </javac>
 </target>
 
-<target name="run" >
-  <antcall target="execute-Component" />
-</target>
+<target name="run" />
 
 </project>
