@@ -63,6 +63,7 @@ import javax.servlet.http.* ;
 import org.apache.axis.* ;
 import org.apache.axis.server.* ;
 import org.apache.axis.utils.* ;
+import org.apache.axis.encoding.Base64 ;
 
 /**
  *
@@ -122,17 +123,40 @@ public class AxisServlet extends HttpServlet {
     /*   for it.                                                        */
     /********************************************************************/
     String  tmp ;
-    tmp = (String) req.getHeader( "SOAPAction" );
+    tmp = (String) req.getHeader( Constants.HEADER_SOAP_ACTION );
     if ( tmp != null && "".equals(tmp) )
       tmp = req.getContextPath(); // Is this right?
     if ( tmp != null ) msgContext.setProperty( Constants.MC_TARGET, tmp );
+
+    tmp = (String) req.getHeader( Constants.HEADER_AUTHORIZATION );
+    if ( tmp != null ) tmp = tmp.trim();
+    if ( tmp != null && tmp.startsWith("Basic ") ) {
+      String user=null ;
+      int  i ;
+
+      tmp = new String( Base64.decode( tmp.substring(6) ) );
+      i = tmp.indexOf( ':' );
+      if ( i == -1 ) user = tmp ;
+      else           user = tmp.substring( 0, i);
+      msgContext.setProperty( Constants.MC_USERID, user );
+      if ( i != -1 ) 
+        msgContext.setProperty( Constants.MC_PASSWORD, tmp.substring(i+1) );
+    }
 
     // Invoke the Axis engine...
     try {
       engine.invoke( msgContext );
     }
     catch( Exception e ) {
-      res.setStatus( HttpServletResponse.SC_INTERNAL_SERVER_ERROR );
+      if ( e instanceof AxisFault ) {
+        AxisFault  af = (AxisFault) e ;
+        if ( "Server.Unauthorized".equals( af.getFaultCode() ) )
+          res.setStatus( HttpServletResponse.SC_UNAUTHORIZED );
+        else
+          res.setStatus( HttpServletResponse.SC_INTERNAL_SERVER_ERROR );
+      }
+      else 
+        res.setStatus( HttpServletResponse.SC_INTERNAL_SERVER_ERROR );
       // msgContext.setOutgoingMessage( new Message(e.toString(), "String" ) );
       if ( !(e instanceof AxisFault) )
         e = new AxisFault( e );

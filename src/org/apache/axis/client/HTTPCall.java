@@ -77,6 +77,8 @@ import org.apache.axis.utils.* ;
 public class HTTPCall {
   private String  url ;
   private String  action ;
+  private String  userID ;
+  private String  passwd ;
 
   public HTTPCall() {
   }
@@ -96,6 +98,22 @@ public class HTTPCall {
 
   public void setAction( String action ) {
     this.action = action ;
+  }
+
+  public void setUserID( String user ) {
+    userID = user ;
+  }
+
+  public String getUserID() {
+    return( userID );
+  }
+
+  public void setPassword( String pwd ) {
+    passwd = pwd ;
+  }
+
+  public String getPassword() {
+    return( passwd );
   }
 
   public static Object invoke(String url, String act, String m, Object[] args) 
@@ -130,8 +148,8 @@ public class HTTPCall {
       SOAPHeader  header = new SOAPHeader();
       header.setPrefix("d");
       header.setName("Debug");
-      header.setNamespaceURI( "http://xml.apache.org/axis/debug" );
-      header.setActor( "http://schemas.xmlsoap.org/soap/actor/next" );
+      header.setNamespaceURI( Constants.URI_DEBUG );
+      header.setActor( Constants.URI_NEXT_ACTOR );
       Document doc = new DocumentImpl();
       Node node = doc.createTextNode( "" + Debug.getDebugLevel() );
       header.addDataNode( node );
@@ -139,8 +157,13 @@ public class HTTPCall {
       reqEnv.addHeader( header );
     }
 
-    msgContext.setProperty( "HTTP_URL", url );   // horrible name!
-    msgContext.setProperty( "HTTP_ACTION", action );   // horrible name!
+    msgContext.setProperty( Constants.MC_HTTP_URL, url );   // horrible name!
+    msgContext.setProperty( Constants.MC_TARGET, action );   // horrible name!
+    if ( userID != null ) {
+      msgContext.setProperty( Constants.MC_USERID, userID );
+      if ( passwd != null )
+        msgContext.setProperty( Constants.MC_PASSWORD, passwd );
+    }
     try {
       client.init();
       client.invoke( msgContext );

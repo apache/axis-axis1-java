@@ -79,6 +79,8 @@ public class GetQuote {
       /***************************/
       String  host    = "localhost" ;
       String  servlet = "/axis/servlet/AxisServlet" ;
+      String  user    = null ;
+      String  pwd     = null ;
       int     port    = 8080 ;
 
       for ( int i = 0 ; i < args.length ; i++ ) {
@@ -89,6 +91,13 @@ public class GetQuote {
             case 'h': if ( args[i].length() > 2 )
                         host = args[i].substring(2);
                       break ;
+            case 'l': if ( args[i].length() > 2 ) {
+                        URL tmpurl = new URL(args[i].substring(2));
+                        host = tmpurl.getHost();
+                        port = tmpurl.getPort();
+                        servlet = tmpurl.getPath() ;
+                      }
+                      break ;
             case 'p': if ( args[i].length() > 2 )
                         port = Integer.parseInt(args[i].substring(2));
                       break ;
@@ -97,12 +106,11 @@ public class GetQuote {
                       if ( servlet != null && servlet.charAt(0) != '/' )
                         servlet = "/" + servlet ;
                       break ;
-            case 'u': if ( args[i].length() > 2 ) {
-                        URL tmpurl = new URL(args[i].substring(2));
-                        host = tmpurl.getHost();
-                        port = tmpurl.getPort();
-                        servlet = tmpurl.getPath() ;
-                      }
+            case 'u': if ( args[i].length() > 2 )
+                        user = args[i].substring(2);
+                      break ;
+            case 'w': if ( args[i].length() > 2 )
+                        pwd = args[i].substring(2);
                       break ;
             default: System.err.println( "Unknown option '" + 
                                          args[i].charAt(1) + "'" );
@@ -119,6 +127,8 @@ public class GetQuote {
 
       String url = "http://" + host + ":" + port + servlet ;
       HTTPCall call = new HTTPCall( url, "urn:xmltoday-delayed-quotes" );
+      if ( user != null ) call.setUserID( user );
+      if ( pwd  != null ) call.setPassword( pwd );
       String res = (String) call.invoke( "getQuote", new Object[] {symbol} );
 
       System.out.println( symbol + ": " + res );

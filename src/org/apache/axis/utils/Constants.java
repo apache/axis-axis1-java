@@ -72,6 +72,21 @@ public class Constants {
   public static String MC_SVC_HANDLER      = "ServiceHandler" ;    // Handler
   public static String MC_HTTP_STATUS_CODE = "HTTP_Status_Code" ;  // Integer
   public static String MC_HTTP_STATUS_LINE = "HTTP_Status_Line" ;  // String
+  public static String MC_HTTP_URL         = "HTTP_URL" ;
+  public static String MC_USERID           = "UserID" ;
+  public static String MC_PASSWORD         = "Password" ;
+
+  // HTTP Stuff
+  //////////////////////////////////////////////////////////////////////////
+  public static final String HEADER_POST = "POST";
+  public static final String HEADER_HOST = "Host";
+  public static final String HEADER_CONTENT_TYPE = "Content-Type";
+  public static final String HEADER_CONTENT_TYPE_JMS = "ContentType";
+  public static final String HEADER_CONTENT_LENGTH = "Content-Length";
+  public static final String HEADER_CONTENT_LOCATION = "Content-Location";
+  public static final String HEADER_CONTENT_ID = "Content-ID";
+  public static final String HEADER_SOAP_ACTION = "SOAPAction";
+  public static final String HEADER_AUTHORIZATION = "Authorization";
 
   // Envelope Stuff
   //////////////////////////////////////////////////////////////////////////
@@ -107,4 +122,8 @@ public class Constants {
   public static String ATTR_ROOT            = "root" ;
   public static String ATTR_ID              = "id" ;
   public static String ATTR_HREF            = "href" ;
+
+  // Misc Strings
+  //////////////////////////////////////////////////////////////////////////
+  public static String URI_DEBUG = "http:///xml.apache.org/axis/debug" ;
 }
