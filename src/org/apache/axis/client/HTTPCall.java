@@ -64,6 +64,7 @@ import org.apache.axis.* ;
 import org.apache.axis.message.* ;
 import org.apache.axis.handlers.* ;
 import org.apache.axis.utils.* ;
+import org.apache.axis.* ;
 
 /**
  *
@@ -157,8 +158,8 @@ public class HTTPCall {
       reqEnv.addHeader( header );
     }
 
-    msgContext.setProperty( Constants.MC_HTTP_URL, url );   // horrible name!
-    msgContext.setProperty( Constants.MC_TARGET, action );   // horrible name!
+    msgContext.setProperty( Constants.MC_TRANS_URL, url );
+    msgContext.setProperty( Constants.MC_HTTP_SOAPACTION, action );
     if ( userID != null ) {
       msgContext.setProperty( Constants.MC_USERID, userID );
       if ( passwd != null )

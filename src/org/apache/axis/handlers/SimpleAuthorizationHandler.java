@@ -87,7 +87,7 @@ public class SimpleAuthorizationHandler implements Handler {
     Debug.Print( 1, "Enter: SimpleAuthenticationHandler::invoke" );
     try {
       String  userID = (String) msgContext.getProperty( Constants.MC_USERID );
-      String  action = (String) msgContext.getProperty( Constants.MC_TARGET );
+      String  action = (String) msgContext.getProperty( Constants.MC_HTTP_SOAPACTION );
 
       Debug.Print( 1, "User: " + userID );
       Debug.Print( 1, "Action: " + action );

@@ -63,6 +63,7 @@ import org.w3c.dom.* ;
 import org.apache.axis.* ;
 import org.apache.axis.message.* ;
 import org.apache.axis.handlers.* ;
+import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
 
 /**
@@ -126,8 +127,8 @@ public class HTTPMessage {
       // Debug.Print( 1, (String) reqMsg.getAs("String") );
     // }
 
-    msgContext.setProperty( Constants.MC_HTTP_URL, url );   // horrible name!
-    msgContext.setProperty( Constants.MC_TARGET, action );   // horrible name!
+    msgContext.setProperty( Constants.MC_TRANS_URL, url );
+    msgContext.setProperty( Constants.MC_HTTP_SOAPACTION, action );
     try {
       client.init();
       client.invoke( msgContext );

@@ -55,27 +55,9 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.utils ;
+package org.apache.axis.transport.http;
 
-public class Constants {
-  // Some common Constants that should be used in local handler options
-  // (Not all implementations will have these concepts - for example
-  //  not all Engines will have notion of registries but defining these
-  //  here should allow people to ask if they exist)
-  //////////////////////////////////////////////////////////////////////////
-  public static String HANDLER_REGISTRY = "HandlerRegistry" ;
-  public static String SERVICE_REGISTRY = "ServiceRegistry" ;
-
-  // MessageContext Property Names
-  //////////////////////////////////////////////////////////////////////////
-  public static String MC_TARGET           = "TargetAction" ;      // String
-  public static String MC_SVC_HANDLER      = "ServiceHandler" ;    // Handler
-  public static String MC_HTTP_STATUS_CODE = "HTTP_Status_Code" ;  // Integer
-  public static String MC_HTTP_STATUS_LINE = "HTTP_Status_Line" ;  // String
-  public static String MC_HTTP_URL         = "HTTP_URL" ;
-  public static String MC_USERID           = "UserID" ;
-  public static String MC_PASSWORD         = "Password" ;
-
+public class HTTPConstants {
   // HTTP Stuff
   //////////////////////////////////////////////////////////////////////////
   public static final String HEADER_POST = "POST";
@@ -87,43 +69,5 @@ public class Constants {
   public static final String HEADER_CONTENT_ID = "Content-ID";
   public static final String HEADER_SOAP_ACTION = "SOAPAction";
   public static final String HEADER_AUTHORIZATION = "Authorization";
-
-  // Envelope Stuff
-  //////////////////////////////////////////////////////////////////////////
-  public static String NSPREFIX_SOAP_ENV   = "SOAP-ENV" ;
-  public static String NSPREFIX_SOAP_ENC   = "SOAP-ENC" ;
-  public static String NSPREFIX_SCHEMA_XSI = "xsi" ;
-  public static String NSPREFIX_SCHEMA_XSD = "xsd" ;
-
-  public static String URI_SOAP_ENV =
-                               "http://schemas.xmlsoap.org/soap/envelope/" ;
-  public static String URI_SOAP_ENC =
-                               "http://schemas.xmlsoap.org/soap/encoding/" ;
-  public static String URI_SCHEMA_XSI =
-                               "http://www.w3.org/1999/XMLSchema/instance/" ;
-  public static String URI_SCHEMA_XSD =
-                               "http://www.w3.org/1999/XMLSchema/" ;
-  public static String URI_NEXT_ACTOR = 
-                               "http://schemas.xmlsoap.org/soap/actor/next" ;
-
-  public static String ELEM_ENVELOPE = "Envelope" ;
-  public static String ELEM_HEADER   = "Header" ;
-  public static String ELEM_BODY     = "Body" ;
-  public static String ELEM_FAULT    = "Fault" ;
-
-  public static String ELEM_FAULT_CODE   = "faultcode" ;
-  public static String ELEM_FAULT_STRING = "faultstring" ;
-  public static String ELEM_FAULT_DETAIL = "detail" ;
-  public static String ELEM_FAULT_ACTOR  = "faultactor" ;
-
-  public static String ATTR_MUST_UNDERSTAND = "mustUnderstand" ;
-  public static String ATTR_ENCODING_STYLE  = "encodingStyle" ;
-  public static String ATTR_ACTOR           = "actor" ;
-  public static String ATTR_ROOT            = "root" ;
-  public static String ATTR_ID              = "id" ;
-  public static String ATTR_HREF            = "href" ;
-
-  // Misc Strings
-  //////////////////////////////////////////////////////////////////////////
-  public static String URI_DEBUG = "http:///xml.apache.org/axis/debug" ;
 }
+

@@ -64,6 +64,7 @@ import org.w3c.dom.* ;
 import org.xml.sax.InputSource ;
 import org.apache.xerces.parsers.DOMParser ;
 import org.apache.axis.* ;
+import org.apache.axis.transport.http.HTTPConstants ;
 import org.apache.axis.utils.* ;
 import org.apache.axis.message.* ;
 import org.apache.axis.encoding.Base64 ;
@@ -93,7 +94,7 @@ public class HTTPDispatchHandler implements Handler {
     try {
       String   host ;
       int      port = 80 ;
-      String   action = (String) msgContext.getProperty( Constants.MC_TARGET );
+      String   action = (String) msgContext.getProperty( Constants.MC_HTTP_SOAPACTION );
       URL      tmpURL        = new URL( targetURL );
       byte[]   buf           = new byte[4097];
       int      rc            = 0 ;
@@ -116,18 +117,18 @@ public class HTTPDispatchHandler implements Handler {
       passwd = (String) msgContext.getProperty( Constants.MC_PASSWORD );
 
       if ( userID != null )
-        otherHeaders = Constants.HEADER_AUTHORIZATION + ": Basic " + 
+        otherHeaders = HTTPConstants.HEADER_AUTHORIZATION + ": Basic " + 
                        Base64.encode( (userID + ":" + 
                        ((passwd == null) ? "" : passwd) ).getBytes() ) + 
                        "\n" ;
 
-      String  header = Constants.HEADER_POST + " " + 
+      String  header = HTTPConstants.HEADER_POST + " " + 
                          tmpURL.getPath() + " HTTP/1.0\n" +
-                       Constants.HEADER_CONTENT_LENGTH + ": " + 
+                       HTTPConstants.HEADER_CONTENT_LENGTH + ": " + 
                                           + reqEnv.length() + "\n" +
-                       Constants.HEADER_CONTENT_TYPE + ": text.xml\n" +
+                       HTTPConstants.HEADER_CONTENT_TYPE + ": text.xml\n" +
                        (otherHeaders == null ? "" : otherHeaders) + 
-                       Constants.HEADER_SOAP_ACTION + ":" + action + "\n\n" ;
+                       HTTPConstants.HEADER_SOAP_ACTION + ":" + action + "\n\n" ;
 
       out.write( header.getBytes() );
       out.write( reqEnv.getBytes() );
@@ -171,7 +172,7 @@ public class HTTPDispatchHandler implements Handler {
             rc = Integer.parseInt( name.substring(start, end) );
             msgContext.setProperty( Constants.MC_HTTP_STATUS_CODE, 
                                     new Integer(rc) );
-            msgContext.setProperty( Constants.MC_HTTP_STATUS_LINE, 
+            msgContext.setProperty( Constants.MC_HTTP_STATUS_MESSAGE, 
                                     name.substring(end+1));
           }
           else 

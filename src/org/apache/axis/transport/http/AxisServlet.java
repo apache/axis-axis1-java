@@ -55,7 +55,7 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.server.transports ;
+package org.apache.axis.transport.http ;
 
 import java.io.*;
 import javax.servlet.* ;
@@ -123,12 +123,12 @@ public class AxisServlet extends HttpServlet {
     /*   for it.                                                        */
     /********************************************************************/
     String  tmp ;
-    tmp = (String) req.getHeader( Constants.HEADER_SOAP_ACTION );
+    tmp = (String) req.getHeader( HTTPConstants.HEADER_SOAP_ACTION );
     if ( tmp != null && "".equals(tmp) )
       tmp = req.getContextPath(); // Is this right?
-    if ( tmp != null ) msgContext.setProperty( Constants.MC_TARGET, tmp );
+    if ( tmp != null ) msgContext.setProperty( Constants.MC_HTTP_SOAPACTION, tmp );
 
-    tmp = (String) req.getHeader( Constants.HEADER_AUTHORIZATION );
+    tmp = (String) req.getHeader( HTTPConstants.HEADER_AUTHORIZATION );
     if ( tmp != null ) tmp = tmp.trim();
     if ( tmp != null && tmp.startsWith("Basic ") ) {
       String user=null ;
