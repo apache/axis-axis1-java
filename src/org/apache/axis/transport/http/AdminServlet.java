@@ -55,11 +55,12 @@
 
 package org.apache.axis.transport.http ;
 
-import org.apache.axis.configuration.FileProvider;
+import org.apache.axis.EngineConfiguration;
+import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.Constants;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -77,16 +78,15 @@ import java.io.IOException;
  */
 public class AdminServlet extends HttpServlet {
     public AxisServer getEngine() {
-        if (getServletContext().getAttribute("AxisEngine") == null) {
-            // Set the base path for the AxisServer to our WEB-INF directory
-            // (so the config files can't get snooped by a browser)
-            FileProvider provider =
-                    new FileProvider(getServletContext().getRealPath("/WEB-INF"),
-                                     Constants.SERVER_CONFIG_FILE);
+        ServletContext context = getServletContext();
+        if (context.getAttribute("AxisEngine") == null) {
+            EngineConfiguration config =
+                (new DefaultEngineConfigurationFactory()).
+                getServerEngineConfig(context);
 
-            getServletContext().setAttribute("AxisEngine", new AxisServer(provider));
+            context.setAttribute("AxisEngine", new AxisServer(config));
         }
-        return (AxisServer)getServletContext().getAttribute("AxisEngine");
+        return (AxisServer)context.getAttribute("AxisEngine");
     }
 
     public void doGet(HttpServletRequest req, HttpServletResponse res)

@@ -420,7 +420,4 @@ public class Constants {
     public static final String MC_CONFIGPATH = "configPath";
     // MessageContext param for the IP of the calling client
     public static final String MC_REMOTE_ADDR = "remoteaddr";
-
-    public static final String SERVER_CONFIG_FILE = "server-config.wsdd";
-    public static final String CLIENT_CONFIG_FILE = "client-config.wsdd";
 }

@@ -56,6 +56,7 @@
 package org.apache.axis;
 
 import javax.xml.rpc.namespace.QName;
+import javax.servlet.ServletContext;
 
 /**
  * EngineConfigurationFactory is an interface used to construct
@@ -83,4 +84,12 @@ public interface EngineConfigurationFactory {
      * @return a server EngineConfiguration
      */
     public EngineConfiguration getServerEngineConfig();
+
+    /**
+     * Get a default server engine configuration in a servlet environment.
+     *
+     * @param ctx a ServletContext
+     * @return a server EngineConfiguration
+     */
+    public EngineConfiguration getServerEngineConfig(ServletContext ctx);
 }

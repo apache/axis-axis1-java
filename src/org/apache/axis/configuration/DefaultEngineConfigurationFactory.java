@@ -59,6 +59,11 @@ import org.apache.axis.EngineConfigurationFactory;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.Constants;
 
+import javax.servlet.ServletContext;
+
+import java.io.File;
+import java.io.InputStream;
+
 /**
  * This is a default implementation of EngineConfigurationFactory.
  * It is user-overrideable by a system property without affecting
@@ -73,6 +78,8 @@ import org.apache.axis.Constants;
  * @author Glyn Normington (glyn@apache.org)
  */
 public class DefaultEngineConfigurationFactory implements EngineConfigurationFactory {
+    private static final String CLIENT_CONFIG_FILE = "client-config.wsdd";
+    private static final String SERVER_CONFIG_FILE = "server-config.wsdd";
 
     private EngineConfigurationFactory userFactory = null;
 
@@ -99,12 +106,12 @@ public class DefaultEngineConfigurationFactory implements EngineConfigurationFac
 
         clientConfigFile = System.getProperty("axis.ClientConfigFile");
         if (clientConfigFile == null) {
-            clientConfigFile = Constants.CLIENT_CONFIG_FILE;
+            clientConfigFile = CLIENT_CONFIG_FILE;
         }
 
         serverConfigFile = System.getProperty("axis.ServerConfigFile");
         if (serverConfigFile == null) {
-            serverConfigFile = Constants.SERVER_CONFIG_FILE;
+            serverConfigFile = SERVER_CONFIG_FILE;
         }
         
     }
@@ -132,6 +139,38 @@ public class DefaultEngineConfigurationFactory implements EngineConfigurationFac
             return new FileProvider(serverConfigFile);
         } else {
             return userFactory.getServerEngineConfig();
+        }
+    }
+
+    /**
+     * Get a default server engine configuration in a servlet environment.
+     *
+     * @param ctx a ServletContext
+     * @return a server EngineConfiguration
+     */
+    public EngineConfiguration getServerEngineConfig(ServletContext ctx) {
+        if (userFactory == null) {
+            /*
+             * Use the WEB-INF directory (so the config files can't get
+             * snooped by a browser)
+             */
+            String webInfPath = ctx.getRealPath("/WEB-INF");
+ 
+            FileProvider config = null ;
+
+            if (!(new File(webInfPath,
+                           SERVER_CONFIG_FILE)).exists()){
+                InputStream is = null ;
+                is = ctx.getResourceAsStream("/WEB-INF/"+
+                                                 SERVER_CONFIG_FILE);
+                if (is != null) config = new FileProvider(is);
+            }
+            if ( config == null )
+                config = new FileProvider(webInfPath,
+                                          SERVER_CONFIG_FILE);
+            return config;
+        } else {
+            return userFactory.getServerEngineConfig(ctx);
         }
     }
 }
