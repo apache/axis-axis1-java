@@ -108,7 +108,6 @@ public class HTTPSender extends BasicHandler {
      */
     static class BooleanHolder {
         public boolean value;
-
         public BooleanHolder(boolean value) {
             this.value = value;
         }
@@ -130,18 +129,18 @@ public class HTTPSender extends BasicHandler {
         try {
             BooleanHolder useFullURL = new BooleanHolder(false);
             StringBuffer otherHeaders = new StringBuffer();
-            String targetURL = msgContext.getStrProp(MessageContext.TRANS_URL);
-            URL tmpURL = new URL(targetURL);
-            String host = tmpURL.getHost();
+            URL targetURL = new URL(msgContext.getStrProp(MessageContext.TRANS_URL));
+            String host = targetURL.getHost();
+            int port = targetURL.getPort();
             Socket sock = null;
 
             try {
 
                 // create socket based on the url protocol type
-                if (tmpURL.getProtocol().equalsIgnoreCase("https")) {
-                    sock = getSecureSocket(host, tmpURL);
+                if (targetURL.getProtocol().equalsIgnoreCase("https")) {
+                    sock = getSecureSocket(host, port);
                 } else {
-                    sock = getSocket(host, tmpURL, otherHeaders, useFullURL);
+                    sock = getSocket(host, port, otherHeaders, useFullURL);
                 }
 
                 // optionally set a timeout for the request
@@ -150,8 +149,8 @@ public class HTTPSender extends BasicHandler {
                 }
 
                 // Send the SOAP request to the server
-                writeToSocket(sock, msgContext, tmpURL, otherHeaders, host,
-                        useFullURL);
+                writeToSocket(sock, msgContext, targetURL,
+                              otherHeaders, host, port, useFullURL);
             } finally {
                 // FIXME (DIMS): IS THIS REALLY NEEDED? SalesRankNPrice fails
                 // for a direct (non-proxy) connection if this is enabled.
@@ -174,17 +173,16 @@ public class HTTPSender extends BasicHandler {
      * getSecureSocket is used when we need a secure SSL connection to the SOAP Server
      *
      * @param host host name
-     * @param tmpURL url that we need to connect to
+     * @param port port that we need to connect to
      *
      * @return a secure socket
      *
      * @throws Exception
      */
-    private Socket getSecureSocket(String host, URL tmpURL) throws Exception {
-        int port = 0;
+    private Socket getSecureSocket(String host, int port) throws Exception {
         Socket sock = null;
 
-        if ((port = tmpURL.getPort()) == -1) {
+        if (port == -1) {
             port = 443;
         }
 
@@ -237,9 +235,7 @@ public class HTTPSender extends BasicHandler {
             if ((tunnelHost == null) || tunnelHost.equals("")) {
                 // direct SSL connection
                 sslSocket = createSocketMethod.invoke(factory,
-                        new Object[]{host,
-                                     new Integer(
-                                             port)});
+                        new Object[]{host,new Integer(port)});
             } else {
                 // SSL tunnelling through proxy server
                 Method createSocketMethod2 =
@@ -384,7 +380,7 @@ public class HTTPSender extends BasicHandler {
      * Creates a non-ssl socket connection to the SOAP server
      *
      * @param host host name
-     * @param tmpURL url to connect to
+     * @param port port to connect to
      * @param otherHeaders buffer for storing additional headers that need to be sent
      * @param useFullURL flag to indicate if the complete URL has to be sent
      *
@@ -393,10 +389,8 @@ public class HTTPSender extends BasicHandler {
      * @throws IOException
      */
     private Socket getSocket(
-            String host, URL tmpURL, StringBuffer otherHeaders, BooleanHolder useFullURL)
+            String host, int port, StringBuffer otherHeaders, BooleanHolder useFullURL)
             throws IOException {
-
-        int port = 0;
         Socket sock = null;
         String proxyHost = System.getProperty("http.proxyHost");
         String proxyPort = System.getProperty("http.proxyPort");
@@ -417,7 +411,7 @@ public class HTTPSender extends BasicHandler {
                     .append(Base64.encode(tmpBuf.toString().getBytes()))
                     .append("\r\n");
         }
-        if ((port = tmpURL.getPort()) == -1) {
+        if (port == -1) {
             port = 80;
         }
         if ((proxyHost == null) || proxyHost.equals("") || (proxyPort == null)
@@ -445,12 +439,15 @@ public class HTTPSender extends BasicHandler {
      * @param tmpURL url to connect to
      * @param otherHeaders other headers if any
      * @param host host name
+     * @param port port
      * @param useFullURL flag to indicate if the whole url needs to be sent
      *
      * @throws IOException
      */
     private void writeToSocket(
-            Socket sock, MessageContext msgContext, URL tmpURL, StringBuffer otherHeaders, String host, BooleanHolder useFullURL)
+            Socket sock, MessageContext msgContext, URL tmpURL,
+            StringBuffer otherHeaders, String host, int port,
+            BooleanHolder useFullURL)
             throws IOException {
 
         OutputStream out = new BufferedOutputStream(sock.getOutputStream(),
@@ -533,6 +530,7 @@ public class HTTPSender extends BasicHandler {
                 .append(HTTPConstants.HEADER_HOST)
                 .append(": ")
                 .append(host)
+                .append((port==-1)?(""):(":"+port))
                 .append("\r\n")
                 .append(HTTPConstants.HEADER_CONTENT_TYPE)
                 .append(": ")
