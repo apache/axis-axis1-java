@@ -14,8 +14,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.apache.axis.components.i18n.Messages;
-import org.apache.axis.components.i18n.DefaultMessageBundle;
+import org.apache.axis.utils.Messages;
 
 
 /**
@@ -39,7 +38,7 @@ public class TestMessages extends TestCase {
         String arg0 = "arg0";
         String arg1 = "arg1";
         String[] args = {arg0, arg1, "arg2"};
-        Enumeration keys = DefaultMessageBundle.getMessageResourceBundle().getKeys();
+        Enumeration keys = Messages.getMessageBundle().getKeys();
         while (keys.hasMoreElements()) {
             String key = (String) keys.nextElement();
             try {

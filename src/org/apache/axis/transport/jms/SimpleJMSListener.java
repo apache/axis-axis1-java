@@ -72,11 +72,11 @@ import org.apache.axis.AxisFault;
 
 import org.apache.axis.server.AxisServer;
 
+import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.Options;
 
 import org.apache.commons.logging.Log;
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.components.i18n.Messages;
 
 /**
  * SimpleJMSListener implements the javax.jms.MessageListener interface. Its

@@ -58,8 +58,8 @@ import java.io.IOException;
 
 import javax.wsdl.Binding;
 
-import org.apache.axis.components.i18n.Messages;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.wsdl.gen.Generator;
 

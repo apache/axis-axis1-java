@@ -66,13 +66,13 @@ import org.apache.axis.deployment.wsdd.WSDDGlobalConfiguration;
 import org.apache.axis.deployment.wsdd.WSDDService;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.utils.Admin;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.InternalException;
 
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.components.i18n.Messages;
 import org.apache.commons.logging.Log;
 
 import org.w3c.dom.Document;

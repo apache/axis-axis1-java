@@ -61,9 +61,9 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Part;
 import org.apache.axis.SOAPPart;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.components.i18n.Messages;
 import org.apache.commons.logging.Log;
 
 import javax.activation.DataHandler;

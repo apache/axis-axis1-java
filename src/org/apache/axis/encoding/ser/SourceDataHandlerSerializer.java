@@ -58,11 +58,11 @@ package org.apache.axis.encoding.ser;
 import org.apache.axis.attachments.SourceDataSource;
 
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.components.i18n.Messages;
 
 import org.apache.axis.encoding.SerializationContext;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.commons.logging.Log;
 

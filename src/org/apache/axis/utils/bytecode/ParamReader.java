@@ -54,7 +54,7 @@
  */
 package org.apache.axis.utils.bytecode;
 
-import org.apache.axis.components.i18n.Messages;
+import org.apache.axis.utils.Messages;
 
 import java.io.IOException;
 import java.lang.reflect.Method;

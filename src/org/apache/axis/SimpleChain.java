@@ -61,9 +61,9 @@ import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.strategies.InvocationStrategy;
 import org.apache.axis.strategies.WSDLGenStrategy;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.components.i18n.Messages;
 import org.apache.commons.logging.Log;
 
 import org.w3c.dom.Document;

@@ -62,12 +62,12 @@ import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.session.Session;
 import org.apache.axis.session.SimpleSession;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.cache.ClassCache;
 import org.apache.axis.client.Service;
 import org.apache.axis.client.Call;
 
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.components.i18n.Messages;
 import org.apache.commons.logging.Log;
 
 import javax.xml.namespace.QName;

@@ -62,6 +62,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.commons.discovery.tools.DefaultClassHolder;
 import org.apache.commons.discovery.tools.DiscoverClass;
 import org.apache.commons.discovery.tools.ManagedProperties;
@@ -69,7 +70,6 @@ import org.apache.commons.discovery.tools.PropertiesHolder;
 import org.apache.commons.discovery.tools.SPInterface;
 
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.components.i18n.Messages;
 import org.apache.commons.logging.Log;
 
 

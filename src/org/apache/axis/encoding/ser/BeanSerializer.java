@@ -64,10 +64,10 @@ import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.utils.BeanPropertyDescriptor;
 import org.apache.axis.utils.BeanUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.fromJava.Types;
 
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.components.i18n.Messages;
 import org.apache.commons.logging.Log;
 
 import org.w3c.dom.Element;

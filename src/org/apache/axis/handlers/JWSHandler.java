@@ -63,6 +63,7 @@ import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.enum.Scope;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JWSClassLoader;
@@ -70,7 +71,6 @@ import org.apache.axis.providers.java.RPCProvider;
 import org.apache.axis.handlers.soap.SOAPService;
 
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.components.i18n.Messages;
 import org.apache.axis.components.compiler.Compiler;
 import org.apache.axis.components.compiler.CompilerFactory;
 import org.apache.axis.components.compiler.CompilerError;

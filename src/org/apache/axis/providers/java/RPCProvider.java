@@ -70,9 +70,9 @@ import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.components.i18n.Messages;
 import org.apache.commons.logging.Log;
 
 import javax.activation.DataHandler;

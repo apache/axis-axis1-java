@@ -64,10 +64,10 @@ import javax.wsdl.Definition;
 import javax.wsdl.Port;
 import javax.wsdl.Service;
 
-import org.apache.axis.components.i18n.Messages;
 import org.apache.axis.deployment.wsdd.WSDDConstants;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 

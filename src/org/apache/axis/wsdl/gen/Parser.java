@@ -63,8 +63,8 @@ import javax.wsdl.Binding;
 import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
 
-import org.apache.axis.components.i18n.Messages;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.PortTypeEntry;

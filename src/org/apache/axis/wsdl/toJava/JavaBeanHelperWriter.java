@@ -61,8 +61,8 @@ import java.util.Vector;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axis.components.i18n.Messages;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import org.apache.axis.wsdl.symbolTable.ElementDecl;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;

@@ -62,11 +62,11 @@ import javax.activation.DataHandler;
 
 import org.apache.axis.Part;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import javax.mail.internet.MimeUtility;
 
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.components.i18n.Messages;
 import org.apache.commons.logging.Log;
 
 

@@ -66,7 +66,7 @@ import org.apache.axis.ConfigurationException;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.EngineConfigurationFactory;
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.components.i18n.Messages;
+import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 
 /**

@@ -68,8 +68,8 @@ import javax.xml.rpc.Service;
 
 import org.apache.axis.AxisFault;
 
-import org.apache.axis.components.i18n.Messages;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 /**
 * This class is the base for all generated stubs.

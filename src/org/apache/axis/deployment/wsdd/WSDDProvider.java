@@ -56,12 +56,12 @@ package org.apache.axis.deployment.wsdd;
 
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.Handler;
-import org.apache.axis.components.i18n.Messages;
 import org.apache.axis.deployment.wsdd.providers.WSDDHandlerProvider;
 import org.apache.axis.deployment.wsdd.providers.WSDDJavaEJBProvider;
 import org.apache.axis.deployment.wsdd.providers.WSDDJavaMsgProvider;
 import org.apache.axis.deployment.wsdd.providers.WSDDJavaRPCProvider;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 
 import javax.xml.namespace.QName;
 import java.util.Hashtable;

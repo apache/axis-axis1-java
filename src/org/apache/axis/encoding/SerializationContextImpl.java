@@ -70,11 +70,11 @@ import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.attachments.Attachments;
 import org.apache.axis.client.Call;
 import org.apache.axis.utils.Mapping;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.NSStack;
 import org.apache.axis.utils.XMLUtils;
 
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.components.i18n.Messages;
 import org.apache.commons.logging.Log;
 
 import org.w3c.dom.Attr;

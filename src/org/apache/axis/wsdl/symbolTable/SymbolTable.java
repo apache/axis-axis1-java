@@ -104,8 +104,8 @@ import javax.xml.rpc.holders.IntHolder;
 
 import org.apache.axis.Constants;
 
-import org.apache.axis.components.i18n.Messages;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.utils.URLHashSet;
 

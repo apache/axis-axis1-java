@@ -60,7 +60,6 @@ import java.beans.PropertyDescriptor;
 import java.beans.IndexedPropertyDescriptor;
 
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.components.i18n.*;
 import org.apache.commons.logging.Log;
 
 
