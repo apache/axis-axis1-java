@@ -318,8 +318,14 @@ public abstract class JavaProvider extends BasicProvider
             if (axisConfig != null) {
                 allowedMethods = axisConfig.getAllowedMethods();
             }
-
+            
             Emitter emitter = new Emitter();
+            
+            // service alias may be provided if exact naming is required,
+            // otherwise Axis will name it according to the implementing class name            
+            String alias = (String)service.getOption("alias");
+            if(alias != null) emitter.setServiceElementName(alias);
+            
             emitter.setMode(service.getStyle());
             emitter.setClsSmart(cls,url);
             emitter.setAllowedMethods(allowedMethods);
