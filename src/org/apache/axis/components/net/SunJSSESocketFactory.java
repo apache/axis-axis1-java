@@ -257,14 +257,9 @@ public class SunJSSESocketFactory extends DefaultSocketFactory implements Secure
             Security.addProvider(new sun.security.provider.Sun());
             Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
 
-            if(attributes == null) {
-                //No configuration specified. Get the default.
-                sslFactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
-            } else {
-                //Configuration specified in wsdd.
-                SSLContext context = getContext();
-                sslFactory = context.getSocketFactory();
-            }
+            //Configuration specified in wsdd.
+            SSLContext context = getContext();
+            sslFactory = context.getSocketFactory();
         } catch (Exception e) {
             if (e instanceof IOException) {
                 throw (IOException) e;
@@ -280,6 +275,15 @@ public class SunJSSESocketFactory extends DefaultSocketFactory implements Secure
      * @throws Exception
      */
     protected SSLContext getContext() throws Exception {
+        
+        if(attributes == null) {
+            SSLContext context =
+                    com.sun.net.ssl.SSLContext.getInstance("SSL");    // SSL
+            // init context with the key managers
+            context.init(null, null, null);
+            return context;
+        }
+        
         // Please don't change the name of the attribute - other
         // software may depend on it ( j2ee for sure )
         String keystoreFile = (String) attributes.get("keystore");
