@@ -170,7 +170,7 @@ Copyright:
           toDir="${build.dest}/org/apache/axis/i18n"/>
 
     <tstamp>
-      <format property="build.time" pattern="MMM dd, yyyy (hh:mm:ss z)"/>
+      <format property="build.time" pattern="MMM dd, yyyy (hh:mm:ss z)" locale="en"/>
     </tstamp>
     <replace file="${build.dest}/org/apache/axis/i18n/resource.properties"
              token="#today#" value="${build.time}"/>
