@@ -275,10 +275,14 @@ public class ClassRep {
             // add each method in this class to the list
             for (int i=0; i < m.length; i++) {
                 int mod = m[i].getModifiers();
-                if (Modifier.isPublic(mod) &&
-                        // Ignore the getParameterName method from the Skeleton class
-                        (!m[i].getName().equals("getParameterName") ||
-                        !(Skeleton.class).isAssignableFrom(m[i].getDeclaringClass()))) {
+                if (Modifier.isPublic(mod)) {
+                    String methodName = m[i].getName();
+                    // Ignore the getParameterName methods from the Skeleton class
+                    if (((methodName.equals("getParameterName") ||
+                            methodName.equals("getParameterNameStatic")) &&
+                            (Skeleton.class).isAssignableFrom(m[i].getDeclaringClass()))) {
+                        continue;  // skip it
+                    }
                     short[] modes = getParameterModes(m[i]);
                     Class[] types = getParameterTypes(m[i]);
                     _methods.add(new MethodRep(m[i], types, modes,
