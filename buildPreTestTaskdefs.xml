@@ -19,14 +19,14 @@
 
     <!-- build my ForEach task -->
     <echo message="Building ForEach" />
-    <javac srcdir="${axis.home}" destdir="${build.dest}">
+    <javac srcdir="${axis.home}" destdir="${build.dest}" debug="${debug}">
       <classpath refid="classpath"/>
       <include name="test/foreachTask/*.java" />
     </javac>
 
     <!-- build the RunAxisFunctionalTest task -->
     <echo message="Building RunAxisFunctionalTest" />
-    <javac srcdir="${axis.home}" destdir="${build.dest}">
+    <javac srcdir="${axis.home}" destdir="${build.dest}" debug="${debug}">
       <classpath refid="classpath"/>
       <include name="test/functional/ant/*.java" />
     </javac>
