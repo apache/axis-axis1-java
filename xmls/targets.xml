@@ -1,5 +1,6 @@
    <!-- ===================================================================
          This is basically the <ant /> task, except that it forks
+         and the verbosity setting is not propagated down
         =================================================================== -->
    <target name="my-forking-ant">
      <echo message="Forking a JVM for target ${target} in file ${file}"/>
@@ -255,13 +256,43 @@
       </and>
     </condition>
     <echo level="verbose">compile.ime=${compile.ime}</echo>
+    <!-- look for xalan -->
+    <available property="xalan2.present"
+               classname="org.apache.xalan.transformer.TransformerImpl" />
+<!--   apply the current proxy settings to the current JVM.
+  This gives in-VM code network access through any firewall
+ -->    
+    <echo level="verbose" message="-- Applying Network Settings ---"/>
+    <!-- we cannot set proxyuser and proxypassword as these are only ant1.6 -->
+    <setproxy 
+      proxyhost="${http.proxyHost}"
+      proxyport="${http.proxyPort}"
+      socksProxyHost="${socks.proxyHost}"
+      socksProxyPort="${socks.proxyPort}"
+      />              
+
+     <!-- these are conditions used for patternset
+          configuration of which sets of tests to run.
+          Ignore them until the functional tests use patternsets -->
+    <!-- set the flag for testing jsp pages -->
+    <condition property="test.functional.httpunit.jsp">
+      <isset property="testserver.is.appserver"/>
+    </condition>
+    <!-- set the flag for testing the admin servlet --> 
+    <condition property="test.functional.httpunit.adminservlet">
+      <isset property="testserver.is.appserver"/>
+    </condition>
+    <!-- set the online flag to true if offline is not set -->
+     <condition property="test.functional.online">
+      <not><isset property="offline"/></not>
+    </condition>       
 
   </target>
 
   <!-- print out the current enviroment.
       Also, probe for javadocs being out of date and set javadoc.notrequired
       to true if they are not needed -->
-  <target name="printEnv" depends="setenv" >
+  <target name="printEnv" depends="setenv,check-javadoc-needed" >
 
     <echo message="-----------------------------------------------------------------"/>
     <echo message="       Build environment for ${Name} ${axis.version} [${year}]   "/>
@@ -279,6 +310,7 @@
     <echo message="axis.home = ${axis.home}"/>
     <echo message="build.dir = ${build.dir}"/>
     <echo message="build.dest = ${build.dest}"/>
+    <echo message="lib.dir = ${lib.dir}"/>
     <echo message=""/>
     <echo message="=== Required Libraries ===" />
     <echo message="wsdl4j.present=${wsdl4j.present}" />
@@ -341,6 +373,12 @@
     <echo message="classpath: ${classpath.as.string}"/>
     <echo message="" />
 
+ </target>
+
+ 
+  <!-- see if javadocs are needed by looking for the env.axis_nojavadocs flag -->
+  
+  <target name="check-javadoc-needed"  depends="setenv" >
 
     <uptodate property="javadoc.notoutofdate"
               targetfile="${build.javadocs}/index.html">
