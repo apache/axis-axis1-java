@@ -6,7 +6,7 @@
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
     xmlns:addressTypes="urn:types.import.test">
 
-<type>
+<types>
   <schema
     targetNamespace="urn:types.import.test"
     xmlns:tns="urn:types.import.test"
@@ -44,7 +44,7 @@
     </complexType>
 
   </schema>
-</type>
+</types>
 
 <message name="empty"/>
 
