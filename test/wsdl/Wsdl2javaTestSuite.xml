@@ -75,13 +75,6 @@
         <mapping namespace="urn:MultiRefTest2" package="test.wsdl.multiref"/>
     </wsdl2java>
 
-    <!-- Multithread Test -->
-    <wsdl2java url="test/wsdl/multithread/AddressBook.wsdl"
-               output="build/work"
-               deployscope="session"
-               serverSide="yes">
-    </wsdl2java>
-
     <!-- Operation style test (oneway, request/response, -->
     <!-- solicit/response, notification -->
     <wsdl2java url="test/wsdl/opStyles/opStyles.wsdl"
