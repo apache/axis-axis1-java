@@ -95,7 +95,7 @@ public class GetQuote {
                         URL tmpurl = new URL(args[i].substring(2));
                         host = tmpurl.getHost();
                         port = tmpurl.getPort();
-                        servlet = tmpurl.getPath() ;
+                        servlet = tmpurl.getFile() ;
                       }
                       break ;
             case 'p': if ( args[i].length() > 2 )

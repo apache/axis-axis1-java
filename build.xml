@@ -42,7 +42,7 @@ Authors:
 
 
 Copyright:
-  Copyright (c) 2000 Apache Software Foundation.
+  Copyright (c) 2001 Apache Software Foundation.
 
 ==================================================================== -->
 
@@ -52,7 +52,7 @@ Copyright:
     <property name="name" value="axis"/>
     <property name="Name" value="Axis"/>
     <property name="version" value="2.0"/>
-    <property name="year" value="2000"/>
+    <property name="year" value="2001"/>
 
     <property name="build.compiler" value="classic"/>
     <property name="debug" value="off"/>
