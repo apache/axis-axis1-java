@@ -109,27 +109,10 @@ public class RPCProvider extends JavaProvider {
              */
             
             
-            String       mName = body.getMethodName();
-            Vector       args  = body.getParams();
+            String       mName      = body.getMethodName();
+            Vector       args       = body.getParams();
+            Object[]     argValues  =  null ;
             
-            if ( methodName != null && !methodName.equals(mName) )
-                throw new AxisFault( "AxisServer.error",
-                                    "Method names don't match\n" +
-                                        "Body name=" + mName + "\n" +
-                                        "Service name=" + methodName,
-                                    null, null );  // should they??
-            
-            Debug.Print( 2, "mName: " + mName );
-            Debug.Print( 2, "MethodName: " + methodName );
-            Method       method = jc.getMethod(mName, args.size());
-            if ( method == null )
-                throw new AxisFault( "AxisServer.error",
-                                    "Method not found\n" +
-                                        "Method name=" + methodName + "\n" +
-                                        "Service name=" + msgContext.getTargetService(),
-                                    null, null );
-            
-            Object[] argValues  =  null ;
             
             if ( args != null && args.size() > 0 ) {
                 argValues = new Object[ args.size()];
@@ -141,6 +124,38 @@ public class RPCProvider extends JavaProvider {
                     }
                 }
             }
+            
+            if ( methodName != null && !methodName.equals(mName) )
+                throw new AxisFault( "AxisServer.error",
+                                    "Method names don't match\n" +
+                                        "Body name=" + mName + "\n" +
+                                        "Service name=" + methodName,
+                                    null, null );  // should they??
+            
+            Debug.Print( 2, "mName: " + mName );
+            Debug.Print( 2, "MethodName: " + methodName );
+            Method       method = jc.getMethod(mName, args.size());
+
+            if ( method == null ) {
+              // If method wasn't found using the args that were passed 
+              // in then try again, this time with MessageContext frist
+              args.add( 0, msgContext );
+              method = jc.getMethod(mName, args.size());
+              if ( method != null ) {
+                Object[] tmpArgs = new Object[args.size()];
+                for ( int i = 1 ; i < args.size() ; i++ )
+                  tmpArgs[i] = argValues[i-1];
+                tmpArgs[0] = msgContext ;
+                argValues = tmpArgs ;
+              }
+            }
+
+            if ( method == null )
+                throw new AxisFault( "AxisServer.error",
+                                    "Method not found\n" +
+                                        "Method name=" + methodName + "\n" +
+                                        "Service name=" + msgContext.getTargetService(),
+                                    null, null );
             
             Object objRes = method.invoke( obj, argValues );
             
