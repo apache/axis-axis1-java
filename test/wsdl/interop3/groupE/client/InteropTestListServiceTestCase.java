@@ -79,9 +79,17 @@ public class InteropTestListServiceTestCase extends junit.framework.TestCase {
         assertTrue("binding is null", binding != null);
 
         try {
-            List node1 = new List(1, "last", null);
-            List node2 = new List(2, "middle", node1);
-            List list = new List(3, "first", node2);
+            List node1 = new List();
+            node1.setVarInt(1);
+            node1.setVarString("last");
+            List node2 = new List();
+            node2.setVarInt(2);
+            node2.setVarString("middle");
+            node2.setChild(node1);
+            List list = new List();
+            list.setVarInt(3);
+            list.setVarString("first");
+            list.setChild(node2);
 
             List value = binding.echoLinkedList(list);
             List vnode2 = value.getChild();
