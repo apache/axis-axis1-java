@@ -200,7 +200,10 @@ public class JavaStubWriter extends JavaClassWriter {
         pw.println("            java.util.Enumeration keys = super.cachedProperties.keys();");
         pw.println("            while (keys.hasMoreElements()) {");
         pw.println("                String key = (String) keys.nextElement();");
-        pw.println("                call.setProperty(key, super.cachedProperties.get(key));");
+        pw.println("                if(call.isPropertySupported(key))");
+        pw.println("                    call.setProperty(key, super.cachedProperties.get(key));");
+        pw.println("                else");
+        pw.println("                    call.setScopedProperty(key, super.cachedProperties.get(key));");
         pw.println("            }");
         if (types.size() > 0) {
             pw.println("            // " + JavaUtils.getMessage("typeMap00"));
@@ -542,9 +545,9 @@ public class JavaStubWriter extends JavaClassWriter {
             // Turn off encoding
             pw.println("        call.setEncodingStyle(null);");
             // turn off multirefs
-            pw.println("        call.setProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);");
+            pw.println("        call.setScopedProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);");
             // turn off XSI types
-            pw.println("        call.setProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);");
+            pw.println("        call.setScopedProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);");
         }
         
         // Style: document, RPC, or wrapped

@@ -153,7 +153,8 @@ public class Call implements javax.xml.rpc.Call {
     // Collection of properties to store and put in MessageContext at
     // invoke() time.  Known ones are stored in actual variables for
     // efficiency/type-consistency.  Unknown ones are in myProperties.
-    private Hashtable          myProperties    = new Hashtable();
+    private Hashtable          callProperties  = new Hashtable();
+    private Hashtable          scopedProperties= new Hashtable();
     private String             username        = null;
     private String             password        = null;
     private boolean            maintainSession = false;
@@ -255,8 +256,7 @@ public class Call implements javax.xml.rpc.Call {
      */
     public void setProperty(String name, Object value) {
         if (name == null || value == null) {
-            return;
-            // Is this right?  Shouldn't we throw an exception like: throw new IllegalArgumentException();
+            throw new IllegalArgumentException();
         }
         else if (name.equals(USERNAME_PROPERTY)) {
             if (!(value instanceof String)) {
@@ -343,8 +343,9 @@ public class Call implements javax.xml.rpc.Call {
                 transport.setTransportName((String) value);
         }
         else {
-            myProperties.put(name, value);
+            throw new IllegalArgumentException();
         }
+        callProperties.put(name, value);
     } // setProperty
 
     /**
@@ -354,58 +355,61 @@ public class Call implements javax.xml.rpc.Call {
      * @return Object value of the property - or null
      */
     public Object getProperty(String name) {
+        if (name != null)
+            return callProperties.get(name);
+        return null;
+    } // getProperty
+
+    /**
+      * Removes (if set) the named property.
+      *
+      * @param name name of the property to remove
+      */
+     public void removeProperty(String name) {
+         if ( name == null || callProperties == null ) return ;
+         callProperties.remove( name );
+     } // removeProperty
+
+    public void setScopedProperty(String name, Object value) {
+        if (name == null || value == null) {
+            throw new IllegalArgumentException();
+        }
+        scopedProperties.put(name, value);
+    } // setScopedProperty
+
+    public Object getScopedProperty(String name) {
         if (name != null) {
-            if (name.equals(USERNAME_PROPERTY)) {
-                return getUsername();
-            }
-            else if (name.equals(PASSWORD_PROPERTY)) {
-                return getPassword();
-            }
-            else if (name.equals(SESSION_MAINTAIN_PROPERTY)) {
-                return new Boolean(getMaintainSession());
-            }
-            else if (name.equals(OPERATION_STYLE_PROPERTY)) {
-                return getOperationStyle().getName();
-            }
-            else if (name.equals(SOAPACTION_USE_PROPERTY)) {
-                return new Boolean(useSOAPAction());
-            }
-            else if (name.equals(SOAPACTION_URI_PROPERTY)) {
-                return getSOAPActionURI();
-            }
-            else if (name.equals(ENCODINGSTYLE_URI_PROPERTY)) {
-                return getEncodingStyle();
-            }
-            else if (name.equals(TRANSPORT_NAME)) {
-                return transportName;
-            }
-            else {
-                return myProperties.get(name);
-            }
+            return scopedProperties.get(name);
         }
-        else {
-            return null;
-        }
-    }
+        return null;
+    } // getScopedProperty
+
+    public void removeScopedProperty(String name) {
+        if ( name == null || scopedProperties == null ) return ;
+        scopedProperties.remove( name );
+    } // removeScopedProperty
 
     /**
      * Configurable properties supported by this Call object.
      */
-    private static ArrayList propertyNames = null;
+    private static ArrayList propertyNames = new ArrayList();
+    static {
+        propertyNames.add(USERNAME_PROPERTY);
+        propertyNames.add(PASSWORD_PROPERTY);
+        propertyNames.add(SESSION_MAINTAIN_PROPERTY);
+        propertyNames.add(OPERATION_STYLE_PROPERTY);
+        propertyNames.add(SOAPACTION_USE_PROPERTY);
+        propertyNames.add(SOAPACTION_URI_PROPERTY);
+        propertyNames.add(ENCODINGSTYLE_URI_PROPERTY);
+        propertyNames.add(TRANSPORT_NAME);
+    }
 
     public Iterator getPropertyNames() {
-        if (propertyNames == null) {
-            propertyNames = new ArrayList();
-            propertyNames.add(USERNAME_PROPERTY);
-            propertyNames.add(PASSWORD_PROPERTY);
-            propertyNames.add(SESSION_MAINTAIN_PROPERTY);
-            propertyNames.add(OPERATION_STYLE_PROPERTY);
-            propertyNames.add(SOAPACTION_USE_PROPERTY);
-            propertyNames.add(SOAPACTION_URI_PROPERTY);
-            propertyNames.add(ENCODINGSTYLE_URI_PROPERTY);
-            propertyNames.add(TRANSPORT_NAME);
-        }
         return propertyNames.iterator();
+    }
+
+    public boolean isPropertySupported(String name) {
+        return propertyNames.contains(name);
     }
 
     /**
@@ -528,16 +532,6 @@ public class Call implements javax.xml.rpc.Call {
      */
     public String getEncodingStyle() {
         return encodingStyle;
-    }
-
-   /**
-     * Removes (if set) the named property.
-     *
-     * @param name name of the property to remove
-     */
-    public void removeProperty(String name) {
-        if ( name == null || myProperties == null ) return ;
-        myProperties.remove( name );
     }
 
     /**
@@ -1898,9 +1892,9 @@ public class Call implements javax.xml.rpc.Call {
 
             SOAPService svc = msgContext.getService();
             if (svc != null) {
-                svc.setPropertyParent(myProperties);
+                svc.setPropertyParent(scopedProperties);
             } else {
-                msgContext.setPropertyParent(myProperties);
+                msgContext.setPropertyParent(scopedProperties);
             }
         }
 
@@ -2016,7 +2010,7 @@ public class Call implements javax.xml.rpc.Call {
             // Set the service so that it defers missing property gets to the
             // Call.  So when client-side Handlers get at the MessageContext,
             // the property scoping will be MC -> SOAPService -> Call
-            service.setPropertyParent(myProperties);
+            service.setPropertyParent(scopedProperties);
         }
     }
 
