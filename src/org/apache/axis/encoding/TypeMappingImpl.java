@@ -366,7 +366,7 @@ public class TypeMappingImpl implements TypeMapping
 
         // If the xmlType was not provided, get one
         if (xmlType == null) {
-            xmlType = getTypeQName(javaType);
+            xmlType = getTypeQNameRecursive(javaType);
 
             // If we couldn't find one, we're hosed, since getTypeQName()
             // already asked all of our delegates.
@@ -512,6 +512,29 @@ public class TypeMappingImpl implements TypeMapping
      * @param javaType class or type
      * @return xmlType qname or null
      */
+    public QName getTypeQNameRecursive(Class javaType) {
+        QName ret = null;
+        while (javaType != null) {
+            ret = getTypeQName(javaType);
+            if (ret != null)
+                return ret;
+
+            // Walk my interfaces...
+            Class [] interfaces = javaType.getInterfaces();
+            if (interfaces != null) {
+                for (int i = 0; i < interfaces.length; i++) {
+                    Class iface = interfaces[i];
+                    ret = getTypeQName(iface);
+                    if (ret != null)
+                        return ret;
+                }
+            }
+
+            javaType = javaType.getSuperclass();
+        }
+        return null;
+    }
+
     public QName getTypeQName(Class javaType) {
         //log.debug("getTypeQName javaType =" + javaType);
         if (javaType == null)
@@ -525,17 +548,16 @@ public class TypeMappingImpl implements TypeMapping
             xmlType = pair.xmlType;
         }
 
-        // Can only detect arrays via code
-        if (xmlType == null &&
-            (javaType.isArray() ||
-             javaType == List.class ||
-             List.class.isAssignableFrom(javaType))) {
-            xmlType = Constants.SOAP_ARRAY;
-        }
-
         if (xmlType == null && doAutoTypes) {
             xmlType = new QName(Constants.NS_URI_JAVA,
                                 javaType.getName());
+        }
+
+        // Can only detect arrays via code
+        if (xmlType == null && (javaType.isArray() ||
+             javaType == List.class ||
+             List.class.isAssignableFrom(javaType))) {
+            xmlType = Constants.SOAP_ARRAY;
         }
 
         //log.debug("getTypeQName xmlType =" + xmlType);
