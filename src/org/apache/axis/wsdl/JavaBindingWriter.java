@@ -78,18 +78,16 @@ public class JavaBindingWriter implements Writer {
     protected JavaBindingWriter(
             Emitter emitter,
             Binding binding,
-            HashMap operationParameters) {
-        QName bindingQName = new QName(binding.getQName().getNamespaceURI(),
-              Utils.capitalizeFirstChar(Utils.xmlNameToJava(binding.getQName().getLocalPart())));
-        binding.setQName (bindingQName);
-        stubWriter = new JavaStubWriter(emitter, binding, operationParameters);
+            SymbolTable symbolTable) {
+        BindingEntry bEntry = symbolTable.getBindingEntry(binding.getQName());
+        stubWriter = new JavaStubWriter(emitter, bEntry, symbolTable);
         if (emitter.bEmitSkeleton) {
-            skelWriter = new JavaSkelWriter(emitter, binding, operationParameters);
-            String fileName = bindingQName.getLocalPart() + "Impl.java";
+            skelWriter = new JavaSkelWriter(emitter, bEntry, symbolTable);
+            String fileName = Utils.getJavaLocalName(bEntry.getName()) + "Impl.java";
             try {
                 // NOTE:  Where does the fileExists method really belong?
-                if (!((JavaWriter) stubWriter).fileExists (fileName, bindingQName.getNamespaceURI())) {
-                    implWriter = new JavaImplWriter(emitter, binding, operationParameters);
+                if (!((JavaWriter) stubWriter).fileExists (fileName, binding.getQName().getNamespaceURI())) {
+                    implWriter = new JavaImplWriter(emitter, bEntry, symbolTable);
                 }
             }
             catch (IOException ioe) {

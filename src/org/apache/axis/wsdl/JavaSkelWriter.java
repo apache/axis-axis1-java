@@ -75,34 +75,34 @@ import org.apache.axis.utils.JavaUtils;
 * file which contains the <bindingName>Skeleton class.
 */
 public class JavaSkelWriter extends JavaWriter {
+    private BindingEntry bEntry;
     private Binding binding;
-    private HashMap operationParameters;
+    private SymbolTable symbolTable;
 
     /**
      * Constructor.
      */
     protected JavaSkelWriter(
             Emitter emitter,
-            Binding binding,
-            HashMap operationParameters) {
-        super(emitter, binding.getQName(), "Skeleton", "java",
+            BindingEntry bEntry,
+            SymbolTable symbolTable) {
+        super(emitter, bEntry, "Skeleton", "java",
                 JavaUtils.getMessage("genSkel00"));
-        this.binding = binding;
-        this.operationParameters = operationParameters;
+        this.bEntry = bEntry;
+        this.binding = bEntry.getBinding();
+        this.symbolTable = symbolTable;
     } // ctor
 
     /**
      * Write the body of the binding's stub file.
      */
     protected void writeFileBody() throws IOException {
-        if (operationParameters == null)
-            throw new IOException(
-                    JavaUtils.getMessage("emitFail01", "" + qname));
-
         PortType portType = binding.getPortType();
-        String portTypeName = emitter.emitFactory.getJavaName(portType.getQName());
+        PortTypeEntry ptEntry =
+                symbolTable.getPortTypeEntry(portType.getQName());
+        String portTypeName = ptEntry.getName();
         boolean isRPC = true;
-        if (emitter.wsdlAttr.getBindingStyle(binding) == WsdlAttributes.STYLE_DOCUMENT) {
+        if (bEntry.getBindingStyle() == BindingEntry.STYLE_DOCUMENT) {
             isRPC = false;
         }
 
@@ -126,7 +126,8 @@ public class JavaSkelWriter extends JavaWriter {
         List operations = binding.getBindingOperations();
         for (int i = 0; i < operations.size(); ++i) {
             BindingOperation operation = (BindingOperation) operations.get(i);
-            Parameters parameters = (Parameters) operationParameters.get(operation.getOperation().getName());
+            Parameters parameters =
+                    ptEntry.getParameters(operation.getOperation().getName());
 
             // Get the soapAction from the <soap:operation>
             String soapAction = "";
@@ -173,13 +174,13 @@ public class JavaSkelWriter extends JavaWriter {
 
         // Instantiate the holders
         for (int i = 0; i < parms.list.size(); ++i) {
-            Emitter.Parameter p = (Emitter.Parameter) parms.list.get(i);
+            Parameters.Parameter p = (Parameters.Parameter) parms.list.get(i);
 
             String holder = Utils.holder(p.type);
-            if (p.mode == Emitter.Parameter.INOUT) {
+            if (p.mode == Parameters.Parameter.INOUT) {
                 pw.println("        " + holder + " " + p.name + "Holder = new " + holder + "(" + p.name + ");");
             }
-            else if (p.mode == Emitter.Parameter.OUT) {
+            else if (p.mode == Parameters.Parameter.OUT) {
                 pw.println("        " + holder + " " + p.name + "Holder = new " + holder + "();");
             }
         }
@@ -202,9 +203,9 @@ public class JavaSkelWriter extends JavaWriter {
                 call = call + ", ";
             else
                 needComma = true;
-            Emitter.Parameter p = (Emitter.Parameter) parms.list.get(i);
+            Parameters.Parameter p = (Parameters.Parameter) parms.list.get(i);
 
-            if (p.mode == Emitter.Parameter.IN)
+            if (p.mode == Parameters.Parameter.IN)
                 call = call + p.name;
             else
                 call = call + p.name + "Holder";
@@ -224,9 +225,9 @@ public class JavaSkelWriter extends JavaWriter {
                 // There is only one inout parameter.  Find it in the parms list and write
                 // its return
                 int i = 0;
-                Emitter.Parameter p = (Emitter.Parameter) parms.list.get(i);
-                while (p.mode != Emitter.Parameter.INOUT)
-                    p = (Emitter.Parameter) parms.list.get(++i);
+                Parameters.Parameter p = (Parameters.Parameter) parms.list.get(i);
+                while (p.mode != Parameters.Parameter.INOUT)
+                    p = (Parameters.Parameter) parms.list.get(++i);
                 pw.println("        return " + wrapPrimitiveType(p.type, p.name + "Holder._value") + ";");
             }
             else {
@@ -235,9 +236,9 @@ public class JavaSkelWriter extends JavaWriter {
                 if (!"void".equals(parms.returnType))
                     pw.println("        list.add(new org.apache.axis.message.RPCParam(\"" + parms.returnName + "\", ret));");
                 for (int i = 0; i < parms.list.size(); ++i) {
-                    Emitter.Parameter p = (Emitter.Parameter) parms.list.get(i);
+                    Parameters.Parameter p = (Parameters.Parameter) parms.list.get(i);
 
-                    if (p.mode != Emitter.Parameter.IN)
+                    if (p.mode != Parameters.Parameter.IN)
                         pw.println("        list.add(new org.apache.axis.message.RPCParam(\"" + p.name + "\", " + wrapPrimitiveType(p.type, p.name + "Holder._value") +"));");
                 }
                 pw.println("        return list;");

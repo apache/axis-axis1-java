@@ -87,33 +87,32 @@ import com.ibm.wsdl.extensions.soap.SOAPOperation;
 */
 public class JavaImplWriter extends JavaWriter {
     private Binding binding;
-    private HashMap operationParameters;
+    private SymbolTable symbolTable;
+    private BindingEntry bEntry;
 
     /**
      * Constructor.
      */
     protected JavaImplWriter(
             Emitter emitter,
-            Binding binding,
-            HashMap operationParameters) {
-        super(emitter, binding.getQName(), "Impl", "java",
+            BindingEntry bEntry,
+            SymbolTable symbolTable) {
+        super(emitter, bEntry, "Impl", "java",
                 JavaUtils.getMessage("genImpl00"));
-        this.binding = binding;
-        this.operationParameters = operationParameters;
+        this.binding = bEntry.getBinding();
+        this.symbolTable = symbolTable;
+        this.bEntry = bEntry;
     } // ctor
 
     /**
      * Write the body of the binding's stub file.
      */
     protected void writeFileBody() throws IOException {
-        if (operationParameters == null)
-            throw new IOException(
-                    JavaUtils.getMessage("emitFail01", "" + qname));
-
         PortType portType = binding.getPortType();
-        String portTypeName = emitter.emitFactory.getJavaName(portType.getQName());
+        PortTypeEntry ptEntry = symbolTable.getPortTypeEntry(portType.getQName());
+        String portTypeName = ptEntry.getName();
         boolean isRPC = true;
-        if (emitter.wsdlAttr.getBindingStyle(binding) == WsdlAttributes.STYLE_DOCUMENT) {
+        if (bEntry.getBindingStyle() == BindingEntry.STYLE_DOCUMENT) {
             isRPC = false;
         }
         pw.print("public class " + className + " implements " + portTypeName);
@@ -126,7 +125,8 @@ public class JavaImplWriter extends JavaWriter {
         List operations = binding.getBindingOperations();
         for (int i = 0; i < operations.size(); ++i) {
             BindingOperation operation = (BindingOperation) operations.get(i);
-            Parameters parameters = (Parameters) operationParameters.get(operation.getOperation().getName());
+            Parameters parameters =
+                    ptEntry.getParameters(operation.getOperation().getName());
 
             // Get the soapAction from the <soap:operation>
             String soapAction = "";

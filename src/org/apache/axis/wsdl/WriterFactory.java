@@ -58,6 +58,7 @@ import java.util.HashMap;
 
 import javax.wsdl.Binding;
 import javax.wsdl.Definition;
+import javax.wsdl.Message;
 import javax.wsdl.PortType;
 import javax.wsdl.Service;
 
@@ -75,35 +76,41 @@ import javax.wsdl.Service;
 
 public interface WriterFactory {
     /**
-     * Get a Writer implementation that will generate bindings for the given
-     * PortType and HashMap of Parameters keyed off of operations.
+     * Allow the Writer extension to make a pass through the symbol table doing any pre-writing
+     * logic, like creating the Java names for each object and constructing signature strings.
      */
-    public Writer getWriter(PortType portType, HashMap operationParameters);
+    public void writerPass(Definition def, SymbolTable symbolTable);
 
     /**
-     * Get a Writer implementation that will generate bindings for the given
-     * Binding and HashMap of Parameters keyed off of operations.
+     * Get a Writer implementation that will generate bindings for the given Message.
      */
-    public Writer getWriter(Binding binding, HashMap operationParameters);
+    public Writer getWriter(Message message, SymbolTable symbolTable);
 
     /**
-     * Get a Writer implementation that will generate bindings for the given
-     * Service and HashMap of (HashMap of Parameters keyed off of operations)
-     * keyed off of portTypes.
+     * Get a Writer implementation that will generate bindings for the given PortType.
      */
-    public Writer getWriter(Service service, HashMap portTypeOperationParameters);
+    public Writer getWriter(PortType portType, SymbolTable symbolTable);
 
     /**
-     * Get a Writer implementation that will generate bindings for the given
-     * Type.
+     * Get a Writer implementation that will generate bindings for the given Binding.
      */
-    public Writer getWriter(Type type);
+    public Writer getWriter(Binding binding, SymbolTable symbolTable);
+
+    /**
+     * Get a Writer implementation that will generate bindings for the given Service.
+     */
+    public Writer getWriter(Service service, SymbolTable symbolTable);
+
+    /**
+     * Get a Writer implementation that will generate bindings for the given Type.
+     */
+    public Writer getWriter(Type type, SymbolTable symbolTable);
 
     /**
      * Get a Writer implementation that will generate anything that doesn't
      * fit into the scope of any of the other writers.
      */
-    public Writer getWriter(Definition definition);
+    public Writer getWriter(Definition definition, SymbolTable symbolTable);
 
     /**
      * Provide the Emitter to the factory.

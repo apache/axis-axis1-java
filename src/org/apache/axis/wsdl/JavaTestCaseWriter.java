@@ -74,19 +74,19 @@ import org.apache.axis.utils.JavaUtils;
 */
 public class JavaTestCaseWriter extends JavaWriter {
     private Service service;
-    private HashMap portTypeOperationParameters;
+    private SymbolTable symbolTable;
 
     /**
      * Constructor.
      */
     protected JavaTestCaseWriter(
             Emitter emitter,
-            Service service,
-            HashMap portTypeOperationParameters) {
-        super(emitter, service.getQName(), "TestCase", "java",
+            ServiceEntry sEntry,
+            SymbolTable symbolTable) {
+        super(emitter, sEntry, "TestCase", "java",
                 JavaUtils.getMessage("genTest00"));
-        this.service = service;
-        this.portTypeOperationParameters = portTypeOperationParameters;
+        this.service = sEntry.getService();
+        this.symbolTable = symbolTable;
     } // ctor
 
     /**
@@ -117,9 +117,11 @@ public class JavaTestCaseWriter extends JavaWriter {
         while (portIterator.hasNext()) {
             Port p = (Port) portIterator.next();
             Binding binding = p.getBinding();
+            BindingEntry bEntry =
+                    symbolTable.getBindingEntry(binding.getQName());
 
             // If this isn't an SOAP binding, skip it
-            if (emitter.wsdlAttr.getBindingType(binding) != WsdlAttributes.TYPE_SOAP) {
+            if (bEntry.getBindingType() != BindingEntry.TYPE_SOAP) {
                 continue;
             }
 
@@ -140,7 +142,10 @@ public class JavaTestCaseWriter extends JavaWriter {
 
     public final void writeServiceTestCode(String portName, Binding binding) throws IOException {
         PortType portType = binding.getPortType();
-        String bindingType = emitter.getTypeFactory().getJavaName(portType.getQName());
+        PortTypeEntry ptEntry =
+                symbolTable.getPortTypeEntry(portType.getQName());
+        BindingEntry bEntry = symbolTable.getBindingEntry(binding.getQName());
+        String bindingType = ptEntry.getName();
 
         pw.println();
         pw.println("    public void test" + portName + "() {");
@@ -162,13 +167,13 @@ public class JavaTestCaseWriter extends JavaWriter {
     } // writeServiceTestCode
 
     private final void writePortTestCode(PortType port) throws IOException {
+        PortTypeEntry ptEntry = symbolTable.getPortTypeEntry(port.getQName());
         Iterator ops = port.getOperations().iterator();
-        HashMap operationParameters = (HashMap) portTypeOperationParameters.get(port.getQName());
         while (ops.hasNext()) {
             pw.println("        try {");
             Operation op = (Operation) ops.next();
             String namespace = (String) emitter.getNamespaces().get(port.getQName().getNamespaceURI());
-            Parameters params = (Parameters) operationParameters.get(op.getName());
+            Parameters params = ptEntry.getParameters(op.getName());
 
             if ( !"void".equals( params.returnType ) ) {
                 pw.print("            ");
@@ -206,11 +211,11 @@ public class JavaTestCaseWriter extends JavaWriter {
                     pw.print(", ");
                 }
 
-                Emitter.Parameter param = (Emitter.Parameter) iparam.next();
+                Parameters.Parameter param = (Parameters.Parameter) iparam.next();
                 String paramType = null;
 
                 switch (param.mode) {
-                    case Emitter.Parameter.IN:
+                    case Parameters.Parameter.IN:
                         paramType = param.type;
                         break;
 

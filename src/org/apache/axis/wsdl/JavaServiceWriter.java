@@ -75,13 +75,11 @@ public class JavaServiceWriter implements Writer {
     protected JavaServiceWriter(
             Emitter emitter,
             Service service,
-            HashMap portTypeOperationParameters) {
-        QName serviceQName = new QName(service.getQName().getNamespaceURI(), 
-            Utils.capitalizeFirstChar(Utils.xmlNameToJava(service.getQName().getLocalPart())));
-        service.setQName (serviceQName);
-        serviceWriter = new JavaServiceImplWriter(emitter, service);
+            SymbolTable symbolTable) {
+        ServiceEntry sEntry = symbolTable.getServiceEntry(service.getQName());
+        serviceWriter = new JavaServiceImplWriter(emitter, sEntry, symbolTable);
         if (emitter.bEmitTestCase) {
-            testCaseWriter = new JavaTestCaseWriter(emitter, service, portTypeOperationParameters);
+            testCaseWriter = new JavaTestCaseWriter(emitter, sEntry, symbolTable);
         }
     } // ctor
 

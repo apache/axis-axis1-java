@@ -52,45 +52,31 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
+
 package org.apache.axis.wsdl;
 
-import java.io.IOException;
-
-import org.apache.axis.utils.JavaUtils;
+import javax.wsdl.QName;
+import javax.wsdl.Service;
 
 /**
-* This is Wsdl2java's Holder Writer.  It writes the <typeName>Holder.java file.
+* This class represents a WSDL service.  It simply encompasses the WSDL4J Service object so it can
+* reside in the SymbolTable.
 */
-public class JavaHolderWriter extends JavaWriter {
-    private Type type;
+public class ServiceEntry extends SymTabEntry {
+    private Service service;
 
     /**
-     * Constructor.
+     * Construct a ServiceEntry from a WSDL4J Service object.
      */
-    protected JavaHolderWriter(Emitter emitter, Type type) {
-        super(emitter, type, "Holder", "java",
-                JavaUtils.getMessage("genHolder00"));
-        this.type = type;
+    public ServiceEntry(Service service) {
+        super(service.getQName());
+        this.service = service;
     } // ctor
 
     /**
-     * Generate the holder for the given complex type.
+     * Get this entry's Service object.
      */
-    protected void writeFileBody() throws IOException {
-        String holderType = Utils.getJavaLocalName(type.getName());
-        pw.println("public final class " + className + " implements java.io.Serializable {");
-        pw.println("    public " + holderType + " _value;");
-        pw.println();
-        pw.println("    public " + className + "() {");
-        pw.println("    }");
-        pw.println();
-        pw.println("    public " + className + "(" + holderType + " value) {");
-        pw.println("        this._value = value;");
-        pw.println("    }");
-        pw.println();
-        pw.println("    // ?++?");
-        pw.println("}");
-        pw.close();
-    } // writeOperation
-
-} // class JavaHolderWriter
+    public Service getService() {
+        return service;
+    } // getService
+} // class ServiceEntry

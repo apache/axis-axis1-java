@@ -91,7 +91,7 @@ public class JavaEnumTypeWriter extends JavaWriter {
 
         // The first index is the base type.  Get its java name.
         String baseType = ((Type) elements.get(0)).getJavaName();
-        String javaName = type.getJavaLocalName();
+        String javaName = Utils.getJavaLocalName(type.getName());
 
         // Note:
         // The current JAX-RPC spec indicates that enumeration is supported for all simple types.
@@ -100,7 +100,7 @@ public class JavaEnumTypeWriter extends JavaWriter {
         // support only the enumeration of Strings.
         // The current state of the AXIS code only supports enumerations of Strings.  If JAX-RPC
         // does introduce new bindings, changes will be required in this method, in EnumSerialization,
-        // and in TypeFactory.getEnumerationBaseAndValues.
+        // and in JavaTypeWriter.getEnumerationBaseAndValues.
         pw.println("public class " + javaName + " implements java.io.Serializable {");
 
         // Each object has a private _value_ variable to store the base value

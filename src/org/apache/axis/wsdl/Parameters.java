@@ -98,4 +98,26 @@ public class Parameters {
                 + "\n(inputs, inouts, outputs) = (" + inputs + ", " + inouts + ", " + outputs + ")"
                 + "\nlist = " + list;
     } // toString
+
+    /**
+     * This class simply collects
+     */
+    protected static class Parameter {
+
+        // constant values for the parameter mode.
+        public static final byte IN = 1;
+        public static final byte OUT = 2;
+        public static final byte INOUT = 3;
+
+        public String name;
+        public String type;
+        public byte mode = IN;
+
+        public String toString() {
+            return "(" + type + ", " + name + ", "
+                    + (mode == IN ? "IN)" : mode == INOUT ? "INOUT)" : "OUT)");
+        } // toString
+    } // class Parameter
+
+
 } // class Parameters

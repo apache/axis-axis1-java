@@ -75,13 +75,12 @@ public class JavaPortTypeWriter implements Writer {
      */
     protected JavaPortTypeWriter(
             Emitter emitter,
-            PortType portType, HashMap operationParameters) {
-        QName qname = new QName(portType.getQName().getNamespaceURI(), 
-               Utils.capitalizeFirstChar(Utils.xmlNameToJava(portType.getQName().getLocalPart())));
-        portType.setQName(qname);
-        interfaceWriter = new JavaInterfaceWriter(emitter, portType, operationParameters);
+            PortType portType, SymbolTable symbolTable) {
+        PortTypeEntry ptEntry = symbolTable.getPortTypeEntry(portType.getQName());
+        interfaceWriter =
+                new JavaInterfaceWriter(emitter, ptEntry, symbolTable);
         if (emitter.bEmitSkeleton && emitter.bMessageContext) {
-            serviceInterfaceWriter = new JavaServiceInterfaceWriter(emitter, portType, operationParameters);
+            serviceInterfaceWriter = new JavaServiceInterfaceWriter(emitter, ptEntry, symbolTable);
         }
     } // ctor
 

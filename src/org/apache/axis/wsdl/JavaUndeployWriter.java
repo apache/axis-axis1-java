@@ -72,17 +72,19 @@ import org.apache.axis.utils.JavaUtils;
 */
 public class JavaUndeployWriter extends JavaWriter {
     private Definition definition;
+    private SymbolTable symbolTable;
 
     /**
      * Constructor.
      */
-    protected JavaUndeployWriter(Emitter emitter, Definition definition) {
+    protected JavaUndeployWriter(Emitter emitter, Definition definition, SymbolTable symbolTable) {
         super(emitter,
                 new QName(definition.getTargetNamespace(), "undeploy"),
                 "",
                 "xml",
                 JavaUtils.getMessage("genUndeploy00"));
         this.definition = definition;
+        this.symbolTable = symbolTable;
     } // ctor
 
     /**
@@ -133,9 +135,10 @@ public class JavaUndeployWriter extends JavaWriter {
      */
     private void writeDeployPort(Port port) throws IOException {
         Binding binding = port.getBinding();
+        BindingEntry bEntry = symbolTable.getBindingEntry(binding.getQName());
         String serviceName = port.getName();
 
-        boolean isRPC = (emitter.wsdlAttr.getBindingStyle(binding) == WsdlAttributes.STYLE_RPC);
+        boolean isRPC = (bEntry.getBindingStyle() == BindingEntry.STYLE_RPC);
 
         pw.println("   <service name=\"" + serviceName
                 + "\" pivot=\"" + (isRPC ? "RPCDispatcher" : "MsgDispatcher") + "\">");

@@ -77,16 +77,19 @@ import org.apache.axis.utils.JavaUtils;
 */
 public class JavaServiceImplWriter extends JavaWriter {
     private Service service;
+    private SymbolTable symbolTable;
 
     /**
      * Constructor.
      */
     protected JavaServiceImplWriter(
             Emitter emitter,
-            Service service) {
-        super(emitter, service.getQName(), "", "java",
+            ServiceEntry sEntry,
+            SymbolTable symbolTable) {
+        super(emitter, sEntry, "", "java",
                 JavaUtils.getMessage("genService00"));
-        this.service = service;
+        this.service = sEntry.getService();
+        this.symbolTable = symbolTable;
     } // ctor
 
     /**
@@ -107,15 +110,19 @@ public class JavaServiceImplWriter extends JavaWriter {
         while (portIterator.hasNext()) {
             Port p = (Port) portIterator.next();
             Binding binding = p.getBinding();
+            BindingEntry bEntry =
+                    symbolTable.getBindingEntry(binding.getQName());
+            PortTypeEntry ptEntry = symbolTable.getPortTypeEntry(
+                    binding.getPortType().getQName());
 
             // If this isn't an SOAP binding, skip it
-            if (emitter.wsdlAttr.getBindingType(binding) != WsdlAttributes.TYPE_SOAP) {
+            if (bEntry.getBindingType() != BindingEntry.TYPE_SOAP) {
                 continue;
             }
 
             String portName = p.getName();
-            String stubClass = emitter.emitFactory.getJavaName(binding.getQName()) + "Stub";
-            String bindingType = emitter.emitFactory.getJavaName(binding.getPortType().getQName());
+            String stubClass = bEntry.getName() + "Stub";
+            String bindingType = ptEntry.getName();
 
             // Get endpoint address and validate it
             String address = getAddressFromPort(p);

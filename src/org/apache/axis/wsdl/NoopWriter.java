@@ -56,41 +56,16 @@ package org.apache.axis.wsdl;
 
 import java.io.IOException;
 
-import org.apache.axis.utils.JavaUtils;
-
 /**
-* This is Wsdl2java's Holder Writer.  It writes the <typeName>Holder.java file.
+* This writer doesn't do anything.  Wsdl2java doesn't write anything for messages, but since
+* the WriterFactory interface requires that getWriter(Message, SymbolTable) return a Writer, it
+* has to return something.  Ergo this class.
 */
-public class JavaHolderWriter extends JavaWriter {
-    private Type type;
+public class NoopWriter implements Writer {
 
     /**
-     * Constructor.
+     * Do a whole lot of nothing.
      */
-    protected JavaHolderWriter(Emitter emitter, Type type) {
-        super(emitter, type, "Holder", "java",
-                JavaUtils.getMessage("genHolder00"));
-        this.type = type;
-    } // ctor
-
-    /**
-     * Generate the holder for the given complex type.
-     */
-    protected void writeFileBody() throws IOException {
-        String holderType = Utils.getJavaLocalName(type.getName());
-        pw.println("public final class " + className + " implements java.io.Serializable {");
-        pw.println("    public " + holderType + " _value;");
-        pw.println();
-        pw.println("    public " + className + "() {");
-        pw.println("    }");
-        pw.println();
-        pw.println("    public " + className + "(" + holderType + " value) {");
-        pw.println("        this._value = value;");
-        pw.println("    }");
-        pw.println();
-        pw.println("    // ?++?");
-        pw.println("}");
-        pw.close();
-    } // writeOperation
-
-} // class JavaHolderWriter
+    public void write() throws IOException {
+    } // write
+} // class NoopWriter
