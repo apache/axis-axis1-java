@@ -393,6 +393,10 @@ public class SchemaUtils {
                                                                symbolTable);
                     
                     if (elem != null) {
+                        // XXX: forces minOccurs="0" so that a null choice
+                        // element can be serialized ok.
+                        elem.setMinOccursIs0(true);
+
                         v.add(elem);
                     }
                 }
