@@ -76,7 +76,8 @@ public class RPCElement extends SOAPBodyElement
 {
     protected Vector params = new Vector();
     protected boolean needDeser = false;
-    
+    protected boolean elementIsFirstParam = false;
+
     public RPCElement(String namespace, String localName, String prefix,
                       Attributes attributes, DeserializationContext context)
     {
@@ -86,6 +87,24 @@ public class RPCElement extends SOAPBodyElement
         
         // This came from parsing XML, so we need to deserialize it sometime
         needDeser = true;
+
+        // IF we're doc/literal... we can't count on the element name
+        // being the method name.
+        SOAPService service = context.getMessageContext().getService();
+        if (service != null && service.getStyle() == SOAPService.STYLE_DOCUMENT) {
+            // So see if we can map it using metadata
+            QName qname = new QName(namespace, localName);
+            String methodName = service.getMethodForElementName(qname);
+            if (methodName != null) {
+                this.name = methodName;
+
+                // OK, now that we've found a match, we need to note that
+                // we should start at this level when deserializing
+                // "parameters"
+                elementIsFirstParam = true;
+
+            }
+        }
     }
     
     public RPCElement(String namespace, String methodName, Object [] args)
@@ -159,9 +178,14 @@ public class RPCElement extends SOAPBodyElement
                     defaultParamTypes = method[i].getParameterTypes();
                     if (defaultParamTypes.length >= numChildren) {
                         try {
-                            context.pushElementHandler(new EnvelopeHandler(new RPCHandler(this)));
-                            context.setCurElement(this);
-        
+                            if (elementIsFirstParam) {
+                                context.pushElementHandler(new RPCHandler(this));
+                                context.setCurElement(null);
+                            } else {
+                                context.pushElementHandler(new EnvelopeHandler(new RPCHandler(this)));
+                                context.setCurElement(this);
+                            }
+
                             publishToHandler((org.xml.sax.ContentHandler) context);
                         } catch (SAXException e) {
                             // If there was a problem, try the next one.

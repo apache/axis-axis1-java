@@ -365,6 +365,27 @@ public class XMLUtils {
     }
 
     /**
+     * Return a string for a particular QName, mapping a new prefix
+     * if necessary.
+     */
+    public String getStringForQName(QName qname, Element e)
+    {
+        String uri = qname.getNamespaceURI();
+        String prefix = getPrefix(uri, e);
+        if (prefix == null) {
+            int i = 1;
+            prefix = "ns" + i;
+            while (getNamespace(prefix, e) != null) {
+                i++;
+                prefix = "ns" + i;
+            }
+            e.setAttributeNS(Constants.NS_URI_XMLNS,
+                        "xmlns:" + prefix, uri);
+        }
+        return prefix + ":" + qname.getLocalPart();
+    }
+
+    /**
      * Gather all existing prefixes in use in this document
      *
      */

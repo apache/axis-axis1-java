@@ -73,6 +73,8 @@ import org.apache.commons.logging.LogFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+import javax.xml.rpc.namespace.QName;
+
 public class BodyBuilder extends SOAPHandler
 {
     protected static Log log =
@@ -100,7 +102,8 @@ public class BodyBuilder extends SOAPHandler
             log.debug(JavaUtils.getMessage("enter00", "BodyBuilder.onStartChild()"));
         }
         SOAPHandler handler = null;
-        
+        SOAPService service = null;
+
         /** We're about to create a body element.  So we really need
          * to know at this point if this is an RPC service or not.  It's
          * possible that no one has set the service up until this point,
@@ -115,19 +118,19 @@ public class BodyBuilder extends SOAPHandler
         if ((root != null) && root.equals("0")) isRoot = false;
 
         MessageContext msgContext = context.getMessageContext();
+        service = msgContext.getService();
 
         if (isRoot &&
-            msgContext.getService() == null) {
+            service == null) {
 
             if (log.isDebugEnabled()) {
                 log.debug(JavaUtils.getMessage("dispatching00",namespace));
             }
 
             try {
-                SOAPService service = msgContext.
-                                           getAxisEngine().
-                                           getConfig().
-                                           getServiceByNamespaceURI(namespace);
+                service = msgContext.getAxisEngine().
+                                     getConfig().
+                                     getServiceByNamespaceURI(namespace);
                 if (service != null)
                     msgContext.setService(service);
             } catch (ConfigurationException e) {
@@ -146,13 +149,29 @@ public class BodyBuilder extends SOAPHandler
                                            attributes, context);
             handler = new SOAPFaultBuilder((SOAPFaultElement)element,
                                            context);
-        } else if (!gotRPCElement &&
-            isRoot && 
-            msgContext.isEncoded() ) {
+        } else if (!gotRPCElement) {
+            if (isRoot &&
+                msgContext.isEncoded() ) {
                 gotRPCElement = true;
                 element = new RPCElement(namespace, localName, prefix,
                                          attributes, context);
-        } else {
+            } else {
+                // If we can figure out a method based on the element name,
+                // we must want an RPCElement.  !!! This needs cleaning up
+                //
+                if (service != null) {
+                    QName qname = new QName(namespace, localName);
+                    String method = service.getMethodForElementName(qname);
+                    if (method != null) {
+                        element = new RPCElement(namespace, localName, prefix,
+                                                 attributes, context);
+                        gotRPCElement = true;
+                    }
+                }
+            }
+        }
+
+        if (element == null) {
             element = new SOAPBodyElement(namespace, localName, prefix,
                                       attributes, context);
             if (element.getFixupDeserializer() != null)

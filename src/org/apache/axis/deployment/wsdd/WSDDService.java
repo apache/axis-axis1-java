@@ -71,6 +71,9 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.rpc.namespace.QName;
 import java.util.Vector;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.Iterator;
 import java.io.IOException;
 import java.beans.IntrospectionException;
 
@@ -81,6 +84,7 @@ public class WSDDService
     extends WSDDTargetedChain
     implements WSDDTypeMappingContainer
 {
+    public static final QName elMapQName = new QName("", "elementMapping");
     public TypeMappingRegistry tmr = null;
     
     private Vector faultFlows = new Vector();
@@ -88,7 +92,10 @@ public class WSDDService
     
     /** Which namespaces should auto-dispatch to this service? */
     private Vector namespaces = new Vector();
-    
+
+    /** List of QName -> method mappings for doc/lit dispatching */
+    private HashMap qName2MethodMap = null;
+
     private String descriptionURL;
     
     /** Style - document or RPC (the default) */
@@ -145,8 +152,23 @@ public class WSDDService
             providerQName = XMLUtils.getQNameFromString(typeStr, e);
         
         String modeStr = e.getAttribute("style");
-        if (modeStr != null && modeStr.equals("document"))
+        if (modeStr != null && modeStr.equals("document")) {
             style = SOAPService.STYLE_DOCUMENT;
+
+            Element [] mappingElements = getChildElements(e, "elementMapping");
+            if (mappingElements.length > 0 && qName2MethodMap == null) {
+                qName2MethodMap = new HashMap();
+            }
+            for (int i = 0; i < mappingElements.length; i++) {
+                // Register a mapping from an Element QName to a particular
+                // method so we can dispatch for doc/lit services.
+                Element el = mappingElements[i];
+                String elString = el.getAttribute("element");
+                QName elQName = XMLUtils.getQNameFromString(elString, el);
+                String methodName = el.getAttribute("method");
+                qName2MethodMap.put(elQName, methodName);
+            }
+        }
     }
 
     /**
@@ -315,7 +337,9 @@ public class WSDDService
                                   faultHandler);
             }
         }
-        
+
+        service.setElementMap(qName2MethodMap);
+
         cachedService = service;
         return service;
     }
@@ -401,6 +425,26 @@ public class WSDDService
         context.startElement(WSDDConstants.SERVICE_QNAME, attrs);
         writeFlowsToContext(context);
         writeParamsToContext(context);
+
+        if (style == SOAPService.STYLE_DOCUMENT && qName2MethodMap != null) {
+            Set qnames = qName2MethodMap.keySet();
+            if (qnames != null) {
+                Iterator i = qnames.iterator();
+                while (i.hasNext()) {
+                    QName elQName = (QName)i.next();
+                    String methodName = (String)qName2MethodMap.get(elQName);
+                    String elemName = context.qName2String(elQName);
+                    attrs = new AttributesImpl();
+                    attrs.addAttribute("", "method", "method",
+                                       "CDATA", methodName);
+                    attrs.addAttribute("", "element", "element",
+                                       "CDATA", elemName);
+
+                    context.startElement(elMapQName, attrs);
+                    context.endElement();
+                }
+            }
+        }
 
         for (int i=0; i < typeMappings.size(); i++) {
             ((WSDDTypeMapping) typeMappings.elementAt(i)).writeToContext(context);
