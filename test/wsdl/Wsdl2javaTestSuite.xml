@@ -74,6 +74,14 @@
                skeleton="yes">
     </wsdl2java>
 
+    <!-- Operation style test (oneway, request/response, -->
+    <!-- solicit/response, notification -->
+    <wsdl2java url="test/wsdl/opStyles/opStyles.wsdl"
+               output="build/work"
+               skeleton="yes"
+               testcase="yes">
+    </wsdl2java>
+
     <!-- RefAttr Test -->
     <wsdl2java url="test/wsdl/refattr/refattr.wsdl"
                output="build/work"

@@ -64,6 +64,7 @@ import java.util.Vector;
 import javax.wsdl.Binding;
 import javax.wsdl.Fault;
 import javax.wsdl.Operation;
+import javax.wsdl.OperationType;
 import javax.wsdl.Port;
 import javax.wsdl.PortType;
 import javax.wsdl.Service;
@@ -171,10 +172,19 @@ public class JavaTestCaseWriter extends JavaWriter {
         PortTypeEntry ptEntry = symbolTable.getPortTypeEntry(port.getQName());
         Iterator ops = port.getOperations().iterator();
         while (ops.hasNext()) {
-            pw.println("        try {");
             Operation op = (Operation) ops.next();
+            OperationType type = op.getStyle();
             Parameters params = ptEntry.getParameters(op.getName());
 
+            // These operation types are not supported.  The signature
+            // will be a string stating that fact.
+            if (type == OperationType.NOTIFICATION
+                    || type == OperationType.SOLICIT_RESPONSE) {
+                pw.println("    " + params.signature);
+                continue;
+            }
+
+            pw.println("        try {");
             if (params.returnType != null) {
                 pw.print("            ");
                 pw.print(params.returnType.getName());

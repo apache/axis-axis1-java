@@ -69,6 +69,7 @@ import javax.wsdl.BindingOperation;
 import javax.wsdl.Fault;
 import javax.wsdl.Input;
 import javax.wsdl.Operation;
+import javax.wsdl.OperationType;
 import javax.wsdl.Output;
 import javax.wsdl.Part;
 import javax.wsdl.PortType;
@@ -117,9 +118,21 @@ public class JavaImplWriter extends JavaWriter {
         List operations = binding.getBindingOperations();
         for (int i = 0; i < operations.size(); ++i) {
             BindingOperation operation = (BindingOperation) operations.get(i);
+            Operation ptOperation = operation.getOperation();
+            OperationType type = ptOperation.getStyle();
             Parameters parameters =
                     ptEntry.getParameters(operation.getOperation().getName());
-            writeOperation(parameters);
+
+            // These operation types are not supported.  The signature
+            // will be a string stating that fact.
+            if (type == OperationType.NOTIFICATION
+                    || type == OperationType.SOLICIT_RESPONSE) {
+                pw.println(parameters.signature);
+                pw.println();
+            }
+            else {
+                writeOperation(parameters);
+            }
         }
         pw.println("}");
         pw.close();
@@ -198,5 +211,6 @@ public class JavaImplWriter extends JavaWriter {
             }
         }
         pw.println("    }");
+        pw.println();
     } // writeOperation
 } // class JavaImplWriter
