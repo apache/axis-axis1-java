@@ -152,6 +152,7 @@ public class MapSerializer implements Serializer {
      */
     public boolean writeSchema(Types types) throws Exception {
         Element complexType = types.createElement("complexType");
+        complexType.setAttribute("name", "Map");
         types.writeSchemaElement(types.getWsdlQName(Constants.SOAP_MAP),
                                  complexType);
         Element seq = types.createElement("sequence");
