@@ -61,7 +61,32 @@ package org.apache.axis.description;
  * @author Glen Daniels (gdaniels@apache.org)
  */
 public class ElementDesc extends FieldDesc {
+    /** The minOccurs value from the schema */
+    private int minOccurs = 1;
+    /** The maxOccurs value from the schema */
+    private int maxOccurs = 1;
+    
     public ElementDesc() {
         super(true);
+    }
+
+    public boolean isMinOccursZero() {
+        return minOccurs == 0;
+    }
+
+    public int getMinOccurs() {
+        return minOccurs;
+    }
+
+    public void setMinOccurs(int minOccurs) {
+        this.minOccurs = minOccurs;
+    }
+
+    public int getMaxOccurs() {
+        return maxOccurs;
+    }
+
+    public void setMaxOccurs(int maxOccurs) {
+        this.maxOccurs = maxOccurs;
     }
 }
