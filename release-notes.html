@@ -14,16 +14,21 @@ h1 {  margin-left: -30px}
 </style>
 </head>
 <body>
-<h2>Axis Beta 2 Release Notes</h2>
+<h2>Axis Beta 3 Release Notes</h2>
 
-<p>This is the <a href="http://xml.apache.org/axis/releases.html"> beta 2 release</a> 
-  of the <a href="http://xml.apache.org/axis"> Axis SOAP library</a>. (Wondering 
-  what Axis is? Please see our <a href="http://xml.apache.org/axis/faq.html">FAQ</a>.)</p>
-<h3>General Beta 2 Information</h3>
+<p>This is the <a href="http://xml.apache.org/axis/releases.html">beta 3 release</a> 
+  of the <a href="http://xml.apache.org/axis"> Axis SOAP library</a>.</p>
 
-<p>This is a beta release.  Most of the functionality is there.  There is still a chance that a few interfaces may change, but we will do our best to keep that from happening.  See the User's Guide for a list of the published interfaces that we believe are stable.  This beta release is closer to JAX-RPC compliance than the alpha, but JAX-RPC is still a moving target, so those interfaces still have the potential to change.</p>
+<h3>General Beta 3 Information</h3>
 
-<p>Why AXIS over SOAP 2.2?  The Axis code has:</p>
+<p>This is a beta release.  Most of the functionality is there.  There is still a chance that a few interfaces may change, but we will do our best to keep that from happening.  See the User's Guide for a list of the published interfaces that we believe are stable.</p>
+
+<h3>JAX-RPC</h3>
+<p>This beta release is intended to be 100% compliant with the <a href="http://java.sun.com/xml/jax-rpc">JAX-RPC</a> and <a href="http://java.sun.com/xml/saaj/">SAAJ</a> specifications from Sun, though there are still a few known issues.  The Axis team is currently working on getting the codebase to pass the TCK (Technology Compatibility Kit) tests, which involves both tweaks to our code and resolving perceived issues with the TCK or the specs - since these are v1.0 specs, there are some interesting conversations going on, but we'll get to compliance as soon as possible!</p>
+
+<h3>Why AXIS over SOAP 2.2?</h3>
+
+<p>The Axis code has:</p>
 
 <ul>
   <li>Significantly higher performance than Apache SOAP 2.2 
@@ -35,10 +40,12 @@ h1 {  margin-left: -30px}
   <li>An extensive package and functional test suite 
 </ul>
 
-<p>Early adopters and advanced SOAP developers will find this release to be of 
-  interest. Most Apache SOAP users, and those who need a fully featured next-version 
-  replacement for Apache SOAP 2.2, may wish to use this beta, but they should be aware that, as a beta, functionality and interfaces may change, though we will do our best to minimize the impact of such changes.</p>
 <h3>What's New?</h3>
+<p>Changes since beta-2:</p>
+<ul>
+ <li>Support for the new version of the DIME spec
+ <li><i>More...</i>
+</ul>
 <p>Changes since alpha-3:</p>
 <ul>
   <li>Closer to JAX-RPC compliance.</li>
@@ -48,6 +55,8 @@ h1 {  margin-left: -30px}
   <li>Now using the org.apache.commons.logging APIs as a common logging interface.</li>
   <li>Many minor bug fixes.</li>
 </ul>
+
+<p>Please check out the included documentation and the <a href="http://xml.apache.org/axis/faq.html">FAQ</a> for more information.</a>
 </body>
 </html>
 
