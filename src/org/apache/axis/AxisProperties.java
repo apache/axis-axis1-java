@@ -55,6 +55,7 @@
 
 package org.apache.axis;
 
+import java.lang.reflect.InvocationTargetException;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Enumeration;
@@ -62,10 +63,18 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.components.net.SocketFactory;
 import org.apache.axis.utils.Messages;
+import org.apache.commons.discovery.ResourceClassIterator;
 import org.apache.commons.discovery.ResourceNameDiscover;
+import org.apache.commons.discovery.ResourceNameIterator;
+import org.apache.commons.discovery.resource.ClassLoaders;
+import org.apache.commons.discovery.resource.classes.DiscoverClasses;
+import org.apache.commons.discovery.resource.names.DiscoverMappedNames;
 import org.apache.commons.discovery.resource.names.DiscoverNamesInAlternateManagedProperties;
+import org.apache.commons.discovery.resource.names.DiscoverNamesInManagedProperties;
+import org.apache.commons.discovery.resource.names.DiscoverServiceNames;
+import org.apache.commons.discovery.resource.names.NameDiscoverers;
+import org.apache.commons.discovery.tools.ClassUtils;
 import org.apache.commons.discovery.tools.DefaultClassHolder;
 import org.apache.commons.discovery.tools.DiscoverClass;
 import org.apache.commons.discovery.tools.ManagedProperties;
@@ -109,25 +118,124 @@ public class AxisProperties {
         LogFactory.getLog(AxisProperties.class.getName());
 
     private static DiscoverNamesInAlternateManagedProperties altNameDiscoverer;
-    
-    public static Object newInstance(Class spiClass, String defaultClass)
-    {
-        return newInstance(new SPInterface(spiClass), new DefaultClassHolder(defaultClass));
+    private static DiscoverMappedNames mappedNames;
+    private static NameDiscoverers nameDiscoverer;
+    private static ClassLoaders loaders;
+
+    public static void setClassOverrideProperty(Class clazz, String propertyName) {
+        getAlternatePropertyNameDiscoverer()
+            .addClassToPropertyNameMapping(clazz.getName(), propertyName);
     }
+    
+    public static void setClassDefault(Class clazz, String defaultName) {
+        getMappedNames().map(clazz.getName(), defaultName);
+    }
+
+    public static void setClassDefaults(Class clazz, String[] defaultNames) {
+        getMappedNames().map(clazz.getName(), defaultNames);
+    }
+
+    public static ResourceNameDiscover getNameDiscoverer() {
+        if (nameDiscoverer == null) {
+            nameDiscoverer = new NameDiscoverers();
+            nameDiscoverer.addResourceNameDiscover(getAlternatePropertyNameDiscoverer());
+            nameDiscoverer.addResourceNameDiscover(new DiscoverNamesInManagedProperties());
+            nameDiscoverer.addResourceNameDiscover(new DiscoverServiceNames(getClassLoaders()));
+            nameDiscoverer.addResourceNameDiscover(getMappedNames());
+        }
+        return nameDiscoverer;
+    }
+    
+    public static ResourceClassIterator getResourceClassIterator(Class spi) {
+        ResourceNameIterator it = getNameDiscoverer().findResourceNames(spi.getName());
+        return new DiscoverClasses(loaders).findResourceClasses(it);
+    }
+
+    
+    private static ClassLoaders getClassLoaders() {
+        if (loaders == null) {
+            loaders = ClassLoaders.getAppLoaders(AxisProperties.class, null, true);
+        }
+        return loaders;
+    }
+
+    private static DiscoverMappedNames getMappedNames() {
+        if (mappedNames == null) {
+            mappedNames = new DiscoverMappedNames();
+        }
+        return mappedNames;
+    }
+    
+    private static DiscoverNamesInAlternateManagedProperties getAlternatePropertyNameDiscoverer() {
+        if (altNameDiscoverer == null) {
+            altNameDiscoverer = new DiscoverNamesInAlternateManagedProperties();
+        }
+        
+        return altNameDiscoverer;
+    }
+
+    /**
+     * !WARNING!
+     * SECURITY issue.
+     * 
+     * See bug 11874
+     * 
+     * The solution to both is to move doPrivilege UP within AXIS to a
+     * class that is either private (cannot be reached by code outside
+     * AXIS) or that represents a secure public interface...
+     * 
+     * This is going to require analysis and (probably) rearchitecting.
+     * So, I'm taking taking the easy way out until we are at a point
+     * where we can reasonably rearchitect for security.
+     */
+    
+    public static Object newInstance(Class spiClass)
+    {
+        return newInstance(spiClass, null, null);
+    }
+
+    public static Object newInstance(final Class spiClass,
+                                     final Class constructorParamTypes[],
+                                     final Object constructorParams[]) {
+        return AccessController.doPrivileged(
+            new PrivilegedAction() {
+                public Object run() {
+                    ResourceClassIterator services = getResourceClassIterator(spiClass);
+            
+                    Object obj = null;
+                    while (obj == null  &&  services.hasNext()) {
+                        Class service = services.nextResourceClass().loadClass();
+            
+                        /* service == null
+                         * if class resource wasn't loadable
+                         */
+                        if (service != null) {
+                            /* OK, class loaded.. attempt to instantiate it.
+                             */
+                            try {
+                                ClassUtils.verifyAncestory(spiClass, service);
+                                obj = ClassUtils.newInstance(service, constructorParamTypes, constructorParams);
+                            } catch (InvocationTargetException e) {
+                                if (e.getTargetException() instanceof java.lang.NoClassDefFoundError) {
+                                    log.debug(Messages.getMessage("exception00"), e);
+                                } else {
+                                    log.warn(Messages.getMessage("exception00"), e);
+                                }
+                            } catch (Exception e) {
+                                log.warn(Messages.getMessage("exception00"), e);
+                            }
+                        }
+                    }
+            
+                    return obj;
+                }
+            });
+    }
+
     
     public static Object newInstance(Class spiClass, Class defaultClass)
     {
         return newInstance(new SPInterface(spiClass), new DefaultClassHolder(defaultClass));
-    }
-    
-    public static Object newInstance(SPInterface spi, String defaultClass)
-    {
-        return newInstance(spi, new DefaultClassHolder(defaultClass));
-    }
-    
-    public static Object newInstance(SPInterface spi, Class defaultClass)
-    {
-        return newInstance(spi, new DefaultClassHolder(defaultClass));
     }
         
     /**
@@ -219,22 +327,6 @@ public class AxisProperties {
         return ManagedProperties.getProperties();
     }
 
-
-    public static final ResourceNameDiscover getAlternatePropertyNameDiscoverer() {
-        if (altNameDiscoverer == null) {
-            altNameDiscoverer = new DiscoverNamesInAlternateManagedProperties();
-            altNameDiscoverer.addClassToPropertyNameMapping(
-                    EngineConfigurationFactory.class.getName(),
-                    EngineConfigurationFactory.SYSTEM_PROPERTY_NAME);
-                    
-            altNameDiscoverer.addClassToPropertyNameMapping(
-                    SocketFactory.class.getName(),
-                    "axis.socketFactory");
-        }
-        
-        return altNameDiscoverer;
-    }
-
     /**
      * !WARNING!
      * SECURITY issue.
@@ -249,8 +341,8 @@ public class AxisProperties {
      * So, I'm taking taking the easy way out until we are at a point
      * where we can reasonably rearchitect for security.
      */
-    private static final Object newInstance(final SPInterface spi,
-                                            final DefaultClassHolder defaultClass)
+    private static Object newInstance(final SPInterface spi,
+                                      final DefaultClassHolder defaultClass)
     {
         return AccessController.doPrivileged(
             new PrivilegedAction() {

@@ -65,13 +65,6 @@ import org.apache.axis.EngineConfigurationFactory;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.utils.Messages;
 import org.apache.commons.discovery.ResourceClassIterator;
-import org.apache.commons.discovery.ResourceNameIterator;
-import org.apache.commons.discovery.resource.ClassLoaders;
-import org.apache.commons.discovery.resource.classes.DiscoverClasses;
-import org.apache.commons.discovery.resource.names.DiscoverConstNames;
-import org.apache.commons.discovery.resource.names.DiscoverNamesInManagedProperties;
-import org.apache.commons.discovery.resource.names.DiscoverServiceNames;
-import org.apache.commons.discovery.resource.names.NameDiscoverers;
 import org.apache.commons.discovery.tools.ClassUtils;
 import org.apache.commons.logging.Log;
 
@@ -102,6 +95,18 @@ public class EngineConfigurationFactoryFinder
 
     private static final String requiredMethod =
         "public static EngineConfigurationFactory newFactory(Object)";
+
+    static {
+        AxisProperties.setClassOverrideProperty(
+                EngineConfigurationFactory.class,
+                EngineConfigurationFactory.SYSTEM_PROPERTY_NAME);
+
+        AxisProperties.setClassDefaults(EngineConfigurationFactory.class,
+                            new String[] {
+                                "org.apache.axis.configuration.EngineConfigurationFactoryServlet",
+                                "org.apache.axis.configuration.EngineConfigurationFactoryDefault",
+                                });
+    }
 
     private EngineConfigurationFactoryFinder() {
     }
@@ -148,24 +153,7 @@ public class EngineConfigurationFactoryFinder
         return (EngineConfigurationFactory)AccessController.doPrivileged(
                 new PrivilegedAction() {
                     public Object run() {
-                        ClassLoaders loaders =
-                            ClassLoaders.getAppLoaders(mySpi, myFactory, true);
-                
-                        NameDiscoverers nameDiscoverers = new NameDiscoverers();
-                        nameDiscoverers.addResourceNameDiscover(AxisProperties.getAlternatePropertyNameDiscoverer());
-                        nameDiscoverers.addResourceNameDiscover(new DiscoverNamesInManagedProperties());
-                        nameDiscoverers.addResourceNameDiscover(new DiscoverServiceNames(loaders));
-                        nameDiscoverers.addResourceNameDiscover(new DiscoverConstNames(
-                            new String[] {
-                                "org.apache.axis.configuration.EngineConfigurationFactoryServlet",
-                                "org.apache.axis.configuration.EngineConfigurationFactoryDefault",
-                                })
-                            );
-
-                        ResourceNameIterator it = nameDiscoverers.findResourceNames(mySpi.getName());
-
-                        ResourceClassIterator services =
-                            new DiscoverClasses(loaders).findResourceClasses(it);
+                        ResourceClassIterator services = AxisProperties.getResourceClassIterator(mySpi);
 
                         EngineConfigurationFactory factory = null;
 

@@ -82,6 +82,21 @@ public class SocketFactoryFactory {
     private static Hashtable factories = new Hashtable();
 
     private static final Class classes[] = new Class[] { Hashtable.class };
+
+
+    static {
+        AxisProperties.setClassOverrideProperty(SocketFactory.class,
+                                       "axis.socketFactory");
+
+        AxisProperties.setClassDefault(SocketFactory.class,
+                                       "org.apache.axis.components.net.DefaultSocketFactory");
+
+        AxisProperties.setClassOverrideProperty(SecureSocketFactory.class,
+                                       "axis.socketSecureFactory");
+
+        AxisProperties.setClassDefault(SecureSocketFactory.class,
+                                       "org.apache.axis.components.net.DefaultSecureSocketFactory");
+    }
     
     /**
      * Returns a copy of the environment's default socket factory.
@@ -99,19 +114,11 @@ public class SocketFactoryFactory {
             Object objects[] = new Object[] { attributes };
     
             if (protocol.equalsIgnoreCase("http")) {
-                theFactory = (SocketFactory)AxisProperties.newInstance(
-                         new SPInterface(SocketFactory.class,
-                                         "axis.socketFactory",
-                                         classes,
-                                         objects),
-                         "org.apache.axis.components.net.DefaultSocketFactory");
+                theFactory = (SocketFactory)
+                    AxisProperties.newInstance(SocketFactory.class, classes, objects);
             } else if (protocol.equalsIgnoreCase("https")) {
-                theFactory = (SocketFactory)AxisProperties.newInstance(
-                         new SPInterface(SecureSocketFactory.class,
-                                         "axis.socketSecureFactory",
-                                         classes,
-                                         objects),
-                         "org.apache.axis.components.net.DefaultSecureSocketFactory");
+                theFactory = (SecureSocketFactory)
+                    AxisProperties.newInstance(SecureSocketFactory.class, classes, objects);
             }
             
             if (theFactory != null) {
