@@ -2,7 +2,7 @@
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <meta name="GENERATOR" content="Mozilla/4.72 [en] (Windows NT 5.0; U) [Netscape]">
+   <meta name="GENERATOR" content="Mozilla/4.73 [en] (WinNT; U) [Netscape]">
    <title>Axis User's Guide</title>
 <!-- saved from url=(0022)http://internet.e-mail -->
 <style type="text/css">
@@ -67,7 +67,6 @@ WSDL from Java</a></li>
 <li>
 <a href="#tcpmon">Using TCPMon</a></li>
 
-
 <li>
 <a href="#Glossary">Glossary</a></li>
 </ul>
@@ -115,8 +114,8 @@ system management, or anything else you can imagine.</li>
 
 <li>
 <b>Stability.</b> Axis defines a set of
-<a href="#published interfaces">published interfaces</a> which change
-relatively slowly compared to the rest of Axis.</li>
+<a href="#published interfaces">published
+interfaces</a> which change relatively slowly compared to the rest of Axis.</li>
 
 <li>
 <b>Component-oriented deployment.</b> You can easily define reusable networks
@@ -209,8 +208,8 @@ Support for generating complex type definitions in WSDL</li>
 All of these items are on the list for the final release.
 <h2>
 <a NAME="Installation"></a>Installing Axis and Using this Guide</h2>
-See the <a href="install.html">Axis Installation Guide</a> for instructions
-on installing Axis as a web application on your J2EE server.
+See the <a href="xml-axis/java/docs/install.html">Axis Installation Guide</a>
+for instructions on installing Axis as a web application on your J2EE server.
 <p>Before running the examples in this guide, you'll need to make sure
 that axis.jar is in your classpath. You should find it in the build/lib
 directory of the distribution.
@@ -248,7 +247,7 @@ method on the public Axis server at Apache.
 24&nbsp;&nbsp;&nbsp;&nbsp; }
 25&nbsp; }</pre>
 </div>
-(You'll find this file in <a href="../samples/userguide/example1/TestClient.java">samples/userguide/example1/TestClient.java</a>)
+(You'll find this file in <a href="xml-axis/java/samples/userguide/example1/TestClient.java">samples/userguide/example1/TestClient.java</a>)
 <p>Assuming you have a network connection active, this program can be run
 as follows:
 <pre>% java samples.userguide.example1.TestClient
@@ -367,7 +366,7 @@ Let's say we have a simple class like the following:
 &nbsp;&nbsp;&nbsp; return i1 - i2;
 &nbsp; }
 }</pre>
-(You'll find this very class in <a href="../samples/userguide/example2/Calculator.java">samples/userguide/example2/Calculator.java</a>.)
+(You'll find this very class in <a href="xml-axis/java/samples/userguide/example2/Calculator.java">samples/userguide/example2/Calculator.java</a>.)
 <p>How do we go about making this class available via SOAP? There are a
 couple of answers to that question, but we'll start with the easiest way
 Axis provides to do this, which takes almost no effort at all!
@@ -622,121 +621,359 @@ able to use it to access your service with toolkits like .NET, SOAP::Lite,
 or any other software which supports using WSDL.
 <p>You can also generate WSDL files from existing Java classes (see <a href="#Java2WSDL: Building WSDL from Java">#Java2WSDL:
 Building WSDL from Java</a>&nbsp; ).
+<br>&nbsp;
 <h3>
 <a NAME="WSDL2Java: Building stubs, skeletons, and data"></a>WSDL2Java:
 Building stubs, skeletons, and data types from WSDL</h3>
-You'll find the Axis WSDL -> Java tool in "org.apache.axis.wsdl.WSDL2Java".
+
+<h4>
+Client-side bindings</h4>
+You'll find the AXIS WSDL -> Java tool in "org.apache.axis.wsdl.WSDL2Java".
 The basic invocation form looks like this:
-<div class="example">
-<pre>% java org.apache.axis.wsdl.WSDL2Java <i>(url-to-wsdl-file)</i></pre>
-</div>
+<div class="example">&nbsp;
+<br><font face="Courier New,Courier">% java org.apache.axis.wsdl.WSDL2Java
+(WSDL-file-URL)</font></div>
+
+<p><br>This will generate only those bindings necessary for the client.&nbsp;
+AXIS follows the JAX-RPC specification when generating Java client bindings
+from WSDL.&nbsp; For this discussion, assume we executed the following:
+<p><font face="Courier New,Courier">% cd samples/addr</font>
+<br><font face="Courier New,Courier">% java org.apache.axis.wsdl.WSDL2Java
+AddressBook.wsdl</font>
+<p>The generated files will reside in the directory "AddressFetcher2".&nbsp;
+They are put here because that is the target namespace from the WSDL.&nbsp;
+Namespaces will be discussed in detail later.
+<br>&nbsp;
+<br>&nbsp;
+<table BORDER COLS=2 WIDTH="100%" >
+<tr>
+<td><b>WSDL clause</b></td>
+
+<td><b>Java class(es) generated</b></td>
+</tr>
+
+<tr>
+<td>For each entry in the type section</td>
+
+<td>A java class</td>
+</tr>
+
+<tr>
+<td></td>
+
+<td>A holder if this type is used as an inout/out parameter</td>
+</tr>
+
+<tr>
+<td>For each portType</td>
+
+<td>A java interface</td>
+</tr>
+
+<tr>
+<td>For each binding</td>
+
+<td>A stub class</td>
+</tr>
+
+<tr>
+<td>For each service</td>
+
+<td>A service interface</td>
+</tr>
+
+<tr>
+<td></td>
+
+<td>A service implementation (the locator)</td>
+</tr>
+</table>
 
 <h4>
-Stubs - making Web Service access transparent from the client side</h4>
-A <b>stub</b> is a Java class which has the same interface as a remote
-Web Service. It stands in as a <b>proxy</b> (another term for the same
-idea) for the remote service, letting you call it exactly as if it were
-a local object. In other words, you don't need to deal with the endpoint
-URL, namespace, or parameter arrays which are involved in dynamic invocation
-via the Service and Call objects. The stub hides all that work for you.
-<p>You can try an example, assuming you've deployed the service in <a href="#descriptors">example
-3</a> above and have your Axis server up and running. Type the following
-at the command line:
-<pre>% java org.apache.axis.wsdl.WSDL2Java http://localhost:8080/axis/services/MyService?wsdl</pre>
-You can add the "--verbose" option right before the URL if you want some
-more feedback on what the tool is up to. This will generate stub code,
-which we'll describe.
-<p>WSDL2Java generates a few classes; here's a rundown of what they are
-and how to use them:
-<ul>
-<li>
-There will be an interface for each referenced PortType in the WSDL. These
-interfaces are the ones you will actually use to call the remote methods,
-as they contain the operations described in the WSDL. For the example,
-above, the generated interface is called MyServicePortType.</li>
+Types</h4>
+The Java class generated from a WSDL type will be named from the WSDL type.&nbsp;
+This class will typically, though not always, be a bean.&nbsp; For example,
+given the WSDL (the WSDL used throughout the WSDL2Java discussion is from
+the Address Book sample):
+<p><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;xsd:complexType
+name="phone"></font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;xsd:all></font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;xsd:element name="areaCode" type="xsd:int"/></font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;xsd:element name="exchange" type="xsd:string"/></font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;xsd:element name="number" type="xsd:string"/></font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&lt;/xsd:all></font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/xsd:complexType></font>
+<p>WSDL2Java will generate:
+<p><font face="Courier New,Courier">public class Phone implements java.io.Serializable
+{</font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public Phone()
+{...}</font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public int getAreaCode()
+{...}</font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public void setAreaCode(int
+areaCode) {...}</font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public java.lang.String
+getExchange() {...}</font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public void setExchange(java.lang.String
+exchange) {...}</font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public java.lang.String
+getNumber() {...}</font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public void setNumber(java.lang.String
+number) {...}</font>
+<br><font face="Courier New,Courier">}</font>
+<br>&nbsp;
+<h4>
+Holders</h4>
+This type may be used as an inout or out parameter.&nbsp; Java does not
+have the concept of inout/out parameters.&nbsp; In order to achieve this
+behavior, JAX-RPC specifies the use of holder classes.&nbsp; A holder class
+is simply a class that contains an instance of its type.&nbsp; For example,
+the holder for the Phone class would be:
+<p><font face="Courier New,Courier">public final class PhoneHolder implements
+javax.xml.rpc.holders.Holder {</font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public Phone value;</font>
+<p><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public PhoneHolder()
+{</font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; }</font>
+<p><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public PhoneHolder(Phone
+value) {</font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+this.value = value;</font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; }</font>
+<br><font face="Courier New,Courier">}</font>
+<p>A holder class is ONLY generated for a type if that type is used as
+an inout or out parameter.
+<p>The holder classes for the primitive types can be found in javax.xml.rpc.holders.
+<br>&nbsp;
+<h4>
+PortTypes</h4>
+The Service Definition Interface (SDI) is the interface that's derived
+from a WSDL's portType.&nbsp; This is the interface you use to access the
+operations on the service.&nbsp; For example, given the WSDL:
+<p><font face="Courier New,Courier">&nbsp; &lt;message name="empty"></font>
+<br><font face="Courier New,Courier">&nbsp; &lt;message name="AddEntryRequest"></font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; &lt;part name="name"
+type="xsd:string"/></font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; &lt;part name="address"
+type="typens:address"/></font>
+<br><font face="Courier New,Courier">&nbsp; &lt;/message></font>
+<br><font face="Courier New,Courier">&nbsp; &lt;portType name="AddressBook"></font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; &lt;operation name="addEntry"></font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;input
+message="tns:AddEntryRequest"/></font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;output
+message="tns:empty"/></font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; &lt;/operation></font>
+<p>WSDL2Java will generate:
+<p><font face="Courier New,Courier">public interface AddressBook extends
+java.rmi.Remote {</font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public void addEntry(String
+name, Address address) throws java.rmi.RemoteException;</font>
+<br><font face="Courier New,Courier">}</font>
+<p>The name of the SDI is typically the name of the portType.&nbsp; However,&nbsp;
+if information in the binding affects the appearance of the SDI, then the
+name of the SDI is the name of the binding, not the name of the portType.&nbsp;
+(For example, JAX-RPC assumes that the bindings will be rpc/encoded - it
+IS an RPC specification, after all.&nbsp; If the binding specifies document/literal,
+then the signature of the Java methods will be different.&nbsp; See the
+JAX-RPC specification for details).
+<br>&nbsp;
+<h4>
+Bindings</h4>
+A Stub class implements the SDI.&nbsp; Its name is the binding name with
+the suffix "Stub".&nbsp; It contains the code which turns the method invocations
+into SOAP calls using the Axis Service and Call objects.&nbsp; It stands
+in as a <b>proxy</b> (another term for the same idea) for the remote service,
+letting you call it exactly as if it were a local object. In other words,
+you don't need to deal with the endpoint URL, namespace, or parameter arrays
+which are involved in dynamic invocation via the Service and Call objects.
+The stub hides all that work for you.
+<p>Given the following WSDL snippet:
+<p><font face="Courier New,Courier">&nbsp; &lt;binding name="AddressBookSOAPBinding"
+type="tns:AddressBook"></font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; ...</font>
+<br><font face="Courier New,Courier">&nbsp; &lt;/binding></font>
+<p>WSDL2Java will generate:
+<p><font face="Courier New,Courier">public class AddressBookSOAPBindingStub
+extends org.apache.axis.client.Stub implements AddressBook {</font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public AddressBookSOAPBindingStub()
+throws org.apache.axis.AxisFault {...}</font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public AddressBookSOAPBindingStub(URL
+endpointURL, javax.xml.rpc.Service service) throws org.apache.axis.AxisFault
+{...}</font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public AddressBookSOAPBindingStub(javax.xml.rpc.Service
+service) throws org.apache.axis.AxisFault {...}</font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public void addEntry(String
+name, Address address) throws RemoteException{...}</font>
+<br><font face="Courier New,Courier">}</font>
+<br>&nbsp;
+<h4>
+Services</h4>
+Normally, a client program would not instantiate a stub directly.&nbsp;
+It would instead instantiate a service locator and call a get method which
+returns a stub.&nbsp; This locator is derived from the service clause in
+the WSDL.&nbsp; WSDL2Java generates two objects from a service clause.&nbsp;
+For example, given the WSDL:
+<p>&nbsp; &lt;service name="AddressBookService">
+<br>&nbsp;&nbsp;&nbsp; &lt;port name="AddressBook" binding="tns:AddressBookSOAPBinding">
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;soap:address location="http://localhost:8080/axis/services/AddressBook"/>
+<br>&nbsp;&nbsp;&nbsp; &lt;/port>
+<br>&nbsp; &lt;/service>
+<p>WSDL2Java will generate the service interface:
+<p><font face="Courier New,Courier">public interface AddressBookService
+extends javax.xml.rpc.Service {</font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public String getAddressBookAddress();</font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public AddressBook
+getAddressBook() throws javax.xml.rpc.ServiceException;</font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public AddressBook
+getAddressBook(URL portAddress) throws javax.xml.rpc.ServiceException;</font>
+<br><font face="Courier New,Courier">}</font>
+<p>WSDL2Java will also generate the locator which implements this interface:
+<p><font face="Courier New,Courier">public class AddressBookServiceLocator
+extends org.apache.axis.client.Service implements AddressBookService {</font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; ...</font>
+<br><font face="Courier New,Courier">}</font>
+<p>The service interface defines a get method for each port listed in the
+service element of the WSDL. The locator is the implementation of this
+service interface.&nbsp; It implements these get methods. It serves as
+a locator for obtaining Stub instances. The Service class will by default
+make a Stub which points to the endpoint URL described in the WSDL file,
+but you may also specify a different URL when you ask for the PortType.
+<p>A typical usage of the stub classes would be as follows:
 
-<li>
-The Stub classes implement the interface, and contain the code which turns
-the method invocations into SOAP calls using the Axis Service and Call
-objects. For the example, this is MyServiceSoapBindingStub. The stubs themselves
-also have a few additional methods for getting a little more control over
-the SOAP invocations - in this version of Axis we won't go into more detail
-about these, though you can read the code if you're inclined.</li>
-
-<li>
-The Service interface - MyService for our example - defines a get method for each port listed in the service element of the WSDL.  The implementation of this service interface - MyServiceLocator for our example - implements these get methods.  It serves as a locator for obtaining Stub instances.  The Service class will by default make a Stub which points
-to the endpoint URL described in the WSDL file, but you may also specify
-a different URL when you ask for the PortType.</li>
-</ul>
-So a typical usage of the stub classes would be as follows:
-<pre class="example">public class Tester {
-&nbsp; public static void main(String [] args) throws Exception
-&nbsp; {
-&nbsp;&nbsp;&nbsp; // Make a service (PortType factory)
-&nbsp;&nbsp;&nbsp; MyService service = new MyServiceLocator();
-
-
-&nbsp;&nbsp;&nbsp; // Now use the service to get a PortType that we can call.
-&nbsp;&nbsp;&nbsp; MyServicePortType port = service.getMyServicePort();
-&nbsp;
-&nbsp;&nbsp;&nbsp; // Make the actual call
-&nbsp;&nbsp;&nbsp; String ret = port.serviceMethod("test string");
-&nbsp;&nbsp;&nbsp; System.out.println("Return val was " + ret);
-&nbsp; }
-}</pre>
+<p class="example"><font face="Courier New,Courier">public class Tester
+{</font>
+<br><font face="Courier New,Courier">&nbsp; public static void main(String
+[] args) throws Exception</font>
+<br><font face="Courier New,Courier">&nbsp; {</font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; // Make a service</font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; AddressBookService
+service = new AddressBookServiceLocator();</font>
+<br>&nbsp;
+<p><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; // Now use the service
+to get a stub which implements the SDI.</font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; AddressBook port
+= service.getAddressBook();</font>
+<p><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; // Make the actual
+call</font>
+<div class="example"><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp;
+Address address = new Address(...);</font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; port.addEntry("Russell
+Butek", address);</font>
+<br><font face="Courier New,Courier">&nbsp; }</font>
+<br><font face="Courier New,Courier">}</font></div>
 
 <h4>
-Skeletons - frameworks for implementing Web Services</h4>
+Server-side bindings</h4>
 Just as a stub is the client side of a Web Service represented in Java,
-a <b>skeleton</b> is a Java framework for the server side. You'd want to
-make a skeleton if you had a WSDL description of a service which you'd
-like to implement. For instance, you might want to join a digital marketplace
-which requires you to make your inventory available via a particular Web
-Service interface.
-<p>To make skeleton classes, you just specify the "--skeleton" option to
-WSDL2Java. For instance, if we wanted to replicate the service in the last
-example, we'd type:
-<pre>% java org.apache.axis.wsdl.WSDL2Java --skeleton http://localhost:8080/axis/services/MyService?wsdl</pre>
-There are a couple of classes produced by the skeleton generator, so let's
-take a look at them:
-<ul>
-<li>
-The Skeleton proper (in our example, <b>MyServiceSoapBindingSkeleton</b>)
-is the class you'll actually deploy as an Axis service. You won't need
-to edit the code in here at all.</li>
+a <b>skeleton</b> is a Java framework for the server side.&nbsp; To make
+skeleton classes, you just specify the "--skeleton" option to WSDL2Java.
+For instance, using the AddressBook.wsdl as we had above:
+<p><font face="Courier New,Courier">% java org.apache.axis.wsdl.WSDL2Java
+--skeleton AddressBook.wsdl</font>
+<p>You will see that WSDL2Java generates all the classes that were generated
+before for the client, but it generates a few new files:
+<br>&nbsp;
+<br>&nbsp;
+<table BORDER COLS=2 WIDTH="100%" >
+<tr>
+<td><b>WSDL clause</b></td>
 
-<li>
-The Implementation class (<b>MyServiceSoapBindingImpl</b>) is the actual
-framework class which you'll flesh out with your own code.</li>
-</ul>
-The tool also builds you a "deploy.wsdd" and an "undeploy.wsdd" for use
-with the AdminClient. These files may be used to deploy the service once
-you've filled in the methods of the Implementation class, compiled the
-code, and made the classes available to your Axis engine.
+<td><b>Java class(es) generated</b></td>
+</tr>
+
+<tr>
+<td>For each binding</td>
+
+<td>A skeleton class</td>
+</tr>
+
+<tr>
+<td></td>
+
+<td>An implementation template class</td>
+</tr>
+
+<tr>
+<td>For each service</td>
+
+<td>deploy.wsdd</td>
+</tr>
+
+<tr>
+<td></td>
+
+<td>undeploy.wsdd</td>
+</tr>
+</table>
+
 <h4>
-Data Types for Stubs and Skeletons</h4>
-WSDL files can contain (or reference) XML Schema describing the data types
-used by particular operations. As we've seen, Axis needs to do some work
-to map schema types to Java types, and this remains true whether we code
-the Java by hand or generate it with a tool. When you use WSDL2Java to
-generate either stubs or skeletons for operations which contain complex
-types, you will notice that Java classes corresponding to the XML data
-types are also generated. For the stub, the code inside the stub handles
-setting up the type mapping in Axis - and for the skeleton, the type mappings
-are included in the generated "deploy.wsdd" file.
-<h5>
-Holders</h5>
-In order to have a reasonably clean mapping for WSDL's in/out and out parameters,
-we have holder classes.  The holder classes for the primitive types can be found
-in javax.xml.rpc.holders.  When WSDL2Java generates Java types from schema types,
-it may also generate their associated holders.  If a method uses a type as an
-in/out or out parameter, then its associated holder will be generated.  If a type
-is only used as an in parameter, then no associated holder will be generated.
-See the examples for more details.
+Bindings</h4>
+The skeleton class is the class that sits between the AXIS engine and the
+actual service implementation.&nbsp; Its name is the binding name with
+suffix "Skeleton".&nbsp; For example, for the AddressBook binding, WSDL2Java
+will generate:
+<p><font face="Courier New,Courier">public class AddressBookSOAPBindingSkeleton
+implements AddressBook,</font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; org.apache.axis.wsdl.Skeleton
+{</font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; private AddressBook
+impl;</font>
+<p><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public AddressBookSOAPBindingSkeleton()
+{</font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+this.impl = new AddressBookSOAPBindingImpl();</font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; }</font>
+<p><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public AddressBookSOAPBindingSkeleton(AddressBook
+impl) {</font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+this.impl = impl;</font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; }</font>
+<p><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public void addEntry(java.lang.String
+name, Address address) throws java.rmi.RemoteException</font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; {</font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+impl.addEntry(name, address);</font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; }</font>
+<br><font face="Courier New,Courier">}</font>
+<p>(The real skeleton is actually much richer.&nbsp; For brevity I'm just
+showing you the basic skeleton.)
+<p>The skeleton contains an implementation of the AddressBook service.&nbsp;
+This implementation is either passed into the skeleton on construction,
+or an instance of the generated implementation is created.&nbsp; When the
+AXIS engine calls the skeleton's addEntry method, it simply delegates the
+invocation to the real implementation's addEntry method.
+<p>Besides the skeleton, WSDL2Java also generates an implementation template
+from the binding:
+<p><font face="Courier New,Courier">public class AddressBookSOAPBindingImpl
+implements AddressBook {</font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; public void addEntry(String
+name, Address address) throws java.rmi.RemoteException {</font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp; }</font>
+<br><font face="Courier New,Courier">}</font>
+<p>This template could actually be used as a test implementation but, as
+you can see, it doesn't do anything.&nbsp; It is intended that the service
+writer fill out the implementation from this template.
+<p>When WSDL2Java is asked to generate the implementation template (via
+the --skeleton flag), it will ONLY generate it if it does not already exist.&nbsp;
+If this implementation already exists, it will not be overwritten.
+<br>&nbsp;
 <h4>
-Wsdl2java details</h4>
-Wsdl2java has a number of options, some of which have already been detailed.
-<p>Usage:&nbsp; java org.apache.axis.wsdl.Wsdl2java [options] WSDL-URI
+Services</h4>
+The tool also builds you a "deploy.wsdd" and an "undeploy.wsdd" for each
+service for use with the AdminClient. These files may be used to deploy
+the service once you've filled in the methods of the Implementation class,
+compiled the code, and made the classes available to your Axis engine.
+<br>&nbsp;
+<h4>
+Other WSDL2Java details</h4>
+WSDL2Java has a number of options besides --skeleton.
+<p>Usage:&nbsp; java org.apache.axis.wsdl.WSDL2Java [options] WSDL-URI
 <br>Options:
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -h, --help
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -744,91 +981,183 @@ print this message and exit
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -v, --verbose
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 print informational messages
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -s, --skeleton
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -s, --server-side
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-emit skeleton class for web service
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -m, --messageContext
+emit server-side bindings for web service
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -S, --skeletonDeploy &lt;argument>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-emit a MessageContext parameter to skeleton methods
+deploy skeleton (true) or implementation (false) in deploy.wsdd.
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Default is true.&nbsp; Only valid with --server-side.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -N, --NStoPkg &lt;argument>=&lt;value>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-mapping of namespace to package&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
--p, --package &lt;argument>
+mapping of namespace to package
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -f, --fileNStoPkg &lt;argument>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-override all namespace to package mappings, use this package name instead
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -o, --output &lt;argument>
+file of NStoPkg mappings (default NStoPkg.properties)
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -p, --package &lt;argument>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+override all namespace to package mappings, use this package
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+name instead
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -o, --output &lt;argument>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 output directory for emitted files
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -d, --deployScope &lt;argument>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-add scope to deploy.wsdd: "Application", "Request", "Session"
+add scope to deploy.xml: "Application", "Request", "Session"
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -t, --testCase
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 emit junit testcase class for web service
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -n, --noImports
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 only generate code for the immediate WSDL document
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -a, --all
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+generate code for all elements, even unreferenced ones
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -D, --Debug
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+print debug information
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -T, --typeMappingVersion
+&lt;argument>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+indicate 1.1 or 1.2.&nbsp; The default is 1.2 (SOAP 1.2 JAX-RPC c
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ompliant)
 <br>&nbsp;
-<h5>
--h, --help</h5>
+<h4>
+-h, --help</h4>
 Print the usage statement and exit
-<h5>
--v, --verbose</h5>
+<h4>
+-v, --verbose</h4>
 See what the tool is generating as it is generating it.
-<h5>
--s, --skeleton</h5>
-Detailed above.
-<h5>
--m, --messageContext</h5>
-The AXIS runtime contains a MessageContext that is normally not available
-to the server-side implementation.&nbsp; Turning on this option adds a
-MessageContext argument to each operation in the server-side interface
-so that the implementation can be given the context.
-<h5>
--N, --NStoPkg &lt;argument>=&lt;value></h5>
+<h4>
+-s, --server-side</h4>
+Emit the server-side bindings for the web service:
+<ul>
+<li>
+a skeleton class named &lt;bindingName>Skeleton.&nbsp; This may or may
+not be emitted (see -S, --skeletonDeploy).</li>
+
+<li>
+an implementation template class named &lt;bindingName>Impl.&nbsp; Note
+that, if this class already exists, then it is not emitted.</li>
+
+<li>
+deploy.wsdd</li>
+
+<li>
+undeploy.wsdd</li>
+</ul>
+
+<h4>
+-S, --skeletonDeploy &lt;argument></h4>
+Deploy either the skeleton (true) or the implementation (false) in deploy.wsdd.&nbsp;
+In other words, for "true" the service clause in the deploy.wsdd file will
+look something like:
+<p><font face="Courier New,Courier">&nbsp; &lt;service name="AddressBook"
+provider="java:RPC"></font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;parameter
+name="className" value="samples.addr.AddressBookSOAPBindingSkeleton"/></font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...</font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp; &lt;/service></font>
+<p>and for "false" it would look like:
+<p><font face="Courier New,Courier">&nbsp; &lt;service name="AddressBook"
+provider="java:RPC"></font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;parameter
+name="className" value="samples.addr.AddressBookSOAPBindingImpl"/></font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...</font>
+<br><font face="Courier New,Courier">&nbsp;&nbsp; &lt;/service></font>
+<p>The default for this option is true.&nbsp; This option is only valid
+with the --server-side option.
+<h4>
+-N, --NStoPkg &lt;argument>=&lt;value></h4>
 By default, package names are generated from the namespace strings in the
-WSDL document.&nbsp; Users can provide their own mapping using the --NStoPkg
-argument, which can be repeated as often as necessary, once for each unique
-namespace mapping.&nbsp; For example, if there is a namespace in the WSDL
-document called "urn:AddressFetcher2", and you want files generated from
-the objects within this namespace to reside in the package samples.addr,
-you would provide the following option to Wsdl2java:
+WSDL document in a magical manner (typically, if the namespace is of the
+form "http://x.y.com" or "urn:x.y.com" the corresponding package will be
+"com.y.x").&nbsp; If this magic is not what you want, you can provide your
+own mapping using the --NStoPkg argument, which can be repeated as often
+as necessary, once for each unique namespace mapping.&nbsp; For example,
+if there is a namespace in the WSDL document called "urn:AddressFetcher2",
+and you want files generated from the objects within this namespace to
+reside in the package samples.addr, you would provide the following option
+to Wsdl2java:
 <pre>--NStoPkg urn:AddressFetcher2=samples.addr</pre>
+(Note that if you use the short option tag, "-N", then there must not be
+a space between "-N" and the namespace.)
+<br>&nbsp;
+<h4>
+-f, --fileNStoPkg &lt;argument></h4>
 If there are a number of namespaces in the WSDL document, listing a mapping
 for them all could become tedious.&nbsp; To help keep the command line
-terse, Wsdl2java will also look for mappings in a file called NStoPkg.properties
-residing in the default package (ie., no package).&nbsp; The entries in
-this file are of the same form as the arguments to the --NStoPkg command
-line option.&nbsp; For example, instead of providing the command line option
-as above, we could provide the same information in NStoPkg.properties:
+terse, WSDL2Java will also look for mappings in a properties file.&nbsp;
+By default, this file is named "NStoPkg.properties" and it must reside
+in the default package (ie., no package).&nbsp; But you can explicitly
+provide your own file using the --fileNStoPkg option.
+<p>The entries in this file are of the same form as the arguments to the
+--NStoPkg command line option.&nbsp; For example, instead of providing
+the command line option as above, we could provide the same information
+in NStoPkg.properties:
 <pre>urn\:AddressFetcher2=samples.addr</pre>
 (Note that the colon must be escaped in the properties file.)
 <p>If an entry for a given mapping exists both on the command line and
 in the properties file, the command line entry takes precedence.
-<h5>
--p, --package &lt;argument></h5>
+<h4>
+-p, --package &lt;argument></h4>
 This is a shorthand option to map all namespaces in a WSDL document to
 the same Java package name.&nbsp; This can be useful, but dangerous.&nbsp;
 You must make sure that you understand the effects of doing this.&nbsp;
 For instance there may be multiple types with the same name in different
 namespaces.&nbsp; It is an error to use the --NStoPkg switch and --package
 at the same time.
-<h5>
--o, --output &lt;argument></h5>
+<h4>
+-o, --output &lt;argument></h4>
 The root directory for all emitted files.
-<h5>
--d, --deployScope &lt;argument></h5>
+<h4>
+-d, --deployScope &lt;argument></h4>
 Add scope to deploy.wsdd: "Application", "Request", or "Session".&nbsp;
 If this option does not appear, no scope tag appears in deploy.wsdd, which
 the AXIS runtime defaults to "Request".
-<h5>
--t, --testCase</h5>
-Generate a client-side JUnit test case.
-<h5>
--n, --noImports</h5>
+<h4>
+-t, --testCase</h4>
+Generate a client-side JUnit test case.&nbsp; This test case can stand
+on its own, but it doesn't really do anything except pass default values
+(null for objects, 0 or false for primitive types).&nbsp; Like the generated
+implementation file, the generated test case file could be considered a
+template that you may fill in.
+<h4>
+-n, --noImports</h4>
 Only generate code for the WSDL document that appears on the command line.&nbsp;
 The default behaviour is to generate files for all WSDL documents, the
 immediate one and all imported ones.
+<h4>
+-a, --all</h4>
+Generate code for all elements, even unreferenced ones.&nbsp; By default,
+WSDL2Java only generates code for those elements in the WSDL file that
+are referenced.
+<p>A note about what it means to be referenced.&nbsp; We cannot simply
+say:&nbsp; start with the services, generate all bindings referenced by
+the service, generated all portTypes referenced by the referenced bindings,
+etc.&nbsp; What if we're generating code from a WSDL file that only contains
+portTypes, messages, and types?&nbsp; If WSDL2Java used service as an anchor,
+and there's no service in the file, then nothing will be generated.&nbsp;
+So the anchor is the lowest element that exists in the WSDL file in the
+order:
+<br>types
+<br>portTypes
+<br>bindings
+<br>services
+<p>For example, if a WSDL file only contained types, then all the listed
+types would be generated.&nbsp; But if a WSDL file contained types and
+a portType, then that portType will be generated and only those types that
+are referenced by that portType.
+<h4>
+-D, --Debug</h4>
+Print debug information, which currently is WSDL2Java's symbol table.
+<h4>
+-T, --typeMappingVersion &lt;argument></h4>
+Indicate 1.1 or 1.2.&nbsp; The default is 1.2 (SOAP 1.2 JAX-RPC compliant).
+<br>&nbsp;
 <h3>
 <a NAME="Java2WSDL: Building WSDL from Java"></a>Java2WSDL: Building WSDL
 from Java</h3>
@@ -841,7 +1170,7 @@ from a Java interface.
 Step 1: Provide a Java interface or class</h4>
 Write and compile a Java interface (or class) that describes the web service
 interface.&nbsp; Here is an example interface that describes a web services
-that can be used to set/query the price of widgets ( <a href="../samples/userguide/example6/WidgetPrice.java">../samples/userguide/example6/WidgetPrice.java</a>
+that can be used to set/query the price of widgets ( <a href="xml-axis/java/samples/userguide/example6/WidgetPrice.java">../samples/userguide/example6/WidgetPrice.java</a>
 ):
 <p><tt><font color="#006600">package samples.userguide.example6;</font></tt>
 <p><tt><font color="#006600">/**</font></tt>
@@ -862,9 +1191,9 @@ Step 2: Create WSDL using Java2WSDL</h4>
 Use the Java2WSDL tool to create a WSDL file from the interface above.
 <p>Here is an example invocation that produces the wsdl file (<tt>wp.wsdl</tt>)
 from the interface described in the previous section:
-<p><tt><font color="#009900">java org.apache.axis.wsdl.Java2WSDL -o
-wp.wsdl -l"http://localhost:8080/axis/services/WidgetPrice" -n "urn:Example6"
--p"samples.userguide.example6" "urn:Example6"&nbsp; samples.userguide.example6.WidgetPrice</font></tt>
+<p><tt><font color="#009900">java org.apache.axis.wsdl.Java2WSDL -o wp.wsdl
+-l"http://localhost:8080/axis/services/WidgetPrice" -n "urn:Example6" -p"samples.userguide.example6"
+"urn:Example6"&nbsp; samples.userguide.example6.WidgetPrice</font></tt>
 <p>Where:
 <ul>
 <li>
@@ -973,7 +1302,7 @@ name= &lt;--service value>Service</font></tt>
 name= &lt;--service value></font></tt>
 <br><tt><font color="#993366">&nbsp;&nbsp; address location= &lt;--location
 value></font></tt>
-<br><tt><font color="#993366"></font></tt>&nbsp;
+<br>&nbsp;
 <p><b>-h , --help</b>
 <br>Prints the help message.
 <p><b>-o, --output &lt;wsdl file></b>
@@ -1053,7 +1382,7 @@ for the web service (see <a href="#WSDL2Java: Building stubs, skeletons, and dat
 the default server implementation of the WidgetPrice web service.</li>
 
 <br>You will need to modify the *SoapBindingImpl file to add your implementation
-(see&nbsp; <a href="../samples/userguide/example6/WidgetPriceSoapBindingImpl.java">../samples/userguide/example6/WidgetPriceSoapBindingImpl.java</a>
+(see&nbsp; <a href="xml-axis/java/samples/userguide/example6/WidgetPriceSoapBindingImpl.java">../samples/userguide/example6/WidgetPriceSoapBindingImpl.java</a>
 ).
 <li>
 <b><tt>WidgetPrice.java</tt></b>:&nbsp; New interface file that contains
@@ -1083,30 +1412,27 @@ files for the WidgetPrice web service.</li>
 Now you have all of the necessary files to build your client/server side
 code and deploy the web service!
 <h2>
-<a name="published interfaces"></a>Published Axis Interfaces</h2>
-Although you may use any of the interfaces
-present in Axis, you need to be aware that some are more stable than
-others since
-there is a continuing need to refactor Axis to maintain and improve its
-modularity.
-<p>Hence certain interfaces are designated as <i>published</i>,
-which means that they are relatively stable.
-As Axis is refactored, the Axis developers will try to avoid changing
-published interfaces unnecessarily and will certainly consider the impact
-on users of any modifications.
-<p>
-So if you stick to using only published interfaces, you'll minimise the pain
-of migrating between releases of Axis. On the other hand, if you
-decide to use unpublished interfaces, migrating between releases
-could be an interesting exercise!
-If you would like an interface to be published,
+<a NAME="published interfaces"></a>Published Axis Interfaces</h2>
+Although you may use any of the interfaces present in Axis, you need to
+be aware that some are more stable than others since there is a continuing
+need to refactor Axis to maintain and improve its modularity.
+<p>Hence certain interfaces are designated as <i>published</i>, which means
+that they are relatively stable. As Axis is refactored, the Axis developers
+will try to avoid changing published interfaces unnecessarily and will
+certainly consider the impact on users of any modifications.
+<p>So if you stick to using only published interfaces, you'll minimise
+the pain of migrating between releases of Axis. On the other hand, if you
+decide to use unpublished interfaces, migrating between releases could
+be an interesting exercise! If you would like an interface to be published,
 you should make the case for this on the
-<a href="mailto:axis-user@xml.apache.org">axis-user</a> mailing list.
-<p>
-The current list of published interfaces is as follows:
+<a href="mailto:axis-user@xml.apache.org">axis-user</a>
+mailing list.
+<p>The current list of published interfaces is as follows:
 <ul>
-<li>No interfaces published so far -- everything is subject to change!
+<li>
+No interfaces published so far -- everything is subject to change!</li>
 </ul>
+
 <h2>
 <a NAME="tcpmon"></a>Using the Axis TCP Monitor (tcpmon)</h2>
 The included "tcpmon" utility can be found in the org.apache.axis.utils
