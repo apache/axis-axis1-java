@@ -485,6 +485,7 @@ public class Call implements javax.xml.rpc.Call {
      */
     public void setSOAPActionURI(String SOAPActionURI)
             throws IllegalArgumentException {
+        useSOAPAction = true;
         this.SOAPActionURI = SOAPActionURI;
     } // setSOAPActionURI
 
