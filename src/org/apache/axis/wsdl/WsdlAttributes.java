@@ -250,27 +250,36 @@ public class WsdlAttributes {
                 BindingOperation bindOp = (BindingOperation) opIterator.next();
 
                 // input
-                Iterator inIter = bindOp.getBindingInput().getExtensibilityElements().iterator();
-                for (; inIter.hasNext();) {
-                    Object obj = inIter.next();
-                    if (obj instanceof SOAPBody) {
-                        String use = ((SOAPBody) obj).getUse();
-                        if (use.equalsIgnoreCase("literal")) {
-                            inputBodyType = USE_LITERAL;
+                if (bindOp.getBindingInput() != null) {
+                    if (bindOp.getBindingInput().getExtensibilityElements() != null) {
+                        Iterator inIter = bindOp.getBindingInput().getExtensibilityElements().iterator();
+                        for (; inIter.hasNext();) {
+                            Object obj = inIter.next();
+                            if (obj instanceof SOAPBody) {
+                                String use = ((SOAPBody) obj).getUse();
+                                if (use.equalsIgnoreCase("literal")) {
+                                    inputBodyType = USE_LITERAL;
+                                }
+                                break;
+                            }
                         }
-                        break;
                     }
                 }
+
                 // output
-                Iterator outIter = bindOp.getBindingOutput().getExtensibilityElements().iterator();
-                for (; outIter.hasNext();) {
-                    Object obj = outIter.next();
-                    if (obj instanceof SOAPBody) {
-                        String use = ((SOAPBody) obj).getUse();
-                        if (use.equalsIgnoreCase("literal")) {
-                            outputBodyType = USE_LITERAL;
+                if (bindOp.getBindingOutput() != null) {
+                    if (bindOp.getBindingOutput().getExtensibilityElements() != null) {
+                        Iterator outIter = bindOp.getBindingOutput().getExtensibilityElements().iterator();
+                        for (; outIter.hasNext();) {
+                            Object obj = outIter.next();
+                            if (obj instanceof SOAPBody) {
+                                String use = ((SOAPBody) obj).getUse();
+                                if (use.equalsIgnoreCase("literal")) {
+                                    outputBodyType = USE_LITERAL;
+                                }
+                                break;
+                            }
                         }
-                        break;
                     }
                 }
 
