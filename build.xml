@@ -147,6 +147,12 @@ Copyright:
               targetfile="${build.javadocs}/index.html">
       <srcfiles dir="${src.dir}" includes="**/*.java" />
     </uptodate>
+
+    <uptodate property="addr.uptodate" 
+              targetfile="${samples.dir}/addr/AddressBookService.java">
+      <srcfiles dir="${samples.dir}/addr" includes="AddressBook.wsdl" />
+    </uptodate>
+
   </target>
 
   <!-- =================================================================== -->
@@ -190,7 +196,7 @@ Copyright:
   <!-- =================================================================== -->
   <!-- Compiles the samples                                                -->
   <!-- =================================================================== -->
-  <target name="samples" depends="compile">
+  <target name="samples" depends="compile,buildAddrSample">
     <javac srcdir="." destdir="${build.dest}"
            debug="${debug}">
       <classpath>
@@ -202,6 +208,31 @@ Copyright:
       <exclude name="**/old/**/*.java" />
       <exclude name="samples/userguide/example2/*.java"/>
     </javac>
+  </target>
+
+  <target name="buildAddrSample" unless="addr.uptodate">
+    <antcall target="cleanAddr"/>
+    <java classname="org.apache.axis.wsdl.Wsdl2java" dir="."
+          fork="true">
+      <arg value="-s"/>
+      <arg value="samples\addr\AddressBook.wsdl"/>
+      <arg value="-p"/>
+      <arg value="samples.addr"/>
+    </java>
+  </target>
+
+  <target name="cleanAddr">
+    <delete file="samples/addr/AddressBook.java" />
+    <delete file="samples/addr/AddressBookService.java" />
+    <delete file="samples/addr/AddressBookSOAPBindingImpl.java" />
+    <delete file="samples/addr/AddressBookSOAPBindingSkeleton.java" />
+    <delete file="samples/addr/AddressBookSOAPBindingStub.java" />
+    <delete file="samples/addr/Address.java" />
+    <delete file="samples/addr/AddressHolder.java" />
+    <delete file="samples/addr/Phone.java" />
+    <delete file="samples/addr/PhoneHolder.java" />
+    <delete file="samples/addr/deploy.xml" />
+    <delete file="samples/addr/undeploy.xml" />
   </target>
 
   <!-- =================================================================== -->
@@ -216,7 +247,7 @@ Copyright:
     <path refid="classpath"/>
   </path>
 
-  <target name="buildTest" if="junit.present" depends="compile">
+  <target name="buildTest" if="junit.present" depends="compile,samples">
     <echo message="junit package found ..."/>
 
     <!-- Tests are packaged as test.*, so source dir is main dir -->
@@ -376,5 +407,6 @@ Copyright:
     <delete dir="${dist.dir}"/>
     <delete file="client-config.xml"/>
     <delete file="server-config.xml"/>
+    <antcall target="cleanAddr"/>
   </target>
 </project>

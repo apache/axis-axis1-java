@@ -58,12 +58,11 @@
 package samples.addr;
 
 import java.net.*;
-import org.apache.axis.client.ServiceClient;
 import org.apache.axis.utils.Options;
 
 
 /**
- * This class shows how to use the ServiceClient's ability to
+ * This class shows how to use the Call object's ability to
  * become session aware.
  *
  * @author Rob Jellinghaus (robj@unrealities.com)
