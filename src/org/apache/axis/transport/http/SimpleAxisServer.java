@@ -94,6 +94,9 @@ public class SimpleAxisServer implements Runnable {
     // cleanup policy).
     private Hashtable sessions = new Hashtable();
 
+    // Are we doing threads?
+    private static boolean doThreads = false;
+
     // Are we doing sessions?
     // Set this to false if you don't want any session overhead.
     private static boolean doSessions = true;
@@ -156,9 +159,13 @@ public class SimpleAxisServer implements Runnable {
             }
             if (socket != null) {
                 SimpleAxisWorker worker = new SimpleAxisWorker(this, socket);
-                Thread thread = new Thread(worker);
-                thread.setDaemon(true);
-                thread.start();
+                if (doThreads) {
+                    Thread thread = new Thread(worker);
+                    thread.setDaemon(true);
+                    thread.start();
+                } else {
+                    worker.run();
+                }
             }
         }
         log.info(JavaUtils.getMessage("quit00", "SimpleAxisServer"));
@@ -166,7 +173,6 @@ public class SimpleAxisServer implements Runnable {
 
     // per thread socket information
     private ServerSocket serverSocket;
-    private volatile Thread worker = null;
 
     /**
      * Obtain the serverSocket that that SimpleAxisServer is listening on.
@@ -192,9 +198,13 @@ public class SimpleAxisServer implements Runnable {
      * @param daemon a boolean indicating if the thread should be a daemon.
      */
     public void start(boolean daemon) throws Exception {
-        worker = new Thread(this);
-        worker.setDaemon(daemon);
-        worker.start();
+        if (doThreads) {
+            Thread thread = new Thread(this);
+            thread.setDaemon(daemon);
+            thread.start();
+        } else {
+            run();
+        }
     }
 
     /**
@@ -243,6 +253,8 @@ public class SimpleAxisServer implements Runnable {
         }
 
         try {
+            doThreads = (opts.isFlagSet('t') > 0);
+
             int port = opts.getPort();
             ServerSocket ss = null;
             // Try five times
