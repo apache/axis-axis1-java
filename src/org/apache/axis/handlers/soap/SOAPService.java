@@ -76,6 +76,7 @@ import org.w3c.dom.Element;
 import javax.xml.rpc.namespace.QName;
 import java.util.Enumeration;
 import java.util.Vector;
+import java.util.ArrayList;
 import java.beans.IntrospectionException;
 
 /** A <code>SOAPService</code> is a Handler which encapsulates a SOAP
@@ -196,6 +197,10 @@ public class SOAPService extends SimpleTargetedChain
         if (category.isDebugEnabled()) {
             category.debug( JavaUtils.getMessage("semanticCheck00"));
         }
+        
+        // This needs to be set to the merged list of service-specific and
+        // enigne-wide actors we should be acting as.
+        ArrayList actors = null;
         
         // 1. Check mustUnderstands
         SOAPEnvelope env = msgContext.getRequestMessage().getSOAPEnvelope();

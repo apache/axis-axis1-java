@@ -74,6 +74,7 @@ import org.apache.log4j.Category;
 
 import javax.xml.rpc.namespace.QName;
 import java.util.Hashtable;
+import java.util.ArrayList;
 import java.beans.IntrospectionException;
 
 /**
@@ -98,7 +99,7 @@ public abstract class AxisEngine extends BasicHandler
     public static final String PROP_SEND_XSI = "sendXsiTypes";
 
     /** Our go-to guy for configuration... */
-    protected ConfigurationProvider configProvider;
+    protected transient ConfigurationProvider configProvider;
 
     protected DeploymentRegistry myRegistry =
             new SimpleWsddDeploymentManager();
@@ -119,6 +120,11 @@ public abstract class AxisEngine extends BasicHandler
     private Session session = new SimpleSession();
     
     protected WSDDGlobalConfiguration myGlobalConfig = null;
+    
+    /**
+     * What actor URIs hold for the entire engine?
+     */ 
+    private ArrayList actorURIs = new ArrayList();
 
     /**
      * Thread local storage used for locating the active message context.
@@ -281,6 +287,21 @@ public abstract class AxisEngine extends BasicHandler
                 h = respFlow.getInstance(myRegistry);
         }
         return h;
+    }
+    
+    public ArrayList getActorURIs()
+    {
+        return actorURIs;
+    }
+    
+    public void addActorURI(String uri)
+    {
+        actorURIs.add(uri);
+    }
+    
+    public void removeActorURI(String uri)
+    {
+        actorURIs.remove(uri);
     }
 
     /*********************************************************************

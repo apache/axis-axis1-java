@@ -169,6 +169,25 @@ public class SOAPEnvelope extends MessageElement
         return headers;
     }
     
+    /**
+     * Get all the headers targeted at a list of actors.
+     */ 
+    public Vector getHeadersByActor(ArrayList actors)
+    {
+        Vector results = new Vector();
+        Iterator i = headers.iterator();
+        while (i.hasNext()) {
+            SOAPHeader header = (SOAPHeader)i.next();
+            // Always process NEXT's, and then anything else in our list
+            if (Constants.ACTOR_NEXT.equals(header.getActor()) || 
+                (actors != null && actors.contains(header.getActor()))) {
+                results.add(header);
+            }
+        }
+        
+        return results;
+    }
+    
     public void addHeader(SOAPHeader header)
     {
         if (category.isDebugEnabled())
