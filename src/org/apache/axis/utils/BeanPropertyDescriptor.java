@@ -59,8 +59,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import org.apache.axis.AxisProperties;
-
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
@@ -87,9 +85,9 @@ public class BeanPropertyDescriptor
     /** 
      * Construct a BPD with getter/setter methods
      * Both must be set
-     * @param String _name is the name of the property
-     * @param Method _getter is the accessor method
-     * @param Method _setter is the modifier method
+     * @param _name is the name of the property
+     * @param _getter is the accessor method
+     * @param _setter is the modifier method
      */
     public BeanPropertyDescriptor(String _name,
                                   Method _getter, 
@@ -109,11 +107,11 @@ public class BeanPropertyDescriptor
     /** 
      * Construct a BPD with getter/setter methods for
      * an indexed property.  All params must be set.
-     * @param String _name is the name of the property
-     * @param Method _getter is the accessor method
-     * @param Method _setter is the modifier method
-     * @param Method _getterIndexed is the accessor method
-     * @param Method _setterIndexed is the modifier method
+     * @param _name is the name of the property
+     * @param _getter is the accessor method
+     * @param _setter is the modifier method
+     * @param _getterIndexed is the accessor method
+     * @param _setterIndexed is the modifier method
      */
     public BeanPropertyDescriptor(String _name,
                                   Method _getter, 
@@ -133,8 +131,8 @@ public class BeanPropertyDescriptor
     /** 
      * Construct a BPD with a field
      * Both must be set
-     * @param String _name is the name of the property
-     * @param Field _field is the name of the public instance field
+     * @param _name is the name of the property
+     * @param _field is the name of the public instance field
      */
     public BeanPropertyDescriptor(String _name,
                                   Field _field) {
@@ -190,7 +188,7 @@ public class BeanPropertyDescriptor
     /**
      * Set the property value
      * @param obj is the object
-     * @param is the new value
+     * @param newValue is the new value
      */
     public void set(Object obj, Object newValue) 
         throws InvocationTargetException, IllegalAccessException {
