@@ -68,6 +68,7 @@ import javax.wsdl.Port;
 import javax.wsdl.QName;
 import javax.wsdl.Service;
 
+import org.apache.axis.Constants;
 import org.apache.axis.utils.JavaUtils;
 
 /**
@@ -143,7 +144,7 @@ public class JavaDeployWriter extends JavaWriter {
                 pw.println("  <beanMapping");
                 pw.println("    xmlns:ns=\"" + type.getQName().getNamespaceURI() + "\"");
                 pw.println("    qname=\"ns:" + type.getQName().getLocalPart() + '"');
-                pw.println("    languageSpecificType=\"java:" + type.getName() + '"');
+                pw.println("    languageSpecificType=\"" + Constants.NSPREFIX_WSDD_JAVA + ":" + type.getName() + '"');
                 pw.println("  />");
             }
         }
@@ -159,8 +160,9 @@ public class JavaDeployWriter extends JavaWriter {
 
         boolean isRPC = (bEntry.getBindingStyle() == BindingEntry.STYLE_RPC);
 
+        String prefix = Constants.NSPREFIX_WSDD_JAVA;
         pw.println("  <service name=\"" + serviceName
-                + "\" provider=\"" + (isRPC ? "java:RPC" : "java:MSG") + "\">");
+                + "\" provider=\"" + (isRPC ? prefix +":RPC" : prefix +":MSG") + "\">");
 
         writeDeployBinding(binding);
 

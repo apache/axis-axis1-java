@@ -71,6 +71,7 @@ import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
+import org.apache.axis.Constants;
 
 /**
  * This class contains static utility methods specifically for schema type queries.
@@ -96,14 +97,14 @@ public class SchemaUtils {
         QName nodeKind = Utils.getNodeQName(node);
         if (nodeKind != null &&
             nodeKind.getLocalPart().equals("element") &&
-            Utils.isSchemaNS(nodeKind.getNamespaceURI())) {
+            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
             NodeList children = node.getChildNodes();
             Node complexNode = null;
             for (int j = 0; j < children.getLength() && complexNode == null; j++) {
                 QName complexKind = Utils.getNodeQName(children.item(j));
                 if (complexKind != null &&
                     complexKind.getLocalPart().equals("complexType") &&
-                    Utils.isSchemaNS(complexKind.getNamespaceURI())) {
+                    Constants.isSchemaXSD(complexKind.getNamespaceURI())) {
                     complexNode = children.item(j);
                     node = complexNode;
                 }
@@ -114,7 +115,7 @@ public class SchemaUtils {
         nodeKind = Utils.getNodeQName(node);
         if (nodeKind != null &&
             nodeKind.getLocalPart().equals("complexType") &&
-            Utils.isSchemaNS(nodeKind.getNamespaceURI())) {
+            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
 
             // Under the complexType there could be complexContent &
             // extension elements if this is a derived type.  Skip over these.
@@ -125,7 +126,7 @@ public class SchemaUtils {
                 QName complexContentKind = Utils.getNodeQName(children.item(j));
                 if (complexContentKind != null &&
                     complexContentKind.getLocalPart().equals("complexContent") &&
-                    Utils.isSchemaNS(complexContentKind.getNamespaceURI()))
+                    Constants.isSchemaXSD(complexContentKind.getNamespaceURI()))
                     complexContent = children.item(j);
             }
             if (complexContent != null) {
@@ -134,7 +135,7 @@ public class SchemaUtils {
                     QName extensionKind = Utils.getNodeQName(children.item(j));
                     if (extensionKind != null &&
                         extensionKind.getLocalPart().equals("extension") &&
-                        Utils.isSchemaNS(extensionKind.getNamespaceURI()))
+                        Constants.isSchemaXSD(extensionKind.getNamespaceURI()))
                         extension = children.item(j);
                 }
             }
@@ -152,7 +153,7 @@ public class SchemaUtils {
                 if (groupKind != null &&
                     (groupKind.getLocalPart().equals("sequence") ||
                      groupKind.getLocalPart().equals("all")) &&
-                    Utils.isSchemaNS(groupKind.getNamespaceURI()))
+                    Constants.isSchemaXSD(groupKind.getNamespaceURI()))
                     groupNode = children.item(j);
             }
 
@@ -168,7 +169,7 @@ public class SchemaUtils {
                     QName elementKind = Utils.getNodeQName(elements.item(i));
                     if (elementKind != null &&
                         elementKind.getLocalPart().equals("element") &&
-                        Utils.isSchemaNS(elementKind.getNamespaceURI())) {
+                        Constants.isSchemaXSD(elementKind.getNamespaceURI())) {
 
                         // Get the name and type qnames.
                         // The name of the element is the local part of the name's qname.
@@ -210,14 +211,14 @@ public class SchemaUtils {
         QName nodeKind = Utils.getNodeQName(node);
         if (nodeKind != null &&
             nodeKind.getLocalPart().equals("element") &&
-            Utils.isSchemaNS(nodeKind.getNamespaceURI())) {
+            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
             NodeList children = node.getChildNodes();
             Node complexNode = null;
             for (int j = 0; j < children.getLength() && complexNode == null; j++) {
                 QName complexKind = Utils.getNodeQName(children.item(j));
                 if (complexKind != null &&
                     complexKind.getLocalPart().equals("complexType") &&
-                    Utils.isSchemaNS(complexKind.getNamespaceURI())) {
+                    Constants.isSchemaXSD(complexKind.getNamespaceURI())) {
                     complexNode = children.item(j);
                     node = complexNode;
                 }
@@ -228,7 +229,7 @@ public class SchemaUtils {
         nodeKind = Utils.getNodeQName(node);
         if (nodeKind != null &&
             nodeKind.getLocalPart().equals("complexType") &&
-            Utils.isSchemaNS(nodeKind.getNamespaceURI())) {
+            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
 
             // Under the complexType there could be should be a complexContent &
             // extension elements if this is a derived type. 
@@ -239,7 +240,7 @@ public class SchemaUtils {
                 QName complexContentKind = Utils.getNodeQName(children.item(j));
                 if (complexContentKind != null &&
                     complexContentKind.getLocalPart().equals("complexContent") &&
-                    Utils.isSchemaNS(complexContentKind.getNamespaceURI()))
+                    Constants.isSchemaXSD(complexContentKind.getNamespaceURI()))
                     complexContent = children.item(j);
             }
             if (complexContent != null) {
@@ -248,7 +249,7 @@ public class SchemaUtils {
                     QName extensionKind = Utils.getNodeQName(children.item(j));
                     if (extensionKind != null &&
                         extensionKind.getLocalPart().equals("extension") &&
-                        Utils.isSchemaNS(extensionKind.getNamespaceURI()))
+                        Constants.isSchemaXSD(extensionKind.getNamespaceURI()))
                         extension = children.item(j);
                 }
             }
@@ -283,14 +284,14 @@ public class SchemaUtils {
         QName nodeKind = Utils.getNodeQName(node);
         if (nodeKind != null &&
             nodeKind.getLocalPart().equals("element") &&
-            Utils.isSchemaNS(nodeKind.getNamespaceURI())) {
+            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
             NodeList children = node.getChildNodes();
             Node simpleNode = null;
             for (int j = 0; j < children.getLength() && simpleNode == null; j++) {
                 QName simpleKind = Utils.getNodeQName(children.item(j));
                 if (simpleKind != null &&
                     simpleKind.getLocalPart().equals("simpleType") &&
-                    Utils.isSchemaNS(simpleKind.getNamespaceURI())) {
+                    Constants.isSchemaXSD(simpleKind.getNamespaceURI())) {
                     simpleNode = children.item(j);
                     node = simpleNode;
                 }
@@ -300,7 +301,7 @@ public class SchemaUtils {
         nodeKind = Utils.getNodeQName(node);
         if (nodeKind != null &&
             nodeKind.getLocalPart().equals("simpleType") &&
-            Utils.isSchemaNS(nodeKind.getNamespaceURI())) {
+            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
 
             // Under the simpleType there should be a restriction.
             // (There may be other #text nodes, which we will ignore).
@@ -310,7 +311,7 @@ public class SchemaUtils {
                 QName restrictionKind = Utils.getNodeQName(children.item(j));
                 if (restrictionKind != null &&
                     restrictionKind.getLocalPart().equals("restriction") &&
-                    Utils.isSchemaNS(restrictionKind.getNamespaceURI()))
+                    Constants.isSchemaXSD(restrictionKind.getNamespaceURI()))
                     restrictionNode = children.item(j);
             }
 
@@ -346,7 +347,7 @@ public class SchemaUtils {
                     QName enumKind = Utils.getNodeQName(enums.item(i));
                     if (enumKind != null &&
                         enumKind.getLocalPart().equals("enumeration") &&
-                        Utils.isSchemaNS(enumKind.getNamespaceURI())) {
+                        Constants.isSchemaXSD(enumKind.getNamespaceURI())) {
 
                         // Put the enum value in the vector.
                         Node enumNode = enums.item(i);
@@ -391,7 +392,7 @@ public class SchemaUtils {
         QName nodeKind = Utils.getNodeQName(node);
         if (nodeKind != null &&
             nodeKind.getLocalPart().equals("element") &&
-            Utils.isSchemaNS(nodeKind.getNamespaceURI())) {
+            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
 
             // Get the qName of just the type.
             // The compare it against the full type of the node, which
@@ -441,14 +442,14 @@ public class SchemaUtils {
         QName nodeKind = Utils.getNodeQName(node);
         if (nodeKind != null &&
             nodeKind.getLocalPart().equals("element") &&
-            Utils.isSchemaNS(nodeKind.getNamespaceURI())) {
+            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
             NodeList children = node.getChildNodes();
             Node complexNode = null;
             for (int j = 0; j < children.getLength() && complexNode == null; j++) {
                 QName complexKind = Utils.getNodeQName(children.item(j));
                 if (complexKind != null &&
                     complexKind.getLocalPart().equals("complexType") &&
-                    Utils.isSchemaNS(complexKind.getNamespaceURI())) {
+                    Constants.isSchemaXSD(complexKind.getNamespaceURI())) {
                     complexNode = children.item(j);
                     node = complexNode;
                 }
@@ -458,7 +459,7 @@ public class SchemaUtils {
         nodeKind = Utils.getNodeQName(node);
         if (nodeKind != null &&
             nodeKind.getLocalPart().equals("complexType") &&
-            Utils.isSchemaNS(nodeKind.getNamespaceURI())) {
+            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
 
             // Under the complexType there should be a complexContent.
             // (There may be other #text nodes, which we will ignore).
@@ -468,7 +469,7 @@ public class SchemaUtils {
                 QName complexContentKind = Utils.getNodeQName(children.item(j));
                 if (complexContentKind != null &&
                     complexContentKind.getLocalPart().equals("complexContent") &&
-                    Utils.isSchemaNS(complexContentKind.getNamespaceURI()))
+                    Constants.isSchemaXSD(complexContentKind.getNamespaceURI()))
                     complexContentNode = children.item(j);
             }
 
@@ -481,7 +482,7 @@ public class SchemaUtils {
                     QName restrictionKind = Utils.getNodeQName(children.item(j));
                     if (restrictionKind != null &&
                         restrictionKind.getLocalPart().equals("restriction") &&
-                        Utils.isSchemaNS(restrictionKind.getNamespaceURI()))
+                        Constants.isSchemaXSD(restrictionKind.getNamespaceURI()))
                         restrictionNode = children.item(j);
                 }
             }
@@ -492,7 +493,7 @@ public class SchemaUtils {
                 baseType = Utils.getNodeTypeRefQName(restrictionNode, "base");
                 if (baseType != null &&
                     baseType.getLocalPart().equals("Array") &&
-                    Utils.isSoapEncodingNS(baseType.getNamespaceURI()))
+                    Constants.isSOAP_ENC(baseType.getNamespaceURI()))
                     ; // Okay
                 else
                     baseType = null;  // Did not find base=soapenc:Array
@@ -512,12 +513,12 @@ public class SchemaUtils {
                     if (kind != null &&
                         (kind.getLocalPart().equals("sequence") ||
                          kind.getLocalPart().equals("all")) &&
-                        Utils.isSchemaNS(kind.getNamespaceURI())) {
+                        Constants.isSchemaXSD(kind.getNamespaceURI())) {
                         groupNode = children.item(j);
                     }
                     if (kind != null &&
                         kind.getLocalPart().equals("attribute") &&
-                        Utils.isSchemaNS(kind.getNamespaceURI())) {
+                        Constants.isSchemaXSD(kind.getNamespaceURI())) {
                         attributeNode = children.item(j);
                     }
                 }
@@ -529,7 +530,7 @@ public class SchemaUtils {
                 QName refQName = Utils.getNodeTypeRefQName(attributeNode, "ref");
                 if (refQName != null &&
                     refQName.getLocalPart().equals("arrayType") &&
-                    Utils.isSoapEncodingNS(refQName.getNamespaceURI()))
+                    Constants.isSOAP_ENC(refQName.getNamespaceURI()))
                     ; // Okay
                 else
                     refQName = null;  // Did not find ref="soapenc:arrayType"
@@ -541,7 +542,7 @@ public class SchemaUtils {
                         Node attrNode = (Node) attrs.elementAt(i);
                         String attrName = attrNode.getNodeName();
                         QName attrQName = Utils.getQNameFromPrefixedName(attributeNode, attrName);
-                        if (Utils.isWsdlNS(attrQName.getNamespaceURI())) {
+                        if (Constants.isWSDL(attrQName.getNamespaceURI())) {
                             wsdlArrayTypeValue = attrNode.getNodeValue();
                         }
                     }
@@ -565,7 +566,7 @@ public class SchemaUtils {
                     QName elementKind = Utils.getNodeQName(elements.item(i));
                     if (elementKind != null &&
                         elementKind.getLocalPart().equals("element") &&
-                        Utils.isSchemaNS(elementKind.getNamespaceURI())) {
+                        Constants.isSchemaXSD(elementKind.getNamespaceURI())) {
                         elementNode = elements.item(i);
                     }
                 }
@@ -612,14 +613,14 @@ public class SchemaUtils {
         QName nodeKind = Utils.getNodeQName(node);
         if (nodeKind != null &&
             nodeKind.getLocalPart().equals("element") &&
-            Utils.isSchemaNS(nodeKind.getNamespaceURI())) {
+            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
             NodeList children = node.getChildNodes();
             Node complexNode = null;
             for (int j = 0; j < children.getLength() && complexNode == null; j++) {
                 QName complexKind = Utils.getNodeQName(children.item(j));
                 if (complexKind != null &&
                     complexKind.getLocalPart().equals("complexType") &&
-                    Utils.isSchemaNS(complexKind.getNamespaceURI())) {
+                    Constants.isSchemaXSD(complexKind.getNamespaceURI())) {
                     complexNode = children.item(j);
                     node = complexNode;
                 }
@@ -629,7 +630,7 @@ public class SchemaUtils {
         nodeKind = Utils.getNodeQName(node);
         if (nodeKind != null &&
             nodeKind.getLocalPart().equals("complexType") &&
-            Utils.isSchemaNS(nodeKind.getNamespaceURI())) {
+            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
 
             // Inder the complexType there could be a group node.
             // (There may be other #text nodes, which we will ignore).
@@ -642,7 +643,7 @@ public class SchemaUtils {
                 if (kind != null &&
                            (kind.getLocalPart().equals("sequence") ||
                             kind.getLocalPart().equals("all")) &&
-                           Utils.isSchemaNS(kind.getNamespaceURI())) {
+                           Constants.isSchemaXSD(kind.getNamespaceURI())) {
                     groupNode = children.item(j);
                 }
             }
@@ -659,7 +660,7 @@ public class SchemaUtils {
                 QName elementKind = Utils.getNodeQName(children.item(i));
                 if (elementKind != null &&
                     elementKind.getLocalPart().equals("element") &&
-                    Utils.isSchemaNS(elementKind.getNamespaceURI())) {
+                    Constants.isSchemaXSD(elementKind.getNamespaceURI())) {
                     elementNode = children.item(i);
                     elementNodeCount++;
                 }

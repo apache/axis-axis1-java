@@ -64,6 +64,7 @@ import java.util.HashMap;
 import javax.wsdl.QName;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.Constants;
 
 import org.w3c.dom.Element;
 
@@ -300,12 +301,13 @@ public abstract class JavaWriter implements Writer {
         pw.println();
         if ("deploy".equals(deploymentOpName)) {
             pw.println("<deployment");
-            pw.println("    xmlns=\"http://xml.apache.org/axis/wsdd/\"");
-            pw.println("    xmlns:java=\"http://xml.apache.org/axis/wsdd/providers/java\">");
+            pw.println("    xmlns=\"" + Constants.URI_WSDD +"\"");
+            pw.println("    xmlns:" + Constants.NSPREFIX_WSDD_JAVA + "=\"" +
+                       Constants.URI_WSDD_JAVA +"\">");
         }
         else {
             pw.println("<undeployment");
-            pw.println("    xmlns=\"http://xml.apache.org/axis/wsdd/\">");
+            pw.println("    xmlns=\"" + Constants.URI_WSDD +"\">");
         }
     } // initializeDeploymentDoc
 

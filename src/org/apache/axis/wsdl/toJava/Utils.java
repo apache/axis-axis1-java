@@ -69,6 +69,7 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.Constants;      
 
 
 /**
@@ -107,7 +108,7 @@ public class Utils {
      */
     public static String getBaseJavaName(QName qName) {
         String localName = qName.getLocalPart();
-        if (Utils.isSchemaNS(qName.getNamespaceURI())) {
+        if (Constants.isSchemaXSD(qName.getNamespaceURI())) {
             if (localName.equals("string")) {
                 return "java.lang.String";
             } else if (localName.equals("integer")) {
@@ -142,7 +143,7 @@ public class Utils {
                 return "void";
             }
         }
-        else if (Utils.isSoapEncodingNS(qName.getNamespaceURI())) {
+        else if (Constants.isSOAP_ENC(qName.getNamespaceURI())) {
             if (localName.equals("string")) {
                 return "java.lang.String";
             } else if (localName.equals("int")) {
@@ -188,7 +189,7 @@ public class Utils {
      */
     public static QName getNillableQName(QName qName) {
         QName rc = new QName(qName.getNamespaceURI(), qName.getLocalPart());
-        if (Utils.isSchemaNS(rc.getNamespaceURI())) {
+        if (Constants.isSchemaXSD(rc.getNamespaceURI())) {
             String localName = rc.getLocalPart();
             if (localName.equals("int") ||
                 localName.equals("long") ||
@@ -197,11 +198,11 @@ public class Utils {
                 localName.equals("double") ||
                 localName.equals("boolean") ||
                 localName.equals("byte")) {
-                rc.setNamespaceURI(getSoapEncodingNS());
+                rc.setNamespaceURI(Constants.URI_CURRENT_SOAP_ENC);
             }
             else if (localName.equals("base64Binary") ||
                      localName.equals("hexBinary")) {
-                rc.setNamespaceURI(getSoapEncodingNS());
+                rc.setNamespaceURI(Constants.URI_CURRENT_SOAP_ENC);
                 rc.setLocalPart("base64");
             }
         }
@@ -447,52 +448,6 @@ public class Utils {
            namespace = getScopedAttribute(node, "xmlns:" + prefixedName.substring(0, prefixedName.lastIndexOf(":")));
         }
         return (new QName(namespace, localName));
-    }
-
-
-    /**
-     * Return true if the indicated string is the schema namespace
-     */
-  public static boolean isSchemaNS(String s) {
-    return (s.equals("http://www.w3.org/2001/XMLSchema")
-            || s.equals("http://www.w3.org/1999/XMLSchema")
-            || s.equals("http://www.w3.org/2001/XMLSchema/")
-            || s.equals("http://www.w3.org/1999/XMLSchema/"));
-  }
-
-    /**
-     * Return true if the indicated string is the schema namespace
-     */
-    public static boolean isWsdlNS(String s) {
-        return (s.equals("http://schemas.xmlsoap.org/wsdl/"));
-    }
-
-    /**
-     * Return true if the indicated string is the soap wsdl namespace
-     */
-    public static boolean isSoapWsdlNS(String s) {
-        return (s.equals("http://schemas.xmlsoap.org/wsdl/soap/"));
-    }
-
-    /**
-     * Return true if the indicated string is the soap namespace
-     */
-    public static boolean isSoapNS(String s) {
-        return (s.equals("http://schemas.xmlsoap.org/soap") ||
-                s.equals("http://schemas.xmlsoap.org/soap/") ||
-                s.equals("http://www.w3.org/2001/06/soap"));
-    }
-
-    /**
-     * Return true if the indicated string is the soap encoding namespace
-     */
-    public static boolean isSoapEncodingNS(String s) {
-        return (s.equals("http://schemas.xmlsoap.org/soap/encoding") ||
-                s.equals("http://schemas.xmlsoap.org/soap/encoding/") ||
-                s.equals("http://www.w3.org/2001/06/soap-encoding"));
-    }
-    public static String getSoapEncodingNS() {
-        return "http://www.w3.org/2001/06/soap-encoding";
     }
 
     /**
