@@ -80,6 +80,7 @@ Copyright:
       <exclude name="**/old/**/*" />
       <exclude name="**/bak/**"/>
       <exclude name="**/org/apache/axis/components/net/JSSE*.java" unless="jsse.present"/>
+      <exclude name="**/org/apache/axis/components/net/IBM*.java" unless="ibmjsse.present"/>
       <exclude name="**/org/apache/axis/components/net/Fake*.java" unless="jsse.present"/>
       <exclude name="**/org/apache/axis/components/image/JimiIO.java" unless="jimi.present"/>
 	  <exclude name="**/org/apache/axis/components/image/MerlinIO.java" unless="merlinio.present"/>
