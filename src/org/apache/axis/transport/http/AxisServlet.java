@@ -94,8 +94,8 @@ public class AxisServlet extends HttpServlet {
       engine = (Handler) context.getAttribute( AXIS_ENGINE );
       if ( engine == null ) {
         engine = new AxisServer();
-        context.setAttribute( AXIS_ENGINE, engine );
         engine.init();
+        context.setAttribute( AXIS_ENGINE, engine );
       }
     }
 

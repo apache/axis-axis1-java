@@ -183,11 +183,11 @@ public class Admin {
   
         if ( action.equals( "undeploy" ) ) {
           if ( type.equals("service") ) {
-            System.out.println("Undeploying " + type + ": " + name );
+            Debug.Print( 2, "Undeploying " + type + ": " + name );
             sr.remove( name );
           }
           else if ( type.equals("handler") || type.equals("chain") ) {
-            System.out.println("Undeploying " + type + ": " + name );
+            Debug.Print( 2, "Undeploying " + type + ": " + name );
             hr.remove( name );
           }
           else
@@ -208,7 +208,7 @@ public class Admin {
   
         if ( type.equals( "handler" ) ) {
           String   cls   = elem.getAttributeValue( "class" );
-          System.out.println( "Deploying handler: " + name );
+          Debug.Print( 2, "Deploying handler: " + name );
           
           if (hr instanceof SupplierRegistry) {
             String lifeCycle = elem.getAttributeValue("lifecycle");
@@ -233,7 +233,7 @@ public class Admin {
         }
         else if ( type.equals( "chain" ) ) {
           if ( flow != null && flow.length() > 0 ) {
-            System.out.println( "Deploying chain: " + name );
+            Debug.Print( 2, "Deploying chain: " + name );
             Chain    c       = (Chain) hr.find( name );
 
             if ( c == null ) c = new SimpleChain();
@@ -253,7 +253,7 @@ public class Admin {
             hr.add( name, c );
           }
           else {
-            System.out.println( "Deploying chain: " + name );
+            Debug.Print( 2, "Deploying chain: " + name );
             StringTokenizer      st = null ;
             SimpleTargetedChain  cc = null ;
             Chain                c  = null ;
@@ -295,7 +295,7 @@ public class Admin {
           }
         }
         else if ( type.equals( "service" ) ) {
-          System.out.println( "Deploying service: " + name );
+          Debug.Print( 2, "Deploying service: " + name );
           StringTokenizer      st = null ;
           SimpleTargetedChain  cc = null ;
           Chain                c  = null ;

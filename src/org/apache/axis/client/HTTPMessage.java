@@ -190,9 +190,7 @@ public class HTTPMessage {
       HandlerRegistry sr = (HandlerRegistry) client.getOption( 
                                                  Constants.SERVICE_REGISTRY );
       if ( sr == null || sr.find("HTTP.input") == null )
-        msgContext.setProperty( 
-                      MessageContext.TRANS_INPUT,
-                      "org.apache.axis.transport.http.HTTPDispatchHandler" );
+        msgContext.setProperty( MessageContext.TRANS_INPUT, "HTTPSender" );
       else
         msgContext.setProperty( MessageContext.TRANS_INPUT, "HTTP.input" );
       msgContext.setProperty(MessageContext.TRANS_OUTPUT, "HTTP.output" );

@@ -92,36 +92,21 @@ public class AxisServer extends BasicHandler
         // Load the simple handler registry and init it
         Debug.Print( 1, "Enter: AxisServer::init" );
         //HandlerRegistry  hr = new SimpleRegistry("handlers.reg");
-        HandlerRegistry  hr = new SupplierRegistry("handlers-supp.reg");
+        DefaultHandlerRegistry  hr = 
+          new DefaultHandlerRegistry("handlers-supp.reg");
+        hr.setOnServer( true );
         hr.init();
         addOption( Constants.HANDLER_REGISTRY, hr );
 
         // Load the simple deployed services registry and init it
         //HandlerRegistry  sr = new SimpleRegistry("services.reg");
-        HandlerRegistry  sr = new SupplierRegistry("services-supp.reg");
+        DefaultServiceRegistry  sr = 
+          new DefaultServiceRegistry("services-supp.reg");
+        sr.setHandlerRegistry( hr ); // needs to know about 'hr'
+        sr.setOnServer( true );
         sr.init();
         addOption( Constants.SERVICE_REGISTRY, sr );
         Debug.Print( 1, "Exit: AxisServer::init" );
-    }
-
-    /** Look for the <b>name</b> in the registry.  If there is no
-     *  registry then just see if <b>name</b> is a className, and if
-     *  so, create a new instance of it.
-     *  Should this go into the registry logic itself???
-     */
-    private Handler find(HandlerRegistry hr, String name) {
-        Handler  h = null ;
-        if ( name == null ) return( null );
-        if ( hr != null ) h = hr.find( name);
-        if ( h != null ) return( h );
-        try {
-            ClassLoader cl = new AxisClassLoader();
-            Class       cls = cl.loadClass( name );
-            h = (Handler) cls.newInstance();
-        }
-        catch( Exception e ) {
-        }
-        return( h );
     }
 
     /**
@@ -148,7 +133,7 @@ public class AxisServer extends BasicHandler
         try {
           hName = msgContext.getStrProp( MessageContext.ENGINE_HANDLER );
           if ( hName != null ) {
-              if ( hr == null || (h = find(hr, hName)) == null ) {
+              if ( hr == null || (h = hr.find(hName)) == null ) {
                 ClassLoader cl = new AxisClassLoader();
                 try {
                   Debug.Print( 2, "Trying to load class: " + hName );
@@ -187,20 +172,20 @@ public class AxisServer extends BasicHandler
               /* Process the Transport Specific Input Chain */
               /**********************************************/
               hName = msgContext.getStrProp(MessageContext.TRANS_INPUT);
-              if ( hName != null && (h = find( hr, hName )) != null )
+              if ( hName != null && (h = hr.find( hName )) != null )
                 h.invoke(msgContext);
       
               /* Process the Global Input Chain */
               /**********************************/
               hName = Constants.GLOBAL_INPUT ;
-              if ( hName != null  && (h = find( hr, hName )) != null )
+              if ( hName != null  && (h = hr.find( hName )) != null )
                   h.invoke(msgContext);
       
               /* Process the Protocol Specific-Handler/Chain */
               /***********************************************/
               hName = msgContext.getStrProp(MessageContext.PROTOCOL_HANDLER);
               if ( hName == null ) hName = "SOAPServer" ;
-              if ( hName != null && (h = find( hr, hName )) != null )
+              if ( hName != null && (h = hr.find( hName )) != null )
                 h.invoke(msgContext);
               else
                 throw new AxisFault( "Server.error",
@@ -210,13 +195,13 @@ public class AxisServer extends BasicHandler
               /* Process the Global Output Chain */
               /***********************************/
               hName = Constants.GLOBAL_OUTPUT ;
-              if ( hName != null && (h = find( hr, hName )) != null )
+              if ( hName != null && (h = hr.find( hName )) != null )
                 h.invoke(msgContext);
       
               /* Process the Transport Specific Output Chain */
               /***********************************************/
               hName = msgContext.getStrProp(MessageContext.TRANS_OUTPUT);
-              if ( hName != null  && (h = find( hr, hName )) != null )
+              if ( hName != null  && (h = hr.find( hName )) != null )
                 h.invoke(msgContext);
           }
         }
