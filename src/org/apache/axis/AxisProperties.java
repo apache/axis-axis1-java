@@ -62,7 +62,7 @@ import java.util.HashMap;
 /**
  * <p>Configuration properties for AXIS.
  * </p>
- * 
+ *
  * <p>Manage configuration properties according to a secure
  * scheme similar to that used by classloaders:
  * <ul>
@@ -86,32 +86,32 @@ import java.util.HashMap;
  *   <li>System properties take precedence over all other properties</li>
  * </ul>
  * </p>
- * 
+ *
  * @author Richard A. Sitze
  */
 public class AxisProperties {
-    
+
     public static final char NL = '\n';
     public static final char CR = '\r';
-    
+
     /**
      * The prefered line separator
      */
     public static final String LS = System.getProperty("line.separator",
                                                         (new Character(NL)).toString());
-                                                        
+
     /**
      * Cache of AXIS Properties, keyed by (thread-context) class loaders.
      * Use <code>HashMap</code> because it allows 'null' keys, which
      * allows us to account for the (null) bootstrap classloader.
      */
     private static final HashMap axisPropertiesCache = new HashMap();
-    
+
 
     /**
      * Get value for property bound to the current thread context class loader.
-     * 
-     * @param property property name.
+     *
+     * @param propertyName property name.
      * @return property value if found, otherwise default.
      */
     public static String getProperty(String propertyName) {
@@ -124,12 +124,12 @@ public class AxisProperties {
         }
         return value;
     }
-    
+
     /**
      * Get value for property bound to the current thread context class loader.
      * If not found, then return default.
-     * 
-     * @param property property name.
+     *
+     * @param propertyName property name.
      * @param dephault default value.
      * @return property value if found, otherwise default.
      */
@@ -140,16 +140,16 @@ public class AxisProperties {
 
     /**
      * Set value for property bound to the current thread context class loader.
-     * @param property property name
+     * @param propertyName property name
      * @param value property value (non-default)  If null, remove the property.
      */
     public static void setProperty(String propertyName, String value) {
         setProperty(propertyName, value, false);
     }
-    
+
     /**
      * Set value for property bound to the current thread context class loader.
-     * @param property property name
+     * @param propertyName property name
      * @param value property value.  If null, remove the property.
      * @param isDefault determines if property is default or not.
      *        A non-default property cannot be overriden.
@@ -162,7 +162,7 @@ public class AxisProperties {
             synchronized (axisPropertiesCache) {
                 ClassLoader classLoader = getThreadContextClassLoader();
                 HashMap properties = (HashMap)axisPropertiesCache.get(classLoader);
-                
+
                 if (value == null) {
                     properties.remove(propertyName);
                 } else {
@@ -170,28 +170,28 @@ public class AxisProperties {
                         properties = new HashMap();
                         axisPropertiesCache.put(classLoader, properties);
                     }
-                
+
                     properties.put(propertyName, new Value(value, isDefault));
                 }
             }
         }
     }
-    
+
     /**
      * Set property values for <code>Properties</code> bound to the
      * current thread context class loader.
-     * 
+     *
      * @param newProperties name/value pairs to be bound
      */
     public static void setProperties(Map newProperties) {
         setProperties(newProperties, false);
     }
-    
-    
+
+
     /**
      * Set property values for <code>Properties</code> bound to the
      * current thread context class loader.
-     * 
+     *
      * @param newProperties name/value pairs to be bound
      * @param isDefault determines if properties are default or not.
      *        A non-default property cannot be overriden.
@@ -216,11 +216,11 @@ public class AxisProperties {
 
 
     /***************** INTERNAL IMPLEMENTATION *****************/
-    
+
     private static class Value {
         final String value;
         final boolean isDefault;
-        
+
         Value(String value, boolean isDefault) {
             this.value = value;
             this.isDefault = isDefault;
@@ -243,14 +243,14 @@ public class AxisProperties {
             if (classLoader != null) {
                 value = getValueProperty(classLoader.getParent(), propertyName);
             }
-            
+
             if (value == null  ||  value.isDefault) {
                 synchronized (axisPropertiesCache) {
                     HashMap properties = (HashMap)axisPropertiesCache.get(classLoader);
-                        
+
                     if (properties != null) {
                         Value altValue = (Value)properties.get(propertyName);
-                        
+
                         // set value only if override exists..
                         // otherwise pass default (or null) on..
                         if (altValue != null)
@@ -259,10 +259,10 @@ public class AxisProperties {
                 }
             }
         }
-        
+
         return value;
     }
-    
+
     private static final ClassLoader getThreadContextClassLoader() {
         return Thread.currentThread().getContextClassLoader();
     }
