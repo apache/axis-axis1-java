@@ -90,6 +90,15 @@ public class JAFDataHandlerSerializer implements Serializer {
         AttributesImpl attrs = new AttributesImpl();
         if (attributes != null)
             attrs.setAttributes(attributes); //copy the existing ones.
+
+        int typeIndex=-1;
+        if((typeIndex = attrs.getIndex(Constants.URI_CURRENT_SCHEMA_XSI,
+                                "type")) != -1){
+
+            //Found a xsi:type which should not be there for attachments.                        
+            attrs.removeAttribute(typeIndex);
+        }                        
+
         attrs.addAttribute("", Constants.ATTR_HREF, "href",
                                "CDATA", href);
 
