@@ -120,7 +120,7 @@ public class Emitter {
     private Class implCls;                 // Optional implementation class
     private Vector allowedMethods = null;  // Names of methods to consider
     private Vector disallowedMethods = null; // Names of methods to exclude
-    private ArrayList stopClasses = null;// class names which halt inheritace searches
+    private ArrayList stopClasses = new ArrayList();// class names which halt inheritace searches
     private boolean useInheritedMethods = false;
     private String intfNS;
     private String implNS;
@@ -1122,12 +1122,14 @@ public class Emitter {
     }
 
     /**
-     * Set a list of methods to export
+     * Add a list of methods to export
      */
     public void setAllowedMethods(String text) {
         if (text != null) {
             StringTokenizer tokenizer = new StringTokenizer(text, " ,+");
-            allowedMethods = new Vector();
+            if (allowedMethods == null) {
+                allowedMethods = new Vector();
+            }
             while (tokenizer.hasMoreTokens()) {
                 allowedMethods.add(tokenizer.nextToken());
             }
@@ -1135,11 +1137,14 @@ public class Emitter {
     }
 
     /**
-     * Set a Vector of methods to export
+     * Add a Vector of methods to export
      * @param allowedMethods a vector of methods to export
      */
     public void setAllowedMethods(Vector allowedMethods) {
-        this.allowedMethods = allowedMethods;
+        if (this.allowedMethods == null) {
+            this.allowedMethods = new Vector();
+        }
+        this.allowedMethods.addAll(allowedMethods);
     }
 
     /**
@@ -1157,20 +1162,26 @@ public class Emitter {
     }
 
     /**
-     * Set a list of methods NOT to export
+     * Add a list of methods NOT to export
      * @param disallowedMethods vector of method name strings
      */
     public void setDisallowedMethods(Vector disallowedMethods) {
-        this.disallowedMethods = disallowedMethods;
+        if (this.disallowedMethods == null) {
+            this.disallowedMethods = new Vector();
+        }
+        this.disallowedMethods.addAll(disallowedMethods);
     }
 
     /**
-     * Set a list of methods NOT to export
+     * Add a list of methods NOT to export
      * @param text space separated list of method names
      */
     public void setDisallowedMethods(String text) {
         if (text != null) {
             StringTokenizer tokenizer = new StringTokenizer(text, " ,+");
+            if (disallowedMethods == null) {
+                disallowedMethods = new Vector();
+            }
             disallowedMethods = new Vector();
             while (tokenizer.hasMoreTokens()) {
                 disallowedMethods.add(tokenizer.nextToken());
@@ -1186,17 +1197,20 @@ public class Emitter {
     }
 
     /**
-     * Set a list of classes (fully qualified) that will stop the traversal
+     * Adds a list of classes (fully qualified) that will stop the traversal
      * of the inheritance tree if encounter in method or complex type generation
      *
      * @param stopClasses vector of class name strings
      */
     public void setStopClasses(ArrayList stopClasses) {
-        this.stopClasses = stopClasses;
+        if (this.stopClasses == null) {
+            this.stopClasses = new ArrayList();
+        }
+        this.stopClasses.addAll(stopClasses);
     }
 
     /**
-     * Set a list of classes (fully qualified) that will stop the traversal
+     * Add a list of classes (fully qualified) that will stop the traversal
      * of the inheritance tree if encounter in method or complex type generation
      *
      * @param text space separated list of class names
@@ -1204,7 +1218,9 @@ public class Emitter {
     public void setStopClasses(String text) {
         if (text != null) {
             StringTokenizer tokenizer = new StringTokenizer(text, " ,+");
-            stopClasses = new ArrayList();
+            if (stopClasses == null) {
+                stopClasses = new ArrayList();
+            }
             while (tokenizer.hasMoreTokens()) {
                 stopClasses.add(tokenizer.nextToken());
             }
