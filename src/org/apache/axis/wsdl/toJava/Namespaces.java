@@ -257,7 +257,10 @@ public class Namespaces extends HashMap {
         } else {
             v = (Vector)pkg2NamespacesMap.get(value);
         }
-        v.add(key);
+        // NOT need to add an input key (namespace value) to v (package vector) 
+        if (!v.contains(key)) { 
+            v.add(key); 
+        }
         pkg2NamespacesMap.put(value, v);
          
         return super.put(key, value);
