@@ -71,6 +71,7 @@ import org.w3c.dom.Document;
 
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.InetAddress;
 
 public class SimpleAxisWorker implements Runnable {
     protected static Log log =
@@ -276,7 +277,7 @@ public class SimpleAxisWorker implements Runnable {
                 //  String hostname = socket.getInetAddress().getHostName();
                 // This works for 99% of the uses of SimpleAxisServer,
                 // but is very stupid
-                String hostname = "localhost";
+                String hostname = InetAddress.getLocalHost().getHostAddress();
                 // !!! Fix string concatenation
                 String url = "http://" + hostname + ":" +
                         server.getServerSocket().getLocalPort() + "/" +
