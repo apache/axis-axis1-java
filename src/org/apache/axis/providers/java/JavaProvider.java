@@ -74,12 +74,20 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.cache.ClassCache;
 import org.apache.axis.utils.cache.JavaClass;
 import org.apache.axis.wsdl.fromJava.Emitter;
+import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.enum.Style;
+import org.apache.axis.enum.Scope;
+import org.apache.axis.Constants;
+import org.apache.axis.session.Session;
+import org.apache.axis.description.ServiceDesc;
+import org.apache.axis.handlers.soap.SOAPService;
+
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 import org.w3c.dom.Document;
 
 import javax.xml.rpc.holders.IntHolder;
 import javax.xml.rpc.server.ServiceLifecycle;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
@@ -128,7 +136,7 @@ public abstract class JavaProvider extends BasicProvider
         // scope can be "Request", "Session", "Application"
         // (as with Apache SOAP)
         Scope scope = Scope.getScope((String)service.getOption(OPTION_SCOPE), Scope.DEFAULT);
-        
+
         scopeHolder.value = scope.getValue();
 
         if (scope == Scope.REQUEST) {
@@ -140,14 +148,15 @@ public abstract class JavaProvider extends BasicProvider
                 serviceName = msgContext.getService().toString();
 
             // look in incoming session
-            if (msgContext.getSession() != null) {
+            Session session = msgContext.getSession();
+            if (session != null) {
                 // This part isn't thread safe...
-                synchronized (this) {
+                synchronized (session) {
                     // store service objects in session, indexed by class name
-                    Object obj = msgContext.getSession().get(serviceName);
+                    Object obj = session.get(serviceName);
                     if (obj == null) {
                         obj = getNewServiceObject(msgContext, clsName);
-                        msgContext.getSession().set(serviceName, obj);
+                        session.set(serviceName, obj);
                     }
                     return obj;
                 }
@@ -159,15 +168,15 @@ public abstract class JavaProvider extends BasicProvider
         } else if (scope == Scope.APPLICATION) {
             // MUST be AxisEngine here!
             AxisEngine engine = msgContext.getAxisEngine();
-            if (engine.getApplicationSession() != null) {
+            Session appSession = engine.getApplicationSession();
+            if (appSession != null) {
                 // This part isn't thread safe
-                synchronized (this) {
+                synchronized (appSession) {
                     // store service objects in session, indexed by class name
-                    Object obj =
-                            engine.getApplicationSession().get(serviceName);
+                    Object obj = appSession.get(serviceName);
                     if (obj == null) {
                         obj = getNewServiceObject(msgContext, clsName);
-                        engine.getApplicationSession().set(serviceName, obj);
+                        appSession.set(serviceName, obj);
                     }
                     return obj;
                 }
@@ -185,7 +194,7 @@ public abstract class JavaProvider extends BasicProvider
 
     /**
      * Return a new service object which, if it implements the ServiceLifecycle
-     * interface, has been init()ed. 
+     * interface, has been init()ed.
      *
      * @param msgContext the MessageContext
      * @param clsName the name of the class to instantiate
@@ -301,37 +310,64 @@ public abstract class JavaProvider extends BasicProvider
         SOAPService service = msgContext.getService();
         ServiceDesc serviceDesc = service.getInitializedServiceDesc(msgContext);
 
+        // Calculate the appropriate namespaces for the WSDL we're going
+        // to put out.
+        //
+        // If we've been explicitly told which namespaces to use, respect
+        // that.  If not:
+        //
+        // The "interface namespace" should be either:
+        // 1) The namespace of the ServiceDesc
+        // 2) The transport URL (if there's no ServiceDesc ns)
+
         try {
-            String url = msgContext.getStrProp(MessageContext.TRANS_URL);
-            String interfaceNamespace = 
-                    msgContext.getStrProp(MessageContext.WSDLGEN_INTFNAMESPACE);
-            if (interfaceNamespace == null) {
-                interfaceNamespace = url;
-            }
-            String locationUrl = 
+            // Location URL is whatever is explicitly set in the MC
+            String locationUrl =
                     msgContext.getStrProp(MessageContext.WSDLGEN_SERV_LOC_URL);
 
             if (locationUrl == null) {
+                // If nothing, try what's explicitly set in the ServiceDesc
                 locationUrl = serviceDesc.getEndpointURL();
             }
 
             if (locationUrl == null) {
-                locationUrl = url;
-            } else {
-                try {
-                    URL urlURL = new URL(url);
-                    URL locationURL = new URL(locationUrl);
-                    URL urlTemp = new URL(urlURL.getProtocol(),
-                            locationURL.getHost(),
-                            locationURL.getPort(),
-                            urlURL.getFile());
-                    interfaceNamespace += urlURL.getFile();
-                    locationUrl = urlTemp.toString();
-                } catch (Exception e) {
-                    locationUrl = url;
-                    interfaceNamespace = url;
-                }
+                // If nothing, use the actual transport URL
+                locationUrl = msgContext.getStrProp(MessageContext.TRANS_URL);
             }
+
+            // Interface namespace is whatever is explicitly set
+            String interfaceNamespace =
+                    msgContext.getStrProp(MessageContext.WSDLGEN_INTFNAMESPACE);
+
+            if (interfaceNamespace == null) {
+                // If nothing, use the default namespace of the ServiceDesc
+                interfaceNamespace = serviceDesc.getDefaultNamespace();
+            }
+
+            if (interfaceNamespace == null) {
+                // If nothing still, use the location URL determined above
+                interfaceNamespace = locationUrl;
+            }
+
+//  Do we want to do this?
+//
+//            if (locationUrl == null) {
+//                locationUrl = url;
+//            } else {
+//                try {
+//                    URL urlURL = new URL(url);
+//                    URL locationURL = new URL(locationUrl);
+//                    URL urlTemp = new URL(urlURL.getProtocol(),
+//                            locationURL.getHost(),
+//                            locationURL.getPort(),
+//                            urlURL.getFile());
+//                    interfaceNamespace += urlURL.getFile();
+//                    locationUrl = urlTemp.toString();
+//                } catch (Exception e) {
+//                    locationUrl = url;
+//                    interfaceNamespace = url;
+//                }
+//            }
 
             Emitter emitter = new Emitter();
 
@@ -344,15 +380,15 @@ public abstract class JavaProvider extends BasicProvider
                              ? Emitter.MODE_RPC
                              : Emitter.MODE_DOCUMENT);
 
-            emitter.setClsSmart(serviceDesc.getImplClass(),url);
+            emitter.setClsSmart(serviceDesc.getImplClass(), locationUrl);
 
             // If a wsdl target namespace was provided, use the targetNamespace.
             // Otherwise use the interfaceNamespace constructed above.
             String targetNamespace = (String) service.getOption(OPTION_WSDL_TARGETNAMESPACE);
-            if (targetNamespace == null || 
+            if (targetNamespace == null ||
                 targetNamespace.length() == 0) {
                 targetNamespace = interfaceNamespace;
-            }            
+            }
             emitter.setIntfNamespace(targetNamespace);
 
             emitter.setLocationUrl(locationUrl);
@@ -485,7 +521,7 @@ public abstract class JavaProvider extends BasicProvider
      * right place.
      */
     public void initServiceDesc(SOAPService service, MessageContext msgContext)
-            throws AxisFault 
+            throws AxisFault
     {
         // Set up the Implementation class for the service
 
@@ -511,5 +547,5 @@ public abstract class JavaProvider extends BasicProvider
 
         serviceDescription.loadServiceDescByIntrospection(cls);
     }
-    
+
 }
