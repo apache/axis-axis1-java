@@ -98,7 +98,7 @@ public class ServiceClient {
     // For testing
     private static Handler localServer = null ;
     public  boolean doLocal = false ;
-    private static final boolean DEBUG_LOG = true;
+    private static final boolean DEBUG_LOG = false;
     
     // Our AxisClient
     private AxisClient engine;
