@@ -273,21 +273,16 @@ public class RPCProvider extends JavaProvider {
             if (holderClass != null &&
                     Holder.class.isAssignableFrom(holderClass)) {
                 int index = count;
-                if (param.getMode()==ParameterDesc.OUT) {
-                    // OUT params don't have param order, just stick them at the end. 
+                // Use the parameter order if specified or just stick them to the end.  
+                if (param.getOrder() != -1) {
+                    index = param.getOrder();
+                } else {
                     count++;
-                } else if (param.getMode()==ParameterDesc.INOUT) {
-                    // Use the parameter order if specified or just stick them to the end.  
-                    if(param.getOrder() != -1) {
-                        index = param.getOrder();
-                    } else {
-                        count++;
-                    }
-                    // If it's already filled, don't muck with it
-                    if(argValues[index] != null) {
-                        continue;
-                    }
-                }                    
+                }
+                // If it's already filled, don't muck with it
+                if (argValues[index] != null) {
+                    continue;
+                }
                 argValues[index] = holderClass.newInstance();
                 // Store an RPCParam in the outs collection so we
                 // have an easy and consistent way to write these

@@ -175,8 +175,8 @@ public class ParameterDesc implements Serializable {
         text+=indent + "typeEntry:  " + typeEntry + "\n";
         text+=indent + "mode:       " + (mode == IN ? 
                                          "IN" : mode == INOUT ? 
-                                         "INOUT" : "OUT:  " 
-                                         + "position:" + order) + "\n";
+                                         "INOUT" : "OUT") + "\n"; 
+        text+=indent + "position:   " + order + "\n";
         text+=indent + "isReturn:   " + isReturn + "\n";
         text+=indent + "typeQName:  " + typeQName + "\n";
         text+=indent + "javaType:   " + javaType + "\n";
