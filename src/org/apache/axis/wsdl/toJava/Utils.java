@@ -716,6 +716,9 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
         else if ("text/xml".equals(mimeName) || "applications/xml".equals(mimeName)) {
             return Constants.MIME_SOURCE;
         }
+        else if ("application/octetstream".equals(mimeName)) {
+            return Constants.MIME_OCTETSTREAM;
+        }
         else if (mimeName != null && mimeName.startsWith("multipart/")) {
             return Constants.MIME_MULTIPART;
         }
