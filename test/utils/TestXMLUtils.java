@@ -218,26 +218,27 @@ public class TestXMLUtils extends TestCase
     */
     public Object getTestXml(String gimme)
     {
+        String lineSep = System.getProperty("line.separator");
         StringBuffer sb = new StringBuffer();
-          sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n")
+          sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + lineSep)
         //The System ID will cause an unknown host exception unless you are
         //connected to the Internet, so comment it out for testing.
-          //.append("<!DOCTYPE web-app PUBLIC \"-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN\"\n")
-          //.append("\"http://java.sun.com/j2ee/dtds/web-app_2.2.dtd\">\n")
-          .append("<web-app>\n")
-          .append("<display-name>Apache-Axis</display-name>\n") 
-          .append("<servlet>\n") 
-          .append("<servlet-name>AxisServlet</servlet-name>\n") 
-          .append("<display-name>Apache-Axis Servlet</display-name>\n") 
-          .append("<servlet-class>\n") 
-          .append("org.apache.axis.transport.http.AxisServlet\n") 
-          .append("</servlet-class>\n") 
-          .append("</servlet>\n") 
-          .append("<servlet-mapping>\n") 
-          .append("<servlet-name>AxisServlet</servlet-name>\n") 
-          .append("<url-pattern>servlet/AxisServlet</url-pattern>\n") 
-          .append("<url-pattern>*.jws</url-pattern>\n") 
-          .append("</servlet-mapping>\n") 
+          //.append("<!DOCTYPE web-app PUBLIC \"-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN\"" + lineSep)
+          //.append("\"http://java.sun.com/j2ee/dtds/web-app_2.2.dtd\">" + lineSep)
+          .append("<web-app>" + lineSep)
+          .append("<display-name>Apache-Axis</display-name>" + lineSep) 
+          .append("<servlet>" + lineSep) 
+          .append("<servlet-name>AxisServlet</servlet-name>" + lineSep) 
+          .append("<display-name>Apache-Axis Servlet</display-name>" + lineSep) 
+          .append("<servlet-class>" + lineSep) 
+          .append("org.apache.axis.transport.http.AxisServlet" + lineSep) 
+          .append("</servlet-class>" + lineSep) 
+          .append("</servlet>" + lineSep) 
+          .append("<servlet-mapping>" + lineSep) 
+          .append("<servlet-name>AxisServlet</servlet-name>" + lineSep) 
+          .append("<url-pattern>servlet/AxisServlet</url-pattern>" + lineSep) 
+          .append("<url-pattern>*.jws</url-pattern>" + lineSep) 
+          .append("</servlet-mapping>" + lineSep) 
           .append("</web-app>");
 
         String xmlString = sb.toString();
