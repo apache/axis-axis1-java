@@ -57,7 +57,11 @@ package org.apache.axis.configuration;
 
 import org.apache.axis.EngineConfigurationFactory;
 import org.apache.axis.EngineConfiguration;
+import org.apache.axis.ConfigurationException;
 import org.apache.axis.Constants;
+import org.apache.axis.utils.JavaUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.servlet.ServletContext;
 
@@ -78,6 +82,8 @@ import java.io.InputStream;
  * @author Davanum Srinivas (dims@apache.org)
  */
 public class ServletEngineConfigurationFactory extends DefaultEngineConfigurationFactory {
+    protected static Log log =
+        LogFactory.getLog(ServletEngineConfigurationFactory.class.getName());
 
     private ServletContext ctx;
     
@@ -122,9 +128,15 @@ public class ServletEngineConfigurationFactory extends DefaultEngineConfiguratio
                                                  SERVER_CONFIG_FILE);
                 if (is != null) config = new FileProvider(is);
             }
-            if ( config == null )
-                config = new FileProvider(webInfPath,
-                                          SERVER_CONFIG_FILE);
+            if ( config == null ) {
+                try {
+                    config = new FileProvider(webInfPath,
+                                              SERVER_CONFIG_FILE);
+                } catch (ConfigurationException ex) {
+                    log.error(JavaUtils.getMessage
+                              ("servletEngineWebInfError00"), ex);
+                }
+            }
             return config;
         } else {
             return userFactory.getServerEngineConfig();
