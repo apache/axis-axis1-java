@@ -334,6 +334,7 @@ public class RPCProvider extends JavaProvider
     }
     
     protected Method[] getMethod(MessageContext msgContext, JavaClass jc, String mName)
+        throws Exception
     {
         return jc.getMethod(mName);
     }
