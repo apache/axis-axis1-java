@@ -1698,9 +1698,6 @@ public class Call implements javax.xml.rpc.Call {
      *
      */
      public void addAttachmentPart( Object attachment){
-         if(!Message.isAttachmentSupportEnabled()){
-              throw new RuntimeException("No support for attachments");
-         }
          attachmentParts.add(attachment);
      }
 }

@@ -184,20 +184,31 @@ public class Message {
 
     private static boolean attachmentSupportEnabled = false;
 
-    public static boolean isAttachmentSupportEnabled() {
+    public boolean isAttachmentSupportEnabled() {
         if (checkForAttchmentSupport) {
             //aviod testing and possibly failing everytime.
             checkForAttchmentSupport = false;
             Class mailapiclass = null;
             Class dataHandlerclass = null;
             try {
+                String attachImpName= AxisEngine.DEFAULT_ATTACHMENT_IMPL;
+                MessageContext mc= getMessageContext();
+                if(null != mc){
+                    AxisEngine ae= mc.getAxisEngine();
+                    if(null != ae){ 
+                      attachImpName= (String)ae.getOption(
+                        AxisEngine.PROP_ATTACHMENT_IMPLEMENTATION);
+                    }
+                }
+                if(null == attachImpName){
+                    attachImpName=AxisEngine.DEFAULT_ATTACHMENT_IMPL;
+                }
                 dataHandlerclass = 
                         Class.forName("javax.activation.DataHandler");
                 mailapiclass = 
                         Class.forName("javax.mail.internet.MimeMultipart");
                 attachImpl = 
-                        Class.forName(
-                                "org.apache.axis.attachments.AttachmentsImpl");
+                        Class.forName(attachImpName);
                 attachmentSupportEnabled = true;
             } catch (ClassNotFoundException ex) {
                 // no support for it, leave mAttachments null.
