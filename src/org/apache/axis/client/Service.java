@@ -102,7 +102,8 @@ public class Service implements javax.xml.rpc.Service {
     private Definition          wsdlDefinition = null ;
     private javax.wsdl.Service  wsdlService    = null ;
 
-    private ConfigurationProvider configProvider = null;
+    private ConfigurationProvider configProvider =
+            new FileProvider(Constants.CLIENT_CONFIG_FILE);
 
     Definition getWSDLDefinition() {
         return( wsdlDefinition );
@@ -114,12 +115,7 @@ public class Service implements javax.xml.rpc.Service {
 
     protected AxisClient getAxisClient() throws JAXRPCException
     {
-        String name = "some name";
-        try {
-            return AxisClientFactory.getClient(name, configProvider);
-        } catch (AxisFault fault) {
-            throw new JAXRPCException(fault.getMessage());
-        }
+        return new AxisClient(configProvider);
     }
 
     /**
@@ -423,5 +419,19 @@ public class Service implements javax.xml.rpc.Service {
      */
     public AxisEngine getEngine() {
         return( engine );
+    }
+
+    /**
+     * Set this Service's configuration provider.
+     *
+     * Note that since all of the constructors create the AxisClient right
+     * now, this is basically a no-op.  Putting it in now so that we can make
+     * lazy engine instantiation work, and not have to duplicate every single
+     * Service constructor with a ConfigurationProvider argument.
+     *
+     * @param configProvider the ConfigurationProvider we want to use.
+     */
+    public void setConfigProvider(ConfigurationProvider configProvider) {
+        this.configProvider = configProvider;
     }
 }
