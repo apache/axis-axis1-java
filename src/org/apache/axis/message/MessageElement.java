@@ -80,7 +80,7 @@ public class MessageElement extends DeserializerBase
     protected AttributesImpl attributes;
     protected String    id;
     protected String    href;
-    protected boolean   isRoot = false;
+    protected boolean   isRoot = true;
     protected SOAPEnvelope message = null;
     
     // The java Object value of this element.  This is either set by
@@ -128,7 +128,6 @@ public class MessageElement extends DeserializerBase
 
         this.attributes = new AttributesImpl(attributes);
         String rootVal = attributes.getValue(Constants.URI_SOAP_ENV, Constants.ATTR_ROOT);
-        // !!! This currently defaults to false... should it default to true?
         if (rootVal != null)
             isRoot = rootVal.equals("1");
       
