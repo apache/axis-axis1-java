@@ -22,30 +22,9 @@ public class TestAxisClassLoader extends TestCase
     public void testGetClassLoaderNoArg()
     {
 	AxisClassLoader expect = AxisClassLoader.getClassLoader();
-	AxisClassLoader actual = AxisClassLoader.getClassLoader("<default_class_loader>");
+	AxisClassLoader actual = AxisClassLoader.getClassLoader();
         assertTrue(expect instanceof AxisClassLoader);
         assertEquals(expect, actual);
-    }
-    
-    public void testGetClassLoaderStringArg()
-    {
-        AxisClassLoader acl = AxisClassLoader.getClassLoader("newClassLoader");
-        AxisClassLoader result = AxisClassLoader.getClassLoader("newClassLoader");
-        if (!acl.equals(result))
-        {
-            fail("Test failure: these 2 AxisClassLoader references should refer to same instance.");
-        }
-    }
-
-    public void testRemoveClassLoader()
-    {
-        AxisClassLoader acl = AxisClassLoader.getClassLoader("newClassLoader");
-        AxisClassLoader.removeClassLoader("newClassLoader");
-        AxisClassLoader result = acl.getClassLoader("newClassLoader");
-        if (acl.equals(result))
-        {
-            fail("These 2 AxisClassLoader references should not refer to same instance.");
-        }
     }
 
     public void testRegisterClassNameClass()
