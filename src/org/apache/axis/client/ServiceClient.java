@@ -99,8 +99,8 @@ public class ServiceClient {
     public  boolean doLocal = false ;
     private static final boolean DEBUG_LOG = false;
     
-    // Our engine; either AxisClient (usually) or AxisServer (doLocal)
-    private AxisEngine engine;
+    // Our AxisClien
+    private AxisClient engine;
     
     // The description of our service
     private ServiceDescription serviceDesc;
@@ -133,7 +133,7 @@ public class ServiceClient {
         try {
             transport.init(engine);
             
-            transport.initMessageContext(msgContext, this, engine, doLocal);
+            transport.initMessageContext(msgContext, this, engine);
         } catch (AxisFault f) {
             // this will happen if there is no appropriate service
             // what?  system.err for now
@@ -310,7 +310,7 @@ public class ServiceClient {
 
         // set up message context if there is a transport
         if (transport != null) {
-            transport.setupMessageContext(msgContext, this, this.engine, doLocal);
+            transport.setupMessageContext(msgContext, this, this.engine);
         }
         
         Message              inMsg = msgContext.getRequestMessage();
