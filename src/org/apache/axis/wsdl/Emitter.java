@@ -111,6 +111,13 @@ import com.ibm.wsdl.extensions.soap.SOAPBinding;
  * @author Steve Graham (sggraham@us.ibm.com)
  */
 public class Emitter {
+
+    // Scope constants
+    public static final byte NO_EXPLICIT_SCOPE = 0x00;
+    public static final byte APPLICATION_SCOPE = 0x01;
+    public static final byte REQUEST_SCOPE     = 0x10;
+    public static final byte SESSION_SCOPE     = 0x11;
+
     private Document doc = null;
     private Definition def = null;
     private WsdlAttributes wsdlAttr = null;
@@ -121,7 +128,7 @@ public class Emitter {
     String packageName = null;
     String packageDirName = "";
     String outputDir = null;
-    String scope = null;
+    byte scope = NO_EXPLICIT_SCOPE;
 
     /**
      * Call this method if you have a uri for the WSDL document
@@ -254,13 +261,10 @@ public class Emitter {
 
     /**
      * Set the scope for the deploy.xml file.
+     * @param scope One of Emitter.NO_EXPLICIT_SCOPE, Emitter.APPLICATION_SCOPE, Emitter.REQUEST_SCOPE, Emitter.SESSION_SCOPE.  Anything else is equivalent to NO_EXPLICIT_SCOPE and no explicit scope tag will appear in deploy.xml.
      */
-    public void setScope(String scope) {
-        if ("Application".equals(scope) || "Request".equals(scope) || "Session".equals(scope))
-            this.scope = scope;
-        else if (scope != null) {
-            System.err.println("Unrecognized scope:  " + scope + ".  Ignoring it.");
-        }
+    public void setScope(byte scope) {
+        this.scope = scope;
     } // setScope
 
     ///////////////////////////////////////////////////
@@ -1497,8 +1501,14 @@ public class Emitter {
 
         deployPW.println("      <option name=\"methodName\" value=\"" + methodList + "\"/>");
 
-        if (scope != null) {
-            deployPW.println("      <option name=\"scope\" value=\"" + scope + "\"/>");
+        if (scope == APPLICATION_SCOPE) {
+            deployPW.println("      <option name=\"scope\" value=\"Application\"/>");
+        }
+        else if (scope == REQUEST_SCOPE) {
+            deployPW.println("      <option name=\"scope\" value=\"Request\"/>");
+        }
+        else if (scope == SESSION_SCOPE) {
+            deployPW.println("      <option name=\"scope\" value=\"Session\"/>");
         }
     } //writeDeployBinding
 
