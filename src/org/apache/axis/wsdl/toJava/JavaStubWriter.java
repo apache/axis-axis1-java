@@ -68,6 +68,7 @@ import org.apache.axis.wsdl.symbolTable.Parameter;
 import org.apache.axis.wsdl.symbolTable.Parameters;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
+import org.apache.axis.wsdl.symbolTable.DefinedType;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
@@ -760,6 +761,21 @@ public class JavaStubWriter extends JavaClassWriter {
             }
         }
 
+ 		if(emitter.isAllWanted()) {
+ 			HashMap rawSymbolTable = symbolTable.getHashMap();
+ 			for(Iterator j = rawSymbolTable.values().iterator(); j.hasNext(); ) {
+ 				Vector typeVector = (Vector)j.next();
+ 				for(Iterator k = typeVector.iterator(); k.hasNext(); ) {
+ 					Object symbol = k.next();
+ 					if(symbol instanceof DefinedType) {
+ 						TypeEntry type = (TypeEntry)symbol;
+ 						if(!types.contains(type)) {
+ 							types.add(type);
+ 						}
+ 					}
+ 				}
+ 			}
+ 		}        
         return types;
     }    // getTypesInPortType
 
