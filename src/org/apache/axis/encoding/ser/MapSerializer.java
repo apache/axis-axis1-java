@@ -76,7 +76,7 @@ public class MapSerializer implements Serializer
         context.startElement(name, attributes);
         
         AttributesImpl itemsAttributes = new AttributesImpl();
-        String encodingURI = context.getMessageContext().getSOAPConstants().getEncodingURI();
+        String encodingURI = context.getMessageContext().getEncodingStyle();
         String encodingPrefix = context.getPrefixForURI(encodingURI);
         String soapPrefix = context.getPrefixForURI(Constants.SOAP_MAP.getNamespaceURI());
         itemsAttributes.addAttribute(encodingURI, "type", encodingPrefix + ":type",
@@ -92,8 +92,9 @@ public class MapSerializer implements Serializer
 
             context.startElement(QNAME_ITEM, null);
 
-            context.serialize(QNAME_KEY,   null, key);
-            context.serialize(QNAME_VALUE, null, val);
+            // Since the Key and Value can be any type, send type info
+            context.serialize(QNAME_KEY,   null, key, null, null, Boolean.TRUE);
+            context.serialize(QNAME_VALUE, null, val, null, null, Boolean.TRUE);
 
             context.endElement();
         }
