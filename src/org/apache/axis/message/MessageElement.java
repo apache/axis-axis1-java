@@ -254,6 +254,11 @@ public class MessageElement implements SOAPElement, Serializable
             encodingStyle =
                     attributes.getValue(sc.getEncodingURI(),
                                         Constants.ATTR_ENCODING_STYLE);
+
+            // if no-encoding style was defined, we don't define as well
+            if (Constants.URI_SOAP12_NOENC.equals(encodingStyle))
+                encodingStyle = null;
+
         }
     }
 
@@ -378,9 +383,6 @@ public class MessageElement implements SOAPElement, Serializable
         if (encodingStyle == null) {
             encodingStyle = "";
         }
-
-        if(!encodingStyle.equals("") && !Constants.isSOAP_ENC(encodingStyle))
-                throw new IllegalArgumentException(Messages.getMessage("illegalArgumentException01",encodingStyle));
 
         this.encodingStyle = encodingStyle;
 

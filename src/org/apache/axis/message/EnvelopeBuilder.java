@@ -147,6 +147,15 @@ public class EnvelopeBuilder extends SOAPHandler
         if(context.getMessageContext() != null)
             context.getMessageContext().setSOAPConstants(soapConstants);
 
+        if (soapConstants == SOAPConstants.SOAP12_CONSTANTS &&
+            attributes.getValue(Constants.URI_SOAP12_ENV, Constants.ATTR_ENCODING_STYLE) != null) {
+
+            AxisFault fault = new AxisFault(Constants.FAULT_SOAP12_SENDER,
+                null, Messages.getMessage("noEncodingStyleAttrAppear", "Envelope"), null, null, null);
+
+            throw new SAXException(fault);
+        }
+
         envelope.setPrefix(prefix);
         envelope.setNamespaceURI(namespace);
         envelope.setNSMappings(context.getCurrentNSMappings());

@@ -184,11 +184,9 @@ public class DeserializationContextImpl extends DefaultHandler implements Lexica
      * returns the soap constants.
      */
     private SOAPConstants getSOAPConstants(){
-        SOAPConstants constants = null;
+        SOAPConstants constants = Constants.DEFAULT_SOAP_VERSION;
         if(msgContext != null)
             constants = msgContext.getSOAPConstants();
-        if(constants == null)
-            constants = SOAPConstants.SOAP11_CONSTANTS;
         return constants;
     }
 
@@ -895,6 +893,20 @@ public class DeserializationContextImpl extends DefaultHandler implements Lexica
             attributes = NullAttributes.singleton;
         } else {
             attributes = new AttributesImpl(attributes);
+
+            SOAPConstants soapConstants = getSOAPConstants();
+            if (soapConstants == SOAPConstants.SOAP12_CONSTANTS) {
+                if (attributes.getValue(soapConstants.getAttrHref()) != null &&
+                    attributes.getValue(Constants.ATTR_ID) != null) {
+
+                    AxisFault fault = new AxisFault(Constants.FAULT_SOAP12_SENDER,
+                        null, Messages.getMessage("noIDandHREFonSameElement"), null, null, null);
+
+                    throw new SAXException(fault);
+
+                }
+            }
+
         }
 
         SOAPHandler nextHandler = null;
