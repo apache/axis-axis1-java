@@ -73,7 +73,7 @@ public class JavaBeanWriter extends JavaClassWriter {
     protected boolean enableDefaultConstructor = true;
 
     /** Field enableFullConstructor */
-    protected boolean enableFullConstructor = false;
+    protected boolean enableFullConstructor = true;
 
     /** Field enableSimpleConstructors */
     protected boolean enableSimpleConstructors = false;
