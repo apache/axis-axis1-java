@@ -194,6 +194,7 @@ Copyright:
     <pathelement location="${build.dir}" />
     <pathelement location="${build.dest}" />
     <pathelement path="${java.class.path}" />
+    <path refid="classpath"/>
   </path>
 
   <target name="buildTest" if="junit.present" depends="compile">
