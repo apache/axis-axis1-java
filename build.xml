@@ -214,7 +214,6 @@ Copyright:
         <path refid="classpath"/>
       </classpath>
       <include name="samples/**/*.java" />
-      <include name="test/**/*.java" />
       <exclude name="samples/**/*SMTP*.java" unless="smtp.present" />
       <exclude name="**/old/**/*.java" />
       <exclude name="samples/userguide/example2/Calculator.java"/>
@@ -299,7 +298,17 @@ Copyright:
   <!-- =================================================================== -->
   <!-- Runs the JUnit package testcases -->
   <!-- =================================================================== -->
-  <target name="junit" if="junit.present" depends="buildTest">
+  <target name="junit" if="junit.present" depends="samples,buildTest">
+    <!-- Start by building the testcases -->
+    <javac srcdir="." destdir="${build.dest}"
+           debug="${debug}">
+      <classpath>
+        <pathelement location="${build.lib}/${name}.jar"/>
+        <path refid="classpath"/>
+      </classpath>
+      <include name="test/**/*.java" />
+    </javac>
+
     <mkdir dir="${basedir}/test-reports" />
     <junit printsummary="yes" haltonfailure="yes" fork="yes">
       <classpath refid="test-classpath" />
