@@ -79,7 +79,9 @@ public class TestEchoSample extends TestCase {
         category.info("Testing echo interop sample.");
 
         // deploy the echo service
-        String[] args = {"-l", "local:", "samples/echo/deploy.xml"};
+        String[] args = {"-l",
+                         "local:///AdminService",
+                         "samples/echo/deploy.wsdd"};
         AdminClient.main(args);
 
         // define the tests using JUnit assert facilities
