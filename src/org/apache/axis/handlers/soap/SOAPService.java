@@ -61,12 +61,14 @@ import org.apache.axis.Handler;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.SimpleTargetedChain;
+import org.apache.axis.attachments.Attachments;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.enum.Style;
-import org.apache.axis.attachments.Attachments;
 import org.apache.axis.handlers.BasicHandler;
+import org.apache.axis.handlers.HandlerChainImpl;
+import org.apache.axis.handlers.HandlerInfoChainFactory;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.providers.BasicProvider;
@@ -419,4 +421,18 @@ public class SOAPService extends SimpleTargetedChain
     public void setSendType(int sendType) {
         this.sendType = sendType;
     }
+
+	public void invoke(MessageContext msgContext) throws AxisFault {
+		HandlerInfoChainFactory handlerFactory = (HandlerInfoChainFactory) this.getOption(Constants.ATTR_HANDLERINFOCHAIN);
+		HandlerChainImpl handlerImpl = null;
+		if (handlerFactory != null) handlerImpl = (HandlerChainImpl) handlerFactory.createHandlerChain();
+		if (handlerImpl != null) handlerImpl.handleRequest(msgContext);
+
+		super.invoke(msgContext);
+
+		if ( handlerImpl != null) {
+			handlerImpl.handleResponse(msgContext);
+				handlerImpl.destroy();
+		}
+	}
 }
