@@ -221,8 +221,10 @@ public class ArrayDeserializer extends DeserializerImpl implements Deserializer 
                 try {
                     ClassLoader cl = 
                             context.getMessageContext().getClassLoader();
-                    arrayClass = Class.forName(JavaUtils.getLoadableClassName(
-                            arrayItemClass.getName() + "[]"), true, cl);   
+                    arrayClass = Class.forName(
+                      JavaUtils.getLoadableClassName(
+                         JavaUtils.getTextClassName(arrayItemClass.getName()) + "[]"),
+                         true, cl);   
                 } catch (Exception e) {
                     throw new SAXException(
                        JavaUtils.getMessage("noComponent00",  "" + defaultItemType));
@@ -463,8 +465,17 @@ public class ArrayDeserializer extends DeserializerImpl implements Deserializer 
             }
         }
         // If all indices are accounted for, the array is complete.
+        // Try converting the value (probably an ArrayListExtension)
+        // into the expected array.
+        // valueComplete is invoked to inform all referents that the
+        // value of the array is ready.
         waiting.remove(hint);
         if (isEnded && waiting.size()==0) {
+            try {
+                if (arrayClass != null) {
+                    value = JavaUtils.convert(value, arrayClass);
+                }
+            } catch (Exception e) {}
             valueComplete();
         }
     }
