@@ -113,7 +113,7 @@ public class LogHandler extends BasicHandler {
         try {
             PrintWriter writer   = null;
 
-            writer = getWriter(msgContext);
+            writer = getWriter();
 
             Message inMsg = msgContext.getRequestMessage();
             Message outMsg = msgContext.getResponseMessage();
@@ -141,7 +141,7 @@ public class LogHandler extends BasicHandler {
         }
     }
 
-    private PrintWriter getWriter(MessageContext msgContext) throws IOException {
+    private PrintWriter getWriter() throws IOException {
         PrintWriter writer;
 
         // Allow config info to control where we write.

@@ -77,12 +77,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.FileFilter;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashMap;

@@ -175,8 +175,8 @@ public class SOAPService extends SimpleTargetedChain
 
         public void invoke(MessageContext msgContext) throws AxisFault {
             // Do SOAP semantics here
-            if (this.log.isDebugEnabled()) {
-                this.log.debug( Messages.getMessage("semanticCheck00"));
+            if (log.isDebugEnabled()) {
+                log.debug( Messages.getMessage("semanticCheck00"));
             }
 
             ArrayList acts = getActors();

@@ -55,21 +55,17 @@
 
 package org.apache.axis.handlers ;
 
-import java.io.StringBufferInputStream;
-import javax.servlet.http.HttpServletRequest;
-
-
 import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.transport.http.AxisServlet;
-import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.commons.logging.Log;
 import org.w3c.dom.Document;
+
+import java.io.ByteArrayInputStream;
 
 /**
  *
@@ -195,7 +191,7 @@ public class EchoHandler extends BasicHandler {
         try {
             String url = msgContext.getStrProp(MessageContext.TRANS_URL);
             String wsdlString = wsdlStart + url + wsdlEnd;
-            Document doc = XMLUtils.newDocument(new StringBufferInputStream(wsdlString));
+            Document doc = XMLUtils.newDocument(new ByteArrayInputStream(wsdlString.getBytes("UTF-8")));
             msgContext.setProperty("WSDL", doc);
         } catch (Exception e) {
             throw AxisFault.makeFault(e);
