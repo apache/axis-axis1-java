@@ -10,7 +10,7 @@
   <handler name="RPCDispatcher"
            class="org.apache.axis.handlers.RPCDispatchHandler" />
 
-  <service name="AdminService" handler="MsgDispatchHandler">
+  <service name="AdminService" handler="MsgDispatcher">
     <option name="className" value="org.apache.axis.utils.Admin" />
     <option name="methodName" value="AdminService" />
   </service>
