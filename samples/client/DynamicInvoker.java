@@ -56,6 +56,12 @@
 package samples.client;
 
 import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.wsdl.gen.Parser;
+import org.apache.axis.wsdl.symbolTable.Type;
+import org.apache.axis.wsdl.symbolTable.Element;
+import org.apache.axis.wsdl.symbolTable.Utils;
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
+import org.apache.axis.wsdl.symbolTable.TypeEntry;
 import org.w3c.dom.Document;
 
 import javax.wsdl.Binding;
@@ -82,6 +88,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.HashSet;
 
 /**
  * This sample shows how to use Axis for completely dynamic invocations
@@ -190,7 +197,7 @@ public class DynamicInvoker {
         PortType portType = selectPortType(def, portTypeNS, portTypeName);
 
         ServiceFactory factory = ServiceFactory.newInstance();
-        javax.xml.rpc.Service dpf = factory.createService(new URL(wsdlLocation), service.getQName());
+        org.apache.axis.client.Service dpf = (org.apache.axis.client.Service)factory.createService(new URL(wsdlLocation), service.getQName());
 
         if (inputName == null && outputName == null) {
             // retrieve list of operations
@@ -256,7 +263,7 @@ public class DynamicInvoker {
                 int count = parts.size();
                 inNames = new String[count];
                 inTypes = new Class[count];
-                retrieveSignature(parts, inNames, inTypes);
+                retrieveSignature(dpf, parts, inNames, inTypes);
             }
             // now prepare out parameters
 
@@ -287,7 +294,7 @@ public class DynamicInvoker {
                 int count = parts.size();
                 outNames = new String[count];
                 outTypes = new Class[count];
-                retrieveSignature(parts, outNames, outTypes);
+                retrieveSignature(dpf, parts, outNames, outTypes);
             }
 
         }
@@ -316,6 +323,7 @@ public class DynamicInvoker {
     }
 
     private static void retrieveSignature(
+            org.apache.axis.client.Service service,
             List parts,
             String[] names,
             Class[] types) {
@@ -323,27 +331,51 @@ public class DynamicInvoker {
         for (int i = 0; i < names.length; ++i) {
             Part part = (Part) parts.get(i);
             names[i] = part.getName();
-            QName partType = part.getTypeName();
-            if (partType == null) {
-                throw new RuntimeException(
-                        "part " + names[i] + " must have type name declared");
-            }
-            // only limited number of types is supported
-            // cheerfully ignoring schema namespace ...
-            String s = partType.getLocalPart();
-            if ("string".equals(s)) {
-                types[i] = String.class;
-            } else if ("double".equals(s)) {
-                types[i] = Integer.TYPE;
-            } else if ("float".equals(s)) {
-                types[i] = Float.TYPE;
-            } else if ("int".equals(s)) {
-                types[i] = Integer.TYPE;
-            } else if ("boolean".equals(s)) {
-                types[i] = Boolean.TYPE;
+            QName partTypeName = part.getTypeName();
+            QName partElementName = part.getElementName();
+            Type partType = null;
+            Element partElement = null;
+            if (partTypeName != null) {
+                partType = service.getWSDLParser().getSymbolTable().getType(partTypeName);
+                // only limited number of types is supported
+                // cheerfully ignoring schema namespace ...
+                String s = partTypeName.getLocalPart();
+                if ("string".equals(s)) {
+                    types[i] = String.class;
+                } else if ("double".equals(s)) {
+                    types[i] = Integer.TYPE;
+                } else if ("float".equals(s)) {
+                    types[i] = Float.TYPE;
+                } else if ("int".equals(s)) {
+                    types[i] = Integer.TYPE;
+                } else if ("boolean".equals(s)) {
+                    types[i] = Boolean.TYPE;
+                } 
+            } else if (partElementName != null) {
+                SymbolTable symbolTable = service.getWSDLParser().getSymbolTable();
+                partElement = symbolTable.getElement(partElementName);
+                HashSet nestedTypes = Utils.getNestedTypes(partElement.getRefType(), symbolTable, true);
+                Iterator it = nestedTypes.iterator();
+                if (it.hasNext()) {
+                    TypeEntry nestedType = (TypeEntry) it.next();
+                    // only limited number of types is supported
+                    // cheerfully ignoring schema namespace ...
+                    String s = nestedType.getQName().getLocalPart();
+                    if ("string".equals(s)) {
+                        types[i] = String.class;
+                    } else if ("double".equals(s)) {
+                        types[i] = Integer.TYPE;
+                    } else if ("float".equals(s)) {
+                        types[i] = Float.TYPE;
+                    } else if ("int".equals(s)) {
+                        types[i] = Integer.TYPE;
+                    } else if ("boolean".equals(s)) {
+                        types[i] = Boolean.TYPE;
+                    } 
+                }
             } else {
                 throw new RuntimeException(
-                        "part type " + partType + " not supported in this sample");
+                        "part " + names[i] + " must have type or element name declared");
             }
         }
     }

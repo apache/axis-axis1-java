@@ -132,7 +132,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
         return( wsdlService );
     }
 
-    protected Parser getWSDLParser() {
+    public Parser getWSDLParser() {
         return( wsdlParser );
     }
     

@@ -101,4 +101,22 @@ public class TestDynamicInvoker extends TestCase {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
         }
     }
+
+    public void test3() throws Exception {
+        try {
+            String[] args = new String[]{"http://mssoapinterop.org/asmx/xsd/round4XSD.wsdl", "echoString(Round4XSDTestSoap)", "Hello World!!!"};
+            DynamicInvoker invoker = new DynamicInvoker();
+            invoker.main(args);
+        }  catch (java.rmi.RemoteException re) {
+            if (re instanceof AxisFault) {
+                AxisFault fault = (AxisFault) re;
+                if (fault.detail instanceof ConnectException ||
+                    fault.getFaultCode().getLocalPart().equals("HTTP")) {
+                    System.err.println("TerraService HTTP error: " + fault);
+                    return;
+                }
+            }
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
+        }
+    }
 }

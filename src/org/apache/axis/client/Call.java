@@ -62,6 +62,11 @@ import org.apache.axis.Handler;
 import org.apache.axis.InternalException;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.wsdl.symbolTable.Parameters;
+import org.apache.axis.wsdl.symbolTable.BindingEntry;
+import org.apache.axis.wsdl.symbolTable.Parameter;
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
+import org.apache.axis.wsdl.toJava.Utils;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ParameterDesc;
@@ -88,6 +93,7 @@ import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.transport.http.HTTPTransport;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
+import org.apache.axis.utils.ClassUtils;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -239,6 +245,11 @@ public class Call implements javax.xml.rpc.Call {
      */
     private static Hashtable transports  = new Hashtable();
 
+    static ParameterMode [] modes = new ParameterMode [] { null,
+                                            ParameterMode.IN,
+                                            ParameterMode.OUT,
+                                            ParameterMode.INOUT };
+    
     /************************************************************************/
     /* Start of core JAX-RPC stuff                                          */
     /************************************************************************/
@@ -1187,6 +1198,7 @@ public class Call implements javax.xml.rpc.Call {
 
         // Get the SOAPAction
         ////////////////////////////////////////////////////////////////////
+        String opStyle = null;
         BindingOperation bop = binding.getBindingOperation(opName,
                                                            null, null);
         if ( bop == null )
@@ -1197,6 +1209,7 @@ public class Call implements javax.xml.rpc.Call {
             Object obj = list.get(i);
             if ( obj instanceof SOAPOperation ) {
                 SOAPOperation sop    = (SOAPOperation) obj ;
+                opStyle = ((SOAPOperation) obj).getStyle();
                 String        action = sop.getSoapActionURI();
                 if ( action != null ) {
                     setUseSOAPAction(true);
@@ -1249,71 +1262,87 @@ public class Call implements javax.xml.rpc.Call {
             }
         }
 
-        // Get the parameters
-        ////////////////////////////////////////////////////////////////////
-        List    paramOrder = op.getParameterOrdering();
-        Input   input      = op.getInput();
-        javax.wsdl.Message message    = null ;
-        List    parts      = null ;
+        Service service = this.getService();
+        SymbolTable symbolTable = service.getWSDLParser().getSymbolTable();
+        BindingEntry bEntry = symbolTable.getBindingEntry(binding.getQName());
+        Parameters parameters = bEntry.getParameters(bop.getOperation());
 
-        if ( input   != null ) message = input.getMessage();
-        if ( message != null ) parts   = message.getOrderedParts( paramOrder );
-        if ( parts != null ) {
-            for ( int i = 0 ; i < parts.size() ; i++ ) {
-                Part    part = (Part) parts.get(i);
-                if ( part == null ) continue ;
-
-                String name = part.getName();
-                QName  type = part.getTypeName();
-
-                if ( type == null ) {
-                    type = part.getElementName();
-                    if ( type != null )
-                      type = new QName("java","org.w3c.dom.Element");
-                    else
-                      throw new JAXRPCException(
-                                  Messages.getMessage("typeNotSet00", name) );
-                }
-
-                QName qname = new QName(type.getNamespaceURI(),
-                        type.getLocalPart());
-                ParameterMode mode = ParameterMode.IN;
-                this.addParameter( name, qname, mode );
-            }
+        // loop over paramters and set up in/out params
+        for (int j = 0; j < parameters.list.size(); ++j) {
+            Parameter p = (Parameter) parameters.list.get(j);
+            // Get the QName representing the parameter type
+            QName paramType = Utils.getXSIType(p);
+            this.addParameter( p.getQName(), paramType, modes[p.getMode()]);
         }
 
+        // set output type
+        if (parameters.returnParam != null) {
+            // Get the QName for the return Type
+            QName returnType = Utils.getXSIType(parameters.returnParam);
+            QName returnQName = parameters.returnParam.getQName();
 
-        // Get the return type
-        ////////////////////////////////////////////////////////////////////
-        Output   output  = op.getOutput();
-        message = null ;
+            // Get the javaType
+            String javaType = null;
+            if (parameters.returnParam.getMIMEType() != null) {
+                javaType = "javax.activation.DataHandler";
+            }
+            else {
+                javaType = parameters.returnParam.getType().getName();
+            }
+            if (javaType == null) {
+                javaType = "";
+            }
+            else {
+                javaType = javaType + ".class";
+            }
+            this.setReturnType(returnType);
+            try {
+                this.setReturnClass(ClassUtils.forName(javaType));
+            } catch (Exception e){
+                //TODO: ???
+            }
+            this.setReturnQName(returnQName);
+        }
+        else {
+            this.setReturnType(org.apache.axis.encoding.XMLType.AXIS_VOID);
+        }
+        
+        boolean hasMIME = Utils.hasMIME(bEntry, bop);
+        Use use = bEntry.getInputBodyType(bop.getOperation());
+        Style style = Style.getStyle(opStyle, bEntry.getBindingStyle());
+        if (use == Use.LITERAL) {
+            // Turn off encoding
+            setEncodingStyle(null);
+            // turn off XSI types
+            setProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);
+        }
+        if (hasMIME || use == Use.LITERAL) {
+            // If it is literal, turn off multirefs.
+            //
+            // If there are any MIME types, turn off multirefs.
+            // I don't know enough about the guts to know why
+            // attachments don't work with multirefs, but they don't.
+            setProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);
+        }
 
-        if ( output  != null ) message = output.getMessage();
-        if ( message != null ) parts   = message.getOrderedParts(null);
+        if (style == Style.DOCUMENT && symbolTable.isWrapped()) {
+            style = Style.WRAPPED;
+        }
 
-        // attachments may have no parameters.
-        if (operation != null && operation.getNumParams() > 0)
-          this.setReturnType( XMLType.AXIS_VOID );
-        if ( parts != null ) {
-            for( int i = 0 ;i < parts.size() ; i++ ) {
-                Part part  = (Part) parts.get( i );
-
-                if (paramOrder != null && paramOrder.contains(part.getName()))
-                        continue ;
-
-                QName type  = part.getTypeName();
-                if ( type == null ) {
-                    type = part.getElementName();
-                    if ( type != null )
-                      type = new QName("java","org.w3c.dom.Element");
-                    else
-                      throw new JAXRPCException(
-                            Messages.getMessage("typeNotSet00", "<return>") );
-                }
-                QName qname = new QName(type.getNamespaceURI(),
-                        type.getLocalPart());
-                this.setReturnType( qname );
-                break ;
+        // Operation name
+        if (style == Style.WRAPPED) {
+            // We need to make sure the operation name, which is what we
+            // wrap the elements in, matches the Qname of the parameter
+            // element.
+            Map partsMap = bop.getOperation().getInput().getMessage().getParts();
+            Part p = (Part)partsMap.values().iterator().next();
+            QName q = p.getElementName();
+            setOperationName(q);
+        } else {
+            QName elementQName =
+                Utils.getOperationQName(bop, bEntry, symbolTable);
+            if (elementQName != null) {
+                setOperationName(elementQName);
             }
         }
 
