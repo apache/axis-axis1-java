@@ -767,7 +767,7 @@ public class MessageElement implements SOAPElement, Serializable
         if (textRep != null) {
             boolean oldPretty = context.getPretty();
             context.setPretty(false);
-            context.writeSafeString(((Text)textRep).getData());
+            context.writeSafeString(textRep.getData());
             context.setPretty(oldPretty);
             return;
         }
@@ -924,7 +924,7 @@ public class MessageElement implements SOAPElement, Serializable
     public SOAPElement addTextNode(String s) throws SOAPException {
         org.apache.axis.message.Text text = new org.apache.axis.message.Text(s);
         try {
-            addChild((MessageElement)text);
+            addChild(text);
             return this;
         } catch (ClassCastException e) {
             throw new SOAPException(e);
@@ -1005,7 +1005,7 @@ public class MessageElement implements SOAPElement, Serializable
     }
 
     public boolean removeNamespaceDeclaration(String prefix) {
-        AttributesImpl attributes = makeAttributesEditable();
+        makeAttributesEditable();
         boolean removed = false;
 
         for (int i = 0; namespaces != null && i < namespaces.size() && !removed; i++) {
