@@ -518,7 +518,18 @@ implements org.w3c.dom.Document, java.io.Serializable {
     }
 
     public NodeList getChildNodes() {
-        throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "");
+        try {
+            if (soapPart != null) {
+                NodeListImpl children = new NodeListImpl();
+                children.addNode(soapPart.getEnvelope());
+                return children;
+            } else {
+                return NodeListImpl.EMPTY_NODELIST;
+            }
+        } catch (SOAPException se) {
+            throw new DOMException(DOMException.INVALID_STATE_ERR, "");
+        }
+
     }
 
     /**

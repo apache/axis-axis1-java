@@ -1,5 +1,12 @@
 package test.saaj;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Text;
+import org.w3c.dom.NodeList;
+
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPBody;
@@ -8,6 +15,11 @@ import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.SOAPBodyElement;
+import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPPart;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.DocumentBuilder;
+import java.io.ByteArrayInputStream;
 
 public class TestText extends junit.framework.TestCase {
 
@@ -122,7 +134,81 @@ public class TestText extends junit.framework.TestCase {
         System.out.println("The message is lll:\n");
         message.writeTo(System.out);
     }
+    
+    public void testTraverseDOM() throws Exception {
+        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                "<book year=\"1992\">\n" +
+                "  <title>Advanced Programming in the Unix environment</title>\n" +
+                "  <author><last>Stevens</last><first>W.</first></author>\n" +
+                "  <publisher>Addison-Wesley</publisher>\n" +
+                "  <price>65.95</price>\n" +
+                "</book>\n" +
+                "";
 
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document payload = builder.parse(new ByteArrayInputStream(xml.getBytes()));
+
+        MessageFactory soapMsgFactory = MessageFactory.newInstance();
+        SOAPMessage soapMsg = soapMsgFactory.createMessage();
+
+        SOAPPart soapPart = soapMsg.getSOAPPart();
+        SOAPEnvelope soapEnv = soapPart.getEnvelope();
+        SOAPBody soapBody = soapEnv.getBody();
+
+        soapBody.addDocument(payload);
+
+        System.out.println("***************");
+        soapMsg.writeTo(System.out);
+
+        processNode(soapPart);
+    }
+
+    private void processNode(Node currentNode) {
+        switch (currentNode.getNodeType()) {
+            // process a Document node
+            case Node.DOCUMENT_NODE:
+                Document doc = (Document) currentNode;
+                System.out.println("Document node: " + doc.getNodeName() +
+                        "\nRoot element: " +
+                        doc.getDocumentElement().getNodeName());
+                processChildNodes(doc.getChildNodes());
+                break;
+
+                // process an Element node
+            case Node.ELEMENT_NODE:
+                System.out.println("\nElement node: " +
+                        currentNode.getNodeName());
+                NamedNodeMap attributeNodes =
+                        currentNode.getAttributes();
+                for (int i = 0; i < attributeNodes.getLength(); i++) {
+                    Attr attribute = (Attr) attributeNodes.item(i);
+                    System.out.println("\tAttribute: " +
+                            attribute.getNodeName() + " ; Value = " +
+                            attribute.getNodeValue());
+                }
+                processChildNodes(currentNode.getChildNodes());
+                break;
+
+                // process a text node and a CDATA section
+            case Node.CDATA_SECTION_NODE:
+            case Node.TEXT_NODE:
+                Text text = (Text) currentNode;
+                if (!text.getNodeValue().trim().equals(""))
+                    System.out.println("\tText: " +
+                            text.getNodeValue());
+                break;
+        }
+    }
+
+    private void processChildNodes(NodeList children) {
+        if (children.getLength() != 0)
+            for (int i = 0; i < children.getLength(); i++)
+                processNode(children.item(i));
+    }
+
+    
     public static void main(String[] args) throws Exception {
         TestText tester = new TestText("TestEnvelope");
         tester.testAddTextNode();
