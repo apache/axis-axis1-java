@@ -60,7 +60,6 @@ import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.encoding.Base64;
 import org.apache.axis.handlers.BasicHandler;
-import org.apache.axis.message.MessageElement;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -68,11 +67,11 @@ import org.apache.commons.logging.LogFactory;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.net.Socket;
@@ -90,6 +89,13 @@ public class HTTPSender extends BasicHandler {
     protected static Log log =
         LogFactory.getLog(HTTPSender.class.getName());
 
+    class BooleanHolder {
+        public boolean value;
+        public BooleanHolder(boolean value) {
+            this.value = value;
+        }
+    }
+
     public void invoke(MessageContext msgContext) throws AxisFault {
         if (log.isDebugEnabled()) {
             log.debug( JavaUtils.getMessage("enter00", 
@@ -98,81 +104,92 @@ public class HTTPSender extends BasicHandler {
 
         /* Find the service we're invoking so we can grab it's options */
         /***************************************************************/
-        String   targetURL = null ;
-        Message  outMsg    = null ;
-        String   reqEnv    = null ;
-
-        targetURL = msgContext.getStrProp( MessageContext.TRANS_URL);
-
         try {
-            String   host ;
-            int      port   = 80 ;
-            URL      tmpURL = new URL( targetURL );
-            int      returnCode     = 0 ;
-            boolean  useFullURL = false;
-
-            //  Get SOAPAction, default to ""
-            String   action = msgContext.useSOAPAction() ?
-                    msgContext.getSOAPActionURI() : "";
-            if (action == null)
-                action = "";
-
-            host = tmpURL.getHost();
-            if ( (port = tmpURL.getPort()) == -1 ) port = 80;
-
-            Socket             sock = null ;
+            BooleanHolder useFullURL = new BooleanHolder(false);
             StringBuffer  otherHeaders = new StringBuffer();
+            String        targetURL = msgContext.getStrProp( MessageContext.TRANS_URL);
+            URL           tmpURL = new URL( targetURL );
+            String        host = tmpURL.getHost();
+            Socket        sock = null ;
 
             if (tmpURL.getProtocol().equalsIgnoreCase("https")) {
-                if ( (port = tmpURL.getPort()) == -1 ) port = 443;
+                sock = getSecureSocket(host, tmpURL);
+            } else {
+                sock = getSocket(host, tmpURL, otherHeaders, useFullURL);
+            }
 
-                // Use http.proxyXXX settings if https.proxyXXX is not set 
-                String tunnelHost = System.getProperty("https.proxyHost");
-                String tunnelPortStr = System.getProperty("https.proxyPort");
-                
-                if (tunnelHost==null) tunnelHost = System.getProperty("http.proxyHost");
-                if (tunnelPortStr==null) tunnelPortStr = System.getProperty("http.proxyPort");
+            // optionally set a timeout for the request
+            if (msgContext.getTimeout() != 0) {
+                sock.setSoTimeout(msgContext.getTimeout());
+            }
 
-                try {
-                    Class SSLSocketFactoryClass =
-                                                 Class.forName("javax.net.ssl.SSLSocketFactory");
-                    Class SSLSocketClass = Class.forName("javax.net.ssl.SSLSocket");
-                    Method createSocketMethod =
-                                               SSLSocketFactoryClass.getMethod("createSocket",
-                                                                               new Class[] {String.class, Integer.TYPE});
-                    Method getDefaultMethod =
-                                             SSLSocketFactoryClass.getMethod("getDefault", new Class[] {});
-                    Method startHandshakeMethod =
-                                                 SSLSocketClass.getMethod("startHandshake", new Class[] {});
-                    Object factory = getDefaultMethod.invoke(null, new Object[] {});
-                    Object sslSocket = null;
-                    if (tunnelHost == null || tunnelHost.equals("")) {
-                        // direct SSL connection
-                        sslSocket = createSocketMethod .invoke(factory,
-                                                               new Object[] {host, new Integer(port)});
-                    } else {
-                        // SSL tunnelling through proxy server
-                        Method createSocketMethod2 =
-                                                    SSLSocketFactoryClass.getMethod("createSocket",
-                                                                                    new Class[] {Socket.class, String.class, Integer.TYPE, Boolean.TYPE});
+            writeToSocket(sock, msgContext, tmpURL, otherHeaders, host, useFullURL);
+            readFromSocket(sock, msgContext);
+        }
+        catch( Exception e ) {
+            log.debug( e );
+            throw AxisFault.makeFault(e);
+        }
 
-                        // Default proxy port is 80, even for https
-                        int tunnelPort = (tunnelPortStr != null? (Integer.parseInt(tunnelPortStr) < 0? 80: Integer.parseInt(tunnelPortStr)): 80);
+        if (log.isDebugEnabled()) {
+            log.debug( JavaUtils.getMessage("exit00", 
+                "HTTPDispatchHandler::invoke") );
+        }
+    }
 
-                        // Create the regular socket connection to the proxy
-                        Socket tunnel = new Socket(tunnelHost, tunnelPort);
+    private Socket getSecureSocket(String host, URL tmpURL) throws Exception
+    {
+        int port = 0;
+        Socket sock = null;
+        if ( (port = tmpURL.getPort()) == -1 ) port = 443;
 
-                        // The tunnel handshake method (condensed and made reflexive)
-                        OutputStream tunnelOutputStream = (OutputStream)SSLSocketClass.getMethod("getOutputStream", new Class[] {}).invoke(tunnel, new Object[] {});
+        // Use http.proxyXXX settings if https.proxyXXX is not set
+        String tunnelHost = System.getProperty("https.proxyHost");
+        String tunnelPortStr = System.getProperty("https.proxyPort");
 
-                        PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(tunnelOutputStream)));
+        if (tunnelHost==null) tunnelHost = System.getProperty("http.proxyHost");
+        if (tunnelPortStr==null) tunnelPortStr = System.getProperty("http.proxyPort");
 
-                        String tunnelUser = System.getProperty("https.proxyUser");
-                        String tunnelPassword = System.getProperty("https.proxyPassword");
-                        if (tunnelUser == null) tunnelUser =
-                               System.getProperty("http.proxyUser");
-                        if (tunnelPassword == null) tunnelPassword =
-                               System.getProperty("http.proxyPassword");
+        try {
+            Class SSLSocketFactoryClass =
+                                         Class.forName("javax.net.ssl.SSLSocketFactory");
+            Class SSLSocketClass = Class.forName("javax.net.ssl.SSLSocket");
+            Method createSocketMethod =
+                                       SSLSocketFactoryClass.getMethod("createSocket",
+                                                                       new Class[] {String.class, Integer.TYPE});
+            Method getDefaultMethod =
+                                     SSLSocketFactoryClass.getMethod("getDefault", new Class[] {});
+            Method startHandshakeMethod =
+                                         SSLSocketClass.getMethod("startHandshake", new Class[] {});
+            Object factory = getDefaultMethod.invoke(null, new Object[] {});
+            Object sslSocket = null;
+            if (tunnelHost == null || tunnelHost.equals("")) {
+                // direct SSL connection
+                sslSocket = createSocketMethod .invoke(factory,
+                                                       new Object[] {host, new Integer(port)});
+            } else {
+                // SSL tunnelling through proxy server
+                Method createSocketMethod2 =
+                                            SSLSocketFactoryClass.getMethod("createSocket",
+                                                                            new Class[] {Socket.class, String.class, Integer.TYPE, Boolean.TYPE});
+
+                // Default proxy port is 80, even for https
+                int tunnelPort = (tunnelPortStr != null? (Integer.parseInt(tunnelPortStr) < 0? 80: Integer.parseInt(tunnelPortStr)): 80);
+
+                // Create the regular socket connection to the proxy
+                Socket tunnel = new Socket(tunnelHost, tunnelPort);
+
+                // The tunnel handshake method (condensed and made reflexive)
+                OutputStream tunnelOutputStream = (OutputStream)SSLSocketClass.getMethod("getOutputStream", new Class[] {}).invoke(tunnel, new Object[] {});
+
+                PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(tunnelOutputStream)));
+
+                String tunnelUser = System.getProperty("https.proxyUser");
+                String tunnelPassword = System.getProperty("https.proxyPassword");
+                if (tunnelUser == null) tunnelUser =
+                       System.getProperty("http.proxyUser");
+                if (tunnelPassword == null) tunnelPassword =
+                       System.getProperty("http.proxyPassword");
 
 // More secure version... engage later?
 //                        PasswordAuthentication pa =
@@ -188,391 +205,399 @@ public class HTTPSender extends BasicHandler {
 //                        }
 
 
-                        out.print("CONNECT " + host + ":" + port + " HTTP/1.0\r\n"
-                                  + "User-Agent: AxisClient");
-                        if (tunnelUser != null && tunnelPassword != null) {
-                            //add basic authentication header for the proxy
-                            sun.misc.BASE64Encoder enc = new sun.misc.BASE64Encoder();
-                            String encodedPassword =
-                                 enc.encode((tunnelUser + ":" + tunnelPassword).getBytes());
-                            out.print("\nProxy-Authorization: Basic " + encodedPassword);
-                        }
-                        out.print("\nContent-Length: 0");
-                        out.print("\nPragma: no-cache");
-                        out.print("\r\n\r\n");
-                        out.flush();
-                        
-                        InputStream tunnelInputStream = (InputStream)SSLSocketClass.getMethod("getInputStream", new Class[] {}).invoke(tunnel, new Object[] {});
-                        if (log.isDebugEnabled()) {
-                            log.debug(JavaUtils.getMessage("isNull00", 
-                              "tunnelInputStream", 
-                              "" + (tunnelInputStream == null)));
-                        }
-
-                        String replyStr = ""; 
-
-                        // Make sure to read all the response from the proxy to prevent SSL negotiation failure
-                        // Response message terminated by two sequential newlines
-                        int     newlinesSeen = 0;
-                        boolean     headerDone = false; /* Done on first newline */
-
-                        while (newlinesSeen < 2) {
-                            int i = tunnelInputStream.read();
-                            if (i < 0) {
-                                throw new IOException("Unexpected EOF from proxy");
-                            }
-                            if (i == '\n') {
-                                headerDone = true;
-                                ++newlinesSeen;
-                            } else if (i != '\r') {
-                                newlinesSeen = 0;
-                                if (!headerDone) {
-                                    replyStr += String.valueOf((char)i);
-                                }
-                            }
-                        }
-
-                        if (!replyStr.startsWith("HTTP/1.0 200") && !replyStr.startsWith("HTTP/1.1 200")) {
-                            throw new IOException(JavaUtils.getMessage("cantTunnel00",
-                                    new String[] {tunnelHost, "" + tunnelPort, replyStr}));
-                        }
-                        // End of condensed reflective tunnel handshake method
-                        sslSocket = createSocketMethod2.invoke(factory,
-                                                               new Object[] {tunnel, host, new Integer(port), new Boolean(true)});
-
-                        if (log.isDebugEnabled()) {
-                            log.debug(JavaUtils.getMessage(
-                                "setupTunnel00", tunnelHost, "" + tunnelPort));
-                        }
-                    }
-                    // must shake out hidden errors!
-                    startHandshakeMethod.invoke(sslSocket, new Object[] {});
-                    sock = (Socket)sslSocket;
-                } catch (ClassNotFoundException cnfe) {
-                    if (log.isDebugEnabled()) {
-                        log.debug( JavaUtils.getMessage("noJSSE00"));
-                    }
-
-                    throw AxisFault.makeFault(cnfe);
-                } catch (NumberFormatException nfe) {
-                      if (log.isDebugEnabled()) {
-                          log.debug( JavaUtils.getMessage("badProxy00", 
-                              tunnelPortStr));
-                      }
-
-                      throw AxisFault.makeFault(nfe);
+                out.print("CONNECT " + host + ":" + port + " HTTP/1.0\r\n"
+                          + "User-Agent: AxisClient");
+                if (tunnelUser != null && tunnelPassword != null) {
+                    //add basic authentication header for the proxy
+                    sun.misc.BASE64Encoder enc = new sun.misc.BASE64Encoder();
+                    String encodedPassword =
+                         enc.encode((tunnelUser + ":" + tunnelPassword).getBytes());
+                    out.print("\nProxy-Authorization: Basic " + encodedPassword);
                 }
+                out.print("\nContent-Length: 0");
+                out.print("\nPragma: no-cache");
+                out.print("\r\n\r\n");
+                out.flush();
+
+                InputStream tunnelInputStream = (InputStream)SSLSocketClass.getMethod("getInputStream", new Class[] {}).invoke(tunnel, new Object[] {});
+                if (log.isDebugEnabled()) {
+                    log.debug(JavaUtils.getMessage("isNull00",
+                      "tunnelInputStream",
+                      "" + (tunnelInputStream == null)));
+                }
+
+                String replyStr = "";
+
+                // Make sure to read all the response from the proxy to prevent SSL negotiation failure
+                // Response message terminated by two sequential newlines
+                int     newlinesSeen = 0;
+                boolean     headerDone = false; /* Done on first newline */
+
+                while (newlinesSeen < 2) {
+                    int i = tunnelInputStream.read();
+                    if (i < 0) {
+                        throw new IOException("Unexpected EOF from proxy");
+                    }
+                    if (i == '\n') {
+                        headerDone = true;
+                        ++newlinesSeen;
+                    } else if (i != '\r') {
+                        newlinesSeen = 0;
+                        if (!headerDone) {
+                            replyStr += String.valueOf((char)i);
+                        }
+                    }
+                }
+
+                if (!replyStr.startsWith("HTTP/1.0 200") && !replyStr.startsWith("HTTP/1.1 200")) {
+                    throw new IOException(JavaUtils.getMessage("cantTunnel00",
+                            new String[] {tunnelHost, "" + tunnelPort, replyStr}));
+                }
+                // End of condensed reflective tunnel handshake method
+                sslSocket = createSocketMethod2.invoke(factory,
+                                                       new Object[] {tunnel, host, new Integer(port), new Boolean(true)});
 
                 if (log.isDebugEnabled()) {
-                    log.debug( JavaUtils.getMessage("createdSSL00"));
-                }
-            } else {
-                String proxyHost = System.getProperty("http.proxyHost");
-                String proxyPort = System.getProperty("http.proxyPort");
-                String nonProxyHosts = System.getProperty("http.nonProxyHosts");
-                boolean hostInNonProxyList = isHostInNonProxyList(host, nonProxyHosts);
-                String proxyUsername = System.getProperty("http.proxyUser");
-                String proxyPassword = System.getProperty("http.proxyPassword");
-
-                if ( proxyUsername != null ) {
-                    StringBuffer tmpBuf = new StringBuffer();
-                    tmpBuf.append( proxyUsername )
-                   .append( ":" )
-                   .append( (proxyPassword == null) ? "" : proxyPassword) ;
-                    otherHeaders.append( HTTPConstants.HEADER_PROXY_AUTHORIZATION )
-                         .append( ": Basic " )
-                         .append( Base64.encode( tmpBuf.toString().getBytes() ) )
-                         .append("\r\n" );
-                }            
-
-                if ((port = tmpURL.getPort()) == -1 ) port = 80;
-
-                if (proxyHost == null || proxyHost.equals("")
-                    || proxyPort == null || proxyPort.equals("")
-                    || hostInNonProxyList) {
-                    sock = new Socket( host, port );
-
-                    if (log.isDebugEnabled()) {
-                        log.debug( JavaUtils.getMessage("createdHTTP00"));
-                    }
-                } else {
-                    sock = new Socket( proxyHost, new Integer(proxyPort).intValue() );
-                    
-                    if (log.isDebugEnabled()) {
-                        log.debug( JavaUtils.getMessage("createdHTTP01", 
-                            proxyHost, proxyPort));
-                    }
-
-                    useFullURL = true;
+                    log.debug(JavaUtils.getMessage(
+                        "setupTunnel00", tunnelHost, "" + tunnelPort));
                 }
             }
-
-            // optionally set a timeout for the request
-            if (msgContext.getTimeout() != 0) {
-                sock.setSoTimeout(msgContext.getTimeout());
-            }
-
-
-            OutputStream  out  = new BufferedOutputStream(sock.getOutputStream(), 8*1024);
-            String        userID = null ;
-            String        passwd = null ;
-
-            userID = msgContext.getUsername();
-            passwd = msgContext.getPassword();
-
-            // if UserID is not part of the context, but is in the URL, use
-            // the one in the URL.
-            if ( userID == null && tmpURL.getUserInfo() != null) {
-                String info = tmpURL.getUserInfo();
-                int sep = info.indexOf(':');
-                if ( (sep>=0) && (sep+1<info.length()) ) {
-                    userID = info.substring(0,sep);
-                    passwd = info.substring(sep+1);
-                } else {
-                    userID = info;
-                }
-            }
-
-            if ( userID != null ) {
-                StringBuffer tmpBuf = new StringBuffer();
-                tmpBuf.append( userID )
-               .append( ":" )
-               .append( (passwd == null) ? "" : passwd) ;
-                otherHeaders.append( HTTPConstants.HEADER_AUTHORIZATION )
-                     .append( ": Basic " )
-                     .append( Base64.encode( tmpBuf.toString().getBytes() ) )
-                     .append("\r\n" );
-            }
-
-            // don't forget the cookies!
-            // mmm... cookies
-            if (msgContext.getMaintainSession()) {
-                String cookie = msgContext.getStrProp(HTTPConstants.HEADER_COOKIE);
-                String cookie2 = msgContext.getStrProp(HTTPConstants.HEADER_COOKIE2);
-
-                if (cookie != null) {
-                    otherHeaders.append(HTTPConstants.HEADER_COOKIE)
-                     .append(": ")
-                     .append(cookie)
-                     .append("\r\n");
-                }
-
-                if (cookie2 != null) {
-                    otherHeaders.append(HTTPConstants.HEADER_COOKIE2)
-                     .append(": ")
-                     .append(cookie2)
-                     .append("\r\n");
-                }
-            }
-
-            StringBuffer header = new StringBuffer();
-            // byte[] request = reqEnv.getBytes();
-
-            header.append( HTTPConstants.HEADER_POST )
-             .append(" " );
-            if (useFullURL == true) {
-                header.append(tmpURL.toExternalForm());
-            } else {
-                header.append( ((tmpURL.getFile() == null ||
-                        tmpURL.getFile().equals(""))? "/": tmpURL.getFile()) );
-            }
-
-            Message reqMessage= msgContext.getRequestMessage();
-
-            header.append( " HTTP/1.0\r\n" )
-             .append( HTTPConstants.HEADER_CONTENT_LENGTH )
-             .append( ": " )
-             .append( reqMessage.getContentLength() )
-             .append( "\r\n" )
-             .append( HTTPConstants.HEADER_HOST )
-             .append( ": " )
-             .append( host )
-             .append( "\r\n" )
-             .append( HTTPConstants.HEADER_CONTENT_TYPE )
-             .append( ": " )
-             .append( reqMessage.getContentType())
-             .append( "\r\n" )
-             .append( (otherHeaders == null ? "" : otherHeaders.toString()))
-             .append( HTTPConstants.HEADER_SOAP_ACTION )
-             .append( ": \"" )
-             .append( action )
-             .append( "\"\r\n");
-
-            // adding user-defined/platform-dependent HTTP headers
-            if (msgContext.getProperty(HTTPConstants.REQUEST_HEADERS)!=null) {
-                Hashtable headerTable = 
-                    (Hashtable)msgContext.getProperty(HTTPConstants.REQUEST_HEADERS);
-                for (Enumeration e = headerTable.keys(); e.hasMoreElements(); ) {
-                    Object key = e.nextElement();
-                    header.append(key).append(": ")
-                     .append(headerTable.get(key)).append("\r\n");
-                }
-            }
-
-            header.append("\r\n");
-
-            out.write( header.toString().getBytes(HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING) );
-            reqMessage.writeContentToStream(out);
-            out.flush();
-
+            // must shake out hidden errors!
+            startHandshakeMethod.invoke(sslSocket, new Object[] {});
+            sock = (Socket)sslSocket;
+        } catch (ClassNotFoundException cnfe) {
             if (log.isDebugEnabled()) {
-                log.debug( JavaUtils.getMessage("xmlSent00") );
-                log.debug( "---------------------------------------------------");
-                log.debug( header + reqEnv );
+                log.debug( JavaUtils.getMessage("noJSSE00"));
             }
 
-            byte       b ;
-            int        len = 0 ;
-            int        colonIndex = -1 ;
-            Hashtable  headers = new Hashtable();
-            String     name, value ;
-            String     statusMessage = "";
+            throw AxisFault.makeFault(cnfe);
+        } catch (NumberFormatException nfe) {
+              if (log.isDebugEnabled()) {
+                  log.debug( JavaUtils.getMessage("badProxy00",
+                      tunnelPortStr));
+              }
 
-            BufferedInputStream inp = new BufferedInputStream(sock.getInputStream());
-                       //Should help performance. Temporary fix only till its all stream oriented.
-
-            // Need to add logic for getting the version # and the return code
-            // but that's for tomorrow!
-
-            /*Logic to read HTTP response headers */
-            boolean readTooMuch= false;
-            b=0;
-            for(ByteArrayOutputStream buf= new ByteArrayOutputStream(4097);;){
-                if(!readTooMuch)b = (byte) inp.read();
-                if(b == -1 ) break ;
-                readTooMuch=false;
-                if ( b != '\r' && b != '\n' ) {
-                    if ( b == ':' && colonIndex == -1 ) colonIndex = len ;
-                    len++;
-                    buf.write(b);
-                }
-                else if ( b == '\r' )
-                    continue ;
-                else {  //b== '\n'
-                    if ( len == 0 ) break ;
-
-                    b = (byte) inp.read();
-                    readTooMuch= true;
-                        //A space or tab at the begining of a line means the header continues.
-                    if( b == ' ' || b== '\t'){
-                        continue;  
-                    }
-
-                    if ( colonIndex != -1 ) {
-                        buf.close();
-                        byte[]hdata= buf.toByteArray();
-                        buf.reset();
-                        name = new String( hdata, 0, colonIndex, HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING );
-                        value = new String( hdata, colonIndex+1, len-1-colonIndex, HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING );
-                        colonIndex = -1 ;
-                    }
-                    else {
-                        buf.close();
-                        byte[]hdata= buf.toByteArray();
-                        buf.reset();
-                        name = new String( hdata, 0, len, HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING );
-                        value = "" ;
-                    }
-
-                    if (log.isDebugEnabled()) {
-                        log.debug( name + value );
-                    }
-
-                    if ( msgContext.getProperty(HTTPConstants.MC_HTTP_STATUS_CODE)==null){
-                        // Reader status code
-                        int start = name.indexOf( ' ' ) + 1 ;
-                        String tmp = name.substring(start).trim();
-                        int end   = tmp.indexOf( ' ' );
-                        if ( end != -1 ) tmp = tmp.substring( 0, end );
-                        returnCode = Integer.parseInt( tmp );
-                        msgContext.setProperty( HTTPConstants.MC_HTTP_STATUS_CODE,
-                                                new Integer(returnCode) );
-                        statusMessage = name.substring(start + end + 1);
-                        msgContext.setProperty( HTTPConstants.MC_HTTP_STATUS_MESSAGE,
-                                                statusMessage);
-                    }
-                    else
-                        headers.put( name.toLowerCase(), value );
-                    len = 0 ;
-                }
-            }
-            /*All HTTP headers have been read.*/
-
-            String contentType = (String) headers.get(
-                       HTTPConstants.HEADER_CONTENT_TYPE.toLowerCase());
-            contentType= (null == contentType )? null:contentType.trim();
-
-            if (returnCode > 199 && returnCode < 300) {
-                // SOAP return is OK - so fall through
-            } else if (contentType!=null && !contentType.equals("text/html") &&
-                       (returnCode > 499 && returnCode < 600) ) {
-                // SOAP Fault should be in here - so fall through
-            } else {
-                // Unknown return code - so wrap up the content into a
-                // SOAP Fault.
-               ByteArrayOutputStream buf= new ByteArrayOutputStream(4097);
-               while(-1 !=(b = (byte)inp.read())){
-                  buf.write(b); 
-               }
-
-                AxisFault fault = new AxisFault("HTTP",
-                                                statusMessage,
-                                                null,
-                                                null);
-                fault.setFaultDetailString(JavaUtils.getMessage("return01",
-                        "" + returnCode, buf.toString()));
-                throw fault;
-            }
-
-            if ( b != -1 ) { //more data than just headers.
-
-                String contentLocation = (String) headers.get(
-                    HTTPConstants.HEADER_CONTENT_LOCATION.toLowerCase());
-                contentLocation= (null == contentLocation )? null:contentLocation.trim();
-
-                String contentLength = (String) headers.get(
-                    HTTPConstants.HEADER_CONTENT_LENGTH.toLowerCase());
-                contentLength= (null == contentLength )? null:contentLength.trim();
-
-                outMsg = new Message( inp, false, contentType, contentLocation);
-
-                outMsg.setMessageType(org.apache.axis.Message.RESPONSE);
-                msgContext.setResponseMessage( outMsg );
-
-                if (log.isDebugEnabled()) {
-                    if(null==contentLength )
-                        log.debug( "\n" + JavaUtils.getMessage("no00",
-                          "Content-Length") );
-                    log.debug( "\n" + JavaUtils.getMessage("xmlRecd00") );
-                    log.debug( "-----------------------------------------------");
-                    log.debug( (String) outMsg.getSOAPPart().getAsString() );
-                }
-
-            }
-
-
-            // if we are maintaining session state,
-            // handle cookies (if any)
-            if (msgContext.getMaintainSession()) {
-                handleCookie(HTTPConstants.HEADER_COOKIE,
-                             HTTPConstants.HEADER_SET_COOKIE,
-                             headers,
-                             msgContext);
-                handleCookie(HTTPConstants.HEADER_COOKIE2,
-                             HTTPConstants.HEADER_SET_COOKIE2,
-                             headers,
-                             msgContext);
-            }
-            
-        }
-        catch( Exception e ) {
-            log.debug( e );
-            throw AxisFault.makeFault(e);
+              throw AxisFault.makeFault(nfe);
         }
 
         if (log.isDebugEnabled()) {
-            log.debug( JavaUtils.getMessage("exit00", 
-                "HTTPDispatchHandler::invoke") );
+            log.debug( JavaUtils.getMessage("createdSSL00"));
+        }
+        return sock;
+    }
+
+
+    private Socket getSocket(String host, URL tmpURL,
+                             StringBuffer otherHeaders, BooleanHolder useFullURL)
+            throws IOException
+    {
+        int port = 0;
+        Socket sock = null;
+        String proxyHost = System.getProperty("http.proxyHost");
+        String proxyPort = System.getProperty("http.proxyPort");
+        String nonProxyHosts = System.getProperty("http.nonProxyHosts");
+        boolean hostInNonProxyList = isHostInNonProxyList(host, nonProxyHosts);
+        String proxyUsername = System.getProperty("http.proxyUser");
+        String proxyPassword = System.getProperty("http.proxyPassword");
+
+        if ( proxyUsername != null ) {
+            StringBuffer tmpBuf = new StringBuffer();
+            tmpBuf.append( proxyUsername )
+           .append( ":" )
+           .append( (proxyPassword == null) ? "" : proxyPassword) ;
+            otherHeaders.append( HTTPConstants.HEADER_PROXY_AUTHORIZATION )
+                 .append( ": Basic " )
+                 .append( Base64.encode( tmpBuf.toString().getBytes() ) )
+                 .append("\r\n" );
+        }
+
+        if ((port = tmpURL.getPort()) == -1 ) port = 80;
+
+        if (proxyHost == null || proxyHost.equals("")
+            || proxyPort == null || proxyPort.equals("")
+            || hostInNonProxyList) {
+            sock = new Socket( host, port );
+
+            if (log.isDebugEnabled()) {
+                log.debug( JavaUtils.getMessage("createdHTTP00"));
+            }
+        } else {
+            sock = new Socket( proxyHost, new Integer(proxyPort).intValue() );
+
+            if (log.isDebugEnabled()) {
+                log.debug( JavaUtils.getMessage("createdHTTP01",
+                    proxyHost, proxyPort));
+            }
+            useFullURL.value = true;
+        }
+        return sock;
+    }
+
+    private void writeToSocket(Socket sock, MessageContext msgContext,
+                               URL tmpURL, StringBuffer otherHeaders,
+                               String host, BooleanHolder useFullURL)
+            throws IOException
+    {
+        OutputStream  out  = new BufferedOutputStream(sock.getOutputStream(), 8*1024);
+        String        userID = null ;
+        String        passwd = null ;
+        String        reqEnv = null;
+
+        userID = msgContext.getUsername();
+        passwd = msgContext.getPassword();
+
+        //  Get SOAPAction, default to ""
+        String   action = msgContext.useSOAPAction() ?
+                msgContext.getSOAPActionURI() : "";
+        if (action == null)
+            action = "";
+
+        // if UserID is not part of the context, but is in the URL, use
+        // the one in the URL.
+        if ( userID == null && tmpURL.getUserInfo() != null) {
+            String info = tmpURL.getUserInfo();
+            int sep = info.indexOf(':');
+            if ( (sep>=0) && (sep+1<info.length()) ) {
+                userID = info.substring(0,sep);
+                passwd = info.substring(sep+1);
+            } else {
+                userID = info;
+            }
+        }
+
+        if ( userID != null ) {
+            StringBuffer tmpBuf = new StringBuffer();
+            tmpBuf.append( userID )
+           .append( ":" )
+           .append( (passwd == null) ? "" : passwd) ;
+            otherHeaders.append( HTTPConstants.HEADER_AUTHORIZATION )
+                 .append( ": Basic " )
+                 .append( Base64.encode( tmpBuf.toString().getBytes() ) )
+                 .append("\r\n" );
+        }
+
+        // don't forget the cookies!
+        // mmm... cookies
+        if (msgContext.getMaintainSession()) {
+            String cookie = msgContext.getStrProp(HTTPConstants.HEADER_COOKIE);
+            String cookie2 = msgContext.getStrProp(HTTPConstants.HEADER_COOKIE2);
+
+            if (cookie != null) {
+                otherHeaders.append(HTTPConstants.HEADER_COOKIE)
+                 .append(": ")
+                 .append(cookie)
+                 .append("\r\n");
+            }
+
+            if (cookie2 != null) {
+                otherHeaders.append(HTTPConstants.HEADER_COOKIE2)
+                 .append(": ")
+                 .append(cookie2)
+                 .append("\r\n");
+            }
+        }
+
+        StringBuffer header = new StringBuffer();
+        // byte[] request = reqEnv.getBytes();
+
+        header.append( HTTPConstants.HEADER_POST )
+         .append(" " );
+        if (useFullURL.value) {
+            header.append(tmpURL.toExternalForm());
+        } else {
+            header.append( ((tmpURL.getFile() == null ||
+                    tmpURL.getFile().equals(""))? "/": tmpURL.getFile()) );
+        }
+
+        Message reqMessage= msgContext.getRequestMessage();
+
+        header.append( " HTTP/1.0\r\n" )
+         .append( HTTPConstants.HEADER_CONTENT_LENGTH )
+         .append( ": " )
+         .append( reqMessage.getContentLength() )
+         .append( "\r\n" )
+         .append( HTTPConstants.HEADER_HOST )
+         .append( ": " )
+         .append( host )
+         .append( "\r\n" )
+         .append( HTTPConstants.HEADER_CONTENT_TYPE )
+         .append( ": " )
+         .append( reqMessage.getContentType())
+         .append( "\r\n" )
+         .append( (otherHeaders == null ? "" : otherHeaders.toString()))
+         .append( HTTPConstants.HEADER_SOAP_ACTION )
+         .append( ": \"" )
+         .append( action )
+         .append( "\"\r\n");
+
+        // adding user-defined/platform-dependent HTTP headers
+        if (msgContext.getProperty(HTTPConstants.REQUEST_HEADERS)!=null) {
+            Hashtable headerTable =
+                (Hashtable)msgContext.getProperty(HTTPConstants.REQUEST_HEADERS);
+            for (Enumeration e = headerTable.keys(); e.hasMoreElements(); ) {
+                Object key = e.nextElement();
+                header.append(key).append(": ")
+                 .append(headerTable.get(key)).append("\r\n");
+            }
+        }
+
+        header.append("\r\n");
+
+        out.write( header.toString().getBytes(HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING) );
+        reqMessage.writeContentToStream(out);
+        out.flush();
+
+        if (log.isDebugEnabled()) {
+            log.debug( JavaUtils.getMessage("xmlSent00") );
+            log.debug( "---------------------------------------------------");
+            log.debug( header + reqEnv );
+        }
+    }
+
+    private void readFromSocket(Socket sock, MessageContext msgContext) throws IOException {
+        Message outMsg = null;
+        byte       b ;
+        int        len = 0 ;
+        int        colonIndex = -1 ;
+        Hashtable  headers = new Hashtable();
+        String     name, value ;
+        String     statusMessage = "";
+        int returnCode = 0;
+
+        BufferedInputStream inp = new BufferedInputStream(sock.getInputStream());
+        //Should help performance. Temporary fix only till its all stream oriented.
+
+        // Need to add logic for getting the version # and the return code
+        // but that's for tomorrow!
+
+        /*Logic to read HTTP response headers */
+        boolean readTooMuch= false;
+        b=0;
+        for(ByteArrayOutputStream buf= new ByteArrayOutputStream(4097);;){
+            if(!readTooMuch)b = (byte) inp.read();
+            if(b == -1 ) break ;
+            readTooMuch=false;
+            if ( b != '\r' && b != '\n' ) {
+                if ( b == ':' && colonIndex == -1 ) colonIndex = len ;
+                len++;
+                buf.write(b);
+            }
+            else if ( b == '\r' )
+                continue ;
+            else {  //b== '\n'
+                if ( len == 0 ) break ;
+
+                b = (byte) inp.read();
+                readTooMuch= true;
+                    //A space or tab at the begining of a line means the header continues.
+                if( b == ' ' || b== '\t'){
+                    continue;
+                }
+
+                if ( colonIndex != -1 ) {
+                    buf.close();
+                    byte[]hdata= buf.toByteArray();
+                    buf.reset();
+                    name = new String( hdata, 0, colonIndex, HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING );
+                    value = new String( hdata, colonIndex+1, len-1-colonIndex, HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING );
+                    colonIndex = -1 ;
+                }
+                else {
+                    buf.close();
+                    byte[]hdata= buf.toByteArray();
+                    buf.reset();
+                    name = new String( hdata, 0, len, HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING );
+                    value = "" ;
+                }
+
+                if (log.isDebugEnabled()) {
+                    log.debug( name + value );
+                }
+
+                if ( msgContext.getProperty(HTTPConstants.MC_HTTP_STATUS_CODE)==null){
+                    // Reader status code
+                    int start = name.indexOf( ' ' ) + 1 ;
+                    String tmp = name.substring(start).trim();
+                    int end   = tmp.indexOf( ' ' );
+                    if ( end != -1 ) tmp = tmp.substring( 0, end );
+                    returnCode = Integer.parseInt( tmp );
+                    msgContext.setProperty( HTTPConstants.MC_HTTP_STATUS_CODE,
+                                            new Integer(returnCode) );
+                    statusMessage = name.substring(start + end + 1);
+                    msgContext.setProperty( HTTPConstants.MC_HTTP_STATUS_MESSAGE,
+                                            statusMessage);
+                }
+                else
+                    headers.put( name.toLowerCase(), value );
+                len = 0 ;
+            }
+        }
+        /*All HTTP headers have been read.*/
+
+        String contentType = (String) headers.get(
+                   HTTPConstants.HEADER_CONTENT_TYPE.toLowerCase());
+        contentType= (null == contentType )? null:contentType.trim();
+
+        if (returnCode > 199 && returnCode < 300) {
+            // SOAP return is OK - so fall through
+        } else if (contentType!=null && !contentType.equals("text/html") &&
+                   (returnCode > 499 && returnCode < 600) ) {
+            // SOAP Fault should be in here - so fall through
+        } else {
+            // Unknown return code - so wrap up the content into a
+            // SOAP Fault.
+           ByteArrayOutputStream buf= new ByteArrayOutputStream(4097);
+           while(-1 !=(b = (byte)inp.read())){
+              buf.write(b);
+           }
+
+            AxisFault fault = new AxisFault("HTTP",
+                                            statusMessage,
+                                            null,
+                                            null);
+            fault.setFaultDetailString(JavaUtils.getMessage("return01",
+                    "" + returnCode, buf.toString()));
+            throw fault;
+        }
+
+        if ( b != -1 ) { //more data than just headers.
+
+            String contentLocation = (String) headers.get(
+                HTTPConstants.HEADER_CONTENT_LOCATION.toLowerCase());
+            contentLocation= (null == contentLocation )? null:contentLocation.trim();
+
+            String contentLength = (String) headers.get(
+                HTTPConstants.HEADER_CONTENT_LENGTH.toLowerCase());
+            contentLength= (null == contentLength )? null:contentLength.trim();
+
+            outMsg = new Message( inp, false, contentType, contentLocation);
+
+            outMsg.setMessageType(Message.RESPONSE);
+            msgContext.setResponseMessage( outMsg );
+
+            if (log.isDebugEnabled()) {
+                if(null==contentLength )
+                    log.debug( "\n" + JavaUtils.getMessage("no00",
+                      "Content-Length") );
+                log.debug( "\n" + JavaUtils.getMessage("xmlRecd00") );
+                log.debug( "-----------------------------------------------");
+                log.debug( (String) outMsg.getSOAPPart().getAsString() );
+            }
+
+        }
+
+
+        // if we are maintaining session state,
+        // handle cookies (if any)
+        if (msgContext.getMaintainSession()) {
+            handleCookie(HTTPConstants.HEADER_COOKIE,
+                         HTTPConstants.HEADER_SET_COOKIE,
+                         headers,
+                         msgContext);
+            handleCookie(HTTPConstants.HEADER_COOKIE2,
+                         HTTPConstants.HEADER_SET_COOKIE2,
+                         headers,
+                         msgContext);
         }
     }
 
