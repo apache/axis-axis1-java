@@ -199,10 +199,13 @@
       <equals arg1="${axis_nojavadocs}" arg2="$${axis_nojavadocs}"/>
     </condition>
 
-    <uptodate property="javadoc.notrequired"
-              targetfile="${build.javadocs}/index.html">
-      <srcfiles dir="${src.dir}" includes="**/*.java" />
-    </uptodate>
+    <condition property="javadoc.notrequired" value="true">
+    <or>
+      <equals arg1="${javadoc.notoutofdate}" arg2="true"/>
+      <equals arg1="true" arg2="${axis_nojavadocs}"/>
+    </or>
+    </condition>
+
 
  </target>
 

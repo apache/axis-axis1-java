@@ -309,18 +309,23 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
         if ( currentForm == FORM_INPUTSTREAM ) {
             // Assumes we don't need a content length
             try {
-                InputStream  inp = (InputStream) currentMessage ;
-                ByteArrayOutputStream  baos = new ByteArrayOutputStream();
-                byte[]  buf = new byte[4096];
-                int len ;
-                while ( (len = inp.read(buf,0,4096)) != -1 )
-                    baos.write( buf, 0, len );
-                buf = baos.toByteArray();
-                // int len = inp.available();
-                // byte[]  buf = new byte[ len ];
-                // inp.read( buf );
+                InputStream  inp = null; 
+                byte[]  buf = null;
+                try{
+                    inp = (InputStream) currentMessage ;
+                    ByteArrayOutputStream  baos = new ByteArrayOutputStream();
+                    buf = new byte[4096];
+                    int len ;
+                    while ( (len = inp.read(buf,0,4096)) != -1 )
+                        baos.write( buf, 0, len );
+                    buf = baos.toByteArray();
+                }finally{    
+                  if(inp != null && 
+                    currentMessage instanceof org.apache.axis.transport.http.SocketInputStream )    
+                    inp.close(); 
+                }  
                 setCurrentMessage( buf, FORM_BYTES );
-	            log.debug("Exit: SOAPPart::getAsBytes");
+                log.debug("Exit: SOAPPart::getAsBytes");
                 return (byte[])currentMessage;
             }
             catch( Exception e ) {

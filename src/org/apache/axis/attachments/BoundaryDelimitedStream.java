@@ -137,7 +137,7 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
      * Gets the next stream. From the previous using the same buffer size to read.
      * @return the boundary delmited stream. Null if there are no more streams.
      */
-    public synchronized BoundaryDelimitedStream getNextStream() {
+    public synchronized BoundaryDelimitedStream getNextStream()  throws java.io.IOException  {
         return getNextStream(readbufsz);
     }
 
@@ -148,7 +148,7 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
      * @return the boundary delmited stream. Null if there are no more streams.
      */
     protected synchronized BoundaryDelimitedStream getNextStream(
-            int readbufsz) {
+            int readbufsz)  throws java.io.IOException  {
 
         BoundaryDelimitedStream ret = null;
 
@@ -168,7 +168,7 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
      * @param readbufsz
      */
     protected BoundaryDelimitedStream(BoundaryDelimitedStream prev,
-                                      int readbufsz) {
+                                      int readbufsz) throws java.io.IOException  {
 
         super(null);
 
@@ -303,7 +303,7 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
             if (readBufEnd < 0) {
                 readbuf = null;
                 closed = true;
-                theEnd = true;
+                finalClose();
 
                 throw new java.io.IOException(
                         JavaUtils.getMessage("eosBeforeMarker"));
@@ -355,7 +355,7 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
                 if (readcnt < 0) {
                     readbuf = null;
                     closed = true;
-                    theEnd = true;
+                    finalClose();
 
                     throw new java.io.IOException(
                             JavaUtils.getMessage("eosBeforeMarker"));
@@ -513,7 +513,7 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
      * @return The position of the boundary. Detects the end of the source stream.
      *
      */
-    protected int boundaryPosition(byte[] searchbuf, int start, int end) {
+    protected int boundaryPosition(byte[] searchbuf, int start, int end) throws java.io.IOException  {
 
         int foundAt = boundarySearch(searchbuf, start, end);
 
@@ -526,7 +526,7 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
                 // If the marker has a "--" at the end then this is the last boundary.
                 if ((searchbuf[foundAt + boundaryLen] == '-')
                         && (searchbuf[foundAt + boundaryLen + 1] == '-')) {
-                    theEnd = true;
+                    finalClose();
                 } else if ((searchbuf[foundAt + boundaryLen] != 13)
                         || (searchbuf[foundAt + boundaryLen + 1] != 10)) {
 
@@ -606,6 +606,13 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
 
         // log.debug(">>>> not found" );
         return BOUNDARY_NOT_FOUND;
+    }
+
+    protected void finalClose() throws java.io.IOException {
+      if(theEnd) return;
+      theEnd= true;
+      is.close();
+      is= null;
     }
 
     /**
