@@ -228,10 +228,7 @@ public class JavaStubWriter extends JavaClassWriter {
         pw.println("            java.util.Enumeration keys = super.cachedProperties.keys();");
         pw.println("            while (keys.hasMoreElements()) {");
         pw.println("                java.lang.String key = (java.lang.String) keys.nextElement();");
-        pw.println("                if(_call.isPropertySupported(key))");
-        pw.println("                    _call.setProperty(key, super.cachedProperties.get(key));");
-        pw.println("                else");
-        pw.println("                    _call.setScopedProperty(key, super.cachedProperties.get(key));");
+        pw.println("                _call.setProperty(key, super.cachedProperties.get(key));");
         pw.println("            }");
         if (typeMappingCount > 0) {
             pw.println("            // " + Messages.getMessage("typeMap00"));
@@ -644,7 +641,7 @@ public class JavaStubWriter extends JavaClassWriter {
             // Turn off encoding
             pw.println("        _call.setEncodingStyle(null);");
             // turn off XSI types
-            pw.println("        _call.setScopedProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);");
+            pw.println("        _call.setProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);");
         }
         if (hasMIME || use == Use.LITERAL) {
             // If it is literal, turn off multirefs.
@@ -652,7 +649,7 @@ public class JavaStubWriter extends JavaClassWriter {
             // If there are any MIME types, turn off multirefs.
             // I don't know enough about the guts to know why
             // attachments don't work with multirefs, but they don't.
-            pw.println("        _call.setScopedProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);");
+            pw.println("        _call.setProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);");
         }
 
         Style style = Style.getStyle(opStyle, bEntry.getBindingStyle());
