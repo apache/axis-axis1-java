@@ -137,6 +137,7 @@ public class TestArrayListConversions extends TestCase {
     public static void main(String[] args) {
         TestArrayListConversions tester = new TestArrayListConversions("TestArrayListConversions");
         try {
+            tester.setUp();
             tester.testArrayConversion();
             tester.testLinkedListConversion();
             tester.testVectorConversion();

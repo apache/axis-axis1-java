@@ -116,7 +116,7 @@ public class BodyBuilder extends SOAPHandler
         if ((root != null) && root.equals("0")) isRoot = false;
 
         MessageContext msgContext = context.getMessageContext();
-        OperationDesc operation = msgContext.getOperationByQName(qname);
+        OperationDesc [] operations = msgContext.getPossibleOperationsByQName(qname);
 
         /** Now we make a plain SOAPBodyElement IF we either:
          * a) have an non-root element, or
@@ -130,12 +130,20 @@ public class BodyBuilder extends SOAPHandler
                                            context);
         } else if (!gotRPCElement) {
             if (isRoot &&
-                (operation == null ||
-                 (operation.getStyle() !=
+                (operations == null ||
+                 (operations[0].getStyle() !=
                   ServiceDesc.STYLE_MESSAGE))) {
                 gotRPCElement = true;
                 element = new RPCElement(namespace, localName, prefix,
-                                         attributes, context, operation);
+                                         attributes, context, operations);
+// * This will be a first cut at switching streaming deserialization back on. *
+// Only deserialize this way if there is a unique operation for this QName for
+// now.  If there are overloads, we'll need to start recording.
+//                if (operations != null && operations.length == 1) {
+//                    handler = new RPCHandler((RPCElement)element, false);
+//                    ((RPCHandler)handler).setOperation(operations[0]);
+//                    msgContext.setOperation(operations[0]);
+//                }
             }
         }
 

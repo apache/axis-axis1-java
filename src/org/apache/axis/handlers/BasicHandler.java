@@ -69,6 +69,7 @@ import org.w3c.dom.Element;
 import javax.xml.rpc.namespace.QName;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
 
 /** <code>BasicHandler</code> is a utility class which implements simple
  * property setting/getting behavior, and stubs out a lot of the Handler
@@ -186,5 +187,14 @@ public abstract class BasicHandler implements Handler {
 
     public void generateWSDL(MessageContext msgContext) throws AxisFault
     {
+    }
+
+    /**
+     * Return a list of QNames which this Handler understands.  By returning
+     * a particular QName here, we are committing to fulfilling any contracts
+     * defined in the specification of the SOAP header with that QName.
+     */
+    public List getUnderstoodHeaders() {
+        return null;
     }
 }

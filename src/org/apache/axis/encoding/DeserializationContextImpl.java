@@ -225,7 +225,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
     public void setCurElement(MessageElement el)
     {
         curElement = el;
-        if (curElement.getRecorder() != recorder) {
+        if (curElement != null && curElement.getRecorder() != recorder) {
             recorder = curElement.getRecorder();
         }
     }
