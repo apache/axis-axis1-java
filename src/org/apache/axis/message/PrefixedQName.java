@@ -78,7 +78,11 @@ public class PrefixedQName implements Name {
     }
     
     public String getQualifiedName() {
-        return qName.toString();
+        StringBuffer buf = new StringBuffer(prefix);
+        if(prefix != emptyString)
+            buf.append(':');
+        buf.append(qName.getLocalPart());
+        return buf.toString();
     }
     
     public String getURI() {
