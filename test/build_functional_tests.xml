@@ -21,6 +21,7 @@ Copyright:
 ==================================================================== -->
 
 <project default="functional-tests" basedir=".">
+  <property name="test.functional.usefile" value="true"/>
 
   <path id="test-classpath">
     <!-- build.dir for test classes and build.dest for classes to test -->
@@ -64,7 +65,7 @@ Copyright:
     <!-- now, run the actual test -->
     <junit dir="." printsummary="yes" haltonfailure="yes" fork="yes">
       <classpath refid="test-classpath" />
-      <formatter type="plain" />
+      <formatter type="plain" usefile="${test.functional.usefile}"/>
       <batchtest>
         <fileset dir="${build.dir}">
           <!-- Convention: each package that's being tested
