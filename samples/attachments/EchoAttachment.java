@@ -59,6 +59,8 @@ package samples.attachments;
 import org.apache.axis.AxisFault;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
+import org.apache.axis.MessageContext;
+import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.encoding.XMLType;
 import org.apache.axis.encoding.ser.JAFDataHandlerSerializerFactory;
 import org.apache.axis.encoding.ser.JAFDataHandlerDeserializerFactory;
@@ -70,6 +72,7 @@ import javax.xml.namespace.QName;
 
 import java.net.URL;
 import java.io.File;
+import java.util.Hashtable;
 
 
 /**
@@ -82,7 +85,6 @@ import java.io.File;
  * This class has a main method that beside the standard arguments
  * allows you to specify an attachment that will be sent to a 
  * service which will then send it back.
- *  WORK IN PROGRESS!
  *  
  */
 public class EchoAttachment {
@@ -112,6 +114,7 @@ public class EchoAttachment {
         Service  service = new Service();
 
         Call     call    = (Call) service.createCall();
+
 
         call.setTargetEndpointAddress( new URL(opts.getURL()) ); //Set the target service host and service location, 
 
@@ -201,6 +204,14 @@ public class EchoAttachment {
         Service  service = new Service(); //A new axis Service.
 
         Call     call    = (Call) service.createCall(); //Create a call to the service.
+
+        //call.setScopedProperty(MessageContext.HTTP_TRANSPORT_VERSION,HTTPConstants.HEADER_PROTOCOL_V11);
+        Hashtable myhttp= new Hashtable();
+        myhttp.put("dddd","yyy");
+        myhttp.put("SOAPAction","dyyy");
+        myhttp.put("SOAPActions","kkk");
+        //myhttp.put(HTTPConstants.HEADER_TRANSFER_ENCODING,HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED);
+        call.setScopedProperty(HTTPConstants.REQUEST_HEADERS,myhttp);
 
         call.setTargetEndpointAddress( new URL(opts.getURL()) ); //Set the target service host and service location, 
 

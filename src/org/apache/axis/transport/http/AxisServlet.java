@@ -593,7 +593,7 @@ public class AxisServlet extends HttpServlet
         /* Send response back along the wire...  */
         /***********************************/
         if (responseMsg != null)
-            sendResponse(res, responseMsg);
+            sendResponse(getProtocolVersion(req), res, responseMsg);
             
         if (isDebug) {
             log.debug("Response sent.");
@@ -615,7 +615,8 @@ public class AxisServlet extends HttpServlet
         return msg;
     }
     
-    private void sendResponse(HttpServletResponse res, Message responseMsg)
+    private void sendResponse(final String clientVersion,
+            HttpServletResponse res, Message responseMsg)
         throws AxisFault, IOException
     {
         if (responseMsg == null) {
@@ -628,12 +629,24 @@ public class AxisServlet extends HttpServlet
             if(isDebug) {
                 log.debug("Returned Content-Type:" +
                           responseMsg.getContentType());
-                log.debug("Returned Content-Length:" +
-                          responseMsg.getContentLength());
+                // log.debug("Returned Content-Length:" +
+                //          responseMsg.getContentLength());
             }
 
             res.setContentType(responseMsg.getContentType());
-            res.setContentLength(responseMsg.getContentLength());
+
+            /* My understand of Content-Length
+             * HTTP 1.0
+             *   -Required for requests, but optional for responses.
+             * HTTP 1.1
+             *  - Either Content-Length or HTTP Chunking is required.
+             *   Most servlet engines will do chunking if content-length is not specified.
+             * 
+             *
+             */
+
+            //if(clientVersion == HTTPConstants.HEADER_PROTOCOL_V10) //do chunking if necessary.
+           //     res.setContentLength(responseMsg.getContentLength());
             
             try {
                 responseMsg.writeTo(res.getOutputStream());
@@ -773,5 +786,24 @@ public class AxisServlet extends HttpServlet
      */
     protected String getDefaultJWSClassDir() {
         return getWebInfPath() + File.separator +  "jwsClasses";
+    }
+
+    /**
+     * Return the HTTP protocol level 1.1 or 1.0 
+     * by derived class.
+     */
+    protected String getProtocolVersion(HttpServletRequest req){
+        String ret= HTTPConstants.HEADER_PROTOCOL_V10;
+        String prot= req.getProtocol();
+        if(prot!= null){
+            int sindex= prot.indexOf('/');
+            if(-1 != sindex){
+                String ver= prot.substring(sindex+1);
+                if(HTTPConstants.HEADER_PROTOCOL_V11.equals(ver.trim())){
+                    ret= HTTPConstants.HEADER_PROTOCOL_V11;
+                }
+            }
+        }
+        return ret;
     }
 }

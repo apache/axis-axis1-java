@@ -173,7 +173,7 @@ public class MessageContext implements SOAPMessageContext {
      * Storage for an arbitrary bag of properties associated with this
      * MessageContext.
      */
-    private LockableHashtable bag ;
+    private LockableHashtable bag = new LockableHashtable();
 
     /**
      * These variables are logically part of the bag, but are separated
@@ -628,6 +628,15 @@ public class MessageContext implements SOAPMessageContext {
      */
     public static String WSDLGEN_SERV_LOC_URL      = "axis.wsdlgen.serv.loc.url";
 
+    /** The value of the property is used by service WSDL generation (aka ?WSDL)
+     *  Set this property to request a certain level of HTTP.
+     *  The values MUST use org.apache.axis.transport.http.HTTPConstants.HEADER_PROTOCOL_10   
+     *    for HTTP 1.0
+     *  The values MUST use org.apache.axis.transport.http.HTTPConstants.HEADER_PROTOCOL_11   
+     *    for HTTP 1.1
+     */
+    public static String HTTP_TRANSPORT_VERSION  = "axis.transport.version";
+
     /** Just a util so we don't have to cast the result
      */
     public String getStrProp(String propName) {
@@ -743,9 +752,6 @@ public class MessageContext implements SOAPMessageContext {
             setEncodingStyle((String) value);
         }
         else {
-            if (bag == null) {
-                bag = new LockableHashtable();
-            }
             bag.put(name, value);
         }
     } // setProperty

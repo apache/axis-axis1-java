@@ -1902,7 +1902,6 @@ public class Call implements javax.xml.rpc.Call {
                 msgContext.setPropertyParent(scopedProperties);
             }
         }
-
         if (log.isDebugEnabled()) {
             log.debug(JavaUtils.getMessage("targetService",
                     msgContext.getTargetService()));

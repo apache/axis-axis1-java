@@ -450,8 +450,6 @@ public class HTTPSender extends BasicHandler {
             BooleanHolder useFullURL)
             throws IOException {
 
-        OutputStream out = new BufferedOutputStream(sock.getOutputStream(),
-                8 * 1024);
         String userID = null;
         String passwd = null;
         String reqEnv = null;
@@ -522,10 +520,84 @@ public class HTTPSender extends BasicHandler {
         }
         Message reqMessage = msgContext.getRequestMessage();
 
-        header.append(" HTTP/1.0\r\n")
-                .append(HTTPConstants.HEADER_CONTENT_LENGTH)
-                .append(": ")
-                .append(reqMessage.getContentLength())
+        boolean http10= true;
+        boolean httpChunkStream= false;
+        String httpConnection= null;
+
+        String httpver= msgContext.getStrProp(MessageContext.HTTP_TRANSPORT_VERSION);
+        if( null == httpver) httpver= HTTPConstants.HEADER_PROTOCOL_V10;
+        httpver=httpver.trim();
+        if(httpver.equals( HTTPConstants.HEADER_PROTOCOL_V11)){
+            http10= false;
+        }
+
+        //process user defined headers for information. 
+        Hashtable userHeaderTable = (Hashtable) msgContext.
+             getProperty(HTTPConstants.REQUEST_HEADERS);
+
+        if(userHeaderTable != null) {
+            if(null== otherHeaders) otherHeaders= new StringBuffer(1024);
+
+            for (java.util.Iterator e = userHeaderTable.entrySet().iterator();
+                  e.hasNext();) {
+
+                java.util.Map.Entry me= (java.util.Map.Entry)e.next();
+                Object keyObj= me.getKey();
+                if(null == keyObj) continue;
+                String key= keyObj.toString().trim();
+
+                if(key.equalsIgnoreCase(HTTPConstants.HEADER_TRANSFER_ENCODING)){
+                    if(!http10){
+                      String val=  me.getValue().toString();
+                      if(null != val && val.trim().equalsIgnoreCase(HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED))
+                          httpChunkStream= true; 
+                    }
+                }
+                else if(key.equalsIgnoreCase(HTTPConstants.HEADER_HOST)){
+                  //ignore
+                }
+                else if(key.equalsIgnoreCase(HTTPConstants.HEADER_CONTENT_TYPE)){
+                  //ignore
+                }
+                else if(key.equalsIgnoreCase(HTTPConstants.HEADER_SOAP_ACTION)){
+                  //ignore
+                }
+                else if(key.equalsIgnoreCase(HTTPConstants.HEADER_CONTENT_LENGTH)){
+                  //ignore
+                }
+                else if(key.equalsIgnoreCase(HTTPConstants.HEADER_COOKIE)){
+                  //ignore
+                }
+                else if(key.equalsIgnoreCase(HTTPConstants.HEADER_COOKIE2)){
+                  //ignore
+                }
+                else if(key.equalsIgnoreCase(HTTPConstants.HEADER_AUTHORIZATION)){
+                  //ignore
+                }
+                else if(key.equalsIgnoreCase(HTTPConstants.HEADER_PROXY_AUTHORIZATION)){
+                  //ignore
+                }
+                else if(key.equalsIgnoreCase(HTTPConstants.HEADER_CONNECTION)){
+                    if(!http10) {
+                      String val= me.getValue().toString();
+                      if(val.trim().equalsIgnoreCase(HTTPConstants.HEADER_CONNECTION_CLOSE))
+                          httpConnection= HTTPConstants.HEADER_CONNECTION_CLOSE; 
+                    }
+                    //HTTP 1.0 will always close.
+                    //HTTP 1.1 will use persistent. //no need to specify 
+                }
+                else{
+                    otherHeaders.append(key).append(": ").append(me.getValue()).append("\r\n");
+                }
+            }
+        }
+
+if(!http10)
+   httpConnection= HTTPConstants.HEADER_CONNECTION_CLOSE; //Force close for now.
+
+        header.append(" ");
+        header.append(http10 ? HTTPConstants.HEADER_PROTOCOL_10 :
+                     HTTPConstants.HEADER_PROTOCOL_11) 
                 .append("\r\n")
                 .append(HTTPConstants.HEADER_HOST)
                 .append(": ")
@@ -536,30 +608,57 @@ public class HTTPSender extends BasicHandler {
                 .append(": ")
                 .append(reqMessage.getContentType())
                 .append("\r\n")
-                .append(((otherHeaders == null)? "": otherHeaders.toString()))
                 .append(HTTPConstants.HEADER_SOAP_ACTION)
                 .append(": \"")
                 .append(action)
                 .append("\"\r\n");
 
-        // adding user-defined/platform-dependent HTTP headers
-        if (msgContext.getProperty(HTTPConstants.REQUEST_HEADERS) != null) {
-            Hashtable headerTable =
-                    (Hashtable) msgContext
-                    .getProperty(HTTPConstants.REQUEST_HEADERS);
+        if(!httpChunkStream ){
+            //Content length MUST be sent on HTTP 1.0 requests.
+            header.append(HTTPConstants.HEADER_CONTENT_LENGTH)
+                  .append(": ")
+                  .append(reqMessage.getContentLength())
+                  .append("\r\n");
+         }
+         else{
+            //Do http chunking.
+            header.append(HTTPConstants.HEADER_TRANSFER_ENCODING )
+            .append(": " )
+            .append(HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED)
+            .append("\r\n" );
+         }
 
-            for (Enumeration e = headerTable.keys(); e.hasMoreElements();) {
-                Object key = e.nextElement();
-                header.append(key).append(": ").append(headerTable.get(key)).append("\r\n");
-            }
+        if(null != httpConnection){
+           header.append(HTTPConstants.HEADER_CONNECTION); 
+           header.append(": " );
+           header.append(httpConnection); 
+           header.append("\r\n" );
         }
-        header.append("\r\n");
+
+        if(null != otherHeaders)
+            header.append(otherHeaders); //Add other headers to the end.
+
+        header.append("\r\n"); //The empty line to start the BODY.
+
+        OutputStream out = sock.getOutputStream();
+
         out.write(header.toString()
                 .getBytes(HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING));
+        out.flush();        
+        ChunkedOutputStream chunkedOutputStream= null; 
+        if(httpChunkStream){
+            out= chunkedOutputStream=  new ChunkedOutputStream(out);
+        }
+
+        out = new BufferedOutputStream(out, 8 * 1024);
         try {
             reqMessage.writeTo(out);
         } catch (SOAPException e) {
             log.error(JavaUtils.getMessage("exception00"), e);
+        }
+        if(null != chunkedOutputStream){
+            out.flush();
+            chunkedOutputStream.eos();
         }
         out.flush();
         if (log.isDebugEnabled()) {
@@ -587,7 +686,7 @@ public class HTTPSender extends BasicHandler {
         String name, value;
         String statusMessage = "";
         int returnCode = 0;
-        BufferedInputStream inp = new BufferedInputStream(sock.getInputStream());
+        InputStream inp = new BufferedInputStream(sock.getInputStream());
 
         // Should help performance. Temporary fix only till its all stream oriented.
         // Need to add logic for getting the version # and the return code
@@ -624,11 +723,10 @@ public class HTTPSender extends BasicHandler {
                 if ((b == ' ') || (b == '\t')) {
                     continue;
                 }
+                buf.close();
+                byte[] hdata = buf.toByteArray();
+                buf.reset();
                 if (colonIndex != -1) {
-                    buf.close();
-                    byte[] hdata = buf.toByteArray();
-
-                    buf.reset();
                     name =
                             new String(hdata, 0, colonIndex,
                                     HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING);
@@ -637,10 +735,7 @@ public class HTTPSender extends BasicHandler {
                                     HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING);
                     colonIndex = -1;
                 } else {
-                    buf.close();
-                    byte[] hdata = buf.toByteArray();
 
-                    buf.reset();
                     name =
                             new String(hdata, 0, len,
                                     HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING);
@@ -708,6 +803,7 @@ public class HTTPSender extends BasicHandler {
             contentLocation = (null == contentLocation)
                     ? null
                     : contentLocation.trim();
+
             String contentLength =
                     (String) headers
                     .get(HTTPConstants.HEADER_CONTENT_LENGTH.toLowerCase());
@@ -715,6 +811,17 @@ public class HTTPSender extends BasicHandler {
             contentLength = (null == contentLength)
                     ? null
                     : contentLength.trim();
+
+            String transferEncoding =
+                    (String) headers
+                    .get(HTTPConstants.HEADER_TRANSFER_ENCODING.toLowerCase());
+            if(null != transferEncoding
+                  && transferEncoding.trim()
+                    .equals(HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED )){
+                 inp= new ChunkedInputStream(inp); 
+            }
+
+                    
             outMsg = new Message(inp, false, contentType,
                     contentLocation);
             outMsg.setMessageType(Message.RESPONSE);

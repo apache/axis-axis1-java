@@ -480,8 +480,7 @@ public class Message extends javax.xml.soap.SOAPMessage {
      *     object
      */
     public int countAttachments(){
-        //TODO: Flesh it out.
-        return -1;
+        return mAttachments == null ? 0 : mAttachments.getAttachmentCount();
     }
 
     /**
