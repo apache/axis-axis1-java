@@ -80,7 +80,7 @@ import java.util.Hashtable;
 public class JSSESocketFactory extends DefaultSocketFactory implements SecureSocketFactory {
 
     /** Field sslFactory           */
-    private static final SSLSocketFactory sslFactory = (SSLSocketFactory)SSLSocketFactory.getDefault();
+    protected SSLSocketFactory sslFactory = null;
 
     /**
      * Constructor JSSESocketFactory
@@ -91,6 +91,14 @@ public class JSSESocketFactory extends DefaultSocketFactory implements SecureSoc
         super(attributes);
     }
 
+    /**
+     * Initialize the SSLSocketFactory
+     * @throws IOException
+     */ 
+    protected void initFactory() throws IOException {
+        sslFactory = (SSLSocketFactory)SSLSocketFactory.getDefault();
+    }
+    
     /**
      * creates a secure socket
      *
@@ -105,6 +113,9 @@ public class JSSESocketFactory extends DefaultSocketFactory implements SecureSoc
     public Socket create(
             String host, int port, StringBuffer otherHeaders, BooleanHolder useFullURL)
             throws Exception {
+        if (sslFactory == null) {
+            initFactory();
+        }
         if (port == -1) {
             port = 443;
         }
