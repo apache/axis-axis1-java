@@ -1475,24 +1475,65 @@ public class Types {
     }
 
     /**
-     * Inserts the type fragment into the given wsdl document
-     *
+     * Inserts the type fragment into the given wsdl document and ensures
+     * that definitions from each embedded schema are allowed to reference
+     * schema components from the other sibling schemas.
      * @param doc
      */
     public void insertTypesFragment(Document doc) {
 
         updateNamespaces();
 
-        if (wsdlTypesElem != null) {
+        if (wsdlTypesElem == null) 
+            return;
 
-            // Import the wsdlTypesElement into the doc.
-            org.w3c.dom.Node node = doc.importNode(wsdlTypesElem, true);
+        // Make sure that definitions from each embedded schema are allowed
+        // to reference schema components from the other sibling schemas.
+        Element schemaElem = null;
+        String tns = null;
+        NodeList nl = wsdlTypesElem.getChildNodes();
+        for (int i = 0; i < nl.getLength(); i++) {
+            NamedNodeMap attrs = nl.item(i).getAttributes();
+            if (attrs == null) continue; // Should never happen.
+            for (int n = 0; n < attrs.getLength(); n++) {
+                Attr a = (Attr) attrs.item(n);
+                if (a.getName().equals("targetNamespace")) {
+                    tns = a.getValue();
+                    schemaElem = (Element) nl.item(i);
+                    break;
+                }
+            }
 
-            // Insert the imported element at the beginning of the document
-            doc.getDocumentElement().insertBefore(
-                    node, doc.getDocumentElement().getFirstChild());
-        }
-    }
+            // Ignore what appears to be a not namespace-qualified
+            // schema definition.
+            if (tns != null && !"".equals(tns.trim())) {
+                // By now we know that an import element might be necessary
+                // for some sibling schemas. However, in the absence of
+                // a symbol table proper, the best we can do is add one
+                // for each sibling schema.
+                Iterator it = schemaTypes.keySet().iterator();
+                String otherTns;
+                Element importElem;
+                while (it.hasNext()) {
+                    if (!tns.equals(otherTns = (String) it.next())) {
+                        importElem = docHolder.createElement("import");
+                        importElem.setAttribute("namespace", otherTns);
+                        schemaElem.insertBefore(importElem,
+                                schemaElem.getFirstChild());
+                    }
+                }
+            }
+            schemaElem = null;
+            tns = null;
+        }  
+
+        // Import the wsdlTypesElement into the doc.
+        org.w3c.dom.Node node = doc.importNode(wsdlTypesElem, true);
+        // Insert the imported element at the beginning of the document
+        doc.getDocumentElement().
+                insertBefore(node,
+                        doc.getDocumentElement().getFirstChild());
+    }  
 
     /**
      * Return the list of classes that we should not emit WSDL for.
