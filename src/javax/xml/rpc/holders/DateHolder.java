@@ -59,7 +59,6 @@ import java.util.Date;
 /**
  * Class DateHolder
  *
- * @author
  * @version 0.1
  */
 public final class DateHolder implements java.io.Serializable {

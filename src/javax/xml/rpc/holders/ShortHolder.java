@@ -57,7 +57,6 @@ package javax.xml.rpc.holders;
 /**
  * Class ShortHolder
  *
- * @author
  * @version 0.1
  */
 public final class ShortHolder implements java.io.Serializable {

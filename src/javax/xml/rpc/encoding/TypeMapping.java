@@ -65,7 +65,6 @@ import javax.xml.rpc.namespace.QName;
  * For its supported encoding styles and XML schema namespaces, a TypeMapping instance maintains a set of tuples of 
  * the type {Java type, SerializerFactory, DeserializerFactory, XML data type}. 
  *
- * @author
  * @version 0.1
  */
 public interface TypeMapping {

@@ -77,7 +77,6 @@ import javax.xml.rpc.namespace.QName;
  * <LI>Return type
  * </UL>
  *
- * @author
  * @version 0.1
  */
 public interface Call {
@@ -94,7 +93,7 @@ public interface Call {
     /**
      * Method getEncodingStyle
      *
-     * @return
+     * @return namespace URI of the Encoding Style
      */
     public String getEncodingStyle();
 

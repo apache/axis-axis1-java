@@ -60,7 +60,6 @@ package javax.xml.rpc.encoding;
  * converts an XML representation to a Java object using a specific XML processing mechanism and based on the 
  * specified type mapping and encoding style.
  *
- * @author
  * @version 0.1
  */
 public interface Deserializer {

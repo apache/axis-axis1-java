@@ -61,7 +61,6 @@ import javax.xml.rpc.JAXRPCException;
  * The javax.xml.rpc.encoding.DeserializerFactory is a factory of deserializers. A DeserializerFactory is 
  * registered with a TypeMapping instance as part of the TypeMappingRegistry. 
  *
- * @author
  * @version 0.1
  */
 public interface DeserializerFactory extends java.io.Serializable {

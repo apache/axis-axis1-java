@@ -60,7 +60,6 @@ package javax.xml.rpc.soap;
  * SOAPFault exception class is used for the mapping of the SOAP faults. If the use attribute in the soap:fault is 
  * literal, the soap:fault maps to the SOAPFault exception. This class extends the exception class java.lang.Exception and is declared as a checked exception in the service definition interface. 
  *
- * @author
  * @version 0.1
  */
 public class SOAPFault extends javax.xml.rpc.FaultException {}

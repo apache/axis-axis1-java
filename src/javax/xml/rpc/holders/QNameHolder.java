@@ -59,7 +59,6 @@ import javax.xml.rpc.namespace.QName;
 /**
  * Class QNameHolder
  *
- * @author
  * @version 0.1
  */
 public final class QNameHolder implements java.io.Serializable {

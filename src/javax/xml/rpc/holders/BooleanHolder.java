@@ -57,7 +57,6 @@ package javax.xml.rpc.holders;
 /**
  * Class BooleanHolder
  *
- * @author
  * @version 0.1
  */
 public final class BooleanHolder implements java.io.Serializable {

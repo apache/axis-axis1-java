@@ -59,7 +59,6 @@ import java.math.BigInteger;
 /**
  * Class BigIntegerHolder
  *
- * @author
  * @version 0.1
  */
 public final class BigIntegerHolder implements java.io.Serializable {

@@ -57,7 +57,6 @@ package javax.xml.rpc.holders;
 /**
  * Class FloatHolder
  *
- * @author
  * @version 0.1
  */
 public final class FloatHolder implements java.io.Serializable {

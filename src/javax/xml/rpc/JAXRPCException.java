@@ -58,7 +58,6 @@ package javax.xml.rpc;
  * The javax.xml.rpc.JAXRPCException is thrown from the core JAX-RPC APIs to indicate exceptions related to the JAX-RPC 
  * runtime mechanisms. A JAXRPCException is mapped to a java.rmi.RemoteException if the former is thrown during the processing of a remote method invocation. 
  *
- * @author
  * @version 0.1
  */
 public class JAXRPCException extends Exception {
