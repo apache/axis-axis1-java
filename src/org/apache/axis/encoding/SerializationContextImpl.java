@@ -500,9 +500,6 @@ public class SerializationContextImpl implements SerializationContext
      * @param attributes are additional attributes
      * @param value is the object to serialize
      * @param javaType is the "real" type of the value.
-     * @param xmlType is the qname of the type or null.
-     * @param sendNull determines whether to send null values.
-     * @param sendType determines whether to set xsi:type attribute.
      */
     public void serialize(QName elemQName,
                           Attributes attributes,
@@ -512,6 +509,29 @@ public class SerializationContextImpl implements SerializationContext
         serialize(elemQName, attributes, value, javaType, null, true, true);
     }
 
+    /**
+     * Serialize the indicated value as an element with the name
+     * indicated by elemQName.
+     * The attributes are additional attribute to be serialized on the element.
+     * The value is the object being serialized.  (It may be serialized
+     * directly or serialized as an mult-ref'd item)
+     * The value is an Object, which may be a wrapped primitive, the
+     * javaType is the actual unwrapped object type.
+     * The xmlType (if specified) is the QName of the type that is used to set
+     * xsi:type.  If not specified, xsi:type is set by using the javaType to
+     * find an appopriate xmlType from the TypeMappingRegistry.
+     * The sendNull flag indicates whether null values should be sent over the
+     * wire (default is to send such values with xsi:nil="true").
+     * The sendType flag indicates whether the xsi:type flag should be sent
+     * (default is true).
+     * @param elemQName is the QName of the element
+     * @param attributes are additional attributes
+     * @param value is the object to serialize
+     * @param javaType is the "real" type of the value.
+     * @param xmlType is the qname of the type or null.
+     * @param sendNull determines whether to send null values.
+     * @param sendType determines whether to set xsi:type attribute.
+     */
     public void serialize(QName elemQName,
                           Attributes attributes,
                           Object value,

@@ -180,7 +180,7 @@ public abstract class JavaProvider extends BasicProvider
      * Process the current message.  Side-effect resEnv to create return value.
      *
      * @param msgContext self-explanatory
-     * @param clsName the class name of the ServiceHandler
+     * @param serviceName the class name of the ServiceHandler
      * @param allowedMethods the 'method name' of ditto
      * @param reqEnv the request envelope
      * @param resEnv the response envelope
@@ -231,8 +231,6 @@ public abstract class JavaProvider extends BasicProvider
             allowedMethods = null;
 
         try {
-            int             i ;
-
             Object obj        = getServiceObject(msgContext,
                                                  service,
                                                  clsName);
@@ -307,8 +305,6 @@ public abstract class JavaProvider extends BasicProvider
 
         try {
             String url = msgContext.getStrProp(MessageContext.TRANS_URL);
-            String urn = (String)msgContext.getTargetService();
-            String description = "Service";
 
             Class cls = getServiceClass(msgContext, getServiceClassName(service));
 
@@ -417,7 +413,7 @@ public abstract class JavaProvider extends BasicProvider
      * AxisServiceConfig object.  This allows us to obtain metadata about
      * a class' configuration without instantiating an object of that class.
      *
-     * @param an object, which may be a Class
+     * @param obj an object, which may be a Class
      */
     public AxisServiceConfig getConfiguration(Object obj)
     {
