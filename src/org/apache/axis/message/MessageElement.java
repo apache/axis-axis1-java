@@ -206,6 +206,10 @@ public class MessageElement
 
     public boolean isRoot() { return _isRoot; }
     public String getID() { return id; }
+    
+    public String getHref() { return href; }
+    
+    public Attributes getAttributes() { return attributes; }
 
     public String getName() { return( name ); }
     public void setName(String name) { this.name = name; }
