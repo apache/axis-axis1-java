@@ -2,6 +2,7 @@ package test.wsdl.interop3.compound2;
 
 
 import java.net.URL;
+import java.util.Properties;
 
 import test.wsdl.interop3.compound2.xsd.Employee;
 import test.wsdl.interop3.compound2.xsd.Person;
@@ -63,6 +64,12 @@ public class Compound2TestCase extends junit.framework.TestCase {
             
             Employee result = binding.echoEmployee(emp);
 
+            if (!emp.equals(result)) {
+                System.out.println("Expected:");
+                System.out.println(printEmployee(emp));
+                System.out.println("Received:");
+                System.out.println(printEmployee(result));
+            }
             assertTrue("Results did not match", result.equals(emp));
 
         }
@@ -71,6 +78,18 @@ public class Compound2TestCase extends junit.framework.TestCase {
         }
     }
 
+    String printEmployee(Employee e) {
+        String result = new String();
+        
+        result += " ID: " + e.getID() + "\r\n";
+        result += " Salary: " + e.getSalary() + "\r\n";
+        Person p = e.getPerson();
+        result += " Person:\r\n";
+        result += "  Name: " + p.getName() + "\r\n";
+        result += "  Male: " + p.isMale() + "\r\n";
+        
+        return result;
+    }
 
 
     public static void main(String[] args) {

@@ -51,23 +51,27 @@ Copyright:
     </fileset>
   </path>
 
-  <taskdef name="wsdl2java" classname="org.apache.axis.tools.ant.wsdl.Wsdl2javaAntTask">
-      <classpath refid="test-classpath"/>
-  </taskdef>
-
+  <target name="clean">
+        <echo message="Removing ${build.dir}/classes/${componentName} and ${build.dir}/work/${componentName}" />
+        <delete dir="${build.dir}/classes/${componentName}"/>
+        <delete dir="${build.dir}/work/${componentName}"/>
+  </target>
+  
+  
   <target name="main">
     <property name="testname" value="compound1"/>
 
     <!-- generate skeletons -->
-    <wsdl2java url="http://www.whitemesa.com/r3/${testname}.wsdl"
-               output="${root.dir}/build/work" skeletonDeploy="no"
+    <!-- <wsdl2java url="http://www.whitemesa.com/r3/${testname}.wsdl" -->
+    <wsdl2java url="${axis.home}/test/wsdl/interop3/${testname}/${testname}.wsdl"
+               output="${axis.home}/build/work" skeletonDeploy="no"
                serverSide="yes"/>
 
     <copy file="SoapInteropCompound1BindingImpl.java" overwrite="true"
-          todir="${root.dir}/build/work/test/wsdl/interop3/${testname}"/>
+          todir="${build.dir}/work/test/wsdl/interop3/${testname}"/>
 
-    <copy file="Compound1TestCase.java"
-          todir="${root.dir}/build/work/test/wsdl/interop3/${testname}"/>
+    <copy file="Compound1TestCase.java" overwrite="true"
+          todir="${build.dir}/work/test/wsdl/interop3/${testname}"/>
 
     <!-- compile the skeletons -->
     <javac srcdir="${build.dir}/work" 

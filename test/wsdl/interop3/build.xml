@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<!DOCTYPE project [
+        <!ENTITY properties SYSTEM "file:../../../xmls/properties.xml">
+        <!ENTITY paths  SYSTEM "file:../../../xmls/path_refs.xml">
+        <!ENTITY taskdefs SYSTEM "file:../../../xmls/taskdefs.xml">
+        <!ENTITY taskdefs_post_compile SYSTEM "file:../../../xmls/taskdefs_post_compile.xml">
+        <!ENTITY targets SYSTEM "file:../../../xmls/targets.xml">
+]>
+
+<project name="Round3" default="interop3">
+
+<property name="axis.home" location="../../.." />
+<property name="componentName" value="test/wsdl/interop3" />
+        &properties;
+        &paths;
+        &taskdefs;
+        &taskdefs_post_compile;
+        &targets;
+
+
+  <target name="interop3" depends="" description="compile the round3 interop tests">
+    <ant dir="emptysa"/>
+    <ant dir="import1"/>
+    <ant dir="import2"/>
+    <ant dir="import3"/>
+    <ant dir="compound1"/>
+    <ant dir="compound2"/>
+    <ant dir="docLit"/>
+    <ant dir="docLitParam"/>
+    <ant dir="rpcEnc"/>
+  </target>
+
+  <target name="clean">
+    <ant dir="emptysa" target="clean"/>
+    <ant dir="import1" target="clean"/>
+    <ant dir="import2" target="clean"/>
+    <ant dir="import3" target="clean"/>
+    <ant dir="compound1" target="clean"/>
+    <ant dir="compound2" target="clean"/>
+    <ant dir="docLit" target="clean"/>
+    <ant dir="docLitParam" target="clean"/>
+    <ant dir="rpcEnc" target="clean" />
+  </target>
+
+  <target name="deploy">
+     <path id="deploy.xml.files">
+        <fileset dir="${build.dir}">
+          <include name="work/${componentName}/**/deploy.wsdd"/>
+         </fileset>
+     </path>
+     <property name="deploy.xml.property" refid="deploy.xml.files"/>
+     
+    <java classname="org.apache.axis.client.AdminClient" fork="yes">
+      <classpath refid="classpath" />
+      <arg line="${deploy.xml.property}"/>
+    </java>
+  </target>
+
+</project>

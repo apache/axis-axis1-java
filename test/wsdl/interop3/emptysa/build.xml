@@ -34,7 +34,7 @@ Copyright:
 
 <project name="Round3" default="main">
 <property name="axis.home" location="../../../.." />
-<property name="componentName" value="test/wsdl/interop3/docLit" />
+<property name="componentName" value="test/wsdl/interop3/compound2" />
         &properties;
         &paths;
         &taskdefs;
@@ -51,36 +51,34 @@ Copyright:
     </fileset>
   </path>
 
+
   <target name="clean">
         <echo message="Removing ${build.dir}/classes/${componentName} and ${build.dir}/work/${componentName}" />
         <delete dir="${build.dir}/classes/${componentName}"/>
         <delete dir="${build.dir}/work/${componentName}"/>
   </target>
   
-
   <target name="main">
-    <property name="testname" value="docLit"/>
+    <property file="axis.properties"/>
 
-    <!-- generate skeletons -->
-    <!-- <wsdl2java url="http://www.whitemesa.com/r3/interoptestdoclit.wsdl" -->
-    <wsdl2java url="${axis.home}/test/wsdl/interop3/${testname}/interoptestdoclit.wsdl"
-               output="${axis.home}/build/work" skeletonDeploy="no"
-               serverSide="yes"/>
+    <!-- <wsdl2java url="http://www.whitemesa.com/r3/emptysa.wsdl" -->
+    <wsdl2java url="${axis.home}/test/wsdl/interop3/emptysa/emptysa.wsdl"
+               output="${axis.home}/build/work"
+               serverside="yes"
+               skeletonDeploy="no">
+        <mapping namespace="http://soapinterop/" package="test.wsdl.interop3.emptysa"/>
+    </wsdl2java>
+    
+    <copy file="SoapInteropEmptySABindingImpl.java" overwrite="true"
+          todir="${build.dir}/work/test/wsdl/interop3/emptysa"/>
 
-    <mkdir dir="${build.dest}"/>
+    <copy file="EmptySATestCase.java" overwrite="true"
+          todir="${build.dir}/work/test/wsdl/interop3/emptysa"/>
 
-    <copy file="WSDLInteropTestDocLitPortBindingImpl.java" overwrite="true"
-          todir="${build.dir}/work/test/wsdl/interop3/${testname}"/>
-
-    <copy file="DocLitTestCase.java" overwrite="true"
-          todir="${build.dir}/work/test/wsdl/interop3/${testname}"/>
-
-    <!-- compile the skeletons -->
-    <javac srcdir="${build.dir}/work" 
-      destdir="${build.dest}" debug="on">
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="on">
       <classpath refid="test-classpath" />
-      <include name="test/wsdl/interop3/${testname}/*.java" />
+      <include name="test/wsdl/interop3/emptysa/*.java" />
     </javac>
-  </target>
 
+  </target>
 </project>

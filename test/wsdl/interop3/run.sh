@@ -21,9 +21,11 @@ endpoints=$1
 
 
 # EmptySA
-#if [ ! -z "${Import1}" ]; then
-#java test.wsdl.interop3.emptySA.EmptySATestCase ${EmptySA}
-#fi
+echo EmptySA
+if [ ! -z "${Import1}" ]; then
+   java test.wsdl.interop3.emptysa.EmptySATestCase ${EmptySA}
+echo "======================================================="
+fi
 
 # Import1
 echo Import1

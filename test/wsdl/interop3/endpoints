@@ -4,6 +4,7 @@
 # Where <endpointfile> has the syntax
 #   TESTNAME="<endpoint>"
 #
+EmptySA=http://www.whitemesa.net/interop/r3/emptySA
 Import1=http://www.whitemesa.net/interop/r3/import1
 Import2=http://www.whitemesa.net/interop/r3/import2
 Import3=http://www.whitemesa.net/interop/r3/import3
@@ -12,9 +13,6 @@ Compound2=http://www.whitemesa.net/interop/r3/compound2
 DocLit=http://www.whitemesa.net/interop/r3/doclit
 DocLitParam=http://www.whitemesa.net/interop/r3/doclitparam
 RpcEnc=http://www.whitemesa.net/interop/r3/rpcEnc
-
-# No client for this one yet
-EmptySA=http://www.whitemesa.net/interop/r3/emptySA
 
 # Group E
 
