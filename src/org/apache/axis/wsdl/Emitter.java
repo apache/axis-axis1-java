@@ -85,15 +85,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.StringTokenizer;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * This class produces java files for stubs, skeletons, and types from a
@@ -124,6 +116,8 @@ public class Emitter {
     String packageDirName = "";
     String outputDir = null;
     byte scope = NO_EXPLICIT_SCOPE;
+    private ArrayList classList = new ArrayList();
+    private ArrayList fileList = new ArrayList();
 
     private TypeFactory emitFactory = null;
     private HashMap portTypesInfo = null;
@@ -352,6 +346,20 @@ public class Emitter {
     //
     // Implementation
     //
+
+    /**
+     * This method returns a list of all generated class names.
+     */
+    public List getGeneratedClassNames() {
+        return this.classList;
+    }
+
+    /**
+     * This method returns a list of all generated file names.
+     */
+    public List getGeneratedFileNames() {
+        return this.fileList;
+    }
 
     /**
      * This method returns a set of all the Types in a given PortType.
