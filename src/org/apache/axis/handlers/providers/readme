@@ -1,0 +1,3 @@
+The "Providers" in this folder go along with the Deployment architecture.
+The intention to to have these providers eventually replace the various
+"dispatch" handlers that are being used currently. 
