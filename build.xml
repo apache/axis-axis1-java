@@ -10,7 +10,7 @@ Notes:
 Prerequisites:
 
    jakarta-ant from http://jakarta.apache.org
-   xml-xerces from http://xml.apache.org
+   jdom from http://www.jdom.org
    JavaMail from http://java.sun.com/products/javamail/
    Java Activation Framework
        from http://java.sun.com/products/beans/glasgow/jaf.html
