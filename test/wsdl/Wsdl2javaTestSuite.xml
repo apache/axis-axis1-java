@@ -145,20 +145,11 @@
     <!-- Delete the intermediate files so we recreate over a clean slate -->
     <delete dir="${build.dir}/classes/test/wsdl/roundtrip"/>
     <!-- Recreate Java files from the new WSDL -->
-    <!-- Temporarily changed to remove skeletonDeploy...Scheu
     <wsdl2java url="build/work/test/wsdl/roundtrip/Roundtrip.wsdl"
                output="build/work"
                deployscope="session"
                serverSide="yes"
                skeletonDeploy="yes"
-               noimports="no"
-               verbose="no"
-               testcase="no">
-    -->
-    <wsdl2java url="build/work/test/wsdl/roundtrip/Roundtrip.wsdl"
-               output="build/work"
-               deployscope="session"
-               serverSide="yes"
                noimports="no"
                verbose="no"
                testcase="no">

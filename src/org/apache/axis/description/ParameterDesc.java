@@ -92,7 +92,7 @@ public class ParameterDesc {
     }
 
     /**
-     * "Complete" constructor, suitable for usage in skeleton code
+     * Constructor
      *
      * @param name the parameter's fully qualified XML name
      * @param mode IN, OUT, INOUT
@@ -102,6 +102,19 @@ public class ParameterDesc {
         this.name = name;
         this.mode = mode;
         this.typeQName = typeQName;
+    }
+
+    /**
+     * "Complete" constructor, suitable for usage in skeleton code
+     *
+     * @param name the parameter's fully qualified XML name
+     * @param mode IN, OUT, INOUT
+     * @param typeQName the parameter's XML type QName
+     * @param javaType the parameter's javaType
+     */
+    public ParameterDesc(QName name, byte mode, QName typeQName, Class javaType) {
+        this(name,mode,typeQName);
+        this.javaType = javaType;
     }
 
     public String toString() {

@@ -131,7 +131,7 @@ public class ServiceDesc {
 
     /** Lookup caches */
     private HashMap name2OperationsMap = null;
-    private HashMap qname2OperationMap = null;
+    private HashMap qname2OperationsMap = null;
     private HashMap method2OperationMap = new HashMap();
 
     /** Method names for which we have completed any introspection necessary */
@@ -270,14 +270,13 @@ public class ServiceDesc {
             name2OperationsMap = new HashMap();
         }
 
+        // Add name to name2Operations Map
         String name = operation.getName();
-
         ArrayList overloads = (ArrayList)name2OperationsMap.get(name);
         if (overloads == null) {
             overloads = new ArrayList();
             name2OperationsMap.put(name, overloads);
         }
-
         overloads.add(operation);
     }
 
@@ -357,7 +356,7 @@ public class ServiceDesc {
         // said mapping....
         initQNameMap();
 
-        ArrayList overloads = (ArrayList)qname2OperationMap.get(qname);
+        ArrayList overloads = (ArrayList)qname2OperationsMap.get(qname);
 
         if (overloads == null) {
             if ((style == STYLE_RPC) && (name2OperationsMap != null)) {
@@ -376,18 +375,18 @@ public class ServiceDesc {
     }
 
     private synchronized void initQNameMap() {
-        if (qname2OperationMap == null) {
+        if (qname2OperationsMap == null) {
             loadServiceDescByIntrospection();
 
-            qname2OperationMap = new HashMap();
+            qname2OperationsMap = new HashMap();
             for (Iterator i = operations.iterator(); i.hasNext();) {
                 OperationDesc operationDesc = (OperationDesc) i.next();
                 ArrayList list = 
-                        (ArrayList)qname2OperationMap.get(operationDesc.
+                        (ArrayList)qname2OperationsMap.get(operationDesc.
                                                           getElementQName());
                 if (list == null) {
                     list = new ArrayList();
-                    qname2OperationMap.put(operationDesc.getElementQName(),
+                    qname2OperationsMap.put(operationDesc.getElementQName(),
                                            list);
                 }
                 list.add(operationDesc);
@@ -438,9 +437,14 @@ public class ServiceDesc {
                         param.setJavaType(type);
                         param.setTypeQName(typeQName);
                     } else {
-                        // A type was specified - see if they match
-                        Class paramClass = tm.getClassForQName(
-                                param.getTypeQName());
+                        // A type qname was specified - see if they match
+                        
+                        // Use the specified javaType or get one 
+                        // from the type mapping registry.
+                        Class paramClass = param.getJavaType();
+                        if (paramClass == null) {
+                            paramClass = tm.getClassForQName(param.getTypeQName());
+                        }
 
                         // This is a match if the paramClass is somehow
                         // convertable to the "real" parameter type.  If not,
@@ -589,11 +593,15 @@ public class ServiceDesc {
                 }
             }
             try {
-                OperationDesc skelDesc =
-                        (OperationDesc)skelMethod.invoke(implClass,
+                List skelList =
+                        (List)skelMethod.invoke(implClass,
                                 new Object [] { methodName });
-                if (skelDesc != null)
-                    addOperationDesc(skelDesc);
+                if (skelList != null) {
+                    Iterator i = skelList.iterator();
+                    while (i.hasNext()) {
+                        addOperationDesc((OperationDesc)i.next());
+                    }
+                }
             } catch (IllegalAccessException e) {
                 return;
             } catch (IllegalArgumentException e) {
