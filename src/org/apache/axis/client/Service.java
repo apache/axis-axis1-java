@@ -60,6 +60,7 @@ import org.apache.axis.AxisEngine;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.WSDLUtils;
 import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Document;
 
@@ -81,14 +82,16 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Proxy;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.Remote;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
-import java.lang.reflect.Proxy;
 
 /**
  * Axis' JAXRPC Dynamic Invoation Interface implementation of the Service
@@ -279,23 +282,67 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
     }
 
     /**
-     * Not implemented yet
+     * Return either an instance of a generated stub, if it can be
+     * found, or a dynamic proxy for the given proxy interface.
      *
-     * @param  portName        ...
-     * @param  proxyInterface  ...
-     * @return java.rmi.Remote ...
+     * @param  portName        The name of the service port
+     * @param  proxyInterface  The Remote object returned by this
+     *         method will also implement the given proxyInterface
+     * @return java.rmi.Remote The stub implementation.
      * @throws ServiceException If there's an error
      */
     public Remote getPort(QName portName, Class proxyInterface)
                            throws ServiceException {
-        return getPort(null, portName, proxyInterface);
+        // First, try to find a generated stub.  If that
+        // returns null, then find a dynamic stub.
+        Remote stub = getGeneratedStub(portName, proxyInterface);
+        return stub != null ? stub : getPort(null, portName, proxyInterface);
     }
 
     /**
-     * Not implemented yet
+     * With the proxyInterface and the service's portName, we have
+     * ALMOST enough info to find a generated stub.  The generated
+     * stub is named after the binding, which we can get from the
+     * service's port.  This binding is likely in the same namespace
+     * (ie, package) that the proxyInterface is in.  So try to find
+     * and instantiate <proxyInterfacePackage>.<bindingName>Stub.
+     * If it doesn't exist, return null.
+     */
+    private Remote getGeneratedStub(QName portName, Class proxyInterface) {
+        try {
+            String pkg = proxyInterface.getName();
+            pkg = pkg.substring(0, pkg.lastIndexOf('.'));
+            Port port = wsdlService.getPort(portName.getLocalPart());
+            String binding = port.getBinding().getQName().getLocalPart();
+            ClassLoader classLoader =
+              Thread.currentThread().getContextClassLoader();
+            Class stubClass = classLoader.loadClass(
+                    pkg + "." + binding + "Stub");
+            if (proxyInterface.isAssignableFrom(stubClass)) {
+                Class[] formalArgs = {javax.xml.rpc.Service.class};
+                Object[] actualArgs = {this};
+                Constructor ctor = stubClass.getConstructor(formalArgs);
+                Stub stub = (Stub) ctor.newInstance(actualArgs);
+                stub._setProperty(
+                        Stub.ENDPOINT_ADDRESS_PROPERTY,
+                        WSDLUtils.getAddressFromPort(port));
+                return (Remote) stub;
+            }
+            else {
+                return null;
+            }
+        }
+        catch (Throwable t) {
+            return null;
+        }
+    } // getGeneratedStub
+
+    /**
+     * Return a dynamic proxy for the given proxy interface.
      *
-     * @param  proxyInterface  ...
-     * @return java.rmi.Remote ...
+     * @param  proxyInterface  The Remote object returned by this
+     * method will also implement the given proxyInterface
+     * @return java.rmi.Remote The stub implementation
      * @throws ServiceException If there's an error
      */
     public Remote getPort(Class proxyInterface) throws ServiceException {
