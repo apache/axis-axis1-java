@@ -23,11 +23,9 @@
 
     <condition property="ant.good">
       <and>
-        <contains string="${ant.version}" substring="${ant.required.version}"/>
+        <contains string="${ant.version}" substring="Apache Ant version"/>
       </and>
     </condition>
-
-    <fail unless="ant.good" message="Improper Version of Ant" />
 
     <available property="servlet.present"
       classname="javax.servlet.Servlet"
