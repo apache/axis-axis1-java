@@ -73,17 +73,19 @@ import org.apache.axis.client.Transport;
  */
 public class HTTPTransport extends Transport
 {
+    public static final String DEFAULT_TRANSPORT_NAME = "http";
+    
     /**
      * HTTP properties
      */
-    static public String URL = MessageContext.TRANS_URL;
+    public static final String URL = MessageContext.TRANS_URL;
 
     private String cookie;
     private String cookie2;
     private String action;
     
     public HTTPTransport () {
-        transportName = "http";
+        transportName = DEFAULT_TRANSPORT_NAME;
     }
     
     /**
@@ -91,7 +93,7 @@ public class HTTPTransport extends Transport
      */
     public HTTPTransport (String url, String action)
     {
-        transportName = "http";
+        transportName = DEFAULT_TRANSPORT_NAME;
         this.url = url;
         this.action = action;
     }
