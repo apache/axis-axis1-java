@@ -92,15 +92,16 @@ public class SimpleAuthorizationHandler implements Handler {
       Debug.Print( 1, "User: " + userID );
       Debug.Print( 1, "Action: " + action );
 
+      FileReader        fr   = new FileReader( "perms.lst" );
+      LineNumberReader  lnr  = new LineNumberReader( fr );
+      String            line = null ;
+      boolean           done = false ;
+
       if ( userID == null || userID.equals("") )
         throw new AxisFault( "Server.Unauthorized", 
                              "User not authorized",
                              null, null );
 
-      FileReader        fr   = new FileReader( "perms.lst" );
-      LineNumberReader  lnr  = new LineNumberReader( fr );
-      String            line = null ;
-      boolean           done = false ;
       while ( (line = lnr.readLine()) != null ) {
         StringTokenizer  st = new StringTokenizer( line );
         String           u  = null ,
@@ -126,6 +127,8 @@ public class SimpleAuthorizationHandler implements Handler {
     }
     catch( Exception e ) {
       Debug.Print( 1, e );
+      // If no file - just allow everyone!
+      if ( e instanceof FileNotFoundException ) return ;
       if ( !(e instanceof AxisFault) ) e = new AxisFault(e);
       throw (AxisFault) e ;
     }
