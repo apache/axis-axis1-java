@@ -56,6 +56,8 @@ package org.apache.axis.utils ;
 
 import java.util.Hashtable;
 import java.util.Vector;
+import java.util.Set;
+import java.util.HashSet;
 
 /**
  * This subclass of the java Hashtable allows individual 
@@ -100,6 +102,31 @@ public class LockableHashtable extends Hashtable {
     public synchronized void setParent(Hashtable parent)
     {
         this.parent = parent;
+    }
+
+    /**
+     * Gets the parent Hashtable for this object (if any)
+     */
+    public synchronized Hashtable getParent() {
+      return parent;
+    }
+
+    /**
+     * Returns the keys in this hashtable, and its parent chain
+     */
+    public Set getAllKeys() {
+        HashSet set = new HashSet();
+        set.addAll(super.keySet());
+        Hashtable p = parent;
+        while (p != null) {
+            set.addAll(p.keySet());
+            if (p instanceof LockableHashtable) {
+                p = ((LockableHashtable) p).getParent();
+            } else {
+                p = null;
+            }
+        }
+        return set;
     }
 
     /**
