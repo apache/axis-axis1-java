@@ -732,8 +732,8 @@ public class MessageElement extends NodeImpl implements SOAPElement,
     public void addChild(MessageElement el) throws SOAPException
     {
         if (objectValue != null) {
-            SOAPException exc =
-                new SOAPException(Messages.getMessage("valuePresent"));
+            IllegalStateException exc =
+                new IllegalStateException(Messages.getMessage("valuePresent"));
             log.error(Messages.getMessage("valuePresent"), exc);
             throw exc;
         }
