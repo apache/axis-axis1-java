@@ -516,7 +516,17 @@ public class WSDDService
             attrs.addAttribute("", ATTR_STYLE, ATTR_STYLE,
                                "CDATA", style.getName());
         }
+        
+        if (streaming) {
+            attrs.addAttribute("", ATTR_STREAMING, ATTR_STREAMING,
+                               "CDATA", "on");
+        }
 
+        if (sendType != Attachments.SEND_TYPE_NOTSET) {
+            attrs.addAttribute("", ATTR_ATTACHMENT_FORMAT,
+                               ATTR_ATTACHMENT_FORMAT, "CDATA",
+                               AttachmentsImpl.getSendTypeString(sendType));
+        }
         context.startElement(WSDDConstants.QNAME_SERVICE, attrs);
 
         if (desc.getWSDLFile() != null) {
