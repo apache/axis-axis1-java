@@ -2,6 +2,8 @@ package test.wsdl.inout;
 
 import javax.xml.rpc.holders.IntHolder;
 import javax.xml.rpc.holders.StringHolder;
+import test.wsdl.inout.holders.AddressHolder;
+import test.wsdl.inout.holders.PhoneHolder;
 
 public class InoutSOAPBindingImpl implements Inout
 {

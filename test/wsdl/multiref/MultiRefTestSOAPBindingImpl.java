@@ -70,7 +70,7 @@ public class MultiRefTestSOAPBindingImpl implements test.wsdl.multiref.MultiRefT
      *       / \
      *      1   2
      */
-    public int testSimpleTree(test.wsdl.multiref.NodeHolder root) throws java.rmi.RemoteException {
+    public int testSimpleTree(test.wsdl.multiref.holders.NodeHolder root) throws java.rmi.RemoteException {
         Node t = root.value;    // Root of tree 
         Node l = t.getLeft();    // Left side
         Node r = t.getRight();   // Right side
@@ -94,7 +94,7 @@ public class MultiRefTestSOAPBindingImpl implements test.wsdl.multiref.MultiRefT
      *       \ /
      *        3
      */
-    public int testDiamond(test.wsdl.multiref.NodeHolder root) throws java.rmi.RemoteException {
+    public int testDiamond(test.wsdl.multiref.holders.NodeHolder root) throws java.rmi.RemoteException {
         Node t = root.value;    // Root of tree 
         Node l = t.getLeft();    // Left side
         Node r = t.getRight();   // Right side
@@ -116,7 +116,7 @@ public class MultiRefTestSOAPBindingImpl implements test.wsdl.multiref.MultiRefT
      *       / \
      *      1   2   and the children of 1 & 2 are backward references to 0
      */
-    public int testLoop(test.wsdl.multiref.NodeHolder root) throws java.rmi.RemoteException {
+    public int testLoop(test.wsdl.multiref.holders.NodeHolder root) throws java.rmi.RemoteException {
         Node t = root.value;    // Root of tree 
         Node l = t.getLeft();    // Left side
         Node r = t.getRight();   // Right side
@@ -136,7 +136,7 @@ public class MultiRefTestSOAPBindingImpl implements test.wsdl.multiref.MultiRefT
      *        0
      *        and the children of 0 are backward references to 0
      */
-    public int testSelfRef(test.wsdl.multiref.NodeHolder root) throws java.rmi.RemoteException {
+    public int testSelfRef(test.wsdl.multiref.holders.NodeHolder root) throws java.rmi.RemoteException {
         Node t = root.value;    // Root of tree 
         Node l = t.getLeft();    // Left side
         Node r = t.getRight();   // Right side
@@ -151,7 +151,7 @@ public class MultiRefTestSOAPBindingImpl implements test.wsdl.multiref.MultiRefT
     /**
      * Tests that both arguments are the same node & the nodes don't have children
      */
-    public int testSameArgs(test.wsdl.multiref.NodeHolder root1,test.wsdl.multiref.NodeHolder root2)
+    public int testSameArgs(test.wsdl.multiref.holders.NodeHolder root1,test.wsdl.multiref.holders.NodeHolder root2)
         throws java.rmi.RemoteException {
         Node t1 = root1.value;    // Root1 of tree 
         Node t2 = root2.value;    // Root2 of tree 
@@ -171,7 +171,7 @@ public class MultiRefTestSOAPBindingImpl implements test.wsdl.multiref.MultiRefT
      *       \ /
      *        2     where 0 and 1 are the argument nodes.                      
      */
-    public int testArgsRefSameNode(test.wsdl.multiref.NodeHolder root1,test.wsdl.multiref.NodeHolder root2)
+    public int testArgsRefSameNode(test.wsdl.multiref.holders.NodeHolder root1,test.wsdl.multiref.holders.NodeHolder root2)
         throws java.rmi.RemoteException {
         Node t1 = root1.value;    // Root1 of tree 
         Node t2 = root2.value;    // Root2 of tree 
@@ -191,7 +191,7 @@ public class MultiRefTestSOAPBindingImpl implements test.wsdl.multiref.MultiRefT
     /**
      * Tests for two node arguments that reference each other.
      */
-    public int testArgsRefEachOther(test.wsdl.multiref.NodeHolder root1,test.wsdl.multiref.NodeHolder root2)
+    public int testArgsRefEachOther(test.wsdl.multiref.holders.NodeHolder root1,test.wsdl.multiref.holders.NodeHolder root2)
         throws java.rmi.RemoteException {
         Node t1 = root1.value;    // Root1 of tree 
         Node t2 = root2.value;    // Root2 of tree 

@@ -6,6 +6,8 @@
  */
 
 package test.wsdl.nested;
+import test.wsdl.nested.holders.PEADDRESSHolder;
+import test.wsdl.nested.holders.RETURNHolder;
 
 public class Nested2BindingImpl implements test.wsdl.nested.Nested2PortType {
     public void nestedSvc2(java.lang.String cUSTOMERNO, java.lang.String pIDISTRCHAN, java.lang.String pIDIVISION, java.lang.String pIPASSBUFFER, java.lang.String pISALESORG, PEADDRESSHolder pEADDRESS, RETURNHolder rETURN) throws java.rmi.RemoteException {

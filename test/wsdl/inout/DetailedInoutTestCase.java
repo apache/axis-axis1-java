@@ -10,6 +10,8 @@ import javax.xml.rpc.ServiceException;
 
 import javax.xml.rpc.holders.IntHolder;
 import javax.xml.rpc.holders.StringHolder;
+import test.wsdl.inout.holders.AddressHolder;
+import test.wsdl.inout.holders.PhoneHolder;
 
 /**
  * This class shows how to use the ServiceClient's ability to

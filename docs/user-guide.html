@@ -711,20 +711,22 @@ behavior, JAX-RPC specifies the use of holder classes.&nbsp; A holder class
 is simply a class that contains an instance of its type.&nbsp; For example,
 the holder for the Phone class would be:</p>
 <pre class="example">
+package samples.addr.holders;
 public final class PhoneHolder implements javax.xml.rpc.holders.Holder {
-    public Phone value;
+    public samples.addr.Phone value;
 
     public PhoneHolder()
     {
     }
 
-    public PhoneHolder(Phone value) {
+    public PhoneHolder(samples.addr.Phone value) {
         this.value = value;
     }
 }
 </pre>
 <p>A holder class is <b>only</b> generated for a type if that type is used as
-an inout or out parameter.</p>
+an inout or out parameter.  Note that the holder class has the suffix "Holder" 
+appended to the class name, and it is generated in a sub-package with the "holders". </p>
 <p>The holder classes for the primitive types can be found in javax.xml.rpc.holders.</p>
 <h4>PortTypes</h4>
 <p>The Service Definition Interface (SDI) is the interface that's derived
