@@ -111,6 +111,14 @@ public class JAFDataHandlerSerializer implements Serializer {
         DataHandler dh= (DataHandler)value;
         //Add the attachment content to the message.
         Attachments attachments= context.getCurrentMessage().getAttachmentsImpl();
+
+        if (attachments == null) {
+            // Attachments apparently aren't supported.
+            // Instead of throwing NullPointerException like
+            // we used to do, throw something meaningful.
+            throw new IOException(JavaUtils.getMessage("noAttachments"));
+        }
+
         Part attachmentPart= attachments.createAttachmentPart(dh);
 
         AttributesImpl attrs = new AttributesImpl();
