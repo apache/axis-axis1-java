@@ -89,6 +89,14 @@ public class FileGenTestCase extends junit.framework.TestCase {
         set.add("ReferenceSoapBindingStub.java");
         return set;
     }
+    
+    /**
+     * List of files which may or may not be generated.
+     */
+    protected Set mayExist() {
+        HashSet set = new HashSet();
+        return set;
+    }
 
     /**
      * The directory containing the files that should exist.
@@ -102,6 +110,7 @@ public class FileGenTestCase extends junit.framework.TestCase {
     public void testFileGen() throws IOException {
         String rootDir = rootDir();
         Set shouldExist = shouldExist();
+        Set mayExist = mayExist();
 
         // open up the output directory and check what files exist.
         File outputDir = new File(rootDir);
@@ -113,6 +122,9 @@ public class FileGenTestCase extends junit.framework.TestCase {
         for (int i = 0; i < files.length; ++i) {
             if (shouldExist.contains(files[i])) {
                 shouldExist.remove(files[i]);
+            } 
+            else if (mayExist.contains(files[i])) {
+                mayExist.remove(files[i]);
             }
             else {
                 shouldNotExist.add(files[i]);

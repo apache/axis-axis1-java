@@ -94,6 +94,15 @@ public class VerifyFilesTestCase extends FileGenTestCase {
     } // shouldExist
 
     /**
+     * List of files which may be generated.
+     */
+    protected Set mayExist() {
+        HashSet set = new HashSet();
+        set.add("SharedName_Type_Helper.java");
+        return set;
+    } // shouldExist
+
+    /**
      * The directory containing the files that should exist.
      */
     protected String rootDir() {

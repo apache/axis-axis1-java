@@ -101,6 +101,7 @@ public abstract class JavaWriter implements Writer {
     protected PrintWriter pw;
     protected String      message;
     protected String      type;
+    protected boolean     embeddedCode = false;
 
     /**
      * Constructor.  Use this one to pass in a Type.  Type contains QName and java name.
@@ -145,9 +146,10 @@ public abstract class JavaWriter implements Writer {
     } // ctor
 
     /**
-     * Generate as an inner class
+     * Generate into an existing class with PrinterWriter pw
      */
     public void write(PrintWriter pw) throws IOException {
+        embeddedCode = true;  // Indicated embedded
         String packageDirName = namespaces.toDir(packageName);
         String path = packageDirName + fileName;
         String fqClass = packageName + "." + className;

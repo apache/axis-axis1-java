@@ -74,10 +74,11 @@ public class TypeDesc {
 
     /**
      * Static function for centralizing access to type metadata for a
-     * given class.
+     * given class.  
      *
-     * Right now this just checks for a static getTypeDesc() method on the
-     * class, but we will eventually extend this to provide for external
+     * This checks for a static getTypeDesc() method on the
+     * class or _Helper class.
+     * Eventually we may extend this to provide for external
      * metadata config (via files sitting in the classpath, etc).
      *
      * (Could introduce a cache here for speed as an optimization)
@@ -87,9 +88,17 @@ public class TypeDesc {
         try {
             Method getTypeDesc =
                     cls.getMethod("getTypeDesc", noClasses);
-            if (getTypeDesc != null)
+            if (getTypeDesc == null) {
+                // Look for a Helper Class
+                ClassLoader cl = Thread.currentThread().getContextClassLoader();
+                Class helper = Class.forName(cls.getName() + "_Helper", true, cl);
+                getTypeDesc =
+                    helper.getMethod("getTypeDesc", noClasses);
+            }
+            if (getTypeDesc != null) {
                 return (TypeDesc)getTypeDesc.invoke(null,
                                                     BeanSerializer.noArgs);
+            }
         } catch (Exception e) {
         }
         return null;
