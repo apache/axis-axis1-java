@@ -8,6 +8,12 @@ owner (if any) in "<>" brackets.  Example:
 
                  * <Glen> Write TO DO list
 
+1.0 MUST-DO
+-----------
+! <> see bugzilla scrub below
+! <> fix javadocs
+
+
 1.0 BUGZILLA SCRUB
 ------------------
 Here is our initial scrub of bugzilla bugs for 1.0.  We've come up with 5 categories:
