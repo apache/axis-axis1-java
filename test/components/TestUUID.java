@@ -83,7 +83,7 @@ public class TestUUID extends TestCase {
         long endTime = 0;
         UUIDGen uuidgen = null;
 
-        uuidgen = UUIDGenFactory.getUUIDGen(null);
+        uuidgen = UUIDGenFactory.getUUIDGen();
         startTime = System.currentTimeMillis();
         for (int i = 1; i <= 10; ++i) {
             String u = uuidgen.nextUUID();
@@ -91,7 +91,5 @@ public class TestUUID extends TestCase {
         }
         endTime = System.currentTimeMillis();
         System.out.println("UUIDGen took " + (endTime - startTime) + " milliseconds");
-
-        UUIDGenFactory.destroyUUIDGen(uuidgen);
     }
 }

@@ -59,10 +59,12 @@
  *  (http://sourceforge.net/projects/juddi/)
  * 
  */
-
 package org.apache.axis.components.uuid;
 
 import org.apache.axis.i18n.Messages;
+import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.AxisProperties;
+import org.apache.commons.logging.Log;
 
 /**
  * A Universally Unique Identifier (UUID) is a 128 bit number generated
@@ -76,44 +78,19 @@ import org.apache.axis.i18n.Messages;
  * @since   JDK1.2.2
  */
 public abstract class UUIDGenFactory {
-    private static final String defaultUUIDGenClassName = "org.apache.axis.components.uuid.SimpleUUIDGen";
+    protected static Log log = LogFactory.getLog(UUIDGenFactory.class.getName());
 
-    /**
-     * getInstance
-     *
-     * Returns the singleton instance of UUIDGen
-     */
-    public static UUIDGen getUUIDGen(String uuidgenClassName) {
-        UUIDGen uuidgen = null;
-
-        if ((uuidgenClassName == null) || (uuidgenClassName.length() == 0)) {
-            // use the default UUIDGen implementation
-            uuidgenClassName = defaultUUIDGenClassName;
-        }
-
-        Class uuidgenClass = null;
-        try {
-            // instruct the class loader to load the UUIDGen implementation
-            uuidgenClass = java.lang.Class.forName(uuidgenClassName);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(Messages.getMessage("uuidGenFactoryCNFE00", uuidgenClassName));
-        }
-
-        try {
-            // try to instantiate the UUIDGen subclass
-            uuidgen = (UUIDGen) uuidgenClass.newInstance();
-        } catch (java.lang.Exception e) {
-            throw new RuntimeException(Messages.getMessage("uuidGenFactoryException02", uuidgenClass.getName(), e.getMessage()));
-        }
-
-        return uuidgen;
+    static {
+        AxisProperties.setClassOverrideProperty(Compiler.class, "axis.UUIDGenerator");
+        AxisProperties.setClassDefault(UUIDGen.class, "org.apache.axis.components.uuid.SimpleUUIDGen");
     }
 
     /**
-     * Release any aquired external resources and stop any background threads.
+     * Returns an instance of UUIDGen
      */
-    public static void destroyUUIDGen(UUIDGen uuidgen) {
-        if (uuidgen != null)
-            uuidgen.destroy();
+    public static UUIDGen getUUIDGen() {
+        UUIDGen uuidgen = (UUIDGen) AxisProperties.newInstance(UUIDGen.class);
+        log.debug("axis.UUIDGenerator:" + uuidgen.getClass().getName());
+        return uuidgen;
     }
 }
