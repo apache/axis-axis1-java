@@ -105,7 +105,7 @@ public class Debug {
   public static void Print( int level, Exception exp ) {
     if ( debugLevel < level ) return ;
     try {
-      String msg = "Exception: " + exp.getMessage() ;
+      String msg = "Exception: " + exp ;
       if ( toScreen )
         System.err.println( msg );
       if ( toFile ) {
