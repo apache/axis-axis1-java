@@ -50,7 +50,9 @@ Copyright:
     <delete dir="${build.dir}/work/${componentName}"/>
 </target>
 
-<target name="copy" depends="setenv"/>
+<target name="copy" depends="setenv">
+    <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${axis.home}/test/wsdl/filegen" antfile="build.xml" target="compile"/>
+</target>
 
 <target name="compile" depends="copy">
   <echo message="Compiling test.wsdl.header"/>
