@@ -261,8 +261,9 @@ public class DeserializerImpl extends SOAPHandler
         // Keep track of our active deserializers.  This enables us to figure
         // out whether or not we're really done in the case where we get to
         // our end tag, but still have open hrefs for members.
-        activeDeserializers.add(dSer);
-        
+    	if (activeDeserializers != null) {
+    		activeDeserializers.add(dSer);
+    	}        
         // In concert with the above, we make sure each field deserializer
         // lets us know when it's done so we can take it off our list.
         dSer.registerValueTarget(new CallbackTarget(this, dSer));
