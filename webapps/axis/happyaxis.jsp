@@ -17,7 +17,7 @@
      */
     public String getInstallHints(HttpServletRequest request) {
         String hint=
-            "On Tomcat 4.x, you may need to put libraries that contain "
+            "<B><I>Note:</I></B> On Tomcat 4.x, you may need to put libraries that contain "
             +"java.* or javax.* packages into CATALINA_HOME/commons/lib";
         return hint;
     }
@@ -27,12 +27,11 @@
      * @param classname
      * @return true iff present
      */
-    boolean classExists(String classname) {
+    Class classExists(String classname) {
         try {
-            Class t = Class.forName(classname);
-            return true;
+            return Class.forName(classname);
         } catch (ClassNotFoundException e) {
-            return false;
+            return null;
         }
     }
 
@@ -69,10 +68,12 @@
                    String category,
                    String classname,
                    String jarFile,
+                   String description,
                    String errorText,
                    String homePage) throws IOException {
 
-       if(!classExists(classname))  {
+       Class clazz = classExists(classname);
+       if(clazz == null)  {
             String url="";
             if(homePage!=null) {
                 url="<br>  See <a href="+homePage+">"+homePage+"</a>";
@@ -84,9 +85,35 @@
                     +"<p>");
             return 1;
         } else {
-            out.write("Found "+jarFile+"<br>");
+            String location = getLocation(out, clazz);
+            if(location == null)
+                out.write("Found "+ description + " (" + classname + ")<br>");
+            else
+                out.write("Found "+ description + " (" + classname + ") at " + location + "<br>");
             return 0;
         }
+    }
+
+
+    String getLocation(JspWriter out, 
+                       Class clazz) throws IOException {
+        try {
+            java.net.URL url = clazz.getProtectionDomain().getCodeSource().getLocation();
+            String location = url.toString();
+            if(location.startsWith("jar")) {
+                url = ((java.net.JarURLConnection)url.openConnection()).getJarFileURL();
+                location = url.toString();
+            } 
+            
+            if(location.startsWith("file")) {
+                java.io.File file = new java.io.File(url.getFile());
+                return file.getAbsolutePath();
+            } else {
+                return url.toString();
+            }
+        } catch (Throwable t){
+        }
+        return null;
     }
 
     /**
@@ -102,12 +129,14 @@
     int needClass(JspWriter out,
                    String classname,
                    String jarFile,
+                   String description,
                    String errorText,
                    String homePage) throws IOException {
         return probeClass(out,
                 "<b>Error</b>",
                 classname,
                 jarFile,
+                description,
                 errorText,
                 homePage);
     }
@@ -125,12 +154,14 @@
     int wantClass(JspWriter out,
                    String classname,
                    String jarFile,
+                   String description,
                    String errorText,
                    String homePage) throws IOException {
         return probeClass(out,
                 "<b>Warning</b>",
                 classname,
                 jarFile,
+                description,
                 errorText,
                 homePage);
     }
@@ -158,6 +189,7 @@
     %>
 <html><head><title>Axis Happiness Page</title></head>
 <body>
+
 <h2>Examining webapp configuration</h2>
 
 <p>
@@ -170,22 +202,26 @@
      */
     needed=needClass(out, "javax.xml.soap.SOAPMessage",
             "saaj.jar",
-            "from Apache or Sun",
+            "SAAJ API",
+            "Axis will not work",
             "http://xml.apache.org/axis/");
 
     needed+=needClass(out, "javax.xml.rpc.Service",
             "jaxrpc.jar",
             "JAX-RPC API",
+            "Axis will not work",
             "http://xml.apache.org/axis/");
 
     needed+=needClass(out, "org.apache.axis.transport.http.AxisServlet",
             "axis.jar",
-            "Apache-Axis itself",
+            "Apache-Axis",
+            "Axis will not work",
             "http://xml.apache.org/axis/");
 
     needed+=needClass(out, "org.apache.commons.logging.Log",
             "commons-logging.jar",
             "Jakarta-commons logging",
+            "Axis will not work",
             "http://jakarta.apache.org/commons/logging.html");
 
     //should we search for a javax.wsdl file here, to hint that it needs
@@ -193,28 +229,36 @@
     needed+=needClass(out, "com.ibm.wsdl.factory.WSDLFactoryImpl",
             "wsdl4j.jar",
             "IBM's WSDL4Java",
+            "Axis will not work",
             null);
 
+    needed+=needClass(out, "javax.xml.parsers.SAXParserFactory",
+            "xerces.jar",
+            "JAXP implementation",
+            "Axis will not work",
+            "http://xml.apache.org/xerces-j/");
+
+    wanted=wantClass(out,"javax.activation.DataHandler",
+            "activation.jar",
+            "Activation API",
+            "Axis will not work",
+            "http://java.sun.com/products/javabeans/glasgow/jaf.html");
 %>
 <h3>Optional Components</h3>
 <%
     /*
      * now the stuff we can live without
      */
-
-    wanted=wantClass(out,"javax.activation.DataHandler",
-            "activation.jar",
-            "Soap With Attachments will not work.",
-            "http://java.sun.com/products/javabeans/glasgow/jaf.html");
-
     wanted+=wantClass(out,"javax.mail.internet.MimeMessage",
             "mail.jar",
-            "Soap With Attachments will not work;",
+            "Mail API",
+            "Attachments will not work",
             "http://java.sun.com/products/javamail/");
 
     wanted+=wantClass(out,"org.apache.xml.security.Init",
             "xmlsec.jar",
-            "XML security is not supported;",
+            "XML Security API",
+            "Attachments will not work",
             "http://xml.apache.org/security/");
 
     /*
@@ -226,29 +270,31 @@
 
     /* add more libraries here */
 
+    out.write("<h3");
     //is everythng we need here
     if(needed==0) {
        //yes, be happy
-        out.write("<h2 align=center><i>The core axis libraries are present</i></h2>");
+        out.write("<i>The core axis libraries are present. </i>");
     } else {
         //no, be very unhappy
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        out.write("<h2 align=center><i>"
+        out.write("<i>"
                 +needed
                 +" core axis librar"
                 +(needed==1?"y is":"ies are")
-                +" missing</i></h2>");
+                +" missing</i>");
     }
     //now look at wanted stuff
     if(wanted>0) {
-        out.write("<h2 align=center>"
+        out.write("<i>"
                 +wanted
                 +" optional axis librar"
                 +(wanted==1?"y is":"ies are")
-                +" missing</i></h2>");
+                +" missing</i>");
     } else {
-        out.write("<h2 align=center>The optonal components are present</h2>");
+        out.write("The optional components are present.");
     }
+    out.write("</h3>");
     //hint if anything is missing
     if(needed>0 || wanted>0 ) {
        out.write(getInstallHints(request));
@@ -256,11 +302,24 @@
 
     %>
     <p>
-    <hr>
-    <p>
-    Even if everything this page probes for is present, there is no guarantee your
+    <B><I>Note:</I></B> Even if everything this page probes for is present, there is no guarantee your
     web service will work, because there are many configuration options that we do
     not check for. These tests are <i>necessary</i> but not <i>sufficient</i>
+    <hr>
+    <h2>Examining System Properties</h2>
+<%
+    /** 
+     * Dump the system properties
+     */
+    out.write("<pre>");
+    java.util.Enumeration e = System.getProperties().propertyNames();
+    for (;e.hasMoreElements();) {
+        String key = (String) e.nextElement();
+        out.write(key + "=" + System.getProperty(key)+"\n");
+    }
+    out.write("</pre>");
+%>
+
 </body>
 </html>
 
