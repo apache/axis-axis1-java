@@ -306,6 +306,8 @@ Copyright:
           toDir="${build.dest}/org/apache/axis/client"/>
     <copy file="${src.dir}/log4j.properties"
           toDir="${build.dest}"/>
+    <copy file="${src.dir}/simplelog.properties"
+          toDir="${build.dest}"/>
     <copy file="${src.dir}/org/apache/axis/utils/axisNLS.properties"
           toDir="${build.dest}/org/apache/axis/utils"/>
 
@@ -320,6 +322,7 @@ Copyright:
     <jar jarfile="${build.lib}/${name}.jar" basedir="${build.dest}" >
       <include name="org/**" />
       <include name="log4j.properties"/>
+      <include name="simplelog.properties"/>
     </jar>
     <jar jarfile="${build.lib}/${jaxrpc}.jar" basedir="${build.dest}" >
       <include name="javax/**"/>
