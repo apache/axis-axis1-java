@@ -70,6 +70,13 @@ Copyright:
         <mapping namespace="urn:ExtensibilityQuery" package="test.wsdl.extensibility"/>
     </wsdl2java>
 
+    <copy todir="${build.dir}/work/test/wsdl/extensibility" overwrite="yes">
+      <fileset dir="${axis.home}/test/wsdl/extensibility">
+        <include name="*TestCase.java"/>
+        <include name="*Impl.java"/>
+      </fileset>
+    </copy>
+
     <javac srcdir="${build.dir}/work" destdir="${build.dest}"
            debug="${debug}">
       <classpath refid="classpath" />

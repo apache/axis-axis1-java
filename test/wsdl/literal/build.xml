@@ -65,18 +65,18 @@ Copyright:
         <mapping namespace="http://www.PerfectXML.com/NETWebSvcs/BookService" package="test.wsdl.literal"/>
     </wsdl2java>
 
+    <copy todir="${build.dir}/work/test/wsdl/literal" overwrite="yes">
+      <fileset dir="${axis.home}/test/wsdl/literal">
+        <include name="*TestCase.java"/>
+        <include name="*Impl.java"/>
+      </fileset>
+    </copy>
+
     <javac srcdir="${build.dir}/work" destdir="${build.dest}"
            debug="${debug}">
       <classpath refid="classpath" />
       <include name="test/wsdl/literal/*.java" />
     </javac>
-
-    <javac srcdir="${axis.home}" destdir="${build.dest}"
-           debug="${debug}">
-      <classpath refid="classpath" />
-      <include name="test/wsdl/literal/*.java" />
-    </javac>
-
 </target>
 
 <target name="run" >

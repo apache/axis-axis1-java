@@ -62,8 +62,8 @@ Copyright:
         <mapping namespace="urn:CityBBB" package="test.wsdl.wrapped"/>
     </wsdl2java>
 
-    <copy todir="${build.dir}/work/${componentName}" overwrite="yes">
-      <fileset dir="${axis.home}/${componentName}">
+    <copy todir="${build.dir}/work/test/wsdl/wrapped" overwrite="yes">
+      <fileset dir="${axis.home}/test/wsdl/wrapped">
         <include name="*TestCase.java"/>
         <include name="*Impl.java"/>
       </fileset>

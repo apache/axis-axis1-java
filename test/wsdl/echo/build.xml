@@ -62,14 +62,16 @@ Copyright:
         <mapping namespace="http://types.echo.services" package="test.wsdl.echo"/>
     </wsdl2java>
 
+    <copy todir="${build.dir}/work/test/wsdl/echo" overwrite="yes">
+      <fileset dir="${axis.home}/test/wsdl/echo">
+        <include name="*TestCase.java"/>
+        <include name="*Impl.java"/>
+      </fileset>
+    </copy>
+
     <javac srcdir="${build.dir}/work" destdir="${build.dest}"
            debug="${debug}">
       <classpath refid="classpath" />
-      <include name="test/wsdl/echo/*.java" />
-    </javac>
-
-    <javac srcdir="${axis.home}" destdir="${build.dest}"
-           debug="${debug}">
       <include name="test/wsdl/echo/*.java" />
     </javac>
 </target>

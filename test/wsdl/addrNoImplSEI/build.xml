@@ -63,8 +63,7 @@ Copyright:
     <!-- Run WSDL2Java on the new wsdl to generate client side and other artifacts -->
     <!-- Replace the generated Impl with the original Impl that does not implement the SEI -->
     <!--   Compile and run test. -->
-    <delete dir="${build.dir}/classes/test/wsdl/addrNoImplSEI"/>
-    <delete dir="${build.dir}/work/test/wsdl/addrNoImplSEI"/>
+
     <wsdl2java url="${axis.home}/test/wsdl/addrNoImplSEI/AddressBook.wsdl"
                output="${axis.home}/build/work"
                deployscope="session"
@@ -118,12 +117,16 @@ Copyright:
                testcase="no">
         <mapping namespace="urn:AddrNoImplSEI" package="test.wsdl.addrNoImplSEI"/>
     </wsdl2java>
+
     <!-- Copy over original classes -->
     <copy todir="${build.dir}/work/test/wsdl/addrNoImplSEI" overwrite="yes">
-      <fileset dir="${test.dir}/wsdl/addrNoImplSEI">
-        <include name="*.java"/>
+      <fileset dir="${axis.home}/test/wsdl/addrNoImplSEI">
+        <include name="*TestCase.java"/>
+        <include name="*Impl.java"/>
+        <include name="Main.java"/>
       </fileset>
     </copy>
+
     <javac srcdir="${build.dir}/work" destdir="${build.dest}"
            debug="${debug}">
         <classpath refid="classpath" />

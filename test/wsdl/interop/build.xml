@@ -545,20 +545,10 @@ Copyright:
     </wsdl2java>
     -->
 
-    <copy todir="${build.dir}/work/test/wsdl/interop3" overwrite="yes">
-      <fileset dir="${test.dir}/wsdl/interop3">
+    <copy todir="${build.dir}/work/test/wsdl/interop" overwrite="yes">
+      <fileset dir="${axis.home}/test/wsdl/interop">
+        <include name="*TestCase.java"/>
         <include name="**/*Impl.java"/>
-      </fileset>
-      <fileset dir="${test.dir}/wsdl/interop3">
-        <include name="**/*TestCase.java"/>
-        <exclude name="**/EmptySATestCase.java"/>
-        <exclude name="**/SalesRankNPrice_ServiceTestCase.java"/>
-      </fileset>
-      <fileset dir="${test.dir}/wsdl/interop3">
-        <include name="**/Main.java"/>
-      </fileset>
-      <fileset dir="${test.dir}/wsdl/interop3">
-        <include name="sequence/SequenceInfo.java"/>
       </fileset>
     </copy>
 

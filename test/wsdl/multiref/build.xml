@@ -66,15 +66,9 @@ Copyright:
 
     <copy todir="${build.dir}/work/test/wsdl/multiref" overwrite="yes">
       <fileset dir="${axis.home}/test/wsdl/multiref">
-        <include name="**/*Impl.java"/>
-      </fileset>
-      <fileset dir="${axis.home}/test/wsdl/multiref">
-        <include name="**/*TestCase.java"/>
-        <exclude name="**/EmptySATestCase.java"/>
-        <exclude name="**/SalesRankNPrice_ServiceTestCase.java"/>
-      </fileset>
-      <fileset dir="${axis.home}/test/wsdl/multiref">
-        <include name="**/Main.java"/>
+        <include name="*TestCase.java"/>
+        <include name="*Impl.java"/>
+        <include name="Main.java"/>
       </fileset>
     </copy>
 

@@ -135,9 +135,9 @@ Copyright:
     </wsdl2java>
 
     <copy todir="${build.dir}/work/test/wsdl/roundtrip" overwrite="yes">
-      <fileset dir="${test.dir}/wsdl/roundtrip">
-        <include name="RoundtripTestServiceTestCase.java"/>
-        <include name="RoundtripTestSoapBindingImpl.java"/>
+      <fileset dir="${axis.home}/test/wsdl/roundtrip">
+        <include name="*TestCase.java"/>
+        <include name="*Impl.java"/>
       </fileset>
     </copy>
 

@@ -66,17 +66,11 @@ Copyright:
         <mapping namespace="urn:ref.types" package="test.wsdl.refattr"/>
     </wsdl2java>
 
+
     <copy todir="${build.dir}/work/test/wsdl/refattr" overwrite="yes">
       <fileset dir="${axis.home}/test/wsdl/refattr">
-        <include name="**/*Impl.java"/>
-      </fileset>
-      <fileset dir="${axis.home}/test/wsdl/refattr">
-        <include name="**/*TestCase.java"/>
-        <exclude name="**/EmptySATestCase.java"/>
-        <exclude name="**/SalesRankNPrice_ServiceTestCase.java"/>
-      </fileset>
-      <fileset dir="${axis.home}/test/wsdl/refattr/">
-        <include name="**/Main.java"/>
+        <include name="*TestCase.java"/>
+        <include name="*Impl.java"/>
       </fileset>
     </copy>
 
