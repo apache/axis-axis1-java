@@ -461,19 +461,8 @@ public class Message extends javax.xml.soap.SOAPMessage
             }
         }
 
-        // The origional logic is very simple
-        // String ret = sc.getContentType() + "; charset="+XMLUtils.getEncoding().toLowerCase();
-        // The following logic is devised to utilize CHARACTER_SET_ENCODING property from SAAJ 1.2.
-        String encoding = null;
-        try {
-            encoding = (String) getProperty(SOAPMessage.CHARACTER_SET_ENCODING);
-        } catch (SOAPException e) {
-        }
-        if (encoding == null) {
-            encoding = XMLUtils.getEncoding().toLowerCase();
-        }
-
-        String ret = sc.getContentType() + "; charset=" + encoding;
+        String encoding = XMLUtils.getEncoding(this, msgContext);;
+        String ret = sc.getContentType() + "; charset=" + encoding.toLowerCase();
         
         // Support of SOAP 1.2 HTTP binding
         if (soap12) {
@@ -495,7 +484,7 @@ public class Message extends javax.xml.soap.SOAPMessage
      *              the length being calculated
      */
     public long getContentLength() throws org.apache.axis.AxisFault {
-        long ret = mSOAPPart.getAsBytes().length;
+        long ret = mSOAPPart.getContentLength();
         if (mAttachments != null && 0 < mAttachments.getAttachmentCount()) {
             ret = mAttachments.getContentLength();
         }
@@ -522,10 +511,7 @@ public class Message extends javax.xml.soap.SOAPMessage
          //Do it the old fashion way.
         if (mAttachments == null || 0 == mAttachments.getAttachmentCount()) {
             try {
-                String charEncoding = (String)getProperty(SOAPMessage.CHARACTER_SET_ENCODING);
-                if(charEncoding == null){
-                    charEncoding = "UTF-8";
-                }
+                String charEncoding = XMLUtils.getEncoding(this, msgContext);;
                 // write the xml declaration header
                 String incXMLDecl = (String)getProperty(SOAPMessage.WRITE_XML_DECLARATION);
                 if(incXMLDecl == null){
@@ -622,7 +608,7 @@ public class Message extends javax.xml.soap.SOAPMessage
         saveRequired = false;
         try {
             /* Fix for Bug 16418 - Start from scratch */ 
-            getSOAPPartAsString();
+            mSOAPPart.saveChanges();
         } catch (AxisFault axisFault) {
             log.error(Messages.getMessage("exception00"), axisFault);
         }

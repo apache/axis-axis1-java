@@ -15,39 +15,100 @@
  */
 package org.apache.axis.components.encoding;
 
+import org.apache.axis.i18n.Messages;
+
+import java.io.IOException;
+import java.io.Writer;
+
 /**
  * UTF-8 Encoder.
- *
+ * 
  * @author <a href="mailto:jens@void.fm">Jens Schumann</a>
- *
  * @see <a href="http://encoding.org">encoding.org</a>
  * @see <a href="http://czyborra.com/utf/#UTF-8">UTF 8 explained</a>
- *
  */
 class UTF8Encoder extends AbstractXMLEncoder {
+    /**
+     * gets the encoding supported by this encoder
+     * 
+     * @return string
+     */
     public String getEncoding() {
         return XMLEncoderFactory.ENCODING_UTF_8;
     }
 
-    public boolean needsEncoding(char c) {
-        return c > 0x7F;
-    }
-
-    public void appendEncoded(EncodedByteArray out, char c) {
-        if (c < 0x80) {
-            out.append(c);
-        } else if (c < 0x800) {
-            out.append((0xC0 | c >> 6));
-            out.append((0x80 | c & 0x3F));
-        } else if (c < 0x10000) {
-            out.append((0xE0 | c >> 12));
-            out.append((0x80 | c >> 6 & 0x3F));
-            out.append((0x80 | c & 0x3F));
-        } else if (c < 0x200000) {
-            out.append((0xF0 | c >> 18));
-            out.append((0x80 | c >> 12 & 0x3F));
-            out.append((0x80 | c >> 6 & 0x3F));
-            out.append((0x80 | c & 0x3F));
+    /**
+     * write the encoded version of a given string
+     * 
+     * @param writer    writer to write this string to
+     * @param xmlString string to be encoded
+     */
+    public void writeEncoded(Writer writer, String xmlString)
+            throws IOException {
+        if (xmlString == null) {
+            return;
+        }
+        char[] characters = xmlString.toCharArray();
+        char character;
+        for (int i = 0; i < characters.length; i++) {
+            character = characters[i];
+            switch (character) {
+                // we don't care about single quotes since axis will
+                // use double quotes anyway
+                case '&':
+                    writer.write(AMP);
+                    break;
+                case '"':
+                    writer.write(QUOTE);
+                    break;
+                case '<':
+                    writer.write(LESS);
+                    break;
+                case '>':
+                    writer.write(GREATER);
+                    break;
+                case '\n':
+                    writer.write(LF);
+                    break;
+                case '\r':
+                    writer.write(CR);
+                    break;
+                case '\t':
+                    writer.write(TAB);
+                    break;
+                default:
+                    if (character < 0x20) {
+                        throw new IllegalArgumentException(Messages.getMessage(
+                                "invalidXmlCharacter00",
+                                Integer.toHexString(character),
+                                xmlString));
+                    } else if (character > 0x7F) {
+                        writer.write("&#x");
+                        writer.write(Integer.toHexString(character).toUpperCase());
+                        writer.write(";");
+                        /*
+			TODO: Try fixing this block instead of code above.
+                        if (character < 0x80) {
+                            writer.write(character);
+                        } else if (character < 0x800) {
+                            writer.write((0xC0 | character >> 6));
+                            writer.write((0x80 | character & 0x3F));
+                        } else if (character < 0x10000) {
+                            writer.write((0xE0 | character >> 12));
+                            writer.write((0x80 | character >> 6 & 0x3F));
+                            writer.write((0x80 | character & 0x3F));
+                        } else if (character < 0x200000) {
+                            writer.write((0xF0 | character >> 18));
+                            writer.write((0x80 | character >> 12 & 0x3F));
+                            writer.write((0x80 | character >> 6 & 0x3F));
+                            writer.write((0x80 | character & 0x3F));
+                        }
+                        */
+                    } else {
+                        writer.write(character);
+                    }
+                    break;
+            }
         }
     }
 }

@@ -20,10 +20,7 @@ import java.io.Serializable;
 
 public class Mapping implements Serializable {
     private String namespaceURI;
-    private int namespaceHash;
-
     private String prefix;
-    private int prefixHash;
 
     public Mapping (String namespaceURI, String prefix) {
         setPrefix(prefix);
@@ -34,26 +31,15 @@ public class Mapping implements Serializable {
         return namespaceURI;
     }
 
-    public int getNamespaceHash() {
-        return namespaceHash;
-    }
-
     public void setNamespaceURI (String namespaceURI) {
-        this.namespaceURI = namespaceURI;
-        this.namespaceHash = namespaceURI.hashCode();
+        this.namespaceURI = namespaceURI.intern();
     }
 
     public String getPrefix() {
         return prefix;
     }
 
-    public int getPrefixHash() {
-        return prefixHash;
-    }
-
     public void setPrefix (String prefix) {
-        this.prefix = prefix;
-        this.prefixHash = prefix.hashCode();
+        this.prefix = prefix.intern();
     }
-
 }

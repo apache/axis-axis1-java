@@ -17,8 +17,6 @@ package org.apache.axis.components.encoding;
 
 import org.apache.axis.utils.Messages;
 
-import java.io.UnsupportedEncodingException;
-
 /**
  *
  * Abstract class for XML String encoders.
@@ -33,13 +31,19 @@ import java.io.UnsupportedEncodingException;
  *
  */
 public abstract class AbstractXMLEncoder implements XMLEncoder {
-    private static final byte[] AMP = "&amp;".getBytes();
-    private static final byte[] QUOTE = "&quot;".getBytes();
-    private static final byte[] LESS = "&lt;".getBytes();
-    private static final byte[] GREATER = "&gt;".getBytes();
-    private static final byte[] LF = "\n".getBytes();
-    private static final byte[] CR = "\r".getBytes();
-    private static final byte[] TAB = "\t".getBytes();
+    protected static final String AMP = "&amp;";
+    protected static final String QUOTE = "&quot;";
+    protected static final String LESS = "&lt;";
+    protected static final String GREATER = "&gt;";
+    protected static final String LF = "\n";
+    protected static final String CR = "\r";
+    protected static final String TAB = "\t";
+
+    /**
+     * gets the encoding supported by this encoder
+     * @return string
+     */
+    public abstract String getEncoding();
 
     /**
      * Encode a string
@@ -51,7 +55,7 @@ public abstract class AbstractXMLEncoder implements XMLEncoder {
             return "";
         }
         char[] characters = xmlString.toCharArray();
-        EncodedByteArray out = null;
+        StringBuffer out = null;
         char character;
 
         for (int i = 0; i < characters.length; i++) {
@@ -104,11 +108,6 @@ public abstract class AbstractXMLEncoder implements XMLEncoder {
                 default:
                     if (character < 0x20) {
                         throw new IllegalArgumentException(Messages.getMessage("invalidXmlCharacter00", Integer.toHexString(character), xmlString));
-                    } else if (needsEncoding(character)) {
-                        if (out == null) {
-                            out = getInitialByteArray(xmlString, i);
-                        }
-                        appendEncoded(out, character);
                     } else {
                         if (out != null) {
                             out.append(character);
@@ -120,26 +119,10 @@ public abstract class AbstractXMLEncoder implements XMLEncoder {
         if (out == null) {
             return xmlString;
         }
-        try {
-            return out.toString(getEncoding());
-        } catch (UnsupportedEncodingException e) {
-            // we tested it ealier, should work.
-            throw new IllegalStateException(Messages.getMessage("encodingDisappeared00", getEncoding()));
-        }
+        return out.toString();
     }
 
-    public abstract String getEncoding();
-
-    public abstract boolean needsEncoding(char c);
-
-    public abstract void appendEncoded(EncodedByteArray out, char c);
-
-    private EncodedByteArray getInitialByteArray(String aXmlString, int pos) {
-        try {
-            return new EncodedByteArray(aXmlString.getBytes(getEncoding()), 0, pos);
-        } catch (UnsupportedEncodingException e) {
-            // we tested it ealier, should work.
-            throw new IllegalStateException(Messages.getMessage("encodingDisappeared00", getEncoding()));
-        }
+    protected StringBuffer getInitialByteArray(String aXmlString, int pos) {
+        return new StringBuffer(aXmlString.substring(0, pos));
     }
 }

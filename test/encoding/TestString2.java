@@ -8,12 +8,12 @@ import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.SerializationContextImpl;
 import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.RPCParam;
-import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.server.AxisServer;
 import org.xml.sax.InputSource;
 
-import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.SOAPEnvelope;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -23,11 +23,11 @@ import java.io.ByteArrayInputStream;
 
 /** Little serialization test with a struct.
  */
-public class TestString extends TestCase {
+public class TestString2 extends TestCase {
 
     public static final String myNS = "urn:myNS";
     
-    public TestString(String name) {
+    public TestString2(String name) {
         super(name);
     }
 
@@ -36,7 +36,7 @@ public class TestString extends TestCase {
         MessageFactory factory = MessageFactory.newInstance();
         org.apache.axis.Message message = (org.apache.axis.Message) factory.createMessage();
         message.setMessageContext(msgContext);
-        String requestEncoding = "UTF-8";
+        String requestEncoding = "UTF-16";
         msgContext.setProperty(SOAPMessage.CHARACTER_SET_ENCODING, requestEncoding);
         message.setProperty(SOAPMessage.CHARACTER_SET_ENCODING, requestEncoding);
         RPCParam input = new RPCParam("urn:myNamespace", "testParam", value);
@@ -96,7 +96,7 @@ public class TestString extends TestCase {
     }
     
     public void testFrenchAccents2() throws Exception {
-        runtest("Une chaÃ®ne avec des caractÃ¨res accentuÃ©s");
+        runtest("Une chaîne avec des caractères accentués");
     }
     
     public void testGermanUmlauts() throws Exception {

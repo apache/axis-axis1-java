@@ -15,28 +15,80 @@
  */
 package org.apache.axis.components.encoding;
 
+import org.apache.axis.i18n.Messages;
+
+import java.io.IOException;
+import java.io.Writer;
+
 /**
  * UTF-16 Encoder.
- *
+ * 
  * @author <a href="mailto:jens@void.fm">Jens Schumann</a>
- *
  * @see <a href="http://encoding.org">encoding.org</a>
  * @see <a href="http://czyborra.com/utf/#UTF-16">UTF 16 explained</a>
- *
  */
 class UTF16Encoder extends AbstractXMLEncoder {
+    /**
+     * gets the encoding supported by this encoder
+     * @return string
+     */
     public String getEncoding() {
         return XMLEncoderFactory.ENCODING_UTF_16;
     }
 
-    public boolean needsEncoding(char c) {
-        return c > 0xFFFF;
-    }
-
-    public void appendEncoded(EncodedByteArray out, char c) {
-        if (c > 0xFFFF) {
-            out.append((0xD7C0 + (c >> 10)));
-            out.append((0xDC00 | c & 0x3FF));
+    /**
+     * write the encoded version of a given string
+     * 
+     * @param writer    writer to write this string to
+     * @param xmlString string to be encoded
+     */
+    public void writeEncoded(Writer writer, String xmlString)
+            throws IOException {
+        if (xmlString == null) {
+            return;
+        }
+        char[] characters = xmlString.toCharArray();
+        char character;
+        for (int i = 0; i < characters.length; i++) {
+            character = characters[i];
+            switch (character) {
+                // we don't care about single quotes since axis will
+                // use double quotes anyway
+                case '&':
+                    writer.write(AMP);
+                    break;
+                case '"':
+                    writer.write(QUOTE);
+                    break;
+                case '<':
+                    writer.write(LESS);
+                    break;
+                case '>':
+                    writer.write(GREATER);
+                    break;
+                case '\n':
+                    writer.write(LF);
+                    break;
+                case '\r':
+                    writer.write(CR);
+                    break;
+                case '\t':
+                    writer.write(TAB);
+                    break;
+                default:
+                    if (character < 0x20) {
+                        throw new IllegalArgumentException(Messages.getMessage(
+                                "invalidXmlCharacter00",
+                                Integer.toHexString(character),
+                                xmlString));
+                    } else if (character > 0xFFFF) {
+                        writer.write((0xD7C0 + (character >> 10)));
+                        writer.write((0xDC00 | character & 0x3FF));
+                    } else {
+                        writer.write(character);
+                    }
+                    break;
+            }
         }
     }
 }

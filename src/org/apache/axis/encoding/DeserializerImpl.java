@@ -542,7 +542,6 @@ public class DeserializerImpl extends SOAPHandler
         if (this.getClass().equals(DeserializerImpl.class) &&
             targets != null &&
             !targets.isEmpty()) {
-
             StringWriter writer = new StringWriter();
             SerializationContextImpl serContext = 
                         new SerializationContextImpl(writer,

@@ -15,13 +15,16 @@
  */
 package org.apache.axis.components.encoding;
 
+import java.io.Writer;
+import java.io.IOException;
+
 /**
  * Interface for XMLEncoders
  */
 public interface XMLEncoder {
     /**
      * gets the encoding supported by this encoder
-     * @return
+     * @return string
      */
     public String getEncoding();
 
@@ -30,5 +33,13 @@ public interface XMLEncoder {
      * @param xmlString string to be encoded
      * @return encoded string
      */
-    String encode(String xmlString);
+    public String encode(String xmlString);
+
+    /**
+     * write the encoded version of a given string
+     * @param writer writer to write this string to
+     * @param xmlString string to be encoded
+     */
+    public void writeEncoded(Writer writer, String xmlString)
+            throws IOException;
 }

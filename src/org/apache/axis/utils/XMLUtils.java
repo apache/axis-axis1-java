@@ -16,38 +16,10 @@
 
 package org.apache.axis.utils ;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-import java.io.Writer;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Stack;
-
-import javax.xml.namespace.QName;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import javax.xml.transform.Source;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.sax.SAXSource;
-import javax.xml.transform.stream.StreamSource;
-
 import org.apache.axis.AxisEngine;
 import org.apache.axis.Constants;
 import org.apache.axis.InternalException;
+import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.components.encoding.XMLEncoder;
 import org.apache.axis.components.encoding.XMLEncoderFactory;
@@ -66,6 +38,36 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
+
+import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPMessage;
+import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.sax.SAXSource;
+import javax.xml.transform.stream.StreamSource;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Stack;
 
 
 public class XMLUtils {
@@ -95,7 +97,7 @@ public class XMLUtils {
      */
     public static String xmlEncodeString(String orig)
     {
-        XMLEncoder encoder = getXMLEncoder();
+        XMLEncoder encoder = getXMLEncoder(MessageContext.getCurrentContext());
         return encoder.encode(orig);
     }
 
@@ -103,23 +105,14 @@ public class XMLUtils {
      * Get the current XMLEncoder
      * @return XMLEncoder
      */ 
-    private static XMLEncoder getXMLEncoder() {
-        MessageContext msgContext = MessageContext.getCurrentContext();
+    public static XMLEncoder getXMLEncoder(MessageContext msgContext) {
         XMLEncoder encoder = null;
-        if(msgContext == null) {
+        String encoding = getEncoding(null, msgContext);
+        try {
+            encoder = XMLEncoderFactory.getEncoder(encoding);
+        } catch (Exception e) {
+            log.error(Messages.getMessage("exception00"), e);
             encoder = XMLEncoderFactory.getDefaultEncoder();
-        } else {
-            String encoding = (String) msgContext.getAxisEngine().getOption(AxisEngine.PROP_XML_ENCODING);
-            try {
-                if(encoding != null) {
-                    encoder = XMLEncoderFactory.getEncoder(encoding);
-                } else {
-                    encoder = XMLEncoderFactory.getDefaultEncoder();
-                }
-            } catch (Exception e) {
-                log.error(Messages.getMessage("exception00"), e);
-                encoder = XMLEncoderFactory.getDefaultEncoder();
-            }
         }
         return encoder;
     }
@@ -128,8 +121,17 @@ public class XMLUtils {
      * Get the current encoding in effect
      * @return string 
      */ 
+    public static String getEncoding(MessageContext msgContext) {
+        XMLEncoder encoder = getXMLEncoder(msgContext);
+        return encoder.getEncoding();        
+    }
+
+    /**
+     * Get the current encoding in effect
+     * @return string 
+     */ 
     public static String getEncoding() {
-        XMLEncoder encoder = getXMLEncoder();
+        XMLEncoder encoder = getXMLEncoder(MessageContext.getCurrentContext());
         return encoder.getEncoding();        
     }
 
@@ -837,5 +839,28 @@ public class XMLUtils {
         }
         
         return elements;
+    }
+
+    public static String getEncoding(Message message, MessageContext msgContext){
+        String encoding = null;
+        try {
+            if(message != null) {
+                encoding = (String) message.getProperty(SOAPMessage.CHARACTER_SET_ENCODING);
+            }
+        } catch (SOAPException e) {
+        }
+        if(msgContext == null) {
+            msgContext = MessageContext.getCurrentContext();  
+        } 
+        if(msgContext != null && encoding == null){
+            encoding = (String) msgContext.getProperty(SOAPMessage.CHARACTER_SET_ENCODING);
+        }
+        if (msgContext != null && encoding == null) {
+            encoding = (String) msgContext.getAxisEngine().getOption(AxisEngine.PROP_XML_ENCODING);
+        }
+        if (encoding == null) {
+            encoding = XMLEncoderFactory.getDefaultEncoder().getEncoding();
+        }
+        return encoding;
     }
 }

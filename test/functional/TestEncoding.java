@@ -112,6 +112,6 @@ public class TestEncoding extends TestCase {
         URLEndpoint endpoint = new URLEndpoint("http://localhost:8080/jws/EchoHeaders.jws");
         SOAPMessage response = con.call(message, endpoint);
         String responseEncoding = (String) response.getProperty(SOAPMessage.CHARACTER_SET_ENCODING);
-        assertEquals(requestEncoding, responseEncoding);
+        assertEquals(requestEncoding.toLowerCase(), responseEncoding.toLowerCase());
     }
 }
