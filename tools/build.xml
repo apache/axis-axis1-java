@@ -103,6 +103,7 @@ Copyright:
     </fileset>
     <fileset dir="${tools.dir}"
       includes="*-tasks.properties"/>
+    <fileset dir="." file="org/apache/axis.xml"/>
     <manifest>
       <section name="org/apache/axis/tools">
         <attribute name="Implementation-Title" value="Apache Axis"/>
