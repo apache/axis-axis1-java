@@ -85,7 +85,7 @@ public class TestTCPTransportSample extends TestCase {
     }
 
     public void doTestUndeploy () throws Exception {
-        String[] args = { "-ltcp://localhost:8088", "samples/stock/undeploy.xml" };
+        String[] args = { "-ltcp://localhost:8088", "samples/stock/undeploy.wsdd" };
         AdminClient.main(args);
     }
 

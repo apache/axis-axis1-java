@@ -106,7 +106,7 @@ public class TestStockSample extends TestCase {
     }
     
     public void doTestUndeploy () throws Exception {
-        String[] args = { "samples/stock/undeploy.xml" };
+        String[] args = { "samples/stock/undeploy.wsdd" };
         AdminClient.main(args);
     }
 
