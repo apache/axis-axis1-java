@@ -12,13 +12,23 @@
   <types>
     <xsd:schema targetNamespace="urn:MultiRefTest2"
                 xmlns:xsd="http://www.w3.org/1999/XMLSchema">
-
-      <xsd:complexType name="node">
+                
+              
+      <xsd:complexType name="nodebase">
         <xsd:all>
             <xsd:element name="left" type="typens:node" xsd:nillable="true"/>
             <xsd:element name="right" type="typens:node" xsd:nillable="true"/>
-            <xsd:element name="data" type="xsd:int"/>
         </xsd:all>
+      </xsd:complexType>
+
+      <xsd:complexType name="node">
+        <xsd:complexContent>
+          <xsd:extension base="typens:nodebase">
+            <xsd:all>
+              <xsd:element name="data" type="xsd:int"/>
+            </xsd:all>
+          </xsd:extension>
+        </xsd:complexContent>
       </xsd:complexType>
     </xsd:schema>
   </types>

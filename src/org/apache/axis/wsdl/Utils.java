@@ -580,7 +580,9 @@ public class Utils {
 
 
     /**
-     * This method returns a set of all the nested Types.
+     * This method returns a set of all the nested types.
+     * Nested types are types declared within this Type (or descendents)
+     * plus any extended types and the extended type nested types
      * The elements of the returned HashSet are Types.
      */
     public static HashSet getNestedTypes(Node type, SymbolTable symbolTable) {
@@ -591,6 +593,7 @@ public class Utils {
 
     private static void getNestedTypes(
             Node type, HashSet types,SymbolTable symbolTable) {
+        // Process types declared in this type
         Vector v = SchemaUtils.getComplexElementTypesAndNames(type, symbolTable);
         if (v != null) {
             for (int i = 0; i < v.size(); i+=2) {
@@ -601,6 +604,15 @@ public class Utils {
                 }
             }
         }
+        // Process extended types
+        Type extendType = SchemaUtils.getComplexElementExtensionBase(type, symbolTable);
+        if (extendType != null) {
+            if (!types.contains(extendType)) {
+                types.add(extendType);
+                getNestedTypes(extendType.getNode(), types, symbolTable);
+            }
+        }
+
     } // getNestedTypes
 
     /**

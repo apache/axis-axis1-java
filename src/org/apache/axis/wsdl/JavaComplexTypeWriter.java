@@ -70,17 +70,23 @@ import org.w3c.dom.Node;
 public class JavaComplexTypeWriter extends JavaWriter {
     private Type type;
     private Vector elements;
+    private Type extendType;  
 
     /**
      * Constructor.
+     * @param emitter   
+     * @param type        The type representing this class
+     * @param elements    Vector containing the Type and name of each property
+     * @param extendType  The type representing the extended class (or null)
      */
     protected JavaComplexTypeWriter(
             Emitter emitter,
-            Type type, Vector elements) {
+            Type type, Vector elements, Type extendType) {
         super(emitter, type, "", "java",
                 JavaUtils.getMessage("genType00"));
         this.type = type;
         this.elements = elements;
+        this.extendType = extendType;
     } // ctor
 
    /**
@@ -91,6 +97,12 @@ public class JavaComplexTypeWriter extends JavaWriter {
     protected void writeFileBody() throws IOException {
         Node node = type.getNode();
 
+        // See if this class extends another class
+        String extendsText = "";
+        if (extendType != null) {
+            extendsText = " extends " + extendType.getJavaName() + " ";
+        }
+
         // We are only interested in the java names of the types, so replace the
         // Types in the list with their java names.  
         // Also filter element names for Java 
@@ -99,7 +111,7 @@ public class JavaComplexTypeWriter extends JavaWriter {
             elements.setElementAt( Utils.xmlNameToJava((String) elements.get(i + 1)), i + 1);
         }
 
-        pw.println("public class " + className + " implements java.io.Serializable {");
+        pw.println("public class " + className + extendsText + " implements java.io.Serializable {");
 
         for (int i = 0; i < elements.size(); i += 2) {
             String variable = (String) elements.get(i + 1);

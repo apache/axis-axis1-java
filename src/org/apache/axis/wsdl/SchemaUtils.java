@@ -115,9 +115,36 @@ public class SchemaUtils {
             nodeKind.getLocalPart().equals("complexType") &&
             Utils.isSchemaNS(nodeKind.getNamespaceURI())) {
 
-            // Under the complexType there should be a sequence or all group node.
-            // (There may be other #text nodes, which we will ignore).
+            // Under the complexType there could be complexContent &
+            // extension elements if this is a derived type.  Skip over these.
             NodeList children = node.getChildNodes();
+            Node complexContent = null;
+            Node extension = null;
+            for (int j = 0; j < children.getLength() && complexContent == null; j++) {
+                QName complexContentKind = Utils.getNodeQName(children.item(j));
+                if (complexContentKind != null &&
+                    complexContentKind.getLocalPart().equals("complexContent") &&
+                    Utils.isSchemaNS(complexContentKind.getNamespaceURI()))
+                    complexContent = children.item(j);
+            }
+            if (complexContent != null) {
+                children = complexContent.getChildNodes();
+                for (int j = 0; j < children.getLength() && extension == null; j++) {
+                    QName extensionKind = Utils.getNodeQName(children.item(j));
+                    if (extensionKind != null &&
+                        extensionKind.getLocalPart().equals("extension") &&
+                        Utils.isSchemaNS(extensionKind.getNamespaceURI()))
+                        extension = children.item(j);
+                }
+            }
+            if (extension != null) {
+                node = extension;  // Skip over complexContent and extension
+            }
+
+
+            // Under the complexType (or extension) there should be a sequence or all group node.
+            // (There may be other #text nodes, which we will ignore).
+            children = node.getChildNodes();
             Node groupNode = null;
             for (int j = 0; j < children.getLength() && groupNode == null; j++) {
                 QName groupKind = Utils.getNodeQName(children.item(j));
@@ -162,6 +189,76 @@ public class SchemaUtils {
                 }
                 return v;
             }
+        }
+        return null;
+    }
+
+    /**
+     * If the specified node represents a supported JAX-RPC complexType/element
+     * which extends another complexType.  The Type of the base is returned.
+     */
+    public static Type getComplexElementExtensionBase(Node node, SymbolTable symbolTable) {
+        if (node == null) {
+            return null;
+        }
+
+        // If the node kind is an element, dive into it.
+        QName nodeKind = Utils.getNodeQName(node);
+        if (nodeKind != null &&
+            nodeKind.getLocalPart().equals("element") &&
+            Utils.isSchemaNS(nodeKind.getNamespaceURI())) {
+            NodeList children = node.getChildNodes();
+            Node complexNode = null;
+            for (int j = 0; j < children.getLength() && complexNode == null; j++) {
+                QName complexKind = Utils.getNodeQName(children.item(j));
+                if (complexKind != null &&
+                    complexKind.getLocalPart().equals("complexType") &&
+                    Utils.isSchemaNS(complexKind.getNamespaceURI())) {
+                    complexNode = children.item(j);
+                    node = complexNode;
+                }
+            }
+        }
+
+        // Expecting a schema complexType
+        nodeKind = Utils.getNodeQName(node);
+        if (nodeKind != null &&
+            nodeKind.getLocalPart().equals("complexType") &&
+            Utils.isSchemaNS(nodeKind.getNamespaceURI())) {
+
+            // Under the complexType there could be should be a complexContent &
+            // extension elements if this is a derived type. 
+            NodeList children = node.getChildNodes();
+            Node complexContent = null;
+            Node extension = null;
+            for (int j = 0; j < children.getLength() && complexContent == null; j++) {
+                QName complexContentKind = Utils.getNodeQName(children.item(j));
+                if (complexContentKind != null &&
+                    complexContentKind.getLocalPart().equals("complexContent") &&
+                    Utils.isSchemaNS(complexContentKind.getNamespaceURI()))
+                    complexContent = children.item(j);
+            }
+            if (complexContent != null) {
+                children = complexContent.getChildNodes();
+                for (int j = 0; j < children.getLength() && extension == null; j++) {
+                    QName extensionKind = Utils.getNodeQName(children.item(j));
+                    if (extensionKind != null &&
+                        extensionKind.getLocalPart().equals("extension") &&
+                        Utils.isSchemaNS(extensionKind.getNamespaceURI()))
+                        extension = children.item(j);
+                }
+            }
+            if (extension == null) {
+                return null;  // No extension                               
+            }
+
+            // Get the QName of the extension base
+            QName extendsType = Utils.getNodeTypeRefQName(extension, "base");
+            if (extendsType == null) {
+                return null; // No extension base
+            }
+            // Return associated Type
+            return (Type) symbolTable.getTypeEntry(extendsType);
         }
         return null;
     }
