@@ -156,12 +156,13 @@ public class TestMessages extends TestCase {
             FileInputStream fis = new FileInputStream(file);
             byte[] bytes = new byte[fis.available()];
             fis.read(bytes);
+            final String pattern = "Messages.getMessage(";
             String string = new String(bytes);
-            String pattern = "Messages.getMessage(";
-            int index = string.indexOf(pattern);
-            while (index >= 0) {
+            while (true) {
+                int index = string.indexOf(pattern);
+                if (index < 0) break;
 
-                // Bump the string past the "Messages.getMessage(" string
+                // Bump the string past the pattern-string
                 string = string.substring(index + pattern.length());
 
                 // Get the arguments for the getMessage call
@@ -181,18 +182,17 @@ public class TestMessages extends TestCase {
                     catch (Throwable t) {
                         errors = errors + "File:  " + file.getPath() + " " + t.getMessage() + LS;
                     }
-                    // The realParms count is the number of strings in the message of the form:
-                    // {X} where X is 0..9
+                    // The realParms count is the number of strings in the
+                    // message of the form: {X} where X is 0..9
                     int realParms = count(value);
                     
-                    // The expectedParms count is the number of arguments to getMessage minus the
-                    // first argument.
-                    int expectedParms = msgArgs.length - 1;
+                    // The providedParms count is the number of arguments to
+                    // getMessage, minus the first argument (key).
+                    int providedParms = msgArgs.length - 1;
                     if (realParms != expectedParms) {
-                        errors = errors + "File:  " + file.getPath() + " " + key + " has " + realParms + " parameters, " + expectedParms + " expected." + LS;
+                        errors = errors + "File:  '" + file.getPath() + "', Key '" + key + "' specifies " + realParms + " {X} parameters, but " + providedParms + " parameter(s) provided." + LS;
                     }
                 }
-                index = string.indexOf("Messages.getMessage(");
             }
         }
         catch (Throwable t) {
@@ -201,9 +201,9 @@ public class TestMessages extends TestCase {
     } // checkMessages
 
     /**
-     * For the given method call string, return the parameter strings.  This means that everything
-     * between the first "(" and the last ")", and each "," encountered at the top level delimits
-     * a parameter.
+     * For the given method call string, return the parameter strings.
+     * This means that everything between the first "(" and the last ")",
+     * and each "," encountered at the top level delimits a parameter.
      */
     private String[] args (String string) {
         int innerParens = 0;
