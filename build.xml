@@ -299,6 +299,7 @@ Copyright:
 
     <copy file="../LICENSE" tofile="${dist.dir}/LICENSE"/>
     <copy file="README" tofile="${dist.dir}/README"/>
+    <copy file="release-notes.html" tofile="${dist.dir}/release-notes.html"/>
   </target>
 
   <!-- =================================================================== -->
