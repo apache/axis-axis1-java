@@ -344,6 +344,37 @@ public class JavaServiceDesc implements ServiceDesc {
         this.disallowedMethods = disallowedMethods;
     }
 
+    public void removeOperationDesc(OperationDesc operation) {
+        operations.remove(operation);
+        operation.setParent(null);
+
+        if (name2OperationsMap != null) {
+            String name = operation.getName();
+            ArrayList overloads = (ArrayList)name2OperationsMap.get(name);
+            if (overloads != null) {
+                overloads.remove(operation);
+                if (overloads.size() == 0) {
+                    name2OperationsMap.remove(name);
+                }
+            }
+        }
+        
+        if (qname2OperationsMap != null) {
+            QName qname = operation.getElementQName();
+            ArrayList list = (ArrayList)qname2OperationsMap.get(qname);
+            if (list != null) {
+                list.remove(operation);
+            }
+        }
+        
+        if (method2OperationMap != null) {
+            Method method = operation.getMethod();
+            if (method != null) {
+                method2OperationMap.remove(method);
+            }
+        }
+    }
+    
     public void addOperationDesc(OperationDesc operation)
     {
         operations.add(operation);
