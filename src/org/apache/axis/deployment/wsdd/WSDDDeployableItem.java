@@ -63,6 +63,8 @@ import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.deployment.DeploymentException;
 import org.apache.axis.utils.LockableHashtable;
 import org.apache.axis.utils.XMLUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -91,6 +93,9 @@ public abstract class WSDDDeployableItem
                                              "per-request",
                                              "singleton" };
     
+    protected static Log log =
+        LogFactory.getLog(WSDDDeployableItem.class.getName());
+
     /** Our parameters */
     LockableHashtable parameters;
 
@@ -291,7 +296,7 @@ public abstract class WSDDDeployableItem
         throws ConfigurationException
     {
         if (scope == SCOPE_SINGLETON) {
-            synchronized (this) {
+             synchronized (this) {
                 if (singletonInstance == null)
                     singletonInstance = makeNewInstance(registry);
             }
@@ -333,7 +338,17 @@ public abstract class WSDDDeployableItem
                 if ( qname != null )
                   h.setName(qname.getLocalPart()); 
                 h.setOptions(getParametersTable());
-                h.init();
+                try{
+                  h.init();
+                }catch(Exception e){
+                    String msg=e +"\n"+stackToString(e);
+                    log.debug(msg);
+                    throw new ConfigurationException(e);
+                }catch(Error e){
+                    String msg=e +"\n"+stackToString(e);
+                    log.debug(msg);
+                    throw new ConfigurationException(msg);
+                }
             }
         } else {
             h = registry.getHandler(getType());
@@ -369,5 +384,13 @@ public abstract class WSDDDeployableItem
             return Class.forName(type.getLocalPart());
         }
         return null;
+    }
+
+    protected static String stackToString(Throwable e){
+      java.io.StringWriter sw= new java.io.StringWriter(1024); 
+      java.io.PrintWriter pw= new java.io.PrintWriter(sw); 
+      e.printStackTrace(pw);
+      pw.close();
+      return sw.toString();
     }
 }

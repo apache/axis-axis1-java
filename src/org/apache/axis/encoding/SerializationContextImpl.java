@@ -551,7 +551,7 @@ public class SerializationContextImpl implements SerializationContext
             // passed with xsi:nil="true" to indicate that no object is present.
             if (sendNull) {
                 AttributesImpl attrs = new AttributesImpl();
-                if (attributes != null)
+                if (attributes != null && 0 < attributes.getLength())
                     attrs.setAttributes(attributes);
                 if (sendType)
                     attrs = (AttributesImpl) setTypeAttribute(attrs, xmlType);
@@ -613,7 +613,7 @@ public class SerializationContextImpl implements SerializationContext
             }
 
             AttributesImpl attrs = new AttributesImpl();
-            if (attributes != null)
+            if (attributes != null && 0 < attributes.getLength())
                 attrs.setAttributes(attributes);
             attrs.addAttribute("", Constants.ATTR_HREF, "href",
                                "CDATA", "#" + id);
@@ -961,7 +961,7 @@ public class SerializationContextImpl implements SerializationContext
             return attributes;
 
         AttributesImpl attrs = new AttributesImpl();
-        if (attributes != null)
+        if (attributes != null && 0 < attributes.getLength() )
             attrs.setAttributes(attributes);
 
         String prefix = getPrefixForURI(Constants.URI_CURRENT_SCHEMA_XSI,

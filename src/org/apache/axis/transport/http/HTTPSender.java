@@ -121,21 +121,26 @@ public class HTTPSender extends BasicHandler {
             String host = tmpURL.getHost();
             Socket sock = null;
 
-            // create socket based on the url protocol type
-            if (tmpURL.getProtocol().equalsIgnoreCase("https")) {
-                sock = getSecureSocket(host, tmpURL);
-            } else {
-                sock = getSocket(host, tmpURL, otherHeaders, useFullURL);
-            }
+            try{
 
-            // optionally set a timeout for the request
-            if (msgContext.getTimeout() != 0) {
-                sock.setSoTimeout(msgContext.getTimeout());
-            }
+                // create socket based on the url protocol type
+                if (tmpURL.getProtocol().equalsIgnoreCase("https")) {
+                    sock = getSecureSocket(host, tmpURL);
+                } else {
+                    sock = getSocket(host, tmpURL, otherHeaders, useFullURL);
+                }
 
-            // Send the SOAP request to the server
-            writeToSocket(sock, msgContext, tmpURL, otherHeaders, host,
-                    useFullURL);
+                // optionally set a timeout for the request
+                if (msgContext.getTimeout() != 0) {
+                    sock.setSoTimeout(msgContext.getTimeout());
+                }
+
+                // Send the SOAP request to the server
+                writeToSocket(sock, msgContext, tmpURL, otherHeaders, host,
+                        useFullURL);
+           }finally{
+             if(null != sock) sock.shutdownOutput(); //need to change for http 1.1
+           }
 
             // Read the response back from the server
             readFromSocket(sock, msgContext);
