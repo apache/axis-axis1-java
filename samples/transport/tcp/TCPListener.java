@@ -270,11 +270,11 @@ public class TCPListener implements Runnable {
                 response="No data";
             } else {
                 try {
-                    response = (String) msg.getSOAPPart().getAsString();
+                    response = (String) msg.getSOAPPartAsString();
                 } catch (AxisFault fault) {
                     msg = new Message(fault);
                     try {
-                        response = (String)msg.getSOAPPart().getAsString();
+                        response = (String)msg.getSOAPPartAsString();
                     } catch (AxisFault fault2) {
                         response = fault2.dumpToString();
                     }

@@ -93,9 +93,9 @@ public class LogHandler extends BasicHandler {
                 pw.println( "= " + JavaUtils.getMessage("elapsed00",
                        "" + (System.currentTimeMillis() - start)));
                 pw.println( "= " + JavaUtils.getMessage("inMsg00",
-                       (inMsg == null ? "null" : inMsg.getSOAPPart().getAsString())));
+                       (inMsg == null ? "null" : inMsg.getSOAPPartAsString())));
                 pw.println( "= " + JavaUtils.getMessage("outMsg00",
-                       (outMsg == null ? "null" : outMsg.getSOAPPart().getAsString())));
+                       (outMsg == null ? "null" : outMsg.getSOAPPartAsString())));
                 pw.println( "=======================================================" );
 
                 pw.close();

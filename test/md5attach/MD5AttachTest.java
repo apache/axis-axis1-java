@@ -52,7 +52,7 @@ public class MD5AttachTest {
         org.apache.axis.Message msg = new org.apache.axis.Message(env);
 
         //Add the attachment content to the message.
-        org.apache.axis.attachments.Attachments attachments = msg.getAttachments();
+        org.apache.axis.attachments.Attachments attachments = msg.getAttachmentsImpl();
         org.apache.axis.Part attachmentPart = attachments.createAttachmentPart(dh);
         String href = attachmentPart.getContentId();
         //Have the parameter element set an href attribute to the attachment.
@@ -60,7 +60,7 @@ public class MD5AttachTest {
         env.clearBody();
         env.addBodyElement(sbe);
 
-        msg.getSOAPPart().setSOAPEnvelope(env);
+        ((org.apache.axis.SOAPPart)msg.getSOAPPart()).setSOAPEnvelope(env);
 
         call.setRequestMessage(msg);
         //go on now....
@@ -69,7 +69,7 @@ public class MD5AttachTest {
         MessageContext mc = call.getMessageContext();
         // System.out.println(mc.getResponseMessage().getAsString());
             
-        env = mc.getResponseMessage().getSOAPPart().getAsSOAPEnvelope();
+        env = mc.getResponseMessage().getSOAPEnvelope();
         sbe = env.getFirstBody();
         org.w3c.dom.Element sbElement = sbe.getAsDOM();
         //get the first level accessor  ie parameter

@@ -82,6 +82,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpUtils;
+import javax.xml.soap.SOAPException;
 
 import java.io.File;
 import java.io.ByteArrayInputStream;
@@ -416,7 +417,7 @@ public class AxisServlet extends HttpServlet
                             writer.println("<p>" +
                                            JavaUtils.getMessage("gotResponse00") +
                                            "</p>");
-                            writer.println(respMsg.getSOAPPart().getAsString());
+                            writer.println(respMsg.getSOAPPartAsString());
                         } else {
                             writer.println("<p>" +
                                            JavaUtils.getMessage("noResponse01") + "</p>");
@@ -481,7 +482,11 @@ public class AxisServlet extends HttpServlet
                 Message msg = new Message(fault);
                 res.setContentType( msg.getContentType() );
                 res.setContentLength( msg.getContentLength() );
-                msg.writeContentToStream(res.getOutputStream());
+                try {
+                    msg.writeTo(res.getOutputStream());
+                } catch (SOAPException e){
+                    log.error(JavaUtils.getMessage("exception00"), e);
+                }
                 return;
             }
         }
@@ -669,7 +674,11 @@ public class AxisServlet extends HttpServlet
           res.setContentType( msg.getContentType() );
           res.setContentLength(respContentlength=  msg.getContentLength() );
           if(isDebug) log.debug("Returned Content-Length:" + respContentlength);
-          msg.writeContentToStream(res.getOutputStream());
+          try {
+              msg.writeTo(res.getOutputStream());
+          } catch (SOAPException e){
+              log.error(JavaUtils.getMessage("exception00"), e);
+          }
         }
         if(!res.isCommitted()) {
             res.flushBuffer(); //Force it right now.

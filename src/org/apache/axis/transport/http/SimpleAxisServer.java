@@ -421,9 +421,7 @@ public class SimpleAxisServer implements Runnable {
                         responseMsg = new Message(af);
                     } else {
                         try {
-                            SOAPEnvelope env = responseMsg.
-                                                getSOAPPart().
-                                                getAsSOAPEnvelope();
+                            SOAPEnvelope env = responseMsg.getSOAPEnvelope();
                             env.clearBody();
                             env.addBodyElement(new SOAPFaultElement((AxisFault)e));
                         } catch (AxisFault fault) {
@@ -432,7 +430,7 @@ public class SimpleAxisServer implements Runnable {
                     }
                 }
 
-//                byte[] response = (byte[]) responseMsg.getSOAPPart().getAsBytes();
+//                byte[] response = (byte[]) responseMsg.getSOAPPartAsBytes();
 
                 // Send it on its way...
                 OutputStream out = socket.getOutputStream();
@@ -457,7 +455,7 @@ public class SimpleAxisServer implements Runnable {
                 }
 
                 out.write(SEPARATOR);
-                responseMsg.writeContentToStream(out);
+                responseMsg.writeTo(out);
                // out.write(response);
                 out.flush();
 

@@ -62,7 +62,7 @@ public class TestHrefs extends TestCase {
        Message message = new Message(msgString);
        message.setMessageContext(new MessageContext(new AxisServer()));
 
-       SOAPEnvelope envelope = (SOAPEnvelope)message.getSOAPPart().getAsSOAPEnvelope();
+       SOAPEnvelope envelope = (SOAPEnvelope)message.getSOAPEnvelope();
        assertNotNull("SOAP envelope should not be null", envelope);
 
        RPCElement body = (RPCElement)envelope.getFirstBody();

@@ -85,7 +85,7 @@ public class LogHandler extends BasicHandler {
 
             // verify signed message
 
-            Document doc = inMsg.getSOAPPart().getAsSOAPEnvelope().getAsDocument();
+            Document doc = inMsg.getSOAPEnvelope().getAsDocument();
             String BaseURI = "http://xml-security";
             CachedXPathAPI xpathAPI = new CachedXPathAPI();
 

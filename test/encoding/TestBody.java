@@ -45,7 +45,7 @@ public class TestBody extends TestCase {
         message.setMessageContext(msgContext);
 
         // ensure that the message is parsed
-        SOAPEnvelope envelope = message.getSOAPPart().getAsSOAPEnvelope();
+        SOAPEnvelope envelope = message.getSOAPEnvelope();
         RPCElement body = (RPCElement) envelope.getFirstBody();
 
         // This is not necessarily true anymore...

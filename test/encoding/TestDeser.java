@@ -146,7 +146,7 @@ public class TestDeser extends TestCase {
        Message message = new Message(header + data + footer);
        message.setMessageContext(new MessageContext(server));
 
-       SOAPEnvelope envelope = (SOAPEnvelope)message.getSOAPPart().getAsSOAPEnvelope();
+       SOAPEnvelope envelope = (SOAPEnvelope)message.getSOAPEnvelope();
        assertNotNull("SOAP envelope should not be null", envelope);
 
        RPCElement body = (RPCElement)envelope.getFirstBody();

@@ -82,8 +82,8 @@ public class Qualify_BindingImpl implements test.wsdl.qualify.Qualify_Binding {
         // or not per the WSDL
         MessageContext mc = MessageContext.getCurrentContext();
         Message request = mc.getRequestMessage();
-        SOAPEnvelope env = request.getSOAPPart().getAsSOAPEnvelope();
-        String requestString = request.getSOAPPart().getAsString();
+        SOAPEnvelope env = request.getSOAPEnvelope();
+        String requestString = request.getSOAPPartAsString();
 
         Element body;
         try {
@@ -124,8 +124,8 @@ public class Qualify_BindingImpl implements test.wsdl.qualify.Qualify_Binding {
         // or not per the WSDL
         MessageContext mc = MessageContext.getCurrentContext();
         Message request = mc.getRequestMessage();
-        SOAPEnvelope env = request.getSOAPPart().getAsSOAPEnvelope();
-        String requestString = request.getSOAPPart().getAsString();
+        SOAPEnvelope env = request.getSOAPEnvelope();
+        String requestString = request.getSOAPPartAsString();
 
         Element body;
         try {

@@ -506,7 +506,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
                 Message msg= null;
                 if(null != (msg=msgContext.getCurrentMessage())){
                     Attachments attch= null;
-                    if( null != (attch= msg.getAttachments())){ 
+                    if( null != (attch= msg.getAttachmentsImpl())){ 
                         try{
                         ret= attch.getAttachmentByReference(href);
                         }catch(AxisFault e){

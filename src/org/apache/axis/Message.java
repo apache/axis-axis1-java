@@ -62,8 +62,14 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.AttachmentPart;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.io.IOException;
+import java.util.Iterator;
 
 /**
  * A complete SOAP (and/or XML-RPC, eventually) message.
@@ -76,29 +82,29 @@ import java.lang.reflect.InvocationTargetException;
  * @author Rob Jellinghaus (robj@unrealities.com)
  * @author Doug Davis (dug@us.ibm.com)
  * @author Glen Daniels (gdaniels@allaire.com)
- * @author Rick Rineholt 
+ * @author Rick Rineholt
  */
-public class Message {
+public class Message extends javax.xml.soap.SOAPMessage {
     protected static Log log =
         LogFactory.getLog(Message.class.getName());
 
     public static final String REQUEST = "request";
     public static final String RESPONSE = "response";
-    
+
     // MIME parts defined for messages.
     public static final String MIME_MULTIPART_RELATED = "multipart/related";
-    
+
     // NOT SUPPORTED NOW
     public static final String MIME_APPLICATION_DIME = "application/dime";
-    
-        /** Default Attachments Implementation class */
-        public static final String DEFAULT_ATTACHMNET_IMPL="org.apache.axis.attachments.AttachmentsImpl";
 
-        /** Current Attachment implementation */
-        private static String mAttachmentsImplClassName=DEFAULT_ATTACHMNET_IMPL;
+    /** Default Attachments Implementation class */
+    public static final String DEFAULT_ATTACHMNET_IMPL="org.apache.axis.attachments.AttachmentsImpl";
+
+    /** Current Attachment implementation */
+    private static String mAttachmentsImplClassName=DEFAULT_ATTACHMNET_IMPL;
 
     // look at the input stream to find the headers to decide.
-    public static final String MIME_UNKNOWN = "  "; 
+    public static final String MIME_UNKNOWN = "  ";
 
     /**
      * The messageType indicates whether this is request or response.
@@ -116,14 +122,13 @@ public class Message {
      */
     private Attachments mAttachments = null;
 
-        /**
-         * Returns name of the class prividing Attachment Implementation
-         * @returns class Name
-         */
-        public static String getAttachmentImplClassName(){
-                return mAttachmentsImplClassName;
-        }
-
+    /**
+     * Returns name of the class prividing Attachment Implementation
+     * @returns class Name
+     */
+    public static String getAttachmentImplClassName(){
+        return mAttachmentsImplClassName;
+    }
 
     private MessageContext msgContext;
 
@@ -172,14 +177,14 @@ public class Message {
      *
      * @param initialContents may be String, byte[], InputStream, SOAPEnvelope,
      *                        or AxisFault.
-     * @param bodyInStream is true if initialContents is an InputStream 
+     * @param bodyInStream is true if initialContents is an InputStream
      *                     containing just the SOAP body (no SOAP-ENV).
      * @param contentType this if the contentType has been already determined.
-     *                   (as in the case of servlets); 
+     *                   (as in the case of servlets);
      */
-    public Message(Object initialContents, 
-                   boolean bodyInStream, 
-                   String contentType, 
+    public Message(Object initialContents,
+                   boolean bodyInStream,
+                   String contentType,
                    String contentLocation) {
         setup(initialContents, bodyInStream, contentType, contentLocation);
     }
@@ -208,7 +213,7 @@ public class Message {
                 MessageContext mc= getMessageContext();
                 if(null != mc){
                     AxisEngine ae= mc.getAxisEngine();
-                    if(null != ae){ 
+                    if(null != ae){
                       attachImpName= (String)ae.getOption(
                         AxisEngine.PROP_ATTACHMENT_IMPLEMENTATION);
                     }
@@ -216,16 +221,16 @@ public class Message {
                 if(null == attachImpName){
                     attachImpName=AxisEngine.DEFAULT_ATTACHMENT_IMPL;
                 }
-                
+
                 /**
                  * Attempt to resolve class name, verify that these are present...
                  */
                 Class.forName("javax.activation.DataHandler");
                 Class.forName("javax.mail.internet.MimeMultipart");
-                
-                attachImpl = 
+
+                attachImpl =
                         Class.forName(attachImpName);
-                        
+
                 attachmentSupportEnabled = true;
             } catch (ClassNotFoundException ex) {
                 // no support for it, leave mAttachments null.
@@ -246,14 +251,14 @@ public class Message {
     private void setup(Object initialContents, boolean bodyInStream,
                        String contentType, String contentLocation) {
 
-        // Try to construct an AttachmentsImpl object for attachment 
+        // Try to construct an AttachmentsImpl object for attachment
         // functionality.
         // If there is no org.apache.axis.attachments.AttachmentsImpl class,
         // it must mean activation.jar is not present and attachments are not
         // supported.
         if (isAttachmentSupportEnabled()) {
             // Construct one, and cast to Attachments.
-            // There must be exactly one constructor of AttachmentsImpl, which 
+            // There must be exactly one constructor of AttachmentsImpl, which
             // must take an org.apache.axis.Message!
             Constructor attachImplConstr = attachImpl.getConstructors()[0];
             try {
@@ -262,7 +267,7 @@ public class Message {
                                        contentType, contentLocation});
 
                 //If it can't support it, it wont have a root part.
-                mSOAPPart = (SOAPPart) mAttachments.getRootPart(); 
+                mSOAPPart = (SOAPPart) mAttachments.getRootPart();
             } catch (InvocationTargetException ex) {
                 log.fatal(JavaUtils.getMessage("invocationTargetException00"),
                           ex);
@@ -279,13 +284,13 @@ public class Message {
         }
 
         // text/xml
-        if (null == mSOAPPart) {  
+        if (null == mSOAPPart) {
             mSOAPPart = new SOAPPart(this, initialContents, bodyInStream);
         }
         else
           mSOAPPart.setMessage(this);
 
-        // The stream was not determined by a more complex type so default to 
+        // The stream was not determined by a more complex type so default to
         if(mAttachments!=null) mAttachments.setRootPart(mSOAPPart);
     }
 
@@ -297,31 +302,39 @@ public class Message {
      * a lot of casts in client code.  Refactoring keeps getting
      * easier anyhow.
      */
-    public SOAPPart getSOAPPart() {
+    public javax.xml.soap.SOAPPart getSOAPPart() {
         return mSOAPPart;
     }
 
+    public String getSOAPPartAsString() throws org.apache.axis.AxisFault {
+        return mSOAPPart.getAsString();
+    }
+
+    public byte[] getSOAPPartAsBytes() throws org.apache.axis.AxisFault {
+        return mSOAPPart.getAsBytes();
+    }
+
     /**
-     * Get this message's SOAPPart as a SOAPEnvelope 
+     * Get this message's SOAPPart as a SOAPEnvelope
      */
     public SOAPEnvelope getSOAPEnvelope() throws AxisFault {
         return mSOAPPart.getAsSOAPEnvelope();
     }
-    
+
     /**
      * Get the Attachments of this Message.
      * If this returns null, then NO ATTACHMENT SUPPORT EXISTS in this
      * configuration of Axis, and no attachment operations may be
      * performed.
      */
-    public Attachments getAttachments() {
+    public Attachments getAttachmentsImpl() {
         return mAttachments;
     }
 
     public String getContentType() throws org.apache.axis.AxisFault {
         //Force serialization if it hasn't happend it.
         //Rick Rineholt fix this later.
-        mSOAPPart.getAsBytes();  
+        mSOAPPart.getAsBytes();
         String ret = "text/xml; charset=utf-8";
         if (mAttachments != null && 0 != mAttachments.getAttachmentCount()) {
             ret = mAttachments.getContentType();
@@ -331,17 +344,32 @@ public class Message {
 
     //This will have to give way someday to HTTP Chunking but for now kludge.
     public int getContentLength() throws org.apache.axis.AxisFault {
-        //Force serialization if it hasn't happend it. 
+        //Force serialization if it hasn't happend it.
         //Rick Rineholt fix this later.
-        int ret = mSOAPPart.getAsBytes().length; 
+        int ret = mSOAPPart.getAsBytes().length;
         if (mAttachments != null && 0 < mAttachments.getAttachmentCount()) {
             ret = mAttachments.getContentLength();
         }
         return ret;
     }
 
-
-    public void writeContentToStream(java.io.OutputStream os) {
+    /**
+     * Writes this <CODE>SOAPMessage</CODE> object to the given
+     *   output stream. The externalization format is as defined by
+     *   the SOAP 1.1 with Attachments specification.
+     *
+     *   <P>If there are no attachments, just an XML stream is
+     *   written out. For those messages that have attachments,
+     *   <CODE>writeTo</CODE> writes a MIME-encoded byte stream.</P>
+     * @param   out the <CODE>OutputStream</CODE>
+     *     object to which this <CODE>SOAPMessage</CODE> object will
+     *     be written
+     * @throws  SOAPException  if there was a problem in
+     *     externalizing this SOAP message
+     * @throws  IOException  if an I/O error
+     *     occurs
+     */
+    public void writeTo(java.io.OutputStream os) throws SOAPException, IOException {
          //Do it the old fashion way.
         if (mAttachments == null || 0 == mAttachments.getAttachmentCount()) {
             try {
@@ -358,4 +386,157 @@ public class Message {
         }
     }
 
+    /**
+     * Retrieves a description of this <CODE>SOAPMessage</CODE>
+     * object's content.
+     * @return  a <CODE>String</CODE> describing the content of this
+     *     message or <CODE>null</CODE> if no description has been
+     *     set
+     * @see #setContentDescription(java.lang.String) setContentDescription(java.lang.String)
+     */
+    public String getContentDescription() {
+        //TODO: Flesh this out.
+        return null;
+    }
+
+    /**
+     * Sets the description of this <CODE>SOAPMessage</CODE>
+     * object's content with the given description.
+     * @param  description a <CODE>String</CODE>
+     *     describing the content of this message
+     * @see #getContentDescription() getContentDescription()
+     */
+    public void setContentDescription(String description) {
+        //TODO: Flesh this out.
+    }
+
+    /**
+     * Updates this <CODE>SOAPMessage</CODE> object with all the
+     *   changes that have been made to it. This method is called
+     *   automatically when a message is sent or written to by the
+     *   methods <CODE>ProviderConnection.send</CODE>, <CODE>
+     *   SOAPConnection.call</CODE>, or <CODE>
+     *   SOAPMessage.writeTo</CODE>. However, if changes are made to
+     *   a message that was received or to one that has already been
+     *   sent, the method <CODE>saveChanges</CODE> needs to be
+     *   called explicitly in order to save the changes. The method
+     *   <CODE>saveChanges</CODE> also generates any changes that
+     *   can be read back (for example, a MessageId in profiles that
+     *   support a message id). All MIME headers in a message that
+     *   is created for sending purposes are guaranteed to have
+     *   valid values only after <CODE>saveChanges</CODE> has been
+     *   called.
+     *
+     *   <P>In addition, this method marks the point at which the
+     *   data from all constituent <CODE>AttachmentPart</CODE>
+     *   objects are pulled into the message.</P>
+     * @throws  SOAPException if there
+     *     was a problem saving changes to this message.
+     */
+    public void saveChanges() throws SOAPException {
+        //TODO: Flesh it out.
+    }
+
+    /**
+     * Indicates whether this <CODE>SOAPMessage</CODE> object
+     * has had the method <CODE>saveChanges</CODE> called on
+     * it.
+     * @return <CODE>true</CODE> if <CODE>saveChanges</CODE> has
+     *     been called on this message at least once; <CODE>
+     *     false</CODE> otherwise.
+     */
+    public boolean saveRequired() {
+        //TODO: Flesh it out.
+        return false;
+    }
+
+    /**
+     * Returns all the transport-specific MIME headers for this
+     * <CODE>SOAPMessage</CODE> object in a transport-independent
+     * fashion.
+     * @return a <CODE>MimeHeaders</CODE> object containing the
+     *     <CODE>MimeHeader</CODE> objects
+     */
+    public MimeHeaders getMimeHeaders() {
+        //TODO: Flesh it out.
+        return null;
+    }
+
+    /**
+     * Removes all <CODE>AttachmentPart</CODE> objects that have
+     *   been added to this <CODE>SOAPMessage</CODE> object.
+     *
+     *   <P>This method does not touch the SOAP part.</P>
+     */
+    public void removeAllAttachments(){
+        //TODO: Flesh it out.
+    }
+
+    /**
+     * Gets a count of the number of attachments in this
+     * message. This count does not include the SOAP part.
+     * @return  the number of <CODE>AttachmentPart</CODE> objects
+     *     that are part of this <CODE>SOAPMessage</CODE>
+     *     object
+     */
+    public int countAttachments(){
+        //TODO: Flesh it out.
+        return -1;
+    }
+
+    /**
+     * Retrieves all the <CODE>AttachmentPart</CODE> objects
+     * that are part of this <CODE>SOAPMessage</CODE> object.
+     * @return  an iterator over all the attachments in this
+     *     message
+     */
+    public Iterator getAttachments(){
+        //TODO: Flesh it out.
+        return null;
+    }
+
+    /**
+     * Retrieves all the <CODE>AttachmentPart</CODE> objects
+     * that have header entries that match the specified headers.
+     * Note that a returned attachment could have headers in
+     * addition to those specified.
+     * @param   headers a <CODE>MimeHeaders</CODE>
+     *     object containing the MIME headers for which to
+     *     search
+     * @return an iterator over all attachments that have a header
+     *     that matches one of the given headers
+     */
+    public Iterator getAttachments(MimeHeaders headers){
+        //TODO: Flesh it out.
+        return null;
+    }
+
+    /**
+     * Adds the given <CODE>AttachmentPart</CODE> object to this
+     * <CODE>SOAPMessage</CODE> object. An <CODE>
+     * AttachmentPart</CODE> object must be created before it can be
+     * added to a message.
+     * @param  attachmentpart an <CODE>
+     *     AttachmentPart</CODE> object that is to become part of
+     *     this <CODE>SOAPMessage</CODE> object
+     * @throws java.lang.IllegalArgumentException
+     */
+    public void addAttachmentPart(AttachmentPart attachmentpart){
+        //TODO: Flesh it out.
+    }
+
+    /**
+     * Creates a new empty <CODE>AttachmentPart</CODE> object.
+     * Note that the method <CODE>addAttachmentPart</CODE> must be
+     * called with this new <CODE>AttachmentPart</CODE> object as
+     * the parameter in order for it to become an attachment to this
+     * <CODE>SOAPMessage</CODE> object.
+     * @return  a new <CODE>AttachmentPart</CODE> object that can be
+     *     populated and added to this <CODE>SOAPMessage</CODE>
+     *     object
+     */
+    public AttachmentPart createAttachmentPart() {
+        //TODO: Flesh it out.
+        return null;
+    }
 }

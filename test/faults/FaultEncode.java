@@ -90,7 +90,7 @@ public class FaultEncode extends TestCase {
         Message message = new Message(fault);
         message.setMessageContext(new MessageContext(server));
 
-        String data = message.getSOAPPart().getAsString();
+        String data = message.getSOAPPartAsString();
         assertTrue("Fault code not encoded correctly",
             data.indexOf("&lt;code&gt;")>=0);
         assertTrue("Fault string not encoded correctly",

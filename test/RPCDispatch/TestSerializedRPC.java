@@ -131,7 +131,7 @@ public class TestSerializedRPC extends TestCase {
         // Extract the response Envelope
         Message message = msgContext.getResponseMessage();
         assertNotNull("Response message was null!", message);
-        SOAPEnvelope envelope = (SOAPEnvelope)message.getSOAPPart().getAsSOAPEnvelope();
+        SOAPEnvelope envelope = (SOAPEnvelope)message.getSOAPEnvelope();
         assertNotNull("SOAP envelope was null", envelope);
 
         // Extract the body from the envelope

@@ -97,7 +97,7 @@ public class TCPSender extends BasicHandler {
             sock    = new Socket( host, port );
             log.info( "Created an insecure HTTP connection");
 
-            reqEnv  = (String) msgContext.getRequestMessage().getSOAPPart().getAsString();
+            reqEnv  = (String) msgContext.getRequestMessage().getSOAPPartAsString();
 
             //System.out.println("Msg: " + reqEnv);
 
@@ -129,7 +129,7 @@ public class TCPSender extends BasicHandler {
                 log.debug( "\nNo Content-Length" );
                 log.debug( "\nXML received:" );
                 log.debug( "-----------------------------------------------");
-                log.debug( (String) outMsg.getSOAPPart().getAsString() );
+                log.debug( (String) outMsg.getSOAPPartAsString() );
             }
 
             msgContext.setResponseMessage( outMsg );

@@ -109,7 +109,7 @@ public class FaultDecode extends TestCase {
         Message message = new Message(messageText);
         message.setMessageContext(new MessageContext(server));
 
-        SOAPEnvelope envelope = (SOAPEnvelope) message.getSOAPPart().getAsSOAPEnvelope();
+        SOAPEnvelope envelope = (SOAPEnvelope) message.getSOAPEnvelope();
         assertNotNull("envelope", envelope);
 
         SOAPBodyElement respBody = envelope.getFirstBody();

@@ -37,7 +37,7 @@ class put {
     
             call.invoke();
         
-            System.out.println(call.getResponseMessage().getSOAPPart().getAsString());
+            System.out.println(call.getResponseMessage().getSOAPPartAsString());
         }
     }
 }

@@ -1422,7 +1422,7 @@ public class Call implements javax.xml.rpc.Call {
 
         if(null != attachmentParts && !attachmentParts.isEmpty()){
             try{
-            org.apache.axis.attachments.Attachments attachments= msg.getAttachments();
+            org.apache.axis.attachments.Attachments attachments= msg.getAttachmentsImpl();
             if(null == attachments) {
               throw new RuntimeException(
                       JavaUtils.getMessage("noAttachments"));
@@ -1914,8 +1914,7 @@ public class Call implements javax.xml.rpc.Call {
          */
         resMsg.setMessageType(Message.RESPONSE);
 
-        SOAPEnvelope resEnv = (SOAPEnvelope)resMsg.getSOAPPart().
-                getAsSOAPEnvelope();
+        SOAPEnvelope resEnv = (SOAPEnvelope)resMsg.getSOAPEnvelope();
 
         SOAPBodyElement respBody = resEnv.getFirstBody();
         if (respBody instanceof SOAPFaultElement) {

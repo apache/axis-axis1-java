@@ -112,7 +112,7 @@ public class LocalSender extends BasicHandler {
 
         // copy the request, and force its format to String in order to
         // exercise the serializers.
-        String msgStr = clientContext.getRequestMessage().getSOAPPart().getAsString();
+        String msgStr = clientContext.getRequestMessage().getSOAPPartAsString();
 
         if (log.isDebugEnabled()) {
             log.debug(JavaUtils.getMessage("sendingXML00", "LocalSender"));

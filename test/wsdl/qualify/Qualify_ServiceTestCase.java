@@ -110,8 +110,8 @@ public class Qualify_ServiceTestCase extends junit.framework.TestCase {
                 throw new AssertionFailedError("Unable to get call object from service");
             }
             Message response = mc.getResponseMessage();
-            SOAPEnvelope env = response.getSOAPPart().getAsSOAPEnvelope();
-            String responseString = response.getSOAPPart().getAsString();
+            SOAPEnvelope env = response.getSOAPEnvelope();
+            String responseString = response.getSOAPPartAsString();
 
             Element body;
             try {
@@ -172,8 +172,8 @@ public class Qualify_ServiceTestCase extends junit.framework.TestCase {
                 throw new AssertionFailedError("Unable to get call object from service");
             }
             Message response = mc.getResponseMessage();
-            SOAPEnvelope env = response.getSOAPPart().getAsSOAPEnvelope();
-            String responseString = response.getSOAPPart().getAsString();
+            SOAPEnvelope env = response.getSOAPEnvelope();
+            String responseString = response.getSOAPPartAsString();
 
             Element body;
             try {
