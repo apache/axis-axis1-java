@@ -244,20 +244,23 @@ public class RPCProvider extends JavaProvider {
                     try {
                         objRes = method.invoke( obj, argValues );
                     } catch (IllegalArgumentException exp) {
-                        StringBuffer msg= new StringBuffer( exp.getMessage());
-                        msg.append( "On object \"" + (obj == null? 
-                                                      "null" : obj.getClass().getName()) + "\" ");
-                        msg.append( "method name \"" + method.getName() + "\"");
-                        msg.append(" tried argument types: "); 
+                        StringBuffer argbuf = new StringBuffer();
                         String sep= "";
-                        for(int i=0; argValues != null &&
-                                     i< argValues.length; ++i){
-                            msg.append( sep);
-                            sep=", ";
-                            msg.append( argValues[i] == null ? "null" : argValues[i].getClass().getName());
+                        for(int i = 0; argValues != null &&
+                                     i < argValues.length; ++i) {
+                            argbuf.append(sep);
+                            sep = ", ";
+                            argbuf.append(argValues[i] == null ? "null" : argValues[i].getClass().getName());
                         }
-                        msg.append("\n");
-                        throw new IllegalArgumentException(msg.toString());
+                        String objName = obj == null ? "null" :
+                                obj.getClass().getName();
+                        String msg = JavaUtils.getMessage("triedArgs00",
+                                new String[] {
+                                        exp.getMessage(),
+                                        objName,
+                                        method.getName(),
+                                        argbuf.toString()});
+                        throw new IllegalArgumentException(msg);
                     }
                 }
             }
