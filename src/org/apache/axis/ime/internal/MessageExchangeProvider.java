@@ -199,9 +199,11 @@ public abstract class MessageExchangeProvider
             try {
                 while (!pool.isShuttingDown()) {
                     MessageExchangeSendContext context = (MessageExchangeSendContext)channel.select(SELECT_TIMEOUT);
-                    if (handler != null)
-                      handler.invoke(context.getMessageContext());
-                    policy.dispatch(context);
+                    if (context != null) {
+                      if (handler != null)
+                        handler.invoke(context.getMessageContext());
+                      policy.dispatch(context);
+                    }
                 }
             } catch (Throwable t) {
                 // kill the thread if any type of exception occurs.
@@ -244,10 +246,11 @@ public abstract class MessageExchangeProvider
             try {
                 while (!pool.isShuttingDown()) {
                     MessageExchangeSendContext context = (MessageExchangeSendContext)channel.select(SELECT_TIMEOUT);
-                    if (handler != null)
-                      handler.invoke(context.getMessageContext());
-                    if (context != null)
-                        listener.onSend(context);
+                    if (context != null) {
+                      if (handler != null)
+                        handler.invoke(context.getMessageContext());
+                      listener.onSend(context);
+                    }
                 }
             } catch (Throwable t) {
                 // kill the thread if any type of exception occurs.
