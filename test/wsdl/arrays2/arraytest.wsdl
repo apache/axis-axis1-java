@@ -69,10 +69,10 @@
         </soap:binding>
         <operation name="getDataOperation">
             <input>
-                <soap:body use="encoded"></soap:body>
+                <soap:body use="encoded" namespace="http://www.xyz.net/webservices/arraytest/1.0"></soap:body>
             </input>
             <output>
-                <soap:body use="encoded"></soap:body>
+                <soap:body use="encoded" namesapce="http://www.xyz.net/webservices/arraytest/1.0"></soap:body>
             </output>
         </operation>
     </binding>
