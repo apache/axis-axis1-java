@@ -63,10 +63,10 @@ import java.util.ResourceBundle;
  */
 public class MessagesConstants {
     public static final String projectName = "org.apache.axis".intern();
-    public static final String resourceName = "axisNLS".intern();
+    public static final String resourceName = "resource".intern();
     public static final Locale locale = null;
 
-    public static final String rootPackageName = "org.apache.axis.utils".intern();
+    public static final String rootPackageName = "org.apache.axis.i18n".intern();
 
     public static final ResourceBundle rootBundle =
         ProjectResourceBundle.getBundle(projectName,
