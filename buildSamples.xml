@@ -52,55 +52,55 @@ Copyright:
 	&targets;
 
   <target name="bidbuy" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/samples/bidbuy/buildComponent.xml"/>
+    <ant inheritAll="true" antfile="${axis.home}/samples/bidbuy/build.xml"/>
   </target>
 
   <target name="echo" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/samples/echo/buildComponent.xml"/>
+    <ant inheritAll="true" antfile="${axis.home}/samples/echo/build.xml"/>
   </target>
 
   <target name="encoding" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/samples/encoding/buildComponent.xml"/>
+    <ant inheritAll="true" antfile="${axis.home}/samples/encoding/build.xml"/>
   </target>
 
   <target name="message" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/samples/message/buildComponent.xml"/>
+    <ant inheritAll="true" antfile="${axis.home}/samples/message/build.xml"/>
   </target>
 
   <target name="misc" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/samples/misc/buildComponent.xml"/>
+    <ant inheritAll="true" antfile="${axis.home}/samples/misc/build.xml"/>
   </target>
 
   <target name="stock" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/samples/stock/buildComponent.xml"/>
+    <ant inheritAll="true" antfile="${axis.home}/samples/stock/build.xml"/>
   </target>
 
   <target name="transport" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/samples/transport/buildComponent.xml"/>
+    <ant inheritAll="true" antfile="${axis.home}/samples/transport/build.xml"/>
   </target>
 
   <target name="userguide" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/samples/userguide/buildComponent.xml"/>
+    <ant inheritAll="true" antfile="${axis.home}/samples/userguide/build.xml"/>
   </target>
 
   <target name="addr" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/samples/addr/buildComponent.xml"/>
+    <ant inheritAll="true" antfile="${axis.home}/samples/addr/build.xml"/>
   </target>
 
   <target name="attachments" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/samples/attachments/buildComponent.xml"/>
+    <ant inheritAll="true" antfile="${axis.home}/samples/attachments/build.xml"/>
   </target>
 
   <target name="proxy" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/samples/proxy/buildComponent.xml"/>
+    <ant inheritAll="true" antfile="${axis.home}/samples/proxy/build.xml"/>
   </target>
 
   <target name="security" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/samples/security/buildComponent.xml"/>
+    <ant inheritAll="true" antfile="${axis.home}/samples/security/build.xml"/>
   </target>
 
   <target name="jaxrpc" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/samples/jaxrpc/buildComponent.xml"/>
+    <ant inheritAll="true" antfile="${axis.home}/samples/jaxrpc/build.xml"/>
   </target>
 
 <!-- =========================================================================== -->
@@ -115,7 +115,7 @@ Copyright:
     <!-- Compile the sample code -->
     <foreach target="component-compile">
         <param name="file">
-             <fileset dir="." includes="samples/**/buildComponent.xml"/>
+             <fileset dir="." includes="samples/**/build.xml"/>
         </param>
      </foreach>
   </target>
@@ -123,6 +123,21 @@ Copyright:
 <!-- =========================================================================== -->
   <target name="clean" depends="setenv">
     <delete dir="${build.dest}/samples"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!--   This simply echos the component files, for sanity checks -->
+  <!-- =================================================================== -->
+  <target name="echoTest" >
+    <foreach target="echo-file">
+        <param name="file">
+             <fileset dir="${axis.home}" >
+                <patternset>
+                 <include name="samples/**/build.xml"/>
+                </patternset>
+             </fileset>
+        </param>
+     </foreach>
   </target>
 
 </project>
