@@ -90,8 +90,9 @@ public class GetInfo {
 
       call.setUserID( opts.getUser() );
       call.setPassword( opts.getPassword() );
-      String res = (String) call.invoke( "getInfo",
-                                         new Object[] { args[0], args[1] } );
+      String res = (String) call.invoke( 
+        "http://schemas.xmlsoap.org/soap/envelope/", "getInfo",
+        new Object[] { args[0], args[1] } );
       
       System.out.println( symbol + ": " + res );
     }
