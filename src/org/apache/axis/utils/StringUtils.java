@@ -312,6 +312,52 @@ public class StringUtils {
     }
 
     /**
+     * write the escaped version of a given string
+     * 
+     * @param str string to be encoded
+     * @return a new escaped <code>String</code>, <code>null</code> if null string input
+     */
+    public static String escapeNumericChar(String str) {
+        if (str == null) {
+            return null;
+        }
+        try {
+            StringWriter writer = new StringWriter(str.length());
+            escapeNumericChar(writer, str);
+            return writer.toString();
+        } catch (IOException ioe) {
+            // this should never ever happen while writing to a StringWriter
+            ioe.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * write the escaped version of a given string
+     * 
+     * @param out       writer to write this string to
+     * @param str       string to be encoded
+     */
+    public static void escapeNumericChar(Writer out, String str)
+            throws IOException {
+        if (str == null) {
+            return;
+        }
+        int length = str.length();
+        char character;
+        for (int i = 0; i < length; i++) {
+            character = str.charAt( i );
+            if (character > 0x7F) {
+                out.write("&#x");
+                out.write(Integer.toHexString(character).toUpperCase());
+                out.write(";");
+            } else {
+                out.write(character);
+            }
+        }
+    }
+
+    /**
      * <p>Unescapes numeric character referencs found in the <code>String</code>.</p>
      *
      * <p>For example, it will return a unicode string which means the specified numeric

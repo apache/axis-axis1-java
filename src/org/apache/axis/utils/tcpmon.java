@@ -583,6 +583,7 @@ public class tcpmon extends JFrame {
         InputStream   in = null ;
         OutputStream  out = null ;
         boolean       xmlFormat ;
+        boolean       numericEnc ;
         volatile boolean       done = false ;
         TableModel    tmodel = null ;
         int           tableIndex = 0 ;
@@ -592,7 +593,7 @@ public class tcpmon extends JFrame {
 
         public SocketRR(Connection c, Socket inputSocket, InputStream inputStream,
             Socket outputSocket, OutputStream outputStream,
-            JTextArea _textArea, boolean format,
+            JTextArea _textArea, boolean format, boolean numeric,
             TableModel tModel, int index, final String type, SlowLinkSimulator slowLink) {
             inSocket = inputSocket ;
             in       = inputStream ;
@@ -600,6 +601,7 @@ public class tcpmon extends JFrame {
             out       = outputStream ;
             textArea  = _textArea ;
             xmlFormat = format ;
+            numericEnc= numeric ;
             tmodel    = tModel ;
             tableIndex = index ;
             this.type = type;
@@ -616,6 +618,7 @@ public class tcpmon extends JFrame {
             try {
                 byte[]      buffer = new byte[4096];
                 byte[]      tmpbuffer = new byte[8192];
+                String      message = null;
                 int         saved = 0 ;
                 int         len ;
                 int         i1, i2 ;
@@ -754,8 +757,12 @@ public class tcpmon extends JFrame {
                                 tmpbuffer[i2++] = buffer[i1];
                             }
                         }
-
-                        textArea.append( new String( tmpbuffer, 0, i2 ) );
+                        message = new String( tmpbuffer, 0, i2, XMLUtils.getEncoding() );
+                        if (numericEnc) {
+                            textArea.append( StringUtils.escapeNumericChar(message) );
+                        } else {
+                            textArea.append( StringUtils.unescapeNumericChar(message) );
+                        }
 
                         // Shift saved bytes to the beginning
                         for ( i = 0 ; i < saved ; i++ ) {
@@ -763,7 +770,12 @@ public class tcpmon extends JFrame {
                         }
                     }
                     else {
-                        textArea.append( new String( buffer, 0, len ) );
+                        message = new String( buffer, 0, len, XMLUtils.getEncoding() );
+                        if (numericEnc) {
+                            textArea.append( StringUtils.escapeNumericChar(message) );
+                        } else {
+                            textArea.append( StringUtils.unescapeNumericChar(message) );
+                        }
                     }
                 // this.sleep(3);  // Let other threads have a chance to run
                 }
@@ -1123,17 +1135,18 @@ public class tcpmon extends JFrame {
                 }
 
                 boolean format = listener.xmlFormatBox.isSelected();
+                boolean numeric = listener.numericBox.isSelected();
 
 
                 //this is the channel to the endpoint
                 rr1 = new SocketRR(this, inSocket, tmpIn1, outSocket,
-                    tmpOut2, inputText, format,
+                    tmpOut2, inputText, format, numeric,
                     listener.tableModel, index + 1, "request:", slowLink);
                 //create the response slow link from the inbound slow link
                 SlowLinkSimulator responseLink = new SlowLinkSimulator(slowLink);
                 //this is the channel from the endpoint
                 rr2 = new SocketRR( this, outSocket, tmpIn2, inSocket,
-                    tmpOut1, outputText, format,
+                    tmpOut1, outputText, format, numeric,
                     null, 0, "response:", responseLink);
 
                 while ( rr1 != null || rr2 != null ) {
@@ -1262,6 +1275,7 @@ public class tcpmon extends JFrame {
         public  JButton     removeButton    = null ;
         public  JButton     removeAllButton = null ;
         public  JCheckBox   xmlFormatBox    = null ;
+        public  JCheckBox   numericBox      = null ;
         public  JButton     saveButton      = null ;
         public  JButton     resendButton    = null ;
         public  JButton     switchButton    = null ;
@@ -1513,6 +1527,7 @@ public class tcpmon extends JFrame {
             bottomButtons.setLayout( new BoxLayout(bottomButtons, BoxLayout.X_AXIS));
             bottomButtons.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
             bottomButtons.add( xmlFormatBox = new JCheckBox( getMessage("xmlFormat00", "XML Format") ) );
+            bottomButtons.add( numericBox = new JCheckBox( getMessage("numericEnc00", "Numeric" ) ) );
             bottomButtons.add( Box.createRigidArea(new Dimension(5, 0)) );
             final String save = getMessage("save00", "Save");
 
