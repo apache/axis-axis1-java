@@ -203,7 +203,6 @@ public class SimpleAxisServer implements Runnable {
             // resetting state between requests:
             //   msgContext = new MessageContext();
             //   requestMsg = new Message("", "String");
-            msgContext.clearProperty( MessageContext.SERVICE_DESCRIPTION );
             msgContext.setTargetService(null);
             msgContext.setResponseMessage(null);
             msgContext.reset();

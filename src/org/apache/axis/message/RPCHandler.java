@@ -10,7 +10,6 @@ import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.encoding.ServiceDescription;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.utils.AxisClassLoader;
 import javax.xml.rpc.namespace.QName;
@@ -87,18 +86,13 @@ public class RPCHandler extends SOAPHandler
          * - Cache typeMappingRegistry
          * - Cache service description
          */
-        ServiceDescription serviceDesc = (ServiceDescription) 
-                                                context.getMessageContext().
-                                                getProperty(MessageContext.SERVICE_DESCRIPTION);
-        
         if (category.isDebugEnabled()) {
             category.debug("In RPCHandler.onStartChild()");
         }
         
         Vector params = call.getParams();
-        if (serviceDesc == null && params.isEmpty()) {
+        if (params.isEmpty()) 
             determineDefaultParams(call.getMethodName(), context);
-        }
         
         // This is a param.
         currentParam = new RPCParam(namespace, localName, null);
@@ -113,17 +107,7 @@ public class RPCHandler extends SOAPHandler
         
         // xsi:type always overrides everything else
         if (type == null) {
-            // but if we don't find one, see if the ServiceDescription
-            // might shed some light...
-            if (serviceDesc != null) {
-                String msgType = context.getEnvelope().getMessageType();
-                type = serviceDesc.getParamTypeByName(msgType, localName);
-                if (category.isDebugEnabled()) {
-                    category.debug("Type from service desc was " + type);
-                }
-            }
-            
-            // and if we still don't know, check the introspected types
+            // check the introspected types
             //
             // NOTE : We don't check params.isEmpty() here because we
             //        must have added at least one above...

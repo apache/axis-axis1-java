@@ -67,7 +67,6 @@ import org.apache.axis.configuration.FileProvider;
 import org.apache.axis.encoding.BeanSerializer;
 import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.Serializer;
-import org.apache.axis.encoding.ServiceDescription;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.registries.HandlerRegistry;
@@ -669,11 +668,6 @@ public class Admin {
                     ": couldn't find pivot Handler '" + pivot + "'");
 
             service.setPivotHandler( tmpH );
-
-            if (pivot.equals("MsgDispatcher")) {
-                ServiceDescription sd = new ServiceDescription("msgService", false);
-                service.setServiceDescription(sd);
-            }
         }
 
         if ( response != null && !"".equals(response) ) {
