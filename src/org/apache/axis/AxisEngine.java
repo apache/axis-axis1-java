@@ -274,7 +274,11 @@ public abstract class AxisEngine extends BasicHandler
         try {
             return config.getService(new QName(null, name));
         } catch (ConfigurationException e) {
-            throw new AxisFault(e);
+            try {
+                return config.getServiceByNamespaceURI(name);
+            } catch (ConfigurationException e1) {
+                throw new AxisFault(e);
+            }
         }
     }
 
