@@ -65,15 +65,29 @@ import java.io.IOException;
  * serializer/deserializerFactory for hexBinary.
  *
  * @author Davanum Srinivas <dims@yahoo.com>
- * @see <a href="http://www.w3.org/TR/2001/PR-xmlschema-2-20010330/#hexBinary">XML Schema 3.2.16</a>
+ * @see <a href="http://www.w3.org/TR/xmlschema-2/#hexBinary">XML Schema 3.2.16</a>
  */
 public class HexSerializer implements Serializer {
 
     static class HexDeser extends Deserializer {
+        /**
+         * Handle any characters found in the data
+         */
         public void characters(char [] chars, int start, int end)
             throws SAXException
         {
             value = new Hex(new String(chars, start, end));
+        }
+
+        /**
+         * Return something even if no characters were found.
+         */
+        public void onEndElement(String namespace, String localName,
+                                 DeserializationContext context)
+            throws SAXException
+        {
+            super.onEndElement(namespace,localName, context);
+            if (value == null) value = new Hex("");
         }
     }
 
