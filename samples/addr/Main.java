@@ -73,7 +73,7 @@ public class Main {
     static String name1 = "Purdue Boilermaker";
     static Address addr1 = new Address (1, "University Drive",
                                         "West Lafayette", "IN", 47907,
-                                        new PhoneNumber (765, "494", "4900"));
+                                        new Phone (765, "494", "4900"));
     
     private static void printAddress (Address ad) {
         if (ad == null) {
@@ -84,12 +84,12 @@ public class Main {
                                 ad.getStreetName());
         System.err.println ("\t" + ad.getCity() + ", " + ad.getState() + " " +
                                 ad.getZip());
-        PhoneNumber ph = ad.getPhoneNumber();
+        Phone ph = ad.getPhoneNumber();
         System.err.println ("\tPhone: (" + ph.getAreaCode() + ") " +
                                 ph.getExchange() + "-" + ph.getNumber());
     }
     
-    private static Object doit (AddressBookProxy ab) throws Exception {
+    private static Object doit (AddressBook ab) throws Exception {
         System.err.println (">> Storing address for '" + name1 + "'");
         ab.addEntry (name1, addr1);
         System.err.println (">> Querying address for '" + name1 + "'");
@@ -112,40 +112,31 @@ public class Main {
         URL serviceURL = new URL(opts.getURL());
         
         System.err.println ("Using proxy without session maintenance.");
-        AddressBookProxy ab1 = new AddressBookProxy ("urn:AddressFetcher2");
-        if (serviceURL != null) {
-            ab1.setEndPoint (serviceURL);
+        AddressBookService abs = new AddressBookService();
+        AddressBook ab1 = null;
+        if (serviceURL == null) {
+            ab1 = abs.getAddressBook();
         }
-        ab1.setMaintainSession (false);
+        else {
+            ab1 = abs.getAddressBook(serviceURL);
+        }
         Object ret = doit (ab1);
         if (ret != null) {
             throw new Exception("non-session test expected null response, got "+ret);
         }
         
         System.err.println ("\n\nUsing proxy with session maintenance.");
-        AddressBookProxy ab2 = new AddressBookProxy ("urn:AddressFetcher2");
-        if (serviceURL != null) {
-            ab2.setEndPoint (serviceURL);
+        AddressBook ab2 = null;
+        if (serviceURL == null) {
+            ab2 = abs.getAddressBook();
         }
-        ab2.setMaintainSession (true);
+        else {
+            ab2 = abs.getAddressBook(serviceURL);
+        }
+        ((AddressBookSOAPBindingStub) ab2).setMaintainSession (true);
         ret = doit (ab2);
         if (ret == null) {
             throw new Exception("session test expected non-null response, got "+ret);
         }
-        
-        /* This code commented out for now.  This test relies on the currently-
-         commented-out section of deploy.xml.  See that file for more.
-         
-         System.err.println ("Using application-scope proxy without session maintenance.");
-         AddressBookProxy ab3 = new AddressBookProxy ("urn:AddressFetcher3");
-         if (serviceURL != null) {
-         ab3.setEndPoint (serviceURL);
-         }
-         ab3.setMaintainSession (false);
-         ret = doit (ab3);
-         if (ret == null) {
-         throw new Exception("non-session test of app provider expected non-null response, got "+ret);
-         }
-         */
     }
 }

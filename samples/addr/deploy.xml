@@ -1,45 +1,25 @@
-<!-- Use this file to deploy some handlers/chains and services  -->
-<!-- Two ways to do this:                                       -->
-<!--   java org.apache.axis.utils.Admin deploy.xml              -->
-<!--      from the same dir that the Axis engine runs           -->
-<!-- or                                                         -->
-<!--   java org.apache.axis.client.AdminClient deploy.xml       -->
-<!--      after the axis server is running                      -->
-<!-- This file will be replaced by WSDD once it's ready         -->
+<!--                                                             -->
+<!--Use this file to deploy some handlers/chains and services  -->
+<!--Two ways to do this:                                         -->
+<!--  java org.apache.axis.utils.Admin deploy.xml              -->
+<!--     from the same dir that the Axis engine runs             -->
+<!--or                                                           -->
+<!--  java org.apache.axis.client.AdminClient deploy.xml       -->
+<!--     after the axis server is running                        -->
+<!--This file will be replaced by WSDD once it's ready           -->
 
 <m:deploy xmlns:m="AdminService">
 
-  <chain   name="book"     flow="RPCDispatcher" />
+   <!-- Services from AddressBookService WSDL service -->
 
-  <service name="urn:AddressFetcher2" pivot="book" >
-    <option name="className" value="samples.addr.AddressBook" />
-    <option name="methodName" value="addEntry getAddressFromName" />
-    <option name="scope" value="Session" />
-  </service>
+   <service name="urn:AddressFetcher2" pivot="RPCDispatcher">
+      <option name="className" value="samples.addr.AddressBookSOAPBindingSkeleton"/>
+      <option name="methodName" value=" addEntry getAddressFromName"/>
+      <option name="scope" value="Session" />
+   </service>
 
-  <beanMappings xmlns:book2="urn:AddressFetcher2">
-    <book2:Address       classname="samples.addr.Address"/>
-    <book2:PhoneNumber      classname="samples.addr.PhoneNumber"/>
-  </beanMappings>
-
-<!--
-Commented out this test for now. This seems to conflict somehow with the first
-service definition... if you uncomment this service & bean definition,
-the functional test suddenly starts breaking!  Will look into this further...
-See commented-out code in Main.main() - RobJ
--->
-
-<!--
-  <service name="urn:AddressFetcher3" pivot="book" >
-    <option name="className" value="samples.addr.AddressBook" />
-    <option name="methodName" value="addEntry getAddressFromName" />
-    <option name="scope" value="Application" />
-  </service>
-
-  <beanMappings xmlns:book3="urn:AddressFetcher3">
-    <book3:Address       classname="samples.addr.Address"/>
-    <book3:PhoneNumber      classname="samples.addr.PhoneNumber"/>
-  </beanMappings>
--->
-
+   <beanMappings xmlns:typens="urn:xml-soap-address-demo">
+      <typens:Phone classname= "samples.addr.Phone"/>
+      <typens:Address classname= "samples.addr.Address"/>
+   </beanMappings>
 </m:deploy>

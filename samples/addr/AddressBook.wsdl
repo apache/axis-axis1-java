@@ -2,6 +2,7 @@
 
 <definitions name="urn:AddressFetcher" 
              targetNamespace="urn:AddressFetcher2"
+             xmlns:tns="urn:AddressFetcher2"
              xmlns:typens="urn:xml-soap-address-demo"
              xmlns:xsd="http://www.w3.org/1999/XMLSchema"
              xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
@@ -45,16 +46,16 @@
   <!-- port type declns -->
   <portType name="AddressBook">
     <operation name="addEntry">
-      <input message="AddEntryRequest"/>
+      <input message="tns:AddEntryRequest"/>
     </operation>
     <operation name="getAddressFromName">
-      <input message="GetAddressFromNameRequest"/>
-      <output message="GetAddressFromNameResponse"/>
+      <input message="tns:GetAddressFromNameRequest"/>
+      <output message="tns:GetAddressFromNameResponse"/>
     </operation>
   </portType>
 
   <!-- binding declns -->
-  <binding name="AddressBookSOAPBinding" type="AddressBook">
+  <binding name="AddressBookSOAPBinding" type="tns:AddressBook">
     <soap:binding style="rpc" 
                   transport="http://schemas.xmlsoap.org/soap/http"/>
     <operation name="addEntry">
@@ -87,8 +88,8 @@
 
   <!-- service decln -->
   <service name="AddressBookService">
-    <port name="AddressBook" binding="AddressBookSOAPBinding">
-      <soap:address location="http://localhost:2020/soap/servlet/rpcrouter"/>
+    <port name="AddressBook" binding="tns:AddressBookSOAPBinding">
+      <soap:address location="http://localhost:8080/axis/servlet/AxisServlet"/>
     </port>
   </service>
 
