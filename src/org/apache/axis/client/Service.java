@@ -93,6 +93,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Vector;
 
 /**
  * Axis' JAXRPC Dynamic Invoation Interface implementation of the Service
@@ -560,12 +561,20 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      * is a WSDL file).
      *
      * @return Iterator The ports specified in the WSDL file
+     * @throws ServiceException If this Service class does not have access to the
+     *         required WSDL metadata
      */
-    public Iterator getPorts() {
-        if ( wsdlService == null ) return( null );
+    public Iterator getPorts() throws ServiceException {
+        if ( wsdlService == null ) {
+            throw new ServiceException(JavaUtils.getMessage("wsdlMissing00"));
+        }
+
         Map map = wsdlService.getPorts();
 
-        if ( map == null ) return( null );
+        if ( map == null ) {
+            // Return an empty iterator;
+            return new Vector().iterator();
+        }
 
         return map.values().iterator();
     }
