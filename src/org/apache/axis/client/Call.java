@@ -157,6 +157,7 @@ public class Call implements javax.xml.rpc.Call {
     private boolean            useSOAPAction   = false;
     private String             SOAPActionURI   = null;
     private String             encodingStyle   = Constants.URI_CURRENT_SOAP_ENC;
+    private Integer            timeout         = null;
 
 
     // Our Transport, if any
@@ -170,7 +171,6 @@ public class Call implements javax.xml.rpc.Call {
     private Vector             myHeaders       = null;
 
     public static final String SEND_TYPE_ATTR    = "send_type_attr" ;
-    public static final String TIMEOUT           = "timeout" ;
     public static final String TRANSPORT_NAME    = "transport_name" ;
     public static final String TRANSPORT_PROPERTY= "java.protocol.handler.pkgs";
 
@@ -583,6 +583,13 @@ public class Call implements javax.xml.rpc.Call {
         }
     }
 
+    public Integer getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(Integer timeout) {
+        this.timeout = timeout;
+    }
     //
     // end properties code.
     //
@@ -1573,23 +1580,7 @@ public class Call implements javax.xml.rpc.Call {
          *   security.auth.subject
          */
         if (myProperties != null) {
-            Enumeration enum = myProperties.keys();
-            while (enum.hasMoreElements()) {
-                String name = (String) enum.nextElement();
-                Object value = myProperties.get(name);
-                int    intValue = 0 ;
-
-                if ( name.equals( TIMEOUT ) ) {
-                    if ( value instanceof Integer )
-                        intValue = ((Integer)value).intValue();
-                    else
-                        intValue = Integer.parseInt((String)value);
-
-                    msgContext.setTimeout( intValue );
-                }
-                else // Just pass the property through to the message context
-                    msgContext.setProperty(name, value);
-            }
+            msgContext.setPropertyParent(myProperties);
         }
 
         // Determine client target service

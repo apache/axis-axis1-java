@@ -61,6 +61,7 @@ import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.session.Session;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.LockableHashtable;
 import org.apache.log4j.Category;
 
 import java.util.Hashtable;
@@ -156,7 +157,7 @@ public class MessageContext {
      * Storage for an arbitrary bag of properties associated with this
      * MessageContext.
      */
-    private Hashtable bag ;
+    private LockableHashtable bag ;
     
     /**
      * These variables are logically part of the bag, but are separated
@@ -639,7 +640,7 @@ public class MessageContext {
         }
         else {
             if (bag == null) {
-                bag = new Hashtable();
+                bag = new LockableHashtable();
             }
             bag.put(name, value);
         }
@@ -684,6 +685,11 @@ public class MessageContext {
         else {
             return null;
         }
+    }
+    
+    public void setPropertyParent(Hashtable parent)
+    {
+        bag.setParent(parent);
     }
 
     /**

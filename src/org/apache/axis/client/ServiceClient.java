@@ -290,7 +290,7 @@ public class ServiceClient {
      * @param value the maximum amount of time, in milliseconds
      */
     public void setTimeout (int value) {
-        call.setProperty(Call.TIMEOUT,  new Integer(value));
+        call.setTimeout(new Integer(value));
     }
 
     /**
@@ -299,7 +299,7 @@ public class ServiceClient {
      * @return value the maximum amount of time, in milliseconds
      */
     public int getTimeout () {
-        Integer timeout = (Integer)call.getProperty(Call.TIMEOUT);
+        Integer timeout = call.getTimeout();
         if (timeout == null) return -1;
         
         return timeout.intValue();

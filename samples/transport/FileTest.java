@@ -54,7 +54,7 @@ public class FileTest {
         call.setTransport( new FileTransport() );
         call.setUsername(opts.getUser() );
         call.setPassword(opts.getPassword() );
-        call.setProperty(Call.TIMEOUT, "10000");
+        call.setTimeout(new Integer(10000));
 
         Float res = new Float(0.0F);
         res = (Float) call.invoke( new Object[] {symbol} );

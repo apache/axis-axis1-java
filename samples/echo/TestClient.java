@@ -185,7 +185,7 @@ public abstract class TestClient {
             call.setSOAPActionURI( action );
 
             // safety first
-            call.setProperty(Call.TIMEOUT, "60000");
+            call.setTimeout(new Integer(60000));
 
             // issue the request
             call.setOperationName( new QName("http://soapinterop.org/", method.trim()) );
