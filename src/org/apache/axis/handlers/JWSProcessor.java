@@ -63,6 +63,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 
 import org.apache.axis.* ;
+import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.Debug ;
 import org.apache.axis.utils.XMLUtils ;
 import org.apache.axis.utils.AxisClassLoader ;
@@ -71,6 +72,8 @@ import org.apache.axis.providers.java.RPCProvider;
 import sun.tools.javac.Main;
 
 import org.w3c.dom.* ;
+
+import javax.servlet.http.HttpServlet;
 
 /**
  * This handler will use the MC_REALPATH property of the MsgContext to
@@ -153,6 +156,7 @@ public class JWSProcessor extends BasicHandler
                           "-classpath",
                           getDefaultClasspath(msgContext),
                           jFile };
+
                 boolean           result   = compiler.compile( args );
 
                 /* Delete the temporary *.java file and check return code */
@@ -302,6 +306,35 @@ public class JWSProcessor extends BasicHandler
 
             cl = cl.getParent();
         }
+
+        // Just to be safe (the above doesn't seem to return the webapp
+        // classpath in all cases), manually do this:
+
+        HttpServlet servlet = (HttpServlet)msgContext.getProperty(
+                                         HTTPConstants.MC_HTTP_SERVLET);
+        if (servlet != null) {
+            String webBase = servlet.getServletContext().
+                                                  getRealPath("/WEB-INF");
+            classpath.append(webBase + File.separatorChar + "classes" +
+                             File.pathSeparatorChar);
+            try {
+                String libBase = webBase + File.separatorChar + "lib";
+                File libDir = new File(libBase);
+                String [] jarFiles = libDir.list();
+                for (int i = 0; i < jarFiles.length; i++) {
+                    String jarFile = jarFiles[i];
+                    if (jarFile.endsWith(".jar")) {
+                        classpath.append(libBase +
+                                         File.separatorChar +
+                                         jarFile +
+                                         File.pathSeparatorChar);
+                    }
+                }
+            } catch (Exception e) {
+                // Oh well.  No big deal.
+            }
+        }
+
 
         // boot classpath isn't found in above search
         if(System.getProperty("sun.boot.class.path") != null)

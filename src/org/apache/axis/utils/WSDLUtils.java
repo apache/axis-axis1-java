@@ -174,7 +174,7 @@ public class WSDLUtils {
         Port port = def.createPort();
 
         port.setBinding(binding);
-        port.setName("foo");
+        port.setName(name + "Port");
 
         SOAPAddress addr = new SOAPAddress();
         addr.setLocationURI(url);
@@ -200,8 +200,16 @@ public class WSDLUtils {
         msg.setUndefined(false);
 
         Class[] parameters = method.getParameterTypes();
+        int offset = 0;
         for(int i = 0, j = parameters.length; i < j; i++) {
-            addPartToMessage(def, msg, "arg" + i, parameters[i], reg);
+            // If the first param is a MessageContext, Axis will
+            // generate it for us - it shouldn't be in the WSDL.
+            if ((i == 0) && MessageContext.class.equals(parameters[i])) {
+                offset = 1;
+                continue;
+            }
+            addPartToMessage(def, msg, "arg" + (i - offset),
+                    parameters[i], reg);
         }
 
         return msg;
@@ -227,8 +235,6 @@ public class WSDLUtils {
         return msg;
     }
 
-    public static int n = 1;
-
     public static void addPartToMessage(Definition def,
                                         Message msg,
                                         String name,
@@ -242,7 +248,11 @@ public class WSDLUtils {
         }
         String pref = def.getPrefix(qName.getNamespaceURI());
         if (pref == null) {
-            def.addNamespace("ns" + n++, qName.getNamespaceURI());
+            int i = 1;
+            while (def.getNamespace("ns" + i) != null) {
+                i++;
+            }
+            def.addNamespace("ns" + i, qName.getNamespaceURI());
         }
 
         javax.wsdl.QName typeQName =
