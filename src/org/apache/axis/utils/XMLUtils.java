@@ -215,18 +215,22 @@ public class XMLUtils {
         return privateElementToString(doc.getDocumentElement(), false);
     }
 
-    public static void privateElementToStream(Element element, OutputStream out,
+    public static void privateElementToWriter(Element element, Writer writer,
                                               boolean omitXMLDecl) {
-        Writer writer = new OutputStreamWriter(out);
         DOM2Writer.serializeAsXML(element, writer, omitXMLDecl);
     }
     
-    public static void ElementToStream(Element element, OutputStream out) {
-        privateElementToStream(element, out, true);
+    public static void ElementToWriter(Element element, Writer writer) {
+        privateElementToWriter(element, writer, true);
     }
     
     public static void DocumentToStream(Document doc, OutputStream out) {
-        privateElementToStream(doc.getDocumentElement(), out, false);
+        Writer writer = new OutputStreamWriter(out);
+        privateElementToWriter(doc.getDocumentElement(), writer, false);
+    }
+    
+    public static void DocumentToWriter(Document doc, Writer writer) {
+        privateElementToWriter(doc.getDocumentElement(), writer, false);
     }
 
     public static String getInnerXMLString(Element element) {

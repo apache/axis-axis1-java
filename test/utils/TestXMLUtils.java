@@ -76,10 +76,10 @@ public class TestXMLUtils extends TestCase
     /**
     * This test method is somewhat complex, but it solves a problem people have
     * asked me about, which is how to unit test a method that has void return
-    * type but writes its output to an output stream.  So half the reason for
+    * type but writes its output to a writer.  So half the reason for
     * creating and using it here is as a reference point.
     */
-    public void testElementToStream() throws IOException
+    public void testElementToWriter() throws IOException
     {
         /* Get the Document and one of its elements. */ 
         Reader xmlReader = (Reader)this.getTestXml("reader");
@@ -95,13 +95,14 @@ public class TestXMLUtils extends TestCase
         * will create a PipedInputStream in a separate thread.
         */
         PipedOutputStream out = new PipedOutputStream();
+        OutputStreamWriter writer = new OutputStreamWriter(out);
         ConsumerPipe cpipe = new ConsumerPipe(out);
         
         /*
         * Call the method under test, passing the PipedOutStream to trap the
         * results.
         */
-        XMLUtils.ElementToStream(elem, out);
+        XMLUtils.ElementToWriter(elem, writer);
 
         /*
         * The output of the test will be piped to ConsumerPipe's PipedInputStream, which
