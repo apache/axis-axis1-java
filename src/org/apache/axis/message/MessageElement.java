@@ -333,13 +333,25 @@ public class MessageElement implements SOAPElement
     }
 
     /**
-     * Set the encoding style.  Calling this means you are absolutely
-     * setting it to SOMETHING valid.  The semantics of a null value,
+     * Sets the encoding style for this <CODE>SOAPElement</CODE>
+     * object to one specified. The semantics of a null value,
      * as above in getEncodingStyle() are to just use the parent's value,
      * but null here means set to "".
+     *
+     * @param   encodingStyle a <CODE>String</CODE>
+     *     giving the encoding style
+     * @throws  java.lang.IllegalArgumentException  if
+     *     there was a problem in the encoding style being set.
+     * @see #getEncodingStyle() getEncodingStyle()
      */
     public void setEncodingStyle(String encodingStyle) throws SOAPException {
-        if (encodingStyle == null) encodingStyle = "";
+        if (encodingStyle == null) {
+            encodingStyle = "";
+        }
+
+        if(!encodingStyle.equals("") && !Constants.isSOAP_ENC(encodingStyle))
+                throw new IllegalArgumentException(JavaUtils.getMessage("illegalArgumentException01",encodingStyle));
+
         this.encodingStyle = encodingStyle;
 
         // Wherever we set the encoding style, map the SOAP-ENC prefix

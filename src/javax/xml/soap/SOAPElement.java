@@ -289,7 +289,7 @@ public interface SOAPElement extends Node {
      * object to one specified.
      * @param   encodingStyle a <CODE>String</CODE>
      *     giving the encoding style
-     * @throws  SOAPException  if
+     * @throws  java.lang.IllegalArgumentException  if
      *     there was a problem in the encoding style being set.
      * @see #getEncodingStyle() getEncodingStyle()
      */
