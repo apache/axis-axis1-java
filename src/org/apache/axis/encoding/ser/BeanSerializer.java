@@ -159,7 +159,7 @@ public class BeanSerializer implements Serializer, Serializable {
                 propName = format(propName, elementPropertyFormat);
 
                 Method readMethod = pd[i].getReadMethod();
-                if (readMethod.getParameterTypes().length == 0) {
+                if (readMethod != null && readMethod.getParameterTypes().length == 0) {
                     // Normal case: serialize the value
                     Object propValue = pd[i].getReadMethod().invoke(value,noArgs);
                     context.serialize(new QName("", propName), null,
