@@ -1,8 +1,6 @@
-package test.wsdl.interop3;
+package test.wsdl.interop3.compound1;
 
-import test.wsdl.interop3.emptysa.EmptySALocator;
-import test.wsdl.interop3.emptysa.SoapInteropEmptySAPortType;
-import test.wsdl.interop3.emptysa.step6.EmptySALocator;
+import test.wsdl.interop3.compound1.xsd.Document;
 
 /*
     <!-- SOAP Builder's round III web services          -->
@@ -24,15 +22,15 @@ import test.wsdl.interop3.emptysa.step6.EmptySALocator;
     <!--          pre-built server                      -->
 */
 
-public class EmptySATestCase extends junit.framework.TestCase {
-    public EmptySATestCase(String name) {
+public class Compound1TestCase extends junit.framework.TestCase {
+    public Compound1TestCase(String name) {
         super(name);
     }
 
     public void testStep3() {
-        SoapInteropEmptySAPortType binding;
+        SoapInteropCompound1Binding binding;
         try {
-            binding = new EmptySALocator().getSoapInteropEmptySAPort();
+            binding = new Compound1Locator().getSoapInteropCompound1Port();
         }
         catch (javax.xml.rpc.ServiceException jre) {
             throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
@@ -40,8 +38,13 @@ public class EmptySATestCase extends junit.framework.TestCase {
         assertTrue("binding is null", binding != null);
 
         try {
-            String value = "Empty SA Echo Test step 3";
-            assertEquals("EmptySA step 3 returned something weird!", value, binding.echoString(value));
+            Document doc = new Document();
+            doc.setValue("some value");
+            doc.setID("myID");
+            Document newDoc = binding.echoDocument(doc);
+
+            assertEquals("Step 3 IDs didn't match!", doc.getID(), newDoc.getID());
+            assertEquals("Step 3 values didn't match!", doc.getValue(), newDoc.getValue());
         }
         catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
@@ -49,9 +52,9 @@ public class EmptySATestCase extends junit.framework.TestCase {
     }
 
     public void testStep5() {
-        test.wsdl.interop3.emptysa.SoapInteropEmptySAPortType binding;
+        SoapInteropCompound1Binding binding;
         try {
-            binding = new EmptySALocator().getSoapInteropEmptySAPort(new java.net.URL("http://localhost:8080/axis/services/EmptySA"));
+            binding = new Compound1Locator().getSoapInteropCompound1Port(new java.net.URL("http://localhost:8080/axis/services/SoapInteropImport1Port"));
         }
         catch (Throwable t) {
             throw new junit.framework.AssertionFailedError("Throwable caught: " + t);
@@ -59,18 +62,24 @@ public class EmptySATestCase extends junit.framework.TestCase {
         assertTrue("binding is null", binding != null);
 
         try {
-            String value = "Empty SA Echo Test step 5";
-            assertEquals("EmptySA step 5 returned something weird!", value, binding.echoString(value));
+            Document doc = new Document();
+            doc.setValue("some value");
+            doc.setID("myID");
+            Document newDoc = binding.echoDocument(doc);
+
+            assertEquals("Step 5 IDs didn't match!", doc.getID(), newDoc.getID());
+            assertEquals("Step 5 values didn't match!", doc.getValue(), newDoc.getValue());
         }
         catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
         }
     }
 
+    /*
     public void testStep7() {
-        test.wsdl.interop3.emptysa.step6.SoapInteropEmptySAPortType binding;
+        test.wsdl.interop3.import1.step6.definitions.SoapInteropImport1PortType binding;
         try {
-            binding = new test.wsdl.interop3.emptysa.step6.EmptySALocator().getSoapInteropEmptySAPort();
+            binding = new SoapInteropImport1PortTypeServiceLocator().getSoapInteropImport1Port();
         }
         catch (Throwable t) {
             throw new junit.framework.AssertionFailedError("Throwable caught: " + t);
@@ -109,7 +118,7 @@ public class EmptySATestCase extends junit.framework.TestCase {
 */
 
     public static void main(String[] args) {
-        junit.textui.TestRunner.run(new junit.framework.TestSuite(EmptySATestCase.class));
+        junit.textui.TestRunner.run(new junit.framework.TestSuite(Compound1TestCase.class));
     } // main
 
 }
