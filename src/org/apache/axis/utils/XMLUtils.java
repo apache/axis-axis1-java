@@ -264,7 +264,15 @@ public class XMLUtils {
      */ 
     public static Document newDocument(String uri, String username, String password) {
         try {
-            return XMLUtils.newDocument(XMLUtils.getInputSourceFromURI(uri, username, password));
+            InputSource ins = XMLUtils.getInputSourceFromURI(uri, username, password);
+            Document doc = XMLUtils.newDocument(ins);
+            // Close the Stream
+            if (ins.getByteStream() != null) {
+                ins.getByteStream().close();
+            } else if (ins.getCharacterStream() != null) {
+                ins.getCharacterStream().close();
+            }
+            return doc;
         } catch (Exception e) {
             log.error(JavaUtils.getMessage("exception00"), e);
         }
