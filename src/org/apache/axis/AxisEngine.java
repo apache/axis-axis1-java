@@ -162,51 +162,6 @@ public abstract class AxisEngine extends BasicHandler
         }
     }
 
-    /**
-     * Load up our engine's configuration of Handlers, Chains,
-     * Services, etc.
-     *
-     * NOTE: Right now this can only read an "engine-config.xml" in an
-     * appropriate place on the classpath (org/apache/axis/client or
-     * org/apache/axis/server).  This should be modified to do something like
-     * look in the server startup directory first, or perhaps check a
-     * system property for the repository location.  (OK, now it checks the
-     * local directory first.)
-     *
-     * We need to complete discussions about the packaging and deployment
-     * patterns for Axis before this code solidifies.
-     */
-    /*
-    private void readConfiguration()
-    {
-        InputStream is;
-        try {
-            is = new FileInputStream(engineBasePath + sep +
-                                     engineConfigFilename);
-        } catch (Exception e) {
-            is = getResourceStream(engineConfigFilename);
-        }
-
-        if (is == null) {
-            // TODO: Deal with this in a nicer way...
-            System.err.println("No engine configuration in " +
-                               this.getClass().getPackage().getName() +
-                               " - aborting!");
-            return;
-        }
-
-        Document doc = XMLUtils.newDocument(is);
-        try {
-            // ??? Clear registries first?
-            Admin.processEngineConfig(doc, this);
-        } catch (Exception e) {
-            System.err.println("Couldn't read engine config!");
-            e.printStackTrace();
-            return;
-        }
-    }
-    */
-
     /** Write out our engine configuration.
      */
     public void saveConfiguration()

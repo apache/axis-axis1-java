@@ -231,10 +231,12 @@ public class WSDDService
             service.setResponseHandler(response.getInstance(registry));
         }
 
-        if (tmr != null) {
-            service.setTypeMappingRegistry(tmr);
-            tmr.setParent(registry.getTypeMappingRegistry(""));
+        if (tmr == null) {
+            tmr = new TypeMappingRegistry();
         }
+
+        service.setTypeMappingRegistry(tmr);
+        tmr.setParent(registry.getTypeMappingRegistry(""));
 
         WSDDFaultFlow [] faultFlows = getFaultFlows();
         if (faultFlows != null && faultFlows.length > 0) {
@@ -242,7 +244,8 @@ public class WSDDService
             for (int i = 0; i < faultFlows.length; i++) {
                 WSDDFaultFlow flow = faultFlows[i];
                 Handler faultHandler = flow.getInstance(registry);
-                wrapper.setOption("fault-" + flow.getQName().getLocalPart(), faultHandler);
+                wrapper.setOption("fault-" + flow.getQName().getLocalPart(),
+                                  faultHandler);
             }
         }
         
