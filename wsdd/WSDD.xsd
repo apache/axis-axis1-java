@@ -229,7 +229,8 @@ QName may or may not be the same as the required name attribute.
         </xsd:annotation>
         <xsd:complexType>
             <xsd:attribute name="name" type="xsd:NMTOKEN" use="required" />
-            <xsd:attribute name="qName" type="xsd:QName" use="optional" />
+            <xsd:attribute name="returnQName" type="xsd:QName" use="optional" />
+            <xsd:attribute name="returnType" type="xsd:QName" use="optional" />
         </xsd:complexType>
     </xsd:element>
     <xsd:element name="transport">
