@@ -77,6 +77,7 @@ public class TestDynamicInvoker extends TestCase {
             if (re instanceof AxisFault) {
                 AxisFault fault = (AxisFault) re;
                 if (fault.detail instanceof ConnectException ||
+                    (fault.getFaultString().indexOf("Connection timed out") != -1) ||
                     fault.getFaultCode().getLocalPart().equals("HTTP")) {
                     System.err.println("getTemp HTTP error: " + fault);
                     return;
