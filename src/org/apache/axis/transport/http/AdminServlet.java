@@ -60,6 +60,8 @@ import org.apache.axis.configuration.ServletEngineConfigurationFactory;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.AxisFault;
+import org.apache.axis.components.logger.LogFactory;
+import org.apache.commons.logging.Log;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -79,30 +81,64 @@ import java.io.IOException;
  */
 public class AdminServlet extends AxisServletBase {
 
+    private static Log log =
+            LogFactory.getLog(AxisServlet.class.getName());
 
-    public void doGet(HttpServletRequest req, HttpServletResponse res)
+
+    /**
+     * handle a GET request. Commands are only valid when not in production mode
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
-        res.setContentType("text/html");
-        String str = "";
+        response.setContentType("text/html");
+        StringBuffer buffer=new StringBuffer(512);
+        buffer.append("<html><head><title>Axis</title></head><body>\n");
+        //REVISIT: what happens if there is no engine?
         AxisServer server = getEngine();
 
-        String cmd = req.getParameter("cmd");
+        //process command
+        String cmd = request.getParameter("cmd");
         if (cmd != null) {
-            if (cmd.equals("start"))
-                server.start();
-            else
-                server.stop();
+            //who called?
+            String callerIP=request.getRemoteAddr();
+            if (!isProduction()) {
+                //only in dev mode do these command work
+                if (cmd.equals("start")) {
+                    log.info(JavaUtils.getMessage("adminServiceStart", callerIP));
+                    server.start();
+                }
+                else if (cmd.equals("stop")) {
+                    log.info(JavaUtils.getMessage("adminServiceStop", callerIP));
+                    server.stop();
+                }
+            } else {
+                //in production we log a hostile probe. Remember: logs can be
+                //used for DoS attacks themselves.
+                log.info(JavaUtils.getMessage("adminServiceDeny", callerIP));
+            }
         }
 
+        // display status
         if (server.isRunning()) {
-            str += JavaUtils.getMessage("serverRun00");
+            buffer.append(JavaUtils.getMessage("serverRun00"));
         }
         else {
-            str += JavaUtils.getMessage("serverStop00");
+            buffer.append(JavaUtils.getMessage("serverStop00"));
         }
-        str += "<p><a href=\"AdminServlet?cmd=start\">start server</a>";
-        str += "<p><a href=\"AdminServlet?cmd=stop\">stop server</a>";
-        str += "<p>Current Load = "+getLoadCounter();
-        res.getWriter().println( str );
+        //add commands
+        if(!isProduction()) {
+            buffer.append("<p><a href=\"AdminServlet?cmd=start\">start server</a>\n");
+            buffer.append("<p><a href=\"AdminServlet?cmd=stop\">stop server</a>\n");
+        }
+        //print load
+        buffer.append("<p>");
+        buffer.append(JavaUtils.getMessage("adminServiceLoad",
+                Integer.toString(getLoadCounter())));
+        buffer.append("\n</body></html>\n");
+        response.getWriter().print( new String(buffer) );
     }
 }

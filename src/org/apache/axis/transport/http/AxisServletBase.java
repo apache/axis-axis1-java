@@ -55,9 +55,8 @@
 
 package org.apache.axis.transport.http;
 
-import org.apache.axis.AxisFault;
-import org.apache.axis.AxisEngine;
-import org.apache.axis.EngineConfiguration;
+import org.apache.axis.*;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.configuration.ServletEngineConfigurationFactory;
 import org.apache.axis.server.AxisServer;
 
@@ -121,6 +120,17 @@ public class AxisServletBase extends HttpServlet {
      */
     private String homeDir = null;
 
+    /**
+     * flag set to true for a 'production' server
+     */
+    private boolean isProduction;
+
+    /**
+     * property name for a production server
+     */
+    private static final String INIT_PROPERTY_PRODUCTION_SYSTEM=
+               "axis.production-system";
+
 
     /**
      * our initialize routine; subclasses should call this if they override it
@@ -131,8 +141,10 @@ public class AxisServletBase extends HttpServlet {
         webInfPath = context.getRealPath("/WEB-INF");
         homeDir = context.getRealPath("/");
 
-        isDebug= log.isDebugEnabled();
-        if(isDebug) log.debug("In AxisServletBase init");
+        isDebug = log.isDebugEnabled();
+        if(log.isDebugEnabled()) log.debug("In AxisServletBase init");
+        isProduction= JavaUtils.isTrueExplicitly(getOption(context,
+                        INIT_PROPERTY_PRODUCTION_SYSTEM, null));
 
     }
 
@@ -365,6 +377,36 @@ public class AxisServletBase extends HttpServlet {
      */
     protected String getHomeDir() {
         return homeDir;
+    }
+
+    /**
+     * Retrieve option, in order of precedence:
+     * (Managed) System property (see discovery.ManagedProperty),
+     * servlet init param, context init param.
+     * Use of system properties is discouraged in production environments,
+     * as it overrides everything else.
+     */
+    protected String getOption(ServletContext context,
+                             String param,
+                             String dephault)
+    {
+        String value = AxisProperties.getProperty(param);
+
+        if (value == null)
+            value = getInitParameter(param);
+
+        if (value == null)
+            value = context.getInitParameter(param);
+
+        return (value != null) ? value : dephault;
+    }
+
+    /**
+     * probe for the system being 'production'
+     * @return true for a secure/robust system.
+     */
+    public boolean isProduction() {
+        return isProduction;
     }
 
 }
