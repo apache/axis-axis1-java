@@ -61,9 +61,15 @@ import org.apache.axis.types.HexBinary;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
+import java.awt.Image;
+
+import java.io.InputStream;
 import java.io.IOException;
+
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
 import java.text.Collator;
 import java.text.MessageFormat;
 import java.util.Arrays;
@@ -258,7 +264,7 @@ public class JavaUtils
             try {
                 String destName = destClass.getName();
                 if (destClass == String.class
-                        || destClass == java.awt.Image.class
+                        || destClass == Image.class
                         || destName.equals("javax.mail.internet.MimeMultipart")
                         || destName.equals("javax.xml.transform.Source")) {
                     DataHandler handler;
@@ -268,7 +274,28 @@ public class JavaUtils
                     else {
                         handler = (DataHandler) arg;
                     }
-                    return handler.getContent();
+                    if (destClass == Image.class) {
+                        // Note:  JIMI is required to process an Image
+                        // attachment, but if the image would be null
+                        // (is.available == 0) then JIMI isn't needed
+                        // and we can return null.
+                        InputStream is = (InputStream) handler.getContent();
+                        if (is.available() == 0) {
+                            return null;
+                        }
+                        else {
+                            if (isImageSupported()) {
+                                return getImageFromStream(is);
+                            }
+                            else {
+                                log.info(JavaUtils.getMessage("needJIMI"));
+                                return arg;
+                            }
+                        }
+                    }
+                    else {
+                        return handler.getContent();
+                    }
                 }
             }
             catch (IOException ioe) {
@@ -509,6 +536,19 @@ public class JavaUtils
 
         return false;
     }
+
+    public static Image getImageFromStream(InputStream is) {
+        try {
+            Class jimi = ClassUtils.forName("com.sun.jimi.core.Jimi");
+            Class[] formalArgs = {InputStream.class};
+            Method getImage = jimi.getDeclaredMethod("getImage", formalArgs);
+            Object[] actualArgs = {is};
+            return (Image) getImage.invoke(null, actualArgs);
+        }
+        catch (Throwable t) {
+            return null;
+        }
+    } // getImageFromStream
     
     /**
      * These are java keywords as specified at the following URL (sorted alphabetically).
@@ -1150,4 +1190,30 @@ public class JavaUtils
                 attachmentSupportEnabled);
         return attachmentSupportEnabled;
     } // isAttachmentSupported
+
+    //avoid testing and possibly failing everytime.
+    private static boolean checkForImageSupport = true;
+    private static boolean imageSupportEnabled = false;
+
+    /**
+     * Determine whether image attachments are supported by checking
+     * if the following class is available:  com.sun.jimi.core.Jimi.
+     */
+    public static synchronized boolean isImageSupported() {
+        if (checkForImageSupport) {
+            //aviod testing and possibly failing everytime.
+            checkForImageSupport = false;
+            try {
+                // Attempt to resolve Jimi, necessary for full
+                // image attachment support
+                ClassUtils.forName("com.sun.jimi.core.Jimi");
+                imageSupportEnabled = true;
+            } catch (Throwable t) {
+            }
+        }
+
+        log.debug(JavaUtils.getMessage("imageEnabled") + "  " +
+                imageSupportEnabled);
+        return imageSupportEnabled;
+    } // isImageSupported
 }

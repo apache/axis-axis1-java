@@ -631,6 +631,13 @@ public class JavaStubWriter extends JavaClassWriter {
                             " = new javax.activation.DataHandler(new org.apache.axis.attachments.MimeMultipartDataSource(\"" +
                             javifiedName + "\", " + javifiedName + "));");
                 }
+                else if (mimeType.startsWith("image/")) {
+                    pw.println("        javax.activation.DataHandler _dh" +
+                            numberOfInMIMES++ +
+                            " = new javax.activation.DataHandler(new org.apache.axis.attachments.ImageDataSource(\"" +
+                            javifiedName + "\", \"" + mimeType + "\", " +
+                            javifiedName + "));");
+                }
             }
         }
         numberOfInMIMES = 0;
@@ -655,11 +662,9 @@ public class JavaStubWriter extends JavaClassWriter {
 
                 String mimeType = p.getMIMEType();
                 if (mimeType != null) {
-                    if (mimeType.equals("text/plain")) {
-                        pw.print("_dh" + numberOfInMIMES++);
-                        continue;
-                    }
-                    else if (mimeType.startsWith("multipart/")) {
+                    if (mimeType.equals("text/plain") ||
+                            mimeType.startsWith("multipart/") ||
+                            mimeType.startsWith("image/")) {
                         pw.print("_dh" + numberOfInMIMES++);
                         continue;
                     }
@@ -793,18 +798,23 @@ public class JavaStubWriter extends JavaClassWriter {
             pw.println("                " + target + "(java.lang.String) _returnDH.getContent();");
         }
         else if (mimeType.startsWith("multipart/")) {
-            pw.println("                javax.mail.internet.MimeMultipart _mmp = (javax.mail.internet.MimeMultipart) _returnDH.getContent();");
+            pw.println("                javax.mail.internet.MimeMultipart _mmp = new javax.mail.internet.MimeMultipart(_returnDH.getDataSource());");
             pw.println("                if (_mmp.getCount() == 0) {");
             pw.println("                    " + target + "null;");
             pw.println("                }");
             pw.println("                else {");
-            pw.println("                    " + target + "(javax.mail.internet.MimeMultipart) _returnDH.getContent();");
+            pw.println("                    " + target + "_mmp;");
             pw.println("                }");
         }
         else if (mimeType.equals("image/jpeg") ||
                 mimeType.equals("image/gif")) {
-            pw.println("                " + target +
-                    "(java.awt.Image) _returnDH.getContent();");
+            pw.println("                if (_returnDH == null) {");
+            pw.println("                    return null;");
+            pw.println("                }");
+            pw.println("                // " + JavaUtils.getMessage("needJIMI"));
+            pw.println("                java.io.InputStream _DHIS = _returnDH.getInputStream();");
+            pw.println("                java.awt.Image _DHI = com.sun.jimi.core.Jimi.getImage(_DHIS);");
+            pw.println("                " + target + "_DHI;");
         }
         else if (mimeType.equals("text/xml") ||
                  mimeType.equals("applications/xml")) {

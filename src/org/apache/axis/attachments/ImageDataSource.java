@@ -54,6 +54,8 @@
  */
 package org.apache.axis.attachments;
 
+import java.awt.Image;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -62,13 +64,10 @@ import java.io.OutputStream;
 
 import javax.activation.DataSource;
 
-import javax.mail.BodyPart;
-import javax.mail.MessagingException;
+import com.sun.jimi.core.Jimi;
 
-import javax.mail.internet.MimeMultipart;
-
-public class MimeMultipartDataSource implements DataSource {
-    public static final String CONTENT_TYPE = "multipart/mixed";
+public class ImageDataSource implements DataSource {
+    public static final String CONTENT_TYPE = "image/jpeg";
 
     private final String name;
     private final String contentType;
@@ -76,13 +75,17 @@ public class MimeMultipartDataSource implements DataSource {
     private ByteArrayInputStream is;
     private ByteArrayOutputStream os;
 
-    public MimeMultipartDataSource(String name, MimeMultipart data) {
+    public ImageDataSource(String name, Image data) {
+        this(name, CONTENT_TYPE, data);
+    } // ctor
+
+    public ImageDataSource(String name, String contentType, Image data) {
         this.name = name;
-        this.contentType = data == null ? CONTENT_TYPE : data.getContentType();
+        this.contentType = contentType == null ? CONTENT_TYPE : contentType;
         os = new ByteArrayOutputStream();
         try {
             if (data != null) {
-                data.writeTo(os);
+                Jimi.putImage(this.contentType, data, os);
             }
         }
         catch (Exception e) {
@@ -113,4 +116,4 @@ public class MimeMultipartDataSource implements DataSource {
         }
         return os;
     } // getOutputStream
-} // class MimeMultipartDataSource
+} // class ImageDataSource
