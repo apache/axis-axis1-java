@@ -84,8 +84,8 @@ book like <a href="http://www.mindview.net/Books/TIJ/">Thinking in Java</a>,
 until you have enough of a foundation to be able to work with Axis. It
 is also useful to have written a simple web application, as this will
 give you some knowledge of how HTTP works, and how Java application
-servers integrate with HTTP. 
-You may find the course notes from 
+servers integrate with HTTP.
+You may find the course notes from
 <a href="http://www.cs.indiana.edu/classes/a348-dger/fall2002/notes/">
 Mastering the World Wide Web</a> useful in this regard, even though Axis
 is only introduced in lecture 28.
@@ -178,6 +178,43 @@ directories. jaxrpc.jar and saaj.jar contain javax packages, so they
 may not get picked up. If happyaxis.jsp (see below) cannot find the
 relevant packages, copy them from axis/WEB-INF/lib to
 CATALINA_HOME/common/lib and restart Tomcat. <a name="start"></a>
+<h3>WebLogic 8.1</h3>
+WebLogic 8.1 ships with <code>webservices.jar</code> that conflicts with Axis'
+<code>saaj.jar</code> and prevents Axis 1.2 from working right out of the box.
+This conflict exists because WebLogic uses an older definition of
+<code>javax.xml.soap.*</code> package from
+<a href="http://java.sun.com/webservices/docs/1.0/api/javax/xml/soap">
+Java Web Services Developer Pack Version 1.0</a>, whereas Axis uses a newer
+revision from J2EE 1.4.
+<p>
+However, there are two alternative configuration changes that enable Axis based
+web services to run on Weblogic 8.1.</p>
+<ul>
+<li>In a webapp containing Axis, set &lt;prefer-web-inf-classes&gt; element in
+<code>WEB-INF/weblogic.xml</code> to true.  An example of <code>weblogic.xml</code>
+is shown below:
+<pre>
+&lt;weblogic-web-app&gt;
+ &lt;container-descriptor&gt;
+  &lt;prefer-web-inf-classes&gt;true&lt;/prefer-web-inf-classes&gt;
+ &lt;/container-descriptor&gt;
+&lt;/weblogic-web-app&gt;
+</pre>
+<p>
+If set to <code>true</code>, the <code>&lt;prefer-web-inf-classes&gt;</code>
+element will force WebLogic's classloader to load classes located in the
+WEB-INF directory of a web application in preference to application or system
+classes. This is a recommended approach since it only impacts a single web module.</p>
+</li>
+<li>In a script used to start WebLogic server, modify <code>CLASSPATH</code>
+property by placing Axis's <code>saaj.jar</code> library in front of WeLlogic's
+<code>webservices.jar</code>. <b>NOTE:</b> This approach impacts all applications
+deployed on a particular WebLogic instance and may prevent them from using
+WebLogic's webservices.</li>
+</ul>
+<p>For more information on how WebLogic's class loader works, see
+<a href="http://e-docs.bea.com/wls/docs81/programming/classloading.html">
+WebLogic Server Application Classloading</a>.</p>
 <h2>Step 3: starting the web server</h2>
 <p>This varies on a product-by-product basis. In many cases it is as
 simple as double clicking on a startup icon or running a command from
@@ -527,28 +564,28 @@ along the way, using happyaxis and the bundled test services, you will
 find it easier to get started with Axis.
 <h2> <a NAME="soapmon"></a>Appendix: Enabling the SOAP Monitor </h2>
 <p>
-SOAP Monitor allows for the monitoring of SOAP requests and responses via 
-a web browser with Java plug-in 1.3 or higher. For a more comprehensive 
-explanation of its usage, read <a href="user-guide.html#soapmon">Using the 
+SOAP Monitor allows for the monitoring of SOAP requests and responses via
+a web browser with Java plug-in 1.3 or higher. For a more comprehensive
+explanation of its usage, read <a href="user-guide.html#soapmon">Using the
 SOAP Monitor</a> in the User's Guide.
 </p><p>
-By default, the SOAP Monitor is not enabled. The basic steps for enabling 
+By default, the SOAP Monitor is not enabled. The basic steps for enabling
 it are compiling the SOAP Monitor java applet, deploying the SOAP Monitor
 web service and adding request and response flow definitions for each monitored
 web service. In more detail:
 <ol>
 <li> Go to $AXIS_HOME/webapps/axis (or %AXIS_HOME%\webapps\axis)
  	and compile SOAPMonitorApplet.java.
-	<blockquote> <span style="font-weight: bold;">On Windows</span> 
+	<blockquote> <span style="font-weight: bold;">On Windows</span>
 	<code class="java"><br/>
 javac -classpath %AXIS_HOME%\lib\axis.jar SOAPMonitorApplet.java</code><br/>
 	<br/>
-	<span style="font-weight: bold;">On Unix</span> 
+	<span style="font-weight: bold;">On Unix</span>
 	<code class="java"><br/>
-javac -classpath $AXIS_HOME/lib/axis.jar SOAPMonitorApplet.java</code><br/>      
+javac -classpath $AXIS_HOME/lib/axis.jar SOAPMonitorApplet.java</code><br/>
     </blockquote>
 	 Copy all resulting class files (i.e. SOAPMonitorApplet*.class) to the root
-	 directory of the web application using the SOAP Monitor 
+	 directory of the web application using the SOAP Monitor
 	 (e.g. .../tomcat/webapps/axis)
 </li>
 <li> Deploy the SOAPMonitorService web service with the admin client and the
@@ -568,31 +605,31 @@ org.apache.axis.client.AdminClient <br/>
 	 <span style="font-weight: bold;">SOAPMonitorService Deployment Descriptor (deploy-monitor.wsdd)</span>
 <pre class="xml">&lt;deployment xmlns=&quot;http://xml.apache.org/axis/wsdd/&quot;
     xmlns:java=&quot;http://xml.apache.org/axis/wsdd/providers/java&quot;&gt;
-  &lt;handler name=&quot;soapmonitor&quot; 
+  &lt;handler name=&quot;soapmonitor&quot;
       type=&quot;java:org.apache.axis.handlers.SOAPMonitorHandler&quot;&gt;
-    &lt;parameter name=&quot;wsdlURL&quot; 
+    &lt;parameter name=&quot;wsdlURL&quot;
       value=&quot;/axis/SOAPMonitorService-impl.wsdl&quot;/&gt;
-    &lt;parameter name=&quot;namespace&quot; 
+    &lt;parameter name=&quot;namespace&quot;
       value=&quot;http://tempuri.org/wsdl/2001/12/SOAPMonitorService-impl.wsdl&quot;/&gt;
     &lt;parameter name=&quot;serviceName&quot; value=&quot;SOAPMonitorService&quot;/&gt;
     &lt;parameter name=&quot;portName&quot; value=&quot;Demo&quot;/&gt;
   &lt;/handler&gt;
   &lt;service name=&quot;SOAPMonitorService&quot; provider=&quot;java:RPC&quot;&gt;
     &lt;parameter name=&quot;allowedMethods&quot; value=&quot;publishMessage&quot;/&gt;
-    &lt;parameter name=&quot;className&quot; 
+    &lt;parameter name=&quot;className&quot;
       value=&quot;org.apache.axis.monitor.SOAPMonitorService&quot;/&gt;
     &lt;parameter name=&quot;scope&quot; value=&quot;Application&quot;/&gt;
   &lt;/service&gt;
 &lt;/deployment&gt;
 </pre>
 </li>
-<li>For each service that is to be monitored, add request and response flow definitions 
-to the service's deployment descriptor and deploy (or redeploy) the service. The 
+<li>For each service that is to be monitored, add request and response flow definitions
+to the service's deployment descriptor and deploy (or redeploy) the service. The
 <span style="font-weight: bold;">requestFlow</span> and <span style="font-weight: bold;">
 responseFlow</span> definitions follow the start tag of the <span style="font-weight: bold;">
-&lt;service&gt;</span> element. If a service is already deployed, undeploy it and deploy 
+&lt;service&gt;</span> element. If a service is already deployed, undeploy it and deploy
 it with the modified deployment descriptor. An example is shown below:
-<pre class="xml">...  
+<pre class="xml">...
 &lt;service name=&quot;xmltoday-delayed-quotes&quot; provider=&quot;java:RPC&quot;&gt;
     &lt;requestFlow&gt;
       &lt;handler type=&quot;soapmonitor&quot;/&gt;
@@ -600,12 +637,12 @@ it with the modified deployment descriptor. An example is shown below:
     &lt;responseFlow&gt;
       &lt;handler type=&quot;soapmonitor&quot;/&gt;
     &lt;/responseFlow&gt;
-    ...</pre> 
+    ...</pre>
 </li>
-<li>With a web browser, go to http[s]://host[:port][/webapp]/SOAPMonitor 
-(e.g. http://localhost:8080/axis/SOAPMonitor) substituting the correct values 
+<li>With a web browser, go to http[s]://host[:port][/webapp]/SOAPMonitor
+(e.g. http://localhost:8080/axis/SOAPMonitor) substituting the correct values
 for your web application. This will show the SOAP Monitor applet for viewing service
-requests and responses. Any requests to services that have been configured 
+requests and responses. Any requests to services that have been configured
 and deployed correctly should show up in the applet.
 </li>
 <ol>
