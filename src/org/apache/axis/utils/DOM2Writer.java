@@ -103,11 +103,7 @@ public class DOM2Writer
     public static void serializeAsXML(Node node, Writer writer,
                                       boolean omitXMLDecl)
     {
-        PrintWriter out = new PrintWriter(writer);
-        if (!omitXMLDecl)
-            out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        print(node, null, out, false, 0);
-        out.flush();
+        serializeAsXML(node, writer, omitXMLDecl, false);
     }
 
     /**
@@ -120,7 +116,8 @@ public class DOM2Writer
         PrintWriter out = new PrintWriter(writer);
         if (!omitXMLDecl)
             out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        print(node, null, out, pretty, 0);
+        NSStack namespaceStack = new NSStack();
+        print(node, namespaceStack, out, pretty, 0);
         out.flush();
     }
 
@@ -157,7 +154,7 @@ public class DOM2Writer
 
         case Node.ELEMENT_NODE :
             {
-                namespaceStack = new NSStack(namespaceStack);
+                namespaceStack.push();
 
                 if (pretty) {
                     for (int i = 0; i < indent; i++)
@@ -261,6 +258,8 @@ public class DOM2Writer
                     if (pretty)
                         out.print(JavaUtils.LS);
                 }
+
+                namespaceStack.pop();
                 break;
             }
 

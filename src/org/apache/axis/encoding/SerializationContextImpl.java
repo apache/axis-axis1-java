@@ -902,9 +902,7 @@ public class SerializationContextImpl implements SerializationContext
             }
         }
 
-        ArrayList currentMappings = nsStack.peek();
-        for (int i = 0; i < currentMappings.size(); i++) {
-            Mapping map = (Mapping)currentMappings.get(i);
+        for (Mapping map=nsStack.topOfFrame(); map!=null; map=nsStack.next()) {
             StringBuffer sb = new StringBuffer("xmlns");
             if (!map.getPrefix().equals("")) {
                 sb.append(":");
@@ -941,7 +939,7 @@ public class SerializationContextImpl implements SerializationContext
         }
 
         nsStack.pop();
-        nsStack.peek().clear();
+        nsStack.clearFrame();
 
         if (writingStartTag) {
             writer.write("/>");
