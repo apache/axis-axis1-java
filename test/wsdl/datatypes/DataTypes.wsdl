@@ -101,6 +101,23 @@
       <s:element name="Mode" type="s0:Mode" />
       <s:element name="Order" nillable="true" type="s0:Order" />
       <s:element name="ArrayOfOrder" nillable="true" type="s0:ArrayOfOrder" />
+      <s:element name="GetSimpleList">
+        <s:complexType>
+          <s:sequence>
+            <s:element name="StringList" type="s0:StringSimpleList" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetSimpleListResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element name="StringList" type="s0:StringSimpleList" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:simpleType name="StringSimpleList">
+        <s:list itemType="s:string"/>
+      </s:simpleType>
     </s:schema>
   </types>
   <message name="SayHelloSoapIn">
@@ -139,6 +156,12 @@
   <message name="GetOrdersSoapOut">
     <part name="parameters" element="s0:GetOrdersResponse" />
   </message>
+  <message name="GetSimpleListIn">
+    <part name="parameters" element="s0:GetSimpleList" />
+  </message>
+  <message name="GetSimpleListOut">
+    <part name="parameters" element="s0:GetSimpleListResponse" />
+  </message>
   <portType name="DataTypes">
     <operation name="SayHello">
       <input message="s0:SayHelloSoapIn" />
@@ -163,6 +186,10 @@
     <operation name="GetOrders">
       <input message="s0:GetOrdersSoapIn" />
       <output message="s0:GetOrdersSoapOut" />
+    </operation>
+    <operation name="GetSimpleList">
+      <input message="s0:GetSimpleListIn" />
+      <output message="s0:GetSimpleListOut" />
     </operation>
   </portType>
   <binding name="DataTypes" type="s0:DataTypes">
@@ -213,6 +240,15 @@
       </output>
     </operation>
     <operation name="GetOrders">
+      <soap:operation soapAction="" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="GetSimpleList">
       <soap:operation soapAction="" style="document" />
       <input>
         <soap:body use="literal" />
