@@ -737,7 +737,7 @@ public class Admin {
             getOptions( elem, h );
             engine.deployHandler( name, h );
         } catch (ClassNotFoundException cnfe) {
-            //throw new AxisFault(cnfe);
+              throw new AxisFault(cnfe);
         } catch (InstantiationException ie) {
               throw new AxisFault(ie);
         } catch (IllegalAccessException iae) {
