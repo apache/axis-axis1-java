@@ -756,4 +756,15 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
 
         soapStream.close();
     }
+
+    /**
+     * Available test is used by Oracle XML parser
+     * @since Axis1.2
+     * @return true if there is data; false if we are closed or at the end of the stream
+     * @throws java.io.IOException
+     */
+    public int available() throws java.io.IOException {
+        return (closed || eos) ? 0 : soapStream.available();
+    }
+
 }
