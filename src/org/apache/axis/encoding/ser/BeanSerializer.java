@@ -137,15 +137,7 @@ public class BeanSerializer implements Serializer, Serializable {
         this.javaType = javaType;
         propertyDescriptor = getPd(javaType);
 
-        // Get the class' TypeDesc if it provides one
-        try {
-            Method getTypeDesc = 
-                    javaType.getMethod("getTypeDesc",
-                                       new Class [] {});
-            // get string array
-            typeDesc = (TypeDesc)getTypeDesc.invoke(null, noArgs);
-        } catch (Exception e) {
-        }
+        typeDesc = TypeDesc.getTypeDescForClass(javaType);
     }
 
     // Construct BeanSerializer for the indicated class/qname and format

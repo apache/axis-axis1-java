@@ -55,9 +55,12 @@
 
 package org.apache.axis.description;
 
+import org.apache.axis.encoding.ser.BeanSerializer;
+
 import javax.xml.rpc.namespace.QName;
 import java.util.HashMap;
 import java.lang.reflect.Array;
+import java.lang.reflect.Method;
 
 /**
  * A TypeDesc represents a Java<->XML data binding.  It is essentially
@@ -67,6 +70,31 @@ import java.lang.reflect.Array;
  * @author Glen Daniels (gdaniels@apache.org)
  */
 public class TypeDesc {
+    public static Class [] noClasses = new Class [] {};
+
+    /**
+     * Static function for centralizing access to type metadata for a
+     * given class.
+     *
+     * Right now this just checks for a static getTypeDesc() method on the
+     * class, but we will eventually extend this to provide for external
+     * metadata config (via files sitting in the classpath, etc).
+     *
+     * (Could introduce a cache here for speed as an optimization)
+     */
+    public static TypeDesc getTypeDescForClass(Class cls)
+    {
+        try {
+            Method getTypeDesc =
+                    cls.getMethod("getTypeDesc", noClasses);
+            if (getTypeDesc != null)
+                return (TypeDesc)getTypeDesc.invoke(null,
+                                                    BeanSerializer.noArgs);
+        } catch (Exception e) {
+        }
+        return null;
+    }
+
     private FieldDesc [] fields;
 
     /** A cache of FieldDescs by name */
