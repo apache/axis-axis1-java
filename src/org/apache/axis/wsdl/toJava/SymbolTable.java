@@ -327,9 +327,9 @@ public class SymbolTable {
         checkForUndefined(def);
         URL contextURL = context == null ? null : getURL(null, context);
         populate(contextURL, def, doc);
-        setReferences(def, doc);
         checkForUndefined();
         populateParameters();
+        setReferences(def, doc);  // uses wrapped flag set in populateParameters
     } // add
 
     /**
