@@ -60,7 +60,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.client.AdminClient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import samples.encoding.testElement;
+import samples.encoding.TestElem;
 
 /** Test the ElementService sample code.
  */
@@ -76,7 +76,7 @@ public class TestElementSample extends TestCase {
         String[] args = {};
         String   xml = "<x:hello xmlns:x=\"urn:foo\">a string</x:hello>";
         System.out.println("Sending : " + xml );
-        String res = new testElement().doit(args, xml);
+        String res = new TestElem().doit(args, xml);
         System.out.println("Received: " + res );
         assertEquals("TestElementSample.doit(): xml must match", res, xml);
     }
