@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://session.wsdl.test:8080/axis/services/SessionTest" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="http://session.wsdl.test:8080/axis/services/SessionTest" xmlns:intf="http://session.wsdl.test:8080/axis/services/SessionTest" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <wsdl:message name="doSomethingResponse">
+    <wsdl:part name="doSomethingReturn" type="xsd:boolean"/>
+  </wsdl:message>
+  <wsdl:message name="doSomethingRequest">
+  </wsdl:message>
+  <wsdl:portType name="SessionTestServer">
+    <wsdl:operation name="doSomething">
+      <wsdl:input message="intf:doSomethingRequest" name="doSomethingRequest"/>
+      <wsdl:output message="intf:doSomethingResponse" name="doSomethingResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="SessionTestSoapBinding" type="intf:SessionTestServer">
+    <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="doSomething">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="doSomethingRequest">
+        <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://session.wsdl.test:8080/axis/services/SessionTest" use="encoded"/>
+      </wsdl:input>
+      <wsdl:output name="doSomethingResponse">
+        <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://session.wsdl.test:8080/axis/services/SessionTest" use="encoded"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="SessionTestServerService">
+    <wsdl:port binding="intf:SessionTestSoapBinding" name="SessionTest">
+      <wsdlsoap:address location="http://localhost:8080/axis/services/SessionTest"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
