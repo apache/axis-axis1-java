@@ -221,6 +221,7 @@ public class Jikes extends AbstractCompiler {
             // first line is not space-starting
             if (line == null) line = input.readLine();
             if (line == null) return errors;
+            category.debug(line);
             buffer.append(line);
 
             // all other space-starting lines are one error
@@ -232,6 +233,7 @@ public class Jikes extends AbstractCompiler {
                 // Continuation of previous error starts with ' '
                 if (line.length() > 0 && line.charAt(0) != ' ')
                     break;
+                category.debug(line);
                 buffer.append('\n');
                 buffer.append(line);
             }
