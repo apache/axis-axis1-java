@@ -170,6 +170,22 @@ public class Call implements javax.xml.rpc.Call {
     public static final String TRANSPORT_NAME    = "transport_name" ;
     public static final String TRANSPORT_PROPERTY= "java.protocol.handler.pkgs";
 
+    // Constants for the standard properties
+    public static final String USERNAME_PROPERTY =
+            "javax.xml.rpc.security.auth.username";
+    public static final String PASSWORD_PROPERTY =
+            "javax.xml.rpc.security.auth.password";
+    public static final String SESSION_PROPERTY =
+            "javax.xml.rpc.http.session.maintain";
+    public static final String OPERATION_STYLE_PROPERTY =
+            "javax.xml.rpc.soap.operation.style";
+    public static final String SOAPACTION_USE_PROPERTY =
+            "javax.xml.rpc.soap.http.soapaction.use";
+    public static final String SOAPACTION_URI_PROPERTY =
+            "javax.xml.rpc.soap.http.soapaction.uri";
+    public static final String NAMESPACE_URI_PROPERTY =
+            "javax.xml.rpc.encodingstyle.namespace.uri";
+
     /**
      * A Hashtable mapping protocols (Strings) to Transports (classes)
      */
@@ -635,14 +651,92 @@ public class Call implements javax.xml.rpc.Call {
      * @param value Value of the property
      */
     public void setProperty(String name, Object value) {
-        if (name == null || value == null) return;
-
-        if ( name.equals(TRANSPORT_NAME) ) {
+        if (name == null || value == null) {
+            return;
+            // Is this right?  Shouldn't we throw an exception like: throw new IllegalArgumentException();
+        }
+        else if (name.equals(USERNAME_PROPERTY)) {
+            if (!(value instanceof String)) {
+                throw new IllegalArgumentException(
+                        JavaUtils.getMessage("badProp00", new String[] {
+                        name, "java.lang.String", value.getClass().getName()}));
+            }
+        }
+        else if (name.equals(PASSWORD_PROPERTY)) {
+            if (!(value instanceof String)) {
+                throw new IllegalArgumentException(
+                        JavaUtils.getMessage("badProp00", new String[] {
+                        name, "java.lang.String", value.getClass().getName()}));
+            }
+        }
+        else if (name.equals(SESSION_PROPERTY)) {
+            if (!(value instanceof Boolean)) {
+                throw new IllegalArgumentException(
+                        JavaUtils.getMessage("badProp00", new String[]
+                        {name,
+                        "java.lang.Boolean",
+                        value.getClass().getName()}));
+            }
+        }
+        else if (name.equals(OPERATION_STYLE_PROPERTY)) {
+            if (!(value instanceof String)) {
+                throw new IllegalArgumentException(
+                        JavaUtils.getMessage("badProp00", new String[] {
+                        name, "java.lang.String", value.getClass().getName()}));
+            }
+            String style = (String) value;
+            if (!style.equals("rpc") && !style.equals("document")) {
+                throw new IllegalArgumentException(
+                        JavaUtils.getMessage("badProp01", new String[] {
+                        name, "\"rpc\", \"document\"", style}));
+            }
+        }
+        else if (name.equals(SOAPACTION_USE_PROPERTY)) {
+            if (!(value instanceof Boolean)) {
+                throw new IllegalArgumentException(
+                        JavaUtils.getMessage("badProp00", new String[]
+                        {name,
+                        "java.lang.Boolean",
+                        value.getClass().getName()}));
+            }
+        }
+        else if (name.equals(SOAPACTION_URI_PROPERTY)) {
+            if (!(value instanceof String)) {
+                throw new IllegalArgumentException(
+                        JavaUtils.getMessage("badProp00", new String[]
+                        {name,
+                        "java.lang.String",
+                        value.getClass().getName()}));
+            }
+            Boolean useSOAP =
+                    (Boolean) myProperties.get(SOAPACTION_USE_PROPERTY);
+            if (useSOAP == null || !useSOAP.booleanValue()) {
+                throw new IllegalArgumentException(
+                        JavaUtils.getMessage("badProp02", new String[]
+                        {name, SOAPACTION_USE_PROPERTY, "true"}));
+            }
+        }
+        else if (name.equals(NAMESPACE_URI_PROPERTY)) {
+            if (!(value instanceof String)) {
+                throw new IllegalArgumentException(
+                        JavaUtils.getMessage("badProp00", new String[]
+                        {name,
+                        "java.lang.String",
+                        value.getClass().getName()}));
+            }
+        }
+        else if ( name.equals(TRANSPORT_NAME) ) {
+            if (!(value instanceof String)) {
+                throw new IllegalArgumentException(
+                        JavaUtils.getMessage("badProp00", new String[] {
+                        name, "java.lang.String", value.getClass().getName()}));
+            }
             transportName = (String) value ;
-            if ( transport != null )
-                transport.setTransportName( (String) value );
-            return ;
-         }
+            if (transport != null)
+                transport.setTransportName((String) value);
+            return;
+        }
+
         if (myProperties == null)
             myProperties = new Hashtable();
         myProperties.put(name, value);
