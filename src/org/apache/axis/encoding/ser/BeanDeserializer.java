@@ -156,7 +156,7 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
         FieldDesc fieldDesc = null;
 
         SOAPConstants soapConstants = context.getSOAPConstants();
-        String encodingStyle = context.getMessageContext().getEncodingStyle();
+        String encodingStyle = context.getEncodingStyle();
         boolean isEncoded = Constants.isSOAP_ENC(encodingStyle);
 
         QName elemQName = new QName(namespace, localName);

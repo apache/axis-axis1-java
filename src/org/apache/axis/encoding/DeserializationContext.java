@@ -21,6 +21,7 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.AxisFault;
+import org.apache.axis.constants.Use;
 import org.apache.axis.attachments.Attachments;
 import org.apache.axis.description.TypeDesc;
 import org.apache.axis.soap.SOAPConstants;
@@ -270,6 +271,19 @@ public class DeserializationContext extends DefaultHandler
     }
 
     /**
+     * Returns this context's encoding style.  If we've got a message
+     * context then we'll get the style from that; otherwise we'll
+     * return a default.
+     *
+     * @return a <code>String</code> value
+     */
+    public String getEncodingStyle() 
+    {
+        return msgContext == null ?
+                Use.ENCODED.getEncoding() : msgContext.getEncodingStyle();
+    }    
+
+    /**
      * Get Envelope
      */
     public SOAPEnvelope getEnvelope()
@@ -490,7 +504,7 @@ public class DeserializationContext extends DefaultHandler
                 TypeDesc typedesc = TypeDesc.getTypeDescForClass(cls);
                 if (typedesc != null) {
                     dser = (Deserializer) method.invoke(null,
-                        new Object[] {msgContext.getEncodingStyle(), cls, typedesc.getXmlType()});
+                        new Object[] {getEncodingStyle(), cls, typedesc.getXmlType()});
                 }
             }
         } catch (Exception e) {
@@ -539,15 +553,7 @@ public class DeserializationContext extends DefaultHandler
                     null);
         }
         TypeMappingRegistry tmr = msgContext.getTypeMappingRegistry();
-        return (TypeMapping) tmr.getTypeMapping(msgContext.getEncodingStyle());
-        /*
-         * TODO: This code doesn't yet work, but we aren't looking up the right
-         * TypeMapping by just using SOAP_ENC.
-
-        String encStyle = curElement == null ? Constants.NS_URI_CURRENT_SOAP_ENC :
-                                               curElement.getEncodingStyle();
-        return (TypeMapping) tmr.getTypeMapping(encStyle);
-        */
+        return (TypeMapping) tmr.getTypeMapping(getEncodingStyle());
     }
 
     /**
