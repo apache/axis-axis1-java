@@ -60,6 +60,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.description.FieldDesc;
 import org.apache.axis.description.TypeDesc;
 import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.AttributeSerializationContextImpl;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.utils.BeanPropertyDescriptor;
 import org.apache.axis.utils.BeanUtils;
@@ -77,6 +78,7 @@ import javax.xml.namespace.QName;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.List;
@@ -497,7 +499,13 @@ public class BeanSerializer implements Serializer, Serializable {
                                       QName qname,
                                       AttributesImpl attrs,
                                       SerializationContext context) throws Exception {
-        String propString = SimpleSerializer.valueToString(propValue);
+        StringWriter writer = new StringWriter();
+        SerializationContext attributeContext = new AttributeSerializationContextImpl(writer, context);
+        attributeContext.serialize(qname,
+                                   null,
+                                   propValue);
+        writer.close();
+        String propString = writer.getBuffer().toString();
         String namespace = qname.getNamespaceURI();
         String localName = qname.getLocalPart();
 
