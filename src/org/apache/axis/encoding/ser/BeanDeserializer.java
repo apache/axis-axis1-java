@@ -64,7 +64,6 @@ import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.BeanPropertyDescriptor;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.BeanUtils;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -75,7 +74,6 @@ import org.xml.sax.SAXException;
 import javax.xml.namespace.QName;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -109,22 +107,17 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
 
     // Construct BeanDeserializer for the indicated class/qname and meta Data
     public BeanDeserializer(Class javaType, QName xmlType, TypeDesc typeDesc ) {
+        this(javaType, xmlType, typeDesc,
+             BeanDeserializerFactory.getProperties(javaType, typeDesc));
+    }
+
+    // Construct BeanDeserializer for the indicated class/qname and meta Data
+    public BeanDeserializer(Class javaType, QName xmlType, TypeDesc typeDesc,
+                            Map propertyMap ) {
         this.xmlType = xmlType;
         this.javaType = javaType;
         this.typeDesc = typeDesc;
-        // Get a list of the bean properties
-        BeanPropertyDescriptor[] pd = null;
-        if (typeDesc != null) {
-            propertyMap = typeDesc.getPropertyDescriptorMap();
-        } else {
-            pd = BeanUtils.getPd(javaType, null);
-            propertyMap = new HashMap();
-            // loop through properties and grab the names for later
-            for (int i = 0; i < pd.length; i++) {
-                BeanPropertyDescriptor descriptor = pd[i];
-                propertyMap.put(descriptor.getName(), descriptor);
-            }
-        }
+        this.propertyMap = propertyMap;
 
         // create a value
         try {
