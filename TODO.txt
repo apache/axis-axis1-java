@@ -33,5 +33,34 @@ SAMPLES
 -------
 ! <> Clean up addr sample, including writing a how-to guide
 
+Wsdl2java
+---------
+* <> (ongoing) JAX-RPC compliance.  In particular:
+! <> The generated XXXService class should extend javax.xml.rpc.Service.
+! <> Generate an error for notification and solicit-response type operations.
+! <> Mapping of XML names.  We do some, not all, of what JAX-RPC specifies.
+! <> Faults - What do we handle now?  What needs to be enhanced?  JAX-RPC needs improving, first, we think.
+! <> Derived type support.
+! <> Method overloading.
+
+* <Russell> (ongoing) Need to pull everything writer-specific out of the framework(Emitter/SymbolTable/etc).  Signatures are still in there.  So are Wsdl2java options that only the writers care about.
+
+! <> Attachment support.
+
+! <> Name clash resolution has to grow up.
+
+! <> Automatically creating a package name from a namespace is very limited at the moment.
+
+! <Tom> Literal soap:body support.  (I'm not sure how far Tom's gotten on this.)
+
+! <Russell/Rich> If a reference to a type is encountered before the definition, a RefdType is created and added to the symbol table.  Once the type is defined, this RefdType is replaced by a real type.  Other objects may have referred to the RefdType.  Their references also need to be replaced.  This doesn't affect any of our existing tests.
+
+* <Russell/Tom> Grow Filegen test.  We now generate code only if it's needed, but this feature isn't well tested yet.
+
+! <> --verbose could probably use some tidying up, particularly wrt types.
+
+! <> Do we need a Wsdl2java Exception?
+
+
 GENERAL / UNCATEGORIZED
 -----------------------
