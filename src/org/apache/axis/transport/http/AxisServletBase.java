@@ -55,23 +55,25 @@
 
 package org.apache.axis.transport.http;
 
-import org.apache.axis.*;
-import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.AxisEngine;
+import org.apache.axis.AxisFault;
+import org.apache.axis.AxisProperties;
+import org.apache.axis.EngineConfiguration;
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.configuration.EngineConfigurationFactoryFinder;
 import org.apache.axis.server.AxisServer;
-
-import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
 
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import java.util.Map;
-import java.util.HashMap;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Base class for servlets used in axis, has common methods

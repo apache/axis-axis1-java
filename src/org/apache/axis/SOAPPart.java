@@ -74,7 +74,13 @@ import org.xml.sax.SAXException;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.transform.Source;
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.util.Hashtable;
 import java.util.Iterator;
 

@@ -63,7 +63,8 @@ package org.apache.axis.attachments;
 import java.io.IOException;
 import java.util.StringTokenizer;
 
-import javax.activation.*;
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
 
 import org.apache.axis.utils.JavaUtils;
 
