@@ -94,6 +94,12 @@ import java.util.ArrayList;
 import java.util.Vector;
 import java.util.Iterator;
 
+/*
+ * MessageElement is the base type of nodes of the SOAP message parse tree.
+ *
+ * Note: it was made Serializable to help users of Apache SOAP who had
+ * exploited the serializability of the DOM tree to migrate to Axis.
+ */
 public class MessageElement implements SOAPElement, Serializable
 {
     protected static Log log =
