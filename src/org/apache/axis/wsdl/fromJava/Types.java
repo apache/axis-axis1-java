@@ -3,7 +3,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -146,21 +146,27 @@ public class Types {
      * @return the QName of the generated Schema type, null if void
      */
     public QName writePartType(Class type, javax.xml.namespace.QName qname) throws Exception {
-        if (type.getName().equals("void"))
+        if( type==null ) {
+            return null;
+        }
+        if (type.getName().equals("void")) {
           return null;
+        }
         if (isSimpleType(type)) {
             javax.xml.namespace.QName typeQName = getTypeQName(type);
             // Still need to write any element declaration...
             if (qname != null) {
                 String elementType = writeType(type);
                 Element element = createElementDecl(qname, elementType, false);
-                if (element != null)
+                if (element != null) {
                     writeSchemaElement(qname,element);
+                }
             }
             return typeQName;
         }else {
-            if (wsdlTypesElem == null)
+            if (wsdlTypesElem == null) {
                 writeWsdlTypesElement();
+            }
             return writeTypeAsElement(type, qname);
         }
     }
