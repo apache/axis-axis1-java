@@ -59,6 +59,7 @@ import org.apache.axis.session.Session;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Enumeration;
 
 /**
  * An HTTP/Servlet implementation of Axis sessions.
@@ -119,7 +120,15 @@ public class AxisHttpSession implements Session
         ensureSession();
         rep.removeAttribute(key);
     }
-    
+
+    /**
+     * Get an enumeration of the keys in this session
+     */
+    public Enumeration getKeys() {
+        ensureSession();
+        return rep.getAttributeNames();
+    }
+
     /** Set the session's time-to-live.
      *
      * This is implementation-specific, but basically should be the #

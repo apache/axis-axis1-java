@@ -105,7 +105,7 @@ public class EJBProvider extends RPCProvider
      * @param clsName The JNDI name of the EJB home class
      * @return an object that implements the service
      */
-    protected Object getNewServiceObject(MessageContext msgContext,
+    protected Object makeNewServiceObject(MessageContext msgContext,
                                              String clsName)
         throws Exception
     {

@@ -56,6 +56,7 @@
 package org.apache.axis.session;
 
 import java.util.Hashtable;
+import java.util.Enumeration;
 
 /**
  * A trivial session implementation.
@@ -115,7 +116,16 @@ public class SimpleSession implements Session
             rep.remove(key);
         lastTouched = System.currentTimeMillis();
     }
-    
+
+    /**
+     * Get an enumeration of the keys in this session
+     */
+    public Enumeration getKeys() {
+        if (rep != null)
+            return rep.keys();
+        return null;
+    }
+
     /** Set the session's time-to-live.
      *
      * This is implementation-specific, but basically should be the #

@@ -55,6 +55,8 @@
 
 package org.apache.axis.session;
 
+import java.util.Enumeration;
+
 /**
  * An abstract interface to provide session storage to Axis services.
  *
@@ -82,6 +84,11 @@ public interface Session
      * @param key the name of the property desired.
      */
     public void remove(String key);
+
+    /**
+     * Get an enumeration of the keys in this session
+     */
+    public Enumeration getKeys();
 
     /** Set the session's time-to-live.
      *

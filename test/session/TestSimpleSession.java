@@ -4,7 +4,6 @@ import junit.framework.TestCase;
 import org.apache.axis.session.SimpleSession;
 import org.apache.axis.session.Session;
 import org.apache.axis.handlers.soap.SOAPService;
-import org.apache.axis.handlers.EchoHandler;
 import org.apache.axis.handlers.SimpleSessionHandler;
 import org.apache.axis.client.Service;
 import org.apache.axis.client.Call;
@@ -18,16 +17,16 @@ import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
 import org.apache.axis.deployment.wsdd.WSDDConstants;
 import org.apache.axis.providers.java.RPCProvider;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.rpc.server.ServiceLifecycle;
+import javax.xml.rpc.ServiceException;
 
-
-/** 
+/**
  * Test the SimpleSession implementation (using SOAP headers for session
  * maintenance)
  *
  * @author Glen Daniels (gdaniels@apache.org)
  */
-public class TestSimpleSession extends TestCase {
+public class TestSimpleSession extends TestCase implements ServiceLifecycle {
     static final String clientWSDD =
             "<deployment xmlns=\"http://xml.apache.org/axis/wsdd/\" " +
                   "xmlns:java=\"" + WSDDConstants.WSDD_JAVA + "\">\n" +
@@ -112,10 +111,16 @@ public class TestSimpleSession extends TestCase {
         assertNotNull("count was null!", count);
         assertEquals("count was wrong", 1, count.intValue());
 
+        // We should have init()ed a single service object
+        assertEquals("Wrong # of calls to init()!", 1, initCalls);
+
         // Next invocation should return 2, assuming the session-based
         // counter is working.
         count = (Integer)call.invoke("sessionTest", "counter", null);
         assertEquals("count was wrong", 2, count.intValue());
+
+        // We should still have 1
+        assertEquals("Wrong # of calls to init()!", 1, initCalls);
 
         // Now start fresh and confirm a new session
         Service svc2 = new Service(clientProvider);
@@ -129,12 +134,21 @@ public class TestSimpleSession extends TestCase {
         assertEquals("New session count was incorrect", 1,
                      count.intValue());
 
+        // We should have init()ed 2 service objects now
+        assertEquals("Wrong # of calls to init()!", 2, initCalls);
+        // And no destroy()s yet...
+        assertEquals("Shouldn't have called destroy() yet!", 0, destroyCalls);
+
         // Wait around a few seconds to let the first session time out
         Thread.sleep(4000);
 
         // And now we should get a new session, therefore going back to 1
         count = (Integer)call.invoke("sessionTest", "counter", null);
         assertEquals("count after timeout was incorrect", 1, count.intValue());
+
+        // Check init/destroy counts
+        assertEquals("Wrong # of calls to init()!", 3, initCalls);
+        assertEquals("Wrong # of calls to destroy()!", 2, destroyCalls);
     }
 
     /**
@@ -160,5 +174,35 @@ public class TestSimpleSession extends TestCase {
         TestSimpleSession test = new TestSimpleSession("test");
         test.testSessionAPI();
         test.testSessionService();
+    }
+
+    private static int initCalls = 0;
+    private static int destroyCalls = 0;
+
+    /**
+     * After a service endpoint object (an instance of a service
+     * endpoint class) is instantiated, the JAX-RPC runtime system
+     * invokes the init method.The service endpoint class uses the
+     * init method to initialize its configuration and setup access
+     * to any external resources.
+     *  @param   context Initialization context for a JAX-RPC service
+     endpoint; Carries javax.servlet.ServletContext
+     for the servlet based JAX-RPC endpoints
+     *  @throws  ServiceException If any error in initialization of the
+     service endpoint; or if any illegal context has
+     been provided in the init method
+     */
+    public void init(Object context) throws ServiceException {
+        initCalls++;
+    }
+
+    /**
+     * JAX-RPC runtime system ends the lifecycle of a service endpoint
+     * object by invoking the destroy method. The service endpoint
+     * releases its resourcesin the implementation of the destroy
+     * method.
+     */
+    public void destroy() {
+        destroyCalls++;
     }
 }
