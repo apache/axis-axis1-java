@@ -70,6 +70,7 @@ public class SOAPConnectionImpl extends javax.xml.soap.SOAPConnection {
         try {
             Call call = new Call(endpoint.toString());
             ((org.apache.axis.Message)request).setMessageContext(call.getMessageContext());
+            call.getMessageContext().setProperty(SOAPMessage.CHARACTER_SET_ENCODING, request.getProperty(SOAPMessage.CHARACTER_SET_ENCODING));
             SOAPEnvelope env = ((org.apache.axis.Message)request).getSOAPEnvelope();
             Attachments attachments = ((org.apache.axis.Message)
                     request).getAttachmentsImpl();
