@@ -216,10 +216,11 @@ public class Options {
   //////////////////////////////////////////////////////////////////////////
   // SOASS
   public String getURL() {
-    String tmp ;
+    String  tmp ;
+    String  protocol = null ;
+    URL     url = null ;
 
     if ( (tmp = isValueSet( 'l' )) != null ) {
-      URL url = null ;
       try {
         url = new URL( tmp );
       }
@@ -230,6 +231,7 @@ public class Options {
         host = url.getHost();
         port = "" + url.getPort();
         servlet = url.getFile();
+        protocol = url.getProtocol();
       }
     }
 
@@ -243,10 +245,12 @@ public class Options {
     else
       if ( servlet.charAt(0) != '/' ) servlet = "/" + servlet ;
 
-    tmp = "http://" + host ;
-    if ( port != null ) tmp += ":" + port ;
-
-    if ( servlet != null ) tmp += servlet ;
+    if (url == null) {
+      if (protocol == null) protocol = "http";
+      tmp = protocol + "://" + host ;
+      if ( port != null ) tmp += ":" + port ;
+      if ( servlet != null ) tmp += servlet ;
+    } else tmp = url.toString();
     return( tmp );
   }
 
