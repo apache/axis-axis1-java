@@ -212,6 +212,8 @@ public class RPCParam extends MessageElement
         // Output the value...
         if (val != null)
             context.writeString(value.toString());
+        else if (value instanceof ElementRecorder)
+            ((ElementRecorder)value).output(context);
         
         context.endElement();
     }

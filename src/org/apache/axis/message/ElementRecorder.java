@@ -57,7 +57,9 @@ package org.apache.axis.message;
 
 import org.xml.sax.*;
 import org.apache.axis.message.events.*;
+import org.apache.axis.encoding.*;
 import java.util.*;
+import java.io.*;
 
 /** This guy records the basic SAX events into an event queue.  Then it can
  * play them back to any SAX ContentHandler.
@@ -122,6 +124,23 @@ class ElementRecorder extends org.xml.sax.helpers.DefaultHandler
         while (e.hasMoreElements()) {
             SAXEvent event = (SAXEvent)e.nextElement();
             event.publishToHandler(handler);
+        }
+    }
+
+    /** 
+      * Output all but the last element to a context.
+      * Note: last element is presumably the end-element
+      */
+    public void output(SerializationContext context) 
+        throws IOException
+    {
+        Enumeration e = _events.elements();
+        if (e.hasMoreElements()) {
+            SAXEvent event = (SAXEvent)e.nextElement();
+            while (e.hasMoreElements()) {
+                event.output(context);
+                event = (SAXEvent)e.nextElement();
+            }
         }
     }
 }

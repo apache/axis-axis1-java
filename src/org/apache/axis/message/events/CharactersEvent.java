@@ -60,6 +60,9 @@ import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
+import org.apache.axis.encoding.SerializationContext;
+import java.io.IOException;
+
 /** A <code>CharactersElementEvent</code>
  * 
  * @author Glen Daniels (gdaniels@allaire.com)
@@ -82,5 +85,10 @@ public class CharactersEvent implements SAXEvent
     public void publishToHandler(ContentHandler handler) throws SAXException
     {
         handler.characters(_characters, _start, _length);
+    }
+    
+    public void output(SerializationContext context) throws IOException
+    {
+        context.writeChars(_characters, _start, _length);
     }
 }

@@ -119,8 +119,6 @@ public class MsgDispatchHandler extends BasicHandler {
 
       SOAPEnvelope  reqEnv  = (SOAPEnvelope) reqMsg.getAs("SOAPEnvelope");
       
-      System.err.println("Parsed the request message!");
-      
       SOAPBodyElement reqBody = reqEnv.getFirstBody();
       Message       resMsg  = msgContext.getResponseMessage();
       SOAPEnvelope  resEnv  = (resMsg == null) ?
