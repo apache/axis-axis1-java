@@ -66,6 +66,9 @@ import org.apache.axis.message.* ;
  * @author Doug Davis (dug@us.ibm.com)
  */
 public class RPCDispatchHandler extends BasicHandler {
+
+  private static final boolean DEBUG_LOG = false;
+
   public void invoke(MessageContext msgContext) throws AxisFault {
     Debug.Print( 1, "Enter: RPCDispatchHandler::invoke" );
 
@@ -117,7 +120,6 @@ public class RPCDispatchHandler extends BasicHandler {
         Object[] argValues  =  null ;
 
         if ( args != null && args.size() > 0 ) {
-          Debug.Print( 2, "There are " + args.size() + " arg(s)" );
           argClasses = new Class[ args.size() ];
           argValues = new Object[ args.size()];
           for ( i = 0 ; i < args.size() ; i++ ) {
@@ -128,10 +130,13 @@ public class RPCDispatchHandler extends BasicHandler {
                 argValues[i]  = arg;
                 argClasses[i] = arg.getClass();
             }
-            Debug.Print( 2, "  class: " + argClasses[i] );
-            Debug.Print( 2, "  value: " + argValues[i] == null ? 
+
+            if (DEBUG_LOG) {
+              System.out.println("  class: " + argClasses[i] );
+              System.out.println("  value: " + argValues[i] == null ? 
                                              "null" :
                                              argValues[i].toString() );
+            }
           }
         }
   
