@@ -402,8 +402,13 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      */
     public javax.xml.rpc.Call createCall(QName portName)
                             throws ServiceException {
+        Call call = (org.apache.axis.client.Call)createCall();
+        call.setPortTypeName( portName );
+
+        // We can't prefill information if WSDL is not specified,
+        // So just return the call that we just created.
         if ( wsdlDefinition == null )
-            throw new ServiceException( JavaUtils.getMessage("wsdlMissing00") );
+            return call;
 
         Port port = wsdlService.getPort( portName.getLocalPart() );
         if ( port == null )
@@ -413,9 +418,6 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
         PortType  portType = binding.getPortType();
         if ( portType == null )
             throw new ServiceException( JavaUtils.getMessage("noPortType00", "" + portName) );
-
-        Call call = (org.apache.axis.client.Call)createCall();
-        call.setPortTypeName( portName );
 
         // Get the URL
         ////////////////////////////////////////////////////////////////////
