@@ -74,6 +74,8 @@ public class ElementDecl {
     // causes nil=true to be passed over the wire.
     private boolean minOccursIs0=false;   
 
+    private boolean nillable=false;
+
     // Indicate if the ElementDecl represents
     // an xsd:any element
     private boolean anyElement = false;
@@ -108,6 +110,14 @@ public class ElementDecl {
 
     public void setMinOccursIs0(boolean minOccursIs0) {
         this.minOccursIs0 = minOccursIs0;
+    }
+
+    public void setNillable(boolean nillable) {
+        this.nillable = nillable;
+    }
+
+    public boolean getNillable() {
+        return nillable;
     }
 
     public boolean getAnyElement() {
