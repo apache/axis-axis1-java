@@ -251,46 +251,42 @@ public abstract class JavaProvider extends BasicProvider
                 null, null);
         }
 
-        try {
-            IntHolder scope   = new IntHolder();
-            Object obj        = getServiceObject(msgContext,
-                                                 service,
-                                                 clsName,
-                                                 scope);
+        IntHolder scope   = new IntHolder();
+        Object serviceObject = null;
 
-            try {
-                Message        reqMsg  = msgContext.getRequestMessage();
-                SOAPEnvelope   reqEnv  = (SOAPEnvelope)reqMsg.getSOAPEnvelope();
-                Message        resMsg  = msgContext.getResponseMessage();
-                SOAPEnvelope   resEnv  = (resMsg == null) ?
-                                         new SOAPEnvelope(msgContext.
-                                                            getSOAPConstants()) :
-                                         (SOAPEnvelope)resMsg.getSOAPEnvelope();
+        try {
+            serviceObject = getServiceObject(msgContext, service, clsName, scope);
     
-                // If we didn't have a response message, make sure we set one up
-                if (resMsg == null) {
-                    resMsg = new Message(resEnv);
-                    msgContext.setResponseMessage( resMsg );
-                }
-    
-                try {
-                    processMessage(msgContext, reqEnv,
-                                   resEnv, obj);
-                } catch (Exception exp) {
-                    throw exp;
-                }
-            } finally {
-                // If this is a request scoped service object which implements
-                // ServiceLifecycle, let it know that it's being destroyed now.
-                if (scope.value == Scope.REQUEST.getValue() &&
-                        obj instanceof ServiceLifecycle) {
-                    ((ServiceLifecycle)obj).destroy();
-                }
+            Message        resMsg  = msgContext.getResponseMessage();
+            SOAPEnvelope   resEnv;
+
+            // If we didn't have a response message, make sure we set one up
+            if (resMsg == null) {
+                resEnv  = new SOAPEnvelope(msgContext.getSOAPConstants());
+
+                resMsg = new Message(resEnv);
+                msgContext.setResponseMessage( resMsg );
+            } else {
+                resEnv  = (SOAPEnvelope)resMsg.getSOAPEnvelope();
             }
+
+            Message        reqMsg  = msgContext.getRequestMessage();
+            SOAPEnvelope   reqEnv  = (SOAPEnvelope)reqMsg.getSOAPEnvelope();
+
+            processMessage(msgContext, reqEnv, resEnv, serviceObject);
         }
         catch( Exception exp ) {
             entLog.debug( Messages.getMessage("toAxisFault00"), exp);
             throw AxisFault.makeFault(exp);
+        } finally {
+            // If this is a request scoped service object which implements
+            // ServiceLifecycle, let it know that it's being destroyed now.
+            if (serviceObject != null  &&
+                scope.value == Scope.REQUEST.getValue() &&
+                serviceObject instanceof ServiceLifecycle)
+            {
+                ((ServiceLifecycle)serviceObject).destroy();
+            }
         }
 
         if (log.isDebugEnabled())
