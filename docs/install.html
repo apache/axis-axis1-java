@@ -70,11 +70,10 @@ Contents
      Axis is implemented in the JAR file <i>axis.jar</i>; implementing the
      JAX-RPC API declared in the JAR files <i>jaxrpc.jar</i> and <i>saaj.jar</i>. It
      needs various helper libraries, for logging, WSDL processing and
-     introspection. All these files come prepackaged into a
-     webapplication, <i>axis.war</i>, that is configured to act as a
-     SOAP Server. It ships with some sample SOAP services, but you can
-     add your own by adding new compiled classes to the Axis webapp and
-     telling it about them.
+     introspection. All these files can be packaged into a
+     web application, <i>axis.war</i>, that can be dropped into a servlet container. 
+	 Axis ships with some sample SOAP services. You can
+     add your own by adding new compiled classes to the Axis webapp registering them.
      
      <p>
      Before you can do that, you have to install it and get it working.
