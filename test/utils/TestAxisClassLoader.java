@@ -23,8 +23,8 @@ public class TestAxisClassLoader extends TestCase
     {
 	AxisClassLoader expect = AxisClassLoader.getClassLoader();
 	AxisClassLoader actual = AxisClassLoader.getClassLoader();
-        assertTrue(expect instanceof AxisClassLoader);
-        assertEquals(expect, actual);
+        assertTrue("Did not get AxisClassLoader", expect instanceof AxisClassLoader);
+        assertEquals("AxisClassLoader returned two different instances.", expect, actual);
     }
 
     public void testRegisterClassNameClass()
@@ -33,7 +33,7 @@ public class TestAxisClassLoader extends TestCase
         java.util.Stack stack = new java.util.Stack(); //Stack was chosen arbitrarily
         Class clazz = stack.getClass();
         acl.registerClass("myStack",clazz);
-        assertTrue(acl.isClassRegistered("myStack"));
+        assertTrue("myStack is not registered properly", acl.isClassRegistered("myStack"));
     }
 
     public void testIsClassRegistered()
@@ -46,7 +46,7 @@ public class TestAxisClassLoader extends TestCase
         {
             fail("Nonce class name should not be registered.");
         }
-        assertTrue(acl.isClassRegistered("anotherStack"));
+        assertTrue("anotherStack was not properly registered.", acl.isClassRegistered("anotherStack"));
     }
 
     public void testDeregisterClass()
@@ -55,11 +55,11 @@ public class TestAxisClassLoader extends TestCase
         java.util.Stack stack = new java.util.Stack(); //Stack was chosen arbitrarily
         Class clazz = stack.getClass();
         acl.registerClass("myStack",clazz);
-        assertTrue(acl.isClassRegistered("myStack"));
+        assertTrue("myStack was not properly registered.", acl.isClassRegistered("myStack"));
         acl.deregisterClass("myStack");
         if (acl.isClassRegistered("myStack"))
         {
-            fail("Class should have been deregistered.");
+            fail("myStack class should have been deregistered.");
         } 
     }
 
@@ -67,13 +67,13 @@ public class TestAxisClassLoader extends TestCase
     {
 	AxisClassLoader acl = AxisClassLoader.getClassLoader();
         Class clazz = acl.loadClass("java.util.BitSet"); //BitSet was chosen arbitrarily 
-        assertTrue(clazz.getName().equals("java.util.BitSet"));
+        assertTrue("Could not properly load the class \"java.util.BitSet\"", clazz.getName().equals("java.util.BitSet"));
 
         java.util.Stack stack = new java.util.Stack(); //Stack was chosen arbitrarily
         Class clazz1 = stack.getClass();
         acl.registerClass("myStack",clazz1);
         Class klass = acl.loadClass("myStack");
-        assertTrue(klass.getName().equals("java.util.Stack"));
+        assertTrue("The myStack class was not \"java.util.Stack\"", klass.getName().equals("java.util.Stack"));
     }
 
     public void testLookup() throws ClassNotFoundException
@@ -81,6 +81,7 @@ public class TestAxisClassLoader extends TestCase
 	AxisClassLoader acl = AxisClassLoader.getClassLoader();
         JavaClass jc = acl.lookup("java.util.BitSet"); //BitSet was chosen arbitrarily 
         Class c = jc.getJavaClass(); 
-        assertTrue(c.getName().equals("java.util.BitSet"));
+        assertTrue("The class is not the expected \"java.util.BitSet\", instead it was \"" + c.getName() + "\"",
+                   c.getName().equals("java.util.BitSet"));
     }
 }
