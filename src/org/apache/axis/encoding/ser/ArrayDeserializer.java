@@ -288,10 +288,11 @@ public class ArrayDeserializer extends DeserializerImpl
             getClassForQName(compQName);
         if (arrayItemClass != null) {
             try {
-                arrayClass = ClassUtils.forName(
-                  JavaUtils.getLoadableClassName(
-                    JavaUtils.getTextClassName(arrayItemClass.getName()) +
-                    dims));
+                String loadableArrayClassName = JavaUtils.getLoadableClassName(
+                                                    JavaUtils.getTextClassName(arrayItemClass.getName()) + dims);
+                arrayClass = ClassUtils.forName(loadableArrayClassName,
+                                                    true,
+                                                    arrayItemClass.getClassLoader());
             } catch (Exception e) {
                 throw new SAXException(
                    Messages.getMessage("noComponent00",  
