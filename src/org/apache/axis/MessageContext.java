@@ -1002,6 +1002,7 @@ public class MessageContext implements SOAPMessageContext {
      * @see javax.xml.rpc.handler.HandlerChain#getRoles() HandlerChain.getRoles()
      */
     public String[] getRoles() {
+        //TODO: Flesh this out.
         return null;
     }
 }
