@@ -260,6 +260,11 @@ public class Java2WsdlAntTask extends Task
         this.style = style;
     }
 
+    // The setter for the "use" attribute
+    public void setUse(String use) {
+        this.use = use;
+    }
+
     /** the command arguments */
     public Mapping createMapping() {
         Mapping pkg = new Mapping();
