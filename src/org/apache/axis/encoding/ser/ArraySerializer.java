@@ -127,8 +127,7 @@ public class ArraySerializer implements Serializer
         //    This won't handle Lists of Lists or
         //    arrays of Lists....only arrays of arrays.
         String dims = "";
-        while (componentType.isArray() &&
-               context.getQNameForClass(componentType).equals(Constants.SOAP_ARRAY)) {
+        while (componentType.isArray()) {
             componentType = componentType.getComponentType();
             dims += "[]";
         }
