@@ -63,6 +63,7 @@ import org.xml.sax.helpers.AttributesImpl;
 import java.lang.reflect.Array;
 import java.io.IOException;
 import java.util.List;
+import java.util.Hashtable;
 
 /** An ArraySerializer handles serializing and deserializing SOAP
  * arrays.
@@ -75,6 +76,18 @@ import java.util.List;
 public class ArraySerializer extends DeserializerBase
     implements ValueReceiver, Serializer
 {
+
+    static Hashtable primitives = new Hashtable();
+    static {
+      primitives.put(Character.class, Character.TYPE);
+      primitives.put(Byte.class, Byte.TYPE);
+      primitives.put(Short.class, Short.TYPE);
+      primitives.put(Integer.class, Integer.TYPE);
+      primitives.put(Long.class, Long.TYPE);
+      primitives.put(Float.class, Float.TYPE);
+      primitives.put(Double.class, Double.TYPE);
+    }
+
     public static class Factory implements DeserializerFactory {
         public DeserializerBase getDeserializer() {
             return new ArraySerializer();
@@ -145,6 +158,10 @@ public class ArraySerializer extends DeserializerBase
                 if (componentType == null)
                     throw new SAXException("No component type for " + arrayItemType);
                 
+                // Replace wrapper classes with primitive equivalents
+                Object primitive = primitives.get(componentType);
+                if (primitive != null) componentType = (Class) primitive;
+
                 value = Array.newInstance(componentType, length);
 
             }
