@@ -442,6 +442,7 @@ public class Constants {
     public static final QName SOAP_VECTOR = new QName("http://xml.apache.org/xml-soap", "Vector");
 
     public static       QName XSD_DATE = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "dateTime");
+    public static       QName XSD_DATE1 = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "date");
     public static       QName XSD_DATE2= new QName(Constants.URI_1999_SCHEMA_XSD,    "timeInstant");
     public static       QName XSD_DATE3= new QName(Constants.URI_2000_SCHEMA_XSD,    "timeInstant");
     
