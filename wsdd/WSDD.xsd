@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <!--// 
             Web Services Deployment Descriptor (WSDD) Version 1.1 (Proposal)
 //-->
@@ -60,7 +60,7 @@ any time.
 				<xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
 			</xsd:sequence>
 			<xsd:attribute name="name" type="xsd:NCName" use="required" />
-			<xsd:attribute name="locked" type="xsd:boolean" use="optional" value="false" />
+			<xsd:attribute name="locked" type="xsd:boolean" use="optional" default="false" />
 			<xsd:attribute name="value" type="xsd:CDATA" use="optional" />
 			<xsd:anyAttribute namespace="##other" />
 		</xsd:complexType>
