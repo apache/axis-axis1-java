@@ -431,7 +431,9 @@ public class ServiceDesc {
 
         if (overloads == null) {
             // Nothing specifically matching this QName.
-            if ((style == Style.RPC) && (name2OperationsMap != null)) {
+            if (((style == Style.RPC) || ((style==Style.MESSAGE) && 
+                                          (getDefaultNamespace() == null))) &&
+                    (name2OperationsMap != null)) {
                 // Try ignoring the namespace....?
                 overloads = (ArrayList)name2OperationsMap.get(qname.getLocalPart());
             }

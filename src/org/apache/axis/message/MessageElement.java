@@ -312,6 +312,12 @@ public class MessageElement implements SOAPElement, Serializable
 
     public String getName() { return( name ); }
     public void setName(String name) { this.name = name; }
+    
+    public QName getQName() { return new QName(namespaceURI, name); }
+    public void setQName(QName qName) {
+        this.name = qName.getLocalPart();
+        this.namespaceURI = qName.getNamespaceURI();
+    }
 
     public String getPrefix() { return( prefix ); }
     public void setPrefix(String prefix) { this.prefix = prefix; }
