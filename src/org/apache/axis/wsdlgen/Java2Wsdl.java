@@ -261,8 +261,8 @@ public class Java2Wsdl {
                 }
             }
 
-            // Can't proceed without a class name and output file
-            if ((className == null) || (wsdlFilename == null)) {
+            // Can't proceed without a class name
+            if ((className == null)) {
                 printUsage();
             }
 

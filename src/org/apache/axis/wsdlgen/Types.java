@@ -204,16 +204,41 @@ public class Types {
             // Get the QName from the registry, or create our own.
             qName = reg.getTypeQName(type);
             if (qName == null) {
-                String ns = namespaces.getCreate(
-                  type.getName().substring(0, type.getName().lastIndexOf('.')));
+                String pkg = getPackageNameFromFullName(type.getName());
+                String lcl = getLocalNameFromFullName(type.getName());
+
+                String ns = namespaces.getCreate(pkg);
                 String pre = namespaces.getCreatePrefix(ns);
-                String localPart = type.getName().substring(type.getName().lastIndexOf('.') + 1);
-                localPart = localPart.replace('$', '_');
+                String localPart = lcl.replace('$', '_');
                 qName = new javax.xml.rpc.namespace.QName(ns, localPart);
             }
         }
 
         return qName;
+    }
+
+    /**
+     * Utility method to get the package name from a fully qualified java class name
+     * @param full input class name
+     * @return package name
+     */
+    private String getPackageNameFromFullName(String full) {
+        if (full.lastIndexOf('.') < 0)
+            return "";
+        else 
+            return full.substring(0, full.lastIndexOf('.')); 
+    }
+
+    /**
+     * Utility method to get the local class name from a fully qualified java class name
+     * @param full input class name
+     * @return package name
+     */
+    private String getLocalNameFromFullName(String full) {
+        if (full.lastIndexOf('.') < 0)
+            return full;
+        else 
+            return full.substring(full.lastIndexOf('.')+1); 
     }
 
     /**
