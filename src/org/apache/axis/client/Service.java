@@ -75,6 +75,7 @@ import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
 import javax.xml.rpc.ServiceException;
 import javax.xml.rpc.encoding.TypeMappingRegistry;
+import javax.xml.rpc.handler.HandlerRegistry;
 import javax.xml.rpc.namespace.QName;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -438,6 +439,49 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
         Call call = new org.apache.axis.client.Call(this);
         previousCall.set(call);
         return call;
+    }
+
+    /**
+     * Gets an array of preconfigured Call objects for invoking operations
+     * on the specified port. There is one Call object per operation that
+     * can be invoked on the specified port. Each Call object is
+     * pre-configured and does not need to be configured using the setter
+     * methods on Call interface.
+     *
+     * This method requires the Service implementation class to have access
+     * to the WSDL related metadata.
+     *
+     * Not implemented.
+     *
+     * @param portName - Qualified name for the target service endpoint
+     *
+     * @throws ServiceException - If this Service class does not have access
+     * to the required WSDL metadata or if an illegal portName is specified.
+     */
+    public javax.xml.rpc.Call[] getCalls() throws ServiceException {
+        if (wsdlLocation == null) {
+            throw new ServiceException();
+        }
+        else {
+            return new javax.xml.rpc.Call[0];
+        }
+    }
+
+    /**
+     * Returns the configured HandlerRegistry instance for this Service
+     * instance.
+     *
+     * NOTE:  This Service currently does not support the configuration
+     *        of a HandlerRegistry!  It will throw a
+     *        java.lang.UnsupportedOperationException.
+     *
+     * @return HandlerRegistry
+     * @throws java.lang.UnsupportedOperationException - if the Service
+     *         class does not support the configuration of a
+     *         HandlerRegistry.
+     */
+    public HandlerRegistry getHandlerRegistry() {
+        throw new UnsupportedOperationException();
     }
 
     /**
