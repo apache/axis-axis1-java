@@ -329,7 +329,10 @@ public class TypeMappingImpl implements Serializable
         // check if ArrayOfT(xml)->T[](java) conversion is possible
         if (sf == null && javaType.isArray() && xmlType != null) {
             Pair pair2 = (Pair) qName2Pair.get(xmlType);
-            if (ArrayUtil.isConvertable(pair.javaType, javaType)) {
+            if (pair2 != null 
+                    && pair2.javaType != null
+                    && !pair2.javaType.isPrimitive() 
+                    && ArrayUtil.isConvertable(pair2.javaType, javaType)) {
                 sf = (javax.xml.rpc.encoding.SerializerFactory) pair2SF.get(pair2);
             }
         }

@@ -144,11 +144,7 @@ public class Java2WsdlAntTask extends Task
      * @throws BuildException
      */
     public void execute() throws BuildException {
-        AntClassLoader cl = new AntClassLoader(getClass().getClassLoader(),
-                getProject(),
-                classpath == null ? createClasspath() : classpath,
-                false);
-
+        AntClassLoader cl = getProject().createClassLoader(classpath == null ? createClasspath(): classpath);        
         ClassUtils.setDefaultClassLoader(cl);
         //add extra classes to the classpath when the classpath attr is not null
         if (extraClasses != null) {
@@ -556,21 +552,22 @@ public class Java2WsdlAntTask extends Task
      * @param wsdlFileName the generated WSDL file
      * @throws Exception
      */
-    protected void generateServerSide(Emitter emitter, String wsdlFileName) throws Exception {
+    protected void generateServerSide(Emitter j2w, String wsdlFileName) throws Exception {
         org.apache.axis.wsdl.toJava.Emitter w2j = new org.apache.axis.wsdl.toJava.Emitter();
         File wsdlFile = new File(wsdlFileName);
-        w2j.setServiceDesc(emitter.getServiceDesc());
-        w2j.setQName2ClassMap(emitter.getQName2ClassMap());
+        w2j.setServiceDesc(j2w.getServiceDesc());
+        w2j.setQName2ClassMap(j2w.getQName2ClassMap());
         w2j.setOutputDir(wsdlFile.getParent());
         w2j.setServerSide(true);   
         w2j.setDeploy(true);
+        w2j.setHelperWanted(true);
 
         // setup namespace-to-package mapping
-        String ns = emitter.getIntfNamespace();
-        String pkg = emitter.getCls().getPackage().getName();
+        String ns = j2w.getIntfNamespace();
+        String pkg = j2w.getCls().getPackage().getName();
         w2j.getNamespaceMap().put(ns, pkg);
         
-        Map nsmap = emitter.getNamespaceMap();
+        Map nsmap = j2w.getNamespaceMap();
         if (nsmap != null) {
             for (Iterator i = nsmap.keySet().iterator(); i.hasNext(); ) {
                 pkg = (String) i.next();
@@ -582,11 +579,11 @@ public class Java2WsdlAntTask extends Task
         // set 'deploy' mode
         w2j.setDeploy(true);
         
-        if (emitter.getImplCls() != null) {
-            w2j.setImplementationClassName(emitter.getImplCls().getName());
+        if (j2w.getImplCls() != null) {
+            w2j.setImplementationClassName(j2w.getImplCls().getName());
         } else {
-            if (!emitter.getCls().isInterface()) {
-                w2j.setImplementationClassName(emitter.getCls().getName());
+            if (!j2w.getCls().isInterface()) {
+                w2j.setImplementationClassName(j2w.getCls().getName());
             } else {
                 throw new Exception("implementation class is not specified.");
             }

@@ -316,7 +316,7 @@ public class JavaUtils
         // in case destClass is array and arg is ArrayOfT class. (ArrayOfT -> T[])
         if (arg != null && destClass.isArray()) {
             Object newArg = ArrayUtil.convertObjectToArray(arg, destClass);            
-            if (newArg != null && newArg != arg)  
+            if (!newArg.getClass().getName().equals(arg.getClass().getName())) 
                 return newArg;
         }
        

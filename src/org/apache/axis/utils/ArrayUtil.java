@@ -32,7 +32,7 @@ public class ArrayUtil {
      * @param arrayType  the destination array type
      * @return returns   the converted array object. 
      *                   If not convertable the original obj argument is returned.
-     *                   If the obj is not type of ArrayOfT, null is returned.
+     *                   If the obj is not type of ArrayOfT or the value is null, null is returned.
      */
     public static Object convertObjectToArray(Object obj, Class arrayType) {
         try {            
@@ -48,6 +48,9 @@ public class ArrayUtil {
                 return null;
             }
             Object comp = pd.get(obj);              
+            if (comp == null) {
+                return null;
+            }
             int arraylen = 0;
             if (comp.getClass().isArray()) {
                 arraylen = Array.getLength(comp);
