@@ -59,7 +59,11 @@ import java.util.* ;
 import org.jdom.* ;
 
 import org.apache.axis.* ;
-import org.apache.axis.message.* ;
+import org.apache.axis.message.RPCArg;
+import org.apache.axis.message.RPCBody;
+import org.apache.axis.message.SOAPBody;
+import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.message.SOAPHeader;
 import org.apache.axis.handlers.* ;
 import org.apache.axis.registries.* ;
 import org.apache.axis.* ;
