@@ -97,7 +97,7 @@ public class MsgDispatchHandler extends BasicHandler {
     Debug.Print( 2, "MethodName: " + methodName );
 
     try {
-      AxisClassLoader cl     = new AxisClassLoader();
+      AxisClassLoader cl     = msgContext.getClassLoader();
       Class           cls    = cl.loadClass(clsName);
       Object          obj    = cls.newInstance();
       Class[]         argClasses = new Class[2];

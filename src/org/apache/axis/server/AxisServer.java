@@ -127,6 +127,7 @@ public class AxisServer extends BasicHandler
         HandlerRegistry sr = 
             (HandlerRegistry) getOption(Constants.SERVICE_REGISTRY);
 
+        msgContext.setProperty(Constants.AXIS_ENGINE, this );
         msgContext.setProperty(Constants.HANDLER_REGISTRY, hr);
         msgContext.setProperty(Constants.SERVICE_REGISTRY, sr);
 
@@ -134,7 +135,7 @@ public class AxisServer extends BasicHandler
           hName = msgContext.getStrProp( MessageContext.ENGINE_HANDLER );
           if ( hName != null ) {
               if ( hr == null || (h = hr.find(hName)) == null ) {
-                ClassLoader cl = new AxisClassLoader();
+                AxisClassLoader cl = msgContext.getClassLoader();
                 try {
                   Debug.Print( 2, "Trying to load class: " + hName );
                   Class cls = cl.loadClass( hName );

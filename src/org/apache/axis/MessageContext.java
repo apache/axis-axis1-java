@@ -57,6 +57,7 @@ package org.apache.axis ;
 
 import java.util.* ;
 import org.apache.axis.* ;
+import org.apache.axis.utils.AxisClassLoader ;
 
 /**
  * Some more general docs will go here.
@@ -98,7 +99,12 @@ public class MessageContext {
      * That unique key/name that the next router/dispatch handler should use
      * to determine what to do next.
      */
-    private String targetService ;
+    private String           targetService ;
+
+    /**
+     * The default classloader that this service should use
+     */
+    private AxisClassLoader  classLoader ;
 
     /**
      * 
@@ -136,6 +142,21 @@ public class MessageContext {
     public void setResponseMessage(Message inMsg) { 
         outMessage = inMsg ;
     };
+
+    public AxisClassLoader getClassLoader() {
+      if ( classLoader == null ) 
+        classLoader = AxisClassLoader.getClassLoader(null);
+      return( classLoader );
+    }
+
+    public AxisClassLoader getClassLoader(String name) {
+      if ( name == null ) return( getClassLoader() );
+      return( AxisClassLoader.getClassLoader(name) );
+    }
+
+    public void setClassLoader(AxisClassLoader cl ) {
+      classLoader = cl ;
+    }
 
     public String getTargetService() {
       return( targetService );
