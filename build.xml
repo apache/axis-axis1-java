@@ -270,15 +270,15 @@ Copyright:
           toDir="${build.dest}/org/apache/axis/client"/>
     <copy file="${src.dir}/log4j.properties"
           toDir="${build.dest}"/>
-    <copy file="${src.dir}/org/apache/axis/utils/axis.nls.properties"
+    <copy file="${src.dir}/org/apache/axis/utils/axisNLS.properties"
           toDir="${build.dest}/org/apache/axis/utils"/>
 
     <tstamp>
       <format property="build.time" pattern="MMM dd, yyyy (hh:mm:ss z)"/>
     </tstamp>
-    <replace file="${build.dest}/org/apache/axis/utils/axis.nls.properties"
+    <replace file="${build.dest}/org/apache/axis/utils/axisNLS.properties"
              token="#today#" value="${build.time}"/>
-    <replace file="${build.dest}/org/apache/axis/utils/axis.nls.properties"
+    <replace file="${build.dest}/org/apache/axis/utils/axisNLS.properties"
              token="#axisVersion#" value="${axis.version}"/>
   
     <jar jarfile="${build.lib}/${name}.jar" basedir="${build.dest}" >
