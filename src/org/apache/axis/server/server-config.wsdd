@@ -12,6 +12,7 @@
 
  <chain name="global.request">
   <handler type="java:org.apache.axis.handlers.JWSHandler"/>
+  <handler type="java:org.apache.axis.handlers.http.URLMapper" />
  </chain>
 
  <service name="AdminService">
