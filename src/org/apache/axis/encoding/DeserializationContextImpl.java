@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -54,7 +54,7 @@
  */
 package org.apache.axis.encoding;
 
-import org.apache.axis.attachments.Attachments; 
+import org.apache.axis.attachments.Attachments;
 
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
@@ -90,7 +90,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-/** 
+/**
  * @author Glen Daniels (gdaniels@macromedia.com)
  * Re-architected for JAX-RPC Compliance by:
  * @author Rich Scheuerle (scheu@us.ibm.com)
@@ -102,14 +102,14 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
             LogFactory.getLog(DeserializationContextImpl.class.getName());
 
     private NSStack namespaces = new NSStack();
-    
+
     private Locator locator;
-                                             
+
     // for performance reasons, keep the top of the stack separate from
     // the remainder of the handlers, and therefore readily available.
     private SOAPHandler topHandler = null;
     private ArrayList pushedDownHandlers = new ArrayList();
-    
+
     //private SAX2EventRecorder recorder = new SAX2EventRecorder();
     private SAX2EventRecorder recorder = null;
     private SOAPEnvelope envelope;
@@ -117,20 +117,20 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
     /* A map of IDs -> IDResolvers */
     private HashMap idMap;
     private LocalIDResolver localIDs;
-    
+
     private HashMap fixups;
-    
+
     static final SOAPHandler nullHandler = new SOAPHandler();
-    
+
     protected MessageContext msgContext;
-    
+
     private boolean doneParsing = false;
     protected InputSource inputSource = null;
 
     private MessageElement curElement;
 
     protected int startOfMappingsPos = -1;
-           
+
     /**
      * Construct Deserializer using MessageContext and EnvelopeBuilder handler
      * @param ctx is the MessageContext
@@ -152,9 +152,9 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
 
         pushElementHandler(new EnvelopeHandler(initialHandler));
     }
-    
+
     /**
-     * Construct Deserializer 
+     * Construct Deserializer
      * @param is is the InputSource
      * @param ctx is the MessageContext
      * @param messageType is the MessageType to construct an EnvelopeBuilder
@@ -165,7 +165,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
     {
         EnvelopeBuilder builder = new EnvelopeBuilder(messageType,
                                                       ctx.getSOAPConstants());
-        
+
         msgContext = ctx;
 
         // If high fidelity is required, record the whole damn thing.
@@ -174,14 +174,14 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
 
         envelope = builder.getEnvelope();
         envelope.setRecorder(recorder);
-        
+
         pushElementHandler(new EnvelopeHandler(builder));
 
         inputSource = is;
     }
-    
+
     /**
-     * Construct Deserializer 
+     * Construct Deserializer
      * @param is is the InputSource
      * @param ctx is the MessageContext
      * @param messageType is the MessageType to construct an EnvelopeBuilder
@@ -193,21 +193,21 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
                                       SOAPEnvelope env)
     {
         EnvelopeBuilder builder = new EnvelopeBuilder(env, messageType);
-        
+
         msgContext = ctx;
-        
+
         // If high fidelity is required, record the whole damn thing.
         if (ctx == null || ctx.isHighFidelity())
             recorder = new SAX2EventRecorder();
 
         envelope = builder.getEnvelope();
         envelope.setRecorder(recorder);
-        
+
         pushElementHandler(new EnvelopeHandler(builder));
 
         inputSource = is;
     }
-    
+
     /**
      * Create a parser and parse the inputSource
      */
@@ -246,34 +246,34 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
             recorder = curElement.getRecorder();
         }
     }
-    
-    
+
+
     /**
-     * Get MessageContext         
+     * Get MessageContext
      */
     public MessageContext getMessageContext()
     {
         return msgContext;
     }
-    
+
     /**
-     * Get Envelope               
+     * Get Envelope
      */
     public SOAPEnvelope getEnvelope()
     {
         return envelope;
     }
-    
+
     /**
-     * Get Event Recorder         
+     * Get Event Recorder
      */
     public SAX2EventRecorder getRecorder()
     {
         return recorder;
     }
-    
+
     /**
-     * Set Event Recorder         
+     * Set Event Recorder
      */
     public void setRecorder(SAX2EventRecorder recorder)
     {
@@ -287,11 +287,11 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
     {
         return namespaces.cloneFrame();
     }
-    
-    /** 
+
+    /**
      * Get the Namespace for a particular prefix
      */
-    public String getNamespaceURI(String prefix) 
+    public String getNamespaceURI(String prefix)
     {
         String result = namespaces.getNamespaceURI(prefix);
         if (result != null)
@@ -302,33 +302,33 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
 
         return null;
     }
-    
+
     /**
      * Construct a QName from a string of the form <prefix>:<localName>
      * @param qNameStr is the prefixed name from the xml text
      * @return QName
      */
     public QName getQNameFromString(String qNameStr)
-    { 
+    {
         if (qNameStr == null)
             return null;
-        
-        // OK, this is a QName, so look up the prefix in our current mappings.        
+
+        // OK, this is a QName, so look up the prefix in our current mappings.
         int i = qNameStr.indexOf(':');
         if (i == -1)
             return null;
-        
+
         String nsURI = getNamespaceURI(qNameStr.substring(0, i));
-        
+
         //log.debug("namespace = " + nsURI);
-        
+
         if (nsURI == null)
             return null;
-        
+
         return new QName(nsURI, qNameStr.substring(i + 1));
     }
-    
-    /** 
+
+    /**
      * Create a QName for the type of the element defined by localName and
      * namespace with the specified attributes.
      * @param namespace of the element
@@ -339,7 +339,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
                                        Attributes attrs)
     {
         QName typeQName = null;
-        
+
         // Check for type
         String type = Constants.getValue(attrs, Constants.URIS_SCHEMA_XSI,
                                          "type");
@@ -353,7 +353,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
             // If the element is a SOAP-ENC element, the name of the element is the type.
             // If the default type mapping accepts SOAP 1.2, then use then set
             // the typeQName to the SOAP-ENC type.
-            // Else if the default type mapping accepts SOAP 1.1, then 
+            // Else if the default type mapping accepts SOAP 1.1, then
             // convert the SOAP-ENC type to the appropriate XSD Schema Type.
             QName myQName = new QName(namespace, localName);
             if (Constants.URI_DEFAULT_SOAP_ENC.equals(Constants.URI_SOAP12_ENC) &&
@@ -383,22 +383,22 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
         // Return with the type if the name matches one of the above primitives
         if (typeQName != null)
             return typeQName;
-        
+
 
         /*  Removing this code for now - Glen 2/20/02
-        
+
         // If all else fails see if the name is a known type
         typeQName = new QName(namespace, localName);
         if (getTypeMapping().getClassForQName(typeQName) != null)
             return typeQName;
-        
+
         */
-        
-        return null;        
+
+        return null;
     }
 
     /**
-     * Convenenience method that returns true if the value is nil 
+     * Convenenience method that returns true if the value is nil
      * (due to the xsi:nil) attribute.
      * @param attrs are the element attributes.
      * @return true if xsi:nil is true
@@ -412,7 +412,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
     /**
      * Get a Deserializer which can turn a given xml type into a given
      * Java type
-     */ 
+     */
     public final Deserializer getDeserializer(Class cls, QName xmlType) {
         if (xmlType == null)
             return null;
@@ -432,9 +432,9 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
                 log.error(JavaUtils.getMessage("noDeser00", xmlType.toString()));
             }
         }
-        return dser;                    
+        return dser;
     }
-    
+
     /**
      * Convenience method to get the Deserializer for a specific
      * xmlType.
@@ -444,40 +444,40 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
     public final Deserializer getDeserializerForType(QName xmlType) {
         return getDeserializer(null, xmlType);
     }
-    
-    /** 
+
+    /**
      * Get the TypeMapping for this DeserializationContext
      */
     public TypeMapping getTypeMapping()
     {
         TypeMappingRegistry tmr = msgContext.getTypeMappingRegistry();
         return (TypeMapping) tmr.getTypeMapping(msgContext.getEncodingStyle());
-        /* 
+        /*
          * TODO: This code doesn't yet work, but we aren't looking up the right
          * TypeMapping by just using SOAP_ENC.
-         
+
         String encStyle = curElement == null ? Constants.NS_URI_CURRENT_SOAP_ENC :
                                                curElement.getEncodingStyle();
         return (TypeMapping) tmr.getTypeMapping(encStyle);
         */
     }
-    
+
     /**
      * Get the TypeMappingRegistry we're using.
      * @return TypeMapping or null
-     */ 
+     */
     public TypeMappingRegistry getTypeMappingRegistry() {
         return (TypeMappingRegistry) msgContext.getTypeMappingRegistry();
     }
 
     /**
      * Get the MessageElement for the indicated id (where id is the #value of an href)
-     * If the MessageElement has not been processed, the MessageElement will 
+     * If the MessageElement has not been processed, the MessageElement will
      * be returned.  If the MessageElement has been processed, the actual object
      * value is stored with the id and this routine will return null.
      * @param id is the value of an href attribute
      * @return MessageElement or null
-     */ 
+     */
     public MessageElement getElementByID(String id)
     {
         if((idMap !=  null)) {
@@ -488,19 +488,19 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
                     return (MessageElement)ret;
             }
         }
-        
+
         return null;
     }
-    
+
     /**
-     * Gets the MessageElement or actual Object value associated with the href value.  
-     * The return of a MessageElement indicates that the referenced element has 
+     * Gets the MessageElement or actual Object value associated with the href value.
+     * The return of a MessageElement indicates that the referenced element has
      * not been processed.  If it is not a MessageElement, the Object is the
-     * actual deserialized value.  
+     * actual deserialized value.
      * In addition, this method is invoked to get Object values via Attachments.
      * @param href is the value of an href attribute (or an Attachment id)
      * @return MessageElement other Object or null
-     */ 
+     */
     public Object getObjectByRef(String href) {
         Object ret= null;
         if(href != null){
@@ -514,7 +514,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
                 Message msg= null;
                 if(null != (msg=msgContext.getCurrentMessage())){
                     Attachments attch= null;
-                    if( null != (attch= msg.getAttachmentsImpl())){ 
+                    if( null != (attch= msg.getAttachmentsImpl())){
                         try{
                         ret= attch.getAttachmentByReference(href);
                         }catch(AxisFault e){
@@ -525,12 +525,12 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
             }
         }
 
-        return ret; 
+        return ret;
     }
-    
+
     /**
      * Add the object associated with this id (where id is the value of an id= attribute,
-     * i.e. it does not start with #).  
+     * i.e. it does not start with #).
      * This routine is called to associate the deserialized object
      * with the id specified on the XML element.
      * @param id (id name without the #)
@@ -542,11 +542,11 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
         String idStr = '#' + id;
         if ((idMap == null) || (id == null))
             return ;
-        
+
         IDResolver resolver = (IDResolver)idMap.get(idStr);
         if (resolver == null)
             return ;
-        
+
         resolver.addReferencedObject(idStr, obj);
         return;
     }
@@ -571,7 +571,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
 
         // There could already be a deserializer in the fixup list
         // for this href.  If so, the easiest way to get all of the
-        // targets updated is to move the previous deserializers 
+        // targets updated is to move the previous deserializers
         // targets to dser.
         if (prev != null && prev != dser) {
             dser.moveValueTargets(prev);
@@ -580,28 +580,28 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
             }
         }
     }
-    
+
     /**
-     * Register the MessageElement with this id (where id is id= form without the #)     
+     * Register the MessageElement with this id (where id is id= form without the #)
      * This routine is called when the MessageElement with an id is read.
      * If there is a Deserializer in our fixup list (described above),
      * the 'fixup' deserializer is given to the MessageElement.  When the
      * MessageElement is completed, the 'fixup' deserializer is informed and
      * it can set its targets.
      * @param id (id name without the #)
-     * @param elem is the MessageElement                   
+     * @param elem is the MessageElement
      */
     public void registerElementByID(String id, MessageElement elem)
     {
         if (localIDs == null)
             localIDs = new LocalIDResolver();
-        
+
         String absID = '#' + id;
-        
+
         localIDs.addReferencedObject(absID, elem);
-        
+
         registerResolverForID(absID, localIDs);
-        
+
         if (fixups != null) {
             Deserializer dser = (Deserializer)fixups.get(absID);
             if (dser != null) {
@@ -609,9 +609,9 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
             }
         }
     }
-    
+
     /**
-     * Each id can have its own kind of resolver.  This registers a 
+     * Each id can have its own kind of resolver.  This registers a
      * resolver for the id.
      */
     public void registerResolverForID(String id, IDResolver resolver)
@@ -620,13 +620,13 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
             // ??? Throw nullPointerException?
             return;
         }
-        
+
         if (idMap == null)
             idMap = new HashMap();
-        
+
         idMap.put(id, resolver);
     }
-    
+
     /**
      * Get the current position in the record.
      */
@@ -635,19 +635,19 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
         if (recorder == null) return -1;
         return recorder.getLength() - 1;
     }
-    
+
     /**
-     * Get the start of the mapping position  
+     * Get the start of the mapping position
      */
     public int getStartOfMappingsPos()
     {
         if (startOfMappingsPos == -1) {
             return getCurrentRecordPos() + 1;
         }
-        
+
         return startOfMappingsPos;
     }
-    
+
     /**
      * Push the MessageElement into the recorder
      */
@@ -660,7 +660,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
         if (!doneParsing && (recorder != null)) {
             recorder.newElement(elem);
         }
-        
+
         try {
             if(curElement != null)
                 elem.setParentElement(curElement);
@@ -677,23 +677,23 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
         if (elem.getRecorder() != recorder)
             recorder = elem.getRecorder();
     }
-    
+
     /****************************************************************
      * Management of sub-handlers (deserializers)
      */
-    
+
     public void pushElementHandler(SOAPHandler handler)
     {
         if (log.isDebugEnabled()) {
             log.debug(JavaUtils.getMessage("pushHandler00", "" + handler));
         }
-        
+
         if (topHandler != null) pushedDownHandlers.add(topHandler);
         topHandler = handler;
     }
-    
+
     /** Replace the handler at the top of the stack.
-     * 
+     *
      * This is only used when we have a placeholder Deserializer
      * for a referenced object which doesn't know its type until we
      * hit the referent.
@@ -702,7 +702,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
     {
         topHandler = handler;
     }
-    
+
     public SOAPHandler popElementHandler()
     {
         SOAPHandler result = topHandler;
@@ -724,7 +724,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
 
         return result;
     }
-    
+
     /****************************************************************
      * SAX event handlers
      */
@@ -743,9 +743,9 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
         }
         if (!doneParsing && (recorder != null))
             recorder.endDocument();
-        
+
         doneParsing = true;
-        
+
         if (log.isDebugEnabled()) {
             log.debug("Exit: DeserializationContextImpl::endDocument()");
         }
@@ -754,7 +754,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
      * Return if done parsing document.
      */
     public boolean isDoneParsing() {return doneParsing;}
-    
+
     /** Record the current set of prefix mappings in the nsMappings table.
      *
      * !!! We probably want to have this mapping be associated with the
@@ -769,19 +769,19 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
         if (log.isDebugEnabled()) {
             log.debug("Enter: DeserializationContextImpl::startPrefixMapping(" + prefix + ", " + uri + ")");
         }
-        
+
         if (!doneParsing && (recorder != null))
             recorder.startPrefixMapping(prefix, uri);
-        
+
         if (startOfMappingsPos == -1)
             startOfMappingsPos = getCurrentRecordPos();
-        
+
         if (prefix != null) {
             namespaces.add(uri, prefix);
         } else {
             namespaces.add(uri, "");
         }
-       
+
         if (topHandler != null)
             topHandler.startPrefixMapping(prefix, uri);
 
@@ -789,17 +789,17 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
             log.debug("Exit: DeserializationContextImpl::startPrefixMapping()");
         }
     }
-    
+
     public void endPrefixMapping(String prefix)
         throws SAXException
     {
         if (log.isDebugEnabled()) {
             log.debug("Enter: DeserializationContextImpl::endPrefixMapping(" + prefix + ")");
         }
-        
+
         if (!doneParsing && (recorder != null))
             recorder.endPrefixMapping(prefix);
-        
+
         if (topHandler != null)
             topHandler.endPrefixMapping(prefix);
 
@@ -807,8 +807,8 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
             log.debug("Exit: DeserializationContextImpl::endPrefixMapping()");
         }
     }
-    
-    public void setDocumentLocator(Locator locator) 
+
+    public void setDocumentLocator(Locator locator)
     {
         if (!doneParsing && (recorder != null))
             recorder.setDocumentLocator(locator);
@@ -825,14 +825,14 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
         if (topHandler != null)
             topHandler.characters(p1, p2, p3);
     }
-    
+
     public void ignorableWhitespace(char[] p1, int p2, int p3) throws SAXException {
         if (!doneParsing && (recorder != null))
             recorder.ignorableWhitespace(p1, p2, p3);
-        if (topHandler != null) 
+        if (topHandler != null)
             topHandler.ignorableWhitespace(p1, p2, p3);
     }
- 
+
     public void processingInstruction(String p1, String p2) throws SAXException {
         // must throw an error since SOAP 1.1 doesn't allow
         // processing instructions anywhere in the message
@@ -845,7 +845,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
         topHandler.skippedEntity(p1);
     }
 
-    /** 
+    /**
      * startElement is called when an element is read.  This is the big work-horse.
      *
      * This guy also handles monitoring the recording depth if we're recording
@@ -858,7 +858,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
         if (log.isDebugEnabled()) {
             log.debug("Enter: DeserializationContextImpl::startElement(" + namespace + ", " + localName + ")");
         }
-        
+
         if (attributes == null || attributes.getLength() == 0) {
             attributes = NullAttributes.singleton;
         } else {
@@ -879,27 +879,27 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
                                                        attributes,
                                                        this);
         }
-        
+
         if (nextHandler == null) {
             nextHandler = new SOAPHandler();
         }
-        
+
         pushElementHandler(nextHandler);
 
         nextHandler.startElement(namespace, localName, prefix,
                                  attributes, this);
-        
+
         if (!doneParsing && (recorder != null)) {
             recorder.startElement(namespace, localName, qName,
                                   attributes);
             if (!doneParsing)
                 curElement.setContentsIndex(recorder.getLength());
         }
-        
+
         namespaces.push();
-        
+
         startOfMappingsPos = -1;
-        
+
         if (log.isDebugEnabled()) {
             log.debug("Exit: DeserializationContextImpl::startElement()");
         }
@@ -914,26 +914,25 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
         if (log.isDebugEnabled()) {
             log.debug("Enter: DeserializationContextImpl::endElement(" + namespace + ", " + localName + ")");
         }
-        
+
         if (!doneParsing && (recorder != null))
             recorder.endElement(namespace, localName, qName);
-        
+
         try {
             SOAPHandler handler = popElementHandler();
             handler.endElement(namespace, localName, this);
-            
+
             if (topHandler != null) {
                 topHandler.onEndChild(namespace, localName, this);
             } else {
                 // We should be done!
             }
-            
+
         } finally {
             if (curElement != null)
                 curElement = (MessageElement)curElement.getParentElement();
 
-            // This breaks the types.VerifyTestCase for some reason....
-            // namespaces.pop();
+            namespaces.pop();
 
 	        if (log.isDebugEnabled()) {
                 String name = curElement != null ?
@@ -959,10 +958,10 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
         {
             if (idMap == null)
                 idMap = new HashMap();
-            
+
             idMap.put(id, referent);
         }
-        
+
         /**
          * Get object referenced by href
          */
