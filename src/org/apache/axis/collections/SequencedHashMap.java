@@ -49,7 +49,6 @@ import java.util.Set;
  *  or use explicit synchronization controls.
  *
  * @since Commons Collections 2.0
- * @version $Revision$ $Date$
  * 
  * @author <a href="mailto:mas@apache.org">Michael A. Smith</A>
  * @author <a href="mailto:dlr@collab.net">Daniel Rall</a>

@@ -19,7 +19,6 @@ package org.apache.axis.components.script;
 /**
  * This interface defines a Script module functionality
  * @author <a href="mailto:dims@yahoo.com">Davanum Srinivas</a>
- * @version $Revision$ $Date$
  * @since 2.0
  */
 public interface Script {

@@ -36,7 +36,6 @@ package org.apache.axis.utils;
  * 1996. Available at: http://www.ietf.org/rfc/rfc2045.txt
  * </p>
  * @author Jeffrey Rodriguez
- * @version $Revision: 1.8 $ $Date: 2002/01/05 11:15:59 $
  */
 final class Base64 {
     private static final int  BASELENGTH         = 255;

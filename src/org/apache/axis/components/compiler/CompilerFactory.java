@@ -26,7 +26,6 @@ import org.apache.commons.logging.Log;
  * This class implements a factory to instantiate a Compiler.
  * @author <a href="mailto:dims@yahoo.com">Davanum Srinivas</a>
  * @author <a href="mailto:stefano@apache.org">Stefano Mazzocchi</a>
- * @version $Revision: 1.10 $ $Date: 2002/07/02 18:07:35 $
  * @since 2.0
  */
 public class CompilerFactory {

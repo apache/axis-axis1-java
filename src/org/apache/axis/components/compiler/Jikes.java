@@ -35,7 +35,6 @@ import java.util.StringTokenizer;
  * NOTE: inspired by the Apache Jasper implementation.
  * @author <a href="mailto:dims@yahoo.com">Davanum Srinivas</a>
  * @author <a href="mailto:stefano@apache.org">Stefano Mazzocchi</a>
- * @version $Revision: 1.10 $ $Date: 2002/07/02 18:07:35 $
  * @since 2.0
  */
 

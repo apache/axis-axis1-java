@@ -23,7 +23,6 @@ import org.apache.commons.logging.Log;
 /**
  * This class implements a factory to instantiate an Script component.
  * @author <a href="mailto:dims@yahoo.com">Davanum Srinivas</a>
- * @version $Revision$ $Date$
  * @since 2.0
  */
 public class ScriptFactory {

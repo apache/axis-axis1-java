@@ -25,7 +25,6 @@ import java.io.OutputStream;
 /**
  * JIMI based Image I/O
  * @author <a href="mailto:dims@yahoo.com">Davanum Srinivas</a>
- * @version $Revision$ $Date$
  * @since 2.0
  */
 public class JimiIO implements ImageIO {

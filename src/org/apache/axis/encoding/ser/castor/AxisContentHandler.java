@@ -66,7 +66,6 @@ import java.io.IOException;
  * This ContentHandler delegates all serialization to an axis SerializationContext
  *
  * @author <a href="mailto:fabien.nisol@advalvas.be">Fabien Nisol</a>
- * @version $Revision$ $Name$
  */
 public class AxisContentHandler extends DefaultHandler {
     /**

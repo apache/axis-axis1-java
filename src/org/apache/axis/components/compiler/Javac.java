@@ -44,7 +44,6 @@ import java.net.URLClassLoader;
  *
  * @author <a href="mailto:dims@yahoo.com">Davanum Srinivas</a>
  * @author <a href="mailto:stefano@apache.org">Stefano Mazzocchi</a>
- * @version $Revision: 1.12 $ $Date: 2002/07/02 18:07:35 $
  * @since 2.0
  */
 

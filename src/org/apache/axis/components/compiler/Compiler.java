@@ -24,7 +24,6 @@ import java.util.List;
  * (Java-based) compiled languages
  * @author <a href="mailto:dims@yahoo.com">Davanum Srinivas</a>
  * @author <a href="mailto:stefano@apache.org">Stefano Mazzocchi</a>
- * @version $Revision: 1.2 $ $Date: 2002/06/06 14:35:58 $
  * @since 2.0
  */
 public interface Compiler {

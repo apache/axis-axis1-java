@@ -30,7 +30,6 @@ import java.util.Iterator;
  * NOTE: NEEDS WORK!!!! NEEDS TO BE TESTED.
  *
  * @author <a href="mailto:dims@yahoo.com">Davanum Srinivas</a>
- * @version $Revision$ $Date$
  * @since 2.0
  */
 public class MerlinIO extends Component implements ImageIO {

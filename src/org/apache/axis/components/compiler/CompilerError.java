@@ -21,7 +21,6 @@ package org.apache.axis.components.compiler;
  * processor (whether interpreted or compiled)
  * @author <a href="mailto:dims@yahoo.com">Davanum Srinivas</a>
  * @author <a href="mailto:stefano@apache.org">Stefano Mazzocchi</a>
- * @version $Revision: 1.1 $ $Date: 2001/12/10 22:25:53 $
  * @since 2.0
  */
 
