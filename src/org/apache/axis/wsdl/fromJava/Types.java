@@ -298,7 +298,7 @@ public class Types {
         if (schemaElem == null) {
           schemaElem = docHolder.createElement("schema");
           wsdlTypesElem.appendChild(schemaElem);
-          schemaElem.setAttribute("xmlns", Constants.NS_URI_CURRENT_SCHEMA_XSD);
+          schemaElem.setAttribute("xmlns", Constants.URI_DEFAULT_SCHEMA_XSD);
           schemaElem.setAttribute("targetNamespace", qName.getNamespaceURI());
         }
         schemaElem.appendChild(element);
@@ -312,7 +312,7 @@ public class Types {
         if (wsdlTypesElem == null) {
             // Create a <wsdl:types> element corresponding to the wsdl namespaces.
             wsdlTypesElem = 
-                    docHolder.createElementNS(Constants.NS_URI_CURRENT_WSDL, "types");
+                    docHolder.createElementNS(Constants.NS_URI_WSDL11, "types");
             wsdlTypesElem.setPrefix(Constants.NS_PREFIX_WSDL);
         }
     }

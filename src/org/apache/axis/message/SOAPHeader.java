@@ -138,7 +138,7 @@ public class SOAPHeader extends MessageElement
             SOAPHeaderElement header = (SOAPHeaderElement)i.next();
             String headerActor = header.getActor();
             // Allow NEXT's and any headers with matching actor
-            if (Constants.ACTOR_NEXT.equals(headerActor) ||
+            if (Constants.URI_SOAP11_NEXT_ACTOR.equals(headerActor) ||
                 (actor == headerActor) || 
                 (actor != null && actor.equals(headerActor))) {
                 results.add(header);
@@ -172,7 +172,7 @@ public class SOAPHeader extends MessageElement
         while (i.hasNext()) {
             SOAPHeaderElement header = (SOAPHeaderElement)i.next();
             // Always process NEXT's, and then anything else in our list
-            if (Constants.ACTOR_NEXT.equals(header.getActor()) || 
+            if (Constants.URI_SOAP11_NEXT_ACTOR.equals(header.getActor()) ||
                 (actors != null && actors.contains(header.getActor()))) {
                 results.add(header);
             }
@@ -218,7 +218,7 @@ public class SOAPHeader extends MessageElement
                     String actor = header.getActor();
                     ArrayList actors = mc.getAxisEngine().getActorURIs();
                     if ((actor != null) &&
-                            !Constants.ACTOR_NEXT.equals(actor) &&
+                            !Constants.URI_SOAP11_NEXT_ACTOR.equals(actor) &&
                             (actors == null || !actors.contains(actor))) {
                         header = null;
                     }
@@ -287,7 +287,7 @@ public class SOAPHeader extends MessageElement
 
                     String actor = header.getActor();
                     if ((actor != null) &&
-                            !Constants.ACTOR_NEXT.equals(actor) &&
+                            !Constants.URI_SOAP11_NEXT_ACTOR.equals(actor) &&
                             (actors == null || !actors.contains(actor))) {
                         continue;
                     }

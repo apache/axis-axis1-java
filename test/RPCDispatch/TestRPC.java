@@ -36,8 +36,8 @@ public class TestRPC extends TestCase {
         "<soap:Envelope " +
              "xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" " +
              "xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\" " +
-             "xmlns:xsi=\"" + Constants.NS_URI_CURRENT_SCHEMA_XSI + "\" " +
-             "xmlns:xsd=\"" + Constants.NS_URI_CURRENT_SCHEMA_XSD + "\">\n" +
+             "xmlns:xsi=\"" + Constants.URI_DEFAULT_SCHEMA_XSI + "\" " +
+             "xmlns:xsd=\"" + Constants.URI_DEFAULT_SCHEMA_XSD + "\">\n" +
              "<soap:Body>\n";
 
     private final String footer =

@@ -50,16 +50,16 @@ public class TestRoundTrip extends TestCase {
             "</ser-root:SrvResponse>";
 
     public TestRoundTrip(String name) {
-        this(name, Constants.NS_URI_CURRENT_SCHEMA_XSI,
-                   Constants.NS_URI_CURRENT_SCHEMA_XSD);
+        this(name, Constants.URI_DEFAULT_SCHEMA_XSI,
+                   Constants.URI_DEFAULT_SCHEMA_XSD);
     }
 
     public TestRoundTrip(String name, String NS_XSI, String NS_XSD) {
         super(name);
         TypeMappingRegistry tmr = server.getTypeMappingRegistry();
         TypeMapping tm = (TypeMapping) tmr.createTypeMapping();
-        tm.setSupportedEncodings(new String[]{Constants.NS_URI_CURRENT_SOAP_ENC});
-        tmr.register(Constants.NS_URI_CURRENT_SOAP_ENC, tm);
+        tm.setSupportedEncodings(new String[]{Constants.URI_DEFAULT_SOAP_ENC});
+        tmr.register(Constants.URI_DEFAULT_SOAP_ENC, tm);
         tm.register(test.encoding.RETURN.class,
                 new QName("urn:test.encoding", "RETURN"),
                 new org.apache.axis.encoding.ser.BeanSerializerFactory(

@@ -290,13 +290,13 @@ public abstract class JavaWriter implements Generator {
         pw.println();
         if ("deploy".equals(deploymentOpName)) {
             pw.println("<deployment");
-            pw.println("    xmlns=\"" + WSDDConstants.NS_URI_WSDD +"\"");
+            pw.println("    xmlns=\"" + WSDDConstants.URI_WSDD +"\"");
             pw.println("    xmlns:" + WSDDConstants.NS_PREFIX_WSDD_JAVA + "=\"" +
-                       WSDDConstants.NS_URI_WSDD_JAVA +"\">");
+                       WSDDConstants.URI_WSDD_JAVA +"\">");
         }
         else {
             pw.println("<undeployment");
-            pw.println("    xmlns=\"" + WSDDConstants.NS_URI_WSDD +"\">");
+            pw.println("    xmlns=\"" + WSDDConstants.URI_WSDD +"\">");
         }
     } // initializeDeploymentDoc
 

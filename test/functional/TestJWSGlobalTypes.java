@@ -71,8 +71,8 @@ import java.io.ByteArrayInputStream;
 
 public class TestJWSGlobalTypes extends TestCase {
     private static final String TYPEMAPPING_WSDD =
-            "<deployment xmlns=\"" + WSDDConstants.NS_URI_WSDD + "\" " +
-                        "xmlns:java=\"" + WSDDConstants.NS_URI_WSDD_JAVA + "\" " +
+            "<deployment xmlns=\"" + WSDDConstants.URI_WSDD + "\" " +
+                        "xmlns:java=\"" + WSDDConstants.URI_WSDD_JAVA + "\" " +
                         "xmlns:ns=\"http://globalTypeTest\">\n" +
             "  <beanMapping type=\"java:test.functional.GlobalBean\" " +
                         "qname=\"ns:GlobalType\"/>\n" +

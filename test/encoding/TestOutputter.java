@@ -19,8 +19,8 @@ public class TestOutputter extends TestCase {
     private AxisServer server = new AxisServer();
 
     public TestOutputter(String name) {
-        this(name, Constants.NS_URI_CURRENT_SCHEMA_XSI,
-                   Constants.NS_URI_CURRENT_SCHEMA_XSD);
+        this(name, Constants.URI_DEFAULT_SCHEMA_XSI,
+                   Constants.URI_DEFAULT_SCHEMA_XSD);
     }
 
     public TestOutputter(String name, String NS_XSI, String NS_XSD) {

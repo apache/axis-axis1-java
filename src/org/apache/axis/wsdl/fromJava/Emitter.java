@@ -428,7 +428,7 @@ public class Emitter {
             }
 
             encodingList = new ArrayList();
-            encodingList.add(Constants.NS_URI_CURRENT_SOAP_ENC);
+            encodingList.add(Constants.URI_DEFAULT_SOAP_ENC);
 
 
             // We want to produce valid SOAP 1.2 JAX-RPC
@@ -467,23 +467,23 @@ public class Emitter {
         def.addNamespace("impl", implNS);
 
         def.addNamespace(Constants.NS_PREFIX_WSDL_SOAP,
-                         Constants.NS_URI_CURRENT_WSDL_SOAP);
-        namespaces.putPrefix(Constants.NS_URI_CURRENT_WSDL_SOAP,
+                         Constants.URI_WSDL11_SOAP);
+        namespaces.putPrefix(Constants.URI_WSDL11_SOAP,
                              Constants.NS_PREFIX_WSDL_SOAP);
 
         def.addNamespace(Constants.NS_PREFIX_WSDL,
-                         Constants.NS_URI_CURRENT_WSDL);
-        namespaces.putPrefix(Constants.NS_URI_CURRENT_WSDL,
+                         Constants.NS_URI_WSDL11);
+        namespaces.putPrefix(Constants.NS_URI_WSDL11,
                              Constants.NS_PREFIX_WSDL);
 
         def.addNamespace(Constants.NS_PREFIX_SOAP_ENC,
-                         Constants.NS_URI_CURRENT_SOAP_ENC);
-        namespaces.putPrefix(Constants.NS_URI_CURRENT_SOAP_ENC,
+                         Constants.URI_DEFAULT_SOAP_ENC);
+        namespaces.putPrefix(Constants.URI_DEFAULT_SOAP_ENC,
                              Constants.NS_PREFIX_SOAP_ENC);
 
         def.addNamespace(Constants.NS_PREFIX_SCHEMA_XSD,
-                         Constants.NS_URI_CURRENT_SCHEMA_XSD);
-        namespaces.putPrefix(Constants.NS_URI_CURRENT_SCHEMA_XSD,
+                         Constants.URI_DEFAULT_SCHEMA_XSD);
+        namespaces.putPrefix(Constants.URI_DEFAULT_SCHEMA_XSD,
                              Constants.NS_PREFIX_SCHEMA_XSD);
     }
 
@@ -522,7 +522,7 @@ public class Emitter {
         SOAPBinding soapBinding = new SOAPBindingImpl();
         String modeStr = (mode == MODE_RPC) ? "rpc" : "document";
         soapBinding.setStyle(modeStr);
-        soapBinding.setTransportURI(Constants.NS_URI_SOAP_HTTP);
+        soapBinding.setTransportURI(Constants.URI_SOAP11_HTTP);
 
         binding.addExtensibilityElement(soapBinding);
 

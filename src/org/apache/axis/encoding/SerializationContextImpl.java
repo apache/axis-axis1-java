@@ -556,7 +556,7 @@ public class SerializationContextImpl implements SerializationContext
                     attrs.setAttributes(attributes);
                 if (sendType)
                     attrs = (AttributesImpl) setTypeAttribute(attrs, xmlType);
-                attrs.addAttribute(Constants.NS_URI_2001_SCHEMA_XSI, "nil", "xsi:nil",
+                attrs.addAttribute(Constants.URI_2001_SCHEMA_XSI, "nil", "xsi:nil",
                                    "CDATA", "true");
                 startElement(elemQName, attrs);
                 endElement();
@@ -957,7 +957,7 @@ public class SerializationContextImpl implements SerializationContext
             !shouldSendXSIType() ||
              type.getLocalPart().indexOf(SymbolTable.ANON_TOKEN) >= 0 ||
             ((attributes != null) &&
-             (attributes.getIndex(Constants.NS_URI_CURRENT_SCHEMA_XSI,
+             (attributes.getIndex(Constants.URI_DEFAULT_SCHEMA_XSI,
                                 "type") != -1)))
             return attributes;
 
@@ -965,10 +965,10 @@ public class SerializationContextImpl implements SerializationContext
         if (attributes != null && 0 < attributes.getLength() )
             attrs.setAttributes(attributes);
 
-        String prefix = getPrefixForURI(Constants.NS_URI_CURRENT_SCHEMA_XSI,
+        String prefix = getPrefixForURI(Constants.URI_DEFAULT_SCHEMA_XSI,
                                            "xsi");
 
-        attrs.addAttribute(Constants.NS_URI_CURRENT_SCHEMA_XSI,
+        attrs.addAttribute(Constants.URI_DEFAULT_SCHEMA_XSI,
                            "type",
                            prefix + ":type",
                            "CDATA", qName2String(type));

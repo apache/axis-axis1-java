@@ -196,7 +196,7 @@ public abstract class WSDDTargetedChain
         
         Handler pivot = null;
         if (pivotQName != null) {
-            if (NS_URI_WSDD_JAVA.equals(pivotQName.getNamespaceURI())) {
+            if (URI_WSDD_JAVA.equals(pivotQName.getNamespaceURI())) {
                 try {
                     pivot = (Handler)Class.forName(pivotQName.getLocalPart()).newInstance();
                 } catch (InstantiationException e) {

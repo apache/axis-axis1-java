@@ -84,19 +84,19 @@ public class EnvelopeBuilder extends SOAPHandler
         envelope.setMessageType(messageType);
         myElement = envelope;
     }
-    
+
     public EnvelopeBuilder(SOAPEnvelope env, String messageType)
     {
         envelope = env ;
         envelope.setMessageType(messageType);
         myElement = envelope;
     }
-    
+
     public SOAPEnvelope getEnvelope()
     {
         return envelope;
     }
-    
+
     public void startElement(String namespace, String localName,
                              String qName, Attributes attributes,
                              DeserializationContext context)
@@ -106,10 +106,10 @@ public class EnvelopeBuilder extends SOAPHandler
             throw new SAXException(
                     JavaUtils.getMessage("badTag00", localName));
 
-        if (namespace.equals(Constants.NS_URI_SOAP_ENV)) {
+        if (namespace.equals(Constants.URI_SOAP11_ENV)) {
             // SOAP 1.1
             soapConstants = SOAPConstants.SOAP11_CONSTANTS;
-        } else if (namespace.equals(Constants.NS_URI_SOAP12_ENV)) {
+        } else if (namespace.equals(Constants.URI_SOAP12_ENV)) {
             // SOAP 1.2
             soapConstants = SOAPConstants.SOAP12_CONSTANTS;
         } else {
@@ -131,7 +131,7 @@ public class EnvelopeBuilder extends SOAPHandler
         envelope.setNSMappings(context.getCurrentNSMappings());
         context.pushNewElement(envelope);
     }
-    
+
     public SOAPHandler onStartChild(String namespace,
                                     String localName,
                                     String prefix,
@@ -143,31 +143,31 @@ public class EnvelopeBuilder extends SOAPHandler
         if (thisQName.equals(soapConstants.getHeaderQName())) {
             if (gotHeader)
                 throw new SAXException(JavaUtils.getMessage("only1Header00"));
-            
+
             gotHeader = true;
             return new HeaderBuilder(envelope);
         }
-        
+
         if (thisQName.equals(soapConstants.getBodyQName())) {
             if (gotBody)
                 throw new SAXException(JavaUtils.getMessage("only1Body00"));
-            
+
             gotBody = true;
             return new BodyBuilder(envelope);
         }
-        
+
         if (!gotBody)
             throw new SAXException(JavaUtils.getMessage("noCustomElems00"));
 
         MessageElement element = new MessageElement(namespace, localName, prefix,
                                      attributes, context);
-        
+
         if (element.getFixupDeserializer() != null)
             return (SOAPHandler)element.getFixupDeserializer();
 
         return null;
     }
-    
+
     public void onEndChild(String namespace, String localName,
                            DeserializationContext context)
     {

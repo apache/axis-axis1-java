@@ -218,7 +218,7 @@ public class WSDDService
                 desc.setImplClass(cls);
                 initTMR();
                 String encStyle = (desc.getStyle() == ServiceDesc.STYLE_RPC) ?
-                    Constants.NS_URI_CURRENT_SOAP_ENC : "";
+                    Constants.URI_DEFAULT_SOAP_ENC : "";
                 desc.setTypeMapping(getTypeMapping(encStyle));
             } catch (Exception ex) {
             }
@@ -436,9 +436,9 @@ public class WSDDService
             String encodingStyle = mapping.getEncodingStyle();
             if (encodingStyle == null) {
                 if (style == ServiceDesc.STYLE_RPC)
-                    encodingStyle =Constants.NS_URI_CURRENT_SOAP_ENC;
+                    encodingStyle =Constants.URI_DEFAULT_SOAP_ENC;
                 else
-                    encodingStyle = Constants.NS_URI_LITERAL_ENC;  // literal
+                    encodingStyle = Constants.URI_LITERAL_ENC;  // literal
             }
             TypeMapping tm = (TypeMapping) tmr.getTypeMapping(encodingStyle);
             TypeMapping df = (TypeMapping) tmr.getDefaultTypeMapping();

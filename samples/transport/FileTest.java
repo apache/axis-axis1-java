@@ -22,9 +22,9 @@ import javax.xml.rpc.namespace.QName;
 public class FileTest {
     static final String wsdd =
             "<deployment xmlns=\"http://xml.apache.org/axis/wsdd/\" " +
-                  "xmlns:java=\"" + WSDDConstants.NS_URI_WSDD_JAVA + "\">\n" +
+                  "xmlns:java=\"" + WSDDConstants.URI_WSDD_JAVA + "\">\n" +
             " <transport name=\"FileTransport\" pivot=\"java:samples.transport.FileSender\"/>\n" +
-            " <service name=\"" + WSDDConstants.NS_URI_WSDD + "\" provider=\"java:MSG\">\n" +
+            " <service name=\"" + WSDDConstants.URI_WSDD + "\" provider=\"java:MSG\">\n" +
             "  <parameter name=\"allowedMethods\" value=\"AdminService\"/>\n" +
             "  <parameter name=\"className\" value=\"org.apache.axis.utils.Admin\"/>\n" +
             " </service>\n" +

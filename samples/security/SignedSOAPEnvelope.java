@@ -111,8 +111,8 @@ public class SignedSOAPEnvelope extends SOAPEnvelope {
         try {
             System.out.println("Beginning Client signing...");
             env.addMapping(new Mapping(SOAPSECNS, SOAPSECprefix));
-            env.addAttribute(Constants.NS_URI_SOAP_ENV, "actor", "some-uri");
-            env.addAttribute(Constants.NS_URI_SOAP_ENV, "mustUnderstand", "1");
+            env.addAttribute(Constants.URI_SOAP11_ENV, "actor", "some-uri");
+            env.addAttribute(Constants.URI_SOAP11_ENV, "mustUnderstand", "1");
 
             SOAPHeaderElement header = 
                 new SOAPHeaderElement(XMLUtils.StringToElement(SOAPSECNS,

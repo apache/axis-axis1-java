@@ -198,7 +198,7 @@ public class JavaDeployWriter extends JavaWriter {
                 String deserializerFactory;
                 String encodingStyle = "";
                 if (!hasLiteral) {
-                    encodingStyle = Constants.NS_URI_CURRENT_SOAP_ENC;
+                    encodingStyle = Constants.URI_DEFAULT_SOAP_ENC;
                 }
 
                 if (javaType.endsWith("[]")) {

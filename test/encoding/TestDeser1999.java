@@ -8,7 +8,7 @@ import org.apache.axis.Constants;
 public class TestDeser1999 extends TestDeser {
 
     public TestDeser1999(String name) {
-        super(name, Constants.NS_URI_1999_SCHEMA_XSI, 
-                    Constants.NS_URI_1999_SCHEMA_XSD);
+        super(name, Constants.URI_1999_SCHEMA_XSI,
+                    Constants.URI_1999_SCHEMA_XSD);
     }
 }

@@ -85,12 +85,8 @@ import org.apache.axis.wsdl.symbolTable.Element;
 import org.apache.axis.wsdl.symbolTable.DefinedElement;
 import org.apache.axis.wsdl.symbolTable.Parameter;
 import org.apache.axis.wsdl.symbolTable.Parameters;
-import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
-import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
-
-import org.w3c.dom.Node;
 
 /**
 * This is Wsdl2java's stub writer.  It writes the <BindingName>Stub.java
@@ -210,7 +206,7 @@ public class JavaStubWriter extends JavaWriter {
             if (bEntry.hasLiteral()) {
                 pw.println("                call.setEncodingStyle(null);");
             } else {
-                pw.println("                call.setEncodingStyle(org.apache.axis.Constants.NS_URI_SOAP_ENC);");
+                pw.println("                call.setEncodingStyle(org.apache.axis.Constants.URI_SOAP11_ENC);");
             }
             
             pw.println("                for (int i = 0; i < cachedSerFactories.size(); ++i) {");

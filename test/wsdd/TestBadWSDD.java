@@ -31,7 +31,7 @@ public class TestBadWSDD extends TestCase
 
     static final String goodWSDD =
             "<deployment xmlns=\"http://xml.apache.org/axis/wsdd/\" " +
-                  "xmlns:java=\"" + WSDDConstants.NS_URI_WSDD_JAVA + "\">\n" +
+                  "xmlns:java=\"" + WSDDConstants.URI_WSDD_JAVA + "\">\n" +
             " <handler type=\"java:org.apache.axis.handlers.LogHandler\" " +
                       "name=\"" + HANDLER_NAME + "\">\n" +
             "  <parameter name=\"" + PARAM_NAME +
@@ -48,7 +48,7 @@ public class TestBadWSDD extends TestCase
 
     static final String header =
             "<deployment xmlns=\"http://xml.apache.org/axis/wsdd/\" " +
-                  "xmlns:java=\"" + WSDDConstants.NS_URI_WSDD_JAVA + "\">\n";
+                  "xmlns:java=\"" + WSDDConstants.URI_WSDD_JAVA + "\">\n";
     static final String footer =
             "</deployment>";
 

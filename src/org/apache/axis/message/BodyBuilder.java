@@ -56,7 +56,7 @@
 package org.apache.axis.message;
 
 /**
- * 
+ *
  * @author Glen Daniels (gdaniels@allaire.com)
  */
 
@@ -81,12 +81,12 @@ public class BodyBuilder extends SOAPHandler
     boolean gotRPCElement = false;
 
     private SOAPEnvelope envelope;
-    
+
     BodyBuilder(SOAPEnvelope envelope)
     {
         this.envelope = envelope;
     }
-    
+
     public void startElement(String namespace, String localName,
                              String qName, Attributes attributes,
                              DeserializationContext context)
@@ -132,7 +132,7 @@ public class BodyBuilder extends SOAPHandler
          * description, which can then tell us what to create.
          */
         boolean isRoot = true;
-        String root = attributes.getValue(Constants.NS_URI_CURRENT_SOAP_ENC,
+        String root = attributes.getValue(Constants.URI_DEFAULT_SOAP_ENC,
                                           Constants.ATTR_ROOT);
         if ((root != null) && root.equals("0")) isRoot = false;
 
@@ -182,7 +182,7 @@ public class BodyBuilder extends SOAPHandler
 
         if (handler == null)
             handler = new SOAPHandler();
-        
+
         handler.myElement = element;
 
         context.pushNewElement(element);
@@ -192,14 +192,14 @@ public class BodyBuilder extends SOAPHandler
         }
         return handler;
     }
-    
+
     public void onEndChild(String namespace, String localName,
                            DeserializationContext context)
     {
         if (log.isDebugEnabled()) {
             log.debug("Enter: BodyBuilder::onEndChild()");
         }
-        
+
         if (element != null) {
             envelope.addBodyElement(element);
             element = null;

@@ -74,7 +74,7 @@ public class TestMiscSample extends TestCase {
 
     static final String deployDoc =
             "<deployment xmlns=\"http://xml.apache.org/axis/wsdd/\" " +
-                  "xmlns:java=\"" + WSDDConstants.NS_URI_WSDD_JAVA + "\">\n" +
+                  "xmlns:java=\"" + WSDDConstants.URI_WSDD_JAVA + "\">\n" +
             "  <service name=\"EchoService\" provider=\"Handler\">\n" +
             "    <parameter name=\"handlerClass\" " +
             "           value=\"org.apache.axis.handlers.EchoHandler\"/>\n" +

@@ -16,8 +16,8 @@ import javax.xml.rpc.namespace.QName;
 public class TestDeser2001 extends TestDeser {
 
     public TestDeser2001(String name) {
-        super(name, Constants.NS_URI_2001_SCHEMA_XSI, 
-                    Constants.NS_URI_2001_SCHEMA_XSD);
+        super(name, Constants.URI_2001_SCHEMA_XSI,
+                    Constants.URI_2001_SCHEMA_XSD);
     }
 
     /** 
