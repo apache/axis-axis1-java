@@ -92,7 +92,7 @@ public class HTTPMessage {
 
   // For testing
   public boolean doLocal = false ;
-  private static Handler localServer = null ;
+  private static Handler localClient = null ;
 
   public HTTPMessage() {
   }
@@ -167,44 +167,56 @@ public class HTTPMessage {
     Handler              client = null ;
     Message              reqMsg = new Message( reqEnv, "SOAPEnvelope" );
 
-    // For testing - skip HTTP layer
+    /* Ok, this might seem strange, but here it is...                    */
+    /* Create a new AxisClient Engine and init it.  This will load any   */
+    /* registries that *might* be there.  We set the target service to   */
+    /* the service so that if it is registered here on the client        */
+    /* we'll find it's request/response chains and invoke them.  Next we */
+    /* check to see if there is any ServiceRegistry at all, or if there  */
+    /* is one, check to see if a chain called HTTP.input is there.  If   */
+    /* not then we need to default to just the simple HTTPDispatchHandler*/
+    /* to call the server.                                               */
+    /* The hard part about the client is that we can't assume *any*      */
+    /* configuration has happened at all so hard-coded defaults are      */
+    /* required.                                                         */
+    /*********************************************************************/
     if ( doLocal ) {
-      mc.setTargetService( action );
-      if ( localServer == null ) {
-        localServer = new org.apache.axis.server.AxisServer();
-        if ( url.endsWith( ".jws") ) {
-          mc.setProperty( "JWSFileName", url.substring(11) );
-          mc.setTargetService( Constants.JWSPROCESSOR_TARGET );
-        }
-        localServer.init();
-      }
-      client = localServer;
+      // For local-testing stash it
+      if ( localClient == null ) 
+        (localClient = new AxisClient()).init();
+      client = localClient ;
     }
-    else {
-      /* Ok, this might seem strange, but here it is...                    */
-      /* Create a new AxisClient Engine and init it.  This will load any   */
-      /* registries that *might* be there.  We set the target service to   */
-      /* the service so that if it is registered here on the client        */
-      /* we'll find it's request/response chains and invoke them.  Next we */
-      /* check to see if there is any ServiceRegistry at all, or if there  */
-      /* is one, check to see if a chain called HTTP.input is there.  If   */
-      /* not then we need to default to just the simple HTTPDispatchHandler*/
-      /* to call the server.                                               */
-      /* The hard part about the client is that we can't assume *any*      */
-      /* configuration has happened at all so hard-coded defaults are      */
-      /* required.                                                         */
-      /*********************************************************************/
+    else  {
       client = new AxisClient();
       client.init();
-      mc.setTargetService( action );
-      HandlerRegistry sr = (HandlerRegistry) client.getOption( 
-                                                 Constants.SERVICE_REGISTRY );
-      if ( sr == null || sr.find("HTTP.input") == null )
-        mc.setProperty( MessageContext.TRANS_INPUT, "HTTPSender" );
-      else
-        mc.setProperty( MessageContext.TRANS_INPUT, "HTTP.input" );
-      mc.setProperty(MessageContext.TRANS_OUTPUT, "HTTP.output" );
     }
+    mc.setTargetService( action );
+
+    if ( doLocal ) {
+      /* For local testing set the transport sender to the AxisServer */
+      /* to by-pass all 'real' transport stuff.                       */
+      /****************************************************************/
+      HandlerRegistry hr = null ;
+      hr = (HandlerRegistry) client.getOption( Constants.HANDLER_REGISTRY );
+      if ( hr.find( "AxisServer" ) == null )
+        hr.add( "AxisServer", new org.apache.axis.server.AxisServer() );
+      if ( url.endsWith( ".jws") ) {
+        mc.setProperty( "JWSFileName", url.substring(11) );
+        mc.setTargetService( Constants.JWSPROCESSOR_TARGET );
+      }
+      mc.setProperty( MessageContext.TRANS_INPUT, "AxisServer" );
+    }
+
+    /* If there is Input Transport Chain then default to HTTP. */
+    /* In order for the client to override the transport chain */
+    /* they should just set the TRANS_INPUT/OUTPUT fields in   */
+    /* the msgContext.                                         */
+    /***********************************************************/
+    if ( mc.getProperty( MessageContext.TRANS_INPUT ) == null ) 
+      mc.setProperty( MessageContext.TRANS_INPUT, "HTTPSender" );
+
+    if ( mc.getProperty( MessageContext.TRANS_OUTPUT ) == null ) 
+      mc.setProperty( MessageContext.TRANS_OUTPUT, "HTTP.output" );
 
     if ( Debug.getDebugLevel() > 0  ) {
       DebugHeader  header = new DebugHeader(Debug.getDebugLevel());
