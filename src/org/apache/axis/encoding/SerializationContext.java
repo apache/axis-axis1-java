@@ -507,7 +507,7 @@ public class SerializationContext
 
                 writer.write(qname);
                 writer.write("=\"");
-                writer.write(attributes.getValue(i));
+                writer.write(XMLUtils.xmlEncodeString(attributes.getValue(i)));
                 writer.write("\"");
             }
         }
