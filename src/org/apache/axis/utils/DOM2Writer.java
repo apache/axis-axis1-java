@@ -73,330 +73,330 @@ import org.apache.axis.utils.*;
  */
 public class DOM2Writer
 {
-  /**
-   * The namespaceURI represented by the prefix <code>xmlns</code>.
-   */
-  private static String NS_URI_XMLNS = "http://www.w3.org/2000/xmlns/";
+    /**
+     * The namespaceURI represented by the prefix <code>xmlns</code>.
+     */
+    private static String NS_URI_XMLNS = "http://www.w3.org/2000/xmlns/";
 
-  /**
-   * The prefered line separator
-   */
-  private static final String lineSeparator =
-      System.getProperty("line.separator", "\n");
+    /**
+     * The prefered line separator
+     */
+    private static final String lineSeparator =
+                                               System.getProperty("line.separator", "\n");
 
-  /**
-   * Return a string containing this node serialized as XML.
-   */
-  public static String nodeToString(Node node, boolean omitXMLDecl)
-  {
-    StringWriter sw = new StringWriter();
-
-    serializeAsXML(node, sw, omitXMLDecl);
-
-    return sw.toString();
-  }
-
-  /**
-  * Serialize this node into the writer as XML.
-  */
-  public static void serializeAsXML(Node node, Writer writer, 
-                                    boolean omitXMLDecl)
-  {
-    PrintWriter out = new PrintWriter(writer);
-    if (!omitXMLDecl)
-        out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-    print(node, null, out);
-    out.flush();
-  }
-
-  private static void print(Node node, NSStack namespaceStack,
-                            PrintWriter out)
-  {
-    if (node == null)
+    /**
+     * Return a string containing this node serialized as XML.
+     */
+    public static String nodeToString(Node node, boolean omitXMLDecl)
     {
-      return;
+        StringWriter sw = new StringWriter();
+
+        serializeAsXML(node, sw, omitXMLDecl);
+
+        return sw.toString();
     }
 
-    boolean hasChildren = false;
-    int type = node.getNodeType();
-
-    switch (type)
+    /**
+     * Serialize this node into the writer as XML.
+     */
+    public static void serializeAsXML(Node node, Writer writer, 
+                                      boolean omitXMLDecl)
     {
-      case Node.DOCUMENT_NODE :
-      {
-        NodeList children = node.getChildNodes();
+        PrintWriter out = new PrintWriter(writer);
+        if (!omitXMLDecl)
+            out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+        print(node, null, out);
+        out.flush();
+    }
 
-        if (children != null)
+    private static void print(Node node, NSStack namespaceStack,
+                              PrintWriter out)
+    {
+        if (node == null)
         {
-          int numChildren = children.getLength();
-
-          for (int i = 0; i < numChildren; i++)
-          {
-            print(children.item(i), namespaceStack, out);
-          }
-        }
-        break;
-      }
-
-      case Node.ELEMENT_NODE :
-      {
-        namespaceStack = new NSStack(namespaceStack);
-
-        out.print('<' + node.getNodeName());
-
-        String elPrefix = node.getPrefix();
-        String elNamespaceURI = node.getNamespaceURI();
-
-        if (elPrefix != null && elNamespaceURI != null)
-        {
-          boolean prefixIsDeclared = false;
-
-          try
-          {
-            String namespaceURI = namespaceStack.getNamespaceURI(elPrefix);
-
-            if (elNamespaceURI.equals(namespaceURI))
-            {
-              prefixIsDeclared = true;
-            }
-          }
-          catch (IllegalArgumentException e)
-          {
-          }
-
-          if (!prefixIsDeclared)
-          {
-            printNamespaceDecl(node, namespaceStack, out);
-          }
+            return;
         }
 
-        NamedNodeMap attrs = node.getAttributes();
-        int len = (attrs != null) ? attrs.getLength() : 0;
+        boolean hasChildren = false;
+        int type = node.getNodeType();
 
-        for (int i = 0; i < len; i++)
+        switch (type)
         {
-          Attr attr = (Attr)attrs.item(i);
-
-          out.print(' ' + attr.getNodeName() +"=\"" +
-                    normalize(attr.getValue()) + '\"');
-
-          String attrPrefix = attr.getPrefix();
-          String attrNamespaceURI = attr.getNamespaceURI();
-
-          if (attrPrefix != null && attrNamespaceURI != null)
-          {
-            boolean prefixIsDeclared = false;
-
-            try
+        case Node.DOCUMENT_NODE :
             {
-              String namespaceURI = namespaceStack.getNamespaceURI(attrPrefix);
+                NodeList children = node.getChildNodes();
 
-              if (attrNamespaceURI.equals(namespaceURI))
-              {
-                prefixIsDeclared = true;
-              }
-            }
-            catch (IllegalArgumentException e)
-            {
+                if (children != null)
+                {
+                    int numChildren = children.getLength();
+
+                    for (int i = 0; i < numChildren; i++)
+                    {
+                        print(children.item(i), namespaceStack, out);
+                    }
+                }
+                break;
             }
 
-            if (!prefixIsDeclared)
+        case Node.ELEMENT_NODE :
             {
-              printNamespaceDecl(attr, namespaceStack, out);
+                namespaceStack = new NSStack(namespaceStack);
+
+                out.print('<' + node.getNodeName());
+
+                String elPrefix = node.getPrefix();
+                String elNamespaceURI = node.getNamespaceURI();
+
+                if (elPrefix != null && elNamespaceURI != null)
+                {
+                    boolean prefixIsDeclared = false;
+
+                    try
+                    {
+                        String namespaceURI = namespaceStack.getNamespaceURI(elPrefix);
+
+                        if (elNamespaceURI.equals(namespaceURI))
+                        {
+                            prefixIsDeclared = true;
+                        }
+                    }
+                    catch (IllegalArgumentException e)
+                    {
+                    }
+
+                    if (!prefixIsDeclared)
+                    {
+                        printNamespaceDecl(node, namespaceStack, out);
+                    }
+                }
+
+                NamedNodeMap attrs = node.getAttributes();
+                int len = (attrs != null) ? attrs.getLength() : 0;
+
+                for (int i = 0; i < len; i++)
+                {
+                    Attr attr = (Attr)attrs.item(i);
+
+                    out.print(' ' + attr.getNodeName() +"=\"" +
+                              normalize(attr.getValue()) + '\"');
+
+                    String attrPrefix = attr.getPrefix();
+                    String attrNamespaceURI = attr.getNamespaceURI();
+
+                    if (attrPrefix != null && attrNamespaceURI != null)
+                    {
+                        boolean prefixIsDeclared = false;
+
+                        try
+                        {
+                            String namespaceURI = namespaceStack.getNamespaceURI(attrPrefix);
+
+                            if (attrNamespaceURI.equals(namespaceURI))
+                            {
+                                prefixIsDeclared = true;
+                            }
+                        }
+                        catch (IllegalArgumentException e)
+                        {
+                        }
+
+                        if (!prefixIsDeclared)
+                        {
+                            printNamespaceDecl(attr, namespaceStack, out);
+                        }
+                    }
+                }
+
+                NodeList children = node.getChildNodes();
+
+                if (children != null)
+                {
+                    int numChildren = children.getLength();
+
+                    hasChildren = (numChildren > 0);
+
+                    if (hasChildren)
+                    {
+                        out.print('>');
+                    }
+
+                    for (int i = 0; i < numChildren; i++)
+                    {
+                        print(children.item(i), namespaceStack, out);
+                    }
+                }
+                else
+                {
+                    hasChildren = false;
+                }
+
+                if (!hasChildren)
+                {
+                    out.print("/>");
+                }
+                break;
             }
-          }
+
+        case Node.ENTITY_REFERENCE_NODE :
+            {
+                out.print('&');
+                out.print(node.getNodeName());
+                out.print(';');
+                break;
+            }
+
+        case Node.CDATA_SECTION_NODE :
+            {
+                out.print("<![CDATA[");
+                out.print(node.getNodeValue());
+                out.print("]]>");
+                break;
+            }
+
+        case Node.TEXT_NODE :
+            {
+                out.print(normalize(node.getNodeValue()));
+                break;
+            }
+
+        case Node.COMMENT_NODE :
+            {
+                out.print("<!--");
+                out.print(node.getNodeValue());
+                out.print("-->");
+                break;
+            }
+
+        case Node.PROCESSING_INSTRUCTION_NODE :
+            {
+                out.print("<?");
+                out.print(node.getNodeName());
+
+                String data = node.getNodeValue();
+
+                if (data != null && data.length() > 0)
+                {
+                    out.print(' ');
+                    out.print(data);
+                }
+
+                out.println("?>");
+                break;
+            }
         }
 
-        NodeList children = node.getChildNodes();
-
-        if (children != null)
+        if (type == Node.ELEMENT_NODE && hasChildren == true)
         {
-          int numChildren = children.getLength();
-
-          hasChildren = (numChildren > 0);
-
-          if (hasChildren)
-          {
+            out.print("</");
+            out.print(node.getNodeName());
             out.print('>');
-          }
+            hasChildren = false;
+        }
+    }
 
-          for (int i = 0; i < numChildren; i++)
-          {
-            print(children.item(i), namespaceStack, out);
-          }
+    private static void printNamespaceDecl(Node node,
+                                           NSStack namespaceStack,
+                                           PrintWriter out)
+    {
+        switch (node.getNodeType())
+        {
+        case Node.ATTRIBUTE_NODE :
+            {
+                printNamespaceDecl(((Attr)node).getOwnerElement(), node,
+                                   namespaceStack, out);
+                break;
+            }
+
+        case Node.ELEMENT_NODE :
+            {
+                printNamespaceDecl((Element)node, node, namespaceStack, out);
+                break;
+            }
+        }
+    }
+
+    private static void printNamespaceDecl(Element owner, Node node,
+                                           NSStack namespaceStack,
+                                           PrintWriter out)
+    {
+        String namespaceURI = node.getNamespaceURI();
+        String prefix = node.getPrefix();
+
+        if (!(namespaceURI.equals(NS_URI_XMLNS) && prefix.equals("xmlns")))
+        {
+            if (XMLUtils.getNamespace(prefix, owner) == null)
+            {
+                out.print(" xmlns:" + prefix + "=\"" + namespaceURI + '\"');
+            }
         }
         else
         {
-          hasChildren = false;
+            prefix = node.getLocalName();
+            namespaceURI = node.getNodeValue();
         }
 
-        if (!hasChildren)
-        {
-          out.print("/>");
-        }
-        break;
-      }
-
-      case Node.ENTITY_REFERENCE_NODE :
-      {
-        out.print('&');
-        out.print(node.getNodeName());
-        out.print(';');
-        break;
-      }
-
-      case Node.CDATA_SECTION_NODE :
-      {
-        out.print("<![CDATA[");
-        out.print(node.getNodeValue());
-        out.print("]]>");
-        break;
-      }
-
-      case Node.TEXT_NODE :
-      {
-        out.print(normalize(node.getNodeValue()));
-        break;
-      }
-
-      case Node.COMMENT_NODE :
-      {
-        out.print("<!--");
-        out.print(node.getNodeValue());
-        out.print("-->");
-        break;
-      }
-
-      case Node.PROCESSING_INSTRUCTION_NODE :
-      {
-        out.print("<?");
-        out.print(node.getNodeName());
-
-        String data = node.getNodeValue();
-
-        if (data != null && data.length() > 0)
-        {
-          out.print(' ');
-          out.print(data);
-        }
-
-        out.println("?>");
-        break;
-      }
+        namespaceStack.add(namespaceURI, prefix);
     }
 
-    if (type == Node.ELEMENT_NODE && hasChildren == true)
+    public static String normalize(String s)
     {
-      out.print("</");
-      out.print(node.getNodeName());
-      out.print('>');
-      hasChildren = false;
-    }
-  }
+        StringBuffer str = new StringBuffer();
+        int len = (s != null) ? s.length() : 0;
 
-  private static void printNamespaceDecl(Node node,
-                                         NSStack namespaceStack,
-                                         PrintWriter out)
-  {
-    switch (node.getNodeType())
-    {
-      case Node.ATTRIBUTE_NODE :
-      {
-        printNamespaceDecl(((Attr)node).getOwnerElement(), node,
-                           namespaceStack, out);
-        break;
-      }
-
-      case Node.ELEMENT_NODE :
-      {
-        printNamespaceDecl((Element)node, node, namespaceStack, out);
-        break;
-      }
-    }
-  }
-
-  private static void printNamespaceDecl(Element owner, Node node,
-                                         NSStack namespaceStack,
-                                         PrintWriter out)
-  {
-    String namespaceURI = node.getNamespaceURI();
-    String prefix = node.getPrefix();
-
-    if (!(namespaceURI.equals(NS_URI_XMLNS) && prefix.equals("xmlns")))
-    {
-      if (XMLUtils.getNamespace(prefix, owner) == null)
-      {
-        out.print(" xmlns:" + prefix + "=\"" + namespaceURI + '\"');
-      }
-    }
-    else
-    {
-      prefix = node.getLocalName();
-      namespaceURI = node.getNodeValue();
-    }
-
-    namespaceStack.add(namespaceURI, prefix);
-  }
-
-  public static String normalize(String s)
-  {
-    StringBuffer str = new StringBuffer();
-    int len = (s != null) ? s.length() : 0;
-
-    for (int i = 0; i < len; i++)
-    {
-      char ch = s.charAt(i);
-
-      switch (ch)
-      {
-        case '<' :
+        for (int i = 0; i < len; i++)
         {
-          str.append("&lt;");
-          break;
-        }
-        case '>' :
-        {
-          str.append("&gt;");
-          break;
-        }
-        case '&' :
-        {
-          str.append("&amp;");
-          break;
-        }
-        case '"' :
-        {
-          str.append("&quot;");
-          break;
-        }
-        case '\n' :
-        {
-          if (i > 0)
-          {
-            char lastChar = str.charAt(str.length() - 1);
+            char ch = s.charAt(i);
 
-            if (lastChar != '\r')
+            switch (ch)
             {
-              str.append(lineSeparator);
-            }
-            else
-            {
-              str.append('\n');
-            }
-          }
-          else
-          {
-            str.append(lineSeparator);
-          }
-          break;
-        }
-        default :
-        {
-          str.append(ch);
-        }
-      }
-    }
+            case '<' :
+                {
+                    str.append("&lt;");
+                    break;
+                }
+            case '>' :
+                {
+                    str.append("&gt;");
+                    break;
+                }
+            case '&' :
+                {
+                    str.append("&amp;");
+                    break;
+                }
+            case '"' :
+                {
+                    str.append("&quot;");
+                    break;
+                }
+            case '\n' :
+                {
+                    if (i > 0)
+                    {
+                        char lastChar = str.charAt(str.length() - 1);
 
-    return (str.toString());
-  }
+                        if (lastChar != '\r')
+                        {
+                            str.append(lineSeparator);
+                        }
+                        else
+                        {
+                            str.append('\n');
+                        }
+                    }
+                    else
+                    {
+                        str.append(lineSeparator);
+                    }
+                    break;
+                }
+            default :
+                {
+                    str.append(ch);
+                }
+            }
+        }
+
+        return (str.toString());
+    }
 }

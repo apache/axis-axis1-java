@@ -63,206 +63,206 @@ import org.xml.sax.* ;
 import org.apache.axis.Constants;
 
 public class XMLUtils {
-  private static DocumentBuilderFactory dbf = init();
-  private static SAXParserFactory       saxFactory;
-  
-  static {
-    // Initialize SAX Parser factory defaults
-    initSAXFactory(null, true, false);
-  }
-  
-  /** Encode a string appropriately for XML.
-   * 
-   * Lifted from ApacheSOAP 2.2 (org.apache.soap.Utils)
-   * 
-   * @param orig the String to encode
-   * @return a String in which XML special chars are repalced by entities
-   */
-  public static String xmlEncodeString(String orig)
-  {
-    if (orig == null)
+    private static DocumentBuilderFactory dbf = init();
+    private static SAXParserFactory       saxFactory;
+    
+    static {
+        // Initialize SAX Parser factory defaults
+        initSAXFactory(null, true, false);
+    }
+    
+    /** Encode a string appropriately for XML.
+     * 
+     * Lifted from ApacheSOAP 2.2 (org.apache.soap.Utils)
+     * 
+     * @param orig the String to encode
+     * @return a String in which XML special chars are repalced by entities
+     */
+    public static String xmlEncodeString(String orig)
     {
-      return "";
+        if (orig == null)
+        {
+            return "";
+        }
+
+        StringBuffer strBuf = new StringBuffer();
+        char[] chars = orig.toCharArray();
+
+        for (int i = 0; i < chars.length; i++)
+        {
+            switch (chars[i])
+            {
+            case '&'  : strBuf.append("&amp;");
+                        break;
+            case '\"' : strBuf.append("&quot;");
+                        break;
+            case '\'' : strBuf.append("&apos;");
+                        break;
+            case '<'  : strBuf.append("&lt;");
+                        break;
+            case '>'  : strBuf.append("&gt;");
+                        break;
+            default   : strBuf.append(chars[i]);
+                        break;
+            }
+        }
+
+        return strBuf.toString();
     }
 
-    StringBuffer strBuf = new StringBuffer();
-    char[] chars = orig.toCharArray();
-
-    for (int i = 0; i < chars.length; i++)
+    /** Initialize the SAX parser factory.
+     * 
+     * @param factoryClassName The class name of the desired SAXParserFactory
+     *                         implementation.  Will be assigned to the system
+     *                         property <b>javax.xml.parsers.SAXParserFactory</b>.
+     * @param namespaceAware true if we want a namespace-aware parser (which we do)
+     * @param validating true if we want a validating parser
+     * 
+     */
+    public static void initSAXFactory(String factoryClassName,
+                                      boolean namespaceAware,
+                                      boolean validating)
     {
-      switch (chars[i])
-      {
-        case '&'  : strBuf.append("&amp;");
-                    break;
-        case '\"' : strBuf.append("&quot;");
-                    break;
-        case '\'' : strBuf.append("&apos;");
-                    break;
-        case '<'  : strBuf.append("&lt;");
-                    break;
-        case '>'  : strBuf.append("&gt;");
-                    break;
-        default   : strBuf.append(chars[i]);
-                    break;
-      }
+        if (factoryClassName != null) {
+            System.setProperty("javax.xml.parsers.SAXParserFactory",
+                               factoryClassName);
+        }
+        saxFactory = SAXParserFactory.newInstance();
+        saxFactory.setNamespaceAware(namespaceAware);
+        saxFactory.setValidating(validating);
     }
 
-    return strBuf.toString();
-  }
+    public static DocumentBuilderFactory init() {
+        Document               doc = null ;
 
-  /** Initialize the SAX parser factory.
-   * 
-   * @param factoryClassName The class name of the desired SAXParserFactory
-   *                         implementation.  Will be assigned to the system
-   *                         property <b>javax.xml.parsers.SAXParserFactory</b>.
-   * @param namespaceAware true if we want a namespace-aware parser (which we do)
-   * @param validating true if we want a validating parser
-   * 
-   */
-  public static void initSAXFactory(String factoryClassName,
-                                     boolean namespaceAware,
-                                     boolean validating)
-  {
-      if (factoryClassName != null) {
-        System.setProperty("javax.xml.parsers.SAXParserFactory",
-                           factoryClassName);
-      }
-      saxFactory = SAXParserFactory.newInstance();
-      saxFactory.setNamespaceAware(namespaceAware);
-      saxFactory.setValidating(validating);
-  }
-
-  public static DocumentBuilderFactory init() {
-    Document               doc = null ;
-
-    try {
-      dbf = DocumentBuilderFactory.newInstance();
-      dbf.setNamespaceAware(true);
+        try {
+            dbf = DocumentBuilderFactory.newInstance();
+            dbf.setNamespaceAware(true);
+        }
+        catch( Exception e ) {
+            e.printStackTrace();
+        }
+        return( dbf );
     }
-    catch( Exception e ) {
-      e.printStackTrace();
+    
+    /** Get a SAX parser instance from the JAXP factory.
+     * 
+     * @return a SAXParser instance.
+     */
+    public static SAXParser getSAXParser() {
+        // Might want to cache the parser (on a per-thread basis, as I don't think
+        // SAX parsers are thread-safe)...
+        try {
+            return saxFactory.newSAXParser();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+            return null;
+        } catch (SAXException se) {
+              se.printStackTrace();
+              return null;
+        }
     }
-    return( dbf );
-  }
-  
-  /** Get a SAX parser instance from the JAXP factory.
-   * 
-   * @return a SAXParser instance.
-   */
-  public static SAXParser getSAXParser() {
-    // Might want to cache the parser (on a per-thread basis, as I don't think
-    // SAX parsers are thread-safe)...
-    try {
-      return saxFactory.newSAXParser();
-    } catch (ParserConfigurationException e) {
-      e.printStackTrace();
-      return null;
-    } catch (SAXException se) {
-      se.printStackTrace();
-      return null;
-    }
-  }
 
-  public static Document newDocument() {
-    try {
-      return dbf.newDocumentBuilder().newDocument();
-    } catch (Exception e) {
-      return null;
+    public static Document newDocument() {
+        try {
+            return dbf.newDocumentBuilder().newDocument();
+        } catch (Exception e) {
+            return null;
+        }
     }
-  }
 
-  public static Document newDocument(InputSource inp) {
-    try {
-      return( dbf.newDocumentBuilder().parse( inp ) );
+    public static Document newDocument(InputSource inp) {
+        try {
+            return( dbf.newDocumentBuilder().parse( inp ) );
+        }
+        catch( Exception e ) {
+            e.printStackTrace();
+            return( null );
+        }
     }
-    catch( Exception e ) {
-      e.printStackTrace();
-      return( null );
+
+    public static Document newDocument(InputStream inp) {
+        try {
+            return( dbf.newDocumentBuilder().parse( inp ) );
+        }
+        catch( Exception e ) {
+            e.printStackTrace();
+            return( null );
+        }
     }
-  }
 
-  public static Document newDocument(InputStream inp) {
-    try {
-      return( dbf.newDocumentBuilder().parse( inp ) );
+    public static Document newDocument(String uri) {
+        try {
+            return( dbf.newDocumentBuilder().parse( uri ) );
+        }
+        catch( Exception e ) {
+            e.printStackTrace();
+            return( null );
+        }
     }
-    catch( Exception e ) {
-      e.printStackTrace();
-      return( null );
+
+    private static String privateElementToString(Element element,
+                                                 boolean omitXMLDecl)
+    {
+        return DOM2Writer.nodeToString(element, omitXMLDecl);
     }
-  }
-
-  public static Document newDocument(String uri) {
-    try {
-      return( dbf.newDocumentBuilder().parse( uri ) );
+    
+    public static String ElementToString(Element element) {
+        return privateElementToString(element, true);
     }
-    catch( Exception e ) {
-      e.printStackTrace();
-      return( null );
+    
+    public static String DocumentToString(Document doc) {
+        return privateElementToString(doc.getDocumentElement(), false);
     }
-  }
 
-  private static String privateElementToString(Element element,
-                                               boolean omitXMLDecl)
-  {
-      return DOM2Writer.nodeToString(element, omitXMLDecl);
-  }
-  
-  public static String ElementToString(Element element) {
-      return privateElementToString(element, true);
-  }
-  
-  public static String DocumentToString(Document doc) {
-      return privateElementToString(doc.getDocumentElement(), false);
-  }
+    public static void privateElementToStream(Element element, OutputStream out,
+                                              boolean omitXMLDecl) {
+        Writer writer = new OutputStreamWriter(out);
+        DOM2Writer.serializeAsXML(element, writer, omitXMLDecl);
+    }
+    
+    public static void ElementToStream(Element element, OutputStream out) {
+        privateElementToStream(element, out, true);
+    }
+    
+    public static void DocumentToStream(Document doc, OutputStream out) {
+        privateElementToStream(doc.getDocumentElement(), out, false);
+    }
 
-  public static void privateElementToStream(Element element, OutputStream out,
-                                            boolean omitXMLDecl) {
-      Writer writer = new OutputStreamWriter(out);
-      DOM2Writer.serializeAsXML(element, writer, omitXMLDecl);
-  }
-  
-  public static void ElementToStream(Element element, OutputStream out) {
-    privateElementToStream(element, out, true);
-  }
-  
-  public static void DocumentToStream(Document doc, OutputStream out) {
-    privateElementToStream(doc.getDocumentElement(), out, false);
-  }
+    public static String getInnerXMLString(Element element) {
+        String elementString = ElementToString(element);
+        int start, end;
+        start = elementString.indexOf(">") + 1;
+        end = elementString.lastIndexOf("</");
+        if (end > 0) 
+            return elementString.substring(start,end);
+        else 
+            return null;
+    }
+    
+    public static String getPrefix(String uri, Node e) {
+        while (e != null && (e.getNodeType() == Element.ELEMENT_NODE)) {
+            NamedNodeMap attrs = e.getAttributes();
+            for (int n = 0; n < attrs.getLength(); n++) {
+                Attr a = (Attr)attrs.item(n);
+                String name;
+                if ((name = a.getName()).startsWith("xmlns:") &&
+                    a.getNodeValue().equals(uri)) {
+                    return name.substring(6);
+                }
+            }
+            e = e.getParentNode();
+        }
+        return null;
+    }
 
-  public static String getInnerXMLString(Element element) {
-      String elementString = ElementToString(element);
-      int start, end;
-      start = elementString.indexOf(">") + 1;
-      end = elementString.lastIndexOf("</");
-      if (end > 0) 
-          return elementString.substring(start,end);
-      else 
-          return null;
-  }
-  
-  public static String getPrefix(String uri, Node e) {
-      while (e != null && (e.getNodeType() == Element.ELEMENT_NODE)) {
-          NamedNodeMap attrs = e.getAttributes();
-          for (int n = 0; n < attrs.getLength(); n++) {
-              Attr a = (Attr)attrs.item(n);
-              String name;
-              if ((name = a.getName()).startsWith("xmlns:") &&
-                  a.getNodeValue().equals(uri)) {
-                  return name.substring(6);
-              }
-          }
-          e = e.getParentNode();
-      }
-      return null;
-  }
-
-  public static String getNamespace(String prefix, Node e) {
-      while (e != null && (e.getNodeType() == Node.ELEMENT_NODE)) {
-          String name = 
-              ((Element)e).getAttributeNS(Constants.NS_URI_XMLNS, prefix);
-          if (name != null) return name;
-          e = e.getParentNode();
-      }
-      return null;
-  }
+    public static String getNamespace(String prefix, Node e) {
+        while (e != null && (e.getNodeType() == Node.ELEMENT_NODE)) {
+            String name = 
+                         ((Element)e).getAttributeNS(Constants.NS_URI_XMLNS, prefix);
+            if (name != null) return name;
+            e = e.getParentNode();
+        }
+        return null;
+    }
 }

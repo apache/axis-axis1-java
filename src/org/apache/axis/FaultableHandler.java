@@ -73,80 +73,81 @@ import org.w3c.dom.* ;
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
 public class FaultableHandler extends BasicHandler {
-  protected Handler    workHandler ;
-  protected Hashtable  faultHandlers ;
-  
-  /** Constructor
-   * 
-   * @param workHandler the Handler we're going to wrap with Fault semantics.
-   */
-  public FaultableHandler(Handler workHandler)
-  {
-    this.workHandler = workHandler;
-    faultHandlers = new Hashtable();
-  }
-
-  public void init() {
-    workHandler.init();
-  }
-
-  public void cleanup() {
-    workHandler.cleanup();
-  }
-
-  /**
-   * Invokes the specified handler.  If there's a fault the appropriate
-   * key will be calculated and used to find the fault chain to be
-   * invoked.  This assumes that the workHandler has caught the exception
-   * and already processed it's undo logic - as needed.
-   */
-  public void invoke(MessageContext msgContext) throws AxisFault {
-    Debug.Print( 1, "Enter: FaultableHandler::invoke" );
-    try {
-      workHandler.invoke( msgContext );
+    protected Handler    workHandler ;
+    protected Hashtable  faultHandlers ;
+    
+    /** Constructor
+     * 
+     * @param workHandler the Handler we're going to wrap with Fault semantics.
+     */
+    public FaultableHandler(Handler workHandler)
+    {
+        this.workHandler = workHandler;
+        faultHandlers = new Hashtable();
     }
-    catch( Exception e ) {
-      Debug.Print( 1, e );
-      AxisFault fault;
-      // Is this a Java Exception? a SOAPException? an AxisException?
-      if ( e instanceof AxisFault ) {
-        fault = (AxisFault)e;
-      } else {
-        fault = new AxisFault( e );
-      }
 
-      /** Index off fault code.
-       * 
-       * !!! TODO: This needs to be able to handle searching by faultcode
-       * hierarchy, i.e.  "Server.General.*" or "Server.*", with the
-       * most specific match winning.
-       */
-      QFault   key          = fault.getFaultCode() ;
-      Handler  faultHandler = (Handler) faultHandlers.get( key );
-      if ( faultHandler != null ) {
-        /** faultHandler will (re)throw if it's appropriate, but it might
-         * also eat the fault.  Which brings up another issue - should
-         * we have a way to pass the Fault directly to the faultHandler?
-         * Maybe another well-known MessageContext property?
-         */
-        faultHandler.invoke( msgContext );
-      } else {
-        throw (AxisFault) e ;
-      }
+    public void init() {
+        workHandler.init();
     }
-    Debug.Print( 1, "Exit: FaultableHandler::invoke" );
-  }
 
-  /**
-   * Some handler later on has faulted so we need to undo our work.
-   */
-  public void undo(MessageContext msgContext) {
-    Debug.Print( 1, "Enter: FaultableHandler::undo" );
-    workHandler.undo( msgContext );
-    Debug.Print( 1, "Exit: FaultableHandler::undo" );
-  };
+    public void cleanup() {
+        workHandler.cleanup();
+    }
 
-  public boolean canHandleBlock(QName qname) {
-    return( workHandler.canHandleBlock(qname) );
-  }
+    /**
+     * Invokes the specified handler.  If there's a fault the appropriate
+     * key will be calculated and used to find the fault chain to be
+     * invoked.  This assumes that the workHandler has caught the exception
+     * and already processed it's undo logic - as needed.
+     */
+    public void invoke(MessageContext msgContext) throws AxisFault {
+        Debug.Print( 1, "Enter: FaultableHandler::invoke" );
+        try {
+            workHandler.invoke( msgContext );
+        }
+        catch( Exception e ) {
+            Debug.Print( 1, e );
+            AxisFault fault;
+            // Is this a Java Exception? a SOAPException? an AxisException?
+            if ( e instanceof AxisFault ) {
+                fault = (AxisFault)e;
+            } else {
+                fault = new AxisFault( e );
+            }
+
+            /** Index off fault code.
+             * 
+             * !!! TODO: This needs to be able to handle searching by faultcode
+             * hierarchy, i.e.  "Server.General.*" or "Server.*", with the
+             * most specific match winning.
+             */
+            QFault   key          = fault.getFaultCode() ;
+            Handler  faultHandler = (Handler) faultHandlers.get( key );
+            if ( faultHandler != null ) {
+                /** faultHandler will (re)throw if it's appropriate, but it
+                 * might also eat the fault.  Which brings up another issue -
+                 * should we have a way to pass the Fault directly to the 
+                 * faultHandler? Maybe another well-known MessageContext
+                 * property?
+                 */
+                faultHandler.invoke( msgContext );
+            } else {
+                throw (AxisFault) e ;
+            }
+        }
+        Debug.Print( 1, "Exit: FaultableHandler::invoke" );
+    }
+
+    /**
+     * Some handler later on has faulted so we need to undo our work.
+     */
+    public void undo(MessageContext msgContext) {
+        Debug.Print( 1, "Enter: FaultableHandler::undo" );
+        workHandler.undo( msgContext );
+        Debug.Print( 1, "Exit: FaultableHandler::undo" );
+    };
+
+    public boolean canHandleBlock(QName qname) {
+        return( workHandler.canHandleBlock(qname) );
+    }
 };

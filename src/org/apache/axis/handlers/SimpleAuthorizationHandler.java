@@ -76,83 +76,83 @@ import org.apache.axis.transport.http.HTTPConstants;
  */
 public class SimpleAuthorizationHandler extends BasicHandler {
     
-  // Simple hashtable of users.  Null means everybody
-  // will authorize (replace with new Hashtable() if you want 
-  // the default to be that nobody is authorized
-  //
-  // Values will be hashtables of valid actions for the user
-  static private Hashtable entries = null;
+    // Simple hashtable of users.  Null means everybody
+    // will authorize (replace with new Hashtable() if you want 
+    // the default to be that nobody is authorized
+    //
+    // Values will be hashtables of valid actions for the user
+    static private Hashtable entries = null;
 
-  // load the perms list
-  static {
-    File permFile = new File("perms.lst");
-    if (permFile.exists()) {
-      entries = new Hashtable();
+    // load the perms list
+    static {
+        File permFile = new File("perms.lst");
+        if (permFile.exists()) {
+            entries = new Hashtable();
 
-      try {
-        FileReader        fr   = new FileReader( permFile );
-        LineNumberReader  lnr  = new LineNumberReader( fr );
-        String            line = null ;
+            try {
+                FileReader        fr   = new FileReader( permFile );
+                LineNumberReader  lnr  = new LineNumberReader( fr );
+                String            line = null ;
 
-        // parse lines into user and passwd tokens and add result to hash table
-        while ( (line = lnr.readLine()) != null ) {
-          StringTokenizer  st = new StringTokenizer( line );
-          if ( st.hasMoreTokens() ) {
-            String userID = st.nextToken();
-            String action = (st.hasMoreTokens()) ? st.nextToken() : "";
+                // parse lines into user and passwd tokens and add result to hash table
+                while ( (line = lnr.readLine()) != null ) {
+                    StringTokenizer  st = new StringTokenizer( line );
+                    if ( st.hasMoreTokens() ) {
+                        String userID = st.nextToken();
+                        String action = (st.hasMoreTokens()) ? st.nextToken() : "";
 
-            Debug.Print( 1, "User '", userID, "' authorized to: ", action );
+                        Debug.Print( 1, "User '", userID, "' authorized to: ", action );
 
-            // if we haven't seen this user before, create an entry 
-            if (!entries.containsKey(userID))
-              entries.put(userID, new Hashtable());
+                        // if we haven't seen this user before, create an entry 
+                        if (!entries.containsKey(userID))
+                            entries.put(userID, new Hashtable());
 
-            // add this action to the list of actions permitted to this user
+                        // add this action to the list of actions permitted to this user
+                        Hashtable authlist = (Hashtable) entries.get(userID);
+                        authlist.put(action, action);
+                    }
+                }
+
+                lnr.close();
+
+            } catch( Exception e ) {
+                Debug.Print( 1, e );
+            }
+        }
+    }
+
+    /**
+     * Authorize the user and targetService from the msgContext
+     */
+    public void invoke(MessageContext msgContext) throws AxisFault {
+        Debug.Print( 1, "Enter: SimpleAuthorizationHandler::invoke" );
+
+        String userID = (String) msgContext.getProperty( MessageContext.USERID );
+        String action = msgContext.getTargetService();
+
+        Debug.Print( 1, "User: '", userID, "'" );
+        Debug.Print( 1, "Action: '", action, "'" );
+
+        if (entries != null) { // perm.list exists
+
             Hashtable authlist = (Hashtable) entries.get(userID);
-            authlist.put(action, action);
-          }
+            if ( authlist == null || !authlist.containsKey(action) ) {
+                throw new AxisFault( "Server.Unauthorized", 
+                    "User '" + userID + "' not authorized to '" + action + "'",
+                    null, null );
+            }
         }
 
-        lnr.close();
+        Debug.Print( 1, "User '", userID, "' authorized to: ", action );
 
-      } catch( Exception e ) {
-        Debug.Print( 1, e );
-      }
-    }
-  }
-
-  /**
-   * Authorize the user and targetService from the msgContext
-   */
-  public void invoke(MessageContext msgContext) throws AxisFault {
-    Debug.Print( 1, "Enter: SimpleAuthorizationHandler::invoke" );
-
-    String userID = (String) msgContext.getProperty( MessageContext.USERID );
-    String action = msgContext.getTargetService();
-
-    Debug.Print( 1, "User: '", userID, "'" );
-    Debug.Print( 1, "Action: '", action, "'" );
-
-    if (entries != null) { // perm.list exists
-
-      Hashtable authlist = (Hashtable) entries.get(userID);
-      if ( authlist == null || !authlist.containsKey(action) ) {
-        throw new AxisFault( "Server.Unauthorized", 
-          "User '" + userID + "' not authorized to '" + action + "'",
-          null, null );
-      }
+        Debug.Print( 1, "Exit: SimpleAuthorizationHandler::invoke" );
     }
 
-    Debug.Print( 1, "User '", userID, "' authorized to: ", action );
-
-    Debug.Print( 1, "Exit: SimpleAuthorizationHandler::invoke" );
-  }
-
-  /**
-   * Nothing to undo
-   */
-  public void undo(MessageContext msgContext) {
-    Debug.Print( 1, "Enter: SimpleAuthorizationHandler::undo" );
-    Debug.Print( 1, "Exit: SimpleAuthorizationHandler::undo" );
-  }
+    /**
+     * Nothing to undo
+     */
+    public void undo(MessageContext msgContext) {
+        Debug.Print( 1, "Enter: SimpleAuthorizationHandler::undo" );
+        Debug.Print( 1, "Exit: SimpleAuthorizationHandler::undo" );
+    }
 };

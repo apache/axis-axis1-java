@@ -65,63 +65,63 @@ import java.util.*;
  */
 public class JavaUtils
 {
-  /** Utility function to convert an Object to some desired Class.
-   * 
-   * Right now this only works for arrays <-> Lists, but it might be
-   * expanded into a more general form later.
-   * 
-   * @param arg the array to convert
-   * @param destClass the actual class we want
-   */
-  public static Object convert(Object arg, Class destClass)
-  {
-    Debug.Print(3, "Trying to convert " + arg.getClass().getName() +
-                                 " to " + destClass.getName());
-    
-    if (!(arg instanceof List))
-      return arg;
-    
-    List list = (List)arg;
-    int length = list.size();
-    
-    if (destClass.isArray()) {
-      if (destClass.getComponentType().isPrimitive()) {
+    /** Utility function to convert an Object to some desired Class.
+     * 
+     * Right now this only works for arrays <-> Lists, but it might be
+     * expanded into a more general form later.
+     * 
+     * @param arg the array to convert
+     * @param destClass the actual class we want
+     */
+    public static Object convert(Object arg, Class destClass)
+    {
+        Debug.Print(3, "Trying to convert " + arg.getClass().getName() +
+                       " to " + destClass.getName());
         
-        Object array = Array.newInstance(destClass.getComponentType(),
-                                         length);
-        for (int i = 0; i < length; i++) {
-          Array.set(array, i, list.get(i));
+        if (!(arg instanceof List))
+            return arg;
+        
+        List list = (List)arg;
+        int length = list.size();
+        
+        if (destClass.isArray()) {
+            if (destClass.getComponentType().isPrimitive()) {
+                
+                Object array = Array.newInstance(destClass.getComponentType(),
+                                                 length);
+                for (int i = 0; i < length; i++) {
+                    Array.set(array, i, list.get(i));
+                }
+                return array;
+                
+            } else {
+                Object [] array;
+                try {
+                    array = (Object [])Array.newInstance(destClass.getComponentType(),
+                                                         length);
+                } catch (Exception e) {
+                    return arg;
+                }
+                
+                return list.toArray(array);
+            }
         }
-        return array;
         
-      } else {
-        Object [] array;
-        try {
-          array = (Object [])Array.newInstance(destClass.getComponentType(),
-                                               length);
-        } catch (Exception e) {
-          return arg;
+        if (List.class.isAssignableFrom(destClass)) {
+            List newList = null;
+            try {
+                newList = (List)destClass.newInstance();
+            } catch (Exception e) {
+                // Couldn't build one for some reason... so forget it.
+                return arg;
+            }
+            
+            for (int j = 0; j < ((List)arg).size(); j++) {
+                newList.add(list.get(j));
+            }
+            return newList;
         }
         
-        return list.toArray(array);
-      }
-    }
-    
-    if (List.class.isAssignableFrom(destClass)) {
-      List newList = null;
-      try {
-        newList = (List)destClass.newInstance();
-      } catch (Exception e) {
-        // Couldn't build one for some reason... so forget it.
         return arg;
-      }
-      
-      for (int j = 0; j < ((List)arg).size(); j++) {
-        newList.add(list.get(j));
-      }
-      return newList;
     }
-    
-    return arg;
-  }
 }

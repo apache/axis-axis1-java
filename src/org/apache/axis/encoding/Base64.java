@@ -90,19 +90,19 @@ public class Base64 {
         int b2 = S_DECODETABLE[ibuf[2]];
         int b3 = S_DECODETABLE[ibuf[3]];
         switch (outlen) {
-          case 1:
+        case 1:
             obuf[wp] = (byte)(b0 << 2 & 0xfc | b1 >> 4 & 0x3);
             return 1;
-          case 2:
+        case 2:
             obuf[wp++] = (byte)(b0 << 2 & 0xfc | b1 >> 4 & 0x3);
             obuf[wp] = (byte)(b1 << 4 & 0xf0 | b2 >> 2 & 0xf);
             return 2;
-          case 3:
+        case 3:
             obuf[wp++] = (byte)(b0 << 2 & 0xfc | b1 >> 4 & 0x3);
             obuf[wp++] = (byte)(b1 << 4 & 0xf0 | b2 >> 2 & 0xf);
             obuf[wp] = (byte)(b2 << 6 & 0xc0 | b3 & 0x3f);
             return 3;
-          default:
+        default:
             throw new RuntimeException("Internal Errror");
         }
     }
@@ -219,8 +219,8 @@ public class Base64 {
         int rest = len-off;
         while (rest >= 3) {
             int i = ((data[rindex]&0xff)<<16)
-                +((data[rindex+1]&0xff)<<8)
-                +(data[rindex+2]&0xff);
+                    +((data[rindex+1]&0xff)<<8)
+                    +(data[rindex+2]&0xff);
             out[windex++] = S_BASE64CHAR[i>>18];
             out[windex++] = S_BASE64CHAR[(i>>12)&0x3f];
             out[windex++] = S_BASE64CHAR[(i>>6)&0x3f];
@@ -254,8 +254,8 @@ public class Base64 {
         int rest = len-off;
         while (rest >= 3) {
             int i = ((data[rindex]&0xff)<<16)
-                +((data[rindex+1]&0xff)<<8)
-                +(data[rindex+2]&0xff);
+                    +((data[rindex+1]&0xff)<<8)
+                    +(data[rindex+2]&0xff);
             out[0] = (byte)S_BASE64CHAR[i>>18];
             out[1] = (byte)S_BASE64CHAR[(i>>12)&0x3f];
             out[2] = (byte)S_BASE64CHAR[(i>>6)&0x3f];
@@ -292,8 +292,8 @@ public class Base64 {
         int output = 0;
         while (rest >= 3) {
             int i = ((data[rindex]&0xff)<<16)
-                +((data[rindex+1]&0xff)<<8)
-                +(data[rindex+2]&0xff);
+                    +((data[rindex+1]&0xff)<<8)
+                    +(data[rindex+2]&0xff);
             out[0] = S_BASE64CHAR[i>>18];
             out[1] = S_BASE64CHAR[(i>>12)&0x3f];
             out[2] = S_BASE64CHAR[(i>>6)&0x3f];

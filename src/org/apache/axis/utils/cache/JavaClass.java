@@ -75,7 +75,7 @@ public class JavaClass {
     public JavaClass(Class jc) {
         this.jc = jc;
     }
-  
+    
     /**
      * Return the java.lang.Class associated with this entry
      */

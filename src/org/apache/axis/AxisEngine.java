@@ -92,7 +92,7 @@ public abstract class AxisEngine extends BasicHandler
     
     /** This Engine's global type mappings     */
     protected TypeMappingRegistry _typeMappingRegistry =
-                                     new TypeMappingRegistry();
+                                                 new TypeMappingRegistry();
     
     protected Properties props = new Properties();
     
@@ -127,13 +127,13 @@ public abstract class AxisEngine extends BasicHandler
      */
     public void init() {
         /** Load properties 1st, so that debug level gets
-         * set ASAP.
-         */
+        * set ASAP.
+        */
         try {
             File propFile = new File("axis.properties");
             if (propFile.exists()) {
                 FileInputStream propFileInputStream =
-                         new FileInputStream(propFile);
+                                               new FileInputStream(propFile);
                 props.load(propFileInputStream);
             }
         } catch (Exception e) {
@@ -173,27 +173,27 @@ public abstract class AxisEngine extends BasicHandler
     {
         InputStream is;
         try {
-          is = new FileInputStream(engineConfigFilename);
+            is = new FileInputStream(engineConfigFilename);
         } catch (Exception e) {
-          is = getResourceStream(engineConfigFilename);
+            is = getResourceStream(engineConfigFilename);
         }
         
         if (is == null) {
-          // TODO: Deal with this in a nicer way...
-          System.err.println("No engine configuration in " +
-                             this.getClass().getPackage().getName() +
-                             " - aborting!");
-          return;
+            // TODO: Deal with this in a nicer way...
+            System.err.println("No engine configuration in " +
+                               this.getClass().getPackage().getName() +
+                               " - aborting!");
+            return;
         }
         
         Document doc = XMLUtils.newDocument(is);
         try {
-          // ??? Clear registries first?
-          Admin.processEngineConfig(doc, this);
+            // ??? Clear registries first?
+            Admin.processEngineConfig(doc, this);
         } catch (Exception e) {
-          System.err.println("Couldn't read engine config!");
-          e.printStackTrace();
-          return;
+            System.err.println("Couldn't read engine config!");
+            e.printStackTrace();
+            return;
         }
     }
 
@@ -202,13 +202,13 @@ public abstract class AxisEngine extends BasicHandler
     public void saveConfiguration()
     {
         try {
-          Document doc = Admin.listConfig(this);
-          FileOutputStream fos = new FileOutputStream(engineConfigFilename);
-          XMLUtils.DocumentToStream(doc, fos);
-          fos.close();
+            Document doc = Admin.listConfig(this);
+            FileOutputStream fos = new FileOutputStream(engineConfigFilename);
+            XMLUtils.DocumentToStream(doc, fos);
+            fos.close();
         } catch (Exception e) {
-          System.err.println("Coudn't write engine config!");
-          e.printStackTrace();
+            System.err.println("Coudn't write engine config!");
+            e.printStackTrace();
         }
     }
     
@@ -267,13 +267,13 @@ public abstract class AxisEngine extends BasicHandler
     public abstract AxisEngine getClientEngine ();
 
     /*********************************************************************
-     * Administration and management APIs
-     *
-     * These can get called by various admin adapters, such as JMX MBeans,
-     * our own Admin client, web applications, etc...
-     *
-     *********************************************************************
-     */
+    * Administration and management APIs
+    *
+    * These can get called by various admin adapters, such as JMX MBeans,
+    * our own Admin client, web applications, etc...
+    *
+    *********************************************************************
+    */
     
     /**
      * Register a new global type mapping
@@ -283,13 +283,16 @@ public abstract class AxisEngine extends BasicHandler
                                     DeserializerFactory deserFactory,
                                     Serializer serializer)
     {
-      Debug.Print(3, "Registering type mapping " + qName + " -> " + cls.getName());
+        Debug.Print(3, "Registering type mapping " + qName + " -> " +
+                       cls.getName());
         if (deserFactory != null)
-            _typeMappingRegistry.addDeserializerFactory(qName, cls, deserFactory);
+            _typeMappingRegistry.addDeserializerFactory(qName,
+                                                        cls,
+                                                        deserFactory);
         if (serializer != null)
             _typeMappingRegistry.addSerializer(cls, qName, serializer);
     }
-        
+    
     /**
      * Unregister a global type mapping
      */

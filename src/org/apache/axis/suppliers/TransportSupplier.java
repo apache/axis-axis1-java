@@ -68,18 +68,18 @@ import org.apache.axis.server.Transport;
 public class TransportSupplier extends TargetedChainSupplier
 {
     public TransportSupplier(String myName,
-                                 Vector requestNames,
-                                 Vector responseNames,
-                                 String pivotName,
-                                 Hashtable options,
-                                 HandlerRegistry registry)
+                             Vector requestNames,
+                             Vector responseNames,
+                             String pivotName,
+                             Hashtable options,
+                             HandlerRegistry registry)
     {
-      super(myName, requestNames, responseNames, pivotName,
-            options, registry);
+        super(myName, requestNames, responseNames, pivotName,
+              options, registry);
     }
     
     public SimpleTargetedChain getNewChain()
     {
-      return new Transport();
+        return new Transport();
     }
 }

@@ -156,122 +156,122 @@ public class AxisServer extends AxisEngine
         HandlerRegistry sr = getServiceRegistry();
 
         try {
-          hName = msgContext.getStrProp( MessageContext.ENGINE_HANDLER );
-          if ( hName != null ) {
-              if ( hr == null || (h = hr.find(hName)) == null ) {
-                AxisClassLoader cl = msgContext.getClassLoader();
-                try {
-                  Debug.Print( 2, "Trying to load class: " + hName );
-                  Class cls = cl.loadClass( hName );
-                  h = (Handler) cls.newInstance();
+            hName = msgContext.getStrProp( MessageContext.ENGINE_HANDLER );
+            if ( hName != null ) {
+                if ( hr == null || (h = hr.find(hName)) == null ) {
+                    AxisClassLoader cl = msgContext.getClassLoader();
+                    try {
+                        Debug.Print( 2, "Trying to load class: " + hName );
+                        Class cls = cl.loadClass( hName );
+                        h = (Handler) cls.newInstance();
+                    }
+                    catch( Exception e ) {
+                        h = null ;
+                    }
                 }
-                catch( Exception e ) {
-                  h = null ;
-                }
-              }
-              if ( h != null )
-                h.invoke(msgContext);
-              else
-                throw new AxisFault( "Server.error",
-                                     "Can't locate handler: " + hName,
-                                     null, null );
-          }
-          else {
-          // This really should be in a handler - but we need to discuss it
-          // first - to make sure that's what we want.
-              /* Now we do the 'real' work.  The flow is basically:         */
-              /*   Transport Specific Request Handler/Chain                   */
-              /*   Global Request Handler/Chain                               */
-              /*   Protocol Specific-Handler(ie. SOAP, XP)                  */
-              /*     ie. For SOAP Handler:                                  */
-              /*           - Service Specific Request Handler/Chain           */
-              /*           - SOAP Semantic Checks                           */
-              /*           - Service Specific Response Handler/Chain          */
-              /*   Global Response Handler/Chain                              */
-              /*   Transport Specific Response Handler/Chain                  */
-              /**************************************************************/
-  
-              // When do we call init/cleanup??
-              Debug.Print(1, "Calling default logic in AxisServer" );
+                if ( h != null )
+                    h.invoke(msgContext);
+                else
+                    throw new AxisFault( "Server.error",
+                        "Can't locate handler: " + hName,
+                        null, null );
+            }
+            else {
+                // This really should be in a handler - but we need to discuss it
+                // first - to make sure that's what we want.
+                /* Now we do the 'real' work.  The flow is basically:         */
+                /*   Transport Specific Request Handler/Chain                   */
+                /*   Global Request Handler/Chain                               */
+                /*   Protocol Specific-Handler(ie. SOAP, XP)                  */
+                /*     ie. For SOAP Handler:                                  */
+                /*           - Service Specific Request Handler/Chain           */
+                /*           - SOAP Semantic Checks                           */
+                /*           - Service Specific Response Handler/Chain          */
+                /*   Global Response Handler/Chain                              */
+                /*   Transport Specific Response Handler/Chain                  */
+                /**************************************************************/
+                
+                // When do we call init/cleanup??
+                Debug.Print(1, "Calling default logic in AxisServer" );
 
-              /*  This is what the entirety of this logic might evolve to:
-              
-              hName = msgContext.getStrProp(MessageContext.TRANSPORT);
-              if ( hName != null ) {
+                /*  This is what the entirety of this logic might evolve to:
+                
+                hName = msgContext.getStrProp(MessageContext.TRANSPORT);
+                if ( hName != null ) {
                 if ((h = hr.find( hName )) != null ) {
-                  h.invoke(msgContext);
+                h.invoke(msgContext);
                 } else {
-                  System.err.println("Couldn't find transport " + hName);
+                System.err.println("Couldn't find transport " + hName);
                 }
-              } else {
+                } else {
                 // No transport set, so use the default (probably just
                 // calls the global->service handlers)
                 defaultTransport.invoke(msgContext);
-              }
-
-              */
-              
-              /* Process the Transport Specific Request Chain */
-              /**********************************************/
-              hName = msgContext.getTransportName();
-              HandlerRegistry tr = getTransportRegistry();
-              SimpleTargetedChain transportChain = null;
-              
-              Debug.Print(3, "AxisServer.invoke: Transport = '" + hName +"'");
-              if ( hName != null && (h = tr.find( hName )) != null ) {
-                if (h instanceof SimpleTargetedChain) {
-                  transportChain = (SimpleTargetedChain)h;
-                  h = transportChain.getRequestHandler();
-                  if (h != null)
-                    h.invoke(msgContext);
                 }
-              }
-      
-              /* Process the Global Request Chain */
-              /**********************************/
-              hName = Constants.GLOBAL_REQUEST ;
-              if ( hName != null  && (h = hr.find( hName )) != null )
-                  h.invoke(msgContext);
-              
-              /**
-               * At this point, the service should have been set by someone
-               * (either the originator of the MessageContext, or one of the
-               * transport or global Handlers).  If it hasn't been set, we
-               * fault.
-               */
-              h = msgContext.getServiceHandler();
-              if (h == null) {
-                // It's possible that we haven't yet parsed the
-                // message at this point.  This is a kludge to
-                // make sure we have.  There probably wants to be
-                // some kind of declarative "parse point" on the handler
-                // chain instead....
-                Message rm = msgContext.getRequestMessage();
-                rm.getAsSOAPEnvelope().getFirstBody();
-                h = msgContext.getServiceHandler();
-                if (h == null)
-                  throw new AxisFault("Server.NoService",
-                                      "The Axis engine couldn't find a " +
-                                      "target service to invoke! targetService is "+msgContext.getTargetService(),
-                                      null, null );
-              }
 
-              h.invoke(msgContext);
-      
-              /* Process the Global Response Chain */
-              /***********************************/
-              hName = Constants.GLOBAL_RECEIVE ;
-              if ( hName != null && (h = hr.find( hName )) != null )
+                */
+                
+                /* Process the Transport Specific Request Chain */
+                /**********************************************/
+                hName = msgContext.getTransportName();
+                HandlerRegistry tr = getTransportRegistry();
+                SimpleTargetedChain transportChain = null;
+                
+                Debug.Print(3, "AxisServer.invoke: Transport = '" + hName +"'");
+                if ( hName != null && (h = tr.find( hName )) != null ) {
+                    if (h instanceof SimpleTargetedChain) {
+                        transportChain = (SimpleTargetedChain)h;
+                        h = transportChain.getRequestHandler();
+                        if (h != null)
+                            h.invoke(msgContext);
+                    }
+                }
+                
+                /* Process the Global Request Chain */
+                /**********************************/
+                hName = Constants.GLOBAL_REQUEST ;
+                if ( hName != null  && (h = hr.find( hName )) != null )
+                    h.invoke(msgContext);
+                
+                /**
+                * At this point, the service should have been set by someone
+                * (either the originator of the MessageContext, or one of the
+                * transport or global Handlers).  If it hasn't been set, we
+                * fault.
+                */
+                h = msgContext.getServiceHandler();
+                if (h == null) {
+                    // It's possible that we haven't yet parsed the
+                    // message at this point.  This is a kludge to
+                    // make sure we have.  There probably wants to be
+                    // some kind of declarative "parse point" on the handler
+                    // chain instead....
+                    Message rm = msgContext.getRequestMessage();
+                    rm.getAsSOAPEnvelope().getFirstBody();
+                    h = msgContext.getServiceHandler();
+                    if (h == null)
+                        throw new AxisFault("Server.NoService",
+                            "The Axis engine couldn't find a " +
+                            "target service to invoke! targetService is "+msgContext.getTargetService(),
+                            null, null );
+                }
+
                 h.invoke(msgContext);
-      
-              /* Process the Transport Specific Response Chain */
-              /***********************************************/
-              if (transportChain != null) {
-                h = transportChain.getResponseHandler();
-                if (h != null)
-                  h.invoke(msgContext);
-              }
-          }
+                
+                /* Process the Global Response Chain */
+                /***********************************/
+                hName = Constants.GLOBAL_RECEIVE ;
+                if ( hName != null && (h = hr.find( hName )) != null )
+                    h.invoke(msgContext);
+                
+                /* Process the Transport Specific Response Chain */
+                /***********************************************/
+                if (transportChain != null) {
+                    h = transportChain.getResponseHandler();
+                    if (h != null)
+                        h.invoke(msgContext);
+                }
+            }
         }
         catch( Exception e ) {
             // Should we even bother catching it ?

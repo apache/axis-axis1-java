@@ -72,118 +72,120 @@ import org.apache.axis.encoding.SerializationContext;
  */
 
 public class AxisFault extends Exception {
-  protected QFault    faultCode ;
-  protected String    faultString ;
-  protected String    faultActor ;
-  protected Vector    faultDetails ;  // vector of Element's
+    protected QFault    faultCode ;
+    protected String    faultString ;
+    protected String    faultActor ;
+    protected Vector    faultDetails ;  // vector of Element's
 
-  public AxisFault(String code, String str, String actor, Element[] details) {
-    setFaultCode( new QFault(Constants.AXIS_NS, code));
-    setFaultString( str );
-    setFaultActor( actor );
-    setFaultDetails( details );
-  }
+    public AxisFault(String code, String str,
+                     String actor, Element[] details) {
+        setFaultCode( new QFault(Constants.AXIS_NS, code));
+        setFaultString( str );
+        setFaultActor( actor );
+        setFaultDetails( details );
+    }
 
-  public AxisFault(QFault code, String str, String actor, Element[] details) {
-    setFaultCode( code );
-    setFaultString( str );
-    setFaultActor( actor );
-    setFaultDetails( details );
-  }
+    public AxisFault(QFault code, String str,
+                     String actor, Element[] details) {
+        setFaultCode( code );
+        setFaultString( str );
+        setFaultActor( actor );
+        setFaultDetails( details );
+    }
 
-  public AxisFault(Exception e) {
-    String  str ;
+    public AxisFault(Exception e) {
+        String  str ;
 
-    setFaultCode( Constants.FAULT_SERVER_GENERAL );
-    // setFaultString( e.toString() );
-    // need to set details if we were in the body at the time!!
-    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-    PrintStream           ps = new PrintStream( stream );
-    e.printStackTrace(ps);
-    ps.close();
-    setFaultString( stream.toString() );
-  }
-  
-  public AxisFault(String message)
-  {
-    setFaultCode(Constants.FAULT_SERVER_GENERAL);
-    setFaultString(message);
-  }
-  
-  /**
-   * No-arg constructor for building one from an XML stream.
-   */
-  public AxisFault()
-  {
-  }
+        setFaultCode( Constants.FAULT_SERVER_GENERAL );
+        // setFaultString( e.toString() );
+        // need to set details if we were in the body at the time!!
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        PrintStream           ps = new PrintStream( stream );
+        e.printStackTrace(ps);
+        ps.close();
+        setFaultString( stream.toString() );
+    }
+    
+    public AxisFault(String message)
+    {
+        setFaultCode(Constants.FAULT_SERVER_GENERAL);
+        setFaultString(message);
+    }
+    
+    /**
+     * No-arg constructor for building one from an XML stream.
+     */
+    public AxisFault()
+    {
+    }
 
-  public void dump() {
-    System.out.println( "AxisFault\n" +
-                        "  faultCode: " + faultCode + "\n" +
-                        "  faultString: " + faultString + "\n" +
-                        "  faultActor: " + faultActor + "\n" +
-                        "  faultDetails: " + faultDetails + "\n"  );
-  }
+    public void dump() {
+        System.out.println( "AxisFault\n" +
+                            "  faultCode: " + faultCode + "\n" +
+                            "  faultString: " + faultString + "\n" +
+                            "  faultActor: " + faultActor + "\n" +
+                            "  faultDetails: " + faultDetails + "\n"  );
+    }
 
-  public void setFaultCode(QFault code) {
-    faultCode = code ;
-  }
+    public void setFaultCode(QFault code) {
+        faultCode = code ;
+    }
 
-  public void setFaultCode(String code) {
-    faultCode = new QFault(Constants.AXIS_NS, code);
-  }
+    public void setFaultCode(String code) {
+        faultCode = new QFault(Constants.AXIS_NS, code);
+    }
 
-  public QFault getFaultCode() {
-    return( faultCode );
-  }
+    public QFault getFaultCode() {
+        return( faultCode );
+    }
 
-  public void setFaultString(String str) {
-    faultString = str ;
-  }
+    public void setFaultString(String str) {
+        faultString = str ;
+    }
 
-  public String getFaultString() {
-    return( faultString );
-  }
+    public String getFaultString() {
+        return( faultString );
+    }
 
-  public void setFaultActor(String actor) {
-    faultActor = actor ;
-  }
+    public void setFaultActor(String actor) {
+        faultActor = actor ;
+    }
 
-  public String getFaultActor() {
-    return( faultActor );
-  }
+    public String getFaultActor() {
+        return( faultActor );
+    }
 
-  public void setFaultDetails(Element[] details) {
-    if ( details == null ) return ;
-    faultDetails = new Vector( details.length );
-    for ( int loop = 0 ; loop < details.length ; loop++ )
-      faultDetails.add( details[loop] );
-  }
+    public void setFaultDetails(Element[] details) {
+        if ( details == null ) return ;
+        faultDetails = new Vector( details.length );
+        for ( int loop = 0 ; loop < details.length ; loop++ )
+            faultDetails.add( details[loop] );
+    }
 
-  public Element[] getFaultDetails() {
-    if (faultDetails == null) return null;
-    Element result[] = new Element[faultDetails.size()];
-    for (int i=0; i<result.length; i++)
-      result[i] = (Element) faultDetails.elementAt(i);
-    return result;
-  }
+    public Element[] getFaultDetails() {
+        if (faultDetails == null) return null;
+        Element result[] = new Element[faultDetails.size()];
+        for (int i=0; i<result.length; i++)
+            result[i] = (Element) faultDetails.elementAt(i);
+        return result;
+    }
 
-  public void output(SerializationContext context) throws Exception {
+    public void output(SerializationContext context) throws Exception {
 
-    SOAPEnvelope envelope = new SOAPEnvelope();
+        SOAPEnvelope envelope = new SOAPEnvelope();
 
-    SOAPFaultElement fault = 
-      new SOAPFaultElement(this);
-    envelope.addBodyElement(fault);
+        SOAPFaultElement fault = 
+                                new SOAPFaultElement(this);
+        envelope.addBodyElement(fault);
 
-    envelope.output(context);
-  }
+        envelope.output(context);
+    }
 
-  public String toString() {
-    return( "AxisFault\n" +
-            "  faultCode: " + faultCode + "\n" +
-            "  faultString: " + faultString + "\n" +
-            "  faultActor: " + faultActor + "\n" +
-            "  faultDetails: " + faultDetails + "\n"  );
-  }
+    public String toString() {
+        return( "AxisFault\n" +
+                "  faultCode: " + faultCode + "\n" +
+                "  faultString: " + faultString + "\n" +
+                "  faultActor: " + faultActor + "\n" +
+                "  faultDetails: " + faultDetails + "\n"  );
+    }
 };

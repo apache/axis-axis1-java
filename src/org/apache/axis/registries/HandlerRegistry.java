@@ -62,24 +62,24 @@ import org.apache.axis.* ;
  * @author Doug Davis (dug@us.ibm.com)
  */
 public interface HandlerRegistry {
-  /**
-   * Add a new Handler to the registry.
-   */
-  public void add(String key, Handler handler);
-  
-  /**
-   * Remove a Handler (locate by key) from the registry - returns old
-   * value if it was there - or null if not.
-   */
-  public Handler remove(String key);
+    /**
+     * Add a new Handler to the registry.
+     */
+    public void add(String key, Handler handler);
+    
+    /**
+     * Remove a Handler (locate by key) from the registry - returns old
+     * value if it was there - or null if not.
+     */
+    public Handler remove(String key);
 
-  /**
-   * Given a 'key' return the corresponding Handler
-   */
-  public Handler find(String key);
+    /**
+     * Given a 'key' return the corresponding Handler
+     */
+    public Handler find(String key);
 
-  /**
-   * Return the list (in an array) of keys for the Handlers
-   */
-  public String[] list();
+    /**
+     * Return the list (in an array) of keys for the Handlers
+     */
+    public String[] list();
 };

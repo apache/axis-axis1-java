@@ -144,24 +144,24 @@ public abstract class BasicHandler implements Handler {
     }
 
     public Element getDeploymentData(Document doc) {
-      Debug.Print( 1, "Enter: BasicHandler::getDeploymentData" );
+        Debug.Print( 1, "Enter: BasicHandler::getDeploymentData" );
 
-      Element  root = doc.createElement( "handler" );
+        Element  root = doc.createElement( "handler" );
 
-      root.setAttribute( "class", this.getClass().getName() );
-      options = this.getOptions();
-      if ( options != null ) {
-        Enumeration e = options.keys();
-        while ( e.hasMoreElements() ) {
-          String k = (String) e.nextElement();
-          Object v = options.get(k);
-          Element e1 = doc.createElement( "option" );
-          e1.setAttribute( "name", k );
-          e1.setAttribute( "value", v.toString() );
-          root.appendChild( e1 );
+        root.setAttribute( "class", this.getClass().getName() );
+        options = this.getOptions();
+        if ( options != null ) {
+            Enumeration e = options.keys();
+            while ( e.hasMoreElements() ) {
+                String k = (String) e.nextElement();
+                Object v = options.get(k);
+                Element e1 = doc.createElement( "option" );
+                e1.setAttribute( "name", k );
+                e1.setAttribute( "value", v.toString() );
+                root.appendChild( e1 );
+            }
         }
-      }
-      Debug.Print( 1, "Exit: BasicHandler::getDeploymentData" );
-      return( root );
+        Debug.Print( 1, "Exit: BasicHandler::getDeploymentData" );
+        return( root );
     }
 }

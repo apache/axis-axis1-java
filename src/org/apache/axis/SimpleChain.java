@@ -67,120 +67,121 @@ import org.w3c.dom.* ;
  * @author Doug Davis (dug@us.ibm.com)
  */
 public class SimpleChain extends BasicHandler implements Chain {
-  protected Vector     handlers ;
-  protected Hashtable  options ;
+    protected Vector     handlers ;
+    protected Hashtable  options ;
 
-  public void init() {
-    for ( int i = 0 ; i < handlers.size() ; i++ )
-      ((Handler) handlers.elementAt( i )).init();
-  }
-
-  public void cleanup() {
-    for ( int i = 0 ; i < handlers.size() ; i++ )
-      ((Handler) handlers.elementAt( i )).cleanup();
-  }
-
-  /**
-   * Iterate over the chain invoking each handler.  If there's a fault
-   * then call 'undo' for each completed handler in reverse order, then 
-   * rethrow the exception.
-   */
-  public void invoke(MessageContext msgContext) throws AxisFault {
-    Debug.Print( 1, "Enter: SimpleChain::invoke" );
-    int i = 0 ;
-    try {
-      for ( i = 0 ; handlers!= null && i<handlers.size() ; i++ )
-        ((Handler) handlers.elementAt( i )).invoke( msgContext );
-    }
-    catch( Exception e ) {
-      // undo in reverse order - rethrow
-      Debug.Print( 1, e );
-      if( !(e instanceof AxisFault ) )
-        e = new AxisFault( e );
-      while( --i >= 0 )
-        ((Handler) handlers.elementAt( i )).undo( msgContext );
-      throw (AxisFault) e ;
-    }
-    Debug.Print( 1, "Exit: SimpleChain::invoke" );
-  }
-
-  /**
-   * Undo all of the work this chain completed because some handler
-   * later on has faulted - in reverse order.
-   */
-  public void undo(MessageContext msgContext) {
-    Debug.Print( 1, "Enter: SimpleChain::undo" );
-    for ( int i = handlers.size()-1 ; i >= 0 ; i-- )
-      ((Handler) handlers.elementAt( i )).undo( msgContext );
-    Debug.Print( 1, "Exit: SimpleChain::undo" );
-  }
-
-  public boolean canHandleBlock(QName qname) {
-    for ( int i = 0 ; i < handlers.size() ; i++ )
-      if ( ((Handler) handlers.elementAt( i )).canHandleBlock(qname) )
-        return( true );
-    return( false );
-  }
-
-  public void addHandler(Handler handler) {
-    if (handler == null)
-      throw new NullPointerException("SimpleChain.addHandler: Null handler!");
-    
-    if ( handlers == null ) handlers = new Vector();
-    handlers.add( handler );
-  }
-
-  public void removeHandler(int index) {
-    if ( handlers != null )
-      handlers.removeElementAt( index );
-  }
-
-  public void clear() {
-    handlers.clear();
-  }
-
-  public boolean contains(Handler handler) {
-    return( handlers != null ? handlers.contains( handler ) : false );
-  }
-
-  public Handler[] getHandlers() {
-    if (handlers == null)
-      return null;
-    
-    Handler [] ret = new Handler[handlers.size()];
-    return( (Handler[]) handlers.toArray(ret) );
-  }
-
-  public Element getDeploymentData(Document doc) {
-    Debug.Print( 1, "Enter: SimpleChain::getDeploymentData" );
-
-    Element  root = doc.createElement( "chain" );
-
-    if (handlers != null ) {
-      StringBuffer str = new StringBuffer();
-      Handler      h ;
-      for ( int i = 0 ; i < handlers.size() ; i++ ) {
-        if ( i != 0 ) str.append(",");
-        h = (Handler) handlers.elementAt(i);
-        str.append( h.getName() );
-      }
-      root.setAttribute( "flow", str.toString() );
+    public void init() {
+        for ( int i = 0 ; i < handlers.size() ; i++ )
+            ((Handler) handlers.elementAt( i )).init();
     }
 
-    options = this.getOptions();
-    if ( options != null ) {
-      Enumeration e = options.keys();
-      while ( e.hasMoreElements() ) {
-        String k = (String) e.nextElement();
-        Object v = options.get(k);
-        Element e1 = doc.createElement( "option" );
-        e1.setAttribute( "name", k );
-        e1.setAttribute( "value", v.toString() );
-        root.appendChild( e1 );
-      }
+    public void cleanup() {
+        for ( int i = 0 ; i < handlers.size() ; i++ )
+            ((Handler) handlers.elementAt( i )).cleanup();
     }
 
-    Debug.Print( 1, "Exit: SimpleChain::getDeploymentData" );
-    return( root );
-  }
+    /**
+     * Iterate over the chain invoking each handler.  If there's a fault
+     * then call 'undo' for each completed handler in reverse order, then 
+     * rethrow the exception.
+     */
+    public void invoke(MessageContext msgContext) throws AxisFault {
+        Debug.Print( 1, "Enter: SimpleChain::invoke" );
+        int i = 0 ;
+        try {
+            for ( i = 0 ; handlers!= null && i<handlers.size() ; i++ )
+                ((Handler) handlers.elementAt( i )).invoke( msgContext );
+        }
+        catch( Exception e ) {
+            // undo in reverse order - rethrow
+            Debug.Print( 1, e );
+            if( !(e instanceof AxisFault ) )
+                e = new AxisFault( e );
+            while( --i >= 0 )
+                ((Handler) handlers.elementAt( i )).undo( msgContext );
+            throw (AxisFault) e ;
+        }
+        Debug.Print( 1, "Exit: SimpleChain::invoke" );
+    }
+
+    /**
+     * Undo all of the work this chain completed because some handler
+     * later on has faulted - in reverse order.
+     */
+    public void undo(MessageContext msgContext) {
+        Debug.Print( 1, "Enter: SimpleChain::undo" );
+        for ( int i = handlers.size()-1 ; i >= 0 ; i-- )
+            ((Handler) handlers.elementAt( i )).undo( msgContext );
+        Debug.Print( 1, "Exit: SimpleChain::undo" );
+    }
+
+    public boolean canHandleBlock(QName qname) {
+        for ( int i = 0 ; i < handlers.size() ; i++ )
+            if ( ((Handler) handlers.elementAt( i )).canHandleBlock(qname) )
+                return( true );
+        return( false );
+    }
+
+    public void addHandler(Handler handler) {
+        if (handler == null)
+            throw new NullPointerException(
+                "SimpleChain.addHandler: Null handler!");
+        
+        if ( handlers == null ) handlers = new Vector();
+        handlers.add( handler );
+    }
+
+    public void removeHandler(int index) {
+        if ( handlers != null )
+            handlers.removeElementAt( index );
+    }
+
+    public void clear() {
+        handlers.clear();
+    }
+
+    public boolean contains(Handler handler) {
+        return( handlers != null ? handlers.contains( handler ) : false );
+    }
+
+    public Handler[] getHandlers() {
+        if (handlers == null)
+            return null;
+        
+        Handler [] ret = new Handler[handlers.size()];
+        return( (Handler[]) handlers.toArray(ret) );
+    }
+
+    public Element getDeploymentData(Document doc) {
+        Debug.Print( 1, "Enter: SimpleChain::getDeploymentData" );
+
+        Element  root = doc.createElement( "chain" );
+
+        if (handlers != null ) {
+            StringBuffer str = new StringBuffer();
+            Handler      h ;
+            for ( int i = 0 ; i < handlers.size() ; i++ ) {
+                if ( i != 0 ) str.append(",");
+                h = (Handler) handlers.elementAt(i);
+                str.append( h.getName() );
+            }
+            root.setAttribute( "flow", str.toString() );
+        }
+
+        options = this.getOptions();
+        if ( options != null ) {
+            Enumeration e = options.keys();
+            while ( e.hasMoreElements() ) {
+                String k = (String) e.nextElement();
+                Object v = options.get(k);
+                Element e1 = doc.createElement( "option" );
+                e1.setAttribute( "name", k );
+                e1.setAttribute( "value", v.toString() );
+                root.appendChild( e1 );
+            }
+        }
+
+        Debug.Print( 1, "Exit: SimpleChain::getDeploymentData" );
+        return( root );
+    }
 };

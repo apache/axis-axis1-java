@@ -137,7 +137,7 @@ public class DeserializationContext
             type = attrs.getValue(Constants.URIS_SCHEMA_XSI[i], "type");
         
         if (type == null)
-          return null;
+            return null;
         
         return getQNameFromString(type);
     }

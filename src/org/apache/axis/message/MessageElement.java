@@ -249,10 +249,10 @@ public class MessageElement extends DeserializerBase
     
     public MessageElement getRealElement()
     {
-      if (href == null)
-        return this;
-      
-      return context.getElementByID(href.substring(1));
+        if (href == null)
+            return this;
+        
+        return context.getElementByID(href.substring(1));
     }
 
     public Object getValue()
@@ -304,26 +304,26 @@ public class MessageElement extends DeserializerBase
 
     public Object getValueAsType(QName typeQName) throws AxisFault
     {
-      MessageElement realEl = getRealElement();
-      
-      if (realEl.typeQName != null) {
-          if (!realEl.typeQName.equals(typeQName))
-            throw new AxisFault("Couldn't convert " + realEl.typeQName +
-                                " to requested type " + typeQName);
-          return getValue();
-      }
-      
-      DeserializerBase dser = realEl.context.getDeserializer(typeQName);
-      if (dser == null)
-        throw new AxisFault("No deserializer for type " + typeQName);
-      
-      try {
-        realEl.publishToHandler(dser);
-      } catch (SAXException e) {
-        throw new AxisFault(e);
-      }
-      
-      return dser.getValue();
+        MessageElement realEl = getRealElement();
+        
+        if (realEl.typeQName != null) {
+            if (!realEl.typeQName.equals(typeQName))
+                throw new AxisFault("Couldn't convert " + realEl.typeQName +
+                    " to requested type " + typeQName);
+            return getValue();
+        }
+        
+        DeserializerBase dser = realEl.context.getDeserializer(typeQName);
+        if (dser == null)
+            throw new AxisFault("No deserializer for type " + typeQName);
+        
+        try {
+            realEl.publishToHandler(dser);
+        } catch (SAXException e) {
+            throw new AxisFault(e);
+        }
+        
+        return dser.getValue();
     }
     
     public DeserializerBase getContentHandler()

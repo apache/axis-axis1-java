@@ -252,19 +252,19 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
 
         // handle the various datetime QNames...
         addDeserializerFactory(
-          new QName(Constants.URI_1999_SCHEMA_XSD, "timeInstant"),
-          java.util.Date.class,
-          new DateSerializer.DateDeserializerFactory());
+            new QName(Constants.URI_1999_SCHEMA_XSD, "timeInstant"),
+            java.util.Date.class,
+            new DateSerializer.DateDeserializerFactory());
 
         addDeserializerFactory(
-          new QName(Constants.URI_2000_SCHEMA_XSD, "timeInstant"),
-          java.util.Date.class,
-          new DateSerializer.DateDeserializerFactory());
+            new QName(Constants.URI_2000_SCHEMA_XSD, "timeInstant"),
+            java.util.Date.class,
+            new DateSerializer.DateDeserializerFactory());
 
         addDeserializerFactory(
-          new QName(Constants.URI_2001_SCHEMA_XSD, "dateTime"),
-          java.util.Date.class,
-          new DateSerializer.DateDeserializerFactory());
+            new QName(Constants.URI_2001_SCHEMA_XSD, "dateTime"),
+            java.util.Date.class,
+            new DateSerializer.DateDeserializerFactory());
         
         addDeserializerFactory(XSD_ANYTYPE, java.lang.Object.class, new ObjDeserializerFactory());
         addSerializer(java.lang.Object.class, XSD_ANYTYPE, new ObjSerializer());

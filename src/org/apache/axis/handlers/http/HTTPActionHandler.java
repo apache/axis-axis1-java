@@ -80,18 +80,18 @@ public class HTTPActionHandler extends BasicHandler
         Debug.Print( 1, "Enter: HTTPActionHandler::invoke" );
 
         /** If there's already a targetService then just return.
-         */
+        */
         if ( msgContext.getServiceHandler() == null ) {
             String action = (String) msgContext.getProperty(
-                                              HTTPConstants.MC_HTTP_SOAPACTION);
+                                                            HTTPConstants.MC_HTTP_SOAPACTION);
             Debug.Print( 2, "  HTTP SOAPAction: " + action );
             
             /** The idea is that this handler only goes in the chain IF this
-             * service does a mapping between SOAPAction and target.  Therefore
-             * if we get here with no action, we're in trouble.
-             */
+            * service does a mapping between SOAPAction and target.  Therefore
+            * if we get here with no action, we're in trouble.
+            */
             if (action == null) {
-                 throw new AxisFault( "Server.NoHTTPSOAPAction",
+                throw new AxisFault( "Server.NoHTTPSOAPAction",
                     "No HTTP SOAPAction property in context",
                     null, null );
             }
