@@ -276,6 +276,9 @@ public class Call implements javax.xml.rpc.Call {
      */
     protected java.util.Vector attachmentParts = new java.util.Vector();
 
+    /** This is false when invoke() is called. */
+    private boolean isNeverInvoked  = true;     
+
     /************************************************************************/
     /* Start of core JAX-RPC stuff                                          */
     /************************************************************************/
@@ -2573,6 +2576,8 @@ public class Call implements javax.xml.rpc.Call {
             log.debug("Enter: Call::invoke()");
         }
 
+        isNeverInvoked  = false;
+
         Message      reqMsg  = null ;
         SOAPEnvelope reqEnv  = null ;
 
@@ -2780,6 +2785,10 @@ public class Call implements javax.xml.rpc.Call {
      */
     public Map getOutputParams()
     {
+        if (isNeverInvoked) {
+            throw new JAXRPCException(
+                    Messages.getMessage("outputParamsUnavailable"));
+        }
         return this.outParams;
     }
 
@@ -2795,6 +2804,10 @@ public class Call implements javax.xml.rpc.Call {
      *                           before any invoke method has been called.
      */
     public List getOutputValues() {
+        if (isNeverInvoked) {
+            throw new JAXRPCException(
+                    Messages.getMessage("outputParamsUnavailable"));
+        }
         return outParamsList;
     }
 
