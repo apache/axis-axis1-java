@@ -115,6 +115,28 @@ public class JavaUtils
         return null;
     }
     
+    public static String getWrapper(String primitive)
+    {
+        if (primitive.equals("int"))
+            return "Integer";
+        else if (primitive.equals("short"))
+            return "Short";
+        else if (primitive.equals("boolean"))
+            return "Boolean";
+        else if (primitive.equals("byte"))
+            return "Byte";
+        else if (primitive.equals("long"))
+            return "Long";
+        else if (primitive.equals("double"))
+            return "Double";
+        else if (primitive.equals("float"))
+            return "Float";
+        else if (primitive.equals("char"))
+            return "Character";
+        
+        return null;
+    }
+
     public static Class getPrimitiveClass(Class wrapper)
     {
         if (wrapper == java.lang.Integer.class)

@@ -180,7 +180,7 @@ public abstract class BaseDeserializerFactory
             if (getDeserializer == null && firstCall) {
                 try {
                     getDeserializer = 
-                        javaType.getMethod("getDeserialier",
+                        javaType.getMethod("getDeserializer",
                                            new Class[] {String.class, 
                                                         Class.class, 
                                                         QName.class});

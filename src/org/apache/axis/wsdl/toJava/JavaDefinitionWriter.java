@@ -76,11 +76,11 @@ import javax.wsdl.QName;
  *   deploy.xml, undeploy.xml and Faults as needed.
  */
 public class JavaDefinitionWriter implements Writer {
-    Writer deployWriter = null;
-    Writer undeployWriter = null;
-    Emitter emitter;
-    Definition definition;
-    SymbolTable symbolTable;
+    protected Writer deployWriter = null;
+    protected Writer undeployWriter = null;
+    protected Emitter emitter;
+    protected Definition definition;
+    protected SymbolTable symbolTable;
 
     /**
      * Constructor.

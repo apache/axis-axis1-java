@@ -80,7 +80,6 @@ public class JavaBeanHelperWriter extends JavaWriter {
      * @param elements    Vector containing the Type and name of each property
      * @param extendType  The type representing the extended class (or null)
      * @param attributes  Vector containing the attribute types and names    
-     * @param extendType  The type representing the extended clas (or null)
      */
     protected JavaBeanHelperWriter(
                                    Emitter emitter,
@@ -121,7 +120,7 @@ public class JavaBeanHelperWriter extends JavaWriter {
     /**
      * write MetaData code
      */
-    protected void writeMetaData() {
+    protected void writeMetaData() throws IOException {
         // Collect elementMappings
         if (elements != null) {
             for (int i = 0; i < elements.size(); i++) {
@@ -206,7 +205,7 @@ public class JavaBeanHelperWriter extends JavaWriter {
      * write Serializer getter code and pass in meta data to avoid
      * undo introspection.
      */
-    protected void writeSerializer() {
+    protected void writeSerializer() throws IOException {
         String typeDesc = null;
         if (attributes != null || elementMappings != null) {
             typeDesc = "typeDesc";
@@ -233,7 +232,7 @@ public class JavaBeanHelperWriter extends JavaWriter {
      * write Deserializer getter code and pass in meta data to avoid
      * undo introspection.
      */
-    protected void writeDeserializer() {
+    protected void writeDeserializer()  throws IOException {
         String typeDesc = null;
         if (attributes != null || elementMappings != null) {
             typeDesc = "typeDesc";

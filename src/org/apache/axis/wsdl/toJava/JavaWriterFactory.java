@@ -78,8 +78,8 @@ import org.apache.axis.encoding.DefaultSOAP12TypeMappingImpl;
 */
 
 public class JavaWriterFactory implements WriterFactory {
-    private Emitter     emitter;
-    private SymbolTable symbolTable;
+    protected Emitter     emitter;
+    protected SymbolTable symbolTable;
 
     /**
      * Default constructor.  Note that this class is unusable until setEmitter
