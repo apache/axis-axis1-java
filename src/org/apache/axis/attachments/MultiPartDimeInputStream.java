@@ -202,7 +202,7 @@ public class MultiPartDimeInputStream extends  MultiPartInputStream {
                     AttachmentPart ap = new AttachmentPart(dh);
 
                     if (contentId != null) 
-                        ap.addMimeHeader(HTTPConstants.HEADER_CONTENT_ID, contentId); 
+                        ap.setMimeHeader(HTTPConstants.HEADER_CONTENT_ID, contentId);
 
                     addPart(contentId, "", ap);
 
