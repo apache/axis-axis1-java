@@ -66,6 +66,8 @@ import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.URL;
 
+import java.util.HashMap;
+
 /**
  * Simple Ant task for running Wsdl2java utility. 
  *
@@ -78,7 +80,7 @@ public class Wsdl2javaAntTask extends Task
     private boolean messageContext = false;
     private boolean testCase = false;
     private boolean noImports = true;
-    private String javaPackageName = "";
+    private HashMap namespaceMap = new HashMap();
     private String output = "." ;
     private String deployScope = "";
     private String url = "";
@@ -92,7 +94,7 @@ public class Wsdl2javaAntTask extends Task
             log("\tmessageContext:" + messageContext, Project.MSG_VERBOSE);
             log("\ttestCase:" + testCase, Project.MSG_VERBOSE);
             log("\tnoImports:" + noImports, Project.MSG_VERBOSE);
-            log("\tpackage:" + javaPackageName, Project.MSG_VERBOSE);
+            log("\tNStoPkg:" + namespaceMap, Project.MSG_VERBOSE);
             log("\toutput:" + output, Project.MSG_VERBOSE);
             log("\tdeployScope:" + deployScope, Project.MSG_VERBOSE);
             log("\tURL:" + url, Project.MSG_VERBOSE);
@@ -111,10 +113,9 @@ public class Wsdl2javaAntTask extends Task
             else {
                 log("Unrecognized scope:  " + deployScope + ".  Ignoring it.", Project.MSG_VERBOSE);
             }
-            if (javaPackageName == null || javaPackageName.length()<=0)
-                emitter.generatePackageName(true);
-            else
-                emitter.setPackageName(javaPackageName);
+            if (!namespaceMap.isEmpty()) {
+                emitter.setNamespaceMap(namespaceMap);
+            }
             emitter.generateTestCase(testCase);
             emitter.generateImports(!noImports);
             emitter.setOutputDir(output);
@@ -152,11 +153,6 @@ public class Wsdl2javaAntTask extends Task
         this.noImports = Project.toBoolean(parameter);
     }
 
-    // The setter for the "package" attribute
-    public void setPackage(String parameter) {
-        this.javaPackageName = parameter;
-    }
-
     // The setter for the "output" attribute
     public void setOutput(String parameter) {
         this.output = parameter;
@@ -170,6 +166,32 @@ public class Wsdl2javaAntTask extends Task
     // The setter for the "url" attribute
     public void setURL(String parameter) {
         this.url = parameter;
+    }
+
+    /** the command arguments */
+    public Mapping createMapping() {
+        Mapping pkg = new Mapping();
+        return pkg;
+    }
+
+    /**
+     * Used for nested package definitions.
+     */
+    public class Mapping {
+        private String namespace;
+        private String packageName;
+
+        public void setNamespace(String value) {
+            namespace = value;
+            if(namespace != null && packageName != null)
+                namespaceMap.put(namespace, packageName);
+        }
+
+        public void setPackage(String value) {
+            packageName = value;
+            if(namespace != null && packageName != null)
+                namespaceMap.put(namespace, packageName);
+        }
     }
 }
 
