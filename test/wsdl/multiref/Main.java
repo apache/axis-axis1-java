@@ -183,6 +183,44 @@ public class Main {
         }
 
         // ----------------------
+        // Create a 'loop' tree.  The children of the root have children that reference the root.
+        // In this test both children have the same data (thus the same equals()).
+        // There should still be separate nodes passed over the wire
+        t = new Node();
+        t.setData(0);
+        l = new Node();
+        l.setData(1);    
+        r = new Node();
+        r.setData(1);
+        t.setLeft(l);
+        t.setRight(r);
+
+        l.setLeft(t);
+        l.setRight(t);
+        r.setLeft(t);
+        r.setRight(t);
+
+        holder = new NodeHolder(t);
+
+        // Test for loops
+        rc = remoteTest.testLoop(holder);
+        if (rc == 0) {
+            // System.err.println("Passed testLoop 1B");
+        } else {
+            System.err.println("Failed testLoop 1B");
+            throw new Exception("Failed testLoop 1B with "+rc);
+        }
+        // Test returns the tree.  To make sure it returned it successfully,
+        // invoke the test again!
+        rc = remoteTest.testLoop(holder);
+        if (rc == 0) {
+            // System.err.println("Passed testLoop 2B");
+        } else {
+            System.err.println("Failed testLoop 2B");
+            throw new Exception("Failed testLoop 2B with "+rc);
+        }
+
+        // ----------------------
         // Test passing of the same node argument.
         t = new Node();
         t.setData(0);
