@@ -39,6 +39,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+/**
+ * This is our implementation of the DOM node
+ */
 public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
         Serializable, Cloneable {
 
@@ -58,10 +61,18 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
     protected CharacterData textRep = null;
 
     protected boolean   _isDirty = false;
-    
+    private static final String NULL_URI_NAME = "intentionalNullURI";
+
+    /**
+     * empty constructor
+     */
     public NodeImpl() {
     }
 
+    /**
+     * constructor which adopts the name and NS of the char data, and its text
+     * @param text
+     */
     public NodeImpl(CharacterData text) {
         textRep = text;
         namespaceURI = text.getNamespaceURI();
@@ -689,7 +700,7 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
                 if (uri != null && uri.trim().length() > 0) {
                     // filterring out the tricky method to differentiate the null namespace
                     // -ware case
-                    if (uri.equals("intentionalNullURI")) {
+                    if (NULL_URI_NAME.equals(uri)) {
                         uri = null;
                     }
                     Attr attr = doc.createAttributeNS(uri, qname);
@@ -703,7 +714,8 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
             }
             return domAttributes;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            log.error(Messages.getMessage("saxToDomFailed00"),ex);
+
             return null;
         }
     }
@@ -767,8 +779,17 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
         context.setPretty(oldPretty);
     }
 
+    /**
+     * get the dirty bit
+     * @return
+     */
     public boolean isDirty() { return _isDirty; }
 
+    /**
+     * set the dirty bit. will also set our parent as dirty, if there is one.
+     * Note that clearing the dirty bit does <i>not</i> propagate upwards.
+     * @param dirty new value of the dirty bit
+     */
     public void setDirty(boolean dirty)
     { 
         _isDirty = dirty; 
@@ -776,5 +797,6 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
             ((NodeImpl)parent).setDirty(true);
         }
     }
+
 
 }
