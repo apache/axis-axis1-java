@@ -110,6 +110,7 @@ public class WSDDTransport
         
         context.startElement(WSDDConstants.QNAME_TRANSPORT, attrs);
         writeFlowsToContext(context);
+        writeParamsToContext(context);
         context.endElement();
     }
 
