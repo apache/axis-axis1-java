@@ -28,6 +28,7 @@ import org.apache.axis.utils.BeanPropertyDescriptor;
 import org.apache.axis.utils.BeanUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.fromJava.Types;
+import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 import org.apache.commons.logging.Log;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
@@ -397,7 +398,7 @@ public class BeanSerializer implements Serializer, Serializable {
             elem = types.createElementWithAnonymousType(fieldName,
             fieldType, isOmittable, where.getOwnerDocument());
         } else {
-            if (Types.isArray(fieldType)) {
+            if (!SchemaUtils.isSimpleSchemaType(xmlType) && Types.isArray(fieldType)) {
                 xmlType = null;
             }
             
