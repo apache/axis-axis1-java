@@ -16,6 +16,13 @@ public class EsrTestServiceTestCase extends junit.framework.TestCase {
         super(name);
     }
 
+    public void testEsrTestWSDL() throws Exception {
+        javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();
+        java.net.URL url = new java.net.URL(new test.wsdl.esr.EsrTestServiceLocator().getEsrTestAddress() + "?WSDL");
+        javax.xml.rpc.Service service = serviceFactory.createService(url, new test.wsdl.esr.EsrTestServiceLocator().getServiceName());
+        assertTrue(service != null);
+    }
+
     public void test1EsrTestEsrInOut() {
         // Using WSDL file to make a SOAP call
         try {

@@ -11,6 +11,14 @@ public class MyServiceServiceTestCase extends junit.framework.TestCase {
     public MyServiceServiceTestCase(java.lang.String name) {
         super(name);
     }
+
+    public void testtestdateWSDL() throws Exception {
+        javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();
+        java.net.URL url = new java.net.URL(new test.wsdl.date.MyServiceServiceLocator().gettestdateAddress() + "?WSDL");
+        javax.xml.rpc.Service service = serviceFactory.createService(url, new test.wsdl.date.MyServiceServiceLocator().getServiceName());
+        assertTrue(service != null);
+    }
+
     public void test1testdateGetInfo() throws Exception {
         test.wsdl.date.TestdateSoapBindingStub binding;
         try {

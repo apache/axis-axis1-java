@@ -11,6 +11,14 @@ public class EmployeeDatabaseTestCase extends junit.framework.TestCase {
     public EmployeeDatabaseTestCase(java.lang.String name) {
         super(name);
     }
+
+    public void testEmployeeDatabaseWSDL() throws Exception {
+        javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();
+        java.net.URL url = new java.net.URL(new test.wsdl.wrapped2.EmployeeDatabaseLocator().getEmployeeDatabaseAddress() + "?WSDL");
+        javax.xml.rpc.Service service = serviceFactory.createService(url, new test.wsdl.wrapped2.EmployeeDatabaseLocator().getServiceName());
+        assertTrue(service != null);
+    }
+
     public void test1EmployeeDatabaseGetEmployeeCount() throws Exception {
         test.wsdl.wrapped2.EmployeeDBBindingStub binding;
         try {

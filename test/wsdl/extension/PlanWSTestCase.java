@@ -11,6 +11,14 @@ public class PlanWSTestCase extends junit.framework.TestCase {
     public PlanWSTestCase(java.lang.String name) {
         super(name);
     }
+
+    public void testPlanWSSoapWSDL() throws Exception {
+        javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();
+        java.net.URL url = new java.net.URL(new test.wsdl.extension.PlanWSLocator().getPlanWSSoapAddress() + "?WSDL");
+        javax.xml.rpc.Service service = serviceFactory.createService(url, new test.wsdl.extension.PlanWSLocator().getServiceName());
+        assertTrue(service != null);
+    }
+
     public void test1PlanWSSoapGetPlan() throws Exception {
         test.wsdl.extension.PlanWSSoapStub binding;
         try {

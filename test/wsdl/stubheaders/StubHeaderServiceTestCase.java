@@ -13,6 +13,14 @@ public class StubHeaderServiceTestCase extends junit.framework.TestCase {
     public StubHeaderServiceTestCase(java.lang.String name) {
         super(name);
     }
+
+    public void testStubHeaderServiceWSDL() throws Exception {
+        javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();
+        java.net.URL url = new java.net.URL(new test.wsdl.stubheaders.StubHeaderServiceLocator().getStubHeaderServiceAddress() + "?WSDL");
+        javax.xml.rpc.Service service = serviceFactory.createService(url, new test.wsdl.stubheaders.StubHeaderServiceLocator().getServiceName());
+        assertTrue(service != null);
+    }
+
     public void test1StubHeaderServiceEcho() throws Exception {
         StubHeaderStub binding;
         try {

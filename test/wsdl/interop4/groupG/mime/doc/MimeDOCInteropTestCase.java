@@ -17,6 +17,13 @@ public class MimeDOCInteropTestCase extends junit.framework.TestCase {
         super(name);
     }
 
+    public void testMimeDOCSoapPortWSDL() throws Exception {
+        javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();
+        java.net.URL url = new java.net.URL(new test.wsdl.interop4.groupG.mime.doc.MimeDOCInteropLocator().getMimeDOCSoapPortAddress() + "?WSDL");
+        javax.xml.rpc.Service service = serviceFactory.createService(url, new test.wsdl.interop4.groupG.mime.doc.MimeDOCInteropLocator().getServiceName());
+        assertTrue(service != null);
+    }
+
     protected void setUp() throws Exception {
         if(url == null) {
             url = new URL(new test.wsdl.interop4.groupG.mime.doc.MimeDOCInteropLocator().getMimeDOCSoapPortAddress());

@@ -34,6 +34,21 @@ public class WhiteMesaSoap12TestSvcTestCase extends junit.framework.TestCase {
     public WhiteMesaSoap12TestSvcTestCase(java.lang.String name) {
         super(name);
     }
+
+    public void testSoap12TestDocPortWSDL() throws Exception {
+        javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();
+        java.net.URL url = new java.net.URL(new test.wsdl.soap12.assertion.WhiteMesaSoap12TestSvcLocator().getSoap12TestDocPortAddress() + "?WSDL");
+        javax.xml.rpc.Service service = serviceFactory.createService(url, new test.wsdl.soap12.assertion.WhiteMesaSoap12TestSvcLocator().getServiceName());
+        assertTrue(service != null);
+    }
+
+    public void testSoap12TestRpcPortWSDL() throws Exception {
+        javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();
+        java.net.URL url = new java.net.URL(new test.wsdl.soap12.assertion.WhiteMesaSoap12TestSvcLocator().getSoap12TestRpcPortAddress() + "?WSDL");
+        javax.xml.rpc.Service service = serviceFactory.createService(url, new test.wsdl.soap12.assertion.WhiteMesaSoap12TestSvcLocator().getServiceName());
+        assertTrue(service != null);
+    }
+
     public void test1Soap12TestRpcPortReturnVoid() throws Exception {
         test.wsdl.soap12.assertion.Soap12TestRpcBindingStub binding;
         try {

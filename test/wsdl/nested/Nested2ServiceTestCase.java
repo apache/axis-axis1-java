@@ -14,6 +14,14 @@ public class Nested2ServiceTestCase extends junit.framework.TestCase {
     public Nested2ServiceTestCase(String name) {
         super(name);
     }
+
+    public void testNestedWSDL() throws Exception {
+        javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();
+        java.net.URL url = new java.net.URL(new test.wsdl.nested.Nested2ServiceLocator().getNestedAddress() + "?WSDL");
+        javax.xml.rpc.Service service = serviceFactory.createService(url, new test.wsdl.nested.Nested2ServiceLocator().getServiceName());
+        assertTrue(service != null);
+    }
+
     public void test1NestedNestedSvc2() {
         test.wsdl.nested.Nested2PortType binding;
         try {

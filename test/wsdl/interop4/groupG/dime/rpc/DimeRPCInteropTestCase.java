@@ -24,6 +24,13 @@ public class DimeRPCInteropTestCase extends junit.framework.TestCase {
         super(name);
     }
 
+    public void testDimeRPCSoapPortWSDL() throws Exception {
+        javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();
+        java.net.URL url = new java.net.URL(new test.wsdl.interop4.groupG.dime.rpc.DimeRPCInteropLocator().getDimeRPCSoapPortAddress() + "?WSDL");
+        javax.xml.rpc.Service service = serviceFactory.createService(url, new test.wsdl.interop4.groupG.dime.rpc.DimeRPCInteropLocator().getServiceName());
+        assertTrue(service != null);
+    }
+
     protected void setUp() throws Exception {
         if(url == null) {
             url = new URL(new test.wsdl.interop4.groupG.dime.rpc.DimeRPCInteropLocator().getDimeRPCSoapPortAddress());

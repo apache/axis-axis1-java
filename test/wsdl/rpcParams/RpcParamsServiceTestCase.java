@@ -16,6 +16,13 @@ public class RpcParamsServiceTestCase extends TestCase {
         super(name);
     }
 
+    public void testRpcParamsWSDL() throws Exception {
+        javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();
+        java.net.URL url = new java.net.URL(new test.wsdl.rpcParams.RpcParamsServiceLocator().getRpcParamsAddress() + "?WSDL");
+        javax.xml.rpc.Service service = serviceFactory.createService(url, new test.wsdl.rpcParams.RpcParamsServiceLocator().getServiceName());
+        assertTrue(service != null);
+    }
+
     /**
      * Send parameters in the order that they are specified in
      * the wsdl. Also omits null parameters.
