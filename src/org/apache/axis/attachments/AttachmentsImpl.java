@@ -95,6 +95,10 @@ public class AttachmentsImpl implements Attachments {
      */ 
     public AttachmentsImpl(Message msg, Object intialContents, String contentType,
        String contentLocation) throws org.apache.axis.AxisFault {
+       if(contentLocation != null){
+           contentLocation= contentLocation.trim();
+           if(contentLocation.length()==0) contentLocation= null;
+       }
        this.contentLocation= contentLocation;
 
       this.msg= msg;
@@ -113,6 +117,11 @@ public class AttachmentsImpl implements Attachments {
                    if(null == contentLocation){ //If the content location is not specified as
                                             //of the main message use the SOAP content location.
                        contentLocation= mpartStream.getContentLocation();
+
+                       if(contentLocation != null){
+                           contentLocation= contentLocation.trim();
+                           if(contentLocation.length()==0) contentLocation= null;
+                       }
                    }
           
                   soapPart= new org.apache.axis.SOAPPart(msg, mpartStream, false); 
@@ -161,11 +170,24 @@ public class AttachmentsImpl implements Attachments {
      * @return The part associated with the attachment.
      */ 
     public Part getAttachmentByReference(String reference) throws org.apache.axis.AxisFault {
-        //TODO should find what type of reference it is .. today only Content Ids are handled.
-        Part ret= (AttachmentPart)attachments.get(reference);
+        if(null == reference ) return null;
+        reference= reference.trim();
+        if(0== reference.length()) return null;
+        String[]id= null;
+        String referenceLC= reference.toLowerCase();
+        if(!referenceLC.startsWith("cid:") && null != contentLocation){
+            String  fqreference= contentLocation;
+            if(!fqreference.endsWith("/")) fqreference += "/";
+            if(reference.startsWith("/")) fqreference += reference.substring(1); 
+            else fqreference += reference;
+            id= new String[]{reference, fqreference };
+        }else{
+            id= new String[]{reference};
+        }
+        Part ret= (AttachmentPart)attachments.get(id);
         if(ret == null && mpartStream != null ){
           //We need to still check if this coming in the input stream;
-          javax.activation.DataHandler dh =mpartStream.getAttachmentByReference(reference); 
+          javax.activation.DataHandler dh =mpartStream.getAttachmentByReference(id); 
           if(dh != null){
             ret= new AttachmentPart(msg, dh);
           }

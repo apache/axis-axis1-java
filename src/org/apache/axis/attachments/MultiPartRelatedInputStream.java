@@ -194,9 +194,12 @@ public class MultiPartRelatedInputStream extends java.io.FilterInputStream {
         }
     }
 
-    public DataHandler getAttachmentByReference( String id ) throws org.apache.axis.AxisFault {  // if CID should still have CID: prefix.  
+    public DataHandler getAttachmentByReference( final String[] id ) throws org.apache.axis.AxisFault {  // if CID should still have CID: prefix.  
         //First see if we have read it in yet.
-        DataHandler ret = (DataHandler) parts.get(id);
+        DataHandler ret = null; 
+        for(int i= id.length -1; ret== null && i > -1; --i){
+            ret = (DataHandler) parts.get(id[i]);
+        }
 
         if ( null == ret) {
             ret = readTillFound(id);
@@ -215,7 +218,7 @@ public class MultiPartRelatedInputStream extends java.io.FilterInputStream {
      *         should be prefixed by "cid:"
      */
 
-    protected javax.activation.DataHandler readTillFound( final String id) throws org.apache.axis.AxisFault {
+    protected javax.activation.DataHandler readTillFound( final String[] id) throws org.apache.axis.AxisFault {
         if (boundaryDelimitedStream == null) return null; //The whole stream has been consumed already
         javax.activation.DataHandler ret = null;
 
@@ -266,9 +269,14 @@ public class MultiPartRelatedInputStream extends java.io.FilterInputStream {
 
                 addPart(contentId, contentLocation, dh);
 
-                if (contentId != null && id.equals( contentId)) { //This is the part being sought
-                    ret = dh;
+                for(int i= id.length -1; ret== null && i > -1; --i){
+                    if (contentId != null && id[i].equals( contentId)) { //This is the part being sought
+                        ret = dh;
+                    }else if(contentLocation != null && id[i].equals( contentLocation)){
+                        ret = dh;
+                    }
                 }
+
                 boundaryDelimitedStream = boundaryDelimitedStream.getNextStream();
 
             }
