@@ -7,11 +7,30 @@
 
 package test.wsdl.soap12.assertion;
 
+import org.apache.axis.message.SOAPHeaderElement;
+import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.Constants;
+import org.apache.axis.MessageContext;
+import org.apache.axis.AxisFault;
+import org.apache.axis.soap.SOAPConstants;
+import org.apache.axis.enum.Style;
+import org.apache.axis.client.Call;
+import org.apache.axis.client.Service;
+
 import java.util.Arrays;
 import java.util.TimeZone;
 import java.util.Calendar;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 public class WhiteMesaSoap12TestSvcTestCase extends junit.framework.TestCase {
+    public final String TEST_NS = "http://example.org/ts-tests";
+    public final String DOC_ENDPOINT = "http://www.whitemesa.net/soap12/test-doc";
+    public final String INTERMEDIARY_ENDPOINT = "http://www.whitemesa.net/soap12/test-intermediary";
+    public final String ROLE_A = "http://example.org/ts-tests/A";
+    public final String ROLE_B = "http://example.org/ts-tests/B";
+    public final String ROLE_C = "http://example.org/ts-tests/C";
+
     public WhiteMesaSoap12TestSvcTestCase(java.lang.String name) {
         super(name);
     }
@@ -504,7 +523,14 @@ public class WhiteMesaSoap12TestSvcTestCase extends junit.framework.TestCase {
         //assertEquals(false, value);
     }
 
-    public void test19Soap12TestDocPortEmptyBody() throws Exception {
+    /**
+     * Several tests (T1, etc) use the same functionality, send an empty body
+     * with the "echoOk" header using various roles, and check the return in the
+     * "responseOk" header.
+     * 
+     * @throws Exception
+     */ 
+    protected void testEchoOkHeaderWithEmptyBody(String role) throws Exception {
         test.wsdl.soap12.assertion.Soap12TestDocBindingStub binding;
         try {
             binding = (test.wsdl.soap12.assertion.Soap12TestDocBindingStub)
@@ -521,8 +547,126 @@ public class WhiteMesaSoap12TestSvcTestCase extends junit.framework.TestCase {
         binding.setTimeout(60000);
 
         // Test operation
+        SOAPHeaderElement header = 
+                new SOAPHeaderElement(TEST_NS, "echoOk");
+        if (role != null)
+            header.setRole(role);
+        header.setObjectValue("this is a test");
+        binding.setHeader(header);
         binding.emptyBody();
-        // TBD - validate results
+        // Get the response header
+        SOAPHeaderElement respHeader = 
+                binding.getHeader(TEST_NS,
+                                    "responseOk");
+        assertNotNull("Missing response header", respHeader);
+        assertEquals("this is a test", respHeader.getValue());
+    }
+
+    /**
+     * Test T1 - echoOk header with empty body using "next" role
+     * 
+     * @throws Exception
+     */ 
+    public void testT1() throws Exception {
+        testEchoOkHeaderWithEmptyBody(Constants.URI_SOAP12_NEXT_ACTOR);
+    }
+
+    /**
+     * Test T2 - echoOk header with empty body using supported role
+     * 
+     * @throws Exception
+     */ 
+    public void testT2() throws Exception {
+        testEchoOkHeaderWithEmptyBody("http://example.org/ts-tests/C");
+    }
+
+    /**
+     * Test T3 - echoOk header with empty body using no role
+     * 
+     * @throws Exception
+     */ 
+    public void testT3() throws Exception {
+        testEchoOkHeaderWithEmptyBody(null);
+    }
+
+    /**
+     * Test T4 - echoOk header with empty body using role ""
+     * 
+     * @throws Exception
+     */ 
+    public void testT4() throws Exception {
+        testEchoOkHeaderWithEmptyBody("");
+    }
+    
+    /**
+     * Test T5 - echoOk header to unrecognized role (should be ignored)
+     * 
+     * @throws Exception
+     */ 
+    public void testT5() throws Exception {
+        Call call = new Call(DOC_ENDPOINT);
+        call.setOperationStyle(Style.DOCUMENT);
+        call.setSOAPVersion(SOAPConstants.SOAP12_CONSTANTS);
+        SOAPEnvelope reqEnv = new SOAPEnvelope(SOAPConstants.SOAP12_CONSTANTS);
+        SOAPHeaderElement header = new SOAPHeaderElement(TEST_NS, "echoOk");
+        header.setRole(ROLE_B);
+        header.setObjectValue("test header");
+        reqEnv.addHeader(header);
+        SOAPEnvelope respEnv = call.invoke(reqEnv);
+        assertTrue("Got unexpected header!", respEnv.getHeaders().isEmpty());
+    }
+
+    /**
+     * Test T6 - echoOk header targeted at endpoint via intermediary
+     * 
+     * @throws Exception
+     */ 
+    public void testT6() throws Exception {
+        Call call = new Call(INTERMEDIARY_ENDPOINT);
+        call.setOperationStyle(Style.DOCUMENT);
+        call.setSOAPVersion(SOAPConstants.SOAP12_CONSTANTS);
+        SOAPEnvelope reqEnv = new SOAPEnvelope(SOAPConstants.SOAP12_CONSTANTS);
+        SOAPHeaderElement header = new SOAPHeaderElement(TEST_NS, "echoOk");
+        header.setRole(ROLE_C);
+        header.setObjectValue("test header");
+        reqEnv.addHeader(header);
+        SOAPEnvelope respEnv = call.invoke(reqEnv);
+        SOAPHeaderElement respHeader = 
+                respEnv.getHeaderByName(TEST_NS, "responseOk");
+        assertNotNull(respHeader);
+        assertEquals("test header", respHeader.getValue());
+    }
+    
+    /**
+     * Test T12 - unknown header, with MustUnderstand true
+     * 
+     * @throws Exception
+     */ 
+    public void testT12() throws Exception {
+        Call call = new Call(DOC_ENDPOINT);
+        call.setOperationStyle(Style.DOCUMENT);
+        call.setSOAPVersion(SOAPConstants.SOAP12_CONSTANTS);
+        SOAPEnvelope reqEnv = new SOAPEnvelope(SOAPConstants.SOAP12_CONSTANTS);
+        SOAPHeaderElement header = new SOAPHeaderElement(TEST_NS, "Unknown");
+        header.setObjectValue("test header");
+        header.setMustUnderstand(true);
+        reqEnv.addHeader(header);
+        try {
+            call.invoke(reqEnv);
+        } catch (AxisFault fault) {
+            assertEquals(Constants.FAULT_SOAP12_MUSTUNDERSTAND,
+                         fault.getFaultCode());
+            ArrayList headers = fault.getHeaders();
+            // If there is a NotUnderstood header, check it
+            for (Iterator i = headers.iterator(); i.hasNext();) {
+                SOAPHeaderElement h = (SOAPHeaderElement) i.next();
+                if (h.getQName().equals(Constants.QNAME_NOTUNDERSTOOD)) {
+                    // TODO : check qname attribute                    
+                }
+            }
+            return;
+        }
+        fail("Didn't receive expected fault!");
     }
 
     public void test20Soap12TestDocPortEchoOk() throws Exception {

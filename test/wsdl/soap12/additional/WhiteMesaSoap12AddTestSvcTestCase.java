@@ -9,7 +9,28 @@ package test.wsdl.soap12.additional;
 
 import org.apache.axis.Constants;
 import org.apache.axis.AxisFault;
+import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.soap.SOAPConstants;
+import org.apache.axis.soap.SOAP12Constants;
+import org.apache.axis.enum.Style;
+import org.apache.axis.enum.Use;
+import org.apache.axis.client.Call;
+import org.apache.axis.client.Service;
 
+import javax.xml.namespace.QName;
+import javax.xml.rpc.ParameterMode;
+
+/**
+ * Additional SOAP 1.2 tests.
+ * 
+ * For details, see:
+ *  
+ * http://www.w3.org/2000/xp/Group/2/03/soap1.2implementation.html#addtests
+ * 
+ * Auto-generated from WhiteMesa's WSDL, with additional coding by:
+ * @author Davanum Srinivas (dims@apache.org)
+ * @author Glen Daniels (gdaniels@apache.org)
+ */ 
 public class WhiteMesaSoap12AddTestSvcTestCase extends junit.framework.TestCase {
     public static final String STRING_VAL = "SOAP 1.2 is cool!";
     public static final float FLOAT_VAL = 3.14F;
@@ -18,7 +39,44 @@ public class WhiteMesaSoap12AddTestSvcTestCase extends junit.framework.TestCase 
     public WhiteMesaSoap12AddTestSvcTestCase(java.lang.String name) {
         super(name);
     }
-        // getTime is a notification style operation and is unsupported.
+    
+    /**
+     * Test xmlp-2, using the GET webmethod.
+     * 
+     * @throws Exception
+     */ 
+    public void testXMLP2() throws Exception {
+        Call call = new Call("http://www.whitemesa.net/soap12/add-test-doc/getTime");
+        call.setSOAPVersion(SOAPConstants.SOAP12_CONSTANTS);
+        call.setProperty(SOAP12Constants.PROP_WEBMETHOD, "GET");
+        call.setOperationStyle(Style.DOCUMENT);
+        call.setOperationUse(Use.LITERAL);
+        call.invoke();
+        SOAPEnvelope env = call.getMessageContext().getResponseMessage().getSOAPEnvelope();
+        Object result = env.getFirstBody().getValueAsType(Constants.XSD_TIME);
+        assertEquals(org.apache.axis.types.Time.class, result.getClass());
+        // Suppose we could check the actual time here too, but we aren't
+        // gonna for now.
+    }
+
+    /**
+     * Test xmlp-3, using the GET webmethod and RPC mode (i.e. deal with
+     * the rpc:result element).
+     * 
+     * @throws Exception
+     */ 
+    public void testXMLP3() throws Exception {
+        Call call = new Call("http://www.whitemesa.net/soap12/add-test-rpc/getTime");
+        call.setSOAPVersion(SOAPConstants.SOAP12_CONSTANTS);
+        call.setProperty(SOAP12Constants.PROP_WEBMETHOD, "GET");
+        call.setOperationStyle(Style.RPC);
+        call.setReturnType(Constants.XSD_TIME);
+        Object ret = call.invoke("", new Object [] {});
+        assertEquals(org.apache.axis.types.Time.class, ret.getClass());
+        // Suppose we could check the actual time here too, but we aren't
+        // gonna for now.
+    }
+    
     public void test1Soap12AddTestDocPortEchoString() throws Exception {
         test.wsdl.soap12.additional.Soap12AddTestDocBindingStub binding;
         try {
