@@ -1411,7 +1411,6 @@ public class Emitter {
 
         if (use == Use.ENCODED || style == Style.RPC) {
             // Add the type representing the param
-            // For convenience, add an element for the param
             // Write <part name=param_name type=param_type>
             QName typeQName = param.getTypeQName();
             if(javaType != null)

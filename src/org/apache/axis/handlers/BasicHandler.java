@@ -103,9 +103,13 @@ public abstract class BasicHandler implements Handler {
         }
     }
 
-    /** Stubbed-out methods.  Override in your child class to implement
-     * any real behavior.
+    /**
+     * Stubbed-out methods.  Override in your child class to implement
+     * any real behavior.  Note that there is NOT a stub for invoke(), since
+     * we require any Handler derivative to implement that.
      */
+
+
     public void init()
     {
     }
@@ -122,11 +126,7 @@ public abstract class BasicHandler implements Handler {
     public void onFault(MessageContext msgContext)
     {
     }
-
-    /** Must implement this in subclasses.
-     */
-    public abstract void invoke(MessageContext msgContext) throws AxisFault;
-
+    
     /**
      * Set the given option (name/value) in this handler's bag of options
      */
