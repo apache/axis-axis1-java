@@ -98,6 +98,7 @@ public class JavaServiceImplWriter extends JavaClassWriter {
         Vector getPortIfaces = new Vector();
         Vector getPortStubClasses = new Vector();
         Vector getPortPortNames = new Vector();
+        Vector getPortPortXmlNames = new Vector();
         boolean printGetPortNotice = false;
 
         // get ports
@@ -150,6 +151,7 @@ public class JavaServiceImplWriter extends JavaClassWriter {
             // valid java identifiers.  Thus the following code.
 
             // java port <--> wsdl port mapping
+            String portXmlName = p.getName();
             String portName = (String) bEntry.getDynamicVar(JavaServiceWriter.PORT_NAME + ":" + p.getName());
             if (portName == null) {
                 portName = p.getName();
@@ -170,6 +172,7 @@ public class JavaServiceImplWriter extends JavaClassWriter {
             }
 
             getPortIfaces.add(bindingType);
+            getPortPortXmlNames.add(portXmlName);
             getPortStubClasses.add(stubClass);
             getPortPortNames.add(portName);
 
@@ -238,7 +241,7 @@ public class JavaServiceImplWriter extends JavaClassWriter {
 
             String wsddServiceName = portName + "WSDDServiceName";
 
-            writeWSDDServiceNameInfo(pw, wsddServiceName, portName);
+            writeWSDDServiceNameInfo(pw, wsddServiceName, portName, portXmlName);
             writeGetPortName(pw, bindingType, portName);
             writeGetPortNameURL(pw, bindingType, portName, stubClass,
                     wsddServiceName);
@@ -247,9 +250,9 @@ public class JavaServiceImplWriter extends JavaClassWriter {
 
         writeGetPortClass(pw, getPortIfaces, getPortStubClasses,
                 getPortPortNames, printGetPortNotice);
-        writeGetPortQNameClass(pw, getPortPortNames);
+        writeGetPortQNameClass(pw, getPortPortNames, getPortPortXmlNames);
         writeGetServiceName(pw, sEntry.getQName());
-        writeGetPorts(pw, getPortPortNames);
+        writeGetPorts(pw, sEntry.getQName().getNamespaceURI(), getPortPortXmlNames);
         writeSetEndpointAddress(pw, getPortPortNames);
     }    // writeFileBody
 
@@ -289,12 +292,12 @@ public class JavaServiceImplWriter extends JavaClassWriter {
      */
     protected void writeWSDDServiceNameInfo(PrintWriter pw,
                                             String wsddServiceName,
-                                            String portName) {
+                                            String portName, String portXmlName) {
 
         // Write the private WSDD service name field
         pw.println("    // " + Messages.getMessage("wsddServiceName00"));
         pw.println("    private java.lang.String " + wsddServiceName + " = \""
-                + portName + "\";");
+                + portXmlName + "\";");        
         pw.println();
 
         // Write the public accessors for the WSDD service name
@@ -461,7 +464,8 @@ public class JavaServiceImplWriter extends JavaClassWriter {
      * @param getPortPortNames 
      */
     protected void writeGetPortQNameClass(PrintWriter pw,
-                                          Vector getPortPortNames) {
+                                          Vector getPortPortNames,
+            Vector getPortPortXmlNames) {
 
         pw.println("    /**");
         pw.println("     * " + Messages.getMessage("getPortDoc00"));
@@ -479,8 +483,9 @@ public class JavaServiceImplWriter extends JavaClassWriter {
 
         for (int i = 0; i < getPortPortNames.size(); ++i) {
             String portName = (String) getPortPortNames.get(i);
+            String portXmlName = (String) getPortPortXmlNames.get(i);
 
-            pw.println("if (\"" + portName + "\".equals(inputPortName)) {");
+            pw.println("if (\"" + portXmlName + "\".equals(inputPortName)) {");
             pw.println("            return get" + portName + "();");
             pw.println("        }");
             pw.print("        else ");
@@ -517,7 +522,7 @@ public class JavaServiceImplWriter extends JavaClassWriter {
      * @param pw        
      * @param portNames 
      */
-    protected void writeGetPorts(PrintWriter pw, Vector portNames) {
+    protected void writeGetPorts(PrintWriter pw, String namespaceURI, Vector portNames) {
 
         pw.println("    private java.util.HashSet ports = null;");
         pw.println();
@@ -526,8 +531,8 @@ public class JavaServiceImplWriter extends JavaClassWriter {
         pw.println("            ports = new java.util.HashSet();");
 
         for (int i = 0; i < portNames.size(); ++i) {
-            pw.println("            ports.add(new javax.xml.namespace.QName(\""
-                    + portNames.get(i) + "\"));");
+            pw.println("            ports.add(new javax.xml.namespace.QName(\"" + 
+                    namespaceURI + "\", \"" + portNames.get(i) + "\"));");
         }
 
         pw.println("        }");
