@@ -41,9 +41,9 @@ JAX-RPC COMPATIBILITY
 ! <> Implement javax.xml.rpc.server interfaces.
 ! <> Add some JAX-RPC compliance samples/tests.
 
-JAXM COMPATIBILITY
+SAAJ COMPATIBILITY
 ------------------
-* <Glyn> Implement javax.xml.soap interfaces in message subsystem.
+* <Glyn/Davanum> Implement javax.xml.soap interfaces (in message subsystem).
          (Not forgetting: SOAPBody.addFault/getFault/hasFault)
 
 SOAP 1.2 SUPPORT
