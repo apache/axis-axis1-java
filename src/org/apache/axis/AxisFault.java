@@ -315,7 +315,18 @@ public class AxisFault extends java.rmi.RemoteException {
      * turn the fault and details into a string
      * @return stringified fault details
      */
-    public String dumpToString()
+    public String dumpToString() {
+        return dumpToString(true);
+    }
+
+    /**
+     * turn the fault and details into a string, with or without XML escaping.
+     * subclassers: for security (cross-site-scripting) reasons, 
+     * escape everything that could contain caller-supplied data. 
+     * @param escapeText flag to control whether to XML escape everything
+     * @return stringified fault details
+     */
+    public String dumpToString(boolean escapeText)
     {
         String details = new String();
 
@@ -336,7 +347,7 @@ public class AxisFault extends java.rmi.RemoteException {
                           + XMLUtils.getInnerXMLString(e);
             }
         }
-        
+
         String subCodes = new String();
         if (faultSubCode != null) {
             for (int i = 0; i < faultSubCode.size(); i++) {
@@ -345,13 +356,26 @@ public class AxisFault extends java.rmi.RemoteException {
 
             }
         }
+        String code=faultCode.toString();
+        String errorString=faultString;
+        String actor=faultActor;
+        String node=faultNode;
+
+        if (escapeText) {
+            //encode everything except details and subcodes, which are already
+            //dealt with one way or another.
+            code= XMLUtils.xmlEncodeString(code);
+            errorString = XMLUtils.xmlEncodeString(errorString);
+            actor= XMLUtils.xmlEncodeString(actor);
+            node = XMLUtils.xmlEncodeString(node);
+        }
 
         return "AxisFault" + JavaUtils.LS
-            + " faultCode: " + faultCode + JavaUtils.LS
+            + " faultCode: " + code + JavaUtils.LS
             + " faultSubcode: " + subCodes + JavaUtils.LS
-            + " faultString: " + faultString + JavaUtils.LS
-            + " faultActor: " + faultActor + JavaUtils.LS
-            + " faultNode: " + faultNode + JavaUtils.LS
+            + " faultString: " + errorString + JavaUtils.LS
+            + " faultActor: " + actor + JavaUtils.LS
+            + " faultNode: " + node + JavaUtils.LS
             + " faultDetail: " + details + JavaUtils.LS
             ;
     }
