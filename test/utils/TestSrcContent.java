@@ -121,7 +121,7 @@ public class TestSrcContent extends TestCase {
                 matcher.contains(content, contentPattern) != expectContent;
         }
 
-        String getContent() { return contentPattern.getPattern(); }
+        String getContentPattern() { return contentPattern.getPattern(); }
 
         boolean getExpectContent() { return expectContent; }
     };
@@ -151,12 +151,26 @@ public class TestSrcContent extends TestCase {
             new FileNameContentPattern(".+([\\\\/])"
                                        + "java\\1src\\1org\\1apache\\1axis\\1"
                                        + "(?!utils\\1tcpmon\\.java"
+                                       + "|client\\1AdminClient\\.java"
                                        + "|providers\\1BSFProvider\\.java"
                                        + "|Version\\.java"
                                        + "|wsdl\\1)"
                                        + "([a-zA-Z0-9_]+\\1)*"
                                        + "[^\\\\/]+\\.java",
-                                       "System\\.(out|err)\\.println", false)
+                                       "System\\.(out|err)\\.println", false),
+
+            // Verify that internationalization is being used properly..
+            new FileNameContentPattern(".+([\\\\/])"
+                                       + "java\\1src\\1org\\1apache\\1axis\\1"
+                                       + "(?!utils\\1tcpmon\\.java"
+                                       + "|handlers\\1LogMessage\\.java"
+                                       + "|utils\\1Admin\\.java"
+                                       + "|wsdl\\1)"
+                                       + "([a-zA-Z0-9_]+\\1)*"
+                                       + "[^\\\\/]+\\.java",
+                                       "log\\.(info|warn|error|fatal)[ \\t]*\\((?![ \\t]*JavaUtils\\.getMessage)",
+                                       false),
+                                       
         };
 
     private void checkFile(File file) {
@@ -174,7 +188,7 @@ public class TestSrcContent extends TestCase {
                         + (avoidPatterns[i].getExpectContent()
                            ? "Expected: "
                            : "Unexpected: ")
-                        + avoidPatterns[i].getContent()
+                        + avoidPatterns[i].getContentPattern()
                         + LS;
                 }
             }
