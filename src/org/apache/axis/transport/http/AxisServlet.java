@@ -505,7 +505,7 @@ public class AxisServlet extends HttpServlet {
                 msgContext.setResponseMessage(msg);
             } else {
                 try {
-                    SOAPEnvelope env = msg.getSOAPPart().getAsSOAPEnvelope();
+                    SOAPEnvelope env = msg.getSOAPEnvelope();
                     env.clearBody();
                     env.addBodyElement(new SOAPFaultElement((AxisFault)e));
                     msgContext.setResponseMessage(msg);

@@ -219,11 +219,11 @@ public abstract class JavaProvider extends BasicProvider {
             JavaClass jc	  = JavaClass.find(obj.getClass());
 
             Message        reqMsg  = msgContext.getRequestMessage();
-            SOAPEnvelope   reqEnv  = (SOAPEnvelope)reqMsg.getSOAPPart().getAsSOAPEnvelope();
+            SOAPEnvelope   reqEnv  = (SOAPEnvelope)reqMsg.getSOAPEnvelope();
             Message        resMsg  = msgContext.getResponseMessage();
             SOAPEnvelope   resEnv  = (resMsg == null) ?
                                      new SOAPEnvelope() :
-                                     (SOAPEnvelope)resMsg.getSOAPPart().getAsSOAPEnvelope();
+                                     (SOAPEnvelope)resMsg.getSOAPEnvelope();
 
             // get the response message again! It may have been explicitly set!
             // (by, say, a proxy service :-) -- RobJ

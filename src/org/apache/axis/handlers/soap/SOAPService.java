@@ -197,7 +197,7 @@ public class SOAPService extends SimpleTargetedChain
         }
         
         // 1. Check mustUnderstands
-        SOAPEnvelope env = msgContext.getRequestMessage().getSOAPPart().getAsSOAPEnvelope();
+        SOAPEnvelope env = msgContext.getRequestMessage().getSOAPEnvelope();
         Vector headers = env.getHeaders();
         Vector misunderstoodHeaders = null;
         Enumeration enum = headers.elements();
@@ -222,7 +222,7 @@ public class SOAPService extends SimpleTargetedChain
                     respMsg = new Message(new SOAPEnvelope());
                     msgContext.setResponseMessage(respMsg);
                 }
-                env = respMsg.getSOAPPart().getAsSOAPEnvelope();
+                env = respMsg.getSOAPEnvelope();
                 enum = misunderstoodHeaders.elements();
                 while (enum.hasMoreElements()) {
                     SOAPHeader badHeader = (SOAPHeader)enum.nextElement();
