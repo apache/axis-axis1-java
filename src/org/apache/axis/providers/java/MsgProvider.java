@@ -148,6 +148,18 @@ public class MsgProvider extends JavaProvider {
                         }
                     }
                     return;
+
+                // Element [] / Element []
+                case OperationDesc.MSG_METHOD_DOCUMENT:
+                    Document doc = ((SOAPBodyElement)bodies.get(0)).getAsDocument();
+                    argObjects[0] = doc;
+                    Document resultDoc =
+                            (Document) method.invoke( obj, argObjects );
+                    if (resultDoc != null) {
+                        resEnv.addBodyElement(new SOAPBodyElement(
+                                resultDoc.getDocumentElement()));
+                    }
+                    return;
             }
         } else {
             Object argObjects[] = new Object [2];

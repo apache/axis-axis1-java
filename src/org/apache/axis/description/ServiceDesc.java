@@ -687,6 +687,11 @@ public class ServiceDesc {
                     (method.getReturnType() == SOAPBodyElement[].class)) {
                 return OperationDesc.MSG_METHOD_BODYARRAY;
             }
+
+            if ((params[0] == Document.class) &&
+                    (method.getReturnType() == Document.class)) {
+                return OperationDesc.MSG_METHOD_DOCUMENT;
+            }
         } else if (params.length == 2) {
             if ((params[0] == SOAPEnvelope.class) &&
                     (params[1] == SOAPEnvelope.class) &&
