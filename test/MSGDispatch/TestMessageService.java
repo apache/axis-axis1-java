@@ -56,11 +56,10 @@
 package test.MSGDispatch;
 
 import junit.framework.TestCase;
-import org.apache.axis.EngineConfiguration;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
-import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
 import org.apache.axis.configuration.SimpleProvider;
+import org.apache.axis.configuration.BasicServerConfig;
 import org.apache.axis.enum.Style;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.message.SOAPBodyElement;
@@ -98,9 +97,7 @@ public class TestMessageService extends TestCase {
         service.getServiceDescription().setDefaultNamespace("http://db.com");
         service.getServiceDescription().setStyle(Style.MESSAGE);
 
-        EngineConfiguration defaultConfig =
-            (new DefaultEngineConfigurationFactory()).getServerEngineConfig();
-        SimpleProvider config = new SimpleProvider(defaultConfig);
+        SimpleProvider config = new BasicServerConfig();
         config.deployService("MessageService", service);
 
         AxisServer server = new AxisServer(config);
@@ -159,7 +156,7 @@ public class TestMessageService extends TestCase {
         assertEquals(new QName("http://db.com", "testEnvelope"), respBody.getQName());
         Iterator i = respBody.getNamespacePrefixes();
         assertNotNull("No namespace mappings");
-        assertEquals("Non-default namespace found", "", (String)i.next());
+        assertEquals("Non-default namespace found", "", i.next());
         assertTrue("Multiple namespace mappings", !i.hasNext());
         
         Vector headers = result.getHeaders();
@@ -183,7 +180,7 @@ public class TestMessageService extends TestCase {
         // Create a DOM document using a default namespace, since bug
         // http://nagoya.apache.org/bugzilla/show_bug.cgi?id=16666 indicated
         // that we might have had a problem here.
-        String xml = "<testElementEcho xmlns=\"http://db.com\"></testElementEcho>";
+        String xml = "<testElementEcho xmlns=\"http://db.com\" attr='foo'><Data></Data></testElementEcho>";
         Document doc = XMLUtils.newDocument(new ByteArrayInputStream(xml.getBytes()));
         SOAPBodyElement body = new SOAPBodyElement(doc.getDocumentElement());
         SOAPEnvelope env = new SOAPEnvelope();
@@ -199,7 +196,7 @@ public class TestMessageService extends TestCase {
         assertEquals(new QName("http://db.com", "testElementEcho"), respBody.getQName());
         Iterator i = respBody.getNamespacePrefixes();
         assertNotNull("No namespace mappings");
-        assertEquals("Non-default namespace found", "", (String)i.next());
+        assertEquals("Non-default namespace found", "", i.next());
         assertTrue("Multiple namespace mappings", !i.hasNext());
     }
 }
