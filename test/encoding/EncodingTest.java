@@ -18,6 +18,7 @@ public class EncodingTest extends TestCase {
     private static final String SUPPORT_CHARS_LESS_HEX_20 = "\t\r\n";
     private static final String ENCODED_SUPPORT_CHARS_LESS_HEX_20 = "&#x9;&#xd;&#xa;";
     private static final String INVALID_XML_STRING = "Invalid XML String \u0000";
+    private static final String FRENCH_ACCENTS="\u00e0\u00e2\u00e4\u00e7\u00e8\u00e9\u00ea\u00eb\u00ee\u00ef\u00f4\u00f6\u00f9\u00fb\u00fc";
 
     public EncodingTest(String s) {
         super(s);
@@ -90,6 +91,25 @@ public class EncodingTest extends TestCase {
     }
 
 
+    public void test2UTF8() throws Exception {
+        XMLEncoder encoder = XMLEncoderFactory.getEncoder(XMLEncoderFactory.ENCODING_UTF_8);
+        String encodedAccents = encoder.encode(FRENCH_ACCENTS);
+
+        assertEquals(XMLEncoderFactory.ENCODING_UTF_8, encoder.getEncoding());
+        assertEquals(FRENCH_ACCENTS, new String(encodedAccents.getBytes(), XMLEncoderFactory.ENCODING_UTF_8));
+        verifyCommonAssertions(encoder);
+    }
+
+    public void test2UTF16() throws Exception {
+        XMLEncoder encoder = XMLEncoderFactory.getEncoder(XMLEncoderFactory.ENCODING_UTF_16);
+        String encodedAccents = encoder.encode(FRENCH_ACCENTS);
+
+        assertEquals(XMLEncoderFactory.ENCODING_UTF_16, encoder.getEncoding());
+        // java uses UTF-16 internally, should be equal
+        assertEquals(FRENCH_ACCENTS, encodedAccents);
+        verifyCommonAssertions(encoder);
+    }
+    
     /**
      * assertions here hold for either encoder
      * @param encoder
