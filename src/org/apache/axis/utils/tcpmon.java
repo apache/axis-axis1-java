@@ -1890,7 +1890,7 @@ public class tcpmon extends JFrame {
         UIManager.setLookAndFeel(
                 nativeLookAndFeel ? UIManager.getSystemLookAndFeelClassName()
                     : UIManager.getCrossPlatformLookAndFeelClassName());
-        JFrame.setDefaultLookAndFeelDecorated(true);
+        //JFrame.setDefaultLookAndFeelDecorated(true);
     }
     /**
      * this is our main method
