@@ -55,6 +55,7 @@
 package org.apache.axis.description;
 
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.bytecode.ExtractorFactory;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.wsdl.Skeleton;
@@ -611,8 +612,8 @@ public class ServiceDesc {
         operation.setReturnType(tm.getTypeQName(method.getReturnType()));
 
         Class [] paramTypes = method.getParameterTypes();
-        String [] paramNames =
-                JavaUtils.getParameterNamesFromDebugInfo(method);
+        String [] paramNames = 
+                ExtractorFactory.getExtractor().getParameterNamesFromDebugInfo(method);
 
         for (int k = 0; k < paramTypes.length; k++) {
             Class type = paramTypes[k];

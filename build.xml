@@ -237,6 +237,7 @@ Copyright:
       <exclude name="**/org/apache/axis/transport/http/AxisServlet.java" unless="servlet.present"/>
       <exclude name="**/org/apache/axis/server/JNDIAxisServerFactory.java" unless="servlet.present"/>
       <exclude name="**/org/apache/axis/security/servlet/*" unless="servlet.present"/>
+      <exclude name="**/org/apache/axis/utils/bytecode/TechTrader*" unless="tt-bytecode.present"/>
       <exclude name="**/javax/xml/soap/*.java" unless="attachments.present"/>
       <exclude name="**/javax/xml/rpc/handler/soap/*.java" unless="attachments.present"/>
       <exclude name="**/*TestSuite.java" unless="junit.present"/>

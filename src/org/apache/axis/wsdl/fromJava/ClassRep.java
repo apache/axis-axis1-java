@@ -54,31 +54,21 @@
  */
 package org.apache.axis.wsdl.fromJava;
 
-import com.techtrader.modules.tools.bytecode.BCClass;
-import com.techtrader.modules.tools.bytecode.BCMethod;
-import com.techtrader.modules.tools.bytecode.Code;
-import com.techtrader.modules.tools.bytecode.Constants;
-import com.techtrader.modules.tools.bytecode.LocalVariable;
-import com.techtrader.modules.tools.bytecode.LocalVariableTableAttribute;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.bytecode.ExtractorFactory;
 import org.apache.axis.wsdl.Skeleton;
 
-import java.io.IOException;
+import javax.xml.rpc.ParameterMode;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
-import java.util.Vector;
 import java.util.List;
-import java.util.HashMap;
-
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.wsdl.Skeleton;
-import javax.xml.rpc.ParameterMode;
+import java.util.Vector;
 
 /**
  * ClassRep is the representation of a class used inside the Java2WSDL
- * emitter.  The information in the ClassRep can be changed by 
+ * emitter.  The information in the ClassRep can be changed by
  * user provided code to affect the emitted wsdl file.
  *
  * If you wish to change the functionality (for example change the
@@ -88,20 +78,20 @@ import javax.xml.rpc.ParameterMode;
  *      and provide new build(...) methods that construct MyClassRep objects.
  *   3) Extend the DefaultFactory class (MyFactory) so that it locates your new Builder classes.
  *   4) Provide MyFactory as an option when your invoke Java2WSDL.
- *            
- *             name  
+ *
+ *             name
  * ClassRep +-+---------> String
  *  | | | | | |
  *  | | | | | | isIntf
  *  | | | | | +---------> boolean
- *  | | | | | 
+ *  | | | | |
  *  | | | | | modifiers
  *  | | | | +-----------> int (use java.lang.reflect.Modifier to decode)
- *  | | | |  
- *  | | | | super 
+ *  | | | |
+ *  | | | | super
  *  | | | +-------------> ClassRep
- *  | | |  
- *  | | | interfaces 
+ *  | | |
+ *  | | | interfaces
  *  | | +---------------> ClassRep(s)
  *  | |
  *  | | methods
@@ -133,7 +123,7 @@ import javax.xml.rpc.ParameterMode;
  *
  *           name
  *  ParamRep -----------> String
- *      | |  
+ *      | |
  *      | |  type
  *      | +-------------> Class
  *      |
@@ -148,11 +138,11 @@ import javax.xml.rpc.ParameterMode;
  *       +--------------> Class
  *
  * Note: all classes extend BaseRep where meta data information can be stored.
- * 
+ *
  * @author Rich Scheuerle  (scheu@us.ibm.com)
  */
 public class ClassRep extends BaseRep {
-    
+
     private String   _name       = "";
     private boolean  _isInterface= false;
     private int      _modifiers  = 0;  // Use java.lang.reflect.Modifer to decode
@@ -162,11 +152,11 @@ public class ClassRep extends BaseRep {
     private Vector   _fields     = new Vector();
     private HashMap  _fieldNames = new HashMap();
     private List     _stopList    = null;
-    
+
     /**
      * Constructor
      * Create an empty ClassRep
-     */ 
+     */
     public ClassRep() {
     }
 
@@ -179,10 +169,10 @@ public class ClassRep extends BaseRep {
      *                   the declared methods are put in the list
      * @param stopList An optional vector of class names which if inhMethods
      *                    is true, will stop the inheritence search if encountered.
-     * @param implClass  This is an optional parameter which is a 
+     * @param implClass  This is an optional parameter which is a
      *                   class that implements or extends cls.  The
      *                   implClass is used to obtain parameter names.
-     */ 
+     */
     public ClassRep(Class cls, boolean inhMethods, List stopList) {
         init(cls, inhMethods, stopList, null);
     }
@@ -200,7 +190,7 @@ public class ClassRep extends BaseRep {
         if (isClassOk(superClass)) {
             _super = new ClassRep(superClass, inhMethods, _stopList);
         }
-        
+
         // Add the interfaces
         for (int i=0; i < cls.getInterfaces().length; i++) {
             _interfaces.add(new ClassRep(cls.getInterfaces()[i], inhMethods, _stopList));
@@ -231,15 +221,15 @@ public class ClassRep extends BaseRep {
     public void     setFields(Vector v)      { _fields = v; }
 
     /**
-     * Adds MethodReps to the ClassRep. 
-     * @param cls the Class    
+     * Adds MethodReps to the ClassRep.
+     * @param cls the Class
      * @param inhMethods if true, then the methods array will contain
      *                   methods declared and/or inherited else only
-     *                   the declared methods are put in the list           
+     *                   the declared methods are put in the list
      * @param implClass  This is an optional parameter which is a
      *                   class that implements or extends cls.  The
-     *                   implClass is used to obtain parameter names.            
-     */ 
+     *                   implClass is used to obtain parameter names.
+     */
     protected void addMethods(Class cls, boolean inhMethods, Class implClass) {
         // Constructs a vector of all the public methods
 
@@ -254,14 +244,14 @@ public class ClassRep extends BaseRep {
         Class[] interfaces = cls.getInterfaces();
         for (int i=0; i < interfaces.length; i++) {
             walkInheritanceChain(interfaces[i], inhMethods, implClass);
-        } 
-        
+        }
+
         return;
     }
 
     /**
      * Return true if we should process this class
-     */ 
+     */
     private boolean isClassOk(Class clazz) {
         if (clazz == null)
             return false;
@@ -277,7 +267,7 @@ public class ClassRep extends BaseRep {
             if (name.startsWith("java.") || name.startsWith("javax."))
                 return false;
         }
-        
+
         // Didn't find a reason to reject this class
         return true;
     }
@@ -286,13 +276,13 @@ public class ClassRep extends BaseRep {
     /**
      * Iterate up the inheritance chain and construct the list of methods
      * Appends to the _methods class variable.
-     */ 
-    private void walkInheritanceChain(Class cls, 
-                                      boolean inhMethods, 
+     */
+    private void walkInheritanceChain(Class cls,
+                                      boolean inhMethods,
                                       Class implClass) {
         Method[] m;
         Class currentClass = cls;
-        
+
         while (isClassOk(currentClass)) {
 
             // get the methods in this class
@@ -317,12 +307,12 @@ public class ClassRep extends BaseRep {
                     _methods.add(methodRep);
                 }
             }
-            
+
             // if we don't want inherited methods, don't walk the chain
             if (!inhMethods) {
                 break;
             }
-            
+
             // move up the inhertance chain
             currentClass = currentClass.getSuperclass();
         }
@@ -345,11 +335,11 @@ public class ClassRep extends BaseRep {
 
     /**
      * Adds FieldReps to the ClassRep.
-     * @param cls the Class    
+     * @param cls the Class
      * A complexType component element will be generated for each FieldRep.
      * This implementation generates FieldReps for public data fields and
      * also for properties exposed by java bean accessor methods.
-     */ 
+     */
     protected void addFields(Class cls) {
 
         // Constructs a FieldRep for every public field and
@@ -406,7 +396,7 @@ public class ClassRep extends BaseRep {
                         _fieldNames.put(name.toLowerCase(), fr);
                     }
                 }
-                
+
             }
         }
         return;
@@ -416,9 +406,9 @@ public class ClassRep extends BaseRep {
      * Get the list of parameter types for the specified method.
      * This implementation uses the specified type unless it is a holder class,
      * in which case the held type is used.
-     * @param method is the Method.                          
-     * @return array of parameter types.                                      
-     */ 
+     * @param method is the Method.
+     * @return array of parameter types.
+     */
     protected Class[] getParameterTypes(Method method) {
         Class[] types = new Class[method.getParameterTypes().length];
         for (int i=0; i < method.getParameterTypes().length; i++) {
@@ -438,28 +428,29 @@ public class ClassRep extends BaseRep {
      * parameter names from the class file.  If parameter names are not
      * available for the method (perhaps the method is in an interface), the
      * corresponding method in the implClass is queried.
-     * @param method is the Method to search.                
-     * @param implClass  If the first search fails, the corresponding  
-     *                   Method in this class is searched.           
+     * @param method is the Method to search.
+     * @param implClass  If the first search fails, the corresponding
+     *                   Method in this class is searched.
      * @return array of Strings which represent the return name followed by parameter names
-     */ 
+     */
     protected String[] getParameterNames(Method method, Class implClass) {
         String[] paramNames = null;
-        
+
         paramNames = getParameterNamesFromSkeleton(method);
         if (paramNames != null) {
             return paramNames;
         }
-        
-        paramNames = JavaUtils.getParameterNamesFromDebugInfo(method); 
-        
+
+        paramNames =
+                ExtractorFactory.getExtractor().getParameterNamesFromDebugInfo(method);
+
         // If failed, try getting a method of the impl class.
         if (paramNames == null && implClass != null) {
             Method m = null;
             try {
                 m = implClass.getDeclaredMethod(method.getName(), method.getParameterTypes());
             } catch (Exception e) {}
-            if (m == null) { 
+            if (m == null) {
                 try {
                     m = implClass.getMethod(method.getName(), method.getParameterTypes());
                 } catch (Exception e) {}
@@ -469,9 +460,10 @@ public class ClassRep extends BaseRep {
                 if (paramNames != null) {
                     return paramNames;
                 }
-                paramNames = JavaUtils.getParameterNamesFromDebugInfo(m); 
+                paramNames =
+                    ExtractorFactory.getExtractor().getParameterNamesFromDebugInfo(method);
             }
-        }            
+        }
 
         return paramNames;
     }
@@ -479,17 +471,17 @@ public class ClassRep extends BaseRep {
     /**
      * Get the list of parameter names for the specified method.
      * This implementation uses Skeleton.getParameterNames to get the parameter names
-     * from the class file.  If parameter names are not available, returns null. 
-     * @param method is the Method to search.                
+     * from the class file.  If parameter names are not available, returns null.
+     * @param method is the Method to search.
      * @return array of Strings which represent the return name followed by parameter names
-     */ 
+     */
     protected String[] getParameterNamesFromSkeleton(Method method) {
         String[] paramNames = null;
         Class cls = method.getDeclaringClass();
         Class skel = Skeleton.class;
         if (!cls.isInterface() && skel.isAssignableFrom(cls)) {
             try {
-                // Use the getParameterNameStatic method so that we don't have to new up 
+                // Use the getParameterNameStatic method so that we don't have to new up
                 // an object.
                 Method getParameterName = cls.getMethod("getParameterNameStatic",
                                                          new Class [] {String.class, int.class});
@@ -504,8 +496,8 @@ public class ClassRep extends BaseRep {
                 int numNames = method.getParameterTypes().length + 1; // Parms + return
                 paramNames = new String[numNames];
                 for (int i=0; i < numNames; i++) {
-                    paramNames[i] = (String) getParameterName.invoke(skelObj, 
-                                                                     new Object[] {method.getName(), 
+                    paramNames[i] = (String) getParameterName.invoke(skelObj,
+                                                                     new Object[] {method.getName(),
                                                                                    new Integer(i-1)});
                 }
             } catch (Exception e) {
@@ -518,29 +510,29 @@ public class ClassRep extends BaseRep {
     /**
      * Get the list of return/parameter modes for the specified method.
      * This implementation uses Skeleton.getParameterModes to get the modes
-     * If parameter modes are not available 
+     * If parameter modes are not available
      * for the method (perhaps the method is in an interface), the
      * corresponding method in the implClass is queried.
-     * @param method is the Method to search.                
-     * @param implClass  If the first search fails, the corresponding  
-     *                   Method in this class is searched.           
+     * @param method is the Method to search.
+     * @param implClass  If the first search fails, the corresponding
+     *                   Method in this class is searched.
      * @return array of Strings which represent the return mode followed by parameter modes
-     */ 
+     */
     protected ParameterMode[] getParameterModes(Method method, Class implClass) {
         ParameterMode[] paramModes = null;
-        
+
         paramModes = getParameterModesFromSkeleton(method);
         if (paramModes != null) {
             return paramModes;
         }
-                
+
         // If failed, try getting a method of the impl class
         if (paramModes == null && implClass != null) {
             Method m = null;
             try {
                 m = implClass.getDeclaredMethod(method.getName(), method.getParameterTypes());
             } catch (Exception e) {}
-            if (m == null) { 
+            if (m == null) {
                 try {
                     m = implClass.getMethod(method.getName(), method.getParameterTypes());
                 } catch (Exception e) {}
@@ -548,7 +540,7 @@ public class ClassRep extends BaseRep {
             if (m != null) {
                 paramModes = getParameterModesFromSkeleton(m);
             }
-        }            
+        }
 
         if (paramModes == null) {
             paramModes = getParameterModes(method);
@@ -560,17 +552,17 @@ public class ClassRep extends BaseRep {
     /**
      * Get the list of return/parameter modes for the specified method.
      * This implementation uses Skeleton.getParameterModes to get the parameter modes
-     * from the class file.  If parameter modes are not available, returns null. 
-     * @param method is the Method to search.                
+     * from the class file.  If parameter modes are not available, returns null.
+     * @param method is the Method to search.
      * @return array of Strings which represent the return mode followed by parameter modes
-     */ 
+     */
     protected ParameterMode[] getParameterModesFromSkeleton(Method method) {
         ParameterMode[] paramModes = null;
         Class cls = method.getDeclaringClass();
         Class skel = Skeleton.class;
         if (!cls.isInterface() && skel.isAssignableFrom(cls)) {
             try {
-                // Use the getParameterModeStatic method so that we don't have to new up 
+                // Use the getParameterModeStatic method so that we don't have to new up
                 // an object.
                 Method getParameterMode = cls.getMethod("getParameterModeStatic",
                                                          new Class [] {String.class, int.class});
@@ -585,8 +577,8 @@ public class ClassRep extends BaseRep {
                 int numModes = method.getParameterTypes().length + 1; // Parms + return
                 paramModes = new ParameterMode[numModes];
                 for (int i=0; i < numModes; i++) {
-                    paramModes[i] = (ParameterMode) getParameterMode.invoke(skelObj, 
-                                                                     new Object[] {method.getName(), 
+                    paramModes[i] = (ParameterMode) getParameterMode.invoke(skelObj,
+                                                                     new Object[] {method.getName(),
                                                                                    new Integer(i-1)});
                 }
             } catch (Exception e) {
@@ -598,9 +590,9 @@ public class ClassRep extends BaseRep {
     /**
      * Get the list of return/parameter modes for the specified method.
      * This default implementation assumes IN unless the type is a holder class
-     * @param method is the Method.                          
-     * @return array of parameter modes.                                      
-     */ 
+     * @param method is the Method.
+     * @return array of parameter modes.
+     */
     protected ParameterMode[] getParameterModes(Method method) {
         ParameterMode[] modes = new ParameterMode[method.getParameterTypes().length+1];
         modes[0] = ParameterMode.OUT;
@@ -617,25 +609,25 @@ public class ClassRep extends BaseRep {
 
 
     /**
-     * Gets additional meta data and sets it on the MethodRep.            
-     * @param methodRep is the target MethodRep.                
-     * @param method is the Method to search.                
-     * @param implClass  If the first search fails, the corresponding  
-     *                   Method in this class is searched.           
-     */ 
+     * Gets additional meta data and sets it on the MethodRep.
+     * @param methodRep is the target MethodRep.
+     * @param method is the Method to search.
+     * @param implClass  If the first search fails, the corresponding
+     *                   Method in this class is searched.
+     */
     protected void getMethodMetaData(MethodRep methodRep, Method method, Class implClass) {
-        
+
         if (getMethodMetaDataFromSkeleton(methodRep, method)) {
             return;
         }
-                
+
         // If failed, try getting a method of the impl class
         if (implClass != null) {
             Method m = null;
             try {
                 m = implClass.getDeclaredMethod(method.getName(), method.getParameterTypes());
             } catch (Exception e) {}
-            if (m == null) { 
+            if (m == null) {
                 try {
                     m = implClass.getMethod(method.getName(), method.getParameterTypes());
                 } catch (Exception e) {}
@@ -643,17 +635,17 @@ public class ClassRep extends BaseRep {
             if (m != null) {
                 getMethodMetaDataFromSkeleton(methodRep, m);
             }
-        }            
+        }
         return;
     }
 
 
     /**
-     * Gets additional meta data and sets it on the MethodRep.            
-     * @param methodRep is the target MethodRep.                
-     * @param method is the Method to search.               
+     * Gets additional meta data and sets it on the MethodRep.
+     * @param methodRep is the target MethodRep.
+     * @param method is the Method to search.
      * @return true if the method is part of a skeleton.
-     */ 
+     */
     protected boolean getMethodMetaDataFromSkeleton(MethodRep methodRep, Method method) {
         Class cls = method.getDeclaringClass();
         Class skel = Skeleton.class;
@@ -702,7 +694,7 @@ public class ClassRep extends BaseRep {
     protected boolean isJavaBeanNormal(Class cls, String name, Class type) {
         if ((name == null) || (name.length() == 0))
             return false;
-        
+
         try {
             String propName = name.substring(0,1).toUpperCase()
                 + name.substring(1);
@@ -723,7 +715,7 @@ public class ClassRep extends BaseRep {
             mod = m.getModifiers();
             if (!Modifier.isPublic(mod)) {
                 return false;
-            }       
+            }
         }
         catch (NoSuchMethodException ex) {
             return false;
@@ -764,7 +756,7 @@ public class ClassRep extends BaseRep {
             mod = m.getModifiers();
             if (!Modifier.isPublic(mod)) {
                 return false;
-            }       
+            }
         }
         catch (NoSuchMethodException ex) {
             return false;
