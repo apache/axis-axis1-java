@@ -62,6 +62,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.net.HttpURLConnection;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -69,12 +70,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpUtils;
 import javax.xml.soap.SOAPException;
+import javax.xml.namespace.QName;
 
 import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.ConfigurationException;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.handlers.soap.SOAPService;
@@ -140,6 +143,8 @@ public class AxisServlet extends AxisServletBase {
     protected String getJWSClassDir() { return jwsClassDir; }
 
 
+
+
     /**
      * create a new servlet instance
      */
@@ -184,18 +189,18 @@ public class AxisServlet extends AxisServletBase {
      * of various kinds, not real SOAP actions.
      *
      * @todo for secure installations, dont stack trace on faults
-     * @param req
-     * @param res
+     * @param request request in
+     * @param response request out
      * @throws ServletException
      * @throws IOException
      */
-    public void doGet(HttpServletRequest req, HttpServletResponse res)
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException
     {
         if (isDebug)
             log.debug("Enter: doGet()");
 
-        PrintWriter writer = res.getWriter();
+        PrintWriter writer = response.getWriter();
 
         try
         {
@@ -203,17 +208,26 @@ public class AxisServlet extends AxisServletBase {
             ServletContext servletContext =
                 getServletConfig().getServletContext();
 
-            String pathInfo = req.getPathInfo();
-            String realpath = servletContext.getRealPath(req.getServletPath());
+            String pathInfo = request.getPathInfo();
+            String realpath = servletContext.getRealPath(request.getServletPath());
             if (realpath == null) {
-                realpath = req.getServletPath();
+                realpath = request.getServletPath();
             }
 
             boolean wsdlRequested = false;
             boolean listRequested = false;
+            boolean hasParameters = request.getParameterNames().hasMoreElements();
+
+            //JWS pages are special; they are the servlet path and there
+            //is no pathinfo...we map the pathinfo to the servlet path to keep
+            //it happy
+            boolean isJWSPage = request.getRequestURI().endsWith(".jws");
+            if(isJWSPage) {
+                pathInfo= request.getServletPath();
+            }
 
             // check first if we are doing WSDL or a list operation
-            String queryString = req.getQueryString();
+            String queryString = request.getQueryString();
             if (queryString != null) {
                 if (queryString.equalsIgnoreCase("wsdl")) {
                     wsdlRequested = true;
@@ -222,41 +236,18 @@ public class AxisServlet extends AxisServletBase {
                 }
             }
 
-            // If the user requested the servlet (i.e. /axis/services/)
-            // with no service name, present the user with a list of deployed
-            // services to be helpful
-            // Don't do this if we are doing WSDL or list.
-            if (!wsdlRequested && !listRequested &&
-                (pathInfo == null || pathInfo.equals(""))) {
-                res.setContentType("text/html");
-                writer.println("<h2>And now... Some Services</h2>");
-                Iterator i = engine.getConfig().getDeployedServices();
-                writer.println("<ul>");
-                while (i.hasNext()) {
-                    ServiceDesc sd = (ServiceDesc)i.next();
-                    StringBuffer sb = new StringBuffer();
-                    sb.append("<li>");
-                    sb.append(sd.getName());
-                    sb.append(" <a href=\"../services/");
-                    sb.append(sd.getName());
-                    sb.append("?wsdl\"><i>(wsdl)</i></a></li>");
-                    writer.println(sb.toString());
-                    ArrayList operations = sd.getOperations();
-                    if (!operations.isEmpty()) {
-                        writer.println("<ul>");
-                        for (Iterator it = operations.iterator(); it.hasNext();) {
-                            OperationDesc desc = (OperationDesc) it.next();
-                            writer.println("<li>" + desc.getName());
-                        }
-                        writer.println("</ul>");
-                    }
-                }
-                writer.println("</ul>");
+            boolean hasNoPath = (pathInfo == null || pathInfo.equals(""));
+            if (!wsdlRequested && !listRequested && hasNoPath) {
+                // If the user requested the servlet (i.e. /axis/servlet/AxisServlet)
+                // with no service name, present the user with a list of deployed
+                // services to be helpful
+                // Don't do this if we are doing WSDL or list.
+                reportAvailableServices(response, writer, request);
             } else if (realpath != null) {
                 // We have a pathname, so now we perform WSDL or list operations
 
                 // get message context w/ various properties set
-                MessageContext msgContext = createMessageContext(engine, req, res);
+                MessageContext msgContext = createMessageContext(engine, request, response);
 
                 try {
                     // NOTE:  HttpUtils.getRequestURL has been deprecated.
@@ -268,120 +259,25 @@ public class AxisServlet extends AxisServletBase {
                     // scenario rather than the actual host name.
                     //
                     // ? Still true?  For which JVM's?
-                    String url = HttpUtils.getRequestURL(req).toString();
+                    String url = HttpUtils.getRequestURL(request).toString();
 
                     msgContext.setProperty(MessageContext.TRANS_URL, url);
 
+
                     if (wsdlRequested) {
                         // Do WSDL generation
-                        engine.generateWSDL(msgContext);
-                        Document doc = (Document) msgContext.getProperty("WSDL");
-                        if (doc != null) {
-                            res.setContentType("text/xml");
-                            XMLUtils.DocumentToWriter(doc, writer);
-                        } else {
-                            //BUGBUG: this never gets called
-                            res.setStatus(java.net.HttpURLConnection.HTTP_NOT_FOUND);
-                            res.setContentType("text/html");
-                            writer.println("<h2>" +
-                                           JavaUtils.getMessage("error00") +
-                                           "</h2>");
-                            writer.println("<p>" +
-                                           JavaUtils.getMessage("noWSDL00") +
-                                           "</p>");
-                        }
+                        processWsdlRequest(msgContext, response, writer);
                     } else if (listRequested) {
                         // Do list, if it is enabled
-                        if (enableList) {
-                            Document doc = Admin.listConfig(engine);
-                            if (doc != null) {
-                                res.setContentType("text/xml");
-                                XMLUtils.DocumentToWriter(doc, writer);
-                            } else {
-                                //TODO: error code
-                                res.setContentType("text/html");
-                                writer.println("<h2>" +
-                                               JavaUtils.getMessage("error00") +
-                                               "</h2>");
-                                writer.println("<p>" +
-                                               JavaUtils.getMessage("noDeploy00") +
-                                               "</p>");
-                            }
-                        } else {
-                            // list not enable, return error
-                            //TODO: error code
-                            res.setContentType("text/html");
-                            writer.println("<h2>" +
-                                           JavaUtils.getMessage("error00") +
-                                           "</h2>");
-                            writer.println("<p><i>?list</i>" +
-                                           JavaUtils.getMessage("disabled00") +
-                                           "</p>");
-                        }
-                    } else if (req.getParameterNames().hasMoreElements()) {
+                        processListRequest(response, writer);
+                    } else if (hasParameters) {
                         // If we have ?method=x&param=y in the URL, make a stab
                         // at invoking the method with the parameters specified
                         // in the URL
 
-                        res.setContentType("text/html");
-                        Enumeration enum = req.getParameterNames();
-                        String method = null;
-                        String args = "";
-                        while (enum.hasMoreElements()) {
-                            String param = (String) enum.nextElement();
-                            if (param.equalsIgnoreCase("method")) {
-                                method = req.getParameter(param);
-                            } else {
-                                args += "<" + param + ">" +
-                                    req.getParameter(param) +
-                                    "</" + param + ">";
-                            }
-                        }
+                        processMethodRequest(msgContext, request, response, writer);
 
-                        if (method == null) {
-                            writer.println("<h2>" +
-                                           JavaUtils.getMessage("error00") +
-                                           ":  " +
-                                           JavaUtils.getMessage("invokeGet00") +
-                                           "</h2>");
-                            writer.println("<p>" +
-                                           JavaUtils.getMessage("noMethod01") +
-                                           "</p>");
-                        } else {
-                            String body =
-                                "<" + method + ">" + args + "</" + method + ">";
-
-                            String msgtxt =
-                                "<SOAP-ENV:Envelope" +
-                                " xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
-                                "<SOAP-ENV:Body>" + body + "</SOAP-ENV:Body>" +
-                                "</SOAP-ENV:Envelope>";
-
-                            ByteArrayInputStream istream =
-                                new ByteArrayInputStream(msgtxt.getBytes());
-
-                            Message msg = new Message(istream, false);
-                            msgContext.setRequestMessage(msg);
-
-//                    if (msg != null) {
-//                        writer.println(msg.getAsString());
-//                        return;
-//                    }
-                            engine.invoke(msgContext);
-                            Message respMsg = msgContext.getResponseMessage();
-                            if (respMsg != null) {
-                                writer.println("<p>" +
-                                       JavaUtils.getMessage("gotResponse00") +
-                                               "</p>");
-                                writer.println(respMsg.getSOAPPartAsString());
-                            } else {
-                                writer.println("<p>" +
-                                       JavaUtils.getMessage("noResponse01") +
-                                               "</p>");
-                            }
-                        }
                     } else {
-                        res.setContentType("text/html");
 
                         // See if we can locate the desired service.  If we
                         // can't, return a 404 Not Found.  Otherwise, just
@@ -396,32 +292,23 @@ public class AxisServlet extends AxisServletBase {
 
                         SOAPService s = engine.getService(serviceName);
                         if (s == null) {
-                            // Outta here, no such service....
-                            res.setStatus(java.net.HttpURLConnection.HTTP_NOT_FOUND);
-                            res.setContentType("text/html");
+                            // no such service....
+                            response.setStatus(java.net.HttpURLConnection.HTTP_NOT_FOUND);
+                            response.setContentType("text/html");
                             writer.println("<h2>" +
                                            JavaUtils.getMessage("error00") + "</h2>");
                             writer.println("<p>" +
                                            JavaUtils.getMessage("noService06") +
                                            "</p>");
-                            return;
+                        } else {
+                            //print a snippet of service info.
+                            reportServiceInfo(response, writer, s, serviceName);
                         }
-
-                        //print a snippet of service info.
-                        writer.println("<h1>" + serviceName +
-                                       "</h1>");
-                        writer.println(
-                                "<p>" +
-                                JavaUtils.getMessage("axisService00") +
-                                "</p>");
-                        writer.println(
-                                "<i>" +
-                                JavaUtils.getMessage("perhaps00") +
-                                "</i>");
                     }
                 } catch (AxisFault fault) {
-                    res.setContentType("text/html");
-                    res.setStatus(500);
+                    log.error(JavaUtils.getMessage("exception00"), fault);
+                    response.setContentType("text/html");
+                    response.setStatus(500);
                     writer.println("<h2>" +
                                    JavaUtils.getMessage("error00") + "</h2>");
                     writer.println("<p>" +
@@ -430,8 +317,9 @@ public class AxisServlet extends AxisServletBase {
                     writer.println("<pre>Fault - " + fault.toString() + " </pre>");
                     writer.println("<pre>" + fault.dumpToString() + " </pre>");
                 } catch (Exception e) {
-                    res.setContentType("text/html");
-                    res.setStatus(500);
+                    log.error(JavaUtils.getMessage("exception00"), e);
+                    response.setContentType("text/html");
+                    response.setStatus(500);
                     writer.println("<h2>" +
                                    JavaUtils.getMessage("error00") +
                                    "</h2>");
@@ -439,7 +327,10 @@ public class AxisServlet extends AxisServletBase {
                                    JavaUtils.getMessage("somethingWrong00") +
                                    "</p>");
                     writer.println("<pre>Exception - " + e + "<br>");
-                    writer.println(JavaUtils.stackToString(e));
+                    //dev systems only give fault dumps
+                    if (isDevelopment()) {
+                        writer.println(JavaUtils.stackToString(e));
+                    }
                     writer.println("</pre>");
                 }
             }
@@ -449,7 +340,7 @@ public class AxisServlet extends AxisServletBase {
                 // print a message informing the user that they reached
                 // the servlet.
 
-                res.setContentType("text/html");
+                response.setContentType("text/html");
                 writer.println( "<html><h1>Axis HTTP Servlet</h1>" );
                 writer.println( JavaUtils.getMessage("reachedServlet00"));
 
@@ -464,6 +355,246 @@ public class AxisServlet extends AxisServletBase {
             if (isDebug)
                 log.debug("Exit: doGet()");
         }
+    }
+
+    /**
+     * scan through the request for parameters, invoking the endpoint
+     * if we get a method param.
+     * @param msgContext current message
+     * @param request incoming requests
+     * @param response response to generate
+     * @param writer output stream
+     * @throws AxisFault if anything goes wrong during method execution
+     */
+    protected void processMethodRequest(MessageContext msgContext,
+                                        HttpServletRequest request,
+                                        HttpServletResponse response,
+                                        PrintWriter writer) throws AxisFault {
+        Enumeration enum = request.getParameterNames();
+        String method = null;
+        String args = "";
+        while (enum.hasMoreElements()) {
+            String param = (String) enum.nextElement();
+            if (param.equalsIgnoreCase("method")) {
+                method = request.getParameter(param);
+            } else {
+                args += "<" + param + ">" +
+                    request.getParameter(param) +
+                    "</" + param + ">";
+            }
+        }
+
+        if (method == null) {
+            response.setContentType("text/html");
+            //TODO: what error code should we send back for no method?
+            writer.println("<h2>" +
+                           JavaUtils.getMessage("error00") +
+                           ":  " +
+                           JavaUtils.getMessage("invokeGet00") +
+                           "</h2>");
+            writer.println("<p>" +
+                           JavaUtils.getMessage("noMethod01") +
+                           "</p>");
+        } else {
+            invokeEndpointFromGet(msgContext, response, writer, method, args);
+
+        }
+    }
+
+    /**
+     * handle a ?wsdl request
+     * @param msgContext message context so far
+     * @param response response to write to
+     * @param writer output stream
+     * @throws AxisFault when anything other than a Server.NoService fault is reported
+     * during WSDL generation
+     */
+    protected void processWsdlRequest(MessageContext msgContext,
+                                      HttpServletResponse response,
+                                      PrintWriter writer) throws AxisFault {
+        AxisEngine engine = getEngine();
+        try {
+            engine.generateWSDL(msgContext);
+            Document doc = (Document) msgContext.getProperty("WSDL");
+            if (doc != null) {
+                response.setContentType("text/xml");
+                XMLUtils.DocumentToWriter(doc, writer);
+            } else {
+                reportNoWSDL(response, writer);
+            }
+        } catch (AxisFault axisFault) {
+            //the no-service fault is mapped to a no-wsdl error
+            if(axisFault.getFaultCode() .equals(Constants.QNAME_NO_SERVICE_FAULT_CODE)) {
+                reportNoWSDL(response, writer);
+            } else {
+                throw axisFault;
+            }
+        }
+    }
+
+    /**
+     * invoke an endpoint from a get request by building an XML request and
+     * handing it down
+     * @param msgContext current message
+     * @param response to return data
+     * @param writer output stream
+     * @param method method to invoke (may be null)
+     * @param args argument list in XML form
+     * @throws AxisFault
+     */
+    protected void invokeEndpointFromGet(MessageContext msgContext,
+                                       HttpServletResponse response,
+                                       PrintWriter writer,
+                                       String method,
+                                       String args) throws AxisFault {
+        AxisEngine engine = getEngine();
+        String body =
+            "<" + method + ">" + args + "</" + method + ">";
+
+        String msgtxt =
+            "<SOAP-ENV:Envelope" +
+            " xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+            "<SOAP-ENV:Body>" + body + "</SOAP-ENV:Body>" +
+            "</SOAP-ENV:Envelope>";
+
+        ByteArrayInputStream istream =
+            new ByteArrayInputStream(msgtxt.getBytes());
+
+        Message msg = new Message(istream, false);
+        msgContext.setRequestMessage(msg);
+        engine.invoke(msgContext);
+        Message respMsg = msgContext.getResponseMessage();
+        if (respMsg != null) {
+            response.setContentType("text/xml");
+            writer.println(respMsg.getSOAPPartAsString());
+        } else {
+            //TODO: error code
+            writer.println("<p>" +
+                   JavaUtils.getMessage("noResponse01") +
+                           "</p>");
+        }
+    }
+
+    /**
+     * print a snippet of service info.
+     * @param service service
+     * @param writer output channel
+     * @param serviceName where to put stuff
+     */
+
+    protected  void reportServiceInfo(HttpServletResponse response, PrintWriter writer, SOAPService service, String serviceName) {
+        response.setContentType("text/html");
+
+        writer.println("<h1>"
+                + service.getName()
+                +"</h1>");
+        writer.println(
+                "<p>" +
+                JavaUtils.getMessage("axisService00") +
+                "</p>");
+        writer.println(
+                "<i>" +
+                JavaUtils.getMessage("perhaps00") +
+                "</i>");
+    }
+
+    /**
+     * respond to the ?list command.
+     * if enableList is set, we list the engine config. If it isnt, then an
+     * error is written out
+     * @param response
+     * @param writer
+     * @throws AxisFault
+     */
+    protected void processListRequest(HttpServletResponse response, PrintWriter writer) throws AxisFault {
+        AxisEngine engine = getEngine();
+        if (enableList) {
+            Document doc = Admin.listConfig(engine);
+            if (doc != null) {
+                response.setContentType("text/xml");
+                XMLUtils.DocumentToWriter(doc, writer);
+            } else {
+                //error code is 404
+                response.setStatus(HttpURLConnection.HTTP_NOT_FOUND);
+                response.setContentType("text/html");
+                writer.println("<h2>" +
+                               JavaUtils.getMessage("error00") +
+                               "</h2>");
+                writer.println("<p>" +
+                               JavaUtils.getMessage("noDeploy00") +
+                               "</p>");
+            }
+        } else {
+            // list not enable, return error
+            //error code is, what, 401
+            response.setStatus(HttpURLConnection.HTTP_FORBIDDEN);
+            response.setContentType("text/html");
+            writer.println("<h2>" +
+                           JavaUtils.getMessage("error00") +
+                           "</h2>");
+            writer.println("<p><i>?list</i>" +
+                           JavaUtils.getMessage("disabled00") +
+                           "</p>");
+        }
+    }
+
+    /**
+     * report that we have no WSDL
+     * @param res
+     * @param writer
+     */
+    protected void reportNoWSDL(HttpServletResponse res, PrintWriter writer) {
+        res.setStatus(HttpURLConnection.HTTP_NOT_FOUND);
+        res.setContentType("text/html");
+        writer.println("<h2>" +
+                       JavaUtils.getMessage("error00") +
+                       "</h2>");
+        writer.println("<p>" +
+                       JavaUtils.getMessage("noWSDL00") +
+                       "</p>");
+    }
+
+    /**
+     * This method lists the available services; it is called when there is
+     * nothing to execute on a GET
+     * @param response
+     * @param writer
+     * @param request
+     * @throws ConfigurationException
+     * @throws AxisFault
+     */
+    protected void reportAvailableServices(HttpServletResponse response,
+                                       PrintWriter writer,
+                                       HttpServletRequest request)
+            throws ConfigurationException, AxisFault {
+        AxisEngine engine = getEngine();
+        response.setContentType("text/html");
+        writer.println("<h2>And now... Some Services</h2>");
+        Iterator i = engine.getConfig().getDeployedServices();
+        String baseURL = getWebappBase(request)+"/services/";
+        writer.println("<ul>");
+        while (i.hasNext()) {
+            ServiceDesc sd = (ServiceDesc)i.next();
+            StringBuffer sb = new StringBuffer();
+            sb.append("<li>");
+            String name = sd.getName();
+            sb.append(name);
+            sb.append(" <a href=\"");
+            sb.append(baseURL);
+            sb.append(name);
+            sb.append("?wsdl\"><i>(wsdl)</i></a></li>");
+            writer.println(sb.toString());
+            ArrayList operations = sd.getOperations();
+            if (!operations.isEmpty()) {
+                writer.println("<ul>");
+                for (Iterator it = operations.iterator(); it.hasNext();) {
+                    OperationDesc desc = (OperationDesc) it.next();
+                    writer.println("<li>" + desc.getName());
+                }
+                writer.println("</ul>");
+            }
+        }
+        writer.println("</ul>");
     }
 
     /**
@@ -686,6 +817,7 @@ public class AxisServlet extends AxisServletBase {
      * Message processing routine convert it - we don't do it since we
      * don't know how it's going to be used - perhaps it might not
      * even need to be parsed.
+     * @return a message context
      */
     private MessageContext createMessageContext(AxisEngine engine,
                                                 HttpServletRequest req,
@@ -795,6 +927,7 @@ public class AxisServlet extends AxisServletBase {
     /**
      * Provided to allow overload of default JWSClassDir
      * by derived class.
+     * @return directory for JWS files
      */
     protected String getDefaultJWSClassDir() {
         return getWebInfPath() + File.separator +  "jwsClasses";
@@ -803,6 +936,7 @@ public class AxisServlet extends AxisServletBase {
     /**
      * Return the HTTP protocol level 1.1 or 1.0
      * by derived class.
+     * @return one of the HTTPConstants values
      */
     protected String getProtocolVersion(HttpServletRequest req){
         String ret= HTTPConstants.HEADER_PROTOCOL_V10;
