@@ -67,6 +67,7 @@ import org.apache.axis.wsdl.symbolTable.FaultInfo;
 import org.apache.axis.wsdl.symbolTable.MimeInfo;
 import org.apache.axis.wsdl.symbolTable.Parameter;
 import org.apache.axis.wsdl.symbolTable.Parameters;
+import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
 import org.apache.axis.wsdl.symbolTable.DefinedType;
@@ -930,7 +931,11 @@ public class JavaStubWriter extends JavaClassWriter {
                 "            java.lang.Class simplesf = org.apache.axis.encoding.ser.SimpleSerializerFactory.class;");
         pw.println(
                 "            java.lang.Class simpledf = org.apache.axis.encoding.ser.SimpleDeserializerFactory.class;");
-
+        pw.println(
+                "            java.lang.Class simplelistsf = org.apache.axis.encoding.ser.SimpleListSerializerFactory.class;");
+        pw.println(
+                "            java.lang.Class simplelistdf = org.apache.axis.encoding.ser.SimpleListDeserializerFactory.class;");
+        
         if (hasMIME) {
             pw.println(
                     "            java.lang.Class mimesf = org.apache.axis.encoding.ser.JAFDataHandlerSerializerFactory.class;");
@@ -970,8 +975,13 @@ public class JavaStubWriter extends JavaClassWriter {
         pw.println("            cachedSerClasses.add(cls);");
 
         if (type.getName().endsWith("[]")) {
-            pw.println("            cachedSerFactories.add(arraysf);");
-            pw.println("            cachedDeserFactories.add(arraydf);");
+            if (SchemaUtils.isListWithItemType(type.getNode())) {
+                pw.println("            cachedSerFactories.add(simplelistsf);");
+                pw.println("            cachedDeserFactories.add(simplelistdf);");
+            } else {
+                pw.println("            cachedSerFactories.add(arraysf);");
+                pw.println("            cachedDeserFactories.add(arraydf);");
+            }
         } else if ((type.getNode() != null) && (Utils.getEnumerationBaseAndValues(
                 type.getNode(), symbolTable) != null)) {
             pw.println("            cachedSerFactories.add(enumsf);");
