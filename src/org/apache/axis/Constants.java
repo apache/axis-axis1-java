@@ -515,6 +515,13 @@ public class Constants {
     public static final QName QNAME_LITERAL_ITEM = new QName(URI_LITERAL_ENC,"item");
     public static final QName QNAME_RPC_RESULT = new QName(URI_SOAP12_RPC,"result");
 
+    //QNames of well known faults
+    /**
+     * the no-service fault value
+     */
+    public static final QName QNAME_NO_SERVICE_FAULT_CODE
+            = new QName(NS_URI_AXIS, "Server.NoService");
+
     // Misc Strings
     //////////////////////////////////////////////////////////////////////////
 
