@@ -2808,8 +2808,12 @@ public class SymbolTable {
             throws IOException {
 
         if (use == null) {
-            throw new IOException(Messages.getMessage("noUse",
-                    operation.getName()));
+            // Deprecated 
+            // throw new IOException(Messages.getMessage("noUse",
+            //        operation.getName()));
+            // for WS-I BP 1.0 R2707.
+            // Set default of use to literal.
+            use = "literal";
         }
 
         if (use.equalsIgnoreCase("literal")) {
