@@ -1,4 +1,5 @@
   <path id="classpath">
+    <pathelement path="${sun.boot.class.path}"/>
     <pathelement location="${xercesImpl.jar}"/>
     <pathelement location="${xmlParserAPIs.jar}"/>
     <pathelement location="${xalan-unbundled.jar}"/>
