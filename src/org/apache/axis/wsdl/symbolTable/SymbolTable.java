@@ -104,7 +104,6 @@ import javax.xml.rpc.holders.IntHolder;
 
 import org.apache.axis.Constants;
 
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.utils.URLHashSet;
@@ -145,8 +144,6 @@ public class SymbolTable {
 
     private boolean verbose;
 
-    private boolean debug = false;
-
     private BaseTypeMapping btm = null;
 
     // should we attempt to treat document/literal WSDL as "rpc-style"
@@ -163,11 +160,10 @@ public class SymbolTable {
      * Construct a symbol table with the given Namespaces.
      */
     public SymbolTable(BaseTypeMapping btm, boolean addImports,
-            boolean verbose, boolean debug, boolean nowrap) {
+            boolean verbose, boolean nowrap) {
         this.btm = btm;
         this.addImports = addImports;
         this.verbose = verbose;
-        this.debug = debug;
         this.nowrap = nowrap;
     } // ctor
 
@@ -1137,7 +1133,7 @@ public class SymbolTable {
                               int index,
                               int outdex,
                               Parameters parameters,
-                              boolean trimInput) throws IOException {
+                              boolean trimInput) {
         Parameter p = (Parameter)inputs.get(index);
         // If this is an element, we want the XML to reflect the element name
         // not the part name.
