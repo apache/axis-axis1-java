@@ -205,6 +205,7 @@ public class WSDDDeployment
                 deployService(service);
             } catch (WSDDNonFatalException ex) {
                 // If it's non-fatal, just keep on going
+                log.info("Ignoring non-fatal exception: ", ex);
             } catch (WSDDException ex) {
                 // otherwise throw it upwards
                 throw ex;
@@ -218,6 +219,7 @@ public class WSDDDeployment
                 deployTypeMapping(mapping);
             } catch (WSDDNonFatalException ex) {
                 // If it's non-fatal, just keep on going
+                log.info("Ignoring non-fatal exception: ", ex);
             } catch (WSDDException ex) {
                 // otherwise throw it upwards
                 throw ex;
@@ -526,7 +528,7 @@ public class WSDDDeployment
                 serviceDescs.add(service.getServiceDesc());
             } catch (WSDDNonFatalException ex) {
                 // If it's non-fatal, just keep on going
-                log.debug("Ingoring non-fatal exception: ", ex);
+                log.info("Ignoring non-fatal exception: ", ex);
             }
         }
         return serviceDescs.iterator();
