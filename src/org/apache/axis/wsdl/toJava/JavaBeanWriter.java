@@ -372,7 +372,7 @@ public class JavaBeanWriter extends JavaClassWriter {
             }
 
             // Call the extended constructor to set inherited fields
-            if (extendType != null) {
+            if (extendType != null && localParams > 0) {
                 pw.println("        super(");
                 for (int j=0; j<localParams; j++) {
                     pw.print("            " + paramNames.elementAt(j));
