@@ -1,4 +1,4 @@
-package org.apache.axis.ime;
+package org.apache.axis.features;
 
 import org.apache.axis.AxisFault;
 

@@ -56,6 +56,7 @@ package org.apache.axis.ime;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.MessageContext;
+import org.apache.axis.features.FeatureEnabled;
 
 import java.util.Map;
 
