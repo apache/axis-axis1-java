@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" 
+ xmlns:s="http://www.w3.org/2001/XMLSchema" 
+ xmlns:s0="http://tempuri.org/" 
+ xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"  
+ targetNamespace="http://tempuri.org/" 
+xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <s:schema elementFormDefault="qualified" 
+              xmlns:tns="http://tempuri.org/" 
+              targetNamespace="http://tempuri.org/">
+ 
+      <s:simpleType name="QNameList">
+        <s:list itemType="s:QName" />
+      </s:simpleType>
+
+      <s:element name="GetPlan" type="s:QName"/>
+
+      <s:element name="GetPlanResponse">
+        <s:complexType/>
+      </s:element>
+
+      <s:element name="GetMPlan">
+         <s:complexType>
+           <s:sequence>
+             <s:element name="list" type="tns:QNameList"/>
+           </s:sequence>
+         </s:complexType>
+      </s:element>
+
+      <s:element name="GetMPlanResponse">
+        <s:complexType/>
+      </s:element>
+    </s:schema>
+  </types>
+
+  <message name="GetPlanSoapIn">
+    <part name="parameters" element="s0:GetPlan" />
+  </message>
+  <message name="GetPlanSoapOut">
+    <part name="parameters" element="s0:GetPlanResponse" />
+  </message>
+
+  <message name="GetMPlanSoapIn">
+    <part name="parameters" element="s0:GetMPlan" />
+  </message>
+  <message name="GetMPlanSoapOut">
+    <part name="parameters" element="s0:GetMPlanResponse" />
+  </message>
+
+  <portType name="PlanWSSoap">
+    <operation name="GetPlan">
+      <input message="s0:GetPlanSoapIn" />
+      <output message="s0:GetPlanSoapOut" />
+    </operation>
+    <operation name="GetMPlan">
+      <input message="s0:GetMPlanSoapIn" />
+      <output message="s0:GetMPlanSoapOut" />
+    </operation>
+  </portType>
+
+  <binding name="PlanWSSoap" type="s0:PlanWSSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" 
+style="document" />
+    <operation name="GetPlan">
+      <soap:operation soapAction="http://tempuri.org/GetPlan" 
+                      style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+
+    <operation name="GetMPlan">
+      <soap:operation soapAction="http://tempuri.org/GetMPlan" 
+                      style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+
+  <service name="PlanWS">
+    <port name="PlanWSSoap" binding="s0:PlanWSSoap">
+      <soap:address location="http://localhost:8080/axis/services/PlanWSSoap" />
+    </port>
+  </service>
+</definitions>
