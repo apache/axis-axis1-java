@@ -60,7 +60,6 @@ import org.apache.log4j.Category;
 import java.lang.reflect.Array;
 
 import java.text.MessageFormat;
-import java.text.ParseException;
 
 import java.util.List;
 import java.util.MissingResourceException;
