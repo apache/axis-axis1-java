@@ -55,12 +55,14 @@ public class BeanSerializer implements Serializer, Serializable {
     protected static Log log =
         LogFactory.getLog(BeanSerializer.class.getName());
 
+    private static final QName MUST_UNDERSTAND_QNAME = 
+        new QName(Constants.URI_SOAP11_ENV, Constants.ATTR_MUST_UNDERSTAND);
+
     QName xmlType;
     Class javaType;
 
     protected BeanPropertyDescriptor[] propertyDescriptor = null;
     protected TypeDesc typeDesc = null;
-
 
     // Construct BeanSerializer for the indicated class/qname
     public BeanSerializer(Class javaType, QName xmlType) {
@@ -170,19 +172,20 @@ public class BeanSerializer implements Serializer, Serializable {
                         Object propValue =
                             propertyDescriptor[i].get(value);
 
-                        // an element cannot be null if nillable property is set to "false"
-                        // and the element cannot be omitted
-                        if (propValue == null && !isNillable && !isOmittable) {
-                            throw new IOException(Messages.getMessage("nullNonNillableElement", propName));
+                        if (propValue == null) {
+                            // an element cannot be null if nillable property is set to 
+                            // "false" and the element cannot be omitted
+                            if (!isNillable && !isOmittable) {
+                                throw new IOException(Messages.getMessage("nullNonNillableElement", propName));
+                            }
+                            
+                            // if meta data says minOccurs=0, then we can skip
+                            // it if its value is null and we aren't doing SOAP
+                            // encoding.
+                            if (isOmittable && !isEncoded) {
+                                continue;
+                            }
                         }
-
-                        // if meta data says minOccurs=0, then we can skip
-                        // it if its value is null and we aren't doing SOAP
-                        // encoding.
-                        if (propValue == null &&
-                                isOmittable &&
-                                !isEncoded)
-                            continue;
 
                         context.serialize(qname,
                                           null,
@@ -532,9 +535,9 @@ public class BeanSerializer implements Serializer, Serializable {
                     // add to our attributes
                     Object propValue = propertyDescriptor[i].get(value);
                     // Convert true/false to 1/0 in case of soapenv:mustUnderstand
-                    if (qname.equals(new QName(Constants.URI_SOAP11_ENV, Constants.ATTR_MUST_UNDERSTAND))) {
+                    if (qname.equals(MUST_UNDERSTAND_QNAME)) {
                     	if (propValue.equals(Boolean.TRUE)) {
-                    		propValue = "1";
+                                propValue = "1";
                     	} else if (propValue.equals(Boolean.FALSE)) {
                     		propValue = "0";
                     	}
