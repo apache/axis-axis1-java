@@ -530,7 +530,7 @@ public class AxisFault extends java.rmi.RemoteException {
      */
     public void setFaultDetail(Element[] details) {
         if ( details == null ) {
-            //TODO: shouldnt we reset fault details here anyway?
+            faultDetails=null;
             return ;
         }
         faultDetails = new Vector( details.length );
