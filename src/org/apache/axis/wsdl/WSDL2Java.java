@@ -178,7 +178,7 @@ public class WSDL2Java extends WSDL2 {
                 break;
 
             case HELPER_CLASS_OPT:
-                emitter.setHelperGeneration(true);
+                emitter.setHelperWanted(true);
                 break;
 
             case SKELETON_DEPLOY_OPT:
