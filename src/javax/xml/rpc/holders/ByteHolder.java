@@ -62,7 +62,7 @@ package javax.xml.rpc.holders;
 public final class ByteHolder implements java.io.Serializable {
 
     /** Field _value           */
-    public byte _value;
+    public byte value;
 
     /**
      * Constructor ByteHolder
@@ -75,7 +75,7 @@ public final class ByteHolder implements java.io.Serializable {
      * @param value
      */
     public ByteHolder(byte value) {
-        this._value = value;
+        this.value = value;
     }
 }
 

@@ -62,7 +62,7 @@ package javax.xml.rpc.holders;
 public final class ShortHolder implements java.io.Serializable {
 
     /** Field _value           */
-    public short _value;
+    public short value;
 
     /**
      * Constructor ShortHolder
@@ -75,7 +75,7 @@ public final class ShortHolder implements java.io.Serializable {
      * @param value
      */
     public ShortHolder(short value) {
-        this._value = value;
+        this.value = value;
     }
 }
 

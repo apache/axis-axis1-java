@@ -62,7 +62,7 @@ package javax.xml.rpc.holders;
 public final class BooleanHolder implements java.io.Serializable {
 
     /** Field _value           */
-    public boolean _value;
+    public boolean value;
 
     /**
      * Constructor BooleanHolder
@@ -75,7 +75,7 @@ public final class BooleanHolder implements java.io.Serializable {
      * @param value
      */
     public BooleanHolder(boolean value) {
-        this._value = value;
+        this.value = value;
     }
 }
 

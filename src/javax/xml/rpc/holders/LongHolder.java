@@ -62,7 +62,7 @@ package javax.xml.rpc.holders;
 public final class LongHolder implements java.io.Serializable {
 
     /** Field _value           */
-    public long _value;
+    public long value;
 
     /**
      * Constructor LongHolder
@@ -75,7 +75,7 @@ public final class LongHolder implements java.io.Serializable {
      * @param value
      */
     public LongHolder(long value) {
-        this._value = value;
+        this.value = value;
     }
 }
 

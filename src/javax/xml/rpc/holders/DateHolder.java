@@ -64,7 +64,7 @@ import java.util.Date;
 public final class DateHolder implements java.io.Serializable {
 
     /** Field _value           */
-    public Date _value;
+    public Date value;
 
     /**
      * Constructor DateHolder
@@ -77,7 +77,7 @@ public final class DateHolder implements java.io.Serializable {
      * @param value
      */
     public DateHolder(Date value) {
-        this._value = value;
+        this.value = value;
     }
 }
 

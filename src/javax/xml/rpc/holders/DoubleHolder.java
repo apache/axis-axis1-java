@@ -62,7 +62,7 @@ package javax.xml.rpc.holders;
 public final class DoubleHolder implements java.io.Serializable {
 
     /** Field _value           */
-    public double _value;
+    public double value;
 
     /**
      * Constructor DoubleHolder
@@ -75,7 +75,7 @@ public final class DoubleHolder implements java.io.Serializable {
      * @param value
      */
     public DoubleHolder(double value) {
-        this._value = value;
+        this.value = value;
     }
 }
 

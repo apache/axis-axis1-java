@@ -87,36 +87,36 @@ public class InoutSOAPBindingImpl implements Inout
 
     public void out0Inout1In0 (PhoneHolder phone) throws org.apache.axis.AxisFault, TestFailed
     {
-        if (equals (phone._value, expectedPhone))
-            phone._value = returnPhone;
+        if (equals (phone.value, expectedPhone))
+            phone.value = returnPhone;
         else
         {
             System.err.println ("Test failure:  out0Inout1In0");
             System.err.println ("expected phone = " + printPhone (expectedPhone));
-            System.err.println ("actual phone = " + printPhone (phone._value));
+            System.err.println ("actual phone = " + printPhone (phone.value));
             throw new TestFailed ();
         }
     }
 
     public void out0Inout1In1 (StringHolder name, Address address) throws org.apache.axis.AxisFault, TestFailed
     {
-        if (equals (address, expectedAddress) && "out0Inout1In1".equals (name._value))
-            name._value = name._value + " yo ho ho!";
+        if (equals (address, expectedAddress) && "out0Inout1In1".equals (name.value))
+            name.value = name.value + " yo ho ho!";
         else
         {
             System.err.println ("Test failure:  out0Inout1In1");
             System.err.println ("expected address =\n" + printAddress (expectedAddress));
             System.err.println ("actual address =\n" + printAddress (address));
             System.err.println ("expected name = out0Inout1In1");
-            System.err.println ("actual name = " + name._value);
+            System.err.println ("actual name = " + name.value);
             throw new TestFailed ();
         }
     }
 
     public void out0Inout1InMany (String name, Address address, PhoneHolder phone) throws org.apache.axis.AxisFault, TestFailed
     {
-        if ("out0Inout1InMany".equals (name) && equals (address, expectedAddress) && equals (phone._value, expectedPhone))
-            phone._value = returnPhone;
+        if ("out0Inout1InMany".equals (name) && equals (address, expectedAddress) && equals (phone.value, expectedPhone))
+            phone.value = returnPhone;
         else
         {
             System.err.println ("Test failure:  out0Inout1InMany");
@@ -125,35 +125,35 @@ public class InoutSOAPBindingImpl implements Inout
             System.err.println ("expected address =\n" + printAddress (expectedAddress));
             System.err.println ("actual address =\n" + printAddress (address));
             System.err.println ("expected phone = " + printPhone (expectedPhone));
-            System.err.println ("actual phone = " + printPhone (phone._value));
+            System.err.println ("actual phone = " + printPhone (phone.value));
             throw new TestFailed ();
         }
     }
 
     public void out0InoutManyIn0 (StringHolder name, AddressHolder address) throws org.apache.axis.AxisFault, TestFailed
     {
-        if ("out0InoutManyIn0".equals (name._value) && equals (address._value, expectedAddress))
+        if ("out0InoutManyIn0".equals (name.value) && equals (address.value, expectedAddress))
         {
-            name._value = name._value + " yo ho ho!";
-            address._value = returnAddress;
+            name.value = name.value + " yo ho ho!";
+            address.value = returnAddress;
         }
         else
         {
             System.err.println ("Test failure:  out0InoutManyIn0");
             System.err.println ("expected name = out0InoutManyIn0");
-            System.err.println ("actual name = " + name._value);
+            System.err.println ("actual name = " + name.value);
             System.err.println ("expected address =\n" + printAddress (expectedAddress));
-            System.err.println ("actual address =\n" + printAddress (address._value));
+            System.err.println ("actual address =\n" + printAddress (address.value));
             throw new TestFailed ();
         }
     }
 
     public void out0InoutManyIn1 (StringHolder name, AddressHolder address, Phone phone) throws org.apache.axis.AxisFault, TestFailed
     {
-        if (equals (phone, expectedPhone) && "out0InoutManyIn1".equals (name._value) && equals (address._value, expectedAddress))
+        if (equals (phone, expectedPhone) && "out0InoutManyIn1".equals (name.value) && equals (address.value, expectedAddress))
         {
-            name._value = name._value + " yo ho ho!";
-            address._value = returnAddress;
+            name.value = name.value + " yo ho ho!";
+            address.value = returnAddress;
         }
         else
         {
@@ -161,9 +161,9 @@ public class InoutSOAPBindingImpl implements Inout
             System.err.println ("expected phone = " + printPhone (expectedPhone));
             System.err.println ("actual phone = " + printPhone (phone));
             System.err.println ("expected name = out0InoutManyIn1");
-            System.err.println ("actual name = " + name._value);
+            System.err.println ("actual name = " + name.value);
             System.err.println ("expected address =\n" + printAddress (expectedAddress));
-            System.err.println ("actual address =\n" + printAddress (address._value));
+            System.err.println ("actual address =\n" + printAddress (address.value));
             throw new TestFailed ();
         }
     }
@@ -171,10 +171,10 @@ public class InoutSOAPBindingImpl implements Inout
 
     public void out0InoutManyInMany (StringHolder name, AddressHolder address, Phone phone, int number) throws org.apache.axis.AxisFault, TestFailed
     {
-        if (equals (phone, expectedPhone) && expectedNumber == number && "out0InoutManyInMany".equals (name._value) && equals (address._value, expectedAddress))
+        if (equals (phone, expectedPhone) && expectedNumber == number && "out0InoutManyInMany".equals (name.value) && equals (address.value, expectedAddress))
         {
-            name._value = name._value + " yo ho ho!";
-            address._value = returnAddress;
+            name.value = name.value + " yo ho ho!";
+            address.value = returnAddress;
         }
         else
         {
@@ -184,9 +184,9 @@ public class InoutSOAPBindingImpl implements Inout
             System.err.println ("expected number = " + expectedNumber);
             System.err.println ("actual number = " + number);
             System.err.println ("expected name = out0InoutManyInMany");
-            System.err.println ("actual name = " + name._value);
+            System.err.println ("actual name = " + name.value);
             System.err.println ("expected address =\n" + printAddress (expectedAddress));
-            System.err.println ("actual address =\n" + printAddress (address._value));
+            System.err.println ("actual address =\n" + printAddress (address.value));
             throw new TestFailed ();
         }
     }
@@ -233,25 +233,25 @@ public class InoutSOAPBindingImpl implements Inout
 
     public Address out1Inout1In0 (StringHolder name) throws org.apache.axis.AxisFault, TestFailed
     {
-        if ("out1Inout1In0".equals (name._value))
+        if ("out1Inout1In0".equals (name.value))
         {
-            name._value = name._value + " yo ho ho!";
+            name.value = name.value + " yo ho ho!";
             return returnAddress;
         }
         else
         {
             System.err.println ("Test failure:  out1Inout1In0");
             System.err.println ("expected name = out1Inout1In0");
-            System.err.println ("actual name = " + name._value);
+            System.err.println ("actual name = " + name.value);
             throw new TestFailed ();
         }
     }
 
     public String out1Inout1In1 (StringHolder name, Address address) throws org.apache.axis.AxisFault, TestFailed
     {
-        if (equals (address, expectedAddress) && "out1Inout1In1".equals (name._value))
+        if (equals (address, expectedAddress) && "out1Inout1In1".equals (name.value))
         {
-            name._value = name._value + " yo ho ho!";
+            name.value = name.value + " yo ho ho!";
             return "out1Inout1In1 arghhh!";
         }
         else
@@ -260,7 +260,7 @@ public class InoutSOAPBindingImpl implements Inout
             System.err.println ("expected address =\n" + printAddress (expectedAddress));
             System.err.println ("actual address =\n" + printAddress (address));
             System.err.println ("expected name = out1Inout1In1");
-            System.err.println ("actual name = " + name._value);
+            System.err.println ("actual name = " + name.value);
             throw new TestFailed ();
         }
     }
@@ -268,9 +268,9 @@ public class InoutSOAPBindingImpl implements Inout
 
     public String out1Inout1InMany (StringHolder name, Address address, Phone phone) throws org.apache.axis.AxisFault, TestFailed
     {
-        if (equals (address, expectedAddress) && equals (phone, expectedPhone) && "out1Inout1InMany".equals (name._value))
+        if (equals (address, expectedAddress) && equals (phone, expectedPhone) && "out1Inout1InMany".equals (name.value))
         {
-            name._value = name._value + " yo ho ho!";
+            name.value = name.value + " yo ho ho!";
             return "out1Inout1InMany arghhh!";
         }
         else
@@ -281,7 +281,7 @@ public class InoutSOAPBindingImpl implements Inout
             System.err.println ("expected phone = " + printPhone (expectedPhone));
             System.err.println ("actual phone = " + printPhone (phone));
             System.err.println ("expected name = out1Inout1InMany");
-            System.err.println ("actual name = " + name._value);
+            System.err.println ("actual name = " + name.value);
             throw new TestFailed ();
         }
     }
@@ -289,19 +289,19 @@ public class InoutSOAPBindingImpl implements Inout
 
     public String out1InoutManyIn0 (StringHolder name, AddressHolder address) throws org.apache.axis.AxisFault, TestFailed
     {
-        if ("out1InoutManyIn0".equals (name._value) && equals (address._value, expectedAddress))
+        if ("out1InoutManyIn0".equals (name.value) && equals (address.value, expectedAddress))
         {
-            name._value = name._value + " yo ho ho!";
-            address._value = returnAddress;
+            name.value = name.value + " yo ho ho!";
+            address.value = returnAddress;
             return "out1InoutManyIn0 arghhh!";
         }
         else
         {
             System.err.println ("Test failure:  out1InoutManyIn0");
             System.err.println ("expected name = out1InoutManyIn0");
-            System.err.println ("actual name = " + name._value);
+            System.err.println ("actual name = " + name.value);
             System.err.println ("expected address =\n" + printAddress (expectedAddress));
-            System.err.println ("actual address =\n" + printAddress (address._value));
+            System.err.println ("actual address =\n" + printAddress (address.value));
             throw new TestFailed ();
         }
     }
@@ -309,10 +309,10 @@ public class InoutSOAPBindingImpl implements Inout
 
     public String out1InoutManyIn1 (StringHolder name, AddressHolder address, Phone phone) throws org.apache.axis.AxisFault, TestFailed
     {
-        if (equals (phone, expectedPhone) && "out1InoutManyIn1".equals (name._value) && equals (address._value, expectedAddress))
+        if (equals (phone, expectedPhone) && "out1InoutManyIn1".equals (name.value) && equals (address.value, expectedAddress))
         {
-            name._value = name._value + " yo ho ho!";
-            address._value = returnAddress;
+            name.value = name.value + " yo ho ho!";
+            address.value = returnAddress;
             return "out1InoutManyIn1 arghhh!";
         }
         else
@@ -321,9 +321,9 @@ public class InoutSOAPBindingImpl implements Inout
             System.err.println ("expected phone = " + printPhone (expectedPhone));
             System.err.println ("actual phone = " + printPhone (phone));
             System.err.println ("expected name = out1InoutManyIn1");
-            System.err.println ("actual name = " + name._value);
+            System.err.println ("actual name = " + name.value);
             System.err.println ("expected address =\n" + printAddress (expectedAddress));
-            System.err.println ("actual address =\n" + printAddress (address._value));
+            System.err.println ("actual address =\n" + printAddress (address.value));
             throw new TestFailed ();
         }
     }
@@ -331,10 +331,10 @@ public class InoutSOAPBindingImpl implements Inout
 
     public String out1InoutManyInMany (StringHolder name, AddressHolder address, Phone phone, int number) throws org.apache.axis.AxisFault, TestFailed
     {
-        if (equals (phone, expectedPhone) && expectedNumber == number && "out1InoutManyInMany".equals (name._value) && equals (address._value, expectedAddress))
+        if (equals (phone, expectedPhone) && expectedNumber == number && "out1InoutManyInMany".equals (name.value) && equals (address.value, expectedAddress))
         {
-            name._value = name._value + " yo ho ho!";
-            address._value = returnAddress;
+            name.value = name.value + " yo ho ho!";
+            address.value = returnAddress;
             return "out1InoutManyInMany arghhh!";
         }
         else
@@ -345,9 +345,9 @@ public class InoutSOAPBindingImpl implements Inout
             System.err.println ("expected number = " + expectedNumber);
             System.err.println ("actual number = " + number);
             System.err.println ("expected name = out1InoutManyInMany");
-            System.err.println ("actual name = " + name._value);
+            System.err.println ("actual name = " + name.value);
             System.err.println ("expected address =\n" + printAddress (expectedAddress));
-            System.err.println ("actual address =\n" + printAddress (address._value));
+            System.err.println ("actual address =\n" + printAddress (address.value));
             throw new TestFailed ();
         }
     }
@@ -355,9 +355,9 @@ public class InoutSOAPBindingImpl implements Inout
 
     public String outManyInout0In0 (AddressHolder address) throws org.apache.axis.AxisFault, TestFailed
     {
-        if (address._value == null)
+        if (address.value == null)
         {
-            address._value = returnAddress;
+            address.value = returnAddress;
             return " arghhh!";
         }
         else
@@ -367,9 +367,9 @@ public class InoutSOAPBindingImpl implements Inout
 
     public int outManyInout0In1 (String name, StringHolder otherName) throws org.apache.axis.AxisFault, TestFailed
     {
-        if ("outManyInout0In1".equals (name) && otherName._value == null)
+        if ("outManyInout0In1".equals (name) && otherName.value == null)
         {
-            otherName._value = " yo ho ho!";
+            otherName.value = " yo ho ho!";
             return returnNumber;
         }
         else
@@ -384,9 +384,9 @@ public class InoutSOAPBindingImpl implements Inout
 
     public int outManyInout0InMany (String name, Address address, StringHolder otherName) throws org.apache.axis.AxisFault, TestFailed
     {
-        if ("outManyInout0InMany".equals (name) && equals (address, expectedAddress) && otherName._value == null)
+        if ("outManyInout0InMany".equals (name) && equals (address, expectedAddress) && otherName.value == null)
         {
-            otherName._value = " yo ho ho!";
+            otherName.value = " yo ho ho!";
             return returnNumber;
         }
         else
@@ -403,17 +403,17 @@ public class InoutSOAPBindingImpl implements Inout
 
     public int outManyInout1In0 (StringHolder name, StringHolder otherName) throws org.apache.axis.AxisFault, TestFailed
     {
-        if ("outManyInout1In0".equals (name._value) && otherName._value == null)
+        if ("outManyInout1In0".equals (name.value) && otherName.value == null)
         {
-            name._value = name._value + " yo ho ho!";
-            otherName._value = " yo ho ho!";
+            name.value = name.value + " yo ho ho!";
+            otherName.value = " yo ho ho!";
             return returnNumber;
         }
         else
         {
             System.err.println ("Test failure:  outManyInout1In0");
             System.err.println ("expected name = outManyInout1In0");
-            System.err.println ("actual name = " + name._value);
+            System.err.println ("actual name = " + name.value);
             throw new TestFailed ();
         }
     }
@@ -421,10 +421,10 @@ public class InoutSOAPBindingImpl implements Inout
 
     public int outManyInout1In1 (StringHolder name, Address address, StringHolder otherName) throws org.apache.axis.AxisFault, TestFailed
     {
-        if (equals (address, expectedAddress) && "outManyInout1In1".equals (name._value) && otherName._value == null)
+        if (equals (address, expectedAddress) && "outManyInout1In1".equals (name.value) && otherName.value == null)
         {
-            name._value = name._value + " yo ho ho!";
-            otherName._value = " yo ho ho!";
+            name.value = name.value + " yo ho ho!";
+            otherName.value = " yo ho ho!";
             return returnNumber;
         }
         else
@@ -433,9 +433,9 @@ public class InoutSOAPBindingImpl implements Inout
             System.err.println ("expected address =\n" + printAddress (expectedAddress));
             System.err.println ("actual address =\n" + printAddress (address));
             System.err.println ("expected name = out1InoutManyInMany");
-            System.err.println ("actual name = " + name._value);
+            System.err.println ("actual name = " + name.value);
             System.err.println ("expected otherName = null");
-            System.err.println ("actual otherName = " + otherName._value);
+            System.err.println ("actual otherName = " + otherName.value);
             throw new TestFailed ();
         }
     }
@@ -443,10 +443,10 @@ public class InoutSOAPBindingImpl implements Inout
 
     public int outManyInout1InMany (String name, Address address, PhoneHolder phone, StringHolder otherName) throws org.apache.axis.AxisFault, TestFailed
     {
-        if ("outManyInout1InMany".equals (name) && equals (address, expectedAddress) && equals (phone._value, expectedPhone) && otherName._value == null)
+        if ("outManyInout1InMany".equals (name) && equals (address, expectedAddress) && equals (phone.value, expectedPhone) && otherName.value == null)
         {
-            phone._value = returnPhone;
-            otherName._value = " yo ho ho!";
+            phone.value = returnPhone;
+            otherName.value = " yo ho ho!";
             return returnNumber;
         }
         else
@@ -457,7 +457,7 @@ public class InoutSOAPBindingImpl implements Inout
             System.err.println ("expected address =\n" + printAddress (expectedAddress));
             System.err.println ("actual address =\n" + printAddress (address));
             System.err.println ("expected phone = " + printPhone (expectedPhone));
-            System.err.println ("actual phone = " + printPhone (phone._value));
+            System.err.println ("actual phone = " + printPhone (phone.value));
             throw new TestFailed ();
         }
     }
@@ -465,20 +465,20 @@ public class InoutSOAPBindingImpl implements Inout
 
     public int outManyInoutManyIn0 (StringHolder name, AddressHolder address, StringHolder otherName) throws org.apache.axis.AxisFault, TestFailed
     {
-        if ("outManyInoutManyIn0".equals (name._value) && equals (address._value, expectedAddress) && otherName._value == null)
+        if ("outManyInoutManyIn0".equals (name.value) && equals (address.value, expectedAddress) && otherName.value == null)
         {
-            name._value = name._value + " yo ho ho!";
-            address._value = returnAddress;
-            otherName._value = " yo ho ho!";
+            name.value = name.value + " yo ho ho!";
+            address.value = returnAddress;
+            otherName.value = " yo ho ho!";
             return returnNumber;
         }
         else
         {
             System.err.println ("Test failure:  outManyInoutManyIn0");
             System.err.println ("expected name = outManyInoutManyIn0");
-            System.err.println ("actual name = " + name._value);
+            System.err.println ("actual name = " + name.value);
             System.err.println ("expected address =\n" + printAddress (expectedAddress));
-            System.err.println ("actual address =\n" + printAddress (address._value));
+            System.err.println ("actual address =\n" + printAddress (address.value));
             throw new TestFailed ();
         }
     }
@@ -486,11 +486,11 @@ public class InoutSOAPBindingImpl implements Inout
 
     public int outManyInoutManyIn1 (StringHolder name, AddressHolder address, Phone phone, StringHolder otherName) throws org.apache.axis.AxisFault, TestFailed
     {
-        if (equals (phone, expectedPhone) && "outManyInoutManyIn1".equals (name._value) && equals (address._value, expectedAddress) && otherName._value == null)
+        if (equals (phone, expectedPhone) && "outManyInoutManyIn1".equals (name.value) && equals (address.value, expectedAddress) && otherName.value == null)
         {
-            name._value = name._value + " yo ho ho!";
-            address._value = returnAddress;
-            otherName._value = " yo ho ho!";
+            name.value = name.value + " yo ho ho!";
+            address.value = returnAddress;
+            otherName.value = " yo ho ho!";
             return returnNumber;
         }
         else
@@ -499,9 +499,9 @@ public class InoutSOAPBindingImpl implements Inout
             System.err.println ("expected phone = " + printPhone (expectedPhone));
             System.err.println ("actual phone = " + printPhone (phone));
             System.err.println ("expected name = out1InoutManyInMany");
-            System.err.println ("actual name = " + name._value);
+            System.err.println ("actual name = " + name.value);
             System.err.println ("expected address =\n" + printAddress (expectedAddress));
-            System.err.println ("actual address =\n" + printAddress (address._value));
+            System.err.println ("actual address =\n" + printAddress (address.value));
             throw new TestFailed ();
         }
     }
@@ -509,11 +509,11 @@ public class InoutSOAPBindingImpl implements Inout
 
     public int outManyInoutManyInMany (StringHolder name, AddressHolder address, Phone phone, int otherNumber, StringHolder otherName) throws org.apache.axis.AxisFault, TestFailed
     {
-        if (equals (phone, expectedPhone) && expectedNumber == otherNumber && "outManyInoutManyInMany".equals (name._value) && equals (address._value, expectedAddress) && otherName._value == null)
+        if (equals (phone, expectedPhone) && expectedNumber == otherNumber && "outManyInoutManyInMany".equals (name.value) && equals (address.value, expectedAddress) && otherName.value == null)
         {
-            name._value = name._value + " yo ho ho!";
-            address._value = returnAddress;
-            otherName._value = " yo ho ho!";
+            name.value = name.value + " yo ho ho!";
+            address.value = returnAddress;
+            otherName.value = " yo ho ho!";
             return returnNumber;
         }
         else
@@ -524,9 +524,9 @@ public class InoutSOAPBindingImpl implements Inout
             System.err.println ("expected number = " + expectedNumber);
             System.err.println ("actual number = " + otherNumber);
             System.err.println ("expected name = outManyInoutManyInMany");
-            System.err.println ("actual name = " + name._value);
+            System.err.println ("actual name = " + name.value);
             System.err.println ("expected address =\n" + printAddress (expectedAddress));
-            System.err.println ("actual address =\n" + printAddress (address._value));
+            System.err.println ("actual address =\n" + printAddress (address.value));
             throw new TestFailed ();
         }
     }

@@ -64,7 +64,7 @@ import java.math.BigDecimal;
 public final class BigDecimalHolder implements java.io.Serializable {
 
     /** Field _value */
-    public BigDecimal _value;
+    public BigDecimal value;
 
     /**
      * Constructor BigDecimalHolder
@@ -77,7 +77,7 @@ public final class BigDecimalHolder implements java.io.Serializable {
      * @param value
      */
     public BigDecimalHolder(BigDecimal value) {
-        this._value = value;
+        this.value = value;
     }
 }
 

@@ -219,7 +219,7 @@ public class JavaSkelWriter extends JavaWriter {
                 Parameter p = (Parameter) parms.list.get(i);
                 while (p.mode != Parameter.INOUT)
                     p = (Parameter) parms.list.get(++i);
-                pw.println("        return " + wrapPrimitiveType(p.type, p.name + "Holder._value") + ";");
+                pw.println("        return " + wrapPrimitiveType(p.type, p.name + "Holder.value") + ";");
             }
             else {
                 // There are more than 1 output parts, so create a Vector to put them into.
@@ -230,7 +230,7 @@ public class JavaSkelWriter extends JavaWriter {
                     Parameter p = (Parameter) parms.list.get(i);
 
                     if (p.mode != Parameter.IN)
-                        pw.println("        list.add(new org.apache.axis.message.RPCParam(\"" + p.name + "\", " + wrapPrimitiveType(p.type, p.name + "Holder._value") +"));");
+                        pw.println("        list.add(new org.apache.axis.message.RPCParam(\"" + p.name + "\", " + wrapPrimitiveType(p.type, p.name + "Holder.value") +"));");
                 }
                 pw.println("        return list;");
             }

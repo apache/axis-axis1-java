@@ -136,7 +136,7 @@ public class JavaImplWriter extends JavaWriter {
 
             if (param.mode == Parameter.OUT) {
                 pw.print("        " + Utils.xmlNameToJava(param.name)
-                        + "._value = ");
+                        + ".value = ");
                 if ( isPrimitiveType(param.type) ) {
                     if ( "boolean".equals(paramType) ) {
                         pw.print("false");

@@ -424,7 +424,7 @@ public class JavaStubWriter extends JavaWriter {
             if (p.mode == Parameter.IN)
                 pw.print(wrapPrimitiveType(p.type, javifiedName));
             else if (p.mode == Parameter.INOUT)
-                pw.print(wrapPrimitiveType(p.type, javifiedName + "._value"));
+                pw.print(wrapPrimitiveType(p.type, javifiedName + ".value"));
         }
         pw.println("});");
         pw.println();
@@ -450,12 +450,12 @@ public class JavaStubWriter extends JavaWriter {
                     if (p.type.getName().endsWith("[]")) {
                         pw.println("             // REVISIT THIS!");
                         pw.println ("            " + javifiedName
-                                    + "._value = (" + p.type.getName()
+                                    + ".value = (" + p.type.getName()
                                     + ") org.apache.axis.utils.JavaUtils.convert(resp, "
                                     + p.type.getName() + ".class);");
                     }
                     else {
-                        pw.println ("            " + javifiedName + "._value = "
+                        pw.println ("            " + javifiedName + ".value = "
                                 + getResponseString(p.type, "resp"));
                     }
                 }
@@ -494,19 +494,19 @@ public class JavaStubWriter extends JavaWriter {
                             if (p.type.getName().endsWith("[]")) {
                                 pw.println("             // REVISIT THIS!");
                                 pw.println ("            " + javifiedName
-                                        + "._value = (" + p.type.getName()
+                                        + ".value = (" + p.type.getName()
                                         + ") org.apache.axis.utils.JavaUtils.convert(resp, "
                                         + p.type.getName() + ".class);");
                             }
                             else {
                                 pw.println ("            " + javifiedName +
-                                            "._value = " +
+                                            ".value = " +
                                             getResponseString(p.type,  "resp"));
                             }
                         }
                         else {
                             pw.println ("            " + javifiedName
-                                    + "._value = " + getResponseString(p.type,
+                                    + ".value = " + getResponseString(p.type,
                                     "((org.apache.axis.message.RPCParam) output.get("
                                     + outdex++ + ")).getValue()"));
                         }
