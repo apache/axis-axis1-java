@@ -63,16 +63,20 @@ package test.concurrency;
  * @author Glen Daniels (gdaniels@apache.org)
  */
 public class TestService {
+    private static Object lock = new Object();
+
     private static TestService singleton = null;
     public static final String MESSAGE = "Hi there, come here often?";
 
     public TestService() throws Exception {
-        if (singleton != null) {
-            // We're not the first/only one, so throw an Exception!
-            throw new Exception("Multiple instances of TestService created!");
-        }
+        synchronized (lock) {
+            if (singleton != null) {
+                // We're not the first/only one, so throw an Exception!
+                throw new Exception("Multiple instances of TestService created!");
+            }
 
-        singleton = this;
+            singleton = this;
+        }
     }
 
     public String hello() {

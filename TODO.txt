@@ -8,6 +8,10 @@ owner (if any) in "<>" brackets.  Example:
 
                  * <Glen> Write TO DO list
 
+
+! <team> Update the TO DO list to be current!
+
+
 1.0 MUST-DO
 -----------
 ! <> see bugzilla scrub below
