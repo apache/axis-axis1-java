@@ -163,15 +163,11 @@ public class JavaDefinitionWriter implements Writer {
                         Fault f = (Fault) fi.next();
                         String name = Utils.getFullExceptionName(
                                 f,
-                                symbolTable,
-                                portType.getQName().getNamespaceURI());
-                    // prevent duplicates
+                                symbolTable);
+                        // prevent duplicates
                         if (! faultList.contains(name) ) {
                             faultList.add(name);
-                            QName faultQName = new QName(
-                                    portType.getQName().getNamespaceURI(),
-                                    Utils.getExceptionName(f));
-                            faults.put(f, faultQName);  // add this fault to the list
+                            faults.put(f, f.getMessage().getQName());
                         }
                     }
                 }

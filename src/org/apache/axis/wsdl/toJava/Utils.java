@@ -565,35 +565,10 @@ public class Utils {
             return typeValue + "Holder";
     } // holder
 
-    /**
-     * Given a fault, return the Java class name of the exception to be
-     * generated from this fault
-     * 
-     * @param fault - The WSDL fault object
-     * @return A Java class name for the fault
-     */ 
-    public static String getExceptionName(Fault fault) {
-        /**
-         * Use the message name as the fault class name,
-         * fall back to fault name if there isn't a message part
-         * 
-         * NOTE: JAX-RPC version 0.5 says to use the message name, but
-         * hopefully this will change to use the fault name, which makes
-         * a good deal more sense (tomj@macromedia.com)
-         */ 
-        Message faultMessage = fault.getMessage();
-        String exceptionName;
-        if (faultMessage != null) {
-            String faultMessageName = faultMessage.getQName().getLocalPart();
-            exceptionName = xmlNameToJavaClass(faultMessageName);
-        } else {
-            exceptionName = xmlNameToJavaClass(fault.getName());
-        }
-        return exceptionName;
-    }
 
     /**
-     * Given a fault, return the fully qualified Java class name of the exception to be
+     * Given a fault, return the fully qualified Java class name 
+     * of the exception to be
      * generated from this fault
      * 
      * @param fault - The WSDL fault object
@@ -601,25 +576,14 @@ public class Utils {
      * @return A Java class name for the fault
      */ 
     public static String getFullExceptionName(
-            Fault fault, SymbolTable symbolTable, String namespace) {
-        /**
-         * Use the message name as the fault class name,
-         * fall back to fault name if there isn't a message part
-         * 
-         * NOTE: JAX-RPC version 0.5 says to use the message name, but
-         * hopefully this will change to use the fault name, which makes
-         * a good deal more sense (tomj@macromedia.com)
-         */ 
+            Fault fault, SymbolTable symbolTable) {
+
+        // Upgraded to JSR 101 version 0.8
+
+        // Get the Message referenced in the message attribute of the 
+        // fault.
         Message faultMessage = fault.getMessage();
-        String exceptionName;
-        if (faultMessage != null) {
-            String faultName = faultMessage.getQName().getLocalPart();
-            QName qname = new QName(namespace, faultName);
-            exceptionName = symbolTable.getJavaName(qname);
-        } else {
-            exceptionName = xmlNameToJavaClass(fault.getName());
-        }
-        return exceptionName;
+        return symbolTable.getJavaName(faultMessage.getQName());
     } // getFullExceptionName
 
 
