@@ -146,6 +146,39 @@ public class TestBeanDeser extends TestCase {
         deserialize(response,ret,true);
     }
 
+    /*
+    // Struct Return - variation
+    public void testReturn2() throws Exception {
+        test.encoding.RETURN ret = new test.encoding.RETURN();
+        ret.setTYPE("000");
+        ret.setID("001");
+        ret.setNUMBER("002");
+        ret.setMESSAGE("003");
+        ret.setLOGNO("004");
+        ret.setLOGMSGNO("005");
+        ret.setMESSAGEV1("006");
+        ret.setMESSAGEV2("007");
+        ret.setMESSAGEV3("008");
+        ret.setMESSAGEV4("009");
+        String response =
+                "<SrvResponse xmlns=\"urn:test.encoding\">\n"+
+                "  <RETURN>\n"+
+                "    <TYPE xsi:type=\"xsd:string\">000</TYPE>\n"+
+                "    <ID xsi:type=\"xsd:string\">001</ID>\n"+
+                "    <NUMBER xsi:type=\"xsd:string\">002</NUMBER>\n"+
+                "    <MESSAGE xsi:type=\"xsd:string\">003</MESSAGE>\n"+
+                "    <LOG_NO xsi:type=\"xsd:string\">004</LOG_NO>\n"+
+                "    <LOG_MSG_NO xsi:type=\"xsd:string\">005</LOG_MSG_NO>\n"+
+                "    <MESSAGE_V1 xsi:type=\"xsd:string\">006</MESSAGE_V1>\n"+
+                "    <MESSAGE_V2 xsi:type=\"xsd:string\">007</MESSAGE_V2>\n"+
+                "    <MESSAGE_V3 xsi:type=\"xsd:string\">008</MESSAGE_V3>\n"+
+                "    <MESSAGE_V4 xsi:type=\"xsd:string\">009</MESSAGE_V4>\n"+
+                "  </RETURN>\n"+
+                "</SrvResponse>";
+        deserialize(response,ret,true);
+    }
+    */
+
     public static void main(String [] args) throws Exception
     {
         TestBeanDeser tester = new TestBeanDeser("test");
