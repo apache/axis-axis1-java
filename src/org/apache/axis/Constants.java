@@ -118,6 +118,16 @@ public class Constants {
     // be nothing more than a nuisance.
     public static final String ENTERPRISE_LOG_CATEGORY = "org.apache.axis.enterprise";
 
+    /**
+     * time logged stuff
+     */
+    public static final String TIME_LOG_CATEGORY = "org.apache.axis.TIME";
+
+    /**
+     * servlet exceptions. Axis faults are logged at debug level here.
+     */
+    public static final String EXCEPTION_LOG_CATEGORY = "org.apache.axis.EXCEPTIONS";
+
     /** The name of the field which accepts xsd:any content in Beans */
     public static final String ANYCONTENT = "_any";
 
@@ -641,4 +651,11 @@ public class Constants {
     // When invoked from a servlet, per JAX-RPC, we need  a
     // ServletEndpointContext object.  This is where it lives.
     public static final String MC_SERVLET_ENDPOINT_CONTEXT = "servletEndpointContext";
+
+    /**
+     * what the extension of JWS files is. If changing this, note that
+     * AxisServlet has an xdoclet declaration in the class javadocs that
+     * also needs updating.
+     */
+    public static final String JWS_DEFAULT_FILE_EXTENSION = ".jws";
 }
