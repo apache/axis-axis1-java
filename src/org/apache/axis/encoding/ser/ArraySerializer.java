@@ -445,12 +445,13 @@ public class ArraySerializer implements Serializer
         }
         
         if (!encoded) {
+            Class cType = Object.class;
             if (javaType.isArray()) {
-                Class cType = javaType.getComponentType();
-                String typeName = types.writeType(cType);
-                
-                return types.createLiteralArrayElement(typeName, null);
+                cType = javaType.getComponentType();
             }
+
+            String typeName = types.writeType(cType);
+            return types.createLiteralArrayElement(typeName, null);
         }
         
         // If an array the component type should be processed first

@@ -1193,6 +1193,10 @@ public class Types {
             element.setAttribute("maxOccurs", "1");
         }
 
+        if (javaType.isArray()) {
+            element.setAttribute("maxOccurs", "unbounded");
+        }
+
         // Write the type for this element, handling anonymous or named
         // types appropriately.
         makeTypeElement(javaType, typeQName, element);
