@@ -195,7 +195,8 @@ only generates code for those elements in the WSDL file that are referenced.
 <p>For example, if a WSDL file only contained types, then all the listed types 
   would be generated.&nbsp; But if a WSDL file contained types and a portType, 
   then that portType will be generated and only those types that are referenced 
-  by that portType. 
+  by that portType.
+<p>Note that the anchor is searched for in the WSDL file appearing on the command line, <b>not</b> in imported WSDL files.  This allows one WSDL file to import constructs defined in another WSDL file without the nuisance of having all the imported WSDL file's constructs generated.
 <h4> -D, --Debug</h4>
 Print debug information, which currently is WSDL2Java's symbol table. 
 <h4> -T, --typeMappingVersion &lt;argument></h4>
