@@ -55,6 +55,12 @@ Copyright:
                testcase="no">
     </wsdl2java>
 
+    <copy todir="${build.dir}/work/samples/jaxrpc/address" overwrite="yes">
+        <fileset dir="${axis.home}/samples/jaxrpc/address">
+          <include name="**.java"/>
+        </fileset>
+    </copy>
+
     <!-- Compile the echo sample generated java files -->
     <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}" fork="${javac.fork}">
       <classpath refid="classpath" />
