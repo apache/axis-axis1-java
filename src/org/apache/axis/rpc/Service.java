@@ -5,6 +5,7 @@
 package org.apache.axis.rpc ;
 
 import org.apache.axis.rpc.namespace.QName;
+import org.apache.axis.rpc.encoding.TypeMappingRegistry;
 
 public interface Service 
       extends java.io.Serializable, javax.naming.Referenceable {
@@ -19,4 +20,8 @@ public interface Service
    public java.net.URL getWSDLDocumentLocation();
    public QName getServiceName();
    public java.util.Iterator getPorts();
+
+   public void setTypeMappingRegistry(TypeMappingRegistry registry)
+                       throws JAXRPCException ;
+   public TypeMappingRegistry getTypeMappingRegistry();
 }
