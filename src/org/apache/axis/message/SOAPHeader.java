@@ -86,6 +86,15 @@ public class SOAPHeader {
     setRoot( elem );
   }
 
+  public SOAPHeader(org.w3c.dom.Element elem) {
+    if ( elem != null ) {
+      org.jdom.input.DOMBuilder builder = null ;
+      builder = new org.jdom.input.DOMBuilder();
+      processed = false ;
+      setRoot( builder.build(elem) );
+    }
+  }
+
   public Element getRoot() {
     return( root );
   }
@@ -113,6 +122,13 @@ public class SOAPHeader {
     else 
       // Handle the case where they set MU before they set the root
       if ( mustUnderstand ) setMustUnderstand( true );
+  }
+
+  public void setRoot(org.w3c.dom.Element elem) {
+    if ( elem == null ) return ;
+    org.jdom.input.DOMBuilder builder = null ;
+    builder = new org.jdom.input.DOMBuilder();
+    setRoot( builder.build(elem) );
   }
 
   public String getName() { return( name ); }
