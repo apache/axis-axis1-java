@@ -74,6 +74,8 @@ public class Java2WsdlAntTask extends Task
     private String output = "." ;
     private String className = "." ;
     private String service = null ;
+    private String implClass = null;
+    private String factory   = null;
 
     // The method executing the task
     public void execute() throws BuildException {
@@ -84,6 +86,8 @@ public class Java2WsdlAntTask extends Task
             log("\tlocation:" + location, Project.MSG_VERBOSE);
             log("\toutput:" + output, Project.MSG_VERBOSE);
             log("\tclassName:" + className, Project.MSG_VERBOSE);
+            log("\timplClass:" + implClass, Project.MSG_VERBOSE);
+            log("\tfactory:"   + factory,   Project.MSG_VERBOSE);
             
             // Instantiate the emitter
             Emitter emitter = new Emitter();
@@ -93,7 +97,11 @@ public class Java2WsdlAntTask extends Task
             }
             if (service != null)
                 emitter.setServiceName(service);
-            emitter.setCls(className, "");
+            emitter.setCls(className);
+            if (implClass != null)
+                emitter.setImplCls(implClass);
+            if (factory != null)
+                emitter.setFactory(factory);
             emitter.setIntfNamespace(namespace);
             emitter.setLocationUrl(location);
             emitter.emit(output, Emitter.MODE_ALL);
@@ -115,6 +123,16 @@ public class Java2WsdlAntTask extends Task
     // The setter for the "className" attribute
     public void setClassName(String parameter) {
         this.className = parameter;
+    }
+
+    // The setter for the "implClass" attribute
+    public void setImplClass(String parameter) {
+        this.implClass = parameter;
+    }
+
+    // The setter for the "factory" attribute
+    public void setFactory(String parameter) {
+        this.factory = parameter;
     }
 
     // The setter for the "service" attribute

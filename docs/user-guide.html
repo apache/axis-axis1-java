@@ -828,10 +828,10 @@ service.
 from a Java interface.
 <br>&nbsp;
 <h4>
-Step 1: Provide a Java interface</h4>
-Write and compile a Java interface that describes the web service interface.&nbsp;
-Here is an example interface that describes a web services that can be
-used to set/query the price of widgets ( <a href="../samples/userguide/example6/WidgetPrice.java">../samples/userguide/example6/WidgetPrice.java</a>
+Step 1: Provide a Java interface or class</h4>
+Write and compile a Java interface (or class) that describes the web service
+interface.&nbsp; Here is an example interface that describes a web services
+that can be used to set/query the price of widgets ( <a href="../samples/userguide/example6/WidgetPrice.java">../samples/userguide/example6/WidgetPrice.java</a>
 ):
 <p><tt><font color="#006600">package samples.userguide.example6;</font></tt>
 <p><tt><font color="#006600">/**</font></tt>
@@ -845,7 +845,8 @@ widgetName, String price);</font></tt>
 <br><tt><font color="#006600">&nbsp;&nbsp;&nbsp; public String getWidgetPrice(String
 widgetName);</font></tt>
 <br><tt><font color="#006600">}</font></tt>
-<br>&nbsp;
+<p><b>Note: </b>If you compile your class with debug information, Java2WSDL
+will use the debug information to obtain the method parameter names.
 <h4>
 Step 2: Create WSDL using Java2WSDL</h4>
 Use the Java2WSDL tool to create a WSDL file from the interface above.
@@ -884,7 +885,8 @@ the next section.
 <h5>
 <a NAME="Java2WSDL Details"></a>Java2WSDL Details</h5>
 Here is the help message generated from the current tool:
-<p><tt><font color="#993366">Usage: java org.apache.axis.wsdlgen.Java2WSDL
+<p><tt><font color="#993366">Java2WSDL emitter</font></tt>
+<br><tt><font color="#993366">Usage: java org.apache.axis.wsdl.Java2WSDL
 [options] class-of-portType</font></tt>
 <br><tt><font color="#993366">Options:</font></tt>
 <br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -914,7 +916,7 @@ package=namespace, name value pairs</font></tt>
 <br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 -m, --methods &lt;argument></font></tt>
 <br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-space separated list of methods to export</font></tt>
+space or comma separated list of methods to export</font></tt>
 <br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 -a, --all</font></tt>
 <br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -934,20 +936,34 @@ target namespace for implementation wsdl</font></tt>
 <br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 -O, --outputImpl &lt;argument></font></tt>
 <br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-output Implementation Wsdl filename, setting this causes --o</font></tt>
+output Implementation Wsdl filename, setting this causes --outputWsdlMode
+to be ignored</font></tt>
+<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-f, --factory &lt;argument></font></tt>
 <br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-utputWsdlMode to be ignored</font></tt>
+name of the Java2WSDLFactory class for extending WSDL generation functions</font></tt>
+<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-i, --implClass &lt;argument></font></tt>
+<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+optional class that contains implementation of methods in</font></tt>
+<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+class-of-portType.&nbsp; The debug information in the class is used</font></tt>
+<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+to obtain the method parameter names, which are used to set</font></tt>
+<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+the WSDL part names.</font></tt>
 <br><tt><font color="#993366">Details:</font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-portType&nbsp;&nbsp;&nbsp; name= &lt;class-of-portType name></font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-binding&nbsp;&nbsp;&nbsp;&nbsp; name= &lt;--service value>SoapBinding</font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-service&nbsp;&nbsp;&nbsp;&nbsp; name= &lt;--service value>Service</font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-port&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; name= &lt;--service value></font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-address location= &lt;--location value></font></tt>
+<br><tt><font color="#993366">&nbsp;&nbsp; portType&nbsp;&nbsp;&nbsp; name=
+&lt;class-of-portType name></font></tt>
+<br><tt><font color="#993366">&nbsp;&nbsp; binding&nbsp;&nbsp;&nbsp;&nbsp;
+name= &lt;--service value>SoapBinding</font></tt>
+<br><tt><font color="#993366">&nbsp;&nbsp; service&nbsp;&nbsp;&nbsp;&nbsp;
+name= &lt;--service value>Service</font></tt>
+<br><tt><font color="#993366">&nbsp;&nbsp; port&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+name= &lt;--service value></font></tt>
+<br><tt><font color="#993366">&nbsp;&nbsp; address location= &lt;--location
+value></font></tt>
+<br><tt><font color="#993366"></font></tt>&nbsp;
 <p><b>-h , --help</b>
 <br>Prints the help message.
 <p><b>-o, --output &lt;wsdl file></b>
@@ -1003,7 +1019,17 @@ an implementation wsdl.
 <br>Use this option to indicate the name of the output implementation wsdl
 file.&nbsp; If specified, Java2WSDL will produce interface and implementation
 wsdl files.&nbsp; If this option is used, the -w option is ignored.
-<br>&nbsp;
+<p><b>-f, --factory &lt;class></b>
+<br>Use this expert option to extend and customize the WSDL2Java tool.
+<p><b>-i, --implClass &lt;impl-class></b>
+<br>The Java2WSLD tool uses method parameter names to construct the WSDL
+message part names.&nbsp; The message names are obtained from the debug
+information of the <b>&lt;class-of-portType> </b>class file.&nbsp; If that
+class file was compiled without debug information or if <b>&lt;class-of-portType></b>
+is an interface, the method parameter names are not available.&nbsp; In
+these cases, you can use the --implClass option to provide an alternative
+class from which to obtain method parameter names.&nbsp; The <b>&lt;impl-class></b>
+could be the actual implementation class, a stub class or a skeleton class.
 <h4>
 Step 3: Create Bindings using WSDL2Java</h4>
 Use the generated wsdl file to build the appropriate client/server bindings

@@ -62,7 +62,7 @@ import javax.wsdl.QName;
 import org.w3c.dom.Node;
 
 /**
- * This Undefined interface is implemented by UndefinedType and UndefinedElement.
+ * This UndefinedDelegate class implements the common functions of UndefinedType and UndefinedElement.
  */
 public class UndefinedDelegate implements Undefined {
 
