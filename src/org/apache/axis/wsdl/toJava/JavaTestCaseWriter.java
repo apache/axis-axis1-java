@@ -59,6 +59,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Vector;
 
 import javax.wsdl.Binding;
 import javax.wsdl.Fault;
@@ -238,7 +239,21 @@ public class JavaTestCaseWriter extends JavaWriter {
                     } else if (paramType.equals("byte[]")) {
                         pw.print("new byte[0]");
                     } else {
-                        pw.print("new " + paramType + "()");
+
+                        // We have some constructed type.
+                        Vector v = SchemaUtils.getEnumerationBaseAndValues(
+                                param.type.getNode(), symbolTable);
+
+                        if (v != null) {
+
+                            // This constructed type is an enumeration.  Use the first one.
+                            String enumeration = (String) v.get(1);
+                            pw.print(paramType + "." + enumeration);
+                        } else {
+
+                            // This constructed type is a normal type, instantiate it.
+                            pw.print("new " + paramType + "()");
+                        }
                     }
                 }
                 pw.print(suffix);
