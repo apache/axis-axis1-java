@@ -60,6 +60,7 @@ import com.ibm.wsdl.extensions.soap.SOAPBindingImpl;
 import com.ibm.wsdl.extensions.soap.SOAPBodyImpl;
 import com.ibm.wsdl.extensions.soap.SOAPFaultImpl;
 import com.ibm.wsdl.extensions.soap.SOAPOperationImpl;
+import com.ibm.wsdl.BindingFaultImpl;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
@@ -874,8 +875,7 @@ public class Emitter {
             // Add the fault to the binding
             BindingFault bFault = def.createBindingFault();
             bFault.setName(faultDesc.getName());
-            SOAPFault soapFault = writeSOAPFault(desc.getElementQName(),
-                    faultDesc.getName());
+            SOAPFault soapFault = writeSOAPFault(faultDesc);
             bFault.addExtensibilityElement(soapFault);
             bindingOper.addBindingFault(bFault);
             
@@ -968,10 +968,26 @@ public class Emitter {
         output = writeSOAPBody(desc.getReturnQName());
 
         bindingOutput.addExtensibilityElement(output);
-
+        
+        // Ad input and output to operation
         bindingOper.setBindingInput(bindingInput);
         bindingOper.setBindingOutput(bindingOutput);
 
+        // Faults clause
+        ArrayList faultList = desc.getFaults();
+        if (faultList != null) {
+            for (Iterator it = faultList.iterator(); it.hasNext();) {
+                FaultDesc faultDesc = (FaultDesc) it.next();
+                // Get a soap:fault
+                ExtensibilityElement soapFault = writeSOAPFault(faultDesc);
+                // Get a wsdl:fault to put the soap:fault in
+                BindingFault bindingFault = new BindingFaultImpl();
+                bindingFault.setName(faultDesc.getName());
+                bindingFault.addExtensibilityElement(soapFault);
+                bindingOper.addBindingFault(bindingFault);
+            }
+        }
+        
         binding.addBindingOperation(bindingOper);
 
         return bindingOper;
@@ -997,26 +1013,33 @@ public class Emitter {
         return soapBody;
     } // writeSOAPBody
 
-    private SOAPFault writeSOAPFault(QName operQName, String faultName) {
-        SOAPFault soapFault = new SOAPFaultImpl();
-        if (use == Use.ENCODED) {
+    private SOAPFault writeSOAPFault(FaultDesc faultDesc) {
+        SOAPFault soapFault = new com.ibm.wsdl.extensions.soap.SOAPFaultImpl();
+        if (use != Use.ENCODED) {
+            soapFault.setUse("literal");
+            // no namespace for literal, gets it from the element
+        } else {
             soapFault.setUse("encoded");
             soapFault.setEncodingStyles(encodingList);
-        } else {
-            soapFault.setUse("literal");
+            
+            // Set the namespace from the fault QName if it exists
+            // otherwise use the target (or interface) namespace
+            QName faultQName = faultDesc.getQName();
+            if (faultQName != null &&
+                    !faultQName.getNamespaceURI().equals("")) {
+                soapFault.setNamespaceURI(faultQName.getNamespaceURI());
+            } else {
+                if (targetService == null) {
+                    soapFault.setNamespaceURI(intfNS);
+                } else {
+                    soapFault.setNamespaceURI(targetService);
+                }
+            }
         }
-        if (targetService == null)
-            soapFault.setNamespaceURI(intfNS);
-        else
-            soapFault.setNamespaceURI(targetService);
-        if (operQName != null &&
-            !operQName.getNamespaceURI().equals("")) {
-            soapFault.setNamespaceURI(operQName.getNamespaceURI());
-        }
-        soapFault.setName(faultName);
         return soapFault;
     } // writeSOAPFault
-
+    
+    
     /** Create a Request Message
      *
      * @param def
@@ -1093,20 +1116,15 @@ public class Emitter {
         throws WSDLException, AxisFault
     {
 
-        String pkgAndClsName = exception.getName();
+        String pkgAndClsName = exception.getClassName();
         String clsName = pkgAndClsName.substring(pkgAndClsName.lastIndexOf('.') + 1,
                                                  pkgAndClsName.length());
 
-        // There are inconsistencies in the JSR 101 version 0.7 specification
-        // with regards to whether the java exception class name is mapped to
-        // the wsdl:fault name= attribute or is mapped to the wsdl:message of
-        // the wsdl:fault message= attribute.  Currently WSDL2Java uses the
-        // latter mapping to generate the java exception class.
-        //
+        // Do this to cover the complex type case with no meta data
+        exception.setName(clsName);
+        
         // The following code uses the class name for both the name= attribute
         // and the message= attribute.
-
-        exception.setName(clsName);
 
         Message msg = (Message) exceptionMsg.get(pkgAndClsName);
 
@@ -1118,11 +1136,12 @@ public class Emitter {
             msg.setUndefined(false);
 
             ArrayList parameters = exception.getParameters();
-            for (int i=0; i<parameters.size(); i++) {
-                ParameterDesc parameter = (ParameterDesc) parameters.get(i);
-                writePartToMessage(def, msg, true, parameter);
+            if (parameters != null) {
+                for (int i=0; i<parameters.size(); i++) {
+                    ParameterDesc parameter = (ParameterDesc) parameters.get(i);
+                    writePartToMessage(def, msg, true, parameter);
+                }
             }
-
             exceptionMsg.put(pkgAndClsName, msg);
         }
 
