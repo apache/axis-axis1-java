@@ -12,6 +12,8 @@ import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.server.AxisServer;
 
+import org.xml.sax.SAXException;
+
 import java.util.Vector;
 
 /**
@@ -57,7 +59,7 @@ public class TestRPC extends TestCase {
      * @return Deserialized result
      */
     private final Object rpc(String method, Object[] parms)
-        throws AxisFault
+        throws AxisFault, SAXException
     {
 
         // Create the message context
