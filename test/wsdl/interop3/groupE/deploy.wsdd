@@ -18,7 +18,7 @@
       <parameter name="scope" value="Session"/>
 
       <typeMapping
-        xmlns:ns="http://soapinterop.org/WSDLInteropTestDocLit"
+        xmlns:ns="http://soapinterop.org/xsd"
         qname="ns:ArrayOf_SOAP-ENC_string"
         type="java:java.lang.String[]"
         serializer="org.apache.axis.encoding.ser.ArraySerializerFactory"
@@ -26,7 +26,7 @@
         encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
       />
       <typeMapping
-        xmlns:ns="http://soapinterop.org/WSDLInteropTestDocLit"
+        xmlns:ns="http://soapinterop.org/xsd"
         qname="ns:SOAPStruct"
         type="java:test.wsdl.interop3.groupE.SOAPStruct"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
@@ -43,7 +43,7 @@
       <parameter name="scope" value="Session"/>
 
       <typeMapping
-        xmlns:ns="http://soapinterop.org/WSDLInteropTestRpcEnc"
+        xmlns:ns="http://soapinterop.org/xsd"
         qname="ns:ArrayOf_SOAP-ENC_string"
         type="java:java.lang.String[]"
         serializer="org.apache.axis.encoding.ser.ArraySerializerFactory"
@@ -51,7 +51,7 @@
         encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
       />
       <typeMapping
-        xmlns:ns="http://soapinterop.org/WSDLInteropTestRpcEnc"
+        xmlns:ns="http://soapinterop.org/xsd"
         qname="ns:SOAPStruct"
         type="java:test.wsdl.interop3.groupE.SOAPStruct"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
