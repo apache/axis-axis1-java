@@ -367,6 +367,10 @@ public class Emitter {
         // The type of the first output part, used as the method's return value
         public String returnType = null;
 
+        // The name of the return type (from the part name of the output message.
+        // Used to create the RPCParam for the return value.
+        public String returnName = null;
+
         // A comma-separated list of all of the faults
         public String faultString = null;
 
@@ -386,6 +390,7 @@ public class Emitter {
 
         public String toString() {
             return "\nreturnType = " + returnType
+                    + "\nreturnTypeName = " + returnName
                     + "\nfaultString = " + faultString
                     + "\nsignature = " + signature
                     + "\nskelSignature = " + skelSignature
@@ -447,6 +452,7 @@ public class Emitter {
             }
             if (outputs.size() > 0) {
                 parameters.returnType = (String) outputs.get(0);
+                parameters.returnName = (String)outputs.get (1);
                 ++parameters.outputs;
                 for (int i = 3; i < outputs.size(); i += 2) {
                     Parameter p = new Parameter();
@@ -490,6 +496,7 @@ public class Emitter {
                 else if (name.equals(outName)) {
                     if (firstOutput) {
                         parameters.returnType = (String) outputs.get(outdex - 1);
+                        parameters.returnName = (String)outputs.get(outdex);
                         firstOutput = false;
                     }
                     else {
@@ -942,43 +949,22 @@ public class Emitter {
                 // either in a holder or as the return value.
                 pw.println("            java.util.Vector output = call.getOutputParams ();");
                 int outdex = 0;
-                final int RESP = -1;
-                final int NO_OUTPUT = -2;
-                int ret = "void".equals(parms.returnType) ? NO_OUTPUT : RESP; // assume the resp is the return type.  It may not be.
-                boolean firstInoutOut = true;
-                boolean firstOut = true;
-
-                for (int i = 0; i < parms.list.size(); ++i) {
-                    Parameter p = (Parameter) parms.list.get(i);
+                boolean firstInoutIsResp = (parms.outputs == 0);
+                for (int i = 0; i < parms.list.size (); ++i) {
+                    Parameter p = (Parameter) parms.list.get (i);
                     if (p.mode != Parameter.IN) {
-                        if (firstInoutOut) {
-                            firstInoutOut = false;
-                            if (p.mode == Parameter.INOUT) {
-                                pw.println("            " + p.name + "._value = " + getResponseString(p.type, "resp"));
-                            }
-                            else {
-                                firstOut = false;
-                                ret = RESP;
-                            }
-                        }
-                        else if (p.mode == Parameter.INOUT) {
-                            pw.println("            " + p.name + "._value = " + getResponseString(p.type, "output.get (" + outdex++ + ")"));
-                        }
-                        else if (firstOut) {
-                            firstOut = false;
-                            ret = outdex++;
+                        if (firstInoutIsResp) {
+                            firstInoutIsResp = false;
+                        pw.println ("            " + p.name + "._value = " + getResponseString(p.type,  "resp"));
                         }
                         else {
-                            pw.println("            " + p.name + "._value = " + getResponseString(p.type, "output.get (" + outdex++ + ")"));
+                            pw.println ("            " + p.name + "._value = " + getResponseString(p.type, "((org.apache.axis.message.RPCParam) output.get(" + outdex++ + ")).getValue ()"));
                         }
                     }
+                    
                 }
-                if (ret == RESP) {
-                    pw.println("            return " + getResponseString(parms.returnType, "resp"));
-                }
-                else if (ret != NO_OUTPUT) {
-                    pw.println("            return " + getResponseString(parms.returnType, "output.get (" + ret + ")"));
-                }
+                if (parms.outputs > 0)
+                    pw.println ("            return " + getResponseString(parms.returnType, "resp"));
             }
             pw.println("        }");
         }
@@ -1046,16 +1032,16 @@ public class Emitter {
             }
             else {
                 // There are more than 1 output parts, so create a Vector to put them into.
-                pw.println("        java.util.Vector v = new java.util.Vector ();");
+                pw.println("        org.apache.axis.server.ParamList list = new org.apache.axis.server.ParamList ();");
                 if (parms.outputs > 0)
-                    pw.println("        v.add (ret);");
+                    pw.println("        list.add (new org.apache.axis.message.RPCParam (\"" + parms.returnName + "\", ret));");
                 for (int i = 0; i < parms.list.size(); ++i) {
                     Parameter p = (Parameter) parms.list.get(i);
 
                     if (p.mode != Parameter.IN)
-                        pw.println("        v.add (" + p.name + "Holder._value);");
+                        pw.println("        list.add (new org.apache.axis.message.RPCParam (\"" + p.name + "\", " + p.name + "Holder._value));");
                 }
-                pw.println("        return v;");
+                pw.println("        return list;");
             }
         }
         pw.println("    }");
