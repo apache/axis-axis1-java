@@ -618,13 +618,16 @@ public class JavaStubWriter extends JavaClassWriter {
         if (allOuts > 0) {
             pw.println("        else {");
             if (allOuts == 1) {
-                if (parms.inouts == 1) {
-                    // There is only one output and it is an inout, so the resp object
-                    // must go into the inout holder.
+                if (parms.returnType != null) {
+                    writeOutputAssign(pw, "return ",
+                                      parms.returnType, "resp");
+                }
+                else {
+                    // The resp object must go into a holder
                     int i = 0;
                     Parameter p = (Parameter) parms.list.get(i);
 
-                    while (p.getMode() != Parameter.INOUT) {
+                    while (p.getMode() == Parameter.IN) {
                         p = (Parameter) parms.list.get(++i);
                     }
                     String javifiedName = Utils.xmlNameToJava(p.getName());
@@ -635,12 +638,6 @@ public class JavaStubWriter extends JavaClassWriter {
                     writeOutputAssign(pw, javifiedName + ".value =",
                                       p.getType(),
                                       "output.get(" + qnameName + ")");
-                }
-                else {
-                    // (parms.outputs == 1)
-                    // There is only one output and it is the return value.
-                    writeOutputAssign(pw, "return ",
-                                      parms.returnType, "resp");
                 }
             }
             else {
@@ -657,7 +654,7 @@ public class JavaStubWriter extends JavaClassWriter {
                                           "output.get(" + qnameName + ")");
                     }
                 }
-                if (parms.outputs > 0) {
+                if (parms.returnType != null) {
                     writeOutputAssign(pw, "return ",
                                       parms.returnType,
                                       "resp");
