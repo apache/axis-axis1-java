@@ -153,6 +153,28 @@ public class Types {
     /** Keep track of the element QNames we've written to avoid dups */
     private Set writtenElementQNames = new HashSet();
 
+
+    private static boolean isArray(Class clazz)
+    {
+        return clazz.isArray() || java.util.Collection.class.isAssignableFrom(clazz);
+    }
+
+    private static Class getComponentType(Class clazz)
+    {
+        if (clazz.isArray())
+        {
+            return clazz.getComponentType();
+        }
+        else if (java.util.Collection.class.isAssignableFrom(clazz))
+        {
+            return Object.class;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
     /**
      * This class serailizes a <code>Class</code> to XML Schema. The constructor
      * provides the context for the streamed node within the WSDL document
@@ -682,9 +704,9 @@ public class Types {
         // If the javaType is an array and the qName is
         // SOAP_ARRAY, construct the QName using the
         // QName of the component type
-        if (javaType.isArray() && (qName != null)
+        if (isArray(javaType) && (qName != null)
                 && Constants.equals(Constants.SOAP_ARRAY, qName)) {
-            Class componentType = javaType.getComponentType();
+            Class componentType = getComponentType(javaType);
 
             // If component namespace uri == targetNamespace
             // Construct ArrayOf<componentLocalPart>
