@@ -96,12 +96,20 @@ Copyright:
      <fileset dir="${tools.dir}/${componentName}/foreach" excludes="**/*.java"/>
   </copy>
 
+  <tstamp/>
   <jar jarfile="${build.lib}/axis-ant.jar" >
     <fileset dir="${tools.build.dir}">
       <include name="${componentName}/**"/>
     </fileset>
     <fileset dir="${tools.dir}"
       includes="*-tasks.properties"/>
+    <manifest>
+      <section name="org/apache/axis/tools">
+        <attribute name="Implementation-Title" value="Apache Axis"/>
+        <attribute name="Implementation-Version" value="${axis.version} ${TSTAMP} ${TODAY}"/> 
+        <attribute name="Implementation-Vendor" value="Apache Web Services"/>
+      </section>
+    </manifest>
   </jar>
 </target>
 
