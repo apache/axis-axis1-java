@@ -112,18 +112,26 @@ public class Namespaces extends HashMap {
      * this namespace, create one.
      */
     public String getCreate(String key) {
+        return getCreate(key, true);
+    } // getCreate
+    
+    /**
+     * Get the package name for the given namespace.  If there is no entry in the HashMap for
+     * this namespace, create one if create flag is on, return <tt>null</tt> otherwise.
+     */
+    String getCreate(String key, boolean create) {
         if (defaultPackage != null) {
             return defaultPackage;
         }
         String value = (String)super.get(key);
-        if (value == null) {
+        if (value == null && create) {
             value = normalizePackageName(
                         (String)Utils.makePackageName(key),
                         javaPkgSeparator);
             put(key, value);
         }
         return (String) value;
-    } // getCreate
+    } // getCreate    
 
     /**
      * Get the package name in directory format (dots replaced by slashes).  If the package name
@@ -208,5 +216,4 @@ public class Namespaces extends HashMap {
     public void setDefaultPackage(String defaultPackage) {
         this.defaultPackage = defaultPackage;
     }
-
 } // class Namespaces
