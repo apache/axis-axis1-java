@@ -53,18 +53,18 @@
  * <http://www.apache.org/>.
  */
 
-package test.encoding;
+package test.types;
 
 import junit.framework.TestCase;
-import org.apache.axis.types.Name;
+import org.apache.axis.types.Token;
 
 /**
- * Test validation of types.Name
+ * Test validation of encoding.Token
  */
-public class TestName extends TestCase {
+public class TestToken extends TestCase {
 
 
-    public TestName(String name) {
+    public TestToken(String name) {
         super(name);
     }
 
@@ -72,14 +72,14 @@ public class TestName extends TestCase {
      * Run a failure test.  value should be invalid.
      */
     private void runFailTest(String value) throws Exception {
-        Name oToken = null;
+        Token oToken = null;
         try {
-            oToken = new Name(value);
+            oToken = new Token(value);
         }
         catch (Exception e) { // catch the validation exception
         }
         assertNull(
-                "Name validation restriction failed. did not restrict bad value [" +
+                "Token validation restriction failed. did not restrict bad value [" +
                    value + "] did not restrict bad value", oToken);
     }
 
@@ -87,51 +87,28 @@ public class TestName extends TestCase {
      * Run a successful test.  value should be valid.
      */
     private void runPassTest(String value) throws Exception {
-        Name oToken = null;
+        Token oToken = null;
         try {
-            oToken = new Name(value);
+            oToken = new Token(value);
         }
         catch (Exception e) { // catch the validation exception
         }
-        assertEquals("Name strings not equal. orig value:" + value, oToken.toString(), value);
+        assertEquals("Token strings not equal. orig value:" + value, oToken.toString(), value);
     }
 
     /**
      * Test a simple string.
      */
     public void testSimpleString() throws Exception {
-        runPassTest("Atlanta");
+        runPassTest("a simple string");
     }
 
     /**
-     * Test a simple string with allowed punctuation.
+     * this is to differentiate from normalized string which cannot accept a CR
      */
-    public void testPunctuationString() throws Exception {
-        runPassTest("Atlanta:_Braves.Home-Team10");
+    public void testCarriageString() throws Exception {
+        runPassTest("a carriage return\r string\r");
     }
-
-    /**
-     * Test a start character ':'
-     */
-    public void testStartColon() throws Exception {
-        runPassTest(":_Braves.Home-Team:1");
-    }
-
-    /**
-     * Test a start character '_'
-     */
-    public void testStartUnderscore() throws Exception {
-        runPassTest("_Braves.Home-Team:1");
-    }
-
-
-    /**
-     * Test a start Digit
-     */
-    public void testStartDigit() throws Exception {
-        runFailTest("1_Braves");
-    }
-
 
     /**
      * this is to differentiate from normalized string which cannot accept a \n

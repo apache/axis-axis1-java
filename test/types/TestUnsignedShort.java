@@ -53,50 +53,48 @@
  * <http://www.apache.org/>.
  */
 
-package test.encoding;
+package test.types;
 
 import junit.framework.TestCase;
 
-import org.apache.axis.types.UnsignedLong;
+import org.apache.axis.types.UnsignedShort;
 
 /**
- * Test validation of types.UnsignedLong
+ * Test validation of types.UnsignedShort
  */
-public class TestUnsignedLong extends TestCase {
+public class TestUnsignedShort extends TestCase {
 
-    public TestUnsignedLong(String name) {
+    public TestUnsignedShort(String name) {
         super(name);
     }
 
     /**
      * Run a failure test.  value should be invalid.
      */
-    private void runFailTest(double value) throws Exception {
-        UnsignedLong oUnsignedLong = null;
+    private void runFailTest(long value) throws Exception {
+        UnsignedShort oUnsignedShort = null;
         try {
-            oUnsignedLong = new UnsignedLong(value);
+            oUnsignedShort = new UnsignedShort(value);
         }
         catch (Exception e) { // catch the validation exception
         }
         // object is not iNstantiated on bad data value
         assertNull("validation restriction failed [" +
-                String.valueOf(value) + "]. did not restrict bad value.", oUnsignedLong);
+                String.valueOf(value) + "]. did not restrict bad value.", oUnsignedShort);
     }
 
     /**
      * Run a successful test.  value should be valid.
      */
-    private void runPassTest(double value) throws Exception {
-        UnsignedLong oUnsignedLong = null;
+    private void runPassTest(long value) throws Exception {
+        UnsignedShort oUnsignedShort = null;
         try {
-            oUnsignedLong = new UnsignedLong(value);
+            oUnsignedShort = new UnsignedShort(value);
         }
         catch (Exception e) { // catch the validation exception
         }
-        String stRetval = String.valueOf(value);  // contains .0
-        stRetval = stRetval.substring(0,stRetval.lastIndexOf('.'));
-        assertEquals("unsigned long not equal" +
-                String.valueOf(value), oUnsignedLong.toString(),stRetval);
+        assertEquals("unsigned short not equal" +
+                String.valueOf(value), oUnsignedShort.toString(), String.valueOf(value));
     }
 
     /**
@@ -115,20 +113,18 @@ public class TestUnsignedLong extends TestCase {
 
 
     /**
-    * Test that a number over MaxInclusive fails
+    * Test that a number at MaxInclusive succeeds
     */
     public void testMaxInclusive() throws Exception {
-      runPassTest(18446744073709551615D);
+      runPassTest(65535);
     }
 
     /**
-    * Test that a number at MaxInclusive succeeds
+    * Test that a number over MaxInclusive fails
     */
-//    public void testMaxOver() throws Exception {
-      // actual MaxOver should be 18446744073709551615D
-      // but we are running into a precision issue
-//      runFailTest(18446744073709551616D);
-//    }
+    public void testMaxOver() throws Exception {
+      runFailTest(65536);
+    }
 
     /**
     * Test that a number at MinInclusive succeeds
@@ -136,6 +132,4 @@ public class TestUnsignedLong extends TestCase {
     public void testMinExclusive() throws Exception {
        runPassTest(0L);
     }
-
-
 }

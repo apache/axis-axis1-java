@@ -53,83 +53,133 @@
  * <http://www.apache.org/>.
  */
 
-package test.encoding;
+package test.types;
 
 import junit.framework.TestCase;
-
-import org.apache.axis.types.UnsignedByte;
+import org.apache.axis.types.NCName;
 
 /**
- * Test validation of types.UnsignedByte
+ * Test validation of types.NCName
  */
-public class TestUnsignedByte extends TestCase {
+public class TestNCName extends TestCase {
 
-    public TestUnsignedByte(String name) {
+
+    public TestNCName(String name) {
         super(name);
     }
 
     /**
      * Run a failure test.  value should be invalid.
      */
-    private void runFailTest(long value) throws Exception {
-        UnsignedByte oUnsignedByte = null;
+    private void runFailTest(String value) throws Exception {
+        NCName oToken = null;
         try {
-            oUnsignedByte = new UnsignedByte(value);
+            oToken = new NCName(value);
         }
         catch (Exception e) { // catch the validation exception
         }
-        // object is not iNstantiated on bad data value
-        assertNull("validation restriction failed [" +
-                String.valueOf(value) + "]. did not restrict bad value.", oUnsignedByte);
+        assertNull(
+                "NCName validation restriction failed. did not restrict bad value [" +
+                   value + "] did not restrict bad value", oToken);
     }
 
     /**
      * Run a successful test.  value should be valid.
      */
-    private void runPassTest(long value) throws Exception {
-        UnsignedByte oUnsignedByte = null;
+    private void runPassTest(String value) throws Exception {
+        NCName oToken = null;
         try {
-            oUnsignedByte = new UnsignedByte(value);
+            oToken = new NCName(value);
         }
         catch (Exception e) { // catch the validation exception
         }
-        assertEquals("unsigned byte not equal" +
-                String.valueOf(value), oUnsignedByte.toString(), String.valueOf(value));
+        assertEquals("NCName strings not equal. orig value:" + value, oToken.toString(), value);
     }
 
     /**
-     * Test that a positive value succeeeds
+     * Test a simple string.
      */
-    public void testPositiveValue() throws Exception {
-        runPassTest(100);
+    public void testSimpleString() throws Exception {
+        runPassTest("Atlanta");
     }
 
     /**
-     * Test that a negative number fails
+     * Test a simple string with allowed punctuation.
      */
-    public void testNegativeValue() throws Exception {
-        runFailTest(-100);
+    public void testPunctuationString() throws Exception {
+        runPassTest("Atlanta_Braves.Home-Team10");
     }
 
 
     /**
-    * Test that a number at MaxInclusive succeeds
-    */
-    public void testMaxInclusive() throws Exception {
-      runPassTest(255);
+     * Test a start character '_'
+     */
+    public void testStartUnderscore() throws Exception {
+        runPassTest("_Braves");
     }
 
     /**
-    * Test that a number over MaxInclusive fails
-    */
-    public void testMaxOver() throws Exception {
-      runFailTest(256);
+     * Test a simple string with allowed punctuation.
+     */
+    public void testMidColon() throws Exception {
+        runFailTest("Atlanta:_Braves.Home-Team10");
     }
 
     /**
-    * Test that a number at MinInclusive succeeds
-    */
-    public void testMinExclusive() throws Exception {
-       runPassTest(0L);
+     * Test a start Digit
+     */
+    public void testStartDigit() throws Exception {
+        runFailTest("1_Braves");
+    }
+
+
+    /**
+     * Test a start character ':'
+     */
+    public void testStartColon() throws Exception {
+        runFailTest(":_Braves.Home-Team:1");
+    }
+
+    /**
+     * this is to differentiate from normalized string which cannot accept a \n
+     */
+    public void testLineFeed() throws Exception {
+        runFailTest("line one\n line two");
+    }
+
+    /**
+     * this is to differentiate from normalized string which cannot accept a \t
+     */
+    public void testStringWithTabs() throws Exception {
+        runFailTest("this has \t a tab");
+    }
+
+    /**
+     * this is to differentiate from normalized string which cannot accept leading spaces.
+     */
+    public void testStringWithLeadingSpaces() throws Exception {
+        runFailTest("  a failure case");
+    }
+
+    /**
+     * this is to differentiate from normalized string which cannot accept trailing spaces.
+     */
+    public void testStringWithTrailingSpaces() throws Exception {
+        runFailTest("this is a  ");
+    }
+
+    /**
+     * this is to differentiate from normalized string which cannot accept
+     * leading and trailing spaces.
+     */
+    public void testStringWithLeadingAndTrailingSpaces() throws Exception {
+        runFailTest("          centered          ");
+    }
+
+    /**
+     * this is to differentiate from normalized string which cannot accept double spaces.
+     */
+    public void testDoubleSpace() throws Exception {
+        runFailTest("a   B"); // note: \r fails
     }
 }

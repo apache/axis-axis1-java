@@ -53,143 +53,143 @@
  * <http://www.apache.org/>.
  */
 
-package test.encoding;
+package test.types;
 
 import junit.framework.TestCase;
 
-import org.apache.axis.types.Day;
-
-import java.text.NumberFormat;
+import org.apache.axis.types.YearMonth;
 
 /**
- * Test validation of types.Day
+ * Test validation of types.YearMonth
  */
-public class TestDay extends TestCase {
+public class TestYearMonth extends TestCase {
 
-    public TestDay(String name) {
+    public TestYearMonth(String name) {
         super(name);
     }
 
     /**
      * Run a failure test.  values should be invalid.
      */
-    private void runFailTest(int day, String tz) throws Exception {
-        Day oDay = null;
+    private void runFailTest(int year, int month, String tz) throws Exception {
+        YearMonth oYearMonth = null;
         try {
-            oDay = new Day(day, tz);
+            oYearMonth = new YearMonth(year, month, tz);
         }
         catch (Exception e) { // catch the validation exception
         }
         // object is not instantiated on bad data value
-        assertNull("validation restriction failed [ day=" + String.valueOf(day) + 
-                   ",tz=" + tz + "]. did not restrict bad value.", oDay);
+        assertNull("validation restriction failed [ year=" +
+                String.valueOf(year) + ",month=" + String.valueOf(month) + 
+                   ",tz=" + tz + "]. did not restrict bad value.", oYearMonth);
     }
 
     private void runFailTest(String source) throws Exception {
-        Day oDay = null;
+        YearMonth oYearMonth = null;
         try {
-            oDay = new Day(source);
+            oYearMonth = new YearMonth(source);
         }
         catch (Exception e) { // catch the validation exception
         }
         // object is not instantiated on bad data value
         assertNull("validation restriction failed [ " + source +
-                 "]. did not restrict bad value.", oDay);
+                 "]. did not restrict bad value.", oYearMonth);
     }
 
     /**
      * Run a successful test.  values should be valid.
      */
-    private void runPassTest(int day, String tz) throws Exception {
-        Day oDay = null;
+    private void runPassTest(int year, int month, String tz) throws Exception {
+        YearMonth oYearMonth = null;
         try {
-            oDay = new Day(day, tz);
+            oYearMonth = new YearMonth(year, month, tz);
         }
         catch (Exception e) { // catch the validation exception
             assertTrue("Validation exception thrown on valid input", false);
         }
-        assertEquals("Day day not equal", day, oDay.getDay());
-        assertEquals("Day timezone not equal", tz, oDay.getTimezone());
+        assertEquals("YearMonth year not equal", year, oYearMonth.getYear());
+        assertEquals("YearMonth month not equal", month, oYearMonth.getMonth());
+        assertEquals("YearMonth timezone not equal", tz, oYearMonth.getTimezone());
     }
     
     private void runPassTest(String source) throws Exception {
-        Day oDay = null;
+        YearMonth oYearMonth = null;
         try {
-            oDay = new Day(source);
+            oYearMonth = new YearMonth(source);
         }
         catch (Exception e) { // catch the validation exception
             assertTrue("Validation exception thrown on valid input", false);
         }
-        assertEquals("Day.toString() not equal", source, oDay.toString());
+        assertEquals("YearMonth.toString() not equal", source, oYearMonth.toString());
     }
 
     /**
      * Test that a normal date succeeeds
      */
     public void testNormal() throws Exception {
-        // test all days
-        for (int d=1; d < 32; d++) {
-            runPassTest(d, null);
-        }
+        runPassTest(2002, 8, null);
     }
     public void testNormalString() throws Exception {
-        // test all 31 days
-        // use NumberFormat to ensure leading zeros
-        NumberFormat nf = NumberFormat.getInstance();
-        nf.setMinimumIntegerDigits(2);
-        for (int d=1; d < 13; d++) {
-            String s = "---" + nf.format(d);
-            runPassTest(s);
-        }
+        runPassTest("9999-12");
     }
     public void testNormalString2() throws Exception {
         // check for leading zeros in toString().
-        runPassTest("---01");
+        runPassTest("0001-01Z");
     }
-    public void testNormalTimezone() throws Exception {
-        runPassTest("---01Z");
+    public void testNegativeYear() throws Exception {
+        runPassTest(-1955, 4, null);
     }
-    public void testNormalPositiveTimezone() throws Exception {
-        runPassTest("---11+05:00");
+    public void testNegativeYearString() throws Exception {
+        runPassTest("-1955-04+05:00");
     }
-    public void testNormalNegativeTimezone() throws Exception {
-        runPassTest("---11-11:00");
+    public void testNegativeYearString2() throws Exception {
+        // negative year with leading zeros
+        runPassTest("-0055-04+05:00");
+    }
+    public void testBigYear() throws Exception {
+        // Big year should be allowed (per Schema, not ISO).
+        runPassTest(12000, 4, null);
+    }
+    public void testBigYearString() throws Exception {
+        runPassTest("-27000-04+05:00");
     }
 
     /**
-     * Test that badly formatted strings fail
-     */ 
-    public void testBadString() throws Exception {
-        runFailTest("13Z");
-        runFailTest("-13");
-        runFailTest("--13");
-        runFailTest("xxx13");
-        runFailTest("garbage");
-    }
-    
-
-    /**
-     * Test that a bad day fails
+     * Test that a bad year fails
+     * Schema says the year can have any number of digits
      */
-    public void testBadDay() throws Exception {
-        runFailTest(32, null);
+    public void testBadYear() throws Exception {
+        runFailTest(0, 7, null);
     }
-    public void testBadDayString() throws Exception {
-        runFailTest("---32");
+    public void testBadYearString() throws Exception {
+        runFailTest("0000-7");
     }
-    public void testBadDayString2() throws Exception {
-        runFailTest("---1");
+
+    /**
+     * Test that a bad month fails
+     */
+    public void testBadMonth() throws Exception {
+        runFailTest(1999, 13, null);
     }
-    
+    public void testBadMonthString() throws Exception {
+        runFailTest("1999-13");
+    }
+
     /**
      * Test that a bad timezone fails
      */
     public void testBadTimezone() throws Exception {
-        runFailTest( 31, "badzone");
+        runFailTest(1966, 7, "badzone");
     }
     public void testBadTimezoneString() throws Exception {
-        runFailTest("---23+EDT");
+        runFailTest("1966-07+EDT");
     }
 
+    /**
+    * Test that a year at MaxInclusive succeeds
+    */
+    public void testMaxYear() throws Exception {
+       runPassTest(9999, 1, null);
+    }
 
 }

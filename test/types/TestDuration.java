@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -52,84 +52,46 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-
-package test.encoding;
+package test.types;
 
 import junit.framework.TestCase;
+import org.apache.axis.types.Duration;
 
-import org.apache.axis.types.UnsignedShort;
+public class TestDuration extends TestCase
+  {
 
-/**
- * Test validation of types.UnsignedShort
- */
-public class TestUnsignedShort extends TestCase {
-
-    public TestUnsignedShort(String name) {
-        super(name);
+  public TestDuration( String name )
+    {
+    super( name );
     }
 
-    /**
-     * Run a failure test.  value should be invalid.
-     */
-    private void runFailTest(long value) throws Exception {
-        UnsignedShort oUnsignedShort = null;
-        try {
-            oUnsignedShort = new UnsignedShort(value);
-        }
-        catch (Exception e) { // catch the validation exception
-        }
-        // object is not iNstantiated on bad data value
-        assertNull("validation restriction failed [" +
-                String.valueOf(value) + "]. did not restrict bad value.", oUnsignedShort);
-    }
+    
+  public void testDurations()
+    throws Exception
+    {
+    // invoke the web service as if it was a local java object
+    String[] durationStrings = new String[ 11 ];
+    durationStrings[ 0 ] = "P2Y3M8DT8H1M3.3S";
+    durationStrings[ 1 ] = "P2Y3M8DT8H1M3S";
+    durationStrings[ 2 ] = "PT8H1M3.3S";
+    durationStrings[ 3 ] = "P2Y3M8D";
+    durationStrings[ 4 ] = "P2YT8H";
+    durationStrings[ 5 ] = "P8DT3.3S";
+    durationStrings[ 6 ] = "P3MT1M";
+    durationStrings[ 7 ] = "PT0.3S";
+    durationStrings[ 8 ] = "P1M";
+    durationStrings[ 9 ] = "-P1M";
+    durationStrings[ 10 ] = "-P2Y3M8DT8H1M3.3S";
 
-    /**
-     * Run a successful test.  value should be valid.
-     */
-    private void runPassTest(long value) throws Exception {
-        UnsignedShort oUnsignedShort = null;
-        try {
-            oUnsignedShort = new UnsignedShort(value);
-        }
-        catch (Exception e) { // catch the validation exception
-        }
-        assertEquals("unsigned short not equal" +
-                String.valueOf(value), oUnsignedShort.toString(), String.valueOf(value));
-    }
+    for( int i = 0; i < durationStrings.length; i++ )
+      {
+      String durationString = durationStrings[ i ];
+      Duration duration = 
+              new Duration( durationString );
 
-    /**
-     * Test that a positive value succeeeds
-     */
-    public void testPositiveValue() throws Exception {
-        runPassTest(100);
+      assertTrue( "Duration string \"" + durationString + 
+                  "\" not equal to returned: " + duration.toString(), 
+                  durationString.equals( duration.toString() ) );
+      }
     }
-
-    /**
-     * Test that a negative number fails
-     */
-    public void testNegativeValue() throws Exception {
-        runFailTest(-100);
-    }
-
-
-    /**
-    * Test that a number at MaxInclusive succeeds
-    */
-    public void testMaxInclusive() throws Exception {
-      runPassTest(65535);
-    }
-
-    /**
-    * Test that a number over MaxInclusive fails
-    */
-    public void testMaxOver() throws Exception {
-      runFailTest(65536);
-    }
-
-    /**
-    * Test that a number at MinInclusive succeeds
-    */
-    public void testMinExclusive() throws Exception {
-       runPassTest(0L);
-    }
-}
+  }
