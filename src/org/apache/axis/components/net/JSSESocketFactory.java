@@ -56,6 +56,7 @@ package org.apache.axis.components.net;
 
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.utils.StringUtils;
 
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
@@ -203,8 +204,8 @@ public class JSSESocketFactory extends DefaultSocketFactory implements SecureSoc
                     }
                 }
             }
-            if (!replyStr.startsWith("HTTP/1.0 200")
-                    && !replyStr.startsWith("HTTP/1.1 200")) {
+            if (StringUtils.startsWithIgnoreWhitespaces("HTTP/1.0 200", replyStr) &&
+                    StringUtils.startsWithIgnoreWhitespaces("HTTP/1.1 200", replyStr)) {
                 throw new IOException(Messages.getMessage("cantTunnel00",
                         new String[]{
                             tcp.getProxyHost(),
