@@ -253,11 +253,21 @@ Copyright:
     <echo message="junit package found ..."/>
 
     <!-- Tests are packaged as test.*, so source dir is main dir -->
+    <java classname="org.apache.axis.wsdl.Wsdl2java" dir="."
+          fork="true">
+      <classpath refid="classpath"/>
+      <classpath>
+        <pathelement location="${build.dest}"/>
+      </classpath>
+      <arg value="-s"/>
+      <arg value="test/inout/inout.wsdl"/>
+      <arg value="-p"/>
+      <arg value="test.inout"/>
+    </java>
     <javac srcdir="${basedir}"
       destdir="${build.dest}"
       debug="on"> <!-- set debug on since it helps with line numbers when unit tests fail. -->
       <include name="test/**/*.java" />
-      <exclude name="test/inout/*.java" />
       <classpath refid="test-classpath" />
     </javac>
   </target>
