@@ -70,6 +70,7 @@ Copyright:
         <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}" nowarn="${nowarn}" source="${source}" fork="${javac.fork}">
             <classpath refid="classpath"/>
             <include name="samples/perf/*.java"/>
+            <exclude name="samples/perf/*Test*" unless="junit.present"/>
         </javac>
     </target>
 

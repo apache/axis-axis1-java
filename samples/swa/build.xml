@@ -69,6 +69,7 @@ Copyright:
         <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}" nowarn="${nowarn}" source="${source}" fork="${javac.fork}">
             <classpath refid="classpath"/>
             <include name="samples/swa/*.java"/>
+            <exclude name="samples/swa/*TestCase*" unless="junit.present"/>
         </javac>
     </target>
 

@@ -97,6 +97,8 @@ Copyright:
                 <path refid="classpath"/>
             </classpath>
             <include name="samples/userguide/example6/**/*.java"/>
+            <exclude name="samples/userguide/example6/*TestCase.java" unless="junit.present"/>
+            <exclude name="samples/userguide/example6/Main.java" unless="junit.present"/>
         </javac>
     </target>
 
