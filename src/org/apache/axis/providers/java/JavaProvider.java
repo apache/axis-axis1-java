@@ -311,7 +311,7 @@ public abstract class JavaProvider extends BasicProvider
             }
         }
         catch( Exception exp ) {
-            log.info( JavaUtils.getMessage("toAxisFault00"), exp);
+            log.debug( JavaUtils.getMessage("toAxisFault00"), exp);
             throw AxisFault.makeFault(exp);
         }
         

@@ -289,7 +289,7 @@ public class JWSProcessor extends BasicHandler
             rpc.cleanup();  // ??
         }
         catch( Exception e ) {
-            log.info(JavaUtils.getMessage("toAxisFault00"), e );
+            log.debug(JavaUtils.getMessage("toAxisFault00"), e );
             throw AxisFault.makeFault(e);
         }
 
