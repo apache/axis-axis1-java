@@ -79,10 +79,9 @@ public class HTTPActionHandler extends BasicHandler
     {
         Debug.Print( 1, "Enter: HTTPActionHandler::invoke" );
 
-        /** If there's already a targetService (ie. JWSProcessor) then
-         *  just return.
+        /** If there's already a targetService then just return.
          */
-        if ( msgContext.getTargetService() == null ) {
+        if ( msgContext.getServiceHandler() == null ) {
             String action = (String) msgContext.getProperty(
                                               HTTPConstants.MC_HTTP_SOAPACTION);
             Debug.Print( 2, "  HTTP SOAPAction: " + action );

@@ -83,10 +83,9 @@ public class TCPActionHandler extends BasicHandler
   {
     Debug.Print( 1, "Enter: TCPActionHandler::invoke" );
     
-    /** If there's already a targetService (ie. JWSProcessor) then
-     *  just return.
+    /** If there's already a targetService then just return.
      */
-    if ( msgContext.getTargetService() == null ) {
+    if ( msgContext.getServiceHandler() == null ) {
       
       String targetServiceName = null;
 
@@ -146,16 +145,13 @@ public class TCPActionHandler extends BasicHandler
           }
         }
         
-        if (targetServiceName == null) {
-          // couldn't find service with that method name, fault
-          throw new AxisFault("Server.NoServiceForMethod", "Could not find service with method name "+mName, null, null);
+        // if we found a target service, set it!
+        if (targetServiceName != null) {
+          msgContext.setTargetService( targetServiceName );
+          Debug.Print( 2, "  First method name: " + mName );
         }
-        
-        Debug.Print( 2, "  First method name: " + mName );
-        
       }
       
-      msgContext.setTargetService( targetServiceName );
     }
     
     // Just for kicks, try getting the message back as String, to cure
