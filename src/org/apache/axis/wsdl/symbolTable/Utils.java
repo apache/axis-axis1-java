@@ -528,13 +528,16 @@ public class Utils {
             }
         }
 
-        // Process array element types
-        QName elementQName = SchemaUtils.getArrayElementQName(node, new IntHolder(0));
-        TypeEntry elementType = symbolTable.getType(elementQName);
-        if (elementType != null) {
-            if (!types.contains(elementType)) {
-                types.add(elementType);
-                getNestedTypes(elementType, types, symbolTable, derivedFlag);
+        // Process array components
+        QName componentQName = SchemaUtils.getArrayComponentQName(node, new IntHolder(0));
+        TypeEntry componentType = symbolTable.getType(componentQName);
+        if (componentType == null) {
+            componentType = symbolTable.getElement(componentQName);
+        }
+        if (componentType != null) {
+            if (!types.contains(componentType)) {
+                types.add(componentType);
+                getNestedTypes(componentType, types, symbolTable, derivedFlag);
             }
         }
     } // getNestedTypes

@@ -781,7 +781,7 @@ public class SymbolTable {
                 // See if this is an array or simple type definition.
                 IntHolder numDims = new IntHolder();
                 numDims.value = 0;
-                QName arrayEQName = SchemaUtils.getArrayElementQName(node, numDims);
+                QName arrayEQName = SchemaUtils.getArrayComponentQName(node, numDims);
 
                 if (arrayEQName != null) {
                     // Get the TypeEntry for the array element type

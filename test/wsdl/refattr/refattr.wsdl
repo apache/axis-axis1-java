@@ -112,9 +112,19 @@
           <xsd:element ref="typens:mangle"/>
           <!-- The following better be Mangle_Type[], not Mangle[] -->
           <xsd:element name="mangle2" type="typens:mangle" maxOccurs="unbounded" />
+
+          <!-- Make sure WSDL2Java properly sets the option element as referenced -->
+          <xsd:element ref="typens:option" minOccurs="1" maxOccurs="unbounded" />
         </xsd:all>
       </xsd:complexType>
 
+      <xsd:element name="option" type="typens:optionType"/>
+      <xsd:complexType name="optionType">
+        <xsd:sequence>
+          <xsd:element name="name"  type="xsd:string" />
+          <xsd:element name="value" type="xsd:string" />
+        </xsd:sequence>
+      </xsd:complexType>
     </xsd:schema>
   </types>
 
