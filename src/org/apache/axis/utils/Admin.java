@@ -72,12 +72,7 @@ import org.apache.axis.configuration.FileProvider;
 import org.apache.axis.encoding.*;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.handlers.BasicHandler;
-import org.apache.axis.registries.HandlerRegistry;
-import org.apache.axis.registries.SupplierRegistry;
 import org.apache.axis.server.AxisServer;
-import org.apache.axis.suppliers.SimpleChainSupplier;
-import org.apache.axis.suppliers.TargetedChainSupplier;
-import org.apache.axis.suppliers.TransportSupplier;
 import org.apache.log4j.Category;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -534,43 +529,6 @@ public class Admin {
         } catch (IOException e) {
             return null;
         }
-    }
-
-    /**
-     * Return an XML Element containing the configuration info for one
-     * of the engine's Handler registries.
-     *
-     * @param root the Element to work with (same as the one we return)
-     * @param registry the registry to write into this Element
-     * @return Element our config element, suitable for pumping back through
-     *                 Admin processing later, to redeploy.
-     */
-    public static Element list(Element root, HandlerRegistry registry)
-        throws AxisFault
-    {
-        Document doc = root.getOwnerDocument();
-
-        Element    elem = null ;
-        Hashtable  opts = null ;
-        String[]   names ;
-        Handler    h ;
-        int        i ;
-
-        names = registry.list();
-
-        for( i = 0 ; names != null && i < names.length ; i++ ) {
-            h = registry.find(names[i]);
-            if (h == null)
-                throw new AxisFault("Server", JavaUtils.getMessage("noHandler02", names[i]), null, null);
-            elem = h.getDeploymentData(doc);
-
-            if ( elem == null ) continue ;
-
-            elem.setAttribute( "name", names[i] );
-            root.appendChild( doc.importNode(elem,true) );
-        }
-
-        return root;
     }
 
     /**

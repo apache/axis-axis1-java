@@ -58,7 +58,6 @@ package org.apache.axis ;
 import org.apache.axis.client.AxisClient;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.handlers.soap.SOAPService;
-import org.apache.axis.registries.HandlerRegistry;
 import org.apache.axis.session.Session;
 import org.apache.axis.utils.AxisClassLoader;
 import org.apache.log4j.Category;
