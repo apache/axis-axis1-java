@@ -62,6 +62,10 @@ import java.io.Serializable ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
 
+/**
+ *
+ * @author Doug Davis (dug@us.ibm.com)
+ */
 public interface Handler extends Serializable {
   /**
    * Init is called when the chain containing this Handler object

@@ -62,6 +62,10 @@ import java.util.* ;
 import org.apache.axis.* ;
 import org.apache.axis.registries.* ;
 
+/**
+ *
+ * @author Doug Davis (dug@us.ibm.com)
+ */
 public class SimpleHandlerRegistry implements HandlerRegistry {
   protected static String     fileName = "handlers.reg" ;
   protected static Hashtable  handlers = null ;

@@ -61,6 +61,10 @@ import java.util.* ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
 
+/**
+ *
+ * @author Doug Davis (dug@us.ibm.com)
+ */
 public class SimpleChain implements Chain {
   protected Vector     handlers ;
   protected Hashtable  options ;

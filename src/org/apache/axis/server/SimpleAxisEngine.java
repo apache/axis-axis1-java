@@ -63,6 +63,10 @@ import org.apache.axis.utils.* ;
 import org.apache.axis.handlers.* ;
 import org.apache.axis.registries.* ;
 
+/**
+ *
+ * @author Doug Davis (dug@us.ibm.com)
+ */
 public class SimpleAxisEngine implements Handler {
   /**
    * This entry point into the SOAP server 

@@ -61,6 +61,10 @@ import java.net.*;
 import java.io.*;
 import java.util.*;
 
+/**
+ *
+ * @author Doug Davis (dug@us.ibm.com)
+ */
 public class AdminClient {
   public static void main(String args[]) {
 

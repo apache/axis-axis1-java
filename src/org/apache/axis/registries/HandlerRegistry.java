@@ -59,6 +59,10 @@ package org.apache.axis.registries ;
 
 import org.apache.axis.* ;
 
+/**
+ *
+ * @author Doug Davis (dug@us.ibm.com)
+ */
 public interface HandlerRegistry {
   /**
    * Init (ie. load settings...)

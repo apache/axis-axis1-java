@@ -69,6 +69,10 @@ import org.apache.xerces.parsers.* ;
 import org.apache.xerces.dom.* ;
 import org.apache.axis.message.* ;
 
+/**
+ *
+ * @author Doug Davis (dug@us.ibm.com)
+ */
 public class RPCArg {
   protected String   namespace ;
   protected String   namespaceURI ;

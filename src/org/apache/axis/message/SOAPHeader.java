@@ -68,6 +68,10 @@ import org.apache.xml.serialize.* ;
 import org.apache.axis.message.* ;
 import org.apache.axis.utils.* ;
 
+/**
+ *
+ * @author Doug Davis (dug@us.ibm.com)
+ */
 public class SOAPHeader {
   protected String    name ;
   protected String    namespace ;

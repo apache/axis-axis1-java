@@ -63,6 +63,10 @@ import org.w3c.dom.* ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
 
+/**
+ *
+ * @author Doug Davis (dug@us.ibm.com)
+ */
 public class AdminHandler implements Handler {
   public Hashtable  options ;
 
