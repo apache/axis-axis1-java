@@ -133,6 +133,9 @@ public class SerializationContext
     
     public String getPrefixForURI(String uri)
     {
+        if ((uri == null) || (uri.equals("")))
+            return null;
+        
         String prefix = nsStack.getPrefix(uri);
         
         if (prefix == null)
@@ -173,8 +176,8 @@ public class SerializationContext
     
     public String qName2String(QName qName)
     {
-        return getPrefixForURI(qName.getNamespaceURI()) +
-               ":" +
+        String prefix = getPrefixForURI(qName.getNamespaceURI());
+        return ((prefix != null) ? prefix + ":" : "") +
                qName.getLocalPart();
     }
     
@@ -267,20 +270,10 @@ public class SerializationContext
             writer.write(">");
         }
         
-        String nsURI = qName.getNamespaceURI();
-        
-        //nsStack.dump();
-        
-        String elementQName;
         StringBuffer buf = new StringBuffer();
+        String elementQName = qName2String(qName);
         buf.append("<");
         
-        if ((nsURI != null) && (!nsURI.equals(""))) {
-            elementQName = getPrefixForURI(nsURI) + ":";
-        } else {
-            elementQName = "";
-        }
-        elementQName += qName.getLocalPart();
         buf.append(elementQName);
         
         if (!pendingNSMappings.isEmpty()) {

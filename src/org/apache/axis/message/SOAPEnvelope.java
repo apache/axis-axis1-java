@@ -187,6 +187,12 @@ public class SOAPEnvelope
         processID(element); // Can body elements have IDs?
     }
     
+    public void clearBody()
+    {
+        if (!bodyElements.isEmpty())
+            bodyElements.removeAllElements();
+    }
+    
     public void addIndependentElement(MessageElement element)
     {
         if (DEBUG_LOG)

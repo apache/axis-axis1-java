@@ -66,36 +66,36 @@ public class Constants {
 
   // Envelope Stuff
   //////////////////////////////////////////////////////////////////////////
-  public static String NSPREFIX_SOAP_ENV   = "SOAP-ENV" ;
-  public static String NSPREFIX_SOAP_ENC   = "SOAP-ENC" ;
-  public static String NSPREFIX_SCHEMA_XSI = "xsi" ;
-  public static String NSPREFIX_SCHEMA_XSD = "xsd" ;
+  public static final String NSPREFIX_SOAP_ENV   = "SOAP-ENV" ;
+  public static final String NSPREFIX_SOAP_ENC   = "SOAP-ENC" ;
+  public static final String NSPREFIX_SCHEMA_XSI = "xsi" ;
+  public static final String NSPREFIX_SCHEMA_XSD = "xsd" ;
 
 
-  public static String AXIS_NS = "http://xml.apache.org/axis/";
+  public static final String AXIS_NS = "http://xml.apache.org/axis/";
   
   //
   // SOAP 1.1 constants
   //
-  public static String URI_SOAP_ENV =
+  public static final String URI_SOAP_ENV =
                                "http://schemas.xmlsoap.org/soap/envelope/" ;
-  public static String URI_SOAP_ENC =
+  public static final String URI_SOAP_ENC =
                                "http://schemas.xmlsoap.org/soap/encoding/" ;
-  public static String URI_NEXT_ACTOR = 
+  public static final String URI_NEXT_ACTOR = 
                                "http://schemas.xmlsoap.org/soap/actor/next" ;
   
   //
   // SOAP 1.2 constants
   //
-  public static String URI_SOAP12_ENV =
+  public static final String URI_SOAP12_ENV =
                         "http://www.w3.org/2001/06/soap-envelope";
-  public static String URI_SOAP12_ENC =
+  public static final String URI_SOAP12_ENC =
                         "http://www.w3.org/2001/06/soap-encoding";
-  public static String URI_SOAP12_NEXT_ACTOR =
+  public static final String URI_SOAP12_NEXT_ACTOR =
                         "http://www.w3.org/2001/06/soap-envelope/actor/next";
-  public static String URI_SOAP12_FAULT_NS =
+  public static final String URI_SOAP12_FAULT_NS =
                         "http://www.w3.org/2001/06/soap-faults";
-  public static String URI_SOAP12_UPGRADE_NS =
+  public static final String URI_SOAP12_UPGRADE_NS =
                         "http://www.w3.org/2001/06/soap-upgrade";
   
 
@@ -130,27 +130,30 @@ public class Constants {
     URI_2001_SCHEMA_XSD,
   };
 
-  public static String ELEM_ENVELOPE = "Envelope" ;
-  public static String ELEM_HEADER   = "Header" ;
-  public static String ELEM_BODY     = "Body" ;
-  public static String ELEM_FAULT    = "Fault" ;
+  public static final String ELEM_ENVELOPE = "Envelope" ;
+  public static final String ELEM_HEADER   = "Header" ;
+  public static final String ELEM_BODY     = "Body" ;
+  public static final String ELEM_FAULT    = "Fault" ;
+  
+  public static final String ELEM_MISUNDERSTOOD = "Misunderstood";
 
-  public static String ELEM_FAULT_CODE   = "faultcode" ;
-  public static String ELEM_FAULT_STRING = "faultstring" ;
-  public static String ELEM_FAULT_DETAIL = "detail" ;
-  public static String ELEM_FAULT_ACTOR  = "faultactor" ;
+  public static final String ELEM_FAULT_CODE   = "faultcode" ;
+  public static final String ELEM_FAULT_STRING = "faultstring" ;
+  public static final String ELEM_FAULT_DETAIL = "detail" ;
+  public static final String ELEM_FAULT_ACTOR  = "faultactor" ;
 
-  public static String ATTR_MUST_UNDERSTAND = "mustUnderstand" ;
-  public static String ATTR_ENCODING_STYLE  = "encodingStyle" ;
-  public static String ATTR_ACTOR           = "actor" ;
-  public static String ATTR_ROOT            = "root" ;
-  public static String ATTR_ID              = "id" ;
-  public static String ATTR_HREF            = "href" ;
-  public static final String ATTR_ARRAY_TYPE = "arrayType";
+  public static final String ATTR_MUST_UNDERSTAND = "mustUnderstand" ;
+  public static final String ATTR_ENCODING_STYLE  = "encodingStyle" ;
+  public static final String ATTR_ACTOR           = "actor" ;
+  public static final String ATTR_ROOT            = "root" ;
+  public static final String ATTR_ID              = "id" ;
+  public static final String ATTR_HREF            = "href" ;
+  public static final String ATTR_QNAME           = "qname";
+  public static final String ATTR_ARRAY_TYPE      = "arrayType";
 
   // Fault Codes
   //////////////////////////////////////////////////////////////////////////
-  public static String FAULT_SERVER_GENERAL = "Server.generalException";
+  public static final String FAULT_SERVER_GENERAL = "Server.generalException";
   
   public static final QFault FAULT_MUSTUNDERSTAND =
                             new QFault(URI_SOAP_ENV, "MustUnderstand");
@@ -158,15 +161,15 @@ public class Constants {
 
   // Misc Strings
   //////////////////////////////////////////////////////////////////////////
-  public static String URI_DEBUG = "http://xml.apache.org/axis/debug" ;
+  public static final String URI_DEBUG = "http://xml.apache.org/axis/debug" ;
 
-  public static String MC_REALPATH = "realpath";
+  public static final String MC_REALPATH = "realpath";
 
   /** The global input/out chains */
-  public static String GLOBAL_REQUEST        = "global.request" ;
-  public static String GLOBAL_RECEIVE       = "global.response" ;
+  public static final String GLOBAL_REQUEST        = "global.request" ;
+  public static final String GLOBAL_RECEIVE       = "global.response" ;
   
-  public static String JWSPROCESSOR_TARGET = "JWSProcessor" ;
+  public static final String JWSPROCESSOR_TARGET = "JWSProcessor" ;
 
   public static final String SERVER_CONFIG_FILE = "server-config.xml";
   public static final String CLIENT_CONFIG_FILE = "client-config.xml";
