@@ -60,6 +60,8 @@ import org.apache.axis.deployment.wsdd.WSDDProvider;
 import org.apache.axis.deployment.wsdd.WSDDService;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.providers.BSFProvider;
+import org.apache.axis.deployment.wsdd.WSDDConstants;
+import org.apache.axis.deployment.wsdd.WSDDConstants;
 
 import java.io.IOException;
 
@@ -70,6 +72,10 @@ import java.io.IOException;
 public class WSDDBsfProvider
     extends WSDDProvider
 {
+    public String getName() {
+        return WSDDConstants.PROVIDER_BSF;
+    }
+
     public Handler newProviderInstance(WSDDService service,
                                        EngineConfiguration registry)
         throws Exception

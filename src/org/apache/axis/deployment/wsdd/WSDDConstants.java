@@ -103,6 +103,8 @@ public class WSDDConstants
     public static final String PROVIDER_MSG = "MSG";
     public static final String PROVIDER_HANDLER = "Handler";
     public static final String PROVIDER_EJB = "EJB";
+    public static final String PROVIDER_COM = "COM";
+    public static final String PROVIDER_BSF = "BSF";
     
     public static final QName QNAME_JAVARPC_PROVIDER = new QName(URI_WSDD_JAVA, PROVIDER_RPC);
     public static final QName QNAME_JAVAMSG_PROVIDER = new QName(URI_WSDD_JAVA, PROVIDER_MSG);

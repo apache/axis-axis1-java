@@ -61,6 +61,8 @@ import org.apache.axis.deployment.wsdd.WSDDService;
 import org.apache.axis.providers.BasicProvider;
 import org.apache.axis.providers.ComProvider;
 import org.apache.axis.utils.ClassUtils;
+import org.apache.axis.deployment.wsdd.WSDDConstants;
+import org.apache.axis.deployment.wsdd.WSDDConstants;
 
 
 /**
@@ -69,6 +71,10 @@ import org.apache.axis.utils.ClassUtils;
 public class WSDDComProvider
     extends WSDDProvider
 {
+    public String getName() {
+        return WSDDConstants.PROVIDER_COM;
+    }
+
     public Handler newProviderInstance(WSDDService service,
                                        EngineConfiguration registry)
         throws Exception

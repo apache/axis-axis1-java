@@ -58,6 +58,7 @@ import org.apache.axis.EngineConfiguration;
 import org.apache.axis.Handler;
 import org.apache.axis.deployment.wsdd.WSDDProvider;
 import org.apache.axis.deployment.wsdd.WSDDService;
+import org.apache.axis.deployment.wsdd.WSDDConstants;
 
 
 /**
@@ -66,6 +67,9 @@ import org.apache.axis.deployment.wsdd.WSDDService;
 public class WSDDJavaMsgProvider
     extends WSDDProvider
 {
+    public String getName() {
+        return WSDDConstants.PROVIDER_MSG;
+    }
     /**
      *
      */
