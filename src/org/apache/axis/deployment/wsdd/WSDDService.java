@@ -60,6 +60,7 @@ import org.apache.axis.EngineConfiguration;
 import org.apache.axis.FaultableHandler;
 import org.apache.axis.Handler;
 import org.apache.axis.AxisFault;
+import org.apache.axis.MessageContext;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.SerializationContext;
@@ -416,7 +417,7 @@ public class WSDDService
 
         service.setServiceDescription(desc);
         try {
-            service.getInitializedServiceDesc(null);
+            service.getInitializedServiceDesc(MessageContext.getCurrentContext());
         } catch (AxisFault axisFault) {
             throw new ConfigurationException(axisFault);
         }
