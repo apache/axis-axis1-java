@@ -81,6 +81,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.plaf.basic.BasicButtonListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -409,16 +410,21 @@ public class tcpmon extends JFrame {
         OutputStream  out = null ;
         boolean       xmlFormat ;
         boolean       done = false ;
+        TableModel    tmodel = null ;
+        int           tableIndex =0 ;
 
         public SocketRR(Socket inputSocket, InputStream inputStream, 
                         Socket outputSocket, OutputStream outputStream, 
-                        JTextArea _textArea, boolean format) {
+                        JTextArea _textArea, boolean format, 
+                        TableModel tModel, int index) {
             inSocket = inputSocket ;
             in       = inputStream ;
             outSocket = outputSocket ;
             out       = outputStream ;
             textArea  = _textArea ;
             xmlFormat = format ;
+            tmodel    = tModel ;
+            tableIndex = index ;
             start();
         }
 
@@ -434,6 +440,7 @@ public class tcpmon extends JFrame {
                 int         len ;
                 int         i1, i2 ;
                 int         i ;
+                int         reqSaved = 0 ;
 
                 int   thisIndent, nextIndent=0 ;
 
@@ -449,6 +456,23 @@ public class tcpmon extends JFrame {
                     // sent to the other side, just how its displayed
                     if ( out != null ) 
                       out.write( buffer, saved, len );
+                
+                    if ( tmodel != null && reqSaved < 50 ) {
+                        String old = (String) tmodel.getValueAt( tableIndex, 
+                                                                 REQ_COLUMN);
+                        old = old + new String(buffer,saved,len);
+                        if ( old.length() > 50 )
+                            old = old.substring(0,50);
+
+                        reqSaved = old.length();
+
+                        if ( (i = old.indexOf('\n')) > 0 ) {
+                            old = old.substring(0,i-1);
+                            reqSaved = 50 ;
+                        }
+
+                        tmodel.setValueAt( old, tableIndex, REQ_COLUMN );
+                    }
 
                     if ( xmlFormat ) {
                         // Do XML Formatting
@@ -627,6 +651,8 @@ public class tcpmon extends JFrame {
                 String         bufferedData = null ;
                 StringBuffer   buf = null ;
 
+                int index = listener.connections.indexOf( this );
+
                 if ( listener.isProxyBox.isSelected() || HTTPProxyHost != null ) {
                     // Check if we're a proxy
                     int          ch ;
@@ -658,9 +684,6 @@ public class tcpmon extends JFrame {
                         end   = bufferedData.indexOf( ' ', start );
                         String urlString = bufferedData.substring( start, end );
                         if ( urlString.charAt(0) == '/' ) urlString = urlString.substring(1);
-
-                        int index = listener.connections.indexOf( this );
-
                         if ( listener.isProxyBox.isSelected() ) {
                             url = new URL( urlString );
                             targetHost = url.getHost();
@@ -704,9 +727,11 @@ public class tcpmon extends JFrame {
                 boolean format = listener.xmlFormatBox.isSelected();
 
                 rr1 = new SocketRR( inSocket, tmpIn1, outSocket, 
-                                    tmpOut2, inputText, format );
+                                    tmpOut2, inputText, format, 
+                                    listener.tableModel, index+1 );
                 rr2 = new SocketRR( outSocket, tmpIn2, inSocket, 
-                                    tmpOut1, outputText, format );
+                                    tmpOut1, outputText, format, 
+                                    null, 0 );
 
                 while( !rr1.isDone() && !rr2.isDone() ) {
                 // Only loop as long as the connection to the target
@@ -732,22 +757,10 @@ public class tcpmon extends JFrame {
                 outSocket = null ;
                 */
 
-                int index = listener.connections.indexOf( this );
-
                 if ( index >= 0 ) {
-                    listener.tableModel.setValueAt( getMessage("done00", "Done"), 1+index, STATE_COLUMN );
+                    listener.tableModel.setValueAt(getMessage("done00","Done"),
+                                                   1+index, STATE_COLUMN );
 
-                    // Get the beginning of the request and put it in the abbrev colum
-                    String reqText = inputText.getText(0,50);
-                    int  eol = reqText.indexOf( '\n' );
-                    if (eol > 0) {
-                        listener.tableModel.setValueAt( reqText.substring(0,eol-1),
-                                                        index+1, REQ_COLUMN );
-                    }
-                    else {
-                        listener.tableModel.setValueAt( reqText,
-                                                        index+1, REQ_COLUMN );
-                    }
                 }
             }
             catch( Exception e ) {
