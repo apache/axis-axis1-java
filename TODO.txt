@@ -12,6 +12,7 @@ owner (if any) in "<>" brackets.  Example:
 -----------
 ! <> see bugzilla scrub below
 ! <> fix javadocs
+! <> revamped documentation -- users shouldn't need to read the source code
 
 
 1.0 BUGZILLA SCRUB
