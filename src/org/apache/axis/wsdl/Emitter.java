@@ -69,6 +69,7 @@ import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
 import javax.wsdl.Definition;
 import javax.wsdl.Fault;
+import javax.wsdl.Import;
 import javax.wsdl.Input;
 import javax.wsdl.Operation;
 import javax.wsdl.Output;
@@ -118,13 +119,39 @@ public class Emitter {
     private boolean bEmitTestCase = false;
     private boolean bVerbose = false;
     private boolean bGeneratePackageName = false;
+    private boolean bGenerateImports = true;
     String packageName = null;
     String packageDirName = "";
     String outputDir = null;
     byte scope = NO_EXPLICIT_SCOPE;
 
     private TypeFactory emitFactory = null;
+    private HashMap portTypesInfo = null;
 
+    /**
+     * Default constructor.
+     */
+    public Emitter() {
+        portTypesInfo = new HashMap();
+    } // ctor
+
+    /**
+     * Construct an Emitter that initially looks like the given Emitter.
+     */
+    public Emitter(Emitter that) {
+        this.bEmitSkeleton        = that.bEmitSkeleton;
+        this.bMessageContext      = that.bMessageContext;
+        this.bEmitTestCase        = that.bEmitTestCase;
+        this.bVerbose             = that.bVerbose;
+        this.bGeneratePackageName = that.bGeneratePackageName;
+        this.bGenerateImports     = that.bGenerateImports;
+        this.packageName          = that.packageName;
+        this.packageDirName       = that.packageDirName;
+        this.outputDir            = that.outputDir;
+        this.scope                = that.scope;
+        this.emitFactory          = that.emitFactory;
+        this.portTypesInfo        = that.portTypesInfo;
+    } // ctor
 
     /**
      * Call this method if you have a uri for the WSDL document
@@ -135,8 +162,7 @@ public class Emitter {
             System.out.println("Parsing XML File: " + uri);
 
         try {
-            doc = XMLUtils.newDocument(uri);
-            emit(doc);
+            emit(XMLUtils.newDocument(uri));
         }
         catch (Throwable t) {
             t.printStackTrace();
@@ -148,52 +174,60 @@ public class Emitter {
      * Call this method if your WSDL document has already been parsed as an XML DOM document.
      */
     public void emit(Document doc) throws IOException {
+        try {
+            setup();
+            WSDLReader reader = new WSDLReader();
+            def = reader.readWSDL(null, doc);
+            emit(def, doc);
+        }
+        catch (Throwable t) {
+            t.printStackTrace();
+            System.out.println("Error in parsing: " + t.getMessage());
+        }
+    } // emit
+
+    private void emit(Definition def, Document doc) throws IOException {
+        this.def = def;
         this.doc = doc;
 
-        try {
-            WSDLReader reader = new WSDLReader();
-            File outputFile = null;
-
-            def = reader.readWSDL(null, doc);
-
-            // Generate package name if desired
-            if (packageName == null  && bGeneratePackageName) {
-                makePackageName();
-            }
-
-            // Make sure the directory that the files will go into exists
-            if (outputDir == null) {
-                outputFile = new File(packageDirName);
-            } else {
-                outputFile = new File(outputDir, packageDirName);
-            }
-
-            outputFile.mkdirs();
-
-            if (bVerbose && packageName != null) {
-                System.out.println("Using package name: " + packageName);
-            }
-
-            emitFactory = new TypeFactory();
-
+        // Generate types from doc
+        if (doc != null) {
             emitFactory.buildTypes(doc);
-
             if (bVerbose) {
                 System.out.println("Types:");
                 emitFactory.dump();
+            }
+            // Output Java classes for types
+            writeTypes();
+        }
+
+
+        if (def != null) {
+            // Generated all the imported XML
+            if (bGenerateImports) {
+
+                // Generate the imported WSDL documents
+                Map imports = def.getImports();
+                Object[] importKeys = imports.keySet().toArray();
+                for (int i = 0; i < importKeys.length; ++i) {
+                    Vector v = (Vector) imports.get(importKeys[i]);
+                    for (int j = 0; j < v.size(); ++j) {
+                        Import imp = (Import) v.get(j);
+                        Emitter emitter = new Emitter(this);
+                        emitter.emit(imp.getDefinition(),
+                                     XMLUtils.newDocument(imp.getLocationURI()));
+                    }
+                }
             }
 
             // Collect information about ports and operations
             wsdlAttr = new WsdlAttributes(def, new HashMap());
 
             // output interfaces for portTypes
-            HashMap portTypesInfo = writePortTypes();
+            portTypesInfo = writePortTypes();
 
             // Output Stub classes for bindings
             writeBindings(portTypesInfo);
-
-            // Output Java classes for types
-            writeTypes();
 
             // Output factory classes for services
             writeServices();
@@ -202,12 +236,33 @@ public class Emitter {
             if (bEmitSkeleton) {
                 writeDeploymentXML();
             }
-
-        }
-        catch (WSDLException e) {
-            e.printStackTrace();
         }
     } // emit
+
+    /**
+     * Set up the emitter variables:  packageName, wsdlAttr, output directory, etc.
+     */
+    private void setup() {
+        // Generate package name if desired
+        if (packageName == null && bGeneratePackageName) {
+            makePackageName();
+        }
+
+        // Make sure the directory that the files will go into exists
+        File outputFile = null;
+        if (outputDir == null) {
+            outputFile = new File(packageDirName);
+        } else {
+            outputFile = new File(outputDir, packageDirName);
+        }
+        outputFile.mkdirs();
+
+        if (bVerbose && packageName != null) {
+            System.out.println("Using package name: " + packageName);
+        }
+
+        emitFactory = new TypeFactory();
+    } // setup
 
     ///////////////////////////////////////////////////
     //
@@ -223,7 +278,7 @@ public class Emitter {
     }
 
     /**
-     * Turn on/off server skeleton creation
+     * Turn on/off test case creation
      * @param boolean value
      */
     public void generateTestCase(boolean value) {
@@ -237,6 +292,14 @@ public class Emitter {
     public void generateMessageContext(boolean value) {
         this.bMessageContext = value;
     }
+
+    /**
+     * Turn on/off generation of elements from imported files.
+     * @param boolean generateImports
+     */
+    public void generateImports(boolean generateImports) {
+        this.bGenerateImports = generateImports;
+    } // generateImports
 
     /**
      * Turn on/off verbose messages
@@ -1126,12 +1189,14 @@ public class Emitter {
             }
         }
         // set output type
-        QName qn = emitFactory.getType(parms.returnType).getQName();
-        String outputType = "new org.apache.axis.utils.QName(\"" + qn.getNamespaceURI() + "\", \"" +
-                    qn.getLocalPart() + "\")";
-        pw.println("        sd.setOutputType(" + outputType + ");");
+        if (!"void".equals(parms.returnType)) {
+            QName qn = emitFactory.getType(parms.returnType).getQName();
+            String outputType = "new org.apache.axis.utils.QName(\"" + qn.getNamespaceURI() + "\", \"" +
+              qn.getLocalPart() + "\")";
+            pw.println("        sd.setOutputType(" + outputType + ");");
 
-        pw.println("        ");
+            pw.println();
+        }
 
         // Set this service description for the call
         pw.println("        call.setServiceDescription(sd);");

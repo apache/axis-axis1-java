@@ -200,7 +200,9 @@ public class Utils {
      */
   public static boolean isSchemaNS(String s) {
     return (s.equals("http://www.w3.org/2001/XMLSchema")
-            || s.equals("http://www.w3.org/1999/XMLSchema"));
+            || s.equals("http://www.w3.org/1999/XMLSchema")
+            || s.equals("http://www.w3.org/2001/XMLSchema/")
+            || s.equals("http://www.w3.org/1999/XMLSchema/"));
   }
   
     /**
