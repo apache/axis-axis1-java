@@ -514,8 +514,13 @@ public class AttachmentsImpl implements Attachments {
         try {
             mergeinAttachments();
 
+            // force a serialization of the message so that
+            // any attachments will be added
+            soapPart.getAsString();
+            
             return orderedAttachments.size();
         } catch (AxisFault e) {
+            log.warn(Messages.getMessage("exception00"),e);
         }
 
         return 0;
@@ -548,7 +553,7 @@ public class AttachmentsImpl implements Attachments {
             orderedAttachments.clear();
             stackDataHandler.clear();
         } catch (AxisFault af){
-            log.warn(Messages.getMessage("exception00"));
+            log.warn(Messages.getMessage("exception00"),af);
         }
     }
 
