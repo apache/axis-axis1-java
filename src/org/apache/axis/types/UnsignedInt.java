@@ -78,11 +78,11 @@ public class UnsignedInt extends java.lang.Number implements java.lang.Comparabl
      * @exception Exception will be thrown if validation fails
      */
     public UnsignedInt(long iValue) throws Exception {
-            setValue(iValue);
+      setValue(iValue);
     }
 
     public UnsignedInt(String stValue) throws Exception {
-            setValue(Long.parseLong(stValue));
+      setValue(Long.parseLong(stValue));
     }
 
 

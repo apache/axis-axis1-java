@@ -52,66 +52,87 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
+package org.apache.axis.types;
 
-package org.apache.axis.encoding.ser;
+import java.lang.Character;
 
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-
-import javax.xml.namespace.QName;
-
-import java.io.IOException;
-
-import org.apache.axis.Constants;
-import org.apache.axis.wsdl.fromJava.Types;
-import org.apache.axis.encoding.Serializer;
-import org.apache.axis.encoding.SerializerFactory;
-import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.types.NormalizedString;
 import org.apache.axis.utils.JavaUtils;
+
 /**
- * Serializer for xsd:normalizedString
- *
+ * Custom class for supporting XSD data type Name
+ * Name represents XML Names. The value space of Name is
+ * the set of all strings which match the Name production
+ * of [XML 1.0 (Second Edition)].
+ * The base type of Name is token.
  * @author Chris Haddad <chaddad@cobia.net>
- * @see <a href="http://www.w3.org/TR/xmlschema-2/#NormalizedString">XML Schema 3.3.1 </a>
+ * @see <a href="http://www.w3.org/TR/xmlschema-2/#Name">XML Schema 3.3.6</a>
  */
-public class NormalizedStringSerializer implements Serializer {
+public class Name extends Token {
 
-    public QName xmlType;
-    public Class javaType;
-    public NormalizedStringSerializer(Class javaType, QName xmlType) {
-        this.xmlType = xmlType;
-        this.javaType = javaType;
+    public Name() {
+        super();
     }
 
     /**
-     * Serialize a NormalizedString object.
+     * ctor for Name
+     * @exception Exception will be thrown if validation fails
      */
-    public void serialize(QName name, Attributes attributes,
-                          Object value, SerializationContext context)
-        throws IOException
-    {
-        context.startElement(name, attributes);
-
-        value = JavaUtils.convert(value, javaType);
-        if (javaType == NormalizedString.class) {
-            context.writeString(value.toString());
+    public Name(String stValue) throws Exception {
+        try {
+            setValue(stValue);
         }
-        context.endElement();
+        catch (Exception e) {
+            // recast normalizedString exception as token exception
+            throw new Exception(JavaUtils.getMessage("badNameType00") + "data=[" +
+                    stValue + "]");
+        }
     }
 
-    public String getMechanismType() { return Constants.AXIS_SAX; }
+    /**
+    * validate against XSD definition for NameChar
+    * NameChar    ::=     Letter | Digit | '.' | '-' | '_' | ':' | CombiningChar | Extender
+    */
+    public boolean isNameChar(Character cValue) {
+      if ( (Character.isDigit(cValue.charValue()) == true)   ||
+        (Character.isLetter(cValue.charValue()) == true) ||
+        (cValue.charValue() == '.') ||
+        (cValue.charValue() == '-') ||
+        (cValue.charValue() == '_') ||
+        (cValue.charValue() == ':') )
+      //TODO  CombineChar ||
+      //TODO  Extender
+          return true;
+        else
+          return false;
+    }
 
     /**
-     * Return XML schema for the specified type, suitable for insertion into
-     * the <types> element of a WSDL document.
      *
-     * @param types the Java2WSDL Types object which holds the context
-     *              for the WSDL being generated.
-     * @return true if we wrote a schema, false if we didn't.
-     * @see org.apache.axis.wsdl.fromJava.Types
+     * validate the value against the xsd definition
+     *   Name    ::=    (Letter | '_' | ':') ( NameChar)*
      */
-    public boolean writeSchema(Types types) throws Exception {
-        return false;
+    public boolean isValid(String stValue) {
+        int scan;
+        Character cValue;
+
+        // conform to Token validation
+        if (super.isValid(stValue) == false)
+          return false;
+
+        for (scan=0; scan < stValue.length(); scan++) {
+              cValue = new Character(stValue.charAt(scan));
+              if (scan == 0) {
+                // Name[0] = (Letter | '_' | ':')
+                if ( (Character.isLetter(cValue.charValue()) != true) &&
+                  (cValue.charValue() != '_') &&
+                  (cValue.charValue() != ':') )
+                    return false;
+              }
+             else
+                if (isNameChar(cValue) == false)
+                    return false;
+        }
+
+        return true;
     }
 }

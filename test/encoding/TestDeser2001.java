@@ -15,6 +15,9 @@ import org.apache.axis.types.Year;
 import org.apache.axis.types.Month;
 import org.apache.axis.types.Day;
 import org.apache.axis.types.MonthDay;
+import org.apache.axis.types.Name;
+import org.apache.axis.types.NCName;
+import org.apache.axis.types.NMToken;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -94,7 +97,7 @@ public class TestDeser2001 extends TestDeser {
 
     /**
      * Test the xsd:Time deserialization
-     */ 
+     */
     public void testTimeZ() throws Exception {
         Calendar date = Calendar.getInstance();
         date.set(Calendar.HOUR_OF_DAY, 12);
@@ -121,7 +124,7 @@ public class TestDeser2001 extends TestDeser {
                      "</result>",
                      time);
     }
-    
+
     private final int msecsInMinute = 60000;
     private final int msecsInHour = 60 * msecsInMinute;
 
@@ -190,6 +193,21 @@ public class TestDeser2001 extends TestDeser {
     public void testUnsignedByte() throws Exception {
         deserialize("<result xsi:type=\"xsd:unsignedByte\">103</result>",
                     new UnsignedByte(103),true);
+    }
+
+    public void testName() throws Exception {
+        deserialize("<result xsi:type=\"xsd:Name\">:Braves</result>",
+                    new Name(":Braves"),true);
+    }
+
+    public void testNCName() throws Exception {
+        deserialize("<result xsi:type=\"xsd:NCName\">_Atlanta.Braves</result>",
+                    new NCName("_Atlanta.Braves"),true);
+    }
+
+    public void testNMToken() throws Exception {
+        deserialize("<result xsi:type=\"xsd:NMTOKEN\">_A.B.C.1-2-3</result>",
+                    new NMToken("_A.B.C.1-2-3"),true);
     }
 
     public void testQName() throws Exception {

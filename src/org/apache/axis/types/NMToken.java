@@ -52,25 +52,77 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
+package org.apache.axis.types;
 
-package org.apache.axis.encoding.ser;
+import java.util.ArrayList;
 
-import org.apache.axis.types.Token;
-import org.apache.axis.encoding.ser.SimpleDeserializer;
-import javax.xml.namespace.QName;
+import org.apache.axis.utils.JavaUtils;
 
 /**
- * Deserializer for xsd:token elements
+ * Custom class for supporting XSD data type NMToken
  *
- * @author Chris Haddad (chaddad@cobia.net)
+ * NMTOKEN represents the NMTOKEN attribute type from
+ * [XML 1.0(Second Edition)]. The value space of NMTOKEN
+ * is the set of tokens that match the Nmtoken production
+ * in [XML 1.0 (Second Edition)].
+ * The base type of NMTOKEN is token.
+ * @author Chris Haddad <chaddad@cobia.net>
+ * @see <a href="http://www.w3.org/TR/xmlschema-2/#nmtoken">XML Schema 3.3.4</a>
  */
-public class TokenDeserializer extends SimpleDeserializer
-{
-    public Object makeValue(String source) throws Exception {
-        return new Token(source);
-    } // makeValue
+public class NMToken extends Token {
 
-    public TokenDeserializer(Class javaType, QName xmlType) {
-        super(javaType, xmlType);
+    public NMToken() {
+        super();
+    }
+
+    /**
+     * ctor for NMToken
+     * @exception Exception will be thrown if validation fails
+     */
+    public NMToken(String stValue) throws Exception {
+        try {
+            setValue(stValue);
+        }
+        catch (Exception e) {
+            // recast normalizedString exception as token exception
+            throw new Exception(JavaUtils.getMessage("badNmtoken00") + "data=[" +
+                    stValue + "]");
+        }
+    }
+
+    /**
+    * validate against definition of NameChar
+    * NameChar    ::=     Letter | Digit | '.' | '-' | '_' | ':' | CombiningChar | Extender
+    **/
+    public boolean isNameChar(Character cValue) {
+      if ( (Character.isDigit(cValue.charValue()) == true)   ||
+        (Character.isLetter(cValue.charValue()) == true) ||
+        (cValue.charValue() == '.') ||
+        (cValue.charValue() == '-') ||
+        (cValue.charValue() == '_') ||
+        (cValue.charValue() == ':') )
+      //TODO  CombineChar ||
+      //TODO  Extender
+          return true;
+        else
+          return false;
+    }
+
+    /**
+     *
+     * validate the value against the xsd definition
+     * Nmtoken    ::=    (NameChar)+
+     */
+    public boolean isValid(String stValue) {
+        int scan;
+        Character cValue;
+
+        for (scan=0; scan < stValue.length(); scan++) {
+          cValue = new Character(stValue.charAt(scan));
+          if (isNameChar(cValue) == false)
+              return false;
+        }
+
+        return true;
     }
 }

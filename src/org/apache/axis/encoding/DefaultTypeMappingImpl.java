@@ -327,7 +327,7 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                    new SimpleDeserializerFactory(org.apache.axis.types.MonthDay.class,
                                              Constants.XSD_MONTHDAY),
                    true);
-        
+
         // Serialize all extensions of Map to SOAP_MAP
         // The SOAP_MAP will be deserialized into a HashMap by default.
         myRegister(Constants.SOAP_MAP,       java.util.HashMap.class,
@@ -375,67 +375,75 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
 
         // xsd:token
         myRegister(Constants.XSD_TOKEN, org.apache.axis.types.Token.class,
-                new TokenSerializerFactory(org.apache.axis.types.Token.class,
-                    Constants.XSD_TOKEN),
-                new TokenDeserializerFactory(
-                    org.apache.axis.types.Token.class,
-                    Constants.XSD_TOKEN),
-                false);
+                   new SimplePrimitiveSerializerFactory(org.apache.axis.types.Token.class,
+                                             Constants.XSD_TOKEN),
+                   new SimpleDeserializerFactory(org.apache.axis.types.Token.class,
+                                             Constants.XSD_TOKEN),
+                   true);
 
         // a xsd:normalizedString
-        myRegister(Constants.XSD_NORMALIZEDSTRING,
-                org.apache.axis.types.NormalizedString.class,
-                new NormalizedStringSerializerFactory(
-                    org.apache.axis.types.NormalizedString.class,
-                    Constants.XSD_NORMALIZEDSTRING),
-                new NormalizedStringDeserializerFactory(
-                    org.apache.axis.types.NormalizedString.class,
-                    Constants.XSD_NORMALIZEDSTRING),
-                false);
+        myRegister(Constants.XSD_NORMALIZEDSTRING, org.apache.axis.types.NormalizedString.class,
+                   new SimplePrimitiveSerializerFactory(org.apache.axis.types.NormalizedString.class,
+                                             Constants.XSD_NORMALIZEDSTRING),
+                   new SimpleDeserializerFactory(org.apache.axis.types.NormalizedString.class,
+                                             Constants.XSD_NORMALIZEDSTRING),
+                   true);
 
         // a xsd:unsignedLong
-        myRegister(Constants.XSD_UNSIGNEDLONG,
-                org.apache.axis.types.UnsignedLong.class,
-                new UnsignedLongSerializerFactory(
-                    org.apache.axis.types.UnsignedLong.class,
-                    Constants.XSD_UNSIGNEDLONG),
-                new UnsignedLongDeserializerFactory(
-                    org.apache.axis.types.UnsignedLong.class,
-                    Constants.XSD_UNSIGNEDLONG),
-                false);
+        myRegister(Constants.XSD_UNSIGNEDLONG, org.apache.axis.types.UnsignedLong.class,
+             new SimplePrimitiveSerializerFactory(org.apache.axis.types.UnsignedLong.class,
+                                                  Constants.XSD_UNSIGNEDLONG),
+             new SimpleDeserializerFactory(org.apache.axis.types.UnsignedLong.class,
+                                           Constants.XSD_UNSIGNEDLONG),
+             true);
 
         // a xsd:unsignedInt
-        myRegister(Constants.XSD_UNSIGNEDINT,
-                org.apache.axis.types.UnsignedInt.class,
-                new UnsignedIntSerializerFactory(
-                    org.apache.axis.types.UnsignedInt.class,
-                    Constants.XSD_UNSIGNEDINT),
-                new UnsignedIntDeserializerFactory(
-                    org.apache.axis.types.UnsignedInt.class,
-                    Constants.XSD_UNSIGNEDINT),
-                false);
+        myRegister(Constants.XSD_UNSIGNEDINT, org.apache.axis.types.UnsignedInt.class,
+             new SimplePrimitiveSerializerFactory(org.apache.axis.types.UnsignedInt.class,
+                                                  Constants.XSD_UNSIGNEDINT),
+             new SimpleDeserializerFactory(org.apache.axis.types.UnsignedInt.class,
+                                           Constants.XSD_UNSIGNEDINT),
+             true);
 
         // a xsd:unsignedShort
-        myRegister(Constants.XSD_UNSIGNEDSHORT,
-                org.apache.axis.types.UnsignedShort.class,
-                new UnsignedShortSerializerFactory(
-                    org.apache.axis.types.UnsignedShort.class,
-                    Constants.XSD_UNSIGNEDSHORT),
-                new UnsignedShortDeserializerFactory(
-                    org.apache.axis.types.UnsignedShort.class,
-                    Constants.XSD_UNSIGNEDSHORT),
-                false);
+        myRegister(Constants.XSD_UNSIGNEDSHORT, org.apache.axis.types.UnsignedShort.class,
+             new SimplePrimitiveSerializerFactory(org.apache.axis.types.UnsignedShort.class,
+                                                  Constants.XSD_UNSIGNEDSHORT),
+             new SimpleDeserializerFactory(org.apache.axis.types.UnsignedShort.class,
+                                           Constants.XSD_UNSIGNEDSHORT),
+             true);
 
         // a xsd:unsignedByte
-        myRegister(Constants.XSD_UNSIGNEDBYTE,
-                org.apache.axis.types.UnsignedByte.class,
-                new UnsignedByteSerializerFactory(
-                    org.apache.axis.types.UnsignedByte.class,
-                    Constants.XSD_UNSIGNEDBYTE),
-                new UnsignedByteDeserializerFactory(
-                    org.apache.axis.types.UnsignedByte.class,
-                    Constants.XSD_UNSIGNEDBYTE),
-                false);
+        myRegister(Constants.XSD_UNSIGNEDBYTE, org.apache.axis.types.UnsignedByte.class,
+                   new SimplePrimitiveSerializerFactory(org.apache.axis.types.UnsignedByte.class,
+                                             Constants.XSD_UNSIGNEDBYTE),
+                   new SimpleDeserializerFactory(org.apache.axis.types.UnsignedByte.class,
+                                             Constants.XSD_UNSIGNEDBYTE),
+                   true);
+
+        // a xsd:Name
+        myRegister(Constants.XSD_NAME, org.apache.axis.types.Name.class,
+                   new SimplePrimitiveSerializerFactory(org.apache.axis.types.Name.class,
+                                             Constants.XSD_NAME),
+                   new SimpleDeserializerFactory(org.apache.axis.types.Name.class,
+                                             Constants.XSD_NAME),
+                   true);
+
+        // a xsd:NCName
+        myRegister(Constants.XSD_NCNAME, org.apache.axis.types.NCName.class,
+                   new SimplePrimitiveSerializerFactory(org.apache.axis.types.NCName.class,
+                                             Constants.XSD_NCNAME),
+                   new SimpleDeserializerFactory(org.apache.axis.types.NCName.class,
+                                             Constants.XSD_NCNAME),
+                   true);
+
+        // a xsd:NmToken
+        myRegister(Constants.XSD_NMTOKEN, org.apache.axis.types.NMToken.class,
+                   new SimplePrimitiveSerializerFactory(org.apache.axis.types.NMToken.class,
+                                             Constants.XSD_NMTOKEN),
+                   new SimpleDeserializerFactory(org.apache.axis.types.NMToken.class,
+                                             Constants.XSD_NMTOKEN),
+                   true);
 
         // All array objects automatically get associated with the SOAP_ARRAY.
         // There is no way to do this with a hash table,

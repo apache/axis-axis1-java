@@ -77,7 +77,11 @@ public class UnsignedLong extends java.lang.Number implements java.lang.Comparab
      * @exception Exception will be thrown if validation fails
      */
     public UnsignedLong(double lValue) throws Exception {
-            setValue(lValue);
+      setValue(lValue);
+    }
+
+    public UnsignedLong(String stValue) throws Exception {
+      setValue(Double.parseDouble(stValue));
     }
 
     /**

@@ -52,60 +52,105 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.types;
 
-import java.lang.Number;
+package test.encoding;
 
-import org.apache.axis.utils.JavaUtils;
+import junit.framework.TestCase;
+import org.apache.axis.types.NMToken;
 
 /**
- * Custom class for supporting primitive XSD data type UnsignedByte
- *
- * @author Chris Haddad <chaddad@cobia.net>
- * @see <a href="http://www.w3.org/TR/xmlschema-2/#unsignedByte">XML Schema 3.3.24</a>
+ * Test validation of types.NMToken
  */
-public class UnsignedByte extends UnsignedShort {
+public class TestNMToken extends TestCase {
 
 
-    public UnsignedByte() {
-
+    public TestNMToken(String name) {
+        super(name);
     }
 
     /**
-     * ctor for UnsignedByte
-     * @exception Exception will be thrown if validation fails
+     * Run a failure test.  value should be invalid.
      */
-    public UnsignedByte(long sValue) throws Exception {
-      setValue(sValue);
-    }
-
-    public UnsignedByte(String sValue) throws Exception {
-      setValue(Long.parseLong(sValue));
+    private void runFailTest(String value) throws Exception {
+        NMToken oToken = null;
+        try {
+            oToken = new NMToken(value);
+        }
+        catch (Exception e) { // catch the validation exception
+        }
+        assertNull(
+                "NMToken validation restriction failed. did not restrict bad value [" +
+                   value + "] did not restrict bad value", oToken);
     }
 
     /**
-     *
-     * validates the data and sets the value for the object.
-     *
-     * @param sValue the number to set
+     * Run a successful test.  value should be valid.
      */
-    public void setValue(long sValue) throws Exception {
-        if (isValid(sValue) == false)
-            throw new Exception(JavaUtils.getMessage("badUnsignedByte00") +
-                    String.valueOf(sValue) + "]");
-        lValue = new Long(sValue);
+    private void runPassTest(String value) throws Exception {
+        NMToken oToken = null;
+        try {
+            oToken = new NMToken(value);
+        }
+        catch (Exception e) { // catch the validation exception
+        }
+        assertEquals("NMToken strings not equal. orig value:" + value, oToken.toString(), value);
     }
 
     /**
-     *
-     * validate the value against the xsd value space definition
-     * @param sValue number to check against range
+     * Test a simple string.
      */
-    public boolean isValid(long sValue) {
-      if ( (sValue < 0L ) ||  (sValue > 255L) )
-        return false;
-      else
-        return true;
+    public void testSimpleString() throws Exception {
+        runPassTest("Atlanta1234567890");
     }
 
+    /**
+     * Test a simple string.
+     */
+    public void testPunctuationString() throws Exception {
+        runPassTest("Atlanta.-_:");
+    }
+
+
+    /**
+     * this is to differentiate from normalized string which cannot accept a \n
+     */
+    public void testLineFeed() throws Exception {
+        runFailTest("line one\n line two");
+    }
+
+    /**
+     * this is to differentiate from normalized string which cannot accept a \t
+     */
+    public void testStringWithTabs() throws Exception {
+        runFailTest("this has \t a tab");
+    }
+
+    /**
+     * this is to differentiate from normalized string which cannot accept leading spaces.
+     */
+    public void testStringWithLeadingSpaces() throws Exception {
+        runFailTest("  a failure case");
+    }
+
+    /**
+     * this is to differentiate from normalized string which cannot accept trailing spaces.
+     */
+    public void testStringWithTrailingSpaces() throws Exception {
+        runFailTest("this is a  ");
+    }
+
+    /**
+     * this is to differentiate from normalized string which cannot accept
+     * leading and trailing spaces.
+     */
+    public void testStringWithLeadingAndTrailingSpaces() throws Exception {
+        runFailTest("          centered          ");
+    }
+
+    /**
+     * this is to differentiate from normalized string which cannot accept double spaces.
+     */
+    public void testDoubleSpace() throws Exception {
+        runFailTest("a   B"); // note: \r fails
+    }
 }
