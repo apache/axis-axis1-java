@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -101,7 +101,7 @@ public class WSDDJavaProvider
         throws WSDDException
     {
         super(d, n);
-		
+
 		Element specificProvider =
 			d.createElementNS(WSDDConstants.WSDD_JAVA, "java:provider");
 		getElement().appendChild(specificProvider);
@@ -119,10 +119,10 @@ public class WSDDJavaProvider
 		    throw new WSDDException(
 		        "The Java Provider requires the presence of a java:provider element in the WSDD");
 		}
-		
+
 		return prov;
 	}
-	
+
     /**
      *
      * @param registry XXX
@@ -132,14 +132,12 @@ public class WSDDJavaProvider
     public Handler newProviderInstance(DeploymentRegistry registry)
         throws Exception
     {
+        Class _class = getJavaClass();
 
-        String type;
+        if (_class == null) {
+            _class = Class.forName("org.apache.axis.providers.java.RPCProvider");
+        }
 
-        type = (!(type = getType()).equals("")
-                ? type
-                : "org.apache.axis.handlers.providers.JavaProvider");
-
-        Class         _class   = Class.forName(type);
         BasicProvider provider = (BasicProvider) _class.newInstance();
 
         // set the basic java provider deployment options

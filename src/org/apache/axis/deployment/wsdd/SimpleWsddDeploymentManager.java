@@ -81,26 +81,6 @@ public class SimpleWsddDeploymentManager
     public WSDDDeployableItem getDeployedWsddItem(QName qname)
         throws DeploymentException
     {
-        return getDeployedWsddItem(qname.toString());
-    }
-
-    /**
-     * Return the RAW deployed item
-     * @param name XXX
-     * @return XXX
-     * @throws DeploymentException XXX
-     */
-    public WSDDDeployableItem getDeployedWsddItem(String name)
-        throws DeploymentException
-    {
-
-        try {
-            WSDDDeployableItem item = (WSDDDeployableItem) getDeployedItem(name);
-
-            return item;
-        }
-        catch (Exception e) {
-            throw new DeploymentException(e.getMessage());
-        }
+        return getDeployedWsddItem(qname);
     }
 }
