@@ -2018,11 +2018,6 @@ public class Call implements javax.xml.rpc.Call {
                 reqMsg = msgContext.getRequestMessage();
                 reqEnv = reqMsg.getSOAPEnvelope();
 
-                // haddadc - the code to insert headers is only conditionally executed.
-                // If we have headers to insert, do so now.
-                //for (int i = 0 ; myHeaders != null && i < myHeaders.size() ; i++ )
-                //    reqEnv.addHeader((SOAPHeaderElement)myHeaders.get(i));
-
                 SOAPBodyElement body = reqEnv.getFirstBody();
 
                 // Does this make any sense to anyone?  If not, we should remove it.
