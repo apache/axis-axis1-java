@@ -33,8 +33,9 @@ Copyright:
   </path>
 
   <taskdef name="runaxisfunctionaltests"
-    classname="test.functional.ant.RunAxisFunctionalTestsTask"
-    classpath="${build.dest}" />
+           classname="test.functional.ant.RunAxisFunctionalTestsTask">
+      <classpath refid="test-classpath" />
+  </taskdef>
 
   <!-- =================================================================== -->
   <!-- Launches the functional test TCP server -->
