@@ -74,6 +74,9 @@ public class DocLitTestCase extends junit.framework.TestCase {
 
         assertTrue("Structs weren't equal",
                    struct.equals(binding.echoStruct(struct)));
+        
+        // test echoVoid
+        binding.echoVoid();
     }
 
 
