@@ -394,7 +394,27 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
         if (wsdlService == null)
             throw new ServiceException(Messages.getMessage("wsdlMissing00"));
 
-        return getPort(null, null, proxyInterface);
+        Map ports = wsdlService.getPorts();
+        if (ports == null || ports.size() <= 0)
+            throw new ServiceException(Messages.getMessage("noPort00", ""));
+
+        // Get the name of the class (without package name)
+        String clazzName = proxyInterface.getName();
+        if(clazzName.lastIndexOf('.')!=-1) {
+            clazzName = clazzName.substring(clazzName.lastIndexOf('.')+1);
+        }
+
+        // Pick the port with the same name as the class
+        Port port = (Port) ports.get(clazzName);
+        if(port == null) {
+            // If not found, just pick the first port.
+            port = (Port) ports.values().iterator().next();
+        }
+        
+        // First, try to find a generated stub.  If that
+        // returns null, then find a dynamic stub.
+        Remote stub = getGeneratedStub(new QName(port.getName()), proxyInterface);
+        return stub != null ? stub : getPort(null, new QName(port.getName()), proxyInterface);
     }
 
     /**
