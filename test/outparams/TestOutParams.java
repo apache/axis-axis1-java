@@ -74,6 +74,10 @@ public class TestOutParams extends TestCase {
         SOAPEnvelope envelope = new SOAPEnvelope();
         msgContext.setRequestMessage(new Message(envelope));
 
+        client.addParameter(
+                new QName("", "string"),
+                XMLType.XSD_STRING,
+                javax.xml.rpc.ParameterMode.PARAM_MODE_IN);
         client.setReturnType(XMLType.XSD_INT);
         // Invoke the Axis server
         Object ret = client.invoke(serviceURN, "method",

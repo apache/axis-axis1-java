@@ -1498,6 +1498,16 @@ public class Call implements javax.xml.rpc.Call {
                                            "Call::invoke(ns, meth, args)") );
         }
 
+        /**
+         * Since JAX-RPC requires us to specify all or nothing, if setReturnType
+         * was called (returnType != null) and we have args but addParameter
+         * wasn't called (paramTypes == null), then toss a fault.
+         */
+        if (returnType != null && args != null && args.length != 0
+                && paramTypes == null) {
+            throw new AxisFault(JavaUtils.getMessage("mustSpecifyParms"));
+        }
+
         RPCElement  body = new RPCElement(namespace, method, args);
 
         Object ret = invoke( body );
