@@ -1776,4 +1776,60 @@ public class SchemaUtils {
         }
         return base;
     }
+
+    /**
+     * Returns whether the specified node represents a <xsd:simpleType> 
+     * with a nested <xsd:list itemType="...">.
+     * @param node 
+     * @return 
+     */
+    public static boolean isListWithItemType(Node node) {
+        
+        return getListItemType(node) != null;
+    }
+
+    /**
+     * Returns the value of itemType attribute of <xsd:list> in <xsd:simpleType> 
+     * @param node 
+     * @return 
+     */
+    public static QName getListItemType(Node node) {
+        
+        if (node == null) {
+            return null;
+        }
+        
+        // If the node kind is an element, dive into it.
+        QName nodeKind = Utils.getNodeQName(node);
+        if (isXSDNode(node, "element")) {
+            NodeList children = node.getChildNodes();
+            for (int j = 0; j < children.getLength(); j++) {
+                if (isXSDNode(children.item(j), "simpleType")) {
+                    node = children.item(j);
+                    break;
+                }
+            }
+        }
+        // Get the node kind, expecting a schema simpleType
+        if (isXSDNode(node, "simpleType")) {
+            NodeList children = node.getChildNodes();
+            for (int j = 0; j < children.getLength(); j++) {
+                if (isXSDNode(children.item(j), "list")) {
+                    Node listNode = children.item(j);
+                    org.w3c.dom.Element listElement = 
+                    (org.w3c.dom.Element) listNode;
+                    String type = listElement.getAttribute("itemType");
+                    if (type.equals("")) {
+                        return null;
+                    }
+                    int colonIndex = type.lastIndexOf(":");
+                    if (colonIndex > 0) {
+                        type = type.substring(colonIndex + 1);
+                    }
+                    return new QName(Constants.URI_2001_SCHEMA_XSD, type + "[]");
+                }
+            }
+        }
+        return null;
+    }
 }
