@@ -1,0 +1,18 @@
+To run the DynamicInvoker sample, you must do the following:
+1.  Set up your CLASSPATH.
+2.  Compile the code.
+3.  Run the sample.
+
+1.  Set up your CLASSPATH.
+    The CLASSPATH must contain:  an XML parser (ie., Xerces), JUnit
+    (www.junit.org), all the jars in the lib directory, and the directory
+    containing the samples subdirectory.
+
+2.  Compile the code.
+    a.  Now you can change directory to samples/client
+    b.  And compile the sample:  javac *.java
+
+3.  Run the sample.
+    Finally, to run the client, run:
+        java samples.client.DynamicInvoker http://www.xmethods.net/sd/2001/TemperatureService.wsdl getTemp 02067
+        java samples.client.DynamicInvoker http://services.xmethods.net/soap/urn:xmethods-delayed-quotes.wsdl getQuote IBM

@@ -55,27 +55,23 @@
 
 package test.dynamic;
 
-import junit.framework.Test;
+import samples.client.DynamicInvoker;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
-/**
- *  Test package for DII
- *
- * @author Mark Roder <mroder@wamnet.com>
- */
-public class PackageTests extends TestCase {
-
-    public PackageTests(String name) {
+public class TestDynamicInvoker extends TestCase {
+    public TestDynamicInvoker(String name) {
         super(name);
+    } // ctor
+
+    public void test1() throws Exception {
+        String[] args = new String[]{"http://www.xmethods.net/sd/2001/TemperatureService.wsdl", "getTemp", "02067"};
+        DynamicInvoker invoker = new DynamicInvoker();
+        invoker.main(args);
     }
 
-    public static Test suite() throws Exception {
-        TestSuite suite = new TestSuite();
-
-        suite.addTestSuite(ServiceGetPort.class);
-        suite.addTestSuite(TestDynamicInvoker.class);
-
-        return suite;
+    public void test2() throws Exception {
+        String[] args = new String[]{"http://services.xmethods.net/soap/urn:xmethods-delayed-quotes.wsdl", "getQuote", "IBM"};
+        DynamicInvoker invoker = new DynamicInvoker();
+        invoker.main(args);
     }
 }
