@@ -61,6 +61,7 @@ import java.util.Vector;
 
 import java.beans.BeanInfo;
 import java.beans.Introspector;
+import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 
 import org.apache.axis.encoding.*;
@@ -128,21 +129,32 @@ public class BeanSerializer extends DeserializerBase
      * An array of nothing, defined only once.
      */
     private static final Object[] noArgs = new Object[] {};
+    
+    public static DeserializerFactory getFactory()
+    {
+      return new BeanSerFactory();
+    }
 
     /**
      * BeanSerializer Factory that creates instances with the specified
      * class.  Caches the PropertyDescriptor
      */
-    private static class BeanSerFactory implements DeserializerFactory {
-        private Class cls;
-        private PropertyDescriptor[] pd;
+    public static class BeanSerFactory implements DeserializerFactory {
+        private Hashtable propertyDescriptors = new Hashtable();
 
-        public BeanSerFactory(Class cls) throws Exception{
-            this.cls = cls;
-            this.pd = Introspector.getBeanInfo(cls).getPropertyDescriptors();
-        }
-
-        public DeserializerBase getDeserializer() {
+        public DeserializerBase getDeserializer(Class cls) {
+            PropertyDescriptor [] pd =
+                  (PropertyDescriptor [])propertyDescriptors.get(cls);
+            
+            if (pd == null) {
+              try {
+                pd = Introspector.getBeanInfo(cls).getPropertyDescriptors();
+              } catch (IntrospectionException e) {
+                return null;
+              }
+                propertyDescriptors.put(cls, pd);
+            }
+            
             BeanSerializer bs = new BeanSerializer();
             bs.setCls(cls);
             bs.setPd(pd);
@@ -162,13 +174,6 @@ public class BeanSerializer extends DeserializerBase
          */
         private static final ObjectStreamField[] serialPersistentFields = 
             {new ObjectStreamField("cls", Class.class)};
-    }
-
-    /**
-     * Accessor for the BeanSerializerFactory
-     */
-    public static DeserializerFactory getFactory(Class cls) throws Exception {
-        return new BeanSerFactory(cls);
     }
 
     /**

@@ -118,11 +118,29 @@ public class Admin {
   private static void registerTypeMappings(Element root, SOAPService service)
     throws Exception
   {
-    NodeList list = root.getElementsByTagName("bean");
-    Debug.Print(2, "Registering " + list.getLength() + " service-specific beans.");
+    TypeMappingRegistry reg = service.getTypeMappingRegistry();
+    NodeList list = root.getElementsByTagName("beanMappings");
     for (int i = 0; list != null && i < list.getLength(); i++) {
       Element el = (Element)list.item(i);
-      registerBeanMapping(el, service.getTypeMappingRegistry());
+      registerTypes(el, reg, true);
+    }
+    
+    list = root.getElementsByTagName("typeMappings");
+    for (int i = 0; list != null && i < list.getLength(); i++) {
+      Element el = (Element)list.item(i);
+      registerTypes(el, reg, false);
+    }
+  }
+  
+  private static void registerTypes(Element root,
+                               TypeMappingRegistry map,
+                               boolean isBean)
+    throws Exception
+  {
+    NodeList list = root.getChildNodes();
+    for (int i = 0; (list != null) && (i < list.getLength()); i++) {
+      if (!(list.item(i) instanceof Element)) continue;
+      registerTypeMapping((Element)list.item(i), map, isBean);
     }
   }
 
@@ -151,7 +169,8 @@ public class Admin {
   {
     Element el = doc.getDocumentElement();
     if (!el.getTagName().equals("engineConfig"))
-      throw new Exception("Wanted 'engineConfig' element, got '" + el.getTagName() + "'");
+      throw new Exception("Wanted 'engineConfig' element, got '" +
+        el.getTagName() + "'");
     
     NodeList nl = el.getElementsByTagName("handlers");
     deploy(nl, engine);
@@ -161,6 +180,15 @@ public class Admin {
     
     nl = el.getElementsByTagName("transports");
     deploy(nl, engine);
+    
+    nl = el.getElementsByTagName("typeMappings");
+    deploy(nl, engine);
+    /*
+    if (nl.getLength() > 0)
+      registerTypes((Element)nl.item(0),
+                    engine.getTypeMappingRegistry(),
+                    false);
+    */
     
     engine.saveConfiguration();
   }
@@ -199,6 +227,9 @@ public class Admin {
         }
         else if (type.equals("transport")) {
           registerTransport(item, engine);
+        }
+        else if (type.equals("typeMapping")) {
+          registerTypeMapping(item, engine.getTypeMappingRegistry(), false);
         }
       }
     }
@@ -290,10 +321,13 @@ public class Admin {
 
         // A streamlined means of deploying both a serializer and a deserializer
         // for a bean at the same time.
-        else if ( type.equals( "bean" ) ) {
-          Debug.Print( 2, "Deploying bean: " + name );
+        else if ( type.equals( "beanMappings" ) ) {
           TypeMappingRegistry engineTypeMap = engine.getTypeMappingRegistry();
-          registerBeanMapping(elem, engineTypeMap);
+          registerTypes(elem, engineTypeMap, true);
+        }
+        else if (type.equals("typeMappings")) {
+          TypeMappingRegistry engineTypeMap = engine.getTypeMappingRegistry();
+          registerTypes(elem, engineTypeMap, false);
         } else
           throw new AxisFault( "Admin.error",
                                "Unknown type to " + action + ": " + type,
@@ -340,6 +374,11 @@ public class Admin {
     
     el = doc.createElement("transports");
     list(el, engine.getTransportRegistry());
+    tmpEl.appendChild(el);
+    
+    Debug.Print(2, "Outputting registry");
+    el = doc.createElement("typeMappings");
+    engine.getTypeMappingRegistry().dumpToElement(el);
     tmpEl.appendChild(el);
 
     return( doc );
@@ -525,6 +564,11 @@ public class Admin {
                ": couldn't find pivot Handler '" + pivot + "'");
       
       service.setPivotHandler( tmpH );
+      
+      if (pivot.equals("MsgDispatcher")) {
+        ServiceDescription sd = new ServiceDescription("msgService", false);
+        service.setServiceDescription(sd);
+      }
     }
     
     if ( response != null && !"".equals(response) ) {
@@ -646,45 +690,77 @@ public class Admin {
    * @param root the type mapping element.
    * @param map the TypeMappingRegistry which gets this mapping.
    */
-  private static void registerBeanMapping(Element root, TypeMappingRegistry map)
+  private static void registerTypeMapping(Element elem,
+                                          TypeMappingRegistry map,
+                                          boolean isBean)
     throws Exception
   {
-    NodeList  list = root.getChildNodes();
-    for ( int i = 0 ; list != null && i < list.getLength() ; i++ ) {
-      Node    node  = list.item(i);
-      if ( node.getNodeType() != Node.ELEMENT_NODE ) continue ;
-      Element elem  = (Element) node ;
-
-      // Retrieve classname attribute
-
-      String classname = elem.getAttribute("classname");
-      if ((classname == null) || classname.equals(""))
-        throw new AxisFault("Server.Admin.error",
-                            "No classname attribute in bean mapping",
-                            null, null);
+    Serializer ser;
+    DeserializerFactory dserFactory;
     
-      // Resolve class name
+    // Retrieve classname attribute
+    String classname = elem.getAttribute("classname");
+    if ((classname == null) || classname.equals(""))
+      throw new AxisFault("Server.Admin.error",
+        "No classname attribute in type mapping",
+        null, null);
+    
+    // Resolve class name
 
-      Class cls;
-      try {
-        cls = Class.forName(classname);
-      } catch (Exception e) {
-        throw new AxisFault( "Admin.error", e.toString(), null, null);
-      }
+    Class cls;
+    QName qn;
+    
+    try {
+      cls = Class.forName(classname);
+    } catch (Exception e) {
+      throw new AxisFault( "Admin.error", e.toString(), null, null);
+    }
 
+    if (isBean) {
       // Resolve qname based on prefix and localpart
 
       String namespaceURI = elem.getNamespaceURI();
       String localName    = elem.getLocalName();
-      QName qn = new QName(namespaceURI, localName);
+      qn = new QName(namespaceURI, localName);
       
       Debug.Print(2, "Registering mapping for " + qn + " -> " + classname);
 
       // register both serializers and deserializers for this bean
-
-      map.addSerializer(cls, qn, new BeanSerializer(cls));
-      map.addDeserializerFactory(qn, cls, BeanSerializer.getFactory(cls));
+      ser = new BeanSerializer(cls);
+      dserFactory = BeanSerializer.getFactory();
+    } else {
+      String typeName = elem.getAttribute("type");
+      int idx = typeName.indexOf(":");
+      String prefix = typeName.substring(0, idx);
+      String localPart = typeName.substring(idx + 1);
+      
+      qn = new QName(XMLUtils.getNamespace(prefix, elem), localPart);
+      
+      classname = elem.getAttribute("serializer");
+      Debug.Print(3, "Serializer class is " + classname);
+      try {
+        ser = (Serializer)Class.forName(classname).newInstance();
+      } catch (Exception e) {
+        throw new AxisFault( "Admin.error",
+                             "Couldn't load serializer class " + e.toString(),
+                             null, null);
+      }
+      classname = elem.getAttribute("deserializerFactory");
+      Debug.Print(3, "DeserializerFactory class is " + classname);
+      try {
+        dserFactory = (DeserializerFactory)Class.forName(classname).
+                                                 newInstance();
+      } catch (Exception e) {
+        throw new AxisFault( "Admin.error",
+                             "Couldn't load deserializerFactory " +
+                                e.toString(),
+                             null, null);
+      }
+      
     }
+    
+    map.addSerializer(cls, qn, ser);
+    map.addDeserializerFactory(qn, cls, dserFactory);
   }
   
   public static void main(String args[]) throws Exception {

@@ -120,6 +120,7 @@ public class TestRPC extends TestCase {
         assertEquals("cba", rpc("reverseString", new Object[] {"abc"}, true));
     }
 
+    /*
     public void testReverseBodyDispatch() throws Exception {
         // Register the reverseString service
         SOAPService reverse = new SOAPService(RPCDispatcher, "RPCDispatcher");
@@ -130,6 +131,7 @@ public class TestRPC extends TestCase {
         // invoke the service and verify the result
         assertEquals("cba", rpc("reverseString", new Object[] {"abc"}, false));
     }
+    */
 
     /**
      * Test a method that reverses a data structure

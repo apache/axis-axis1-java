@@ -24,7 +24,7 @@
  *    Alternately, this acknowledgment may appear in the software itself,
  *    if and wherever such third-party acknowledgments normally appear.
  *
- * 4. The names "Axis" and "Apache Software Foundation" must
+ * 4. The names "AXIS" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
  *    software without prior written permission. For written 
  *    permission, please contact apache@apache.org.
@@ -53,54 +53,61 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.handlers ;
-
+import java.io.*;
 import java.util.* ;
-
-import org.apache.axis.* ;
-import org.apache.axis.encoding.*;
-import org.apache.axis.utils.* ;
-import org.apache.axis.message.DebugHeader;
-import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.message.SOAPHeader;
+import java.net.URL;
 
 import org.w3c.dom.* ;
+import org.apache.axis.AxisServiceConfig;
+import org.apache.axis.utils.XMLUtils ;
+
+import org.apache.axis.utils.Debug;
 
 /**
+ * See \samples\stock\readme for info.
  *
+ * @author Sanjiva Weerawarana (sanjiva@watson.ibm.com)
  * @author Doug Davis (dug@us.ibm.com)
  */
-public class DebugHandler extends BasicHandler {
-    
-    public void invoke(MessageContext msgContext) throws AxisFault {
-        Debug.Print( 1, "Enter: DebugHandler::invoke" );
-        try {
-            Message       msg = msgContext.getRequestMessage();
-            
-            SOAPEnvelope message = (SOAPEnvelope)msg.getAsSOAPEnvelope();
-            SOAPHeader header = message.getHeaderByName(Constants.URI_DEBUG, 
-                                                        "Debug");
-            
-            if (header != null) {
-                int debugVal = 
-                      ((Integer)header
-                             .getValueAsType(SOAPTypeMappingRegistry.XSD_INT))
-                      .intValue();
-                Debug.Print( 1, "Setting debug level to: " + debugVal );
-                Debug.setDebugLevel(debugVal);
-                header.setProcessed(true);
-            }
-        }
-        catch( Exception e ) {
-            Debug.Print( 1, e );
-            throw new AxisFault( e );
-        }
-        Debug.Print( 1, "Exit: DebugHandler::invoke" );
-    }
+public class AltStockQuoteService implements AxisServiceConfig {
+  public String getMethods() {
+    return "echo";
+  }
+  
+  public String echo(String s)
+  {
+    return s;
+  }
+  
+  public float getQuote (String symbol) throws Exception {
+    // get a real (delayed by 20min) stockquote from 
+    // http://www.xmltoday.com/examples/stockquote/. The IP addr 
+    // below came from the host that the above form posts to ..
 
-    public void undo(MessageContext msgContext) {
-        Debug.Print( 1, "Enter: DebugHandler::undo" );
-        Debug.Print( 1, "Exit: DebugHandler::undo" );
-    }
+    // NOTE THAT THIS RETURNS 66.25 WHERE THE ORDINARY EXAMPLE RETURNS 55.25!
+    if ( symbol.equals("XXX") ) return( (float) 66.25 );
+
+    Document doc = null ;
     
-};
+    doc = XMLUtils.newDocument( "http://www.xmltoday.com/examples/" +
+                                "stockquote/getxmlquote.vep?s="+symbol );
+
+    Element  elem = doc.getDocumentElement();
+    NodeList list = elem.getElementsByTagName("stock_quote");
+
+    elem = (Element) list.item(0);
+    list = elem.getElementsByTagName( "price" );
+    elem = (Element) list.item( 0 );
+    String quoteStr = elem.getAttribute("value");
+    try {
+      return Float.valueOf(quoteStr).floatValue();
+    } catch (NumberFormatException e1) {
+      // maybe its an int?
+      try {
+        return Integer.valueOf(quoteStr).intValue() * 1.0F;
+      } catch (NumberFormatException e2) {
+        return -1.0F;
+      }
+    }
+  }
+}

@@ -75,8 +75,6 @@ public class DeserializationContext
 {
     public SOAPSAXHandler baseHandler;
     public Hashtable idMappings = new Hashtable();
-    public Hashtable fixups = new Hashtable();
-    public boolean hasUnresolvedHrefs = false;
     
     private MessageContext msgContext;
 
@@ -90,50 +88,6 @@ public class DeserializationContext
     public SOAPSAXHandler getSAXHandler()
     {
         return baseHandler;
-    }
-    
-    public void addFixupHandler(String id, DeserializerBase handler)
-    {
-        DeserializerBase oldHandler = (DeserializerBase)fixups.get(id);
-        
-        /** !!! This is kind of messy.  Basically, if multiple references
-         * to the same object occur, we need to make sure that when it gets
-         * found, all of the fixup points are loaded with the correct value.
-         * 
-         * Right now this happens by checking the deserializer types and
-         * copying the targets across to the new one.  To make this nicer,
-         * we should integrate knowledge of the HREF attribute further up
-         * the chain (in SOAPSAXHandler), to avoid even creating a new
-         * deserializer once one is already registered for a given ID.
-         * 
-         */
-        if (oldHandler != null) {
-            // Make sure types match...
-            if (!handler.getClass().equals(oldHandler.getClass())) {
-                System.err.println("Non-compatible deserializers for multiple refs to ID " + id);
-                return;
-            }
-            
-            handler.copyValueTargets(oldHandler);
-        }
-        
-        fixups.put(id, handler);
-        hasUnresolvedHrefs = true;
-    }
-    
-    public DeserializerBase getHandlerForID(String id)
-    {
-        DeserializerBase handler = (DeserializerBase)fixups.get(id);
-        if (handler != null) {
-            fixups.remove(id);
-            hasUnresolvedHrefs = !fixups.isEmpty();
-        }
-        return handler;
-    }
-    
-    public boolean unresolvedHrefs()
-    {
-        return hasUnresolvedHrefs;
     }
     
     public void pushElementHandler(DeserializerBase handler)

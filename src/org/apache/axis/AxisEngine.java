@@ -92,7 +92,7 @@ public abstract class AxisEngine extends BasicHandler
     
     /** This Engine's global type mappings     */
     protected TypeMappingRegistry _typeMappingRegistry =
-                                     new SOAPTypeMappingRegistry();
+                                     new TypeMappingRegistry();
     
     protected Properties props = new Properties();
     
@@ -146,6 +146,8 @@ public abstract class AxisEngine extends BasicHandler
         propVal = props.getProperty("debugFile");
         Debug.setToFile(propVal != null);
         
+        _typeMappingRegistry.setParent(SOAPTypeMappingRegistry.getSingleton());
+        
         Debug.Print( 1, "Enter: AxisEngine::init" );
         
         readConfiguration();
@@ -193,13 +195,6 @@ public abstract class AxisEngine extends BasicHandler
           e.printStackTrace();
           return;
         }
-
-        // Load the registry of deployed types
-        TypeMappingRegistry tmr = new TypeMappingRegistry("typemap-supp.reg");
-        tmr.setParent(new SOAPTypeMappingRegistry());
-        _typeMappingRegistry = tmr;
-        
-        tmr.init();
     }
 
     /** Write out our engine configuration.
@@ -275,6 +270,7 @@ public abstract class AxisEngine extends BasicHandler
                                     DeserializerFactory deserFactory,
                                     Serializer serializer)
     {
+      Debug.Print(3, "Registering type mapping " + qName + " -> " + cls.getName());
         if (deserFactory != null)
             _typeMappingRegistry.addDeserializerFactory(qName, cls, deserFactory);
         if (serializer != null)

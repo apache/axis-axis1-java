@@ -83,6 +83,16 @@ public class TestStockSample extends TestCase {
         String[] args = { "-uuser1", "-wpass1", "XXX", "-sjws/StockQuoteService.jws" };
         float val = new GetQuote().getQuote(args);
         assertEquals("TestStockSample.doTestStockJWS(): stock price should be 66.25", val, 66.25, 0.01);
+        
+        // This should FAIL
+        args[3] = "-sjws/AltStockQuoteService.jws";
+        try {
+          val = new GetQuote().getQuote(args);
+        } catch (Exception e) {
+          e.printStackTrace();
+          return;
+        }
+        assertNull("not null");
     }
     
     public void doTestDeploy () throws Exception {

@@ -61,6 +61,7 @@ Copyright:
     <!-- first, put the JWS where the functional test can see it -->
     <mkdir dir="build/jws" />
     <copy file="samples/stock/StockQuoteService.jws" todir="build/jws" />
+    <copy file="test/functional/AltStockQuoteService.jws" todir="build/jws" />
     
     <!-- now, run the actual test -->
     <junit dir="." printsummary="yes" haltonfailure="yes" fork="yes">

@@ -89,7 +89,7 @@ public class ArraySerializer extends DeserializerBase
     }
 
     public static class Factory implements DeserializerFactory {
-        public DeserializerBase getDeserializer() {
+        public DeserializerBase getDeserializer(Class cls) {
             return new ArraySerializer();
         }
     }

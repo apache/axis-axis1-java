@@ -30,11 +30,11 @@
     <option name="methodName" value="Ping" />
   </service>
 
-  <bean xmlns:bid="http://www.soapinterop.org/Bid">
+  <beanMappings xmlns:bid="http://www.soapinterop.org/Bid">
     <bid:PurchaseOrder classname="samples.bidbuy.PurchaseOrder"/>
     <bid:Address       classname="samples.bidbuy.Address"/>
     <bid:LineItem      classname="samples.bidbuy.LineItem"/>
-  </bean>
+  </beanMappings>
 
   <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
 
@@ -60,8 +60,8 @@
     <option name="methodName" value="LookupAsString" />
   </service>
 
-  <bean xmlns:reg="http://www.soapinterop.org/Registry">
+  <beanMappings xmlns:reg="http://www.soapinterop.org/Registry">
     <reg:Service classname="samples.bidbuy.Service"/>
-  </bean>
+  </beanMappings>
 
 </m:deploy>

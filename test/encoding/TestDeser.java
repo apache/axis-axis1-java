@@ -21,6 +21,7 @@ public class TestDeser extends TestCase {
 
     private String header;
     private String footer;
+    private AxisServer server = new AxisServer();
 
     public TestDeser(String name) {
         this(name, Constants.URI_CURRENT_SCHEMA_XSI, 
@@ -65,7 +66,7 @@ public class TestDeser extends TestCase {
      */
     protected void deserialize(String data, Object expected) {
        Message message = new Message(header + data + footer);
-       message.setMessageContext(new MessageContext(new AxisServer()));
+       message.setMessageContext(new MessageContext(server));
 
        SOAPEnvelope envelope = (SOAPEnvelope)message.getAsSOAPEnvelope();
        assertNotNull("envelope", envelope);
@@ -81,7 +82,7 @@ public class TestDeser extends TestCase {
        assertNotNull("param", param);
 
        Object result = param.getValue();
-       if (!equals(expected,result)) assertEquals(expected, result);
+       if (!equals(result, expected)) assertEquals(expected, result);
     }
 
     public void testString() {

@@ -156,7 +156,7 @@ public abstract class TestClient {
         QName ssqn = new QName("http://soapinterop.org/xsd", "SOAPStruct");
         Class cls = SOAPStruct.class;
         call.addSerializer(cls, ssqn, new BeanSerializer(cls));
-        call.addDeserializerFactory(ssqn, cls, BeanSerializer.getFactory(cls));
+        call.addDeserializerFactory(ssqn, cls, BeanSerializer.getFactory());
 
         // execute the tests
         test("String", "abcdefg");

@@ -316,8 +316,13 @@ public class MessageContext {
       Debug.Print(2,"MessageContext: setServiceHandler("+sh+")");
       serviceHandler = sh;
       if (sh != null && sh instanceof SOAPService) {
-        TypeMappingRegistry tmr = ((SOAPService)sh).getTypeMappingRegistry();
+        SOAPService service = (SOAPService)sh;
+        TypeMappingRegistry tmr = service.getTypeMappingRegistry();
         setTypeMappingRegistry(tmr);
+        
+        if (serviceDesc == null) {
+          serviceDesc = service.getServiceDescription();
+        }
       }
     }
 

@@ -94,13 +94,13 @@ public class AddressBookProxy
             QName qn1 = new QName(serviceName, "Address");
             Class cls = Address.class;
             call.addSerializer(cls, qn1, new BeanSerializer(cls));
-            call.addDeserializerFactory(qn1, cls, BeanSerializer.getFactory(cls));
+            call.addDeserializerFactory(qn1, cls, BeanSerializer.getFactory());
             
             // register the PhoneNumber class
             QName qn2 = new QName(serviceName, "PhoneNumber");
             cls = PhoneNumber.class;
             call.addSerializer(cls, qn2, new BeanSerializer(cls));
-            call.addDeserializerFactory(qn2, cls, BeanSerializer.getFactory(cls));
+            call.addDeserializerFactory(qn2, cls, BeanSerializer.getFactory());
         } catch (Exception ex) {
             throw new IllegalArgumentException("Exception configurizing bean serialization: "+ex);
         }
