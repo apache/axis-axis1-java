@@ -102,6 +102,7 @@ import test.wsdl.roundtrip.holders.BondInvestmentHolder;
 public class RoundtripTestServiceTestCase extends TestCase {
 
     private RoundtripPortType binding = null;
+    private RoundtripPortType binding2 = null;
     private static final double DOUBLE_DELTA = 0.0D;
     private static final float FLOAT_DELTA = 0.0F;
 
@@ -123,6 +124,7 @@ public class RoundtripTestServiceTestCase extends TestCase {
 
         try {
             binding = new RoundtripPortTypeServiceLocator().getRoundtripTest();
+            binding2 = new RoundtripPortTypeServiceLocator().getRoundtripTest2();
         } catch (ServiceException jre) {
             fail("JAX-RPC ServiceException caught: " + jre);
         }
@@ -173,6 +175,46 @@ public class RoundtripTestServiceTestCase extends TestCase {
 
     } // testStockInvestment
 
+    /**
+     *  Like the above test, but uses the alternate port.
+     */
+    public void testStockInvestmentWithPort2() {
+
+        try {
+            StockInvestment stock = new StockInvestment();
+            stock.setName("International Business Machines");
+            stock.setId(1);
+            stock.setTradeExchange("NYSE");
+            stock.setLastTradePrice(200.55F);
+            float lastTradePrice = binding2.getRealtimeLastTradePrice(stock);
+            assertEquals("The expected and actual values did not match.",
+                         201.25F,
+                         lastTradePrice,
+                         FLOAT_DELTA);
+            // Make sure static field dontMapToWSDL is not mapped.
+            try {
+                Method m = (StockInvestment.class).
+                    getDeclaredMethod("getDontMapToWSDL", 
+                                      new Class[] {});
+                fail("Should not map static member dontMapToWSDL");
+            } catch (NoSuchMethodException e) {
+                // Cool the method should not be in the class
+            }
+
+            // Make sure private field avgYearlyReturn is not mapped.
+            try {
+                Method m = (StockInvestment.class).
+                    getDeclaredMethod("getAvgYearlyReturn", 
+                                      new Class[] {});
+                fail("Should not map private member avgYearlyReturn");
+            } catch (NoSuchMethodException e) {
+                // Cool the method should not be in the class
+            }
+        } catch (RemoteException re) {
+            fail("Remote Exception caught: " + re);
+        }
+
+    } // testStockInvestmentWithPort2
 
     /**
      *  Test to insure that a JAX-RPC Value Type works correctly.  PreferredStockInvestment

@@ -237,6 +237,10 @@ in this top level schema element.<br>
   <br>
   <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
   print this message and exit</font></tt> <br>
+  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -I, --input 
+  &lt;argument></font></tt> <br>
+  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+  input WSDL filename</font></tt> <br>
   <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -o, --output 
   &lt;argument></font></tt> <br>
   <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
@@ -249,6 +253,11 @@ in this top level schema element.<br>
   &lt;argument></font></tt> <br>
   <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
   portType name (obtained from class-of-portType if not specified)</font></tt> 
+  <br>
+  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -b, --bindingName 
+  &lt;argument></font></tt> <br>
+  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+  binding name ((--servicePortName value + "SOAPBinding" if not specified)</font></tt> 
   <br>
   <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -S, --serviceElementName 
   &lt;argument></font></tt> <br>
@@ -327,8 +336,8 @@ in this top level schema element.<br>
   <tt><font color="#993366">Details:</font></tt> <br>
   <tt><font color="#993366">&nbsp;&nbsp; portType element name= &lt.portTypeName 
   value> OR &lt;class-of-portType name></font></tt> <br>
-  <tt><font color="#993366">&nbsp;&nbsp; binding element&nbsp; name= &lt;--servicePortName 
-  value>SoapBinding</font></tt> <br>
+  <tt><font color="#993366">&nbsp;&nbsp; binding element&nbsp; name= &lt;--bindingName value> OR 
+  &lt;--servicePortName value>SoapBinding</font></tt> <br>
   <tt><font color="#993366">&nbsp;&nbsp; service element&nbsp; name= &lt;--serviceElementName 
   value> OR &lt;portTypeName value>Service</font></tt> <br>
   <tt><font color="#993366">&nbsp;&nbsp; port element &nbsp;&nbsp;&nbsp; name= 
@@ -341,6 +350,12 @@ in this top level schema element.<br>
 <p><b>-o, --output &lt;WSDL file></b> <br>
   Indicates the name of the output WSDL file.&nbsp; If not specified, a suitable 
   default WSDL file is written into the current directory. 
+<p><b>-i, --input &lt;WSDL file></b> <br>
+  Optional parameter that indicates the name of the input wsdl file.  The output
+  wsdl file will contain everything from the input wsdl file plus the new constructs.
+  If a new construct is already present in the input wsdl file, it is not added.
+  This option is useful for constructing a wsdl file with multiple ports, bindings,
+  or portTypes.
 <p><b>-l, --location &lt;location></b> <br>
   Indicates the url of the location of the service.&nbsp; The name after the last 
   slash or backslash is the name of the service port (unless overriden by the 
@@ -349,10 +364,13 @@ in this top level schema element.<br>
 <p><b>-p, --portTypeName &lt;name></b> <br>
   Indicates the name to use use for the portType element. If not specified, the 
   class-of-portType name is used. 
-<p><b>-s, -serviceElementName &lt;name></b> <br>
+<p><b>-b, --bindingName &lt;name></b> <br>
+  Indicates the name to use use for the binding element. If not specified, the 
+  value of the --servicePortName + "SoapBinding" is used. 
+<p><b>-s, --serviceElementName &lt;name></b> <br>
   Indicates the name of the service element.&nbsp; If not specified, the service 
   element is the &lt;portTypeName>Service.&nbsp; 
-<p><b>-s, -servicePortName &lt;name></b> <br>
+<p><b>-s, --servicePortName &lt;name></b> <br>
   Indicates the name of the service port.&nbsp; If not specified, the service 
   port name is derived from the --location value.&nbsp; 
 <p><b>-n, --namespace &lt;target namespace></b> <br>

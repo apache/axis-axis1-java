@@ -211,10 +211,10 @@ public class Types {
         for (int i=0; i < v.size(); i++) {
             TypeEntry te = (TypeEntry) v.elementAt(i);
             if (te instanceof org.apache.axis.wsdl.symbolTable.Element) { 
+                addToElementsList(te.getQName());
+            } else if (te instanceof Type) {
                 addToTypesList(te.getQName(), 
                                te.getQName().getLocalPart());
-            } else if (te instanceof Type) {
-                addToElementsList(te.getQName());
             }
         }
 
