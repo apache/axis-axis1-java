@@ -193,30 +193,26 @@ public class Admin
          * IP, unless the remoteAdmin option is set.
          */
         Handler serviceHandler = msgContext.getService();
-        if (serviceHandler != null) {
-            String remoteAdmin = (String)serviceHandler.
-                                        getOption("enableRemoteAdmin");
-            if ((remoteAdmin == null) ||
-                !remoteAdmin.equals("true")) {
-                String remoteIP =
-                        msgContext.getStrProp(Constants.MC_REMOTE_ADDR);
-                if (remoteIP != null) {
-                    if (!remoteIP.equals("127.0.0.1")) {
-                        try {
-                            InetAddress myAddr = InetAddress.getLocalHost();
-                            InetAddress remoteAddr =
-                                    InetAddress.getByName(remoteIP);
-                            
-                            if (!myAddr.equals(remoteAddr))
-                                throw new AxisFault("Server.Unauthorized",
-                                   JavaUtils.getMessage("noAdminAccess00"),
-                                   null, null);
-                        } catch (UnknownHostException e) {
-                            throw new AxisFault("Server.UnknownHost",
-                                JavaUtils.getMessage("unknownHost00"),
-                                null, null);
-                        }
-                    }
+        if (serviceHandler != null  &&
+            !JavaUtils.isTrue(serviceHandler.getOption("enableRemoteAdmin"))) {
+                
+            String remoteIP = msgContext.getStrProp(Constants.MC_REMOTE_ADDR);
+            if (remoteIP != null  &&
+                !remoteIP.equals("127.0.0.1")) {
+                    
+                try {
+                    InetAddress myAddr = InetAddress.getLocalHost();
+                    InetAddress remoteAddr =
+                            InetAddress.getByName(remoteIP);
+                    
+                    if (!myAddr.equals(remoteAddr))
+                        throw new AxisFault("Server.Unauthorized",
+                           JavaUtils.getMessage("noAdminAccess00"),
+                           null, null);
+                } catch (UnknownHostException e) {
+                    throw new AxisFault("Server.UnknownHost",
+                        JavaUtils.getMessage("unknownHost00"),
+                        null, null);
                 }
             }
         }

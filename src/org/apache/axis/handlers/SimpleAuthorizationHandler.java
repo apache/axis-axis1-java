@@ -92,10 +92,8 @@ public class SimpleAuthorizationHandler extends BasicHandler {
             log.debug("Enter: SimpleAuthorizationHandler::invoke");
         }
 
-        boolean allowByDefault = false;
-        String optVal = (String)getOption("allowByDefault");
-        if ((optVal != null) && (optVal.equalsIgnoreCase("true")))
-            allowByDefault = true;
+        boolean allowByDefault =
+            JavaUtils.isTrue(getOption("allowByDefault"));
 
         AuthenticatedUser user = (AuthenticatedUser)msgContext.
                                          getProperty(MessageContext.AUTHUSER);

@@ -211,10 +211,8 @@ public class RPCHandler extends SOAPHandler
         }
 
 
-        String isNil = attributes.getValue(Constants.URI_2001_SCHEMA_XSI,
-                                           "nil");
-
-        if ( isNil != null && isNil.equals("true") )
+        if (JavaUtils.isTrue(attributes.getValue(Constants.URI_2001_SCHEMA_XSI,
+                                           "nil")))
           return( new DeserializerImpl() );
         
         Deserializer dser = null;

@@ -161,12 +161,12 @@ public class AxisServlet extends HttpServlet
                                   INIT_PROPERTY_TRANSPORT_NAME,
                                   HTTPTransport.DEFAULT_TRANSPORT_NAME);
 
-        if (isTrue(getOption(context, INIT_PROPERTY_USE_SECURITY, null))) {
+        if (JavaUtils.isTrue(getOption(context, INIT_PROPERTY_USE_SECURITY, null))) {
             securityProvider = new ServletSecurityProvider();
         }
 
         enableList =
-            isTrue(getOption(context, INIT_PROPERTY_ENABLE_LIST, null));
+            JavaUtils.isTrue(getOption(context, INIT_PROPERTY_ENABLE_LIST, null));
 
         jwsClassDir = getOption(context, INIT_PROPERTY_JWS_CLASS_DIR, null);
         if (jwsClassDir != null) {
@@ -767,10 +767,6 @@ public class AxisServlet extends HttpServlet
         return (value != null) ? value : dephault;
     }
     
-    private static boolean isTrue(String value) {
-        return (value != null) && value.equalsIgnoreCase("true");
-    }
-
     /**
      * Provided to allow overload of default JWSClassDir
      * by derived class.

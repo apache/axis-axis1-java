@@ -166,8 +166,7 @@ public abstract class WSDDDeployableItem
             String pname = param.getAttribute(ATTR_NAME);
             String value = param.getAttribute(ATTR_VALUE);
             String locked = param.getAttribute(ATTR_LOCKED);
-            parameters.put(pname, value, (locked != null &&
-                                    locked.equalsIgnoreCase("true")));
+            parameters.put(pname, value, JavaUtils.isTrueExplicitly(locked));
         }
     }
 

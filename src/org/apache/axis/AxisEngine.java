@@ -359,8 +359,7 @@ public abstract class AxisEngine extends BasicHandler
             if (val != null) {
                 if (val instanceof Boolean)
                     continue;
-                if (val instanceof String &&
-                    "false".equalsIgnoreCase((String)val)) {
+                if (JavaUtils.isFalse(val)) {
                     setOption(BOOLEAN_OPTIONS[i], Boolean.FALSE);
                     continue;
                 }
