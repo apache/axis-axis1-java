@@ -87,7 +87,8 @@ public class NSStack {
     private Mapping[] stack;
     private int top = 0;
     private int iterator = 0;
-    
+    private int currentDefaultNS = -1;
+
     public NSStack() {
         stack = new Mapping[32];
         stack[0] = null;
@@ -119,6 +120,17 @@ public class NSStack {
 
         top--;
 
+        // If we've moved below the current default NS, figure out the new
+        // default (if any)
+        if (top < currentDefaultNS) {
+            while (currentDefaultNS > 0) {
+                if (stack[currentDefaultNS] != null &&
+                        stack[currentDefaultNS].getPrefix().length() == 0)
+                    break;
+                currentDefaultNS--;
+            }
+        }
+        
         if (top == 0) {
             if (log.isTraceEnabled())
                 log.trace("NSPop (" + Messages.getMessage("empty00") + ")");
@@ -149,7 +161,7 @@ public class NSStack {
     /**
      * Remove all mappings from the current frame.
      */
-    public void clearFrame() {
+    private void clearFrame() {
         while (stack[top] != null) top--;
     }
 
@@ -183,16 +195,27 @@ public class NSStack {
      * remap it to the (possibly different) namespaceURI.
      */
     public void add(String namespaceURI, String prefix) {
-        // Replace duplicate prefixes (last wins - this could also fault)
-        for (int cursor=top; stack[cursor]!=null; cursor--) {
-            if (stack[cursor].getPrefix().equals(prefix)) {
-                stack[cursor].setNamespaceURI(namespaceURI);
-                return;
+        int idx = top;
+        try {
+            // Replace duplicate prefixes (last wins - this could also fault)
+            for (int cursor=top; stack[cursor]!=null; cursor--) {
+                if (stack[cursor].getPrefix().equals(prefix)) {
+                    stack[cursor].setNamespaceURI(namespaceURI);
+                    idx = cursor;
+                    return;
+                }
+            }
+            
+            push();
+            stack[top] = new Mapping(namespaceURI, prefix);
+            idx = top;
+        } finally {
+            // If this is the default namespace, note the new in-scope
+            // default is here.
+            if (prefix.length() == 0) {
+                currentDefaultNS = idx;
             }
         }
-
-        push();
-        stack[top] = new Mapping(namespaceURI, prefix);
     }
     
     /**
@@ -216,6 +239,13 @@ public class NSStack {
         
         int hash = namespaceURI.hashCode();
 
+        // If defaults are OK, and the given NS is the current default,
+        // return "" as the prefix to favor defaults where possible.
+        if (!noDefault && currentDefaultNS > 0 && 
+                namespaceURI.equals(
+                        stack[currentDefaultNS].getNamespaceURI()))
+            return "";
+            
         for (int cursor=top; cursor>0; cursor--) {
             Mapping map = stack[cursor];
             if (map == null) continue;
