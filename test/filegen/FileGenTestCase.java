@@ -84,14 +84,11 @@ public class FileGenTestCase extends junit.framework.TestCase {
     private static String[] shouldNotExist= new String[] {
         "InvalidTickerFaultMessage.java",
         "PortTypeNotSoap.java",
-        "ReferenceHttpGetStub.java"
-        // Add these when we don't emit unreferenced types 
-/*
+        "ReferenceHttpGetStub.java",
         "Address.java",
         "AddressHolder.java",
         "StateType.java",
         "StateTypeHolder.java"
-*/
     };
 
     public void testFileGen() throws IOException {
