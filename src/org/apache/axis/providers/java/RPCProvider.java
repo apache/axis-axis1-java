@@ -313,7 +313,7 @@ public class RPCProvider extends JavaProvider {
             }
             
             resEnv.addBodyElement( resBody );
-            resEnv.setEncodingStyleURI(Constants.URI_SOAP_ENC);
+            resEnv.setEncodingStyleURI(Constants.URI_CURRENT_SOAP_ENC);
         }
     }
     

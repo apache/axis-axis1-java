@@ -57,6 +57,7 @@ package org.apache.axis.deployment;
 import org.apache.axis.Handler;
 import org.apache.axis.deployment.wsdd.WSDDGlobalConfiguration;
 import org.apache.axis.deployment.wsdd.WSDDDocument;
+import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.SerializationContext;
 import org.w3c.dom.Document;
@@ -148,12 +149,20 @@ public abstract class DeploymentRegistry
         throws DeploymentException;
 
     /**
-     * retrieve an instance of the named mapping registry
+     * retrieve an instance of the named type mapping registry
+     * @return TypeMappingRegistery
+     */
+    public abstract TypeMappingRegistry getTypeMappingRegistry();
+
+
+
+    /**
+     * retrieve an instance of the named type mapping    
      * @param encodingStyle XXX
      * @return XXX
      * @throws DeploymentException XXX
      */
-    public abstract TypeMappingRegistry getTypeMappingRegistry(
+    public abstract TypeMapping getTypeMapping(
         String encodingStyle)
         throws DeploymentException;
 
@@ -163,8 +172,8 @@ public abstract class DeploymentRegistry
      * @param tmr XXX
      * @throws DeploymentException XXX
      */
-    public abstract void addTypeMappingRegistry(String encodingStyle,
-                                                TypeMappingRegistry tmr)
+    public abstract void addTypeMapping(String encodingStyle,
+                                        TypeMapping tm)
         throws DeploymentException;
 
     /**
@@ -172,7 +181,7 @@ public abstract class DeploymentRegistry
      * @param encodingStyle XXX
      * @throws DeploymentException XXX
      */
-    public abstract void removeTypeMappingRegistry(String encodingStyle)
+    public abstract void removeTypeMapping(String encodingStyle)
         throws DeploymentException;
 
     /**

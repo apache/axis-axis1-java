@@ -215,7 +215,9 @@ public class WSDDUndeployment
         AttributesImpl attrs = new org.xml.sax.helpers.AttributesImpl();
         attrs.addAttribute("", "name", "name", "CDATA",
                            context.qName2String(qname));
-        context.writeElement(elementQName, attrs);
+         
+        context.startElement(elementQName, attrs);
+        context.endElement();
     }
 
     public void writeToContext(SerializationContext context)

@@ -62,9 +62,14 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.SOAPPart;
 import org.apache.axis.configuration.FileProvider;
 import org.apache.axis.encoding.DeserializerFactory;
+import org.apache.axis.encoding.SerializerFactory;
+import org.apache.axis.encoding.ser.BaseSerializerFactory;
+import org.apache.axis.encoding.ser.BaseDeserializerFactory;
 import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.SerializationContextImpl;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.SOAPBodyElement;
@@ -138,7 +143,7 @@ public class Call implements javax.xml.rpc.Call {
     private Vector             paramNames      = null ;
     private Vector             paramTypes      = null ;
     private Vector             paramModes      = null ;
-    private String             encodingStyle   = Constants.URI_SOAP_ENC ;
+    private String             encodingStyle   = Constants.URI_CURRENT_SOAP_ENC ;
     private QName              returnType      = null ;
 
     private MessageContext     msgContext      = null ;
@@ -1063,18 +1068,53 @@ public class Call implements javax.xml.rpc.Call {
     }
 
     /**
-     * Map a type for serialization.
+     * Register type mapping information for serialization/deserialization
      *
      * Note: Not part of JAX-RPC specification.
      *
-     * @param _class the Java class of the data type.
-     * @param qName the xsi:type QName of the associated XML type.
-     * @param serializer a Serializer which will be used to write the XML.
+     * @param javaType is  the Java class of the data type.
+     * @param xmlType the xsi:type QName of the associated XML type.
+     * @param sf/df are the factories (or the Class objects of the factory).
+     * @param force Indicates whether to add the information if already registered.
      */
-    public void addSerializer(Class _class, QName qName,
-                              Serializer serializer){
-        TypeMappingRegistry typeMap = msgContext.getTypeMappingRegistry();
-        typeMap.addSerializer(_class, qName, serializer);
+    public void registerTypeMapping(Class javaType, QName xmlType,
+                                    SerializerFactory sf,
+                                    DeserializerFactory df) {
+        registerTypeMapping(javaType, xmlType, sf, df, true);
+    }
+    public void registerTypeMapping(Class javaType, QName xmlType,
+                                    SerializerFactory sf,
+                                    DeserializerFactory df,
+                                    boolean force) {
+        // Get the TypeMappingRegistry
+        TypeMappingRegistry tmr = msgContext.getTypeMappingRegistry();
+
+        // If a TypeMapping is not available, add one.
+        TypeMapping tm = (TypeMapping) tmr.getTypeMapping(Constants.URI_CURRENT_SOAP_ENC); 
+        try {
+            if (tm == null) {
+                tm = (TypeMapping) tmr.createTypeMapping();
+                tmr.register(tm, new String[] {Constants.URI_CURRENT_SOAP_ENC});
+            }
+            if (!force && tm.getClassForQName(xmlType) != null) 
+                return;
+
+            // Register the information
+            tm.register(javaType, xmlType, sf, df);
+        } catch (Exception e) {}
+    }
+    public void registerTypeMapping(Class javaType, QName xmlType,
+                                    Class sfClass, Class dfClass) {
+        registerTypeMapping(javaType, xmlType, sfClass, dfClass, true);
+    }
+    public void registerTypeMapping(Class javaType, QName xmlType,
+                                    Class sfClass, Class dfClass, boolean force){
+        // Instantiate the factory using introspection.
+        SerializerFactory   sf = BaseSerializerFactory.createFactory  (sfClass, javaType, xmlType);
+        DeserializerFactory df = BaseDeserializerFactory.createFactory(dfClass, javaType, xmlType);
+        if (sf != null || df != null) {
+            registerTypeMapping(javaType, xmlType, sf, df, force);
+        }
     }
 
     /**
@@ -1089,13 +1129,6 @@ public class Call implements javax.xml.rpc.Call {
      * @throws IntrospectionException _class is not compatible with the
      *                            specified deserializer.
      */
-    public void addDeserializerFactory(QName qName, Class _class,
-                                       DeserializerFactory deserFactory)
-        throws IntrospectionException
-    {
-        TypeMappingRegistry typeMap = msgContext.getTypeMappingRegistry();
-        typeMap.addDeserializerFactory(qName, _class, deserFactory);
-    }
 
     /************************************************
      * Invocation
@@ -1370,7 +1403,7 @@ public class Call implements javax.xml.rpc.Call {
         if (category.isDebugEnabled()) {
             StringWriter writer = new StringWriter();
             try {
-                SerializationContext ctx = new SerializationContext(writer,
+                SerializationContext ctx = new SerializationContextImpl(writer,
                                                                    msgContext);
                 reqEnv.output(ctx);
                 writer.close();

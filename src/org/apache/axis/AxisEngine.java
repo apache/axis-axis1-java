@@ -59,9 +59,10 @@ import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.deployment.DeploymentException;
 import org.apache.axis.deployment.wsdd.*;
 import org.apache.axis.encoding.DeserializerFactory;
-import org.apache.axis.encoding.SOAPTypeMappingRegistry;
+import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.encoding.TypeMappingRegistryImpl;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.InternalException;
@@ -178,7 +179,8 @@ public abstract class AxisEngine extends BasicHandler
             category.debug(JavaUtils.getMessage("enter00", "AxisEngine::init"));
         }
 
-        getTypeMappingRegistry().setParent(SOAPTypeMappingRegistry.getSingleton());
+        // The SOAP/XSD stuff is in the default TypeMapping of the TypeMappingRegistry.
+        //getTypeMappingRegistry().setParent(SOAPTypeMappingRegistry.getSingleton());
 
         try {
             configProvider.configureEngine(this);
@@ -252,15 +254,7 @@ public abstract class AxisEngine extends BasicHandler
     public TypeMappingRegistry getTypeMappingRegistry()
     {
         TypeMappingRegistry tmr = null;
-        try {
-            tmr = myRegistry.getTypeMappingRegistry("");
-            if (tmr == null) {
-                tmr = new TypeMappingRegistry();
-                myRegistry.addTypeMappingRegistry("", tmr);
-            }
-        } catch (DeploymentException e) {
-            category.error(e);
-        }
+        tmr = myRegistry.getTypeMappingRegistry();
         
         return tmr;
     }
@@ -325,34 +319,6 @@ public abstract class AxisEngine extends BasicHandler
     *
     *********************************************************************
     */
-
-    /**
-     * Register a new global type mapping
-     */
-    public void registerTypeMapping(QName qName,
-                                    Class cls,
-                                    DeserializerFactory deserFactory,
-                                    Serializer serializer)
-        throws IntrospectionException
-    {
-        category.info(JavaUtils.getMessage("registerTypeMap00",
-                qName.toString(), cls.getName()));
-        if (deserFactory != null)
-            getTypeMappingRegistry().addDeserializerFactory(qName,
-                                                        cls,
-                                                        deserFactory);
-        if (serializer != null)
-            getTypeMappingRegistry().addSerializer(cls, qName, serializer);
-    }
-
-    /**
-     * Unregister a global type mapping
-     */
-    public void unregisterTypeMapping(QName qName, Class cls)
-    {
-        getTypeMappingRegistry().removeDeserializer(qName);
-        getTypeMappingRegistry().removeSerializer(cls);
-    }
 
     /**
      * List of options which should be converted from Strings to Booleans

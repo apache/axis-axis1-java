@@ -70,6 +70,7 @@ import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.client.AxisClient;
 import org.apache.axis.configuration.FileProvider;
 import org.apache.axis.encoding.*;
+import org.apache.axis.encoding.ser.*;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.server.AxisServer;
@@ -513,7 +514,7 @@ public class Admin {
         throws AxisFault
     {
         StringWriter writer = new StringWriter();
-        SerializationContext context = new SerializationContext(writer, null);
+        SerializationContext context = new SerializationContextImpl(writer, null);
         context.setPretty(true);
         try {
             engine.getDeploymentRegistry().writeToContext(context);
@@ -805,8 +806,8 @@ public class Admin {
 
             // register both serializers and deserializers for this bean
             mapping.setQName(qn);
-            mapping.setSerializer(BeanSerializer.class);
-            mapping.setDeserializer(BeanSerializer.getFactory().getClass());
+            mapping.setSerializer(BeanSerializerFactory.class);
+            mapping.setDeserializer(BeanDeserializerFactory.class);
         } else {
             String typeName = elem.getAttribute("type");
             int idx = typeName.indexOf(':');

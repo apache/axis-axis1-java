@@ -56,7 +56,7 @@
 package org.apache.axis;
 
 import org.apache.axis.utils.QFault;
-
+import org.xml.sax.Attributes;
 import javax.xml.rpc.namespace.QName;
 
 public class Constants {
@@ -138,6 +138,40 @@ public class Constants {
         return false;
     }
 
+    /**
+     * getValue
+     * This utility routine returns the value of the attribute represented by the qname
+     * namespaceURI:localPart.  If the namespaceURI is one of the current known namespaces
+     * (like URI_CURRENT_SCHEMA_XSD), then all of the known qnames for this item are 
+     * searched.
+     * @param attributes are the attributes to search
+     * @param namespaceURI is the current known namespace for the attribute name
+     * @param localPart is the local part of the attribute name
+     * @return the value of the attribute or null
+     */
+    public static String getValue(Attributes attributes, String namespaceURI, String localPart) {
+        if (attributes == null || namespaceURI == null || localPart == null)
+            return null;
+        String[] search = null;
+        if (namespaceURI.equals(URI_CURRENT_SOAP_ENC)) 
+            search = URIS_SOAP_ENC;
+        else if (namespaceURI.equals(URI_CURRENT_SOAP_ENV))
+            search = URIS_SOAP_ENV;
+        else if (namespaceURI.equals(URI_CURRENT_SCHEMA_XSD))
+            search = URIS_SCHEMA_XSD;
+        else if (namespaceURI.equals(URI_CURRENT_SCHEMA_XSI))
+            search = URIS_SCHEMA_XSI;
+        else
+            search = new String[] {namespaceURI};
+        // Now look for an attribute value
+        for (int i=0; i < search.length; i++) {
+            String value = attributes.getValue(search[i], localPart);
+            if (value != null) {
+                return value;
+            }
+        }
+        return null;
+    }
 
     // Misc SOAP Namespaces
     public static final String URI_NEXT_ACTOR = 
@@ -278,6 +312,8 @@ public class Constants {
         return false;
     }
 
+    // Axis Mechanism Type
+    public static final String AXIS_SAX = "Axis SAX Mechanism";
 
     public static final String ELEM_ENVELOPE = "Envelope" ;
     public static final String ELEM_HEADER   = "Header" ;
@@ -327,6 +363,44 @@ public class Constants {
                                         new QName(URI_SOAP_ENV, ELEM_FAULT_ACTOR);
     public static final QName QNAME_FAULTDETAILS =
                                          new QName(URI_SOAP_ENV, ELEM_FAULT_DETAIL);
+
+
+    // Define qnames for the all of the XSD and SOAP-ENC encodings
+    public static final QName XSD_STRING = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "string");
+    public static final QName XSD_BOOLEAN = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "boolean");
+    public static final QName XSD_DOUBLE = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "double");
+    public static final QName XSD_FLOAT = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "float");
+    public static final QName XSD_INT = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "int");
+    public static final QName XSD_INTEGER = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "integer");
+    public static final QName XSD_LONG = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "long");
+    public static final QName XSD_SHORT = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "short");
+    public static final QName XSD_BYTE = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "byte");
+    public static final QName XSD_DECIMAL = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "decimal");
+    public static final QName XSD_BASE64 = new QName(Constants.URI_2001_SCHEMA_XSD, "base64Binary");
+    public static final QName XSD_HEXBIN = new QName(Constants.URI_2001_SCHEMA_XSD, "hexBinary");
+    public static final QName XSD_ANYTYPE = new QName(Constants.URI_2001_SCHEMA_XSD, "anyType");
+    public static final QName XSD_QNAME = new QName(Constants.URI_2001_SCHEMA_XSD, "QName");
+    public static final QName SOAP_BASE64 = new QName(Constants.URI_CURRENT_SOAP_ENC, "base64");
+
+    public static final QName SOAP_STRING = new QName(Constants.URI_CURRENT_SOAP_ENC, "string");
+    public static final QName SOAP_BOOLEAN = new QName(Constants.URI_CURRENT_SOAP_ENC, "boolean");
+    public static final QName SOAP_DOUBLE = new QName(Constants.URI_CURRENT_SOAP_ENC, "double");
+    public static final QName SOAP_FLOAT = new QName(Constants.URI_CURRENT_SOAP_ENC, "float");
+    public static final QName SOAP_INT = new QName(Constants.URI_CURRENT_SOAP_ENC, "int");
+    public static final QName SOAP_LONG = new QName(Constants.URI_CURRENT_SOAP_ENC, "long");
+    public static final QName SOAP_SHORT = new QName(Constants.URI_CURRENT_SOAP_ENC, "short");
+    public static final QName SOAP_BYTE = new QName(Constants.URI_CURRENT_SOAP_ENC, "byte");
+    public static final QName SOAP_INTEGER = new QName(Constants.URI_CURRENT_SOAP_ENC, "integer");
+    public static final QName SOAP_DECIMAL = new QName(Constants.URI_CURRENT_SOAP_ENC, "decimal");
+    public static final QName SOAP_ARRAY = new QName(Constants.URI_CURRENT_SOAP_ENC, "Array");
+
+    public static final QName SOAP_MAP = new QName("http://xml.apache.org/xml-soap", "Map");
+    public static final QName SOAP_ELEMENT = new QName("http://xml.apache.org/xml-soap", "Element");
+    public static final QName SOAP_VECTOR = new QName("http://xml.apache.org/xml-soap", "Vector");
+
+    public static       QName XSD_DATE = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "dateTime");
+    public static       QName XSD_DATE2= new QName(Constants.URI_1999_SCHEMA_XSD,    "timeInstant");
+    public static       QName XSD_DATE3= new QName(Constants.URI_2000_SCHEMA_XSD,    "timeInstant");
     
     // Misc Strings
     //////////////////////////////////////////////////////////////////////////

@@ -60,6 +60,7 @@ import org.w3c.dom.Node;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.Constants;                      
 import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.rpc.namespace.QName;
@@ -93,8 +94,9 @@ public class WSDDBeanMapping
     {
         super(e, true);
         
-        serializer = "org.apache.axis.encoding.BeanSerializer";
-        deserializer = "org.apache.axis.encoding.BeanSerializer$BeanDeserFactory";
+        serializer = "org.apache.axis.encoding.ser.BeanSerializerFactory";
+        deserializer = "org.apache.axis.encoding.ser.BeanDeserializerFactory";
+        encodingStyle = Constants.URI_CURRENT_SOAP_ENC;
     }
 
     protected QName getElementName() {

@@ -57,9 +57,9 @@ package org.apache.axis.handlers;
 
 import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
+import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
-import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeader;
 import org.apache.axis.session.SimpleSession;
@@ -198,7 +198,7 @@ public class SimpleSessionHandler extends BasicHandler
             // Got one!
             try {
                 Long id = (Long)header.
-                             getValueAsType(SOAPTypeMappingRegistry.XSD_LONG);
+                             getValueAsType(Constants.XSD_LONG);
                 // Store it away.
                 AxisEngine engine = context.getAxisEngine();
                 engine.setOption(SESSION_ID, id);
@@ -259,7 +259,7 @@ public class SimpleSessionHandler extends BasicHandler
                 // Got one!
                 try {
                     id = (Long)header.
-                            getValueAsType(SOAPTypeMappingRegistry.XSD_LONG);
+                            getValueAsType(Constants.XSD_LONG);
                 } catch (Exception e) {
                     throw AxisFault.makeFault(e);
                 }
