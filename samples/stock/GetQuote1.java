@@ -55,9 +55,7 @@
 
 package samples.stock ;
 
-import java.net.*;
-import java.io.*;
-import java.util.*;
+import java.io.FileInputStream;
 
 import org.apache.axis.AxisFault ;
 import org.apache.axis.Constants ;
@@ -88,13 +86,14 @@ public class GetQuote1 {
         System.exit(1);
       }
 
-      Service service = new Service( "file:///wstk/xml-axis/java/samples/stock/GetQuote.wsdl",
+      FileInputStream  fis = new FileInputStream( "GetQuote.wsdl" );
+      Service service = new Service( fis, 
                                      new QName("urn:xmltoday-delayed-quotes",
                                                "GetQuoteService") );
       QName   qn      = new QName( "urn:xmltoday-delayed-quotes", "GetQuote" );
       Call    call    = service.createCall( qn, "getQuote" );
 
-      //  params, return-type
+      //  set params, return-type   - dug
 
       call.setProperty( Constants.NAMESPACE, "urn:xmltoday-delayed-quotes" );
       call.setProperty( Transport.USER, opts.getUser() );
@@ -102,6 +101,7 @@ public class GetQuote1 {
 
       Object result = call.invoke( new Object[] { symbol = args[0] } );
 
+      fis.close();
       return( ((Float) result).floatValue() );
     }
 

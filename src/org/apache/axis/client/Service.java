@@ -70,6 +70,8 @@ import java.util.List ;
 import java.util.Iterator ;
 import java.util.HashSet ;
 
+import java.io.InputStream ;
+
 import org.apache.axis.utils.XMLUtils ;
 
 import org.apache.axis.rpc.JAXRPCException ;
@@ -108,7 +110,7 @@ public class Service implements org.apache.axis.rpc.Service {
             this.wsdlLocation   = WSDLdoc ;
             this.wsdlDefinition = def ;
 
-            // arg!
+            // grrr!
             String           ns = serviceName.getNamespaceURI();
             String           lp = serviceName.getLocalPart();
             javax.wsdl.QName qn = new javax.wsdl.QName( ns, lp );
@@ -134,7 +136,7 @@ public class Service implements org.apache.axis.rpc.Service {
             this.wsdlLocation = new URL(wsdlLocation) ;
             this.wsdlDefinition = def ;
 
-            // arg!
+            // grrr!
             String           ns = serviceName.getNamespaceURI();
             String           lp = serviceName.getLocalPart();
             javax.wsdl.QName qn = new javax.wsdl.QName( ns, lp );
@@ -151,6 +153,32 @@ public class Service implements org.apache.axis.rpc.Service {
         catch( Exception exp ) {
             throw new JAXRPCException( "Error processing WSDL document: " + 
                                        wsdlLocation + "\n" + exp.toString() );
+        }
+    }
+
+    public Service(InputStream wsdlInputStream, QName serviceName) 
+                           throws JAXRPCException {
+        try {
+            org.w3c.dom.Document doc = XMLUtils.newDocument(wsdlInputStream);
+            WSDLReader           reader = new WSDLReader();
+            Definition           def    = reader.readWSDL( null, doc );
+
+            this.wsdlLocation   = null ;
+            this.wsdlDefinition = def ;
+
+            // grrr!
+            String           ns = serviceName.getNamespaceURI();
+            String           lp = serviceName.getLocalPart();
+            javax.wsdl.QName qn = new javax.wsdl.QName( ns, lp );
+ 
+            this.wsdlService    = def.getService( qn );
+            if ( this.wsdlService == null )
+                throw new JAXRPCException( "Can't find service: " + 
+                                           serviceName );
+        }
+        catch( Exception exp ) {
+            throw new JAXRPCException( "Error processing WSDL document:\n" + 
+                                       exp.toString() );
         }
     }
 
