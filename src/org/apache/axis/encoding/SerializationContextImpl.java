@@ -902,7 +902,7 @@ public class SerializationContextImpl implements SerializationContext
             }
 
             throw new IOException(JavaUtils.getMessage("noSerializer00",
-                    value.getClass().getName(), "" + this));
+                    value.getClass().getName(), "" + tm));
         }
         // !!! Write out a generic null, or get type info from somewhere else?
     }

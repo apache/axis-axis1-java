@@ -63,8 +63,10 @@ import javax.xml.rpc.namespace.QName;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Field;
 
 /**
  * A ServiceDesc is an abstract description of a service.
@@ -90,6 +92,9 @@ public class ServiceDesc {
     /** List of allowed methods */
     /** null allows everything, an empty ArrayList allows nothing */
     private ArrayList allowedMethods = null;
+
+    /** List if disallowed methods */
+    private List disallowedMethods = null;
 
     /** Style */
     private int style = STYLE_RPC;
@@ -124,6 +129,9 @@ public class ServiceDesc {
     private boolean isSkeletonClass = false;
     /** Cached copy of the skeleton "getParameterDescStatic" method */
     private Method skelMethod = null;
+
+    /** Classes at which we should stop looking up the inheritance chain */
+    private ArrayList stopClasses = null;
 
     /** Lookup caches */
     private HashMap name2OperationsMap = null;
@@ -209,6 +217,22 @@ public class ServiceDesc {
         this.name = name;
     }
 
+    public ArrayList getStopClasses() {
+        return stopClasses;
+    }
+
+    public void setStopClasses(ArrayList stopClasses) {
+        this.stopClasses = stopClasses;
+    }
+
+    public List getDisallowedMethods() {
+        return disallowedMethods;
+    }
+
+    public void setDisallowedMethods(List disallowedMethods) {
+        this.disallowedMethods = disallowedMethods;
+    }
+
     public void addOperationDesc(OperationDesc operation)
     {
         operations.add(operation);
@@ -236,7 +260,7 @@ public class ServiceDesc {
 
     public OperationDesc [] getOperationsByName(String methodName)
     {
-        getSyncedOperationsForName(methodName);
+        getSyncedOperationsForName(implClass, methodName);
 
         if (name2OperationsMap == null)
             return null;
@@ -259,7 +283,7 @@ public class ServiceDesc {
         // If we need to load up operations from introspection data, do it.
         // This returns fast if we don't need to do anything, so it's not very
         // expensive.
-        getSyncedOperationsForName(methodName);
+        getSyncedOperationsForName(implClass, methodName);
 
         if (name2OperationsMap == null)
             return null;
@@ -375,8 +399,11 @@ public class ServiceDesc {
 
         // Didn't find a match.  Try the superclass, if appropriate
         Class superClass = implClass.getSuperclass();
-        if (!superClass.getName().startsWith("java.") &&
-                !superClass.getName().startsWith("javax.")) {
+        if (superClass != null &&
+                !superClass.getName().startsWith("java.") &&
+                !superClass.getName().startsWith("javax.") &&
+                (stopClasses == null ||
+                          !stopClasses.contains(superClass.getName()))) {
             syncOperationToClass(oper, superClass);
         }
     }
@@ -387,18 +414,46 @@ public class ServiceDesc {
      */
     public void loadServiceDescByIntrospection()
     {
+        loadServiceDescByIntrospection(implClass, true);
+
+        // Setting this to null means there is nothing more to do, and it
+        // avoids future string compares.
+        completedNames = null;
+    }
+    /**
+     * Fill in a service description by introspecting the implementation
+     * class.
+     */
+    public void loadServiceDescByIntrospection(Class implClass, boolean searchParents)
+    {
         if (implClass == null)
             return;
 
         Method [] methods = implClass.getDeclaredMethods();
 
         for (int i = 0; i < methods.length; i++) {
-            getSyncedOperationsForName(methods[i].getName());
+            getSyncedOperationsForName(implClass, methods[i].getName());
         }
 
-        // Setting this to null means there is nothing more to do, and it
-        // avoids future string compares.
-        completedNames = null;
+        if (implClass.isInterface()) {
+            Class [] superClasses = implClass.getInterfaces();
+            for (int i = 0; i < superClasses.length; i++) {
+                Class superClass = superClasses[i];
+                if (stopClasses == null ||
+                        !stopClasses.contains(superClass.getName())) {
+                    loadServiceDescByIntrospection(superClass, true);
+                }
+            }
+        } else {
+            Class superClass = implClass.getSuperclass();
+            if (superClass != null &&
+                    !superClass.getName().startsWith("java.") &&
+                    !superClass.getName().startsWith("javax.") &&
+                    (stopClasses == null ||
+                        !stopClasses.contains(superClass.getName()))) {
+                loadServiceDescByIntrospection(superClass, true);
+            }
+        }
     }
 
     /**
@@ -418,7 +473,7 @@ public class ServiceDesc {
      * Makes sure we have completely synchronized OperationDescs with
      * the implementation class.
      */
-    private void getSyncedOperationsForName(String methodName)
+    private void getSyncedOperationsForName(Class implClass, String methodName)
     {
         // If we have no implementation class, don't worry about it (we're
         // probably on the client)
@@ -432,6 +487,10 @@ public class ServiceDesc {
         // Skip it if it's not a sanctioned method name
         if ((allowedMethods != null) &&
             !allowedMethods.contains(methodName))
+            return;
+
+        if ((disallowedMethods != null) &&
+            disallowedMethods.contains(methodName))
             return;
 
         // If we're a skeleton class, make sure we don't already have any
@@ -520,7 +579,8 @@ public class ServiceDesc {
         }
 
         Class superClass = implClass.getSuperclass();
-        if (!superClass.getName().startsWith("java.") &&
+        if (superClass != null &&
+                !superClass.getName().startsWith("java.") &&
                 !superClass.getName().startsWith("javax.")) {
             createOperationsForName(superClass, methodName);
         }
@@ -546,7 +606,8 @@ public class ServiceDesc {
         OperationDesc operation = new OperationDesc();
         operation.setName(method.getName());
         operation.setMethod(method);
-        operation.setReturnClass(method.getReturnType());
+        Class retClass = method.getReturnType();
+        operation.setReturnClass(retClass);
         operation.setReturnType(tm.getTypeQName(method.getReturnType()));
 
         Class [] paramTypes = method.getParameterTypes();
@@ -577,6 +638,32 @@ public class ServiceDesc {
                 paramDesc.setTypeQName(tm.getTypeQName(type));
             }
             operation.addParameter(paramDesc);
+        }
+
+        // Create Exception Types
+        Class[] exceptionTypes = new Class[method.getExceptionTypes().length];
+        exceptionTypes = method.getExceptionTypes();
+
+        for (int i=0; i < exceptionTypes.length; i++) {
+            // Every remote method declares a java.rmi.RemoteException
+            if (exceptionTypes[i] != java.rmi.RemoteException.class) {
+                Field[] f = exceptionTypes[i].getDeclaredFields();
+                ArrayList exceptionParams = new ArrayList();
+                for (int j = 0; j < f.length; j++) {
+                    QName qname = new QName("", f[j].getName());
+                    QName typeQName = tm.getTypeQName(f[j].getType());
+                    ParameterDesc param = new ParameterDesc(qname,
+                                                            ParameterDesc.IN,
+                                                            typeQName);
+                    param.setJavaType(f[j].getType());
+                    exceptionParams.add(param);
+                }
+                String pkgAndClsName = exceptionTypes[i].getName();
+                FaultDesc fault = new FaultDesc();
+                fault.setName(pkgAndClsName);
+                fault.setParameters(exceptionParams);
+                operation.addFault(fault);
+            }
         }
 
         addOperationDesc(operation);

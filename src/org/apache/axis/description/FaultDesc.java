@@ -52,45 +52,45 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.wsdl.fromJava;
 
-import java.util.Vector;
+package org.apache.axis.description;
+
+import javax.xml.rpc.namespace.QName;
+import java.util.ArrayList;
 
 /**
- * ExceptionRep is the representation of a class used inside the Java2WSDL
- * emitter.  The information in the ExceptionRep can be changed by 
- * user provided code to affect the emitted wsdl file.  (See ClassRep)
- * @author Brent Ulbricht
+ *
+ * @author Glen Daniels (gdaniels@apache.org)
  */
-public class ExceptionRep extends BaseRep {
-    
-    private String   _name       = "";
-    private Vector   _parameters = null;                                   
+public class FaultDesc {
+    private QName qname;
+    private ArrayList parameters;
 
-    /**
-     * Constructor
-     * Create an empty ExceptionRep (represents void)
-     */ 
-    public ExceptionRep() {
+    public QName getQName() {
+        return qname;
     }
 
-    /**
-     * Constructor
-     * Create a default representation of ExceptionRep
-     * @param name name of the exception
-     * @param parameters parameters used in exception class
-     */ 
-    public ExceptionRep(String name, Vector parameters) {
-        _name = name;
-        _parameters = parameters;
+    public void setQName(QName name) {
+        this.qname = name;
     }
-       
-    /**
-     * Getters/Setters
-     **/
-    public String   getName()                             { return _name; }
-    public void     setName(String name)                  { _name = name; }
-    public Vector   getParameters()                       { return _parameters; }
-    public void     setParameters(Vector parameters)      { _parameters = parameters; }
 
-};
+    public String getName()
+    {
+        if (qname != null)
+            return qname.getLocalPart();
+        return null;
+    }
+
+    public void setName(String name)
+    {
+        qname = new QName("", name);
+    }
+
+    public ArrayList getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(ArrayList parameters) {
+        this.parameters = parameters;
+    }
+}

@@ -55,51 +55,33 @@
 
 package org.apache.axis.encoding.ser;
 
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.AttributesImpl;
-
-import javax.xml.rpc.namespace.QName;
-import java.io.IOException;
-
-import org.apache.axis.Constants;
-import org.apache.axis.encoding.Serializer;
-import org.apache.axis.encoding.SerializerFactory;
-import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.encoding.DeserializerFactory;
-import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.DeserializerImpl;
-import org.apache.axis.InternalException;
 import org.apache.axis.AxisFault;
-import org.apache.axis.description.TypeDesc;
+import org.apache.axis.Constants;
+import org.apache.axis.InternalException;
 import org.apache.axis.description.FieldDesc;
+import org.apache.axis.description.TypeDesc;
+import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.Serializer;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.wsdl.fromJava.ClassRep;
 import org.apache.axis.wsdl.fromJava.FieldRep;
 import org.apache.axis.wsdl.fromJava.Types;
-import org.apache.axis.wsdl.toJava.Utils;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.io.Serializable;
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
-import java.beans.IntrospectionException;
-
 import org.w3c.dom.Element;
-import org.w3c.dom.Document;
+import org.xml.sax.Attributes;
+import org.xml.sax.helpers.AttributesImpl;
 
+import javax.xml.rpc.namespace.QName;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
-import java.io.ObjectStreamField;
+import java.io.IOException;
 import java.io.Serializable;
-
-import java.util.HashMap;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.List;
 import java.util.Vector;
-import java.util.Iterator;
 
 /**
  * General purpose serializer/deserializerFactory for an arbitrary java bean.
@@ -305,7 +287,7 @@ public class BeanSerializer implements Serializer, Serializable {
         // See if there is a super class, stop if we hit a stop class
         Element e = null;
         Class superClass = javaType.getSuperclass();
-        Vector stopClasses = types.getStopClasses();
+        List stopClasses = types.getStopClasses();
         if (superClass != null &&
                 superClass != java.lang.Object.class &&
                 (stopClasses == null ||
@@ -437,7 +419,6 @@ public class BeanSerializer implements Serializer, Serializable {
      * attribute list
      *
      * @param value the object we are serializing
-     * @param pd the properties of this class
      * @return attributes for this element, null if none
      */
     protected Attributes getObjectAttributes(Object value,

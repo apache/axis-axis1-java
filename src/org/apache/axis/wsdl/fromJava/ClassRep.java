@@ -69,6 +69,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Vector;
+import java.util.List;
 import java.util.HashMap;
 
 import org.apache.axis.utils.JavaUtils;
@@ -160,7 +161,7 @@ public class ClassRep extends BaseRep {
     private Vector   _methods    = new Vector();
     private Vector   _fields     = new Vector();
     private HashMap  _fieldNames = new HashMap();
-    private Vector   _stopList    = null;
+    private List     _stopList    = null;
     
     /**
      * Constructor
@@ -182,13 +183,13 @@ public class ClassRep extends BaseRep {
      *                   class that implements or extends cls.  The
      *                   implClass is used to obtain parameter names.
      */ 
-    public ClassRep(Class cls, boolean inhMethods, Vector stopList) {
+    public ClassRep(Class cls, boolean inhMethods, List stopList) {
         init(cls, inhMethods, stopList, null);
     }
-    public ClassRep(Class cls, boolean inhMethods, Vector stopList, Class implClass) {
+    public ClassRep(Class cls, boolean inhMethods, List stopList, Class implClass) {
         init(cls, inhMethods, stopList, implClass);
     }
-    protected void init(Class cls, boolean inhMethods, Vector stopList, Class implClass) {
+    protected void init(Class cls, boolean inhMethods, List stopList, Class implClass) {
         _name = cls.getName();
         _isInterface = cls.isInterface();
         _modifiers = cls.getModifiers();
@@ -235,9 +236,7 @@ public class ClassRep extends BaseRep {
      * @param inhMethods if true, then the methods array will contain
      *                   methods declared and/or inherited else only
      *                   the declared methods are put in the list           
-     * @param stopList An optional vector of class names which if inhMethods
-     *                    is true, will stop the inheritence search if encountered.
-     * @param implClass  This is an optional parameter which is a 
+     * @param implClass  This is an optional parameter which is a
      *                   class that implements or extends cls.  The
      *                   implClass is used to obtain parameter names.            
      */ 
@@ -442,7 +441,6 @@ public class ClassRep extends BaseRep {
      * @param method is the Method to search.                
      * @param implClass  If the first search fails, the corresponding  
      *                   Method in this class is searched.           
-     * @param types  are the parameter types after converting Holders.
      * @return array of Strings which represent the return name followed by parameter names
      */ 
     protected String[] getParameterNames(Method method, Class implClass) {
@@ -526,7 +524,6 @@ public class ClassRep extends BaseRep {
      * @param method is the Method to search.                
      * @param implClass  If the first search fails, the corresponding  
      *                   Method in this class is searched.           
-     * @param types  are the parameter types after converting Holders.
      * @return array of Strings which represent the return mode followed by parameter modes
      */ 
     protected ParameterMode[] getParameterModes(Method method, Class implClass) {
