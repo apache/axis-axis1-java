@@ -71,6 +71,24 @@ import org.apache.axis.Part;
 public interface Attachments {
 
     /**
+     * Adds an existing attachment to this list.
+     * Note: Passed part will be bound to this message.
+     * @param newPart new part to add
+     * @returns Part old attachment with the same Content-ID, or null.
+     * @throws org.apache.axis.AxisFault
+     */
+     public Part addAttachmentPart(Part newPart) throws org.apache.axis.AxisFault;
+
+    /**
+     * This method uses getAttacmentByReference() to look for attachment.
+     * If attachment has been found, it will be removed from the list, and
+     * returned to the user.
+     * @param  The reference that referers to an attachment.
+     * @return The part associated with the removed attachment, or null.
+     */
+     public Part removeAttachmentPart(String reference) throws org.apache.axis.AxisFault;
+
+    /**
      * This method should look at a refernce and determine if it is a CID: or url
      * to look for attachment.
      * @param  The reference in the xml that referers to an attachment.
@@ -103,6 +121,11 @@ public interface Attachments {
      *         otherwise null.
      */ 
     public Part getRootPart();
+
+    /**
+     * Sets the root part of this multipart block
+     */
+    public void setRootPart(Part newRoot);
 
     /**
      * Get the content length of the stream. 

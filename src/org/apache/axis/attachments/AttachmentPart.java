@@ -87,33 +87,18 @@ public class AttachmentPart extends Part {
 
     javax.activation.DataHandler datahandler= null;
     
-    /**
-     * Do not call this directly!  This should only be called by the
-     * AttachmentsImpl object.
-     */ 
-
-     
-    public AttachmentPart(Message parent) {
-        super(parent);
-    }
-
-    public AttachmentPart(Message parent, javax.activation.DataHandler dh ) {
-        super(parent);
-        datahandler= dh;
-        addMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE , dh.getContentType());
-    }
 
     public AttachmentPart() {
-        super(null);
+        super();
     }
 
     public AttachmentPart(javax.activation.DataHandler dh ) {
-        super(null);
+        super();
         datahandler= dh;
         addMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE , dh.getContentType());
     }
 
-    javax.activation.DataHandler getActiviationDataHandler(){
+    public javax.activation.DataHandler getActiviationDataHandler(){
       return datahandler;
     }
 
