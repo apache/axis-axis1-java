@@ -82,12 +82,19 @@ import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
 
 import org.w3c.dom.*;
+import org.apache.xml.serialize.XMLSerializer;
+import org.apache.xml.serialize.OutputFormat;
+
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
+
 import org.apache.axis.utils.XMLUtils;
 
 import com.ibm.wsdl.xml.WSDLReader;
 import com.ibm.wsdl.extensions.soap.SOAPAddress;
 import com.ibm.wsdl.extensions.soap.SOAPOperation;
 import com.ibm.wsdl.extensions.soap.SOAPBody;
+import com.ibm.wsdl.extensions.soap.SOAPBinding;
 
 /**
  * This class produces java files for stubs, skeletons, and types from a
@@ -95,6 +102,7 @@ import com.ibm.wsdl.extensions.soap.SOAPBody;
  *
  * @author Russell Butek (butek@us.ibm.com)
  * @author Tom Jordahl (tjordahl@macromedia.com)
+ * @author Steve Graham (sggraham@us.ibm.com)
  */
 public class Emitter {
     private Document doc = null;
@@ -131,6 +139,8 @@ public class Emitter {
             writeTypes ();
             HashMap portTypesInfo = writePortTypes ();
             writeBindings (portTypesInfo);
+            if(bEmitSkeleton)
+            	writeDeploymentXML();
         }
         catch (WSDLException e) {
             e.printStackTrace ();
@@ -244,6 +254,8 @@ public class Emitter {
         while (i.hasNext ()) {
             PortType portType = (PortType) i.next ();
             HashMap portTypeInfo = writePortType (portType);
+            if(bEmitSkeleton)
+            	writeAxisPortType(portType);
 
             portTypesInfo.put (portType, portTypeInfo);
         }
@@ -251,12 +263,13 @@ public class Emitter {
     } // writePortTypes
 
     /**
-     * Generate the bindings (interface, stub, skeleton) for the given port type.
+     * Generate the interface for the given port type.
      */
     private HashMap writePortType(PortType portType) throws IOException {
         String nameValue = portType.getQName ().getLocalPart ();
         PrintWriter interfacePW = new PrintWriter (
                 new FileWriter (nameValue + ".java"));
+        System.out.println("Generating PortType interface: " + nameValue + ".java");
 
         interfacePW.println ("public interface " + nameValue + " extends java.rmi.Remote");
         interfacePW.println ("{");
@@ -276,6 +289,32 @@ public class Emitter {
 
         return portTypeInfo;
     } // writePortType
+
+    /**
+     * Generate the server-side (Axis) interface for the given port type.
+     */
+    private void writeAxisPortType(PortType portType) throws IOException {
+        String nameValue = portType.getQName ().getLocalPart () + "Axis";
+        PrintWriter interfacePW = new PrintWriter (
+                new FileWriter (nameValue + ".java"));
+        System.out.println("Generating server-side PortType interface: " + nameValue + ".java");
+
+        interfacePW.println ("import org.apache.axis.MessageContext;");
+        interfacePW.println ("public interface " + nameValue + " extends java.rmi.Remote");
+        interfacePW.println ("{");
+        
+        List operations = portType.getOperations ();
+
+        for (int i = 0; i < operations.size (); ++i) {
+            Operation operation = (Operation) operations.get (i);
+            Parameters operationInfo = writeOperationSkelSignatures (operation, interfacePW);
+         }
+
+        interfacePW.println ("}");
+        interfacePW.close ();
+
+        return;
+    } // writeAxisPortType
 
     /**
      * This class simply collects
@@ -469,8 +508,11 @@ public class Emitter {
         if (allOuts == 0)
             skelSig = "    public void " + name + "(";
         else
-            skelSig = "    public Object " + name + "(";
+            skelSig = "    public " + parms.returnType + " " + name + " (";
 
+		skelSig = skelSig + "MessageContext ctx";
+		if (parms.list.size() > 0) 
+		    skelSig = skelSig + ", ";
         boolean needComma = false;
 
         for (int i = 0; i < parms.list.size (); ++i) {
@@ -482,7 +524,7 @@ public class Emitter {
                     skelSig = skelSig + ", ";
             }
             else
-                needComma = true;
+               needComma = true;
             if (p.mode == Parameter.IN) {
                 signature = signature + p.type + " " + p.name;
                 skelSig = skelSig + p.type + " " + p.name;
@@ -522,13 +564,25 @@ public class Emitter {
     } // partStrings
 
     /**
-     * This method generates the interface, stub, and skeleton info for the given operation.
+     * This method generates the interface signatures for the given operation.
      */
     private Parameters writeOperation(Operation operation, PrintWriter interfacePW) throws IOException {
         String name = operation.getName ();
         Parameters parms = parameters (operation);
 
         interfacePW.println (parms.signature + ";");
+
+        return parms;
+    } // writeOperation
+ 
+    /**
+     * This method generates the skeleton interface signatures operation.
+     */
+    private Parameters writeOperationSkelSignatures(Operation operation, PrintWriter interfacePW) throws IOException {
+        String name = operation.getName ();
+        Parameters parms = parameters (operation);
+
+        interfacePW.println (parms.skelSignature + ";");
 
         return parms;
     } // writeOperation
@@ -604,6 +658,7 @@ public class Emitter {
 
         String stubName = name + "Stub";
         PrintWriter stubPW = new PrintWriter (new FileWriter (stubName + ".java"));
+        System.out.println("Generating client-side stub: " + stubName + ".java");
 
         // get the soap:address
         // This is a temporary hack till the service class is coded to
@@ -702,10 +757,12 @@ public class Emitter {
         {
             String skelName = name + "Skeleton";
             skelPW = new PrintWriter (new FileWriter (skelName + ".java"));
+            System.out.println("Generating server-side skeleton: " + skelName + ".java");
 
-            skelPW.println ("public class " + skelName);
+            skelPW.println ("import org.apache.axis.MessageContext;");
+			skelPW.println ("public class " + skelName);
             skelPW.println ("{");
-            skelPW.println ("    private " + portTypeName + " impl;");
+            skelPW.println ("    private " + portTypeName + "Axis impl;");
             skelPW.println ();
             // RJB WARNING! - is this OK?
             skelPW.println ("    public " + skelName + "()");
@@ -713,7 +770,7 @@ public class Emitter {
             skelPW.println ("        this.impl = new " + name + "Impl ();");
             skelPW.println ("    }");
             skelPW.println ();
-            skelPW.println ("    public " + skelName + " (" + portTypeName + " impl)");
+            skelPW.println ("    public " + skelName + " (" + portTypeName + "Axis impl)");
             skelPW.println ("    {");
             skelPW.println ("        this.impl = impl;");
             skelPW.println ("    }");
@@ -901,7 +958,10 @@ public class Emitter {
         if (parms.outputs == 0)
             pw.print ("        impl." + name + "(");
         else
-            pw.print ("        Object o = impl." + name + "(");
+            pw.print ("        " + parms.returnType + " ret = impl." + name + "(");
+        pw.print("ctx");
+        if(parms.list.size() > 0)
+        	pw.print(", ");
         boolean needComma = false;
         for (int i = 0; i < parms.list.size (); ++i) {
             if (needComma)
@@ -921,7 +981,7 @@ public class Emitter {
         if (parms.inouts + parms.outputs > 0) {
             if (parms.inouts == 0 && parms.outputs == 1)
                 // The only output is a single return value; simply pass it through.
-                pw.println ("        return o;");
+                pw.println ("        return ret;");
             else if (parms.outputs == 0 && parms.inouts == 1) {
                 // There is only one inout parameter.  Find it in the parms list and write
                 // its return
@@ -935,7 +995,7 @@ public class Emitter {
                 // There are more than 1 output parts, so create a Vector to put them into.
                 pw.println ("        java.util.Vector v = new java.util.Vector ();");
                 if (parms.outputs > 0)
-                    pw.println ("        v.add (o);");
+                    pw.println ("        v.add (ret);");
                 for (int i = 0; i < parms.list.size (); ++i) {
                     Parameter p = (Parameter) parms.list.get (i);
 
@@ -948,7 +1008,199 @@ public class Emitter {
         pw.println ("    }");
         pw.println ();
     } // writeSkeletonOperation
+    
+    /**
+     * Generate the deployment descriptor and undeployment descriptor
+     * for the current WSDL file
+     */
+    private void writeDeploymentXML(){
+    	try{
+        	PrintWriter dpw = new PrintWriter (new FileWriter ("deploy.xml"));
+        	System.out.println("Generating deployment document: deploy.xml");
+    		XMLSerializer deploy = initializeDeploymentDoc(dpw, "deploy");
 
+        	PrintWriter upw = new PrintWriter (new FileWriter ("undeploy.xml"));
+        	System.out.println("Generating deployment document: undeploy.xml");
+    		XMLSerializer undeploy = initializeDeploymentDoc(upw, "undeploy");
+    		
+    		writeDeployServices(deploy, undeploy);
+    		writeDeployTypes(deploy);
+    		
+			deploy.endElement("AdminService", "deploy", "m:deploy");
+			dpw.close();
+			
+			undeploy.endElement("AdminService", "undeploy", "m:undeploy");
+			upw.close();
+		}catch (Exception e){
+        	System.err.println("Failed to write deployment documents");
+        	e.printStackTrace();
+        }
+    	
+    } // writeDeploymentXML
+    
+    /**
+     * Initialize the deployment document
+     */
+    private XMLSerializer initializeDeploymentDoc(PrintWriter w, String deploymentOpName) throws Exception{
+		OutputFormat of = new OutputFormat();
+		of.setIndenting(true);
+		of.setIndent(3);
+		of.setOmitXMLDeclaration(true);
+	    	
+	    XMLSerializer ser = new XMLSerializer(w, of);
+     	
+		ser.comment(
+            "                                                             ");
+    	ser.comment(
+    	    "Use this file to undeploy some handlers/chains and services  ");
+    	ser.comment(
+            "Two ways to do this:                                         ");
+    	ser.comment(
+            "  java org.apache.axis.utils.Admin undeploy.xml              ");
+    	ser.comment(
+            "     from the same dir that the Axis engine runs             ");
+    	ser.comment(
+            "or                                                           ");
+    	ser.comment(
+            "  java org.apache.axis.client.AdminClient undeploy.xml       ");
+    	ser.comment(
+            "     after the axis server is running                        ");
+    	ser.comment(
+            "This file will be replaced by WSDD once it's ready           ");
+		ser.comment(
+            "                                                             ");
+		
+		ser.startDocument();
+		
+		AttributesImpl attrs = new AttributesImpl();
+		attrs.addAttribute("","xmlns:m","", "", "AdminService");
+		ser.startElement("AdminService", deploymentOpName, "m:"+ deploymentOpName, attrs);
+		
+    	return ser;
+    } // initializeDeploymentDoc
+    
+    /**
+     * Write out bean mappings for each type
+     */
+    private void writeDeployTypes(XMLSerializer deploy) throws org.xml.sax.SAXException{
+        Vector types = findChildNodesByName (doc, "complexType");
+
+		if(types.isEmpty()) return;
+
+		newLine(deploy);
+		newLine(deploy);
+		
+		//assumes all complex type elements are under one parent
+		Node type = (Node)types.get(0);		
+		Element parent = (Element)type.getParentNode();
+		String namespaceURI = parent.getAttribute("targetNamespace");
+
+		//grab the namespace prefix from the attributes of the root (if it is there)
+		String namespacePrefix="ns";
+		NamedNodeMap docAttrs = doc.getDocumentElement().getAttributes();
+		for(int i = 0; i<docAttrs.getLength();i++){
+  			Attr attr = (Attr)docAttrs.item(i);
+  			if(attr.getValue().equals(namespaceURI)){
+    			namespacePrefix = ((Attr)docAttrs.item(i)).getLocalName();
+    			break;
+    		}
+		}
+
+		AttributesImpl attrs = new AttributesImpl();
+		attrs.addAttribute("","xmlns:" + namespacePrefix,"", "", namespaceURI);
+		deploy.startElement("", "beanMappings", "", attrs);
+		
+        for (int i = 0; i < types.size (); ++i) {
+        	type = (Node) types.get (i);
+        	NamedNodeMap attributes = type.getAttributes ();
+        	String typeName = capitalize (attributes.getNamedItem ("name").getNodeValue ());
+			
+			AttributesImpl attrs2 = new AttributesImpl();
+			attrs2.addAttribute("","classname","", "", typeName);
+			deploy.startElement(namespaceURI, typeName, namespacePrefix + ":" + typeName, attrs2);
+			deploy.endElement(namespaceURI, typeName, namespacePrefix + ":" + typeName);
+        }
+        deploy.endElement("", "beanMappings",  "");
+    	
+    } //writeDeployTypes
+    
+    /**
+     * Write out deployment and undeployment instructions for each WSDL service
+     */
+    private void writeDeployServices(XMLSerializer deploy, XMLSerializer undeploy) throws IOException, org.xml.sax.SAXException{
+    	//deploy the ports on each service
+        Map serviceMap = def.getServices();
+        for ( Iterator mapIterator = serviceMap.values().iterator(); mapIterator.hasNext();) {
+            Service myService = (Service)mapIterator.next();
+            newLine(deploy);
+            deploy.comment("Services from " + myService.getQName().getLocalPart() + " WSDL service");
+            newLine(undeploy);
+            undeploy.comment("Services from " + myService.getQName().getLocalPart() + " WSDL service");
+            
+            for (Iterator portIterator = myService.getPorts().values().iterator(); portIterator.hasNext();) {
+                Port myPort = (Port)portIterator.next();
+                writeDeployPort(deploy, undeploy, myPort);
+            }
+        }
+    	
+	} //writeDeployServices
+	
+    /**
+     * Write out deployment and undeployment instructions for given WSDL port
+     */
+    private void writeDeployPort(XMLSerializer deploy, XMLSerializer undeploy, Port port) throws org.xml.sax.SAXException{
+    	Binding binding = port.getBinding();
+    	String serviceName = port.getName();
+    	            
+    	boolean isRPC = false;
+        Iterator operationExtensibilityIterator = binding.getExtensibilityElements().iterator();
+        for ( ; operationExtensibilityIterator.hasNext(); ) {
+            Object obj = operationExtensibilityIterator.next();
+            if (obj instanceof SOAPBinding) {
+                isRPC = ((SOAPBinding)obj).getStyle().equals("rpc");
+                break;
+            }
+        }
+
+    	AttributesImpl attrs = new AttributesImpl();
+		attrs.addAttribute("","name","", "", serviceName);
+		attrs.addAttribute("","pivot","", "", isRPC ? "RPCDispatcher" : "MsgDispatcher" );
+    	deploy.startElement("", "service", "", attrs);
+    	undeploy.startElement("", "service", "", attrs);
+    	
+    	writeDeployBinding(deploy, binding);
+    	
+    	deploy.endElement("", "service", "");
+    	undeploy.endElement("", "service", "");
+    	
+    } //writeDeployPort
+
+    /**
+     * Write out deployment instructions for given WSDL binding
+     */
+    private void writeDeployBinding(XMLSerializer deploy, Binding binding) throws org.xml.sax.SAXException{
+        AttributesImpl attrs = new AttributesImpl();
+		attrs.addAttribute("","name","", "", "className");
+		attrs.addAttribute("","value","", "", binding.getQName ().getLocalPart () + "Impl"  );
+    	deploy.startElement("", "option", "", attrs);
+    	deploy.endElement("", "option", "");
+    	
+    	String methodList = "";
+    	Iterator operationsIterator = binding.getBindingOperations().iterator();
+        for ( ; operationsIterator.hasNext(); ) {
+            BindingOperation op = (BindingOperation)operationsIterator.next();
+            methodList = methodList + " " + op.getName();
+        }
+        
+        attrs = new AttributesImpl();
+		attrs.addAttribute("","name","", "", "methodName");
+		attrs.addAttribute("","value","", "", methodList);
+    	deploy.startElement("", "option", "", attrs);
+    	deploy.endElement("", "option", "");    	
+
+    } //writeDeployBinding
+
+	
     //////////////////////////////
     //
     // Methods using types (non WSDL)
@@ -956,6 +1208,7 @@ public class Emitter {
 
     /**
      * Generate bindings (classes and class holders) for the complex types.
+     * If generating serverside (skeleton) spit out beanmappings
      */
     private void writeTypes() throws IOException {
         Vector types = findChildNodesByName (doc, "complexType");
@@ -973,7 +1226,8 @@ public class Emitter {
         NamedNodeMap attributes = node.getAttributes ();
         String nameValue = capitalize (attributes.getNamedItem ("name").getNodeValue ());
         PrintWriter typePW = new PrintWriter (new FileWriter (nameValue + ".java"));
-
+		System.out.println("Generating Type Implementation: " + nameValue + ".java");
+		
         typePW.println ("public class " + nameValue + " implements java.io.Serializable");
         typePW.println ("{");
 
@@ -1030,6 +1284,8 @@ public class Emitter {
             capitalize (attributes.getNamedItem ("name").getNodeValue ());
         PrintWriter pw =
             new PrintWriter (new FileWriter (typeName + "Holder.java"));
+            
+		System.out.println("Generating Type Implementation Holder: " + typeName + "Holder.java");
 
         pw.println ("public final class " + typeName + "Holder implements java.io.Serializable");
         pw.println ("{");
@@ -1117,6 +1373,16 @@ public class Emitter {
     // Utility methods
     //
 
+	/**
+	 * Put a line seperator to the given XML serializer
+	 */
+	private void newLine(XMLSerializer ser) throws org.xml.sax.SAXException{
+		String nl = "\n";
+		char[] crlf = new char[nl.length()];
+		nl.getChars(0, nl.length(), crlf, 0);
+		ser.ignorableWhitespace(crlf,0, crlf.length);
+	}
+	
     /**
      * For a given string, strip off the prefix - everything before the colon.
      */
