@@ -93,8 +93,6 @@ public class SOAPConnectionImpl extends javax.xml.soap.SOAPConnection {
             throw new SOAPException(mue);
         } catch (org.apache.axis.AxisFault af){
             throw new SOAPException(af);
-        } catch (java.rmi.RemoteException re){
-            throw new SOAPException(re);
         }
     }
 
