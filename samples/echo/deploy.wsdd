@@ -1,0 +1,21 @@
+<!-- Use this file to deploy some handlers/chains and services  -->
+<!-- Two ways to do this:                                       -->
+<!--   java org.apache.axis.utils.Admin deploy.xml              -->
+<!--      from the same dir that the Axis engine runs           -->
+<!-- or                                                         -->
+<!--   java org.apache.axis.client.http.AdminClient deploy.xml  -->
+<!--      after the axis server is running                      -->
+<!-- This file will be replaced by WSDD once it's ready         -->
+
+ <deployment 	name="test" xmlns="http://xml.apache.org/axis/wsdd/" 
+			xmlns:java="http://xml.apache.org/axis/wsdd/providers/java"
+			xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance">
+  <service name="http://soapinterop.org/" pivot="java:RPC" >
+    <parameter name="className" value="samples.echo.EchoService" />
+    <parameter name="methodName" value="*" />
+  </service>
+
+  <typeMapping xmlns:echo="http://soapinterop.org/xsd"
+    qname="echo:SOAPStruct" languageSpecificType="java:samples.echo.SOAPStruct"
+    serializer="org.apache.axis.encoding.BeanSerializer" deserializer="org.apache.axis.encoding.BeanSerializer$BeanSerFactory"/>
+</deployment>

@@ -93,7 +93,7 @@ public class LocalSender extends BasicHandler {
 
         AxisServer targetServer = (AxisServer)clientContext.
                                                             getProperty(LocalTransport.LOCAL_SERVER);
-        category.debug( JavaUtils.getMessage("usingServer00", "LocalSender", "" + targetServer));
+        category.debug(JavaUtils.getMessage("usingServer00", "LocalSender", "" + targetServer));
 
         if (targetServer == null) {
             // This should have already been done, but it doesn't appear to be
@@ -129,11 +129,12 @@ public class LocalSender extends BasicHandler {
         if (transURL != null) {
             try {
                 URL url = new URL(transURL);
-                if (url.getProtocol().equals("file")) {
-                    String file = url.getFile();
-                    if (file.length()>0 && file.charAt(0)=='/') file = file.substring(1);
-                    serverContext.setProperty(Constants.MC_REALPATH, file);
-                }
+                String file = url.getFile();
+                if (file.length()>0 && file.charAt(0)=='/') file = file.substring(1);
+                serverContext.setProperty(Constants.MC_REALPATH, file);
+                
+                // This enables "local:///AdminService" and the like to work.
+                serverContext.setTargetService(file);
             } catch (Exception e) {
             }
         }

@@ -192,10 +192,6 @@ public class Constants {
     // MessageContext param for the IP of the calling client
     public static final String MC_REMOTE_ADDR = "remoteaddr";
 
-    /** The global input/out chains */
-    public static final String GLOBAL_REQUEST        = "global.request" ;
-    public static final String GLOBAL_RECEIVE       = "global.response" ;
-    
     public static final String JWSPROCESSOR_TARGET = "JWSProcessor" ;
 
     public static final String SERVER_CONFIG_FILE = "server-config.wsdd";

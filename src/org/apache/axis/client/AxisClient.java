@@ -147,8 +147,7 @@ public class AxisClient extends AxisEngine
 
                 /* Process the Global Request Chain */
                 /**********************************/
-                hName = Constants.GLOBAL_REQUEST ;
-                if ( hName != null  && (h = getHandler( hName )) != null )
+                if ((h = getGlobalRequest()) != null )
                     h.invoke(msgContext);
 
                 /** Process the Transport Specific stuff
@@ -165,8 +164,7 @@ public class AxisClient extends AxisEngine
 
                 /* Process the Global Response Chain */
                 /***********************************/
-                hName = Constants.GLOBAL_RECEIVE ;
-                if ( hName != null && (h = getHandler( hName )) != null )
+                if ((h = getGlobalResponse()) != null)
                     h.invoke(msgContext);
 
                 if ( service != null ) {
