@@ -105,8 +105,6 @@ public class GetQuote {
           call.set(HTTPConstants.MC_HTTP_SOAPACTION, "");
       }
 
-      if ( opts.isFlagSet('t') > 0 ) call.doLocal = true ;
-
       call.set( Transport.USER, opts.getUser() );
       call.set( Transport.PASSWORD, opts.getPassword() );
 

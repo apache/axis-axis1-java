@@ -39,8 +39,6 @@ public class FileTest {
     sd.addOutputParam("return", SOAPTypeMappingRegistry.XSD_FLOAT);
     call.setServiceDescription(sd);
   
-    if ( opts.isFlagSet('t') > 0 ) call.doLocal = true ;
-  
     call.set(Transport.USER, opts.getUser() );
     call.set(Transport.PASSWORD, opts.getPassword() );
     call.setTransport( new FileTransport() );
