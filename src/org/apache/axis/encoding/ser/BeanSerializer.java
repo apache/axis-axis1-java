@@ -62,7 +62,9 @@ import org.apache.axis.description.FieldDesc;
 import org.apache.axis.description.TypeDesc;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.Serializer;
+import org.apache.axis.utils.BeanPropertyDescriptor;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.BeanUtils;
 import org.apache.axis.wsdl.fromJava.ClassRep;
 import org.apache.axis.wsdl.fromJava.FieldRep;
 import org.apache.axis.wsdl.fromJava.Types;
@@ -114,7 +116,7 @@ public class BeanSerializer implements Serializer, Serializable {
         this.xmlType = xmlType;
         this.javaType = javaType;
         this.typeDesc = typeDesc;
-        propertyDescriptor = getPd(javaType);
+        propertyDescriptor = BeanUtils.getPd(javaType);
     }
 
     /**
@@ -216,61 +218,6 @@ public class BeanSerializer implements Serializer, Serializable {
         context.endElement();
     }
 
-    /**
-     * Create a BeanPropertyDescriptor array for the indicated class.
-     */
-    static BeanPropertyDescriptor[] getPd(Class javaType) {
-        BeanPropertyDescriptor[] pd;
-        try {
-            PropertyDescriptor[] rawPd = Introspector.getBeanInfo(javaType).getPropertyDescriptors();
-            pd = BeanPropertyDescriptor.processPropertyDescriptors(rawPd,javaType);
-        } catch (Exception e) {
-            // this should never happen
-            throw new InternalException(e);
-        }
-        return pd;
-    }
-
-    /**
-     * Return a list of properties in the bean which should be attributes
-     */
-    static Vector getBeanAttributes(Class javaType, TypeDesc typeDesc) {
-        Vector ret = new Vector();
-
-        if (typeDesc == null) {
-            // !!! Support old-style beanAttributeNames for now
-
-            // See if this object defined the 'getAttributeElements' function
-            // which returns a Vector of property names that are attributes
-            try {
-                Method getAttributeElements =
-                        javaType.getMethod("getAttributeElements",
-                                           new Class [] {});
-                // get string array
-                String[] array = (String[])getAttributeElements.invoke(null, noArgs);
-
-                // convert it to a Vector
-                ret = new Vector(array.length);
-                for (int i = 0; i < array.length; i++) {
-                    ret.add(array[i]);
-                }
-            } catch (Exception e) {
-                ret.clear();
-            }
-        } else {
-            FieldDesc [] fields = typeDesc.getFields();
-            if (fields != null) {
-                for (int i = 0; i < fields.length; i++) {
-                    FieldDesc field = fields[i];
-                    if (!field.isElement()) {
-                        ret.add(field.getFieldName());
-                    }
-                }
-            }
-        }
-
-        return ret;
-    }
 
 
     public String getMechanismType() { return Constants.AXIS_SAX; }

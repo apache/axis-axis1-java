@@ -55,36 +55,26 @@
 
 package org.apache.axis.encoding.ser;
 
-import java.beans.IntrospectionException;
-import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Vector;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.Iterator;
-
-import org.apache.axis.InternalException;
 import org.apache.axis.description.TypeDesc;
+import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.encoding.Deserializer;
+import org.apache.axis.encoding.DeserializerImpl;
+import org.apache.axis.encoding.SimpleType;
+import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.message.SOAPHandler;
+import org.apache.axis.utils.BeanPropertyDescriptor;
 import org.apache.axis.utils.JavaUtils;
-
-import javax.xml.rpc.namespace.QName;
-
+import org.apache.axis.utils.BeanUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-import org.apache.axis.encoding.Serializer;
-import org.apache.axis.encoding.SerializerFactory;
-import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.encoding.DeserializerFactory;
-import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.DeserializerImpl;
-import org.apache.axis.encoding.TypeMapping;
-import org.apache.axis.encoding.SimpleType;
+import javax.xml.rpc.namespace.QName;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A deserializer for any simple type with a (String) constructor.  Note:
@@ -118,7 +108,7 @@ public class SimpleDeserializer extends DeserializerImpl {
         
         // if this type is a SimpleType bean, get bean properties
         if (SimpleType.class.isAssignableFrom(javaType)) {
-            this.pd = BeanSerializer.getPd(javaType);
+            this.pd = BeanUtils.getPd(javaType);
             // loop through properties and grab the names for later
             for (int i = 0; i < pd.length; i++) {
                 BeanPropertyDescriptor descriptor = pd[i];
@@ -135,7 +125,7 @@ public class SimpleDeserializer extends DeserializerImpl {
         
         // if this type is a SimpleType bean, get bean properties
         if (SimpleType.class.isAssignableFrom(javaType)) {
-            this.pd = BeanSerializer.getPd(javaType);
+            this.pd = BeanUtils.getPd(javaType);
             // loop through properties and grab the names for later
             for (int i = 0; i < pd.length; i++) {
                 BeanPropertyDescriptor descriptor = pd[i];
@@ -346,7 +336,7 @@ public class SimpleDeserializer extends DeserializerImpl {
             String name = (String) entry.getKey();
             Object val = entry.getValue();
             
-            BeanPropertyDescriptor bpd = 
+            BeanPropertyDescriptor bpd =
                     (BeanPropertyDescriptor) propertyMap.get(name);
             if (bpd.getWriteMethod() == null) continue;
             try {

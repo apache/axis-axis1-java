@@ -52,84 +52,42 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
+package org.apache.axis.utils;
 
-package org.apache.axis.encoding.ser;
+import java.io.ByteArrayOutputStream;
 
-import org.apache.axis.encoding.Target;
-import org.apache.axis.utils.BeanPropertyDescriptor;
 import org.apache.axis.utils.JavaUtils;
+
+import java.lang.reflect.Method;
+import java.beans.IntrospectionException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.xml.sax.SAXException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 
 /**
- * Class which knows how to update a bean property
- */
-class BeanPropertyTarget implements Target {
+ * This class is essentially a copy of the PropertyDescriptor information, except
+ * that the values in it can be modified.
+ * @author Rich Scheuerle <scheu@us.ibm.com>
+ **/
+public class BeanPropertyDescriptor
+{
     protected static Log log =
-        LogFactory.getLog(BeanPropertyTarget.class.getName());
+        LogFactory.getLog(BeanPropertyDescriptor.class.getName());
 
-    private Object object;
-    private BeanPropertyDescriptor pd;
-    private int index = -1;
+    private String name;
+    private Method getter;
+    private Method setter;
     
-    /** 
-     * This constructor is used for a normal property.
-     * @param Object is the bean class
-     * @param pd is the property
-     **/
-    public BeanPropertyTarget(Object object, BeanPropertyDescriptor pd) {
-        this.object = object;
-        this.pd     = pd;
-        this.index  = -1;  // disable indexing
+    public BeanPropertyDescriptor(String _name, Method _getter, Method _setter) {
+        name = _name;
+        getter = _getter;
+        setter = _setter;
     }
-    
-    /** 
-     * This constructor is used for an indexed property.
-     * @param Object is the bean class
-     * @param pd is the property
-     * @param i is the index          
-     **/
-    public BeanPropertyTarget(Object object, BeanPropertyDescriptor pd, int i) {
-        this.object = object;
-        this.pd     = pd;
-        this.index  = i;
-    }
-    
-    public void set(Object value) throws SAXException {
-        try {
-            if (index < 0)
-                pd.getWriteMethod().invoke(object, new Object[] {value});
-            else
-                pd.getWriteMethod().invoke(object, new Object[] {new Integer(index), value});
-        } catch (Exception e) {
-            Class type = pd.getReadMethod().getReturnType();
-            value = JavaUtils.convert(value, type);
-            try {
-                if (index < 0)
-                    pd.getWriteMethod().invoke(object, new Object[] {value});
-                else
-                    pd.getWriteMethod().invoke(object, new Object[] {new Integer(index), value});
-            } catch (Exception ex) {
-                String field= pd.getName();
-                int i = 0;
-                if (index >=0) {
-                    field += "[" + index + "]";
-                    i = 1;
-                }
-                if (log.isErrorEnabled()) {
-                    String valueType = "null";
-                    if (value != null)
-                        valueType = value.getClass().getName();
-                    log.error(JavaUtils.getMessage("cantConvert02",
-                                                   new String[] {
-                                                       valueType,
-                                                       field,
-                                                       pd.getType().getName()}));
-                }
-                throw new SAXException(ex);
-            }
-        }
-    }
+    public Method getReadMethod()  { return getter; }
+    public Method getWriteMethod() { return setter; }
+    public String getName() {return name;}
+    public Class getType() {return getter.getReturnType(); }
+
 }
 

@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -52,73 +52,106 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.encoding.ser ;
+package org.apache.axis.utils;
 
-import java.io.ByteArrayOutputStream;
+import org.apache.axis.InternalException;
+import org.apache.axis.description.TypeDesc;
+import org.apache.axis.description.FieldDesc;
 
-import org.apache.axis.utils.JavaUtils;
-
-import java.lang.reflect.Method;
-import java.beans.IntrospectionException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.beans.Introspector;
+import java.util.Vector;
+import java.lang.reflect.Method;
 
-/**
- * This class is essentially a copy of the PropertyDescriptor information, except
- * that the values in it can be modified.
- * @author Rich Scheuerle <scheu@us.ibm.com>
- **/
-class BeanPropertyDescriptor
-{
-    protected static Log log =
-        LogFactory.getLog(BeanPropertyDescriptor.class.getName());
+public class BeanUtils {
 
-    private String name;
-    private Method getter;
-    private Method setter;
-    
-    public BeanPropertyDescriptor(String _name, Method _getter, Method _setter) {
-        name = _name;
-        getter = _getter;
-        setter = _setter;
+    public static final Object[] noArgs = new Object[] {};  // For convenience
+
+    /**
+     * Create a BeanPropertyDescriptor array for the indicated class.
+     */
+    public static BeanPropertyDescriptor[] getPd(Class javaType) {
+        BeanPropertyDescriptor[] pd;
+        try {
+            PropertyDescriptor[] rawPd = Introspector.getBeanInfo(javaType).getPropertyDescriptors();
+            pd = processPropertyDescriptors(rawPd,javaType);
+        } catch (Exception e) {
+            // this should never happen
+            throw new InternalException(e);
+        }
+        return pd;
     }
-    public Method getReadMethod()  { return getter; }
-    public Method getWriteMethod() { return setter; }
-    public String getName() {return name;}
-    public Class getType() {return getter.getReturnType(); }
 
-    /** 
-     * This method attempts to sort the property descriptors to match the 
-     * order defined in the class.  This is necessary to support 
-     * xsd:sequence processing, which means that the serialized order of 
+    /**
+     * Return a list of properties in the bean which should be attributes
+     */
+    public static Vector getBeanAttributes(Class javaType, TypeDesc typeDesc) {
+        Vector ret = new Vector();
+
+        if (typeDesc == null) {
+            // !!! Support old-style beanAttributeNames for now
+
+            // See if this object defined the 'getAttributeElements' function
+            // which returns a Vector of property names that are attributes
+            try {
+                Method getAttributeElements =
+                        javaType.getMethod("getAttributeElements",
+                                           new Class [] {});
+                // get string array
+                String[] array = (String[])getAttributeElements.invoke(null, noArgs);
+
+                // convert it to a Vector
+                ret = new Vector(array.length);
+                for (int i = 0; i < array.length; i++) {
+                    ret.add(array[i]);
+                }
+            } catch (Exception e) {
+                ret.clear();
+            }
+        } else {
+            FieldDesc [] fields = typeDesc.getFields();
+            if (fields != null) {
+                for (int i = 0; i < fields.length; i++) {
+                    FieldDesc field = fields[i];
+                    if (!field.isElement()) {
+                        ret.add(field.getFieldName());
+                    }
+                }
+            }
+        }
+
+        return ret;
+    }
+    /**
+     * This method attempts to sort the property descriptors to match the
+     * order defined in the class.  This is necessary to support
+     * xsd:sequence processing, which means that the serialized order of
      * properties must match the xml element order.  (This method assumes that the
-     * order of the set methods matches the xml element order...the emitter 
+     * order of the set methods matches the xml element order...the emitter
      * will always order the set methods according to the xml order.)
      *
-     * This routine also looks for set(i, type) and get(i) methods and adjusts the 
+     * This routine also looks for set(i, type) and get(i) methods and adjusts the
      * property to use these methods instead.  These methods are generated by the
      * emitter for "collection" of properties (i.e. maxOccurs="unbounded" on an element).
      * JAX-RPC is silent on this issue, but web services depend on this kind of behaviour.
      * The method signatures were chosen to match bean indexed properties.
      */
-    static BeanPropertyDescriptor[] processPropertyDescriptors(
+    public static BeanPropertyDescriptor[] processPropertyDescriptors(
                   PropertyDescriptor[] rawPd, Class cls) {
         BeanPropertyDescriptor[] myPd = new BeanPropertyDescriptor[rawPd.length];
 
         for (int i=0; i < rawPd.length; i++) {
-            myPd[i] = new BeanPropertyDescriptor(rawPd[i].getName(), 
-                                               rawPd[i].getReadMethod(), 
+            myPd[i] = new BeanPropertyDescriptor(rawPd[i].getName(),
+                                               rawPd[i].getReadMethod(),
                                                rawPd[i].getWriteMethod());
         }
-        
+
         try {
             // Create a new pd array and index into the array
             int index = 0;
 
             // Build a new pd array
-            // defined by the order of the get methods. 
+            // defined by the order of the get methods.
             BeanPropertyDescriptor[] newPd = new BeanPropertyDescriptor[rawPd.length];
             Method[] methods = cls.getMethods();
             for (int i=0; i < methods.length; i++) {
@@ -138,7 +171,7 @@ class BeanPropertyDescriptor
             // Now if there are any additional property descriptors, add them to the end.
             if (index < myPd.length) {
                 for (int m=0; m < myPd.length && index < myPd.length; m++) {
-                    boolean found = false;           
+                    boolean found = false;
                     for (int n=0; n < index && !found; n++) {
                         found = (myPd[m]==newPd[n]);
                     }
@@ -156,7 +189,7 @@ class BeanPropertyDescriptor
             // Get the methods of the class and look for the special set and
             // get methods for property "collections"
             for (int i=0; i < methods.length; i++) {
-                if (methods[i].getName().startsWith("set") && 
+                if (methods[i].getName().startsWith("set") &&
                     methods[i].getParameterTypes().length == 2) {
                     for (int j=0; j < methods.length; j++) {
                         if ((methods[j].getName().startsWith("get") ||
@@ -186,4 +219,3 @@ class BeanPropertyDescriptor
         return myPd;
     }
 }
-
