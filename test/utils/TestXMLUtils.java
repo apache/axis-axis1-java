@@ -1,24 +1,19 @@
 package test.utils;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.apache.axis.utils.XMLUtils;
-import org.apache.axis.message.SOAPHandler;
-import org.apache.axis.encoding.DeserializationContextImpl;
 import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.encoding.DeserializationContextImpl;
 import org.apache.axis.test.AxisTestBase;
+import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-import org.xml.sax.helpers.DefaultHandler;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.SAXParser;
 import javax.xml.soap.SOAPEnvelope;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.PipedOutputStream;
@@ -345,9 +340,22 @@ public class TestXMLUtils extends AxisTestBase
         parser2.getXMLReader().parse(inputsrc2);
     }
         
+    // If we are using DeserializationContextImpl, we do not allow
+    // a DOCTYPE to be specified to prevent denial of service attacks
+    // via the ENTITY processing intstruction.
+    String msg2 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+        "<SOAP-ENV:Envelope " +
+        "xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" " +
+        "xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\" > " +
+        "<SOAP-ENV:Body>\n" +
+        "<echo:Echo xmlns:echo=\"EchoService\">\n" +
+        "<symbol>IBM</symbol>\n" +
+        "</echo:Echo>\n" +
+        "</SOAP-ENV:Body></SOAP-ENV:Envelope>\n";
+    
     public void testSAXXXE3() throws Exception
     {
-        StringReader strReader3 = new StringReader(msg);
+        StringReader strReader3 = new StringReader(msg2);
         DeserializationContext dser = new DeserializationContextImpl(
             new InputSource(strReader3), null, org.apache.axis.Message.REQUEST);
         dser.parse();
