@@ -469,13 +469,12 @@ public class Types {
         docFragment = docHolder.createDocumentFragment();
     }
     /**
-     * Inserts the type fragment into the given wsdl definition
-     * @param definition
+     * Inserts the type fragment into the given wsdl document
+     * @param doc
      */
-    public void insertTypesFragment(Definition def) {
-        //        doc.getDocumentElement().insertBefore(
-        //          doc.importNode(docFragment, true),
-        //          doc.getDocumentElement().getFirstChild());
-        def.setTypesElement((Element) docFragment.getFirstChild());
+    public void insertTypesFragment(Document doc) {
+        doc.getDocumentElement().insertBefore(
+                          doc.importNode(docFragment, true),
+                          doc.getDocumentElement().getFirstChild());
     }
 }
