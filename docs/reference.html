@@ -275,7 +275,13 @@ the command line switch.&nbsp; <br>
 <h3><a name="Java2WSDL"></a>Java2WSDL Reference</h3>
 <p>Here is the help message generated from the current tool: </p>
 <p><font color="#993366">
-<pre>Java2WSDL emitter<br>Usage: java org.apache.axis.wsdl.Java2WSDL [options] class-of-portType<br>Options:<br>        -h, --help<br>                print this message and exit<br>        -I, --input <argument>
+<pre>
+Java2WSDL emitter
+Usage: java org.apache.axis.wsdl.Java2WSDL [options] class-of-portType
+Options:
+        -h, --help
+                print this message and exit
+        -I, --input <argument>
                 input WSDL filename
         -o, --output <argument>
                 output WSDL filename
@@ -284,9 +290,11 @@ the command line switch.&nbsp; <br>
         -P, --portTypeName <argument>
                 portType name (obtained from class-of-portType if not specified)
         -b, --bindingName <argument>
-                binding name (--servicePortName value + "SOAPBinding" if not specified)
+                binding name (--servicePortName value + "SOAPBinding" if not
+                 specified)
         -S, --serviceElementName <argument>
-                service element name (defaults to --servicePortName value + "Service")
+                service element name (defaults to --servicePortName value +
+                "Service")
         -s, --servicePortName <argument>
                 service port name (obtained from --location if not specified)
         -n, --namespace <argument>
@@ -304,43 +312,48 @@ the command line switch.&nbsp; <br>
         -N, --namespaceImpl <argument>
                 target namespace for implementation wsdl
         -O, --outputImpl <argument>
-                output Implementation WSDL filename, setting this causes --outputWsdlMode to be ignored
+                output Implementation WSDL filename, setting this causes 
+                --outputWsdlMode to be ignored
         -i, --implClass <argument>
-                optional class that contains implementation of methods in class-of-portType.  
-				The debug information in the class is used
-                to obtain the method parameter names, which are used to set
-                the WSDL part names.
+                optional class that contains implementation of methods in 
+                class-of-portType.  The debug information in the class is used
+                 to obtain the method parameter names, which are used to set
+                 the WSDL part names.
         -x, --exclude <argument>
                 space or comma separated list of methods not to export
         -c, --stopClasses <argument>
                 space or comma separated list of class names which will stop
-                inheritance search if --all switch is given
+                 inheritance search if --all switch is given
         -T, --typeMappingVersion <argument>
-                indicate 1.1 or 1.2.  The default is 1.1 (SOAP 1.1 JAX-RPC 
-				 compliant  1.2 indicates SOAP 1.1 encoded.)
+                indicate 1.1 or 1.2.  The default is 1.1 (SOAP 1.1 JAX-RPC
+                compliant  1.2 indicates SOAP 1.1 encoded.)
         -A, --soapAction <argument>
-                value of the operations soapAction field. Values are DEFAULT,
+                value of the operation's soapAction field. Values are DEFAULT,
                 OPERATION or NONE. OPERATION forces soapAction to the name
                 of the operation.  DEFAULT causes the soapAction to be set
-                according to the operations meta data (usually "").  NONE forces
-				the soapAction to "".  The default is DEFAULT.
+                according to the operation's meta data (usually "").  NONE
+                forces the soapAction to "".  The default is DEFAULT.
         -y, --style <argument>
                 The style of binding in the WSDL, either DOCUMENT, RPC, or WRAPPED.
         -u, --use <argument>
                 The use of items in the binding, either LITERAL or ENCODED
         -e, --extraClasses <argument>
-                A space or comma separated list of class names to be added tO
-                The type section.
+                A space or comma separated list of class names to be added to
+                the type section.
+        -C, --importSchema
+                A file or URL to an XML Schema that should be physically
+                imported into the generated WSDL
+        -X, --classpath
+                additional classpath elements
 Details:
-   portType element name= &lt;--portTypeName value&gt; OR <class-of-porttype
- name="">
-   binding  element name= &lt;--bindingName value&gt; OR &lt;--servicePortName value&gt;Soap
+   portType element name= <--portTypeName value> OR <class-of-portType name>
+   binding  element name= <--bindingName value> OR <--servicePortName value>Soap
 Binding
-   service  element name= &lt;--serviceElementName value&gt; OR &lt;--portTypeName value&gt;
+   service  element name= <--serviceElementName value> OR <--portTypeName value>
 Service
-   port     element name= &lt;--servicePortName value&gt;
-   address location     = &lt;--location value&gt;
-</class-of-porttype></argument></argument></argument></argument></argument></argument></argument></argument></argument></argument></argument></argument></argument></value></argument></argument></argument></argument></argument></argument></argument></argument></argument></pre>
+   port     element name= <--servicePortName value>
+   address location     = <--location value>
+</pre>
 </font>
 <br>
 </p>
@@ -446,6 +459,12 @@ these other classes. The -extraClasses option can be specified
 duplicate times. Each specification results in the additional classes
 being added to the list.
 </p>
+<p> <strong>-C, --importSchema</strong><br>
+A file or URL to an XML Schema that should be physically imported into the generated WSDL</p>
+<p><br>
+  <strong>-X, --classpath</strong><br>
+  Additional classpath elements</p>
+<p>&nbsp;</p>
 <h2><a name="Deployment"></a>Deployment (WSDD) Reference</h2>
 Note : all the elements referred to in this section are in the WSDD
 namespace, namely "http://xml.apache.org/axis/wsdd/".
@@ -672,10 +691,9 @@ string&lt;/documentation&gt;<br>
 &lt;/operation&gt; </code> </dd>
 </dl>
 <p> </p>
-<a name="global_configuration">
-</a>
 <h2><a name="global_configuration">Global Axis Configuration</a></h2>
-<a name="global_configuration">The server is configured (by default) by
+
+The server is configured (by default) by
 values in the
 server-config.wsdd file, though a dedicated Axis user can write their
 own configuration handler, and so store configuration data in an LDAP
@@ -685,13 +703,13 @@ as to how to do that. You can also add options to the web.xml file and
 have them picked up automatically. We don't encourage that as it is
 nice
 to keep configuration stuff in one place.
-</a>
-<p><a name="global_configuration"> In the server-config file, there is
+
+<p>In the server-config file, there is
 a global configuration section,
 which supports parameter name/value pairs as nested elements. Here are
 the options that we currently document, though there may be more
-(consult the source, as usual). </a></p>
-<pre><a name="global_configuration">   &lt;globalConfiguration&gt;<br>    &lt;parameter name="adminPassword" value="admin"/&gt;<br>    &lt;parameter name="attachments.Directory" value="c:\temp\attachments"/&gt;<br>    &lt;parameter name="sendMultiRefs" value="true"/&gt;<br>    &lt;parameter name="sendXsiTypes" value="true"/&gt;<br>    &lt;parameter name="attachments.implementation" value="org.apache.axis.attachments.AttachmentsImpl"/&gt;<br>    &lt;parameter name="sendXMLDeclaration" value="true"/&gt;<br>    &lt;parameter name="enable2DArrayEncoding" value="true"/&gt;<br>   &lt;/globalConfiguration&gt;<br></a></pre>
+(consult the source, as usual). </p>
+<pre>&lt;globalConfiguration&gt;<br>    &lt;parameter name="adminPassword" value="admin"/&gt;<br>    &lt;parameter name="attachments.Directory" value="c:\temp\attachments"/&gt;<br>    &lt;parameter name="sendMultiRefs" value="true"/&gt;<br>    &lt;parameter name="sendXsiTypes" value="true"/&gt;<br>    &lt;parameter name="attachments.implementation" value="org.apache.axis.attachments.AttachmentsImpl"/&gt;<br>    &lt;parameter name="sendXMLDeclaration" value="true"/&gt;<br>    &lt;parameter name="enable2DArrayEncoding" value="true"/&gt;<br>&lt;/globalConfiguration&gt;<br></pre>
 <table>
   <tbody>
     <tr>
@@ -714,6 +732,12 @@ is <tt>org.apache.axis.attachments.AttachmentsImpl</tt> </td>
 default, because listing the current system config can expose
 information (such as the adminservice password) that one does not want
 widely avaialable. </td>
+    </tr>
+    <tr>
+      <td><b>axis.disableServiceList</b></td>
+      <td>Flag to disable the list of services feature. Set to false by
+default, which enables the list of services by the AxisServlet when a GET
+request is performed on the servlet root.</td>
     </tr>
     <tr>
       <td><b>axis.Compiler</b></td>
@@ -785,51 +809,257 @@ container. </td>
 <!-- end table -->
   </tbody>
 </table>
-<a name="individual_service"> </a>
 <h2><a name="individual_service">Individual Service Configuration</a></h2>
-<a name="individual_service"><i>TODO</i>
-</a>
-<p><a name="individual_service">Here are some of the per-service
-configuration options are available;
-these can be set in the wsdd file used to deploy a service, from where
-they will be picked up.
-</a></p>
-<p><a name="individual_service"> More may exist. </a>
-<table>
+<p>Here is a service element with examples of the current set of options you can set. More may exists (consult the source, as usual).</p>
+<pre>  
+&lt;service name=&quot;MyServiceName&quot; 
+		provider=&quot;java:RPC&quot; 
+		style=&quot;rpc|document|wrapped&quot; 
+		use=&quot;encoded|literal&quot;
+		streaming=&quot;off|on&quot;
+		attachment=&quot;MIME|DIME|NONE&quot;&gt;
+
+ &lt;parameter name=&quot;className&quot; value=&quot;org.apache.mystuff.MyService&quot;/&gt;
+ &lt;parameter name=&quot;allowedMethods&quot; value=&quot;method1 method2 method3&quot;/&gt;
+ &lt;parameter name=&quot;wsdlTargetNamespace&quot; value=&quot;http://mystuff.apache.org/MyService&quot;/&gt;
+ &lt;parameter name=&quot;wsdlServiceElement&quot; value=&quot;MyService&quot;/&gt;
+ &lt;parameter name=&quot;wsdlServicePort&quot; value=&quot;MyServicePort&quot;/&gt;
+ &lt;parameter name=&quot;wsdlPortType&quot; value=&quot;MyPort&quot;/&gt;
+ &lt;parameter name=&quot;wsdlSoapActionMode&quot; value=&quot;NONE|DEFAULT|OPERATION&quot;/&gt;
+
+ &lt;parameter name=&quot;SingleSOAPVersion&quot; value=&quot;1.1|1.2/&gt;
+
+ &lt;documentation&gt;Service level info&lt;/documentation&gt;
+ &lt;endpointURL&gt;http://example.com:5050/my/custom/url/to/service&lt;/endpointURL&gt;
+ &lt;wsdlFile&gt;/path/to/wsdl/file&lt;/wsdlFile&gt;
+ &lt;namespace&gt;http://my.namespace.com/myservice&lt;/namespace&gt;
+ &lt;handlerInfoChain&gt;handlerChainName&lt;/handlerInfoChain&gt;
+ 
+ &lt;operation ... /&gt;
+
+ &lt;typeMapping ... /&gt;
+  
+ &lt;beanMapping ... /&gt;
+  
+&lt;/service&gt;</pre>
+<h3>Service Element Attributes</h3>
+
+<h4>name</h4>
+The name of the service.
+<h4>provider</h4>
+The provider for the service.  The recognized providers are: java:RPC, java:MSG,
+java:EJB, java:COM, java:BSF, java:CORBA, java:RMI and "Handler"
+where <tt>xmlns:java="http://xml.apache.org/axis/wsdd/providers/java"</tt>.  The RPC provider supports
+both rpc/encoded, document/literal and wrapped/literal services.  the MSG provider supports the
+'fixed signature' service which takes XML in and returns XML our directly.  The other providers must be
+built in to Axis. See the code in org.apache.axis.providers.
+
+<h4>style</h4>
+The style of the service.  
+"rpc" uses the RPC style of wrapping the parts of the message an element that has the same name
+as the operation.
+"document" style means the messages in and out of the service are exactly as
+they are describe by the XML Schema in the WSDL.
+"wrapped" is a subset of the document style.  The arguments to the operation are wrapped up in and
+element that has the same name as the operation.  This is the style of service .NET generates by
+default.  The generated WSDL specifies document style (and literal use) but Axis will 'unwrapped'
+the parts of the message for the Axis service at the back end.
+
+<h4>use</h4>
+This can be either "encoded" or "literal".  Encoded means the SOAP 1.1 "Section 5 Encoding" is used to
+encode the data structures returned by the service and incoming XML is decoded using the same rules.
+Literal use means no such encoding is performed.
+
+<h4>streaming</h4>
+Valid values are "on" or "off".  This turns on or off the streaming mode of the XML deserializer.
+The default is currently off.  Certain Axis functionality may not function properly if this is turned
+on.  Use with caution.
+
+<h4>attachment</h4>
+Valied values are "MIME" for SOAP with attachements (SwA), "DIME" for DIME support and "NONE" for no attachement
+support at all.  The default mode of Axis is to use MIME attachements (SwA).
+
+<h3>Elements allowed in the Service element</h3>
+
+<h4>&lt;wsdlFile&gt;</h4>
+<p>The path to a WSDL File; can be an absolute path or a
+resource that axis.jar can load. Useful to export your custom WSDL
+file. When specify a path to a resource, place a forward slash to start
+at the beginning of the classpath (e.g "/org/someone/res/mywsdl.wsdl").
+How does Axis know whether to return a file or resource? It looks for a
+file first, if that is missing a resource is returned. </p>
+
+<h4>&lt;documentation&gt;</h4>
+<p>Documentation text that will get inserted in to the document element of the WSDL for the service</p>
+
+<h4>&lt;endpointURL&gt;</h4>
+<p>Specify the endpoint URL of the service, which will override the transport level URL
+created by the Axis servlet.  This is usefull if you have a proxy handling requests
+and you need the endpoint URL to reflect a different hostname than the one Axis is
+executing on.</p>
+
+<h4>&lt;namespace&gt;</h4>
+<p>Specify the default namespace for the service.</p>
+
+<h4>&lt;handlerInfoChain&gt;</h4>
+<p>Specify the JAX RPC handler chain for this service.</p>
+
+<p>In addition, as described above, the <B>&lt;requestFlow&gt;</B> and/or <B>&lt;responseFlow&gt;</B> elements are also allowed in the service element.</p>
+
+
+
+<p>
+
+<h3>Service Level Parameters</h3>
+The following parameters can be set on a service wide basis using the &lt;parameter&gt; tag. There may be more than those documented here, but this list should be almost complete.
+<p>
+<table  cellpadding="2">
   <tbody>
-    <tr>
-      <td><b>style</b></td>
-      <td>whether to use RPC:enc or doc/lit encoding </td>
-    </tr>
+	<tr>
+	  <td><strong>className</strong></td>
+	  <td>The fully qualified name of the implemenation class of the service.<br>
+	  </td>
+	</tr>
+	<tr>
+	  <td><strong>allowedMethods</strong></td>
+	  <td>A space or comma seperated list of method names, or "*" for all methods in the service class.  
+	  If this parameter isn't specified, all methods ("*") is the default.
+	  </td>
+	</tr>
+	<tr>
+	  <td><strong>wsdlPortType</strong></td>
+	  <td>The name of the portType element in the generated WSDL for the service.</td>
+	</tr>
+	<tr>
+	  <td><strong>wsdlServiceElement</strong></td>
+	  <td>The name of the Service element in the generated WSDL for the service.</td>
+	</tr>
+	<tr>
+	  <td><strong>wsdlServicePort</strong></td>
+	  <td>The name of the port in the generated WSDL for the service.</td>
+	</tr>
+	<tr>
+	  <td><strong>wsdlTargetNamespace</strong></td>
+	  <td>The target namespace in the generated WSDL for the service.</td>
+	</tr>
+	<tr>
+	  <td><strong>wsdlInputSchema</strong></td>
+	  <td>A comma separated list of of input Schema for the generated WSDL for the service.</td>
+	</tr>
+	<tr>
+	  <td><strong>wsdlSoapActionMode</strong></td>
+	  <td>Values are DEFAULT, OPERATION or NONE. 
+	  OPERATION forces soapAction to the name of the operation.  
+	  DEFAULT causes the soapAction to be set according to the 
+	  operations meta data, specifically the soapAction attribute of the operation
+	  in the deployment information.  
+	  NONE forces the soapAction to "".  The default is DEFAULT.</td>
+	</tr>
     <tr>
       <td><strong>SingleSOAPVersion</strong></td>
       <td>When set to either "1.1" or "1.2", this configures a service
 to only accept the specified SOAP version. Attempts to connect to the
 service using another version will result in a fault.</td>
     </tr>
-    <tr>
-      <td><b>wsdlFile</b></td>
-      <td>The path to a WSDL File; can be an absolute path or a
-resource that axis.jar can load. Useful to export your custom WSDL
-file. When specify a path to a resource, place a forward slash to start
-at the beginning of the classpath (e.g "/org/someone/res/mywsdl.wsdl").
-How does Axis know whether to return a file or resource? It looks for a
-file first, if that is missing a resource is returned. </td>
-    </tr>
-<!-- TODO: what does this mean?
- <tr><td><b>streaming</b></td>
-<td>
-</td>
-</tr>
- -->
   </tbody>
 </table>
-<a name="axis_logging">
-</a></p>
+
+
+
+<h2><a name="individual_operations">Individual Operation Configuration</a></h2>
+
+<p>Here is an <tt>&lt;operation&gt;</tt> element with examples of the current set of options you can set. More may exists (consult the source, as usual).</p>
+<pre>
+&lt;operation name=&quot;GetQuote&quot; 
+           qname=&quot;operNS:GetQuote&quot; 
+           returnQName=&quot;GetQuoteResult&quot; 
+           returnType=&quot;xsd:float&quot; 
+           soapAction=&quot;&quot; 
+           returnHeader="true|false"&gt;
+
+    &lt;documentation&gt;Operation level documentation here&lt;/documentation&gt;
+
+    &lt;parameter name=&quot;ticker&quot; type=&quot;tns:string&quot;/&gt;
+
+    &lt;fault name=&quot;InvalidTickerFaultMessage&quot; 
+           qname=&quot;tickerSymbol&quot; 
+           class=&quot;test.wsdl.faults.InvalidTickerFaultMessage&quot; 
+           type=&quot;xsd:string&quot;/&gt;
+<br>&lt;/operation&gt;
+</pre>
+
+<p>The example above omits the XML Namespace declarations (xmlns:foo="http://my.namespace/") that could appear
+in each of the elements for the namespaces used.</p>
+
+<h3>Operation  Attributes</h3>
+
+<h4>name</h4>
+The name of the operation.  This would generally match the name of the function in your service implementation.
+
+<h4>qname</h4>
+The Qualified Name of the top level element for this operation.  This is how Axis maps operations for document/literal services,
+which do not have the operation name in the QName of the XML element on the wire.
+
+<h4>returnQName</h4>
+The Qualified Name of the XML element that is returned from this operation.
+
+<h4>returnType</h4>
+The Qualified Name of the return type.
+
+<h4>returnHeader</h4>
+If true, the return value of the operation is contained in a header.
+
+<h4>soapAction</h4>
+The value of the SOAPAction attribute for this operation in the WSDL generated for this service.
+
+<h3>Elements allowed in the Operation Element</h3>
+
+<h4>&lt;documentation&gt;</h4>
+Documentation text that will get inserted in to the document element of the WSDL for the operation.
+
+<h4>&lt;parameter&gt;</h4>
+<p>Defines a parameter for the operation. Valid attributes are:</p>
+<table>
+<tr><td><strong>name</strong></td> 
+<td>The name of the parameter.</td></tr>
+<tr><td><strong>qname</strong></td> 
+<td>The QName of the parameter, used in preference to name.</td>
+</tr>
+<tr><td><strong>mode</strong></td> 
+<td>The mode of the parameter.  One of "in", "out" or "inout".</td></tr>
+<tr><td><strong>inHeader</strong></td> 
+<td>If "true", this parameter is an input header.</td></tr>
+<tr><td><strong>outHeader</strong></td> 
+<td>If "true", this parameter is an output header.</td></tr>
+<tr><td><strong>type</strong></td> 
+<td>The QName of the type of the parameter.</td></tr>
+</table>
+<p>
+<strong>NOTE:</strong> A <tt>&lt;documentation&gt;</tt> element may appear as a child of parameter.
+</p>
+
+<h4>&lt;fault&gt;</h4>
+Defines the type information for each fault that the operation may throw.
+Valid attributes are:</p>
+<table>
+<tr><td><strong>name</strong></td> 
+<td>The name of the fault.</td></tr>
+<tr><td><strong>qname</strong></td> 
+<td>The QName of the fault.</td>
+</tr>
+<tr><td><strong>class</strong></td> 
+<td>The Java class that represents this fault.</td></tr>
+<tr><td><strong>type</strong></td> 
+<td>The QName of the type that represents the data for this fault.</td></tr>
+</table>
+
+
+
+
+
 <h2><a name="axis_logging">Axis Logging Configuration</a></h2>
-<a name="axis_logging">Axis uses the Jakarta Projects's
-</a><a href="http://jakarta.apache.org/commons/logging.html">commons-logging
-API</a>,
+Axis uses the Jakarta Projects's
+<a href="http://jakarta.apache.org/commons/logging.html">commons-logging API</a>,
 as implemented in <tt>commons-logging.jar</tt> to implement logging
 throughout the code. Normally
 this library routes the logging to the Log4j library, provided that an

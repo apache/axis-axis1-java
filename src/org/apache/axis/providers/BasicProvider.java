@@ -46,6 +46,7 @@ public abstract class BasicProvider extends BasicHandler {
     public static final String OPTION_WSDL_SERVICEPORT = "wsdlServicePort";
     public static final String OPTION_WSDL_TARGETNAMESPACE = "wsdlTargetNamespace";
     public static final String OPTION_WSDL_INPUTSCHEMA = "wsdlInputSchema";
+    public static final String OPTION_WSDL_SOAPACTION_MODE = "wsdlSoapActionMode";
 
     protected static Log log =
             LogFactory.getLog(BasicProvider.class.getName());
@@ -209,6 +210,8 @@ public abstract class BasicProvider extends BasicHandler {
             String wsdlPortType = (String) service.getOption(OPTION_WSDL_PORTTYPE);
             String wsdlServiceElement = (String) service.getOption(OPTION_WSDL_SERVICEELEMENT);
             String wsdlServicePort = (String) service.getOption(OPTION_WSDL_SERVICEPORT);
+            String wsdlInputSchema = (String) service.getOption(OPTION_WSDL_INPUTSCHEMA);
+            String wsdlSoapActinMode = (String) service.getOption(OPTION_WSDL_SOAPACTION_MODE);
 
             if (wsdlPortType != null && wsdlPortType.length() > 0) {
                 emitter.setPortTypeName(wsdlPortType);
@@ -219,10 +222,11 @@ public abstract class BasicProvider extends BasicHandler {
             if (wsdlServicePort != null && wsdlServicePort.length() > 0) {
                 emitter.setServicePortName(wsdlServicePort);
             }
-
-            String wsdlInputSchema = (String) service.getOption(OPTION_WSDL_INPUTSCHEMA);
-            if (null != wsdlInputSchema && wsdlInputSchema.length() > 0) {
+            if (wsdlInputSchema != null && wsdlInputSchema.length() > 0) {
                 emitter.setInputSchema(wsdlInputSchema);
+            }
+            if (wsdlSoapActinMode != null && wsdlSoapActinMode.length() > 0) {
+                emitter.setSoapAction(wsdlSoapActinMode);
             }
 
             Document doc = emitter.emit(Emitter.MODE_ALL);

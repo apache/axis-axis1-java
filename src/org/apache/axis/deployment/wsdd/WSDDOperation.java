@@ -84,6 +84,11 @@ public class WSDDOperation extends WSDDElement
             desc.setReturnHeader(JavaUtils.isTrueExplicitly(retHStr));
         }
 
+        String soapAction = e.getAttribute(ATTR_SOAPACTION);
+        if (soapAction != null) {
+            desc.setSoapAction(soapAction);
+        }
+
         Element [] parameters = getChildElements(e, ELEM_WSDD_PARAM);
         for (int i = 0; i < parameters.length; i++) {
             Element paramEl = parameters[i];
@@ -136,6 +141,9 @@ public class WSDDOperation extends WSDDElement
             attrs.addAttribute("", ATTR_QNAME, ATTR_QNAME, 
                                "CDATA", 
                                context.qName2String(desc.getElementQName()));
+        }
+        if (desc.getSoapAction() != null) {
+            attrs.addAttribute("", ATTR_SOAPACTION, ATTR_SOAPACTION, "CDATA", desc.getSoapAction());
         }
 
         context.startElement(getElementName(), attrs);

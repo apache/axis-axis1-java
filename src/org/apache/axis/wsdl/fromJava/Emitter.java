@@ -1156,9 +1156,9 @@ public class Emitter {
         // Otherwise use the information in the operationDesc.
         String soapAction = "";
 
-        if (getSoapAction().equals("OPERATION")) {
+        if (getSoapAction().equalsIgnoreCase("OPERATION")) {
             soapAction = oper.getName();
-        } else if (getSoapAction().equals("NONE")) {
+        } else if (getSoapAction().equalsIgnoreCase("NONE")) {
             soapAction = "";
         } else {
             soapAction = desc.getSoapAction();
