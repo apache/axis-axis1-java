@@ -443,19 +443,41 @@ public class tcpmon extends JFrame {
                 int         reqSaved = 0 ;
 
                 int   thisIndent, nextIndent=0 ;
-
+                inSocket.setSoTimeout(10 );
+                outSocket.setSoTimeout(10 );
+                
                 for ( ;; ) {
+                    if( done ) break;
                     len = in.available();
-                    if ( len == 0 ) len = 1 ;
+                    // Used to be 1, but if we block it doesn't matter 
+                    // however 1 will break with some servers, including apache
+                    if ( len == 0 ) len = 4096 ;
                     if ( saved+len > 4096 ) len = 4096-saved ;
-                    len = in.read(buffer,saved,len);
+                    int len1=0;
+                    while( len1==0 ) {
+                        try {
+                            len1 = in.read(buffer,saved,len);
+                        } catch( java.io.InterruptedIOException ex ) {
+                            //System.out.println("Interrupted exception reading" + this +
+                            //                   " " + done);
+                            len1=0;
+                            if( done ) return;
+                        }
+                    }
+                    // System.out.println("XXX Read result: " + this + " "  +len1 + " " + out);
+                    len=len1;
                     if ( len == -1 ) break ;
 
+                    //System.out.println("Read: " + " "  + saved + " " +
+                    //                 len + " "  + new String( buffer, saved, 20 ));
+                    
                     // No matter how we may (or may not) format it, send it
                     // on unformatted - we don't want to mess with how its
                     // sent to the other side, just how its displayed
-                    if ( out != null ) 
+                    if ( out != null ) {
                       out.write( buffer, saved, len );
+                      //System.out.println("Write: " + len );
+                    }
                 
                     if ( tmodel != null && reqSaved < 50 ) {
                         String old = (String) tmodel.getValueAt( tableIndex, 
@@ -515,18 +537,21 @@ public class tcpmon extends JFrame {
                     else {
                         textArea.append( new String( buffer, 0, len ) );
                     }
+                    // System.out.println("Sleep 3");
                     this.sleep(3);  // Let other threads have a chance to run
                 }
                 this.sleep(3);  // Let other threads have a chance to run
                 // halt();
                 done = true ;
+                //System.out.println("Done reading " + this);
             }
             catch( Exception e ) {
-                // e.printStackTrace();
+                e.printStackTrace();
             }
         }
-        public void halt() {
+        public  void halt() {
             try {
+                //System.out.println("Closing " +this + " " + inSocket + " " + outSocket );
                 if ( inSocket != null )  inSocket.close();
                 if ( outSocket != null ) outSocket.close();
                 inSocket  = null ;
@@ -535,8 +560,8 @@ public class tcpmon extends JFrame {
                 if ( out != null ) out.close();
                 in = null ;
                 out = null ;
-            }
-            catch( Exception e ) {
+                done=true;
+            } catch( Exception e ) {
                 e.printStackTrace();
             }
         }
@@ -741,6 +766,7 @@ public class tcpmon extends JFrame {
                 // while( !rr2.isDone() ) {
                     Thread.sleep( 10 );
                 }
+                //  System.out.println("Done ");
                 rr1.halt();
                 rr2.halt();
 
