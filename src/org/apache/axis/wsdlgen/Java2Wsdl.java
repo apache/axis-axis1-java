@@ -59,6 +59,7 @@ import org.apache.avalon.excalibur.cli.CLOption;
 import org.apache.avalon.excalibur.cli.CLOptionDescriptor;
 import org.apache.avalon.excalibur.cli.CLUtil;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -72,6 +73,7 @@ public class Java2Wsdl {
     protected static final int HELP_OPT = 'h';
     protected static final int OUTPUT_OPT = 'o';
     protected static final int NAMESPACE_OPT = 'n';
+    protected static final int TARGET_NAMESPACE_OPT = 't';
     protected static final int LOCATION_OPT = 'l';
     protected static final int CLASSDIR_OPT = 'c';
     protected static final int ALLOWED_METHODS_OPT = 'm';
@@ -92,8 +94,12 @@ public class Java2Wsdl {
                 "print this message and exit"),
         new CLOptionDescriptor("namespace",
                 CLOptionDescriptor.ARGUMENT_OPTIONAL,
-                NAMESPACE_OPT,
+                TARGET_NAMESPACE_OPT,
                 "target namespace"),
+        new CLOptionDescriptor("PkgtoNS",
+                CLOptionDescriptor.DUPLICATES_ALLOWED + CLOptionDescriptor.ARGUMENTS_REQUIRED_2,
+                NAMESPACE_OPT,
+                "package=namespace, name value pairs"),
         new CLOptionDescriptor("location",
                 CLOptionDescriptor.ARGUMENT_OPTIONAL,
                 LOCATION_OPT,
@@ -121,6 +127,7 @@ public class Java2Wsdl {
         String classDir = null;
         String wsdlFilename = null;
         String allowedMethods = null;
+        HashMap namespaceMap = new HashMap();
 
         // Parse the arguments
         CLArgsParser parser = new CLArgsParser(args, options);
@@ -169,6 +176,12 @@ public class Java2Wsdl {
                         break;
 
                     case NAMESPACE_OPT:
+                        String namespace = option.getArgument(0);
+                        String packageName = option.getArgument(1);
+                        namespaceMap.put(namespace, packageName);
+                        break;
+
+                    case TARGET_NAMESPACE_OPT:
                         emitter.setTargetNamespace(option.getArgument());
                         break;
 
@@ -181,6 +194,9 @@ public class Java2Wsdl {
                 printUsage();
             }
 
+            if (!namespaceMap.isEmpty()) {
+                emitter.setNamespaceMap(namespaceMap);
+            }
             emitter.emit(classDir, className, allowedMethods, wsdlFilename);
         }
         catch (Throwable t) {
