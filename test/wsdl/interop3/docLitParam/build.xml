@@ -2,10 +2,10 @@
   <property name="root.dir" value="../../../.."/>
 
   <path id="test-classpath">
-    <pathelement location="${build.dest}" />
+    <pathelement location="${root.dir}/${build.dest}" />
     <pathelement path="${java.class.path}" />
     <pathelement location="${java.home}/../lib/tools.jar"/>
-    <fileset dir="../../../lib">
+    <fileset dir="${root.dir}/lib">
       <include name="*.jar"/>
     </fileset>
   </path>
