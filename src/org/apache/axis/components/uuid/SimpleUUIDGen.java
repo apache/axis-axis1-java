@@ -107,11 +107,12 @@ public class SimpleUUIDGen implements UUIDGen {
         String bitString = count.toString(2);
         if (bitString.length() < 60) {
             int nbExtraZeros = 60 - bitString.length();
-            String extraZeros = new String();
-            for (int i = 0; i < nbExtraZeros; i++)
-                extraZeros = extraZeros.concat("0");
-
-            bitString = extraZeros.concat(bitString);
+            StringBuffer extraZeros = new StringBuffer();
+            for (int i = 0; i < nbExtraZeros; i++) {
+                extraZeros.append("0");
+            }
+            extraZeros.append(bitString);
+            bitString = extraZeros.toString();
         }
 
         byte[] bits = bitString.getBytes();

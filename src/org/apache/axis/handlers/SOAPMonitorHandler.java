@@ -92,7 +92,7 @@ public class SOAPMonitorHandler extends BasicHandler {
     String  target = messageContext.getTargetService();
     // Check for null target
     if (target == null) {
-        target = new String();
+        target = "";
     }
     // Get id, type and content
     Long    id;
