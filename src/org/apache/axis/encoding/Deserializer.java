@@ -344,8 +344,39 @@ public class Deserializer extends SOAPHandler
                            DeserializationContext context)
         throws SAXException
     {
-        if (!isHref)
+        if (!isHref) {
             onEndElement(namespace, localName, context);
+            // !!! It would be nice if we could put the valueComplete()
+            // in here, so that it doesn't get called multiple times per
+            // multi-ref object, but that's problematic right now.  If
+            // a bean containing an array is serialized like this:
+            //
+            // <bean>
+            //  <array href="#1"/>
+            // </bean>
+            // <multiRef id="1" sOAP-ENC:arrayType="xsd:string[2]">
+            //  <item href="#2"/>
+            //  <item href="#3"/>
+            // </multiRef>
+            // <multiRef id="2">Hi there!</multiRef>
+            // <multiRef id="3">Hi again</multiRef>
+            //
+            // ... we'll end up setting the bean's array field at the
+            // end of the first <multiRef> element (the array), which
+            // will at that point have null values, since the items
+            // have yet to be deserialized.  Then when the items get
+            // processed (2nd + 3rd multiRefs), the values make it into
+            // the Vector inside the ArraySerializer, but not into the
+            // bean's array field....
+            //
+            // The solution to this might be to have each object know
+            // when it's "done" (i.e. all array elements are set), and
+            // let it call valueComplete() itself.  Though really this is
+            // only a problem with objects that we convert (i.e. arrays
+            // at the moment), because if no conversion occurs, the
+            // values for the later multiRefs just drop into the existing
+            // object in place.
+        }
         valueComplete();
     }
 }

@@ -108,7 +108,7 @@ public class SerializationContext
      * A place to hold objects we cache for multi-ref serialization, and
      * remember the IDs we assigned them.
      */
-    private Hashtable multiRefValues = null;
+    private HashMap multiRefValues = null;
     private int multiRefIndex = -1;
     
     /**
@@ -118,7 +118,7 @@ public class SerializationContext
      * those out the same way the next time around.
      */
     private Object currentSer = null;
-    private Vector secondLevelObjects = null;
+    private HashSet secondLevelObjects = null;
     
     public SerializationContext(Writer writer, MessageContext msgContext)
     {
@@ -204,7 +204,7 @@ public class SerializationContext
             !(value.getClass().equals(String.class)) &&
             !(value instanceof Number)) {
             if (multiRefIndex == -1)
-                multiRefValues = new Hashtable();
+                multiRefValues = new HashMap();
             
             String href = (String)multiRefValues.get(value);
             if (href == null) {
@@ -221,8 +221,8 @@ public class SerializationContext
                  */
                 if (currentSer != null) {
                     if (secondLevelObjects == null)
-                        secondLevelObjects = new Vector();
-                    secondLevelObjects.addElement(value);
+                        secondLevelObjects = new HashSet();
+                    secondLevelObjects.add(value);
                 }
             }
             
@@ -248,10 +248,10 @@ public class SerializationContext
         AttributesImpl attrs = new AttributesImpl();
         attrs.addAttribute("","","","","");
         
-        Enumeration e = multiRefValues.keys();
-        while (e.hasMoreElements()) {
-            while (e.hasMoreElements()) {
-                Object val = e.nextElement();
+        Iterator i = ((HashMap)multiRefValues.clone()).keySet().iterator();
+        while (i.hasNext()) {
+            while (i.hasNext()) {
+                Object val = i.next();
                 String id = (String)multiRefValues.get(val);
                 attrs.setAttribute(0, "", Constants.ATTR_ID, "id", "CDATA",
                                    id);
@@ -260,7 +260,7 @@ public class SerializationContext
             }
             
             if (secondLevelObjects != null) {
-                e = secondLevelObjects.elements();
+                i = secondLevelObjects.iterator();
                 secondLevelObjects = null;
             }
         }
