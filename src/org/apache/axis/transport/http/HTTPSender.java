@@ -102,7 +102,10 @@ public class HTTPSender extends BasicHandler {
             if (action == null) {
                 Message rm = msgContext.getRequestMessage();
                 MessageElement body = rm.getAsSOAPEnvelope().getFirstBody();
-                action = body.getNamespaceURI() + "/" + body.getName();
+                action = body.getNamespaceURI();
+                if (action == null) action = "";
+                if (!action.endsWith("/")) action += "/";
+                action += body.getName();
             }
 
             host = tmpURL.getHost();
