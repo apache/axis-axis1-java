@@ -120,6 +120,11 @@ public class MsgProvider extends JavaProvider {
             
             doc = reqBody.getAsDOM().getOwnerDocument();
 
+            Vector newBodies = new Vector();
+            for (int i = 0 ; i < bodies.size() ; i++ )
+                newBodies.add( ((SOAPBodyElement)bodies.get(i)).getAsDOM() );
+            bodies = newBodies ;
+
             /* If no methodName was specified during deployment then get it */
             /* from the root of the Body element                            */
             /* Hmmm, should we do this????                                  */
@@ -134,13 +139,17 @@ public class MsgProvider extends JavaProvider {
             /////////////////////////////////////////////////////////////////
             argClasses = new Class[1];
             argObjects = new Object[1];
-            // argClasses[0] = clsLoader.loadClass("org.w3c.dom.Element");
-            // argClasses[0] = clsLoader.loadClass(Element[].class.getName()) ;
-            argClasses[0] = Element[].class ;
-            argObjects[0] = bodies.toArray();
+            argClasses[0] = clsLoader.loadClass("java.util.Vector");
+            argObjects[0] = bodies ;
 
             try {
               method = jc.getJavaClass().getMethod( methodName, argClasses );
+              Element[] result = (Element[]) method.invoke( obj, argObjects );        
+              if ( result != null ) {
+                  for ( int i = 0 ; i < result.length ; i++ )
+                      resEnv.addBodyElement( new SOAPBodyElement(result[i]));
+              }
+              return ;
             }
             catch( NoSuchMethodException exp ) {exp2 = exp;}
 
@@ -149,18 +158,19 @@ public class MsgProvider extends JavaProvider {
               /////////////////////////////////////////////////////////////////
               argClasses = new Class[2];
               argObjects = new Object[2];
-              // argClasses[0] = clsLoader.loadClass("org.w3c.dom.Element");
-              // argClasses[0] = clsLoader.loadClass(Element[].class.getName()) ;
               argClasses[0] = clsLoader.loadClass("org.apache.axis.MessageContext");
-              argClasses[1] = Element[].class ;
+              argClasses[1] = clsLoader.loadClass("java.util.Vector");
               argObjects[0] = msgContext ;
-              Element[] els = new Element[bodies.size()];
-              for ( int j = 0 ; j < bodies.size() ; j++ )
-                  els[j] = ((SOAPBodyElement)bodies.get(j)).getAsDOM();
-              argObjects[1] = els ;
-  
+              argObjects[1] = bodies ;
+
               try {
                 method = jc.getJavaClass().getMethod( methodName, argClasses );
+                Element[] result = (Element[]) method.invoke( obj, argObjects );        
+                if ( result != null ) {
+                    for ( int i = 0 ; i < result.length ; i++ )
+                        resEnv.addBodyElement( new SOAPBodyElement(result[i]));
+                }
+                return ;
               }
               catch( NoSuchMethodException exp ) {exp2 = exp;}
             }
