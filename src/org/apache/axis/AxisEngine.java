@@ -99,6 +99,7 @@ public abstract class AxisEngine extends BasicHandler
     public static final String PROP_ATTACHMENT_CLEANUP = "attachment.DirectoryCleanUp";
     public static final String PROP_DEFAULT_CONFIG_CLASS = "axis.engineConfigClass";
     public static final String PROP_SOAP_VERSION = "defaultSOAPVersion";
+    public static final String PROP_SOAP_ALLOWED_VERSION = "singleSOAPVersion";
     public static final String PROP_TWOD_ARRAY_ENCODING = "enable2DArrayEncoding";
     public static final String PROP_SEND_MINIMIZED_ELEMENTS = "axis.sendMinimizedElements";
 

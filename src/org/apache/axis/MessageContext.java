@@ -376,6 +376,18 @@ public class MessageContext implements SOAPMessageContext {
             if (defaultSOAPVersion != null && "1.2".equals(defaultSOAPVersion)) {
                 setSOAPConstants(SOAPConstants.SOAP12_CONSTANTS);
             }
+            
+            String singleSOAPVersion = (String)engine.getOption(
+                                        AxisEngine.PROP_SOAP_ALLOWED_VERSION);
+            if (singleSOAPVersion != null) {
+                if ("1.2".equals(singleSOAPVersion)) {
+                    setProperty(Constants.MC_SINGLE_SOAP_VERSION,
+                                SOAPConstants.SOAP12_CONSTANTS);
+                } else if ("1.1".equals(singleSOAPVersion)) {
+                    setProperty(Constants.MC_SINGLE_SOAP_VERSION,
+                                SOAPConstants.SOAP11_CONSTANTS);                    
+                }
+            }
         }
     }
 
