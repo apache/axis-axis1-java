@@ -556,10 +556,9 @@ Copyright:
     <copy todir="${build.dir}/work/samples" overwrite="yes">
       <fileset dir="${samples.dir}">
         <include name="**/*BindingImpl.java"/>
-      </fileset>
-      <fileset dir="${samples.dir}">
         <include name="**/*TestCase.java"/>
-      </fileset>
+        <exclude name="ws-i/scm/**/*.java" />
+	  </fileset>
     </copy>
 
     <delete dir="${build.dir}/classes/samples/userguide/example6"/>
