@@ -1,0 +1,44 @@
+<?xml version="1.0" ?>
+<!DOCTYPE project [
+        <!ENTITY properties SYSTEM "file:../../xmls/properties.xml">
+        <!ENTITY paths  SYSTEM "file:../../xmls/path_refs.xml">
+        <!ENTITY taskdefs SYSTEM "file:../../xmls/taskdefs.xml">
+        <!ENTITY taskdefs_post_compile SYSTEM "file:../../xmls/taskdefs_post_compile.xml">
+]>
+
+<!-- ===================================================================
+==================================================================== -->
+
+<project default="compile">
+
+        &properties;
+        &paths;
+        &taskdefs;
+        &taskdefs_post_compile;
+
+<target name="clean"/>
+
+<target name="copy"/>
+
+<target name="compile">
+  <javac srcdir="." destdir="${build.dest}" debug="${debug}">
+    <classpath>
+        <path refid="classpath"/>
+    </classpath>
+    <include name="samples/userguide/**/*.java"/>
+    <exclude name="samples/userguide/example6/Main.java" />
+    <exclude name="samples/userguide/example6/*Impl.java" />
+    <exclude name="samples/userguide/example6/*TestCase.java" />
+    <exclude name="samples/userguide/example2/Calculator.java"/>
+    <exclude name="samples/**/*SMTP*.java" unless="smtp.present" />
+    <exclude name="**/old/**/*.java" />
+  </javac>
+</target>
+
+<target name="deploy"/>
+
+<target name="run"/>
+
+<target name="undeploy"/>
+
+</project>

@@ -1,0 +1,497 @@
+<?xml version="1.0"?>
+<!DOCTYPE project [
+	<!ENTITY properties SYSTEM "file:xmls/properties.xml">
+        <!ENTITY paths  SYSTEM "file:xmls/path_refs.xml">
+        <!ENTITY taskdefs SYSTEM "file:xmls/taskdefs.xml">
+	<!ENTITY taskdefs_post_compile SYSTEM "file:xmls/taskdefs_post_compile.xml">
+]>
+
+<!-- ===================================================================
+==================================================================== -->
+
+<project default="printEnv" basedir=".">
+
+	&properties;
+	&paths;
+	&taskdefs;
+	&taskdefs_post_compile;
+
+  <!-- Give user a chance to override without editing this file
+       (and without typing -D each time it compiles it) -->
+  <property file="${user.home}/build.properties"/>
+  <property file="${user.home}/test.properties"/>
+
+  <property environment="env"/>
+  
+  <!-- =================================================================== -->
+  <!-- Determine what dependencies are present                             -->
+  <!-- =================================================================== -->
+
+<!-- =========================================================================== -->
+  <target name="setenv">
+
+    <available property="servlet.present"
+      classname="javax.servlet.Servlet"
+      classpathref="classpath"/>
+
+    <available property="regexp.present"
+      classname="org.apache.oro.text.regex.Pattern"
+      classpathref="classpath"/>
+
+    <available property="junit.present"
+      classname="junit.framework.TestCase"
+      classpathref="classpath"/>
+
+    <available property="wsdl4j.present"
+      classname="javax.wsdl.Definition"
+      classpathref="classpath"/>
+
+    <available property="commons-logging.present"
+      classname="org.apache.commons.logging.Log"
+      classpathref="classpath"/>
+
+    <available property="log4j.present"
+      classname="org.apache.log4j.Category"
+      classpathref="classpath"/>
+
+    <available property="tt-bytecode.present"
+      classname="com.techtrader.modules.tools.bytecode.BCClass"
+      classpathref="classpath"/>
+
+    <available property="serp.present"
+      classname="serp.bytecode.Project"
+      classpathref="classpath"/>
+
+    <available property="activation.present"
+      classname="javax.activation.DataHandler"
+      classpathref="classpath"/>
+
+    <available property="security.present"
+      classname="org.apache.xml.security.Init"
+      classpathref="classpath"/>
+
+    <available property="mailapi.present"
+      classname="javax.mail.internet.MimeMessage"
+      classpathref="classpath"/>
+
+    <condition property="attachments.present" >
+      <and>
+        <available classname="javax.activation.DataHandler" classpathref="classpath" />
+        <available classname="javax.mail.internet.MimeMessage" classpathref="classpath" />
+      </and>
+    </condition>
+
+    <available property="post-compile.present" file="post-compile.xml" />
+
+    <property environment="env"/>
+    <condition property="debug" value="on">
+    <and>
+      <equals arg1="on" arg2="${env.debug}"/>
+    </and>
+    </condition>
+
+   </target>
+
+   <target name="printEnv" depends="setenv" >
+
+    <echo message="--- Build environment for ${Name} ---" />
+    <echo message="--- Flags (Note: If the {property name} is displayed, "/>
+    <echo message="           then the component is not present)" />
+    <echo message=""/>
+    <echo message="build.dir = ${build.dir}"/>
+    <echo message="build.dest = ${build.dest}"/>
+    <echo message=""/>
+    <echo message="=== Required Libraries ===" />
+    <echo message="wsdl4j.present=${wsdl4j.present}" />
+    <echo message="commons-logging.present=${commons-logging.present}" />
+    <echo message="log4j.present=${log4j.present}" />
+    <echo message="tt-bytecode.present=${tt-bytecode.present}" />
+    <echo message=""/>
+    <echo message="--- Optional Libraries ---" />
+    <echo message="servlet.present=${servlet.present}" />
+    <echo message="regexp.present=${regexp.present}" />
+    <echo message="junit.present=${junit.present}" />
+    <echo message="activation.present=${activation.present}" />
+    <echo message="mailapi.present=${mailapi.present}" />
+    <echo message="attachments.present=${attachments.present}" />
+    <echo message="security.present=${security.present}" />
+    <echo message=""/>
+    <echo message="--- Property values ---" />
+    <echo message="debug=${debug}" />
+    <echo message="deprecation=${deprecation}" />
+    <echo message="" />
+    <echo message="-- Test Environment for AXIS ---"/>
+    <echo message="" />
+    <echo message="test.functional.remote = ${test.functional.remote}" />
+    <echo message="test.functional.local = ${test.functional.local}" />
+    <echo message="test.functional.both = ${test.functional.both}" />
+    <echo message="test.functional.reportdir = ${test.functional.reportdir}" />
+    <echo message="test.functional.SimpleAxisPort = ${test.functional.SimpleAxisPort}" />
+    <echo message="test.functional.fail = ${test.functional.fail}" />
+    <echo message="" />
+
+
+    <uptodate property="javadoc.notrequired"
+              targetfile="${build.javadocs}/index.html">
+      <srcfiles dir="${src.dir}" includes="**/*.java" />
+    </uptodate>
+
+  </target>
+
+<!-- TESTS -->
+
+  <target name="chains" depends="setenv">
+    <ant inheritAll="true" antfile="test/chains/buildComponent.xml"/>
+  </target>
+
+  <target name="faults" depends="setenv">
+    <ant inheritAll="true" antfile="test/faults/buildComponent.xml"/>
+  </target>
+
+  <target name="functional" depends="setenv,buildSamples">
+    <ant inheritAll="true" antfile="test/functional/buildComponent.xml"/>
+  </target>
+
+  <target name="session" depends="setenv">
+    <ant inheritAll="true" antfile="test/session/buildComponent.xml" target="run" />
+  </target>
+
+  <target name="refattr" depends="setenv" >
+    <ant inheritAll="true" antfile="test/wsdl/refattr/buildComponent.xml" target="run" />
+  </target>
+
+  <target name="outparms" depends="setenv">
+    <ant inheritAll="true" antfile="test/outparms/buildComponent.xml"/>
+  </target>
+
+  <target name="soap" depends="setenv">
+    <ant inheritAll="true" antfile="test/soap/buildComponent.xml"/>
+  </target>
+
+  <target name="utils" depends="setenv">
+    <ant inheritAll="true" antfile="test/utils/buildComponent.xml"/>
+  </target>
+
+  <target name="RFCDispatch" depends="setenv">
+    <ant inheritAll="true" antfile="test/RFCDispatch/buildComponent.xml"/>
+  </target>
+
+  <target name="encoding" depends="setenv">
+    <ant inheritAll="true" antfile="test/encoding/buildComponent.xml"/>
+  </target>
+
+  <target name="md5attach" depends="setenv">
+     <ant inheritAll="true" antfile="test/md5attach/buildComponent.xml"/>
+  </target>
+
+  <target name="wsdd" depends="setenv">
+     <ant inheritAll="true" antfile="test/wsdd/buildComponent.xml"/>
+  </target>
+
+  <target name="wsdl" depends="setenv">
+     <ant inheritAll="true" antfile="test/wsdl/buildComponent.xml"/>
+  </target>
+
+<!-- =========================================================================== -->
+  <target name="compile" depends="printEnv,copy,buildSamples">
+    <!-- Compile the code -->
+    <foreach target="buildThem">
+        <param name="file">
+             <fileset dir="test/" >
+		<patternset>
+                 <include name="**/buildComponent.xml"/>
+		</patternset>
+             </fileset>
+        </param>
+     </foreach>
+  </target>
+
+  <target name="buildThem">
+        <echo message="test/${file}"/>
+        <ant inheritAll="true" antfile="test/${file}"/>
+  </target>
+
+  <target name="runThem">
+        <echo message="test/wsdl/refattr/${file}"/>
+        <ant inheritAll="true" antfile="test/wsdl/refattr/${file}" target="run" >
+           <property name="batch" value="true"/>
+        </ant>
+  </target>
+
+ <target name="buildSamples">
+   <ant inheritAll="true" antfile="buildSamples.xml" target="compile"/>
+ </target>
+
+  <!-- =================================================================== -->
+  <!-- Compiles the JUnit testcases -->
+  <!-- =================================================================== -->
+
+  <!-- =================================================================== -->
+  <!-- Runs the JUnit package testcases -->
+  <!-- =================================================================== -->
+  <target name="junit" if="junit.present" depends="buildSamples,compile">
+    <mkdir dir="${basedir}/test-reports" />
+    <junit printsummary="yes" haltonfailure="yes" fork="yes">
+      <classpath refid="classpath" />
+      <formatter type="xml" />
+      <batchtest todir="test-reports">
+        <fileset dir="${build.dir}/classes">
+          <!-- Convention: each package that's being tested
+                has its own test class collecting all the tests -->
+          <include name="**/PackageTests.class" />
+          <!-- <include name="**/test/*TestSuite.class"/> -->
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Functional tests, no dependencies (for no-build testing)            -->
+  <!-- =================================================================== -->
+  <target name="functional-tests-only" depends="setenv">
+
+    <!-- The Axis Ant task must be built (into ANT_HOME/lib)... -->
+    <!-- This should be already built in build.xml
+    <ant antfile="test/build_ant.xml" />
+
+    ...and then the functional tests can be run.  If this step yields a
+    "can't find class test.functional.ant.RunAxisFunctionalTestsTask",
+    verify that your Ant classpath contains ANT_HOME/lib.
+    -->
+
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Functional tests, no server (for testing under debugger)            -->
+  <!-- =================================================================== -->
+  <target name="functional-tests-noserver" depends="buildSamples,compile">
+    <ant antfile="test/build_functional_tests.xml" target="junit-functional-noserver">
+      <property name="test.functional.usefile" value="${test.functional.usefile}"/>
+    </ant>
+
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Interop 3                                                           -->
+  <!-- =================================================================== -->
+  <target name="interop3" depends="compile">
+    <ant dir="test/wsdl/interop3/import1"/>
+    <ant dir="test/wsdl/interop3/import2"/>
+    <ant dir="test/wsdl/interop3/import3"/>
+    <ant dir="test/wsdl/interop3/compound1"/>
+    <ant dir="test/wsdl/interop3/compound2"/>
+    <ant dir="test/wsdl/interop3/docLit"/>
+    <ant dir="test/wsdl/interop3/docLitParam"/>
+    <ant dir="test/wsdl/interop3/rpcEnc"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Cleans everything                                                   -->
+  <!-- =================================================================== -->
+  <target name="clean">
+    <delete dir="${build.dir}/test"/>
+  </target>
+
+  <target name="copy"/>
+
+  <target name="mattTest">
+     <ant inheritAll="true" antfile="test/mattTest/build.xml"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Launches the functional test TCP server -->
+  <!-- =================================================================== -->
+  <target name="start-functional-test-tcp-server" if="junit.present">
+    <echo message="Starting test tcp server."/>
+    <java classname="samples.transport.tcp.TCPListener" fork="yes" dir="./build">
+      <arg line="-p 8088" /> <!-- arbitrary port -->
+      <classpath refid="classpath" />
+    </java>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Launches the functional test HTTP server -->
+  <!-- =================================================================== -->
+  <target name="start-functional-test-http-server" if="junit.present">
+    <echo message="Starting test http server."/>
+    <java classname="org.apache.axis.transport.http.SimpleAxisServer" fork="yes" dir="./build">
+        <!-- Uncomment this to use Jikes instead of Javac for compiling JWS Files
+        <jvmarg value="-Daxis.Compiler=org.apache.axis.components.compiler.Jikes"/>
+        -->
+        <jvmarg value="-Daxis.wsdlgen.intfnamespace=http://localhost:${test.functional.ServicePort}"/>
+        <jvmarg value="-Daxis.wsdlgen.serv.loc.url=http://localhost:${test.functional.ServicePort}"/>
+        <arg line="-p ${test.functional.SimpleAxisPort}" />  <!-- arbitrary port -->
+      <classpath refid="classpath" />
+    </java>
+
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Prepares the JUnit functional test -->
+  <!-- =================================================================== -->
+  <target name="junit-functional-prepare" if="junit.present">
+	  <mkdir dir="${basedir}/${test.functional.reportdir}" />
+	  <path id="deploy.xml.files">
+		<fileset dir="${build.dir}/work">
+		  <include name="**/deploy.wsdd"/>
+		</fileset>
+	  </path>
+
+	  <path id="undeploy.xml.files">
+		<fileset dir="${build.dir}/work">
+		  <include name="**/undeploy.wsdd"/>
+		</fileset>
+	  </path>
+
+	  <property name="deploy.xml.property" refid="deploy.xml.files"/>
+	  <property name="undeploy.xml.property" refid="undeploy.xml.files"/>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Runs the JUnit functional test -->
+  <!-- =================================================================== -->
+  <target name="junit-functional" if="junit.present" depends="junit-functional-prepare,start-signature-signing-and-verification">
+    <java classname="org.apache.axis.client.AdminClient" fork="yes">
+      <classpath refid="classpath" />
+      <arg line="${deploy.xml.property}"/>
+    </java>
+
+    <!-- now, run the actual test -->
+    <junit dir="." printsummary="yes" haltonfailure="${test.functional.fail}" fork="yes">
+      <classpath refid="classpath" />
+      <formatter type="xml" usefile="${test.functional.usefile}"/>
+      <batchtest todir="${test.functional.reportdir}">
+        <fileset dir="${build.dest}">
+          <!-- Convention: each package that's being tested
+                has its own test class collecting all the tests -->
+              <include name="**/FunctionalTests.class" />
+              <include name="**/*TestCase.class" />
+              <exclude name="**/Interop3TestCase.class"/>
+        </fileset>
+      </batchtest>
+    </junit>
+
+    <foreach target="runThem">
+        <param name="file">
+             <fileset dir="test/wsdl/refattr" >
+                <patternset>
+                 <include name="**/buildComponent.xml"/>
+                </patternset>
+             </fileset>
+        </param>
+    </foreach>
+
+    <java classname="org.apache.axis.client.AdminClient" fork="yes">
+      <classpath refid="classpath" />
+      <arg line="${undeploy.xml.property}"/>
+    </java>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Start Signature Signing and Verification -->
+  <!-- =================================================================== -->
+  <target name="start-signature-signing-and-verification" if="security.present">
+    <!-- Enable transparent Signing of SOAP Messages sent
+        from the client and Server-side Signature Verification.
+    -->
+    <java classname="org.apache.axis.client.AdminClient" fork="yes">
+      <classpath refid="classpath" />
+      <arg line="samples/security/serversecuritydeploy.wsdd"/>
+    </java>
+    <java classname="org.apache.axis.utils.Admin" fork="yes">
+      <classpath refid="classpath" />
+      <arg value="client"/>
+      <arg value="samples/security/clientsecuritydeploy.wsdd"/>
+    </java>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Stop Signature Signing and Verification -->
+  <!-- =================================================================== -->
+  <target name="stop-signature-signing-and-verification" if="security.present">
+    <!-- Disable transparent Signing of SOAP Messages sent
+        from the client and Server-side Signature Verification.
+    -->
+    <java classname="org.apache.axis.client.AdminClient" fork="yes">
+      <classpath refid="classpath" />
+      <arg line="samples/security/serversecurityundeploy.wsdd"/>
+    </java>
+    <java classname="org.apache.axis.utils.Admin" fork="yes">
+      <classpath refid="classpath" />
+      <arg value="client"/>
+      <arg value="samples/security/clientsecurityundeploy.wsdd"/>
+    </java>
+
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Stops the functional test HTTP server -->
+  <!-- =================================================================== -->
+  <target name="stop-functional-test-http-server" if="junit.present" depends="stop-signature-signing-and-verification">
+    <echo message="Stopping test http server."/>
+    <java classname="org.apache.axis.client.AdminClient" fork="yes">
+      <classpath refid="classpath" />
+      <arg line="quit"/>
+    </java>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Stops the functional test HTTP server when testing digital signature -->
+  <!-- =================================================================== -->
+  <target name="stop-functional-test-http-server-secure" if="junit.present" depends="stop-signature-signing-and-verification">
+    <echo message="Stopping test http server."/>
+    <java classname="org.apache.axis.client.AdminClient" fork="yes">
+      <classpath refid="classpath" />
+      <arg line="quit"/>
+    </java>
+  </target>
+
+  <target name="wsdl-setup" if="junit.present">
+    <copy todir="${build.dir}/classes" overwrite="yes">
+      <fileset dir="${test.dir}/wsdl/_import">
+        <include name="NStoPkg.properties"/>
+      </fileset>
+    </copy>
+    <copy todir="${build.dir}/work/samples" overwrite="yes">
+      <fileset dir="${samples.dir}">
+        <include name="**/userguide/example6/"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Run functional tests                                                -->
+  <!-- =================================================================== -->
+  <target name="functional-tests" depends="printEnv,wsdl-setup" if="junit.present" >
+    <!-- This uses a custom Ant task.  See test/functional/ant/RunAxisFunctionalTests.java -->
+    <!-- This pattern taken from Cactus, http://jakarta.apache.org/commons/cactus -->
+    <runaxisfunctionaltests
+      url="http://localhost:8088"
+      startTarget1="start-functional-test-tcp-server"
+      startTarget2="start-functional-test-http-server"
+      testTarget="junit-functional"
+      stopTarget="stop-functional-test-http-server" />
+
+    <!-- now run security test -->
+    <runaxisfunctionaltests
+      url="http://localhost:8088"
+      startTarget1="start-functional-test-tcp-server"
+      startTarget2="start-functional-test-http-server"
+      testTarget="junit-functional-secure"
+      stopTarget="stop-functional-test-http-server-secure" />
+
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Run simple tests                                                -->
+  <!-- =================================================================== -->
+  <target name="simple-tests" depends="setenv" if="junit.present" >
+    <runaxisfunctionaltests
+      url="http://localhost:8088"
+      startTarget1="start-functional-test-tcp-server"
+      startTarget2="start-functional-test-http-server"
+      testTarget="printEnv"
+      stopTarget="stop-functional-test-http-server" />
+  </target>
+
+</project>

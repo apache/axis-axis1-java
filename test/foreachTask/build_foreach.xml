@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+
+<project default="buildForEachTask" basedir=".">
+  <property file="build.properties"/>
+  <property file="test.properties"/>
+
+  <path id="test-classpath">
+    <!-- build.dir for test classes and build.dest for classes to test -->
+    <pathelement location="${build.dir}" />
+    <pathelement location="${build.dest}" />
+    <pathelement path="${java.class.path}" />
+    <pathelement location="${commons-logging.jar}"/>
+    <pathelement location="${log4j-core.jar}"/>
+    <pathelement location="test/foreachTask/bsf.jar" />
+    <pathelement location="test/foreachTask/js.jar" />
+  </path>
+
+  <property environment="env" />
+  <property name="ant.dir" value="${env.ANT_HOME}/lib" />
+
+  <target name="buildForEachTask">
+    <echo message="ant.dir is ${ant.dir}" />
+    <javac srcdir="${basedir}" destdir="${ant.dir}">
+      <include name="test/foreachTask/*.java" />
+    </javac>
+  </target>
+
+</project>
+

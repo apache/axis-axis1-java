@@ -1,0 +1,71 @@
+<?xml version="1.0" ?>
+<!--
+My Test.... Documentation Abounds!
+-->
+
+<!-- =========================================================================================== -->
+<!--  Every project should begin with this next block -->
+<!-- =========================================================================================== -->
+
+<!DOCTYPE project [
+        <!ENTITY properties SYSTEM "file:../../xmls/properties.xml">
+        <!ENTITY paths  SYSTEM "file:../../xmls/path_refs.xml">
+        <!ENTITY taskdefs SYSTEM "file:../../xmls/taskdefs.xml">
+        <!ENTITY taskdefs_post_compile SYSTEM "file:../../xmls/taskdefs_post_compile.xml">
+]>
+
+<!-- ===================================================================
+==================================================================== -->
+
+<project name="mattTest" default="compile">
+
+        &properties;
+        &paths;
+        &taskdefs;
+        &taskdefs_post_compile;
+
+<!-- ============================================================================================ -->
+<!--
+You now have read in the default build.properties file, and the default test.properties file
+If the user has an override for either of these in their home directory, these have been processed
+Then, we construct a classpath that includes, hopefully, all of the things that we would need.
+-->
+<!-- =========================================================================================== -->
+
+<!-- =========================================================================================== -->
+<!-- This target should remove anything created by this test -->
+<!-- =========================================================================================== -->
+<target name="clean">
+   <delete dir="${build.dest}/mattTest"/>
+</target>
+
+<!-- =========================================================================================== -->
+<!-- This target should copy in anything that this test needs, or copy out to staging -->
+<!-- =========================================================================================== -->
+<target name="copy"/>
+
+<!-- =========================================================================================== -->
+<!-- This target actually "makes" things -->
+<!-- =========================================================================================== -->
+<taskdef name="script" classname="org.apache.tools.ant.taskdefs.optional.Script" />
+
+<target name="compile">
+  <mkdir dir="${build.dest}/mattTest"/>
+   <script language="javascript"><![CDATA[
+      var moduleNames=new Array("helper","jtas","name","rg", "ctrl", "octl", "tas","tr");
+      var i=0;
+      for(i=0; i<moduleNames.length; i++) {
+	echo = mattTest.createTask("echo");
+	compile.addTask(echo);
+	echo.setMessage("Looking at " + moduleNames[i]);
+      }
+  ]]></script>
+</target>
+
+<target name="deploy"/>
+
+<target name="run"/>
+
+<target name="undeploy"/>
+
+</project>
