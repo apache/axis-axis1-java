@@ -23,6 +23,7 @@ Copyright:
 <project default="functional-tests" basedir=".">
   <property name="test.functional.usefile" value="true"/>
   <property name="test.functional.reportdir" value="test-reports"/>
+  <property name="test.functional.SimpleAxisPort" value="8080"/>
 
   <path id="test-classpath">
     <pathelement location="${build.dest}" />
@@ -54,6 +55,7 @@ Copyright:
   <target name="start-functional-test-http-server" if="junit.present">
     <echo message="Starting test http server."/>
     <java classname="org.apache.axis.transport.http.SimpleAxisServer" fork="yes" dir="./build">
+      <arg line="-p ${test.functional.SimpleAxisPort}" /> <!-- arbitrary port -->
       <classpath refid="test-classpath" />
     </java>
   </target>
@@ -120,6 +122,9 @@ Copyright:
       </fileset>
       <fileset dir="${test.dir}">
         <include name="**/*TestCase.java"/>
+      </fileset>
+      <fileset dir="${test.dir}">
+        <include name="**/Main.java"/>
       </fileset>
     </copy>
     <copy todir="${build.dir}/work/samples" overwrite="yes">
