@@ -19,6 +19,7 @@ public class PackageTests extends TestCase
     {
         TestSuite suite = new TestSuite();
 
+        suite.addTestSuite(TestDeser.class);
         suite.addTestSuite(TestSer.class);
         suite.addTestSuite(TestString.class);
 

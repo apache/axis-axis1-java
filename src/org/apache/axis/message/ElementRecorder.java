@@ -142,19 +142,37 @@ class ElementRecorder extends DeserializerBase
     }
 
     /** 
-      * Output all but the last element to a context.
-      * Note: last element is presumably the end-element
+      * Output the the full stream to a context.
       */
     public void output(SerializationContext context) 
         throws IOException
     {
         Enumeration e = _events.elements();
-        if (e.hasMoreElements()) {
-            SAXEvent event = (SAXEvent)e.nextElement();
-            while (e.hasMoreElements()) {
-                event.output(context);
-                event = (SAXEvent)e.nextElement();
-            }
+        while (e.hasMoreElements()) {
+            ((SAXEvent)e.nextElement()).output(context);
+        }
+    }
+
+    /** 
+      * Output the children context.  This essentially means skipping
+      * the first and last recorded events.
+      */
+    public void outputChildren(SerializationContext context) 
+        throws IOException
+    {
+        Enumeration e = _events.elements();
+        SAXEvent event = null;
+
+        // read the first element
+        if (e.hasMoreElements()) event = (SAXEvent)e.nextElement();
+
+        // read the second element
+        if (e.hasMoreElements()) event = (SAXEvent)e.nextElement();
+
+        // output the elements until there is no successor
+        while (e.hasMoreElements()) {
+            event.output(context);
+            event = (SAXEvent)e.nextElement();
         }
     }
 }
