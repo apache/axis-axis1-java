@@ -314,6 +314,7 @@ public class Deserializer extends SOAPHandler
         // ??? Is this the right thing to do here?
         
         if (this.getClass().equals(Deserializer.class) &&
+            targets != null &&
             !targets.isEmpty()) {
             endIdx = context.getCurrentRecordPos();
             

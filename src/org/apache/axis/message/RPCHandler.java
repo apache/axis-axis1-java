@@ -131,9 +131,12 @@ public class RPCHandler extends SOAPHandler
                 "' : Couldn't find deserializer for type " + type);
         }
         
-        dser.registerValueTarget(
-                                 new Deserializer.FieldTarget(currentParam,
-                                                                  RPCParam.getValueField()));
+        String isNil = attributes.getValue(Constants.URI_2001_SCHEMA_XSI, "nil");
+        if (isNil == null || !isNil.equals("true")) {
+            dser.registerValueTarget(
+               new Deserializer.FieldTarget(currentParam, 
+                   RPCParam.getValueField()));
+        }
         
         if (DEBUG_LOG) {
             System.out.println("Out RPCHandler.onStartChild()");
