@@ -115,13 +115,13 @@ public class DetailedInoutTestCase extends TestCase
         try
         {
             io.out0Inout1In0 (ph);
-            assertTrue("out0Inout1In0 returned bad value", equals(ph._value, returnPhone));
+            assertTrue("out0Inout1In0 returned bad value", equals(ph.value, returnPhone));
         }
         catch (Throwable t)
         {
             throw new AssertionFailedError("Test failure:  out0Inout1In0\nexpected phone = "
                                            + printPhone (returnPhone) + "\nactual phone = "
-                                           + printPhone (ph._value) + t.getMessage());
+                                           + printPhone (ph.value) + t.getMessage());
         }
     }
 
@@ -131,12 +131,12 @@ public class DetailedInoutTestCase extends TestCase
         try
         {
             io.out0Inout1In1 (sh, expectedAddress);
-            assertEquals("StringHolder returned bad value", "out0Inout1In1 yo ho ho!", sh._value);
+            assertEquals("StringHolder returned bad value", "out0Inout1In1 yo ho ho!", sh.value);
         }
         catch (Throwable t)
         {
             throw new AssertionFailedError("Test failure:  out0Inout1In1\nexpected string = out0Inout1In1 yo ho ho!\nactual string = "
-                                           + sh._value + t.getMessage());
+                                           + sh.value + t.getMessage());
         }
     }
 
@@ -146,13 +146,13 @@ public class DetailedInoutTestCase extends TestCase
         try
         {
             io.out0Inout1InMany ("out0Inout1InMany", expectedAddress, ph);
-            assertTrue("out0Inout1InMany returned bad value", equals(ph._value, returnPhone));
+            assertTrue("out0Inout1InMany returned bad value", equals(ph.value, returnPhone));
         }
         catch (Throwable t)
         {
             throw new AssertionFailedError("Test failure:  out0Inout1InMany\nexpected phone = "
                                            + printPhone (returnPhone) + "\nactual phone = "
-                                           + printPhone (ph._value) + t.getMessage());
+                                           + printPhone (ph.value) + t.getMessage());
         }
     }
 
@@ -163,14 +163,14 @@ public class DetailedInoutTestCase extends TestCase
         try
         {
             io.out0InoutManyIn0 (sh, ah);
-            assertEquals("out0InoutManyIn0 yo ho ho!", sh._value);
-            assertTrue("out0InoutManyIn0 returned bad value", equals (ah._value, returnAddress));
+            assertEquals("out0InoutManyIn0 yo ho ho!", sh.value);
+            assertTrue("out0InoutManyIn0 returned bad value", equals (ah.value, returnAddress));
         }
         catch (Throwable t)
         {
             throw new AssertionFailedError("Test failure:  out0InoutManyIn0\nexpected string = out0InoutManyIn0 yo ho ho!\nactual string = "
-                                           + sh._value + "\nexpected address =\n" + printAddress (returnAddress)
-                                           + "\nactual address =\n" + printAddress (ah._value) + t.getMessage());
+                                           + sh.value + "\nexpected address =\n" + printAddress (returnAddress)
+                                           + "\nactual address =\n" + printAddress (ah.value) + t.getMessage());
         }
     }
 
@@ -181,8 +181,8 @@ public class DetailedInoutTestCase extends TestCase
             StringHolder sh = new StringHolder ("out0InoutManyIn1");
             AddressHolder ah = new AddressHolder (expectedAddress);
             io.out0InoutManyIn1 (sh, ah, expectedPhone);
-            assertEquals("out0InoutManyIn1 yo ho ho!", sh._value);
-            assertTrue("testOut0InoutManyIn1 returned bad value", equals (ah._value, returnAddress));
+            assertEquals("out0InoutManyIn1 yo ho ho!", sh.value);
+            assertTrue("testOut0InoutManyIn1 returned bad value", equals (ah.value, returnAddress));
         }
         catch (Throwable t)
         {
@@ -197,14 +197,14 @@ public class DetailedInoutTestCase extends TestCase
         try
         {
             io.out0InoutManyInMany (sh, ah, expectedPhone, expectedNumber);
-            assertEquals("out0InoutManyInMany yo ho ho!", sh._value);
-            assertTrue(equals (ah._value, returnAddress));
+            assertEquals("out0InoutManyInMany yo ho ho!", sh.value);
+            assertTrue(equals (ah.value, returnAddress));
         }
         catch (Throwable t)
         {
             throw new AssertionFailedError("Test failure:  out0InoutManyInMany\nexpected string = out0InoutManyInMany yo ho ho!\nactual string = "
-                                           + sh._value + "\nexpected address =\n" + printAddress (returnAddress)
-                                           + "\nactual address =\n" + printAddress (ah._value) + t.getMessage());
+                                           + sh.value + "\nexpected address =\n" + printAddress (returnAddress)
+                                           + "\nactual address =\n" + printAddress (ah.value) + t.getMessage());
         }
     }
 
@@ -260,13 +260,13 @@ public class DetailedInoutTestCase extends TestCase
         try
         {
             ret = io.out1Inout1In0 (sh);
-            assertEquals("out1Inout1In0 yo ho ho!", sh._value);
+            assertEquals("out1Inout1In0 yo ho ho!", sh.value);
             assertTrue(equals (ret, returnAddress));
         }
         catch (Throwable t)
         {
             throw new AssertionFailedError("Test failure:  out1Inout1In0\nexpected string = out1Inout1In0 yo ho ho!\nactual string = "
-                                           + sh._value + "\nexpected address =\n" + printAddress (returnAddress)
+                                           + sh.value + "\nexpected address =\n" + printAddress (returnAddress)
                                            + "\nactual address =\n" + printAddress (ret) + t.getMessage());
         }
     }
@@ -278,13 +278,13 @@ public class DetailedInoutTestCase extends TestCase
         try
         {
             ret = io.out1Inout1In1 (sh, expectedAddress);
-            assertEquals("out1Inout1In1 yo ho ho!", sh._value);
+            assertEquals("out1Inout1In1 yo ho ho!", sh.value);
             assertEquals("out1Inout1In1 arghhh!", ret);
         }
         catch (Throwable t)
         {
             throw new AssertionFailedError("Test failure:  out1Inout1In1\nexpected string1 = out1Inout1In1 yo ho ho!\nactual string1 = "
-                                           + sh._value + "\nexpected string2 = out1Inout1In1 arghhh!\nactual string2 = " + ret);
+                                           + sh.value + "\nexpected string2 = out1Inout1In1 arghhh!\nactual string2 = " + ret);
         }
     }
 
@@ -295,13 +295,13 @@ public class DetailedInoutTestCase extends TestCase
         try
         {
             ret = io.out1Inout1InMany (sh, expectedAddress, expectedPhone);
-            assertEquals("out1Inout1InMany yo ho ho!", sh._value);
+            assertEquals("out1Inout1InMany yo ho ho!", sh.value);
             assertEquals("out1Inout1InMany arghhh!", ret);
         }
         catch (Throwable t)
         {
             throw new AssertionFailedError("Test failure:  out1Inout1InMany\nexpected string1 = out1Inout1InMany yo ho ho!\nactual string1 = "
-                                           + sh._value + "\nexpected string2 = out1Inout1InMany arghhh!\nactual string2 = " + ret + t.getMessage());
+                                           + sh.value + "\nexpected string2 = out1Inout1InMany arghhh!\nactual string2 = " + ret + t.getMessage());
         }
     }
 
@@ -313,15 +313,15 @@ public class DetailedInoutTestCase extends TestCase
         try
         {
             ret = io.out1InoutManyIn0 (sh, ah);
-            assertEquals("out1InoutManyIn0 yo ho ho!", sh._value);
-            assertTrue(equals (ah._value, returnAddress));
+            assertEquals("out1InoutManyIn0 yo ho ho!", sh.value);
+            assertTrue(equals (ah.value, returnAddress));
             assertEquals("out1InoutManyIn0 arghhh!", ret);
         }
         catch (Throwable t)
         {
             throw new AssertionFailedError("Test failure:  out1InoutManyIn0\nexpected string1 = out1InoutManyIn0 yo ho ho!\nactual string1 = "
-                                           + sh._value + "\nexpected address = " + printAddress (returnAddress)
-                                           + "\nactual address = " + printAddress (ah._value)
+                                           + sh.value + "\nexpected address = " + printAddress (returnAddress)
+                                           + "\nactual address = " + printAddress (ah.value)
                                            + "\nexpected string2 = out1InoutManyIn0 arghhh!\nactual string2 = " + ret + t.getMessage());
         }
     }
@@ -334,15 +334,15 @@ public class DetailedInoutTestCase extends TestCase
         try
         {
             ret = io.out1InoutManyIn1 (sh, ah, expectedPhone);
-            assertEquals("out1InoutManyIn1 yo ho ho!", sh._value);
-            assertTrue(equals (ah._value, returnAddress));
+            assertEquals("out1InoutManyIn1 yo ho ho!", sh.value);
+            assertTrue(equals (ah.value, returnAddress));
             assertEquals("out1InoutManyIn1 arghhh!", ret);
         }
         catch (Throwable t)
         {
             throw new AssertionFailedError("Test failure:  out1InoutManyIn1\nexpected string1 = out1InoutManyIn1 yo ho ho!\nactual string1 = "
-                                           + sh._value + "\nexpected address = " + printAddress (returnAddress)
-                                           + "\nactual address = " + printAddress (ah._value)
+                                           + sh.value + "\nexpected address = " + printAddress (returnAddress)
+                                           + "\nactual address = " + printAddress (ah.value)
                                            + "\nexpected string2 = out1InoutManyIn1 arghhh!\nactual string2 = " + ret + t.getMessage());
         }
     }
@@ -355,15 +355,15 @@ public class DetailedInoutTestCase extends TestCase
         try
         {
             ret = io.out1InoutManyInMany (sh, ah, expectedPhone, expectedNumber);
-            assertEquals("out1InoutManyInMany yo ho ho!", sh._value);
-            assertTrue(equals (ah._value, returnAddress));
+            assertEquals("out1InoutManyInMany yo ho ho!", sh.value);
+            assertTrue(equals (ah.value, returnAddress));
             assertEquals("out1InoutManyInMany arghhh!", ret);
         }
         catch (Throwable t)
         {
             throw new AssertionFailedError("Test failure:  out1InoutManyInMany\nexpected string1 = out1InoutManyInMany yo ho ho!\nactual string1 = "
-                                           + sh._value + "\nexpected address = " + printAddress (returnAddress)
-                                           + "\nactual address = " + printAddress (ah._value)
+                                           + sh.value + "\nexpected address = " + printAddress (returnAddress)
+                                           + "\nactual address = " + printAddress (ah.value)
                                            + "\nexpected string2 = out1InoutManyInMany arghhh!\nactual string2 = " + ret + t.getMessage());
         }
     }
@@ -375,14 +375,14 @@ public class DetailedInoutTestCase extends TestCase
         try
         {
             ret = io.outManyInout0In0 (ah);
-            assertTrue(equals (ah._value, returnAddress));
+            assertTrue(equals (ah.value, returnAddress));
             assertEquals(" arghhh!", ret);
         }
         catch (Throwable t)
         {
             throw new AssertionFailedError("Test failure:  outManyInout0In0\nexpected address = "
                                            + printAddress (returnAddress) + "\nactual address = "
-                                           + printAddress (ah._value) + "\nexpected string =  arghhh!\nactual string = "
+                                           + printAddress (ah.value) + "\nexpected string =  arghhh!\nactual string = "
                                            + ret + t.getMessage());
         }
     }
@@ -394,13 +394,13 @@ public class DetailedInoutTestCase extends TestCase
         try
         {
             ret = io.outManyInout0In1 ("outManyInout0In1", sh);
-            assertEquals(" yo ho ho!", sh._value);
+            assertEquals(" yo ho ho!", sh.value);
             assertEquals(returnNumber, ret);
         }
         catch (Throwable t)
         {
             throw new AssertionFailedError("Test failure:  outManyInout0In1\nexpected string =  yo ho ho!\nactual string = "
-                                           + sh._value + "\nexpected number = " + returnNumber
+                                           + sh.value + "\nexpected number = " + returnNumber
                                            + "\nactual number = " + ret + t.getMessage());
         }
     }
@@ -412,13 +412,13 @@ public class DetailedInoutTestCase extends TestCase
         try
         {
             ret = io.outManyInout0InMany ("outManyInout0InMany", expectedAddress, sh);
-            assertEquals(" yo ho ho!", sh._value);
+            assertEquals(" yo ho ho!", sh.value);
             assertEquals(returnNumber, ret);
         }
         catch (Throwable t)
         {
             throw new AssertionFailedError("Test failure:  outManyInout0InMany\nexpected string =  yo ho ho!\nactual string = "
-                                           + sh._value + "\nexpected number = " + returnNumber
+                                           + sh.value + "\nexpected number = " + returnNumber
                                            + "\nactual number = " + ret + t.getMessage());
         }
     }
@@ -431,15 +431,15 @@ public class DetailedInoutTestCase extends TestCase
         try
         {
             ret = io.outManyInout1In0 (shinout, shout);
-            assertEquals("outManyInout1In0 yo ho ho!", shinout._value);
-            assertEquals(" yo ho ho!", shout._value);
+            assertEquals("outManyInout1In0 yo ho ho!", shinout.value);
+            assertEquals(" yo ho ho!", shout.value);
             assertEquals(returnNumber, ret);
         }
         catch (Throwable t)
         {
             throw new AssertionFailedError("Test failure:  outManyInout1In0\nexpected string1 = outManyInout1In0 yo ho ho!\nactual string1 = "
-                                           + shinout._value + "\nexpected string2 =  yo ho ho!\nactual string2 = "
-                                           + shout._value + "\nexpected number = " + returnNumber
+                                           + shinout.value + "\nexpected string2 =  yo ho ho!\nactual string2 = "
+                                           + shout.value + "\nexpected number = " + returnNumber
                                            + "\nactual number = " + ret + t.getMessage());
         }
     }
@@ -452,15 +452,15 @@ public class DetailedInoutTestCase extends TestCase
         try
         {
             ret = io.outManyInout1In1 (shinout, expectedAddress, shout);
-            assertEquals("outManyInout1In1 yo ho ho!", shinout._value);
-            assertEquals(" yo ho ho!", shout._value);
+            assertEquals("outManyInout1In1 yo ho ho!", shinout.value);
+            assertEquals(" yo ho ho!", shout.value);
             assertEquals(returnNumber, ret);
         }
         catch (Throwable t)
         {
             throw new AssertionFailedError("Test failure:  outManyInout1In1\nexpected string1 = outManyInout1In1 yo ho ho!\nactual string = "
-                                           + shinout._value + "\nexpected string2 =  yo ho ho!\nactual string2 = "
-                                           + shout._value + "\nexpected number = " + returnNumber
+                                           + shinout.value + "\nexpected string2 =  yo ho ho!\nactual string2 = "
+                                           + shout.value + "\nexpected number = " + returnNumber
                                            + "\nactual number = " + ret + t.getMessage());
         }
     }
@@ -473,16 +473,16 @@ public class DetailedInoutTestCase extends TestCase
         try
         {
             ret = io.outManyInout1InMany ("outManyInout1InMany", expectedAddress, ph, sh);
-            assertTrue(equals (ph._value, returnPhone));
-            assertEquals(" yo ho ho!", sh._value);
+            assertTrue(equals (ph.value, returnPhone));
+            assertEquals(" yo ho ho!", sh.value);
             assertEquals(returnNumber, ret);
         }
         catch (Throwable t)
         {
             throw new AssertionFailedError("Test failure:  outManyInout1InMany\nexpected phone = "
                                            + printPhone (returnPhone) + "\nactual phone = "
-                                           + printPhone (ph._value) + "\nexpected string =  yo ho ho!\nactual string = "
-                                           + sh._value + "\nexpected number = " + returnNumber
+                                           + printPhone (ph.value) + "\nexpected string =  yo ho ho!\nactual string = "
+                                           + sh.value + "\nexpected number = " + returnNumber
                                            + "\nactual number = " + ret + t.getMessage());
         }
     }
@@ -496,17 +496,17 @@ public class DetailedInoutTestCase extends TestCase
         try
         {
             ret = io.outManyInoutManyIn0 (shinout, ah, shout);
-            assertEquals("outManyInoutManyIn0 yo ho ho!", shinout._value);
-            assertTrue(equals (ah._value, returnAddress));
-            assertEquals(" yo ho ho!", shout._value);
+            assertEquals("outManyInoutManyIn0 yo ho ho!", shinout.value);
+            assertTrue(equals (ah.value, returnAddress));
+            assertEquals(" yo ho ho!", shout.value);
             assertEquals(returnNumber, ret);
         }
         catch (Throwable t)
         {
             throw new AssertionFailedError("Test failure:  outManyInoutManyIn0\nexpected string1 = outManyInoutManyIn0 yo ho ho!\nactual string1 = "
-                                           + shinout._value + "\nexpected address = " + printAddress (returnAddress)
-                                           + "\nactual address = " + printAddress (ah._value) + "\nexpected string2 =  yo ho ho!\nactual string2 = "
-                                           + shout._value + "\nexpected number = " + returnNumber + "\nactual number = "
+                                           + shinout.value + "\nexpected address = " + printAddress (returnAddress)
+                                           + "\nactual address = " + printAddress (ah.value) + "\nexpected string2 =  yo ho ho!\nactual string2 = "
+                                           + shout.value + "\nexpected number = " + returnNumber + "\nactual number = "
                                            + ret + t.getMessage());
         }
     }
@@ -520,17 +520,17 @@ public class DetailedInoutTestCase extends TestCase
         try
         {
             ret = io.outManyInoutManyIn1 (shinout, ah, expectedPhone, shout);
-            assertEquals("outManyInoutManyIn1 yo ho ho!", shinout._value);
-            assertTrue(equals (ah._value, returnAddress));
-            assertEquals(" yo ho ho!", shout._value);
+            assertEquals("outManyInoutManyIn1 yo ho ho!", shinout.value);
+            assertTrue(equals (ah.value, returnAddress));
+            assertEquals(" yo ho ho!", shout.value);
             assertEquals(returnNumber, ret);
         }
         catch (Throwable t)
         {
             throw new AssertionFailedError("Test failure:  outManyInoutManyIn1\nexpected string1 = outManyInoutManyIn1 yo ho ho!\nactual string1 = "
-                                           + shinout._value + "\nexpected address = " + printAddress (returnAddress)
-                                           + "\nactual address = " + printAddress (ah._value)
-                                           + "\nexpected string2 =  yo ho ho!\nactual string2 = " + shout._value
+                                           + shinout.value + "\nexpected address = " + printAddress (returnAddress)
+                                           + "\nactual address = " + printAddress (ah.value)
+                                           + "\nexpected string2 =  yo ho ho!\nactual string2 = " + shout.value
                                            + "\nexpected number = " + returnNumber
                                            + "\nactual number = " + ret + t.getMessage());
         }
@@ -545,17 +545,17 @@ public class DetailedInoutTestCase extends TestCase
         try
         {
             ret = io.outManyInoutManyInMany (shinout, ah, expectedPhone, expectedNumber, shout);
-            assertEquals("outManyInoutManyInMany yo ho ho!", shinout._value);
-            assertTrue(equals (ah._value, returnAddress));
-            assertEquals(" yo ho ho!", shout._value);
+            assertEquals("outManyInoutManyInMany yo ho ho!", shinout.value);
+            assertTrue(equals (ah.value, returnAddress));
+            assertEquals(" yo ho ho!", shout.value);
             assertEquals(returnNumber, ret);
         }
         catch (Throwable t)
         {
             throw new AssertionFailedError("Test failure:  outManyInoutManyInMany\nexpected string1 = outManyInoutManyInMany yo ho ho!\nactual string1 = "
-                                           + shinout._value + "\nexpected address = " + printAddress (returnAddress)
-                                           + "\nactual address = " + printAddress (ah._value)
-                                           + "\nexpected string2 =  yo ho ho!\nactual string2 = " + shout._value
+                                           + shinout.value + "\nexpected address = " + printAddress (returnAddress)
+                                           + "\nactual address = " + printAddress (ah.value)
+                                           + "\nexpected string2 =  yo ho ho!\nactual string2 = " + shout.value
                                            + "\nexpected number = " + returnNumber
                                            + "\nactual number = " + ret + t.getMessage());
         }

@@ -64,7 +64,7 @@ import java.math.BigInteger;
 public final class BigIntegerHolder implements java.io.Serializable {
 
     /** Field _value           */
-    public BigInteger _value;
+    public BigInteger value;
 
     /**
      * Constructor BigIntegerHolder
@@ -77,7 +77,7 @@ public final class BigIntegerHolder implements java.io.Serializable {
      * @param value
      */
     public BigIntegerHolder(BigInteger value) {
-        this._value = value;
+        this.value = value;
     }
 }
 

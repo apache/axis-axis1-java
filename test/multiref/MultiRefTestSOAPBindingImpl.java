@@ -71,7 +71,7 @@ public class MultiRefTestSOAPBindingImpl implements test.multiref.MultiRefTest {
      *      1   2
      */
     public int testSimpleTree(test.multiref.NodeHolder root) throws java.rmi.RemoteException {
-        Node t = root._value;    // Root of tree 
+        Node t = root.value;    // Root of tree 
         Node l = t.getLeft();    // Left side
         Node r = t.getRight();   // Right side
 
@@ -95,7 +95,7 @@ public class MultiRefTestSOAPBindingImpl implements test.multiref.MultiRefTest {
      *        3
      */
     public int testDiamond(test.multiref.NodeHolder root) throws java.rmi.RemoteException {
-        Node t = root._value;    // Root of tree 
+        Node t = root.value;    // Root of tree 
         Node l = t.getLeft();    // Left side
         Node r = t.getRight();   // Right side
 
@@ -117,7 +117,7 @@ public class MultiRefTestSOAPBindingImpl implements test.multiref.MultiRefTest {
      *      1   2   and the children of 1 & 2 are backward references to 0
      */
     public int testLoop(test.multiref.NodeHolder root) throws java.rmi.RemoteException {
-        Node t = root._value;    // Root of tree 
+        Node t = root.value;    // Root of tree 
         Node l = t.getLeft();    // Left side
         Node r = t.getRight();   // Right side
 
@@ -137,7 +137,7 @@ public class MultiRefTestSOAPBindingImpl implements test.multiref.MultiRefTest {
      *        and the children of 0 are backward references to 0
      */
     public int testSelfRef(test.multiref.NodeHolder root) throws java.rmi.RemoteException {
-        Node t = root._value;    // Root of tree 
+        Node t = root.value;    // Root of tree 
         Node l = t.getLeft();    // Left side
         Node r = t.getRight();   // Right side
 
@@ -153,8 +153,8 @@ public class MultiRefTestSOAPBindingImpl implements test.multiref.MultiRefTest {
      */
     public int testSameArgs(test.multiref.NodeHolder root1,test.multiref.NodeHolder root2)
         throws java.rmi.RemoteException {
-        Node t1 = root1._value;    // Root1 of tree 
-        Node t2 = root2._value;    // Root2 of tree 
+        Node t1 = root1.value;    // Root1 of tree 
+        Node t2 = root2.value;    // Root2 of tree 
 
         if (t1 != null && t2 != null  &&
             t1 == t2 &&
@@ -173,8 +173,8 @@ public class MultiRefTestSOAPBindingImpl implements test.multiref.MultiRefTest {
      */
     public int testArgsRefSameNode(test.multiref.NodeHolder root1,test.multiref.NodeHolder root2)
         throws java.rmi.RemoteException {
-        Node t1 = root1._value;    // Root1 of tree 
-        Node t2 = root2._value;    // Root2 of tree 
+        Node t1 = root1.value;    // Root1 of tree 
+        Node t2 = root2.value;    // Root2 of tree 
 
         if (t1 != null && t2 != null &&
             t1 != t2 &&
@@ -193,8 +193,8 @@ public class MultiRefTestSOAPBindingImpl implements test.multiref.MultiRefTest {
      */
     public int testArgsRefEachOther(test.multiref.NodeHolder root1,test.multiref.NodeHolder root2)
         throws java.rmi.RemoteException {
-        Node t1 = root1._value;    // Root1 of tree 
-        Node t2 = root2._value;    // Root2 of tree 
+        Node t1 = root1.value;    // Root1 of tree 
+        Node t2 = root2.value;    // Root2 of tree 
 
         if (t1 != null && t2 != null &&
             t1 != t2 &&

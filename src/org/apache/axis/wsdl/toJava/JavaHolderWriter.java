@@ -87,13 +87,13 @@ public class JavaHolderWriter extends JavaWriter {
     protected void writeFileBody() throws IOException {
         String holderType = Utils.getJavaLocalName(type.getName());
         pw.println("public final class " + className + " implements java.io.Serializable {");
-        pw.println("    public " + holderType + " _value;");
+        pw.println("    public " + holderType + " value;");
         pw.println();
         pw.println("    public " + className + "() {");
         pw.println("    }");
         pw.println();
         pw.println("    public " + className + "(" + holderType + " value) {");
-        pw.println("        this._value = value;");
+        pw.println("        this.value = value;");
         pw.println("    }");
         pw.println();
         pw.println("    // ?++?");

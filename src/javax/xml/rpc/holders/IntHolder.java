@@ -62,7 +62,7 @@ package javax.xml.rpc.holders;
 public final class IntHolder implements java.io.Serializable {
 
     /** Field _value           */
-    public int _value;
+    public int value;
 
     /**
      * Constructor IntHolder
@@ -75,7 +75,7 @@ public final class IntHolder implements java.io.Serializable {
      * @param value
      */
     public IntHolder(int value) {
-        this._value = value;
+        this.value = value;
     }
 }
 

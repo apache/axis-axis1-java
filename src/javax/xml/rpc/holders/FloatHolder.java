@@ -62,7 +62,7 @@ package javax.xml.rpc.holders;
 public final class FloatHolder implements java.io.Serializable {
 
     /** Field _value           */
-    public float _value;
+    public float value;
 
     /**
      * Constructor FloatHolder
@@ -75,7 +75,7 @@ public final class FloatHolder implements java.io.Serializable {
      * @param value
      */
     public FloatHolder(float value) {
-        this._value = value;
+        this.value = value;
     }
 }
 

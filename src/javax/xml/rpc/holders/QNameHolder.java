@@ -64,7 +64,7 @@ import javax.xml.rpc.namespace.QName;
 public final class QNameHolder implements java.io.Serializable {
 
     /** Field _value           */
-    public QName _value;
+    public QName value;
 
     /**
      * Constructor QNameHolder
@@ -77,7 +77,7 @@ public final class QNameHolder implements java.io.Serializable {
      * @param value
      */
     public QNameHolder(QName value) {
-        this._value = value;
+        this.value = value;
     }
 }
 
