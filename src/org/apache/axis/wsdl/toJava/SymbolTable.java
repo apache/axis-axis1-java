@@ -178,7 +178,7 @@ public class SymbolTable {
             return null;
         }
     } // get
-
+    
 
     /**
      * Get the type entry for the given qname.
@@ -1222,8 +1222,7 @@ public class SymbolTable {
                 if (referentName != null) {
                     TypeEntry referent = getTypeEntry(referentName, forElement.value);
                     if (referent != null) {
-                        //setTypeReferences(referent, doc, literal);
-                        setTypeReferences(referent, doc, false);
+                        setTypeReferences(referent, doc, literal);
                     }
                 }
             }
