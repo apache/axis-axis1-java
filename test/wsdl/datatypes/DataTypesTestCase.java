@@ -147,5 +147,32 @@ public class DataTypesTestCase extends junit.framework.TestCase {
         }
     }
 
+    public void test7DataTypesSoapGetSimpleList() {
+        DataTypes_Port binding;
+        try {
+            binding = new DataTypes_ServiceLocator().getDataTypes();
+        }
+        catch (javax.xml.rpc.ServiceException jre) {
+            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
+        }
+        assertTrue("binding is null", binding != null);
+
+        try {
+            java.lang.String[] inputList = new java.lang.String[3];
+            inputList[0] = "one";
+            inputList[1] = "two";
+            inputList[2] = "three";
+            java.lang.String[] outputList = binding.getSimpleList(inputList);
+            assertTrue("outputList[0] should be \"one_response\", but instead is " + outputList[0], 
+                    "one_response".equals(outputList[0]));
+            assertTrue("outputList[1] should be \"two_response\", but instead is " + outputList[1], 
+                            "two_response".equals(outputList[1]));
+            assertTrue("outputList[2] should be \"three_response\", but instead is " + outputList[2], 
+                                    "three_response".equals(outputList[2]));
+        }
+        catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
+        }
+    }
 }
 
