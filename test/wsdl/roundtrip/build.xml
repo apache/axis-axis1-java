@@ -42,16 +42,18 @@ Copyright:
         &taskdefs_post_compile;
         &targets;
 
-<target name="clean"/>
+<target name="clean">
+    <echo message="Removing ${build.dir}/classes/${componentName} and ${build.dir}/work/${componentName}" />
+    <delete dir="${build.dir}/classes/${componentName}"/>
+    <delete dir="${build.dir}/work/${componentName}"/>
+</target>
 
-<target name="copy" depends="setenv"/>
+<target name="copy" depends="setenv,clean"/>
 
 <target name="compile" depends="copy">
   <echo message="Compilig test.wsdl.roundtrip"/>
     <!-- Roundtrip Test -->
     <!-- To test Java Value Types, copy over the base and subclasses -->
-    <delete dir="${build.dir}/classes/test/wsdl/roundtrip"/>
-    <delete dir="${build.dir}/work/test/wsdl/roundtrip"/>
     <copy todir="${build.dir}/work/test/wsdl/roundtrip" overwrite="yes">
       <fileset dir="${test.dir}/wsdl/roundtrip">
         <include name="RoundtripPortTypeA.java"/>
