@@ -213,7 +213,7 @@ public abstract class SOAPSAXHandler extends DefaultHandler
     
     /** Parse to the end of the header element
      */
-    public void parseHeaders()
+    public void parseHeaders() throws SAXException
     {
         if (!parsedHeaders)
             parseForHeader(null, null);
@@ -221,13 +221,13 @@ public abstract class SOAPSAXHandler extends DefaultHandler
 
     /** Parse all the way through, without stopping.
      */
-    public void parseToEnd()
+    public void parseToEnd() throws SAXException
     {
         parsingToEnd = true;
         parse();
     }
     
-    public MessageElement parseForID(String id)
+    public MessageElement parseForID(String id) throws SAXException
     {
         if (state == FINISHED)
             return null;
@@ -245,6 +245,7 @@ public abstract class SOAPSAXHandler extends DefaultHandler
     }
     
     public SOAPHeader parseForHeader(String namespace, String localPart)
+        throws SAXException
     {
         // don't bother if we're done with the headers already.
         if (parsedHeaders)
@@ -265,6 +266,7 @@ public abstract class SOAPSAXHandler extends DefaultHandler
     }
 
     public SOAPBodyElement parseForBody(String namespace, String localPart)
+        throws SAXException
     {
         // don't bother if we're done with the body already.
         if (parsedBody)
@@ -684,7 +686,7 @@ public abstract class SOAPSAXHandler extends DefaultHandler
         throw new SAXException("Invalid state in endElement!");
     }
     
-    public abstract void parse();
+    public abstract void parse() throws SAXException;
     protected abstract void continueParsing();
     protected abstract void pauseParsing() throws SAXException;
 }

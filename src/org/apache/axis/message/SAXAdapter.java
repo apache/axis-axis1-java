@@ -37,12 +37,12 @@ public class SAXAdapter extends SOAPSAXHandler
     /*******************************************************************
      * Threading stuff
      */
-    public void parse()
+    public void parse() throws SAXException
     {
       try {
         _parser.parse(inputSource, this);
-      } catch (Exception e) {
-        e.printStackTrace();
+      } catch (java.io.IOException ioe) {
+        throw new SAXException(ioe);
       }
     }
     
