@@ -104,8 +104,8 @@ public class JSSESocketFactory extends DefaultSocketFactory {
     private SSLSocketFactory sslFactory = null;
 
     /** Field defaultKeystoreFile           */
-    static String defaultKeystoreFile = AxisProperties.getProperty("user.home")
-            + "/.keystore";
+    static String defaultKeystoreFile =
+        System.getProperty("user.home") + "/.keystore";
 
     /** Field defaultKeyPass           */
     static String defaultKeyPass = "changeit";
@@ -141,55 +141,29 @@ public class JSSESocketFactory extends DefaultSocketFactory {
             port = 443;
         }
 
-        // Get https.proxyXXX settings
-        String tunnelHost = getGlobalProperty("https.proxyHost");
-        String tunnelPortStr = getGlobalProperty("https.proxyPort");
-        String nonProxyHosts = getGlobalProperty("https.nonProxyHosts");
+        TransportClientProperties tcp = TransportClientPropertiesFactory.create("https");
 
-        // Use http.proxyXXX settings if https.proxyXXX is not set
-        if (tunnelHost == null) {
-            tunnelHost = getGlobalProperty("http.proxyHost");
-        }
-        if (tunnelPortStr == null) {
-            tunnelPortStr = getGlobalProperty("http.proxyPort");
-        }
-        if (nonProxyHosts == null) {
-            nonProxyHosts = getGlobalProperty("http.nonProxyHosts");
-        }
-        boolean hostInNonProxyList = isHostInNonProxyList(host, nonProxyHosts);
+        boolean hostInNonProxyList = isHostInNonProxyList(host, tcp.getNonProxyHosts());
 
-        if ((tunnelHost == null) || tunnelHost.equals("")
-                || hostInNonProxyList) {
-
+        if (tcp.getProxyHost().length() == 0 || hostInNonProxyList) {
             // direct SSL connection
             sslSocket = sslFactory.createSocket(host, port);
         } else {
 
             // Default proxy port is 80, even for https
-            int tunnelPort = ((tunnelPortStr != null)
-                    ? ((Integer.parseInt(tunnelPortStr) < 0)
-                    ? 80
-                    : Integer.parseInt(tunnelPortStr))
-                    : 80);
+            int tunnelPort = (tcp.getProxyPort().length() != 0)
+                             ? Integer.parseInt(tcp.getProxyPort())
+                             : 80;
+            if (tunnelPort < 0)
+                tunnelPort = 80;
 
             // Create the regular socket connection to the proxy
-            Socket tunnel = new Socket(tunnelHost, tunnelPort);
+            Socket tunnel = new Socket(tcp.getProxyHost(), tunnelPort);
 
             // The tunnel handshake method (condensed and made reflexive)
             OutputStream tunnelOutputStream = tunnel.getOutputStream();
             PrintWriter out = new PrintWriter(
                     new BufferedWriter(new OutputStreamWriter(tunnelOutputStream)));
-            String tunnelUser =
-                    getGlobalProperty("https.proxyUser");
-            String tunnelPassword =
-                    getGlobalProperty("https.proxyPassword");
-
-            if (tunnelUser == null) {
-                tunnelUser = getGlobalProperty("http.proxyUser");
-            }
-            if (tunnelPassword == null) {
-                tunnelPassword = getGlobalProperty("http.proxyPassword");
-            }
 
             // More secure version... engage later?
             // PasswordAuthentication pa =
@@ -205,12 +179,13 @@ public class JSSESocketFactory extends DefaultSocketFactory {
             // }
             out.print("CONNECT " + host + ":" + port + " HTTP/1.0\r\n"
                     + "User-Agent: AxisClient");
-            if ((tunnelUser != null) && (tunnelPassword != null)) {
+            if (tcp.getProxyUser().length() != 0 &&
+                tcp.getProxyPassword().length() != 0) {
 
                 // add basic authentication header for the proxy
-                String encodedPassword = XMLUtils.base64encode((tunnelUser
+                String encodedPassword = XMLUtils.base64encode((tcp.getProxyUser()
                         + ":"
-                        + tunnelPassword).getBytes());
+                        + tcp.getProxyPassword()).getBytes());
 
                 out.print("\nProxy-Authorization: Basic " + encodedPassword);
             }
@@ -252,7 +227,7 @@ public class JSSESocketFactory extends DefaultSocketFactory {
                     && !replyStr.startsWith("HTTP/1.1 200")) {
                 throw new IOException(JavaUtils.getMessage("cantTunnel00",
                         new String[]{
-                            tunnelHost,
+                            tcp.getProxyHost(),
                             "" + tunnelPort,
                             replyStr}));
             }
@@ -260,7 +235,8 @@ public class JSSESocketFactory extends DefaultSocketFactory {
             // End of condensed reflective tunnel handshake method
             sslSocket = sslFactory.createSocket(tunnel, host, port, true);
             if (log.isDebugEnabled()) {
-                log.debug(JavaUtils.getMessage("setupTunnel00", tunnelHost,
+                log.debug(JavaUtils.getMessage("setupTunnel00",
+                          tcp.getProxyHost(),
                         "" + tunnelPort));
             }
         }

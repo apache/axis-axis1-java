@@ -54,29 +54,51 @@
  */
 package org.apache.axis.components.net;
 
-import java.net.Socket;
+import java.util.HashMap;
+
+import org.apache.axis.AxisProperties;
+import org.apache.axis.utils.JavaUtils;
+
+import org.apache.axis.components.logger.LogFactory;
+import org.apache.commons.logging.Log;
+
 
 /**
- * Socket factory.
- * @author Davanum Srinivas (dims@yahoo.com)
+ * @author Richard A. Sitze
  */
-public interface SocketFactory {
+public class TransportClientPropertiesFactory {
+    protected static Log log =
+            LogFactory.getLog(SocketFactoryFactory.class.getName());
+    
+    private static HashMap cache = new HashMap();
+    private static HashMap defaults = new HashMap();
+    
+    static {
+        defaults.put("http", DefaultHTTPTransportClientProperties.class);
+        defaults.put("https", DefaultHTTPSTransportClientProperties.class);
+    }
 
-    /**
-     * Create a socket
-     *
-     * @param host
-     * @param port
-     * @param otherHeaders
-     * @param useFullURL
-     *
-     * @return
-     *
-     * @throws Exception
-     */
-    public Socket create(String host,
-                         int port,
-                         StringBuffer otherHeaders,
-                         BooleanHolder useFullURL)
-        throws Exception;
+    public static TransportClientProperties create(String protocol)
+    {
+        TransportClientProperties tcp = null;
+        
+        try {
+            tcp = (TransportClientProperties)cache.get(protocol);
+            
+            if (tcp == null) {
+                tcp = (TransportClientProperties)
+                    AxisProperties.newInstance(TransportClientProperties.class,
+                                               (Class)defaults.get(protocol));
+
+                if (tcp != null) {
+                    cache.put(protocol, tcp);
+                }
+            }
+        } catch (Exception e) {
+            log.error(JavaUtils.getMessage("exception00"), e);
+            tcp = null;
+        }
+        
+        return tcp;
+    }
 }

@@ -4,3 +4,6 @@ client-config.wsdd
 server-config.wsdd
 test-reports
 junit*
+bin
+.project
+.classpath

@@ -59,6 +59,13 @@ import java.util.Enumeration;
 import java.util.Map;
 import java.util.Properties;
 
+import java.lang.reflect.InvocationTargetException;
+
+import org.apache.commons.discovery.DiscoverClass;
+import org.apache.commons.discovery.DiscoveryException;
+import org.apache.commons.discovery.base.Environment;
+import org.apache.commons.discovery.base.ImplClass;
+import org.apache.commons.discovery.base.SPInterface;
 import org.apache.commons.discovery.tools.ManagedProperties;
 
 
@@ -93,6 +100,64 @@ import org.apache.commons.discovery.tools.ManagedProperties;
  * @author Richard A. Sitze
  */
 public class AxisProperties {
+    public static Environment getDiscoverEnvironment() {
+        return new Environment(getCommonsGroupContext());
+    }
+    
+    public static Object newInstance(Class spiClass, String defaultClass)
+        throws DiscoveryException,
+               InstantiationException,
+               IllegalAccessException,
+               NoSuchMethodException,
+               InvocationTargetException
+    {
+        SPInterface spi = new SPInterface(spiClass);
+        return DiscoverClass.newInstance(getDiscoverEnvironment(),
+                                         spi,
+                                         (String) null,
+                                         spi.createImplClass(defaultClass));
+    }
+    
+    public static Object newInstance(Class spiClass, Class defaultClass)
+        throws DiscoveryException,
+               InstantiationException,
+               IllegalAccessException,
+               NoSuchMethodException,
+               InvocationTargetException
+    {
+        SPInterface spi = new SPInterface(spiClass);
+        return DiscoverClass.newInstance(getDiscoverEnvironment(),
+                                         spi,
+                                         (String) null,
+                                         spi.createImplClass(defaultClass));
+    }
+
+    public static Object newInstance(SPInterface spi, String defaultClass)
+        throws DiscoveryException,
+               InstantiationException,
+               IllegalAccessException,
+               NoSuchMethodException,
+               InvocationTargetException
+    {
+        return DiscoverClass.newInstance(getDiscoverEnvironment(),
+                                         spi,
+                                         (String) null,
+                                         spi.createImplClass(defaultClass));
+    }
+
+    public static Object newInstance(SPInterface spi, Class defaultClass)
+        throws DiscoveryException,
+               InstantiationException,
+               IllegalAccessException,
+               NoSuchMethodException,
+               InvocationTargetException
+    {
+        return DiscoverClass.newInstance(getDiscoverEnvironment(),
+                                         spi,
+                                         (String) null,
+                                         spi.createImplClass(defaultClass));
+    }
+
 
     private static String commonsGroupContext = null;
     

@@ -61,6 +61,9 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
+import org.apache.commons.discovery.base.ImplClass;
+import org.apache.commons.discovery.base.SPInterface;
+
 import java.lang.reflect.Constructor;
 import java.util.Hashtable;
 
@@ -90,38 +93,20 @@ public class SocketFactoryFactory {
      * @return
      */
     public static synchronized SocketFactory getFactory(Hashtable attributes) {
+        if (theFactory == null) {
+            try {
+                Class classes[] = new Class[] { Hashtable.class };
+                Object objects[] = new Object[] { attributes };
 
-        String socketFactoryClassName =
-                AxisProperties.getProperty("axis.socketFactory",
-                        "org.apache.axis.components.net.DefaultSocketFactory");
-
-        log.debug("axis.socketFactory:" + socketFactoryClassName);
-        SocketFactory extractor = null;
-
-        try {
-            if (theFactory == null) {
-                Class extractorClass =
-                        ClassUtils.forName(socketFactoryClassName);
-
-                if (SocketFactory.class.isAssignableFrom(extractorClass)) {
-                    Class classes[] = new Class[1];
-
-                    classes[0] = Hashtable.class;
-                    Object objects[] = new Object[1];
-
-                    objects[0] = attributes;
-                    Constructor constructor =
-                            extractorClass.getConstructor(classes);
-
-                    theFactory =
-                            (SocketFactory) constructor.newInstance(objects);
-                }
+                theFactory = (SocketFactory)AxisProperties.newInstance(
+                         new SPInterface(SocketFactory.class,
+                                         "axis.socketFactory",
+                                         classes,
+                                         objects),
+                         "org.apache.axis.components.net.DefaultSocketFactory");
+            } catch (Exception e) {
+                log.error(JavaUtils.getMessage("exception00"), e);
             }
-        } catch (Exception e) {
-
-            // If something goes wrong here, should we just fall
-            // through and use the default one?
-            log.error(JavaUtils.getMessage("exception00"), e);
         }
         return theFactory;
     }
@@ -135,38 +120,20 @@ public class SocketFactoryFactory {
      */
     public static synchronized SocketFactory getSecureFactory(
             Hashtable attributes) {
+        if (theSecureFactory == null) {
+            try {
+                Class classes[] = new Class[] { Hashtable.class };
+                Object objects[] = new Object[] { attributes };
 
-        String socketFactoryClassName =
-                AxisProperties.getProperty("axis.socketSecureFactory",
+                theSecureFactory = (SocketFactory)AxisProperties.newInstance(
+                        new SPInterface(SocketFactory.class,
+                                        "axis.socketSecureFactory",
+                                        classes,
+                                        objects),
                         "org.apache.axis.components.net.JSSESocketFactory");
-
-        log.debug("axis.socketSecureFactory:" + socketFactoryClassName);
-        SocketFactory extractor = null;
-
-        try {
-            if (theSecureFactory == null) {
-                Class extractorClass =
-                        ClassUtils.forName(socketFactoryClassName);
-
-                if (SocketFactory.class.isAssignableFrom(extractorClass)) {
-                    Class classes[] = new Class[1];
-
-                    classes[0] = Hashtable.class;
-                    Object objects[] = new Object[1];
-
-                    objects[0] = attributes;
-                    Constructor constructor =
-                            extractorClass.getConstructor(classes);
-
-                    theSecureFactory =
-                            (SocketFactory) constructor.newInstance(objects);
-                }
+            } catch (Exception e) {
+                log.error(JavaUtils.getMessage("exception00"), e);
             }
-        } catch (Exception e) {
-
-            // If something goes wrong here, should we just fall
-            // through and use the default one?
-            log.error(JavaUtils.getMessage("exception00"), e);
         }
         return theSecureFactory;
     }

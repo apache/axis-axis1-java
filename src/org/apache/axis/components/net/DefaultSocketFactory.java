@@ -104,55 +104,43 @@ public class DefaultSocketFactory implements SocketFactory {
             String host, int port, StringBuffer otherHeaders, BooleanHolder useFullURL)
             throws Exception {
 
-        Socket sock = null;
-        String proxyHost = getGlobalProperty("http.proxyHost");
-        String proxyPort = getGlobalProperty("http.proxyPort");
-        String nonProxyHosts = getGlobalProperty("http.nonProxyHosts");
-        boolean hostInNonProxyList = isHostInNonProxyList(host, nonProxyHosts);
-        String proxyUsername = getGlobalProperty("http.proxyUser");
-        String proxyPassword = getGlobalProperty("http.proxyPassword");
+        TransportClientProperties tcp = TransportClientPropertiesFactory.create("http");
 
-        if (proxyUsername != null) {
+        Socket sock = null;
+        boolean hostInNonProxyList = isHostInNonProxyList(host, tcp.getNonProxyHosts());
+
+        if (tcp.getProxyUser().length() != 0) {
             StringBuffer tmpBuf = new StringBuffer();
 
-            tmpBuf.append(proxyUsername).append(":").append((proxyPassword
-                    == null)
-                    ? ""
-                    : proxyPassword);
+            tmpBuf.append(tcp.getProxyUser())
+                  .append(":")
+                  .append(tcp.getProxyPassword());
             otherHeaders.append(HTTPConstants.HEADER_PROXY_AUTHORIZATION)
-                    .append(": Basic ")
-                    .append(Base64.encode(tmpBuf.toString().getBytes()))
-                    .append("\r\n");
+                        .append(": Basic ")
+                        .append(Base64.encode(tmpBuf.toString().getBytes()))
+                        .append("\r\n");
         }
         if (port == -1) {
             port = 80;
         }
-        if ((proxyHost == null) || proxyHost.equals("") || (proxyPort == null)
-                || proxyPort.equals("") || hostInNonProxyList) {
+        if ((tcp.getProxyHost().length() == 0) ||
+            (tcp.getProxyPort().length() == 0) ||
+            hostInNonProxyList)
+        {
             sock = new Socket(host, port);
             if (log.isDebugEnabled()) {
                 log.debug(JavaUtils.getMessage("createdHTTP00"));
             }
         } else {
-            sock = new Socket(proxyHost, new Integer(proxyPort).intValue());
+            sock = new Socket(tcp.getProxyHost(),
+                              new Integer(tcp.getProxyPort()).intValue());
             if (log.isDebugEnabled()) {
-                log.debug(JavaUtils.getMessage("createdHTTP01", proxyHost,
-                        proxyPort));
+                log.debug(JavaUtils.getMessage("createdHTTP01", tcp.getProxyHost(),
+                          tcp.getProxyPort()));
             }
             useFullURL.value = true;
         }
         return sock;
-    }
-
-    /**
-     * Method getGlobalProperty
-     *
-     * @param property
-     *
-     * @return
-     */
-    protected String getGlobalProperty(String property) {
-        return AxisProperties.getProperty(property);
     }
 
     /**

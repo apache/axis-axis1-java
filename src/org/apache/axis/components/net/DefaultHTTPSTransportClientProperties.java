@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2002 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -20,7 +20,7 @@
  * 3. The end-user documentation included with the redistribution,
  *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
- *        Apache Software Foundation (http://www.apache.org/)."
+ *    Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
  *    if and wherever such third-party acknowledgments normally appear.
  *
@@ -54,29 +54,67 @@
  */
 package org.apache.axis.components.net;
 
-import java.net.Socket;
+import org.apache.axis.AxisProperties;
+
 
 /**
- * Socket factory.
- * @author Davanum Srinivas (dims@yahoo.com)
+ * @author Richard A. Sitze
  */
-public interface SocketFactory {
+public class DefaultHTTPSTransportClientProperties
+    extends DefaultHTTPTransportClientProperties {
 
     /**
-     * Create a socket
-     *
-     * @param host
-     * @param port
-     * @param otherHeaders
-     * @param useFullURL
-     *
-     * @return
-     *
-     * @throws Exception
+     * @see org.apache.axis.components.net.TransportClientProperties#getProxyHost()
      */
-    public Socket create(String host,
-                         int port,
-                         StringBuffer otherHeaders,
-                         BooleanHolder useFullURL)
-        throws Exception;
+    public String getProxyHost() {
+        if (proxyHost == null) {
+            proxyHost = AxisProperties.getProperty("https.proxyHost");
+            super.getProxyHost();
+        }
+        return proxyHost;
+    }
+
+    /**
+     * @see org.apache.axis.components.net.TransportClientProperties#getNonProxyHosts()
+     */
+    public String getNonProxyHosts() {
+        if (nonProxyHosts == null) {
+            nonProxyHosts = AxisProperties.getProperty("https.nonProxyHosts");
+            super.getNonProxyHosts();
+        }
+        return nonProxyHosts;
+    }
+
+    /**
+     * @see org.apache.axis.components.net.TransportClientProperties#getPort()
+     */
+    public String getProxyPort() {
+        if (proxyPort == null) {
+            proxyPort = AxisProperties.getProperty("https.proxyPort");
+            super.getProxyPort();
+        }
+        return proxyPort;
+    }
+
+    /**
+     * @see org.apache.axis.components.net.TransportClientProperties#getUser()
+     */
+    public String getProxyUser() {
+        if (proxyUser == null) {
+            proxyUser = AxisProperties.getProperty("https.proxyUser");
+            super.getProxyUser();
+        }
+        return proxyUser;
+    }
+
+    /**
+     * @see org.apache.axis.components.net.TransportClientProperties#getPassword()
+     */
+    public String getProxyPassword() {
+        if (proxyPassword == null) {
+            proxyPassword = AxisProperties.getProperty("https.proxyPassword");
+            super.getProxyPassword();
+        }
+        return proxyPassword;
+    }
 }
