@@ -583,6 +583,13 @@ public class SymbolTable {
         // Get the QName of the node's name attribute value
         qName = Utils.getNodeNameQName(node);
         if (qName != null) {
+
+            // If the qname is already registered as a base type,
+            // don't create a defining type/element.
+            if (!isElement && btm.getBaseName(qName)!=null) {
+                return;
+            }
+
             // If the node has a type or ref attribute, get the 
             // qname representing the type
             BooleanHolder forElement = new BooleanHolder();
