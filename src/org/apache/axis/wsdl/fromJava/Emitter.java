@@ -1107,7 +1107,7 @@ public class Emitter {
     {
         Message msg = def.createMessage();
 
-        QName qName = createMessageName(def, oper.getName() + "Request");
+        QName qName = createMessageName(def, getRequestQName(oper).getLocalPart() + "Request");
         
         msg.setQName(qName);
         msg.setUndefined(false);
@@ -1155,7 +1155,7 @@ public class Emitter {
     private void qualifyOperation(OperationDesc oper) {
         if (style == Style.WRAPPED && use == Use.LITERAL) {
             QName qname = oper.getElementQName();
-            if (qname != null) {
+            if (qname == null) {
                 qname = new QName(intfNS, oper.getName()); 
             } else if (qname.getNamespaceURI().equals("")) {
                 qname = new QName(intfNS,qname.getLocalPart());
@@ -1241,7 +1241,7 @@ public class Emitter {
     {
         Message msg = def.createMessage();
 
-        QName qName = createMessageName(def, desc.getName() + "Response");
+        QName qName = createMessageName(def, getResponseQName(desc).getLocalPart());
 
         msg.setQName(qName);
         msg.setUndefined(false);

@@ -214,11 +214,16 @@ public class RPCParam implements Serializable
                 javaType = paramDesc.getJavaType() != null ?
                     paramDesc.getJavaType(): javaType;
             } else if (!(javaType.equals(paramDesc.getJavaType()))) {
-                if (!(javaType.equals(
-                        JavaUtils.getHolderValueType(paramDesc.getJavaType()))))
-                    // This must (assumedly) be a polymorphic type - in ALL
-                    // such cases, we must send an xsi:type attribute.
-                    wantXSIType = Boolean.TRUE;
+                Class clazz = JavaUtils.getPrimitiveClass(javaType);
+                if(clazz == null || !clazz.equals(paramDesc.getJavaType())) {
+                    if (!(javaType.equals(
+                            JavaUtils.getHolderValueType(paramDesc.getJavaType())))) {
+                        
+                        // This must (assumedly) be a polymorphic type - in ALL
+                        // such cases, we must send an xsi:type attribute.
+                        wantXSIType = Boolean.TRUE;
+                    }
+                }
             }
             xmlType = paramDesc.getTypeQName();
         }
