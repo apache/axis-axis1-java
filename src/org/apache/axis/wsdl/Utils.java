@@ -270,6 +270,20 @@ public class Utils {
         return  keyword + keywordSuffix;
      }
 
+    /**
+     * Map an XML name to a valid Java identifier
+     */
+    public static String xmlNameToJava(String name)
+    {
+        char[] nameArray = name.toCharArray();
+        for(int j = 0, len = name.length(); j < len; ++j) {
+            char c = nameArray[j];
+            if( !Character.isLetterOrDigit(c) && c != '_' )
+                nameArray[j] = '_';
+        }
+        return new String(nameArray);
+    }
+
     public static String makePackageName(String namespace)
     {
         String hostname = null;
