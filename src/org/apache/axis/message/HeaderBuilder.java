@@ -92,12 +92,7 @@ public class HeaderBuilder extends SOAPHandler
     
     public void onEndChild(String namespace, String localName,
                            DeserializationContext context)
-                           throws SAXException
     {
-        try {
-            envelope.addHeader(header);
-        } catch (Exception ex) {
-            throw new SAXException(ex);
-        }
+        envelope.addHeader(header);
     }
 }

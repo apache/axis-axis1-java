@@ -62,7 +62,6 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 import javax.xml.rpc.namespace.QName;
-import javax.xml.soap.SOAPException;
 
 /**
  * The EnvelopeBuilder is responsible for parsing the top-level
@@ -80,7 +79,6 @@ public class EnvelopeBuilder extends SOAPHandler
     private boolean gotBody = false;
 
     public EnvelopeBuilder(String messageType, SOAPConstants soapConstants)
-        throws SOAPException
     {
         envelope = new SOAPEnvelope(false, soapConstants);
         envelope.setMessageType(messageType);
