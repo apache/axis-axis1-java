@@ -25,23 +25,23 @@ import java.net.URL;
 */
 
 public class Compound1TestCase extends junit.framework.TestCase {
-    URL url;
+    static URL url;
 
     public Compound1TestCase(String name) {
         super(name);
     }
 
     protected void setUp() throws Exception {
-        try {
-            url = new URL("http://localhost:8080/stkv3/wsdl/Compound1.wsdl");
-        } catch (Exception e) {
-        }
     }
 
     public void testStep3() {
         SoapInteropCompound1Binding binding;
         try {
-            binding = new Compound1Locator().getSoapInteropCompound1Port();
+            if (url != null) {
+                binding = new Compound1Locator().getSoapInteropCompound1Port(url);
+            } else {
+                binding = new Compound1Locator().getSoapInteropCompound1Port();
+            }
         }
         catch (javax.xml.rpc.ServiceException jre) {
             throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
@@ -131,19 +131,14 @@ public class Compound1TestCase extends junit.framework.TestCase {
 
 
     public static void main(String[] args) {
+        if (args.length == 1) {
+            try {
+                url = new URL(args[0]);
+            } catch (Exception e) {
+            }
+        }
+
         junit.textui.TestRunner.run(new junit.framework.TestSuite(Compound1TestCase.class));
-        String str;
-        str = AppendBaby(args);
-        System.out.println(str);
-
-        String s2 = args[0] + ", baby";
     } // main
-
-    private static String AppendBaby(String[] args) {
-        String str;
-        str = args[0] + ", baby";
-        return str;
-    }
-
 }
 
