@@ -61,12 +61,11 @@ import javax.xml.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
 
 /**
- * @author Rich Scheuerle (scheu@us.ibm.com)
- * 
  * The TypeMapping delegate is used to simply delegate to 
  * the indicated type mapping.  It is used by the TypeMappingRegistry
  * to assist with chaining.
  * 
+ * @author Rich Scheuerle (scheu@us.ibm.com)
  */
 class TypeMappingDelegate extends TypeMappingImpl { 
 
