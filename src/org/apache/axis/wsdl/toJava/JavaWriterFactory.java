@@ -324,8 +324,9 @@ public class JavaWriterFactory implements WriterFactory {
     }
 
     /**
-     * The --all flag is set on the command line (or generateAll(true) is called on WSDL2Java).
-     * Set all symbols as referenced.
+     * The --all flag is set on the command line (or generateAll(true) is called
+     * on WSDL2Java). Set all symbols as referenced (except nonSOAP bindings
+     * which we don't know how to deal with).
      */
     private void setAllReferencesToTrue() {
         Iterator it = symbolTable.getHashMap().values().iterator();
@@ -333,7 +334,14 @@ public class JavaWriterFactory implements WriterFactory {
             Vector v = (Vector) it.next();
             for (int i = 0; i < v.size(); ++i) {
                 SymTabEntry entry = (SymTabEntry) v.elementAt(i);
-                entry.setIsReferenced(true);
+                if (entry instanceof BindingEntry &&
+                        ((BindingEntry) entry).getBindingType() !=
+                        BindingEntry.TYPE_SOAP) {
+                    entry.setIsReferenced(false);
+                }
+                else {
+                    entry.setIsReferenced(true);
+                }
             }
         }
     } // setAllReferencesToTrue

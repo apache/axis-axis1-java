@@ -82,13 +82,16 @@ public class JavaBindingWriter implements Writer {
             SymbolTable symbolTable) {
 
         BindingEntry bEntry = symbolTable.getBindingEntry(binding.getQName());
+
+        // Interface writer
+        PortTypeEntry ptEntry =
+                symbolTable.getPortTypeEntry(binding.getPortType().getQName());
+        if (ptEntry.isReferenced()) {
+            interfaceWriter = new JavaInterfaceWriter(
+                    emitter, ptEntry, bEntry, symbolTable);
+        }
+
         if (bEntry.isReferenced()) {
-            // Interface writer
-            PortTypeEntry ptEntry = 
-                    symbolTable.getPortTypeEntry(binding.getPortType().getQName());
-            interfaceWriter =
-                    new JavaInterfaceWriter(emitter, ptEntry, bEntry, symbolTable);
-            
             // Stub writer
             stubWriter = new JavaStubWriter(emitter, bEntry, symbolTable);
 
