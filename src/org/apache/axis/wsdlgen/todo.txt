@@ -1,0 +1,66 @@
+This is a todo list for Java2Wsdl stuff
+---------------------------------------
+Initial Version: Ravi Kumar(rkumar@borland.com) - Dec 2, 2001
+
+
+Group 1
+-------
+* Generate deployment - deploy.wsdd, undeploy.wsdd
+* Pluggable ParameterNameResolver for method parameters with complexType
+* Make PackageName=Namespace configurable using a properties file
+* Generate JAX-RPC style stub, skeleton and optionally refactor exporting 
+  class as the impl class *** (see Note 1) ***
+
+Group 2
+-------
+* Unit tests
+* samples
+* User documentation
+* Internationalization
+
+
+Group 3
+-------
+* Support for IN / OUT parameters - aka Holders
+* Address roundtrip behaviour - with the exception of type promotion and param 
+  naming differences
+* A mechanism to register types (class:serializer:deserializer)
+
+
+Group 4
+-------
+* Support method overloading
+* support exporting by interface - in addition to allowed methods
+* Output mode currently has ALL, Interface, Implementation -- need to add Types
+* Output and OUTPUT_IMPL options are there to generate "split" files -- need to 
+  add OUTPUT_TYPES as well 
+* Allow options for just for Java->XML type generation
+
+
+Group 5
+-------
+* Style/use support: rpc/encoded, document/literal, rpc/literal and document/encoded
+* Switch the runtime WSDL generation to use Java2Wsdl
+
+
+
+********************************************************************************
+NOTES:
+Use this place to clarify features if they are not immediately obvious
+
+ 
+Note 1: Generate JAX-RPC style classes
+--------------------------------------
+Java2Wsdl needs to satisfy the following scenarios
+1. Export a class as a Web service 
+        no wsdl is required, just the deploy.wsdd and undeploy.wsdd
+2. Export a class and generate WSD
+        get both WSDL and deploy.wsdd, undeploy.wsdd
+3. Export a class and generate WSDL and JAX-RPC compliant stubs
+        same as above plus client stub code --- Most typical need
+4. Export a class and generate WSDL and JAX-RPC compliant stubs and skeletons
+        same as above plus skeleton and impl classes, optionally refactoring 
+        the exporting class to be an impl class
+Basically IN ONE STEP, ALL code, wsdl and deployment generation for any of the 
+above scenarios. 
+Note, the functionality will be achieved y calling into Wsdl2Java as appropriate
