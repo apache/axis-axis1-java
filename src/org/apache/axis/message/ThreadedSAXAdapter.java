@@ -31,7 +31,9 @@ public class ThreadedSAXAdapter extends SOAPSAXHandler
         public void run()
         {
             try {
+                context.getMessageContext().setParsing(true);
                 _parser.parse(inputSource, ThreadedSAXAdapter.this);
+                context.getMessageContext().setParsing(false);
             } catch (Exception e) {
                 e.printStackTrace();
             }
