@@ -82,7 +82,8 @@ public class TCPSender extends BasicHandler {
             Category.getInstance(TCPSender.class.getName());
 
     public void invoke(MessageContext msgContext) throws AxisFault {
-        Debug.Print( 0, "Enter: TCPSender::invoke" );
+        category.fatal( "Enter: TCPSender::invoke" );
+
         /* Find the service we're invoking so we can grab it's options */
         /***************************************************************/
         String   targetURL = null ;
@@ -99,7 +100,7 @@ public class TCPSender extends BasicHandler {
             Socket             sock = null ;
 
             sock    = new Socket( host, port );
-            Debug.Print( 1, "Created an insecure HTTP connection");
+            category.info( "Created an insecure HTTP connection");
 
             reqEnv  = (String) msgContext.getRequestMessage().getAsString();
 
@@ -114,11 +115,11 @@ public class TCPSender extends BasicHandler {
             out.write( bytes );
             out.flush();
 
-            Debug.Print( 1, "XML sent:" );
-            Debug.Print( 1, "---------------------------------------------------");
-            Debug.Print( 1, reqEnv );
+            category.debug( "XML sent:" );
+            category.debug( "---------------------------------------------------");
+            category.debug( reqEnv );
 
-            if ( Debug.getDebugLevel() > 8 ) {
+            if ( category.isDebugEnabled() ) {
                 // Special case - if the debug level is this high then something
                 // really bad must be going on - so just dump the input stream
                 // to stdout.
@@ -129,22 +130,22 @@ public class TCPSender extends BasicHandler {
             }
 
             outMsg = new Message( inp );
-            if (Debug.getDebugLevel() > 0) {
-                Debug.Print( 1, "\nNo Content-Length" );
-                Debug.Print( 1, "\nXML received:" );
-                Debug.Print( 1, "-----------------------------------------------");
-                Debug.Print( 1, (String) outMsg.getAsString() );
+            if (category.isDebugEnabled()) {
+                category.debug( "\nNo Content-Length" );
+                category.debug( "\nXML received:" );
+                category.debug( "-----------------------------------------------");
+                category.debug( (String) outMsg.getAsString() );
             }
 
             msgContext.setResponseMessage( outMsg );
         }
         catch( Exception e ) {
-            Debug.Print( 1, e );
+            category.error( e );
             e.printStackTrace();
             if ( !(e instanceof AxisFault) ) e = new AxisFault(e);
             throw (AxisFault) e ;
         }
-        Debug.Print( 0, "Exit: TCPSender::invoke" );
+        category.fatal( "Exit: TCPSender::invoke" );
     }
 
     public void undo(MessageContext msgContext) {

@@ -10,10 +10,14 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.apache.axis.Constants;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.ServiceDescription;
-import org.apache.axis.utils.Debug;
+
+import org.apache.log4j.Category;
 
 public class BodyBuilder extends SOAPHandler
 {
+    static Category category =
+            Category.getInstance(BodyBuilder.class.getName());
+
     private final static boolean DEBUG_LOG = false;
     
     private SOAPBodyElement element;
@@ -54,8 +58,8 @@ public class BodyBuilder extends SOAPHandler
 
         if (isRoot &&
             context.getMessageContext().getServiceHandler() == null) {
-            Debug.Print(2, "Dispatching to body namespace '",
-                        namespace, "'");
+            category.debug( "Dispatching to body namespace '" +
+                        namespace + "'");
             context.getMessageContext().setTargetService(namespace);
         }
         

@@ -64,7 +64,6 @@ import javax.xml.parsers.SAXParser;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.message.* ;
-import org.apache.axis.utils.Debug ;
 import org.apache.axis.utils.XMLUtils ;
 import org.apache.log4j.Category;
 
@@ -83,7 +82,7 @@ public class Message {
      */
     private Object originalMessage ;
     private Object currentMessage ;
-    
+
     private static final int FORM_STRING       = 1;
     private static final int FORM_INPUTSTREAM  = 2;
     private static final int FORM_SOAPENVELOPE = 3;
@@ -91,11 +90,11 @@ public class Message {
     private static final int FORM_BODYINSTREAM = 5;
     private static final int FORM_FAULT        = 6;
     private int currentForm ;
-    
+
     private static final String[] formNames =
     { "", "FORM_STRING", "FORM_INPUTSTREAM", "FORM_SOAPENVELOPE",
       "FORM_BYTES", "FORM_BODYINSTREAM", "FORM_FAULT" };
-    
+
     private String messageType ;
     private MessageContext msgContext;
 
@@ -107,38 +106,38 @@ public class Message {
         originalMessage = stringForm;
         setCurrentMessage(stringForm, FORM_STRING);
     }
-    
+
     public Message(SOAPEnvelope env) {
         category.debug( "Enter Message ctor (SOAPEnvelope)" );
         originalMessage = env;
         setCurrentMessage(env, FORM_SOAPENVELOPE);
     }
-    
+
     public Message(InputStream inputStream) {
         category.debug( "Enter Message ctor (InputStream)" );
         originalMessage = inputStream;
         setCurrentMessage(inputStream, FORM_INPUTSTREAM);
     }
-    
+
     public Message(InputStream inputStream, boolean isBody) {
         category.debug( "Enter Message ctor (BodyInputStream)" );
         originalMessage = inputStream;
         setCurrentMessage(inputStream, isBody ? FORM_BODYINSTREAM :
                                                 FORM_INPUTSTREAM);
     }
-    
+
     public Message(byte [] bytes) {
-        Debug.Print(2, "Enter Message ctor (byte[])" );
+        category.debug("Enter Message ctor (byte[])" );
         originalMessage = bytes;
         setCurrentMessage(bytes, FORM_BYTES);
     }
-    
+
     public Message(AxisFault fault) {
-        Debug.Print(2, "Enter Message ctor (AxisFault)" );
+        category.debug("Enter Message ctor (AxisFault)" );
         originalMessage = fault;
         setCurrentMessage(fault, FORM_FAULT);
     }
-    
+
     public Object getOriginalMessage() {
         return( originalMessage );
     }
@@ -150,17 +149,17 @@ public class Message {
     private int getCurrentForm() {
         return( currentForm );
     }
-    
+
     public String getMessageType()
     {
         return messageType;
     }
-    
+
     public void setMessageType(String messageType)
     {
         this.messageType = messageType;
     }
-    
+
     public MessageContext getMessageContext()
     {
         return msgContext;
@@ -184,7 +183,7 @@ public class Message {
             category.debug( "Exit: Message::getAsBytes" );
             return( (byte[]) currentMessage );
         }
-        
+
         if ( currentForm == FORM_BODYINSTREAM ) {
             try {
                 getAsSOAPEnvelope();
@@ -222,7 +221,7 @@ public class Message {
             getAsString();
 
         if ( currentForm == FORM_STRING ) {
-            setCurrentMessage( ((String)currentMessage).getBytes(), 
+            setCurrentMessage( ((String)currentMessage).getBytes(),
                                FORM_BYTES );
             category.debug( "Exit: Message::getAsBytes" );
             return( (byte[]) currentMessage );
@@ -248,7 +247,7 @@ public class Message {
         }
 
         if ( currentForm == FORM_BYTES ) {
-            setCurrentMessage( new String((byte[]) currentMessage), 
+            setCurrentMessage( new String((byte[]) currentMessage),
                                FORM_STRING );
             category.debug( "Exit: Message::getAsString, currentMessage is "+
                             currentMessage );
@@ -294,16 +293,16 @@ public class Message {
                         formNames[currentForm] );
         if ( currentForm == FORM_SOAPENVELOPE )
             return( (SOAPEnvelope) currentMessage );
-        
+
         if (currentForm == FORM_BODYINSTREAM) {
-            InputStreamBody bodyEl = 
+            InputStreamBody bodyEl =
                              new InputStreamBody((InputStream)currentMessage);
             SOAPEnvelope env = new SOAPEnvelope();
             env.addBodyElement(bodyEl);
             setCurrentMessage(env, FORM_SOAPENVELOPE);
             return env;
         }
-        
+
         InputSource is;
 
         if ( currentForm == FORM_INPUTSTREAM ) {
@@ -311,9 +310,9 @@ public class Message {
         } else {
             is = new InputSource(new StringReader(getAsString()));
         }
-        DeserializationContext dser = 
+        DeserializationContext dser =
             new DeserializationContext(is, msgContext, messageType);
-        
+
         // This may throw a SAXException
         try {
             dser.parse();

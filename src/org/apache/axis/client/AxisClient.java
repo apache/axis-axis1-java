@@ -58,7 +58,7 @@ package org.apache.axis.client ;
 import java.util.* ;
 import org.apache.axis.* ;
 import org.apache.axis.configuration.*;
-import org.apache.axis.utils.Debug ;
+
 import org.apache.axis.handlers.* ;
 import org.apache.axis.registries.* ;
 import org.apache.axis.transport.http.HTTPSender;
@@ -83,31 +83,31 @@ public class AxisClient extends AxisEngine
     {
         super(provider);
     }
-    
+
     /**
      * this *is* the client engine!
      */
     public AxisEngine getClientEngine () {
         return this;
     }
-    
+
     /**
      * Main routine of the AXIS engine.  In short we locate the appropriate
      * handler for the desired service and invoke() it.
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
         category.debug("Enter: AxisClient::invoke" );
-        
+
         String  hName = null ;
         Handler h     = null ;
-        
+
         HandlerRegistry hr = getHandlerRegistry();
         HandlerRegistry sr = getServiceRegistry();
-        
+
         try {
             hName = msgContext.getStrProp( MessageContext.ENGINE_HANDLER );
             category.debug( "EngineHandler: " + hName );
-            
+
             if ( hName != null ) {
                 h = hr.find( hName );
                 if ( h != null )
@@ -120,7 +120,7 @@ public class AxisClient extends AxisEngine
             else {
                 // This really should be in a handler - but we need to discuss it
                 // first - to make sure that's what we want.
-                
+
                 /* Now we do the 'real' work.  The flow is basically:         */
                 /*                                                            */
                 /*   Service Specific Request Chain                           */
@@ -131,12 +131,12 @@ public class AxisClient extends AxisEngine
                 /*   Service Specific Response Chain                          */
                 /*   Protocol Specific-Handler/Checker                        */
                 /**************************************************************/
-                
+
                 // When do we call init/cleanup??
-                
+
                 SimpleTargetedChain service = null ;
-                msgContext.setPastPivot(false); 
-                
+                msgContext.setPastPivot(false);
+
                 /* Process the Service Specific Request Chain */
                 /**********************************************/
                 hName =  msgContext.getTargetService();
@@ -147,13 +147,13 @@ public class AxisClient extends AxisEngine
                     }
                     if ( h != null ) h.invoke( msgContext );
                 }
-                
+
                 /* Process the Global Request Chain */
                 /**********************************/
                 hName = Constants.GLOBAL_REQUEST ;
                 if ( hName != null  && (h = hr.find( hName )) != null )
                     h.invoke(msgContext);
-                
+
                 /** Process the Transport Specific stuff
                  *
                  * NOTE: Somewhere in here there is a handler which actually
@@ -165,33 +165,33 @@ public class AxisClient extends AxisEngine
                 if ( hName != null && (h = tr.find( hName )) != null )
                     h.invoke(msgContext);
                 else
-                    msgContext.setPastPivot(true); 
-                                
+                    msgContext.setPastPivot(true);
+
                 /* Process the Global Response Chain */
                 /***********************************/
                 hName = Constants.GLOBAL_RECEIVE ;
                 if ( hName != null && (h = hr.find( hName )) != null )
                     h.invoke(msgContext);
-                
+
                 if ( service != null ) {
                     h = service.getResponseHandler();
                     if ( h != null )
                         h.invoke(msgContext);
                 }
-                
+
                 // Do SOAP Semantics checks here - this needs to be a call to
                 // a pluggable object/handler/something
             }
         }
         catch( Exception e ) {
             // Should we even bother catching it ?
-            Debug.Print( 1, e );
+            category.error( e );
             if ( !(e instanceof AxisFault) ) e = new AxisFault( e );
             throw (AxisFault) e ;
         }
         category.debug("Exit: AxisClient::invoke" );
     };
-    
+
     public void undo(MessageContext msgContext) {
         category.debug("Enter: AxisClient::undo" );
         category.debug("Exit: AxisClient::undo" );

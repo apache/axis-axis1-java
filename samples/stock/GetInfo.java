@@ -60,7 +60,7 @@ import java.io.*;
 import java.util.*;
 
 import org.apache.axis.AxisFault ;
-import org.apache.axis.utils.Debug ;
+
 import org.apache.axis.utils.Options ;
 import org.apache.axis.client.ServiceClient ;
 import org.apache.axis.client.Transport ;
@@ -75,8 +75,6 @@ public class GetInfo {
   public static void main(String args[]) {
     try {
       Options opts = new Options( args );
-
-      Debug.setDebugLevel( opts.isFlagSet( 'd' ) );
 
       args = opts.getRemainingArgs();
 

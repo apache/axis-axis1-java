@@ -56,7 +56,7 @@ package org.apache.axis.handlers.http;
 
 import org.apache.axis.*;
 import org.apache.axis.handlers.BasicHandler;
-import org.apache.axis.utils.Debug;
+
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.log4j.Category;
 

@@ -92,24 +92,24 @@ public class LocalSender extends BasicHandler {
 
         AxisServer targetServer = (AxisServer)clientContext.
                                                             getProperty(LocalTransport.LOCAL_SERVER);
-        Debug.Print(3, "LocalSender using server " + targetServer);
-        
+        category.debug( "LocalSender using server " + targetServer);
+
         if (targetServer == null) {
             // This should have already been done, but it doesn't appear to be
             // something that can be relied on.  Oh, well...
             if (server == null) init();
             targetServer = server;
         }
-        
+
         // Define a new messageContext per request
         MessageContext serverContext = new MessageContext(targetServer);
 
         // copy the request, and force its format to String in order to
         // exercise the serializers.
         String msgStr = clientContext.getRequestMessage().getAsString();
-        
-        Debug.Print(3, "LocalSender sending XML:");
-        Debug.Print(3, msgStr);
+
+        category.debug( "LocalSender sending XML:");
+        category.debug( msgStr);
 
         serverContext.setRequestMessage(new Message(msgStr));
         serverContext.setTransportName("local");

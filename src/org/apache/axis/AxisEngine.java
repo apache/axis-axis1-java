@@ -294,7 +294,7 @@ public abstract class AxisEngine extends BasicHandler
                                     DeserializerFactory deserFactory,
                                     Serializer serializer)
     {
-        Debug.Print(3, "Registering type mapping " + qName + " -> " +
+        category.info("Registering type mapping " + qName + " -> " +
                        cls.getName());
         if (deserFactory != null)
             _typeMappingRegistry.addDeserializerFactory(qName,
@@ -335,7 +335,7 @@ public abstract class AxisEngine extends BasicHandler
      */
     public void deployService(String key, SOAPService service)
     {
-        Debug.Print(2, "Deploying service '" + key + "' into " + this);
+        category.info("Deploying service '" + key + "' into " + this);
         service.setName(key);
         service.setEngine(this);
 

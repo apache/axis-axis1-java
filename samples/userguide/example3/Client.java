@@ -56,7 +56,7 @@
 package samples.userguide.example3;
 
 import org.apache.axis.client.ServiceClient;
-import org.apache.axis.utils.Debug;
+
 import org.apache.axis.utils.Options;
 
 public class Client
@@ -65,8 +65,6 @@ public class Client
     {
         try {
             Options options = new Options(args);
-            
-            Debug.setDebugLevel(options.isFlagSet('d'));
             
             String endpointURL = options.getURL();
             String textToSend;

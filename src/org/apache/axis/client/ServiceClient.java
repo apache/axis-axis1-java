@@ -559,7 +559,7 @@ public class ServiceClient {
             invoke();
         }
         catch( Exception e ) {
-            Debug.Print( 1, e );
+            category.error( e );
             if ( !(e instanceof AxisFault ) ) e = new AxisFault( e );
             throw (AxisFault) e ;
         }
@@ -631,7 +631,7 @@ public class ServiceClient {
             engine.invoke( msgContext );
         }
         catch( AxisFault fault ) {
-            Debug.Print( 1,  fault );
+            category.error( fault );
             throw fault ;
         }
 

@@ -58,7 +58,7 @@ package org.apache.axis.registries ;
 import java.io.* ;
 import java.util.* ;
 import org.apache.axis.* ;
-import org.apache.axis.utils.Debug ;
+
 import org.apache.axis.suppliers.* ;
 import org.apache.axis.registries.* ;
 

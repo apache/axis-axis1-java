@@ -58,7 +58,7 @@ package org.apache.axis ;
 import java.util.* ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.AxisClassLoader ;
-import org.apache.axis.utils.Debug ;
+
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.encoding.ServiceDescription;
@@ -66,6 +66,7 @@ import org.apache.axis.registries.HandlerRegistry;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.message.*;
 import org.apache.axis.session.Session;
+import org.apache.log4j.Category;
 
 /**
  * Some more general docs will go here.
@@ -91,6 +92,9 @@ import org.apache.axis.session.Session;
  * @author Jacek Kopecky (jacek@idoox.com)
  */
 public class MessageContext {
+    static Category category =
+            Category.getInstance(MessageContext.class.getName());
+
     /**
      * Just a placeholder until we figure out how many messages we'll actually
      * be passing around.
@@ -357,7 +361,7 @@ public class MessageContext {
      * @param tServ the name of the target service.
      */
     public void setTargetService(String tServ) {
-        Debug.Print(2, "MessageContext: setTargetService(" + tServ+")");
+        category.debug("MessageContext: setTargetService(" + tServ+")");
         targetService = tServ ;
 
         HandlerRegistry sr = axisEngine.getServiceRegistry();
@@ -381,7 +385,7 @@ public class MessageContext {
     
     public void setServiceHandler(Handler sh)
     {
-        Debug.Print(2,"MessageContext: setServiceHandler("+sh+")");
+        category.debug("MessageContext: setServiceHandler("+sh+")");
         serviceHandler = sh;
         if (sh != null && sh instanceof SOAPService) {
             SOAPService service = (SOAPService)sh;

@@ -60,7 +60,7 @@ import java.util.*;
 import org.apache.axis.ConfigurationProvider;
 import org.apache.axis.AxisEngine;
 import org.apache.axis.utils.Admin;
-import org.apache.axis.utils.Debug;
+
 import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Document;
 
@@ -143,14 +143,6 @@ public class FileProvider implements ConfigurationProvider
         }
 
         String propVal;
-
-        if (!Debug.isLevelSet()) {
-            propVal = props.getProperty(AxisEngine.PROP_DEBUG_LEVEL, "0");
-            Debug.setDebugLevel(Integer.parseInt(propVal));
-        }
-
-        propVal = props.getProperty(AxisEngine.PROP_DEBUG_FILE);
-        Debug.setToFile(propVal != null);
 
         // Should we send XML declarations in our messages?
         // default is true, and currently the only accepted true value is

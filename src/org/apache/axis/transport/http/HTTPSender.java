@@ -96,7 +96,7 @@ public class HTTPSender extends BasicHandler {
             URL      tmpURL = new URL( targetURL );
             byte[]   buf    = new byte[4097];
             int      rc     = 0 ;
-            
+
             // default SOAPAction to request namespaceURI/method
             String   action = msgContext.getStrProp(HTTPConstants.MC_HTTP_SOAPACTION);
             if (action == null) {
@@ -104,7 +104,7 @@ public class HTTPSender extends BasicHandler {
                 MessageElement body = rm.getAsSOAPEnvelope().getFirstBody();
                 action = body.getNamespaceURI() + "/" + body.getName();
             }
-            
+
             host = tmpURL.getHost();
             if ( (port = tmpURL.getPort()) == -1 ) port = 80;
 
@@ -183,7 +183,7 @@ public class HTTPSender extends BasicHandler {
             }
 
             reqEnv  = (String) msgContext.getRequestMessage().getAsString();
-            
+
             //System.out.println("Msg: " + reqEnv);
 
             BufferedInputStream inp = new BufferedInputStream(sock.getInputStream());
@@ -205,20 +205,20 @@ public class HTTPSender extends BasicHandler {
                      .append( Base64.encode( tmpBuf.toString().getBytes() ) )
                      .append("\n" );
             }
-            
+
             // don't forget the cookies!
             // mmm... cookies
             if (msgContext.getMaintainSession()) {
                 String cookie = msgContext.getStrProp(HTTPConstants.HEADER_COOKIE);
                 String cookie2 = msgContext.getStrProp(HTTPConstants.HEADER_COOKIE2);
-                
+
                 if (cookie != null) {
                     otherHeaders.append(HTTPConstants.HEADER_COOKIE)
                      .append(": ")
                      .append(cookie)
                      .append("\r\n");
                 }
-                
+
                 if (cookie2 != null) {
                     otherHeaders.append(HTTPConstants.HEADER_COOKIE2)
                      .append(": ")
@@ -226,7 +226,7 @@ public class HTTPSender extends BasicHandler {
                      .append("\r\n");
                 }
             }
-            
+
             StringBuffer header = new StringBuffer();
             byte[] request = reqEnv.getBytes();
 
@@ -250,7 +250,7 @@ public class HTTPSender extends BasicHandler {
              .append( ": \"" )
              .append( action )
              .append( "\"\r\n");
-            
+
             header.append("\r\n");
 
             out.write( header.toString().getBytes() );
@@ -307,17 +307,8 @@ public class HTTPSender extends BasicHandler {
                 }
             }
 
-            if ( b != -1 && Debug.getDebugLevel() > 8 ) {
-                // Special case - if the debug level is this high then something
-                // really bad must be going on - so just dump the input stream
-                // to stdout.
-                while ( (b = (byte) inp.read()) != -1 )
-                    System.err.print((char)b);
-                System.err.println("");
-            }
-
             if ( b != -1 ) {
-                if (Debug.getDebugLevel() > 0) {
+                if (category.isDebugEnabled()) {
                     String contentLength = (String) headers.get("content-length");
                     if ( contentLength != null ) {
                         contentLength = contentLength.trim();
@@ -325,9 +316,9 @@ public class HTTPSender extends BasicHandler {
                         for (len=0; len<data.length; )
                             len+= inp.read(data,len,data.length-len);
                         String xml = new String(data);
-                        
+
                         outMsg = new Message( data );
-                        
+
                         category.debug( "\nXML received:" );
                         category.debug( "-----------------------------------------------");
                         category.debug( xml );
@@ -346,7 +337,7 @@ public class HTTPSender extends BasicHandler {
                 outMsg.setMessageType(org.apache.axis.encoding.
                                                  ServiceDescription.RESPONSE);
                 msgContext.setResponseMessage( outMsg );
-                
+
                 // if we are maintaining session state,
                 // handle cookies (if any)
                 if (msgContext.getMaintainSession()) {
@@ -369,7 +360,7 @@ public class HTTPSender extends BasicHandler {
         }
         category.debug( "Exit: HTTPDispatchHandler::invoke" );
     }
-    
+
     // little helper function for cookies
     public void handleCookie
          (String cookieName, String setCookieName, Hashtable headers,
@@ -386,8 +377,8 @@ public class HTTPSender extends BasicHandler {
             msgContext.setProperty(cookieName, cookie);
         }
     }
-    
-    
+
+
 
     public void undo(MessageContext msgContext) {
         category.debug( "Enter: HTTPDispatchHandler::undo" );

@@ -58,12 +58,13 @@ package samples.transport.tcp;
 import java.net.URL;
 import java.util.* ;
 import org.apache.axis.* ;
-import org.apache.axis.utils.Debug ;
+
 import org.apache.axis.handlers.* ;
 import org.apache.axis.registries.* ;
 import org.apache.axis.client.Transport;
 import org.apache.axis.client.AxisClient;
 import org.apache.axis.client.ServiceClient;
+import org.apache.log4j.Category;
 
 /**
  *
@@ -73,6 +74,9 @@ import org.apache.axis.client.ServiceClient;
  */
 public class TCPTransport extends Transport
 {
+    static Category category =
+            Category.getInstance(TCPTransport.class.getName());
+
     private String host;
     private String port;
     
@@ -116,8 +120,8 @@ public class TCPTransport extends Transport
         if (host != null) serv.set(HOST, host);
         if (port != null) serv.set(PORT, port);
 
-        Debug.Print(3, "Port = " + mc.getStrProp(PORT));
-        Debug.Print(3, "Host = " + mc.getStrProp(HOST));
+        category.debug( "Port = " + mc.getStrProp(PORT));
+        category.debug( "Host = " + mc.getStrProp(HOST));
         
         // kind of ugly... fake up a "http://host:port/" url to send down the chain
         // ROBJ TODO: clean this up so we use TCP transport properties all the way down
@@ -125,7 +129,7 @@ public class TCPTransport extends Transport
         /*
         String url = "http://"+serv.get(HOST)+":"+serv.get(PORT);
         
-        Debug.Print(4, "TCPTransport set URL to '" + url + "'");
+        category.debug( "TCPTransport set URL to '" + url + "'");
         mc.setProperty(MessageContext.TRANS_URL, url);
         */
     }

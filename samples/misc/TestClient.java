@@ -60,7 +60,7 @@ import java.io.*;
 import java.util.*;
 
 import org.apache.axis.*;
-import org.apache.axis.utils.Debug ;
+
 import org.apache.axis.utils.Options ;
 import org.apache.axis.client.ServiceClient ;
 import org.apache.axis.transport.http.HTTPTransport ;
@@ -95,8 +95,6 @@ public class TestClient {
         if (service != null) {
             action = service;
         }
-
-      Debug.setDebugLevel( opts.isFlagSet( 'd' ) );
 
       args = opts.getRemainingArgs();
       if ( args != null ) action = args[0];

@@ -114,7 +114,7 @@ public class Admin {
                 table.put( name, value );
         }
     }
-    
+
     /**
      * Register a set of type mappings for a service.
      *
@@ -130,14 +130,14 @@ public class Admin {
             Element el = (Element)list.item(i);
             registerTypes(el, reg, true);
         }
-        
+
         list = root.getElementsByTagName("typeMappings");
         for (int i = 0; list != null && i < list.getLength(); i++) {
             Element el = (Element)list.item(i);
             registerTypes(el, reg, false);
         }
     }
-    
+
     private static void registerTypes(Element root,
                                       TypeMappingRegistry map,
                                       boolean isBean)
@@ -177,16 +177,16 @@ public class Admin {
         if (!el.getTagName().equals("engineConfig"))
             throw new Exception("Wanted 'engineConfig' element, got '" +
                 el.getTagName() + "'");
-        
+
         NodeList nl = el.getElementsByTagName("handlers");
         deploy(nl, engine);
-        
+
         nl = el.getElementsByTagName("services");
         deploy(nl, engine);
-        
+
         nl = el.getElementsByTagName("transports");
         deploy(nl, engine);
-        
+
         nl = el.getElementsByTagName("typeMappings");
         deploy(nl, engine);
         /*
@@ -195,7 +195,7 @@ public class Admin {
         engine.getTypeMappingRegistry(),
         false);
         */
-        
+
         engine.saveConfiguration();
     }
 
@@ -237,12 +237,12 @@ public class Admin {
         int lenI = nl.getLength();
         for (int i = 0; i < lenI; i++) {
             Element el = (Element)nl.item(i);
-            
+
             NodeList children = el.getChildNodes();
             int lenJ = children.getLength();
             for (int j = 0; j < lenJ; j++) {
                 if (!(children.item(j) instanceof Element)) continue;
-                
+
                 Element item = (Element)children.item(j);
 
                 int type;
@@ -302,7 +302,7 @@ public class Admin {
                     "Root element must be 'clientdeploy', 'deploy', 'undeploy', " +
                     "'list', 'passwd', or 'quit'",
                     null, null );
-            
+
             /** Might do something like this once security is a little more
              * integrated.
             if (!engine.hasSafePassword() &&
@@ -311,7 +311,7 @@ public class Admin {
               "You must change the admin password before administering Axis!",
                                      null, null);
              */
-            
+
             /** For now, though - make sure we can only admin from our own
              * IP, unless the remoteAdmin option is set.
              */
@@ -328,7 +328,7 @@ public class Admin {
                             InetAddress myAddr = InetAddress.getLocalHost();
                             InetAddress remoteAddr =
                                             InetAddress.getByName(remoteIP);
-                        
+
                             if (!myAddr.equals(remoteAddr))
                                 throw new AxisFault("Server.Unauthorized",
                                     "Remote admin access is not allowed! ",
@@ -337,7 +337,7 @@ public class Admin {
                     }
                 }
             }
-            
+
             if (action.equals("passwd")) {
                 String newPassword = root.getFirstChild().getNodeValue();
                 engine.setAdminPassword(newPassword);
@@ -359,16 +359,16 @@ public class Admin {
                 root.appendChild( doc.createTextNode( "Quitting" ) );
                 return doc;
             }
-            
+
             if ( action.equals("list") ) {
                 return listConfig(engine);
             }
-            
+
             if (action.equals("clientdeploy")) {
                 // set engine to client engine
                 engine = engine.getClientEngine();
             }
-            
+
             NodeList list = root.getChildNodes();
             for ( int loop = 0 ; loop < list.getLength() ; loop++ ) {
                 Node     node    = list.item(loop);
@@ -378,7 +378,7 @@ public class Admin {
                 Element  elem    = (Element) node ;
                 String   type    = elem.getTagName();
                 String   name    = elem.getAttribute("name");
-                
+
                 if ( action.equals( "undeploy" ) ) {
                     if ( type.equals("service") ) {
                         category.info( "Undeploying " + type + ": " + name );
@@ -394,7 +394,7 @@ public class Admin {
                             null, null );
                     continue ;
                 }
-                
+
                 if ( type.equals( "handler" ) ) {
                     registerHandler(elem, engine);
                 }
@@ -423,7 +423,7 @@ public class Admin {
                         null, null );
             }
             engine.saveConfiguration();
-            
+
             doc = XMLUtils.newDocument();
             doc.appendChild( root = doc.createElement( "Admin" ) );
             root.appendChild( doc.createTextNode( "Done processing" ) );
@@ -435,7 +435,7 @@ public class Admin {
         }
         return( doc );
     }
-    
+
     /** Get an XML document representing this engine's configuration.
      *
      * This document is suitable for saving and reloading into the
@@ -449,30 +449,30 @@ public class Admin {
         throws AxisFault
     {
         Document doc = XMLUtils.newDocument();
-        
+
         Element tmpEl = doc.createElement("engineConfig");
         doc.appendChild(tmpEl);
-        
+
         Element el = doc.createElement("handlers");
         list(el, engine.getHandlerRegistry());
         tmpEl.appendChild(el);
-        
+
         el = doc.createElement("services");
         list(el, engine.getServiceRegistry());
         tmpEl.appendChild(el);
-        
+
         el = doc.createElement("transports");
         list(el, engine.getTransportRegistry());
         tmpEl.appendChild(el);
-        
-        Debug.Print(2, "Outputting registry");
+
+        category.debug( "Outputting registry");
         el = doc.createElement("typeMappings");
         engine.getTypeMappingRegistry().dumpToElement(el);
         tmpEl.appendChild(el);
 
         return( doc );
     }
-    
+
     /**
      * Return an XML Element containing the configuration info for one
      * of the engine's Handler registries.
@@ -492,7 +492,7 @@ public class Admin {
         String[]   names ;
         Handler    h ;
         int        i ;
-        
+
         names = registry.list();
 
         for( i = 0 ; names != null && i < names.length ; i++ ) {
@@ -506,10 +506,10 @@ public class Admin {
             elem.setAttribute( "name", names[i] );
             root.appendChild( doc.importNode(elem,true) );
         }
-        
+
         return root;
     }
-    
+
     /**
      * Deploy a chain described in XML into an AxisEngine.
      *
@@ -522,7 +522,7 @@ public class Admin {
         Handler tmpH = null;
         String hName;
         SupplierRegistry hr = (SupplierRegistry)engine.getHandlerRegistry();
-        
+
         String   name    = elem.getAttribute( "name" );
         String   flow    = elem.getAttribute( "flow" );
         String   request   = elem.getAttribute( "request" );
@@ -539,7 +539,7 @@ public class Admin {
         if (flow != null) {
             category.info( "Deploying chain: " + name );
             Vector names = new Vector();
-            
+
             StringTokenizer st = new StringTokenizer( flow, " \t\n\r\f," );
             while ( st.hasMoreElements() ) {
                 names.addElement(st.nextToken());
@@ -550,17 +550,17 @@ public class Admin {
                                                                names,
                                                                options,
                                                                hr);
-            
+
             hr.add(name, supp);
         }
         else {
             category.info( "Deploying chain: " + name );
-            
+
             if ((request == null) &&
                 (response == null) &&
                 (pivot == null))
                 throw new AxisFault("No request/response/pivot for chain '" + name + "'!");
-            
+
             StringTokenizer      st = null ;
             Vector reqNames = new Vector();
             Vector respNames = new Vector();
@@ -571,16 +571,16 @@ public class Admin {
                     reqNames.addElement(st.nextToken());
                 }
             }
-            
+
             if (response != null) {
                 st = new StringTokenizer( response, " \t\n\r\f," );
                 while ( st.hasMoreElements() ) {
                     respNames.addElement(st.nextToken());
                 }
             }
-            
+
             getOptions( elem, options );
-            
+
             TargetedChainSupplier supp = new TargetedChainSupplier(name,
                                                                    reqNames,
                                                                    respNames,
@@ -590,7 +590,7 @@ public class Admin {
             hr.add(name,supp);
         }
     }
-    
+
     /**
      * Deploy a service described in XML into an AxisEngine.
      *
@@ -602,7 +602,7 @@ public class Admin {
     {
         HandlerRegistry hr = engine.getHandlerRegistry();
         HandlerRegistry sr = engine.getServiceRegistry();
-        
+
         String   name    = elem.getAttribute( "name" );
         String   request   = elem.getAttribute( "request" );
         String   pivot   = elem.getAttribute( "pivot" );
@@ -629,7 +629,7 @@ public class Admin {
 
         if ( service == null ) service = new SOAPService();
         else              service.clear();
-        
+
         if ( request != null && !"".equals(request) ) {
             st = new StringTokenizer( request, " \t\n\r\f," );
             c  = null ;
@@ -645,21 +645,21 @@ public class Admin {
                 c.addHandler( tmpH );
             }
         }
-        
+
         if ( pivot != null && !"".equals(pivot) ) {
             tmpH = hr.find(pivot);
             if (tmpH == null)
                 throw new AxisFault("Deploying service " + name +
                     ": couldn't find pivot Handler '" + pivot + "'");
-            
+
             service.setPivotHandler( tmpH );
-            
+
             if (pivot.equals("MsgDispatcher")) {
                 ServiceDescription sd = new ServiceDescription("msgService", false);
                 service.setServiceDescription(sd);
             }
         }
-        
+
         if ( response != null && !"".equals(response) ) {
             st = new StringTokenizer( response, " \t\n\r\f," );
             c  = null ;
@@ -675,18 +675,18 @@ public class Admin {
                 c.addHandler( tmpH );
             }
         }
-        
+
         getOptions( elem, service );
-        
+
         try {
             registerTypeMappings(elem, service);
         } catch (Exception e) {
             throw new AxisFault(e);
         }
-        
+
         engine.deployService( name, service );
     }
-    
+
     /**
      * Deploy a handler described in XML into an AxisEngine.
      *
@@ -697,7 +697,7 @@ public class Admin {
         throws AxisFault
     {
         HandlerRegistry hr = engine.getHandlerRegistry();
-        
+
         try {
             AxisClassLoader   cl     = AxisClassLoader.getClassLoader();
             String   name    = elem.getAttribute( "name" );
@@ -708,7 +708,7 @@ public class Admin {
             String   cls   = elem.getAttribute( "class" );
             if ( cls != null && cls.equals("") ) cls = null ;
             category.info( "Deploying handler: " + name );
-            
+
             h = hr.find( name );
             if ( h == null ) h = (Handler) cl.loadClass(cls).newInstance();
             getOptions( elem, h );
@@ -760,9 +760,9 @@ public class Admin {
                 respNames.addElement(st.nextToken());
             }
         }
-        
+
         getOptions( elem, options );
-        
+
         HandlerRegistry hr = engine.getHandlerRegistry();
         TargetedChainSupplier supp = new TransportSupplier(name,
                                                            reqNames,
@@ -786,19 +786,19 @@ public class Admin {
     {
         Serializer ser;
         DeserializerFactory dserFactory;
-        
+
         // Retrieve classname attribute
         String classname = elem.getAttribute("classname");
         if ((classname == null) || classname.equals(""))
             throw new AxisFault("Server.Admin.error",
                 "No classname attribute in type mapping",
                 null, null);
-        
+
         // Resolve class name
 
         Class cls;
         QName qn;
-        
+
         try {
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
             cls = cl.loadClass(classname);
@@ -812,8 +812,8 @@ public class Admin {
             String namespaceURI = elem.getNamespaceURI();
             String localName    = elem.getLocalName();
             qn = new QName(namespaceURI, localName);
-            
-            Debug.Print(2, "Registering mapping for " + qn + " -> " + classname);
+
+            category.debug( "Registering mapping for " + qn + " -> " + classname);
 
             // register both serializers and deserializers for this bean
             ser = new BeanSerializer(cls);
@@ -823,11 +823,11 @@ public class Admin {
             int idx = typeName.indexOf(":");
             String prefix = typeName.substring(0, idx);
             String localPart = typeName.substring(idx + 1);
-            
+
             qn = new QName(XMLUtils.getNamespace(prefix, elem), localPart);
-            
+
             classname = elem.getAttribute("serializer");
-            Debug.Print(3, "Serializer class is " + classname);
+            category.debug( "Serializer class is " + classname);
             try {
                 ser = (Serializer)Class.forName(classname).newInstance();
             } catch (Exception e) {
@@ -836,7 +836,7 @@ public class Admin {
                     null, null);
             }
             classname = elem.getAttribute("deserializerFactory");
-            Debug.Print(3, "DeserializerFactory class is " + classname);
+            category.debug( "DeserializerFactory class is " + classname);
             try {
                 dserFactory = (DeserializerFactory)Class.forName(classname).
                                                                             newInstance();
@@ -846,13 +846,13 @@ public class Admin {
                     e.toString(),
                     null, null);
             }
-            
+
         }
-        
+
         map.addSerializer(cls, qn, ser);
         map.addDeserializerFactory(qn, cls, dserFactory);
     }
-    
+
     public static void main(String args[]) throws Exception {
         int  i = 0 ;
 

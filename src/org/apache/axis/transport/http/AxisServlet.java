@@ -59,6 +59,7 @@ import java.io.*;
 import javax.servlet.* ;
 import javax.servlet.http.* ;
 import org.apache.axis.* ;
+import org.apache.axis.configuration.FileProvider;
 import org.apache.axis.registries.HandlerRegistry;
 import org.apache.axis.server.* ;
 import org.apache.axis.utils.*;
@@ -84,12 +85,25 @@ public class AxisServlet extends HttpServlet {
             param = context.getInitParameter("transport.name");
         if (param != null)
             transportName = param;
+    }
 
-        engine = (AxisEngine)context.getAttribute(AXIS_ENGINE);
+    public AxisServer getEngine() {
+        if (getServletContext().getAttribute("AxisEngine") == null) {
+            // Set the base path for the AxisServer to our WEB-INF directory
+            // (so the config files can't get snooped by a browser)
+            FileProvider provider =
+                    new FileProvider(getServletContext().getRealPath("/WEB-INF"),
+                                     "server-config.xml");
+
+            getServletContext().setAttribute("AxisEngine", new AxisServer(provider));
+        }
+        return (AxisServer)getServletContext().getAttribute("AxisEngine");
     }
 
     public void doGet(HttpServletRequest req, HttpServletResponse res)
         throws ServletException, IOException {
+        if (engine == null)
+            engine = getEngine();
 
         ServletContext context = getServletConfig().getServletContext();
         MessageContext msgContext = new MessageContext(engine);
@@ -158,6 +172,9 @@ public class AxisServlet extends HttpServlet {
 
     public void doPost(HttpServletRequest req, HttpServletResponse res)
         throws ServletException, IOException {
+        if (engine == null)
+            engine = getEngine();
+
         ServletConfig  config  = getServletConfig();
         ServletContext context = config.getServletContext();
         HttpSession    session = req.getSession();

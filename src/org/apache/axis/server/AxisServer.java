@@ -87,24 +87,24 @@ public class AxisServer extends AxisEngine
      * the AxisClient to be used by outcalling Services
      */
     private AxisEngine clientEngine;
-    
+
     public AxisServer()
     {
         this(new FileProvider(Constants.SERVER_CONFIG_FILE));
     }
-    
+
     public AxisServer(ConfigurationProvider provider)
     {
         super(provider);
     }
-    
+
     /** Is this server active?  If this is false, any requests will
      * cause a SOAP Server fault to be generated.
      */
     private boolean running = true;
-    
+
     public boolean isRunning() { return running; }
-    
+
     /** Start the server.
      */
     public void start()
@@ -113,14 +113,14 @@ public class AxisServer extends AxisEngine
         init();
         running = true;
     }
-    
+
     /** Stop the server.
      */
     public void stop()
     {
         running = false;
     }
-    
+
     /**
      * Get this server's client engine.  Create it if it does
      * not yet exist.
@@ -131,7 +131,7 @@ public class AxisServer extends AxisEngine
         }
         return clientEngine;
     }
-    
+
     /**
      * Main routine of the AXIS server.  In short we locate the appropriate
      * handler for the desired service and invoke() it.
@@ -339,7 +339,7 @@ public class AxisServer extends AxisEngine
                 /**************************************************************/
 
                 // When do we call init/cleanup??
-                Debug.Print(1, "Calling default logic in AxisServer" );
+                category.debug( "Calling default logic in AxisServer" );
 
                 /*  This is what the entirety of this logic might evolve to:
 

@@ -56,7 +56,7 @@ package org.apache.axis.handlers.http;
 
 import org.apache.axis.*;
 import org.apache.axis.handlers.BasicHandler;
-import org.apache.axis.utils.Debug;
+
 import org.apache.axis.encoding.Base64 ;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.log4j.Category;
@@ -95,13 +95,13 @@ public class HTTPAuthHandler extends BasicHandler
             if ( i == -1 ) user = tmp ;
             else           user = tmp.substring( 0, i);
             msgContext.setProperty( MessageContext.USERID, user );
-            Debug.Print(3, "HTTP userid: " + user );
+            category.debug( "HTTP userid: " + user );
             if ( i != -1 )  {
                 String pwd = tmp.substring(i+1);
                 if ( pwd != null && pwd.equals("") ) pwd = null ;
                 if ( pwd != null ) {
                     msgContext.setProperty( MessageContext.PASSWORD, pwd );
-                    Debug.Print(3, "HTTP passwd: " + pwd );
+                    category.debug( "HTTP passwd: " + pwd );
                 }
             }
         }
