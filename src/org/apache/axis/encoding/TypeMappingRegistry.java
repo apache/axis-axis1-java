@@ -313,20 +313,30 @@ public class TypeMappingRegistry implements Serializer {
             attrs.addAttribute("", "languageSpecificType",
                                "languageSpecificType",
                                "CDATA", "java:" + desc.cls.getName());
-            
-            String dser = desc.factory.getClass().getName();
-            attrs.addAttribute("", "deserializer", "deserializer",
-                               "CDATA", dser);
-            
-            SerializerDescriptor serDesc =
-                                       (SerializerDescriptor)s.get(desc.cls);
-            if (serDesc != null) {
-                attrs.addAttribute("", "serializer", "serializer",
-                                   "CDATA",
-                                   serDesc.serializer.getClass().getName());
+
+            QName elementQName;
+
+            if (desc.factory.getClass() ==
+                    BeanSerializer.BeanSerFactory.class) {
+                elementQName = WSDDConstants.BEANMAPPING_QNAME;
+            } else {
+                elementQName = WSDDConstants.TYPE_QNAME;
+
+                String dser = desc.factory.getClass().getName();
+                attrs.addAttribute("", "deserializer", "deserializer",
+                                   "CDATA", dser);
+
+                SerializerDescriptor serDesc =
+                        (SerializerDescriptor)s.get(desc.cls);
+                if (serDesc != null) {
+                    attrs.addAttribute("", "serializer", "serializer",
+                                       "CDATA",
+                                       serDesc.serializer.
+                                                    getClass().getName());
+                }
             }
-            
-            ctx.startElement(WSDDConstants.TYPE_QNAME, attrs);
+
+            ctx.startElement(elementQName, attrs);
             ctx.endElement();
         }
     }

@@ -243,7 +243,7 @@ public class SerializationContext
      */ 
     public String getPrefixForURI(String uri)
     {
-        return getPrefixForURI(uri, "ns" + lastPrefixIndex++);
+        return getPrefixForURI(uri, null);
     }
     
     /**
@@ -259,7 +259,8 @@ public class SerializationContext
     /**
      * Get a prefix for the given namespace URI.  If one has already been
      * defined in this serialization, use that.  Otherwise, map the passed
-     * default prefix to the URI, and return that.
+     * default prefix to the URI, and return that.  If a null default prefix
+     * is passed, use one of the form "ns<num>"
      */ 
     public String getPrefixForURI(String uri, String defaultPrefix)
     {
@@ -274,7 +275,11 @@ public class SerializationContext
         }
 
         if (prefix == null) {
-            prefix = defaultPrefix;
+            if (defaultPrefix == null) {
+                prefix = "ns" + lastPrefixIndex++;
+            } else {
+                prefix = defaultPrefix;
+            }
             registerPrefixForURI(prefix, uri);
         }
 
