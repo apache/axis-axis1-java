@@ -207,10 +207,30 @@ public class Call implements org.apache.axis.rpc.Call {
      */
     public Call() {
         serviceDesc = new ServiceDescription(null, true);
-        engine = new AxisClient(configProvider);
-
-        msgContext = new MessageContext(engine);
+        setEngine( new AxisClient(configProvider) );
         if ( !initialized ) initialize();
+    }
+
+    /**
+     * Change the AxisEngine being used by this Call object.  This should
+     * be called right away after creating the Call object since any 
+     * values in the old msgContext object associated with the old engine
+     * will NOT be carried over to the new msgContext of this new engine.
+     *
+     * @param newEngine the new AxisEngine to use
+     */
+    public void setEngine(AxisEngine newEngine) {
+        engine = newEngine ;
+        msgContext = new MessageContext( engine );
+    }
+
+    /**
+     * Returns the current AxisEngine being used by this Call object.
+     *
+     * @return AxisEngine the current AxisEngine
+     */
+    public AxisEngine getEngine() {
+        return( engine );
     }
 
     /**
