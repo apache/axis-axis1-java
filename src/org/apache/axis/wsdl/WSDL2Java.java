@@ -75,6 +75,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 
@@ -102,6 +104,8 @@ public class WSDL2Java {
     protected static final int NETWORK_TIMEOUT_OPT = 'O';
     protected static final int FACTORY_CLASS_OPT = 'F';
     protected static final int HELPER_CLASS_OPT = 'H';
+    protected static final int USERNAME_OPT = 'U';
+    protected static final int PASSWORD_OPT = 'P';
 
 
     // Scope constants
@@ -110,6 +114,10 @@ public class WSDL2Java {
     public static final byte REQUEST_SCOPE     = 0x10;
     public static final byte SESSION_SCOPE     = 0x11;
 
+    // Username and password for Authentication
+    protected String username = null;
+    protected String password = null;
+    
     // The emitter framework Emitter class.
     protected Emitter emitter;
     // Timeout, in milliseconds, to let the Emitter do its work
@@ -194,7 +202,15 @@ public class WSDL2Java {
         new CLOptionDescriptor("timeout",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 NETWORK_TIMEOUT_OPT,
-                JavaUtils.getMessage("optionTimeout00"))
+                JavaUtils.getMessage("optionTimeout00")),
+        new CLOptionDescriptor("user",
+                CLOptionDescriptor.ARGUMENT_REQUIRED,
+                USERNAME_OPT,
+                JavaUtils.getMessage("optionUsername")),
+        new CLOptionDescriptor("password",
+                CLOptionDescriptor.ARGUMENT_REQUIRED,
+                PASSWORD_OPT,
+                JavaUtils.getMessage("optionPassword"))
     };
 
     /**
@@ -409,6 +425,22 @@ public class WSDL2Java {
     public void setTimeout(long timeout) {
         this.timeoutms = timeout;
     }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
     //
     // Command line switches
     //
@@ -456,7 +488,7 @@ public class WSDL2Java {
     public void emit(String wsdlURL)
             throws Exception {
 
-        Authenticator.setDefault(new DefaultAuthenticator());
+        Authenticator.setDefault(new DefaultAuthenticator(this));
 
         // We run the actual Emitter in a thread that we can kill
         WSDLRunnable runnable = new WSDLRunnable(emitter, wsdlURL);
@@ -632,6 +664,15 @@ public class WSDL2Java {
                             timeout = timeout * 1000;
                         wsdl2java.setTimeout(timeout);
                         break;
+                        
+                    case USERNAME_OPT:
+                        wsdl2java.setUsername(option.getArgument());
+                        break;
+
+                    case PASSWORD_OPT:
+                        wsdl2java.setPassword(option.getArgument());
+                        break;
+                        
                 }
             }
 
@@ -652,6 +693,9 @@ public class WSDL2Java {
             if (!namespaceMap.isEmpty()) {
                 wsdl2java.setNamespaceMap(namespaceMap);
             }
+            
+            // Set username and password if provided in URL
+            wsdl2java.checkForAuthInfo(wsdlURI);
 
             wsdl2java.setTypeMappingVersion(typeMappingVersion);
             wsdl2java.emit(wsdlURI);
@@ -747,12 +791,40 @@ public class WSDL2Java {
         System.exit(1);
     }
 
+    private void checkForAuthInfo(String uri) throws MalformedURLException {
+        URL url = new URL(uri);
+        String userInfo = url.getUserInfo();
+        if (userInfo != null) {
+            int i = userInfo.indexOf(':');
+            if (i >= 0) {
+                this.username = userInfo.substring(0,i);
+                this.password = userInfo.substring(i+1);
+            } else {
+                this.username = userInfo;
+            }
+        } 
+    }
+
     private class DefaultAuthenticator extends Authenticator {
+        private WSDL2Java wsdl2java;
+        
+        DefaultAuthenticator(WSDL2Java wsdl2java) {
+            this.wsdl2java = wsdl2java;
+        }
         protected PasswordAuthentication getPasswordAuthentication() {
-            String proxyUser = System.getProperty("http.proxyUser","");
-            String proxyPassword = System.getProperty("http.proxyPassword","");
-            System.out.println("Authenticator:" + getRequestingPrompt() + "[" + proxyUser + ":" + proxyPassword + "]");
-            return new PasswordAuthentication (proxyUser, proxyPassword.toCharArray());
+            // First check command line options
+            String user = wsdl2java.getUsername();
+            String password = wsdl2java.getPassword();
+            
+            // if we didn't get them, check the system properties
+            if (user == null) {
+                user = System.getProperty("http.proxyUser","");
+            }
+            if (password == null) {
+                password = System.getProperty("http.proxyPassword","");
+            }
+            
+            return new PasswordAuthentication (user, password.toCharArray());
         }
     }
 }

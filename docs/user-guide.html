@@ -982,7 +982,12 @@ ompliant)
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  -O, --timeout &lt;argument>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 timeout in seconds (default is 45, specify -1 to disable)
-<br>&nbsp;
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  -U, --user &lt;argument>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+username to access the WSDL-URI 
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  -P, --password &lt;argument>
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+password to access the WSDL-URI <br>&nbsp;
 <h4>
 -h, --help</h4>
 Print the usage statement and exit
@@ -1111,6 +1116,16 @@ Print debug information, which currently is WSDL2Java's symbol table.
 <h4>
 -T, --typeMappingVersion &lt;argument></h4>
 Indicate 1.1 or 1.2.&nbsp; The default is 1.2 (SOAP 1.2 JAX-RPC compliant).
+<h4> -U, --user &lt;argument&gt;</h4>
+This username is used in resolving the WSDL-URI provided as the input to 
+WSDL2Java. &nbsp;If the URI contains a username, this will override the command
+line switch. &nbsp;An example of a URL with a username and password is: 
+<code>http://user:password@hostname:port/path/to/service?WSDL</code><br>
+<h4> -P, --password &lt;argument&gt;</h4>
+ This password is used in resolving the WSDL-URI provided as the input to WSDL2Java.
+ &nbsp;If the URI contains a password, this will override the command
+line switch.<br>
+
 <br>&nbsp;
 <h3>
 <a NAME="Java2WSDL: Building WSDL from Java"></a>Java2WSDL: Building WSDL
