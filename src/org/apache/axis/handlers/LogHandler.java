@@ -83,7 +83,7 @@ public class LogHandler extends BasicHandler {
                 Message outMsg = msgContext.getResponseMessage();
                 
                 pw.println( "=======================================================" );
-                pw.println( "= Elapsed: " + (System.currentTimeMillis() - start)) + " millseconds";
+                pw.println( "= Elapsed: " + (System.currentTimeMillis() - start) + " milliseconds");
                 pw.println( "= InMsg: " + (inMsg == null ? "null" : inMsg.getAsString()));
                 pw.println( "= OutMsg: " + (outMsg == null ? "null" : outMsg.getAsString()));
                 pw.println( "=======================================================" );
