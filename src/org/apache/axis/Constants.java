@@ -399,13 +399,13 @@ public class Constants {
     // QNames
     //////////////////////////////////////////////////////////////////////////
     public static final QName QNAME_FAULTCODE = 
-                                         new QName(URI_SOAP_ENV, ELEM_FAULT_CODE);
+                                         new QName("", ELEM_FAULT_CODE);
     public static final QName QNAME_FAULTSTRING = 
-                                       new QName(URI_SOAP_ENV, ELEM_FAULT_STRING);
+                                       new QName("", ELEM_FAULT_STRING);
     public static final QName QNAME_FAULTACTOR = 
-                                        new QName(URI_SOAP_ENV, ELEM_FAULT_ACTOR);
+                                        new QName("", ELEM_FAULT_ACTOR);
     public static final QName QNAME_FAULTDETAILS =
-                                         new QName(URI_SOAP_ENV, ELEM_FAULT_DETAIL);
+                                         new QName("", ELEM_FAULT_DETAIL);
 
 
     // Define qnames for the all of the XSD and SOAP-ENC encodings
