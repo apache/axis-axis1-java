@@ -89,7 +89,9 @@ public class FileReader extends Thread {
           if (pleaseStop) continue;
 
         Thread.sleep( 100 );   // let the other side finish writing
-        FileInputStream fis = new FileInputStream( "xml" + nextNum + ".req" );
+        FileInputStream fis = new FileInputStream( file );
+        FileOutputStream fos = new FileOutputStream( "xml" + nextNum + ".res" );
+        nextNum++ ;
 
         Message msg = new Message( fis, "InputStream" );
         MessageContext  msgContext = new MessageContext();
@@ -102,17 +104,19 @@ public class FileReader extends Thread {
         msgContext.setTargetService( action.trim() );
         // end of hack
 
-        server.invoke( msgContext );
-        msg = msgContext.getResponseMessage();
-        fis.close();
+        try {
+            server.invoke( msgContext );
+            msg = msgContext.getResponseMessage();
+            buf = (byte[]) msg.getAs( "Bytes" );
+        } catch (Exception e) {
+            buf = e.toString().getBytes();
+        }
 
-        (new File("xml" + nextNum + ".req" )).delete();
-
-        FileOutputStream fos = new FileOutputStream( "xml" + nextNum + ".res" );
-        buf = (byte[]) msg.getAs( "Bytes" );
         fos.write( buf );
         fos.close();
-        nextNum++ ;
+
+        fis.close();
+        file.delete();
       }
       catch( Exception e ) {
         if ( !(e instanceof FileNotFoundException) )
