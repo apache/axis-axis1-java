@@ -74,6 +74,8 @@
 <property name="build.samples" location="${build.dir}/classes/samples"/>
 <property name="build.javadocs" location="${build.dir}/javadocs"/>
 <property name="build.webapp" location="${build.dir}/webapps/axis"/>
+<property name="axis.war.filename" value="axis.war"/>
+<property name="axis.war" location="${build.dir}/${axis.war.filename}"/>
 
 <property name="webapp" location="${axis.home}/webapps/axis" />
 <property name="dist.dir" location="${axis.home}/axis-${axis.dirname}" />
