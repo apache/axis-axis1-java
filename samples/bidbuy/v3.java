@@ -170,7 +170,7 @@ public class v3 implements vInterface {
     }
   }
 
-  public String buy(String serverURL, int quantity, int numItems) 
+  public String buy(String serverURL, int quantity, int numItems, double price) 
       throws Exception 
   {
     try {
@@ -209,7 +209,7 @@ public class v3 implements vInterface {
       
       
       for ( i = 0 ; i < numItems ; i++ )
-        lineItems[i] = new LineItem("Widget"+i, quantity, new BigDecimal(100));
+        lineItems[i] = new LineItem("Widget"+i,quantity,new BigDecimal(price));
 
       PurchaseOrder  po = new PurchaseOrder( "PO1", 
                                              new Date(),

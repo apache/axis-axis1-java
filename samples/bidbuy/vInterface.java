@@ -15,5 +15,6 @@ public interface vInterface {
   public Vector lookupAsString(String registryURL) throws Exception ;
   public double requestForQuote(String serverURL) throws Exception ;
   public String simpleBuy(String serverURL, int quantity ) throws Exception ;
-  public String buy(String serverURL, int quantity, int numItems) throws Exception;
+  public String buy(String serverURL, int quantity, int numItems, double price)
+    throws Exception;
 }
