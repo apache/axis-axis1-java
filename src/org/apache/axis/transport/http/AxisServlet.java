@@ -175,6 +175,11 @@ public class AxisServlet extends HttpServlet {
 
             Map environment = new HashMap();
             environment.put("servletContext", context);
+            String attdir= getInitParameter("axis.attachments.Directory");
+            if(attdir != null) environment.put("axis.attachments.Directory",  attdir);
+            if(null != webInfPath){
+                environment.put("servlet.realpath",  webInfPath + File.separator + "attachments");
+            }
             environment.put(EngineConfiguration.PROPERTY_NAME, provider);
 
             // Obtain an AxisServer by using whatever AxisServerFactory is

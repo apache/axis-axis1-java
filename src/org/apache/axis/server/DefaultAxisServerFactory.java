@@ -3,11 +3,13 @@ package org.apache.axis.server;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
+import org.apache.axis.AxisEngine;
 import org.apache.axis.configuration.FileProvider;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.util.Map;
+import java.io.File;
 
 /**
  * Helper class for obtaining AxisServers.  Default implementation.
@@ -35,8 +37,34 @@ public class DefaultAxisServerFactory implements AxisServerFactory {
         } catch (ClassCastException e) {
             // Just in case, fall through here.
         }
+
         
-        return createNewServer(config);
+        AxisServer ret= createNewServer(config);
+
+        String attachmentsdirservlet=  null;
+        if( null != ret &&  environment != null ){
+          if( null !=  (attachmentsdirservlet= (String) 
+                environment.get("axis.attachments.Directory"))){
+              ret.setOption(AxisEngine.PROP_ATTACHMENT_DIR,
+               attachmentsdirservlet);
+          }
+          if(null == (attachmentsdirservlet= (String)
+                ret.getOption(AxisEngine.PROP_ATTACHMENT_DIR))){
+              if( null !=  (attachmentsdirservlet= (String) 
+                  environment.get("servlet.realpath"))){
+                 ret.setOption(AxisEngine.PROP_ATTACHMENT_DIR, attachmentsdirservlet);
+              }
+          }    
+        }
+        if(ret != null){
+            attachmentsdirservlet= (String) ret.getOption(AxisEngine.PROP_ATTACHMENT_DIR);
+            File attdirFile= new File(attachmentsdirservlet);
+            if( !attdirFile.isDirectory()){
+                      attdirFile.mkdirs();
+            }
+        }
+
+        return ret;
     }
 
     /**

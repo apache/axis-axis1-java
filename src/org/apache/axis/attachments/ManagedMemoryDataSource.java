@@ -56,6 +56,8 @@
 package org.apache.axis.attachments;
 import org.apache.log4j.Category;
 import org.apache.axis.InternalException;
+import org.apache.axis.MessageContext; 
+import java.io.File; 
 
 /**
  * @author Rick Rineholt 
@@ -306,7 +308,10 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource {
        if( ml != null){
            if (null == cachediskstream) { //Need to create a disk cache
                 try{
-                    diskCacheFile = java.io.File.createTempFile("Axis", "axis"); //Create a temporary file. TODO allow location to be configurable.
+                    MessageContext mc= MessageContext.getCurrentContext();
+                    String attdir= mc == null ? null :  mc.getStrProp(MessageContext.ATTACHMENTS_DIR );
+                    diskCacheFile = java.io.File.createTempFile("Axis", "axis",
+                       attdir== null ? null : new File( attdir)); 
                     category.debug("Disk cache file name \"" + diskCacheFile .getAbsolutePath()+ "\".");
                     cachediskstream = new java.io.BufferedOutputStream(
                          new java.io.FileOutputStream(diskCacheFile));

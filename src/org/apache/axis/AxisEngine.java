@@ -97,6 +97,8 @@ public abstract class AxisEngine extends BasicHandler
     public static final String PROP_PASSWORD = "adminPassword";
     public static final String PROP_SYNC_CONFIG = "syncConfiguration";
     public static final String PROP_SEND_XSI = "sendXsiTypes";
+    public static final String PROP_ATTACHMENT_DIR = "attachments.Directory";
+    public static final String PROP_ATTACHMENT_CLEANUP = "attachment.DirectoryCleanUp";
 
     // Default admin. password
     private static final String DEFAULT_ADMIN_PASSWORD = "admin";
