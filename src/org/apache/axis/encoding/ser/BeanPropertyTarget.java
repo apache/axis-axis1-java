@@ -75,7 +75,7 @@ class BeanPropertyTarget implements Target {
     
     /** 
      * This constructor is used for a normal property.
-     * @param Object is the bean class
+     * @param object is the bean class
      * @param pd is the property
      **/
     public BeanPropertyTarget(Object object, BeanPropertyDescriptor pd) {
@@ -86,7 +86,7 @@ class BeanPropertyTarget implements Target {
     
     /** 
      * This constructor is used for an indexed property.
-     * @param Object is the bean class
+     * @param object is the bean class
      * @param pd is the property
      * @param i is the index          
      **/
@@ -112,10 +112,8 @@ class BeanPropertyTarget implements Target {
                     pd.set(object, index, value);
             } catch (Exception ex) {
                 String field= pd.getName();
-                int i = 0;
                 if (index >=0) {
                     field += "[" + index + "]";
-                    i = 1;
                 }
                 if (log.isErrorEnabled()) {
                     String valueType = "null";
