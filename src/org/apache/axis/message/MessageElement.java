@@ -904,8 +904,9 @@ public class MessageElement implements SOAPElement, Serializable
     // JAXM SOAPElement methods...
 
     public SOAPElement addChildElement(Name name) throws SOAPException {
-        MessageElement child = new MessageElement(name.getURI(),
-                                                  name.getLocalName());
+        MessageElement child = new MessageElement(name.getLocalName(), 
+                                                  name.getPrefix(),
+                                                  name.getURI());
         addChild(child);
         return child;
     }

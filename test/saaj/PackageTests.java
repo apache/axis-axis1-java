@@ -21,6 +21,7 @@ public class PackageTests extends junit.framework.TestCase {
         suite.addTestSuite(test.saaj.TestEnvelope.class);
         suite.addTestSuite(test.saaj.TestSOAPFaultDetail.class);
         suite.addTestSuite(test.saaj.TestHeaders.class);
+        suite.addTestSuite(test.saaj.TestPrefixes.class);
         return suite;
     }
 }
