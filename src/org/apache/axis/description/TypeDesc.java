@@ -55,8 +55,6 @@
 
 package org.apache.axis.description;
 
-import org.apache.axis.encoding.ser.BeanSerializer;
-
 import javax.xml.rpc.namespace.QName;
 import java.lang.reflect.Method;
 import java.util.HashMap;

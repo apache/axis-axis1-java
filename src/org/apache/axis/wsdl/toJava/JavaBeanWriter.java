@@ -57,11 +57,8 @@ package org.apache.axis.wsdl.toJava;
 import org.apache.axis.utils.JavaUtils;
 import org.w3c.dom.Node;
 
-import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
 import java.util.Vector;
-import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * This is Wsdl2java's Complex Type Writer.  It writes the <typeName>.java file.

@@ -61,9 +61,6 @@ import java.util.Vector;
 import javax.wsdl.QName;
 
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import org.apache.axis.utils.JavaUtils;
 
 /**
 * This is Wsdl2java's Type Writer.  It writes the following files, as appropriate:
