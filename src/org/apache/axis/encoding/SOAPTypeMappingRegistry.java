@@ -6,13 +6,13 @@ import org.xml.sax.*;
 
 public class SOAPTypeMappingRegistry extends TypeMappingRegistry { 
     
-    public static final QName XSD_STRING = new QName(Constants.URI_SCHEMA_XSD, "string");
-    public static final QName XSD_BOOLEAN = new QName(Constants.URI_SCHEMA_XSD, "boolean");
-    public static final QName XSD_DOUBLE = new QName(Constants.URI_SCHEMA_XSD, "double");
-    public static final QName XSD_FLOAT = new QName(Constants.URI_SCHEMA_XSD, "float");
-    public static final QName XSD_INT = new QName(Constants.URI_SCHEMA_XSD, "int");
-    public static final QName XSD_LONG = new QName(Constants.URI_SCHEMA_XSD, "long");
-    public static final QName XSD_SHORT = new QName(Constants.URI_SCHEMA_XSD, "short");
+    public static final QName XSD_STRING = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "string");
+    public static final QName XSD_BOOLEAN = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "boolean");
+    public static final QName XSD_DOUBLE = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "double");
+    public static final QName XSD_FLOAT = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "float");
+    public static final QName XSD_INT = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "int");
+    public static final QName XSD_LONG = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "long");
+    public static final QName XSD_SHORT = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "short");
     public static final QName SOAP_STRING = new QName(Constants.URI_SOAP_ENC, "string");
     public static final QName SOAP_BOOLEAN = new QName(Constants.URI_SOAP_ENC, "boolean");
     public static final QName SOAP_DOUBLE = new QName(Constants.URI_SOAP_ENC, "double");
@@ -83,6 +83,22 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
         public DeserializerBase getDeserializer() { return new ShortDeser(); }
     }
 
+    /**
+     * Alias common DeserializerFactories across the various popular schemas
+     * @param base QName based on the current Schema namespace
+     * @param factory common factory to be used across all schemas
+     */
+    private void addDeserializersFor(QName base, DeserializerFactory factory) {
+        addDeserializerFactory(base, factory);
+        String localPart = base.getLocalPart();
+        for (int i=0; i<Constants.URIS_SCHEMA_XSD.length; i++) {
+            if (!Constants.URIS_SCHEMA_XSD[i].equals(base.getNamespaceURI())) {
+               QName qname = new QName(Constants.URIS_SCHEMA_XSD[i], localPart);
+               addDeserializerFactory(qname, factory);
+            }
+        }
+    }
+
     public SOAPTypeMappingRegistry() {
         SOAPEncoding se = new SOAPEncoding();
         addSerializer(java.lang.String.class, XSD_STRING, se);
@@ -93,13 +109,14 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
         addSerializer(java.lang.Long.class, XSD_LONG, se);
         addSerializer(java.lang.Short.class, XSD_SHORT, se);
         
-        addDeserializerFactory(XSD_STRING, new StringDeserializerFactory());    
-        addDeserializerFactory(XSD_BOOLEAN, new BooleanDeserializerFactory());
-        addDeserializerFactory(XSD_DOUBLE, new DoubleDeserializerFactory());
-        addDeserializerFactory(XSD_FLOAT, new FloatDeserializerFactory());
-        addDeserializerFactory(XSD_INT, new IntDeserializerFactory());
-        addDeserializerFactory(XSD_LONG, new LongDeserializerFactory());
-        addDeserializerFactory(XSD_SHORT, new ShortDeserializerFactory());
+        addDeserializersFor(XSD_STRING, new StringDeserializerFactory());    
+        addDeserializersFor(XSD_BOOLEAN, new BooleanDeserializerFactory());
+        addDeserializersFor(XSD_DOUBLE, new DoubleDeserializerFactory());
+        addDeserializersFor(XSD_FLOAT, new FloatDeserializerFactory());
+        addDeserializersFor(XSD_INT, new IntDeserializerFactory());
+        addDeserializersFor(XSD_LONG, new LongDeserializerFactory());
+        addDeserializersFor(XSD_SHORT, new ShortDeserializerFactory());
+
         /*
         addDeserializerFactory(SOAP_STRING, se);
         addDeserializerFactory(SOAP_BOOLEAN, se);

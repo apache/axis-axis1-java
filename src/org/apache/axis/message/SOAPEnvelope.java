@@ -89,8 +89,8 @@ public class SOAPEnvelope
     public SOAPEnvelope()
     {
         nsDecls.put(Constants.URI_SOAP_ENV, Constants.NSPREFIX_SOAP_ENV);
-        nsDecls.put(Constants.URI_SCHEMA_XSD, Constants.NSPREFIX_SCHEMA_XSD);
-        nsDecls.put(Constants.URI_SCHEMA_XSI, Constants.NSPREFIX_SCHEMA_XSI);
+        nsDecls.put(Constants.URI_CURRENT_SCHEMA_XSD, Constants.NSPREFIX_SCHEMA_XSD);
+        nsDecls.put(Constants.URI_CURRENT_SCHEMA_XSI, Constants.NSPREFIX_SCHEMA_XSI);
         handler = null;
     }
     
