@@ -169,9 +169,11 @@ Copyright:
   <!-- =================================================================== -->
   <!-- Compiles the samples                                                -->
   <!-- =================================================================== -->
-  <target name="samples" depends="compile"
+  <target name="samples" depends="compile" unless="samples.built"
     description="build the samples">
       <ant antfile="${axis.home}/buildSamples.xml" target="compile"/>
+      <property name="samples.built" value="yes"/>
+      <echo message="Samples property set ${samples.built}"/>
   </target>
 
   <!-- =================================================================== -->
@@ -183,9 +185,11 @@ Copyright:
     <path refid="classpath"/>
   </path>
 
-  <target name="buildTest" if="junit.present" depends="compile,samples">
+  <target name="buildTest" if="junit.present" unless="tests.built">
     <echo message="junit package found ..."/>
       <ant antfile="${axis.home}/buildTest.xml" target="compile"/>
+    <property name="tests.built" value="yes"/>
+    <echo message="Tests property set ${tests.built}"/>
   </target>
 
   <!-- =================================================================== -->
@@ -205,20 +209,9 @@ Copyright:
   <!-- =================================================================== -->
   <!-- Runs the JUnit package testcases -->
   <!-- =================================================================== -->
-  <target name="junit" if="junit.present" depends="samples,buildTest">
+  <target name="junit" if="junit.present" depends="compile, buildTest">
     <mkdir dir="${test.functional.reportdir}" />
-    <junit printsummary="yes" haltonfailure="yes" fork="yes">
-      <classpath refid="test-classpath" />
-      <formatter type="xml" />
-      <batchtest todir="${test.functional.reportdir}">
-        <fileset dir="${build.dir}/classes">
-          <!-- Convention: each package that's being tested
-                has its own test class collecting all the tests -->
-          <include name="**/PackageTests.class" />
-          <!-- <include name="**/test/*TestSuite.class"/> -->
-        </fileset>
-      </batchtest>
-    </junit>
+    <ant antfile="${axis.home}/buildTest.xml" target="junit"/>
   </target>
 
   <!-- =================================================================== -->
@@ -249,7 +242,7 @@ Copyright:
   <!-- =================================================================== -->
   <!-- Functional tests, no server (for testing under debugger)            -->
   <!-- =================================================================== -->
-  <target name="functional-tests-noserver" depends="buildTest, samples"
+  <target name="functional-tests-noserver" depends="compile, buildTest"
     description="functional tests, no server">
     <ant antfile="test/build_functional_tests.xml" target="junit-functional-noserver">
       <property name="test.functional.usefile" value="${test.functional.usefile}"/>
@@ -257,24 +250,24 @@ Copyright:
 
   </target>
 
-  <target name="componentTest" depends="buildTest">
+  <target name="componentTest" depends="compile, buildTest">
      <ant antfile="${axis.home}/buildTest.xml" target="componentTest"/>
   </target>
 
   <!-- =================================================================== -->
   <!-- Functional tests, with server                                       -->
   <!-- =================================================================== -->
-  <target name="functional-tests" depends="buildTest"
+  <target name="functional-tests" depends="compile, buildTest"
     description="functional tests">
     <ant antfile="${axis.home}/buildTest.xml" target="functional-tests"/>
   </target>
 
   <!-- Security only tests, with full dependencies -->
-  <target name="secure-tests" depends="junit, functional-tests-secure-only">
+  <target name="secure-tests" depends="compile, buildTest, junit, functional-tests-secure-only">
   </target>
 
   <!-- All tests -->
-  <target name="all-tests" depends="junit, functional-tests">
+  <target name="all-tests" depends="compile, buildTest, junit, functional-tests">
   </target>
 
   <!-- =================================================================== -->
@@ -349,7 +342,7 @@ Copyright:
     </copy>
   </target>
 
-  <target name="dist" depends="compile, javadocsdist, samples, junit"
+  <target name="dist" depends="compile, javadocsdist, samples, buildTest, junit"
     description="create the full binary distribution">
     <mkdir dir="${dist.dir}"/>
     <mkdir dir="${dist.dir}/lib"/>
