@@ -141,6 +141,10 @@ Copyright:
       <exclude name="org/apache/axis/handlers/HTTP*" unless="servlet.present"/>
       <exclude name="org/apache/axis/transport/http/*" unless="servlet.present"/>
     </javac>
+    <copy file="${src.dir}/org/apache/axis/server/engine-config.xml"
+          toDir="${build.dest}/org/apache/axis/server"/>
+    <copy file="${src.dir}/org/apache/axis/client/engine-config.xml"
+          toDir="${build.dest}/org/apache/axis/client"/>
     <jar jarfile="${build.lib}/${name}.jar" basedir="${build.dest}" >
       <include name="org/**" />
     </jar>
