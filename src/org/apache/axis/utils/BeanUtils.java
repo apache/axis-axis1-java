@@ -66,6 +66,7 @@ import java.beans.Introspector;
 import java.util.Vector;
 import java.lang.reflect.Method;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 
 public class BeanUtils {
@@ -254,6 +255,9 @@ public class BeanUtils {
                 // add it if not.
                 for (int i=0; i < fields.length; i++) {
                     Field f = fields[i];
+                    // skip field if it is declared final
+                    if (Modifier.isFinal(f.getModifiers()))
+                        continue;
                     String fName = f.getName();
                     boolean found = false;
                     for (int j=0; j<pd.size() && !found; j++) {
