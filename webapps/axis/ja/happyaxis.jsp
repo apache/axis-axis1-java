@@ -1,5 +1,5 @@
-<html>
-<%@ page contentType="text/html; charset=Shift_JIS" %>
+ï»¿<html>
+<%@ page contentType="text/html; charset=UTF-8" %>
 <%@ page import="java.io.InputStream,
                  java.io.IOException,
                  javax.xml.parsers.SAXParser,
@@ -49,9 +49,9 @@
     public String getInstallHints(HttpServletRequest request) {
 
         String hint=
-            "<B><I>’ˆÓ:</I></B> Tomcat 4.x ‚Æ Java1.4 ã‚Å‚ÍACATALINA_HOME/common/lib ‚ÉA"
-            +"java.* ‚à‚µ‚­‚Í javax.* ƒpƒbƒP[ƒW‚ğŠÜ‚Şƒ‰ƒCƒuƒ‰ƒŠ‚ğ”z’u‚·‚é•K—v‚ª‚ ‚é‚©‚à‚µ‚ê‚Ü‚¹‚ñB"
-            +"<br>‚½‚Æ‚¦‚Î jaxrpc.jar ‚Æ saaj.jar ‚ÍA2‚Â‚Ì‚»‚Ì‚æ‚¤‚Èƒ‰ƒCƒuƒ‰ƒŠ‚Å‚·B";
+            "<B><I>æ³¨æ„:</I></B> Tomcat 4.x ã¨ Java1.4 ä¸Šã§ã¯ã€CATALINA_HOME/common/lib ã«ã€"
+            +"java.* ã‚‚ã—ãã¯ javax.* ãƒ‘ãƒƒã‚±ãƒ¼ã‚¸ã‚’å«ã‚€ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã‚’é…ç½®ã™ã‚‹å¿…è¦ãŒã‚ã‚‹ã‹ã‚‚ã—ã‚Œã¾ã›ã‚“ã€‚"
+            +"<br>ãŸã¨ãˆã° jaxrpc.jar ã¨ saaj.jar ã¯ã€2ã¤ã®ãã®ã‚ˆã†ãªãƒ©ã‚¤ãƒ–ãƒ©ãƒªã§ã™ã€‚";
           
         return hint;
     }
@@ -110,11 +110,11 @@
             if(clazz == null)  {
                String url="";
                if(homePage!=null) {
-                  url="<br>  <a href="+homePage+">"+homePage+"</a>‚ğQÆ‚µ‚Ä‚­‚¾‚³‚¢B";
+                  url="<br>  <a href="+homePage+">"+homePage+"</a>ã‚’å‚ç…§ã—ã¦ãã ã•ã„ã€‚";
                }
                
-               out.write("<p>"+category+":<b>"+jarFile+"</b>ƒtƒ@ƒCƒ‹‚ª’ñ‹Ÿ‚·‚é"
-                   +classname+"ƒNƒ‰ƒX‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB<br>"
+               out.write("<p>"+category+":<b>"+jarFile+"</b>ãƒ•ã‚¡ã‚¤ãƒ«ãŒæä¾›ã™ã‚‹"
+                   +classname+"ã‚¯ãƒ©ã‚¹ãŒè¦‹ã¤ã‹ã‚Šã¾ã›ã‚“ã€‚<br>"
                    +errorText
                    +url
                    +"<p>");
@@ -123,27 +123,27 @@
             } else {
                String location = getLocation(out, clazz);
                if(location == null) {
-                  out.write(description + " (" + classname + ") ‚ªŒ©‚Â‚©‚è‚Ü‚µ‚½B<br>");
+                  out.write(description + " (" + classname + ") ãŒè¦‹ã¤ã‹ã‚Šã¾ã—ãŸã€‚<br>");
                }
                else {
-                  out.write(location + "‚ÉA" + description + " (" + classname + ") ‚ªŒ©‚Â‚©‚è‚Ü‚µ‚½B<br>");
+                  out.write(location + "ã«ã€" + description + " (" + classname + ") ãŒè¦‹ã¤ã‹ã‚Šã¾ã—ãŸã€‚<br>");
                }
                return 0;
             }
         } catch(NoClassDefFoundError ncdfe) {
             String url="";
             if(homePage!=null) {
-                url="<br>  <a href="+homePage+">"+homePage+"</a> ‚ğQÆ‚µ‚Ä‚­‚¾‚³‚¢B";
+                url="<br>  <a href="+homePage+">"+homePage+"</a> ã‚’å‚ç…§ã—ã¦ãã ã•ã„ã€‚";
             }
-            out.write("<p>"+category+":<b>"+jarFile+"</b>ƒtƒ@ƒCƒ‹‚ª’ñ‹Ÿ‚·‚é"
-                    +classname+"ƒNƒ‰ƒX‚ÌˆË‘¶ŠÖŒW‚ª‰ğŒˆ‚Å‚«‚Ü‚¹‚ñB<br>"
+            out.write("<p>"+category+":<b>"+jarFile+"</b>ãƒ•ã‚¡ã‚¤ãƒ«ãŒæä¾›ã™ã‚‹"
+                    +classname+"ã‚¯ãƒ©ã‚¹ã®ä¾å­˜é–¢ä¿‚ãŒè§£æ±ºã§ãã¾ã›ã‚“ã€‚<br>"
                     +errorText
                     +url
-                    +"<br>ª–{“I‚ÈŒ´ˆö: "+ncdfe.getMessage()
-                    +"<br>‚±‚ÌƒGƒ‰[‚ÍŸ‚Ì‚æ‚¤‚Èê‡‚É”­¶‚·‚é‰Â”\«‚ª‚ ‚è‚Ü‚·B"
-                    +"'‹¤’Ê‚Ì' ƒNƒ‰ƒXƒpƒX‚É"+classname+" ‚ªİ’è‚³‚ê‚Ä‚¢‚é‚É‚à‚©‚©‚í‚ç‚¸A"
-                    +" activation.jar ‚Ì‚æ‚¤‚ÈˆË‘¶‚·‚éƒ‰ƒCƒuƒ‰ƒŠ‚ªwebapp‚ÌƒNƒ‰ƒXƒpƒX"
-                    +"‚¾‚¯‚É‚µ‚©İ’è‚³‚ê‚Ä‚¢‚È‚¢‚æ‚¤‚Èê‡B"
+                    +"<br>æ ¹æœ¬çš„ãªåŸå› : "+ncdfe.getMessage()
+                    +"<br>ã“ã®ã‚¨ãƒ©ãƒ¼ã¯æ¬¡ã®ã‚ˆã†ãªå ´åˆã«ç™ºç”Ÿã™ã‚‹å¯èƒ½æ€§ãŒã‚ã‚Šã¾ã™ã€‚"
+                    +"'å…±é€šã®' ã‚¯ãƒ©ã‚¹ãƒ‘ã‚¹ã«"+classname+" ãŒè¨­å®šã•ã‚Œã¦ã„ã‚‹ã«ã‚‚ã‹ã‹ã‚ã‚‰ãšã€"
+                    +" activation.jar ã®ã‚ˆã†ãªä¾å­˜ã™ã‚‹ãƒ©ã‚¤ãƒ–ãƒ©ãƒªãŒwebappã®ã‚¯ãƒ©ã‚¹ãƒ‘ã‚¹"
+                    +"ã ã‘ã«ã—ã‹è¨­å®šã•ã‚Œã¦ã„ãªã„ã‚ˆã†ãªå ´åˆã€‚"
                     +"<p>");
             return 1;
         }
@@ -174,7 +174,7 @@
             }
         } catch (Throwable t){
         }
-        return "•s–¾‚ÈêŠ";
+        return "ä¸æ˜ãªå ´æ‰€";
     }
 
     /**
@@ -194,7 +194,7 @@
                    String errorText,
                    String homePage) throws IOException {
         return probeClass(out,
-                "<b>ƒGƒ‰[</b>",
+                "<b>ã‚¨ãƒ©ãƒ¼</b>",
                 classname,
                 jarFile,
                 description,
@@ -219,7 +219,7 @@
                    String errorText,
                    String homePage) throws IOException {
         return probeClass(out,
-                "<b>Œx</b>",
+                "<b>è­¦å‘Š</b>",
                 classname,
                 jarFile,
                 description,
@@ -238,12 +238,12 @@
                       String resource,
                       String errorText) throws Exception {
         if(!resourceExists(resource)) {
-            out.write("<p><b>Œx</b>: ƒŠƒ\[ƒX "+resource+"‚ğŒ©‚Â‚¯‚é‚±‚Æ‚ª‚Å‚«‚Ü‚¹‚ñB"
+            out.write("<p><b>è­¦å‘Š</b>: ãƒªã‚½ãƒ¼ã‚¹ "+resource+"ã‚’è¦‹ã¤ã‘ã‚‹ã“ã¨ãŒã§ãã¾ã›ã‚“ã€‚"
                         +"<br>"
                         +errorText);
             return 0;
         } else {
-            out.write(resource+"‚ªŒ©‚Â‚©‚è‚Ü‚µ‚½B<br>");
+            out.write(resource+"ãŒè¦‹ã¤ã‹ã‚Šã¾ã—ãŸã€‚<br>");
             return 1;
         }
     }
@@ -270,7 +270,7 @@
     private String getParserName() {
         SAXParser saxParser = getSAXParser();
         if (saxParser == null) {
-            return "XML Parser‚ğ¶¬‚·‚é‚±‚Æ‚ª‚Å‚«‚Ü‚¹‚ñB";
+            return "XML Parserã‚’ç”Ÿæˆã™ã‚‹ã“ã¨ãŒã§ãã¾ã›ã‚“ã€‚";
         }
 
         // check to what is in the classname
@@ -334,9 +334,9 @@
 <html><head><title>Axis Happiness Page</title></head>
 <body>
 <h1>Axis Happiness Page</h1>
-<h2>webapp‚Ì\¬‚ÉŠÖ‚·‚é’²¸</h2>
+<h2>webappã®æ§‹æˆã«é–¢ã™ã‚‹èª¿æŸ»</h2>
 <p>
-<h3>•K{ƒRƒ“ƒ|[ƒlƒ“ƒg</h3>
+<h3>å¿…é ˆã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆ</h3>
 <%
     int needed=0,wanted=0;
 
@@ -352,43 +352,43 @@
         needed = needClass(out, "javax.xml.soap.SOAPMessage",
         	"saaj.jar",
             "SAAJ API",
-            "‚¨‚»‚ç‚­Axis‚Í“®‚«‚Ü‚¹‚ñB",
-            "http://xml.apache.org/axis/");
+            "ãŠãã‚‰ãAxisã¯å‹•ãã¾ã›ã‚“ã€‚",
+            "http://ws.apache.org/axis/jp/");
     } else {
         String location = getLocation(out, clazz);
-        out.write("<b>ƒGƒ‰[:</b> "+location+"‚É“KØ‚Å‚È‚¢ƒo[ƒWƒ‡ƒ“‚ÌSAAJ API‚ªŒ©‚Â‚©‚è‚Ü‚µ‚½B" +
-        "Axis‚Ìsaaj.jar‚ğACLASSPATH‚Éİ’è‚³‚ê‚Ä‚¢‚é"+location+ "‚æ‚è‚à‘O•û‚Éİ’è‚µ‚Ä‚­‚¾‚³‚¢B<br />" +
-        "‚¨‚»‚ç‚­Axis‚Í“®‚«‚Ü‚¹‚ñB‚æ‚èÚ×‚Èî•ñ‚Í<a href=\"http://ws.apache.org/axis/java/install.html\">Axis installation instructions</a>‚ğQÆ‚µ‚Ä‚­‚¾‚³‚¢B<br />");
+        out.write("<b>ã‚¨ãƒ©ãƒ¼:</b> "+location+"ã«é©åˆ‡ã§ãªã„ãƒãƒ¼ã‚¸ãƒ§ãƒ³ã®SAAJ APIãŒè¦‹ã¤ã‹ã‚Šã¾ã—ãŸã€‚" +
+        "Axisã®saaj.jarã‚’ã€CLASSPATHã«è¨­å®šã•ã‚Œã¦ã„ã‚‹"+location+ "ã‚ˆã‚Šã‚‚å‰æ–¹ã«è¨­å®šã—ã¦ãã ã•ã„ã€‚<br />" +
+        "ãŠãã‚‰ãAxisã¯å‹•ãã¾ã›ã‚“ã€‚ã‚ˆã‚Šè©³ç´°ãªæƒ…å ±ã¯<a href=\"http://ws.apache.org/axis/jp/java/install.html\">Axis installation instructions</a>ã‚’å‚ç…§ã—ã¦ãã ã•ã„ã€‚<br />");
     }
 
     needed+=needClass(out, "javax.xml.rpc.Service",
             "jaxrpc.jar",
             "JAX-RPC API",
-            "‚¨‚»‚ç‚­Axis‚Í“®‚«‚Ü‚¹‚ñB",
-            "http://xml.apache.org/axis/");
+            "ãŠãã‚‰ãAxisã¯å‹•ãã¾ã›ã‚“ã€‚",
+            "http://ws.apache.org/axis/jp/");
 
     needed+=needClass(out, "org.apache.axis.transport.http.AxisServlet",
             "axis.jar",
             "Apache-Axis",
-            "‚¨‚»‚ç‚­Axis‚Í“®‚«‚Ü‚¹‚ñB",
-            "http://xml.apache.org/axis/");
+            "ãŠãã‚‰ãAxisã¯å‹•ãã¾ã›ã‚“ã€‚",
+            "http://ws.apache.org/axis/jp/");
 
     needed+=needClass(out, "org.apache.commons.discovery.Resource",
             "commons-discovery.jar",
             "Jakarta-Commons Discovery",
-            "‚¨‚»‚ç‚­Axis‚Í“®‚«‚Ü‚¹‚ñB",
-            "http://jakarta.apache.org/commons/discovery.html");
+            "ãŠãã‚‰ãAxisã¯å‹•ãã¾ã›ã‚“ã€‚",
+            "http://jakarta.apache.org/commons/discovery/");
 
     needed+=needClass(out, "org.apache.commons.logging.Log",
             "commons-logging.jar",
             "Jakarta-Commons Logging",
-            "‚¨‚»‚ç‚­Axis‚Í“®‚«‚Ü‚¹‚ñB",
-            "http://jakarta.apache.org/commons/logging.html");
+            "ãŠãã‚‰ãAxisã¯å‹•ãã¾ã›ã‚“ã€‚",
+            "http://jakarta.apache.org/commons/logging/");
 
     needed+=needClass(out, "org.apache.log4j.Layout",
             "log4j-1.2.8.jar",
             "Log4j",
-            "Axis‚ª“®‚©‚È‚¢‰Â”\«‚ª‚ ‚è‚Ü‚·B",
+            "AxisãŒå‹•ã‹ãªã„å¯èƒ½æ€§ãŒã‚ã‚Šã¾ã™ã€‚",
             "http://jakarta.apache.org/log4j");
 
     //should we search for a javax.wsdl file here, to hint that it needs
@@ -396,22 +396,22 @@
     needed+=needClass(out, "com.ibm.wsdl.factory.WSDLFactoryImpl",
             "wsdl4j.jar",
             "IBM's WSDL4Java",
-            "‚¨‚»‚ç‚­Axis‚Í“®‚«‚Ü‚¹‚ñB",
+            "ãŠãã‚‰ãAxisã¯å‹•ãã¾ã›ã‚“ã€‚",
             null);
 
     needed+=needClass(out, "javax.xml.parsers.SAXParserFactory",
             "xerces.jar",
             "JAXP implementation",
-            "‚¨‚»‚ç‚­Axis‚Í“®‚«‚Ü‚¹‚ñB",
-            "http://xml.apache.org/xerces-j/");
+            "ãŠãã‚‰ãAxisã¯å‹•ãã¾ã›ã‚“ã€‚",
+            "http://ws.apache.org/xerces-j/");
 
     needed+=needClass(out,"javax.activation.DataHandler",
             "activation.jar",
             "Activation API",
-            "‚¨‚»‚ç‚­Axis‚Í“®‚«‚Ü‚¹‚ñB",
+            "ãŠãã‚‰ãAxisã¯å‹•ãã¾ã›ã‚“ã€‚",
             "http://java.sun.com/products/javabeans/glasgow/jaf.html");
 %>
-<h3>ƒIƒvƒVƒ‡ƒiƒ‹¥ƒRƒ“ƒ|[ƒlƒ“ƒg</h3>
+<h3>ã‚ªãƒ—ã‚·ãƒ§ãƒŠãƒ«ï½¥ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆ</h3>
 <%
     /*
      * now the stuff we can live without
@@ -419,27 +419,27 @@
     wanted+=wantClass(out,"javax.mail.internet.MimeMessage",
             "mail.jar",
             "Mail API",
-            "‚¨‚»‚ç‚­Attachments‚Í‹@”\‚µ‚Ü‚¹‚ñB",
+            "ãŠãã‚‰ãAttachmentsã¯æ©Ÿèƒ½ã—ã¾ã›ã‚“ã€‚",
             "http://java.sun.com/products/javamail/");
 
     wanted+=wantClass(out,"org.apache.xml.security.Init",
             "xmlsec.jar",
             "XML Security API",
-            "XML Security‚ÍƒTƒ|[ƒg‚³‚ê‚Ü‚¹‚ñB",
-            "http://xml.apache.org/security/");
+            "XML Securityã¯ã‚µãƒãƒ¼ãƒˆã•ã‚Œã¾ã›ã‚“ã€‚",
+            "http://ws.apache.org/security/");
 
     wanted += wantClass(out, "javax.net.ssl.SSLSocketFactory",
             "jsse.jar or java1.4+ runtime",
             "Java Secure Socket Extension",
-            "https‚ÍƒTƒ|[ƒg‚³‚ê‚Ü‚¹‚ñB",
+            "httpsã¯ã‚µãƒãƒ¼ãƒˆã•ã‚Œã¾ã›ã‚“ã€‚",
             "http://java.sun.com/products/jsse/");
     /*
      * resources on the classpath path
      */
     /* broken; this is a file, not a resource
     wantResource(out,"/server-config.wsdd",
-            "ƒT[ƒo[\¬ƒtƒ@ƒCƒ‹‚ª‚ ‚è‚Ü‚¹‚ñB"
-            +"ì¬‚·‚é‚½‚ß‚ÉAdminClient‚ğÀs‚µ‚Ä‚­‚¾‚³‚¢B");
+            "ã‚µãƒ¼ãƒãƒ¼æ§‹æˆãƒ•ã‚¡ã‚¤ãƒ«ãŒã‚ã‚Šã¾ã›ã‚“ã€‚"
+            +"ä½œæˆã™ã‚‹ãŸã‚ã«AdminClientã‚’å®Ÿè¡Œã—ã¦ãã ã•ã„ã€‚");
     */
     /* add more libraries here */
 
@@ -447,23 +447,23 @@
     //is everythng we need here
     if(needed==0) {
        //yes, be happy
-        out.write("<i>axis‚ÌƒRƒA¥ƒ‰ƒCƒuƒ‰ƒŠ‚Í‘¶İ‚µ‚Ä‚¢‚Ü‚·B </i>");
+        out.write("<i>axisã®ã‚³ã‚¢ï½¥ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã¯å­˜åœ¨ã—ã¦ã„ã¾ã™ã€‚ </i>");
     } else {
         //no, be very unhappy
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         out.write("<i>"
-                +"axis‚ÌƒRƒA¥ƒ‰ƒCƒuƒ‰ƒŠ"
-                +(needed==1?"‚ª":"‚ª")
-                +needed+"‚ÂŒ‡‚¯‚Ä‚¢‚Ü‚·B</i>");
+                +"axisã®ã‚³ã‚¢ï½¥ãƒ©ã‚¤ãƒ–ãƒ©ãƒª"
+                +(needed==1?"ãŒ":"ãŒ")
+                +needed+"ã¤æ¬ ã‘ã¦ã„ã¾ã™ã€‚</i>");
     }
     //now look at wanted stuff
     if(wanted>0) {
         out.write("<i>"
-                +"axis‚ÌƒIƒvƒVƒ‡ƒiƒ‹¥ƒ‰ƒCƒuƒ‰ƒŠ"
-                +(wanted==1?"‚ª":"‚ª")
-                +wanted+"‚ÂŒ‡‚¯‚Ä‚¢‚Ü‚·B </i>");
+                +"axisã®ã‚ªãƒ—ã‚·ãƒ§ãƒŠãƒ«ï½¥ãƒ©ã‚¤ãƒ–ãƒ©ãƒª"
+                +(wanted==1?"ãŒ":"ãŒ")
+                +wanted+"ã¤æ¬ ã‘ã¦ã„ã¾ã™ã€‚ </i>");
     } else {
-        out.write("ƒIƒvƒVƒ‡ƒiƒ‹¥ƒRƒ“ƒ|[ƒlƒ“ƒg‚Í‘¶İ‚µ‚Ä‚¢‚Ü‚·B");
+        out.write("ã‚ªãƒ—ã‚·ãƒ§ãƒŠãƒ«ï½¥ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆã¯å­˜åœ¨ã—ã¦ã„ã¾ã™ã€‚");
     }
     out.write("</h3>");
     //hint if anything is missing
@@ -473,12 +473,12 @@
 
     %>
     <p>
-    <B><I>’ˆÓ:</I></B> ƒy[ƒW‚É‘S‚Ä‚Ì’²¸Œ‹‰Ê‚ª•\¦‚³‚ê‚½‚Æ‚µ‚Ä‚àA
-    ƒ`ƒFƒbƒN‚Å‚«‚È‚¢\¬ƒIƒvƒVƒ‡ƒ“‚à‘½‚¢‚½‚ßA‚ ‚È‚½‚ÌWebƒT[ƒrƒX‚ª³í‚É‹@”\‚·‚é•Ûá‚Í‚ ‚è‚Ü‚¹‚ñB
-    ‚±‚ê‚ç‚ÌƒeƒXƒg‚Í<i>•K—v</i>‚È‚à‚Ì‚Å‚·‚ªA<i>\•ª</i>‚È‚à‚Ì‚Å‚Í‚ ‚è‚Ü‚¹‚ñB
+    <B><I>æ³¨æ„:</I></B> ãƒšãƒ¼ã‚¸ã«å…¨ã¦ã®èª¿æŸ»çµæœãŒè¡¨ç¤ºã•ã‚ŒãŸã¨ã—ã¦ã‚‚ã€
+    ãƒã‚§ãƒƒã‚¯ã§ããªã„æ§‹æˆã‚ªãƒ—ã‚·ãƒ§ãƒ³ã‚‚å¤šã„ãŸã‚ã€ã‚ãªãŸã®Webã‚µãƒ¼ãƒ“ã‚¹ãŒæ­£å¸¸ã«æ©Ÿèƒ½ã™ã‚‹ä¿éšœã¯ã‚ã‚Šã¾ã›ã‚“ã€‚
+    ã“ã‚Œã‚‰ã®ãƒ†ã‚¹ãƒˆã¯<i>å¿…è¦</i>ãªã‚‚ã®ã§ã™ãŒã€<i>ååˆ†</i>ãªã‚‚ã®ã§ã¯ã‚ã‚Šã¾ã›ã‚“ã€‚
     <hr>
 
-    <h2>ƒAƒvƒŠƒP[ƒVƒ‡ƒ“¥ƒT[ƒo[‚ÉŠÖ‚·‚é’²¸</h2>
+    <h2>ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ï½¥ã‚µãƒ¼ãƒãƒ¼ã«é–¢ã™ã‚‹èª¿æŸ»</h2>
     <%
         String servletVersion=getServletVersion();
         String xmlParser=getParserName();
@@ -486,18 +486,18 @@
 
     %>
     <table>
-        <tr><td>ƒT[ƒuƒŒƒbƒg‚Ìƒo[ƒWƒ‡ƒ“</td><td><%= servletVersion %></td></tr>
-        <tr><td>XMLƒp[ƒT[</td><td><%= xmlParser %></td></tr>
-        <tr><td>XMLƒp[ƒT[‚ÌêŠ</td><td><%= xmlParserLocation %></td></tr>
+        <tr><td>ã‚µãƒ¼ãƒ–ãƒ¬ãƒƒãƒˆã®ãƒãƒ¼ã‚¸ãƒ§ãƒ³</td><td><%= servletVersion %></td></tr>
+        <tr><td>XMLãƒ‘ãƒ¼ã‚µãƒ¼</td><td><%= xmlParser %></td></tr>
+        <tr><td>XMLãƒ‘ãƒ¼ã‚µãƒ¼ã®å ´æ‰€</td><td><%= xmlParserLocation %></td></tr>
     </table>
 <% if(xmlParser.indexOf("crimson")>=0) { %>
     <p>
-    <b> Axis‚Åg—p‚·‚éXMLƒp[ƒT[‚É‚Í Crimson ‚Å‚Í‚È‚­A 
-        <a href="http://xml.apache.org/xerces2-j/">Xerces 2</a> ‚ğ„§‚µ‚Ä‚¢‚Ü‚·B
+    <b> Axisã§ä½¿ç”¨ã™ã‚‹XMLãƒ‘ãƒ¼ã‚µãƒ¼ã«ã¯ Crimson ã§ã¯ãªãã€ 
+        <a href="http://ws.apache.org/xerces2-j/">Xerces 2</a> ã‚’æ¨å¥¨ã—ã¦ã„ã¾ã™ã€‚
     </p>
 <%    } %>
 
-    <h2>ƒVƒXƒeƒ€¥ƒvƒƒpƒeƒB‚ÉŠÖ‚·‚é’²¸</h2>
+    <h2>ã‚·ã‚¹ãƒ†ãƒ ï½¥ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã«é–¢ã™ã‚‹èª¿æŸ»</h2>
 <%
     /**
      * Dump the system properties
@@ -515,11 +515,11 @@
         }
         out.write("</pre><p>");
     } else {
-        out.write("ƒVƒXƒeƒ€¥ƒvƒƒpƒeƒB‚ÉƒAƒNƒZƒX‚Å‚«‚Ü‚¹‚ñB<p>");
+        out.write("ã‚·ã‚¹ãƒ†ãƒ ï½¥ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã«ã‚¢ã‚¯ã‚»ã‚¹ã§ãã¾ã›ã‚“ã€‚<p>");
     }
 %>
     <hr>
-    ƒvƒ‰ƒbƒgƒtƒH[ƒ€: <%= getServletConfig().getServletContext().getServerInfo()  %>
+    ãƒ—ãƒ©ãƒƒãƒˆãƒ•ã‚©ãƒ¼ãƒ : <%= getServletConfig().getServletContext().getServerInfo()  %>
 </body>
 </html>
 

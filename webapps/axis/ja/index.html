@@ -1,8 +1,8 @@
-<html>
+﻿<html>
 
 <head>
 <meta http-equiv="Content-Type"
-content="text/html; charset=shift_jis">
+content="text/html; charset=UTF-8">
 <title>Apache-Axis</title>
 </head>
 
@@ -10,44 +10,44 @@ content="text/html; charset=shift_jis">
 
 <h1 align="center">Apache-AXIS</h1>
 
-<p>����ɂ��́I Apache-Axis��<em>�悤����</em> </p>
+<p>こんにちは！ Apache-Axisへ<em>ようこそ</em> </p>
 
-<p>�����͉����������ł����H</p>
+<p>今日は何をしたいですか？</p>
 
 <ul>
-    <li>���[�J���C���X�g�[���̐ݒ��<a href="happyaxis.jsp">���؂���</a>
+    <li>ローカルインストールの設定の<a href="happyaxis.jsp">検証する</a>
         <br>
-        <i>���܂��@�\���Ȃ��ꍇ�́uAxis�̌��؁v���Q��</i></li>
-    <li>�z���ς�Web�T�[�r�X�̃��X�g��<a href="servlet/AxisServlet">����</a>
+        <i>うまく機能しない場合は「Axisの検証」を参照</i></li>
+    <li>配備済のWebサービスのリストを<a href="../servlet/AxisServlet">見る</a>
         </li>
-    <li><a href="EchoHeaders.jws?method=list">
-        ���[�J���̃G���h�|�C���g���Ăяo��</a> - ���̃��X�g�͌Ăяo������http�w�b�_�ł�
-        (��������
-        <a href="EchoHeaders.jws?wsdl">WSDL</a>���Q�Ƃ��ĉ�����). 
-    <li>Apache-Axis�z�[���y�[�W��<a href="http://xml.apache.org/axis">�K�₷��</a>
+    <li><a href="../EchoHeaders.jws?method=list">
+        ローカルのエンドポイントを呼び出す</a> - そのリストは呼び出し元のhttpヘッダです
+        (もしくは
+        <a href="../EchoHeaders.jws?wsdl">WSDL</a>を参照して下さい). 
+    <li>Apache-Axisホームページを<a href="http://ws.apache.org/axis/jp/">訪問する</a>
         </li>
-    <li><a href="servlet/AdminServlet">Axis���Ǘ�����</a> <br>
-        [���S���̗��R����f�t�H���g�ł͗��p�s��]</li>
-    <li><a href="SOAPMonitor">SOAP���j�^</a> <br>
-        [���S���̗��R����f�t�H���g�ł͗��p�s��]</li>
+    <li><a href="../servlet/AdminServlet">Axisを管理する</a> <br>
+        [安全性の理由からデフォルトでは利用不可]</li>
+    <li><a href="../SOAPMonitor">SOAPモニタ</a> <br>
+        [安全性の理由からデフォルトでは利用不可]</li>
 </ul>
-��L�̃f�t�H���g�ŗ��p�ł��Ȃ��@�\��L���ɂ���ɂ́Aweb�A�v���P�[�V��������
-WEB-INF/web.xml�t�@�C���̊Y������錾�̃R�����g���O���A�A�v���P�[�V�������ċN�����ĉ������B
+上記のデフォルトで利用できない機能を有効にするには、webアプリケーション内の
+WEB-INF/web.xmlファイルの該当する宣言のコメントを外し、アプリケーションを再起動して下さい。
 <br />
 
-<h3>Axis�̌���</h3>
+<h3>Axisの検証</h3>
 
 
-"happyaxis"���؃y�[�W����ԕ\���̃y�[�W�ł͂Ȃ���O��\������ꍇ�A
-�����Ƃ��Ă̓N���X�p�X���ɕ�����XML�p�[�T���w�肵�Ă��邱�Ƃ��l�����܂��B
-�֌W�̂Ȃ��p�[�T���N���X�p�X�����菜���Ă݂ĉ������B
+"happyaxis"検証ページが状態表示のページではなく例外を表示する場合、
+原因としてはクラスパス内に複数のXMLパーサを指定していることが考えられます。
+関係のないパーサをクラスパスから取り除いてみて下さい。
 
 
 <p>
-Axis�𓮍삳�����Ŗ�������Ă���ꍇ�́A
+Axisを動作させる上で問題を抱えている場合は、
 Axis <a
-href="http://nagoya.apache.org/wiki/apachewiki.cgi?AxisProjectPages">Wiki</a>
-�Ɉӌ��𕷂��A���̌�Axis���[�U���[�����O���X�g�ɓ��e���Ă݂ĉ������B
+href="http://ws.apache.org/axis/jp/wiki-java/index.html">Wiki</a>
+に意見を聞き、その後Axisユーザメーリングリストに投稿してみて下さい。
 
 </body>
 </html>
