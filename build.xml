@@ -471,6 +471,7 @@ Copyright:
       description="clean up, build, dist and much of the axis servlet">
     <delete dir="${build.dir}"/>
     <delete dir="${dist.dir}"/>
+    <delete dir="${axis.home}/tools/lib"/>
     <delete file="client-config.wsdd"/>
     <delete file="server-config.wsdd"/>
     <delete file="webapps/axis/WEB-INF/server-config.wsdd"/>
