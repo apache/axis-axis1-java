@@ -169,4 +169,11 @@ public class EchoService {
     public HashMap echoMap(HashMap input) {
         return input;
     }
+
+    /**
+     * This method accepts an array of Maps and echoes it back to the client.
+     */
+    public HashMap echoMapArray(HashMap [] input) {
+        return input;
+    }
 }
