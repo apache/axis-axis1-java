@@ -134,7 +134,7 @@ public class SOAPBody extends MessageElement
 
         // Output <SOAP-ENV:Body>
         context.startElement(new QName(soapConstants.getEnvelopeURI(),
-                                       Constants.ELEM_BODY), null);
+                                       Constants.ELEM_BODY), getAttributes());
         Enumeration enum = bodyElements.elements();
         while (enum.hasMoreElements()) {
             SOAPBodyElement body = (SOAPBodyElement)enum.nextElement();
