@@ -71,6 +71,11 @@ Copyright:
     <!--...not to mention the sample user list -->
     <copy file="samples/stock/users.lst" todir="build"/>
 
+    <java classname="org.apache.axis.client.AdminClient" fork="yes">
+      <classpath refid="test-classpath" />
+      <arg line="${deploy.xml.property}"/>
+    </java>
+
     <!-- now, run the actual test -->
     <junit dir="." printsummary="yes" haltonfailure="yes" fork="yes">
       <classpath refid="test-classpath" />
@@ -80,9 +85,15 @@ Copyright:
           <!-- Convention: each package that's being tested
                 has its own test class collecting all the tests -->
           <include name="**/FunctionalTests.class" />
+          <include name="**/*TestCase.class" />
         </fileset>
       </batchtest>
     </junit>
+
+    <java classname="org.apache.axis.client.AdminClient" fork="yes">
+      <classpath refid="test-classpath" />
+      <arg line="${undeploy.xml.property}"/>
+    </java>
   </target>
 
   <!-- =================================================================== -->
@@ -97,9 +108,51 @@ Copyright:
   </target>
 
   <!-- =================================================================== -->
+  <!-- Generate code using Wsdl2java utility                               -->
+  <!-- =================================================================== -->
+  <target name="wsdl-setup" if="junit.present">
+    <ant antfile="src/org/apache/axis/wsdl/test/Wsdl2javaTestSuite.xml">
+    </ant>
+    <copy todir="${build.dir}/work/test" overwrite="yes">
+      <fileset dir="${test.dir}">
+        <include name="**/*BindingImpl.java"/>
+      </fileset>
+      <fileset dir="${test.dir}">
+        <include name="**/*TestCase.java"/>
+      </fileset>
+    </copy>
+    <copy todir="${build.dir}/work/samples" overwrite="yes">
+      <fileset dir="${samples.dir}">
+        <include name="**/*BindingImpl.java"/>
+      </fileset>
+      <fileset dir="${samples.dir}">
+        <include name="**/*TestCase.java"/>
+      </fileset>
+    </copy>
+    <path id="deploy.xml.files">
+        <fileset dir="${build.dir}/work">
+          <include name="**/deploy.xml"/>
+        </fileset>
+    </path>
+    <path id="undeploy.xml.files">
+        <fileset dir="${build.dir}/work">
+          <include name="**/undeploy.xml"/>
+        </fileset>
+    </path>
+    <property name="deploy.xml.property" refid="deploy.xml.files"/>
+    <property name="undeploy.xml.property" refid="undeploy.xml.files"/>
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}"
+           debug="${debug}">
+      <classpath refid="test-classpath" />
+      <include name="**/*.java" />
+    </javac>
+  </target>
+
+  <!-- =================================================================== -->
   <!-- Run functional tests                                                -->
   <!-- =================================================================== -->
-  <target name="functional-tests" if="junit.present">
+  <target name="functional-tests" if="junit.present" depends="wsdl-setup">
+
     <!-- This uses a custom Ant task.  See test/functional/ant/RunAxisFunctionalTests.java -->
     <!-- This pattern taken from Cactus, http://jakarta.apache.org/commons/cactus -->
     <runaxisfunctionaltests

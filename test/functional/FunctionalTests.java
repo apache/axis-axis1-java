@@ -4,8 +4,6 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import test.inout.DetailedInoutTestCase;
-
 /**
  * Axis's FunctionalTests test client/server interactions.
  */
@@ -39,17 +37,11 @@ public class FunctionalTests extends TestCase
         // bid-buy test
         suite.addTestSuite(TestBidBuySample.class);
 
-        // address book test
-        suite.addTestSuite(TestAddressBookSample.class);
-
         // "Raw" echo service test.
         suite.addTestSuite(TestMiscSample.class);
 
         // Proxy service test.
         suite.addTestSuite(TestProxySample.class);
-
-        // in/inout/out parameter tests
-        suite.addTestSuite(DetailedInoutTestCase.class);
 
         return suite;
     }

@@ -81,11 +81,6 @@ public class DetailedInoutTestCase extends TestCase
     private Address returnAddress = new Address (555, "Monroe Street", "Madison", "WI", 54444, returnPhone);
     private int returnNumber = 66;
 
-    public void testDeploy() {
-        String[] args = {"test/inout/deploy.xml"};
-        AdminClient.main(args);
-    } // doTestDeploy
-    
     public void testOut0_inout0_in0 ()
     {
         try

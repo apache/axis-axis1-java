@@ -99,13 +99,13 @@ public class Wsdl2javaAntTask extends Task
             
             // Instantiate the emitter
             Emitter emitter = new Emitter();
-            if ("Application".equals(deployScope)) {
+            if ("application".equalsIgnoreCase(deployScope)) {
                 emitter.setScope(Emitter.APPLICATION_SCOPE);
             }
-            else if ("Request".equals(deployScope)) {
+            else if ("request".equalsIgnoreCase(deployScope)) {
                 emitter.setScope(Emitter.REQUEST_SCOPE);
             }
-            else if ("Session".equals(deployScope)) {
+            else if ("session".equalsIgnoreCase(deployScope)) {
                 emitter.setScope(Emitter.SESSION_SCOPE);
             }
             else {

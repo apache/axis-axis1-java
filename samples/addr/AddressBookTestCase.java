@@ -53,7 +53,7 @@
  * <http://www.apache.org/>.
  */
 
-package test.functional;
+package samples.addr;
 
 import junit.framework.TestCase;
 import org.apache.axis.AxisFault;
@@ -63,31 +63,22 @@ import samples.addr.Main;
 
 /** Test the address book sample code.
  */
-public class TestAddressBookSample extends TestCase {
+public class AddressBookTestCase extends TestCase {
     static Category category =
-            Category.getInstance(TestAddressBookSample.class.getName());
+            Category.getInstance(AddressBookTestCase.class.getName());
 
-
-    public TestAddressBookSample(String name) {
+    public AddressBookTestCase(String name) {
         super(name);
     }
-    
-    public void doTestDeploy () throws Exception {
-        String[] args = { "samples/addr/deploy.xml" };
-        AdminClient.main(args);
-    }
-    
+
     public void doTest () throws Exception {
         String[] args = {};
         Main.main(args);
     }
-    
+
     public void testAddressBookService () throws Exception {
         try {
             category.info("Testing address book sample.");
-            category.info("Testing deployment...");
-            doTestDeploy();
-            category.info("Testing service...");
             doTest();
             category.info("Test complete.");
         }
@@ -97,6 +88,6 @@ public class TestAddressBookSample extends TestCase {
             throw new Exception("Fault returned from test: "+e);
         }
     }
-    
 }
+
 
