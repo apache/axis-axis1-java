@@ -79,9 +79,10 @@ import org.apache.axis.utils.QName ;
 public abstract class TestClient {
 
     private static ServiceClient call;
-    private static TypeMappingRegistry map = new SOAPTypeMappingRegistry();
     private static boolean addMethodToAction = false;
     private static String soapAction = "http://soapinterop.org/";
+
+    private TypeMappingRegistry map;
 
     /**
      * Determine if two objects are equal.  Handles nulls and recursively
@@ -146,6 +147,7 @@ public abstract class TestClient {
      */
     public void setURL(String url) {
         call = new ServiceClient(url);
+        map = call.getMessageContext().getTypeMappingRegistry();
     }
 
     /**
