@@ -57,7 +57,7 @@ public class DelayedStockQuote {
         SOAPElement symbol = gltp.addChildElement(name);
         symbol.addTextNode(tickerSymbol);
 
-        URLEndpoint endpoint = new URLEndpoint("http://66.28.98.121:9090/soap");
+        URLEndpoint endpoint = new URLEndpoint("http://64.124.140.30/soap");
         SOAPMessage response = con.call(message, endpoint);
         con.close();
 
