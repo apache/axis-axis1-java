@@ -323,7 +323,7 @@ implements org.w3c.dom.Document, java.io.Serializable {
                 SOAPBody body =
                     (org.apache.axis.message.SOAPBody) soapEnv.getHeader();
                 if (body != null) {
-                    return header.getElementsByTagNameNS(
+                    return body.getElementsByTagNameNS(
                             namespaceURI,
                             localName);
                 }
@@ -352,9 +352,9 @@ implements org.w3c.dom.Document, java.io.Serializable {
                     return header.getElementsByTagName(localName);
                 }
                 SOAPBody body =
-                    (org.apache.axis.message.SOAPBody) soapEnv.getHeader();
+                    (org.apache.axis.message.SOAPBody) soapEnv.getBody();
                 if (body != null) {
-                    return header.getElementsByTagName(localName);
+                    return body.getElementsByTagName(localName);
                 }
             }
             return null;

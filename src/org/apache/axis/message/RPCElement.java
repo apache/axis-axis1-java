@@ -70,7 +70,7 @@ public class RPCElement extends SOAPBodyElement
 
                 String lc = Utils.xmlNameToJava(name);
                 if (serviceDesc == null) {
-                    AxisFault.makeFault(
+                    throw AxisFault.makeFault(
                             new ClassNotFoundException(
                                     Messages.getMessage("noClassForService00",
                                                          lc)));
