@@ -315,6 +315,7 @@ public class JavaUtils
         if (arg != null &&
             destClass.isArray() &&
             !destClass.getComponentType().equals(Object.class) &&
+            !destClass.getComponentType().isArray() &&
             destClass.getComponentType().isAssignableFrom(arg.getClass())) {
             Object array = 
                 Array.newInstance(destClass.getComponentType(), 1);
