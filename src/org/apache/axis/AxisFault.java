@@ -88,6 +88,7 @@ import java.util.Vector;
  * </ol>
  * @author Doug Davis (dug@us.ibm.com)
  * @author James Snell (jasnell@us.ibm.com)
+ * @author Steve Loughran
  */
 
 public class AxisFault extends java.rmi.RemoteException {
@@ -95,6 +96,7 @@ public class AxisFault extends java.rmi.RemoteException {
         LogFactory.getLog(AxisFault.class.getName());
 
     protected QName     faultCode ;
+    /** SOAP1.2 addition: subcodes of faults; a Vector of QNames */
     protected Vector    faultSubCode ;
     protected String    faultString = "";
     protected String    faultActor ;
@@ -156,11 +158,12 @@ public class AxisFault extends java.rmi.RemoteException {
         setFaultString( faultString );
         setFaultActor( actor );
         setFaultDetail( details );
-        if (details == null)
+        if (details == null) {
             initFromException(this);
+        }
     }
 
-/**
+    /**
      * make a fault in any namespace
      * @param code fault code which will be passed into the Axis namespace
      * @param subcodes fault subcodes which will be pased into the Axis namespace
@@ -169,20 +172,24 @@ public class AxisFault extends java.rmi.RemoteException {
      * @param node which node caused the fault on the SOAP path
      * @param details details; if null the current stack trace and classname is
      * inserted into the details.
+     * @since axis1.1
      */
     public AxisFault(QName code, QName[] subcodes, String faultString,
                      String actor, String node, Element[] details) {
         super (faultString);
         setFaultCode( code );
-        if (subcodes != null)
-            for (int i = 0; i < subcodes.length; i++)
+        if (subcodes != null) {
+            for (int i = 0; i < subcodes.length; i++) {
                 addFaultSubCode( subcodes[i] );
+            }
+        }
         setFaultString( faultString );
         setFaultActor( actor );
         setFaultNode( node );
         setFaultDetail( details );
-        if (details == null)
+        if (details == null) {
             initFromException(this);
+        }
     }
 
     /**
@@ -236,25 +243,24 @@ public class AxisFault extends java.rmi.RemoteException {
 
     /**
      * fill in soap fault details from the exception, unless
-     * this object already has a stack trace in its details.
+     * this object already has a stack trace in its details. Which, given
+     * the way this private method is invoked, is a pretty hard situation to ever achieve.
      * This method adds classname of the exception and the stack trace.
      * @param target what went wrong
      */
     private void initFromException(Exception target)
     {
-        for (int i = 0; faultDetails != null && i < faultDetails.size(); i++) {
-            Element element = (Element) faultDetails.elementAt(i);
-            if ("stackTrace".equals(element.getLocalName()) &&
-                Constants.NS_URI_AXIS.equals(element.getNamespaceURI())) {
-                // todo: Should we replace it or just let it be?
-                return;
-            }
+        //look for old stack trace
+        Element oldStackTrace=lookupFaultDetail(Constants.QNAME_FAULTDETAIL_STACKTRACE);
+        if(oldStackTrace!=null) {
+            // todo: Should we replace it or just let it be?
+            return;
         }
 
-        // Set the exception message (if any) as the fault string 
+        // Set the exception message (if any) as the fault string
         setFaultString( target.toString() );
-        
-        if (faultDetails == null) faultDetails = new Vector();
+
+        initFaultDetails();
 
         Element el;
         
@@ -265,18 +271,36 @@ public class AxisFault extends java.rmi.RemoteException {
         
         if ((target instanceof AxisFault) &&
             (target.getClass() != AxisFault.class)) {
-            el = XMLUtils.StringToElement(Constants.NS_URI_AXIS, 
-                                                  "exceptionName", 
-                                                  target.getClass().getName());
+            el = XMLUtils.StringToElement(Constants.QNAME_FAULTDETAIL_EXCEPTIONNAME.getNamespaceURI(),
+                                          Constants.QNAME_FAULTDETAIL_EXCEPTIONNAME.getLocalPart(),
+                                          target.getClass().getName());
             
             faultDetails.add(el);
         }
-        
-        el =  XMLUtils.StringToElement(Constants.NS_URI_AXIS, 
-                                       "stackTrace", 
+
+        //add stack trace
+        el =  XMLUtils.StringToElement(Constants.QNAME_FAULTDETAIL_STACKTRACE.getNamespaceURI(),
+                Constants.QNAME_FAULTDETAIL_STACKTRACE.getLocalPart(),
                                        JavaUtils.stackToString(target));
 
         faultDetails.add(el);
+    }
+
+    /**
+     * init the fault details data structure; does nothing
+     * if this exists already
+     */
+    private void initFaultDetails() {
+        if (faultDetails == null) {
+            faultDetails = new Vector();
+        }
+    }
+
+    /**
+     * clear the fault details list
+     */
+    public void clearFaultDetails() {
+        faultDetails=null;
     }
 
     /**
@@ -298,8 +322,17 @@ public class AxisFault extends java.rmi.RemoteException {
         if (faultDetails != null) {
             for (int i=0; i < faultDetails.size(); i++) {
                 Element e = (Element) faultDetails.get(i);
+                String namespace= e.getNamespaceURI();
+                if(namespace==null) {
+                    namespace="";
+                }
+                String partname= e.getLocalName();
+                if(partname==null) {
+                    partname=e.getNodeName();
+                }
                 details += JavaUtils.LS
-                          + "\t" +  e.getLocalName() + ": "
+                          + "\t{" + namespace + "}"
+                          + partname + ": "
                           + XMLUtils.getInnerXMLString(e);
             }
         }
@@ -333,7 +366,7 @@ public class AxisFault extends java.rmi.RemoteException {
 
     /**
      * set a fault code string that is turned into a qname
-     * in the axis namespace
+     * in the SOAP 1.1 or 1.2 namespace, depending on the current context
      * @param code fault code
      */
     public void setFaultCodeAsString(String code) {
@@ -346,7 +379,7 @@ public class AxisFault extends java.rmi.RemoteException {
 
     /**
      * get the fault code
-     * @return fault code QName or null
+     * @return fault code QName or null if there is none yet.
      */
     public QName getFaultCode() {
         return( faultCode );
@@ -354,37 +387,53 @@ public class AxisFault extends java.rmi.RemoteException {
 
     /**
      * This is new in SOAP 1.2, ignored in SOAP 1.1
+     * @since axis1.1
      */
     public void addFaultSubCodeAsString(String code) {
-        if (faultSubCode == null)
-            faultSubCode = new Vector();
+        initFaultSubCodes();
         faultSubCode.add(new QName(Constants.NS_URI_AXIS, code));
     }
 
     /**
+     * do whatever is needed to create the fault subcodes
+     * data structure, if it is needed
+     */
+    protected void initFaultSubCodes() {
+        if (faultSubCode == null) {
+            faultSubCode = new Vector();
+        }
+    }
+
+    /**
      * This is new in SOAP 1.2, ignored in SOAP 1.1
+     * @since axis1.1
      */
     public void addFaultSubCode(QName code) {
-        if (faultSubCode == null)
-            faultSubCode = new Vector();
+        initFaultSubCodes();
         faultSubCode.add(code);
     }
 
     /**
      * This is new in SOAP 1.2, ignored in SOAP 1.1
+     *
+     * @since axis1.1
      */
     public void clearFaultSubCodes() {
         faultSubCode = null;
     }
 
+    /**
+     * get the fault subcode list; only used in SOAP 1.2
+     * @since axis1.1
+     * @return null for no subcodes, or a QName array
+     */
     public QName[] getFaultSubCodes() {
-        if (faultSubCode == null)
+        if (faultSubCode == null) {
             return null;
+        }
         QName[] q = new QName[faultSubCode.size()];
         return (QName[])faultSubCode.toArray(q);
     }
-
-
 
 
     /**
@@ -410,6 +459,7 @@ public class AxisFault extends java.rmi.RemoteException {
 
     /**
      * This is SOAP 1.2 equivalent of {@link #setFaultString(java.lang.String)}
+     * @since axis1.1
      */
     public void setFaultReason(String str) {
         setFaultString(str);
@@ -417,6 +467,7 @@ public class AxisFault extends java.rmi.RemoteException {
 
     /**
      * This is SOAP 1.2 equivalent of {@link #getFaultString()}
+     * @since axis1.1
      * @return
      */
     public String getFaultReason() {
@@ -441,6 +492,7 @@ public class AxisFault extends java.rmi.RemoteException {
 
     /**
      * This is SOAP 1.2 equivalent of {@link #getFaultActor()}
+     * @since axis1.1
      * @return
      */
     public String getFaultRole() {
@@ -449,6 +501,7 @@ public class AxisFault extends java.rmi.RemoteException {
 
     /**
      * This is SOAP 1.2 equivalent of {@link #setFaultActor(java.lang.String)}
+     * @since axis1.1
      */
     public void setFaultRole(String role) {
         setFaultActor(role);
@@ -456,6 +509,7 @@ public class AxisFault extends java.rmi.RemoteException {
 
     /**
      * This is new in SOAP 1.2
+     * @since axis1.1
      * @return
      */
     public String getFaultNode() {
@@ -464,50 +518,42 @@ public class AxisFault extends java.rmi.RemoteException {
 
     /**
      * This is new in SOAP 1.2
+     * @since axis1.1
      */
     public void setFaultNode(String node) {
         faultNode = node;
     }
 
     /**
-     * the fault detail element to the arrary of details
+     * set the fault detail element to the arrary of details
      * @param details list of detail elements, can be null
      */
     public void setFaultDetail(Element[] details) {
         if ( details == null ) {
+            //TODO: shouldnt we reset fault details here anyway?
             return ;
         }
         faultDetails = new Vector( details.length );
-        for ( int loop = 0 ; loop < details.length ; loop++ )
+        for ( int loop = 0 ; loop < details.length ; loop++ ) {
             faultDetails.add( details[loop] );
-    }
-
-    /**
-     * turn a string containing an xml fragment into the fault details
-     * @param details XML fragment
-     */
-    public void setFaultDetailString(String details) {
-        faultDetails = new Vector();
-        try {
-            Document doc = XMLUtils.newDocument();
-            Element element = doc.createElement("string");
-            Text text = doc.createTextNode(details);
-            element.appendChild(text);
-            faultDetails.add(element);
-        } catch (ParserConfigurationException e) {
-            // This should not occur
-            throw new InternalException(e);
         }
     }
 
     /**
-     * parse an XML fragment and add it as a single element in the
-     * fault detail xml
+     * set the fault details to a string element.
+     * @param details XML fragment
+     */
+    public void setFaultDetailString(String details) {
+        clearFaultDetails();
+        addFaultDetailString(details);
+    }
+
+    /**
+     * add a string tag to the fault details.
      * @param detail XML fragment
      */
     public void addFaultDetailString(String detail) {
-        if(faultDetails == null)
-            faultDetails = new Vector(); 
+        initFaultDetails();
         try {
             Document doc = XMLUtils.newDocument();
             Element element = doc.createElement("string");
@@ -525,11 +571,63 @@ public class AxisFault extends java.rmi.RemoteException {
      * @return an array of fault details, or null for none
      */
     public Element[] getFaultDetails() {
-        if (faultDetails == null) return null;
+        if (faultDetails == null) {
+            return null;
+        }
         Element result[] = new Element[faultDetails.size()];
         for (int i=0; i<result.length; i++)
             result[i] = (Element) faultDetails.elementAt(i);
         return result;
+    }
+
+    /**
+     * Find a fault detail element by its qname
+     * @param qname name of the node to look for
+     * @return the matching element or null
+     * @since axis1.1
+     */
+    public Element lookupFaultDetail(QName qname) {
+        if (faultDetails != null) {
+            //extract details from the qname. the empty namespace is represented
+            //by the empty string
+            String searchNamespace = qname.getNamespaceURI();
+            String searchLocalpart = qname.getLocalPart();
+            //now spin through the elements, seeking a match
+            Iterator it=faultDetails.iterator();
+            while (it.hasNext()) {
+                Element e = (Element) it.next();
+                String localpart= e.getLocalName();
+                if(localpart==null) {
+                    localpart=e.getNodeName();
+                }
+                String namespace= e.getNamespaceURI();
+                if(namespace==null) {
+                    namespace="";
+                }
+                //we match on matching namespace and local part; empty namespace
+                //in an element may be null, which matches QName's ""
+                if(searchNamespace.equals(namespace)
+                    && searchLocalpart.equals(localpart)) {
+                    return e;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * find and remove a specified fault detail element
+     * @param qname qualified name of detail
+     * @return true if it was found and removed
+     * @since axis1.1
+     */
+    public boolean removeFaultDetail(QName qname) {
+        Element elt=lookupFaultDetail(qname);
+        if(elt==null) {
+            return false;
+        } else {
+            return faultDetails.remove(elt);
+        }
     }
 
     /**
