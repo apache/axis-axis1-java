@@ -486,20 +486,20 @@ public class EJBProvider extends RPCProvider
      * Fill in a service description with the correct impl class
      * and typemapping set.  
      */
-    public void initServiceDesc(SOAPService service, MessageContext msgContext)
-            throws AxisFault
-    {
-        // the service class used to fill service description is the EJB Remote/Local Interface
-        // we add EJBObject and EJBLocalObject as stop classes because we
-        // don't want any of their methods in the wsdl ...
-        ServiceDesc serviceDescription = service.getServiceDescription();
-        ArrayList stopClasses = serviceDescription.getStopClasses();
-        if (stopClasses == null)
-            stopClasses = new ArrayList();              	
-        stopClasses.add("javax.ejb.EJBObject");
-        stopClasses.add("javax.ejb.EJBLocalObject");
-        serviceDescription.setStopClasses(stopClasses);
-        super.initServiceDesc(service,msgContext);
-    }
+//    public void initServiceDesc(SOAPService service, MessageContext msgContext)
+//            throws AxisFault
+//    {
+//        // the service class used to fill service description is the EJB Remote/Local Interface
+//        // we add EJBObject and EJBLocalObject as stop classes because we
+//        // don't want any of their methods in the wsdl ...
+//        ServiceDesc serviceDescription = service.getServiceDescription();
+//        ArrayList stopClasses = serviceDescription.getStopClasses();
+//        if (stopClasses == null)
+//            stopClasses = new ArrayList();              	
+//        stopClasses.add("javax.ejb.EJBObject");
+//        stopClasses.add("javax.ejb.EJBLocalObject");
+//        serviceDescription.setStopClasses(stopClasses);
+//        super.initServiceDesc(service,msgContext);
+//    }
 
 }
