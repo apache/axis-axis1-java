@@ -56,9 +56,11 @@
 package org.apache.axis ;
 
 import org.apache.axis.client.AxisClient;
+import org.apache.axis.client.Call;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.session.Session;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
 
 import java.util.Hashtable;
@@ -156,6 +158,17 @@ public class MessageContext {
      */
     private Hashtable bag ;
     
+    /**
+     * These variables are logically part of the bag, but are separated
+     * because they are used often and the Hashtable is more expensive.
+     */
+    private String  username       = null;
+    private String  password       = null;
+    private String  operationStyle = null;
+    private boolean useSOAPAction  = false;
+    private String  SOAPActionURI  = null;
+    private String  encodingStyle  = Constants.URI_CURRENT_SOAP_ENC;
+
     /**
      * Are we using SOAP encoding?  Default is true for RPC services,
      * should be set to false for document/literal.
@@ -466,11 +479,11 @@ public class MessageContext {
     
     /** A String with the user's ID (if available)
      */
-    public static String USERID              = "user.id";
+    public static String USERID              = Call.USERNAME_PROPERTY;
 
     /** A String with the user's password (if available)
      */
-    public static String PASSWORD            = "user.password";
+    public static String PASSWORD            = Call.PASSWORD_PROPERTY;
 
     /** Place to store an AuthenticatedUser */
     public static String AUTHUSER            = "authenticatedUser";
@@ -550,17 +563,239 @@ public class MessageContext {
         return( true );
     }
 
-    public Object getProperty(String propName) {
-        if ( bag == null ) return( null );
-        return( bag.get(propName) );
+    /**
+     * Allows you to set a named property to the passed in value.
+     * There are a few known properties (like username, password, etc)
+     * that are variables in Call.  The rest of the properties are
+     * stored in a Hashtable.  These common properties should be
+     * accessed via the accessors for speed/type safety, but they may
+     * still be obtained via this method.  It's up to one of the
+     * Handlers (or the Axis engine itself) to go looking for
+     * one of them.
+     *
+     * @param name  Name of the property
+     * @param value Value of the property
+     */
+    public void setProperty(String name, Object value) {
+        if (name == null || value == null) {
+            return;
+            // Is this right?  Shouldn't we throw an exception like: throw new IllegalArgumentException();
+        }
+        else if (name.equals(Call.USERNAME_PROPERTY)) {
+            if (!(value instanceof String)) {
+                throw new IllegalArgumentException(
+                        JavaUtils.getMessage("badProp00", new String[] {
+                        name, "java.lang.String", value.getClass().getName()}));
+            }
+            setUsername((String) value);
+        }
+        else if (name.equals(Call.PASSWORD_PROPERTY)) {
+            if (!(value instanceof String)) {
+                throw new IllegalArgumentException(
+                        JavaUtils.getMessage("badProp00", new String[] {
+                        name, "java.lang.String", value.getClass().getName()}));
+            }
+            setPassword((String) value);
+        }
+        else if (name.equals(Call.SESSION_PROPERTY)) {
+            if (!(value instanceof Boolean)) {
+                throw new IllegalArgumentException(
+                        JavaUtils.getMessage("badProp00", new String[]
+                        {name,
+                        "java.lang.Boolean",
+                        value.getClass().getName()}));
+            }
+            setMaintainSession(((Boolean) value).booleanValue());
+        }
+        else if (name.equals(Call.OPERATION_STYLE_PROPERTY)) {
+            if (!(value instanceof String)) {
+                throw new IllegalArgumentException(
+                        JavaUtils.getMessage("badProp00", new String[] {
+                        name, "java.lang.String", value.getClass().getName()}));
+            }
+            setOperationStyle((String) value);
+        }
+        else if (name.equals(Call.SOAPACTION_USE_PROPERTY)) {
+            if (!(value instanceof Boolean)) {
+                throw new IllegalArgumentException(
+                        JavaUtils.getMessage("badProp00", new String[]
+                        {name,
+                        "java.lang.Boolean",
+                        value.getClass().getName()}));
+            }
+            setUseSOAPAction(((Boolean) value).booleanValue());
+        }
+        else if (name.equals(Call.SOAPACTION_URI_PROPERTY)) {
+            if (!(value instanceof String)) {
+                throw new IllegalArgumentException(
+                        JavaUtils.getMessage("badProp00", new String[]
+                        {name,
+                        "java.lang.String",
+                        value.getClass().getName()}));
+            }
+            setSOAPActionURI((String) value);
+        }
+        else if (name.equals(Call.ENCODING_STYLE_PROPERTY)) {
+            if (!(value instanceof String)) {
+                throw new IllegalArgumentException(
+                        JavaUtils.getMessage("badProp00", new String[]
+                        {name,
+                        "java.lang.String",
+                        value.getClass().getName()}));
+            }
+            setEncodingStyle((String) value);
+        }
+        else {
+            if (bag == null) {
+                bag = new Hashtable();
+            }
+            bag.put(name, value);
+        }
+    } // setProperty
+
+    /**
+     * Returns the value associated with the named property - or null if not
+     * defined/set.
+     *
+     * @return Object value of the property - or null
+     */
+    public Object getProperty(String name) {
+        if (name != null) {
+            if (name.equals(Call.USERNAME_PROPERTY)) {
+                return getUsername();
+            }
+            else if (name.equals(Call.PASSWORD_PROPERTY)) {
+                return getPassword();
+            }
+            else if (name.equals(Call.SESSION_PROPERTY)) {
+                return new Boolean(getMaintainSession());
+            }
+            else if (name.equals(Call.OPERATION_STYLE_PROPERTY)) {
+                return getOperationStyle();
+            }
+            else if (name.equals(Call.SOAPACTION_USE_PROPERTY)) {
+                return new Boolean(useSOAPAction());
+            }
+            else if (name.equals(Call.SOAPACTION_URI_PROPERTY)) {
+                return getSOAPActionURI();
+            }
+            else if (name.equals(Call.ENCODING_STYLE_PROPERTY)) {
+                return getEncodingStyle();
+            }
+            else if (bag == null) {
+                return null;
+            }
+            else {
+                return bag.get(name);
+            }
+        }
+        else {
+            return null;
+        }
     }
 
-    public void setProperty(String propName, Object propValue) {
-        if (propValue == null) return;
-        if ( bag == null ) bag = new Hashtable() ;
-        bag.put( propName, propValue );
-    }
-    
+    /**
+     * Set the username.
+     */
+    public void setUsername(String username) {
+        this.username = username;
+    } // setUsername
+
+    /**
+     * Get the user name
+     */
+    public String getUsername() {
+        return username;
+    } // getUsername
+
+    /**
+     * Set the password.
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    } // setPassword
+
+    /**
+     * Get the password
+     */
+    public String getPassword() {
+        return password;
+    } // getPassword
+
+    /**
+     * Set the operation style.  IllegalArgumentException is thrown if operationStyle
+     * is not "rpc" or "document".
+     *
+     * @exception IllegalArgumentException if operationStyle is not "rpc" or "document".
+     */
+    public void setOperationStyle(String operationStyle) {
+        if ("rpc".equalsIgnoreCase(operationStyle)
+                || "document".equalsIgnoreCase(operationStyle)) {
+            this.operationStyle = operationStyle;
+        }
+        else {
+            throw new IllegalArgumentException(JavaUtils.getMessage(
+                    "badProp01",
+                    new String[] {Call.OPERATION_STYLE_PROPERTY,
+                    "\"rpc\", \"document\"", operationStyle}));
+        }
+    } // setOperationStyle
+
+    /**
+     * Get the operation style.
+     */
+    public String getOperationStyle() {
+        return operationStyle;
+    } // getOperationStyle
+
+    /**
+     * Should soapAction be used?
+     */
+    public void setUseSOAPAction(boolean useSOAPAction) {
+        this.useSOAPAction = useSOAPAction;
+    } // setUseSOAPAction
+
+    /**
+     * Are we using soapAction?
+     */
+    public boolean useSOAPAction() {
+        return useSOAPAction;
+    } // useSOAPAction
+
+    /**
+     * Set the soapAction URI.
+     */
+    public void setSOAPActionURI(String SOAPActionURI)
+            throws IllegalArgumentException {
+        this.SOAPActionURI = SOAPActionURI;
+    } // setSOAPActionURI
+
+    /**
+     * Get the soapAction URI.
+     */
+    public String getSOAPActionURI() {
+        return SOAPActionURI;
+    } // getSOAPActionURI
+
+    /**
+     * Sets the encoding style to the URL passed in.
+     *
+     * @param namespaceURI URI of the encoding to use.
+     */
+    public void setEncodingStyle(String namespaceURI) {
+        encodingStyle = namespaceURI;
+    } // setEncodingStype
+
+    /**
+     * Returns the encoding style as a URI that should be used for the SOAP
+     * message.
+     *
+     * @return String URI of the encoding style to use
+     */
+    public String getEncodingStyle() {
+        return encodingStyle;
+    } // getEncodingStyle
+
     public void clearProperty(String propName)
     {
         if (bag != null) {

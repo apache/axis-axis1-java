@@ -168,16 +168,22 @@ public class JavaStubWriter extends JavaWriter {
 
         pw.println("    }");
         pw.println();
-        pw.println("    private javax.xml.rpc.Call getCall() throws java.rmi.RemoteException {");
+        pw.println("    private org.apache.axis.client.Call getCall() throws java.rmi.RemoteException {");
         pw.println("        try {");
         pw.println("            org.apache.axis.client.Call call =");
         pw.println("                    (org.apache.axis.client.Call) super.service.createCall();");
-        pw.println("            if (maintainSessionSet) {");
-        pw.println("                call.setMaintainSession(maintainSession);");
+        pw.println("            if (super.maintainSessionSet) {");
+        pw.println("                call.setMaintainSession(super.maintainSession);");
+        pw.println("            }");
+        pw.println("            if (super.cachedUsername != null) {");
+        pw.println("                call.setUsername(super.cachedUsername);");
+
+        pw.println("            }");
+        pw.println("            if (super.cachedPassword != null) {");
+        pw.println("                call.setPassword(super.cachedPassword);");
         pw.println("            }");
         pw.println("            if (super.cachedEndpoint != null) {");
         pw.println("                call.setTargetEndpointAddress(super.cachedEndpoint);");
-        pw.println("                call.setProperty(org.apache.axis.transport.http.HTTPTransport.URL, super.cachedEndpoint.toString());");
         pw.println("            }");
         pw.println("            java.util.Enumeration keys = super.cachedProperties.keys();");
         pw.println("            while (keys.hasMoreElements()) {");
@@ -434,7 +440,7 @@ public class JavaStubWriter extends JavaWriter {
         pw.println("        if (super.cachedEndpoint == null) {");
         pw.println("            throw new org.apache.axis.NoEndPointException();");
         pw.println("        }");
-        pw.println("        javax.xml.rpc.Call call = getCall();");
+        pw.println("        org.apache.axis.client.Call call = getCall();");
 
         // DUG: need to set the isRPC flag in the Call object
 
@@ -470,8 +476,8 @@ public class JavaStubWriter extends JavaWriter {
 
         // SoapAction
         if (soapAction != null) {
-            pw.println("        call.setProperty(\"soap.http.soapaction.use\", Boolean.TRUE);");
-            pw.println("        call.setProperty(\"soap.http.soapaction.uri\", \"" + soapAction + "\");");
+            pw.println("        call.setUseSOAPAction(true);");
+            pw.println("        call.setSOAPActionURI(\"" + soapAction + "\");");
         }
 
         // Encoding literal or encoded use.

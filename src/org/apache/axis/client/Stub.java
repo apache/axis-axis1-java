@@ -88,11 +88,13 @@ public abstract class Stub implements javax.xml.rpc.Stub {
     // If maintainSession HAS NOT been set, then the
     // Call object uses the default maintainSession
     // from the Service.
-    protected boolean maintainSessionSet = false;
-    protected boolean maintainSession = false;
+    protected boolean    maintainSessionSet = false;
+    protected boolean    maintainSession    = false;
 
-    protected URL cachedEndpoint = null;
-    protected Properties cachedProperties = new Properties();
+    protected Properties cachedProperties   = new Properties();
+    protected String     cachedUsername     = null;
+    protected String     cachedPassword     = null;
+    protected URL        cachedEndpoint     = null;
 
     /**
      * Sets the value for a named property. JAX-RPC 1.0 specification 
@@ -118,6 +120,7 @@ public abstract class Stub implements javax.xml.rpc.Stub {
                         JavaUtils.getMessage("badProp00", new String[] {
                         name, "java.lang.String", value.getClass().getName()}));
             }
+            cachedUsername = (String) value;
         }
         else if (name.equals(PASSWORD_PROPERTY)) {
             if (!(value instanceof String)) {
@@ -125,6 +128,7 @@ public abstract class Stub implements javax.xml.rpc.Stub {
                         JavaUtils.getMessage("badProp00", new String[] {
                         name, "java.lang.String", value.getClass().getName()}));
             }
+            cachedPassword = (String) value;
         }
         else if (name.equals(ADDRESS_PROPERTY)) {
             if (!(value instanceof String)) {
@@ -150,7 +154,9 @@ public abstract class Stub implements javax.xml.rpc.Stub {
             maintainSessionSet = true;
             maintainSession = ((Boolean) value).booleanValue();
         }
-        cachedProperties.put(name, value);
+        else {
+            cachedProperties.put(name, value);
+        }
     } // _setProperty
 
     /**
@@ -161,7 +167,26 @@ public abstract class Stub implements javax.xml.rpc.Stub {
      * @return the value of a named property.
      */
     public Object _getProperty(String name) {
-        return cachedProperties.get(name);
+        if (name != null) {
+            if (name.equals(USERNAME_PROPERTY)) {
+                return cachedUsername;
+            }
+            else if (name.equals(PASSWORD_PROPERTY)) {
+                return cachedPassword;
+            }
+            else if (name.equals(ADDRESS_PROPERTY)) {
+                return cachedEndpoint;
+            }
+            else if (name.equals(SESSION_PROPERTY)) {
+                return maintainSessionSet ? new Boolean(maintainSession) : null;
+            }
+            else {
+                return cachedProperties.get(name);
+            }
+        }
+        else {
+            return null;
+        }
     } // _getProperty
 
     /**
@@ -170,6 +195,34 @@ public abstract class Stub implements javax.xml.rpc.Stub {
     public Iterator _getPropertyNames() {
         return cachedProperties.keySet().iterator();
     } // _getPropertyNames
+
+    /**
+     * Set the username.
+     */
+    public void setUsername(String username) {
+        cachedUsername = username;
+    } // setUsername
+
+    /**
+     * Get the user name
+     */
+    public String getUsername() {
+        return cachedUsername;
+    } // getUsername
+
+    /**
+     * Set the password.
+     */
+    public void setPassword(String password) {
+        cachedPassword = password;
+    } // setPassword
+
+    /**
+     * Get the password
+     */
+    public String getPassword() {
+        return cachedPassword;
+    } // getPassword
 
     /**
      * If set to true, session is maintained; if false, it is not.
