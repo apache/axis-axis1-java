@@ -44,6 +44,21 @@
         <include name="deploy.wsdd"/>
       </fileset>
     </copy>
+
+    <copy todir="${build.dir}/work/test/wsdl/sequence" overwrite="yes">
+      <fileset dir="${axis.home}/test/wsdl/sequence">
+        <include name="**/*Impl.java"/>
+      </fileset>
+      <fileset dir="${axis.home}/test/wsdl/sequence">
+        <include name="**/*TestCase.java"/>
+        <exclude name="**/EmptySATestCase.java"/>
+        <exclude name="**/SalesRankNPrice_ServiceTestCase.java"/>
+      </fileset>
+      <fileset dir="${axis.home}/test/wsdl/sequence">
+        <include name="**/Main.java"/>
+      </fileset>
+    </copy>
+
     <!-- Compile Java -->
     <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}">
       <classpath refid="classpath" />

@@ -35,16 +35,26 @@
                testcase="yes">
     </wsdl2java>
 
+    <copy todir="${build.dir}/work/test/wsdl/opStyles" overwrite="yes">
+      <fileset dir="${axis.home}/test/wsdl/opStyles">
+        <include name="**/*Impl.java"/>
+      </fileset>
+      <fileset dir="${axis.home}/test/wsdl/opStyles">
+        <include name="**/*TestCase.java"/>
+        <exclude name="**/EmptySATestCase.java"/>
+        <exclude name="**/SalesRankNPrice_ServiceTestCase.java"/>
+      </fileset>
+      <fileset dir="${axis.home}/test/wsdl/opStyles">
+        <include name="**/Main.java"/>
+      </fileset>
+    </copy>
+
     <javac srcdir="${build.dir}/work" destdir="${build.dest}"
            debug="${debug}">
       <classpath refid="classpath" />
       <include name="test/wsdl/opStyles/*.java" />
     </javac>
 
-    <javac srcdir="${axis.home}" destdir="${build.dest}"
-           debug="${debug}">
-      <include name="test/wsdl/opStyles/*.java" />
-    </javac>
 </target>
 
 <target name="run" >

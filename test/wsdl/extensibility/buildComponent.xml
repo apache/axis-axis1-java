@@ -50,10 +50,6 @@
       <include name="test/wsdl/extensibility/*.java" />
     </javac>
 
-    <javac srcdir="${axis.home}" destdir="${build.dest}"
-           debug="${debug}">
-      <include name="test/wsdl/extensibility/*.java" />
-    </javac>
 </target>
 
 <target name="run" >

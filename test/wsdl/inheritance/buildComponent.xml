@@ -94,17 +94,26 @@
         <mapping namespace="urn:InheritanceTest3" package="test.wsdl.inheritance"/>
     </java2wsdl>
 
+    <copy todir="${build.dir}/work/test/wsdl/inheritance" overwrite="yes">
+      <fileset dir="${axis.home}/test/wsdl/inheritance">
+        <include name="**/*Impl.java"/>
+      </fileset>
+      <fileset dir="${axis.home}/test/wsdl/inheritance">
+        <include name="**/*TestCase.java"/>
+        <exclude name="**/EmptySATestCase.java"/>
+        <exclude name="**/SalesRankNPrice_ServiceTestCase.java"/>
+      </fileset>
+      <fileset dir="${axis.home}/test/wsdl/inheritance">
+        <include name="**/Main.java"/>
+      </fileset>
+    </copy>
+
     <javac srcdir="${build.dir}/work" destdir="${build.dest}"
            debug="${debug}">
       <classpath refid="classpath" />
       <include name="test/wsdl/inheritance/*.java" />
     </javac>
     
-     <javac srcdir="${axis.home}" destdir="${build.dest}"
-           debug="${debug}">
-      <classpath refid="classpath" />
-      <include name="test/wsdl/inheritance/*.java" />
-    </javac>
 </target>
 
 <target name="run" >

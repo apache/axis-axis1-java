@@ -21,15 +21,19 @@
 
   <target name="clean" />
   
-  <target name="copy" depends="setenv"/>
+  <target name="copy" depends="setenv">
+     <ant antfile="${axis.home}/samples/echo/buildComponent.xml" target="compile" />
+     <ant antfile="${axis.home}/samples/jaxrpc/buildComponent.xml" target="compile" />
+  </target>
 
   <target name="compile" depends="copy" >
     <!-- Use this to check the classpath if the ANT Task fails... -->
 
-    <!--
-    <property name="test-classpath.property" refid="classpath"/>
-    <echo message="Classpath for wsdl2java task : ${test-classpath.property}"/>
-    -->
+    <copy todir="${build.dir}/work/samples" overwrite="yes">
+      <fileset dir="${samples.dir}">
+        <include name="**/userguide/example6/"/>
+      </fileset>
+    </copy>
 
     <copy todir="${build.dir}/classes" overwrite="yes">
       <fileset dir="${test.dir}/wsdl/_import">
@@ -41,18 +45,25 @@
         <include name="**/userguide/example6/"/>
       </fileset>
     </copy>
-<!-- mseibert
-    <javac srcdir="${build.dir}/work" destdir="${build.dest}"
+
+    <!-- Compile the sample code -->
+    <javac srcdir="${axis.home}" destdir="${build.dest}"
            debug="${debug}">
-      <classpath refid="classpath" />
-      <include name="**/*.java" />
-      <exclude name="test/wsdl/interop3/**/*.java" />
+      <classpath>
+        <pathelement location="${build.lib}/${name}.jar"/>
+        <pathelement location="${build.lib}/${jaxrpc}.jar"/>
+        <pathelement location="${build.lib}/${saaj}.jar"/>
+        <path refid="classpath"/>
+      </classpath>
+      <include name="samples/userguide/example6/*.java" />
+      <exclude name="samples/userguide/example6/Main.java" />
+      <exclude name="samples/userguide/example6/*Impl.java" />
+      <exclude name="samples/userguide/example6/*TestCase.java" />
     </javac>
  
     <echo message="Running WSDL2Java and Java2WSDL Emitters"/>
--->
+
     <!-- WidgetPrice Java to WSDL Samples -->
-<!-- mseibert
     <java2wsdl output="${axis.home}/build/work/samples/userguide/example6/WidgetPrice.wsdl"
                className= "samples.userguide.example6.WidgetPrice"
                namespace="urn:Example6"
@@ -70,7 +81,60 @@
         <mapping namespace="urn:Example6" package="samples.userguide.example6"/>
     </wsdl2java>
 
--->
+    <!-- Import Test 1:  some namespace->package mappings from the -->
+    <!--                 command line, some generated, some from   -->
+    <!--                 NStoPkg.properties.                       -->
+    <wsdl2java url="${axis.home}/test/wsdl/_import/Import.wsdl"
+               output="${axis.home}/build/work"
+               deployscope="none"
+               serverSide="yes"
+               skeletonDeploy="yes"
+               noimports="no"
+               verbose="no"
+               testcase="yes">
+        <mapping namespace="urn:import" package="test.wsdl.import"/>
+        <mapping namespace="urn:importBinding1" package="test.wsdl.import.binding1"/>
+        <mapping namespace="urn:importBinding2" package="test.wsdl.import.binding2"/>
+    </wsdl2java>
+
+    <!-- Import Test 2:  all namespace->package mappings from the -->
+    <!--                 command line.                            -->
+    <wsdl2java url="${axis.home}/test/wsdl/_import/Import.wsdl"
+               output="${axis.home}/build/work"
+               deployscope="none"
+               serverSide="yes"
+               skeletonDeploy="yes"
+               noimports="no"
+               verbose="no"
+               testcase="yes">
+        <mapping namespace="urn:import" package="test.import2"/>
+        <mapping namespace="urn:importBinding1" package="test.import2.binding1"/>
+        <mapping namespace="urn:importBinding2" package="test.import2.binding2"/>
+        <mapping namespace="urn:types.import.test" package="test.import2.types"/>
+        <mapping namespace="urn:iface.import.test" package="test.import2.iface"/>
+        <mapping namespace="urn:messages.import.test" package="test.import2.messages"/>
+    </wsdl2java>
+
+    <!-- Import Test 3:  all namespace->package mappings from the -->
+    <!--                 command line.  Make sure an xsd:import   -->
+    <!--                 statement inside a schema inside a type  -->
+    <!--                 works properly.                          -->
+    <wsdl2java url="${axis.home}/test/wsdl/_import/ImportMessagesXSDImport.wsdl"
+               output="${axis.home}/build/work"
+               noimports="no">
+        <mapping namespace="urn:types.import.test" package="test.import.test3"/>
+    </wsdl2java>
+
+    <!-- Another import test:  relative references via ../.. -->
+    <wsdl2java url="${axis.home}/test/wsdl/import2/service1/service2/testimport.wsdl"
+               output="${axis.home}/build/work"
+               serverSide="yes"
+               skeletonDeploy="yes"
+               noimports="no">
+        <mapping namespace="http://test.globus.org/importtest" package="test.wsdl.import2"/>
+        <mapping namespace="http://test.globus.org/interface" package="test.wsdl.import2.interface"/>
+        <mapping namespace="http://test.globus.org/types" package="test.wsdl.import2.types"/>
+    </wsdl2java>
 
     <!-- SOAPBuilders Interoperability Lab "Round 1" -->
     <!--     http://www.xmethods.net/ilab/           -->
@@ -78,6 +142,7 @@
                output="${axis.home}/build/work"
                deployscope="none"
                serverSide="yes"
+               skeletonDeploy="yes"
                noimports="no"
                verbose="no"
                testcase="no">
@@ -90,6 +155,7 @@
                output="${axis.home}/build/work"
                deployscope="none"
                serverSide="yes"
+               skeletonDeploy="yes"
                noimports="no"
                verbose="no"
                testcase="no">
@@ -100,6 +166,7 @@
                output="${axis.home}/build/work"
                deployscope="none"
                serverSide="yes"
+               skeletonDeploy="yes"
                noimports="no"
                verbose="no"
                testcase="no">
@@ -124,6 +191,7 @@
                testcase="no"
                deployscope="none"
                serverSide="yes"
+               skeletonDeploy="yes"
                verbose="no"
                noimports="no">
         <mapping namespace="http://soapinterop.org/" package="mssoapinterop.interopb"/>
@@ -177,6 +245,7 @@
     <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="on">
       <classpath refid="classpath" />
       <include name="test/wsdl/interop3/import1/*.java" />
+      <include name="test/wsdl/interop3/import1/**/*.java" />
     </javac>
     <!-- Step 3:  see test/wsdl/interop3/Import1TestCase.java -->
     <!-- Step 5:  see test/wsdl/interop3/Import1TestCase.java -->
@@ -189,12 +258,19 @@
         <mapping namespace="http://soapinterop.org/" package="test.wsdl.interop3.import1"/>
         <mapping namespace="http://soapinterop.org/definitions/" package="test.wsdl.interop3.import1.definitions"/>
     </java2wsdl>
+
     <wsdl2java url="${axis.home}/build/work/test/wsdl/interop3/import1.wsdl"
                output="${axis.home}/build/work"
                serverSide="yes">
         <mapping namespace="http://soapinterop.org/" package="test.wsdl.interop3.import1.step6"/>
         <mapping namespace="http://soapinterop.org/definitions/" package="test.wsdl.interop3.import1.step6.definitions"/>
     </wsdl2java>
+
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="on">
+      <classpath refid="classpath" />
+      <include name="test/wsdl/interop3/import1/step6/**/*.java" />
+    </javac>
+
     <!-- Step 7:  see test/wsdl/interop3/Import1TestCase.java -->
     <!-- Step 8:  see test/wsdl/interop3/Import1TestCase.java -->
     <!-- SOAP Builder's round III web services -->
@@ -361,6 +437,28 @@
                testcase="no">
         <mapping namespace="http://www.PerfectXML.com/NETWebSvcs/BookService" package="test.wsdl.literal"/>
     </wsdl2java>
+
+    <!-- jaxrpc sample -->
+    <wsdl2java url="${axis.home}/samples/jaxrpc/hello/HelloWorld.wsdl"
+               output="${axis.home}/build/work"
+               serverSide="yes"
+               testcase="no">
+    </wsdl2java>
+
+    <!-- jaxrpc sample -->
+    <wsdl2java url="${axis.home}/samples/jaxrpc/hello/HelloWorld.wsdl"
+               output="${axis.home}/build/work"
+               serverSide="yes"
+               testcase="no">
+    </wsdl2java>
+
+    <!-- Testcase for Bug 10612 - AXIS doesn't support xml includes -->
+    <wsdl2java url="${axis.home}/test/wsdl/import3/MultiImpIncl/wsdl/MultiImp.wsdl"
+               output="${axis.home}/build/work"
+               serverSide="yes"
+               testcase="no">
+    </wsdl2java>
+
     <!-- The following WSDL are BAD.  We're keeping them here so we can -->
     <!-- check periodically to see whether the owner has fixed them.    -->
     <!-- Real-time Quote Server from http://www.xmltoday.com/examples/soap/realtime.psp -->
@@ -420,6 +518,46 @@
                noimports="no">
     </wsdl2java>
     -->
+
+    <copy todir="${build.dir}/work/test/wsdl/interop3" overwrite="yes">
+      <fileset dir="${test.dir}/wsdl/interop3">
+        <include name="**/*Impl.java"/>
+      </fileset>
+      <fileset dir="${test.dir}/wsdl/interop3">
+        <include name="**/*TestCase.java"/>
+        <exclude name="**/EmptySATestCase.java"/>
+        <exclude name="**/SalesRankNPrice_ServiceTestCase.java"/>
+      </fileset>
+      <fileset dir="${test.dir}/wsdl/interop3">
+        <include name="**/Main.java"/>
+      </fileset>
+      <fileset dir="${test.dir}/wsdl/interop3">
+        <include name="sequence/SequenceInfo.java"/>
+      </fileset>
+    </copy>
+
+    <copy todir="${build.dir}/work/samples" overwrite="yes">
+      <fileset dir="${samples.dir}">
+        <include name="**/*BindingImpl.java"/>
+      </fileset>
+      <fileset dir="${samples.dir}">
+        <include name="**/*TestCase.java"/>
+      </fileset>
+    </copy>
+
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}"
+           debug="${debug}">
+      <classpath refid="classpath" />
+      <include name="com/**/*.java" />
+      <include name="mssoapinterop/**/*.java" />
+      <include name="net/**/*.java" />
+      <include name="org/**/*.java" />
+      <include name="interop/**/*.java" />
+      <include name="samples/**/*.java" />
+      <include name="test/**/*.java" />
+      <exclude name="test/wsdl/interop3/**/*.java" />
+    </javac>
+
   </target>
 
 <target name="run" >

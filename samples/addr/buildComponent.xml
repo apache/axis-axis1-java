@@ -21,7 +21,8 @@
 <target name="copy"/>
 
 <target name="compile">
-  <javac srcdir="." destdir="${build.dest}" debug="${debug}">
+
+  <javac srcdir="${axis.home}" destdir="${build.dest}" debug="${debug}">
     <classpath>
         <path refid="classpath"/>
     </classpath>
@@ -31,8 +32,8 @@
     <exclude name="**/old/**/*.java" />
   </javac>
 
-    <wsdl2java url="samples/addr/AddressBook.wsdl"
-               output="build/work"
+    <wsdl2java url="${axis.home}/samples/addr/AddressBook.wsdl"
+               output="${build.dir}/work"
                deployscope="session"
                serverSide="yes"
                skeletonDeploy="yes"
@@ -42,6 +43,13 @@
                testcase="no">
         <mapping namespace="urn:AddressFetcher2" package="samples.addr"/>
     </wsdl2java>
+
+    <copy todir="${build.dir}/work/samples/addr" overwrite="yes">
+      <fileset dir="${axis.home}/samples/addr">
+        <include name="Main.java"/>
+	<include name="DOMUtils.java"/>
+      </fileset>
+    </copy>
 
     <!-- Compile the echo sample generated java files -->
     <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}">

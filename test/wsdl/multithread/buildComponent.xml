@@ -29,8 +29,23 @@
 </target>
 
 <target name="compile" depends="copy">
-  <echo message="Compilig test.wsdl.multithread"/>
+  <echo message="Compiling test.wsdl.multithread"/>
+
     <!-- Multithread Test -->
+    <copy todir="${build.dir}/work/test/wsdl/multithread" overwrite="yes">
+      <fileset dir="${axis.home}/test/wsdl/multithread">
+        <include name="**/*Impl.java"/>
+      </fileset>
+      <fileset dir="${axis.home}/test/wsdl/multithread">
+        <include name="**/*TestCase.java"/>
+        <exclude name="**/EmptySATestCase.java"/>
+        <exclude name="**/SalesRankNPrice_ServiceTestCase.java"/>
+      </fileset>
+      <fileset dir="${axis.home}/test/wsdl/multithread">
+        <include name="**/Main.java"/>
+      </fileset>
+    </copy>
+
   <javac srcdir="${axis.home}" destdir="${build.dest}" debug="${debug}">
     <classpath>
         <path refid="classpath"/>
