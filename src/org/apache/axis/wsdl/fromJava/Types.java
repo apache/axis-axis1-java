@@ -562,6 +562,10 @@ public class Types {
         if (javaType == void.class) {
             return;
         }
+        
+        if (javaType.isArray()) {
+            type = writeTypeForPart(javaType.getComponentType(), null);
+        }
 
         if (type == null) {
             type = writeTypeForPart(javaType, type);
@@ -589,6 +593,10 @@ public class Types {
             String prefixedName = prefix + ":" + type.getLocalPart();
 
             childElem.setAttribute("type", prefixedName);
+            
+            if (javaType.isArray()) {
+                childElem.setAttribute("maxOccurs", "unbounded");
+            }
         }
 
         sequence.appendChild(childElem);
@@ -618,7 +626,7 @@ public class Types {
             qName = getTypeQName(type);
         }
 
-        QName typeQName = writeTypeNamespace(type, qName);
+        writeTypeNamespace(type, qName);
         String elementType = writeType(type, qName);
 
         if (elementType != null) {

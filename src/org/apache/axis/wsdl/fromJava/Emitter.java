@@ -66,6 +66,7 @@ import org.apache.axis.Version;
 import org.apache.axis.description.FaultDesc;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ParameterDesc;
+import org.apache.axis.description.JavaServiceDesc;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.encoding.DefaultTypeMappingImpl;
 import org.apache.axis.encoding.TypeMapping;
@@ -228,7 +229,7 @@ public class Emitter {
     private ServiceDesc serviceDesc;
 
     /** Field serviceDesc2 */
-    private ServiceDesc serviceDesc2;
+    private JavaServiceDesc serviceDesc2;
 
     /** Field soapAction */
     private String soapAction = "DEFAULT";
@@ -582,9 +583,10 @@ public class Emitter {
 
         // Set up a ServiceDesc to use to introspect the Service
         if (serviceDesc == null) {
-            serviceDesc = new ServiceDesc();
+            JavaServiceDesc javaServiceDesc = new JavaServiceDesc();
+            serviceDesc = javaServiceDesc;
 
-            serviceDesc.setImplClass(cls);
+            javaServiceDesc.setImplClass(cls);
 
             // Set the typeMapping to the one provided.
             // If not available use the default TM
@@ -594,9 +596,9 @@ public class Emitter {
                 serviceDesc.setTypeMapping(getDefaultTypeMapping());
             }
 
-            serviceDesc.setStopClasses(stopClasses);
+            javaServiceDesc.setStopClasses(stopClasses);
             serviceDesc.setAllowedMethods(allowedMethods);
-            serviceDesc.setDisallowedMethods(disallowedMethods);
+            javaServiceDesc.setDisallowedMethods(disallowedMethods);
             serviceDesc.setStyle(style);
 
             // If the class passed in is a portType,
@@ -605,7 +607,7 @@ public class Emitter {
             // a serviceDesc2 is built to get the method parameter names.
             if ((implCls != null) && (implCls != cls)
                     && (serviceDesc2 == null)) {
-                serviceDesc2 = new ServiceDesc();
+                serviceDesc2 = new JavaServiceDesc();
 
                 serviceDesc2.setImplClass(implCls);
 

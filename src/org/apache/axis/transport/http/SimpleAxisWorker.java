@@ -289,6 +289,7 @@ public class SimpleAxisWorker implements Runnable {
                         fileName.toString());
                 msgContext.setProperty(Constants.MC_JWS_CLASSDIR,
                         "jwsClasses");
+                msgContext.setProperty(Constants.MC_HOME_DIR, ".");
 
                 // !!! Fix string concatenation
                 String url = "http://" + getLocalHost() + ":" +
