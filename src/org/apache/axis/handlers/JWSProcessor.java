@@ -83,6 +83,7 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
+import java.util.HashMap;
 
 /**
  * This handler will use the MC_REALPATH property of the MsgContext to
@@ -100,6 +101,7 @@ public class JWSProcessor extends BasicHandler
     protected static Log log =
         LogFactory.getLog(JWSProcessor.class.getName());
 
+    protected static HashMap soapServices = new HashMap();
 
     public void invoke(MessageContext msgContext) throws AxisFault
     {
@@ -153,7 +155,7 @@ public class JWSProcessor extends BasicHandler
 
             if (log.isDebugEnabled())
                 log.debug("jwsFile: " + jwsFile );
-            
+
             String   jFile   = outdir + File.separator + file.substring(0, file.length()-3) +
                     "java" ;
             String   cFile   = outdir + File.separator + file.substring(0, file.length()-3) +
@@ -249,6 +251,8 @@ public class JWSProcessor extends BasicHandler
                         null, new Element[] { root } );
                 }
                 JWSClassLoader.removeClassLoader( clsName );
+                // And clean out the cached service.
+                soapServices.remove(clsName);
             }
 
             JWSClassLoader cl = JWSClassLoader.getClassLoader(clsName);
@@ -263,24 +267,37 @@ public class JWSProcessor extends BasicHandler
             /* Create a new RPCProvider - this will be the "service"   */
             /* that we invoke.                                                */
             /******************************************************************/
-            SOAPService rpc = new SOAPService(new RPCProvider());
+            // Cache the rpc service created to handle the class.  The cache
+            // is based on class name, so only one .jws/.jwr class can be active
+            // in the system at a time.
+            SOAPService rpc = (SOAPService)soapServices.get(clsName);
+            if (rpc == null) {
+                rpc = new SOAPService(new RPCProvider());
+                rpc.setOption(RPCProvider.OPTION_CLASSNAME, clsName );
+
+                // Support specification of "allowedMethods" as a parameter.
+                String allowed = (String)getOption(RPCProvider.OPTION_ALLOWEDMETHODS);
+                if (allowed == null) allowed = "*";
+                rpc.setOption(RPCProvider.OPTION_ALLOWEDMETHODS, allowed);
+                // Take the setting for the scope option from the handler
+                // parameter named "scope"
+                String scope = (String)getOption(RPCProvider.OPTION_SCOPE);
+                if (scope == null) scope = RPCProvider.OPTION_SCOPE_DEFAULT;
+                rpc.setOption(RPCProvider.OPTION_SCOPE, scope);
+
+                // Set up service description
+                ServiceDesc sd = rpc.getServiceDescription();
+                sd.setImplClass(cl.loadClass(clsName));
+                sd.setTypeMapping(msgContext.getTypeMapping());
+
+                soapServices.put(clsName, rpc);
+
+            }
             msgContext.setService( rpc );
-
-            rpc.setOption(RPCProvider.OPTION_CLASSNAME, clsName );
-
-            /** For now, allow all methods - we probably want to have a way to
-            * configure this in the future.
-            */
-            rpc.setOption(RPCProvider.OPTION_ALLOWEDMETHODS, "*");
-
-            // Set up service description
-            ServiceDesc sd = rpc.getServiceDescription();
-            sd.setImplClass(cl.loadClass(clsName));
-            sd.setTypeMapping(msgContext.getTypeMapping());
 
             // Set engine, which hooks up type mappings.
             rpc.setEngine(msgContext.getAxisEngine());
-            
+
             rpc.init();   // ??
             if (doWsdl)
                 rpc.generateWSDL(msgContext);

@@ -63,6 +63,7 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.util.Hashtable;
 
 /** A <code>JWSHandler</code> sets the target service and JWS filename
  * in the context depending on the JWS configuration and the target URL.
@@ -76,9 +77,15 @@ public class JWSHandler extends BasicHandler
     protected static Log log =
         LogFactory.getLog(JWSHandler.class.getName());
 
+    public final String OPTION_JWS_FILE_EXTENSION = "extension";
+    public final String DEFAULT_JWS_FILE_EXTENSION = ".jws";
+
     // Keep the processor Handler around so we can make it the service
-    // Handler for this request if appropriate.
-    static SOAPService processor = new SOAPService(new JWSProcessor());
+    // Handler for this request if appropriate.  No need for these to be
+    // static, since it may be desirable to have JWS handlers with different
+    // behaviours for different file extensions.
+    JWSProcessor jws = new JWSProcessor();
+    SOAPService processor = new SOAPService(jws);
 
     public void invoke(MessageContext msgContext) throws AxisFault
     {
@@ -88,8 +95,10 @@ public class JWSHandler extends BasicHandler
 
         // FORCE the targetService to be JWS if the URL is right.
         String realpath = msgContext.getStrProp(Constants.MC_REALPATH);
+        String extension = (String)getOption(OPTION_JWS_FILE_EXTENSION);
+        if (extension == null) extension = DEFAULT_JWS_FILE_EXTENSION;
 
-        if ((realpath!=null) && (realpath.endsWith(".jws"))) {
+        if ((realpath!=null) && (realpath.endsWith(extension))) {
             msgContext.setService(processor);
         }
 
@@ -100,5 +109,13 @@ public class JWSHandler extends BasicHandler
 
     public void generateWSDL(MessageContext msgContext) throws AxisFault {
         invoke(msgContext);
+    }
+
+    /**
+     * Propagate options set on this handler into the processor.
+     */
+    public void setOptions(Hashtable opts) {
+        super.setOptions(opts);
+        jws.setOptions(opts);
     }
 }
