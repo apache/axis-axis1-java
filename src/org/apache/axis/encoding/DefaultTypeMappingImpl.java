@@ -618,6 +618,7 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                    new ArraySerializerFactory(),
                    new ArrayDeserializerFactory()
         );
+        
         // All array objects automatically get associated with the SOAP_ARRAY.
         // There is no way to do this with a hash table,
         // so it is done directly in getTypeQName.
@@ -741,7 +742,7 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
         throws JAXRPCException {
 
         // Don't allow anyone but init to modify us.
-        if (doneInit) {
+        if (doneInit && !doAutoTypes) {
             throw new JAXRPCException(Messages.getMessage("fixedTypeMapping"));
         }
         else {

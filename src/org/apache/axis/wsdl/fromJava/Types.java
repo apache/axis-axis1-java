@@ -997,6 +997,33 @@ public class Types {
 
         return complexType;
     }
+    
+    /**
+     * Create an array which is a wrapper type for "item" elements
+     * of a component type.  This is basically the unencoded parallel to
+     * a SOAP-encoded array.
+     * 
+     * @param componentType
+     * @param itemName
+     * @return
+     */ 
+    public Element createLiteralArrayElement(String componentType,
+                                             QName itemName) {
+        Element complexType = docHolder.createElement("complexType");
+        Element sequence = docHolder.createElement("sequence");
+        
+        complexType.appendChild(sequence);
+        
+        Element elem = docHolder.createElement("element");
+        elem.setAttribute("name", "item");
+        elem.setAttribute("type", componentType);
+        elem.setAttribute("minOccurs", "0");
+        elem.setAttribute("maxOccurs", "unbounded");
+        
+        sequence.appendChild(elem);
+        
+        return complexType;
+    }
 
     /**
      * Returns true if indicated type matches the JAX-RPC enumeration class.

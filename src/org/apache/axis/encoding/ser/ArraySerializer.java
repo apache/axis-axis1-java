@@ -109,7 +109,10 @@ public class ArraySerializer implements Serializer
         MessageContext msgContext = context.getMessageContext();
         SchemaVersion schema = SchemaVersion.SCHEMA_2001;
         SOAPConstants soap = SOAPConstants.SOAP11_CONSTANTS;
-        if(msgContext != null) {
+        boolean encoded = true;
+        
+        if (msgContext != null) {
+            encoded = msgContext.isEncoded();
             schema = msgContext.getSchemaVersion();
             soap = msgContext.getSOAPConstants();
         }
@@ -169,81 +172,80 @@ public class ArraySerializer implements Serializer
                     Messages.getMessage("noType00", componentType.getName()));
         }
 
-        String prefix = context.getPrefixForURI(componentQName.getNamespaceURI());
-        String compType = prefix + ":" + componentQName.getLocalPart();
         int len = (list == null) ? Array.getLength(value) : list.size();
-
-        String arrayType;
-        if (soap == SOAPConstants.SOAP12_CONSTANTS)
-            arrayType = dims + len;
-        else
-            arrayType = dims + "[" + len + "]";
-
-        // Discover whether array can be serialized directly as a two-dimensional
-        // array (i.e. arrayType=int[2,3]) versus an array of arrays.
-        // Benefits:
-        //   - Less text passed on the wire.
-        //   - Easier to read wire format
-        //   - Tests the deserialization of multi-dimensional arrays.
-        // Drawbacks:
-        //   - Is not safe!  It is possible that the arrays are multiply
-        //     referenced.  Transforming into a 2-dim array will cause the
-        //     multi-referenced information to be lost.  Plus there is no
-        //     way to determine whether the arrays are multi-referenced.
-        //   - .NET currently (Dec 2002) does not support 2D SOAP-encoded arrays
-        //
-        // OLD Comment as to why this was ENABLED:
-        // It is necessary for
-        // interoperability (echo2DStringArray).  It is 'safe' for now
-        // because Axis treats arrays as non multi-ref (see the note
-        // in SerializationContextImpl.isPrimitive(...) )
-        // More complicated processing is necessary for 3-dim arrays, etc.
-        //
-        // Axis 1.1 - December 2002
-        // Turned this OFF because Microsoft .NET can not deserialize
-        // multi-dimensional SOAP-encoded arrays, and this interopability
-        // is pretty high visibility. Make it a global configuration parameter:
-        //  <parameter name="enable2DArrayEncoding" value="true"/>    (tomj)
-        //
-
-        // Check the message context to see if we should turn 2D processing ON
-        // Default is OFF
-        boolean enable2Dim = false;
-        
-        // Vidyanand : added this check
-        if( msgContext != null ) {
-           enable2Dim = 
-            JavaUtils.isTrueExplicitly(msgContext.getAxisEngine().getOption(AxisEngine.PROP_TWOD_ARRAY_ENCODING));
-        }
-
+        String arrayType = "";
         int dim2Len = -1;
-        if (enable2Dim && !dims.equals("")) {
-            if (cls.isArray() && len > 0) {
-                boolean okay = true;
-                // Make sure all of the component arrays are the same size
-                for (int i=0; i < len && okay; i++) {
+        if (encoded) {
+            if (soap == SOAPConstants.SOAP12_CONSTANTS)
+                arrayType = dims + len;
+            else
+                arrayType = dims + "[" + len + "]";
 
-                    Object elementValue = Array.get(value, i);
-                    if (elementValue == null)
-                        okay = false;
-                    else if (dim2Len < 0) {
-                        dim2Len = Array.getLength(elementValue);
-                        if (dim2Len <= 0) {
+            // Discover whether array can be serialized directly as a two-dimensional
+            // array (i.e. arrayType=int[2,3]) versus an array of arrays.
+            // Benefits:
+            //   - Less text passed on the wire.
+            //   - Easier to read wire format
+            //   - Tests the deserialization of multi-dimensional arrays.
+            // Drawbacks:
+            //   - Is not safe!  It is possible that the arrays are multiply
+            //     referenced.  Transforming into a 2-dim array will cause the
+            //     multi-referenced information to be lost.  Plus there is no
+            //     way to determine whether the arrays are multi-referenced.
+            //   - .NET currently (Dec 2002) does not support 2D SOAP-encoded arrays
+            //
+            // OLD Comment as to why this was ENABLED:
+            // It is necessary for
+            // interoperability (echo2DStringArray).  It is 'safe' for now
+            // because Axis treats arrays as non multi-ref (see the note
+            // in SerializationContextImpl.isPrimitive(...) )
+            // More complicated processing is necessary for 3-dim arrays, etc.
+            //
+            // Axis 1.1 - December 2002
+            // Turned this OFF because Microsoft .NET can not deserialize
+            // multi-dimensional SOAP-encoded arrays, and this interopability
+            // is pretty high visibility. Make it a global configuration parameter:
+            //  <parameter name="enable2DArrayEncoding" value="true"/>    (tomj)
+            //
+
+            // Check the message context to see if we should turn 2D processing ON
+            // Default is OFF
+            boolean enable2Dim = false;
+        
+            // Vidyanand : added this check
+            if( msgContext != null ) {
+               enable2Dim = 
+                JavaUtils.isTrueExplicitly(msgContext.getAxisEngine().getOption(AxisEngine.PROP_TWOD_ARRAY_ENCODING));
+            }
+
+            if (enable2Dim && !dims.equals("")) {
+                if (cls.isArray() && len > 0) {
+                    boolean okay = true;
+                    // Make sure all of the component arrays are the same size
+                    for (int i=0; i < len && okay; i++) {
+
+                        Object elementValue = Array.get(value, i);
+                        if (elementValue == null)
+                            okay = false;
+                        else if (dim2Len < 0) {
+                            dim2Len = Array.getLength(elementValue);
+                            if (dim2Len <= 0) {
+                                okay = false;
+                            }
+                        } else if (dim2Len != Array.getLength(elementValue)) {
                             okay = false;
                         }
-                    } else if (dim2Len != Array.getLength(elementValue)) {
-                        okay = false;
                     }
-                }
-                // Update the arrayType to use mult-dim array encoding
-                if (okay) {
-                    dims = dims.substring(0, dims.length()-2);
-                    if (soap == SOAPConstants.SOAP12_CONSTANTS)
-                        arrayType = dims + len + " " + dim2Len;
-                    else
-                        arrayType = dims + "[" + len + "," + dim2Len + "]";
-                } else {
-                    dim2Len = -1;
+                    // Update the arrayType to use mult-dim array encoding
+                    if (okay) {
+                        dims = dims.substring(0, dims.length()-2);
+                        if (soap == SOAPConstants.SOAP12_CONSTANTS)
+                            arrayType = dims + len + " " + dim2Len;
+                        else
+                            arrayType = dims + "[" + len + "," + dim2Len + "]";
+                    } else {
+                        dim2Len = -1;
+                    }
                 }
             }
         }
@@ -252,10 +254,10 @@ public class ArraySerializer implements Serializer
         // actual schema array or for a maxOccurs usage.
         // For the maxOccurs case, the currentXMLType of the context is
         // the same as the componentQName.
-        boolean maxOccursUsage = (msgContext != null && !msgContext.isEncoded()) &&
-                                          componentQName.equals(context.getCurrentXMLType());
+        boolean maxOccursUsage = !encoded &&
+                componentQName.equals(context.getCurrentXMLType());
 
-        if (!maxOccursUsage) {
+        if (encoded) {
             AttributesImpl attrs;
             if (attributes == null) {
                 attrs = new AttributesImpl();
@@ -265,6 +267,7 @@ public class ArraySerializer implements Serializer
                 attrs = new AttributesImpl(attributes);
             }
 
+            String compType = context.attributeQName2String(componentQName);
 
             if (attrs.getIndex(soap.getEncodingURI(), soap.getAttrItemType()) == -1) {
                 String encprefix =
@@ -272,11 +275,11 @@ public class ArraySerializer implements Serializer
 
                 if (soap != SOAPConstants.SOAP12_CONSTANTS) {
                     compType = compType + arrayType;
-
-                attrs.addAttribute(soap.getEncodingURI(),
+                    
+                    attrs.addAttribute(soap.getEncodingURI(),
                                        soap.getAttrItemType(),
-                                   encprefix + ":arrayType",
-                                   "CDATA",
+                                       encprefix + ":arrayType",
+                                       "CDATA",
                                        compType);
 
                 } else {
@@ -416,6 +419,21 @@ public class ArraySerializer implements Serializer
      * @see org.apache.axis.wsdl.fromJava.Types
      */
     public Element writeSchema(Class javaType, Types types) throws Exception {
+        boolean encoded = true;
+        MessageContext mc = MessageContext.getCurrentContext();
+        if (mc != null) {
+            encoded = mc.isEncoded();
+        }
+        
+        if (!encoded) {
+            if (javaType.isArray()) {
+                Class cType = javaType.getComponentType();
+                String typeName = types.writeType(cType);
+                
+                return types.createLiteralArrayElement(typeName, null);
+            }
+        }
+        
         // If an array the component type should be processed first
         String componentTypeName = null;
         Class componentType = null;

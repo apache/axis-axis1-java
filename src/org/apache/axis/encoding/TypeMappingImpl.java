@@ -142,7 +142,7 @@ public class TypeMappingImpl implements TypeMapping
     protected TypeMapping delegate;   // Pointer to delegate or null
     private ArrayList namespaces;   // Supported namespaces
 
-    private boolean doAutoTypes = false;
+    protected boolean doAutoTypes = false;
 
     /**
      * Construct TypeMapping
@@ -536,18 +536,31 @@ public class TypeMappingImpl implements TypeMapping
         return null;
     }
 
-    public QName getTypeQName(Class javaType) {
-        //log.debug("getTypeQName javaType =" + javaType);
+    /**
+     * Get the QName for this Java class, but only return a specific
+     * mapping if there is one.  In other words, don't do special array
+     * processing, etc.
+     * 
+     * @param javaType
+     * @return
+     */
+    public QName getTypeQNameExact(Class javaType) {
         if (javaType == null)
             return null;
        
         QName xmlType = null;
         Pair pair = (Pair) class2Pair.get(javaType);
         if (pair == null && delegate != null) {
-            xmlType = delegate.getTypeQName(javaType);
+            xmlType = delegate.getTypeQNameExact(javaType);
         } else if (pair != null) {
             xmlType = pair.xmlType;
         }
+
+        return xmlType;
+    }
+
+    public QName getTypeQName(Class javaType) {
+        QName xmlType = getTypeQNameExact(javaType);
 
         /* If auto-typing is on and the array has the default SOAP_ARRAY QName,
          * then generate a namespace for this array intelligently.   Also
@@ -574,7 +587,7 @@ public class TypeMappingImpl implements TypeMapping
         if (xmlType == null && isArray(javaType)) {
 
             // get the registered array if any
-            pair = (Pair) class2Pair.get(Object[].class);
+            Pair pair = (Pair) class2Pair.get(Object[].class);
             // TODO: it always returns the last registered one,
             //  so that's why the soap 1.2 typemappings have to 
             //  move to an other registry to differentiate them
