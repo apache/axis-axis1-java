@@ -411,7 +411,7 @@ public class MessageElement implements SOAPElement, Serializable
     /**
      * Remove a child element.
      */
-    private void removeChild(MessageElement child) {
+    public void removeChild(MessageElement child) {
         // Remove all occurrences in case it has been added multiple times.
         int i;
         while ((i = children.indexOf(child)) != -1) {

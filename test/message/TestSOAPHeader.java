@@ -96,21 +96,11 @@ public class TestSOAPHeader extends TestCase {
      *
      * @param argv
      */
-    public static void main(String[] argv) {
-        boolean swing = false;
-        if (argv.length > 0) {
-            if ("-swing".equals(argv[0])) {
-                swing = true;
-            }
-        }
-        if (swing) {
-            junit.swingui.TestRunner.main(new String[]{
-                "test.message.TestSOAPHeader"});
-        } else {
-            System.out.println("use '-swing' for the Swing version.");
-            junit.textui.TestRunner.main(new String[]{
-                "test.message.TestSOAPHeader"});
-        }
+    public static void main(String[] argv) throws Exception {
+        TestSOAPHeader tester = new TestSOAPHeader("TestSOAPHeader");
+        tester.setUp();
+        tester.testExamineHeaderElements1();
+        tester.testSoapHeadersBUG();
     }
 
     /** Field ACTOR */
@@ -287,7 +277,6 @@ public class TestSOAPHeader extends TestCase {
      *
      * @throws Exception
      */
-    /*
     public void testSoapHeadersBUG() throws Exception {
         MimeHeaders mimeheaders = new MimeHeaders();
 
@@ -313,13 +302,11 @@ public class TestSOAPHeader extends TestCase {
         while (it.hasNext()) {
             SOAPElement el = (SOAPElement) it.next();
             count++;
-        //    SOAPElement el = (SOAPElement) obj;
-        //    Name name = el.getElementName();
-        //
-        //    System.out.println("HEADER ELEMENT NAME:" + name.getPrefix() + ":"
-        //            + name.getLocalName() + " " + name.getURI());
+            Name name = el.getElementName();
+            System.out.println("Element:" + el);
+            System.out.println("HEADER ELEMENT NAME:" + name.getPrefix() + ":"
+                    + name.getLocalName() + " " + name.getURI());
         }
         assertTrue(count==1);
     }
-    */
 }
