@@ -356,7 +356,24 @@ public abstract class Stub implements javax.xml.rpc.Stub {
         }
         return null;
     }
-    
+
+    /**
+     * Get a response header element
+     */
+    public SOAPHeaderElement getResponseHeader(String namespace, String partName) {
+        try
+        {
+            Call lastCall = ((org.apache.axis.client.Service)service).getCall();
+            if (lastCall == null)
+                return null;
+            return lastCall.getResponseMessage().getSOAPEnvelope().getHeaderByName(namespace, partName);
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
+    }
+
     /**
      * Get the array of header elements
      */ 
@@ -364,6 +381,27 @@ public abstract class Stub implements javax.xml.rpc.Stub {
         SOAPHeaderElement[] array = new SOAPHeaderElement[headers.size()];
         headers.copyInto(array);
         return array;
+    }
+
+    /**
+     * Get the array of response header elements
+     */
+    public SOAPHeaderElement[] getResponseHeaders() {
+        SOAPHeaderElement[] array = new SOAPHeaderElement[0];
+        try
+        {
+            Call lastCall = ((org.apache.axis.client.Service)service).getCall();
+            if (lastCall == null)
+                return array;
+            Vector h = lastCall.getResponseMessage().getSOAPEnvelope().getHeaders();
+            array = new SOAPHeaderElement[h.size()];
+            h.copyInto(array);
+            return array;
+        }
+        catch (Exception e)
+        {
+            return array;
+        }
     }
 
     /**
