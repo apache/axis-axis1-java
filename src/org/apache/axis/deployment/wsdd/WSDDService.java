@@ -75,7 +75,6 @@ import org.apache.axis.encoding.ser.BaseSerializerFactory;
 import org.apache.axis.enum.Style;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.providers.java.JavaProvider;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Element;
@@ -88,8 +87,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import java.util.List;
-import java.util.Iterator;
 
 /**
  * A service represented in WSDD.
@@ -240,14 +237,14 @@ public class WSDDService
 
     /**
      * Initialize a TypeMappingRegistry with the
-     * WSDDTypeMappings.  
+     * WSDDTypeMappings.
      * Note: Extensions of WSDDService may override
      * initTMR to popluate the tmr with different
      * type mappings.
      */
     protected void initTMR() throws WSDDException
     {
-        // If not created, construct a tmr 
+        // If not created, construct a tmr
         // and populate it with the type mappings.
         if (tmr == null) {
             tmr = new TypeMappingRegistryImpl();
@@ -538,8 +535,8 @@ public class WSDDService
             }
             tm.register( mapping.getLanguageSpecificType(), mapping.getQName(), ser, deser);
         } catch (ClassNotFoundException e) {
-            log.info(Messages.getMessage("unabletoDeployTypemapping00", mapping.getQName().toString()), e);
-            throw new WSDDException(e);
+            log.error(Messages.getMessage("unabletoDeployTypemapping00", mapping.getQName().toString()), e);
+            throw new WSDDNonFatalException(e);
         } catch (Exception e) {
             throw new WSDDException(e);
         }
@@ -564,7 +561,7 @@ public class WSDDService
             attrs.addAttribute("", ATTR_STYLE, ATTR_STYLE,
                                "CDATA", style.getName());
         }
-        
+
         if (streaming) {
             attrs.addAttribute("", ATTR_STREAMING, ATTR_STREAMING,
                                "CDATA", "on");
@@ -612,7 +609,7 @@ public class WSDDService
 			_wsddHIchain.writeToContext(context);
 
 		}
-		
+
         context.endElement();
 
 
@@ -660,7 +657,7 @@ public class WSDDService
         // If type mapping registry not initialized yet, return null.
         if (tmr == null) {
             return null;
-        } 
+        }
         return (TypeMapping) tmr.getTypeMapping(encodingStyle);
     }
 }
