@@ -349,7 +349,7 @@ public interface Call {
      * Removes a named property.
      *
      * @param name Name of the property
-     * @throws if an invalid or
+     * @throws JAXRPCException if an invalid or
      *     unsupported property name is passed.
      */
     public void removeProperty(String name);
@@ -376,7 +376,7 @@ public interface Call {
      * @throws java.rmi.RemoteException if there is any error in the remote
      *                                    method invocation or if the Call
      *                                    object is not configured properly.
-     * @throws SOAPFaultException Indicates a SOAP fault
+     * @throws javax.xml.rpc.soap.SOAPFaultException Indicates a SOAP fault
      * @throws JAXRPCException <ul>
      *
      *     <li>If there is an error in the configuration of the
@@ -402,7 +402,7 @@ public interface Call {
      *
      * @throws java.rmi.RemoteException if there is any error in the
      *     remote method invocation.
-     * @throws SOAPFaultException Indicates a SOAP fault
+     * @throws javax.xml.rpc.soap.SOAPFaultException Indicates a SOAP fault
      * @throws JAXRPCException <ul>
      *     <li>If there is an error in the configuration of the
      *         <code>Cal</code>l object
@@ -424,10 +424,8 @@ public interface Call {
      * <code>JAXRPCException</code> during the processing of the one-way
      * remote call.
      *
-     * @param inputParams  Object[]--Parameters for this invocation. This
+     * @param params  Object[]--Parameters for this invocation. This
      *     includes only the input params.
-     *
-     * @param params
      *
      * @throws JAXRPCException if there is an error in the
      *     configuration of the <code>Call</code> object (example: a
