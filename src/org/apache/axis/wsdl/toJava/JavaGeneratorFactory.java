@@ -507,91 +507,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
 
                 // Use the type or the referenced type's QName to generate the java name.
                 if (entry instanceof TypeEntry) {
-                    TypeEntry tEntry = (TypeEntry) entry;
-                    String dims = tEntry.getDimensions();
-                    TypeEntry refType = tEntry.getRefType();
-
-                    while (refType != null) {
-                        tEntry = refType;
-                        dims += tEntry.getDimensions();
-                        refType = tEntry.getRefType();
-                    }
-
-                    // Need to javify the ref'd TypeEntry if it was not
-                    // already processed
-                    if (tEntry.getName() == null) {
-
-                        // Get the QName of the ref'd TypeEntry, which
-                        // is will be used to javify the name
-                        QName typeQName = tEntry.getQName();
-
-                        if ((typeQName.getLocalPart().indexOf(
-                                SymbolTable.ANON_TOKEN) < 0)) {
-
-                            // Normal Case: The ref'd type is not anonymous
-                            // Simply construct the java name from
-                            // the qName
-                            tEntry.setName(emitter.getJavaName(typeQName));
-                        } else {
-
-                            // This is an anonymous type name.
-                            // Axis uses '>' as a nesting token to generate
-                            // unique qnames for anonymous types.
-                            // Only consider the localName after the last '>'
-                            // when generating the java name
-                            // String localName = typeQName.getLocalPart();
-                            // localName =
-                            // localName.substring(
-                            // localName.lastIndexOf(
-                            // SymbolTable.ANON_TOKEN)+1);
-                            // typeQName = new QName(typeQName.getNamespaceURI(),
-                            // localName);
-                            String localName = typeQName.getLocalPart();
-
-                            // Check to see if this is an anonymous type,
-                            // if it is, replace Axis' ANON_TOKEN with
-                            // an underscore to make sure we don't run
-                            // into name collisions with similarly named
-                            // non-anonymous types
-                            StringBuffer sb = new StringBuffer(localName);
-                            int aidx = -1;
-
-                            while ((aidx = sb.toString().indexOf(
-                                    SymbolTable.ANON_TOKEN)) > -1) {
-                                sb.replace(
-                                        aidx,
-                                        aidx + SymbolTable.ANON_TOKEN.length(),
-                                        "_");
-                            }
-
-                            localName = sb.toString();
-                            typeQName = new QName(typeQName.getNamespaceURI(),
-                                    localName);
-
-                            // If there is already an existing type,
-                            // there will be a collision.
-                            // If there is an existing anon type,
-                            // there will be a  collision.
-                            // In both cases, mangle the name.
-                            symbolTable.getType(typeQName);
-
-                            if (anonQNames.get(typeQName) != null) {
-                                localName += "Type" + uniqueNum++;
-                                typeQName =
-                                        new QName(typeQName.getNamespaceURI(),
-                                                localName);
-                            }
-
-                            anonQNames.put(typeQName, typeQName);
-
-                            // Now set the name with the constructed qname
-                            tEntry.setName(emitter.getJavaName(typeQName));
-                        }
-                    }
-
-                    // Set the entry with the same name as the ref'd entry
-                    // but add the appropriate amount of dimensions
-                    entry.setName(tEntry.getName() + dims);
+                    uniqueNum = javifyTypeEntryName(symbolTable, (TypeEntry) entry, anonQNames, uniqueNum);      
                 }
 
                 // If it is not a type, then use this entry's QName to
@@ -603,6 +519,131 @@ public class JavaGeneratorFactory implements GeneratorFactory {
         }
     }    // javifyNames
 
+    /** Refactored to call recursively for JAX-RPC 1.1 spec 4.2.5. */
+    protected int javifyTypeEntryName(SymbolTable symbolTable, TypeEntry entry, HashMap anonQNames, int uniqueNum) {        
+        TypeEntry tEntry = (TypeEntry) entry;
+        String dims = tEntry.getDimensions();
+        TypeEntry refType = tEntry.getRefType();
+        while (refType != null) {           
+            tEntry = refType;
+            dims += tEntry.getDimensions();
+            refType = tEntry.getRefType();
+        }
+        
+        TypeEntry te = tEntry;      
+        while (te != null) {    
+            TypeEntry base = SchemaUtils.getBaseType(te, symbolTable);
+            if (base == null) 
+                break;
+            
+            uniqueNum = javifyTypeEntryName(symbolTable, base, anonQNames, uniqueNum);
+            
+            if (Utils.getEnumerationBaseAndValues(te.getNode(), symbolTable) == null
+                    &&SchemaUtils.getContainedAttributeTypes(te.getNode(), symbolTable) == null) {
+                if (base.isSimpleType()) { 
+                    // Case 1:
+                    // <simpleType name="mySimpleStringType">
+                    //   <restriction base="xs:string">
+                    //   </restriction>
+                    // </simpleType>
+                    te.setSimpleType(true);
+                    te.setName(base.getName());
+                    te.setRefType(base);
+                }
+                
+                if (base.isBaseType()) {
+                    // Case 2:
+                    // <simpleType name="FooString">
+                    //   <restriction base="foo:mySimpleStringType">
+                    //   </restriction>
+                    // </simpleType>
+                    te.setBaseType(true);
+                    te.setName(base.getName());
+                    te.setRefType(base);
+                }
+            }
+            
+            if (!te.isSimpleType()) 
+                break;
+
+            te = base;          
+        }
+
+        // Need to javify the ref'd TypeEntry if it was not
+        // already processed
+        if (tEntry.getName() == null) {
+            // Get the QName of the ref'd TypeEntry, which
+            // is will be used to javify the name
+            QName typeQName = tEntry.getQName();
+            
+            if ((typeQName.getLocalPart().
+                    indexOf(SymbolTable.ANON_TOKEN) < 0)) {
+                // Normal Case: The ref'd type is not anonymous
+                // Simply construct the java name from
+                // the qName
+                tEntry.setName(emitter.getJavaName(typeQName));
+            } else {
+                // This is an anonymous type name.
+                // Axis uses '>' as a nesting token to generate
+                // unique qnames for anonymous types.
+                // Only consider the localName after the last '>'
+                // when generating the java name
+                // String localName = typeQName.getLocalPart();
+                // localName =
+                // localName.substring(
+                // localName.lastIndexOf(
+                // SymbolTable.ANON_TOKEN)+1);
+                // typeQName = new QName(typeQName.getNamespaceURI(),
+                // localName);
+                String localName = typeQName.getLocalPart();
+
+                // Check to see if this is an anonymous type,
+                // if it is, replace Axis' ANON_TOKEN with
+                // an underscore to make sure we don't run
+                // into name collisions with similarly named
+                // non-anonymous types
+                StringBuffer sb = new StringBuffer(localName);
+                int aidx = -1;
+
+                while ((aidx = sb.toString().indexOf(
+                        SymbolTable.ANON_TOKEN)) > -1) {
+                    sb.replace(
+                            aidx,
+                            aidx + SymbolTable.ANON_TOKEN.length(),
+                            "_");
+                }
+
+                localName = sb.toString();
+                typeQName = new QName(typeQName.getNamespaceURI(),
+                        localName);
+
+                // If there is already an existing type,
+                // there will be a collision.
+                // If there is an existing anon type,
+                // there will be a  collision.
+                // In both cases, mangle the name.
+                symbolTable.getType(typeQName);
+
+                if (anonQNames.get(typeQName) != null) {
+                    localName += "Type" + uniqueNum++;
+                    typeQName =
+                    new QName(typeQName.getNamespaceURI(),
+                            localName);
+                }
+
+                anonQNames.put(typeQName, typeQName);
+
+                // Now set the name with the constructed qname
+                tEntry.setName(emitter.getJavaName(typeQName));
+            }
+        }
+        // Set the entry with the same name as the ref'd entry
+        // but add the appropriate amount of dimensions
+        entry.setName(tEntry.getName() + dims);
+        
+        return uniqueNum;
+    }
+    
     /**
      * setFaultContext:
      * Processes the symbol table and sets the COMPLEX_TYPE_FAULT
