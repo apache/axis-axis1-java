@@ -54,27 +54,29 @@
  */
 package javax.xml.rpc.holders;
 
+import java.util.Date;
+
 /**
- * Class FloatClassHolder
+ * Class DateHolder
  *
  * @version 0.1
  */
-public final class FloatClassHolder implements java.io.Serializable {
+public final class DateHolder implements java.io.Serializable {
 
     /** Field _value           */
-    public Float value;
+    public Date value;
 
     /**
-     * Constructor FloatClassHolder
+     * Constructor DateHolder
      */
-    public FloatClassHolder() {}
+    public DateHolder() {}
 
     /**
-     * Constructor FloatClassHolder
+     * Constructor DateHolder
      *
      * @param value
      */
-    public FloatClassHolder(Float value) {
+    public DateHolder(Date value) {
         this.value = value;
     }
 }

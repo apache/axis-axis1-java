@@ -55,26 +55,26 @@
 package javax.xml.rpc.holders;
 
 /**
- * Class BooleanClassHolder
+ * Class ByteClassHolder
  *
- * @version 0.1
+ * @version 0.7
  */
-public final class BooleanClassHolder implements java.io.Serializable {
+public final class ByteWrapperHolder implements Holder {
 
     /** Field _value           */
-    public Boolean value;
+    public Byte value;
 
     /**
-     * Constructor BooleanClassHolder
+     * Constructor ByteWrapperHolder
      */
-    public BooleanClassHolder() {}
+    public ByteWrapperHolder() {}
 
     /**
-     * Constructor BooleanClassHolder
+     * Constructor ByteWrapperHolder
      *
      * @param value
      */
-    public BooleanClassHolder(Boolean value) {
+    public ByteWrapperHolder(Byte value) {
         this.value = value;
     }
 }

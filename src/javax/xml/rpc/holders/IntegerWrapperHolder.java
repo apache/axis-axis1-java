@@ -55,26 +55,26 @@
 package javax.xml.rpc.holders;
 
 /**
- * Class LongClassHolder
+ * Class IntegerWrapperHolder
  *
- * @version 0.1
+ * @version 0.7
  */
-public final class LongClassHolder implements java.io.Serializable {
+public final class IntegerWrapperHolder implements Holder {
 
     /** Field _value           */
-    public Long value;
+    public Integer value;
 
     /**
-     * Constructor LongClassHolder
+     * Constructor IntegerWrapperHolder
      */
-    public LongClassHolder() {}
+    public IntegerWrapperHolder() {}
 
     /**
-     * Constructor LongClassHolder
+     * Constructor IntegerWrapperHolder
      *
      * @param value
      */
-    public LongClassHolder(Long value) {
+    public IntegerWrapperHolder(Integer value) {
         this.value = value;
     }
 }
