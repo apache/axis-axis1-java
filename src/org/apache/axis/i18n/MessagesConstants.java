@@ -69,6 +69,10 @@ public class MessagesConstants {
     public static final String rootPackageName = "org.apache.axis.utils".intern();
 
     public static final ResourceBundle rootBundle =
-        ResourceBundle.getBundle("org.apache.axis.utils.axisNLS");
-//        org.apache.axis.utils.Messages.getResourceBundle();//
+        ProjectResourceBundle.getBundle(projectName,
+                                        rootPackageName,
+                                        resourceName,
+                                        locale,
+                                        MessagesConstants.class.getClassLoader(),
+                                        null);
 }
