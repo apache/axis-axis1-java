@@ -55,20 +55,20 @@
 
 package org.apache.axis.configuration;
 
-import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
+import org.apache.axis.AxisProperties;
 import org.apache.axis.EngineConfigurationFactory;
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.discovery.DiscoverConstNames;
-import org.apache.axis.discovery.DiscoverOldNamesInManagedProperties;
 import org.apache.axis.utils.Messages;
 import org.apache.commons.discovery.ResourceClassIterator;
 import org.apache.commons.discovery.ResourceNameIterator;
 import org.apache.commons.discovery.resource.ClassLoaders;
 import org.apache.commons.discovery.resource.classes.DiscoverClasses;
+import org.apache.commons.discovery.resource.names.DiscoverConstNames;
 import org.apache.commons.discovery.resource.names.DiscoverNamesInManagedProperties;
 import org.apache.commons.discovery.resource.names.DiscoverServiceNames;
 import org.apache.commons.discovery.resource.names.NameDiscoverers;
@@ -152,7 +152,7 @@ public class EngineConfigurationFactoryFinder
                             ClassLoaders.getAppLoaders(mySpi, myFactory, true);
                 
                         NameDiscoverers nameDiscoverers = new NameDiscoverers();
-                        nameDiscoverers.addResourceNameDiscover(new DiscoverOldNamesInManagedProperties());
+                        nameDiscoverers.addResourceNameDiscover(AxisProperties.getAlternatePropertyNameDiscoverer());
                         nameDiscoverers.addResourceNameDiscover(new DiscoverNamesInManagedProperties());
                         nameDiscoverers.addResourceNameDiscover(new DiscoverServiceNames(loaders));
                         nameDiscoverers.addResourceNameDiscover(new DiscoverConstNames(
@@ -161,12 +161,12 @@ public class EngineConfigurationFactoryFinder
                                 "org.apache.axis.configuration.EngineConfigurationFactoryDefault",
                                 })
                             );
-                            
+
                         ResourceNameIterator it = nameDiscoverers.findResourceNames(mySpi.getName());
-                
+
                         ResourceClassIterator services =
                             new DiscoverClasses(loaders).findResourceClasses(it);
-                
+
                         EngineConfigurationFactory factory = null;
 
                         while (factory == null  &&  services.hasNext()) {

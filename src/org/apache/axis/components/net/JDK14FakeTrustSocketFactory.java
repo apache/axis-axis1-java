@@ -54,31 +54,31 @@
  */
 package org.apache.axis.components.net;
 
-import com.sun.net.ssl.SSLContext;
-import com.sun.net.ssl.TrustManager;
-import com.sun.net.ssl.X509TrustManager;
+import java.util.Hashtable;
+
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 
-import java.util.Hashtable;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 /**
  * Hook for Axis sender, allowing unsigned server certs
  */
-public class FakeTrustSocketFactory extends JSSESocketFactory {
+public class JDK14FakeTrustSocketFactory extends JDK14JSSESocketFactory {
 
     /** Field log           */
     protected static Log log =
-            LogFactory.getLog(FakeTrustSocketFactory.class.getName());
+            LogFactory.getLog(JDK14FakeTrustSocketFactory.class.getName());
 
     /**
      * Constructor FakeTrustSocketFactory
      *
      * @param attributes
      */
-    public FakeTrustSocketFactory(Hashtable attributes) {
+    public JDK14FakeTrustSocketFactory(Hashtable attributes) {
         super(attributes);
     }
 
@@ -89,7 +89,7 @@ public class FakeTrustSocketFactory extends JSSESocketFactory {
      *
      * @throws Exception
      */
-    protected com.sun.net.ssl.SSLContext getContext() throws Exception {
+    protected SSLContext getContext() throws Exception {
 
         try {
             SSLContext sc = SSLContext.getInstance("SSL");
@@ -123,13 +123,14 @@ public class FakeTrustSocketFactory extends JSSESocketFactory {
          *
          * @return
          */
-        public boolean isClientTrusted(java.security.cert
-                .X509Certificate[] chain) {
+        public void checkClientTrusted(java.security.cert.X509Certificate[] chain,
+                                       String arg)
+            throws java.security.cert.CertificateException
+        {
 
             if (log.isDebugEnabled()) {
                 log.debug(Messages.getMessage("ftsf03"));
             }
-            return true;
         }
 
         /**
@@ -139,13 +140,14 @@ public class FakeTrustSocketFactory extends JSSESocketFactory {
          *
          * @return
          */
-        public boolean isServerTrusted(java.security.cert
-                .X509Certificate[] chain) {
+        public void checkServerTrusted(java.security.cert.X509Certificate[] chain,
+                                       String arg)
+            throws java.security.cert.CertificateException
+        {
 
             if (log.isDebugEnabled()) {
                 log.debug(Messages.getMessage("ftsf04"));
             }
-            return true;
         }
 
         /**

@@ -54,70 +54,14 @@
  */
 package org.apache.axis.components.net;
 
-import org.apache.axis.AxisProperties;
-import org.apache.axis.utils.ClassUtils;
-import org.apache.axis.utils.JavaUtils;
-
-import org.apache.axis.components.logger.LogFactory;
-import org.apache.commons.logging.Log;
-
-import org.apache.commons.discovery.tools.SPInterface;
-
-import java.lang.reflect.Constructor;
-import java.util.Hashtable;
 
 /**
- * Class SocketFactoryFactory
- *
- * @author
- * @version %I%, %G%
+ * Secure Socket factory.
+ * This has a separate interface to allow discovery (by interface)
+ * and runtime distinction to be made between Socket & SecureSockets.
+ * 
+ * @author Richard A. Sitze
+ * @author Davanum Srinivas (dims@yahoo.com)
  */
-public class SocketFactoryFactory {
-
-    /** Field log           */
-    protected static Log log =
-            LogFactory.getLog(SocketFactoryFactory.class.getName());
-
-    /** socket factory */
-    private static Hashtable factories = new Hashtable();
-
-    private static final Class classes[] = new Class[] { Hashtable.class };
-    
-    /**
-     * Returns a copy of the environment's default socket factory.
-     * 
-     * @param protocol Today this only supports "http" & "https".
-     * @param attributes
-     *
-     * @return
-     */
-    public static synchronized SocketFactory getFactory(String protocol,
-                                                        Hashtable attributes) {
-        SocketFactory theFactory = (SocketFactory)factories.get(protocol);
-
-        if (theFactory == null) {
-            Object objects[] = new Object[] { attributes };
-    
-            if (protocol.equalsIgnoreCase("http")) {
-                theFactory = (SocketFactory)AxisProperties.newInstance(
-                         new SPInterface(SocketFactory.class,
-                                         "axis.socketFactory",
-                                         classes,
-                                         objects),
-                         "org.apache.axis.components.net.DefaultSocketFactory");
-            } else if (protocol.equalsIgnoreCase("https")) {
-                theFactory = (SocketFactory)AxisProperties.newInstance(
-                         new SPInterface(SecureSocketFactory.class,
-                                         "axis.socketSecureFactory",
-                                         classes,
-                                         objects),
-                         "org.apache.axis.components.net.DefaultSecureSocketFactory");
-            }
-            
-            if (theFactory != null) {
-                factories.put(protocol, theFactory);
-            }
-        }
-        return theFactory;
-    }
+public interface SecureSocketFactory extends SocketFactory {
 }
