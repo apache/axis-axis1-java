@@ -182,7 +182,9 @@ public class SOAPFaultBuilder extends SOAPHandler implements Callback
     private void createFault() {
         AxisFault f = null;
         
-        SOAPConstants soapConstants = context.getMessageContext().getSOAPConstants();
+        SOAPConstants soapConstants = context.getMessageContext() == null ?
+                                        SOAPConstants.SOAP11_CONSTANTS :
+                                        context.getMessageContext().getSOAPConstants();
 
         if (faultClass != null) {
             // Custom fault handling
@@ -288,7 +290,9 @@ public class SOAPFaultBuilder extends SOAPHandler implements Callback
     {
         SOAPHandler retHandler = null;
 
-        SOAPConstants soapConstants = context.getMessageContext().getSOAPConstants();
+        SOAPConstants soapConstants = context.getMessageContext() == null ?
+                SOAPConstants.SOAP11_CONSTANTS :
+                context.getMessageContext().getSOAPConstants();
         
         QName qName = null;
         // If we found the type for this field, get the deserializer

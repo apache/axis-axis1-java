@@ -559,6 +559,10 @@ public class DeserializationContextImpl extends DefaultHandler implements Lexica
      */
     public TypeMapping getTypeMapping()
     {
+        if (msgContext == null) {
+            return (TypeMapping) new org.apache.axis.encoding.TypeMappingRegistryImpl().getTypeMapping(
+                    null);
+        }
         TypeMappingRegistry tmr = msgContext.getTypeMappingRegistry();
         return (TypeMapping) tmr.getTypeMapping(msgContext.getEncodingStyle());
         /*

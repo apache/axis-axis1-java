@@ -52,37 +52,80 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-
 package test.message;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.SOAPFault;
+import javax.xml.soap.SOAPMessage;
+import java.io.ByteArrayInputStream;
+
 /**
- * Test org.apache.axis.Message subsystem.
- *
- * @author Glyn Normington (glyn@apache.org)
+ * @author steve.johnson@riskmetrics.com (Steve Johnson)
+ * @author Davanum Srinivas (dims@yahoo.com)
+ * @version $Revision$
  */
-public class PackageTests extends TestCase
-{
-    public PackageTests(String name)
-    {
+public class TestSOAPFault extends TestCase {
+
+    /**
+     * Method suite
+     * 
+     * @return 
+     */
+    public static Test suite() {
+        return new TestSuite(TestSOAPFault.class);
+    }
+
+    /**
+     * Method main
+     * 
+     * @param argv 
+     */
+    public static void main(String[] argv) throws Exception {
+        TestSOAPFault tester = new TestSOAPFault("TestSOAPFault");
+        tester.testSoapFaultBUG();
+    }
+
+    /**
+     * Constructor TestSOAPFault
+     * 
+     * @param name 
+     */
+    public TestSOAPFault(String name) {
         super(name);
     }
 
-    public static Test suite() throws Exception
-    {
-        TestSuite suite = new TestSuite();
-        
-        suite.addTestSuite(TestMessageElement.class);
-        suite.addTestSuite(TestSOAPEnvelope.class);
-        suite.addTestSuite(TestSOAPHeader.class);
-        suite.addTestSuite(TestSOAPBody.class);
-        suite.addTestSuite(TestJavaSerialization.class);
-        suite.addTestSuite(TestMessageSerialization.class);
-        suite.addTestSuite(TestSOAPFault.class);
- 
-        return suite;
+    String xmlString =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+            "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" +
+            "<soapenv:Body>" +
+            "<soapenv:Fault>" +
+            "<faultcode>soapenv:13001</faultcode>" +
+            "<faultstring>java.lang.Exception: File already exists</faultstring>" +
+            "<faultactor>urn:RiskMetricsDirect:1.0:object-service-service:CreateObject</faultactor>" +
+            "<detail/>" +
+            "</soapenv:Fault>" +
+            "</soapenv:Body>" +
+            "</soapenv:Envelope>";
+
+    /**
+     * Method testSoapFaultBUG
+     * 
+     * @throws Exception 
+     */
+    public void testSoapFaultBUG() throws Exception {
+        ByteArrayInputStream bis = new ByteArrayInputStream(xmlString.getBytes());
+        MessageFactory msgFactory = MessageFactory.newInstance();
+        SOAPMessage msg = msgFactory.createMessage(null, bis);
+			
+        //now attempt to access the fault
+        if (msg.getSOAPPart().getEnvelope().getBody().hasFault()) {
+            SOAPFault fault =
+                    msg.getSOAPPart().getEnvelope().getBody().getFault();
+            System.out.println("Fault: " + fault.getFaultString());
+        }
     }
-}
+}    
