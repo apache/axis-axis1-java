@@ -97,6 +97,7 @@ public class Java2WsdlAntTask extends Task
             }
             if (service != null)
                 emitter.setServiceName(service);
+            log("Java2WSDL " + className, Project.MSG_INFO);
             emitter.setCls(className);
             if (implClass != null)
                 emitter.setImplCls(implClass);
