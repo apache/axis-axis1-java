@@ -58,6 +58,7 @@ package org.apache.axis.schema;
 import org.apache.axis.encoding.TypeMapping;
 
 import javax.xml.namespace.QName;
+import java.io.Serializable;
 
 /**
  * The SchemaVersion interface allows us to abstract out the differences
@@ -65,7 +66,7 @@ import javax.xml.namespace.QName;
  *
  * @author Glen Daniels (gdaniels@apache.org)
  */
-public interface SchemaVersion {
+public interface SchemaVersion extends Serializable {
     public static SchemaVersion SCHEMA_1999 = new SchemaVersion1999();
     public static SchemaVersion SCHEMA_2000 = new SchemaVersion2000();
     public static SchemaVersion SCHEMA_2001 = new SchemaVersion2001();
