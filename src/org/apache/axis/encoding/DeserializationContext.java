@@ -157,15 +157,16 @@ public class DeserializationContext extends DefaultHandler
         if (inputSource != null) {
             SAXParser parser = XMLUtils.getSAXParser();
             try {
-                try {
-                    parser.parse(inputSource, this);
-                } catch (IOException e) {
-                    throw new SAXException(e);
-                }
-                inputSource = null;
-            } finally {
+                parser.parse(inputSource, this);
+
+                // only release the parser for reuse if there wasn't an
+                // error.  While parsers should be reusable, don't trust
+                // parsers that died to clean up appropriately.
                 XMLUtils.releaseSAXParser(parser);
+            } catch (IOException e) {
+                throw new SAXException(e);
             }
+            inputSource = null;
         }
     }
     
