@@ -82,6 +82,8 @@ public class OperationDesc {
     public static final int MSG_METHOD_SOAPENVELOPE = 2;
     // public Element [] method(Element [])
     public static final int MSG_METHOD_ELEMENTARRAY = 3;
+    // public Document method(Document)
+    public static final int MSG_METHOD_DOCUMENT = 4;
 
     protected static Log log =
         LogFactory.getLog(OperationDesc.class.getName());
