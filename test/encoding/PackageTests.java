@@ -31,6 +31,7 @@ public class PackageTests extends TestCase
         suite.addTestSuite(TestArrayListConversions.class);
         suite.addTestSuite(TestXsiType.class);
         suite.addTestSuite(TestOutputter.class);
+        suite.addTestSuite(TestAttributes.class);
 
         return suite;
     }
