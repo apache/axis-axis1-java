@@ -143,6 +143,7 @@ public class CommonsHTTPSender extends BasicHandler {
             httpClient.setHttpConnectionFactoryTimeout(clientProperties.getConnectionPoolTimeout());
             
             HostConfiguration hostConfiguration = getHostConfiguration(httpClient, targetURL);
+            httpClient.setHostConfiguration(hostConfiguration);
             
             String webMethod = null;
             boolean posting = true;
