@@ -51,7 +51,7 @@ Copyright:
 
     <target name="copy" depends="setenv"/>
 
-    <target name="compile" depends="copy">
+    <target name="compile" depends="clean,copy">
         <echo message="Running WSDL2Java and Java2WSDL Emitters"/>
         <mkdir dir="${axis.home}/build/work/${componentName}"/>
 
