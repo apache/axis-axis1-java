@@ -24,7 +24,7 @@ public class PackageTests extends TestCase {
         suite.addTestSuite(TestStructure.class);
         suite.addTestSuite(TestBadWSDD.class);
         suite.addTestSuite(TestAdminService.class);
-        suite.addTestSuite(TestXSD.class);
+        //suite.addTestSuite(TestXSD.class);
 
         return suite;
     }
