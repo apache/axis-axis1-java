@@ -2,7 +2,9 @@ package test.encoding;
 
 import junit.framework.TestCase;
 import org.apache.axis.Handler;
-import org.apache.axis.client.ServiceClient;
+import org.apache.axis.client.Call;
+import org.apache.axis.client.Service;
+import org.apache.axis.encoding.XMLType;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.registries.HandlerRegistry;
 import org.apache.axis.server.AxisServer;
@@ -16,7 +18,7 @@ import java.util.Vector;
 public class TestArrayListConversions extends TestCase {
   private static final String SERVICE_NAME = "TestArrayConversions";
   
-  private ServiceClient client;
+  private Call call;
   
   public TestArrayListConversions()
   {
@@ -50,17 +52,24 @@ public class TestArrayListConversions extends TestCase {
 
   public void init()
   {
-    ServiceClient.initialize();
-    AxisServer server = new AxisServer();
-    HandlerRegistry hr = (HandlerRegistry) server.getHandlerRegistry();
-    Handler disp = hr.find("RPCDispatcher");    
-    SOAPService service = new SOAPService(disp);
-    service.addOption("className", "test.encoding.TestArrayListConversions");
-    service.addOption("methodName", "*");
-    
-    server.deployService(SERVICE_NAME, service);
-    
-    client = new ServiceClient(new LocalTransport(server));
+    try {
+      Service ss = new Service();
+      AxisServer server = new AxisServer();
+      HandlerRegistry hr = (HandlerRegistry) server.getHandlerRegistry();
+      Handler disp = hr.find("RPCDispatcher");    
+      SOAPService service = new SOAPService(disp);
+      service.addOption("className", "test.encoding.TestArrayListConversions");
+      service.addOption("methodName", "*");
+      
+      server.deployService(SERVICE_NAME, service);
+      
+      call = (Call) ss.createCall();
+      call.setTransport( new LocalTransport(server) );
+    }
+    catch( Exception exp ) {
+      exp.printStackTrace();
+    }
+
   }
   
   public void testVectorConversion() throws Exception
@@ -68,8 +77,9 @@ public class TestArrayListConversions extends TestCase {
     Vector v = new Vector();
     v.addElement("Hi there!");
     v.addElement("This'll be a SOAP Array and then a LinkedList!");
-    Object ret = client.invoke(SERVICE_NAME, "echoLinkedList",
-                               new Object [] { v });
+    call.setOperationName( "echoLinkedList" );
+    call.setProperty( Call.NAMESPACE, SERVICE_NAME );
+    Object ret = call.invoke( new Object[] { v } );
     if (!equals(v, ret)) assertEquals("Echo LinkedList mangled the result.  Result is underneath.\n" + ret, v, ret);
   }
   
@@ -80,8 +90,9 @@ public class TestArrayListConversions extends TestCase {
     l.add("Second linked list item");
     l.add("This will be a SOAP Array then a Vector!");
 
-    Object ret = client.invoke(SERVICE_NAME, "echoVector",
-                        new Object [] { l });
+    call.setOperationName( "echoVector" );
+    call.setProperty( Call.NAMESPACE, SERVICE_NAME );
+    Object ret = call.invoke( new Object[] { l } );
     if (!equals(l, ret)) assertEquals("Echo Vector mangled the result.  Result is underneath.\n" + ret, l, ret);
   }
       
@@ -91,8 +102,9 @@ public class TestArrayListConversions extends TestCase {
     v.addElement("Hi there!");
     v.addElement("This'll be a SOAP Array");
 
-    Object ret = client.invoke(SERVICE_NAME, "echoArray",
-                        new Object [] { v });
+    call.setOperationName( "echoArray" );
+    call.setProperty( Call.NAMESPACE, SERVICE_NAME );
+    Object ret = call.invoke( new Object[] { v } );
     if (!equals(v, ret)) assertEquals("Echo Array mangled the result.  Result is underneath\n" + ret, v, ret);
   }
 

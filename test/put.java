@@ -2,7 +2,8 @@ package test;
 
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
-import org.apache.axis.client.ServiceClient;
+import org.apache.axis.client.Call;
+import org.apache.axis.client.Service;
 import org.apache.axis.transport.http.HTTPTransport;
 import org.apache.axis.utils.Options;
 
@@ -22,18 +23,21 @@ class put {
         Options opts = new Options(args);
         String action = opts.isValueSet('a');
 
-        ServiceClient sc = new ServiceClient(opts.getURL());
-        if (action != null) sc.set(HTTPTransport.ACTION, action);
+        Service  service = new Service();
+        Call     call    = (Call) service.createCall();
+
+        call.setTargetEndpointAddress( new java.net.URL(opts.getURL()) );
+        if (action != null )
+            call.setProperty( HTTPTransport.ACTION, action );
   
         args = opts.getRemainingArgs();
         for (int i=0; i<args.length; i++) {
             FileInputStream stream = new FileInputStream(new File(args[i]));
-            sc.setRequestMessage(new Message(stream));
+            call.setRequestMessage(new Message(stream));
     
-            sc.invoke();
+            call.invoke();
         
-            MessageContext mc = sc.getMessageContext();
-            System.out.println(mc.getResponseMessage().getAsString());
+            System.out.println(call.getResponseMessage().getAsString());
         }
     }
 }

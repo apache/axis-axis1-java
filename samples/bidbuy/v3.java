@@ -4,7 +4,6 @@ import org.apache.axis.client.Service;
 import org.apache.axis.client.Call;
 import org.apache.axis.encoding.BeanSerializer;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
-import org.apache.axis.encoding.ServiceDescription;
 import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.transport.http.HTTPTransport;

@@ -59,7 +59,6 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.apache.axis.encoding.BeanSerializer;
-import org.apache.axis.encoding.ServiceDescription;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.transport.http.HTTPTransport;
