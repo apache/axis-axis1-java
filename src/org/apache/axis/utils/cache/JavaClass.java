@@ -57,13 +57,14 @@ package org.apache.axis.utils.cache;
 
 import java.lang.reflect.Method;
 import java.util.Hashtable;
+import java.io.Serializable;
 
 /**
  * A simple cache of previously loaded classes, and their methods.
  *
  * @author Sam Ruby <rubys@us.ibm.com>
  */
-public class JavaClass {
+public class JavaClass implements Serializable {
 
     private static Hashtable classes = new Hashtable();
     private Hashtable methods = new Hashtable();

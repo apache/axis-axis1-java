@@ -54,10 +54,10 @@
  */
 package org.apache.axis.wsdl;
 
-
+import java.io.Serializable;
 
 /**
  * Interface for WSDL2Java generated skeletons    
  */
-public interface Skeleton {
+public interface Skeleton extends Serializable {
 }
