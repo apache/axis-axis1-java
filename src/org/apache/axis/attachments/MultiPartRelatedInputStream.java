@@ -165,9 +165,9 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
                             rootPartContentId.length() - 1);
                 }
 
-                if (!rootPartContentId.startsWith("cid:")) {
-                    rootPartContentId = "cid:" + rootPartContentId;
-                }
+              //  if (!rootPartContentId.startsWith("cid:")) {
+              //      rootPartContentId = "cid:" + rootPartContentId;
+              //  }
             }
 
             // if start is null then the first attachment is the rootpart
@@ -242,11 +242,11 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
 
                     contentId = contentId.trim();
 
-                    if (!contentId.startsWith("cid:")) {
-                        contentId =
-                                "cid:"
-                                + contentId;        // make sure its identified as cid
-                    }
+                  //  if (!contentId.startsWith("cid:")) {
+                  //      contentId =
+                  //              "cid:"
+                  //              + contentId;        // make sure its identified as cid
+                  //  }
                 }
 
                 contentLocation =
@@ -375,7 +375,7 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
      * @throws org.apache.axis.AxisFault
      */
     public Part getAttachmentByReference(final String[] id)
-            throws org.apache.axis.AxisFault {    // if CID should still have CID: prefix.
+            throws org.apache.axis.AxisFault {    
 
         // First see if we have read it in yet.
         Part ret = null;
@@ -448,9 +448,9 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
 
     /**
      * This will read streams in till the one that is needed is found.
-     * @param The id is the stream being sought. TODO today its only handles CID. all ContentId streams
-     *         should be prefixed by "cid:"
-     *
+     * @param The id is the stream being sought. 
+     *         
+	 *
      * @param id
      *
      * @return
@@ -521,9 +521,9 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
                                     contentId.substring(0, contentId.length() - 1);
                         }
 
-                        if (!contentId.startsWith("cid:")) {
-                            contentId = "cid:" + contentId;
-                        }
+                     //   if (!contentId.startsWith("cid:")) {
+                     //       contentId = "cid:" + contentId;
+                     //   }
 
                         contentId = contentId.trim();
                     }

@@ -107,7 +107,7 @@ public class MultiPartDimeInputStream extends  MultiPartInputStream {
     }
 
     public Part getAttachmentByReference(final String[] id)
-      throws org.apache.axis.AxisFault {  // if CID should still have CID: prefix.  
+      throws org.apache.axis.AxisFault { 
         //First see if we have read it in yet.
         Part ret = null; 
 
@@ -131,8 +131,9 @@ public class MultiPartDimeInputStream extends  MultiPartInputStream {
 
     protected void addPart(String contentId, String locationId,
      AttachmentPart  ap) {
-        if (contentId != null && contentId.trim().length() != 0) parts.put(contentId, ap);
-        if (locationId != null && locationId.trim().length() != 0)parts.put(locationId, ap);
+     //For DIME streams Content-Location is ignored.
+        if (contentId != null && contentId.trim().length() != 0)
+          parts.put(contentId, ap);
         orderedParts.add(ap); 
     }
 
@@ -149,13 +150,13 @@ public class MultiPartDimeInputStream extends  MultiPartInputStream {
     public java.util.Collection getAttachments() 
       throws org.apache.axis.AxisFault {
         readAll();
-        return orderedParts; 
+        return new java.util.LinkedList(orderedParts); 
     }
 
     /** 
      * This will read streams in till the one that is needed is found.
-     * @param The id is the stream being sought. TODO today its only handles CID. all ContentId streams
-     *         should be prefixed by "cid:"
+     * @param The id is the stream being sought. 
+     *         
      */
 
     protected Part readTillFound(final String[] id) 

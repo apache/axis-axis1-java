@@ -359,9 +359,10 @@ public class AttachmentsImpl implements Attachments {
             return ret;
         }
 
+
         String referenceLC = reference.toLowerCase();
 
-        if (!referenceLC.startsWith("cid:") && (null != contentLocation)) {
+        if (!referenceLC.startsWith(Attachments.CIDprefix) && (null != contentLocation)) {
             String fqreference = contentLocation;
 
             if (!fqreference.endsWith("/")) {
@@ -376,7 +377,16 @@ public class AttachmentsImpl implements Attachments {
 
             // lets see if we can get it as Content-Location
             ret = (AttachmentPart) attachments.get(fqreference);
+        
+                
+                }
+
+                if( null == ret && reference.startsWith(Attachments.CIDprefix)){ //last ditch effort.
+                ret = (Part) attachments.get( reference.substring(4));
+            
         }
+
+                
 
         return ret;
     }

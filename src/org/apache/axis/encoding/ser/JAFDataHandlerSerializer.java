@@ -112,7 +112,6 @@ public class JAFDataHandlerSerializer implements Serializer {
         //Add the attachment content to the message.
         Attachments attachments= context.getCurrentMessage().getAttachmentsImpl();
         Part attachmentPart= attachments.createAttachmentPart(dh);
-        String href= attachmentPart.getContentId();
 
         AttributesImpl attrs = new AttributesImpl();
         if (attributes != null && 0 < attributes.getLength())
@@ -127,7 +126,7 @@ public class JAFDataHandlerSerializer implements Serializer {
         }
 
         attrs.addAttribute("", Constants.ATTR_HREF, "href",
-                               "CDATA", href);
+                               "CDATA", attachmentPart.getContentIdRef() );
 
         context.startElement(name, attrs);
         context.endElement(); //There is no data to so end the element.

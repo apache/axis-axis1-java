@@ -90,7 +90,7 @@ public class SOAPUtils {
         StringBuffer s = new StringBuffer();
 
         // Unique string is <hashcode>.<currentTime>.apache-soap.<hostname>
-        s.append("cid:").append( lcount).append(s.hashCode()).append('.').append(System.currentTimeMillis()).append(".AXIS@").append(thisHost);
+        s.append( lcount).append(s.hashCode()).append('.').append(System.currentTimeMillis()).append(".AXIS@").append(thisHost);
         return s.toString();
     }
 }

@@ -80,7 +80,7 @@ public abstract class MultiPartInputStream extends
     }
 
     public abstract Part getAttachmentByReference(final String[] id)
-     throws org.apache.axis.AxisFault;  // if CID should still have CID: prefix.  
+     throws org.apache.axis.AxisFault;  
 
     public abstract java.util.Collection getAttachments() 
       throws org.apache.axis.AxisFault;

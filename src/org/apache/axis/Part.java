@@ -108,7 +108,7 @@ public interface Part
     public void setContentLocation(String loc);
 
     /**
-     * Sets Content-Id of this part. "cid:" prefix will be added if one wan't
+     * Sets Content-Id of this part. 
      *  already defined.
      * @param newCid new Content-Id
      * @returns void
@@ -134,5 +134,14 @@ public interface Part
      * Content type.
      */
     public abstract String getContentType();
+
+    /**
+     * Content ID.
+     *
+     * @return the contentId reference value that should be used directly
+     * as an href in a SOAP element to reference this attachment.
+     * <B>Not part of JAX-RPC, JAX-M, SAAJ, etc. </B>
+     */
+    public String getContentIdRef();
 }
 
