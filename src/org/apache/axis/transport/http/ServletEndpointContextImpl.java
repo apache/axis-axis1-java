@@ -62,34 +62,29 @@ import java.security.Principal;
 
 public class ServletEndpointContextImpl implements ServletEndpointContext {
     
-    private AxisHttpSession httpSession;
-    private MessageContext msgContext ;
-    private ServletContext servletContext;
-    private Principal principal;
-    
     public HttpSession getHttpSession() {
-        return httpSession.getRep();
+        javax.servlet.http.HttpServletRequest srvreq =
+            (javax.servlet.http.HttpServletRequest) 
+                getMessageContext().getProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST);
+        return (srvreq == null)  ? null : srvreq.getSession();
     }
 
     public MessageContext getMessageContext() {
-        return msgContext;
+        return org.apache.axis.MessageContext.getCurrentContext();
     }
 
     public ServletContext getServletContext() {
-        return servletContext;
+        javax.servlet.http.HttpServlet srv =
+            (javax.servlet.http.HttpServlet)
+                getMessageContext().getProperty(HTTPConstants.MC_HTTP_SERVLET);
+        return (srv == null) ? null : srv.getServletContext();
     }
 
     public Principal getUserPrincipal() {
-        return principal;
-    }
+        javax.servlet.http.HttpServletRequest srvreq =
+            (javax.servlet.http.HttpServletRequest)
+                getMessageContext().getProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST);
 
-    /**
-     * Full constructor
-     */ 
-    public ServletEndpointContextImpl(AxisHttpSession httpSession, MessageContext msgContext, Principal principal, ServletContext servletContext) {
-        this.httpSession = httpSession;
-        this.msgContext = msgContext;
-        this.principal = principal;
-        this.servletContext = servletContext;
+        return (srvreq == null) ? null : srvreq.getUserPrincipal();
     }
 }

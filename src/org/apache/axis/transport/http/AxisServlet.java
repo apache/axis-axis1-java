@@ -871,11 +871,7 @@ public class AxisServlet extends AxisServletBase {
         msgContext.setProperty(Constants.MC_REMOTE_ADDR, req.getRemoteAddr());
 
         // Set up a javax.xml.rpc.server.ServletEndpointContext
-        ServletEndpointContextImpl sec =
-                new ServletEndpointContextImpl(new AxisHttpSession(req),
-                                               msgContext,
-                                               req.getUserPrincipal(),
-                                               getServletConfig().getServletContext());
+        ServletEndpointContextImpl sec = new ServletEndpointContextImpl();
 
         msgContext.setProperty(Constants.MC_SERVLET_ENDPOINT_CONTEXT, sec);
         /* Save the real path */
