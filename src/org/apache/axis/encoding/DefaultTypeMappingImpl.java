@@ -149,25 +149,25 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
         // Note that only deserializing is supported since we are flowing
         // SOAP 1.1 over the wire.
         myRegister(Constants.SOAP_STRING,     java.lang.String.class,
-                   null, null, true,  true);
+                   null, null, true);
         myRegister(Constants.SOAP_BOOLEAN,    java.lang.Boolean.class,
-                   null, null, false, true);
+                   null, null, false);
         myRegister(Constants.SOAP_DOUBLE,     java.lang.Double.class,
-                   null, null, false, true);
+                   null, null, false);
         myRegister(Constants.SOAP_FLOAT,      java.lang.Float.class,
-                   null, null, false, true);
+                   null, null, false);
         myRegister(Constants.SOAP_INT,        java.lang.Integer.class,
-                   null, null, false, true);
+                   null, null, false);
         myRegister(Constants.SOAP_INTEGER,    java.math.BigInteger.class,
-                   null, null, false, true);
+                   null, null, false);
         myRegister(Constants.SOAP_DECIMAL,    java.math.BigDecimal.class,
-                   null, null, false, true);
+                   null, null, false);
         myRegister(Constants.SOAP_LONG,       java.lang.Long.class,
-                   null, null, false, true);
+                   null, null, false);
         myRegister(Constants.SOAP_SHORT,      java.lang.Short.class,
-                   null, null, false, true);
+                   null, null, false);
         myRegister(Constants.SOAP_BYTE,       java.lang.Byte.class,
-                   null, null, false, true);
+                   null, null, false);
 
         // Hex binary data needs to use the hex binary serializer/deserializer
         myRegister(Constants.XSD_HEXBIN,     Hex.class,
