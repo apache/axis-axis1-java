@@ -124,7 +124,8 @@ public class Emitter {
     protected WriterFactory writerFactory = null;
     protected SymbolTable symbolTable = null;
     protected String currentWSDLURI = null;
-    protected File NStoPkg = new File("NStoPkg.properties");
+    protected String NStoPkgFilename = "NStoPkg.properties";
+    protected File NStoPkgFile = null;
 
     /**
      * Default constructor.
@@ -161,8 +162,9 @@ public class Emitter {
         if (packageName != null) {
              namespaces.setDefaultPackage(packageName);
         } else {
-            // First, read the namespace mapping file - NStoPkg.properties - if it
-            // exists, and load the namespaceMap HashMap with its data.
+            // First, read the namespace mapping file - configurable, by default
+            // NStoPkg.properties - if it exists, and load the namespaceMap HashMap
+            // with its data.
             getNStoPkgFromPropsFile(namespaces);
             
             if (delaySetMap != null) {
@@ -244,7 +246,14 @@ public class Emitter {
     {
         try {
             Properties mappings = new Properties();
-            mappings.load(new FileInputStream(NStoPkg));
+System.out.println("NStoPkgFile = " + NStoPkgFile);
+System.out.println("NStoPkgFilename = " + NStoPkgFilename);
+            if (NStoPkgFile != null) {
+                mappings.load(new FileInputStream(NStoPkgFile));
+            }
+            else {
+                mappings.load(new FileInputStream(NStoPkgFilename));
+            }
             Enumeration keys = mappings.propertyNames();
             while (keys.hasMoreElements()) {
                 try {
@@ -256,6 +265,7 @@ public class Emitter {
             }
         }
         catch (Throwable t) {
+t.printStackTrace();
         }
     } // getNStoPkgFromPropsFile
 
@@ -415,11 +425,20 @@ public class Emitter {
     } // getScope
 
     /**
-     * set the package to namespace mappings
+     * set the package to namespace mappings filename
      */
-    public void setNStoPkg(File NStoPkg) {
-        this.NStoPkg = NStoPkg;
-    } // getScope
+    public void setNStoPkg(String NStoPkgFilename) {
+        if (NStoPkgFilename != null) {
+            this.NStoPkgFilename = NStoPkgFilename;
+        }
+    } // setNStoPkg
+
+    /**
+     * set the package to namespace mappings file
+     */
+    public void setNStoPkg(File NStoPkgFile) {
+        this.NStoPkgFile = NStoPkgFile;
+    } // setNStoPkg
 
     ///////////////////////////////////////////////////
     //
