@@ -66,6 +66,9 @@ import org.apache.axis.utils.* ;
 import org.apache.axis.* ;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.transport.http.HTTPDispatchHandler;
+import org.apache.axis.encoding.Serializer;
+import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.encoding.DeserializerFactory;
 
 import org.w3c.dom.* ;
 
@@ -92,19 +95,23 @@ public class HTTPCall {
   private String  passwd ;
   private String  encodingStyleURI ;
   private ServiceDescription serviceDesc;
+  private MessageContext msgContext;
 
   // For testing
   public  boolean doLocal = false ;
   private static final boolean DEBUG_LOG = false;
 
   public HTTPCall() {
+    msgContext = new MessageContext();
   }
 
   public HTTPCall(String url) {
     this.url = url ;
+    msgContext = new MessageContext();
   }
 
   public HTTPCall(String url, String action) {
+    msgContext = new MessageContext();
     setURL( url );
     setAction( action );
   }
@@ -146,6 +153,17 @@ public class HTTPCall {
     this.serviceDesc = serviceDesc;
   }
 
+  public void addSerializer(Class _class, QName qName, Serializer serializer) {
+    TypeMappingRegistry typeMap = msgContext.getTypeMappingRegistry();
+    typeMap.addSerializer(_class, qName, serializer);
+  }
+    
+  public void addDeserializerFactory(QName qName, Class _class,
+                                     DeserializerFactory deserializerFactory) {
+    TypeMappingRegistry typeMap = msgContext.getTypeMappingRegistry();
+    typeMap.addDeserializerFactory(qName, _class, deserializerFactory);
+  }
+
   public static Object invoke(String url, String act, String m, Object[] args) 
       throws AxisFault
   {
@@ -169,7 +187,6 @@ public class HTTPCall {
     HTTPMessage          hMsg   = new HTTPMessage( url, action );
     Message              reqMsg = new Message( reqEnv, "SOAPEnvelope" );
     Message              resMsg = null ;
-    MessageContext       msgContext =  new MessageContext();
     Vector               resBodies = null ;
     Vector               resArgs = null ;
     Object               result = null ;
