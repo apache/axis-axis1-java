@@ -60,6 +60,7 @@ import java.net.*;
 import java.util.*;
 
 import org.apache.axis.* ;
+import org.apache.axis.configuration.*;
 import org.apache.axis.server.* ;
 import org.apache.axis.utils.* ;
 
@@ -97,11 +98,17 @@ public class SimpleAxisServer implements Runnable {
     // (thread safety not considered crucial here)
     public static int sessionIndex = 0;
 
+    // Configuration provider
+    private static FileProvider provider = new FileProvider("server-config.xml");
+    
+    // Another example of configuration (AdminService only) might look like this...
+    //private static XMLStringProvider provider = new XMLStringProvider("<engineConfig><handlers><handler name=\"MsgDispatcher\" class=\"org.apache.axis.providers.java.MsgProvider\"/></handlers><services><service name=\"AdminService\" pivot=\"MsgDispatcher\"><option name=\"className\" value=\"org.apache.axis.utils.Admin\"/><option name=\"methodName\" value=\"AdminService\"/><option name=\"enableRemoteAdmin\" value=\"false\"/></service></services></engineConfig>");
+    
     // Axis server (shared between instances)
     private static AxisServer myAxisServer = null;
     private static synchronized AxisServer getAxisServer() {
         if (myAxisServer == null) {
-            myAxisServer = new AxisServer();
+            myAxisServer = new AxisServer(provider);
         }
         return myAxisServer;
     }
@@ -141,7 +148,7 @@ public class SimpleAxisServer implements Runnable {
     public void run() {
 
         // create an Axis server
-        AxisServer engine = new AxisServer();
+        AxisServer engine = getAxisServer();
         engine.init();
         
         // create and initialize a message context

@@ -53,55 +53,51 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.transport.http ;
+ package org.apache.axis.configuration;
 
 import java.io.*;
-import javax.servlet.* ;
-import javax.servlet.http.* ;
-import org.apache.axis.* ;
-import org.apache.axis.configuration.*;
-import org.apache.axis.server.* ;
-import org.apache.axis.utils.* ;
+import java.util.*;
+import org.apache.axis.ConfigurationProvider;
+import org.apache.axis.AxisEngine;
+import org.apache.axis.utils.Admin;
+import org.apache.axis.utils.XMLUtils;
+import org.xml.sax.InputSource;
+import org.w3c.dom.Document;
 
 /**
- * Proof-of-concept "management" servlet for Axis.
- * 
- * Point a browser here to administer the Axis installation.
- * 
- * Right now just starts and stops the server.
- * 
+ * A simple ConfigurationProvider that uses the Admin class to
+ * configure the engine from a String containing XML.
+ *
+ * This provider does not write configuration to persistent storage.
+ *
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
-public class AdminServlet extends HttpServlet {
-    private AxisServer server;
-    
-    public void init() {
-        // Set the base path for the AxisServer to our WEB-INF directory
-        // (so the config files can't get snooped by a browser)
-        FileProvider provider =
-               new FileProvider(getServletContext().getRealPath("/WEB-INF"),
-                                "server-config.xml");
-        
-        server = new AxisServer(provider);
-        getServletContext().setAttribute("AxisEngine", server);
+public class XMLStringProvider implements ConfigurationProvider
+{
+    String xmlConfiguration;
+
+    /**
+     * Constructor
+     *
+     * @param xmlConfiguration a String containing an engine configuration
+     *        in XML.
+     */
+    public XMLStringProvider(String xmlConfiguration)
+    {
+        this.xmlConfiguration = xmlConfiguration;
     }
 
-    public void doGet(HttpServletRequest req, HttpServletResponse res)
-        throws ServletException, IOException {
-        res.setContentType("text/html");
-        String str = "";
-        
-        String cmd = req.getParameter("cmd");
-        if (cmd != null) {
-            if (cmd.equals("start"))
-                server.start();
-            else
-                server.stop();
-        }
+    public void configureEngine(AxisEngine engine) throws Exception
+    {
+        InputSource is = new InputSource(new StringReader(xmlConfiguration));
 
-        str += "Server is " + (server.isRunning() ? "running" : "stopped");
-        str += "<p><a href=\"AdminServlet?cmd=start\">start server</a>";
-        str += "<p><a href=\"AdminServlet?cmd=stop\">stop server</a>";
-        res.getWriter().println( str );
+        Document doc = XMLUtils.newDocument(is);
+
+        Admin.processEngineConfig(doc, engine);
+    }
+
+    public void writeEngineConfig(AxisEngine engine) throws Exception
+    {
+        // NOOP
     }
 }

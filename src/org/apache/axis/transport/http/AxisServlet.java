@@ -70,6 +70,7 @@ import org.apache.axis.message.*;
 public class AxisServlet extends HttpServlet {
     // These have default values.
     private String transportName = "http";
+    private AxisEngine engine = null;
 
     private static final String AXIS_ENGINE = "AxisEngine" ;
 
@@ -80,7 +81,9 @@ public class AxisServlet extends HttpServlet {
         if (param == null)
             param = context.getInitParameter("transport.name");
         if (param != null)
-            transportName = param;      
+            transportName = param;
+        
+        engine = (AxisEngine)context.getAttribute(AXIS_ENGINE);
     }
 
     public void doGet(HttpServletRequest req, HttpServletResponse res)
@@ -96,7 +99,13 @@ public class AxisServlet extends HttpServlet {
         ServletContext context = config.getServletContext();
         HttpSession    session = req.getSession();
 
-        AxisEngine  engine = AxisServer.getSingleton();
+        if (engine == null)
+            engine = (AxisEngine)context.getAttribute(AXIS_ENGINE);
+        
+        if (engine == null) {
+            // !!! should return a SOAP fault...
+            throw new ServletException("Couldn't find AxisEngine!");
+        }
         
         /* Place the Request message in the MessagContext object - notice */
         /* that we just leave it as a 'ServletRequest' object and let the  */

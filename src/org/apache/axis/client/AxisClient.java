@@ -57,6 +57,7 @@ package org.apache.axis.client ;
 
 import java.util.* ;
 import org.apache.axis.* ;
+import org.apache.axis.configuration.*;
 import org.apache.axis.utils.Debug ;
 import org.apache.axis.handlers.* ;
 import org.apache.axis.registries.* ;
@@ -74,14 +75,9 @@ import org.apache.axis.transport.local.LocalSender;
  */
 public class AxisClient extends AxisEngine
 {
-    public AxisClient()
+    public AxisClient(ConfigurationProvider provider)
     {
-        super(null, Constants.CLIENT_CONFIG_FILE);
-    }
-    
-    public AxisClient(String basePath)
-    {
-        super(basePath, Constants.CLIENT_CONFIG_FILE);
+        super(provider);
     }
     
     /**
