@@ -58,6 +58,15 @@ package org.apache.axis.utils ;
 import java.io.* ;
 import java.util.Hashtable ;
 
+/**
+ * This allows us to specify that certain classes, the ones we register
+ * using the registerClass method, should be loaded using this class
+ * loader - all others use the system default one.
+ * This was added so that the *.jws processor can reload classes
+ * that have already been loaded once - when the java file changes.
+ *
+ * @author Doug Davis (dug@us.ibm.com)
+ */
 public class AxisClassLoader extends ClassLoader {
   static Hashtable list = null ;
 
@@ -68,8 +77,8 @@ public class AxisClassLoader extends ClassLoader {
   public synchronized void registerClass( String name, String classFile )
       throws FileNotFoundException, IOException
   {
-    if ( list == null ) list = new Hashtable();
-
+    /* Load the class file the *.class file */
+    /****************************************/
     FileInputStream       fis  = new FileInputStream( classFile );
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     byte buf[] = new byte[1024];
@@ -78,12 +87,20 @@ public class AxisClassLoader extends ClassLoader {
     fis.close();
     baos.close();
 
+    /* Create a new Class object from it */
+    /*************************************/
     byte[] data = baos.toByteArray();
     Class  cls  = defineClass( name, data, 0, data.length );
+    if ( list == null ) list = new Hashtable();
+
+    /* And finally register it */
+    /***************************/
     list.put( name, cls );
   }
 
   public synchronized void deregisterClass( String name ) {
+    /* Deregister the passed in className */
+    /**************************************/
     if ( list != null )
       list.remove( name);
   }
@@ -91,6 +108,9 @@ public class AxisClassLoader extends ClassLoader {
   public Class loadClass(String name) throws ClassNotFoundException {
     Object obj ;
 
+    /* Check the 'list' for the className - if there just return the */
+    /* class - if not there use the default class loader.            */
+    /*****************************************************************/
     if ( list != null ) {
       obj = list.get( name );
       if ( obj != null )
