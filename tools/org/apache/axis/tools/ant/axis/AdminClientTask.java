@@ -19,8 +19,9 @@ package org.apache.axis.tools.ant.axis;
 import org.apache.axis.AxisFault;
 import org.apache.axis.client.AdminClient;
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.Task;
+import org.apache.tools.ant.taskdefs.MatchingTask;
 
 import javax.xml.rpc.ServiceException;
 import java.io.File;
@@ -30,45 +31,33 @@ import java.util.LinkedList;
 /**
  * Task to administer a local or remote Axis server. Remember, for remote admin,
  * the server has to be accept remote management calls.
+ *
  * @ant.task category="axis" name="axis-admin"
  */
-public class AdminClientTask extends Task {
+public class AdminClientTask extends MatchingTask {
 
     /**
-     *  flag to control action on execution trouble
+     * flag to control action on execution trouble
      */
     private boolean failOnError = true;
-
     private String hostname;
-
     private int port = 0;
-
     private String servletPath;
-
+    private File srcDir = null;
     private File xmlFile;
-
     private String transportChain;
-
     private String username;
-
     private String password;
-
     private String fileProtocol;
-
     private String action = "";
-
     private String url;
-
     private boolean debug;
-
-
     private String newPassword;
-
     private LinkedList argslist;
-
 
     /**
      * set a debug flag
+     *
      * @param debug
      */
     public void setDebug(boolean debug) {
@@ -77,6 +66,7 @@ public class AdminClientTask extends Task {
 
     /**
      * set a new password; only valid if action=passwd
+     *
      * @param newPassword
      */
     public void setNewPassword(String newPassword) {
@@ -85,15 +75,16 @@ public class AdminClientTask extends Task {
 
     /**
      * full url to the admin endpoint
+     *
      * @param url
      */
     public void setUrl(String url) {
         this.url = url;
     }
 
-
     /**
      * specifies that a simple file protocol be used
+     *
      * @param fileProtocol
      */
     public void setFileProtocol(String fileProtocol) {
@@ -102,6 +93,7 @@ public class AdminClientTask extends Task {
 
     /**
      * name the host to admin
+     *
      * @param hostname
      */
     public void setHostname(String hostname) {
@@ -110,6 +102,7 @@ public class AdminClientTask extends Task {
 
     /**
      * the admin password
+     *
      * @param password
      */
     public void setPassword(String password) {
@@ -118,6 +111,7 @@ public class AdminClientTask extends Task {
 
     /**
      * the port to connect to
+     *
      * @param port
      */
     public void setPort(int port) {
@@ -126,6 +120,7 @@ public class AdminClientTask extends Task {
 
     /**
      * the path to the AxisAdmin servlet
+     *
      * @param servletPath
      */
     public void setServletPath(String servletPath) {
@@ -133,16 +128,24 @@ public class AdminClientTask extends Task {
     }
 
     /**
+     * Set the source dir to find the source text files.
+     */
+    public void setSrcdir(File srcDir) {
+        this.srcDir = srcDir;
+    }
+
+    /**
      * the name of the XML file containing deployment information
+     *
      * @param xmlFile
      */
     public void setXmlFile(File xmlFile) {
         this.xmlFile = xmlFile;
     }
 
-
     /**
-     *  set the transport chain to use
+     * set the transport chain to use
+     *
      * @param transportChain
      */
     public void setTransportChain(String transportChain) {
@@ -151,6 +154,7 @@ public class AdminClientTask extends Task {
 
     /**
      * username to log in as
+     *
      * @param username
      */
     public void setUsername(String username) {
@@ -166,14 +170,33 @@ public class AdminClientTask extends Task {
     }
 
     /**
+     * validation code
+     *
+     * @throws org.apache.tools.ant.BuildException
+     *          if validation failed
+     */
+    protected void validate()
+            throws BuildException {
+        if (srcDir != null) {
+            if (!srcDir.exists()) {
+                throw new BuildException("srcdir does not exist!");
+            }
+            if (!srcDir.isDirectory()) {
+                throw new BuildException("srcdir is not a directory!");
+            }
+        }
+    }
+
+    /**
      * trace out parameters
+     *
      * @param logLevel to log at
      * @see org.apache.tools.ant.Project#log
      */
     public void traceParams(int logLevel) {
         log("Running axis-admin with parameters:", logLevel);
         log("  action:" + action, logLevel);
-        log("  url:"+ url, logLevel);
+        log("  url:" + url, logLevel);
         log("  hostname:" + hostname, logLevel);
         log("  port:" + port, logLevel);
         log("  servletPath:" + servletPath, logLevel);
@@ -188,35 +211,36 @@ public class AdminClientTask extends Task {
      * <p>Processes a set of administration commands.</p>
      * <p>The following commands are available:</p>
      * <ul>
-     *   <li><code>-l<i>url</i></code> sets the AxisServlet URL</li>
-     *   <li><code>-h<i>hostName</i></code> sets the AxisServlet host</li>
-     *   <li><code>-p<i>portNumber</i></code> sets the AxisServlet port</li>
-     *   <li><code>-s<i>servletPath</i></code> sets the path to the
-     *              AxisServlet</li>
-     *   <li><code>-f<i>fileName</i></code> specifies that a simple file
-     *              protocol should be used</li>
-     *   <li><code>-u<i>username</i></code> sets the username</li>
-     *   <li><code>-w<i>password</i></code> sets the password</li>
-     *   <li><code>-d</code> sets the debug flag (for instance, -ddd would
-     *      set it to 3)</li>
-     *   <li><code>-t<i>name</i></code> sets the transport chain touse</li>
-     *   <li><code>list</code> will list the currently deployed services</li>
-     *   <li><code>quit</code> will quit (???)</li>
-     *   <li><code>passwd <i>value</i></code> changes the admin password</li>
-     *   <li><code><i>xmlConfigFile</i></code> deploys or undeploys
-     *       Axis components and web services</li>
+     * <li><code>-l<i>url</i></code> sets the AxisServlet URL</li>
+     * <li><code>-h<i>hostName</i></code> sets the AxisServlet host</li>
+     * <li><code>-p<i>portNumber</i></code> sets the AxisServlet port</li>
+     * <li><code>-s<i>servletPath</i></code> sets the path to the
+     * AxisServlet</li>
+     * <li><code>-f<i>fileName</i></code> specifies that a simple file
+     * protocol should be used</li>
+     * <li><code>-u<i>username</i></code> sets the username</li>
+     * <li><code>-w<i>password</i></code> sets the password</li>
+     * <li><code>-d</code> sets the debug flag (for instance, -ddd would
+     * set it to 3)</li>
+     * <li><code>-t<i>name</i></code> sets the transport chain touse</li>
+     * <li><code>list</code> will list the currently deployed services</li>
+     * <li><code>quit</code> will quit (???)</li>
+     * <li><code>passwd <i>value</i></code> changes the admin password</li>
+     * <li><code><i>xmlConfigFile</i></code> deploys or undeploys
+     * Axis components and web services</li>
      * </ul>
      * <p>If <code>-l</code> or <code>-h -p -s</code> are not set, the
      * AdminClient will invoke
      * <code>http://localhost:8080/axis/servlet/AxisServlet</code>.</p>
-     *
+     * <p/>
      * outputs XML result or null in case of failure. In the case of multiple
      * commands, the XML results will be concatenated, separated by \n
-     * @exception BuildException something went wrong
+     *
+     * @throws BuildException something went wrong
      */
-
     public void execute() throws BuildException {
         traceParams(Project.MSG_VERBOSE);
+        validate();
         argslist = new LinkedList();
 
         //build an array of args
@@ -242,18 +266,27 @@ public class AdminClientTask extends Task {
                 throw new BuildException(
                         "newpassword is only used when action=passwd");
             }
-
         }
 
-
-        //final param is the xml file
+        //final param is the xml file(s)
         if (xmlFile != null) {
             if (!xmlFile.exists()) {
                 throw new BuildException("File " + xmlFile + " no found");
             }
             addArg(xmlFile.toString());
         }
-
+        if (srcDir != null) {
+            DirectoryScanner ds = super.getDirectoryScanner(srcDir);
+            String[] files = ds.getIncludedFiles();
+            for (int i = 0; i < files.length; i++) {
+                File srcFile = new File(srcDir, files[i]);
+                if (!srcFile.exists()) {
+                    throw new BuildException("File " + srcFile + " no found");
+                }
+                addArg(srcFile.getAbsolutePath());
+            }
+        }
+        
         //turn the list into an array
         int counter = 0;
         String[] args = new String[argslist.size()];
@@ -269,7 +302,7 @@ public class AdminClientTask extends Task {
         try {
             admin = new AdminClient(true);
         } catch (ServiceException e) {
-            throw new BuildException("failed to start the axis engine",e);
+            throw new BuildException("failed to start the axis engine", e);
         }
         String result = null;
         try {
@@ -283,16 +316,15 @@ public class AdminClientTask extends Task {
             log(fault.dumpToString(), Project.MSG_ERR);
             traceParams(Project.MSG_ERR);
             logOrThrow(getTaskName()
-                    +" failed with  "
+                    + " failed with  "
                     + fault.getFaultCode().toString()
-                    + " "+ fault.getFaultString());
-        } catch(BuildException e) {
+                    + " " + fault.getFaultString());
+        } catch (BuildException e) {
             //rethrow these
             throw e;
         } catch (Exception e) {
-            throw new BuildException("Exception in "+getTaskName(),e);
+            throw new BuildException("Exception in " + getTaskName(), e);
         }
-
     }
 
     private void logOrThrow(String text) throws BuildException {
@@ -303,21 +335,20 @@ public class AdminClientTask extends Task {
         }
     }
 
-
     /**
      * add one arg
+     *
      * @param argument
      */
-
     protected void addArg(String argument) {
         argslist.add(argument);
     }
 
     /**
      * add one arg
+     *
      * @param argument
      */
-
     protected void addArg(String argument, boolean test) {
         if (test) {
             argslist.add(argument);
@@ -326,6 +357,7 @@ public class AdminClientTask extends Task {
 
     /**
      * add an arg pair
+     *
      * @param argument
      * @param param
      */
@@ -336,9 +368,10 @@ public class AdminClientTask extends Task {
 
     /**
      * add an arg pair if the test is true
+     *
      * @param argument first arg
-     * @param param param to accompany
-     * @param test test to trigger argument add
+     * @param param    param to accompany
+     * @param test     test to trigger argument add
      */
     protected void addArgs(String argument, String param, boolean test) {
         if (test) {
