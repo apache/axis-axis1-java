@@ -308,7 +308,7 @@ public class JavaDeployWriter extends JavaWriter {
                 QName name = unkElement.getElementType();
                 if(name.getNamespaceURI().equals(Constants.URI_WSDL12_SOAP) && 
                    name.getLocalPart().equals("binding")){
-                    use = Use.ENCODED12;
+                    use = Use.ENCODED;
                 }
             }
         }

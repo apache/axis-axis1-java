@@ -244,6 +244,11 @@ public class Call implements javax.xml.rpc.Call {
                                             ParameterMode.OUT,
                                             ParameterMode.INOUT };
     
+    /** This is true when someone has called setEncodingStyle() */
+    private boolean encodingStyleExplicitlySet = false;
+    /** This is true when someone has called setOperationUse() */
+    private boolean useExplicitlySet = false;
+    
     /************************************************************************/
     /* Start of core JAX-RPC stuff                                          */
     /************************************************************************/
@@ -572,10 +577,8 @@ public class Call implements javax.xml.rpc.Call {
      * @param operationStyle string designating style
      */
     public void setOperationStyle(String operationStyle) {
-        if (operation == null) {
-            operation = new OperationDesc();
-        }
-        operation.setStyle(Style.getStyle(operationStyle, Style.DEFAULT));
+        Style style = Style.getStyle(operationStyle, Style.DEFAULT);
+        setOperationStyle(style);
     } // setOperationStyle
     
     /**
@@ -587,7 +590,28 @@ public class Call implements javax.xml.rpc.Call {
         if (operation == null) {
             operation = new OperationDesc();
         }
+        
         operation.setStyle(operationStyle);
+        
+        // If no one has explicitly set the use, we should track
+        // the style.  If it's non-RPC, default to LITERAL.
+        if (!useExplicitlySet) {
+            if (operationStyle != Style.RPC) {
+                operation.setUse(Use.LITERAL);
+            }
+        }
+        
+        // If no one has explicitly set the encodingStyle, we should
+        // track the style.  If it's RPC, default to SOAP-ENC, otherwise
+        // default to "".
+        if (!encodingStyleExplicitlySet) {
+            String encStyle = "";
+            if (operationStyle == Style.RPC) {
+                // RPC style defaults to encoded, otherwise default to literal
+                encStyle = msgContext.getSOAPConstants().getEncodingURI();
+            }
+            msgContext.setEncodingStyle(encStyle);
+        }
     }
 
     /**
@@ -605,10 +629,8 @@ public class Call implements javax.xml.rpc.Call {
      * @param operationUse string designating use
      */
     public void setOperationUse(String operationUse) {
-        if (operation == null) {
-            operation = new OperationDesc();
-        }
-        operation.setUse(Use.getUse(operationUse, Use.DEFAULT));
+        Use use = Use.getUse(operationUse, Use.DEFAULT);
+        setOperationUse(use);
     } // setOperationUse
     
     /**
@@ -616,10 +638,21 @@ public class Call implements javax.xml.rpc.Call {
      * @param operationUse
      */ 
     public void setOperationUse(Use operationUse) {
+        useExplicitlySet = true;
+        
         if (operation == null) {
             operation = new OperationDesc();
         }
+        
         operation.setUse(operationUse);        
+        if (!encodingStyleExplicitlySet) {
+            String encStyle = "";
+            if (operationUse == Use.ENCODED) {
+                // RPC style defaults to encoded, otherwise default to literal
+                encStyle = msgContext.getSOAPConstants().getEncodingURI();
+            }
+            msgContext.setEncodingStyle(encStyle);
+        }
     }
 
     /**
@@ -668,6 +701,7 @@ public class Call implements javax.xml.rpc.Call {
      * @param namespaceURI URI of the encoding to use.
      */
     public void setEncodingStyle(String namespaceURI) {
+        encodingStyleExplicitlySet = true;
         msgContext.setEncodingStyle(namespaceURI);
     }
 

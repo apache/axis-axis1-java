@@ -45,7 +45,7 @@ public class TestRPC extends TestCase {
         SOAPService service = new SOAPService(new RPCProvider());
         service.setOption("className", "test.soap12.Echo");
         service.setOption("allowedMethods", "*");
-        service.setOption("use", Use.ENCODED12);
+        service.setOption("use", Use.ENCODED);
 
         ServiceDesc desc = service.getInitializedServiceDesc(null);
         desc.setDefaultNamespace(method);

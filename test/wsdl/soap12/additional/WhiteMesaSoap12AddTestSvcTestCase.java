@@ -328,8 +328,7 @@ public class WhiteMesaSoap12AddTestSvcTestCase extends junit.framework.TestCase 
         Call call = new Call(DOC_INT_ENDPOINT);
         call.setSOAPVersion(SOAPConstants.SOAP12_CONSTANTS);
         call.setOperationStyle(Style.WRAPPED);
-        call.setOperationUse(Use.LITERAL);
-        call.addParameter(new QName("", "inputString"),
+        call.addParameter(new QName(TEST_NS, "inputString"),
                           Constants.XSD_STRING, ParameterMode.IN);
         call.setReturnType(Constants.XSD_STRING);
         
@@ -348,8 +347,7 @@ public class WhiteMesaSoap12AddTestSvcTestCase extends junit.framework.TestCase 
         Call call = new Call(DOC_INT_UC_ENDPOINT);
         call.setSOAPVersion(SOAPConstants.SOAP12_CONSTANTS);
         call.setOperationStyle(Style.WRAPPED);
-        call.setOperationUse(Use.LITERAL);
-        call.addParameter(new QName("", "inputString"),
+        call.addParameter(new QName(TEST_NS, "inputString"),
                           Constants.XSD_STRING, ParameterMode.IN);
         call.setReturnType(Constants.XSD_STRING);
         
