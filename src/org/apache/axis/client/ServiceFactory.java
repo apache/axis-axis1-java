@@ -235,9 +235,11 @@ public class ServiceFactory extends javax.xml.rpc.ServiceFactory
     } // createService
 
     /**
-     *  Create a Service instance.
-     *
-     *  Not yet implemented.
+     * Create a Service instance.  Since the WSDL file is not provided
+     * here, the Service object returned is quite simpleminded.
+     * Likewise, the Call object that service.createCall will return
+     * will also be simpleminded.  The caller must explicitly fill in
+     * all the info on the Call object (ie., endpoint address, etc.).
      *
      *  @param   serviceName QName for the service
      *  @return  Service.
@@ -245,12 +247,6 @@ public class ServiceFactory extends javax.xml.rpc.ServiceFactory
      */
     public javax.xml.rpc.Service createService(QName serviceName)
             throws ServiceException {
-
-        // RJB - this isn't quite proper - I'm dropping the serviceName,
-        // but I don't rightly know what use the service name is without
-        // WSDL.  So I'll just create a default (empty) Service with the
-        // assumption that callers of this method are going to do all
-        // the work themselves.
         return new Service();
     } // createService
 }
