@@ -22,6 +22,12 @@
 
     <mkdir dir="${root.dir}/${build.dest}"/>
 
+    <copy file="SoapInteropImport2BindingImpl.java"
+          todir="${root.dir}/build/work/test/wsdl/interop3/import2"/>
+
+    <copy file="Import2TestCase.java"
+          todir="${root.dir}/build/work/test/wsdl/interop3/import2"/>
+
     <!-- compile the skeletons -->
     <javac srcdir="${root.dir}/${build.dir}/work" 
       destdir="${root.dir}/${build.dest}" debug="on">
