@@ -77,10 +77,8 @@ public class VerifyFilesTestCase extends FileGenTestCase {
     protected Set shouldExist() {
         HashSet set = new HashSet();
         set.add("AnotherNonSharedNameImpl.java");
-        set.add("AnotherNonSharedNameSkeleton.java");
         set.add("AnotherNonSharedNameStub.java");
         set.add("NonSharedNameImpl.java");
-        set.add("NonSharedNameSkeleton.java");
         set.add("NonSharedNameStub.java");
         set.add("SharedName_Port.java");
         set.add("SharedName_Service.java");
