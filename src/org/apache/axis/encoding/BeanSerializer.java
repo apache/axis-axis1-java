@@ -236,11 +236,12 @@ public class BeanSerializer extends Deserializer
                 try {
                     pd.getWriteMethod().invoke(object, new Object[] {value});
                 } catch (Exception ex) {
-                    category.error("Couldn't convert " +
-                                   value.getClass().getName() +
-                                   " to bean field '" + pd.getName() +
-                                   "', type " +
-                                   pd.getPropertyType().getName());
+                    category.error(JavaUtils.getMessage(
+                            "cantConvert02",
+                            new String[] {
+                                    value.getClass().getName(),
+                                    pd.getName(),
+                                    pd.getPropertyType().getName()}));
                     throw new SAXException(ex);
                 }
             }
@@ -279,14 +280,14 @@ public class BeanSerializer extends Deserializer
                 TypeMappingRegistry tmr = context.getTypeMappingRegistry();
                 QName qn = tmr.getTypeQName(pd[i].getPropertyType());
                 if (qn == null)
-                    throw new SAXException("Unregistered type: " +
-                                           pd[i].getPropertyType());
+                    throw new SAXException(
+                            JavaUtils.getMessage("unregistered00", "" + pd[i].getPropertyType()));
 
                 // get the deserializer
                 Deserializer dSer = tmr.getDeserializer(qn);
                 if (dSer == null)
-                    throw new SAXException("No deserializer for " +
-                                           pd[i].getPropertyType());
+                    throw new SAXException(
+                            JavaUtils.getMessage("noDeser00", "" + pd[i].getPropertyType()));
 
                 // Success!  Register the target and deserializer.
                 dSer.registerValueTarget(new PropertyTarget(value, pd[i]));
@@ -295,8 +296,8 @@ public class BeanSerializer extends Deserializer
         }
 
         // No such field
-        throw new SAXException("Invalid element in " + cls.getName() +
-                               " - " + localName);
+        throw new SAXException(
+                JavaUtils.getMessage("badElem00", cls.getName(), localName));
     }
 
     /**

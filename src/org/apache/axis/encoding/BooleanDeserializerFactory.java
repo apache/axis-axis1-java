@@ -55,6 +55,8 @@
 
 package org.apache.axis.encoding;
 
+import org.apache.axis.utils.JavaUtils;
+
 import org.xml.sax.SAXException;
 
 /**
@@ -79,7 +81,8 @@ public class BooleanDeserializerFactory implements DeserializerFactory {
                    break;
 
                 default:
-                   throw new NumberFormatException("invalid boolean");
+                   throw new NumberFormatException(
+                           JavaUtils.getMessage("badBool00"));
             }
         }
     }

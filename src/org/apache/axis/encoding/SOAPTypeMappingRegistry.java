@@ -57,6 +57,7 @@ package org.apache.axis.encoding;
 
 import org.apache.axis.Constants;
 import org.apache.axis.message.SOAPHandler;
+import org.apache.axis.utils.JavaUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -114,7 +115,7 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
                           Object value, SerializationContext context)
             throws IOException
         {
-            throw new IOException("Can't serialize a raw object");
+            throw new IOException(JavaUtils.getMessage("cantSerialize02"));
         }
     }
 
@@ -128,7 +129,8 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
                                         DeserializationContext context)
             throws SAXException
         {
-            throw new SAXException("Basic deser can't handle structured data!");
+            throw new SAXException(
+                    JavaUtils.getMessage("cantHandle00", "BasicDeser"));
         }
         
         public void characters(char [] chars, int start, int end)

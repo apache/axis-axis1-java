@@ -56,6 +56,7 @@ package org.apache.axis.encoding;
 
 import org.apache.axis.Constants;
 import org.apache.axis.message.SOAPHandler;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -111,7 +112,7 @@ public class ArraySerializer extends Deserializer
         throws SAXException
     {
         if (category.isDebugEnabled()) {
-            category.debug("In ArraySerializer.startElement()");
+            category.debug(JavaUtils.getMessage("enter00", "ArraySerializer.startElement()"));
         }
 
         if (attributes.getValue(Constants.URI_CURRENT_SCHEMA_XSI,  "nil") != null) {
@@ -122,7 +123,7 @@ public class ArraySerializer extends Deserializer
                                   attributes.getValue(Constants.URI_SOAP_ENC,
                                                    Constants.ATTR_ARRAY_TYPE));
         if (arrayTypeValue == null)
-            throw new SAXException("No arrayType attribute for array!");
+            throw new SAXException(JavaUtils.getMessage("noArrayType00"));
         
         String arrayTypeValueNamespaceURI = arrayTypeValue.getNamespaceURI();
         String arrayTypeValueLocalPart = arrayTypeValue.getLocalPart();
@@ -133,8 +134,8 @@ public class ArraySerializer extends Deserializer
             || rightBracketIndex == -1
             || rightBracketIndex < leftBracketIndex)
         {
-            throw new IllegalArgumentException("Malformed arrayTypeValue '" +
-                arrayTypeValue + "'.");
+            throw new IllegalArgumentException(
+                    JavaUtils.getMessage("badArrayType00", "" + arrayTypeValue));
         }
 
         String componentTypeName =
@@ -142,9 +143,8 @@ public class ArraySerializer extends Deserializer
 
         if (componentTypeName.endsWith("]"))
         {
-            throw new IllegalArgumentException("Arrays of arrays are not " +
-                "supported '" + arrayTypeValue +
-                "'.");
+            throw new IllegalArgumentException(
+                    JavaUtils.getMessage("noArrayArray00", "" + arrayTypeValue));
         }
         
         arrayItemType = new QName(arrayTypeValueNamespaceURI,
@@ -159,8 +159,7 @@ public class ArraySerializer extends Deserializer
             if (lengthStr.indexOf(',') != -1)
             {
                 throw new IllegalArgumentException(
-                    "Multi-dimensional arrays are not supported '" +
-                    lengthStr + "'.");
+                        JavaUtils.getMessage("noMultiArray00", lengthStr));
             }
 
             try
@@ -170,8 +169,8 @@ public class ArraySerializer extends Deserializer
                                               getClassForQName(arrayItemType);
                 
                 if (componentType == null)
-                    throw new SAXException("No component type for " +
-                                           arrayItemType);
+                    throw new SAXException(
+                            JavaUtils.getMessage("noComponent00",  "" + arrayItemType));
                 
                 ArrayList list = new ArrayList(length);
                 // ArrayList lacks a setSize(), so...
@@ -184,8 +183,7 @@ public class ArraySerializer extends Deserializer
             catch (NumberFormatException e)
             {
                 throw new IllegalArgumentException(
-                    "Explicit array length is not a valid integer '" +
-                    lengthStr + "'.");
+                        JavaUtils.getMessage("badInteger00", lengthStr));
             }
         }
         
@@ -199,8 +197,8 @@ public class ArraySerializer extends Deserializer
                 || rightBracketIndex == -1
                 || rightBracketIndex < leftBracketIndex)
             {
-                throw new SAXException("Malformed offset attribute '" +
-                    offset + "'.");
+                throw new SAXException(
+                        JavaUtils.getMessage("badOffset00", offset));
             }
             
             curIndex = Integer.parseInt(offset.substring(leftBracketIndex + 1,
@@ -208,7 +206,7 @@ public class ArraySerializer extends Deserializer
         }
         
         if (category.isDebugEnabled()) {
-            category.debug("Out ArraySerializer.startElement()");
+            category.debug(JavaUtils.getMessage("exit00", "ArraySerializer.startElement()"));
         }
     }
     
@@ -220,7 +218,7 @@ public class ArraySerializer extends Deserializer
         throws SAXException
     {
         if (category.isDebugEnabled()) {
-            category.debug("In ArraySerializer.onStartChild()");
+            category.debug(JavaUtils.getMessage("enter00", "ArraySerializer.onStartChild()"));
         }
         
         if (attributes != null) {
@@ -234,8 +232,8 @@ public class ArraySerializer extends Deserializer
                     || rightBracketIndex == -1
                     || rightBracketIndex < leftBracketIndex)
                 {
-                    throw new SAXException("Malformed position attribute '" +
-                        pos + "'.");
+                    throw new SAXException(
+                            JavaUtils.getMessage("badPosition00", pos));
                 }
                 
                 curIndex = 
@@ -255,7 +253,7 @@ public class ArraySerializer extends Deserializer
         dSer.registerCallback(this, new Integer(curIndex++));
         
         if (category.isDebugEnabled()) {
-            category.debug("Out ArraySerializer.onStartChild()");
+            category.debug(JavaUtils.getMessage("exit00", "ArraySerializer.onStartChild()"));
         }
         return dSer;
     }
@@ -263,8 +261,8 @@ public class ArraySerializer extends Deserializer
     public void valueReady(Object value, Object hint)
     {
         if (category.isDebugEnabled()) {
-            category.debug("ArraySerializer got value [" + hint +
-                               "] = " + value);
+            category.debug(JavaUtils.getMessage("gotValue00", "ArraySerializer", "[" + hint +
+                               "] = " + value));
         }
         ((ArrayList)this.value).set(((Integer)hint).intValue(), value);
     }
@@ -274,15 +272,15 @@ public class ArraySerializer extends Deserializer
         throws IOException
     {
         if (value == null)
-            throw new IOException("Can't serialize null Arrays just yet...");
+            throw new IOException(JavaUtils.getMessage("cantDoNullArray00"));
         
         Class cls = value.getClass();
         List list = null;
         
         if (!cls.isArray()) {
             if (!(value instanceof List)) {
-                throw new IOException("Can't serialize a " + cls.getName() +
-                    " with the ArraySerializer!");
+                throw new IOException(
+                        JavaUtils.getMessage("cantSerialize00", cls.getName()));
             }
             list = (List)value;
         }
@@ -300,8 +298,8 @@ public class ArraySerializer extends Deserializer
         
         QName componentQName = context.getQNameForClass(componentType);
         if (componentQName == null)
-            throw new IOException("No mapped schema type for " +
-                                  componentType.getName());
+            throw new IOException(
+                    JavaUtils.getMessage("noType00", componentType.getName()));
         String prefix = context.getPrefixForURI(componentQName.getNamespaceURI());
         String arrayType = prefix + ":" + componentQName.getLocalPart();
         int len = (list == null) ? Array.getLength(value) : list.size();

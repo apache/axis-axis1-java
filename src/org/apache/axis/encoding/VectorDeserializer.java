@@ -57,6 +57,7 @@ package org.apache.axis.encoding;
 
 import org.apache.axis.Constants;
 import org.apache.axis.message.SOAPHandler;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -89,7 +90,7 @@ implements ValueReceiver {
                              DeserializationContext context)
     throws SAXException {
         if (category.isDebugEnabled()) {
-            category.debug("In VectorDeserializer.startElement()");
+            category.debug(JavaUtils.getMessage("enter00", "VectorDeserializer.startElement()"));
         }
 
         if (attributes.getValue(Constants.URI_CURRENT_SCHEMA_XSI,  "nil") != null) {
@@ -99,7 +100,7 @@ implements ValueReceiver {
         this.value = new java.util.Vector();
 
         if (category.isDebugEnabled()) {
-            category.debug("Out VectorDeserializer.startElement()");
+            category.debug(JavaUtils.getMessage("exit00", "VectorDeserializer.startElement()"));
         }
     }
 
@@ -110,29 +111,29 @@ implements ValueReceiver {
                                     DeserializationContext context)
     throws SAXException {
         if (category.isDebugEnabled()) {
-            category.debug("In VectorDeserializer.onStartChild()");
+            category.debug(JavaUtils.getMessage("enter00", "VectorDeserializer.onStartChild()"));
         }
 
         if (attributes == null)
-            throw new SAXException("No type attribute for vector!");
+            throw new SAXException(JavaUtils.getMessage("noType01"));
 
         String type = null;
         for (int i=0; i<Constants.URIS_SCHEMA_XSI.length && type==null; i++)
             type = attributes.getValue(Constants.URIS_SCHEMA_XSI[i], "type");
 
         if (type == null)
-            throw new SAXException("No type attribute for vector!");
+            throw new SAXException(JavaUtils.getMessage("noType01"));
 
         QName itemType = context.getQNameFromString(type);
         if (itemType == null)
-            throw new SAXException("No type attribute for vector!");
+            throw new SAXException(JavaUtils.getMessage("noType01"));
 
         Deserializer dSer = context.getTypeMappingRegistry().
                                         getDeserializer(itemType);
         dSer.registerCallback(this, null);
 
         if (category.isDebugEnabled()) {
-            category.debug("Out VectorDeserializer.onStartChild()");
+            category.debug(JavaUtils.getMessage("exit00", "VectorDeserializer.onStartChild()"));
         }
         return dSer;
     }
@@ -140,7 +141,7 @@ implements ValueReceiver {
     public void valueReady(Object value, Object hint)
     {
         if (category.isDebugEnabled()) {
-            category.debug("VectorDeserializer got value = " + value);
+            category.debug(JavaUtils.getMessage("gotValue00", "VectorDeserializer", "" + value));
         }
         ((Vector)this.value).add(value);
     }

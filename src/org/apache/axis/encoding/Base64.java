@@ -58,6 +58,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
 
+import org.apache.axis.utils.JavaUtils;
+
 /**
  *
  * @author TAMURA Kent &lt;kent@trl.ibm.co.jp&gt;
@@ -103,7 +105,7 @@ public class Base64 {
             obuf[wp] = (byte)(b2 << 6 & 0xc0 | b3 & 0x3f);
             return 3;
         default:
-            throw new RuntimeException("Internal Errror");
+            throw new RuntimeException(JavaUtils.getMessage("internalError00"));
         }
     }
 
