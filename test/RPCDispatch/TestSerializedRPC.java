@@ -95,16 +95,16 @@ public class TestSerializedRPC extends TestCase {
         // Extract the response Envelope
         Message message = msgContext.getResponseMessage();
         SOAPEnvelope envelope = (SOAPEnvelope)message.getAsSOAPEnvelope();
-        assertNotNull("envelope", envelope);
+        assertNotNull("SOAP envelope was null", envelope);
 
         // Extract the body from the envelope
         RPCElement body = (RPCElement)envelope.getFirstBody();
-        assertNotNull("body", body);
+        assertNotNull("SOAP body was null", body);
 
         // Extract the list of parameters from the body
         Vector arglist = body.getParams();
-        assertNotNull("arglist", arglist);
-        assertTrue("param.size()>0", arglist.size()>0);
+        assertNotNull("SOAP argument list was null", arglist);
+        assertTrue("param.size()<=0 {Should be > 0}", arglist.size()>0);
 
         // Return the first parameter
         RPCParam param = (RPCParam) arglist.get(0);
@@ -117,13 +117,13 @@ public class TestSerializedRPC extends TestCase {
     public void testSerReverseString() throws Exception {
         String arg = "<arg0 xsi:type=\"xsd:string\">abc</arg0>";
         // invoke the service and verify the result
-        assertEquals("cba", rpc("reverseString", arg, true));
+        assertEquals("Did not reverse the string as expected", "cba", rpc("reverseString", arg, true));
     }
 
     public void testSerReverseBodyDispatch() throws Exception {
         String arg = "<arg0 xsi:type=\"xsd:string\">abc</arg0>";
         // invoke the service and verify the result
-        assertEquals("cba", rpc("reverseString", arg, false));
+        assertEquals("Did not reverse the string as expected", "cba", rpc("reverseString", arg, false));
     }
     
     /**
@@ -141,7 +141,7 @@ public class TestSerializedRPC extends TestCase {
         arg += "<field1>5</field1><field2>abc</field2><field3>3</field3>";
         arg += "</arg0>";
         Data expected = new Data(3, "cba", 5);
-        assertEquals(expected, rpc("reverseData", arg, true));
+        assertEquals("Did not reverse data as expected", expected, rpc("reverseData", arg, true));
     }
     
     /**
@@ -159,7 +159,7 @@ public class TestSerializedRPC extends TestCase {
         arg += "<field1>5</field1><field2>abc</field2><field3>3</field3>";
         arg += "</arg0>";
         Data expected = new Data(3, "cba", 5);
-        assertEquals(expected, rpc("reverseData", arg, true));
+        assertEquals("Did not reverse data as expected", expected, rpc("reverseData", arg, true));
     }
     
     /**
@@ -178,7 +178,7 @@ public class TestSerializedRPC extends TestCase {
         arg += "</arg0>";
         
         // invoke the service and verify the result
-        assertEquals(arg, rpc("argAsDOM", arg, true));
+        assertEquals("Did not echo arg correctly.", arg, rpc("argAsDOM", arg, true));
     }
     
     public static void main(String args[]) {
