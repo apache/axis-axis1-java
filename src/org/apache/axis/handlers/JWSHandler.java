@@ -54,28 +54,6 @@
 
 package org.apache.axis.handlers;
 
-import org.apache.axis.AxisFault;
-import org.apache.axis.AxisProperties;
-import org.apache.axis.Constants;
-import org.apache.axis.MessageContext;
-import org.apache.axis.components.compiler.Compiler;
-import org.apache.axis.components.compiler.CompilerError;
-import org.apache.axis.components.compiler.CompilerFactory;
-import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.description.ServiceDesc;
-import org.apache.axis.encoding.TypeMappingRegistry;
-import org.apache.axis.enum.Scope;
-import org.apache.axis.handlers.soap.SOAPService;
-import org.apache.axis.providers.java.RPCProvider;
-import org.apache.axis.transport.http.HTTPConstants;
-import org.apache.axis.utils.ClassUtils;
-import org.apache.axis.utils.JWSClassLoader;
-import org.apache.axis.utils.Messages;
-import org.apache.axis.utils.XMLUtils;
-import org.apache.commons.logging.Log;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
@@ -92,6 +70,26 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
+
+import org.apache.axis.AxisFault;
+import org.apache.axis.AxisProperties;
+import org.apache.axis.Constants;
+import org.apache.axis.MessageContext;
+import org.apache.axis.components.compiler.Compiler;
+import org.apache.axis.components.compiler.CompilerError;
+import org.apache.axis.components.compiler.CompilerFactory;
+import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.enum.Scope;
+import org.apache.axis.handlers.soap.SOAPService;
+import org.apache.axis.providers.java.RPCProvider;
+import org.apache.axis.transport.http.HTTPConstants;
+import org.apache.axis.utils.ClassUtils;
+import org.apache.axis.utils.JWSClassLoader;
+import org.apache.axis.utils.Messages;
+import org.apache.axis.utils.XMLUtils;
+import org.apache.commons.logging.Log;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /** A <code>JWSHandler</code> sets the target service and JWS filename
  * in the context depending on the JWS configuration and the target URL.

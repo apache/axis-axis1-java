@@ -55,29 +55,28 @@
 
 package org.apache.axis.providers.java;
 
+import java.lang.reflect.Method;
+import java.util.Properties;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Properties;
 
 /**
  * A basic EJB Provider
  *
  * @author Carl Woolf (cwoolf@macromedia.com)
  * @author Tom Jordahl (tomj@macromedia.com)
- * @author Cédric Chabanois (cchabanois@ifrance.com)
+ * @author C?dric Chabanois (cchabanois@ifrance.com)
  */
 public class EJBProvider extends RPCProvider
 {

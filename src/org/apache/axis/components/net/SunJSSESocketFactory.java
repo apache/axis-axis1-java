@@ -54,24 +54,15 @@
  */
 package org.apache.axis.components.net;
 
-import com.sun.net.ssl.SSLContext;
-import org.apache.axis.utils.Messages;
-import org.apache.axis.utils.XMLUtils;
-
-import javax.net.ssl.SSLSocket;
-import javax.net.ssl.SSLSocketFactory;
-import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.Socket;
 import java.security.KeyStore;
 import java.security.Security;
 import java.util.Hashtable;
+
+import com.sun.net.ssl.SSLContext;
 
 /**
  * SSL socket factory. It _requires_ a valid RSA key and

@@ -55,11 +55,11 @@
 
 package org.apache.axis.transport.jms;
 
+import java.util.HashMap;
+
 import javax.jms.Destination;
-import javax.jms.JMSException;
 import javax.jms.MessageListener;
 import javax.jms.Session;
-import java.util.HashMap;
 
 /**
  * JMSEndpoint encapsulates interactions w/ a JMS destination.

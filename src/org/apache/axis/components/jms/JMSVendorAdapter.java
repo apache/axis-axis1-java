@@ -55,18 +55,24 @@
 
 package org.apache.axis.components.jms;
 
-import org.apache.axis.transport.jms.JMSConnector;
-import org.apache.axis.transport.jms.JMSConnectorFactory;
-import org.apache.axis.transport.jms.JMSConstants;
-import org.apache.axis.transport.jms.JMSURLHelper;
-import org.apache.axis.MessageContext;
-import org.apache.axis.client.Call;
-
-import javax.jms.*;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Set;
+
+import javax.jms.InvalidDestinationException;
+import javax.jms.JMSException;
+import javax.jms.JMSSecurityException;
+import javax.jms.Message;
+import javax.jms.Queue;
+import javax.jms.QueueConnectionFactory;
+import javax.jms.QueueSession;
+import javax.jms.Topic;
+import javax.jms.TopicConnectionFactory;
+import javax.jms.TopicSession;
+
+import org.apache.axis.MessageContext;
+import org.apache.axis.client.Call;
+import org.apache.axis.transport.jms.JMSConstants;
+import org.apache.axis.transport.jms.JMSURLHelper;
 
 /**
  * SPI Interface that all JMSVendorAdaptors must implement.  Allows for
