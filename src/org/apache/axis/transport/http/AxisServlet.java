@@ -22,12 +22,15 @@ import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Iterator;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.soap.MimeHeader;
+import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
@@ -559,6 +562,15 @@ public class AxisServlet extends AxisServletBase {
                             false,
                             req.getHeader(HTTPConstants.HEADER_CONTENT_TYPE),
                             req.getHeader(HTTPConstants.HEADER_CONTENT_LOCATION));
+            // Transfer HTTP headers to MIME headers for request message.
+            MimeHeaders requestMimeHeaders = requestMsg.getMimeHeaders();
+            for (Enumeration e = req.getHeaderNames(); e.hasMoreElements(); ) {
+                String headerName = (String) e.nextElement();
+                for (Enumeration f = req.getHeaders(headerName); f.hasMoreElements(); ) {
+                    String headerValue = (String) f.nextElement();
+                    requestMimeHeaders.addHeader(headerName, headerValue);
+                }
+            }
 
             if(isDebug) log.debug("Request Message:" + requestMsg);
 
@@ -653,6 +665,12 @@ public class AxisServlet extends AxisServletBase {
         /* Send response back along the wire...  */
         /***********************************/
         if (responseMsg != null) {
+            // Transfer MIME headers to HTTP headers for response message.
+            MimeHeaders responseMimeHeaders = responseMsg.getMimeHeaders();
+            for (Iterator i = responseMimeHeaders.getAllHeaders(); i.hasNext(); ) {
+                MimeHeader responseMimeHeader = (MimeHeader) i.next();
+                res.addHeader(responseMimeHeader.getName(), responseMimeHeader.getValue());
+            }
             // synchronize the character encoding of request and response
             String responseEncoding = (String) msgContext.getProperty(SOAPMessage.CHARACTER_SET_ENCODING);
             if (responseEncoding != null) {
