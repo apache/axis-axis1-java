@@ -13,6 +13,7 @@
     <parameter name="className" value="samples.stock.StockQuoteService"/>
     <parameter name="allowedMethods" value="getQuote test"/>
     <parameter name="allowedRoles" value="user1,user2"/>
+    <parameter name="wsdlServicePort" value="GetQuote"/>
 
     <requestFlow name="checks">
       <handler type="java:org.apache.axis.handlers.SimpleAuthenticationHandler"/>
