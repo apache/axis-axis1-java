@@ -100,11 +100,15 @@ public class TestTransportSample extends TestCase {
             FileTest.main(args);
         } catch (AxisFault e) {
             String fault = e.getFaultString();
-            if (fault == null || fault.indexOf("java.net.UnknownHost")<0)
+            if (fault == null) throw e;
+            if (fault.indexOf("java.net.UnknownHost")<0) {
+                int start = fault.indexOf(": ");
+                System.out.println(fault.substring(start+2));
+            } else if (fault.equals("timeout")) {
+                System.out.println("timeout");
+            } else {
                 throw e;
-            int start = fault.indexOf(": ");
-            int eol   = fault.indexOf('\n', start+1);
-            System.out.println(fault.substring(start+2, eol));
+            }
         }
     }
     

@@ -57,6 +57,7 @@ package org.apache.axis ;
 
 import java.io.* ;
 import java.util.* ;
+import java.lang.reflect.InvocationTargetException ;
 
 import javax.xml.parsers.* ;
 import org.w3c.dom.* ;
@@ -96,6 +97,11 @@ public class AxisFault extends Exception {
     public AxisFault(Exception e) {
         String  str ;
 
+        if (e instanceof InvocationTargetException) {
+            Throwable t = ((InvocationTargetException)e).getTargetException();
+            if (t != null && t instanceof Exception) e = (Exception) t;
+        }
+
         setFaultCode( Constants.FAULT_SERVER_GENERAL );
         setFaultString( e.toString() );
         
@@ -107,7 +113,8 @@ public class AxisFault extends Exception {
         
         Document doc = XMLUtils.newDocument();
         Element elem = doc.createElement("stackTrace");
-        Node textNode = doc.createTextNode(writer.getBuffer().toString());
+        String text = XMLUtils.xmlEncodeString(writer.getBuffer().toString());
+        Node textNode = doc.createTextNode(text);
         elem.appendChild(textNode);
         
         Element [] details = new Element [] { elem };
