@@ -98,7 +98,8 @@ public class DefaultEngineConfigurationFactory implements EngineConfigurationFac
      * has overridden this with their own.
      */
     public DefaultEngineConfigurationFactory() {
-        String fClassName = System.getProperty("axis.EngineConfigFactory");
+        String fClassName =
+            System.getProperty(EngineConfigurationFactory.SYSTEM_PROPERTY_NAME);
 
         if (fClassName != null) {
             try {
