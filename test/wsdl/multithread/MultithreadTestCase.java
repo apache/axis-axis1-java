@@ -1,25 +1,19 @@
 package test.wsdl.multithread;
 
-import java.net.ConnectException;
-
-import java.rmi.RemoteException;
-
-import javax.xml.rpc.ServiceException;
-
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
-
 import org.apache.axis.AxisFault;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import samples.addr.AddressBook;
-import samples.addr.AddressBookServiceLocator;
-import samples.addr.AddressBookSOAPBindingStub;
 import samples.addr.Address;
+import samples.addr.AddressBook;
+import samples.addr.AddressBookSOAPBindingStub;
+import samples.addr.AddressBookServiceLocator;
 import samples.addr.Phone;
 import samples.addr.StateType;
+
+import javax.xml.rpc.ServiceException;
+import java.net.ConnectException;
 
 /**
 * This test calls the stub multiple times from multiple threads.  Before the
@@ -141,5 +135,10 @@ public class MultithreadTestCase extends TestCase {
             throw error;
         }
     } // testMultithreading
+
+    public static void main(String[] args) {
+        MultithreadTestCase testCase = new MultithreadTestCase("MultithreadTestCase");
+        testCase.testMultithreading();
+    }
 } // class MultithreadTestCase
 
