@@ -722,11 +722,10 @@ public class MessageElement implements SOAPElement, Serializable
             for (int i = 0; i < qNameAttrs.size(); i++) {
                 QNameAttr attr = (QNameAttr)qNameAttrs.get(i);
                 QName attrName = attr.name;
-                addAttribute(attrName.getNamespaceURI(),
+                setAttribute(attrName.getNamespaceURI(),
                              attrName.getLocalPart(),
                              context.qName2String(attr.value));
             }
-            qNameAttrs = null;
         }
 
         /**

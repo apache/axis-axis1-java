@@ -59,6 +59,8 @@ import junit.framework.TestCase;
 
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.Name;
+import javax.xml.namespace.QName;
+
 import org.apache.axis.soap.SOAPConstants;
 
 import org.apache.axis.message.MessageElement;
@@ -178,15 +180,27 @@ public class TestMessageElement extends TestCase {
         assertTrue("Did not find namespace declaration \"pre\"", found);
     }
     
-    public void testGetNamespacePrefixes() throws Exception {
+    public void testQNameAttrTest() throws Exception {
         MessageElement me = 
             new MessageElement("http://www.wolfram.com","Test");
-        Iterator it = me.getNamespacePrefixes();
-        assertTrue(it != null);
+        me.addAttribute(
+            "http://www.w3.org/2001/XMLSchema-instance", 
+            "type",
+            new QName("http://www.wolfram2.com", "type1"));
+        MessageElement me2 = 
+            new MessageElement("http://www.wolfram.com", "Child", (Object)"1");
+        me2.addAttribute(
+            "http://www.w3.org/2001/XMLSchema-instance", 
+            "type",
+            new QName("http://www.w3.org/2001/XMLSchema", "int"));
+        me.addChildElement(me2);
+        String s1 = me.toString();
+        String s2 = me.toString();
+        assertEquals(s1, s2);
     }
     
     public static void main(String[] args) throws Exception {
         TestMessageElement tester = new TestMessageElement("TestMessageElement");
-        tester.testGetNamespacePrefixes();
+        tester.testQNameAttrTest();
     }
 }
