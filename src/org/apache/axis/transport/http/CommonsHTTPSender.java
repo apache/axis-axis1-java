@@ -45,6 +45,9 @@ import org.apache.commons.logging.Log;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FilterInputStream;
+import java.io.InputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -196,11 +199,19 @@ public class CommonsHTTPSender extends BasicHandler {
                 + statusMessage, null,
                 null);
                 
-                fault.setFaultDetailString(Messages.getMessage("return01",
-                "" + returnCode, method.getResponseBodyAsString()));
-                throw fault;
+                try {
+                    fault.setFaultDetailString(Messages.getMessage("return01",
+                    "" + returnCode, method.getResponseBodyAsString()));
+                    throw fault;
+                } finally {
+                    method.releaseConnection(); // release connection back to pool.
+                }
             }
-            Message outMsg = new Message(method.getResponseBodyAsStream(),
+
+            // wrap the response body stream so that close() also releases the connection back to the pool.
+            InputStream releaseConnectionOnCloseStream = createConnectionReleasingInputStream(method);
+
+            Message outMsg = new Message(releaseConnectionOnCloseStream,
             false, contentType, contentLocation);
             // Transfer HTTP headers of HTTP message to MIME headers of SOAP message
             Header[] responseHeaders = method.getResponseHeaders();
@@ -209,10 +220,6 @@ public class CommonsHTTPSender extends BasicHandler {
                 Header responseHeader = responseHeaders[i];
                 responseMimeHeaders.addHeader(responseHeader.getName(), responseHeader.getValue());
             }
-            // no need to invoke method.releaseConnection here, as that will
-            // happen automatically when the response body is read.
-            // issue: what if the stream is never closed?  Are we certain
-            // that InputStream.close() always gets called?
             outMsg.setMessageType(Message.RESPONSE);
             msgContext.setResponseMessage(outMsg);
             if (log.isDebugEnabled()) {
@@ -587,6 +594,18 @@ public class CommonsHTTPSender extends BasicHandler {
             }
         }
         return true;
+    }
+
+    private InputStream createConnectionReleasingInputStream(final HttpMethodBase method) throws IOException {
+        return new FilterInputStream(method.getResponseBodyAsStream()) {
+                public void close() throws IOException {
+                    try {
+                        super.close();
+                    } finally {
+                        method.releaseConnection();
+                    }
+                }
+            };
     }
 }
 
