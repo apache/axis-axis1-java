@@ -97,6 +97,10 @@ public abstract class Enum implements java.io.Serializable {
                ? _equals((Enum)obj)
                : false;
     }
+
+    public int hashCode() {
+        return value;
+    }
     
     public final boolean equals(Enum obj) {
         return (obj != null) ? _equals(obj) : false;
