@@ -196,38 +196,47 @@ public class EngineConfigurationFactoryFinder
                                                          Class[] paramTypes,
                                                          Object[] param) {
         /**
-         * Verify that service implements:
-         *  public static EngineConfigurationFactory newFactory(Object);
+         * Some JDK's may link on method resolution (findPublicStaticMethod)
+         * and others on method call (method.invoke).
+         * 
+         * Either way, catch class load/resolve problems and return null.
          */
-        Method method =
-            ClassUtils.findPublicStaticMethod(service,
-                                              EngineConfigurationFactory.class,
-                                              "newFactory",
-                                              paramTypes);
-
-
-        if (method == null) {
-            log.warn(Messages.getMessage("engineConfigMissingNewFactory",
-                                          service.getName(),
-                                          requiredMethod));
-        } else {
-            try {
-                return (EngineConfigurationFactory)method.invoke(null, param);
-            } catch (InvocationTargetException e) {
-                if (e.getTargetException() instanceof java.lang.NoClassDefFoundError) {
-                    log.debug(Messages.getMessage("engineConfigInvokeNewFactory",
-                                                  service.getName(),
-                                                  requiredMethod), e);
-                } else {
+        
+        try {
+            /**
+             * Verify that service implements:
+             *  public static EngineConfigurationFactory newFactory(Object);
+             */
+            Method method = ClassUtils.findPublicStaticMethod(service,
+                                                  EngineConfigurationFactory.class,
+                                                  "newFactory",
+                                                  paramTypes);
+    
+            if (method == null) {
+                log.warn(Messages.getMessage("engineConfigMissingNewFactory",
+                                              service.getName(),
+                                              requiredMethod));
+            } else {
+                try {
+                    return (EngineConfigurationFactory)method.invoke(null, param);
+                } catch (InvocationTargetException e) {
+                    if (e.getTargetException() instanceof NoClassDefFoundError) {
+                        log.debug(Messages.getMessage("engineConfigLoadFactory",
+                                                      service.getName()));
+                    } else {
+                        log.warn(Messages.getMessage("engineConfigInvokeNewFactory",
+                                                      service.getName(),
+                                                      requiredMethod), e);
+                    }
+                } catch (Exception e) {
                     log.warn(Messages.getMessage("engineConfigInvokeNewFactory",
                                                   service.getName(),
                                                   requiredMethod), e);
                 }
-            } catch (Exception e) {
-                log.warn(Messages.getMessage("engineConfigInvokeNewFactory",
-                                              service.getName(),
-                                              requiredMethod), e);
             }
+        } catch (NoClassDefFoundError e) {
+            log.debug(Messages.getMessage("engineConfigLoadFactory",
+                                          service.getName()));
         }
 
         return null;

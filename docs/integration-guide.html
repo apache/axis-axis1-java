@@ -200,7 +200,7 @@ Reference
 <td><code>SocketFactoryFactory.getSecureFactory()</code></td>
 <td><code>SecureSocketFactory</code></td>
 <td><code>axis.socketSecureFactory</code></td>
-<td><code>DefaultSecureSocketFactory</code></td>
+<td><code>JSSESocketFactory</code></td>
 </tr>
 </table>
 
@@ -1344,62 +1344,7 @@ The default pluggable secure socket factory module
 (see <a href="#Pluggable APIs">Pluggable APIs</a>)
 uses JSSE security.
 Review the JSSE documentation for details on
-installing and registering (if appropriate) JSSE into your JDK,
-and for details on how to configuration JSSE.
-Configuration for the JVM is offered by JSSE and the Java security model.
-JSSE properties are set in the file
-<code>&lt;JAVA_HOME&gt;/lib/security/java.security</code>.
-<p>
-AXIS allows per-instance overrides of various properties
-that apply to individual Axis instances,
-determined by the attributes passed to the Axis constructor/factory
-(?this may be broken, but can still configure via JSSE).
-<p>
-The following table summarizes settings, order in which they are checked is left-to-right:
-<table border="1">
-<tr>
-<th>Description</th>
-<th>System Property</th>
-<th>AXIS attribute</th>
-<th>JSSE property</th>
-<th>Default</th>
-</tr>
-<tr>
-<td>Provider</td>
-<td>n/a</td>
-<td>n/a</td>
-<td>security.provider.&lt;n&gt;</td>
-<td>See JSSE Spec</td>
-</tr>
-<tr>
-<td>KeyStore File Name</td>
-<td>javax.net.ssl.keyStore</td>
-<td>keystore</td>
-<td>n/a</td>
-<td>&lt;user.home&gt;/.keystore</td>
-</tr>
-<tr>
-<td>KeyStore Type</td>
-<td>javax.net.ssl.keyStoreType</td>
-<td>keystoreType</td>
-<td>keystore.type</td>
-<td>See JSSE Spec</td>
-</tr>
-<tr>
-<td>KeyStore Password</td>
-<td></td>
-<td>keystorePass</td>
-<td></td>
-<td>See JSSE Spec</td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-</tr>
-</table>
-<p>
-Note that the above table does not cover all properties/settings
-provided by JSSE.
+installing, registering, and configuring JSSE for your runtime environment.
 
 </body>
 </html>
