@@ -68,6 +68,7 @@ public class TestRPC extends TestCase {
 
         // Create a message context with the action and message
         MessageContext msgContext = new MessageContext();
+        msgContext.setProperty(Constants.SERVICE_REGISTRY, sr);
         msgContext.setRequestMessage(new Message(envelope, "SOAPEnvelope"));
         try {
                 msgContext.setTargetService(SOAPAction);

@@ -93,14 +93,14 @@ public class AxisServer extends BasicHandler
     public void init() {
         // Load the simple handler registry and init it
         Debug.Print( 1, "Enter: AxisServer::init" );
-        DefaultHandlerRegistry  hr = 
+        DefaultHandlerRegistry  hr =
           new DefaultHandlerRegistry(Constants.SERVER_HANDLER_REGISTRY);
         hr.setOnServer( true );
         hr.init();
         addOption( Constants.HANDLER_REGISTRY, hr );
 
         // Load the simple deployed services registry and init it
-        DefaultServiceRegistry  sr = 
+        DefaultServiceRegistry  sr =
           new DefaultServiceRegistry(Constants.SERVER_SERVICE_REGISTRY);
         sr.setHandlerRegistry( hr ); // needs to know about 'hr'
         sr.setOnServer( true );
@@ -128,11 +128,11 @@ public class AxisServer extends BasicHandler
         /* Do some prep-work.  Get the registries and put them in the */
         /* msgContext so they can be used by later handlers.          */
         /**************************************************************/
-        HandlerRegistry hr = 
+        HandlerRegistry hr =
             (HandlerRegistry) getOption(Constants.HANDLER_REGISTRY);
-        HandlerRegistry sr = 
+        HandlerRegistry sr =
             (HandlerRegistry) getOption(Constants.SERVICE_REGISTRY);
-        TypeMappingRegistry tmr = 
+        TypeMappingRegistry tmr =
             (TypeMappingRegistry) getOption(Constants.TYPEMAP_REGISTRY);
 
         msgContext.setProperty(Constants.AXIS_ENGINE, this );
@@ -201,19 +201,24 @@ public class AxisServer extends BasicHandler
                 h.invoke(msgContext);
               else
                 throw new AxisFault( "Server.error",
-                                     "Can't find '" + hName + "' handler", 
+                                     "Can't find '" + hName + "' handler",
                                      null, null );
               */
+              // This is HACKISH!  Why do we *have* both getTargetService
+              // and getServiceHandler?  And why is this code looking in
+              // the *handler* registry rather than the *service* registry???
+              // -- RobJ
               hName = msgContext.getTargetService();
+              h = msgContext.getServiceHandler();
               if ( hName != null ) {
-                if ((h = hr.find( hName )) != null)
+                if (h != null || ((h = hr.find( hName )) != null))
                   h.invoke(msgContext);
                 else
                   throw new AxisFault( "Server.error",
-                                     "Can't find '" + hName + "' handler", 
+                                     "Can't find '" + hName + "' handler",
                                      null, null );
               } else {
-                throw new AxisFault("Server.NoService", 
+                throw new AxisFault("Server.NoService",
                                     "The Axis engine couldn't find a target service to invoke!",
                                     null, null );
               }
