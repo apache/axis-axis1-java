@@ -65,6 +65,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.Collator;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -629,6 +630,30 @@ public class Utils {
         }
         return null;
     }
+
+    /**
+     * This method returns a set of all the nested Types.
+     * The elements of the returned HashSet are Types.
+     */
+    public static HashSet getNestedTypes(Node type, SymbolTable symbolTable) {
+        HashSet types = new HashSet();
+        getNestedTypes(type, types, symbolTable);
+        return types;
+    } // getNestedTypes
+
+    private static void getNestedTypes(
+            Node type, HashSet types,SymbolTable symbolTable) {
+        Vector v = Utils.getComplexElementTypesAndNames(type, symbolTable);
+        if (v != null) {
+            for (int i = 0; i < v.size(); i+=2) {
+                if (!types.contains(v.get(i))) {
+                    types.add(v.get(i));
+                    getNestedTypes(
+                            ((Type) v.get(i)).getNode(), types, symbolTable);
+                }
+            }
+        }
+    } // getNestedTypes
 
     /**
      * Query Java Local Name

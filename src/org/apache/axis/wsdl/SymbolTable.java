@@ -140,7 +140,7 @@ public class SymbolTable {
      */
     protected void add(Definition def, Document doc) throws IOException {
         populate(def, doc);
-        setReferences();
+        setReferences(def, doc);
     } // add
 
     /**
@@ -911,39 +911,105 @@ public class SymbolTable {
      * Set each SymTabEntry's isReferenced flag.  The default is false.  If no other symbol
      * references this symbol, then leave it false, otherwise set it to true.
      */
-    private void setReferences() {
-        Iterator it = symbolTable.values().iterator();
-        while (it.hasNext()) {
-            Vector v = (Vector) it.next();
-            for (int i = 0; i < v.size(); ++i) {
-                SymTabEntry entry = (SymTabEntry) v.elementAt(i);
-                if (entry instanceof MessageEntry) {
-                    setMessageReferences((MessageEntry) entry);
+    private void setReferences(Definition def, Document doc) {
+        Map stuff = def.getServices();
+        if (stuff.isEmpty()) {
+            stuff = def.getBindings();
+            if (stuff.isEmpty()) {
+                stuff = def.getPortTypes();
+                if (stuff.isEmpty()) {
+                    stuff = def.getMessages();
+                    if (stuff.isEmpty()) {
+                        for (int i = 0; i < types.size(); ++i) {
+                            Type type = (Type) types.get(i);
+                            setTypeReferences(type, doc);
+                        }
+                    }
+                    else {
+                        Iterator i = stuff.values().iterator();
+                        while (i.hasNext()) {
+                            Message message = (Message) i.next();
+                            MessageEntry mEntry =
+                                    getMessageEntry(message.getQName());
+                            setMessageReferences(mEntry, def, doc);
+                        }
+                    }
                 }
-                else if (entry instanceof PortTypeEntry) {
-                    setPortTypeReferences((PortTypeEntry) entry);
+                else {
+                    Iterator i = stuff.values().iterator();
+                    while (i.hasNext()) {
+                        PortType portType = (PortType) i.next();
+                        PortTypeEntry ptEntry =
+                                getPortTypeEntry(portType.getQName());
+                        setPortTypeReferences(ptEntry, def, doc);
+                    }
                 }
-                else if (entry instanceof BindingEntry) {
-                    setBindingReferences((BindingEntry) entry);
+            }
+            else {
+                Iterator i = stuff.values().iterator();
+                while (i.hasNext()) {
+                    Binding binding = (Binding) i.next();
+                    BindingEntry bEntry = getBindingEntry(binding.getQName());
+                    setBindingReferences(bEntry, def, doc);
                 }
-                else if (entry instanceof ServiceEntry) {
-                    setServiceReferences((ServiceEntry) entry);
-                }
+            }
+        }
+        else {
+            Iterator i = stuff.values().iterator();
+            while (i.hasNext()) {
+                Service service = (Service) i.next();
+                ServiceEntry sEntry = getServiceEntry(service.getQName());
+                setServiceReferences(sEntry, def, doc);
             }
         }
     } // setReferences
 
+    private void setTypeReferences(Type entry, Document doc) {
+        // If we don't want to emit stuff from imported files, only set the
+        // isReferenced flag if this entry exists in the immediate WSDL file.
+        Node node = entry.getNode();
+        if (addImports || node == null || node.getOwnerDocument() == doc) {
+            entry.setIsReferenced(true);
+        }
+
+        HashSet nestedTypes = Utils.getNestedTypes(node, this);
+        Iterator it = nestedTypes.iterator();
+        while (it.hasNext()) {
+            Type nestedType = (Type) it.next();
+            if (!nestedType.isReferenced()) {
+                setTypeReferences(nestedType, doc);
+            }
+        }
+    } // setTypeReferences
+
     /**
      * Set the isReferenced flag to true on all SymTabEntries that the given Meesage refers to.
      */
-    private void setMessageReferences(MessageEntry entry) {
+    private void setMessageReferences(
+            MessageEntry entry, Definition def, Document doc) {
+        // If we don't want to emit stuff from imported files, only set the
+        // isReferenced flag if this entry exists in the immediate WSDL file.
         Message message = entry.getMessage();
+        if (addImports) {
+            entry.setIsReferenced(true);
+        }
+        else {
+            // NOTE:  I thought I could have simply done:
+            // if (def.getMessage(message.getQName()) != null)
+            // but that method traces through all imported messages.
+            Map messages = def.getMessages();
+            if (messages.containsValue(message)) {
+                entry.setIsReferenced(true);
+            }
+        }
+
+        // Set all the message's types
         Iterator parts = message.getParts().values().iterator();
         while (parts.hasNext()) {
             Part part = (Part) parts.next();
             Type type = getTypeEntry(part.getTypeName());
             if (type != null) {
-                type.setIsReferenced(true);
+                setTypeReferences(type, doc);
             }
         }
     } // setMessageReference
@@ -951,8 +1017,25 @@ public class SymbolTable {
     /**
      * Set the isReferenced flag to true on all SymTabEntries that the given PortType refers to.
      */
-    private void setPortTypeReferences(PortTypeEntry entry) {
+    private void setPortTypeReferences(
+            PortTypeEntry entry, Definition def, Document doc) {
+        // If we don't want to emit stuff from imported files, only set the
+        // isReferenced flag if this entry exists in the immediate WSDL file.
         PortType portType = entry.getPortType();
+        if (addImports) {
+            entry.setIsReferenced(true);
+        }
+        else {
+            // NOTE:  I thought I could have simply done:
+            // if (def.getPortType(portType.getQName()) != null)
+            // but that method traces through all imported portTypes.
+            Map portTypes = def.getPortTypes();
+            if (portTypes.containsValue(portType)) {
+                entry.setIsReferenced(true);
+            }
+        }
+
+        // Set all the portType's messages
         Iterator operations = portType.getOperations().iterator();
 
         // For each operation, query its input, output, and fault messages
@@ -966,7 +1049,7 @@ public class SymbolTable {
                 if (message != null) {
                     MessageEntry mEntry = getMessageEntry(message.getQName());
                     if (mEntry != null) {
-                        mEntry.setIsReferenced(true);
+                        setMessageReferences(mEntry, def, doc);
                     }
                 }
             }
@@ -978,7 +1061,7 @@ public class SymbolTable {
                 if (message != null) {
                     MessageEntry mEntry = getMessageEntry(message.getQName());
                     if (mEntry != null) {
-                        mEntry.setIsReferenced(true);
+                        setMessageReferences(mEntry, def, doc);
                     }
                 }
             }
@@ -991,7 +1074,7 @@ public class SymbolTable {
                 if (message != null) {
                     MessageEntry mEntry = getMessageEntry(message.getQName());
                     if (mEntry != null) {
-                        mEntry.setIsReferenced(true);
+                        setMessageReferences(mEntry, def, doc);
                     }
                 }
             }
@@ -1001,27 +1084,61 @@ public class SymbolTable {
     /**
      * Set the isReferenced flag to true on all SymTabEntries that the given Meesage refers to.
      */
-    private void setBindingReferences(BindingEntry entry) {
+    private void setBindingReferences(
+            BindingEntry entry, Definition def, Document doc) {
+        // If we don't want to emit stuff from imported files, only set the
+        // isReferenced flag if this entry exists in the immediate WSDL file.
         Binding binding = entry.getBinding();
+        if (addImports) {
+            entry.setIsReferenced(true);
+        }
+        else {
+            // NOTE:  I thought I could have simply done:
+            // if (def.getBindng(binding.getQName()) != null)
+            // but that method traces through all imported bindings.
+            Map bindings = def.getBindings();
+            if (bindings.containsValue(binding)) {
+                entry.setIsReferenced(true);
+            }
+        }
+
+        // Set all the binding's portTypes
         PortType portType = binding.getPortType();
         PortTypeEntry ptEntry = getPortTypeEntry(portType.getQName());
         if (ptEntry != null) {
-            ptEntry.setIsReferenced(true);
+            setPortTypeReferences(ptEntry, def, doc);
         }
     } // setBindingReferences
 
     /**
      * Set the isReferenced flag to true on all SymTabEntries that the given Meesage refers to.
      */
-    private void setServiceReferences(ServiceEntry entry) {
+    private void setServiceReferences(
+            ServiceEntry entry, Definition def, Document doc) {
+        // If we don't want to emit stuff from imported files, only set the
+        // isReferenced flag if this entry exists in the immediate WSDL file.
         Service service = entry.getService();
+        if (addImports) {
+            entry.setIsReferenced(true);
+        }
+        else {
+            // NOTE:  I thought I could have simply done:
+            // if (def.getService(service.getQName()) != null)
+            // but that method traces through all imported services.
+            Map services = def.getServices();
+            if (services.containsValue(service)) {
+                entry.setIsReferenced(true);
+            }
+        }
+
+        // Set all the service's bindings
         Iterator ports = service.getPorts().values().iterator();
         while (ports.hasNext()) {
             Port port = (Port) ports.next();
             Binding binding = (Binding) port.getBinding();
             BindingEntry bEntry = getBindingEntry(binding.getQName());
             if (bEntry != null) {
-                bEntry.setIsReferenced(true);
+                setBindingReferences(bEntry, def, doc);
             }
         }
     } // setServiceReferences
