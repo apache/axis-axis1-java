@@ -86,14 +86,19 @@ public class TypeDesc {
     public static TypeDesc getTypeDescForClass(Class cls)
     {
         try {
-            Method getTypeDesc =
+            Method getTypeDesc = null;
+            try {
+                getTypeDesc =
                     cls.getMethod("getTypeDesc", noClasses);
+            } catch (NoSuchMethodException e) {}
             if (getTypeDesc == null) {
                 // Look for a Helper Class
                 ClassLoader cl = Thread.currentThread().getContextClassLoader();
                 Class helper = Class.forName(cls.getName() + "_Helper", true, cl);
-                getTypeDesc =
-                    helper.getMethod("getTypeDesc", noClasses);
+                try {
+                    getTypeDesc =
+                        helper.getMethod("getTypeDesc", noClasses);
+                } catch (NoSuchMethodException e) {}
             }
             if (getTypeDesc != null) {
                 return (TypeDesc)getTypeDesc.invoke(null,

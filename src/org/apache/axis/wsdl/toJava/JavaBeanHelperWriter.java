@@ -128,7 +128,18 @@ public class JavaBeanHelperWriter extends JavaWriter {
                 TypeEntry type = elem.getType();
                 String elemName = elem.getName().getLocalPart();
                 String javaName = Utils.xmlNameToJava(elemName);
-                if (!javaName.equals(elemName)) {
+
+                // Meta data is needed if the default serializer
+                // action cannot map the javaName back to the
+                // element's qname.  This occurs if:
+                //  - the javaName and element name local part are different.
+                //  - the javaName starts with uppercase char (this is a wierd
+                //    case and we have several problems with the mapping rules.
+                //    Seems best to gen meta data in this case.)
+                //  - the element name is qualified (has a namespace uri)
+                if (!javaName.equals(elemName) || 
+                    Character.isUpperCase(javaName.charAt(0)) ||
+                    !elem.getName().getNamespaceURI().equals("")) {
                     // If we did some mangling, make sure we'll write out the XML
                     // the correct way.
                     if (elementMappings == null)

@@ -575,6 +575,7 @@ public class JavaUtils
             // character is also uppercase, to follow Introspector rules.
             if (Character.isUpperCase(nameArray[i]) &&
                 ((i != firstRealChar) ||
+                    (nameLen == 1) ||
                     (nameLen > 1 && Character.isLowerCase(nameArray[1])))) {
                 result.append(Character.toLowerCase(nameArray[i]));
             }

@@ -341,10 +341,24 @@ public class SchemaUtils {
         QName nodeName = Utils.getNodeNameQName(elementNode);
         BooleanHolder forElement = new BooleanHolder();
         QName nodeType = Utils.getNodeTypeRefQName(elementNode, forElement);
-        if (nodeType == null) { // The element may use an anonymous type       
+
+
+        // An element inside a complex type is either qualified or unqualified.
+        // If the ref= attribute is used, the name of the ref'd element is used
+        // (which must be a root element).  If the ref= attribute is not
+        // used, the name of the element is unqualified.
+
+        if (!forElement.value) {
+            // Unqualified nodeName
+            nodeName = new QName("", nodeName.getLocalPart());            
+        } else {
+            nodeName = nodeType;
+        }
+        if (nodeType == null) {
             nodeType = getElementAnonQName(elementNode);            
             forElement.value = false;
         }
+
         
         TypeEntry type = (TypeEntry)symbolTable.getTypeEntry(nodeType, 
                                                              forElement.value);
