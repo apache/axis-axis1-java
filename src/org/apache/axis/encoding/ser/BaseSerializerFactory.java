@@ -116,7 +116,7 @@ public abstract class BaseSerializerFactory extends BaseFactory
      */
     protected Serializer getGeneralPurpose(String mechanismType) {
         if (javaType != null && xmlType != null) {
-        	Constructor serClassConstructor = getSerClassConstructor();
+            Constructor serClassConstructor = getSerClassConstructor();
             if (serClassConstructor != null) {
                 try {
                     return (Serializer) 
@@ -159,6 +159,7 @@ public abstract class BaseSerializerFactory extends BaseFactory
      */
     protected Serializer getSpecialized(String mechanismType) {
         if (javaType != null && xmlType != null) {
+            Method getSerializer = getGetSerializer();
             if (getSerializer != null) {
                 try {
                     return (Serializer) 
@@ -303,26 +304,27 @@ public abstract class BaseSerializerFactory extends BaseFactory
         }
         return sf;
     }
+
     /**
      * Returns the getSerializer.
      * @return Method
      */
-	protected Method getGetSerializer() {
+    protected Method getGetSerializer() {
     	if (getSerializer == null) {
             getSerializer = getMethod(javaType, "getSerializer");
         }
     	return getSerializer;
     }
-
+    
     /**
      * Returns the serClassConstructor.
      * @return Constructor
      */
-	protected Constructor getSerClassConstructor() {
+    protected Constructor getSerClassConstructor() {
     	if (serClassConstructor == null) {
             serClassConstructor = getConstructor(serClass);
         }
     	return serClassConstructor;
     }
-
+    
 }

@@ -78,6 +78,7 @@ public class SimpleDeserializer extends DeserializerImpl {
         
         init();
     }
+
     public SimpleDeserializer(Class javaType, QName xmlType, TypeDesc typeDesc) {
         this.xmlType = xmlType;
         this.javaType = javaType;
@@ -191,57 +192,30 @@ public class SimpleDeserializer extends DeserializerImpl {
      */
     public Object makeValue(String source) throws Exception
     {
-        // Trim whitespace if non-String
-        if (javaType != java.lang.String.class)
-            source = source.trim();
+        if (javaType == java.lang.String.class) {
+            return source;
+        }
 
-        if (source.length() == 0 && typeDesc == null &&
-                javaType != java.lang.String.class) {
+        // Trim whitespace if non-String
+        source = source.trim();
+
+        if (source.length() == 0 && typeDesc == null) {
             return null;
         }
         
-        // If the javaType is a boolean, except a number of different sources
-        if (javaType == boolean.class || javaType == Boolean.class) {
-            // This is a pretty lame test, but it is what the previous code did.
-            switch (source.charAt(0)) {
-                case '0': case 'f': case 'F':
-                    return Boolean.FALSE;
-                    
-                case '1': case 't': case 'T': 
-                    return Boolean.TRUE; 
-                    
-                default:
-                    throw new NumberFormatException(
-                            Messages.getMessage("badBool00"));
+        // if constructor is set skip all basic java type checks
+        if (this.constructor == null) {
+            Object value = makeBasicValue(source);
+            if (value != null) {
+                return value;
             }
+        }
             
-        }
-        
-        // If expecting a Float or a Double, need to accept some special cases.
-        if (javaType == float.class ||
-                javaType == java.lang.Float.class) {
-            if (source.equals("NaN")) {
-                return new Float(Float.NaN);
-            } else if (source.equals("INF")) {
-                return new Float(Float.POSITIVE_INFINITY);
-            } else if (source.equals("-INF")) {
-                return new Float(Float.NEGATIVE_INFINITY);
-            }
-        }
-        if (javaType == double.class ||
-                javaType == java.lang.Double.class) {
-            if (source.equals("NaN")) {
-                return new Double(Double.NaN);
-            } else if (source.equals("INF")) {
-                return new Double(Double.POSITIVE_INFINITY);
-            } else if (source.equals("-INF")) {
-                return new Double(Double.NEGATIVE_INFINITY);
-            }
-        }    
-
         Object [] args = null;
         
-        if (QName.class.isAssignableFrom(javaType)) {
+        boolean isQNameSubclass = QName.class.isAssignableFrom(javaType);
+
+        if (isQNameSubclass) {
             int colon = source.lastIndexOf(":");
             String namespace = colon < 0 ? "" :
                 context.getNamespaceURI(source.substring(0, colon));
@@ -251,7 +225,7 @@ public class SimpleDeserializer extends DeserializerImpl {
 
         if (constructor == null) {
             try {
-                if (QName.class.isAssignableFrom(javaType)) {
+                if (isQNameSubclass) {
                     constructor = 
                         javaType.getDeclaredConstructor(STRING_STRING_CLASS);
                 } else {
@@ -269,7 +243,80 @@ public class SimpleDeserializer extends DeserializerImpl {
         
         return constructor.newInstance(args);
     }
-    
+
+    private Object makeBasicValue(String source) throws Exception {
+        // If the javaType is a boolean, except a number of different sources
+        if (javaType == boolean.class || 
+            javaType == Boolean.class) {
+            // This is a pretty lame test, but it is what the previous code did.
+            switch (source.charAt(0)) {
+                case '0': case 'f': case 'F':
+                    return Boolean.FALSE;
+                    
+                case '1': case 't': case 'T': 
+                    return Boolean.TRUE; 
+                    
+                default:
+                    throw new NumberFormatException(
+                            Messages.getMessage("badBool00"));
+                }
+            
+        }
+        
+        // If expecting a Float or a Double, need to accept some special cases.
+        if (javaType == float.class ||
+            javaType == java.lang.Float.class) {
+            if (source.equals("NaN")) {
+                return new Float(Float.NaN);
+            } else if (source.equals("INF")) {
+                return new Float(Float.POSITIVE_INFINITY);
+            } else if (source.equals("-INF")) {
+                return new Float(Float.NEGATIVE_INFINITY);
+            } else {
+                return new Float(source);
+            }
+        }
+        
+        if (javaType == double.class ||
+            javaType == java.lang.Double.class) {
+            if (source.equals("NaN")) {
+                return new Double(Double.NaN);
+            } else if (source.equals("INF")) {
+                return new Double(Double.POSITIVE_INFINITY);
+            } else if (source.equals("-INF")) {
+                return new Double(Double.NEGATIVE_INFINITY);
+            } else {
+                return new Double(source);
+            }
+        }    
+        
+        if (javaType == int.class ||
+            javaType == java.lang.Integer.class) {
+            return new Integer(source);
+        }
+        
+        if (javaType == short.class ||
+            javaType == java.lang.Short.class) {
+            return new Short(source);
+        }
+        
+        if (javaType == long.class ||
+            javaType == java.lang.Long.class) {
+            return new Long(source);
+        }
+        
+        if (javaType == byte.class ||
+            javaType == java.lang.Byte.class) {
+            return new Byte(source);
+        }
+        
+        if (javaType == org.apache.axis.types.URI.class) {
+            return new org.apache.axis.types.URI(source);
+        }
+
+        return null;
+    }
+        
     /**
      * Set the bean properties that correspond to element attributes.
      * 

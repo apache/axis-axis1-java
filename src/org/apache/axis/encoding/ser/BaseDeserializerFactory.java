@@ -106,7 +106,7 @@ public abstract class BaseDeserializerFactory extends BaseFactory
      */
     protected Deserializer getGeneralPurpose(String mechanismType) {
         if (javaType != null && xmlType != null) {
-        	Constructor deserClassConstructor = getDeserClassConstructor();
+            Constructor deserClassConstructor = getDeserClassConstructor();
             if (deserClassConstructor != null) {
                 try {
                     return (Deserializer) 
@@ -148,7 +148,7 @@ public abstract class BaseDeserializerFactory extends BaseFactory
      */
     protected Deserializer getSpecialized(String mechanismType) {
         if (javaType != null && xmlType != null) {
-        	Method getDeserializer = getGetDeserializer();
+            Method getDeserializer = getGetDeserializer();
             if (getDeserializer != null) {
                 try {
                     return (Deserializer) 
@@ -279,7 +279,7 @@ public abstract class BaseDeserializerFactory extends BaseFactory
      * Returns the deserClassConstructor.
      * @return Constructor
      */
-	protected Constructor getDeserClassConstructor() {
+    protected Constructor getDeserClassConstructor() {
     	if (deserClassConstructor == null) { 
             deserClassConstructor = getConstructor(deserClass);
         } 
@@ -290,7 +290,7 @@ public abstract class BaseDeserializerFactory extends BaseFactory
      * Returns the getDeserializer.
      * @return Method
      */
-	protected Method getGetDeserializer() {
+    protected Method getGetDeserializer() {
     	if (getDeserializer == null) {
             getDeserializer = getMethod(javaType,"getDeserializer");    
         }

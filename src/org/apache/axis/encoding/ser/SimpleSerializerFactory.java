@@ -20,13 +20,39 @@
 package org.apache.axis.encoding.ser;
 
 import javax.xml.namespace.QName;
+import javax.xml.rpc.JAXRPCException;
 
 public class SimpleSerializerFactory extends BaseSerializerFactory {
+
+    private boolean isBasicType = false;
+
     /**
      * Note that the factory is constructed with the QName and xmlType.  This is important
      * to allow distinction between primitive values and java.lang wrappers.
      **/
     public SimpleSerializerFactory(Class javaType, QName xmlType) {
         super(SimpleSerializer.class, xmlType, javaType);
+        this.isBasicType = isBasic(javaType);
     }
+
+    /*
+     * Any builtin type that has a constructor that takes a String is a basic
+     * type.
+     * This is for optimization purposes, so that we don't introspect
+     * primitive java types or some basic Axis types.
+     */
+    private static boolean isBasic(Class javaType) {
+        return (javaType.isPrimitive() || 
+                javaType == java.lang.String.class ||
+                javaType == org.apache.axis.types.URI.class);
+    }
+
+    public javax.xml.rpc.encoding.Serializer getSerializerAs(String mechanismType) throws JAXRPCException {
+        if (this.isBasicType) {
+            return new SimpleSerializer(javaType, xmlType);
+        } else {
+            return super.getSerializerAs(mechanismType);
+        }
+    }
+    
 }

@@ -40,14 +40,17 @@ public class SimpleDeserializerFactory extends BaseDeserializerFactory {
         new Class [] {String.class};
 
     private Constructor constructor = null;
+    private boolean isBasicType = false;
     /**
      * Note that the factory is constructed with the QName and xmlType.  This is important
      * to allow distinction between primitive values and java.lang wrappers.
      **/
     public SimpleDeserializerFactory(Class javaType, QName xmlType) {
         super(SimpleDeserializer.class, xmlType, javaType);
-        try {
-            if (!javaType.isPrimitive()) {
+        this.isBasicType = isBasic(javaType);
+        if (!this.isBasicType) {
+            // discover the constructor for non basic types
+            try {
                 if (QName.class.isAssignableFrom(javaType)) {
                     constructor = 
                         javaType.getDeclaredConstructor(STRING_STRING_CLASS);
@@ -55,18 +58,24 @@ public class SimpleDeserializerFactory extends BaseDeserializerFactory {
                     constructor = 
                         javaType.getDeclaredConstructor(STRING_CLASS);
                 }
-            }
-            else {
-                Class wrapper = JavaUtils.getWrapperClass(javaType);
-                if (wrapper != null)
-                    constructor = 
-                        wrapper.getDeclaredConstructor(STRING_CLASS);
-            }
-        } catch (java.lang.NoSuchMethodException e) {
-            throw new IllegalArgumentException(e.toString());
-        } 
+            } catch (java.lang.NoSuchMethodException e) {
+                throw new IllegalArgumentException(e.toString());
+            } 
+        }
     }
     
+    /*
+     * Any builtin type that has a constructor that takes a String is a basic
+     * type.
+     * This is for optimization purposes, so that we don't introspect
+     * primitive java types or some basic Axis types.
+     */
+    private static boolean isBasic(Class javaType) {
+        return (javaType.isPrimitive() || 
+                javaType == java.lang.String.class ||
+                javaType == org.apache.axis.types.URI.class);
+    }
+
     /**
      * Get the Deserializer and the set the Constructor so the
      * deserializer does not have to do introspection.
@@ -76,10 +85,18 @@ public class SimpleDeserializerFactory extends BaseDeserializerFactory {
         if (javaType == java.lang.Object.class) {
             return null;
         }
-        SimpleDeserializer deser = (SimpleDeserializer) super.getDeserializerAs(mechanismType);
-        if (deser != null)
-            deser.setConstructor(constructor);
-        return deser;
+        if (this.isBasicType) {
+            return new SimpleDeserializer(javaType, xmlType);
+        } else {
+            // XXX: don't think we can always expect to be SimpleDeserializer
+            // since getSpecialized() might return a different type
+            SimpleDeserializer deser = 
+                (SimpleDeserializer) super.getDeserializerAs(mechanismType);
+            if (deser != null) {
+                deser.setConstructor(constructor);
+            }
+            return deser;
+        }
     }
-            
+    
 }
