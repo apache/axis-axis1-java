@@ -55,31 +55,31 @@
   <!-- port type declns -->
   <portType name="sharedName">
     <operation name="sharedName">
-      <input name="sharedName" message="tns:empty"/>
-      <output name="sharedName" message="tns:sharedName"/>
+      <input name="sharedNameIn" message="tns:empty"/>
+      <output name="sharedNameOut" message="tns:sharedName"/>
     </operation>
     <operation name="sharedName">
-      <input name="sharedName" message="tns:sharedName"/>
-      <output name="empty" message="tns:empty"/>
+      <input name="sharedNameIn2" message="tns:sharedName"/>
+      <output name="emptyOut2" message="tns:empty"/>
     </operation>
     <operation name="sharedName">
-      <input name="another" message="tns:anotherMessage"/>
-      <output name="empty" message="tns:empty"/>
+      <input name="anotherIn3" message="tns:anotherMessage"/>
+      <output name="emptyOut3" message="tns:empty"/>
     </operation>
   </portType>
 
   <portType name="literalPort">
     <operation name="sharedName">
-      <input name="sharedName" message="tns:empty"/>
-      <output name="sharedName" message="tns:literalMessage"/>
+      <input name="sharedNameIn" message="tns:empty"/>
+      <output name="sharedNameOut" message="tns:literalMessage"/>
     </operation>
     <operation name="sharedName">
-      <input name="sharedName" message="tns:literalMessage"/>
-      <output name="empty" message="tns:empty"/>
+      <input name="sharedNameIn2" message="tns:literalMessage"/>
+      <output name="emptyOut2" message="tns:empty"/>
     </operation>
     <operation name="sharedName">
-      <input name="another" message="tns:anotherLitMessage"/>
-      <output name="empty" message="tns:empty"/>
+      <input name="anotherIn3" message="tns:anotherLitMessage"/>
+      <output name="emptyOut3" message="tns:empty"/>
     </operation>
   </portType>
 
@@ -89,26 +89,26 @@
         style="rpc"
         transport="http://schemas.xmlsoap.org/soap/http"/>
     <operation name="sharedName">
-      <input name="sharedName">
+      <input name="sharedNameIn">
         <soap:body use="encoded"/>
       </input>
-      <output name="sharedName">
+      <output name="sharedNameOut">
         <soap:body use="encoded"/>
       </output>
     </operation>
     <operation name="sharedName">
-      <input name="sharedName">
+      <input name="sharedNameIn2">
         <soap:body use="encoded"/>
       </input>
-      <output name="empty">
+      <output name="emptyOut2">
         <soap:body use="encoded"/>
       </output>
     </operation>
     <operation name="sharedName">
-      <input name="another">
+      <input name="anotherIn3">
         <soap:body use="encoded"/>
       </input>
-      <output name="empty">
+      <output name="emptyOut3">
         <soap:body use="encoded"/>
       </output>
     </operation>
@@ -120,26 +120,26 @@
         style="rpc"
         transport="http://schemas.xmlsoap.org/soap/http"/>
     <operation name="sharedName">
-      <input name="sharedName">
+      <input name="sharedNameIn">
         <soap:body use="literal"/>
       </input>
-      <output name="sharedName">
+      <output name="sharedNameOut">
         <soap:body use="literal"/>
       </output>
     </operation>
     <operation name="sharedName">
-      <input name="sharedName">
+      <input name="sharedNameIn2">
         <soap:body use="literal"/>
       </input>
-      <output name="empty">
+      <output name="emptyOut2">
         <soap:body use="literal"/>
       </output>
     </operation>
     <operation name="sharedName">
-      <input name="another">
+      <input name="anotherIn3">
         <soap:body use="literal"/>
       </input>
-      <output name="empty">
+      <output name="emptyOut3">
         <soap:body use="literal"/>
       </output>
     </operation>
@@ -151,26 +151,26 @@
         style="rpc"
         transport="http://schemas.xmlsoap.org/soap/http"/>
     <operation name="sharedName">
-      <input name="sharedName">
+      <input name="sharedNameIn">
         <soap:body use="encoded"/>
       </input>
-      <output name="sharedName">
+      <output name="sharedNameOut">
         <soap:body use="encoded"/>
       </output>
     </operation>
     <operation name="sharedName">
-      <input name="sharedName">
+      <input name="sharedNameIn2">
         <soap:body use="encoded"/>
       </input>
-      <output name="empty">
+      <output name="emptyOut2">
         <soap:body use="encoded"/>
       </output>
     </operation>
     <operation name="sharedName">
-      <input name="another">
+      <input name="anotherIn3">
         <soap:body use="encoded"/>
       </input>
-      <output name="empty">
+      <output name="emptyOut3">
         <soap:body use="encoded"/>
       </output>
     </operation>
