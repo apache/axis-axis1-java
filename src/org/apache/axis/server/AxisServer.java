@@ -126,10 +126,25 @@ public class AxisServer extends BasicHandler
         msgContext.setProperty(Constants.SERVICE_REGISTRY, sr);
 
         try {
-          hName = msgContext.getTargetService();
-          if ( hName != null  && (h = hr.find(hName)) != null ) {
-            Debug.Print(1, "Calling handler: " + hName );
-            h.invoke( msgContext );
+          hName = msgContext.getStrProp( MessageContext.ENGINE_HANDLER );
+          if ( hName != null ) {
+              if ( hr == null || (h = hr.find(hName)) == null ) {
+                ClassLoader cl = new AxisClassLoader();
+                try {
+                  Debug.Print( 2, "Trying to load class: " + hName );
+                  Class cls = cl.loadClass( hName );
+                  h = (Handler) cls.newInstance();
+                }
+                catch( Exception e ) {
+                  h = null ;
+                }
+              }
+              if ( h != null )
+                h.invoke(msgContext);
+              else
+                throw new AxisFault( "Server.error",
+                                     "Can't locate handler: " + hName,
+                                     null, null );
           }
           else {
           // This really should be in a handler - but we need to discuss it

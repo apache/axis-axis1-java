@@ -146,16 +146,24 @@ public class HTTPMessage {
       reqEnv.addBody( body );
     }
 
-    Handler              client = new HTTPDispatchHandler();
+    Handler              client = null ;
     Message              reqMsg = new Message( reqEnv, "SOAPEnvelope" );
     MessageContext       msgContext = new MessageContext( reqMsg );
 
     // For testing - skip HTTP layer
     if ( doLocal ) {
       client = new org.apache.axis.server.AxisServer();
-      msgContext.setProperty(MessageContext.TRANS_INPUT , "HTTP.Input" );
-      msgContext.setProperty(MessageContext.TRANS_OUTPUT, "HTTP.Output" );
+      msgContext.setProperty(MessageContext.TRANS_INPUT , "HTTP.input" );
+      msgContext.setProperty(MessageContext.TRANS_OUTPUT, "HTTP.output" );
       msgContext.setTargetService( action );
+    }
+    else {
+      client = new AxisClient();
+      // msgContext.setProperty( 
+                      // MessageContext.ENGINE_HANDLER,
+                      // "org.apache.axis.transport.http.HTTPDispatchHandler" );
+      msgContext.setProperty(MessageContext.TRANS_INPUT , "HTTP.input" );
+      msgContext.setProperty(MessageContext.TRANS_OUTPUT , "HTTP.output" );
     }
 
     if ( true ) { // Debug.getDebugLevel() > 0  ) {
