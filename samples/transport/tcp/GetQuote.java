@@ -93,8 +93,7 @@ public class GetQuote {
         Service service = new Service();
         Call call = (Call)service.createCall();
         
-        SimpleTargetedChain c = new SimpleTargetedChain();
-        c.setPivotHandler(new TCPSender());
+        SimpleTargetedChain c = new SimpleTargetedChain(new TCPSender());
         service.getEngine().deployTransport("tcp", c);
         
         call.setTransport(new TCPTransport());

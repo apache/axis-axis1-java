@@ -58,6 +58,7 @@ import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.Handler;
+import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.SimpleTargetedChain;
@@ -103,10 +104,93 @@ public class SOAPService extends SimpleTargetedChain
      */
     private TypeMappingRegistry typeMap;
     
+    /**
+     * SOAPRequestHandler is used to inject SOAP semantics just before
+     * the pivot handler.
+     */
+    private class SOAPRequestHandler extends BasicHandler {
+        public SOAPRequestHandler() {}
+
+        public void undo(MessageContext msgContext) {}
+
+        public void invoke(MessageContext msgContext) throws AxisFault {
+            // Do SOAP semantics here
+            if (category.isDebugEnabled()) {
+                category.debug( JavaUtils.getMessage("semanticCheck00"));
+            }
+
+            // This needs to be set to the merged list of service-specific and
+            // enigne-wide actors we should be acting as.
+            ArrayList actors = msgContext.getAxisEngine().getActorURIs();
+
+            // 1. Check mustUnderstands
+            SOAPEnvelope env = msgContext.getRequestMessage().getSOAPEnvelope();
+            Vector headers = env.getHeadersByActor(actors);
+            Vector misunderstoodHeaders = null;
+            Enumeration enum = headers.elements();
+            while (enum.hasMoreElements()) {
+                SOAPHeader header = (SOAPHeader)enum.nextElement();
+                if (header.isMustUnderstand() && !header.isProcessed()) {
+                    if (misunderstoodHeaders == null)
+                        misunderstoodHeaders = new Vector();
+                    misunderstoodHeaders.addElement(header);
+                }
+            }
+
+            // !!! we should indicate SOAP1.2 compliance via the
+            // MessageContext, not a boolean here....
+            boolean doMisunderstoodHeaders = true;
+
+            if (misunderstoodHeaders != null) {
+                // !!! If SOAP 1.2, insert misunderstood fault header here
+                if (doMisunderstoodHeaders) {
+                    Message respMsg = msgContext.getResponseMessage();
+                    if (respMsg == null) {
+                        respMsg = new Message(new SOAPEnvelope());
+                        msgContext.setResponseMessage(respMsg);
+                    }
+                    env = respMsg.getSOAPEnvelope();
+                    enum = misunderstoodHeaders.elements();
+                    while (enum.hasMoreElements()) {
+                        SOAPHeader badHeader = (SOAPHeader)enum.nextElement();
+                        QName badQName = new QName(badHeader.getNamespaceURI(),
+                                                   badHeader.getName());
+                        SOAPHeader newHeader = new SOAPHeader(
+                                                              Constants.URI_SOAP12_FAULT_NS,
+                                                              Constants.ELEM_MISUNDERSTOOD);
+                        newHeader.addAttribute(null,
+                                               Constants.ATTR_QNAME,
+                                               badQName);
+
+                        env.addHeader(newHeader);
+                    }
+                }
+
+                throw new AxisFault(Constants.FAULT_MUSTUNDERSTAND,
+                                    JavaUtils.getMessage("noUnderstand00"),
+                                    null, null);
+            }
+        }
+    }
+
     /** Standard, no-arg constructor.
      */
     public SOAPService()
     {
+        initTypeMappingRegistry();
+    }
+
+    /** Constructor with real or null request, pivot, and response
+     *  handlers. A special request handler is specified to inject
+     *  SOAP semantics.
+     */
+    public SOAPService(Handler reqHandler, Handler pivHandler,
+                       Handler respHandler) {
+        init(reqHandler, new SOAPRequestHandler(), pivHandler, null, respHandler);
+        initTypeMappingRegistry();
+    }
+
+    private void initTypeMappingRegistry() {
         typeMap = new TypeMappingRegistry();
         typeMap.setParent(SOAPTypeMappingRegistry.getSingleton());
     }
@@ -126,8 +210,8 @@ public class SOAPService extends SimpleTargetedChain
      */
     public SOAPService(Handler serviceHandler)
     {
-        this();
-        setPivotHandler(serviceHandler);
+        init(null, new SOAPRequestHandler(), serviceHandler, null, null);
+        initTypeMappingRegistry();
     }
     
     /** Tell this service which engine it's deployed to.
@@ -166,158 +250,6 @@ public class SOAPService extends SimpleTargetedChain
         return true;
     }
     
-    public void invoke(MessageContext msgContext) throws AxisFault
-    {
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("enter00", 
-                "SOAPService::invoke") );
-        }
-        
-        if (!availableFromTransport(msgContext.getTransportName()))
-            throw new AxisFault("Server.NotAvailable",
-                JavaUtils.getMessage("noService02", msgContext.getTransportName()),
-                null, null);
-        
-        msgContext.setPastPivot(false);
-
-        Handler h = getRequestHandler() ;
-        if ( h != null ) {
-            if (category.isDebugEnabled()) {
-                category.debug( JavaUtils.getMessage("invokeRequest00") );
-            }
-
-            h.invoke(msgContext);
-        } else {
-            if (category.isDebugEnabled()) {
-                category.debug( JavaUtils.getMessage("noRequest01") );
-            }
-        }
-
-        // Do SOAP semantics here
-        if (category.isDebugEnabled()) {
-            category.debug( JavaUtils.getMessage("semanticCheck00"));
-        }
-        
-        // This needs to be set to the merged list of service-specific and
-        // enigne-wide actors we should be acting as.
-        ArrayList actors = msgContext.getAxisEngine().getActorURIs();
-        
-        // 1. Check mustUnderstands
-        SOAPEnvelope env = msgContext.getRequestMessage().getSOAPEnvelope();
-        Vector headers = env.getHeadersByActor(actors);
-        Vector misunderstoodHeaders = null;
-        Enumeration enum = headers.elements();
-        while (enum.hasMoreElements()) {
-            SOAPHeader header = (SOAPHeader)enum.nextElement();
-            if (header.isMustUnderstand() && !header.isProcessed()) {
-                if (misunderstoodHeaders == null)
-                    misunderstoodHeaders = new Vector();
-                misunderstoodHeaders.addElement(header);
-            }
-        }
-        
-        // !!! we should indicate SOAP1.2 compliance via the
-        // MessageContext, not a boolean here....
-        boolean doMisunderstoodHeaders = true;
-        
-        if (misunderstoodHeaders != null) {
-            // !!! If SOAP 1.2, insert misunderstood fault header here
-            if (doMisunderstoodHeaders) {
-                Message respMsg = msgContext.getResponseMessage();
-                if (respMsg == null) {
-                    respMsg = new Message(new SOAPEnvelope());
-                    msgContext.setResponseMessage(respMsg);
-                }
-                env = respMsg.getSOAPEnvelope();
-                enum = misunderstoodHeaders.elements();
-                while (enum.hasMoreElements()) {
-                    SOAPHeader badHeader = (SOAPHeader)enum.nextElement();
-                    QName badQName = new QName(badHeader.getNamespaceURI(),
-                                               badHeader.getName());
-                    SOAPHeader newHeader = new SOAPHeader(
-                                               Constants.URI_SOAP12_FAULT_NS,
-                                               Constants.ELEM_MISUNDERSTOOD);
-                    newHeader.addAttribute(null,
-                                           Constants.ATTR_QNAME,
-                                           badQName);
-                    
-                    env.addHeader(newHeader);
-                }
-            }
-            
-            throw new AxisFault(Constants.FAULT_MUSTUNDERSTAND,
-                        JavaUtils.getMessage("noUnderstand00"),
-                        null, null);
-        }
-
-        h = getPivotHandler();
-        if ( h != null ) {
-            if (category.isDebugEnabled()) {
-                category.debug( JavaUtils.getMessage("invokeService00") );
-            }
-
-            h.invoke(msgContext);
-        } else {
-            if (category.isDebugEnabled()) {
-                category.debug( JavaUtils.getMessage("noService03") );
-            }
-        }
-        
-        // OK, we're past the pivot, so let the MessageContext know.
-        msgContext.setPastPivot(true);
-        
-        h = getResponseHandler();
-        if ( h != null ) {
-            if (category.isDebugEnabled()) {
-                category.debug( JavaUtils.getMessage("invokeResponse00") );
-            }
-
-            h.invoke(msgContext);
-        } else {
-            if (category.isDebugEnabled()) {
-                category.debug( JavaUtils.getMessage("noResponse00") );
-            }
-        }
-
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("exit00", 
-                "SOAPService::invoke") );
-        }
-    }
-
-    public void undo(MessageContext msgContext)
-    {
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("enter00", 
-                "SOAPService::undo") );
-            category.debug(JavaUtils.getMessage("exit00", 
-                "SOAPService::undo") );
-        }
-    }
-
-    public Element getDeploymentData(Document doc) {
-      if (category.isDebugEnabled()) {
-          category.debug(JavaUtils.getMessage("enter00", 
-              "SOAPService::getDeploymentData") );
-      }
-
-      Element  root = doc.createElementNS("", "service");
-
-      fillInDeploymentData(root);
-      
-      if (!getTypeMappingRegistry().isEmpty()) {
-        Element elem = doc.createElementNS("", "typeMappings");
-        getTypeMappingRegistry().dumpToElement(elem);
-        root.appendChild(elem);
-      }
-      
-      if (category.isDebugEnabled()) {
-          category.debug(JavaUtils.getMessage("exit00", 
-              "SOAPService::getDeploymentData") );
-      }
-      return( root );
-    }
-
     /*********************************************************************
      * Administration and management APIs
      *

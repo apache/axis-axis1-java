@@ -37,8 +37,7 @@ public class FileTest {
         AxisEngine engine = service.getEngine();
 
         // Manually deploy file sender and file transport for this example
-        SimpleTargetedChain c = new SimpleTargetedChain();
-        c.setPivotHandler(new FileSender());
+        SimpleTargetedChain c = new SimpleTargetedChain(new FileSender());
         engine.deployTransport("FileTransport", c);
 
         call.setOperationName( "getQuote" );

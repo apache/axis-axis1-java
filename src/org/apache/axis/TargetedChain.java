@@ -57,7 +57,7 @@ package org.apache.axis;
 /**
  * @author James Snell (jasnell@us.ibm.com)
  */
-public interface TargetedChain extends Handler { 
+public interface TargetedChain extends Chain { 
     
     /**
      * Returns the Request handler
@@ -65,33 +65,13 @@ public interface TargetedChain extends Handler {
     public Handler   getRequestHandler();
     
     /**
-     * Sets the Request Chain
-     */
-    public void    setRequestHandler(Handler reqHandler);
-    
-    /**
      * Returns the Pivot Handler
      */
     public Handler getPivotHandler();
     
     /**
-     * Sets the Pivot Handler
-     */
-    public void    setPivotHandler(Handler handler);
-    
-    /**
      * Returns the Response Handler
      */
     public Handler   getResponseHandler();
-    
-    /**
-     * Sets the Response Handler
-     */
-    public void    setResponseHandler(Handler respHandler);
-    
-    /**
-     * Clears the Handlers
-     */
-    public void    clear();
     
 }

@@ -205,33 +205,37 @@ public class WSDDService
             return cachedService;
         }
         
-        SOAPService   service  = new SOAPService();
-        if ( getQName() != null )
-            service.setName(getQName().getLocalPart()); 
-        service.setOptions(getParametersTable());
-        
-        WSDDChain     request  = getRequestFlow();
-        WSDDChain      response = getResponseFlow();
-        
+        Handler reqHandler = null;
+        WSDDChain request = getRequestFlow();
+ 
         if (request != null) {
-            service.setRequestHandler(request.getInstance(registry));
+            reqHandler = request.getInstance(registry);
         }
-        
-        //service.setPivotHandler(getProvider().getInstance(registry));
+
+        Handler providerHandler = null;
+
         if (providerQName != null) {
-            Handler providerHandler = WSDDProvider.getInstance(providerQName,
-                                                               this,
-                                                               registry);
+            providerHandler = WSDDProvider.getInstance(providerQName,
+                                                       this,
+                                                       registry);
             if (providerHandler == null)
                 throw new WSDDException(
-                        JavaUtils.getMessage("couldntConstructProvider00"));
-            
-            service.setPivotHandler(providerHandler);
+                          JavaUtils.getMessage("couldntConstructProvider00"));
         }
-        
+
+        Handler respHandler = null;
+        WSDDChain response = getResponseFlow();
+
         if (response != null) {
-            service.setResponseHandler(response.getInstance(registry));
+            respHandler = response.getInstance(registry);
         }
+  
+        SOAPService service = new SOAPService(reqHandler, providerHandler,
+                                              respHandler);
+
+        if ( getQName() != null )
+            service.setName(getQName().getLocalPart());
+        service.setOptions(getParametersTable());
 
         if (tmr == null) {
             tmr = new TypeMappingRegistry();

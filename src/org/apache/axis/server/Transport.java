@@ -72,14 +72,4 @@ public class Transport extends SimpleTargetedChain
     static Category category =
             Category.getInstance(Transport.class.getName());
 
-    public Element getDeploymentData(Document doc) {
-        category.debug(JavaUtils.getMessage("enter00", "Transport::getDeploymentData"));
-
-        Element  root = doc.createElementNS("", "transport");
-
-        fillInDeploymentData(root);
-
-        category.debug(JavaUtils.getMessage("exit00", "Transport::getDeploymentData"));
-        return( root );
-    }
 }

@@ -185,11 +185,11 @@ public abstract class WSDDTargetedChain
     public Handler makeNewInstance(DeploymentRegistry registry)
         throws Exception
     {
-        TargetedChain c = new org.apache.axis.SimpleTargetedChain();
+        Handler reqHandler = null;
 
         WSDDChain req = getRequestFlow();
         if (req != null)
-            c.setRequestHandler(req.getInstance(registry));
+            reqHandler = req.getInstance(registry);
         
         Handler pivot = null;
         if (pivotQName != null) {
@@ -200,13 +200,13 @@ public abstract class WSDDTargetedChain
             }
         }
         
-        c.setPivotHandler(pivot);
-
+        Handler respHandler = null;
         WSDDChain resp = getResponseFlow();
         if (resp != null)
-            c.setResponseHandler(resp.getInstance(registry));
+            respHandler = resp.getInstance(registry);
 
-        return c;
+        return new org.apache.axis.SimpleTargetedChain(reqHandler, pivot,
+                                                       respHandler);
     }
 
     /**

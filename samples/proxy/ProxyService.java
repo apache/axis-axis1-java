@@ -94,8 +94,7 @@ public class ProxyService {
             service.setEngine( msgContext.getAxisEngine().getClientEngine() );
             Call    call = (Call) service.createCall();
 
-            SimpleTargetedChain c = new SimpleTargetedChain();
-            c.setPivotHandler(new TCPSender());
+            SimpleTargetedChain c = new SimpleTargetedChain(new TCPSender());
 	    service.getEngine().deployTransport("tcp", c);
     
             // add TCP for proxy testing

@@ -55,7 +55,6 @@
 package org.apache.axis.deployment.v2dd;
 
 import org.apache.axis.Handler;
-import org.apache.axis.SimpleTargetedChain;
 import org.apache.axis.deployment.DeployableItem;
 import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.deployment.DeploymentException;
@@ -99,8 +98,6 @@ public class V2DDDeployableItem implements DeployableItem, Serializable {
         // definition to configure the instance
         
         try {
-            SimpleTargetedChain stc = new SimpleTargetedChain();
-            
             V2DDProvider prov = service.getProvider();
             String[] methods = prov.getMethods();
 
