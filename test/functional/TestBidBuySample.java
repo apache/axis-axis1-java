@@ -72,7 +72,7 @@ public class TestBidBuySample extends TestCase {
     }
     
     public void doTestDeploy () throws Exception {
-        String[] args = { "samples/bidbuy/deploy.xml" };
+        String[] args = { "samples/bidbuy/deploy.wsdd" };
         AdminClient.main(args);
     }
     
@@ -96,6 +96,10 @@ public class TestBidBuySample extends TestCase {
             throw new Exception("Fault returned from test: "+e);
         }
     }
-    
+
+    public static void main(String[] args) throws Exception {
+        TestBidBuySample tester = new TestBidBuySample("test");
+        tester.testBidBuyService();
+    }
 }
 
