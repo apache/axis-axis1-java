@@ -113,12 +113,13 @@ public class HTTPSender extends BasicHandler {
      *
      * @throws IOException
      */
-    private void getSocket(
-            SocketHolder sockHolder,
-            String protocol,
-            String host, int port, int timeout, 
-            StringBuffer otherHeaders, BooleanHolder useFullURL)
-            throws Exception {
+    protected void getSocket(SocketHolder sockHolder,
+                             MessageContext msgContext,
+                             String protocol,
+                             String host, int port, int timeout, 
+                             StringBuffer otherHeaders, 
+                             BooleanHolder useFullURL)
+        throws Exception {
         Hashtable options = getOptions();
         if(timeout > 0) {
             if(options == null) {
@@ -379,7 +380,8 @@ public class HTTPSender extends BasicHandler {
 
         header2.append("\r\n"); //The empty line to start the BODY.
 
-        getSocket(sockHolder, targetURL.getProtocol(), host, port, timeout, otherHeaders, useFullURL);
+        getSocket(sockHolder, msgContext, targetURL.getProtocol(), 
+                  host, port, timeout, otherHeaders, useFullURL);
         
         StringBuffer header = new StringBuffer();
         
