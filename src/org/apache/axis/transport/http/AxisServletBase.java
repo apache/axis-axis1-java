@@ -183,6 +183,8 @@ public class AxisServletBase extends HttpServlet {
                 // also means we put the standard configuration pattern in one
                 // place.
                 engine = AxisServer.getServer(environment);
+//              attach the AxisServer with the current Servlet
+                engine.setName(servlet.getServletName());
                 storeEngine(servlet, engine);
             }
         }
@@ -204,16 +206,10 @@ public class AxisServletBase extends HttpServlet {
         if (engine == null) {
             context.removeAttribute(axisServletName + ATTR_AXIS_ENGINE);
             // find if there is other AxisEngine in Context
-            boolean otherAxisEengine = false;
-            for (Enumeration e = context.getAttributeNames(); e.hasMoreElements();) {
-                String name = (String) e.nextElement();
-                if (!ATTR_AXIS_ENGINE.equals(name) && name.endsWith(ATTR_AXIS_ENGINE)) {
-                    // name is not "AxisEngine" but finish with "AxisEngine"
-                    otherAxisEengine = true;
-                }
-            }
+            AxisServer server = (AxisServer) context.getAttribute(ATTR_AXIS_ENGINE);
+
             // no other AxisEngine in ServletContext
-            if (!otherAxisEengine) {
+            if (servlet.getServletName().equals(server.getName())) {
                 context.removeAttribute(ATTR_AXIS_ENGINE);
             }
         } else {
@@ -243,9 +239,13 @@ public class AxisServletBase extends HttpServlet {
             contextObject = servlet.getServletContext().getAttribute(ATTR_AXIS_ENGINE);
         }
         if (contextObject instanceof AxisServer) {
-            return (AxisServer) contextObject;
-        }
-        else {
+            AxisServer server = (AxisServer) contextObject;
+            // if this is "our" Engine
+            if (servlet.getServletName().equals(server.getName())) {
+                return server;
+            }
+            return null;
+        } else {
             return null;
         }
      }
