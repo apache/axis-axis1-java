@@ -117,7 +117,6 @@ public class SessionUtils {
      */
     public static synchronized String generateSessionId() {
         // Generate a byte array containing a session identifier
-        Random random = getRandom();
         byte bytes[] = new byte[SESSION_ID_BYTES];
 
         getRandom().nextBytes(bytes);
@@ -150,8 +149,7 @@ public class SessionUtils {
      * @return a new session.
      */
     public static synchronized Long generateSession() {
-        Random random = getRandom();
-        return new Long(random.nextLong());
+        return new Long(getRandom().nextLong());
     }
 
     /**
