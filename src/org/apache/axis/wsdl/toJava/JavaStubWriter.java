@@ -123,10 +123,6 @@ public class JavaStubWriter extends JavaClassWriter {
     protected void writeFileBody(PrintWriter pw) throws IOException {
         PortType portType = binding.getPortType();
 
-        boolean isRPC = true;
-        if (bEntry.getBindingStyle() == BindingEntry.STYLE_DOCUMENT) {
-            isRPC = false;
-        }
         HashSet types = getTypesInPortType(portType);
         boolean hasMIME = Utils.hasMIME(bEntry);
         if (types.size() > 0  || hasMIME) {
@@ -252,11 +248,13 @@ public class JavaStubWriter extends JavaClassWriter {
 
             // Get the soapAction from the <soap:operation>
             String soapAction = "";
+            String opStyle = null;
             Iterator operationExtensibilityIterator = operation.getExtensibilityElements().iterator();
             for (; operationExtensibilityIterator.hasNext();) {
                 Object obj = operationExtensibilityIterator.next();
                 if (obj instanceof SOAPOperation) {
                     soapAction = ((SOAPOperation) obj).getSoapActionURI();
+                    opStyle = ((SOAPOperation) obj).getStyle();
                     break;
                 }
             }
@@ -271,8 +269,7 @@ public class JavaStubWriter extends JavaClassWriter {
                 pw.println();
             }
             else {
-                writeOperation(pw,
-                        operation, parameters, soapAction, isRPC);
+                writeOperation(pw, operation, parameters, soapAction, opStyle);
             }
         }
     } // writeFileBody
@@ -473,7 +470,7 @@ public class JavaStubWriter extends JavaClassWriter {
             BindingOperation operation,
             Parameters parms,
             String soapAction,
-            boolean isRPC) throws IOException {
+            String opStyle) throws IOException {
 
         writeComment(pw, operation.getDocumentationElement());
 
@@ -581,14 +578,19 @@ public class JavaStubWriter extends JavaClassWriter {
         }
 
         // Style: document, RPC, or wrapped
-        int style = bEntry.getBindingStyle();
-        String styleStr = "rpc";
-        if (style == BindingEntry.STYLE_DOCUMENT) {
-            if (symbolTable.isWrapped()) {
-                styleStr = "wrapped";
-            } else {
+        String styleStr = opStyle;  // operation style override binding
+        if (styleStr == null) {     // get default from binding
+            styleStr = "rpc";
+            int style = bEntry.getBindingStyle();
+            if (style == BindingEntry.STYLE_DOCUMENT) {
                 styleStr = "document";
             }
+        }
+            
+        // FIXME: this only checks for wrapped in a global way, which
+        // is not really right as some ops can be wrapped and some not
+        if (styleStr.equals("document") && symbolTable.isWrapped()) {
+            styleStr = "wrapped";
         }
 
         if (!hasMIME) {

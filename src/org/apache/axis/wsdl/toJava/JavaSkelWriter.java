@@ -117,10 +117,7 @@ public class JavaSkelWriter extends JavaClassWriter {
     protected void writeFileBody(PrintWriter pw) throws IOException {
         String portTypeName = (String) bEntry.getDynamicVar(JavaBindingWriter.INTERFACE_NAME);
         String implType = portTypeName + " impl";
-        boolean isRPC = true;
-        if (bEntry.getBindingStyle() == BindingEntry.STYLE_DOCUMENT) {
-            isRPC = false;
-        }
+
         // Declare private impl and skeleton base delegates
         pw.println("    private " + implType + ";");
         pw.println("    private static java.util.Map _myOperations = new java.util.Hashtable();");
@@ -314,7 +311,7 @@ public class JavaSkelWriter extends JavaClassWriter {
             }
             else {
                 writeOperation(pw,
-                        operation, parameters, soapAction, namespace, isRPC);
+                        operation, parameters, soapAction, namespace);
             }
         }
     } // writeFileBody
@@ -327,8 +324,8 @@ public class JavaSkelWriter extends JavaClassWriter {
             BindingOperation operation,
             Parameters parms,
             String soapAction,
-            String namespace,
-            boolean isRPC) throws IOException {
+            String namespace
+            ) throws IOException {
         writeComment(pw, operation.getDocumentationElement());
 
         // The skeleton used to have specialized operation signatures.
