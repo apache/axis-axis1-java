@@ -128,6 +128,10 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
      */
     private Object currentMessage ;
 
+    // These two fields are used for caching in getAsString and getAsBytes
+    private String currentMessageAsString = null;
+    private byte[] currentMessageAsBytes = null;
+
     /**
      * Message object this part is tied to. Used for serialization settings.
      */
@@ -310,7 +314,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
      * array.  This will force buffering of the message.
      */
     public byte[] getAsBytes() throws AxisFault {
-	    log.debug("Enter: SOAPPart::getAsBytes");
+        log.debug("Enter: SOAPPart::getAsBytes");
         if ( currentForm == FORM_BYTES ) {
             log.debug("Exit: SOAPPart::getAsBytes");
             return (byte[])currentMessage;
@@ -321,7 +325,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
                 getAsSOAPEnvelope();
             } catch (Exception e) {
                 log.fatal(JavaUtils.getMessage("makeEnvFail00"), e);
-	            log.debug("Exit: SOAPPart::getAsBytes");
+                log.debug("Exit: SOAPPart::getAsBytes");
                 return null;
             }
         }
@@ -371,6 +375,18 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
         }
 
         if ( currentForm == FORM_STRING ) {
+            // If the current message was already converted from
+            // a byte[] to String, return the byte[] representation
+            // (this is done to avoid unnecessary conversions)
+            if (currentMessage == currentMessageAsString &&
+                currentMessageAsBytes != null) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Exit: SOAPPart::getAsBytes()");
+                }
+                return currentMessageAsBytes;
+            }
+            // Save this message in case it is requested later in getAsString
+            currentMessageAsString = (String) currentMessage;
             try{
                 setCurrentMessage( ((String)currentMessage).getBytes("UTF-8"),
                FORM_BYTES );
@@ -378,6 +394,8 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
                setCurrentMessage( ((String)currentMessage).getBytes(),
                                FORM_BYTES );
             }
+            currentMessageAsBytes = (byte[]) currentMessage;
+
             log.debug("Exit: SOAPPart::getAsBytes");
             return (byte[])currentMessage;
         }
@@ -395,7 +413,9 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
     public String getAsString() throws AxisFault {
         log.debug("Enter: SOAPPart::getAsString");
         if ( currentForm == FORM_STRING ) {
-            log.debug("Exit: SOAPPart::getAsString(): " + currentMessage);
+            if (log.isDebugEnabled()) {
+                log.debug("Exit: SOAPPart::getAsString(): " + currentMessage);
+            }
             return (String)currentMessage;
         }
 
@@ -406,14 +426,29 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
         }
 
         if ( currentForm == FORM_BYTES ) {
-                        try{
-                                setCurrentMessage( new String((byte[]) currentMessage,"UTF-8"),
-                               FORM_STRING );
-                        }catch(UnsupportedEncodingException ue){
-            setCurrentMessage( new String((byte[]) currentMessage),
-                               FORM_STRING );
-                        }
-            log.debug("Exit: SOAPPart::getAsString(): " + currentMessage);
+            // If the current message was already converted from
+            // a String to byte[], return the String representation
+            // (this is done to avoid unnecessary conversions)
+            if (currentMessage == currentMessageAsBytes &&
+                currentMessageAsString != null) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Exit: SOAPPart::getAsString(): " + currentMessageAsString);
+                } 
+                return currentMessageAsString;
+            }
+            // Save this message in case it is requested later in getAsBytes
+            currentMessageAsBytes = (byte[]) currentMessage;
+            try{
+                setCurrentMessage( new String((byte[]) currentMessage,"UTF-8"),
+                                   FORM_STRING );
+            }catch(UnsupportedEncodingException ue){
+                setCurrentMessage( new String((byte[]) currentMessage),
+                                   FORM_STRING );
+            }
+            currentMessageAsString = (String) currentMessage;
+            if (log.isDebugEnabled()) {
+                log.debug("Exit: SOAPPart::getAsString(): " + currentMessage);
+            }
             return (String)currentMessage;
         }
 
@@ -427,7 +462,9 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
                 return null;
             }
             setCurrentMessage(writer.getBuffer().toString(), FORM_STRING);
-            log.debug("Exit: SOAPPart::getAsString(): " + currentMessage);
+            if (log.isDebugEnabled()) {
+                log.debug("Exit: SOAPPart::getAsString(): " + currentMessage);
+            }
             return (String)currentMessage;
         }
 
@@ -440,7 +477,9 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
                 throw AxisFault.makeFault(e);
             }
             setCurrentMessage(writer.getBuffer().toString(), FORM_STRING);
-            log.debug("Exit: SOAPPart::getAsString(): " + currentMessage);
+            if (log.isDebugEnabled()) {
+                log.debug("Exit: SOAPPart::getAsString(): " + currentMessage);
+            }
             return (String)currentMessage;
         }
 
@@ -458,9 +497,10 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
     public SOAPEnvelope getAsSOAPEnvelope()
         throws AxisFault
     {
-        log.debug("Enter: SOAPPart::getAsSOAPEnvelope()");
-        log.debug(JavaUtils.getMessage("currForm", formNames[currentForm]));
-
+        if (log.isDebugEnabled()) {
+            log.debug("Enter: SOAPPart::getAsSOAPEnvelope()");
+            log.debug(JavaUtils.getMessage("currForm", formNames[currentForm]));
+        }
         if ( currentForm == FORM_SOAPENVELOPE )
             return (SOAPEnvelope)currentMessage;
 
