@@ -38,6 +38,9 @@ Contents</h3>
 <br>&nbsp;&nbsp;&nbsp; <a href="#Message Contexts">Message Contexts</a>
 <br>&nbsp;&nbsp;&nbsp; <a href="#Engine">Engine</a>
 <br><a href="#Administration Subsystem">Administration Subsystem</a>
+<br><a href="#Message Model Subsystem">Message Model Subsystem</a>
+<br>&nbsp;&nbsp;&nbsp; <a href="#SOAP message model">SOAP Message Model</a>
+<br>&nbsp;&nbsp;&nbsp; <a href="#Message elements">Message Elements</a>
 <br><a href="#Sequence Diagrams">Interaction Diagrams</a>
 <br>&nbsp;&nbsp;&nbsp; <a href="#Client Interaction">Client Side Processing</a>
 <br><a href="#Open Issues">Open Issues</a>
@@ -276,6 +279,42 @@ The following diagram shows the classes and the types of runtime
 artefacts they produce (a dotted arrow means "instantiates").
 <br><img SRC="wsddclasses.jpg">
 <h2>
+<a NAME="Message Model Subsystem"></a>Message Model Subsystem</h2>
+<a name="SOAP message model"></a><h3>SOAP Message Model</h3>
+The XML syntax of a SOAP message is fairly simple.
+A SOAP message consists of an <i>envelope</i> containing:
+<ul>
+<li>an optional <i>header</i> containing zero or more <i>header entries</i>
+(sometimes ambiguously referred to as <i>headers</i>),</li>
+<li>a <i>body</i> containing zero or more <i>body entries</i>, and</li>
+<li>zero or more additional, non-standard elements.</li>
+</ul>
+The only body entry defined by SOAP is a <i>SOAP fault</i> which is
+used for reporting errors.
+<p>
+Some of the XML elements of a SOAP message define namespaces, each in terms
+of a URI and a local name, and encoding styles, a standard one of which
+is defined by SOAP.
+<p>
+Header entries may be tagged with the following optional SOAP attributes:
+<ul>
+<li><i>actor</i> which specifies the intended recipient of the header
+entry in terms of a URI, and</li>
+<li><i>mustUnderstand</i> which specifies whether or not the intended
+recipient of the header entry is required to process the header
+entry.</li>
+</ul>
+<p>
+So the SOAP message model looks like this:
+<br><img SRC="soapmessagemodel.jpg">
+
+<a name="Message elements"></a><h3>Message Elements</h3>
+The classes which represent SOAP messages form a hierarchy based on
+the MessageElement class which takes care of namespaces and encodings.
+The SOAPHeader class looks after the actor and mustUnderstand attributes.
+<br><img SRC="messagemodelclasses.jpg">
+
+<h2>
 <a NAME="Sequence Diagrams"></a>Interaction Diagrams</h2>
 
 <h3>
@@ -305,8 +344,8 @@ there is some SOAP and HTTP bias in the basic MessageContext
 type and associated classes.</li>
 
 <li>
-What classes are included in the "encoding" and "message model" subsystems?
-Are these subsystems independent of the other subsystems which depend on
+What classes are included in the "encoding" subsystem?
+Are the encoding and message model subsystems independent of the other subsystems which depend on
 "message flow"?</li>
 
 <li>
