@@ -46,7 +46,6 @@ Format of deployment xml files:
   <handler name="rpc-dispatch" class="org.apache.axis.handlers.RPCDispatchHandle
 r" />
   <handler name="echo" class="org.apache.axis.handlers.EchoHandler" />
-  <handler name="admin" class="org.apache.axis.handlers.AdminHandler" />
   <handler name="error" class="org.apache.axis.handlers.ErrorHandler" />
 
   <chain name="pre" flow="log" />
