@@ -496,7 +496,9 @@ public class Constants {
     public static final QName XSD_NCNAME = new QName(URI_2001_SCHEMA_XSD, "NCName");
     public static final QName XSD_NMTOKEN = new QName(URI_2001_SCHEMA_XSD, "NMTOKEN");
     public static final QName XSD_ANYURI = new QName(URI_2001_SCHEMA_XSD, "anyURI");
-
+    public static final QName XSD_LANGUAGE = new QName(URI_2001_SCHEMA_XSD, "language");
+    public static final QName XSD_ID = new QName(URI_2001_SCHEMA_XSD, "ID");
+    
     public static final QName SOAP_BASE64 = new QName(URI_DEFAULT_SOAP_ENC, "base64");
     public static final QName SOAP_BASE64BINARY = new QName(URI_DEFAULT_SOAP_ENC, "base64Binary");
     public static final QName SOAP_STRING = new QName(URI_DEFAULT_SOAP_ENC, "string");
