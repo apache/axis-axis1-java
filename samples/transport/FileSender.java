@@ -81,6 +81,7 @@ public class FileSender extends BasicHandler {
   public void invoke(MessageContext msgContext) throws AxisFault {
     Message  msg = msgContext.getRequestMessage();
     byte[]   buf = (byte[]) msg.getAsBytes();
+    boolean timedOut = false;
     try {
       FileOutputStream fos = new FileOutputStream( "xml" + nextNum + ".req" );
 
@@ -90,18 +91,18 @@ public class FileSender extends BasicHandler {
     catch( Exception e ) {
       e.printStackTrace();
     }
-    
+
     long timeout = Long.MAX_VALUE;
-    if (msgContext.getTimeout()!=0) 
+    if (msgContext.getTimeout()!=0)
       timeout=(new Date()).getTime()+msgContext.getTimeout();
 
-    for (;;) {
+    for (; timedOut == false;) {
       try {
         Thread.sleep( 100 );
         File file = new File( "xml" + nextNum + ".res" );
 
         if ((new Date().getTime())>=timeout)
-            throw new AxisFault("timeout");
+            timedOut = true;
 
         if ( !file.exists() ) continue ;
         Thread.sleep( 100 );   // let the other side finish writing
@@ -109,20 +110,19 @@ public class FileSender extends BasicHandler {
         msg = new Message( fis );
         msg.getAsBytes();  // just flush the buffer
         fis.close();
-        Thread.sleep( 100 );
+         Thread.sleep( 100 );
         (new File("xml" + nextNum + ".res")).delete();
         msgContext.setResponseMessage( msg );
         break ;
       }
       catch( Exception e ) {
-          if ((new Date().getTime())>=timeout)
-              throw new AxisFault("timeout");
-
         // File not there - just loop
       }
-
     }
     nextNum++ ;
+    if (timedOut)
+        throw new AxisFault("timeout");
+
   }
 
   public void undo(MessageContext msgContext) {

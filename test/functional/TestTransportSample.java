@@ -124,15 +124,8 @@ public class TestTransportSample extends TestCase {
             doTestClientDeploy();
             System.out.println("Testing deployment...");
             doTestDeploy();
-/* Removing this for now.  xmltoday is down at present, and my build was
-   therefore hanging.  If you add it back in, PLEASE make sure that timeouts
-   on the Document.parse() from the xmltoday URL in StockQuoteSample are
-   handled somehow, and that a timeout does not indicate a failed test
-   with this example.  --Glen
-
             System.out.println("Testing service with symbol IBM...");
             doTestIBM();
-*/
             System.out.println("Testing service with symbol XXX...");
             doTestXXX();
             System.out.println("Test complete.");
