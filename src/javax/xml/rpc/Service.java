@@ -57,6 +57,7 @@ package javax.xml.rpc;
 
 
 import javax.xml.rpc.encoding.TypeMappingRegistry;
+import javax.xml.rpc.handler.HandlerRegistry;
 import javax.xml.rpc.namespace.QName;
 
 
@@ -75,8 +76,7 @@ import javax.xml.rpc.namespace.QName;
  *
  * @version 0.1
  */
-public interface Service
-    extends java.io.Serializable, javax.naming.Referenceable {
+public interface Service {
 
     /**
      * The getPort method returns a dynamic proxy for the specified service port. A service client uses this dynamic 
@@ -154,6 +154,34 @@ public interface Service
     public Call createCall() throws ServiceException;
 
     /**
+     * Gets an array of preconfigured Call objects for invoking operations
+     * on the specified port. There is one Call object per operation that
+     * can be invoked on the specified port. Each Call object is
+     * pre-configured and does not need to be configured using the setter
+     * methods on Call interface.
+     *
+     * This method requires the Service implementation class to have access
+     * to the WSDL related metadata.
+     *
+     * @param portName - Qualified name for the target service endpoint
+     *
+     * @throws ServiceException - If this Service class does not have access
+     * to the required WSDL metadata or if an illegal portName is specified.
+     */
+    public Call[] getCalls() throws ServiceException;
+
+    /**
+     * Returns the configured HandlerRegistry instance for this Service
+     * instance.
+     *
+     * @return HandlerRegistry
+     * @throws java.lang.UnsupportedOperationException - if the Service
+     *         class does not support the configuration of a
+     *         HandlerRegistry.
+     */
+    public HandlerRegistry getHandlerRegistry();
+
+    /**
      * Gets location of the WSDL document for this Service.
      *
      * @return Location of the WSDL document for this service
@@ -173,16 +201,6 @@ public interface Service
      * @return iterator containing list of qualified names of the ports  
      */
     public java.util.Iterator getPorts();
-
-    /**
-     * Registers a type mapping registry with this Service object.
-     *
-     * @param registry - TypeMappingRegistry object
-     *
-     * @throws ServiceException - if there is an error in the configuration of the TypeMappingRegistry
-     */
-    public void setTypeMappingRegistry(TypeMappingRegistry registry)
-        throws ServiceException;
 
     /**
      * Gets the TypeMappingRegistry registered with this Service object

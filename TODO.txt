@@ -17,6 +17,9 @@ CLIENT API
 
 JAX-RPC COMPATIBILITY
 ---------------------
+! <> Implement Service.getCalls() method. (maybe)
+! <> Implement generated Services' getCalls() method.
+! <> Implement Service.getHandlerRegistry() method.
 
 SOAP 1.2 SUPPORT
 ----------------
