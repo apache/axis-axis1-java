@@ -62,7 +62,7 @@ import java.io.*;
 import java.util.*;
 
 public class AdminClient {
-  static void main(String args[]) {
+  public static void main(String args[]) {
 
     String hdr = "POST /axis/servlet/AxisServlet HTTP/1.0\n" +
                  "Host: localhost:8080\n" +

@@ -80,6 +80,8 @@ public class AxisServlet extends HttpServlet {
     HttpSession    session = req.getSession();
 
     // Set-up the Axis Message objects...
+    // This really shouldn't be a 'new' - we expect the Transport Listener
+    // toh have some sort of caching (probably) to make this less expensive.
     SimpleAxisEngine  engine     = new SimpleAxisEngine();
     MessageContext    msgContext = new MessageContext();
     Message           msg        = new Message( req, "ServletRequest" );
