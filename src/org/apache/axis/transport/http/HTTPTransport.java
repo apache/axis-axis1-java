@@ -117,7 +117,7 @@ public class HTTPTransport extends Transport
         if (cookie != null)
             mc.setProperty(HTTPConstants.HEADER_COOKIE, cookie);
         if (cookie2 != null)
-            mc.setProperty(HTTPConstants.HEADER_COOKIE, cookie2);
+            mc.setProperty(HTTPConstants.HEADER_COOKIE2, cookie2);
 
         // Allow the SOAPAction to determine the service, if the service
         // (a) has not already been determined, and (b) if a service matching
