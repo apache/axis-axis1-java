@@ -64,6 +64,9 @@ public class JavaBuildFileWriter extends JavaWriter
 
     protected String getFileName() {
         String dir = emitter.getOutputDir();
+        if (dir == null) {
+            dir = ".";
+        }
         return dir + "/build.xml";
     }
 
@@ -127,7 +130,14 @@ public class JavaBuildFileWriter extends JavaWriter
         if ((index = wsdlFile.lastIndexOf("/")) > 0) {
             wsdlFile = wsdlFile.substring(index + 1);
         }
-        return wsdlFile.substring(0, wsdlFile.indexOf('.'));
+        if ((index = wsdlFile.lastIndexOf("?")) > 0) {
+            wsdlFile = wsdlFile.substring(0, index);
+        }
+        if ((index = wsdlFile.indexOf('.')) != -1) {
+            return wsdlFile.substring(0, index);
+        } else {
+            return wsdlFile;
+        }
     }
 
     /* (non-Javadoc)
