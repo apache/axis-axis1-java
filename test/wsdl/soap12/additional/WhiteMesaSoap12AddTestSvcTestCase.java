@@ -16,6 +16,11 @@ import org.apache.axis.enum.Style;
 import org.apache.axis.enum.Use;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeaderElement;
+import org.apache.axis.message.RPCElement;
+import org.apache.axis.message.RPCParam;
+import org.apache.axis.message.SOAPBodyElement;
+import org.apache.axis.message.PrefixedQName;
+import org.apache.axis.message.MessageElement;
 import org.apache.axis.soap.SOAP12Constants;
 import org.apache.axis.soap.SOAPConstants;
 import test.wsdl.soap12.additional.xsd.SOAPStruct;
@@ -51,7 +56,10 @@ public class WhiteMesaSoap12AddTestSvcTestCase extends junit.framework.TestCase 
     public static final String HOST = "http://www.whitemesa.net";
     public static final String RPC_ENDPOINT = HOST + "/soap12/add-test-rpc";
     public static final String DOC_ENDPOINT = HOST + "/soap12/add-test-doc";
+    public static final String GET_DOC_ENDPOINT = HOST + "/soap12/add-test-doc/getTime";
+    public static final String GET_RPC_ENDPOINT = HOST + "/soap12/add-test-rpc/getTime";
     public static final String DOC_INT_ENDPOINT = HOST + "/soap12/add-test-doc-int";
+    public static final String DOC_INT_UC_ENDPOINT = HOST + "/soap12/add-test-doc-int-uc";
     private QName SOAPSTRUCT_QNAME = new QName("http://example.org/ts-tests/xsd", "SOAPStruct");
 
     public WhiteMesaSoap12AddTestSvcTestCase(java.lang.String name) {
@@ -86,7 +94,7 @@ public class WhiteMesaSoap12AddTestSvcTestCase extends junit.framework.TestCase 
      * @throws Exception
      */ 
     public void testXMLP2() throws Exception {
-        Call call = new Call("http://www.whitemesa.net/soap12/add-test-doc/getTime");
+        Call call = new Call(GET_DOC_ENDPOINT);
         call.setSOAPVersion(SOAPConstants.SOAP12_CONSTANTS);
         call.setProperty(SOAP12Constants.PROP_WEBMETHOD, "GET");
         call.setOperationStyle(Style.DOCUMENT);
@@ -106,7 +114,7 @@ public class WhiteMesaSoap12AddTestSvcTestCase extends junit.framework.TestCase 
      * @throws Exception
      */ 
     public void testXMLP3() throws Exception {
-        Call call = new Call("http://www.whitemesa.net/soap12/add-test-rpc/getTime");
+        Call call = new Call(GET_RPC_ENDPOINT);
         call.setSOAPVersion(SOAPConstants.SOAP12_CONSTANTS);
         call.setProperty(SOAP12Constants.PROP_WEBMETHOD, "GET");
         call.setOperationStyle(Style.RPC);
@@ -236,14 +244,63 @@ public class WhiteMesaSoap12AddTestSvcTestCase extends junit.framework.TestCase 
         fail("Should have received receiver fault!");
     }
     
+    /**
+     * Test xmlp-9 : do an "echoString" call with a bad (unknown) encoding
+     * style on the argument.  Confirm Sender fault from endpoint.
+     * 
+     * @throws Exception
+     */ 
     public void testXMLP9() throws Exception {
-        
+        Call call = new Call(RPC_ENDPOINT);
+        call.setSOAPVersion(SOAPConstants.SOAP12_CONSTANTS);
+        SOAPEnvelope reqEnv = new SOAPEnvelope(SOAPConstants.SOAP12_CONSTANTS);
+        SOAPBodyElement body = new SOAPBodyElement(new PrefixedQName(TEST_NS, "echoString", "ns"));
+        reqEnv.addBodyElement(body);
+        MessageElement arg = new MessageElement("", "inputString");
+        arg.setEncodingStyle("http://this-is-a-bad-encoding-style");
+        body.addChild(arg);
+        try {
+            call.invoke(reqEnv);
+        } catch (AxisFault fault) {
+            assertEquals(Constants.FAULT_SOAP12_SENDER, fault.getFaultCode());            
+            return;
+        }
+        fail("Didn't catch expected fault");                
     }
     
+    /**
+     * Test xmlp-11 : send a string where an integer is expected, confirm
+     * BadArguments fault.
+     * 
+     * @throws Exception
+     */ 
     public void testXMLP11() throws Exception {
-        
+        Call call = new Call(RPC_ENDPOINT);
+        call.setSOAPVersion(SOAPConstants.SOAP12_CONSTANTS);
+        call.setProperty(Call.SEND_TYPE_ATTR, Boolean.FALSE);
+        try {
+            call.invoke(new QName(TEST_NS, "echoInteger"),
+                        new Object [] { new RPCParam("inputInteger",
+                                                     "ceci n'est pas un int")
+                                      }
+                       );
+        } catch (AxisFault fault) {
+            assertEquals(Constants.FAULT_SOAP12_SENDER, fault.getFaultCode());
+            QName [] subCodes = fault.getFaultSubCodes();
+            assertNotNull(subCodes);
+            assertEquals(1, subCodes.length);
+            assertEquals(Constants.FAULT_SUBCODE_BADARGS, subCodes[0]);
+            return;
+        }
+        fail("Didn't catch expected fault");        
     }
     
+    /**
+     * Test xmlp-12 : unknown method call to RPC endpoint.  Confirm
+     * "ProcedureNotPresent" subcode of "Sender" fault.
+     * 
+     * @throws Exception
+     */ 
     public void testXMLP12() throws Exception {
         Call call = new Call(RPC_ENDPOINT);
         call.setSOAPVersion(SOAPConstants.SOAP12_CONSTANTS);
@@ -267,7 +324,17 @@ public class WhiteMesaSoap12AddTestSvcTestCase extends junit.framework.TestCase 
      * 
      */ 
     public void testXMLP13() throws Exception {
+        String ARG = "i FeEL sTrAnGEly CAsEd (but I like it)";
+        Call call = new Call(DOC_INT_ENDPOINT);
+        call.setSOAPVersion(SOAPConstants.SOAP12_CONSTANTS);
+        call.setOperationStyle(Style.WRAPPED);
+        call.setOperationUse(Use.LITERAL);
+        call.addParameter(new QName("", "inputString"),
+                          Constants.XSD_STRING, ParameterMode.IN);
+        call.setReturnType(Constants.XSD_STRING);
         
+        String ret = (String)call.invoke(ECHO_STRING_QNAME, new Object [] { ARG });
+        assertEquals("Return didn't match argument", ARG, ret);        
     }
 
     /**
@@ -277,7 +344,17 @@ public class WhiteMesaSoap12AddTestSvcTestCase extends junit.framework.TestCase 
      * 
      */ 
     public void testXMLP14() throws Exception {
+        String ARG = "i FeEL sTrAnGEly CAsEd (and dream of UPPER)";
+        Call call = new Call(DOC_INT_UC_ENDPOINT);
+        call.setSOAPVersion(SOAPConstants.SOAP12_CONSTANTS);
+        call.setOperationStyle(Style.WRAPPED);
+        call.setOperationUse(Use.LITERAL);
+        call.addParameter(new QName("", "inputString"),
+                          Constants.XSD_STRING, ParameterMode.IN);
+        call.setReturnType(Constants.XSD_STRING);
         
+        String ret = (String)call.invoke(ECHO_STRING_QNAME, new Object [] { ARG });
+        assertEquals("Return wasn't uppercased argument", ARG.toUpperCase(), ret);
     }
     
     public void testXMLP15() throws Exception {
@@ -287,6 +364,8 @@ public class WhiteMesaSoap12AddTestSvcTestCase extends junit.framework.TestCase 
         
         Call call = new Call(DOC_INT_ENDPOINT);
         call.setSOAPVersion(SOAPConstants.SOAP12_CONSTANTS);
+        call.setOperationStyle(Style.WRAPPED);
+        call.setOperationUse(Use.LITERAL);
 
         SOAPHeaderElement header = new SOAPHeaderElement(HEADER_NS, HEADER_NAME);
         header.setRole(Constants.URI_SOAP12_NEXT_ROLE);
