@@ -2115,9 +2115,11 @@ public class SymbolTable {
         while (ports.hasNext()) {
             Port port = (Port) ports.next();
             Binding binding = port.getBinding();
-            BindingEntry bEntry = getBindingEntry(binding.getQName());
-            if (bEntry != null) {
-                setBindingReferences(bEntry, def, doc);
+            if(binding != null) {
+                BindingEntry bEntry = getBindingEntry(binding.getQName());
+                if (bEntry != null) {
+                    setBindingReferences(bEntry, def, doc);
+                }
             }
         }
     } // setServiceReferences
