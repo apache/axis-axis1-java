@@ -281,7 +281,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
     }
 
     /**
-     * Get the Namespace Mappings
+     * Get the Namespace Mappings.  Returns null if none are present.
      **/
     public ArrayList getCurrentNSMappings()
     {

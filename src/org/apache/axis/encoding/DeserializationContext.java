@@ -125,7 +125,7 @@ public interface DeserializationContext extends javax.xml.rpc.encoding.Deseriali
     public void setRecorder(SAX2EventRecorder recorder);
 
    /**
-     * Get the Namespace Mappings
+     * Get the Namespace Mappings.  Returns null if none are present.
      **/
     public ArrayList getCurrentNSMappings();
     
