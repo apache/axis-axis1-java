@@ -121,6 +121,15 @@ public class LocalSender extends BasicHandler {
             serverContext.setTransportName("http");
         }
 
+        // Also copy authentication info if present
+        String user = clientContext.getStrProp(MessageContext.USERID);
+        if (user != null) {
+            serverContext.setProperty(MessageContext.USERID, user);
+            String pass = clientContext.getStrProp(MessageContext.PASSWORD);
+            if (pass != null)
+                serverContext.setProperty(MessageContext.PASSWORD, pass);
+        }
+
         // set the realpath if possible
         String transURL = clientContext.getStrProp(MessageContext.TRANS_URL);
         if (transURL != null) {
