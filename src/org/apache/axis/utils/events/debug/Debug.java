@@ -54,7 +54,9 @@
  */
 package org.apache.axis.utils.events.debug;
 
-import org.apache.axis.utils.events.*;
+import org.apache.axis.utils.events.Event;
+import org.apache.axis.utils.events.EventListener;
+import org.apache.axis.utils.events.EventNotifier;
    
 /**
  * @author: James Snell (jasnell@us.ibm.com)
