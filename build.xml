@@ -78,6 +78,7 @@ Copyright:
   <property name="wsdl4j.jar" value="lib/wsdl4j.jar"/>
   <property name="log4j-core.jar" value="lib/log4j-core.jar"/>
   <property name="clutil.jar" value="lib/clutil.jar"/>
+  <property name="bcel.jar" value="lib/bcel.jar"/>
 
   <property name="junit.jar" value="lib/junit.jar"/>
 
@@ -136,6 +137,10 @@ Copyright:
     <available property="clutil.present"
       classname="org.apache.avalon.excalibur.cli.CLUtil"
       classpathref="classpath"/>
+      
+    <available property="bcel.present"
+      classname="org.apache.bcel.Repository"
+      classpathref="classpath"/>
 
     <available property="activation.present"
       classname="javax.activation.DataHandler"
@@ -174,6 +179,7 @@ Copyright:
     <echo message="wsdl4j.present=${wsdl4j.present}" />
     <echo message="log4j.present=${log4j.present}" />
     <echo message="clutil.present=${clutil.present}" />
+    <echo message="bcel.present=${bcel.present}" />
     <echo message=""/>
     <echo message="--- Optional Libraries ---" />
     <echo message="servlet.present=${servlet.present}" />
@@ -250,6 +256,7 @@ Copyright:
     <copy file="${wsdl4j.jar}" toDir="${build.lib}"/>
     <copy file="${log4j-core.jar}" toDir="${build.lib}"/>
     <copy file="${clutil.jar}" toDir="${build.lib}"/>
+    <copy file="${bcel.jar}" toDir="${build.lib}"/>
     <antcall target="post-compile"/>
   </target>
 
