@@ -78,12 +78,10 @@ public class DynamicProxyTestCase extends TestCase {
             Stub binding = (Stub) service.getPort(TypeTest.class);
             binding._setProperty(Stub.ENDPOINT_ADDRESS_PROPERTY,
                     "http://localhost:8080/axis/services/TypeTest");
-            return (TypeTest) binding;
-            
+            throw new AssertionFailedError("Should not get a binding");
         }
         catch (ServiceException jre) {
-            jre.printStackTrace();
-            throw new AssertionFailedError("ServiceException caught: " + jre);
+            return null;
         }
     } // getProxy
 
@@ -125,7 +123,7 @@ public class DynamicProxyTestCase extends TestCase {
         TypeTest binding = getProxyWithWSDL();
         allPrimitivesIn(binding);
         binding = getProxy();
-        allPrimitivesIn(binding);
+        assertTrue(binding == null);
     } // test2TypeTestAllPrimitivesInout
 
     private void allPrimitivesInout(TypeTest binding) {

@@ -112,6 +112,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
     private transient EngineConfiguration config =
         (new DefaultEngineConfigurationFactory()).getClientEngineConfig();
 
+    private QName               serviceName     = null ;
     private URL                 wsdlLocation    = null ;
     private Definition          wsdlDefinition  = null ;
     private javax.wsdl.Service  wsdlService     = null ;
@@ -149,6 +150,16 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
     }
 
     /**
+     * Constructs a new Service object - this assumes the caller will set
+     * the appropriate fields by hand rather than getting them from the
+     * WSDL.
+     */
+    public Service(QName serviceName) {
+        this.serviceName = serviceName;
+        engine = getAxisClient();
+    }
+
+    /**
      * Constructs a new Service object as above, but also passing in
      * the EngineConfiguration which should be used to set up the
      * AxisClient.
@@ -167,6 +178,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      * @throws ServiceException If there's an error finding or parsing the WSDL
      */
     public Service(URL wsdlDoc, QName serviceName) throws ServiceException {
+        this.serviceName = serviceName;
         engine = getAxisClient();
         this.wsdlLocation = wsdlDoc;
         Definition def = null ;
@@ -194,6 +206,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      */
     public Service(String wsdlLocation, QName serviceName)
                            throws ServiceException {
+        this.serviceName = serviceName;
         engine = getAxisClient();
         try {
             this.wsdlLocation = new URL(wsdlLocation);
@@ -289,6 +302,14 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      */
     public Remote getPort(QName portName, Class proxyInterface)
                            throws ServiceException {
+
+        if (wsdlLocation == null)
+            throw new ServiceException(JavaUtils.getMessage("wsdlMissing00"));
+
+        Port port = wsdlService.getPort( portName.getLocalPart() );
+        if ( port == null )
+            throw new ServiceException( JavaUtils.getMessage("noPort00", "" + portName) );
+
         // First, try to find a generated stub.  If that
         // returns null, then find a dynamic stub.
         Remote stub = getGeneratedStub(portName, proxyInterface);
@@ -340,6 +361,9 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      * @throws ServiceException If there's an error
      */
     public Remote getPort(Class proxyInterface) throws ServiceException {
+        if (wsdlLocation == null)
+            throw new ServiceException(JavaUtils.getMessage("wsdlMissing00"));
+
         return getPort(null, null, proxyInterface);
     }
 
@@ -509,12 +533,14 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      * to the required WSDL metadata or if an illegal portName is specified.
      */
     public javax.xml.rpc.Call[] getCalls(QName portName) throws ServiceException {
-        if (wsdlLocation == null) {
+        if (portName == null)
+            throw new ServiceException(JavaUtils.getMessage("badPort00"));
+
+        if (wsdlLocation == null) 
             throw new ServiceException(JavaUtils.getMessage("wsdlMissing00"));
-        }
-        else {
-            return new javax.xml.rpc.Call[0];
-        }
+
+        javax.xml.rpc.Call[] array = new javax.xml.rpc.Call[]{createCall(portName)};
+        return array;
     }
 
     /**
@@ -550,6 +576,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      * @return QName Fully qualified name of this service.
      */
     public QName getServiceName() {
+        if ( serviceName != null ) return serviceName;
         if ( wsdlService == null ) return( null );
         QName  qn = wsdlService.getQName();
         return( new QName( qn.getNamespaceURI(), qn.getLocalPart() ) );
@@ -565,10 +592,6 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      *         required WSDL metadata
      */
     public Iterator getPorts() throws ServiceException {
-        if ( wsdlService == null ) {
-            throw new ServiceException(JavaUtils.getMessage("wsdlMissing00"));
-        }
-
         Map map = wsdlService.getPorts();
 
         if ( map == null ) {
