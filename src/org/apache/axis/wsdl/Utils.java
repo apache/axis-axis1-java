@@ -144,7 +144,9 @@ public class Utils {
                 return "boolean";
             } else if (localName.equals("base64")) {
                 return "byte[]";
-           } else if (localName.equals("Vector")) {   // Not defined in JSR-101
+            } else if (localName.equals("Array")) {    // Support for JAX-RPC Array
+                return "Object[]";
+            } else if (localName.equals("Vector")) {   // Not defined in JSR-101
                 return "java.util.Vector";
             }
         }
@@ -323,10 +325,21 @@ public class Utils {
     }
 
     /**
+     * Return true if the indicated string is the soap namespace
+     */
+    public static boolean isSoapNS(String s) {
+        return (s.equals("http://schemas.xmlsoap.org/soap") ||
+                s.equals("http://schemas.xmlsoap.org/soap/") ||
+                s.equals("http://www.w3.org/2001/06/soap"));
+    }
+
+    /**
      * Return true if the indicated string is the soap encoding namespace
      */
     public static boolean isSoapEncodingNS(String s) {
-        return (s.equals("http://www.w3.org/2001/06/soap-encoding"));
+        return (s.equals("http://schemas.xmlsoap.org/soap/encoding") ||
+                s.equals("http://schemas.xmlsoap.org/soap/encoding/") ||
+                s.equals("http://www.w3.org/2001/06/soap-encoding"));
     }
 
     /**

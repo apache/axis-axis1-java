@@ -1,4 +1,5 @@
 samples/addr/AddressBook.wsdl
+test/arrays/ArrayTest.wsdl
 test/inout/inout.wsdl
 test/multiref/MultiRefTest.wsdl
 http://www.whitemesa.com/interop/InteropTest.wsdl

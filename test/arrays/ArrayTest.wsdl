@@ -1,0 +1,91 @@
+<?xml version="1.0" ?>
+
+<definitions name="urn:ArrayTest"
+             targetNamespace="urn:ArrayTest2"
+             xmlns:tns="urn:ArrayTest2"
+             xmlns:typens="urn:ArrayTest2"
+             xmlns:xsd="http://www.w3.org/1999/XMLSchema"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding"
+             xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+  <!-- type defs -->
+  <types>
+    <xsd:schema targetNamespace="urn:ArrayTest2"
+                xmlns:xsd="http://www.w3.org/1999/XMLSchema">
+
+      <xsd:complexType name="personalInfo">
+        <xsd:all>
+            <xsd:element name="name" type="xsd:string"/>
+            <xsd:element name="favoriteMovies" type="soapenc:Array"/>
+        </xsd:all>
+      </xsd:complexType>
+    </xsd:schema>
+  </types>
+
+  <!-- message declns -->
+  <message name="AddEntryRequest">
+    <part name="name" type="xsd:string"/>
+    <part name="info" type="typens:personalInfo"/>
+  </message>
+
+  <message name="GetPersonalInfoFromNameRequest">
+    <part name="name" type="xsd:string"/>
+  </message>
+
+  <message name="GetPersonalInfoFromNameResponse">
+    <part name="info" type="typens:personalInfo"/>
+  </message>
+
+  <!-- port type declns -->
+  <portType name="PersonalInfoBook">
+    <operation name="addEntry">
+      <input message="tns:AddEntryRequest"/>
+    </operation>
+    <operation name="getPersonalInfoFromName">
+      <input message="tns:GetPersonalInfoFromNameRequest"/>
+      <output message="tns:GetPersonalInfoFromNameResponse"/>
+    </operation>
+  </portType>
+
+  <!-- binding declns -->
+  <binding name="PersonalInfoBookSOAPBinding" type="tns:PersonalInfoBook">
+    <soap:binding style="rpc"
+                  transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="addEntry">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="encoded"
+                   namespace="urn:ArrayTest"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="encoded"
+                   namespace="urn:ArrayTest"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="getPersonalInfoFromName">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="encoded"
+                   namespace="urn:ArrayTest"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="encoded"
+                   namespace="urn:ArrayTest"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+  </binding>
+
+  <!-- service decln -->
+  <service name="PersonalInfoBookService">
+    <port name="PersonalInfoBook" binding="tns:PersonalInfoBookSOAPBinding">
+      <soap:address location="http://localhost:8080/axis/services/PersonalInfoBook"/>
+    </port>
+  </service>
+
+</definitions>
+
