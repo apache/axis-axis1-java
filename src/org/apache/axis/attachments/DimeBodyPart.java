@@ -294,25 +294,40 @@ public class DimeBodyPart {
 
     void send(java.io.OutputStream os, byte position, DataHandler dh,
         final long maxchunk) throws java.io.IOException {
-        byte chunknext = 0;
-
-        long dataSize = getDataSize();
-        java.io.InputStream in = dh.getInputStream();
-        byte[] readbuf = new byte[64 * 1024];
-        int bytesread;
-
-        sendHeader(os, position, dataSize, (byte) 0);
-        long totalsent = 0;
-
-        do {
-            bytesread = in.read(readbuf);
-            if (bytesread > 0) {
-                os.write(readbuf, 0, bytesread);
-                totalsent += bytesread;
+// START FIX: http://nagoya.apache.org/bugzilla/show_bug.cgi?id=17001
+        java.io.InputStream in = null;
+        try {
+            byte chunknext = 0;
+    
+            long dataSize = getDataSize();
+            in = dh.getInputStream();
+            byte[] readbuf = new byte[64 * 1024];
+            int bytesread;
+    
+            sendHeader(os, position, dataSize, (byte) 0);
+            long totalsent = 0;
+    
+            do {
+                bytesread = in.read(readbuf);
+                if (bytesread > 0) {
+                    os.write(readbuf, 0, bytesread);
+                    totalsent += bytesread;
+                }
+            }
+            while (bytesread > -1);
+            os.write(pad, 0, dimePadding(totalsent));
+        }
+        finally {
+            if (in != null) {
+                try {
+                  in.close();
+                }
+                catch (IOException e) {
+                  // ignore
+                }
             }
         }
-        while (bytesread > -1);
-        os.write(pad, 0, dimePadding(totalsent));
+// END FIX: http://nagoya.apache.org/bugzilla/show_bug.cgi?id=17001
     }
 
     protected void sendChunk(java.io.OutputStream os,
