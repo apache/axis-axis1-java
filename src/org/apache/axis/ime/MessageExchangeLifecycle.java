@@ -63,15 +63,41 @@ package org.apache.axis.ime;
  */
 public interface MessageExchangeLifecycle {
 
+    /**
+     * Initialize the lifecycle.  (Create threads, etc)
+     */
     public void init();
 
+    /**
+     * Cleanup
+     */
+    public void cleanup()
+           throws InterruptedException ;
+
+    /**
+     * Performs a "safe shutdown", allowing all
+     * current activities to complete.
+     */
     public void shutdown();
 
+    /**
+     * Performs an "unsafe shutdown", interrupting
+     * all current activities without letting
+     * them complete
+     */
     public void shutdown(boolean force);
 
+    /**
+     * Block indefinitely until shutdown is 
+     * complete
+     */
     public void awaitShutdown()
             throws InterruptedException;
 
+    /**
+     * Block for the specified amount of time 
+     * or until shutdown is complete
+     */
     public void awaitShutdown(long timeout)
             throws InterruptedException;
 

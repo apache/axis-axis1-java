@@ -69,9 +69,20 @@ public class WorkerPool {
     public static final long MAX_THREADS = 100;
     
     protected Map threads = new Hashtable();
-    protected boolean interrupt;
     protected long threadcount;
     public boolean _shutdown;
+
+    public void cleanup()
+        throws InterruptedException {
+        if (!isShutdown()) {
+          safeShutdown();
+          awaitShutdown();
+        }
+        synchronized(this) {
+          threads.clear();
+          _shutdown = false;
+        }
+    }
 
     /**
      * Returns true if all workers have been shutdown

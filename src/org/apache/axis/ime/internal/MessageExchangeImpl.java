@@ -440,6 +440,14 @@ public class MessageExchangeImpl
     }
 
     /**
+     * @see org.apache.axis.ime.MessageExchangeLifecycle#cleanup()
+     */
+    public void cleanup()
+            throws InterruptedException {
+        provider.cleanup();
+    }
+
+    /**
      * @see org.apache.axis.ime.MessageExchangeLifecycle#awaitShutdown(long)
      */
     public void awaitShutdown(long timeout)
