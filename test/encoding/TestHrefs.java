@@ -2,6 +2,7 @@ package test.encoding;
 
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
+import org.apache.axis.MessageContext;
 import org.apache.axis.message.*;
 import org.apache.axis.encoding.*;
 import org.apache.axis.utils.QName;
@@ -70,6 +71,7 @@ public class TestHrefs extends TestCase {
        }
        
        Message message = new Message(msgString, "String");
+       message.setMessageContext(new MessageContext());
 
        SOAPEnvelope envelope = (SOAPEnvelope)message.getAs("SOAPEnvelope");
        assertNotNull("envelope", envelope);

@@ -64,6 +64,7 @@ public class Constants {
   public static String AXIS_ENGINE      = "AxisEngine" ;
   public static String HANDLER_REGISTRY = "HandlerRegistry" ;
   public static String SERVICE_REGISTRY = "ServiceRegistry" ;
+  public static String TYPEMAP_REGISTRY = "TypeMapRegistry" ;
 
   // Envelope Stuff
   //////////////////////////////////////////////////////////////////////////

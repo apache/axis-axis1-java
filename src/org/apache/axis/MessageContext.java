@@ -123,13 +123,18 @@ public class MessageContext {
      */
     private TypeMappingRegistry mappingRegistry = null;
 
+    private static final SOAPTypeMappingRegistry soapTMR = 
+        new SOAPTypeMappingRegistry();
+
     public void setTypeMappingRegistry(TypeMappingRegistry reg) {
         mappingRegistry = reg;
     }
 
     public TypeMappingRegistry getTypeMappingRegistry() {
-        if (mappingRegistry == null)
-            mappingRegistry = new SOAPTypeMappingRegistry();
+        if (mappingRegistry == null) {
+            mappingRegistry = new TypeMappingRegistry();
+            mappingRegistry.setParent(soapTMR);
+        }
         return mappingRegistry;
     }
 
