@@ -73,10 +73,10 @@ import org.apache.axis.wsdl.symbolTable.SymbolTable;
 * which contains the <portTypeName> interface.
 */
 public class JavaInterfaceWriter extends JavaWriter {
-    private PortType      portType;
-    private PortTypeEntry ptEntry;
-    private SymbolTable   symbolTable;
-    private BindingEntry  bEntry;
+    protected PortType      portType;
+    protected PortTypeEntry ptEntry;
+    protected SymbolTable   symbolTable;
+    protected BindingEntry  bEntry;
 
     /**
      * Constructor.
@@ -127,7 +127,7 @@ public class JavaInterfaceWriter extends JavaWriter {
     /**
      * This method generates the interface signatures for the given operation.
      */
-    private void writeOperation(Operation operation) throws IOException {
+    protected void writeOperation(Operation operation) throws IOException {
         writeComment(pw, operation.getDocumentationElement());
         Parameters parms = bEntry.getParameters(operation);
         pw.println(parms.signature + ";");

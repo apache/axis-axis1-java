@@ -100,18 +100,18 @@ public class JavaBindingWriter implements Generator {
         PortTypeEntry ptEntry =
                 symbolTable.getPortTypeEntry(binding.getPortType().getQName());
         if (ptEntry.isReferenced()) {
-            interfaceWriter = new JavaInterfaceWriter(
+            interfaceWriter = getJavaInterfaceWriter(
                     emitter, ptEntry, bEntry, symbolTable);
         }
 
         if (bEntry.isReferenced()) {
             // Stub writer
-            stubWriter = new JavaStubWriter(emitter, bEntry, symbolTable);
+            stubWriter = getJavaStubWriter(emitter, bEntry, symbolTable);
 
             // Skeleton and Impl writers
             if (emitter.isServerSide()) {
                 if (emitter.isSkeletonWanted()) {
-                    skelWriter = new JavaSkelWriter(emitter, bEntry, symbolTable);
+                    skelWriter = getJavaSkelWriter(emitter, bEntry, symbolTable);
                 }
                 String fileName = Utils.getJavaLocalName(bEntry.getName())
                         + "Impl.java";
@@ -119,7 +119,7 @@ public class JavaBindingWriter implements Generator {
                 // NOTE:  Where does the fileExists method really belong?
                     if (!((JavaWriter) stubWriter).fileExists (fileName,
                             binding.getQName().getNamespaceURI())) {
-                        implWriter = new JavaImplWriter(
+                        implWriter = getJavaImplWriter(
                                 emitter, bEntry, symbolTable);
                     }
                 }
@@ -130,6 +130,40 @@ public class JavaBindingWriter implements Generator {
             }
         }
     } // ctor
+
+    /**
+     * getJavaInterfaceWriter
+     **/
+    protected Generator getJavaInterfaceWriter(Emitter emitter,
+                                               PortTypeEntry ptEntry,
+                                               BindingEntry bEntry,
+                                               SymbolTable st) {
+        return new JavaInterfaceWriter(emitter, ptEntry, bEntry, st);
+    }
+    /**
+     * getJavaStubWriter
+     **/
+    protected Generator getJavaStubWriter(Emitter emitter,
+                                          BindingEntry bEntry,
+                                          SymbolTable st) {
+        return new JavaStubWriter(emitter, bEntry, st);
+    }
+    /**
+     * getJavaSkelWriter
+     **/
+    protected Generator getJavaSkelWriter(Emitter emitter,
+                                          BindingEntry bEntry,
+                                          SymbolTable st) {
+        return new JavaSkelWriter(emitter, bEntry, st);
+    }
+    /**
+     * getJavaImplWriter
+     **/
+    protected Generator getJavaImplWriter(Emitter emitter,
+                                          BindingEntry bEntry,
+                                          SymbolTable st) {
+        return new JavaImplWriter(emitter, bEntry, st);
+    }
 
     /**
      * Write all the binding bindnigs:  stub, skeleton, and impl.
