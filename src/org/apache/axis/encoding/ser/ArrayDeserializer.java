@@ -262,7 +262,9 @@ public class ArrayDeserializer extends DeserializerImpl
         if (typeQName != null) {
             arrayClass = context.getTypeMapping().
                 getClassForQName(typeQName);
-        } else {
+        } 
+        
+        if (typeQName == null || arrayClass == null) {
             // type= information is not sufficient.
             // Get an array of the default item type.
             Class arrayItemClass = null;
