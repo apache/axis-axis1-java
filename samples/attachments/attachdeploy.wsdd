@@ -8,9 +8,9 @@
     <requestFlow type="checks"/>
   </service>
 
- <typeMapping deserializer="org.apache.axis.encoding.JAFDataHandlerDeserializer$Factory"
+ <typeMapping deserializer="org.apache.axis.encoding.ser.JAFDataHandlerDeserializerFactory"
    languageSpecificType="java:javax.activation.DataHandler" qname="ns1:DataHandler"
-    serializer="org.apache.axis.encoding.JAFDataHandlerSerializer" 
+    serializer="org.apache.axis.encoding.ser.JAFDataHandlerSerializerFactory" 
      xmlns:ns1="urn:EchoAttachmentsService"/>
 
 </deployment>

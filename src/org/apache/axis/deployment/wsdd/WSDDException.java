@@ -78,6 +78,6 @@ public class WSDDException
      */
     public WSDDException(Exception e)
     {
-        super(e.getMessage());
+        super(e);
     }
 }
