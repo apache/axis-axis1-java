@@ -438,8 +438,7 @@ public abstract class Stub implements javax.xml.rpc.Stub {
  
       for(int iScan=0;iScan<vElems.size();iScan++) {
         SOAPHeaderElement oElem = (SOAPHeaderElement)vElems.get(iScan);
-        if ( (oElem.getNamespaceURI().equals(oHeader.getNamespaceURI()) == 
-            true) && (oElem.getName().equals(oHeader.getName()) == true) ) {
+        if (oElem.getQName().equals(oHeader.getQName()) == true) {
             return iScan;           
           }
  
