@@ -66,7 +66,7 @@ public class RPCElement extends SOAPBodyElement
 
         // Obtain our possible operations
         if (operations == null) {
-            updateOperations();
+            updateOperationsByName();
         } else {
             this.operations = operations;
         }
@@ -93,7 +93,7 @@ public class RPCElement extends SOAPBodyElement
         this.name = methodName;
     }
 
-    public void updateOperations() throws AxisFault
+    public void updateOperationsByName() throws AxisFault
     {
         if (context == null) {
             return;
@@ -123,6 +123,21 @@ public class RPCElement extends SOAPBodyElement
         }
 
         this.operations = serviceDesc.getOperationsByName(lc);
+    }
+
+    public void updateOperationsByQName() throws AxisFault
+    {
+        if (context == null) {
+            return;
+        }
+
+        MessageContext msgContext = context.getMessageContext();
+
+        if (msgContext == null) {
+            return;
+        }
+
+        this.operations = msgContext.getPossibleOperationsByQName(getQName());
     }
 
     public String getMethodName()
