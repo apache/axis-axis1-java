@@ -35,7 +35,7 @@ public class EncodingTest extends TestCase {
             //ignore legit whitespace
             if ("\t\n\r".indexOf(c) == 1) {
                 //verify the others are caught
-                String s=Character.toString(c);
+                String s=(new Character(c)).toString();
                 assertInvalidStringsDetected(s);
             }
         }
