@@ -338,7 +338,7 @@ public class DOM2Writer
     namespaceStack.add(namespaceURI, prefix);
   }
 
-  private static String normalize(String s)
+  public static String normalize(String s)
   {
     StringBuffer str = new StringBuffer();
     int len = (s != null) ? s.length() : 0;
