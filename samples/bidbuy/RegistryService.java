@@ -1,4 +1,4 @@
-package samples.bidbuy ;
+package samples.bidbuy;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -18,7 +18,7 @@ public class RegistryService {
       * @param name to search for
       * @return service found (or null)
       */
-  
+
     public RegistryService() {
       load();
     }
@@ -56,6 +56,25 @@ public class RegistryService {
             if (s.getServiceName().equals(name)) return s;
         }
         return null;
+    }
+
+    /**
+     * Unregister a serivce
+     * @param server name
+     */
+    public void Unregister(String name) {
+        Enumeration e1 = registry.keys();
+        while (e1.hasMoreElements()) {
+            Vector list = (Vector) registry.get(e1.nextElement());
+            Enumeration e2 = list.elements();
+            while (e2.hasMoreElements()) {
+                Service s = (Service) e2.nextElement();
+                if (s.getServiceName().equals(name)) {
+                    list.remove(s);
+                    save();
+                }
+            }
+        }
     }
 
     /**
@@ -99,9 +118,9 @@ public class RegistryService {
         String result = "";
         for (int i=0; i<services.length; i++) {
             Service service = services[i];
-            result += service.getServiceName() + "\t" + 
+            result += service.getServiceName() + "\t" +
                       service.getServiceUrl() + "\t" +
-                      service.getServiceType() + "\t" + 
+                      service.getServiceType() + "\t" +
                       service.getServiceWsdl() + "\n";
         }
         return result;
