@@ -379,14 +379,14 @@ public class HTTPSender extends BasicHandler {
 
                         outMsg = new Message( data );
 
-                        category.debug( "\n" + JavaUtils.getMessage("xmlrecd00") );
+                        category.debug( "\n" + JavaUtils.getMessage("xmlRecd00") );
                         category.debug( "-----------------------------------------------");
                         category.debug( xml );
                     }
                     else {
                         outMsg = new Message( inp );
                         category.debug( "\n" + JavaUtils.getMessage("no00", "Content-Length") );
-                        category.debug( "\n" + JavaUtils.getMessage("xmlrecd00") );
+                        category.debug( "\n" + JavaUtils.getMessage("xmlRecd00") );
                         category.debug( "-----------------------------------------------");
                         category.debug( (String) outMsg.getSOAPPart().getAsString() );
                     }

@@ -101,7 +101,7 @@ public class AdminClient
             Service service = new Service();
             call = (Call) service.createCall();
         } catch (JAXRPCException e) {
-            category.fatal(JavaUtils.getMessage("couldn'tCall00"), e);
+            category.fatal(JavaUtils.getMessage("couldntCall00"), e);
             call = null;
         }
     }

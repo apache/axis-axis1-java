@@ -85,7 +85,7 @@ public class FactorySupplier implements Supplier
             Handler handler = (Handler)_class.newInstance();
             handler.setOptions(_options);
             if (category.isDebugEnabled())
-                category.debug(JavaUtils.getMessage("return00", _class.getName()));
+                category.debug(JavaUtils.getMessage("return00", "FactorySupplier.getHandler", _class.getName()));
             return handler;
         } catch (IllegalAccessException e1) {
             e1.printStackTrace();
