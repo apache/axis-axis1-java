@@ -145,6 +145,7 @@ public class ServiceDesc {
     /** Our typemapping for resolving Java<->XML type issues */
     private TypeMapping tm = null;
     private boolean haveAllSkeletonMethods = false;
+    private boolean introspectionComplete = false;
 
     /**
      * Default constructor
@@ -395,7 +396,13 @@ public class ServiceDesc {
         // If we're MESSAGE style, we should only have a single operation,
         // to which we'll pass any XML we receive.
         if (style == Style.MESSAGE) {
-            return new OperationDesc [] { (OperationDesc)operations.get(0) };
+            if (!introspectionComplete) {
+                loadServiceDescByIntrospection();
+            }
+            if (operations.size() > 0)
+                return new OperationDesc [] { (OperationDesc)operations.get(0) };
+
+            return null;
         }
 
         // If we're DOCUMENT style, we look in our mapping of QNames ->
@@ -550,7 +557,7 @@ public class ServiceDesc {
      */
     public void loadServiceDescByIntrospection(Class implClass, boolean searchParents)
     {
-        if (implClass == null)
+        if (introspectionComplete || implClass == null)
             return;
 
         Method [] methods = implClass.getDeclaredMethods();
@@ -580,6 +587,8 @@ public class ServiceDesc {
                 loadServiceDescByIntrospection(superClass, true);
             }
         }
+
+        introspectionComplete = true;
     }
 
     /**
@@ -856,5 +865,19 @@ public class ServiceDesc {
         if (namespaceMappings == null)
             namespaceMappings = new ArrayList();
         namespaceMappings.add(0, namespace);
+    }
+
+    public void setProperty(String name, Object value) {
+        if (properties == null) {
+            properties = new HashMap();
+        }
+        properties.put(name, value);
+    }
+
+    public Object getProperty(String name) {
+        if (properties == null)
+            return null;
+
+        return properties.get(name);
     }
 }

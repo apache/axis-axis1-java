@@ -188,8 +188,13 @@ public class WSDDService
         }
 
         String providerStr = e.getAttribute(ATTR_PROVIDER);
-        if (providerStr != null && !providerStr.equals(""))
+        if (providerStr != null && !providerStr.equals("")) {
             providerQName = XMLUtils.getQNameFromString(providerStr, e);
+            if (WSDDConstants.QNAME_JAVAMSG_PROVIDER.equals(providerQName)) {
+                // Message style if message provider...
+                desc.setStyle(Style.MESSAGE);
+            }
+        }
 
         // call to validate standard descriptors for this service
         validateDescriptors();
