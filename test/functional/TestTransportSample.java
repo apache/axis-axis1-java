@@ -55,22 +55,10 @@
 
 package test.functional;
 
-import java.net.*;
-import java.io.*;
-import java.util.*;
-
-import org.apache.axis.AxisFault ;
-
-import org.apache.axis.utils.Options ;
-import org.apache.axis.utils.QName ;
-import org.apache.axis.encoding.ServiceDescription;
-import org.apache.axis.encoding.SOAPTypeMappingRegistry;
-
 import junit.framework.TestCase;
-
+import org.apache.axis.AxisFault;
 import org.apache.axis.utils.Admin;
 import org.apache.log4j.Category;
-
 import samples.transport.FileTest;
 
 /** Test the stock sample code.

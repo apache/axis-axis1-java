@@ -55,13 +55,13 @@
 
 package test.outparams;
 
-import org.apache.axis.handlers.BasicHandler;
-import org.apache.axis.MessageContext;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
-import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.MessageContext;
+import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.RPCParam;
+import org.apache.axis.message.SOAPEnvelope;
 
 public class ServiceHandler extends BasicHandler {
     public static final String OUTPARAM1 = "Output param value";

@@ -53,11 +53,16 @@
  */
 package test.functional.ant;
 
-import java.net.*;
-import java.io.*;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
+import org.apache.tools.ant.taskdefs.CallTarget;
 
-import org.apache.tools.ant.*;
-import org.apache.tools.ant.taskdefs.*;
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.Socket;
+import java.net.URL;
 
 /**
  * Ant task for starting / stopping servers and running junit in the middle.

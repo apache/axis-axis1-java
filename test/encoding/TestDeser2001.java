@@ -1,10 +1,10 @@
 package test.encoding;
 
 import org.apache.axis.Constants;
-import junit.framework.TestCase;
+
 import java.util.Calendar;
-import java.util.TimeZone;
 import java.util.HashMap;
+import java.util.TimeZone;
 
 /** 
  * Test deserialization of SOAP responses

@@ -56,7 +56,6 @@
 package samples.userguide.example3;
 
 import org.apache.axis.client.ServiceClient;
-
 import org.apache.axis.utils.Options;
 
 public class Client

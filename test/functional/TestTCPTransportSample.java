@@ -55,25 +55,18 @@
 
 package test.functional;
 
-import java.net.*;
-import java.io.*;
-import java.util.*;
-
-import org.apache.axis.AxisFault ;
-import samples.transport.tcp.TCPTransport;
+import junit.framework.AssertionFailedError;
+import junit.framework.TestCase;
+import org.apache.axis.AxisFault;
+import org.apache.axis.client.Call;
+import org.apache.axis.client.Service;
+import org.apache.axis.encoding.XMLType;
+import org.apache.axis.utils.Admin;
+import org.apache.log4j.Category;
 import samples.transport.tcp.AdminClient;
 import samples.transport.tcp.GetQuote;
-import org.apache.axis.utils.Admin;
-import org.apache.axis.client.ServiceClient;
-import org.apache.axis.client.Service;
-import org.apache.axis.client.Call;
-import org.apache.axis.encoding.ServiceDescription;
-import org.apache.axis.encoding.SOAPTypeMappingRegistry;
-import org.apache.axis.encoding.XMLType;
-import org.apache.log4j.Category;
 
-import junit.framework.TestCase;
-import junit.framework.AssertionFailedError;
+import java.net.URL;
 
 /** Test the stock sample code.
  */

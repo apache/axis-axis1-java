@@ -55,10 +55,14 @@
 
 package samples.userguide.example4;
 
-import java.io.*;
-import java.util.Date;
-import org.apache.axis.*;
+import org.apache.axis.AxisFault;
+import org.apache.axis.Handler;
+import org.apache.axis.MessageContext;
 import org.apache.axis.handlers.BasicHandler;
+
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
+import java.util.Date;
 
 public class LogHandler extends BasicHandler {
     public void invoke(MessageContext msgContext) throws AxisFault

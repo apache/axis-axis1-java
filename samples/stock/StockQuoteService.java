@@ -55,12 +55,13 @@
 
 package samples.stock ;
 
-import java.io.*;
-import java.util.* ;
-import java.net.URL;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
-import javax.xml.parsers.* ;
-import org.w3c.dom.* ;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.net.URL;
 
 /**
  * See \samples\stock\readme for info.

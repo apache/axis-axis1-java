@@ -1,7 +1,10 @@
 package test.utils;
 
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 import org.apache.axis.utils.Options;
+
 import java.net.MalformedURLException;
 
 public class TestOptions extends TestCase

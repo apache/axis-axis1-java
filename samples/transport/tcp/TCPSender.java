@@ -55,21 +55,15 @@
 
 package samples.transport.tcp;
 
-import java.io.* ;
-import java.net.* ;
-import java.util.* ;
-import java.lang.reflect.*;
-
-import org.apache.axis.* ;
-import org.apache.axis.utils.* ;
-import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.message.SOAPHeader;
+import org.apache.axis.AxisFault;
+import org.apache.axis.Message;
+import org.apache.axis.MessageContext;
 import org.apache.axis.handlers.BasicHandler;
-import org.apache.axis.transport.http.NonBlockingBufferedInputStream;
-import org.apache.axis.encoding.Base64 ;
 import org.apache.log4j.Category;
 
-import org.w3c.dom.* ;
+import java.io.BufferedInputStream;
+import java.io.OutputStream;
+import java.net.Socket;
 
 /**
  * This is meant to be used on a SOAP Client to call a SOAP server.

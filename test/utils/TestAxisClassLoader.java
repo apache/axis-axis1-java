@@ -1,6 +1,8 @@
 package test.utils;
 
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 import org.apache.axis.utils.AxisClassLoader;
 import org.apache.axis.utils.cache.JavaClass;
 

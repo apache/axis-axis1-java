@@ -55,19 +55,10 @@
 
 package test.functional;
 
-import java.net.*;
-import java.io.*;
-import java.util.*;
-
-import org.apache.axis.AxisFault ;
-
-import org.apache.axis.utils.Options ;
-import org.apache.axis.client.AdminClient;
-import org.apache.axis.client.ServiceClient;
-import org.apache.log4j.Category;
-
 import junit.framework.TestCase;
-
+import org.apache.axis.AxisFault;
+import org.apache.axis.client.AdminClient;
+import org.apache.log4j.Category;
 import samples.misc.TestClient;
 
 /** Test the proxy sample code.

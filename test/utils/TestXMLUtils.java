@@ -1,11 +1,22 @@
 package test.utils;
 
-import junit.framework.*;
-import java.io.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 import org.apache.axis.utils.XMLUtils;
-import org.xml.sax.*;
-import org.w3c.dom.*;
-import javax.xml.parsers.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.PipedOutputStream;
+import java.io.Reader;
+import java.io.StringReader;
 
 public class TestXMLUtils extends TestCase
 {

@@ -57,8 +57,9 @@
 
 package samples.addr;
 
-import java.net.*;
 import org.apache.axis.utils.Options;
+
+import java.net.URL;
 
 
 /**

@@ -55,14 +55,15 @@ package samples.transport ;
  * <http://www.apache.org/>.
  */
 
-import java.io.* ;
-import java.lang.Thread ;
-import java.util.Date ;
+import org.apache.axis.AxisFault;
+import org.apache.axis.Message;
+import org.apache.axis.MessageContext;
+import org.apache.axis.handlers.BasicHandler;
 
-import org.apache.axis.Message ;
-import org.apache.axis.AxisFault ;
-import org.apache.axis.MessageContext ;
-import org.apache.axis.handlers.BasicHandler ;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.util.Date;
 
 
 /**

@@ -6,8 +6,8 @@
 
 package samples.addr;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 public class AddressBookSOAPBindingImpl implements AddressBook {
     static private Map addresses = new HashMap();

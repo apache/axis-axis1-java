@@ -1,12 +1,12 @@
 package samples.bidbuy;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
-import java.io.FileInputStream ;
-import java.io.FileOutputStream ;
-import java.io.ObjectInputStream ;
-import java.io.ObjectOutputStream ;
 
 public class RegistryService {
 

@@ -1,18 +1,17 @@
 package test.encoding;
 
-import org.apache.axis.MessageContext;
-import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.message.RPCParam;
-import org.apache.axis.message.RPCElement;
-import org.apache.axis.encoding.*;
-import org.apache.axis.server.AxisServer;
-import org.apache.axis.utils.QName;
-import org.apache.axis.client.Call;
-
-import java.io.Writer;
-import java.io.StringWriter;
-
 import junit.framework.TestCase;
+import org.apache.axis.MessageContext;
+import org.apache.axis.client.Call;
+import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.ServiceDescription;
+import org.apache.axis.message.RPCElement;
+import org.apache.axis.message.RPCParam;
+import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.server.AxisServer;
+
+import java.io.StringWriter;
+import java.io.Writer;
 
 /**
  * Verify that shutting off xsi:types in the ServiceDescription works

@@ -57,7 +57,11 @@
 
 package samples.addr;
 
-import org.w3c.dom.*;
+import org.w3c.dom.Attr;
+import org.w3c.dom.CharacterData;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * @author Matthew J. Duftler

@@ -1,17 +1,11 @@
 package test.encoding;
 
-import org.apache.axis.*;
-import org.apache.axis.encoding.*;
-import org.apache.axis.handlers.soap.*;
-import org.apache.axis.message.*;
-import org.apache.axis.registries.*;
-import org.apache.axis.server.AxisServer;
-import org.apache.axis.utils.QName;
-import org.xml.sax.InputSource;
-import java.io.*;
-import java.util.*;
-
 import junit.framework.TestCase;
+import org.apache.axis.AxisEngine;
+import org.apache.axis.Message;
+import org.apache.axis.MessageContext;
+import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.server.AxisServer;
 
 /** 
  * Verify that deserialization actually can cause the soap service

@@ -55,15 +55,13 @@
 
 package samples.proxy;
 
-import java.util.*;
-import org.w3c.dom.* ;
 import org.apache.axis.AxisFault;
-import org.apache.axis.MessageContext;
-import org.apache.axis.Message;
 import org.apache.axis.Handler;
-import org.apache.axis.client.Service;
+import org.apache.axis.Message;
+import org.apache.axis.MessageContext;
 import org.apache.axis.client.Call;
-
+import org.apache.axis.client.Service;
+import org.w3c.dom.Document;
 import samples.transport.tcp.TCPTransport;
 
 /**

@@ -1,13 +1,18 @@
 package test.encoding;
 
-import org.apache.axis.encoding.*;
-
-import java.util.*;
-import java.io.*;
-import org.xml.sax.*;
+import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.encoding.Deserializer;
+import org.apache.axis.encoding.DeserializerFactory;
+import org.apache.axis.encoding.SOAPTypeMappingRegistry;
+import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.Serializer;
 import org.apache.axis.message.SOAPHandler;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.QName;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+
+import java.io.IOException;
+import java.util.Hashtable;
 
 public class DataSer extends Deserializer implements Serializer
 {

@@ -55,16 +55,11 @@
 
 package samples.stock ;
 
-import java.net.*;
-import java.io.*;
-import java.util.*;
-
-import org.apache.axis.AxisFault ;
-
-import org.apache.axis.utils.Options ;
-import org.apache.axis.client.ServiceClient ;
-import org.apache.axis.client.Transport ;
-import org.apache.axis.transport.http.HTTPTransport ;
+import org.apache.axis.AxisFault;
+import org.apache.axis.client.ServiceClient;
+import org.apache.axis.client.Transport;
+import org.apache.axis.transport.http.HTTPTransport;
+import org.apache.axis.utils.Options;
 
 /**
  *

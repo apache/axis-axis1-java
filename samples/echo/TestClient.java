@@ -55,21 +55,25 @@
 
 package samples.echo ;
 
-import java.lang.reflect.Array;
-import java.util.*;
-import java.math.BigDecimal;
-
-import org.apache.axis.AxisFault ;
-import org.apache.axis.client.ServiceClient ;
-import org.apache.axis.transport.http.HTTPTransport ;
+import org.apache.axis.AxisFault;
+import org.apache.axis.client.ServiceClient;
 import org.apache.axis.encoding.BeanSerializer;
-import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.encoding.ServiceDescription;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.message.RPCParam;
-import org.apache.axis.utils.Options ;
-import org.apache.axis.utils.QName ;
+import org.apache.axis.transport.http.HTTPTransport;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Options;
+import org.apache.axis.utils.QName;
+
+import java.lang.reflect.Array;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Test Client for the echo interop service.  See the main entrypoint

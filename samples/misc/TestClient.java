@@ -55,19 +55,15 @@
 
 package samples.misc ;
 
-import java.net.*;
-import java.io.*;
-import java.util.*;
+import org.apache.axis.client.Call;
+import org.apache.axis.client.Service;
+import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.transport.http.HTTPConstants;
+import org.apache.axis.utils.Options;
 
-import org.apache.axis.*;
-
-import org.apache.axis.utils.Options ;
-import org.apache.axis.client.ServiceClient ;
-import org.apache.axis.transport.http.HTTPTransport ;
-import org.apache.axis.transport.http.HTTPConstants ;
-import org.apache.axis.client.Call ;
-import org.apache.axis.client.Service ;
-import org.apache.axis.message.SOAPEnvelope ;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.net.URL;
 
 
 /**

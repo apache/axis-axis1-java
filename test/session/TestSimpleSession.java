@@ -1,8 +1,7 @@
 package test.session;
 
-import org.apache.axis.session.SimpleSession;
-
 import junit.framework.TestCase;
+import org.apache.axis.session.SimpleSession;
 
 /** 
  * Test deserialization of SOAP responses

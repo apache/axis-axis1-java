@@ -55,20 +55,17 @@
 
 package samples.bidbuy ;
 
-import java.lang.reflect.Array;
-import java.util.Hashtable;
-import java.util.Date;
-
-import org.apache.axis.AxisFault ;
-import org.apache.axis.client.ServiceClient ;
-import org.apache.axis.transport.http.HTTPTransport ;
+import org.apache.axis.client.ServiceClient;
 import org.apache.axis.encoding.BeanSerializer;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.encoding.ServiceDescription;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.message.RPCParam;
-import org.apache.axis.utils.Options ;
-import org.apache.axis.utils.QName ;
+import org.apache.axis.transport.http.HTTPTransport;
+import org.apache.axis.utils.Options;
+import org.apache.axis.utils.QName;
+
+import java.util.Date;
 
 
 /**

@@ -1,11 +1,6 @@
 package samples.bidbuy ;
 
-import org.apache.axis.message.RPCElement ;
-import org.apache.axis.message.RPCParam ;
-import org.apache.axis.utils.* ;
-import org.apache.axis.encoding.* ;
-import org.apache.axis.* ;
-import java.util.* ;
+import java.util.Vector;
 
 public interface vInterface {
   public void register(String registryURL, Service s) throws Exception ;

@@ -1,18 +1,22 @@
 package test.encoding;
 
-import java.lang.reflect.Array;
+import junit.framework.TestCase;
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
-import org.apache.axis.message.*;
-import org.apache.axis.encoding.*;
+import org.apache.axis.message.RPCElement;
+import org.apache.axis.message.RPCParam;
+import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.server.AxisServer;
-import org.apache.axis.utils.QName;
-import org.xml.sax.InputSource;
-import java.io.*;
-import java.util.*;
 
-import junit.framework.TestCase;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Vector;
 
 /** 
  * Test deserialization of SOAP responses

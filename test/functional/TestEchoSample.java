@@ -58,7 +58,6 @@ package test.functional;
 import junit.framework.TestCase;
 import org.apache.axis.client.AdminClient;
 import org.apache.log4j.Category;
-
 import samples.echo.TestClient;
 
 /** Test the stock sample code.

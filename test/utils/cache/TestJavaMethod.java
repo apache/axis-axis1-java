@@ -1,7 +1,10 @@
 package test.utils.cache;
 
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 import org.apache.axis.utils.cache.JavaMethod;
+
 import java.lang.reflect.Method;
 
 public class TestJavaMethod extends TestCase
