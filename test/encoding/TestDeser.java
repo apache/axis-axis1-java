@@ -66,7 +66,23 @@ public class TestDeser extends TestCase {
            for (int i=0; i < list1.size(); i++) {
                if (!equals(list1.get(i), list2.get(i))) return false;
            }
+           return true;
        }
+       if ((obj1 instanceof Map) && (obj2 instanceof Map)) {
+           Map map1 = (Map)obj1;
+           Map map2 = (Map)obj2;
+           Set keys1 = map1.keySet();
+           Set keys2 = map2.keySet();
+           if (!(keys1.equals(keys2))) return false;
+           Iterator i = keys1.iterator();
+           while (i.hasNext()) {
+               Object key = i.next();
+               if (!map1.get(key).equals(map2.get(key)))
+                   return false;
+           }
+           return true;
+       }
+       
        return false;
     }
 
@@ -141,6 +157,23 @@ public class TestDeser extends TestCase {
                        "<item xsi:type=\"xsd:string\">def</item>" +
                     "</result>",
                     v);
+    }
+    
+    public void testMap() throws Exception {
+        HashMap m = new HashMap();
+        m.put("abcKey", "abcVal");
+        m.put("defKey", "defVal");
+        deserialize("<result xsi:type=\"xmlsoap:Map\" " +
+                    "xmlns:xmlsoap=\"http://xml.apache.org/xml-soap\"> " +
+                      "<item>" +
+                       "<key xsi:type=\"xsd:string\">abcKey</key>" + 
+                       "<value xsi:type=\"xsd:string\">abcVal</value>" + 
+                      "</item><item>" +
+                       "<key xsi:type=\"xsd:string\">defKey</key>" +
+                       "<value xsi:type=\"xsd:string\">defVal</value>" +
+                      "</item>" +
+                    "</result>",
+                    m);
     }
 
     public void testUntyped() throws Exception {
