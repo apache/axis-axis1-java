@@ -80,18 +80,20 @@ public class RPCDispatchHandler implements Handler {
   public void invoke(MessageContext msgContext) throws AxisFault {
     System.err.println("In RPCDispatchHandler");
 
-    // Find the service we're invoking
+    /* Find the service we're invoking so we can grab it's options */
+    /***************************************************************/
     Handler service ;
-
     service = (Handler) msgContext.getProperty( Constants.MC_SVC_HANDLER );
 
-    // Now get the service specific info 
+    /* Now get the service (RPC) specific info  */
+    /********************************************/
     String  clsName    = (String) service.getOption( "className" );
     String  methodName = (String) service.getOption( "methodName" );
 
     try {
-      // We know we're doing a java call so find the class, create a
-      // new instance of it.
+      /* We know we're doing a Java/RPC call so we can ask for the */
+      /* SOAPBody as an RPCBody and process it accordingly.        */
+      /*************************************************************/
       int          i ;
       Class        cls    = Class.forName(clsName);
       Object       obj    = cls.newInstance();
@@ -100,6 +102,9 @@ public class RPCDispatchHandler implements Handler {
       Vector       bodies = env.getAsRPCBody();
       SOAPEnvelope resEnv = null ;
 
+      /* Loop over each entry in the SOAPBody - each one is a different */
+      /* RPC call.                                                      */
+      /******************************************************************/
       for ( int bNum = 0 ; bNum < bodies.size() ; bNum++ ) {
         RPCBody      body  = (RPCBody) bodies.get( bNum );
         String       mName = body.getMethodName();
@@ -119,7 +124,8 @@ public class RPCDispatchHandler implements Handler {
         Method method = cls.getMethod( mName, argClasses );
         Object objRes = method.invoke( obj, argValues );
   
-        // Now put the result in a result SOAPEnvelope
+        /* Now put the result in a result SOAPEnvelope */
+        /***********************************************/
         if ( resEnv == null )
           resEnv = new SOAPEnvelope();
         RPCBody resBody = new RPCBody();
@@ -133,14 +139,14 @@ public class RPCDispatchHandler implements Handler {
         resEnv.addBody( resBody );
       }
 
-      // Message outMsg = new Message( objRes.toString(), "String" );
       Message outMsg = new Message( resEnv, "SOAPEnvelope" );
       msgContext.setOutgoingMessage( outMsg );
     }
     catch( Exception e ) {
       e.printStackTrace();
-      throw new AxisFault( e );
-    }
+      if ( !(e instanceof AxisFault) ) e = new AxisFault(e);
+      throw (AxisFault) e ;
+    } 
   }
 
   public void undo(MessageContext msgContext) { 

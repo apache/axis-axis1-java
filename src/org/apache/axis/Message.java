@@ -153,13 +153,15 @@ public class Message {
     }
 
     if ( currentForm.equals("DOMDocument") ||
-         currentForm.equals("SOAPEnvelope") )
+         currentForm.equals("SOAPEnvelope") ||
+         currentForm.equals("AxisFault") )
       getAsString();
 
     if ( currentForm.equals("String") ) {
       setCurrentMessage( ((String)currentMessage).getBytes(), "Bytes" );
       return( (byte[]) currentMessage );
     }
+
 
     System.err.println("Can't convert " + currentForm + " to Bytes" );
     return( null );
@@ -179,7 +181,8 @@ public class Message {
       return( (String) currentMessage );
     }
 
-    if ( currentForm.equals("SOAPEnvelope") )
+    if ( currentForm.equals("SOAPEnvelope") ||
+         currentForm.equals("AxisFault") )
       getAsDOMDocument();
 
     if ( currentForm.equals("Document") ) { 
@@ -215,8 +218,21 @@ public class Message {
                                         getInputStream() );
       else if ( currentForm.equals("String") ) 
         reader = new StringReader( (String) currentMessage );
-      else if ( currentForm.equals("Bytes") ) 
-        reader = new InputStreamReader( new ByteArrayInputStream((byte[])currentMessage ));
+      else if ( currentForm.equals("Bytes") )  {
+        ByteArrayInputStream  bais ;
+        bais = new ByteArrayInputStream((byte[])currentMessage );
+        reader = new InputStreamReader( bais );
+      }
+      else if ( currentForm.equals("AxisFault") ) {
+        AxisFault     fault = (AxisFault) currentMessage ;
+        SOAPEnvelope  env   = new SOAPEnvelope();
+        SOAPBody      body  = new SOAPBody( fault.getAsDOM() );
+
+        env.addBody( body );
+
+        setCurrentMessage( env.getAsDOM(), "Document" );
+        return( (Document) currentMessage );
+      }
       else if ( currentForm.equals("SOAPEnvelope") ) {
         SOAPEnvelope  env = (SOAPEnvelope) currentMessage ;
         setCurrentMessage( env.getAsDOM(), "Document" );

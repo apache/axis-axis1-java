@@ -64,6 +64,11 @@ import org.apache.axis.utils.* ;
 import org.apache.axis.message.* ;
 
 /**
+ * This class is needed so that we have some place to store service specific
+ * options.  If two services are defined on the exact same chain/handler
+ * then they'll also share the same options.  Having this handler allows
+ * us to create a new instance of this pass-thru handler (one per service)
+ * that will allow us to store service specific options on it.
  *
  * @author Doug Davis (dug@us.ibm.com)
  */

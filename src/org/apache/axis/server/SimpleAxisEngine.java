@@ -73,6 +73,10 @@ public class SimpleAxisEngine implements Handler {
    */
   protected Hashtable options ;
 
+  /**
+   * Find/load the registries and save them so we don't need to do this
+   * each time we're called.
+   */
   public void init() {
     // Load the simple handler registry and init it
     HandlerRegistry  hr = new SimpleHandlerRegistry();
@@ -88,34 +92,44 @@ public class SimpleAxisEngine implements Handler {
   public void cleanup() {
   };
 
+  /**
+   * Main routine of the AXIS server.  In short we locate the appropriate
+   * handler for the desired service and invoke() it.
+   */
   public void invoke(MessageContext msgContext) throws AxisFault {
     HandlerRegistry hr = (HandlerRegistry)getOption(Constants.HANDLER_REGISTRY);
     HandlerRegistry sr = (HandlerRegistry)getOption(Constants.SERVICE_REGISTRY);
 
+    /* The target web-server should be place in the MC_TARGET entry in the */
+    /* bag of the msgContext object.  If it's not there we need to scan    */
+    /* the incoming message to find it.                                    */
+    /***********************************************************************/
     String action = (String) msgContext.getProperty( Constants.MC_TARGET );
-    if ( action == null ) action = "EchoService" ;
+    if ( action == null ) action = "EchoService" ; // Temporary - need 2 scan
 
     Handler h = sr.find( action );
 
     if ( h == null ) {
-      Message msg = new Message( "Service '"+action+"' not found", "String" );
-      msgContext.setOutgoingMessage( msg );
-      return ;
+      throw new AxisFault( "Server.NoSuchService",
+                           "Service '" + action + "' was not found",
+                           null, null );
     }
 
-    // Place in the bag so that handlers down the line can have access to
-    // it - ie. can look thru it's list of options
+    /* Place in the bag so that handlers down the line can have access to */
+    /* it - ie. can look thru it's list of options                        */
+    /**********************************************************************/
     msgContext.setProperty( Constants.MC_SVC_HANDLER, h );
 
-    h.init();
+    h.init();   // ???
     try {
       h.invoke( msgContext );
     }
     catch( Exception e ) {
       // Should we even bother catching it ?
-      throw new AxisFault( e );
+      if ( !(e instanceof AxisFault) ) e = new AxisFault( e );
+      throw (AxisFault) e ;
     }
-    h.cleanup();
+    h.cleanup();   // ???
   };
 
   public void undo(MessageContext msgContext) {

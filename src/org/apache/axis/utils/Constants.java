@@ -94,6 +94,11 @@ public class Constants {
   public static String ELEM_BODY     = "Body" ;
   public static String ELEM_FAULT    = "Fault" ;
 
+  public static String ELEM_FAULT_CODE   = "faultcode" ;
+  public static String ELEM_FAULT_STRING = "faultstring" ;
+  public static String ELEM_FAULT_DETAIL = "detail" ;
+  public static String ELEM_FAULT_ACTOR  = "faultactor" ;
+
   public static String ATTR_MUST_UNDERSTAND = "mustUnderstand" ;
   public static String ATTR_ENCODING_STYLE  = "encodingStyle" ;
   public static String ATTR_ACTOR           = "actor" ;
