@@ -1436,7 +1436,7 @@ public class Emitter {
         this.fileList.add(fileName);
 
         PrintWriter servicePW = printWriter(fileName);
-        TestCaseFactory testFactory = null;
+        TestCaseEmitter testFactory = null;
 
         if (this.bVerbose) {
             System.out.println("Generating service class: " + fileName);
@@ -1449,7 +1449,7 @@ public class Emitter {
             this.classList.add(testCase);
             this.fileList.add(testCaseFileName);
 
-            testFactory = new TestCaseFactory(this.printWriter(testCaseFileName),
+            testFactory = new TestCaseEmitter(this.printWriter(testCaseFileName),
                                               this.packageName,
                                               testCase,
                                               this);
