@@ -224,15 +224,7 @@ public class AdminClient
             
             input.close();
             SOAPBodyElement body = (SOAPBodyElement) result.elementAt(0);
-            StringWriter writer = new StringWriter();
-            call.getEngine().addOption(AxisEngine.PROP_XML_DECL, 
-                                       new Boolean(false));
-            SerializationContext ctx = new SerializationContext(writer,
-                                                  call.getMessageContext());
-            ctx.setPretty(true);
-            body.output(ctx);
-            sb.append(writer.toString());
-            sb.append('\n');
+            sb.append( body.toString() );
         }
         
         return sb.toString();

@@ -64,6 +64,11 @@ import org.apache.axis.*;
 import org.apache.axis.utils.Options ;
 import org.apache.axis.client.ServiceClient ;
 import org.apache.axis.transport.http.HTTPTransport ;
+import org.apache.axis.transport.http.HTTPConstants ;
+import org.apache.axis.client.Call ;
+import org.apache.axis.client.Service ;
+import org.apache.axis.message.SOAPEnvelope ;
+
 
 /**
  *
@@ -87,33 +92,30 @@ public class TestClient {
      * @param service an optional service argument, which will be used for
      * specifying the transport-level service
      */
-    public static String doTest (String args[], String service) throws Exception {
+    public static String doTest (String args[], String op) throws Exception {
       Options      opts    = new Options( args );
       String       url     = opts.getURL();
       String       action  = "EchoService" ;
         
-        if (service != null) {
-            action = service;
-        }
+      if (op != null) action = op;
 
       args = opts.getRemainingArgs();
       if ( args != null ) action = args[0];
 
-      ServiceClient client = new ServiceClient(new HTTPTransport());
-      client.set(HTTPTransport.URL, url);
-      client.set(HTTPTransport.ACTION, action);
+      InputStream   input   = new ByteArrayInputStream(msg.getBytes());
+      Service       service = new Service();
+      Call          call    = (Call) service.createCall();
+      SOAPEnvelope  env     = new SOAPEnvelope(input);
 
-      Message        reqMsg      = new Message( msg );
-      Message        resMsg     = null ;
+      call.setTargetEndpointAddress( new URL(url) );
+      call.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, action );
 
       System.out.println( "Request:\n" + msg );
-        
-      client.setRequestMessage( reqMsg );
-      client.invoke();
-      resMsg = client.getMessageContext().getResponseMessage();
 
-      System.out.println( "Response:\n" + resMsg.getAsString() );
-        return (String)resMsg.getAsString();
+      env = call.invoke( env );
+
+      System.out.println( "Response:\n" + env.toString() );
+      return( env.toString() );
     }
     
   public static void main(String args[]) throws Exception{

@@ -57,11 +57,18 @@ package org.apache.axis.message;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
+import org.apache.axis.Message;
+import org.apache.axis.MessageContext;
 import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.utils.Mapping;
 import org.apache.axis.utils.QName;
 import org.xml.sax.helpers.AttributesImpl;
+import org.xml.sax.InputSource;
+import org.apache.axis.client.AxisClient ;
 
+import java.io.InputStream ;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -104,6 +111,22 @@ public class SOAPEnvelope extends MessageElement
         }
         
         setDirty(true);
+    }
+
+    public SOAPEnvelope(InputStream input) {
+        try {
+            InputSource is = new InputSource(input);
+            DeserializationContext dser = null ;
+            AxisClient     tmpEngine = new AxisClient(null);
+            MessageContext msgContext = new MessageContext(tmpEngine);
+            dser = new DeserializationContext(is, msgContext,
+                                              Message.REQUEST, this );
+            dser.parse();
+        }
+        catch( Exception e ) {
+            e.printStackTrace();
+            throw new RuntimeException( e.toString() );
+        }
     }
     
     public String getMessageType()
@@ -307,7 +330,9 @@ public class SOAPEnvelope extends MessageElement
 
         if (bodyElements.isEmpty()) {
             // This is a problem.
-            throw new Exception("No body elements!");
+            // throw new Exception("No body elements!");
+            // If there are no body elements just return - it's ok that
+            // the body is empty
         }
 
         // Output <SOAP-ENV:Body>

@@ -31,6 +31,13 @@ public class EnvelopeBuilder extends SOAPHandler
         myElement = envelope;
     }
     
+    public EnvelopeBuilder(SOAPEnvelope env, String messageType)
+    {
+        envelope = env ;
+        envelope.setMessageType(messageType);
+        myElement = envelope;
+    }
+    
     public SOAPEnvelope getEnvelope()
     {
         return envelope;
