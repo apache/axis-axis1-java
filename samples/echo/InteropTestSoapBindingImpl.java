@@ -153,4 +153,12 @@ public class InteropTestSoapBindingImpl implements samples.echo.InteropTestPortT
             return input;
         }
 
+    /**
+     * This method accepts a UnsignedInt (xsd:unsignedInt) and echoes
+     * it back to the client.
+     */
+    public org.apache.axis.types.NonNegativeInteger echoNonNegativeInteger(org.apache.axis.types.NonNegativeInteger input) throws java.rmi.RemoteException {
+            return input;
+        }
+
 }

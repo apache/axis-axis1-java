@@ -455,6 +455,14 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                                              Constants.XSD_UNSIGNEDBYTE),
                    true);
 
+        // a xsd:nonNegativeInteger
+        myRegister(Constants.XSD_NONNEGATIVEINTEGER, org.apache.axis.types.NonNegativeInteger.class,
+             new SimplePrimitiveSerializerFactory(org.apache.axis.types.NonNegativeInteger.class,
+                                                  Constants.XSD_NONNEGATIVEINTEGER),
+             new SimpleDeserializerFactory(org.apache.axis.types.NonNegativeInteger.class,
+                                           Constants.XSD_NONNEGATIVEINTEGER),
+             true);
+
         // a xsd:Name
         myRegister(Constants.XSD_NAME, org.apache.axis.types.Name.class,
                    new SimplePrimitiveSerializerFactory(org.apache.axis.types.Name.class,

@@ -422,6 +422,7 @@
     <part name="unsignedInt" type="xsd:unsignedInt"/>
     <part name="unsignedShort" type="xsd:unsignedShort"/>
     <part name="unsignedByte" type="xsd:unsignedByte"/>
+    <part name="nonNegativeInteger" type="xsd:nonNegativeInteger"/>
     <part name="anyURI" type="xsd:anyURI"/>
     <part name="gYear" type="xsd:gYear"/>
     <part name="gMonth" type="xsd:gMonth"/>
@@ -617,6 +618,16 @@
   <message name="outputUnsignedByte">
     <part name="outUnsignedByte" type="xsd:unsignedByte"/>
     <part name="unsignedByte" type="xsd:unsignedByte"/>
+  </message>
+
+  <message name="inputNonNegativeInteger">
+    <part name="inNonNegativeInteger" type="xsd:nonNegativeInteger"/>
+    <part name="NonNegativeInteger" type="xsd:nonNegativeInteger"/>
+  </message>
+
+  <message name="outputNonNegativeInteger">
+    <part name="outNonNegativeInteger" type="xsd:nonNegativeInteger"/>
+    <part name="NonNegativeInteger" type="xsd:nonNegativeInteger"/>
   </message>
 
   <message name="inputAnyURI">
@@ -1118,6 +1129,10 @@
       <input message="tns:inputUnsignedByte"/>
       <output message="tns:outputUnsignedByte"/>
     </operation>
+    <operation name="methodNonNegativeInteger">
+      <input message="tns:inputNonNegativeInteger"/>
+      <output message="tns:outputNonNegativeInteger"/>
+    </operation>    
     <operation name="methodAnyURI">
       <input message="tns:inputAnyURI"/>
       <output message="tns:outputAnyURI"/>
@@ -2255,6 +2270,21 @@
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
     </operation>    
+    <operation name="methodNonNegativeInteger">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
     <operation name="methodAnyURI">
       <soap:operation soapAction=""/>
       <input>

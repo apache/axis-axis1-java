@@ -48,6 +48,8 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import test.wsdl.types.comprehensive_service.TypeTest;
+
+import org.apache.axis.types.NonNegativeInteger;
 import org.apache.axis.types.Time;
 import org.apache.axis.types.UnsignedLong;
 import org.apache.axis.types.UnsignedInt;
@@ -59,6 +61,7 @@ import org.apache.axis.types.Month;
 import org.apache.axis.types.Day;
 import org.apache.axis.types.YearMonth;
 import org.apache.axis.types.MonthDay;
+import org.apache.axis.holders.NonNegativeIntegerHolder;
 import org.apache.axis.holders.TimeHolder;
 import org.apache.axis.holders.UnsignedLongHolder;
 import org.apache.axis.holders.UnsignedShortHolder;
@@ -139,6 +142,7 @@ public class DynamicProxyTestCase extends TestCase {
                     new UnsignedInt(0),
                     new UnsignedShort(0),
                     new UnsignedByte(0),
+                    new NonNegativeInteger("0"),
                     new URI("urn:this-is-a-test"),
                     new Year(1995),
                     new Month(7),
@@ -198,6 +202,7 @@ public class DynamicProxyTestCase extends TestCase {
                     new UnsignedIntHolder(new UnsignedInt(0)),
                     new UnsignedShortHolder(new UnsignedShort(0)),
                     new UnsignedByteHolder(new UnsignedByte(0)),
+                    new NonNegativeIntegerHolder(new NonNegativeInteger("0")),
                     new URIHolder(new URI("urn:this-is-a-test")),
                     new YearHolder(new Year(1995)),
                     new MonthHolder(new Month(7)),
@@ -257,6 +262,7 @@ public class DynamicProxyTestCase extends TestCase {
                     new UnsignedIntHolder(),
                     new UnsignedShortHolder(),
                     new UnsignedByteHolder(),
+                    new NonNegativeIntegerHolder(),
                     new URIHolder(),
                     new YearHolder(),
                     new MonthHolder(),

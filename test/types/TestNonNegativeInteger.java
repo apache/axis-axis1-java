@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2002 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -55,40 +55,68 @@
 
 package test.types;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
+
+import org.apache.axis.types.NonNegativeInteger;
 
 /**
- * test the axis specific type classes
+ * Test validation of types.NonNegativeInteger
  */
-public class PackageTests extends TestCase
-{
-    public PackageTests(String name)
-    {
+public class TestNonNegativeInteger extends TestCase {
+
+    public TestNonNegativeInteger(String name) {
         super(name);
     }
 
-    public static Test suite() throws Exception
-    {
-        TestSuite suite = new TestSuite();
-
-        suite.addTestSuite(TestNonNegativeInteger.class);
-        suite.addTestSuite(TestNormalizedString.class);
-        suite.addTestSuite(TestToken.class);
-        suite.addTestSuite(TestUnsignedLong.class);
-        suite.addTestSuite(TestUnsignedInt.class);
-        suite.addTestSuite(TestUnsignedShort.class);
-        suite.addTestSuite(TestUnsignedByte.class);
-        suite.addTestSuite(TestYearMonth.class);
-        suite.addTestSuite(TestYear.class);
-        suite.addTestSuite(TestMonth.class);
-        suite.addTestSuite(TestMonthDay.class);
-        suite.addTestSuite(TestDay.class);
-        suite.addTestSuite(TestName.class);
-        suite.addTestSuite(TestNCName.class);
-        suite.addTestSuite(TestNMToken.class);
-        suite.addTestSuite(TestDuration.class);
-        return suite;
+    /**
+     * Run a failure test.  value should be invalid.
+     */
+    private void runFailTest(String value) throws Exception {
+        NonNegativeInteger oNonNegativeInteger = null;
+        try {
+            oNonNegativeInteger = new NonNegativeInteger(value);
+        }
+        catch (Exception e) { // catch the validation exception
+        }
+        // object is not iNstantiated on bad data value
+        assertNull("validation restriction failed [" +
+                value + "]. did not restrict bad value.", oNonNegativeInteger);
     }
+
+    /**
+     * Run a successful test.  value should be valid.
+     */
+    private void runPassTest(String value) throws Exception {
+        NonNegativeInteger oNonNegativeInteger = null;
+        try {
+            oNonNegativeInteger = new NonNegativeInteger(value);
+        }
+        catch (Exception e) { // catch the validation exception
+        }
+        assertEquals("unsigned int not equal" +
+                value, oNonNegativeInteger.toString(), value);
+    }
+
+    /**
+     * Test that a positive value succeeeds
+     */
+    public void testPositiveValue() throws Exception {
+        runPassTest("12345678901234567890");
+    }
+
+    /**
+     * Test that a negative number fails
+     */
+    public void testNegativeValue() throws Exception {
+        runFailTest("-123");
+    }
+
+
+    /**
+    * Test that a number at MinInclusive succeeds
+    */
+    public void testMinExclusive() throws Exception {
+       runPassTest("0");
+    }
+
 }

@@ -53,42 +53,34 @@
  * <http://www.apache.org/>.
  */
 
-package test.types;
+package org.apache.axis.holders;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.apache.axis.types.NonNegativeInteger;
+
+import javax.xml.rpc.holders.Holder;
 
 /**
- * test the axis specific type classes
+ * Class UnsignedIntHolder
+ *
  */
-public class PackageTests extends TestCase
-{
-    public PackageTests(String name)
-    {
-        super(name);
+public final class NonNegativeIntegerHolder implements Holder {
+
+    /** Field _value */
+    public NonNegativeInteger value;
+
+    /**
+     * Constructor NonNegativeIntegerHolder
+     */
+    public NonNegativeIntegerHolder() {
     }
 
-    public static Test suite() throws Exception
-    {
-        TestSuite suite = new TestSuite();
-
-        suite.addTestSuite(TestNonNegativeInteger.class);
-        suite.addTestSuite(TestNormalizedString.class);
-        suite.addTestSuite(TestToken.class);
-        suite.addTestSuite(TestUnsignedLong.class);
-        suite.addTestSuite(TestUnsignedInt.class);
-        suite.addTestSuite(TestUnsignedShort.class);
-        suite.addTestSuite(TestUnsignedByte.class);
-        suite.addTestSuite(TestYearMonth.class);
-        suite.addTestSuite(TestYear.class);
-        suite.addTestSuite(TestMonth.class);
-        suite.addTestSuite(TestMonthDay.class);
-        suite.addTestSuite(TestDay.class);
-        suite.addTestSuite(TestName.class);
-        suite.addTestSuite(TestNCName.class);
-        suite.addTestSuite(TestNMToken.class);
-        suite.addTestSuite(TestDuration.class);
-        return suite;
+    /**
+     * Constructor NonNegativeIntegerHolder
+     *
+     * @param value
+     */
+    public NonNegativeIntegerHolder(NonNegativeInteger value) {
+        this.value = value;
     }
 }
+

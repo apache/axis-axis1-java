@@ -58,6 +58,7 @@ package samples.echo ;
 import org.apache.axis.AxisFault;
 
 import org.apache.axis.types.HexBinary;
+import org.apache.axis.types.NonNegativeInteger;
 import org.apache.axis.types.NormalizedString;
 import org.apache.axis.types.Token;
 import org.apache.axis.types.UnsignedLong;
@@ -283,6 +284,19 @@ public abstract class TestClient {
         } catch (Exception e) {
             if (!testMode) {
                 verify("echoUnsignedByte", ubInput, e);
+            } else {
+                throw e;
+            }
+        }
+
+        // Test xsd:nonNegativeInteger
+        NonNegativeInteger nniInput = new NonNegativeInteger("12345678901234567890");
+        try {
+            output = binding.echoNonNegativeInteger(nniInput);
+            verify("echoNonNegativeInteger", nniInput, output);
+        } catch (Exception e) {
+            if (!testMode) {
+                verify("echoNonNegativeInteger", nniInput, e);
             } else {
                 throw e;
             }
