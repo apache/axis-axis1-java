@@ -613,7 +613,7 @@ public class Constants {
     public static final QName MIME_PLAINTEXT = new QName(NS_URI_XMLSOAP, "PlainText");
     public static final QName MIME_MULTIPART = new QName(NS_URI_XMLSOAP, "Multipart");
     public static final QName MIME_SOURCE = new QName(NS_URI_XMLSOAP, "Source");
-    public static final QName MIME_OCTETSTREAM = new QName(NS_URI_XMLSOAP, "octetstream");
+    public static final QName MIME_OCTETSTREAM = new QName(NS_URI_XMLSOAP, "octet-stream");
     public static final QName MIME_DATA_HANDLER = new QName(NS_URI_XMLSOAP, "DataHandler");
 
 
@@ -694,4 +694,16 @@ public class Constants {
      */
     public static final int DEFAULT_MESSAGE_TIMEOUT=60*1000*10;
 
+    /**
+     * MIME Content Types
+     * 
+     * @since Axis1.2
+     */
+    public static final String MIME_CT_APPLICATION_OCTETSTREAM     = "application/octet-stream";
+    public static final String MIME_CT_TEXT_PLAIN         = "text/plain";
+    public static final String MIME_CT_IMAGE_JPEG        = "image/jpeg";
+    public static final String MIME_CT_IMAGE_GIF        = "image/gif";
+    public static final String MIME_CT_TEXT_XML            = "text/xml";
+    public static final String MIME_CT_APPLICATION_XML        = "application/xml";
+    public static final String MIME_CT_MULTIPART_PREFIX        = "multipart/";
 }

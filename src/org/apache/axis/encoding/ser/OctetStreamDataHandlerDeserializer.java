@@ -29,7 +29,7 @@ import java.io.InputStream;
 import java.io.ByteArrayOutputStream;
 
 /**
- * application/octetstream DataHandler Deserializer
+ * application/octet-stream DataHandler Deserializer
  * Modified by Davanum Srinivas <dims@yahoo.com>
  */
 public class OctetStreamDataHandlerDeserializer extends JAFDataHandlerDeserializer {

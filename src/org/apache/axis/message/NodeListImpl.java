@@ -31,9 +31,9 @@ class NodeListImpl implements NodeList {
     Vector mNodes;
 
     /**
-	 * Constructor and Setter is intensionally made package access only.
-	 *  
-	 */
+     * Constructor and Setter is intensionally made package access only.
+     *  
+     */
     NodeListImpl() {
         mNodes = new Vector();
     }
@@ -53,11 +53,11 @@ class NodeListImpl implements NodeList {
     }
 
     /**
-	 * Interface Implemented
-	 * 
-	 * @param index
-	 * @return
-	 */
+     * Interface Implemented
+     * 
+     * @param index
+     * @return
+     */
     public Node item(int index) {
         if (mNodes != null && mNodes.size() > index) {
             return (Node) mNodes.get(index);

@@ -64,9 +64,9 @@ public class AttachmentsImpl implements Attachments {
      */
     protected String contentLocation = null;
 
-	/**
-	 * The HashMap for DataHandler Managements.
-	 */
+    /**
+     * The HashMap for DataHandler Managements.
+     */
 	private HashMap stackDataHandler = new HashMap();
 
     /**
@@ -230,11 +230,11 @@ public class AttachmentsImpl implements Attachments {
     public Part createAttachmentPart(Object datahandler)
             throws org.apache.axis.AxisFault {
 
-		// Searching for the same attachements
-		Integer key = new Integer(datahandler.hashCode());
-		if (stackDataHandler.containsKey(key)) {
-			return (Part)stackDataHandler.get(key);
-		}
+        // Searching for the same attachements
+    	Integer key = new Integer(datahandler.hashCode());
+    	if (stackDataHandler.containsKey(key)) {
+        	return (Part)stackDataHandler.get(key);
+        }
 
         multipart = null;
 
@@ -254,8 +254,8 @@ public class AttachmentsImpl implements Attachments {
 
         addAttachmentPart(ret);
 
-		// Store the current DataHandler with its key
-		stackDataHandler.put(key, ret);
+        // Store the current DataHandler with its key
+    	stackDataHandler.put(key, ret);
 
         return ret;
     }

@@ -67,7 +67,7 @@ public class JavaServiceDesc implements ServiceDesc {
     /** The name of this service */
     private String name = null;
 
-	/** The documentation of this service */
+    /** The documentation of this service */
 	private String documentation = null;
 
     /** Style/Use */
@@ -314,19 +314,19 @@ public class JavaServiceDesc implements ServiceDesc {
         this.name = name;
     }
 
-	/**
-	 * get the documentation for the service
-	 */
+    /**
+     * get the documentation for the service
+     */
 	public String getDocumentation() {
-		return documentation; 
-	}
+    	return documentation; 
+    }
 
-	/**
-	 * set the documentation for the service
-	 */
+    /**
+     * set the documentation for the service
+     */
 	public void setDocumentation(String documentation) {
-		this.documentation = documentation;
-	}
+    	this.documentation = documentation;
+    }
 
     public ArrayList getStopClasses() {
         return stopClasses;

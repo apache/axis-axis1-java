@@ -53,8 +53,8 @@ public class WSDL2Java extends WSDL2 {
 
     /** Field TEST_OPT */
     protected static final int TEST_OPT = 't';
-	/** Field BUILDFILE_OPT */
-	protected static final int BUILDFILE_OPT = 'B';
+    /** Field BUILDFILE_OPT */
+    protected static final int BUILDFILE_OPT = 'B';
     /** Field PACKAGE_OPT */
     protected static final int PACKAGE_OPT = 'p';
 
@@ -143,9 +143,9 @@ public class WSDL2Java extends WSDL2 {
                         CLOptionDescriptor.ARGUMENT_DISALLOWED,
                         HELPER_CLASS_OPT,
                         Messages.getMessage("optionHelper00")),
-				new CLOptionDescriptor("buildFile", CLOptionDescriptor.ARGUMENT_DISALLOWED,
-						BUILDFILE_OPT,
-						Messages.getMessage("optionBuildFile00")),        
+                new CLOptionDescriptor("buildFile", CLOptionDescriptor.ARGUMENT_DISALLOWED,
+                        BUILDFILE_OPT,
+                        Messages.getMessage("optionBuildFile00")),        
                 new CLOptionDescriptor("user", CLOptionDescriptor.ARGUMENT_REQUIRED,
                         USERNAME_OPT,
                         Messages.getMessage("optionUsername")),
@@ -254,9 +254,9 @@ public class WSDL2Java extends WSDL2 {
             case TEST_OPT:
                 emitter.setTestCaseWanted(true);
                 break;
-			case BUILDFILE_OPT:
-				emitter.setBuildFileWanted(true);
-				break;
+            case BUILDFILE_OPT:
+                emitter.setBuildFileWanted(true);
+                break;
             case ALL_OPT:
                 emitter.setAllWanted(true);
                 break;

@@ -284,26 +284,26 @@ public abstract class BaseSerializerFactory extends BaseFactory
         }
         return sf;
     }
-	/**
-	 * Returns the getSerializer.
-	 * @return Method
-	 */
+    /**
+     * Returns the getSerializer.
+     * @return Method
+     */
 	protected Method getGetSerializer() {
-		if (getSerializer == null) {
+    	if (getSerializer == null) {
             getSerializer = getMethod(javaType, "getSerializer");
-		}
-		return getSerializer;
-	}
+        }
+    	return getSerializer;
+    }
 
-	/**
-	 * Returns the serClassConstructor.
-	 * @return Constructor
-	 */
+    /**
+     * Returns the serClassConstructor.
+     * @return Constructor
+     */
 	protected Constructor getSerClassConstructor() {
-		if (serClassConstructor == null) {
-		    serClassConstructor = getConstructor(serClass);
-		}
-		return serClassConstructor;
-	}
+    	if (serClassConstructor == null) {
+            serClassConstructor = getConstructor(serClass);
+        }
+    	return serClassConstructor;
+    }
 
 }

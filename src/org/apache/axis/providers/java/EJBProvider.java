@@ -453,7 +453,7 @@ public class EJBProvider extends RPCProvider
 //        ServiceDesc serviceDescription = service.getServiceDescription();
 //        ArrayList stopClasses = serviceDescription.getStopClasses();
 //        if (stopClasses == null)
-//            stopClasses = new ArrayList();              	
+//            stopClasses = new ArrayList();                  
 //        stopClasses.add("javax.ejb.EJBObject");
 //        stopClasses.add("javax.ejb.EJBLocalObject");
 //        serviceDescription.setStopClasses(stopClasses);

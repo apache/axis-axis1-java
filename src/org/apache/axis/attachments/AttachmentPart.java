@@ -80,11 +80,11 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
         datahandler = dh;
         if(dh != null) {
             setMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE, dh.getContentType());
-	    javax.activation.DataSource ds = dh.getDataSource();
-	    if (ds instanceof ManagedMemoryDataSource) {
-		extractFilename((ManagedMemoryDataSource)ds); //and get the filename if appropriate
+        javax.activation.DataSource ds = dh.getDataSource();
+        if (ds instanceof ManagedMemoryDataSource) {
+    	extractFilename((ManagedMemoryDataSource)ds); //and get the filename if appropriate
 
-	    }
+        }
         }
     }
 

@@ -71,42 +71,42 @@ public class JavaBuildFileWriter extends JavaWriter
         out.write("<?xml version=\"1.0\"?>\n");
 
         out.write("<project basedir=\".\" default=\"jar\">\n");
-        out.write("	<property name=\"src\" location=\".\"/>\n");
-        out.write("	<property name=\"build.classes\" location=\"classes\"/>\n");
+        out.write("    <property name=\"src\" location=\".\"/>\n");
+        out.write("    <property name=\"build.classes\" location=\"classes\"/>\n");
 
-        out.write("	<path id=\"classpath\">\n");
+        out.write("    <path id=\"classpath\">\n");
         StringTokenizer tok = getClasspathComponets();
         while (tok.hasMoreTokens()) {
-            out.write("		<pathelement location=\"" + tok.nextToken() + "\"/>\n");
+            out.write("        <pathelement location=\"" + tok.nextToken() + "\"/>\n");
         }
-        out.write("	</path>\n");
+        out.write("    </path>\n");
 
-        out.write("	<target name=\"compile\">\n");
-        out.write("	   <mkdir dir=\"${build.classes}\"/>\n");
-        out.write("		<javac destdir=\"${build.classes}\" debug=\"on\">\n");
-        out.write("			<classpath refid=\"classpath\" />\n");
-        out.write("			<src path=\"${src}\"/>\n");
-        out.write("		</javac>\n");
-        out.write("	</target>\n");
+        out.write("    <target name=\"compile\">\n");
+        out.write("       <mkdir dir=\"${build.classes}\"/>\n");
+        out.write("        <javac destdir=\"${build.classes}\" debug=\"on\">\n");
+        out.write("            <classpath refid=\"classpath\" />\n");
+        out.write("            <src path=\"${src}\"/>\n");
+        out.write("        </javac>\n");
+        out.write("    </target>\n");
 
-        out.write("	<target name=\"jar\" depends=\"compile\">\n");
+        out.write("    <target name=\"jar\" depends=\"compile\">\n");
         out.write("        <copy todir=\"${build.classes}\">\n");
         out.write("            <fileset dir=\".\" casesensitive=\"yes\" >\n");
         out.write("                <include name=\"**/*.wsdd\"/>\n");
         out.write("            </fileset>\n");
         out.write("        </copy>\n");
 
-        out.write("		<jar jarfile=\"" + getJarFileName(symbolTable.getWSDLURI()) + ".jar\" basedir=\"${build.classes}\" >\n");
-        out.write("		<include name=\"**\" />\n");
-        out.write("		<manifest>\n");
-        out.write("			<section name=\"org/apache/ws4j2ee\">\n");
-        out.write("			<attribute name=\"Implementation-Title\" value=\"Apache Axis\"/>\n");
-        out.write("			<attribute name=\"Implementation-Vendor\" value=\"Apache Web Services\"/>\n");
-        out.write("			</section>\n");
-        out.write("		</manifest>\n");
-        out.write("		</jar>\n");
-        out.write("		<delete dir=\"${build.classes}\"/>\n");
-        out.write("	</target>\n");
+        out.write("        <jar jarfile=\"" + getJarFileName(symbolTable.getWSDLURI()) + ".jar\" basedir=\"${build.classes}\" >\n");
+        out.write("        <include name=\"**\" />\n");
+        out.write("        <manifest>\n");
+        out.write("            <section name=\"org/apache/ws4j2ee\">\n");
+        out.write("            <attribute name=\"Implementation-Title\" value=\"Apache Axis\"/>\n");
+        out.write("            <attribute name=\"Implementation-Vendor\" value=\"Apache Web Services\"/>\n");
+        out.write("            </section>\n");
+        out.write("        </manifest>\n");
+        out.write("        </jar>\n");
+        out.write("        <delete dir=\"${build.classes}\"/>\n");
+        out.write("    </target>\n");
         out.write("</project>\n");
         out.close();
     }

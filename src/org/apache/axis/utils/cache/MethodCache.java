@@ -32,10 +32,10 @@ import org.apache.axis.utils.ClassUtils;
  * @author Sebastian Dietrich <sebastian.dietrich@anecon.com>
  */
 public class MethodCache {
-	/**
-	 * The only instance of this class
-	 */
-	transient private static MethodCache instance;
+    /**
+     * The only instance of this class
+     */
+    transient private static MethodCache instance;
 
     /**
      * Cache for Methods
@@ -43,24 +43,24 @@ public class MethodCache {
      */
     transient private static ThreadLocal cache;
 
-	/**
-	 * The <i>private</i> constructor for this class.
-	 * Use getInstance to get an instance (the only one).
-	 */
-	private MethodCache() {
-		cache = new ThreadLocal();
-	}
+    /**
+     * The <i>private</i> constructor for this class.
+     * Use getInstance to get an instance (the only one).
+     */
+    private MethodCache() {
+        cache = new ThreadLocal();
+    }
 
-	/**
-	 * Gets the only instance of this class
-	 * @return the only instance of this class
-	 */
-	public static MethodCache getInstance() {
-		if (instance == null) {
-			instance = new MethodCache();
-		}
-		return instance;
-	}
+    /**
+     * Gets the only instance of this class
+     * @return the only instance of this class
+     */
+    public static MethodCache getInstance() {
+        if (instance == null) {
+            instance = new MethodCache();
+        }
+        return instance;
+    }
 
     /**
      * Returns the per thread hashmap (for method caching)
@@ -69,7 +69,7 @@ public class MethodCache {
         Map map = (Map) cache.get();
         if (map == null) {
             map = new HashMap();
-			cache.set(map);
+            cache.set(map);
         }
         return map;
     }
@@ -114,16 +114,16 @@ public class MethodCache {
     /** used to track methods we've sought but not found in the past */
     private static final Object NULL_OBJECT = new Object();
 
-	/**
-	 * Returns the specified method - if any.
-	 *
-	 * @param clazz the class to get the method from
-	 * @param methodName the name of the method
-	 * @param parameterTypes the parameters of the method
-	 * @return the found method
-	 *
-	 * @throws NoSuchMethodException if the method can't be found
-	 */
+    /**
+     * Returns the specified method - if any.
+     *
+     * @param clazz the class to get the method from
+     * @param methodName the name of the method
+     * @param parameterTypes the parameters of the method
+     * @return the found method
+     *
+     * @throws NoSuchMethodException if the method can't be found
+     */
     public Method getMethod(Class clazz,
                             String methodName,
                             Class[] parameterTypes)

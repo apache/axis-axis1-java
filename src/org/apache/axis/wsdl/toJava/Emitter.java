@@ -87,7 +87,7 @@ public class Emitter extends Parser {
     /** Field bHelperGeneration */
     private boolean bHelperGeneration = false;
     
-	private boolean bBuildFileGeneration = false;
+    private boolean bBuildFileGeneration = false;
 
     /** Field packageName */
     private String packageName = null;
@@ -207,21 +207,21 @@ public class Emitter extends Parser {
         return bEmitTestCase;
     }    // isTestCaseWanted
 
-	/**
-	 * get the build file genaeration state
-	 * @return
-	 */
-	public boolean isBuildFileWanted(){
-		return bBuildFileGeneration;
-	}
-	
-	/**
-	 * turn the build file genaration ON
-	 * @param value
-	 */
-	public void setBuildFileWanted(boolean value){
-		bBuildFileGeneration = value;
-	}
+    /**
+     * get the build file genaeration state
+     * @return
+     */
+    public boolean isBuildFileWanted(){
+        return bBuildFileGeneration;
+    }
+    
+    /**
+     * turn the build file genaration ON
+     * @param value
+     */
+    public void setBuildFileWanted(boolean value){
+        bBuildFileGeneration = value;
+    }
 
     /**
      * By default, code is generated only for referenced elements.

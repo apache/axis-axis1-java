@@ -438,7 +438,7 @@ public class Types {
             }
         } //if (mappedTyped != null) {
         
-        return qNameRet;	
+        return qNameRet;    
     }
     
     /**

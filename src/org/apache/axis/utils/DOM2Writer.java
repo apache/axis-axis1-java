@@ -79,7 +79,7 @@ public class DOM2Writer
     }
 
     private static void print(Node node, NSStack namespaceStack,
-    						  Node startnode,
+                              Node startnode,
                               PrintWriter out, boolean pretty,
                               int indent)
     {
@@ -294,7 +294,7 @@ public class DOM2Writer
 
     private static void printNamespaceDecl(Node node,
                                            NSStack namespaceStack,
-										   Node startnode,
+                                           Node startnode,
                                            PrintWriter out)
     {
         switch (node.getNodeType())
