@@ -145,6 +145,12 @@ public class MessageElement implements SOAPElement
         name = localPart;
     }
 
+    MessageElement(String namespace, String localPart, Object value)
+    {
+        this(namespace, localPart);
+        objectValue = value;
+    }
+
     MessageElement(Element elem)
     {
         elementRep = elem;
@@ -409,13 +415,18 @@ public class MessageElement implements SOAPElement
      * A serializer needs to be registered for this object class for proper
      * operation.
      * <p>
-     * Note that this method will log and error and no-op if there are
-     * any children in the MessageElement.
+     * Note that this method will log an error and no-op if there are
+     * any children in the MessageElement or if the MessageElement was
+     * constructed from XML.
      * @param newValue node's value or null.
      */
     public void setObjectValue(Object newValue){
-        if (children != null) {
+        if (children != null && !children.isEmpty()) {
             log.error(JavaUtils.getMessage("childPresent"));
+            return;
+        }
+        if (elementRep != null) {
+            log.error(JavaUtils.getMessage("xmlPresent"));
             return;
         }
         this.objectValue = newValue;

@@ -76,19 +76,17 @@ public class SOAPHeader extends MessageElement {
     protected boolean   mustUnderstand = false;
 
     public SOAPHeader() {
+        super();
     }
 
     public SOAPHeader(String namespace, String localPart)
     {
-        setNamespaceURI(namespace);
-        setName(localPart);
+        super(namespace, localPart);
     }
 
     public SOAPHeader(String namespace, String localPart, Object value)
     {
-        setNamespaceURI(namespace);
-        setName(localPart);
-        setObjectValue(value);
+        super(namespace, localPart, value);
     }
 
     public SOAPHeader(Element elem)
