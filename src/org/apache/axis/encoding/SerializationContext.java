@@ -270,7 +270,7 @@ public class SerializationContext
         }
 
         if (startOfDocument && sendXMLDecl) {
-            writer.write("<?xml version=\"1.0\" encoding=\"UTF8\"?>");
+            writer.write("<?xml version=\"1.0\"?>");
             startOfDocument = false;
         }
         
