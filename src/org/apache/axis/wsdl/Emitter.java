@@ -1311,7 +1311,7 @@ public class Emitter {
         deployPW.println("      <option name=\"methodName\" value=\"" + methodList + "\"/>");
     } //writeDeployBinding
 
-    //////////////////////////////
+    //////////////////////////////
     //
     // Methods using types (non WSDL)
     //
