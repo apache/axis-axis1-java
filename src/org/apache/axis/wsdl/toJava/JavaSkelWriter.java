@@ -75,10 +75,12 @@ import javax.wsdl.extensions.soap.SOAPOperation;
 import org.apache.axis.utils.JavaUtils;
 
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
+import org.apache.axis.wsdl.symbolTable.Element;
 import org.apache.axis.wsdl.symbolTable.Parameter;
 import org.apache.axis.wsdl.symbolTable.Parameters;
 import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
+import org.apache.axis.wsdl.symbolTable.TypeEntry;
 
 /**
 * This is Wsdl2java's skeleton writer.  It writes the <BindingName>Skeleton.java
@@ -124,14 +126,21 @@ public class JavaSkelWriter extends JavaWriter {
 
         // Declare private impl and skeleton base delegates
         pw.println("    private " + implType + ";");
-        pw.println("    private static java.util.Hashtable _myOperations = new java.util.Hashtable();");
+        pw.println("    private static java.util.Map _myOperations = new java.util.Hashtable();");
+        pw.println("    private static java.util.Collection _myOperationsList = new java.util.ArrayList();");
         pw.println();
-        pw.println("    public static org.apache.axis.description.OperationDesc getOperationDescByName(String methodName) {");
-        pw.println("        return (org.apache.axis.description.OperationDesc)_myOperations.get(methodName);");
+        pw.println("    /**");
+        pw.println("    * Returns List of OperationDesc objects with this name");
+        pw.println("    */");
+        pw.println("    public static java.util.List getOperationDescByName(String methodName) {");
+        pw.println("        return (java.util.List)_myOperations.get(methodName);");
         pw.println("    }");
         pw.println();
+        pw.println("    /**");
+        pw.println("    * Returns Collection of OperationDescs");
+        pw.println("    */");
         pw.println("    public static java.util.Collection getOperationDescs() {");
-        pw.println("        return _myOperations.values();");
+        pw.println("        return _myOperationsList;");
         pw.println("    }");
         pw.println();
 
@@ -167,9 +176,23 @@ public class JavaSkelWriter extends JavaWriter {
                         default:
                             throw new IOException();
                     }
-                    pw.println("            new org.apache.axis.description.ParameterDesc(" +
-                       Utils.getNewQName(Utils.getAxisQName(p.getQName())) +
-                       ", " + modeStr + ", null),");
+                    // Construct a parameter with the parameter name, mode, type qname
+                    // a type javaType.
+                    TypeEntry paramType = p.getType();
+                    if (paramType instanceof Element && 
+                        paramType.getRefType() != null) {
+                        paramType = paramType.getRefType();
+                    }
+                    pw.println("            " +
+                        "new org.apache.axis.description.ParameterDesc(" +
+                        Utils.getNewQName(
+                             Utils.getAxisQName(p.getQName())) +
+                        ", " + modeStr + "," +
+                        Utils.getNewQName(
+                             Utils.getAxisQName(paramType.getQName()))
+                        +","+
+                        p.getType().getName() + ".class" 
+                        +"),");
                 }
 
                 pw.println("        };");
@@ -224,7 +247,11 @@ public class JavaSkelWriter extends JavaWriter {
                     }
                 }
 
-                pw.println("        _myOperations.put(\"" + javaOpName + "\", _oper);");
+                pw.println("        _myOperationsList.add(_oper);");
+                pw.println("        if (_myOperations.get(\"" + javaOpName + "\")==null) {");
+                pw.println("            _myOperations.put(\"" + javaOpName + "\", new java.util.ArrayList());");
+                pw.println("        }");
+                pw.println("        ((java.util.List)_myOperations.get(\"" + javaOpName + "\")).add(_oper);");
             }
         }
         pw.println("    }");
