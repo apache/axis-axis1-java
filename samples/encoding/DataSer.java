@@ -11,6 +11,8 @@ public class DataSer extends DeserializerBase implements Serializer
 {
     public static final String STRINGMEMBER = "stringMember";
     public static final String FLOATMEMBER = "floatMember";
+    public static final String DATAMEMBER = "dataMember";
+    public static final QName myTypeQName = new QName("typeNS", "Data");
     
     public static class DataSerFactory implements DeserializerFactory {
         public DeserializerBase getDeserializer() {
@@ -28,6 +30,7 @@ public class DataSer extends DeserializerBase implements Serializer
     {
         typesByMemberName.put(STRINGMEMBER, SOAPTypeMappingRegistry.XSD_STRING);
         typesByMemberName.put(FLOATMEMBER, SOAPTypeMappingRegistry.XSD_FLOAT);
+        typesByMemberName.put(DATAMEMBER, myTypeQName);
         value = new Data();
     }
     
@@ -44,6 +47,7 @@ public class DataSer extends DeserializerBase implements Serializer
         
         // These can come in either order.
         DeserializerBase dSer = context.getDeserializer(typeQName);
+        dSer.registerValueTarget(value, localName);
         
         if (dSer == null)
             throw new SAXException("No deserializer for a " + typeQName + "???");
@@ -51,18 +55,6 @@ public class DataSer extends DeserializerBase implements Serializer
         context.pushElementHandler(dSer);
     }
     
-    public void onEndChild(String localName, DeserializerBase deserializer)
-        throws SAXException
-    {
-        if (STRINGMEMBER.equals(localName)) {
-            ((Data)value).stringMember = (String)deserializer.getValue();
-        } else if (FLOATMEMBER.equals(localName)) {
-            ((Data)value).floatMember = (Float)deserializer.getValue();
-        } else {
-            throw new SAXException("No such child - " + localName);
-        }
-    }
-        
     /** SERIALIZER STUFF
      */
     
