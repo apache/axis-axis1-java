@@ -105,6 +105,7 @@ Copyright:
   <!-- =================================================================== -->
   <target name="junit" if="junit.present">
     <junit printsummary="yes" haltonfailure="${test.functional.fail}" fork="yes">
+      <jvmarg value="-Xbootclasspath:${sun.boot.class.path}"/>
       <classpath refid="classpath" />
       <formatter type="xml" />
       <batchtest todir="${test.functional.reportdir}">
