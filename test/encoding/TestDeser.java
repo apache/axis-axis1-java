@@ -50,7 +50,7 @@ public class TestDeser extends TestCase {
             "<soap:Envelope " +
               "xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" " +
               "xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\" " +
-              "xmlns:me=\"urn:me\" " +
+              "xmlns:me=\"http://soapinterop.org/xsd\" " +
               "xmlns:xsi=\"" + NS_XSI + "\" " +
               "xmlns:xsd=\"" + NS_XSD + "\">\n" +
               "<soap:Body>\n" +
@@ -66,33 +66,33 @@ public class TestDeser extends TestCase {
         tm.setSupportedEncodings(new String[] {Constants.URI_DEFAULT_SOAP_ENC});
         tmr.register(Constants.URI_DEFAULT_SOAP_ENC, tm);
         tm.register(java.lang.String[].class, 
-                    new QName("urn:me", "ArrayOfString"),
+                    new QName("http://soapinterop.org/xsd", "ArrayOfString"),
                     new org.apache.axis.encoding.ser.ArraySerializerFactory(),
                     new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
         tm.register(java.lang.Object[].class, 
-                    new QName("urn:me", "ArrayOfObject"),
+                    new QName("http://soapinterop.org/xsd", "ArrayOfObject"),
                     new org.apache.axis.encoding.ser.ArraySerializerFactory(),
                     new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
         tm.register(samples.echo.SOAPStruct.class, 
-                    new QName("urn:me", "SOAPStruct"),
+                    new QName("http://soapinterop.org/xsd", "SOAPStruct"),
                     new org.apache.axis.encoding.ser.BeanSerializerFactory(
                           samples.echo.SOAPStruct.class,
-                          new QName("urn:me", "SOAPStruct")),
+                          new QName("http://soapinterop.org/xsd", "SOAPStruct")),
                     new org.apache.axis.encoding.ser.BeanDeserializerFactory(
                           samples.echo.SOAPStruct.class,
-                          new QName("urn:me", "SOAPStruct")));
+                          new QName("http://soapinterop.org/xsd", "SOAPStruct")));
         tm.register(samples.echo.SOAPStruct[].class, 
-                    new QName("urn:me", "ArrayOfSOAPStruct"),
+                    new QName("http://soapinterop.org/xsd", "ArrayOfSOAPStruct"),
                     new org.apache.axis.encoding.ser.ArraySerializerFactory(),
                     new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
         tm.register(samples.echo.SOAPStructStruct.class,
-                    new QName("urn:me", "SOAPStructStruct"),
+                    new QName("http://soapinterop.org/xsd", "SOAPStructStruct"),
                     new org.apache.axis.encoding.ser.BeanSerializerFactory(
                           samples.echo.SOAPStructStruct.class,
-                          new QName("urn:me", "SOAPStructStruct")),
+                          new QName("http://soapinterop.org/xsd", "SOAPStructStruct")),
                     new org.apache.axis.encoding.ser.BeanDeserializerFactory(
                           samples.echo.SOAPStructStruct.class,
-                          new QName("urn:me", "SOAPStructStruct")));
+                          new QName("http://soapinterop.org/xsd", "SOAPStructStruct")));
     }
 
     /**

@@ -124,6 +124,7 @@ public class TestBeanDeser2 extends TestCase {
              "</multiRef>";
 
         test.encoding.beans.SbTravelRequest travelRequest = (test.encoding.beans.SbTravelRequest) deserialize(response);
+        assertNotNull("supPliers array missing", travelRequest.supPliers);
         assertTrue(travelRequest.supPliers.length==1);
         assertTrue(travelRequest.supPliers[0].searchType.intValue()==0);
         assertTrue(travelRequest.supPliers[0].supplierCode.equals("SC**"));

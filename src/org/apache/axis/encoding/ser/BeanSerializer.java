@@ -161,6 +161,7 @@ public class BeanSerializer implements Serializer, Serializable {
                 if (propName.equals("class"))
                     continue;
                 QName qname = null;
+                QName xmlType = null;
                 boolean isOmittable = false;
 
                 // If we have type metadata, check to see what we're doing
@@ -184,6 +185,7 @@ public class BeanSerializer implements Serializer, Serializable {
                             qname = field.getXmlName();
                         }
                         isOmittable = field.isMinOccursIs0();
+                        xmlType = field.getXmlType();
                     }
                 }
 
@@ -193,6 +195,11 @@ public class BeanSerializer implements Serializer, Serializable {
                     qname = new QName("", propName);
                 }
 
+                if (xmlType == null) {
+                    // look up the type QName using the class
+                    xmlType = context.getQNameForClass(propertyDescriptor[i].getType());
+                }
+                
                 // Read the value from the property
                 if(propertyDescriptor[i].isReadable()) {
                     if (!propertyDescriptor[i].isIndexed()) {
@@ -210,7 +217,7 @@ public class BeanSerializer implements Serializer, Serializable {
                         context.serialize(qname,
                                           null,
                                           propValue,
-                                          context.getQNameForClass(propertyDescriptor[i].getType()),
+                                          xmlType,
                                           true,
                                           null);
                     } else {

@@ -56,6 +56,7 @@ package org.apache.axis.encoding.ser;
 
 import org.apache.axis.Constants;
 import org.apache.axis.description.TypeDesc;
+import org.apache.axis.description.FieldDesc;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.DeserializerImpl;
@@ -189,6 +190,7 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
         throws SAXException
     {
         BeanPropertyDescriptor propDesc = null;
+        FieldDesc fieldDesc = null;
 
         String encodingStyle = context.getMessageContext().getEncodingStyle();
         boolean isEncoded = Constants.isSOAP_ENC(encodingStyle);
@@ -206,6 +208,7 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
             String fieldName = typeDesc.getFieldNameForElement(elemQName, 
                                                                isEncoded);
             propDesc = (BeanPropertyDescriptor)propertyMap.get(fieldName);
+            fieldDesc = typeDesc.getFieldByName(fieldName); 
         }
 
         if (propDesc == null) {
@@ -255,6 +258,11 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
         QName childXMLType = context.getTypeFromXSITypeAttr(namespace, 
                                                             localName,
                                                             attributes);
+        
+        // If no xsi:type, check the meta-data for the field
+        if (childXMLType == null && fieldDesc != null) {
+            childXMLType = fieldDesc.getXmlType();
+        }
         
         // Get Deserializer for child, default to using DeserializerImpl
         Deserializer dSer = getDeserializer(childXMLType, propDesc.getType(), 
