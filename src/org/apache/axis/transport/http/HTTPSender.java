@@ -418,7 +418,7 @@ public class HTTPSender extends BasicHandler {
                                                 statusMessage,
                                                 null,
                                                 null);
-                fault.setFaultDetailsString(JavaUtils.getMessage("return01",
+                fault.setFaultDetailString(JavaUtils.getMessage("return01",
                         "" + returnCode, buf.toString()));
                 throw fault;
             }
