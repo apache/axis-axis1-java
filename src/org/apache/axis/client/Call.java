@@ -62,6 +62,7 @@ import org.apache.axis.Handler;
 import org.apache.axis.InternalException;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.attachments.Attachments;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.description.FaultDesc;
 import org.apache.axis.description.OperationDesc;
@@ -102,6 +103,8 @@ import javax.wsdl.Binding;
 import javax.wsdl.BindingInput;
 import javax.wsdl.BindingOperation;
 import javax.wsdl.Operation;
+import javax.wsdl.extensions.mime.MIMEPart;
+import javax.wsdl.extensions.mime.MIMEMultipartRelated;
 import javax.wsdl.Part;
 import javax.wsdl.Port;
 import javax.wsdl.PortType;
@@ -147,6 +150,7 @@ import java.rmi.RemoteException;
  * </pre>
  *
  * @author Doug Davis (dug@us.ibm.com)
+ * @author Steve Loughran
  */
 
 public class Call implements javax.xml.rpc.Call {
@@ -202,26 +206,56 @@ public class Call implements javax.xml.rpc.Call {
     private Vector             myHeaders       = null;
 
     public static final String SEND_TYPE_ATTR    = "send_type_attr" ;
+
+    /**
+     * This is the name of a property to set the transport of the message
+     *
+     * @see #setProperty
+     */
     public static final String TRANSPORT_NAME    = "transport_name" ;
+
+    /**
+     * This is not the name of a property that can be set with
+     * setProperty, despite its name.
+     */
     public static final String TRANSPORT_PROPERTY= "java.protocol.handler.pkgs";
 
+    /**
+     * this is a property set in the message context when the invocation
+     * process begins, for the benefit of handlers
+     */
     public static final String WSDL_SERVICE      = "wsdl.service";
 
+    /**
+     * this is a property set in the message context when the invocation
+     * process begins, for the benefit of handlers
+     */
     public static final String WSDL_PORT_NAME    = "wsdl.portName";
 
-    // @deprecated use WSDL_SERVICE instead.
+    /**
+     * @deprecated use WSDL_SERVICE instead.
+     */
     public static final String JAXRPC_SERVICE    = WSDL_SERVICE;
 
-    // @deprected use WSDL_PORT_NAME instead.
+    /**
+     * @deprecated use WSDL_PORT_NAME instead.
+     */
     public static final String JAXRPC_PORTTYPE_NAME = WSDL_PORT_NAME;
 
-    // If true, the code will throw a fault if there is no
-    // response message from the server.  Otherwise, the
-    // invoke method will return a null.
+    /**
+     * If true, the code will throw a fault if there is no
+     * response message from the server.  Otherwise, the
+     * invoke method will return a null.
+     * @todo: stevel: why is this a static? Surely it should be a property.
+     */
     public static final boolean FAULT_ON_NO_RESPONSE = false;
 
     /**
      * Property for setting attachment format.
+     * Can be set to either DIME or MIME (default)
+     * @see #setProperty
+     * @see #ATTACHMENT_ENCAPSULATION_FORMAT_DIME
+     * @see #ATTACHMENT_ENCAPSULATION_FORMAT_MIME
      */
     public static final String ATTACHMENT_ENCAPSULATION_FORMAT=
       "attachment_encapsulation_format";
@@ -237,6 +271,13 @@ public class Call implements javax.xml.rpc.Call {
       "axis.attachment.style.dime";
 
     /**
+     * Timeout property: should be accompanies by an integer
+     * @see #setProperty
+     */
+    public static final String CONNECTION_TIMEOUT_PROPERTY =
+            "axis.connection.timeout";
+
+    /**
      * A Hashtable mapping protocols (Strings) to Transports (classes)
      */
     private static Hashtable transports  = new Hashtable();
@@ -250,7 +291,17 @@ public class Call implements javax.xml.rpc.Call {
     private boolean encodingStyleExplicitlySet = false;
     /** This is true when someone has called setOperationUse() */
     private boolean useExplicitlySet = false;
-    
+
+    /**
+     * the name of a SOAP service that the call is bound to
+     */
+    private SOAPService myService = null;
+
+    /**
+     * these are our attachments
+     */
+    protected java.util.Vector attachmentParts = new java.util.Vector();
+
     /************************************************************************/
     /* Start of core JAX-RPC stuff                                          */
     /************************************************************************/
@@ -301,6 +352,26 @@ public class Call implements javax.xml.rpc.Call {
      * Handlers (or the Axis engine itself) to go looking for
      * one of them.
      *
+     * There are various well defined properties defined in the
+     * JAX-RPC specification and declared in the Call and Stub classes.
+     * It is not possible to set any other properties beginning in java. or
+     * javax. that are not in the specification.
+     * @see javax.xml.rpc.Stub
+     * @see javax.xml.rpc.Call
+     *
+     * There are other properties implemented in this class above and
+     * beyond those of the JAX-RPC spec
+     * Specifically, ATTACHMENT_ENCAPSULATION_FORMAT, CONNECTION_TIMEOUT_PROPERTY,
+     * and TRANSPORT_NAME.
+     *
+     * It is intended that all future Axis-specific properties will begin
+     * with axis. or apache. To ensure integration with future versions Axis,
+     * use different prefixes for your own properties.
+     *
+     * Axis developers: keep this in sync with propertyNames below
+     * @see #ATTACHMENT_ENCAPSULATION_FORMAT
+     * @see #TRANSPORT_NAME
+     * @see #CONNECTION_TIMEOUT_PROPERTY
      * @param name  Name of the property
      * @param value Value of the property
      */
@@ -311,37 +382,19 @@ public class Call implements javax.xml.rpc.Call {
                                          "badProp03" : "badProp04"));
         }
         else if (name.equals(USERNAME_PROPERTY)) {
-            if (!(value instanceof String)) {
-                throw new JAXRPCException(
-                        Messages.getMessage("badProp00", new String[] {
-                        name, "java.lang.String", value.getClass().getName()}));
-            }
+            verifyStringProperty(name, value);
             setUsername((String) value);
         }
         else if (name.equals(PASSWORD_PROPERTY)) {
-            if (!(value instanceof String)) {
-                throw new JAXRPCException(
-                        Messages.getMessage("badProp00", new String[] {
-                        name, "java.lang.String", value.getClass().getName()}));
-            }
+            verifyStringProperty(name, value);
             setPassword((String) value);
         }
         else if (name.equals(SESSION_MAINTAIN_PROPERTY)) {
-            if (!(value instanceof Boolean)) {
-                throw new JAXRPCException(
-                        Messages.getMessage("badProp00", new String[]
-                        {name,
-                        "java.lang.Boolean",
-                        value.getClass().getName()}));
-            }
+            verifyBooleanProperty(name, value);
             setMaintainSession(((Boolean) value).booleanValue());
         }
         else if (name.equals(OPERATION_STYLE_PROPERTY)) {
-            if (!(value instanceof String)) {
-                throw new JAXRPCException(
-                        Messages.getMessage("badProp00", new String[] {
-                        name, "java.lang.String", value.getClass().getName()}));
-            }
+            verifyStringProperty(name, value);
             setOperationStyle((String) value);
             if (getOperationStyle() == Style.DOCUMENT ||
                 getOperationStyle() == Style.WRAPPED) {
@@ -351,61 +404,30 @@ public class Call implements javax.xml.rpc.Call {
             }
         }
         else if (name.equals(SOAPACTION_USE_PROPERTY)) {
-            if (!(value instanceof Boolean)) {
-                throw new JAXRPCException(
-                        Messages.getMessage("badProp00", new String[]
-                        {name,
-                        "java.lang.Boolean",
-                        value.getClass().getName()}));
-            }
+            verifyBooleanProperty(name, value);
             setUseSOAPAction(((Boolean) value).booleanValue());
         }
         else if (name.equals(SOAPACTION_URI_PROPERTY)) {
-            if (!(value instanceof String)) {
-                throw new JAXRPCException(
-                        Messages.getMessage("badProp00", new String[]
-                        {name,
-                        "java.lang.String",
-                        value.getClass().getName()}));
-            }
+            verifyStringProperty(name, value);
             setSOAPActionURI((String) value);
         }
         else if (name.equals(ENCODINGSTYLE_URI_PROPERTY)) {
-            if (!(value instanceof String)) {
-                throw new JAXRPCException(
-                        Messages.getMessage("badProp00", new String[]
-                        {name,
-                        "java.lang.String",
-                        value.getClass().getName()}));
-            }
+            verifyStringProperty(name, value);
             setEncodingStyle((String) value);
         }
         else if (name.equals(Stub.ENDPOINT_ADDRESS_PROPERTY)) {
-            if (!(value instanceof String)) {
-                throw new JAXRPCException(
-                        Messages.getMessage("badProp00", new String[]
-                        {name,
-                        "java.lang.String",
-                        value.getClass().getName()}));
-            }
+            verifyStringProperty(name, value);
             setTargetEndpointAddress((String) value);
         }
         else if ( name.equals(TRANSPORT_NAME) ) {
-            if (!(value instanceof String)) {
-                throw new JAXRPCException(
-                        Messages.getMessage("badProp00", new String[] {
-                        name, "java.lang.String", value.getClass().getName()}));
-            }
+            verifyStringProperty(name, value);
             transportName = (String) value ;
-            if (transport != null)
+            if (transport != null) {
                 transport.setTransportName((String) value);
+            }
         }
         else if ( name.equals(ATTACHMENT_ENCAPSULATION_FORMAT) ) {
-            if (!(value instanceof String)) {
-                throw new JAXRPCException(
-                        Messages.getMessage("badProp00", new String[] {
-                        name, "java.lang.String", value.getClass().getName()}));
-            }
+            verifyStringProperty(name, value);
             if(!value.equals(ATTACHMENT_ENCAPSULATION_FORMAT_MIME ) &&
                !value.equals(ATTACHMENT_ENCAPSULATION_FORMAT_DIME ))
                 throw new JAXRPCException(
@@ -413,12 +435,67 @@ public class Call implements javax.xml.rpc.Call {
                         (String) value, ATTACHMENT_ENCAPSULATION_FORMAT_MIME + " "
                         +ATTACHMENT_ENCAPSULATION_FORMAT_DIME  }));
         }
+        else if (name.equals(CONNECTION_TIMEOUT_PROPERTY)) {
+            verifyIntegerProperty(name,value);
+            setTimeout((Integer)value);
+        }
         else if (name.startsWith("java.") || name.startsWith("javax.")) {
             throw new JAXRPCException(
                     Messages.getMessage("badProp05", name));
         }
         myProperties.put(name, value);
     } // setProperty
+
+    /**
+     * Verify that the type of the object is a String, and throw
+     * an i18n-ized exception if not
+     * @param name
+     * @param value
+     * @throws JAXRPCException if value is not a String
+     */
+    private void verifyStringProperty(String name, Object value) {
+        if (!(value instanceof String)) {
+            throw new JAXRPCException(
+                    Messages.getMessage("badProp00", new String[]
+                    {name,
+                    "java.lang.String",
+                    value.getClass().getName()}));
+        }
+    }
+
+    /**
+     * Verify that the type of the object is a Boolean, and throw
+     * an i18n-ized exception if not
+     * @param name
+     * @param value
+     * @throws JAXRPCException if value is not a Boolean
+     */
+    private void verifyBooleanProperty(String name, Object value) {
+        if (!(value instanceof Boolean)) {
+            throw new JAXRPCException(
+                    Messages.getMessage("badProp00", new String[]
+                    {name,
+                    "java.lang.Boolean",
+                    value.getClass().getName()}));
+        }
+    }
+
+    /**
+     * Verify that the type of the object is an Integer, and throw
+     * an i18n-ized exception if not
+     * @param name
+     * @param value
+     * @throws JAXRPCException if value is not an Integer
+     */
+    private void verifyIntegerProperty(String name, Object value) {
+        if (!(value instanceof Integer)) {
+            throw new JAXRPCException(
+                    Messages.getMessage("badProp00", new String[]
+                    {name,
+                     "java.lang.Integer",
+                     value.getClass().getName()}));
+        }
+    }
 
     /**
      * Returns the value associated with the named property
@@ -457,13 +534,14 @@ public class Call implements javax.xml.rpc.Call {
         propertyNames.add(USERNAME_PROPERTY);
         propertyNames.add(PASSWORD_PROPERTY);
         propertyNames.add(SESSION_MAINTAIN_PROPERTY);
-        propertyNames.add(ATTACHMENT_ENCAPSULATION_FORMAT);
         propertyNames.add(OPERATION_STYLE_PROPERTY);
         propertyNames.add(SOAPACTION_USE_PROPERTY);
         propertyNames.add(SOAPACTION_URI_PROPERTY);
         propertyNames.add(ENCODINGSTYLE_URI_PROPERTY);
+        propertyNames.add(Stub.ENDPOINT_ADDRESS_PROPERTY);
         propertyNames.add(TRANSPORT_NAME);
-            propertyNames.add(ATTACHMENT_ENCAPSULATION_FORMAT);
+        propertyNames.add(ATTACHMENT_ENCAPSULATION_FORMAT);
+        propertyNames.add(CONNECTION_TIMEOUT_PROPERTY);
     }
 
     public Iterator getPropertyNames() {
@@ -1159,10 +1237,12 @@ public class Call implements javax.xml.rpc.Call {
      * Note: Not part of JAX-RPC specification.
      * 
      * @param  opName          Operation(method) that's going to be invoked
+     * @throws JAXRPCException
      */     
     public void setOperation(String opName) {
-        if ( service == null )
+        if ( service == null ) {
             throw new JAXRPCException( Messages.getMessage("noService04") );
+        }
 
         // remove all settings concerning an operation
         // leave portName and targetEndPoint as they are
@@ -1173,33 +1253,40 @@ public class Call implements javax.xml.rpc.Call {
 
         javax.wsdl.Service wsdlService = service.getWSDLService();
         // Nothing to do is the WSDL is not already set.
-        if(wsdlService == null)
+        if(wsdlService == null) {
             return;
+        }
 
         Port port = wsdlService.getPort( portName.getLocalPart() );
-        if ( port == null )
+        if ( port == null ) {
             throw new JAXRPCException( Messages.getMessage("noPort00", "" +
                                                            portName) );
+        }
 
         Binding   binding  = port.getBinding();
         PortType  portType = binding.getPortType();
-        if ( portType == null )
+        if ( portType == null ) {
             throw new JAXRPCException( Messages.getMessage("noPortType00", "" +
                                                            portName) );
+        }
 
         List operations = portType.getOperations();
-        if ( operations == null )
+        if ( operations == null ) {
             throw new JAXRPCException( Messages.getMessage("noOperation01",
                                                            opName) );
+        }
 
         Operation op = null ;
         for ( int i = 0 ; i < operations.size() ; i++, op=null ) {
             op = (Operation) operations.get( i );
-            if ( opName.equals( op.getName() ) ) break ;
+            if ( opName.equals( op.getName() ) ) {
+                break ;
+            }
         }
-        if ( op == null )
+        if ( op == null ) {
             throw new JAXRPCException( Messages.getMessage("noOperation01",
                                                            opName) );
+        }
 
         // Get the SOAPAction
         ////////////////////////////////////////////////////////////////////
@@ -1207,16 +1294,17 @@ public class Call implements javax.xml.rpc.Call {
         String opStyle = null;
         BindingOperation bop = binding.getBindingOperation(opName,
                                                            null, null);
-        if ( bop == null )
+        if ( bop == null ) {
             throw new JAXRPCException( Messages.getMessage("noOperation02",
                                                             opName ));
+        }
         list = bop.getExtensibilityElements();
         for ( int i = 0 ; list != null && i < list.size() ; i++ ) {
             Object obj = list.get(i);
             if ( obj instanceof SOAPOperation ) {
                 SOAPOperation sop    = (SOAPOperation) obj ;
                 opStyle = ((SOAPOperation) obj).getStyle();
-                String        action = sop.getSoapActionURI();
+                String action = sop.getSoapActionURI();
                 if ( action != null ) {
                     setUseSOAPAction(true);
                     setSOAPActionURI(action);
@@ -1236,33 +1324,36 @@ public class Call implements javax.xml.rpc.Call {
             list = bIn.getExtensibilityElements();
             for ( int i = 0 ; list != null && i < list.size() ; i++ ) {
                 Object obj = list.get(i);
-                if( obj instanceof
-                        javax.wsdl.extensions.mime.MIMEMultipartRelated){
-                  javax.wsdl.extensions.mime.MIMEMultipartRelated mpr=
-                  (javax.wsdl.extensions.mime.MIMEMultipartRelated) obj;
+                if( obj instanceof MIMEMultipartRelated){
+                  MIMEMultipartRelated mpr=(MIMEMultipartRelated) obj;
                   Object part= null;
                   List l=  mpr.getMIMEParts();
                   for(int j=0; l!= null && j< l.size() && part== null; j++){
-                     javax.wsdl.extensions.mime.MIMEPart mp
-                     = (javax.wsdl.extensions.mime.MIMEPart)l.get(j);
+                     MIMEPart mp = (MIMEPart)l.get(j);
                      List ll= mp.getExtensibilityElements();
                      for(int k=0; ll != null && k < ll.size() && part == null;
                            k++){
                        part= ll.get(k);
-                       if ( !(part instanceof SOAPBody)) part = null;
+                       if ( !(part instanceof SOAPBody)) {
+                           part = null;
+                       }
                      }
                   }
-                  if(null != part) obj= part;
+                  if(null != part) {
+                      obj= part;
+                  }
                 }
 
                 if ( obj instanceof SOAPBody ) {
                     SOAPBody sBody  = (SOAPBody) obj ;
                     list = sBody.getEncodingStyles();
-                    if ( list != null && list.size() > 0 )
+                    if ( list != null && list.size() > 0 ) {
                         this.setEncodingStyle( (String) list.get(0) );
+                    }
                     String ns = sBody.getNamespaceURI();
-                    if (ns != null && !ns.equals(""))
+                    if (ns != null && !ns.equals("")) {
                       setOperationName( new QName( ns, opName ) );
+                    }
                     break ;
                 }
             }
@@ -1299,13 +1390,18 @@ public class Call implements javax.xml.rpc.Call {
             if (qname == null) {
                 continue;
             }
-            try {
-                Class clazz = getTypeMapping().getClassForQName(info.getXMLType());
-                addFault(qname, clazz, info.getXMLType(), true);
-            } catch (Exception e) {
-                //TODO: ???
+
+            QName xmlType = info.getXMLType();
+            Class clazz = getTypeMapping().getClassForQName(xmlType);
+            if (clazz != null) {
+                addFault(qname, clazz, xmlType, true);
+            } else {
+                //we cannot map from the info to a java class
+                //In Axis1.1 and before this was silently swallowed. Now we log it
+
+                log.debug(Messages.getMessage("clientNoTypemapping", xmlType.toString()));
             }
-        }        
+        }
 
         // set output type
         if (parameters.returnParam != null) {
@@ -1329,9 +1425,12 @@ public class Call implements javax.xml.rpc.Call {
             }
             this.setReturnType(returnType);
             try {
-                this.setReturnClass(ClassUtils.forName(javaType));
-            } catch (Exception e){
-                //TODO: ???
+                Class clazz = ClassUtils.forName(javaType);
+                this.setReturnClass(clazz);
+            } catch (ClassNotFoundException swallowedException) {
+                //log that this lookup failed,
+                log.debug(Messages.getMessage("clientNoReturnClass",
+                        javaType));
             }
             this.setReturnQName(returnQName);
         }
@@ -1412,22 +1511,25 @@ public class Call implements javax.xml.rpc.Call {
 
         javax.wsdl.Service wsdlService = service.getWSDLService();
         // Nothing to do is the WSDL is not already set.
-        if(wsdlService == null)
+        if(wsdlService == null) {
             return;
+        }
 
         // we reinitialize target endpoint only if we have wsdl
         this.setTargetEndpointAddress( (URL) null );
 
         Port port = wsdlService.getPort( portName.getLocalPart() );
-        if ( port == null )
+        if ( port == null ) {
             throw new JAXRPCException( Messages.getMessage("noPort00", "" +
                                                            portName) );
+        }
 
         Binding   binding  = port.getBinding();
         PortType  portType = binding.getPortType();
-        if ( portType == null )
+        if ( portType == null ) {
             throw new JAXRPCException( Messages.getMessage("noPortType00", "" +
                                                            portName) );
+        }
 
         // Get the URL
         ////////////////////////////////////////////////////////////////////
@@ -1451,15 +1553,16 @@ public class Call implements javax.xml.rpc.Call {
         ////////////////////////////////////////////////////////////////////
         BindingOperation bop = binding.getBindingOperation(opName,
                                                            null, null);
-        if ( bop == null )
+        if ( bop == null ) {
             throw new JAXRPCException( Messages.getMessage("noOperation02",
                                                             opName ));
+        }
         list = bop.getExtensibilityElements();
         for ( int i = 0 ; list != null && i < list.size() ; i++ ) {
             Object obj = list.get(i);
             if ( obj instanceof SOAPOperation ) {
-                SOAPOperation sop    = (SOAPOperation) obj ;
-                String        action = sop.getSoapActionURI();
+                SOAPOperation sop = (SOAPOperation) obj ;
+                String action = sop.getSoapActionURI();
                 if ( action != null ) {
                     setUseSOAPAction(true);
                     setSOAPActionURI(action);
@@ -1610,9 +1713,11 @@ public class Call implements javax.xml.rpc.Call {
             env = new SOAPEnvelope(msgContext.getSOAPConstants(),
                                    msgContext.getSchemaVersion());
 
-            if ( !(params[0] instanceof SOAPEnvelope) )
-                for ( i = 0 ; i < params.length ; i++ )
+            if ( !(params[0] instanceof SOAPEnvelope) ) {
+                for ( i = 0 ; i < params.length ; i++ ) {
                     env.addBodyElement( (SOAPBodyElement) params[i] );
+                }
+            }
 
             Message msg = new Message( env );
             setRequestMessage(msg);
@@ -1633,8 +1738,9 @@ public class Call implements javax.xml.rpc.Call {
         }
 
 
-        if ( operationName == null )
+        if ( operationName == null ) {
             throw new AxisFault( Messages.getMessage("noOperation00") );
+        }
         try {
             Object res=this.invoke(operationName.getNamespaceURI(),
                     operationName.getLocalPart(), params);
@@ -1710,9 +1816,12 @@ public class Call implements javax.xml.rpc.Call {
             return( msg.getSOAPEnvelope() );
         }
         catch( Exception exp ) {
-            if ( exp instanceof AxisFault ) throw (AxisFault) exp ;
+            if ( exp instanceof AxisFault ) {
+                throw (AxisFault) exp ;
+            }
 
             entLog.debug(Messages.getMessage("toAxisFault00"), exp);
+            //TODO: stevel: we could chain this instead of losing the exception info
             throw new AxisFault(
                     Messages.getMessage("errorInvoking00", "\n" + exp) );
         }
@@ -1730,10 +1839,12 @@ public class Call implements javax.xml.rpc.Call {
      */
     public static void setTransportForProtocol(String protocol,
                                                Class transportClass) {
-        if (Transport.class.isAssignableFrom(transportClass))
+        if (Transport.class.isAssignableFrom(transportClass)) {
             transports.put(protocol, transportClass);
-        else
+        }
+        else {
             throw new InternalException(transportClass.toString());
+        }
     }
 
     /**
@@ -1789,8 +1900,9 @@ public class Call implements javax.xml.rpc.Call {
             }
         }
 
-        if (transportPackages.contains(packageName))
+        if (transportPackages.contains(packageName)) {
             return;
+        }
 
         transportPackages.add(packageName);
 
@@ -1819,22 +1931,25 @@ public class Call implements javax.xml.rpc.Call {
         //////////////////////////////////////////////////////////////////////
         if (log.isDebugEnabled()) {
             log.debug( "operation=" + operation);
-            if (operation != null)
+            if (operation != null) {
                 log.debug("operation.getNumParams()=" +
                           operation.getNumParams());
+            }
         }
-        if ( operation == null || operation.getNumParams() == 0 )
+        if ( operation == null || operation.getNumParams() == 0 ) {
             return( params );
+        }
 
         // Count the number of IN and INOUT params, this needs to match the
         // number of params passed in - if not throw an error
         /////////////////////////////////////////////////////////////////////
         numParams = operation.getNumInParams();
 
-        if ( params == null || numParams != params.length )
+        if ( params == null || numParams != params.length ) {
             throw new JAXRPCException(
                     Messages.getMessage("parmMismatch00",
                     "" + params.length, "" + numParams) );
+        }
 
         log.debug( "getParamList number of params: " + params.length);
 
@@ -1920,20 +2035,19 @@ public class Call implements javax.xml.rpc.Call {
      * Note: Not part of JAX-RPC specification.
      *
      * @param msg the new request message.
+     * @throws RuntimeException containing the text of an AxisFault, if any
+     * AxisFault was thrown
      */
     public void setRequestMessage(Message msg) {
          String attachformat= (String)getProperty(
            ATTACHMENT_ENCAPSULATION_FORMAT);
 
-         if(null != attachformat){
-              org.apache.axis.attachments.Attachments attachments=
-                msg.getAttachmentsImpl();
+         if(null != attachformat) {
+              Attachments attachments=msg.getAttachmentsImpl();
               if(null != attachments) {
-                  if( null != attachformat && attachformat.equals(
-                    ATTACHMENT_ENCAPSULATION_FORMAT_MIME))
+                  if( ATTACHMENT_ENCAPSULATION_FORMAT_MIME.equals(attachformat)) {
                     attachments.setSendType(attachments.SEND_TYPE_MIME);
-                  else if( null != attachformat && attachformat.equals(
-                      ATTACHMENT_ENCAPSULATION_FORMAT_DIME)) {
+                  } else if ( ATTACHMENT_ENCAPSULATION_FORMAT_DIME.equals(attachformat)) {
                     attachments.setSendType(attachments.SEND_TYPE_DIME);
                   }
               }
@@ -1941,16 +2055,16 @@ public class Call implements javax.xml.rpc.Call {
 
         if(null != attachmentParts && !attachmentParts.isEmpty()){
             try{
-            org.apache.axis.attachments.Attachments attachments= msg.getAttachmentsImpl();
-            if(null == attachments) {
-              throw new RuntimeException(
-                      Messages.getMessage("noAttachments"));
-            }
+                Attachments attachments= msg.getAttachmentsImpl();
+                if(null == attachments) {
+                  throw new RuntimeException(
+                          Messages.getMessage("noAttachments"));
+                }
 
-            attachments.setAttachmentParts(attachmentParts);
-            }catch(org.apache.axis.AxisFault ex){
+                attachments.setAttachmentParts(attachmentParts);
+            }catch(AxisFault ex){
               log.info(Messages.getMessage("axisFault00"), ex);
-              throw  new RuntimeException(ex.getMessage());
+              throw new RuntimeException(ex.getMessage());
             }
         }
 
@@ -2047,18 +2161,35 @@ public class Call implements javax.xml.rpc.Call {
                                     DeserializerFactory df,
                                     boolean force) {
         TypeMapping tm = getTypeMapping();
-        if (!force && tm.isRegistered(javaType, xmlType))
+        if (!force && tm.isRegistered(javaType, xmlType)) {
             return;
+        }
 
         // Register the information
         tm.register(javaType, xmlType, sf, df);
     }
 
+    /**
+     * register this type matting
+     * @param javaType
+     * @param xmlType
+     * @param sfClass
+     * @param dfClass
+     */
     public void registerTypeMapping(Class javaType, QName xmlType,
                                     Class sfClass, Class dfClass) {
         registerTypeMapping(javaType, xmlType, sfClass, dfClass, true);
     }
 
+    /**
+     * register a type. This only takes place if either the serializer or
+     * deserializer factory could be created.
+     * @param javaType java type to handle
+     * @param xmlType XML mapping
+     * @param sfClass class of serializer factory
+     * @param dfClass class of deserializer factory
+     * @param force
+     */
     public void registerTypeMapping(Class javaType,
                                     QName xmlType,
                                     Class sfClass,
@@ -2254,8 +2385,9 @@ public class Call implements javax.xml.rpc.Call {
 
                 boolean findReturnParam = false;
                 QName returnParamQName = null;
-                if (operation != null)
+                if (operation != null) {
                     returnParamQName = operation.getReturnQName();
+                }
 
                 if (!XMLType.AXIS_VOID.equals(getReturnType())) {
                     if (returnParamQName == null) {
@@ -2359,8 +2491,9 @@ public class Call implements javax.xml.rpc.Call {
      *
      */
     private Class getJavaTypeForQName(QName name) {
-        if (operation == null) return null;
-
+        if (operation == null) {
+            return null;
+        }
         ParameterDesc param = operation.getOutputParamByQName(name);
         return param == null ? null : param.getJavaType();
     }
@@ -2395,8 +2528,9 @@ public class Call implements javax.xml.rpc.Call {
         msgContext.setProperty( MessageContext.CALL, this );
         msgContext.setProperty( WSDL_SERVICE, service );
         msgContext.setProperty( WSDL_PORT_NAME, getPortName() );
-        if ( isMsg )
-          msgContext.setProperty( MessageContext.IS_MSG, "true" );
+        if ( isMsg ) {
+            msgContext.setProperty( MessageContext.IS_MSG, "true" );
+        }
 
         if (username != null) {
             msgContext.setUsername(username);
@@ -2408,7 +2542,6 @@ public class Call implements javax.xml.rpc.Call {
 
         if (operation != null) {
             msgContext.setOperation(operation);
-
             operation.setStyle(getOperationStyle());
             operation.setUse(getOperationUse());
         }
@@ -2479,8 +2612,9 @@ public class Call implements javax.xml.rpc.Call {
         if (transport != null) {
             transport.setupMessageContext(msgContext, this, service.getEngine());
         }
-        else
+        else {
             msgContext.setTransportName( transportName );
+        }
 
         // For debugging - print request message
         if (log.isDebugEnabled()) {
@@ -2508,15 +2642,23 @@ public class Call implements javax.xml.rpc.Call {
         }
     }
 
+    /**
+     * invoke the message on the current engine
+     * @param msgContext
+     * @throws AxisFault if the invocation raised a fault, or there was no
+     * reponse
+     */
     private void invokeEngine(MessageContext msgContext) throws AxisFault {
         service.getEngine().invoke( msgContext );
 
-        if (transport != null)
+        if (transport != null) {
             transport.processReturnedMessageContext(msgContext);
+        }
 
         Message resMsg = msgContext.getResponseMessage();
 
         if (resMsg == null) {
+            //TODO: stevel: this is a constant. it is always true. so why the condition?
           if (this.FAULT_ON_NO_RESPONSE) {
             throw new AxisFault(Messages.getMessage("nullResponse00"));
           } else {
@@ -2532,25 +2674,39 @@ public class Call implements javax.xml.rpc.Call {
 
         SOAPBodyElement respBody = resEnv.getFirstBody();
         if (respBody instanceof SOAPFault) {
+            //we got a fault
             if(operation == null ||
                     operation.getReturnClass() == null ||
                     operation.getReturnClass() != 
-                        javax.xml.soap.SOAPMessage.class) 
+                        javax.xml.soap.SOAPMessage.class) {
+                //unless we don't care about the return value or we want
+                //a raw message back
+                //get the fault from the body and throw it
                 throw ((SOAPFault)respBody).getFault();
+            }
         }
     }
 
+    /**
+     * Implement async invocation by running the request in a new thread
+     * @todo this is not a good way to do stuff, as it has no error reporting facility
+     * @param msgContext
+     */
     private void invokeEngineOneWay(final MessageContext msgContext) {
+        //create a new class
         Runnable runnable = new Runnable(){
             public void run() {
                 try {
                     service.getEngine().invoke( msgContext );
                 } catch (AxisFault af){
+                    //TODO: handle errors properly
                     log.debug(Messages.getMessage("exceptionPrinting"), af);
                 }
             }
         };
+        //create a thread to run it
         Thread thread = new Thread(runnable);
+        //run it
         thread.start();
     }
 
@@ -2595,10 +2751,11 @@ public class Call implements javax.xml.rpc.Call {
         return this.service;
     }
 
-    private SOAPService myService = null;
-
     /**
      *
+     * Set the service so that it defers missing property gets to the
+     * Call.  So when client-side Handlers get at the MessageContext,
+     * the property scoping will be MC -> SOAPService -> Call
      */
     public void setSOAPService(SOAPService service)
     {
@@ -2624,7 +2781,6 @@ public class Call implements javax.xml.rpc.Call {
         setSOAPService(new SOAPService(reqHandler, null, respHandler));
     }
 
-    protected java.util.Vector attachmentParts= new java.util.Vector();
 
     /**
      * This method adds an attachment.
@@ -2649,8 +2805,9 @@ public class Call implements javax.xml.rpc.Call {
                     Messages.getMessage("operationAlreadySet"));
         }
 
-        if (operation == null)
+        if (operation == null) {
             operation = new OperationDesc();
+        }
 
         FaultDesc fault = new FaultDesc();
         fault.setQName(qname);

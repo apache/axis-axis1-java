@@ -91,6 +91,11 @@ public class HTTPSender extends BasicHandler {
     protected static Log log = LogFactory.getLog(HTTPSender.class.getName());
 
     /**
+     * the url; used for error reporting
+     */
+    URL targetURL;
+
+    /**
      * invoke creates a socket connection, sends the request SOAP message and then
      * reads the response SOAP message back from the SOAP server
      *
@@ -106,7 +111,7 @@ public class HTTPSender extends BasicHandler {
         try {
             BooleanHolder useFullURL = new BooleanHolder(false);
             StringBuffer otherHeaders = new StringBuffer();
-            URL targetURL = new URL(msgContext.getStrProp(MessageContext.TRANS_URL));
+            targetURL = new URL(msgContext.getStrProp(MessageContext.TRANS_URL));
             String host = targetURL.getHost();
             int port = targetURL.getPort();
             Socket sock = null;
@@ -241,8 +246,9 @@ public class HTTPSender extends BasicHandler {
 
         // If we're SOAP 1.2, allow the web method to be set from the
         // MessageContext.
-        if (msgContext.getSOAPConstants() == SOAPConstants.SOAP12_CONSTANTS)
+        if (msgContext.getSOAPConstants() == SOAPConstants.SOAP12_CONSTANTS) {
             webMethod = msgContext.getStrProp(SOAP12Constants.PROP_WEBMETHOD);
+        }
         if (webMethod == null) {
             webMethod = HTTPConstants.HEADER_POST;
         } else {
@@ -268,7 +274,9 @@ public class HTTPSender extends BasicHandler {
         String httpConnection = null;
 
         String httpver = msgContext.getStrProp(MessageContext.HTTP_TRANSPORT_VERSION);
-        if (null == httpver) httpver = HTTPConstants.HEADER_PROTOCOL_V10;
+        if (null == httpver) {
+            httpver = HTTPConstants.HEADER_PROTOCOL_V10;
+        }
         httpver = httpver.trim();
         if (httpver.equals(HTTPConstants.HEADER_PROTOCOL_V11)) {
             http10 = false;
@@ -279,7 +287,9 @@ public class HTTPSender extends BasicHandler {
                 getProperty(HTTPConstants.REQUEST_HEADERS);
 
         if (userHeaderTable != null) {
-            if (null == otherHeaders) otherHeaders = new StringBuffer(1024);
+            if (null == otherHeaders) {
+                otherHeaders = new StringBuffer(1024);
+            }
 
             for (java.util.Iterator e = userHeaderTable.entrySet().iterator();
                  e.hasNext();) {
@@ -331,8 +341,11 @@ public class HTTPSender extends BasicHandler {
             }
         }
 
-        if (!http10)
-            httpConnection = HTTPConstants.HEADER_CONNECTION_CLOSE; //Force close for now.
+        if (!http10) {
+            //Force close for now.
+            //TODO HTTP/1.1
+            httpConnection = HTTPConstants.HEADER_CONNECTION_CLOSE;
+        }
 
         header.append(" ");
         header.append(http10 ? HTTPConstants.HEADER_PROTOCOL_10 :
@@ -432,7 +445,9 @@ public class HTTPSender extends BasicHandler {
             inp = readHeadersFromSocket(sock, msgContext, null, cheaders);
             int returnCode= -1;
             Integer Irc= (Integer)msgContext.getProperty(HTTPConstants.MC_HTTP_STATUS_CODE);
-            if(null != Irc) returnCode= Irc.intValue();
+            if(null != Irc) {
+                returnCode= Irc.intValue();
+            }
             if(100 == returnCode){  // got 100 we may continue.
                 //Need todo a little msgContext house keeping....
                 msgContext.removeProperty(HTTPConstants.MC_HTTP_STATUS_CODE);
@@ -451,7 +466,7 @@ public class HTTPSender extends BasicHandler {
         }
         if (httpChunkStream) {
             ChunkedOutputStream chunkedOutputStream = new ChunkedOutputStream(out);
-            out = new BufferedOutputStream(chunkedOutputStream, 8 * 1024);
+            out = new BufferedOutputStream(chunkedOutputStream, Constants.HTTP_TXR_BUFFER_SIZE);
             try {
                 reqMessage.writeTo(out);
             } catch (SOAPException e) {
@@ -460,7 +475,7 @@ public class HTTPSender extends BasicHandler {
             out.flush();
             chunkedOutputStream.eos();
         } else {
-            out = new BufferedOutputStream(out, 8 * 1024);
+            out = new BufferedOutputStream(out, Constants.HTTP_TXR_BUFFER_SIZE);
             try {
                 out.write(header.toString()
                         .getBytes(HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING));
@@ -490,10 +505,13 @@ public class HTTPSender extends BasicHandler {
         int colonIndex = -1;
         String name, value;
         int returnCode = 0;
-        if(null == inp) inp = new BufferedInputStream(sock.getInputStream());
+        if(null == inp) {
+            inp = new BufferedInputStream(sock.getInputStream());
+        }
         
-        if (headers == null)
+        if (headers == null) {
             headers = new Hashtable();
+        }
 
         // Should help performance. Temporary fix only till its all stream oriented.
         // Need to add logic for getting the version # and the return code

@@ -90,6 +90,7 @@ public class HTTPConstants {
     public static final String HEADER_CACHE_CONTROL = "Cache-Control";
     public static final String HEADER_CACHE_CONTROL_NOCACHE = "no-cache";
     public static final String HEADER_PRAGMA = "Pragma";
+    public static final String HEADER_LOCATION = "Location";
 
 
 
