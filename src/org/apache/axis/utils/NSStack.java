@@ -60,6 +60,7 @@ import org.apache.commons.logging.LogFactory;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Stack;
+import java.util.Iterator;
 
 /**
  * @author: James Snell
@@ -144,6 +145,14 @@ public class NSStack {
             table = new ArrayList();
             stack.pop();
             stack.push(table);
+        }
+        // Replace duplicate prefixes (last wins - this could also fault)
+        for (Iterator i = table.iterator(); i.hasNext();) {
+            Mapping mapping = (Mapping)i.next();
+            if (mapping.getPrefix().equals(prefix)) {
+                mapping.setNamespaceURI(namespaceURI);
+                return;
+            }
         }
         table.add(new Mapping(namespaceURI, prefix));
     }
