@@ -74,6 +74,7 @@ public class Wsdl2java {
     protected static final int SKELETON_OPT = 's';
     protected static final int PACKAGE_OPT = 'p';
     protected static final int OUTPUT_OPT = 'o';
+    protected static final int SCOPE_OPT = 'd';
 
     /**
      *  Define the understood options. Each CLOptionDescriptor contains:
@@ -108,7 +109,11 @@ public class Wsdl2java {
         new CLOptionDescriptor("output",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 OUTPUT_OPT,
-                "output dir for emitted files")
+                "output dir for emitted files"),
+        new CLOptionDescriptor("deployScope",
+                CLOptionDescriptor.ARGUMENT_REQUIRED,
+                SCOPE_OPT,
+                "add scope to deploy.xml: \"Application\", \"Request\", \"Session\"")
     };
 
     /**
@@ -122,6 +127,7 @@ public class Wsdl2java {
         String packageName = null;
         String wsdlURI = null;
         String outputDir = null;
+        String scope = null;
 
         // Parse the arguments
         CLArgsParser parser = new CLArgsParser(args, options);
@@ -172,6 +178,10 @@ public class Wsdl2java {
                 case OUTPUT_OPT:
                     outputDir = option.getArgument();
                     break;
+
+                case SCOPE_OPT:
+                    scope = option.getArgument();
+                    break;
             }
         }
 
@@ -195,6 +205,7 @@ public class Wsdl2java {
             if (packageName != null)
                 emitter.setPackageName(packageName);
             emitter.setOutputDir(outputDir);
+            emitter.setScope(scope);
             // Start writing code!
             emitter.emit(wsdlURI);
         }

@@ -121,6 +121,7 @@ public class Emitter {
     String packageName = null;
     String packageDirName = "";
     String outputDir = null;
+    String scope = null;
 
     /**
      * Call this method if you have a uri for the WSDL document
@@ -250,6 +251,17 @@ public class Emitter {
     public void setOutputDir(String outputDir) {
         this.outputDir = outputDir;
     }
+
+    /**
+     * Set the scope for the deploy.xml file.
+     */
+    public void setScope(String scope) {
+        if ("Application".equals(scope) || "Request".equals(scope) || "Session".equals(scope))
+            this.scope = scope;
+        else if (scope != null) {
+            System.err.println("Unrecognized scope:  " + scope + ".  Ignoring it.");
+        }
+    } // setScope
 
     ///////////////////////////////////////////////////
     //
@@ -1484,6 +1496,10 @@ public class Emitter {
         }
 
         deployPW.println("      <option name=\"methodName\" value=\"" + methodList + "\"/>");
+
+        if (scope != null) {
+            deployPW.println("      <option name=\"scope\" value=\"" + scope + "\"/>");
+        }
     } //writeDeployBinding
 
     //////////////////////////////
