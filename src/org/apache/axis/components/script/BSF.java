@@ -55,8 +55,8 @@
 
 package org.apache.axis.components.script;
 
-import com.ibm.bsf.BSFEngine;
-import com.ibm.bsf.BSFManager;
+import org.apache.bsf.BSFEngine;
+import org.apache.bsf.BSFManager;
 
 public class BSF implements Script {
     public Object run(String language, String name, String scriptStr, String methodName, Object[] argValues)
