@@ -465,23 +465,23 @@ public class Admin {
     {
         Document doc = XMLUtils.newDocument();
 
-        Element tmpEl = doc.createElement("engineConfig");
+        Element tmpEl = doc.createElementNS("", "engineConfig");
         doc.appendChild(tmpEl);
 
-        Element el = doc.createElement("handlers");
+        Element el = doc.createElementNS("", "handlers");
         list(el, engine.getHandlerRegistry());
         tmpEl.appendChild(el);
 
-        el = doc.createElement("services");
+        el = doc.createElementNS("", "services");
         list(el, engine.getServiceRegistry());
         tmpEl.appendChild(el);
 
-        el = doc.createElement("transports");
+        el = doc.createElementNS("", "transports");
         list(el, engine.getTransportRegistry());
         tmpEl.appendChild(el);
 
         category.debug( "Outputting registry");
-        el = doc.createElement("typeMappings");
+        el = doc.createElementNS("", "typeMappings");
         engine.getTypeMappingRegistry().dumpToElement(el);
         tmpEl.appendChild(el);
 

@@ -200,7 +200,7 @@ public class SimpleTargetedChain extends BasicHandler implements TargetedChain
     public Element getDeploymentData(Document doc) {
         category.debug("Enter: SimpleTargetedChain::getDeploymentData" );
 
-        Element   root = doc.createElement( "chain" );
+        Element   root = doc.createElementNS("", "chain");
         fillInDeploymentData(root);
 
         category.debug("Exit: SimpleTargetedChain::getDeploymentData" );
@@ -257,7 +257,7 @@ public class SimpleTargetedChain extends BasicHandler implements TargetedChain
             while ( e.hasMoreElements() ) {
                 String k = (String) e.nextElement();
                 Object v = options.get(k);
-                Element e1 = doc.createElement( "option" );
+                Element e1 = doc.createElementNS("", "option");
                 e1.setAttribute( "name", k );
                 e1.setAttribute( "value", v.toString() );
                 root.appendChild( e1 );

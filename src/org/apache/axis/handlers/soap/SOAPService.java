@@ -267,12 +267,12 @@ public class SOAPService extends SimpleTargetedChain
     public Element getDeploymentData(Document doc) {
       category.debug("Enter: SOAPService::getDeploymentData" );
 
-      Element  root = doc.createElement( "service" );
+      Element  root = doc.createElementNS("", "service");
 
       fillInDeploymentData(root);
       
       if (!getTypeMappingRegistry().isEmpty()) {
-        Element elem = doc.createElement("typeMappings");
+        Element elem = doc.createElementNS("", "typeMappings");
         getTypeMappingRegistry().dumpToElement(elem);
         root.appendChild(elem);
       }

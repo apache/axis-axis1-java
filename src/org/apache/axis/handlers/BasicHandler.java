@@ -151,7 +151,7 @@ public abstract class BasicHandler implements Handler {
     public Element getDeploymentData(Document doc) {
         category.debug("Enter: BasicHandler::getDeploymentData" );
 
-        Element  root = doc.createElement( "handler" );
+        Element  root = doc.createElementNS("", "handler");
 
         root.setAttribute( "class", this.getClass().getName() );
         options = this.getOptions();
@@ -160,7 +160,7 @@ public abstract class BasicHandler implements Handler {
             while ( e.hasMoreElements() ) {
                 String k = (String) e.nextElement();
                 Object v = options.get(k);
-                Element e1 = doc.createElement( "option" );
+                Element e1 = doc.createElementNS("", "option" );
                 e1.setAttribute( "name", k );
                 e1.setAttribute( "value", v.toString() );
                 root.appendChild( e1 );
