@@ -70,7 +70,9 @@ import org.apache.axis.encoding.TypeMappingRegistry;
  */
 public class AxisServer extends BasicHandler
 {
-    public AxisServer() {}
+    public AxisServer() {
+      // Debug.setDebugLevel(3);
+    }
 
     /**
      * Allows the Listener to specify which handler/service registry

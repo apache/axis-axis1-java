@@ -94,7 +94,7 @@ System.out.println("TestHTTPEcho() "+new File(".").getAbsolutePath()+" "+new Fil
     
     public void doTestStock () throws Exception {
         try {
-            String[] args = { "-d3", "-uuser1", "-wpass1", "XXX" };
+            String[] args = { "-d", "-uuser1", "-wpass1", "XXX" };
             float val = new GetQuote().getQuote(args);
             assertEquals("TestHTTPEcho: stock price is 55.25", val, 55.25, 0.01);
         }
