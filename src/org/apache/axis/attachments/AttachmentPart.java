@@ -79,8 +79,6 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
     /** Field datahandler           */
     javax.activation.DataHandler datahandler = null;
 
-    // private Hashtable headers = new Hashtable();
-
     /** Field mimeHeaders           */
     private javax.xml.soap.MimeHeaders mimeHeaders =
             new javax.xml.soap.MimeHeaders();
@@ -95,8 +93,7 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
      * Constructor AttachmentPart
      */
     public AttachmentPart() {
-        addMimeHeader(HTTPConstants.HEADER_CONTENT_ID,
-                SOAPUtils.getNewContentIdValue());
+        addMimeHeader(HTTPConstants.HEADER_CONTENT_ID, SOAPUtils.getNewContentIdValue());
     }
 
     /**
@@ -105,12 +102,9 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
      * @param dh
      */
     public AttachmentPart(javax.activation.DataHandler dh) {
-
         addMimeHeader(HTTPConstants.HEADER_CONTENT_ID,
                 SOAPUtils.getNewContentIdValue());
-
         datahandler = dh;
-
         addMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE, dh.getContentType());
     }
 
@@ -168,13 +162,10 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
      * @return
      */
     public String getFirstMimeHeader(String header) {
-
         String[] values = mimeHeaders.getHeader(header.toLowerCase());
-
         if ((values != null) && (values.length > 0)) {
             return values[0];
         }
-
         return null;
     }
 
@@ -182,20 +173,21 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
      * check if this Part's mimeheaders matches the one passed in.
      * TODO: Am not sure about the logic.
      */
-    public boolean matches(javax.xml.soap.MimeHeaders headers){
-        Iterator iterator = headers.getAllHeaders();
-        while(iterator.hasNext()){
-            String key = (String) iterator.next();
-            String[] values1 = headers.getHeader(key);
-            String[] values2 = mimeHeaders.getHeader(key);
-            if(values1.length!=values2.length)
-                return false;
-            java.util.Arrays.sort(values1);
-            java.util.Arrays.sort(values2);
-            for(int i=0;i<values1.length;i++) {
-                if(!values1[i].equals(values2[i]))
-                    return false;
+    public boolean matches(javax.xml.soap.MimeHeaders headers) {
+        for (Iterator i = mimeHeaders.getAllHeaders(); i.hasNext();) {
+            javax.xml.soap.MimeHeader hdr = (javax.xml.soap.MimeHeader) i.next();
+            String values[] = headers.getHeader(hdr.getName());
+            boolean found = false;
+            if (values != null) {
+                for (int j = 0; j < values.length; j++) {
+                    if (!hdr.getValue().equalsIgnoreCase(values[j]))
+                        continue;
+                    found = true;
+                    break;
+                }
             }
+            if (!found)
+                return false;
         }
         return true;
     }
@@ -223,11 +215,9 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
      *     @returns void
      */
     public void setContentId(String newCid) {
-
         if (!newCid.toLowerCase().startsWith("cid:")) {
             newCid = "cid:" + newCid;
         }
-
         addMimeHeader(HTTPConstants.HEADER_CONTENT_ID, newCid);
     }
 
@@ -237,21 +227,16 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
      * @return
      */
     public String getContentId() {
-
         String ret = getFirstMimeHeader(HTTPConstants.HEADER_CONTENT_ID);
-
         // Do not let the contentID ever be empty.
         if (ret == null) {
             ret = SOAPUtils.getNewContentIdValue();
-
             addMimeHeader(HTTPConstants.HEADER_CONTENT_ID, ret);
         }
 
         ret = ret.trim();
-
         if (ret.length() == 0) {
             ret = SOAPUtils.getNewContentIdValue();
-
             addMimeHeader(HTTPConstants.HEADER_CONTENT_ID, ret);
         }
 
@@ -354,6 +339,7 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
      */
     public void setDataHandler(DataHandler datahandler) {
         this.datahandler = datahandler;
+        setMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE, datahandler.getContentType());
     }
 
     /**
@@ -390,7 +376,6 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
      *     was a data transformation error
      */
     public Object getContent() throws SOAPException {
-
         javax.activation.DataSource ds = datahandler.getDataSource();
 
         if (ds instanceof ManagedMemoryDataSource) {
@@ -409,7 +394,6 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
                 }
             }
         }
-
         return null;
     }
 
@@ -432,7 +416,6 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
      * @see #getContent() getContent()
      */
     public void setContent(Object object, String contentType) {
-
         if (object instanceof String) {
             try {
                 String s = (String) object;
@@ -461,7 +444,7 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
      * untouched.
      */
     public void clearContent() {
-        // TODO: Implement this.
+        datahandler = null;
     }
 
     /**
@@ -474,7 +457,18 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
      *     while trying to determine the size.
      */
     public int getSize() throws SOAPException {
-        // TODO: Implement this.
+        if (datahandler == null)
+            return 0;
+        ByteBuffer bout = new ByteBuffer();
+        try {
+            datahandler.writeTo(bout);
+        } catch (java.io.IOException ex) {
+            log.error(JavaUtils.getMessage("javaIOException00"), ex);
+            throw new SOAPException(JavaUtils.getMessage("javaIOException01", ex.getMessage()), ex);
+        }
+        byte bytes[] = bout.getBytes();
+        if (bytes != null)
+            return bytes.length;
         return -1;
     }
 
@@ -489,5 +483,11 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
      */
     public String[] getMimeHeader(String name) {
         return mimeHeaders.getHeader(name);
+    }
+
+    private class ByteBuffer extends java.io.ByteArrayOutputStream {
+        byte[] getBytes() {
+            return super.buf;
+        }
     }
 }
