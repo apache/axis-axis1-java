@@ -568,20 +568,29 @@ public class SymbolTable {
                 this.dotNet = false;
                 // Create symbol table entry for attribute type
                 QName refQName = Utils.getNodeTypeRefQName(node, "type");
-                if (refQName == null) {
+                if (refQName != null) {
                     TypeEntry refType = getTypeEntry(refQName, false);
-                    if (refType != null) {
+                    if (refType == null) {
                         // Not defined yet, add one
+                        // XXX This check is too basic, we need to handle
+                        // XXX <simpleType> types also.
+                        // XXX <simpleType> types also.
                         String baseName = btm.getBaseName(refQName);
                         if (baseName != null) {
                             BaseType bt = new BaseType(refQName);
-                            bt.setIsReferenced(true);
                             symbolTablePut(bt);
                         }
                         else {
                             throw new IOException(
-                                    "Attribute type is not simple:" + refQName.toString());
+                                    JavaUtils.getMessage("AttrNotSimpleType01",
+                                                         refQName.toString()));
                         }
+                    } else {
+                        // found a type entry, make sure we mark it referenced
+                        // XXX This isn't usefull assumming we only support base
+                        // XXX schema types (int, string), but in the future we
+                        // XXX need to support <simpleTypes> as attributes.
+                        refType.setIsReferenced(true);
                     }
                 }
                 
