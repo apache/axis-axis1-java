@@ -18,6 +18,8 @@ package org.apache.axis.wsdl.fromJava;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.InternalException;
+import org.apache.axis.MessageContext;
+import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.encoding.Serializer;
@@ -976,6 +978,14 @@ public class Types {
      */
     public Element createArrayElement(String componentTypeName) {
 
+        SOAPConstants constants = null;
+        MessageContext mc = MessageContext.getCurrentContext();
+        if(mc==null||mc.getSOAPConstants()==null){
+            constants = SOAPConstants.SOAP11_CONSTANTS;    
+        } else {
+            constants = mc.getSOAPConstants();
+        }
+        String prefix = namespaces.getCreatePrefix(constants.getEncodingURI());
         // ComplexType representation of array
         Element complexType = docHolder.createElement("complexType");
         Element complexContent = docHolder.createElement("complexContent");
@@ -986,14 +996,17 @@ public class Types {
 
         complexContent.appendChild(restriction);
         restriction.setAttribute("base",
-                Constants.NS_PREFIX_SOAP_ENC + ":Array");
+                prefix + ":Array");
 
         Element attribute = docHolder.createElement("attribute");
 
         restriction.appendChild(attribute);
+        
         attribute.setAttribute("ref",
-                Constants.NS_PREFIX_SOAP_ENC + ":arrayType");
-        attribute.setAttribute(Constants.NS_PREFIX_WSDL + ":arrayType",
+                prefix + ":arrayType");
+
+        prefix = namespaces.getCreatePrefix(Constants.NS_URI_WSDL11);
+        attribute.setAttribute(prefix + ":arrayType",
                 componentTypeName);
 
         return complexType;
