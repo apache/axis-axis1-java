@@ -71,7 +71,7 @@ public final class DimeMultiPart {
     static final long transSize = Integer.MAX_VALUE;
     static final byte CURRENT_VERSION = 1; //Anything above this we don't support.
     protected java.util.Vector parts = new java.util.Vector(); 
-    public DimeMultiPart() {};
+    public DimeMultiPart() {}
     public void addBodyPart(DimeBodyPart part) {
         parts.add(part);
     }

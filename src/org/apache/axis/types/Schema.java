@@ -182,7 +182,7 @@ public class Schema implements java.io.Serializable {
         field.setXmlName(new javax.xml.namespace.QName("", "id"));
         field.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "ID"));
         typeDesc.addFieldDesc(field);
-    };
+    }
 
     /**
      * Return type metadata object

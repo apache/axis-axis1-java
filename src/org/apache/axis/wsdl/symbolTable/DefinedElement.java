@@ -71,11 +71,11 @@ public class DefinedElement extends Element {
      */
     public DefinedElement(QName pqName, TypeEntry refType, Node pNode, String dims) {
         super(pqName, refType, pNode, dims);
-    };
+    }
     /**
      * Create an element type defined directly.               
      */
     public DefinedElement(QName pqName, Node pNode) {
         super(pqName, pNode);
     }
-};
+}

@@ -122,7 +122,7 @@ public class DimeBodyPart {
 
     static final long MAX_DWORD = 0xffffffffL;
 
-    protected DimeBodyPart() {}; //do not use.
+    protected DimeBodyPart() {} //do not use.
 
     /**
      * Create a DIME Attachment Part.

@@ -70,10 +70,10 @@ import org.apache.axis.utils.Messages;
 
 public final class DimeTypeNameFormat {
     private byte format = 0; 
-    private DimeTypeNameFormat() {}; 
+    private DimeTypeNameFormat() {}
     private DimeTypeNameFormat(byte f) {
         format = f;
-    }; 
+    }
     //Current type values.
     static final byte NOCHANGE_VALUE = 0x00; // indicates the type is unchanged from the previous record (used for chunking)
     static final byte MIME_VALUE = 0x01; //indicates the type is specified as a MIME media-type
