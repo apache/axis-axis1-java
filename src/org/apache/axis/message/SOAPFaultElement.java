@@ -137,7 +137,7 @@ public class SOAPFaultElement extends SOAPBodyElement
           context.startElement(new QName(Constants.URI_SOAP_ENV, "faultcode"),
                                null);
           QFault code = fault.getFaultCode();
-          context.writeString(context.qName2String(code));
+          context.writeSafeString(context.qName2String(code));
           context.endElement();
         }
     
@@ -145,7 +145,7 @@ public class SOAPFaultElement extends SOAPBodyElement
           context.startElement(new QName(Constants.URI_SOAP_ENV,
                                          "faultstring"),
                                null);
-          context.writeString(fault.getFaultString());
+          context.writeSafeString(fault.getFaultString());
           context.endElement();
         }
     
@@ -153,7 +153,7 @@ public class SOAPFaultElement extends SOAPBodyElement
           context.startElement(new QName(Constants.URI_SOAP_ENV,
                                          "faultactor"),
                                null);
-          context.writeString(fault.getFaultActor());
+          context.writeSafeString(fault.getFaultActor());
           context.endElement();
         }
     
