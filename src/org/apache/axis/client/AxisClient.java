@@ -102,7 +102,7 @@ public class AxisClient extends AxisEngine {
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("enter00", "AxisClient::invoke"));
+            log.debug("Enter: AxisClient::invoke");
         }
 
         String  hName = null ;
@@ -192,7 +192,7 @@ public class AxisClient extends AxisEngine {
 
         } catch( Exception e ) {
             // Should we even bother catching it ?
-            log.debug(JavaUtils.getMessage("exception00"), e);
+            log.info(JavaUtils.getMessage("exception00"), e);
             throw AxisFault.makeFault(e);
 
         } finally {
@@ -201,7 +201,7 @@ public class AxisClient extends AxisEngine {
         }
 
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("exit00", "AxisClient::invoke") );
+            log.debug("Exit: AxisClient::invoke");
         }
     };
 }
