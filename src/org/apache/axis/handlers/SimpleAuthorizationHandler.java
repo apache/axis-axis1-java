@@ -78,10 +78,10 @@ public class SimpleAuthorizationHandler extends BasicHandler {
     Debug.Print( 1, "Enter: SimpleAuthenticationHandler::invoke" );
     try {
       String  userID = (String) msgContext.getProperty( MessageContext.USERID );
-      String  action = (String) msgContext.getProperty( HTTPConstants.MC_HTTP_SOAPACTION );
+      String  action = msgContext.getTargetService();
 
-      Debug.Print( 1, "User: " + userID );
-      Debug.Print( 1, "Action: " + action );
+      Debug.Print( 1, "User: '" + userID + "'" );
+      Debug.Print( 1, "Action: '" + action + "'" );
 
       FileReader        fr   = new FileReader( "perms.lst" );
       LineNumberReader  lnr  = new LineNumberReader( fr );
@@ -100,12 +100,12 @@ public class SimpleAuthorizationHandler extends BasicHandler {
 
         if ( st.hasMoreTokens() ) u = st.nextToken();
         if ( st.hasMoreTokens() ) a = st.nextToken();
-        Debug.Print( 2, "From file: " + u + ":" + a );
+        Debug.Print( 2, "From file: '" + u + "':'" + a + "'" );
 
         if ( !userID.equals(u) ) continue ;
         if ( !action.equals(a) ) continue ;
 
-        Debug.Print( 1, "User '" + userID + "' authorized to: " +a );
+        Debug.Print( 1, "User '" + userID + "' authorized to: " + a );
         done = true ;
         break ;
       }

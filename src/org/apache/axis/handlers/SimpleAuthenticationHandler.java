@@ -103,7 +103,7 @@ public class SimpleAuthenticationHandler extends BasicHandler {
         if ( passwd == null && p != null ) continue ;
         if ( passwd != null && !passwd.equals(p) ) continue ;
 
-        Debug.Print( 1, "User '" + userID + "' authenicated to server" );
+        Debug.Print( 1, "User '" + userID + "' authenticated to server" );
         done = true ;
         break ;
       }

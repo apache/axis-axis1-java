@@ -92,7 +92,13 @@ public class RPCBody {
     setMethodName( methodName );
     if ( args != null ) {
       for ( int i = 0 ; i < args.length ; i++ ) {
-        RPCArg  arg = new RPCArg( "arg" + i, (String) args[i] );
+        Object  obj = args[i] ;
+        RPCArg  arg = null ;
+
+        if ( !(obj instanceof RPCArg) )
+          arg = new RPCArg( "arg" + i, (String) obj );
+        else
+          arg = (RPCArg) obj ;
         addArg( arg );
       }
     }

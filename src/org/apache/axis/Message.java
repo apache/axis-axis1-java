@@ -224,32 +224,34 @@ public class Message {
     Debug.Print( 2, "Enter: Message::getAsDocument" );
     if ( currentForm.equals("Document") ) return( (Document) currentMessage );
 
-    SAXBuilder parser = new SAXBuilder();
-    Reader     reader = null ;
+    SAXBuilder  parser = new SAXBuilder();
+    InputStream inp     = null ;
 
     try {
       if ( currentForm.equals("InputStream") )
-        reader = new InputStreamReader( (InputStream) currentMessage );
+        inp = (InputStream) currentMessage ;
       else if ( currentForm.equals("ServletRequest") ) {
         HttpServletRequest req = (HttpServletRequest)currentMessage;
+        inp = req.getInputStream();
         
-        int contentLength = req.getContentLength();
-        Reader requestReader = req.getReader ();
-        char[] payload       = new char[contentLength];
-        int    offset        = 0;
-
-        while (offset < contentLength) {
-            offset += requestReader.read (payload, offset, contentLength - offset);
-        }
-        
-        reader = new CharArrayReader(payload);
+        // int contentLength = req.getContentLength();
+        // Reader requestReader = req.getReader ();
+        // char[] payload       = new char[contentLength];
+        // int    offset        = 0;
+        // while (offset < contentLength) {
+           // offset+=requestReader.read(payload,offset,contentLength-offset);
+        // }
+        // reader = new CharArrayReader(payload);
       }
-      else if ( currentForm.equals("String") ) 
-        reader = new StringReader( (String) currentMessage );
+      else if ( currentForm.equals("String") )  {
+        Reader reader = new StringReader( (String) currentMessage );
+        setCurrentMessage( parser.build( reader ), "Document" );
+        Debug.Print( 2, "Exit: Message::getAsDocument" );
+        return( (Document) currentMessage );
+      }
       else if ( currentForm.equals("Bytes") )  {
         ByteArrayInputStream  bais ;
-        bais = new ByteArrayInputStream((byte[])currentMessage );
-        reader = new InputStreamReader( bais );
+        inp = new ByteArrayInputStream((byte[])currentMessage );
       }
       else if ( currentForm.equals("AxisFault") ) {
         AxisFault     fault = (AxisFault) currentMessage ;
@@ -274,7 +276,7 @@ public class Message {
         return( null );
       }
   
-      setCurrentMessage( parser.build( reader ), "Document" );
+      setCurrentMessage( parser.build( inp ), "Document" );
       Debug.Print( 2, "Exit: Message::getAsDocument" );
       return( (Document) currentMessage );
     }

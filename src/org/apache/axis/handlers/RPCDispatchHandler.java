@@ -112,13 +112,18 @@ public class RPCDispatchHandler extends BasicHandler {
                                null, null );  // Should they??
   
         Debug.Print( 2, "There are " + args.size() + " arg(s)" );
-        Class[]  argClasses = new Class[ args.size() ];
-        Object[] argValues  = new Object[ args.size()];
-        for ( i = 0 ; i < args.size() ; i++ ) {
-          argClasses[i] = cl.loadClass("java.lang.String") ;
-          argValues[i]  = ((RPCArg)args.get(i)).getValue() ; // only String 4now
-          Debug.Print( 2, "  class: " + argClasses[i] );
-          Debug.Print( 2, "  value: " + argValues[i].toString() );
+        Class[]  argClasses = null ;
+        Object[] argValues  =  null ;
+
+        if ( args != null && args.size() > 0 ) {
+          argClasses = new Class[ args.size() ];
+          argValues = new Object[ args.size()];
+          for ( i = 0 ; i < args.size() ; i++ ) {
+            argClasses[i] = cl.loadClass("java.lang.String") ;
+            argValues[i]  = ((RPCArg)args.get(i)).getValue() ; // String 4now
+            Debug.Print( 2, "  class: " + argClasses[i] );
+            Debug.Print( 2, "  value: " + argValues[i].toString() );
+          }
         }
   
         Method method = cls.getMethod( mName, argClasses );
@@ -130,10 +135,12 @@ public class RPCDispatchHandler extends BasicHandler {
         resBody.setMethodName( mName + "Response" );
         resBody.setPrefix( body.getPrefix() );
         resBody.setNamespaceURI( body.getNamespaceURI() );
-        RPCArg  arg = new RPCArg();
-        arg.setName( "return" );
-        arg.setValue( objRes.toString() );
-        resBody.addArg( arg );
+        if ( objRes != null ) {
+          RPCArg  arg = new RPCArg();
+          arg.setName( "return" );
+          arg.setValue( objRes.toString() );
+          resBody.addArg( arg );
+        }
         resEnv.addBody( resBody.getAsSOAPBody() );
       }
 
