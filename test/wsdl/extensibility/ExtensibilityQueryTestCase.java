@@ -47,7 +47,6 @@ public class ExtensibilityQueryTestCase extends junit.framework.TestCase {
             book.setSubject("all");
             bookQuery.setBookQuery(book);
             expression.setAny(bookQuery); 
-            ((Stub)binding)._setProperty(BeanDeserializer.DESERIALIZE_ANY, Boolean.TRUE);          
             ExtensibilityType any = binding.query(expression);
             ResultListType result = (ResultListType) any.getAny();
             QueryResultType[] queryResult = result.getResult();
