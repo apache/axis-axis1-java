@@ -620,8 +620,10 @@ public class MessageElement implements SOAPElement
          * whatever encoding style is in scope....
          */ 
         if (encodingStyle != null) {
-            SOAPConstants soapConstants = context.getMessageContext().
-                                                        getSOAPConstants();
+            MessageContext mc = context.getMessageContext();
+            SOAPConstants soapConstants = (mc != null) ?
+                                            mc.getSOAPConstants() :
+                                            SOAPConstants.SOAP11_CONSTANTS;
             if (parent == null) {
                 // don't emit an encoding style if its "" (literal)
                 if (!encodingStyle.equals("")) { 
