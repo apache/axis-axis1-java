@@ -335,8 +335,9 @@ public class CommonsHTTPSender extends BasicHandler {
         if (action == null) {
             action = "";
         }
+        Message msg = msgContext.getRequestMessage();
         method.setRequestHeader(new Header(HTTPConstants.HEADER_CONTENT_TYPE,
-                msgContext.getRequestMessage().getContentType()));
+                msg.getContentType(msgContext.getSOAPConstants())));
         method.setRequestHeader(new Header(HTTPConstants.HEADER_SOAP_ACTION, "\"" + action + "\""));
         method.setUseDisk(false);
         String userID = msgContext.getUsername();

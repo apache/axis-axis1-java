@@ -57,6 +57,7 @@ package org.apache.axis;
 
 import org.apache.axis.attachments.Attachments;
 import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
@@ -374,11 +375,11 @@ public class Message extends javax.xml.soap.SOAPMessage
         return mAttachments;
     }
 
-    public String getContentType() throws org.apache.axis.AxisFault {
+    public String getContentType(SOAPConstants sc) throws AxisFault {
         //Force serialization if it hasn't happend it.
         //Rick Rineholt fix this later.
         mSOAPPart.getAsBytes();
-        String ret = "text/xml; charset=utf-8";
+        String ret = sc.getContentType();
         if (mAttachments != null && 0 != mAttachments.getAttachmentCount()) {
             ret = mAttachments.getContentType();
         }

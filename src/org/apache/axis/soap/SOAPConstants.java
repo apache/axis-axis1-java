@@ -103,4 +103,9 @@ public interface SOAPConstants extends Serializable {
      * Obtain the QName for the role attribute (actor/role)
      */
     public QName getRoleAttributeQName();
+
+    /**
+     * Obtain the MIME content type
+     */
+    public String getContentType();
 }

@@ -79,6 +79,7 @@ import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.security.servlet.ServletSecurityProvider;
+import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.Admin;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
@@ -587,7 +588,8 @@ public class AxisServlet extends AxisServletBase {
         /* Send response back along the wire...  */
         /***********************************/
         if (responseMsg != null)
-            sendResponse(getProtocolVersion(req), res, responseMsg);
+            sendResponse(getProtocolVersion(req), msgContext.getSOAPConstants(),
+                         res, responseMsg);
 
         if (isDebug) {
             log.debug("Response sent.");
@@ -632,7 +634,8 @@ public class AxisServlet extends AxisServletBase {
      * @throws AxisFault
      * @throws IOException if the response stream can not be written to
      */
-    private void sendResponse(final String clientVersion,
+    private void sendResponse(final String clientVersion, 
+            SOAPConstants soapConstants,
             HttpServletResponse res, Message responseMsg)
         throws AxisFault, IOException
     {
@@ -645,13 +648,13 @@ public class AxisServlet extends AxisServletBase {
         } else {
             if(isDebug) {
                 log.debug("Returned Content-Type:" +
-                          responseMsg.getContentType());
+                    responseMsg.getContentType(soapConstants));
                 // log.debug("Returned Content-Length:" +
                 //          responseMsg.getContentLength());
             }
 
             try {
-                res.setContentType(responseMsg.getContentType());
+                res.setContentType(responseMsg.getContentType(soapConstants));
 
                 /* My understand of Content-Length
                  * HTTP 1.0
