@@ -349,7 +349,7 @@
     <wsdl2java url="test/wsdl/types/ComprehensiveTypes.wsdl"
                output="build/work"
                skeleton="yes"
-               testcase="no">
+               testcase="yes">
     </wsdl2java>
 
     <!--

@@ -127,12 +127,51 @@ public class JavaImplWriter extends JavaWriter {
 
     private void writeOperation(Parameters parms) throws IOException {
         pw.println(parms.signature + " {");
+
+        // Fill in any out parameter holders
+        Iterator iparam = parms.list.iterator();
+        while (iparam.hasNext()) {
+            Parameter param = (Parameter) iparam.next();
+            String paramType = param.type.getName();
+
+            if (param.mode == Parameter.OUT) {
+                pw.print("        " + Utils.xmlNameToJava(param.name)
+                        + "._value = ");
+                if ( isPrimitiveType(param.type) ) {
+                    if ( "boolean".equals(paramType) ) {
+                        pw.print("false");
+                    } else if ("byte".equals(paramType)) {
+                        pw.print("(byte)-3");
+                    } else if ("short".equals(paramType)) {
+                        pw.print("(short)-3");
+                    } else {
+                        pw.print("-3");
+                    }
+                } else if (paramType.equals("java.math.BigDecimal")) {
+                    pw.print("new java.math.BigDecimal(-3)");
+                } else if (paramType.equals("java.math.BigInteger")) {
+                    pw.print("new java.math.BigInteger(\"-3\")");
+                } else if (paramType.equals("byte[]")) {
+                    pw.print("new byte[0]");
+                } else {
+                    pw.print("new " + paramType + "()");
+                }
+                pw.println(";");
+            }
+        }
+
+        // Print the return statement
         if (parms.returnType != null) {
             pw.print("        return ");
 
             if (isPrimitiveType(parms.returnType)) {
-                if ("boolean".equals(parms.returnType.getName())) {
+                String returnType = parms.returnType.getName();
+                if ("boolean".equals(returnType)) {
                     pw.println("false;");
+                } else if ("byte".equals(returnType)) {
+                    pw.println("(byte)-3;");
+                } else if ("short".equals(returnType)) {
+                    pw.println("short)-3;");
                 } else {
                     pw.println("-3;");
                 }

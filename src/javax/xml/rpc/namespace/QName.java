@@ -169,6 +169,15 @@ public class QName {
             }
         }
 
+        if (localPart == null) {
+            if (((QName) p1).localPart != null) {
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+
         return localPart.equals(((QName) p1).localPart);
     }
 
@@ -178,7 +187,20 @@ public class QName {
      * @return a hash code value for this Qname object
      */
     public int hashCode() {
-        return namespaceURI.hashCode() ^ localPart.hashCode();
+        if (namespaceURI == null) {
+            if (localPart == null) {
+                return 0;
+            }
+            else {
+                return localPart.hashCode();
+            }
+        }
+        else if (localPart == null) {
+            return namespaceURI.hashCode();
+        }
+        else {
+            return namespaceURI.hashCode() ^ localPart.hashCode();
+        }
     }
 
     // temporary!!

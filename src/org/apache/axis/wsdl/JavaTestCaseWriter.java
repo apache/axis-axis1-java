@@ -212,28 +212,36 @@ public class JavaTestCaseWriter extends JavaWriter {
                 }
 
                 Parameter param = (Parameter) iparam.next();
-                String paramType = null;
+                String paramType = param.type.getName();
+                String suffix = "";
 
-                switch (param.mode) {
-                    case Parameter.IN:
-                        paramType = param.type.getName();
-                        break;
-
-                    default:
-                        paramType = Utils.holder(param.type);
+                if (param.mode != Parameter.IN) {
+                    pw.print("new " + Utils.holder(param.type) + "(");
+                    suffix = ")";
                 }
-                
-                if ( isPrimitiveType(param.type) ) {
-                    if ( "boolean".equals(paramType) ) {
-                        pw.print("true");
+
+                if (param.mode != Parameter.OUT) {
+                    if ( isPrimitiveType(param.type) ) {
+                        if ( "boolean".equals(paramType) ) {
+                            pw.print("true");
+                        } else if ("byte".equals(paramType)) {
+                            pw.print("(byte)0");
+                        } else if ("short".equals(paramType)) {
+                            pw.print("(short)0");
+                        } else {
+                            pw.print("0");
+                        }
+                    } else if (paramType.equals("java.math.BigDecimal")) {
+                        pw.print("new java.math.BigDecimal(0)");
+                    } else if (paramType.equals("java.math.BigInteger")) {
+                        pw.print("new java.math.BigInteger(\"0\")");
+                    } else if (paramType.equals("byte[]")) {
+                        pw.print("new byte[0]");
                     } else {
-                        pw.print("0");
+                        pw.print("new " + paramType + "()");
                     }
-                } else {
-                    pw.print("new ");
-                    pw.print(paramType);
-                    pw.print("()");
                 }
+                pw.print(suffix);
             }
 
             pw.println(");");
