@@ -105,6 +105,7 @@ import com.ibm.wsdl.extensions.soap.SOAPBinding;
 public class Emitter {
     private Document doc = null;
     private Definition def = null;
+    private WsdlAttributes wsdlAttr = null;
     private boolean bEmitSkeleton = false;
     private boolean bMessageContext = false;
     private boolean bVerbose = false;
@@ -147,12 +148,26 @@ public class Emitter {
             if (bVerbose && packageName != null) {
                 System.out.println("Using package name: " + packageName);
             }
-            writeTypes();
+
+            // Collect information about ports and operations
+            wsdlAttr = new WsdlAttributes(def, new HashMap());
+
+            // output interfaces for portTypes
             HashMap portTypesInfo = writePortTypes();
+
+            // Output Stub classes for bindings
             writeBindings(portTypesInfo);
+
+            // Output Java classes for types
+            writeTypes();
+
+            // Output factory classes for services
             writeServices();
+
+            // Output deploy.xml and undeploy.xml
             if (bEmitSkeleton)
                 writeDeploymentXML();
+
         }
         catch (WSDLException e) {
             e.printStackTrace();
@@ -246,13 +261,13 @@ public class Emitter {
         Input input = operation.getInput();
 
         if (input != null)
-            partStrings(v, input.getMessage().getOrderedParts(null));
+            partStrings(v, input.getMessage().getOrderedParts(null), false);
 
         // Collect all the output types
         Output output = operation.getOutput();
 
         if (output != null)
-            partStrings(v, output.getMessage().getOrderedParts(null));
+            partStrings(v, output.getMessage().getOrderedParts(null), false);
 
         // Collect all the types in faults
         Map faults = operation.getFaults();
@@ -261,7 +276,7 @@ public class Emitter {
             Iterator i = faults.values().iterator();
 
             while (i.hasNext())
-                partStrings(v, ((Fault) i.next()).getMessage().getOrderedParts(null));
+                partStrings(v, ((Fault) i.next()).getMessage().getOrderedParts(null), false);
         }
 
         // Put all these types into a set.  This operation eliminates all duplicates.
@@ -306,7 +321,11 @@ public class Emitter {
         while (i.hasNext()) {
             PortType portType = (PortType) i.next();
 
-            // FIXME - Skip portTypes that aren't mentioned in a SOAP rpc binding
+            // If this portType wasn't mentioned in a binding we are emitting,
+            // skip it.
+            if (!wsdlAttr.isInSoapBinding(portType)) {
+                continue;
+            }
 
             HashMap portTypeInfo = writePortType(portType);
             if (bEmitSkeleton && bMessageContext)
@@ -325,7 +344,7 @@ public class Emitter {
         String fileName = nameValue + ".java";
         PrintWriter interfacePW = new PrintWriter(new FileWriter(fileName));
         if (bVerbose)
-            System.out.println("Generating portType interface: " + nameValue + ".java");
+            System.out.println("Generating portType interface: " + fileName);
 
         writeFileHeader(fileName, interfacePW);
         interfacePW.println("public interface " + nameValue + " extends java.rmi.Remote {");
@@ -455,13 +474,23 @@ public class Emitter {
 
         // Collect the input parts
         Input input = operation.getInput();
-        if (input != null)
-            partStrings(inputs, input.getMessage().getOrderedParts(parameterOrder));
+        if (input != null) {
+            if (wsdlAttr.getInputBodyType(operation) == WsdlAttributes.USE_LITERAL) {
+                partStrings(inputs, input.getMessage().getOrderedParts(parameterOrder), true);
+            } else {
+                partStrings(inputs, input.getMessage().getOrderedParts(parameterOrder), false);
+            }
+        }
 
         // Collect the output parts
         Output output = operation.getOutput();
-        if (output != null)
-            partStrings(outputs, output.getMessage().getOrderedParts(parameterOrder));
+        if (output != null) {
+            if (wsdlAttr.getOutputBodyType(operation) == WsdlAttributes.USE_LITERAL) {
+                partStrings(outputs, output.getMessage().getOrderedParts(parameterOrder), true);
+            } else {
+                partStrings(outputs, output.getMessage().getOrderedParts(parameterOrder), false);
+            }
+        }
 
         if (parameterOrder == null) {
             // Get the mode info about the parts.  Since no parameterOrder is defined
@@ -473,13 +502,17 @@ public class Emitter {
 
                 p.name = name;
                 p.type = (String) inputs.get(i - 1);
-                for (int j = 1; j < outputs.size(); j += 2)
-                    if (name.equals(outputs.get(j))) {
-                        p.mode = Parameter.INOUT;
-                        outputs.remove(j);
-                        outputs.remove(j - 1);
-                        break;
+                // If we have more than 1 output, check for inouts
+                if (outputs.size() > 2) {
+                    for (int j = 1; j < outputs.size(); j += 2) {
+                        if (name.equals(outputs.get(j))) {
+                            p.mode = Parameter.INOUT;
+                            outputs.remove(j);
+                            outputs.remove(j - 1);
+                            break;
+                        }
                     }
+                }
                 if (p.mode == Parameter.IN)
                     ++parameters.inputs;
                 else
@@ -636,15 +669,20 @@ public class Emitter {
      * This method returns a vector whose odd numbered elements are element types and whose
      * even numbered elements are element values.
      */
-    private void partStrings(Vector v, Collection parts) {
+    private void partStrings(Vector v, Collection parts, boolean elements) {
         Iterator i = parts.iterator();
 
         while (i.hasNext()) {
             Part part = (Part) i.next();
 
-            if (part.getTypeName() != null) {
-                v.add(type(part.getTypeName().getLocalPart()));
+            if (elements) {
+                v.add("org.w3c.dom.Element");
                 v.add(part.getName());
+            } else {
+                if (part.getTypeName() != null) {
+                    v.add(type(part.getTypeName().getLocalPart()));
+                    v.add(part.getName());
+                }
             }
         }
     } // partStrings
@@ -656,6 +694,7 @@ public class Emitter {
         String name = operation.getName();
         Parameters parms = parameters(operation);
 
+        writeComment(interfacePW, operation.getDocumentationElement());
         interfacePW.println(parms.signature + ";");
 
         return parms;
@@ -690,7 +729,7 @@ public class Emitter {
 
         Vector params = new Vector();
 
-        partStrings(params, operation.getMessage().getOrderedParts(null));
+        partStrings(params, operation.getMessage().getOrderedParts(null), false);
 
         for (int i = 0; i < params.size(); i += 2)
             pw.println("    public " + params.get(i) + " " + params.get(i + 1) + ";");
@@ -728,9 +767,10 @@ public class Emitter {
         while (i.hasNext()) {
             Binding binding = (Binding) i.next();
 
-            // If this isn't an RPC binding, skip it
-            if (!isRpcBinding(binding))
+            // If this isn't a SOAP binding, skip it
+            if (wsdlAttr.getBindingType(binding) != WsdlAttributes.TYPE_SOAP) {
                 continue;
+            }
 
             HashMap portTypeInfo = (HashMap) portTypesInfo.get(binding.getPortType());
 
@@ -906,6 +946,7 @@ public class Emitter {
 
         String name = operation.getName();
 
+        writeComment(stubPW, operation.getDocumentationElement());
         writeStubOperation(name, parms, soapAction, namespace, stubPW);
         if (bEmitSkeleton)
             writeSkeletonOperation(name, parms, skelPW);
@@ -1108,19 +1149,23 @@ public class Emitter {
         // declare class
         servicePW.println("public class " + serviceName + " {");
 
+        // output comments
+        writeComment(servicePW, service.getDocumentationElement());
+
         // get ports
         Map portMap = service.getPorts();
         Iterator portIterator = portMap.values().iterator();
 
-        // write a get method for each of the ports with a Soap RPC binding
+        // write a get method for each of the ports with a SOAP binding
         while (portIterator.hasNext()) {
             Port p = (Port) portIterator.next();
             String portName = p.getName();
             Binding binding = p.getBinding();
 
-            // If this isn't an RPC binding, skip it
-            if (!isRpcBinding(binding))
+            // If this isn't an SOAP binding, skip it
+            if (wsdlAttr.getBindingType(binding) != WsdlAttributes.TYPE_SOAP) {
                 continue;
+            }
 
             String stubClass = binding.getQName().getLocalPart() + "Stub";
             String bindingType = binding.getPortType().getQName().getLocalPart();
@@ -1141,6 +1186,7 @@ public class Emitter {
             // Write out the get<PortName> methods
             servicePW.println();
             servicePW.println("    // Use to get a proxy class for " + portName);
+            writeComment(servicePW, p.getDocumentationElement());
             servicePW.println("    private final java.lang.String " + portName + "_address = \"" + address + "\";");
             servicePW.println("    public " + bindingType + " get" + portName + "() {");
             servicePW.println("       java.net.URL endpoint;");
@@ -1170,24 +1216,6 @@ public class Emitter {
         servicePW.close();
     }
 
-    /**
-     * Return true if this binding has a <soap:binding style="rpc> attribute
-     */
-    private boolean isRpcBinding(Binding binding) {
-        Iterator i = binding.getExtensibilityElements().iterator();
-        while (i.hasNext()) {
-            Object obj = i.next();
-            if (obj instanceof SOAPBinding) {
-                SOAPBinding sb = (SOAPBinding) obj;
-                String style = sb.getStyle();
-                if (style.equalsIgnoreCase("rpc"))
-                    return true;
-                else
-                    return false;
-            }
-        }
-        return false;
-    }
 
     /**
      * Return the endpoint address from a <soap:address location="..."> tag
@@ -1330,15 +1358,7 @@ public class Emitter {
         Binding binding = port.getBinding();
         String serviceName = port.getName();
 
-        boolean isRPC = false;
-        Iterator operationExtensibilityIterator = binding.getExtensibilityElements().iterator();
-        for (; operationExtensibilityIterator.hasNext();) {
-            Object obj = operationExtensibilityIterator.next();
-            if (obj instanceof SOAPBinding) {
-                isRPC = ((SOAPBinding) obj).getStyle().equals("rpc");
-                break;
-            }
-        }
+        boolean isRPC = (wsdlAttr.getBindingStyle(binding) == WsdlAttributes.STYLE_RPC);
 
         deployPW.println("   <service name=\"" + serviceName
                 + "\" pivot=\"" + (isRPC ? "RPCDispatcher" : "MsgDispatcher") + "\">");
@@ -1391,7 +1411,10 @@ public class Emitter {
      */
     private void writeType(Node node) throws IOException {
         NamedNodeMap attributes = node.getAttributes();
-        String nameValue = capitalize(attributes.getNamedItem("name").getNodeValue());
+
+        // scrounge for type name
+        String nameValue = findTypeName(node);
+
         String fileName = nameValue + ".java";
         PrintWriter typePW = new PrintWriter(new FileWriter(fileName));
         if (bVerbose)
@@ -1441,12 +1464,43 @@ public class Emitter {
     } // writeType
 
     /**
+     * Look in the node and the parent node for type name
+     * Example:
+     *   <element name="foo">
+     *    <complexType>
+     * OR
+     *   <complexType name="foo">
+     *    ...
+     *
+     */
+    private String findTypeName(Node node) throws IOException {
+        String nameValue = null;
+
+        Node attrNode = node.getAttributes().getNamedItem("name");
+        if (attrNode != null) {
+            nameValue = capitalize(attrNode.getNodeValue());
+        }
+        else {
+            Node n1 = node.getParentNode();
+            NamedNodeMap a1 = n1.getAttributes();
+            Node parentAttrNode = node.getParentNode().getAttributes().getNamedItem("name");
+            if (parentAttrNode != null) {
+                nameValue = parentAttrNode.getNodeValue();
+            }
+        }
+        if (nameValue == null) {
+            throw new IOException("Unable to find type name for " + node.getNodeName());
+        }
+        return nameValue;
+    }
+
+    /**
      * Generate the holder for the given complex type.
      */
     private void writeHolder(Node type) throws IOException {
         NamedNodeMap attributes = type.getAttributes();
-        String typeName =
-                capitalize(attributes.getNamedItem("name").getNodeValue());
+        String typeName = findTypeName(type);
+
         String fileName = typeName + "Holder.java";
         PrintWriter pw =
                 new PrintWriter(new FileWriter(fileName));
@@ -1487,7 +1541,8 @@ public class Emitter {
     } // findNameValue
 
     /**
-     * This method returns the complexType node with the given type name.  If the given name does not describe a complex type, this method returns null.
+     * This method returns the complexType node with the given type name.
+     * If the given name does not describe a complex type, this method returns null.
      */
     private Node complexType(String typeName) {
         Vector types = findChildNodesByName(doc, "complexType");
@@ -1536,6 +1591,38 @@ public class Emitter {
     //
     // Utility methods
     //
+
+    /**
+     * output documentation element as a Java comment
+     */
+    private void writeComment(PrintWriter pw, Element element) {
+        // This control how many characters per line
+        final int LINE_LENGTH = 65;
+
+        if (element == null)
+            return;
+
+        String comment = element.getFirstChild().getNodeValue();
+        if (comment != null) {
+            int start = 0;
+
+            pw.println();  // blank line
+
+            // make the comment look pretty
+            while (start < comment.length()) {
+                int end = start + LINE_LENGTH;
+                if (end > comment.length())
+                    end = comment.length();
+                // look for next whitespace
+                while (end < comment.length() &&
+                        !Character.isWhitespace(comment.charAt(end))) {
+                    end++;
+                }
+                pw.println("    // " + comment.substring(start, end).trim());
+                start = end + 1;
+            }
+        }
+    }
 
     /**
      * For a given string, strip off the prefix - everything before the colon.
