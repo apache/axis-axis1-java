@@ -93,4 +93,11 @@ public class PortTypeEntry extends SymTabEntry {
         return (Parameters) parameters.get(operationName);
     } // getParameters
 
+    /**
+     * Get all of the parameters for all operations.
+     */
+    public HashMap getParameters() {
+        return parameters;
+    } // getParameters
+
 } // class PortTypeEntry

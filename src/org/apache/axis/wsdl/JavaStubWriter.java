@@ -311,13 +311,22 @@ public class JavaStubWriter extends JavaWriter {
             QName qType;
             if (literal) {
                 qType = part.getElementName();
+                if (qType != null) {
+                    v.add(symbolTable.getElementTypeEntry(qType));
+                }
             } else {
                 qType = part.getTypeName(); 
-                if (qType == null)
+                if (qType == null) {
                     qType = part.getElementName();
-            }
-            if (qType != null) {
-                v.add(symbolTable.getTypeEntry(qType));
+                    if (qType != null) {
+                        v.add(symbolTable.getElementTypeEntry(qType));
+                    }
+                }
+                else {
+                    if (qType != null) {
+                        v.add(symbolTable.getTypeEntry(qType));
+                    }
+                }
             }
         }
     } // partTypes

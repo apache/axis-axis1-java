@@ -80,19 +80,24 @@ public class JavaBindingWriter implements Writer {
             Binding binding,
             SymbolTable symbolTable) {
         BindingEntry bEntry = symbolTable.getBindingEntry(binding.getQName());
-        stubWriter = new JavaStubWriter(emitter, bEntry, symbolTable);
-        if (emitter.bEmitSkeleton) {
-            skelWriter = new JavaSkelWriter(emitter, bEntry, symbolTable);
-            String fileName = Utils.getJavaLocalName(bEntry.getName()) + "Impl.java";
-            try {
+        if (bEntry.isReferenced()) {
+            stubWriter = new JavaStubWriter(emitter, bEntry, symbolTable);
+            if (emitter.bEmitSkeleton) {
+                skelWriter = new JavaSkelWriter(emitter, bEntry, symbolTable);
+                String fileName = Utils.getJavaLocalName(bEntry.getName())
+                        + "Impl.java";
+                try {
                 // NOTE:  Where does the fileExists method really belong?
-                if (!((JavaWriter) stubWriter).fileExists (fileName, binding.getQName().getNamespaceURI())) {
-                    implWriter = new JavaImplWriter(emitter, bEntry, symbolTable);
+                    if (!((JavaWriter) stubWriter).fileExists (fileName,
+                            binding.getQName().getNamespaceURI())) {
+                        implWriter = new JavaImplWriter(
+                                emitter, bEntry, symbolTable);
+                    }
                 }
-            }
-            catch (IOException ioe) {
-                System.err.println(
-                        JavaUtils.getMessage("fileExistError00", fileName));
+                catch (IOException ioe) {
+                    System.err.println(
+                            JavaUtils.getMessage("fileExistError00", fileName));
+                }
             }
         }
     } // ctor
@@ -101,7 +106,9 @@ public class JavaBindingWriter implements Writer {
      * Write all the binding bindnigs:  stub, skeleton, and impl.
      */
     public void write() throws IOException {
-        stubWriter.write();
+        if (stubWriter != null) {
+            stubWriter.write();
+        }
         if (skelWriter != null) {
             skelWriter.write();
         }

@@ -631,7 +631,7 @@ public class SymbolTable {
                     v.add(getTypeEntry(typeName));
                     v.add(part.getName());
                 } else if (elementName != null) {
-                    v.add(getTypeEntry(elementName));
+                    v.add(getElementTypeEntry(elementName));
                     v.add(part.getName());
                 }
             }
@@ -834,6 +834,15 @@ public class SymbolTable {
         Node node = entry.getNode();
         if (addImports || node == null || node.getOwnerDocument() == doc) {
             entry.setIsReferenced(true);
+            if (entry instanceof ElementType) {
+                QName referentName = Utils.getNodeTypeRefQName(entry.getNode());
+                if (referentName != null) {
+                    Type referent = getTypeEntry(referentName);
+                    if (referent != null) {
+                        setTypeReferences(referent, doc);
+                    }
+                }
+            }
         }
 
         HashSet nestedTypes = Utils.getNestedTypes(node, this);
@@ -872,6 +881,10 @@ public class SymbolTable {
         while (parts.hasNext()) {
             Part part = (Part) parts.next();
             Type type = getTypeEntry(part.getTypeName());
+            if (type != null) {
+                setTypeReferences(type, doc);
+            }
+            type = getElementTypeEntry(part.getElementName());
             if (type != null) {
                 setTypeReferences(type, doc);
             }
@@ -1087,11 +1100,31 @@ public class SymbolTable {
     } // get
 
     /**
-     * Get the TypeEntry with the given QName.  If it doesn't exist, return null.
+     * Get the non-ElementType TypeEntry with the given QName.  If it doesn't exist, return null.
      */
     public Type getTypeEntry(QName qname) {
-        return (Type) get(qname, Type.class);
+        for (int i = 0; i < types.size(); ++i) {
+            Type type = (Type) types.get(i);
+            if (type.getQName().equals(qname)
+                    && !(type instanceof ElementType)) {
+                return type;
+            }
+        }
+        return null;
     } // getTypeEntry
+
+    /**
+     * Get the ElementType entry with the given QName.  If it doesn't exist, return null.
+     */
+    public ElementType getElementTypeEntry(QName qname) {
+        for (int i = 0; i < types.size(); ++i) {
+            Type type = (Type) types.get(i);
+            if (type.getQName().equals(qname) && type instanceof ElementType) {
+                return (ElementType) type;
+            }
+        }
+        return null;
+    } // getElementTypeEntry
 
     /**
      * Get the MessageEntry with the given QName.  If it doesn't exist, return null.

@@ -77,9 +77,13 @@ public class JavaServiceWriter implements Writer {
             Service service,
             SymbolTable symbolTable) {
         ServiceEntry sEntry = symbolTable.getServiceEntry(service.getQName());
-        serviceWriter = new JavaServiceImplWriter(emitter, sEntry, symbolTable);
-        if (emitter.bEmitTestCase) {
-            testCaseWriter = new JavaTestCaseWriter(emitter, sEntry, symbolTable);
+        if (sEntry.isReferenced()) {
+            serviceWriter =
+                    new JavaServiceImplWriter(emitter, sEntry, symbolTable);
+            if (emitter.bEmitTestCase) {
+                testCaseWriter =
+                        new JavaTestCaseWriter(emitter, sEntry, symbolTable);
+            }
         }
     } // ctor
 
@@ -87,7 +91,9 @@ public class JavaServiceWriter implements Writer {
      * Write all the service bindnigs:  service and testcase.
      */
     public void write() throws IOException {
-        serviceWriter.write();
+        if (serviceWriter != null) {
+            serviceWriter.write();
+        }
         if (testCaseWriter != null) {
             testCaseWriter.write();
         }
