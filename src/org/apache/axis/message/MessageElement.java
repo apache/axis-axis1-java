@@ -301,7 +301,7 @@ public class MessageElement implements SOAPElement
     }
 
     public MessageElement getParent() { return parent; }
-    public void setParent(MessageElement parent) 
+    public void setParent(MessageElement parent) throws SOAPException
     { 
         this.parent = parent;
         if (parent != null) {
@@ -315,11 +315,13 @@ public class MessageElement implements SOAPElement
      * Note that this method will log a error and no-op if there is
      * a value (set using setObjectValue) in the MessageElement.
      */
-    public void addChild(MessageElement el)
+    public void addChild(MessageElement el) throws SOAPException
     {
         if (objectValue != null) {
-            log.error(JavaUtils.getMessage("valuePresent"));
-            return;
+            SOAPException exc = new SOAPException(JavaUtils.
+                                                  getMessage("valuePresent"));
+            log.error(JavaUtils.getMessage("valuePresent"), exc);
+            throw exc;
         }
         if (children == null)
             children = new ArrayList();
@@ -415,14 +417,18 @@ public class MessageElement implements SOAPElement
      * constructed from XML.
      * @param newValue node's value or null.
      */
-    public void setObjectValue(Object newValue){
+    public void setObjectValue(Object newValue) throws SOAPException {
         if (children != null && !children.isEmpty()) {
-            log.error(JavaUtils.getMessage("childPresent"));
-            return;
+            SOAPException exc = new SOAPException(JavaUtils.
+                                                  getMessage("childPresent"));
+            log.error(JavaUtils.getMessage("childPresent"), exc);
+            throw exc;
         }
         if (elementRep != null) {
-            log.error(JavaUtils.getMessage("xmlPresent"));
-            return;
+            SOAPException exc = new SOAPException(JavaUtils.
+                                                  getMessage("xmlPresent"));
+            log.error(JavaUtils.getMessage("xmlPresent"), exc);
+            throw exc;
         }
         this.objectValue = newValue;
     }
@@ -711,56 +717,40 @@ public class MessageElement implements SOAPElement
     // JAXM SOAPElement methods...
 
     public SOAPElement addChildElement(Name name) throws SOAPException {
-        try {
-            MessageElement child = new MessageElement(name.getURI(),
-                                                      name.getLocalName());
-            addChild(child);
-            return child;
-        } catch (Throwable t) {
-            throw new SOAPException(t);
-        }
+        MessageElement child = new MessageElement(name.getURI(),
+                                                  name.getLocalName());
+        addChild(child);
+        return child;
     }
 
     public SOAPElement addChildElement(String localName) throws SOAPException {
-        try {
-            // Inherit parent's namespace
-            MessageElement child = new MessageElement(getNamespaceURI(),
-                                                      localName);
-            addChild(child);
-            return child;
-        } catch (Throwable t) {
-            throw new SOAPException(t);
-        }
+        // Inherit parent's namespace
+        MessageElement child = new MessageElement(getNamespaceURI(),
+                                                  localName);
+        addChild(child);
+        return child;
     }
 
     public SOAPElement addChildElement(String localName,
                                        String prefix) throws SOAPException {
-        try {
-            MessageElement child = new MessageElement(getNamespaceURI(prefix),
-                                                      localName);
-            addChild(child);
-            return child;
-        } catch (Throwable t) {
-            throw new SOAPException(t);
-        }
+        MessageElement child = new MessageElement(getNamespaceURI(prefix),
+                                                  localName);
+        addChild(child);
+        return child;
     }
 
     public SOAPElement addChildElement(String localName,
                                        String prefix,
                                        String uri) throws SOAPException {
-        try {
             MessageElement child = new MessageElement(uri, localName);
             child.addNamespaceDeclaration(prefix, uri);
             addChild(child);
             return child;
-        } catch (Throwable t) {
-            throw new SOAPException(t);
-        }
     }
 
     /**
      * The added child must be an instance of MessageElement rather than
-     * an abitrary SOAPElement otherwise a (wrapped) class cast exception
+     * an abitrary SOAPElement otherwise a (wrapped) ClassCastException
      * will be thrown.
      */
     public SOAPElement addChildElement(SOAPElement element)
@@ -768,8 +758,8 @@ public class MessageElement implements SOAPElement
         try {
             addChild((MessageElement)element);
             return element;
-        } catch (Throwable t) {
-            throw new SOAPException(t);
+        } catch (ClassCastException e) {
+            throw new SOAPException(e);
         }
     }
 

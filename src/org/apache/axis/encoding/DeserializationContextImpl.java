@@ -622,7 +622,16 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
             recorder.newElement(elem);
         }
         
-        elem.setParent(curElement);
+        try {
+            elem.setParent(curElement);
+        } catch (Exception e) {
+            /*
+             * The only checked exception that may be thrown from setParent
+             * occurs if the parent already has an explicit object value,
+             * which should never occur during deserialization. An error
+             * has already been logged, so no-op.
+             */
+        }
         curElement = elem;
     }
     
