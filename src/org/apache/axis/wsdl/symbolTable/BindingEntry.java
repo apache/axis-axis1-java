@@ -63,6 +63,7 @@ import javax.wsdl.Operation;
 import javax.wsdl.extensions.soap.SOAPFault;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ArrayList;
 
 /**
 * This class represents a WSDL binding.  It encompasses the WSDL4J Binding object so it can
@@ -101,6 +102,9 @@ public class BindingEntry extends SymTabEntry {
     // Booleans.
     private Map     headerParts;
 
+    // List of operations at need to use DIME
+    private ArrayList dimeOps = new ArrayList();
+    
     /**
      * Construct a BindingEntry from a WSDL4J Binding object and the additional binding info:
      * binding type, binding style, whether there is any literal binding, and the attributes which
@@ -216,6 +220,25 @@ The caller of this constructor should
         opMap.put(parameterName, type);
     } // setMIMEType
 
+    /**
+     * Mark the operation as a DIME operation
+     * @param operationName
+     */ 
+    public void setOperationDIME(String operationName) {
+        if(dimeOps.indexOf(operationName)==-1){
+            dimeOps.add(operationName);
+        }
+    }
+    
+    /**
+     * Check if this operation should use DIME
+     * @param operationName
+     * @return
+     */ 
+    public boolean isOperationDIME(String operationName){
+        return (dimeOps.indexOf(operationName)>=0);    
+    }
+    
     /**
      * Is this part an input header part?.
      */

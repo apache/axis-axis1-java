@@ -8,7 +8,7 @@
 package test.wsdl.interop4.groupG.dime.rpc;
 
 public class AttachmentsBindingImpl implements test.wsdl.interop4.groupG.dime.rpc.AttachmentsPortType{
-    public test.wsdl.interop4.groupG.dime.rpc.xsd.ReferencedBinary echoAttachment(test.wsdl.interop4.groupG.dime.rpc.xsd.ReferencedBinary in) throws java.rmi.RemoteException {
+    public org.apache.axis.attachments.OctetStream echoAttachment(org.apache.axis.attachments.OctetStream in) throws java.rmi.RemoteException {
         return in;
     }
 
@@ -16,19 +16,18 @@ public class AttachmentsBindingImpl implements test.wsdl.interop4.groupG.dime.rp
         return in;
     }
 
-    public byte[] echoAttachmentAsBase64(test.wsdl.interop4.groupG.dime.rpc.xsd.ReferencedBinary in) throws java.rmi.RemoteException {
-        return in.getValue();
+    public byte[] echoAttachmentAsBase64(org.apache.axis.attachments.OctetStream in) throws java.rmi.RemoteException {
+        return in.getBytes();
     }
 
-    public test.wsdl.interop4.groupG.dime.rpc.xsd.ReferencedBinary echoBase64AsAttachment(byte[] in) throws java.rmi.RemoteException {
-        return new test.wsdl.interop4.groupG.dime.rpc.xsd.ReferencedBinary(in);
+    public org.apache.axis.attachments.OctetStream echoBase64AsAttachment(byte[] in) throws java.rmi.RemoteException {
+        return new org.apache.axis.attachments.OctetStream(in);
     }
 
     public void echoUnrefAttachments() throws java.rmi.RemoteException {
-        //TODO: What should we do here?
     }
 
-    public java.lang.String echoAttachmentAsString(test.wsdl.interop4.groupG.dime.rpc.xsd.ReferencedText in) throws java.rmi.RemoteException {
-        return new String(in.getValue());
+    public java.lang.String echoAttachmentAsString(java.lang.String in) throws java.rmi.RemoteException {
+        return in;
     }
 }

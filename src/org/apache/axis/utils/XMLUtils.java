@@ -66,6 +66,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.Text;
+import org.w3c.dom.NodeList;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -726,5 +727,25 @@ parser.getParser().setEntityResolver(new DefaultEntityResolver());
 
     public static InputSource getEmptyInputSource() {
         return new InputSource(bais);
+    }
+    
+    /**
+     * Find a Node with a given QName
+     * 
+     * @param node parent node
+     * @param name QName of the child we need to find
+     * @return child node
+     */ 
+    public static Node findNode(Node node, QName name){
+        if(name.getNamespaceURI().equals(node.getNamespaceURI()) && 
+           name.getLocalPart().equals(node.getLocalName()))
+            return node;
+        NodeList children = node.getChildNodes();
+        for(int i=0;i<children.getLength();i++){
+            Node ret = findNode(children.item(i), name);
+            if(ret != null)
+                return ret;
+        }
+        return null;
     }
 }

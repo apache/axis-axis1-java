@@ -71,12 +71,14 @@ Copyright:
     </wsdl2java>
 
     <mkdir dir="${build.dest}"/>
+    <!--
     <copy file="${axis.home}/test/wsdl/interop4/groupG/dime/rpc/DimeRPCInteropTestCase.java"
           todir="${root.dir}/build/work/test/wsdl/interop4/groupG/dime/rpc"
           overwrite="yes"/>
     <copy file="${axis.home}/test/wsdl/interop4/groupG/dime/rpc/AttachmentsBindingImpl.java"
           todir="${root.dir}/build/work/test/wsdl/interop4/groupG/dime/rpc"
           overwrite="yes"/>
+    -->          
     <!-- compile the skeletons -->
     <javac srcdir="${build.dir}/work"
       destdir="${build.dest}" debug="on">

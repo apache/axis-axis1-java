@@ -732,6 +732,11 @@ public class JavaStubWriter extends JavaClassWriter {
 
         // Set the headers
         pw.println("        setRequestHeaders(_call);");
+        
+        // Set DIME flag if needed 
+        if(bEntry.isOperationDIME(operation.getOperation().getName())) {
+            pw.println("        _call.setProperty(_call.ATTACHMENT_ENCAPSULATION_FORMAT, _call.ATTACHMENT_ENCAPSULATION_FORMAT_DIME);");
+        }
 
         // Invoke the operation
         if (oneway) {
