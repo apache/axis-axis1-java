@@ -118,6 +118,7 @@ public class Wsdl2javaAntTask extends Task
     private boolean noImports = false;
     private boolean all = false;
     private boolean helperGen = false;
+    private boolean noWrapped = false;
     private String factory = null;
     private HashMap namespaceMap = new HashMap();
     private String output = "." ;
@@ -191,6 +192,7 @@ public class Wsdl2javaAntTask extends Task
         log("\tnamespaceMappingFile:"+namespaceMappingFile, logLevel);
         log("\tusername:" + username, logLevel);
         log("\t:password" + password, logLevel);
+        log("\t:noWrapped" + noWrapped, logLevel);
         traceNetworkSettings(logLevel);
     }
 
@@ -237,6 +239,7 @@ public class Wsdl2javaAntTask extends Task
             emitter.setVerbose(verbose);
             emitter.setDebug(debug);
             emitter.setTypeMappingVersion(typeMappingVersion);
+            emitter.setNowrap(noWrapped);
 	        if (namespaceMappingFile != null) {
 	            emitter.setNStoPkg(namespaceMappingFile.toString());
 	        }    
@@ -491,6 +494,14 @@ public class Wsdl2javaAntTask extends Task
         this.password = password;
     }
 
+    /**
+     * Set the noWrapped flag.
+     * @param noWrapped
+     */ 
+    public void setNoWrapped(boolean noWrapped) {
+      this.noWrapped = noWrapped;
+    }
+    
     private void traceSystemSetting(String setting,int logLevel) {
         String value=System.getProperty(setting);
         log("\t"+setting+"=" + value, logLevel);
