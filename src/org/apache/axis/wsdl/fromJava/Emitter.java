@@ -209,36 +209,6 @@ public class Emitter {
      * @throws Exception
      */
     public Document emit(int mode) throws Exception {
-        if (serviceDesc == null) {
-            serviceDesc = new ServiceDesc();
-            serviceDesc.setImplClass(cls);
-            //serviceDesc.setStyle();
-            TypeMappingRegistry tmr = new TypeMappingRegistryImpl();
-            serviceDesc.setTypeMapping((TypeMapping)
-                                       tmr.getDefaultTypeMapping());
-        }
-
-        serviceDesc.setStopClasses(stopClasses);
-        serviceDesc.setAllowedMethods(allowedMethods);
-        serviceDesc.setDisallowedMethods(disallowedMethods);
-
-        // If the class passed in is a portType, 
-        // there may be an implClass that is used to 
-        // obtain the method parameter names.  In this case,
-        // a serviceDesc2 is built to get the method parameter names. 
-        if (implCls != null &&
-            implCls != cls &&
-            serviceDesc2 == null) {
-            serviceDesc2 = new ServiceDesc();
-            serviceDesc2.setImplClass(implCls);
-            TypeMappingRegistry tmr = new TypeMappingRegistryImpl();
-            serviceDesc2.setTypeMapping((TypeMapping)
-                                       tmr.getDefaultTypeMapping());
-            serviceDesc2.setStopClasses(stopClasses);
-            serviceDesc2.setAllowedMethods(allowedMethods);
-            serviceDesc2.setDisallowedMethods(disallowedMethods);
-        }
-
         Document doc = null;
         Definition def = null;
         switch (mode) {
@@ -392,6 +362,38 @@ public class Emitter {
      * @throws Exception
      */
     private void init() throws Exception {
+
+        // Set up a ServiceDesc to use to introspect the Service
+        if (serviceDesc == null) {
+            serviceDesc = new ServiceDesc();
+            serviceDesc.setImplClass(cls);
+            //serviceDesc.setStyle();
+            TypeMappingRegistry tmr = new TypeMappingRegistryImpl();
+            serviceDesc.setTypeMapping((TypeMapping)
+                                       tmr.getDefaultTypeMapping());
+        }
+
+        serviceDesc.setStopClasses(stopClasses);
+        serviceDesc.setAllowedMethods(allowedMethods);
+        serviceDesc.setDisallowedMethods(disallowedMethods);
+
+        // If the class passed in is a portType, 
+        // there may be an implClass that is used to 
+        // obtain the method parameter names.  In this case,
+        // a serviceDesc2 is built to get the method parameter names. 
+        if (implCls != null &&
+            implCls != cls &&
+            serviceDesc2 == null) {
+            serviceDesc2 = new ServiceDesc();
+            serviceDesc2.setImplClass(implCls);
+            TypeMappingRegistry tmr = new TypeMappingRegistryImpl();
+            serviceDesc2.setTypeMapping((TypeMapping)
+                                       tmr.getDefaultTypeMapping());
+            serviceDesc2.setStopClasses(stopClasses);
+            serviceDesc2.setAllowedMethods(allowedMethods);
+            serviceDesc2.setDisallowedMethods(disallowedMethods);
+        }
+
         if (encodingList == null) {
             clsName = cls.getName();
             clsName = clsName.substring(clsName.lastIndexOf('.') + 1);

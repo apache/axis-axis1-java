@@ -73,9 +73,12 @@ import java.io.PrintWriter;
 public class Java2WsdlAntTask extends Task
 {
     private String namespace = "";
+    private String namespaceImpl = null;
     private HashMap namespaceMap = new HashMap();
     private String location = "";
+    private String locationImport = null;
     private String output = "." ;
+    private String outputImpl = null;
     private String className = "." ;
     private String servicePortName = null ;
     private String portTypeName = null ;
@@ -101,6 +104,9 @@ public class Java2WsdlAntTask extends Task
             log("\tstopClasses:" + stopClasses, Project.MSG_VERBOSE);
             log("\ttypeMappingVersion:" + tm, Project.MSG_VERBOSE);
             log("\tstyle:" + style, Project.MSG_VERBOSE);
+            log("\toutputImpl:" + outputImpl, Project.MSG_VERBOSE);
+            log("\tnamespaceImpl:" + namespaceImpl, Project.MSG_VERBOSE);
+            log("\tlocationImport:" + locationImport, Project.MSG_VERBOSE);
             
             // Instantiate the emitter
             Emitter emitter = new Emitter();
@@ -134,9 +140,17 @@ public class Java2WsdlAntTask extends Task
                 }
             }
             emitter.setIntfNamespace(namespace);
+            emitter.setImplNamespace(namespaceImpl);
             emitter.setLocationUrl(location);
+            emitter.setImportUrl(locationImport);
             emitter.setUseInheritedMethods(useInheritedMethods);
-            emitter.emit(output, Emitter.MODE_ALL);
+            if (outputImpl == null) {
+                // Normal case
+                emitter.emit(output, Emitter.MODE_ALL);
+            } else {
+                // Emit interface and implementation wsdls
+                emitter.emit(output, outputImpl);
+            }
         } catch (Throwable t) {
             StringWriter writer = new StringWriter();
             t.printStackTrace(new PrintWriter(writer));
@@ -150,9 +164,19 @@ public class Java2WsdlAntTask extends Task
         this.output = parameter;
     }
 
+    // The setter for the "outputImpl" attribute
+    public void setOutputImpl(String parameter) {
+        this.outputImpl = parameter;
+    }
+
     // The setter for the "location" attribute
     public void setLocation(String parameter) {
         this.location = parameter;
+    }
+
+    // The setter for the "locationImport" attribute
+    public void setLocationImport(String parameter) {
+        this.locationImport = parameter;
     }
 
     // The setter for the "className" attribute
@@ -178,6 +202,11 @@ public class Java2WsdlAntTask extends Task
     // The setter for the "namespace" attribute
     public void setNamespace(String parameter) {
         this.namespace = parameter;
+    }
+
+    // The setter for the "namespaceImpl" attribute
+    public void setNamespaceImpl(String parameter) {
+        this.namespaceImpl = parameter;
     }
 
     // The setter for the "useInheritedMethods" attribute

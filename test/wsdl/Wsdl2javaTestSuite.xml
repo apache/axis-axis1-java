@@ -193,7 +193,22 @@
       <exclude name="test/wsdl/roundtrip/*TestCase.java" />
       <exclude name="test/wsdl/roundtrip/*Impl.java" />
     </javac>
-    <!-- Now create the WSDL file -->
+
+    <!-- The following invocation of java2wsdl simply tests whether the 
+         split wsdl function works.  The generated wsdl files are not used. -->
+    
+    <java2wsdl output="build/work/test/wsdl/roundtrip/RoundtripIntf.wsdl"
+               outputImpl="build/work/test/wsdl/roundtrip/RoundtripImpl.wsdl"
+               className= "test.wsdl.roundtrip.RoundtripPortType"
+               useInheritedMethods="false"
+               namespace="http://roundtrip.wsdl.test"
+               namespaceImpl="http://roundtrip.wsdl.test"
+               location="http://localhost:8080/axis/services/RoundtripTest"
+               locationImport="file://build/work/test/wsdl/roundtrip/RoundtripIntf.wsdl">
+        <mapping namespace="http://roundtrip.wsdl.test" package="test.wsdl.roundtrip"/>
+    </java2wsdl>
+
+    <!-- Now create the real WSDL file -->
     <java2wsdl output="build/work/test/wsdl/roundtrip/Roundtrip.wsdl"
                className= "test.wsdl.roundtrip.RoundtripPortType"
                useInheritedMethods="false"
