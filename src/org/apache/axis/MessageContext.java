@@ -186,9 +186,7 @@ public class MessageContext implements SOAPMessageContext {
      */
     private String  username       = null;
     private String  password       = null;
-    private Style   operationStyle = Style.RPC;
-    private Use     operationUse   = Use.ENCODED;
-    private String  encodingStyle  = operationUse.getEncoding();
+    private String  encodingStyle  = Use.ENCODED.getEncoding();
     private boolean useSOAPAction  = false;
     private String  SOAPActionURI  = null;
 
@@ -248,8 +246,6 @@ public class MessageContext implements SOAPMessageContext {
             ServiceDesc desc = serviceHandler.getInitializedServiceDesc(this);
 
             if (desc != null) {
-                setOperationStyle(desc.getStyle());
-                setOperationUse(desc.getUse());
                 if (desc.getStyle() != Style.DOCUMENT) {
                     possibleOperations = desc.getOperationsByQName(qname);
                 } else {
@@ -434,7 +430,7 @@ public class MessageContext implements SOAPMessageContext {
      * Encoding
      */
     public boolean isEncoded() {
-        return (operationUse == Use.ENCODED);
+        return (getOperationUse() == Use.ENCODED);
         //return soapConstants.getEncodingURI().equals(encodingStyle);
     }
 
@@ -644,11 +640,9 @@ public class MessageContext implements SOAPMessageContext {
         serviceHandler = sh;
         if (sh != null) {
             targetService = sh.getName();
-            SOAPService service = (SOAPService)sh;
+            SOAPService service = sh;
             TypeMappingRegistry tmr = service.getTypeMappingRegistry();
             setTypeMappingRegistry(tmr);
-            setOperationStyle(service.getStyle());
-            setOperationUse(service.getUse());
 
             // styles are not "soap version aware" so compensate...
             setEncodingStyle(service.getUse().getEncoding());
@@ -798,19 +792,6 @@ public class MessageContext implements SOAPMessageContext {
             }
             setMaintainSession(((Boolean) value).booleanValue());
         }
-        else if (name.equals(Call.OPERATION_STYLE_PROPERTY)) {
-            if (!(value instanceof String)) {
-                throw new IllegalArgumentException(
-                        Messages.getMessage("badProp00", new String[] {
-                        name, "java.lang.String", value.getClass().getName()}));
-            }
-            setOperationStyle(Style.getStyle((String)value, Style.DEFAULT));
-            if (getOperationStyle() == Style.RPC) {
-                setOperationUse(Use.ENCODED);
-            } else if (getOperationStyle() == Style.DOCUMENT) {
-                setOperationUse(Use.LITERAL);
-            }
-        }
         else if (name.equals(Call.SOAPACTION_USE_PROPERTY)) {
             if (!(value instanceof Boolean)) {
                 throw new IllegalArgumentException(
@@ -940,31 +921,33 @@ public class MessageContext implements SOAPMessageContext {
     } // getPassword
 
     /**
-     * Set the operation style.
-     */
-    public void setOperationStyle(Style operationStyle) {
-        this.operationStyle = operationStyle;
-    } // setOperationStyle
-
-    /**
      * Get the operation style.
      */
     public Style getOperationStyle() {
-        return operationStyle;
-    } // getOperationStyle
+        if (currentOperation != null) {
+            return currentOperation.getStyle();
+        }
 
-    /**
-     * Set the operation use.
-     */
-    public void setOperationUse(Use operationUse) {
-        this.operationUse = operationUse;
-    } // setOperationUse
+        if (serviceHandler != null) {
+            return serviceHandler.getStyle();
+        }
+
+        return Style.RPC;
+    } // getOperationStyle
 
     /**
      * Get the operation use.
      */
     public Use getOperationUse() {
-        return operationUse;
+        if (currentOperation != null) {
+            return currentOperation.getUse();
+        }
+
+        if (serviceHandler != null) {
+            return serviceHandler.getUse();
+        }
+
+        return Use.ENCODED;
     } // getOperationUse
 
     /**

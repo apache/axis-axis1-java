@@ -61,6 +61,7 @@ import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.transport.local.LocalTransport;
 import org.apache.axis.configuration.SimpleProvider;
 import org.apache.axis.configuration.BasicServerConfig;
+import org.apache.axis.enum.Style;
 import junit.framework.TestCase;
 
 /**
@@ -129,7 +130,7 @@ public class GenericLocalTest extends TestCase {
      * Convenience method to deploy ourselves as a service
      */ 
     public void deploy() {
-        deploy("service", this.getClass());
+        deploy("service", this.getClass(), Style.RPC);
     }
 
     /**
@@ -139,10 +140,12 @@ public class GenericLocalTest extends TestCase {
      * @param serviceName the name under which to deploy the service.
      * @param target class of the service.
      */ 
-    public void deploy(String serviceName, Class target) {
+    public void deploy(String serviceName, Class target, Style style) {
         String className = target.getName();
 
         SOAPService service = new SOAPService(new RPCProvider());
+        service.setStyle(style);
+
         service.setOption("className", className);
         service.setOption("allowedMethods", "*");
 

@@ -70,7 +70,6 @@ import java.util.Hashtable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.ArrayList;
-import java.util.Set;
 
 /**
  * A SimpleProvider is an EngineConfiguration which contains a simple
@@ -243,7 +242,8 @@ public class SimpleProvider implements EngineConfiguration
     public void deployService(QName qname, SOAPService service)
     {
         services.put(qname, service);
-        service.setEngine(engine);
+        if (engine != null)
+            service.setEngine(engine);
     }
 
     public void deployService(String name, SOAPService service)

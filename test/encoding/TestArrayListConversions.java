@@ -8,10 +8,10 @@ import org.apache.axis.providers.java.RPCProvider;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.transport.local.LocalTransport;
 import org.apache.axis.configuration.SimpleProvider;
-import org.apache.axis.encoding.DefaultTypeMappingImpl;
 import org.apache.axis.description.ServiceDesc;
 
 import javax.xml.namespace.QName;
+import javax.xml.rpc.ParameterMode;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -124,6 +124,7 @@ public class TestArrayListConversions extends TestCase {
         l.add("This will be a SOAP Array then a Vector!");
 
         call.setOperationName(new QName(SERVICE_NAME, "echoArray"));
+        call.addParameter("arg0", null, LinkedList.class, ParameterMode.IN);
         call.setReturnClass(Vector.class);
         Object ret = call.invoke(new Object[]{l});
         assertEquals("Return wasn't a Vector!", Vector.class, ret.getClass());

@@ -52,53 +52,68 @@
  * <http://www.apache.org/>.
  */
 
-/**
- * @author Glen Daniels (gdaniels@apache.org)
- */
-package test.functional;
+package test.encoding;
 
-import junit.framework.TestCase;
-import org.apache.axis.deployment.wsdd.WSDDConstants;
-import org.apache.axis.client.AdminClient;
-import org.apache.axis.client.Call;
+import test.GenericLocalTest;
+import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.ser.BeanSerializerFactory;
 import org.apache.axis.encoding.ser.BeanDeserializerFactory;
-import org.apache.axis.utils.Options;
+import org.apache.axis.enum.Style;
+import org.apache.axis.client.Call;
 
 import javax.xml.namespace.QName;
-import java.io.ByteArrayInputStream;
+import javax.xml.rpc.ParameterMode;
 
-public class TestJWSGlobalTypes extends TestCase {
-    private static final String TYPEMAPPING_WSDD =
-            "<deployment xmlns=\"" + WSDDConstants.URI_WSDD + "\" " +
-                        "xmlns:java=\"" + WSDDConstants.URI_WSDD_JAVA + "\" " +
-                        "xmlns:ns=\"http://globalTypeTest\">\n" +
-            "  <beanMapping type=\"java:test.functional.GlobalBean\" " +
-                        "qname=\"ns:GlobalType\"/>\n" +
-            "</deployment>";
+/**
+ * Confirm that global type mappings work in both RPC and Document
+ * contexts.
+ *
+ * @author Glen Daniels (gdaniels@apache.org)
+ */
+public class TestGlobalTypeMappings extends GenericLocalTest {
+    private QName TYPE_QNAME = new QName("ns", "dataType");
 
-    public TestJWSGlobalTypes(String s) {
+    public TestGlobalTypeMappings() {
+        super("service");
+    }
+
+    public TestGlobalTypeMappings(String s) {
         super(s);
     }
 
     protected void setUp() throws Exception {
-        // Deploy the type mapping
-        AdminClient client = new AdminClient();
-        Options opts = new Options(null);
-        ByteArrayInputStream bis =
-                new ByteArrayInputStream(TYPEMAPPING_WSDD.getBytes());
-        client.process(opts, bis);
+        super.setUp(false); // don't deploy here
+        TypeMapping tm = (TypeMapping)config.getTypeMappingRegistry().
+                getDefaultTypeMapping();
+        tm.register(Data.class, TYPE_QNAME,
+                    new BeanSerializerFactory(Data.class, TYPE_QNAME),
+                    new BeanDeserializerFactory(Data.class, TYPE_QNAME));
     }
 
-    public void testGlobalTypes() throws Exception {
-        Call call = new Call("http://localhost:8080/jws/GlobalTypeTest.jws");
-        QName qname = new QName("http://globalTypeTest", "GlobalType");
-        call.registerTypeMapping(GlobalBean.class, qname,
-                    new BeanSerializerFactory(GlobalBean.class, qname),
-                    new BeanDeserializerFactory(GlobalBean.class, qname));
-        GlobalBean bean = new GlobalBean();
-        bean.setIntValue(4);
-        GlobalBean ret = (GlobalBean)call.invoke("echo", new Object [] { bean });
-        assertEquals(4, ret.getIntValue());
+    public void testDocLit() throws Exception {
+        deploy("service", this.getClass(), Style.WRAPPED);
+        Call call = getCall();
+        call.setOperationStyle("wrapped");
+        call.setOperationUse("literal");
+        call.setEncodingStyle("");
+        call.registerTypeMapping(Data.class, TYPE_QNAME,
+                    new BeanSerializerFactory(Data.class, TYPE_QNAME),
+                    new BeanDeserializerFactory(Data.class, TYPE_QNAME));
+        call.setReturnClass(Data.class);
+        call.addParameter("arg0", TYPE_QNAME, ParameterMode.IN);
+        Data data = new Data();
+        data.stringMember = "doc lit test";
+        data.floatMember = new Float(451.0F);
+        call.invoke("echoData", new Object [] { data });
+    }
+
+    /**
+     * Our service method.  We'll deploy this several ways.
+     *
+     * @param data
+     * @return
+     */
+    public Data echoData(Data data) {
+        return data;
     }
 }

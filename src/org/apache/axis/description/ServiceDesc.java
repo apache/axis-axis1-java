@@ -116,6 +116,11 @@ public class ServiceDesc {
     private Style style = Style.RPC;
     private Use   use   = Use.ENCODED;
 
+    // Style and Use are related.  By default, if Style==RPC, Use should be
+    // ENCODED.  But if Style==DOCUMENT, Use should be LITERAL.  So we want
+    // to keep the defaults synced until someone explicitly sets the Use.
+    private boolean useSet = false;
+
     /** Implementation class */
     private Class implClass = null;
 
@@ -191,6 +196,10 @@ public class ServiceDesc {
 
     public void setStyle(Style style) {
         this.style = style;
+        if (!useSet) {
+            // Use hasn't been explicitly set, so track style
+            use = style == Style.RPC ? Use.ENCODED : Use.LITERAL;
+        }
     }
 
     /**
@@ -202,6 +211,7 @@ public class ServiceDesc {
     }
 
     public void setUse(Use use) {
+        useSet = true;
         this.use = use;
     }
 

@@ -1087,6 +1087,19 @@ public class Call implements javax.xml.rpc.Call {
      * @param cls the desired return class.
      */
     public void setReturnClass(Class cls) {
+        if (operationSetManually) {
+            throw new RuntimeException(
+                    Messages.getMessage("operationAlreadySet"));
+        }
+
+        if (operation == null)
+            operation = new OperationDesc();
+
+        operation.setReturnClass(cls);
+        TypeMapping tm = getTypeMapping();
+        operation.setReturnType(tm.getTypeQName(cls));
+        parmAndRetReq = true;
+
         returnJavaType = cls;
     }
 
@@ -2273,8 +2286,6 @@ public class Call implements javax.xml.rpc.Call {
             operation.setStyle(getOperationStyle());
             operation.setUse(getOperationUse());
         }
-        msgContext.setOperationStyle(getOperationStyle());
-        msgContext.setOperationUse(getOperationUse());
 
         if (useSOAPAction) {
             msgContext.setUseSOAPAction(true);

@@ -681,7 +681,8 @@ public class SerializationContextImpl implements SerializationContext
         // hashCode() and equals() methods have been overloaded to make two
         // Objects appear equal.
 
-        if (doMultiRefs && (value != forceSer) && !isPrimitive(value)) {
+        if (doMultiRefs && (msgContext == null || msgContext.isEncoded()) &&
+                (value != forceSer) && !isPrimitive(value)) {
             if (multiRefIndex == -1)
                 multiRefValues = new HashMap();
 
