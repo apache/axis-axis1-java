@@ -61,6 +61,7 @@ import org.xml.sax.helpers.*;
 import org.apache.axis.Constants;
 import org.apache.axis.message.*;
 import org.apache.axis.utils.QName;
+import org.apache.log4j.Category;
 
 import java.io.*;
 import java.util.*;
@@ -76,8 +77,9 @@ import java.lang.*;
 
 public class Deserializer extends SOAPHandler
 {
-    private static final boolean DEBUG_LOG = false;
-    
+    static Category category =
+            Category.getInstance(Deserializer.class.getName());
+
     protected Object value = null;
     //protected DeserializationContext context = null;
     protected boolean isComplete = false;
@@ -228,8 +230,8 @@ public class Deserializer extends SOAPHandler
             while (e.hasMoreElements()) {
                 Target target = (Target)e.nextElement();
                 target.set(value);
-                if (DEBUG_LOG) {
-                    System.out.println("Set value " + value + " in target " +
+                if (category.isDebugEnabled()) {
+                    category.debug("Set value " + value + " in target " +
                                        target);
                 }
             }
@@ -254,8 +256,8 @@ public class Deserializer extends SOAPHandler
                                                        localName,
                                                        attributes);
             
-            if (DEBUG_LOG) {
-                System.out.println("Deser got type : " + type);
+            if (category.isDebugEnabled()) {
+                category.debug("Deser got type : " + type);
             }
             
             // We know we're deserializing, and we can't seem to figure
@@ -296,8 +298,8 @@ public class Deserializer extends SOAPHandler
             
             Object ref = context.getObjectByRef(href);
             
-            if (DEBUG_LOG) {
-                System.out.println("Got " + ref + " for ID " + href);
+            if (category.isDebugEnabled()) {
+                category.debug("Got " + ref + " for ID " + href);
             }
             
             if (ref == null) {

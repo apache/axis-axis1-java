@@ -62,6 +62,7 @@ import org.xml.sax.*;
 import org.apache.axis.Constants;
 import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.*;
+import org.apache.log4j.Category;
 
 /**
  * A <code>MapSerializer</code> is be used to serialize and
@@ -72,8 +73,9 @@ import org.apache.axis.utils.*;
  */
 public class MapSerializer extends Deserializer implements Serializer
 {
-    private static final boolean DEBUG_LOG = false;
-    
+    static Category category =
+            Category.getInstance(MapSerializer.class.getName());
+
     // QNames we deal with
     private static final QName QNAME_KEY = new QName("","key");
     private static final QName QNAME_ITEM = new QName("", "item");
@@ -195,14 +197,14 @@ public class MapSerializer extends Deserializer implements Serializer
                              DeserializationContext context)
         throws SAXException
     {
-        if (DEBUG_LOG) {
-            System.err.println("In MapSerializer.startElement()");
+        if (category.isDebugEnabled()) {
+            category.debug("In MapSerializer.startElement()");
         }
         
         value = new HashMap();
         
-        if (DEBUG_LOG) {
-            System.err.println("Out MapSerializer.startElement()");
+        if (category.isDebugEnabled()) {
+            category.debug("Out MapSerializer.startElement()");
         }
     }
     
@@ -213,8 +215,8 @@ public class MapSerializer extends Deserializer implements Serializer
                                     DeserializationContext context)
         throws SAXException
     {
-        if (DEBUG_LOG) {
-            System.err.println("In MapSerializer.onStartChild()");
+        if (category.isDebugEnabled()) {
+            category.debug("In MapSerializer.onStartChild()");
         }
 
         if (!localName.equals("item"))
