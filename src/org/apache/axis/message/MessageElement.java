@@ -295,8 +295,9 @@ public class MessageElement implements SOAPElement,
     public Attributes getAttributesEx() { return attributes; }
 
     public Node getFirstChild() {
-        if(children != null && !children.isEmpty()){
-            return (Node)children.get(0);
+        Iterator iterator = getChildElements();
+        if(iterator != null && iterator.hasNext()){
+            return (Node)iterator.next();
         }else{
             return null;
         }
