@@ -147,21 +147,6 @@ public class TestRPC extends TestCase {
     }
 
     /**
-     * Test a simple method that returns a field from the message context
-     */
-    public void testMessageContextExplicit() throws Exception {
-        // Register the targetService service
-        SOAPService tgtSvc = new SOAPService(new RPCProvider());
-        tgtSvc.setOption("className", "test.RPCDispatch.Service");
-        tgtSvc.setOption("allowedMethods", "targetServiceExplicit");
-        provider.deployService(new QName(null, SOAPAction), tgtSvc);
-
-        // invoke the service and verify the result
-        assertEquals("SOAP Action did not equal the targetService.", 
-            SOAPAction, rpc("targetServiceExplicit", new Object[] {}));
-    }
-
-    /**
      * Test a simple method that accepts and returns a null
      */
     public void testNull() throws Exception {

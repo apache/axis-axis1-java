@@ -201,8 +201,8 @@ public class SimpleProvider implements EngineConfiguration
         return transport;
     }
 
-    public Handler getService(QName qname) throws ConfigurationException {
-        Handler service = (Handler)services.get(qname);
+    public SOAPService getService(QName qname) throws ConfigurationException {
+        SOAPService service = (SOAPService)services.get(qname);
         if ((defaultConfiguration != null) && (service == null))
             service = defaultConfiguration.getService(qname);
         return service;
@@ -214,9 +214,9 @@ public class SimpleProvider implements EngineConfiguration
      * @param namespace a namespace URI
      * @return an instance of the appropriate Service, or null
      */
-    public Handler getServiceByNamespaceURI(String namespace)
+    public SOAPService getServiceByNamespaceURI(String namespace)
             throws ConfigurationException {
-        Handler service = (Handler)services.get(new QName("",namespace));
+        SOAPService service = (SOAPService)services.get(new QName("",namespace));
         if ((service == null) && (defaultConfiguration != null))
             service = defaultConfiguration.getServiceByNamespaceURI(namespace);
         return service;

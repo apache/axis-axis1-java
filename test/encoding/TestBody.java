@@ -52,7 +52,7 @@ public class TestBody extends TestCase {
         //assertEquals("Namespace does not equal the message context target service.", namespace, msgContext.getTargetService());
 
         // verify the service is set
-        assertEquals("The target is not the same as the message context service handler", target, msgContext.getServiceHandler());
+        assertEquals("The target is not the same as the message context service handler", target, msgContext.getService());
     }
 
     public static void main(String[] args) throws Exception {

@@ -72,7 +72,7 @@ public class ClientSigningHandler extends BasicHandler {
         /** Sign the SOAPEnvelope
          */
         try {
-            Handler serviceHandler = msgContext.getServiceHandler();
+            Handler serviceHandler = msgContext.getService();
             String filename = (String) getOption("keystore");
             if ((filename == null) || (filename.equals("")))
                 throw new AxisFault("Server.NoKeyStoreFile",

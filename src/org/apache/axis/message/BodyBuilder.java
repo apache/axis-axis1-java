@@ -65,6 +65,7 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Handler;
 import org.apache.axis.ConfigurationException;
+import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
@@ -116,19 +117,19 @@ public class BodyBuilder extends SOAPHandler
         MessageContext msgContext = context.getMessageContext();
 
         if (isRoot &&
-            msgContext.getServiceHandler() == null) {
+            msgContext.getService() == null) {
 
             if (log.isDebugEnabled()) {
                 log.debug(JavaUtils.getMessage("dispatching00",namespace));
             }
 
             try {
-                Handler serviceHandler = msgContext.
+                SOAPService service = msgContext.
                                            getAxisEngine().
                                            getConfig().
                                            getServiceByNamespaceURI(namespace);
-                if (serviceHandler != null)
-                    msgContext.setServiceHandler(serviceHandler);
+                if (service != null)
+                    msgContext.setService(service);
             } catch (ConfigurationException e) {
                 // oh well...
             }

@@ -268,7 +268,7 @@ public class AxisServer extends AxisEngine
                 * transport or global Handlers).  If it hasn't been set, we
                 * fault.
                 */
-                h = msgContext.getServiceHandler();
+                h = msgContext.getService();
                 if (h == null) {
                     // It's possible that we haven't yet parsed the
                     // message at this point.  This is a kludge to
@@ -277,7 +277,7 @@ public class AxisServer extends AxisEngine
                     // chain instead....
                     Message rm = msgContext.getRequestMessage();
                     rm.getSOAPEnvelope().getFirstBody();
-                    h = msgContext.getServiceHandler();
+                    h = msgContext.getService();
                     if (h == null)
                         throw new AxisFault("Server.NoService",
                             JavaUtils.getMessage("noService05",
@@ -416,7 +416,7 @@ public class AxisServer extends AxisEngine
                 * transport or global Handlers).  If it hasn't been set, we
                 * fault.
                 */
-                h = msgContext.getServiceHandler();
+                h = msgContext.getService();
                 if (h == null) {
                     // It's possible that we haven't yet parsed the
                     // message at this point.  This is a kludge to
@@ -426,7 +426,7 @@ public class AxisServer extends AxisEngine
                     Message rm = msgContext.getRequestMessage();
                     if (rm != null) {
                         rm.getSOAPEnvelope().getFirstBody();
-                        h = msgContext.getServiceHandler();
+                        h = msgContext.getService();
                     }
                     if (h == null)
                         throw new AxisFault("Server.NoService",

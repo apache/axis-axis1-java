@@ -90,6 +90,9 @@ public class WSDDService
     private Vector namespaces = new Vector();
     
     private String descriptionURL;
+    
+    /** Style - document or RPC (the default) */
+    private int style = SOAPService.STYLE_RPC;
 
     private SOAPService cachedService = null;
     
@@ -140,6 +143,10 @@ public class WSDDService
         String typeStr = e.getAttribute("provider");
         if (typeStr != null && !typeStr.equals(""))
             providerQName = XMLUtils.getQNameFromString(typeStr, e);
+        
+        String modeStr = e.getAttribute("style");
+        if (modeStr != null && modeStr.equals("document"))
+            style = SOAPService.STYLE_DOCUMENT;
     }
 
     /**
@@ -183,6 +190,20 @@ public class WSDDService
 
     public void setProviderQName(QName providerQName) {
         this.providerQName = providerQName;
+    }
+
+    /**
+     * Get the service style - document or RPC
+     */ 
+    public int getStyle() {
+        return style;
+    }
+
+    /**
+     * Set the service style - document or RPC
+     */ 
+    public void setStyle(int style) {
+        this.style = style;
     }
 
     /**
@@ -268,6 +289,7 @@ public class WSDDService
   
         SOAPService service = new SOAPService(reqHandler, providerHandler,
                                               respHandler);
+        service.setStyle(style);
 
         if ( getQName() != null )
             service.setName(getQName().getLocalPart());
@@ -366,6 +388,9 @@ public class WSDDService
         if (providerQName != null) {
             attrs.addAttribute("", "provider", "provider",
                                "CDATA", context.qName2String(providerQName));
+        }
+        if (style == SOAPService.STYLE_DOCUMENT) {
+            attrs.addAttribute("", "style", "style", "CDATA", "document");
         }
         
         context.startElement(WSDDConstants.SERVICE_QNAME, attrs);

@@ -225,7 +225,7 @@ public class Admin {
         /** For now, though - make sure we can only admin from our own
          * IP, unless the remoteAdmin option is set.
          */
-        Handler serviceHandler = msgContext.getServiceHandler();
+        Handler serviceHandler = msgContext.getService();
         if (serviceHandler != null) {
             String remoteAdmin = (String)serviceHandler.
                                         getOption("enableRemoteAdmin");

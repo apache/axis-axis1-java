@@ -58,12 +58,18 @@ package org.apache.axis.message;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.Constants;
+import org.apache.axis.MessageContext;
+import org.apache.axis.Handler;
+import org.apache.axis.utils.cache.ClassCache;
+import org.apache.axis.utils.cache.JavaClass;
+import org.apache.axis.utils.JavaUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.SAXException;
 
 import javax.xml.rpc.namespace.QName;
 import java.util.Vector;
+import java.lang.reflect.Method;
 
 public class RPCElement extends SOAPBodyElement
 {
@@ -108,14 +114,64 @@ public class RPCElement extends SOAPBodyElement
         return name;
     }
     
+    protected Class  defaultParamTypes[] = null;
+    
+    public Class [] getJavaParamTypes()
+    {
+        return defaultParamTypes;
+    }
+    
     public void deserialize() throws SAXException
     {
-        context.pushElementHandler(new EnvelopeHandler(new RPCHandler(this)));
-        context.setCurElement(this);
-        
         needDeser = false;
+
+        MessageContext msgContext = context.getMessageContext();
+        Handler service    = msgContext.getService();
+        String clsName = null;
+
+        if (service != null) {
+            clsName = (String)service.getOption("className");
+        }
+
+        if (clsName != null) {
+            ClassLoader cl       = msgContext.getClassLoader();
+            ClassCache cache     = msgContext.getAxisEngine().getClassCache();
+            JavaClass       jc   = null;
+            try {
+                jc = cache.lookup(clsName, cl);
+            } catch (ClassNotFoundException e) {
+                throw new SAXException(e);
+            }
+            
+            if (log.isDebugEnabled()) {
+                log.debug(JavaUtils.getMessage(
+                        "lookup00", name, clsName));
+            }
+            
+            Method[] method = jc.getMethod(name);
+            int numChildren = (getChildren() == null) ? 0 : getChildren().size();
+            if (method != null) {
+                for (int i = 0; i < method.length; i++) {
+                    defaultParamTypes = method[i].getParameterTypes();
+                    if (defaultParamTypes.length >= numChildren) {
+                        try {
+                            context.pushElementHandler(new EnvelopeHandler(new RPCHandler(this)));
+                            context.setCurElement(this);
         
-        publishToHandler((org.xml.sax.ContentHandler) context);
+                            publishToHandler((org.xml.sax.ContentHandler) context);
+                        } catch (SAXException e) {
+                            // If there was a problem, try the next one.
+                            params = new Vector();
+                            continue;
+                        }
+                        // Succeeded in deserializing!
+                        return;
+                    }
+                }
+            }
+        }
+        
+        publishToHandler((org.xml.sax.ContentHandler)context);
     }
     
     /** This gets the FIRST param whose name matches.

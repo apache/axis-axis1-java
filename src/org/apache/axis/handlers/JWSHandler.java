@@ -57,6 +57,7 @@ package org.apache.axis.handlers;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
+import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.utils.JavaUtils;
 
 import org.apache.commons.logging.Log;
@@ -77,7 +78,7 @@ public class JWSHandler extends BasicHandler
 
     // Keep the processor Handler around so we can make it the service
     // Handler for this request if appropriate.
-    static JWSProcessor processor = new JWSProcessor();
+    static SOAPService processor = new SOAPService(new JWSProcessor());
 
     public void invoke(MessageContext msgContext) throws AxisFault
     {
@@ -90,7 +91,7 @@ public class JWSHandler extends BasicHandler
         String realpath = msgContext.getStrProp(Constants.MC_REALPATH);
 
         if ((realpath!=null) && (realpath.endsWith(".jws"))) {
-            msgContext.setServiceHandler(processor);
+            msgContext.setService(processor);
         }
 
         if (log.isDebugEnabled()) {

@@ -122,7 +122,7 @@ public class HTTPTransport extends Transport
         // Allow the SOAPAction to determine the service, if the service
         // (a) has not already been determined, and (b) if a service matching
         // the soap action has been deployed.
-        if (mc.getServiceHandler() == null) {
+        if (mc.getService() == null) {
             mc.setTargetService( (String)mc.getSOAPActionURI() );
         }
     }

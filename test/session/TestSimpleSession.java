@@ -141,9 +141,9 @@ public class TestSimpleSession extends TestCase {
      * This is our service method for testing session data.  Simply
      * increments a session-scoped counter.
      */
-    public Integer counter(MessageContext context) throws Exception
+    public Integer counter() throws Exception
     {
-        Session session = context.getSession();
+        Session session = MessageContext.getCurrentContext().getSession();
         if (session == null)
             throw new Exception("No session in MessageContext!");
         Integer count = (Integer)session.get("counter");

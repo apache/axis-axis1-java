@@ -88,7 +88,7 @@ public class MsgProvider extends JavaProvider {
                                 Object obj)
         throws Exception
     {
-        Handler targetService = msgContext.getServiceHandler();
+        Handler targetService = msgContext.getService();
         
         // is this service a body-only service?
         // if true (the default), the servic3e expects two args,

@@ -106,7 +106,7 @@ public class SimpleAuthorizationHandler extends BasicHandler {
                     JavaUtils.getMessage("needUser00"), null, null);
 
         String userID = user.getName();
-        Handler serviceHandler = msgContext.getServiceHandler();
+        Handler serviceHandler = msgContext.getService();
 
         if (serviceHandler == null)
             throw new AxisFault(JavaUtils.getMessage("needService00"));

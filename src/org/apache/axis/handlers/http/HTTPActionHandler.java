@@ -84,7 +84,7 @@ public class HTTPActionHandler extends BasicHandler
 
         /** If there's already a targetService then just return.
         */
-        if ( msgContext.getServiceHandler() == null ) {
+        if ( msgContext.getService() == null ) {
             String action = (String) msgContext.getSOAPActionURI();
             log.debug( "  HTTP SOAPAction: " + action );
             

@@ -80,7 +80,7 @@ public class URLMapper extends BasicHandler
 
         /** If there's already a targetService then just return.
          */
-        if ( msgContext.getServiceHandler() == null ) {
+        if ( msgContext.getService() == null ) {
             // Assumes "/" + servicename
             String path = (String)msgContext.getProperty(HTTPConstants.MC_HTTP_SERVLETPATHINFO);
             if ((path != null) && (path.length() > 1)) {

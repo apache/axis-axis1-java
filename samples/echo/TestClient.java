@@ -79,6 +79,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.io.StringWriter;
+import java.io.PrintWriter;
 
 import javax.xml.rpc.holders.StringHolder;
 import javax.xml.rpc.holders.IntHolder;
@@ -456,22 +458,33 @@ public abstract class TestClient {
         } else {
             client = new TestClient() {
             public void verify(String method, Object sent, Object gotBack) {
+                String message;
                 if (this.equals(sent, gotBack)) {
-                    System.out.println(method + "\t OK");
+                    message = "OK";
                 } else {
-                    String message = "Fail: ";
                     if (gotBack instanceof Exception) {
                         if (gotBack instanceof AxisFault) {
-                            message = "Fault: ";
-                            gotBack = ((AxisFault)gotBack).getFaultString();
+                            message = "Fault: " +
+                                ((AxisFault)gotBack).getFaultString();
                         } else {
+                            StringWriter sw = new StringWriter();
+                            PrintWriter pw = new PrintWriter(sw);
                             message = "Exception: ";
-                            ((Exception)gotBack).printStackTrace();
+                            ((Exception)gotBack).printStackTrace(pw);
+                            message += sw.getBuffer().toString();
                         }
+                    } else {
+                        message = "Fail:" + gotBack + " expected " + sent;
                     }
-                    System.out.println(method + "\t " + message +
-                                       gotBack + " expected " + sent);
                 }
+                // Line up the output
+                String tab = "";
+                int l = method.length();
+                while (l < 25) {
+                    tab += " ";
+                    l++;
+                }
+                System.out.println(method + tab + " " + message);
             }
         };
         }

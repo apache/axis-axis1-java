@@ -58,6 +58,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
+import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.providers.java.RPCProvider;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.JWSClassLoader;
@@ -263,8 +264,8 @@ public class JWSProcessor extends BasicHandler
             /* Create a new RPCProvider - this will be the "service"   */
             /* that we invoke.                                                */
             /******************************************************************/
-            Handler rpc = new RPCProvider();
-            msgContext.setServiceHandler( rpc );
+            SOAPService rpc = new SOAPService(new RPCProvider());
+            msgContext.setService( rpc );
 
             rpc.setOption( "className", clsName );
 

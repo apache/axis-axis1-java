@@ -357,11 +357,16 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
             return getQNameFromString(type);
         }
 
+        /*  Removing this code for now - Glen 2/20/02
+        
         // If all else fails see if the name is a known type
         typeQName = new QName(namespace, localName);
         if (getTypeMapping().getClassForQName(typeQName) != null)
             return typeQName;
-        return null;
+        
+        */
+        
+        return null;        
     }
 
     /**

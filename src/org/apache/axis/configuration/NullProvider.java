@@ -59,6 +59,7 @@ import org.apache.axis.AxisEngine;
 import org.apache.axis.ConfigurationException;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.Handler;
+import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.TypeMappingRegistry;
 
@@ -104,11 +105,11 @@ public class NullProvider implements EngineConfiguration
         return null;
     }
 
-    public Handler getService(QName qname) throws ConfigurationException {
+    public SOAPService getService(QName qname) throws ConfigurationException {
         return null;
     }
 
-    public Handler getServiceByNamespaceURI(String namespace)
+    public SOAPService getServiceByNamespaceURI(String namespace)
             throws ConfigurationException {
         return null;
     }

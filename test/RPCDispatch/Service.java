@@ -35,13 +35,6 @@ public class Service {
     /**
      * Return the target service (should be this!)
      */
-    public String targetServiceExplicit(MessageContext mc) throws Exception {
-       return mc.getTargetService();
-    }
-
-    /**
-     * Return the target service (should be this!)
-     */
     public String targetServiceImplicit() throws Exception {
        return MessageContext.getCurrentContext().getTargetService();
     }
@@ -49,10 +42,10 @@ public class Service {
     /**
      * Return the target service (should be this!)
      */
-    public String argAsDOM(MessageContext mc, Data input) throws Exception {
+    public String argAsDOM(Data input) throws Exception {
 
        // get the first parameter
-       Message message = mc.getRequestMessage();
+       Message message = MessageContext.getCurrentContext().getRequestMessage();
        RPCElement body = (RPCElement)message.getSOAPPart().getAsSOAPEnvelope().getFirstBody();
        NodeList parms = body.getAsDOM().getChildNodes();
        Node parm1 = null;
@@ -71,6 +64,23 @@ public class Service {
      */
     public Integer echoInt(Integer value) throws Exception {
        return value;
+    }
+    
+    /**
+     * Return the boolean value passed in
+     */ 
+    public boolean overloaded(boolean b)
+    {
+        return b;
+    }
+    
+    /**
+     * Return the int passed in (this and the function above test overloaded
+     * method dispatch)
+     */ 
+    public int overloaded(int i)
+    {
+        return i;
     }
 
     /**

@@ -70,7 +70,7 @@ public class LogHandler extends BasicHandler {
         /** Log an access each time we get invoked.
          */
         try {
-            Handler serviceHandler = msgContext.getServiceHandler();
+            Handler serviceHandler = msgContext.getService();
             String filename = (String)getOption("filename");
             if ((filename == null) || (filename.equals("")))
                 throw new AxisFault("Server.NoLogFile",
