@@ -732,7 +732,7 @@ public class SchemaUtils {
      * @param node is the Node
      * @return QName of the compoent of the collection
      */
-    private static QName getCollectionComponentQName(Node node) {
+    public static QName getCollectionComponentQName(Node node) {
         if (node == null) {
             return null;
         }
