@@ -86,10 +86,12 @@ public class TestJAXMSamples extends TestCase {
             if (t != null) {
                 t.printStackTrace();
                 if (t instanceof AxisFault) {
-                    if (((AxisFault) t).detail instanceof SocketException) {
-                        System.out.println("Connect failure caused JAXM DelayedStockQuote to be skipped.");
-                        return;
-                    }
+                  AxisFault af = (AxisFault) t;
+                  if ((af.detail instanceof SocketException)
+							|| (af.getFaultCode().getLocalPart().equals("HTTP"))) {
+						System.out.println("Connect failure caused JAXM DelayedStockQuote to be skipped.");
+						return;
+					}
                 }
                 throw new Exception("Fault returned from test: " + t);
             } else {
@@ -103,26 +105,48 @@ public class TestJAXMSamples extends TestCase {
     } // testGetQuote
     
     public void testJWSFault() throws Exception {
-        SOAPConnectionFactory scFactory = SOAPConnectionFactory.newInstance();
-        SOAPConnection con = scFactory.createConnection();
-
-        MessageFactory factory = MessageFactory.newInstance();
-        SOAPMessage message = factory.createMessage();
-
-        SOAPEnvelope envelope = message.getSOAPPart().getEnvelope();
-        SOAPBody body = envelope.getBody();
-
-        Name bodyName = envelope.createName("echo");
-        SOAPBodyElement bodyElement = body.addBodyElement(bodyName);
-
-        Name name = envelope.createName("arg0");
-        SOAPElement symbol = bodyElement.addChildElement(name);
-        symbol.addTextNode("Hello");
-
-        URLEndpoint endpoint = new URLEndpoint("http://localhost:8080/jws/FaultTest.jws");
-        SOAPMessage response = con.call(message, endpoint);
-        SOAPBody respBody = response.getSOAPPart().getEnvelope().getBody();
-        assertTrue(respBody.hasFault());
+        try {
+	        SOAPConnectionFactory scFactory = SOAPConnectionFactory.newInstance();
+	        SOAPConnection con = scFactory.createConnection();
+	
+	        MessageFactory factory = MessageFactory.newInstance();
+	        SOAPMessage message = factory.createMessage();
+	
+	        SOAPEnvelope envelope = message.getSOAPPart().getEnvelope();
+	        SOAPBody body = envelope.getBody();
+	
+	        Name bodyName = envelope.createName("echo");
+	        SOAPBodyElement bodyElement = body.addBodyElement(bodyName);
+	
+	        Name name = envelope.createName("arg0");
+	        SOAPElement symbol = bodyElement.addChildElement(name);
+	        symbol.addTextNode("Hello");
+	
+	        URLEndpoint endpoint = new URLEndpoint("http://localhost:8080/jws/FaultTest.jws");
+	        SOAPMessage response = con.call(message, endpoint);
+	        SOAPBody respBody = response.getSOAPPart().getEnvelope().getBody();
+	        assertTrue(respBody.hasFault());
+        } catch (javax.xml.soap.SOAPException e) {
+            Throwable t = e.getCause();
+            if (t != null) {
+                t.printStackTrace();
+                if (t instanceof AxisFault) {
+                  AxisFault af = (AxisFault) t;
+                  if ((af.detail instanceof SocketException)
+							|| (af.getFaultCode().getLocalPart().equals("HTTP"))) {
+						System.out.println("Connect failure caused testJWSFault to be skipped.");
+						return;
+					}
+                }
+                throw new Exception("Fault returned from test: " + t);
+            } else {
+                e.printStackTrace();
+                throw new Exception("Exception returned from test: " + e);
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+            throw new Exception("Fault returned from test: " + t);
+        }
     }
 
     public static void main(String args[]) throws Exception {

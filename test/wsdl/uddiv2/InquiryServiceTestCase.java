@@ -7,6 +7,10 @@
 
 package test.wsdl.uddiv2;
 
+import java.net.SocketException;
+
+import org.apache.axis.AxisFault;
+
 public class InquiryServiceTestCase extends junit.framework.TestCase {
     public InquiryServiceTestCase(java.lang.String name) {
         super(name);
@@ -45,9 +49,19 @@ public class InquiryServiceTestCase extends junit.framework.TestCase {
             for(int i=0;i<infos2.length;i++){
                 System.out.println(infos2[i].getBusinessKey());
             }
-        }
-        catch (test.wsdl.uddiv2.api_v2.DispositionReport e1) {
-            throw new junit.framework.AssertionFailedError("error Exception caught: " + e1);
+        } catch (test.wsdl.uddiv2.api_v2.DispositionReport e1) {
+           	throw new junit.framework.AssertionFailedError("error Exception caught: " + e1);
+        } catch (Exception e) {
+            e.printStackTrace();
+			if (e instanceof AxisFault) {
+				AxisFault af = (AxisFault) e;
+				if ((af.detail instanceof SocketException)
+						|| (af.getFaultCode().getLocalPart().equals("HTTP"))) {
+					System.out.println("Connect failure caused testJWSFault to be skipped.");
+					return;
+				}
+			}
+			throw new Exception("Fault returned from test: " + e);
         }
     }
 }
