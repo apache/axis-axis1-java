@@ -54,7 +54,8 @@ Copyright:
     <!-- generate skeletons -->
     <wsdl2java url="${axis.home}/test/wsdl/interop4/groupG/dime/doc/dime-doc.wsdl"
                output="${root.dir}/build/work" 
-               skeletonDeploy="no"
+               skeletonDeploy="yes"
+               timeout="-1"
                testCase="yes"
                serverSide="yes">
         <mapping namespace="http://soapinterop.org/attachments/wsdl" package="test.wsdl.interop4.groupG.dime.doc"/>
@@ -70,14 +71,14 @@ Copyright:
     </wsdl2java>
 
     <mkdir dir="${build.dest}"/>
-    <!--
-    <copy file="BaseTypesInteropTestsTestCase.java"
-         todir="${root.dir}/build/work/test/wsdl/interop5/basetype/"
-         overwrite="yes"/>
-    <copy file="InteropTestsBindingImpl.java"
-         todir="${root.dir}/build/work/test/wsdl/interop5/basetype/"
-         overwrite="yes"/>
-    -->
+
+    <copy file="${axis.home}/test/wsdl/interop4/groupG/dime/doc/DimeDOCInteropTestCase.java"
+          todir="${root.dir}/build/work/test/wsdl/interop4/groupG/dime/doc"
+          overwrite="yes"/>
+    <copy file="${axis.home}/test/wsdl/interop4/groupG/dime/doc/AttachmentsBindingImpl.java"
+          todir="${root.dir}/build/work/test/wsdl/interop4/groupG/dime/doc"
+          overwrite="yes"/>
+
     <!-- compile the skeletons -->
     <javac srcdir="${build.dir}/work"
       destdir="${build.dest}" debug="on">
