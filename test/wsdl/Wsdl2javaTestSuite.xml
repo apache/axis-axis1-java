@@ -706,6 +706,7 @@
     <wsdl2java url="test/wsdl/types/ComprehensiveTypes.wsdl"
                output="build/work"
                serverSide="yes"
+               helperGen="yes"
                testcase="yes">
     </wsdl2java>
 

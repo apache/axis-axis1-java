@@ -104,6 +104,9 @@ public class WSDL2Java {
     protected static final int ALL_OPT = 'a';
     protected static final int TYPEMAPPING_OPT = 'T';
     protected static final int NETWORK_TIMEOUT_OPT = 'O';
+    protected static final int FACTORY_CLASS_OPT = 'F';
+    protected static final int HELPER_CLASS_OPT = 'H';
+
 
     // Scope constants
     public static final byte NO_EXPLICIT_SCOPE = 0x00;
@@ -184,6 +187,14 @@ public class WSDL2Java {
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 TYPEMAPPING_OPT,
                 JavaUtils.getMessage("optionTypeMapping00")),
+        new CLOptionDescriptor("factory",
+                CLOptionDescriptor.ARGUMENT_REQUIRED,
+                FACTORY_CLASS_OPT,
+                JavaUtils.getMessage("optionFactory00")),
+        new CLOptionDescriptor("helperGen",
+                CLOptionDescriptor.ARGUMENT_DISALLOWED,
+                HELPER_CLASS_OPT,
+                JavaUtils.getMessage("optionHelper00")),
         new CLOptionDescriptor("timeout",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 NETWORK_TIMEOUT_OPT,
@@ -283,6 +294,31 @@ public class WSDL2Java {
     public boolean getDebug() {
         return emitter.getDebug();
     } // getDebug
+
+
+    /**
+     * Indicate writer factory 
+     * @param String class name
+     */
+    public void factory(String value) {
+        emitter.setFactory(value);
+    }
+
+    /**
+     * Indicate helper Generation s
+     * @param boolean value
+     */
+    public void helperGen(boolean value) {
+        emitter.setHelperGeneration(value);
+    }
+
+    /**
+     * Indicate helper Generation s
+     * @param boolean value
+     */
+    public boolean getHelperGen() {
+        return emitter.getHelperGeneration();
+    }
 
     /**
      * Turn on/off verbose messages
@@ -504,6 +540,14 @@ public class WSDL2Java {
 
                     case VERBOSE_OPT:
                         wsdl2java.verbose(true);
+                        break;
+
+                    case FACTORY_CLASS_OPT:
+                        wsdl2java.factory(option.getArgument());
+                        break;
+
+                    case HELPER_CLASS_OPT:
+                        wsdl2java.helperGen(true);
                         break;
 
                     case SKELETON_DEPLOY_OPT:
