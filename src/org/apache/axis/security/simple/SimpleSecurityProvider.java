@@ -57,6 +57,7 @@ package org.apache.axis.security.simple;
 
 import org.apache.axis.security.SecurityProvider;
 import org.apache.axis.security.AuthenticatedUser;
+import org.apache.axis.MessageContext;
 import org.apache.log4j.Category;
 import org.apache.log4j.Priority;
 
@@ -118,7 +119,10 @@ public class SimpleSecurityProvider implements SecurityProvider {
      * @param password the password to check
      * @return an AuthenticatedUser or null
      */
-    public AuthenticatedUser authenticate(String username, String password) {
+    public AuthenticatedUser authenticate(MessageContext msgContext) {
+        String username = msgContext.getStrProp(MessageContext.USERID);
+        String password = msgContext.getStrProp(MessageContext.PASSWORD);
+
         if (users != null) {
             category.debug( "User: " + username );
 
