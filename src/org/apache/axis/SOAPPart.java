@@ -472,30 +472,13 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
      * Add the specified MIME header, as per JAXM.
      */
     public void addMimeHeader (String header, String value) {
-
-        if(null == header) {
-            throw new IllegalArgumentException(JavaUtils.getMessage("headerNotNull"));
-        }
-
-        header = header.trim();
-
-        if(header.length() == 0) {
-            throw new IllegalArgumentException(
-                    JavaUtils.getMessage("headerNotEmpty"));
-        }
-
-        if(null == value) {
-            throw new IllegalArgumentException(
-                    JavaUtils.getMessage("headerValueNotNull"));
-        }
-        mimeHeaders.setHeader(header.toLowerCase(), value);
+        mimeHeaders.setHeader(header, value);
     }
 
     /**
      * Get the specified MIME header.
      */
-    public String getFirstMimeHeader (String header) {
-        //return (String) headers.get(header.toLowerCase());
+    private String getFirstMimeHeader (String header) {
         String[] values = mimeHeaders.getHeader(header);
         if(values != null && values.length>0)
             return values[0];

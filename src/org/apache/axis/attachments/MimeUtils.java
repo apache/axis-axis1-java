@@ -282,7 +282,7 @@ public class MimeUtils {
             messageBodyPart.setText(env);
             messageBodyPart.setHeader("Content-Type",
                     "text/xml; charset=UTF-8");
-            messageBodyPart.setHeader("Content-ID", "<" + rootCID + ">");
+            messageBodyPart.setHeader("Content-Id", "<" + rootCID + ">");
             messageBodyPart.setHeader(
                     HTTPConstants.HEADER_CONTENT_TRANSFER_ENCODING, "binary");
             multipart.addBodyPart(messageBodyPart);
@@ -324,9 +324,10 @@ public class MimeUtils {
                             HTTPConstants.HEADER_CONTENT_ID,
                             HTTPConstants.HEADER_CONTENT_TRANSFER_ENCODING}); i.hasNext();) {
                     String header = (String) i.next();
-
-                    messageBodyPart.setHeader(header,
-                            part.getFirstMimeHeader(header));
+                    String values[] = part.getMimeHeader(header);
+                    for(int j=0;j<values.length;j++){
+                        messageBodyPart.setHeader(header, values[j]);
+                    }
                 }
 
                 multipart.addBodyPart(messageBodyPart);
