@@ -84,7 +84,7 @@ public interface EngineConfiguration {
      * Property name used for setting an EngineConfiguration to be used
      * in creating engines.
      */
-    public static final String PROPERTY_NAME = "engineConfig";
+    static final String PROPERTY_NAME = "engineConfig";
 
      /**
      * Configure this AxisEngine using whatever data source we have.
@@ -92,7 +92,7 @@ public interface EngineConfiguration {
      * @param engine the AxisEngine we'll deploy state to
      * @throws ConfigurationException if there was a problem
      */
-    public void configureEngine(AxisEngine engine) throws ConfigurationException;
+    void configureEngine(AxisEngine engine) throws ConfigurationException;
 
     /**
      * Read the configuration from an engine, and store it somehow.
@@ -100,7 +100,7 @@ public interface EngineConfiguration {
      * @param engine the AxisEngine from which to read state.
      * @throws ConfigurationException if there was a problem
      */
-    public void writeEngineConfig(AxisEngine engine) throws ConfigurationException;
+    void writeEngineConfig(AxisEngine engine) throws ConfigurationException;
    
     /**
      * retrieve an instance of the named handler
@@ -108,7 +108,7 @@ public interface EngineConfiguration {
      * @return XXX
      * @throws ConfigurationException XXX
      */
-    public Handler getHandler(QName qname) throws ConfigurationException;
+    Handler getHandler(QName qname) throws ConfigurationException;
  
    /**
      * retrieve an instance of the named service
@@ -116,7 +116,7 @@ public interface EngineConfiguration {
      * @return XXX
      * @throws ConfigurationException XXX
      */
-    public SOAPService getService(QName qname) throws ConfigurationException;
+    SOAPService getService(QName qname) throws ConfigurationException;
     
     /**
      * Get a service which has been mapped to a particular namespace
@@ -124,7 +124,7 @@ public interface EngineConfiguration {
      * @param namespace a namespace URI
      * @return an instance of the appropriate Service, or null
      */ 
-    public SOAPService getServiceByNamespaceURI(String namespace)
+    SOAPService getServiceByNamespaceURI(String namespace)
         throws ConfigurationException;
 
      /**
@@ -133,28 +133,28 @@ public interface EngineConfiguration {
      * @return XXX
      * @throws ConfigurationException XXX
      */
-    public Handler getTransport(QName qname) throws ConfigurationException;
+    Handler getTransport(QName qname) throws ConfigurationException;
 
     /**
      * Retrieve the TypeMappingRegistry for this engine
      */
-    public TypeMappingRegistry getTypeMappingRegistry()
+    TypeMappingRegistry getTypeMappingRegistry()
         throws ConfigurationException;
 
     /**
      * Returns a global request handler.
      */
-    public Handler getGlobalRequest() throws ConfigurationException;
+    Handler getGlobalRequest() throws ConfigurationException;
 
     /**
      * Returns a global response handler.
      */
-    public Handler getGlobalResponse() throws ConfigurationException;
+    Handler getGlobalResponse() throws ConfigurationException;
 
     /**
      * Returns the global configuration options.
      */
-    public Hashtable getGlobalOptions() throws ConfigurationException;
+    Hashtable getGlobalOptions() throws ConfigurationException;
 
     /**
      * Get an enumeration of the services deployed to this engine,
@@ -162,5 +162,5 @@ public interface EngineConfiguration {
      * @see org.apache.axis.description.ServiceDesc
      * @return something to iterate with
      */
-    public Iterator getDeployedServices() throws ConfigurationException;
+    Iterator getDeployedServices() throws ConfigurationException;
 }
