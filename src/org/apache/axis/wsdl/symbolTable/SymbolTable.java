@@ -1027,16 +1027,22 @@ public class SymbolTable {
         Input input = operation.getInput();
         if (input != null) {
             getParametersFromParts(inputs,
-                        input.getMessage().getOrderedParts(null), 
-                        literalInput, operation.getName(), bindingEntry);
+                                   input.getMessage().getOrderedParts(null), 
+                                   literalInput, 
+                                   operation.getName(), 
+                                   bindingEntry, 
+                                   false);
         }
 
         // Collect all the output parameters
         Output output = operation.getOutput();
         if (output != null) {
             getParametersFromParts(outputs,
-                        output.getMessage().getOrderedParts(null), 
-                        literalOutput, operation.getName(), bindingEntry);
+                                   output.getMessage().getOrderedParts(null), 
+                                   literalOutput, 
+                                   operation.getName(), 
+                                   bindingEntry, 
+                                   true);  // output parts
         }
 
         if (parameterOrder != null) {
@@ -1188,10 +1194,11 @@ public class SymbolTable {
      * each Part (shouldn't we call these "Parts" or something?)
      */
     public void getParametersFromParts(Vector v, 
-                                          Collection parts, 
-                                          boolean literal, 
-                                          String opName, 
-                                          BindingEntry bindingEntry) 
+                                       Collection parts, 
+                                       boolean literal, 
+                                       String opName, 
+                                       BindingEntry bindingEntry, 
+                                       boolean outputParts) 
             throws IOException {
         Iterator i = parts.iterator();
 
@@ -1226,7 +1233,7 @@ public class SymbolTable {
                 possiblyWrapped) {
             wrapped = true;
         }
-
+        
         i = parts.iterator();
         while (i.hasNext()) {
             Parameter param = new Parameter();
@@ -1235,8 +1242,10 @@ public class SymbolTable {
             QName typeName = part.getTypeName();
             String partName = part.getName();
 
+            // We're either:
+            // 1. encoded 
+            // 2. literal & not wrapped.
             if (!literal || !wrapped || elementName == null) {
-                // We're either RPC or literal + not wrapped.
                 
                 param.setName(partName);
 
@@ -1265,7 +1274,7 @@ public class SymbolTable {
                 continue;   // next part
             }
             
-            // flow to here means literal + wrapped!
+            // flow to here means wrapped literal !
 
             // See if we can map all the XML types to java(?) types
             // if we can, we use these as the types
@@ -1320,6 +1329,17 @@ public class SymbolTable {
                 wrapped = false;
             }
             
+            // More conditions for wrapped mode to track JAX-RPC RI behavior
+            // If we are dealing with output parameters:
+            // - wrapped operations "dig into" the structure of the returned element
+            //   and return the inner element type IF:
+            //  1) there are no attributes on the "wrapper" element
+            //  2) there is a single element inside the "wrapper" (the return type)
+            // 
+            // - wrapped operations return a bean mapped to the entire return 
+            //   element otherwise
+        
+
             // Get the nested type entries.
             // TODO - If we are unable to represent any of the types in the
             // element, we need to use SOAPElement/SOAPBodyElement.
@@ -1327,9 +1347,12 @@ public class SymbolTable {
             Vector vTypes =
                     SchemaUtils.getContainedElementDeclarations(node, this);
 
-            // if we got the types entries and we didn't find attributes
-            // use the things is this element as the parameters
-            if (vTypes != null && wrapped) {
+            // IF we got the types entries and we didn't find attributes
+            // AND either we are not doing output params OR 
+            //     there is only one element in a wrapped output param
+            // THEN use the things in this element as the parameters
+            if (vTypes != null && wrapped &&
+                    (!outputParts) || (vTypes.size() == 1 && outputParts)) {
                 // add the elements in this list
                 for (int j = 0; j < vTypes.size(); j++) {
                     ElementDecl elem = (ElementDecl) vTypes.elementAt(j);
@@ -1341,20 +1364,33 @@ public class SymbolTable {
                     v.add(p);
                 }
             } else {
-                // we were unable to get the types, or we found attributes so
-                // we can't use wrapped mode.
-                Parameter p = new Parameter();
-                p.setName(partName);
+                // - we were unable to get the types OR 
+                // - we found attributes OR
+                // - we are doing output parameters (and there is more than 1)
+                // so we can't use wrapped mode.
+                param.setName(partName);
                 
                 if (typeName != null) {
-                    p.setType(getType(typeName));
+                    param.setType(getType(typeName));
                 } else if (elementName != null) {
-                    p.setType(getElement(elementName));
+                    
+                    // An ugly hack here to set the referenced flag on the
+                    // element and the anonymous type that the element defines
+                    // There must be a better way to get this done.
+                    Element element = getElement(elementName);
+                    element.setIsReferenced(true);
+                    QName anonQName = SchemaUtils.getElementAnonQName(element.getNode());
+                    if (anonQName != null) {
+                        TypeEntry anonType = getType(anonQName);
+                        anonType.setIsReferenced(true);
+                    }
+                    
+                    param.setType(element);
                 }
-                setMIMEType(p, bindingEntry == null ? null :
+                setMIMEType(param, bindingEntry == null ? null :
                         bindingEntry.getMIMEType(opName, partName));
                 
-                v.add(p);
+                v.add(param);
             }
         } // while
 
