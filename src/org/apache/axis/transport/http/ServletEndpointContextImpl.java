@@ -54,17 +54,19 @@
  */
 package org.apache.axis.transport.http;
 
-import javax.xml.rpc.server.ServletEndpointContext;
-import javax.xml.rpc.handler.MessageContext;
-import javax.servlet.http.HttpSession;
-import javax.servlet.ServletContext;
 import java.security.Principal;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.xml.rpc.handler.MessageContext;
+import javax.xml.rpc.server.ServletEndpointContext;
 
 public class ServletEndpointContextImpl implements ServletEndpointContext {
     
     public HttpSession getHttpSession() {
-        javax.servlet.http.HttpServletRequest srvreq =
-            (javax.servlet.http.HttpServletRequest) 
+        HttpServletRequest srvreq = (HttpServletRequest) 
                 getMessageContext().getProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST);
         return (srvreq == null)  ? null : srvreq.getSession();
     }
@@ -74,15 +76,13 @@ public class ServletEndpointContextImpl implements ServletEndpointContext {
     }
 
     public ServletContext getServletContext() {
-        javax.servlet.http.HttpServlet srv =
-            (javax.servlet.http.HttpServlet)
+        HttpServlet srv = (HttpServlet)
                 getMessageContext().getProperty(HTTPConstants.MC_HTTP_SERVLET);
         return (srv == null) ? null : srv.getServletContext();
     }
 
     public Principal getUserPrincipal() {
-        javax.servlet.http.HttpServletRequest srvreq =
-            (javax.servlet.http.HttpServletRequest)
+        HttpServletRequest srvreq = (HttpServletRequest)
                 getMessageContext().getProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST);
 
         return (srvreq == null) ? null : srvreq.getUserPrincipal();
