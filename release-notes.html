@@ -14,9 +14,9 @@ h1 {  margin-left: -30px}
 </style>
 </head>
 <body>
-<h2>Axis Alpha 2 Release Notes</h2>
+<h2>Axis Alpha 3 Release Notes</h2>
 
-<p>This is the <a href="http://xml.apache.org/axis/releases.html"> alpha 2 release</a> 
+<p>This is the <a href="http://xml.apache.org/axis/releases.html"> alpha 3 release</a> 
   of the <a href="http://xml.apache.org/axis"> Axis SOAP library</a>. (Wondering 
   what Axis is? Please see our <a href="http://xml.apache.org/axis/faq.html">FAQ</a>.)</p>
 <h3>General Alpha Information</h3>
@@ -25,8 +25,6 @@ h1 {  margin-left: -30px}
 missing features include:</p>
 
 <ul>
-<li>No support for SOAP attachments
-<li>Deployment syntax not finalized
 <li>Incomplete Apache SOAP 2.2 deployment descriptor support
 <li>Minimal testing in EJB / application server frameworks
   <li>No support for XML-RPC, SMTP 
@@ -55,19 +53,13 @@ missing features include:</p>
   release. Progress towards that beta release may be viewed on Axis's <a href="http://xml.apache.org/axis/requirements.html"> 
   requirements and status page</a>.</p>
 <h3>What's New?</h3>
-<p>Changes since alpha-1:</p>
+<p>Changes since alpha-2:</p>
 <ul>
-  <li>Added support for auto-generating WSDL from any URL-accessible service (i.e. 
-    JWS services)!</li>
-  <li>Added a Wsdl2java tool for building Axis stubs and skeletons from WSDL files!</li>
-  <li>SimpleAxisServer now supports HTTP basic authentication</li>
-  <li>Revamp authentication handlers to use an extensible &quot;security provider&quot; 
-    interface, which should allow easy integration with existing security providers 
-    such as those provided by application servers. A basic version and a version 
-    which uses servlet 2.2 authentication are both provided.</li>
-  <li>The &quot;org.apache.axis.utils.Debug&quot; class is gone, and we now use 
-    <a href="http://jakarta.apache.org/log4j/docs/index.html">log4j</a> as our 
-    logging / debugging library.</li>
+  <li>Added a <a href="docs/user-guide.html#Java2WSDLReference">java2wsdl</a> tool for building WSDL from Java files!</li>
+  <li>Many enhancement for the <a href="docs/user-guide.html#WSDL2JavaReference">wsdl2java</a> JAX-RPC compliant
+  emitter.</li>
+  <li>Deployment syntax now finalized using <a href="docs/user-guide.html#DeploymentReference">WSDD</a> files.</li>
+  <li>Preliminary support for <A href="docs/user-guide.html#AttachmentsReference">SOAP Messages with Attachments</a>.</li>
   <li>Many minor bug fixes.</li>
 </ul>
 </body>
