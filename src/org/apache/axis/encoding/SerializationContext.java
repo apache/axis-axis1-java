@@ -304,6 +304,7 @@ public class SerializationContext
         }
         
         nsStack.pop();
+        nsStack.peek().clear();
 
         if (writingStartTag) {
             writer.write("/>");
