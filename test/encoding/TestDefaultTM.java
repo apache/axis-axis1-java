@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package encoding;
+package test.encoding;
 
 import junit.framework.TestCase;
 import org.apache.axis.encoding.TypeMappingRegistryImpl;
