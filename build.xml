@@ -15,6 +15,9 @@ Optional components:
    SOAP Attachment support enablement:
      activation.jar from http://java.sun.com/products/javabeans/glasgow/jaf.html
      mailapi.jar    from http://java.sun.com/products/javamail/
+   Security support enablement:
+     xmlsec.jar from fresh build of CVS from http://xml.apache.org/security/
+     Other support jars from http://cvs.apache.org/viewcvs.cgi/xml-security/libs/
 
 Build Instructions:
    To build, run
@@ -136,6 +139,10 @@ Copyright:
       classname="javax.activation.DataHandler"
       classpathref="classpath"/>
 
+    <available property="security.present"
+      classname="org.apache.xml.security.Init"
+      classpathref="classpath"/>
+
     <available property="mailapi.present"
       classname="javax.mail.internet.MimeMessage"
       classpathref="classpath"/>
@@ -164,6 +171,7 @@ Copyright:
     <echo message="activation.present=${activation.present}" />
     <echo message="mailapi.present=${mailapi.present}" />
     <echo message="attachments.present=${attachments.present}" />
+    <echo message="security.present=${security.present}" />
     <echo message=""/>
     <echo message="--- Property values ---" />
     <echo message="debug=${debug}" />
@@ -245,6 +253,7 @@ Copyright:
       <exclude name="samples/userguide/example6/*Impl.java" />
       <exclude name="samples/userguide/example6/*TestCase.java" />
       <exclude name="samples/attachments/**/*.java" unless="attachments.present"/>
+      <exclude name="samples/security/**/*.java" unless="security.present"/>
     </javac>
   </target>
 
