@@ -132,7 +132,7 @@ public class RPCElement extends SOAPBodyElement
             } else {
                 String name = null;
                 if (name == null) name = "arg" + i;
-                addParam(new RPCParam(name, args[i]));
+                addParam(new RPCParam(namespace, name, args[i]));
             }
         }
     }
@@ -375,12 +375,12 @@ public class RPCElement extends SOAPBodyElement
             if (encodingStyle != null && encodingStyle.equals("")) {
                 context.registerPrefixForURI("", getNamespaceURI());
             }
-            context.startElement(new QName(namespaceURI,name), attributes);
+            context.startElement(new QName(getNamespaceURI(), name), attributes);
         }
 
         for (int i = 0; i < params.size(); i++) {
             RPCParam param = (RPCParam)params.elementAt(i);
-            if (!hasOperationElement && encodingStyle.equals("")) {
+            if (!hasOperationElement && encodingStyle != null && encodingStyle.equals("")) {
                 context.registerPrefixForURI("", param.getQName().getNamespaceURI());
             }
             param.serialize(context);
