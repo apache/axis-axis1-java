@@ -70,7 +70,7 @@ Copyright:
     <!-- allnamespaces 
     -->
     <echo message="all namespaces test"/>
-    <wsdl2java url="${axis.home}/test/wsdl/selectivefilegen/selectivefilegen.wsdl"
+    <wsdl2java url="${axis.home}/test/wsdl/selectivefilegen/selectiveFileGen.wsdl"
                output="${axis.home}/build/work"
                testcase="yes"
                skeletonDeploy="true"
