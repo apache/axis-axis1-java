@@ -505,7 +505,7 @@ public class JavaBeanWriter extends JavaClassWriter {
             if (enableSetters) {
                 pw.println("    public void set" + capName + "(" +
                            typeName + " " + Utils.addUnderscore(name) + ") {");
-                pw.println("        this." + Utils.addUnderscore(name) + " = " + name + ";");
+                pw.println("        this." + Utils.addUnderscore(name) + " = " + Utils.addUnderscore(name) + ";");
                 pw.println("    }");
                 pw.println();
             }
