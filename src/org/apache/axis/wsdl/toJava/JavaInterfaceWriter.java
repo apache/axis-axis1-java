@@ -90,12 +90,9 @@ public class JavaInterfaceWriter extends JavaWriter {
         this.symbolTable = symbolTable;
         this.bEntry = bEntry;
 
-        // If there is literal use in this binding, then the interface name is
-        // derived from the binding name, not the portType name (the default).
-        if (bEntry.hasLiteral()) {
-            super.className = Utils.getJavaLocalName(bEntry.getName());
-            super.fileName = className + ".java";
-        }
+        super.className = Utils.getJavaLocalName(
+                (String) bEntry.getDynamicVar(JavaBindingWriter.SEI_NAME));
+        super.fileName = className + ".java";
     } // ctor
 
     /**

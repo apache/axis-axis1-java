@@ -179,10 +179,7 @@ public class JavaTestCaseWriter extends JavaWriter {
             String testMethodName = "test" + counter++ + portName + javaOpName;
             pw.println("    public void " + testMethodName + "() {");
 
-            // If there is not literal use, the interface name is the portType name.
-            // Otherwise it is the binding name.
-            String bindingType = bEntry.hasLiteral() ?
-                    bEntry.getName() : ptEntry.getName();
+            String bindingType = (String) bEntry.getDynamicVar(JavaBindingWriter.SEI_NAME);
             writeBindingAssignment(bindingType, portName);
 
             pw.println("        try {");

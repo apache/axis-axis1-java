@@ -155,10 +155,7 @@ public class JavaServiceImplWriter extends JavaWriter {
             String portName = Utils.xmlNameToJavaClass(p.getName());
             String stubClass = bEntry.getName() + "Stub";
 
-            // If there is not literal use, the interface name is the portType name.
-            // Otherwise it is the binding name.
-            String bindingType = bEntry.hasLiteral() ?
-                    bEntry.getName() : ptEntry.getName();
+            String bindingType = (String) bEntry.getDynamicVar(JavaBindingWriter.SEI_NAME);
 
             // getPort(Class) must return a stub for an interface.  Collect all
             // the port interfaces so the getPort(Class) method can be constructed.
