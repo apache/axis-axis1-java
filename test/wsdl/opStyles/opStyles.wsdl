@@ -2,8 +2,8 @@
 
 <definitions 
     name="operation styles test"
-    targetNamespace="opStyles.wsdl.test"
-    xmlns:tns="opStyles.wsdl.test"
+    targetNamespace="urn:opStyles.wsdl.test"
+    xmlns:tns="urn:opStyles.wsdl.test"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
     xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
