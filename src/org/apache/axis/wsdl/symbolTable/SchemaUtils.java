@@ -969,8 +969,142 @@ public class SchemaUtils {
     }
 
     /**
+     * adds an attribute node's type and name to the vector
+     * helper used by getContainedAttributeTypes
+     */
+    private static void addAttributeToVector(Vector v, Node child, SymbolTable symbolTable)
+    {
+        // Get the name and type qnames.
+        // The type qname is used to locate the TypeEntry, which is then
+        // used to retrieve the proper java name of the type.
+        QName attributeName = Utils.getNodeNameQName(child);
+        BooleanHolder forElement = new BooleanHolder();
+        QName attributeType = Utils.getTypeQName(child, forElement, false);
+
+        // An attribute is either qualified or unqualified.
+        // If the ref= attribute is used, the name of the ref'd element is used
+        // (which must be a root element).  If the ref= attribute is not
+        // used, the name of the attribute is unqualified.
+        if (!forElement.value) {
+            // check the Form (or attributeFormDefault) attribute of 
+            // this node to determine if it should be namespace 
+            // quailfied or not.
+            String form = Utils.getAttribute(child, "form");
+            if (form != null && form.equals("unqualified")) {
+                // Unqualified nodeName
+                attributeName = Utils.findQName("", attributeName.getLocalPart());            
+            } else if (form == null) {
+                // check attributeFormDefault on schema element
+                String def = Utils.getScopedAttribute(child, 
+                                                      "attributeFormDefault");
+                if (def == null || def.equals("unqualified")) {
+                    // Unqualified nodeName
+                    attributeName = Utils.findQName("", attributeName.getLocalPart());            
+                }
+            }
+        } else {
+            attributeName = attributeType;
+        }
+
+        // Get the corresponding TypeEntry from the symbol table
+        TypeEntry type = symbolTable.getTypeEntry(attributeType, 
+                                                  forElement.value);
+
+        // add type and name to vector, skip it if we couldn't parse it
+        // XXX - this may need to be revisited.
+        if (type != null && attributeName != null) {
+            v.add(type);
+            v.add(attributeName);
+        }
+    }
+
+    /**
+     * adds an attribute to the vector
+     * helper used by addAttributeGroupToVector
+     */
+    private static void addAttributeToVector(Vector v, SymbolTable symbolTable,
+                                            QName type, QName name)
+    {
+        TypeEntry typeEnt = symbolTable.getTypeEntry(type, false);
+        if (typeEnt != null) // better not be null
+        {
+            v.add(typeEnt);
+            v.add(name);
+        }
+    }
+    
+    /**
+     * adds each attribute group's attribute node to the vector
+     * helper used by getContainedAttributeTypes
+     */
+    private static void addAttributeGroupToVector(Vector v, Node attrGrpnode, SymbolTable symbolTable)
+    {
+        // get the type of the attributeGroup
+        QName attributeGroupType = Utils.getTypeQName(attrGrpnode, new BooleanHolder(), false);
+        TypeEntry type = symbolTable.getTypeEntry(attributeGroupType, false);
+        if (type != null)
+        {
+            if (type.getNode() != null)
+            {
+                // for each attribute or attributeGroup defined in the attributeGroup...
+                NodeList children = type.getNode().getChildNodes();
+                for (int j = 0; j < children.getLength(); j++) {
+                    Node kid = children.item(j);
+                    if (isXSDNode(kid, "attribute")) {
+                        addAttributeToVector(v, kid, symbolTable);
+                    }
+                    else if (isXSDNode(kid, "attributeGroup")) {
+                        addAttributeGroupToVector(v, kid, symbolTable);
+                    }
+                }
+            }
+            else if (type.isBaseType())
+            {
+                // soap/encoding is treated as a "known" schema
+                // so let's act like we know it
+                if (type.getQName().equals(Constants.SOAP_COMMON_ATTRS11))
+                {
+                    // 1.1 commonAttributes contains two attributes
+                    addAttributeToVector(v, symbolTable,
+                        Constants.XSD_ID, new QName(Constants.URI_SOAP11_ENC, "id"));
+                    addAttributeToVector(v, symbolTable,
+                        Constants.XSD_ANYURI, new QName(Constants.URI_SOAP11_ENC, "href"));
+                }
+                else if (type.getQName().equals(Constants.SOAP_COMMON_ATTRS12))
+                {
+                    // 1.2 commonAttributes contains one attribute
+                    addAttributeToVector(v, symbolTable,
+                        Constants.XSD_ID, new QName(Constants.URI_SOAP12_ENC, "id"));
+                }
+                else if (type.getQName().equals(Constants.SOAP_ARRAY_ATTRS11))
+                {
+                    // 1.1 arrayAttributes contains two attributes
+                    addAttributeToVector(v, symbolTable,
+                        Constants.XSD_STRING, new QName(Constants.URI_SOAP12_ENC, "arrayType"));
+                    addAttributeToVector(v, symbolTable,
+                        Constants.XSD_STRING, new QName(Constants.URI_SOAP12_ENC, "offset"));
+                }
+                else if (type.getQName().equals(Constants.SOAP_ARRAY_ATTRS12))
+                {
+                    // 1.2 arrayAttributes contains two attributes
+                    //   the type of "arraySize" is really "2003soapenc:arraySize"
+                    //   which is rather of a hairy beast that is not yet supported
+                    //   in Axis, so let's just use string; nobody should care for
+                    //   now because arraySize wasn't used at all up until this
+                    //   bug 23145 was fixed, which had nothing to do, per se, with
+                    //   adding support for arraySize
+                    addAttributeToVector(v, symbolTable,
+                        Constants.XSD_STRING, new QName(Constants.URI_SOAP12_ENC, "arraySize"));
+                    addAttributeToVector(v, symbolTable,
+                        Constants.XSD_QNAME, new QName(Constants.URI_SOAP12_ENC, "itemType"));
+                }
+            }
+        }
+    }
+    
+    /**
      * Return the attribute names and types if any in the node
-     * The even indices are the element types (TypeEntry) and
+     * The even indices are the attribute types (TypeEntry) and
      * the odd indices are the corresponding names (Strings).
      * 
      * Example:
@@ -981,6 +1115,7 @@ public class SchemaUtils {
      *   </sequence>
      *   <attribute name="Name" type="string" />
      *   <attribute name="Male" type="boolean" />
+     *   <attributeGroup ref="s0:MyAttrSet" />
      * </complexType>
      * 
      */ 
@@ -1034,56 +1169,22 @@ public class SchemaUtils {
             children = node.getChildNodes();
             for (int i = 0; i < children.getLength(); i++) {
                 Node child = children.item(i);
-                if (! isXSDNode(child, "attribute")) {
+                if (! isXSDNode(child, "attribute") && ! isXSDNode(child, "attributeGroup")) {
                     continue;
                 }
-                
-                // we have an attribute node
+
+                // we have an attribute or attributeGroup node
                 if (v == null)
                     v = new Vector();
 
-                // Get the name and type qnames.
-                // The type qname is used to locate the TypeEntry, which is then
-                // used to retrieve the proper java name of the type.
-                QName attributeName = Utils.getNodeNameQName(child);
-                BooleanHolder forElement = new BooleanHolder();
-                QName attributeType = Utils.getTypeQName(child, forElement, false);
+                if (isXSDNode(child, "attributeGroup")) {
+                    addAttributeGroupToVector(v, child, symbolTable);
+                }
+                else {
+                    // we have an attribute
+                    addAttributeToVector(v, child, symbolTable);
+                }
 
-                // An attribute is either qualified or unqualified.
-                // If the ref= attribute is used, the name of the ref'd element is used
-                // (which must be a root element).  If the ref= attribute is not
-                // used, the name of the attribute is unqualified.
-                if (!forElement.value) {
-                    // check the Form (or attributeFormDefault) attribute of 
-                    // this node to determine if it should be namespace 
-                    // quailfied or not.
-                    String form = Utils.getAttribute(child, "form");
-                    if (form != null && form.equals("unqualified")) {
-                        // Unqualified nodeName
-                        attributeName = Utils.findQName("", attributeName.getLocalPart());            
-                    } else if (form == null) {
-                        // check attributeFormDefault on schema element
-                        String def = Utils.getScopedAttribute(child, 
-                                                              "attributeFormDefault");
-                        if (def == null || def.equals("unqualified")) {
-                            // Unqualified nodeName
-                            attributeName = Utils.findQName("", attributeName.getLocalPart());            
-                        }
-                    }
-                } else {
-                    attributeName = attributeType;
-                }
-                
-                // Get the corresponding TypeEntry from the symbol table
-                TypeEntry type = symbolTable.getTypeEntry(attributeType, 
-                                                          forElement.value);
-                
-                // add type and name to vector, skip it if we couldn't parse it
-                // XXX - this may need to be revisited.
-                if (type != null && attributeName != null) {
-                    v.add(type);
-                    v.add(attributeName);
-                }
             }
         }            
         return v;

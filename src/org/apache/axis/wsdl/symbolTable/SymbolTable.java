@@ -691,7 +691,7 @@ public class SymbolTable {
 
     /**
      * Utility method which walks the Document and creates Type objects for
-     * each complexType, simpleType, or element referenced or defined.
+     * each complexType, simpleType, attributeGroup or element referenced or defined.
      *
      * What goes into the symbol table?  In general, only the top-level types 
      * (ie., those just below
@@ -746,6 +746,14 @@ public class SymbolTable {
                 // seem like overkill, but is necessary to support ref=
                 // and element=.
                 createTypeFromDef(node, true, level > SCHEMA_LEVEL);
+            }
+            else if (isXSD && localPart.equals("attributeGroup")) {
+                // bug 23145: support attributeGroup (Brook Richan)
+                // Create a type entry for the referenced type
+                createTypeFromRef(node);
+
+                // Create a type representing an attributeGroup.
+                createTypeFromDef(node, false, level > SCHEMA_LEVEL);
             }
             else if (isXSD && localPart.equals("attribute")) {
                 // Create a type entry for the referenced type
@@ -1006,6 +1014,56 @@ public class SymbolTable {
                     String baseName = btm.getBaseName(qName);
                     if (baseName != null)
                         symbolTablePut(new BaseType(qName));
+
+                    // bugzilla 23145: handle attribute groups
+                    // soap/encoding is treated as a "known" schema
+                    // so now let's act like we know it
+                    else if (qName.equals(Constants.SOAP_COMMON_ATTRS11))
+                    {
+                        symbolTablePut(new BaseType(qName));
+                        // the 1.1 commonAttributes type contains two attributes
+                        // make sure those attributes' types are in the symbol table
+                        // attribute name = "id" type = "xsd:ID"
+                        if (getTypeEntry(Constants.XSD_ID, false) == null)
+                            symbolTablePut(new BaseType(Constants.XSD_ID));
+                        // attribute name = "href" type = "xsd:anyURI"
+                        if (getTypeEntry(Constants.XSD_ANYURI, false) == null)
+                            symbolTablePut(new BaseType(Constants.XSD_ANYURI));
+                    }
+                    else if (qName.equals(Constants.SOAP_COMMON_ATTRS12))
+                    {
+                        symbolTablePut(new BaseType(qName));
+                        // the 1.2 commonAttributes type contains one attribute
+                        // make sure the attribute's type is in the symbol table
+                        // attribute name = "id" type = "xsd:ID"
+                        if (getTypeEntry(Constants.XSD_ID, false) == null)
+                            symbolTablePut(new BaseType(Constants.XSD_ID));
+                    }
+                    else if (qName.equals(Constants.SOAP_ARRAY_ATTRS11))
+                    {
+                        symbolTablePut(new BaseType(qName));
+                        // the 1.1 arrayAttributes type contains two attributes
+                        // make sure the attributes' types are in the symbol table
+                        // attribute name = "arrayType" type = "xsd:string"
+                        if (getTypeEntry(Constants.XSD_STRING, false) == null)
+                            symbolTablePut(new BaseType(Constants.XSD_STRING));
+                        // attribute name = "offset" type = "soapenc:arrayCoordinate"
+                        //                               which is really an xsd:string
+                    }
+                    else if (qName.equals(Constants.SOAP_ARRAY_ATTRS12))
+                    {
+                        symbolTablePut(new BaseType(qName));
+                        // the 1.2 arrayAttributes type contains two attributes
+                        // make sure the attributes' types are in the symbol table
+                        // attribute name = "arraySize" type = "2003soapenc:arraySize"
+                        //             which is really a hairy beast that is not
+                        //             supported, yet; so let's just use string
+                        if (getTypeEntry(Constants.XSD_STRING, false) == null)
+                            symbolTablePut(new BaseType(Constants.XSD_STRING));
+                        // attribute name = "itemType" type = "xsd:QName"
+                        if (getTypeEntry(Constants.XSD_QNAME, false) == null)
+                            symbolTablePut(new BaseType(Constants.XSD_QNAME));
+                    }
                     else if (forElement.value == false)
                         symbolTablePut(new UndefinedType(qName));
                     else
