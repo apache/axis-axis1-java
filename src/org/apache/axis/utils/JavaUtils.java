@@ -509,6 +509,10 @@ public class JavaUtils
             // Allow mapping of HashMaps to Hashtables
             if (src == HashMap.class && dest == Hashtable.class)
                 return true;
+
+            // Allow mapping of Calendar to Date
+            if (Calendar.class.isAssignableFrom(src) && dest == Date.class)
+                return true;
         }
         
         Class destHeld = JavaUtils.getHolderValueType(dest);
