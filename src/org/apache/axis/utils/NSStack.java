@@ -54,6 +54,8 @@
  */
 package org.apache.axis.utils;
 
+import org.apache.log4j.Category;
+
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Stack;
@@ -63,7 +65,8 @@ import java.util.Stack;
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
 public class NSStack {
-    private static final boolean DEBUG_LOG = false;
+    static Category category =
+            Category.getInstance(NSStack.class.getName());
     
     private static final ArrayList EMPTY = new ArrayList();
 
@@ -83,15 +86,15 @@ public class NSStack {
     
     public void push() {
         if (stack == null) stack = new Stack();
-        if (DEBUG_LOG)
-            System.out.println("NSPush (" + stack.size() + ")");
+        if (category.isDebugEnabled())
+            category.debug("NSPush (" + stack.size() + ")");
         stack.push(EMPTY);
     }
     
     public void push(ArrayList table) {
         if (stack == null) stack = new Stack();
-        if (DEBUG_LOG)
-            System.out.println("NSPush (" + stack.size() + ")");
+        if (category.isDebugEnabled())
+            category.debug("NSPush (" + stack.size() + ")");
         if (table.size() == 0) 
            stack.push(EMPTY);
         else
@@ -111,16 +114,16 @@ public class NSStack {
     
     public ArrayList pop() {
         if (stack.isEmpty()) {
-            if (DEBUG_LOG)
-                System.out.println("NSPop (empty)");
+            if (category.isDebugEnabled())
+                category.debug("NSPop (empty)");
             if (parent != null)
                 return parent.pop();
             return null;
         }
         
-        if (DEBUG_LOG) {
+        if (category.isDebugEnabled()){
             ArrayList t = (ArrayList)stack.pop();
-            System.out.println("NSPop (" + stack.size() + ")");
+            category.debug("NSPop (" + stack.size() + ")");
             return t;
         } else {
             return (ArrayList)stack.pop();
@@ -195,8 +198,8 @@ public class NSStack {
         if (parent != null)
             return parent.getNamespaceURI(prefix);
 
-        if (DEBUG_LOG) {
-            System.err.println("didn't find prefix '" + prefix + "'");
+        if (category.isDebugEnabled()){
+            category.debug("didn't find prefix '" + prefix + "'");
             dump();
         }
 

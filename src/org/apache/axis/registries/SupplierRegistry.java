@@ -74,8 +74,6 @@ public class SupplierRegistry implements HandlerRegistry {
     static Category category =
             Category.getInstance(SupplierRegistry.class.getName());
 
-    private static final boolean DEBUG_LOG = false;
-    
     protected Hashtable  suppliers = null ;
     
     public SupplierRegistry()
@@ -86,16 +84,16 @@ public class SupplierRegistry implements HandlerRegistry {
      * Add a new Handler to the registry.
      */
     public void add(String key, Handler handler) {
-        if (DEBUG_LOG)
-            System.out.println("Registry " + this + " adding '" + key +
+        if (category.isDebugEnabled())
+            category.debug("Registry " + this + " adding '" + key +
                                "' (" + handler + ")");
         if ( suppliers == null ) suppliers = new Hashtable();
         suppliers.put( key, new SimpleSupplier(handler) );
     }
     
     public void add(String key, Supplier supplier) {
-        if (DEBUG_LOG)
-            System.out.println("Registry " + this + " adding '" + key +
+        if (category.isDebugEnabled())
+            category.debug("Registry " + this + " adding '" + key +
                                "' (" + supplier + ")");
         if ( suppliers == null ) suppliers = new Hashtable();
         suppliers.put( key, supplier );

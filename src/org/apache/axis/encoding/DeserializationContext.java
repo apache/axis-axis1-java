@@ -68,6 +68,7 @@ import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.NSStack;
 import org.apache.axis.utils.QName;
 import org.apache.axis.utils.XMLUtils;
+import org.apache.log4j.Category;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
@@ -86,7 +87,8 @@ import java.util.Stack;
 
 public class DeserializationContext extends DefaultHandler
 {
-    private static final boolean DEBUG_LOG = false;
+    static Category category =
+            Category.getInstance(DeserializationContext.class.getName());
     
     static class LocalIDResolver implements IDResolver
     {
@@ -393,8 +395,8 @@ public class DeserializationContext extends DefaultHandler
     
     public void pushElementHandler(SOAPHandler handler)
     {
-        if (DEBUG_LOG) {
-            System.out.println("Pushing handler " + handler);
+        if (category.isDebugEnabled()) {
+            category.debug("Pushing handler " + handler);
         }
         
         handlerStack.push(handler);
@@ -416,14 +418,14 @@ public class DeserializationContext extends DefaultHandler
     {
         if (!handlerStack.empty()) {
             SOAPHandler handler = getTopHandler();
-            if (DEBUG_LOG) {
-                System.out.println("Popping handler " + handler);
+            if (category.isDebugEnabled()) {
+                category.debug("Popping handler " + handler);
             }
             handlerStack.pop();
             return handler;
         } else {
-            if (DEBUG_LOG) {
-                System.out.println("Popping handler...(null)");
+            if (category.isDebugEnabled()) {
+                category.debug("Popping handler...(null)");
             }
             return null;
         }
@@ -439,8 +441,8 @@ public class DeserializationContext extends DefaultHandler
     }
     
     public void endDocument() throws SAXException {
-        if (DEBUG_LOG) {
-            System.err.println("EndDocument");
+        if (category.isDebugEnabled()) {
+            category.debug("EndDocument");
         }
         if (recorder != null)
             recorder.endDocument();
@@ -471,8 +473,8 @@ public class DeserializationContext extends DefaultHandler
             namespaces.add(uri, "");
         }
        
-        if (DEBUG_LOG) {
-            System.err.println("StartPrefixMapping '" + prefix + "'->'" + uri + "'");
+        if (category.isDebugEnabled()) {
+            category.debug("StartPrefixMapping '" + prefix + "'->'" + uri + "'");
         }
         
         SOAPHandler handler = getTopHandler();
@@ -483,8 +485,8 @@ public class DeserializationContext extends DefaultHandler
     public void endPrefixMapping(String prefix)
         throws SAXException
     {
-        if (DEBUG_LOG) {
-            System.err.println("EndPrefixMapping '" + prefix + "'");
+        if (category.isDebugEnabled()) {
+            category.debug("EndPrefixMapping '" + prefix + "'");
         }
         
         if (recorder != null)
@@ -542,8 +544,8 @@ public class DeserializationContext extends DefaultHandler
     {
         SOAPHandler nextHandler = null;
 
-        if (DEBUG_LOG) {
-            System.out.println("startElement ['" + namespace + "' " +
+        if (category.isDebugEnabled()) {
+            category.debug("startElement ['" + namespace + "' " +
                            localName + "]");
         }
         
@@ -584,8 +586,8 @@ public class DeserializationContext extends DefaultHandler
     public void endElement(String namespace, String localName, String qName)
         throws SAXException
     {
-        if (DEBUG_LOG) {
-            System.out.println("endElement ['" + namespace + "' " +
+        if (category.isDebugEnabled()) {
+            category.debug("endElement ['" + namespace + "' " +
                            localName + "]");
         }
         
@@ -600,8 +602,8 @@ public class DeserializationContext extends DefaultHandler
                 getTopHandler().onEndChild(namespace, localName, this);
             } else {
                 // We should be done!
-                if (DEBUG_LOG) {
-                    System.out.println("Done with document!");
+                if (category.isDebugEnabled()) {
+                    category.debug("Done with document!");
                 }
             }
             

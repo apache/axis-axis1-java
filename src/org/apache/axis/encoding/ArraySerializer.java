@@ -58,6 +58,7 @@ package org.apache.axis.encoding;
 import org.apache.axis.Constants;
 import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.QName;
+import org.apache.log4j.Category;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
@@ -79,7 +80,8 @@ import java.util.List;
 public class ArraySerializer extends Deserializer
     implements ValueReceiver, Serializer
 {
-    private final static boolean DEBUG_LOG = false;
+    static Category category =
+            Category.getInstance(ArraySerializer.class.getName());
 
     static Hashtable primitives = new Hashtable();
     static {
@@ -109,8 +111,8 @@ public class ArraySerializer extends Deserializer
                              DeserializationContext context)
         throws SAXException
     {
-        if (DEBUG_LOG) {
-            System.err.println("In ArraySerializer.startElement()");
+        if (category.isDebugEnabled()) {
+            category.debug("In ArraySerializer.startElement()");
         }
 
         if (attributes.getValue(Constants.URI_CURRENT_SCHEMA_XSI,  "nil") != null) {
@@ -206,8 +208,8 @@ public class ArraySerializer extends Deserializer
                                                          rightBracketIndex));
         }
         
-        if (DEBUG_LOG) {
-            System.err.println("Out ArraySerializer.startElement()");
+        if (category.isDebugEnabled()) {
+            category.debug("Out ArraySerializer.startElement()");
         }
     }
     
@@ -218,8 +220,8 @@ public class ArraySerializer extends Deserializer
                                     DeserializationContext context)
         throws SAXException
     {
-        if (DEBUG_LOG) {
-            System.err.println("In ArraySerializer.onStartChild()");
+        if (category.isDebugEnabled()) {
+            category.debug("In ArraySerializer.onStartChild()");
         }
         
         if (attributes != null) {
@@ -253,16 +255,16 @@ public class ArraySerializer extends Deserializer
                                         getDeserializer(itemType);
         dSer.registerCallback(this, new Integer(curIndex++));
         
-        if (DEBUG_LOG) {
-            System.err.println("Out ArraySerializer.onStartChild()");
+        if (category.isDebugEnabled()) {
+            category.debug("Out ArraySerializer.onStartChild()");
         }
         return dSer;
     }
     
     public void valueReady(Object value, Object hint)
     {
-        if (DEBUG_LOG) {
-            System.err.println("ArraySerializer got value [" + hint +
+        if (category.isDebugEnabled()) {
+            category.debug("ArraySerializer got value [" + hint +
                                "] = " + value);
         }
         ((ArrayList)this.value).set(((Integer)hint).intValue(), value);

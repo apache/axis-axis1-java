@@ -15,6 +15,7 @@ import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.utils.AxisClassLoader;
 import org.apache.axis.utils.QName;
 import org.apache.axis.utils.cache.JavaClass;
+import org.apache.log4j.Category;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -23,7 +24,8 @@ import java.util.Vector;
 
 public class RPCHandler extends SOAPHandler
 {
-    private final static boolean DEBUG_LOG = false;
+    static Category category =
+            Category.getInstance(RPCHandler.class.getName());
     
     private RPCElement call;
     private RPCParam currentParam;
@@ -49,8 +51,8 @@ public class RPCHandler extends SOAPHandler
             JavaClass       jc     = cl.lookup(clsName);
             Class           cls    = jc.getJavaClass();
             
-            if (DEBUG_LOG) {
-                System.err.println("Looking up method '" + methodName +
+            if (category.isDebugEnabled()) {
+                category.debug("Looking up method '" + methodName +
                                    "' in class " + clsName);
             }
 
@@ -89,8 +91,8 @@ public class RPCHandler extends SOAPHandler
                                                 context.getMessageContext().
                                                 getProperty(MessageContext.SERVICE_DESCRIPTION);
         
-        if (DEBUG_LOG) {
-            System.err.println("In RPCHandler.onStartChild()");
+        if (category.isDebugEnabled()) {
+            category.debug("In RPCHandler.onStartChild()");
         }
         
         Vector params = call.getParams();
@@ -105,8 +107,8 @@ public class RPCHandler extends SOAPHandler
         QName type = context.getTypeFromAttributes(namespace,
                                                    localName,
                                                    attributes);
-        if (DEBUG_LOG) {
-            System.err.println("Type from attrs was " + type);
+        if (category.isDebugEnabled()) {
+            category.debug("Type from attrs was " + type);
         }
         
         // xsi:type always overrides everything else
@@ -116,8 +118,8 @@ public class RPCHandler extends SOAPHandler
             if (serviceDesc != null) {
                 String msgType = context.getEnvelope().getMessageType();
                 type = serviceDesc.getParamTypeByName(msgType, localName);
-                if (DEBUG_LOG) {
-                    System.err.println("Type from service desc was " + type);
+                if (category.isDebugEnabled()) {
+                    category.debug("Type from service desc was " + type);
                 }
             }
             
@@ -133,8 +135,8 @@ public class RPCHandler extends SOAPHandler
                 if (index+1<defaultParamTypes.length)
                     if (defaultParamTypes[0]==MessageContext.class) index++;
                 type = typeMap.getTypeQName(defaultParamTypes[index]);
-                if (DEBUG_LOG) {
-                    System.err.println("Type from default parms was " + type);
+                if (category.isDebugEnabled()) {
+                    category.debug("Type from default parms was " + type);
                 }
             }
         }
@@ -158,8 +160,8 @@ public class RPCHandler extends SOAPHandler
                    RPCParam.getValueField()));
         }
         
-        if (DEBUG_LOG) {
-            System.out.println("Out RPCHandler.onStartChild()");
+        if (category.isDebugEnabled()) {
+            category.debug("Out RPCHandler.onStartChild()");
         }
         return dser;
     }
@@ -168,8 +170,8 @@ public class RPCHandler extends SOAPHandler
                            DeserializationContext context)
         throws SAXException
     {
-        if (DEBUG_LOG) {
-            System.out.println("Setting MessageContext property in " +
+        if (category.isDebugEnabled()) {
+            category.debug("Setting MessageContext property in " +
                                "RPCHandler.endElement().");
         }
         context.getMessageContext().setProperty("RPC", call);

@@ -17,8 +17,6 @@ public class BodyBuilder extends SOAPHandler
     static Category category =
             Category.getInstance(BodyBuilder.class.getName());
 
-    private final static boolean DEBUG_LOG = false;
-    
     private SOAPBodyElement element;
     boolean gotRPCElement = false;
     boolean isRPCElement = false;
@@ -37,8 +35,8 @@ public class BodyBuilder extends SOAPHandler
                                      DeserializationContext context)
         throws SAXException
     {
-        if (DEBUG_LOG) {
-            System.err.println("In BodyBuilder.onStartChild()");
+        if (category.isDebugEnabled()) {
+            category.debug("In BodyBuilder.onStartChild()");
         }
         SOAPHandler handler = null;
         
@@ -93,8 +91,8 @@ public class BodyBuilder extends SOAPHandler
         
         handler.myElement = element;
         
-        if (DEBUG_LOG) {
-            System.err.println("Out BodyBuilder.onStartChild()");
+        if (category.isDebugEnabled()) {
+            category.debug("Out BodyBuilder.onStartChild()");
         }
         return handler;
     }
@@ -102,8 +100,8 @@ public class BodyBuilder extends SOAPHandler
     public void onEndChild(String namespace, String localName,
                            DeserializationContext context)
     {
-        if (DEBUG_LOG) {
-            System.err.println("In BodyBuilder.onEndChild()");
+        if (category.isDebugEnabled()) {
+            category.debug("In BodyBuilder.onEndChild()");
         }
         
         if (element != null) {
@@ -111,8 +109,8 @@ public class BodyBuilder extends SOAPHandler
             element = null;
         }
 
-        if (DEBUG_LOG) {
-            System.err.println("Out BodyBuilder.onEndChild()");
+        if (category.isDebugEnabled()) {
+            category.debug("Out BodyBuilder.onEndChild()");
         }
     }
 }
