@@ -41,10 +41,11 @@ public class URLMapper extends BasicHandler
         /** If there's already a targetService then just return.
          */
         if ( msgContext.getService() == null ) {
-            // Assumes "/" + servicename
+        	// path may or may not start with a "/". see http://issues.apache.org/jira/browse/AXIS-1372
             String path = (String)msgContext.getProperty(HTTPConstants.MC_HTTP_SERVLETPATHINFO);
-            if ((path != null) && (path.length() > 1)) {
-                path = path.substring(1);
+            if ((path != null) && (path.length() >= 1)) { //rules out the cases of path="", path=null
+            	if(path.startsWith("/"))
+            		path = path.substring(1); //chop the extra "/"            		
 
                 msgContext.setTargetService( path );
             }
