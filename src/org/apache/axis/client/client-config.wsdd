@@ -4,5 +4,6 @@
             xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
  <transport name="http" pivot="java:org.apache.axis.transport.http.HTTPSender"/>
  <transport name="local" pivot="java:org.apache.axis.transport.local.LocalSender"/>
+ <transport name="java" pivot="java:org.apache.axis.transport.java.JavaSender"/>
 </deployment>
 

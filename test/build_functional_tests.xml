@@ -213,6 +213,7 @@ Copyright:
   <!-- Generate code using Wsdl2java utility                               -->
   <!-- =================================================================== -->
   <target name="wsdl-setup" if="junit.present" >
+    <copy file="${axis.home}/samples/stock/GetQuote.wsdl" todir="."/>
     <copy todir="${build.dir}/classes" overwrite="yes">
       <fileset dir="${test.dir}/wsdl/_import">
         <include name="NStoPkg.properties"/>
@@ -309,6 +310,7 @@ Copyright:
       testTarget="junit-functional-secure"
       stopTarget="stop-functional-test-http-server-secure" />
 
+    <delete file="GetQuote.wsdl"/>
   </target>
 
   <!-- =================================================================== -->

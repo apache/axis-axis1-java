@@ -63,6 +63,7 @@ import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import samples.stock.GetQuote;
+import samples.stock.GetQuote2;
 
 
 /** Test the stock sample code.
@@ -97,6 +98,12 @@ public class TestStockSample extends TestCase {
         AdminClient.main(args);
     }
     
+    public void doTestStockJava() throws Exception {
+        String[] args = { "XXX" };
+        float val = new GetQuote2().getQuote(args);
+        assertEquals("Stock price is not the expected 55.25 +/- 0.01", val, 55.25, 0.01);
+    }
+    
     public void doTestStock () throws Exception {
         String[] args = { "-uuser1", "-wpass1", "XXX" };
         float val = new GetQuote().getQuote(args);
@@ -124,6 +131,8 @@ public class TestStockSample extends TestCase {
             log.info("Testing stock sample.");
             log.info("Testing JWS...");
             doTestStockJWS();
+            log.info("Testing Java Binding...");
+            doTestStockJava();
             log.info("Testing deployment...");
             doTestDeploy();
             log.info("Testing service...");

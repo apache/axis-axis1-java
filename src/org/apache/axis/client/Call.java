@@ -177,6 +177,7 @@ public class Call implements javax.xml.rpc.Call {
 
     // Is this a one-way call?
     private boolean invokeOneWay               = false;
+    private boolean isMsg                      = false;
 
     // Our Transport, if any
     private Transport          transport       = null ;
@@ -1273,6 +1274,7 @@ public class Call implements javax.xml.rpc.Call {
         if ( params != null && params.length > 0 && i == params.length ) {
             /* ok, we're doing Messaging, so build up the message */
             /******************************************************/
+            isMsg = true ;
             env = new SOAPEnvelope(msgContext.getSOAPConstants());
 
             if ( !(params[0] instanceof SOAPEnvelope) )
@@ -1408,6 +1410,8 @@ public class Call implements javax.xml.rpc.Call {
     public static synchronized void initialize() {
         addTransportPackage("org.apache.axis.transport");
 
+        setTransportForProtocol("java",
+                org.apache.axis.transport.java.JavaTransport.class);
         setTransportForProtocol("local",
                 org.apache.axis.transport.local.LocalTransport.class);
         setTransportForProtocol("http", HTTPTransport.class);
@@ -1973,6 +1977,8 @@ public class Call implements javax.xml.rpc.Call {
         msgContext.setProperty( MessageContext.CALL, this );
         msgContext.setProperty( WSDL_SERVICE, service );
         msgContext.setProperty( WSDL_PORT_NAME, getPortName() );
+        if ( isMsg ) 
+          msgContext.setProperty( MessageContext.IS_MSG, "true" );
 
         if (username != null) {
             msgContext.setUsername(username);
