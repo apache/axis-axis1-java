@@ -67,5 +67,9 @@ public class DefinedType extends Type {
         super(pqName, pjName, pNode);
         setShouldEmit(true);
     }
+    public DefinedType(QName pqName, TypeEntry refType, Node pNode, String dims) {
+        super(pqName, refType, pNode, dims);
+        setShouldEmit(true);
+    }
 };
 

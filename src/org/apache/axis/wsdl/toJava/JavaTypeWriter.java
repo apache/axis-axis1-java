@@ -80,7 +80,7 @@ public class JavaTypeWriter implements Writer {
      */
     public JavaTypeWriter(
             Emitter emitter,
-            Type type,
+            TypeEntry type,
             SymbolTable symbolTable) {
         if (type.isReferenced()) {
 

@@ -67,7 +67,7 @@
         <mapping namespace="urn:MultiRefTest2" package="test.multiref"/>
     </wsdl2java>
 
-    <!-- MultiRef Test -->
+    <!-- RefAttr Test -->
     <wsdl2java url="test/refattr/refattr.wsdl"
                output="build/work"
                deployscope="session"

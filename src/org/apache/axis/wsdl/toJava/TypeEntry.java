@@ -1,0 +1,284 @@
+/*
+ * The Apache Software License, Version 1.1
+ *
+ *
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ *
+ * 3. The end-user documentation included with the redistribution,
+ *    if any, must include the following acknowledgment:
+ *       "This product includes software developed by the
+ *        Apache Software Foundation (http://www.apache.org/)."
+ *    Alternately, this acknowledgment may appear in the software itself,
+ *    if and wherever such third-party acknowledgments normally appear.
+ *
+ * 4. The names "Axis" and "Apache Software Foundation" must
+ *    not be used to endorse or promote products derived from this
+ *    software without prior written permission. For written
+ *    permission, please contact apache@apache.org.
+ *
+ * 5. Products derived from this software may not be called "Apache",
+ *    nor may "Apache" appear in their name, without prior written
+ *    permission of the Apache Software Foundation.
+ *
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+ * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+ * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ * ====================================================================
+ *
+ * This software consists of voluntary contributions made by many
+ * individuals on behalf of the Apache Software Foundation.  For more
+ * information on the Apache Software Foundation, please see
+ * <http://www.apache.org/>.
+ */
+package org.apache.axis.wsdl.toJava;
+
+import org.apache.axis.utils.JavaUtils;
+import org.w3c.dom.Node;
+
+import javax.wsdl.QName;
+import java.io.IOException;
+
+/**
+ * This class represents a wsdl types entry that is supported by the WSDL2Java emitter.
+ * A TypeEntry has a QName representing its XML name and a Java Name, which
+ * is its full java name.  The TypeEntry may also have a Node, which locates
+ * the definition of the emit type in the xml.
+ * A TypeEntry object extends SymTabEntry and is built by the SymbolTable class for
+ * each supported root complexType, simpleType, and elements that are
+ * defined or encountered.
+ *
+ *                    SymTabEntry
+ *                        |
+ *                    TypeEntry
+ *                  /           \
+ *            Type                Element
+ *             |                     |
+ * (BaseJavaType,                (DefinedElement,
+ *  CollectionType                UndefinedElement)
+ *  DefinedType,
+ *  UndefinedType)
+ *
+ *  UndefinedType and UndefinedElement are placeholders when the real type or element
+ *  is not encountered yet.  Both of these implement the Undefined interface.
+ *  
+ *  A TypeEntry whose java (or other language) name depends on an Undefined type, will
+ *  have its java name initialization deferred until the Undefined type is replaced with
+ *  a defined type.  The updateUndefined() method is invoked by the UndefinedDelegate to
+ *  update the information.
+ *
+ *  Each TypeEntry whose language name depends on another TypeEntry will have the refType
+ *  field set.  For example:
+ *      <element name="foo" type="bar" />
+ *  The TypeEntry for "foo" will have a refType set to the TypeEntry of "bar".
+ * 
+ *  Another Example:
+ *     <xsd:complexType name="hobbyArray">
+ *       <xsd:complexContent>
+ *         <xsd:restriction base="soapenc:Array">
+ *           <xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:string[]"/>
+ *         </xsd:restriction>
+ *       </xsd:complexContent>
+ *     </xsd:complexType>
+ *  The TypeEntry for "hobbyArray" will have a refType that locates the TypeEntry for xsd:string
+ *  and the dims field will be "[]"
+ *
+ *
+ *
+ * @author Rich Scheuerle  (scheu@us.ibm.com)
+ */
+public abstract class TypeEntry extends SymTabEntry {
+
+    protected Node    node;      // Node
+
+    protected TypeEntry refType; // Some TypeEntries refer to other types.
+                                 
+
+    protected String  dims;      // If refType is an element, dims indicates 
+                                 // the array dims (for example "[]").
+                              
+    protected boolean undefined; // If refType is an Undefined type 
+                                 // (or has a refType that is Undefined) 
+                                 // then the undefined flag is set.
+                                 //  The java name cannot be determined
+                                 // until the Undefined type is found.
+    protected boolean shouldEmit;// Indicates if this TypeEntry should 
+                                 // have code emitted for it.
+    protected boolean isBaseType;// Indicates if represented by a 
+                                 // java primitive or util class
+
+    /**
+     * Create a TypeEntry object for an xml construct that references another type. 
+     * Defer processing until refType is known.
+     */  
+    protected TypeEntry(QName pqName, TypeEntry refType, Node pNode, String dims) {
+        super(pqName, "defer name");  // Set super qname (defer name)
+        node = pNode;
+        this.undefined = refType.undefined;
+        this.refType = refType;
+        if (dims == null)
+            dims = "";
+        this.dims = dims;
+        
+        if (refType.undefined) {
+            // Need to defer processing until known.
+            TypeEntry uType = refType;
+            while (!(uType instanceof Undefined)) {
+                uType = uType.refType;
+            }
+            ((Undefined)uType).register(this);
+        } else {
+            setName(refType.getName() + dims);             
+            isBaseType = (refType.getBaseType() != null && dims.equals(""));
+        }
+        shouldEmit = false;
+        
+        //System.out.println(toString());
+
+    }
+       
+    /**
+     * Create a TypeEntry object for an xml construct that is not a base java type
+     */  
+    protected TypeEntry(QName pqName, String pjName, Node pNode) {
+        super(pqName, pjName);
+        node  = pNode;
+        refType = null;
+        undefined = false;
+        dims = "";
+        shouldEmit  = (node != null);
+        isBaseType = false;
+        //System.out.println(toString());
+    }
+
+    /**
+     * Create a TypeEntry object for an xml construct name that represents a base java type
+     */
+    protected TypeEntry(QName pqName) {
+        super(pqName, Utils.getBaseJavaName(pqName));
+        node = null;
+        undefined = false;
+        dims = "";
+        shouldEmit = false;
+        isBaseType = true;
+        //System.out.println(toString());
+    }
+       
+
+    /**
+     * UpdateUndefined is called when the ref TypeEntry is finally known.
+     */
+    protected boolean updateUndefined(TypeEntry oldRef, TypeEntry newRef) throws IOException {
+        // Replace refType with the new one if applicable
+        if (refType == oldRef) {
+            refType = newRef;
+            // Detect a loop
+            TypeEntry te = refType;
+            while(te != null && te != this) {
+                te = te.refType;
+            }
+            if (te == this) {
+                // Detected a loop.
+                undefined = false;
+                setName("");
+                isBaseType = false;
+                node = null;                   
+                throw new IOException(JavaUtils.getMessage("undefinedloop00", getQName().toString()));
+            }
+        }
+
+        // Update information if refType is now defined
+        if (refType != null && undefined && refType.undefined==false) {
+            undefined = false;
+            setName(refType.getName() + dims);             
+            isBaseType = (refType.getBaseType() != null && dims.equals(""));
+        }
+        return undefined;
+    }
+
+    /**
+     * Query Java Mapping Name
+     */
+    public String getJavaName() {
+        return name;
+    }
+
+    /**
+     * Query Java Mapping Name
+     */
+    public Node getNode() {
+        return node;
+    }
+
+    /**
+     * Query whether a Node should be emitted.
+     */
+    public boolean getShouldEmit() {
+        return shouldEmit;
+    }
+
+    /**
+     * Indicate whether a Node should be emitted.
+     */
+    public void setShouldEmit(boolean pShouldEmit) {
+        shouldEmit = pShouldEmit;
+    }
+
+    /**
+     * Returns the Java Base Type Name.
+     * For example if the Type represents a schema integer, "int" is returned.
+     * If this is a user defined type, null is returned.
+     */
+    public String getBaseType() {
+        if (isBaseType) {
+            return name;
+        }
+        else {
+            return null;
+        }
+    }
+
+    /**
+     * Get string representation.
+     */
+    public String toString() {
+        return toString("");
+    }
+
+    /**
+     * Get string representation with indentation
+     */
+    protected String toString(String indent) {
+        String refString = indent + "RefType:       null \n";
+        if (refType != null)
+            refString = indent + "RefType:\n" + refType.toString(indent + "  ") + "\n";
+        return super.toString(indent) + 
+            indent + "Class:         " + this.getClass().getName() + "\n" + 
+            indent + "Emit?:         " + shouldEmit + "\n" + 
+            indent + "Base?:         " + isBaseType + "\n" + 
+            indent + "Undefined?:    " + undefined + "\n" + 
+            indent + "Node:          " + getNode() + "\n" +
+            refString;
+    }
+};

@@ -60,109 +60,31 @@ import org.w3c.dom.Node;
 import javax.wsdl.QName;
 
 /**
- * This class represents a type that is supported by the WSDL2Java emitter.
- * A Type has a QName representing its XML name and a Java Name, which
- * is its full java name.  The Type may also have a Node, which locates
- * the definition of the emit type in the xml.
- * A Type object extends SymTabEntry and is built by the SymbolTable class for
- * each XML complexType, simpleType, or element (necessary for ref=) that is
- * defined or encountered.
+ * This class represents a TypeEntry that is a type (complexType, simpleType, etc.
  *
  * @author Rich Scheuerle  (scheu@us.ibm.com)
  */
-public class Type extends SymTabEntry {
-
-    private Node    node;        // Element node
-    private boolean shouldEmit;  // Indicates if this Type should have code emitted for it.
-    private boolean isBaseType;  // Indicates if represented by a java primitive or util class
+public abstract class Type extends TypeEntry {
 
     /**
      * Create a Type object for an xml construct name that represents a base java type
      */
     protected Type(QName pqName) {
-        super(pqName, Utils.getBaseJavaName(pqName));
-        node = null;
-        shouldEmit = false;
-        isBaseType = true;
+        super(pqName);
     }
        
     /**
-     * Create a Type object for an xml construct that references another type.        
-     * The Type corresponding to the ultimate reference type is passed as refType
-     */  
-    protected Type(QName pqName, Type refType, Node pNode) {
-        super(pqName, refType.getJavaName());
-        node = pNode;
-        shouldEmit = false;
-        isBaseType = (refType.getBaseType() != null);
+     * Create a TypeEntry object for an xml construct that references a type that has 
+     * not been defined yet.  Defer processing until refType is known.
+     */ 
+    protected Type(QName pqName, TypeEntry refType, Node pNode, String dims) {
+        super(pqName, refType, pNode, dims);
     }
        
     /**
      * Create a Type object for an xml construct that is not a base java type
      */  
     protected Type(QName pqName, String pjName, Node pNode) {
-        super(pqName, pjName);
-        node  = pNode;
-        shouldEmit  = (node != null);
-        isBaseType = false;
-    }
-
-    /**
-     * Query Java Mapping Name
-     */
-    public String getJavaName() {
-        return name;
-    }
-
-    /**
-     * Query Java Mapping Name
-     */
-    public Node getNode() {
-        return node;
-    }
-
-    /**
-     * Query whether a Node defining the type exists.
-     */
-    public boolean isDefined() {
-        return (node != null);
-    }
-
-    /**
-     * Query whether a Node should be emitted.
-     */
-    public boolean getShouldEmit() {
-        return shouldEmit;
-    }
-
-    /**
-     * Indicate whether a Node should be emitted.
-     */
-    public void setShouldEmit(boolean pShouldEmit) {
-        shouldEmit = pShouldEmit;
-    }
-
-    /**
-     * Returns the Java Base Type Name.
-     * For example if the Type represents a schema integer, "int" is returned.
-     * If this is a user defined type, null is returned.
-     */
-    public String getBaseType() {
-        if (isBaseType) {
-            return name;
-        }
-        else {
-            return null;
-        }
-    }
-
-    /**
-     * Get string representation.
-     */
-    public String toString() {
-        return super.toString() + 
-            "Emit?: " + shouldEmit + "\n" + 
-            "Base?: " + isBaseType + "\n" + 
-            "Node:  " + getNode() + "\n";
+        super(pqName, pjName, pNode);
     }
 };

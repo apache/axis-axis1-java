@@ -51,7 +51,8 @@
     <part name="ISBN" type="xsd:string" />
   </message>
   <message name="otheropHttpGetOut">
-    <part name="Body" element="xsd:string" />
+    <!-- <part name="Body" element="xsd:string" /> -->
+    <part name="Body" type="xsd:string" />
   </message>
 
   <!-- unused fault, should not be emitted -->

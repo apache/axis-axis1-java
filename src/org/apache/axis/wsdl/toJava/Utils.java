@@ -517,7 +517,8 @@ public class Utils {
     /**
      * Given a type, return the Java mapping of that type's holder.
      */
-    public static String holder(Type type, SymbolTable symbolTable) {
+
+    public static String holder(TypeEntry type, SymbolTable symbolTable) {
         String typeValue = type.getName();
         if (typeValue.equals("java.lang.String")) {
             return "javax.xml.rpc.holders.StringHolder";
@@ -582,7 +583,7 @@ public class Utils {
 
     /**
      * This method returns a set of all the nested types.
-     * Nested types are types declared within this Type (or descendents)
+     * Nested types are types declared within this TypeEntry (or descendents)
      * plus any extended types and the extended type nested types
      * The elements of the returned HashSet are Types.
      */
@@ -601,12 +602,12 @@ public class Utils {
                 if (!types.contains(v.get(i))) {
                     types.add(v.get(i));
                     getNestedTypes(
-                            ((Type) v.get(i)).getNode(), types, symbolTable);
+                            ((TypeEntry) v.get(i)).getNode(), types, symbolTable);
                 }
             }
         }
         // Process extended types
-        Type extendType = SchemaUtils.getComplexElementExtensionBase(type, symbolTable);
+        TypeEntry extendType = SchemaUtils.getComplexElementExtensionBase(type, symbolTable);
         if (extendType != null) {
             if (!types.contains(extendType)) {
                 types.add(extendType);
@@ -616,7 +617,7 @@ public class Utils {
 
         // Process array element types
         QName elementQName = SchemaUtils.getArrayElementQName(type);
-        Type elementType = symbolTable.getTypeEntry(elementQName);
+        TypeEntry elementType = symbolTable.getType(elementQName);
         if (elementType != null) {
             if (!types.contains(elementType)) {
                 types.add(elementType);

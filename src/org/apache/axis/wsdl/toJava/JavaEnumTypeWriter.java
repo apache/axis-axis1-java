@@ -66,7 +66,7 @@ import org.w3c.dom.Node;
 * This is Wsdl2java's Complex Type Writer.  It writes the <typeName>.java file.
 */
 public class JavaEnumTypeWriter extends JavaWriter {
-    private Type type;
+    private TypeEntry type;
     private Vector elements;
 
     /**
@@ -74,7 +74,7 @@ public class JavaEnumTypeWriter extends JavaWriter {
      */
     protected JavaEnumTypeWriter(
             Emitter emitter,
-            Type type, Vector elements) {
+            TypeEntry type, Vector elements) {
         super(emitter, type, "", "java",
                 JavaUtils.getMessage("genType00"));
         this.type = type;
@@ -90,7 +90,7 @@ public class JavaEnumTypeWriter extends JavaWriter {
         Node node = type.getNode();
 
         // The first index is the base type.  Get its java name.
-        String baseType = ((Type) elements.get(0)).getJavaName();
+        String baseType = ((TypeEntry) elements.get(0)).getJavaName();
         String javaName = Utils.getJavaLocalName(type.getName());
 
         // Note:

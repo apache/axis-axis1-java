@@ -144,16 +144,22 @@ public abstract class SymTabEntry {
      * Collate the info in this object in string form.
      */
     public String toString() {
+        return toString("");
+    } // toString
+    /**
+     * Collate the info in this object in string form with indentation.
+     */
+    protected String toString(String indent) {
         String string =
-                "QName:         " + qname + '\n' + 
-                "name:          " + name + '\n' + 
-                "isReferenced?  " + isReferenced + '\n';
-        String prefix = "dynamicVars:   ";
+            indent + "QName:         " + qname + '\n' + 
+            indent + "name:          " + name + '\n' + 
+            indent + "isReferenced?  " + isReferenced + '\n';
+        String prefix = indent + "dynamicVars:   ";
         Iterator keys = dynamicVars.keySet().iterator();
         while (keys.hasNext()) {
             Object key = keys.next();
             string += prefix + key + " = " + dynamicVars.get(key) + '\n';
-            prefix = "               ";
+            prefix = indent + "               ";
         }
         return string;
     } // toString

@@ -388,8 +388,8 @@ public class Emitter {
     protected void writeTypes() throws IOException {
         Vector types = symbolTable.getTypes();
         for (int i = 0; i < types.size(); ++i) {
-            Type type = (Type) types.elementAt(i);
-            if (type.isDefined() && type.getShouldEmit() && type.getBaseType() == null) {
+            TypeEntry type = (TypeEntry) types.elementAt(i);
+            if (type.getNode() != null && type.getShouldEmit() && type.getBaseType() == null) {
                 Writer writer = writerFactory.getWriter(type, symbolTable);
                 writer.write();
             }

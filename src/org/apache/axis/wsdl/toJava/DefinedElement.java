@@ -54,77 +54,30 @@
  */
 package org.apache.axis.wsdl.toJava;
 
-import java.io.IOException;
 
-import java.util.Vector;
+import org.w3c.dom.Node;
 
-import javax.wsdl.Fault;
 import javax.wsdl.QName;
 
-import org.apache.axis.utils.JavaUtils;
-
 /**
-* This is Wsdl2java's Fault Writer.  It writes the <faultName>.java file.
-* NOTE:  this must be rewritten.  It doesn't follow JAX-RPC.
-*/
-public class JavaFaultWriter extends JavaWriter {
-    private Fault fault;
-    private SymbolTable symbolTable;
-
+ * This Type is for a QName that is an element, these types are only emitted if 
+ * referenced by a ref= or an element=.
+ * An element type can be defined inline or it can be defined via
+ * a ref/type attribute.
+ */
+public class DefinedElement extends Element {
     /**
-     * Constructor.
+     * Create an element type defined by a ref/type attribute
      */
-    protected JavaFaultWriter(Emitter emitter, QName qname, Fault fault, SymbolTable symbolTable) {
-        super(emitter, qname, "", "java", JavaUtils.getMessage("genFault00"));
-        this.fault = fault;
-        this.symbolTable = symbolTable;
-    } // ctor
-
+    public DefinedElement(QName pqName, TypeEntry refType, Node pNode, String dims) {
+        super(pqName, refType, pNode, dims);
+        setShouldEmit(false);  // No need to emit since code will use ref info
+    };
     /**
-     * Write the body of the Fault file.
+     * Create an element type defined directly.               
      */
-    protected void writeFileBody() throws IOException {
-        pw.println("public class " + className + " extends org.apache.axis.AxisFault {");
-
-        Vector params = new Vector();
-
-        symbolTable.partStrings(params, fault.getMessage().getOrderedParts(null));
-
-        // Write data members of the exception and getter methods for them
-        for (int i = 0; i < params.size(); i += 2) {
-            String type = ((TypeEntry) params.get(i)).getName();
-            String variable = (String) params.get(i + 1);
-            pw.println("    public " + type + " " + variable + ";");
-            pw.println("    public " + type + " get" + Utils.capitalizeFirstChar(variable) + "() {");
-            pw.println("        return this." + variable + ";");
-            pw.println("    }");
-        }
-
-        // Default contructor
-        pw.println();
-        pw.println("    public " + className + "() {");
-        pw.println("    }");
-        pw.println();
-        
-        // contructor that initializes data
-        if (params.size() > 0) {
-            pw.print("      public " + className + "(");
-            for (int i = 0; i < params.size(); i += 2) {
-                if (i != 0) pw.print(", ");
-                pw.print(((TypeEntry) params.get(i)).getName() + " " + params.get(i + 1));
-            }
-            pw.println(") {");
-            for (int i = 1; i < params.size(); i += 2) {
-                String variable = (String) params.get(i);
-
-                pw.println("        this." + variable + " = " + variable + ";");
-            }
-            pw.println("    }");
-        }
-        
-        // Done with class
-        pw.println("}");
-        pw.close();
-    } // writeFileBody
-
-} // class JavaFaultWriter
+    public DefinedElement(QName pqName, String pjName, Node pNode) {
+        super(pqName, pjName, pNode);
+        setShouldEmit(false);  // Only emit if refd
+    }
+};

@@ -68,9 +68,9 @@ import org.w3c.dom.Node;
 * This is Wsdl2java's Complex Type Writer.  It writes the <typeName>.java file.
 */
 public class JavaComplexTypeWriter extends JavaWriter {
-    private Type type;
+    private TypeEntry type;
     private Vector elements;
-    private Type extendType;  
+    private TypeEntry extendType;  
 
     /**
      * Constructor.
@@ -81,7 +81,7 @@ public class JavaComplexTypeWriter extends JavaWriter {
      */
     protected JavaComplexTypeWriter(
             Emitter emitter,
-            Type type, Vector elements, Type extendType) {
+            TypeEntry type, Vector elements, TypeEntry extendType) {
         super(emitter, type, "", "java",
                 JavaUtils.getMessage("genType00"));
         this.type = type;
@@ -104,10 +104,10 @@ public class JavaComplexTypeWriter extends JavaWriter {
         }
 
         // We are only interested in the java names of the types, so replace the
-        // Types in the list with their java names.  
+        // TypeEntry in the list with their java names.  
         // Also filter element names for Java 
         for (int i=0; i < elements.size(); i+=2) {
-            elements.setElementAt(((Type) elements.get(i)).getJavaName(), i);
+            elements.setElementAt(((TypeEntry) elements.get(i)).getJavaName(), i);
             elements.setElementAt( Utils.xmlNameToJava((String) elements.get(i + 1)), i + 1);
         }
 

@@ -104,7 +104,7 @@ public interface WriterFactory {
     /**
      * Get a Writer implementation that will generate bindings for the given Type.
      */
-    public Writer getWriter(Type type, SymbolTable symbolTable);
+    public Writer getWriter(TypeEntry type, SymbolTable symbolTable);
 
     /**
      * Get a Writer implementation that will generate anything that doesn't

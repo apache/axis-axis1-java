@@ -135,7 +135,7 @@ public class JavaWriterFactory implements WriterFactory {
     /**
      * Return Wsdl2java's JavaTypeWriter object.
      */
-    public Writer getWriter(Type type, SymbolTable symbolTable) {
+    public Writer getWriter(TypeEntry type, SymbolTable symbolTable) {
         return new JavaTypeWriter(emitter, type, symbolTable);
     } // getWriter
 
@@ -156,11 +156,11 @@ public class JavaWriterFactory implements WriterFactory {
             for (int i = 0; i < v.size(); ++i) {
                 SymTabEntry entry = (SymTabEntry) v.elementAt(i);
 
-                // If entry instanceof Type, then the java name has already been filled in.
+                // If entry instanceof TypeEntry, then the java name has already been filled in.
                 // Don't try to do it again.  This method should really be doing the filling in
                 // of ALL enty java names, but that's another step toward generalizing the
                 // framework that I don't have time for right now.
-                if (!(entry instanceof Type)) {
+                if (!(entry instanceof TypeEntry)) {
                     entry.setName(symbolTable.getJavaName(entry.getQName()));
                 }
             }
@@ -178,19 +178,19 @@ public class JavaWriterFactory implements WriterFactory {
             if (v.size() > 1) {
                 boolean resolve = true;
                 // Common Special Case:
-                // If a Type and ElementType have the same QName, and the ElementType
+                // If a Type and Element have the same QName, and the Element
                 // uses type= to reference the Type, then they are the same class so 
                 // don't bother mangling.
                 if (v.size() == 2 &&
-                    ((v.elementAt(0) instanceof ElementType &&
+                    ((v.elementAt(0) instanceof Element &&
                       v.elementAt(1) instanceof Type) ||
-                     (v.elementAt(1) instanceof ElementType &&
+                     (v.elementAt(1) instanceof Element &&
                       v.elementAt(0) instanceof Type))) {
-                    ElementType e = null;
-                    if (v.elementAt(0) instanceof ElementType) {
-                        e = (ElementType)v.elementAt(0);
+                    Element e = null;
+                    if (v.elementAt(0) instanceof Element) {
+                        e = (Element)v.elementAt(0);
                     } else {
-                        e = (ElementType)v.elementAt(1);
+                        e = (Element)v.elementAt(1);
                     }
                     QName eType = Utils.getNodeTypeRefQName(e.getNode(), "type");
                     if (eType != null && eType.equals(e.getQName()))
@@ -221,10 +221,10 @@ public class JavaWriterFactory implements WriterFactory {
                     boolean firstType = true;
                     for (int i = 0; i < v.size(); ++i) {
                         SymTabEntry entry = (SymTabEntry) v.elementAt(i);
-                        if (entry instanceof ElementType) {
+                        if (entry instanceof Element) {
                             entry.setName(mangleName(entry.getName() , "_ElemType"));
                         }
-                        else if (entry instanceof Type) {
+                        else if (entry instanceof TypeEntry) {
                             // Search all other types for java names that match this one.
                             // The sameJavaClass method returns true if the java names are
                             // the same (ignores [] ).
@@ -232,9 +232,9 @@ public class JavaWriterFactory implements WriterFactory {
                                 firstType = false;
                                 Vector types = symbolTable.getTypes();
                                 for (int j = 0; j < types.size(); ++j) {
-                                    Type type = (Type) types.elementAt(j);
+                                    TypeEntry type = (TypeEntry) types.elementAt(j);
                                     if (type != entry && 
-                                        !(type instanceof ElementType) &&
+                                        !(type instanceof Element) &&
                                         type.getBaseType() == null &&
                                         sameJavaClass(((Type)entry).getName(), type.getName())) {
                                         v.add(type);  

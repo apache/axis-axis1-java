@@ -67,7 +67,7 @@ public class Parameter {
     public static final byte INOUT = 3;
 
     public String name;
-    public Type type;
+    public TypeEntry type;
     public byte mode = IN;
 
     public String toString() {

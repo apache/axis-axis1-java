@@ -237,7 +237,7 @@ public abstract class JavaWriter implements Writer {
     /**
      * Return a string with "var" wrapped as an Object type if needed
      */
-    protected String wrapPrimitiveType(Type type, String var) {
+    protected String wrapPrimitiveType(TypeEntry type, String var) {
         String objType = type == null ? null : (String) TYPES.get(type.getName());
         if (objType != null) {
             return "new " + objType + "(" + var + ")";
@@ -251,7 +251,7 @@ public abstract class JavaWriter implements Writer {
      * Return the Object variable 'var' cast to the appropriate type
      * doing the right thing for the primitive types.
      */
-    protected String getResponseString(Type type, String var) {
+    protected String getResponseString(TypeEntry type, String var) {
         if (type == null) {
             return ";";
         }
@@ -266,7 +266,7 @@ public abstract class JavaWriter implements Writer {
         }
     } // getResponseString
 
-    protected boolean isPrimitiveType(Type type) {
+    protected boolean isPrimitiveType(TypeEntry type) {
         return TYPES.get(type.getName()) != null;
     }
 

@@ -47,10 +47,6 @@
       <!-- no mangling should occur since the same java type is used -->
       <xsd:element name="enum" type="typens:enum"/>
 
-      <!-- The following are illegal.  Should not generate anything. But should not cause abend -->
-      <xsd:element name="self"  ref="typens:self" />
-      <xsd:element name="foo"   ref="typens:undefined_element" />
-
       <!-- This is a 'forward use' of a type.  Not sure if this is legal, but we currently accept it -->
       <xsd:element name="forward"  type="typens:forward" />
       <xsd:complexType name="forward">
