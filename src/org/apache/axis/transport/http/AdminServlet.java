@@ -60,7 +60,7 @@ public class AdminServlet extends AxisServletBase {
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
-        response.setContentType("text/html");
+        response.setContentType("text/html; charset=utf-8");
         StringBuffer buffer=new StringBuffer(512);
         buffer.append("<html><head><title>Axis</title></head><body>\n");
         //REVISIT: what happens if there is no engine?

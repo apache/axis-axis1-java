@@ -309,7 +309,7 @@ public class AxisServlet extends AxisServletBase {
                 // print a message informing the user that they reached
                 // the servlet.
 
-                response.setContentType("text/html");
+                response.setContentType("text/html; charset=utf-8");
                 writer.println("<html><h1>Axis HTTP Servlet</h1>");
                 writer.println(Messages.getMessage("reachedServlet00"));
 
@@ -342,7 +342,7 @@ public class AxisServlet extends AxisServletBase {
     private void reportTroubleInGet(Throwable exception,
                                     HttpServletResponse response,
                                     PrintWriter writer) {
-        response.setContentType("text/html");
+        response.setContentType("text/html; charset=utf-8");
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         writer.println("<h2>" +
                        Messages.getMessage("error00") +
@@ -422,7 +422,7 @@ public class AxisServlet extends AxisServletBase {
     protected void reportServiceInfo(HttpServletResponse response,
                                      PrintWriter writer, SOAPService service,
                                      String serviceName) {
-        response.setContentType("text/html");
+        response.setContentType("text/html; charset=utf-8");
 
         writer.println("<h1>"
                        + service.getName()
@@ -472,7 +472,7 @@ public class AxisServlet extends AxisServletBase {
             ConfigurationException, AxisFault {
         AxisEngine engine = getEngine();
 
-        response.setContentType("text/html");
+        response.setContentType("text/html; charset=utf-8");
         writer.println("<h2>And now... Some Services</h2>");
 
         Iterator i;
@@ -529,7 +529,7 @@ public class AxisServlet extends AxisServletBase {
                                             PrintWriter writer) {
         // no such service....
         response.setStatus(HttpURLConnection.HTTP_NOT_FOUND);
-        response.setContentType("text/html");
+        response.setContentType("text/html; charset=utf-8");
         writer.println("<h2>" +
                        Messages.getMessage("error00") + "</h2>");
         writer.println("<p>" +
@@ -557,7 +557,7 @@ public class AxisServlet extends AxisServletBase {
         boolean foundJWSFile = (new File(realpath).exists()) &&
                                (realpath.endsWith(Constants.
                                                   JWS_DEFAULT_FILE_EXTENSION));
-        response.setContentType("text/html");
+        response.setContentType("text/html; charset=utf-8");
         if (foundJWSFile) {
             response.setStatus(HttpURLConnection.HTTP_OK);
             writer.println(Messages.getMessage("foundJWS00") + "<p>");
