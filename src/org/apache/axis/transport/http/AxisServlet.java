@@ -277,6 +277,9 @@ public class AxisServlet extends HttpServlet
             
             String pathInfo = req.getPathInfo();
             String realpath = servletContext.getRealPath(req.getServletPath());
+            if (realpath == null) {
+                realpath = req.getServletPath();
+            }
             if ((pathInfo == null || pathInfo.equals("")) &&
                 !realpath.endsWith(".jws")) {
                 res.setContentType("text/html");
