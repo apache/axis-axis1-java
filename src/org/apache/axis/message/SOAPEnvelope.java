@@ -85,8 +85,9 @@ public class SOAPEnvelope extends MessageElement
 {
     protected static Log log =
         LogFactory.getLog(SOAPEnvelope.class.getName());
+
+    private SOAPHeader header;
     
-    public Vector headers = new Vector();
     public Vector bodyElements = new Vector();
     public Vector trailers = new Vector();
     private SOAPConstants soapConstants;
@@ -112,6 +113,7 @@ public class SOAPEnvelope extends MessageElement
     public SOAPEnvelope(boolean registerPrefixes, SOAPConstants soapConstants)
     {
         this.soapConstants = soapConstants;
+        header = new SOAPHeader(soapConstants);
 
         if (registerPrefixes) {
             if (namespaces == null)
@@ -130,6 +132,7 @@ public class SOAPEnvelope extends MessageElement
 
     public SOAPEnvelope(InputStream input) throws SAXException {
         InputSource is = new InputSource(input);
+        header = new SOAPHeader(soapConstants); // soapConstants = null!
         DeserializationContext dser = null ;
         AxisClient     tmpEngine = new AxisClient(new NullProvider());
         MessageContext msgContext = new MessageContext(tmpEngine);
@@ -168,7 +171,11 @@ public class SOAPEnvelope extends MessageElement
     
     public Vector getHeaders() throws AxisFault
     {
-        return headers;
+        if (header != null) {
+            return header.getHeaders();
+        } else {
+            return new Vector();
+        }
     }
     
     /**
@@ -176,26 +183,20 @@ public class SOAPEnvelope extends MessageElement
      */ 
     public Vector getHeadersByActor(ArrayList actors)
     {
-        Vector results = new Vector();
-        Iterator i = headers.iterator();
-        while (i.hasNext()) {
-            SOAPHeaderElement header = (SOAPHeaderElement)i.next();
-            // Always process NEXT's, and then anything else in our list
-            if (Constants.ACTOR_NEXT.equals(header.getActor()) || 
-                (actors != null && actors.contains(header.getActor()))) {
-                results.add(header);
-            }
+        if (header != null) {
+            return header.getHeadersByActor(actors);
+        } else {
+            return new Vector();
         }
-        
-        return results;
     }
     
-    public void addHeader(SOAPHeaderElement header)
+    public void addHeader(SOAPHeaderElement hdr)
     {
-        if (log.isDebugEnabled())
-            log.debug(JavaUtils.getMessage("addHeader00"));
-        header.setEnvelope(this);
-        headers.addElement(header);
+        if (header == null) {
+            header = new SOAPHeader(soapConstants);
+        }
+        hdr.setEnvelope(this);
+        header.addHeader(hdr);
         _isDirty = true;
     }
     
@@ -209,12 +210,12 @@ public class SOAPEnvelope extends MessageElement
         _isDirty = true;
     }
     
-    public void removeHeader(SOAPHeaderElement header)
+    public void removeHeader(SOAPHeaderElement hdr)
     {
-        if (log.isDebugEnabled())
-            log.debug(JavaUtils.getMessage("removeHeader00"));
-        headers.removeElement(header);
-        _isDirty = true;
+        if (header != null) {
+            header.removeHeader(hdr);
+            _isDirty = true;
+        }
     }
     
     public void removeBodyElement(SOAPBodyElement element)
@@ -269,28 +270,13 @@ public class SOAPEnvelope extends MessageElement
                                              boolean accessAllHeaders)
         throws AxisFault
     {
-        SOAPHeaderElement header = (SOAPHeaderElement)findElement(headers,
-                                                                  namespace,
-                                                                  localPart);
-
-        // If we're operating within an AxisEngine, respect its actor list
-        // unless told otherwise
-        if (!accessAllHeaders) {
-            MessageContext mc = MessageContext.getCurrentContext();
-            if (mc != null) {
-                if (header != null) {
-                    String actor = header.getActor();
-                    ArrayList actors = mc.getAxisEngine().getActorURIs();
-                    if ((actor != null) &&
-                            !Constants.ACTOR_NEXT.equals(actor) &&
-                            (actors == null || !actors.contains(actor))) {
-                        header = null;
-                    }
-                }
-            }
+        if (header != null) {
+            return header.getHeaderByName(namespace,
+                                          localPart,
+                                          accessAllHeaders);
+        } else {
+            return null;
         }
-        
-        return header;
     }
     
     public SOAPBodyElement getBodyByName(String namespace, String localPart)
@@ -339,44 +325,13 @@ public class SOAPEnvelope extends MessageElement
                                         boolean accessAllHeaders)
         throws AxisFault
     {
-        ArrayList actors = null;
-        boolean firstTime = false;
-        
-        /** This might be optimizable by creating a custom Enumeration
-         * which moves through the headers list (parsing on demand, again),
-         * returning only the next one each time.... this is Q&D for now.
-         */
-        Vector v = new Vector();
-        Enumeration e = headers.elements();
-        SOAPHeaderElement header;
-        while (e.hasMoreElements()) {
-            header = (SOAPHeaderElement)e.nextElement();
-            if (header.getNamespaceURI().equals(namespace) &&
-                header.getName().equals(localPart)) {
-
-                if (!accessAllHeaders) {
-                    if (firstTime) {
-                        // Do one-time setup
-                        MessageContext mc = MessageContext.getCurrentContext();
-                        if (mc != null)
-                            actors = mc.getAxisEngine().getActorURIs();
-                            
-                        firstTime = false;
-                    }
-
-                    String actor = header.getActor();
-                    if ((actor != null) &&
-                            !Constants.ACTOR_NEXT.equals(actor) &&
-                            (actors == null || !actors.contains(actor))) {
-                        continue;
-                    }
-                }
-
-                v.addElement(header);
-            }
+        if (header != null) {
+            return header.getHeadersByName(namespace,
+                                           localPart,
+                                           accessAllHeaders);
+        } else {
+            return new Vector().elements();
         }
-        
-        return v.elements();
     }
     
     /** Should make SOAPSerializationException?
@@ -398,26 +353,12 @@ public class SOAPEnvelope extends MessageElement
         
         Enumeration enum;
         
+        // Output <SOAP-ENV:Envelope>
         context.startElement(new QName(soapConstants.getEnvelopeURI(),
                                        Constants.ELEM_ENVELOPE), attributes);
         
-        if (log.isDebugEnabled())
-            log.debug(headers.size() + " "
-                    + JavaUtils.getMessage("headers00"));
-        
-        if (!headers.isEmpty()) {
-            // Output <SOAP-ENV:Header>
-            context.startElement(new QName(soapConstants.getEnvelopeURI(),
-                                           Constants.ELEM_HEADER), null);
-            enum = headers.elements();
-            while (enum.hasMoreElements()) {
-                SOAPHeaderElement header = (SOAPHeaderElement)enum.
-                                               nextElement();
-                header.output(context);
-                // Output this header element
-            }
-            // Output </SOAP-ENV:Header>
-            context.endElement();
+        if (header != null) {
+            header.outputImpl(context);
         }
 
         if (bodyElements.isEmpty()) {
