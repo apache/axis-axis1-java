@@ -84,7 +84,9 @@ public abstract class AdminClient {
       try {
         Options opts = new Options( args );
         
-        Debug.setDebugLevel( opts.isFlagSet('d') );
+        if (opts.isFlagSet('d') > 0) {
+          Debug.setDebugLevel( opts.isFlagSet('d') );
+        }
         
         args = opts.getRemainingArgs();
         

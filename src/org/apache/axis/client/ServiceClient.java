@@ -91,6 +91,9 @@ import org.apache.axis.encoding.SerializationContext;
 // Only supports String
 
 public class ServiceClient {
+    // Client transports
+    private static Transport defaultTransport = null;
+                                                        
     // keep prop hashtable small
     private Hashtable properties = new Hashtable(10);
     protected String encodingStyleURI = null ;
@@ -150,10 +153,19 @@ public class ServiceClient {
     
     public void setTransport(Transport transport) {
         this.transport = transport;
+        Debug.Print(1, "Transport is " + transport);
+    }
+    
+    public static void setDefaultTransport(Transport transport)
+    {
+        defaultTransport = transport;
     }
     
     public Transport getTransportForProtocol(String protocol)
     {
+      if (defaultTransport != null)
+        return defaultTransport;
+      
       if (protocol.equals("http"))
         return new HTTPTransport();
       
@@ -186,14 +198,6 @@ public class ServiceClient {
     
     public String getEncodingStyleURI() {
         return( encodingStyleURI );
-    }
-    
-    public void setTransportRequest(String handlerName) {
-      msgContext.setProperty( MessageContext.TRANS_REQUEST, handlerName );
-    }
-  
-    public void setTransportResponse(String handlerName) {
-      msgContext.setProperty( MessageContext.TRANS_RESPONSE, handlerName );
     }
     
     public void setRequestMessage(Message msg) {

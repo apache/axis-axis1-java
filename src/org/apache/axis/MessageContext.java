@@ -333,10 +333,6 @@ public class MessageContext {
      */
     public static String TRANS_URL           = "transport.url";
 
-    /** The transport specific request/response chains  */
-    public static String TRANS_REQUEST         = "transport.request";
-    public static String TRANS_RESPONSE        = "transport.response";
-
     /** Has a quit been requested? Hackish... but useful... -- RobJ */
     public static String QUIT_REQUESTED = "quit.requested";
   

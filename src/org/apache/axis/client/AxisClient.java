@@ -77,7 +77,8 @@ public class AxisClient extends AxisEngine
     public AxisClient()
     {
         super(Constants.CLIENT_HANDLER_REGISTRY,
-              Constants.CLIENT_SERVICE_REGISTRY);
+              Constants.CLIENT_SERVICE_REGISTRY,
+              Constants.CLIENT_TRANSPORT_REGISTRY);
     }
 
     /**

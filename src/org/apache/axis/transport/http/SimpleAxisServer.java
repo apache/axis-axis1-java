@@ -126,9 +126,7 @@ public class SimpleAxisServer implements Runnable {
     private static byte cannedResponse[] = "<empty/>".getBytes();
 
     // Axis specific constants
-    private static String transportReqName = "HTTPAction";
-    private static String transportRespName = "HTTP.response";
-    //private static final String AXIS_ENGINE = "AxisEngine" ;
+    private static String transportName = "SimpleHTTP";
     
     // are we stopped?
     // latch to true if stop() is called
@@ -149,8 +147,6 @@ public class SimpleAxisServer implements Runnable {
         // create and initialize a message context
         MessageContext msgContext = new MessageContext(engine);
         Message        requestMsg;
-        msgContext.setProperty(MessageContext.TRANS_REQUEST , transportReqName);
-        msgContext.setProperty(MessageContext.TRANS_RESPONSE, transportRespName);
 
         // Reusuable, buffered, content length controlled, InputStream
         NonBlockingBufferedInputStream is =
@@ -177,9 +173,8 @@ public class SimpleAxisServer implements Runnable {
             msgContext.setTargetService(null);
             msgContext.setResponseMessage(null);
             msgContext.clearProperties();
-            msgContext.setProperty("transport", "HTTPTransport");
-            msgContext.setProperty(MessageContext.TRANS_REQUEST, transportReqName);
-            msgContext.setProperty(MessageContext.TRANS_RESPONSE, transportRespName);
+            //msgContext.setProperty("transport", "HTTPTransport");
+            msgContext.setTransportName(transportName);
             
             try {
                 try {

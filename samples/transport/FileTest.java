@@ -43,7 +43,7 @@ public class FileTest {
   
     call.set(Transport.USER, opts.getUser() );
     call.set(Transport.PASSWORD, opts.getPassword() );
-    call.setTransportRequest( "FileSender" );
+    call.setTransport( new FileTransport() );
   
     Float res = new Float(0.0F);
     res = (Float) call.invoke( "urn:xmltoday-delayed-quotes",

@@ -68,32 +68,25 @@ import org.apache.axis.utils.* ;
  */
 public class AxisServlet extends HttpServlet {
   // These have default values.
-  private String transportReqName = "HTTP.request";
-  private String transportRespName = "HTTP.response";
+  private String transportName = "http";
 
   private static final String AXIS_ENGINE = "AxisEngine" ;
 
   public void init() {
-      String param = getInitParameter("transport.request");
+      String param = getInitParameter("transport.name");
       ServletContext context = getServletConfig().getServletContext();
       
       if (param == null)
-          param = context.getInitParameter("transport.request");
+          param = context.getInitParameter("transport.name");
       if (param != null)
-          transportReqName = param;
-      
-      param = getInitParameter("transport.response");
-      if (param == null)
-          param = context.getInitParameter("transport.response");
-      if (param != null)
-          transportRespName = param;
+          transportName = param;      
   }
 
   public void doGet(HttpServletRequest req, HttpServletResponse res)
                 throws ServletException, IOException {
     res.setContentType("text/html");
-    res.getWriter().println( "In doGet" );
-    res.getWriter().println(" Request = " + transportReqName);
+    res.getWriter().println( "In doGet<p>" );
+    res.getWriter().println(" TransportName = " + transportName);
   }
 
   public void doPost(HttpServletRequest req, HttpServletResponse res)
@@ -118,11 +111,9 @@ public class AxisServlet extends HttpServlet {
     /**********************************************************/
     msgContext.setRequestMessage( msg );
 
-    /* Set the Transport Specific Request/Response chains IDs */
-    /******************************************************/
-    msgContext.setProperty(MessageContext.TRANS_REQUEST , transportReqName );
-    msgContext.setProperty(MessageContext.TRANS_RESPONSE, transportRespName );
-    msgContext.setTransportName(transportReqName);
+    /* Set the Transport */
+    /*********************/
+    msgContext.setTransportName(transportName);
 
     /* Save some HTTP specific info in the bag in case a handler needs it */
     /**********************************************************************/

@@ -113,7 +113,8 @@ public class AxisServer extends AxisEngine
      */
     public AxisServer() {
       super(Constants.SERVER_HANDLER_REGISTRY,
-            Constants.SERVER_SERVICE_REGISTRY);
+            Constants.SERVER_SERVICE_REGISTRY,
+            Constants.SERVER_TRANSPORT_REGISTRY);
     }
 
     /**
@@ -149,14 +150,6 @@ public class AxisServer extends AxisEngine
       c.addHandler( _handlerRegistry.find( "debug" ) );
       deployHandler( "global.request", c );
       
-      c = new SimpleChain();
-      c.addHandler( _handlerRegistry.find( "HTTPAuth" ) );
-      c.addHandler( _handlerRegistry.find( "HTTPAction" ) );
-      // deployHandler( "HTTP.request", c );
-      
-      SimpleTargetedChain transport = new SimpleTargetedChain();
-      transport.setRequestHandler(c);
-      deployTransport("HTTP.request", transport);
     }
 
     protected void deployDefaultServices()
@@ -179,7 +172,20 @@ public class AxisServer extends AxisEngine
 
     protected void deployDefaultTransports()
     {
-      // Do nothing.
+      Chain c = new SimpleChain();
+      Handler actionHandler = _handlerRegistry.find( "HTTPAction" );
+      c.addHandler( _handlerRegistry.find( "HTTPAuth" ) );
+      c.addHandler( actionHandler );
+      
+      // HTTP transport w/authorization
+      SimpleTargetedChain transport = new SimpleTargetedChain();
+      transport.setRequestHandler(c);
+      deployTransport("http", transport);
+      
+      // HTTP transport (for SimpleAxisServer) without auth.
+      transport = new SimpleTargetedChain();
+      transport.setRequestHandler(actionHandler);
+      deployTransport("SimpleHTTP", transport);
     }
     
     /**
@@ -266,6 +272,7 @@ public class AxisServer extends AxisEngine
               HandlerRegistry tr = getTransportRegistry();
               SimpleTargetedChain transportChain = null;
               
+              Debug.Print(3, "AxisServer.invoke: Transport = '" + hName +"'");
               if ( hName != null && (h = tr.find( hName )) != null ) {
                 if (h instanceof SimpleTargetedChain) {
                   transportChain = (SimpleTargetedChain)h;

@@ -106,6 +106,7 @@ public class TCPTransport extends Transport
         if (port != null) serv.set(PORT, port);
         String url = "http://"+serv.get(HOST)+":"+serv.get(PORT);
         
+        Debug.Print(4, "TCPTransport set URL to '" + url + "'");
         mc.setProperty(MessageContext.TRANS_URL, url);
     }
 }

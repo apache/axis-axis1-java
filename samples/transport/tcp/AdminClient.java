@@ -61,15 +61,21 @@ import org.apache.axis.transport.http.HTTPConstants;
 import java.net.URL;
 
 /**
- * An admin client object, specific to HTTP.
+ * An admin client object, specific to TCP in that it sets
+ * the TCP transport up.
  *
  * @author Rob Jellinghaus (robj@unrealities.com)
  * @author Doug Davis (dug@us.ibm.com)
+ * @author Glen Daniels (gdaniels@macromedia.com)
  */
 
 public class AdminClient extends org.apache.axis.client.AdminClient {
 
     public static void main(String args[]) {
+        /** !!! This shouldn't be hardcoded....
+         */
+        ServiceClient.setDefaultTransport(new TCPTransport("localhost", "8080"));
+        
         try {
             org.apache.axis.client.AdminClient.main(args);
         }
