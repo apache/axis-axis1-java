@@ -238,15 +238,9 @@ public class Call implements javax.xml.rpc.Call {
      * Clears the list of parameters.
      */
     public void removeAllParameters() {
-        if (paramNames != null) {
-            paramNames.clear();
-        }
-        if (paramTypes != null) {
-            paramTypes.clear();
-        }
-        if (paramModes != null) {
-            paramModes.clear();
-        }
+        paramNames = null ;
+        paramTypes = null ;
+        paramModes = null ;
     }
 
     /**
@@ -396,7 +390,7 @@ public class Call implements javax.xml.rpc.Call {
         for ( i = 0 ; params != null && i < params.length ; i++ )
             if ( !(params[i] instanceof SOAPBodyElement) ) break ;
 
-        if ( params != null && i == params.length ) {
+        if ( params != null && params.length > 0 && i == params.length ) {
             /* ok, we're doing Messaging, so build up the message */
             /******************************************************/
             env = new SOAPEnvelope();
@@ -434,8 +428,7 @@ public class Call implements javax.xml.rpc.Call {
         catch( Exception exp ) {
             if ( exp instanceof AxisFault ) throw (AxisFault) exp ;
 
-            throw new AxisFault( "Error invoking operation",
-                                                exp );
+            throw new AxisFault( "Error invoking operation:\n" + exp );
         }
     }
 

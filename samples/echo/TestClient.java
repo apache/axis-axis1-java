@@ -56,7 +56,8 @@
 package samples.echo ;
 
 import org.apache.axis.AxisFault;
-import org.apache.axis.client.ServiceClient;
+import org.apache.axis.client.Call;
+import org.apache.axis.client.Service;
 import org.apache.axis.encoding.BeanSerializer;
 import org.apache.axis.encoding.ServiceDescription;
 import org.apache.axis.encoding.TypeMappingRegistry;
@@ -64,6 +65,7 @@ import org.apache.axis.message.RPCParam;
 import org.apache.axis.transport.http.HTTPTransport;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Options;
+import org.apache.axis.encoding.XMLType;
 import javax.xml.rpc.namespace.QName;
 
 import java.lang.reflect.Array;
@@ -83,7 +85,8 @@ import java.util.Set;
  */
 public abstract class TestClient {
 
-    private static ServiceClient call;
+    private static Service service;
+    private static Call call;
     private static boolean addMethodToAction = false;
     private static String soapAction = "http://soapinterop.org/";
 
@@ -148,29 +151,33 @@ public abstract class TestClient {
         try {
             // set up the argument list
             Object args[];
+            call.removeAllParameters();
             if (toSend == null) {
                 args = new Object[] {};
             } else {
-                args = new Object[] {new RPCParam(arg, toSend)};
+                // args = new Object[] {new RPCParam(arg, toSend)};
 
                 // Default return type based on what we expect
-                ServiceDescription sd = new ServiceDescription(method, true);
-                sd.setReturnType(map.getTypeQName(toSend.getClass()));
-                call.setServiceDescription(sd);
+                QName qn = map.getTypeQName(toSend.getClass());
+                XMLType  xt = new XMLType( qn );
+
+                call.addParameter( arg, xt, Call.PARAM_MODE_IN);
+                call.setReturnType( xt );
+                args = new Object[] { toSend } ;
             }
 
             // set the SOAPAction, optionally appending the method name
             String action = soapAction;
             if (addMethodToAction) action += method;
-            call.set(HTTPTransport.ACTION, action);
+            call.setProperty( HTTPTransport.ACTION, action );
 
             // safety first
-            call.setTimeout(60000);
+            call.setProperty(Call.TIMEOUT, "60000");
 
             // issue the request
-            Object got= call.invoke("http://soapinterop.org/",
-                                    method.trim(),
-                                    args);
+            call.setProperty( Call.NAMESPACE, "http://soapinterop.org/" );
+            call.setOperationName( method.trim() );
+            Object got= call.invoke( args );
 
             // verify the result
             verify(method, toSend, got);
@@ -188,8 +195,16 @@ public abstract class TestClient {
     public void setURL(String url)
         throws AxisFault
     {
-        call = new ServiceClient(url);
-        map = call.getMessageContext().getTypeMappingRegistry();
+        try {
+            service = new Service();
+            call = (Call) service.createCall();
+            call.setTargetEndpointAddress( new java.net.URL(url) );
+            map = call.getMessageContext().getTypeMappingRegistry();
+        }
+        catch( Exception exp ) {
+            if ( exp instanceof AxisFault ) throw (AxisFault) exp ;
+            throw new AxisFault(exp);
+        }
     }
 
     /**
