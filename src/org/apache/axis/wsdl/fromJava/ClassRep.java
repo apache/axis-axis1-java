@@ -222,6 +222,29 @@ public class ClassRep {
         // Constructs a vector of all the public methods
         Method[] m;
         
+        if (inhMethods)
+            m = cls.getMethods();
+        else
+            m = cls.getDeclaredMethods();
+        
+        // add each method in this class to the list
+        for (int i=0; i < m.length; i++) {
+            int mod = m[i].getModifiers();
+            if (Modifier.isPublic(mod) &&
+                    // Ignore the getParameterName method from the Skeleton class
+                    (!m[i].getName().equals("getParameterName") ||
+                    !(Skeleton.class).isAssignableFrom(m[i].getDeclaringClass()))) {
+                short[] modes = getParameterModes(m[i]);
+                Class[] types = getParameterTypes(m[i]);
+                _methods.add(new MethodRep(m[i], types, modes,
+                                           getParameterNames(m[i], implClass, types)));
+            }
+        }
+        
+        
+/*
+        // tomj - There is a problem here with interfaces
+        
         // iterate up the inheritance chain and construct the list of methods
         Class currentClass = cls;
         while (currentClass != null &&
@@ -253,6 +276,7 @@ public class ClassRep {
             // move up the inhertance chain
             currentClass = currentClass.getSuperclass();
         }
+*/
         return;
     }
 
