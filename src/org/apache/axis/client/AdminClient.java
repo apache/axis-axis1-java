@@ -144,6 +144,30 @@ public class AdminClient
         return call;
     }
 
+    public String list(Options opts) throws Exception { 
+        processOpts( opts );
+        return list();
+    }
+
+    public String list() throws Exception { 
+        log( JavaUtils.getMessage("doList00") );
+        String               str   = "<m:list xmlns:m=\"AdminService\"/>" ;
+        ByteArrayInputStream input = new ByteArrayInputStream(str.getBytes());
+        return process(input);
+    }
+
+    public String quit(Options opts) throws Exception { 
+        processOpts( opts );
+        return quit();
+    }
+
+    public String quit() throws Exception { 
+        log(JavaUtils.getMessage("doQuit00"));
+        String               str   = "<m:quit xmlns:m=\"AdminService\"/>";
+        ByteArrayInputStream input = new ByteArrayInputStream(str.getBytes());
+        return process(input);
+    }
+
     /**
      * <p>Processes a set of administration commands.</p>
      * <p>The following commands are available:</p>
@@ -175,8 +199,8 @@ public class AdminClient
      * commands, the XML results will be concatenated, separated by \n
      * @exception Exception Could be an IO exception, an AxisFault or something else
      */
-    public String process (String[] args) throws Exception
-    {
+
+    public String process(String[] args) throws Exception {
         StringBuffer sb = new StringBuffer();
 
         Options opts = new Options( args );
@@ -189,25 +213,18 @@ public class AdminClient
         args = opts.getRemainingArgs();
 
         if ( args == null ) {
-            log( JavaUtils.getMessage("usage00", "AdminClient xml-files | list") );
+            log(JavaUtils.getMessage("usage00","AdminClient xml-files | list"));
             return null;
         }
 
-        for ( int i = 0 ; i < args.length ; i++ )
-        {
+        for ( int i = 0 ; i < args.length ; i++ ) {
             InputStream input = null;
 
-            if ( args[i].equals("list") ) {
-                log( JavaUtils.getMessage("doList00") );
-                String str = "<m:list xmlns:m=\"AdminService\"/>" ;
-                input = new ByteArrayInputStream( str.getBytes() );
-                sb.append( process(opts, input) );
-            } else if (args[i].equals("quit")) {
-                log(JavaUtils.getMessage("doQuit00"));
-                String str = "<m:quit xmlns:m=\"AdminService\"/>";
-                input = new ByteArrayInputStream(str.getBytes());
-                sb.append( process(opts, input) );
-            } else if (args[i].equals("passwd")) {
+            if ( args[i].equals("list") ) 
+              sb.append( list(opts) );
+            else if (args[i].equals("quit")) 
+              sb.append( quit(opts) );
+            else if (args[i].equals("passwd")) {
                 log(JavaUtils.getMessage("changePwd00"));
                 if (args[i + 1] == null) {
                     log(JavaUtils.getMessage("needPwd00"));
@@ -223,15 +240,15 @@ public class AdminClient
             else {
                 if(args[i].indexOf(java.io.File.pathSeparatorChar)==-1){
                     log( JavaUtils.getMessage("processFile00", args[i]) );
-                    input = new FileInputStream( args[i] );
-                    sb.append( process(opts, input) );
+                    sb.append( process(opts, args[i] ) );
                 } else {
-                    java.util.StringTokenizer tokenizer = new java.util.StringTokenizer(args[i],java.io.File.pathSeparator);
+                    java.util.StringTokenizer tokenizer = null ;
+                    tokenizer = new java.util.StringTokenizer(args[i],
+                                                 java.io.File.pathSeparator);
                     while(tokenizer.hasMoreTokens()) {
                         String file = tokenizer.nextToken();
                         log( JavaUtils.getMessage("processFile00", file) );
-                        input = new FileInputStream( file );
-                        sb.append( process(opts, input) );
+                        sb.append( process(opts, file) );
                         if(tokenizer.hasMoreTokens())
                             sb.append("\n");
                     }
@@ -242,20 +259,46 @@ public class AdminClient
         return sb.toString();
     }
 
-    public String process(Options opts, InputStream input)  throws Exception
-    {
-        if (call == null) {
+    public void processOpts(Options opts) throws Exception {
+        if (call == null) 
             throw new Exception(JavaUtils.getMessage("nullCall00"));
-        }
 
         call.setTargetEndpointAddress( new URL(opts.getURL()) );
-        call.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, "AdminService");
         call.setProperty( Transport.USER, opts.getUser() );
         call.setProperty( Transport.PASSWORD, opts.getPassword() );
 
         String tName = opts.isValueSet( 't' );
         if ( tName != null && !tName.equals("") )
             call.setProperty( Call.TRANSPORT_NAME, tName );
+    }
+
+    public String process(InputStream input) throws Exception { 
+        return process(null, input );
+    }
+
+    public String process(URL xmlURL) throws Exception { 
+        return process(null, xmlURL.openStream() );
+    }
+
+    public String process(String xmlFile) throws Exception { 
+        FileInputStream in     = new FileInputStream(xmlFile);
+        String          result =  process(null, in );
+        in.close();
+        return result ;
+    }
+
+    public String process(Options opts, String xmlFile)  throws Exception {
+        processOpts( opts );
+        return process( xmlFile );
+    }
+
+    public String process(Options opts, InputStream input)  throws Exception {
+        if (call == null) 
+            throw new Exception(JavaUtils.getMessage("nullCall00"));
+
+        if ( opts != null ) processOpts( opts );
+        
+        call.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, "AdminService");
 
         Vector result = null ;
         Object[]  params = new Object[] { new SOAPBodyElement(input) };
@@ -263,9 +306,8 @@ public class AdminClient
 
         input.close();
 
-        if (result == null || result.isEmpty()) {
+        if (result == null || result.isEmpty()) 
             throw new AxisFault(JavaUtils.getMessage("nullResponse00"));
-        }
 
         SOAPBodyElement body = (SOAPBodyElement) result.elementAt(0);
         return body.toString();
