@@ -301,7 +301,7 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
             }
         }
 
-        pw.println("    };");
+        pw.println("    }");
         pw.println();
 
         pw.println("    /**");
