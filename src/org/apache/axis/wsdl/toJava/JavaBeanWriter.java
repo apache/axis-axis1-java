@@ -242,6 +242,7 @@ public class JavaBeanWriter extends JavaWriter {
         }
 
         writeEqualsMethod();
+        writeHashCodeMethod();
 
         // Write the meta data into a Helper class or
         // embed it in the bean class
@@ -254,18 +255,38 @@ public class JavaBeanWriter extends JavaWriter {
         pw.close();
     } // writeFileBody
 
+    /**
+     * Generate an equals method.
+     **/
     protected void writeEqualsMethod() {
-        pw.println("    public boolean equals(Object obj) {");
-        pw.println("        // compare elements");
+     
+        // The __equalsCalc field and synchronized method are necessary
+        // in case the object has direct or indirect references to itself.
+        pw.println("    private Object __equalsCalc = null;");
+        pw.println("    public synchronized boolean equals(Object obj) {");
+
+        // First do the general comparison checks
         pw.println("        if (!(obj instanceof " + className + ")) return false;");
         pw.println("        " +  className + " other = (" + className + ") obj;");
         pw.println("        if (obj == null) return false;");
         pw.println("        if (this == obj) return true;");
-        pw.println("        if (! (obj instanceof " + className + ")) return false;");
+
+        // Have we been here before ? return true if yes otherwise false
+        pw.println("        if (__equalsCalc != null) {");
+        pw.println("            return (__equalsCalc == obj);");
+        pw.println("        }");
+        pw.println("        __equalsCalc = obj;");
+
+        // Before checking the elements, check equality of the super class
+        String truth = "true";
+        if (extendType != null && !type.isSimpleType()) {
+            truth = "super.equals(obj)";
+        }
+        pw.println("        boolean _equals;");
         if (names.size() == 0) {
-            pw.println("        return true;");
+            pw.println("        _equals = " + truth + ";");
         } else {
-            pw.println("        return");
+            pw.println("        _equals = " + truth + " && ");
             for (int i = 0; i < names.size(); i += 2) {
                 String variableType = (String) names.get(i);
                 String variable = (String) names.get(i + 1);
@@ -308,6 +329,80 @@ public class JavaBeanWriter extends JavaWriter {
                     pw.println(" &&");
             }
         }
+        pw.println("        __equalsCalc = null;");
+        pw.println("        return _equals;");
+        pw.println("    }");
+    }
+
+    protected void writeHashCodeMethod() {
+        // The __hashCodeCalc field and synchronized method are necessary
+        // in case the object has direct or indirect references to itself.
+        pw.println("    private boolean __hashCodeCalc = false;");
+        pw.println("    public synchronized int hashCode() {");
+        pw.println("        if (__hashCodeCalc) {");
+        pw.println("            return 0;");
+        pw.println("        }"); 
+        pw.println("        __hashCodeCalc = true;"); 
+
+        // Get the hashCode of the super class
+        String start = "1";
+        if (extendType != null && !type.isSimpleType()) {
+            start = "super.hashCode()";
+        }
+        pw.println("        int _hashCode = " + start + ";");
+        for (int i = 0; i < names.size(); i += 2) {
+            String variableType = (String) names.get(i);
+            String variable = (String) names.get(i + 1);
+            String get = "get";
+            
+            if (variableType.equals("boolean"))
+                get = "is";
+            
+            if (variableType.equals("int") ||
+                variableType.equals("short") ||
+                variableType.equals("boolean") ||
+                variableType.equals("byte")) {
+                pw.println("        _hashCode += " + get +
+                         Utils.capitalizeFirstChar(variable) + "();");
+            } else if (variableType.equals("long")) {
+                pw.println("        _hashCode += new Long(" + get +
+                           Utils.capitalizeFirstChar(variable) + "()).hashCode();");
+            } else if (variableType.equals("float")) {
+                pw.println("        _hashCode += new Float(" + get +
+                           Utils.capitalizeFirstChar(variable) + "()).hashCode();");
+            } else if (variableType.equals("double")) {
+                pw.println("        _hashCode += new Double(" + get +
+                           Utils.capitalizeFirstChar(variable) + "()).hashCode();");
+            } else if (variableType.indexOf("[") >=0) {
+                // The hashCode calculation for arrays is complicated.
+                // Wish there was a hashCode method in java.utils.Arrays !
+                // Get the hashCode for each element of the array which is not an array.
+                pw.println("        if (" + get + 
+                           Utils.capitalizeFirstChar(variable) + "() != null) {");
+                pw.println("            for (int i=0;");
+                pw.println("                 i<java.lang.reflect.Array.getLength(" + get +
+                           Utils.capitalizeFirstChar(variable) + "());");
+                pw.println("                 i++) {");
+                pw.println("                Object obj = java.lang.reflect.Array.get(" +
+                           get +
+                           Utils.capitalizeFirstChar(variable) + "(), i);");
+                pw.println("                if (obj != null &&");
+                pw.println("                    !obj.getClass().isArray()) {");
+                pw.println("                    _hashCode += obj.hashCode();");
+                pw.println("                }");     
+                pw.println("            }");     
+                pw.println("        }");     
+            } else {
+                pw.println("        if (" + get + 
+                           Utils.capitalizeFirstChar(variable) + "() != null) {");
+                pw.println("            _hashCode += " + get +
+                           Utils.capitalizeFirstChar(variable) + "().hashCode();");
+                pw.println("        }");  
+            }
+        }
+        // Reset the __hashCodeCalc variable and return
+        pw.println("        __hashCodeCalc = false;");
+        pw.println("        return _hashCode;");
         pw.println("    }");
     }
 } // class JavaBeanWriter
