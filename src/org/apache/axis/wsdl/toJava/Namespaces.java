@@ -117,8 +117,10 @@ public class Namespaces extends HashMap {
         }
         String value = (String)super.get(key);
         if (value == null) {
-            value = (String)Utils.makePackageName(key);
-            put(key, normalizePackageName(value,javaPkgSeparator));
+            value = normalizePackageName(
+                        (String)Utils.makePackageName(key),
+                        javaPkgSeparator);
+            put(key, value);
         }
         return (String) value;
     } // getCreate
