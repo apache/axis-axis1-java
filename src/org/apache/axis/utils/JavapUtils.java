@@ -64,7 +64,8 @@ import java.io.InputStreamReader;
 
 import java.util.StringTokenizer;
 import java.util.Vector;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This is a utility class that can be used to extract information 
@@ -79,7 +80,7 @@ public class JavapUtils
     static Category category =
             Category.getInstance(JavapUtils.class.getName());
 
-    private static Hashtable cache = new Hashtable();
+    private static Map cache = new HashMap();
 
     /**
      * Get the return/parameter names for the indicated method.
