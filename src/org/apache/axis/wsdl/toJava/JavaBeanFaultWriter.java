@@ -22,9 +22,9 @@ import java.io.PrintWriter;
 import java.util.Vector;
 
 /**
- * This is Wsdl2java's Complex Faylt Writer.
+ * This is Wsdl2java's Complex Fault Writer.
  * It generates bean-like class for complexTypes used
- * in a operation fault message.
+ * in an operation fault message.
  */
 public class JavaBeanFaultWriter extends JavaBeanWriter {
 
