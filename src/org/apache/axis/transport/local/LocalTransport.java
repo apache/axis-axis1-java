@@ -57,8 +57,8 @@ package org.apache.axis.transport.local;
 
 import org.apache.axis.AxisEngine;
 import org.apache.axis.MessageContext;
-import org.apache.axis.client.ServiceClient;
 import org.apache.axis.client.Transport;
+import org.apache.axis.client.Call;
 import org.apache.axis.server.AxisServer;
 
 /**
@@ -110,7 +110,7 @@ public class LocalTransport extends Transport
      * @param engine the engine containing the registries
      */
     public void setupMessageContextImpl(MessageContext mc,
-                                        ServiceClient serv,
+                                        Call call,
                                         AxisEngine engine)
     {
         if (server != null)

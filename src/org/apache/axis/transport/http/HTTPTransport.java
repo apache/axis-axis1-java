@@ -58,8 +58,8 @@ package org.apache.axis.transport.http;
 import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
 import org.apache.axis.MessageContext;
-import org.apache.axis.client.ServiceClient;
 import org.apache.axis.client.Transport;
+import org.apache.axis.client.Call;
 
 /**
  * Extends Transport by implementing the setupMessageContext function to
@@ -105,7 +105,7 @@ public class HTTPTransport extends Transport
      * @throws AxisFault if service cannot be found
      */
     public void setupMessageContextImpl(MessageContext mc,
-                                        ServiceClient serviceClient,
+                                        Call call,
                                         AxisEngine engine)
         throws AxisFault
     {
