@@ -636,7 +636,7 @@ public class Admin {
             Class pivotClass = pivotHandler.getClass();
             if (pivotClass == RPCProvider.class) {
                 serv.setProviderQName(WSDDConstants.JAVARPC_PROVIDER);
-            } else if (pivotClass != MsgProvider.class) {
+            } else if (pivotClass == MsgProvider.class) {
                 serv.setProviderQName(WSDDConstants.JAVAMSG_PROVIDER);
             } else {
                 serv.setParameter("handlerClass", pivotClass.getName());
