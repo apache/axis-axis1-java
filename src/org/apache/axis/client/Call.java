@@ -2617,13 +2617,6 @@ public class Call implements javax.xml.rpc.Call {
                     }
                 }
             }
-
-            SOAPService svc = msgContext.getService();
-            if (svc != null) {
-                svc.setPropertyParent(myProperties);
-            } else {
-                msgContext.setPropertyParent(myProperties);
-            }
         }
         if (log.isDebugEnabled()) {
             log.debug(Messages.getMessage("targetService",
@@ -2650,6 +2643,13 @@ public class Call implements javax.xml.rpc.Call {
         }
         else {
             msgContext.setTransportName( transportName );
+        }
+
+        SOAPService svc = msgContext.getService();
+        if (svc != null) {
+            svc.setPropertyParent(myProperties);
+        } else {
+            msgContext.setPropertyParent(myProperties);
         }
 
         // For debugging - print request message
