@@ -245,7 +245,7 @@ public class Time implements java.io.Serializable {
         _equals = true &&
             ((_value ==null && other._value ==null) ||
              (_value !=null &&
-              _value.getTimeInMillis() == other._value.getTimeInMillis()));
+              _value.getTime().equals(other._value.getTime())));
 
         return _equals;
 
