@@ -341,7 +341,7 @@ public class JavaStubWriter extends JavaWriter {
         // Loop over parameter types for this operation
         for (int i=0; i < params.list.size(); i++) {
             Parameter p = (Parameter) params.list.get(i);
-            v.add(p.type);
+            v.add(p.getType());
         }
         
         // Add the return type
@@ -501,9 +501,9 @@ public class JavaStubWriter extends JavaWriter {
             Parameter p = (Parameter) parms.list.get(i);
 
             // We need to use the Qname of the actual type, not the QName of the element
-            QName qn = p.type.getQName();
-            if (p.type instanceof DefinedElement) {
-                Node node = symbolTable.getTypeEntry(p.type.getQName(), true).getNode();
+            QName qn = p.getType().getQName();
+            if (p.getType() instanceof DefinedElement) {
+                Node node = symbolTable.getTypeEntry(p.getType().getQName(), true).getNode();
                 QName qn2 = Utils.getNodeTypeRefQName(node, "type");
                 if (qn2 != null) {
                     qn = qn2;
@@ -518,15 +518,15 @@ public class JavaStubWriter extends JavaWriter {
             pw.println("        javax.xml.rpc.namespace.QName " + qnName + " = new javax.xml.rpc.namespace.QName(\"" +
                     paramQName.getNamespaceURI() + "\", \"" +
                     paramQName.getLocalPart() + "\");");
-            if (p.mode == Parameter.IN) {
+            if (p.getMode() == Parameter.IN) {
                 pw.println("        call.addParameter(" + qnName + ", "
                            + typeString + ", javax.xml.rpc.ParameterMode.PARAM_MODE_IN);");
             }
-            else if (p.mode == Parameter.INOUT) {
+            else if (p.getMode() == Parameter.INOUT) {
                 pw.println("        call.addParameter(" + qnName + ", "
                            + typeString + ", javax.xml.rpc.ParameterMode.PARAM_MODE_INOUT);");
             }
-            else { // p.mode == Parameter.OUT
+            else { // p.getMode() == Parameter.OUT
                 pw.println("        call.addParameter(" + qnName + ", "
                            + typeString + ", javax.xml.rpc.ParameterMode.PARAM_MODE_OUT);");
             }
@@ -596,18 +596,18 @@ public class JavaStubWriter extends JavaWriter {
             Parameter p = (Parameter) parms.list.get(i);
 
             String javifiedName = Utils.xmlNameToJava(p.getName());
-            if (p.mode != Parameter.OUT) {
+            if (p.getMode() != Parameter.OUT) {
                 if (needComma) {
                     pw.print(", ");
                 }
                 else {
                     needComma = true;
                 }
-                if (p.mode == Parameter.IN) {
-                    pw.print(wrapPrimitiveType(p.type, javifiedName));
+                if (p.getMode() == Parameter.IN) {
+                    pw.print(wrapPrimitiveType(p.getType(), javifiedName));
                 }
                 else { 
-                    pw.print(wrapPrimitiveType(p.type, javifiedName + ".value"));
+                    pw.print(wrapPrimitiveType(p.getType(), javifiedName + ".value"));
                 }
             }
         }
@@ -627,7 +627,7 @@ public class JavaStubWriter extends JavaWriter {
                     int i = 0;
                     Parameter p = (Parameter) parms.list.get(i);
 
-                    while (p.mode != Parameter.INOUT) {
+                    while (p.getMode() != Parameter.INOUT) {
                         p = (Parameter) parms.list.get(++i);
                     }
                     String javifiedName = Utils.xmlNameToJava(p.getName());
@@ -641,17 +641,17 @@ public class JavaStubWriter extends JavaWriter {
                     // NOTE A:
                     // It seems that it should be the responsibility of the 
                     // Call to convert the ArrayList into the proper array.
-                    if (p.type.getName().endsWith("[]")) {
+                    if (p.getType().getName().endsWith("[]")) {
                         pw.println("            // REVISIT THIS!");
                         pw.println("            " + javifiedName
-                                    + ".value = (" + p.type.getName()
+                                    + ".value = (" + p.getType().getName()
                                     + ") org.apache.axis.utils.JavaUtils.convert(output.get("
-                                    + qnameName + "), " + p.type.getName()
+                                    + qnameName + "), " + p.getType().getName()
                                     + ".class);");
                     }
                     else {
                         pw.println("            " + javifiedName + ".value = "
-                                + getResponseString(p.type,
+                                + getResponseString(p.getType(),
                                 "output.get(" + qnameName + ")"));
                     }
                 }
@@ -687,40 +687,40 @@ public class JavaStubWriter extends JavaWriter {
                     String javifiedName = Utils.xmlNameToJava(p.getName());
                     String qnameName = Utils.getNewQName(
                             Utils.getAxisQName(p.getQName()));
-                    if (p.mode != Parameter.IN) {
+                    if (p.getMode() != Parameter.IN) {
                         if (firstInoutIsResp) {
                             firstInoutIsResp = false;
                             // If expecting an array, need to call convert(..) because
                             // the runtime stores arrays in a different form (ArrayList). 
                             // (See NOTE A)
-                            if (p.type.getName().endsWith("[]")) {
+                            if (p.getType().getName().endsWith("[]")) {
                                 pw.println("             // REVISIT THIS!");
                                 pw.println ("            " + javifiedName
-                                        + ".value = (" + p.type.getName()
+                                        + ".value = (" + p.getType().getName()
                                         + ") org.apache.axis.utils.JavaUtils.convert(output.get(" + qnameName + "), "
-                                        + p.type.getName() + ".class);");
+                                        + p.getType().getName() + ".class);");
                             }
                             else {
                                 pw.println ("            " + javifiedName +
                                             ".value = " +
-                                            getResponseString(p.type,  "output.get(" + qnameName + ")"));
+                                            getResponseString(p.getType(),  "output.get(" + qnameName + ")"));
                             }
                         }
                         else {
                             // If expecting an array, need to call convert(..) because
                             // the runtime stores arrays in a different form (ArrayList). 
                             // (See NOTE A)
-                            if (p.type.getName().endsWith("[]")) {
+                            if (p.getType().getName().endsWith("[]")) {
                                 pw.println("             // REVISIT THIS!");
                                 pw.println ("            " + javifiedName
-                                            + ".value = (" + p.type.getName()
+                                            + ".value = (" + p.getType().getName()
                                             + ") org.apache.axis.utils.JavaUtils.convert("
                                             + "output.get(" + qnameName + "), "
-                                            + p.type.getName() + ".class);");
+                                            + p.getType().getName() + ".class);");
                             }
                             else {
                                 pw.println ("            " + javifiedName
-                                            + ".value = " + getResponseString(p.type,
+                                            + ".value = " + getResponseString(p.getType(),
                                     "output.get(" + qnameName + ")"));
                             }
                         }

@@ -111,9 +111,10 @@ public class JavaComplexTypeWriter extends JavaWriter {
 
         // We are only interested in the java names of the types, so create a names list
         Vector names = new Vector();
-        for (int i = 0; i < elements.size(); i += 2) {
-            TypeEntry type = (TypeEntry) elements.get(i);
-            String elemName = (String) elements.get(i + 1);
+        for (int i = 0; i < elements.size(); i++) {
+            ElementDecl elem = (ElementDecl)elements.get(i);
+            TypeEntry type = elem.getType();
+            String elemName = elem.getName().getLocalPart();
             String javaName = Utils.xmlNameToJava(elemName);
             if (!javaName.equals(elemName)) {
                 // If we did some mangling, make sure we'll write out the XML
@@ -121,7 +122,7 @@ public class JavaComplexTypeWriter extends JavaWriter {
                 if (elementMappings == null)
                     elementMappings = new HashMap();
 
-                elementMappings.put(javaName, new QName("", elemName));
+                elementMappings.put(javaName, elem.getName());
             }
             names.add(type.getName());
             names.add(javaName);
@@ -179,7 +180,8 @@ public class JavaComplexTypeWriter extends JavaWriter {
         }
 
         pw.println();
-        for (int i = 0; i < names.size(); i += 2) {
+        int j = 0; 
+        for (int i = 0; i < names.size(); i += 2, j++) {
             String typeName = (String) names.get(i);
             String name = (String) names.get(i + 1);
             String capName = Utils.capitalizeFirstChar(name);
@@ -206,33 +208,34 @@ public class JavaComplexTypeWriter extends JavaWriter {
             // like the reasonable approach to take for collection types.
             // (It may be more efficient to handle this with an ArrayList...but
             // for the initial support it was easier to use an actual array.) 
-            if (i < elements.size() &&
-                    ((TypeEntry) elements.elementAt(i)).getQName().getLocalPart().indexOf("[") > 0) {
-
-                String compName = typeName.substring(0, typeName.lastIndexOf("["));
-
-                int bracketIndex = typeName.indexOf("[");
-                String newingName = typeName.substring(0, bracketIndex + 1);
-                String newingSuffix = typeName.substring(bracketIndex + 1);
-
-                pw.println("    public " + compName + " " + get + capName + "(int i) {");
-                pw.println("        return " + name + "[i];");
-                pw.println("    }");
-                pw.println();
-                pw.println("    public void set" + capName + "(int i, " + compName + " value) {");
-                pw.println("        if (this." + name + " == null ||");
-                pw.println("            this." + name + ".length <= i) {");
-                pw.println("            " + typeName + " a = new " +
-                           newingName + "i + 1" + newingSuffix + ";");
-                pw.println("            if (this." + name + " != null) {");
-                pw.println("                for(int j = 0; j < this." + name + ".length; j++)");
-                pw.println("                    a[j] = this." + name + "[j];");
-                pw.println("            }");
-                pw.println("            this." + name + " = a;");
-                pw.println("        }");
-                pw.println("        this." + name + "[i] = value;");
-                pw.println("    }");
-                pw.println();
+            if (j < elements.size()) {
+                ElementDecl elem = (ElementDecl)elements.get(j);
+                if (elem.getType().getQName().getLocalPart().indexOf("[") > 0) {
+                    String compName = typeName.substring(0, typeName.lastIndexOf("["));
+                    
+                    int bracketIndex = typeName.indexOf("[");
+                    String newingName = typeName.substring(0, bracketIndex + 1);
+                    String newingSuffix = typeName.substring(bracketIndex + 1);
+                    
+                    pw.println("    public " + compName + " " + get + capName + "(int i) {");
+                    pw.println("        return " + name + "[i];");
+                    pw.println("    }");
+                    pw.println();
+                    pw.println("    public void set" + capName + "(int i, " + compName + " value) {");
+                    pw.println("        if (this." + name + " == null ||");
+                    pw.println("            this." + name + ".length <= i) {");
+                    pw.println("            " + typeName + " a = new " +
+                               newingName + "i + 1" + newingSuffix + ";");
+                    pw.println("            if (this." + name + " != null) {");
+                    pw.println("                for(int j = 0; j < this." + name + ".length; j++)");
+                    pw.println("                    a[j] = this." + name + "[j];");
+                    pw.println("            }");
+                    pw.println("            this." + name + " = a;");
+                    pw.println("        }");
+                    pw.println("        this." + name + "[i] = value;");
+                    pw.println("    }");
+                    pw.println();
+                }
             }
         }
        

@@ -189,7 +189,9 @@ public class JavaWriterFactory implements WriterFactory {
                         // Only consider the localName after the last '>' when
                         // generating the java name
                         String localName = typeQName.getLocalPart();
-                        localName = localName.substring(localName.lastIndexOf(SymbolTable.ANON_TOKEN)+1);
+                        localName = 
+                            localName.substring(
+                                localName.lastIndexOf(SymbolTable.ANON_TOKEN)+1);
                         typeQName = new QName(typeQName.getNamespaceURI(), localName);
                         // If there is already an existing type, there will be a 
                         // collision.  If there is an existing anon type, there will be a 
@@ -273,7 +275,8 @@ public class JavaWriterFactory implements WriterFactory {
                             // an anonymous type, then need to change the
                             // java name of the anonymous type to match.
                             QName anonQName = new QName(entry.getQName().getNamespaceURI(),
-                                                        SymbolTable.ANON_TOKEN + entry.getQName().getLocalPart());
+                                                        SymbolTable.ANON_TOKEN +
+                                                        entry.getQName().getLocalPart());
                             TypeEntry anonType = symbolTable.getType(anonQName);
                             if (anonType != null) {
                                 anonType.setName(entry.getName());
@@ -497,11 +500,11 @@ public class JavaWriterFactory implements WriterFactory {
             }
 
             String javifiedName = Utils.xmlNameToJava(p.getName());
-            if (p.mode == Parameter.IN) {
-                signature = signature + p.type.getName() + " " + javifiedName;
+            if (p.getMode() == Parameter.IN) {
+                signature = signature + p.getType().getName() + " " + javifiedName;
             }
             else {
-                signature = signature + Utils.holder(p.type, symbolTable) + " "
+                signature = signature + Utils.holder(p.getType(), symbolTable) + " "
                         + javifiedName;
             }
         }
@@ -537,15 +540,15 @@ public class JavaWriterFactory implements WriterFactory {
                             
                             // If the given parameter is an inout or out parameter, then
                             // set a HOLDER_IS_NEEDED flag using the dynamicVar design.
-                            if (p.mode != Parameter.IN) {
-                                p.type.setDynamicVar(
+                            if (p.getMode() != Parameter.IN) {
+                                p.getType().setDynamicVar(
                                         JavaTypeWriter.HOLDER_IS_NEEDED,
                                         new Boolean(true));
 
                                 // If the type is a DefinedElement, need to 
                                 // set HOLDER_IS_NEEDED on the anonymous type.
                                 QName anonQName = SchemaUtils.
-                                    getElementAnonQName(p.type.getNode());
+                                    getElementAnonQName(p.getType().getNode());
                                 if (anonQName != null) {
                                     TypeEntry anonType = 
                                         symbolTable.getType(anonQName);

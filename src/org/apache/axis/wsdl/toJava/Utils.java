@@ -247,7 +247,8 @@ public class Utils {
                 if (kind.getLocalPart().equals("schema")) {
                     search = null;
                 } else if (kind.getLocalPart().equals("element")) {
-                    localName = SymbolTable.ANON_TOKEN + getNodeNameQName(search).getLocalPart();
+                    localName = SymbolTable.ANON_TOKEN +
+                        getNodeNameQName(search).getLocalPart();
                     search = search.getParentNode();
                 } else if (kind.getLocalPart().equals("complexType") ||
                            kind.getLocalPart().equals("simpleType")) {
@@ -613,15 +614,17 @@ public class Utils {
     } // getNestedTypes
 
     private static void getNestedTypes(
-            Node type, HashSet types,SymbolTable symbolTable) {
+            Node type, HashSet types, SymbolTable symbolTable) {
         // Process types declared in this type
-        Vector v = SchemaUtils.getComplexElementTypesAndNames(type, symbolTable);
+        Vector v = SchemaUtils.getComplexElementDeclarations(type, symbolTable);
         if (v != null) {
-            for (int i = 0; i < v.size(); i+=2) {
-                if (!types.contains(v.get(i))) {
-                    types.add(v.get(i));
-                    getNestedTypes(
-                            ((TypeEntry) v.get(i)).getNode(), types, symbolTable);
+            for (int i = 0; i < v.size(); i++) {
+                ElementDecl elem = (ElementDecl)v.get(i);
+                if (!types.contains(elem.getType())) {
+                    types.add(elem.getType());
+                    getNestedTypes(elem.getType().getNode(), 
+                                   types, 
+                                   symbolTable);
                 }
             }
         }
@@ -703,6 +706,11 @@ public class Utils {
     {
         return new javax.xml.rpc.namespace.QName(qname.getNamespaceURI(),
                                                  qname.getLocalPart());
+    }
+    
+    public static QName getWSDLQName(javax.xml.rpc.namespace.QName qname)
+    {
+        return new QName(qname.getNamespaceURI(), qname.getLocalPart());
     }
 }
 
