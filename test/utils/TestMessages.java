@@ -109,11 +109,12 @@ public class TestMessages extends TestCase {
     private String errors = "";
 
     /**
-     * If this test is run from xml-axis/java, then walk through the source tree looking for all
-     * calls to Messages.getMessage.  For each of these calls:
+     * If this test is run from xml-axis/java, then walk through the source
+     * tree looking for all calls to Messages.getMessage.  For each of these
+     * calls:
      * 1.  Make sure the message key exists in axisNLS.properties
-     * 2.  Make sure the actual number of parameters (in axisNLS.properties) matches the
-     *     excpected number of parameters (in the source code).
+     * 2.  Make sure the actual number of parameters (in axisNLS.properties)
+     *     matches the excpected number of parameters (in the source code).
      */
     public void testForMissingMessages() {
         String baseDir = System.getProperty("user.dir");
@@ -156,11 +157,12 @@ public class TestMessages extends TestCase {
             byte[] bytes = new byte[fis.available()];
             fis.read(bytes);
             String string = new String(bytes);
-            int index = string.indexOf("Messages.getMessage(");
+            String pattern = "Messages.getMessage(";
+            int index = string.indexOf(pattern);
             while (index >= 0) {
 
                 // Bump the string past the "Messages.getMessage(" string
-                string = string.substring(index + 21);
+                string = string.substring(index + pattern.length());
 
                 // Get the arguments for the getMessage call
                 String[] msgArgs = args(string);
