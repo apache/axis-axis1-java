@@ -926,6 +926,10 @@ public class JavaUtils
         return true;
     }
     
+    public static final boolean isTrueExplicitly(Object value) {
+        return isTrueExplicitly(value, false);
+    }
+
     /**
      * Tests the Object 'value':
      *   if its null, return default.
@@ -984,6 +988,10 @@ public class JavaUtils
             return isFalseExplicitly( (String)value );
         }
         return false;
+    }
+    
+    public static final boolean isFalseExplicitly(Object value) {
+        return isFalseExplicitly(value, true);
     }
 
     /**
