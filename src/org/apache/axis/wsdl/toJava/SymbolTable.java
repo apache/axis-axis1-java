@@ -467,6 +467,19 @@ public class SymbolTable {
                 if (contextURL != null) {
                     String contextFileName = contextURL.getFile();
                     String parentName = new File(contextFileName).getParent();
+                    if (parentName != null) {
+                        url = new URL(new URL("file", "", parentName + '/'),
+                                spec);
+                        try {
+                            url.openStream();
+                        }
+                        catch (IOException secondioe) {
+                            throw new FileNotFoundException(url.toString());
+                        }
+                    }
+                    else {
+                        throw new FileNotFoundException(url.toString());
+                    }
                 }
                 throw new FileNotFoundException(url.toString());
             }
