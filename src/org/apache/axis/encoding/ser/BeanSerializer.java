@@ -109,7 +109,7 @@ public class BeanSerializer implements Serializer, Serializable {
         this.xmlType = xmlType;
         this.javaType = javaType;
         this.typeDesc = typeDesc;
-        propertyDescriptor = BeanUtils.getPd(javaType);
+        propertyDescriptor = BeanUtils.getPd(javaType, typeDesc);
     }
 
     /**

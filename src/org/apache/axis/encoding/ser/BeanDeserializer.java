@@ -112,7 +112,7 @@ public class BeanDeserializer extends Deserializer implements Serializable
         this.javaType = javaType;
         this.typeDesc = typeDesc;
         // Get a list of the bean properties
-        BeanPropertyDescriptor[] pd = BeanUtils.getPd(javaType);
+        BeanPropertyDescriptor[] pd = BeanUtils.getPd(javaType, typeDesc);
         // loop through properties and grab the names for later
         for (int i = 0; i < pd.length; i++) {
             BeanPropertyDescriptor descriptor = pd[i];
