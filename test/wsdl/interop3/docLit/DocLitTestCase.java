@@ -1,7 +1,7 @@
 package test.wsdl.interop3.docLit;
 
 
-import test.wsdl.interop3.docLit.xsd.ArrayOfstringLiteral;
+import test.wsdl.interop3.docLit.xsd.ArrayOfstring_Literal;
 import test.wsdl.interop3.docLit.xsd.SOAPStruct;
 
 import java.net.URL;
@@ -52,7 +52,7 @@ public class DocLitTestCase extends junit.framework.TestCase {
 
         String str = "Hello there!";
         String [] strArray = new String [] { "1", "two", "trois" };
-        ArrayOfstringLiteral param = new ArrayOfstringLiteral();
+        ArrayOfstring_Literal param = new ArrayOfstring_Literal();
         param.setString(strArray);
 
         assertEquals("echoString results differ", binding.echoString(str), str);
