@@ -287,6 +287,16 @@ public class AxisFault extends java.rmi.RemoteException {
         faultDetails.add(element);
     }
 
+    public void addFaultDetailString(String detail) {
+        if(faultDetails == null)
+            faultDetails = new Vector();
+        Document doc = XMLUtils.newDocument();
+        Element element = doc.createElement("string");
+        Text text = doc.createTextNode(detail);
+        element.appendChild(text);
+        faultDetails.add(element);
+    }
+
     public Element[] getFaultDetails() {
         if (faultDetails == null) return null;
         Element result[] = new Element[faultDetails.size()];
