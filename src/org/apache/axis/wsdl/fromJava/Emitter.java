@@ -66,6 +66,7 @@ import com.ibm.wsdl.extensions.soap.SOAPBodyImpl;
 import com.ibm.wsdl.extensions.soap.SOAPOperationImpl;
 
 import org.apache.axis.Constants;
+import org.apache.axis.wsdl.toJava.Utils;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.description.ParameterDesc;
@@ -635,10 +636,10 @@ public class Emitter {
 
     /** Create a Message
      *
-     * @param Definition, the WSDL definition
-     * @param Operation, the wsdl operation
-     * @param OperationDesc, the Operation Description
-     * @param BindingOperation, corresponding Binding Operation
+     * @param def Definition, the WSDL definition
+     * @param oper Operation, the wsdl operation
+     * @param desc OperationDesc, the Operation Description
+     * @param bindingOper BindingOperation, corresponding Binding Operation
      * @throws Exception
      */
     private void writeMessages(Definition def,
@@ -949,11 +950,29 @@ public class Emitter {
         Part part = def.createPart();
 
         // Write the type representing the parameter type
-        javax.wsdl.QName typeQName = types.writePartType(param.getJavaType());
-        if (typeQName != null) {
-            part.setTypeName(typeQName);
+        QName elemQName = null;
+        if (mode != MODE_RPC)
+            elemQName = param.getQName();
+        javax.wsdl.QName typeQName = types.writePartType(param.getJavaType(),
+                elemQName);
+        if (mode == MODE_RPC) {
+            if (typeQName != null) {
+                part.setTypeName(typeQName);
+                part.setName(param.getName());
+                msg.addPart(part);
+            }
+        } else if (elemQName != null) {
+            String namespaceURI = elemQName.getNamespaceURI();
+            if (namespaceURI != null && !namespaceURI.equals("")) {
+                def.addNamespace(namespaces.getCreatePrefix(namespaceURI),
+                        namespaceURI);
+            }
+            part.setElementName(Utils.getWSDLQName(elemQName));
             part.setName(param.getName());
             msg.addPart(part);
+        } else {
+            // ?? Throw an exception here?  Must have an element if not
+            // RPC style?
         }
         return param.getName();
     }
@@ -1393,7 +1412,7 @@ public class Emitter {
 
     /**
      * Sets the soapAction option value
-     * @param must be DEFAULT, NONE, or OPERATION
+     * @param value must be DEFAULT, NONE, or OPERATION
      */
     public void setSoapAction(String value) {
         soapAction = value;

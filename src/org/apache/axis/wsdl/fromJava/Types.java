@@ -58,6 +58,7 @@ package org.apache.axis.wsdl.fromJava;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
+import org.apache.axis.wsdl.toJava.Utils;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.SerializerFactory;
 import org.apache.axis.encoding.SimpleType;
@@ -65,6 +66,8 @@ import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.ser.BeanSerializerFactory;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -90,6 +93,7 @@ import java.util.List;
  * @author unascribed
  */
 public class Types {
+    protected static Log log = LogFactory.getLog(Types.class.getName());
 
     Definition def;
     Namespaces namespaces = null;
@@ -140,16 +144,24 @@ public class Types {
      * @param type <code>Class</code> to generate the XML Schema info for
      * @return the QName of the generated Schema type, null if void
      */
-    public QName writePartType(Class type) throws Exception {
+    public QName writePartType(Class type, javax.xml.rpc.namespace.QName qname) throws Exception {
         if (type.getName().equals("void"))
           return null;
         if (isSimpleType(type)) {
-            javax.xml.rpc.namespace.QName qName = getTypeQName(type);
-            return getWsdlQName(qName);
+            javax.xml.rpc.namespace.QName typeQName = getTypeQName(type);
+            // Still need to write any element declaration...
+            if (qname != null) {
+                String elementType = writeType(type);
+                Element element = createElementDecl(Utils.getWSDLQName(qname),
+                        elementType, false);
+                if (element != null)
+                    writeSchemaElement(Utils.getWSDLQName(qname),element);
+            }
+            return getWsdlQName(typeQName);
         }else {
             if (wsdlTypesElem == null)
                 writeWsdlTypesElement();
-            return writeTypeAsElement(type);
+            return writeTypeAsElement(type, Utils.getWSDLQName(qname));
         }
     }
 
@@ -158,13 +170,16 @@ public class Types {
      * @param type the class type
      * @return the QName of the generated Element
      */
-    private QName writeTypeAsElement(Class type) throws Exception {
-        QName qName = writeTypeNamespace(type);
+    private QName writeTypeAsElement(Class type, QName qName) throws Exception {
+        QName typeQName = writeTypeNamespace(type);
+        if (qName == null) {
+            qName = typeQName;
+        }
         String elementType = writeType(type);
         if (elementType != null) {
-            Element element = createRootElement(qName, elementType, isNullable(type));
+            Element element = createElementDecl(qName, elementType, isNullable(type));
             if (element != null)
-                writeSchemaElement(qName,element);
+                writeSchemaElement(typeQName,element);
             return qName;
         }
         return null;
@@ -193,7 +208,7 @@ public class Types {
     private javax.xml.rpc.namespace.QName getTypeQName(Class javaType) {
         javax.xml.rpc.namespace.QName qName = null;
 
-        // Use the typeMapping information to lookup the qName.        
+        // Use the typeMapping information to lookup the qName.
         javax.xml.rpc.namespace.QName dQName = null;
         if (defaultTM != null) {
             dQName = defaultTM.getTypeQName(javaType);
@@ -212,8 +227,8 @@ public class Types {
             }
         }
 
-        // If the javaType is an array and the qName is 
-        // SOAP_ARRAY, construct the QName using the 
+        // If the javaType is an array and the qName is
+        // SOAP_ARRAY, construct the QName using the
         // QName of the component type
         if (javaType.isArray() &&
             qName != null &&
@@ -228,7 +243,7 @@ public class Types {
                 qName = new javax.xml.rpc.namespace.QName(
                         targetNamespace,
                         "ArrayOf" + cqName.getLocalPart());
-            } else {                                     
+            } else {
                 String pre = namespaces.getCreatePrefix(cqName.getNamespaceURI());
                 qName = new javax.xml.rpc.namespace.QName(
                         targetNamespace,
@@ -237,12 +252,12 @@ public class Types {
             return qName;
         }
 
-        // If a qName was not found construct one using the 
+        // If a qName was not found construct one using the
         // class name information.
         if (qName == null) {
             String pkg = getPackageNameFromFullName(javaType.getName());
             String lcl = getLocalNameFromFullName(javaType.getName());
-            
+
             String ns = namespaces.getCreate(pkg);
             namespaces.getCreatePrefix(ns);
             String localPart = lcl.replace('$', '_');
@@ -284,6 +299,14 @@ public class Types {
      * @param element the Element to append to the Schema node
      */
     public void writeSchemaElement(QName qName, Element element) {
+        if (wsdlTypesElem == null) {
+            try {
+                writeWsdlTypesElement();
+            } catch (Exception e) {
+                log.error(e);
+                return;
+            }
+        }
         Element schemaElem = null;
         NodeList nl = wsdlTypesElem.getChildNodes();
         for (int i = 0; i < nl.getLength(); i++ ) {
@@ -300,7 +323,7 @@ public class Types {
             wsdlTypesElem.appendChild(schemaElem);
             schemaElem.setAttribute("xmlns", Constants.URI_DEFAULT_SCHEMA_XSD);
             schemaElem.setAttribute("targetNamespace", qName.getNamespaceURI());
-            
+
             // Add SOAP-ENC namespace import
             Element importElem = docHolder.createElement("import");
             schemaElem.appendChild(importElem);
@@ -316,7 +339,7 @@ public class Types {
     private void writeWsdlTypesElement() throws Exception {
         if (wsdlTypesElem == null) {
             // Create a <wsdl:types> element corresponding to the wsdl namespaces.
-            wsdlTypesElem = 
+            wsdlTypesElem =
                     docHolder.createElementNS(Constants.NS_URI_WSDL11, "types");
             wsdlTypesElem.setPrefix(Constants.NS_PREFIX_WSDL);
         }
@@ -334,7 +357,7 @@ public class Types {
      * @throws Exception
      */
     public String writeType(Class type) throws Exception {
-      
+
         // Quick return if schema type
         if (isSimpleType(type)) {
             QName qName = getWsdlQName(getTypeQName(type));
@@ -364,13 +387,13 @@ public class Types {
         if (factory != null) {
             ser = (Serializer)factory.getSerializerAs(Constants.AXIS_SAX);
         }
-        
+
         // if we can't get a serializer, that is bad.
-        if (ser == null) {            
+        if (ser == null) {
             throw new AxisFault(
                     JavaUtils.getMessage("NoSerializer00", type.getName()));
         }
-        
+
           // Write the namespace
         QName qName = writeTypeNamespace(type);
 
@@ -515,7 +538,7 @@ public class Types {
      * @param nullable nillable attribute of the element
      * @return the created Element
      */
-    private Element createRootElement(QName qName,
+    private Element createElementDecl(QName qName,
                                       String elementType,
                                       boolean nullable) {
         if (!addToElementsList(qName))
@@ -524,11 +547,8 @@ public class Types {
         Element element = docHolder.createElement("element");
 
         //Generate an element name that matches the type.
-        // Previously a unique element name was generated.
-        //String name = generateUniqueElementName(qName);
-        String name = elementType.substring(elementType.lastIndexOf(":")+1);
 
-        element.setAttribute("name", name);
+        element.setAttribute("name", qName.getLocalPart());
         if (nullable)
             element.setAttribute("nillable", "true");
         element.setAttribute("type", elementType);
@@ -545,7 +565,7 @@ public class Types {
     public Element createElement(String elementName,
                                  String elementType,
                                  boolean nullable,
-                                 boolean omittable, 
+                                 boolean omittable,
                                  Document docHolder) {
         Element element = docHolder.createElement("element");
         element.setAttribute("name", elementName);
@@ -640,12 +660,12 @@ public class Types {
     }
 
     /**
-     * Is the given class acceptable as an attribute 
+     * Is the given class acceptable as an attribute
      * @param type input Class
      * @return true if the type is a simple, enum type or extends SimpleType
      */
     public boolean isAcceptableAsAttribute(Class type) {
-        return isSimpleType(type) || 
+        return isSimpleType(type) ||
             isEnumClass(type) ||
             implementsSimpleType(type);
     }
@@ -735,6 +755,10 @@ public class Types {
      * @return if the type is added returns true, else if the type is already present returns false
      */
     private boolean addToElementsList (QName qName) {
+        if (qName == null) {
+            return false;
+        }
+
         boolean added = false;
         ArrayList elements = (ArrayList)schemaElementNames.get(qName.getNamespaceURI());
         if (elements == null) {
@@ -754,7 +778,7 @@ public class Types {
 
 
     /**
-     * Determines if the field is nullable. All non-primitives except 
+     * Determines if the field is nullable. All non-primitives except
      * for byte[] are nillable.
      *
      * @param type input Class
@@ -764,12 +788,12 @@ public class Types {
         if (type.isPrimitive() ||
             (type.isArray() && type.getComponentType() == byte.class))
             return false;
-        else 
+        else
             return true;
     }
 
 
-    /** @todo ravi: Get rid of Doccument fragment and import node stuuf,
+    /** todo ravi: Get rid of Doccument fragment and import node stuuf,
      *  once I have a handle on the wsdl4j mechanism to get at types.
      *
      *  Switch over notes: remove docHolder, docFragment in favor of wsdl4j Types
@@ -799,7 +823,7 @@ public class Types {
 
     /**
      * Return the list of classes that we should not emit WSDL for.
-     */ 
+     */
     public List getStopClasses() {
         return stopClasses;
     }
