@@ -107,6 +107,7 @@ public class ForeachTask extends Task {
     // must match the default value of Ant#inheritRefs
     private boolean inheritRefs = false;
     private boolean fork = false;
+    private boolean verbose = false;
 
     public ForeachTask() {
         params = new Vector();
@@ -149,6 +150,14 @@ public class ForeachTask extends Task {
         fork = f;
     }
 
+    /**
+     * Enable verbose output when signing
+     * ; optional: default false
+     */
+    public void setVerbose(final boolean verbose) {
+        this.verbose = verbose;
+    }
+
     public ParamSet createParam() {
         ParamSet param = new ParamSet();
         params.addElement(param);
@@ -178,6 +187,7 @@ public class ForeachTask extends Task {
             callee2.setTaskName(getTaskName());
             callee2.setLocation(getLocation());
             callee2.setClassname("org.apache.tools.ant.Main");
+            callee2.setAppend(true);
             callee2.setFork(true);
         }
         String systemClassPath = System.getProperty("java.class.path");
@@ -185,6 +195,9 @@ public class ForeachTask extends Task {
         String args = "-buildfile " + properties.get("file");
         Commandline.Argument arguments = callee2.createArg();
         arguments.setLine(args);
+        if (verbose) {
+            callee2.createArg().setValue("-verbose");
+        }
         if (callee2.executeJava() != 0) {
             throw new BuildException("Execution of ANT Task failed");
         }
