@@ -131,7 +131,11 @@ public class RPCHandler extends SOAPHandler
             log.debug(JavaUtils.getMessage("enter00",
                                            "RPCHandler.onStartChild()"));
         }
-        
+        if (!context.isDoneParsing()) {
+            context.pushNewElement(new MessageElement(namespace,
+            localName, prefix+":"+localName,attributes,context));
+        }
+
         Vector params = rpcElem.getParams();
         
         // This is a param.

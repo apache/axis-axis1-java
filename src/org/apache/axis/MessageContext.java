@@ -192,10 +192,14 @@ public class MessageContext {
     {
         currentOperation = operation;
     }
-    public OperationDesc getOperationByQName(QName qname)
+
+    public OperationDesc [] getPossibleOperationsByQName(QName qname)
     {
-        if (currentOperation != null)
-            return currentOperation;
+        if (currentOperation != null) {
+            return new OperationDesc [] { currentOperation };
+        }
+
+        OperationDesc [] possibleOperations = null;
 
         if (serviceHandler == null) {
             try {
@@ -218,9 +222,23 @@ public class MessageContext {
         ServiceDesc desc = serviceHandler.getInitializedServiceDesc(this);
 
         if (desc != null) {
-            currentOperation = desc.getOperationByElementQName(qname);
+            possibleOperations = desc.getOperationsByQName(qname);
             setOperationStyle(desc.getStyle());
         }
+
+        return possibleOperations;
+    }
+
+    public OperationDesc getOperationByQName(QName qname)
+    {
+        if (currentOperation != null)
+            return currentOperation;
+
+        OperationDesc [] possibleOperations = getPossibleOperationsByQName(qname);
+        if (possibleOperations != null && possibleOperations.length > 0) {
+            currentOperation = possibleOperations[0];
+        }
+
         return currentOperation;
     }
 

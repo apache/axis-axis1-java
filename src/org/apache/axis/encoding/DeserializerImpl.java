@@ -359,6 +359,7 @@ public class DeserializerImpl extends SOAPHandler implements Deserializer
             if (ref == null) {
                 // Nothing yet... register for later interest.
                 context.registerFixup(href, this);
+                return;
             }
             
             if (ref instanceof MessageElement) {

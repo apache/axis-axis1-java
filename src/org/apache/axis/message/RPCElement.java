@@ -76,13 +76,14 @@ public class RPCElement extends SOAPBodyElement
     protected Vector params = new Vector();
     protected boolean needDeser = false;
     protected boolean elementIsFirstParam = false;
+    OperationDesc [] operations = null;
 
     public RPCElement(String namespace,
                       String localName,
                       String prefix,
                       Attributes attributes,
                       DeserializationContext context,
-                      OperationDesc operation)
+                      OperationDesc [] operations)
     {
         super(namespace, localName, prefix, attributes, context);
 
@@ -93,12 +94,27 @@ public class RPCElement extends SOAPBodyElement
         // This came from parsing XML, so we need to deserialize it sometime
         needDeser = true;
 
-        if (operation != null) {
+        MessageContext msgContext = context.getMessageContext();
+
+        // Obtain our possible operations
+        if (operations == null) {
+            SOAPService service    = msgContext.getService();
+            if (service != null) {
+                ServiceDesc serviceDesc = service.getInitializedServiceDesc(msgContext);
+
+                String lc = Utils.xmlNameToJava(name);
+                operations = serviceDesc.getOperationsByName(lc);
+            }
+        }
+
+        if (operations != null && operations.length > 0) {
             // IF we're doc/literal... we can't count on the element name
             // being the method name.
-            elementIsFirstParam = (operation.getStyle() ==
+            elementIsFirstParam = (operations[0].getStyle() ==
                                    ServiceDesc.STYLE_DOCUMENT);
         }
+
+        this.operations = operations;
     }
 
     public RPCElement(String namespace, String methodName, Object [] args)
@@ -136,33 +152,6 @@ public class RPCElement extends SOAPBodyElement
         needDeser = false;
 
         MessageContext msgContext = context.getMessageContext();
-        SOAPService service    = msgContext.getService();
-        OperationDesc [] operations = null;
-
-        // Obtain our possible operations
-        if (service != null) {
-            ServiceDesc serviceDesc = service.getInitializedServiceDesc(msgContext);
-
-            // If we've got a service description now, we want to use
-            // the matching operations in there.
-            QName qname = new QName(namespaceURI, name);
-            operations = serviceDesc.getOperationsByQName(qname);
-            
-            if (operations == null) {
-                String lc = Utils.xmlNameToJava(name);
-                operations = serviceDesc.getOperationsByName(lc);
-            }
-        }
-
-        // if we don't have a service that has the operations,
-        // (i.e. for client side), the operation
-        // may already be set in the message context.
-        if (operations == null) {
-            OperationDesc oper = msgContext.getOperation();
-            if (oper != null) {
-                operations = new OperationDesc [] { oper };
-            }
-        }
 
         // Figure out if we should be looking for out params or in params
         // (i.e. is this message a response?)
@@ -189,7 +178,7 @@ public class RPCElement extends SOAPBodyElement
                     // Set the operation so the RPCHandler can get at it
                     rpcHandler.setOperation(operation);
                     try {
-                        if (elementIsFirstParam) {
+                        if (elementIsFirstParam && operation.getNumInParams() > 0) {
                             context.pushElementHandler(rpcHandler);
                             context.setCurElement(null);
                         } else {

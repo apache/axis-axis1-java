@@ -57,20 +57,23 @@ package org.apache.axis.client ;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
+import org.apache.axis.Handler;
+import org.apache.axis.InternalException;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
-import org.apache.axis.SOAPPart;
-import org.apache.axis.configuration.FileProvider;
+import org.apache.axis.description.OperationDesc;
+import org.apache.axis.description.ParameterDesc;
+import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.encoding.DeserializerFactory;
-import org.apache.axis.encoding.SerializerFactory;
-import org.apache.axis.encoding.ser.BaseSerializerFactory;
-import org.apache.axis.encoding.ser.BaseDeserializerFactory;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.SerializationContextImpl;
-import org.apache.axis.encoding.Serializer;
-import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.encoding.SerializerFactory;
 import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.XMLType;
+import org.apache.axis.encoding.ser.BaseDeserializerFactory;
+import org.apache.axis.encoding.ser.BaseSerializerFactory;
+import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.SOAPBodyElement;
@@ -79,42 +82,28 @@ import org.apache.axis.message.SOAPFaultElement;
 import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.transport.http.HTTPTransport;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.attachments.AttachmentPart;
-import org.apache.axis.InternalException;
-import org.apache.axis.Handler;
-import org.apache.axis.handlers.soap.SOAPService;
-import org.apache.axis.description.OperationDesc;
-import org.apache.axis.description.ServiceDesc;
-import org.apache.axis.description.ParameterDesc;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.wsdl.Binding;
-import javax.wsdl.BindingInput;
-import javax.wsdl.BindingOperation;
-import javax.wsdl.Definition;
-import javax.wsdl.Input;
-import javax.wsdl.Operation;
-import javax.wsdl.Output;
-import javax.wsdl.Part;
-import javax.wsdl.Port;
-import javax.wsdl.PortType;
+import javax.wsdl.*;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.extensions.soap.SOAPBody;
 import javax.wsdl.extensions.soap.SOAPOperation;
-
-import javax.xml.rpc.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
 import javax.xml.rpc.ParameterMode;
-import javax.xml.soap.SOAPException;
-
+import javax.xml.rpc.namespace.QName;
 import java.beans.IntrospectionException;
-import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 /**
  * Axis' JAXRPC Dynamic Invocation Interface implementation of the Call
@@ -386,9 +375,7 @@ public class Call implements javax.xml.rpc.Call {
     }
 
     /**
-     * Gets the names of configurable properties supported by this Call object.
-     *
-     * @return Iterator for the property names
+     * Configurable properties supported by this Call object.
      */
     private static ArrayList propertyNames = null;
 
@@ -757,7 +744,6 @@ public class Call implements javax.xml.rpc.Call {
      * @return XMLType    XMLType of paramName, or null if not found.
      */
     public QName getParameterTypeByName(String paramName) {
-        int  i ;
         QName paramQName = new QName("", paramName);
 
         return getParameterTypeByQName(paramQName);
@@ -772,7 +758,6 @@ public class Call implements javax.xml.rpc.Call {
      * @return XMLType    XMLType of paramQName, or null if not found.
      */
     public QName getParameterTypeByQName(QName paramQName) {
-        int i;
         ParameterDesc param = operation.getParamByQName(paramQName);
         if (param != null) {
             return param.getTypeQName();
@@ -891,8 +876,6 @@ public class Call implements javax.xml.rpc.Call {
         Definition wsdlDefinition = service.getWSDLDefinition();
         javax.wsdl.Service wsdlService = service.getWSDLService();
 
-        javax.wsdl.QName qn = new javax.wsdl.QName( portName.getNamespaceURI(),
-                                                    portName.getLocalPart() );
         if ( wsdlDefinition == null )
             throw new JAXRPCException( JavaUtils.getMessage("wsdlMissing00") );
 
@@ -1140,7 +1123,7 @@ public class Call implements javax.xml.rpc.Call {
      *
      * @param  params Array of parameters to invoke the Web Service with
      * @return Object Return value of the operation/method - or null
-     * @throws RemoteException if there's an error
+     * @throws java.rmi.RemoteException if there's an error
      */
     public Object invoke(Object[] params) throws java.rmi.RemoteException {
         /* First see if we're dealing with Messaging instead of RPC.        */
@@ -1389,7 +1372,7 @@ public class Call implements javax.xml.rpc.Call {
      *
      * Note: Not part of JAX-RPC specification.
      *
-     * @param transport the Transport object we'll use to set up
+     * @param trans the Transport object we'll use to set up
      *                  MessageContext properties.
      */
     public void setTransport(Transport trans) {
@@ -1524,13 +1507,23 @@ public class Call implements javax.xml.rpc.Call {
      * @param javaType is  the Java class of the data type.
      * @param xmlType the xsi:type QName of the associated XML type.
      * @param sf/df are the factories (or the Class objects of the factory).
-     * @param force Indicates whether to add the information if already registered.
      */
     public void registerTypeMapping(Class javaType, QName xmlType,
                                     SerializerFactory sf,
                                     DeserializerFactory df) {
         registerTypeMapping(javaType, xmlType, sf, df, true);
     }
+
+    /**
+     * Register type mapping information for serialization/deserialization
+     *
+     * Note: Not part of JAX-RPC specification.
+     *
+     * @param javaType is  the Java class of the data type.
+     * @param xmlType the xsi:type QName of the associated XML type.
+     * @param sf/df are the factories (or the Class objects of the factory).
+     * @param force Indicates whether to add the information if already registered.
+     */
     public void registerTypeMapping(Class javaType, QName xmlType,
                                     SerializerFactory sf,
                                     DeserializerFactory df,

@@ -61,6 +61,7 @@ import org.w3c.dom.Element;
 import javax.xml.rpc.namespace.QName;
 import java.io.Serializable;
 import java.util.Hashtable;
+import java.util.List;
 
 /**
  *
@@ -99,6 +100,13 @@ public interface Handler extends Serializable {
      * Can this Handler process this QName?
      */
     public boolean canHandleBlock(QName qname);
+
+    /**
+     * Return a list of QNames which this Handler understands.  By returning
+     * a particular QName here, we are committing to fulfilling any contracts
+     * defined in the specification of the SOAP header with that QName.
+     */
+    public List getUnderstoodHeaders();
 
     /**
      * Add the given option (name/value) to this handler's bag of options
