@@ -600,8 +600,15 @@ to be encoded. (see the SOAP spec for more on multi-ref serialization)
 <h2><a NAME="DataMapping"></a>XML &lt;-> Java Data Mapping in Axis</h2>
 <h3>How your Java types map to SOAP/XML types</h3>
 
-The JAX-RPC specification determines how Java types are mapped to WSDL and vice versa. 
-So read chapters 4 and 5 of the <a href="http://java.sun.com/xml/jaxrpc/">
+Interoperability, <i>interop</i> is an ongoing challenge
+between SOAP implementations. If you want your service to work with other platforms
+and implementations, you do need to understand the issues. There are some
+<a href="reading.html#interop">external articles</a> on the subject that act
+as a good starting place. 
+  
+The basic mapping between Java types and WSDL/XSD/SOAP in Axis is determined by 
+The JAX-RPC specification. Read chapters 4 and 5 of the 
+<a href="http://java.sun.com/xml/jaxrpc/">
 specification</a> to fully understand how things are converted. Here are
 some of the salient points. 
 
@@ -627,10 +634,12 @@ some of the salient points.
   may choose to return a value of <tt>nil</tt>, then the primitive data types 
   are replaced by their wrapper classes, such as Byte, Double, Boolean, etc. 
 <h4>SOAP Encoding Datatypes</h4>
-<p> Alongside the XSD datatypes are the SOAP 'section 5' datatypes that are all 
+<p> Alongside the XSD datatypes are the SOAP 'Section 5' datatypes that are all 
   nillable, and so only ever map to the wrapper classes. These types exist because 
   they all support the &quot;ID&quot; and &quot;HREF&quot; attributes, and so 
   will be used when in an rpc-encoded context to support multi-ref serialization.
+  
+  
 <h3>Exceptions</h3>
 
 This is an area which causes plenty of confusion, and indeed, the author
@@ -689,7 +698,7 @@ Remember, the calling language may not have the notion of Exceptions, or
 at least not be as rigorous as Java in the rules as to how exceptions
 must be handled. 
 
-<h4>What Axis can not send via SOAP</h4>
+<h3>What Axis can send via SOAP with restricted Interoperability</h3>
 
 <h5>Unsigned data</h5>
 
@@ -703,30 +712,32 @@ do so will stop Java clients that do not use Axis or another SOAP client library
 with unsigned support from using them. At least, until 
 a revision of JAX-RPC adds this. 
 
-
-<h5>Arbitrary Objects without registration</h5>
-
-You cannot send arbitrary Java objects over the wire and expect them to
-be understood at the far end. With RMI you can send and receive
-<tt>Serializable</tt> Java objects, but that is because you are running
-Java at both ends. Axis will only send objects for which there is a
-registered Axis serializer. This document will shortly show how to use
-the BeanSerializer to serialize any class that follows the JavaBean
-pattern of accessor and mutator. To serve up objects you must either
-register your classes with this BeanSerializer, or there must be
-serialization support built in to Axis.
-
-
 <h5>Java Collections</h5>
 
 Some of the Collection classes, such as <tt>HashTable</tt> do have
 serializers, but there is no formal interoperability with other SOAP
 implementations, and nothing in the SOAP specifications which covers
 complex objects. The most reliable way to send aggregate objects is to
-use arrays. 
+use arrays. In particular, .NET cannot handle them, though many Java SOAP 
+implementations can marshall and unmarshall hash tables.  
 
-This is an ongoing issue with SOAP interop; expect it to slowly improve
-over time.
+
+<h3>What Axis can not send via SOAP</h3>
+
+
+<h5>Arbitrary Objects without Pre-Registration</h5>
+
+You cannot send arbitrary Java objects over the wire and expect them to
+be understood at the far end. With RMI you can send and receive
+<tt>Serializable</tt> Java objects, but that is because you are running
+Java at both ends. Axis will only send objects for which there is a
+registered Axis serializer. This document shows below how to use
+the BeanSerializer to serialize any class that follows the JavaBean
+pattern of accessor and mutator. To serve up objects you must either
+register your classes with this BeanSerializer, or there must be
+serialization support built in to Axis.
+
+
 
 <h5>Remote References</h5>
 
