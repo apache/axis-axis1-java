@@ -201,7 +201,7 @@ public class ArraySerializer implements Serializer
         // Turned this OFF because Microsoft .NET can not deserialize
         // multi-dimensional SOAP-encoded arrays, and this interopability
         // is pretty high visibility. Make it a global configuration parameter:
-        //  <parameter name="enable2DEncoding" value="true"/>    (tomj)
+        //  <parameter name="enable2DArrayEncoding" value="true"/>    (tomj)
         //
 
         // Check the message context to see if we should turn 2D processing ON
