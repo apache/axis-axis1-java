@@ -375,7 +375,6 @@ public class tcpmon extends JFrame {
 
           listener.removeButton.setEnabled(false);
           listener.removeAllButton.setEnabled(true);
-          // listener.xmlFormatButton.setEnabled(true);
           listener.saveButton.setEnabled(true);
           listener.outPane.setDividerLocation(divLoc);
           listener.outPane.setVisible( true );
@@ -515,7 +514,6 @@ public class tcpmon extends JFrame {
     public  JButton     stopButton      = null ;
     public  JButton     removeButton    = null ;
     public  JButton     removeAllButton = null ;
-    // public  JButton     xmlFormatButton = null ;
     public  JCheckBox   xmlFormatBox    = null ;
     public  JButton     saveButton      = null ;
     public  JButton     switchButton    = null ;
@@ -611,7 +609,6 @@ public class tcpmon extends JFrame {
             setRight( new JLabel("") );
             removeButton.setEnabled(false);
             removeAllButton.setEnabled(false);
-            // xmlFormatButton.setEnabled(false);
             saveButton.setEnabled(false);
           }
           else {
@@ -622,7 +619,6 @@ public class tcpmon extends JFrame {
                 setRight(new JLabel(""));
                 removeButton.setEnabled(false);
                 removeAllButton.setEnabled(false);
-                // xmlFormatButton.setEnabled(false);
                 saveButton.setEnabled(false);
               }
               else {
@@ -631,7 +627,6 @@ public class tcpmon extends JFrame {
                 setRight( conn.outputScroll );
                 removeButton.setEnabled(false);
                 removeAllButton.setEnabled(true);
-                // xmlFormatButton.setEnabled(true);
                 saveButton.setEnabled(true);
               }
             }
@@ -641,7 +636,6 @@ public class tcpmon extends JFrame {
               setRight( conn.outputScroll );
               removeButton.setEnabled(true);
               removeAllButton.setEnabled(true);
-              // xmlFormatButton.setEnabled(true);
               saveButton.setEnabled(true);
             }
           }
@@ -699,7 +693,6 @@ public class tcpmon extends JFrame {
       JPanel bottomButtons = new JPanel();
       bottomButtons.setLayout( new BoxLayout(bottomButtons, BoxLayout.X_AXIS));
       bottomButtons.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-      // bottomButtons.add( xmlFormatButton = new JButton( "XML Format" ) );
       bottomButtons.add( xmlFormatBox = new JCheckBox( "XML Format" ) );
       bottomButtons.add( Box.createRigidArea(new Dimension(5,0)) );
       bottomButtons.add( saveButton = new JButton( "Save" ) );
@@ -708,13 +701,6 @@ public class tcpmon extends JFrame {
       bottomButtons.add( Box.createHorizontalGlue() );
       bottomButtons.add( closeButton = new JButton( "Close" ) );
       pane2.add( bottomButtons, BorderLayout.SOUTH );
-
-      // xmlFormatButton.setEnabled( false );
-      // xmlFormatButton.addActionListener( new ActionListener() {
-          // public void actionPerformed(ActionEvent event) {
-            // if ( "XML Format".equals(event.getActionCommand()) ) xmlFormat();
-          // };
-        // });
 
       saveButton.setEnabled( false );
       saveButton.addActionListener( new ActionListener() {
@@ -828,10 +814,6 @@ public class tcpmon extends JFrame {
       lsm.clearSelection();
       lsm.setSelectionInterval(0,0);
     }
-
-    // public void xmlFormat() {
-      // System.err.println("Formatting...");
-    // }
 
     public void save() {
       JFileChooser  dialog = new JFileChooser( "." );
