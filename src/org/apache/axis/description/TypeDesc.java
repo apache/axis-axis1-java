@@ -84,10 +84,31 @@ public class TypeDesc {
     /** Have we already introspected for the special "any" property desc? */
     private boolean lookedForAny = false;
 
+    /** Can this instance search for metadata in parents of the type it describes? */
+    private boolean canSearchParents = true;
+
+    /**
+     * Creates a new <code>TypeDesc</code> instance.  The type desc can search
+     * the metadata of its type'sparent classes.
+     *
+     * @param javaClass a <code>Class</code> value
+     */
     public TypeDesc(Class javaClass) {
-        this.javaClass = javaClass;
+        this(javaClass, true);
     }
     
+    /**
+     * Creates a new <code>TypeDesc</code> instance.
+     *
+     * @param javaClass a <code>Class</code> value
+     * @param canSearchParents whether the type desc can search the metadata of
+     * its type's parent classes.
+     */
+    public TypeDesc(Class javaClass, boolean canSearchParents) {
+        this.javaClass = javaClass;
+        this.canSearchParents = canSearchParents;
+    }
+
     /**
      * Static function to explicitly register a type description for
      * a given class.
@@ -169,7 +190,13 @@ public class TypeDesc {
     }
 
     public FieldDesc[] getFields(boolean searchParents) {
-        if (searchParents) {
+        // note that if canSearchParents is false, this is identical
+        // to getFields(), because the parent type's metadata is off
+        // limits for restricted types which are required to provide a
+        // complete description of their content model in their own
+        // metadata, per the XML schema rules for
+        // derivation-by-restriction
+        if (canSearchParents && searchParents) {
             // check superclasses if they exist
             Class cls = javaClass.getSuperclass();
             if (cls != null && !cls.getName().startsWith("java.")) {
@@ -255,11 +282,14 @@ public class TypeDesc {
         FieldDesc desc = (FieldDesc)fieldNameMap.get(fieldName);
         if (desc == null) {
             // check superclasses if they exist
-            Class cls = javaClass.getSuperclass();
-            if (cls != null && !cls.getName().startsWith("java.")) {
-                TypeDesc superDesc = getTypeDescForClass(cls);
-                if (superDesc != null) {
-                    return superDesc.getElementNameForField(fieldName);
+            // and we are allowed to look
+            if (canSearchParents) {
+                Class cls = javaClass.getSuperclass();
+                if (cls != null && !cls.getName().startsWith("java.")) {
+                    TypeDesc superDesc = getTypeDescForClass(cls);
+                    if (superDesc != null) {
+                        return superDesc.getElementNameForField(fieldName);
+                    }
                 }
             }
         } else if (!desc.isElement()) {
@@ -277,11 +307,14 @@ public class TypeDesc {
         FieldDesc desc = (FieldDesc)fieldNameMap.get(fieldName);
         if (desc == null) {
             // check superclasses if they exist
-            Class cls = javaClass.getSuperclass();
-            if (cls != null && !cls.getName().startsWith("java.")) {
-                TypeDesc superDesc = getTypeDescForClass(cls);
-                if (superDesc != null) {
-                    return superDesc.getAttributeNameForField(fieldName);
+            // and we are allowed to look
+            if (canSearchParents) {
+                Class cls = javaClass.getSuperclass();
+                if (cls != null && !cls.getName().startsWith("java.")) {
+                    TypeDesc superDesc = getTypeDescForClass(cls);
+                    if (superDesc != null) {
+                        return superDesc.getAttributeNameForField(fieldName);
+                    }
                 }
             }
         } else if (desc.isElement()) {
@@ -327,7 +360,8 @@ public class TypeDesc {
         }
         
         // check superclasses if they exist
-        if (result == null) {
+        // and we are allowed to look
+        if (result == null && canSearchParents) {
             Class cls = javaClass.getSuperclass();
             if (cls != null && !cls.getName().startsWith("java.")) {
                 TypeDesc superDesc = getTypeDescForClass(cls);
@@ -371,8 +405,9 @@ public class TypeDesc {
             }
         }
         
-        if (possibleMatch == null) {
+        if (possibleMatch == null && canSearchParents) {
             // check superclasses if they exist
+            // and we are allowed to look
             Class cls = javaClass.getSuperclass();
             if (cls != null && !cls.getName().startsWith("java.")) {
                 TypeDesc superDesc = getTypeDescForClass(cls);
@@ -391,7 +426,7 @@ public class TypeDesc {
     public FieldDesc getFieldByName(String name)
     {
         FieldDesc ret = (FieldDesc)fieldNameMap.get(name);
-        if (ret == null) {
+        if (ret == null && canSearchParents) {
             Class cls = javaClass.getSuperclass();
             if (cls != null && !cls.getName().startsWith("java.")) {
                 TypeDesc superDesc = getTypeDescForClass(cls);

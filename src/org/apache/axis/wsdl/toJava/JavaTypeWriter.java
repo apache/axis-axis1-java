@@ -102,6 +102,10 @@ public class JavaTypeWriter implements Generator {
                     TypeEntry base = SchemaUtils.getComplexElementExtensionBase(
                        node, symbolTable);
                     if (base == null) {
+                        base = SchemaUtils.getComplexElementRestrictionBase(
+                           node, symbolTable);
+                    }
+                    if (base == null) {
                         QName baseQName = SchemaUtils.getSimpleTypeBase(
                            node);
                         if (baseQName != null) {

@@ -126,7 +126,7 @@ public class SchemaUtils {
                 children = complexContent.getChildNodes();
                 for (int j = 0; j < children.getLength() && extension == null; j++) {
                     Node kid = children.item(j);
-                    if (isXSDNode(kid, "extension")) { 
+                    if (isXSDNode(kid, "extension") || isXSDNode(kid, "restriction")) { 
                         extension = kid;
                     }
                 }
@@ -479,6 +479,66 @@ public class SchemaUtils {
             return ((localName != null) && localName.equals(schemaLocalName));
         }
         return false;
+    }
+
+    /**
+     * Look for the base type of node iff node is a complex type that has been
+     * derived by restriction; otherwise return null.
+     */
+    public static TypeEntry getComplexElementRestrictionBase(Node node, SymbolTable symbolTable) {
+        if (node == null) {
+            return null;
+        }
+        // If the node kind is an element, dive into it.
+        if (isXSDNode(node, "element")) {
+            NodeList children = node.getChildNodes();
+            Node complexNode = null;
+            for (int j = 0; j < children.getLength() && complexNode == null; j++) {
+                if (isXSDNode(children.item(j), "complexType")) {
+                    complexNode = children.item(j);
+                    node = complexNode;
+                }
+            }
+        }
+
+        // Expecting a schema complexType
+        if (isXSDNode(node, "complexType")) {
+
+            // Under the complexType there could be should be a complexContent &
+            // restriction elements if this is a derived type.
+            NodeList children = node.getChildNodes();
+            Node content = null;
+            Node restriction = null;
+            for (int j = 0; j < children.getLength() && content == null; j++) {
+                Node kid = children.item(j);
+                if (isXSDNode(kid, "complexContent")) {
+                    content = kid;
+                }
+            }
+            if (content != null) {
+                children = content.getChildNodes();
+                for (int j = 0; j < children.getLength() && restriction == null; j++) {
+                    Node kid = children.item(j);
+                    if (isXSDNode(kid, "restriction")) {
+                        restriction = kid;
+                    }
+                }
+            }
+            if (restriction == null) {
+                return null;
+            } else {
+                // Get the QName of the extension base
+                QName restrictionType = Utils.getTypeQName(restriction, new BooleanHolder(), false);
+                if (restrictionType == null) {
+                    return null;
+                } else {
+                    // Return associated Type
+                    return symbolTable.getType(restrictionType);
+                }
+            }
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -956,12 +1016,12 @@ public class SchemaUtils {
                     break;
                 }
             }
-            // Check for extensions
+            // Check for extensions or restrictions
             if (content != null) {
                 children = content.getChildNodes();
                 for (int j = 0; j < children.getLength(); j++) {
                     Node kid = children.item(j);
-                    if (isXSDNode(kid, "extension")) {
+                    if (isXSDNode(kid, "extension") || isXSDNode(kid, "restriction")) {
                         node = kid;
                         break;
                     }

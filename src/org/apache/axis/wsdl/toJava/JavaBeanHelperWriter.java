@@ -59,6 +59,7 @@ import org.apache.axis.wsdl.symbolTable.ElementDecl;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
 import org.apache.axis.wsdl.symbolTable.DefinedElement;
 import org.apache.axis.wsdl.symbolTable.DefinedType;
+import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 
 import javax.xml.namespace.QName;
 import java.io.IOException;
@@ -75,6 +76,7 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
     protected TypeEntry extendType;
     protected PrintWriter wrapperPW = null;
     protected Vector elementMetaData = null;
+    protected boolean canSearchParents;
 
     /**
      * Constructor.
@@ -85,16 +87,32 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
      * @param attributes  Vector containing the attribute types and names
      */
     protected JavaBeanHelperWriter(
-                                   Emitter emitter,
-                                   TypeEntry type,
-                                   Vector elements,
-                                   TypeEntry extendType,
-                                   Vector attributes) {
+        Emitter emitter,
+        TypeEntry type,
+        Vector elements,
+        TypeEntry extendType,
+        Vector attributes) {
         super(emitter, type.getName() + "_Helper", "helper");
         this.type = type;
         this.elements = elements;
         this.attributes = attributes;
         this.extendType = extendType;
+        // is this a complex type that is derived from other types
+        // by restriction?  if so, set the policy of the generated
+        // TypeDescription to ignore metadata associated with
+        // superclasses, as restricted types are required to
+        // define their entire content model.  Hence the type
+        // description associated with the current type provides
+        // all of the types (and only those types) allowed in
+        // the restricted derivation.
+        if (null != extendType
+            && null != SchemaUtils.getComplexElementRestrictionBase(type.getNode(),
+                                                                    emitter.getSymbolTable())) {
+            this.canSearchParents = false;
+        } else {
+            this.canSearchParents = true;
+        }
+        
     } // ctor
 
     /**
@@ -213,19 +231,22 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
                 //    Character.isUpperCase(javaName.charAt(0)) ||
                 //!elem.getName().getNamespaceURI().equals("") ||
                 //elem.getMinOccursIs0()) {
-                    // If we did some mangling, make sure we'll write out the XML
-                    // the correct way.
-                    if (elementMetaData == null)
-                        elementMetaData = new Vector();
+                // If we did some mangling, make sure we'll write out the XML
+                // the correct way.
+                if (elementMetaData == null)
+                    elementMetaData = new Vector();
 
-                    elementMetaData.add(elem);
+                elementMetaData.add(elem);
                 //}
             }
         }
         pw.println("    // " + Messages.getMessage("typeMeta"));
         pw.println("    private static org.apache.axis.description.TypeDesc typeDesc =");
-        pw.println("        new org.apache.axis.description.TypeDesc(" +
-                   Utils.getJavaLocalName(type.getName()) + ".class);");
+        pw.println("        new org.apache.axis.description.TypeDesc(" 
+                   + Utils.getJavaLocalName(type.getName())
+                   + ".class, "
+                   + (this.canSearchParents ? "true" : "false")
+                   + ");");
         pw.println();
 
         pw.println("    static {");
@@ -278,7 +299,7 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
                     QName xmlType = null;
 
                     if (elemType.getDimensions().length() > 1 &&
-                            (elemType.getClass() == DefinedType.class)) {
+                        (elemType.getClass() == DefinedType.class)) {
                         // If we have a DefinedType with dimensions, it must
                         // be a SOAP array derived type.  In this case, use
                         // the refType's QName for the metadata.
@@ -338,7 +359,7 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
         // bean property name will have a capitalized first character
         // (because setURL() maps to a property named "URL", not "uRL")
         if (fieldName.length() > 1 &&
-                Character.isUpperCase(fieldName.charAt(1))) {
+            Character.isUpperCase(fieldName.charAt(1))) {
             return Utils.capitalizeFirstChar(fieldName);
         }
 
