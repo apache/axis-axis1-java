@@ -56,10 +56,9 @@
 package org.apache.axis.transport.jms;
 
 import javax.jms.Destination;
-import javax.jms.Session;
 import javax.jms.JMSException;
 import javax.jms.MessageListener;
-
+import javax.jms.Session;
 import java.util.HashMap;
 
 /**

@@ -55,14 +55,11 @@
 
 package org.apache.axis;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.encoding.TypeMappingRegistry;
-import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.handlers.soap.SOAPService;
 
+import javax.xml.namespace.QName;
 import java.util.Hashtable;
-import java.util.Enumeration;
 import java.util.Iterator;
 
 /**

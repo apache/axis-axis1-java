@@ -56,13 +56,11 @@
 package org.apache.axis.security.servlet;
 
 import org.apache.axis.MessageContext;
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.security.AuthenticatedUser;
 import org.apache.axis.security.SecurityProvider;
 import org.apache.axis.transport.http.HTTPConstants;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
-
-import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import javax.servlet.http.HttpServletRequest;

@@ -55,33 +55,21 @@
 
 package org.apache.axis.transport.jms;
 
-import java.io.InputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.BufferedInputStream;
-import java.io.IOException;
+import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.server.AxisServer;
+import org.apache.axis.utils.Messages;
+import org.apache.axis.utils.Options;
+import org.apache.commons.logging.Log;
 
-import java.util.HashMap;
-import java.util.Properties;
-
-import javax.jms.MessageListener;
 import javax.jms.BytesMessage;
 import javax.jms.Destination;
 import javax.jms.JMSException;
-
-import org.apache.axis.Message;
-import org.apache.axis.MessageContext;
-import org.apache.axis.AxisFault;
-
-import org.apache.axis.server.AxisServer;
-
-import org.apache.axis.utils.Messages;
-import org.apache.axis.utils.Options;
-
-import org.apache.commons.logging.Log;
-
-import org.apache.axis.components.logger.LogFactory;
+import javax.jms.MessageListener;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Properties;
 
 
 /**

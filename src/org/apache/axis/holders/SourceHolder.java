@@ -54,9 +54,8 @@
  */
 package org.apache.axis.holders;
 
-import javax.xml.transform.Source;
-
 import javax.xml.rpc.holders.Holder;
+import javax.xml.transform.Source;
 
 /**
  * Class SourceHolder

@@ -54,15 +54,14 @@
  */
 package org.apache.axis.message;
 
-import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
-import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.Callback;
 import org.apache.axis.encoding.CallbackTarget;
-import org.xml.sax.SAXException;
+import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.encoding.Deserializer;
 import org.xml.sax.Attributes;
-import java.util.Vector;
+import org.xml.sax.SAXException;
+
 import javax.xml.namespace.QName;
 
 /**

@@ -55,6 +55,7 @@
 
 package org.apache.axis;
 
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.handlers.soap.SOAPService;
@@ -63,15 +64,13 @@ import org.apache.axis.session.SimpleSession;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.cache.ClassCache;
-
-import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.server.ServiceLifecycle;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.Enumeration;
+import java.util.Hashtable;
 
 
 /**

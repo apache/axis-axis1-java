@@ -55,7 +55,6 @@
 package javax.xml.soap;
 
 import javax.xml.transform.Source;
-
 import java.util.Iterator;
 
 /**

@@ -55,19 +55,17 @@
 
  package org.apache.axis.components.jms;
 
-import java.util.HashMap;
-import java.util.Hashtable;
-
 import javax.jms.ConnectionFactory;
-import javax.jms.QueueConnectionFactory;
 import javax.jms.Queue;
+import javax.jms.QueueConnectionFactory;
 import javax.jms.QueueSession;
-import javax.jms.TopicConnectionFactory;
 import javax.jms.Topic;
+import javax.jms.TopicConnectionFactory;
 import javax.jms.TopicSession;
-
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import java.util.HashMap;
+import java.util.Hashtable;
 
 /**
  * Uses JNDI to locate ConnectionFactory and Destinations

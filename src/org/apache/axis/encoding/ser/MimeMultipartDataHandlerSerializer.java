@@ -56,24 +56,15 @@
 package org.apache.axis.encoding.ser;
 
 import org.apache.axis.attachments.MimeMultipartDataSource;
-
 import org.apache.axis.components.logger.LogFactory;
-
 import org.apache.axis.encoding.SerializationContext;
-
-import org.apache.axis.utils.JavaUtils;
-
 import org.apache.commons.logging.Log;
-
 import org.xml.sax.Attributes;
 
-import java.io.IOException;
-
 import javax.activation.DataHandler;
-
 import javax.mail.internet.MimeMultipart;
-
 import javax.xml.namespace.QName;
+import java.io.IOException;
 
 /**
  * MimeMultipartDataHandler Serializer

@@ -55,23 +55,14 @@
 
 package org.apache.axis.components.image;
 
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
-
-import java.awt.Component;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.MediaTracker;
-
-import java.awt.image.BufferedImage;
-
-import java.awt.Toolkit;
-
-import java.io.InputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-
 import sun.awt.image.codec.JPEGImageEncoderImpl;
+
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * JDK1.3 based Image I/O

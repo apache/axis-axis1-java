@@ -61,7 +61,6 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 import javax.xml.namespace.QName;
-
 import java.util.Vector;
 
 /**

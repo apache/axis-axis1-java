@@ -55,15 +55,13 @@
 
 package org.apache.axis.utils;
 
-import java.util.List;
-import java.util.ListIterator;
-
-import javax.wsdl.Port;
-
-import javax.wsdl.extensions.soap.SOAPAddress;
-
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
+
+import javax.wsdl.Port;
+import javax.wsdl.extensions.soap.SOAPAddress;
+import java.util.List;
+import java.util.ListIterator;
 
 
 public class WSDLUtils {

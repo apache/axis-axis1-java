@@ -61,15 +61,9 @@ import org.w3c.dom.Node;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.holders.BooleanHolder;
-import javax.xml.rpc.holders.IntHolder;
-import javax.wsdl.Fault;
-import javax.wsdl.Part;
-import javax.wsdl.Message;
-import javax.wsdl.extensions.soap.SOAPFault;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Vector;
-import java.util.Map;
 
 /**
  * This class contains static utility methods for the emitter.

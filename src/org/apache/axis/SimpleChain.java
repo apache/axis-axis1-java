@@ -55,22 +55,16 @@
 
 package org.apache.axis ;
 
-import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.message.SOAPFault;
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.strategies.InvocationStrategy;
 import org.apache.axis.strategies.WSDLGenStrategy;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
-
-import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
-
 import java.util.Enumeration;
 import java.util.Vector;
 

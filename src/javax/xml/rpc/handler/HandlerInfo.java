@@ -55,9 +55,7 @@
 package javax.xml.rpc.handler;
 
 import javax.xml.namespace.QName;
-
 import java.io.Serializable;
-
 import java.util.HashMap;
 import java.util.Map;
 

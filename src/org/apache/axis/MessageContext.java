@@ -57,6 +57,7 @@ package org.apache.axis ;
 
 import org.apache.axis.attachments.Attachments;
 import org.apache.axis.client.AxisClient;
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.encoding.TypeMapping;
@@ -64,22 +65,20 @@ import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.enum.Style;
 import org.apache.axis.enum.Use;
 import org.apache.axis.handlers.soap.SOAPService;
+import org.apache.axis.schema.SchemaVersion;
 import org.apache.axis.session.Session;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.LockableHashtable;
 import org.apache.axis.utils.Messages;
-import org.apache.axis.schema.SchemaVersion;
-
-import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.Call;
 import javax.xml.rpc.handler.soap.SOAPMessageContext;
 import java.io.File;
-import java.util.Hashtable;
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 /**
  * Some more general docs will go here.

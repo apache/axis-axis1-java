@@ -56,7 +56,6 @@
 package org.apache.axis.encoding.ser;
 
 import org.apache.axis.encoding.DeserializationContext;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 

@@ -54,12 +54,10 @@
  */
 package org.apache.axis.types;
 
-import java.util.ArrayList;
-import java.text.NumberFormat;
-import java.text.FieldPosition;
-
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
+
+import java.text.FieldPosition;
+import java.text.NumberFormat;
 
 /**
  * Custom class for supporting primitive XSD data type UnsignedLong

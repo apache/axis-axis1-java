@@ -56,16 +56,12 @@
 package org.apache.axis.encoding.ser;
 
 import org.apache.axis.components.logger.LogFactory;
-
 import org.apache.axis.encoding.DeserializationContext;
-
 import org.apache.commons.logging.Log;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 import javax.activation.DataHandler;
-
 import javax.mail.internet.MimeMultipart;
 
 /**

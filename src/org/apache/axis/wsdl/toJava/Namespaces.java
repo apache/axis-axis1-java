@@ -54,13 +54,13 @@
  */
 package org.apache.axis.wsdl.toJava;
 
+import org.apache.axis.utils.JavaUtils;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
-
-import org.apache.axis.utils.JavaUtils;
 
 /**
 * This class is essentially a HashMap of <namespace, package name> pairs with

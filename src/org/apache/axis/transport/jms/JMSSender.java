@@ -55,18 +55,15 @@
 
 package org.apache.axis.transport.jms;
 
-import java.io.ByteArrayOutputStream;
-
-import java.util.HashMap;
-
-import org.apache.axis.MessageContext;
-import org.apache.axis.Message;
 import org.apache.axis.AxisFault;
-
+import org.apache.axis.Message;
+import org.apache.axis.MessageContext;
 import org.apache.axis.handlers.BasicHandler;
 
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
+import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
 
 /**
  * This is meant to be used on a SOAP Client to call a SOAP server.

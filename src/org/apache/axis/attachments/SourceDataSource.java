@@ -54,17 +54,13 @@
  */
 package org.apache.axis.attachments;
 
+import javax.activation.DataSource;
+import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
-
-import javax.activation.DataSource;
-
-import javax.xml.transform.Source;
-
-import javax.xml.transform.stream.StreamSource;
 
 public class SourceDataSource implements DataSource {
     public static final String CONTENT_TYPE = "text/xml";

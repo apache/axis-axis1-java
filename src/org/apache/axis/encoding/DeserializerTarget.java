@@ -56,8 +56,6 @@
 package org.apache.axis.encoding;
 
 import org.xml.sax.SAXException;
-import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.encoding.Target;
 
 // Target is a Deserializer.  The set method invokes one of the setValue methods
 // of the deserializer depending on whether a hint was given.  The DeserializerTarget

@@ -55,13 +55,10 @@
 
 package org.apache.axis.encoding.ser;
 
-import java.awt.Image;
-
 import javax.mail.internet.MimeMultipart;
-
 import javax.xml.namespace.QName;
-
 import javax.xml.transform.Source;
+import java.awt.*;
 
 /**
  * A JAFDataHandlerSerializer Factory

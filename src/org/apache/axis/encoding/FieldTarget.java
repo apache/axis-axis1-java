@@ -55,18 +55,12 @@
 
 package org.apache.axis.encoding;
 
-import org.xml.sax.SAXException;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Enumeration;
-import java.util.Vector;
-
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.Messages;
-
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
+import org.xml.sax.SAXException;
+
+import java.lang.reflect.Field;
 
 
 // Target is a field.  The set method places the value in the field.

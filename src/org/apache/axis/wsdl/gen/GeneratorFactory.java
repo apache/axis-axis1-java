@@ -54,15 +54,15 @@
  */
 package org.apache.axis.wsdl.gen;
 
+import org.apache.axis.wsdl.symbolTable.BaseTypeMapping;
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
+import org.apache.axis.wsdl.symbolTable.TypeEntry;
+
 import javax.wsdl.Binding;
 import javax.wsdl.Definition;
 import javax.wsdl.Message;
 import javax.wsdl.PortType;
 import javax.wsdl.Service;
-
-import org.apache.axis.wsdl.symbolTable.BaseTypeMapping;
-import org.apache.axis.wsdl.symbolTable.SymbolTable;
-import org.apache.axis.wsdl.symbolTable.TypeEntry;
 
 /**
 * Generator and Generatoractory are part of the generator framework.

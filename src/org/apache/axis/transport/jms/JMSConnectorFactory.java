@@ -55,19 +55,10 @@
 
 package org.apache.axis.transport.jms;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Hashtable;
-
-import java.lang.reflect.Method;
-
-import javax.jms.ConnectionFactory;
-import javax.jms.QueueConnectionFactory;
-import javax.jms.TopicConnectionFactory;
-import javax.jms.JMSException;
-
-import org.apache.axis.components.jms.JMSVendorAdapterFactory;
 import org.apache.axis.components.jms.JMSVendorAdapter;
+import org.apache.axis.components.jms.JMSVendorAdapterFactory;
+
+import java.util.HashMap;
 
 /**
  * JMSConnectorFactory is a factory class for creating JMSConnectors. It can

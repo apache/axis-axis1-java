@@ -54,30 +54,25 @@
  */
 package org.apache.axis.wsdl.toJava;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Vector;
-
-import javax.xml.namespace.QName;
-
-import javax.wsdl.Binding;
-import javax.wsdl.Port;
-import javax.wsdl.Service;
-
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.WSDLUtils;
-
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
 import org.apache.axis.wsdl.symbolTable.ServiceEntry;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
+
+import javax.wsdl.Binding;
+import javax.wsdl.Port;
+import javax.wsdl.Service;
+import javax.xml.namespace.QName;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Vector;
 
 /**
 * This is Wsdl2java's service implementation writer.

@@ -54,21 +54,16 @@
  */
 package org.apache.axis.wsdl.symbolTable;
 
-import java.io.IOException;
-
-import java.util.Map;
-
-import javax.wsdl.extensions.soap.SOAPHeaderFault;
+import org.apache.axis.enum.Use;
+import org.apache.axis.utils.Messages;
 
 import javax.wsdl.Fault;
 import javax.wsdl.Message;
 import javax.wsdl.Part;
-
+import javax.wsdl.extensions.soap.SOAPHeaderFault;
 import javax.xml.namespace.QName;
-
-import org.apache.axis.enum.Use;
-
-import org.apache.axis.utils.Messages;
+import java.io.IOException;
+import java.util.Map;
 
 /**
 * Fault information object.  This should probably really be FaultEntry and

@@ -54,18 +54,16 @@
  */
 package org.apache.axis.wsdl.toJava;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import java.util.Iterator;
-
-import javax.wsdl.Operation;
-import javax.wsdl.PortType;
-
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.Parameters;
 import org.apache.axis.wsdl.symbolTable.PortTypeEntry;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
+
+import javax.wsdl.Operation;
+import javax.wsdl.PortType;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Iterator;
 
 /**
 * This is Wsdl2java's PortType Writer.  It writes the <portTypeName>.java file

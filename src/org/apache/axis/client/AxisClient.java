@@ -57,21 +57,19 @@ package org.apache.axis.client ;
 
 import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
+import org.apache.axis.Constants;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
-import org.apache.axis.configuration.EngineConfigurationFactoryFinder;
-import org.apache.axis.handlers.soap.SOAPService;
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.Messages;
-
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.configuration.EngineConfigurationFactoryFinder;
+import org.apache.axis.handlers.HandlerChainImpl;
+import org.apache.axis.handlers.HandlerInfoChainFactory;
+import org.apache.axis.handlers.soap.SOAPService;
+import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 
 import javax.xml.namespace.QName;
-import org.apache.axis.handlers.HandlerInfoChainFactory;
-import org.apache.axis.handlers.HandlerChainImpl;
-import org.apache.axis.Constants;
 
 /**
  * Provides the equivalent of an "Axis engine" on the client side.

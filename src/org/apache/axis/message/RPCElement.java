@@ -66,17 +66,16 @@ import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.enum.Style;
 import org.apache.axis.enum.Use;
 import org.apache.axis.handlers.soap.SOAPService;
-import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.toJava.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+
+import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPElement;
 import java.util.ArrayList;
 import java.util.Enumeration;
-
-import javax.xml.namespace.QName;
-
 import java.util.Vector;
 
 public class RPCElement extends SOAPBodyElement

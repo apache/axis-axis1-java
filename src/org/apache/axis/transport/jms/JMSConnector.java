@@ -55,28 +55,23 @@
 
 package org.apache.axis.transport.jms;
 
-import java.util.Map;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Iterator;
-
-import java.io.ByteArrayOutputStream;
-
-import javax.jms.JMSException;
-import javax.jms.ExceptionListener;
-import javax.jms.ConnectionFactory;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageProducer;
-import javax.jms.MessageListener;
-import javax.jms.Destination;
-import javax.jms.Session;
-import javax.jms.Message;
-import javax.jms.BytesMessage;
-
-import javax.naming.Context;
-import javax.naming.NamingException;
-
 import org.apache.axis.components.jms.JMSVendorAdapter;
+
+import javax.jms.BytesMessage;
+import javax.jms.ConnectionFactory;
+import javax.jms.Destination;
+import javax.jms.ExceptionListener;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageConsumer;
+import javax.jms.MessageListener;
+import javax.jms.MessageProducer;
+import javax.jms.Session;
+import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Map;
 
 // No vendor dependent exception classes
 //import progress.message.client.EUserAlreadyConnected;

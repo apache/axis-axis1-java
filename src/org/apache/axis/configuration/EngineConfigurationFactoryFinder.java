@@ -55,11 +55,6 @@
 
 package org.apache.axis.configuration;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-
 import org.apache.axis.AxisProperties;
 import org.apache.axis.EngineConfigurationFactory;
 import org.apache.axis.components.logger.LogFactory;
@@ -67,6 +62,11 @@ import org.apache.axis.utils.Messages;
 import org.apache.commons.discovery.ResourceClassIterator;
 import org.apache.commons.discovery.tools.ClassUtils;
 import org.apache.commons.logging.Log;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 
 /**

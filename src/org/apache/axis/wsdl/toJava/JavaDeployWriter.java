@@ -54,33 +54,13 @@
  */
 package org.apache.axis.wsdl.toJava;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Vector;
-import java.util.ArrayList;
-
-import javax.wsdl.Binding;
-import javax.wsdl.BindingOperation;
-import javax.wsdl.Definition;
-import javax.wsdl.Operation;
-import javax.wsdl.OperationType;
-import javax.wsdl.Port;
-import javax.xml.namespace.QName;
-import javax.wsdl.Service;
-
 import org.apache.axis.Constants;
-import org.apache.axis.enum.Style;
-import org.apache.axis.enum.Use;
-
 import org.apache.axis.deployment.wsdd.WSDDConstants;
 import org.apache.axis.enum.Scope;
-
+import org.apache.axis.enum.Style;
+import org.apache.axis.enum.Use;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
-
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.CollectionTE;
 import org.apache.axis.wsdl.symbolTable.Element;
@@ -89,6 +69,21 @@ import org.apache.axis.wsdl.symbolTable.Parameter;
 import org.apache.axis.wsdl.symbolTable.Parameters;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
+
+import javax.wsdl.Binding;
+import javax.wsdl.BindingOperation;
+import javax.wsdl.Definition;
+import javax.wsdl.Operation;
+import javax.wsdl.OperationType;
+import javax.wsdl.Port;
+import javax.wsdl.Service;
+import javax.xml.namespace.QName;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Vector;
 
 /**
 * This is Wsdl2java's deploy Writer.  It writes the deploy.wsdd file.

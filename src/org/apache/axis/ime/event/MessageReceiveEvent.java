@@ -54,9 +54,9 @@
  */
 package org.apache.axis.ime.event;
 
+import org.apache.axis.MessageContext;
 import org.apache.axis.ime.MessageExchangeCorrelator;
 import org.apache.axis.ime.internal.MessageExchangeReceiveContext;
-import org.apache.axis.MessageContext;
 
 /**
  * The MessageReceiveEvent is used to notify listeners that a message

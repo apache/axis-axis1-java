@@ -57,22 +57,20 @@ package org.apache.axis.encoding.ser.castor;
 
 import org.apache.axis.Constants;
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.utils.Messages;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.Serializer;
-import org.apache.axis.encoding.DeserializerImpl;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.fromJava.Types;
 import org.apache.commons.logging.Log;
-import org.exolab.castor.xml.Marshaller;
 import org.exolab.castor.xml.MarshalException;
+import org.exolab.castor.xml.Marshaller;
 import org.exolab.castor.xml.ValidationException;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 import org.w3c.dom.Element;
-
+import org.xml.sax.Attributes;
 
 import javax.xml.namespace.QName;
-import java.io.*;
+import java.io.IOException;
+import java.io.StringWriter;
 
 /**
  * Castor serializer

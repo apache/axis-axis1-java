@@ -53,18 +53,11 @@
  */
 package javax.xml.transform.sax;
 
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
+
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
-
-import java.lang.String;
-
-import java.io.OutputStream;
-import java.io.Writer;
-
-import org.xml.sax.XMLReader;
-import org.xml.sax.ext.DeclHandler;
-import org.xml.sax.ext.LexicalHandler;
-import org.xml.sax.InputSource;
 
 
 /**

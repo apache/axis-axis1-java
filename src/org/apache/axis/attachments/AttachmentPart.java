@@ -55,12 +55,10 @@
 package org.apache.axis.attachments;
 
 import org.apache.axis.Part;
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.transport.http.HTTPConstants;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.SessionUtils;
-
-import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import javax.activation.DataHandler;

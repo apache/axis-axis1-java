@@ -54,11 +54,10 @@
  */
 package org.apache.axis.configuration;
 
-import org.apache.axis.transport.local.LocalSender;
+import org.apache.axis.SimpleTargetedChain;
 import org.apache.axis.transport.http.HTTPSender;
 import org.apache.axis.transport.java.JavaSender;
-import org.apache.axis.Handler;
-import org.apache.axis.SimpleTargetedChain;
+import org.apache.axis.transport.local.LocalSender;
 
 /**
  * A SimpleProvider set up with hardcoded basic configuration for a client

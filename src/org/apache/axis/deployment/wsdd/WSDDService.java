@@ -55,11 +55,12 @@
 package org.apache.axis.deployment.wsdd;
 
 import org.apache.axis.AxisEngine;
+import org.apache.axis.AxisFault;
 import org.apache.axis.ConfigurationException;
+import org.apache.axis.Constants;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.FaultableHandler;
 import org.apache.axis.Handler;
-import org.apache.axis.AxisFault;
 import org.apache.axis.MessageContext;
 import org.apache.axis.attachments.Attachments;
 import org.apache.axis.attachments.AttachmentsImpl;
@@ -74,14 +75,13 @@ import org.apache.axis.encoding.ser.BaseDeserializerFactory;
 import org.apache.axis.encoding.ser.BaseSerializerFactory;
 import org.apache.axis.enum.Style;
 import org.apache.axis.enum.Use;
+import org.apache.axis.handlers.HandlerInfoChainFactory;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.providers.java.JavaProvider;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Element;
 import org.xml.sax.helpers.AttributesImpl;
-import org.apache.axis.handlers.HandlerInfoChainFactory;
-import org.apache.axis.Constants;
 
 import javax.xml.namespace.QName;
 import java.io.IOException;

@@ -54,9 +54,7 @@
  */
 package org.apache.axis.types;
 
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.Messages;
-import org.apache.axis.utils.XMLChar;
+
 
 /**
  * Custom class for supporting XSD data type Entity

@@ -54,14 +54,13 @@
  */
 package org.apache.axis.transport.http;
 
-import java.security.Principal;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.xml.rpc.handler.MessageContext;
 import javax.xml.rpc.server.ServletEndpointContext;
+import java.security.Principal;
 
 public class ServletEndpointContextImpl implements ServletEndpointContext {
     

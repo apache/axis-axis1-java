@@ -54,21 +54,19 @@
  */
 package org.apache.axis.wsdl.gen;
 
+import org.apache.axis.encoding.DefaultSOAPEncodingTypeMappingImpl;
+import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.wsdl.symbolTable.BaseTypeMapping;
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
+import org.apache.axis.wsdl.symbolTable.TypeEntry;
+
 import javax.wsdl.Binding;
 import javax.wsdl.Definition;
 import javax.wsdl.Message;
 import javax.wsdl.PortType;
-import javax.xml.namespace.QName;
 import javax.wsdl.Service;
-
-import org.apache.axis.encoding.TypeMapping;
-import org.apache.axis.encoding.DefaultSOAPEncodingTypeMappingImpl;
-
-import org.apache.axis.utils.JavaUtils;
-
-import org.apache.axis.wsdl.symbolTable.BaseTypeMapping;
-import org.apache.axis.wsdl.symbolTable.SymbolTable;
-import org.apache.axis.wsdl.symbolTable.TypeEntry;
+import javax.xml.namespace.QName;
 
 /**
 * This factory returns a bunch of NoopGenerators

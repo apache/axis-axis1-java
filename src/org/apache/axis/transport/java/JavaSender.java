@@ -57,15 +57,14 @@ package org.apache.axis.transport.java;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.MessageContext;
+import org.apache.axis.client.Call;
+import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.description.OperationDesc;
+import org.apache.axis.enum.Scope;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.handlers.soap.SOAPService;
-import org.apache.axis.providers.java.RPCProvider ;
-import org.apache.axis.providers.java.MsgProvider ;
-import org.apache.axis.client.Call ;
-import org.apache.axis.enum.Scope ;
-import org.apache.axis.description.OperationDesc ;
-
-import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.providers.java.MsgProvider;
+import org.apache.axis.providers.java.RPCProvider;
 import org.apache.commons.logging.Log;
 
 public class JavaSender extends BasicHandler {

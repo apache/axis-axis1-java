@@ -54,13 +54,9 @@
  */
 package org.apache.axis.types;
 
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 
-import java.text.SimpleDateFormat;
-import java.text.Format;
 import java.text.NumberFormat;
-import java.text.DecimalFormat;
 
 /**
  * Implementation of the XML Schema type gYear

@@ -55,9 +55,8 @@
 
 package org.apache.axis.message;
 
-import javax.xml.soap.Name;
-
 import javax.xml.namespace.QName;
+import javax.xml.soap.Name;
 
 public class PrefixedQName implements Name {
     /** comment/shared empty string */

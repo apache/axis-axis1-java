@@ -59,7 +59,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
-
 import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.List;

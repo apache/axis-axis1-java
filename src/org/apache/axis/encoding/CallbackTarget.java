@@ -56,7 +56,6 @@
 package org.apache.axis.encoding;
 
 import org.xml.sax.SAXException;
-import org.apache.axis.encoding.Deserializer;
 
 // Target is a Callback.  The set method invokes one of the setValue methods
 // of the callback using the hing.  The CallbackTarget

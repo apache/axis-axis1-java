@@ -55,7 +55,6 @@
 package org.apache.axis.wsdl.symbolTable;
 
 import java.io.IOException;
-
 import java.util.Vector;
 
 /**

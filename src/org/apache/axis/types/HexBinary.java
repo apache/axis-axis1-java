@@ -54,10 +54,9 @@
  */
 package org.apache.axis.types ;
 
-import java.io.ByteArrayOutputStream;
-
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
+
+import java.io.ByteArrayOutputStream;
 
 /**
  * Custom class for supporting primitive XSD data type hexBinary.

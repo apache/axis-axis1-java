@@ -79,11 +79,10 @@ import org.apache.commons.logging.Log;
 import org.w3c.dom.Document;
 
 import javax.xml.namespace.QName;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.FileNotFoundException;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;

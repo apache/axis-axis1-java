@@ -56,16 +56,13 @@
 
 package org.apache.axis.encoding;
 
-import java.io.IOException;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
-
 import org.w3c.dom.Element;
-
 import org.xml.sax.Attributes;
+
+import javax.xml.namespace.QName;
+import java.io.IOException;
 
 /**
  * This interface describes the AXIS SerializationContext.

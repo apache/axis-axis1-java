@@ -55,24 +55,14 @@
 
 package org.apache.axis.encoding.ser;
 
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
+import org.apache.axis.description.TypeDesc;
+import org.apache.axis.encoding.Serializer;
+import org.apache.axis.utils.BeanPropertyDescriptor;
+import org.apache.axis.utils.BeanUtils;
+import org.apache.axis.utils.JavaUtils;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
-import java.io.IOException;
-
-import org.apache.axis.description.TypeDesc;
-import org.apache.axis.encoding.Serializer;
-import org.apache.axis.encoding.SerializerFactory;
-import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.encoding.DeserializerFactory;
-import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.utils.BeanUtils;
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.BeanPropertyDescriptor;
 
 /**
  * SerializerFactory for Bean

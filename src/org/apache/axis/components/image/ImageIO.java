@@ -55,7 +55,7 @@
 
 package org.apache.axis.components.image;
 
-import java.awt.Image;
+import java.awt.*;
 import java.io.InputStream;
 import java.io.OutputStream;
 

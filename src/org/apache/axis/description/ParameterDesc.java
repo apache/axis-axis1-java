@@ -54,16 +54,14 @@
  */
 package org.apache.axis.description;
 
-import javax.xml.namespace.QName;
-
 import org.apache.axis.utils.Messages;
-
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
 
+import javax.xml.namespace.QName;
 import java.io.IOException;
-import java.io.Serializable;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
 /**
  * A Parameter descriptor, collecting the interesting info about an

@@ -54,15 +54,6 @@
  */
 package org.apache.axis.deployment.wsdd;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Vector;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis.AxisEngine;
 import org.apache.axis.ConfigurationException;
 import org.apache.axis.Constants;
@@ -81,6 +72,14 @@ import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 import org.w3c.dom.Element;
+
+import javax.xml.namespace.QName;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Vector;
 
 
 /**

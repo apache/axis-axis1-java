@@ -55,6 +55,9 @@
 
 package org.apache.axis.i18n;
 
+import org.apache.axis.components.logger.LogFactory;
+import org.apache.commons.logging.Log;
+
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -62,9 +65,6 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-
-import org.apache.axis.components.logger.LogFactory;
-import org.apache.commons.logging.Log;
 
 /**
  * <p>Wrapper class for resource bundles. Property files are used to store

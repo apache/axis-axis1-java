@@ -55,13 +55,11 @@
 package org.apache.axis.utils.bytecode;
 
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.Hashtable;
 
 /**
  *  This class retieves function parameter names from bytecode built with

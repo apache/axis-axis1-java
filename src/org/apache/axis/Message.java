@@ -56,26 +56,23 @@
 package org.apache.axis;
 
 import org.apache.axis.attachments.Attachments;
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.ClassUtils;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
-
-import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.AttachmentPart;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.io.IOException;
+import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.SOAPException;
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 
 /**

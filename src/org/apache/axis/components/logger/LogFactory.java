@@ -55,11 +55,11 @@
 
 package org.apache.axis.components.logger;
 
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-
 import org.apache.commons.discovery.tools.DiscoverSingleton;
 import org.apache.commons.logging.Log;
+
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 
 /**

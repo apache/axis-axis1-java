@@ -54,17 +54,14 @@
  */
 package org.apache.axis.wsdl.symbolTable;
 
-import java.util.Vector;
-
-import javax.xml.namespace.QName;
-
-import javax.xml.rpc.holders.BooleanHolder;
-import javax.xml.rpc.holders.IntHolder;
-
 import org.apache.axis.Constants;
-
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import javax.xml.namespace.QName;
+import javax.xml.rpc.holders.BooleanHolder;
+import javax.xml.rpc.holders.IntHolder;
+import java.util.Vector;
 
 /**
  * This class contains static utility methods specifically for schema type queries.

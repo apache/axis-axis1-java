@@ -78,7 +78,14 @@ import javax.wsdl.extensions.soap.SOAPOperation;
 import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 
 /**
 * This is Wsdl2java's stub writer.  It writes the <BindingName>Stub.java

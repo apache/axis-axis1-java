@@ -57,16 +57,13 @@ package org.apache.axis.handlers;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
-import org.apache.axis.utils.LockableHashtable;
-
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.utils.LockableHashtable;
 import org.apache.commons.logging.Log;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
-
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;

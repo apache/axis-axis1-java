@@ -54,16 +54,15 @@
  */
 package org.apache.axis.description;
 
-import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.lang.reflect.Method;
-
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.commons.logging.Log;
-
 import org.apache.axis.enum.Style;
 import org.apache.axis.enum.Use;
+import org.apache.commons.logging.Log;
+
+import javax.xml.namespace.QName;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 
 /**

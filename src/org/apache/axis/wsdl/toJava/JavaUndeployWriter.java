@@ -54,22 +54,17 @@
  */
 package org.apache.axis.wsdl.toJava;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import java.util.Iterator;
-import java.util.Map;
+import org.apache.axis.deployment.wsdd.WSDDConstants;
+import org.apache.axis.utils.Messages;
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
 
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
 import javax.wsdl.Service;
-
-import org.apache.axis.deployment.wsdd.WSDDConstants;
-
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.Messages;
-
-import org.apache.axis.wsdl.symbolTable.SymbolTable;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
 * This is Wsdl2java's deploy Writer.  It writes the deploy.java file.

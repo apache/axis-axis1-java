@@ -55,28 +55,26 @@
 
 package org.apache.axis.wsdl.fromJava;
 
+import com.ibm.wsdl.BindingFaultImpl;
 import com.ibm.wsdl.extensions.soap.SOAPAddressImpl;
 import com.ibm.wsdl.extensions.soap.SOAPBindingImpl;
 import com.ibm.wsdl.extensions.soap.SOAPBodyImpl;
 import com.ibm.wsdl.extensions.soap.SOAPOperationImpl;
-import com.ibm.wsdl.BindingFaultImpl;
-
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
-import org.apache.axis.description.OperationDesc;
-import org.apache.axis.description.ServiceDesc;
-import org.apache.axis.description.ParameterDesc;
 import org.apache.axis.description.FaultDesc;
+import org.apache.axis.description.OperationDesc;
+import org.apache.axis.description.ParameterDesc;
+import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.encoding.DefaultTypeMappingImpl;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.enum.Style;
 import org.apache.axis.enum.Use;
 import org.apache.axis.utils.ClassUtils;
-import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
 import org.xml.sax.SAXException;
 
 import javax.wsdl.Binding;
@@ -85,8 +83,9 @@ import javax.wsdl.BindingInput;
 import javax.wsdl.BindingOperation;
 import javax.wsdl.BindingOutput;
 import javax.wsdl.Definition;
-import javax.wsdl.Input;
+import javax.wsdl.Fault;
 import javax.wsdl.Import;
+import javax.wsdl.Input;
 import javax.wsdl.Message;
 import javax.wsdl.Operation;
 import javax.wsdl.Output;
@@ -94,22 +93,16 @@ import javax.wsdl.Part;
 import javax.wsdl.Port;
 import javax.wsdl.PortType;
 import javax.wsdl.Service;
-import javax.wsdl.Fault;
 import javax.wsdl.WSDLException;
-
 import javax.wsdl.extensions.ExtensibilityElement;
-
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.extensions.soap.SOAPBinding;
 import javax.wsdl.extensions.soap.SOAPBody;
 import javax.wsdl.extensions.soap.SOAPFault;
 import javax.wsdl.extensions.soap.SOAPOperation;
-
 import javax.wsdl.factory.WSDLFactory;
-
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;

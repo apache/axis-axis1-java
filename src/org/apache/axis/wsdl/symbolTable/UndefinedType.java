@@ -54,9 +54,8 @@
  */
 package org.apache.axis.wsdl.symbolTable;
 
-import java.io.IOException;
-
 import javax.xml.namespace.QName;
+import java.io.IOException;
 
 /**
  * This represents a QName found in a reference but is not defined.

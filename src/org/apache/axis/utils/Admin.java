@@ -55,12 +55,6 @@
 
 package org.apache.axis.utils ;
 
-import java.io.FileInputStream;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-
 import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;

@@ -54,15 +54,12 @@
  */
 package org.apache.axis.wsdl.symbolTable;
 
-import java.io.IOException;
-import java.io.Serializable;
+import org.apache.axis.utils.Messages;
+import org.w3c.dom.Node;
 
 import javax.xml.namespace.QName;
-
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.Messages;
-
-import org.w3c.dom.Node;
+import java.io.IOException;
+import java.io.Serializable;
 
 /**
  * This class represents a wsdl types entry that is supported by the WSDL2Java emitter.

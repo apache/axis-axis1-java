@@ -55,29 +55,19 @@
 
 package org.apache.axis.providers.java;
 
-import org.apache.commons.logging.Log;
-
-import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
-import org.apache.axis.handlers.soap.SOAPService;
-import org.apache.axis.utils.ClassUtils;
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.Messages;
-
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.utils.ClassUtils;
 import org.apache.commons.logging.Log;
+import org.omg.CORBA.ORB;
+import org.omg.CosNaming.NameComponent;
 import org.omg.CosNaming.NamingContext;
 import org.omg.CosNaming.NamingContextHelper;
-import org.omg.CosNaming.NameComponent;
-import org.omg.CORBA.ORB;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import java.lang.reflect.Method;
 import java.util.Properties;
-import java.util.Hashtable;
 
 /**
  * A basic CORBA Provider
