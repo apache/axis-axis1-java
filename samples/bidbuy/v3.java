@@ -1,14 +1,18 @@
 package samples.bidbuy ;
 
-import org.apache.axis.client.ServiceClient ;
-import org.apache.axis.transport.http.HTTPTransport ;
-import org.apache.axis.message.RPCElement ;
-import org.apache.axis.message.RPCParam ;
-import org.apache.axis.utils.* ;
-import org.apache.axis.encoding.* ;
-import org.apache.axis.* ;
-import java.util.* ;
-import java.math.BigDecimal ;
+import org.apache.axis.client.ServiceClient;
+import org.apache.axis.encoding.BeanSerializer;
+import org.apache.axis.encoding.SOAPTypeMappingRegistry;
+import org.apache.axis.encoding.ServiceDescription;
+import org.apache.axis.message.RPCElement;
+import org.apache.axis.message.RPCParam;
+import org.apache.axis.transport.http.HTTPTransport;
+import org.apache.axis.utils.QName;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 public class v3 implements vInterface {
   public void register(String registryURL, Service s) throws Exception {

@@ -1,7 +1,6 @@
 package test.encoding;
 
 import org.apache.axis.Constants;
-import junit.framework.TestCase;
 
 /** 
  * Test deserialization of SOAP responses

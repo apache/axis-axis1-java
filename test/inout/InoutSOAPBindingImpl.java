@@ -1,7 +1,6 @@
 package test.inout;
 
 import org.apache.axis.rpc.holders.StringHolder;
-import java.rmi.RemoteException;
 
 public class InoutSOAPBindingImpl implements Inout
 {

@@ -55,10 +55,7 @@
 
 package samples.transport.tcp ;
 
-import org.apache.axis.utils.Options ;
 import org.apache.axis.client.Call;
-import org.apache.axis.transport.http.HTTPConstants;
-import java.net.URL;
 
 /**
  * An admin client object, which will work with the TCP transport.

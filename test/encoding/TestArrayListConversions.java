@@ -1,14 +1,17 @@
 package test.encoding;
 
-import org.apache.axis.*;
-import org.apache.axis.client.*;
+import junit.framework.TestCase;
+import org.apache.axis.Handler;
+import org.apache.axis.client.ServiceClient;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.registries.HandlerRegistry;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.transport.local.LocalTransport;
 
-import java.util.*;
-import junit.framework.TestCase;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Vector;
 
 public class TestArrayListConversions extends TestCase {
   private static final String SERVICE_NAME = "TestArrayConversions";

@@ -1,10 +1,13 @@
 package test;
 
-import java.io.*;
-import org.apache.axis.*;
+import org.apache.axis.Message;
+import org.apache.axis.MessageContext;
 import org.apache.axis.client.ServiceClient;
-import org.apache.axis.transport.http.HTTPTransport ;
-import org.apache.axis.utils.*;
+import org.apache.axis.transport.http.HTTPTransport;
+import org.apache.axis.utils.Options;
+
+import java.io.File;
+import java.io.FileInputStream;
 
 /**
  * A convenient little test program which will send a message as is to

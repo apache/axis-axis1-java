@@ -55,14 +55,15 @@ package samples.transport ;
  * <http://www.apache.org/>.
  */
 
-import java.io.* ;
-import java.lang.Thread ;
+import org.apache.axis.AxisFault;
+import org.apache.axis.Message;
+import org.apache.axis.MessageContext;
+import org.apache.axis.server.AxisServer;
 
-import org.apache.axis.Message ;
-import org.apache.axis.AxisFault ;
-import org.apache.axis.MessageContext ;
-import org.apache.axis.handlers.BasicHandler ;
-import org.apache.axis.server.AxisServer ;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 
 /**
  * Waits for the XML to appear in a file called xml#.req and writes

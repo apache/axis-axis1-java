@@ -1,16 +1,21 @@
 package test.encoding;
 
+import junit.framework.TestCase;
 import org.apache.axis.MessageContext;
-import org.apache.axis.message.*;
-import org.apache.axis.encoding.*;
+import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.message.RPCElement;
+import org.apache.axis.message.RPCParam;
+import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.QName;
 import org.apache.log4j.Category;
 import org.xml.sax.InputSource;
-import java.io.*;
-import java.util.*;
 
-import junit.framework.TestCase;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
 
 /** Little serialization test with a struct.
  */

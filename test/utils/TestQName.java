@@ -1,8 +1,9 @@
 package test.utils;
 
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 import org.apache.axis.utils.QName;
-import org.w3c.dom.*;
 
 public class TestQName extends TestCase
 {

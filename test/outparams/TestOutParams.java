@@ -1,19 +1,19 @@
 package test.outparams;
 
 import junit.framework.TestCase;
-
-import org.apache.axis.*;
-import org.apache.axis.transport.local.LocalTransport;
+import org.apache.axis.Constants;
+import org.apache.axis.Handler;
+import org.apache.axis.Message;
+import org.apache.axis.MessageContext;
 import org.apache.axis.client.ServiceClient;
-import org.apache.axis.encoding.*;
-import org.apache.axis.handlers.soap.*;
-import org.apache.axis.message.*;
-import org.apache.axis.server.*;
-import org.apache.axis.registries.*;
+import org.apache.axis.handlers.soap.SOAPService;
+import org.apache.axis.message.RPCParam;
+import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.registries.HandlerRegistry;
+import org.apache.axis.server.AxisServer;
+import org.apache.axis.transport.local.LocalTransport;
 
 import java.util.Vector;
-
-import test.RPCDispatch.Data;
 
 /**
  * Test org.apache.axis.handlers.RPCDispatcher

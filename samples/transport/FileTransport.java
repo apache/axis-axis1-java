@@ -55,9 +55,6 @@
 
 package samples.transport;
 
-import java.util.* ;
-import org.apache.axis.* ;
-
 import org.apache.axis.client.Transport;
 
 /**
