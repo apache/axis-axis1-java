@@ -110,6 +110,84 @@ public class Import2TestCase extends junit.framework.TestCase {
     }
 */
 
+    public void testAbsoluteStep3() {
+        test.wsdl.interop3.absimport2.definitions.SoapInteropImport2PortType binding;
+        try {
+            binding = new test.wsdl.interop3.absimport2.Import2Locator().getSoapInteropImport2Port();
+        }
+        catch (javax.xml.rpc.ServiceException jre) {
+            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
+        }
+        assertTrue("binding is null", binding != null);
+
+        try {
+            test.wsdl.interop3.absimport2.xsd.SOAPStruct value = null;
+            value = binding.echoStruct(new test.wsdl.interop3.absimport2.xsd.SOAPStruct());
+        }
+        catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
+        }
+    }
+
+    public void testAbsoluteStep5() {
+        test.wsdl.interop3.absimport2.definitions.SoapInteropImport2PortType binding;
+        try {
+            binding = new test.wsdl.interop3.absimport2.Import2Locator().getSoapInteropImport2Port(new java.net.URL("http://localhost:8080/axis/services/SoapInteropImport2Port"));
+        }
+        catch (Throwable t) {
+            throw new junit.framework.AssertionFailedError("Throwable caught: " + t);
+        }
+        assertTrue("binding is null", binding != null);
+
+        try {
+            test.wsdl.interop3.absimport2.xsd.SOAPStruct value = null;
+            value = binding.echoStruct(new test.wsdl.interop3.absimport2.xsd.SOAPStruct());
+        }
+        catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
+        }
+    }
+
+    public void testAbsoluteStep7() {
+        test.wsdl.interop3.absimport2.step6.definitions.SoapInteropImport2PortType binding;
+        try {
+            binding = new test.wsdl.interop3.absimport2.step6.definitions.SoapInteropImport2PortTypeServiceLocator().getSoapInteropImport2Port();
+        }
+        catch (javax.xml.rpc.ServiceException jre) {
+            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
+        }
+        assertTrue("binding is null", binding != null);
+
+        try {
+            test.wsdl.interop3.absimport2.step6.xsd.SOAPStruct value = null;
+            value = binding.echoStruct(new test.wsdl.interop3.absimport2.step6.xsd.SOAPStruct());
+        }
+        catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
+        }
+    }
+
+/* doesn't work yet
+    public void testAbsoluteStep8() {
+        SoapInteropImport2PortType binding;
+        try {
+            binding = new SoapInteropImport2PortTypeServiceLocator().getSoapInteropImport2Port(new java.net.URL("http://mssoapinterop.org/stkV3/wsdl/import2.wsdl"));
+        }
+        catch (Throwable t) {
+            throw new junit.framework.AssertionFailedError("Throwable caught: " + t);
+        }
+        assertTrue("binding is null", binding != null);
+
+        try {
+            SOAPStruct value = null;
+            value = binding.echoStruct(new SOAPStruct());
+        }
+        catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
+        }
+    }
+*/
+
     public static void main(String[] args) {
         junit.textui.TestRunner.run(new junit.framework.TestSuite(Import2TestCase.class));
     } // main
