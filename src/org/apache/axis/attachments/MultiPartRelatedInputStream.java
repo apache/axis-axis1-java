@@ -57,6 +57,7 @@ package org.apache.axis.attachments;
 import org.apache.axis.transport.http.HTTPConstants; 
 import org.apache.axis.attachments.ManagedMemoryDataSource;
 import javax.activation.DataHandler;
+import org.apache.axis.Part;
 
 
 /**
@@ -217,13 +218,11 @@ public class MultiPartRelatedInputStream extends java.io.FilterInputStream {
         }
     }
 
-    public DataHandler getAttachmentByReference( final String[] id ) throws org.apache.axis.AxisFault {  // if CID should still have CID: prefix.  
+    public Part getAttachmentByReference( final String[] id ) throws org.apache.axis.AxisFault {  // if CID should still have CID: prefix.  
         //First see if we have read it in yet.
-        DataHandler ret = null; 
+        Part ret = null; 
         for(int i= id.length -1; ret== null && i > -1; --i){
-            AttachmentPart p=(AttachmentPart) parts.get(id[i]);
-            if(null != p)
-               ret=  p.getActiviationDataHandler();
+             ret=(AttachmentPart) parts.get(id[i]);
         }
 
         if ( null == ret) {
@@ -254,9 +253,9 @@ public class MultiPartRelatedInputStream extends java.io.FilterInputStream {
      *         should be prefixed by "cid:"
      */
 
-    protected javax.activation.DataHandler readTillFound( final String[] id) throws org.apache.axis.AxisFault {
+    protected Part readTillFound( final String[] id) throws org.apache.axis.AxisFault {
         if (boundaryDelimitedStream == null) return null; //The whole stream has been consumed already
-        javax.activation.DataHandler ret = null;
+        Part ret = null;
 
         try {
             if ( soapStream == boundaryDelimitedStream ) { //Still on the SOAP stream.
@@ -329,9 +328,9 @@ public class MultiPartRelatedInputStream extends java.io.FilterInputStream {
 
                 for(int i= id.length -1; ret== null && i > -1; --i){
                     if (contentId != null && id[i].equals( contentId)) { //This is the part being sought
-                        ret = dh;
+                        ret = ap;
                     }else if(contentLocation != null && id[i].equals( contentLocation)){
-                        ret = dh;
+                        ret = ap;
                     }
                 }
 
