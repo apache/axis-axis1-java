@@ -388,6 +388,9 @@ public class ClassRep {
      * @return true if the Property has JavaBean style accessors
      */
     protected boolean isJavaBeanNormal(Class cls, String name, Class type) {
+        if ((name == null) || (name.length() == 0))
+            return false;
+        
         try {
             String propName = name.substring(0,1).toUpperCase()
                 + name.substring(1);
