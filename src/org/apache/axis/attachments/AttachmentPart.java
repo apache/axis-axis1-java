@@ -562,7 +562,8 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
 
     /**
      * when an attachment part is disposed, any associated files
-     * are deleted
+     * are deleted, and the datahandler itself nulled. The object
+     * is no longer completely usable, at this point
      */
     public synchronized void dispose() {
         if(attachmentFile!=null) {
@@ -572,5 +573,9 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
             //set the filename to null to stop repeated use
             setAttachmentFile(null);
         }
+        //clean up the datahandler, as it will have been
+        //invalidated if it was bound to a file; if it wasnt
+        //we get to release memory anyway
+        datahandler=null;
     }
 }
