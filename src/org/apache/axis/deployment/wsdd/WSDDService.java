@@ -252,24 +252,9 @@ public class WSDDService
     }
 
     private void createTMR() {
+        tmr = new TypeMappingRegistryImpl();
         String version = getParameter("typeMappingVersion");
-        if(version != null) {
-            TypeMapping tm = null;
-            if (version.equals("1.0")) {
-                tm = DefaultSOAPEncodingTypeMappingImpl.create();
-            } else if (version.equals("1.1")) {
-                tm = DefaultTypeMappingImpl.getSingleton();
-            } else if (version.equals("1.2")) {
-                tm = DefaultSOAPEncodingTypeMappingImpl.createWithDelegate();
-            } else if (version.equals("1.3")) {
-                tm = DefaultJAXRPC11TypeMappingImpl.createWithDelegate();
-            } else {
-                throw new RuntimeException(org.apache.axis.utils.Messages.getMessage("j2wBadTypeMapping00"));
-            }
-            tmr = new TypeMappingRegistryImpl(tm);
-        } else {
-            tmr = new TypeMappingRegistryImpl();
-        }
+        ((TypeMappingRegistryImpl)tmr).doRegisterFromVersion(version);
     }
 
     /**

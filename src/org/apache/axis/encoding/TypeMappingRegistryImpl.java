@@ -247,24 +247,60 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
      * if an invalid type mapping is specified or the delegate is already set
      */
     public void registerDefault(javax.xml.rpc.encoding.TypeMapping mapping) {
-        if (mapping == null || 
-            !(mapping instanceof TypeMapping)) {
-            throw new IllegalArgumentException(
-                    Messages.getMessage("badTypeMapping"));
-        }
-
-        /* Don't allow this call after the delegate() method since
-         * the TMR's TypeMappings will be using the default type mapping
-         * of the secondary TMR.
-         */
-        if (defaultDelTM.getDelegate() instanceof TypeMappingDelegate) {
-            throw new IllegalArgumentException(
-                    Messages.getMessage("defaultTypeMappingSet"));
-        }
-
-        defaultDelTM.setDelegate((TypeMapping) mapping);
+//        if (mapping == null ||
+//            !(mapping instanceof TypeMapping)) {
+//            throw new IllegalArgumentException(
+//                    Messages.getMessage("badTypeMapping"));
+//        }
+//
+//        /* Don't allow this call after the delegate() method since
+//         * the TMR's TypeMappings will be using the default type mapping
+//         * of the secondary TMR.
+//         */
+//        if (defaultDelTM.getDelegate() instanceof TypeMappingDelegate) {
+//            throw new IllegalArgumentException(
+//                    Messages.getMessage("defaultTypeMappingSet"));
+//        }
+//
+//        defaultDelTM.setDelegate((TypeMapping) mapping);
     }
-        
+
+    public void doRegisterFromVersion(String version) {
+        TypeMapping tm;
+        if (version == null || version.equals("1.0")) {
+            tm = DefaultSOAPEncodingTypeMappingImpl.getSingleton();
+        } else if (version.equals("1.1")) {
+            return;
+        } else if (version.equals("1.2")) {
+            tm = DefaultSOAPEncodingTypeMappingImpl.create();
+        } else if (version.equals("1.3")) {
+            tm = DefaultJAXRPC11TypeMappingImpl.create();
+        } else {
+            throw new RuntimeException(org.apache.axis.utils.Messages.getMessage("j2wBadTypeMapping00"));
+        }
+        registerSOAPENCDefault(tm);
+    }
+    /**
+     * Force registration of the given mapping as the SOAPENC default mapping
+     * @param mapping
+     */
+    private void registerSOAPENCDefault(TypeMapping mapping) {
+        registerForced(Constants.URI_SOAP11_ENC, mapping);
+        registerForced(Constants.URI_SOAP12_ENC, mapping);
+    }
+
+    /**
+     * Force registration of a particular mapping for a given namespace,
+     * which will delegate back to the default.
+     *
+     * @param namespaceURI
+     * @param mapping
+     */
+    private void registerForced(String namespaceURI, TypeMapping mapping) {
+        mapTM.put(namespaceURI, new TypeMappingDelegate((TypeMapping) mapping));
+        ((TypeMapping)mapping).setDelegate(defaultDelTM.getDelegate());
+    }
+
     /**
      * Gets the TypeMapping for the namespace.  If not found, the default
      * TypeMapping is returned.

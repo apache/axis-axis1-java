@@ -30,21 +30,25 @@ import org.apache.axis.encoding.ser.ArrayDeserializerFactory;
  * @author Rich Scheuerle (scheu@us.ibm.com)
  */
 public class DefaultSOAPEncodingTypeMappingImpl extends DefaultTypeMappingImpl {
-    
     private static DefaultSOAPEncodingTypeMappingImpl tm = null;
     /**
      * Construct TypeMapping
      */
-    public static TypeMapping create() {
+    public static TypeMapping getSingleton() {
         if (tm == null) {
             tm = new DefaultSOAPEncodingTypeMappingImpl();
         }
         return tm;
     }
     
-    public static TypeMapping createWithDelegate() {
+    public static TypeMapping create() {
         TypeMapping ret = new DefaultSOAPEncodingTypeMappingImpl();
-        ret.setDelegate(DefaultTypeMappingImpl.getSingleton());
+
+        // Removed by gdaniels 2/11/2005 - we don't seem to need this
+        // any more since delegation gets done by the TMR as necessary
+        //
+        // ret.setDelegate(DefaultTypeMappingImpl.getSingleton());
+
         return ret;
     }
 

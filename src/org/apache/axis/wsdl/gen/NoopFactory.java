@@ -134,7 +134,7 @@ public class NoopFactory implements GeneratorFactory {
             btm = new BaseTypeMapping() {
 
                 TypeMapping defaultTM =
-                        DefaultSOAPEncodingTypeMappingImpl.createWithDelegate();
+                        DefaultSOAPEncodingTypeMappingImpl.create();
 
                 public String getBaseName(QName qNameIn) {
 

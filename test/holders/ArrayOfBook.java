@@ -19,11 +19,11 @@ public class ArrayOfBook implements java.io.Serializable {
         this.arrayOfBook = arrayOfBook;
     }
 
-    public test.holders.Book getArrayOfBook(int i) {
-        return this.arrayOfBook[i];
-    }
-
-    public void setArrayOfBook(int i, test.holders.Book _value) {
-        this.arrayOfBook[i] = _value;
-    }
+//    public test.holders.Book getArrayOfBook(int i) {
+//        return this.arrayOfBook[i];
+//    }
+//
+//    public void setArrayOfBook(int i, test.holders.Book _value) {
+//        this.arrayOfBook[i] = _value;
+//    }
 }

@@ -19,7 +19,6 @@ package org.apache.axis.encoding;
 import org.apache.axis.Constants;
 import org.apache.axis.AxisProperties;
 import org.apache.axis.MessageContext;
-import org.apache.axis.AxisEngine;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.ser.ArrayDeserializerFactory;
 import org.apache.axis.encoding.ser.ArraySerializerFactory;
@@ -142,7 +141,8 @@ public class TypeMappingImpl implements TypeMapping
      * setDelegate sets the new Delegate TypeMapping
      */
     public void setDelegate(TypeMapping delegate) {
-        this.delegate = delegate;
+        if (delegate != this)
+            this.delegate = delegate;
     }
 
     /**
@@ -447,6 +447,28 @@ public class TypeMappingImpl implements TypeMapping
     public javax.xml.rpc.encoding.DeserializerFactory
         getDeserializer(Class javaType, QName xmlType)
         throws JAXRPCException {
+        return getDeserializer(javaType, xmlType, this);
+    }
+
+    /**
+     * Gets the DeserializerFactory registered for the specified XML data type.
+     * This version uses a particular "original" TypeMapping in order to do
+     * secondary lookups for array component types, if necessary.
+     *
+     * @param javaType - the desired Java class
+     * @param xmlType - Qualified name of the XML data type
+     * @param orig - the TypeMapping from which to do secondary lookups
+     *
+     * @return Registered DeserializerFactory
+     *
+     * @throws JAXRPCException - If there is no registered DeserializerFactory
+     * for this pair of Java type and  XML data type
+     * java.lang.IllegalArgumentException -
+     * If invalid or unsupported XML/Java type is specified
+     */
+    public javax.xml.rpc.encoding.DeserializerFactory
+        getDeserializer(Class javaType, QName xmlType, TypeMappingImpl orig)
+        throws JAXRPCException {
         javax.xml.rpc.encoding.DeserializerFactory df = null;
 
         if (javaType == null) {
@@ -463,7 +485,33 @@ public class TypeMappingImpl implements TypeMapping
         df = (javax.xml.rpc.encoding.DeserializerFactory) pair2DF.get(pair);
 
         if (df == null && delegate != null) {
-            df = delegate.getDeserializer(javaType, xmlType);
+            df = delegate.getDeserializer(javaType, xmlType, orig);
+        }
+
+        if (df == null) {
+            if (javaType.isArray()) {
+                Class componentType = javaType.getComponentType();
+
+                // HACK ALERT - Don't return the ArrayDeserializer IF
+                // the xmlType matches the component type of the array,
+                // because that means we're using maxOccurs and we'll
+                // want the higher layers to get the component type
+                // deserializer... (sigh)
+                if (xmlType != null) {
+                    Class actualClass = orig.getClassForQName(xmlType);
+                    if (actualClass == componentType)
+                        return null;
+                }
+
+                pair = (Pair) qName2Pair.get(Constants.SOAP_ARRAY);
+                df = (javax.xml.rpc.encoding.DeserializerFactory) pair2DF.get(pair);
+                if (df instanceof ArrayDeserializerFactory && javaType.isArray()) {
+                    QName componentXmlType = orig.getTypeQName(componentType);
+                    if (componentXmlType != null) {
+                        df = new ArrayDeserializerFactory(componentXmlType);
+                    }
+                }
+            }
         }
         return df;
     }

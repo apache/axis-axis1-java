@@ -24,6 +24,7 @@ package org.apache.axis.message;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
+import org.apache.axis.Message;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.encoding.DeserializationContext;
@@ -181,7 +182,8 @@ public class BodyBuilder extends SOAPHandler
                 if (msgContext != null && !msgContext.isHighFidelity() &&
                         (operations == null || operations.length == 1)) {
                     ((RPCElement)element).setNeedDeser(false);
-                    handler = new RPCHandler((RPCElement)element, false);
+                    handler = new RPCHandler((RPCElement)element,
+                                             Message.RESPONSE.equals(msgContext.getCurrentMessage().getMessageType()));
                     if (operations != null) {
                         ((RPCHandler)handler).setOperation(operations[0]);
                         msgContext.setOperation(operations[0]);

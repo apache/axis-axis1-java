@@ -16,6 +16,8 @@
 
 package org.apache.axis.encoding.ser;
 
+import javax.xml.namespace.QName;
+
 
 /**
  * DeserializerFactory for arrays
@@ -23,7 +25,35 @@ package org.apache.axis.encoding.ser;
  * @author Rich Scheuerle <scheu@us.ibm.com>
  */
 public class ArrayDeserializerFactory extends BaseDeserializerFactory {
+    private QName componentXmlType;
+
     public ArrayDeserializerFactory() {
         super(ArrayDeserializer.class);
+    }
+
+    /**
+     * Constructor
+     * @param componentXmlType the desired component type for this deser
+     */
+    public ArrayDeserializerFactory(QName componentXmlType) {
+        super(ArrayDeserializer.class);
+        this.componentXmlType = componentXmlType;
+    }
+
+    /**
+     * getDeserializerAs() is overloaded here in order to set the default
+     * item type on the ArrayDeserializers we create.
+     *
+     * @param mechanismType
+     * @return
+     */
+    public javax.xml.rpc.encoding.Deserializer getDeserializerAs(String mechanismType) {
+        ArrayDeserializer dser = (ArrayDeserializer) super.getDeserializerAs(mechanismType);
+        dser.defaultItemType = componentXmlType;
+        return dser;
+    }
+
+    public void setComponentType(QName componentType) {
+        componentXmlType = componentType;
     }
 }

@@ -1393,7 +1393,11 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
                 if (shouldSendType ||
                     (xmlType != null &&
                      (!xmlType.equals(actualXMLType.value)))) {
-                    writeXMLType = actualXMLType.value;
+                    if (!isEncoded() && Constants.isSOAP_ENC(actualXMLType.value.getNamespaceURI())) {
+                        // Don't write SOAP_ENC types (i.e. Array) if we're not using encoding   
+                    } else {
+                        writeXMLType = actualXMLType.value;
+                    }
                 }
 
                 // -----------------

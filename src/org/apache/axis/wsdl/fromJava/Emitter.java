@@ -2545,13 +2545,14 @@ public class Emitter {
     public void setTypeMappingVersion(String typeMappingVersion) {
         if(defaultTM == null) {
             if (typeMappingVersion.equals("1.0")) {
-                defaultTM=DefaultSOAPEncodingTypeMappingImpl.create();
+                defaultTM=DefaultSOAPEncodingTypeMappingImpl.getSingleton();
             } else if (typeMappingVersion.equals("1.1")) {
+                // No SOAP encoding
                 defaultTM=DefaultTypeMappingImpl.getSingleton();
             } else if (typeMappingVersion.equals("1.2")) {
-                defaultTM=DefaultSOAPEncodingTypeMappingImpl.createWithDelegate();
+                defaultTM=DefaultSOAPEncodingTypeMappingImpl.create();
             } else if (typeMappingVersion.equals("1.3")) {
-                defaultTM=DefaultJAXRPC11TypeMappingImpl.createWithDelegate();
+                defaultTM=DefaultJAXRPC11TypeMappingImpl.create();
             } else {
                 throw new RuntimeException(org.apache.axis.utils.Messages.getMessage("j2wBadTypeMapping00"));
             }

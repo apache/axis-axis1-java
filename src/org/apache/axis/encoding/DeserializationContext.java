@@ -482,9 +482,9 @@ public class DeserializationContext extends DefaultHandler
         if (cls == null) {
             return null;
         }
-        if (cls.isArray()) {
-            cls = cls.getComponentType();
-        }
+//        if (cls.isArray()) {
+//            cls = cls.getComponentType();
+//        }
         if (javax.xml.rpc.holders.Holder.class.isAssignableFrom(cls)) {
             try {
                 cls = cls.getField("value").getType();
@@ -1233,5 +1233,4 @@ public class DeserializationContext extends DefaultHandler
     	public void comment(char[] arg0, int arg1, int arg2) throws SAXException {}
     }
 }
-
 

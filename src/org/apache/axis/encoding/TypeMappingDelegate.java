@@ -100,7 +100,31 @@ class TypeMappingDelegate implements TypeMapping {
         }
         return null;
     }
-    public javax.xml.rpc.encoding.DeserializerFactory 
+
+    /**
+     * Gets the DeserializerFactory registered for the specified XML data type.
+     * This version uses a particular "original" TypeMapping in order to do
+     * secondary lookups for array component types, if necessary.
+     *
+     * @param javaType - the desired Java class
+     * @param xmlType - Qualified name of the XML data type
+     * @param orig - the TypeMapping from which to do secondary lookups
+     *
+     * @return Registered DeserializerFactory
+     *
+     * @throws JAXRPCException - If there is no registered DeserializerFactory
+     * for this pair of Java type and  XML data type
+     * java.lang.IllegalArgumentException -
+     * If invalid or unsupported XML/Java type is specified
+     */
+    public javax.xml.rpc.encoding.DeserializerFactory getDeserializer(Class javaType, QName xmlType, TypeMappingImpl orig) throws JAXRPCException {
+        if (delegate != null) {
+            return delegate.getDeserializer(javaType, xmlType, orig);
+        }
+        return null;
+    }
+
+    public javax.xml.rpc.encoding.DeserializerFactory
         getDeserializer(QName xmlType)
         throws JAXRPCException {
         if (delegate != null) {

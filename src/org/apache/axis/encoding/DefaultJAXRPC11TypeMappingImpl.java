@@ -43,7 +43,7 @@ public class DefaultJAXRPC11TypeMappingImpl extends DefaultSOAPEncodingTypeMappi
         return tm;
     }
 
-    public static TypeMapping createWithDelegate() {
+    public static TypeMapping create() {
         TypeMapping ret = new DefaultJAXRPC11TypeMappingImpl();
         ret.setDelegate(DefaultJAXRPC11TypeMappingImpl.getSingleton());
         return ret;
