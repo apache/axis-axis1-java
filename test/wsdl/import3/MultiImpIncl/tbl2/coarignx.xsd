@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<schema 
+  targetNamespace="http://www.axsone.com/webdemo/exec/schemas/tbl2/coarignx" 
+  xmlns:tns="http://www.axsone.com/webdemo/exec/schemas/tbl2/coarignx" 
+  xmlns="http://www.w3.org/2001/XMLSchema" 
+  xmlns:axs="http://www.axsone.com/webdemo/exec/schemas/AxsGlobals">
+ 
+  <!--  cannot use import, bug in AXIS, this file was already imported.
+  	Workaround: to comment out import statement 
+   -->	
+   <import
+     namespace="http://www.axsone.com/webdemo/exec/schemas/AxsGlobals"
+     schemaLocation="../AxsGlobals.xsd"/>
+
+  <complexType name="CoarignxAllFieldsType"> 
+    <all> 
+      <element name="COMPNUM2" type="string" minOccurs="0"/> 
+      <element name="CUSTID" type="string" minOccurs="0"/> 
+      <element name="LOCATION" type="string" minOccurs="0"/> 
+      <element name="ITMNUM" type="decimal" minOccurs="0"/> 
+      <element name="CURXRATE" type="decimal" minOccurs="0"/> 
+      <element name="ITEMCCDT" type="date" minOccurs="0"/> 
+    </all> 
+  </complexType> 
+ 
+</schema> 

@@ -205,9 +205,9 @@
     </javac>
 
 
-    <!-- The following invocation of java2wsdl simply tests whether the 
+    <!-- The following invocation of java2wsdl simply tests whether the
          split wsdl function works.  The generated wsdl files are not used. -->
-    
+
     <java2wsdl output="build/work/test/wsdl/roundtrip/RoundtripIntf.wsdl"
                outputImpl="build/work/test/wsdl/roundtrip/RoundtripImpl.wsdl"
                className= "test.wsdl.roundtrip.RoundtripPortType"
@@ -948,8 +948,8 @@
                testcase="no">
         <mapping namespace="urn:attributeQualify" package="test.wsdl.qualify2"/>
     </wsdl2java>
-    
-    
+
+
     <!-- This tests Bug 9642 -  Java Date not deserialize properly.  -->
     <wsdl2java url="test/wsdl/ram/ram.wsdl"
                output="build/work"
@@ -974,9 +974,21 @@
                serverSide="yes"
                testcase="no">
     </wsdl2java>
-    
-    
-    
+
+    <!-- jaxrpc sample -->
+    <wsdl2java url="samples/jaxrpc/hello/HelloWorld.wsdl"
+               output="build/work"
+               serverSide="yes"
+               testcase="no">
+    </wsdl2java>
+
+    <!-- Testcase for Bug 10612 - AXIS doesn't support xml includes -->
+    <wsdl2java url="test/wsdl/import3/MultiImpIncl/wsdl/MultiImp.wsdl"
+               output="build/work"
+               serverSide="yes"
+               testcase="no">
+    </wsdl2java>
+
     <!-- The following WSDL are BAD.  We're keeping them here so we can -->
     <!-- check periodically to see whether the owner has fixed them.    -->
 
