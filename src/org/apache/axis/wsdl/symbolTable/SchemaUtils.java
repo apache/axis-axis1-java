@@ -399,6 +399,17 @@ public class SchemaUtils {
 
                         v.add(elem);
                     }
+                } else if (localName.equals("any")) {
+                    // Represent this as an element named any of type any type.
+                    // This will cause it to be serialized with the element
+                    // serializer.
+                    Type type = symbolTable.getType(Constants.XSD_ANY);
+                    ElementDecl elem = new ElementDecl(type,
+                            Utils.findQName("",
+                                    "any"));
+
+                    elem.setAnyElement(true);
+                    v.add(elem);
                 }
             }
         }
@@ -539,7 +550,6 @@ public class SchemaUtils {
                 } else if (localName.equals("group")) {
                     v.addAll(processGroupNode(kid, symbolTable));
                 } else if (localName.equals("any")) {
-                    
                     // Represent this as an element named any of type any type.
                     // This will cause it to be serialized with the element
                     // serializer.
