@@ -79,7 +79,6 @@ public class AllOptionTestCase extends FileGenTestCase {
         set.add("OpFault.java");
         set.add("PortTypeNotSoap.java");
         set.add("PortTypeSoap.java");
-        set.add("ReferenceHttpGetStub.java");
         set.add("ReferenceService.java");
         set.add("ReferenceServiceLocator.java");
         set.add("ReferenceSoapBindingStub.java");

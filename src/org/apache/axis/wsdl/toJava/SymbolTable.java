@@ -1220,6 +1220,10 @@ public class SymbolTable {
         }
     } // setReferences
 
+    /**
+     * Set the isReferenced flag to true on the given TypeEntry and all
+     * SymTabEntries that it refers to.
+     */
     private void setTypeReferences(TypeEntry entry, Document doc,
             boolean literal) {
 
@@ -1264,7 +1268,8 @@ public class SymbolTable {
     } // setTypeReferences
 
     /**
-     * Set the isReferenced flag to true on all SymTabEntries that the given Meesage refers to.
+     * Set the isReferenced flag to true on the given MessageEntry and all
+     * SymTabEntries that it refers to.
      */
     private void setMessageReferences(
             MessageEntry entry, Definition def, Document doc, boolean literal) {
@@ -1305,7 +1310,8 @@ public class SymbolTable {
     } // setMessageReference
 
     /**
-     * Set the isReferenced flag to true on all SymTabEntries that the given PortType refers to.
+     * Set the isReferenced flag to true on the given PortTypeEntry and all
+     * SymTabEntries that it refers to.
      */
     private void setPortTypeReferences(
             PortTypeEntry entry, BindingEntry bEntry,
@@ -1384,36 +1390,41 @@ public class SymbolTable {
     } // setPortTypeReferences
 
     /**
-     * Set the isReferenced flag to true on all SymTabEntries that the given Meesage refers to.
+     * Set the isReferenced flag to true on the given BindingEntry and all
+     * SymTabEntries that it refers to ONLY if this binding is a SOAP binding.
      */
     private void setBindingReferences(
             BindingEntry entry, Definition def, Document doc) {
-        // If we don't want to emit stuff from imported files, only set the
-        // isReferenced flag if this entry exists in the immediate WSDL file.
-        Binding binding = entry.getBinding();
-        if (addImports) {
-            entry.setIsReferenced(true);
-        }
-        else {
-            // NOTE:  I thought I could have simply done:
-            // if (def.getBindng(binding.getQName()) != null)
-            // but that method traces through all imported bindings.
-            Map bindings = def.getBindings();
-            if (bindings.containsValue(binding)) {
+
+        if (entry.getBindingType() == BindingEntry.TYPE_SOAP) {
+            // If we don't want to emit stuff from imported files, only set the
+            // isReferenced flag if this entry exists in the immediate WSDL file.
+            Binding binding = entry.getBinding();
+            if (addImports) {
                 entry.setIsReferenced(true);
             }
-        }
+            else {
+                // NOTE:  I thought I could have simply done:
+                // if (def.getBindng(binding.getQName()) != null)
+                // but that method traces through all imported bindings.
+                Map bindings = def.getBindings();
+                if (bindings.containsValue(binding)) {
+                    entry.setIsReferenced(true);
+                }
+            }
 
-        // Set all the binding's portTypes
-        PortType portType = binding.getPortType();
-        PortTypeEntry ptEntry = getPortTypeEntry(portType.getQName());
-        if (ptEntry != null) {
-            setPortTypeReferences(ptEntry, entry, def, doc);
+            // Set all the binding's portTypes
+            PortType portType = binding.getPortType();
+            PortTypeEntry ptEntry = getPortTypeEntry(portType.getQName());
+            if (ptEntry != null) {
+                setPortTypeReferences(ptEntry, entry, def, doc);
+            }
         }
     } // setBindingReferences
 
     /**
-     * Set the isReferenced flag to true on all SymTabEntries that the given Meesage refers to.
+     * Set the isReferenced flag to true on the given ServiceEntry and all
+     * SymTabEntries that it refers to.
      */
     private void setServiceReferences(
             ServiceEntry entry, Definition def, Document doc) {
