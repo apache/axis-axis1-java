@@ -55,6 +55,7 @@
 package org.apache.axis.transport.http;
 
 import org.apache.axis.AxisFault;
+import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.components.logger.LogFactory;
@@ -360,7 +361,7 @@ public class HTTPSender extends BasicHandler {
                 .append("\r\n")
                 .append(HTTPConstants.HEADER_USER_AGENT)   //Tell who we are.
                 .append( ": ")
-                .append("Axis/RC1")
+                .append(Constants.AXIS_VERSION)
                 .append("\r\n")
                 .append(HTTPConstants.HEADER_HOST)  //used for virtual connections
                 .append(": ")
