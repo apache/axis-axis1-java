@@ -56,6 +56,7 @@
 package org.apache.axis.transport.http ;
 
 import org.apache.axis.*;
+import org.apache.axis.security.servlet.ServletSecurityProvider;
 import org.apache.axis.configuration.FileProvider;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPFaultElement;
@@ -84,6 +85,7 @@ public class AxisServlet extends HttpServlet {
     // These have default values.
     private String transportName = "http";
     private AxisEngine engine = null;
+    private ServletSecurityProvider securityProvider = null;
 
     private static final String AXIS_ENGINE = "AxisEngine" ;
 
@@ -95,6 +97,11 @@ public class AxisServlet extends HttpServlet {
             param = context.getInitParameter("transport.name");
         if (param != null)
             transportName = param;
+
+        param = getInitParameter("use-servlet-security");
+        if ((param != null) && (param.equalsIgnoreCase("true"))) {
+            securityProvider = new ServletSecurityProvider();
+        }
     }
 
     public AxisServer getEngine() {
@@ -240,6 +247,9 @@ public class AxisServlet extends HttpServlet {
         msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST, req );
         msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETRESPONSE, res );
         msgContext.setProperty(Constants.MC_REMOTE_ADDR, req.getRemoteAddr());
+
+        if (securityProvider != null)
+            msgContext.setProperty("securityProvider", securityProvider);
 
         /* Save the SOAPAction header in the MessageContext bag - this will */
         /* be used to tell the Axis Engine which service is being invoked.  */
