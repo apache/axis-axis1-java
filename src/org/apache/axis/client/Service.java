@@ -57,9 +57,8 @@ package org.apache.axis.client ;
 
 import javax.wsdl.extensions.soap.SOAPAddress;
 import org.apache.axis.AxisEngine;
-import org.apache.axis.Constants;
 import org.apache.axis.EngineConfiguration;
-import org.apache.axis.configuration.FileProvider;
+import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.utils.AxisClassLoader;
@@ -110,7 +109,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
     private boolean             maintainSession = false ;
 
     private EngineConfiguration config =
-            new FileProvider(Constants.CLIENT_CONFIG_FILE);
+        (new DefaultEngineConfigurationFactory()).getClientEngineConfig();
 
     Definition getWSDLDefinition() {
         return( wsdlDefinition );

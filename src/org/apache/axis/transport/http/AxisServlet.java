@@ -61,7 +61,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.EngineConfiguration;
-import org.apache.axis.configuration.FileProvider;
+import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPFaultElement;
 import org.apache.axis.security.servlet.ServletSecurityProvider;
@@ -82,7 +82,7 @@ import javax.servlet.http.HttpSession;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
+
 import java.io.PrintWriter;
 import java.util.Enumeration;
 import java.util.Map;
@@ -161,20 +161,10 @@ public class AxisServlet extends HttpServlet {
 
         if (context.getAttribute("AxisEngine") == null) {
             String webInfPath = context.getRealPath("/WEB-INF");
-            // Set the base path for the AxisServer to our WEB-INF directory
-            // (so the config files can't get snooped by a browser)
-            FileProvider provider = null ;
 
-            if (!(new File(webInfPath,
-                           Constants.SERVER_CONFIG_FILE)).exists()){
-                InputStream is = null ;
-                is = context.getResourceAsStream("/WEB-INF/"+
-                                                 Constants.SERVER_CONFIG_FILE);
-                if ( is != null ) provider = new FileProvider(is);
-            }
-            if ( provider == null )
-                provider = new FileProvider(webInfPath,
-                                            Constants.SERVER_CONFIG_FILE);
+            EngineConfiguration config =
+                (new DefaultEngineConfigurationFactory()).
+                getServerEngineConfig(context);
 
             Map environment = new HashMap();
             environment.put("servletContext", context);
@@ -183,7 +173,7 @@ public class AxisServlet extends HttpServlet {
             if(null != webInfPath){
                 environment.put("servlet.realpath",  webInfPath + File.separator + "attachments");
             }
-            environment.put(EngineConfiguration.PROPERTY_NAME, provider);
+            environment.put(EngineConfiguration.PROPERTY_NAME, config);
 
             // Obtain an AxisServer by using whatever AxisServerFactory is
             // registered.  The default one will just use the provider we
