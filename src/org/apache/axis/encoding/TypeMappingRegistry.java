@@ -56,12 +56,14 @@
 package org.apache.axis.encoding;
 
 import java.util.Hashtable;
+import org.apache.axis.Constants;
 import org.apache.axis.utils.*;
 import org.apache.axis.utils.events.*;
 import org.apache.axis.message.*;
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
 import org.xml.sax.*;
+import org.xml.sax.helpers.AttributesImpl;
 import java.io.*;
 
 /**
@@ -188,6 +190,23 @@ public class TypeMappingRegistry implements Serializer {
         load(fis);
     }
 
+    public Attributes setTypeAttribute(Attributes attributes, QName type,
+                                       SerializationContext context)
+    {
+        if ((attributes != null) &&
+            (attributes.getIndex(Constants.URI_CURRENT_SCHEMA_XSI,
+                                "type") != -1))
+            return attributes;
+        
+        AttributesImpl attrs = new AttributesImpl();
+        if (attributes != null)
+            attrs.setAttributes(attributes);
+        
+        attrs.addAttribute(Constants.URI_CURRENT_SCHEMA_XSI, "type",
+                           "xsi:type", "CDATA", context.qName2String(type));
+        return attrs;
+    }
+    
     public void serialize(QName name, Attributes attributes,
                           Object value, SerializationContext context)
         throws IOException
@@ -196,6 +215,8 @@ public class TypeMappingRegistry implements Serializer {
             Class _class = value.getClass();
             Serializer ser = getSerializer(_class);
             if (ser != null) {
+                QName type = getTypeQName(_class);
+                attributes = setTypeAttribute(attributes, type, context);
                 ser.serialize(name, attributes, value, context);
             } else {
                 throw new IOException("No serializer found for class " + _class.getName());

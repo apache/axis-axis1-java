@@ -88,6 +88,32 @@ public class SerializationContext
     
     private MessageContext msgContext;
     
+    /**
+     * Should I write out objects as multi-refs?
+     * 
+     * !!! For now, this is an all-or-nothing flag.  Either ALL objects will
+     * be written in-place as hrefs with the full serialization at the end
+     * of the body, or we'll write everything inline (potentially repeating
+     * serializations of identical objects).
+     */
+    private boolean doMultiRefs = false;
+    
+    /**
+     * A place to hold objects we cache for multi-ref serialization, and
+     * remember the IDs we assigned them.
+     */
+    private Hashtable multiRefValues = null;
+    private int multiRefIndex = -1;
+    
+    /**
+     * These two let us deal with multi-level object graphs for multi-ref
+     * serialization.  Each time around the serialization loop, we'll fill
+     * in any new objects into the secondLevelObjects vector, and then write
+     * those out the same way the next time around.
+     */
+    private Object currentSer = null;
+    private Vector secondLevelObjects = null;
+    
     public SerializationContext(Writer writer, MessageContext msgContext)
     {
         this.writer = writer;
@@ -134,7 +160,6 @@ public class SerializationContext
             /*if ((pendingNSMappings.get(uri) != null) ||
                 (nsStack.getPrefix(uri) != null))
                 return;*/
-            
             pendingNSMappings.put(uri, prefix);
         }
     }
@@ -154,7 +179,74 @@ public class SerializationContext
     public void serialize(QName qName, Attributes attributes, Object value)
         throws IOException
     {
+        if (value == null)
+            return;
+        
+        if (doMultiRefs && (value != currentSer) &&
+            !(value.getClass().equals(String.class)) &&
+            !(value instanceof Number)) {
+            if (multiRefIndex == -1)
+                multiRefValues = new Hashtable();
+            
+            String href = (String)multiRefValues.get(value);
+            if (href == null) {
+                multiRefIndex++;
+                href = "id" + multiRefIndex;
+                multiRefValues.put(value, href);
+                
+                /** Problem - if we're in the middle of writing out
+                 * the multi-refs and hit another level of the
+                 * object graph, we need to make sure this object
+                 * will get written.  For now, add it to a list
+                 * which we'll check each time we're done with
+                 * outputMultiRefs().
+                 */
+                if (currentSer != null) {
+                    if (secondLevelObjects == null)
+                        secondLevelObjects = new Vector();
+                    secondLevelObjects.addElement(value);
+                }
+            }
+            
+            AttributesImpl attrs = new AttributesImpl();
+            if (attributes != null)
+                attrs.setAttributes(attributes);
+            attrs.addAttribute("", Constants.ATTR_HREF, "href",
+                               "CDATA", "#" + href);
+            
+            startElement(qName, attrs);
+            endElement();
+            return;
+        }
+        
         getTypeMappingRegistry().serialize(qName, attributes, value, this);
+    }
+    
+    public void outputMultiRefs() throws IOException
+    {
+        if (!doMultiRefs || (multiRefValues == null))
+            return;
+        
+        AttributesImpl attrs = new AttributesImpl();
+        attrs.addAttribute("","","","","");
+        
+        Enumeration e = multiRefValues.keys();
+        while (e.hasMoreElements()) {
+            while (e.hasMoreElements()) {
+                Object val = e.nextElement();
+                String id = (String)multiRefValues.get(val);
+                attrs.setAttribute(0, "", Constants.ATTR_ID, "id", "CDATA",
+                                   id);
+                currentSer = val;
+                serialize(new QName("","multiRef"), attrs, val);
+            }
+            
+            if (secondLevelObjects != null) {
+                e = secondLevelObjects.elements();
+                secondLevelObjects = null;
+            }
+        }
+        currentSer = null;
     }
     
     public void startElement(QName qName, Attributes attributes)

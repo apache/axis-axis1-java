@@ -325,6 +325,9 @@ public class SOAPEnvelope
             // Output this body element.
         }
         
+        // Output multi-refs
+        context.outputMultiRefs();
+        
         // Output </SOAP-ENV:Body>
         context.endElement();
         
