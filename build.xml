@@ -465,6 +465,7 @@ Copyright:
       <exclude name="test/wsdl/Wsdl2javaTestSuite.java" unless="servlet.present"/>
       <exclude name="test/md5attach/*.java" unless="attachments.present"/>
       <exclude name="test/functional/TestAttachmentsSample.java" unless="attachments.present"/>
+      <exclude name="test/servlet/**/*.java"/>
     </javac>
     <copy file="test/wsdd/testStructure1.wsdd" toDir="${build.dest}/test/wsdd"/>
   </target>
