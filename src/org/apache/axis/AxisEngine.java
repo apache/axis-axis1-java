@@ -423,9 +423,6 @@ public abstract class AxisEngine extends BasicHandler
      */
     public void deployService(String key, SOAPService service)
     {
-      System.out.println("Deploying service '" + key + "'");
-      System.out.println("   pivot is " + service.getPivotHandler().getName());
-      
         service.setName(key);
         getServiceRegistry().add(key, service);
         saveServiceRegistry();
