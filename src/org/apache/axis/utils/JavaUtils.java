@@ -783,8 +783,6 @@ public class JavaUtils
         return new String(sb);
     }
 
-
-
     /**
      * Determines if the Class is a Holder class. If so returns Class of held type
      * else returns null

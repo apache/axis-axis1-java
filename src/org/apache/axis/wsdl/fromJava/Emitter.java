@@ -74,6 +74,7 @@ import org.apache.axis.description.FaultDesc;
 import org.apache.axis.encoding.*;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.utils.JavaUtils;
 import org.w3c.dom.Document;
 
 
@@ -867,8 +868,9 @@ public class Emitter {
             retParam.setQName(desc.getReturnQName());
         }
         retParam.setTypeQName(desc.getReturnType());
-        retParam.setJavaType(desc.getReturnClass());
         retParam.setMode(ParameterDesc.OUT);
+        retParam.setIsReturn(true);
+        retParam.setJavaType(desc.getReturnClass());
         writePartToMessage(def, msg, false, retParam);
 
         ArrayList parameters = desc.getParameters();
@@ -948,20 +950,33 @@ public class Emitter {
         // If Request message, only continue if IN or INOUT
         // If Response message, only continue if OUT or INOUT
         if (request &&
-            param.getMode() == ParameterDesc.OUT)
+            param.getMode() == ParameterDesc.OUT) {
             return null;
+        }
         if (!request &&
-            param.getMode() == ParameterDesc.IN)
+            param.getMode() == ParameterDesc.IN) {
             return null;
+        }
 
         // Create the Part
         Part part = def.createPart();
+
+        // Get the java type to represent in the wsdl
+        // (if the mode is OUT or INOUT and this
+        // parameter does not represent the return type,
+        // the type held in the Holder is the one that should
+        // be written.)
+        Class javaType = param.getJavaType();
+        if (param.getMode() != ParameterDesc.IN &&
+            param.getIsReturn() == false) {
+            javaType = JavaUtils.getHolderValueType(javaType);
+        }
 
         // Write the type representing the parameter type
         QName elemQName = null;
         if (mode != MODE_RPC)
             elemQName = param.getQName();
-        QName typeQName = types.writePartType(param.getJavaType(),
+        QName typeQName = types.writePartType(javaType,
                 elemQName);
         if (mode == MODE_RPC) {
             if (typeQName != null) {

@@ -108,6 +108,8 @@ public class OperationDesc {
      * Default constructor.
      */
     public OperationDesc() {
+        returnDesc.setMode(ParameterDesc.OUT);
+        returnDesc.setIsReturn(true);
     }
 
     /**
@@ -116,6 +118,8 @@ public class OperationDesc {
     public OperationDesc(String name, ParameterDesc [] parameters, QName returnQName) {
         this.name = name;
         returnDesc.setQName(returnQName);
+        returnDesc.setMode(ParameterDesc.OUT);
+        returnDesc.setIsReturn(true);
         for (int i = 0; i < parameters.length; i++) {
             addParameter(parameters[i]);
         }
