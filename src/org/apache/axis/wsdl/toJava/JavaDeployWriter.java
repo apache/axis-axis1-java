@@ -177,7 +177,7 @@ public class JavaDeployWriter extends JavaWriter {
                 if (bEntry.getBindingType() != BindingEntry.TYPE_SOAP) {
                     continue;
                 }
-                writeDeployPort(pw, myPort);
+                writeDeployPort(pw, myPort, myService);
             }
         }
     } //writeDeployServices
@@ -264,7 +264,7 @@ public class JavaDeployWriter extends JavaWriter {
     /**
      * Write out deployment and undeployment instructions for given WSDL port
      */
-    protected void writeDeployPort(PrintWriter pw, Port port) throws IOException {
+    protected void writeDeployPort(PrintWriter pw, Port port, Service service) throws IOException {
         Binding binding = port.getBinding();
         BindingEntry bEntry = symbolTable.getBindingEntry(binding.getQName());
         String serviceName = port.getName();
@@ -286,6 +286,13 @@ public class JavaDeployWriter extends JavaWriter {
                 + "\" provider=\"" + prefix +":RPC"
                 + "\"" + styleStr + ">");
 
+        pw.println("      <parameter name=\"wsdlTargetNamespace\" value=\""
+                         + service.getQName().getNamespaceURI() + "\"/>");
+        pw.println("      <parameter name=\"wsdlServiceElement\" value=\""
+                         + service.getQName().getLocalPart() + "\"/>");
+        pw.println("      <parameter name=\"wsdlServicePort\" value=\""
+                         + serviceName + "\"/>");
+
         writeDeployBinding(pw, binding);
         writeDeployTypes(pw, hasLiteral);
 
@@ -305,6 +312,10 @@ public class JavaDeployWriter extends JavaWriter {
 
         pw.println("      <parameter name=\"className\" value=\""
                          + className + "\"/>");
+
+        pw.println("      <parameter name=\"wsdlPortType\" value=\""
+                         + binding.getPortType().getQName().getLocalPart() + "\"/>");
+
 
         String methodList = "";
         if (!emitter.isSkeletonWanted()) {
