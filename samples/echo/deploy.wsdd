@@ -12,6 +12,10 @@
   <service name="http://soapinterop.org/" provider="java:RPC" >
     <parameter name="className" value="samples.echo.EchoService" />
     <parameter name="allowedMethods" value="*" />
+    <beanMapping xmlns:echo="http://soapinterop.org/xsd" qname="echo:SOAPStructStruct"
+      languageSpecificType="java:samples.echo.SOAPStructStruct"/>    
+    <beanMapping xmlns:echo="http://soapinterop.org/xsd" qname="echo:SOAPArrayStruct"
+      languageSpecificType="java:samples.echo.SOAPArrayStruct"/>   
     <beanMapping xmlns:echo="http://soapinterop.org/xsd" qname="echo:SOAPStruct"
       languageSpecificType="java:samples.echo.SOAPStruct"/>    
     <typeMapping xmlns:echo="http://soapinterop.org/xsd"
@@ -34,5 +38,13 @@
       type="java:float[]"
       serializer="org.apache.axis.encoding.ser.ArraySerializerFactory"
       deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory" />
+    <requestFlow>
+        <handler type="java:samples.echo.echoHeaderStringHandler"/>
+        <handler type="java:samples.echo.echoHeaderStructHandler"/>
+    </requestFlow>
+    <responseFlow>
+        <handler type="java:samples.echo.echoHeaderStringHandler"/>
+        <handler type="java:samples.echo.echoHeaderStructHandler"/>
+    </responseFlow>
   </service>
 </deployment>
