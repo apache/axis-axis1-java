@@ -202,7 +202,21 @@ public class MimeUtils {
      * This routine will get the content type.
      */
     public static String getContentType(javax.mail.internet.MimeMultipart mp) {
-        return  mp.getContentType();
+        String ct= mp.getContentType();
+        StringBuffer ret= new StringBuffer();
+        for(java.util.StringTokenizer st= new java.util.StringTokenizer(ct, "\n\r"); st.hasMoreTokens(); ){
+            String line= st.nextToken();
+            if(line != null && 0 < line.length()){
+                int i=0;
+                for(; i < line.length() ; ++i ) {
+                    char n = line.charAt(i);
+                    if(n != ' ' || n != '\t' ) break;
+                }       
+                if( i >1 ) line= line.substring(i-1);
+                if(line.length() >0) ret.append(line);
+            }    
+        }
+        return  ret.toString(); 
     }
     /**
      * This routine will create a multipar object from the parts and the SOAP content.
