@@ -63,12 +63,15 @@ import java.util.List;
 import java.util.Iterator;
 import java.util.Collection;
 
-import javax.wsdl.Fault;
 import javax.wsdl.BindingFault;
+import javax.wsdl.Message;
 import javax.wsdl.PortType;
 import javax.wsdl.extensions.soap.SOAPFault;
 import javax.xml.namespace.QName;
 
+import org.apache.axis.enum.Use;
+
+import org.apache.axis.wsdl.symbolTable.FaultInfo;
 import org.apache.axis.wsdl.symbolTable.Parameter;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 
@@ -79,21 +82,22 @@ import org.apache.axis.wsdl.symbolTable.SymbolTable;
  * faults that are complex types. 
  */
 public class JavaFaultWriter extends JavaClassWriter {
-    private Fault fault;
+    private Message faultMessage;
     private SymbolTable symbolTable;
-    private SOAPFault soapFault;
+    private boolean literal;
+    private String faultName;
 
     /**
      * Constructor.
      */
     protected JavaFaultWriter(Emitter emitter, 
-                              SymbolTable symbolTable, 
-                              Fault fault, 
-                              SOAPFault soapFault) {
-        super(emitter, Utils.getFullExceptionName(fault, symbolTable), "fault");
-        this.fault = fault;
+                              SymbolTable symbolTable,
+                              FaultInfo faultInfo) {
+        super(emitter, Utils.getFullExceptionName(faultInfo.getMessage(),
+                symbolTable), "fault");
+        this.literal = faultInfo.getUse().equals(Use.LITERAL);
+        this.faultMessage = faultInfo.getMessage();
         this.symbolTable = symbolTable;
-        this.soapFault = soapFault;
     } // ctor
 
     /**
@@ -109,18 +113,10 @@ public class JavaFaultWriter extends JavaClassWriter {
     protected void writeFileBody(PrintWriter pw) throws IOException {
         Vector params = new Vector();
 
-        boolean literal = false;
-        // Have to get use information (literal/encoded) for fault from Binding.
-        if (soapFault != null) {
-            if ("literal".equalsIgnoreCase(soapFault.getUse())) {
-                literal = true;
-            }
-        }
-
         symbolTable.getParametersFromParts(params, 
-                                fault.getMessage().getOrderedParts(null), 
+                                faultMessage.getOrderedParts(null), 
                                 literal, 
-                                fault.getName(), 
+                                faultName, 
                                 null);
 
         // Write data members of the exception and getter methods for them

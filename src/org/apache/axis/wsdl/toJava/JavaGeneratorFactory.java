@@ -935,7 +935,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
             while (i.hasNext()) {
                 Fault fault = (Fault) i.next();
                 String exceptionName =
-                  Utils.getFullExceptionName(fault, symbolTable);
+                  Utils.getFullExceptionName(fault.getMessage(), symbolTable);
                 signature = signature + ", " + exceptionName;
             }
         }

@@ -82,8 +82,9 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
-import org.apache.axis.wsdl.symbolTable.Element;
 import org.apache.axis.wsdl.symbolTable.CollectionTE;
+import org.apache.axis.wsdl.symbolTable.Element;
+import org.apache.axis.wsdl.symbolTable.FaultInfo;
 import org.apache.axis.wsdl.symbolTable.Parameter;
 import org.apache.axis.wsdl.symbolTable.Parameters;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
@@ -479,19 +480,18 @@ public class JavaDeployWriter extends JavaWriter {
         }
         if (faults != null) {
             for (Iterator iterator = faults.iterator(); iterator.hasNext();) {
-                JavaDefinitionWriter.FaultInfo faultInfo = 
-                        (JavaDefinitionWriter.FaultInfo) iterator.next();
-                QName faultQName = Utils.getFaultQName(faultInfo.fault, 
-                                                       faultInfo.soapFault);
+                FaultInfo faultInfo = (FaultInfo) iterator.next();
+                QName faultQName = faultInfo.getQName();
                 if (faultQName != null) {
-                    String className = Utils.getFullExceptionName(faultInfo.fault, symbolTable);
+                    String className = Utils.getFullExceptionName(
+                            faultInfo.getMessage(), symbolTable);
                     pw.print("        <fault");
                     pw.print(" qname=\"" +
                              Utils.genQNameAttributeString(faultQName, "fns") + "\"");
                     pw.print(" class=\"" + className+ "\"");
                     pw.print(" type=\"" +
-                             Utils.genQNameAttributeString(faultInfo.xmlType,
-                                                           "tns") + "\"");
+                             Utils.genQNameAttributeString(
+                             faultInfo.getXMLType(), "tns") + "\"");
                     pw.println("/>");
                 }
             }

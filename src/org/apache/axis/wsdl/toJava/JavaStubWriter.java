@@ -60,6 +60,7 @@ import org.apache.axis.enum.Use;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.CollectionTE;
 import org.apache.axis.wsdl.symbolTable.Element;
+import org.apache.axis.wsdl.symbolTable.FaultInfo;
 import org.apache.axis.wsdl.symbolTable.Parameter;
 import org.apache.axis.wsdl.symbolTable.Parameters;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
@@ -415,10 +416,9 @@ public class JavaStubWriter extends JavaClassWriter {
         }
         // For each fault, register its information
         for (Iterator faultIt = faults.iterator(); faultIt.hasNext();) {
-            JavaDefinitionWriter.FaultInfo info = (JavaDefinitionWriter.FaultInfo) faultIt.next();
-            
-            Fault fault = info.fault;
-            QName qname = Utils.getFaultQName(fault, info.soapFault);
+            FaultInfo info = (FaultInfo) faultIt.next();
+            QName qname = info.getQName();
+            Message message = info.getMessage();
             
             // if no parts in fault, skip it!
             if (qname == null) {
@@ -426,17 +426,17 @@ public class JavaStubWriter extends JavaClassWriter {
             }
             
             // Get the Exception class name
-            String className = Utils.getFullExceptionName(fault, symbolTable);
+            String className = Utils.getFullExceptionName(message, symbolTable);
             
             // Get the xmlType of the exception data
-            QName xmlType = Utils.getFaultDataType(fault, symbolTable);
+            QName xmlType = Utils.getFaultDataType(message, symbolTable);
             
             // output the registration API call
             pw.print("        _call.addFault(");
             pw.print( Utils.getNewQName(qname) + ", ");
             pw.print( className + ".class, ");
             pw.print( Utils.getNewQName(xmlType) + ", ");
-            pw.print( Utils.isFaultComplex(fault, symbolTable));
+            pw.print( Utils.isFaultComplex(message, symbolTable));
             pw.println(");");
         }
     }

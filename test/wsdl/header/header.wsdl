@@ -41,9 +41,7 @@
     <wsdl:operation name="op1">
       <wsdl:input message="tns:op1Request"/>
       <wsdl:output message="tns:op1Response"/>
-<!--
       <wsdl:fault name="op1Fault" message="tns:op1Fault"/>
--->
     </wsdl:operation>
   </wsdl:portType>
 
@@ -59,23 +57,19 @@
                      part="parm1"
                      use="literal"
                      namespace="urn:header.wsdl.test">
-<!--
           <soap:headerfault message="tns:op1Fault"
                             part="message"
                             use="literal" 
                             namespace="urn:header.wsdl.test"/>
--->
         </soap:header>
         <soap:header message="tns:op1Request"
                      part="header"
                      use="literal"
                      namespace="urn:header.wsdl.test">
-<!--
           <soap:headerfault message="tns:op1Fault"
                             part="message"
                             use="literal" 
                             namespace="urn:header.wsdl.test"/>
--->
         </soap:header>
       </wsdl:input>
       <wsdl:output>
@@ -84,13 +78,11 @@
                    parts="header"
                    namespace="urn:header.wsdl.test"/>
 -->
-<!--
         <soap:header message="tns:op1Response"
                      part="return"
                      use="literal"
                      namespace="urn:header.wsdl.test">
         </soap:header>
--->
       </wsdl:output>
     </wsdl:operation>
   </wsdl:binding>
