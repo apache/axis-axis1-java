@@ -103,7 +103,7 @@ public class DynamicProxyTestCase extends TestCase {
                     0,
                     true,
                     (byte)0,
-                    new QName("double, double", "toil and trouble"),
+                    new QName("http://double-double", "toil-and-trouble"),
                     Calendar.getInstance(),
                     new byte[0],
                     new byte[0],
@@ -143,8 +143,8 @@ public class DynamicProxyTestCase extends TestCase {
                     new DoubleHolder(0),
                     new BooleanHolder(true),
                     new ByteHolder((byte)0),
-                    new QNameHolder(
-                            new QName("double, double", "toil and trouble")),
+                    new QNameHolder(new QName("http://double-double",
+                            "toil-and-trouble")),
                     new CalendarHolder(Calendar.getInstance()),
                     new ByteArrayHolder(new byte[0]),
                     new ByteArrayHolder(new byte[0]),
@@ -1165,7 +1165,7 @@ public class DynamicProxyTestCase extends TestCase {
 
         try {
             javax.xml.rpc.namespace.QName value = null;
-            value = binding.methodQName(new javax.xml.rpc.namespace.QName("double, double", "toil and trouble"), new QNameHolder(new javax.xml.rpc.namespace.QName("double, double", "toil and trouble")));
+            value = binding.methodQName(new javax.xml.rpc.namespace.QName("http://double-double", "toil-and-trouble"), new QNameHolder(new javax.xml.rpc.namespace.QName("http://double-double", "toil-and-trouble")));
         }
         catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
