@@ -166,7 +166,6 @@ public class Wsdl2javaTestSuite extends TestSuite {
             delete.init();
 
             delete.setDir(workDir);
-            delete.setVerbose(true);
         }
     }
 
@@ -244,7 +243,6 @@ public class Wsdl2javaTestSuite extends TestSuite {
         wsdl2java.generatePackageName(true);
         wsdl2java.setOutputDir(Wsdl2javaTestSuite.WORK_DIR);
         wsdl2java.generateSkeleton(true);
-        wsdl2java.verbose(true);
         wsdl2java.generateTestCase(true);
 
         /* Copy concrete implementation files to the work directory.
@@ -253,7 +251,7 @@ public class Wsdl2javaTestSuite extends TestSuite {
         if (implDir.isDirectory()) {
             File[] files = implDir.listFiles();
             for (int i = 0; i < files.length; i++) {
-                if (files[i].getName().endsWith("Impl.java")) {
+                if (files[i].getName().endsWith("Impl.java") || files[i].getName().endsWith("TestCase.java"))) {
                     File subDir = new File(Wsdl2javaTestSuite.WORK_DIR, implDir.toString());
                     subDir.mkdirs();
                     File newFile = new File(subDir, files[i].getName());
@@ -340,7 +338,7 @@ public class Wsdl2javaTestSuite extends TestSuite {
                 AdminClient.main(args);
             }
 
-            AdminClient.main(new String[] {"list"});
+            //AdminClient.main(new String[] {"list"});
 
             // Run the tests
             super.run(result);
@@ -362,7 +360,7 @@ public class Wsdl2javaTestSuite extends TestSuite {
                 AdminClient.main(args);
             }
 
-            AdminClient.main(new String[] {"list"});
+            //AdminClient.main(new String[] {"list"});
 
             // Clean up the test environment
             //this.cleanTest(); // commented out while debugging.
