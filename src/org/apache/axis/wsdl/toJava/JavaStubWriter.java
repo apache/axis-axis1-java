@@ -57,6 +57,7 @@ package org.apache.axis.wsdl.toJava;
 import org.apache.axis.enum.Style;
 import org.apache.axis.enum.Use;
 import org.apache.axis.utils.Messages;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.CollectionTE;
 import org.apache.axis.wsdl.symbolTable.Element;
@@ -376,7 +377,7 @@ public class JavaStubWriter extends JavaClassWriter {
                 String javaType = null;
                 if (p.getMIMEInfo() != null) {
                     MimeInfo mimeInfo = p.getMIMEInfo();
-                    javaType = "javax.activation.DataHandler" + mimeInfo.getDimensions() + ".class, ";
+                    javaType = JavaUtils.mimeToJava(mimeInfo.getType()) + mimeInfo.getDimensions() + ".class, ";
                 }
                 else {
                     javaType = p.getType().getName();
@@ -410,7 +411,7 @@ public class JavaStubWriter extends JavaClassWriter {
                 String javaType = null;
                 if (parameters.returnParam.getMIMEInfo() != null) {
                     MimeInfo mimeInfo = parameters.returnParam.getMIMEInfo();
-                    javaType = "javax.activation.DataHandler" + mimeInfo.getDimensions();
+                    javaType = JavaUtils.mimeToJava(mimeInfo.getType()) + mimeInfo.getDimensions();
                 }
                 else {
                     javaType = parameters.returnParam.getType().getName();

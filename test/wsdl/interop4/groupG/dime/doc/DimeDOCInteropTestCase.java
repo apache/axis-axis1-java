@@ -58,16 +58,12 @@ public class DimeDOCInteropTestCase extends junit.framework.TestCase {
         input[0] = new OctetStream("EchoAttachments0".getBytes());
         input[1] = new OctetStream("EchoAttachments1".getBytes());
         
-        //TODO: Need to fix wsdl2java generation. Getting a "Bad Types" 
-        //      Exception if we enable the following code.
-        /*
         // Test operation
         OctetStream[] output = null;
         output = binding.echoAttachments(input);
         // TBD - validate results
         assertTrue(Arrays.equals(input[0].getBytes(), output[0].getBytes()));
         assertTrue(Arrays.equals(input[1].getBytes(), output[1].getBytes()));
-        */
     }
 
     public void test3DimeDOCSoapPortEchoAttachmentAsBase64() throws Exception {
