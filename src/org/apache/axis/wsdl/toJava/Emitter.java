@@ -249,7 +249,6 @@ public class Emitter {
             while (keys.hasMoreElements()) {
                 try {
                     String key = (String) keys.nextElement();
-System.out.println(key + " => " + mappings.getProperty(key));
                     namespaces.put(key, mappings.getProperty(key));
                 }
                 catch (Throwable t) {

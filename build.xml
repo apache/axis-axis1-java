@@ -520,6 +520,7 @@ Copyright:
   <!-- =================================================================== -->
   <target name="interop3" depends="buildTest">
     <ant dir="test/wsdl/interop3/import1"/>
+    <ant dir="test/wsdl/interop3/compound1"/>
   </target>
 
   <!-- =================================================================== -->
@@ -527,6 +528,7 @@ Copyright:
   <!-- =================================================================== -->
   <target name="clean">
     <delete dir="${build.dir}"/>
+    <delete dir="${test.dir}/build"/>
     <delete dir="${dist.dir}"/>
     <delete file="client-config.wsdd"/>
     <delete file="server-config.wsdd"/>
