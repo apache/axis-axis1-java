@@ -51,7 +51,7 @@ Copyright:
 
 <target name="compile" depends="copy">
   <echo message="Compiling test.concurrency"/>
-  <javac srcdir="${axis.home}" destdir="${build.dest}" debug="${debug}" fork="${javac.fork}">
+  <javac srcdir="${axis.home}" destdir="${build.dest}" debug="${debug}" nowarn="${nowarn}" fork="${javac.fork}">
     <classpath>
         <path refid="classpath"/>
     </classpath>

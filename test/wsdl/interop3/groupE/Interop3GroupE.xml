@@ -102,7 +102,7 @@ Copyright:
         </copy>
 
         <!-- Compile Java -->
-        <javac srcdir="${build.dir}/work" destdir="${build.dest}"
+        <javac srcdir="${build.dir}/work" destdir="${build.dest}" nowarn="${nowarn}" 
                debug="${debug}">
             <classpath refid="test-classpath" />
             <include name="test/wsdl/interop3/groupE/**.java" />
@@ -178,7 +178,7 @@ Copyright:
         </copy>
 
         <!-- Compile Java -->
-        <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}">
+        <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}" nowarn="${nowarn}">
             <classpath refid="test-classpath" />
             <include name="test/wsdl/interop3/groupE/**.java" />
             <include name="test/wsdl/interop3/groupE/client/**.java" />

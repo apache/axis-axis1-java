@@ -90,7 +90,7 @@ Copyright:
     <depend srcdir="${src.dir}" destdir="${build.dest}"
             cache="${build.dir}/dependencycache" closure="no">
     </depend>  
-    <javac srcdir="${src.dir}" destdir="${build.dest}" debug="${debug}"
+    <javac srcdir="${src.dir}" destdir="${build.dest}"  nowarn="${nowarn}" debug="${debug}"
       deprecation="${deprecation}"
       classpathref="classpath">
       <exclude name="**/old/**/*" />
@@ -296,6 +296,7 @@ Copyright:
     <mkdir dir="${build.webapp}/WEB-INF/classes/"/>
     <javac srcdir="${axis.home}/webapps/axis"
       destdir="${build.webapp}/WEB-INF/classes/"
+      nowarn="${nowarn}"
       debug="${debug}"
       deprecation="${deprecation}"
       classpathref="classpath">

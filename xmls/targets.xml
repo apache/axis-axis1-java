@@ -358,6 +358,7 @@
     <echo message=""/>
     <echo message="--- Property values ---" />
     <echo message="debug=${debug}" />
+    <echo message="nowarn=${nowarn}" />
     <echo message="deprecation=${deprecation}" />
     <echo message="build.compiler=${build.compiler}" />
     <echo message="javac.fork=${javac.fork}" />

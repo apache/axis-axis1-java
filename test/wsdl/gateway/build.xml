@@ -56,6 +56,7 @@ Copyright:
     <!-- Compile the test classes for Java2WSDL -->
     <javac srcdir="${axis.home}/test/wsdl/gateway" 
            destdir="${build.dest}" 
+           nowarn="${nowarn}" 
            fork="${javac.fork}"
            debug="${debug}">
       <classpath refid="classpath" />
@@ -97,7 +98,7 @@ Copyright:
     <delete dir="${build.dir}/classes/test/wsdl/gateway" />
 
     <!-- Compile the test case -->
-    <javac srcdir="${build.dir}/work" destdir="${build.dest}" fork="${javac.fork}"
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" nowarn="${nowarn}" fork="${javac.fork}"
            debug="${debug}">
       <classpath refid="classpath" />
       <include name="test/wsdl/gateway/*.java" />

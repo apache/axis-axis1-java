@@ -48,7 +48,7 @@ Copyright:
 
 <target name="compile" depends="copy">
 
-  <javac srcdir="${axis.home}" destdir="${build.dest}" debug="${debug}" fork="${javac.fork}">
+  <javac srcdir="${axis.home}" destdir="${build.dest}" debug="${debug}" nowarn="${nowarn}" fork="${javac.fork}">
     <classpath>
         <path refid="classpath"/>
     </classpath>
@@ -79,7 +79,7 @@ Copyright:
     </copy>
 
     <!-- Compile the echo sample generated java files -->
-    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}" fork="${javac.fork}">
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}" nowarn="${nowarn}" fork="${javac.fork}">
       <classpath refid="classpath" />
       <include name="samples/addr/**.java" />
     </javac>

@@ -49,7 +49,7 @@ Copyright:
   <target name="compile" depends="copy">
     <!-- Generate the WSDL file that the test will validate.-->
     <echo message="Compiling test.wsdl.schemaImport"/>
-    <javac srcdir="${axis.home}" destdir="${build.dest}" debug="${debug}" fork="${javac.fork}">
+    <javac srcdir="${axis.home}" destdir="${build.dest}" debug="${debug}" nowarn="${nowarn}" fork="${javac.fork}">
       <classpath refid="classpath"/>
       <include name="test/wsdl/schemaImport/**.java"/>
     </javac>

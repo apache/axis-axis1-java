@@ -81,7 +81,7 @@ Copyright:
 
     <!-- compile the skeletons -->
     <javac srcdir="${build.dir}/work"
-      destdir="${build.dest}" debug="on">
+      destdir="${build.dest}" debug="on" nowarn="${nowarn}">
       <classpath refid="classpath" />
       <include name="test/wsdl/interop4/groupG/dime/rpc/**/*.java" />
     </javac>

@@ -18,7 +18,7 @@
     </target>
 
     <target name="compile" depends="prepare">
-         <javac srcdir="${src.dir}" destdir="${build.dir}" debug="on" 
+         <javac srcdir="${src.dir}" destdir="${build.dir}" debug="on" nowarn="${nowarn}" 
                                     optimize="off" deprecation="off"/>
     </target>
     

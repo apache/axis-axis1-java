@@ -64,7 +64,8 @@ Copyright:
     <!-- build my ForEach task -->
   <echo message="Building ForEach" />
   <javac srcdir="${tools.dir}" 
-    debug="${debug}"
+      debug="${debug}"
+      nowarn="${nowarn}"
       destdir="${tools.build.dir}">
     <classpath refid="classpath"/>
     <include name="${componentName}/foreach/*.java" />
@@ -73,7 +74,8 @@ Copyright:
     <!-- build the RunAxisFunctionalTest task -->
   <echo message="Building RunAxisFunctionalTest" />
   <javac srcdir="${tools.dir}" 
-    debug="${debug}"
+      debug="${debug}"
+      nowarn="${nowarn}"
       destdir="${tools.build.dir}">
     <classpath refid="classpath"/>
     <include name="${componentName}/axis/*.java" />
@@ -83,6 +85,7 @@ Copyright:
   <echo message="Building WSDL tasks" />
   <javac srcdir="${tools.dir}"
     debug="${debug}"
+    nowarn="${nowarn}"
     destdir="${tools.build.dir}">
     <classpath>
       <pathelement location="${build.lib}/${name}.jar"/>

@@ -116,7 +116,7 @@ Copyright:
         <mapping namespace="urn:types.import.test" package="test.import.test3"/>
     </wsdl2java>
 
-    <javac srcdir="${build.dir}/work" destdir="${build.dest}" fork="${javac.fork}"
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" nowarn="${nowarn}" fork="${javac.fork}"
            debug="${debug}">
       <classpath refid="classpath" />
       <include name="test/import2/**/*.java" />
