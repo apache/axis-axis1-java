@@ -251,12 +251,12 @@ public class SOAPHeader extends MessageElement
         if (vec.isEmpty())
             return null;
         
+        QName qname = new QName(namespace, localPart);
         Enumeration e = vec.elements();
         MessageElement element;
         while (e.hasMoreElements()) {
             element = (MessageElement)e.nextElement();
-            if (element.getNamespaceURI().equals(namespace) &&
-                element.getName().equals(localPart))
+            if (element.getQName().equals(qname))
                 return element;
         }
         
