@@ -349,8 +349,21 @@ public class SchemaUtils {
         // used, the name of the element is unqualified.
 
         if (!forElement.value) {
-            // Unqualified nodeName
-            nodeName = new QName("", nodeName.getLocalPart());            
+            // check the Form (or elementFormDefault) attribute of this node to
+            // determine if it should be namespace quailfied or not.
+            String form = Utils.getAttribute(elementNode, "form");
+            if (form != null && form.equals("unqualified")) {
+                // Unqualified nodeName
+                nodeName = new QName("", nodeName.getLocalPart());            
+            } else if (form == null) {
+                // check elementForDefault on schema element
+                String def = Utils.getScopedAttribute(elementNode, 
+                                                      "elementFormDefault");
+                if (def == null || def.equals("unqualified")) {
+                    // Unqualified nodeName
+                    nodeName = new QName("", nodeName.getLocalPart());            
+                }
+            }
         } else {
             nodeName = nodeType;
         }

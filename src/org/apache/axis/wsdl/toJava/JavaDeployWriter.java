@@ -306,8 +306,16 @@ public class JavaDeployWriter extends JavaWriter {
                                    elementQName.getLocalPart() + "\"/>");
                     }
                 } else {
-                    pw.println("      <operation name=\"" + 
-                               operName + "\">");
+                    pw.print("      <operation name=\"" + 
+                               operName + "\"");
+                    if (params.returnName != null) {
+                        QName returnQName = Utils.getWSDLQName(params.returnName);
+                        pw.print(" returnQName=\"retNS:" +
+                             returnQName.getLocalPart() +
+                             "\" xmlns:retNS=\"" +
+                             returnQName.getNamespaceURI() + "\"");
+                    }
+                    pw.println(">");
                 }
                 
                 Vector paramList = params.list;
