@@ -56,14 +56,30 @@ package javax.xml.rpc.holders;
 
 import java.math.BigDecimal;
 
+/**
+ * Class BigDecimalHolder
+ *
+ * @author
+ * @version 0.1
+ */
 public final class BigDecimalHolder implements java.io.Serializable {
 
+    /** Field _value */
     public BigDecimal _value;
 
-    public BigDecimalHolder () {
-    }
+    /**
+     * Constructor BigDecimalHolder
+     */
+    public BigDecimalHolder() {}
 
-    public BigDecimalHolder (BigDecimal value) {
+    /**
+     * Constructor BigDecimalHolder
+     *
+     * @param value
+     */
+    public BigDecimalHolder(BigDecimal value) {
         this._value = value;
     }
 }
+
+

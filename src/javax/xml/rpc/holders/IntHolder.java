@@ -54,14 +54,30 @@
  */
 package javax.xml.rpc.holders;
 
+/**
+ * Class IntHolder
+ *
+ * @author
+ * @version 0.1
+ */
 public final class IntHolder implements java.io.Serializable {
 
+    /** Field _value           */
     public int _value;
 
-    public IntHolder () {
-    }
+    /**
+     * Constructor IntHolder
+     */
+    public IntHolder() {}
 
-    public IntHolder (int value) {
+    /**
+     * Constructor IntHolder
+     *
+     * @param value
+     */
+    public IntHolder(int value) {
         this._value = value;
     }
 }
+
+

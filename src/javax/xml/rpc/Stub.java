@@ -59,14 +59,50 @@ import java.io.Serializable;
 import java.net.URL;
 
 /**
- * Base class for generating Web Service stubs from WSDL.
- *
- * @
+ * Base class for generating Web Service stubs from WSDL. 
  */
-public abstract class Stub implements Serializable, Referenceable
-{
-    public abstract void _setProperty (String name, Object value);
-    public abstract Object _getProperty (String name);
-    public abstract void _setTargetEndpoint (URL address);
-    public abstract URL _getTargetEndpoint ();
-} // abstract class Stub
+public abstract class Stub implements Serializable, Referenceable {
+
+    /**
+     * Sets the value for a named property. JAX-RPC 1.0 specification 
+     * specifies a standard set of properties that may be passed 
+     * to the Stub._setProperty method. These properties include:
+     * <UL>
+     * <LI>http.auth.username: Username for the HTTP Basic Authentication
+     * <LI>http.auth.password: Password for the HTTP Basic Authentication
+     * <LI>security.auth.subject: JAAS Subject that carries client principal and its credentials
+     * <LI>encodingstyle.namespace.uri: Encoding style specified as a namespace URI
+     * <LI>[TBD: Additional properties]
+     * </UL>
+     *
+     * @param name - Name of the property
+     * @param value - Value of the property
+     */
+    public abstract void _setProperty(String name, Object value);
+
+    /**
+     * Gets the value of a named property.
+     *
+     * @param name
+     *
+     * @return the value of a named property.
+     */
+    public abstract Object _getProperty(String name);
+
+    /**
+     * Sets the endpoint address for the target service port that is to be invoked using a stub instance.
+     *
+     * @param address - String parameter specifies the target endpoint address. The URI scheme for the address must 
+     * correspond to the transport binding for this stub class.
+     */
+    public abstract void _setTargetEndpoint(URL address);
+
+    /**
+     * Gets the endpoint address for a target service port.
+     *
+     * @return Endpoint address configured for this stub instance
+     */
+    public abstract URL _getTargetEndpoint();
+}    // abstract class Stub
+
+

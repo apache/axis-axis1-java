@@ -56,14 +56,30 @@ package javax.xml.rpc.holders;
 
 import java.util.Date;
 
+/**
+ * Class DateHolder
+ *
+ * @author
+ * @version 0.1
+ */
 public final class DateHolder implements java.io.Serializable {
 
+    /** Field _value           */
     public Date _value;
 
-    public DateHolder () {
-    }
+    /**
+     * Constructor DateHolder
+     */
+    public DateHolder() {}
 
-    public DateHolder (Date value) {
+    /**
+     * Constructor DateHolder
+     *
+     * @param value
+     */
+    public DateHolder(Date value) {
         this._value = value;
     }
 }
+
+

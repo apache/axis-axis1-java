@@ -54,14 +54,30 @@
  */
 package javax.xml.rpc.holders;
 
+/**
+ * Class BooleanHolder
+ *
+ * @author
+ * @version 0.1
+ */
 public final class BooleanHolder implements java.io.Serializable {
 
+    /** Field _value           */
     public boolean _value;
 
-    public BooleanHolder () {
-    }
+    /**
+     * Constructor BooleanHolder
+     */
+    public BooleanHolder() {}
 
-    public BooleanHolder (boolean value) {
+    /**
+     * Constructor BooleanHolder
+     *
+     * @param value
+     */
+    public BooleanHolder(boolean value) {
         this._value = value;
     }
 }
+
+

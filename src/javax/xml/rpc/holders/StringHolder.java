@@ -54,14 +54,30 @@
  */
 package javax.xml.rpc.holders;
 
+/**
+ * Class StringHolder
+ *
+ * @author
+ * @version 0.1
+ */
 public final class StringHolder implements java.io.Serializable {
 
+    /** Field _value           */
     public String _value;
 
-    public StringHolder () {
-    }
+    /**
+     * Constructor StringHolder
+     */
+    public StringHolder() {}
 
-    public StringHolder (String value) {
+    /**
+     * Constructor StringHolder
+     *
+     * @param value
+     */
+    public StringHolder(String value) {
         this._value = value;
     }
 }
+
+
