@@ -442,8 +442,6 @@ public class JavaStubWriter extends JavaWriter {
         pw.println("        }");
         pw.println("        org.apache.axis.client.Call call = getCall();");
 
-        // DUG: need to set the isRPC flag in the Call object
-
         // loop over paramters and set up in/out params
         for (int i = 0; i < parms.list.size(); ++i) {
             Parameter p = (Parameter) parms.list.get(i);
@@ -480,16 +478,25 @@ public class JavaStubWriter extends JavaWriter {
             pw.println("        call.setSOAPActionURI(\"" + soapAction + "\");");
         }
 
-        // Encoding literal or encoded use.
+        // Encoding: literal or encoded use.
         int use = bEntry.getInputBodyType(operation.getOperation());
         if (use == BindingEntry.USE_LITERAL) {
             // Turn off encoding
-            pw.println("        ((org.apache.axis.client.Call)call).setEncodingStyle(null);");
+            pw.println("        call.setEncodingStyle(null);");
             // turn off multirefs
             pw.println("        call.setProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);");
             // turn off XSI types
             pw.println("        call.setProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);");
         }
+        
+        // Style: document or RPC
+        int style = bEntry.getBindingStyle();
+        if (style == BindingEntry.STYLE_DOCUMENT) {
+            pw.println("        call.setProperty(org.apache.axis.client.Call.OPERATION_STYLE_PROPERTY, \"document\");");
+        } else {
+            pw.println("        call.setProperty(org.apache.axis.client.Call.OPERATION_STYLE_PROPERTY, \"rpc\");");
+        }
+            
         
         // Operation name
         pw.println("        call.setOperationName(new javax.xml.rpc.namespace.QName(\"" + namespace + "\", \"" + operation.getName() + "\"));" );
