@@ -108,7 +108,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
     private transient EngineConfiguration config = null;
 
     private QName               serviceName     = null ;
-    private URL                 wsdlLocation    = null ;
+    private String              wsdlLocation    = null ;
     private javax.wsdl.Service  wsdlService     = null ;
     private boolean             maintainSession = false ;
     private HandlerRegistryImpl registry = new HandlerRegistryImpl();
@@ -180,7 +180,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
     public Service(URL wsdlDoc, QName serviceName) throws ServiceException {
         this.serviceName = serviceName;
         engine = getAxisClient();
-        this.wsdlLocation = wsdlDoc;
+        wsdlLocation = wsdlDoc.toString();
         Parser parser = null ;
 
         if ( cachingWSDL &&
@@ -226,22 +226,18 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
     public Service(String wsdlLocation, QName serviceName)
                            throws ServiceException {
         this.serviceName = serviceName;
+        this.wsdlLocation = wsdlLocation;
         engine = getAxisClient();
-        try {
-            this.wsdlLocation = new URL(wsdlLocation);
-        }
-        catch (MalformedURLException mue) {
-        }
         // Start by reading in the WSDL using Parser
         Parser parser = null ;
         if ( cachingWSDL &&
-             (parser = (Parser) cachedWSDL.get(this.wsdlLocation.toString())) != null ) {
+             (parser = (Parser) cachedWSDL.get(wsdlLocation)) != null ) {
           initService( parser, serviceName );
         }
         else {
             Document doc = null;
             try {
-                doc = XMLUtils.newDocument(this.wsdlLocation.toString());
+                doc = XMLUtils.newDocument(wsdlLocation);
             } catch (Exception exp ) {
                 throw new ServiceException(
                    Messages.getMessage("wsdlError00", "" + "", "\n" + exp) );
@@ -593,7 +589,11 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      * @return URL URL pointing to the WSDL doc
      */
     public URL getWSDLDocumentLocation() {
-        return wsdlLocation ;
+        try {
+            return new URL(wsdlLocation);
+        } catch (MalformedURLException e) {
+            return null;
+        }
     }
 
     /**
