@@ -53,7 +53,7 @@
  * <http://www.apache.org/>.
  */
 
-package test.encoding;
+package test.types;
 
 import junit.framework.TestCase;
 import org.apache.axis.types.NMToken;

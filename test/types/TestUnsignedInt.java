@@ -53,103 +53,84 @@
  * <http://www.apache.org/>.
  */
 
-package test.encoding;
+package test.types;
 
 import junit.framework.TestCase;
 
-import org.apache.axis.types.NormalizedString;
+import org.apache.axis.types.UnsignedInt;
 
 /**
- * Test validation of encoding.NormalizedString
+ * Test validation of types.UnsignedInt
  */
-public class TestNormalizedString extends TestCase {
+public class TestUnsignedInt extends TestCase {
 
-    public TestNormalizedString(String name) {
+    public TestUnsignedInt(String name) {
         super(name);
     }
 
     /**
      * Run a failure test.  value should be invalid.
      */
-    private void runFailTest(String value) throws Exception {
-        NormalizedString oNormalizedString = null;
+    private void runFailTest(long value) throws Exception {
+        UnsignedInt oUnsignedInt = null;
         try {
-            oNormalizedString = new NormalizedString(value);
+            oUnsignedInt = new UnsignedInt(value);
         }
         catch (Exception e) { // catch the validation exception
         }
         // object is not iNstantiated on bad data value
         assertNull("validation restriction failed [" +
-                value + "]. did not restrict bad value.", oNormalizedString);
+                String.valueOf(value) + "]. did not restrict bad value.", oUnsignedInt);
     }
 
     /**
      * Run a successful test.  value should be valid.
      */
-    private void runPassTest(String value) throws Exception {
-        NormalizedString oNormalizedString = null;
+    private void runPassTest(long value) throws Exception {
+        UnsignedInt oUnsignedInt = null;
         try {
-            oNormalizedString = new NormalizedString(value);
+            oUnsignedInt = new UnsignedInt(value);
         }
         catch (Exception e) { // catch the validation exception
         }
-        assertEquals("normalized string not equal" +
-                value, oNormalizedString.toString(), value);
+        assertEquals("unsigned int not equal" +
+                String.valueOf(value), oUnsignedInt.toString(), String.valueOf(value));
     }
 
     /**
-     * Test that "a simple string" succeeds.
+     * Test that a positive value succeeeds
      */
-    public void testNsSimpleString() throws Exception {
-        runPassTest("a simple string");
+    public void testPositiveValue() throws Exception {
+        runPassTest(100);
     }
 
     /**
-     * Test that "this has \r carriage return" fails.
+     * Test that a negative number fails
      */
-    public void testNsCarriageReturn() throws Exception {
-        runFailTest("this has \r carriage return");
+    public void testNegativeValue() throws Exception {
+        runFailTest(-100);
+    }
+
+
+    /**
+    * Test that a number at MaxInclusive succeeds
+    */
+    public void testMaxInclusive() throws Exception {
+       runPassTest(4294967295L);
     }
 
     /**
-     * Test that "this has \n line feed" fails.
-     */
-    public void testNsLineFeed() throws Exception {
-        runFailTest("this has \n line feed");
+    * Test that a number over MaxInclusive fails
+    */
+    public void testMaxOver() throws Exception {
+       runFailTest(4294967296L);
     }
 
     /**
-     * Test that "this has \t a tab" fails.
-     */
-    public void testNsStringWithTabs() throws Exception {
-        runFailTest("this has \t a tab");
+    * Test that a number at MinInclusive succeeds
+    */
+    public void testMinExclusive() throws Exception {
+       runPassTest(0L);
     }
 
-    /**
-     * differentiate from xsd:token
-     */
-    public void testNsStringWithLeadingSpaces() throws Exception {
-        runPassTest("  a failure case");
-    }
-
-    /*
-     * differentiate from xsd:token
-     */
-    public void testNsStringWithTrailingSpaces() throws Exception {
-        runPassTest("this is a  ");
-    }
-
-    /*
-     * differentiate from xsd:token
-     */
-    public void testNsStringWithLeadingAndTrailingSpaces() throws Exception {
-        runPassTest("          centered          ");
-    }
-
-    /*
-     * differentiate from xsd:token
-     */
-    public void testNsDoubleSpace() throws Exception {
-        runPassTest("a   B"); // note: \r fails
-    }
 }

@@ -52,46 +52,42 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package test.encoding;
 
+package test.types;
+
+import junit.framework.Test;
 import junit.framework.TestCase;
-import org.apache.axis.types.Duration;
+import junit.framework.TestSuite;
 
-public class TestDuration extends TestCase
-  {
-
-  public TestDuration( String name )
+/**
+ * test the axis specific type classes
+ */
+public class PackageTests extends TestCase
+{
+    public PackageTests(String name)
     {
-    super( name );
+        super(name);
     }
 
-    
-  public void testDurations()
-    throws Exception
+    public static Test suite() throws Exception
     {
-    // invoke the web service as if it was a local java object
-    String[] durationStrings = new String[ 11 ];
-    durationStrings[ 0 ] = "P2Y3M8DT8H1M3.3S";
-    durationStrings[ 1 ] = "P2Y3M8DT8H1M3S";
-    durationStrings[ 2 ] = "PT8H1M3.3S";
-    durationStrings[ 3 ] = "P2Y3M8D";
-    durationStrings[ 4 ] = "P2YT8H";
-    durationStrings[ 5 ] = "P8DT3.3S";
-    durationStrings[ 6 ] = "P3MT1M";
-    durationStrings[ 7 ] = "PT0.3S";
-    durationStrings[ 8 ] = "P1M";
-    durationStrings[ 9 ] = "-P1M";
-    durationStrings[ 10 ] = "-P2Y3M8DT8H1M3.3S";
+        TestSuite suite = new TestSuite();
 
-    for( int i = 0; i < durationStrings.length; i++ )
-      {
-      String durationString = durationStrings[ i ];
-      org.apache.axis.types.Duration duration = 
-              new org.apache.axis.types.Duration( durationString );
-
-      assertTrue( "Duration string \"" + durationString + 
-                  "\" not equal to returned: " + duration.toString(), 
-                  durationString.equals( duration.toString() ) );
-      }
+        suite.addTestSuite(TestNormalizedString.class);
+        suite.addTestSuite(TestToken.class);
+        suite.addTestSuite(TestUnsignedLong.class);
+        suite.addTestSuite(TestUnsignedInt.class);
+        suite.addTestSuite(TestUnsignedShort.class);
+        suite.addTestSuite(TestUnsignedByte.class);
+        suite.addTestSuite(TestYearMonth.class);
+        suite.addTestSuite(TestYear.class);
+        suite.addTestSuite(TestMonth.class);
+        suite.addTestSuite(TestMonthDay.class);
+        suite.addTestSuite(TestDay.class);
+        suite.addTestSuite(TestName.class);
+        suite.addTestSuite(TestNCName.class);
+        suite.addTestSuite(TestNMToken.class);
+        suite.addTestSuite(TestDuration.class);
+        return suite;
     }
-  }
+}

@@ -53,18 +53,18 @@
  * <http://www.apache.org/>.
  */
 
-package test.encoding;
+package test.types;
 
 import junit.framework.TestCase;
-import org.apache.axis.types.NCName;
+
+import org.apache.axis.types.NormalizedString;
 
 /**
- * Test validation of types.NCName
+ * Test validation of encoding.NormalizedString
  */
-public class TestNCName extends TestCase {
+public class TestNormalizedString extends TestCase {
 
-
-    public TestNCName(String name) {
+    public TestNormalizedString(String name) {
         super(name);
     }
 
@@ -72,114 +72,84 @@ public class TestNCName extends TestCase {
      * Run a failure test.  value should be invalid.
      */
     private void runFailTest(String value) throws Exception {
-        NCName oToken = null;
+        NormalizedString oNormalizedString = null;
         try {
-            oToken = new NCName(value);
+            oNormalizedString = new NormalizedString(value);
         }
         catch (Exception e) { // catch the validation exception
         }
-        assertNull(
-                "NCName validation restriction failed. did not restrict bad value [" +
-                   value + "] did not restrict bad value", oToken);
+        // object is not iNstantiated on bad data value
+        assertNull("validation restriction failed [" +
+                value + "]. did not restrict bad value.", oNormalizedString);
     }
 
     /**
      * Run a successful test.  value should be valid.
      */
     private void runPassTest(String value) throws Exception {
-        NCName oToken = null;
+        NormalizedString oNormalizedString = null;
         try {
-            oToken = new NCName(value);
+            oNormalizedString = new NormalizedString(value);
         }
         catch (Exception e) { // catch the validation exception
         }
-        assertEquals("NCName strings not equal. orig value:" + value, oToken.toString(), value);
+        assertEquals("normalized string not equal" +
+                value, oNormalizedString.toString(), value);
     }
 
     /**
-     * Test a simple string.
+     * Test that "a simple string" succeeds.
      */
-    public void testSimpleString() throws Exception {
-        runPassTest("Atlanta");
+    public void testNsSimpleString() throws Exception {
+        runPassTest("a simple string");
     }
 
     /**
-     * Test a simple string with allowed punctuation.
+     * Test that "this has \r carriage return" fails.
      */
-    public void testPunctuationString() throws Exception {
-        runPassTest("Atlanta_Braves.Home-Team10");
-    }
-
-
-    /**
-     * Test a start character '_'
-     */
-    public void testStartUnderscore() throws Exception {
-        runPassTest("_Braves");
+    public void testNsCarriageReturn() throws Exception {
+        runFailTest("this has \r carriage return");
     }
 
     /**
-     * Test a simple string with allowed punctuation.
+     * Test that "this has \n line feed" fails.
      */
-    public void testMidColon() throws Exception {
-        runFailTest("Atlanta:_Braves.Home-Team10");
+    public void testNsLineFeed() throws Exception {
+        runFailTest("this has \n line feed");
     }
 
     /**
-     * Test a start Digit
+     * Test that "this has \t a tab" fails.
      */
-    public void testStartDigit() throws Exception {
-        runFailTest("1_Braves");
-    }
-
-
-    /**
-     * Test a start character ':'
-     */
-    public void testStartColon() throws Exception {
-        runFailTest(":_Braves.Home-Team:1");
-    }
-
-    /**
-     * this is to differentiate from normalized string which cannot accept a \n
-     */
-    public void testLineFeed() throws Exception {
-        runFailTest("line one\n line two");
-    }
-
-    /**
-     * this is to differentiate from normalized string which cannot accept a \t
-     */
-    public void testStringWithTabs() throws Exception {
+    public void testNsStringWithTabs() throws Exception {
         runFailTest("this has \t a tab");
     }
 
     /**
-     * this is to differentiate from normalized string which cannot accept leading spaces.
+     * differentiate from xsd:token
      */
-    public void testStringWithLeadingSpaces() throws Exception {
-        runFailTest("  a failure case");
+    public void testNsStringWithLeadingSpaces() throws Exception {
+        runPassTest("  a failure case");
     }
 
-    /**
-     * this is to differentiate from normalized string which cannot accept trailing spaces.
+    /*
+     * differentiate from xsd:token
      */
-    public void testStringWithTrailingSpaces() throws Exception {
-        runFailTest("this is a  ");
+    public void testNsStringWithTrailingSpaces() throws Exception {
+        runPassTest("this is a  ");
     }
 
-    /**
-     * this is to differentiate from normalized string which cannot accept
-     * leading and trailing spaces.
+    /*
+     * differentiate from xsd:token
      */
-    public void testStringWithLeadingAndTrailingSpaces() throws Exception {
-        runFailTest("          centered          ");
+    public void testNsStringWithLeadingAndTrailingSpaces() throws Exception {
+        runPassTest("          centered          ");
     }
 
-    /**
-     * this is to differentiate from normalized string which cannot accept double spaces.
+    /*
+     * differentiate from xsd:token
      */
-    public void testDoubleSpace() throws Exception {
-        runFailTest("a   B"); // note: \r fails
+    public void testNsDoubleSpace() throws Exception {
+        runPassTest("a   B"); // note: \r fails
     }
 }
