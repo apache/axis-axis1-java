@@ -52,20 +52,32 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.ime;
+package org.apache.axis.ime.internal;
 
-import java.io.Serializable;
+import org.apache.axis.ime.MessageExchangeCorrelator;
 
 /**
  * Used for correlating outbound/inbound messages.
  * This class may be extended to allow for more complex
  * Correlation mechanisms
- * 
+ *
  * @author James M Snell (jasnell@us.ibm.com)
  */
-public interface MessageExchangeCorrelator
-        extends Serializable {
-            
-    public String getIdentifier();
+public class SimpleMessageExchangeCorrelator
+        implements MessageExchangeCorrelator {
+
+    private String identifier;
+
+    private SimpleMessageExchangeCorrelator() {
+    }
+
+    public SimpleMessageExchangeCorrelator(
+            String identifier) {
+        this.identifier = identifier;
+    }
+
+    public String getIdentifier() {
+        return this.identifier;
+    }
 
 }

@@ -116,7 +116,7 @@ public class MessageExchangeImpl
                 (MessageExchangeCorrelator) context.getProperty(
                         MessageExchangeConstants.MESSAGE_CORRELATOR_PROPERTY);
         if (correlator == null) {
-            correlator = new MessageExchangeCorrelator(
+            correlator = new SimpleMessageExchangeCorrelator(
                     UUIDGenFactory.getUUIDGen(null).nextUUID());
             context.setProperty(
                     MessageExchangeConstants.MESSAGE_CORRELATOR_PROPERTY,
