@@ -238,7 +238,7 @@ public class AxisFault extends java.rmi.RemoteException {
     {
         super (message, t);
         setFaultCodeAsString(Constants.FAULT_SERVER_GENERAL);
-        setFaultString(message);
+        setFaultString(getMessage());
     }
 
     /**
