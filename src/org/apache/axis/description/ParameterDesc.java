@@ -56,7 +56,6 @@ package org.apache.axis.description;
 
 import javax.xml.namespace.QName;
 
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
@@ -111,14 +110,16 @@ public class ParameterDesc implements Serializable {
      * @param copy the copy 
      */
     public ParameterDesc(ParameterDesc copy) {
-      name= copy.name;
-      typeEntry= copy.typeEntry;
-      mode= copy.mode;
-      typeQName= copy.typeQName;
-      javaType= copy.javaType;
-      order= copy.order;
-      isReturn= copy.isReturn;
-      mimeType= copy.mimeType;
+        name = copy.name;
+        typeEntry = copy.typeEntry;
+        mode = copy.mode;
+        typeQName = copy.typeQName;
+        javaType = copy.javaType;
+        order = copy.order;
+        isReturn = copy.isReturn;
+        mimeType = copy.mimeType;
+        inHeader = copy.inHeader;
+        outHeader = copy.outHeader;
     }
 
     /**
@@ -241,7 +242,6 @@ public class ParameterDesc implements Serializable {
 
     /** 
      * Set the java type (note that this is javaType in the signature.) 
-     * @return Class javaType
      */
     public void setJavaType(Class javaType) {
         // The javaType must match the mode.  A Holder is expected for OUT/INOUT

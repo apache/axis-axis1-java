@@ -160,7 +160,6 @@ public class Call implements javax.xml.rpc.Call {
     private Service            service         = null ;
     private QName              portName        = null;
     private QName              operationName   = null ;
-    private QName              returnType      = null ;
 
     private MessageContext     msgContext      = null ;
 
@@ -171,8 +170,6 @@ public class Call implements javax.xml.rpc.Call {
     private String             username        = null;
     private String             password        = null;
     private boolean            maintainSession = false;
-    private Style              operationStyle  = Style.RPC;
-    private Use                operationUse    = Use.ENCODED;
     private boolean            useSOAPAction   = false;
     private String             SOAPActionURI   = null;
     private Integer            timeout         = null;
@@ -570,15 +567,20 @@ public class Call implements javax.xml.rpc.Call {
      * @param operationStyle string designating style
      */
     public void setOperationStyle(String operationStyle) {
-        this.operationStyle =
-            Style.getStyle(operationStyle, Style.DEFAULT);
+        if (operation == null) {
+            operation = new OperationDesc();
+        }
+        operation.setStyle(Style.getStyle(operationStyle, Style.DEFAULT));
     } // setOperationStyle
 
     /**
      * Get the operation style.
      */
     public Style getOperationStyle() {
-        return operationStyle;
+        if (operation != null) {
+            return operation.getStyle();
+        }
+        return Style.DEFAULT;
     } // getOperationStyle
 
     /**
@@ -586,15 +588,20 @@ public class Call implements javax.xml.rpc.Call {
      * @param operationUse string designating use
      */
     public void setOperationUse(String operationUse) {
-        this.operationUse =
-            Use.getUse(operationUse, Use.DEFAULT);
+        if (operation == null) {
+            operation = new OperationDesc();
+        }
+        operation.setUse(Use.getUse(operationUse, Use.DEFAULT));
     } // setOperationUse
 
     /**
      * Get the operation use.
      */
     public Use getOperationUse() {
-        return operationUse;
+        if (operation != null) {
+            return operation.getUse();
+        }
+        return Use.DEFAULT;
     } // getOperationStyle
 
     /**
@@ -979,7 +986,6 @@ public class Call implements javax.xml.rpc.Call {
         // JSR 101 which indicates an exception MAY be thrown.
 
         //if (parmAndRetReq) {
-        returnType = type ;
         operation.setReturnType(type);
         TypeMapping tm = getTypeMapping();
         operation.setReturnClass(tm.getClassForQName(type));
@@ -1031,7 +1037,10 @@ public class Call implements javax.xml.rpc.Call {
      * @return the XMLType specified for this Call (or null).
      */
     public QName getReturnType() {
-        return( returnType );
+        if (operation != null)
+            return operation.getReturnType();
+
+        return null;
     }
 
     /**
@@ -1938,8 +1947,8 @@ public class Call implements javax.xml.rpc.Call {
          * was called (returnType != null) and we have args but addParameter
          * wasn't called (paramXMLTypes == null), then toss a fault.
          */
-        if (returnType != null && args != null && args.length != 0
-                && operation == null) {
+        if (getReturnType() != null && args != null && args.length != 0
+                && operation.getNumParams() == 0) {
             throw new AxisFault(Messages.getMessage("mustSpecifyParms"));
         }
 
@@ -1993,7 +2002,7 @@ public class Call implements javax.xml.rpc.Call {
          * if things don't look right.
          */
         if (!invokeOneWay && operation != null &&
-                operation.getNumParams() > 0 && returnType == null) {
+                operation.getNumParams() > 0 && getReturnType() == null) {
             // TCK:
             // Issue an error if the return type was not set, but continue processing.
             //throw new AxisFault(Messages.getMessage("mustSpecifyReturnType"));
@@ -2037,7 +2046,7 @@ public class Call implements javax.xml.rpc.Call {
           }
         }
 
-        resEnv = (SOAPEnvelope)resMsg.getSOAPEnvelope();
+        resEnv = resMsg.getSOAPEnvelope();
         SOAPBodyElement bodyEl = resEnv.getFirstBody();
         if (bodyEl instanceof RPCElement) {
             try {
@@ -2080,7 +2089,7 @@ public class Call implements javax.xml.rpc.Call {
                 QName returnParamQName = null;
                 if (operation != null) operation.getReturnQName();
 
-                if (!XMLType.AXIS_VOID.equals(returnType)) {
+                if (!XMLType.AXIS_VOID.equals(getReturnType())) {
                     if (returnParamQName == null) {
                         // Assume the first param is the return
                         RPCParam param = (RPCParam)resArgs.get(0);
@@ -2157,7 +2166,7 @@ public class Call implements javax.xml.rpc.Call {
         } else {
             // This is a SOAPBodyElement, try to treat it like a return value
             try {
-                result = bodyEl.getValueAsType(returnType);
+                result = bodyEl.getValueAsType(getReturnType());
             } catch (Exception e) {
                 // just return the SOAPElement
                 result = bodyEl;
@@ -2354,7 +2363,7 @@ public class Call implements javax.xml.rpc.Call {
          */
         resMsg.setMessageType(Message.RESPONSE);
 
-        SOAPEnvelope resEnv = (SOAPEnvelope)resMsg.getSOAPEnvelope();
+        SOAPEnvelope resEnv = resMsg.getSOAPEnvelope();
 
         SOAPBodyElement respBody = resEnv.getFirstBody();
         if (respBody instanceof SOAPFault) {

@@ -72,6 +72,23 @@ public class FaultDesc {
     private QName xmlType;
     private boolean complex;
 
+    /**
+     * Default constructor
+     */
+    public FaultDesc() {
+    }
+
+    /**
+     * Full constructor
+     */
+    public FaultDesc(QName qname, String className,
+                     QName xmlType, boolean complex) {
+        this.qname = qname;
+        this.className = className;
+        this.xmlType = xmlType;
+        this.complex = complex;
+    }
+
     public QName getQName() {
         return qname;
     }

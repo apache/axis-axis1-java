@@ -261,6 +261,18 @@ public class OperationDesc {
         }
        log.debug("@" + Integer.toHexString(hashCode())  + " added parameter >" + param + "@" + Integer.toHexString(param.hashCode()) + "<total parameters:" +getNumParams());
     }
+    
+    public void addParameter(QName paramName,
+                             QName xmlType,
+                             Class javaType,
+                             byte parameterMode,
+                             boolean inHeader,
+                             boolean outHeader) {
+        ParameterDesc param =
+                new ParameterDesc(paramName, parameterMode, xmlType,
+                                  javaType, inHeader, outHeader);
+        addParameter(param);
+    }
 
     public ParameterDesc getParameter(int i)
     {
