@@ -206,11 +206,27 @@ Copyright:
     <echo message="--- Property values ---" />
     <echo message="debug=${debug}" />
     <echo message="deprecation=${deprecation}" />
+    <!-- Set environment variable axis_nojavadocs=true  to never generate javadocs. Case sensative! -->
+    <echo message="axis_nojavadocs=${env.axis_nojavadocs}"/>
 
-    <uptodate property="javadoc.notrequired"
+    <uptodate property="javadoc.notoutofdate"
               targetfile="${build.javadocs}/index.html">
       <srcfiles dir="${src.dir}" includes="**/*.java" />
     </uptodate>
+
+    <condition property="axis_nojavadocs" value="true">
+      <equals arg1="true" arg2="${env.axis_nojavadocs}"/>
+    </condition>
+    <condition property="axis_nojavadocs" value="false">
+      <equals arg1="${axis_nojavadocs}" arg2="$${axis_nojavadocs}"/>
+    </condition>
+
+    <condition property="javadoc.notrequired" value="true">
+    <or>
+      <equals arg1="${javadoc.notoutofdate}" arg2="true"/>
+      <equals arg1="true" arg2="${axis_nojavadocs}"/>
+    </or>
+    </condition>
 
   </target>
 
@@ -490,17 +506,19 @@ Copyright:
   <!-- =================================================================== -->
   <!-- Creates the binary distribution                                     -->
   <!-- =================================================================== -->
-  <target name="dist" depends="compile, javadocs, samples, junit" >
-    <mkdir dir="${dist.dir}"/>
+  <target name="javadocsdist" depends="javadocs" unless="javadoc.notrequired">
     <mkdir dir="${dist.dir}/docs"/>
     <mkdir dir="${dist.dir}/docs/apiDocs"/>
+    <copy todir="${dist.dir}/docs/apiDocs">
+      <fileset dir="${build.javadocs}"/>
+    </copy>
+  </target>
+  <target name="dist" depends="compile, javadocsdist, samples, junit" >
+    <mkdir dir="${dist.dir}"/>
     <mkdir dir="${dist.dir}/lib"/>
     <mkdir dir="${dist.dir}/samples"/>
     <mkdir dir="${dist.dir}/webapps/axis"/>
 
-    <copy todir="${dist.dir}/docs/apiDocs">
-      <fileset dir="${build.javadocs}"/>
-    </copy>
     <copy todir="${dist.dir}/lib">
       <fileset dir="${build.lib}"/>
     </copy>

@@ -1331,6 +1331,9 @@ public class Call implements javax.xml.rpc.Call {
 
         // If we never set-up any names... then just return what was passed in
         //////////////////////////////////////////////////////////////////////
+        log.debug( "getParamList number of params: " + params.length);
+        log.debug( "operation=" + operation);
+        if(operation != null) log.debug("operation.getNumParams()=" +operation.getNumParams());
         if ( operation.getNumParams() == 0 ) return( params );
 
         // Count the number of IN and INOUT params, this needs to match the

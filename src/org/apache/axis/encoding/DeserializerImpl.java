@@ -353,7 +353,7 @@ public class DeserializerImpl extends SOAPHandler implements Deserializer
             if (log.isDebugEnabled()) {
                 log.debug(JavaUtils.getMessage(
                         "gotForID00",
-                        new String[] {"" + ref, href, "" + ref.getClass()}));
+                        new String[] {"" + ref, href, (ref == null ? "*null*" : ref.getClass().toString())}));
             }
             
             if (ref == null) {

@@ -84,7 +84,7 @@ public class ParameterDesc {
     /** The XML type of this parameter */
     private QName typeQName;
     /** The Java type of this parameter */
-    private Class javaType;
+    private Class javaType = null;
     /** The order of this parameter (-1 indicates unordered) */
     private int order = -1;
 
@@ -106,7 +106,7 @@ public class ParameterDesc {
 
     public String toString() {
         return "(" + typeEntry + ", " + getName() + ", "
-                + (mode == IN ? "IN)" : mode == INOUT ? "INOUT)" : "OUT)");
+                + (mode == IN ? "IN)" : mode == INOUT ? "INOUT)" : "OUT)" + "position:" + order);
     } // toString
     
     /**
