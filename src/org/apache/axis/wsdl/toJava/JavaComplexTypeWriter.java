@@ -100,14 +100,14 @@ public class JavaComplexTypeWriter extends JavaWriter {
         // See if this class extends another class
         String extendsText = "";
         if (extendType != null) {
-            extendsText = " extends " + extendType.getJavaName() + " ";
+            extendsText = " extends " + extendType.getName() + " ";
         }
 
         // We are only interested in the java names of the types, so replace the
         // TypeEntry in the list with their java names.  
         // Also filter element names for Java 
         for (int i=0; i < elements.size(); i+=2) {
-            elements.setElementAt(((TypeEntry) elements.get(i)).getJavaName(), i);
+            elements.setElementAt(((TypeEntry) elements.get(i)).getName(), i);
             elements.setElementAt( Utils.xmlNameToJava((String) elements.get(i + 1)), i + 1);
         }
 

@@ -180,14 +180,6 @@ public abstract class TypeEntry extends SymTabEntry {
         //System.out.println(toString());
     }
        
-
-    /**
-     * Query Java Mapping Name
-     */
-    public String getJavaName() {
-        return name;
-    }
-
     /**
      * Query Java Mapping Name
      */

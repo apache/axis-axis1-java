@@ -348,7 +348,7 @@ public class JavaStubWriter extends JavaWriter {
 
         QName qname = type.getQName();
         pw.println("            qn = new javax.xml.rpc.namespace.QName(\"" + qname.getNamespaceURI() + "\", \"" + qname.getLocalPart() + "\");");
-        pw.println("            cls = " + type.getJavaName() + ".class;");
+        pw.println("            cls = " + type.getName() + ".class;");
         pw.println("            call.addSerializer(cls, qn, new org.apache.axis.encoding.BeanSerializer(cls));");
         pw.println("            call.addDeserializerFactory(qn, cls, org.apache.axis.encoding.BeanSerializer.getFactory());");
         pw.println();
@@ -465,12 +465,12 @@ public class JavaStubWriter extends JavaWriter {
                     
                     // Quick Fix By scheu for now.  This should be fixed elsewhere. 
                     if (parms.returnType != null &&
-                        parms.returnType.getJavaName() != null &&
-                        parms.returnType.getJavaName().indexOf("[]") > 0) {
+                        parms.returnType.getName() != null &&
+                        parms.returnType.getName().indexOf("[]") > 0) {
                         pw.println("             // REVISIT THIS!");
-                        pw.println("             return ("+parms.returnType.getJavaName() + ")" 
+                        pw.println("             return ("+parms.returnType.getName() + ")" 
                                    +"org.apache.axis.utils.JavaUtils.convert(resp,"
-                                   + parms.returnType.getJavaName()+".class);");
+                                   + parms.returnType.getName()+".class);");
                     } else {
                         pw.println("             return " + getResponseString(parms.returnType, "resp"));
                     }
@@ -516,12 +516,12 @@ public class JavaStubWriter extends JavaWriter {
                 if (parms.outputs > 0) {
                     // Quick Fix By scheu for now.  This should be fixed elsewhere.
                     if (parms.returnType != null &&
-                        parms.returnType.getJavaName() != null &&
-                        parms.returnType.getJavaName().indexOf("[]") > 0) {
+                        parms.returnType.getName() != null &&
+                        parms.returnType.getName().indexOf("[]") > 0) {
                         pw.println("             // REVISIT THIS!");
-                        pw.println("             return ("+parms.returnType.getJavaName() + ")" 
+                        pw.println("             return ("+parms.returnType.getName() + ")" 
                                    +"org.apache.axis.utils.JavaUtils.convert(resp,"
-                                   + parms.returnType.getJavaName()+".class);");
+                                   + parms.returnType.getName()+".class);");
                     } else {
                         pw.println("             return " + getResponseString(parms.returnType, "resp"));
                     }

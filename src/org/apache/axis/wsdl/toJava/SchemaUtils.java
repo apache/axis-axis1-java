@@ -323,7 +323,7 @@ public class SchemaUtils {
                 QName baseType = Utils.getNodeTypeRefQName(restrictionNode, "base");
                 baseEType = symbolTable.getType(baseType);
                 if (baseEType != null && 
-                    !baseEType.getJavaName().equals("java.lang.String")) {
+                    !baseEType.getName().equals("java.lang.String")) {
                     baseEType = null;
                 }
             }
