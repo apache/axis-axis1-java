@@ -236,9 +236,9 @@ public class Time implements java.io.Serializable {
     }
 
     public boolean equals(Object obj) {
+        if (obj == null) return false;
         if (!(obj instanceof Time)) return false;
         Time other = (Time) obj;
-        if (obj == null) return false;
         if (this == obj) return true;
 
         boolean _equals;
