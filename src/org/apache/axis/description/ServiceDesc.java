@@ -967,7 +967,7 @@ public class ServiceDesc {
             ParameterDesc paramDesc = new ParameterDesc();
             // If we have a name for this param, use it, otherwise call
             // it "in*"
-            if (paramNames != null) {
+            if (paramNames != null && paramNames[k] != null && paramNames[k].length()>0) {
                 paramDesc.setName(paramNames[k]);
             } else {
                 paramDesc.setName("in" + k);
