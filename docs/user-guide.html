@@ -382,9 +382,9 @@ components in the server:</P><PRE>% java org.apache.axis.client.AdminClient list
  &lt;/service&gt;
 &lt;/deployment&gt;</pre>
 <p>The first section defines a Handler called "track" that is implemented by the 
-  class samples.log.LogHandler. We give this Handler an option to let it know 
+  class samples.userguide.example4.LogHandler. We give this Handler an option to let it know 
   which file to write its messages into.</p>
-<p>Then we define a service, MyService, which is an RPC service just like we saw 
+<p>Then we define a service, LogTestService, which is an RPC service just like we saw 
   above in our first example. The difference is the &lt;requestFlow&gt; element 
   inside the &lt;service&gt; - this indicates a set of Handlers that should be 
   invoked when the service is invoked, before the provider. By inserting a reference 
