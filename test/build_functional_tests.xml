@@ -315,6 +315,19 @@ Copyright:
   </target>
 
   <!-- =================================================================== -->
+  <!-- Run secure functional tests ONLY                                    -->
+  <!-- =================================================================== -->
+  <target name="functional-tests-secure-only" if="junit.present">
+
+    <runaxisfunctionaltests
+      url="http://localhost:8088"
+      startTarget1="start-functional-test-tcp-server"
+      startTarget2="start-functional-test-http-server"
+      testTarget="junit-functional-secure"
+      stopTarget="stop-functional-test-http-server-secure" />
+  </target>
+
+  <!-- =================================================================== -->
   <!-- Runs the JUnit functional tests ONLY -->
   <!-- =================================================================== -->
   <target name="junit-functional-tests-only" if="junit.present" depends="junit-functional-prepare">

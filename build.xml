@@ -59,7 +59,7 @@ Copyright:
        (and without typing -D each time it compiles it) -->
   <property file="build.properties"/>
   <property file="${user.home}/build.properties"/>
-  
+
   <property name="axis.version" value="beta2+"/>
 
   <property name="name" value="axis"/>
@@ -70,7 +70,7 @@ Copyright:
   <property name="saaj" value="saaj"/>
 
   <!-- debug flag for ant javac, values are "on" and "off" -->
-  <property name="debug" value="on"/>  
+  <property name="debug" value="on"/>
 
   <property name="deprecation" value="true"/>
 
@@ -106,7 +106,7 @@ Copyright:
   <property name="dist.dir" location="axis-1_0"/>
 
   <property name="test.functional.usefile" value="true"/>
-  
+
   <property name="tools.jar" location="${java.home}/../lib/tools.jar"/>
   <property name="axis.lib.dir" location="lib"/>
 
@@ -318,7 +318,7 @@ Copyright:
              token="#today#" value="${build.time}"/>
     <replace file="${build.dest}/org/apache/axis/utils/axisNLS.properties"
              token="#axisVersion#" value="${axis.version}"/>
-  
+
     <jar jarfile="${build.lib}/${name}.jar" basedir="${build.dest}" >
       <include name="org/**" />
       <include name="log4j.properties"/>
@@ -348,10 +348,10 @@ Copyright:
   <!-- =================================================================== -->
   <!-- Compiles the samples                                                -->
   <!-- =================================================================== -->
-  <target name="samples" depends="compile" 
+  <target name="samples" depends="compile"
     description="build the samples">
 
-  <!-- The interop echo sample depends on the wsdl2java task -->    
+  <!-- The interop echo sample depends on the wsdl2java task -->
     <javac srcdir="." destdir="${build.dest}"
            debug="${debug}">
       <classpath>
@@ -399,7 +399,7 @@ Copyright:
                testcase="no">
         <mapping namespace="urn:AddressFetcher2" package="samples.addr"/>
     </wsdl2java>
-    
+
     <!-- Compile the echo sample generated java files -->
     <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}">
       <classpath refid="test-classpath" />
@@ -501,6 +501,13 @@ Copyright:
 
   </target>
 
+  <target name="functional-tests-secure-only" depends="setenv"
+    description="functional secure tests without a rebuild;"
+    >
+    <ant antfile="test/build_functional_tests.xml" target="functional-tests-secure-only"/>
+  </target>
+
+
   <!-- =================================================================== -->
   <!-- Functional tests, no server (for testing under debugger)            -->
   <!-- =================================================================== -->
@@ -596,8 +603,8 @@ Copyright:
       <fileset dir="${build.javadocs}"/>
     </copy>
   </target>
-  
-  <target name="dist" depends="compile, javadocsdist, samples, junit" 
+
+  <target name="dist" depends="compile, javadocsdist, samples, junit"
     description="create the full binary distribution">
     <mkdir dir="${dist.dir}"/>
     <mkdir dir="${dist.dir}/lib"/>
@@ -640,7 +647,7 @@ Copyright:
   <!-- =================================================================== -->
   <!-- Creates the source distribution                                     -->
   <!-- =================================================================== -->
-  <target name="srcdist" depends="javadocs" 
+  <target name="srcdist" depends="javadocs"
       description="Create the source distribution">
     <copy todir="${dist.dir}">
       <fileset dir=".">

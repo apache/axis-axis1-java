@@ -76,6 +76,10 @@ public class LogHandler extends BasicHandler {
     static Log log =
             LogFactory.getLog(LogHandler.class.getName());
 
+    static {
+        org.apache.xml.security.Init.init();
+    }
+
     public void invoke(MessageContext msgContext) throws AxisFault {
         try {
             System.out.println("Starting Server verification");

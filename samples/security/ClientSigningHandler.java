@@ -68,6 +68,10 @@ public class ClientSigningHandler extends BasicHandler {
     static Log log =
             LogFactory.getLog(ClientSigningHandler.class.getName());
 
+    static {
+        org.apache.xml.security.Init.init();
+    }
+
     public void invoke(MessageContext msgContext) throws AxisFault {
         /** Sign the SOAPEnvelope
          */
