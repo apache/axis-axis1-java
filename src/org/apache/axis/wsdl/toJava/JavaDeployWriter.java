@@ -405,12 +405,12 @@ public class JavaDeployWriter extends JavaWriter {
         pw.println("      <parameter name=\"className\" value=\"" + className
                 + "\"/>");
 
-        pw.println("      <parameter name=\"typeMappingVersion\" value=\"" 
-                   + emitter.getTypeMappingVersion() + "\"/>");
-        
         pw.println("      <parameter name=\"wsdlPortType\" value=\""
                 + binding.getPortType().getQName().getLocalPart() + "\"/>");
 
+        pw.println("      <parameter name=\"typeMappingVersion\" value=\"" 
+                   + emitter.getTypeMappingVersion() + "\"/>");
+        
         HashSet allowedMethods = new HashSet();
 
         if (!emitter.isSkeletonWanted()) {
