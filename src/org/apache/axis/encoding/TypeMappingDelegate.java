@@ -67,13 +67,14 @@ import javax.xml.rpc.JAXRPCException;
  * 
  * @author Rich Scheuerle (scheu@us.ibm.com)
  */
-class TypeMappingDelegate extends TypeMappingImpl { 
-
+class TypeMappingDelegate implements TypeMapping { 
+    TypeMapping delegate;
+    
     /**
      * Construct TypeMapping
      */
     TypeMappingDelegate(TypeMapping delegate) {
-        super(delegate);
+        this.delegate = delegate;
     }
 
 
@@ -200,6 +201,68 @@ class TypeMappingDelegate extends TypeMappingImpl {
     public Class getClassForQName(QName xmlType) {
         if (delegate != null) {
             return delegate.getClassForQName(xmlType);
+        }
+        return null;
+    }
+
+    /**
+     * Get the QName for this Java class, but only return a specific
+     * mapping if there is one.  In other words, don't do special array
+     * processing, etc.
+     * 
+     * @param javaType
+     * @return
+     */
+    public QName getTypeQNameExact(Class javaType) {
+        if (delegate != null) {
+            return delegate.getTypeQNameExact(javaType);
+        }
+        return null;
+    }
+
+    /**
+     * setDelegate sets the new Delegate TypeMapping
+     */
+    public void setDelegate(TypeMapping delegate) {
+        this.delegate = delegate;
+    }
+
+    /**
+     * getDelegate gets the new Delegate TypeMapping
+     */
+    public TypeMapping getDelegate() {
+        return delegate;
+    }
+
+    /**
+     * Returns an array of all the classes contained within this mapping
+     */
+    public Class[] getAllClasses() {
+        if (delegate == null) return null;
+        return delegate.getAllClasses();
+    }
+
+    /**
+     * Get the exact XML type QName which will be used when serializing a
+     * given Class to a given type QName.  In other words, if we have:
+     *
+     * Class        TypeQName
+     * ----------------------
+     * Base         myNS:Base
+     * Child        myNS:Child
+     *
+     * and call getXMLType(Child.class, BASE_QNAME), we should get
+     * CHILD_QNAME.
+     *
+     * @param javaType
+     * @param xmlType
+     * @return the type's QName
+     * @throws JAXRPCException
+     */
+    public QName getXMLType(Class javaType, QName xmlType)
+            throws JAXRPCException {
+        if (delegate != null) {
+            return delegate.getXMLType(javaType, xmlType);
         }
         return null;
     }

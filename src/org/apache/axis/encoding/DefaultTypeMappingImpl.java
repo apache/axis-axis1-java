@@ -127,10 +127,6 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
     }
 
     protected DefaultTypeMappingImpl() {
-        this(false);
-    }
-
-    protected DefaultTypeMappingImpl(boolean encoded) {
         super(null);
         delegate = null;
 
@@ -158,10 +154,6 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                     new JAFDataHandlerDeserializerFactory(
                             java.lang.String.class,
                             Constants.MIME_PLAINTEXT));
-        }
-
-        if (!encoded) {
-            registerSOAPTypes();
         }
 
         // HexBinary binary data needs to use the hex binary serializer/deserializer
@@ -643,42 +635,7 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
         SchemaVersion.SCHEMA_2000.registerSchemaSpecificTypes(this);
         SchemaVersion.SCHEMA_2001.registerSchemaSpecificTypes(this);
 
-        if (encoded) {
-            registerSOAPTypes();
-        }
-
         doneInit = true;
-    }
-
-    /**
-     * Register the SOAP encoding data types.  This is split out into a
-     * method so it can happen either before or after the XSD mappings.
-     */
-    private void registerSOAPTypes() {
-        // SOAP Encoded strings are treated as primitives.
-        // Everything else is not.
-        myRegisterSimple(Constants.SOAP_STRING, java.lang.String.class);
-        myRegisterSimple(Constants.SOAP_BOOLEAN, java.lang.Boolean.class);
-        myRegisterSimple(Constants.SOAP_DOUBLE, java.lang.Double.class);
-        myRegisterSimple(Constants.SOAP_FLOAT, java.lang.Float.class);
-        myRegisterSimple(Constants.SOAP_INT, java.lang.Integer.class);
-        myRegisterSimple(Constants.SOAP_INTEGER, java.math.BigInteger.class);
-        myRegisterSimple(Constants.SOAP_DECIMAL, java.math.BigDecimal.class);
-        myRegisterSimple(Constants.SOAP_LONG, java.lang.Long.class);
-        myRegisterSimple(Constants.SOAP_SHORT, java.lang.Short.class);
-        myRegisterSimple(Constants.SOAP_BYTE, java.lang.Byte.class);
-        myRegister(Constants.SOAP_BASE64,     byte[].class,
-                   new Base64SerializerFactory(byte[].class,
-                                               Constants.SOAP_BASE64 ),
-                   new Base64DeserializerFactory(byte[].class,
-                                                 Constants.SOAP_BASE64)
-        );
-        myRegister(Constants.SOAP_BASE64BINARY,     byte[].class,
-                   new Base64SerializerFactory(byte[].class,
-                                               Constants.SOAP_BASE64 ),
-                   new Base64DeserializerFactory(byte[].class,
-                                                 Constants.SOAP_BASE64)
-        );
     }
 
     /**
@@ -727,10 +684,11 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                                             xmlType.getLocalPart());
                     super.internalRegister(javaType, qName, sf, df);
                 }
+            } else {
+                // Register with the specified xmlType.
+                // This is the prefered mapping and the last registed one wins
+                super.internalRegister(javaType, xmlType, sf, df);
             }
-            // Register with the specified xmlType.
-            // This is the prefered mapping and the last registed one wins
-            super.internalRegister(javaType, xmlType, sf, df);
         } catch (JAXRPCException e) { }
     }
 
@@ -742,12 +700,12 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
         throws JAXRPCException {
 
         // Don't allow anyone but init to modify us.
-        if (doneInit && !doAutoTypes) {
-            throw new JAXRPCException(Messages.getMessage("fixedTypeMapping"));
-        }
-        else {
-            super.register(javaType, xmlType, sf, dsf);
-        }
+        super.register(javaType, xmlType, sf, dsf);
+//        if (doneInit && !doAutoTypes) {
+//            throw new JAXRPCException(Messages.getMessage("fixedTypeMapping"));
+//        }
+//        else {
+//        }
     }
     public void removeSerializer(Class javaType, QName xmlType)
         throws JAXRPCException {

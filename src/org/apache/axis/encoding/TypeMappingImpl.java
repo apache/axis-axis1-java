@@ -340,6 +340,10 @@ public class TypeMappingImpl implements TypeMapping
         // Now get the serializer with the pair
         sf = (javax.xml.rpc.encoding.SerializerFactory) pair2SF.get(pair);
 
+        if (sf == null && delegate != null) {
+            sf = delegate.getSerializer(javaType, xmlType);
+        }
+
         // If not successful, use the javaType to get another Pair unless
         // we've got an array, in which case make sure we get the
         // ArraySerializer.
@@ -354,9 +358,6 @@ public class TypeMappingImpl implements TypeMapping
             }
         }
 
-        if (sf == null && delegate != null) {
-            sf = delegate.getSerializer(javaType, xmlType);
-        }
         return sf;
     }
 
@@ -399,6 +400,10 @@ public class TypeMappingImpl implements TypeMapping
         // Now get the serializer with the pair
         sf = (javax.xml.rpc.encoding.SerializerFactory) pair2SF.get(pair);
 
+        if (sf == null && delegate != null) {
+            return delegate.getXMLType(javaType, xmlType);
+        }
+
         // If not successful, use the xmlType to get
         // another pair.  For some xmlTypes (like SOAP_ARRAY)
         // all of the possible javaTypes are not registered.
@@ -411,10 +416,6 @@ public class TypeMappingImpl implements TypeMapping
             if (pair != null) {
                 sf = (javax.xml.rpc.encoding.SerializerFactory) pair2SF.get(pair);
             }
-        }
-
-        if (sf == null && delegate != null) {
-            return ((TypeMappingImpl)delegate).getXMLType(javaType, xmlType);
         }
 
         if (pair != null) {

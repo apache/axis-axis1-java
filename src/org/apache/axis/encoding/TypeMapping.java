@@ -138,6 +138,26 @@ public interface TypeMapping
      * Returns an array of all the classes contained within this mapping
      */
     public Class [] getAllClasses();
+
+    /**
+     * Get the exact XML type QName which will be used when serializing a
+     * given Class to a given type QName.  In other words, if we have:
+     *
+     * Class        TypeQName
+     * ----------------------
+     * Base         myNS:Base
+     * Child        myNS:Child
+     *
+     * and call getXMLType(Child.class, BASE_QNAME), we should get
+     * CHILD_QNAME.
+     *
+     * @param javaType
+     * @param xmlType
+     * @return the type's QName
+     * @throws javax.xml.rpc.JAXRPCException
+     */
+    QName getXMLType(Class javaType, QName xmlType)
+        throws JAXRPCException;
 }
 
 

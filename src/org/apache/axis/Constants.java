@@ -315,9 +315,9 @@ public class Constants {
     public static final String URI_DEFAULT_SCHEMA_XSD = URI_2001_SCHEMA_XSD;
 
     public static final String[] URIS_SCHEMA_XSD = {
-        URI_2001_SCHEMA_XSD,
+        URI_1999_SCHEMA_XSD,
         URI_2000_SCHEMA_XSD,
-        URI_1999_SCHEMA_XSD
+        URI_2001_SCHEMA_XSD
     };
     public static final QName [] QNAMES_NIL = {
         SchemaVersion2001.QNAME_NIL,
