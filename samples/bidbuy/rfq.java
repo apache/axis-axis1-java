@@ -289,6 +289,7 @@ public class rfq extends JPanel {
     c.anchor    = GridBagConstraints.WEST ;
     c.gridwidth = GridBagConstraints.REMAINDER ;
     purchasePanel.add( tQuantity = new JTextField(6), c );
+    tQuantity.setText("1");
 
     c.anchor    = GridBagConstraints.EAST ;
     c.gridwidth = 1 ;
