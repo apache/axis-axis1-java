@@ -396,7 +396,7 @@ public class Call implements javax.xml.rpc.Call {
         for ( i = 0 ; params != null && i < params.length ; i++ )
             if ( !(params[i] instanceof SOAPBodyElement) ) break ;
 
-        if ( i == params.length ) {
+        if ( params != null && i == params.length ) {
             /* ok, we're doing Messaging, so build up the message */
             /******************************************************/
             env = new SOAPEnvelope();
