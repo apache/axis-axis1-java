@@ -65,14 +65,7 @@ Copyright:
              <fileset dir="${axis.home}" >
                <patternset>
                  <include name="test/**/build.xml"/>
-                 <exclude name="test/wsdl/interop3/compound1/build.xml" />
-                 <exclude name="test/wsdl/interop3/compound2/build.xml" />
-                 <exclude name="test/wsdl/interop3/docLit/build.xml" />
-                 <exclude name="test/wsdl/interop3/docLitParam/build.xml" />
-                 <exclude name="test/wsdl/interop3/rpcEnc/build.xml" />
-                 <exclude name="test/wsdl/interop3/import1/build.xml" />
-                 <exclude name="test/wsdl/interop3/import2/build.xml" />
-                 <exclude name="test/wsdl/interop3/import3/build.xml" />
+                 <exclude name="test/wsdl/interop3/**/build.xml" />
                </patternset>
              </fileset>
         </param>
@@ -253,14 +246,7 @@ Copyright:
              <fileset dir="${axis.home}" >
                 <patternset>
                  <include name="test/**/build.xml"/>
-                 <exclude name="test/wsdl/interop3/compound1/build.xml" />
-                 <exclude name="test/wsdl/interop3/compound2/build.xml" />
-                 <exclude name="test/wsdl/interop3/docLit/build.xml" />
-                 <exclude name="test/wsdl/interop3/docLitParam/build.xml" />
-                 <exclude name="test/wsdl/interop3/rpcEnc/build.xml" />
-                 <exclude name="test/wsdl/interop3/import1/build.xml" />
-                 <exclude name="test/wsdl/interop3/import2/build.xml" />
-                 <exclude name="test/wsdl/interop3/import3/build.xml" />
+                 <exclude name="test/wsdl/interop3/**/build.xml" />
                 </patternset>
              </fileset>
         </param>
@@ -276,14 +262,7 @@ Copyright:
              <fileset dir="${axis.home}" >
                 <patternset>
                  <include name="test/**/build.xml"/>
-                 <exclude name="test/wsdl/interop3/compound1/build.xml" />
-                 <exclude name="test/wsdl/interop3/compound2/build.xml" />
-                 <exclude name="test/wsdl/interop3/docLit/build.xml" />
-                 <exclude name="test/wsdl/interop3/docLitParam/build.xml" />
-                 <exclude name="test/wsdl/interop3/rpcEnc/build.xml" />
-                 <exclude name="test/wsdl/interop3/import1/build.xml" />
-                 <exclude name="test/wsdl/interop3/import2/build.xml" />
-                 <exclude name="test/wsdl/interop3/import3/build.xml" />
+                 <exclude name="test/wsdl/interop3/**/build.xml" />
                 </patternset>
              </fileset>
         </param>
@@ -310,14 +289,8 @@ Copyright:
              <fileset dir="${axis.home}" >
                 <patternset>
                  <include name="test/**/build.xml"/>
-                 <exclude name="test/wsdl/interop3/compound1/build.xml" />
-                 <exclude name="test/wsdl/interop3/compound2/build.xml" />
-                 <exclude name="test/wsdl/interop3/docLit/build.xml" />
-                 <exclude name="test/wsdl/interop3/docLitParam/build.xml" />
-                 <exclude name="test/wsdl/interop3/rpcEnc/build.xml" />
-                 <exclude name="test/wsdl/interop3/import1/build.xml" />
-                 <exclude name="test/wsdl/interop3/import2/build.xml" />
-                 <exclude name="test/wsdl/interop3/import3/build.xml" />
+                 <exclude name="test/wsdl/interop/build.xml" />
+                 <exclude name="test/wsdl/interop3/**/build.xml" />
                 </patternset>
              </fileset>
         </param>
