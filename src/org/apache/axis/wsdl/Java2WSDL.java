@@ -228,7 +228,7 @@ public class Java2WSDL {
      * addOptions
      * Add option descriptions to the tool.  Allows
      * extended classes to add additional options.
-     * @param CLOptionDescriptor[] the options
+     * @param newOptions CLOptionDescriptor[] the options
      */
     protected void addOptions(CLOptionDescriptor[] newOptions) {
         if (newOptions != null && newOptions.length > 0) {
@@ -242,7 +242,7 @@ public class Java2WSDL {
 
     /**
      * Parse an option
-     * @param CLOption is the option 
+     * @param option CLOption is the option
      */
     protected void parseOption(CLOption option) {
         String value;
@@ -417,7 +417,7 @@ public class Java2WSDL {
     /**
      * run 
      * checks the command-line arguments and runs the tool.
-     * @param String[] command-line arguments.
+     * @param args String[] command-line arguments.
      */
     protected void run(String[] args) {
         // Parse the arguments
@@ -488,7 +488,7 @@ public class Java2WSDL {
    /**
      * Main
      * Run the Java2WSDL emitter with the specified command-line arguments
-     * @param String[] command-line arguments
+     * @param args String[] command-line arguments
      */
     public static void main(String args[]) {
         Java2WSDL java2wsdl = new Java2WSDL();

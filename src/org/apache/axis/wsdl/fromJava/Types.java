@@ -57,9 +57,7 @@
 package org.apache.axis.wsdl.fromJava;
 
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisProperties;
 import org.apache.axis.Constants;
-import org.apache.axis.encoding.DefaultTypeMappingImpl;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.SerializerFactory;
 import org.apache.axis.encoding.SimpleType;
@@ -168,9 +166,7 @@ public class Types {
                 Node node = elements.item(i);
                 if (node.getLocalName() != null &&
                     node.getLocalName().equals("types")) {
-                    Document emptyDoc = XMLUtils.newDocument(inputWSDL);
                     wsdlTypesElem = (Element) node;
-                    
                 }
             }
         }
@@ -248,11 +244,21 @@ public class Types {
             type = JavaUtils.getHolderValueType(type);
         }
 
+        if (qname == null) {
+            qname = getTypeQName(type);
+            if (qname == null) {
+                throw new AxisFault("Type was " + type.getName()); // FIXME!
+            }
+        }
+
         /**
          * No need to do anything if this is a simple type (i.e. in the
          * xsd or soap-enc schemas already)
          */
-        if (isSimpleType(type)) {
+        String nsURI = qname.getNamespaceURI();
+        if (Constants.isSchemaXSD(nsURI) ||
+                (Constants.isSOAP_ENC(nsURI) &&
+                  !"Array".equals(qname.getLocalPart()))) {
             return qname;
         }
 
@@ -463,12 +469,23 @@ public class Types {
      * Then return the qualified string representation of the generated type
      *
      * @param type Class for which to generate schema
-     * @param qname of the type to write
      * @return a prefixed string for the schema type
      */
     public String writeType(Class type) throws AxisFault {
         return writeType(type, null);
     }
+
+    /**
+     * Write a schema representation for the given <code>Class</code>. Recurse
+     * through all the public fields as well as fields represented by java
+     * bean compliant accessor methods.
+     *
+     * Then return the qualified string representation of the generated type
+     *
+     * @param type Class for which to generate schema
+     * @param qName of the type to write
+     * @return a prefixed string for the schema type
+     */
     public String writeType(Class type, QName qName) throws AxisFault {
         // Get a corresponding QName if one is not provided
         if (qName == null ||
@@ -477,14 +494,13 @@ public class Types {
         }
 
         // Quick return if schema type
-        if (isSimpleType(type)) {
-            if (Constants.isSchemaXSD(qName.getNamespaceURI())) {
-                return Constants.NS_PREFIX_SCHEMA_XSD + ":" +
+        if (Constants.isSchemaXSD(qName.getNamespaceURI())) {
+            return Constants.NS_PREFIX_SCHEMA_XSD + ":" +
                     qName.getLocalPart();
-            } else {
-                return Constants.NS_PREFIX_SOAP_ENC + ":" +
+        } else if (Constants.isSOAP_ENC(qName.getNamespaceURI()) &&
+                      !"Array".equals(qName.getLocalPart())) {
+            return Constants.NS_PREFIX_SOAP_ENC + ":" +
                     qName.getLocalPart();
-            }
         }
 
         // look up the serializer in the TypeMappingRegistry
@@ -727,57 +743,21 @@ public class Types {
     }
 
     /**
-     * Is the given class one of the simple types defined by Schema
-     * (per JSR 101 v.0.6)
-     * @param type input Class
-     * @return true if the type is a simple schema type
-     */
-    public boolean isSimpleSchemaType(Class type) {
-      return (type == java.lang.String.class ||
-              type == java.lang.Boolean.TYPE  ||
-              type == java.lang.Byte.TYPE ||
-              type == java.lang.Double.TYPE ||
-              type == java.lang.Float.TYPE ||
-              type == java.lang.Integer.TYPE ||
-              type == java.lang.Long.TYPE ||
-              type == java.lang.Short.TYPE ||
-              type == java.math.BigInteger.class ||
-              type == java.math.BigDecimal.class ||
-              type == QName.class ||
-              type == java.util.Calendar.class ||
-              type == org.apache.axis.encoding.Token.class ||
-              type == org.apache.axis.encoding.NormalizedString.class ||
-              //type == Byte[].class ||
-              type == byte[].class);
-    }
-
-    /**
-     * Is the given class one of the simple types defined by SoapEncoding.
-     * (per JSR 101 v.0.6)
-     * @param type input Class
-     * @return true if the type is a simple soap encoding type
-     */
-    boolean isSimpleSoapEncodingType(Class type) {
-      return (type == java.lang.String.class ||
-              type == java.lang.Boolean.class  ||
-              type == java.lang.Byte.class ||
-              type == java.lang.Double.class ||
-              type == java.lang.Float.class ||
-              type == java.lang.Integer.class ||
-              type == java.lang.Long.class ||
-              type == java.lang.Short.class ||
-              type == java.math.BigDecimal.class ||
-              type == byte[].class);
-    }
-
-    /**
-     * Is the given class one of the simple types
+     * Is the given class one of the simple types?  In other words,
+     * do we have a mapping for this type which is in the xsd or
+     * soap-enc namespaces?
+     *
      * @param type input Class
      * @return true if the type is a simple type
      */
     boolean isSimpleType(Class type) {
-        return (isSimpleSchemaType(type) ||
-                isSimpleSoapEncodingType(type));
+        QName qname = tm.getTypeQName(type);
+        if (qname == null)
+            return false;  // No mapping
+
+        String nsURI = qname.getNamespaceURI();
+        return (Constants.isSchemaXSD(nsURI) ||
+                Constants.isSOAP_ENC(nsURI));
     }
 
     /**
