@@ -587,7 +587,7 @@ public class Message extends javax.xml.soap.SOAPMessage
      */
     public String getContentDescription() {
         String values[] = headers.getHeader(HTTPConstants.HEADER_CONTENT_DESCRIPTION);
-        if(values.length > 0)
+        if(values != null && values.length > 0)
             return values[0];
         return null;
     }
