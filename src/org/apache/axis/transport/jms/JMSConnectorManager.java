@@ -55,24 +55,14 @@
 
 package org.apache.axis.transport.jms;
 
-import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
-import org.apache.axis.MessageContext;
-import org.apache.axis.client.Call;
-import org.apache.axis.client.Transport;
 import org.apache.axis.components.jms.JMSVendorAdapter;
-import org.apache.axis.components.jms.JMSVendorAdapterFactory;
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.transport.jms.JMSConstants;
 import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 
-import javax.jms.Destination;
-import java.util.Collection;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Vector;
 
 /**
  * JMSConnectorManager manages a pool of connectors and works with the

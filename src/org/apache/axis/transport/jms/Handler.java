@@ -55,9 +55,8 @@
 
 package org.apache.axis.transport.jms;
 
-import org.apache.axis.transport.jms.JMSConstants;
-
-import java.net.*;
+import java.net.URL;
+import java.net.URLConnection;
 
 /**
  * URLStreamHandler for the "jms" protocol

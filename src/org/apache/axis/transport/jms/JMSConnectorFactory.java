@@ -59,12 +59,7 @@ import org.apache.axis.components.jms.JMSVendorAdapter;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
-import javax.jms.QueueConnectionFactory;
-import javax.jms.TopicConnectionFactory;
-
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Vector;
 
 /**
  * JMSConnectorFactory is a factory class for creating JMSConnectors. It can

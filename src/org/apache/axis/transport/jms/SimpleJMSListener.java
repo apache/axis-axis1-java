@@ -55,17 +55,15 @@
 
 package org.apache.axis.transport.jms;
 
-import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.components.jms.JMSVendorAdapter;
 import org.apache.axis.components.jms.JMSVendorAdapterFactory;
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.Options;
 import org.apache.commons.logging.Log;
 
 import javax.jms.BytesMessage;
-import javax.jms.Destination;
-import javax.jms.JMSException;
 import javax.jms.MessageListener;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;

@@ -55,7 +55,7 @@
 
 package org.apache.axis.transport.jms;
 
-import java.net.*;
+import java.net.URL;
 
 /**
  * URLConnection for the "jms" protocol
