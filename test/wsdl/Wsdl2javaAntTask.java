@@ -144,6 +144,7 @@ public class Wsdl2javaAntTask extends Task
 
             // emitter.emit(doc);
         } catch (Throwable t) {
+            t.printStackTrace();
             throw new BuildException("Error while running " + getClass().getName(), t); 
         }
     }
