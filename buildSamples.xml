@@ -178,7 +178,7 @@
 
 <!-- =========================================================================== -->
   <taskdef name="foreach" classname="test.functional.ant.ForeachTask">
-	<classpath refid="classpath"/>
+    <classpath refid="classpath"/>
   </taskdef>
 
   <target name="compile" depends="printEnv,copy">
@@ -191,8 +191,8 @@
   </target>
 
   <target name="buildThem">
-        <echo message="samples/${file}"/>
-	<ant inheritAll="true" antfile="samples/${file}"/>
+    <echo message="samples/${file}"/>
+    <ant inheritAll="true" antfile="samples/${file}"/>
   </target>
 
 <!-- =========================================================================== -->
