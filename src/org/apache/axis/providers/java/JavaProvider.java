@@ -90,7 +90,7 @@ public abstract class JavaProvider extends BasicProvider {
     public static final String OPTION_CLASSPATH = "classPath";
 
     private String classNameOption = "className";
-    private String allowedMethodsOption = "methodName";
+    private String allowedMethodsOption = "allowedMethods";
 
     /**
      * Get the service object whose method actually provides the service.
@@ -195,7 +195,7 @@ public abstract class JavaProvider extends BasicProvider {
         /* Now get the service (RPC) specific info  */
         /********************************************/
         String  clsName    = getServiceClassName(service);
-        String  allowedMethods = getServiceAllowedMethods(service);
+        String  allowedMethods = getAllowedMethods(service);
 
         if ((clsName == null) || clsName.equals(""))
             throw new AxisFault("Server.NoClassForService",
@@ -204,7 +204,8 @@ public abstract class JavaProvider extends BasicProvider {
 
         if ((allowedMethods == null) || allowedMethods.equals(""))
             throw new AxisFault("Server.NoMethodConfig",
-                JavaUtils.getMessage("noOption00", getServiceAllowedMethodsOptionName(), serviceName),
+                JavaUtils.getMessage("noOption00", 
+                                     allowedMethodsOption, serviceName),
                 null, null);
 
         if (allowedMethods.equals("*"))
@@ -273,7 +274,7 @@ public abstract class JavaProvider extends BasicProvider {
         }
 
         JavaClass jc	  = JavaClass.find(obj.getClass());
-        String  allowedMethods = getServiceAllowedMethods(service);
+        String  allowedMethods = getAllowedMethods(service);
 
         /** ??? Should we enforce setting methodName?  As it was,
          * if it's null, we allowed any method.  This seems like it might
@@ -318,7 +319,15 @@ public abstract class JavaProvider extends BasicProvider {
 
     }
 
-
+    private String getAllowedMethods(Handler service)
+    {
+        String val = (String)service.getOption(allowedMethodsOption);
+        if (val == null || val.length() == 0) {
+            // Try the old option for backwards-compatibility
+            val = (String)service.getOption("methodName");
+        }
+        return val;
+    }
 
     ///////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////
@@ -347,27 +356,14 @@ public abstract class JavaProvider extends BasicProvider {
      */
     protected String getServiceClassName(Handler service)
     {
-        return (String) service.getOption( classNameOption );
+        return (String) service.getOption( getServiceClassNameOptionName() );
     }
-    /**
-     *
-     */
-    protected String getServiceAllowedMethods(Handler service)
-    {
-        return (String) service.getOption( allowedMethodsOption );
-    }
+
     /**
      *
      */
     protected String getServiceClassNameOptionName()
     {
         return classNameOption;
-    }
-    /**
-     *
-     */
-    protected String getServiceAllowedMethodsOptionName()
-    {
-        return allowedMethodsOption;
     }
 }

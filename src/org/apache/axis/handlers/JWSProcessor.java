@@ -237,7 +237,7 @@ public class JWSProcessor extends BasicHandler
             /** For now, allow all methods - we probably want to have a way to
             * configure this in the future.
             */
-            rpc.setOption( "methodName", "*");
+            rpc.setOption( "allowedMethods", "*");
 
             rpc.init();   // ??
             if (doWsdl)
