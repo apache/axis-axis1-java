@@ -125,7 +125,7 @@ public class Wsdl2javaTestSuite extends TestSuite {
 
                         if ( !loader.isClassRegistered(className) ) {
                             String classFile = Wsdl2javaTestSuite.WORK_DIR;
-                            classFile += className.replace('.', File.separatorChar) + ".java";
+                            classFile += className.replace('.', File.separatorChar) + ".class";
                             loader.registerClass(className, classFile);
                         }
 
