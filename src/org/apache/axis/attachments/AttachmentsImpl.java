@@ -107,13 +107,11 @@ public class AttachmentsImpl implements Attachments {
     /**
      * Construct one of these on a parent Message.
      * Should only ever be called by Message constructor!
-     * @param initialContents should be anything but today only a stream is
-     *        supported.
-     * @param The mime content type of the stream for transports that provide
-     *        it.
      *
-     * @param intialContents
-     * @param contentType
+     * @param intialContents should be anything but today only a stream is
+     *        supported.
+     * @param contentType The mime content type of the stream for transports
+     *        that provide it.
      * @param contentLocation
      *
      * @throws org.apache.axis.AxisFault
@@ -205,9 +203,8 @@ public class AttachmentsImpl implements Attachments {
      * This method uses getAttacmentByReference() to look for attachment.
      *     If attachment has been found, it will be removed from the list, and
      *     returned to the user.
-     * @param  The reference that referers to an attachment.
+     * @param reference The reference that referers to an attachment.
      *
-     * @param reference
      * @return The part associated with the removed attachment, or null.
      *
      * @throws org.apache.axis.AxisFault
@@ -236,7 +233,7 @@ public class AttachmentsImpl implements Attachments {
      * Adds an existing attachment to this list.
      * Note: Passed part will be bound to this message.
      * @param newPart new part to add
-     * @returns Part old attachment with the same Content-ID, or null.
+     * @return Part old attachment with the same Content-ID, or null.
      *
      * @return
      *
@@ -330,9 +327,8 @@ public class AttachmentsImpl implements Attachments {
      *     Note: if Content-Id or Content-Location headers have changed by outside
      *     code, lookup will not return proper values. In order to change these
      *     values attachment should be removed, then added again.
-     * @param  The reference in the xml that referers to an attachment.
+     * @param reference The reference in the xml that referers to an attachment.
      *
-     * @param reference
      * @return The part associated with the attachment.
      *
      * @throws org.apache.axis.AxisFault
@@ -654,5 +650,21 @@ public class AttachmentsImpl implements Attachments {
         if (value.equalsIgnoreCase("DIME")) return SEND_TYPE_DIME;
         if (value.equalsIgnoreCase("NONE")) return SEND_TYPE_NONE;
         return SEND_TYPE_NOTSET;
+    }
+    
+    /**
+     * For a given sendType value, return a string representation.
+     */ 
+    public static String getSendTypeString(int value) {
+        if (value == SEND_TYPE_MIME) {
+            return "MIME";
+        }
+        if (value == SEND_TYPE_DIME) {
+            return "DIME";
+        }
+        if (value == SEND_TYPE_NONE) {
+            return "NONE";
+        }
+        return null;
     }
 }
