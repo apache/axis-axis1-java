@@ -1015,6 +1015,32 @@ public class Call implements javax.xml.rpc.Call {
     }
 
     /**
+     * Adds a parameter type as a soap:header.
+     *
+     * @param paramName     - Name of the parameter
+     * @param xmlType       - XML datatype of the parameter
+     * @param parameterMode - Mode of the parameter-whether IN, OUT or INOUT
+     * @param headerMode    - Mode of the header. Even if this is an INOUT
+     *                      parameter, it need not be in the header in both
+     *                      directions.
+     * @throws JAXRPCException - if isParameterAndReturnSpecRequired returns
+     *                         false, then addParameter MAY throw
+     *                         JAXRPCException....actually Axis allows
+     *                         modification in such cases
+     */
+    public void addParameterAsHeader(QName paramName, QName xmlType,
+                                     ParameterMode parameterMode,
+                                     ParameterMode headerMode) {
+        Class javaType = null;
+        TypeMapping tm = getTypeMapping();
+        if (tm != null) {
+            javaType = tm.getClassForQName(xmlType);
+        }
+        addParameterAsHeader(paramName, xmlType, javaType,
+                parameterMode, headerMode);
+    }
+     
+    /**
 
      * Adds a parameter type as a soap:header.
      * @param paramName - Name of the parameter
@@ -1409,7 +1435,17 @@ public class Call implements javax.xml.rpc.Call {
             Parameter p = (Parameter) parameters.list.get(j);
             // Get the QName representing the parameter type
             QName paramType = Utils.getXSIType(p);
-            this.addParameter( p.getQName(), paramType, modes[p.getMode()]);
+
+            // checks whether p is an IN or OUT header 
+            // and adds it as a header parameter else
+            // add it to the body
+            ParameterMode mode = modes[p.getMode()];
+            if (p.isInHeader() || p.isOutHeader()) {
+                this.addParameterAsHeader(p.getQName(), paramType,
+                        mode, mode);
+            } else {
+                this.addParameter(p.getQName(), paramType, mode);
+            } 
         }
 
         Map faultMap = bEntry.getFaults();
@@ -2762,10 +2798,10 @@ public class Call implements javax.xml.rpc.Call {
 
     /**
      * Implement async invocation by running the request in a new thread
-     * @todo this is not a good way to do stuff, as it has no error reporting facility
      * @param msgContext
      */
     private void invokeEngineOneWay(final MessageContext msgContext) {
+        //TODO: this is not a good way to do stuff, as it has no error reporting facility
         //create a new class
         Runnable runnable = new Runnable(){
             public void run() {
