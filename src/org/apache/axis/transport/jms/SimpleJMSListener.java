@@ -102,7 +102,7 @@ public class SimpleJMSListener implements MessageListener
                              String password, boolean doThreads)
         throws Exception
     {
-        this.doThreads = doThreads;
+        SimpleJMSListener.doThreads = doThreads;
 
         try {
             // create a JMS connector using the default vendor adapter
