@@ -64,4 +64,12 @@ public class DetailEntry extends MessageElement implements javax.xml.soap.Detail
     public DetailEntry(javax.xml.soap.Name name){
         super(name);
     }
+
+    public javax.xml.soap.SOAPElement addTextNode(String text) throws javax.xml.soap.SOAPException {
+        javax.xml.soap.SOAPElement element = super.addTextNode(text);
+        org.apache.axis.message.Detail detail = (org.apache.axis.message.Detail)this.getParentElement();
+        org.apache.axis.AxisFault fault = detail.getFault();
+        fault.addFaultDetailString(text);
+        return element;
+    }
 }
