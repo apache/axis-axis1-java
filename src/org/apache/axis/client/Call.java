@@ -376,6 +376,9 @@ public class Call implements javax.xml.rpc.Call {
         ////////////////////////////////////////////////////////////////////
         BindingOperation bop = binding.getBindingOperation(opName,
                                                            null, null);
+        if ( bop == null )
+            throw new JAXRPCException( JavaUtils.getMessage("noOperation02",
+                                                            opName ));
         this.removeProperty(HTTPConstants.MC_HTTP_SOAPACTION);
         list = bop.getExtensibilityElements();
         for ( int i = 0 ; list != null && i < list.size() ; i++ ) {
