@@ -81,12 +81,6 @@ public class TypeMappingRegistry implements Serializer {
     
     Hashtable s;
     Hashtable d;
-    DeserializationContext context = null;
-    
-    public void setDeserializationContext(DeserializationContext context)
-    {
-        this.context = context;
-    }
     
     public void addSerializer(Class _class, QName qName, Serializer serializer) {
         if (s == null) s = new Hashtable();
@@ -124,7 +118,6 @@ public class TypeMappingRegistry implements Serializer {
             return null;
         
         DeserializerBase dSer = factory.getDeserializer();
-        dSer.setDeserializationContext(context);
         return dSer;
     }
     

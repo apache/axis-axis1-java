@@ -79,7 +79,6 @@ public class DeserializationContext
     public DeserializationContext(SOAPSAXHandler baseHandler)
     {
         this.baseHandler = baseHandler;
-        mappingRegistry.setDeserializationContext(this);
     }
     
     public SOAPSAXHandler getSAXHandler()
@@ -144,9 +143,6 @@ public class DeserializationContext
     public void setTypeMappingRegistry(TypeMappingRegistry reg)
     {
         mappingRegistry = reg;
-        if (reg != null) {
-            reg.setDeserializationContext(this);
-        }
     }
 
     public TypeMappingRegistry getTypeMappingRegistry()
@@ -167,6 +163,8 @@ public class DeserializationContext
     
     public DeserializerBase getDeserializer(QName qName)
     {
-        return mappingRegistry.getDeserializer(qName);
+        DeserializerBase dSer = mappingRegistry.getDeserializer(qName);
+        dSer.setDeserializationContext(this);
+        return dSer;
     }
 }
