@@ -56,6 +56,7 @@
 package org.apache.axis.client;
 
 import org.apache.axis.utils.Messages;
+import org.apache.axis.utils.ClassUtils;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -94,7 +95,7 @@ public class HappyClient {
      */
     boolean resourceExists(String resource) {
         boolean found;
-        InputStream instream = this.getClass().getResourceAsStream(resource);
+        InputStream instream = ClassUtils.getResourceAsStream(this.getClass(),resource);
         found = instream != null;
         if (instream != null) {
             try {
