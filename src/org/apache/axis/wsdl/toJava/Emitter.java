@@ -57,6 +57,7 @@ package org.apache.axis.wsdl.toJava;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -142,6 +143,25 @@ public class Emitter extends Parser {
 
     /** Field outputDir */
     private String outputDir = null;
+    
+    /** Field nsIncludes - defines a list of namespaces to specifically
+     * include in the generated source code. If non-empty, anything
+     * not in this list should be excluded. If empty, everything in this
+     * and not specifically excluded should be generated. 
+     */
+    protected List nsIncludes = new ArrayList();
+    
+    /** Field nsIncludes - defines a list of namespaces to specifically 
+     * exclude from generated source code. Any entry in this list that 
+     * is in conflict with the includes list should be ignored and 
+     * generated.
+     */
+    protected List nsExcludes = new ArrayList();
+    
+    /** Field properties - defines a set of general purpose properties
+     * that can be used by custom JavaGeneratorFactories.
+     */
+    protected List properties = new ArrayList();
 
     /**
      * Default constructor.
@@ -359,6 +379,48 @@ public class Emitter extends Parser {
      */
     public HashMap getNamespaceMap() {
         return delayedNamespacesMap;
+    }
+    
+    /** Sets the list of namespaces to specifically include
+     * in the generated code.
+     */
+    public void setNamespaceIncludes(List nsIncludes) {
+        this.nsIncludes = nsIncludes;
+    }
+
+    /** Returns the list of namespaces specifically excluded
+     * from the generated code.
+     */
+    public List getNamespaceIncludes() {
+        return this.nsIncludes;
+    }
+    
+    /** Sets the list of namespaces to specifically exclude
+     * from the generated source.
+     */
+    public void setNamespaceExcludes(List nsExcludes) {
+        this.nsExcludes = nsExcludes;
+    }
+    
+    /** Returns the list of excludes to specifically exclude
+     * from the generated source.
+     */
+    public List getNamespaceExcludes() {
+        return this.nsExcludes;
+    }
+    
+    /** Sets the list of extension properties for custom 
+     * JavaGeneratorFactories.
+     */ 
+    public void setProperties(List properties) {
+        this.properties = properties;
+    }
+    
+    /** Gets the list of extension properties for custom
+     * JavaGeneratorFactories.
+     */ 
+    public List getProperties() {
+        return this.properties;
     }
 
     /**

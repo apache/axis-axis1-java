@@ -171,9 +171,9 @@ public class JavaBuildFileWriter extends JavaWriter {
      * @see org.apache.axis.wsdl.gen.Generator#generate()
      */
     public void generate() throws IOException {
-		if(emitter.isBuildFileWanted()){
-        	super.generate();
-		}
+//		if(emitter.isBuildFileWanted()){
+//        	super.generate();
+//		}
     }
 
 }

@@ -54,6 +54,7 @@
  */
 package org.apache.axis.wsdl.toJava;
 
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.DefaultTypeMappingImpl;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.utils.JavaUtils;
@@ -75,6 +76,7 @@ import org.apache.axis.wsdl.symbolTable.SymTabEntry;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.Type;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
+import org.apache.commons.logging.Log;
 
 import javax.wsdl.Binding;
 import javax.wsdl.Definition;
@@ -98,6 +100,8 @@ import java.util.Vector;
  * This is Wsdl2java's implementation of the GeneratorFactory
  */
 public class JavaGeneratorFactory implements GeneratorFactory {
+    private static final Log log_ =
+        LogFactory.getLog(JavaGeneratorFactory.class.getName());
 
     /** Field emitter */
     protected Emitter emitter;
@@ -248,12 +252,14 @@ public class JavaGeneratorFactory implements GeneratorFactory {
      * @return 
      */
     public Generator getGenerator(Message message, SymbolTable symbolTable) {
-
-        MessageEntry mEntry = symbolTable.getMessageEntry(message.getQName());
-
-        messageWriters.addStuff(new NoopGenerator(), mEntry, symbolTable);
-
-        return messageWriters;
+        if (include(message.getQName())) {
+            MessageEntry mEntry = symbolTable.getMessageEntry(message.getQName());
+            messageWriters.addStuff(new NoopGenerator(), mEntry, symbolTable);
+            return messageWriters;
+        }
+        else {
+            return new NoopGenerator();
+        } 
     }    // getGenerator
 
     /** Return Wsdl2java's JavaPortTypeWriter object. */
@@ -267,13 +273,15 @@ public class JavaGeneratorFactory implements GeneratorFactory {
      * @return 
      */
     public Generator getGenerator(PortType portType, SymbolTable symbolTable) {
-
-        PortTypeEntry ptEntry =
-                symbolTable.getPortTypeEntry(portType.getQName());
-
-        portTypeWriters.addStuff(new NoopGenerator(), ptEntry, symbolTable);
-
-        return portTypeWriters;
+        if (include(portType.getQName())) {
+            PortTypeEntry ptEntry =
+                    symbolTable.getPortTypeEntry(portType.getQName());
+            portTypeWriters.addStuff(new NoopGenerator(), ptEntry, symbolTable);
+            return portTypeWriters;
+        }
+        else {
+            return new NoopGenerator();
+        }
     }    // getGenerator
 
     /** Return Wsdl2java's JavaBindingWriter object. */
@@ -287,14 +295,16 @@ public class JavaGeneratorFactory implements GeneratorFactory {
      * @return 
      */
     public Generator getGenerator(Binding binding, SymbolTable symbolTable) {
-
-        Generator writer = new JavaBindingWriter(emitter, binding,
-                symbolTable);
-        BindingEntry bEntry = symbolTable.getBindingEntry(binding.getQName());
-
-        bindingWriters.addStuff(writer, bEntry, symbolTable);
-
-        return bindingWriters;
+        if (include(binding.getQName())) {
+            Generator writer = new JavaBindingWriter(emitter, binding,
+                    symbolTable);
+            BindingEntry bEntry = symbolTable.getBindingEntry(binding.getQName());
+            bindingWriters.addStuff(writer, bEntry, symbolTable);
+            return bindingWriters;
+        }
+        else {
+            return new NoopGenerator();
+        }
     }    // getGenerator
 
     /** Return Wsdl2java's JavaServiceWriter object. */
@@ -308,14 +318,16 @@ public class JavaGeneratorFactory implements GeneratorFactory {
      * @return 
      */
     public Generator getGenerator(Service service, SymbolTable symbolTable) {
-
-        Generator writer = new JavaServiceWriter(emitter, service,
-                symbolTable);
-        ServiceEntry sEntry = symbolTable.getServiceEntry(service.getQName());
-
-        serviceWriters.addStuff(writer, sEntry, symbolTable);
-
-        return serviceWriters;
+        if (include(service.getQName())) {
+            Generator writer = new JavaServiceWriter(emitter, service,
+                    symbolTable);
+            ServiceEntry sEntry = symbolTable.getServiceEntry(service.getQName());
+            serviceWriters.addStuff(writer, sEntry, symbolTable);
+            return serviceWriters;
+        }
+        else {
+            return new NoopGenerator();
+        }
     }    // getGenerator
 
     /** Return Wsdl2java's JavaTypeWriter object. */
@@ -329,12 +341,14 @@ public class JavaGeneratorFactory implements GeneratorFactory {
      * @return 
      */
     public Generator getGenerator(TypeEntry type, SymbolTable symbolTable) {
-
-        Generator writer = new JavaTypeWriter(emitter, type, symbolTable);
-
-        typeWriters.addStuff(writer, type, symbolTable);
-
-        return typeWriters;
+        if (include(type.getQName())) {
+            Generator writer = new JavaTypeWriter(emitter, type, symbolTable);
+            typeWriters.addStuff(writer, type, symbolTable);
+            return typeWriters;
+        }
+        else {
+            return new NoopGenerator();
+        }
     }    // getGenerator
 
     /** Return Wsdl2java's JavaDefinitionWriter object. */
@@ -349,10 +363,13 @@ public class JavaGeneratorFactory implements GeneratorFactory {
      */
     public Generator getGenerator(Definition definition,
                                   SymbolTable symbolTable) {
-
-        defWriters.addStuff(null, definition, symbolTable);
-
-        return defWriters;
+        if (include(definition.getQName())) {
+            defWriters.addStuff(null, definition, symbolTable);
+            return defWriters;
+        }
+        else {
+            return new NoopGenerator();
+        }
     }    // getGenerator
 
     // Hack class just to play with the idea of adding writers
@@ -1386,4 +1403,46 @@ public class JavaGeneratorFactory implements GeneratorFactory {
 
         return btm;
     }
+    
+    /**
+     * Determines whether the QName supplied should be generated by comparing
+     * the namespace for the QName against the included and excluded names.
+     <p/>
+     <ul>
+     <li>if both the includes and excludes are both empty, 
+             the element is generated</li>
+     <li>if the namespace is in the includes, 
+             the element is generated</li>
+     <li>if the namespace is not in the excludes and the includes are empty,
+             the element will be generated.  
+     <li>if the namespace is only in the excludes, 
+             the element is not generated</li>
+     <li>if the namespace is not in the includes and the includes are not 
+             empty, the element is not generated</li>
+        @param qName
+        @return
+     */
+    protected boolean include(QName qName) {
+        String namespace =
+            (qName != null && qName.getNamespaceURI() != null)
+                ? qName.getNamespaceURI()
+                : "";
+
+        boolean doInclude = false;
+        NamespaceSelector selector = new NamespaceSelector(namespace);
+        if (qName == null
+            || emitter == null
+            || emitter.getNamespaceIncludes().contains(selector)
+            || (emitter.getNamespaceIncludes().size() == 0
+                && !emitter.getNamespaceExcludes().contains(selector))) {
+            doInclude = true;
+        }
+        else {
+            log_.info(
+                "excluding code generation for non-included QName:" + qName);
+
+        }
+        return doInclude;
+    }
+
 }    // class JavaGeneratorFactory

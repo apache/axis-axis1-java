@@ -1,0 +1,245 @@
+<?xml version="1.0" ?>
+<!DOCTYPE project [
+        <!ENTITY properties SYSTEM "file:../../../xmls/properties.xml">
+        <!ENTITY paths  SYSTEM "file:../../../xmls/path_refs.xml">
+        <!ENTITY taskdefs SYSTEM "file:../../../xmls/taskdefs.xml">
+        <!ENTITY taskdefs_post_compile SYSTEM "file:../../../xmls/taskdefs_post_compile.xml">
+        <!ENTITY targets SYSTEM "file:../../../xmls/targets.xml">
+]>
+
+<!-- ===================================================================
+<description>
+   Test/Sample Component file for Axis
+
+Notes:
+   This is a build file for use with the Jakarta Ant build tool.
+
+Prerequisites:
+
+   jakarta-ant from http://jakarta.apache.org
+
+Build Instructions:
+   To compile
+        ant compile
+   To execute
+        ant run
+
+Author:
+  Matt Seibert mseibert@us.ibm.com
+
+Copyright:
+  Copyright (c) 2002-2003 Apache Software Foundation.
+</description>
+==================================================================== -->
+
+<project default="compile">
+
+<property name="axis.home" location="../../.." />
+<property name="componentName" value="test/wsdl/selectivefilegen" />
+        &properties;
+        &paths;
+        &taskdefs;
+        &taskdefs_post_compile;
+        &targets;
+
+<target name="clean">
+    <echo message="Removing ${build.dir}/classes/${componentName} and ${build.dir}/work/${componentName}" />
+    <delete dir="${build.dir}/classes/${componentName}"/>
+    <delete dir="${build.dir}/work/${componentName}"/>
+</target>
+
+<target name="copy" depends="setenv">
+    <ant inheritAll="${ant.inheritAll}" 
+         inheritRefs="${ant.inheritRefs}" 
+         dir="${axis.home}/test/wsdl/filegen" 
+         antfile="build.xml" 
+         target="compile"/>
+</target>
+
+<target name="compile" depends="copy">
+    <copy todir="${build.dir}/work/test/wsdl/selectivefilegen" overwrite="yes">
+      <fileset dir="${axis.home}/test/wsdl/selectivefilegen">
+        <include name="*TestCase.java"/>
+        <include name="*Impl.java"/>
+        <include name="Bean1.java"/>
+        <include name="Bean2.java"/>
+      </fileset>
+    </copy>
+
+  <echo message="Compiling test.wsdl.selectivefilegen"/>
+    <!-- allnamespaces 
+    -->
+    <echo message="all namespaces test"/>
+    <wsdl2java url="${axis.home}/test/wsdl/selectivefilegen/selectivefilegen.wsdl"
+               output="${axis.home}/build/work"
+               testcase="yes"
+               skeletonDeploy="true"
+               serverSide="true">
+        <mapping namespace="urn:services.selectivefilegen.wsdl.test"
+                 package="test.wsdl.selectivefilegen.allnamespaces.services"/>
+        <mapping namespace="urn:bean1.selectivefilegen.wsdl.test"
+                 package="test.wsdl.selectivefilegen.allnamespaces.bean1"/>
+        <mapping namespace="urn:bean2.selectivefilegen.wsdl.test"
+                 package="test.wsdl.selectivefilegen.allnamespaces.bean2"/>
+    </wsdl2java>
+
+    <!-- exluded bean 
+    -->
+    <echo message="exclude bean test"/>
+    <wsdl2java url="${axis.home}/test/wsdl/selectivefilegen/selectivefilegen.wsdl"
+               output="${axis.home}/build/work"
+               testcase="yes"
+               skeletonDeploy="true"
+               serverSide="true">
+        <mapping namespace="urn:services.selectivefilegen.wsdl.test"
+                 package="test.wsdl.selectivefilegen.excludedbean.services"/>
+        <!-- notice the bean1 namespace is mapped to an externally
+             generated implementation
+             -->
+        <mapping namespace="urn:bean1.selectivefilegen.wsdl.test"
+                 package="test.wsdl.selectivefilegen"/>
+        <mapping namespace="urn:bean2.selectivefilegen.wsdl.test"
+                 package="test.wsdl.selectivefilegen.excludedbean.bean2"/>
+        <nsexclude namespace="urn:bean1.selectivefilegen.wsdl.test"/>
+    </wsdl2java>
+    
+    <!-- excluded service 
+               -->
+    <echo message="exclude service test"/>
+    <wsdl2java url="${axis.home}/test/wsdl/selectivefilegen/selectivefilegen.wsdl"
+               output="${axis.home}/build/work"
+               testcase="yes"
+               skeletonDeploy="true"
+               serverSide="true">
+               <!-- no need to write a custom stub, although we could,
+               bacuse no one refers to it.
+                   -->
+        <mapping namespace="urn:services.selectivefilegen.wsdl.test"
+                 package="test.wsdl.selectivefilegen.excludedsvc.services"/>
+        <mapping namespace="urn:bean1.selectivefilegen.wsdl.test"
+                 package="test.wsdl.selectivefilegen.excludedsvc.bean1"/>
+        <mapping namespace="urn:bean2.selectivefilegen.wsdl.test"
+                 package="test.wsdl.selectivefilegen.excludedsvc.bean2"/>
+        <nsexclude namespace="urn:services.selectivefilegen.wsdl.test"/>
+    </wsdl2java>
+
+    <!-- include bean 
+    -->
+    <echo message="include bean test"/>
+    <wsdl2java url="${axis.home}/test/wsdl/selectivefilegen/selectivefilegen.wsdl"
+               output="${axis.home}/build/work"
+               testcase="yes"
+               skeletonDeploy="true"
+               serverSide="true">
+        <mapping namespace="urn:services.selectivefilegen.wsdl.test"
+                 package="test.wsdl.selectivefilegen.includedbean"/>
+        <mapping namespace="urn:bean1.selectivefilegen.wsdl.test"
+                 package="test.wsdl.selectivefilegen.includedbean"/>
+        <mapping namespace="urn:bean2.selectivefilegen.wsdl.test"
+                 package="test.wsdl.selectivefilegen.includedbean"/>
+        <nsinclude namespace="urn:bean1.selectivefilegen.wsdl.test"/>
+        <nsinclude namespace="urn:bean2.selectivefilegen.wsdl.test"/>
+    </wsdl2java>
+    
+    <!-- included service
+                 -->
+    <echo message="include service test"/>
+    <wsdl2java url="${axis.home}/test/wsdl/selectivefilegen/selectivefilegen.wsdl"
+               output="${axis.home}/build/work"
+               testcase="yes"
+               skeletonDeploy="true"
+               serverSide="true">
+        <mapping namespace="urn:services.selectivefilegen.wsdl.test"
+                 package="test.wsdl.selectivefilegen.includedsvc"/>
+                 <!-- map the next two namespaces to custom packages -->
+        <mapping namespace="urn:bean1.selectivefilegen.wsdl.test"
+                 package="test.wsdl.selectivefilegen"/>
+        <mapping namespace="urn:bean2.selectivefilegen.wsdl.test"
+                 package="test.wsdl.selectivefilegen"/>
+        <nsinclude namespace="urn:services.selectivefilegen.wsdl.test"/>
+    </wsdl2java>
+
+    <!-- cmd line exclude test -->
+    <echo message="cmd line exclude test"/>
+    <java classname="org.apache.axis.wsdl.WSDL2Java"
+	    fork="true">
+         <classpath>
+             <fileset dir="${axis.home}/build/lib" includes="*.jar"/>
+             <fileset dir="${lib.dir}">
+                <include name="**/*.jar"/>
+             </fileset>
+         </classpath>
+         <sysproperty key="log4j.configuration"
+                      value="${axis.home}/build/lib/log4j.properties"/>
+         <arg line="-o ${axis.home}/build/work"/>
+         <arg line="-t"/>
+         <arg line="-S true"/>
+         <arg value="--NStoPkg"/>
+         <arg value="urn:services.selectivefilegen.wsdl.test=test.wsdl.selectivefilegen.cmdlinex.services"/>
+         <arg value="--NStoPkg"/>
+         <arg value="urn:bean1.selectivefilegen.wsdl.test=test.wsdl.selectivefilegen"/>
+         <arg value="--NStoPkg"/>
+         <arg value="urn:bean2.selectivefilegen.wsdl.test=test.wsdl.selectivefilegen.cmdlinex.bean2"/>
+         <arg line="-x urn:bean1.selectivefilegen.wsdl.test"/>
+         <arg line="${axis.home}/test/wsdl/selectivefilegen/selectivefilegen.wsdl"/>
+    </java>
+
+    <!-- cmd line include test -->
+    <echo message="cmd line include test"/>
+    <java classname="org.apache.axis.wsdl.WSDL2Java"
+	    fork="true">
+         <classpath>
+             <fileset dir="${axis.home}/build/lib" includes="*.jar"/>
+             <fileset dir="${lib.dir}">
+                <include name="**/*.jar"/>
+             </fileset>
+         </classpath>
+         <sysproperty key="log4j.configuration"
+                      value="${axis.home}/build/lib/log4j.properties"/>
+         <arg line="-o ${axis.home}/build/work"/>
+         <arg line="-t"/>
+         <arg line="-S true"/>
+         <arg value="--NStoPkg"/>
+         <arg value="urn:services.selectivefilegen.wsdl.test=test.wsdl.selectivefilegen.cmdlinei"/>
+         <arg value="--NStoPkg"/>
+         <arg value="urn:bean1.selectivefilegen.wsdl.test=test.wsdl.selectivefilegen.cmdlinei"/>
+         <arg value="--NStoPkg"/>
+         <arg value="urn:bean2.selectivefilegen.wsdl.test=test.wsdl.selectivefilegen.cmdlinei"/>
+         <arg line="-i urn:bean1.selectivefilegen.wsdl.test"/>
+         <arg line="-i urn:bean2.selectivefilegen.wsdl.test"/>
+         <arg line="${axis.home}/test/wsdl/selectivefilegen/selectivefilegen.wsdl"/>
+    </java>
+
+    <!-- property test - just look at the factoryProp printout using a 
+         compile -verbose option until a better test can be created.
+    -->
+    <echo message="property test"/>
+    <wsdl2java url="${axis.home}/test/wsdl/selectivefilegen/selectivefilegen.wsdl"
+               output="${axis.home}/build/work"
+               testcase="yes"
+               skeletonDeploy="true"
+               serverSide="true">
+        <mapping namespace="urn:services.selectivefilegen.wsdl.test"
+                 package="test.wsdl.selectivefilegen.property"/>
+        <mapping namespace="urn:bean1.selectivefilegen.wsdl.test"
+                 package="test.wsdl.selectivefilegen.property"/>
+        <mapping namespace="urn:bean2.selectivefilegen.wsdl.test"
+                 package="test.wsdl.selectivefilegen.property"/>
+        <nsinclude namespace="urn:nothing"/>
+        <property name="prop1" value="value1"/>
+        <property name="prop2" value="value2"/>
+        <property name="prop3" value="value3"/>
+    </wsdl2java>
+
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" nowarn="${nowarn}" fork="${javac.fork}"
+           debug="${debug}">
+      <classpath refid="classpath" />
+      <include name="test/wsdl/selectivefilegen/**/*.java" />
+    </javac>
+</target>
+
+<target name="run" >
+  <antcall target="execute-Component" />
+</target>
+
+</project>
