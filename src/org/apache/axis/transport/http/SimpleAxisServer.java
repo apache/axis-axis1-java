@@ -122,11 +122,10 @@ public class SimpleAxisServer implements Runnable {
         engine.init();
 
         // create and initialize a message context
-        MessageContext msgContext = new MessageContext();
+        MessageContext msgContext = new MessageContext(engine);
         Message        requestMsg = new Message("", "String");
         msgContext.setProperty(MessageContext.TRANS_INPUT , transportInName);
         msgContext.setProperty(MessageContext.TRANS_OUTPUT, transportOutName);
-        msgContext.setAxisEngine(engine);
 
         // Reusuable, buffered, content length controlled, InputStream
         NonBlockingBufferedInputStream is =

@@ -121,7 +121,7 @@ public class AxisServlet extends HttpServlet {
     /* don't know how it's going to be used - perhaps it might not     */
     /* even need to be parsed.                                         */
     /*******************************************************************/
-    MessageContext    msgContext = new MessageContext();
+    MessageContext    msgContext = new MessageContext(engine);
     InputStream       inp        = req.getInputStream();
     Message           msg        = new Message( inp, "InputStream" );
 

@@ -94,8 +94,7 @@ public class FileReader extends Thread {
         nextNum++ ;
 
         Message msg = new Message( fis, "InputStream" );
-        MessageContext  msgContext = new MessageContext();
-        msgContext.setAxisEngine(server);
+        MessageContext  msgContext = new MessageContext(server);
         msgContext.setRequestMessage( msg );
 
         // SOAPAction hack

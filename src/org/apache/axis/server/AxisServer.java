@@ -108,8 +108,6 @@ public class AxisServer extends AxisEngine
         TypeMappingRegistry tmr =
             (TypeMappingRegistry) getOption(Constants.TYPEMAP_REGISTRY);
 
-        msgContext.setAxisEngine( this );
-
         msgContext.setTypeMappingRegistry(tmr);
 
         try {

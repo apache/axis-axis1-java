@@ -3,6 +3,7 @@ package test.encoding;
 import org.apache.axis.MessageContext;
 import org.apache.axis.message.*;
 import org.apache.axis.encoding.*;
+import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.QName;
 import org.xml.sax.InputSource;
 import java.io.*;
@@ -21,7 +22,7 @@ public class TestString extends TestCase {
     }
 
     private void runtest(String value, String expected) throws Exception {
-        MessageContext msgContext = new MessageContext();
+        MessageContext msgContext = new MessageContext(new AxisServer());
         SOAPEnvelope msg = new SOAPEnvelope();
         RPCParam input = new RPCParam("urn:myNamespace", "testParam", value);
         

@@ -6,6 +6,7 @@ import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.message.*;
 import org.apache.axis.encoding.*;
+import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.QName;
 import org.xml.sax.InputSource;
 import java.io.*;
@@ -64,7 +65,7 @@ public class TestDeser extends TestCase {
      */
     protected void deserialize(String data, Object expected) {
        Message message = new Message(header + data + footer, "String");
-       message.setMessageContext(new MessageContext());
+       message.setMessageContext(new MessageContext(new AxisServer()));
 
        SOAPEnvelope envelope = (SOAPEnvelope)message.getAs("SOAPEnvelope");
        assertNotNull("envelope", envelope);

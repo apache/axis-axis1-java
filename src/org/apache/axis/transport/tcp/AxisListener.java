@@ -174,8 +174,7 @@ public class AxisListener implements Runnable {
             /* don't know how it's going to be used - perhaps it might not     */
             /* even need to be parsed.                                         */
             /*******************************************************************/
-            MessageContext    msgContext = new MessageContext();
-            msgContext.setAxisEngine(engine);
+            MessageContext    msgContext = new MessageContext(engine);
             
             InputStream inp;
             try {
