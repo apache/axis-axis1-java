@@ -7,32 +7,38 @@ xmlns:tns="urn:QueryTypes" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
     <xsd:schema attributeFormDefault="qualified"
     elementFormDefault="qualified" targetNamespace="urn:QueryTypes">
 
-      <xsd:element name="FindBooksQueryExpressionType">
+      <xsd:element name="FindBooksQueryExpressionElement">
         <xsd:complexType>
           <xsd:sequence>
-            <xsd:element name="bookQuery">
-              <xsd:complexType>
-                <xsd:attribute name="subject" type="xsd:string"/>
-              </xsd:complexType>
-            </xsd:element>
+            <xsd:element name="bookQuery" type="tns:BookType"/>
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
 
-      <xsd:element name="QueryResultType">
+      <xsd:element name="QueryResultElement">
         <xsd:complexType>
             <xsd:sequence>
-              <xsd:element name="queryResult">
-                <xsd:complexType>
-                  <xsd:attribute name="name" type="xsd:string"/>
-                  <xsd:attribute name="value" type="xsd:string"/>
-                  <xsd:attribute name="time" type="xsd:dateTime"/>
-                  <xsd:attribute name="queryType" type="xsd:QName"/>
-                </xsd:complexType>
-              </xsd:element>
+               <xsd:element name="resultList" type="tns:ResultListType"/>
             </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
+
+      <xsd:complexType name="ResultListType">
+        <xsd:sequence>
+          <xsd:element name="result" minOccurs="0" maxOccurs="unbounded" type="tns:QueryResultType"/>
+        </xsd:sequence>
+      </xsd:complexType>
+
+      <xsd:complexType name="BookType">
+        <xsd:attribute name="subject" type="xsd:string"/>
+      </xsd:complexType>
+
+      <xsd:complexType name="QueryResultType">
+        <xsd:attribute name="name" type="xsd:string"/>
+        <xsd:attribute name="value" type="xsd:string"/>
+        <xsd:attribute name="time" type="xsd:dateTime"/>
+        <xsd:attribute name="queryType" type="xsd:QName"/>
+      </xsd:complexType>
 
     </xsd:schema>
   </types>

@@ -36,7 +36,15 @@
 
       <typeMapping
         qname="query:bookQuery"
-        type="java:test.wsdl.extensibility.BookQuery"
+        type="java:test.wsdl.extensibility.BookType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+
+      <typeMapping
+        qname="query:QueryResultElement"
+        type="java:test.wsdl.extensibility.QueryResultElement"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
@@ -51,8 +59,8 @@
       />
 
       <typeMapping
-        qname="query:QueryResult"
-        type="java:test.wsdl.extensibility.QueryResult"
+        qname="query:ResultListType"
+        type="java:test.wsdl.extensibility.ResultListType"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
         deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
         encodingStyle=""
