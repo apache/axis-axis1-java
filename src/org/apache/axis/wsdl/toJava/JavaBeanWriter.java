@@ -253,7 +253,7 @@ public class JavaBeanWriter extends JavaClassWriter {
      * a simple type
      */
     protected void preprocess() {
-
+        
         // Add element names
         if (elements != null) {
             for (int i = 0; i < elements.size(); i++) {
@@ -659,20 +659,30 @@ public class JavaBeanWriter extends JavaClassWriter {
                     + "(java.lang.String _value) {");
             pw.println("        this._value = _value;");
             pw.println("    }");
-
+            int i = 0;
             for (Iterator iterator = simpleValueTypes.iterator();
                  iterator.hasNext();) {
                 String typeName = (String) iterator.next();
 
                 if (typeName.equals("java.lang.String")) {
+                    i += 2;
                     continue;
                 }
 
+                String capName = "_value";
+                if (isUnion()) {
+                    // names and simpleValueTypes should match as
+                    // union is over simple types
+                    String name = (String) names.get(i + 1);
+                    capName = Utils.capitalizeFirstChar(name);
+                }
+
                 pw.println("    public " + className + "(" + typeName
-                        + " value) {");
-                pw.println("        set_value(_value);");
+                        + " _value) {");
+                pw.println("        set" + capName + "(_value);");
                 pw.println("    }");
                 pw.println();
+                i += 2;
             }
         } else if (simpleValueTypes.size() == 1) {
             pw.println("    public " + className + "("

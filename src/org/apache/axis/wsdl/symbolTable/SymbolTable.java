@@ -949,6 +949,19 @@ public class SymbolTable {
                     createTypeFromRef(re);
                 }
 
+                Node union = SchemaUtils.getUnionNode(node);
+                if (union != null) {
+                    QName [] memberTypes = Utils.getMemberTypeQNames(union);
+                    if (memberTypes != null) {
+                        for (int i=0;i<memberTypes.length;i++) {
+                            if (SchemaUtils.isSimpleSchemaType(memberTypes[i]) &&
+                                getType(memberTypes[i]) == null) {
+                                symbolTablePut(new BaseType(memberTypes[i]));
+                            }
+                        }
+                    }
+                }
+
                 // This is a definition of a complex type.
                 // Create a Type.
                 createTypeFromDef(node, false, false);

@@ -69,7 +69,7 @@ public class SchemaUtils {
         return false;
     }
 
-    public static boolean isSimpleTypeWithUnion(Node node) {
+    public static Node getUnionNode(Node node) {
         // Expecting a schema complexType
         if (isXSDNode(node, "simpleType")) {
             // Under the simpleType there could be union
@@ -77,11 +77,15 @@ public class SchemaUtils {
             for (int j = 0; j < children.getLength(); j++) {
                 Node kid = children.item(j);
                 if (isXSDNode(kid, "union")) {
-                    return true;
+                    return kid;
                 }
             }
         }
-        return false;
+        return null;
+    }
+    
+    public static boolean isSimpleTypeWithUnion(Node node) {
+        return (getUnionNode(node) != null);
     }
     
   /**
@@ -343,6 +347,7 @@ public class SchemaUtils {
                 Vector v = null;
 
                 for (int i = 0; i < simpleQName.length; i++) {
+
                     TypeEntry simpleType = symbolTable.getType(simpleQName[i]);
 
                     if (simpleType != null) {
