@@ -77,6 +77,7 @@ public class PackageTests
         suite.addTestSuite(TestRPC.class);
         suite.addTestSuite(TestVersionMismatch.class);
         suite.addTestSuite(TestEncodingStyle.class);
+        suite.addTestSuite(TestExceptions.class);
         return suite;
     }
 }

@@ -200,8 +200,19 @@ public class RPCProvider extends JavaProvider {
         }
 
         if (operation == null) {
-            throw new AxisFault(Messages.getMessage("noSuchOperation",
-                    methodName));
+            SOAPConstants soapConstants = msgContext == null ?
+                    SOAPConstants.SOAP11_CONSTANTS :
+                    msgContext.getSOAPConstants();
+            if (soapConstants == SOAPConstants.SOAP12_CONSTANTS) {
+                AxisFault fault =
+                        new AxisFault(Constants.FAULT_SOAP12_SENDER,
+                                Messages.getMessage("noSuchOperation"), null, null);
+                fault.addFaultSubCode(Constants.FAULT_SUBCODE_PROC_NOT_PRESENT);
+                throw new SAXException(fault);
+            } else {
+                throw new AxisFault(Messages.getMessage("noSuchOperation",
+                        methodName));
+            }
         }
         
         // Create the array we'll use to hold the actual parameter
