@@ -63,25 +63,25 @@ Copyright:
   <mkdir dir="${tools.build.dir}"/>
     <!-- build my ForEach task -->
   <echo message="Building ForEach" />
-  <javac srcdir="${tools.dir}/${componentName}/foreach" 
+  <javac srcdir="${tools.dir}" 
     debug="${debug}"
       destdir="${tools.build.dir}">
     <classpath refid="classpath"/>
-    <include name="*.java" />
+    <include name="${componentName}/foreach/*.java" />
   </javac>
 
     <!-- build the RunAxisFunctionalTest task -->
   <echo message="Building RunAxisFunctionalTest" />
-  <javac srcdir="${tools.dir}/${componentName}/axis" 
+  <javac srcdir="${tools.dir}" 
     debug="${debug}"
       destdir="${tools.build.dir}">
     <classpath refid="classpath"/>
-    <include name="*.java" />
+    <include name="${componentName}/axis/*.java" />
   </javac>
 
     <!-- build the wsdl2java and java2wsdl tasks -->
   <echo message="Building WSDL tasks" />
-  <javac srcdir="${tools.dir}/${componentName}/wsdl"
+  <javac srcdir="${tools.dir}"
     debug="${debug}"
     destdir="${tools.build.dir}">
     <classpath>
@@ -89,7 +89,7 @@ Copyright:
       <pathelement location="${build.lib}/${jaxrpc}.jar"/>
       <path refid="classpath"/>
     </classpath>
-    <include name="*.java" />
+    <include name="${componentName}/wsdl/*.java" />
   </javac>
 
   <copy todir="${build.dir}/tools/${componentName}/foreach" >
