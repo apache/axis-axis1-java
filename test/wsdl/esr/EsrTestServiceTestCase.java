@@ -8,6 +8,7 @@
 package test.wsdl.esr;
 
 import org.apache.axis.transport.http.SimpleAxisWorker;
+import org.apache.axis.utils.NetworkUtils;
 
 import javax.xml.namespace.QName;
 
@@ -26,7 +27,7 @@ public class EsrTestServiceTestCase extends junit.framework.TestCase {
     public void test1EsrTestEsrInOut() {
         // Using WSDL file to make a SOAP call
         try {
-            String thisHost = SimpleAxisWorker.getLocalHost();
+            String thisHost = NetworkUtils.getLocalHostname();
             String thisPort = System.getProperty("test.functional.ServicePort", "8080");
 
             //load wsdl file
@@ -84,7 +85,7 @@ public class EsrTestServiceTestCase extends junit.framework.TestCase {
     public void test1EsrTestEsrInOut2() {
         // Using WSDL file to make a SOAP call
         try {
-            String thisHost = SimpleAxisWorker.getLocalHost();
+            String thisHost = NetworkUtils.getLocalHostname();
             String thisPort = System.getProperty("test.functional.ServicePort", "8080");
 
             //load wsdl file

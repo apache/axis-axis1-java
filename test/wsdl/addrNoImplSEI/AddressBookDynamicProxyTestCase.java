@@ -18,6 +18,7 @@ package test.wsdl.addrNoImplSEI;
 
 import junit.framework.TestCase;
 import org.apache.axis.transport.http.SimpleAxisWorker;
+import org.apache.axis.utils.NetworkUtils;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.Service;
@@ -42,7 +43,7 @@ public class AddressBookDynamicProxyTestCase extends TestCase {
         String nameSpaceUri = "http://addrNoImplSEI.wsdl.test";
         String serviceName = "AddressBookNoImplSEIService";
 
-        String thisHost = SimpleAxisWorker.getLocalHost();
+        String thisHost = NetworkUtils.getLocalHostname();
         String thisPort = System.getProperty("test.functional.ServicePort", "8080");
 
         //location of wsdl file
