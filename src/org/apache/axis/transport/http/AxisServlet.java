@@ -1045,9 +1045,15 @@ public class AxisServlet extends AxisServletBase {
                return false;
           }
           
-          serviceName = request.getRequestURI().substring
-               (request.getRequestURI().indexOf (path) + path.length() + 1);
-          
+        String servletURI = request.getContextPath() + path;
+        String reqURI = request.getRequestURI();
+        // chop off '/'.
+        if (servletURI.length() + 1 < reqURI.length()) {
+            serviceName = reqURI.substring(servletURI.length() + 1);
+        }
+        else {
+            serviceName = "";
+        }
           while (i.hasNext() == true) {
                String queryHandler = (String) i.next();
                
