@@ -291,12 +291,42 @@ public class Utils {
     /**
      * XML nodes may have a type/ref attribute.
      * For example &lt.element name="foo" type="b:bar"&gt.
-     * has the type attribute value "b:bar".  This routine gets the QName of the type/ref attribute value.
+     * has the type attribute value "b:bar". 
+     * This routine gets the QName of the type/ref attribute value.
+     *
+     * Note: If the "minOccurs" and "maxOccurs" are set such that the 
+     * type is a collection of "types", then an artificial qname is
+     * returned to represent the collection.
+     * 
+     * If you want the QName for just the "type" without analyzing 
+     * minOccurs/maxOccurs then use:
+     *    getNodeTypeRefQName(node, "type")
      */
     public static QName getNodeTypeRefQName(Node node) {
         if (node == null) return null;
 
         QName qName= getNodeTypeRefQName(node, "type");
+
+        // If the node has "type" and "maxOccurs" then the type is really
+        // a collection.  There is qname in the wsdl which we can use to represent
+        // the collection, so we need to invent one.
+        // The local part of the qname is changed to <local>[minOccurs, maxOccurs]
+        if (qName != null) {
+            String maxOccursValue = getAttribute(node, "maxOccurs");
+            String minOccursValue = getAttribute(node, "minOccurs");
+            if (maxOccursValue == null) {
+                maxOccursValue = "1";
+            }
+            if (minOccursValue == null) {
+                minOccursValue = "1";
+            }
+            if (!maxOccursValue.equals("1") || !minOccursValue.equals("1")) {
+                String localPart = qName.getLocalPart();
+                localPart += "[" + minOccursValue + "," + maxOccursValue + "]";
+                qName.setLocalPart(localPart);
+            }
+        }
+
         if (qName == null) {
             qName = getNodeTypeRefQName(node, "ref");
         }
@@ -580,6 +610,18 @@ public class Utils {
                 getNestedTypes(extendType.getNode(), types, symbolTable);
             }
         }
+
+        // Process array element types
+        QName elementQName = SchemaUtils.getArrayElementQName(type);
+        Type elementType = symbolTable.getTypeEntry(elementQName);
+        if (elementType != null) {
+            if (!types.contains(elementType)) {
+                types.add(elementType);
+                getNestedTypes(elementType.getNode(), types, symbolTable);
+            }
+        }
+        
+        
 
     } // getNestedTypes
 

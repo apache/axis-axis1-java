@@ -147,7 +147,7 @@ public class Emitter {
             }
         }
 
-        symbolTable = new SymbolTable(namespaces, bGenerateImports);
+        symbolTable = new SymbolTable(namespaces, bGenerateImports, bDebug);
         symbolTable.add(def, doc);
         writerFactory.writerPass(def, symbolTable);
         if (bDebug) {

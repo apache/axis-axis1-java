@@ -355,11 +355,44 @@ public class SchemaUtils {
      * forms, then return the qname repesenting the element type of the array.
      */
     public static QName getArrayElementQName(Node node) {
-        QName qName = getArrayElementQName_JAXRPC(node);
-        if (qName != null)
-            return qName;
-        // qName = getArrayElementQName_nonJAXRPC(node);
+        QName qName = getCollectionElementQName(node);
+        if (qName == null)
+            qName = getArrayElementQName_JAXRPC(node);
+        // if (qName == null)
+        //   qName = getArrayElementQName_nonJAXRPC(node);
         return qName;
+    }
+
+    /**
+     * If the specified node represents an element that refernces a collection
+     * then return the qname repesenting the element type of the collection.
+     *
+     *  <xsd:element name="alias" type="xsd:string" maxOccurs="unbounded"/>
+     *
+     */
+    private static QName getCollectionElementQName(Node node) {
+        if (node == null) {
+            return null;
+        }
+
+        // If the node kind is an element, dive get its type.
+        QName nodeKind = Utils.getNodeQName(node);
+        if (nodeKind != null &&
+            nodeKind.getLocalPart().equals("element") &&
+            Utils.isSchemaNS(nodeKind.getNamespaceURI())) {
+
+            // Get the qName of just the type.
+            // The compare it against the full type of the node, which
+            // takes into account maxOccurs and could return a collection type.
+            // If different, return just the type (which is the collection element type).
+            QName justTypeQName = Utils.getNodeTypeRefQName(node, "type");
+            if (justTypeQName != null) {
+                QName fullTypeQName = Utils.getNodeTypeRefQName(node);
+                if (justTypeQName != fullTypeQName)
+                    return justTypeQName;
+            }
+        }
+        return null;
     }
 
     /**
@@ -531,7 +564,8 @@ public class SchemaUtils {
                     String maxOccursValue = Utils.getAttribute(elementNode, "maxOccurs");
                     if (maxOccursValue != null &&
                         maxOccursValue.equalsIgnoreCase("unbounded")) {
-                        return Utils.getNodeTypeRefQName(elementNode);
+                        // Get the QName of just the type
+                        return Utils.getNodeTypeRefQName(elementNode, "type");
                     }
                 }
             }
@@ -624,7 +658,7 @@ public class SchemaUtils {
                 String maxOccursValue = Utils.getAttribute(elementNode, "maxOccurs");
                 if (maxOccursValue != null &&
                     maxOccursValue.equalsIgnoreCase("unbounded")) {
-                    return Utils.getNodeTypeRefQName(elementNode);
+                    return Utils.getNodeTypeRefQName(elementNode, "type");
                 }
             }
         }
