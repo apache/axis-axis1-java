@@ -148,7 +148,7 @@ public class RPCProvider extends JavaProvider {
             if ( method == null )
                 throw new AxisFault( "AxisServer.error",
                                     "Method not found\n" +
-                                        "Method name=" + methodName + "\n" +
+                                        "Method name=" + mName + "\n" +
                                         "Service name=" + msgContext.getTargetService(),
                                     null, null );
             
