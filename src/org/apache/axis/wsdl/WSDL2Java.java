@@ -94,6 +94,7 @@ public class WSDL2Java {
     protected static final int SKELETON_OPT = 's';
     protected static final int SKELETON_DEPLOY_OPT = 'S';
     protected static final int NAMESPACE_OPT = 'N';
+    protected static final int NAMESPACE_FILE_OPT = 'f';
     protected static final int OUTPUT_OPT = 'o';
     protected static final int SCOPE_OPT = 'd';
     protected static final int TEST_OPT = 't';
@@ -144,6 +145,10 @@ public class WSDL2Java {
                 CLOptionDescriptor.DUPLICATES_ALLOWED + CLOptionDescriptor.ARGUMENTS_REQUIRED_2,
                 NAMESPACE_OPT,
                 JavaUtils.getMessage("optionNStoPkg00")),
+        new CLOptionDescriptor("fileNStoPkg",
+                CLOptionDescriptor.ARGUMENT_REQUIRED,
+                NAMESPACE_FILE_OPT,
+                JavaUtils.getMessage("optionFileNStoPkg00")),
         new CLOptionDescriptor("package",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 PACKAGE_OPT,
@@ -339,11 +344,18 @@ public class WSDL2Java {
     } // getScope
 
     /**
-     * Get the scope for the deploy.xml file.
+     * Set the NStoPkg mappings filename.
      */
-    public void setNStoPkg(File NStoPkg) {
-        emitter.setNStoPkg(NStoPkg);
-    } // getScope
+    public void setNStoPkg(String NStoPkgFilename) {
+        emitter.setNStoPkg(NStoPkgFilename);
+    } // setNStoPkg
+
+    /**
+     * Set the NStoPkg mappings file.
+     */
+    public void setNStoPkg(File NStoPkgFile) {
+        emitter.setNStoPkg(NStoPkgFile);
+    } // setNStoPkg
 
     //
     // Command line switches
@@ -464,6 +476,10 @@ public class WSDL2Java {
                         String namespace = option.getArgument(0);
                         String packageName = option.getArgument(1);
                         namespaceMap.put(namespace, packageName);
+                        break;
+
+                    case NAMESPACE_FILE_OPT:
+                        wsdl2java.setNStoPkg(option.getArgument());
                         break;
 
                     case PACKAGE_OPT:
