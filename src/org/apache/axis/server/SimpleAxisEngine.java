@@ -74,20 +74,24 @@ public class SimpleAxisEngine implements Handler {
   protected Hashtable options ;
 
   public void init() {
+    // Load the simple handler registry and init it
+    HandlerRegistry  hr = new SimpleHandlerRegistry();
+    hr.init();
+    addOption( Constants.HANDLER_REGISTRY, hr );
+
+    // Load the simple deployed services registry and init it
+    HandlerRegistry  sr = new SimpleServiceRegistry();
+    sr.init();
+    addOption( Constants.SERVICE_REGISTRY, sr );
   }
 
   public void cleanup() {
   };
 
   public void invoke(MessageContext msgContext) throws AxisFault {
-    // Load the simple handler registry and init it
-    HandlerRegistry  hr = new SimpleHandlerRegistry();
-    hr.init();
+    HandlerRegistry hr = (HandlerRegistry)getOption(Constants.HANDLER_REGISTRY);
+    HandlerRegistry sr = (HandlerRegistry)getOption(Constants.SERVICE_REGISTRY);
 
-    // Load the simple deployed services registry and init it
-    HandlerRegistry  sr = new SimpleServiceRegistry();
-    sr.init();
-    
     String action = (String) msgContext.getProperty( Constants.MC_TARGET );
     if ( action == null ) action = "EchoService" ;
 
