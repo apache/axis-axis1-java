@@ -204,7 +204,7 @@
 <p>
 <h3>Needed Components</h3>
 <%
-    int needed,wanted;
+    int needed=0,wanted=0;
 
     /**
      * the essentials, without these Axis is not going to work
@@ -247,7 +247,7 @@
             "Axis will not work",
             "http://xml.apache.org/xerces-j/");
 
-    wanted=wantClass(out,"javax.activation.DataHandler",
+    needed+=needClass(out,"javax.activation.DataHandler",
             "activation.jar",
             "Activation API",
             "Axis will not work",
@@ -267,7 +267,7 @@
     wanted+=wantClass(out,"org.apache.xml.security.Init",
             "xmlsec.jar",
             "XML Security API",
-            "Attachments will not work",
+            "XML Security is not supported",
             "http://xml.apache.org/security/");
 
     /*
