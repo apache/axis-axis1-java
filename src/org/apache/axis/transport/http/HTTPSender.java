@@ -54,6 +54,7 @@
  */
 package org.apache.axis.transport.http;
 
+import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
@@ -187,15 +188,15 @@ public class HTTPSender extends BasicHandler {
         }
 
         // Get https.proxyXXX settings
-        String tunnelHost = System.getProperty("https.proxyHost");
-        String tunnelPortStr = System.getProperty("https.proxyPort");
+        String tunnelHost = AxisEngine.getGlobalProperty("https.proxyHost");
+        String tunnelPortStr = AxisEngine.getGlobalProperty("https.proxyPort");
 
         // Use http.proxyXXX settings if https.proxyXXX is not set
         if (tunnelHost == null) {
-            tunnelHost = System.getProperty("http.proxyHost");
+            tunnelHost = AxisEngine.getGlobalProperty("http.proxyHost");
         }
         if (tunnelPortStr == null) {
-            tunnelPortStr = System.getProperty("http.proxyPort");
+            tunnelPortStr = AxisEngine.getGlobalProperty("http.proxyPort");
         }
         try {
 
@@ -214,7 +215,7 @@ public class HTTPSender extends BasicHandler {
             Object factory = null;
 
             // Hook in a different SSL socket factory
-            String socketFactoryClass = System.getProperty("axis.socketFactory");
+            String socketFactoryClass = AxisEngine.getGlobalProperty("axis.socketFactory");
             if (socketFactoryClass != null) {
                 try {
                     Class c1 = Class.forName(socketFactoryClass);
@@ -262,14 +263,14 @@ public class HTTPSender extends BasicHandler {
                 PrintWriter out = new PrintWriter(
                         new BufferedWriter(
                                 new OutputStreamWriter(tunnelOutputStream)));
-                String tunnelUser = System.getProperty("https.proxyUser");
-                String tunnelPassword = System.getProperty("https.proxyPassword");
+                String tunnelUser = AxisEngine.getGlobalProperty("https.proxyUser");
+                String tunnelPassword = AxisEngine.getGlobalProperty("https.proxyPassword");
 
                 if (tunnelUser == null) {
-                    tunnelUser = System.getProperty("http.proxyUser");
+                    tunnelUser = AxisEngine.getGlobalProperty("http.proxyUser");
                 }
                 if (tunnelPassword == null) {
-                    tunnelPassword = System.getProperty("http.proxyPassword");
+                    tunnelPassword = AxisEngine.getGlobalProperty("http.proxyPassword");
                 }
 
                 // More secure version... engage later?
@@ -392,12 +393,12 @@ public class HTTPSender extends BasicHandler {
             String host, int port, StringBuffer otherHeaders, BooleanHolder useFullURL)
             throws IOException {
         Socket sock = null;
-        String proxyHost = System.getProperty("http.proxyHost");
-        String proxyPort = System.getProperty("http.proxyPort");
-        String nonProxyHosts = System.getProperty("http.nonProxyHosts");
+        String proxyHost = AxisEngine.getGlobalProperty("http.proxyHost");
+        String proxyPort = AxisEngine.getGlobalProperty("http.proxyPort");
+        String nonProxyHosts = AxisEngine.getGlobalProperty("http.nonProxyHosts");
         boolean hostInNonProxyList = isHostInNonProxyList(host, nonProxyHosts);
-        String proxyUsername = System.getProperty("http.proxyUser");
-        String proxyPassword = System.getProperty("http.proxyPassword");
+        String proxyUsername = AxisEngine.getGlobalProperty("http.proxyUser");
+        String proxyPassword = AxisEngine.getGlobalProperty("http.proxyPassword");
 
         if (proxyUsername != null) {
             StringBuffer tmpBuf = new StringBuffer();

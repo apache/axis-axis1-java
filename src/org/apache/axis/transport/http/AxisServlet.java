@@ -747,7 +747,7 @@ public class AxisServlet extends HttpServlet
                              String param,
                              String dephault)
     {
-        String value = System.getProperty(param);
+        String value = AxisEngine.getGlobalProperty(param);
 
         if (value == null)
             value = getInitParameter(param);

@@ -95,8 +95,6 @@ public class FileProvider implements EngineConfiguration {
     protected static Log log =
         LogFactory.getLog(FileProvider.class.getName());
 
-    protected String sep = System.getProperty("file.separator");
-
     protected WSDDDeployment deployment = null;
 
     private static final String CURRENT_DIR = ".";
