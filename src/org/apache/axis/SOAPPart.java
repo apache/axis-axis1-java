@@ -157,6 +157,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
         int form = FORM_STRING;
         if (initialContents instanceof SOAPEnvelope) {
             form = FORM_SOAPENVELOPE;
+            ((SOAPEnvelope)initialContents).setOwnerDocument(this);
         } else if (initialContents instanceof InputStream) {
             form = isBodyStream ? FORM_BODYINSTREAM : FORM_INPUTSTREAM;
         } else if (initialContents instanceof byte[]) {
@@ -619,6 +620,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
             InputStreamBody bodyEl =
                              new InputStreamBody((InputStream)currentMessage);
             SOAPEnvelope env = new SOAPEnvelope();
+            env.setOwnerDocument(this);
             env.addBodyElement(bodyEl);
             setCurrentForm(env, FORM_SOAPENVELOPE);
             return env;
