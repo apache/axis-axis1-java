@@ -236,6 +236,15 @@
     <echo level="verbose">iis.found=${iis.found}</echo>
     <echo level="verbose">iis.base=${iis.base}</echo>
 
+
+    <!-- enables/disables compilation of the org.apache.axis.ime package -->
+    <condition property="compile.ime">
+      <and>
+        <equals arg1="${env.compileime}" arg2="true" />
+      </and>
+    </condition>
+    <echo level="verbose">compile.ime=${compile.ime}</echo>
+
   </target>
 
   <!-- print out the current enviroment. 
@@ -312,6 +321,10 @@
     <echo message="test.functional.fail = ${test.functional.fail}" />
     <echo message="" />
 
+    <echo message="-- Internal Message Exchange ---" />
+    <echo message="" />
+    <echo message="compile.ime = ${compile.ime}" />
+    <echo message="" />
 
     <pathconvert targetos="windows" property="classpath.as.string" refid="classpath"/>
     <echo message="classpath: ${classpath.as.string}"/>

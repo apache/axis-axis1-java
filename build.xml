@@ -125,6 +125,7 @@ Copyright:
       <exclude name="**/javax/xml/rpc/server/Servlet*.java" unless="servlet.present"/>
       <exclude name="**/*TestSuite.java" unless="junit.present"/>
       <exclude name="**/org/apache/axis/encoding/ser/castor/*.java" unless="castor.present"/>
+      <exclude name="**/org/apache/axis/ime/**/*" unless="compile.ime" />
     </javac>
     <copy file="${src.dir}/org/apache/axis/server/server-config.wsdd"
           toDir="${build.dest}/org/apache/axis/server"/>
