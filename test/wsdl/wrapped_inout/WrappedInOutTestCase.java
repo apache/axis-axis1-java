@@ -29,6 +29,24 @@ public class WrappedInOutTestCase extends junit.framework.TestCase {
         assertEquals(value, expected);
     }
 
+    public void test1WrappedInOutEchoEmptyString() throws Exception {
+        test.wsdl.wrapped_inout.WrappedInOutInterface binding;
+        try {
+            binding = new test.wsdl.wrapped_inout.WrappedInOutLocator().getWrappedInOut();
+        }
+        catch (javax.xml.rpc.ServiceException jre) {
+            if(jre.getLinkedCause()!=null)
+                jre.getLinkedCause().printStackTrace();
+            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
+        }
+        assertTrue("binding is null", binding != null);
+
+        java.lang.String expected = new String("");
+        java.lang.String value = null;
+        value = binding.echoString(expected);
+        assertEquals(value, expected);
+    }
+
     public void test2WrappedInOutEchoStringIO() throws Exception {
         test.wsdl.wrapped_inout.WrappedInOutInterface binding;
         try {

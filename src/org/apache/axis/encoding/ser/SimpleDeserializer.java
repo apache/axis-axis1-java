@@ -207,7 +207,7 @@ public class SimpleDeserializer extends DeserializerImpl {
                            DeserializationContext context)
         throws SAXException
     {
-        if (isNil || val == null || val.length() == 0) {
+        if (isNil || val == null) {
             value = null;
             return;
         }
