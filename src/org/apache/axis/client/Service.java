@@ -84,12 +84,10 @@ import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.Remote;
-import java.util.HashSet;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.lang.reflect.Proxy;
 
 /**
@@ -465,8 +463,6 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      * to the WSDL related metadata.
      *
      * Not implemented.
-     *
-     * @param portName - Qualified name for the target service endpoint
      *
      * @throws ServiceException - If this Service class does not have access
      * to the required WSDL metadata or if an illegal portName is specified.

@@ -96,10 +96,8 @@ public interface TypeMapping
         throws JAXRPCException;
 
     /**
-     * Gets the DeserializerFactory registered for the specified pair 
-     * of Java type and XML data type.
+     * Gets the DeserializerFactory registered for the specified XML data type.
      *
-     * @param javaType - Class of the Java type
      * @param xmlType - Qualified name of the XML data type
      *
      * @return Registered DeserializerFactory
