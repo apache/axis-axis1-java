@@ -65,7 +65,11 @@ import org.apache.commons.discovery.DiscoverClass;
 import org.apache.commons.discovery.DiscoveryException;
 import org.apache.commons.discovery.base.Environment;
 import org.apache.commons.discovery.base.SPInterface;
+import org.apache.commons.discovery.base.ImplClass;
 import org.apache.commons.discovery.tools.ManagedProperties;
+
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -113,66 +117,24 @@ public class AxisProperties {
     
     public static Object newInstance(Class spiClass, String defaultClass)
     {
-        Object object;
-        try {
-            SPInterface spi = new SPInterface(spiClass);
-            object = DiscoverClass.newInstance(getDiscoverEnvironment(),
-                                               spi,
-                                               (String) null,
-                                               spi.createImplClass(defaultClass));
-        } catch (Exception e) {
-            log.error(JavaUtils.getMessage("exception00"), e);
-            object = null;
-        }
-        return object;
+        return newInstance(new SPInterface(spiClass), defaultClass);
     }
     
     public static Object newInstance(Class spiClass, Class defaultClass)
     {
-        Object object;
-        try {
-            SPInterface spi = new SPInterface(spiClass);
-            object = DiscoverClass.newInstance(getDiscoverEnvironment(),
-                                               spi,
-                                               (String) null,
-                                               spi.createImplClass(defaultClass));
-        } catch (Exception e) {
-            log.error(JavaUtils.getMessage("exception00"), e);
-            object = null;
-        }
-        return object;
+        return newInstance(new SPInterface(spiClass), defaultClass);
     }
 
     public static Object newInstance(SPInterface spi, String defaultClass)
     {
-        Object object;
-        try {
-            object = DiscoverClass.newInstance(getDiscoverEnvironment(),
-                                               spi,
-                                               (String) null,
-                                               spi.createImplClass(defaultClass));
-        } catch (Exception e) {
-            log.error(JavaUtils.getMessage("exception00"), e);
-            object = null;
-        }
-        return object;
+        return newInstance(spi, spi.createImplClass(defaultClass));
     }
 
     public static Object newInstance(SPInterface spi, Class defaultClass)
     {
-        Object object;
-        try {
-            object = DiscoverClass.newInstance(getDiscoverEnvironment(),
-                                               spi,
-                                               (String) null,
-                                               spi.createImplClass(defaultClass));
-        } catch (Exception e) {
-            log.error(JavaUtils.getMessage("exception00"), e);
-            object = null;
-        }
-        return object;
+        return newInstance(spi, spi.createImplClass(defaultClass));
     }
-
+    
 
     private static String commonsGroupContext = null;
     
@@ -271,5 +233,39 @@ public class AxisProperties {
      */
     public static Properties getProperties() {
         return ManagedProperties.getProperties();
+    }
+
+
+    /**
+     * !WARNING!
+     * SECURITY issue.
+     * 
+     * See bug 11874
+     * 
+     * The solution to both is to move doPrivilege UP within AXIS to a
+     * class that is either private (cannot be reached by code outside
+     * AXIS) or that represents a secure public interface...
+     * 
+     * This is going to require analysis and (probably) rearchitecting.
+     * So, I'm taking taking the easy way out until we are at a point
+     * where we can reasonably rearchitect for security.
+     */
+    private static final Object newInstance(final SPInterface spi,
+                                            final ImplClass defaultClass)
+    {
+        return AccessController.doPrivileged(
+            new PrivilegedAction() {
+                public Object run() {
+                    try {
+                        return DiscoverClass.newInstance(getDiscoverEnvironment(),
+                                                         spi,
+                                                         (String)null,
+                                                         defaultClass);
+                    } catch (Exception e) {
+                        log.error(JavaUtils.getMessage("exception00"), e);
+                    }
+                    return null;
+                }
+            });
     }
 }

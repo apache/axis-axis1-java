@@ -56,9 +56,12 @@
 package org.apache.axis.components.image;
 
 import org.apache.axis.AxisProperties;
-import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
+
+import org.apache.commons.discovery.base.SPInterface;
+
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 /**
@@ -72,22 +75,23 @@ public class ImageIOFactory {
             LogFactory.getLog(ImageIOFactory.class.getName());
 
     public static ImageIO getImageIO() {
-        String imageIOClassName = AxisProperties.getProperty("axis.ImageIO",
-                "org.apache.axis.components.image.JimiIO");
-        log.debug("axis.ImageIO:" + imageIOClassName);
-        if (imageIOClassName != null) {
-            try {
-                Class imageIOClass = ClassUtils.forName(imageIOClassName);
-                if (ImageIO.class.isAssignableFrom(imageIOClass))
-                    return (ImageIO) imageIOClass.newInstance();
-            } catch (Exception e) {
-                // If something goes wrong here, should we just fall
-                // through and use the default one?
-                log.error(JavaUtils.getMessage("exception00"), e);
-            }
+        /**
+         * JimiIO may/maynot be present, so we don't use
+         * hard link to class (JimiIO.class), but instead
+         * the fully qualified class name
+         */
+        ImageIO imageIO =
+            (ImageIO)AxisProperties.newInstance(
+                         new SPInterface(ImageIO.class, "axis.ImageIO"),
+                         "org.apache.axis.components.image.JimiIO");
+        
+        if (imageIO == null) {
+            log.info(JavaUtils.getMessage("needImageIO"));
+        } else {
+            log.debug("axis.ImageIO:" + imageIO.getClass().getName());
         }
-        log.info(JavaUtils.getMessage("needImageIO"));
-        return null;
+
+        return imageIO;
     }
 }
 
