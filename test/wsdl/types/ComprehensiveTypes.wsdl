@@ -228,6 +228,8 @@
           <xsd:enumeration value="1"/>
           <xsd:enumeration value="2"/>                    
           <xsd:enumeration value="3"/>                    
+          <xsd:enumeration value="-9223372036854775808"/>                    
+          <xsd:enumeration value="9223372036854775807"/>                    
         </xsd:restriction>
       </xsd:simpleType>
       <xsd:simpleType name="enumShort">
