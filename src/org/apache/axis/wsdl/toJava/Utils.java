@@ -1262,6 +1262,21 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
 
             return paramType + "." + enumeration;
         }
+        
+        if(param.getType().getRefType()!= null){
+            // Check for enumeration
+            Vector v2 = Utils.getEnumerationBaseAndValues(param.getType().getRefType().getNode(),
+                    symbolTable);
+
+            if (v2 != null) {
+
+                // This constructed type is an enumeration.  Use the first one.
+                String enumeration =
+                        (String) JavaEnumTypeWriter.getEnumValueIds(v2).get(0);
+
+                return paramType + "." + enumeration;
+            }
+        }
 
         // This constructed type is a normal type, instantiate it.
         return "new " + paramType + "()";
