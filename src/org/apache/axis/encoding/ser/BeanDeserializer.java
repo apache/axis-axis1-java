@@ -97,8 +97,6 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
     protected Map propertyMap = null;
     protected QName prevQName;
 
-    public static final String DESERIALIZE_ANY = "DeserializeAny";
-    
     /** Type metadata about this class for XML deserialization */
     protected TypeDesc typeDesc = null;
 
@@ -233,11 +231,7 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
             // try to put unknown elements into an Object property
             propDesc = getObjectPropertyDesc(elemQName, context);
             if (propDesc != null) {
-                //Boolean deserializeAny =  (Boolean) messageContext.getProperty(DESERIALIZE_ANY);
-                Boolean deserializeAny = Boolean.TRUE;
-                if ((deserializeAny != null) && (deserializeAny.booleanValue())) {
-                  dSer = context.getDeserializerForType(elemQName);
-                }
+                dSer = context.getDeserializerForType(elemQName);
                 if (dSer == null)  {
                     qn = Constants.XSD_ANY;
                     // make sure that the Element Deserializer deserializes the current element and not the child

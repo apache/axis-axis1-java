@@ -98,7 +98,6 @@ class ObjectSerializer {
        String messageString = stringWriter.getBuffer().toString();
        logger.debug(messageString);
        Reader reader = new StringReader(messageString);
-       messageContext.setProperty(BeanDeserializer.DESERIALIZE_ANY, Boolean.TRUE);
        DeserializationContext deserializer = new DeserializationContextImpl(new InputSource(reader),
                                                                            messageContext, 
                                                                            Message.REQUEST);
