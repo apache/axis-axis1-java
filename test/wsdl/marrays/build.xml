@@ -62,16 +62,6 @@ Copyright:
         <mapping namespace="urn:MArrayTests" package="test.wsdl.marrays"/>
     </wsdl2java>
 
-    <!-- MArrayTests Test -->
-    <wsdl2java url="${axis.home}/test/wsdl/marrays/MArrayTest.wsdl"
-               output="${axis.home}/build/work"
-               deployscope="session"
-               serverSide="yes"
-               skeletonDeploy="yes"
-               testcase="yes">
-        <mapping namespace="urn:MArrayTests" package="test.wsdl.marrays"/>
-    </wsdl2java>
-
     <copy todir="${build.dir}/work/test/wsdl/marrays" overwrite="yes">
       <fileset dir="${axis.home}/test/wsdl/marrays">
         <include name="*TestCase.java"/>
