@@ -249,18 +249,7 @@ public class RPCElement extends SOAPBodyElement
                                 // Get the type in the signature (java type or its holder)
                                 Class sigType = paramDesc.getJavaType();
                                 if(!JavaUtils.isConvertable(value, sigType))
-                                    match = false;  
-                                  
-                                //if (!sigType.isArray() && value.getClass().isArray() &&
-                                //    !sigType.equals(Object.class)) {
-                                //      match = false;  
-                                //}
-                                //
-                                //if (operation.getUse() == Use.ENCODED &&
-                                //    sigType.isArray() &&
-                                //    !value.getClass().isArray()) {
-                                //      match = false;
-                                //}   
+                                    match = false;
                             }
                         }
                         // This is not the right operation, try the next one.
