@@ -358,7 +358,14 @@ public class WsdlAttributes {
             // XXX - we may not have seen all operations
             return USE_ENCODED;
         }
+
         HashMap m = attr.getFaultBodyTypeMap();
+
+        // Default to encoded if we didn't have a soap:body for the fault
+        if ( ! m.containsKey(faultName) ) {
+            return USE_ENCODED;
+        }
+
         return ((Integer) m.get(faultName)).intValue();
     }
 
