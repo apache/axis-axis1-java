@@ -51,7 +51,7 @@
 
     <!-- Import Test 2:  all namespace->package mappings from the -->
     <!--                 command line.                            -->
-    <wsdl2java url="test/import_/import.wsdl"
+    <wsdl2java url="test/import_/Import.wsdl"
                output="build/work"
                deployscope="none"
                skeleton="yes"
