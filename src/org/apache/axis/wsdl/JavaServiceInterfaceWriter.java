@@ -102,7 +102,7 @@ public class JavaServiceInterfaceWriter extends JavaWriter {
      * This method generates the axis server side impl interface signatures operation.
      */
     private void writeOperationAxisSkelSignatures(Operation operation) throws IOException {
-        Emitter.Parameters parms = (Emitter.Parameters) operationParameters.get(operation);
+        Emitter.Parameters parms = (Emitter.Parameters) operationParameters.get(operation.getName());
         pw.println(parms.axisSignature + ";");
     } // writeOperationAxisSkelSignatures
 

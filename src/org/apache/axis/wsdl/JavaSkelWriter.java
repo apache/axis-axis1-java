@@ -122,7 +122,7 @@ public class JavaSkelWriter extends JavaWriter {
         List operations = binding.getBindingOperations();
         for (int i = 0; i < operations.size(); ++i) {
             BindingOperation operation = (BindingOperation) operations.get(i);
-            Emitter.Parameters parameters = (Emitter.Parameters) operationParameters.get(operation.getOperation());
+            Emitter.Parameters parameters = (Emitter.Parameters) operationParameters.get(operation.getOperation().getName());
 
             // Get the soapAction from the <soap:operation>
             String soapAction = "";
