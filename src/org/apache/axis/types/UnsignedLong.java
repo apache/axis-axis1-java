@@ -55,6 +55,8 @@
 package org.apache.axis.types;
 
 import java.util.ArrayList;
+import java.text.NumberFormat;
+import java.text.FieldPosition;
 
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
@@ -100,17 +102,16 @@ public class UnsignedLong extends java.lang.Number implements java.lang.Comparab
     }
 
     /**
-    * strip the decimal part of the double value. toString tacks on .0
-    */
-    private String stripDecimal(String stValue) {
-        return stValue.substring(0,stValue.lastIndexOf('.'));
-    }
-
+     * Format the Double in to a string
+     */ 
     private String convertDoubleToUnsignedLong(Double lValue) {
       if (lValue != null) {
-        String stRetval = lValue.toString(); // convert to string
-              // strip trailing .0
-        return stripDecimal(stRetval);
+          NumberFormat nf = NumberFormat.getInstance();
+          nf.setGroupingUsed(false);
+          StringBuffer buf = new StringBuffer();
+          FieldPosition pos = new FieldPosition(NumberFormat.INTEGER_FIELD);
+          nf.format(lValue.doubleValue(), buf, pos);
+          return buf.toString();
       }
       return null;
     }
