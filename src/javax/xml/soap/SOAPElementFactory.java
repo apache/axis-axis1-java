@@ -124,9 +124,8 @@ public abstract class SOAPElementFactory {
     public static SOAPElementFactory newInstance() throws SOAPException {
 
         try {
-            return (SOAPElementFactory) FactoryFinder.find(
-                "javax.xml.soap.SOAPElementFactory",
-                "com.sun.xml.messaging.soap.SOAPElementFactoryImpl");
+            return (SOAPElementFactory) FactoryFinder.find(SEF_PROPERTY,
+                                                           DEFAULT_SEF);
         } catch (Exception exception) {
             throw new SOAPException("Unable to create SOAP Element Factory: "
                                     + exception.getMessage());
