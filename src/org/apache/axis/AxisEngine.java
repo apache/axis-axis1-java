@@ -65,7 +65,7 @@ import org.apache.axis.registries.HandlerRegistry;
 import org.apache.axis.registries.SupplierRegistry;
 import org.apache.axis.session.Session;
 import org.apache.axis.session.SimpleSession;
-import org.apache.axis.utils.QName;
+import org.apache.axis.rpc.namespace.QName;
 import org.apache.log4j.Category;
 
 /**

@@ -1,11 +1,11 @@
 package org.apache.axis.resolver.sd.schema.providers;
 
+import org.apache.axis.rpc.namespace.QName;
 import org.apache.axis.Handler;
 import org.apache.axis.resolver.ResolverContext;
 import org.apache.axis.resolver.java.JavaResolver;
 import org.apache.axis.resolver.sd.schema.Provider;
 import org.apache.axis.resolver.sd.schema.SDConstants;
-import org.apache.axis.utils.QName;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 

@@ -56,9 +56,9 @@ package org.apache.axis.deployment.wsdd;
 
 import org.apache.axis.Handler;
 import org.apache.axis.deployment.DeployableItem;
+import org.apache.axis.rpc.namespace.QName;
 import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.utils.LockableHashtable;
-import org.apache.axis.utils.QName;
 import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

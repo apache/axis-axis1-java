@@ -65,7 +65,7 @@ import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.utils.Mapping;
-import org.apache.axis.utils.QName;
+import org.apache.axis.rpc.namespace.QName;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.log4j.Category;
 import org.w3c.dom.Document;

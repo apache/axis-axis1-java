@@ -758,7 +758,7 @@ public class Call implements org.apache.axis.rpc.Call {
      * @param qName the xsi:type QName of the associated XML type.
      * @param serializer a Serializer which will be used to write the XML.
      */
-    public void addSerializer(Class _class, org.apache.axis.utils.QName qName,
+    public void addSerializer(Class _class, QName qName,
                               Serializer serializer){
         TypeMappingRegistry typeMap = msgContext.getTypeMappingRegistry();
         typeMap.addSerializer(_class, qName, serializer);
@@ -774,8 +774,7 @@ public class Call implements org.apache.axis.rpc.Call {
      * @param deserializerFactory a factory which can create deserializer
      *                            instances for this type.
      */
-    public void addDeserializerFactory(org.apache.axis.utils.QName qName,
-                                       Class _class,
+    public void addDeserializerFactory(QName qName, Class _class,
                                        DeserializerFactory deserFactory){
         TypeMappingRegistry typeMap = msgContext.getTypeMappingRegistry();
         typeMap.addDeserializerFactory(qName, _class, deserFactory);

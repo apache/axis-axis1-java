@@ -57,7 +57,6 @@ package org.apache.axis.deployment;
 import org.apache.axis.Handler;
 import org.apache.axis.deployment.wsdd.WSDDGlobalConfiguration;
 import org.apache.axis.encoding.TypeMappingRegistry;
-import org.apache.axis.utils.QName;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -68,6 +67,13 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 
+import org.apache.axis.Handler;
+import org.apache.axis.Chain;
+import org.apache.axis.TargetedChain;
+import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.deployment.wsdd.WSDDGlobalConfiguration;
+import org.apache.axis.deployment.wsdd.WSDDDeployableItem;
+import org.apache.axis.rpc.namespace.QName;
 
 /**
  * The DeploymentRegistry abstract class takes the place of the

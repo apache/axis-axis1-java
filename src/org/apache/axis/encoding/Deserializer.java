@@ -60,7 +60,7 @@ import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.SAX2EventRecorder;
 import org.apache.axis.message.SAXOutputter;
 import org.apache.axis.message.SOAPHandler;
-import org.apache.axis.utils.QName;
+import org.apache.axis.rpc.namespace.QName;
 import org.apache.log4j.Category;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;

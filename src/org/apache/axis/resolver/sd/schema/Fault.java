@@ -1,6 +1,7 @@
 package org.apache.axis.resolver.sd.schema;
 
-import org.apache.axis.utils.QName;
+import org.apache.axis.Handler;
+import org.apache.axis.rpc.namespace.QName;
 
 /**
  * @author James Snell (jasnell@us.ibm.com)

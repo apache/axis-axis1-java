@@ -55,7 +55,7 @@
 
 package org.apache.axis.encoding;
 
-import org.apache.axis.utils.QName;
+import org.apache.axis.rpc.namespace.QName;
 import org.xml.sax.Attributes;
 
 import java.io.IOException;

@@ -63,6 +63,7 @@ import com.ibm.wsdl.extensions.soap.SOAPOperation;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
 import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.rpc.namespace.QName;
 import org.w3c.dom.Document;
 
 import javax.wsdl.Binding;
@@ -266,9 +267,9 @@ public class WSDLUtils {
                                         TypeMappingRegistry reg)
     {
         Part part = def.createPart();
-        org.apache.axis.utils.QName qName = reg.getTypeQName(param);
+        QName qName = reg.getTypeQName(param);
         if (qName == null) {
-            qName = new org.apache.axis.utils.QName("java", param.getName());
+            qName = new QName("java", param.getName());
         }
         String pref = def.getPrefix(qName.getNamespaceURI());
         if (pref == null) {

@@ -55,11 +55,11 @@
 package org.apache.axis.deployment;
 
 import org.apache.axis.Constants;
+import org.apache.axis.rpc.namespace.QName;
 import org.apache.axis.Handler;
 import org.apache.axis.deployment.wsdd.WSDDGlobalConfiguration;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.encoding.TypeMappingRegistry;
-import org.apache.axis.utils.QName;
 
 import java.util.Hashtable;
 

@@ -104,11 +104,6 @@ public class XMLType implements org.apache.axis.rpc.encoding.XMLType {
             XSD_DATE = new XMLType(new QName(Constants.URI_CURRENT_SCHEMA_XSD, "dateTime"));
     }
 
-    // temporary
-    public XMLType(org.apache.axis.utils.QName type) {
-        this.type = new QName( type.getNamespaceURI(), type.getLocalPart() );
-    }
-
     public XMLType(QName type) {
         this.type = type ;
     }
