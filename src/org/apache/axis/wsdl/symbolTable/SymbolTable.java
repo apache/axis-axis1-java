@@ -1593,12 +1593,14 @@ public class SymbolTable {
                 if(bindingEntry.isInHeaderPart(opName, partName)) {
                     wrapped = false;
                 } else {
+                    /*
                     throw new IOException(
                         Messages.getMessage("badTypeNode",
                                              new String[] {
                                                  partName,
                                                  opName,
                                                  elementName.toString()}));
+                    */                                                 
                 }                    
             } else { 
                 // check for attributes
