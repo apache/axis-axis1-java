@@ -1,0 +1,102 @@
+<?xml version="1.0" ?>
+
+<!-- This WSDL file has lots of bad Java names which are OK in XML-->
+
+<definitions name="JavaNames"
+             targetNamespace="http://names.wsdl.test/javanames"
+             xmlns:tns="http://names.wsdl.test/javanames"
+             xmlns:typens="http://names.wsdl.test/javanames"
+             xmlns:xsd="http://www.w3.org/1999/XMLSchema"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+  <!-- type defs -->
+  <types>
+    <xsd:schema targetNamespace="http://names.wsdl.test/javanames"
+                xmlns:xsd="http://www.w3.org/1999/XMLSchema">
+      <xsd:complexType name="my-phone">
+        <xsd:all>
+            <xsd:element name="area:Code" type="xsd:int"/>
+            <xsd:element name="exchange" type="xsd:string"/>
+            <xsd:element name="number" type="xsd:string"/>
+        </xsd:all>
+      </xsd:complexType>
+
+      <xsd:complexType name="my.address">
+        <xsd:all>
+            <xsd:element name="street-Num" type="xsd:int"/>
+            <xsd:element name="street-Name" type="xsd:string"/>
+            <xsd:element name="city" type="xsd:string"/>
+            <xsd:element name="state" type="xsd:string"/>
+            <xsd:element name="zip" type="xsd:int"/>
+            <xsd:element name="phone.Number" type="typens:my-phone"/>
+        </xsd:all>
+      </xsd:complexType>
+    </xsd:schema>
+  </types>
+
+  <!-- message declns -->
+  <message name="AddEntryRequest">
+    <part name="name" type="xsd:string"/>
+    <part name="address" type="typens:my.address"/>
+  </message>
+
+  <message name="GetAddressFromNameRequest">
+    <part name="name" type="xsd:string"/>
+  </message>
+
+  <message name="GetAddressFromNameResponse">
+    <part name="address" type="typens:my.address"/>
+  </message>
+
+  <!-- port type declns -->
+  <portType name="-JavaNames-">
+    <operation name="new">
+      <input message="tns:AddEntryRequest"/>
+    </operation>
+    <operation name="public">
+      <input message="tns:GetAddressFromNameRequest"/>
+      <output message="tns:GetAddressFromNameResponse"/>
+    </operation>
+  </portType>
+
+  <!-- binding declns -->
+  <binding name="Java-Names_SOAP:Binding" type="tns:-JavaNames-">
+    <soap:binding style="rpc"
+                  transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="new">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="encoded"
+                   namespace="http://names.wsdl.test/javanames"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="encoded"
+                   namespace="http://names.wsdl.test/javanames"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="public">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="encoded"
+                   namespace="http://names.wsdl.test/javanames"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="encoded"
+                   namespace="http://names.wsdl.test/javanames"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+  </binding>
+
+  <!-- service decln -->
+  <service name="JavaNames-Service;test">
+    <port name="JavaNames" binding="tns:Java-Names_SOAP:Binding">
+      <soap:address location="http://localhost:8080/axis/servlet/AxisServlet"/>
+    </port>
+  </service>
+
+</definitions>
