@@ -337,6 +337,10 @@ public class SymbolTable {
             }
             
 /* tomj: This is a bad idea, faults seem to be undefined
+// RJB reply:  this MUST be done for those systems that do something with
+// messages.  Perhaps we have to do an extra step for faults?  I'll leave
+// this commented for now, until someone uses this generator for something
+// other than WSDL2Java.
             // Messages
             Iterator i = def.getMessages().values().iterator();
             while (i.hasNext()) {
