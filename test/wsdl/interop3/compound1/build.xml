@@ -20,7 +20,7 @@
     <wsdl2java url="http://www.whitemesa.net/wsdl/r3/compound1.wsdl"
                output="${root.dir}/build/work" skeleton="yes"/>
 
-    <copy file="SoapInteropCompound1BindingImpl.java"
+    <copy file="SoapInteropCompound1BindingImpl.java" overwrite="true"
           todir="${root.dir}/build/work/test/wsdl/interop3/compound1"/>
 
     <copy file="Compound1TestCase.java"

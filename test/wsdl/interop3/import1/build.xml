@@ -22,7 +22,7 @@
 
     <mkdir dir="${root.dir}/${build.dest}"/>
 
-    <copy file="SoapInteropImport1BindingImpl.java"
+    <copy file="SoapInteropImport1BindingImpl.java" overwrite="true"
           todir="${root.dir}/build/work/test/wsdl/interop3/import1"/>
 
     <copy file="Import1TestCase.java"
