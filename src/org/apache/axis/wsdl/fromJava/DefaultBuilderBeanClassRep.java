@@ -80,7 +80,7 @@ public class DefaultBuilderBeanClassRep implements BuilderBeanClassRep {
         // processing, you could add/change/remove/rename the ClassRep and FieldRep objects.
         // For example, if you want all of the field elements in the complexType to be
         // uppercased, you could walk all of the FieldRep and uppercase the names.
-        ClassRep cr = new ClassRep(cls, false);
+        ClassRep cr = new ClassRep(cls, false, null);
 
         return cr;
     }

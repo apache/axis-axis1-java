@@ -107,6 +107,7 @@ public class Types {
     HashMap schemaElementNames = null;
     HashMap schemaUniqueElementNames = null; 
     BuilderBeanClassRep beanBuilder = null;
+    Vector stopClasses = null;
 
     /**
      * This class serailizes a <code>Class</code> to XML Schema. The constructor
@@ -124,13 +125,15 @@ public class Types {
                  TypeMapping defaultTM,   
                  Namespaces namespaces, 
                  String targetNamespace,
-                 Java2WSDLFactory factory) {
+                 Java2WSDLFactory factory, 
+                 Vector stopClasses) {
         this.def = def;
         createDocumentFragment();
         this.tm = tm;
         this.defaultTM = defaultTM;
         this.namespaces = namespaces;
         this.targetNamespace = targetNamespace;
+        this.stopClasses = stopClasses;
         schemaElementNames = new HashMap();
         schemaUniqueElementNames = new HashMap();
         schemaTypes = new HashMap();
@@ -455,11 +458,12 @@ public class Types {
         writeSchemaElement(qName, complexType);
         complexType.setAttribute("name", qName.getLocalPart());
 
-        // See if there is a super class
+        // See if there is a super class, stop if we hit a stop class
         Element e = null;
         Class superClass = cls.getSuperclass();
         if (superClass != null &&
-            superClass != java.lang.Object.class) {
+                superClass != java.lang.Object.class &&
+                (stopClasses == null || !stopClasses.contains(superClass.getName()))) {
             // Write out the super class
             String base = writeType(superClass);
             Element complexContent = docHolder.createElement("complexContent");

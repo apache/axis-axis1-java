@@ -72,10 +72,12 @@ public interface BuilderPortTypeClassRep {
      * @param cls is the Class 
      * @param inhMethods if true, then the ClassRep will contain all methods inherited and
      *                   declared. If false, then ClassRep will contain just the declared methods.
+    * @param stopClasses An optional vector of class names which if inhMethods
+    *                    is true, will stop the inheritence search if encountered.
      * @param implClass  An optional implClass can be passed in that implements/extends cls.
      *                   The purpose of the implClass is to find method parameter names.             
      **/
-    public ClassRep build(Class cls, boolean inhMethods, Class implClass);
+    public ClassRep build(Class cls, boolean inhMethods, Vector stopClasses, Class implClass);
 
     /**
      * Returns a list of MethodReps to be used for portType operation processing.
@@ -84,5 +86,5 @@ public interface BuilderPortTypeClassRep {
      *                       if empty or null, consider all methods.
      * @return Vector of MethodRep objects
      **/
-    public Vector getResolvedMethods(ClassRep cr, Vector allowedMethods);
+    public Vector getResolvedMethods(ClassRep cr, Vector allowedMethods, Vector disallowedMethods);
 }

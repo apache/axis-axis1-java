@@ -88,6 +88,8 @@ public class Java2WSDL {
     protected static final int INHERITED_CLASS_OPT = 'a';
     protected static final int FACTORY_CLASS_OPT = 'f';
     protected static final int IMPL_CLASS_OPT = 'i';
+    protected static final int METHODS_NOTALLOWED_OPT = 'x';
+    protected static final int STOP_CLASSES_OPT = 'c';
 
     /**
      *  Define the understood options. Each CLOptionDescriptor contains:
@@ -155,7 +157,14 @@ public class Java2WSDL {
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 IMPL_CLASS_OPT,
                 JavaUtils.getMessage("j2woptimplClass00")),
-
+        new CLOptionDescriptor("exclude",
+                CLOptionDescriptor.ARGUMENT_REQUIRED,
+                METHODS_NOTALLOWED_OPT,
+                JavaUtils.getMessage("j2woptexclude00")),
+        new CLOptionDescriptor("stopClasses",
+                CLOptionDescriptor.ARGUMENT_REQUIRED,
+                STOP_CLASSES_OPT,
+                JavaUtils.getMessage("j2woptstopClass00"))
     };
 
     
@@ -270,6 +279,15 @@ public class Java2WSDL {
                     case LOCATION_IMPORT_OPT:
                         emitter.setImportUrl(option.getArgument());
                         break;
+                        
+                    case METHODS_NOTALLOWED_OPT:
+                        emitter.setDisallowedMethods(option.getArgument());
+                        break;
+                        
+                    case STOP_CLASSES_OPT:
+                        emitter.setStopClasses(option.getArgument());
+                        break;
+                        
                 }
             }
 

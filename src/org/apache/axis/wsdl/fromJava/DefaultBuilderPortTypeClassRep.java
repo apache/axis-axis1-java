@@ -75,10 +75,12 @@ public class DefaultBuilderPortTypeClassRep implements BuilderPortTypeClassRep {
      * @param cls is the Class 
      * @param inhMethods if true, then the ClassRep will contain all methods inherited and
      *                   declared. If false, then ClassRep will contain just the declared methods.
+     * @param stopClasses An optional vector of class names which if inhMethods
+     *                    is true, will stop the inheritence search if encountered.
      * @param implClass  An optional implClass can be passed in that implements/extends cls.
      *                   The purpose of the implClass is to find method parameter names.             
      **/
-    public ClassRep build(Class cls, boolean inhMethods, Class implClass) {
+    public ClassRep build(Class cls, boolean inhMethods, Vector stopClasses, Class implClass) {
         // Constructs a default ClassRep from the class
         // The Java2WSDL code examines the names/methods/params in ClassRep (and its super classes)
         // when constructing complexTypes.  So if you want to change the WSDL
@@ -86,7 +88,7 @@ public class DefaultBuilderPortTypeClassRep implements BuilderPortTypeClassRep {
         // For example, if you want to supply your own parameter names, you 
         // could walk the ParamRep objects of each MethodRep and supply your own names.
         // (See getResolvedMethods for a way to deal with overloading conflicts)
-        ClassRep cr = new ClassRep(cls, inhMethods, implClass);
+        ClassRep cr = new ClassRep(cls, inhMethods, stopClasses, implClass);
 
         return cr;
     }
@@ -96,9 +98,13 @@ public class DefaultBuilderPortTypeClassRep implements BuilderPortTypeClassRep {
      * @param cr is the ClassRep for the PortType class
      * @param allowedMethods is a vector that contains the names of the methods to consider.
      *                       if empty or null, consider all methods.
+     * @param disallowedMethods is a vector that contains the names of the methods NOT to consider.
+     *                       if empty or null, consider all methods.
      * @return Vector of MethodRep objects
      **/
-    public Vector getResolvedMethods(ClassRep cr, Vector allowedMethods) {
+    public Vector getResolvedMethods(ClassRep cr,
+                                     Vector allowedMethods,
+                                     Vector disallowedMethods) {
         Vector methods = new Vector(cr.getMethods());
 
         // Remove from the array methods not contained in allowedMethods
@@ -107,6 +113,18 @@ public class DefaultBuilderPortTypeClassRep implements BuilderPortTypeClassRep {
             int i = 0;
             while(i < methods.size()) {
                 if (!allowedMethods.contains(((MethodRep)methods.elementAt(i)).getName())) {
+                    methods.remove(i);
+                } else {
+                    i++;
+                }
+            }
+        }
+        
+        // Remove from the array methods that are listed in disallowedMethods
+        if (disallowedMethods != null && disallowedMethods.size() > 0) {
+            int i = 0;
+            while(i < methods.size()) {
+                if (disallowedMethods.contains(((MethodRep)methods.elementAt(i)).getName())) {
                     methods.remove(i);
                 } else {
                     i++;
