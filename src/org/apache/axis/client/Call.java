@@ -1908,8 +1908,10 @@ public class Call implements javax.xml.rpc.Call {
                 // config at the top of this method, so don't need to do it
                 // here.  Check for void return, though.
                 boolean findReturnParam = false;
+                QName returnParamQName = operation.getReturnQName();
+                
                 if (!XMLType.AXIS_VOID.equals(returnType)) {
-                    if (operation.getReturnQName() == null) {
+                    if (returnParamQName == null) {
                         // Assume the first param is the return
                         RPCParam param = (RPCParam)resArgs.get(0);
                         result = param.getValue();
@@ -1936,7 +1938,7 @@ public class Call implements javax.xml.rpc.Call {
                     // Check if this parameter is our return 
                     // otherwise just add it to our outputs
                     if (findReturnParam &&
-                          operation.getReturnQName().equals(param.getQName())) {
+                          returnParamQName.equals(param.getQName())) {
                         // found it!
                         result = value;
                         findReturnParam = false;
@@ -1944,6 +1946,12 @@ public class Call implements javax.xml.rpc.Call {
                         outParams.put(param.getQName(), value);
                         outParamsList.add(value);
                     }
+                }
+                // If we were looking for a particular QName for the return and
+                // didn't find it, throw an exception
+                if (findReturnParam) {
+                    String returnParamName = returnParamQName.toString(); 
+                    throw new AxisFault(Messages.getMessage("noReturnParam", returnParamName));
                 }
             }
         } else {
