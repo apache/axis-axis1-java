@@ -56,8 +56,11 @@
 package samples.echo ;
 
 import java.lang.reflect.Array;
+import java.util.Hashtable;
+
 import org.apache.axis.AxisFault ;
 import org.apache.axis.client.HTTPCall ;
+import org.apache.axis.encoding.BeanSerializer;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.encoding.ServiceDescription;
 import org.apache.axis.encoding.TypeMappingRegistry;
@@ -132,9 +135,9 @@ public class TestClient {
 
         // register the SOAPStruct class
         QName ssqn = new QName("http://soapinterop.org/xsd", "SOAPStruct");
-        call.addSerializer(SOAPStruct.class, ssqn, new SOAPStructSer());
-        call.addDeserializerFactory(ssqn, SOAPStruct.class,
-                                    SOAPStructSer.getFactory());
+        Class cls = SOAPStruct.class;
+        call.addSerializer(cls, ssqn, new BeanSerializer(cls));
+        call.addDeserializerFactory(ssqn, cls, BeanSerializer.getFactory(cls));
 
         // execute the tests
         test("echoString", "abcdefg");
