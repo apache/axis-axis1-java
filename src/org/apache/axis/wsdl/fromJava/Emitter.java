@@ -625,13 +625,14 @@ public class Emitter {
             for (int i = 0; i < mappedTypes.length; i++)
             {
                 Class mappedType = mappedTypes[i];
+                QName name = tm.getTypeQName(mappedType);
                 /**
                  * If it's a non-standard type, make sure it shows up in
                  * our WSDL
                  */
                 if (standardTypes.getSerializer(mappedType) == null)
                 {
-                    types.writeTypeForPart(mappedType,null);
+                    types.writeTypeForPart(mappedType, name);
                 }
             }
         }
