@@ -208,19 +208,20 @@ public class SimpleAxisServer implements Runnable {
      * This will interrupt any pending accept().
      */
     public void stop() throws Exception {
-        /* The following code, before log.info, may be unnecessary given
-         * that we are about to kill the JVM.
+        /* 
+         * Close the server socket cleanly, but avoid fresh accepts while
+         * the socket is closing.
          */
         stopped = true;
         try {
             serverSocket.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.info(JavaUtils.getMessage("exception00"), e);
         }
-        if (worker != null) {
-            worker.interrupt();
-        }
+
         log.info(JavaUtils.getMessage("quit00", "SimpleAxisServer"));
+
+        // Kill the JVM, which will interrupt pending accepts even on linux.
         System.exit(0);
     }
 
@@ -244,21 +245,24 @@ public class SimpleAxisServer implements Runnable {
             int port = opts.getPort();
             ServerSocket ss = null;
             // Try five times
-            for (int i=0;i<5;i++) {
+            for (int i = 0; i < 5; i++) {
                 try {
                     ss = new ServerSocket(port);
                     break;
                 } catch (java.net.BindException be){
-                    // At 3 second intervals.
-                    Thread.sleep(3000);
+                    log.debug(JavaUtils.getMessage("exception00"), be);
+                    if (i < 4) {
+                        // At 3 second intervals.
+                        Thread.sleep(3000);
+                    } else {
+                        throw new Exception(JavaUtils.
+                                getMessage("unableToStartServer00",
+                                           Integer.toString(port)));
+                    }
                 }
             }
-            if (ss != null){
-                sas.setServerSocket(ss);
-                sas.start();
-            } else {
-                throw new Exception(JavaUtils.getMessage("unableToStartServer00",Integer.toString(port)));
-            }
+            sas.setServerSocket(ss);
+            sas.start();
         } catch (Exception e) {
             log.error(JavaUtils.getMessage("exception00"), e);
             return;
