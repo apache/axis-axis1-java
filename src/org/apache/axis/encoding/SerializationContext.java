@@ -312,7 +312,7 @@ public class SerializationContext
         
         if (writingStartTag) {
             writer.write(">");
-            if (pretty) writer.write(">\n");
+            if (pretty) writer.write("\n");
             indent++;
         }
         
