@@ -55,7 +55,6 @@
 
 package org.apache.axis.encoding.ser;
 
-import org.apache.axis.AxisProperties;
 import org.apache.axis.MessageContext;
 import org.apache.axis.Constants;
 import org.apache.axis.description.TypeDesc;
@@ -262,7 +261,8 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
             // try to put unknown elements into an Object property
             propDesc = getObjectPropertyDesc(elemQName, context);
             if (propDesc != null) {
-                Boolean deserializeAny =  (Boolean) messageContext.getProperty(DESERIALIZE_ANY);
+                //Boolean deserializeAny =  (Boolean) messageContext.getProperty(DESERIALIZE_ANY);
+                Boolean deserializeAny = Boolean.TRUE;
                 if ((deserializeAny != null) && (deserializeAny.booleanValue())) {
                   dSer = context.getDeserializerForType(elemQName);
                 }

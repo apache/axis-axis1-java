@@ -1052,7 +1052,6 @@ public class SerializationContextImpl implements SerializationContext
     public Attributes setTypeAttribute(Attributes attributes, QName type)
     {
         if (type == null ||
-            !shouldSendXSIType() ||
              type.getLocalPart().indexOf(SymbolTable.ANON_TOKEN) >= 0 ||
             ((attributes != null) &&
              (attributes.getIndex(Constants.URI_DEFAULT_SCHEMA_XSI,
@@ -1069,7 +1068,7 @@ public class SerializationContextImpl implements SerializationContext
         attrs.addAttribute(Constants.URI_DEFAULT_SCHEMA_XSI,
                            "type",
                            prefix + ":type",
-                           "CDATA", qName2String(type));
+                           "CDATA", attributeQName2String(type));
         return attrs;
     }
 

@@ -45,14 +45,7 @@ public class ExtensibilityQueryBindingImpl implements ExtensibilityQueryPortType
 
     public ExtensibilityType query(ExtensibilityType query) throws RemoteException {
         ExtensibilityType result = new ExtensibilityType();
-        Element element = (Element) query.getAny();
-        Object obj = null;
-        try {
-            obj = ObjectSerializer.toObject(element);
-        } catch (Exception e) {
-            throw new RemoteException("Failed to deserialize any to object: " + e);
-        }
-        
+        Object obj = query.getAny();
         if (obj instanceof BookType) {
             BookType bookQuery = (BookType) obj;
             String subject = bookQuery.getSubject();

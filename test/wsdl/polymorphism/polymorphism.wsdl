@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:s="http://www.w3.org/2001/XMLSchema"
+    xmlns:s0="http://xml.apache.org/axis/PolymorphismTest"
+    xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+    targetNamespace="http://xml.apache.org/axis/PolymorphismTest"
+    xmlns="http://schemas.xmlsoap.org/wsdl/">
+    <documentation>
+        This tests the ability to return a polymorphic child type from an
+        operation which has been declared to return a parent type.  We'll
+        confirm that we get back the right type (a "B"), and make sure that
+        we do it in an environment where the server would normally NOT send
+        xsi:types at all (i.e. the "sendXsiTypes" option set to "false"), since
+        polymorphic types should always force xsi:type.
+    </documentation>
+  <types>
+    <s:schema elementFormDefault="qualified" 
+targetNamespace="http://xml.apache.org/axis/PolymorphismTest">
+      <s:element name="GetBAsA">
+        <s:complexType />
+      </s:element>
+      <s:element name="GetBAsAResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetBAsAResult"
+type="s0:A" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="A">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="a" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="B">
+        <s:complexContent mixed="false">
+          <s:extension base="s0:A">
+            <s:sequence>
+              <s:element minOccurs="0" maxOccurs="1" name="b" type="s:string" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:element name="A" nillable="true" type="s0:A" />
+    </s:schema>
+  </types>
+  <message name="GetBAsASoapIn">
+    <part name="parameters" element="s0:GetBAsA" />
+  </message>
+  <message name="GetBAsASoapOut">
+    <part name="parameters" element="s0:GetBAsAResponse" />
+  </message>
+  <portType name="PolymorphismTest">
+    <operation name="GetBAsA">
+      <input message="s0:GetBAsASoapIn" />
+      <output message="s0:GetBAsASoapOut" />
+    </operation>
+  </portType>
+  <binding name="PolymorphismTestSoap" type="s0:PolymorphismTest">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" 
+style="document" />
+    <operation name="GetBAsA">
+      <soap:operation soapAction="" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+  <service name="PolymorphismTest">
+    <port name="PolymorphismTest" binding="s0:PolymorphismTestSoap">
+      <soap:address location="http://localhost:8080/axis/services/PolymorphismTest" />
+    </port>
+  </service>
+</definitions>

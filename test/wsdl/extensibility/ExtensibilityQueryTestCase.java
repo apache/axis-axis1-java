@@ -84,7 +84,7 @@ public class ExtensibilityQueryTestCase extends junit.framework.TestCase {
         addBeanMapping(mapping, "FindBooksQueryExpressionElement", FindBooksQueryExpressionElement.class);
         addBeanMapping(mapping, "BookType", BookType.class);
         addBeanMapping(mapping, "resultList", ResultListType.class);
-        addBeanMapping(mapping, "result", QueryResultType.class);
+        addBeanMapping(mapping, "QueryResultType", QueryResultType.class);
         registry.register("",mapping);
         EngineConfiguration config = engine.getConfig();
         config.writeEngineConfig(engine);
