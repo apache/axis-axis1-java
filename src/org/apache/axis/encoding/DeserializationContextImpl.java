@@ -282,7 +282,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
      **/
     public ArrayList getCurrentNSMappings()
     {
-        return (ArrayList)namespaces.peek().clone();
+        return namespaces.cloneFrame();
     }
     
     /** 

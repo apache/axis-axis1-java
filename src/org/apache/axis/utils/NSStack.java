@@ -63,116 +63,138 @@ import java.util.Stack;
 import java.util.Iterator;
 
 /**
+ * The abstraction this class provides is a push down stack of variable
+ * length frames of prefix to namespace mappings.  Used for keeping track
+ * of what namespaces are active at any given point as an XML document is
+ * traversed or produced.
+ *
+ * From a performance point of view, this data will both be modified frequently
+ * (at a minimum, there will be one push and pop per XML element processed),
+ * and scanned frequently (many of the "good" mappings will be at the bottom
+ * of the stack).  The one saving grace is that the expected maximum 
+ * cardinalities of the number of frames and the number of total mappings
+ * is only in the dozens, representing the nesting depth of an XML document
+ * and the number of active namespaces at any point in the processing.
+ *
+ * Accordingly, this stack is implemented as a single array, will null
+ * values used to indicate frame boundaries.
+ *
  * @author: James Snell
  * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Sam Ruby (rubys@us.ibm.com)
  */
 public class NSStack {
     protected static Log log =
         LogFactory.getLog(NSStack.class.getName());
     
-    private static final ArrayList EMPTY = new ArrayList();
-
-    private Stack stack = new Stack();
+    private Mapping[] stack;
+    private int top = 0;
+    private int iterator = 0;
     
-    private NSStack parent = null;
-
-    public NSStack() {}
-    
-    public NSStack(ArrayList table) {
-        push(table);
-    }
-    
-    public NSStack(NSStack parent) {
-        this.parent = parent;
-    }
-    
-    public void push() {
-        if (stack == null) stack = new Stack();
-
-        if (log.isTraceEnabled())
-            log.trace("NSPush (" + stack.size() + ")");
-
-        stack.push(EMPTY);
-    }
-    
-    public void push(ArrayList table) {
-        if (stack == null) stack = new Stack();
-
-        if (log.isTraceEnabled())
-            log.trace("NSPush (" + stack.size() + ")");
-
-        if (table.size() == 0) 
-           stack.push(EMPTY);
-        else
-           stack.push(table);
-    }
-    
-    public ArrayList peek() {
-        if (stack.isEmpty())
-            if (parent != null)
-                return parent.peek();
-            else
-                return EMPTY;
-                
-        
-        return (ArrayList)stack.peek();
-    }
-    
-    public ArrayList pop() {
-        if (stack.isEmpty()) {
-            if (log.isTraceEnabled())
-                log.trace("NSPop (" + JavaUtils.getMessage("empty00") + ")");
-
-            if (parent != null)
-                return parent.pop();
-
-            return null;
-        }
-        
-        if (log.isTraceEnabled()){
-            ArrayList t = (ArrayList)stack.pop();
-            log.trace("NSPop (" + stack.size() + ")");
-            return t;
-        } else {
-            return (ArrayList)stack.pop();
-        }
-    }
-    
-    public void add(String namespaceURI, String prefix) {
-        if (stack.isEmpty()) push();
-        ArrayList table = peek();
-        if (table == EMPTY) {
-            table = new ArrayList();
-            stack.pop();
-            stack.push(table);
-        }
-        // Replace duplicate prefixes (last wins - this could also fault)
-        for (Iterator i = table.iterator(); i.hasNext();) {
-            Mapping mapping = (Mapping)i.next();
-            if (mapping.getPrefix().equals(prefix)) {
-                mapping.setNamespaceURI(namespaceURI);
-                return;
-            }
-        }
-        table.add(new Mapping(namespaceURI, prefix));
+    public NSStack() {
+        stack = new Mapping[32];
+        stack[0] = null;
     }
     
     /**
-     * remove a namespace from the topmost table on the stack
+     * Create a new frame at the top of the stack.
      */
-    /*
-    public void remove(String namespaceURI) {
-        if (stack.isEmpty()) return;
-        ArrayList current = peek();
-        for (int i = 0; i < current.size(); i++) {
-            Mapping map = (Mapping)current.get(i);
-            if (map.getNamespaceURI().equals(namespaceURI)) {
-                current.removeElementAt(i);
-                return; // ???
-            }
+    public void push() {
+        top ++;
+
+        if (top >= stack.length) {
+           Mapping newstack[] = new Mapping[stack.length*2];
+           System.arraycopy (stack, 0, newstack, 0, stack.length);
+           stack = newstack;
+        }
+
+        if (log.isTraceEnabled())
+            log.trace("NSPush (" + stack.length + ")");
+
+        stack[top] = null;
+    }
+    
+    /**
+     * Remove the top frame from the stack.
+     */
+    public void pop() {
+        while (stack[top] != null) top--;
+
+        if (top == 0) {
+            if (log.isTraceEnabled())
+                log.trace("NSPop (" + JavaUtils.getMessage("empty00") + ")");
+
+            return;
+        }
+        
+        top--;
+
+        if (log.isTraceEnabled()){
+            log.trace("NSPop (" + stack.length + ")");
         }
     }
-    */
+    
+    /**
+     * Return a copy of the current frame.
+     */
+    public ArrayList cloneFrame() {
+        ArrayList clone = new ArrayList();
+
+        topOfFrame();
+
+        while (iterator <= top) clone.add(stack[iterator++]);
+
+        return clone;
+    }
+
+    /**
+     * Remove all mappings from the current frame.
+     */
+    public void clearFrame() {
+        while (stack[top] != null) top--;
+    }
+
+    /**
+     * Reset the embedded iterator in this class to the top of the current
+     * (i.e., last) frame.  Note that this is not threadsafe, nor does it
+     * provide multiple iterators, so don't use this recursively.  Nor
+     * should you modify the stack while iterating over it.
+     */
+    public Mapping topOfFrame() {
+        iterator = top;
+        while (stack[iterator] != null) iterator--;
+        iterator++;
+        return next();
+    }
+
+    /**
+     * Return the next namespace mapping in the top frame.
+     */
+    public Mapping next() {
+        if (iterator > top) {
+            return null;
+        } else {
+            return stack[iterator++];
+        }
+    }
+
+    /**
+     * Add a mapping for a namespaceURI to the specified prefix to the top
+     * frame in the stack.  If the prefix is already mapped in that frame,
+     * remap it to the (possibly different) namespaceURI.
+     */
+    public void add(String namespaceURI, String prefix) {
+        // Replace duplicate prefixes (last wins - this could also fault)
+        for (int cursor=top; stack[cursor]!=null; cursor--) {
+            if (stack[cursor].getPrefix().equals(prefix)) {
+                stack[cursor].setNamespaceURI(namespaceURI);
+                return;
+            }
+        }
+
+        push();
+        stack[top] = new Mapping(namespaceURI, prefix);
+    }
     
     /**
      * Return an active prefix for the given namespaceURI.  NOTE : This
@@ -193,99 +215,61 @@ public class NSStack {
         if ((namespaceURI == null) || (namespaceURI.equals("")))
             return null;
         
-        if (!stack.isEmpty()) {
-            for (int n = stack.size() - 1; n >= 0; n--) {
-                ArrayList t = (ArrayList)stack.get(n);
-                
-                for (int i = 0; i < t.size(); i++) {
-                    Mapping map = (Mapping)t.get(i);
-                    if (map.getNamespaceURI().equals(namespaceURI)) {
-                        String possiblePrefix = map.getPrefix();
-                        if (getNamespaceURI(possiblePrefix).equals(namespaceURI) &&
-                            (!noDefault || !"".equals(possiblePrefix)))
-                            return possiblePrefix;
-                    }
-                }
+        for (int cursor=top; cursor>0; cursor--) {
+            Mapping map = stack[cursor];
+            if (map == null) continue;
+
+            if (map.getNamespaceURI().equals(namespaceURI)) {
+                String possiblePrefix = map.getPrefix();
+                if (getNamespaceURI(possiblePrefix).equals(namespaceURI) &&
+                    (!noDefault || !"".equals(possiblePrefix)))
+                    return possiblePrefix;
             }
         }
         
-        if (parent != null)
-            return parent.getPrefix(namespaceURI);
         return null;
     }
 
+    /**
+     * Return an active prefix for the given namespaceURI, including
+     * the default prefix ("").
+     */ 
     public String getPrefix(String namespaceURI) {
         return getPrefix(namespaceURI, false);
     }
     
+    /**
+     * Given a prefix, return the associated namespace (if any).
+     */
     public String getNamespaceURI(String prefix) {
         if (prefix == null)
             prefix = "";
+
+        for (int cursor=top; cursor>0; cursor--) {
+            Mapping map = stack[cursor];
+            if (map == null) continue;
         
-        if (!stack.isEmpty()) {
-            for (int n = stack.size() - 1; n >= 0; n--) {
-                ArrayList t = (ArrayList)stack.get(n);
-                
-                for (int i = 0; i < t.size(); i++) {
-                    Mapping map = (Mapping)t.get(i);
-                    if (map.getPrefix().equals(prefix))
-                        return map.getNamespaceURI();
-                }
-            }
+            if (map.getPrefix().equals(prefix))
+                return map.getNamespaceURI();
         }
         
-        if (parent != null)
-            return parent.getNamespaceURI(prefix);
-
-        if (log.isTraceEnabled()){
-            log.trace("--" + JavaUtils.getMessage("noPrefix00", "" + this, prefix));
-            dump("--");
-            log.trace("--" + JavaUtils.getMessage("end00"));
-        }
-
         return null;
     }
     
-    public boolean isDeclared(String namespaceURI) {
-        if (!stack.isEmpty()) {
-            for (int n = stack.size() - 1; n >= 0; n--) {
-                ArrayList t = (ArrayList)stack.get(n);
-                if ((t != null) && (t != EMPTY)) {
-                    for (int i = 0; i < t.size(); i++) {
-                        if (((Mapping)t.get(i)).getNamespaceURI().
-                                   equals(namespaceURI))
-                            return true;
-                    }
-                }
-            }
-        }
-
-        if (parent != null)
-            return parent.isDeclared(namespaceURI);
-
-        return false;
-    }
-    
+    /**
+     * Produce a trace dump of the entire stack, starting from the top and
+     * including frame markers.
+     */
     public void dump(String dumpPrefix)
     {
-        Enumeration e = stack.elements();
-        while (e.hasMoreElements()) {
-            ArrayList list = (ArrayList)e.nextElement();
+        for (int cursor=top; cursor>0; cursor--) {
+            Mapping map = stack[cursor];
 
-            if (list == null) {
-                log.trace(dumpPrefix + JavaUtils.getMessage("nullTable00"));
-                continue;
-            }
-
-            for (int i = 0; i < list.size(); i++) {
-                Mapping map = (Mapping)list.get(i);
+            if (map == null) {
+                log.trace(dumpPrefix + JavaUtils.getMessage("stackFrame00"));
+            } else {
                 log.trace(dumpPrefix + map.getNamespaceURI() + " -> " + map.getPrefix());
             }
-        }
-
-        if (parent != null) {
-            log.trace(dumpPrefix + "--" + JavaUtils.getMessage("parent00"));
-            parent.dump(dumpPrefix + "--");
         }
     }
 }
