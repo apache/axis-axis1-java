@@ -378,8 +378,15 @@ public class Types {
         String componentTypeName = null;
         Class componentType = null;
         if (type.isArray()) {
+            String dimString = "[]";
             componentType = type.getComponentType();
-            componentTypeName = writeType(componentType);
+            if (componentType.isArray()) {
+                while (componentType.isArray()) {
+                    dimString += "[]";
+                    componentType = componentType.getComponentType();
+                }
+            }
+            componentTypeName = writeType(componentType) + dimString;
         }
 
         String soapTypeName = qName.getLocalPart();
@@ -409,7 +416,7 @@ public class Types {
             attribute.setAttribute("ref",
                                    Constants.NSPREFIX_SOAP_ENC +":arrayType");
             attribute.setAttribute(Constants.NSPREFIX_WSDL +":arrayType",
-                                   componentTypeName + "[]" );
+                                   componentTypeName );
         } else {
             if (isEnumClass(type)) {
                 writeEnumType(qName, type);
