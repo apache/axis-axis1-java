@@ -131,7 +131,9 @@ public class ServiceClient {
         addTransportPackage("org.apache.axis.transport");
         
         setTransportForProtocol("local", new org.apache.axis.transport.local.LocalTransport());
-        setTransportForProtocol("http", new HTTPTransport());
+        HTTPTransport httpTransport = new HTTPTransport();
+        setTransportForProtocol("http", httpTransport);
+        setTransportForProtocol("https", httpTransport);
         
         initialized = true;
       }
