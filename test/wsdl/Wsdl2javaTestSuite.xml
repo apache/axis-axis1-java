@@ -336,7 +336,6 @@
     </wsdl2java>
     
     <!-- Check to make sure we map XML names that are illegal Java correctly -->
-    <!--
     <wsdl2java url="test/wsdl/names/JavaNames.wsdl"
                output="build/work"
                deployscope="none"
@@ -346,7 +345,6 @@
                testcase="yes">
         <mapping namespace="http://test.com/reference" package="test.filegen"/>
     </wsdl2java>
-    -->
 
     <!--
     <wsdl2java url="http://www.lemurlabs.com/projects/soap/fortune/FortuneService.wsdl"
