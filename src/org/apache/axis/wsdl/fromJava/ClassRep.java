@@ -327,6 +327,21 @@ public class ClassRep extends BaseRep {
             // move up the inhertance chain
             currentClass = currentClass.getSuperclass();
         }
+
+        // Mark all overloaded methods
+        HashMap map = new HashMap();
+        for (int i = 0; i < _methods.size(); ++i) {
+            MethodRep method = (MethodRep) _methods.get(i);
+            String methodName = method.getName();
+            MethodRep otherMethod = (MethodRep) map.get(methodName);
+            if (otherMethod != null) {
+                otherMethod.setOverloaded();
+                method.setOverloaded();
+            }
+            else {
+                map.put(methodName, method);
+            }
+        }
     }
 
     /**

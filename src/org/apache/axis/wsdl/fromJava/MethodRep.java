@@ -72,7 +72,8 @@ import javax.xml.rpc.ParameterMode;
 public class MethodRep extends BaseRep {
     
     private String   _name       = "";
-    private ParamRep _returns    = null;                                           
+    private ParamRep _returns    = null;
+    private boolean  _overloaded = false;
     private Vector   _parameters = new Vector();    
     private Vector   _exceptions = new Vector();
 
@@ -169,4 +170,6 @@ public class MethodRep extends BaseRep {
     public void     setParameters(Vector v)  { _parameters = v; }
     public Vector   getExceptions()          { return _exceptions; }
     public void     setExceptions(Vector v)  { _exceptions = v; }
+    public void     setOverloaded() { _overloaded = true; }
+    public boolean  isOverloaded() { return _overloaded; }
 };

@@ -570,8 +570,9 @@ public class Emitter {
 
         for(int i=0; i<methods.size(); i++) {
             MethodRep method = (MethodRep) methods.elementAt(i);
-            Operation oper = writeOperation(def, binding, method);
-            writeMessages(def, oper, method);
+            BindingOperation bindingOper = writeOperation(def, binding, method);
+            Operation oper = bindingOper.getOperation();
+            writeMessages(def, oper, method, bindingOper);
             portType.addOperation(oper);
         }
 
@@ -587,12 +588,21 @@ public class Emitter {
      * @param method (A MethodRep object)                       
      * @throws Exception
      */
-    private void writeMessages(Definition def, Operation oper, 
-                               MethodRep method) throws Exception{
+    private void writeMessages(Definition def, Operation oper,
+            MethodRep method, BindingOperation bindingOper)
+            throws Exception{
         Input input = def.createInput();
 
         Message msg = writeRequestMessage(def, method);
         input.setMessage(msg);
+
+        // Iff this method is overloaded, then give the input
+        // stanzas a name.
+        if (method.isOverloaded()) {
+            String name = msg.getQName().getLocalPart();
+            input.setName(name);
+            bindingOper.getBindingInput().setName(name);
+        }
         oper.setInput(input);
 
         def.addMessage(msg);
@@ -600,6 +610,14 @@ public class Emitter {
         msg = writeResponseMessage(def, method);
         Output output = def.createOutput();
         output.setMessage(msg);
+
+        // Iff this method is overloaded, then give the output
+        // stanzas a name.
+        if (method.isOverloaded()) {
+            String name = msg.getQName().getLocalPart();
+            output.setName(name);
+            bindingOper.getBindingOutput().setName(name);
+        }
         oper.setOutput(output);
 
         def.addMessage(msg);
@@ -639,14 +657,13 @@ public class Emitter {
      * @param methodRep  - Representation of the method                      
      * @throws Exception
      */
-    private Operation writeOperation(Definition def, 
+    private BindingOperation writeOperation(Definition def, 
                                      Binding binding, 
                                      MethodRep methodRep) {
         Operation oper = def.createOperation();
         oper.setName(methodRep.getName());
         oper.setUndefined(false);
-        writeBindingOperation(def, binding, oper, methodRep);
-        return oper;
+        return writeBindingOperation(def, binding, oper, methodRep);
     }
 
     /** Create a Binding Operation
@@ -657,7 +674,7 @@ public class Emitter {
      * @param methodRep  - Representation of the method                           
      * @throws Exception
      */
-    private void writeBindingOperation (Definition def, 
+    private BindingOperation writeBindingOperation (Definition def, 
                                         Binding binding, 
                                         Operation oper,
                                         MethodRep methodRep) {
@@ -666,6 +683,7 @@ public class Emitter {
         BindingOutput bindingOutput = def.createBindingOutput();
 
         bindingOper.setName(oper.getName());
+        bindingOper.setOperation(oper);
 
         SOAPOperation soapOper = new SOAPOperationImpl();
         String soapAction = methodRep.getMetaData("soapAction");
@@ -723,6 +741,8 @@ public class Emitter {
         bindingOper.setBindingOutput(bindingOutput);
 
         binding.addBindingOperation(bindingOper);
+
+        return bindingOper;
     }
 
     /** Create a Request Message
