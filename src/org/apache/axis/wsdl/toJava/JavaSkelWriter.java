@@ -61,7 +61,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.wsdl.Binding;
+import javax.wsdl.BindingInput;
 import javax.wsdl.BindingOperation;
+import javax.wsdl.BindingOutput;
+import javax.wsdl.Operation;
+import javax.wsdl.OperationType;
 import javax.wsdl.PortType;
 import javax.wsdl.QName;
 
@@ -131,10 +135,12 @@ public class JavaSkelWriter extends JavaWriter {
         pw.println("    public String getParameterName(String opName, int i) {");
         pw.println("        return skel.getParameterName(opName, i);");
         pw.println("    }");
+        pw.println();
         pw.println("    public static String getParameterNameStatic(String opName, int i) {");
         pw.println("        init();");
         pw.println("        return skel.getParameterName(opName, i);");
         pw.println("    }");
+        pw.println();
         // Initialize operation parameter names
         pw.println("    protected static void init() {");
         pw.println("        if (skel != null) ");
@@ -183,19 +189,50 @@ public class JavaSkelWriter extends JavaWriter {
                 }
             }
             // Get the namespace for the operation from the <soap:body>
+            // RJB: is this the right thing to do?
             String namespace = "";
-            Iterator bindingInputIterator
-                    = operation.getBindingInput().getExtensibilityElements().iterator();
-            for (; bindingInputIterator.hasNext();) {
-                Object obj = bindingInputIterator.next();
-                if (obj instanceof SOAPBody) {
-                    namespace = ((SOAPBody) obj).getNamespaceURI();
-                    if (namespace == null)
-                        namespace = "";
-                    break;
+            Iterator bindingMsgIterator = null;
+            BindingInput input = operation.getBindingInput();
+            BindingOutput output;
+            if (input != null) {
+                bindingMsgIterator =
+                        input.getExtensibilityElements().iterator();
+            }
+            else {
+                output = operation.getBindingOutput();
+                if (output != null) {
+                    bindingMsgIterator =
+                            output.getExtensibilityElements().iterator();
                 }
             }
-            writeOperation(operation, parameters, soapAction, namespace, isRPC);
+            if (bindingMsgIterator != null) {
+                for (; bindingMsgIterator.hasNext();) {
+                    Object obj = bindingMsgIterator.next();
+                    if (obj instanceof SOAPBody) {
+                        namespace = ((SOAPBody) obj).getNamespaceURI();
+                        if (namespace == null) {
+                            namespace = emitter.def.getTargetNamespace();
+                        }
+                        if (namespace == null)
+                            namespace = "";
+                        break;
+                    }
+                }
+            }
+            Operation ptOperation = operation.getOperation();
+            OperationType type = ptOperation.getStyle();
+
+            // These operation types are not supported.  The signature
+            // will be a string stating that fact.
+            if (type == OperationType.NOTIFICATION
+                    || type == OperationType.SOLICIT_RESPONSE) {
+                pw.println(parameters.signature);
+                pw.println();
+            }
+            else {
+                writeOperation(
+                        operation, parameters, soapAction, namespace, isRPC);
+            }
         }
         pw.println("}");
         pw.close();

@@ -1,0 +1,97 @@
+<?xml version="1.0" ?>
+
+<definitions 
+    name="operation styles test"
+    targetNamespace="opStyles.wsdl.test"
+    xmlns:tns="opStyles.wsdl.test"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+  <!-- message declns -->
+  <message name="empty"/>
+
+  <!-- port type declns -->
+  <portType name="opStyles">
+    <operation name="oneway">
+      <input message="tns:empty"/>
+    </operation>
+    <operation name="requestResponse">
+      <input message="tns:empty"/>
+      <output message="tns:empty"/>
+    </operation>
+    <operation name="solicitResponse">
+      <output message="tns:empty"/>
+      <input message="tns:empty"/>
+    </operation>
+    <operation name="notification">
+      <output message="tns:empty"/>
+    </operation>
+  </portType>
+
+  <!-- binding declns -->
+  <binding name="opStyleBinding" type="tns:opStyles">
+    <soap:binding
+        style="rpc"
+        transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="oneway">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+    </operation>
+    <operation name="requestResponse">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="solicitResponse">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="notification">
+      <soap:operation soapAction=""/>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+  </binding>
+
+  <!-- service decln -->
+  <service name="opStyleService">
+    <port name="opStyles" binding="tns:opStyleBinding">
+      <soap:address location="http://localhost:8080/axis/services/opStyles"/>
+    </port>
+  </service>
+
+</definitions>
+

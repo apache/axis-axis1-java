@@ -65,10 +65,13 @@ import java.util.Map;
 import java.util.Vector;
 
 import javax.wsdl.Binding;
+import javax.wsdl.BindingInput;
 import javax.wsdl.BindingOperation;
+import javax.wsdl.BindingOutput;
 import javax.wsdl.Fault;
 import javax.wsdl.Input;
 import javax.wsdl.Operation;
+import javax.wsdl.OperationType;
 import javax.wsdl.Output;
 import javax.wsdl.Part;
 import javax.wsdl.PortType;
@@ -264,22 +267,50 @@ public class JavaStubWriter extends JavaWriter {
                 }
             }
             // Get the namespace for the operation from the <soap:body>
+            // RJB: is this the right thing to do?
             String namespace = "";
-            Iterator bindingInputIterator
-                    = operation.getBindingInput().getExtensibilityElements().iterator();
-            for (; bindingInputIterator.hasNext();) {
-                Object obj = bindingInputIterator.next();
-                if (obj instanceof SOAPBody) {
-                    namespace = ((SOAPBody) obj).getNamespaceURI();
-                    if (namespace == null) {
-                        namespace = emitter.def.getTargetNamespace();
-                    }
-                    if (namespace == null)
-                        namespace = "";
-                    break;
+            Iterator bindingMsgIterator = null;
+            BindingInput input = operation.getBindingInput();
+            BindingOutput output;
+            if (input != null) {
+                bindingMsgIterator =
+                        input.getExtensibilityElements().iterator();
+            }
+            else {
+                output = operation.getBindingOutput();
+                if (output != null) {
+                    bindingMsgIterator =
+                            output.getExtensibilityElements().iterator();
                 }
             }
-            writeOperation(operation, parameters, soapAction, namespace, isRPC);
+            if (bindingMsgIterator != null) {
+                for (; bindingMsgIterator.hasNext();) {
+                    Object obj = bindingMsgIterator.next();
+                    if (obj instanceof SOAPBody) {
+                        namespace = ((SOAPBody) obj).getNamespaceURI();
+                        if (namespace == null) {
+                            namespace = emitter.def.getTargetNamespace();
+                        }
+                        if (namespace == null)
+                            namespace = "";
+                        break;
+                    }
+                }
+            }
+            Operation ptOperation = operation.getOperation();
+            OperationType type = ptOperation.getStyle();
+
+            // These operation types are not supported.  The signature
+            // will be a string stating that fact.
+            if (type == OperationType.NOTIFICATION
+                    || type == OperationType.SOLICIT_RESPONSE) {
+                pw.println(parameters.signature);
+                pw.println();
+            }
+            else {
+                writeOperation(
+                        operation, parameters, soapAction, namespace, isRPC);
+            }
         }
         pw.println("}");
         pw.close();

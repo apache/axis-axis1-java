@@ -64,6 +64,8 @@ import java.util.Vector;
 import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
 import javax.wsdl.Definition;
+import javax.wsdl.Operation;
+import javax.wsdl.OperationType;
 import javax.wsdl.Port;
 import javax.wsdl.QName;
 import javax.wsdl.Service;
@@ -187,10 +189,19 @@ public class JavaDeployWriter extends JavaWriter {
         Iterator operationsIterator = binding.getBindingOperations().iterator();
         for (; operationsIterator.hasNext();) {
             BindingOperation op = (BindingOperation) operationsIterator.next();
-            methodList = methodList + " " + op.getName();
+            Operation ptOperation = op.getOperation();
+            OperationType type = ptOperation.getStyle();
+
+            // These operation types are not supported.  The signature
+            // will be a string stating that fact.
+            if (type != OperationType.NOTIFICATION
+                    && type != OperationType.SOLICIT_RESPONSE) {
+                methodList = methodList + " " + op.getName();
+            }
         }
 
-        pw.println("      <parameter name=\"methodName\" value=\"" + methodList + "\"/>");
+        pw.println("      <parameter name=\"methodName\" value=\""
+                + methodList.substring(1) + "\"/>");
 
         if (emitter.getScope() == Emitter.APPLICATION_SCOPE) {
             pw.println("      <parameter name=\"scope\" value=\"Application\"/>");

@@ -64,9 +64,12 @@ import javax.wsdl.Binding;
 import javax.wsdl.Definition;
 import javax.wsdl.Message;
 import javax.wsdl.Operation;
+import javax.wsdl.OperationType;
 import javax.wsdl.PortType;
 import javax.wsdl.QName;
 import javax.wsdl.Service;
+
+import org.apache.axis.utils.JavaUtils;
 
 /**
 * This is Wsdl2java's implementation of the WriterFactory.
@@ -370,8 +373,25 @@ public class JavaWriterFactory implements WriterFactory {
                             new HashSet(portType.getOperations()).iterator();
                     while(operations.hasNext()) {
                         Operation operation = (Operation) operations.next();
+                        OperationType type = operation.getStyle();
                         String name = operation.getName();
-                        constructSignature(ptEntry.getParameters(name), name);
+                        Parameters parameters = ptEntry.getParameters(name);
+                        if (type == OperationType.SOLICIT_RESPONSE) {
+                            parameters.signature = "    // " + JavaUtils.getMessage(
+                                    "invalidSolResp00", name);
+                            System.err.println(JavaUtils.getMessage(
+                                    "invalidSolResp00", name));
+                        }
+                        else if (type == OperationType.NOTIFICATION) {
+                            parameters.signature = "    // " + JavaUtils.getMessage(
+                                    "invalidNotif00", name);
+                            System.err.println(JavaUtils.getMessage(
+                                    "invalidNotif00", name));
+                        }
+                        else { // ONE_WAY or REQUEST_RESPONSE
+                            parameters.signature = constructSignature( 
+                                   parameters, name);
+                        }
                     }
                 }
             }
@@ -381,7 +401,7 @@ public class JavaWriterFactory implements WriterFactory {
     /**
      * Construct the signature, which is used by both the interface and the stub.
      */
-    private void constructSignature(Parameters parms, String opName) {
+    private String constructSignature(Parameters parms, String opName) {
         String name  = Utils.xmlNameToJava(opName);
         String ret = parms.returnType == null ? "void" : parms.returnType.getName();
         String signature = "    public " + ret + " " + name + "(";
@@ -411,7 +431,7 @@ public class JavaWriterFactory implements WriterFactory {
         if (parms.faultString != null) {
             signature = signature + ", " + parms.faultString;
         }
-        parms.signature = signature;
+        return signature;
     } // constructSignature
 
     /**
