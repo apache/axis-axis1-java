@@ -21,6 +21,7 @@ Prerequisites:
    wsdl4j             from http://www-124.ibm.com/developerworks/projects/wsdl4j/
    commons-logging    from http://jakarta.apache.org/commons/logging.html
    commons-discovery  from http://jakarta.apache.org/commons/discovery.html
+   commons-lang       from http://jakarta.apache.org/commons/lang/index.html
    log4j              from http://jakarta.apache.org/log4j
    activation         from http://java.sun.com/products/javabeans/glasgow/jaf.html
    mailapi            from http://java.sun.com/products/javamail/
@@ -223,6 +224,7 @@ Copyright:
     </jar>
     <copy file="${wsdl4j.jar}" toDir="${build.lib}"/>
     <copy file="${commons-logging.jar}" toDir="${build.lib}"/>
+    <copy file="${commons-lang-2.0.jar}" toDir="${build.lib}"/>
     <copy file="${commons-discovery.jar}" toDir="${build.lib}"/>
     <copy file="${log4j-core.jar}" toDir="${build.lib}"/>
     <copy file="${src.dir}/log4j.properties"
