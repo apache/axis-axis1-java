@@ -438,7 +438,12 @@ public class Emitter extends Parser {
         try {
             Properties mappings = new Properties();
             if (NStoPkgFile != null) {
-                mappings.load(new FileInputStream(NStoPkgFile));
+                try {
+                    mappings.load(new FileInputStream(NStoPkgFilename));
+                } catch (Throwable t) {
+                    mappings.load(ClassUtils.getResourceAsStream(
+                            Emitter.class, NStoPkgFilename));
+                }
             }
             else {
                 mappings.load(new FileInputStream(NStoPkgFilename));

@@ -696,6 +696,8 @@ public class AxisServlet extends AxisServletBase {
             /* Set the request(incoming) message field in the context */
             /**********************************************************/
             msgContext.setRequestMessage(requestMsg);
+            String url = HttpUtils.getRequestURL(req).toString();
+            msgContext.setProperty(MessageContext.TRANS_URL, url);
 
             try {
                 /**
