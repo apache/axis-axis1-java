@@ -42,7 +42,7 @@ public abstract class UUIDGenFactory {
 
     static {
         AxisProperties.setClassOverrideProperty(Compiler.class, "axis.UUIDGenerator");
-        AxisProperties.setClassDefault(UUIDGen.class, "org.apache.axis.components.uuid.SimpleUUIDGen");
+        AxisProperties.setClassDefault(UUIDGen.class, "org.apache.axis.components.uuid.FastUUIDGen");
     }
 
     /**
