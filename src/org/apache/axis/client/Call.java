@@ -94,6 +94,7 @@ import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.Parameter;
 import org.apache.axis.wsdl.symbolTable.Parameters;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
+import org.apache.axis.wsdl.symbolTable.FaultInfo;
 import org.apache.axis.wsdl.toJava.Utils;
 import org.apache.commons.logging.Log;
 
@@ -121,6 +122,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.rmi.RemoteException;
 
 /**
  * Axis' JAXRPC Dynamic Invocation Interface implementation of the Call
@@ -1330,6 +1332,32 @@ public class Call implements javax.xml.rpc.Call {
             QName paramType = Utils.getXSIType(p);
             this.addParameter( p.getQName(), paramType, modes[p.getMode()]);
         }
+        
+        Map faultMap = bEntry.getFaults();
+        // Get the list of faults for this operation
+        ArrayList faults = (ArrayList) faultMap.get(bop);
+
+        // check for no faults
+        if (faults == null) {
+            return;
+        }
+        // For each fault, register its information
+        for (Iterator faultIt = faults.iterator(); faultIt.hasNext();) {
+            FaultInfo info = (FaultInfo) faultIt.next();
+            QName qname = info.getQName();
+            javax.wsdl.Message message = info.getMessage();
+
+            // if no parts in fault, skip it!
+            if (qname == null) {
+                continue;
+            }
+            try {
+                Class clazz = getTypeMapping().getClassForQName(info.getXMLType());
+                addFault(qname, clazz, info.getXMLType(), true);
+            } catch (Exception e) {
+                //TODO: ???
+            }
+        }        
 
         // set output type
         if (parameters.returnParam != null) {
@@ -1578,6 +1606,13 @@ public class Call implements javax.xml.rpc.Call {
         try {
             return this.invoke(params);
         }
+        catch (AxisFault af) {
+            this.operationName = origOpName;
+            if(af.getWrapped() != null && af.getWrapped() instanceof RemoteException) {
+                throw ((RemoteException)af.getWrapped());
+            }
+            throw af;
+        }
         catch (java.rmi.RemoteException re) {
             this.operationName = origOpName;
             throw re;
@@ -1662,6 +1697,9 @@ public class Call implements javax.xml.rpc.Call {
             return res;
         }
         catch( AxisFault af) {
+            if(af.getWrapped() != null && af.getWrapped() instanceof RemoteException) {
+                throw ((RemoteException)af.getWrapped());
+            }
             throw af;
         }
         catch( Exception exp ) {

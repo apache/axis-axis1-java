@@ -106,6 +106,9 @@ public class AxisFault extends java.rmi.RemoteException {
     /** SOAP headers which should be serialized with the Fault */
     protected ArrayList faultHeaders = null;
 
+    /** wrapped remote exception */
+    protected Throwable detail2 = null;
+    
     /**
      * Make an AxisFault based on a passed Exception.  If the Exception is
      * already an AxisFault, simply use that.  Otherwise, wrap it in an
@@ -200,7 +203,7 @@ public class AxisFault extends java.rmi.RemoteException {
         super ("", target);
         // ? SOAP 1.2 or 1.1 ?
         setFaultCodeAsString( Constants.FAULT_SERVER_USER );
-
+        detail2 = target;
         initFromException(target);
     }
 
@@ -779,4 +782,12 @@ public class AxisFault extends java.rmi.RemoteException {
         }
     }
 
-};
+    /**
+     * Returns the wrapped remote exception (the <i>cause</i>).
+     *
+     * @return  the wrapped remote exception, which may be <tt>null</tt>.
+     */
+    public Throwable getWrapped() {
+        return detail2;
+    }
+}

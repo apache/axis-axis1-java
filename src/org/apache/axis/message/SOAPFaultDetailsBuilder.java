@@ -133,41 +133,52 @@ public class SOAPFaultDetailsBuilder extends SOAPHandler implements Callback
         MessageContext msgContext = context.getMessageContext();
         SOAPConstants soapConstants = msgContext.getSOAPConstants();
         OperationDesc op = msgContext.getOperation();
+        Class faultClass = null;
+        QName faultXmlType = null;
         if (op != null) {
             FaultDesc faultDesc = op.getFaultByQName(qn);
             // allow fault type to be denoted in xsi:type
             if (faultDesc == null) {
-                QName type = context.getTypeFromAttributes(namespace,
+                faultXmlType = context.getTypeFromAttributes(namespace,
                                                            name,
                                                            attributes); 
-                if (type != null) {
-                    faultDesc = op.getFaultByXmlType(type);
+                if (faultXmlType != null) {
+                    faultDesc = op.getFaultByXmlType(faultXmlType);
                 }
+            } else {
+                faultXmlType = faultDesc.getXmlType();    
             }
             if (faultDesc != null) {
                 // Set the class
                 try {
-                    Class faultClass = ClassUtils.forName(faultDesc.getClassName());
-                    builder.setFaultClass(faultClass);
+                    faultClass = ClassUtils.forName(faultDesc.getClassName());
                 } catch (ClassNotFoundException e) {
                     // Just create an AxisFault, no custom exception
                 }
-                builder.setWaiting(true);
-                // register callback for the data, use the xmlType from fault info
-                Deserializer dser = null;
-                if (attributes.getValue(soapConstants.getAttrHref()) == null) {
-                    dser = context.getDeserializerForType(faultDesc.getXmlType());
-                } else {
-                    dser = new DeserializerImpl();
-                    dser.setDefaultType(faultDesc.getXmlType());
-                }
-                if (dser != null) {
-                    dser.registerValueTarget(new CallbackTarget(this, "faultData"));
-                }
-                return (SOAPHandler)dser;
             }
+        } else {
+            faultXmlType = context.getTypeFromAttributes(namespace,
+                                                       name,
+                                                       attributes); 
+            faultClass = context.getTypeMapping().getClassForQName(faultXmlType);            
         }
         
+        if(faultClass != null && faultXmlType != null) {
+            builder.setFaultClass(faultClass);
+            builder.setWaiting(true);
+            // register callback for the data, use the xmlType from fault info
+            Deserializer dser = null;
+            if (attributes.getValue(soapConstants.getAttrHref()) == null) {
+                dser = context.getDeserializerForType(faultXmlType);
+            } else {
+                dser = new DeserializerImpl();
+                dser.setDefaultType(faultXmlType);
+            }
+            if (dser != null) {
+                dser.registerValueTarget(new CallbackTarget(this, "faultData"));
+            }
+            return (SOAPHandler)dser;
+        }
         return null;
     }
 

@@ -71,6 +71,7 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Vector;
+import java.rmi.RemoteException;
 
 /** 
  * Build a Fault body element.
@@ -198,10 +199,18 @@ public class SOAPFaultBuilder extends SOAPHandler implements Callback
                         // We need to create the exception,
                         // passing the data to the constructor.
                         Class argClass = ConvertWrapper(faultData.getClass());
-                        Constructor con =
-                                faultClass.getConstructor(
-                                        new Class[] { argClass });
-                        f = (AxisFault) con.newInstance(new Object[] { faultData });
+                        try {
+                            Constructor con =
+                                    faultClass.getConstructor(
+                                            new Class[] { argClass });
+                            f = (AxisFault) con.newInstance(new Object[] { faultData });
+                        } catch(Exception e){
+                            // Don't do anything here, since a problem above means
+                            // we'll just fall through and use a plain AxisFault.
+                        }
+                        if (f == null && faultData instanceof RemoteException) {
+                            f = AxisFault.makeFault((RemoteException)faultData);    
+                        }
                     }
                 }
                 // If we have an AxisFault, set the fields
