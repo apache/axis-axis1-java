@@ -18,10 +18,11 @@ CLIENT API
 
 SCHEMA SUPPORT
 --------------
-X <Glen> Support qualified/unqualified flags for elements
-      (this also relates to WSDL2Java and type metadata)
 ! <> Support qualified/unqualified flags for attributes
       (this also relates to WSDL2Java and type metadata)
+! <> Support <xsd:choice>
+! <> Support minOccurs/maxOccurs on <xsd:sequence> elements
+! <> Support <xsd:list>
 
 
 JAX-RPC COMPATIBILITY
@@ -129,7 +130,7 @@ X <Rich> Generate correct input/output elements for overloading.
 
 METHOD DISPATCH / SERVICE METADATA
 ----------------------------------
-! <Glen> Use QName lookup when processing doc/lit style stuff with
+X <Glen> Use QName lookup when processing doc/lit style stuff with
          RPCProvider
 
 
