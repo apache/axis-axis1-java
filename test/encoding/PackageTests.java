@@ -43,6 +43,11 @@ public class PackageTests extends TestCase
         suite.addTestSuite(TestUnsignedInt.class);
         suite.addTestSuite(TestUnsignedShort.class);
         suite.addTestSuite(TestUnsignedByte.class);
+        suite.addTestSuite(TestYearMonth.class);
+        suite.addTestSuite(TestYear.class);
+        suite.addTestSuite(TestMonth.class);
+        suite.addTestSuite(TestMonthDay.class);
+        suite.addTestSuite(TestDay.class);
         return suite;
     }
 }

@@ -10,6 +10,11 @@ import org.apache.axis.types.UnsignedInt;
 import org.apache.axis.types.UnsignedShort;
 import org.apache.axis.types.UnsignedByte;
 import org.apache.axis.types.Time;
+import org.apache.axis.types.YearMonth;
+import org.apache.axis.types.Year;
+import org.apache.axis.types.Month;
+import org.apache.axis.types.Day;
+import org.apache.axis.types.MonthDay;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -241,4 +246,29 @@ public class TestDeser2001 extends TestDeser {
                     null);
     }
 
+    public void testYearMonth() throws Exception {
+        org.apache.axis.types.YearMonth ym = new YearMonth(2002, 8);
+        deserialize("<result xsi:type=\"xsd:gYearMonth\">2002-08</result>",
+                     ym);
+    }
+    public void testYear() throws Exception {
+        org.apache.axis.types.Year ym = new Year(2002);
+        deserialize("<result xsi:type=\"xsd:gYear\">2002</result>",
+                     ym);
+    }
+    public void testMonth() throws Exception {
+        org.apache.axis.types.Month ym = new Month(8);
+        deserialize("<result xsi:type=\"xsd:gMonth\">--08--</result>",
+                     ym);
+    }
+    public void testDay() throws Exception {
+        org.apache.axis.types.Day ym = new Day(15);
+        deserialize("<result xsi:type=\"xsd:gDay\">---15</result>",
+                     ym);
+    }
+    public void testMonthDay() throws Exception {
+        org.apache.axis.types.MonthDay ym = new MonthDay(8, 5);
+        deserialize("<result xsi:type=\"xsd:gMonthDay\">--08-05</result>",
+                     ym);
+    }
 }
