@@ -23,7 +23,11 @@ Copyright:
 <project default="functional-tests" basedir=".">
   <property name="test.functional.usefile" value="true"/>
   <property name="test.functional.reportdir" value="test-reports"/>
+  <!--The following is the port the service is listening on. -->
+  <!--FYI to run tcpmon change this to another port and have tcpmon listen on 8080 -->
   <property name="test.functional.SimpleAxisPort" value="8080"/>
+  <!--The IP port the service will be targeted at.-->
+  <property name="test.functional.ServicePort" value="8080"/>
   <property name="test.functional.fail" value="yes"/>
 
   <path id="test-classpath">
@@ -60,7 +64,9 @@ Copyright:
         <!-- Uncomment this to use Jikes instead of Javac for compiling JWS Files
         <jvmarg value="-Daxis.Compiler=org.apache.axis.utils.compiler.Jikes"/>
         -->
-        <arg line="-p ${test.functional.SimpleAxisPort}" /> <!-- arbitrary port -->
+        <jvmarg value="-Daxis.wsdlgen.intfnamespace=http://localhost:${test.functional.ServicePort}"/>
+        <jvmarg value="-Daxis.wsdlgen.serv.loc.url=http://localhost:${test.functional.ServicePort}"/>
+        <arg line="-p ${test.functional.SimpleAxisPort}" />  <!-- arbitrary port -->
       <classpath refid="test-classpath" />
     </java>
   </target>
@@ -100,6 +106,7 @@ Copyright:
       <jvmarg value="-Dhttp.proxyPassword=${http.proxyPassword}"/>
       <!-- Pass the port for SimpleAxisServer -->
       <jvmarg value="-Dtest.functional.SimpleAxisPort=${test.functional.SimpleAxisPort}"/>
+      <jvmarg value="-Dtest.functional.ServicePort=${test.functional.ServicePort}"/>
       <classpath refid="test-classpath" />
       <formatter type="xml" usefile="${test.functional.usefile}"/>
       <batchtest todir="${test.functional.reportdir}">
@@ -326,6 +333,7 @@ Copyright:
       <jvmarg value="-Dhttp.proxyPassword=${http.proxyPassword}"/>
       <!-- Pass the port for SimpleAxisServer -->
       <jvmarg value="-Dtest.functional.SimpleAxisPort=${test.functional.SimpleAxisPort}"/>
+      <jvmarg value="-Dtest.functional.ServicePort=${test.functional.ServicePort}"/>
       <classpath refid="test-classpath" />
       <formatter type="xml" usefile="${test.functional.usefile}"/>
       <batchtest todir="${test.functional.reportdir}">

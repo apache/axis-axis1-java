@@ -283,6 +283,12 @@ public class SimpleAxisWorker implements Runnable {
                         fileName.toString();
                 msgContext.setProperty(MessageContext.TRANS_URL, url);
 
+                msgContext.setProperty(MessageContext.WSDLGEN_INTFNAMESPACE,
+                     System.getProperty(MessageContext.WSDLGEN_INTFNAMESPACE,url));
+
+                msgContext.setProperty(MessageContext.WSDLGEN_SERV_LOC_URL,
+                      System.getProperty(MessageContext.WSDLGEN_SERV_LOC_URL,url));
+
                 String filePart = fileName.toString();
                 if (filePart.startsWith("axis/services/")) {
                     msgContext.setTargetService(filePart.substring(14));

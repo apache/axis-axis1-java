@@ -81,6 +81,7 @@ import javax.xml.rpc.holders.IntHolder;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 
 /**
  * Base class for Java dispatching.  Fetches various fields out of envelope,
@@ -373,6 +374,26 @@ public abstract class JavaProvider extends BasicProvider
 
         try {
             String url = msgContext.getStrProp(MessageContext.TRANS_URL);
+            String interfaceNamespace= msgContext.getStrProp(MessageContext.WSDLGEN_INTFNAMESPACE);
+            if(interfaceNamespace == null) interfaceNamespace= url;
+            String locationUrl= msgContext.getStrProp(MessageContext.WSDLGEN_SERV_LOC_URL);
+            if(locationUrl== null) locationUrl= url;
+            else{
+               try{
+                 URL urlURL= new URL(url);
+                 URL locationURL= new URL(locationUrl);
+                 URL urlTemp= new URL( urlURL.getProtocol(),
+                     locationURL.getHost(),
+                     locationURL.getPort(),
+                     urlURL.getFile());
+                     interfaceNamespace += urlURL.getFile();
+                locationUrl= urlTemp.toString();     
+               }catch(Exception e){
+                 locationUrl= url; 
+                 interfaceNamespace= url;
+               }
+            }
+
 
             Class cls = getServiceClass(msgContext, getServiceClassName(service));
 
@@ -393,8 +414,8 @@ public abstract class JavaProvider extends BasicProvider
             emitter.setMode(service.getStyle());
             emitter.setClsSmart(cls,url);
             emitter.setAllowedMethods(allowedMethods);
-            emitter.setIntfNamespace(url);
-            emitter.setLocationUrl(url);
+            emitter.setIntfNamespace(interfaceNamespace);
+            emitter.setLocationUrl(locationUrl);
             emitter.setServiceDesc(msgContext.getService().getInitializedServiceDesc(msgContext));
             emitter.setTypeMapping((TypeMapping)msgContext.getTypeMappingRegistry().
                                    getTypeMapping(Constants.URI_DEFAULT_SOAP_ENC));

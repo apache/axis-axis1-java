@@ -325,6 +325,14 @@ public class AxisServlet extends HttpServlet
 
                     msgContext.setProperty(MessageContext.TRANS_URL, url);
 
+
+                    msgContext.setProperty(MessageContext.WSDLGEN_INTFNAMESPACE,
+                      getOption(servletContext, MessageContext.WSDLGEN_INTFNAMESPACE,url));
+
+                    msgContext.setProperty(MessageContext.WSDLGEN_SERV_LOC_URL,
+                      getOption(servletContext, MessageContext.WSDLGEN_SERV_LOC_URL,url));
+
+
                     boolean wsdlRequested = false;
                     boolean listRequested = false;
 
