@@ -77,9 +77,6 @@ public class Parameters {
     // The signature that the interface and the stub will use
     public String signature = null;
 
-    // The signature that the skeleton will use
-    public String skelSignature = null;
-
     // The numbers of the respective parameters
     public int inputs = 0;
     public int inouts = 0;
@@ -90,7 +87,6 @@ public class Parameters {
                 + "\nreturnTypeName = " + returnName
                 + "\nfaultString = " + faultString
                 + "\nsignature = " + signature
-                + "\nskelSignature = " + skelSignature
                 + "\n(inputs, inouts, outputs) = (" + inputs + ", " + inouts + ", " + outputs + ")"
                 + "\nlist = " + list;
     } // toString
