@@ -220,9 +220,9 @@ public class AxisClient extends AxisEngine {
     }
 
     protected void invokeJAXRPCHandlers(MessageContext context){
-	java.util.List chain = null;
-	HandlerInfoChainFactory hiChainFactory = null;
-	boolean clientSpecified = false;
+    java.util.List chain = null;
+    HandlerInfoChainFactory hiChainFactory = null;
+    boolean clientSpecified = false;
 
         Service service
             = (Service)context.getProperty(Call.WSDL_SERVICE);
@@ -238,28 +238,28 @@ public class AxisClient extends AxisEngine {
         javax.xml.rpc.handler.HandlerRegistry registry;
         registry = service.getHandlerRegistry();
         if(registry != null) {
-	    chain = registry.getHandlerChain(portName);
-	    if ((chain != null) && (!chain.isEmpty())) {
-		hiChainFactory = new HandlerInfoChainFactory(chain);
-		clientSpecified = true;
-	    }
+        chain = registry.getHandlerChain(portName);
+        if ((chain != null) && (!chain.isEmpty())) {
+        hiChainFactory = new HandlerInfoChainFactory(chain);
+        clientSpecified = true;
+        }
         }
 
-	// Otherwise, use the container support
-	if (!clientSpecified) {
-	    SOAPService soapService = context.getService();
-	    if (soapService != null) {
-		// A client configuration exists for this service.  Check
-		// to see if there is a HandlerInfoChain configured on it.
-		hiChainFactory = (HandlerInfoChainFactory) 
-    		    soapService.getOption(Constants.ATTR_HANDLERINFOCHAIN);
-	    }
-	}
+    // Otherwise, use the container support
+    if (!clientSpecified) {
+        SOAPService soapService = context.getService();
+        if (soapService != null) {
+        // A client configuration exists for this service.  Check
+        // to see if there is a HandlerInfoChain configured on it.
+        hiChainFactory = (HandlerInfoChainFactory) 
+                soapService.getOption(Constants.ATTR_HANDLERINFOCHAIN);
+        }
+    }
 
-	if (hiChainFactory == null) {
-	    return;
-	}
-	HandlerChainImpl impl = (HandlerChainImpl) hiChainFactory.createHandlerChain();
+    if (hiChainFactory == null) {
+        return;
+    }
+    HandlerChainImpl impl = (HandlerChainImpl) hiChainFactory.createHandlerChain();
 
         if(!context.getPastPivot()) {
             impl.handleRequest(context);

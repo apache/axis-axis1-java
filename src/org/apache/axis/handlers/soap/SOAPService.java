@@ -464,17 +464,17 @@ public class SOAPService extends SimpleTargetedChain
         this.sendType = sendType;
     }
 
-	public void invoke(MessageContext msgContext) throws AxisFault {
-		HandlerInfoChainFactory handlerFactory = (HandlerInfoChainFactory) this.getOption(Constants.ATTR_HANDLERINFOCHAIN);
-		HandlerChainImpl handlerImpl = null;
-		if (handlerFactory != null) handlerImpl = (HandlerChainImpl) handlerFactory.createHandlerChain();
-		if (handlerImpl != null) handlerImpl.handleRequest(msgContext);
+    public void invoke(MessageContext msgContext) throws AxisFault {
+        HandlerInfoChainFactory handlerFactory = (HandlerInfoChainFactory) this.getOption(Constants.ATTR_HANDLERINFOCHAIN);
+        HandlerChainImpl handlerImpl = null;
+        if (handlerFactory != null) handlerImpl = (HandlerChainImpl) handlerFactory.createHandlerChain();
+        if (handlerImpl != null) handlerImpl.handleRequest(msgContext);
 
-		super.invoke(msgContext);
+        super.invoke(msgContext);
 
-		if ( handlerImpl != null) {
-			handlerImpl.handleResponse(msgContext);
-				handlerImpl.destroy();
-		}
-	}
+        if ( handlerImpl != null) {
+            handlerImpl.handleResponse(msgContext);
+                handlerImpl.destroy();
+        }
+    }
 }
