@@ -103,8 +103,8 @@ public abstract class JavaProvider extends BasicProvider {
                                     String clsName)
         throws Exception
     {
-        String serviceName = msgContext.getTargetService();
-
+        String serviceName = msgContext.getServiceHandler().getName();
+        
         // scope can be "Request", "Session", "Application"
         // (as with Apache SOAP)
         String scope = (String)service.getOption("scope");
@@ -119,6 +119,10 @@ public abstract class JavaProvider extends BasicProvider {
             return getNewServiceObject(msgContext, clsName);
 
         } else if (scope.equalsIgnoreCase("Session")) {
+            
+            // What do we do if serviceName is null at this point???
+            if (serviceName == null)
+                serviceName = msgContext.getServiceHandler().toString();
 
             // look in incoming session
             if (msgContext.getSession() != null) {

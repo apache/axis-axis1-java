@@ -86,6 +86,7 @@ public class TestSimpleSession extends TestCase {
                                               new RPCProvider(),
                                               sessionHandler);
 
+        service.setName("sessionTestService");
         service.setOption("scope", "session");
         service.setOption("className", "test.session.TestSimpleSession");
         service.setOption("allowedMethods", "counter");
@@ -106,14 +107,12 @@ public class TestSimpleSession extends TestCase {
         // Try it - first invocation should return 1.
         Integer count = (Integer)call.invoke("sessionTest", "counter", null);
         assertNotNull("count was null!", count);
-        assertEquals("count was " + count + " (expected 1)", count.intValue(),
-                        1);
+        assertEquals("count was wrong", 1, count.intValue());
 
         // Next invocation should return 2, assuming the session-based
         // counter is working.
         count = (Integer)call.invoke("sessionTest", "counter", null);
-        assertEquals("count was " + count + " (expected 2)", count.intValue(),
-                        2);
+        assertEquals("count was wrong", 2, count.intValue());
 
         // Now start fresh and confirm a new session
         Service svc2 = new Service(clientProvider);
