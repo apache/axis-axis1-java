@@ -61,6 +61,7 @@ import org.apache.axis.deployment.wsdd.providers.WSDDHandlerProvider;
 import org.apache.axis.deployment.wsdd.providers.WSDDJavaEJBProvider;
 import org.apache.axis.deployment.wsdd.providers.WSDDJavaMsgProvider;
 import org.apache.axis.deployment.wsdd.providers.WSDDJavaRPCProvider;
+import org.apache.axis.deployment.wsdd.providers.WSDDJavaCORBAProvider;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 
@@ -102,6 +103,7 @@ public abstract class WSDDProvider
         providers.put(WSDDConstants.QNAME_JAVAMSG_PROVIDER, new WSDDJavaMsgProvider());
         providers.put(WSDDConstants.QNAME_HANDLER_PROVIDER, new WSDDHandlerProvider());
         providers.put(WSDDConstants.QNAME_EJB_PROVIDER, new WSDDJavaEJBProvider());
+        providers.put(WSDDConstants.QNAME_CORBA_PROVIDER, new WSDDJavaCORBAProvider());
         try {
             loadPluggableProviders();
         } catch (Throwable t){
