@@ -204,7 +204,7 @@ public abstract class JavaProvider extends BasicProvider {
 
         if ((allowedMethods == null) || allowedMethods.equals(""))
             throw new AxisFault("Server.NoMethodConfig",
-                JavaUtils.getMessage("noOption00", getServiceClassNameOptionName(), serviceName),
+                JavaUtils.getMessage("noOption00", getServiceAllowedMethodsOptionName(), serviceName),
                 null, null);
 
         if (allowedMethods.equals("*"))
