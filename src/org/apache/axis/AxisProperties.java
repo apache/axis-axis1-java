@@ -113,21 +113,21 @@ public class AxisProperties {
         return new DiscoverClasses(loaders).findResourceClasses(it);
     }
 
-    private static ClassLoaders getClassLoaders() {
+    private static synchronized ClassLoaders getClassLoaders() {
         if (loaders == null) {
             loaders = ClassLoaders.getAppLoaders(AxisProperties.class, null, true);
         }
         return loaders;
     }
 
-    private static DiscoverMappedNames getMappedNames() {
+    private static synchronized DiscoverMappedNames getMappedNames() {
         if (mappedNames == null) {
             mappedNames = new DiscoverMappedNames();
         }
         return mappedNames;
     }
 
-    private static DiscoverNamesInAlternateManagedProperties getAlternatePropertyNameDiscoverer() {
+    private static synchronized DiscoverNamesInAlternateManagedProperties getAlternatePropertyNameDiscoverer() {
         if (altNameDiscoverer == null) {
             altNameDiscoverer = new DiscoverNamesInAlternateManagedProperties();
         }
