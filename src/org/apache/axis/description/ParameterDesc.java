@@ -118,8 +118,11 @@ public class ParameterDesc {
     }
 
     public String toString() {
-        return "(" + typeEntry + ", " + getName() + ", "
-                + (mode == IN ? "IN)" : mode == INOUT ? "INOUT)" : "OUT)" + "position:" + order);
+        return "name:  " + name
+                + "\ntypeEntry:  " + typeEntry
+                + "\nmode:  " + (mode == IN ? "IN" : mode == INOUT ? "INOUT" : "OUT:  " + "position:" + order)
+                + "\ntypeQName:  " + typeQName
+                + "\njavaType:  " + javaType;
     } // toString
     
     /**

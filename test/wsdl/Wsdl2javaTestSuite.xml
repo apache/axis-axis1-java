@@ -181,6 +181,11 @@
         <include name="InvalidCompanyId.java"/>
       </fileset>
     </copy>
+    <copy todir="${build.dir}/work/test/wsdl/roundtrip/holders" overwrite="yes">
+      <fileset dir="${test.dir}/wsdl/roundtrip/holders">
+        <include name="BondInvestmentHolder.java"/>
+     </fileset>
+    </copy>
     <!-- Compile the Web Service -->
     <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}">
       <classpath refid="test-classpath" />

@@ -70,7 +70,11 @@ import test.wsdl.roundtrip.InvalidTickerSymbol;
 import test.wsdl.roundtrip.InvalidTradeExchange;
 import test.wsdl.roundtrip.InvalidCompanyId;
 
+import test.wsdl.roundtrip.holders.BondInvestmentHolder;
+
 import java.rmi.RemoteException;
+
+import javax.xml.rpc.holders.StringHolder;
 
 /**
  * This class contains the implementations of the methods defined in the
@@ -685,6 +689,10 @@ public class RoundtripTestSoapBindingImpl implements RoundtripPortType {
     public int getId(Investment investment) 
         throws java.rmi.RemoteException {
         return investment.getId();
+    }
+
+    // This is a compile-time test, so we don't need any runtime test code.
+    public void holderTest(StringHolder sh, BondInvestmentHolder bih) {
     }
 
 } // End class RoundtripTypesTestSoapBindingImpl
