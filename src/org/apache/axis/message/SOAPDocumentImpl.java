@@ -16,9 +16,6 @@
 
 package org.apache.axis.message;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.soap.SOAPException;
-
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.SOAPPart;
@@ -37,6 +34,9 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.ProcessingInstruction;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.soap.SOAPException;
 
 /**
  * SOAPDcoumentImpl implements the Document API for SOAPPART. At the moment, it

@@ -491,7 +491,7 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
                 System.arraycopy(curElements, 0,
                         newElements, 0, length);
             }
-            MessageElement thisEl = new org.apache.axis.message.Text(textValue);
+            MessageElement thisEl = new MessageElement(new org.apache.axis.message.Text(textValue));
             newElements[length] = thisEl;
             propDesc.set(value, newElements);
         } catch (Exception e) {

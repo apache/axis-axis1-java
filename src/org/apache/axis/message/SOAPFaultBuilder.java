@@ -29,11 +29,10 @@ import org.xml.sax.SAXException;
 
 import javax.xml.namespace.QName;
 import java.lang.reflect.Constructor;
-import java.util.List;
-import java.util.HashMap;
-import java.util.Vector;
-import java.util.List;
 import java.rmi.RemoteException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Vector;
 
 /** 
  * Build a Fault body element.
