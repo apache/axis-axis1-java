@@ -64,7 +64,7 @@ import java.util.List;
 import java.util.Properties;
 
 import javax.wsdl.Definition;
-import javax.wsdl.QName;
+import javax.xml.namespace.QName;
 import javax.wsdl.WSDLException;
 
 import org.apache.axis.encoding.DefaultSOAP12TypeMappingImpl;

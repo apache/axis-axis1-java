@@ -53,7 +53,7 @@
  */
 package org.apache.axis.wsdl.symbolTable;
 
-import javax.wsdl.QName;
+import javax.xml.namespace.QName;
 
 /**
  * Get the base language name for a qname

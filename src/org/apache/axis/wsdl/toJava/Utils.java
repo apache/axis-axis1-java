@@ -69,7 +69,7 @@ import javax.wsdl.Input;
 import javax.wsdl.Message;
 import javax.wsdl.Operation;
 import javax.wsdl.Part;
-import javax.wsdl.QName;
+import javax.xml.namespace.QName;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.soap.SOAPBody;
 import java.io.File;

@@ -74,7 +74,7 @@ import javax.wsdl.OperationType;
 import javax.wsdl.Output;
 import javax.wsdl.Part;
 import javax.wsdl.PortType;
-import javax.wsdl.QName;
+import javax.xml.namespace.QName;
 
 import javax.wsdl.extensions.soap.SOAPBody;
 import javax.wsdl.extensions.soap.SOAPOperation;

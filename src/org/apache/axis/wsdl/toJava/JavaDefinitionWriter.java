@@ -68,7 +68,7 @@ import javax.wsdl.Fault;
 import javax.wsdl.Import;
 import javax.wsdl.Operation;
 import javax.wsdl.PortType;
-import javax.wsdl.QName;
+import javax.xml.namespace.QName;
 
 import org.apache.axis.wsdl.gen.Generator;
 

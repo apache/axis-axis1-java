@@ -58,7 +58,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import javax.wsdl.QName;
+import javax.xml.namespace.QName;
 
 import org.apache.axis.utils.JavaUtils;
 

@@ -187,10 +187,10 @@ public class JavaSkelWriter extends JavaClassWriter {
                     pw.println("            " +
                         "new org.apache.axis.description.ParameterDesc(" +
                         Utils.getNewQName(
-                             Utils.getAxisQName(p.getQName())) +
+                             p.getQName()) +
                         ", " + modeStr + "," +
                         Utils.getNewQName(
-                             Utils.getAxisQName(paramType.getQName()))
+                             paramType.getQName())
                         +","+
                         p.getType().getName() + ".class" 
                         +"),");
@@ -211,8 +211,7 @@ public class JavaSkelWriter extends JavaClassWriter {
                 // If we need to know the QName (if we have a namespace or
                 // the actual method name doesn't match the XML we expect),
                 // record it in the OperationDesc
-                QName elementQName = Utils.getAxisQName(
-                        Utils.getOperationQName(operation));
+                QName elementQName = Utils.getOperationQName(operation);
                 if (elementQName != null) {
                     pw.println("        _oper.setElementQName(" +
                             Utils.getNewQName(elementQName) + ");");

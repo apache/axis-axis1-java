@@ -1018,13 +1018,13 @@ public class Call implements javax.xml.rpc.Call {
                 Part    part = (Part) parts.get(i);
                 if ( part == null ) continue ;
 
-                String           name  = part.getName();
-                javax.wsdl.QName type  = part.getTypeName();
+                String name = part.getName();
+                QName  type = part.getTypeName();
 
                 if ( type == null ) {
                     type = part.getElementName();
                     if ( type != null )
-                      type = new javax.wsdl.QName("java","org.w3c.dom.Element");
+                      type = new QName("java","org.w3c.dom.Element");
                     else
                       throw new JAXRPCException(
                                   JavaUtils.getMessage("typeNotSet00", name) );
@@ -1056,11 +1056,11 @@ public class Call implements javax.xml.rpc.Call {
                 if (paramOrder != null && paramOrder.contains(part.getName()))
                         continue ;
 
-                javax.wsdl.QName type  = part.getTypeName();
+                QName type  = part.getTypeName();
                 if ( type == null ) {
                     type = part.getElementName();
                     if ( type != null )
-                      type = new javax.wsdl.QName("java","org.w3c.dom.Element");
+                      type = new QName("java","org.w3c.dom.Element");
                     else
                       throw new JAXRPCException(
                             JavaUtils.getMessage("typeNotSet00", "<return>") );

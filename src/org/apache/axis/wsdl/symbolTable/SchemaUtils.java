@@ -56,7 +56,7 @@ package org.apache.axis.wsdl.symbolTable;
 
 import java.util.Vector;
 
-import javax.wsdl.QName;
+import javax.xml.namespace.QName;
 
 import javax.xml.rpc.holders.BooleanHolder;
 import javax.xml.rpc.holders.IntHolder;
@@ -261,12 +261,9 @@ public class SchemaUtils {
                     // Represent this as an element named any of type any type.
                     // This will cause it to be serialized with the element 
                     // serializer.
-                    TypeEntry type = 
-                        symbolTable.getType(
-                            Utils.getWSDLQName(Constants.XSD_ANY));
+                    TypeEntry type = symbolTable.getType(Constants.XSD_ANY);
                     ElementDecl elem = 
-                        new ElementDecl(type, 
-                                    Utils.getAxisQName(new QName("","any")));
+                        new ElementDecl(type, new QName("","any"));
                     elem.setAnyElement(true);
                     v.add(elem);
                 } else if (subNodeKind.getLocalPart().equals("element")) {
@@ -380,7 +377,7 @@ public class SchemaUtils {
         TypeEntry type = (TypeEntry)symbolTable.getTypeEntry(nodeType, 
                                                              forElement.value);
         if (type != null) {
-            ElementDecl elem = new ElementDecl(type ,Utils.getAxisQName(nodeName));
+            ElementDecl elem = new ElementDecl(type, nodeName);
             String minOccurs = Utils.getAttribute(elementNode, "minOccurs");
             if (minOccurs != null && minOccurs.equals("0")) {
                 elem.setMinOccursIs0(true);

@@ -60,7 +60,7 @@ import java.io.PrintWriter;
 import java.util.Vector;
 
 import javax.wsdl.Fault;
-import javax.wsdl.QName;
+import javax.xml.namespace.QName;
 
 import org.apache.axis.utils.JavaUtils;
 

@@ -70,7 +70,7 @@ import javax.wsdl.Message;
 import javax.wsdl.Operation;
 import javax.wsdl.OperationType;
 import javax.wsdl.PortType;
-import javax.wsdl.QName;
+import javax.xml.namespace.QName;
 import javax.wsdl.Service;
 
 import org.apache.axis.encoding.TypeMapping;

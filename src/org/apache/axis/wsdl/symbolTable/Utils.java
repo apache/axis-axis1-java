@@ -59,7 +59,7 @@ import org.apache.axis.utils.JavaUtils;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
-import javax.wsdl.QName;
+import javax.xml.namespace.QName;
 import javax.xml.rpc.holders.BooleanHolder;
 import javax.xml.rpc.holders.IntHolder;
 import java.util.HashSet;
@@ -86,7 +86,7 @@ public class Utils {
      * @param QName
      */
     public static QName getNillableQName(QName qName) {
-        QName rc = new QName(qName.getNamespaceURI(), qName.getLocalPart());
+        QName rc = qName;
         if (Constants.isSchemaXSD(rc.getNamespaceURI())) {
             String localName = rc.getLocalPart();
             if (localName.equals("int") ||
@@ -96,12 +96,12 @@ public class Utils {
                 localName.equals("double") ||
                 localName.equals("boolean") ||
                 localName.equals("byte")) {
-                rc.setNamespaceURI(Constants.URI_DEFAULT_SOAP_ENC);
+                rc = new QName(Constants.URI_DEFAULT_SOAP_ENC, 
+                               qName.getLocalPart());
             }
             else if (localName.equals("base64Binary") ||
                      localName.equals("hexBinary")) {
-                rc.setNamespaceURI(Constants.URI_DEFAULT_SOAP_ENC);
-                rc.setLocalPart("base64");
+                rc = new QName(Constants.URI_DEFAULT_SOAP_ENC, "base64");
             }
         }
        return rc;
@@ -301,7 +301,7 @@ public class Utils {
 //                if (namespace != null)
 //                    qName.setNamespaceURI(namespace);
                 localPart += "[" + maxOccursValue + "]";
-                qName.setLocalPart(localPart);
+                qName = new QName(qName.getNamespaceURI(), localPart);
             }
         }
 
@@ -354,7 +354,7 @@ public class Utils {
                     Constants.isSchemaXSD(nodeName.getNamespaceURI()) &&
                     (nodeName.getLocalPart().equals("element") ||
                      nodeName.getLocalPart().equals("attribute"))) {
-                    return getWSDLQName(Constants.XSD_ANYTYPE);
+                    return Constants.XSD_ANYTYPE;
                 }
             }              
         }
@@ -546,31 +546,6 @@ public class Utils {
         }
     } // getNestedTypes
 
-    /**
-     * Given the WSDL4J QName (javax.wsdl.QName), return the JAX-RPC
-     * QName (javax.xml.namespace.QName).
-     */
-    public static javax.xml.namespace.QName getAxisQName(QName qname)
-    {
-        if (qname == null) {
-            return null;
-        }
-        return new javax.xml.namespace.QName(qname.getNamespaceURI(),
-                                                 qname.getLocalPart());
-    }
-
-    /**
-     * Given the JAX-RPC QName (javax.xml.namespace.QName), return
-     * the WSDL4J QName (javax.wsdl.QName).
-     */
-    public static QName getWSDLQName(javax.xml.namespace.QName qname)
-    {
-        if (qname == null) {
-            return null;
-        }
-        return new QName(qname.getNamespaceURI(), qname.getLocalPart());
-    }
-    
     /**
      * Generate an XML prefixed attribute value with a corresponding xmlns 
      * declaration for the prefix.  If there is no namespace, 

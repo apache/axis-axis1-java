@@ -58,7 +58,7 @@ import javax.wsdl.Binding;
 import javax.wsdl.Definition;
 import javax.wsdl.Message;
 import javax.wsdl.PortType;
-import javax.wsdl.QName;
+import javax.xml.namespace.QName;
 import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
 

@@ -99,7 +99,7 @@ public abstract class InteropTestListServiceTestClient {
     private String soapAction = "http://soapinterop.org/";
     private org.apache.axis.client.Call call = null;
     private Definition wsdl = null;
-    private javax.wsdl.QName serviceQN = null;
+    private QName serviceQN = null;
 
     /**
      * Determine if two objects are equal.  Handles nulls and recursively
@@ -203,7 +203,7 @@ public abstract class InteropTestListServiceTestClient {
      * The WSDL must define one service.
      */
     private QName getServiceQName() {
-        serviceQN = (javax.wsdl.QName)wsdl.getServices().
+        serviceQN = (QName)wsdl.getServices().
             keySet().iterator().next();
         return new QName(serviceQN.getNamespaceURI(),
                          serviceQN.getLocalPart());
