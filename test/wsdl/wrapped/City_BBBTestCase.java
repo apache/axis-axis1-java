@@ -12,7 +12,7 @@ public class City_BBBTestCase extends junit.framework.TestCase {
         super(name);
     }
     public void test1CityBBBPortGetAttraction() {
-        City_BBBBinding binding;
+        City_BBBPortType binding;
         try {
             binding = new City_BBBLocator().getCity_BBBPort();
         }
@@ -32,7 +32,7 @@ public class City_BBBTestCase extends junit.framework.TestCase {
     }
 
     public void test2CityBBBPortGetAttractions() {
-        City_BBBBinding binding;
+        City_BBBPortType binding;
         try {
             binding = new City_BBBLocator().getCity_BBBPort();
         }
@@ -56,7 +56,7 @@ public class City_BBBTestCase extends junit.framework.TestCase {
     }
 
     public void test3CityBBBPortGetAttractions() {
-        City_BBBBinding binding;
+        City_BBBPortType binding;
         try {
             binding = new City_BBBLocator().getCity_BBBPort();
         }

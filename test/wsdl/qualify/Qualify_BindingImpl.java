@@ -73,7 +73,7 @@ import org.apache.axis.message.RPCElement;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-public class Qualify_BindingImpl implements test.wsdl.qualify.Qualify_Binding {
+public class Qualify_BindingImpl implements test.wsdl.qualify.Qualify_Port {
     
     public static final String namespace = "urn:qualifyTest";
     

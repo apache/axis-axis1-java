@@ -7,7 +7,7 @@
 
 package test.wsdl.datatypes;
 
-public class DataTypes_BindingImpl implements DataTypes_Binding {
+public class DataTypes_BindingImpl implements DataTypes_Port {
     public java.lang.String sayHello() throws java.rmi.RemoteException {
         return "Hello World!";
     }

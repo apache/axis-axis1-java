@@ -7,10 +7,10 @@
 
 package test.wsdl.wrapped;
 
-import test.wsdl.wrapped.City_BBBBinding;
+import test.wsdl.wrapped.City_BBBPortType;
 import test.wsdl.wrapped.Attraction;
 
-public class City_BBBBindingImpl implements City_BBBBinding {
+public class City_BBBBindingImpl implements City_BBBPortType {
     public static final String OID_STRING = "Attraction@cityCF::1028:1028";
 
     public Attraction getAttraction(String attname) throws java.rmi.RemoteException {

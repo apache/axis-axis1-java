@@ -536,19 +536,14 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                 SymTabEntry entry = (SymTabEntry) v.elementAt(i);
                 if (entry instanceof BindingEntry) {
                     // The SEI (Service Endpoint Interface) name
-                    // is normally the portType name.
-                    // But the binding info MIGHT force the SEI
-                    // name to be the binding name.
+                    // is always the portType name.
                     BindingEntry bEntry = (BindingEntry) entry;
                     String seiName = null;
-                    if (bEntry.hasLiteral() && symbolTable.isWrapped()) {
-                        seiName = bEntry.getName();
-                    }
-                    else {
-                        PortTypeEntry ptEntry = symbolTable.getPortTypeEntry(
+
+                    PortTypeEntry ptEntry = symbolTable.getPortTypeEntry(
                                 bEntry.getBinding().getPortType().getQName());
-                        seiName = ptEntry.getName();
-                    }                    bEntry.setDynamicVar(JavaBindingWriter.INTERFACE_NAME, seiName);
+                    seiName = ptEntry.getName();
+                    bEntry.setDynamicVar(JavaBindingWriter.INTERFACE_NAME, seiName);
                 }
             }
         }

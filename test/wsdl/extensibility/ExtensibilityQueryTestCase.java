@@ -25,7 +25,7 @@ public class ExtensibilityQueryTestCase extends junit.framework.TestCase {
         super(name);
     }
     public void testQuery() {
-        ExtensibilityQueryBinding binding;
+        ExtensibilityQueryPortType binding;
         try {
             ExtensibilityQueryLocator locator = new ExtensibilityQueryLocator();
             binding = locator.getExtensibilityQueryPort();
