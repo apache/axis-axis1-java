@@ -29,6 +29,7 @@ Axis System Integration Guide</h1>
 Table of Contents</h3>
 <a href="#Introduction">Introduction</a>
 <br><a href="#Pluggable APIs">Pluggable APIs</a>
+<br>&nbsp; <a href="#Components">Components</a>
 <!-- <br>&nbsp; <a href="#System Management Plug">System Management</a>
 -->
 <br>&nbsp; <a href="#Logging/Tracing Plug">Logging/Tracing</a>
@@ -37,7 +38,6 @@ Table of Contents</h3>
 <br>&nbsp; <a href="#Internationalization Plug">Internationalization</a>
 <br>&nbsp; <a href="#Performance Monitoring Plug">Performance Monitoring</a>
 <br>&nbsp; <a href="#Encoding Plug">Encoding</a>
-<br>&nbsp; <a href="#Compiler">Compiler</a>
 <br>&nbsp; <a href="#WSDL plug">WSDL Parser and Code Generator Framework</a>
 <h2>
 <a NAME="Introduction"></a>Introduction</h2>
@@ -53,6 +53,155 @@ The reader may find useful background information in the
 <a NAME="Pluggable APIs"></a>Pluggable APIs</h2>
 The following are the points that are pluggable in order to integrate AXIS
 into a web application server.
+The first subsection details a number of pluggable components in general.
+More details are provided for other components in the remaining
+subsections.
+
+<h3>
+<a NAME="Components"></a>Components</h3>
+This section describes in general how to plug specializations
+of various components into AXIS.
+
+<h4>
+General Strategy
+</h4>
+To override the default behavior for a pluggable component:
+<ul>
+<li>Develop implementation of components interface</li>
+<br>&nbsp;
+<li>Define the implementation class to AXIS by either creating
+a service definition file (prefered)
+or by setting a system property.
+<ul>
+<br>
+<li><strong>PREFERED:</strong> To create a service definition file:</li>
+<ul>
+<li>The name of the service definition file is derived from the interface
+or abstract class which the service implements/extends:
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<code>/META-INF/services/&lt;componentPackage&gt;.&lt;interfaceName&gt;</code>.</li>
+<li>Put the fully qualified class name of the implementation class on a line by itself
+in the service definition file.</li>
+</ul>
+<br>
+<li>Set system property:
+<ul>
+<li>The name of the system property is the name of the interface.</li>
+<li>The value of the system property is the name of the implementation.</li>
+<li>The optional system property name (in table, below) may be also be used.</li>
+<br>&nbsp;
+<li>Setting a system property is not prefered, particularly in a J2EE or other application
+hosting environment, because it imposes a directive across all applications.
+This may or may not be appropriate behavior.
+If it is to be done, it should never be done from within a Web Application at runtime.
+</li>
+</ul>
+</li>
+</ul>
+<br>
+<li>Package the implementation class and, if used,
+the service definition file in a JAR file
+and/or place it where it can be picked up by a class loader (CLASSPATH).</li>
+</ul>
+
+<h4>
+Example 1
+</h4>
+To override the default behavior for the Java Compiler:
+<ul>
+<li>An implementation of the <code>Compiler</code> interface is already provided for the <code>Jikes</code> compiler.</li>
+<br>&nbsp;
+<li>Create the service definition file named:
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<code>/META-INF/services/org.apache.axis.components.compiler.Compiler</code></li>
+<br>&nbsp;
+<li>Add the following line to the service definition file:
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<code>org.apache.axis.components.compiler.Jikes</code></li>
+<br>&nbsp;
+<li>Since <code>org.apache.axis.components.compiler.Jikes</code>
+is packaged with AXIS, all that needs to be done is to ensure
+that the service definition file is loadable by a class loader.
+</li>
+</ul>
+
+<h4>
+Example 2
+</h4>
+To override the default behavior for the SocketFactory
+in an environment that does not allow resources to be
+located/loaded appropriately, or where the behavior
+needs to be forced to a specific implementation:
+<ul>
+<li>Provide an implementation of the <code>SocketFactory</code> interface,
+for example <code>your.package.YourSocketFactory</code></li>
+<br>&nbsp;
+<li>Set the system property named
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<code>org.apache.axis.components.net.SocketFactory</code>
+<br>
+to the value
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<code>your.package.YourSocketFactory</code>
+<br>
+<p>This can be done by using the JVM commandline
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<code>-Dorg.apache.axis.components.net.SocketFactory=your.package.YourSocketFactory</code>
+<br>&nbsp;
+</li>
+<li>Ensure that the implementation class is loadable by a class loader.
+</li>
+</ul>
+
+<h4>
+Reference
+</h4>
+
+<table border="1">
+<tr>
+<th>Component/Package</th>
+<th>Factory</th>
+<th>Interface</th>
+<th>Optional System Property</th>
+<th>Default Implementation</th>
+</tr>
+<tr>
+<td><code>org.apache.axis.components.compiler</code></td>
+<td><code>CompilerFactory.getCompiler()</code></td>
+<td><code>Compiler</code></td>
+<td><code>axis.Compiler</code></td>
+<td><code>Javac</code></td>
+</tr>
+<tr>
+<td><code>org.apache.axis.components.image</code></td>
+<td><code>ImageIOFactory.getImageIO()</code></td>
+<td><code>ImageIO</code></td>
+<td><code>axis.ImageIO</code></td>
+<td><code>MerlinIO, JimiIO, JDK13IO</code></td>
+</tr>
+<tr>
+<td><code>org.apache.axis.components.jms</code></td>
+<td><code>JMSVendorAdapterFactory.getJMSVendorAdapter()</code></td>
+<td><code>JMSVendorAdapter</code></td>
+<td><code></code></td>
+<td><code>JNDIVendorAdapter</code></td>
+</tr>
+<tr>
+<td><code>org.apache.axis.components.net</code></td>
+<td><code>SocketFactoryFactory.getFactory()</code></td>
+<td><code>SocketFactory</code></td>
+<td><code>axis.socketFactory</code></td>
+<td><code>DefaultSocketFactory</code></td>
+</tr>
+<tr>
+<td><code>org.apache.axis.components.net</code></td>
+<td><code>SocketFactoryFactory.getSecureFactory()</code></td>
+<td><code>SocketFactory</code></td>
+<td><code>axis.socketSecureFactory</code></td>
+<td><code>JSSESocketFactory</code></td>
+</tr>
+</table>
+
 <!--
 <h3>
 <a NAME="System Management Plug"></a>System Management</h3>
@@ -227,7 +376,7 @@ the interface <code>org.apache.axis.EngineConfigurationFactory</code>,
 which currently provides methods that return client and server
 configurations.
 
-<p>Our focus will be how to define the implemenation class for
+<p>Our focus will be how to define the implementation class for
 <code>EngineConfigurationFactory</code>.
 
 <ul>
@@ -606,45 +755,6 @@ Example</li>
 <a NAME="Encoding Plug"></a>Encoding</h3>
 AXIS does not yet include an Encoding Plug.
 <!--
-How can a system integrator plug in other encoding mechanisms such as SOAP
-1.2 or optimized XML-based encoding?
-<ul>
-<li>
-Justification/Rationale - why is this plug point necessary?&nbsp; Spec
-compliance?</li>
-
-<li>
-Interfaces</li>
-
-<li>
-Mechanism</li>
-
-<ul>
-<li>
-Life cycle</li>
-
-<li>
-Exception handling - in general; plug-in shouldn't throw any exceptions
-- does runtime ignore? Log?)</li>
-
-<li>
-Multiple thread support?&nbsp; Ie., is synchronization required?</li>
-</ul>
-
-<li>
-Configuration/reconfiguration</li>
-
-<li>
-Default behavior if not plugged.</li>
-
-<li>
-Example</li>
-</ul>
--->
-
-<!--
-<h3>
-<a NAME="Compiler"></a>Compiler</h3>
 How can a system integrator plug in other encoding mechanisms such as SOAP
 1.2 or optimized XML-based encoding?
 <ul>
