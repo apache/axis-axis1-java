@@ -234,6 +234,9 @@ public class RPCElement extends SOAPBodyElement
                     }
                 }
             }
+
+            throw new SAXException(
+                    JavaUtils.getMessage("noSuchOperation", name));
         }
 
         if (elementIsFirstParam) {

@@ -205,6 +205,9 @@ public class OperationDesc {
 
     public ParameterDesc getParameter(int i)
     {
+        if (parameters.size() <= i)
+            return null;
+
         return (ParameterDesc)parameters.get(i);
     }
 

@@ -318,7 +318,7 @@ public class ServiceDesc {
      * Search the declared methods on the implementation class to find one
      * with an argument list which matches our parameter list.
      */
-    private void syncOperationToClass(OperationDesc oper)
+    private void syncOperationToClass(OperationDesc oper, Class implClass)
     {
         // If we're already mapped to a Java method, no need to do anything.
         if (oper.getMethod() != null)
@@ -371,6 +371,13 @@ public class ServiceDesc {
                 method2OperationMap.put(method, oper);
                 return;
             }
+        }
+
+        // Didn't find a match.  Try the superclass, if appropriate
+        Class superClass = implClass.getSuperclass();
+        if (!superClass.getName().startsWith("java.") &&
+                !superClass.getName().startsWith("javax.")) {
+            syncOperationToClass(oper, superClass);
         }
     }
 
@@ -467,14 +474,14 @@ public class ServiceDesc {
         // OK, go find any current OperationDescs for this method name and
         // make sure they're synced with the actual class.
         if (name2OperationsMap != null) {
-            ArrayList currentOverloads = 
+            ArrayList currentOverloads =
                     (ArrayList)name2OperationsMap.get(methodName);
             if (currentOverloads != null) {
                 // For each one, sync it to the implementation class' methods
                 for (Iterator i = currentOverloads.iterator(); i.hasNext();) {
                     OperationDesc oper = (OperationDesc) i.next();
                     if (oper.getMethod() == null) {
-                        syncOperationToClass(oper);
+                        syncOperationToClass(oper, implClass);
                     }
                 }
             }
@@ -483,16 +490,40 @@ public class ServiceDesc {
         // Now all OperationDescs from deployment data have been completely
         // filled in.  So we now make new OperationDescs for any method
         // overloads which were not covered above.
+        // NOTE : This is the "lenient" approach, which allows you to
+        // specify one overload and still get the others by introspection.
+        // We could equally well return above if we found OperationDescs,
+        // and have a rule that if you specify any overloads, you must specify
+        // all the ones you want accessible.
+
+        createOperationsForName(implClass, methodName);
+
+        // Note that we never have to look at this method name again.
+        completedNames.add(methodName);
+    }
+
+    /**
+     * Look for methods matching this name, and for each one, create an
+     * OperationDesc (if it's not already in our list).
+     *
+     * TODO: Make this more efficient
+     */
+    private void createOperationsForName(Class implClass, String methodName)
+    {
         Method [] methods = implClass.getDeclaredMethods();
 
         for (int i = 0; i < methods.length; i++) {
             Method method = methods[i];
-            if (method.getName().equals(methodName))
+            if (method.getName().equals(methodName)) {
                 createOperationForMethod(method);
+            }
         }
 
-        // Note that we never have to look at this method name again.
-        completedNames.add(methodName);
+        Class superClass = implClass.getSuperclass();
+        if (!superClass.getName().startsWith("java.") &&
+                !superClass.getName().startsWith("javax.")) {
+            createOperationsForName(superClass, methodName);
+        }
     }
 
     /**
