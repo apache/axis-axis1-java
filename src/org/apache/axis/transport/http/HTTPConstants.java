@@ -67,6 +67,11 @@ public class HTTPConstants {
      *  (Maybe this should be more specific, like "http_servlet",
      *   whaddya think? - todo by Jacek)
      */
+
+    public static final String HEADER_PROTOCOL_10 = "HTTP/1.0";
+    public static final String HEADER_PROTOCOL_11 = "HTTP/1.1";
+    public static final String HEADER_PROTOCOL_V10 = "1.0".intern();
+    public static final String HEADER_PROTOCOL_V11 = "1.1".intern();
     public static final String HEADER_POST = "POST";
     public static final String HEADER_HOST = "Host";
     public static final String HEADER_CONTENT_TYPE = "Content-Type";
@@ -78,9 +83,21 @@ public class HTTPConstants {
     public static final String HEADER_SOAP_ACTION = "SOAPAction";
     public static final String HEADER_AUTHORIZATION = "Authorization";
     public static final String HEADER_PROXY_AUTHORIZATION = "Proxy-Authorization";
+
+
+
     
     public static final String REQUEST_HEADERS = "HTTP-Request-Headers";
     public static final String RESPONSE_HEADERS = "HTTP-Response-Headers";
+
+    /*http 1.1*/
+    public static final String HEADER_TRANSFER_ENCODING = "Transfer-Encoding".intern();
+    public static final String HEADER_TRANSFER_ENCODING_CHUNKED = "chunked".intern();
+
+    public static final String HEADER_CONNECTION = "Connection";
+    public static final String HEADER_CONNECTION_CLOSE = "close".intern();
+    public static final String HEADER_CONNECTION_KEEPALIVE = "Keep-Alive".intern();//The default don't send.
+    
 
     /**
      * Cookie headers
