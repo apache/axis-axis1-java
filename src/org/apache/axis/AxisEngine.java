@@ -99,7 +99,10 @@ public abstract class AxisEngine extends BasicHandler
     public static final String PROP_SYNC_CONFIG = "syncConfiguration";
     public static final String PROP_SEND_XSI = "sendXsiTypes";
     public static final String PROP_ATTACHMENT_DIR = "attachments.Directory";
+    public static final String PROP_ATTACHMENT_IMPLEMENTATION  = "attachments.implementation" ;
     public static final String PROP_ATTACHMENT_CLEANUP = "attachment.DirectoryCleanUp";
+
+    public static final String DEFAULT_ATTACHMENT_IMPL="org.apache.axis.attachments.AttachmentsImpl";
 
     // Default admin. password
     private static final String DEFAULT_ADMIN_PASSWORD = "admin";
@@ -188,6 +191,21 @@ public abstract class AxisEngine extends BasicHandler
 
         if (category.isDebugEnabled()) {
             category.debug(JavaUtils.getMessage("exit00", "AxisEngine::init"));
+        }
+
+        /*Set the default attachment implementation */
+
+        String attachmentsImp= null;
+        try{
+            attachmentsImp=System.getProperty("axis." + PROP_ATTACHMENT_IMPLEMENTATION  );
+            if(null!=attachmentsImp)
+                setOption(PROP_ATTACHMENT_IMPLEMENTATION, attachmentsImp);
+        } catch(Throwable t){attachmentsImp= null;} 
+
+        if(attachmentsImp == null ){
+            if((attachmentsImp= (String) getOption(PROP_ATTACHMENT_IMPLEMENTATION)) == null){
+                  setOption(PROP_ATTACHMENT_IMPLEMENTATION, DEFAULT_ATTACHMENT_IMPL);
+            }
         }
     }
 
