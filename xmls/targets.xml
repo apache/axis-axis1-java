@@ -14,19 +14,19 @@
     This is an accessory function to echo out fileNames 
        =================================================================== --> 
   <target name="echo-file">
-        <basename property="fileName" file="${file}"/>
-        <dirname property="dirName" file="${file}"/>
-        <echo message="Dir: ${dirName} File: ${fileName}"/>
+    <basename property="fileName" file="${file}"/>
+    <dirname property="dirName" file="${file}"/>
+    <echo message="Dir: ${dirName} File: ${fileName}"/>
   </target>
 
   <!-- ===================================================================
         This is an accessory function to compile some given component
        =================================================================== -->
   <target name="component-compile">
-        <echo message="${file}"/>
-        <basename property="fileName" file="${file}"/>
-        <dirname property="dirName" file="${file}"/>
-        <ant dir="${dirName}" antfile="${fileName}" target="compile"/>
+    <echo message="${file}"/>
+    <basename property="fileName" file="${file}"/>
+    <dirname property="dirName" file="${file}"/>
+    <ant inheritAll="false" dir="${dirName}" antfile="${fileName}" target="compile"/>
   </target>
 
   <!-- ===================================================================
@@ -35,7 +35,9 @@
        =================================================================== -->
   <target name="batch-component-test">
     <antcall target="echo-file"/>
-    <ant antfile="${file}" target="component-junit-functional"/>
+    <basename property="fileName" file="${file}"/>
+    <dirname property="dirName" file="${file}"/>
+    <ant inheritAll="false" dir="${dirName}" antfile="${fileName}" target="component-junit-functional"/>
   </target>
 
   <!-- ===================================================================
@@ -43,7 +45,9 @@
        =================================================================== -->
   <target name="batch-component-run">
     <antcall target="echo-file"/>
-    <ant antfile="${file}" target="run"/>
+    <basename property="fileName" file="${file}"/>
+    <dirname property="dirName" file="${file}"/>
+    <ant inheritAll="false" dir="${dirName}" antfile="${fileName}" target="run"/>
   </target>
 
   <!-- =================================================================== -->
@@ -409,5 +413,5 @@
 
   <target name="transport-layer" depends="setenv" >
     <mkdir dir="${test.functional.reportdir}" />
-    <ant antfile="${axis.home}/samples/transport/build.xml" target="compile" />
+    <ant inheritAll="false" dir="${axis.home}/samples/transport" antfile="build.xml" target="compile" />
   </target>
