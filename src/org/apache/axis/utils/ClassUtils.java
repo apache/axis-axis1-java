@@ -54,6 +54,9 @@
  */
 package org.apache.axis.utils;
 
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+
 /**
  * Utility methods for Class Loading.
  *
@@ -119,10 +122,33 @@ public final class ClassUtils {
      * @throws ClassNotFoundException if the class is not found
      */
     public static Class forName(
-            String className, boolean init, ClassLoader loader)
+            String _className, boolean init, ClassLoader _loader)
             throws ClassNotFoundException {
+        
+        // Create final vars for doPrivileged block
+        final String className = _className;
+        final ClassLoader loader = _loader;
         try {
-            return Class.forName(className, true, loader);
+            // Get the class within a doPrivleged block
+            Object ret = 
+                AccessController.doPrivileged(
+                    new PrivilegedAction() {
+                        public Object run() {
+                            try {
+                                return Class.forName(className, true, loader);
+                            } catch (Throwable e) {
+                                return e;
+                            }
+                        }
+                    });
+            // If the class was located, return it.  Otherwise throw exception
+            if (ret instanceof Class) {
+                return (Class) ret;
+            } else if (ret instanceof ClassNotFoundException) {
+                throw (ClassNotFoundException) ret;
+            } else {
+                throw new ClassNotFoundException(_className);
+            }
         } catch (ClassNotFoundException cnfe) {
             return loadClass(className);
         }
@@ -135,31 +161,55 @@ public final class ClassUtils {
      * @return java class
      * @throws ClassNotFoundException if the class is not found
      */
-    private static Class loadClass(String className)
+    private static Class loadClass(String _className)
             throws ClassNotFoundException {
-        try {
-            // Check if the class is a registered class then
-            // use the classloader for that class.
-            ClassLoader classLoader = getClassLoader(className);
-            return Class.forName(className, true, classLoader);
-        } catch (ClassNotFoundException cnfe) {
-        }
+        // Create final vars for doPrivileged block
+        final String className = _className;
 
-        try {
-            // Try the context class loader
-            ClassLoader classLoader =
-                    Thread.currentThread().getContextClassLoader();
-            return Class.forName(className, true, classLoader);
-        } catch (ClassNotFoundException cnfe2) {
-            try {
-                // Try the classloader that loaded this class.
-                ClassLoader classLoader =
-                        ClassUtils.class.getClassLoader();
-                return Class.forName(className, true, classLoader);
-            } catch (ClassNotFoundException cnfe3) {
-                // Try the default class loader.
-                return Class.forName(className);
-            }
+        // Get the class within a doPrivleged block
+        Object ret = 
+            AccessController.doPrivileged(
+                    new PrivilegedAction() {
+                        public Object run() {
+                            try {
+                                // Check if the class is a registered class then
+                                // use the classloader for that class.
+                                ClassLoader classLoader = getClassLoader(className);
+                                return Class.forName(className, true, classLoader);
+                            } catch (ClassNotFoundException cnfe) {
+                            }
+                            
+                            try {
+                                // Try the context class loader
+                                ClassLoader classLoader =
+                                    Thread.currentThread().getContextClassLoader();
+                                return Class.forName(className, true, classLoader);
+                            } catch (ClassNotFoundException cnfe2) {
+                                try {
+                                    // Try the classloader that loaded this class.
+                                    ClassLoader classLoader =
+                                        ClassUtils.class.getClassLoader();
+                                    return Class.forName(className, true, classLoader);
+                                } catch (ClassNotFoundException cnfe3) {
+                                    // Try the default class loader.
+                                    try {
+                                        return Class.forName(className);
+                                    } catch (Throwable e) {
+                                        // Still not found, return exception
+                                        return e;
+                                    }
+                                }
+                            } 
+                        }
+                    });
+
+        // If the class was located, return it.  Otherwise throw exception
+        if (ret instanceof Class) {
+            return (Class) ret;
+        } else if (ret instanceof ClassNotFoundException) {
+            throw (ClassNotFoundException) ret;
+        } else {
+            throw new ClassNotFoundException(_className);
         }
     }
 }

@@ -106,16 +106,17 @@ public abstract class BaseDeserializerFactory
         Deserializer deser = null;
 
         // Need to add code to check against mechanisms vector.
+
+        // Try getting a specialized Deserializer
+        deser = getSpecialized(mechanismType);
+        
+        // Try getting a general purpose Deserializer via constructor
+        // invocation
+        if (deser == null) {
+            deser = getGeneralPurpose(mechanismType);
+        }
+        
         try {
-            // Try getting a specialized Deserializer
-            deser = getSpecialized(mechanismType);
-            
-            // Try getting a general purpose Deserializer via constructor
-            // invocation
-            if (deser == null) {
-                deser = getGeneralPurpose(mechanismType);
-            }
-            
             // If not successfull, try newInstance
             if (deser == null) {
                 deser = (Deserializer) deserClass.newInstance();
