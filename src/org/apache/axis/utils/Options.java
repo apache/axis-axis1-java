@@ -74,6 +74,7 @@ public class Options {
             Category.getInstance(Options.class.getName());
 
     String  args[] = null ;
+    URL     defaultURL = null ;
 
     //////////////////////////////////////////////////////////////////////////
     // SOASS (Start of Axis Specific Stuff)
@@ -94,6 +95,7 @@ public class Options {
      */
     public Options(String _args[]) throws MalformedURLException {
         args = _args ;
+        defaultURL = new URL("http://localhost:8080/axis/servlet/AxisServlet");
         
         ///////////////////////////////////////////////////////////////////////
         // SOASS
@@ -127,6 +129,14 @@ public class Options {
 
         // EOASS
         ///////////////////////////////////////////////////////////////////////
+    }
+
+    public void setDefaultURL(String url) throws MalformedURLException {
+        defaultURL = new URL(url);
+    }
+
+    public void setDefaultURL(URL url) {
+        defaultURL = url ;
     }
 
     /**
@@ -270,15 +280,15 @@ public class Options {
         tmp = isValueSet( 'p' ); if ( port == null ) port = tmp ;
         tmp = isValueSet( 's' ); if ( servlet == null ) servlet = tmp ;
 
-        if ( host == null ) host = "localhost" ;
-        if ( port == null ) port = "8080" ;
-        if ( servlet == null ) servlet = "/axis/servlet/AxisServlet" ;
+        if ( host == null ) host = defaultURL.getHost();
+        if ( port == null ) port = "" + defaultURL.getPort();
+        if ( servlet == null ) servlet = defaultURL.getFile();
         else
             if ( servlet.length()>0 && servlet.charAt(0)!='/' ) 
                 servlet = "/" + servlet ;
 
         if (url == null) {
-            if (protocol == null) protocol = "http";
+            if (protocol == null) protocol = defaultURL.getProtocol();
             tmp = protocol + "://" + host ;
             if ( port != null && !port.equals("-1")) tmp += ":" + port ;
             if ( servlet != null ) tmp += servlet ;
