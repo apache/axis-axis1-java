@@ -76,7 +76,6 @@ public class AxisServlet extends HttpServlet {
   public void init() {
       ServletContext context = getServletConfig().getServletContext();
       String param = context.getInitParameter("transport.input");
-      System.out.println("Got input name '" + param + "'");
       if (param != null)
           transportInName = param;
       param = getInitParameter("transport.output");
