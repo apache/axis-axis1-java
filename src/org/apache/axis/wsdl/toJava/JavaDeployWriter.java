@@ -51,6 +51,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
+import java.util.HashMap;
 
 /**
  * This is Wsdl2java's deploy Writer.  It writes the deploy.wsdd file.
@@ -540,6 +541,16 @@ public class JavaDeployWriter extends JavaWriter {
                     + SOAPAction
                     + "\"");
         }
+        
+        if (params.mep != null &&
+                params.mep != OperationType.REQUEST_RESPONSE) {
+            String mepString = getMepString(params.mep);
+            if (mepString != null) {
+                pw.print(" mep=\""
+                         + mepString
+                         + "\"");
+            }
+        }
 
         if ((params.returnParam != null) && params.returnParam.isOutHeader()) {
             pw.print(" returnHeader=\"true\"");
@@ -650,5 +661,15 @@ public class JavaDeployWriter extends JavaWriter {
         OutputStreamWriter writer = new OutputStreamWriter(out, "UTF-8");
 
         return new PrintWriter(writer);
+    }
+    
+    public static Map mepStrings = new HashMap();
+    static {
+        mepStrings.put(OperationType.REQUEST_RESPONSE, "request-response");
+        mepStrings.put(OperationType.ONE_WAY, "oneway");
+    }
+    
+    String getMepString(OperationType mep) {
+        return (String)mepStrings.get(mep);
     }
 }    // class JavaDeployWriter

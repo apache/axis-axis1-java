@@ -21,10 +21,13 @@ import org.apache.axis.enum.Use;
 import org.apache.commons.logging.Log;
 
 import javax.xml.namespace.QName;
+import javax.wsdl.OperationType;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.HashMap;
 
 
 /**
@@ -48,6 +51,15 @@ public class OperationDesc implements Serializable {
     public static final int MSG_METHOD_DOCUMENT = 4;
 
     public static final int MSG_METHOD_NONCONFORMING = -4;
+    
+    public static Map mepStrings = new HashMap();
+    
+    static {
+        mepStrings.put("request-response", OperationType.REQUEST_RESPONSE);
+        mepStrings.put("oneway", OperationType.ONE_WAY);
+        mepStrings.put("solicit-response", OperationType.SOLICIT_RESPONSE);
+        mepStrings.put("notification", OperationType.NOTIFICATION);
+    }
 
     protected static Log log =
         LogFactory.getLog(OperationDesc.class.getName());
@@ -89,6 +101,11 @@ public class OperationDesc implements Serializable {
 
     /** The documentation for the operation */
 	private String documentation = null;
+    
+    /** The MEP for this Operation - uses the WSDL4J OperationType for now
+     * but we might want to have our own extensible enum for WSDL 2.0
+     */ 
+    private OperationType mep = OperationType.REQUEST_RESPONSE;
 
     /**
      * Default constructor.
@@ -532,6 +549,25 @@ public class OperationDesc implements Serializable {
 
     public void setMessageOperationStyle(int messageOperationStyle) {
         this.messageOperationStyle = messageOperationStyle;
+    }
+
+    public OperationType getMep() {
+        return mep;
+    }
+
+    public void setMep(OperationType mep) {
+        this.mep = mep;
+    }
+    
+    /**
+     * Set the MEP using a string like "request-response"
+     * @param mepString
+     */ 
+    public void setMep(String mepString) {
+        OperationType newMep = (OperationType)mepStrings.get(mepString);
+        if (newMep != null) {
+            mep = newMep;
+        }
     }
 }
 

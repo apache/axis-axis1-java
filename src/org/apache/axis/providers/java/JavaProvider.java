@@ -24,6 +24,7 @@ import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.description.JavaServiceDesc;
+import org.apache.axis.description.OperationDesc;
 import org.apache.axis.enum.Scope;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.message.SOAPEnvelope;
@@ -38,6 +39,7 @@ import org.xml.sax.SAXException;
 
 import javax.xml.rpc.holders.IntHolder;
 import javax.xml.rpc.server.ServiceLifecycle;
+import javax.wsdl.OperationType;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
@@ -282,21 +284,35 @@ public abstract class JavaProvider extends BasicProvider
         try {
             serviceObject = getServiceObject(msgContext, service, clsName, scope);
 
-            Message        resMsg  = msgContext.getResponseMessage();
-            SOAPEnvelope   resEnv;
+            SOAPEnvelope   resEnv = null;
 
-            // If we didn't have a response message, make sure we set one up
-            // with the appropriate versions of SOAP and Schema
-            if (resMsg == null) {
-                resEnv  = new SOAPEnvelope(msgContext.getSOAPConstants(),
-                                           msgContext.getSchemaVersion());
-
-                resMsg = new Message(resEnv);
-                msgContext.setResponseMessage( resMsg );
+            // If there IS a response message AND this is a one-way operation,
+            // we delete the response message here.  Note that this might
+            // cause confusing results in some cases - i.e. nothing fails,
+            // but your response headers don't go anywhere either.  It might
+            // be nice if in the future there was a way to detect an error
+            // when trying to install a response message in a MessageContext
+            // associated with a one-way operation....
+            OperationDesc operation = msgContext.getOperation();
+            if (operation != null &&
+                    operation.getMep() == OperationType.ONE_WAY) {
+                msgContext.setResponseMessage(null);
             } else {
-                resEnv  = resMsg.getSOAPEnvelope();
-            }
+                Message        resMsg  = msgContext.getResponseMessage();
 
+                // If we didn't have a response message, make sure we set one up
+                // with the appropriate versions of SOAP and Schema
+                if (resMsg == null) {
+                    resEnv  = new SOAPEnvelope(msgContext.getSOAPConstants(),
+                                               msgContext.getSchemaVersion());
+                    
+                    resMsg = new Message(resEnv);
+                    msgContext.setResponseMessage( resMsg );
+                } else {
+                    resEnv  = resMsg.getSOAPEnvelope();
+                }
+            }
+            
             Message        reqMsg  = msgContext.getRequestMessage();
             SOAPEnvelope   reqEnv  = reqMsg.getSOAPEnvelope();
 

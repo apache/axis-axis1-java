@@ -1653,11 +1653,14 @@ public class SymbolTable {
         if ((parameterOrder != null) && parameterOrder.isEmpty()) {
             parameterOrder = null;
         }
+
+        Input input = operation.getInput();
+        Output output = operation.getOutput();
+        
+        parameters.mep = operation.getStyle();
         
         // All input parts MUST be in the parameterOrder list.  It is an error otherwise.
         if (parameterOrder != null && !wrapped) {
-            Input input = operation.getInput();
-
             if (input != null) {
                 Message inputMsg = input.getMessage();
                 Map allInputs = inputMsg.getParts();
@@ -1682,8 +1685,6 @@ public class SymbolTable {
         }
 
         // Collect all the input parameters
-        Input input = operation.getInput();
-
         if ((input != null) && (input.getMessage() != null)) {
             getParametersFromParts(inputs,
                     input.getMessage().getOrderedParts(null),
@@ -1692,8 +1693,6 @@ public class SymbolTable {
         }
 
         // Collect all the output parameters
-        Output output = operation.getOutput();
-
         if ((output != null) && (output.getMessage() != null)) {
             getParametersFromParts(outputs,
                     output.getMessage().getOrderedParts(null),

@@ -154,4 +154,5 @@ public class WSDDConstants
     public static final String ATTR_CLASSNAME = "classname";
     public static final String ATTR_CLASS = "class";
     public static final String ATTR_SOAPACTION = "soapAction";
+    public static final String ATTR_MEP = "mep";
 }
