@@ -169,10 +169,14 @@ public class Constants {
         if (attributes == null || search == null || localPart == null)
             return null;
 
-        for (int i=0; i < search.length; i++) {
-            String value = attributes.getValue(search[i], localPart);
-            if (value != null) {
-                return value;
+        int len = attributes.getLength();
+
+        for (int i=0; i < len; i++) {
+            if (attributes.getLocalName(i).equals(localPart)) {
+                String uri = attributes.getURI(i);
+                for (int j=0; j<search.length; j++) {
+                    if (search[j].equals(uri)) return attributes.getValue(i);
+                }
             }
         }
 
@@ -191,6 +195,8 @@ public class Constants {
                                   QName [] search) {
         if (attributes == null || search == null)
             return null;
+
+        if (attributes.getLength() == 0) return null;
 
         String value = null;
         for (int i=0; (value == null) && (i < search.length); i++) {
