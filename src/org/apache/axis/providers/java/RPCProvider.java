@@ -57,6 +57,7 @@ package org.apache.axis.providers.java ;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.MessageContext;
+import org.apache.axis.enum.Style;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.description.ParameterDesc;
@@ -153,10 +154,35 @@ public class RPCProvider extends JavaProvider
             }
         }
 
+       // special case code for a document style operation with no
+       // arguments (which is a strange thing to have, but whatever)
         if (body == null) {
-            // throw something
-            throw new Exception(JavaUtils.getMessage("noBody00"));
+            // throw an error if this isn't a document style service            
+            if (!serviceDesc.getStyle().equals(Style.DOCUMENT)) {
+                throw new Exception(JavaUtils.getMessage("noBody00"));
+            }
+            
+            // look for a method in the service that has no arguments, 
+            // use the first one we find.
+            ArrayList ops = serviceDesc.getOperations();
+            for (Iterator iterator = ops.iterator(); iterator.hasNext();) {
+                OperationDesc desc = (OperationDesc) iterator.next();
+                if (desc.getNumInParams() == 0) {
+                    // found one with no parameters, use it
+                    msgContext.setOperation(desc);
+                    // create an empty element
+                    body = new RPCElement(desc.getName());
+                    // stop looking
+                    break;
+                }
+            }
+
+            // If we still didn't find anything, report no body error.
+            if (body == null) {
+                throw new Exception(JavaUtils.getMessage("noBody00"));
+            }
         }
+
         String methodName = body.getMethodName();
         Vector args = body.getParams();
         int numArgs = args.size();
