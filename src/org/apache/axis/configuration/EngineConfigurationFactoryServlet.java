@@ -146,22 +146,20 @@ public class EngineConfigurationFactoryServlet
          * Use the WEB-INF directory (so the config files can't get
          * snooped by a browser)
          */
-        String webInfPath = ctx.getRealPath("/WEB-INF");
- 
-        FileProvider config = null ;
+        String name = "/WEB-INF/"+ SERVER_CONFIG_FILE;
+        InputStream is = ctx.getResourceAsStream(name);
 
-        if (webInfPath == null || !(new File(webInfPath,
-                                             SERVER_CONFIG_FILE)).exists()){
-            InputStream is =
-                ctx.getResourceAsStream("/WEB-INF/"+ SERVER_CONFIG_FILE);
-
-            if (is == null) {
-                log.error(JavaUtils.getMessage
-                          ("servletEngineWebInfError01", 
-                           webInfPath + "/" + SERVER_CONFIG_FILE));
-            } else {
-                config = new FileProvider(is);
+        FileProvider config;
+        if (is == null) {
+            String rootPath = ctx.getRealPath("/");
+            if (rootPath != null) {
+                name = rootPath + name;
             }
+            log.error(JavaUtils.getMessage("servletEngineWebInfError01",
+                                           name));
+            config = null;
+        } else {
+            config = new FileProvider(is);
         }
 
         return config;
