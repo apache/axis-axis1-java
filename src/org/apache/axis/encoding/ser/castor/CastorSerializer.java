@@ -119,7 +119,7 @@ public class CastorSerializer implements Serializer {
             log.error(Messages.getMessage("castorValidationException00"), ve);
             throw new IOException(Messages.getMessage(
                     "castorValidationException00")
-                    + ve.getLocalizedMessage());
+                    + ve.getLocation() + ": " + ve.getLocalizedMessage());
         }
     }
 

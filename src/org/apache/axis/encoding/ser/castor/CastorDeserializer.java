@@ -68,7 +68,7 @@ public class CastorDeserializer
         } catch (ValidationException ve) {
             log.error(Messages.getMessage("castorValidationException00"), ve);
             throw new SAXException(Messages.getMessage("castorValidationException00")
-                    + ve.getLocalizedMessage());
+                    + ve.getLocation() + ": " + ve.getLocalizedMessage());
         } catch (Exception exp) {
             log.error(Messages.getMessage("exception00"), exp);
             throw new SAXException(exp);
