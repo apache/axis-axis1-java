@@ -305,22 +305,6 @@ public class HTTPSender extends BasicHandler {
                         if (null != val && val.trim().equalsIgnoreCase(HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED))
                             httpChunkStream = true;
                     }
-                } else if (key.equalsIgnoreCase(HTTPConstants.HEADER_HOST)) {
-                    //ignore
-                } else if (key.equalsIgnoreCase(HTTPConstants.HEADER_CONTENT_TYPE)) {
-                    //ignore
-                } else if (key.equalsIgnoreCase(HTTPConstants.HEADER_SOAP_ACTION)) {
-                    //ignore
-                } else if (key.equalsIgnoreCase(HTTPConstants.HEADER_CONTENT_LENGTH)) {
-                    //ignore
-                } else if (key.equalsIgnoreCase(HTTPConstants.HEADER_COOKIE)) {
-                    //ignore
-                } else if (key.equalsIgnoreCase(HTTPConstants.HEADER_COOKIE2)) {
-                    //ignore
-                } else if (key.equalsIgnoreCase(HTTPConstants.HEADER_AUTHORIZATION)) {
-                    //ignore
-                } else if (key.equalsIgnoreCase(HTTPConstants.HEADER_PROXY_AUTHORIZATION)) {
-                    //ignore
                 } else if (key.equalsIgnoreCase(HTTPConstants.HEADER_CONNECTION)) {
                     if (!http10) {
                         String val = me.getValue().toString();
