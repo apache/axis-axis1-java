@@ -55,7 +55,9 @@
 
 package samples.userguide.example3;
 
-import org.apache.axis.client.ServiceClient;
+import org.apache.axis.client.Call;
+import org.apache.axis.client.Service;
+import org.apache.axis.encoding.XMLType;
 import org.apache.axis.utils.Options;
 
 public class Client
@@ -75,10 +77,15 @@ public class Client
                 textToSend = args[0];
             }
             
-            ServiceClient client = new ServiceClient(endpointURL);
-            
-            String ret = (String)client.invoke("MyService", "serviceMethod",
-                                               new Object [] { textToSend });
+            Service  service = new Service();
+            Call     call    = (Call) service.createCall();
+
+            call.setTargetEndpointAddress( new java.net.URL(endpointURL) );
+            call.setOperationName( "serviceMethod" );
+            call.setProperty( Call.NAMESPACE, "MyService" );
+            call.addParameter( "arg1", XMLType.XSD_STRING, Call.PARAM_MODE_IN);
+
+            String ret = (String) call.invoke( new Object[] { textToSend } );
             
             System.out.println("You typed : " + ret);
         } catch (Exception e) {

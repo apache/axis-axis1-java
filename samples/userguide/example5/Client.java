@@ -56,7 +56,9 @@
 package samples.userguide.example5;
 
 import org.apache.axis.AxisFault;
-import org.apache.axis.client.ServiceClient;
+import org.apache.axis.client.Call;
+import org.apache.axis.client.Service;
+import org.apache.axis.encoding.XMLType;
 import org.apache.axis.utils.Options;
 import javax.xml.rpc.namespace.QName;
                                            
@@ -76,15 +78,21 @@ public class Client
         order.setItemCodes(items);
         order.setQuantities(quantities);
         
-        ServiceClient client = new ServiceClient(options.getURL());
-        client.addSerializer(Order.class, new QName("urn:BeanService", "Order"),
-                             new org.apache.axis.encoding.BeanSerializer(Order.class));
+        Service  service = new Service();
+        Call     call    = (Call) service.createCall();
+        QName    qn      = new QName( "urn:BeanService", "Order" );
+
+        call.addSerializer(Order.class, qn,
+                    new org.apache.axis.encoding.BeanSerializer(Order.class));
         
         String result;
         try {
-            result = (String)client.invoke("OrderProcessor",
-                                           "processOrder",
-                                           new Object[] { order });
+            call.setTargetEndpointAddress( new java.net.URL(options.getURL()) );
+            call.setProperty( Call.NAMESPACE, "OrderProcessor" );
+            call.setOperationName( "processOrder" );
+            call.addParameter( "arg1", new XMLType(qn), Call.PARAM_MODE_IN );
+
+            result = (String) call.invoke( new Object[] { order } );
         } catch (AxisFault fault) {
             result = "Error : " + fault.toString();
         }

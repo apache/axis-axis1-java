@@ -55,19 +55,27 @@
 
 package samples.userguide.example1;
 
-import org.apache.axis.client.ServiceClient;
+import org.apache.axis.client.Call;
+import org.apache.axis.client.Service;
+import org.apache.axis.encoding.XMLType;
 
 public class TestClient
 {
    public static void main(String [] args) {
        try {
-           String endpoint = "http://nagoya.apache.org:5049/axis/servlet/AxisServlet";
+           String endpoint = 
+                    "http://nagoya.apache.org:5049/axis/servlet/AxisServlet";
      
-           ServiceClient client = new ServiceClient(endpoint);
-           String ret = (String)client.invoke("http://soapinterop.org/",
-                                              "echoString",
-                                              new Object [] { "Hello!" });
-           
+           Service  service = new Service();
+           Call     call    = (Call) service.createCall();
+
+           call.setTargetEndpointAddress( new java.net.URL(endpoint) );
+           call.setOperationName( "echoString" );
+           call.addParameter( "string", XMLType.XSD_STRING, Call.PARAM_MODE_IN);
+           call.setProperty( Call.NAMESPACE, "http://soapinterop.org/" );
+
+           String ret = (String) call.invoke( new Object[] { "Hello!" } );
+
            System.out.println("Sent 'Hello!', got '" + ret + "'");
        } catch (Exception e) {
            System.err.println(e.toString());
