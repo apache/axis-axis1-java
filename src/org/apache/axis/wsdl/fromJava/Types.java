@@ -296,10 +296,15 @@ public class Types {
             }
         }
         if (schemaElem == null) {
-          schemaElem = docHolder.createElement("schema");
-          wsdlTypesElem.appendChild(schemaElem);
-          schemaElem.setAttribute("xmlns", Constants.URI_DEFAULT_SCHEMA_XSD);
-          schemaElem.setAttribute("targetNamespace", qName.getNamespaceURI());
+            schemaElem = docHolder.createElement("schema");
+            wsdlTypesElem.appendChild(schemaElem);
+            schemaElem.setAttribute("xmlns", Constants.URI_DEFAULT_SCHEMA_XSD);
+            schemaElem.setAttribute("targetNamespace", qName.getNamespaceURI());
+            
+            // Add SOAP-ENC namespace import
+            Element importElem = docHolder.createElement("import");
+            schemaElem.appendChild(importElem);
+            importElem.setAttribute("namespace", Constants.URI_DEFAULT_SOAP_ENC);
         }
         schemaElem.appendChild(element);
     }
