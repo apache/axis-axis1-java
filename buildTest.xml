@@ -171,7 +171,6 @@ Copyright:
                 has its own test class collecting all the tests -->
               <include name="**/FunctionalTests.class" />
               <include name="**/*TestCase.class" />
-              <include name="**/PackageTests.class" />
           <!-- <include name="**/test/*TestSuite.class"/> -->
               <exclude name="**/Interop3TestCase.class"/>
         </fileset>
