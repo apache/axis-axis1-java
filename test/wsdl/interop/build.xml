@@ -48,8 +48,8 @@ Copyright:
 </target>
  
   <target name="copy" depends="setenv">
-     <ant antfile="${axis.home}/samples/echo/build.xml" target="compile" />
-     <ant antfile="${axis.home}/samples/jaxrpc/build.xml" target="compile" />
+     <ant dir="${axis.home}" antfile="${axis.home}/samples/echo/build.xml" target="compile" />
+     <ant dir="${axis.home}" antfile="${axis.home}/samples/jaxrpc/build.xml" target="compile" />
   </target>
 
   <target name="compile" depends="copy" >
@@ -418,7 +418,7 @@ Copyright:
     </javac>
     <!-- Step 7:  see test/wsdl/interop3/Import2TestCase.java -->
     <!-- Step 8:  see test/wsdl/interop3/Import2TestCase.java -->
-    <ant antfile="${axis.home}/test/wsdl/interop3/groupE/Interop3GroupE.xml"/>
+    <ant dir="${axis.home}" antfile="${axis.home}/test/wsdl/interop3/groupE/Interop3GroupE.xml"/>
     <!-- UDDI 1.0 WSDL's -->
 <!-- tomj: turn these off while attribute processing is in flux
     <wsdl2java url="http://www.uddi.org/wsdl/inquire_v1.wsdl"
