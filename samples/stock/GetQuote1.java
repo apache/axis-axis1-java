@@ -64,6 +64,7 @@ import org.apache.axis.Constants ;
 import org.apache.axis.client.Service ;
 import org.apache.axis.rpc.Call ;
 import org.apache.axis.encoding.XMLType ;
+import org.apache.axis.rpc.namespace.QName ;
 
 import org.apache.axis.client.Transport ;
 import org.apache.axis.transport.http.HTTPConstants;
@@ -87,16 +88,15 @@ public class GetQuote1 {
         System.exit(1);
       }
 
-      Service service = new Service();
-      Call    call    = service.createCall();
+      Service service = new Service( "file:///wstk/xml-axis/java/samples/stock/GetQuote.wsdl",
+                                     new QName("urn:xmltoday-delayed-quotes",
+                                               "GetQuoteService") );
+      QName   qn      = new QName( "urn:xmltoday-delayed-quotes", "GetQuote" );
+      Call    call    = service.createCall( qn, "getQuote" );
 
-      call.setTargetEndpointAddress( new URL(opts.getURL()) );
-      call.setOperationName( "getQuote" );
-      call.addParameter( "symbol", XMLType.XSD_STRING, call.PARAM_MODE_IN );
-      call.setReturnType( XMLType.XSD_FLOAT );
+      //  params, return-type
 
       call.setProperty( Constants.NAMESPACE, "urn:xmltoday-delayed-quotes" );
-      call.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, "getQuote" );
       call.setProperty( Transport.USER, opts.getUser() );
       call.setProperty( Transport.PASSWORD, opts.getPassword() );
 

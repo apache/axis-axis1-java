@@ -62,35 +62,61 @@ package org.apache.axis.client ;
  * @author Doug Davis (dug@us.ibm.com)
  */
 
-import com.ibm.wsdl.xml.WSDLReader;
-import org.apache.axis.rpc.JAXRPCException;
-import org.apache.axis.rpc.namespace.QName;
-import org.apache.axis.utils.XMLUtils;
+import java.net.URL ;
+import java.lang.String ;
+import java.util.Map ;
+import java.util.Set ;
+import java.util.List ;
+import java.util.Iterator ;
+import java.util.HashSet ;
 
-import javax.wsdl.Definition;
-import javax.wsdl.Operation;
-import javax.wsdl.PortType;
-import java.net.URL;
-import java.util.Iterator;
-import java.util.List;
+import org.apache.axis.utils.XMLUtils ;
+
+import org.apache.axis.rpc.JAXRPCException ;
+import org.apache.axis.rpc.namespace.QName ;
+import org.apache.axis.transport.http.HTTPConstants ;
+
+import javax.wsdl.Definition ;
+import javax.wsdl.Binding ;
+import javax.wsdl.BindingOperation ;
+import javax.wsdl.Message ;
+import javax.wsdl.Operation ;
+import javax.wsdl.Output ;
+import javax.wsdl.Port ;
+import javax.wsdl.PortType ;
+
+import com.ibm.wsdl.xml.WSDLReader ;
+import com.ibm.wsdl.extensions.soap.SOAPAddress ;
+import com.ibm.wsdl.extensions.soap.SOAPOperation ;
 
 public class Service implements org.apache.axis.rpc.Service {
-    private URL         wsdlLocation   = null ;
-    private Definition  wsdlDefinition = null ;
+    private URL                 wsdlLocation   = null ;
+    private Definition          wsdlDefinition = null ;
+    private javax.wsdl.Service  wsdlService    = null ;
 
     public Service() throws JAXRPCException { 
         this.wsdlLocation   = null ;
         this.wsdlDefinition = null ;
     }
 
-    public Service(URL WSDLdoc) throws JAXRPCException {
+    public Service(URL WSDLdoc, QName serviceName) throws JAXRPCException {
         try {
             org.w3c.dom.Document doc = XMLUtils.newDocument(WSDLdoc.toString());
             WSDLReader           reader = new WSDLReader();
             Definition           def    = reader.readWSDL( null, doc );
 
-            this.wsdlLocation = WSDLdoc ;
+            this.wsdlLocation   = WSDLdoc ;
             this.wsdlDefinition = def ;
+
+            // arg!
+            String           ns = serviceName.getNamespaceURI();
+            String           lp = serviceName.getLocalPart();
+            javax.wsdl.QName qn = new javax.wsdl.QName( ns, lp );
+ 
+            this.wsdlService    = def.getService( qn );
+            if ( this.wsdlService == null )
+                throw new JAXRPCException( "Can't find service: " + 
+                                           serviceName );
         }
         catch( Exception exp ) {
             throw new JAXRPCException( "Error processing WSDL document: " + 
@@ -98,7 +124,8 @@ public class Service implements org.apache.axis.rpc.Service {
         }
     }
 
-    public Service(String wsdlLocation) throws JAXRPCException {
+    public Service(String wsdlLocation, QName serviceName) 
+                           throws JAXRPCException {
         try {
             org.w3c.dom.Document doc = XMLUtils.newDocument(wsdlLocation);
             WSDLReader           reader = new WSDLReader();
@@ -106,6 +133,16 @@ public class Service implements org.apache.axis.rpc.Service {
 
             this.wsdlLocation = new URL(wsdlLocation) ;
             this.wsdlDefinition = def ;
+
+            // arg!
+            String           ns = serviceName.getNamespaceURI();
+            String           lp = serviceName.getLocalPart();
+            javax.wsdl.QName qn = new javax.wsdl.QName( ns, lp );
+ 
+            this.wsdlService    = def.getService( qn );
+            if ( this.wsdlService == null )
+                throw new JAXRPCException( "Can't find service: " + 
+                                           serviceName );
         }
         catch( java.net.MalformedURLException exp ) {
             throw new JAXRPCException( "Malformed WSDL URI: " + wsdlLocation +
@@ -129,11 +166,36 @@ public class Service implements org.apache.axis.rpc.Service {
                                                     portName.getLocalPart() );
         if ( wsdlDefinition == null )
             throw new JAXRPCException( "Missing WSDL document" );
+
+        Port port = wsdlService.getPort( portName.getLocalPart() );
+        if ( port == null )
+            throw new JAXRPCException( "Can't find port: " + portName );
+
         PortType portType = wsdlDefinition.getPortType( qn );
         if ( portType == null )
             throw new JAXRPCException( "Can't find portType: " + portName );
+
         org.apache.axis.client.Call call = new org.apache.axis.client.Call();
         call.setPortTypeName( portName );
+
+        // Get the URL
+        ////////////////////////////////////////////////////////////////////
+        List list = port.getExtensibilityElements();
+        for ( int i = 0 ; list != null && i < list.size() ; i++ ) {
+            Object obj = list.get(i);
+            if ( obj instanceof SOAPAddress ) { 
+                try {
+                    SOAPAddress addr = (SOAPAddress) obj ;
+                    URL         url  = new URL(addr.getLocationURI());
+                    call.setTargetEndpointAddress(url);
+                }
+                catch(Exception exp) {
+                    throw new JAXRPCException("Can't set location URI: " + 
+                                              exp.toString() );
+                }
+            }
+        }
+
         return( call );
     }
 
@@ -144,9 +206,12 @@ public class Service implements org.apache.axis.rpc.Service {
                                                     portName.getLocalPart() );
         if ( wsdlDefinition == null )
             throw new JAXRPCException( "Missing WSDL document" );
-        PortType portType = wsdlDefinition.getPortType( qn );
-        if ( portType == null )
-            throw new JAXRPCException( "Can't find portType: " + portName );
+
+        Port port = wsdlService.getPort( portName.getLocalPart() );
+        if ( port == null )
+            throw new JAXRPCException( "Can't find port: " + portName );
+
+        PortType  portType = wsdlDefinition.getPortType( qn );
         List operations = portType.getOperations();
         if ( operations == null )
             throw new JAXRPCException( "Can't find operation: " + 
@@ -164,7 +229,48 @@ public class Service implements org.apache.axis.rpc.Service {
         call.setPortTypeName( portName );
         call.setOperationName( operationName );
 
-        // set other fields from WSDL  - dug
+        // Get the URL
+        ////////////////////////////////////////////////////////////////////
+        List list = port.getExtensibilityElements();
+        for ( int i = 0 ; list != null && i < list.size() ; i++ ) {
+            Object obj = list.get(i);
+            if ( obj instanceof SOAPAddress ) { 
+                try {
+                    SOAPAddress addr = (SOAPAddress) obj ;
+                    URL         url  = new URL(addr.getLocationURI());
+                    call.setTargetEndpointAddress(url);
+                }
+                catch(Exception exp) {
+                    throw new JAXRPCException("Can't set location URI: " + 
+                                              exp.toString() );
+                }
+            }
+        }
+
+        // Get the SOAPAction
+        ////////////////////////////////////////////////////////////////////
+        Binding          binding = port.getBinding();
+        BindingOperation bop = binding.getBindingOperation(operationName,
+                                                           null, null);
+        list = bop.getExtensibilityElements();
+        for ( int i = 0 ; list != null && i < list.size() ; i++ ) {
+            Object obj = list.get(i);
+            if ( obj instanceof SOAPOperation ) { 
+                SOAPOperation sop    = (SOAPOperation) obj ;
+                String        action = sop.getSoapActionURI();
+                if ( action != null )
+                    call.setProperty(HTTPConstants.MC_HTTP_SOAPACTION, action);
+            }
+        }
+
+        // Get the parameters
+        ////////////////////////////////////////////////////////////////////
+        // to do - dug
+
+        // Get the return type
+        ////////////////////////////////////////////////////////////////////
+        Output   output = op.getOutput();
+        Message  messae = output.getMessage();
 
         return( call );
     }
@@ -179,12 +285,30 @@ public class Service implements org.apache.axis.rpc.Service {
 
     public QName getServiceName() {
         // not implemented yet
-        return( null );
+        if ( wsdlService == null ) return( null );
+        javax.wsdl.QName  qn = wsdlService.getQName();
+        return( new QName( qn.getNamespaceURI(), qn.getLocalPart() ) );
     }
 
     public Iterator getPorts() {
         // not implemented yet
-        return( null );
+        if ( wsdlService == null ) return( null );
+        Map       map  = wsdlService.getPorts();
+
+        if ( map == null ) return( null );
+
+        Set       set   = map.keySet();
+        Iterator  iter  = set.iterator();
+        Set       ports = null ;
+
+        while ( iter.hasNext() ) {
+            String name = (String) iter.next();
+            Port   port = (Port) map.get( name );
+            if ( ports == null ) ports = new HashSet();
+            ports.add( port );
+        }
+        if ( ports == null ) return( null );
+        return( ports.iterator() );
     }
 
     public javax.naming.Reference getReference() {
