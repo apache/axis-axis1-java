@@ -144,7 +144,11 @@ public class Java2WsdlAntTask extends Task
      * @throws BuildException
      */
     public void execute() throws BuildException {
-        AntClassLoader cl = getProject().createClassLoader(classpath == null ? createClasspath(): classpath);        
+        AntClassLoader cl = new AntClassLoader(getClass().getClassLoader(),
+        		getProject(),
+                classpath == null ? createClasspath() : classpath,
+                false);
+        
         ClassUtils.setDefaultClassLoader(cl);
         //add extra classes to the classpath when the classpath attr is not null
         if (extraClasses != null) {
@@ -564,8 +568,13 @@ public class Java2WsdlAntTask extends Task
 
         // setup namespace-to-package mapping
         String ns = j2w.getIntfNamespace();
-        String pkg = j2w.getCls().getPackage().getName();
-        w2j.getNamespaceMap().put(ns, pkg);
+        String clsName = j2w.getCls().getName();
+        int idx = clsName.lastIndexOf(".");
+        String pkg = null;
+        if (idx > 0) {
+            pkg = clsName.substring(0, idx);            
+            w2j.getNamespaceMap().put(ns, pkg);
+        }
         
         Map nsmap = j2w.getNamespaceMap();
         if (nsmap != null) {

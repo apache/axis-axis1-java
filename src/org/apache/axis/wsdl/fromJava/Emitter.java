@@ -697,8 +697,11 @@ public class Emitter {
             }
 
             if (cls != null) {
-                if (cls.getPackage() != null) {
-                    namespaces.put(cls.getPackage().getName(), intfNS, "intf");
+                String clsName = cls.getName();
+                int idx = clsName.lastIndexOf(".");
+                if (idx > 0) {
+                    String pkgName = clsName.substring(0, idx);
+                    namespaces.put(pkgName, intfNS, "intf");
                 }
             }
 
