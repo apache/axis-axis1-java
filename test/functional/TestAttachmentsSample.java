@@ -80,13 +80,25 @@ public class TestAttachmentsSample extends TestCase {
     
     public void doTestAttachments1() throws Exception {
         Options opts = new Options( new String[]{});
-        boolean res = new EchoAttachment(opts).echo("samples/attachments/README");
+        boolean res = new EchoAttachment(opts).echo(false, "samples/attachments/README");
+       assertEquals("Didn't process attachment correctly", res, true) ;
+    }
+
+    public void doTestAttachmentsD1() throws Exception {
+        Options opts = new Options( new String[]{});
+        boolean res = new EchoAttachment(opts).echo(true, "samples/attachments/README");
        assertEquals("Didn't process attachment correctly", res, true) ;
     }
     
     public void doTestAttachments2() throws Exception {
         Options opts = new Options( new String[]{});
-        boolean res = new EchoAttachment(opts).echoDir("samples/attachments");
+        boolean res = new EchoAttachment(opts).echoDir(false, "samples/attachments");
+        assertEquals("Didn't process attachments correctly", res, true);
+    }
+
+    public void doTestAttachmentsD2() throws Exception {
+        Options opts = new Options( new String[]{});
+        boolean res = new EchoAttachment(opts).echoDir(true, "samples/attachments");
         assertEquals("Didn't process attachments correctly", res, true);
     }
     
@@ -108,6 +120,10 @@ public class TestAttachmentsSample extends TestCase {
             doTestAttachments1();
             log.info("Testing multiple file attachments...");
             doTestAttachments2();
+            log.info("Testing single file DIME attachment...");
+            doTestAttachmentsD1();
+            log.info("Testing multiple file DIME attachments...");
+            doTestAttachmentsD2();
             log.info("Testing undeployment...");
             doTestUndeploy();
             log.info("Test complete.");
