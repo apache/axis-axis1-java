@@ -55,29 +55,19 @@
 
 package org.apache.axis;
 
-import org.apache.axis.deployment.DeploymentException;
-import org.apache.axis.encoding.DeserializerFactory;
-import org.apache.axis.encoding.TypeMapping;
-import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.TypeMappingRegistry;
-import org.apache.axis.encoding.TypeMappingRegistryImpl;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.handlers.soap.SOAPService;
-import org.apache.axis.InternalException;
 import org.apache.axis.session.Session;
 import org.apache.axis.session.SimpleSession;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.cache.ClassCache;
-import org.apache.axis.providers.java.RPCProvider;
-import org.apache.axis.providers.java.MsgProvider;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import javax.xml.rpc.namespace.QName;
-import java.util.Hashtable;
 import java.util.ArrayList;
-import java.beans.IntrospectionException;
+import java.util.Hashtable;
 
 /**
  * An <code>AxisEngine</code> is the base class for AxisClient and
@@ -156,12 +146,6 @@ public abstract class AxisEngine extends BasicHandler
     public static MessageContext getCurrentMessageContext() {
         return (MessageContext) currentMessageContext.get();
     }
-
-    /**
-     * No-arg constructor. Not used.
-     *
-     */
-    private AxisEngine() {}
 
     /**
      * Construct an AxisEngine using the specified engine configuration.
