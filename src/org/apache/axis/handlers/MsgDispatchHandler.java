@@ -104,7 +104,7 @@ public class MsgDispatchHandler extends BasicHandler {
                               new SOAPEnvelope() :
                               (SOAPEnvelope)resMsg.getAs("SOAPEnvelope");
 
-      Document      doc     = new Document( reqBody.getAsXML() );
+      Document      doc     = new Document( reqBody.getRoot() );
 
       /* If no methodName was specified during deployment then get it */
       /* from the root of the Body element                            */

@@ -67,93 +67,93 @@ import org.apache.axis.* ;
  * @author Doug Davis (dug@us.ibm.com)
  */
 public class SOAPHeader {
+  protected Element   root ;
+  protected boolean   processed ;
+
+  // Utility vars - dup of info in 'root' but faster access here
   protected String    name ;
   protected String    prefix ;
   protected String    namespaceURI ;
-  protected boolean   mustUnderstand ;
   protected String    actor ;
-  protected Vector    data ;
-  protected boolean   processed ;
+  protected boolean   mustUnderstand ;
 
   public SOAPHeader() {
     processed = false ;
   }
 
   public SOAPHeader(Element elem) {
-    String  value ;
-    prefix = elem.getNamespacePrefix();
-    namespaceURI = elem.getNamespaceURI();
-    name = elem.getName();
-    value = elem.getAttributeValue( Constants.ATTR_MUST_UNDERSTAND,
-                                    elem.getNamespace() );
-    if ( "1".equals(value) ) mustUnderstand = true ;
-    actor = elem.getAttributeValue( Constants.ATTR_ACTOR, elem.getNamespace() );
-    setData( elem.getMixedContent() );
     processed = false ;
+    setRoot( elem );
+  }
+
+  public Element getRoot() {
+    return( root );
+  }
+
+  public void setRoot(Element elem) {
+    String  value ;
+
+    root           = elem ;
+    prefix         = elem.getNamespacePrefix();
+    namespaceURI   = elem.getNamespaceURI();
+    name           = elem.getName();
+
+    value          = elem.getAttributeValue( Constants.ATTR_ACTOR, 
+                                             elem.getNamespace() );
+    if ( value != null )
+      actor = value ;
+    else 
+      // Handle the case where they set Actor before they set the root
+      if ( value != null ) setActor( value );
+
+    value          = elem.getAttributeValue( Constants.ATTR_MUST_UNDERSTAND,
+                                             elem.getNamespace() );
+    if ( value != null )
+      mustUnderstand = "1".equals(value);
+    else 
+      // Handle the case where they set MU before they set the root
+      if ( mustUnderstand ) setMustUnderstand( true );
   }
 
   public String getName() { return( name ); }
-  public void setName(String n) { name = n; }
-
   public String getPrefix() { return( prefix ); }
-  public void setPrefix(String p) { prefix = p; }
-
   public String getNamespaceURI() { return( namespaceURI ); }
-  public void setNamespaceURI(String nsuri) { namespaceURI = nsuri ; }
 
   public boolean getMustUnderstand() { return( mustUnderstand ); }
-  public void setMustUnderstand(boolean b) { mustUnderstand = b ; }
+  public void setMustUnderstand(boolean b) { 
+    Namespace ns   = null ;
+    Attribute attr = null ;
+
+    mustUnderstand = b ;
+    if ( root == null ) return ;
+    ns = Namespace.getNamespace( Constants.NSPREFIX_SOAP_ENV, 
+                                 Constants.URI_SOAP_ENV );
+    attr = new Attribute(Constants.ATTR_MUST_UNDERSTAND, "1", ns );
+    root.addAttribute( attr );
+  }
 
   public String getActor() { return( actor ); }
-  public void setActor(String a) { actor = a ; }
+  public void setActor(String a) { 
+    Namespace ns   = null ;
+    Attribute attr = null ;
 
-  public Vector getData() { return( data ); }
-
-  public Object getDataAtIndex(int i) {
-    if ( data == null || i >= data.size() ) return( null );
-    return( (Object) data.get(i) );
+    actor = a ;
+    ns = Namespace.getNamespace( Constants.NSPREFIX_SOAP_ENV, 
+                                 Constants.URI_SOAP_ENV );
+    attr = new Attribute( Constants.ATTR_ACTOR, actor, ns );
+    root.addAttribute( attr );
   }
 
-  public void addDataNode(Object n) { 
-    if ( data == null ) data = new Vector();
-    data.add(n); 
-  };
-
-  public void setData(List nl) { 
-    data = null ;
-    if ( nl != null && nl.size() != 0 ) data = new Vector();
-    for ( int i = 0 ; i < nl.size() ; i++ )
-      data.add( nl.get(i) );
-  }
-
-  public Element getAsXML() {
-    Element    root = new Element( name, prefix, namespaceURI );
-    Namespace  ns   = null ;
-    Attribute  attr = null ;
-    if ( mustUnderstand ) {
-      ns = Namespace.getNamespace( Constants.NSPREFIX_SOAP_ENV, 
-                                   Constants.URI_SOAP_ENV );
-      attr = new Attribute(Constants.ATTR_MUST_UNDERSTAND, "1", ns );
-      root.addAttribute( attr );
+  public org.w3c.dom.Element getAsDOMElement() throws AxisFault {
+    if ( root == null ) return( null );
+    try {
+      org.jdom.output.DOMOutputter outputter = null ;
+      outputter = new org.jdom.output.DOMOutputter();
+      return( outputter.output( root ) );
     }
-    if ( actor != null ) {
-      ns = Namespace.getNamespace( Constants.NSPREFIX_SOAP_ENV, 
-                                   Constants.URI_SOAP_ENV );
-      attr = new Attribute( Constants.ATTR_ACTOR, actor, ns );
-      root.addAttribute( attr );
+    catch( Exception e ) {
+      throw new AxisFault( e );
     }
-    for ( int i = 0 ; data != null && i < data.size() ; i++ ) {
-      Object o = data.get(i);
-      if ( o instanceof String )
-        root.addContent( (String) o );
-      else if ( o instanceof CDATA )
-        root.addContent( (CDATA) o );
-      else if ( o instanceof Element )
-        root.addContent( (Element) o );
-      else
-        System.err.println( "Unknown type: " + o.getClass() );
-    }
-    return( root );
   }
 
   public void setProcessed(boolean value) {

@@ -134,7 +134,7 @@ public class RPCBody {
     }
   }
 
-  public Element getAsXML() {
+  public Element getElement() {
     Element   root ;
    
     if ( prefix != null ) 
@@ -143,13 +143,13 @@ public class RPCBody {
       root = new Element( methodName );
     for ( int i = 0 ; args != null && i < args.size() ; i++ ) {
       RPCArg  arg = (RPCArg) args.get(i) ;
-      root.addContent( arg.getAsXML() );
+      root.addContent( arg.getElement() );
     }
     return( root );
   }
 
   public SOAPBody getAsSOAPBody() {
-    return( new SOAPBody( getAsXML() ) );
+    return( new SOAPBody( getElement() ) );
   }
 
 };

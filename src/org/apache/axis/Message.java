@@ -256,17 +256,17 @@ public class Message {
       else if ( currentForm.equals("AxisFault") ) {
         AxisFault     fault = (AxisFault) currentMessage ;
         SOAPEnvelope  env   = new SOAPEnvelope();
-        SOAPBody      body  = new SOAPBody( fault.getAsXML() );
+        SOAPBody      body  = new SOAPBody( fault.getElement() );
 
         env.addBody( body );
 
-        setCurrentMessage( env.getAsXML(), "Document" );
+        setCurrentMessage( env.getDocument(), "Document" );
         Debug.Print( 2, "Exit: Message::getAsDocument" );
         return( (Document) currentMessage );
       }
       else if ( currentForm.equals("SOAPEnvelope") ) {
         SOAPEnvelope  env = (SOAPEnvelope) currentMessage ;
-        setCurrentMessage( env.getAsXML(), "Document" );
+        setCurrentMessage( env.getDocument(), "Document" );
         Debug.Print( 2, "Exit: Message::getAsDocument" );
         return( (Document) currentMessage );
       }

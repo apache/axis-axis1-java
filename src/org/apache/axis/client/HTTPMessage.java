@@ -198,13 +198,11 @@ public class HTTPMessage {
       msgContext.setProperty(MessageContext.TRANS_OUTPUT, "HTTP.output" );
     }
 
-    if ( false ) { // Debug.getDebugLevel() > 0  ) {
-      SOAPHeader  header = new SOAPHeader();
-      header.setPrefix("d");
-      header.setName("Debug");
-      header.setNamespaceURI( Constants.URI_DEBUG );
+    if ( Debug.getDebugLevel() > 0  ) {
+      Element  elem = new Element( "Debug", "d", Constants.URI_DEBUG );
+      elem.addContent( "" + Debug.getDebugLevel() );
+      SOAPHeader  header = new SOAPHeader(elem);
       header.setActor( Constants.URI_NEXT_ACTOR );
-      header.addDataNode( "" + Debug.getDebugLevel() );
 
       reqEnv.addHeader( header );
     }
@@ -229,7 +227,7 @@ public class HTTPMessage {
     Message       resMsg = msgContext.getResponseMessage();
     SOAPEnvelope  resEnv = (SOAPEnvelope) resMsg.getAs( "SOAPEnvelope" );
     SOAPBody      resBody = resEnv.getFirstBody();
-    Document      doc = new Document( resBody.getAsXML() );
+    Document      doc = new Document( resBody.getRoot() );
 
     mc.setResponseMessage( new Message(doc, "Document") );
 
