@@ -1,0 +1,28 @@
+.example { 
+    background:#ccccff 
+}
+
+.xml {
+    background:#eeeeee 
+}
+
+body { 
+    background-color:#FFFFFF; 
+    font-family: Verdana, Arial, Helvetica, sans-serif; 
+    margin-left: 40px;
+    color:#000000
+}
+
+h2 {
+    text-decoration: underline; 
+    background-color: #DCE1FF; 
+    background-position: left; 
+    margin-left: -30px}
+    
+h3 {
+    margin-left: -10px
+}
+
+h1 {
+    margin-left: -30px
+}
