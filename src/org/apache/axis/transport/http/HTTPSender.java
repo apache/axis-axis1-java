@@ -610,6 +610,10 @@ public class HTTPSender extends BasicHandler {
                 : contentType.trim();
         if ((returnCode > 199) && (returnCode < 300)) {
             // SOAP return is OK - so fall through
+        } else if (msgContext.getSOAPConstants() ==
+                SOAPConstants.SOAP12_CONSTANTS) {
+            // For now, if we're SOAP 1.2, fall through, since the range of
+            // valid result codes is much greater
         } else if ((contentType != null) && !contentType.startsWith("text/html")
                 && ((returnCode > 499) && (returnCode < 600))) {
             // SOAP Fault should be in here - so fall through
