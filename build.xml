@@ -171,91 +171,7 @@ Copyright:
   <!-- =================================================================== -->
   <target name="samples" depends="compile"
     description="build the samples">
-
-  <!-- The interop echo sample depends on the wsdl2java task -->
-    <javac srcdir="." destdir="${build.dest}"
-           debug="${debug}">
-      <classpath>
-        <pathelement location="${build.lib}/${name}.jar"/>
-        <pathelement location="${build.lib}/${jaxrpc}.jar"/>
-        <pathelement location="${build.lib}/${saaj}.jar"/>
-        <path refid="classpath"/>
-      </classpath>
-      <include name="test/wsdl/*.java" />
-    </javac>
-
-    <taskdef name="wsdl2java"
-           classname="test.wsdl.Wsdl2javaAntTask">
-             <classpath refid="test-classpath" />
-    </taskdef>
-
-    <!-- Create java files for the echo sample -->
-    <wsdl2java url="samples/echo/InteropTest.wsdl"
-               output="build/work"
-               deployscope="session"
-               serverSide="no"
-               noimports="no"
-               verbose="no"
-               typeMappingVersion="1.1"
-               testcase="no">
-        <mapping namespace="http://soapinterop.org/" package="samples.echo"/>
-        <mapping namespace="http://soapinterop.org/xsd" package="samples.echo"/>
-    </wsdl2java>
-
-    <!-- Compile the echo sample generated java files -->
-    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}">
-      <classpath refid="test-classpath" />
-      <include name="samples/echo/**.java" />
-    </javac>
-
-    <!-- AddressBook Sample -->
-    <wsdl2java url="samples/addr/AddressBook.wsdl"
-               output="build/work"
-               deployscope="session"
-               serverSide="yes"
-               skeletonDeploy="yes"
-               noimports="no"
-               verbose="no"
-               typeMappingVersion="1.1"
-               testcase="no">
-        <mapping namespace="urn:AddressFetcher2" package="samples.addr"/>
-    </wsdl2java>
-
-    <!-- jaxrpc Dynamic proxy with bean - Bug 10824 -->
-    <wsdl2java url="samples/jaxrpc/address/Address.wsdl"
-               output="build/work"
-               serverSide="yes"
-               testcase="no">
-    </wsdl2java>
-
-    <!-- Compile the echo sample generated java files -->
-    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}">
-      <classpath refid="test-classpath" />
-      <include name="samples/addr/**.java" />
-      <include name="samples/jaxrpc/address/**.java" />
-    </javac>
-
-
-    <!-- Compile the sample code -->
-    <javac srcdir="." destdir="${build.dest}"
-           debug="${debug}">
-      <classpath>
-        <pathelement location="${build.lib}/${name}.jar"/>
-        <pathelement location="${build.lib}/${jaxrpc}.jar"/>
-        <pathelement location="${build.lib}/${saaj}.jar"/>
-        <path refid="classpath"/>
-      </classpath>
-      <include name="samples/**/*.java" />
-      <exclude name="samples/**/*SMTP*.java" unless="smtp.present" />
-      <exclude name="**/old/**/*.java" />
-      <exclude name="samples/userguide/example2/Calculator.java"/>
-      <exclude name="samples/addr/AddressBookTestCase.java" unless= "junit.present"/>
-      <exclude name="samples/userguide/example6/Main.java" />
-      <exclude name="samples/userguide/example6/*Impl.java" />
-      <exclude name="samples/userguide/example6/*TestCase.java" />
-      <exclude name="samples/attachments/**/*.java" unless="attachments.present" />
-      <exclude name="samples/security/**/*.java" unless="security.present"/>
-    </javac>
+      <ant antfile="${axis.home}/buildSamples.xml" target="compile"/>
   </target>
 
   <!-- =================================================================== -->
@@ -269,28 +185,7 @@ Copyright:
 
   <target name="buildTest" if="junit.present" depends="compile,samples">
     <echo message="junit package found ..."/>
-    <!-- Start by building the testcases -->
-    <javac srcdir="." destdir="${build.dest}"
-           debug="${debug}">
-      <classpath>
-        <pathelement location="${build.lib}/${name}.jar"/>
-        <pathelement location="${build.lib}/${jaxrpc}.jar"/>
-        <pathelement location="${build.lib}/${saaj}.jar"/>
-        <path refid="classpath"/>
-      </classpath>
-      <include name="test/**/*.java" />
-      <exclude name="test/lib/*.java"/>
-      <exclude name="test/inout/*.java" />
-      <exclude name="test/wsdl/*/*.java" />
-      <exclude name="test/wsdl/interop3/groupE/**/*.java" />
-      <exclude name="test/wsdl/interop3/**/*.java" />
-      <exclude name="test/wsdl/Wsdl2javaTestSuite.java" unless="servlet.present"/>
-      <exclude name="test/md5attach/*.java" unless="attachments.present"/>
-      <exclude name="test/functional/TestAttachmentsSample.java" unless="attachments.present"/>
-      <exclude name="test/wsdl/attachments/*.java" unless="jimiAndAttachments.present" />
-      <exclude name="test/httpunit/**/*.java"/>
-    </javac>
-    <copy file="test/wsdd/testStructure1.wsdd" toDir="${build.dest}/test/wsdd"/>
+      <ant antfile="${axis.home}/buildTest.xml" target="compile"/>
   </target>
 
   <!-- =================================================================== -->
@@ -362,14 +257,16 @@ Copyright:
 
   </target>
 
+  <target name="componentTest" depends="buildTest">
+     <ant antfile="${axis.home}/buildTest.xml" target="componentTest"/>
+  </target>
+
   <!-- =================================================================== -->
   <!-- Functional tests, with server                                       -->
   <!-- =================================================================== -->
-  <target name="functional-tests" depends="buildTest, samples"
+  <target name="functional-tests" depends="buildTest"
     description="functional tests">
-    <ant antfile="test/build_functional_tests.xml">
-      <property name="test.functional.usefile" value="${test.functional.usefile}"/>
-    </ant>
+    <ant antfile="${axis.home}/buildTest.xml" target="functional-tests"/>
   </target>
 
   <!-- Security only tests, with full dependencies -->
@@ -550,6 +447,7 @@ Copyright:
     </delete>
     <delete dir="test-reports"/>
     <delete file="TEST-test.functional.FunctionalTests.txt"/>
+    <delete file="GetQuote.wsdl"/>
   </target>
   
   <!-- =================================================================== -->
