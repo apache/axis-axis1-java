@@ -951,8 +951,10 @@ public class Call implements javax.xml.rpc.Call {
         byte mode = ParameterDesc.IN;
         if (parameterMode == ParameterMode.INOUT) {
             mode = ParameterDesc.INOUT;
+            param.setIsReturn(true);
         } else if (parameterMode == ParameterMode.OUT) {
             mode = ParameterDesc.OUT;
+            param.setIsReturn(true);
         }
         param.setMode(mode);
         param.setQName(new QName(paramName.getNamespaceURI(),Utils.getLastLocalPart(paramName.getLocalPart())));
