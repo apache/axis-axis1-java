@@ -493,6 +493,7 @@ public class Constants {
     public static final QName XSD_ANYURI = new QName(URI_2001_SCHEMA_XSD, "anyURI");
 
     public static final QName SOAP_BASE64 = new QName(URI_DEFAULT_SOAP_ENC, "base64");
+    public static final QName SOAP_BASE64BINARY = new QName(URI_DEFAULT_SOAP_ENC, "base64Binary");
     public static final QName SOAP_STRING = new QName(URI_DEFAULT_SOAP_ENC, "string");
     public static final QName SOAP_BOOLEAN = new QName(URI_DEFAULT_SOAP_ENC, "boolean");
     public static final QName SOAP_DOUBLE = new QName(URI_DEFAULT_SOAP_ENC, "double");
@@ -512,6 +513,7 @@ public class Constants {
     public static final QName MIME_PLAINTEXT = new QName(NS_URI_XMLSOAP, "PlainText");
     public static final QName MIME_MULTIPART = new QName(NS_URI_XMLSOAP, "Multipart");
     public static final QName MIME_SOURCE = new QName(NS_URI_XMLSOAP, "Source");
+    public static final QName MIME_OCTETSTREAM = new QName(NS_URI_XMLSOAP, "octetstream");
     public static final QName MIME_DATA_HANDLER = new QName(NS_URI_XMLSOAP, "DataHandler");
 
 

@@ -200,6 +200,12 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                    new Base64DeserializerFactory(byte[].class,
                                                  Constants.SOAP_BASE64)
         );
+        myRegister(Constants.SOAP_BASE64BINARY,     byte[].class,
+                   new Base64SerializerFactory(byte[].class,
+                                               Constants.SOAP_BASE64 ),
+                   new Base64DeserializerFactory(byte[].class,
+                                                 Constants.SOAP_BASE64)
+        );
         myRegister(Constants.XSD_BASE64,     byte[].class,
                    new Base64SerializerFactory(byte[].class,
                                                Constants.XSD_BASE64 ),
@@ -375,6 +381,9 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                     new JAFDataHandlerDeserializerFactory(
                             javax.xml.transform.Source.class,
                             Constants.MIME_SOURCE));
+            myRegister(Constants.MIME_OCTETSTREAM, javax.activation.DataHandler.class,
+                    new JAFDataHandlerSerializerFactory(),
+                    new JAFDataHandlerDeserializerFactory());
             myRegister(Constants.MIME_DATA_HANDLER, javax.activation.DataHandler.class,
                     new JAFDataHandlerSerializerFactory(),
                     new JAFDataHandlerDeserializerFactory());
