@@ -27,6 +27,7 @@ Copyright:
     <pathelement location="${build.dir}" />
     <pathelement location="${build.dest}" />
     <pathelement path="${java.class.path}" />
+    <pathelement location="${log4j-core.jar}"/>
   </path>
 
   <!--
@@ -50,7 +51,7 @@ Copyright:
     <javac srcdir="${basedir}"
       destdir="${ant.dir}">
       <include name="test/functional/ant/*.java" />
-      <classpath refid="test-classpath" />
+      <classpath refid="test-classpath"/>
     </javac>
   </target>
 
