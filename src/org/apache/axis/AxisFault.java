@@ -109,6 +109,13 @@ public class AxisFault extends Exception {
     setFaultCode(Constants.FAULT_SERVER_GENERAL);
     setFaultString(message);
   }
+  
+  /**
+   * No-arg constructor for building one from an XML stream.
+   */
+  public AxisFault()
+  {
+  }
 
   public void dump() {
     System.out.println( "AxisFault\n" +
