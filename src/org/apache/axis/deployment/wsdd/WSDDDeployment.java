@@ -153,7 +153,7 @@ public class WSDDDeployment
         
         Element el = getChildElement(e, "globalConfig");
         if (el != null)
-            globalConfig = new WSDDGlobalConfiguration(e);
+            globalConfig = new WSDDGlobalConfiguration(el);
     }
 
     protected QName getElementName()
