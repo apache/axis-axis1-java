@@ -245,6 +245,8 @@ public class JavaEnumTypeWriter extends JavaClassWriter {
         } else {                            
             pw.println("    public java.lang.String toString() { return java.lang.String.valueOf(_value_);}");
         }
+        
+       pw.println("    public java.lang.Object readResolve() throws java.io.ObjectStreamException { return fromValue(_value_);}");
     } // writeFileBody
 
     /**
