@@ -110,7 +110,7 @@ public class JavaInterfaceWriter extends JavaWriter {
      */
     private void writeOperation(PortType portType, Operation operation, String namespace) throws IOException {
         writeComment(pw, operation.getDocumentationElement());
-        Emitter.Parameters parms = (Emitter.Parameters) operationParameters.get(operation.getName());
+        Parameters parms = (Parameters) operationParameters.get(operation.getName());
         pw.println(parms.signature + ";");
     } // writeOperation
 

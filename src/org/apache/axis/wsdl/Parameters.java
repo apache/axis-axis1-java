@@ -54,59 +54,48 @@
  */
 package org.apache.axis.wsdl;
 
-import java.io.IOException;
-
-import java.util.HashMap;
-import java.util.List;
-
-import javax.wsdl.Operation;
-import javax.wsdl.PortType;
-
-import org.apache.axis.utils.JavaUtils;
+import java.util.Vector;
 
 /**
-* This is Wsdl2java's service writer.  It writes the <serviceName>.java file.
-*/
-public class JavaServiceInterfaceWriter extends JavaWriter {
-    private PortType portType;
-    private HashMap operationParameters;
+ * This class simply collects all the parameter or message data for an operation into one place.
+ */
+public class Parameters {
 
-    /**
-     * Constructor.
-     */
-    protected JavaServiceInterfaceWriter(
-            Emitter emitter,
-            PortType portType,
-            HashMap operationParameters) {
-        super(emitter, portType.getQName(), "AXIS", "java",
-                JavaUtils.getMessage("genIface01"));
-        this.portType = portType;
-        this.operationParameters = operationParameters;
-    } // ctor
+    // This vector contains instances of the Parameter class
+    public Vector list = new Vector();
 
-    /**
-     * Generate the server-side (Axis) interface for the given port type.
-     */
-    protected void writeFileBody() throws IOException {
-        pw.println("public interface " + className + " extends java.rmi.Remote {");
+    // The type of the first output part, used as the method's return value
+    public String returnType = null;
 
-        List operations = portType.getOperations();
+    // The name of the return type (from the part name of the output message.
+    // Used to create the RPCParam for the return value.
+    public String returnName = null;
 
-        for (int i = 0; i < operations.size(); ++i) {
-            Operation operation = (Operation) operations.get(i);
-            writeOperationAxisSkelSignatures(operation);
-        }
+    // A comma-separated list of all of the faults
+    public String faultString = null;
 
-        pw.println("}");
-        pw.close();
-    } // writeFileBody
+    // The signature that the interface and the stub will use
+    public String signature = null;
 
-    /**
-     * This method generates the axis server side impl interface signatures operation.
-     */
-    private void writeOperationAxisSkelSignatures(Operation operation) throws IOException {
-        Parameters parms = (Parameters) operationParameters.get(operation.getName());
-        pw.println(parms.axisSignature + ";");
-    } // writeOperationAxisSkelSignatures
+    // The signature that the skeleton will use
+    public String skelSignature = null;
 
-} // class JavaServiceInterfaceWriter
+    // The signature that the skeleton impl
+    public String axisSignature = null;
+
+    // The numbers of the respective parameters
+    public int inputs = 0;
+    public int inouts = 0;
+    public int outputs = 0;
+
+    public String toString() {
+        return "\nreturnType = " + returnType
+                + "\nreturnTypeName = " + returnName
+                + "\nfaultString = " + faultString
+                + "\nsignature = " + signature
+                + "\nskelSignature = " + skelSignature
+                + "\naxisSignature = " + axisSignature
+                + "\n(inputs, inouts, outputs) = (" + inputs + ", " + inouts + ", " + outputs + ")"
+                + "\nlist = " + list;
+    } // toString
+} // class Parameters

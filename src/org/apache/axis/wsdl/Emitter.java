@@ -100,26 +100,26 @@ public class Emitter {
     public static final byte REQUEST_SCOPE     = 0x10;
     public static final byte SESSION_SCOPE     = 0x11;
 
-    private Document doc = null;
-    private Definition def = null;
+    protected Document doc = null;
+    protected Definition def = null;
     protected WsdlAttributes wsdlAttr = null;
     protected boolean bEmitSkeleton = false;
     protected boolean bMessageContext = false;
     protected boolean bEmitTestCase = false;
     protected boolean bVerbose = false;
-    private boolean bGenerateImports = true;
-    private String outputDir = null;
-    private byte scope = NO_EXPLICIT_SCOPE;
+    protected boolean bGenerateImports = true;
+    protected String outputDir = null;
+    protected byte scope = NO_EXPLICIT_SCOPE;
     protected ArrayList classList = new ArrayList();
     protected ArrayList fileList = new ArrayList();
-    private Namespaces namespaces = null;
-    private HashMap delaySetMap = null;
+    protected Namespaces namespaces = null;
+    protected HashMap delaySetMap = null;
     protected TypeFactory emitFactory = null;
-    private WriterFactory writerFactory = null;
+    protected WriterFactory writerFactory = null;
 
     // portTypesInfo is a Hashmap of <PortType, HashMap2> pairs where HashMap2 is a
     // Hashmap of <Operation, Parameters> pairs.
-    private HashMap portTypesInfo = null;
+    protected HashMap portTypesInfo = null;
 
     /**
      * Default constructor.
@@ -273,7 +273,7 @@ public class Emitter {
     /**
      * Do some cleanup of the 'symbol table' and add our own symbol table structures
      */
-    private void firstPass() throws IOException {
+    protected void firstPass() throws IOException {
 
         // PortTypes and Services can share the same name.  If they do in this Definition,
         // force their names to be suffixed with _PortType and _Service, respectively.
@@ -430,7 +430,7 @@ public class Emitter {
     /**
      * Generate the bindings for all port types.
      */
-    private void writePortTypes() throws IOException {
+    protected void writePortTypes() throws IOException {
         Map portTypes = def.getPortTypes();
         Iterator i = portTypes.values().iterator();
 
@@ -468,50 +468,6 @@ public class Emitter {
         } // toString
     } // class Parameter
 
-
-    /**
-     * This class simply collects all the parameter or message data for an operation into one place.
-     */
-    protected static class Parameters {
-
-        // This vector contains instances of the Parameter class
-        public Vector list = new Vector();
-
-        // The type of the first output part, used as the method's return value
-        public String returnType = null;
-
-        // The name of the return type (from the part name of the output message.
-        // Used to create the RPCParam for the return value.
-        public String returnName = null;
-
-        // A comma-separated list of all of the faults
-        public String faultString = null;
-
-        // The signature that the interface and the stub will use
-        public String signature = null;
-
-        // The signature that the skeleton will use
-        public String skelSignature = null;
-
-        // The signature that the skeleton impl
-        public String axisSignature = null;
-
-        // The numbers of the respective parameters
-        public int inputs = 0;
-        public int inouts = 0;
-        public int outputs = 0;
-
-        public String toString() {
-            return "\nreturnType = " + returnType
-                    + "\nreturnTypeName = " + returnName
-                    + "\nfaultString = " + faultString
-                    + "\nsignature = " + signature
-                    + "\nskelSignature = " + skelSignature
-                    + "\naxisSignature = " + axisSignature
-                    + "\n(inputs, inouts, outputs) = (" + inputs + ", " + inouts + ", " + outputs + ")"
-                    + "\nlist = " + list;
-        } // toString
-    } // class Parameters
 
     /**
      * For the given operation, this method returns the parameter info conveniently collated.
@@ -791,7 +747,7 @@ public class Emitter {
     /**
      * Generate the stubs and skeletons for all binding tags.
      */
-    private void writeBindings() throws IOException {
+    protected void writeBindings() throws IOException {
         Map bindings = def.getBindings();
         Iterator i = bindings.values().iterator();
 
@@ -818,7 +774,7 @@ public class Emitter {
     /**
      * Create the service class or classes
      */
-    private void writeServices() throws IOException {
+    protected void writeServices() throws IOException {
         Map services = def.getServices();
         Iterator i = services.values().iterator();
 
@@ -838,7 +794,7 @@ public class Emitter {
      * Generate bindings (classes and class holders) for the complex types.
      * If generating serverside (skeleton) spit out beanmappings
      */
-    private void writeTypes() throws IOException {
+    protected void writeTypes() throws IOException {
         HashMap types = emitFactory.getTypes();
         Iterator i = types.values().iterator();
         while (i.hasNext()) {

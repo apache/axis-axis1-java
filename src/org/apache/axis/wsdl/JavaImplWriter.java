@@ -126,7 +126,7 @@ public class JavaImplWriter extends JavaWriter {
         List operations = binding.getBindingOperations();
         for (int i = 0; i < operations.size(); ++i) {
             BindingOperation operation = (BindingOperation) operations.get(i);
-            Emitter.Parameters parameters = (Emitter.Parameters) operationParameters.get(operation.getOperation().getName());
+            Parameters parameters = (Parameters) operationParameters.get(operation.getOperation().getName());
 
             // Get the soapAction from the <soap:operation>
             String soapAction = "";
@@ -159,7 +159,7 @@ public class JavaImplWriter extends JavaWriter {
 
     private void writeOperation(
             BindingOperation operation,
-            Emitter.Parameters parms,
+            Parameters parms,
             String soapAction,
             String namespace,
             boolean isRPC) throws IOException {
