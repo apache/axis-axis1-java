@@ -1,7 +1,7 @@
 package samples.bidbuy ;
 
 import org.apache.axis.client.ServiceClient ;
-import org.apache.axis.client.http.HTTPClient ;
+import org.apache.axis.client.http.HTTPTransport ;
 import org.apache.axis.message.RPCElement ;
 import org.apache.axis.message.RPCParam ;
 import org.apache.axis.utils.* ;
@@ -13,9 +13,8 @@ import java.math.BigDecimal ;
 public class v3 implements vInterface {
   public void register(String registryURL, Service s) throws Exception {
     try {
-      ServiceClient call = new ServiceClient(new HTTPClient());
-      call.set(HTTPClient.URL, registryURL);
-      call.set(HTTPClient.ACTION, "http://www.soapinterop.org/Register");
+      ServiceClient call = new ServiceClient
+            (new HTTPTransport(registryURL, "http://www.soapinterop.org/Register"));
       RPCElement body = new RPCElement( "http://www.soapinterop.org/Registry",
                                         "Register",
                                         new RPCParam[] {
@@ -37,9 +36,8 @@ public class v3 implements vInterface {
 
   public void unregister(String registryURL, String name) throws Exception {
     try {
-      ServiceClient call = new ServiceClient(new HTTPClient());
-      call.set(HTTPClient.URL, registryURL);
-      call.set(HTTPClient.ACTION, "http://www.soapinterop.org/Unegister");
+      ServiceClient call = new ServiceClient
+            (new HTTPTransport(registryURL, "http://www.soapinterop.org/Unregister"));
       RPCElement body = new RPCElement( "http://www.soapinterop.org/Registry",
                                         "Unregister",
                                         new RPCParam[] {
@@ -55,9 +53,9 @@ public class v3 implements vInterface {
 
   public Boolean ping(String serverURL) throws Exception {
     try {
-      ServiceClient call = new ServiceClient(new HTTPClient());
-      call.set(HTTPClient.URL, serverURL);
-      call.set(HTTPClient.ACTION, "http://www.soapinterop.org/Ping");
+      ServiceClient call = new ServiceClient(new HTTPTransport());
+      call.set(HTTPTransport.URL, serverURL);
+      call.set(HTTPTransport.ACTION, "http://www.soapinterop.org/Ping");
       call.invoke( "http://www.soapinterop.org/Bid", "Ping", null );
       return( new Boolean(true) );
     }
@@ -73,9 +71,9 @@ public class v3 implements vInterface {
       ServiceDescription sd = new ServiceDescription("lookup", true );
       sd.addOutputParam("RequestForQuoteResult",
                         SOAPTypeMappingRegistry.XSD_DOUBLE);
-      ServiceClient call = new ServiceClient(new HTTPClient());
-      call.set(HTTPClient.URL, registryURL);
-      call.set(HTTPClient.ACTION, "http://www.soapinterop.org/LookupAsString");
+      ServiceClient call = new ServiceClient(new HTTPTransport());
+      call.set(HTTPTransport.URL, registryURL);
+      call.set(HTTPTransport.ACTION, "http://www.soapinterop.org/LookupAsString");
       call.setServiceDescription(sd);
       RPCElement body = new RPCElement( "http://www.soapinterop.org/Registry",
                                         "LookupAsString",
@@ -124,9 +122,9 @@ public class v3 implements vInterface {
                         SOAPTypeMappingRegistry.XSD_DOUBLE);
       sd.addOutputParam("return",
                         SOAPTypeMappingRegistry.XSD_DOUBLE);
-      ServiceClient call = new ServiceClient(new HTTPClient());
-      call.set(HTTPClient.URL, serverURL);
-      call.set(HTTPClient.ACTION, "http://www.soapinterop.org/RequestForQuote");
+      ServiceClient call =
+            new ServiceClient(new HTTPTransport
+                                  (serverURL, "http://www.soapinterop.org/RequestForQuote"));
       call.setServiceDescription( sd );
       RPCElement body = new RPCElement( "http://www.soapinterop.org/Bid",
                                         "RequestForQuote",
@@ -156,9 +154,9 @@ public class v3 implements vInterface {
                         SOAPTypeMappingRegistry.XSD_STRING);
       sd.addOutputParam("return",
                         SOAPTypeMappingRegistry.XSD_STRING);
-      ServiceClient call = new ServiceClient(new HTTPClient());
-      call.set(HTTPClient.URL, serverURL);
-      call.set(HTTPClient.ACTION, "http://www.soapinterop.org/SimpleBuy");
+      ServiceClient call =
+            new ServiceClient(new HTTPTransport
+                                  (serverURL, "http://www.soapinterop.org/SimpleBuy"));
       RPCElement  body = new RPCElement( "http://www.soapinterop.org/Bid",
                                          "SimpleBuy",
                                          new RPCParam[] {
@@ -189,9 +187,9 @@ public class v3 implements vInterface {
                         SOAPTypeMappingRegistry.XSD_STRING);
       sd.addOutputParam("return",
                         SOAPTypeMappingRegistry.XSD_STRING);
-      ServiceClient call = new ServiceClient(new HTTPClient());
-      call.set(HTTPClient.URL, serverURL);
-      call.set(HTTPClient.ACTION, "http://www.soapinterop.org/Buy");
+      ServiceClient call = new ServiceClient(new HTTPTransport());
+      call.set(HTTPTransport.URL, serverURL);
+      call.set(HTTPTransport.ACTION, "http://www.soapinterop.org/Buy");
 
 
       // register the PurchaseOrder class
@@ -248,3 +246,4 @@ public class v3 implements vInterface {
   }
 
 }
+

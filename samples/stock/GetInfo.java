@@ -63,7 +63,8 @@ import org.apache.axis.AxisFault ;
 import org.apache.axis.utils.Debug ;
 import org.apache.axis.utils.Options ;
 import org.apache.axis.client.ServiceClient ;
-import org.apache.axis.client.http.HTTPClient ;
+import org.apache.axis.client.Transport ;
+import org.apache.axis.client.http.HTTPTransport ;
 
 /**
  *
@@ -85,14 +86,13 @@ public class GetInfo {
       }
 
       String  symbol = args[0] ;
-      ServiceClient call = new ServiceClient(new HTTPClient());
-      call.set(HTTPClient.URL, opts.getURL());
-      call.set(HTTPClient.ACTION, "urn:cominfo");
+      ServiceClient call = new ServiceClient
+            (new HTTPTransport(opts.getURL(), "urn:cominfo"));
 
       if ( opts.isFlagSet('t') > 0 ) call.doLocal = true ;
 
-      call.set( HTTPClient.USER, opts.getUser() );
-      call.set( HTTPClient.PASSWORD, opts.getPassword() );
+      call.set( Transport.USER, opts.getUser() );
+      call.set( Transport.PASSWORD, opts.getPassword() );
       String res = (String) call.invoke(
         "urn:cominfo", "getInfo",
         new Object[] { args[0], args[1] } );

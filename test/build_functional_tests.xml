@@ -74,7 +74,7 @@ Copyright:
   <!-- =================================================================== -->
   <target name="stop-functional-test-http-server" if="junit.present">
     <echo message="Stopping test http server."/>
-    <java classname="org.apache.axis.client.http.HTTPAdminClient" fork="yes">
+    <java classname="org.apache.axis.client.http.AdminClient" fork="yes">
       <classpath refid="test-classpath" />
       <arg line="quit"/>
     </java>

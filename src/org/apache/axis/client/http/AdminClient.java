@@ -64,85 +64,85 @@ import org.apache.axis.encoding.SerializationContext ;
 import org.apache.axis.message.SOAPEnvelope ;
 import org.apache.axis.message.SOAPBodyElement ;
 import org.apache.axis.client.ServiceClient;
-import org.apache.axis.client.AxisClient;
+import org.apache.axis.client.Transport;
 import org.apache.axis.Message ;
 import org.apache.axis.MessageContext ;
 import org.apache.axis.utils.Debug ;
 import org.apache.axis.encoding.ServiceDescription;
 
 /**
+ * An admin client object, specific to HTTP.
  *
+ * @author Rob Jellinghaus (robj@unrealities.com)
  * @author Doug Davis (dug@us.ibm.com)
  */
 
-public class HTTPAdminClient {
-  public static void main(String args[]) {
-    try {
-        new HTTPAdminClient().doAdmin(args);
+public class AdminClient {
+    public static void main(String args[]) {
+        try {
+            new AdminClient().doAdmin(args);
+        }
+        catch( Exception e ) {
+            System.err.println( e );
+            e.printStackTrace( System.err );
+        }
     }
-    catch( Exception e ) {
-      System.err.println( e );
-      e.printStackTrace( System.err );
-    }
-  }
     
     // do the real work, and throw exception if fubar
     // this is reused by the TestHTTPDeploy functional tests
     public void doAdmin (String[] args)
         throws Exception
     {
-      Options opts = new Options( args );
-
-      Debug.setDebugLevel( opts.isFlagSet('d') );
-
-      args = opts.getRemainingArgs();
-
-      if ( args == null ) {
-        System.err.println( "Usage: AdminClient xml-files | list" );
-        System.exit(1);
-      }
-
-      for ( int i = 0 ; i < args.length ; i++ ) {
-        InputStream input = null ;
-
-        if ( args[i].equals("list") ) {
-          System.out.println( "Doing a list" );
-          String str = "<list/>" ;
-          input = new ByteArrayInputStream( str.getBytes() );
-        } else if (args[i].equals("quit")) {
-            System.out.println("Doing a quit");
-            String str = "<quit/>";
-            input = new ByteArrayInputStream(str.getBytes());
-        }
-        else {
-          System.out.println( "Processing file: " + args[i] );
-          input = new FileInputStream( args[i] );
-        }
-
-        ServiceClient     hMsg       = new ServiceClient(new HTTPClient());
-        hMsg.set( HTTPClient.URL, opts.getURL() );
-        hMsg.set( HTTPClient.ACTION, "AdminService" );
+        Options opts = new Options( args );
         
-        MessageContext  msgContext = new MessageContext();
-        Message         inMsg      = new Message( input, "BodyInputStream" );
-        Message         outMsg     = null ;
-        msgContext.setRequestMessage( inMsg );
-
-        if ( opts.isFlagSet('t') > 0 ) hMsg.doLocal = true ;
-        hMsg.set( AxisClient.USER, opts.getUser() );
-        hMsg.set( AxisClient.PASSWORD, opts.getPassword() );
-
-        hMsg.invoke( msgContext );
-
-        outMsg = msgContext.getResponseMessage();
-        msgContext.setServiceDescription(new ServiceDescription("Admin", false));
-        input.close();
-        SOAPEnvelope envelope = (SOAPEnvelope) outMsg.getAs("SOAPEnvelope");
-        SOAPBodyElement body = envelope.getFirstBody();
-        StringWriter writer = new StringWriter();
-        SerializationContext ctx = new SerializationContext(writer, msgContext);
-        body.output(ctx);
-        System.out.println(writer.toString());
-      }
+        Debug.setDebugLevel( opts.isFlagSet('d') );
+        
+        args = opts.getRemainingArgs();
+        
+        if ( args == null ) {
+            System.err.println( "Usage: AdminClient xml-files | list" );
+            System.exit(1);
+        }
+        
+        for ( int i = 0 ; i < args.length ; i++ ) {
+            InputStream input = null ;
+            
+            if ( args[i].equals("list") ) {
+                System.out.println( "Doing a list" );
+                String str = "<list/>" ;
+                input = new ByteArrayInputStream( str.getBytes() );
+            } else if (args[i].equals("quit")) {
+                System.out.println("Doing a quit");
+                String str = "<quit/>";
+                input = new ByteArrayInputStream(str.getBytes());
+            }
+            else {
+                System.out.println( "Processing file: " + args[i] );
+                input = new FileInputStream( args[i] );
+            }
+            
+            ServiceClient     hMsg       =
+                new ServiceClient(new HTTPTransport(opts.getURL(), "AdminService"));
+            
+            Message         inMsg      = new Message( input, "BodyInputStream" );
+            hMsg.setRequestMessage( inMsg );
+            
+            if ( opts.isFlagSet('t') > 0 ) hMsg.doLocal = true ;
+            hMsg.set( Transport.USER, opts.getUser() );
+            hMsg.set( Transport.PASSWORD, opts.getPassword() );
+            
+            hMsg.invoke();
+            
+            Message outMsg = hMsg.getMessageContext().getResponseMessage();
+            hMsg.getMessageContext().setServiceDescription(new ServiceDescription("Admin", false));
+            input.close();
+            SOAPEnvelope envelope = (SOAPEnvelope) outMsg.getAs("SOAPEnvelope");
+            SOAPBodyElement body = envelope.getFirstBody();
+            StringWriter writer = new StringWriter();
+            SerializationContext ctx = new SerializationContext(writer, hMsg.getMessageContext());
+            body.output(ctx);
+            System.out.println(writer.toString());
+        }
     }
-};
+}
+

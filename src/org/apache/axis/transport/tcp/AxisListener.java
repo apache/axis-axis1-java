@@ -150,6 +150,7 @@ public class AxisListener implements Runnable {
                 engine.init();
                 
                 HandlerRegistry hr = (HandlerRegistry)engine.getOption(Constants.HANDLER_REGISTRY);
+                HandlerRegistry sr = (HandlerRegistry)engine.getOption(Constants.SERVICE_REGISTRY);
                 // add the TCPDispatchHandler
                 hr.add("TCPSender", new TCPDispatchHandler());
                 hr.add("TCPAction", new TCPActionHandler());
@@ -164,7 +165,7 @@ public class AxisListener implements Runnable {
                 service.addOption(SOAPService.OPTION_PIVOT, "RPCDispatcher");
                 service.addOption( "className", "org.apache.axis.transport.tcp.PseudoStockQuoteService" );
                 service.addOption( "methodName", "getQuote" );
-                hr.add( "urn:xmltoday-delayed-quotes", service ); // ???
+                sr.add( "urn:xmltoday-delayed-quotes", service ); // ???
             }
             
             /* Place the Request message in the MessagContext object - notice */

@@ -53,77 +53,102 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.client.http;
+package org.apache.axis.client.tcp ;
 
 import java.util.* ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.Debug ;
 import org.apache.axis.handlers.* ;
 import org.apache.axis.registries.* ;
-import org.apache.axis.client.ServiceClient;
+import org.apache.axis.client.Transport;
 import org.apache.axis.client.AxisClient;
-import org.apache.axis.transport.http.HTTPConstants;
+import org.apache.axis.client.ServiceClient;
+import org.apache.axis.client.http.HTTPTransport; // UGLY!!!!!
+import org.apache.axis.transport.tcp.TCPDispatchHandler;
+import org.apache.axis.handlers.tcp.TCPActionHandler;
 
 /**
  * Extends Client by implementing the setupMessageContext function to
- * set HTTP-specific message context fields.  May not even be necessary
+ * set TCP-specific message context fields.  May not even be necessary
  * if we arrange things differently somehow.
  *
  * @author Rob Jellinghaus (robj@unrealities.com)
  * @author Doug Davis (dug@us.ibm.com)
  * @author Glen Daniels (gdaniels@allaire.com)
  */
-public class HTTPClient extends AxisClient
+public class TCPTransport extends Transport
 {
-    /**
-     * HTTP properties
-     */
-    static public String URL = "URL";
-    static public String ACTION = "action";
+    private Handler engine;
+    
+    static private boolean initedClient = false;
+    
+    private String host;
+    private String port;
+    
+    public TCPTransport () {
+    }
+    
+    public TCPTransport (String host, String port) {
+        this.host = host;
+        this.port = port;
+    }
     
     /**
-     * Set up the message context for HTTP defaults
+     * Find/load the registries and save them so we don't need to do this
+     * each time we're called.
      */
-    public void setupMessageContext (MessageContext mc, ServiceClient serviceClient, boolean doLocal)
-        throws AxisFault
+    public void init(Handler engine) {
+        this.engine = engine;
+        // Load the simple handler registry and init it
+        Debug.Print( 1, "Enter: TCPTransport::init" );
+        
+        // add the TCPDispatchHandler
+        HandlerRegistry hr = (DefaultHandlerRegistry)engine.getOption(Constants.HANDLER_REGISTRY);
+        hr.add("TCPSender", new TCPDispatchHandler());
+        hr.add("TCPAction", new TCPActionHandler());
+        
+        SimpleChain c = new SimpleChain();
+        c.addHandler( hr.find( "TCPAction" ) );
+        hr.add( "TCP.input", c );
+    }
+    
+    /**
+     * TCP properties
+     */
+    static public String HOST = "tcp.host";
+    static public String PORT = "tcp.port";
+    
+    /**
+     * Initialize the given MessageContext with the correct handlers and registries.
+     */
+    public void initMessageContext (MessageContext mc, ServiceClient serv, Handler engine, boolean doLocal)
     {
-        DefaultServiceRegistry sr = (DefaultServiceRegistry)this.getOption(Constants.SERVICE_REGISTRY);
-        if ( sr == null || sr.find("HTTP.input") == null )
-            mc.setProperty( MessageContext.TRANS_INPUT, "HTTPSender" );
+        DefaultServiceRegistry sr = (DefaultServiceRegistry)engine.getOption(Constants.SERVICE_REGISTRY);
+        if ( sr == null || sr.find("TCP.input") == null )
+            mc.setProperty( MessageContext.TRANS_INPUT, "TCPSender" );
         else
-            mc.setProperty( MessageContext.TRANS_INPUT, "HTTP.input" );
-        mc.setProperty(MessageContext.TRANS_OUTPUT, "HTTP.output" );
-        try {
-            mc.setTargetService( serviceClient.get(ACTION) );
-        } catch (AxisFault f) {
-            System.err.println("HTTPClinet.setupMessageContext: Could not set target service to "+serviceClient.get(ACTION));
-            throw f;
-        }
+            mc.setProperty( MessageContext.TRANS_INPUT, "TCP.input" );
+        mc.setProperty(MessageContext.TRANS_OUTPUT, "TCP.output" );
+    }
         
-        /* If there is Input Transport Chain then default to HTTP. */
-        /* In order for the client to override the transport chain */
-        /* they should just set the TRANS_INPUT/OUTPUT fields in   */
-        /* the msgContext.                                         */
-        /***********************************************************/
-        if ( mc.getProperty( MessageContext.TRANS_INPUT ) == null )
-            mc.setProperty( MessageContext.TRANS_INPUT, "HTTPSender" );
-        
-        if ( mc.getProperty( MessageContext.TRANS_OUTPUT ) == null )
-            mc.setProperty( MessageContext.TRANS_OUTPUT, "HTTP.output" );
-        
-        if ( serviceClient.get(URL).endsWith( ".jws") ) {
-            mc.setProperty( "JWSFileName", serviceClient.get(URL).substring(11) );
-            mc.setTargetService( Constants.JWSPROCESSOR_TARGET );
-        }
-        
-        mc.setProperty( MessageContext.TRANS_URL, serviceClient.get(URL) );
-        mc.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, serviceClient.get(ACTION) );
-        String userID, passwd;
-        if ( (userID = serviceClient.get(AxisClient.USER)) != null ) {
-            mc.setProperty( MessageContext.USERID, userID );
-            if ( (passwd  = serviceClient.get(AxisClient.PASSWORD))!= null )
-                mc.setProperty( MessageContext.PASSWORD, passwd );
-        }
-        
+    
+    /**
+     * Set up any transport-specific derived properties in the message context.
+     * @param context the context to set up
+     * @param message the client service instance
+     * @param engine the engine containing the registries
+     * @param doLocal if true, we are setting up for local testing
+     * @throws AxisFault if service cannot be found
+     */
+    public void setupMessageContext (MessageContext mc, ServiceClient serv, Handler engine, boolean doLocal)
+    {
+        // kind of ugly... fake up a "http://host:port/" url to send down the chain
+        // ROBJ TODO: clean this up so we use TCP transport properties all the way down
+        // use serviceclient properties if any, otherwise use ours
+        if (host != null) serv.set(HOST, host);
+        if (port != null) serv.set(PORT, port);
+        String url = "http://"+serv.get(HOST)+":"+serv.get(PORT);
+        serv.set(HTTPTransport.URL, url);
     }
 }
+

@@ -70,21 +70,15 @@ import org.apache.axis.registries.* ;
  * @author Doug Davis (dug@us.ibm.com)
  * @author Glen Daniels (gdaniels@allaire.com)
  */
-public abstract class AxisClient extends BasicHandler
+public class AxisClient extends BasicHandler
 {
     public AxisClient() {}
-    
-    /**
-     * Property names for user & password.
-     * Soon to be moved elsewhere.
-     */
-    public static String USER = "user";
-    public static String PASSWORD = "password";
     
     /**
      * Allows the Listener to specify which handler/service registry
      * implementation they want to use.
      */
+    /*
     public AxisClient(HandlerRegistry handlers, HandlerRegistry services)
     {
         Debug.Print( 1, "Enter: AxisClient::Constructor");
@@ -93,7 +87,7 @@ public abstract class AxisClient extends BasicHandler
         addOption(Constants.HANDLER_REGISTRY, handlers);
         addOption(Constants.SERVICE_REGISTRY, services);
         Debug.Print( 1, "Exit: AxisClient::Constructor");
-    }
+     }*/
     
     /**
      * Find/load the registries and save them so we don't need to do this
@@ -102,8 +96,8 @@ public abstract class AxisClient extends BasicHandler
     public void init() {
         // Load the simple handler registry and init it
         Debug.Print( 1, "Enter: AxisClient::init" );
-        DefaultHandlerRegistry  hr = 
-          new DefaultHandlerRegistry(Constants.CLIENT_HANDLER_REGISTRY);
+        DefaultHandlerRegistry  hr =
+            new DefaultHandlerRegistry(Constants.CLIENT_HANDLER_REGISTRY);
         hr.setOnServer( false );
         hr.init();
         addOption( Constants.HANDLER_REGISTRY, hr );
@@ -119,16 +113,6 @@ public abstract class AxisClient extends BasicHandler
     }
     
     /**
-     * Set up the message context as appropriate for this transport.
-     * @param context the context to set up (with transport chain info, etc.)
-     * @param message the client service instance
-     * @throws AxisFault if service cannot be found
-     */
-    public abstract void setupMessageContext
-        (MessageContext context, ServiceClient message, boolean doLocal)
-        throws AxisFault;
-    
-    /**
      * Main routine of the AXIS server.  In short we locate the appropriate
      * handler for the desired service and invoke() it.
      */
@@ -141,9 +125,9 @@ public abstract class AxisClient extends BasicHandler
         /* Do some prep-work.  Get the registries and put them in the */
         /* msgContext so they can be used by later handlers.          */
         /**************************************************************/
-        HandlerRegistry hr = 
+        HandlerRegistry hr =
             (HandlerRegistry) getOption(Constants.HANDLER_REGISTRY);
-        HandlerRegistry sr = 
+        HandlerRegistry sr =
             (HandlerRegistry) getOption(Constants.SERVICE_REGISTRY);
         
         if ( hr != null )
@@ -244,5 +228,6 @@ public abstract class AxisClient extends BasicHandler
     public void undo(MessageContext msgContext) {
         Debug.Print( 1, "Enter: AxisClient::undo" );
         Debug.Print( 1, "Exit: AxisClient::undo" );
-    };
-};
+    }
+}
+
