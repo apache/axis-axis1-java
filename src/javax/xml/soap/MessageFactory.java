@@ -204,7 +204,7 @@ public abstract class MessageFactory {
 
     /**  */
     private static final String DEFAULT_MESSAGE_FACTORY =
-        "com.sun.xml.messaging.soap.MessageFactoryImpl";
+        "org.apache.axis.soap.MessageFactoryImpl";
 
     /**  */
     private static final String MESSAGE_FACTORY_PROPERTY =
