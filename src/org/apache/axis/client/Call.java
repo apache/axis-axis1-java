@@ -103,6 +103,7 @@ import javax.wsdl.extensions.soap.SOAPOperation;
 import javax.xml.rpc.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
 import javax.xml.rpc.ParameterMode;
+import javax.xml.soap.SOAPException;
 
 import java.beans.IntrospectionException;
 import java.io.PrintWriter;
@@ -1541,8 +1542,13 @@ public class Call implements javax.xml.rpc.Call {
         }
 
         // Set both the envelope and the RPCElement encoding styles
-        body.setEncodingStyle(encodingStyle);
-        reqEnv.setEncodingStyle(encodingStyle);
+        try {
+            body.setEncodingStyle(encodingStyle);
+            reqEnv.setEncodingStyle(encodingStyle);
+        } catch (SOAPException e) {
+            log.debug( JavaUtils.getMessage("exception00"), e );
+            throw AxisFault.makeFault(e);
+        }
 
         setRequestMessage(reqMsg);
 
@@ -1552,8 +1558,7 @@ public class Call implements javax.xml.rpc.Call {
 
         try {
             invoke();
-        }
-        catch( Exception e ) {
+        } catch (Exception e) {
             log.debug( JavaUtils.getMessage("exception00"), e );
             throw AxisFault.makeFault(e);
         }
