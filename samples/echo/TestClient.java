@@ -64,6 +64,7 @@ import org.apache.axis.encoding.BeanSerializer;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.encoding.ServiceDescription;
 import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.message.RPCParam;
 import org.apache.axis.utils.Options ;
 import org.apache.axis.utils.QName ;
 
@@ -77,6 +78,8 @@ public class TestClient {
 
     private static HTTPCall call;
     private static TypeMappingRegistry map = new SOAPTypeMappingRegistry();
+    private static boolean addMethodToAction = false;
+    private static String soapAction = "http://soapinterop.org/";
 
     /**
      * 
@@ -98,17 +101,29 @@ public class TestClient {
      * @param method name of the method to invoke
      * @param toSend object of the correct type to be sent
      */
-    private static void test(String method, Object toSend) {
+    private static void test(String type, Object toSend) {
 
+        String method = "echo" + type;
+        String arg = "input" + type;
+        String resultName = "output" + type;
+        RPCParam paramToSend = new RPCParam(arg, toSend);
+        
         try {
             // Default return type based on what we expect
             ServiceDescription sd = new ServiceDescription(method, true);
-            sd.addOutputParam("return", map.getTypeQName(toSend.getClass()));
+            sd.addOutputParam(resultName, map.getTypeQName(toSend.getClass()));
+            sd.addOutputParam("Return", map.getTypeQName(toSend.getClass()));
             call.setServiceDescription(sd);
+            
+            String action = soapAction;
+            if (addMethodToAction) {
+                action += method;
+            }
+            call.setAction(action);
 
             // issue the request
             Object gotBack = call.invoke(
-                "http://soapinterop.org/", method, new Object[] {toSend} );
+                "http://soapinterop.org/", method, new Object[] {paramToSend} );
 
             // verify the result
             if (equals(toSend,gotBack)) {
@@ -131,6 +146,13 @@ public class TestClient {
     public static void main(String args[]) throws Exception {
         // set up the call object
         Options opts = new Options(args);
+        
+        addMethodToAction = (opts.isFlagSet('m') > 0);
+        
+        String action = opts.isValueSet('a');
+        if (action != null)
+            soapAction = action;
+        
         call = new HTTPCall(opts.getURL(), "http://soapinterop.org/");
 
         // register the SOAPStruct class
@@ -140,14 +162,14 @@ public class TestClient {
         call.addDeserializerFactory(ssqn, cls, BeanSerializer.getFactory(cls));
 
         // execute the tests
-        test("echoString", "abcdefg");
-        test("echoStringArray", new String[] {"abc", "def"});
-        test("echoInteger", new Integer(42));
-        test("echoIntegerArray", new Integer[] {new Integer(42)});
-        test("echoFloat", new Float(3.7F));
-        test("echoFloatArray", new Float[] {new Float(3.7F), new Float(7F)});
-        test("echoStruct", new SOAPStruct(5, "Hello", 10.3F));
-        test("echoStructArray", new SOAPStruct[] {
+        test("String", "abcdefg");
+        test("StringArray", new String[] {"abc", "def"});
+        test("Integer", new Integer(42));
+        test("IntegerArray", new Integer[] {new Integer(42)});
+        test("Float", new Float(3.7F));
+        test("FloatArray", new Float[] {new Float(3.7F), new Float(7F)});
+        test("Struct", new SOAPStruct(5, "Hello", 10.3F));
+        test("StructArray", new SOAPStruct[] {
           new SOAPStruct(1, "one", 1.1F),
           new SOAPStruct(2, "two", 2.2F),
           new SOAPStruct(3, "three", 3.3F)});
