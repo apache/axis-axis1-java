@@ -64,6 +64,7 @@ import javax.wsdl.extensions.soap.SOAPFault;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
+import java.util.Set;
 
 /**
 * This class represents a WSDL binding.  It encompasses the WSDL4J Binding object so it can
@@ -458,6 +459,13 @@ The caller of this constructor should
     public void setFaults(HashMap faults) {
         this.faults = faults;
     }
+
+    /**
+     * Get a {@link Set} of comprised {@link Operation} objects.
+     */
+     public Set getOperations() {
+         return attributes.keySet();
+     }
 
     /**
      * Set the fault body type map for the given operation.

@@ -1178,6 +1178,7 @@ public class SymbolTable {
                         continue;
                     
                     Binding binding = bEntry.getBinding();
+                    Collection bindOperations = bEntry.getOperations();
                     PortType portType = binding.getPortType();
 
                     HashMap parameters = new HashMap();
@@ -1186,6 +1187,16 @@ public class SymbolTable {
                     // get parameters
                     while(operations.hasNext()) {
                         Operation operation = (Operation) operations.next();
+
+                        // See if the PortType operation has a corresponding
+                        // Binding operation and report an error if it doesn't.
+                        if (!bindOperations.contains(operation)) {
+                            throw  new IOException(
+                                Messages.getMessage("emitFailNoMatchingBindOperation01",
+                                    operation.getName(),
+                                    portType.getQName().getLocalPart()));
+                        }
+
                         String namespace = portType.getQName().getNamespaceURI();
                         Parameters parms = getOperationParameters(operation,
                                                                   namespace,
