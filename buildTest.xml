@@ -339,7 +339,7 @@ Copyright:
         <fileset dir="${test.functional.reportdir}">
           <include name="TEST-*.xml"/>
         </fileset>
-        <report format="frames" todir="${test.reports.dir}"/>
+        <report format="frames" todir="${test.reports.dir}"  styledir="xmls"/>
       </junitreport>
     </target>
 
