@@ -1,6 +1,5 @@
 #!/bin/sh
 # this assumes webserver is running on port 8080
-# this assumes that the samples/xml/init.xml file has already been deployed
 
 echo "Deploy everything first"
 java org.apache.axis.client.AdminClient deploy.xml
