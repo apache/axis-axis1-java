@@ -153,9 +153,9 @@ public class JWSHandler extends BasicHandler
             if (log.isDebugEnabled())
                 log.debug("jwsFile: " + jwsFile );
             
-            String   jFile   = outdir + File.separator + file.substring(0, file.length()-3) +
+            String   jFile   = outdir + File.separator + file.substring(0, file.length()-extension.length()+1) +
                     "java" ;
-            String   cFile   = outdir + File.separator + file.substring(0, file.length()-3) +
+            String   cFile   = outdir + File.separator + file.substring(0, file.length()-extension.length()+1) +
                     "class" ;
             
             if (log.isDebugEnabled()) {
@@ -174,7 +174,7 @@ public class JWSHandler extends BasicHandler
             if ( clsName != null && clsName.charAt(0) == '/' )
                 clsName = clsName.substring(1);
             
-            clsName = clsName.substring( 0, clsName.length()-4 );
+            clsName = clsName.substring( 0, clsName.length()-extension.length() );
             clsName = clsName.replace('/', '.');
             
             if (log.isDebugEnabled())
