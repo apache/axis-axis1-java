@@ -185,7 +185,7 @@ public class RPCHandler extends SOAPHandler
                 }
             }
 
-            if (defaultParamTypes!=null &&
+            if (type == null && defaultParamTypes!=null &&
                 params.size()<=defaultParamTypes.length) {
 
                 TypeMappingRegistry typeMap = context.getTypeMappingRegistry();
