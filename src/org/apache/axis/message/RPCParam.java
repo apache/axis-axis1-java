@@ -102,7 +102,7 @@ public class RPCParam extends MessageElement
     public void setRPCElement(RPCElement element)
     {
         myRPCElement = element;
-        if (namespaceURI==null) namespaceURI=element.getNamespaceURI();
+        // if (namespaceURI==null) namespaceURI=element.getNamespaceURI();
     }
     
     /** !!! This is a little messy... need to think about
