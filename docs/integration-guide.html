@@ -285,104 +285,74 @@ Example</li>
 
 <h3>
 <a NAME="Internationalization Plug"></a>Internationalization</h3>
-The plug point for internationalization isn't a framework, but simply a
-property file of the strings used in AXIS.
-<br>&nbsp;
+AXIS supports internationalization by providing
+both a property file of the strings used in AXIS,
+and an extension mechanism that facilitates
+accessing internal AXIS messages and extending the messages
+available to integration code based on existing AXIS code.
+
+<h4>
+<a NAME="Translation"></a>Translation</h4>
+
 <ul>
 <li>
 Justification/Rationale</li>
 
-<br>In order for readers of languages other than English to be comfortable
-with AXIS, we provide a mechanism for the strings used in AXIS to be translated.&nbsp;
-We do not provide any translations in AXIS; we merely provide a means by
-which translators can easily plug in their translations.
+<br>
+In order for readers of languages other than English
+to be comfortable with AXIS,
+we provide a mechanism for the strings used in AXIS to be translated.
+We do not provide any translations in AXIS;
+we merely provide a means by which translators
+can easily plug in their translations.
 <br>&nbsp;
-<li>
-Interfaces</li>
 
-<br>AXIS uses the standard Java internationalization class:&nbsp; <font face="Courier New,Courier"><font size=-1>PropertyResourceBundle</font></font>.&nbsp;
-To make this class easy to use, there are a number of methods on JavaUtils
-that are used to get the messages within the resource bundle.
-<p><font face="Courier New,Courier"><font size=-1>public static java.util.ResourceBundle
-getMessageResourceBundle();</font></font>
-<p><font face="Courier New,Courier"><font size=-1>public static String
-getMessage(String key) throws java.util.MissingResourceException;</font></font>
-<p><font face="Courier New,Courier"><font size=-1>public static String
-getMessage(String key, String var) throws java.util.MissingResourceException;</font></font>
-<p><font face="Courier New,Courier"><font size=-1>public static String
-getMessage(String key, String var1, String var2) throws java.util.MissingResourceException;</font></font>
-<p><font face="Courier New,Courier"><font size=-1>public static String
-getMessage(String key, String[] vars) throws java.util.MissingResourceException;</font></font>
-<p>AXIS programmers can work with the resource bundle directly via a call
-to <font face="Courier New,Courier"><font size=-1>JavaUtils.getMessageResourceBundle</font></font>,
-but the <font face="Courier New,Courier"><font size=-1>getMessage</font></font>
-methods should be used instead for two reasons:
-<br>&nbsp;
-<ol>
-<li>
-It's a shortcut.&nbsp; It is cleaner to call</li>
-
-<ol><font face="Courier New,Courier"><font size=-1>JavaUtils.getMessage("myMsg00");</font></font></ol>
-than
-<ol><font face="Courier New,Courier"><font size=-1>JavaUtils.getMessageResourceBundle().getString("myMsg00");</font></font></ol>
-
-<li>
-The <font face="Courier New,Courier"><font size=-1>getMessage</font></font>
-methods enable messages with variables.</li>
-</ol>
-
-<h4>
-The getMessage methods</h4>
-If you have a message with no variables
-<ol><font face="Courier New,Courier"><font size=-1>myMsg00=This is a string.</font></font></ol>
-then simply call
-<ol><font face="Courier New,Courier"><font size=-1>JavaUtils.getMessage("myMsg00");</font></font></ol>
-
-<p><br>If you have a message with variables, use the syntax <font face="Courier New,Courier">"{X}"</font>
-where <font face="Courier New,Courier"><font size=-1>X</font></font> is
-the number of the variable, starting at 0.&nbsp; For example:
-<ol><font face="Courier New,Courier"><font size=-1>myMsg00=My {0} is {1}.</font></font></ol>
-then call:
-<ol><font face="Courier New,Courier"><font size=-1>JavaUtils.getMessage("myMsg00",
-"name", "Russell");</font></font></ol>
-and the resulting string will be:&nbsp; "My name is Russell."
-<p>You could also call the String array version of <font face="Courier New,Courier"><font size=-1>getMessage</font></font>:
-<ol><font face="Courier New,Courier"><font size=-1>JavaUtils.getMessage("myMsg00",
-new String[] {"name", "Russell"});</font></font></ol>
-
-<p><br>The String array version of <font face="Courier New,Courier"><font size=-1>getMessage</font></font>
-is all that is necessary, but the vast majority of messages will have 0,
-1 or 2 variables, so the other <font face="Courier New,Courier"><font size=-1>getMessage</font></font>
-methods are provided as a convenience to avoid the complexity of the String
-array version.
-<p>Note that the <font face="Courier New,Courier"><font size=-1>getMessage</font></font>
-methods throw <font face="Courier New,Courier"><font size=-1>MissingResourceException</font></font>
-if the resource cannot be found.&nbsp; And ParseException if there are
-more {X} entries than arguments.&nbsp; These exceptions are <font face="Courier New,Courier"><font size=-1>RuntimeException'</font></font>s,
-so the caller doesn't have to explicitly catch them.
-<p>The resource bundle properties file is org/apache/axis/i18n/resource.properties.
-<br>&nbsp;
 <li>
 Mechanism</li>
+<br>
+AXIS provides english messages in the
+Java resource named
+org.apache.axis.i18n.resource.properties
+(in the source tree, the file is named
+xml-axis/java/src/org/apache/axis/i18n/resource.properties).
 
-<br>The Java internationalization mechanism - i.e., a ResourceBundle backed
-by a properties file - and the java.text.MessageFormat class, are sufficient
-for our needs.
-<p>Entries in the properties file must follow the pattern:&nbsp; <font face="Courier New,Courier"><font size=-1>&lt;string>&lt;2-digit
-suffix></font></font>.
-<p>Entries should be ordered in the properties file alphabetically by key.
-<p>Entries in the properties file must never be changed.&nbsp; If a code
-change requires a message change, don't change the existing message; instead
-create a new entry, incrementing the 2-digit suffix.&nbsp; This must be
-done for two reasons:&nbsp; 1.&nbsp; You don't know whether the message
-is being used elsewhere.&nbsp; 2.&nbsp; So the translator only has to be
-aware of, and translate, the new strings.&nbsp; Without this restriction,
-every time translators are given the properties file to translate, they
-would have to translate all strings all the time.
-<ul>&nbsp;</ul>
-We may occasionally want to trim the properties file of old data, but this
-should only be done on major releases.
-<ul>&nbsp;</ul>
+<p>AXIS makes use of the Java internationalization mechanism -
+i.e., a java.util.ResourceBundle backed by a properties file -
+and the java.text.MessageFormat class to substitute
+parameters into the message text.
+
+<ul>
+<br>
+<li>
+java.util.ResourceBundle retrieves message text
+from a property file using a key provided by the program.
+Entries in a message resource file are of the form
+&lt;key&gt;=&lt;message&gt;.
+</li>
+
+<br>&nbsp;
+<li>
+java.text.MessageFormat substitutes variables for
+markers in the message text.
+Markers use the syntax
+<font face="Courier New,Courier">"{X}"</font>
+where <code>X</code> is
+the number of the variable, starting at 0.
+</li>
+</ul>
+
+<p>For example: <code>myMsg00=My {0} is {1}.</code>
+
+<p>Translation requires creating an
+alternate version of the property file provided by AXIS
+for a target language.
+The JavaDoc for <code>java.utils.ResourceBundle</code>
+provides details on how to identify different property
+files for different locales.
+
+<p>For details on using AXIS's internationalization tools,
+see the <a href="developers-guide.html">Developer's Guide</a>.
+<br>&nbsp;
 
 <li>
 Default behavior</li>
@@ -390,26 +360,104 @@ Default behavior</li>
 <br>The default behavior, meaning what happens when a translated file doesn't
 exist for a given locale, is to fall back on the English-language properties
 file.&nbsp; If that file doesn't exist (unlikely unless something is seriously
-wrong), AXIS with throw an exception with an English-language reason message.
+wrong), AXIS will throw an exception with an English-language reason message.
 <br>&nbsp;
-<li>
-Examples</li>
+</ul>
 
-<br>In <font face="Courier New,Courier"><font size=-1>org.apache.axis.client.Call.invoke</font></font>,
-there is the following statement:
-<p><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-if ( operationName == null )</font></font>
-<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-throw new AxisFault( "No operation name specified" );</font></font>
-<p>We will have to add an entry into org/apache/axis/i18n/resource.properties.&nbsp;
-Something like:
-<p><font face="Courier New,Courier"><font size=-1>noOperation=No operation
-name specified.</font></font>
-<p>And change the code to read:
-<p><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-if ( operationName == null )</font></font>
-<br><font face="Courier New,Courier"><font size=-1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-throw new AxisFault(JavaUtils.getMessage("noOperation"));</font></font></ul>
+<h4>
+<a NAME="Extending Message Files"></a>Extending Message Files</h4>
+AXIS provides a Message file extension mechanism
+that allows AXIS-based code to use AXIS message keys,
+as well as new message keys unique to the extended code.
+
+<ul>
+<li>
+Justification/Rationale</li>
+<br>
+AXIS provides pluggable interfaces for
+various AXIS entities, including EngineConfigurationFactory's,
+Provides, and Handlers.
+AXIS also provides a variety of implementations
+of these entities.
+It is convenient to use AXIS source code for
+such implementations as starting points for developing
+extentions and customizations that fulfill the unique needs
+of the end user.
+<br>&nbsp;
+
+<li>
+Procedure</li>
+<br>To extend the AXIS message file:
+<br>&nbsp;
+<ul>
+<li>Copy the AXIS source file
+<code>java/src/org/apache/axis/i18n/Messages.java</code>
+to your project/package, say
+<code>my/project/package/path/Messages.java</code>.
+</li>
+<ul>
+<li>Set the <code>package</code> declaration in the copied file
+to the correct package name.
+</li>
+<li>Set the private attribute <code>projectName</code>
+to <code>"my.project"</code>:
+the portion of the package name that is common to your project.
+<code>projectName</code> must be equal to or be a prefix of the
+copied Messages package name.
+</li>
+</ul>
+<br>&nbsp;
+<li>Create the file
+<code>my/project/package/path/resource.properties</code>.
+Add new message key/value pairs to this file.
+</li>
+<br>&nbsp;
+<li>As you copy AXIS source files over to your project,
+change the <code>import org.apache.axis.i18n.Messages</code>
+statement to <code>import my.project.package.path.Messages</code>.
+</li>
+<li>Use the methods provided by the class Messages,
+as discussed in the <a href="developers-guide.html">Developer's Guide</a>,
+to access the new messages.
+</li>
+</ul>
+<br>
+
+<li>
+Behavior</li>
+
+<ul>
+<li>
+Local Search</li>
+<br><code>Messages</code> begins looking for a key's value in
+the <code>resources.properties</code>
+resource in it's (Messages) package.
+<br>&nbsp;
+
+<li>
+Hierarchical Search</li>
+<br>If <code>Messages</code> cannot locate
+either the key, or the resource file,
+it walks up the package hierarchy until it finds it.
+The top of the hierarchy, above which it will not search,
+is defined by the <code>projectName</code> attribute,
+set above.
+<br>&nbsp;
+
+<li>
+Default behavior</li>
+<br>If the key cannot be found in the package hierarchy
+then a default resource is used.
+The default behaviour is determined by
+the <code>parent</code> attribute of the
+<code>Messages</code> class copied to your extensions directory.
+<p>Unless changed, the default behavior, meaning what happens when a key
+isn't defined in the new properties file,
+is to fall back to the AXIS properties file
+(org.apache.axis.i18n.resource.properties).
+<br>&nbsp;
+</ul>
+</ul>
 
 <h3>
 <a NAME="Performance Monitoring Plug"></a>Performance Monitoring</h3>
