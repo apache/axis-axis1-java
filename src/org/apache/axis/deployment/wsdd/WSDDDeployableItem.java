@@ -62,6 +62,7 @@ import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.deployment.DeployableItem;
 import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.deployment.DeploymentException;
+import org.apache.axis.providers.java.JavaProvider;
 import org.apache.axis.utils.LockableHashtable;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
@@ -145,7 +146,7 @@ public abstract class WSDDDeployableItem
         // Figure out our scope - right now if a non-recognized scope
         // attribute appears, we will ignore it and use the default
         // scope.  Is this right, or should we throw an error?
-        String scopeStr = e.getAttribute(ATTR_SCOPE);
+        String scopeStr = e.getAttribute(JavaProvider.OPTION_SCOPE);
         if (scopeStr != null) {
             for (int i = 0; i < scopeStrings.length; i++) {
                 if (scopeStr.equals(scopeStrings[i])) {
@@ -343,11 +344,11 @@ public abstract class WSDDDeployableItem
                 try{
                   h.init();
                 }catch(Exception e){
-                    String msg=e + NL + JavaUtils.stackToString(e);
+                    String msg=e + JavaUtils.LS + JavaUtils.stackToString(e);
                     log.debug(msg);
                     throw new ConfigurationException(e);
                 }catch(Error e){
-                    String msg=e + NL + JavaUtils.stackToString(e);
+                    String msg=e + JavaUtils.LS + JavaUtils.stackToString(e);
                     log.debug(msg);
                     throw new ConfigurationException(msg);
                 }
