@@ -71,7 +71,7 @@ import java.net.Socket;
 import java.util.Hashtable;
 
 /**
- * This is a single threaded implementation of an HTTP server for processing
+ * This is a simple implementation of an HTTP server for processing
  * SOAP requests via Apache's xml-axis.  This is not intended for production
  * use.  Its intended uses are for demos, debugging, and performance
  * profiling.
