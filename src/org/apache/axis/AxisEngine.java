@@ -322,12 +322,39 @@ public abstract class AxisEngine extends BasicHandler
         getTypeMappingRegistry().removeSerializer(cls);
     }
 
+    /**
+     * List of options which should be converted from Strings to Booleans
+     * automatically.
+     */ 
+    static String [] booleanOptions = new String [] {
+        PROP_DOMULTIREFS, PROP_SEND_XSI, PROP_XML_DECL
+    };
+    
     public void deployWSDD(WSDDDocument doc) throws DeploymentException
     {
         myRegistry.deploy(doc);
         WSDDGlobalConfiguration global = myRegistry.getGlobalConfiguration();
         if (global != null)
-            this.setOptions(global.getParametersTable());
+            setOptions(global.getParametersTable());
+        
+        // Convert boolean options to Booleans so we don't need to use
+        // string comparisons.  Default is "true".
+        
+        for (int i = 0; i < booleanOptions.length; i++) {
+            String val = (String)getOption(booleanOptions[i]);
+            if (val != null && val.equalsIgnoreCase("false")) {
+                addOption(booleanOptions[i], Boolean.FALSE);
+            } else {
+                addOption(booleanOptions[i], Boolean.TRUE);
+            }
+        }
+        
+        // Deal with admin password's default value.
+        if (getOption(PROP_PASSWORD) == null) {
+            addOption(PROP_PASSWORD, "admin");
+        } else {
+            setAdminPassword((String)getOption(PROP_PASSWORD));
+        }
     }
     
     /**

@@ -57,6 +57,7 @@
 
 import org.apache.axis.AxisEngine;
 import org.apache.axis.ConfigurationProvider;
+import org.apache.axis.deployment.wsdd.WSDDDocument;
 import org.apache.axis.utils.Admin;
 import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Document;
@@ -79,7 +80,6 @@ public class FileProvider implements ConfigurationProvider
 
     String basepath = ".";
     String filename;
-    protected Properties props = new Properties();
 
     /**
      * Constructor which accesses a file in the current directory of the
@@ -114,11 +114,8 @@ public class FileProvider implements ConfigurationProvider
             throw new Exception("No engine configuration file - aborting!");
         }
 
-        Document doc = XMLUtils.newDocument(is);
-
-        Admin.processEngineConfig(doc, engine);
-
-        loadProperties(engine);
+        WSDDDocument doc = new WSDDDocument(XMLUtils.newDocument(is));
+        engine.deployWSDD(doc);
     }
 
     public void writeEngineConfig(AxisEngine engine) throws Exception
@@ -127,43 +124,5 @@ public class FileProvider implements ConfigurationProvider
         FileOutputStream fos = new FileOutputStream(basepath + sep + filename);
         XMLUtils.DocumentToStream(doc, fos);
         fos.close();
-    }
-
-    protected void loadProperties(AxisEngine engine)
-    {
-        /** Load properties 1st, so that debug level gets
-        * set ASAP.
-        */
-        try {
-            File propFile = new File("axis.properties");
-            if (propFile.exists()) {
-                FileInputStream propFileInputStream =
-                                               new FileInputStream(propFile);
-                props.load(propFileInputStream);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        String propVal;
-
-        // Should we send XML declarations in our messages?
-        // default is true, and currently the only accepted true value is
-        // "true".
-        propVal = props.getProperty(AxisEngine.PROP_XML_DECL, "true");
-        engine.addOption(AxisEngine.PROP_XML_DECL, new Boolean(propVal.equals("true")));
-
-        // Should we send multi-ref serializations in our messages?
-        propVal = props.getProperty(AxisEngine.PROP_DOMULTIREFS, "true");
-        engine.addOption(AxisEngine.PROP_DOMULTIREFS, new Boolean(propVal.equals("true")));
-
-        // The admin password (if it hasn't been set, we're "unsafe", and
-        // we shouldn't do anything in the admin but change it)
-        propVal = props.getProperty(AxisEngine.PROP_PASSWORD);
-        if (propVal != null) {
-            engine.setAdminPassword(propVal);
-        } else {
-            engine.addOption(AxisEngine.PROP_PASSWORD, "admin");
-        }
     }
 }
