@@ -88,6 +88,7 @@ public class LocalTransport extends Transport
      */
     public LocalTransport()
     {
+        transportName = "local";
     }
     
     /** Use this constructor if you have a particular server kicking
@@ -98,6 +99,7 @@ public class LocalTransport extends Transport
      */
     public LocalTransport(AxisServer server)
     {
+        transportName = "local";
         this.server = server;
     }
     
@@ -107,9 +109,10 @@ public class LocalTransport extends Transport
      * @param message the client service instance
      * @param engine the engine containing the registries
      */
-    public void setupMessageContext (MessageContext mc, ServiceClient serv, AxisEngine engine)
+    public void setupMessageContextImpl(MessageContext mc,
+                                        ServiceClient serv,
+                                        AxisEngine engine)
     {
-        mc.setTransportName(transportName == null ? "local" : transportName);
         if (server != null)
             mc.setProperty(LOCAL_SERVER, server);
     }

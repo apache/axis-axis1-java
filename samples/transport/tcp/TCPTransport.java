@@ -77,9 +77,11 @@ public class TCPTransport extends Transport
     private String port;
     
     public TCPTransport () {
+        transportName = "tcp";
     }
     
     public TCPTransport (String host, String port) {
+        transportName = "tcp";
         this.host = host;
         this.port = port;
     }
@@ -96,13 +98,14 @@ public class TCPTransport extends Transport
      * @param message the client service instance
      * @param engine the engine containing the registries
      */
-    public void setupMessageContext (MessageContext mc, ServiceClient serv, AxisEngine engine)
+    public void setupMessageContextImpl(MessageContext mc,
+                                        ServiceClient serv,
+                                        AxisEngine engine)
     {
-        mc.setTransportName("tcp");
-        
         try {
           String urlString = mc.getStrProp(MessageContext.TRANS_URL);
           if (urlString != null) {
+              System.out.println("URLString is " + urlString);
             URL url = new URL(urlString);
             mc.setProperty(HOST, url.getHost());
             mc.setProperty(PORT, new Integer(url.getPort()).toString());

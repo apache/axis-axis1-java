@@ -73,15 +73,9 @@ import org.apache.axis.client.ServiceClient;
  */
 public class FileTransport extends Transport
 {
-    /**
-     * Set up any transport-specific derived properties in the message context.
-     * @param context the context to set up
-     * @param message the client service instance
-     * @param engine the engine containing the registries
-     */
-    public void setupMessageContext (MessageContext mc, ServiceClient serv, AxisEngine engine)
+    public FileTransport()
     {
-        mc.setTransportName("FileTransport");
+        transportName = "FileTransport";
     }
 }
 

@@ -63,8 +63,8 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.AxisEngine;
 import org.apache.axis.Handler;
 
-public abstract class Transport {
-    
+public class Transport {
+
     /**
      * Synonyms for MessageContext userid / password.
      */
@@ -74,8 +74,13 @@ public abstract class Transport {
     /**
      * Transport Chain Name - so users can change the default.
      */
-    public static String transportName = null ;
-    
+    public String transportName = null ;
+
+    /**
+     * Transport URL, if any.
+     */
+    public String url = null;
+
     /**
      * Set up any transport-specific derived properties in the message context.
      * @param context the context to set up
@@ -83,9 +88,34 @@ public abstract class Transport {
      * @param engine the engine containing the registries
      * @throws AxisFault if service cannot be found
      */
-    public abstract void setupMessageContext
-        (MessageContext context, ServiceClient message, AxisEngine engine)
-        throws AxisFault;
+    public final void setupMessageContext(MessageContext context,
+                                          ServiceClient message,
+                                          AxisEngine engine)
+        throws AxisFault
+    {
+        if (url != null)
+            context.setProperty(MessageContext.TRANS_URL, url);
+
+        if (transportName != null)
+            context.setTransportName(transportName);
+
+        setupMessageContextImpl(context, message, engine);
+    }
+
+    /**
+     * Set up any transport-specific derived properties in the message context.
+     * @param context the context to set up
+     * @param message the client service instance
+     * @param engine the engine containing the registries
+     * @throws AxisFault if service cannot be found
+     */
+    public void setupMessageContextImpl(MessageContext context,
+                                        ServiceClient message,
+                                        AxisEngine engine)
+        throws AxisFault
+    {
+        // Default impl does nothing
+    }
 
     /**
      * Sets the transport chain name - to override the default.
@@ -102,6 +132,20 @@ public abstract class Transport {
     public String getTransportName() {
         return( transportName );
     }
+
+    /**
+     * Get the transport-specific URL
+     */
+    public String getUrl() {
+        return url;
+    }
+
+    /**
+     * Set the transport-specific URL
+     */
+    public void setUrl(String url) {
+        this.url = url;
+    }
 }
-    
+
 
