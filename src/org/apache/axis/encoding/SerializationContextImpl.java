@@ -162,12 +162,6 @@ public class SerializationContextImpl implements SerializationContext
     private boolean sendXSIType = true;
 
     /**
-     * Should I send minimized elements? As in <element/> instead of
-     * <element></element>.
-     */
-    private boolean sendMinimizedElements = true;
-
-    /**
      * A place to hold objects we cache for multi-ref serialization, and
      * remember the IDs we assigned them.
      */
@@ -275,12 +269,6 @@ public class SerializationContextImpl implements SerializationContext
 
             if (shouldSendMultiRefs != null)
                 doMultiRefs = shouldSendMultiRefs.booleanValue();
-
-            Boolean shouldSendMinimized =
-                (Boolean)optionSource.getOption(AxisEngine.PROP_SEND_MINIMIZED_ELEMENTS);
-
-            if (shouldSendMinimized != null)
-                sendMinimizedElements = shouldSendMinimized.booleanValue();
 
             // The SEND_TYPE_ATTR and PROP_SEND_XSI options indicate
             // whether the elements should have xsi:type attributes.
@@ -1019,14 +1007,9 @@ public class SerializationContextImpl implements SerializationContext
         nsStack.pop();
 
         if (writingStartTag) {
-            if (sendMinimizedElements) {
-                writer.write("/>");
-            }
-            else {
-                writer.write("></");
-                writer.write(elementQName);
-                writer.write('>');
-            }
+            writer.write("></");
+            writer.write(elementQName);
+            writer.write('>');
             if (pretty) writer.write('\n');
             writingStartTag = false;
             return;
