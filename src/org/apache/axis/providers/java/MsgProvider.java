@@ -161,7 +161,6 @@ public class MsgProvider extends JavaProvider {
   
               try {
                 method = jc.getJavaClass().getMethod( methodName, argClasses );
-                System.err.println("FOUND [Element");
               }
               catch( NoSuchMethodException exp ) {exp2 = exp;}
             }
