@@ -200,9 +200,10 @@ public class Emitter {
      */
     public void emit(Class cls, String allowedMethods, String filename) throws Exception {
         def = emit(cls, allowedMethods);
-        types.insertTypesFragment(def);
-        Document doc = WSDLFactory.newInstance().newWSDLWriter().getDocument(def);
 
+        Document doc = WSDLFactory.newInstance().newWSDLWriter().getDocument(def);
+        types.insertTypesFragment(doc);
+ 
         XMLUtils.PrettyDocumentToStream(doc, new FileOutputStream(new File(filename)));
     }
 
