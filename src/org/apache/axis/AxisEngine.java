@@ -64,6 +64,7 @@ import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.handlers.soap.SOAPService;
+import org.apache.axis.InternalException;
 import org.apache.axis.session.Session;
 import org.apache.axis.session.SimpleSession;
 import org.apache.axis.utils.JavaUtils;
@@ -176,8 +177,7 @@ public abstract class AxisEngine extends BasicHandler
         try {
             configProvider.configureEngine(this);
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new NullPointerException(JavaUtils.getMessage("problemDeploying00"));
+            throw new InternalException(e);
         }
         
         if (category.isDebugEnabled()) {

@@ -171,7 +171,7 @@ public class BeanSerializer extends Deserializer
                pd = processPropertyDescriptors(rawPd,cls);
             } catch (Exception e) {
                // this should never happen
-               throw new NullPointerException(e.toString());
+               throw new InternalException(e);
             }
             // If this is an enumeration class, delegate all serialization to the enum serializer
             if (isEnumClass(cls)) {
@@ -372,8 +372,7 @@ public class BeanSerializer extends Deserializer
             try {
                 bs.setValue(cls.newInstance());
             } catch (Exception e) {
-                // I'm not allowed to throw much, so I throw what I can!
-                throw new NullPointerException(e.toString());
+                throw new InternalException(e);
             }
 
             return bs;

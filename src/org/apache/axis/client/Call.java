@@ -75,6 +75,7 @@ import org.apache.axis.transport.http.HTTPTransport;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.attachments.AttachmentPart; 
+import org.apache.axis.InternalException;
 import javax.xml.rpc.encoding.XMLType ;
 
 import org.apache.log4j.Category;
@@ -758,7 +759,7 @@ public class Call implements javax.xml.rpc.Call {
         if (Transport.class.isAssignableFrom(transportClass))
             transports.put(protocol, transportClass);
         else
-            throw new NullPointerException();
+            throw new InternalException(transportClass.toString());
     }
 
     /**
