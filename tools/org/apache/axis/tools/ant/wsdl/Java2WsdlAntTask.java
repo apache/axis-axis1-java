@@ -58,10 +58,14 @@ import org.apache.axis.wsdl.fromJava.Emitter;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
+import org.apache.tools.ant.AntClassLoader;
+import org.apache.tools.ant.types.Path;
 import org.apache.axis.encoding.DefaultTypeMappingImpl;
 import org.apache.axis.encoding.DefaultSOAPEncodingTypeMappingImpl;
+import org.apache.axis.utils.ClassUtils;
 
 import java.util.HashMap;
+import java.util.StringTokenizer;
 import java.io.StringWriter;
 import java.io.PrintWriter;
 import java.io.File;
@@ -111,6 +115,7 @@ public class Java2WsdlAntTask extends Task
     private String use = null;
     private MappingSet mappings=new MappingSet();
     private String extraClasses = null;
+    private Path classpath = null;
 
     /**
      * trace out parameters
@@ -163,6 +168,18 @@ public class Java2WsdlAntTask extends Task
      * @throws BuildException
      */
     public void execute() throws BuildException {
+        if (classpath != null) {
+            AntClassLoader cl = new AntClassLoader(null, project, classpath, false);
+            log("Using CLASSPATH " + cl.getClasspath(),
+              Project.MSG_VERBOSE);
+            ClassUtils.setClassLoader(className, cl);
+            ClassUtils.setClassLoader(implClass, cl);
+            StringTokenizer tokenizer = new StringTokenizer(extraClasses, " ,");
+            while (tokenizer.hasMoreTokens()) {
+                String clsName = tokenizer.nextToken();
+                ClassUtils.setClassLoader(clsName, cl);
+            }
+        }
         try {
             traceParams(Project.MSG_VERBOSE);
             validate();
@@ -246,6 +263,13 @@ public class Java2WsdlAntTask extends Task
             log(writer.getBuffer().toString(), Project.MSG_ERR);
             throw new BuildException("Error while running " + getClass().getName(), t);
         }
+    }
+
+    public Path createClasspath() {
+      if (classpath == null) {
+        classpath = new Path(project);
+      }
+      return classpath.createPath();
     }
 
     /**
