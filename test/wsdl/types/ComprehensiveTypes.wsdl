@@ -71,6 +71,18 @@
     <part name="soapBase64" type="soapenc:base64"/>
   </message>
 
+  <message name="enum">
+    <part name="enum" type="typens:enum"/>
+  </message>
+
+  <message name="complexAll">
+    <part name="complexAll" type="typens:complexAll"/>
+  </message>
+
+  <message name="complexSequence">
+    <part name="complexSequence" type="typens:complexSequence"/>
+  </message>
+
   <!-- port type declns -->
   <portType name="TypeTest">
     <operation name="allPrimitivesIn">
@@ -84,6 +96,42 @@
     <operation name="allPrimitivesOut">
       <input message="tns:empty"/>
       <output message="tns:allPrimitives"/>
+    </operation>
+    <operation name="enumIn">
+      <input message="tns:enum"/>
+      <output message="tns:empty"/>
+    </operation>
+    <operation name="enumInout">
+      <input message="tns:enum"/>
+      <output message="tns:enum"/>
+    </operation>
+    <operation name="enumOut">
+      <input message="tns:empty"/>
+      <output message="tns:enum"/>
+    </operation>
+    <operation name="complexAllIn">
+      <input message="tns:complexAll"/>
+      <output message="tns:empty"/>
+    </operation>
+    <operation name="complexAllInout">
+      <input message="tns:complexAll"/>
+      <output message="tns:complexAll"/>
+    </operation>
+    <operation name="complexAllOut">
+      <input message="tns:empty"/>
+      <output message="tns:complexAll"/>
+    </operation>
+    <operation name="complexSequenceIn">
+      <input message="tns:complexSequence"/>
+      <output message="tns:empty"/>
+    </operation>
+    <operation name="complexSequenceInout">
+      <input message="tns:complexSequence"/>
+      <output message="tns:complexSequence"/>
+    </operation>
+    <operation name="complexSequenceOut">
+      <input message="tns:empty"/>
+      <output message="tns:complexSequence"/>
     </operation>
   </portType>
 
@@ -123,6 +171,141 @@
       </output>
     </operation>
     <operation name="allPrimitivesOut">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="enumIn">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="enumInout">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="enumOut">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="complexAllIn">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="complexAllInout">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="complexAllOut">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="complexSequenceIn">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="complexSequenceInout">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="complexSequenceOut">
       <soap:operation soapAction=""/>
       <input>
         <soap:body
