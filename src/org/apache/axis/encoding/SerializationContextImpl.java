@@ -96,6 +96,7 @@ import javax.xml.rpc.holders.QNameHolder;
 import javax.xml.rpc.JAXRPCException;
 import java.io.IOException;
 import java.io.Writer;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -131,6 +132,8 @@ public class SerializationContextImpl implements SerializationContext
 
     private boolean pretty = false;
     private static QName multirefQName = new QName("","multiRef");
+    private static Class[] getSerializerClasses =
+            new Class[] {String.class, Class.class, QName.class};
 
     /**
      * Should I write out objects as multi-refs?
@@ -1231,6 +1234,20 @@ public class SerializationContextImpl implements SerializationContext
                 //    name = type;
                 ser.serialize(elemQName, attributes, value, this);
                 return;
+            }
+
+            // if no serializer was configured try to find one dynamically using WSDLJava 
+            // generated metadata
+            try { 
+                Method method = value.getClass().getMethod(
+                        "getSerializer", getSerializerClasses);
+                if (method != null) {
+                    Serializer serializer = (Serializer) method.invoke(value,
+                            new Object[] {"", value.getClass(), elemQName});
+                    serializer.serialize(elemQName, attributes, value, this);
+                    return;
+                }
+            } catch (Exception e) {
             }
 
             throw new IOException(Messages.getMessage("noSerializer00",
