@@ -538,13 +538,18 @@ public class Types {
      * @return the created Element
      */
     public Element createElement(String elementName,
-                                  String elementType,
-                                  boolean nullable,
-                                  Document docHolder) {
+                                 String elementType,
+                                 boolean nullable,
+                                 boolean omittable, 
+                                 Document docHolder) {
         Element element = docHolder.createElement("element");
         element.setAttribute("name", elementName);
         if (nullable)
             element.setAttribute("nillable", "true");
+        if (omittable) {
+            element.setAttribute("minOccurs", "0");
+            element.setAttribute("maxOccurs", "1");
+        }
         element.setAttribute("type", elementType);
         return element;
     }

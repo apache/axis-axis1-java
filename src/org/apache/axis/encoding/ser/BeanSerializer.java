@@ -128,6 +128,9 @@ public class BeanSerializer implements Serializer, Serializable {
         // attribute list
         Attributes beanAttrs = getObjectAttributes(value, attributes, context);
 
+        // Get the encoding style
+        String encodingStyle = context.getMessageContext().getEncodingStyle();
+        
         // check whether we have and xsd:any namespace="##any" type
         boolean suppressElement = !context.getMessageContext().isEncoded() &&
                                   name.getNamespaceURI().equals("") && 
@@ -143,6 +146,7 @@ public class BeanSerializer implements Serializer, Serializable {
                 if (propName.equals("class"))
                     continue;
                 QName qname = null;
+                boolean isOmittable = false;
 
                 // If we have type metadata, check to see what we're doing
                 // with this field.  If it's an attribute, skip it.  If it's
@@ -156,6 +160,7 @@ public class BeanSerializer implements Serializer, Serializable {
                             continue;
 
                         qname = field.getXmlName();
+                        isOmittable = field.isMinOccursIs0();
                     }
                 }
 
@@ -173,6 +178,14 @@ public class BeanSerializer implements Serializer, Serializable {
                         // Normal case: serialize the value
                         Object propValue = 
                             propertyDescriptor[i].get(value);
+                        // if meta data says minOccurs=0, then we can skip
+                        // it if its value is null and we aren't doing SOAP
+                        // encoding.
+                        if (propValue == null && 
+                                isOmittable &&
+                                !Constants.isSOAP_ENC(encodingStyle))
+                            continue;
+                        
                         javaType = (propValue == null || 
                                     baseJavaType.isPrimitive())
                             ? baseJavaType : propValue.getClass();
@@ -305,14 +318,21 @@ public class BeanSerializer implements Serializer, Serializable {
                         writeField(types,
                                    propName,
                                    propertyDescriptor[i].getType(),
-                                   propertyDescriptor[i].isIndexed(), all);
+                                   propertyDescriptor[i].isIndexed(), 
+                                   field.isMinOccursIs0(), 
+                                   all);
                     }
+                } else {
+                    writeField(types,
+                               propName,
+                               propertyDescriptor[i].getType(),
+                               propertyDescriptor[i].isIndexed(), false, all);
                 }
             } else {
                 writeField(types,
                            propName,
                            propertyDescriptor[i].getType(),
-                           propertyDescriptor[i].isIndexed(), all);
+                           propertyDescriptor[i].isIndexed(), false, all);
             }
         }
 
@@ -332,11 +352,12 @@ public class BeanSerializer implements Serializer, Serializable {
     protected void writeField(Types types, String fieldName,
                             Class fieldType,
                             boolean isUnbounded,
-                            Element where) throws Exception {
+                            boolean isOmittable, Element where) throws Exception {
         String elementType = types.writeType(fieldType);
         Element elem = types.createElement(fieldName,
                                            elementType,
                                            types.isNullable(fieldType),
+                                           isOmittable,
                                            where.getOwnerDocument());
         if (isUnbounded) {
             elem.setAttribute("maxOccurs", "unbounded");

@@ -28,7 +28,13 @@
     <echo message="Classpath for wsdl2java task : ${test-classpath.property}"/>
     -->
     <echo message="Running WSDL2Java and Java2WSDL Emitters"/>
-
+    
+    <!-- Omit Test -->
+    <wsdl2java url="test/wsdl/omit/omit.wsdl"
+               output="build/work"
+               serverSide="yes">
+    </wsdl2java>
+    
     <!-- WidgetPrice Java to WSDL Samples -->
     <java2wsdl output="build/work/samples/userguide/example6/WidgetPrice.wsdl"
                className= "samples.userguide.example6.WidgetPrice"

@@ -178,7 +178,7 @@ public class RPCElement extends SOAPBodyElement
 
             for (int i = 0; i < operations.length; i++) {
                 OperationDesc operation = operations[i];
-                if (operation.getNumInParams() >= numParams) {
+                if (operation.getNumInParams() >= numParams || elementIsFirstParam ) {
                     // Set the operation so the RPCHandler can get at it
                     rpcHandler.setOperation(operation);
                     try {

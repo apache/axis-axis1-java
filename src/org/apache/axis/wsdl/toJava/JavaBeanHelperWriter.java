@@ -148,9 +148,12 @@ public class JavaBeanHelperWriter extends JavaWriter {
                 //    case and we have several problems with the mapping rules.
                 //    Seems best to gen meta data in this case.)
                 //  - the element name is qualified (has a namespace uri)
+                // its also needed if:
+                //  - the element has the minoccurs flag set
                 //if (!javaName.equals(elemName) || 
                 //    Character.isUpperCase(javaName.charAt(0)) ||
-                //    !elem.getName().getNamespaceURI().equals("")) {
+                //!elem.getName().getNamespaceURI().equals("") ||
+                //elem.getMinOccursIs0()) {
                     // If we did some mangling, make sure we'll write out the XML
                     // the correct way.
                     if (elementMetaData == null)
@@ -208,6 +211,9 @@ public class JavaBeanHelperWriter extends JavaWriter {
                     pw.print(  "        field.setXmlName(new javax.xml.rpc.namespace.QName(\"");
                     pw.println(xmlName.getNamespaceURI() + "\", \"" +
                                xmlName.getLocalPart() + "\"));");
+                    if (elem.getMinOccursIs0()) {
+                        pw.println("        field.setMinOccursIs0(true);");
+                    }
                     pw.println("        typeDesc.addFieldDesc(field);");
                 }
             }
@@ -247,7 +253,7 @@ public class JavaBeanHelperWriter extends JavaWriter {
         pw.println("           javax.xml.rpc.namespace.QName _xmlType) {");
         pw.println("        return ");
         pw.println("          new " + ser +"(");
-        pw.println("            _javaType, _xmlType," + typeDesc + ");");
+        pw.println("            _javaType, _xmlType, " + typeDesc + ");");
         pw.println("    };");
         pw.println();
     }
@@ -274,7 +280,7 @@ public class JavaBeanHelperWriter extends JavaWriter {
         pw.println("           javax.xml.rpc.namespace.QName _xmlType) {");
         pw.println("        return ");
         pw.println("          new " + dser + "(");
-        pw.println("            _javaType, _xmlType," + typeDesc + ");");
+        pw.println("            _javaType, _xmlType, " + typeDesc + ");");
         pw.println("    };");
         pw.println();
     }

@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2002 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -53,99 +53,17 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.description;
-
-import javax.xml.rpc.namespace.QName;
 
 /**
- * FieldDescs are metadata objects which control the mapping of a given
- * Java field to/from XML.
+ * OmitImpl.java
  *
- * @author Glen Daniels (gdaniels@apache.org)
  */
-public class FieldDesc {
-    /** The name of the Java field in question */
-    private String fieldName;
-    /** The XML QName this field maps to */
-    private QName xmlName;
-    /** The XML Type this field maps to/from */
-    private QName xmlType;
-    /** The Java type of this field */
-    private Class javaType;
 
-    /** An indication of whether this should be an element or an attribute */
-    // Q : should this be a boolean, or just "instanceof ElementDesc", etc.
-    private boolean _isElement = true;
+package test.wsdl.omit;
 
-    /** An indication that minoccurs is zero */
-    private boolean minOccursIs0 = false;
-    
-    /**
-     * Can't construct the base class directly, must construct either an
-     * ElementDesc or an AttributeDesc.
-     */
-    protected FieldDesc(boolean isElement)
-    {
-        _isElement = isElement;
+public class OmitImpl implements test.wsdl.omit.Omit {
+    public test.wsdl.omit.Phone echoPhone(test.wsdl.omit.Phone in) throws java.rmi.RemoteException {
+        return in;
     }
 
-    /**
-     * Obtain the field name.
-     */
-    public String getFieldName() {
-        return fieldName;
-    }
-
-    /**
-     * Set the field name.
-     */
-    public void setFieldName(String fieldName) {
-        this.fieldName = fieldName;
-    }
-
-    /**
-     * Obtain the XML QName for this field
-     */
-    public QName getXmlName() {
-        return xmlName;
-    }
-
-    /**
-     * Set the XML QName for this field
-     */
-    public void setXmlName(QName xmlName) {
-        this.xmlName = xmlName;
-    }
-
-    public Class getJavaType() {
-        return javaType;
-    }
-
-    public void setJavaType(Class javaType) {
-        this.javaType = javaType;
-    }
-
-    /**
-     * Check if this is an element or an attribute.
-     *
-     * @return true if this is an ElementDesc, or false if an AttributeDesc
-     */
-    public boolean isElement() {
-        return _isElement;
-    }
-
-    public boolean isIndexed() {
-        return false;
-    }
-
-    /**
-     * Check if this field can be omitted.
-     */ 
-    public boolean isMinOccursIs0() {
-        return minOccursIs0;
-    }
-
-    public void setMinOccursIs0(boolean minOccursIs0) {
-        this.minOccursIs0 = minOccursIs0;
-    }
 }
