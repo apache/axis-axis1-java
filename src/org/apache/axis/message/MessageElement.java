@@ -94,8 +94,6 @@ public class MessageElement
     
     protected Vector qNameAttrs = null;
 
-    public Hashtable nsDecls = new Hashtable();
-                                     
     // Some message representations - as recorded SAX events...
     protected SAX2EventRecorder recorder = null;
     protected int startEventIndex = 0;

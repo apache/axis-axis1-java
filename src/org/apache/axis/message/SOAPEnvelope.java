@@ -258,12 +258,13 @@ public class SOAPEnvelope extends MessageElement
         throws Exception
     {
         // Register namespace prefixes.
-        Enumeration enum = nsDecls.keys();
-        while (enum.hasMoreElements()) {
-            String uri = (String)enum.nextElement();
-            context.registerPrefixForURI((String)nsDecls.get(uri), uri);
+        for (Iterator i = namespaces.iterator(); i.hasNext(); ) {
+            Mapping mapping = (Mapping)i.next();
+            context.registerPrefixForURI(mapping.getPrefix(),
+                                         mapping.getNamespaceURI());
         }
         
+        Enumeration enum;
         AttributesImpl attrs = null;
         if (encodingStyleURI != null) {
             attrs = new AttributesImpl();
