@@ -103,7 +103,7 @@ Copyright:
   </target>
   
     <!-- compile the java sources using the compilation classpath -->
-  <target name="compile" depends="init">
+  <target name="compile" depends="init" if="commons-httpclient.present">
     <property name="build.debuglevel" value="lines,vars,source"/> 
     <javac destdir="${test.classes.dir}"
            debug="${build.debug}"
