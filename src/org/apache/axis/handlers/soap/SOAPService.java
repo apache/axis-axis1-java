@@ -195,6 +195,7 @@ public class SOAPService extends SimpleTargetedChain
 
             if (misunderstoodHeaders != null) {
                 // !!! If SOAP 1.2, insert misunderstood fault header here
+                StringBuffer whatWasMissUnderstood= new StringBuffer(256);
                 if (doMisunderstoodHeaders) {
                     Message respMsg = msgContext.getResponseMessage();
                     if (respMsg == null) {
@@ -208,6 +209,10 @@ public class SOAPService extends SimpleTargetedChain
                                                           nextElement();
                         QName badQName = new QName(badHeader.getNamespaceURI(),
                                                    badHeader.getName());
+
+                        if(whatWasMissUnderstood.length() != 0) whatWasMissUnderstood.append(", ");
+                        whatWasMissUnderstood.append( badQName.toString() );                           
+
                         SOAPHeaderElement newHeader = new
                             SOAPHeaderElement(Constants.URI_SOAP12_FAULT,
                                               Constants.ELEM_MISUNDERSTOOD);
@@ -220,7 +225,7 @@ public class SOAPService extends SimpleTargetedChain
                 }
 
                 throw new AxisFault(Constants.FAULT_MUSTUNDERSTAND,
-                                    Messages.getMessage("noUnderstand00"),
+                                    Messages.getMessage("noUnderstand00", whatWasMissUnderstood.toString()),
                                     null, null);
             }
         }
