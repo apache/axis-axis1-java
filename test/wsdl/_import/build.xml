@@ -48,7 +48,7 @@ Copyright:
     <delete dir="${build.dir}/work/${componentName}"/>
 </target>
 
-<target name="copy" depends="setenv,clean">
+<target name="copy" depends="setenv">
     <copy todir="${build.dir}/classes" overwrite="yes">
       <fileset dir="${test.dir}/wsdl/_import">
         <include name="NStoPkg.properties"/>

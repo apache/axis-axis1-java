@@ -49,11 +49,11 @@ Copyright:
     <delete dir="${build.dir}/work/${componentName}"/>
 </target>
 
-<target name="copy" depends="setenv,clean">
+<target name="copy" depends="setenv">
   <echo message="Compiling test.utils"/>
-  <ant inheritAll="true" antfile="${axis.home}/buildTest.xml" target="utils"/>
+  <ant inheritAll="true" antfile="${axis.home}/test/utils/build.xml" target="compile"/>
   <echo message="Compiling test.RPCDispatch"/>
-  <ant inheritAll="true" antfile="${axis.home}/buildTest.xml" target="RPCDispatch"/>
+  <ant inheritAll="true" antfile="${axis.home}/test/RPCDispatch/build.xml" target="compile"/>
 </target>
 
 <target name="compile" depends="copy">
