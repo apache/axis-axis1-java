@@ -88,8 +88,8 @@ Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
   </mime-mapping>
 
   <welcome-file-list id="WelcomeFileList">
-    <welcome-file>index.html</welcome-file>
     <welcome-file>index.jsp</welcome-file>
+    <welcome-file>index.html</welcome-file>
     <welcome-file>index.jws</welcome-file>
   </welcome-file-list>
 
