@@ -59,7 +59,8 @@ import java.lang.reflect.Array;
 import java.util.Hashtable;
 
 import org.apache.axis.AxisFault ;
-import org.apache.axis.client.HTTPCall ;
+import org.apache.axis.client.ServiceClient ;
+import org.apache.axis.client.http.HTTPClient ;
 import org.apache.axis.encoding.BeanSerializer;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.encoding.ServiceDescription;
@@ -76,13 +77,13 @@ import org.apache.axis.utils.QName ;
  */
 public class TestClient {
 
-    private static HTTPCall call;
+    private static ServiceClient call;
     private static TypeMappingRegistry map = new SOAPTypeMappingRegistry();
     private static boolean addMethodToAction = false;
     private static String soapAction = "http://soapinterop.org/";
 
     /**
-     * 
+     *
      */
     private static boolean equals(Object obj1, Object obj2) {
        if (obj1 == null) return (obj2 == null);
@@ -119,7 +120,7 @@ public class TestClient {
             if (addMethodToAction) {
                 action += method;
             }
-            call.setAction(action);
+            call.set(HTTPClient.ACTION, action);
 
             // issue the request
             Object gotBack = call.invoke(
@@ -153,7 +154,9 @@ public class TestClient {
         if (action != null)
             soapAction = action;
         
-        call = new HTTPCall(opts.getURL(), "http://soapinterop.org/");
+        call = new ServiceClient(new HTTPClient());
+        call.set(HTTPClient.URL, opts.getURL());
+        call.set(HTTPClient.ACTION, "http://soapinterop.org/");
 
         // register the SOAPStruct class
         QName ssqn = new QName("http://soapinterop.org/xsd", "SOAPStruct");

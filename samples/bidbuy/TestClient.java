@@ -60,7 +60,8 @@ import java.util.Hashtable;
 import java.util.Date;
 
 import org.apache.axis.AxisFault ;
-import org.apache.axis.client.HTTPCall ;
+import org.apache.axis.client.ServiceClient ;
+import org.apache.axis.client.http.HTTPClient ;
 import org.apache.axis.encoding.BeanSerializer;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.encoding.ServiceDescription;
@@ -78,7 +79,7 @@ import org.apache.axis.utils.Debug ;
  */
 public class TestClient {
 
-    private static HTTPCall call;
+    private static ServiceClient call;
     private static TypeMappingRegistry map = new SOAPTypeMappingRegistry();
 
     /**
@@ -102,10 +103,12 @@ public class TestClient {
         // set up the call object
         Options opts = new Options(args);
         Debug.setDebugLevel( opts.isFlagSet( 'd' ) );
-        call = new HTTPCall(opts.getURL(), "http://www.soapinterop.org/Buy");
+        call = new ServiceClient(new HTTPClient());
+        call.set(HTTPClient.URL, opts.getURL());
+        call.set(HTTPClient.ACTION, "http://www.soapinterop.org/Buy");
 
         // register the PurchaseOrder class
-        QName poqn = new QName("http://www.soapinterop.org/Bid", 
+        QName poqn = new QName("http://www.soapinterop.org/Bid",
                                "PurchaseOrder");
         Class cls = PurchaseOrder.class;
         call.addSerializer(cls, poqn, new BeanSerializer(cls));
@@ -144,7 +147,7 @@ public class TestClient {
 
             // issue the request
             String receipt = (String) call.invoke(
-                "http://www.soapinterop.org/Bid", "Buy", 
+                "http://www.soapinterop.org/Bid", "Buy",
                 new Object[] {new RPCParam("PO", po)} );
 
             System.out.println(receipt);

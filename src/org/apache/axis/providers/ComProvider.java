@@ -1,8 +1,8 @@
-package org.apache.axis.handlers.providers;
+package org.apache.axis.providers;
 
 import org.apache.axis.MessageContext;
 
-public class ComProvider extends BasicProvider { 
+public class ComProvider extends BasicProvider {
     
     public static final String OPTION_PROGID = "ProgID";
     public static final String OPTION_CLSID = "CLSID";

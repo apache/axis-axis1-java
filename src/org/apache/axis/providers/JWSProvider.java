@@ -1,8 +1,8 @@
-package org.apache.axis.handlers.providers;
+package org.apache.axis.providers;
 
 import org.apache.axis.MessageContext;
 
-public class JWSProvider extends BasicProvider { 
+public class JWSProvider extends BasicProvider {
     
     public void invoke(MessageContext msgContext) {
     }
