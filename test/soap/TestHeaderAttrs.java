@@ -18,7 +18,7 @@ import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.message.SOAPHeader;
+import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.server.AxisServer;
 
 import org.xml.sax.SAXException;
@@ -49,10 +49,12 @@ public class TestHeaderAttrs extends TestCase {
     
     static final String ACTOR = "http://some.actor/";
     
-    static SOAPHeader goodHeader = new SOAPHeader(GOOD_HEADER_NS, 
-                                                  GOOD_HEADER_NAME);
-    static SOAPHeader badHeader = new SOAPHeader(BAD_HEADER_NS, 
-                                                 BAD_HEADER_NAME);
+    static SOAPHeaderElement goodHeader = 
+                                       new SOAPHeaderElement(GOOD_HEADER_NS, 
+                                                             GOOD_HEADER_NAME);
+    static SOAPHeaderElement badHeader = 
+                                       new SOAPHeaderElement(BAD_HEADER_NS, 
+                                                             BAD_HEADER_NAME);
 
     private SimpleProvider provider = new SimpleProvider();
     private AxisServer engine = new AxisServer(provider);
@@ -169,7 +171,8 @@ public class TestHeaderAttrs extends TestCase {
      * Call the service with a random string.  Returns true if the result
      * is the length of the string (doubled if the doubled arg is true).
      */ 
-    public boolean runTest(SOAPHeader header, boolean doubled) throws Exception
+    public boolean runTest(SOAPHeaderElement header,
+                           boolean doubled) throws Exception
     {
         Call call = new Call(new Service());
         call.setTransport(localTransport);

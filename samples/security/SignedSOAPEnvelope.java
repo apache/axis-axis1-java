@@ -64,7 +64,7 @@ import org.apache.axis.encoding.DeserializationContextImpl;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.SerializationContextImpl;
 import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.message.SOAPHeader;
+import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Mapping;
 import org.apache.axis.utils.XMLUtils;
@@ -114,7 +114,10 @@ public class SignedSOAPEnvelope extends SOAPEnvelope {
             env.addAttribute(Constants.URI_SOAP_ENV, "actor", "some-uri");
             env.addAttribute(Constants.URI_SOAP_ENV, "mustUnderstand", "1");
 
-            SOAPHeader header = new SOAPHeader(XMLUtils.StringToElement(SOAPSECNS, "Signature", ""));
+            SOAPHeaderElement header = 
+                new SOAPHeaderElement(XMLUtils.StringToElement(SOAPSECNS,
+                                                               "Signature",
+                                                               ""));
             env.addHeader(header);
 
             Document doc = getSOAPEnvelopeAsDocument(env, msgContext);

@@ -64,33 +64,35 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.rpc.namespace.QName;
 
-/** A simple header abstraction.  Extends MessageElement with header-specific
- * stuff like mustUnderstand, actor, and a 'processed' flag.
+/** 
+ * A simple header element abstraction.  Extends MessageElement with
+ * header-specific stuff like mustUnderstand, actor, and a 'processed' flag.
  *
  * @author Glen Daniels (gdaniels@macromedia.com)
- *
+ * @author Glyn Normington (glyn@apache.org)
  */
-public class SOAPHeader extends MessageElement {
+public class SOAPHeaderElement extends MessageElement
+    implements javax.xml.soap.SOAPHeaderElement {
     protected boolean   processed = false;
 
     protected String    actor;
     protected boolean   mustUnderstand = false;
 
-    public SOAPHeader() {
+    public SOAPHeaderElement() {
         super();
     }
 
-    public SOAPHeader(String namespace, String localPart)
+    public SOAPHeaderElement(String namespace, String localPart)
     {
         super(namespace, localPart);
     }
 
-    public SOAPHeader(String namespace, String localPart, Object value)
+    public SOAPHeaderElement(String namespace, String localPart, Object value)
     {
         super(namespace, localPart, value);
     }
 
-    public SOAPHeader(Element elem)
+    public SOAPHeaderElement(Element elem)
     {
         super(elem);
         String val = elem.getAttributeNS(Constants.URI_SOAP_ENV,
@@ -101,7 +103,7 @@ public class SOAPHeader extends MessageElement {
                                     Constants.ATTR_ACTOR);
     }
 
-    public SOAPHeader(String namespace, String localPart, String prefix,
+    public SOAPHeaderElement(String namespace, String localPart, String prefix,
                       Attributes attributes, DeserializationContext context) {
         super(namespace, localPart, prefix, attributes, context);
 
@@ -119,7 +121,7 @@ public class SOAPHeader extends MessageElement {
         processed = false;
     }
 
-    public boolean isMustUnderstand() { return( mustUnderstand ); }
+    public boolean getMustUnderstand() { return( mustUnderstand ); }
     public void setMustUnderstand(boolean b) {
         mustUnderstand = b ;
         String val = b ? "1" : "0";

@@ -179,7 +179,7 @@ public class SOAPEnvelope extends MessageElement
         Vector results = new Vector();
         Iterator i = headers.iterator();
         while (i.hasNext()) {
-            SOAPHeader header = (SOAPHeader)i.next();
+            SOAPHeaderElement header = (SOAPHeaderElement)i.next();
             // Always process NEXT's, and then anything else in our list
             if (Constants.ACTOR_NEXT.equals(header.getActor()) || 
                 (actors != null && actors.contains(header.getActor()))) {
@@ -190,7 +190,7 @@ public class SOAPEnvelope extends MessageElement
         return results;
     }
     
-    public void addHeader(SOAPHeader header)
+    public void addHeader(SOAPHeaderElement header)
     {
         if (log.isDebugEnabled())
             log.debug(JavaUtils.getMessage("addHeader00"));
@@ -209,7 +209,7 @@ public class SOAPEnvelope extends MessageElement
         _isDirty = true;
     }
     
-    public void removeHeader(SOAPHeader header)
+    public void removeHeader(SOAPHeaderElement header)
     {
         if (log.isDebugEnabled())
             log.debug(JavaUtils.getMessage("removeHeader00"));
@@ -253,7 +253,8 @@ public class SOAPEnvelope extends MessageElement
      * Get a header by name (always respecting the currently in-scope
      * actors list)
      */ 
-    public SOAPHeader getHeaderByName(String namespace, String localPart)
+    public SOAPHeaderElement getHeaderByName(String namespace,
+                                             String localPart)
         throws AxisFault
     {
         return getHeaderByName(namespace, localPart, false);
@@ -263,13 +264,14 @@ public class SOAPEnvelope extends MessageElement
      * Get a header by name, filtering for headers targeted at this
      * engine depending on the accessAllHeaders parameter.
      */ 
-    public SOAPHeader getHeaderByName(String namespace, String localPart,
-                                      boolean accessAllHeaders)
+    public SOAPHeaderElement getHeaderByName(String namespace,
+                                             String localPart,
+                                             boolean accessAllHeaders)
         throws AxisFault
     {
-        SOAPHeader header = (SOAPHeader)findElement(headers,
-                                                    namespace,
-                                                    localPart);
+        SOAPHeaderElement header = (SOAPHeaderElement)findElement(headers,
+                                                                  namespace,
+                                                                  localPart);
 
         // If we're operating within an AxisEngine, respect its actor list
         // unless told otherwise
@@ -346,9 +348,9 @@ public class SOAPEnvelope extends MessageElement
          */
         Vector v = new Vector();
         Enumeration e = headers.elements();
-        SOAPHeader header;
+        SOAPHeaderElement header;
         while (e.hasMoreElements()) {
-            header = (SOAPHeader)e.nextElement();
+            header = (SOAPHeaderElement)e.nextElement();
             if (header.getNamespaceURI().equals(namespace) &&
                 header.getName().equals(localPart)) {
 
@@ -409,7 +411,8 @@ public class SOAPEnvelope extends MessageElement
                                            Constants.ELEM_HEADER), null);
             enum = headers.elements();
             while (enum.hasMoreElements()) {
-                SOAPHeader header = (SOAPHeader)enum.nextElement();
+                SOAPHeaderElement header = (SOAPHeaderElement)enum.
+                                               nextElement();
                 header.output(context);
                 // Output this header element
             }
