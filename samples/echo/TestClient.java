@@ -113,9 +113,9 @@ public abstract class TestClient {
        }
 
        if (obj1 instanceof List)
-         obj1 = JavaUtils.convert(obj1, new Object[]{}.getClass());
+         obj1 = JavaUtils.convert(obj1, (new Object[]{}).getClass());
        if (obj2 instanceof List)
-         obj2 = JavaUtils.convert(obj2, new Object[]{}.getClass());
+         obj2 = JavaUtils.convert(obj2, (new Object[]{}).getClass());
 
        if (!obj2.getClass().isArray()) return false;
        if (!obj1.getClass().isArray()) return false;
@@ -235,7 +235,7 @@ public abstract class TestClient {
         // set up tests so that the results are sent to System.out
         TestClient client = new TestClient() {
             public void verify(String method, Object sent, Object gotBack) {
-                if (equals(sent, gotBack)) {
+                if (this.equals(sent, gotBack)) {
                     System.out.println(method + "\t OK");
                 } else {
                     System.out.println(method + "\t Fail: " + gotBack);
