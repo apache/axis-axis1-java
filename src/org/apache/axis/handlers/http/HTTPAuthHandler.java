@@ -59,6 +59,7 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.encoding.Base64;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.transport.http.HTTPConstants;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
 
 /** An <code>HTTPAuthHandler</code> simply sets the context's username
@@ -74,7 +75,7 @@ public class HTTPAuthHandler extends BasicHandler
 
     public void invoke(MessageContext msgContext) throws AxisFault
     {
-        category.debug("Enter: HTTPAuthHandler::invoke" );
+        category.debug(JavaUtils.getMessage("enter00", "HTTPAuthHandler::invoke") );
         
         /* Process the Basic Auth stuff in the headers */
         /***********************************************/
@@ -89,23 +90,23 @@ public class HTTPAuthHandler extends BasicHandler
             if ( i == -1 ) user = tmp ;
             else           user = tmp.substring( 0, i);
             msgContext.setProperty( MessageContext.USERID, user );
-            category.debug( "HTTP userid: " + user );
+            category.debug( JavaUtils.getMessage("httpUser00", user) );
             if ( i != -1 )  {
                 String pwd = tmp.substring(i+1);
                 if ( pwd != null && pwd.equals("") ) pwd = null ;
                 if ( pwd != null ) {
                     msgContext.setProperty( MessageContext.PASSWORD, pwd );
-                    category.debug( "HTTP passwd: " + pwd );
+                    category.debug( JavaUtils.getMessage("httpPassword00", pwd) );
                 }
             }
         }
 
-        category.debug("Exit : HTTPAuthHandler::invoke" );
+        category.debug(JavaUtils.getMessage("exit00", "HTTPAuthHandler::invoke") );
     }
 
     public void undo(MessageContext msgContext) 
     {
-        category.debug("Enter: HTTPActionHandler::undo" );
-        category.debug("Exit: HTTPActionHandler::undo" );
+        category.debug(JavaUtils.getMessage("enter00", "HTTPActionHandler::undo") );
+        category.debug(JavaUtils.getMessage("exit00", "HTTPActionHandler::undo") );
     }
 }

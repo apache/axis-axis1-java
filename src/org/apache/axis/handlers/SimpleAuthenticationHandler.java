@@ -60,6 +60,7 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.security.AuthenticatedUser;
 import org.apache.axis.security.SecurityProvider;
 import org.apache.axis.security.simple.SimpleSecurityProvider;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
 
 /**
@@ -81,7 +82,7 @@ public class SimpleAuthenticationHandler extends BasicHandler {
      * Authenticate the user and password from the msgContext
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
-        category.debug("Enter: SimpleAuthenticationHandler::invoke" );
+        category.debug(JavaUtils.getMessage("enter00", "SimpleAuthenticationHandler::invoke") );
 
         SecurityProvider provider = (SecurityProvider)msgContext.getProperty("securityProvider");
         if (provider == null) {
@@ -91,38 +92,38 @@ public class SimpleAuthenticationHandler extends BasicHandler {
 
         if (provider != null) {
             String  userID = (String) msgContext.getProperty( MessageContext.USERID );
-            category.debug( "User: " + userID );
+            category.debug( JavaUtils.getMessage("user00", userID) );
 
             // in order to authenticate, the user must exist
             if ( userID == null || userID.equals(""))
                 throw new AxisFault( "Server.Unauthenticated",
-                    "User '" + userID + "' not authenticated (unknown user)",
+                    JavaUtils.getMessage("cantAuth00", userID),
                     null, null );
 
             String passwd = (String) msgContext.getProperty( MessageContext.PASSWORD );
-            category.debug( "Pass: " + passwd );
+            category.debug( JavaUtils.getMessage("password00", passwd) );
 
             AuthenticatedUser authUser = provider.authenticate(msgContext);
 
             // if a password is defined, then it must match
             if ( authUser == null)
                 throw new AxisFault( "Server.Unauthenticated",
-                    "User '" + userID + "' not authenticated",
+                    JavaUtils.getMessage("cantAuth01", userID),
                     null, null );
 
-            category.debug( "User '" + userID + "' authenticated to server" );
+            category.debug( JavaUtils.getMessage("auth00", userID) );
 
             msgContext.setProperty(MessageContext.AUTHUSER, authUser);
         }
 
-        category.debug("Exit: SimpleAuthenticationHandler::invoke" );
+        category.debug(JavaUtils.getMessage("exit00", "SimpleAuthenticationHandler::invoke") );
     }
 
     /**
      * Nothing to undo
      */
     public void undo(MessageContext msgContext) {
-        category.debug("Enter: SimpleAuthenticationHandler::undo" );
-        category.debug("Exit: SimpleAuthenticationHandler::undo" );
+        category.debug(JavaUtils.getMessage("enter00", "SimpleAuthenticationHandler::undo") );
+        category.debug(JavaUtils.getMessage("exit00", "SimpleAuthenticationHandler::undo") );
     }
 };

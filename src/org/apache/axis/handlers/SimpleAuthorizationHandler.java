@@ -60,6 +60,7 @@ import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
 import org.apache.axis.security.AuthenticatedUser;
 import org.apache.axis.security.SecurityProvider;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
 
 import java.util.StringTokenizer;
@@ -84,7 +85,7 @@ public class SimpleAuthorizationHandler extends BasicHandler {
      * Authorize the user and targetService from the msgContext
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
-        category.debug("Enter: SimpleAuthorizationHandler::invoke" );
+        category.debug(JavaUtils.getMessage("enter00", "SimpleAuthorizationHandler::invoke") );
 
         boolean allowByDefault = false;
         String optVal = (String)getOption("allowByDefault");
@@ -96,48 +97,47 @@ public class SimpleAuthorizationHandler extends BasicHandler {
 
         if (user == null)
             throw new AxisFault("Server.NoUser",
-                    "Need to specify a user for authorization!", null, null);
+                    JavaUtils.getMessage("needUser00"), null, null);
 
         String userID = user.getName();
         Handler serviceHandler = msgContext.getServiceHandler();
 
         if (serviceHandler == null)
-            throw new AxisFault("No target service to authorize for!");
+            throw new AxisFault(JavaUtils.getMessage("needService00"));
 
         String serviceName = serviceHandler.getName();
 
         String allowedRoles = (String)serviceHandler.getOption("allowedRoles");
         if (allowedRoles == null) {
-            String action = allowByDefault ? "allowing." : "disallowing.";
-            category.info("No roles specified for target service, " + action);
-            if (!allowByDefault) {
+            if (allowByDefault) {
+                category.info(JavaUtils.getMessage( "noRoles00"));
+            }
+            else {
+                category.info(JavaUtils.getMessage( "noRoles01"));
                 throw new AxisFault( "Server.Unauthorized",
-                    "User '" + userID + "' not authorized to '" +
-                    serviceName + "'",
+                    JavaUtils.getMessage("notAuth00", userID, serviceName),
                     null, null );
             }
-            category.debug("Exit: SimpleAuthorizationHandler::invoke" );
+            category.debug(JavaUtils.getMessage("exit00", "SimpleAuthorizationHandler::invoke") );
             return;
         }
 
         SecurityProvider provider = (SecurityProvider)msgContext.getProperty("securityProvider");
         if (provider == null)
-            throw new AxisFault("No security provider in MessageContext!");
+            throw new AxisFault(JavaUtils.getMessage("noSecurity00"));
 
         StringTokenizer st = new StringTokenizer(allowedRoles, ",");
         while (st.hasMoreTokens()) {
             String thisRole = st.nextToken();
             if (provider.userMatches(user, thisRole)) {
-                category.info("User '" + userID + "' authorized to: "
-                              + serviceName);
-                category.debug("Exit: SimpleAuthorizationHandler::invoke" );
+                category.info(JavaUtils.getMessage("auth01", userID, serviceName));
+                category.debug(JavaUtils.getMessage("exit00", "SimpleAuthorizationHandler::invoke") );
                 return;
             }
         }
 
         throw new AxisFault( "Server.Unauthorized",
-            "User '" + userID + "' not authorized to '" +
-            serviceName + "'",
+            JavaUtils.getMessage("cantAuth02", userID, serviceName),
             null, null );
     }
 
@@ -145,7 +145,7 @@ public class SimpleAuthorizationHandler extends BasicHandler {
      * Nothing to undo
      */
     public void undo(MessageContext msgContext) {
-        category.debug("Enter: SimpleAuthorizationHandler::undo" );
-        category.debug("Exit: SimpleAuthorizationHandler::undo" );
+        category.debug(JavaUtils.getMessage("enter00", "SimpleAuthorizationHandler::undo") );
+        category.debug(JavaUtils.getMessage("exit00", "SimpleAuthorizationHandler::undo") );
     }
 };

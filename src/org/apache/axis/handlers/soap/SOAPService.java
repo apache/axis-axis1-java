@@ -67,6 +67,7 @@ import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeader;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -152,26 +153,25 @@ public class SOAPService extends SimpleTargetedChain
     
     public void invoke(MessageContext msgContext) throws AxisFault
     {
-        category.debug("Enter: SOAPService::invoke" );
+        category.debug(JavaUtils.getMessage("enter00", "SOAPService::invoke") );
         
         if (!availableFromTransport(msgContext.getTransportName()))
             throw new AxisFault("Server.NotAvailable",
-                "This service is not available at this endpoint (" +
-                msgContext.getTransportName() + ").",
+                JavaUtils.getMessage("noService02", msgContext.getTransportName()),
                 null, null);
         
         msgContext.setPastPivot(false);
 
         Handler h = getRequestHandler() ;
         if ( h != null ) {
-            category.debug( "Invoking request chain" );
+            category.debug( JavaUtils.getMessage("invokeRequest00") );
             h.invoke(msgContext);
         } else {
-            category.debug( "No request chain" );
+            category.debug( JavaUtils.getMessage("noRequest01") );
         }
 
         // Do SOAP semantics here
-        category.debug( "Doing SOAP semantic checks...");
+        category.debug( JavaUtils.getMessage("semanticCheck00"));
         
         // 1. Check mustUnderstands
         SOAPEnvelope env = msgContext.getRequestMessage().getSOAPPart().getAsSOAPEnvelope();
@@ -217,16 +217,16 @@ public class SOAPService extends SimpleTargetedChain
             }
             
             throw new AxisFault(Constants.FAULT_MUSTUNDERSTAND,
-                        "Didn't understand MustUnderstand header(s)!",
+                        JavaUtils.getMessage("noUnderstand00"),
                         null, null);
         }
 
         h = getPivotHandler();
         if ( h != null ) {
-            category.debug( "Invoking service/pivot" );
+            category.debug( JavaUtils.getMessage("invokeService00") );
             h.invoke(msgContext);
         } else {
-            category.debug( "No service/pivot" );
+            category.debug( JavaUtils.getMessage("noService03") );
         }
         
         // OK, we're past the pivot, so let the MessageContext know.
@@ -234,23 +234,23 @@ public class SOAPService extends SimpleTargetedChain
         
         h = getResponseHandler();
         if ( h != null ) {
-            category.debug( "Invoking response chain" );
+            category.debug( JavaUtils.getMessage("invokeResponse00") );
             h.invoke(msgContext);
         } else {
-            category.debug( "No response chain" );
+            category.debug( JavaUtils.getMessage("noResponse00") );
         }
 
-        category.debug("Exit : SOAPService::invoke" );
+        category.debug(JavaUtils.getMessage("exit00", "SOAPService::invoke") );
     }
 
     public void undo(MessageContext msgContext)
     {
-        category.debug("Enter: SOAPService::undo" );
-        category.debug("Exit: SOAPService::undo" );
+        category.debug(JavaUtils.getMessage("enter00", "SOAPService::undo") );
+        category.debug(JavaUtils.getMessage("exit00", "SOAPService::undo") );
     }
 
     public Element getDeploymentData(Document doc) {
-      category.debug("Enter: SOAPService::getDeploymentData" );
+      category.debug(JavaUtils.getMessage("enter00", "SOAPService::getDeploymentData") );
 
       Element  root = doc.createElementNS("", "service");
 
@@ -262,7 +262,7 @@ public class SOAPService extends SimpleTargetedChain
         root.appendChild(elem);
       }
       
-      category.debug("Exit: SOAPService::getDeploymentData" );
+      category.debug(JavaUtils.getMessage("exit00", "SOAPService::getDeploymentData") );
       return( root );
     }
 
@@ -315,7 +315,8 @@ public class SOAPService extends SimpleTargetedChain
      */
     public void enableTransport(String transportName)
     {
-        category.debug( "SOAPService(" + this + ") enabling transport " + transportName);
+        category.debug(JavaUtils.getMessage(
+                "enableTransport00", "" + this, transportName));
         if (validTransports == null)
             validTransports = new Vector();
         validTransports.addElement(transportName);

@@ -59,6 +59,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
 
 /**
@@ -70,7 +71,7 @@ public class EchoHandler extends BasicHandler {
             Category.getInstance(EchoHandler.class.getName());
 
     public void invoke(MessageContext msgContext) throws AxisFault {
-        category.debug("Enter: EchoHandler::invoke" );
+        category.debug(JavaUtils.getMessage("enter00", "EchoHandler::invoke") );
         try {
             Message  msg = msgContext.getRequestMessage();
             SOAPEnvelope env = (SOAPEnvelope) msg.getSOAPPart().getAsSOAPEnvelope();
@@ -80,12 +81,12 @@ public class EchoHandler extends BasicHandler {
             category.error( e );
             throw new AxisFault( e );
         }
-        category.debug("Exit: EchoHandler::invoke" );
+        category.debug(JavaUtils.getMessage("exit00", "EchoHandler::invoke") );
     }
 
     public void undo(MessageContext msgContext) {
-        category.debug("Enter: EchoHandler::undo" );
-        category.debug("Exit: EchoHandler::undo" );
+        category.debug(JavaUtils.getMessage("enter00", "EchoHandler::undo") );
+        category.debug(JavaUtils.getMessage("exit00", "EchoHandler::undo") );
     }
 
 };

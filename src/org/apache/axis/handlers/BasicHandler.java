@@ -57,6 +57,7 @@ package org.apache.axis.handlers;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -149,7 +150,7 @@ public abstract class BasicHandler implements Handler {
     }
 
     public Element getDeploymentData(Document doc) {
-        category.debug("Enter: BasicHandler::getDeploymentData" );
+        category.debug(JavaUtils.getMessage("enter00", "BasicHandler::getDeploymentData") );
 
         Element  root = doc.createElementNS("", "handler");
 
@@ -166,7 +167,7 @@ public abstract class BasicHandler implements Handler {
                 root.appendChild( e1 );
             }
         }
-        category.debug("Exit: BasicHandler::getDeploymentData" );
+        category.debug(JavaUtils.getMessage("exit00", "BasicHandler::getDeploymentData") );
         return( root );
     }
 

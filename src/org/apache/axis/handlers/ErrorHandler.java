@@ -57,6 +57,7 @@ package org.apache.axis.handlers ;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.MessageContext;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
 
 /**
@@ -69,13 +70,13 @@ public class ErrorHandler extends BasicHandler {
             Category.getInstance(ErrorHandler.class.getName());
 
     public void invoke(MessageContext msgContext) throws AxisFault {
-        category.debug("Enter: ErrorHandler::invoke" );
+        category.debug(JavaUtils.getMessage("enter00", "ErrorHandler::invoke") );
         throw new AxisFault( "Server.Whatever", "ERROR", null, null );
     }
 
     public void undo(MessageContext msgContext) {
-        category.debug("Enter: ErrorHandler::undo" );
-        category.debug("Exit: ErrorHandler::undo" );
+        category.debug(JavaUtils.getMessage("enter00", "ErrorHandler::undo") );
+        category.debug(JavaUtils.getMessage("exit00", "ErrorHandler::undo") );
     }
 
 };

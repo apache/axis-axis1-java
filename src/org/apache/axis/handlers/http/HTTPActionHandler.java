@@ -58,6 +58,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.MessageContext;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.transport.http.HTTPConstants;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
 
 /** An <code>HTTPActionHandler</code> simply sets the context's TargetService
@@ -78,7 +79,7 @@ public class HTTPActionHandler extends BasicHandler
 
     public void invoke(MessageContext msgContext) throws AxisFault
     {
-        category.debug("Enter: HTTPActionHandler::invoke" );
+        category.debug(JavaUtils.getMessage("enter00", "HTTPActionHandler::invoke") );
 
         /** If there's already a targetService then just return.
         */
@@ -93,7 +94,7 @@ public class HTTPActionHandler extends BasicHandler
             */
             if (action == null) {
                 throw new AxisFault( "Server.NoHTTPSOAPAction",
-                    "No HTTP SOAPAction property in context",
+                    JavaUtils.getMessage("noSOAPAction00"),
                     null, null );
             }
             
@@ -115,12 +116,12 @@ public class HTTPActionHandler extends BasicHandler
             }
         }
 
-        category.debug("Exit : HTTPActionHandler::invoke" );
+        category.debug(JavaUtils.getMessage("exit00", "HTTPActionHandler::invoke") );
     }
 
     public void undo(MessageContext msgContext)
     {
-        category.debug("Enter: HTTPActionHandler::undo" );
-        category.debug("Exit: HTTPActionHandler::undo" );
+        category.debug(JavaUtils.getMessage("enter00", "HTTPActionHandler::undo") );
+        category.debug(JavaUtils.getMessage("exit00", "HTTPActionHandler::undo") );
     }
 }

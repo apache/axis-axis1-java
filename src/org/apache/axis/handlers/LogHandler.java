@@ -58,6 +58,7 @@ package org.apache.axis.handlers ;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
 
 import java.io.FileWriter;
@@ -74,7 +75,7 @@ public class LogHandler extends BasicHandler {
     long start = 0;
 
     public void invoke(MessageContext msgContext) throws AxisFault {
-        category.debug("Enter: LogHandler::invoke" );
+        category.debug(JavaUtils.getMessage("enter00", "LogHandler::invoke") );
         if (msgContext.getPastPivot() == false) {
            start = System.currentTimeMillis();
         } else {
@@ -86,9 +87,12 @@ public class LogHandler extends BasicHandler {
                 Message outMsg = msgContext.getResponseMessage();
 
                 pw.println( "=======================================================" );
-                pw.println( "= Elapsed: " + (System.currentTimeMillis() - start) + " milliseconds");
-                pw.println( "= InMsg: " + (inMsg == null ? "null" : inMsg.getSOAPPart().getAsString()));
-                pw.println( "= OutMsg: " + (outMsg == null ? "null" : outMsg.getSOAPPart().getAsString()));
+                pw.println( "= " + JavaUtils.getMessage("elapsed00",
+                       "" + (System.currentTimeMillis() - start)));
+                pw.println( "= " + JavaUtils.getMessage("inMsg00",
+                       (inMsg == null ? "null" : inMsg.getSOAPPart().getAsString())));
+                pw.println( "= " + JavaUtils.getMessage("outMsg00",
+                       (outMsg == null ? "null" : outMsg.getSOAPPart().getAsString())));
                 pw.println( "=======================================================" );
 
                 pw.close();
@@ -97,21 +101,21 @@ public class LogHandler extends BasicHandler {
                 throw new AxisFault( e );
             }
         }
-        category.debug("Exit: LogHandler::invoke" );
+        category.debug(JavaUtils.getMessage("exit00", "LogHandler::invoke") );
     }
 
     public void undo(MessageContext msgContext) {
-        category.debug("Exit: LogHandler::undo" );
+        category.debug(JavaUtils.getMessage("enter00", "LogHandler::undo") );
         try {
             FileWriter  fw   = new FileWriter( "axis.log", true );
             PrintWriter pw   = new PrintWriter( fw );
             pw.println( "=====================" );
-            pw.println( "= Fault occurred " );
+            pw.println( "= " + JavaUtils.getMessage("fault00") );
             pw.println( "=====================" );
             pw.close();
         } catch( Exception e ) {
             category.error( e );
         }
-        category.debug("Exit: LogHandler::undo" );
+        category.debug(JavaUtils.getMessage("exit00", "LogHandler::undo") );
     }
 };

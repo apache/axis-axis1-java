@@ -61,6 +61,7 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.providers.java.RPCProvider;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.AxisClassLoader;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.log4j.Category;
 import org.w3c.dom.Document;
@@ -109,7 +110,7 @@ public class JWSProcessor extends BasicHandler
             throws AxisFault
     {
         if (category.isDebugEnabled())
-            category.debug("Enter: JWSProcessor::invoke");
+            category.debug(JavaUtils.getMessage("enter00", "JWSProcessor::invoke"));
         try {
             /* Grab the *.jws filename from the context - should have been */
             /* placed there by another handler (ie. HTTPActionHandler)     */
@@ -152,8 +153,8 @@ public class JWSProcessor extends BasicHandler
                 /* java file then recompile the java file.                 */
                 /* Start by copying the *.jws file to *.java               */
                 /***********************************************************/
-                category.info("Compiling: " + jwsFile );
-                category.debug("copy " + jwsFile + " " + jFile );
+                category.info(JavaUtils.getMessage("compiling00", jwsFile) );
+                category.debug(JavaUtils.getMessage("copy00", jwsFile, jFile) );
                 FileReader fr = new FileReader( jwsFile );
                 FileWriter fw = new FileWriter( jFile );
                 char[] buf = new char[4096];
@@ -209,7 +210,7 @@ public class JWSProcessor extends BasicHandler
                     root.appendChild( doc.createTextNode( sbuf.toString() ) );
                     (new File(errFile)).delete();
                     throw new AxisFault( "Server.compileError",
-                        "Error while compiling: " + jFile,
+                         JavaUtils.getMessage("badCompile00", jFile),
                         null, new Element[] { root } );
                 }
                 (new File(errFile)).delete();
@@ -242,13 +243,13 @@ public class JWSProcessor extends BasicHandler
             rpc.cleanup();  // ??
         }
         catch( Exception e ) {
-            category.error( "JWSProcessor fault", e );
+            category.error( "JWSProcessor Exception", e );
             if ( !(e instanceof AxisFault) ) e = new AxisFault( e );
             throw (AxisFault) e ;
         }
 
         if (category.isDebugEnabled())
-            category.debug("Exit : JWSProcessor::invoke" );
+            category.debug(JavaUtils.getMessage("exit00", "JWSProcessor::invoke") );
     }
 
     public void generateWSDL(MessageContext msgContext) throws AxisFault {
@@ -258,7 +259,8 @@ public class JWSProcessor extends BasicHandler
     public void undo(MessageContext msgContext)
     {
         if (category.isDebugEnabled()) {
-            category.debug("Enter/Exit : JWSProcessor::undo");
+            category.debug(JavaUtils.getMessage("enter00", "JWSProcessor::undo"));
+            category.debug(JavaUtils.getMessage("exit00", "JWSProcessor::undo"));
         }
     }
 

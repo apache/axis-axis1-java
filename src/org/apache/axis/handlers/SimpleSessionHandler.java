@@ -63,6 +63,7 @@ import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeader;
 import org.apache.axis.session.SimpleSession;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
 
 import javax.xml.rpc.namespace.QName;
@@ -151,7 +152,7 @@ public class SimpleSessionHandler extends BasicHandler
                 SimpleSession session = (SimpleSession)activeSessions.get(key);
                 if (session.getTimeout() >
                      (curTime - session.getLastAccessTime())) {
-                    category.debug("Session id " + key + " timed out.");
+                    category.debug(JavaUtils.getMessage("timeout00", "" + key));
                     // Hashtable is synchronized, so this is safe.
                     activeSessions.remove(key);
                 }
@@ -200,7 +201,7 @@ public class SimpleSessionHandler extends BasicHandler
             // We have a session ID, so insert the header
             Message msg = context.getRequestMessage();
             if (msg == null)
-                throw new AxisFault("No request message in MessageContext?");
+                throw new AxisFault(JavaUtils.getMessage("noRequest00"));
             
             SOAPEnvelope env = msg.getSOAPPart().getAsSOAPEnvelope();
             SOAPHeader header = new SOAPHeader(SESSION_NS,
@@ -234,7 +235,7 @@ public class SimpleSessionHandler extends BasicHandler
             // Request.  Set up the session if we find the header.
             Message msg = context.getRequestMessage();
             if (msg == null)
-                throw new AxisFault("No request message?");
+                throw new AxisFault(JavaUtils.getMessage("noRequest00"));
             
             SOAPEnvelope env = msg.getSOAPPart().getAsSOAPEnvelope();
             SOAPHeader header = env.getHeaderByName(SESSION_NS,
@@ -283,7 +284,7 @@ public class SimpleSessionHandler extends BasicHandler
     }
 
     public void undo(MessageContext msgContext) {
-        category.debug("Enter: SimpleSessionHandler::undo" );
-        category.debug("Exit: SimpleSessionHandler::undo" );
+        category.debug(JavaUtils.getMessage("enter00", "SimpleSessionHandler::undo") );
+        category.debug(JavaUtils.getMessage("exit00", "SimpleSessionHandler::undo") );
     }
 }
