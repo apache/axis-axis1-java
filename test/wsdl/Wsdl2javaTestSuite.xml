@@ -154,6 +154,7 @@
                output="build/work"
                deployscope="session"
                serverSide="yes"
+               skeletonDeploy="yes"
                noimports="no"
                verbose="no"
                testcase="no">
@@ -477,7 +478,7 @@
     <java2wsdl output="build/work/test/wsdl/interop3/import1.wsdl"
                className= "test.wsdl.interop3.import1.definitions.SoapInteropImport1PortType"
                namespace="http://soapinterop.org/definitions/"
-               implClass="test.wsdl.interop3.import1.SoapInteropImport1BindingSkeleton"
+               implClass="test.wsdl.interop3.import1.SoapInteropImport1BindingImpl"
            location="http://localhost:8080/axis/services/SoapInteropImport1Port">
         <mapping namespace="http://soapinterop.org/" package="test.wsdl.interop3.import1"/>
         <mapping namespace="http://soapinterop.org/definitions/" package="test.wsdl.interop3.import1.definitions"/>
@@ -516,7 +517,7 @@
     <java2wsdl output="build/work/test/wsdl/interop3/import2.wsdl"
                className= "test.wsdl.interop3.import2.definitions.SoapInteropImport2PortType"
                namespace="http://soapinterop.org/definitions/"
-               implClass="test.wsdl.interop3.import2.SoapInteropImport2BindingSkeleton"
+               implClass="test.wsdl.interop3.import2.SoapInteropImport2BindingImpl"
            location="http://localhost:8080/axis/services/SoapInteropImport2Port">
         <mapping namespace="http://soapinterop.org/main/" package="test.wsdl.interop3.import2"/>
         <mapping namespace="http://soapinterop.org/definitions/" package="test.wsdl.interop3.import2.definitions"/>
@@ -599,7 +600,7 @@
     <java2wsdl output="build/work/test/wsdl/interop3/import3.wsdl"
                className= "test.wsdl.interop3.import3.SoapInteropImport3PortType"
                namespace="http://soapinterop.org/definitions/"
-               implClass="test.wsdl.interop3.import3.SoapInteropImport3BindingSkeleton"
+               implClass="test.wsdl.interop3.import3.SoapInteropImport3BindingImpl"
            location="http://localhost:8080/axis/services/SoapInteropImport3Port">
         <mapping namespace="http://soapinterop.org/main2/" package="test.wsdl.interop3.import3"/>
         <mapping namespace="http://soapinterop.org/definitions/" package="test.wsdl.interop3.import3.definitions"/>
