@@ -26,14 +26,14 @@ public class TestDOM extends TestCase {
     private String request =
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
         "<SOAP-ENV:Envelope" +
-        " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"" +
+        " SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\"" +
         " xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"" +
-        " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"" +
-        " SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\n" +
-        "  <SOAP-ENV:Header>x\n" +
-        "    <SOAP-SEC:signature SOAP-ENV:actor=\"null\" SOAP-ENV:mustUnderstand=\"1\"\n" +
-        "     xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"\n" +
-        "     xmlns:SOAP-SEC=\"http://schemas.xmlsoap.org/soap/security/\">\n" +
+        " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"" +
+        " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n" +
+        "  <SOAP-ENV:Header>\n" +
+        "    <SOAP-SEC:signature SOAP-ENV:actor=\"null\" SOAP-ENV:mustUnderstand=\"1\"" +
+        " xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"" +
+        " xmlns:SOAP-SEC=\"http://schemas.xmlsoap.org/soap/security/\">\n" +
         "       <Signature xmlns=\"http://www.w3.org/2000/09/xmldsig#\">\n" +
         "       </Signature>\n" +
         "    </SOAP-SEC:signature>\n" +
@@ -60,9 +60,5 @@ public class TestDOM extends TestCase {
        String result = message.getAsString();
 
        assertEquals(request, result);
-    }
-
-    public static void main(String[] args) throws Exception {
-        new TestDOM("main").testDOM();
     }
 }
