@@ -301,8 +301,14 @@ public class RPCProvider extends JavaProvider {
                 if (heldType != null) {
                     // Create an RPCParam by converting the Holder back into 
                     // the held type.
-                    resBody.addParam (new RPCParam (getParameterName(obj, method, i, mName),
-                                                    JavaUtils.convert(argValues[i], heldType)));
+                    resBody.addParam (new RPCParam (getParameterName(obj,
+                                                                     method,
+                                                                     i, 
+                                                                     mName,
+                                                                     args),
+                                                    JavaUtils.convert(
+                                                            argValues[i], 
+                                                            heldType)));
                 }
             }
             
@@ -321,14 +327,36 @@ public class RPCProvider extends JavaProvider {
      * of the method specified. 
      * (Use i=-1 to access the return name.)
      */
-    protected String getParameterName(Object obj, Method method, int i, String mName) {
+    protected String getParameterName(Object obj,
+                                      Method method,
+                                      int i,
+                                      String mName) {
+        return getParameterName(obj, method, i, mName, null);
+    }
+    
+    /**
+     * Returns or creates the parameter name for the i'th parm of 
+     * of the method specified, using the name in the appropriate
+     * position of the rpcParams Vector if it is supplied.
+     * 
+     * (Use i=-1 to access the return name.)
+     */
+    protected String getParameterName(Object obj,
+                                      Method method,
+                                      int i,
+                                      String mName,
+                                      Vector rpcParams) {
         String parmName = null;
         // Emitter skeletons keep track of the parameter names
         if (obj instanceof org.apache.axis.wsdl.Skeleton) 
             parmName = ((org.apache.axis.wsdl.Skeleton)obj).getParameterName(method.getName(), i);
         if (parmName == null) {
             if (i >= 0) {
-                parmName = mName + "Result" + i;
+                if (rpcParams != null && rpcParams.size() > i) {
+                    parmName = ((RPCParam)rpcParams.get(i)).getName();
+                } else {
+                    parmName = mName + "Result" + i;
+                }
             } else {
                 parmName = mName + "Result";  
             }
