@@ -57,61 +57,44 @@ package samples.security;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.Handler;
-import org.apache.axis.MessageContext;
-import org.apache.axis.handlers.BasicHandler;
-import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
-import org.apache.xml.security.signature.XMLSignature;
-import org.apache.xml.security.utils.Constants;
-import org.apache.xpath.CachedXPathAPI;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-import java.io.FileWriter;
-import java.io.PrintWriter;
-import java.io.FileOutputStream;
-import java.io.PrintWriter;
-import java.util.Date;
 
 public class ClientSigningHandler extends BasicHandler {
     static Category category =
             Category.getInstance(ClientSigningHandler.class.getName());
 
-    public void invoke(MessageContext msgContext) throws AxisFault
-    {
+    public void invoke(MessageContext msgContext) throws AxisFault {
         /** Sign the SOAPEnvelope
          */
         try {
             Handler serviceHandler = msgContext.getServiceHandler();
-            String filename = (String)getOption("keystore");
+            String filename = (String) getOption("keystore");
             if ((filename == null) || (filename.equals("")))
                 throw new AxisFault("Server.NoKeyStoreFile",
-                                 "No KeyStore file configured for the ClientSigningHandler!",
-                                    null, null);
-			Message requestMessage = msgContext.getRequestMessage();
-			SOAPEnvelope unsignedEnvelope = requestMessage.getSOAPEnvelope();
-			// need to correctly compute baseuri
-			SignedSOAPEnvelope signedEnvelope = new SignedSOAPEnvelope(unsignedEnvelope,"http://xml-security",filename);
-			requestMessage = new Message(signedEnvelope);
-			msgContext.setCurrentMessage(requestMessage);
+                        "No KeyStore file configured for the ClientSigningHandler!",
+                        null, null);
+            Message requestMessage = msgContext.getRequestMessage();
+            SOAPEnvelope unsignedEnvelope = requestMessage.getSOAPEnvelope();
+            // need to correctly compute baseuri
+            SignedSOAPEnvelope signedEnvelope = new SignedSOAPEnvelope(msgContext, unsignedEnvelope, "http://xml-security", filename);
+            requestMessage = new Message(signedEnvelope);
+            msgContext.setCurrentMessage(requestMessage);
             // and then pass on to next handler
             //requestMessage.getSOAPPart().writeTo(System.out);
         } catch (Exception e) {
             throw AxisFault.makeFault(e);
-		}
+        }
     }
 
-    public void undo(MessageContext msgContext)
-    {
+    public void undo(MessageContext msgContext) {
         try {
             // probably needs to fault.
-        } catch( Exception e ) {
-            category.error( e );
+        } catch (Exception e) {
+            category.error(e);
         }
     }
 }
