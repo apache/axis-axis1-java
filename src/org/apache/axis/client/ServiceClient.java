@@ -142,15 +142,15 @@ public class ServiceClient {
     /**
      * Basic, no-argument constructor.
      */
-    public ServiceClient () {
-        call = new Call();
+    public ServiceClient () throws Exception {
+        call = new Call(new Service());
     }
 
     /**
      * Construct a ServiceClient with just an AxisEngine.
      */
-    public ServiceClient (AxisEngine engine) {
-        call = new Call();
+    public ServiceClient (AxisEngine engine) throws Exception {
+        call = new Call(new Service());
         call.setEngine(engine);
     }
 
@@ -162,7 +162,7 @@ public class ServiceClient {
      *                    service.
      */
     public ServiceClient(String endpointURL)
-            throws AxisFault
+            throws AxisFault, Exception
     {
         try {
             call = new Call(endpointURL);
@@ -175,7 +175,7 @@ public class ServiceClient {
      * Construct a ServiceClient with a given endpoint URL & engine
      */
     public ServiceClient(String endpointURL, AxisEngine engine)
-            throws AxisFault
+            throws AxisFault, Exception
     {
         try {
             call = new Call(endpointURL);
@@ -192,15 +192,15 @@ public class ServiceClient {
      *                  to set up the MessageContext appropriately for each
      *                  request
      */
-    public ServiceClient (Transport transport) {
-        call = new Call();
+    public ServiceClient (Transport transport) throws Exception {
+        call = new Call(new Service());
         call.setTransport(transport);
     }
 
     /**
      * Construct a ServiceClient with the given Transport & engine.
      */
-    public ServiceClient (Transport transport, AxisEngine engine) {
+    public ServiceClient (Transport transport, AxisEngine engine) throws Exception {
         this(engine);
         call.setTransport(transport);
     }

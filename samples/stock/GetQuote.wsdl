@@ -8,6 +8,10 @@
              xmlns="http://schemas.xmlsoap.org/wsdl/">
 
   <!-- message declns -->
+  <message name="testRequest">
+    <part name="string" type="xsd:string"/>
+  </message>
+
   <message name="GetQuoteRequest">
     <part name="symbol" type="xsd:string"/>
   </message>
@@ -22,6 +26,9 @@
       <input  message="tns:GetQuoteRequest"/>
       <output message="tns:GetQuoteResponse"/>
     </operation>
+    <operation name="test" >
+      <output message="tns:GetQuoteResponse"/>
+    </operation>
   </portType>
 
   <!-- binding declns -->
@@ -30,6 +37,19 @@
                   transport="http://schemas.xmlsoap.org/soap/http"/>
     <operation name="getQuote">
       <soap:operation soapAction="getQuote"/>
+      <input>
+        <soap:body use="encoded" 
+                   namespace="urn:xmltoday-delayed-quotes" 
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" 
+                   namespace="urn:xmltoday-delayed-quotes"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="test">
+      <soap:operation soapAction="test"/>
       <input>
         <soap:body use="encoded" 
                    namespace="urn:xmltoday-delayed-quotes" 

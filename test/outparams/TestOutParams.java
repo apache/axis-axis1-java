@@ -6,6 +6,7 @@ import org.apache.axis.Handler;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.client.Call;
+import org.apache.axis.client.Service;
 import org.apache.axis.encoding.XMLType;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.message.RPCParam;
@@ -37,7 +38,8 @@ public class TestOutParams extends TestCase {
              "</soap:Body>\n" +
         "</soap:Envelope>\n";
 
-    private Call client = new Call();
+    private Service s_service = null ;
+    private Call    client    = null ;
     private AxisServer server = new AxisServer();
 
     public TestOutParams(String name) {
@@ -51,6 +53,8 @@ public class TestOutParams extends TestCase {
     public void testOutputParams() throws Exception {
         // Register the service
         Handler h = new ServiceHandler();
+        s_service = new Service();
+        client  = (Call) s_service.createCall();
 
         // ??? Do we need to register the handler?
 

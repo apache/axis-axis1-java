@@ -70,6 +70,10 @@ import java.net.URL;
  * @author Doug Davis (dug@us.ibm.com)
  */
 public class StockQuoteService {
+  public String test() {
+    return( "Just a test" );
+  }
+
   public float getQuote (String symbol) throws Exception {
     // get a real (delayed by 20min) stockquote from 
     // http://www.xmltoday.com/examples/stockquote/. The IP addr 

@@ -171,6 +171,56 @@ public class GetQuote1 {
       return( ((Float) result).floatValue() );
     }
 
+    /**
+     * This will use the WSDL to prefill all of the info needed to make
+     * the call.  All that's left is filling in the args to invoke().
+     */
+    public float getQuote3(String args[]) throws Exception {
+      Options  opts = new Options( args );
+
+      args = opts.getRemainingArgs();
+
+      if ( args == null ) {
+        System.err.println( "Usage: GetQuote <symbol>" );
+        System.exit(1);
+      }
+
+      /* Define the service QName and port QName */
+      /*******************************************/
+      QName servQN = new QName("urn:xmltoday-delayed-quotes","GetQuoteService");
+      QName portQN = new QName("urn:xmltoday-delayed-quotes","GetQuote");
+
+      /* Now use those QNames as pointers into the WSDL doc */
+      /******************************************************/
+      Service service = new Service( new URL("file:GetQuote.wsdl"), servQN );
+      Call    call    = (Call) service.createCall( portQN, "getQuote" );
+
+      /* Strange - but allows the user to change just certain portions of */
+      /* the URL we're gonna use to invoke the service.  Useful when you  */
+      /* want to run it thru tcpmon (ie. put  -p81 on the cmd line).      */
+      /********************************************************************/
+      opts.setDefaultURL( call.getTargetEndpointAddress() );
+      call.setTargetEndpointAddress( new URL(opts.getURL()) );
+
+      /* Define some service specific properties */
+      /*******************************************/
+      call.setProperty( Transport.USER, opts.getUser() );
+      call.setProperty( Transport.PASSWORD, opts.getPassword() );
+
+      /* Get symbol and invoke the service */
+      /*************************************/
+      Object result = call.invoke( new Object[] { symbol = args[0] } );
+      result = call.invoke( new Object[] { symbol = args[0] } );
+
+      call.setOperation( portQN, "test" );
+      opts.setDefaultURL( call.getTargetEndpointAddress() );
+      call.setTargetEndpointAddress( new URL(opts.getURL()) );
+
+      System.out.println( call.invoke(new Object[]{}) );
+
+      return( ((Float) result).floatValue() );
+    }
+
     public static void main(String args[]) {
       try {
           String    save_args[] = new String[args.length];
@@ -179,19 +229,29 @@ public class GetQuote1 {
 
           /* Call the getQuote() that uses the WDSL */
           /******************************************/
+          System.out.println("Using WSDL");
           System.arraycopy( args, 0, save_args, 0, args.length );
           val = gq.getQuote1( args );
           System.out.println( gq.symbol + ": " + val );
 
           /* Call the getQuote() that does it all manually */
           /*************************************************/
+          System.out.println("Manually");
           System.arraycopy( save_args, 0, args, 0, args.length );
           val = gq.getQuote2( args );
+          System.out.println( gq.symbol + ": " + val );
+
+          /* Call the getQuote() that uses Axis's generated WSDL */
+          /*******************************************************/
+          System.out.println("WSDL + Reuse Call");
+          System.arraycopy( save_args, 0, args, 0, args.length );
+          val = gq.getQuote3( args );
           System.out.println( gq.symbol + ": " + val );
       }
       catch( Exception e ) {
           if ( e instanceof AxisFault ) {
               ((AxisFault)e).dump();
+              e.printStackTrace();
           } else
               e.printStackTrace();
       }
