@@ -500,7 +500,7 @@ public class MessageElement implements SOAPElement,
         int position = children.indexOf(oldChild);
         if(position < 0) {
             throw new DOMException(DOMException.NOT_FOUND_ERR,
-                                   "MessageElement Not found");;
+                                   "MessageElement Not found");
         }
         children.remove(position);
         children.add(position, newChild);
