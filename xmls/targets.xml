@@ -1,0 +1,137 @@
+  <target name="echoThem">
+        <basename property="fileName" file="${file}"/>
+        <dirname property="dirName" file="${file}"/>
+        <echo message="Dir: ${dirName} File: ${fileName}"/>
+  </target>
+
+  <target name="buildThem">
+        <echo message="${file}"/>
+        <ant inheritAll="true" antfile="${file}" target="compile"/>
+  </target>
+
+  <target name="runThem">
+        <ant inheritAll="true" antfile="${file}" target="run" >
+           <property name="batch" value="true"/>
+        </ant>
+  </target>
+
+  <!-- =================================================================== -->
+  <!-- Determine what dependencies are present                             -->
+  <!-- =================================================================== -->
+
+  <target name="setenv">
+
+    <available property="servlet.present"
+      classname="javax.servlet.Servlet"
+      classpathref="classpath"/>
+
+    <available property="regexp.present"
+      classname="org.apache.oro.text.regex.Pattern"
+      classpathref="classpath"/>
+
+    <available property="junit.present"
+      classname="junit.framework.TestCase"
+      classpathref="classpath"/>
+
+    <available property="wsdl4j.present"
+      classname="javax.wsdl.Definition"
+      classpathref="classpath"/>
+
+    <available property="commons-logging.present"
+      classname="org.apache.commons.logging.Log"
+      classpathref="classpath"/>
+
+    <available property="log4j.present"
+      classname="org.apache.log4j.Category"
+      classpathref="classpath"/>
+
+    <available property="tt-bytecode.present"
+      classname="com.techtrader.modules.tools.bytecode.BCClass"
+      classpathref="classpath"/>
+
+    <available property="serp.present"
+      classname="serp.bytecode.Project"
+      classpathref="classpath"/>
+    <available property="activation.present"
+      classname="javax.activation.DataHandler"
+      classpathref="classpath"/>
+
+    <available property="security.present"
+      classname="org.apache.xml.security.Init"
+      classpathref="classpath"/>
+
+    <available property="mailapi.present"
+      classname="javax.mail.internet.MimeMessage"
+      classpathref="classpath"/>
+
+    <condition property="attachments.present" >
+      <and>
+        <available classname="javax.activation.DataHandler" classpathref="classpath" />
+        <available classname="javax.mail.internet.MimeMessage" classpathref="classpath" />
+      </and>
+    </condition>
+
+    <available property="post-compile.present" file="post-compile.xml" />
+
+    <property environment="env"/>
+    <condition property="debug" value="on">
+    <and>
+      <equals arg1="on" arg2="${env.debug}"/>
+    </and>
+    </condition>
+
+  </target>
+
+  <target name="printEnv" depends="setenv" >
+
+    <echo message="-----------------------------------------------------------------"/>
+    <echo message="       Build environment for ${Name} ${axis.version} [${year}]   "/>
+    <echo message="-----------------------------------------------------------------"/>
+    <echo message="Building with ${ant.version}"/>
+    <echo message="using build file ${ant.file}"/>
+    <echo message="Java ${java.version} located at ${java.home} "/>
+    <echo message="-----------------------------------------------------------------"/>
+
+    <echo message="--- Flags (Note: If the {property name} is displayed, "/>
+    <echo message="           then the component is not present)" />
+    <echo message=""/>
+
+    <echo message="build.dir = ${build.dir}"/>
+    <echo message="build.dest = ${build.dest}"/>
+    <echo message=""/>
+    <echo message="=== Required Libraries ===" />
+    <echo message="wsdl4j.present=${wsdl4j.present}" />
+    <echo message="commons-logging.present=${commons-logging.present}" />
+    <echo message="log4j.present=${log4j.present}" />
+    <echo message="tt-bytecode.present=${tt-bytecode.present}" />
+    <echo message=""/>
+    <echo message="--- Optional Libraries ---" />
+    <echo message="servlet.present=${servlet.present}" />
+    <echo message="regexp.present=${regexp.present}" />
+    <echo message="junit.present=${junit.present}" />
+    <echo message="activation.present=${activation.present}" />
+    <echo message="mailapi.present=${mailapi.present}" />
+    <echo message="attachments.present=${attachments.present}" />
+    <echo message="security.present=${security.present}" />
+    <echo message=""/>
+    <echo message="--- Property values ---" />
+    <echo message="debug=${debug}" />
+    <echo message="deprecation=${deprecation}" />
+    <echo message="" />
+    <echo message="-- Test Environment for AXIS ---"/>
+    <echo message="" />
+    <echo message="test.functional.remote = ${test.functional.remote}" />
+    <echo message="test.functional.local = ${test.functional.local}" />
+    <echo message="test.functional.both = ${test.functional.both}" />
+    <echo message="test.functional.reportdir = ${test.functional.reportdir}" />
+    <echo message="test.functional.SimpleAxisPort = ${test.functional.SimpleAxisPort}" />
+    <echo message="test.functional.fail = ${test.functional.fail}" />
+    <echo message="" />
+
+    <uptodate property="javadoc.notrequired"
+              targetfile="${build.javadocs}/index.html">
+      <srcfiles dir="${src.dir}" includes="**/*.java" />
+    </uptodate>
+
+ </target>
+
