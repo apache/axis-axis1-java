@@ -285,17 +285,15 @@
     -->
 
     <!-- XMethods Delayed Quote Service from http://www.xmethods.net/detail.html?id=2 -->
-    <!--
     <wsdl2java url="http://services.xmethods.net/soap/urn:xmethods-delayed-quotes.wsdl"
                output="build/work"
                testcase="no"
                deployscope="none"
                skeleton="yes"
                messagecontext="no"
-               verbose="yes"
+               verbose="no"
                noimports="no">
     </wsdl2java>
-    -->
 
     <!-- Reverse lookup of US Area codes and International Country codes 
          from http://www.soapclient.com/uddi/uddi.sri?requestname=get_xmethods -->

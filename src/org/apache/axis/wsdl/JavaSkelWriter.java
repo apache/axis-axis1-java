@@ -115,7 +115,7 @@ public class JavaSkelWriter extends JavaWriter {
         pw.println();
             // RJB WARNING! - is this OK?
         pw.println("    public " + className + "() {");
-        pw.println("        this.impl = new " + qname.getLocalPart() + "Impl();");
+        pw.println("        this.impl = new " + bEntry.getName() + "Impl();");
         pw.println("    }");
         pw.println();
         pw.println("    public " + className + "(" + implType + ") {");
