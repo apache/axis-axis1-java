@@ -63,6 +63,7 @@ import org.apache.axis.message.EnvelopeBuilder;
 import org.apache.axis.message.EnvelopeHandler;
 import org.apache.axis.message.IDResolver;
 import org.apache.axis.message.MessageElement;
+import org.apache.axis.message.NullAttributes;
 import org.apache.axis.message.SAX2EventRecorder;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHandler;
@@ -848,7 +849,11 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
             log.debug("Enter: DeserializationContextImpl::startElement(" + namespace + ", " + localName + ")");
         }
         
-        attributes = new AttributesImpl(attributes);
+        if (attributes == null || attributes.getLength() == 0) {
+            attributes = NullAttributes.singleton;
+        } else {
+            attributes = new AttributesImpl(attributes);
+        }
 
         SOAPHandler nextHandler = null;
 
