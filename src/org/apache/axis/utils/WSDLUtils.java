@@ -114,6 +114,10 @@ public class WSDLUtils {
 
         Message msg;
         for(int i = 0, j = methods.length; i < j; i++) {
+            if (allowedMethods != null) {
+                if (allowedMethods.indexOf(methods[i].getName()) == -1)
+                    continue;
+            }
 
             Operation oper = def.createOperation();
             oper.setName(methods[i].getName());
