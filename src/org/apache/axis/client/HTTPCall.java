@@ -169,7 +169,7 @@ public class HTTPCall {
     HTTPMessage          hMsg   = new HTTPMessage( url, action );
     Message              reqMsg = new Message( reqEnv, "SOAPEnvelope" );
     Message              resMsg = null ;
-    MessageContext       msgContext = new MessageContext( reqMsg );
+    MessageContext       msgContext =  new MessageContext();
     Vector               resBodies = null ;
     Vector               resArgs = null ;
     Object               result = null ;
@@ -179,7 +179,8 @@ public class HTTPCall {
     if ( encodingStyleURI != null ) 
       reqEnv.setEncodingStyleURI( encodingStyleURI );
     
-    reqEnv.setServiceDescription(serviceDesc);
+    msgContext.setServiceDescription(serviceDesc);
+    msgContext.setRequestMessage(reqMsg);
     reqEnv.setMessageType(ServiceDescription.REQUEST);
     
     reqEnv.addBodyElement(body);
@@ -222,7 +223,6 @@ public class HTTPCall {
     
     /** This must happen before deserialization...
      */
-    resMsg.setServiceDescription(serviceDesc);
     resMsg.setMessageType(ServiceDescription.RESPONSE);
     
     resEnv = (SOAPEnvelope)resMsg.getAs("SOAPEnvelope");

@@ -61,7 +61,6 @@ import org.w3c.dom.* ;
 import org.xml.sax.*;
 
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.ServiceDescription;
 import org.apache.axis.message.* ;
 import org.apache.axis.utils.Debug ;
 import org.apache.axis.utils.XMLUtils ;
@@ -80,7 +79,6 @@ public class Message {
   private Object currentMessage ;
   private String currentForm ;
   private String messageType ;
-  private ServiceDescription serviceDesc = null;
   private MessageContext msgContext;
 
   /**
@@ -91,6 +89,9 @@ public class Message {
     originalMessage = origMsg ;
     currentMessage = origMsg ;
     currentForm = form ;
+
+    // if (msgContext == null) throw new NullPointerException();
+    // this.msgContext = msgContext;
   }
 
   public Object getOriginalMessage() {
@@ -110,15 +111,6 @@ public class Message {
     this.messageType = messageType;
   }
   
-  public ServiceDescription getServiceDescription()
-  {
-      return serviceDesc;
-  }
-  public void setServiceDescription(ServiceDescription serviceDesc)
-  {
-      this.serviceDesc = serviceDesc;
-  }
-
   public MessageContext getMessageContext()
   {
       if (msgContext == null) msgContext=new MessageContext();
@@ -346,7 +338,6 @@ public class Message {
     SAXAdapter parser = 
         new SAXAdapter(new org.apache.xerces.parsers.SAXParser(), is, 
                        getMessageContext());
-    parser.setServiceDescription(serviceDesc);
     SOAPEnvelope env = parser.getEnvelope();
     env.setMessageType(messageType);
     

@@ -106,10 +106,7 @@ public class DefaultHandlerRegistry extends SupplierRegistry {
     /***************************************************************/
     dontSave = true ;
 
-    MessageContext  msgContext = new MessageContext();
     Admin                 admin      = new Admin();
-
-    msgContext.setProperty(Constants.HANDLER_REGISTRY, this);
 
     Handler h = null ;
     Chain   c = null ;

@@ -139,7 +139,7 @@ public class SimpleAxisServer {
             // resetting state between requests:
             //   msgContext = new MessageContext();
             //   requestMsg = new Message("", "String");
-            requestMsg.setServiceDescription(null); // why is this here?
+            msgContext.setServiceDescription(null);
             msgContext.setRequestMessage(requestMsg);
             msgContext.setResponseMessage(null);
             msgContext.clearProperties();

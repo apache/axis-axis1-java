@@ -110,11 +110,7 @@ public class DefaultServiceRegistry extends SupplierRegistry {
     if ( handlerRegistry instanceof DefaultHandlerRegistry )
       ((DefaultHandlerRegistry)handlerRegistry).setDontSave(true);
 
-    MessageContext  msgContext = new MessageContext();
     Admin                 admin      = new Admin();
-
-    msgContext.setProperty(Constants.HANDLER_REGISTRY, handlerRegistry);
-    msgContext.setProperty(Constants.SERVICE_REGISTRY, this);
 
     if ( onServer ) {
       Handler h = handlerRegistry.find( "JWSProcessor" );

@@ -197,7 +197,7 @@ public class RPCParam extends MessageElement
             // !!! How do we set other attributes when serializing??
             attrs = new AttributesImpl();
             
-            ServiceDescription desc = getEnvelope().getServiceDescription();
+            ServiceDescription desc = context.getServiceDescription();
             if ((desc == null) || desc.getSendTypeAttr()) {
                 
                 if (typeQName != null) {

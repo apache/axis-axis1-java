@@ -205,7 +205,7 @@ Copyright:
   <!-- =================================================================== -->
   <!-- Creates the binary distribution                                     -->
   <!-- =================================================================== -->
-  <target name="dist" depends="compile, javadocs, samples, junit" >
+  <target name="dist" depends="compile, junit, samples, javadocs" >
     <mkdir dir="${dist.dir}"/>
     <mkdir dir="${dist.dir}/docs"/>
     <mkdir dir="${dist.dir}/docs/apiDocs"/>

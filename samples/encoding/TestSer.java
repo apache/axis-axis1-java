@@ -57,11 +57,11 @@ public class TestSer
                 reader = new FileReader(args[0]);
             }
             
-            SAXAdapter adapter = new SAXAdapter(new SAXParser(), new InputSource(reader), new MessageContext());
-            adapter.setServiceDescription(service);
-            TypeMappingRegistry reg = adapter.getContext().getTypeMappingRegistry();
+            msgContext.setServiceDescription(service);
+            TypeMappingRegistry reg = msgContext.getTypeMappingRegistry();
             reg.addDeserializerFactory(dataQName, Data.class, DataSer.getFactory());
             
+            SAXAdapter adapter = new SAXAdapter(new SAXParser(), new InputSource(reader), msgContext);
             SOAPEnvelope env = adapter.getEnvelope();
             env.setMessageType(ServiceDescription.REQUEST);
             

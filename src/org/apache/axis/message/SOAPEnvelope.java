@@ -83,8 +83,6 @@ public class SOAPEnvelope
     // This gets passed back into the service description during
     // deserialization 
     public String messageType;
-    // Our service description, if we know it...
-    protected ServiceDescription serviceDesc;
   
     public SOAPEnvelope()
     {
@@ -107,16 +105,6 @@ public class SOAPEnvelope
     public void setMessageType(String messageType)
     {
         this.messageType = messageType;
-    }
-    
-    public ServiceDescription getServiceDescription()
-    {
-        return serviceDesc;
-    }
-    
-    public void setServiceDescription(ServiceDescription serviceDesc)
-    {
-        this.serviceDesc = serviceDesc;
     }
     
     public void setEncodingStyleURI(String uri)
