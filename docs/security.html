@@ -46,6 +46,28 @@ any other application which POSTs XML files to a web server. The clients
 are safe unless the server (or its DNS address) have been subverted; the
 server is vulnerable, and does need to be secured. 
 
+<p> 
+Similarly, 
+<a href="http://webservices.xml.com/pub/a/ws/2003/03/04/security.html">
+Bilal Siddiqui
+</a> makes the claim that <i> 
+
+SOAP cannot distinguish between sensitive and non-sensitive web services
+and cannot perform user authentication, authorization, and access
+control.</i> 
+
+<p>
+
+
+Again, this is another example of excess panic, perhaps combined with a
+lack of knowledge of how SOAP servers are implemented. 
+You do not need to follow this author's advice and have
+separate SOAP servers for every level of sensitivity, or XML and SOAP
+aware firewalls, any more than you need separate Web Servers for
+different users, or require HTTP aware routers to restrict parts of a
+web server to different IP addresses. 
+
+
 <h2>Common Attack Types</h2>
 
 <ul>
@@ -76,9 +98,10 @@ should know about. None of these problems are unique to SOAP; anyone
 processing incoming XML needs to know and resist these. 
 
 <ol>
-<li>Large XML Docukents<br>. Have a client post an XML doc of
+<li>Large XML Documents<br> 
+Have a client post an XML doc of
 extreme length/depth
-<tt>&lt;ha&gt;&lt;ha&gt;&lt;ha&gt;....&lt;/ha&gt;&lt;/ha&gt;&lt;/ha&gt;</tt>.
+&lt;foo&gt;&lt;foo&gt;&lt;foo&gt;...&lt;/foo&gt;&lt;/foo&gt;&lt;/foo&gt;
 This does bad things to DOM parsers and memory consumption on the
 server: a DoS attack. The issue here is that the costs of handling a
 large XML document are much greater than the cost of generating one. 
@@ -142,6 +165,7 @@ some incentive for integration. (this is a hint to developers out there)
 Axis does not (yet) support HTTP1.1 Digest Authentication; if it does get added
 it will be via the 
 <a href="http://jakarta.apache.org/commons/httpclient/">HttpClient</a>
+libraries. 
 
 
 <h2>Securing your Services</h2>
@@ -201,15 +225,17 @@ data. Only accept a string containing only the characters/regular
 expression expected, and check its length. Better yet apply any other
 higher level checks 'userID==session.userID' that you can. Prepared
 Statements are the followon way of defending against SQL injection, as the
-JDBC runtime handles escaping of things. Dont try and build SQL strings
+JDBC runtime handles escaping of things. Don't try and build SQL strings
 by hand; it is a recipe for security holes. 
 
 <p>
+
 Note that this would seem to argue strongly against mapping Session EJB
 objects to SOAP Endpoints. This is not the case. The Session bean must
 merely assume that all incoming data is untrusted, and so validate it
 all before processing further. This is exactly the kind of task a
-<i>Service Layer</i> should be doing.
+<a href="http://martinfowler.com/eaaCatalog/serviceLayer.html">
+<i>Service Layer</i></a> should be doing.
  
 <h3>Cross Site Scripting</h3>
 
@@ -221,7 +247,7 @@ loopholes in the rest of the webapp expose this exact problem. We don't
 think Axis itself is vulnerable, because although it may include
 supplied data in a SOAPFault, this is displayed as XML, not HTML.
 Clients which don't distinguish the two could be an issue, as could
-anything we missed, especially in GET handling.  
+anything we missed, especially in GET handling. 
 
 <h2>Securing Axis</h2>
 
@@ -237,7 +263,7 @@ vulnerable to known holes.
 
 <h3>Cut down the build</h3>
 
-Rebuild Axis without bits of it you dont need. This is a very paranoid
+Rebuild Axis without bits of it you don't need. This is a very paranoid
 solution, but keeps the number of potential attack points down. One area
 to consider is the 'instant SOAP service' feature of JWS pages. They,
 along with JSP pages, provide anyone who can get text files onto the web
@@ -374,3 +400,16 @@ Securing a system is much harder than getting a system to work, as
 security perspective, no security holes can exist for a system to be
 secure: no matter how obscure it is, someone may find it and exploit it.
 Be paranoid: you know it makes sense. 
+
+<p>
+
+Finally, don't get put off writing SOAP services through a fear of the
+security implications. Any CGI-BIN or ASP/JSP page that takes parameters
+is as much of a security risk as a SOAP endpoint. For some reason,
+SOAP attracts dramatic press stories about infinite risk, perhaps
+because it is new and unknown. It isn't: it is XML posted to a web
+application, that's all. Only if you are scared of that, should you
+not write a SOAP service. 
+
+</body>
+</html>
