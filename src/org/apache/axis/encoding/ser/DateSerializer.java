@@ -86,10 +86,6 @@ public class DateSerializer implements Serializer {
 
     private static Calendar calendar = Calendar.getInstance();
 
-    static {
-        zulu.setTimeZone(TimeZone.getTimeZone("GMT"));
-    }
-
     /**
      * Serialize a Date.
      */

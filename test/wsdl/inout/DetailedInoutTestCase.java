@@ -5,6 +5,7 @@ import junit.framework.TestCase;
 import junit.swingui.TestRunner;
 
 import org.apache.axis.utils.Options;
+import org.apache.axis.holders.DateHolder;
 
 import javax.xml.rpc.ServiceException;
 
@@ -12,6 +13,8 @@ import javax.xml.rpc.holders.IntHolder;
 import javax.xml.rpc.holders.StringHolder;
 import test.wsdl.inout.holders.AddressHolder;
 import test.wsdl.inout.holders.PhoneHolder;
+
+import java.util.Date;
 
 /**
  * This class shows how to use the ServiceClient's ability to
@@ -28,6 +31,7 @@ public class DetailedInoutTestCase extends TestCase
         super(name);
         expectedAddress = new Address();
         expectedPhone = new Phone();
+        expectedDate = new Date(2002-1900, 6, 23);
         expectedAddress.setStreetNum(1);
         expectedAddress.setStreetName("University Drive");
         expectedAddress.setCity("West Lafayette");
@@ -40,6 +44,7 @@ public class DetailedInoutTestCase extends TestCase
 
         returnAddress = new Address();
         returnPhone = new Phone();
+        returnDate = new Date(1998-1900, 3, 9);
         returnAddress.setStreetNum(555);
         returnAddress.setStreetName("Monroe Street");
         returnAddress.setCity("Madison");
@@ -102,10 +107,12 @@ public class DetailedInoutTestCase extends TestCase
 
     private Phone expectedPhone;
     private Address expectedAddress;
+    private Date expectedDate;
     private int expectedNumber = 99;
 
     private Phone returnPhone;
     private Address returnAddress;
+    private Date returnDate;
     private int returnNumber = 66;
 
     public void testOut0Inout0In0 ()
@@ -606,6 +613,20 @@ public class DetailedInoutTestCase extends TestCase
                     + shout.value + "\nexpected number = " + returnNumber
                     + "\nactual number = " + ihout.value + " "
                     + t.getMessage());
+        }
+    }
+    public void testDateInout ()
+    {
+        org.apache.axis.holders.DateHolder dh = new DateHolder(expectedDate);
+        try
+        {
+            io.dateInout (dh);
+            assertTrue("Output date does not match", returnDate.equals(dh.value));
+            
+        }
+        catch (Throwable t)
+        {
+            throw new AssertionFailedError("Test failure: dateInout: " + t.getMessage());
         }
     }
 

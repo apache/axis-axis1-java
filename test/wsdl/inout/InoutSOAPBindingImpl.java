@@ -5,11 +5,16 @@ import javax.xml.rpc.holders.StringHolder;
 import test.wsdl.inout.holders.AddressHolder;
 import test.wsdl.inout.holders.PhoneHolder;
 
+import java.util.Date;
+
+import org.apache.axis.holders.DateHolder;
+
 public class InoutSOAPBindingImpl implements Inout
 {
     public InoutSOAPBindingImpl() {
         expectedAddress = new Address();
         expectedPhone = new Phone();
+        expectedDate = new Date(2002-1900, 6, 23);
         expectedAddress.setStreetNum(1);
         expectedAddress.setStreetName("University Drive");
         expectedAddress.setCity("West Lafayette");
@@ -22,6 +27,7 @@ public class InoutSOAPBindingImpl implements Inout
 
         returnAddress = new Address();
         returnPhone = new Phone();
+        returnDate = new Date(1998-1900, 3, 9);
         returnAddress.setStreetNum(555);
         returnAddress.setStreetName("Monroe Street");
         returnAddress.setCity("Madison");
@@ -80,10 +86,12 @@ public class InoutSOAPBindingImpl implements Inout
 
     private Phone expectedPhone;
     private Address expectedAddress;
+    private Date expectedDate;
     private int expectedNumber = 99;
 
     private Phone returnPhone;
     private Address returnAddress;
+    private Date returnDate;
     private int returnNumber = 66;
 
     public void out0Inout0In0 () throws org.apache.axis.AxisFault, TestFailed
@@ -558,4 +566,18 @@ public class InoutSOAPBindingImpl implements Inout
             throw new TestFailed ();
         }
     }
+    public void dateInout (DateHolder dateHolder) throws org.apache.axis.AxisFault, TestFailed
+    {
+        Date inDate = dateHolder.value;
+        if (inDate.equals(expectedDate))
+        {
+            dateHolder.value = returnDate;
+        } else {
+            System.err.println ("Test failure:  dateInout");
+            System.err.println ("expected Date = " + expectedDate);
+            System.err.println ("actual Date = " + inDate);
+            throw new TestFailed ();
+        }
+    }
+    
 }

@@ -31,7 +31,7 @@ public class TestDeser2001 extends TestDeser {
         Calendar date = Calendar.getInstance();
         date.set(1999, 04, 31, 0, 0, 0);
         date.set(Calendar.MILLISECOND,0);
-        date.setTimeZone(TimeZone.getTimeZone("GMT"));
+        //date.setTimeZone(TimeZone.getTimeZone("GMT"));
         deserialize("<result xsi:type=\"xsd:date\">" + 
                        "1999-05-31" + 
                      "</result>",
@@ -66,7 +66,7 @@ public class TestDeser2001 extends TestDeser {
     public void testDateTZ() throws Exception {
         Calendar date = Calendar.getInstance();
         date.set(1999, 04, 31, 0, 0, 0);
-        date.setTimeZone(TimeZone.getTimeZone("GMT"));
+        //date.setTimeZone(TimeZone.getTimeZone("GMT"));
         date.set(Calendar.MILLISECOND,0);
         deserialize("<result xsi:type=\"xsd:date\">" + 
                        "1999-05-31" + 

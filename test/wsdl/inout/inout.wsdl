@@ -63,6 +63,10 @@
     <part name="otherNumber" type="xsd:int"/>
   </message>
 
+  <message name="Msg7">
+    <part name="date" type="xsd:date"/>
+  </message>
+
   <message name="Msg15">
     <part name="name" type="xsd:string"/>
     <part name="otherName" type="xsd:string"/>
@@ -258,6 +262,11 @@
       <fault name="TestFailed" message="tns:TestFailed"/>
     </operation>
 
+    <operation name="dateInout">
+      <input message="tns:Msg7"/>
+      <output message="tns:Msg7"/>
+      <fault name="TestFailed" message="tns:TestFailed"/>
+    </operation>
   </portType>
 
   <!-- binding declns -->
@@ -669,6 +678,21 @@
       <fault name="TestFailed">
       </fault>
     </operation>
+    <operation name="dateInout">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body use="encoded" 
+                   namespace="http://www.apache.org/inout" 
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" 
+                   namespace="http://www.apache.org/inout"
+                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <fault name="TestFailed">
+    </fault>
   </binding>
 
   <!-- service decln -->
