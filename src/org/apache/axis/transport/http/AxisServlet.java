@@ -427,6 +427,14 @@ public class AxisServlet extends AxisServletBase {
     
     /**
      * report that we have no WSDL
+     * 
+     * This method was moved to the querystring handler QSWSDLHandler. The
+     * method reportNoWSDL in AxisServlet is never called. Perhaps the method
+     * is overwritten in subclasses of AxisServlet so the method wasn't 
+     * removed. See the discussion in
+     * 
+     * http://nagoya.apache.org/bugzilla/show_bug.cgi?id=23845
+     * 
      * @param res
      * @param writer
      * @param moreDetailCode optional name of a message to provide more detail
@@ -434,24 +442,6 @@ public class AxisServlet extends AxisServletBase {
      */
     protected void reportNoWSDL(HttpServletResponse res, PrintWriter writer,
                                 String moreDetailCode, AxisFault axisFault) {
-        res.setStatus(HttpURLConnection.HTTP_NOT_FOUND);
-        res.setContentType("text/html");
-        writer.println("<h2>" +
-                       Messages.getMessage("error00") +
-                       "</h2>");
-        writer.println("<p>" +
-                       Messages.getMessage("noWSDL00") +
-                       "</p>");
-        if(moreDetailCode!=null) {
-            writer.println("<p>"
-                    +Messages.getMessage(moreDetailCode)
-                    +"</p>");
-        }
-
-        if(axisFault!=null && isDevelopment()) {
-            //dev systems only give fault dumps
-            writeFault(writer, axisFault);
-        }
     }
 
 
