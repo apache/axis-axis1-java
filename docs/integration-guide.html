@@ -36,6 +36,7 @@ Table of Contents</h3>
 <br>&nbsp; <a href="#Internationalization Plug">Internationalization</a>
 <br>&nbsp; <a href="#Performance Monitoring Plug">Performance Monitoring</a>
 <br>&nbsp; <a href="#Encoding Plug">Encoding</a>
+<br>&nbsp; <a href="#Compiler">Compiler</a>
 <br>&nbsp; <a href="#WSDL plug">WSDL Parser and Code Generator Framework</a>
 <h2>
 <a NAME="Introduction"></a>Introduction</h2>
@@ -213,38 +214,168 @@ for the following toolkits, in order of preference:
 
 <h3>
 <a NAME="Configuration Plug"></a>Configuration</h3>
-How can AXIS fit into existing configuration systems?
+<br>The internal data model used by AXIS is based on
+an AXIS specific data model: Web Services Deployment Descriptor (WSDD).
+AXIS initially obtains the WSDD information for a
+service from an instance of <code>org.apache.axis.EngineConfiguration</code>.
+
+<p>The EngineConfiguration is provided by an implementation of
+the interface <code>org.apache.axis.EngineConfigurationFactory</code>,
+which currently provides methods that return client and server
+configurations.
+
+<p>Our focus will be how to define the implemenation class for
+<code>EngineConfigurationFactory</code>.
+
 <ul>
 <li>
-Justification/Rationale - why is this plug point necessary?&nbsp; Spec
-compliance?</li>
-
-<li>
-Interfaces</li>
+Justification/Rationale</li>
+<br>While the default behaviour is sufficient for general use of
+AXIS, integrating AXIS into an existing application server may
+require an alternate deployment model.
+A customized implementation of the EngineConfigurationFactory
+would map from the hosts deployment model to AXIS's internal
+deployment model.
+<br>&nbsp;
 
 <li>
 Mechanism</li>
+<br>The relevant sequence of instructions used to obtain
+configuration information and initialize AXIS is as follows:
+<ul>
+<br>
+<code>EngineConfigurationFactory factory = EngineConfigurationFactoryFinder(someContext);</code>
+<br>
+<code>EngineCongfiguration config = factory.getClientEngineConfig();</code>
+<br>
+<code>AxisClient = new AxisClient(config);</code>
+</ul>
+<br>The details may vary (server versus client, whether other factories are involved, etc).
+Regardless, the point is that user code is responsible for
+calling <code>EngineConfigurationFactoryFinder(someContext)</code>
+and ensuring that the results are handed to AXIS.&nbsp;
+<code>someContext</code> is key to how the factory finder
+locates the appropariate implementation of
+EngineConfigurationFactory to be used, if any.
 
+<p>EngineConfigurationFactoryFinder works as follows:
+<br>&nbsp;
+<ul>
+<li>Obtain a list of classes that implement
+<code>org.apache.axis.EngineConfigurationFactory</code>,
+in the following order:
 <ul>
 <li>
-Life cycle</li>
+The value of the system property <code>axis.EngineConfigFactory</code>.
+</li>
+<li>
+The value of the system property
+<code>org.apache.axis.EngineConfigurationFactory</code>.
+</li>
+<li>Locate all resources named
+<code>META-INF/services/org.apache.axis.EngineConfigurationFactory</code>.
+Each line of such a file identifies the name of a class
+implementing the interface.
+</li>
+<li>
+<code>org.apache.axis.configuration.EngineConfigurationFactoryServlet</code>
+</li>
+<li>
+<code>org.apache.axis.configuration.EngineConfigurationFactoryDefault</code>
+</li>
+</ul>
+</li>
+
+<br>
+<li>Classes implementing EngineConfigurationFactory are required to
+provide the method
+<br>&nbsp;
+<ul>
+<code>public static EngineConfigurationFactory newFactory(Object)</code>
+</ul>
+<br>
+This method is called, passing <code>someContext</code> as the parameter.
+</li>
+
+<br>&nbsp;
+<li>
+The implementation class is required to examine runtime environment
+(to optionally include the parameter).
+If the environment can provide informatin required by
+an EngineConfigurationFactory,
+then the <code>newFactory()</code> may return in instance of that factory.
+Otherwise, <code>newFactory()</code> must return null.
+</li>
+
+<br>&nbsp;
+<li>
+EngineConfigurationFactoryFinder returns the first non-null
+factory it obtains.
+</li>
+</ul>
+<br>&nbsp;
+
 
 <li>
-Exception handling - in general; plug-in shouldn't throw any exceptions
-- does runtime ignore? Log?)</li>
-
+Default behavior</li>
+<br>The default behaviour is provided by the last two elements
+of the list of implementing classes, as described above:
+<ul>
 <li>
-Multiple thread support?&nbsp; Ie., is synchronization required?</li>
+<code>org.apache.axis.configuration.EngineConfigurationFactoryServlet</code>
+<br><code>newFactory(obj)</code> is called.
+If <code>obj instanceof javax.servlet.ServletContext</code> is true,
+then an instance of this class is returned.
+<p>The default Servlet factory is expected to function as a server
+(as a client it will incorrectly attempt
+to load the WSDD file <code>client-config.wsdd</code>
+from the current working directory!).
+
+<p>The default Servlet factory will open the Web Application resource
+<code>/WEB-INF/server-config.wsdd</code>:
+<ul>
+<li>
+If it exists as a accessible file (i.e. not in a JAR/WAR file),
+then it opens it as a file
+(this allows changes to be saved,
+if changes are allowed & made using the Admin tools).
+</li>
+<li>
+If it does not exist as a file, then an attempt is made
+to access it as a resource stream (getResourceAsStream),
+which works for JAR/WAR file contents.
+</li>
+<li>
+If the resource is simply not available,
+an attempt is made to create it as a file.
+</li>
+<li>
+If all above attempts fail, a final attempt is
+made to access <code>org.apache.axis.server.server-config.wsdd</code>
+as a data stream.
+</li>
 </ul>
 
+</li>
+<br>&nbsp;
 <li>
-Configuration/reconfiguration</li>
+<code>org.apache.axis.configuration.EngineConfigurationFactoryDefault</code>
+<br><code>newFactory(obj)</code> is called.
+If <code>obj</code> is null
+then an instance of this class is returned.
+A non-null <code>obj</code> is presumed to
+require a non-default factory.
 
-<li>
-Default behavior if not plugged.</li>
+<p>The default factory will load the WSDD files
+<code>client-config.wsdd</code> or <code>server-config.wsdd</code>,
+as appropriate, from the current working directory.
+The names of these files may be changed using the
+system properties <code>axis.ClientConfigFile</code>
+and <code>axis.ServerConfigFile</code>,
+respectively.
+</li>
+</ul>
 
-<li>
-Example</li>
 </ul>
 
 <h3>
@@ -497,6 +628,43 @@ Example</li>
 
 <h3>
 <a NAME="Encoding Plug"></a>Encoding</h3>
+How can a system integrator plug in other encoding mechanisms such as SOAP
+1.2 or optimized XML-based encoding?
+<ul>
+<li>
+Justification/Rationale - why is this plug point necessary?&nbsp; Spec
+compliance?</li>
+
+<li>
+Interfaces</li>
+
+<li>
+Mechanism</li>
+
+<ul>
+<li>
+Life cycle</li>
+
+<li>
+Exception handling - in general; plug-in shouldn't throw any exceptions
+- does runtime ignore? Log?)</li>
+
+<li>
+Multiple thread support?&nbsp; Ie., is synchronization required?</li>
+</ul>
+
+<li>
+Configuration/reconfiguration</li>
+
+<li>
+Default behavior if not plugged.</li>
+
+<li>
+Example</li>
+</ul>
+
+<h3>
+<a NAME="Compiler"></a>Compiler</h3>
 How can a system integrator plug in other encoding mechanisms such as SOAP
 1.2 or optimized XML-based encoding?
 <ul>
