@@ -842,7 +842,7 @@ public class Admin {
         }
         
         if (registry != null) {
-            WSDDDocument.deployMappingToRegistry(mapping, registry);
+            WSDDDeployment.deployMappingToRegistry(mapping, registry);
         }
     }
 
