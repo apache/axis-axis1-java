@@ -120,7 +120,7 @@ public interface TypeMapping
     /**
      * Gets the Class mapped to QName.
      * @param xmlType qname or null
-     * @return javaType class or type
+     * @return javaType class for type or null for no mapping
      */
     public Class getClassForQName(QName xmlType);
 
