@@ -135,7 +135,7 @@ public abstract class Enum implements java.io.Serializable {
             }
         }
         
-        protected void setDefault(Enum dephault) {
+        public void setDefault(Enum dephault) {
             this.dephault = dephault;
         }
         

@@ -16,6 +16,7 @@ public class PackageTests
         TestSuite suite = new TestSuite("All Axis Call tests");
 
         suite.addTest(TestCall.suite());
+        suite.addTest(TestAsyncCall.suite());
         return suite;
     }
 }
