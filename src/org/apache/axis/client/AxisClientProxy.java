@@ -88,7 +88,8 @@ public class AxisClientProxy implements InvocationHandler {
             return null;
         }
         else {
-            return call.invoke(method.getName(), objects);
+            call.setOperation(call.getPortName(), method.getName());
+            return call.invoke(objects);
         }
     }
 }
