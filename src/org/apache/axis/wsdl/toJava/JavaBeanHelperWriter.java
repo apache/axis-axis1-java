@@ -230,10 +230,12 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
                    Utils.getJavaLocalName(type.getName()) + ".class);");
         pw.println();
 
+        pw.println("    static {");
+        pw.println("        typeDesc.setXmlType(" + Utils.getNewQName(type.getQName()) + ");");
+
         // Add attribute and element field descriptors
         if (attributes != null || elementMetaData != null) {
             boolean wroteFieldType = false;
-            pw.println("    static {");
 
             if (attributes != null) {
                 for (int i = 0; i < attributes.size(); i += 2) {
@@ -299,18 +301,18 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
                     pw.println("        typeDesc.addFieldDesc(field);");
                 }
             }
-
-            pw.println("    };");
-            pw.println();
-
-            pw.println("    /**");
-            pw.println("     * " + Messages.getMessage("returnTypeMeta"));
-            pw.println("     */");
-            pw.println("    public static org.apache.axis.description.TypeDesc getTypeDesc() {");
-            pw.println("        return typeDesc;");
-            pw.println("    }");
-            pw.println();
         }
+
+        pw.println("    };");
+        pw.println();
+
+        pw.println("    /**");
+        pw.println("     * " + Messages.getMessage("returnTypeMeta"));
+        pw.println("     */");
+        pw.println("    public static org.apache.axis.description.TypeDesc getTypeDesc() {");
+        pw.println("        return typeDesc;");
+        pw.println("    }");
+        pw.println();
     }
 
     /**

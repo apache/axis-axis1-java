@@ -109,6 +109,15 @@ public class SOAPFaultDetailsBuilder extends SOAPHandler implements Callback
         OperationDesc op = msgContext.getOperation();
         if (op != null) {
             FaultDesc faultDesc = op.getFaultByQName(qn);
+            // allow fault type to be denoted in xsi:type
+            if (faultDesc == null) {
+                QName type = context.getTypeFromAttributes(namespace,
+                                                           name,
+                                                           attributes); 
+                if (type != null) {
+                    faultDesc = op.getFaultByXmlType(type);
+                }
+            }
             if (faultDesc != null) {
                 // Set the class
                 try {

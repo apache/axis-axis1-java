@@ -388,7 +388,7 @@ public class SymbolTable {
      * symbol table has been populated, iterate through it, setting the isReferenced flag
      * appropriately for each entry.
      */
-    private void add(String context, Definition def, Document doc)
+    protected void add(String context, Definition def, Document doc)
             throws IOException, SAXException, WSDLException, 
                    ParserConfigurationException {
         URL contextURL = context == null ? null : getURL(null, context);

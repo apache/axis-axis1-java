@@ -75,6 +75,7 @@ import org.apache.axis.utils.Mapping;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.NSStack;
 import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.description.TypeDesc;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -1219,6 +1220,14 @@ public class SerializationContextImpl implements SerializationContext
                 if (method != null) {
                     Serializer serializer = (Serializer) method.invoke(value,
                             new Object[] {"", value.getClass(), elemQName});
+                    TypeDesc typedesc = TypeDesc.getTypeDescForClass(value.getClass());
+                    if (typedesc != null) {
+                        QName qname = typedesc.getXmlType();
+                        if (qname != null) {
+                            attributes = setTypeAttribute(attributes, 
+                                                          qname);
+                        }
+                    } 
                     serializer.serialize(elemQName, attributes, value, this);
                     return;
                 }
