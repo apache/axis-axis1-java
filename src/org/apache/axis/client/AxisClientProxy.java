@@ -139,6 +139,7 @@ public class AxisClientProxy implements InvocationHandler {
      */
     public Object invoke(Object o, Method method, Object[] objects)
             throws Throwable {
+        // first see if we invoke Stub methods
         if (method.getName().equals("_setProperty")) {
             call.setProperty((String) objects[0], objects[1]);
             return null;
@@ -146,6 +147,9 @@ public class AxisClientProxy implements InvocationHandler {
             return call.getProperty((String) objects[0]);
         } else if (method.getName().equals("_getPropertyNames")) {
             return call.getPropertyNames();
+        } else if (Object.class.equals(method.getDeclaringClass())) {
+            // if we invoke basic Object methods : delegate to Call instance
+            return method.invoke(call, objects);
         } else {
           Object outValue;
           Object[] paramsCall;
