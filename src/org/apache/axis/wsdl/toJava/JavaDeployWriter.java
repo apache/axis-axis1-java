@@ -67,6 +67,7 @@ import org.apache.axis.wsdl.symbolTable.Element;
 import org.apache.axis.wsdl.symbolTable.FaultInfo;
 import org.apache.axis.wsdl.symbolTable.Parameter;
 import org.apache.axis.wsdl.symbolTable.Parameters;
+import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
 
@@ -279,10 +280,17 @@ public class JavaDeployWriter extends JavaWriter {
                 }
 
                 if (javaType.endsWith("[]")) {
-                    serializerFactory =
-                            "org.apache.axis.encoding.ser.ArraySerializerFactory";
-                    deserializerFactory =
-                            "org.apache.axis.encoding.ser.ArrayDeserializerFactory";
+                    if (SchemaUtils.isListWithItemType(type.getNode())) {
+                        serializerFactory =
+                        "org.apache.axis.encoding.ser.SimpleListSerializerFactory";
+                        deserializerFactory =
+                        "org.apache.axis.encoding.ser.SimpleListDeserializerFactory";
+                    } else {
+                        serializerFactory =
+                        "org.apache.axis.encoding.ser.ArraySerializerFactory";
+                        deserializerFactory =
+                        "org.apache.axis.encoding.ser.ArrayDeserializerFactory";
+                    }
                 } else if ((type.getNode() != null) && (Utils.getEnumerationBaseAndValues(
                         type.getNode(), symbolTable) != null)) {
                     serializerFactory =
