@@ -124,7 +124,6 @@ public class MessageElement implements SOAPElement
     protected Element elementRep = null;
 
     protected MessageElement parent = null;
-    // Do we need links to our children too?
 
     public ArrayList namespaces = null;
     
@@ -327,8 +326,20 @@ public class MessageElement implements SOAPElement
         if (children == null)
             children = new ArrayList();
         children.add(el);
+        el.parent = this;
     }
-    
+
+    /**
+     * Remove a child element.
+     */
+    private void removeChild(MessageElement child) {
+        // Remove all occurrences in case it has been added multiple times.
+        int i;
+        while ((i = children.indexOf(child)) != -1) {
+            children.remove(i);
+        }
+    }
+     
     public ArrayList getChildren()
     {
         return children;
@@ -710,12 +721,17 @@ public class MessageElement implements SOAPElement
     }
 
     /**
-     * No-opped.
+     * Break the relationship between this element and its parent, if any.
      */
-    public void detachNode() {}
-    
+    public void detachNode() {
+        if (parent != null) {
+            parent.removeChild(this);
+            parent = null;
+        }
+    }
+
     /**
-     * No-opped.
+     * No-opped - Axis does not recycle nodes.
      */
     public void recycleNode() {}
 
