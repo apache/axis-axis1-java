@@ -356,6 +356,13 @@
                testcase="yes">
     </wsdl2java>
 
+    <!-- This tests parameterOrder.  -->
+    <wsdl2java url="test/wsdl/parameterOrder/parameterOrder.wsdl"
+               output="build/work"
+               skeleton="yes"
+               testcase="yes">
+    </wsdl2java>
+
     <!-- The following WSDL are BAD.  We're keeping them here so we can -->
     <!-- check periodically to see whether the owner has fixed them.    -->
 

@@ -839,20 +839,24 @@ public class SymbolTable {
         }
 
         // Get the mode info about those parts that aren't in the parameterOrder list.
-        // Since they're not in the parameterOrder list, the order doesn't matter.
-        // Add the input and inout parts first, then add the output parts.
+        // Since they're not in the parameterOrder list, the order is, first all in (and
+        // inout) parameters, then all out parameters, in the order they appear in the
+        // messages.
         for (int i = 1; i < inputs.size(); i += 2) {
             int outdex = getPartIndex((String) inputs.get(i), outputs);
             addInishParm(inputs, outputs, i, outdex, parameters, false);
         }
 
-        // Now that the remaining in and inout parameters are collected, the first entry in the
-        // outputs Vector is the return value.  The rest are out parameters.
-        if (outputs.size() > 0) {
+        // Now that the remaining in and inout parameters are collected, determine the status of
+        // outputs.  If there is only 1, then it is the return value.  If there are more than 1,
+        // then they are out parameters.
+        if (outputs.size() == 2) {
             parameters.returnType = (TypeEntry) outputs.get(0);
             parameters.returnName = (String) outputs.get(1);
             ++parameters.outputs;
-            for (int i = 3; i < outputs.size(); i += 2) {
+        }
+        else {
+            for (int i = 1; i < outputs.size(); i += 2) {
                 addOutParm(outputs, i, parameters, false);
             }
         }

@@ -174,19 +174,24 @@ public class JavaSkelWriter extends JavaWriter {
             Parameter p = (Parameter) parms.list.get(i);
 
             String holder = Utils.holder(p.type, symbolTable);
+            String holderVar = Utils.xmlNameToJava(p.name);
             if (p.mode == Parameter.INOUT) {
-                pw.println("        " + holder + " " + p.name + "Holder = new " + holder + "(" + Utils.xmlNameToJava(p.name) + ");");
+                pw.println("        " + holder + " " + holderVar
+                        + "Holder = new " + holder + "(" + holderVar + ");");
             }
             else if (p.mode == Parameter.OUT) {
-                pw.println("        " + holder + " " + p.name + "Holder = new " + holder + "();");
+                pw.println("        " + holder + " " + holderVar
+                        + "Holder = new " + holder + "();");
             }
         }
 
         // Call the real implementation
-        if ( parms.returnType == null )
+        if (parms.returnType == null) {
             pw.print("        ");
-        else
+        }
+        else {
             pw.print("        Object ret = ");
+        }
         String call = "impl." + Utils.xmlNameToJava(operation.getName()) + "(";
         boolean needComma = false;
         for (int i = 0; i < parms.list.size(); ++i) {
@@ -196,44 +201,36 @@ public class JavaSkelWriter extends JavaWriter {
                 needComma = true;
             Parameter p = (Parameter) parms.list.get(i);
 
-            if (p.mode == Parameter.IN)
-                call = call + Utils.xmlNameToJava(p.name);
-            else
-                call = call + p.name + "Holder";
+            call = call + Utils.xmlNameToJava(p.name);
+            if (p.mode != Parameter.IN)
+                call = call + "Holder";
         }
         call = call + ")";
-        if (parms.outputs == 0)
+        if (parms.returnType == null) {
             pw.println(call + ";");
-        else
+        }
+        else {
             pw.println(wrapPrimitiveType(parms.returnType, call) + ";");
+        }
 
         // Handle the outputs, if there are any.
         if (parms.inouts + parms.outputs > 0) {
-            if (parms.inouts == 0 && parms.outputs == 1)
-            // The only output is a single return value; simply pass it through.
-                pw.println("        return ret;");
-            else if (parms.outputs == 0 && parms.inouts == 1) {
-                // There is only one inout parameter.  Find it in the parms list and write
-                // its return
-                int i = 0;
+            pw.println("        org.apache.axis.server.ParamList list = new org.apache.axis.server.ParamList();");
+            if (parms.returnType != null)
+                pw.println("        list.add(new org.apache.axis.message.RPCParam(\""
+                        + parms.returnName + "\", ret));");
+            for (int i = 0; i < parms.list.size(); ++i) {
                 Parameter p = (Parameter) parms.list.get(i);
-                while (p.mode != Parameter.INOUT)
-                    p = (Parameter) parms.list.get(++i);
-                pw.println("        return " + wrapPrimitiveType(p.type, p.name + "Holder.value") + ";");
-            }
-            else {
-                // There are more than 1 output parts, so create a Vector to put them into.
-                pw.println("        org.apache.axis.server.ParamList list = new org.apache.axis.server.ParamList();");
-                if (parms.returnType != null)
-                    pw.println("        list.add(new org.apache.axis.message.RPCParam(\"" + parms.returnName + "\", ret));");
-                for (int i = 0; i < parms.list.size(); ++i) {
-                    Parameter p = (Parameter) parms.list.get(i);
 
-                    if (p.mode != Parameter.IN)
-                        pw.println("        list.add(new org.apache.axis.message.RPCParam(\"" + p.name + "\", " + wrapPrimitiveType(p.type, p.name + "Holder.value") +"));");
+                if (p.mode != Parameter.IN) {
+                    String pName = Utils.xmlNameToJava(p.name);
+                    pw.println("        list.add(new org.apache.axis.message.RPCParam(\""
+                            + p.name + "\", "
+                            + wrapPrimitiveType(p.type, pName + "Holder.value")
+                            + "));");
                 }
-                pw.println("        return list;");
             }
+            pw.println("        return list;");
         }
 
         pw.println("    }");

@@ -395,26 +395,38 @@ public class JavaWriterFactory implements WriterFactory {
             skelSig = "    public Object " + name + "(";
 
         boolean needComma = false;
+        boolean needSkelSigComma = false;
 
         for (int i = 0; i < parms.list.size(); ++i) {
             Parameter p = (Parameter) parms.list.get(i);
 
             if (needComma) {
                 signature = signature + ", ";
-                if (p.mode != Parameter.OUT)
-                    skelSig = skelSig + ", ";
             }
-            else
+            else {
                 needComma = true;
+            }
 
             String javifiedName = Utils.xmlNameToJava(p.name);
             if (p.mode == Parameter.IN) {
                 signature = signature + p.type.getName() + " " + javifiedName;
+                if (needSkelSigComma) {
+                    skelSig = skelSig + ", ";
+                }
+                else {
+                    needSkelSigComma = true;
+                }
                 skelSig = skelSig + p.type.getName() + " " + javifiedName;
             }
             else if (p.mode == Parameter.INOUT) {
                 signature = signature + Utils.holder(p.type, symbolTable) + " "
                         + javifiedName;
+                if (needSkelSigComma) {
+                    skelSig = skelSig + ", ";
+                }
+                else {
+                    needSkelSigComma = true;
+                }
                 skelSig = skelSig + p.type.getName() + " " + javifiedName;
             }
             else// (p.mode == Parameter.OUT)
