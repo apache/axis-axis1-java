@@ -24,18 +24,18 @@ package javax.xml.rpc;
  * @version 1.0
  */
 public class ServiceException extends Exception {
-
+    
     // fixme: could we refactor this to use the jdk1.4 exception wrapping stuff?
-
+    
     /** The cause of this exception. */
     Throwable cause;
-
+    
     /**
      * Constructs a new exception with <code>null</code> as its
      * detail message. The cause is not initialized.
      */
     public ServiceException() {}
-
+    
     /**
      * Constructs a new exception with the specified detail
      * message.  The cause is not initialized.
@@ -46,7 +46,7 @@ public class ServiceException extends Exception {
     public ServiceException(String message) {
         super(message);
     }
-
+    
     /**
      * Constructs a new exception with the specified detail
      * message and cause.
@@ -61,7 +61,7 @@ public class ServiceException extends Exception {
         super(message);
         this.cause = cause;
     }
-
+    
     /**
      * Constructs a new exception with the specified cause
      * and a detail message of <tt>(cause==null ? null :
@@ -78,7 +78,7 @@ public class ServiceException extends Exception {
         super(cause.toString());
         this.cause = cause;
     }
-
+    
     /**
      * Gets the linked cause.
      *
@@ -88,35 +88,34 @@ public class ServiceException extends Exception {
     public Throwable getLinkedCause() {
         return cause;
     }
-
+    
     public void printStackTrace() { 
-	synchronized (System.err) {
+        synchronized (System.err) {
             System.err.println(this);
-	    printStackTrace(System.err);
+            printStackTrace(System.err);
         }
     }
     
     public void printStackTrace(java.io.PrintStream ps) {
-	if (this.cause == null) {
-	    super.printStackTrace(ps);
-	} else {
-	    synchronized(ps) {
-		ps.println(this);
-		this.cause.printStackTrace(ps);
-	    }
-	}
+        if (this.cause == null) {
+            super.printStackTrace(ps);
+        } else {
+            synchronized(ps) {
+                ps.println(this);
+                this.cause.printStackTrace(ps);
+            }
+        }
     }
     
     public void printStackTrace(java.io.PrintWriter pw) {
-	if (this.cause == null) {
-	    super.printStackTrace(pw);
-	} else {
-	    synchronized(pw) {
-		pw.println(this);
-		this.cause.printStackTrace(pw);
-	    }
-	}
+        if (this.cause == null) {
+            super.printStackTrace(pw);
+        } else {
+            synchronized(pw) {
+                pw.println(this);
+                this.cause.printStackTrace(pw);
+            }
+        }
     }
     
 }
-
