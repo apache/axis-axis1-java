@@ -90,7 +90,7 @@ public class JavaEnumTypeWriter extends JavaWriter {
         Node node = type.getNode();
 
         // The first index is the base type.  Get its java name.
-        String baseType = ((TypeEntry) elements.get(0)).getJavaName();
+        String baseType = ((TypeEntry) elements.get(0)).getName();
         String javaName = Utils.getJavaLocalName(type.getName());
 
         // Note:
