@@ -126,7 +126,7 @@ public class FaultableHandler extends BasicHandler {
             QFault   key          = fault.getFaultCode() ;
             Handler  faultHandler = (Handler) faultHandlers.get( key );
             */
-            Handler faultHandler;
+            Handler faultHandler = null;
 
             Hashtable options = getOptions();
             Enumeration enum = options.keys();
