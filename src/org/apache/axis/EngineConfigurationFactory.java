@@ -68,7 +68,7 @@ public interface EngineConfigurationFactory {
      * Property name used for setting an EngineConfiguration to be used
      * in creating engines.
      */
-    public static final String SYSTEM_PROPERTY_NAME = "engineConfigFactory";
+    public static final String SYSTEM_PROPERTY_NAME = "axis.EngineConfigFactory";
 
      /**
      * Get a default client engine configuration.
