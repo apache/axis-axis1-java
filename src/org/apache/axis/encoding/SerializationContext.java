@@ -146,11 +146,6 @@ public class SerializationContext
     private boolean sendXSIType = true;
 
     /**
-     * Should I send any xsi attributes?
-     */
-    private boolean sendXSI = true;
-
-    /**
      * A place to hold objects we cache for multi-ref serialization, and
      * remember the IDs we assigned them.
      */
@@ -193,13 +188,14 @@ public class SerializationContext
             if (shouldSendMultiRefs != null)
                 doMultiRefs = shouldSendMultiRefs.booleanValue();
 
+            // The SEND_TYPE_ATTR and PROP_SEND_XSI options indicate
+            // whether the elements should have xsi:type attributes.
             // Only turn this off is the user tells us to
             if ( !msgContext.isPropertyTrue(Call.SEND_TYPE_ATTR, true ))
                 sendXSIType = false ;
             
             Boolean opt = (Boolean)engine.getOption(AxisEngine.PROP_SEND_XSI);
             if ((opt != null) && (opt.equals(Boolean.FALSE))) {
-                sendXSI = false;
                 sendXSIType = false;
             }
         }
@@ -226,13 +222,6 @@ public class SerializationContext
      */ 
     public boolean shouldSendXSIType() {
         return sendXSIType;
-    }
-
-    /**
-     * Set whether or not to write any xsi attributes
-     */ 
-    public boolean shouldSendXSI() {
-        return sendXSI;
     }
 
     /**
@@ -353,13 +342,18 @@ public class SerializationContext
         throws IOException
     {
         if (value == null) {
+            // If the value is null, the element is
+            // passed with xsi:nil="true" to indicate that no object is present.
+            //
+            // There are three approaches that could be taken...
+            // 1) (Currently Implemented) Use xsi:nil="true".
+            // 2) Emit an empty element.  (This would be deserialized incorrectly.)
+            // 3) Don't emit an element.  (This could also cause deserialization problems.)
             AttributesImpl attrs = new AttributesImpl();
             if (attributes != null)
                 attrs.setAttributes(attributes);
-            if (sendXSI) {
-                attrs.addAttribute(Constants.URI_2001_SCHEMA_XSI, "nil", "xsi:nil",
-                                   "CDATA", "true");
-            }
+            attrs.addAttribute(Constants.URI_2001_SCHEMA_XSI, "nil", "xsi:nil",
+                               "CDATA", "true");
             startElement(qName, attrs);
             endElement();
         }
