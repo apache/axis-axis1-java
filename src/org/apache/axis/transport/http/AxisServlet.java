@@ -69,6 +69,7 @@ import org.apache.axis.server.AxisServerFactory;
 import org.apache.axis.utils.Admin;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
+import org.apache.log4j.Category;
 import org.w3c.dom.Document;
 
 import javax.servlet.ServletConfig;
@@ -94,6 +95,8 @@ public class AxisServlet extends HttpServlet {
     private AxisEngine engine = null;
     private ServletSecurityProvider securityProvider = null;
 
+    static Category category =
+            Category.getInstance(AxisServlet.class.getName());
     /**
      * Should we enable the "?list" functionality on GETs?  (off by
      * default because deployment information is a potential security
@@ -103,9 +106,14 @@ public class AxisServlet extends HttpServlet {
 
     private static final String AXIS_ENGINE = "AxisEngine" ;
 
+    private boolean isDebug= false;
+
     public void init() {
+        isDebug= category.isDebugEnabled();
+        if(isDebug) category.debug("In servlet init");
         String param = getInitParameter("transport.name");
         ServletContext context = getServletConfig().getServletContext();
+
 
         if (param == null)
             param = context.getInitParameter("transport.name");
@@ -153,6 +161,7 @@ public class AxisServlet extends HttpServlet {
 
     public void doGet(HttpServletRequest req, HttpServletResponse res)
         throws ServletException, IOException {
+        if(isDebug) category.debug("In doGet");
         PrintWriter writer = res.getWriter();
 
         if (engine == null) {
@@ -336,10 +345,12 @@ public class AxisServlet extends HttpServlet {
 
     public void doPost(HttpServletRequest req, HttpServletResponse res)
         throws ServletException, IOException {
+        if(isDebug) category.debug("In doPost");
         if (engine == null) {
             try {
                 engine = getEngine();
             } catch (AxisFault fault) {
+                category.debug(fault);
                 Message msg = new Message(fault);
                 res.setContentType( msg.getContentType() );
                 res.setContentLength( msg.getContentLength() );
@@ -357,7 +368,9 @@ public class AxisServlet extends HttpServlet {
 
         if (engine == null) {
             // !!! should return a SOAP fault...
-            throw new ServletException(JavaUtils.getMessage("noEngine00"));
+            ServletException se= new ServletException(JavaUtils.getMessage("noEngine00"));
+            category.debug(se);
+            throw se; 
         }
 
         /* Place the Request message in the MessagContext object - notice */
@@ -367,9 +380,17 @@ public class AxisServlet extends HttpServlet {
         /* even need to be parsed.                                         */
         /*******************************************************************/
         MessageContext    msgContext = new MessageContext(engine);
+        if(isDebug) category.debug("MessageContext:" + msgContext );
+
+        if(isDebug) category.debug("HEADER_CONTENT_TYPE:" +  
+          req.getHeader( HTTPConstants.HEADER_CONTENT_TYPE));
+        if(isDebug) category.debug("HEADER_CONTENT_LOCATION:" +
+          req.getHeader( HTTPConstants.HEADER_CONTENT_LOCATION));
+
         Message           msg        = new Message( req.getInputStream(), false,
            req.getHeader( HTTPConstants.HEADER_CONTENT_TYPE),
             req.getHeader( HTTPConstants.HEADER_CONTENT_LOCATION));
+        if(isDebug) category.debug("Message:" + msg);
 
         /* Set the request(incoming) message field in the context */
         /**********************************************************/
@@ -391,8 +412,20 @@ public class AxisServlet extends HttpServlet {
         msgContext.setProperty(HTTPConstants.HEADER_AUTHORIZATION, req.getHeader(HTTPConstants.HEADER_AUTHORIZATION) );
         msgContext.setProperty(Constants.MC_REMOTE_ADDR, req.getRemoteAddr());
 
+
         if (securityProvider != null)
             msgContext.setProperty("securityProvider", securityProvider);
+
+        if(isDebug){
+            category.debug("Constants.MC_HOME_DIR:" + context.getRealPath("/"));
+            category.debug("Constants.MC_RELATIVE_PATH:"+req.getServletPath());
+            category.debug("HTTPConstants.MC_HTTP_SERVLETLOCATION:"+
+               getServletContext().getRealPath("/WEB-INF") );
+            category.debug("HTTPConstants.MC_HTTP_SERVLETPATHINFO:" + req.getPathInfo() );
+            category.debug("HTTPConstants.HEADER_AUTHORIZATION:" + req.getHeader(HTTPConstants.HEADER_AUTHORIZATION));
+            category.debug("Constants.MC_REMOTE_ADDR:"+req.getRemoteAddr());
+            category.debug("securityProvider:"+securityProvider );
+        }
 
         /* Save the SOAPAction header in the MessageContext bag - this will */
         /* be used to tell the Axis Engine which service is being invoked.  */
@@ -406,15 +439,19 @@ public class AxisServlet extends HttpServlet {
         /********************************************************************/
         String  tmp ;
         tmp = (String) req.getHeader( HTTPConstants.HEADER_SOAP_ACTION );
+        if(isDebug) category.debug("HEADER_SOAP_ACTION:" + tmp);
 
         try {
             /** Technically, if we don't find this header, we should probably fault.
             * It's required in the SOAP HTTP binding.
             */
             if ( tmp == null ) {
-                throw new AxisFault( "Client.NoSOAPAction",
+                AxisFault af=  new AxisFault( "Client.NoSOAPAction",
                     JavaUtils.getMessage("noHeader00", "SOAPAction"),
                     null, null );
+
+                 category.debug(af);
+                throw af; 
             }
 
             if ( "".equals(tmp) )
@@ -432,14 +469,20 @@ public class AxisServlet extends HttpServlet {
             String realpath = context.getRealPath(req.getServletPath());
             if (realpath != null)
                 msgContext.setProperty(Constants.MC_REALPATH, realpath);
+
             String configPath = context.getRealPath("/WEB-INF");
+            if(isDebug) category.debug("configPath:" + configPath);
+
             msgContext.setProperty(Constants.MC_CONFIGPATH, configPath);
 
             /* Invoke the Axis engine... */
             /*****************************/
+            if(isDebug) category.debug("Invoking Axis Engine.");
             engine.invoke( msgContext );
+            if(isDebug) category.debug("Return from Axis Engine.");
         }
         catch( Exception e ) {
+            category.debug(e);
             if ( e instanceof AxisFault ) {
                 AxisFault  af = (AxisFault) e ;
                 if ( "Server.Unauthorized".equals( af.getFaultCode() ) )
@@ -471,15 +514,22 @@ public class AxisServlet extends HttpServlet {
         /* Send it back along the wire...  */
         /***********************************/
 
+
         if(null== (msg = msgContext.getResponseMessage())) {
+          if(isDebug) category.debug("NO AXIS MESSAGE TO RETURN!");
           String resp= JavaUtils.getMessage("noData00");
-          res.setContentLength( resp.getBytes().length );
+          res.setContentLength(resp.getBytes().length );
           res.getWriter().print(resp);
         } else {
+
+          if(isDebug) category.debug("Returned Content-Type:" + msg.getContentType());
+          int respContentlength=0;
           res.setContentType( msg.getContentType() );
-          res.setContentLength( msg.getContentLength() );
+          res.setContentLength(respContentlength=  msg.getContentLength() );
+          if(isDebug) category.debug("Returned Content-Length:" + respContentlength);
           msg.writeContentToStream(res.getOutputStream());
         }
         res.flushBuffer(); //Force it right now.
+        if(isDebug) category.debug("Response sent.");
     }
 }
