@@ -125,13 +125,13 @@ public class AxisServletBase extends HttpServlet {
     /**
      * flag set to true for a 'production' server
      */
-    private boolean isProduction;
+    private boolean isDevelopment;
 
     /**
      * property name for a production server
      */
-    private static final String INIT_PROPERTY_PRODUCTION_SYSTEM=
-               "axis.production-system";
+    private static final String INIT_PROPERTY_DEVELOPMENT_SYSTEM=
+               "axis.development.system";
 
 
     /**
@@ -145,8 +145,8 @@ public class AxisServletBase extends HttpServlet {
 
         isDebug = log.isDebugEnabled();
         if(log.isDebugEnabled()) log.debug("In AxisServletBase init");
-        isProduction= JavaUtils.isTrueExplicitly(getOption(context,
-                        INIT_PROPERTY_PRODUCTION_SYSTEM, null));
+        isDevelopment= JavaUtils.isTrueExplicitly(getOption(context,
+                        INIT_PROPERTY_DEVELOPMENT_SYSTEM, null));
 
     }
 
@@ -342,19 +342,18 @@ public class AxisServletBase extends HttpServlet {
     /**
      * extract the base of our webapp from an inbound request
      *
-     * @param request request containing http://foobar/axis/services/
+     * @param request request containing http://foobar/axis/services/something
      * @return http://foobar/axis/services/
      */
     protected String getWebappBase(HttpServletRequest request) {
         StringBuffer baseURL=new StringBuffer(128);
         baseURL.append(request.getScheme());
-        baseURL.append("//");
+        baseURL.append("://");
         baseURL.append(request.getServerName());
         if(request.getServerPort()!=80) {
             baseURL.append(":");
             baseURL.append(request.getServerPort());
         }
-        baseURL.append("/");
         baseURL.append(request.getContextPath());
         return baseURL.toString();
     }
@@ -407,10 +406,10 @@ public class AxisServletBase extends HttpServlet {
 
     /**
      * probe for the system being 'production'
-     * @return true for a secure/robust system.
+     * @return true for a dev system.
      */
-    public boolean isProduction() {
-        return isProduction;
+    public boolean isDevelopment() {
+        return isDevelopment;
     }
 
 }
