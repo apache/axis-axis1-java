@@ -20,6 +20,7 @@ JAX-RPC COMPATIBILITY
 ! <> Implement Service.getCalls() method. (maybe)
 ! <> Implement generated Services' getCalls() method.
 ! <> Implement Service.getHandlerRegistry() method.
+! <> Implement ServiceFactory.createService methods.
 ! <> Remove standard property constants from org.apache.axis.client.Call after beta2.
 ! <> Remove ParameterMode.PARAM_MODE_* constants after beta2.
 
