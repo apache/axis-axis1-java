@@ -72,8 +72,9 @@ public interface MessageElement {
     public static byte ELEMENT_TYPE_FAULT = 5;
     public static byte ELEMENT_TYPE_ORPHAN = 99;    // No Parent
 
-    public byte           getType();
+    public byte           getMessageElementType();
     public QName          getQName();
+    public QName          getTypeQName();
     public String         getNamespaceURI();
     public String         getLocalName();
     public String         getPrefix();
