@@ -94,8 +94,15 @@ public class Detail extends SOAPFault implements javax.xml.soap.Detail {
      * @throws SOAPException  thrown when there is a problem in adding a DetailEntry object to this Detail object.
      */
     public DetailEntry addDetailEntry(Name name) throws SOAPException {
-        DetailEntry entry = new org.apache.axis.message.DetailEntry(name);
+        org.apache.axis.message.DetailEntry entry = new org.apache.axis.message.DetailEntry(name);
         addChildElement(entry);
+        if(fault != null) {
+            try {
+                fault.addFaultDetail(entry.getAsDOM());
+            } catch (Exception e) {
+                throw new SOAPException(e);
+            }
+        }
         return entry;
     }
 
