@@ -69,6 +69,9 @@ import org.apache.axis.utils.* ;
  * @author Doug Davis (dug@us.ibm.com)
  */
 public class AxisServlet extends HttpServlet {
+
+  private static final String AXIS_ENGINE = "AxisEngine" ;
+
   public void init() {
   }
 
@@ -85,9 +88,17 @@ public class AxisServlet extends HttpServlet {
     HttpSession    session = req.getSession();
 
     // Set-up the Axis Message objects...
-    // This really shouldn't be a 'new' - we expect the Transport Listener
-    // toh have some sort of caching (probably) to make this less expensive.
-    SimpleAxisEngine  engine     = new SimpleAxisEngine();
+    Handler  engine = null ;
+
+    synchronized(context) {
+      engine = (Handler) context.getAttribute( AXIS_ENGINE );
+      if ( engine == null ) {
+        engine = new SimpleAxisEngine() ;   // Get name from config file
+        context.setAttribute( AXIS_ENGINE, engine );
+        engine.init();
+      }
+    }
+
     MessageContext    msgContext = new MessageContext();
     Message           msg        = new Message( req, "ServletRequest" );
 
@@ -100,9 +111,7 @@ public class AxisServlet extends HttpServlet {
 
     // Invoke the Axis engine...
     try {
-      engine.init();
       engine.invoke( msgContext );
-      engine.cleanup();
     }
     catch( Exception e ) {
       msgContext.setOutgoingMessage( new Message(e.toString(), "String" ) );

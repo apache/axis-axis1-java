@@ -58,6 +58,14 @@
 package org.apache.axis.utils ;
 
 public class Constants {
+  // Some common Constants that should be used in local handler options
+  // (Not all implementations will have these concepts - for example
+  //  not all Engines will have notion of registries but defining these
+  //  here should allow people to ask if they exist)
+  //////////////////////////////////////////////////////////////////////////
+  public static String HANDLER_REGISTRY = "HandlerRegistry" ;
+  public static String SERVICE_REGISTRY = "ServiceRegistry" ;
+
   // MessageContext Property Names
   //////////////////////////////////////////////////////////////////////////
   public static String MC_TARGET       = "TargetAction" ;
