@@ -359,18 +359,22 @@ public class OperationDesc {
         ParameterDesc param = null;
 
         for (Iterator i = parameters.iterator(); i.hasNext();) {
-            param = (ParameterDesc) i.next();
+            ParameterDesc pnext = (ParameterDesc)i.next();
             if (param.getQName().equals(qname) &&
-                    param.getMode() != ParameterDesc.IN)
-                return param;
+                    param.getMode() != ParameterDesc.IN) {
+                param = pnext;
+                break;
+            }
         }
 
-        if (null == returnDesc.getQName() ){
-            param= new ParameterDesc( returnDesc); //Create copy
-            param.setQName(qname);
-        }
-        else if ( qname.equals(returnDesc.getQName())) {
-            param = returnDesc;
+        if (param == null) {
+            if (null == returnDesc.getQName() ){
+                param= new ParameterDesc( returnDesc); //Create copy
+                param.setQName(qname);
+            }
+            else if ( qname.equals(returnDesc.getQName())) {
+                param = returnDesc;
+            }
         }
 
         return param;
