@@ -45,6 +45,7 @@ Contents</h3>
 <br>&nbsp;&nbsp;&nbsp; <a href="#WSDL2Java">WSDL2Java</a>
 <br><a href="#Sequence Diagrams">Interaction Diagrams</a>
 <br>&nbsp;&nbsp;&nbsp; <a href="#Client Interaction">Client Side Processing</a>
+<br><a href="#Pluggable-Component Discovery">Pluggable-Component Discovery</a>
 <br><a href="#Open Issues">Open Issues</a>
 <h2>
 <a NAME="Introduction"></a>Introduction</h2>
@@ -460,12 +461,32 @@ request Message, drives AxisClient.invoke, and processes the resultant
 MessageContext. This significant method calls in this sequence are shown
 in the following interaction diagram.
 <br><img SRC="clientinteraction.jpg" height=503 width=731>
+
+<h2>
+<a NAME="Pluggable-Component Discovery"></a>Pluggable-Component Discovery</h2>
+<p>
+While most pluggable components infrastructures (jaxp/xerces, commons-logging, etc)
+provide discovery features, it is foreseen that there are situations where
+these may evolve over time.
+For example, as leading-edge technologies are
+reworked and adopted as standards,
+discovery mechanisms are likely to change.
+<p>
+Therefore,
+component discovery must be relegated to a <b>single</b>
+point of control within AXIS,
+typically an AXIS-specific factory method.
+These factory methods should conform to current standards,
+when available.
+As technologies evolve and/or are standardized, the factory methods
+should be kept up-to-date with appropriate discovery mechanisms.
+
 <h2>
 <a NAME="Open Issues"></a>Open Issues</h2>
 
 <ol>
 <li>
-&nbsp;The relationship between the Axis subsystems needs to be documented
+The relationship between the Axis subsystems needs to be documented
 and somewhat cleaned up as there is leakage of responsibilities between
 some of the subsystems. For example,
 there is some SOAP and HTTP bias in the basic MessageContext
