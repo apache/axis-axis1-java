@@ -15,7 +15,7 @@
   </taskdef>
 
   <target name="main">
-    <property name="test.dir" value="docLitParam"/>
+    <property name="testname" value="docLitParam"/>
 
     <!-- generate skeletons -->
     <wsdl2java url="http://www.whitemesa.com/r3/InteropTestDocLitParameters.wsdl"
@@ -24,13 +24,13 @@
     <mkdir dir="${root.dir}/${build.dest}"/>
 
     <copy file="WSDLInteropTestDocLitPortBindingImpl.java" overwrite="true"
-          todir="${root.dir}/build/work/test/wsdl/interop3/${test.dir}"/>
+          todir="${root.dir}/build/work/test/wsdl/interop3/${testname}"/>
 
     <!-- compile the skeletons -->
     <javac srcdir="${root.dir}/${build.dir}/work" 
       destdir="${root.dir}/${build.dest}" debug="on">
       <classpath refid="test-classpath" />
-      <include name="test/wsdl/interop3/${test.dir}/*.java" />
+      <include name="test/wsdl/interop3/${testname}/*.java" />
     </javac>
   </target>
 
