@@ -115,6 +115,8 @@ public class Emitter {
     public static final byte REQUEST_SCOPE     = 0x10;
     public static final byte SESSION_SCOPE     = 0x11;
 
+    private static boolean firstSer = true ;
+
     private Document doc = null;
     private Definition def = null;
     private WsdlAttributes wsdlAttr = null;
@@ -1169,11 +1171,17 @@ public class Emitter {
         if (type.getBaseType() != null) {
             return;
         }
+        if ( firstSer ) {
+            pw.println("            org.apache.axis.utils.QName qn;" );
+            pw.println("            Class cls;" );
+        }
+        firstSer = false ;
+
         QName qname = type.getQName();
-        pw.println("            org.apache.axis.utils.QName qn1 = new org.apache.axis.utils.QName(\"" + qname.getNamespaceURI() + "\", \"" + type.getJavaLocalName() + "\");");
-        pw.println("            Class cls = " + type.getJavaName() + ".class;");
-        pw.println("            call.addSerializer(cls, qn1, new org.apache.axis.encoding.BeanSerializer(cls));");
-        pw.println("            call.addDeserializerFactory(qn1, cls, org.apache.axis.encoding.BeanSerializer.getFactory());");
+        pw.println("            qn = new org.apache.axis.utils.QName(\"" + qname.getNamespaceURI() + "\", \"" + type.getJavaLocalName() + "\");");
+        pw.println("            cls = " + type.getJavaName() + ".class;");
+        pw.println("            call.addSerializer(cls, qn, new org.apache.axis.encoding.BeanSerializer(cls));");
+        pw.println("            call.addDeserializerFactory(qn, cls, org.apache.axis.encoding.BeanSerializer.getFactory());");
         pw.println();
     } // writeSerializationInit
 
