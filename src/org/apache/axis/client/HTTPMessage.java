@@ -228,7 +228,7 @@ public class HTTPMessage {
     }
 
     Message       resMsg = msgContext.getResponseMessage();
-    SOAPEnvelope  resEnv = (SOAPEnvelope) resMsg.getAs( "SOAPEnvelope" );
+    //SOAPEnvelope  resEnv = (SOAPEnvelope) resMsg.getAs( "SOAPEnvelope" );
     mc.setResponseMessage(resMsg);
     /*
     SOAPBody      resBody = null; //resEnv.getFirstBody();

@@ -75,6 +75,7 @@ public class ServiceDescription
     public static final String RESPONSE = "Response";
     
     String name;
+    boolean serviceIsRPC = true;
     
     class Param {
         public String name;
@@ -100,9 +101,15 @@ public class ServiceDescription
     // Should we tack on "xsi:type" attributes?
     public boolean sendXsiType = true;
     
-    public ServiceDescription(String name)
+    public ServiceDescription(String name, boolean isRPC)
     {
         this.name = name;
+        this.serviceIsRPC = isRPC;
+    }
+    
+    public boolean isRPC()
+    {
+        return this.serviceIsRPC;
     }
     
     public void addInputParam(String name, QName type)

@@ -136,6 +136,10 @@ public class SerializationContext
     public void startElement(QName qName, Attributes attributes)
         throws IOException
     {
+        if (DEBUG_LOG) {
+            System.out.println("Out: Starting element [" + qName.getNamespaceURI() + "]:" + qName.getLocalPart());
+        }
+        
         if (writingStartTag) {
             writer.write(">");
         }
@@ -190,6 +194,11 @@ public class SerializationContext
         throws IOException
     {
         String elementQName = (String)elementStack.pop();
+        
+        if (DEBUG_LOG) {
+            System.out.println("Out: Ending element " + elementQName);
+        }
+        
         nsStack.pop();
 
         if (writingStartTag) {

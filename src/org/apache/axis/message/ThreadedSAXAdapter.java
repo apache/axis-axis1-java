@@ -10,6 +10,8 @@ import org.xml.sax.*;
  */
 public class ThreadedSAXAdapter extends SOAPSAXHandler
 {
+    private static final boolean DEBUG_LOG = false;
+    
     private Object _semaphore = new Object();
                                            
     private XMLReader _parser;
@@ -31,7 +33,9 @@ public class ThreadedSAXAdapter extends SOAPSAXHandler
                 e.printStackTrace();
             }
             
-            System.out.println("ThreadedSAXAdapter done.");
+            if (DEBUG_LOG) {
+                System.out.println("ThreadedSAXAdapter done.");
+            }
             doneParsing = true;
             state = FINISHED;
             
@@ -95,7 +99,9 @@ public class ThreadedSAXAdapter extends SOAPSAXHandler
      */
     protected synchronized void continueParsing()
     {
-        System.out.println("continueParsing()");
+        if (DEBUG_LOG) {
+            System.out.println("continueParsing()");
+        }
         doneParsing = false;
         notify();
     }
@@ -110,7 +116,9 @@ public class ThreadedSAXAdapter extends SOAPSAXHandler
         if (parsingToEnd)
             return;
         
-        System.out.println("pauseParsing()");
+        if (DEBUG_LOG) {
+            System.out.println("pauseParsing()");
+        }
         
         synchronized (this) {
             doneParsing = true;
