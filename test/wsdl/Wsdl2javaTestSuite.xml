@@ -56,6 +56,13 @@
         <mapping namespace="urn:Example6" package="samples.userguide.example6"/>
     </wsdl2java>
 
+    <!-- Multiple-binding test with different literal usage -->
+    <wsdl2java url="test/wsdl/multibinding/multibinding.wsdl"
+               output="build/work"
+               skeleton="yes"
+               testcase="yes">
+    </wsdl2java>
+
     <!-- MultiRef Test -->
     <wsdl2java url="test/wsdl/multiref/MultiRefTest.wsdl"
                output="build/work"

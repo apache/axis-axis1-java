@@ -1049,6 +1049,7 @@ public class SymbolTable {
             }
 
             // Check the Binding Operations for use="literal"
+            boolean hasLiteral = false;
             HashMap attributes = new HashMap();
             List bindList = binding.getBindingOperations();
             for (Iterator opIterator = bindList.iterator(); opIterator.hasNext();) {
@@ -1120,9 +1121,15 @@ public class SymbolTable {
                 attributes.put(bindOp.getOperation(),
                         new BindingEntry.OperationAttr(inputBodyType, outputBodyType, faultMap));
 
+                // If the input or output body uses literal, flag the binding as using literal.
+                // NOTE:  should I include faultBodyType in this check?
+                if (inputBodyType == BindingEntry.USE_LITERAL ||
+                        outputBodyType == BindingEntry.USE_LITERAL) {
+                    hasLiteral = true;
+                }
             } // binding operations
 
-            BindingEntry bEntry = new BindingEntry(binding, bindingType, bindingStyle, attributes);
+            BindingEntry bEntry = new BindingEntry(binding, bindingType, bindingStyle, hasLiteral, attributes);
             symbolTablePut(bEntry);
         }
     } // populateBindings
