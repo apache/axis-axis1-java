@@ -67,7 +67,13 @@ public class ExtensibilityQueryTestCase extends junit.framework.TestCase {
                                
         assertTrue(result.getName().equals(name));
         assertTrue(result.getValue().equals(value));
-        assertTrue(result.getTime().before(Calendar.getInstance()));
+        Calendar now = Calendar.getInstance();
+        Calendar then = result.getTime();
+        if (!then.before(now)) {
+            System.out.println("Time check failed. Result time = " + then + ", current time = "
+                               + now);
+        }
+        assertTrue(then.before(now));
         assertTrue(result.getQueryType().getNamespaceURI().equals("urn:QueryType"));
         assertTrue(result.getQueryType().getLocalPart().equals("BookQuery"));
     }
