@@ -54,6 +54,8 @@
  */
 package org.apache.axis.components.encoding;
 
+import java.io.UnsupportedEncodingException;
+
 /**
  *
  * Simple byte array with variable array length, used within the
@@ -115,7 +117,21 @@ class EncodedByteArray {
         pointer += length;
     }
 
+    /**
+     * convert to a string using the platform's default charset 
+     * @return string
+     */ 
     public String toString() {
         return new String(array, 0, pointer);
+    }
+
+    /**
+     * convert the encoded byte array to a string according to the given charset 
+     * @param charsetName
+     * @return string
+     * @throws UnsupportedEncodingException
+     */ 
+    public String toString(String charsetName) throws UnsupportedEncodingException {
+        return new String(array, 0, pointer, charsetName);
     }
 }
