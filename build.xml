@@ -187,6 +187,7 @@ Copyright:
           toDir="${build.dest}/org/apache/axis/wsdl/test"/>
     <jar jarfile="${build.lib}/${name}.jar" basedir="${build.dest}" >
       <include name="org/**" />
+      <include name="javax/**"/>
       <include name="log4j.properties"/>
     </jar>
     <copy file="${wsdl4j.jar}" toDir="${build.lib}"/>
