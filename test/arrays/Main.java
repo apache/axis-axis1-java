@@ -75,7 +75,8 @@ public class Main {
     static String[] movies = new String[] { "Star Trek", "A.I." };
     static String[] hobbies= new String[] { "programming", "reading about programming" };
     static String[] pets   = new String[] { "Byte", "Nibbles" };
-    static PersonalInfo pi = new PersonalInfo(name,movies,hobbies,pets);
+    static byte[]   nickName = new byte[] { 'g', 'e', 'e', 'k' };
+    static PersonalInfo pi = new PersonalInfo(name,movies,hobbies,pets,nickName);
     
     private static void printPersonalInfo (PersonalInfo pi) {
         if (pi == null) {
@@ -97,6 +98,11 @@ public class Main {
         for(int i=0; i<pets.length; i++)
             System.err.println("\t\t" + (String) pets[i]);
 
+        byte[] nb =pi.getNickName();
+        System.err.print ("\tNickName=");
+        for(int i=0; i<nb.length; i++)
+            System.err.print(nb[i]);
+        System.err.println("");
     }
     
     private static Object doit (PersonalInfoBook pib) throws Exception {

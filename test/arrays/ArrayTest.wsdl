@@ -42,6 +42,9 @@
             <xsd:element name="hobbies" type="typens:hobbyArray"/>
             <!-- Style 3: Array defined using derivation of soapenc:Array -->
             <xsd:element name="pets" type="typens:petArray"/>
+            <!-- Array of bytes -->                                           
+            <xsd:element name="nickName" type="soapenc:base64"/>
+
         </xsd:sequence>
       </xsd:complexType>
     </xsd:schema>
