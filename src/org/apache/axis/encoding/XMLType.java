@@ -92,7 +92,10 @@ public class XMLType {
     public static final QName SOAP_ARRAY = Constants.SOAP_ARRAY;
 
     public static final QName SOAP_MAP = Constants.SOAP_MAP;
-    public static final QName SOAP_ELEMENT = Constants.SOAP_ELEMENT;                                
+    public static final QName SOAP_ELEMENT = Constants.SOAP_ELEMENT;
+
+    /** A "marker" XML type QName we use to indicate a void type. */
+    public static final QName AXIS_VOID = new QName("http://xml.apache.org/axis", "Void");
 
     public static       QName XSD_DATE;
     

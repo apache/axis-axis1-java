@@ -540,7 +540,7 @@ public class JavaStubWriter extends JavaWriter {
             pw.println("        call.setReturnType(" + outputType + ");");
         }
         else {
-            pw.println("        call.setReturnType(null);");
+            pw.println("        call.setReturnType(org.apache.axis.encoding.XMLType.AXIS_VOID);");
         }
 
         // SoapAction

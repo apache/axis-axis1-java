@@ -70,6 +70,7 @@ import org.apache.axis.encoding.SerializationContextImpl;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.encoding.XMLType;
 import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.SOAPBodyElement;
@@ -78,7 +79,7 @@ import org.apache.axis.message.SOAPFaultElement;
 import org.apache.axis.message.SOAPHeader;
 import org.apache.axis.transport.http.HTTPTransport;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.attachments.AttachmentPart; 
+import org.apache.axis.attachments.AttachmentPart;
 import org.apache.axis.InternalException;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ServiceDesc;
@@ -693,12 +694,12 @@ public class Call implements javax.xml.rpc.Call {
      *
      * @param  paramQName  QName of the parameter to return
      * @return XMLType    XMLType of paramQName, or null if not found.
-     */    
+     */
     public QName getParameterTypeByQName(QName paramQName) {
         int i;
         if ( paramNames == null ) return( null );
 
-        for (i = 0 ; i< paramNames.size() ; i++ ) 
+        for (i = 0 ; i< paramNames.size() ; i++ )
             if ( ((QName)paramNames.get(i)).equals(paramQName) ) {
                 return (QName) paramTypes.get(i);
             }
@@ -795,7 +796,7 @@ public class Call implements javax.xml.rpc.Call {
     }
 
     public void setOperation(QName portName, String opName) {
-        if ( service == null ) 
+        if ( service == null )
             throw new JAXRPCException( JavaUtils.getMessage("noService04") );
 
         Definition wsdlDefinition = service.getWSDLDefinition();
@@ -835,7 +836,7 @@ public class Call implements javax.xml.rpc.Call {
         List list = port.getExtensibilityElements();
         for ( int i = 0 ; list != null && i < list.size() ; i++ ) {
             Object obj = list.get(i);
-            if ( obj instanceof SOAPAddress ) { 
+            if ( obj instanceof SOAPAddress ) {
                 try {
                     SOAPAddress addr = (SOAPAddress) obj ;
                     URL         url  = new URL(addr.getLocationURI());
@@ -858,7 +859,7 @@ public class Call implements javax.xml.rpc.Call {
         list = bop.getExtensibilityElements();
         for ( int i = 0 ; list != null && i < list.size() ; i++ ) {
             Object obj = list.get(i);
-            if ( obj instanceof SOAPOperation ) { 
+            if ( obj instanceof SOAPOperation ) {
                 SOAPOperation sop    = (SOAPOperation) obj ;
                 String        action = sop.getSoapActionURI();
                 if ( action != null ) {
@@ -884,7 +885,7 @@ public class Call implements javax.xml.rpc.Call {
                 if( obj instanceof javax.wsdl.extensions.mime.MIMEMultipartRelated){
                   javax.wsdl.extensions.mime.MIMEMultipartRelated mpr=
                   (javax.wsdl.extensions.mime.MIMEMultipartRelated) obj;
-                  Object part= null; 
+                  Object part= null;
                   List l=  mpr.getMIMEParts();
                   for(int j=0; l!= null && j< l.size() && part== null; j++){
                      javax.wsdl.extensions.mime.MIMEPart mp
@@ -892,13 +893,13 @@ public class Call implements javax.xml.rpc.Call {
                      List ll= mp.getExtensibilityElements();
                      for(int k=0; ll!= null && k< ll.size() && part== null; k++){
                        part= ll.get(k);
-                       if ( !(part instanceof SOAPBody)) part = null; 
+                       if ( !(part instanceof SOAPBody)) part = null;
                      }
                   }
                   if(null != part) obj= part;
                 }
 
-                if ( obj instanceof SOAPBody ) { 
+                if ( obj instanceof SOAPBody ) {
                     SOAPBody sBody  = (SOAPBody) obj ;
                     list = sBody.getEncodingStyles();
                     if ( list != null && list.size() > 0 )
@@ -931,7 +932,7 @@ public class Call implements javax.xml.rpc.Call {
 
                 if ( type == null ) {
                     type = part.getElementName();
-                    if ( type != null ) 
+                    if ( type != null )
                       type = new javax.wsdl.QName("java","org.w3c.dom.Element");
                     else
                       throw new JAXRPCException(
@@ -965,7 +966,7 @@ public class Call implements javax.xml.rpc.Call {
                 javax.wsdl.QName type  = part.getTypeName();
                 if ( type == null ) {
                     type = part.getElementName();
-                    if ( type != null ) 
+                    if ( type != null )
                       type = new javax.wsdl.QName("java","org.w3c.dom.Element");
                     else
                       throw new JAXRPCException(
@@ -1002,17 +1003,17 @@ public class Call implements javax.xml.rpc.Call {
     }
 
     /**
-     * Invokes a specific operation using a synchronous request-response interaction mode. The invoke method takes 
-     * as parameters the object values corresponding to these defined parameter types. Implementation of the invoke 
-     * method must check whether the passed parameter values correspond to the number, order and types of parameters 
+     * Invokes a specific operation using a synchronous request-response interaction mode. The invoke method takes
+     * as parameters the object values corresponding to these defined parameter types. Implementation of the invoke
+     * method must check whether the passed parameter values correspond to the number, order and types of parameters
      * specified in the corresponding operation specification.
      *
      * @param operationName - Name of the operation to invoke
      * @param params  - Parameters for this invocation
      *
-     * @return the value returned from the other end. 
+     * @return the value returned from the other end.
      *
-     * @throws java.rmi.RemoteException - if there is any error in the remote method invocation or if the Call 
+     * @throws java.rmi.RemoteException - if there is any error in the remote method invocation or if the Call
      * object is not configured properly.
      */
     public Object invoke(QName operationName, Object[] params)
@@ -1196,9 +1197,9 @@ public class Call implements javax.xml.rpc.Call {
     /**
      * Cache of transport packages we've already added to the system
      * property.
-     */ 
+     */
     private static ArrayList transportPackages = null;
-    
+
     /** Add a package to the system protocol handler search path.  This
      * enables users to create their own URLStreamHandler classes, and thus
      * allow custom protocols to be used in Axis (typically on the client
@@ -1224,12 +1225,12 @@ public class Call implements javax.xml.rpc.Call {
                 }
             }
         }
-        
+
         if (transportPackages.contains(packageName))
             return;
-        
+
         transportPackages.add(packageName);
-        
+
         StringBuffer currentPackages = new StringBuffer();
         for (Iterator i = transportPackages.iterator(); i.hasNext();) {
             String thisPackage = (String) i.next();
@@ -1334,7 +1335,7 @@ public class Call implements javax.xml.rpc.Call {
      */
     public void setRequestMessage(Message msg) {
 
-        if(null != attachmentParts && !attachmentParts.isEmpty()){ 
+        if(null != attachmentParts && !attachmentParts.isEmpty()){
             try{
             org.apache.axis.attachments.Attachments attachments= msg.getAttachments();
             if(null == attachments) {
@@ -1348,7 +1349,7 @@ public class Call implements javax.xml.rpc.Call {
               throw  new RuntimeException(ex.getMessage());
             }
         }
-    
+
         msgContext.setRequestMessage(msg);
         attachmentParts.clear();
     }
@@ -1426,15 +1427,15 @@ public class Call implements javax.xml.rpc.Call {
         TypeMappingRegistry tmr = msgContext.getTypeMappingRegistry();
 
         // If a TypeMapping is not available, add one.
-        TypeMapping tm = (TypeMapping) tmr.getTypeMapping(encodingStyle); 
-        TypeMapping defaultTM = (TypeMapping) tmr.getDefaultTypeMapping(); 
+        TypeMapping tm = (TypeMapping) tmr.getTypeMapping(encodingStyle);
+        TypeMapping defaultTM = (TypeMapping) tmr.getDefaultTypeMapping();
         try {
             if (tm == null || tm == defaultTM ) {
                 tm = (TypeMapping) tmr.createTypeMapping();
                 tm.setSupportedNamespaces(new String[] {encodingStyle});
                 tmr.register(encodingStyle, tm);
             }
-            if (!force && tm.isRegistered(javaType, xmlType)) 
+            if (!force && tm.isRegistered(javaType, xmlType))
                 return;
 
             // Register the information
@@ -1493,16 +1494,16 @@ public class Call implements javax.xml.rpc.Call {
                     throws AxisFault {
 
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("enter00", 
+            log.debug(JavaUtils.getMessage("enter00",
                                            "Call::invoke(ns, meth, args)") );
         }
 
         RPCElement  body = new RPCElement(namespace, method, args);
-        
+
         Object ret = invoke( body );
 
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("exit00", 
+            log.debug(JavaUtils.getMessage("exit00",
                                            "Call::invoke(ns, meth, args)") );
         }
 
@@ -1539,8 +1540,17 @@ public class Call implements javax.xml.rpc.Call {
      */
     public Object invoke( RPCElement body ) throws AxisFault {
         if (log.isDebugEnabled()) {
-            log.debug(JavaUtils.getMessage("enter00", 
+            log.debug(JavaUtils.getMessage("enter00",
                                            "Call::invoke(RPCElement)") );
+        }
+
+        /**
+         * Since JAX-RPC requires us to specify a return type if we've set
+         * parameter types, check for this case right now and toss a fault
+         * if things don't look right.
+         */
+        if (paramTypes != null && returnType == null) {
+            throw new AxisFault(JavaUtils.getMessage("mustSpecifyReturnType"));
         }
 
         SOAPEnvelope         reqEnv = new SOAPEnvelope();
@@ -1587,13 +1597,13 @@ public class Call implements javax.xml.rpc.Call {
                 log.error(JavaUtils.getMessage("exception00"), e);
                 throw AxisFault.makeFault(e);
             }
-            
+
             if (resArgs != null && resArgs.size() > 0) {
-                
+
                 // If there is no return, then we start at index 0 to create the outParams Map.
                 // If there IS a return, then we start with 1.
                 int outParamStart = 0;
-                
+
                 // If we have resArgs and the returnType is specified, then the first
                 // resArgs is the return.  If we have resArgs and neither returnType
                 // nor paramTypes are specified, then we assume that the caller is
@@ -1612,12 +1622,16 @@ public class Call implements javax.xml.rpc.Call {
                 // types match the expected returnType and paramTypes, but I'm not
                 // sure how to do that since the resArgs value is a Java Object
                 // and the returnType and paramTypes are QNames.
-                if (returnType != null || paramTypes == null) {
+
+                // GD 03/15/02 : We're now checking for invalid metadata
+                // config at the top of this method, so don't need to do it
+                // here.  Check for void return, though.
+                if (!XMLType.AXIS_VOID.equals(returnType)) {
                     RPCParam param = (RPCParam)resArgs.get(0);
                     result = param.getValue();
                     outParamStart = 1;
                 }
-                
+
                 for (int i = outParamStart; i < resArgs.size(); i++) {
                     RPCParam param = (RPCParam) resArgs.get(i);
                     outParams.put(param.getQName(), param.getValue());
@@ -1656,7 +1670,7 @@ public class Call implements javax.xml.rpc.Call {
     public void setOption(String name, Object value) {
         service.getEngine().setOption(name, value);
     }
-    
+
     /**
      * Invoke this Call with its established MessageContext
      * (perhaps because you called this.setRequestMessage())
@@ -1717,7 +1731,7 @@ public class Call implements javax.xml.rpc.Call {
 
         if ( body.getPrefix() == null )       body.setPrefix( "m" );
         if ( body.getNamespaceURI() == null ) {
-            throw new AxisFault("Call.invoke", 
+            throw new AxisFault("Call.invoke",
                    JavaUtils.getMessage("cantInvoke00", body.getName()),
                                         null, null);
         } else if (msgContext.getService() == null) {
@@ -1752,22 +1766,22 @@ public class Call implements javax.xml.rpc.Call {
         }
 
         service.getEngine().invoke( msgContext );
-        
+
         if (transport != null)
             transport.processReturnedMessageContext(msgContext);
-        
+
         Message resMsg = msgContext.getResponseMessage();
-        
+
         if (resMsg == null)
             throw new AxisFault(JavaUtils.getMessage("nullResponse00"));
-        
+
         /** This must happen before deserialization...
          */
         resMsg.setMessageType(Message.RESPONSE);
-        
+
         SOAPEnvelope resEnv = (SOAPEnvelope)resMsg.getSOAPPart().
                 getAsSOAPEnvelope();
-        
+
         SOAPBodyElement respBody = resEnv.getFirstBody();
         if (respBody instanceof SOAPFaultElement) {
             throw ((SOAPFaultElement)respBody).getFault();

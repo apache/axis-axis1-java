@@ -9,6 +9,8 @@
 
 package samples.echo;
 
+import org.apache.axis.encoding.XMLType;
+
 import javax.xml.rpc.namespace.QName;
 
 public class EchoServiceBindingStub extends org.apache.axis.client.Stub implements samples.echo.EchoServicePortType {
@@ -357,7 +359,7 @@ public class EchoServiceBindingStub extends org.apache.axis.client.Stub implemen
             throw new org.apache.axis.NoEndPointException();
         }
         org.apache.axis.client.Call call = getCall();
-        call.setReturnType(null);
+        call.setReturnType(XMLType.AXIS_VOID);
         call.setUseSOAPAction(true);
         String methodName = (addMethodToAction) ? "echoVoid" : "";
         call.setSOAPActionURI(soapAction+methodName);
@@ -552,7 +554,7 @@ public class EchoServiceBindingStub extends org.apache.axis.client.Stub implemen
         call.addParameter("outputString", new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"), javax.xml.rpc.ParameterMode.PARAM_MODE_OUT);
         call.addParameter("outputInteger", new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "int"), javax.xml.rpc.ParameterMode.PARAM_MODE_OUT);
         call.addParameter("outputFloat", new javax.xml.rpc.namespace.QName("http://www.w3.org/2001/XMLSchema", "float"), javax.xml.rpc.ParameterMode.PARAM_MODE_OUT);
-        call.setReturnType(null);
+        call.setReturnType(XMLType.AXIS_VOID);
         call.setUseSOAPAction(true);
         String methodName = (addMethodToAction) ? "echoStructAsSimpleTypes" : "";
         call.setSOAPActionURI(soapAction+methodName);
