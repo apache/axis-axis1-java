@@ -74,7 +74,10 @@ public class JWSHandler extends BasicHandler
 
     public void invoke(MessageContext msgContext) throws AxisFault
     {
-        category.debug(JavaUtils.getMessage("enter00", "JWSHandler::invoke") );
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("enter00", 
+                "JWSHandler::invoke") );
+        }
 
         // FORCE the targetService to be JWS if the URL is right.
         String realpath = msgContext.getStrProp(Constants.MC_REALPATH);
@@ -83,7 +86,10 @@ public class JWSHandler extends BasicHandler
             msgContext.setTargetService(Constants.JWSPROCESSOR_TARGET) ;
         }
 
-        category.debug(JavaUtils.getMessage("exit00", "JWSHandler::invoke") );
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("exit00", 
+                "JWSHandler::invoke") );
+        }
     }
 
     public void generateWSDL(MessageContext msgContext) throws AxisFault {
@@ -92,7 +98,9 @@ public class JWSHandler extends BasicHandler
 
     public void undo(MessageContext msgContext)
     {
-        category.debug(JavaUtils.getMessage("enter00", "JWSHandler::undo") );
-        category.debug(JavaUtils.getMessage("exit00", "JWSHandler::undo") );
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("enter00", "JWSHandler::undo"));
+            category.debug(JavaUtils.getMessage("exit00", "JWSHandler::undo"));
+        }
     }
 }

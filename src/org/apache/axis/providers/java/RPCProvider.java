@@ -89,7 +89,11 @@ public class RPCProvider extends JavaProvider {
                                 Object obj)
         throws Exception
     {
-        category.debug(JavaUtils.getMessage("enter00", "RPCProvider.processMessage()"));
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("enter00", 
+                "RPCProvider.processMessage()"));
+        }
+
         Vector          bodies = reqEnv.getBodyElements();
         if (category.isDebugEnabled()) {
             category.debug(JavaUtils.getMessage("bodyElems00", "" + bodies.size()));
@@ -115,7 +119,10 @@ public class RPCProvider extends JavaProvider {
                 for ( int i = 0 ; i < args.size() ; i++ ) {
                     argValues[i]  = ((RPCParam)args.get(i)).getValue() ;
                     
-                    category.debug("  " + JavaUtils.getMessage("value00", "" + argValues[i]) );
+                    if (category.isDebugEnabled()) {
+                        category.debug("  " + JavaUtils.getMessage("value00", 
+                            "" + argValues[i]) );
+                    }
                 }
             }
 

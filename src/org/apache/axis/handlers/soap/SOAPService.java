@@ -153,7 +153,10 @@ public class SOAPService extends SimpleTargetedChain
     
     public void invoke(MessageContext msgContext) throws AxisFault
     {
-        category.debug(JavaUtils.getMessage("enter00", "SOAPService::invoke") );
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("enter00", 
+                "SOAPService::invoke") );
+        }
         
         if (!availableFromTransport(msgContext.getTransportName()))
             throw new AxisFault("Server.NotAvailable",
@@ -164,14 +167,21 @@ public class SOAPService extends SimpleTargetedChain
 
         Handler h = getRequestHandler() ;
         if ( h != null ) {
-            category.debug( JavaUtils.getMessage("invokeRequest00") );
+            if (category.isDebugEnabled()) {
+                category.debug( JavaUtils.getMessage("invokeRequest00") );
+            }
+
             h.invoke(msgContext);
         } else {
-            category.debug( JavaUtils.getMessage("noRequest01") );
+            if (category.isDebugEnabled()) {
+                category.debug( JavaUtils.getMessage("noRequest01") );
+            }
         }
 
         // Do SOAP semantics here
-        category.debug( JavaUtils.getMessage("semanticCheck00"));
+        if (category.isDebugEnabled()) {
+            category.debug( JavaUtils.getMessage("semanticCheck00"));
+        }
         
         // 1. Check mustUnderstands
         SOAPEnvelope env = msgContext.getRequestMessage().getSOAPPart().getAsSOAPEnvelope();
@@ -223,10 +233,15 @@ public class SOAPService extends SimpleTargetedChain
 
         h = getPivotHandler();
         if ( h != null ) {
-            category.debug( JavaUtils.getMessage("invokeService00") );
+            if (category.isDebugEnabled()) {
+                category.debug( JavaUtils.getMessage("invokeService00") );
+            }
+
             h.invoke(msgContext);
         } else {
-            category.debug( JavaUtils.getMessage("noService03") );
+            if (category.isDebugEnabled()) {
+                category.debug( JavaUtils.getMessage("noService03") );
+            }
         }
         
         // OK, we're past the pivot, so let the MessageContext know.
@@ -234,23 +249,38 @@ public class SOAPService extends SimpleTargetedChain
         
         h = getResponseHandler();
         if ( h != null ) {
-            category.debug( JavaUtils.getMessage("invokeResponse00") );
+            if (category.isDebugEnabled()) {
+                category.debug( JavaUtils.getMessage("invokeResponse00") );
+            }
+
             h.invoke(msgContext);
         } else {
-            category.debug( JavaUtils.getMessage("noResponse00") );
+            if (category.isDebugEnabled()) {
+                category.debug( JavaUtils.getMessage("noResponse00") );
+            }
         }
 
-        category.debug(JavaUtils.getMessage("exit00", "SOAPService::invoke") );
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("exit00", 
+                "SOAPService::invoke") );
+        }
     }
 
     public void undo(MessageContext msgContext)
     {
-        category.debug(JavaUtils.getMessage("enter00", "SOAPService::undo") );
-        category.debug(JavaUtils.getMessage("exit00", "SOAPService::undo") );
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("enter00", 
+                "SOAPService::undo") );
+            category.debug(JavaUtils.getMessage("exit00", 
+                "SOAPService::undo") );
+        }
     }
 
     public Element getDeploymentData(Document doc) {
-      category.debug(JavaUtils.getMessage("enter00", "SOAPService::getDeploymentData") );
+      if (category.isDebugEnabled()) {
+          category.debug(JavaUtils.getMessage("enter00", 
+              "SOAPService::getDeploymentData") );
+      }
 
       Element  root = doc.createElementNS("", "service");
 
@@ -262,7 +292,10 @@ public class SOAPService extends SimpleTargetedChain
         root.appendChild(elem);
       }
       
-      category.debug(JavaUtils.getMessage("exit00", "SOAPService::getDeploymentData") );
+      if (category.isDebugEnabled()) {
+          category.debug(JavaUtils.getMessage("exit00", 
+              "SOAPService::getDeploymentData") );
+      }
       return( root );
     }
 
@@ -315,8 +348,11 @@ public class SOAPService extends SimpleTargetedChain
      */
     public void enableTransport(String transportName)
     {
-        category.debug(JavaUtils.getMessage(
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage(
                 "enableTransport00", "" + this, transportName));
+        }
+
         if (validTransports == null)
             validTransports = new Vector();
         validTransports.addElement(transportName);

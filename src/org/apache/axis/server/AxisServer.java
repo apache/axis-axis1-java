@@ -134,7 +134,10 @@ public class AxisServer extends AxisEngine
      * handler for the desired service and invoke() it.
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
-        category.debug(JavaUtils.getMessage("enter00", "AxisServer::invoke") );
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("enter00", 
+                "AxisServer::invoke") );
+        }
 
         if (!isRunning()) {
             throw new AxisFault("Server.disabled",
@@ -182,7 +185,9 @@ public class AxisServer extends AxisEngine
                 /**************************************************************/
 
                 // When do we call init/cleanup??
-                category.debug(JavaUtils.getMessage("defaultLogic00") );
+                if (category.isDebugEnabled()) {
+                    category.debug(JavaUtils.getMessage("defaultLogic00") );
+                }
 
                 /*  This is what the entirety of this logic might evolve to:
 
@@ -267,14 +272,21 @@ public class AxisServer extends AxisEngine
             // Should we even bother catching it ?
             throw new AxisFault(e);
         }
-        category.debug(JavaUtils.getMessage("exit00", "AxisServer::invoke") );
+        
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("exit00", 
+                "AxisServer::invoke") );
+        }
     }
 
     /**
      *
      */
     public void generateWSDL(MessageContext msgContext) throws AxisFault {
-        category.debug(JavaUtils.getMessage("enter00", "AxisServer::editWSDL") );
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("enter00", 
+                "AxisServer::generateWSDL") );
+        }
 
         if (!isRunning()) {
             throw new AxisFault("Server.disabled",
@@ -406,11 +418,17 @@ public class AxisServer extends AxisEngine
             // Should we even bother catching it ?
             throw new AxisFault( e );
         }
-        category.debug(JavaUtils.getMessage("exit00", "AxisServer::editWSDL") );
+
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("exit00", 
+                "AxisServer::generateWSDL") );
+        }
     }
 
     public void undo(MessageContext msgContext) {
-        category.debug(JavaUtils.getMessage("enter00", "AxisServer::undo") );
-        category.debug(JavaUtils.getMessage("exit00", "AxisServer::undo") );
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("enter00", "AxisServer::undo"));
+            category.debug(JavaUtils.getMessage("exit00", "AxisServer::undo"));
+        }
     };
 };
