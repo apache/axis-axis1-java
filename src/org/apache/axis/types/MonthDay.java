@@ -60,10 +60,10 @@ import java.text.NumberFormat;
 
 /**
  * Implementation of the XML Schema type gMonthDay
- * 
+ *
  * @author Tom Jordahl <tomj@macromedia.com>
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#gMonthDay">XML Schema 3.2.12</a>
- */ 
+ */
 public class MonthDay implements java.io.Serializable {
     int month;
     int day;
@@ -72,8 +72,8 @@ public class MonthDay implements java.io.Serializable {
     /**
      * Constructs a MonthDay with the given values
      * No timezone is specified
-     */ 
-    public MonthDay(int month, int day) 
+     */
+    public MonthDay(int month, int day)
         throws NumberFormatException {
         setValue(month, day);
     }
@@ -81,28 +81,28 @@ public class MonthDay implements java.io.Serializable {
     /**
      * Constructs a MonthDay with the given values, including a timezone string
      * The timezone is validated but not used.
-     */ 
-    public MonthDay(int month, int day, String timezone) 
+     */
+    public MonthDay(int month, int day, String timezone)
         throws NumberFormatException {
         setValue(month, day, timezone);
     }
-    
+
     /**
      * Construct a MonthDay from a String in the format --MM-DD[timezone]
-     */ 
+     */
     public MonthDay(String source) throws NumberFormatException {
         if (source.length() < 6) {
             throw new NumberFormatException(
                     Messages.getMessage("badMonthDay00"));
         }
-        
+
         if (source.charAt(0) != '-' ||
             source.charAt(1) != '-' ||
             source.charAt(4) != '-' ) {
             throw new NumberFormatException(
                     Messages.getMessage("badMonthDay00"));
         }
-        
+
         setValue(Integer.parseInt(source.substring(2,4)),
                  Integer.parseInt(source.substring(5,7)),
                  source.substring(7));
@@ -128,7 +128,7 @@ public class MonthDay implements java.io.Serializable {
     /**
      * Set the day
      * NOTE: if the month isn't set yet, the day isn't validated
-     */ 
+     */
     public void setDay(int day) {
         // validate day
         if (day < 1 || day > 31) {
@@ -178,7 +178,7 @@ public class MonthDay implements java.io.Serializable {
         setDay(day);
         setTimezone(timezone);
     }
-    
+
     public void setValue(int month, int day) throws NumberFormatException {
         setMonth(month);
         setDay(day);
@@ -205,11 +205,23 @@ public class MonthDay implements java.io.Serializable {
         MonthDay other = (MonthDay) obj;
         if (obj == null) return false;
         if (this == obj) return true;
-        
+
         boolean equals = (this.month == other.month && this.day == other.day);
         if (timezone != null) {
             equals = equals && timezone.equals(other.timezone);
         }
         return equals;
+    }
+
+    /**
+     * Return the value of (month + day) XORed with the hashCode of
+     * timezone iff one is defined.
+     *
+     * @return an <code>int</code> value
+     */
+    public int hashCode() {
+        return null == timezone
+            ? (month + day)
+            : (month + day) ^ timezone.hashCode();
     }
 }

@@ -54,16 +54,19 @@
  */
 package org.apache.axis.types;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 /**
  * Custom class for supporting XSD data type NMTokens
- * 
+ *
  * @author Davanum Srinivas <dims@yahoo.com>
  */
 public class NMTokens extends NCName {
     private NMToken[] tokens;
-    
+
     public NMTokens() {
         super();
     }
@@ -85,16 +88,52 @@ public class NMTokens extends NCName {
     }
 
     public String toString() {
-        String val = "";
+        StringBuffer buf = new StringBuffer();
         for (int i = 0; i < tokens.length; i++) {
             NMToken token = tokens[i];
-            if (i > 0) val += " ";
-            val += token.toString();
+            if (i > 0) buf.append(" ");
+            buf.append(token.toString());
         }
-        return val;
+        return buf.toString();
     }
 
+    /**
+     * NMTokens can be equal without having identical ordering because
+     * they represent a set of references.  Hence we have to compare
+     * values here as a set, not a list.
+     *
+     * @param object an <code>Object</code> value
+     * @return a <code>boolean</code> value
+     */
     public boolean equals(Object object) {
-        return (toString().equals(object.toString()));
+        if (object == this) {
+            return true;        // succeed quickly, when possible
+        }
+        if (object instanceof NMTokens) {
+            NMTokens that = (NMTokens)object;
+            if (this.tokens.length == that.tokens.length) {
+                Set ourSet = new HashSet(Arrays.asList(this.tokens));
+                Set theirSet = new HashSet(Arrays.asList(that.tokens));
+                return ourSet.equals(theirSet);
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Returns the sum of the hashcodes of the underlying tokens, an
+     * operation which is not sensitive to ordering.
+     *
+     * @return an <code>int</code> value
+     */
+    public int hashCode() {
+        int hash = 0;
+        for (int i = 0; i < tokens.length; i++) {
+            hash += tokens[i].hashCode();
+        }
+        return hash;
     }
 }

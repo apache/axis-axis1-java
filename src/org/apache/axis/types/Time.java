@@ -63,11 +63,11 @@ import java.util.TimeZone;
 
 /**
  * Class that represents the xsd:time XML Schema type
- */ 
+ */
 public class Time implements java.io.Serializable {
     private Calendar _value;
 
-    
+
     private static SimpleDateFormat zulu =
        new SimpleDateFormat("HH:mm:ss.SSS'Z'");
 
@@ -79,15 +79,15 @@ public class Time implements java.io.Serializable {
 
     /**
      * Initialize with a Calender, year month and date are ignored
-     */ 
+     */
     public Time(Calendar value) {
         this._value = value;
         _value.set(0,0,0);      // ignore year, month, date
     }
-    
+
     /**
      * Converts a string formatted as HH:mm:ss[.SSS][+/-offset]
-     */ 
+     */
     public Time(String value) throws NumberFormatException {
         _value = makeValue(value);
     }
@@ -100,7 +100,7 @@ public class Time implements java.io.Serializable {
         this._value = date;
         _value.set(0,0,0);      // ignore year, month, date
     }
-    
+
     public void setTime(Date date) {
         _value.setTime(date);
         _value.set(0,0,0);      // ignore year, month, date
@@ -108,7 +108,7 @@ public class Time implements java.io.Serializable {
 
     /**
      * Utility function that parses xsd:time strings and returns a Date object
-     */ 
+     */
     private Calendar makeValue(String source) throws NumberFormatException {
         Calendar calendar = Calendar.getInstance();
         Date date;
@@ -195,7 +195,7 @@ public class Time implements java.io.Serializable {
 
         calendar.setTime(date);
         calendar.set(0,0,0);    // ignore year, month, date
-        
+
         return calendar;
     }
 
@@ -203,7 +203,7 @@ public class Time implements java.io.Serializable {
         synchronized (zulu) {
             return zulu.format(_value.getTime());
         }
-        
+
     }
 
     public boolean equals(Object obj) {
@@ -219,6 +219,15 @@ public class Time implements java.io.Serializable {
               _value.equals(other._value)));
 
         return _equals;
-        
+
+    }
+
+    /**
+     * Returns the hashcode of the underlying calendar.
+     *
+     * @return an <code>int</code> value
+     */
+    public int hashCode() {
+        return _value == null ? 0 : _value.hashCode();
     }
 }

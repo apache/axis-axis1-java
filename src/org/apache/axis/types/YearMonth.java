@@ -60,10 +60,10 @@ import java.text.NumberFormat;
 
 /**
  * Implementation of the XML Schema type gYearMonth
- * 
+ *
  * @author Tom Jordahl <tomj@macromedia.com>
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#gYearMonth">XML Schema 3.2.10</a>
- */ 
+ */
 public class YearMonth implements java.io.Serializable {
     int year;
     int month;
@@ -72,7 +72,7 @@ public class YearMonth implements java.io.Serializable {
     /**
      * Constructs a YearMonth with the given values
      * No timezone is specified
-     */ 
+     */
     public YearMonth(int year, int month) throws NumberFormatException {
         setValue(year, month);
     }
@@ -80,17 +80,17 @@ public class YearMonth implements java.io.Serializable {
     /**
      * Constructs a YearMonth with the given values, including a timezone string
      * The timezone is validated but not used.
-     */ 
+     */
     public YearMonth(int year, int month, String timezone) throws NumberFormatException {
         setValue(year, month, timezone);
     }
-    
+
     /**
      * Construct a YearMonth from a String in the format [-]CCYY-MM
-     */ 
+     */
     public YearMonth(String source) throws NumberFormatException {
         int negative = 0;
-        
+
         if (source.charAt(0) == '-') {
             negative = 1;
         }
@@ -98,7 +98,7 @@ public class YearMonth implements java.io.Serializable {
             throw new NumberFormatException(
                     Messages.getMessage("badYearMonth00"));
         }
-        
+
         // look for first '-'
         int pos = source.substring(negative).indexOf('-');
         if (pos < 0) {
@@ -106,7 +106,7 @@ public class YearMonth implements java.io.Serializable {
                     Messages.getMessage("badYearMonth00"));
         }
         if (negative > 0) pos++;    //adjust index for orginal string
-        
+
         setValue(Integer.parseInt(source.substring(0,pos)),
                  Integer.parseInt(source.substring(pos+1,pos+3)),
                  source.substring(pos+3));
@@ -122,7 +122,7 @@ public class YearMonth implements java.io.Serializable {
             throw new NumberFormatException(
                     Messages.getMessage("badYearMonth00"));
         }
-        
+
         this.year = year;
     }
 
@@ -171,7 +171,7 @@ public class YearMonth implements java.io.Serializable {
         setMonth(month);
         setTimezone(timezone);
     }
-    
+
     public void setValue(int year, int month) throws NumberFormatException {
         setYear(year);
         setMonth(month);
@@ -202,11 +202,23 @@ public class YearMonth implements java.io.Serializable {
         YearMonth other = (YearMonth) obj;
         if (obj == null) return false;
         if (this == obj) return true;
-        
+
         boolean equals = (this.year == other.year && this.month == other.month);
         if (timezone != null) {
             equals = equals && timezone.equals(other.timezone);
         }
         return equals;
+    }
+
+    /**
+     * Return the value of (month + year) XORed with the hashCode of
+     * timezone iff one is defined.
+     *
+     * @return an <code>int</code> value
+     */
+    public int hashCode() {
+        return null == timezone
+            ? (month + year)
+            : (month + year) ^ timezone.hashCode();
     }
 }
