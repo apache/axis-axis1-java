@@ -168,24 +168,51 @@ public class Types {
      * @return QName for the schema type representing the class
      */
     private QName writeTypeNamespace(Class type) {
+        javax.xml.rpc.namespace.QName qName = getTypeQName(type);
+        String pref = def.getPrefix(qName.getNamespaceURI());
+        if (pref == null)
+          def.addNamespace(namespaces.getCreatePrefix(qName.getNamespaceURI()), qName.getNamespaceURI());
+        return getWsdlQName(qName);
+    }
+
+    /**
+     * Return the QName of the type
+     * @param type input class
+     * @return QName
+     */
+    private javax.xml.rpc.namespace.QName getTypeQName(Class type) {
         javax.xml.rpc.namespace.QName qName = null;
         String typeName = null;
         if (type.isArray()) {
             Class componentType = type.getComponentType();
-            typeName = "ArrayOf" + componentType.getName().substring(componentType.getName().lastIndexOf('.') + 1);
-            if (isPrimitiveWsdlType(componentType))
-              qName = new javax.xml.rpc.namespace.QName(targetNamespace, typeName);
-            else
-              qName = new javax.xml.rpc.namespace.QName(namespaces.getCreate(componentType.getName()), typeName);
-        }else {
-            typeName = type.getName().substring(type.getName().lastIndexOf('.') + 1);
-            qName = new javax.xml.rpc.namespace.QName(namespaces.getCreate(type.getName()), typeName);
+
+            // Check for byte[] and Object[]
+            if (componentType == java.lang.Byte.class ||
+                componentType == java.lang.Byte.TYPE) {
+                qName = new javax.xml.rpc.namespace.QName(Constants.URI_SOAP_ENC, "base64");
+            } else if (componentType == java.lang.Object.class) {
+                qName = new javax.xml.rpc.namespace.QName(Constants.URI_SOAP_ENC, "Array");
+            } else {
+                // Construct ArrayOf in targetNamespace
+                javax.xml.rpc.namespace.QName cqName = getTypeQName(componentType);
+                String pre = namespaces.getCreatePrefix(cqName.getNamespaceURI());
+                String localPart = "ArrayOf_" + pre + "_" + cqName.getLocalPart();
+                qName = new javax.xml.rpc.namespace.QName(targetNamespace, 
+                                                          localPart);
+            } 
+        } else {
+            // Get the QName from the registry, or create our own.
+            qName = reg.getTypeQName(type);
+            if (qName == null) {
+                String ns = namespaces.getCreate(type.getName());
+                String pre = namespaces.getCreatePrefix(ns);
+                String localPart = type.getName().substring(type.getName().lastIndexOf('.') + 1);
+                localPart = localPart.replace('$', '_');
+                qName = new javax.xml.rpc.namespace.QName(ns, localPart);
+            }
         }
-        QName typeQName = getWsdlQName(qName);
-        String pref = def.getPrefix(qName.getNamespaceURI());
-        if (pref == null)
-          def.addNamespace(namespaces.getCreatePrefix(qName.getNamespaceURI()), qName.getNamespaceURI());
-        return typeQName;
+
+        return qName;
     }
 
     /**
@@ -243,54 +270,61 @@ public class Types {
      * @throws Exception
      */
     private String writeType(Class type) throws Exception {
+
+        // Quick return if schema type
         if (isPrimitiveWsdlType(type))
             return "xsd:" + reg.getTypeQName(type).getLocalPart();
+
+        // Write the namespace
         QName qName = writeTypeNamespace(type);
-        String typeName = null;
+
+        // If an array the component type should be processed first
         String componentTypeName = null;
         Class componentType = null;
         if (type.isArray()) {
             componentType = type.getComponentType();
             componentTypeName = writeType(componentType);
-            typeName = "ArrayOf" + componentTypeName.substring(componentTypeName.indexOf(":")+1);
         }
-        else {
-            typeName = type.getName().replace('$', '_');
-        }
-        String soapTypeName;
-        if (typeName.indexOf('.') >= 0)
-            soapTypeName = typeName.substring(typeName.lastIndexOf('.')+1);
-        else
-            soapTypeName = typeName;
 
-        String prefixedName = namespaces.getCreatePrefix(qName.getNamespaceURI())+":"+soapTypeName;
+        String soapTypeName = qName.getLocalPart();
+        String prefix = namespaces.getCreatePrefix(qName.getNamespaceURI());
+        String prefixedName = prefix+":"+soapTypeName;
 
+        // If processed before, or this is a known namespace, return
         if (!addToTypesList(qName, soapTypeName))
           return prefixedName;
 
-        Element complexType = docHolder.createElement("complexType");
-        writeSchemaElement(qName, complexType);
-        complexType.setAttribute("name", soapTypeName);
-        Element sequence = docHolder.createElement("sequence");
-        complexType.appendChild(sequence);
-
         if (type.isArray()) {
-            Element elem = docHolder.createElement("element");
-            elem.setAttribute("name", "item");
-            String elType = componentTypeName;
-            if (isNullable(componentType)) {
-                elem.setAttribute("nillable", "true");
-            }
-            elem.setAttribute("type", elType);
-            complexType.setAttribute("base", "soap:Array");
-            sequence.appendChild(elem);
+            // ComplexType representation of array
+            Element complexType = docHolder.createElement("complexType");
+            writeSchemaElement(qName, complexType);
+            complexType.setAttribute("name", soapTypeName);
+
+            Element complexContent = docHolder.createElement("complexContent");
+            complexType.appendChild(complexContent);
+
+            Element restriction = docHolder.createElement("restriction");
+            complexContent.appendChild(restriction);
+            restriction.setAttribute("base", "soap:Array");
+
+            Element attribute = docHolder.createElement("attribute");
+            restriction.appendChild(attribute);
+            attribute.setAttribute("ref", "soapenc:arrayType");
+            attribute.setAttribute("wsdl:arrayType", componentTypeName + "[]" );
         } else {
-            Field[] fld= type.getDeclaredFields();
+            // ComplexType representation of bean class
+            Element complexType = docHolder.createElement("complexType");
+            writeSchemaElement(qName, complexType);
+            complexType.setAttribute("name", soapTypeName);
+            Element sequence = docHolder.createElement("sequence");
+            complexType.appendChild(sequence);
+
+            Field[] fld= type.getDeclaredFields();         
             for (int i=0;i<fld.length;i++) {
-              if ((fld[i].getModifiers() == Modifier.PUBLIC) ||
-                (isJavaBean(type, fld[i]))) {
-                writeField (fld[i].getName(),fld[i].getType(),sequence);
-              }
+                if ((fld[i].getModifiers() == Modifier.PUBLIC) ||
+                    (isJavaBean(type, fld[i]))) {
+                    writeField (fld[i].getName(),fld[i].getType(),sequence);
+                }
             }
         }
         return prefixedName;
@@ -395,7 +429,7 @@ public class Types {
     }
 
     /**
-     * Add the type to an ArrayList and return true to indicate that the Schema node
+     * Add the type to an ArrayList and return true if the Schema node
      * needs to be generated
      * If the type already exists, just return false to indicate that the type is already
      * generated in a previous iterration
@@ -405,22 +439,36 @@ public class Types {
      * @return if the type is added returns true, else if the type is already present returns false
      */
     private boolean addToTypesList (QName qName, String typeName) {
+        boolean added = false;
         ArrayList types = (ArrayList)schemaTypes.get(qName.getNamespaceURI());
         if (types == null) {
             types = new ArrayList();
             types.add(typeName);
             schemaTypes.put(qName.getNamespaceURI(), types);
-            return true;
+            added = true;
         }
         else {
             if (!types.contains(typeName)) {
                types.add(typeName);
-               return true;
+               added = true;
             }
+        }
+
+        // If addded, look at the namespace uri to see if the schema element should be 
+        // generated.
+        if (added) {
+            String prefix = namespaces.getCreatePrefix(qName.getNamespaceURI());
+            if (prefix.equals("soap") ||
+                prefix.equals("soapenc") ||
+                prefix.equals("wsdl") ||
+                prefix.equals("xsd")) 
+                return false;
+            else
+                return true;
         }
         return false;
     }
-
+ 
     /**
      * Determines if the Field in the Class has bean compliant accessors. If so returns true,
      * else returns false

@@ -310,9 +310,18 @@ public class Emitter {
 
         def.addNamespace("intf", intfNS);
         def.addNamespace("impl", implNS);
+
         def.addNamespace("soap", "http://schemas.xmlsoap.org/wsdl/soap/");
+        namespaces.putPrefix("http://schemas.xmlsoap.org/wsdl/soap/", "soap");
+
+        def.addNamespace("wsdl", "http://schemas.xmlsoap.org/wsdl/");
+        namespaces.putPrefix("wsdl", "http://schemas.xmlsoap.org/wsdl/");
+
         def.addNamespace("soapenc", Constants.URI_SOAP_ENC);
+        namespaces.putPrefix(Constants.URI_SOAP_ENC, "soapenc");
+
         def.addNamespace("xsd", Constants.URI_CURRENT_SCHEMA_XSD);
+        namespaces.putPrefix(Constants.URI_CURRENT_SCHEMA_XSD, "xsd");
     }
 
    /**
