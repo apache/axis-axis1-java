@@ -251,7 +251,6 @@ public abstract class JavaWriter implements Generator {
             int start = 0;
 
             pw.println();  // blank line
-            pw.println("    /**");
 
             // make the comment look pretty
             while (start < comment.length()) {
@@ -263,10 +262,9 @@ public abstract class JavaWriter implements Generator {
                         !Character.isWhitespace(comment.charAt(end))) {
                     end++;
                 }
-                pw.println("     * " + comment.substring(start, end).trim());
+                pw.println("    // " + comment.substring(start, end).trim());
                 start = end + 1;
             }
-            pw.println("     */");
         }
     } // writeComment
 
