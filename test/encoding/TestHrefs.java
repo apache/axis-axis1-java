@@ -82,7 +82,7 @@ public class TestHrefs extends TestCase {
 
        Vector arglist = body.getParams();
        assertNotNull("arglist", arglist);
-       assert("param.size()>0", arglist.size()>0);
+       assertTrue("param.size()>0", arglist.size()>0);
 
        RPCParam param = (RPCParam) arglist.get(0);
        assertNotNull("param", param);

@@ -20,7 +20,7 @@ public class TestQName extends TestCase
     public void testQNameDefaultConstructor()
     {
         QName qname = new QName();
-        assert(qname instanceof QName);
+        assertTrue(qname instanceof QName);
         assertNull(qname.getLocalPart());
     }   
     
@@ -65,15 +65,15 @@ public class TestQName extends TestCase
         ////QName qname5 = new QName("PREFIX:LOCALPART", elem);
 
         // the following should NOT throw a NullPointerException
-        assert(!qname1.equals(qname2));
+        assertTrue(!qname1.equals(qname2));
        
         //Note: this test is comparing the same two QName objects as above, but
         //due to the order and the implementation of the QName.equals() method,
         //this test passes without incurring a NullPointerException. 
-        assert(!qname2.equals(qname1));
+        assertTrue(!qname2.equals(qname1));
 
-        assert(qname2.equals(qname3));
-        assert(!qname3.equals(qname4));
+        assertTrue(qname2.equals(qname3));
+        assertTrue(!qname3.equals(qname4));
     }
     
     public void testHashCode()
@@ -82,6 +82,6 @@ public class TestQName extends TestCase
         QName compare = new QName("xsl", "text");
         QName contrast = new QName("xso", "text");
         assertEquals(control.hashCode(), compare.hashCode());
-        assert(!(control.hashCode() == contrast.hashCode()));
+        assertTrue(!(control.hashCode() == contrast.hashCode()));
     }
 }

@@ -21,8 +21,8 @@ public class TestQFault extends TestCase
     public void testQFaultConstructorWith3Params()
     {
         QFault qfault = new QFault("xsl","include","extra");
-        assert(qfault instanceof QName);
-        assert(qfault instanceof QFault);
+        assertTrue(qfault instanceof QName);
+        assertTrue(qfault instanceof QFault);
         assertEquals("include.extra", qfault.getLocalPart());
     }   
     
@@ -30,7 +30,7 @@ public class TestQFault extends TestCase
     {
         QFault qfault = new QFault("rdf","title");
         QFault qfaultWithMinorCode = new QFault(qfault,"extraBits");
-        assert(qfaultWithMinorCode instanceof QFault);
+        assertTrue(qfaultWithMinorCode instanceof QFault);
         assertEquals("title.extraBits", qfaultWithMinorCode.getLocalPart());
     }   
     

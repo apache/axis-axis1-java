@@ -104,7 +104,7 @@ public class TestSerializedRPC extends TestCase {
         // Extract the list of parameters from the body
         Vector arglist = body.getParams();
         assertNotNull("arglist", arglist);
-        assert("param.size()>0", arglist.size()>0);
+        assertTrue("param.size()>0", arglist.size()>0);
 
         // Return the first parameter
         RPCParam param = (RPCParam) arglist.get(0);

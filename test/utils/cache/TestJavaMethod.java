@@ -39,7 +39,7 @@ public class TestJavaMethod extends TestCase
         catch (NullPointerException ex) {
             gotError = true;
         }
-        assert("Expected NullPointerException", gotError);
+        assertTrue("Expected NullPointerException", gotError);
 
         //on the other hand, make sure methods with 0 params work...
         JavaMethod jmCapacity = new JavaMethod(vector, "capacity");
@@ -69,6 +69,6 @@ public class TestJavaMethod extends TestCase
         catch (NullPointerException ex) {
             gotError = true;
         }
-        assert("Expected NullPointerException", gotError);
+        assertTrue("Expected NullPointerException", gotError);
     }
 }
