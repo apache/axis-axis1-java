@@ -56,8 +56,7 @@
 package org.apache.axis.handlers ;
 
 import java.util.* ;
-import org.w3c.dom.* ;
-import org.xml.sax.InputSource ;
+import org.jdom.* ;
 
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
@@ -80,9 +79,8 @@ public class DebugHandler extends BasicHandler {
 
             for ( int i = 0 ; headers != null && i < headers.size() ; i ++ ) {
                 SOAPHeader  header = (SOAPHeader) headers.get(i);
-                Node        node = header.getDataAtIndex( 0 );
-                if ( node != null ) {
-                    String  value    = node.getNodeValue();
+                String      value = (String) header.getDataAtIndex( 0 );
+                if ( value != null ) {
                     int     debugVal = Integer.parseInt( value );
                     Debug.Print( 1, "Setting debug level to: " + debugVal );
                     Debug.setDebugLevel( debugVal );

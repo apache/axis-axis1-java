@@ -58,9 +58,9 @@ package org.apache.axis.transport.http;
 import java.io.* ;
 import java.net.* ;
 import java.util.* ;
-import org.w3c.dom.* ;
-import org.xml.sax.InputSource ;
-import org.apache.xerces.parsers.DOMParser ;
+import org.jdom.* ;
+import org.jdom.input.SAXBuilder ;
+import org.jdom.output.XMLOutputter ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
 import org.apache.axis.message.* ;
@@ -172,15 +172,13 @@ public class HTTPDispatchHandler extends BasicHandler {
         }
       }
       if ( b != -1 ) {
-        DOMParser  parser = new DOMParser();
-        parser.parse( new InputSource( inp ) );
-  
-        outMsg = new Message( parser.getDocument(), "Document" );
+        SAXBuilder parser = new SAXBuilder();
+        Document doc = parser.build(inp);
+        outMsg = new Message( doc, "Document" );
         msgContext.setResponseMessage( outMsg );
         if ( Debug.DebugOn(2) ) {
           Debug.Print( 2, "XML received:" );
-          Message m = new Message( parser.getDocument(), "Document" );
-          Debug.Print( 2, (String) m.getAs( "String" ) );
+          Debug.Print( 2, (new XMLOutputter()).outputString(doc) );
         }
       }
 

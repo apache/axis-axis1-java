@@ -58,9 +58,7 @@ package org.apache.axis.message ;
 // !!!!***** Just a placeholder until we get the real stuff ***!!!!!
 
 import java.util.* ;
-import org.w3c.dom.* ;
-import org.apache.xerces.dom.DocumentImpl ;
-import org.xml.sax.InputSource ;
+import org.jdom.* ;
 import org.apache.axis.message.* ;
 
 /**
@@ -75,7 +73,7 @@ public class SOAPBody {
   }
 
   public SOAPBody(Document doc) {
-    root = doc.getDocumentElement() ;
+    root = doc.getRootElement() ;
   }
 
   public SOAPBody(Element elem) {
@@ -90,15 +88,12 @@ public class SOAPBody {
     this.root = r ;
   }
 
-  public Element getAsXML(Document doc) {
-    if ( doc == null ) return( root );
-    return( (Element) doc.importNode( (Node) root, true ) );
+  public Element getAsXML() {
+    return( root );
   }
 
   public Document getAsDocument() {
-    Document doc = new DocumentImpl();
-    doc.appendChild( doc.importNode( (Node) root, true ) );
-    return( doc );
+    return( new Document(root) );
   }
 
 };

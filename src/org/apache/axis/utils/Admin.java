@@ -57,10 +57,8 @@ package org.apache.axis.utils ;
 
 import java.io.* ;
 import java.util.* ;
-import org.w3c.dom.* ;
-import org.apache.xerces.dom.DocumentImpl ;
-import org.apache.xerces.parsers.DOMParser ;
-import org.xml.sax.InputSource ;
+import org.jdom.* ;
+import org.jdom.input.SAXBuilder ;
 import org.apache.axis.registries.* ;
 import org.apache.axis.handlers.* ;
 import org.apache.axis.utils.* ;
@@ -90,12 +88,12 @@ public class Admin {
   }
 
   private void getOptions(Element root, Handler handler) {
-    NodeList  list = root.getElementsByTagName( "option" );
+    List  list = root.getChildren( "option" );
 
-    for ( int i = 0 ; list != null && i < list.getLength() ; i++ ) {
-      Element elem  = (Element) list.item(i);
-      String  name  = elem.getAttribute( "name" );
-      String  value = elem.getAttribute( "value" );
+    for ( int i = 0 ; list != null && i < list.size() ; i++ ) {
+      Element elem  = (Element) list.get(i);
+      String  name  = elem.getAttributeValue( "name" );
+      String  value = elem.getAttributeValue( "value" );
 
       if ( name != null && value != null )
         handler.addOption( name, value );
@@ -107,35 +105,33 @@ public class Admin {
     hr = (HandlerRegistry)msgContext.getProperty(Constants.HANDLER_REGISTRY);
     sr = (HandlerRegistry)msgContext.getProperty(Constants.SERVICE_REGISTRY);
     process( xml );
-    Document doc = new DocumentImpl();
-    Element  root = doc.createElement( "Admin" );
-    doc.appendChild( root );
-    root.appendChild( doc.createTextNode( "Done processing" ) );
+    Element  root = new Element( "Admin" );
+    Document doc  = new Document(root);
+    root.addContent( "Done processing" );
     Debug.Print( 1, "Exit: Admin:AdminService" );
     return( doc );
   }
 
   public void process(Document doc) {
-    process( doc.getDocumentElement() );
+    process( doc.getRootElement() );
   }
 
   public void process(Element root) {
     try {
       init();
       ClassLoader   cl     = new AxisClassLoader();
-      String        action = root.getTagName();
+      String        action = root.getName();
 
       if ( !action.equals("deploy") && !action.equals("undeploy") ) 
         Error( "Root element must be 'deploy' or 'undeploy'" );
   
-      NodeList list = root.getChildNodes();
-      for ( int loop = 0 ; loop < list.getLength() ; loop++ ) {
-        Node node = list.item(loop);
-        if ( node.getNodeType() != Node.ELEMENT_NODE ) continue ;
+      List list = root.getChildren();
+      for ( int loop = 0 ; loop < list.size() ; loop++ ) {
+        Object node = list.get(loop);
         Element  elem    = (Element) node ;
         // if ( elem.getNodeType != ELEMENT_NODE ) continue ;
-        String   type    = elem.getTagName();
-        String   name    = elem.getAttribute( "name" );
+        String   type    = elem.getName();
+        String   name    = elem.getAttributeValue( "name" );
   
         if ( action.equals( "undeploy" ) ) {
           if ( type.equals("service") ) {
@@ -154,11 +150,11 @@ public class Admin {
         Handler  h       = null ;
   
         if ( type.equals( "handler" ) ) {
-          String   cls   = elem.getAttribute( "class" );
+          String   cls   = elem.getAttributeValue( "class" );
           System.out.println( "Deploying handler: " + name );
           
           if (hr instanceof SupplierRegistry) {
-            String lifeCycle = elem.getAttribute("lifecycle");
+            String lifeCycle = elem.getAttributeValue("lifecycle");
             Supplier supplier;
 
             if ("factory".equals(lifeCycle)) {
@@ -179,10 +175,10 @@ public class Admin {
           }
         }
         else if ( type.equals( "chain" ) ) {
-          String   flow    = elem.getAttribute( "flow" );
-          String   input   = elem.getAttribute( "input" );
-          String   pivot   = elem.getAttribute( "pivot" );
-          String   output  = elem.getAttribute( "output" );
+          String   flow    = elem.getAttributeValue( "flow" );
+          String   input   = elem.getAttributeValue( "input" );
+          String   pivot   = elem.getAttributeValue( "pivot" );
+          String   output  = elem.getAttributeValue( "output" );
  
           String   hName ;
           Handler  tmpH ;
@@ -244,7 +240,7 @@ public class Admin {
           }
         }
         else if ( type.equals( "service" ) ) {
-          String   handler = elem.getAttribute( "handler" );
+          String   handler = elem.getAttributeValue( "handler" );
           System.out.println( "Deploying service: " + name );
           Handler  hand  = hr.find(handler);
           if( hand == null )
@@ -296,15 +292,12 @@ public class Admin {
 
     try {
       for ( i = 0 ; i < args.length ; i++ ) {
-        DOMParser    parser  = new DOMParser();
-        InputSource  inp     = null ;
-        Document     doc     = null ;
+        SAXBuilder       parser  = new SAXBuilder();
+        Document         doc     = null ;
 
         System.out.println( "Processing '" + args[i] + "'" );
  
-        inp = new InputSource( new FileInputStream(args[i]));
-        parser.parse( inp );
-        doc = parser.getDocument();
+        doc = parser.build( new FileInputStream(args[i]) );
 
         admin.process( doc );
       }

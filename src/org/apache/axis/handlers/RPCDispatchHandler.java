@@ -57,7 +57,7 @@ package org.apache.axis.handlers ;
 
 import java.util.* ;
 import java.lang.reflect.* ;
-import org.w3c.dom.* ;
+import org.jdom.* ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
 import org.apache.axis.message.* ;

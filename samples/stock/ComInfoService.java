@@ -58,10 +58,7 @@ package samples.stock ;
 import java.io.*;
 import java.net.URL;
 
-import org.w3c.dom.*;
-import org.xml.sax.InputSource ;
-import org.apache.xerces.parsers.* ;
-import org.apache.xerces.framework.* ;
+import org.jdom.* ;
 
 /**
  *

@@ -56,7 +56,7 @@
 package org.apache.axis.client ;
 
 import java.util.* ;
-import org.w3c.dom.* ;
+import org.jdom.* ;
 import org.apache.axis.* ;
 import org.apache.axis.message.* ;
 import org.apache.axis.handlers.* ;
@@ -166,7 +166,7 @@ public class HTTPCall {
 
     resMsg = msgContext.getResponseMessage();
     Document doc = (Document) resMsg.getAs("Document");
-    body = new RPCBody( doc.getDocumentElement() );
+    body = new RPCBody( doc.getRootElement() );
     resArgs = body.getArgs();
     arg = (RPCArg) resArgs.get(0);
     Debug.Print( 1, "Exit: HTTPCall.invoke" );
