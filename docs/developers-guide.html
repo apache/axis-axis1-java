@@ -208,50 +208,6 @@ Expect these to be written to logs only.</li>
 Expect these to be written to logs only.</li>
 </ul>
 
-<h4>Debug Output</h4>
-Developers may be tempted to use <code>System.out.println</code>
-while debugging or analyzing a system.
-PLEASE DON'T.
-Remember that AXIS is targetted for use in a number
-of open-source and other web applications,
-and so it needs to be a good citizen.
-We strongly encourage you to use the following guidelines:
-<ul>
-<li>
-Take a few moments and introduce debug statements
-<code>log.debug("reasonably terse and meaningful message");</code>
-If they are useful for understanding a problem now,
-they may be again in the future to you or a peer.
-</li>
-
-<br>&nbsp;
-<li>
-You are saying: <i>"Yes, but I don't want to see ALL the debug output"</i>.
-Turn on DEBUG output ONLY for the package(s) or class(es)
-that you are interested in.
-In Log4J, leave the root (default) priority high,
-lower the threshold for either the
-<code>CONSOLE</code> or <code>LOGFILE</code>
-appenders (assuming your properties file is based on the
-<code>log4j.properties</code> file in AXIS) as you desire,
-and set the logger (class/package name) priority down to <code>DEBUG</code>.
-See <a href="#Configuring the Logger">Configuring the Logger</a>, below.
-</li>
-
-<br>&nbsp;
-<li>
-You are saying: <i>"OK, but I still have TO MUCH OUTPUT"</i>.
-Welcome to the real world :-).
-Seriously, consider logging to a file and using tools to
-extract the information you need (grep).
-Place key words in log messages that will help categorize them.
-At worst, try <code>log.debug("myname: my message");</code>.
-This last is also good for messages that you want to clean out when done,
-as it makes it easy to search for your specific debug statements.
-Regardless, remove <code>myname</code> from the message when done.
-</li>
-</ul>
-
 <h3><a NAME="Configuring the Logger">Configuring the Logger</a></h3>
 The Jakarta Commons Logging (JCL) SPI
 can be configured to use different logging toolkits.
@@ -596,10 +552,10 @@ verify.&nbsp; Check in your test.</font></li>
 <h2>
 <a NAME="Debugging"></a>Debugging</h2>
 
-<h4>
-Using tcpmon to monitor functional-tests</h4>
-Here is an easy way to monitor the messages while running functional-tests
-(or all-tests).
+<h4>Using <code>tcpmon</code> to Monitor Functional Tests.</h4>
+<p>
+Here is an easy way to monitor the messages while running
+<code>functional-tests</code> (or <code>all-tests</code>).
 <br>Start up tcpmon listening on 8080 and forwarding to a different port:
 <blockquote><tt>java org.apache.axis.utils.tcpmon 8080 localhost 8011</tt></blockquote>
 Run your tests, but use the forwarded port for the SimpleAxisServer, and
@@ -607,8 +563,11 @@ indicate that functional-tests should continue if a failure occurs.
 <blockquote><tt>ant functional-tests -Dtest.functional.SimpleAxisPort=8011
 -Dtest.functional.fail=no</tt></blockquote>
 The SOAP messages for all of the tests should appear in the tcpmon window.
+<p>
+<code>tcpmon</code> is described in more detail in the
+<a href="user-guide.html#tcpmon">AXIS User's Guide</a>.
 
-<h4>Running a single functional test</h4>
+<h4>Running a Single Functional Test</h4>
 In one window start the server:
 <br>
 <blockquote><tt>java org.apache.axis.transport.http.SimpleAxisServer -p 8080</tt></blockquote>
@@ -616,5 +575,117 @@ In another window, first deploy the service you're testing:
 <blockquote><tt>java org.apache.axis.client.AdminClient deploy.wsdd</tt></blockquote>
 Then bring up the JUnit user interface with your test.  For example, to run the the multithread test case:
 <blockquote><tt>java junit.swingui.TestRunner -noloading test.wsdl.multithread.MultithreadTestCase</tt></blockquote>
+
+<h4>Turning on Debug Output</h4>
+This section is oriented to the AXIS default logger: Log4J.
+For additional information on Log4J, see the section
+<a href="#Configuring the Logger">Configuring the Logger</a>.
+<p>
+<ul>
+<li><h5>Overriding Log4J properties</h5></li>
+The <code>log4j.properties</code> file
+is packaged in <code>axis.jar</code> with reasonable
+default settings.
+Subsequent items presume changes to these settings.
+There are multiple options open to the developer,
+most of which involve
+extracting <code>log4j.properties</code> from <code>axis.jar</code>
+and modifying as appropriate.
+<ul>
+<p>
+<li>
+If you are building and executing <code>java</code> programs from
+a command line or script file,
+include the JVM option
+<code>-Dlog4j.configuration=<i>yourConfigFile</i></code>.
+</li>
+<p>
+<li>
+Set <code>CLASSPATH</code> such that
+your version of <code>log4j.properties</code> appears
+prior to <code>axis.jar</code> in the <code>CLASSPATH</code>.
+</li>
+<p>
+<li>
+If you are building and executing your programs using <code>ant</code>
+(this includes building AXIS and running it's tests),
+set the environment variable <code>ANT_OPTS</code> to <code>-Dlog4j.configuration=<i>yourConfigFile</i></code>.
+</li>
+<p>
+<li>
+If you are building AXIS, you can change <code>src/log4j.properties</code>
+directly.  Be sure NOT to commit your change(s).
+</li>
+</ul>
+
+<br>
+<li><h5>Turning on ALL DEBUG Output</h5></li>
+<ul>
+<li>
+Set the <code>log4j.rootCategory</code> <i>priority</i> to
+<code>DEBUG</code>.
+</li>
+<p>
+<li>
+Set the <i>priority</i> threshold for an appender to <code>DEBUG</code>
+(The <code>log4j.properties</code> file in AXIS defines two appenders:
+<code>CONSOLE</code> and <code>LOGFILE</code>).
+</li>
+</ul>
+
+<br>
+<li><h5>Selective DEBUG Output</h5></li>
+<ul>
+<li>
+Set the <code>log4j.rootCategory</code> <i>priority</i> to
+<code>INFO</code> or higher.
+</li>
+<p>
+<li>
+Set the <code>log4j.logger.<i>logger.name</i></code> <i>priority</i> to
+<code>DEBUG</code> for the loggers that you are interested in.
+</li>
+<p>
+<li>
+Set the <i>priority</i> threshold for an appender to <code>DEBUG</code>
+(The <code>log4j.properties</code> file in AXIS defines two appenders:
+<code>CONSOLE</code> and <code>LOGFILE</code>).
+</li>
+<p>
+<li>
+If you are still seeing more than you want to see,
+you will need to use other tools to extract the information
+you are interested in from the log output.
+Use appropriate key words in log messages
+and use tools such as <code>grep</code> to
+search for them in log messages.
+</li>
+</ul>
+</ul>
+
+<h4>Writing Temporary Output</h4>
+Remember that AXIS is targetted for use in a number
+of open-source and other web applications,
+and so it needs to be a good citizen.
+Writing output using <code>System.out.println</code> or
+<code>System.err.println</code>
+should be avoided.
+<p>
+Developers may be tempted to use <code>System.out.println</code>
+while debugging or analyzing a system.
+If you choose to do this, you will need to disable the
+<code>util/TestSrcContent</code> test,
+which enforces avoidance of
+<code>System.out.println</code> and <code>System.err.println</code>.
+It follows that you will need to remove your statements
+before checking the code back in.
+<p>
+As an alternative, 
+we strongly encourage you to 
+take a few moments and introduce debug statements:
+<code>log.debug("reasonably terse and meaningful message")</code>.
+If a debug message is useful for understanding a problem now,
+it may be useful again in the future to you or a peer.
+
 </body>
 </html>
