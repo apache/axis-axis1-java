@@ -374,11 +374,10 @@ public class RPCElement extends SOAPBodyElement
 
     /**
      * needHeaderProcessing
-     * @param opereration OperationDesc
+     * @param operation OperationDesc
      * @param isResponse boolean indicates if request or response message
      * @param context DeserializationContext
      * @param handler RPCHandler used to deserialize parameters
-     * @return true if the operation description indicates parameters/results
      * are located in the soap header.
      */
     private void processHeaders(OperationDesc operation,

@@ -315,23 +315,23 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
     }
     
     /**
-     * Obtain a type mapping for the given namespaceURI.  If no specific
-     * mapping exists for this namespaceURI, we will create and register
+     * Obtain a type mapping for the given encodingStyle.  If no specific
+     * mapping exists for this encodingStyle, we will create and register
      * one before returning it.
      * 
-     * @param namespaceURI
-     * @return a registered TypeMapping for the given namespaceURI
+     * @param encodingStyle
+     * @return a registered TypeMapping for the given encodingStyle
      */ 
-    public TypeMapping getOrMakeTypeMapping(String namespaceURI) {
-        TypeMapping del = (TypeMapping) mapTM.get(namespaceURI);
+    public TypeMapping getOrMakeTypeMapping(String encodingStyle) {
+        TypeMapping del = (TypeMapping) mapTM.get(encodingStyle);
         TypeMapping tm = null;
         if (del != null) {
             tm = del.getDelegate();
         }
         if (tm == null) {
             tm = (TypeMapping)createTypeMapping();
-            tm.setSupportedEncodings(new String[] {namespaceURI});
-            register(namespaceURI, tm);
+            tm.setSupportedEncodings(new String[] {encodingStyle});
+            register(encodingStyle, tm);
         }
         return tm;
     }
