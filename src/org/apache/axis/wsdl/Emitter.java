@@ -81,10 +81,7 @@ import javax.wsdl.PortType;
 import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 
 import org.apache.xerces.parsers.DOMParser;
 
@@ -778,9 +775,11 @@ public class Emitter {
      * In the stub constructor, write the serializer code for the complex types.
      */
     private void writeSerializationInit(PrintWriter pw, String type) throws IOException {
+        Element e = (Element)complexType(type).getParentNode();
+        String namespace = e.getAttribute("targetNamespace");
         pw.println ("        try");
         pw.println ("        {");
-        pw.println ("            org.apache.axis.utils.QName qn1 = new org.apache.axis.utils.QName (\"bogusNS\", \"" + type + "\");");
+        pw.println ("            org.apache.axis.utils.QName qn1 = new org.apache.axis.utils.QName (\"" + namespace + "\", \"" + type + "\");");
         pw.println ("            Class cls = " + type + ".class;");
         pw.println ("            call.addSerializer (cls, qn1, new org.apache.axis.encoding.BeanSerializer (cls));");
         pw.println ("            call.addDeserializerFactory (qn1, cls, org.apache.axis.encoding.BeanSerializer.getFactory ());");
