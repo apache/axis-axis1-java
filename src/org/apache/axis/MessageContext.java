@@ -155,6 +155,12 @@ public class MessageContext {
      * MessageContext.
      */
     private Hashtable bag ;
+    
+    /**
+     * Are we using SOAP encoding?  Default is true for RPC services,
+     * should be set to false for document/literal.
+     */ 
+    private boolean isEncoded = true;
 
     /**
      * Get the active message context. 
@@ -220,6 +226,17 @@ public class MessageContext {
         this.session = session;
     }
     
+    /**
+     * Encoding
+     */
+    public boolean isEncoded() {
+        return isEncoded;
+    }
+
+    public void setEncoded(boolean encoded) {
+        isEncoded = encoded;
+    }
+
     /**
      * Set whether we are maintaining session state
      */

@@ -186,7 +186,12 @@ public interface SerializationContext extends javax.xml.rpc.encoding.Serializati
      */
     public Message getCurrentMessage();
 
-    /** 
+    /**
+     * Get the MessageContext we're operating with
+     */
+    public MessageContext getMessageContext();
+
+    /**
      * Convert QName to a string of the form <prefix>:<localpart>
      * @param QName
      * @return prefixed qname representation for serialization.
