@@ -194,6 +194,9 @@ public abstract class AbstractCompiler implements Compiler {
     // add optimization (for what is worth)
     arguments.add("-O");
 
+    // add debug option
+    arguments.add("-g");
+
     // add encoding if set
     if (encoding != null) {
       arguments.add("-encoding");
