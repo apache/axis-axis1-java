@@ -10,10 +10,7 @@ import javax.naming.NamingException;
 import java.util.Map;
 
 /**
- * Helper class for obtaining AxisServers, which hides the complexity
- * of JNDI accesses, etc.
- *
- * !!! QUESTION : Does this class need to play any ClassLoader tricks?
+ * Helper class for obtaining AxisServers.  Default implementation.
  * 
  * @author Glen Daniels (gdaniels@macromedia.com)
  */ 
