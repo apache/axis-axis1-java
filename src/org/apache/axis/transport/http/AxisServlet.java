@@ -165,7 +165,7 @@ public class AxisServlet extends AxisServletBase {
     /**
      * Initialization method.
      */
-    public void init() {
+    public void init() throws javax.servlet.ServletException {
         super.init();
         ServletContext context = getServletConfig().getServletContext();
 
