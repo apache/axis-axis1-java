@@ -113,16 +113,18 @@ public class WSDDService
     {
         super(e);
         
-        Element [] typeMappings = getChildElements(e, "typeMapping");
-        for (int i = 0; i < typeMappings.length; i++) {
-            WSDDTypeMapping typeMapping = new WSDDTypeMapping(typeMappings[i]);
-            deployTypeMapping(typeMapping);
+        Element [] typeMappingElements = getChildElements(e, "typeMapping");
+        for (int i = 0; i < typeMappingElements.length; i++) {
+            WSDDTypeMapping mapping =
+                    new WSDDTypeMapping(typeMappingElements[i]);
+            typeMappings.add(mapping);
         }
-
-        Element [] beanMappings = getChildElements(e, "beanMapping");
-        for (int i = 0; i < beanMappings.length; i++) {
-            WSDDBeanMapping beanMapping = new WSDDBeanMapping(beanMappings[i]);
-            deployTypeMapping(beanMapping);
+        
+        Element [] beanMappingElements = getChildElements(e, "beanMapping");
+        for (int i = 0; i < beanMappingElements.length; i++) {
+            WSDDBeanMapping mapping =
+                    new WSDDBeanMapping(beanMappingElements[i]);
+            typeMappings.add(mapping);
         }
 
         String typeStr = e.getAttribute("provider");
@@ -245,6 +247,10 @@ public class WSDDService
         if (tmr == null) {
             tmr = new TypeMappingRegistryImpl();
         }
+        for (int i = 0; i < typeMappings.size(); i++) {
+            deployTypeMapping((WSDDTypeMapping)typeMappings.get(i));
+        }
+
         service.setTypeMappingRegistry(tmr);
         tmr.delegate(registry.getTypeMappingRegistry());
 
@@ -307,7 +313,6 @@ public class WSDDService
                                                           mapping.getQName());
             }
             tm.register( mapping.getLanguageSpecificType(), mapping.getQName(), ser, deser);
-            typeMappings.add(mapping);
         } catch (ClassNotFoundException e) {
             throw new WSDDException(e);
         } catch (Exception e) {
@@ -335,13 +340,8 @@ public class WSDDService
         writeFlowsToContext(context);
         writeParamsToContext(context);
 
-        if (tmr != null) {
-            for (int i=0; i < typeMappings.size(); i++) {
-                ((WSDDTypeMapping) typeMappings.elementAt(i)).writeToContext(context);
-            }
-            // RJS_TEMP
-            // Need to provide a writeTypeMappingsToContext
-            //tmr.dumpToSerializationContext(context);
+        for (int i=0; i < typeMappings.size(); i++) {
+            ((WSDDTypeMapping) typeMappings.elementAt(i)).writeToContext(context);
         }
 
         context.endElement();
