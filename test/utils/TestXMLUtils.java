@@ -20,10 +20,10 @@ public class TestXMLUtils extends TestCase
 
     public void setup() {
     }
-    
+
     public void testInit()
     {
-        DocumentBuilderFactory dbf = XMLUtils.init();
+        DocumentBuilderFactory dbf = XMLUtils.initDOMFactory();
         assertTrue(dbf instanceof DocumentBuilderFactory);
     }
 
@@ -32,7 +32,7 @@ public class TestXMLUtils extends TestCase
         Document doc = XMLUtils.newDocument();
         assertTrue(doc instanceof org.w3c.dom.Document);
     }
-    
+
     public void testNewDocumentInputSource()
     {
         Reader reader = (Reader)this.getTestXml("reader");
@@ -48,7 +48,7 @@ public class TestXMLUtils extends TestCase
         Document doc = XMLUtils.newDocument(inputsrc);
         assertTrue(doc instanceof org.w3c.dom.Document);
     }
-   
+
     /* This test will fail unless you are connected to the Web, so just skip
     * it unless you really want to test it.  When not connected to the Web you
     * will get an UnknownHostException.
@@ -67,12 +67,12 @@ public class TestXMLUtils extends TestCase
         Reader reader = (Reader)this.getTestXml("reader");
         InputSource inputsrc = new InputSource(reader);
         Document doc = XMLUtils.newDocument(inputsrc);
-        
+
         String xmlString = (String)this.getTestXml("string");
         String result = XMLUtils.DocumentToString(doc);
         assertEquals(xmlString, result);
     }
-    
+
     /**
     * This test method is somewhat complex, but it solves a problem people have
     * asked me about, which is how to unit test a method that has void return
@@ -81,23 +81,23 @@ public class TestXMLUtils extends TestCase
     */
     public void testElementToWriter() throws IOException
     {
-        /* Get the Document and one of its elements. */ 
+        /* Get the Document and one of its elements. */
         Reader xmlReader = (Reader)this.getTestXml("reader");
         InputSource inputsrc = new InputSource(xmlReader);
         Document doc = XMLUtils.newDocument(inputsrc);
         NodeList nl = doc.getElementsByTagName("display-name");
         Element elem = (Element)nl.item(0);
         String expected = "<display-name>Apache-Axis</display-name>";
-       
+
         /*
-        * Create a PipedOutputStream to get the output from the tested method. 
-        * Pass the PipedOutputStream to the ConsumerPipe's constructor, which 
+        * Create a PipedOutputStream to get the output from the tested method.
+        * Pass the PipedOutputStream to the ConsumerPipe's constructor, which
         * will create a PipedInputStream in a separate thread.
         */
         PipedOutputStream out = new PipedOutputStream();
         OutputStreamWriter writer = new OutputStreamWriter(out);
         ConsumerPipe cpipe = new ConsumerPipe(out);
-        
+
         /*
         * Call the method under test, passing the PipedOutStream to trap the
         * results.
@@ -113,28 +113,28 @@ public class TestXMLUtils extends TestCase
         String result = cpipe.getResult();
         //don't forget to close this end of the pipe (ConsumerPipe closes the other end).
         out.close();
-        
+
         assertEquals(expected, result);
     }
-    
+
     /**
     * For explanation of the methodology used to test this method, see notes in
     * previous test method.
-    */ 
+    */
     public void testDocumentToStream() throws IOException
     {
         Reader reader = (Reader)this.getTestXml("reader");
         InputSource inputsrc = new InputSource(reader);
         Document doc = XMLUtils.newDocument(inputsrc);
-        
+
         PipedOutputStream out = new PipedOutputStream();
         ConsumerPipe cpipe = new ConsumerPipe(out);
-       
+
         XMLUtils.DocumentToStream(doc, out);
         out.flush();
         String result = cpipe.getResult();
         out.close();
-        
+
         String expected = (String)this.getTestXml("string");
         assertEquals(expected, result);
     }
@@ -144,7 +144,7 @@ public class TestXMLUtils extends TestCase
         Reader reader = (Reader)this.getTestXml("reader");
         InputSource inputsrc = new InputSource(reader);
         Document doc = XMLUtils.newDocument(inputsrc);
-        
+
         NodeList nl = doc.getElementsByTagName("display-name");
         Element elem = (Element)nl.item(0);
         String expected = "<display-name>Apache-Axis</display-name>";
@@ -152,29 +152,29 @@ public class TestXMLUtils extends TestCase
         assertEquals("display-name", elem.getTagName());
         assertEquals(expected, result);
     }
-    
+
     public void testGetInnerXMLString()
     {
         Reader reader = (Reader)this.getTestXml("reader");
         InputSource inputsrc = new InputSource(reader);
         Document doc = XMLUtils.newDocument(inputsrc);
-        
+
         NodeList nl = doc.getElementsByTagName("display-name");
         Element elem = (Element)nl.item(0);
         String expected = "Apache-Axis";
         String result = XMLUtils.getInnerXMLString(elem);
         assertEquals(expected, result);
     }
-        
+
     public void testGetPrefix()
     {
         Document doc = XMLUtils.newDocument();
-       
-        Element elem = doc.createElement("svg"); 
-        elem.setAttribute("xmlns:svg", "\"http://www.w3.org/2000/svg\""); 
-        elem.setAttribute("xmlns:xlink", "\"http://www.w3.org/1999/xlink\""); 
-        elem.setAttribute("xmlns:xhtml", "\"http://www.w3.org/1999/xhtml\""); 
-        
+
+        Element elem = doc.createElement("svg");
+        elem.setAttribute("xmlns:svg", "\"http://www.w3.org/2000/svg\"");
+        elem.setAttribute("xmlns:xlink", "\"http://www.w3.org/1999/xlink\"");
+        elem.setAttribute("xmlns:xhtml", "\"http://www.w3.org/1999/xhtml\"");
+
         String expected = "svg";
         String result = XMLUtils.getPrefix("\"http://www.w3.org/2000/svg\"", elem);
         assertEquals(expected, result);
@@ -185,14 +185,14 @@ public class TestXMLUtils extends TestCase
         result = XMLUtils.getPrefix("\"http://www.w3.org/1999/xhtml\"", elem);
         assertEquals(expected, result);
     }
-    
+
     public void testGetNamespace()
     {
-        String testDoc = "<svg xmlns:svg=\"http://www.w3.org/2000/svg\"/>"; 
+        String testDoc = "<svg xmlns:svg=\"http://www.w3.org/2000/svg\"/>";
         InputSource inputsrc = new InputSource(new StringReader(testDoc));
         Document doc = XMLUtils.newDocument(inputsrc);
         assertNotNull(doc);
-        
+
         NodeList nl = doc.getElementsByTagName("svg");
         Element elem = (Element)nl.item(0);
 
@@ -200,7 +200,7 @@ public class TestXMLUtils extends TestCase
         String result = XMLUtils.getNamespace("svg", elem);
         assertEquals(expected, result);
     }
-    
+
     /**
     * This is a utility method for creating XML document input sources for this
     * JUnit test class.  The returned Object should be cast to the type you
@@ -219,29 +219,29 @@ public class TestXMLUtils extends TestCase
           //.append("<!DOCTYPE web-app PUBLIC \"-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN\"" + lineSep)
           //.append("\"http://java.sun.com/j2ee/dtds/web-app_2.2.dtd\">" + lineSep)
           .append("<web-app>" + lineSep)
-          .append("<display-name>Apache-Axis</display-name>" + lineSep) 
-          .append("<servlet>" + lineSep) 
-          .append("<servlet-name>AxisServlet</servlet-name>" + lineSep) 
-          .append("<display-name>Apache-Axis Servlet</display-name>" + lineSep) 
-          .append("<servlet-class>" + lineSep) 
-          .append("org.apache.axis.transport.http.AxisServlet" + lineSep) 
-          .append("</servlet-class>" + lineSep) 
-          .append("</servlet>" + lineSep) 
-          .append("<servlet-mapping>" + lineSep) 
-          .append("<servlet-name>AxisServlet</servlet-name>" + lineSep) 
-          .append("<url-pattern>servlet/AxisServlet</url-pattern>" + lineSep) 
-          .append("<url-pattern>*.jws</url-pattern>" + lineSep) 
-          .append("</servlet-mapping>" + lineSep) 
+          .append("<display-name>Apache-Axis</display-name>" + lineSep)
+          .append("<servlet>" + lineSep)
+          .append("<servlet-name>AxisServlet</servlet-name>" + lineSep)
+          .append("<display-name>Apache-Axis Servlet</display-name>" + lineSep)
+          .append("<servlet-class>" + lineSep)
+          .append("org.apache.axis.transport.http.AxisServlet" + lineSep)
+          .append("</servlet-class>" + lineSep)
+          .append("</servlet>" + lineSep)
+          .append("<servlet-mapping>" + lineSep)
+          .append("<servlet-name>AxisServlet</servlet-name>" + lineSep)
+          .append("<url-pattern>servlet/AxisServlet</url-pattern>" + lineSep)
+          .append("<url-pattern>*.jws</url-pattern>" + lineSep)
+          .append("</servlet-mapping>" + lineSep)
           .append("</web-app>");
 
         String xmlString = sb.toString();
-        
+
         if (gimme.equals("string"))
         {
             return xmlString;
         }
         else if (gimme.equals("reader"))
-        { 
+        {
             StringReader strReader = new StringReader(xmlString);
             return strReader;
         }
