@@ -14,5 +14,6 @@
     <parameter name="allowedMethods" value="*" />
     <beanMapping xmlns:echo="http://soapinterop.org/xsd" qname="echo:SOAPStruct"
       languageSpecificType="java:samples.echo.SOAPStruct"/>
+    
   </service>
 </deployment>

@@ -132,6 +132,12 @@ public interface TypeMappingRegistry extends java.io.Serializable {
      */
     public void clear(String namespaceURI);
 
+    /**
+     * Return the default TypeMapping
+     * @return TypeMapping or null
+     **/
+    public javax.xml.rpc.encoding.TypeMapping getDefaultTypeMapping();
+
 }
 
 

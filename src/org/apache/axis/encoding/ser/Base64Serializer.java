@@ -80,6 +80,13 @@ import org.apache.axis.encoding.Base64;
  */
 public class Base64Serializer implements Serializer {
 
+    public QName xmlType;
+    public Class javaType;
+    public Base64Serializer(Class javaType, QName xmlType) {
+        this.xmlType = xmlType;
+        this.javaType = javaType;
+    }
+
     /** 
      * Serialize a base64 quantity.
      */
@@ -87,8 +94,18 @@ public class Base64Serializer implements Serializer {
                           Object value, SerializationContext context)
         throws IOException
     {
-        byte[] data = (byte[]) value;
-
+        byte[] data = null;
+        if (javaType == byte[].class) {
+            data = (byte[]) value;
+        } else {
+            data = new byte[ ((Byte[]) value).length ];
+            for (int i=0; i<data.length; i++) {
+                Byte b = ((Byte[]) value)[i];
+                if (b != null)
+                    data[i] = b.byteValue();
+            }
+        }
+        
         context.startElement(name, attributes);
         context.writeString(Base64.encode(data, 0, data.length));
         context.endElement();

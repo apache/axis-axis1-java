@@ -66,6 +66,7 @@ import org.apache.axis.providers.java.MsgProvider;
 import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.TypeMappingRegistryImpl;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeader;
@@ -218,7 +219,7 @@ public class SOAPService extends SimpleTargetedChain
      */
     public void setEngine(AxisEngine engine)
     {
-      tmr = engine.getTypeMappingRegistry();
+        tmr.delegate(engine.getTypeMappingRegistry());
     }
 
     /**

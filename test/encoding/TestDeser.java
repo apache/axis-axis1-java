@@ -270,6 +270,16 @@ public class TestDeser extends TestCase {
     public void testUntyped() throws Exception {
          deserialize("<result>10</result>", "10");
     }
+
+    public void testSOAPString() throws Exception {
+        deserialize("<result xsi:type=\"soapenc:string\">abc</result>",
+                    "abc");
+    }
+
+    public void testNilSOAPBoolean() throws Exception {
+        deserialize("<result xsi:type=\"soapenc:boolean\" xsi:nil=\"true\" />",
+                    null);
+    }
     
     public static void main(String [] args) throws Exception
     {

@@ -69,6 +69,11 @@ import javax.xml.rpc.encoding.DeserializerFactory;
 public interface TypeMapping extends javax.xml.rpc.encoding.TypeMapping {
 
     /**
+     * setDelegate sets the new Delegate TypeMapping
+     */
+    public void setDelegate(TypeMapping delegate);
+
+    /**
      * Gets the SerializerFactory registered for the specified pair
      * of Java type and XML data type.
      *

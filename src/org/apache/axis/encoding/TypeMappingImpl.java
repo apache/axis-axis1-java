@@ -82,7 +82,7 @@ import java.util.HashMap;
  * Because every web service uses the soap, schema, wsdl primitives, we could 
  * pre-populate the TypeMapping with these standard tuples.  Instead, if requested
  * namespace/class matches is not found in the TypeMapping but matches one these
- * known primitives, the request is delegated to the Default TypeMapping.
+ * known primitives, the request is delegated to the Default TypeMapping or another TypeMapping
  * 
  */
 public class TypeMappingImpl implements TypeMapping { 
@@ -107,23 +107,28 @@ public class TypeMappingImpl implements TypeMapping {
     private HashMap class2Pair;     // Class Name to Pair Mapping                           
     private HashMap pair2SF;        // Pair to Serialization Factory
     private HashMap pair2DF;        // Pair to Deserialization Factory
-    private TypeMappingRegistry tmr;  // Back pointer to owning TMR
-    protected boolean delegateIfNotFound; // Indicates to delegate to Default if not found
+    protected TypeMapping delegate;   // Pointer to delegate or null
     private ArrayList namespaces;   // Supported namespaces
 
     /**
      * Construct TypeMapping
      */
-    public TypeMappingImpl(TypeMappingRegistry tmr) {
-        this.tmr = tmr;
+    public TypeMappingImpl(TypeMapping delegate) {
         qName2Pair  = new HashMap();
         class2Pair  = new HashMap();
         pair2SF     = new HashMap();
         pair2DF     = new HashMap();
-        delegateIfNotFound = true;
+        this.delegate = delegate;
         namespaces  = new ArrayList();
     }
-    
+
+    /**
+     * setDelegate sets the new Delegate TypeMapping
+     */
+    public void setDelegate(TypeMapping delegate) {
+        this.delegate = delegate;
+    }
+
     /********* JAX-RPC Compliant Method Definitions *****************/
     
     /**
@@ -227,11 +232,8 @@ public class TypeMappingImpl implements TypeMapping {
                 }
             }
         }
-        if (sf == null && delegateIfNotFound) {
-            TypeMapping defaultTM = (TypeMapping) tmr.getDefaultTypeMapping();
-            if (defaultTM != null) {
-                sf = (SerializerFactory) defaultTM.getSerializer(javaType, xmlType);
-            }
+        if (sf == null && delegate != null) {
+            sf = (SerializerFactory) delegate.getSerializer(javaType, xmlType);
         }
         return sf;
     }
@@ -264,11 +266,8 @@ public class TypeMappingImpl implements TypeMapping {
         if (pair.javaType != null) {
             df = (DeserializerFactory) pair2DF.get(pair);
         } 
-        if (df == null && delegateIfNotFound) {
-            TypeMapping defaultTM = (TypeMapping) tmr.getDefaultTypeMapping();
-            if (defaultTM != null) {
-                df = (DeserializerFactory) defaultTM.getDeserializer(javaType, xmlType);
-            }
+        if (df == null && delegate != null) {
+            df = (DeserializerFactory) delegate.getDeserializer(javaType, xmlType);
         }
         return df;
     }
@@ -321,11 +320,8 @@ public class TypeMappingImpl implements TypeMapping {
         //System.out.println("getTypeQName javaType =" + javaType);
         QName xmlType = null;
         Pair pair = (Pair) class2Pair.get(javaType);
-        if (pair == null && delegateIfNotFound) {
-            TypeMapping defaultTM = (TypeMapping) tmr.getDefaultTypeMapping();
-            if (defaultTM != null) {
-                xmlType = defaultTM.getTypeQName(javaType);
-            }
+        if (pair == null && delegate != null) {
+            xmlType = delegate.getTypeQName(javaType);
         } else if (pair != null) {
             xmlType = pair.xmlType;
         }
@@ -343,11 +339,8 @@ public class TypeMappingImpl implements TypeMapping {
         //System.out.println("getClassForQName xmlType =" + xmlType);
         Class javaType = null;
         Pair pair = (Pair) qName2Pair.get(xmlType);
-        if (pair == null && delegateIfNotFound) {
-            TypeMapping defaultTM = (TypeMapping) tmr.getDefaultTypeMapping();
-            if (defaultTM != null) {
-                javaType = defaultTM.getClassForQName(xmlType);
-            }
+        if (pair == null && delegate != null) {
+            javaType = delegate.getClassForQName(xmlType);
         } else if (pair != null) {
             javaType = pair.javaType;
         }

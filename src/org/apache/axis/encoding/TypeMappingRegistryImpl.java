@@ -86,6 +86,44 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
         defaultTM = DefaultTypeMappingImpl.create();
     }
     
+    /**
+     * delegate
+     *
+     * Changes the contained type mappings to delegate to 
+     * their corresponding types in the secondary TMR.
+     */
+    public void delegate(TypeMappingRegistry secondaryTMR) {
+        if (secondaryTMR != null && secondaryTMR != this) {
+            if (defaultTM != null) {
+                defaultTM = (TypeMapping) secondaryTMR.getDefaultTypeMapping();
+            }
+        }
+        String[]  keys = secondaryTMR.getSupportedNamespaces();
+        if (keys != null) {
+            for(int i=0; i < keys.length; i++) {
+                try {
+                    String nsURI = keys[i];
+                    TypeMapping tm = (TypeMapping) mapTM.get(nsURI);
+                    if (tm == null) {
+                        tm = (TypeMapping) createTypeMapping();
+                        tm.setSupportedEncodings(new String[] { nsURI });
+                        mapTM.put(nsURI, tm);
+                    }
+                    
+                    if (tm != null) {
+                        TypeMapping del = (TypeMapping) secondaryTMR.getTypeMapping(nsURI);
+                        tm.setDelegate(del);
+                    }
+                    
+                } catch (Exception e) {
+                }
+            }
+        }
+        
+    }            
+            
+
+
     /********* JAX-RPC Compliant Method Definitions *****************/
     
     /**
@@ -162,7 +200,7 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
      * @return An empty generic TypeMapping object
      */
     public javax.xml.rpc.encoding.TypeMapping createTypeMapping() {
-        return new TypeMappingImpl(this);
+        return new TypeMappingImpl(defaultTM);
     }
         
 
@@ -172,8 +210,18 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
      * @return String[] containing names of all registered namespace URIs
      */
     public String[] getSupportedNamespaces() {
-        return (String[]) mapTM.keySet().toArray();
-    }
+        java.util.Set s = mapTM.keySet(); 
+        if (s != null) { 
+            String[] rc = new String[s.size()];
+            int i = 0;
+            java.util.Iterator it = s.iterator();
+            while(it.hasNext()) {
+                rc[i++] = (String) it.next();
+            }
+            return rc;
+        }
+        return null;
+    } 
 
 
     /**
@@ -193,45 +241,4 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
         return defaultTM;
     }
 
-
-    // This code is no longer valid.  If this information should
-    // be serialized, the WSDD should do it.  Not the TypeMappingRegistry.
-    /* 
-    public void dumpToElement(Element root)
-    {
-        if ((d == null) || (parent == null)) {
-            return;
-        }
-
-        Document doc = root.getOwnerDocument();
-        
-        Enumeration enum = d.keys();
-        while (enum.hasMoreElements()) {
-            QName typeQName = (QName)enum.nextElement();
-            DeserializerDescriptor desc = 
-                                   (DeserializerDescriptor)d.get(typeQName);
-            if (desc.cls == null)
-                continue;
-            
-            Element mapEl = doc.createElementNS("", "typeMapping");
-
-            mapEl.setAttribute("type", "ns:" + typeQName.getLocalPart());
-            mapEl.setAttribute("xmlns:ns", typeQName.getNamespaceURI());
-            
-            mapEl.setAttribute("classname", desc.cls.getName());
-            
-            String dser = desc.factory.getClass().getName();
-            mapEl.setAttribute("deserializerFactory", dser);
-            
-            SerializerDescriptor serDesc =
-                                      (SerializerDescriptor)s.get(desc.cls);
-            if (serDesc != null) {
-                mapEl.setAttribute("serializer", serDesc.serializer.
-                                                      getClass().getName());
-            }
-
-            root.appendChild(mapEl);
-        }
-    }
-    */
 }

@@ -60,6 +60,8 @@ import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.apache.axis.encoding.ser.BeanSerializerFactory;
 import org.apache.axis.encoding.ser.BeanDeserializerFactory;
+import org.apache.axis.encoding.ser.ArraySerializerFactory;
+import org.apache.axis.encoding.ser.ArrayDeserializerFactory;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.Constants;
@@ -199,7 +201,6 @@ public abstract class TestClient {
             call = (Call) service.createCall();
             call.setTargetEndpointAddress( new java.net.URL(url) );
             tmr = call.getMessageContext().getTypeMappingRegistry();
-            tm  = (TypeMapping) tmr.getTypeMapping(Constants.URI_SOAP_ENC);
         }
         catch( Exception exp ) {
             throw AxisFault.makeFault(exp);
@@ -215,6 +216,23 @@ public abstract class TestClient {
         Class cls = SOAPStruct.class;
         call.registerTypeMapping(cls, ssqn, BeanSerializerFactory.class, BeanDeserializerFactory.class);
 
+        // Register deserializer factories for the array types.
+        // AXIS doesn't use the array types during serialization, 
+        // so there is no need to register the serializer factories.
+        QName q = new QName("http://soapinterop.org/xsd", "ArrayOfSOAPStruct");
+        Class c = SOAPStruct[].class;
+        call.registerTypeMapping(c,q, null, ArrayDeserializerFactory.class);
+        q = new QName("http://soapinterop.org/xsd", "ArrayOfstring");
+        c = java.lang.String[].class;
+        call.registerTypeMapping(c,q, null, ArrayDeserializerFactory.class);
+        q = new QName("http://soapinterop.org/xsd", "ArrayOffloat");
+        c = float[].class;
+        call.registerTypeMapping(c,q, null, ArrayDeserializerFactory.class);
+        q = new QName("http://soapinterop.org/xsd", "ArrayOfint");
+        c = int[].class;
+        call.registerTypeMapping(c,q, null, ArrayDeserializerFactory.class);
+        tm  = (TypeMapping) tmr.getTypeMapping(Constants.URI_SOAP_ENC);
+        
         // execute the tests
         test("String      ", "abcdefg");
         test("StringArray ", new String[] {"abc", "def"});

@@ -223,6 +223,16 @@ public class ArraySerializer implements Serializer {
                                   arrayType);
             attrs = attrImpl;
         }
+
+        // Force type to be SOAP_ARRAY for all array serialization.
+        int typeI = attributes.getIndex(Constants.URI_CURRENT_SCHEMA_XSI,
+                                        "type");
+        if (typeI != -1) {
+            AttributesImpl attrImpl = new AttributesImpl(attrs);
+            attrImpl.removeAttribute(typeI);
+            attrs = context.setTypeAttribute(attrImpl, Constants.SOAP_ARRAY);
+        }
+
         
         context.startElement(name, attrs);
 

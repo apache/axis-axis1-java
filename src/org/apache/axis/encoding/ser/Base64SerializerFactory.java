@@ -74,7 +74,7 @@ import org.apache.axis.encoding.DeserializerImpl;
  * @author Rich Scheuerle <scheu@us.ibm.com>
  */
 public class Base64SerializerFactory extends BaseSerializerFactory {
-    public Base64SerializerFactory() {
-        super(Base64Serializer.class, true);  // Share Base64Serializer instance
-    }
+    public   Base64SerializerFactory(Class javaType, QName xmlType) {
+        super(Base64Serializer.class, true, xmlType, javaType);  // Share Base64Serializer instance
+    } 
 }
