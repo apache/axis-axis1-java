@@ -79,6 +79,9 @@ public class HTTPConstants {
     public static final String HEADER_AUTHORIZATION = "Authorization";
     public static final String HEADER_PROXY_AUTHORIZATION = "Proxy-Authorization";
     
+    public static final String REQUEST_HEADERS = "HTTP-Request-Headers";
+    public static final String RESPONSE_HEADERS = "HTTP-Response-Headers";
+
     /**
      * Cookie headers
      */
