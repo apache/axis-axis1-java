@@ -114,23 +114,68 @@ public class TestDeser2001 extends TestDeser {
                      "</result>",
                      time);
     }
-    public void testTimeTZ() throws Exception {
+
+    public void testTimePacific() throws Exception {
+        deserializeCalendar(TimeZone.getTimeZone("PST8PDT"));
+    }
+    
+    /**
+     * test that this works in Wintertime
+     * @throws Exception
+     */
+    public void testTimeLocal() throws Exception {
+        deserializeCalendar(TimeZone.getDefault());
+    }
+
+    /**
+     * test that this works in Wintertime
+     * @throws Exception
+     */
+    public void testTimeUK() throws Exception {
+        deserializeCalendar(TimeZone.getTimeZone("GMT0BST"));
+    }
+
+
+    private void deserializeCalendar(TimeZone tz) throws Exception {
+        deserializeCalendar(2004, 1, 1, tz);
+        deserializeCalendar(2004, 7, 1, tz);
+    }
+
+    private void deserializeCalendar(int year, int month,int day,TimeZone tz) throws Exception {
         Calendar date = Calendar.getInstance();
+        date.set(Calendar.YEAR, year);
+        date.set(Calendar.MONTH, month);
+        date.set(Calendar.DAY_OF_MONTH, day);
         date.set(Calendar.HOUR_OF_DAY, 12);
         date.set(Calendar.MINUTE, 01);
         date.set(Calendar.SECOND, 30);
-        date.set(Calendar.MILLISECOND,150);
-        date.setTimeZone(TimeZone.getDefault());
+        date.set(Calendar.MILLISECOND, 150);
+        date.setTimeZone(tz);
         Time time = new Time(date);
+        String offset = calcGMTOffset(date);
+        String comment=" [time="+time.toString()+"; tz="+tz.getDisplayName()+"]";
+
         deserialize("<result xsi:type=\"xsd:time\">" +
-                       "12:01:30.150" + calcGMTOffset(date) +
+                       "12:01:30.150" + offset +
                      "</result>",
-                     time);
+                     time,
+                    false,
+                    comment);
     }
 
-    private final int msecsInMinute = 60000;
-    private final int msecsInHour = 60 * msecsInMinute;
 
+    private static final int msecsInMinute = 60000;
+    private static final int msecsInHour = 60 * msecsInMinute;
+
+    /**
+     *
+     * calculate the offset from GMT of the current time zone.
+     * If the underlying time zone of the calendar contains historical
+     * summer time information, the offset will be corrected for summertime
+     * if the date of the calendar is a summertime date
+     * @param cal
+     * @return an offset string such as +3:00 or -2:30. GMT is returned as -00:00
+     */
     private String calcGMTOffset(Calendar cal) {
         int msecOffset = cal.get(Calendar.ZONE_OFFSET) +
                 cal.get(Calendar.DST_OFFSET);
