@@ -17,6 +17,18 @@
 
 package org.apache.axis.transport.http;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
 import org.apache.axis.AxisProperties;
@@ -26,16 +38,6 @@ import org.apache.axis.configuration.EngineConfigurationFactoryFinder;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
-
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Base class for servlets used in axis, has common methods
@@ -133,7 +135,7 @@ public class AxisServletBase extends HttpServlet {
                     axisServer.cleanup();
                     //and erase our history of it
                     axisServer =null;
-                    storeEngine(getServletContext(),null);
+                    storeEngine(this,null);
                 }
             }
         }
@@ -165,7 +167,7 @@ public class AxisServletBase extends HttpServlet {
 
         ServletContext context = servlet.getServletContext();
         synchronized (context) {
-            engine = retrieveEngine(context);
+            engine = retrieveEngine(servlet);
             if (engine == null) {
                 Map environment = getEngineEnvironment(servlet);
 
@@ -181,7 +183,7 @@ public class AxisServletBase extends HttpServlet {
                 // also means we put the standard configuration pattern in one
                 // place.
                 engine = AxisServer.getServer(environment);
-                storeEngine(context, engine);
+                storeEngine(servlet, engine);
             }
         }
 
@@ -196,11 +198,31 @@ public class AxisServletBase extends HttpServlet {
      * @param context servlet context to use
      * @param engine reference to the engine. If null, the engine is removed
      */
-    private static void storeEngine(ServletContext context, AxisServer engine) {
+    private static void storeEngine(HttpServlet servlet, AxisServer engine) {
+        ServletContext context = servlet.getServletContext();
+        String axisServletName = servlet.getServletName();
         if (engine == null) {
-            context.removeAttribute(ATTR_AXIS_ENGINE);
+            context.removeAttribute(axisServletName + ATTR_AXIS_ENGINE);
+            // find if there is other AxisEngine in Context
+            boolean otherAxisEengine = false;
+            for (Enumeration e = context.getAttributeNames(); e.hasMoreElements();) {
+                String name = (String) e.nextElement();
+                if (!ATTR_AXIS_ENGINE.equals(name) && name.endsWith(ATTR_AXIS_ENGINE)) {
+                    // name is not "AxisEngine" but finish with "AxisEngine"
+                    otherAxisEengine = true;
+                }
+            }
+            // no other AxisEngine in ServletContext
+            if (!otherAxisEengine) {
+                context.removeAttribute(ATTR_AXIS_ENGINE);
+            }
         } else {
-            context.setAttribute(ATTR_AXIS_ENGINE, engine);
+            if (context.getAttribute(ATTR_AXIS_ENGINE) == null) {
+                // first Axis servlet to store its AxisEngine
+                // use default name
+                context.setAttribute(ATTR_AXIS_ENGINE, engine);
+            }
+            context.setAttribute(axisServletName + ATTR_AXIS_ENGINE, engine);
         }
     }
 
@@ -209,12 +231,17 @@ public class AxisServletBase extends HttpServlet {
      * issues of hot-updated webapps. Remember than if a webapp is marked
      * as distributed, there is more than 1 servlet context, hence more than
      * one AxisEngine instance
-     * @param context
+     * @param servlet
      * @return the engine or null if either the engine couldnt be found or
      *         the attribute wasnt of the right type
      */
-    private static AxisServer retrieveEngine(ServletContext context) {
-        Object contextObject = context.getAttribute(ATTR_AXIS_ENGINE);
+    private static AxisServer retrieveEngine(HttpServlet servlet) {
+        Object contextObject = servlet.getServletContext().getAttribute(servlet.getServletName() + ATTR_AXIS_ENGINE);
+        if (contextObject == null) {
+            // if AxisServer not found :
+            // fall back to the "default" AxisEngine
+            contextObject = servlet.getServletContext().getAttribute(ATTR_AXIS_ENGINE);
+        }
         if (contextObject instanceof AxisServer) {
             return (AxisServer) contextObject;
         }
@@ -222,7 +249,6 @@ public class AxisServletBase extends HttpServlet {
             return null;
         }
      }
-
 
     /**
      * extract information from the servlet configuration files
