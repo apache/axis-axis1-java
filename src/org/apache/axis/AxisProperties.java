@@ -55,13 +55,42 @@
 
 package org.apache.axis;
 
-import java.util.Properties;
+import java.util.Map;
+import java.util.HashMap;
 
 
 /**
+ * <p>Configuration properties for AXIS.
+ * </p>
+ * 
+ * <p>Manage configuration properties according to a secure
+ * scheme similar to that used by classloaders:
+ * <ul>
+ *   <li><code>ClassLoader</code>s are organized in a tree hierarchy.</li>
+ *   <li>each <code>ClassLoader</code> has a reference
+ *       to a parent <code>ClassLoader</code>.</li>
+ *   <li>the root of the tree is the bootstrap <code>ClassLoader</code>er.</li>
+ *   <li>the youngest decendent is the thread context class loader.</li>
+ *   <li>properties are bound to a <code>ClassLoader</code> instance
+ *   <ul>
+ *     <li><i>non-default</i> properties bound to a parent <code>ClassLoader</code>
+ *         instance take precedence over all properties of the same name bound
+ *         to any decendent.
+ *         Just to confuse the issue, this is the default case.</li>
+ *     <li><i>default</i> properties bound to a parent <code>ClassLoader</code>
+ *         instance may be overriden by (default or non-default) properties of
+ *         the same name bound to any decendent.
+ *         </li>
+ *   </ul>
+ *   </li>
+ *   <li>System properties take precedence over all other properties</li>
+ * </ul>
+ * </p>
+ * 
  * @author Richard A. Sitze
  */
 public class AxisProperties {
+    
     public static final char NL = '\n';
     public static final char CR = '\r';
     
@@ -70,28 +99,171 @@ public class AxisProperties {
      */
     public static final String LS = System.getProperty("line.separator",
                                                         (new Character(NL)).toString());
+                                                        
+    /**
+     * Cache of AXIS Properties, keyed by (thread-context) class loaders.
+     * Use <code>HashMap</code> because it allows 'null' keys, which
+     * allows us to account for the (null) bootstrap classloader.
+     */
+    private static final HashMap axisPropertiesCache = new HashMap();
+    
 
     /**
-     * Central access point for AXIS to obtain configuration properties.
-     * To be extended in the future... or replaced with non-global properties.
+     * Get value for property bound to the current thread context class loader.
+     * 
+     * @param property property name.
+     * @return property value if found, otherwise default.
      */
-    public static String getProperty(String property) {
-        return System.getProperty(property);
+    public static String getProperty(String propertyName) {
+        String value = System.getProperty(propertyName);
+        if (value == null) {
+            Value val = getValueProperty(getThreadContextClassLoader(), propertyName);
+            if (val != null) {
+                value = val.value;
+            }
+        }
+        return value;
     }
     
-    public static String getProperty(String property, String dephault) {
-        return System.getProperty(property, dephault);
+    /**
+     * Get value for property bound to the current thread context class loader.
+     * If not found, then return default.
+     * 
+     * @param property property name.
+     * @param dephault default value.
+     * @return property value if found, otherwise default.
+     */
+    public static String getProperty(String propertyName, String dephault) {
+        String value = getProperty(propertyName);
+        return (value == null) ? dephault : value;
     }
 
     /**
-     * Central access point for AXIS to set configuration properties.
-     * To be extended in the future... or replaced with non-global properties.
+     * Set value for property bound to the current thread context class loader.
+     * @param property property name
+     * @param value property value (non-default)  If null, remove the property.
      */
-    public static Object setProperty(String property, String value) {
-        return System.setProperty(property, value);
+    public static void setProperty(String propertyName, String value) {
+        setProperty(propertyName, value, false);
     }
     
-    public static Properties getProperties() {
-        return System.getProperties();
+    /**
+     * Set value for property bound to the current thread context class loader.
+     * @param property property name
+     * @param value property value.  If null, remove the property.
+     * @param isDefault determines if property is default or not.
+     *        A non-default property cannot be overriden.
+     *        A default property can be overriden by a property
+     *        (default or non-default) of the same name bound to
+     *        a decendent class loader.
+     */
+    public static void setProperty(String propertyName, String value, boolean isDefault) {
+        if (propertyName != null) {
+            synchronized (axisPropertiesCache) {
+                ClassLoader classLoader = getThreadContextClassLoader();
+                HashMap properties = (HashMap)axisPropertiesCache.get(classLoader);
+                
+                if (value == null) {
+                    properties.remove(propertyName);
+                } else {
+                    if (properties == null) {
+                        properties = new HashMap();
+                        axisPropertiesCache.put(classLoader, properties);
+                    }
+                
+                    properties.put(propertyName, new Value(value, isDefault));
+                }
+            }
+        }
+    }
+    
+    /**
+     * Set property values for <code>Properties</code> bound to the
+     * current thread context class loader.
+     * 
+     * @param newProperties name/value pairs to be bound
+     */
+    public static void setProperties(Map newProperties) {
+        setProperties(newProperties, false);
+    }
+    
+    
+    /**
+     * Set property values for <code>Properties</code> bound to the
+     * current thread context class loader.
+     * 
+     * @param newProperties name/value pairs to be bound
+     * @param isDefault determines if properties are default or not.
+     *        A non-default property cannot be overriden.
+     *        A default property can be overriden by a property
+     *        (default or non-default) of the same name bound to
+     *        a decendent class loader.
+     */
+    public static void setProperties(Map newProperties, boolean isDefault) {
+        java.util.Iterator it = newProperties.entrySet().iterator();
+
+        /**
+         * Each entry must be mapped to a Property.
+         * 'setProperty' does this for us.
+         */
+        while (it.hasNext()) {
+            Map.Entry entry = (Map.Entry)it.next();
+            setProperty( String.valueOf(entry.getKey()),
+                         String.valueOf(entry.getValue()),
+                         isDefault);
+        }
+    }
+
+
+    /***************** INTERNAL IMPLEMENTATION *****************/
+    
+    private static class Value {
+        final String value;
+        final boolean isDefault;
+        
+        Value(String value, boolean isDefault) {
+            this.value = value;
+            this.isDefault = isDefault;
+        }
+    }
+
+    /**
+     * Get value for properties bound to the class loader.
+     * Explore up the tree first, as higher-level class
+     * loaders take precedence over lower-level class loaders.
+     */
+    private static Value getValueProperty(ClassLoader classLoader, String propertyName) {
+        Value value = null;
+
+        if (propertyName != null) {
+            /**
+             * If classLoader isn't bootstrap loader (==null),
+             * then get up-tree value.
+             */
+            if (classLoader != null) {
+                value = getValueProperty(classLoader.getParent(), propertyName);
+            }
+            
+            if (value == null  ||  value.isDefault) {
+                synchronized (axisPropertiesCache) {
+                    HashMap properties = (HashMap)axisPropertiesCache.get(classLoader);
+                        
+                    if (properties != null) {
+                        Value altValue = (Value)properties.get(propertyName);
+                        
+                        // set value only if override exists..
+                        // otherwise pass default (or null) on..
+                        if (altValue != null)
+                            value = altValue;
+                    }
+                }
+            }
+        }
+        
+        return value;
+    }
+    
+    private static final ClassLoader getThreadContextClassLoader() {
+        return Thread.currentThread().getContextClassLoader();
     }
 }
