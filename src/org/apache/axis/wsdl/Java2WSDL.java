@@ -377,11 +377,11 @@ public class Java2WSDL {
         case STYLE_OPT:
                 value = option.getArgument();
                 if (value.equalsIgnoreCase("DOCUMENT")) {
-                    emitter.setMode(Emitter.STYLE_DOCUMENT);
+                    emitter.setMode(Emitter.MODE_DOCUMENT);
                 } else if (value.equalsIgnoreCase("RPC")) {
-                    emitter.setMode(Emitter.STYLE_RPC);
+                    emitter.setMode(Emitter.MODE_RPC);
                 } else if (value.equalsIgnoreCase("WRAPPED")) {
-                    emitter.setMode(Emitter.STYLE_DOC_WRAPPED);
+                    emitter.setMode(Emitter.MODE_DOC_WRAPPED);
                 } else {
                     System.out.println(Messages.getMessage("j2woptBadStyle00"));
                 }

@@ -127,9 +127,9 @@ public class Emitter {
     public static final int MODE_IMPLEMENTATION = 2;
 
     // Style Modes
-    public static final int STYLE_RPC = 0;
-    public static final int STYLE_DOCUMENT = 1;
-    public static final int STYLE_DOC_WRAPPED = 2;
+    public static final int MODE_RPC = 0;
+    public static final int MODE_DOCUMENT = 1;
+    public static final int MODE_DOC_WRAPPED = 2;
 
     private Class cls;
     private Class implCls;                 // Optional implementation class
@@ -146,7 +146,7 @@ public class Emitter {
     private String serviceElementName;
     private String targetService = null;
     private String description;
-    private int mode = STYLE_RPC;
+    private int mode = MODE_RPC;
     private TypeMapping tm = null;        // Registered type mapping
     private TypeMapping defaultTM = null; // Default TM
     private Namespaces namespaces;
@@ -619,7 +619,7 @@ public class Emitter {
         binding.setQName(bindingQName);
 
         SOAPBinding soapBinding = new SOAPBindingImpl();
-        String modeStr = (mode == STYLE_RPC) ? "rpc" : "document";
+        String modeStr = (mode == MODE_RPC) ? "rpc" : "document";
         soapBinding.setStyle(modeStr);
         soapBinding.setTransportURI(Constants.URI_SOAP11_HTTP);
 
@@ -819,7 +819,7 @@ public class Emitter {
         }
 
         if (names.size() > 0) {
-            if (mode == STYLE_DOC_WRAPPED) {
+            if (mode == MODE_DOC_WRAPPED) {
                 names.clear();
             }
             oper.setParameterOrdering(names);
@@ -905,7 +905,7 @@ public class Emitter {
     private ExtensibilityElement writeSOAPBody(QName operQName) {
         SOAPBody soapBody = new SOAPBodyImpl();
         // for now, if its document, it is literal use.
-        if (mode == STYLE_RPC) {
+        if (mode == MODE_RPC) {
             soapBody.setUse("encoded");
             soapBody.setEncodingStyles(encodingList);
         } else {
@@ -1081,7 +1081,7 @@ public class Emitter {
         }
 
         switch(mode) {
-        case STYLE_RPC: {
+        case MODE_RPC: {
             // Add the type representing the param
             // For convenience, add an element for the param
             // Write <part name=param_name type=param_type>
@@ -1098,7 +1098,7 @@ public class Emitter {
             }
             break;
         }
-        case STYLE_DOCUMENT: {
+        case MODE_DOCUMENT: {
             // Write the type representing the param.
             // Write the element representing the param
             // If an element was written
@@ -1122,7 +1122,7 @@ public class Emitter {
             }
             break;
         }
-        case STYLE_DOC_WRAPPED: {
+        case MODE_DOC_WRAPPED: {
             // Write type representing the param
             QName typeQName = 
                 types.writeTypeForPart(javaType,

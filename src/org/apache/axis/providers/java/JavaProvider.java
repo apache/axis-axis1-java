@@ -376,11 +376,11 @@ public abstract class JavaProvider extends BasicProvider
 
             Style style = serviceDesc.getStyle();
             if (style == Style.RPC) {
-                emitter.setMode(Emitter.STYLE_RPC);
+                emitter.setMode(Emitter.MODE_RPC);
             } else if (style == Style.DOCUMENT) {
-                emitter.setMode(Emitter.STYLE_DOCUMENT);
+                emitter.setMode(Emitter.MODE_DOCUMENT);
             } else if (style == Style.WRAPPED) {
-                emitter.setMode(Emitter.STYLE_DOC_WRAPPED);
+                emitter.setMode(Emitter.MODE_DOC_WRAPPED);
             }
 
             emitter.setClsSmart(serviceDesc.getImplClass(), locationUrl);
