@@ -352,7 +352,7 @@ public class Emitter {
     private Binding writeBinding(Definition def, boolean add) throws Exception {
         Binding binding = def.createBinding();
         binding.setUndefined(false);
-        binding.setQName(new javax.wsdl.QName(intfNS, clsName + "SoapBinding"));
+        binding.setQName(new javax.wsdl.QName(intfNS, getServiceName() + "SoapBinding"));
 
         SOAPBinding soapBinding = new SOAPBindingImpl();
         soapBinding.setStyle("rpc");
@@ -383,7 +383,9 @@ public class Emitter {
         Port port = def.createPort();
 
         port.setBinding(binding);
-        port.setName(clsName + "Port");
+
+        // Probably should use the end of the location Url
+        port.setName(getServiceName());
 
         SOAPAddress addr = new SOAPAddressImpl();
         addr.setLocationURI(locationUrl);
@@ -404,7 +406,7 @@ public class Emitter {
         PortType portType = def.createPortType();
         portType.setUndefined(false);
 
-        portType.setQName(new javax.wsdl.QName(intfNS, clsName + "PortType"));
+        portType.setQName(new javax.wsdl.QName(intfNS, getServiceName() + "PortType"));
 
         /** @todo should introduce allowInterfaces, to publish all methods from a interface */
         /** @todo if allowedMethods is specified always look for inherited methods as well?? */

@@ -12,7 +12,8 @@ public class SequenceTestServiceTestCase extends junit.framework.TestCase {
     }
 
     public void testSequenceTest() {
-        test.sequence.SequenceTest binding = new SequenceTestService().getSequenceTest();
+        test.sequence.SequenceTestPortType binding =
+            new SequenceTest().getSequenceTest();
         assertTrue("binding is null", binding != null);
         try {
             int value = -3;
