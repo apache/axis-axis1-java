@@ -89,8 +89,9 @@ public abstract class JavaProvider extends BasicProvider {
      * Get the service object whose method actually provides the service.
      * May look up in session table.
      */
-    public Object getServiceObject (MessageContext msgContext, Handler service,
-                                    Object so_factory, String clsName)
+    public Object getServiceObject (MessageContext msgContext,
+                                    Handler service,
+                                    String clsName)
         throws Exception
     {
         String serviceName = msgContext.getTargetService();
@@ -106,7 +107,7 @@ public abstract class JavaProvider extends BasicProvider {
         if (scope.equals("Request")) {
 
             // make a one-off
-            return getNewServiceObject(so_factory);
+            return getNewServiceObject(msgContext, clsName);
 
         } else if (scope.equals("Session")) {
 
@@ -115,13 +116,13 @@ public abstract class JavaProvider extends BasicProvider {
                 // store service objects in session, indexed by class name
                 Object obj = msgContext.getSession().get(serviceName);
                 if (obj == null) {
-                    obj = getNewServiceObject(so_factory);
+                    obj = getNewServiceObject(msgContext, clsName);
                     msgContext.getSession().set(serviceName, obj);
                 }
                 return obj;
             } else {
                 // was no incoming session, sigh, treat as request scope
-                return getNewServiceObject(so_factory);
+                return getNewServiceObject(msgContext, clsName);
             }
 
         } else if (scope.equals("Application")) {
@@ -132,13 +133,13 @@ public abstract class JavaProvider extends BasicProvider {
                 // store service objects in session, indexed by class name
                 Object obj = engine.getApplicationSession().get(serviceName);
                 if (obj == null) {
-                    obj = getNewServiceObject(so_factory);
+                    obj = getNewServiceObject(msgContext, clsName);
                     engine.getApplicationSession().set(serviceName, obj);
                 }
                 return obj;
             } else {
                 // was no incoming session, sigh, treat as request scope
-                return getNewServiceObject(so_factory);
+                return getNewServiceObject(msgContext, clsName);
             }
 
         } else {
@@ -196,12 +197,6 @@ public abstract class JavaProvider extends BasicProvider {
                 serviceName + "'",
                 null, null);
 
-        /** ??? Should we enforce setting allowedMethods?  As it was,
-        * if it's null, we allowed any method.  This seems like it might
-        * be considered somewhat insecure (it's an easy mistake to
-        * make).  Tossing an Exception if it's not set, and using "*"
-        * to explicitly indicate "any method" is probably better.
-        */
         if ((allowedMethods == null) || allowedMethods.equals(""))
             throw new AxisFault("Server.NoMethodConfig",
                 "No '" +
@@ -216,9 +211,9 @@ public abstract class JavaProvider extends BasicProvider {
         try {
             int             i ;
 
-            Object so_factory = getServiceObjectFactory(msgContext, clsName);
-            Object obj        = getServiceObject(msgContext, service,
-                                                 so_factory, clsName);
+            Object obj        = getServiceObject(msgContext,
+                                                 service,
+                                                 clsName);
             JavaClass jc	  = new JavaClass(obj.getClass());
 
             Message        reqMsg  = msgContext.getRequestMessage();
@@ -325,10 +320,12 @@ public abstract class JavaProvider extends BasicProvider {
      *   class wrapped in jc
      *
      */
-    protected Object getNewServiceObject(Object factory)
+    protected Object getNewServiceObject(MessageContext msgContext,
+                                             String clsName)
         throws Exception
     {
-        JavaClass jc = (JavaClass)factory;
+        AxisClassLoader cl     = msgContext.getClassLoader();
+        JavaClass       jc     = cl.lookup(clsName);
 
         return jc.getJavaClass().newInstance();
     }
@@ -361,18 +358,4 @@ public abstract class JavaProvider extends BasicProvider {
     {
         return allowedMethodsOption;
     }
-
-    /**
-     *
-     */
-    protected Object getServiceObjectFactory(MessageContext msgContext,
-                                             String clsName)
-        throws Exception
-    {
-        AxisClassLoader cl     = msgContext.getClassLoader();
-        JavaClass       jc     = cl.lookup(clsName);
-
-        return jc;
-    }
-
 }
