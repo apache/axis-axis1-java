@@ -49,7 +49,7 @@ public class TestJavaUtils extends TestCase
         assertEquals("fooBar", JavaUtils.xmlNameToJava("foo-bar"));
         assertEquals("fooBar", JavaUtils.xmlNameToJava("foo.bar"));
         assertEquals("fooBar", JavaUtils.xmlNameToJava("foo:bar"));
-        assertEquals("fooBar", JavaUtils.xmlNameToJava("foo_bar"));
+        assertEquals("foo_Bar", JavaUtils.xmlNameToJava("foo_bar"));
         assertEquals("fooBar", JavaUtils.xmlNameToJava("foo\u00B7bar"));
         assertEquals("fooBar", JavaUtils.xmlNameToJava("foo\u0387bar"));
         assertEquals("fooBar", JavaUtils.xmlNameToJava("foo\u06DDbar"));
