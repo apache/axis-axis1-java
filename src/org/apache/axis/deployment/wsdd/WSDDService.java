@@ -100,7 +100,7 @@ public class WSDDService
     extends WSDDTargetedChain
     implements WSDDTypeMappingContainer
 {
-    private TypeMappingRegistry tmr = new TypeMappingRegistryImpl();;
+    private TypeMappingRegistry tmr = null;
 
     private Vector faultFlows = new Vector();
     private Vector typeMappings = new Vector();
@@ -186,7 +186,6 @@ public class WSDDService
             WSDDTypeMapping mapping =
                     new WSDDTypeMapping(typeMappingElements[i]);
             typeMappings.add(mapping);
-            deployTypeMapping(mapping);
         }
 
         Element [] beanMappingElements = getChildElements(e, ELEM_WSDD_BEANMAPPING);
@@ -194,7 +193,6 @@ public class WSDDService
             WSDDBeanMapping mapping =
                     new WSDDBeanMapping(beanMappingElements[i]);
             typeMappings.add(mapping);
-            deployTypeMapping(mapping);
         }
 
         Element [] namespaceElements = getChildElements(e, ELEM_WSDD_NAMESPACE);
@@ -230,20 +228,47 @@ public class WSDDService
 	// Add in JAX-RPC support for HandlerInfo chains
         Element hcEl = getChildElement(e, ELEM_WSDD_JAXRPC_CHAIN);
         if (hcEl != null) {
-	    	_wsddHIchain = new WSDDJAXRPCHandlerInfoChain(hcEl);
+            _wsddHIchain = new WSDDJAXRPCHandlerInfoChain(hcEl);
         }
+
+        // Initialize TypeMappingRegistry
+        initTMR();
 
         // call to validate standard descriptors for this service
         validateDescriptors();
     }
 
     /**
+     * Initialize a TypeMappingRegistry with the
+     * WSDDTypeMappings.  
+     * Note: Extensions of WSDDService may override
+     * initTMR to popluate the tmr with different
+     * type mappings.
+     */
+    protected void initTMR() throws WSDDException
+    {
+        // If not created, construct a tmr 
+        // and populate it with the type mappings.
+        if (tmr == null) {
+            tmr = new TypeMappingRegistryImpl();
+            for (int i=0; i<typeMappings.size(); i++) {
+                deployTypeMapping((WSDDTypeMapping)
+                                  typeMappings.get(i));
+            }
+        }
+    }
+
+
+    /**
      * This method can be used for dynamic deployment using new WSDDService()
      * etc.  It validates some standard parameters for some standard providers
      * (if present).  Do this before deployment.deployService().
      */
-    public void validateDescriptors()
+    public void validateDescriptors() throws WSDDException
     {
+        if (tmr == null) {
+            initTMR();
+        }
         desc.setTypeMappingRegistry(tmr);
         desc.setTypeMapping(getTypeMapping(desc.getStyle().getEncoding()));
 
@@ -379,6 +404,9 @@ public class WSDDService
             return cachedService;
         }
 
+        // Make sure tmr is initialized.
+        initTMR();
+
         Handler reqHandler = null;
         WSDDChain request = getRequestFlow();
 
@@ -434,7 +462,6 @@ public class WSDDService
 	}
 
         AxisEngine.normaliseOptions(service);
-
         tmr.delegate(registry.getTypeMappingRegistry());
 
         WSDDFaultFlow [] faultFlows = getFaultFlows();
@@ -629,6 +656,10 @@ public class WSDDService
     }
 
     public TypeMapping getTypeMapping(String encodingStyle) {
+        // If type mapping registry not initialized yet, return null.
+        if (tmr == null) {
+            return null;
+        } 
         return (TypeMapping) tmr.getTypeMapping(encodingStyle);
     }
 }
