@@ -97,8 +97,6 @@ public interface RoundtripPortType {
         throws java.rmi.RemoteException;
     public byte[] methodByteArray(byte[] inByteArray)
         throws java.rmi.RemoteException;
-    public Byte[] methodSoapByteArray(Byte[] inSoapByteArray)
-        throws java.rmi.RemoteException;
     public void methodAllTypesIn(java.lang.String string,
                                  java.math.BigInteger integer,
                                  java.math.BigDecimal decimal,

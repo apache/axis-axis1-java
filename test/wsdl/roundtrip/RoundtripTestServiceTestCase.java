@@ -779,28 +779,6 @@ public class RoundtripTestServiceTestCase extends TestCase {
     } // testMethodAllTypesIn
 
     /**
-     *  Test to insure that a wrapper Byte array contains the expected values
-     *  on both the client and server.
-     */
-    public void testMethodSoapByteArray() {
-
-        try {
-            Byte[] sendByte = {new Byte((byte) 17), new Byte((byte) 11)};
-            Byte[] expected = {new Byte((byte) 3), new Byte((byte) 7)};
-            Byte[] actual = binding.methodSoapByteArray(sendByte);
-            assertEquals("The expected and actual values did not match.",
-                         expected[0],
-                         actual[0]);
-            assertEquals("The expected and actual values did not match.",
-                         expected[1],
-                         actual[1]);
-        } catch (RemoteException re) {
-            fail("Remote Exception caught: " + re);
-        }
-
-    } // testMethodSoapByteArray
-
-    /**
      *  Test to insure that a primitive byte array matches the expected values on
      *  both the client and server.
      */

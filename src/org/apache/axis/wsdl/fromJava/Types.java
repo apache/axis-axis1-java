@@ -627,6 +627,7 @@ public class Types {
               type == java.math.BigDecimal.class ||
               type == javax.xml.namespace.QName.class ||
               type == java.util.Calendar.class ||
+              //type == Byte[].class ||
               type == byte[].class);
     }
 
