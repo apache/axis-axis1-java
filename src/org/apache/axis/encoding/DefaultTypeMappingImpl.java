@@ -142,15 +142,19 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                    new BeanDeserializerFactory(javax.xml.rpc.namespace.QName.class,
                                                Constants.XSD_QNAME),true);
         myRegister(Constants.XSD_ANYTYPE,    java.lang.Object.class,     null, null, false);
-        myRegister(Constants.XSD_DATE,       java.util.Date.class,                           
-                   new DateSerializerFactory(java.util.Date.class,Constants.XSD_DATE),
-                   new DateDeserializerFactory(java.util.Date.class,Constants.XSD_DATE),true);
+
+        // The xsd primitive for date has changed through the various namespace versions.
+        // XSD_DATE is the current one, which is why it is registered after the other two
         myRegister(Constants.XSD_DATE2,      java.util.Date.class,                           
                    new DateSerializerFactory(java.util.Date.class, Constants.XSD_DATE2),
                    new DateDeserializerFactory(java.util.Date.class, Constants.XSD_DATE2),true);
         myRegister(Constants.XSD_DATE3,      java.util.Date.class,                           
                    new DateSerializerFactory(java.util.Date.class, Constants.XSD_DATE3),
                    new DateDeserializerFactory(java.util.Date.class, Constants.XSD_DATE3),true);
+        myRegister(Constants.XSD_DATE,       java.util.Date.class,                           
+                   new DateSerializerFactory(java.util.Date.class,Constants.XSD_DATE),
+                   new DateDeserializerFactory(java.util.Date.class,Constants.XSD_DATE),true);
+
         myRegister(Constants.XSD_BASE64,     byte[].class,                                   
                    new Base64SerializerFactory(),
                    new Base64DeserializerFactory(),true);
