@@ -362,4 +362,38 @@ public class AttachmentsImpl implements Attachments {
     }
 
 
+    /**
+     * Removes all <CODE>AttachmentPart</CODE> objects that have
+     *   been added to this <CODE>SOAPMessage</CODE> object.
+     *
+     *   <P>This method does not touch the SOAP part.</P>
+     */
+    public void removeAllAttachments() {
+        //TODO: Flesh it out.
+    }
+
+    /**
+     * Retrieves all the <CODE>AttachmentPart</CODE> objects
+     * that have header entries that match the specified headers.
+     * Note that a returned attachment could have headers in
+     * addition to those specified.
+     * @param   headers a <CODE>MimeHeaders</CODE>
+     *     object containing the MIME headers for which to
+     *     search
+     * @return an iterator over all attachments that have a header
+     *     that matches one of the given headers
+     */
+    public java.util.Iterator getAttachments(javax.xml.soap.MimeHeaders headers) {
+        //TODO: Flesh it out.
+        return null;
+    }
+
+    /**
+     * Create a new attachment Part in this Message.
+     * Will actually, and always, return an AttachmentPart.
+     */
+    public Part createAttachmentPart() throws org.apache.axis.AxisFault {
+        //TODO: Flesh it out.
+        return null;
+    }
 }
