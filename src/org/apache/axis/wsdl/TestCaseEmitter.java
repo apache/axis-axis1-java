@@ -251,7 +251,7 @@ public class TestCaseEmitter {
 
             writer.println("        } catch (java.rmi.RemoteException re) {");
             writer.print(INDENT);
-            writer.println("throw new junit.framework.AssertionFailedError(\"Remote Exception caught: \" + re.getMessage());");
+            writer.println("throw new junit.framework.AssertionFailedError(\"Remote Exception caught: \" + re );");
             writer.println("        }");
         }
     }
