@@ -170,7 +170,9 @@ public class RPCElement extends SOAPBodyElement
                 }
             }
         }
-        
+
+        context.pushElementHandler(new EnvelopeHandler(new RPCHandler(this)));
+        context.setCurElement(this);
         publishToHandler((org.xml.sax.ContentHandler)context);
     }
     
