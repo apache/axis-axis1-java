@@ -66,7 +66,7 @@ import org.apache.axis.utils.QName;
 import java.util.*;
 import java.io.*;
 
-public class MessageElement
+public class MessageElement extends DeserializerBase
 {
     private static final boolean DEBUG_LOG = false;
     
@@ -78,12 +78,9 @@ public class MessageElement
     protected String    href;
     protected boolean   isRoot = false;
     protected SOAPEnvelope message = null;
-    private DeserializationContext context = null;
-    DeserializerBase deserializer;
     
     // The java Object value of this element.  This is either set by
     // deserialization, or by the user creating a message.
-    protected Object value = null;
     protected QName typeQName = null;
     
     // String representation of this element.
@@ -155,27 +152,6 @@ public class MessageElement
     public Element getAsDOM()
     {
         return null;
-    }
-    
-    public Object getValue() throws IOException
-    {
-        if (value instanceof ElementRecorder) {
-            // !!! Lazy deserialization here... We have the SAX events,
-            //     but haven't run them through a deserializer yet.
-            return null;
-        }
-        
-        if (deserializer != null) {
-            value = deserializer.getValue();
-            deserializer = null;
-        }
-        
-        return value;
-    }
-
-    public void setValue(Object val)
-    {
-        value = val;
     }
     
     public DeserializerBase getContentHandler()

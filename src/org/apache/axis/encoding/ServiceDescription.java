@@ -164,12 +164,14 @@ public class ServiceDescription
      */
     public QName getParamTypeByName(String messageType, String paramName)
     {
-        if (messageType.equals(REQUEST))
-            return getInputParamTypeByName(paramName);
-        if (messageType.equals(RESPONSE))
-            return getOutputParamTypeByName(paramName);
-        
-        // Only understand these two at present...
+        if (messageType != null) {
+            if (messageType.equals(REQUEST))
+                return getInputParamTypeByName(paramName);
+            if (messageType.equals(RESPONSE))
+                return getOutputParamTypeByName(paramName);
+            
+            // Only understand these two at present...
+        }
         
         return null;
     }

@@ -22,14 +22,11 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
     public static final QName SOAP_SHORT = new QName(Constants.URI_SOAP_ENC, "short");
     
     abstract class BasicDeser extends DeserializerBase {
-        public void startElement(String namespace, String name, String qName,
-                                 Attributes attributes)
-        {
-        }
-        
         public void characters(char [] chars, int start, int end)
+            throws SAXException
         {
             value = makeValue(new String(chars, start, end));
+            valueComplete();
         }
         abstract Object makeValue(String source);
     }

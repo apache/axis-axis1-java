@@ -71,6 +71,7 @@ import org.xml.sax.helpers.DefaultHandler;
 public class RPCParam extends MessageElement
 {
     private static boolean DEBUG_LOG = false;
+    private DeserializerBase deserializer = null;
     
     // Who's your daddy?
     RPCElement myRPCElement;
