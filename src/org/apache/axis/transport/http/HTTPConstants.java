@@ -112,4 +112,8 @@ public class HTTPConstants {
     public static String MC_HTTP_SERVLETRESPONSE= "transport.http.servletResponse";
     public static String MC_HTTP_SERVLETLOCATION= "transport.http.servletLocation";
     public static String MC_HTTP_SERVLETPATHINFO= "transport.http.servletPathInfo";
+
+    /** HTTP header field values
+     */
+    public static final String HEADER_DEFAULT_CHAR_ENCODING = "iso-8859-1";
 }
