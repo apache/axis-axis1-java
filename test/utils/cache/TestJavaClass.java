@@ -33,7 +33,7 @@ public class TestJavaClass extends TestCase
         JavaClass jcVec = new JavaClass(v);
         JavaClass jcST = new JavaClass(st);
 
-        Method countTkns = jcST.getMethod("countTokens", 1);
+        Method countTkns = jcST.getMethod("countTokens", 0);
         Method nextTkn = jcST.getMethod("nextToken", 1);
 
         Method add1 = jcVec.getMethod("add", 1);
