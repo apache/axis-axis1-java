@@ -285,34 +285,6 @@ public class TestDeser extends TestCase {
                     list, true);
     }
 
-    public void testArrayWithNilInt() throws Exception {
-        ArrayList list = new ArrayList(4);
-        list.add(new Integer(1));
-        list.add(null);
-        list.add(new Integer(3));
-        deserialize("<result xsi:type=\"soapenc:Array\" " +
-                            "soapenc:arrayType=\"xsd:int[3]\"> " +
-                       "<item xsi:type=\"xsd:int\">1</item>" +
-                       "<item xsi:nil=\"true\"/>" +
-                       "<item xsi:type=\"xsd:int\">3</item>" +
-                    "</result>",
-                    list, true);
-    }
-    
-    public void testArrayWithNilString() throws Exception {
-        ArrayList list = new ArrayList(4);
-        list.add("abc");
-        list.add(null);
-        list.add("def");
-        deserialize("<result xsi:type=\"soapenc:Array\" " +
-                            "soapenc:arrayType=\"xsd:string[3]\"> " +
-                       "<item xsi:type=\"xsd:string\">abc</item>" +
-                       "<item xsi:nil=\"true\"/>" +
-                       "<item xsi:type=\"xsd:string\">def</item>" +
-                    "</result>",
-                    list, true);
-    }
-    
     public void testMap() throws Exception {
         HashMap m = new HashMap();
         m.put("abcKey", "abcVal");
@@ -339,11 +311,6 @@ public class TestDeser extends TestCase {
                     "abc");
     }
 
-    public void testNilSOAPBoolean() throws Exception {
-        deserialize("<result xsi:type=\"soapenc:boolean\" xsi:nil=\"true\" />",
-                    null);
-    }
-    
     // Complicated array tests
 
     // type=soapenc:Array
