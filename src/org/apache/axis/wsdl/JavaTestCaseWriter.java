@@ -175,9 +175,9 @@ public class JavaTestCaseWriter extends JavaWriter {
             String namespace = (String) emitter.getNamespaces().get(port.getQName().getNamespaceURI());
             Parameters params = ptEntry.getParameters(op.getName());
 
-            if ( !"void".equals( params.returnType ) ) {
+            if (params.returnType != null) {
                 pw.print("            ");
-                pw.print(params.returnType);
+                pw.print(params.returnType.getName());
                 pw.print(" value = ");
 
                 if (  isPrimitiveType( params.returnType ) ) {
@@ -193,7 +193,7 @@ public class JavaTestCaseWriter extends JavaWriter {
 
             pw.print("            ");
 
-            if ( !"void".equals(params.returnType) ) {
+            if (params.returnType != null) {
                 pw.print("value = ");
             }
 
@@ -216,14 +216,14 @@ public class JavaTestCaseWriter extends JavaWriter {
 
                 switch (param.mode) {
                     case Parameters.Parameter.IN:
-                        paramType = param.type;
+                        paramType = param.type.getName();
                         break;
 
                     default:
                         paramType = Utils.holder(param.type);
                 }
                 
-                if ( isPrimitiveType(paramType) ) {
+                if ( isPrimitiveType(param.type) ) {
                     if ( "boolean".equals(paramType) ) {
                         pw.print("true");
                     } else {

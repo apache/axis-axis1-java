@@ -186,7 +186,7 @@ public class JavaSkelWriter extends JavaWriter {
         }
 
         // Call the real implementation
-        if ( "void".equals(parms.returnType) )
+        if ( parms.returnType == null )
             pw.print("        ");
         else
             pw.print("        Object ret = ");
@@ -233,7 +233,7 @@ public class JavaSkelWriter extends JavaWriter {
             else {
                 // There are more than 1 output parts, so create a Vector to put them into.
                 pw.println("        org.apache.axis.server.ParamList list = new org.apache.axis.server.ParamList();");
-                if (!"void".equals(parms.returnType))
+                if (parms.returnType != null)
                     pw.println("        list.add(new org.apache.axis.message.RPCParam(\"" + parms.returnName + "\", ret));");
                 for (int i = 0; i < parms.list.size(); ++i) {
                     Parameters.Parameter p = (Parameters.Parameter) parms.list.get(i);

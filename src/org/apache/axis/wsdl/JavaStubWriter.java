@@ -391,11 +391,7 @@ public class JavaStubWriter extends JavaWriter {
             Parameters.Parameter p = (Parameters.Parameter) parms.list.get(i);
 
 
-            Type type = getDefinedType(p.type);
-            if (type == null) {
-                // XXX yikes, something is wrong
-            }
-            QName qn = type.getQName();
+            QName qn = p.type.getQName();
             String typeString = "new org.apache.axis.encoding.XMLType( new javax.xml.rpc.namespace.QName(\"" + qn.getNamespaceURI() + "\", \"" +
                     Utils.capitalizeFirstChar(qn.getLocalPart()) + "\"))";
             if (p.mode == Parameters.Parameter.IN) {
@@ -409,8 +405,8 @@ public class JavaStubWriter extends JavaWriter {
             }
         }
         // set output type
-        if (!"void".equals(parms.returnType)) {
-            QName qn = getDefinedType(parms.returnType).getQName();
+        if (parms.returnType != null) {
+            QName qn = parms.returnType.getQName();
             String outputType = "new org.apache.axis.encoding.XMLType(new javax.xml.rpc.namespace.QName(\"" + qn.getNamespaceURI() + "\", \"" +
               Utils.capitalizeFirstChar(qn.getLocalPart()) + "\"))";
             pw.println("        call.setReturnType(" + outputType + ");");
@@ -497,27 +493,5 @@ public class JavaStubWriter extends JavaWriter {
         pw.println("    }");
         pw.println();
     } // writeOperation
-
-    /**
-     * Get the defined Type for the given Java Name
-     * Return null if not found.
-     */
-    public Type getDefinedType(String javaName) {
-        Vector types = symbolTable.getTypes();
-        for (int i = 0; i < types.size(); ++i) {
-            Type et = (Type) types.elementAt(i);
-            if(et.getJavaName().equals(javaName)) {
-                // There could be multiple types/elements with this
-                // name.  Get one that defines the name.
-                if (et instanceof BaseJavaType ||
-                    et instanceof DefinedType ||
-                    (et instanceof ElementType &&
-                     ((ElementType) et).getDefinedDirectly())) {
-                    return et;
-                }
-            }
-        }
-        return null;
-    } // getDefinedType
 
 } // class JavaStubWriter
