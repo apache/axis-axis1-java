@@ -55,16 +55,14 @@
 
 package org.apache.axis.providers.java;
 
-import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
 import org.apache.axis.AxisFault;
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.Messages;
+import org.apache.axis.i18n.Messages;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.message.SOAPEnvelope;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Document;
 
 import java.lang.reflect.Method;
 import java.util.Vector;
@@ -87,10 +85,11 @@ import java.util.Vector;
  */
 public class MsgProvider extends JavaProvider {
     /**
-     * Process the message.  This means figuring out what our actual
-     * backend method takes (we could cache this somehow) and doing the
-     * invocation.  Note that we don't catch exceptions here, preferring to
-     * bubble them right up through to someone who'll catch it above us.
+     * Process the message.  Figure out the method "style" (one of the three
+     * allowed signatures, which has already been determined and cached in
+     * the OperationDesc) and do the actual invocation.  Note that we don't
+     * catch exceptions here, preferring to bubble them right up through to
+     * someone who'll catch it above us.
      *
      * @param msgContext the active MessageContext
      * @param reqEnv the request SOAPEnvelope
@@ -104,98 +103,63 @@ public class MsgProvider extends JavaProvider {
                                 Object obj)
         throws Exception
     {
-        Handler targetService = msgContext.getService();
         OperationDesc operation = msgContext.getOperation();
         Method method = operation.getMethod();
 
-        // is this service a body-only service?
-        // if true, we expect to pass a Vector of body Elements (as DOM) and
-        //   get back an array of DOM Elements for the return body, OR
-        //   to pass a Document and get back a Document.
-        //
-        // if false, the service expects just one MessageContext argument,
-        //   and looks at the entire request envelope in the MessageContext
-        //   (hence it's a "FullMessageService").
-        //
-        // Q (Glen) : Why would you ever do the latter instead of just defining
-        //            a Handler provider yourself?  I think we should change
-        //            this to simply pass the whole SOAP envelope as a Document
-        //            and get back a Document.  Or even SOAPEnvelope/
-        //            SOAPEnvelope...
-        boolean bodyOnlyService = true;
-        if (targetService.getOption("FullMessageService") != null) {
-            bodyOnlyService = false;
-        }
+        int methodType = operation.getMessageOperationStyle();
 
-        // Collect the types so we know what we're dealing with in the target
-        // method.
-        Class [] params = method.getParameterTypes();
-
-        if (params.length != 1) {
-            // Must have exactly one argument in all cases.
-            throw new AxisFault(
-                    Messages.getMessage("msgMethodMustHaveOneParam",
-                                         method.getName(),
-                                         ""+params.length));
-
-        }
-
-        Object argObjects[] = new Object [params.length];
-
-        Document doc = null ;
-        
-        if (bodyOnlyService) {
+        if (methodType != OperationDesc.MSG_METHOD_SOAPENVELOPE) {
             // dig out just the body, and pass it on
             Vector                bodies  = reqEnv.getBodyElements();
-            SOAPBodyElement       reqBody = reqEnv.getFirstBody();
+            Object argObjects[] = new Object [1];
 
-            doc = reqBody.getAsDOM().getOwnerDocument();
-
-            Vector newBodies = new Vector();
-            for (int i = 0 ; i < bodies.size() ; i++ )
-                newBodies.add( ((SOAPBodyElement)bodies.get(i)).getAsDOM() );
-            bodies = newBodies ;
-
-            // We know we have one param.  OK, is it a Vector?
-            if (params[0] == Vector.class) {
-                // Yes, invoke away!
-                argObjects[0] = bodies ;
-                Element[] result = (Element[]) method.invoke( obj, argObjects );
-                if ( result != null ) {
-                    for ( int i = 0 ; i < result.length ; i++ ) {
-                        if(result[i] != null)
-                            resEnv.addBodyElement( new SOAPBodyElement(result[i]));
+            switch (methodType) {
+                // SOAPBodyElement [] / SOAPBodyElement []
+                case OperationDesc.MSG_METHOD_BODYARRAY:
+                    SOAPBodyElement [] bodyElements =
+                            new SOAPBodyElement[bodies.size()];
+                    bodies.toArray(bodyElements);
+                    argObjects[0] = bodyElements;
+                    SOAPBodyElement [] bodyResult =
+                            (SOAPBodyElement [])method.invoke(obj, argObjects);
+                    if (bodyResult != null) {
+                        for (int i = 0; i < bodyResult.length; i++) {
+                            SOAPBodyElement bodyElement = bodyResult[i];
+                            resEnv.addBodyElement(bodyElement);
+                        }
                     }
-                }
-                return ;
-            } else if (params[0] == Document.class) {
-                // Not a Vector, but a Document!  Invoke away!
-                argObjects[0] = doc;
+                    return;
 
-                // !!! WANT TO MAKE THIS SAX-CAPABLE AS WELL?
-                Document retDoc = (Document) method.invoke( obj, argObjects );
-                if ( retDoc != null ) {
-                    SOAPBodyElement el = new SOAPBodyElement(retDoc.getDocumentElement());
-                    resEnv.addBodyElement(el);
-                }
-            } else {
-                // Neither - must be a bad method.
-                throw new AxisFault(
-                        Messages.getMessage("badMsgMethodParam",
-                                             method.getName(),
-                                             params[0].getName()));
+                // Element [] / Element []
+                case OperationDesc.MSG_METHOD_ELEMENTARRAY:
+                    Element [] elements = new Element [bodies.size()];
+                    for (int i = 0; i < elements.length; i++) {
+                        SOAPBodyElement body = (SOAPBodyElement)bodies.get(i);
+                        elements[i] = body.getAsDOM();
+                    }
+                    argObjects[0] = elements;
+                    Element[] elemResult =
+                            (Element[]) method.invoke( obj, argObjects );
+                    if (elemResult != null) {
+                        for ( int i = 0 ; i < elemResult.length ; i++ ) {
+                            if(elemResult[i] != null)
+                                resEnv.addBodyElement(
+                                        new SOAPBodyElement(elemResult[i]));
+                        }
+                    }
+                    return;
             }
         } else {
-            // pass *just* the MessageContext (maybe don't even parse!!!)
-            if (params[0] != MessageContext.class) {
-                throw new AxisFault(
-                        Messages.getMessage("needMessageContextArg",
-                                             method.getName(),
-                                             params[0].getName()));
-            }
+            Object argObjects[] = new Object [2];
 
-            argObjects[0] = msgContext ;
+            // SOAPEnvelope / SOAPEnvelope
+            argObjects[0] = reqEnv;
+            argObjects[1] = resEnv;
             method.invoke(obj, argObjects);
+            return;
         }
+
+        // SHOULD NEVER GET HERE...
+        throw new AxisFault(Messages.getMessage("badMsgMethodStyle"));
     }
 };

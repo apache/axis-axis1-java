@@ -1,15 +1,13 @@
 package samples.message ;
 
 import org.w3c.dom.Element ;
-import org.apache.axis.MessageContext ;
-import java.util.Vector ;
 
 public class MessageService {
-    public Element[] echoElements(Vector elems) {
-        Element[]  result = new Element[elems.size()];
+    public Element[] echoElements(Element [] elems) {
+        Element[]  result = new Element[elems.length];
 
-        for ( int i = 0 ; i < elems.size() ; i++ )
-            result[i] = (Element) elems.get(i);
+        for ( int i = 0 ; i < elems.length ; i++ )
+            result[i] = (Element) elems[i];
         
         return( result );
     }

@@ -62,8 +62,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Text;
 import org.apache.axis.utils.XMLUtils;
 
-import java.util.Vector;
-
 /**
  * Sequence test service.  This is a custom built message-style service
  * which confirms that the XML it receives correctly contains ordered
@@ -85,10 +83,10 @@ public class SequenceService {
      * @return a SOAP response in a DOM Element, either boolean true or false,
      *         indicating the success/failure of the test.
      */
-    public Element [] testSequence(Vector elems) {
+    public Element [] testSequence(Element [] elems) {
         Element zero = null;
-        for (int i = 0; i < elems.size(); i++) {
-            zero = findTheZero((Element)elems.get(i));
+        for (int i = 0; i < elems.length; i++) {
+            zero = findTheZero(elems[i]);
             if (zero != null)
                 break;
         }

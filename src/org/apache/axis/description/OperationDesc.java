@@ -73,6 +73,15 @@ import org.apache.axis.enum.Style;
  * @author Glen Daniels (gdaniels@apache.org)
  */
 public class OperationDesc {
+    // Constants for "message style" operation patterns.  If this OperationDesc
+    // is message style, the Java method will have one of these signatures:
+
+    // public SOAPBodyElement [] method(SOAPBodyElement [])
+    public static final int MSG_METHOD_BODYARRAY = 1;
+    // public SOAPEnvelope method(SOAPEnvelope)
+    public static final int MSG_METHOD_SOAPENVELOPE = 2;
+    // public Element [] method(Element [])
+    public static final int MSG_METHOD_ELEMENTARRAY = 3;
 
     protected static Log log =
         LogFactory.getLog(OperationDesc.class.getName());
@@ -105,6 +114,9 @@ public class OperationDesc {
     private ArrayList faults = null;
 
     private ParameterDesc returnDesc = new ParameterDesc();
+
+    /** If we're a message-style operation, what's our signature? */
+    private int messageOperationStyle = -1;
 
     /**
      * Default constructor.
@@ -367,6 +379,14 @@ public class OperationDesc {
             }
         }
         return text;
+    }
+
+    public int getMessageOperationStyle() {
+        return messageOperationStyle;
+    }
+
+    public void setMessageOperationStyle(int messageOperationStyle) {
+        this.messageOperationStyle = messageOperationStyle;
     }
 }
 

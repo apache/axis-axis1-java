@@ -56,6 +56,8 @@ package org.apache.axis.description;
 
 import org.apache.axis.AxisServiceConfig;
 import org.apache.axis.InternalException;
+import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.DefaultTypeMappingImpl;
 import org.apache.axis.encoding.TypeMapping;
@@ -67,6 +69,8 @@ import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.bytecode.ParamNameExtractor;
 import org.apache.axis.wsdl.Skeleton;
 import org.apache.commons.logging.Log;
+import org.w3c.dom.Element;
+import org.w3c.dom.Document;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.holders.Holder;
@@ -155,6 +159,7 @@ public class ServiceDesc {
     private HashMap qname2OperationsMap = null;
     private HashMap method2OperationMap = new HashMap();
     private HashMap method2ParamsMap = new HashMap();
+    private OperationDesc messageServiceDefaultOp = null;
 
     /** Method names for which we have completed any introspection necessary */
     private ArrayList completedNames = new ArrayList();
@@ -417,30 +422,25 @@ public class ServiceDesc {
      */
     public OperationDesc [] getOperationsByQName(QName qname)
     {
-        // If we're MESSAGE style, we should only have a single operation,
-        // to which we'll pass any XML we receive.
-        if (style == Style.MESSAGE) {
-            if (!introspectionComplete) {
-                loadServiceDescByIntrospection();
-            }
-            if (operations.size() > 0)
-                return new OperationDesc [] { (OperationDesc)operations.get(0) };
+        // Look in our mapping of QNames -> operations.
 
-            return null;
-        }
-
-        // If we're DOCUMENT style, we look in our mapping of QNames ->
-        // operations instead.  But first, let's make sure we've initialized
-        // said mapping....
+        // But first, let's make sure we've initialized said mapping....
         initQNameMap();
 
         ArrayList overloads = (ArrayList)qname2OperationsMap.get(qname);
 
         if (overloads == null) {
+            // Nothing specifically matching this QName.
             if ((style == Style.RPC) && (name2OperationsMap != null)) {
                 // Try ignoring the namespace....?
                 overloads = (ArrayList)name2OperationsMap.get(qname.getLocalPart());
             }
+
+            // Handle the case where a single Message-style operation wants
+            // to accept anything.
+            if ((style == Style.MESSAGE) && (messageServiceDefaultOp != null))
+                return new OperationDesc [] { messageServiceDefaultOp };
+
             if (overloads == null)
                 return null;
         }
@@ -573,6 +573,15 @@ public class ServiceDesc {
             Method method = methods[i];
             if (Modifier.isPublic(method.getModifiers()) &&
                     method.getName().equals(oper.getName())) {
+
+                if (style == Style.MESSAGE) {
+                    int messageOperType = checkMessageMethod(method);
+                    if (messageOperType == -1) {
+                        throw new InternalException("Couldn't match method to any of the allowable message-style patterns!");
+                    }
+                    oper.setMessageOperationStyle(messageOperType);
+                }
+
                 // Check params
                 Class [] paramTypes = method.getParameterTypes();
                 if (paramTypes.length != oper.getNumParams())
@@ -663,6 +672,33 @@ public class ServiceDesc {
         }
     }
 
+    private int checkMessageMethod(Method method) {
+        // Collect the types so we know what we're dealing with in the target
+        // method.
+        Class [] params = method.getParameterTypes();
+
+        if (params.length == 1) {
+            if ((params[0] == Element[].class) &&
+                    (method.getReturnType() == Element[].class)) {
+                return OperationDesc.MSG_METHOD_ELEMENTARRAY;
+            }
+
+            if ((params[0] == SOAPBodyElement[].class) &&
+                    (method.getReturnType() == SOAPBodyElement[].class)) {
+                return OperationDesc.MSG_METHOD_BODYARRAY;
+            }
+        } else if (params.length == 2) {
+            if ((params[0] == SOAPEnvelope.class) &&
+                    (params[1] == SOAPEnvelope.class) &&
+                    (method.getReturnType() == void.class)) {
+                return OperationDesc.MSG_METHOD_SOAPENVELOPE;
+            }
+        }
+
+        throw new InternalException (Messages.getMessage("badMsgMethodParams",
+                                                         method.getName()));
+    }
+
     /**
      * Fill in a service description by introspecting the implementation
      * class.
@@ -720,7 +756,7 @@ public class ServiceDesc {
         }
 
         loadServiceDescByIntrospectionRecursive(implClass);
-        
+
         // All operations should now be synchronized.  Check it.
         for (Iterator iterator = operations.iterator(); iterator.hasNext();) {
             OperationDesc operation = (OperationDesc) iterator.next();
@@ -731,7 +767,11 @@ public class ServiceDesc {
                                             "" + operation.getNumParams()));
             }
         }
-        
+
+        if ((style == Style.MESSAGE) && operations.size() == 1) {
+            messageServiceDefaultOp = (OperationDesc)operations.get(0);
+        }
+
         introspectionComplete = true;
     }
 
@@ -968,36 +1008,49 @@ public class ServiceDesc {
         }
         operation.setElementQName(new QName(defaultNS, method.getName()));
         operation.setMethod(method);
-        Class retClass = method.getReturnType();
-        operation.setReturnClass(retClass);
-        operation.setReturnType(tm.getTypeQName(method.getReturnType()));
 
-        String [] paramNames = getParamNames(method);
-
-        for (int k = 0; k < paramTypes.length; k++) {
-            Class type = paramTypes[k];
-            ParameterDesc paramDesc = new ParameterDesc();
-            // If we have a name for this param, use it, otherwise call
-            // it "in*"
-            if (paramNames != null && paramNames[k] != null && paramNames[k].length()>0) {
-                paramDesc.setName(paramNames[k]);
-            } else {
-                paramDesc.setName("in" + k);
+        // If this is a MESSAGE style service, set up the OperationDesc
+        // appropriately.
+        if (style == Style.MESSAGE) {
+            int messageOperType = checkMessageMethod(method);
+            if (messageOperType == -1) {
+                throw new InternalException("Couldn't match method to any of the allowable message-style patterns!");
             }
+            operation.setMessageOperationStyle(messageOperType);
+        } else {
+            // For other styles, continue here.
+            Class retClass = method.getReturnType();
+            operation.setReturnClass(retClass);
+            operation.setReturnType(tm.getTypeQName(method.getReturnType()));
 
-            // If it's a Holder, mark it INOUT, and set the XML type QName
-            // to the held type.  Otherwise it's IN.
+            String [] paramNames = getParamNames(method);
 
-            Class heldClass = JavaUtils.getHolderValueType(type);
-            if (heldClass != null) {
-                paramDesc.setMode(ParameterDesc.INOUT);
-                paramDesc.setTypeQName(tm.getTypeQName(heldClass));
-            } else {
-                paramDesc.setMode(ParameterDesc.IN);
-                paramDesc.setTypeQName(tm.getTypeQName(type));
+            for (int k = 0; k < paramTypes.length; k++) {
+                Class type = paramTypes[k];
+                ParameterDesc paramDesc = new ParameterDesc();
+                // If we have a name for this param, use it, otherwise call
+                // it "in*"
+                if (paramNames != null && paramNames[k] != null &&
+                        paramNames[k].length()>0) {
+                    paramDesc.setName(paramNames[k]);
+                } else {
+                    paramDesc.setName("in" + k);
+                }
+
+                // If it's a Holder, mark it INOUT, and set the XML type QName
+                // to the held type.  Otherwise it's IN.
+
+                Class heldClass = JavaUtils.getHolderValueType(type);
+                if (heldClass != null) {
+                    paramDesc.setMode(ParameterDesc.INOUT);
+                    paramDesc.setTypeQName(tm.getTypeQName(heldClass));
+                } else {
+                    paramDesc.setMode(ParameterDesc.IN);
+                    paramDesc.setTypeQName(tm.getTypeQName(type));
+                }
+                paramDesc.setJavaType(type);
+                operation.addParameter(paramDesc);
             }
-            paramDesc.setJavaType(type);
-            operation.addParameter(paramDesc);
         }
 
         // Create Exception Types
