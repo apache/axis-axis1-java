@@ -99,6 +99,11 @@ public class MsgDispatchHandler extends BasicHandler {
       Message       reqMsg  = msgContext.getRequestMessage();
       SOAPEnvelope  reqEnv  = (SOAPEnvelope) reqMsg.getAs("SOAPEnvelope");
       SOAPBody      reqBody = reqEnv.getFirstBody();
+      Message       resMsg  = msgContext.getResponseMessage();
+      SOAPEnvelope  resEnv  = (resMsg == null) ?
+                              new SOAPEnvelope() :
+                              (SOAPEnvelope)resMsg.getAs("SOAPEnvelope");
+
       Document      doc     = new Document( reqBody.getAsXML() );
   
       argClasses[0] = cl.loadClass("org.apache.axis.MessageContext");
@@ -111,9 +116,12 @@ public class MsgDispatchHandler extends BasicHandler {
       Document retDoc = (Document) method.invoke( obj, argObjects );
   
       SOAPBody      resBody = new SOAPBody( retDoc );
-      SOAPEnvelope  resEnv  = new SOAPEnvelope( resBody );
-      Message       resMsg = new Message( resEnv, "SOAPEnvelope" );
-      msgContext.setResponseMessage( resMsg );
+      resEnv.addBody(resBody);
+      
+      if (resMsg == null) {
+        resMsg = new Message(resEnv, "SOAPEnvelope");
+        msgContext.setResponseMessage( resMsg );
+      }
     }
     catch( Exception exp ) {
       exp.printStackTrace();

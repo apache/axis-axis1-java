@@ -89,9 +89,12 @@ public class RPCDispatchHandler extends BasicHandler {
       Class           cls    = cl.loadClass(clsName); 
       Object          obj    = cls.newInstance();
       Message         inMsg  = msgContext.getRequestMessage();
+      Message         outMsg = msgContext.getResponseMessage();
       SOAPEnvelope    env    = (SOAPEnvelope) inMsg.getAs("SOAPEnvelope");
       Vector          bodies = env.getAsRPCBody();
-      SOAPEnvelope    resEnv = null ;
+      SOAPEnvelope    resEnv = (outMsg == null) ?
+                                new SOAPEnvelope() :
+                                (SOAPEnvelope)outMsg.getAs("SOAPEnvelope");
 
       /* Loop over each entry in the SOAPBody - each one is a different */
       /* RPC call.                                                      */
@@ -121,10 +124,8 @@ public class RPCDispatchHandler extends BasicHandler {
         Method method = cls.getMethod( mName, argClasses );
         Object objRes = method.invoke( obj, argValues );
   
-        /* Now put the result in a result SOAPEnvelope */
-        /***********************************************/
-        if ( resEnv == null )
-          resEnv = new SOAPEnvelope();
+        /* Now put the result in the result SOAPEnvelope */
+        /*************************************************/
         RPCBody resBody = new RPCBody();
         resBody.setMethodName( mName + "Response" );
         resBody.setPrefix( body.getPrefix() );
@@ -136,8 +137,10 @@ public class RPCDispatchHandler extends BasicHandler {
         resEnv.addBody( resBody.getAsSOAPBody() );
       }
 
-      Message outMsg = new Message( resEnv, "SOAPEnvelope" );
-      msgContext.setResponseMessage( outMsg );
+      if (outMsg == null) {
+        outMsg = new Message(resEnv, "SOAPEnvelope");
+        msgContext.setResponseMessage( outMsg );
+      }
     }
     catch( Exception e ) {
       Debug.Print( 1, e );
