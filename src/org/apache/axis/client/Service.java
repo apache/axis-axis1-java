@@ -53,7 +53,7 @@
 * <http://www.apache.org/>.
 */
 
-package org.apache.axis.client ;
+package org.apache.axis.client;
 
 import org.apache.axis.AxisEngine;
 import org.apache.axis.EngineConfiguration;
@@ -104,39 +104,38 @@ import java.util.Vector;
  */
 
 public class Service implements javax.xml.rpc.Service, Serializable, Referenceable {
-    private transient AxisEngine          engine = null;
+    private transient AxisEngine engine = null;
     private transient EngineConfiguration config = null;
 
-    private QName               serviceName     = null ;
-    private String              wsdlLocation    = null ;
-    private javax.wsdl.Service  wsdlService     = null ;
-    private boolean             maintainSession = false ;
+    private QName serviceName = null;
+    private String wsdlLocation = null;
+    private javax.wsdl.Service wsdlService = null;
+    private boolean maintainSession = false;
     private HandlerRegistryImpl registry = new HandlerRegistryImpl();
-    private Parser              wsdlParser      = null;
+    private Parser wsdlParser = null;
 
     /**
      * Thread local storage used for storing the last call object
      */
     private static ThreadLocal previousCall = new ThreadLocal();
-    private static HashMap      cachedWSDL  = new HashMap();
-    private static boolean      cachingWSDL = true ;
+    private static HashMap cachedWSDL = new HashMap();
+    private static boolean cachingWSDL = true;
 
     /**
      * A Hashtable mapping addresses (URLs) to Transports (objects)
      */
     private Hashtable transportImpls = new Hashtable();
 
-    
+
     protected javax.wsdl.Service getWSDLService() {
-        return( wsdlService );
+        return (wsdlService);
     }
 
     public Parser getWSDLParser() {
-        return( wsdlParser );
+        return (wsdlParser);
     }
-    
-    protected AxisClient getAxisClient()
-    {
+
+    protected AxisClient getAxisClient() {
         return new AxisClient(getEngineConfiguration());
     }
 
@@ -181,21 +180,13 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
         this.serviceName = serviceName;
         engine = getAxisClient();
         wsdlLocation = wsdlDoc.toString();
-        Parser parser = null ;
+        Parser parser = null;
 
-        if ( cachingWSDL &&
-             (parser = (Parser) cachedWSDL.get(this.wsdlLocation.toString())) != null ){
-          initService( parser, serviceName );
-        }
-        else {
-            Document doc = null;
-            try {
-                doc = XMLUtils.newDocument(wsdlDoc.toString());
-            } catch (Exception exp ) {
-                throw new ServiceException(
-                   Messages.getMessage("wsdlError00", "" + "", "\n" + exp) );
-            }
-            initService(doc, serviceName);
+        if (cachingWSDL &&
+                (parser = (Parser) cachedWSDL.get(this.wsdlLocation.toString())) != null) {
+            initService(parser, serviceName);
+        } else {
+            initService(wsdlDoc.toString(), serviceName);
         }
     }
 
@@ -209,7 +200,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
     public Service(Parser parser, QName serviceName) throws ServiceException {
         this.serviceName = serviceName;
         engine = getAxisClient();
-        initService( parser, serviceName );
+        initService(parser, serviceName);
     }
 
     /**
@@ -224,25 +215,17 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      * @throws ServiceException If there's an error finding or parsing the WSDL
      */
     public Service(String wsdlLocation, QName serviceName)
-                           throws ServiceException {
+            throws ServiceException {
         this.serviceName = serviceName;
         this.wsdlLocation = wsdlLocation;
         engine = getAxisClient();
         // Start by reading in the WSDL using Parser
-        Parser parser = null ;
-        if ( cachingWSDL &&
-             (parser = (Parser) cachedWSDL.get(wsdlLocation)) != null ) {
-          initService( parser, serviceName );
-        }
-        else {
-            Document doc = null;
-            try {
-                doc = XMLUtils.newDocument(wsdlLocation);
-            } catch (Exception exp ) {
-                throw new ServiceException(
-                   Messages.getMessage("wsdlError00", "" + "", "\n" + exp) );
-            }
-          initService(doc, serviceName);
+        Parser parser = null;
+        if (cachingWSDL &&
+                (parser = (Parser) cachedWSDL.get(wsdlLocation)) != null) {
+            initService(parser, serviceName);
+        } else {
+            initService(wsdlLocation, serviceName);
         }
     }
 
@@ -257,16 +240,40 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      * @throws ServiceException If there's an error finding or parsing the WSDL
      */
     public Service(InputStream wsdlInputStream, QName serviceName)
-                           throws ServiceException {
+            throws ServiceException {
         engine = getAxisClient();
         Document doc = null;
         try {
             doc = XMLUtils.newDocument(wsdlInputStream);
-        } catch (Exception exp ) {
+        } catch (Exception exp) {
             throw new ServiceException(
-               Messages.getMessage("wsdlError00", "" + "", "\n" + exp) );
+                    Messages.getMessage("wsdlError00", "" + "", "\n" + exp));
         }
-        initService(doc, serviceName);
+        initService(null, doc, serviceName);
+    }
+
+    /**
+     * Common code for building up the Service from a WSDL document
+     *
+     * @param url               URL for the WSDL document
+     * @param serviceName       Qualified name of the desired service
+     * @throws ServiceException  If there's an error finding or parsing the WSDL
+     */
+    private void initService(String url, QName serviceName)
+            throws ServiceException {
+        try {
+            // Start by reading in the WSDL using Parser
+            Parser parser = new Parser();
+            parser.run(url);
+
+            if (cachingWSDL && this.wsdlLocation != null)
+                cachedWSDL.put(url, parser);
+
+            initService(parser, serviceName);
+        } catch (Exception exp) {
+            throw new ServiceException(
+                    Messages.getMessage("wsdlError00", "" + "", "\n" + exp));
+        }
     }
 
     /**
@@ -276,38 +283,40 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      * @param serviceName       Qualified name of the desired service
      * @throws ServiceException  If there's an error finding or parsing the WSDL
      */
-    private void initService(Document doc, QName serviceName)
+    private void initService(String context, Document doc, QName serviceName)
             throws ServiceException {
         try {
             // Start by reading in the WSDL using Parser
             Parser parser = new Parser();
-            parser.run(this.wsdlLocation.toString());
+            parser.run(context, doc);
 
-            if ( cachingWSDL && this.wsdlLocation != null )
-              cachedWSDL.put( this.wsdlLocation.toString(), parser );
-
-            initService( parser, serviceName );
-        }
-        catch( Exception exp ) {
+            initService(parser, serviceName);
+        } catch (Exception exp) {
             throw new ServiceException(
-                    Messages.getMessage("wsdlError00", "" + "", "\n" + exp) );
+                    Messages.getMessage("wsdlError00", "" + "", "\n" + exp));
         }
     }
 
+    /**
+     *  Code for building up the Service from a Parser
+     * 
+     * @param parser            Parser for this service
+     * @param serviceName       Qualified name of the desired service
+     * @throws ServiceException If there's an error finding or parsing the WSDL
+     */
     private void initService(Parser parser, QName serviceName)
             throws ServiceException {
         try {
-            this.wsdlParser = parser ;
+            this.wsdlParser = parser;
             ServiceEntry serviceEntry = parser.getSymbolTable().getServiceEntry(serviceName);
-            if ( serviceEntry != null)
-                this.wsdlService    = serviceEntry.getService(); 
-            if ( this.wsdlService == null )
+            if (serviceEntry != null)
+                this.wsdlService = serviceEntry.getService();
+            if (this.wsdlService == null)
                 throw new ServiceException(
                         Messages.getMessage("noService00", "" + serviceName));
-        }
-        catch( Exception exp ) {
+        } catch (Exception exp) {
             throw new ServiceException(
-                    Messages.getMessage("wsdlError00", "" + "", "\n" + exp) );
+                    Messages.getMessage("wsdlError00", "" + "", "\n" + exp));
         }
     }
 
@@ -322,14 +331,14 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      * @throws ServiceException If there's an error
      */
     public Remote getPort(QName portName, Class proxyInterface)
-                           throws ServiceException {
+            throws ServiceException {
 
         if (wsdlService == null)
             throw new ServiceException(Messages.getMessage("wsdlMissing00"));
 
-        Port port = wsdlService.getPort( portName.getLocalPart() );
-        if ( port == null )
-            throw new ServiceException( Messages.getMessage("noPort00", "" + portName) );
+        Port port = wsdlService.getPort(portName.getLocalPart());
+        if (port == null)
+            throw new ServiceException(Messages.getMessage("noPort00", "" + portName));
 
         // First, try to find a generated stub.  If that
         // returns null, then find a dynamic stub.
@@ -364,12 +373,10 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
                         WSDLUtils.getAddressFromPort(port));
                 stub.setPortName(portName);
                 return (Remote) stub;
-            }
-            else {
+            } else {
                 return null;
             }
-        }
-        catch (Throwable t) {
+        } catch (Throwable t) {
             return null;
         }
     } // getGeneratedStub
@@ -402,20 +409,19 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      * @throws ServiceException
      */
     public Remote getPort(String endpoint, Class proxyInterface)
-        throws ServiceException
-    {
+            throws ServiceException {
         return getPort(endpoint, null, proxyInterface);
     }
 
     private Remote getPort(String endpoint, QName portName,
-            Class proxyInterface) throws ServiceException {
+                           Class proxyInterface) throws ServiceException {
         if (!proxyInterface.isInterface()) {
             throw new ServiceException(Messages.getMessage("mustBeIface00"));
         }
 
         if (!(Remote.class.isAssignableFrom(proxyInterface))) {
             throw new ServiceException(
-                            Messages.getMessage("mustExtendRemote00"));
+                    Messages.getMessage("mustExtendRemote00"));
         }
 
         try {
@@ -425,14 +431,13 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
                 if (endpoint != null) {
                     call.setTargetEndpointAddress(new URL(endpoint));
                 }
-            }
-            else {
+            } else {
                 call = (org.apache.axis.client.Call) createCall(portName);
             }
             ClassLoader classLoader =
                     Thread.currentThread().getContextClassLoader();
-            return (Remote)Proxy.newProxyInstance(classLoader,
-                    new Class[] { proxyInterface, javax.xml.rpc.Stub.class },
+            return (Remote) Proxy.newProxyInstance(classLoader,
+                    new Class[]{proxyInterface, javax.xml.rpc.Stub.class},
                     new AxisClientProxy(call, portName));
         } catch (Exception e) {
             throw new ServiceException(e.toString());
@@ -448,43 +453,42 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      * @throws ServiceException If there's an error
      */
     public javax.xml.rpc.Call createCall(QName portName)
-                            throws ServiceException {
-        Call call = (org.apache.axis.client.Call)createCall();
-        call.setPortName( portName );
+            throws ServiceException {
+        Call call = (org.apache.axis.client.Call) createCall();
+        call.setPortName(portName);
 
         // We can't prefill information if WSDL is not specified,
         // So just return the call that we just created.
-        if ( wsdlParser == null )
+        if (wsdlParser == null)
             return call;
 
-        Port port = wsdlService.getPort( portName.getLocalPart() );
-        if ( port == null )
-            throw new ServiceException( Messages.getMessage("noPort00", "" + portName) );
+        Port port = wsdlService.getPort(portName.getLocalPart());
+        if (port == null)
+            throw new ServiceException(Messages.getMessage("noPort00", "" + portName));
 
-        Binding   binding  = port.getBinding();
-        PortType  portType = binding.getPortType();
-        if ( portType == null )
-            throw new ServiceException( Messages.getMessage("noPortType00", "" + portName) );
+        Binding binding = port.getBinding();
+        PortType portType = binding.getPortType();
+        if (portType == null)
+            throw new ServiceException(Messages.getMessage("noPortType00", "" + portName));
 
         // Get the URL
         ////////////////////////////////////////////////////////////////////
         List list = port.getExtensibilityElements();
-        for ( int i = 0 ; list != null && i < list.size() ; i++ ) {
+        for (int i = 0; list != null && i < list.size(); i++) {
             Object obj = list.get(i);
-            if ( obj instanceof SOAPAddress ) {
+            if (obj instanceof SOAPAddress) {
                 try {
-                    SOAPAddress addr = (SOAPAddress) obj ;
-                    URL         url  = new URL(addr.getLocationURI());
+                    SOAPAddress addr = (SOAPAddress) obj;
+                    URL url = new URL(addr.getLocationURI());
                     call.setTargetEndpointAddress(url);
-                }
-                catch(Exception exp) {
+                } catch (Exception exp) {
                     throw new ServiceException(
-                            Messages.getMessage("cantSetURI00", "" + exp) );
+                            Messages.getMessage("cantSetURI00", "" + exp));
                 }
             }
         }
 
-        return( call );
+        return (call);
     }
 
     /**
@@ -499,11 +503,11 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      */
     public javax.xml.rpc.Call createCall(QName portName,
                                          String operationName)
-                           throws ServiceException {
+            throws ServiceException {
 
-        Call call = (org.apache.axis.client.Call)createCall();
-        call.setOperation( portName, operationName );
-        return( call );
+        Call call = (org.apache.axis.client.Call) createCall();
+        call.setOperation(portName, operationName);
+        return (call);
     }
 
     /**
@@ -518,11 +522,11 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      */
     public javax.xml.rpc.Call createCall(QName portName,
                                          QName operationName)
-                           throws ServiceException {
+            throws ServiceException {
 
-        Call call = (org.apache.axis.client.Call)createCall();
-        call.setOperation( portName, operationName.getLocalPart() );
-        return( call );
+        Call call = (org.apache.axis.client.Call) createCall();
+        call.setOperation(portName, operationName.getLocalPart());
+        return (call);
     }
 
     /**
@@ -558,7 +562,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
         if (portName == null)
             throw new ServiceException(Messages.getMessage("badPort00"));
 
-        if (wsdlService == null) 
+        if (wsdlService == null)
             throw new ServiceException(Messages.getMessage("wsdlMissing00"));
 
         javax.xml.rpc.Call[] array = new javax.xml.rpc.Call[]{createCall(portName)};
@@ -602,10 +606,10 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      * @return QName Fully qualified name of this service.
      */
     public QName getServiceName() {
-        if ( serviceName != null ) return serviceName;
-        if ( wsdlService == null ) return( null );
-        QName  qn = wsdlService.getQName();
-        return( new QName( qn.getNamespaceURI(), qn.getLocalPart() ) );
+        if (serviceName != null) return serviceName;
+        if (wsdlService == null) return (null);
+        QName qn = wsdlService.getQName();
+        return (new QName(qn.getNamespaceURI(), qn.getLocalPart()));
     }
 
     /**
@@ -619,7 +623,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      *     have access to the required WSDL metadata
      */
     public Iterator getPorts() throws ServiceException {
-        if (wsdlService == null || wsdlService.getPorts() == null){
+        if (wsdlService == null || wsdlService.getPorts() == null) {
             // Return an empty iterator;
             return new Vector().iterator();
         }
@@ -633,7 +637,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      * @throws ServiceException if there's an error
      */
     public void setTypeMappingRegistry(TypeMappingRegistry registry)
-                    throws ServiceException  {
+            throws ServiceException {
     }
 
     /**
@@ -642,7 +646,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      * @return TypeMappingRegistry The registry
      */
     public TypeMappingRegistry getTypeMappingRegistry() {
-        return( engine.getTypeMappingRegistry() );
+        return (engine.getTypeMappingRegistry());
     }
 
     /**
@@ -661,8 +665,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
             addr = new StringRefAddr(
                     ServiceFactory.SERVICE_CLASSNAME, classname);
             reference.add(addr);
-        }
-        else {
+        } else {
             if (wsdlLocation != null) {
                 addr = new StringRefAddr(
                         ServiceFactory.WSDL_LOCATION, wsdlLocation.toString());
@@ -694,7 +697,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      * @param engine  Sets this Service's AxisEngine to the passed in one
      */
     public void setEngine(AxisEngine engine) {
-        this.engine = engine ;
+        this.engine = engine;
     }
 
     /**
@@ -706,7 +709,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      * @return AxisEngine  the engine
      */
     public AxisEngine getEngine() {
-        return( engine );
+        return (engine);
     }
 
     /**
@@ -725,14 +728,14 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
 
     /**
      * Constructs a EngineConfig if one is not available.
-     */ 
+     */
     protected EngineConfiguration getEngineConfiguration() {
         if (this.config == null) {
-            this.config = EngineConfigurationFactoryFinder.newFactory().getClientEngineConfig(); 
+            this.config = EngineConfigurationFactoryFinder.newFactory().getClientEngineConfig();
         }
         return config;
     }
-    
+
     /**
      * Determine whether we'd like to track sessions or not.
      * This information is passed to all Call objects created
@@ -764,7 +767,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      * Tells whether or not we're caching WSDL
      */
     public boolean getCacheWSDL() {
-      return cachingWSDL ;
+        return cachingWSDL;
     }
 
     /**
@@ -772,15 +775,15 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      * Default is 'true' (on).
      */
     public void setCacheWSDL(boolean flag) {
-      cachingWSDL = flag ;
+        cachingWSDL = flag;
     }
 
     protected static class HandlerRegistryImpl implements HandlerRegistry {
         Map map = new HashMap();
 
         public List getHandlerChain(QName portName) {
-            List list = (List)map.get(portName);
-            if(list == null) {
+            List list = (List) map.get(portName);
+            if (list == null) {
                 list = new java.util.ArrayList();
                 setHandlerChain(portName, list);
             }
@@ -803,7 +806,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      * Get any registered Transport object for a given URL.
      */
     Transport getTransportForURL(URL url) {
-        return (Transport)transportImpls.get(url);
+        return (Transport) transportImpls.get(url);
     }
 
 }
