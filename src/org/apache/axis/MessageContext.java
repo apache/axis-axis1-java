@@ -57,6 +57,7 @@ package org.apache.axis ;
 
 import org.apache.axis.client.AxisClient;
 import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.session.Session;
 import org.apache.axis.utils.JavaUtils;
@@ -292,6 +293,15 @@ public class MessageContext {
             return axisEngine.getTypeMappingRegistry();
 
         return mappingRegistry;
+    }
+
+    /**
+     * Return the type mapping currently in scope for our encoding style
+     */
+    public TypeMapping getTypeMapping()
+    {
+        return (TypeMapping)getTypeMappingRegistry().
+                getTypeMapping(encodingStyle);
     }
 
     /**

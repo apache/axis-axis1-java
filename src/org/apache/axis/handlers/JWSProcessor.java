@@ -56,8 +56,8 @@ package org.apache.axis.handlers;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
-import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
+import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.providers.java.RPCProvider;
 import org.apache.axis.transport.http.HTTPConstants;
@@ -115,7 +115,6 @@ public class JWSProcessor extends BasicHandler
             /* Grab the *.jws filename from the context - should have been */
             /* placed there by another handler (ie. HTTPActionHandler)     */
             /***************************************************************/
-            Runtime  rt      = Runtime.getRuntime();
             String   jwsFile = msgContext.getStrProp(Constants.MC_REALPATH);
             String rel = msgContext.getStrProp(Constants.MC_RELATIVE_PATH);
             if (rel.charAt(0) == '/') {
@@ -207,7 +206,6 @@ public class JWSProcessor extends BasicHandler
                 // Process proc = rt.exec( "javac " + jFile );
                 // proc.waitFor();
                 Compiler          compiler = CompilerFactory.getCompiler();
-                String[]          args     = null ;
 
                 compiler.setClasspath(getDefaultClasspath(msgContext));
                 compiler.setDestination(outdir);
@@ -274,6 +272,11 @@ public class JWSProcessor extends BasicHandler
             * configure this in the future.
             */
             rpc.setOption( "allowedMethods", "*");
+
+            // Set up service description
+            ServiceDesc sd = rpc.getServiceDescription();
+            sd.setImplClass(cl.loadClass(clsName));
+            sd.setTypeMapping(msgContext.getTypeMapping());
 
             rpc.init();   // ??
             if (doWsdl)
