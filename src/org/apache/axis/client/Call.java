@@ -651,7 +651,6 @@ public class Call implements javax.xml.rpc.Call {
                 return( this.invoke(ns,operationName,getParamList(params)) );
         }
         catch( Exception exp ) {
-exp.printStackTrace();
             if ( exp instanceof AxisFault ) throw (AxisFault) exp ;
 
             throw new AxisFault( JavaUtils.getMessage("errorInvoking00", "\n" + exp) );
