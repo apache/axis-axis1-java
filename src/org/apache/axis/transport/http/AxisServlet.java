@@ -79,6 +79,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpUtils;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -245,9 +246,7 @@ public class AxisServlet extends HttpServlet {
                                    req.getRemoteAddr());
 
             try {
-                String url = req.getScheme() + "://" +
-                        req.getServerName() + ":" +
-                        req.getServerPort() + req.getRequestURI();
+                String url = HttpUtils.getRequestURL(req).toString();
 
                 msgContext.setProperty(MessageContext.TRANS_URL, url);
 
