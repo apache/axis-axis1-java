@@ -384,7 +384,7 @@
             "http://jakarta.apache.org/commons/logging.html");
 
     needed+=needClass(out, "org.apache.log4j.Layout",
-            "log4j-1.2.4.jar",
+            "log4j-1.2.8.jar",
             "Log4j",
             "Axis may not work",
             "http://jakarta.apache.org/log4j");
