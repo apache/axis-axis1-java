@@ -135,6 +135,7 @@ public class AxisClient extends AxisEngine
                 // When do we call init/cleanup??
                 
                 SimpleTargetedChain service = null ;
+                msgContext.setPastPivot(false); 
                 
                 /* Process the Service Specific Request Chain */
                 /**********************************************/
@@ -163,6 +164,8 @@ public class AxisClient extends AxisEngine
                 HandlerRegistry tr = getTransportRegistry();
                 if ( hName != null && (h = tr.find( hName )) != null )
                     h.invoke(msgContext);
+                else
+                    msgContext.setPastPivot(true); 
                                 
                 /* Process the Global Response Chain */
                 /***********************************/
