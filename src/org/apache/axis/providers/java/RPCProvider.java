@@ -150,8 +150,6 @@ public class RPCProvider extends JavaProvider {
             // If method has an additional parameter of the right parameter
             // type, add MessageContext as the first parameter
             Class params[] = method.getParameterTypes();
-            System.out.println("params:" + params.length);
-            System.out.println("args:" + args.size());
             if (params.length > args.size() 
               && params[0].equals(msgContext.getClass())) 
             {
