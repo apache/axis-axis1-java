@@ -7,11 +7,44 @@
         <!ENTITY targets SYSTEM "file:xmls/targets.xml">
 ]>
 
-<!-- ===================================================================
-==================================================================== -->
-
 <project default="printEnv" basedir=".">
+<!-- =================================================================== -->
+<description>
+   Samples Build file for Axis
 
+Notes:
+   This is a build file for use with the Jakarta Ant build tool.
+
+Prerequisites:
+
+   jakarta-ant from http://jakarta.apache.org
+
+Optional components:
+   SOAP Attachment support enablement:
+     activation.jar from http://java.sun.com/products/javabeans/glasgow/jaf.html
+     mailapi.jar    from http://java.sun.com/products/javamail/
+   Security support enablement:
+     xmlsec.jar from fresh build of CVS from http://xml.apache.org/security/
+     Other support jars from http://cvs.apache.org/viewcvs.cgi/xml-security/libs/
+
+Build Instructions:
+   To build, run
+
+     ant "target"
+
+   on the directory where this file is located with the target you want.
+
+Most useful targets:
+
+ - compile  : compiles the samples and WSDL files
+
+Author:
+  Matt Seibert mseibert@us.ibm.com
+
+Copyright:
+  Copyright (c) 2002-2003 Apache Software Foundation.
+</description>
+<!-- ==================================================================== -->
         &properties;
         &paths;
         &taskdefs;
