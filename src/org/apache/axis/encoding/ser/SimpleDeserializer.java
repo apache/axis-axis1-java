@@ -98,6 +98,8 @@ public class SimpleDeserializer extends DeserializerImpl {
             if (typeDesc == null) {
                 typeDesc = TypeDesc.getTypeDescForClass(javaType);
             }
+        }
+
         // Get the cached propertyDescriptor from the type or
         // generate a fresh one.
         if (typeDesc != null) {
@@ -109,7 +111,6 @@ public class SimpleDeserializer extends DeserializerImpl {
                 BeanPropertyDescriptor descriptor = pd[i];
                 propertyMap.put(descriptor.getName(), descriptor);
             }
-        }
         }
     }
     
