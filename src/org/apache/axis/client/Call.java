@@ -335,9 +335,9 @@ public class Call implements javax.xml.rpc.Call {
         if (name == null || value == null) return;
 
         if ( name.equals(TRANSPORT_NAME) ) {
-            transportName = name ;
+            transportName = (String) value ;
             if ( transport != null )
-                transport.setTransportName( name );
+                transport.setTransportName( (String) value );
             return ;
          }
         if (myProperties == null)
