@@ -825,6 +825,12 @@
                    namespace="http://www.apache.org/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
+      <fault name="TestFailed">
+          <soap:fault 
+              name="TestFailed"
+              encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+              use="encoded"
+              namespace="http://www.apache.org/inout"/>
     </operation>
   </binding>
 
