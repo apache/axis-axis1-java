@@ -3,14 +3,14 @@
 <definitions name="urn:AddressFetcher"
              targetNamespace="urn:AddressFetcher2"
              xmlns:tns="urn:AddressFetcher2"
-             xmlns:typens="urn:xml-soap-address-demo"
+             xmlns:typens="urn:AddressFetcher2"
              xmlns:xsd="http://www.w3.org/1999/XMLSchema"
              xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
              xmlns="http://schemas.xmlsoap.org/wsdl/">
 
   <!-- type defs -->
   <types>
-    <xsd:schema targetNamespace="urn:xml-soap-address-demo"
+    <xsd:schema targetNamespace="urn:AddressFetcher2"
                 xmlns:xsd="http://www.w3.org/1999/XMLSchema">
       <xsd:complexType name="phone">
         <xsd:all>
