@@ -148,6 +148,13 @@ public class RoundtripTestSoapBindingImpl implements RoundtripPortType {
         sendValue.setDocType((short) 45);
         sendValue.setTaxIndicator((byte) 8);
         
+        if ((in0.getStockBeta() == 32) &&
+            (in0.getDocType() == (short) 35) &&
+            (in0.getTaxIndicator() == (byte) 3)) 
+            ;
+        else 
+            throw new RemoteException("Actual attribute values did not match expected values.");
+
         if ((in0.getOptions()[0].getCallDate().equals(new Date(1013441507388L))) &&
             (in0.getOptions()[1].getCallDate().equals(new Date(1013441507390L))) &&
             (in0.getWrapperShortArray()[0].equals(new Short((short) 23))) &&

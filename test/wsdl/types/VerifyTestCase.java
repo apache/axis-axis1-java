@@ -55,6 +55,7 @@ import test.wsdl.types.comprehensive_types.EnumLong;
 import test.wsdl.types.comprehensive_types.EnumShort;
 import test.wsdl.types.comprehensive_types.EnumString;
 import test.wsdl.types.comprehensive_types.StockQuote;
+import test.wsdl.types.comprehensive_types.Time;
 import test.wsdl.types.comprehensive_types2.A;
 import test.wsdl.types.comprehensive_types2.B;
 
@@ -245,8 +246,17 @@ public class VerifyTestCase extends junit.framework.TestCase {
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
-        StockQuote stockQuote = new StockQuote("hi ho!", "hi ho!", "it's off to work", "we go", "tweet tweet tweet tweet", "tweet tweet tweet tweet", "tweet tweet, tweet tweet");
-        ComplexWComplex complexWComplex = new ComplexWComplex(stockQuote, 22);
+        StockQuote stockQuote = new StockQuote();
+        stockQuote.setTime(new Time());
+        stockQuote.setChange("5");
+        stockQuote.setPctchange("100%");
+        stockQuote.setBid("9");
+        stockQuote.setAsk("11");
+        stockQuote.setSymbol("AXS");
+        stockQuote.setLast("5");
+        ComplexWComplex complexWComplex = new ComplexWComplex();
+        complexWComplex.setStockQuote(stockQuote);
+        complexWComplex.setOutside(22);
         try {
             binding.complexWComplexIn(complexWComplex);
         } catch (java.rmi.RemoteException re) {

@@ -208,65 +208,69 @@ public class BeanDeserializer extends DeserializerImpl implements Deserializer, 
                                DeserializationContext context)
             throws SAXException {
 
-        // No attributes are allowed for SOAP encoding
-        if (Constants.isSOAP_ENC(context.getMessageContext().getEncodingStyle())) {
-            return;
-        }
         // get list of properties that are really attributes
         Vector beanAttributeNames = BeanSerializer.getBeanAttributes(javaType);
         
         // loop through the attributes and set bean properties that 
         // correspond to attributes
-        for (int i=0; i < attributes.getLength(); i++) {
-            String attrName = attributes.getLocalName(i);
-            String attrNameUp = BeanSerializer.format(attrName, BeanSerializer.FORCE_UPPER);
-            String attrNameLo = BeanSerializer.format(attrName, BeanSerializer.FORCE_LOWER);
-            String mangledName = JavaUtils.xmlNameToJava(attrName);
-            
-            // look for the attribute property
-            BeanPropertyDescriptor bpd = 
+        if (beanAttributeNames != null && 
+            beanAttributeNames.size() > 0) {
+            for (int i=0; i < attributes.getLength(); i++) {
+                String attrName = attributes.getLocalName(i);
+                String attrNameUp = BeanSerializer.format(attrName, BeanSerializer.FORCE_UPPER);
+                String attrNameLo = BeanSerializer.format(attrName, BeanSerializer.FORCE_LOWER);
+                String mangledName = JavaUtils.xmlNameToJava(attrName);
+
+                // See if the attribute is a beanAttribute name
+                if (!beanAttributeNames.contains(attrName) &&
+                    !beanAttributeNames.contains(attrNameUp) &&
+                    !beanAttributeNames.contains(attrNameLo))
+                    continue;
+
+                // look for the attribute property
+                BeanPropertyDescriptor bpd = 
                     (BeanPropertyDescriptor) propertyMap.get(attrNameUp);
-            if (bpd == null)
-                bpd = (BeanPropertyDescriptor) propertyMap.get(attrNameLo);
-            if (bpd == null)
-                bpd = (BeanPropertyDescriptor) propertyMap.get(mangledName);
-            if (bpd != null) {
-                if (bpd.getWriteMethod() == null ) continue ;
-                
-                // determine the QName for this child element
-                TypeMapping tm = context.getTypeMapping();
-                Class type = bpd.getType();
-                QName qn = tm.getTypeQName(type);
-                if (qn == null)
-                    throw new SAXException(
+                if (bpd == null)
+                    bpd = (BeanPropertyDescriptor) propertyMap.get(attrNameLo);
+                if (bpd == null)
+                    bpd = (BeanPropertyDescriptor) propertyMap.get(mangledName);
+                if (bpd != null) {
+                    if (bpd.getWriteMethod() == null ) continue ;
+                    
+                    // determine the QName for this child element
+                    TypeMapping tm = context.getTypeMapping();
+                    Class type = bpd.getType();
+                    QName qn = tm.getTypeQName(type);
+                    if (qn == null)
+                        throw new SAXException(
                             JavaUtils.getMessage("unregistered00", type.toString()));
                 
-                // get the deserializer
-                Deserializer dSer = context.getDeserializerForType(qn);
-                if (dSer == null)
-                    throw new SAXException(
+                    // get the deserializer
+                    Deserializer dSer = context.getDeserializerForType(qn);
+                    if (dSer == null)
+                        throw new SAXException(
                             JavaUtils.getMessage("noDeser00", type.toString()));
-                if (! (dSer instanceof SimpleDeserializer))
-                    throw new SAXException(
+                    if (! (dSer instanceof SimpleDeserializer))
+                        throw new SAXException(
                             JavaUtils.getMessage("AttrNotSimpleType00", 
                                                  bpd.getName(), 
                                                  type.toString()));
                 
-                if (bpd.getWriteMethod().getParameterTypes().length == 1) {
-                    // Success!  Create an object from the string and set
-                    // it in the bean
-                    try {
-                        Object val = ((SimpleDeserializer)dSer).
-                                        makeValue(attributes.getValue(i));
-                        bpd.getWriteMethod().invoke(value, new Object[] {val} );
-                    } catch (Exception e) {
-                        throw new SAXException(e);
+                    if (bpd.getWriteMethod().getParameterTypes().length == 1) {
+                        // Success!  Create an object from the string and set
+                        // it in the bean
+                        try {
+                            Object val = ((SimpleDeserializer)dSer).
+                                makeValue(attributes.getValue(i));
+                            bpd.getWriteMethod().invoke(value, new Object[] {val} );
+                        } catch (Exception e) {
+                            throw new SAXException(e);
+                        }
                     }
-                }
                 
-            } // if
-        } // attribute loop
-
+                } // if
+            } // attribute loop
+        } // if attributes exist
     } // onStartElement
 
 }

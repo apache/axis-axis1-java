@@ -541,6 +541,25 @@ public class Types {
 
 
     /**
+     * Create Attribute Element with a given name and type
+     * @param elementName the name of the created element
+     * @param elementType schema type representation of the element
+     * @param nullable nullable attribute of the element
+     * @return the created Element
+     */
+    public Element createAttributeElement(String elementName,
+                                  String elementType,
+                                  boolean nullable,
+                                  Document docHolder) {
+        Element element = docHolder.createElement("attribute");
+        element.setAttribute("name", elementName);
+        if (nullable)
+            element.setAttribute("nillable", "true");
+        element.setAttribute("type", elementType);
+        return element;
+    }
+
+    /**
      * convert from JAX-RPC QName to WSDL QName
      * @param qName JAX-RPC QName
      * @return WSDL QName
