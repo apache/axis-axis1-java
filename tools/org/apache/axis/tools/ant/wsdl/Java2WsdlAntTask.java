@@ -1,7 +1,7 @@
 /*
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -64,13 +64,27 @@ import org.apache.axis.encoding.DefaultSOAPEncodingTypeMappingImpl;
 import java.util.HashMap;
 import java.io.StringWriter;
 import java.io.PrintWriter;
+import java.io.File;
 
-/**
- * Generates a WSDL description from a Java class.
- *
- * @author Rich Scheuerle (scheu@us.ibm.com)
- * @ant.task category="axis"
+/*
+ * Important. we autogenerate the ant task docs from this.
+ * after adding a new attribute
+ * 1. add the javadoc for the end users. Make it meaningful
+ * 2. get jakarta_ant/proposals/xdocs from ant CVS
+ * 3. run the xdocs target in tools/build.xml
+ *    this creates xml files in xdocs/build
+ * 4. run proposals/xdocs/dvsl build.xml to create the html files
+ *    these are also created under xdocs/build
+ * 5. copy the the html files to docs/ant
+ * 4. check in the changes in docs/ant
  */
+/**
+ * Generates a WSDL description from a Java class. 
+ * @author Rich Scheuerle (scheu@us.ibm.com)
+ * @author Steve Loughran
+ * @ant.task category="axis" name="axis-java2wsdl"
+ */
+
 public class Java2WsdlAntTask extends Task
 {
     private String namespace = "";
@@ -89,39 +103,71 @@ public class Java2WsdlAntTask extends Task
     private boolean useInheritedMethods = false;
     private String exclude = null;
     private String stopClasses = null;
-    private String tm = "1.1";
+    private String typeMappingVersion = TypeMappingVersionEnum.DEFAULT_VERSION;
     private String style = null;
+    private String serviceElementName=null;
+    private String methods=null;
     private String use = null;
+    private MappingSet mappings=new MappingSet();
     private String extraClasses = null;
 
-    // The method executing the task
+    /**
+     * trace out parameters
+     * @param logLevel to log at
+     * @see org.apache.tools.ant.Project#log
+     */
+    public void traceParams(int logLevel) {
+        log("Running Java2WsdlAntTask with parameters:", logLevel);
+        log("\tnamespace:" + namespace, logLevel);
+        log("\tPkgtoNS:" + namespaceMap, logLevel);
+        log("\tlocation:" + location, logLevel);
+        log("\toutput:" + output, logLevel);
+        log("\tinput:" + input, logLevel);
+        log("\tclassName:" + className, logLevel);
+        log("\tservicePortName:" + servicePortName, logLevel);
+        log("\tportTypeName:" + portTypeName, logLevel);
+        log("\tbindingName:" + bindingName, logLevel);
+        log("\timplClass:" + implClass, logLevel);
+        log("\tinheritance:" + useInheritedMethods, logLevel);
+        log("\texcluded:" + exclude, logLevel);
+        log("\tstopClasses:" + stopClasses, logLevel);
+        log("\ttypeMappingVersion:" + typeMappingVersion, logLevel);
+        log("\tstyle:" + style, logLevel);
+        log("\toutputImpl:" + outputImpl, logLevel);
+        log("\tuse:" + use, logLevel);
+        log("\tnamespaceImpl:" + namespaceImpl, logLevel);
+        log("\tlocationImport:" + locationImport, logLevel);
+        log("\tserviceElementName:" + serviceElementName, logLevel);
+        log("\tmethods:" + methods, logLevel);
+        log("\textraClasses:" + extraClasses, logLevel);
+}
+
+    /**
+     * validation code
+     * @throws  BuildException  if validation failed
+     */
+    protected void validate()
+            throws BuildException {
+        if(className==null || className.length() ==0) {
+            throw new BuildException("No classname was specified");
+        }
+        if(location==null || location.length() == 0) {
+            throw new BuildException("No location was specified");
+        }
+    }
+
+    /**
+     * execute the task
+     * @throws BuildException
+     */
     public void execute() throws BuildException {
         try {
-            log("Running Java2WsdlAntTask with parameters:", Project.MSG_VERBOSE);
-            log("\tnamespace:" + namespace, Project.MSG_VERBOSE);
-            log("\tPkgtoNS:" + namespaceMap, Project.MSG_VERBOSE);
-            log("\tlocation:" + location, Project.MSG_VERBOSE);
-            log("\toutput:" + output, Project.MSG_VERBOSE);
-            log("\tinput:" + input, Project.MSG_VERBOSE);
-            log("\tclassName:" + className, Project.MSG_VERBOSE);
-            log("\tservicePortName:" + servicePortName, Project.MSG_VERBOSE);
-            log("\tportTypeName:" + portTypeName, Project.MSG_VERBOSE);
-            log("\tbindingName:" + bindingName, Project.MSG_VERBOSE);
-            log("\timplClass:" + implClass, Project.MSG_VERBOSE);
-            log("\tinheritance:" + useInheritedMethods, Project.MSG_VERBOSE);
-            log("\texcluded:" + exclude, Project.MSG_VERBOSE);
-            log("\tstopClasses:" + stopClasses, Project.MSG_VERBOSE);
-            log("\ttypeMappingVersion:" + tm, Project.MSG_VERBOSE);
-            log("\tstyle:" + style, Project.MSG_VERBOSE);
-            log("\tuse:" + use, Project.MSG_VERBOSE);
-            log("\toutputImpl:" + outputImpl, Project.MSG_VERBOSE);
-            log("\tnamespaceImpl:" + namespaceImpl, Project.MSG_VERBOSE);
-            log("\tlocationImport:" + locationImport, Project.MSG_VERBOSE);
-            log("\textraClasses:" + extraClasses, Project.MSG_VERBOSE);
-            
+            traceParams(Project.MSG_VERBOSE);
+            validate();
             // Instantiate the emitter
             Emitter emitter = new Emitter();
-
+            //do the mappings
+            mappings.execute(this,namespaceMap);
             if (!namespaceMap.isEmpty()) {
                 emitter.setNamespaceMap(namespaceMap);
             }
@@ -149,7 +195,7 @@ public class Java2WsdlAntTask extends Task
                 emitter.setExtraClasses(extraClasses);
             }
 
-            if (tm.equals("1.1")) {
+            if (typeMappingVersion.equals("1.1")) {
                 emitter.setDefaultTypeMapping(DefaultTypeMappingImpl.getSingleton());
             } else {
                 emitter.setDefaultTypeMapping(DefaultSOAPEncodingTypeMappingImpl.create());
@@ -170,6 +216,12 @@ public class Java2WsdlAntTask extends Task
             emitter.setLocationUrl(location);
             emitter.setImportUrl(locationImport);
             emitter.setUseInheritedMethods(useInheritedMethods);
+            if(serviceElementName!=null) {
+                emitter.setServiceElementName( serviceElementName);
+            }
+            if(methods!=null) {
+                emitter.setAllowedMethods(methods);
+            }
             if (outputImpl == null) {
                 // Normal case
                 emitter.emit(output, Emitter.MODE_ALL);
@@ -177,7 +229,13 @@ public class Java2WsdlAntTask extends Task
                 // Emit interface and implementation wsdls
                 emitter.emit(output, outputImpl);
             }
+
+
+        } catch(BuildException b) {
+            //pass build exceptions up the wire
+           throw b;
         } catch (Throwable t) {
+            //other trouble: stack trace the trouble and throw an exception
             StringWriter writer = new StringWriter();
             t.printStackTrace(new PrintWriter(writer));
             log(writer.getBuffer().toString(), Project.MSG_ERR);
@@ -185,132 +243,213 @@ public class Java2WsdlAntTask extends Task
         }
     }
 
-    // The setter for the "output" attribute
-    public void setOutput(String parameter) {
-        this.output = parameter;
+    /**
+     * The name of the output WSDL file.
+     * If not specified, a suitable default WSDL file is written into
+     * the current directory.
+     * @param parameter
+     */
+    public void setOutput(File parameter) {
+        this.output = parameter.getPath();
     }
 
-    // The setter for the "input" attribute
-    public void setInput(String parameter) {
-        this.input = parameter;
+    /**
+     * Optional attribute that indicates the name of the input wsdl file.
+     * The output wsdl file will contain everything from the input wsdl
+     * file plus the new constructs. If a new construct is already present
+     * in the input wsdl file, it is not added. This option is useful for
+     * constructing a wsdl file with multiple ports, bindings, or portTypes.
+     * @param parameter filename
+     */
+    public void setInput(File parameter) {
+        this.input = parameter.getPath();
     }
 
-    // The setter for the "outputImpl" attribute
-    public void setOutputImpl(String parameter) {
-        this.outputImpl = parameter;
+    /**
+     * Use this option to indicate the name of the output implementation WSDL
+     * file.  If specified, Java2WSDL will produce separate interface and implementation
+     * WSDL files.  If not, a single WSDL file is generated
+     * @param parameter
+     */
+    public void setOutputImpl(File parameter) {
+        this.outputImpl = parameter.getPath();
     }
 
-    // The setter for the "location" attribute
+    /**
+     * The url of the location of the service. The name after the last slash or
+     * backslash is the name of the service port (unless overridden by the -s
+     * option). The service port address location attribute is assigned the
+     * specified value.
+     * @param parameter a URL
+     */
     public void setLocation(String parameter) {
         this.location = parameter;
     }
 
-    // The setter for the "locationImport" attribute
+    /**
+     * the location of the interface WSDL when generating an implementation WSDL
+     * Required when <tt>outputImpl</tt> is set
+     * @param parameter URL?
+     */
     public void setLocationImport(String parameter) {
         this.locationImport = parameter;
     }
 
-    // The setter for the "className" attribute
+    /**
+     * the class name to import, eg. org.example.Foo. Required.
+     * The class must be on the classpath.
+     * @param parameter fully qualified class name
+     */
     public void setClassName(String parameter) {
         this.className = parameter;
     }
 
-    // The setter for the "implClass" attribute
+    /**
+     * Sometimes extra information is available in the implementation class
+     * file. Use this option to specify the implementation class.
+     * @param parameter
+     */
     public void setImplClass(String parameter) {
         this.implClass = parameter;
     }
 
-    // The setter for the "servicePortName" attribute
+    /**
+     * service port name (obtained from location if not specified)
+     * @param parameter portname
+     */
     public void setServicePortName(String parameter) {
         this.servicePortName = parameter;
     }
 
-    // The setter for the "portTypeName" attribute
+    /**
+     * Indicates the name to use use for the portType element.
+     * If not specified, the class-of-portType name is used.
+     * @param parameter
+     */
     public void setPortTypeName(String parameter) {
         this.portTypeName = parameter;
     }
 
-    // The setter for the "bindingName" attribute
+    /**
+     * The name to use use for the binding element.
+     * If not specified, the value of the
+     * <tt>servicePortName</tt> + "SoapBinding" is used.
+     * @param parameter
+     */
     public void setBindingName(String parameter) {
         this.bindingName = parameter;
     }
 
-    // The setter for the "namespace" attribute
+    /**
+     * the target namespace. Required.
+     * @param parameter
+     */
     public void setNamespace(String parameter) {
         this.namespace = parameter;
     }
 
-    // The setter for the "namespaceImpl" attribute
+    /**
+     * Namespace of the implementation WSDL.
+     * @param parameter
+     */
     public void setNamespaceImpl(String parameter) {
         this.namespaceImpl = parameter;
     }
 
-    // The setter for the "useInheritedMethods" attribute
+    /**
+     * should inherited methods be exported too? Default=false
+     * @param parameter
+     */
     public void setUseInheritedMethods(boolean parameter) {
         this.useInheritedMethods = parameter;
     }
 
-    // The setter for the "exclude" attribute
+    /**
+     * Comma separated list of methods to exclude from the wsdl file.
+     * @param exclude
+     */
     public void setExclude(String exclude) {
         this.exclude = exclude;
     }
 
-    // The setter for the "stopClasses" attribute
+    /**
+     * Comma separated list of classes which stop the Java2WSDL
+     * inheritance search.
+     * @param stopClasses
+     */
     public void setStopClasses(String stopClasses) {
         this.stopClasses = stopClasses;
     }
 
-    // The setter for the "style" attribute
+    /**
+     * The style of the WSDL document: RPC, DOCUMENT or WRAPPED.
+     * If RPC, a rpc/encoded wsdl is generated. If DOCUMENT, a
+     * document/literal wsdl is generated. If WRAPPED, a
+     * document/literal wsdl is generated using the wrapped approach.
+     * @param style
+     */
     public void setStyle(String style) {
         this.style = style;
     }
 
-    // The setter for the "use" attribute
+    /**
+     * add a mapping of namespaces to packages
+     */
+    public void addMapping(NamespaceMapping mapping) {
+        mappings.addMapping(mapping);
+    }
+
+    /**
+     * add a mapping of namespaces to packages
+     */
+    public void addMappingSet(MappingSet mappingset) {
+        mappings.addMappingSet(mappingset);
+    }
+
+
+    /**
+     *  the default type mapping registry to use. Either 1.1 or 1.2.
+     * Default is 1.1
+     * @param parameter new version
+     */
+    public void setTypeMappingVersion(TypeMappingVersionEnum parameter) {
+        this.typeMappingVersion = parameter.getValue();
+    }
+
+    /**
+     * If this option is specified, only the indicated methods in your
+     * interface class will be exported into the WSDL file.  The methods list
+     * must be comma separated.  If not specified, all methods declared in
+     * the interface class will be exported into the WSDL file
+     * @param methods list of methods
+     */
+    public void setMethods(String methods) {
+        this.methods = methods;
+    }
+    
+    /**
+     * Set the use option
+     */
     public void setUse(String use) {
         this.use = use;
     }
-
-    /** the command arguments */
-    public Mapping createMapping() {
-        Mapping pkg = new Mapping();
-        return pkg;
+    
+    /**
+     * the name of the service element.
+     * If not specified, the service element is the <tt>portTypeName</tt>Service.
+     * @param serviceElementName
+     */
+    public void setServiceElementName(String serviceElementName) {
+        this.serviceElementName = serviceElementName;
     }
 
-    // The setter for the "typeMappingVersion" attribute
-    public void setTypeMappingVersion(String parameter) {
-        this.tm = parameter;
-    }
-
-    // The setter for the "extraClasses" attribute
+    /**
+     * The setter for the "extraClasses" attribute
+     */
     public void setExtraClasses(String extraClasses) {
         this.extraClasses = extraClasses;
     }
 
-    /**
-     * Used for nested package definitions.
-     */
-    public class Mapping {
-        private String namespace = null;
-        private String packageName = null;
-
-        public void setNamespace(String value) {
-            namespace = value;
-            if(namespace != null && packageName != null) {
-                namespaceMap.put(packageName,namespace);
-                namespace = null; 
-                packageName = null;
-            }
-        }
-
-        public void setPackage(String value) {
-            packageName = value;
-            if(namespace != null && packageName != null) {
-                namespaceMap.put(packageName,namespace);
-                namespace = null;
-                packageName = null;
-            }
-        }
-    }
 }
 
 

@@ -68,7 +68,10 @@ import java.net.URL;
  * Ant task for starting / stopping servers and running junit in the middle.
  * Based on the Cactus org.apache.commons.cactus.ant package, heavily munged
  * and cruftily dumped into one file.
- *
+ * <p>
+ * <i>For Axis development; there is no support or stability associated 
+ *  with this task</i> 
+ * @ant.task category="axis"
  * @author Rob Jellinghaus (robj@unrealities.com)
  */
 public class RunAxisFunctionalTestsTask extends Task
