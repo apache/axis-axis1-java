@@ -2164,6 +2164,14 @@ public class SymbolTable {
                     Parameter p = new Parameter();
 
                     p.setQName(elem.getQName());
+                    // If the parameter is a anonymous complex type, the parameter
+                    // name should just be the name of the element, not >foo>element
+                    String paramName = p.getName();
+                    final int gt = paramName.lastIndexOf(ANON_TOKEN);
+                    if (gt != 1) {
+                        paramName = paramName.substring(gt+1);
+                    }
+                    p.setName(paramName);
                     p.setType(elem.getType());
                     p.setOmittable(elem.getMinOccursIs0());
                     fillParamInfo(p, bindingEntry, opName, partName);
