@@ -2253,13 +2253,17 @@ public class SymbolTable {
                                 operation.getBindingInput().getExtensibilityElements(),
                                 param);
 
-                        param.setQName(qName);
+                        if(qName!= null) {
+                            param.setQName(qName);
+                        }
                     } else if (param.isOutHeader()) {
                         QName qName = getBindedParameterName(
                                 operation.getBindingOutput().getExtensibilityElements(),
                                 param);
 
-                        param.setQName(qName);
+                        if(qName!= null) {
+                            param.setQName(qName);
+                        }
                     }
                 }
             }
