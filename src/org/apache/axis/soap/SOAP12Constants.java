@@ -56,7 +56,7 @@ package org.apache.axis.soap;
 
 import org.apache.axis.Constants;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 /**
  * SOAP 1.2 constants

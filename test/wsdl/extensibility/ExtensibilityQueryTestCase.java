@@ -17,7 +17,7 @@ import org.apache.axis.encoding.ser.BeanDeserializerFactory;
 import org.apache.axis.encoding.ser.BeanDeserializer;
 
 import javax.xml.rpc.encoding.TypeMapping;
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 import java.util.Calendar;
 
 public class ExtensibilityQueryTestCase extends junit.framework.TestCase {

@@ -70,8 +70,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import org.apache.axis.encoding.Target;
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 import java.io.StringWriter;
 import java.util.Enumeration;

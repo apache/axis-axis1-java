@@ -60,7 +60,7 @@ import org.apache.axis.encoding.Hex;
 import org.apache.axis.encoding.DeserializerImpl;
 import org.xml.sax.SAXException;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 /**
  * Deserializer for hexBinary.

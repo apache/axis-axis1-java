@@ -62,7 +62,7 @@ import org.apache.axis.utils.JavaUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 /**
  * The DateSerializer deserializes a Date.  Much of the work is done in the 

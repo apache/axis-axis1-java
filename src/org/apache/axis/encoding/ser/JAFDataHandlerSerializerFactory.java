@@ -60,8 +60,8 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
+import javax.xml.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
-import javax.xml.rpc.namespace.QName;
 
 import org.apache.axis.InternalException;
 import org.apache.axis.message.SOAPHandler;

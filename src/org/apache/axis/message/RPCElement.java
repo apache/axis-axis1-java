@@ -69,7 +69,8 @@ import org.apache.axis.wsdl.toJava.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
+
 import java.util.Vector;
 
 public class RPCElement extends SOAPBodyElement

@@ -63,11 +63,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.xml.namespace.QName;
 import javax.xml.rpc.holders.Holder;
-import javax.xml.rpc.namespace.QName;
 
 import org.apache.axis.encoding.TypeMapping;
-import org.apache.axis.enum.*;
+import org.apache.axis.enum.Style;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.bytecode.ExtractorFactory;
 import org.apache.axis.wsdl.Skeleton;

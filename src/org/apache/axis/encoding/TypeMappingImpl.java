@@ -60,7 +60,7 @@ import org.apache.axis.Constants;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
 
 import java.util.ArrayList;

@@ -15,7 +15,7 @@ import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.transport.local.LocalTransport;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 import java.util.Map;
 
 /**

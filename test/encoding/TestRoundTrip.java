@@ -11,7 +11,7 @@ import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.server.AxisServer;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 import java.util.Vector;
 
 /**

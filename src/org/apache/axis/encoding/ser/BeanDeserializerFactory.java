@@ -57,7 +57,7 @@ package org.apache.axis.encoding.ser;
 
 import org.apache.axis.utils.JavaUtils;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 /**
  * DeserializerFactory for Bean

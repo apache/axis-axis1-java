@@ -61,7 +61,8 @@ import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.encoding.SerializationContext;
 import org.xml.sax.helpers.AttributesImpl;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
+
 import java.io.IOException;
 
 public class WSDDParameter extends WSDDElement

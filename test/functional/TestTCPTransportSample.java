@@ -72,7 +72,7 @@ import samples.transport.tcp.GetQuote;
 import samples.transport.tcp.TCPSender;
 
 import javax.xml.rpc.ParameterMode;
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 import java.net.URL;
 

@@ -56,7 +56,7 @@ package javax.xml.rpc;
 
 import java.net.URL;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 /**
  * The javax.xml.rpc.ServiceFactory is an abstract class that provides

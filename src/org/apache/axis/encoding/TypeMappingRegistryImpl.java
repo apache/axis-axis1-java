@@ -59,7 +59,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.deployment.wsdd.WSDDConstants;
 import org.apache.axis.utils.JavaUtils;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
 
 import java.beans.IntrospectionException;

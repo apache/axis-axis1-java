@@ -20,7 +20,7 @@ import org.apache.axis.providers.java.RPCProvider;
 import org.apache.axis.server.AxisServer;
 import org.xml.sax.SAXException;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 import java.util.Vector;
 
 /**

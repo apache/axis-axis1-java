@@ -71,7 +71,8 @@ import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
+
 import java.io.IOException;
 /**
  * Serializer for primitives and anything simple whose value is obtained with toString()

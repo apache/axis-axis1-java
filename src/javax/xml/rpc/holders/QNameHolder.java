@@ -54,7 +54,7 @@
  */
 package javax.xml.rpc.holders;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 /**
  * Class QNameHolder

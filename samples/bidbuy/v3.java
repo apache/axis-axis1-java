@@ -7,7 +7,7 @@ import org.apache.axis.encoding.ser.BeanDeserializerFactory;
 import org.apache.axis.encoding.XMLType;
 
 import javax.xml.rpc.ParameterMode;
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.Calendar;

@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.SimpleTimeZone;
 import java.util.TimeZone;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 /** 
  * Test deserialization of SOAP responses

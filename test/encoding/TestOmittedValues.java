@@ -72,7 +72,7 @@ import org.apache.axis.server.AxisServer;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 /**
  * A test which confirms that we can correctly call methods where null arguments

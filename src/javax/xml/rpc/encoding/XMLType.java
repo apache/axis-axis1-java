@@ -55,7 +55,7 @@
 
 package javax.xml.rpc.encoding;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 /**
  * Class XMLType

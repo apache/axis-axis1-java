@@ -9,7 +9,7 @@ import org.xml.sax.SAXException;
 import org.apache.axis.Constants;
 import org.apache.axis.wsdl.fromJava.Types;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.util.Hashtable;
 

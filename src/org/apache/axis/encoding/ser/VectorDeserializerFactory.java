@@ -55,7 +55,7 @@
 
 package org.apache.axis.encoding.ser;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 /**
  * A VectorDeserializer Factory

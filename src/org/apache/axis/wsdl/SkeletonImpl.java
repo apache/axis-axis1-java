@@ -55,8 +55,9 @@
 package org.apache.axis.wsdl;
 
 import java.util.HashMap;
+
+import javax.xml.namespace.QName;
 import javax.xml.rpc.ParameterMode;
-import javax.xml.rpc.namespace.QName;
 
 /**
  * Provides Base function implementation for the Skeleton interface    

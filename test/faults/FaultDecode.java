@@ -68,7 +68,7 @@ import org.apache.axis.message.SOAPFaultElement;
 import org.apache.axis.server.AxisServer;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 /**
  * This class tests Fault deserialization.

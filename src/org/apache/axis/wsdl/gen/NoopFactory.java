@@ -114,8 +114,8 @@ public class NoopFactory implements GeneratorFactory {
             btm = new BaseTypeMapping() {
                     TypeMapping defaultTM = DefaultSOAP12TypeMappingImpl.create();
                     public String getBaseName(QName qNameIn) {
-                        javax.xml.rpc.namespace.QName qName = 
-                            new javax.xml.rpc.namespace.QName(
+                        javax.xml.namespace.QName qName = 
+                            new javax.xml.namespace.QName(
                               qNameIn.getNamespaceURI(),
                               qNameIn.getLocalPart());
                         Class cls = defaultTM.getClassForQName(qName);

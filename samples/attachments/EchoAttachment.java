@@ -66,7 +66,7 @@ import org.apache.axis.utils.Options;
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 import javax.xml.rpc.ParameterMode;
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 import java.net.URL;
 import java.io.File;

@@ -58,7 +58,7 @@ import java.net.URL;
 
 import java.rmi.Remote;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 import javax.xml.rpc.Service;
 import javax.xml.rpc.ServiceFactory;

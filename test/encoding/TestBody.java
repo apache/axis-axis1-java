@@ -12,7 +12,7 @@ import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.server.AxisServer;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 /**
  * Verify that deserialization actually can cause the soap service

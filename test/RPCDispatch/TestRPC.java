@@ -21,7 +21,7 @@ import org.xml.sax.SAXException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 import java.util.Vector;
 
 /**

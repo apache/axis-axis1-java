@@ -57,7 +57,7 @@ package org.apache.axis.encoding;
 
 import org.apache.axis.Constants;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
 
 import java.util.ArrayList;

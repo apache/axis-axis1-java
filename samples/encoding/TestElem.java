@@ -4,7 +4,7 @@ import java.io.ByteArrayInputStream;
 
 import java.net.URL;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;

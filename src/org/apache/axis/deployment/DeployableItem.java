@@ -57,7 +57,7 @@ package org.apache.axis.deployment;
 import org.apache.axis.Handler;
 import org.apache.axis.EngineConfiguration;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 
 /**

@@ -144,11 +144,11 @@ public class Types {
      * @param type <code>Class</code> to generate the XML Schema info for
      * @return the QName of the generated Schema type, null if void
      */
-    public QName writePartType(Class type, javax.xml.rpc.namespace.QName qname) throws Exception {
+    public QName writePartType(Class type, javax.xml.namespace.QName qname) throws Exception {
         if (type.getName().equals("void"))
           return null;
         if (isSimpleType(type)) {
-            javax.xml.rpc.namespace.QName typeQName = getTypeQName(type);
+            javax.xml.namespace.QName typeQName = getTypeQName(type);
             // Still need to write any element declaration...
             if (qname != null) {
                 String elementType = writeType(type);
@@ -193,7 +193,7 @@ public class Types {
      * @return QName for the schema type representing the class
      */
     private QName writeTypeNamespace(Class type) {
-        javax.xml.rpc.namespace.QName qName = getTypeQName(type);
+        javax.xml.namespace.QName qName = getTypeQName(type);
         String pref = def.getPrefix(qName.getNamespaceURI());
         if (pref == null)
           def.addNamespace(namespaces.getCreatePrefix(qName.getNamespaceURI()), qName.getNamespaceURI());
@@ -205,11 +205,11 @@ public class Types {
      * @param javaType input javaType Class
      * @return QName
      */
-    private javax.xml.rpc.namespace.QName getTypeQName(Class javaType) {
-        javax.xml.rpc.namespace.QName qName = null;
+    private javax.xml.namespace.QName getTypeQName(Class javaType) {
+        javax.xml.namespace.QName qName = null;
 
         // Use the typeMapping information to lookup the qName.
-        javax.xml.rpc.namespace.QName dQName = null;
+        javax.xml.namespace.QName dQName = null;
         if (defaultTM != null) {
             dQName = defaultTM.getTypeQName(javaType);
         }
@@ -238,14 +238,14 @@ public class Types {
             // Construct ArrayOf<componentLocalPart>
             // Else
             // Construct ArrayOf_<componentPrefix>_<componentLocalPart>
-            javax.xml.rpc.namespace.QName cqName = getTypeQName(componentType);
+            javax.xml.namespace.QName cqName = getTypeQName(componentType);
             if (targetNamespace.equals(cqName.getNamespaceURI())) {
-                qName = new javax.xml.rpc.namespace.QName(
+                qName = new javax.xml.namespace.QName(
                         targetNamespace,
                         "ArrayOf" + cqName.getLocalPart());
             } else {
                 String pre = namespaces.getCreatePrefix(cqName.getNamespaceURI());
-                qName = new javax.xml.rpc.namespace.QName(
+                qName = new javax.xml.namespace.QName(
                         targetNamespace,
                         "ArrayOf_" + pre + "_" + cqName.getLocalPart());
             }
@@ -261,7 +261,7 @@ public class Types {
             String ns = namespaces.getCreate(pkg);
             namespaces.getCreatePrefix(ns);
             String localPart = lcl.replace('$', '_');
-            qName = new javax.xml.rpc.namespace.QName(ns, localPart);
+            qName = new javax.xml.namespace.QName(ns, localPart);
         }
 
         return qName;
@@ -604,7 +604,7 @@ public class Types {
      * @param qName JAX-RPC QName
      * @return WSDL QName
      */
-    public QName getWsdlQName (javax.xml.rpc.namespace.QName qName) {
+    public QName getWsdlQName (javax.xml.namespace.QName qName) {
         return new QName(qName.getNamespaceURI(), qName.getLocalPart());
     }
 
@@ -625,7 +625,7 @@ public class Types {
               type == java.lang.Short.TYPE ||
               type == java.math.BigInteger.class ||
               type == java.math.BigDecimal.class ||
-              type == javax.xml.rpc.namespace.QName.class ||
+              type == javax.xml.namespace.QName.class ||
               type == java.util.Calendar.class ||
               type == byte[].class);
     }

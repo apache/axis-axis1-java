@@ -67,7 +67,8 @@ import org.apache.commons.logging.LogFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;

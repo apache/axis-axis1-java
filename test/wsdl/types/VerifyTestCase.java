@@ -32,7 +32,7 @@ import javax.xml.rpc.holders.ShortWrapperHolder;
 import javax.xml.rpc.holders.ShortHolder;
 import javax.xml.rpc.holders.StringHolder;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 import test.wsdl.types.comprehensive_types.Animal;
 import test.wsdl.types.comprehensive_types.AnimalHolder;
@@ -560,9 +560,9 @@ public class VerifyTestCase extends junit.framework.TestCase {
 //            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
 //        }
         try {
-            javax.xml.rpc.namespace.QName sendValue = new javax.xml.rpc.namespace.QName("test1", "test2");
+            QName sendValue = new QName("test1", "test2");
             QNameHolder qh = new QNameHolder(sendValue);
-            javax.xml.rpc.namespace.QName actual = binding.methodQName(sendValue, qh);
+            QName actual = binding.methodQName(sendValue, qh);
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }

@@ -70,9 +70,9 @@ import org.apache.axis.utils.LockableHashtable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.namespace.QName;
 import javax.xml.rpc.Call;
 import javax.xml.rpc.handler.soap.SOAPMessageContext;
-import javax.xml.rpc.namespace.QName;
 import java.io.File;
 import java.util.Hashtable;
 

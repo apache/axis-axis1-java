@@ -55,7 +55,7 @@
 
 package javax.xml.rpc.handler;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 /**
  * A handler provides a mechanism for processing of service

@@ -62,7 +62,7 @@ import org.apache.axis.encoding.XMLType;
 import org.apache.axis.utils.Options;
 
 import javax.xml.rpc.ParameterMode;
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 /**
  *

@@ -55,7 +55,8 @@
 
 package org.apache.axis;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
+
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.handlers.soap.SOAPService;

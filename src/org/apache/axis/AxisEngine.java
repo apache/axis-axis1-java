@@ -65,7 +65,7 @@ import org.apache.axis.utils.cache.ClassCache;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 import javax.xml.rpc.server.ServiceLifecycle;
 import java.util.ArrayList;
 import java.util.Hashtable;

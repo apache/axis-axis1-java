@@ -56,7 +56,8 @@
 package org.apache.axis.message;
 
 import javax.xml.soap.Name;
-import javax.xml.rpc.namespace.QName;
+
+import javax.xml.namespace.QName;
 
 public class PrefixedQName implements Name {
     private String prefix;

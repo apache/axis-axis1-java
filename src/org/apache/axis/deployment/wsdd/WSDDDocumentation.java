@@ -59,7 +59,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.apache.axis.encoding.SerializationContext;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
+
 import java.io.IOException;
 
 

@@ -64,7 +64,8 @@ import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.SerializationContext;
 import org.w3c.dom.Document;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;

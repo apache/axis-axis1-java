@@ -58,7 +58,7 @@ package org.apache.axis.encoding.ser;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
 
 import java.io.IOException;

@@ -92,7 +92,7 @@ import javax.wsdl.PortType;
 import javax.wsdl.Service;
 import javax.wsdl.Fault;
 import javax.wsdl.factory.WSDLFactory;
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 import java.io.File;
 import java.io.FileOutputStream;

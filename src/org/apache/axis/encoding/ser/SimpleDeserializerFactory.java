@@ -57,8 +57,8 @@ package org.apache.axis.encoding.ser;
 
 import org.apache.axis.utils.JavaUtils;
 
+import javax.xml.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
-import javax.xml.rpc.namespace.QName;
 import java.lang.reflect.Constructor;
 
 /**

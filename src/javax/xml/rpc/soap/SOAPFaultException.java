@@ -54,7 +54,7 @@
  */
 package javax.xml.rpc.soap;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 import javax.xml.soap.Detail;
 
 /**

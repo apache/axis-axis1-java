@@ -10,7 +10,7 @@ import org.apache.axis.encoding.XMLType;
 import org.apache.axis.utils.Options;
 
 import javax.xml.rpc.ParameterMode;
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 /** Tests the simple File transport.  To run:
  *      java org.apache.axis.utils.Admin client client_deploy.xml

@@ -71,7 +71,7 @@ import org.xml.sax.Attributes;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPException;
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 import java.util.ArrayList;
 import java.util.Enumeration;

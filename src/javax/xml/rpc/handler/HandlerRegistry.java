@@ -57,7 +57,7 @@ package javax.xml.rpc.handler;
 
 import java.io.Serializable;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 /**
  * The <code>javax.xml.rpc.handler.HandlerRegistry</code> provides

@@ -54,7 +54,7 @@
  */
 package org.apache.axis.description;
 
-import javax.xml.rpc.namespace.QName;
+import javax.xml.namespace.QName;
 
 /**
  * An AttributeDesc is a FieldDesc for an Java field mapping to an
