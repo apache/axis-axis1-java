@@ -1,6 +1,6 @@
 package test.inout;
 
-import org.apache.axis.rpc.holders.StringHolder;
+import javax.rpc.holders.StringHolder;
 
 public class InoutSOAPBindingImpl implements Inout
 {

@@ -63,7 +63,7 @@ import org.apache.axis.client.AxisClient;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.Mapping;
-import org.apache.axis.rpc.namespace.QName;
+import javax.rpc.namespace.QName;
 import org.apache.log4j.Category;
 import org.xml.sax.InputSource;
 import org.xml.sax.helpers.AttributesImpl;

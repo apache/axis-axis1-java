@@ -60,9 +60,9 @@ import com.ibm.wsdl.extensions.soap.SOAPBody;
 import com.ibm.wsdl.extensions.soap.SOAPOperation;
 import com.ibm.wsdl.xml.WSDLReader;
 import org.apache.axis.encoding.XMLType;
-import org.apache.axis.rpc.JAXRPCException;
-import org.apache.axis.rpc.encoding.TypeMappingRegistry;
-import org.apache.axis.rpc.namespace.QName;
+import javax.rpc.JAXRPCException;
+import javax.rpc.encoding.TypeMappingRegistry;
+import javax.rpc.namespace.QName;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.XMLUtils;
 
@@ -98,7 +98,7 @@ import java.util.Set;
  * @author Doug Davis (dug@us.ibm.com)
  */
 
-public class Service implements org.apache.axis.rpc.Service {
+public class Service implements javax.rpc.Service {
     private URL                 wsdlLocation   = null ;
     private Definition          wsdlDefinition = null ;
     private javax.wsdl.Service  wsdlService    = null ;
@@ -246,7 +246,7 @@ public class Service implements org.apache.axis.rpc.Service {
      * @return Call            Used for invoking the Web Service
      * @throws JAXRPCException If there's an error
      */
-    public org.apache.axis.rpc.Call createCall(QName portName) 
+    public javax.rpc.Call createCall(QName portName) 
                             throws JAXRPCException {
         javax.wsdl.QName qn = new javax.wsdl.QName( portName.getNamespaceURI(),
                                                     portName.getLocalPart() );
@@ -295,7 +295,7 @@ public class Service implements org.apache.axis.rpc.Service {
      * @return Call            Used for invoking the Web Service
      * @throws JAXRPCException If there's an error
      */
-    public org.apache.axis.rpc.Call createCall(QName portName, 
+    public javax.rpc.Call createCall(QName portName, 
                                                String operationName)
                            throws JAXRPCException {
         javax.wsdl.QName qn = new javax.wsdl.QName( portName.getNamespaceURI(),
@@ -439,7 +439,7 @@ public class Service implements org.apache.axis.rpc.Service {
      * @return Call            Used for invoking the Web Service
      * @throws JAXRPCException If there's an error
      */
-    public org.apache.axis.rpc.Call createCall() throws JAXRPCException {
+    public javax.rpc.Call createCall() throws JAXRPCException {
         return( new org.apache.axis.client.Call() );
     }
 

@@ -58,7 +58,7 @@ package org.apache.axis.encoding;
 //import org.apache.axis.message.Message;
 //import org.apache.axis.message.MessageElement;
 //import org.apache.axis.utils.NSStack;
-import org.apache.axis.rpc.namespace.QName;
+import javax.rpc.namespace.QName;
 import org.xml.sax.Attributes;
 
 import java.io.IOException;

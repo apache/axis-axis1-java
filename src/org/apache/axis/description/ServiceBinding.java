@@ -54,7 +54,7 @@
  */
 package org.apache.axis.description;
 
-import org.apache.axis.rpc.namespace.QName;
+import javax.rpc.namespace.QName;
 
 /**
  * This are proposed interfaces for Service Description. I imagine

@@ -61,10 +61,10 @@ package org.apache.axis.encoding ;
  */
 
 import org.apache.axis.Constants;
-import org.apache.axis.rpc.namespace.QName;
+import javax.rpc.namespace.QName;
 
 
-public class XMLType implements org.apache.axis.rpc.encoding.XMLType {
+public class XMLType implements javax.rpc.encoding.XMLType {
     private QName type ;
 
     public static final XMLType XSD_STRING = new XMLType(new QName(Constants.URI_CURRENT_SCHEMA_XSD, "string"));
