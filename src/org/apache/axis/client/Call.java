@@ -142,7 +142,7 @@ import java.util.Vector;
  *
  * AXIS properties:
  *     SEND_TYPE_ATTR - Should we send the XSI type attributes (true/false)
- *     TIMEOUT        - Timeout used by transport sender in seconds
+ *     TIMEOUT        - Timeout used by transport sender in milliseconds
  *     TRANSPORT_NAME - Name of transport handler to use
  *     ATTACHMENT_ENCAPSULATION_FORMAT- Send attachments as MIME the default, or DIME.
  * </pre>
