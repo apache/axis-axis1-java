@@ -63,6 +63,7 @@ import org.w3c.dom.* ;
 import org.apache.xerces.parsers.DOMParser ;
 import org.xml.sax.InputSource ;
 import org.apache.axis.registries.* ;
+import org.apache.axis.handlers.* ;
 
 import org.apache.axis.* ;
 
@@ -187,10 +188,13 @@ public class Admin {
         else if ( type.equals( "service" ) ) {
           String   handler = elem.getAttribute( "handler" );
           System.out.println( "Deploying service: " + name );
-          if ( hr.find(handler) == null )
+          Handler  hand  = hr.find(handler);
+          if( hand == null )
             Error( "Can't find '" + handler + "' to deploy as a service");
-          getOptions( elem, hr.find( handler ) );
-          sr.add( name, hr.find( handler ) );
+          ServiceHandler sh = new ServiceHandler();
+          sh.setHandler(hand);
+          getOptions( elem, sh );
+          sr.add( name, sh );
         }
         else 
           Error( "Unknown type to " + action + ": " + type );
