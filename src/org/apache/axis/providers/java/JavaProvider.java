@@ -339,24 +339,29 @@ public abstract class JavaProvider extends BasicProvider
 
         try {
             String url = msgContext.getStrProp(MessageContext.TRANS_URL);
-            String interfaceNamespace= msgContext.getStrProp(MessageContext.WSDLGEN_INTFNAMESPACE);
-            if(interfaceNamespace == null) interfaceNamespace= url;
-            String locationUrl= msgContext.getStrProp(MessageContext.WSDLGEN_SERV_LOC_URL);
-            if(locationUrl== null) locationUrl= url;
-            else{
-               try{
-                 URL urlURL= new URL(url);
-                 URL locationURL= new URL(locationUrl);
-                 URL urlTemp= new URL( urlURL.getProtocol(),
-                     locationURL.getHost(),
-                     locationURL.getPort(),
-                     urlURL.getFile());
-                     interfaceNamespace += urlURL.getFile();
-                locationUrl= urlTemp.toString();     
-               }catch(Exception e){
-                 locationUrl= url; 
-                 interfaceNamespace= url;
-               }
+            String interfaceNamespace = 
+                    msgContext.getStrProp(MessageContext.WSDLGEN_INTFNAMESPACE);
+            if (interfaceNamespace == null) 
+                interfaceNamespace = url;
+            String locationUrl = 
+                    msgContext.getStrProp(MessageContext.WSDLGEN_SERV_LOC_URL);
+            
+            if (locationUrl == null) {
+                locationUrl = url;
+            } else {
+                try {
+                    URL urlURL = new URL(url);
+                    URL locationURL = new URL(locationUrl);
+                    URL urlTemp = new URL(urlURL.getProtocol(),
+                            locationURL.getHost(),
+                            locationURL.getPort(),
+                            urlURL.getFile());
+                    interfaceNamespace += urlURL.getFile();
+                    locationUrl = urlTemp.toString();
+                } catch (Exception e) {
+                    locationUrl = url;
+                    interfaceNamespace = url;
+                }
             }
 
 
