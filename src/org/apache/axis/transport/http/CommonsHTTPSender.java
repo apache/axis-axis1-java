@@ -307,7 +307,7 @@ public class CommonsHTTPSender extends BasicHandler {
                 Credentials proxyCred =
                 new UsernamePasswordCredentials(tcp.getProxyUser(),
                 tcp.getProxyPassword());
-                client.getState().setProxyCredentials(null, proxyCred);
+                client.getState().setProxyCredentials(null, null, proxyCred);
             }
             int proxyPort = new Integer(tcp.getProxyPort()).intValue();
             config.setProxy(tcp.getProxyHost(), proxyPort);
@@ -366,7 +366,7 @@ public class CommonsHTTPSender extends BasicHandler {
         }
         if (userID != null) {
             Credentials cred = new UsernamePasswordCredentials(userID, passwd);
-            httpClient.getState().setCredentials(null, cred);
+            httpClient.getState().setCredentials(null, null, cred);
             
             // The following 3 lines should NOT be required. But Our SimpleAxisServer fails
             // during all-tests if this is missing.
