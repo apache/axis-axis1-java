@@ -223,7 +223,7 @@ public class JavaStubWriter extends JavaWriter {
         for (int i = 0; i < operations.size(); ++i) {
             BindingOperation operation = (BindingOperation) operations.get(i);
             Parameters parameters =
-                    bEntry.getParameters(operation.getOperation().getName());
+                    bEntry.getParameters(operation.getOperation());
 
             // Get the soapAction from the <soap:operation>
             String soapAction = "";
@@ -324,7 +324,7 @@ public class JavaStubWriter extends JavaWriter {
         HashSet types = new HashSet();
         Vector v = new Vector();
 
-        Parameters params = bEntry.getParameters(operation.getName());
+        Parameters params = bEntry.getParameters(operation);
         
         // Loop over parameter types for this operation
         for (int i=0; i < params.list.size(); i++) {

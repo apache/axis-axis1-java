@@ -420,7 +420,7 @@ public class JavaWriterFactory implements WriterFactory {
                         Operation operation = (Operation) operations.next();
                         OperationType type = operation.getStyle();
                         String name = operation.getName();
-                        Parameters parameters = bEntry.getParameters(name);
+                        Parameters parameters = bEntry.getParameters(operation);
                         if (type == OperationType.SOLICIT_RESPONSE) {
                             parameters.signature = "    // " + JavaUtils.getMessage(
                                     "invalidSolResp00", name);

@@ -125,7 +125,7 @@ public class JavaImplWriter extends JavaWriter {
             Operation ptOperation = operation.getOperation();
             OperationType type = ptOperation.getStyle();
             Parameters parameters =
-                    bEntry.getParameters(operation.getOperation().getName());
+                    bEntry.getParameters(operation.getOperation());
 
             // These operation types are not supported.  The signature
             // will be a string stating that fact.

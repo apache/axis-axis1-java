@@ -795,7 +795,7 @@ public class SymbolTable {
                         Parameters parms = getOperationParameters(operation, 
                                                                   namespace, 
                                                                   bEntry);
-                        parameters.put(operation.getName(), parms);
+                        parameters.put(operation, parms);
                     }
                     bEntry.setParameters(parameters);
                 }
