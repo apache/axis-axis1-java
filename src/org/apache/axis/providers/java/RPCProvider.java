@@ -295,10 +295,10 @@ public class RPCProvider extends JavaProvider
 
     /**
      * This method encapsulates the method invocation.             
-     * @param MessageContext
-     * @param Method is the target method.   
-     * @param Object is the target object 
-     * @param Object[] are the method arguments
+     * @param msgContext MessageContext
+     * @param method the target method.
+     * @param obj the target object
+     * @param argValues the method arguments
      */
     protected Object invokeMethod(MessageContext msgContext,
                                   Method method, Object obj,
@@ -310,9 +310,9 @@ public class RPCProvider extends JavaProvider
 
     /**
      * Throw an AxisFault if the requested method is not allowed.
-     * @param MessageContext
-     * @param String list of allowed methods
-     * @param String name of target method
+     * @param msgContext MessageContext
+     * @param allowedMethods list of allowed methods
+     * @param methodName name of target method
      */
     protected void checkMethodName(MessageContext msgContext,
                                    String allowedMethods,
