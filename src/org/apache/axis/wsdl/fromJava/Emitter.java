@@ -879,8 +879,8 @@ public class Emitter {
         if (typeQName != null) {
             part.setTypeName(typeQName);
             part.setName(param.getName());
+            msg.addPart(part);
         }
-        msg.addPart(part);
         return param.getName();
     }
 

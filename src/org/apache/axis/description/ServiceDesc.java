@@ -65,6 +65,7 @@ import java.util.*;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 
 /**
  * A ServiceDesc is an abstract description of a service.
@@ -725,13 +726,17 @@ public class ServiceDesc {
                 Field[] f = exceptionTypes[i].getDeclaredFields();
                 ArrayList exceptionParams = new ArrayList();
                 for (int j = 0; j < f.length; j++) {
-                    QName qname = new QName("", f[j].getName());
-                    QName typeQName = tm.getTypeQName(f[j].getType());
-                    ParameterDesc param = new ParameterDesc(qname,
-                                                            ParameterDesc.IN,
-                                                            typeQName);
-                    param.setJavaType(f[j].getType());
-                    exceptionParams.add(param);
+                    int mod = f[j].getModifiers();
+                    if (Modifier.isPublic(mod) &&
+                         !Modifier.isStatic(mod)) {
+                        QName qname = new QName("", f[j].getName());
+                        QName typeQName = tm.getTypeQName(f[j].getType());
+                        ParameterDesc param = new ParameterDesc(qname,
+                                                                ParameterDesc.IN,
+                                                                typeQName);
+                        param.setJavaType(f[j].getType());
+                        exceptionParams.add(param);
+                    }
                 }
                 String pkgAndClsName = exceptionTypes[i].getName();
                 FaultDesc fault = new FaultDesc();

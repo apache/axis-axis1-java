@@ -177,10 +177,13 @@ public class Types {
     private QName writeTypeAsElement(Class type) throws Exception {
         QName qName = writeTypeNamespace(type);
         String elementType = writeType(type);
-        Element element = createRootElement(qName, elementType, isNullable(type));
-        if (element != null)
-            writeSchemaElement(qName,element);
-        return qName;
+        if (elementType != null) {
+            Element element = createRootElement(qName, elementType, isNullable(type));
+            if (element != null)
+                writeSchemaElement(qName,element);
+            return qName;
+        }
+        return null;
     }
 
     /**
@@ -361,18 +364,17 @@ public class Types {
             // If no factory is found, try the BeanSerializerFactory if
             // the type is not Throwable.  (There is no mapping for
             // java types that extend Throwable.)
-            if (!Throwable.class.isAssignableFrom(type)) {
-                factory = new BeanSerializerFactory(type, getTypeQName(type));
-            }
+            factory = new BeanSerializerFactory(type, getTypeQName(type));
         }
         if (factory != null) {
             ser = (Serializer)factory.getSerializerAs(Constants.AXIS_SAX);
         }
         
         // if we can't get a serializer, that is bad.
-        if (ser == null)
+        if (ser == null) {            
             throw new AxisFault(
                     JavaUtils.getMessage("NoSerializer00", type.getName()));
+        }
         
           // Write the namespace
         QName qName = writeTypeNamespace(type);
