@@ -88,6 +88,8 @@ public class AxisServlet extends HttpServlet {
 
     Handler  engine = null ;
 
+    // Debug.setDebugLevel( 2 );
+
     /* Get or 'new' the Axis engine object */
     /***************************************/
     synchronized(context) {
