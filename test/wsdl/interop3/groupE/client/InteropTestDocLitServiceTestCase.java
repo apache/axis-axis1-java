@@ -131,7 +131,10 @@ public class InteropTestDocLitServiceTestCase extends junit.framework.TestCase {
         assertTrue("binding is null", binding != null);
 
         try {
-            SOAPStruct input = new SOAPStruct(3.142f, 3, "Pi");
+            SOAPStruct input = new SOAPStruct();
+            input.setVarFloat(3.142f);
+            input.setVarInt(3);
+            input.setVarString("Pi");
             SOAPStruct value = binding.echoStruct(input);
             if (value.getVarFloat() != input.getVarFloat() ||
                 value.getVarInt() != input.getVarInt() ||
