@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="QueryTypes" targetNamespace="urn:QueryTypes"
+xmlns="http://schemas.xmlsoap.org/wsdl/"
+xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+xmlns:tns="urn:QueryTypes" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <types>
+    <xsd:schema attributeFormDefault="qualified"
+    elementFormDefault="qualified" targetNamespace="urn:QueryTypes">
+
+      <xsd:element name="FindBooksQueryExpressionType">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="bookQuery">
+              <xsd:complexType>
+                <xsd:attribute name="subject" type="xsd:string"/>
+              </xsd:complexType>
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+
+      <xsd:element name="QueryResultType">
+        <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="queryResult">
+                <xsd:complexType>
+                  <xsd:attribute name="name" type="xsd:string"/>
+                  <xsd:attribute name="value" type="xsd:string"/>
+                  <xsd:attribute name="time" type="xsd:dateTime"/>
+                  <xsd:attribute name="queryType" type="xsd:QName"/>
+                </xsd:complexType>
+              </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+
+    </xsd:schema>
+  </types>
+</definitions>
+

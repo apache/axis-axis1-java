@@ -53,70 +53,43 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.encoding.ser;
+package org.apache.axis.encoding;
 
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.w3c.dom.Element;
-import org.w3c.dom.Document;
 
 import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
+import java.io.Writer;
 
-import org.apache.axis.Constants;
-import org.apache.axis.wsdl.fromJava.Types;
-import org.apache.axis.encoding.Serializer;
-import org.apache.axis.encoding.SerializerFactory;
-import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.encoding.DeserializerFactory;
-import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.DeserializerImpl;
-import org.apache.axis.utils.JavaUtils;
 
-/**
- * Serializer for DOM elements
+/** Used to suppress element tag serialization when serializing simple
+ * types into attributes.
  *
- * @author Glen Daniels (gdaniels@macromedia.com)
- * Modified by @author Rich scheuerle <scheu@us.ibm.com>
+ * @author Thomas Sandholm (sandholm@mcs.anl.gov)
  */
+public class AttributeSerializationContextImpl extends SerializationContextImpl
+{
+   SerializationContext parent;
+   public AttributeSerializationContextImpl(Writer writer, SerializationContext parent)
+   {
+        super(writer);
+        this.parent = parent;
+   }
 
-public class ElementSerializer implements Serializer {
-
-    /**
-     * Serialize a DOM Element
-     */
-    public void serialize(QName name, Attributes attributes,
-                          Object value, SerializationContext context)
+   public void startElement(QName qName, Attributes attributes)
         throws IOException
-    {
-        if (!(value instanceof Element))
-            throw new IOException(JavaUtils.getMessage("cantSerialize01"));
+   {
+        // suppressed
+   }
 
-        // suppress xsd:any namespace="##any" elements
-        boolean suppressElement = (!context.getMessageContext().isEncoded() && 
-                                   name.getNamespaceURI().equals("") &&
-                                   name.getLocalPart().equals("any")); 
+   public void endElement()
+        throws IOException
+   {
+        // suppressed
+   }
 
-        if (!suppressElement)
-            context.startElement(name, attributes);
-        context.writeDOMElement((Element)value);
-        if (!suppressElement)
-            context.endElement();
-    }
-
-    public String getMechanismType() { return Constants.AXIS_SAX; }
-
-    /**
-     * Return XML schema for the specified type, suitable for insertion into
-     * the <types> element of a WSDL document.
-     *
-     * @param types the Java2WSDL Types object which holds the context
-     *              for the WSDL being generated.
-     * @return true if we wrote a schema, false if we didn't.
-     * @see org.apache.axis.wsdl.fromJava.Types
-     */
-    public boolean writeSchema(Types types) throws Exception {
-        return false;
-    }
+   public String qName2String(QName qname)
+   {
+       return parent.qName2String(qname);
+   }
 }

@@ -1,0 +1,62 @@
+<!-- Use this file to deploy some handlers/chains and services      -->
+<!-- Two ways to do this:                                           -->
+<!--   java org.apache.axis.client.AdminClient deploy.wsdd          -->
+<!--      after the axis server is running                          -->
+<!-- or                                                             -->
+<!--   java org.apache.axis.utils.Admin client|server deploy.wsdd   -->
+<!--      from the same directory that the Axis engine runs         -->
+
+<deployment
+    xmlns="http://xml.apache.org/axis/wsdd/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:query="urn:QueryTypes"
+    xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+    <service name="ExtensibilityQueryPort" provider="java:RPC" style="wrapped">
+      <parameter name="className" value="test.wsdl.extensibility.ExtensibilityQueryBindingSkeleton"/>
+      <parameter name="allowedMethods" value="*"/>
+      <parameter name="scope" value="Session"/>
+
+      <typeMapping
+        xmlns:ns="urn:ExtensibilityQuery"
+        qname="ns:ExtensibilityType"
+        type="java:test.wsdl.extensibility.ExtensibilityType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+      
+      <typeMapping
+        qname="xsd:anyType"
+        type="java:java.lang.Object"
+        serializer="org.apache.axis.encoding.ser.ElementSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.ElementDeserializerFactory"
+        encodingStyle=""
+      />
+
+      <typeMapping
+        qname="query:bookQuery"
+        type="java:test.wsdl.extensibility.BookQuery"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+
+      <typeMapping
+        qname="query:QueryResultType"
+        type="java:test.wsdl.extensibility.QueryResultType"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+
+      <typeMapping
+        qname="query:QueryResult"
+        type="java:test.wsdl.extensibility.QueryResult"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle=""
+      />
+    </service>
+
+</deployment>

@@ -115,6 +115,7 @@ public class Emitter {
     protected String NStoPkgFilename = "NStoPkg.properties";
     protected File NStoPkgFile = null;
 
+
     /**
      * Default constructor.
      */

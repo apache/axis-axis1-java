@@ -265,6 +265,11 @@ public class SchemaUtils {
                     v.addAll(processSequenceNode(children.item(j), symbolTable));
                 } else if (subNodeKind.getLocalPart().equals("group")) {
                     v.addAll(processGroupNode(children.item(j), symbolTable));
+                } else if (subNodeKind.getLocalPart().equals("any")) {
+                    TypeEntry type = new DefinedType(Utils.getWSDLQName(Constants.XSD_ANYTYPE), sequenceNode);
+                    type.setName("java.lang.Object");
+                    ElementDecl elem = new ElementDecl(type, Utils.getAxisQName(new QName("","any")));
+                    v.add(elem);
                 } else if (subNodeKind.getLocalPart().equals("element")) {
                     ElementDecl elem = 
                             processChildElementNode(children.item(j), 
