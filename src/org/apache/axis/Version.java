@@ -83,13 +83,14 @@ public class Version {
     public static void main(String[] args) {
         if (args.length != 1)
             System.out.println(getVersion());
-        
-        try {
-            Call call = new Call(args[0]);
-            String result = (String)call.invoke("Version", "getVersion", null);
-            System.out.println(result);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        else
+            try {
+                Call call = new Call(args[0]);
+                String result = (String)call.invoke("Version", "getVersion", 
+                                                    null);
+                System.out.println(result);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
     }
 }
