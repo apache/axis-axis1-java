@@ -94,6 +94,7 @@ public class HTTPDispatchHandler extends BasicHandler {
       int      rc     = 0 ;
 
       host = tmpURL.getHost();
+      Debug.Print(0, "HOST: " + host );
       if ( (port = tmpURL.getPort()) == -1 ) port = 80;
 
       Socket             sock = null ;
@@ -273,17 +274,26 @@ public class HTTPDispatchHandler extends BasicHandler {
       if ( b != -1 ) {
         if (Debug.getDebugLevel() > 0) {
           String contentLength = (String) headers.get("content-length");
-          contentLength = contentLength.trim();
-          byte[] data = new byte[Integer.parseInt(contentLength)];
-          for (len=0; len<data.length; )
-            len+= inp.read(data,len,data.length-len);
-          String xml = new String(data);
-
-          outMsg = new Message( data, "Bytes" );
-
-          Debug.Print( 1, "\nXML received:" );
-          Debug.Print( 1, "-------------------------------------------------");
-          Debug.Print( 1, xml );
+          if ( contentLength != null ) {
+            contentLength = contentLength.trim();
+            byte[] data = new byte[Integer.parseInt(contentLength)];
+            for (len=0; len<data.length; )
+              len+= inp.read(data,len,data.length-len);
+            String xml = new String(data);
+  
+            outMsg = new Message( data, "Bytes" );
+  
+            Debug.Print( 1, "\nXML received:" );
+            Debug.Print( 1, "-----------------------------------------------");
+            Debug.Print( 1, xml );
+          }
+          else {
+            outMsg = new Message( inp, "InputStream" );
+            Debug.Print( 1, "\nNo Content-Length" );
+            Debug.Print( 1, "\nXML received:" );
+            Debug.Print( 1, "-----------------------------------------------");
+            Debug.Print( 1, (String) outMsg.getAs("String") );
+          }
         } else {
           outMsg = new Message( inp, "InputStream" );
         }
