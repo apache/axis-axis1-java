@@ -171,28 +171,44 @@ public class HTTPDispatchHandler extends BasicHandler {
 
       OutputStream  out  = sock.getOutputStream();
       InputStream   inp  = sock.getInputStream();
-      String        otherHeaders = null ;
+      StringBuffer  otherHeaders = new StringBuffer();
       String        userID = null ;
       String        passwd = null ;
 
       userID = msgContext.getStrProp( MessageContext.USERID );
       passwd = msgContext.getStrProp( MessageContext.PASSWORD );
 
-      if ( userID != null )
-        otherHeaders = HTTPConstants.HEADER_AUTHORIZATION + ": Basic " +
-                       Base64.encode( (userID + ":" +
-                       ((passwd == null) ? "" : passwd) ).getBytes() ) +
-                       "\n" ;
+      if ( userID != null ) {
+        StringBuffer tmpBuf = new StringBuffer();
+        tmpBuf.append( userID )
+              .append( ":" )
+              .append( (passwd == null) ? "" : passwd) ;
+        otherHeaders.append( HTTPConstants.HEADER_AUTHORIZATION )
+                    .append( ": Basic " )
+                    .append( Base64.encode( tmpBuf.toString().getBytes() ) )
+                    .append("\n" );
+      }
+     
+      StringBuffer header = new StringBuffer();
 
-      String  header = HTTPConstants.HEADER_POST + " " +
-                         ((tmpURL.getFile() == null || tmpURL.getFile().equals(""))? "/": tmpURL.getFile()) + " HTTP/1.0\n" +
-                       HTTPConstants.HEADER_CONTENT_LENGTH + ": " +
-                                          + reqEnv.length() + "\n" +
-                       HTTPConstants.HEADER_CONTENT_TYPE + ": text/xml\n" +
-                       (otherHeaders == null ? "" : otherHeaders) +
-                       HTTPConstants.HEADER_SOAP_ACTION+": \""+action+"\"\n\n";
+      header.append( HTTPConstants.HEADER_POST )
+            .append(" " )
+            .append( ((tmpURL.getFile() == null || 
+                       tmpURL.getFile().equals(""))? "/": tmpURL.getFile()) )
+            .append( " HTTP/1.0\n" )
+            .append( HTTPConstants.HEADER_CONTENT_LENGTH )
+            .append( ": " )
+            .append(reqEnv.length() )
+            .append( "\n" )
+            .append( HTTPConstants.HEADER_CONTENT_TYPE )
+            .append( ": text/xml\n" )
+            .append( (otherHeaders == null ? "" : otherHeaders.toString()) )
+            .append( HTTPConstants.HEADER_SOAP_ACTION )
+            .append( ": \"" )
+            .append( action )
+            .append( "\"\n\n" );
 
-      out.write( header.getBytes() );
+      out.write( header.toString().getBytes() );
       out.write( reqEnv.getBytes() );
 
       Debug.Print( 1, "XML sent:" );
