@@ -1648,7 +1648,7 @@ public class Emitter {
                 if (oper.getReturnQName() == null) {
                     retName = new QName(oper.getName() + "Return");
                 } else {
-                    if (defaultNamespace
+                    if (defaultNamespace != null && defaultNamespace
                             .equals(oper.getReturnQName().getNamespaceURI())) {
                         retName =
                                 new QName(oper.getReturnQName().getLocalPart());
@@ -1669,10 +1669,9 @@ public class Emitter {
                 if (!parameter.isInHeader() && !parameter.isOutHeader())
                 {
                     QName paramName = parameter.getQName();
-                    if (oper.getReturnQName() != null && defaultNamespace
-                            .equals(paramName.getNamespaceURI())) {
-                        paramName = new QName(oper.getReturnQName()
-                                .getLocalPart());
+                    if (paramName != null && defaultNamespace != null 
+                        && defaultNamespace.equals(paramName.getNamespaceURI())) {
+                        paramName = new QName(paramName.getLocalPart());
                     }
                     types.writeWrappedParameter(sequence,
                                                 paramName,
