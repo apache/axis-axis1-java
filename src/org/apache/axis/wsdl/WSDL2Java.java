@@ -54,21 +54,14 @@
  */
 package org.apache.axis.wsdl;
 
-import org.apache.axis.utils.CLArgsParser;
+import org.apache.axis.enum.Scope;
 import org.apache.axis.utils.CLOption;
 import org.apache.axis.utils.CLOptionDescriptor;
-import org.apache.axis.utils.CLUtil;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
-
-import org.apache.axis.enum.Scope;
-
 import org.apache.axis.wsdl.gen.Parser;
 import org.apache.axis.wsdl.gen.WSDL2;
-
 import org.apache.axis.wsdl.toJava.Emitter;
-
-import org.apache.axis.deployment.wsdd.WSDDConstants;
 
 /**
  * Command line interface to the WSDL2Java utility
@@ -181,7 +174,7 @@ public class WSDL2Java extends WSDL2 {
 
     /**
      * Parse an option
-     * @param CLOption is the option
+     * @param option is the option
      */
     protected void parseOption(CLOption option) {
         switch (option.getId()) {
@@ -290,7 +283,7 @@ public class WSDL2Java extends WSDL2 {
     /**
      * Main
      * Run the WSDL2Java emitter with the specified command-line arguments
-     * @param String[] command-line arguments
+     * @param args command-line arguments
      */
     public static void main(String args[]) {
         WSDL2Java wsdl2java = new WSDL2Java();
