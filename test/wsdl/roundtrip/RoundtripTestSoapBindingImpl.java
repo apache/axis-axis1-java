@@ -440,19 +440,6 @@ public class RoundtripTestSoapBindingImpl implements RoundtripPortType {
 
     } // methodAllTypesIn
 
-    public Byte[] methodSoapByteArray(Byte[] in0) throws RemoteException {
-
-        Byte[] expected = {new Byte((byte) 17), new Byte((byte) 11)};
-        Byte[] returnByte = {new Byte((byte) 3), new Byte((byte) 7)};
-
-        if ((in0[0].equals(expected[0])) && (in0[1].equals(expected[1]))) {
-            return returnByte;
-        } else {
-            throw new RemoteException("Expecting a Byte array with 17 and 11.");
-        }
-
-    } // methodSoapByteArray
-
     public byte[] methodByteArray(byte[] in0) throws RemoteException {
 
         byte[] returnByte = {(byte) 5, (byte) 4};
