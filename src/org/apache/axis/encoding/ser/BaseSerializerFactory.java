@@ -229,6 +229,25 @@ public abstract class BaseSerializerFactory extends BaseFactory
             return null;
         }
 
+        try {
+            if (factory == BeanSerializerFactory.class) {
+                return new BeanSerializerFactory(javaType, xmlType);
+            } else if (factory == SimpleSerializerFactory.class) {
+                return new SimpleSerializerFactory(javaType, xmlType);
+            } else if (factory == EnumSerializerFactory.class) {
+                return new EnumSerializerFactory(javaType, xmlType);
+            } else if (factory == ElementSerializerFactory.class) {
+                return new ElementSerializerFactory();
+            } else if (factory == SimpleListSerializerFactory.class) {
+                return new SimpleListSerializerFactory(javaType, xmlType);
+            }
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.debug(org.apache.axis.utils.Messages.getMessage("exception00"), e);
+            }
+            return null;
+        }
+
         SerializerFactory sf = null;
         try {
             Method method = 

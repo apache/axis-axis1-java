@@ -198,6 +198,25 @@ public abstract class BaseDeserializerFactory extends BaseFactory
             return null;
         }
 
+        try {
+            if (factory == BeanDeserializerFactory.class) {
+                return new BeanDeserializerFactory(javaType, xmlType);
+            } else if (factory == SimpleDeserializerFactory.class) {
+                return new SimpleDeserializerFactory(javaType, xmlType);
+            } else if (factory == EnumDeserializerFactory.class) {
+                return new EnumDeserializerFactory(javaType, xmlType);
+            } else if (factory == ElementDeserializerFactory.class) {
+                return new ElementDeserializerFactory();
+            } else if (factory == SimpleListDeserializerFactory.class) {
+                return new SimpleListDeserializerFactory(javaType, xmlType);
+            }
+        } catch (Exception e) {
+            if (log.isDebugEnabled()) {
+                log.debug(org.apache.axis.utils.Messages.getMessage("exception00"), e);
+            }
+            return null;
+        }
+
         DeserializerFactory df = null;
         try {
             Method method = 
