@@ -367,21 +367,30 @@ When in doubt, log the exception.
 <p>
 <ul>
 <li><h4>Catch and Throw</h4></li>
-If an exception is caught, but cannot be resolved
-(and such a situation passes code review),
-and the exception is rethrown,
+If an exception is caught and rethrown (unresolved),
 logging of the exception is at the discretion of the coder and reviewers.
 If any comments are logged, the exception should also be logged.
+<p>
+When in doubt, log the exception and any related local information
+that can help to identify the complete context of the exception.
+<p>
+Log the exception as an <i>error</i> (<code>log.error()</code>)
+if it is known to be an unresolved or unresolvable error,
+otherwise log it at the <i>informative</i> level (<code>log.info()</code>).
 <p>
 <li><h4>Catch and Wrap</h4></li>
 When exception <code>e</code> is caught and wrapped
 by a new exception <code>w</code>,
 log exception <code>e</code> before throwing <code>w</code>.
 <p>
+Log the exception as an <i>error</i> (<code>log.error()</code>)
+if it is known to be an unresolved or unresolvable error,
+otherwise log it at the <i>informative</i> level (<code>log.info()</code>).
+<p>
 <li><h4>Catch and Resolve</h4></li>
 When exception <code>e</code> is caught and resolved,
 logging of the exception is at the discretion of the coder and reviewers.
-If any comments are logged, the exception should also be logged.
+If any comments are logged, the exception should also be logged (<code>log.info()</code>).
 Issues that must be balanced are performance and problem resolvability.
 <p>
 Note that in many cases, ignoring the exception may be appropriate.
