@@ -427,8 +427,11 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
      * nodes.
      */
     public NodeList getChildNodes() {
-        initializeChildren();
-        return new NodeListImpl(children);
+        if (children == null) {
+            return NodeListImpl.EMPTY_NODELIST;
+        } else {
+            return new NodeListImpl(children);
+        }
     }
 
     /**

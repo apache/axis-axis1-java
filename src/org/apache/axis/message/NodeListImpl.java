@@ -19,8 +19,10 @@ package org.apache.axis.message;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Vector;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * A simple implementation for Nodelist Support in AXIS
@@ -30,22 +32,21 @@ import java.util.Vector;
  */
 
 class NodeListImpl implements NodeList {
-    Vector mNodes;
+    List mNodes;
+
+    public static final NodeList EMPTY_NODELIST = new NodeListImpl(Collections.EMPTY_LIST);
 
     /**
      * Constructor and Setter is intensionally made package access only.
      *  
      */
     NodeListImpl() {
-        mNodes = new Vector();
+        mNodes = new ArrayList();
     }
 
-    NodeListImpl(Vector nodes) {
-        mNodes = nodes;
-    }
-
-    NodeListImpl(Collection nodes) {
-        mNodes = new Vector(nodes);
+    NodeListImpl(List nodes) {
+        this();
+        mNodes.addAll(nodes);
     }
 
     void addNode(org.w3c.dom.Node node) {

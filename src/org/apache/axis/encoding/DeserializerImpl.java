@@ -33,7 +33,6 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.namespace.QName;
 import java.io.StringWriter;
-import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Vector;
 
@@ -186,7 +185,6 @@ public class DeserializerImpl extends SOAPHandler
      */
     public void removeValueTargets() {
         if (targets != null) {
-            targets.clear();
             targets = null;
         }
     }
@@ -210,10 +208,7 @@ public class DeserializerImpl extends SOAPHandler
             targets = new Vector();
         }
         
-        Enumeration e = other.getValueTargets().elements();
-        while (e.hasMoreElements()) {
-            targets.addElement(e.nextElement());
-        }
+        targets.addAll(other.getValueTargets());
         other.removeValueTargets();
     }
     
@@ -249,9 +244,8 @@ public class DeserializerImpl extends SOAPHandler
     {
         if (componentsReady()) {            
             if (targets != null) {
-                Enumeration e = targets.elements();
-                while (e.hasMoreElements()) {
-                    Target target = (Target)e.nextElement();
+                for (int i = 0; i < targets.size(); i++) {
+                    Target target = (Target) targets.get(i);
                     target.set(value);
                     if (debugEnabled) {
                         log.debug(Messages.getMessage("setValueInTarget00",

@@ -122,18 +122,6 @@ public class SimpleDeserializer extends DeserializerImpl {
         isEnded = false; // Indicate the end of element not yet called
     }
     
-    /**
-     * Remove the Value Targets of the Deserializer.
-     * Simple deserializers may be re-used, so don't
-     * nullify the vector.
-     */
-    public void removeValueTargets() {
-        if (targets != null) {
-            targets.clear();
-            // targets = null;
-        }
-    }
-    
     /** 
      * The Factory calls setConstructor.
      */

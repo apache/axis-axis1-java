@@ -92,18 +92,6 @@ public class SimpleListDeserializer extends SimpleDeserializer {
     }
 
     /**
-     * Remove the Value Targets of the Deserializer.
-     * Simple deserializers may be re-used, so don't
-     * nullify the vector.
-     */
-    public void removeValueTargets() {
-        if (targets != null) {
-            targets.clear();
-            // targets = null;
-        }
-    }
-
-    /**
      * The Factory calls setConstructor.
      */
     public void setConstructor(Constructor c)
