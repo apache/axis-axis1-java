@@ -59,13 +59,13 @@ import java.net.*;
 import java.io.*;
 import java.util.*;
 
-import org.apache.axis.Constants;
 import org.apache.axis.AxisFault ;
 import org.apache.axis.client.HTTPCall ;
 import org.apache.axis.utils.Debug ;
 import org.apache.axis.utils.Options ;
 import org.apache.axis.utils.QName ;
 import org.apache.axis.encoding.ServiceDescription;
+import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 
 /** 
  *
@@ -91,7 +91,7 @@ public class GetQuote {
       HTTPCall call   = new HTTPCall( opts.getURL(), 
                                       "urn:xmltoday-delayed-quotes" );
       ServiceDescription sd = new ServiceDescription("stockQuotes", true);
-      sd.addOutputParam("return", new QName(Constants.URI_SCHEMA_XSD, "float"));
+      sd.addOutputParam("return", SOAPTypeMappingRegistry.XSD_FLOAT);
       call.setServiceDescription(sd);
       
       if ( opts.isFlagSet('t') > 0 ) call.doLocal = true ;
