@@ -43,9 +43,9 @@ public class SimpleDocLitServiceTestCase extends junit.framework.TestCase {
 
         // Test operation
         try {
-            binding.echoEmptyFault(new _echoEmptyFaultRequest());
+            binding.echoEmptyFault(new EchoEmptyFaultRequest());
         }
-        catch (_EmptyPart e1) {
+        catch (EmptyPart e1) {
             return; // success!
         }
         
@@ -122,8 +122,8 @@ public class SimpleDocLitServiceTestCase extends junit.framework.TestCase {
         String stringParam = "HELLO";
         for (int i=1; i < 4; i++) {
             try {
-              _echoMultipleFaults1Request request =
-                        new _echoMultipleFaults1Request();
+              EchoMultipleFaults1Request request =
+                        new EchoMultipleFaults1Request();
                 request.setWhichFault(i);
                 request.setParam1(stringParam);
                 request.setParam2(new ArrayOfFloat(floatParam));
@@ -142,7 +142,7 @@ public class SimpleDocLitServiceTestCase extends junit.framework.TestCase {
                 assertEquals("HELLO", e2.getPart2());
                 continue;
             }
-            catch (_EmptyPart e3) {
+            catch (EmptyPart e3) {
                 assertEquals("Wrong fault thrown: " + e3.getClass(), 1, i);
                 continue;
             }
@@ -169,8 +169,8 @@ public class SimpleDocLitServiceTestCase extends junit.framework.TestCase {
         float floatParam = 9.7F;
         for (int i=1; i < 4; i++) {
             try {
-              _echoMultipleFaults2Request request = 
-                        new _echoMultipleFaults2Request();
+              EchoMultipleFaults2Request request = 
+                        new EchoMultipleFaults2Request();
                 request.setWhichFault(i);
                 request.setParam1(stringParam);
                 request.setParam2(floatParam);
@@ -217,8 +217,8 @@ public class SimpleDocLitServiceTestCase extends junit.framework.TestCase {
         String param2 = "Param2";
         for (int i=1; i < 3; i++) {
             try {
-              _echoMultipleFaults3Request request = 
-                        new _echoMultipleFaults3Request();
+              EchoMultipleFaults3Request request = 
+                        new EchoMultipleFaults3Request();
                 request.setWhichFault(i);
                 request.setParam1(param1);
                 request.setParam2(param2);
@@ -256,8 +256,8 @@ public class SimpleDocLitServiceTestCase extends junit.framework.TestCase {
         Enum enumParam = new Enum(1);
         for (int i=1; i < 3; i++) {
             try {
-              _echoMultipleFaults4Request request =
-                        new _echoMultipleFaults4Request();
+              EchoMultipleFaults4Request request =
+                        new EchoMultipleFaults4Request();
                 request.setWhichFault(i);
                 request.setParam1(intParam);
                 request.setParam2(enumParam);

@@ -55,7 +55,7 @@ public class ExtensibilityQueryTestCase extends junit.framework.TestCase {
             ExtensibilityType expression = new ExtensibilityType(); 
             BookType book = new BookType();
             book.setSubject("all");
-            QName elementName = _FindBooksQueryExpressionElement.getTypeDesc().getFields()[0].getXmlName();
+            QName elementName = FindBooksQueryExpressionElement.getTypeDesc().getFields()[0].getXmlName();
             MessageElement el = new MessageElement(elementName.getNamespaceURI(), elementName.getLocalPart(), book);
             expression.set_any(new MessageElement [] { el });
             // call the operation
@@ -102,7 +102,7 @@ public class ExtensibilityQueryTestCase extends junit.framework.TestCase {
             
             BookType book = new BookType();
             book.setSubject("all");
-            QName elementName = _FindBooksQueryExpressionElement.getTypeDesc().getFields()[0].getXmlName();
+            QName elementName = FindBooksQueryExpressionElement.getTypeDesc().getFields()[0].getXmlName();
             elements[2] = new MessageElement(elementName.getNamespaceURI(), elementName.getLocalPart(), book);
             
             elements[3] = new MessageElement(new Text("789"));

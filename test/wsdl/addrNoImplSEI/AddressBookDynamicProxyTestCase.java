@@ -62,10 +62,10 @@ public class AddressBookDynamicProxyTestCase extends TestCase {
                 new QName("urn:AddrNoImplSEI", "Address"),
                 new org.apache.axis.encoding.ser.BeanSerializerFactory(test.wsdl.addrNoImplSEI.Address.class, new QName("urn:AddrNoImplSEI", "Address")),
                 new org.apache.axis.encoding.ser.BeanDeserializerFactory(test.wsdl.addrNoImplSEI.Address.class, new QName("urn:AddrNoImplSEI", "Address")));
-        map.register(test.wsdl.addrNoImplSEI._Phone.class,
-                new QName("urn:AddrNoImplSEI", "_Phone"),
-                new org.apache.axis.encoding.ser.BeanSerializerFactory(test.wsdl.addrNoImplSEI._Phone.class, new QName("urn:AddrNoImplSEI", "_Phone")),
-                new org.apache.axis.encoding.ser.BeanDeserializerFactory(test.wsdl.addrNoImplSEI._Phone.class, new QName("urn:AddrNoImplSEI", "_Phone")));
+        map.register(test.wsdl.addrNoImplSEI.Phone.class,
+                new QName("urn:AddrNoImplSEI", ">Phone"),
+                new org.apache.axis.encoding.ser.BeanSerializerFactory(test.wsdl.addrNoImplSEI.Phone.class, new QName("urn:AddrNoImplSEI", ">Phone")),
+                new org.apache.axis.encoding.ser.BeanDeserializerFactory(test.wsdl.addrNoImplSEI.Phone.class, new QName("urn:AddrNoImplSEI", ">Phone")));
         map.register(test.wsdl.addrNoImplSEI.StateType.class,
                 new QName("urn:AddrNoImplSEI", "StateType"),
                 new org.apache.axis.encoding.ser.EnumSerializerFactory(test.wsdl.addrNoImplSEI.StateType.class, new QName("urn:AddrNoImplSEI", "StateType")),
@@ -78,11 +78,11 @@ public class AddressBookDynamicProxyTestCase extends TestCase {
 
         String name1;
         Address addr1;
-        _Phone phone1;
+        Phone phone1;
 
         name1 = "Purdue Boilermaker";
         addr1 = new Address();
-        phone1 = new _Phone();
+        phone1 = new Phone();
         addr1.setStreetNum(1);
         addr1.setStreetName("University Drive");
         addr1.setCity("West Lafayette");

@@ -111,8 +111,8 @@ public class Qualify_ServiceTestCase extends junit.framework.TestCase {
         assertTrue("binding is null", binding != null);
 
         try {
-            __FormOverrideResponse_response value = null;
-            __FormOverride_complex arg = new __FormOverride_complex();
+            FormOverrideResponseResponse value = null;
+            FormOverrideComplex arg = new FormOverrideComplex();
             arg.setName("Timmah");
             value = binding.formOverride(arg);
             

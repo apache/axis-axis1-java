@@ -51,7 +51,7 @@ public class ExtensibilityQueryBindingImpl implements ExtensibilityQueryPortType
                 queryResult[i].setQueryType(new QName("urn:QueryType","BookQuery"));
             }
             resultList.setResult(queryResult);
-            QName elementName = _QueryResultElement.getTypeDesc().getFields()[0].getXmlName();
+            QName elementName = QueryResultElement.getTypeDesc().getFields()[0].getXmlName();
             MessageElement me = new MessageElement(elementName.getNamespaceURI(), elementName.getLocalPart(), resultList);
             log.debug("Outgoing message: " + me.toString());
             result.set_any(new MessageElement [] { me });
@@ -106,7 +106,7 @@ public class ExtensibilityQueryBindingImpl implements ExtensibilityQueryPortType
         
         BookType book = new BookType();
         book.setSubject("gotAll");
-        QName elementName = _FindBooksQueryExpressionElement.getTypeDesc().getFields()[0].getXmlName();
+        QName elementName = FindBooksQueryExpressionElement.getTypeDesc().getFields()[0].getXmlName();
         replyElements[0] = new MessageElement(elementName.getNamespaceURI(), elementName.getLocalPart(), book);
         replyElements[1] = new MessageElement(new Text("ABCD"));
         

@@ -611,14 +611,14 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                 StringBuffer sb = new StringBuffer(localName);
                 int aidx = -1;
 
-                while ((aidx = sb.toString().indexOf(
-                        SymbolTable.ANON_TOKEN)) > -1) {
-                    sb.replace(
-                            aidx,
-                            aidx + SymbolTable.ANON_TOKEN.length(),
-                            "_");
+                while ((aidx = sb.toString().indexOf(SymbolTable.ANON_TOKEN)) > -1) {
+                    sb.replace(aidx, aidx + SymbolTable.ANON_TOKEN.length(), "");
+                    char c = sb.charAt(aidx);
+                    if (Character.isLetter(c) && Character.isLowerCase(c)) {
+                        sb.setCharAt(aidx, Character.toUpperCase(c));
+                    }
                 }
-
+                        
                 localName = sb.toString();
                 typeQName = new QName(typeQName.getNamespaceURI(),
                         localName);

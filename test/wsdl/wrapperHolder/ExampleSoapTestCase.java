@@ -17,8 +17,8 @@ public class ExampleSoapTestCase extends junit.framework.TestCase {
 
     public void testWrapperHolderWSDL() throws Exception {
         javax.xml.rpc.ServiceFactory serviceFactory = javax.xml.rpc.ServiceFactory.newInstance();
-        java.net.URL url = new java.net.URL(new test.wsdl.wrapperHolder.DoExampleLocator().getWrapperHolderAddress() + "?WSDL");
-        javax.xml.rpc.Service service = serviceFactory.createService(url, new test.wsdl.wrapperHolder.DoExampleLocator().getServiceName());
+        java.net.URL url = new java.net.URL(new test.wsdl.wrapperHolder.DoExample_ServiceLocator().getWrapperHolderAddress() + "?WSDL");
+        javax.xml.rpc.Service service = serviceFactory.createService(url, new test.wsdl.wrapperHolder.DoExample_ServiceLocator().getServiceName());
         assertTrue(service != null);
     }
 
@@ -26,7 +26,7 @@ public class ExampleSoapTestCase extends junit.framework.TestCase {
         test.wsdl.wrapperHolder.ExampleSoapStub binding;
         try {
             binding = (test.wsdl.wrapperHolder.ExampleSoapStub)
-                          new test.wsdl.wrapperHolder.DoExampleLocator().getWrapperHolder();
+                          new test.wsdl.wrapperHolder.DoExample_ServiceLocator().getWrapperHolder();
         }
         catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)

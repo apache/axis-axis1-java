@@ -49,7 +49,7 @@ import test.wsdl.types.comprehensive_types.Enum;
 import test.wsdl.types.comprehensive_types.PersionCat;
 import test.wsdl.types.comprehensive_types.Time;
 import test.wsdl.types.comprehensive_types.Yarn;
-import test.wsdl.types.comprehensive_types._complexWComplex_stock_quote;
+import test.wsdl.types.comprehensive_types.ComplexWComplexStock_quote;
 import test.wsdl.types.comprehensive_types.holders.AnimalHolder;
 import test.wsdl.types.comprehensive_types.holders.ArrayHolder;
 import test.wsdl.types.comprehensive_types.holders.ArrayMHolder;
@@ -399,7 +399,7 @@ public class VerifyTestCase extends junit.framework.TestCase {
         A a = new A();
         a.setC(3);
         b.setD(a);
-        _complexWComplex_stock_quote stockQuote = new _complexWComplex_stock_quote();
+        ComplexWComplexStock_quote stockQuote = new ComplexWComplexStock_quote();
         Time time = new Time();
         time.setDST(false);
         stockQuote.setTime(time);

@@ -18,7 +18,7 @@ public class AttrGroupServiceTestCase extends junit.framework.TestCase {
         // so, basically, if this compiles, we are good to go
         // but running it won't hurt anything
 
-        test.wsdl.attrGroup._Record1 rec1 = new test.wsdl.attrGroup._Record1();
+        test.wsdl.attrGroup.Record1 rec1 = new test.wsdl.attrGroup.Record1();
 
         // an element defined within Record1
         rec1.setElem1(1);
@@ -36,7 +36,7 @@ public class AttrGroupServiceTestCase extends junit.framework.TestCase {
         rec1.setId(new org.apache.axis.types.Id("theId"));
         rec1.setHref(new org.apache.axis.types.URI("a", "b"));
 
-        test.wsdl.attrGroup._Record2 rec2 = new test.wsdl.attrGroup._Record2();
+        test.wsdl.attrGroup.Record2 rec2 = new test.wsdl.attrGroup.Record2();
         
         // an element defined within Record2
         rec2.setElem2("2");

@@ -32,12 +32,12 @@ import java.net.URL;
 public class Main {
     static String name1;
     static Address addr1;
-    static _Phone phone1;
+    static Phone phone1;
     
     static {
         name1 = "Purdue Boilermaker";
         addr1 = new Address();
-        phone1 = new _Phone();
+        phone1 = new Phone();
         addr1.setStreetNum(1);
         addr1.setStreetName("University Drive");
         addr1.setCity("West Lafayette");
@@ -58,7 +58,7 @@ public class Main {
                                 ad.getStreetName());
         System.err.println ("\t" + ad.getCity() + ", " + ad.getState() + " " +
                                 ad.getZip());
-        _Phone ph = ad.getPhone();
+        Phone ph = ad.getPhone();
         System.err.println ("\tPhone: (" + ph.getAreaCode() + ") " +
                                 ph.getExchange() + "-" + ph.getNumber());
     }

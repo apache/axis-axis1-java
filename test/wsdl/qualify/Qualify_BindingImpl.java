@@ -86,7 +86,7 @@ public class Qualify_BindingImpl implements test.wsdl.qualify.Qualify_Port {
         return "Hello there: " + name;
     }
 
-    public test.wsdl.qualify.__FormOverrideResponse_response formOverride(test.wsdl.qualify.__FormOverride_complex complex) throws java.rmi.RemoteException {
+    public test.wsdl.qualify.FormOverrideResponseResponse formOverride(test.wsdl.qualify.FormOverrideComplex complex) throws java.rmi.RemoteException {
         // Validate XML request to make sure elements are properly qualified
         // or not per the WSDL
         MessageContext mc = MessageContext.getCurrentContext();
@@ -139,7 +139,7 @@ public class Qualify_BindingImpl implements test.wsdl.qualify.Qualify_Port {
         }        
 
         // Return a response (which the client will validate)
-        test.wsdl.qualify.__FormOverrideResponse_response r = new __FormOverrideResponse_response();
+        test.wsdl.qualify.FormOverrideResponseResponse r = new FormOverrideResponseResponse();
         r.setName("Tommy");
         return r;
     }
