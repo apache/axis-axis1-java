@@ -100,7 +100,26 @@ public abstract class JavaWriter implements Writer {
     protected String      message;
 
     /**
-     * Constructor.  Set up all the variables needed to write a file.
+     * Constructor.  Use this one to pass in a Type.  Type contains QName and java name.
+     */
+    protected JavaWriter(
+            Emitter emitter,
+            Type  type,
+            String suffix,
+            String extension,
+            String message) {
+        this.emitter     = emitter;
+        this.qname       = type.getQName();
+        this.namespaces  = emitter.getNamespaces();
+        this.className   = type.getJavaLocalName() + (suffix == null ? "" : suffix);
+        this.fileName    = className + '.' + extension;
+        this.packageName = namespaces.getCreate(qname.getNamespaceURI());
+        this.message     = message;
+    } // ctor
+
+
+    /**
+     * Constructor.  Use Set up all the variables needed to write a file.
      */
     protected JavaWriter(
             Emitter emitter,

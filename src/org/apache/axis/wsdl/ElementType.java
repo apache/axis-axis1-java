@@ -54,62 +54,34 @@
  */
 package org.apache.axis.wsdl;
 
-import java.io.IOException;
 
-import java.util.HashMap;
+import org.w3c.dom.Node;
 
-import javax.wsdl.Binding;
 import javax.wsdl.QName;
 
-import org.apache.axis.utils.JavaUtils;
-
 /**
-* This is Wsdl2java's Binding Writer.  It writes the following files, as appropriate:
-* <bindingName>Stub.java, <bindingName>Skeleton.java, <bindingName>Impl.java.
-*/
-public class JavaBindingWriter implements Writer {
-    Writer stubWriter = null;
-    Writer skelWriter = null;
-    Writer implWriter = null;
-
+ * This Type is for a QName that is an element, these types are only emitted if 
+ * referenced by a ref= or an element=.
+ * An element type can be defined inline or it can be defined via
+ * a ref/type attribute.
+ */
+public class ElementType extends Type {
+    private boolean definedDirectly;
     /**
-     * Constructor.
+     * Create an element type defined by a ref/type attribute
      */
-    protected JavaBindingWriter(
-            Emitter emitter,
-            Binding binding,
-            HashMap operationParameters) {
-        QName bindingQName = new QName(binding.getQName().getNamespaceURI(),
-              Utils.capitalizeFirstChar(Utils.xmlNameToJava(binding.getQName().getLocalPart())));
-        binding.setQName (bindingQName);
-        stubWriter = new JavaStubWriter(emitter, binding, operationParameters);
-        if (emitter.bEmitSkeleton) {
-            skelWriter = new JavaSkelWriter(emitter, binding, operationParameters);
-            String fileName = bindingQName.getLocalPart() + "Impl.java";
-            try {
-                // NOTE:  Where does the fileExists method really belong?
-                if (!((JavaWriter) stubWriter).fileExists (fileName, bindingQName.getNamespaceURI())) {
-                    implWriter = new JavaImplWriter(emitter, binding, operationParameters);
-                }
-            }
-            catch (IOException ioe) {
-                System.err.println(
-                        JavaUtils.getMessage("fileExistError00", fileName));
-            }
-        }
-    } // ctor
-
+    public ElementType(QName pqName, Type refType, Node pNode) {
+        super(pqName, refType, pNode);
+        setShouldEmit(false);  // No need to emit since code will use ref info
+        definedDirectly = false;
+    };
     /**
-     * Write all the binding bindnigs:  stub, skeleton, and impl.
+     * Create an element type defined directly.               
      */
-    public void write() throws IOException {
-        stubWriter.write();
-        if (skelWriter != null) {
-            skelWriter.write();
-        }
-        if (implWriter != null) {
-            implWriter.write();
-        }
-    } // write
-
-} // class JavaBindingWriter
+    public ElementType(QName pqName, String pjName, Node pNode) {
+        super(pqName, pjName, pNode);
+        setShouldEmit(false);  // Only emit if refd
+        definedDirectly = true;
+    }
+    public boolean getDefinedDirectly() {return definedDirectly;}
+};

@@ -583,7 +583,7 @@ public class Emitter {
         Iterator i = faults.values().iterator();
         while (i.hasNext()) {
             Fault fault = (Fault) i.next();
-            String exceptionName = Utils.capitalize(Utils.xmlNameToJava((String) fault.getName()));
+            String exceptionName = Utils.capitalizeFirstChar(Utils.xmlNameToJava((String) fault.getName()));
             if (parameters.faultString == null)
                 parameters.faultString = exceptionName;
             else
@@ -729,21 +729,29 @@ public class Emitter {
 
         while (i.hasNext()) {
             Part part = (Part) i.next();
-
+            QName elementName = part.getElementName();
+            QName typeName = part.getTypeName();
             if (literal) {
-                QName elementName = part.getElementName();
                 if (elementName != null) {
-                    v.add(Utils.capitalize(elementName.getLocalPart()));
+                    v.add(Utils.capitalizeFirstChar(elementName.getLocalPart()));
                     v.add(part.getName());
                 }
             } else {
-                QName typeName = part.getTypeName();
+                // Encoded
                 if (typeName != null) {
                     // Handle the special "java" namespace for types
                     if (typeName.getNamespaceURI().equalsIgnoreCase("java")) {
                         v.add(typeName.getLocalPart());
                     } else {
                         v.add(emitFactory.getType(typeName).getJavaName());
+                    }
+                    v.add(part.getName());
+                } else if (elementName != null) {
+                    // Handle the special "java" namespace for types
+                    if (elementName.getNamespaceURI().equalsIgnoreCase("java")) {
+                        v.add(elementName.getLocalPart());
+                    } else {
+                        v.add(emitFactory.getType(elementName).getJavaName());
                     }
                     v.add(part.getName());
                 }
@@ -806,7 +814,7 @@ public class Emitter {
         Iterator i = types.values().iterator();
         while (i.hasNext()) {
             Type type = (Type) i.next();
-            if (type.isDefined() && type.getBaseType() == null) {
+            if (type.isDefined() && type.getShouldEmit() && type.getBaseType() == null) {
                 Writer writer = writerFactory.getWriter(type);
                 writer.write();
             }

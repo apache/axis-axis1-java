@@ -76,8 +76,6 @@ public class JavaTypeWriter implements Writer {
     protected JavaTypeWriter(
             Emitter emitter,
             Type type) {
-        QName typeQName = new QName(type.getQName().getNamespaceURI(), type.getJavaLocalName());
-        type.setQName (typeQName);
 
         // Determine what sort of type this is and instantiate the appropriate Writer.
         Node node = type.getNode();
@@ -94,14 +92,22 @@ public class JavaTypeWriter implements Writer {
             }
         }
 
-        holderWriter = new JavaHolderWriter(emitter, type);
+        // If a type class is written, also write a holder
+        if (v != null) {
+            holderWriter = new JavaHolderWriter(emitter, type);
+        } else {
+            if (emitter.bVerbose) {
+                System.out.println("No java binding for " + type.getQName());
+            }
+        }
     } // ctor
 
     /**
      * Write all the service bindnigs:  service and testcase.
      */
     public void write() throws IOException {
-        typeWriter.write();
+        if (typeWriter != null)
+            typeWriter.write();
         if (holderWriter != null) {
             holderWriter.write();
         }

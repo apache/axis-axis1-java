@@ -119,7 +119,7 @@ public class JavaDefinitionWriter implements Writer {
         Iterator fi = faults.iterator();
         while (fi.hasNext()) {
             Fault fault = (Fault) fi.next();
-            String exceptionName = Utils.capitalize(Utils.xmlNameToJava(fault.getName()));
+            String exceptionName = Utils.capitalizeFirstChar(Utils.xmlNameToJava(fault.getName()));
             QName faultName = new QName(definition.getTargetNamespace(), exceptionName);
             new JavaFaultWriter(emitter, faultName, fault).write();
         }

@@ -332,7 +332,9 @@ public class JavaStubWriter extends JavaWriter {
             if (literal) {
                 qType = part.getElementName();
             } else {
-                qType = part.getTypeName();
+                qType = part.getTypeName(); 
+                if (qType == null)
+                    qType = part.getElementName();
             }
             if (qType != null) {
                 v.add(emitter.emitFactory.getType(qType));
@@ -356,8 +358,7 @@ public class JavaStubWriter extends JavaWriter {
         firstSer = false ;
 
         QName qname = type.getQName();
-        //pw.println("            qn = new javax.xml.rpc.namespace.QName(\"" + qname.getNamespaceURI() + "\", \"" + type.getJavaLocalName() + "\");");
-        pw.println("            qn = new javax.xml.rpc.namespace.QName(\"" + qname.getNamespaceURI() + "\", \"" + qname.getLocalPart() + "\");");
+        pw.println("            qn = new javax.xml.rpc.namespace.QName(\"" + qname.getNamespaceURI() + "\", \"" + Utils.capitalizeFirstChar(qname.getLocalPart()) + "\");");
         pw.println("            cls = " + type.getJavaName() + ".class;");
         pw.println("            call.addSerializer(cls, qn, new org.apache.axis.encoding.BeanSerializer(cls));");
         pw.println("            call.addDeserializerFactory(qn, cls, org.apache.axis.encoding.BeanSerializer.getFactory());");
@@ -389,13 +390,13 @@ public class JavaStubWriter extends JavaWriter {
             Emitter.Parameter p = (Emitter.Parameter) parms.list.get(i);
 
 
-            Type type = emitter.emitFactory.getType(p.type);
+            Type type = emitter.emitFactory.getDefinedType(p.type);
             if (type == null) {
                 // XXX yikes, something is wrong
             }
             QName qn = type.getQName();
             String typeString = "new org.apache.axis.encoding.XMLType( new javax.xml.rpc.namespace.QName(\"" + qn.getNamespaceURI() + "\", \"" +
-                    qn.getLocalPart() + "\"))";
+                    Utils.capitalizeFirstChar(qn.getLocalPart()) + "\"))";
             if (p.mode == Emitter.Parameter.IN) {
                 pw.println("        call.addParameter(\"" + p.name + "\", " + typeString + ", org.apache.axis.client.Call.PARAM_MODE_IN);");
             }
@@ -408,9 +409,9 @@ public class JavaStubWriter extends JavaWriter {
         }
         // set output type
         if (!"void".equals(parms.returnType)) {
-            QName qn = emitter.emitFactory.getType(parms.returnType).getQName();
+            QName qn = emitter.emitFactory.getDefinedType(parms.returnType).getQName();
             String outputType = "new org.apache.axis.encoding.XMLType(new javax.xml.rpc.namespace.QName(\"" + qn.getNamespaceURI() + "\", \"" +
-              qn.getLocalPart() + "\"))";
+              Utils.capitalizeFirstChar(qn.getLocalPart()) + "\"))";
             pw.println("        call.setReturnType(" + outputType + ");");
 
             pw.println();

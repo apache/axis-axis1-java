@@ -76,7 +76,8 @@ public class JavaServiceWriter implements Writer {
             Emitter emitter,
             Service service,
             HashMap portTypeOperationParameters) {
-        QName serviceQName = new QName(service.getQName().getNamespaceURI(), Utils.capitalize(Utils.xmlNameToJava(service.getQName().getLocalPart())));
+        QName serviceQName = new QName(service.getQName().getNamespaceURI(), 
+            Utils.capitalizeFirstChar(Utils.xmlNameToJava(service.getQName().getLocalPart())));
         service.setQName (serviceQName);
         serviceWriter = new JavaServiceImplWriter(emitter, service);
         if (emitter.bEmitTestCase) {

@@ -149,7 +149,7 @@ public class JavaDeployWriter extends JavaWriter {
         Iterator it = types.values().iterator();
         while (it.hasNext()) {
             Type type = (Type) it.next();
-            if (type.getBaseType() == null) {
+            if (type.getBaseType() == null && type.getShouldEmit()) {
                 if (!nsMap.containsKey(type.getQName().getNamespaceURI())) {
                   pw.println("");
                   nsPrefix = "ns" + i++;
@@ -162,9 +162,9 @@ public class JavaDeployWriter extends JavaWriter {
         it = types.values().iterator();
         while (it.hasNext()) {
             Type type = (Type) it.next();
-            if (type.getBaseType() == null) {
+            if (type.getBaseType() == null && type.getShouldEmit()) {
                 nsPrefix = (String)nsMap.get(type.getQName().getNamespaceURI());
-                pw.println("     <" + nsPrefix + ":" + type.getQName().getLocalPart()
+                pw.println("     <" + nsPrefix + ":" + Utils.capitalizeFirstChar(type.getQName().getLocalPart())
                        + " classname=\"" + type.getJavaName() +"\"/>");
             }
         }
