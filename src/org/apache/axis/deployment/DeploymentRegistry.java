@@ -58,6 +58,7 @@ import org.apache.axis.Handler;
 import org.apache.axis.deployment.wsdd.WSDDGlobalConfiguration;
 import org.apache.axis.deployment.wsdd.WSDDDocument;
 import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.encoding.SerializationContext;
 import org.w3c.dom.Document;
 
 import javax.xml.rpc.namespace.QName;
@@ -217,6 +218,9 @@ public abstract class DeploymentRegistry
     public abstract void setGlobalConfiguration(
         WSDDGlobalConfiguration global);
 
+    public abstract void writeToContext(SerializationContext context)
+        throws IOException;
+    
     /**
      * Save the registry to the given filepath
      * @param filename XXX

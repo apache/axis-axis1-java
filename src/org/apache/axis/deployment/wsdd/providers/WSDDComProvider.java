@@ -56,17 +56,11 @@ package org.apache.axis.deployment.wsdd.providers;
 
 import org.apache.axis.Handler;
 import org.apache.axis.deployment.DeploymentRegistry;
-import org.apache.axis.deployment.wsdd.WSDDConstants;
-import org.apache.axis.deployment.wsdd.WSDDException;
 import org.apache.axis.deployment.wsdd.WSDDProvider;
+import org.apache.axis.deployment.wsdd.WSDDService;
 import org.apache.axis.providers.BasicProvider;
 import org.apache.axis.providers.ComProvider;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import javax.xml.rpc.namespace.QName;
 
 
 /**
@@ -75,102 +69,30 @@ import javax.xml.rpc.namespace.QName;
 public class WSDDComProvider
     extends WSDDProvider
 {
-
-    /**
-     *
-     * Wrap an extant DOM element in WSDD
-     *
-     * @param e (Element) XXX
-     * @throws WSDDException XXX
-     */
-    public WSDDComProvider(Element e)
-        throws WSDDException
-    {
-        super(e);
-    }
-
-    /**
-     *
-     * Create a new DOM element and wrap in WSDD
-     *
-     * @param d (Document) XXX
-     * @param n (Node) XXX
-     * @throws WSDDException XXX
-     */
-    public WSDDComProvider(Document d, Node n)
-        throws WSDDException
-    {
-        super(d, n);
-
-	    Element specificProvider =
-	    	d.createElementNS(WSDDConstants.WSDD_COM, "com:provider");
-	    getElement().appendChild(specificProvider);
-    }
-
-    protected Element getProviderElement()
-    	throws WSDDException
-    {
-	    Element prov =
-	        (Element) getElement()
-	            .getElementsByTagNameNS(WSDDConstants.WSDD_COM, "provider")
-	            .item(0);
-
-	    if (prov == null) {
-	        throw new WSDDException(
-	            "The Com Provider requires the presence of a com:provider element in the WSDD");
-	    }
-
-    	return prov;
-    }
-
-    /**
-     *
-     * @param registry XXX
-     * @return XXX
-     * @throws Exception XXX
-     */
-    public Handler newProviderInstance(DeploymentRegistry registry)
+    public Handler newProviderInstance(WSDDService service,
+                                       DeploymentRegistry registry)
         throws Exception
     {
-        Class _class = getJavaClass();
-
-        if (_class == null) {
-            _class = Class.forName("org.apache.axis.handlers.providers.ComProvider");
-        }
+        Class _class = Class.forName("org.apache.axis.handlers.providers.ComProvider");
 
         BasicProvider provider = (BasicProvider) _class.newInstance();
 
-        // set the basic java provider deployment options
-        Element prov = getProviderElement();
-
-        String option = prov.getAttribute("ProgID");
+        String option = service.getParameter("ProgID");
 
         if (!option.equals("")) {
             provider.addOption(ComProvider.OPTION_PROGID, option);
         }
 
-        option = prov.getAttribute("CLSID");
+        option = service.getParameter("CLSID");
 
         if (!option.equals("")) {
             provider.addOption(ComProvider.OPTION_CLSID, option);
         }
 
-        option = prov.getAttribute("threadingModel");
+        option = service.getParameter("threadingModel");
 
         if (!option.equals("")) {
             provider.addOption(ComProvider.OPTION_THREADING_MODEL, option);
-        }
-
-        // collect the information about the operations
-        NodeList nl =
-            getElement().getElementsByTagNameNS(WSDDConstants.WSDD_NS,
-                                                "operation");
-
-        for (int n = 0; n < nl.getLength(); n++) {
-            Element op = (Element) nl.item(n);
-
-            provider.addOperation(op.getAttribute("name"),
-                                  new QName(op.getAttribute("qName"), op));
         }
 
         return provider;

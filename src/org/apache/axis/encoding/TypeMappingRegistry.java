@@ -56,6 +56,7 @@
 package org.apache.axis.encoding;
 
 import org.apache.axis.Constants;
+import org.apache.axis.deployment.wsdd.WSDDConstants;
 import org.apache.axis.utils.JavaUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -291,9 +292,6 @@ public class TypeMappingRegistry implements Serializer {
             parent.dump(out, "Parent");
     }
 
-    public static final QName typeMappingQName = new QName("axis",
-                                                           "typeMapping");
-    
     public void dumpToSerializationContext(SerializationContext ctx)
       throws IOException
     {
@@ -310,24 +308,25 @@ public class TypeMappingRegistry implements Serializer {
                 continue;
 
             AttributesImpl attrs = new AttributesImpl();
-            attrs.addAttribute("", "type", "type",
+            attrs.addAttribute("", "qname", "qname",
                                "CDATA", ctx.qName2String(typeQName));
-            attrs.addAttribute("", "class", "class",
-                               "CDATA", desc.cls.getName());
+            attrs.addAttribute("", "languageSpecificType",
+                               "languageSpecificType",
+                               "CDATA", "java:" + desc.cls.getName());
             
             String dser = desc.factory.getClass().getName();
-            attrs.addAttribute("", "dser", "dser",
+            attrs.addAttribute("", "deserializer", "deserializer",
                                "CDATA", dser);
             
             SerializerDescriptor serDesc =
                                        (SerializerDescriptor)s.get(desc.cls);
             if (serDesc != null) {
-                attrs.addAttribute("", "ser", "ser",
+                attrs.addAttribute("", "serializer", "serializer",
                                    "CDATA",
                                    serDesc.serializer.getClass().getName());
             }
             
-            ctx.startElement(typeMappingQName, attrs);
+            ctx.startElement(WSDDConstants.TYPE_QNAME, attrs);
             ctx.endElement();
         }
     }

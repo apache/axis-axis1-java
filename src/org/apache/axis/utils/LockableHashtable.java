@@ -120,4 +120,12 @@ public class LockableHashtable extends Hashtable {
         if (lockedEntries.contains(p1)) lockedEntries.remove(p1);
         return super.remove(p1);
     }
+    
+    /**
+     * Returns true if a given key is in our locked list
+     */ 
+    public boolean isKeyLocked(Object key)
+    {
+        return lockedEntries.contains(key);
+    }
 }

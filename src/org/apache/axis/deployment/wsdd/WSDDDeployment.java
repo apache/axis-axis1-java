@@ -56,6 +56,14 @@ package org.apache.axis.deployment.wsdd;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.apache.axis.Constants;
+import org.apache.axis.encoding.SerializationContext;
+
+import javax.xml.rpc.namespace.QName;
+import java.util.Vector;
+import java.util.Iterator;
+import java.io.IOException;
 
 
 /**
@@ -67,7 +75,40 @@ public class WSDDDeployment
     extends WSDDElement
     implements WSDDTypeMappingContainer
 {
+    private Vector handlers = new Vector();
+    private Vector services = new Vector();
+    private Vector transports = new Vector();
+    private Vector typeMappings = new Vector();
+    private WSDDGlobalConfiguration globalConfig = null; 
+    
+    public void addHandler(WSDDHandler handler)
+    {
+        handlers.add(handler);
+    }
+    
+    public void addTransport(WSDDTransport transport)
+    {
+        transports.add(transport);
+    }
+    
+    public void addService(WSDDService service)
+    {
+        services.add(service);
+    }
+    
+    public void addTypeMapping(WSDDTypeMapping typeMapping)
+        throws WSDDException
+    {
+        typeMappings.add(typeMapping);
+    }
 
+    /**
+     * Default constructor
+     */ 
+    public WSDDDeployment()
+    {
+    }
+    
     /**
      * Create an element in WSDD that wraps an extant DOM element
      * @param e (Element) XXX
@@ -76,111 +117,87 @@ public class WSDDDeployment
     public WSDDDeployment(Element e)
         throws WSDDException
     {
-        super(e, "deployment");
+        super(e);
+        
+        Element [] elements = getChildElements(e, "handler");
+        int i;
+
+        for (i = 0; i < elements.length; i++) {
+            WSDDHandler handler = new WSDDHandler(elements[i]);
+            addHandler(handler);
+        }
+
+        elements = getChildElements(e, "chain");
+        for (i = 0; i < elements.length; i++) {
+            WSDDChain chain = new WSDDChain(elements[i]);
+            addHandler(chain);
+        }
+        
+        elements = getChildElements(e, "transport");
+        for (i = 0; i < elements.length; i++) {
+            WSDDTransport transport = new WSDDTransport(elements[i]);
+            addTransport(transport);
+        }
+        
+        elements = getChildElements(e, "service");
+        for (i = 0; i < elements.length; i++) {
+            WSDDService service = new WSDDService(elements[i]);
+            addService(service);
+        }
+        
+        elements = getChildElements(e, "typeMapping");
+        for (i = 0; i < elements.length; i++) {
+            WSDDTypeMapping mapping = new WSDDTypeMapping(elements[i]);
+            addTypeMapping(mapping);
+        }
     }
 
-    /**
-     * Create a new element in DOM and wrap it in WSDD
-     *     This ctor is different from those of similar classes in part
-     *       because Deployment is the entry-node into the DOM Document
-     * @param doc (Document) XXX
-     * @throws WSDDException XXX
-     */
-    public WSDDDeployment(Document doc)
-        throws WSDDException
+    protected QName getElementName()
     {
-        super(doc, doc, "deployment");
+        return WSDDConstants.DEPLOY_QNAME;
     }
-
-    /**
-     *
-     * @return XXX
-     */
-    public String getName()
+    
+    public void writeToContext(SerializationContext context)
+        throws IOException
     {
-        return getAttribute("name");
+        context.registerPrefixForURI("", WSDDConstants.WSDD_NS);
+        context.registerPrefixForURI("java", WSDDConstants.WSDD_JAVA);
+        context.startElement(new QName(WSDDConstants.WSDD_NS, "deployment"),
+                             null);
+        Iterator i = handlers.iterator();
+        while (i.hasNext()) {
+            WSDDHandler handler = (WSDDHandler)i.next();
+            handler.writeToContext(context);
+        }
+        
+        i = services.iterator();
+        while (i.hasNext()) {
+            WSDDService service = (WSDDService)i.next();
+            service.writeToContext(context);
+        }
+        
+        i = transports.iterator();
+        while (i.hasNext()) {
+            WSDDTransport transport = (WSDDTransport)i.next();
+            transport.writeToContext(context);
+        }
+        
+        i = typeMappings.iterator();
+        while (i.hasNext()) {
+            WSDDTypeMapping mapping = (WSDDTypeMapping)i.next();
+            mapping.writeToContext(context);
+        }
+        context.endElement();
     }
-
+    
     /**
-     *
-     * @param name XXX
-     */
-    public void setName(String name)
-    {
-        setAttribute("name", name);
-    }
-
-    /**
-     *
-	 * Convenience method to return just the first one.
-	 *
+	 * Get our global configuration
+     * 
      * @return XXX
      */
     public WSDDGlobalConfiguration getGlobalConfiguration()
     {
-
-        WSDDElement[] e = createArray("globalConfiguration",
-                                      WSDDGlobalConfiguration.class);
-
-        if (e.length == 0) {
-            return null;
-        }
-
-        return (WSDDGlobalConfiguration) e[0];
-    }
-
-    /**
-     *
-     * @return XXX
-     */
-    public WSDDGlobalConfiguration[] getGlobalConfigurations()
-    {
-
-        WSDDElement[]     e = createArray("globalConfiguration",
-                                          WSDDGlobalConfiguration.class);
-        WSDDGlobalConfiguration[] t = new WSDDGlobalConfiguration[e.length];
-
-        System.arraycopy(e, 0, t, 0, e.length);
-
-        return t;
-    }
-
-    /**
-     *
-     * @param name XXX
-     * @return XXX
-     */
-    public WSDDGlobalConfiguration getGlobalConfiguration(String name)
-    {
-
-        WSDDGlobalConfiguration[] t = getGlobalConfigurations();
-
-        for (int n = 0; n < t.length; n++) {
-            if (t[n].getName().equals(name)) {
-                return t[n];
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     *
-     * @param name XXX
-     * @return the newly created / tree-ified item,
-     *          so that the caller might mutate it
-     */
-    public WSDDGlobalConfiguration createGlobalConfiguration()
-    {
-        return (WSDDGlobalConfiguration) createChild(WSDDGlobalConfiguration.class);
-    }
-
-    /**
-     *
-     */
-    public void removeGlobalConfiguration(WSDDGlobalConfiguration victim)
-    {
-        removeChild(victim);
+        return globalConfig;
     }
 
     /**
@@ -189,119 +206,19 @@ public class WSDDDeployment
      */
     public WSDDTypeMapping[] getTypeMappings()
     {
-
-        WSDDElement[]     e = createArray("typeMapping",
-                                          WSDDTypeMapping.class);
-        WSDDTypeMapping[] t = new WSDDTypeMapping[e.length];
-
-        System.arraycopy(e, 0, t, 0, e.length);
-
+        WSDDTypeMapping[] t = new WSDDTypeMapping[typeMappings.size()];
+        typeMappings.toArray(t);
         return t;
     }
 
-    /**
-     *
-     * @param name XXX
-     * @return XXX
-     */
-    public WSDDTypeMapping getTypeMapping(String name)
-    {
-
-        WSDDTypeMapping[] t = getTypeMappings();
-
-        for (int n = 0; n < t.length; n++) {
-            if (t[n].getName().equals(name)) {
-                return t[n];
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     *
-     * @param name XXX
-     * @return the newly created / tree-ified item,
-	 *          so that the caller might mutate it
-     */
-    public WSDDTypeMapping createTypeMapping()
-    {
-        return (WSDDTypeMapping) createChild(WSDDTypeMapping.class);
-    }
-
-    /**
-     *
-     */
-    public void removeTypeMapping(WSDDTypeMapping victim)
-    {
-        removeChild(victim);
-    }
-
-    /**
-     *
-     * @return XXX
-     */
-    public WSDDChain[] getChains()
-    {
-
-        WSDDElement[] e = createArray("chain", WSDDChain.class);
-        WSDDChain[]   c = new WSDDChain[e.length];
-
-        System.arraycopy(e, 0, c, 0, e.length);
-
-        return c;
-    }
-
-    /**
-     *
-     * @param name XXX
-     * @return XXX
-     */
-    public WSDDChain getChain(String name)
-    {
-
-        WSDDChain[] c = getChains();
-
-        for (int n = 0; n < c.length; n++) {
-            if (c[n].getName().equals(name)) {
-                return c[n];
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     *
-     * @param name XXX
-     * @return the newly created / tree-ified item,
-	 *          so that the caller might mutate it
-     */
-    public WSDDChain createChain()
-    {
-        return (WSDDChain) createChild(WSDDChain.class);
-    }
-
-    /**
-     *
-     */
-    public void removeChain(WSDDChain victim)
-    {
-        removeChild(victim);
-    }
-    
     /**
      *
      * @return XXX
      */
     public WSDDHandler[] getHandlers()
     {
-
-        WSDDElement[] e = createArray("handler", WSDDHandler.class);
-        WSDDHandler[] h = new WSDDHandler[e.length];
-
-        System.arraycopy(e, 0, h, 0, e.length);
-
+        WSDDHandler[] h = new WSDDHandler[handlers.size()];
+        handlers.toArray(h);
         return h;
     }
 
@@ -310,13 +227,13 @@ public class WSDDDeployment
      * @param name XXX
      * @return XXX
      */
-    public WSDDHandler getHandler(String name)
+    public WSDDHandler getHandler(QName name)
     {
 
         WSDDHandler[] h = getHandlers();
 
         for (int n = 0; n < h.length; n++) {
-            if (h[n].getName().equals(name)) {
+            if (h[n].getQName().equals(name)) {
                 return h[n];
             }
         }
@@ -326,35 +243,12 @@ public class WSDDDeployment
 
     /**
      *
-     * @param name XXX
-     * @return the newly created / tree-ified item,
-	 *          so that the caller might mutate it
-     */
-    public WSDDHandler createHandler()
-    {
-        return (WSDDHandler) createChild(WSDDHandler.class);
-    }
-
-    /**
-     *
-     */
-    public void removeHandler(WSDDHandler victim)
-    {
-        removeChild(victim);
-    }
-
-    /**
-     *
      * @return XXX
      */
     public WSDDTransport[] getTransports()
     {
-
-        WSDDElement[]   e = createArray("transport", WSDDTransport.class);
-        WSDDTransport[] t = new WSDDTransport[e.length];
-
-        System.arraycopy(e, 0, t, 0, e.length);
-
+        WSDDTransport[] t = new WSDDTransport[transports.size()];
+        transports.toArray(t);
         return t;
     }
 
@@ -363,13 +257,13 @@ public class WSDDDeployment
      * @param name XXX
      * @return XXX
      */
-    public WSDDTransport getTransport(String name)
+    public WSDDTransport getTransport(QName name)
     {
 
         WSDDTransport[] t = getTransports();
 
         for (int n = 0; n < t.length; n++) {
-            if (t[n].getName().equals(name)) {
+            if (t[n].getQName().equals(name)) {
                 return t[n];
             }
         }
@@ -379,35 +273,12 @@ public class WSDDDeployment
 
     /**
      *
-     * @param name XXX
-     * @return the newly created / tree-ified item,
-	 *          so that the caller might mutate it
-     */
-    public WSDDTransport createTransport()
-    {
-        return (WSDDTransport) createChild(WSDDTransport.class);
-    }
-
-    /**
-     *
-     */
-    public void removeTransport(WSDDTransport victim)
-    {
-        removeChild(victim);
-    }
-
-    /**
-     *
      * @return XXX
      */
     public WSDDService[] getServices()
     {
-
-        WSDDElement[] e = createArray("service", WSDDService.class);
-        WSDDService[] s = new WSDDService[e.length];
-
-        System.arraycopy(e, 0, s, 0, e.length);
-
+        WSDDService[] s = new WSDDService[services.size()];
+        services.toArray(s);
         return s;
     }
 
@@ -416,36 +287,17 @@ public class WSDDDeployment
      * @param name XXX
      * @return XXX
      */
-    public WSDDService getService(String name)
+    public WSDDService getService(QName name)
     {
 
         WSDDService[] s = getServices();
 
         for (int n = 0; n < s.length; n++) {
-            if (s[n].getName().equals(name)) {
+            if (s[n].getQName().equals(name)) {
                 return s[n];
             }
         }
 
         return null;
     }
-    /**
-     *
-     * @param name XXX
-     * @return the newly created / tree-ified item,
-	 *          so that the caller might mutate it
-     */
-    public WSDDService createService()
-    {
-        return (WSDDService) createChild(WSDDService.class);
-    }
-
-    /**
-     *
-     */
-    public void removeService(WSDDService victim)
-    {
-        removeChild(victim);
-    }
-
 }

@@ -54,66 +54,87 @@
  */
 package org.apache.axis.deployment.wsdd;
 
-import org.apache.axis.Chain;
 import org.apache.axis.Handler;
+import org.apache.axis.TargetedChain;
+import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.transport.http.HTTPSender;
 import org.apache.axis.deployment.DeploymentRegistry;
+import org.apache.axis.deployment.DeploymentException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import javax.xml.rpc.namespace.QName;
+import java.io.IOException;
 
 
 /**
- * WSDD Flow complexType
  *
  */
-public abstract class WSDDFlow
+public abstract class WSDDTargetedChain
     extends WSDDDeployableItem
 {
-    public static final QName DEFAULT_QNAME =
-            new QName(WSDDConstants.WSDD_JAVA, "org.apache.axis.SimpleChain");
-
-    /**
-     *
-     * @param e (Element) XXX
-     * @param n (String) XXX
-     * @throws WSDDException XXX
-     */
-    public WSDDFlow(Element e, String n)
-        throws WSDDException
+    private WSDDRequestFlow requestFlow;
+    private WSDDResponseFlow responseFlow;
+    private QName pivotQName;
+    
+    protected WSDDTargetedChain()
     {
-        super(e, n);
     }
 
     /**
      *
-     * @param d (Document) XXX
-     * @param n (Node) XXX
-     * @param subClass (String) XXX
+     * @param e (Element) XXX
      * @throws WSDDException XXX
      */
-    public WSDDFlow(Document d, Node n, String subClass)
+    protected WSDDTargetedChain(Element e)
         throws WSDDException
     {
-        super(d, n, subClass);
+        super(e);
+        Element reqEl = getChildElement(e, "requestFlow");
+        if (reqEl != null) {
+            requestFlow = new WSDDRequestFlow(reqEl);
+        }
+        Element respEl = getChildElement(e, "responseFlow");
+        if (respEl != null) {
+            responseFlow = new WSDDResponseFlow(respEl);
+        }
+        
+        // !!! pivot? use polymorphic method?
+        String pivotStr = e.getAttribute("pivot");
+        if (pivotStr != null && !pivotStr.equals(""))
+            pivotQName = XMLUtils.getQNameFromString(pivotStr, e);
+        
+    }
+
+    public WSDDRequestFlow getRequestFlow()
+    {
+        return requestFlow;
+    }
+    
+    public void setRequestFlow(WSDDRequestFlow flow)
+    {
+        requestFlow = flow;
+    }
+
+    public WSDDResponseFlow getResponseFlow()
+    {
+        return responseFlow;
+    }
+    
+    public void setResponseFlow(WSDDResponseFlow flow)
+    {
+        responseFlow = flow;
     }
 
     /**
      *
      * @return XXX
      */
-    public WSDDHandler[] getHandlers()
+    public WSDDFaultFlow[] getFaultFlows()
     {
-
-        String[]      names = { "handler", "chain" };
-        Class[]       types = { WSDDHandler.class, WSDDChain.class };
-        WSDDElement[] e     = createArray(names, types);
-        WSDDHandler[] h     = new WSDDHandler[e.length];
-
-        System.arraycopy(e, 0, h, 0, e.length);
-
-        return h;
+        return null;
     }
 
     /**
@@ -121,14 +142,14 @@ public abstract class WSDDFlow
      * @param name XXX
      * @return XXX
      */
-    public WSDDHandler getHandler(String name)
+    public WSDDFaultFlow getFaultFlow(QName name)
     {
 
-        WSDDHandler[] h = getHandlers();
+        WSDDFaultFlow[] t = getFaultFlows();
 
-        for (int n = 0; n < h.length; n++) {
-            if (h[n].getName().equals(name)) {
-                return h[n];
+        for (int n = 0; n < t.length; n++) {
+            if (t[n].getQName().equals(name)) {
+                return t[n];
             }
         }
 
@@ -136,54 +157,27 @@ public abstract class WSDDFlow
     }
 
     /**
-     * A Chain is a Handler, so most of the Handler methods below
-	 *  suffice. But this one gets the ball (of Chain) rolling...
-	 *
-     * @param name XXX
-     * @return the newly created / tree-ified item,
-     *          so that the caller might mutate it
+     *
+     * @param type XXX
      */
-    public WSDDChain createChain()
+    public void setType(String type) throws WSDDException
     {
-        return (WSDDChain) createChild(WSDDChain.class);
+        throw new WSDDException(getElementName().getLocalPart() +
+                                " disallows setting of Type");
+    }
+    
+    public QName getPivotQName()
+    {
+        return pivotQName;
+    }
+
+    public void setPivotQName(QName pivotQName) {
+        this.pivotQName = pivotQName;
     }
 
     /**
      *
-     * @param name XXX
-     * @return the newly created / tree-ified item,
-     *          so that the caller might mutate it
-     */
-    public WSDDHandler createHandler()
-    {
-        return (WSDDHandler) createChild(WSDDHandler.class);
-    }
-
-    /**
-     *
-     */
-    public void removeHandler(WSDDHandler victim)
-    {
-        removeChild(victim);
-    }
-
-    /**
-     *
-     * @return XXX
-     */
-    public QName getType()
-    {
-        QName type = super.getType();
-
-        if (type == null) {
-            type = DEFAULT_QNAME;
-        }
-
-        return type;
-    }
-
-    /**
-     *
+     * @param pivot XXX
      * @param registry XXX
      * @return XXX
      * @throws Exception XXX
@@ -191,20 +185,41 @@ public abstract class WSDDFlow
     public Handler getInstance(DeploymentRegistry registry)
         throws Exception
     {
+        TargetedChain c = new org.apache.axis.SimpleTargetedChain();
 
-        try {
-            Handler       h        = super.makeNewInstance(registry);
-            Chain         c        = (Chain) h;
-            WSDDHandler[] handlers = getHandlers();
-
-            for (int n = 0; n < handlers.length; n++) {
-                c.addHandler(handlers[n].getInstance(registry));
+        WSDDChain req = getRequestFlow();
+        if (req != null)
+            c.setRequestHandler(req.getInstance(registry));
+        
+        Handler pivot = null;
+        if (pivotQName != null) {
+            if (WSDDConstants.WSDD_JAVA.equals(pivotQName.getNamespaceURI())) {
+                pivot = (Handler)Class.forName(pivotQName.getLocalPart()).newInstance();
+            } else {
+                pivot = registry.getHandler(pivotQName);
             }
+        }
+        
+        c.setPivotHandler(pivot);
 
-            return c;
+        WSDDChain resp = getResponseFlow();
+        if (resp != null)
+            c.setResponseHandler(resp.getInstance(registry));
+
+        return c;
+    }
+
+    /**
+     * Write this element out to a SerializationContext
+     */
+    public final void writeFlowsToContext(SerializationContext context)
+            throws IOException {
+        if (requestFlow != null) {
+            requestFlow.writeToContext(context);
         }
-        catch (Exception e) {
-            return null;
+        if (responseFlow != null) {
+            responseFlow.writeToContext(context);
         }
+        
     }
 }

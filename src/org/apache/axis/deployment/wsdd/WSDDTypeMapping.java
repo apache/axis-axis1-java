@@ -58,8 +58,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.encoding.SerializationContext;
+import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.rpc.namespace.QName;
+import java.io.IOException;
 
 
 /**
@@ -68,7 +71,21 @@ import javax.xml.rpc.namespace.QName;
 public class WSDDTypeMapping
     extends WSDDElement
 {
-
+    private QName qname;
+    private String serializer;
+    private String deserializer;
+    private QName typeQName;
+    private String ref;
+    private String encodingStyle;
+    
+    /**
+     * Default constructor
+     * 
+     */ 
+    public WSDDTypeMapping()
+    {
+    }
+    
     /**
      *
      * @param e (Element) XXX
@@ -77,37 +94,40 @@ public class WSDDTypeMapping
     public WSDDTypeMapping(Element e)
         throws WSDDException
     {
-        super(e, "typeMapping");
+        super(e);
+        
+        serializer = e.getAttribute("serializer");
+        deserializer = e.getAttribute("deserializer");
+        
+        String qnameStr = e.getAttribute("qname");
+        qname = XMLUtils.getQNameFromString(qnameStr, e);
+        
+        String typeStr = e.getAttribute("languageSpecificType");
+        typeQName = XMLUtils.getQNameFromString(typeStr, e);        
     }
 
     /**
-     *
-     * @param d (Document) XXX
-     * @param n (Node) XXX
-     * @throws WSDDException XXX
+     * Write this element out to a SerializationContext
      */
-    public WSDDTypeMapping(Document d, Node n)
-        throws WSDDException
-    {
-        super(d, n, "typeMapping");
+    public void writeToContext(SerializationContext context)
+            throws IOException {
+        AttributesImpl attrs = new AttributesImpl();
+        attrs.addAttribute("", "serializer", "serializer", "CDATA", serializer);
+        attrs.addAttribute("", "deserializer", "deserializer", "CDATA", deserializer);
+
+        String typeStr = context.qName2String(typeQName);
+        attrs.addAttribute("", "languageSpecificType", 
+                           "languageSpecificType", "CDATA", typeStr);
+        
+        String qnameStr = context.qName2String(qname);
+        attrs.addAttribute("", "qname", "qname", "CDATA", qnameStr);
+        
+        context.startElement(WSDDConstants.TYPE_QNAME, attrs);
+        context.endElement();
     }
 
-    /**
-     *
-     * @return XXX
-     */
-    public String getName()
-    {
-        return getAttribute("name");
-    }
-
-    /**
-     *
-     * @param name XXX
-     */
-    public void setName(String name)
-    {
-        setAttribute("name", name);
+    protected QName getElementName() {
+        return WSDDConstants.TYPE_QNAME;
     }
 
     /**
@@ -116,7 +136,7 @@ public class WSDDTypeMapping
      */
     public String getRef()
     {
-        return getAttribute("ref");
+        return ref;
     }
 
     /**
@@ -125,7 +145,7 @@ public class WSDDTypeMapping
      */
     public void setRef(String ref)
     {
-        setAttribute("ref", ref);
+        this.ref = ref;
     }
 
     /**
@@ -134,7 +154,7 @@ public class WSDDTypeMapping
      */
     public String getEncodingStyle()
     {
-        return getAttribute("encodingStyle");
+        return encodingStyle;
     }
 
     /**
@@ -143,7 +163,7 @@ public class WSDDTypeMapping
      */
     public void setEncodingStyle(String es)
     {
-        setAttribute("encodingStyle", es);
+        encodingStyle = es;
     }
 
     /**
@@ -152,7 +172,7 @@ public class WSDDTypeMapping
      */
     public QName getQName()
     {
-        return new QName(getAttribute("qName"), getElement());
+        return qname;
     }
 
     /**
@@ -161,12 +181,7 @@ public class WSDDTypeMapping
      */
     public void setQName(QName name)
     {
-        String prefix = XMLUtils.getPrefix(name.getNamespaceURI(), getElement());
-        if (prefix == null)
-            prefix = XMLUtils.getNewPrefix(getElement().getOwnerDocument(),
-                                           name.getNamespaceURI());
-        String qstr = prefix + ":" + name.getLocalPart();
-        setAttribute("qName", qstr);
+        qname = name;
     }
 
     /**
@@ -177,9 +192,6 @@ public class WSDDTypeMapping
     public Class getLanguageSpecificType()
         throws ClassNotFoundException
     {
-
-        String type = getAttribute("languageSpecificType");
-        QName typeQName = XMLUtils.getQNameFromString(type, getElement());
         if (typeQName != null) {
             if (!WSDDConstants.WSDD_JAVA.equals(typeQName.getNamespaceURI())) {
                 throw new ClassNotFoundException("Found languageSpecificType namespace '" +
@@ -190,7 +202,7 @@ public class WSDDTypeMapping
             return Class.forName(typeQName.getLocalPart());
         }
         
-        throw new ClassNotFoundException("Couldn't locate class '" + type + "'");
+        throw new ClassNotFoundException("No type QName for mapping?");
     }
 
     /**
@@ -200,8 +212,7 @@ public class WSDDTypeMapping
     public void setLanguageSpecificType(Class lsType)
     {
         String type = lsType.getName();
-        String prefix = XMLUtils.getPrefix(WSDDConstants.WSDD_JAVA, getElement());
-        setAttribute("languageSpecificType", prefix + ":" + type );
+        typeQName = new QName(WSDDConstants.WSDD_JAVA, type);
     }
 
     /**
@@ -212,10 +223,7 @@ public class WSDDTypeMapping
     public Class getSerializer()
         throws ClassNotFoundException
     {
-
-        String type = getAttribute("serializer");
-
-        return Class.forName(type);
+        return Class.forName(serializer);
     }
 
     /**
@@ -224,7 +232,7 @@ public class WSDDTypeMapping
      */
     public void setSerializer(Class ser)
     {
-        setAttribute("serializer", ser.getName());
+        serializer = ser.getName();
     }
 
     /**
@@ -235,9 +243,7 @@ public class WSDDTypeMapping
     public Class getDeserializer()
         throws ClassNotFoundException
     {
-        String type = getAttribute("deserializer");
-
-        return Class.forName(type);
+        return Class.forName(deserializer);
     }
 
     /**
@@ -246,7 +252,7 @@ public class WSDDTypeMapping
      */
     public void setDeserializer(Class deser)
     {
-        setAttribute("deserializer", deser.getName());
+        deserializer = deser.getName();
     }
 }
 

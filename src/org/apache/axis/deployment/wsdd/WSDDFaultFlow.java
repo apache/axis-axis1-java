@@ -58,13 +58,22 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import javax.xml.rpc.namespace.QName;
+
 
 /**
  *
  */
 public class WSDDFaultFlow
-    extends WSDDFlow
+    extends WSDDChain
 {
+    /**
+     * Default constructor
+     */
+    public WSDDFaultFlow()
+    {
+    }
+
     /**
      *
      * @param e (Element) XXX
@@ -73,18 +82,11 @@ public class WSDDFaultFlow
     public WSDDFaultFlow(Element e)
         throws WSDDException
     {
-        super(e, "faultFlow");
+        super(e);
     }
-
-    /**
-     *
-     * @param d (Document) XXX
-     * @param n (Node) XXX
-     * @throws WSDDException XXX
-     */
-    public WSDDFaultFlow(Document d, Node n)
-        throws WSDDException
+    
+    protected QName getElementName()
     {
-        super(d, n, "faultFlow");
+        return WSDDConstants.FAULTFLOW_QNAME;
     }
 }

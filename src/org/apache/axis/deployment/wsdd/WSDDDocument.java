@@ -58,14 +58,16 @@ import org.apache.axis.deployment.DeploymentDocument;
 import org.apache.axis.deployment.DeploymentException;
 import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.deployment.DeployableItem;
-import org.apache.axis.encoding.DeserializerFactory;
-import org.apache.axis.encoding.Serializer;
-import org.apache.axis.encoding.TypeMappingRegistry;
-import org.apache.axis.encoding.SOAPTypeMappingRegistry;
+import org.apache.axis.encoding.*;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.Constants;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
+
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.StringReader;
 
 /**
  * represents a WSDD Document (this is the top level object in this object model)
@@ -76,7 +78,6 @@ public class WSDDDocument
 
     /** XXX */
     private Document doc;
-    private Element deploymentElement;
 
     /** XXX */
     private WSDDDeployment dep;
@@ -92,24 +93,20 @@ public class WSDDDocument
      *
      * @param doc (Document) XXX
      */
-    public WSDDDocument(Document doc)
+    public WSDDDocument(Document doc) throws WSDDException
     {
         this.doc = doc;
-        deploymentElement = doc.getDocumentElement();
+        dep = new WSDDDeployment(doc.getDocumentElement());
     }
 
     /**
      *
      * @param e (Element) XXX
      */
-    public WSDDDocument(Element e)
+    public WSDDDocument(Element e) throws WSDDException
     {
-        deploymentElement = e;
         doc = e.getOwnerDocument();
-    }
-
-    public Document getDOMDocument() throws DeploymentException {
-        return getDocument();
+        dep = new WSDDDeployment(e);
     }
 
     /**
@@ -118,53 +115,32 @@ public class WSDDDocument
      */
     public WSDDDeployment getDeployment()
     {
-        getDocument();
-
-        if (null == dep) {
-            try {
-                if (null == deploymentElement) {
-                    // create both the DOM and WSDD deployment 'child'
-                    dep = new WSDDDeployment(doc);
-                }
-                else {
-                    // create the WSDD 'child' from the given DOM deployment
-                    dep = new WSDDDeployment(deploymentElement);
-                }
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-
-                // log the stack trace?
-                //
-                // leave dep as null
-            }
-        }
-
+        if (dep == null)
+            dep = new WSDDDeployment();
         return dep;
     }
 
-    /**
-     *
-     * @return XXX
-     */
-    public Document getDocument()
-    {
-        if (null == doc) {
-            doc = XMLUtils.newDocument();
-            Element el = doc.createElementNS(WSDDConstants.WSDD_NS, "deployment");
-            el.setAttributeNS(
-                            Constants.NS_URI_XMLNS,
-                            "xmlns",
-                            WSDDConstants.WSDD_NS);
-            doc.appendChild(el);
-            try {
-                dep = new WSDDDeployment(el);
-            } catch (WSDDException e) {
-                return null;
-            }
+    public Document getDOMDocument() throws DeploymentException {
+        StringWriter writer = new StringWriter();
+        SerializationContext context = new SerializationContext(writer, null);
+        context.setPretty(true);
+        try {
+            dep.writeToContext(context);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        try {
+            writer.close();
+            return XMLUtils.newDocument(new InputSource(new StringReader(writer.getBuffer().toString())));
+        } catch (IOException e) {
+            return null;
+        }
+    }
 
-        return doc;
+    public void writeToContext(SerializationContext context)
+        throws IOException
+    {
+        getDeployment().writeToContext(context);
     }
 
     /**
@@ -174,22 +150,6 @@ public class WSDDDocument
     public void setDocument(Document document)
     {
         doc = document;
-
-        dep = null;
-    }
-
-    /**
-     * Remove both the DOM and WSDD deployment
-     */
-    public void removeDeployment()
-    {
-        if (null == dep) {
-            return;
-        }
-
-        Element e = dep.getElement();
-
-        e.getParentNode().removeChild(e);
 
         dep = null;
     }
@@ -211,17 +171,12 @@ public class WSDDDocument
         }
 
         WSDDHandler[]     handlers   = dep.getHandlers();
-        WSDDChain[]       chains     = dep.getChains();
         WSDDTransport[]   transports = dep.getTransports();
         WSDDService[]     services   = dep.getServices();
         WSDDTypeMapping[] mappings   = dep.getTypeMappings();
 
         for (int n = 0; n < handlers.length; n++) {
             registry.deployHandler(handlers[n]);
-        }
-
-        for (int n = 0; n < chains.length; n++) {
-            registry.deployHandler(chains[n]);
         }
 
         for (int n = 0; n < transports.length; n++) {
@@ -242,10 +197,11 @@ public class WSDDDocument
                                                DeploymentRegistry registry) 
             throws DeploymentException {
         TypeMappingRegistry tmr     =
-            registry.getTypeMappingRegistry(mapping.getEncodingStyle());
-
+                registry.getTypeMappingRegistry(mapping.getEncodingStyle());
+        
         if (tmr == null) {
-            tmr = new SOAPTypeMappingRegistry();
+            tmr = new TypeMappingRegistry();
+            tmr.setParent(SOAPTypeMappingRegistry.getSingleton());
 
             registry.addTypeMappingRegistry(mapping.getEncodingStyle(),
                                             tmr);
@@ -276,20 +232,5 @@ public class WSDDDocument
     }
 
     public void importItem(DeployableItem item) throws DeploymentException {
-        if (!(item instanceof WSDDElement))
-            return;
-/*
-            throw new DeploymentException("Importing non-WSDD item " +
-                                          item.getClass().getName() +
-                                          " into WSDD document!");
-*/
-        
-        WSDDElement elem = (WSDDElement)item;
-        
-        // Don't bother importing if we own it already.
-        if (elem.getElement().getOwnerDocument().equals(getDOMDocument()))
-            return;
-        
-        getDeployment().addChild((WSDDElement)item);
     }
 }

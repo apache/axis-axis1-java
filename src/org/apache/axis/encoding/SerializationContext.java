@@ -479,8 +479,8 @@ public class SerializationContext
         }
 
         if (onlyXML) {
-          indent--;
-          if (pretty) for (int i=0; i<indent; i++) writer.write(' ');
+            if (pretty) for (int i=0; i<indent; i++) writer.write(' ');
+            indent--;
         }
         writer.write("</");
         writer.write(elementQName);

@@ -52,100 +52,27 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.deployment.wsdd;
+package org.apache.axis.deployment.wsdd.providers;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
+import org.apache.axis.Handler;
+import org.apache.axis.deployment.DeploymentRegistry;
+import org.apache.axis.deployment.wsdd.WSDDProvider;
+import org.apache.axis.deployment.wsdd.WSDDService;
 
 
 /**
  *
  */
-public class WSDDParameter
-    extends WSDDElement
+public class WSDDJavaMsgProvider
+    extends WSDDProvider
 {
-
     /**
      *
-     * @param e (Element) XXX
-     * @throws WSDDException XXX
      */
-    public WSDDParameter(Element e)
-        throws WSDDException
+    public Handler newProviderInstance(WSDDService service,
+                                       DeploymentRegistry registry)
+        throws Exception
     {
-        super(e, "parameter");
-    }
-
-    /**
-     *
-     * @param d (Document) XXX
-     * @param n (Node) XXX
-     * @throws WSDDException XXX
-     */
-    public WSDDParameter(Document d, Node n)
-        throws WSDDException
-    {
-        super(d, n, "parameter");
-    }
-
-    /**
-     *
-     * @return XXX
-     */
-    public String getName()
-    {
-        return getAttribute("name");
-    }
-
-    /**
-     *
-     * @param newName XXX
-     */
-    public void setName(String newName)
-    {
-        setAttribute("name", newName);
-    }
-
-    /**
-     *
-     * @return XXX
-     */
-    public String getValue()
-    {
-        return getAttribute("value");
-    }
-
-    /**
-     *
-     * @param newValue XXX
-     */
-    public void setValue(String newValue)
-    {
-        setAttribute("value", newValue);
-    }
-	
-    /**
-     *
-     * @return XXX
-     */
-    public boolean getLocked()
-    {
-
-        String locked = getAttribute("locked");
-
-        return ((locked != null) && locked.equals("true"));
-    }
-
-    /**
-     *
-     * @param locked XXX
-     */
-    public void setLocked(boolean locked)
-    {
-
-        setAttribute("locked", (locked
-                                ? "true"
-                                : "false"));
+        return new org.apache.axis.providers.java.MsgProvider();
     }
 }

@@ -65,7 +65,6 @@ import org.apache.axis.SimpleChain;
 import org.apache.axis.providers.java.RPCProvider;
 import org.apache.axis.providers.java.MsgProvider;
 import org.apache.axis.deployment.wsdd.*;
-import org.apache.axis.deployment.wsdd.providers.WSDDJavaProvider;
 import org.apache.axis.deployment.DeploymentException;
 import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.client.AxisClient;
@@ -84,9 +83,13 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 import javax.xml.rpc.namespace.QName;
 import java.io.FileInputStream;
+import java.io.StringWriter;
+import java.io.StringReader;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Hashtable;
@@ -309,6 +312,8 @@ public class Admin {
             throw new AxisFault(e);
         }
         
+        engine.saveConfiguration();
+        
         doc = XMLUtils.newDocument();
         doc.appendChild( root = doc.createElementNS("", "Admin" ) );
         root.appendChild( doc.createTextNode( "Done processing" ) );
@@ -513,33 +518,20 @@ public class Admin {
     public static Document listConfig(AxisEngine engine)
         throws AxisFault
     {
-        return engine.
-                getDeploymentRegistry().
-                getConfigDocument().
-                getDOMDocument();
-//        Document doc = XMLUtils.newDocument();
-//
-//        Element tmpEl = doc.createElementNS("", "engineConfig");
-//        doc.appendChild(tmpEl);
-//
-//        Element el = doc.createElementNS("", "handlers");
-//        list(el, engine.getHandlerRegistry());
-//        tmpEl.appendChild(el);
-//
-//        el = doc.createElementNS("", "services");
-//        list(el, engine.getServiceRegistry());
-//        tmpEl.appendChild(el);
-//
-//        el = doc.createElementNS("", "transports");
-//        list(el, engine.getTransportRegistry());
-//        tmpEl.appendChild(el);
-//
-//        category.debug( "Outputting registry");
-//        el = doc.createElementNS("", "typeMappings");
-//        engine.getTypeMappingRegistry().dumpToElement(el);
-//        tmpEl.appendChild(el);
-//
-//        return( doc );
+        StringWriter writer = new StringWriter();
+        SerializationContext context = new SerializationContext(writer, null);
+        context.setPretty(true);
+        try {
+            engine.getDeploymentRegistry().writeToContext(context);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            writer.close();
+            return XMLUtils.newDocument(new InputSource(new StringReader(writer.getBuffer().toString())));
+        } catch (IOException e) {
+            return null;
+        }
     }
 
     /**
@@ -613,16 +605,17 @@ public class Admin {
             WSDDDocument wsddDoc = (WSDDDocument)engine.
                     getDeploymentRegistry().getConfigDocument();
             
-            WSDDChain chain = wsddDoc.getDeployment().createChain();
+            WSDDChain chain = new WSDDChain();
             chain.setName(name);
             chain.setOptionsHashtable(options);
 
             StringTokenizer st = new StringTokenizer( flow, " \t\n\r\f," );
             while ( st.hasMoreElements() ) {
                 String handlerName = st.nextToken();
-                WSDDHandler handler = chain.createHandler();
+                WSDDHandler handler = new WSDDHandler();
                 //handler.setName(handlerName);
-                handler.setType(handlerName);
+                handler.setType(new QName("", handlerName));
+                chain.addHandler(handler);
             }
 
             engine.getDeploymentRegistry().deployHandler(chain);
@@ -658,19 +651,19 @@ public class Admin {
                 "Services must use targeted chains",
                 null, null );
 
-        WSDDDocument wd = (WSDDDocument)engine.getDeploymentRegistry().getConfigDocument();
-        WSDDService serv = wd.getDeployment().createService();
+        WSDDService serv = new WSDDService();
         
         serv.setName(name);
         
         if ( request != null && !"".equals(request) ) {
             st = new StringTokenizer( request, " \t\n\r\f," );
-            WSDDRequestFlow req = serv.createRequestFlow();
-            WSDDChain chain = req.createChain();
+            WSDDRequestFlow req = new WSDDRequestFlow();
+            serv.setRequestFlow(req);
             while ( st.hasMoreElements() ) {
                 hName = st.nextToken();
-                WSDDHandler h = chain.createHandler();
-                h.setType(hName);
+                WSDDHandler h = new WSDDHandler();
+                h.setType(new QName("",hName));
+                req.addHandler(h);
             }
         }
 
@@ -682,25 +675,25 @@ public class Admin {
         if (pivotHandler == null)
             throw new AxisFault("No pivot handler '" + pivot + "' found!");
         Class pivotClass = pivotHandler.getClass();
-        if ((pivotClass != RPCProvider.class) &&
-            (pivotClass != MsgProvider.class)) {
-            throw new AxisFault("Only RPCDispatcher or MsgDispatcher are allowed as service pivots! (you specified '" + pivot + "')");
+        if (pivotClass == RPCProvider.class) {
+            serv.setProviderQName(WSDDConstants.JAVARPC_PROVIDER);
+        } else if (pivotClass != MsgProvider.class) {
+            serv.setProviderQName(WSDDConstants.JAVAMSG_PROVIDER);
+        } else {
+            serv.setParameter("handlerClass", pivotClass.getName());
+            serv.setProviderQName(WSDDConstants.HANDLER_PROVIDER);
         }
-
-        if ( pivot != null && !"".equals(pivot) ) {
-            WSDDProvider provider = serv.createProvider(WSDDJavaProvider.class);
-            provider.setAttribute("type", pivot);
-            provider.setProviderAttribute("className", (String)opts.get("className"));
-        }
+        
 
         if ( response != null && !"".equals(response) ) {
             st = new StringTokenizer( response, " \t\n\r\f," );
-            WSDDResponseFlow resp = serv.createResponseFlow();
-            WSDDChain chain = resp.createChain();
+            WSDDResponseFlow resp = new WSDDResponseFlow();
+            serv.setResponseFlow(resp);
             while ( st.hasMoreElements() ) {
                 hName = st.nextToken();
-                WSDDHandler h = chain.createHandler();
-                h.setType(hName);
+                WSDDHandler h = new WSDDHandler();
+                h.setType(new QName("", hName));
+                resp.addHandler(h);
             }
         }
 
@@ -772,27 +765,29 @@ public class Admin {
         Vector respNames = new Vector();
 
         WSDDDocument wd = (WSDDDocument)engine.getDeploymentRegistry().getConfigDocument();
-        WSDDTransport transport = wd.getDeployment().createTransport();
+        WSDDTransport transport = new WSDDTransport();
         
         transport.setName(name);
 
         if (request != null) {
-            WSDDRequestFlow req = transport.createRequestFlow();
-            WSDDChain chain = req.createChain();
+            WSDDRequestFlow req = new WSDDRequestFlow();
+            transport.setRequestFlow(req);
             st = new StringTokenizer( request, " \t\n\r\f," );
             while ( st.hasMoreElements() ) {
-                WSDDHandler h = chain.createHandler();
-                h.setType(st.nextToken());
+                WSDDHandler h = new WSDDHandler();
+                h.setType(new QName("", st.nextToken()));
+                req.addHandler(h);
             }
         }
 
         if (response != null) {
-            WSDDResponseFlow resp = transport.createResponseFlow();
-            WSDDChain chain = resp.createChain();
+            WSDDResponseFlow resp = new WSDDResponseFlow();
+            transport.setResponseFlow(resp);
             st = new StringTokenizer( response, " \t\n\r\f," );
             while ( st.hasMoreElements() ) {
-                WSDDHandler h = chain.createHandler();
-                h.setType(st.nextToken());
+                WSDDHandler h = new WSDDHandler();
+                h.setType(new QName("", st.nextToken()));
+                resp.addHandler(h);
             }
         }
 
@@ -814,7 +809,7 @@ public class Admin {
                                             DeploymentRegistry registry)
         throws Exception
     {
-        WSDDTypeMapping mapping = container.createTypeMapping();
+        WSDDTypeMapping mapping = new WSDDTypeMapping();
         
         // Retrieve classname attribute
         String classname = elem.getAttribute("classname");

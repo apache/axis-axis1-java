@@ -55,6 +55,7 @@
 package org.apache.axis.deployment.wsdd;
 
 import org.apache.axis.Handler;
+import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.deployment.DeployableItem;
 import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.utils.LockableHashtable;
@@ -62,10 +63,13 @@ import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.rpc.namespace.QName;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Set;
+import java.io.IOException;
 
 
 /**
@@ -76,44 +80,58 @@ public abstract class WSDDDeployableItem
     extends WSDDElement
     implements DeployableItem
 {
-    /** XXX */
-    LockableHashtable parms;
+    /** Our parameters */
+    LockableHashtable parameters;
 
-    /** XXX */
+    /** Our name */
     QName qname;
+    
+    /** Our type */
+    QName type;
 
+    /**
+     * Default constructor
+     */ 
+    public WSDDDeployableItem()
+    {
+    }
+    
     /**
      *
      * @param e (Element) XXX
      * @param n (String) XXX
      * @throws WSDDException XXX
      */
-    public WSDDDeployableItem(Element e, String n)
+    public WSDDDeployableItem(Element e)
         throws WSDDException
     {
-        super(e, n);
-    }
+        super(e);
+        
+        String name = e.getAttribute("name");
+        if (name != null && !name.equals("")) {
+//            qname = XMLUtils.getQNameFromString(name, e);
+            qname = new QName("", name);
+        }
+        
+        //!!! default namespace?
+        
+        String typeStr = e.getAttribute("type");
+        if (typeStr != null && !typeStr.equals(""))
+            type = XMLUtils.getQNameFromString(typeStr, e);
 
-    /**
-     *
-     * @param d (Document) XXX
-     * @param n (Node) XXX
-     * @param s (String) XXX
-     * @throws WSDDException XXX
-     */
-    public WSDDDeployableItem(Document d, Node n, String s)
-        throws WSDDException
-    {
-        super(d, n, s);
-    }
-
-    /**
-     *
-     * @return XXX
-     */
-    public String getName()
-    {
-        return getAttribute("name");
+        if (parameters == null)
+            parameters = new LockableHashtable();
+        
+        // Load up our params
+        Element [] paramElements = getChildElements(e, "parameter");
+        for (int i = 0; i < paramElements.length; i++) {
+            Element param = paramElements[i];
+            String pname = param.getAttribute("name");
+            String value = param.getAttribute("value");
+            String locked = param.getAttribute("locked");
+            parameters.put(pname, value, (locked != null &&
+                                    locked.equalsIgnoreCase("true")));
+        }
     }
 
     /**
@@ -122,7 +140,12 @@ public abstract class WSDDDeployableItem
      */
     public void setName(String name)
     {
-        setAttribute("name", name);
+        qname = new QName(null, name);
+    }
+    
+    public void setQName(QName qname)
+    {
+        this.qname = qname;
     }
 
     /**
@@ -131,20 +154,6 @@ public abstract class WSDDDeployableItem
      */
     public QName getQName()
     {
-        if (qname == null) {
-            String nsURI =
-                getElement().getOwnerDocument().getDocumentElement()
-                    .getAttributeNS(org.apache.axis.Constants
-                        .URI_2000_SCHEMA_XSI, "targetNamespace");
-
-            if (nsURI.equals("")) {
-                qname = new QName(null, getName());
-            }
-            else {
-                qname = new QName(nsURI, getName());
-            }
-        }
-
         return qname;
     }
 
@@ -154,41 +163,46 @@ public abstract class WSDDDeployableItem
      */
     public QName getType()
     {
-        String type = getAttribute("type");
-        if (type != null && !type.equals(""))
-            return XMLUtils.getQNameFromString(type, getElement());
-
-        return null;
+        return type;
     }
 
     /**
      *
      * @param type XXX
      */
-    public void setType(String type) throws WSDDException
+    public void setType(QName type)
     {
-        setAttribute("type", type);
+        this.type = type;
     }
 
+    /**
+     * Set a parameter
+     */ 
+    public void setParameter(String name, String value)
+    {
+        if (parameters == null)
+            parameters = new LockableHashtable();
+        parameters.put(name, value);
+    }
+    
+    /**
+     * Get the value of one of our parameters
+     */ 
+    public String getParameter(String name)
+    {
+        if (name == null)
+            return null;
+        
+        return (String)parameters.get(name);
+    }
+    
     /**
      * Returns the config parameters as a hashtable (lockable)
      * @return XXX
      */
     public LockableHashtable getParametersTable()
     {
-        if (parms == null) {
-            parms = new LockableHashtable();
-
-            WSDDParameter[] ps = getParameters();
-
-            for (int n = 0; n < ps.length; n++) {
-                WSDDParameter p = (WSDDParameter) ps[n];
-
-                parms.put(p.getName(), p.getValue(), p.getLocked());
-            }
-        }
-
-        return parms;
+        return parameters;
     }
     
     /**
@@ -201,42 +215,31 @@ public abstract class WSDDDeployableItem
         if (hashtable == null)
             return;
         
-        parms = new LockableHashtable(hashtable);
-        Iterator i = parms.keySet().iterator();
+        parameters = new LockableHashtable(hashtable);
+    }
+    
+    public void writeParamsToContext(SerializationContext context)
+        throws IOException
+    {
+        if (parameters == null)
+            return;
+        
+        Set keys = parameters.keySet();
+        Iterator i = keys.iterator();
         while (i.hasNext()) {
             String name = (String)i.next();
-            String value = (String)parms.get(name);
-            WSDDParameter param = createParameter(name);
-            param.setValue(value);
+            AttributesImpl attrs = new AttributesImpl();
+            
+            attrs.addAttribute("", "name", "name", "CDATA", name);
+            attrs.addAttribute("", "value", "value", "CDATA", 
+                                   (String)parameters.get(name));
+            if (parameters.isKeyLocked(name)) {
+                attrs.addAttribute("", "locked", "locked", "CDATA", "true");
+            }
+
+            context.startElement(WSDDConstants.PARAM_QNAME, attrs);
+            context.endElement();
         }
-    }
-
-    /**
-     *
-     * @return XXX
-     */
-    public WSDDParameter[] getParameters()
-    {
-        WSDDElement[]   e = createArray("parameter", WSDDParameter.class);
-        WSDDParameter[] p = new WSDDParameter[e.length];
-
-        System.arraycopy(e, 0, p, 0, e.length);
-
-        return p;
-    }
-
-    /**
-     *
-     * @param name XXX
-     * @return XXX
-     */
-    public WSDDParameter createParameter(String name)
-    {
-        WSDDParameter p = (WSDDParameter) createChild(WSDDParameter.class);
-
-        p.setName(name);
-
-        return p;
     }
 
     /**
@@ -245,27 +248,7 @@ public abstract class WSDDDeployableItem
      */
     public void removeParameter(String name)
     {
-        WSDDParameter p = getParameter(name);
-
-        removeChild(p);
-    }
-
-    /**
-     *
-     * @param name XXX
-     * @return XXX
-     */
-    public WSDDParameter getParameter(String name)
-    {
-        WSDDParameter[] e = getParameters();
-
-        for (int n = 0; n < e.length; n++) {
-            if (e[n].getName().equals(name)) {
-                return e[n];
-            }
-        }
-
-        return null;
+        // !!! FILL IN
     }
 
     /**

@@ -279,9 +279,9 @@ public class XMLUtils {
 
     public static String getNamespace(String prefix, Node e) {
         while (e != null && (e.getNodeType() == Node.ELEMENT_NODE)) {
-            String name =
-                ((Element)e).getAttributeNS(Constants.NS_URI_XMLNS, prefix);
-            if (name != null && name.length() > 0) return name;
+            Attr attr =
+                ((Element)e).getAttributeNodeNS(Constants.NS_URI_XMLNS, prefix);
+            if (attr != null) return attr.getValue();
             e = e.getParentNode();
         }
         return null;

@@ -54,6 +54,8 @@
  */
 package org.apache.axis.deployment.wsdd;
 
+import javax.xml.rpc.namespace.QName;
+
 /**
  *
  */
@@ -76,4 +78,35 @@ public class WSDDConstants
     /** XXX */
     public final static String WSDD_BSF =
         "http://xml.apache.org/axis/wsdd/providers/bsf";
+    
+    public static final QName JAVARPC_PROVIDER = new QName(WSDD_JAVA,
+                                                        "RPC");
+    public static final QName JAVAMSG_PROVIDER = new QName(WSDD_JAVA,
+                                                        "MSG");
+    public static final QName HANDLER_PROVIDER = new QName("", "Handler");
+
+    public static final QName PARAM_QNAME = new QName(WSDD_NS,
+                                                      "parameter");
+    public static final QName DOC_QNAME = new QName(WSDD_NS,
+                                                    "documentation");
+    public static final QName DEPLOY_QNAME = new QName(WSDD_NS,
+                                                       "deployment");
+    public static final QName REQFLOW_QNAME = new QName(WSDD_NS,
+                                                        "requestFlow");
+    public static final QName RESPFLOW_QNAME = new QName(WSDD_NS,
+                                                         "responseFlow");
+    public static final QName FAULTFLOW_QNAME = new QName(WSDD_NS,
+                                                          "faultFlow");
+    public static final QName HANDLER_QNAME = new QName(WSDD_NS,
+                                                        "handler");
+    public static final QName CHAIN_QNAME = new QName(WSDD_NS,
+                                                      "chain");
+    public static final QName SERVICE_QNAME = new QName(WSDD_NS,
+                                                        "service");
+    public static final QName TRANSPORT_QNAME = new QName(WSDD_NS,
+                                                          "transport");
+    public static final QName GLOBAL_QNAME = new QName(WSDD_NS,
+                                                       "globalConfiguration");
+    public static final QName TYPE_QNAME = new QName(WSDD_NS,
+                                                     "typeMapping");
 }
