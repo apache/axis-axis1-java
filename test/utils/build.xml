@@ -59,6 +59,7 @@ Copyright:
     </classpath>
     <include name="test/utils/*.java"/>
     <include name="test/utils/cache/*.java"/>
+    <include name="test/utils/bytecode/*.java"/>
     <include name="test/AxisTestBase.java"/>
   </javac>
 </target>
