@@ -551,9 +551,20 @@ public class BeanSerializer implements Serializer, Serializable {
                                       QName qname,
                                       QName xmlType, AttributesImpl attrs,
                                       SerializationContext context) throws Exception {
-        String propString = context.getValueAsString(propValue, xmlType);
+
         String namespace = qname.getNamespaceURI();
         String localName = qname.getLocalPart();
+
+        // org.xml.sax.helpers.AttributesImpl JavaDoc says: "For the
+        // sake of speed, this method does no checking to see if the
+        // attribute is already in the list: that is the
+        // responsibility of the application." check for the existence
+        // of the attribute to avoid adding it more than once.
+        if (attrs.getIndex(namespace, localName) != -1) {
+            return;
+        }
+
+        String propString = context.getValueAsString(propValue, xmlType);
 
         attrs.addAttribute(namespace,
                            localName,
