@@ -77,6 +77,7 @@ import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.net.Socket;
 import java.net.URL;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
@@ -181,8 +182,8 @@ public class HTTPSender extends BasicHandler {
 
                         // Make sure to read all the response from the proxy to prevent SSL negotiation failure
                         // Response message terminated by two sequential newlines
-                        int		newlinesSeen = 0;
-                        boolean		headerDone = false;	/* Done on first newline */
+                        int     newlinesSeen = 0;
+                        boolean     headerDone = false; /* Done on first newline */
 
                         while (newlinesSeen < 2) {
                             int i = tunnelInputStream.read();
@@ -365,6 +366,17 @@ public class HTTPSender extends BasicHandler {
              .append( ": \"" )
              .append( action )
              .append( "\"\r\n");
+
+            // adding user-defined/platform-dependent HTTP headers
+            if (msgContext.getProperty(HTTPConstants.REQUEST_HEADERS)!=null) {
+                Hashtable headerTable = 
+                    (Hashtable)msgContext.getProperty(HTTPConstants.REQUEST_HEADERS);
+                for (Enumeration e = headerTable.keys(); e.hasMoreElements(); ) {
+                    Object key = e.nextElement();
+                    header.append(key).append(": ")
+                     .append(headerTable.get(key)).append("\r\n");
+                }
+            }
 
             header.append("\r\n");
 
