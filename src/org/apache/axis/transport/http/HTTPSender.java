@@ -350,7 +350,9 @@ public class HTTPSender extends BasicHandler {
         if (mimeHeaders != null) {
             for (Iterator i = mimeHeaders.getAllHeaders(); i.hasNext(); ) {
                 MimeHeader mimeHeader = (MimeHeader) i.next();
-                if (mimeHeader.getName().equals(HTTPConstants.HEADER_CONTENT_TYPE)) {
+                String headerName = mimeHeader.getName();
+                if (headerName.equals(HTTPConstants.HEADER_CONTENT_TYPE)
+                        || headerName.equals(HTTPConstants.HEADER_SOAP_ACTION)) {
                 	continue;
                 }
                 header2.append(mimeHeader.getName())
