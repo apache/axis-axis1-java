@@ -352,8 +352,7 @@ public class TypeMappingImpl implements TypeMapping
         }
 
         if (sf == null && delegate != null) {
-            sf = (SerializerFactory)
-                delegate.getSerializer(javaType, xmlType);
+            sf = delegate.getSerializer(javaType, xmlType);
         }
         return sf;
     }
@@ -471,8 +470,7 @@ public class TypeMappingImpl implements TypeMapping
         df = (javax.xml.rpc.encoding.DeserializerFactory) pair2DF.get(pair);
 
         if (df == null && delegate != null) {
-            df = (javax.xml.rpc.encoding.DeserializerFactory)
-                delegate.getDeserializer(javaType, xmlType);
+            df = delegate.getDeserializer(javaType, xmlType);
         }
         return df;
     }
