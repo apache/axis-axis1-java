@@ -10,6 +10,8 @@ package test.wsdl.interop4.groupG.dime.doc;
 import org.apache.axis.Message;
 import org.apache.axis.AxisEngine;
 
+import java.util.Collection;
+
 public class AttachmentsBindingImpl implements test.wsdl.interop4.groupG.dime.doc.AttachmentsPortType{
     public org.apache.axis.attachments.OctetStream echoAttachment(org.apache.axis.attachments.OctetStream in) throws java.rmi.RemoteException {
         return in;
@@ -30,6 +32,10 @@ public class AttachmentsBindingImpl implements test.wsdl.interop4.groupG.dime.do
     }
 
     public void echoUnrefAttachments() throws java.rmi.RemoteException {
+        org.apache.axis.Message reqMsg = AxisEngine.getCurrentMessageContext().getRequestMessage();
+        Collection attachments = reqMsg.getAttachmentsImpl().getAttachments();
+        org.apache.axis.Message respMsg = AxisEngine.getCurrentMessageContext().getResponseMessage();
+        respMsg.getAttachmentsImpl().setAttachmentParts(attachments);
     }
 
     public java.lang.String echoAttachmentAsString(java.lang.String in) throws java.rmi.RemoteException {

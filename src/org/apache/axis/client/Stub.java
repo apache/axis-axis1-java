@@ -62,6 +62,7 @@ import org.apache.axis.utils.Messages;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
 import javax.xml.rpc.Service;
+import javax.activation.DataHandler;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
@@ -95,6 +96,9 @@ public abstract class Stub implements javax.xml.rpc.Stub {
     // Support for Header
     private Vector headers = new Vector();
 
+    // Support for Attachments
+    private Vector attachments = new Vector();
+    
     // Flag to determine whether this is the first call to register type mappings.
     // This need not be synchronized because firstCall is ONLY called from within
     // a synchronized block in the generated stub code.
@@ -294,10 +298,9 @@ public abstract class Stub implements javax.xml.rpc.Stub {
 
     /**
      * Set the header
-     * @namespace namespace
+     * @param namespace
      * @param partName that uniquely identify a header object.
      * @param headerValue Object that is sent in the request as a SOAPHeader
-     * @return void
      */
     public void setHeader(String namespace, String partName, Object headerValue) {
         headers.add(new SOAPHeaderElement(namespace, partName, headerValue));
@@ -310,6 +313,26 @@ public abstract class Stub implements javax.xml.rpc.Stub {
         headers.add(header);
     }
 
+    /**
+     * Extract attachments
+     * @param call
+     */ 
+    public void extractAttachments(Call call) {
+        attachments.clear();
+        Iterator iterator = call.getResponseMessage().getAttachments();
+        while(iterator.hasNext()){
+            attachments.add(iterator.next());
+        }
+    }
+    
+    /**
+     * Add an attachment
+     * @param handler
+     */ 
+    public void addAttachment(Object handler) {
+        attachments.add(handler);        
+    }
+    
     /**
      * Get the header element
      */ 
@@ -333,13 +356,29 @@ public abstract class Stub implements javax.xml.rpc.Stub {
     }
 
     /**
+     * Get the array of attachments
+     */ 
+    public Object[] getAttachments() {
+        Object[] array = new Object[attachments.size()];
+        attachments.copyInto(array);
+        attachments.clear();
+        return array;
+    }
+
+    /**
      * This method clears both requestHeaders and responseHeaders hashtables.
-     * @return void
      */
     public void clearHeaders() {
         headers.clear();
     }
     
+    /**
+     * This method clears the request attachments.
+     */
+    public void clearAttachments() {
+        attachments.clear();
+    }
+
     protected void setRequestHeaders(org.apache.axis.client.Call call) throws AxisFault {		
         SOAPHeaderElement[] headers = getHeaders();
         for(int i=0;i<headers.length;i++){
@@ -347,9 +386,15 @@ public abstract class Stub implements javax.xml.rpc.Stub {
         }
     }  
 
+    protected void setAttachments(org.apache.axis.client.Call call) throws AxisFault {
+        Object[] attachments = getAttachments();
+        for(int i=0;i<attachments.length;i++){
+            call.addAttachmentPart(attachments[i]);
+        }
+    }  
+
     /**
      * Helper method for updating headers from the response.
-     * @return void
      */
     protected void getResponseHeaders(org.apache.axis.client.Call call) throws AxisFault {		
         org.apache.axis.Message response = call.getMessageContext().getResponseMessage();      
