@@ -108,6 +108,13 @@ public class AxisServlet extends AxisServletBase {
     private static Log tlog =
         LogFactory.getLog("org.apache.axis.TIME");
 
+    /**
+     * a separate log for exceptions lets users route them
+     * differently from general low level debug info
+     */
+    private static Log exceptionLog =
+            LogFactory.getLog("org.apache.axis.EXCEPTIONS");
+
     public static final String INIT_PROPERTY_TRANSPORT_NAME =
         "transport.name";
 
@@ -178,7 +185,7 @@ public class AxisServlet extends AxisServletBase {
         jwsClassDir = getOption(context, INIT_PROPERTY_JWS_CLASS_DIR, null);
 
         /**
-         * There are DEFINITATE problems here if
+         * There are DEFINATE problems here if
          * getHomeDir and/or getDefaultJWSClassDir return null
          * (as they could with WebLogic).
          * This needs to be reexamined in the future, but this
@@ -196,11 +203,8 @@ public class AxisServlet extends AxisServletBase {
 
 
     /**
-     * Process GET requests. Because Axis does not support the GET-style
-     * pseudo execution of SOAP methods, this handler deals with queries
-     * of various kinds, not real SOAP actions.
+     * Process GET requests. This includes handoff of pseudo-SOAP requests
      *
-     * @todo for secure installations, dont stack trace on faults
      * @param request request in
      * @param response request out
      * @throws ServletException
@@ -261,92 +265,61 @@ public class AxisServlet extends AxisServletBase {
                 // get message context w/ various properties set
                 MessageContext msgContext = createMessageContext(engine, request, response);
 
-                try {
-                    // NOTE:  HttpUtils.getRequestURL has been deprecated.
-                    // This line SHOULD be:
-                    //    String url = req.getRequestURL().toString()
-                    // HOWEVER!!!!  DON'T REPLACE IT!  There's a bug in
-                    // req.getRequestURL that is not in HttpUtils.getRequestURL
-                    // req.getRequestURL returns "localhost" in the remote
-                    // scenario rather than the actual host name.
-                    //
-                    // ? Still true?  For which JVM's?
-                    String url = HttpUtils.getRequestURL(request).toString();
+                // NOTE:  HttpUtils.getRequestURL has been deprecated.
+                // This line SHOULD be:
+                //    String url = req.getRequestURL().toString()
+                // HOWEVER!!!!  DON'T REPLACE IT!  There's a bug in
+                // req.getRequestURL that is not in HttpUtils.getRequestURL
+                // req.getRequestURL returns "localhost" in the remote
+                // scenario rather than the actual host name.
+                //
+                // ? Still true?  For which JVM's?
+                String url = HttpUtils.getRequestURL(request).toString();
 
-                    msgContext.setProperty(MessageContext.TRANS_URL, url);
+                msgContext.setProperty(MessageContext.TRANS_URL, url);
 
 
-                    if (wsdlRequested) {
-                        // Do WSDL generation
-                        processWsdlRequest(msgContext, response, writer);
-                    } else if (listRequested) {
-                        // Do list, if it is enabled
-                        processListRequest(response, writer);
-                    } else if (hasParameters) {
-                        // If we have ?method=x&param=y in the URL, make a stab
-                        // at invoking the method with the parameters specified
-                        // in the URL
+                if (wsdlRequested) {
+                    // Do WSDL generation
+                    processWsdlRequest(msgContext, response, writer);
+                } else if (listRequested) {
+                    // Do list, if it is enabled
+                    processListRequest(response, writer);
+                } else if (hasParameters) {
+                    // If we have ?method=x&param=y in the URL, make a stab
+                    // at invoking the method with the parameters specified
+                    // in the URL
 
-                        processMethodRequest(msgContext, request, response, writer);
+                    processMethodRequest(msgContext, request, response, writer);
+
+                } else {
+
+                    // See if we can locate the desired service.  If we
+                    // can't, return a 404 Not Found.  Otherwise, just
+                    // print the placeholder message.
+
+                    String serviceName;
+                    if (pathInfo.startsWith("/")) {
+                        serviceName = pathInfo.substring(1);
+                    } else {
+                        serviceName = pathInfo;
+                    }
+
+                    SOAPService s = engine.getService(serviceName);
+                    if (s == null) {
+                        //no service: report it
+                        if(isJWSPage) {
+                            reportCantGetJWSService(request, response, writer);
+                        } else {
+                            reportCantGetAxisService(request, response, writer);
+                        }
 
                     } else {
-
-                        // See if we can locate the desired service.  If we
-                        // can't, return a 404 Not Found.  Otherwise, just
-                        // print the placeholder message.
-
-                        String serviceName;
-                        if (pathInfo.startsWith("/")) {
-                            serviceName = pathInfo.substring(1);
-                        } else {
-                            serviceName = pathInfo;
-                        }
-
-                        SOAPService s = engine.getService(serviceName);
-                        if (s == null) {
-                            //no service: report it
-                            if(isJWSPage) {
-                                reportCantGetJWSService(request, response, writer);
-                            } else {
-                                reportCantGetAxisService(request, response, writer);
-                            }
-
-                        } else {
-                            //print a snippet of service info.
-                            reportServiceInfo(response, writer, s, serviceName);
-                        }
+                        //print a snippet of service info.
+                        reportServiceInfo(response, writer, s, serviceName);
                     }
-                } catch (AxisFault fault) {
-                    log.error(Messages.getMessage("exception00"), fault);
-                    response.setContentType("text/html");
-                    response.setStatus(500);
-                    writer.println("<h2>" +
-                                   Messages.getMessage("error00") + "</h2>");
-                    writer.println("<p>" +
-                                   Messages.getMessage("somethingWrong00") +
-                                   "</p>");
-                    writer.println("<pre>Fault - " + fault.toString() + " </pre>");
-                    writer.println("<pre>" + fault.dumpToString() + " </pre>");
-                } catch (Exception e) {
-                    log.error(Messages.getMessage("exception00"), e);
-                    response.setContentType("text/html");
-                    response.setStatus(500);
-                    writer.println("<h2>" +
-                                   Messages.getMessage("error00") +
-                                   "</h2>");
-                    writer.println("<p>" +
-                                   Messages.getMessage("somethingWrong00") +
-                                   "</p>");
-                    writer.println("<pre>Exception - " + e + "<br>");
-                    //dev systems only give fault dumps
-                    if (isDevelopment()) {
-                        writer.println(JavaUtils.stackToString(e));
-                    }
-                    writer.println("</pre>");
                 }
-            }
-            else
-            {
+            } else {
                 // We didn't have a real path in the request, so just
                 // print a message informing the user that they reached
                 // the servlet.
@@ -360,14 +333,76 @@ public class AxisServlet extends AxisServletBase {
                                          "<b>" + transportName + "</b>"));
                 writer.println("</html>");
             }
+        } catch (AxisFault fault) {
+            reportTroubleInGet(fault, response, writer);
+        } catch (Exception e) {
+            reportTroubleInGet(e, response, writer);
         } finally {
             writer.close();
-
             if (isDebug)
                 log.debug("Exit: doGet()");
         }
     }
 
+    /**
+     * when we get an exception or an axis fault in a GET, we handle
+     * it almost identically: we go 'something went wrong', set the response
+     * code to 500 and then dump info. But we dump different info for an axis fault
+     * or subclass thereof.
+     * @param exception what went wrong
+     * @param response current response
+     * @param writer open writer to response
+     */
+    private void reportTroubleInGet(Exception exception, HttpServletResponse response, PrintWriter writer) {
+        response.setContentType("text/html");
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        writer.println("<h2>" +
+                       Messages.getMessage("error00") +
+                       "</h2>");
+        writer.println("<p>" +
+                       Messages.getMessage("somethingWrong00") +
+                       "</p>");
+        if(exception instanceof AxisFault) {
+            AxisFault fault=(AxisFault)exception;
+            processAxisFault(fault);
+            writer.println("<pre>Fault - " + fault.toString() + " </pre>");
+            writer.println("<pre>" + fault.dumpToString() + " </pre>");
+        } else {
+            logException(exception);
+            writer.println("<pre>Exception - " + exception + "<br>");
+            //dev systems only give fault dumps
+            if (isDevelopment()) {
+                writer.println(JavaUtils.stackToString(exception));
+            }
+            writer.println("</pre>");
+        }
+    }
+
+    /**
+     * routine called whenever an axis fault is caught; where they
+     * are logged and any other business. The method may modify the fault
+     * in the process
+     * @param fault what went wrong.
+     */
+    protected void processAxisFault(AxisFault fault) {
+        //log the fault
+        if(exceptionLog.isDebugEnabled()) {
+            exceptionLog.debug(Messages.getMessage("axisFault00"), fault);
+        }
+        //dev systems only give fault dumps
+        if (!isDevelopment()) {
+            //strip out the stack trace
+            fault.removeFaultDetail(Constants.QNAME_FAULTDETAIL_STACKTRACE);
+        }
+    }
+
+    /**
+     * log any exception to our output log, at our chosen level
+     * @param e what went wrong
+     */
+    protected void logException(Exception e) {
+        exceptionLog.info(Messages.getMessage("exception00"), e);
+    }
     /**
      * scan through the request for parameters, invoking the endpoint
      * if we get a method param. If there was no method param then the
@@ -440,12 +475,12 @@ public class AxisServlet extends AxisServletBase {
         } catch (AxisFault axisFault) {
             //the no-service fault is mapped to a no-wsdl error
             if(axisFault.getFaultCode() .equals(Constants.QNAME_NO_SERVICE_FAULT_CODE)) {
-                //which we log before reporting.
-                if(log.isDebugEnabled()) {
-                    log.debug(Messages.getMessage("exception00"), axisFault);
-                }
+                //which we log
+                processAxisFault(axisFault);
+                //then report
                 reportNoWSDL(response, writer, "noWSDL01", axisFault);
             } else {
+                //all other faults get thrown
                 throw axisFault;
             }
         }
@@ -487,7 +522,8 @@ public class AxisServlet extends AxisServletBase {
             response.setContentType("text/xml");
             writer.println(respMsg.getSOAPPartAsString());
         } else {
-            //TODO: error code
+            //tell the caller that something is wrong
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             writer.println("<p>" +
                    Messages.getMessage("noResponse01") +
                            "</p>");
@@ -600,11 +636,23 @@ public class AxisServlet extends AxisServletBase {
     protected void reportAvailableServices(HttpServletResponse response,
                                        PrintWriter writer,
                                        HttpServletRequest request)
-            throws ConfigurationException, AxisFault {
+            throws  ConfigurationException, AxisFault {
         AxisEngine engine = getEngine();
         response.setContentType("text/html");
         writer.println("<h2>And now... Some Services</h2>");
-        Iterator i = engine.getConfig().getDeployedServices();
+
+        Iterator i;
+        try {
+            i = engine.getConfig().getDeployedServices();
+        } catch (ConfigurationException configException) {
+            //turn any internal configuration exceptions back into axis faults
+            //if that is what they are
+            if(configException.getContainedException() instanceof AxisFault) {
+                throw (AxisFault) configException.getContainedException();
+            } else {
+                throw configException;
+            }
+        }
         String baseURL = getWebappBase(request)+"/services/";
         writer.println("<ul>");
         while (i.hasNext()) {
@@ -758,51 +806,60 @@ public class AxisServlet extends AxisServletBase {
                 /* Invoke the Axis engine... */
                 /*****************************/
                 if(isDebug) log.debug("Invoking Axis Engine.");
+                //here we run the message by the engine
                 engine.invoke(msgContext);
                 if(isDebug) log.debug("Return from Axis Engine.");
                 if( tlog.isDebugEnabled() ) {
                     t2=System.currentTimeMillis();
                 }
-
                 responseMsg = msgContext.getResponseMessage();
-                contentType = responseMsg.getContentType(msgContext.getSOAPConstants()); 
             } catch (AxisFault e) {
-                log.error(Messages.getMessage("exception00"), e);
+                //log and sanitize
+                processAxisFault(e);
+                // then get the status code
                 // It's been suggested that a lack of SOAPAction
                 // should produce some other error code (in the 400s)...
                 int status = getHttpServletResponseStatus(e);
-                if (status == HttpServletResponse.SC_UNAUTHORIZED)
+                if (status == HttpServletResponse.SC_UNAUTHORIZED) {
+                    // unauth access results in authentication request
+                    // TODO: less generic realm choice?
                   res.setHeader("WWW-Authenticate","Basic realm=\"AXIS\"");
-                  // TODO: less generic realm choice?
+                }
                 res.setStatus(status);
                 responseMsg = msgContext.getResponseMessage();
-                if (responseMsg == null)
+                if (responseMsg == null) {
                     responseMsg = new Message(e);
-                contentType = responseMsg.getContentType(msgContext.getSOAPConstants()); 
+                }
             } catch (Exception e) {
-                log.error(Messages.getMessage("exception00"), e);
+                //other exceptions are internal trouble
+                logException(e);
                 res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 responseMsg = msgContext.getResponseMessage();
-                if (responseMsg == null)
-                    responseMsg = new Message(AxisFault.makeFault(e));
-                contentType = responseMsg.getContentType(msgContext.getSOAPConstants()); 
+                if (responseMsg == null) {
+                    AxisFault fault=AxisFault.makeFault(e);
+                    processAxisFault(fault);
+                    responseMsg = new Message(fault);
+                }
             }
         } catch (AxisFault fault) {
-            log.error(Messages.getMessage("axisFault00"), fault);
+            processAxisFault(fault);
             responseMsg = msgContext.getResponseMessage();
-            if (responseMsg == null)
+            if (responseMsg == null) {
                 responseMsg = new Message(fault);
-            contentType = responseMsg.getContentType(msgContext.getSOAPConstants()); 
+            }
         }
+        //determine content type from message response
+        contentType = responseMsg.getContentType(msgContext.getSOAPConstants());
         if( tlog.isDebugEnabled() ) {
             t3=System.currentTimeMillis();
         }
 
         /* Send response back along the wire...  */
         /***********************************/
-        if (responseMsg != null)
+        if (responseMsg != null) {
             sendResponse(getProtocolVersion(req), contentType,
                          res, responseMsg);
+        }
 
         if (isDebug) {
             log.debug("Response sent.");
@@ -884,7 +941,7 @@ public class AxisServlet extends AxisServletBase {
 
                 responseMsg.writeTo(res.getOutputStream());
             } catch (SOAPException e){
-                log.error(Messages.getMessage("exception00"), e);
+                logException(e);
             }
         }
 
@@ -991,7 +1048,7 @@ public class AxisServlet extends AxisServletBase {
                                                               "SOAPAction"),
                                          null, null);
 
-            log.error(Messages.getMessage("genFault00"), af);
+            exceptionLog.error(Messages.getMessage("genFault00"), af);
 
             throw af;
         }
