@@ -91,19 +91,17 @@ public abstract class Stub implements javax.xml.rpc.Stub {
     protected Integer    cachedTimeout      = null;
 
     // Flag to determine whether this is the first call to register type mappings.
-    // firstCallLock is used to access this in a thread-safe manner.
-    private boolean firstCall     = true;
-    private Object  firstCallLock = new Object();
+    // This need not be synchronized because firstCall is ONLY called from within
+    // a synchronized block in the generated stub code.
+    private boolean firstCall = true;
 
     /**
      * Is this the first time the type mappings are being registered?
      */
     protected boolean firstCall() {
-        synchronized (firstCallLock) {
-            boolean ret = firstCall;
-            firstCall = false;
-            return ret;
-        }
+        boolean ret = firstCall;
+        firstCall = false;
+        return ret;
     } // firstCall
 
     /**

@@ -208,27 +208,29 @@ public class JavaStubWriter extends JavaClassWriter {
             pw.println("            // " + JavaUtils.getMessage("typeMap02"));
             pw.println("            // " + JavaUtils.getMessage("typeMap03"));
             pw.println("            // " + JavaUtils.getMessage("typeMap04"));
-            pw.println("            if (firstCall()) {");
+            pw.println("            synchronized (this) {");
+            pw.println("                if (firstCall()) {");
             
             // Hack alert - we need to establish the encoding style before we register type mappings due
             // to the fact that TypeMappings key off of encoding style
-            pw.println("                // "
+            pw.println("                    // "
                     + JavaUtils.getMessage("mustSetStyle"));
             if (bEntry.hasLiteral()) {
-                pw.println("                call.setEncodingStyle(null);");
+                pw.println("                    call.setEncodingStyle(null);");
             } else {
-                pw.println("                call.setEncodingStyle(org.apache.axis.Constants.URI_SOAP11_ENC);");
+                pw.println("                    call.setEncodingStyle(org.apache.axis.Constants.URI_SOAP11_ENC);");
             }
             
-            pw.println("                for (int i = 0; i < cachedSerFactories.size(); ++i) {");
-            pw.println("                    Class cls = (Class) cachedSerClasses.get(i);");
-            pw.println("                    javax.xml.rpc.namespace.QName qName =");
-            pw.println("                            (javax.xml.rpc.namespace.QName) cachedSerQNames.get(i);");
-            pw.println("                    Class sf = (Class)");
-            pw.println("                             cachedSerFactories.get(i);");
-            pw.println("                    Class df = (Class)");
-            pw.println("                             cachedDeserFactories.get(i);");
-            pw.println("                    call.registerTypeMapping(cls, qName, sf, df, false);");
+            pw.println("                    for (int i = 0; i < cachedSerFactories.size(); ++i) {");
+            pw.println("                        Class cls = (Class) cachedSerClasses.get(i);");
+            pw.println("                        javax.xml.rpc.namespace.QName qName =");
+            pw.println("                                (javax.xml.rpc.namespace.QName) cachedSerQNames.get(i);");
+            pw.println("                        Class sf = (Class)");
+            pw.println("                                 cachedSerFactories.get(i);");
+            pw.println("                        Class df = (Class)");
+            pw.println("                                 cachedDeserFactories.get(i);");
+            pw.println("                        call.registerTypeMapping(cls, qName, sf, df, false);");
+            pw.println("                    }");
             pw.println("                }");
             pw.println("            }");
         }
