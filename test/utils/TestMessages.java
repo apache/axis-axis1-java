@@ -161,26 +161,30 @@ public class TestMessages extends TestCase {
                 // Get the arguments for the getMessage call
                 String[] msgArgs = args(string);
 
-                // The first argument is the key
-                String key = msgArgs[0].substring(1, msgArgs[0].length() - 1);
-
-                // Get the raw message
-                String value = null;
-                try {
-                    value = JavaUtils.getMessage(key);
-                }
-                catch (Throwable t) {
-                    errors = errors + "File:  " + file.getPath() + " " + t.getMessage() + '\n';
-                }
-                // The realParms count is the number of strings in the message of the form:
-                // {X} where X is 0..9
-                int realParms = count(value);
-
-                // The expectedParms count is the number of arguments to getMessage minus the
-                // first argument.
-                int expectedParms = msgArgs.length - 1;
-                if (realParms != expectedParms) {
-                    errors = errors + "File:  " + file.getPath() + " " + key + " has " + realParms + " parameters, " + expectedParms + " expected.\n";
+                // The first argument is the key.
+                // If the key is a literal string, check the usage.
+                // If the key is not a literal string, accept the usage.
+                if (msgArgs[0].startsWith("\"")) {
+                    String key = msgArgs[0].substring(1, msgArgs[0].length() - 1);
+                    
+                    // Get the raw message
+                    String value = null;
+                    try {
+                        value = JavaUtils.getMessage(key);
+                    }
+                    catch (Throwable t) {
+                        errors = errors + "File:  " + file.getPath() + " " + t.getMessage() + '\n';
+                    }
+                    // The realParms count is the number of strings in the message of the form:
+                    // {X} where X is 0..9
+                    int realParms = count(value);
+                    
+                    // The expectedParms count is the number of arguments to getMessage minus the
+                    // first argument.
+                    int expectedParms = msgArgs.length - 1;
+                    if (realParms != expectedParms) {
+                        errors = errors + "File:  " + file.getPath() + " " + key + " has " + realParms + " parameters, " + expectedParms + " expected.\n";
+                    }
                 }
                 index = string.indexOf("JavaUtils.getMessage(");
             }

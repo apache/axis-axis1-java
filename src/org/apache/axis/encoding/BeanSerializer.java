@@ -389,6 +389,8 @@ public class BeanSerializer extends Deserializer
         context.endElement();
     }
 
+
+
     /**
      * Override serialization - all that is needed is the class
      */

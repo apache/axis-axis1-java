@@ -74,47 +74,6 @@
         </xsd:sequence>
       </xsd:complexType>
 
-    <!-- Arrays of arrays -->
-      <xsd:complexType name="Array2">
-        <xsd:complexContent>
-          <xsd:restriction base="soapenc:Array">
-            <xsd:sequence>
-              <xsd:element name="alias" type="typens:intArray" maxOccurs="unbounded"/>
-            </xsd:sequence>
-          </xsd:restriction>
-        </xsd:complexContent>
-      </xsd:complexType>
-
-      <xsd:complexType name="Array3">
-        <xsd:complexContent>
-          <xsd:restriction base="soapenc:Array">
-            <xsd:sequence>
-              <xsd:element name="alias" type="typens:Array2" maxOccurs="unbounded"/>
-            </xsd:sequence>
-          </xsd:restriction>
-        </xsd:complexContent>
-      </xsd:complexType>
-
-    <!-- Arrays of arrays -->
-      <xsd:complexType name="Array2S">
-        <xsd:complexContent>
-          <xsd:restriction base="soapenc:Array">
-            <xsd:sequence>
-              <xsd:element name="alias" type="typens:petArray" maxOccurs="unbounded"/>
-            </xsd:sequence>
-          </xsd:restriction>
-        </xsd:complexContent>
-      </xsd:complexType>
-
-      <xsd:complexType name="Array3S">
-        <xsd:complexContent>
-          <xsd:restriction base="soapenc:Array">
-            <xsd:sequence>
-              <xsd:element name="alias" type="typens:Array2S" maxOccurs="unbounded"/>
-            </xsd:sequence>
-          </xsd:restriction>
-        </xsd:complexContent>
-      </xsd:complexType>
     </xsd:schema>
 
   </types>
@@ -157,22 +116,6 @@
     <part name="id" type="xsd:int"/>
   </message>
 
-  <message name="Array3Request">
-    <part name="in" type="typens:Array3"/>
-  </message>
-
-  <message name="Array3Response">
-    <part name="out" type="typens:Array3"/>
-  </message>
-
-  <message name="Array3SRequest">
-    <part name="in" type="typens:Array3S"/>
-  </message>
-
-  <message name="Array3SResponse">
-    <part name="out" type="typens:Array3S"/>
-  </message>
-
   <!-- port type declns -->
   <portType name="PersonalInfoBook">
     <operation name="addEntry">
@@ -193,14 +136,6 @@
     <operation name="getID2FromName">
       <input message="tns:GetID2FromNameRequest"/>
       <output message="tns:GetID2FromNameResponse"/>
-    </operation>
-    <operation name="testArray3">
-      <input message="tns:Array3Request"/>
-      <output message="tns:Array3Response"/>
-    </operation>
-    <operation name="testArray3S">
-      <input message="tns:Array3SRequest"/>
-      <output message="tns:Array3SResponse"/>
     </operation>
   </portType>
 
@@ -261,32 +196,6 @@
       </output>
     </operation>
     <operation name="getID2FromName">
-      <soap:operation soapAction=""/>
-      <input>
-        <soap:body use="encoded"
-                   namespace="urn:ArrayTest"
-                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
-      </input>
-      <output>
-        <soap:body use="encoded"
-                   namespace="urn:ArrayTest"
-                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
-      </output>
-    </operation>
-    <operation name="testArray3">
-      <soap:operation soapAction=""/>
-      <input>
-        <soap:body use="encoded"
-                   namespace="urn:ArrayTest"
-                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
-      </input>
-      <output>
-        <soap:body use="encoded"
-                   namespace="urn:ArrayTest"
-                   encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
-      </output>
-    </operation>
-    <operation name="testArray3S">
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded"

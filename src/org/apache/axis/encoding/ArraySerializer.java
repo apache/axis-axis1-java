@@ -67,7 +67,9 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.HashSet;
 import java.util.List;
+import java.util.StringTokenizer;
 
 /** An ArraySerializer handles serializing and deserializing SOAP
  * arrays.
@@ -75,6 +77,9 @@ import java.util.List;
  * Some code borrowed from ApacheSOAP - thanks to Matt Duftler!
  * 
  * @author Glen Daniels (gdaniels@macromedia.com)
+ * 
+ * Multi-reference stuff:
+ * @author Rich Scheuerle (scheu@us.ibm.com)
  */
 
 public class ArraySerializer extends Deserializer
@@ -105,7 +110,47 @@ public class ArraySerializer extends Deserializer
     public int curIndex = 0;
     QName arrayItemType;
     int length;
-    
+    ArrayList mDimLength = null;  // If set, array of multi-dim lengths 
+    ArrayList mDimFactor = null;  // If set, array of factors for multi-dim arrays
+    HashSet waiting = new HashSet();  // List of indices waiting for completion
+
+    /**
+     * During processing, the Array Deserializer stores the array in 
+     * an ArrayListExtension class.  This class contains all of the
+     * normal function of an ArrayList, plus it keeps a list of the
+     * converted array values.  This class is essential to support
+     * arrays that are multi-referenced.
+     **/
+    public class ArrayListExtension extends ArrayList {
+        private Hashtable table = null;
+        
+        /**
+         * Constructors
+         */
+        ArrayListExtension() {
+            super();
+        }
+        ArrayListExtension(int length) {
+            super(length);
+        }
+        /**
+         * Store converted value
+         **/
+        public void setConvertedValue(Class cls, Object value) {
+            if (table == null)
+                table = new Hashtable();
+            table.put(cls, value);
+        }
+        /**
+         * Get previously converted value
+         **/
+        public Object getConvertedValue(Class cls) {
+            if (table == null)
+                return null;
+            return table.get(cls);
+        }
+    }
+   
     public void onStartElement(String namespace, String localName,
                              String qName, Attributes attributes,
                              DeserializationContext context)
@@ -144,8 +189,6 @@ public class ArraySerializer extends Deserializer
             // with a componentType of ArrayList.class
             arrayItemType = new QName(Constants.URI_SOAP_ENC, "Array");
             componentType = ArrayList.class;
-            //throw new IllegalArgumentException(
-            //        JavaUtils.getMessage("noArrayArray00", "" + arrayTypeValue));
         }
         else
             arrayItemType = new QName(arrayTypeValueNamespaceURI,
@@ -157,15 +200,26 @@ public class ArraySerializer extends Deserializer
         
         if (lengthStr.length() > 0)
         {
-            if (lengthStr.indexOf(',') != -1)
-            {
-                throw new IllegalArgumentException(
-                        JavaUtils.getMessage("noMultiArray00", lengthStr));
-            }
-
             try
             {
-                length = Integer.parseInt(lengthStr);
+                StringTokenizer tokenizer = new StringTokenizer(lengthStr, "[],");
+
+                length = Integer.parseInt(tokenizer.nextToken());
+
+                if (tokenizer.hasMoreTokens())
+                    {
+                        // If the array is passed as a multi-dimensional array
+                        // (i.e. int[2][3]) then store all of the mult-dim lengths.
+                        // The valueReady method uses this array to set the
+                        // proper mult-dim element.
+                        mDimLength = new ArrayList();
+                        mDimLength.add(new Integer(length));
+                        
+                        while(tokenizer.hasMoreTokens()) {
+                            mDimLength.add(new Integer(Integer.parseInt(tokenizer.nextToken())));
+                        }
+                    }
+
 
                 // If the componentType was not already determined to be an 
                 // array, go and get it.
@@ -178,7 +232,9 @@ public class ArraySerializer extends Deserializer
                             JavaUtils.getMessage("noComponent00",  "" + arrayItemType));
                 
                 
-                ArrayList list = new ArrayList(length);
+                // Create an ArrayListExtension class to store the ArrayList
+                // plus converted objects.
+                ArrayList list = new ArrayListExtension(length);
                 // ArrayList lacks a setSize(), so...
                 for (int i = 0; i < length; i++) {
                     list.add(null);
@@ -196,7 +252,7 @@ public class ArraySerializer extends Deserializer
         {
             // asize with no integers: size must be determined by inspection
             // of the actual members.
-            value = new ArrayList();
+            value = new ArrayListExtension();
         }
         
         String offset = attributes.getValue(Constants.URI_SOAP_ENC,
@@ -212,9 +268,9 @@ public class ArraySerializer extends Deserializer
                 throw new SAXException(
                         JavaUtils.getMessage("badOffset00", offset));
             }
-            
-            curIndex = Integer.parseInt(offset.substring(leftBracketIndex + 1,
-                                                         rightBracketIndex));
+
+            curIndex = convertToIndex(offset.substring(leftBracketIndex + 1,rightBracketIndex),
+                                      "badOffset00");
         }
         
         if (category.isDebugEnabled()) {
@@ -248,9 +304,8 @@ public class ArraySerializer extends Deserializer
                             JavaUtils.getMessage("badPosition00", pos));
                 }
                 
-                curIndex = 
-                       Integer.parseInt(pos.substring(leftBracketIndex + 1,
-                                                      rightBracketIndex));
+                curIndex = convertToIndex(pos.substring(leftBracketIndex + 1,rightBracketIndex),
+                                          "badPosition00");
             }
 
             // If the xsi:nil attribute, set the value to null and return since
@@ -272,15 +327,42 @@ public class ArraySerializer extends Deserializer
         
         Deserializer dSer = context.getTypeMappingRegistry().
                                         getDeserializer(itemType);
-        dSer.registerCallback(this, new Integer(curIndex++));
+        // Register the call back and indicate to wait for 
+        // index to be set before calling completing
+        dSer.registerCallback(this, new Integer(curIndex));
+        waiting.add(new Integer(curIndex));
+
+        curIndex++;
         
         if (category.isDebugEnabled()) {
             category.debug(JavaUtils.getMessage("exit00", "ArraySerializer.onStartChild()"));
         }
         return dSer;
     }
-    
-    public void valueReady(Object value, Object hint)
+
+    /** 
+     * Need to wait for all indices to be set.
+     */
+    protected boolean componentsReady() {
+        return (waiting.size() == 0);
+    }
+
+    /**
+     * valueReady is called during deserialization to assign
+     * the Object value to the array position indicated by hint.
+     * The hint is always a single Integer.  If the array being
+     * deserialized is a multi-dimensional array, the hint is 
+     * converted into a series of indices to set the correct
+     * nested position.
+     * The array deserializer always deserializes into
+     * an ArrayList, which is converted and copied into the
+     * actual array after completion (by valueComplete).
+     * It is important to wait until all indices have been 
+     * processed before invoking valueComplete.
+     * @param value value of the array element
+     * @param hint index of the array element (Integer)
+     **/
+    public void valueReady(Object value, Object hint) throws SAXException
     {
         if (category.isDebugEnabled()) {
             category.debug(JavaUtils.getMessage("gotValue00", "ArraySerializer", "[" + hint +
@@ -289,13 +371,158 @@ public class ArraySerializer extends Deserializer
         ArrayList list = (ArrayList)this.value;
         int offset = ((Integer)hint).intValue();
 
-        // grow the list if necessary to accomodate the new member
-        while (list.size() <= offset) {
-          list.add(null);
+        if (this.mDimLength == null) {
+            // Normal Case: Set the element in the list
+            // grow the list if necessary to accomodate the new member
+            while (list.size() <= offset) {
+                list.add(null);
+            }
+
+            list.set(offset, value);
+        } else {
+            // Multi-Dim Array case:  Need to find the nested ArrayList
+            // and set the proper element.
+
+            // Convert the offset into a series of indices
+            ArrayList mDimIndex = toMultiIndex(offset);
+
+            // Get/Create the nested ArrayList
+            for(int i=0; i < mDimLength.size(); i++) {
+                int length = ((Integer)mDimLength.get(i)).intValue();
+                int index  = ((Integer)mDimIndex.get(i)).intValue();
+                while (list.size() < length) {
+                    list.add(null);
+                }
+                // If not the last dimension, get the nested ArrayList
+                // Else set the value
+                if (i < mDimLength.size()-1) {
+                    if (list.get(index) == null) {
+                        list.set(index, new ArrayList());
+                    }
+                    list = (ArrayList) list.get(index);                    
+                } else {
+                    list.set(index, value);
+                }
+            }
+        }
+        // If all indices are accounted for, the array is complete.
+        waiting.remove(hint);
+        if (isEnded && waiting.size()==0) {
+            valueComplete();
+        }
+    }
+    
+    /**
+     * Converts the given string to an index.
+     * Assumes the string consists of a brackets surrounding comma 
+     * separated digits.  For example "[2]" or [2,3]".
+     * The routine returns a single index.
+     * For example "[2]" returns 2.
+     * For example "[2,3]" depends on the size of the multiple dimensions.
+     *   if the dimensions are "[3,5]" then 13 is returned (2*5) + 3.
+     * @param string representing index text
+     * @param exceptKey exception message key
+     * @return index 
+     */
+    private int convertToIndex(String text, String exceptKey) throws SAXException {
+        StringTokenizer tokenizer = new StringTokenizer(text, "[],");
+        int index = 0;
+        try {
+            if (mDimLength == null) {
+                // Normal Case: Single dimension
+                index = Integer.parseInt(tokenizer.nextToken());
+                if (tokenizer.hasMoreTokens())
+                    throw new SAXException(JavaUtils.getMessage(exceptKey, text));
+            }
+            else {
+                // Multiple Dimensions: 
+                int dim = -1;
+                ArrayList work = new ArrayList();
+                while(tokenizer.hasMoreTokens()) {
+                    // Problem if the number of dimensions specified exceeds
+                    // the number of dimensions of arrayType
+                    dim++;
+                    if (dim >= mDimLength.size())
+                        throw new SAXException(JavaUtils.getMessage(exceptKey, text));
+
+                    // Get the next token and convert to integer
+                    int workIndex = Integer.parseInt(tokenizer.nextToken());
+
+                    // Problem if the index is out of range.                     
+                    if (workIndex < 0 || 
+                        workIndex >= ((Integer)mDimLength.get(dim)).intValue())
+                        throw new SAXException(JavaUtils.getMessage(exceptKey, text));
+                    
+                    work.add(new Integer(workIndex));
+                }
+                index = toSingleIndex(work); // Convert to single index
+            }
+        } catch (SAXException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new SAXException(JavaUtils.getMessage(exceptKey, text));
+        }
+        return index;
+    } 
+
+    /**
+     * Converts single index to list of multiple indices.
+     * @param single index
+     * @return list of multiple indices or null if not multiple indices.
+     */
+    private ArrayList toMultiIndex(int single) {
+        if (mDimLength == null) 
+            return null;
+
+        // Calculate the index factors if not already known
+        if (mDimFactor == null) {
+            mDimFactor = new ArrayList();
+            for (int i=0; i < mDimLength.size(); i++) {
+                int factor = 1;
+                for (int j=i+1; j<mDimLength.size(); j++) {
+                    factor *= ((Integer)mDimLength.get(j)).intValue();
+                }
+                mDimFactor.add(new Integer(factor));
+            }
         }
 
-        list.set(offset, value);
+        ArrayList rc = new ArrayList();
+        for (int i=0; i < mDimLength.size(); i++) {
+            int factor = ((Integer)mDimFactor.get(i)).intValue();
+            rc.add(new Integer(single / factor));
+            single = single % factor;
+        }
+        return rc;
     }
+
+    /**
+     * Converts multiple index to single index.
+     * @param Array list of multiple indices
+     * @return single index
+     */
+    private int toSingleIndex(ArrayList indexArray) {
+        if (mDimLength == null || indexArray == null) 
+            return -1;
+
+        // Calculate the index factors if not already known
+        if (mDimFactor == null) {
+            mDimFactor = new ArrayList();
+            for (int i=0; i < mDimLength.size(); i++) {
+                int factor = 1;
+                for (int j=i+1; j<mDimLength.size(); j++) {
+                    factor *= ((Integer)mDimLength.get(j)).intValue();
+                }
+                mDimFactor.add(new Integer(factor));
+            }
+        }
+
+        int single = 0;
+        for (int i=0; i < indexArray.size(); i++) {
+            single += ((Integer)mDimFactor.get(i)).intValue()*((Integer)indexArray.get(i)).intValue();
+        }
+        return single;
+    }
+
 
     public void serialize(QName name, Attributes attributes,
                           Object value, SerializationContext context)
@@ -339,16 +566,65 @@ public class ArraySerializer extends Deserializer
             dims += "[]";
         }
 
-        
+       
         QName componentQName = context.getQNameForClass(componentType);
         if (componentQName == null)
             throw new IOException(
                     JavaUtils.getMessage("noType00", componentType.getName()));
         String prefix = context.getPrefixForURI(componentQName.getNamespaceURI());
-        String arrayType = prefix + ":" + componentQName.getLocalPart();
+        String compType = prefix + ":" + componentQName.getLocalPart();
         int len = (list == null) ? Array.getLength(value) : list.size();
+
+        String arrayType = compType + dims + "[" + len + "]";
         
-        arrayType += dims + "[" + len + "]";
+        
+        // Discover whether array can be serialized directly as a two-dimensional
+        // array (i.e. arrayType=int[2,3]) versus an array of arrays.
+        // Benefits:
+        //   - Less text passed on the wire.
+        //   - Easier to read wire format
+        //   - Tests the deserialization of multi-dimensional arrays.
+        // Drawbacks:
+        //   - Is not safe!  It is possible that the arrays are multiply
+        //     referenced.  Transforming into a 2-dim array will cause the 
+        //     multi-referenced information to be lost.  Plus there is no
+        //     way to determine whether the arrays are multi-referenced.
+        //     Thus the code is currently disabled (see enable2Dim below).
+        //   
+        // In the future this code may be enabled for cases that we know
+        // are safe.
+        // (More complicated processing is necessary for 3-dim arrays, etc.
+        // This initial support is mainly used to test deserialization.)
+        //
+        int dim2Len = -1;
+        boolean enable2Dim = false;  // Disabled
+        if (enable2Dim && !dims.equals("")) {
+            if (cls.isArray() && len > 0) {
+                boolean okay = true;
+                // Make sure all of the component arrays are the same size
+                for (int i=0; i < len && okay; i++) {
+                
+                    Object elementValue = Array.get(value, i);
+                    if (elementValue == null)
+                        okay = false;
+                    else if (dim2Len < 0) {
+                        dim2Len = Array.getLength(elementValue);
+                        if (dim2Len <= 0) {
+                            okay = false;
+                        }
+                    } else if (dim2Len != Array.getLength(elementValue)) {
+                        okay = false;
+                    }
+                }
+                // Update the arrayType to use mult-dim array encoding
+                if (okay) {
+                    dims = dims.substring(0, dims.length()-2);
+                    arrayType = compType + dims + "[" + len + "," + dim2Len + "]";
+                } else {
+                    dim2Len = -1;
+                }
+            }
+        }
         
         Attributes attrs = attributes;
         
@@ -366,11 +642,23 @@ public class ArraySerializer extends Deserializer
         }
         
         context.startElement(name, attrs);
-        
-        for (int index = 0; index < len; index++)
-            context.serialize(new QName("","item"), null,
-                              (list == null) ? Array.get(value, index) :
-                                               list.get(index));
+
+        if (dim2Len < 0) {
+            // Normal case, serialize each array element
+            for (int index = 0; index < len; index++)
+                context.serialize(new QName("","item"), null,
+                                  (list == null) ? Array.get(value, index) :
+                                  list.get(index));
+        } else {
+            // Serialize as a 2 dimensional array
+            for (int index = 0; index < len; index++) {
+                for (int index2 = 0; index2 < dim2Len; index2++) {
+                   context.serialize(new QName("","item"), null,
+                                     Array.get(Array.get(value, index), index2));
+                }
+            }
+        }
+
         
         context.endElement();
     }

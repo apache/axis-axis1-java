@@ -135,6 +135,15 @@
         <mapping namespace="urn:ArrayTest2" package="test.arrays"/>
     </wsdl2java>
 
+    <!-- MArrayTests Test -->
+    <wsdl2java url="test/wsdl/marrays/MArrayTest.wsdl"
+               output="build/work"
+               deployscope="session"
+               skeleton="yes"
+               testcase="yes">
+        <mapping namespace="urn:MArrayTests" package="test.wsdl.marrays"/>
+    </wsdl2java>
+
     <!-- Import Test 1:  some namespace->package mappings from the -->
     <!--                 command line, some generated, some from   -->
     <!--                 NStoPkg.properties.                       -->

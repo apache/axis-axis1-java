@@ -55,7 +55,9 @@
 
 package org.apache.axis.encoding;
 
+import org.xml.sax.SAXException;
+
 public interface ValueReceiver
 {
-    public void valueReady(Object value, Object hint);
+    public void valueReady(Object value, Object hint) throws SAXException;
 }
