@@ -30,7 +30,9 @@ Table of Contents</h3>
 <a href="#Introduction">Introduction</a>
 <br><a href="#General Guidelines">General Guidelines</a>
 <br><a href="#Development Environment">Development Environment</a>
-<br><a href="#Logging/Tracing">Logging/Tracing</a>
+<br><a href="#Pluggable-Components">Pluggable-Components</a>
+<br>&nbsp;&nbsp;&nbsp;<a href="#Discovery">Discovery</a>
+<br>&nbsp;&nbsp;&nbsp;<a href="#Logging/Tracing">Logging/Tracing</a>
 <br><a href="#Configuration Properties">Configuration Properties</a>
 <br><a href="#Exception Handling">Exception Handling</a>
 <br><a href="#Compile And Run">Compile and Run</a>
@@ -115,7 +117,29 @@ variable so that the Axis tests do the same. Set ANT_OPTS to, for example:
 </blockquote>
 
 <h2>
-<a NAME="Logging/Tracing"></a>Logging/Tracing</h2>
+<a NAME="Pluggable-Components"></a>Pluggable-Components</h2>
+The <a href="architecture-guide.html">Axis Architecture Guide</a>
+explains the requirements for pluggable components.
+
+<h3>
+<a NAME="Discovery"></a>Discovery</h3>
+An axis-specific component factory should be created of the form:
+<ol>
+org.apache.axis.components.&lt;componentType>.&lt;factoryClassName>
+</ol>
+For example, <code>org.apache.axis.components.logger.LogFactory</code> is the factory,
+or discovery mechanism, for the logger component/service.
+<p>
+The <code>org.apache.axis.components.bytecode</code> package demonstrates
+both a factory, and supporting classes for different bytecode tools used
+by axis.  This is representative of a pluggable component that uses
+external tooling, but isolates them behind a 'thin' wrapper to AXIS,
+providing only the limited interface required by AXIS.
+This allows future designers
+and implementors to gain an explicit understanding of the AXIS's
+requirements on these tools.
+<h3>
+<a NAME="Logging/Tracing"></a>Logging/Tracing</h3>
 AXIS logging and tracing is based on the Logging component of the
 <a href="http://jakarta.apache.org/commons/index.html">Jakarta Commons</a>
 project, or the Jakarta Commons Logging (JCL) SPI.
@@ -126,7 +150,7 @@ other logging tools, including
 and
 <a>JDK 1.4</a>.
 The interface maps closely to Log4J and LogKit.
-<h3>Using the Logger SPI</h3>
+<h4>Using the Logger SPI</h4>
 <p>
 To use the JCL SPI from a Java class,
 include the following import statements:
@@ -134,7 +158,7 @@ include the following import statements:
 <code>
 import org.apache.commons.logging.Log;
 <br>
-import org.apache.commons.logging.LogFactory;
+import org.apache.axis.components.logger.LogFactory;
 <br>&nbsp;
 </code>
 </ul>
@@ -191,8 +215,8 @@ only needs to execute in support of logging,
 and that introduces undesirable runtime overhead
 in the general case (logging disabled).
 
-<h3>Guidelines</h3>
-<h4>Message Priorities</h4>
+<h4>Guidelines</h4>
+<h5>Message Priorities</h5>
 It is important to ensure that log message are
 appropriate in content and severity.
 The following guidelines are suggested:
@@ -226,7 +250,7 @@ Expect these to be written to logs only.
 These NEED NOT be internationalized, but it never hurts...</li>
 </ul>
 
-<h3><a NAME="Configuring the Logger">Configuring the Logger</a></h3>
+<h4><a NAME="Configuring the Logger">Configuring the Logger</a></h4>
 The Jakarta Commons Logging (JCL) SPI
 can be configured to use different logging toolkits.
 To configure which logger is used by the JCL, see the
@@ -237,7 +261,7 @@ logging toolkit being used.
 The JCL SPI (and hence AXIS) uses
 <a href="http://jakarta.apache.org/log4j/docs/index.html">Log4J</a>
 by default if it is available (in the CLASSPATH).
-<h4>Log4J</h4>
+<h5>Log4J</h5>
 As
 <a href="http://jakarta.apache.org/log4j/docs/index.html">Log4J</a>
 is the prefered/default logger for AXIS,
@@ -245,7 +269,7 @@ a <i>few</i> details are presented herein to get the developer going.
 <p>
 Configure Log4J using system properties and/or a properties file:
 <ul>
-<li><h5>log4j.configuration=<i>log4j.properties</i></h5></li>
+<li><h6>log4j.configuration=<i>log4j.properties</i></h6></li>
 Use this system property to specify the name of a Log4J configuration file.
 If not specified, the default configuration file is <i>log4j.properties</i>.
 A <i>log4j.properties</i> file is provided in <code>axis.jar</code>,
@@ -254,11 +278,11 @@ by placing a file of the same name so as to
 appear before <code>axis.jar</code> in the CLASSPATH.
 
 <br>&nbsp;
-<li><h5>log4j.rootCategory=<i>priority</i> [, <i>appender</i>]*</h5></li>
+<li><h6>log4j.rootCategory=<i>priority</i> [, <i>appender</i>]*</h6></li>
 Set the default (root) logger priority.
 
 <br>&nbsp;
-<li><h5>log4j.logger.<i>logger.name</i>=<i>priority</i></h5></li>
+<li><h6>log4j.logger.<i>logger.name</i>=<i>priority</i></h6></li>
 Set the priority for the named logger
 and all loggers hierarchically lower than, or below, the
 named logger.
@@ -283,7 +307,7 @@ Likewise, setting
 will enable debug message for all AXIS classes,
 but not for other Jakarta projects.
 <br>&nbsp;
-<li><h5>log4j.appender.<i>appender</i>.Threshold=<i>priority</i></h5></li>
+<li><h6>log4j.appender.<i>appender</i>.Threshold=<i>priority</i></h6></li>
 Log4J <i>appenders</i> correspond to different output devices:
 console, files, sockets, and others.
 If appender's <i>threshold</i>
@@ -310,6 +334,11 @@ Using this central point of access will allow the
 global configuration system to be redesigned
 to better support multiple AXIS engines in a
 single JVM.
+<p>
+A <code>getGlobalProperty()</code> method has also been added
+to <code>BasicHandler</code>.
+Handlers (ancestors of <code>BasicHandler</code>) should use this local method
+rather than accessing <code>AxisEngine.getGlobalProperty</code>.
 
 <h2>
 <a NAME="Exception Handling"></a>Exception Handling</h2>
