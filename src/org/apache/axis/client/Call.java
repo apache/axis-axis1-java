@@ -148,7 +148,7 @@ public class Call implements javax.xml.rpc.Call {
 
     private boolean            parmAndRetReq   = true ;
     private Service            service         = null ;
-    private QName              portTypeName    = new QName("");
+    private QName              portName        = new QName("");
     private QName              operationName   = null ;
     private QName              returnType      = null ;
 
@@ -192,8 +192,16 @@ public class Call implements javax.xml.rpc.Call {
     public static final String SEND_TYPE_ATTR    = "send_type_attr" ;
     public static final String TRANSPORT_NAME    = "transport_name" ;
     public static final String TRANSPORT_PROPERTY= "java.protocol.handler.pkgs";
-    public static final String JAXRPC_SERVICE    = "jaxrpc.service";
-    public static final String JAXRPC_PORTTYPE_NAME = "jaxrpc.porttype.name";
+
+    public static final String WSDL_SERVICE      = "wsdl.service";
+
+    public static final String WSDL_PORT_NAME    = "wsdl.portName";
+
+    // @deprecated use WSDL_SERVICE instead.
+    public static final String JAXRPC_SERVICE    = WSDL_SERVICE;
+
+    // @deprected use WSDL_PORT_NAME instead.
+    public static final String JAXRPC_PORTTYPE_NAME = WSDL_PORT_NAME;
 
     // If true, the code will throw a fault if there is no
     // response message from the server.  Otherwise, the
@@ -948,7 +956,7 @@ public class Call implements javax.xml.rpc.Call {
             throw new JAXRPCException( JavaUtils.getMessage("noService04") );
 
         // Make sure we're making a fresh start.
-        this.setPortTypeName( portName );
+        this.setPortName( portName );
         this.setOperationName( opName );
         this.setTargetEndpointAddress( (URL) null );
         this.setEncodingStyle( null );
@@ -1141,8 +1149,32 @@ public class Call implements javax.xml.rpc.Call {
      *
      * @return QName Fully qualified name of the port (or null if not set)
      */
+    public QName getPortName() {
+        return( portName );
+    } // getPortName
+
+    /**
+     * Sets the port name of this Call object.  This call will not set
+     * any additional fields, nor will it do any checking to verify that
+     * this port name is actually defined in the WSDL - for now anyway.
+     *
+     * @param portName Fully qualified name of the port
+     */
+    public void setPortName(QName portName) {
+        this.portName = portName;
+    } // setPortName
+
+    /**
+     * Returns the fully qualified name of the port for this Call object
+     * (if there is one).
+     *
+     * @return QName Fully qualified name of the port (or null if not set)
+     *
+     * @deprected This is really the service's port name, not portType name.
+     *            Use getPortName instead.
+     */
     public QName getPortTypeName() {
-        return( portTypeName );
+        return getPortName();
     }
 
     /**
@@ -1151,9 +1183,12 @@ public class Call implements javax.xml.rpc.Call {
      * this port type is actually defined in the WSDL - for now anyway.
      *
      * @param portType Fully qualified name of the portType
+     *
+     * @deprected This is really the service's port name, not portType name.
+     *            Use setPortName instead.
      */
     public void setPortTypeName(QName portType) {
-        portTypeName = portType ;
+        setPortName(portType);
     }
 
     /**
@@ -1921,8 +1956,8 @@ public class Call implements javax.xml.rpc.Call {
         msgContext.reset();
         msgContext.setResponseMessage(null);
         msgContext.setProperty( MessageContext.CALL, this );
-        msgContext.setProperty( JAXRPC_SERVICE, service );
-        msgContext.setProperty( JAXRPC_PORTTYPE_NAME, getPortTypeName() );
+        msgContext.setProperty( WSDL_SERVICE, service );
+        msgContext.setProperty( WSDL_PORT_NAME, getPortTypeName() );
 
         if (username != null) {
             msgContext.setUsername(username);
