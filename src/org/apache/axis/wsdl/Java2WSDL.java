@@ -204,7 +204,6 @@ public class Java2WSDL {
      */
     protected Java2WSDL() {
         emitter = createEmitter();
-        addOptions(options);
     } // ctor
 
 
@@ -241,6 +240,9 @@ public class Java2WSDL {
         switch (option.getId()) {
         case CLOption.TEXT_ARGUMENT:
             if (className != null) {
+                System.out.println(JavaUtils.getMessage("j2wDuplicateClass00", 
+                                                        className, 
+                                                        option.getArgument()));
                 printUsage();
             }
             className = option.getArgument();
@@ -378,6 +380,7 @@ public class Java2WSDL {
     protected void validateOptions() {
         // Can't proceed without a class name
         if ((className == null)) {
+            System.out.println(JavaUtils.getMessage("j2wMissingClass00"));
             printUsage();
         }
         

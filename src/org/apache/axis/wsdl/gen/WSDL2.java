@@ -147,6 +147,9 @@ public class WSDL2 {
         switch (option.getId()) {
             case CLOption.TEXT_ARGUMENT:
                 if (wsdlURI != null) {
+                    System.out.println(JavaUtils.getMessage("w2jDuplicateWSDLURI00", 
+                                                            wsdlURI, 
+                                                            option.getArgument()));
                     printUsage();
                 }
                 wsdlURI = option.getArgument();
@@ -186,6 +189,7 @@ public class WSDL2 {
      **/
     protected void validateOptions() {
         if (wsdlURI == null) {
+            System.out.println(JavaUtils.getMessage("w2jMissingWSDLURI00"));
             printUsage();
         }
 
