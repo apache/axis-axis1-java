@@ -196,9 +196,9 @@ Reference
 <tr>
 <td><code>org.apache.axis.components.net</code></td>
 <td><code>SocketFactoryFactory.getSecureFactory()</code></td>
-<td><code>SocketFactory</code></td>
+<td><code>SecureSocketFactory</code></td>
 <td><code>axis.socketSecureFactory</code></td>
-<td><code>JSSESocketFactory</code></td>
+<td><code>DefaultSecureSocketFactory</code></td>
 </tr>
 </table>
 
@@ -451,8 +451,11 @@ This method is called, passing <code>someContext</code> as the parameter.
 
 <br>&nbsp;
 <li>
-The implementation class is required to examine runtime environment
-(to optionally include the parameter).
+The <code>newFactory</code> method 
+is required to check the <code>someContext</code> parameter to determine if
+it is meaningfull to the class (at a minimum,
+verify that it is of an expected type, or class)
+and may, in addition, examine the overall runtime environment.
 If the environment can provide information required by
 an EngineConfigurationFactory,
 then the <code>newFactory()</code> may return in instance of that factory.
