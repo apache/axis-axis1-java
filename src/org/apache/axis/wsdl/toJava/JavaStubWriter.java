@@ -234,7 +234,7 @@ public class JavaStubWriter extends JavaClassWriter {
         }
         pw.println("            return _call;");
         pw.println("        }");
-        pw.println("        catch (Throwable t) {");
+        pw.println("        catch (java.lang.Throwable t) {");
         pw.println("            throw new org.apache.axis.AxisFault(\""
                 + Messages.getMessage("badCall01") + "\", t);");
         pw.println("        }");
