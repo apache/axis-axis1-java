@@ -129,16 +129,26 @@ public class SimpleAxisServer implements Runnable {
     private static byte UNAUTH[] = "401 Unauthorized".getBytes();
     private static byte ISE[]    = "500 Internal Server Error".getBytes();
 
-    // Standard MIME headers
-    private static byte MIME_STUFF[] =
+    // Standard MIME headers for XML payload
+    private static byte XML_MIME_STUFF[] =
         ( "\nContent-Type: text/xml; charset=utf-8\n" +
+          "Content-Length: ").getBytes();
+
+    // Standard MIME headers for HTML payload
+    private static byte HTML_MIME_STUFF[] =
+        ( "\nContent-Type: text/html; charset=utf-8\n" +
           "Content-Length: ").getBytes();
 
     // Mime/Content separator
     private static byte SEPARATOR[] = "\n\n".getBytes();
     
     // Tiddly little response
-    private static byte cannedResponse[] = "<empty/>".getBytes();
+    private static final String responseStr =
+            "<html><head><title>SimpleAxisServer</title></head>" +
+            "<body><h1>SimpleAxisServer</h1>" +
+            "You've reached the SimpleAxisServer." +
+            "</html>";
+    private static byte cannedHTMLResponse[] = responseStr.getBytes();
 
     // Axis specific constants
     private static String transportName = "SimpleHTTP";
@@ -202,6 +212,9 @@ public class SimpleAxisServer implements Runnable {
                 // assume the best
                 byte[] status = OK;
 
+                // assume we're not getting WSDL
+                boolean doWsdl = false;
+
                 // cookie for this session, if any
                 String cooky = null;
                 
@@ -219,6 +232,17 @@ public class SimpleAxisServer implements Runnable {
                     int contentLength = parseHeaders(is, soapAction, httpRequest,
                         fileName, cookie, cookie2, authInfo);
                     is.setContentLength(contentLength);
+
+                    int paramIdx = fileName.toString().indexOf('?');
+                    if (paramIdx != -1) {
+                        // Got params
+                        String params = fileName.substring(paramIdx + 1);
+                        fileName.setLength(paramIdx);
+                        category.debug("Filename is " + fileName.toString());
+                        category.debug("Params is " + params);
+                        if ("wsdl".equalsIgnoreCase(params))
+                            doWsdl = true;
+                    }
 
                     msgContext.setProperty(Constants.MC_REALPATH,
                                            fileName.toString());
@@ -253,28 +277,32 @@ public class SimpleAxisServer implements Runnable {
 
                     // if get, then return simpleton document as response
                     if (httpRequest.toString().equals("GET")) {
-                        engine.generateWSDL(msgContext);
-
-                        Document doc = (Document)msgContext.getProperty("WSDL");
-
                         OutputStream out = socket.getOutputStream();
                         out.write(HTTP);
                         out.write(status);
-                        out.write(MIME_STUFF);
 
-                        if (doc != null) {
-                            String response = XMLUtils.DocumentToString(doc);
-                            byte [] respBytes = response.getBytes();
+                        if (doWsdl) {
+                            engine.generateWSDL(msgContext);
 
-                            putInt(out, respBytes.length);
-                            out.write(SEPARATOR);
-                            out.write(respBytes);
-                        } else {
-                            putInt(out, cannedResponse.length);
-                            out.write(SEPARATOR);
-                            out.write(cannedResponse);
+                            Document doc = (Document)msgContext.getProperty("WSDL");
+
+                            if (doc != null) {
+                                String response = XMLUtils.DocumentToString(doc);
+                                byte [] respBytes = response.getBytes();
+
+                                out.write(XML_MIME_STUFF);
+                                putInt(out, respBytes.length);
+                                out.write(SEPARATOR);
+                                out.write(respBytes);
+                                out.flush();
+                                continue;
+                            }
                         }
 
+                        out.write(HTML_MIME_STUFF);
+                        putInt(out, cannedHTMLResponse.length);
+                        out.write(SEPARATOR);
+                        out.write(cannedHTMLResponse);
                         out.flush();
                         continue;
                     }
@@ -324,10 +352,12 @@ public class SimpleAxisServer implements Runnable {
                     engine.invoke(msgContext);
 
                 } catch( AxisFault af ) {
+                    category.error("HTTP server fault", af);
+
                     if ("Server.Unauthorized".equals(af.getFaultCode())) {
-                        status = ISE; // SC_INTERNAL_SERVER_ERROR
-                    } else {
                         status = UNAUTH; // SC_UNAUTHORIZED
+                    } else {
+                        status = ISE; // SC_INTERNAL_SERVER_ERROR
                     }
 
                     msgContext.setResponseMessage(new Message(af));
@@ -346,7 +376,7 @@ public class SimpleAxisServer implements Runnable {
                 OutputStream out = socket.getOutputStream();
                 out.write(HTTP);
                 out.write(status);
-                out.write(MIME_STUFF);
+                out.write(XML_MIME_STUFF);
                 putInt(out, response.length);
 
                 if (doSessions) {
@@ -493,11 +523,6 @@ public class SimpleAxisServer implements Runnable {
                 char c = (char)(buf[i + 5] & 0x7f);
                 if (c == ' ')
                     break;
-                if (c == '?') {
-                    // !!! eventually process args, for now always assume
-                    // WSDL....
-                    break;
-                }
                 fileName.append(c);
             }
             category.debug( "SimpleAxisServer: req filename='" + fileName.toString() + "'");
