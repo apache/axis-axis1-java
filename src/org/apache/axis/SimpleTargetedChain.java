@@ -65,7 +65,7 @@ import org.apache.axis.handlers.* ;
  *
  * @author Doug Davis (dug@us.ibm.com)
  */
-public class SimpleTargetedChain extends BasicHandler {
+public class SimpleTargetedChain extends BasicHandler implements TargetedChain  {
   protected Chain      inputChain ;
   protected Handler    pivotHandler ;
   protected Chain      outputChain ;
