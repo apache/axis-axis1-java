@@ -100,7 +100,7 @@ Contents
       </p>
     <ul>
         <li>In this directory, copy the jars associated with the JAXP 1.1 XML
-          compliant parser of your choice. We recommend xerces.jar
+          compliant parser of your choice. We recommend xerces jars
           from the <a href="http://xml.apache.org/dist/xerces-j/">xml-xerces distribution</a>,
           though others work. If you omit this stage you may be able to
           use the default XML parser provided by the web application.
@@ -114,13 +114,6 @@ Contents
       (see below) cannot find the relevant packages, place them in 
       CATALINA_HOME/common/lib and restart Tomcat. 
     
-    <h3>Axis 1.0 client and Java1.4</h3>
-    Axis 1.0 shipped with a bug that surfaced afterwards: clients need servlet.jar or
-    j2ee.jar on their classpath when running on Java1.4. This has been fixed in the 
-    CVS version. If you get a <tt>NoClassDefFoundError</tt> on the client side, with 
-    Java failing to find <tt>javax/servlet/ServletContext</tt>, either 
-    correct the classpath or upgrade to a later version of Axis.  
-
     <a name="start"/></a>
     <h2>Step 3: starting the web server</h2>
 
@@ -289,8 +282,6 @@ change URLs to correct host, port and webapp specifics.
         <li>Add axis.jar, commons-discovery.jar, commons-logging.jar, jaxrpc.jar, saaj.jar,
           log4j-1.2.4.jar (or whatever is appropriate for your chosen logging implementation),
           and the XML parser jar file or files (e.g., xerces.jar) to your classpath.
-        <li>If you are using Axis1.0 and Java1.4, you need to add servlet.jar to the classpath
-            as a workaround for the aforementioned bug.
         <li>Look in axis/samples/stock for the file deploy.wsdd. This is the deployment 
         descriptor we want to tell Axis about. 
           
