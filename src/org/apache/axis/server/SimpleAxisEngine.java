@@ -117,14 +117,16 @@ public class SimpleAxisEngine extends BasicHandler
         */
         msgContext.setProperty(Constants.SERVICE_REGISTRY, sr);
 
-        /** We must have a TARGET_SERVICE to continue.  This tells us which Handler to
-        * pull from the registry and call.  The Transport Listener is responsible
-        * for making sure this gets set, and if it isn't, we FAIL.
+        /** We must have a Target Service to continue.  This tells us which 
+        * Handler to pull from the registry and call.  The Transport Listener 
+        * is responsible for making sure this gets set, and if it isn't, 
+        * we FAIL.
         */
-        String target = (String) msgContext.getProperty( MessageContext.TARGET_SERVICE );
+        String target = (String) msgContext.getTargetService();
+
         if ( target == null )
             throw new AxisFault("Server.NoTargetConfigured",
-                "AxisEngine: Couldn't find a target property in the MessageContext!",
+                "AxisEngine: No targetService set",
                 null, null );
 
         Handler h = sr.find( target );
@@ -135,9 +137,6 @@ public class SimpleAxisEngine extends BasicHandler
                 "Service '" + target + "' was not found",
                 null, null );
         }
-
-        // Clear this for the next round of dispatch, if any.
-        msgContext.clearProperty( MessageContext.TARGET_SERVICE );
 
         h.init();   // ???
         try {

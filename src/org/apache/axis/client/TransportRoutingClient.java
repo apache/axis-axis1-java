@@ -66,7 +66,7 @@ import org.apache.axis.transport.http.HTTPConstants;
 /** This is a quick in-memory client to demonstrate how transport-dependent
  * routing works.  It pretends to be the AxisServlet with a SOAPAction header
  * of "EchoService".  This ends up calling the AxisServlet chain, which
- * sets the new TARGET_SERVICE to be the value of the SOAPAction header, and then
+ * sets the new TargetService to be the value of the SOAPAction header, and then
  * uses the Router handler to dispatch to the service.
  *
  * @author Glen Daniels (gdaniels@allaire.com)
@@ -96,7 +96,7 @@ public class TransportRoutingClient {
             
             /** The transport is http.
              */
-            msgContext.setProperty(MessageContext.TARGET_SERVICE, Constants.SERVLET_TARGET);
+            msgContext.setTargetService( Constants.SERVLET_TARGET );
             
             /** If we were a real servlet, we might have made the SOAPAction
              * HTTP header available like this...

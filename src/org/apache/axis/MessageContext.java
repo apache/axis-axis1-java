@@ -95,6 +95,12 @@ public class MessageContext {
     private Message outMessage ;
 
     /**
+     * That unique key/name that the next router/dispatch handler should use
+     * to determine what to do next.
+     */
+    private String targetService ;
+
+    /**
      * 
      */
     private Hashtable bag ;
@@ -131,6 +137,14 @@ public class MessageContext {
         outMessage = inMsg ;
     };
 
+    public String getTargetService() {
+      return( targetService );
+    }
+
+    public void setTargetService(String tServ) {
+      targetService = tServ ;
+    }
+
     /** Contains an instance of Handler, which is the
      *  ServiceContext and the entrypoint of this service.
      *
@@ -138,12 +152,6 @@ public class MessageContext {
      *   tool do this by default?  - todo by Jacek)
      */
     public static String SVC_HANDLER         = "service.handler";
-
-    /** Contains a String that should uniquely identify the
-     *  service that the current message is being sent to
-     */
-    public static String TARGET_SERVICE      = "service.target";
-
 
     /** This String is the URL that the message came to
      */

@@ -154,7 +154,7 @@ public class HTTPMessage {
     // For testing - skip HTTP layer
     if ( doLocal ) {
       client = new org.apache.axis.server.SimpleAxisEngine();
-      msgContext.setProperty( MessageContext.TARGET_SERVICE, action );
+      msgContext.setTargetService( action );
     }
 
     if ( true ) { // Debug.getDebugLevel() > 0  ) {
