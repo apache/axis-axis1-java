@@ -121,17 +121,7 @@ public class Utils {
         QName rc = qName;
         if (Constants.isSchemaXSD(rc.getNamespaceURI())) {
             String localName = rc.getLocalPart();
-            if (localName.equals("int") ||
-                localName.equals("long") ||
-                localName.equals("short") ||
-                localName.equals("float") ||
-                localName.equals("double") ||
-                localName.equals("boolean") ||
-                localName.equals("byte")) {
-                rc = findQName(Constants.URI_DEFAULT_SOAP_ENC, 
-                               qName.getLocalPart());
-            }
-            else if (localName.equals("base64Binary")) {
+            if (localName.equals("base64Binary")) {
                 rc = findQName(Constants.URI_DEFAULT_SOAP_ENC, "base64");
             } else if (localName.equals("hexBinary")) {
                 rc = findQName(Constants.URI_DEFAULT_SCHEMA_XSD, "hexBinary");
