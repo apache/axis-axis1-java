@@ -53,6 +53,16 @@ Copyright:
 <target name="compile" depends="copy">
   <echo message="Compilig test.wsdl.addrNoImplSEI"/>
 
+    <!-- AddressBook roundtrip example that does not implement SEI -->
+    <!-- Summary -->
+    <!-- Bootstrap the process by creating java classes from the original wsdl -->
+    <!--  Compile the classes plus the provided Impl class -->
+    <!--   The Impl class is supposed to simulate a server-side EJB -->
+    <!--   It does not implement the SEI and it contains some additional throw clauses -->
+    <!-- Run Java2WSDL on the Impl class to ensure a valid wsdl is generated -->
+    <!-- Run WSDL2Java on the new wsdl to generate client side and other artifacts -->
+    <!-- Replace the generated Impl with the original Impl that does not implement the SEI -->
+    <!--   Compile and run test. -->
     <delete dir="${build.dir}/classes/test/wsdl/addrNoImplSEI"/>
     <delete dir="${build.dir}/work/test/wsdl/addrNoImplSEI"/>
     <wsdl2java url="${axis.home}/test/wsdl/addrNoImplSEI/AddressBook.wsdl"
@@ -93,6 +103,10 @@ Copyright:
     </java2wsdl>
 
     <!-- Now run wsdl to java to make sure we don't have any strange artifacts -->
+    <delete dir="${build.dir}/classes/test/wsdl/addrNoImplSEI"/>
+    <delete>
+       <fileset dir="${build.dir}/work/test/wsdl/addrNoImplSEI" includes="**/*.java"/>
+    </delete>
     <wsdl2java url="${axis.home}/build/work/test/wsdl/addrNoImplSEI/AddressBook.wsdl"
                output="${axis.home}/build/work"
                deployscope="session"
