@@ -137,6 +137,24 @@ public class SOAPEnvelope {
     return( headers );
   }
 
+  public Vector getHeadersByNameAndURI(String name, String URI) {
+    Vector tmpList = null ;
+    /* If URI is null then they asked for the entire list */
+    /******************************************************/
+    if ( URI == null ) return( headers );
+    if ( headers == null ) return( null );
+
+    for ( int i = 0 ; i < headers.size(); i++ ) {
+      SOAPHeader  header = (SOAPHeader) headers.elementAt(i);
+      if ( URI.equals( header.getNamespaceURI() ) &&
+           name.equals( header.getName()) ) {
+        if ( tmpList == null ) tmpList = new Vector();
+        tmpList.add( header );
+      }
+    }
+    return( tmpList );
+  }
+
   public Vector getHeadersByURI(String URI) {
     Vector tmpList = null ;
     /* If URI is null then they asked for the entire list */
@@ -191,7 +209,7 @@ public class SOAPEnvelope {
     return( body );
   }
 
-  public Document getAsXML() {
+  public Document getDocument() {
     Document doc = null ;
     Element  root ;
     int      i ;
@@ -213,7 +231,7 @@ public class SOAPEnvelope {
       root.addContent( elem );
       for ( i = 0 ; i < headers.size() ; i++ ) {
         SOAPHeader h = (SOAPHeader) headers.get(i);
-        elem.addContent( h.getAsXML() );
+        elem.addContent( h.getRoot() );
       }
     } 
     if ( body != null ) {
@@ -221,7 +239,7 @@ public class SOAPEnvelope {
                                   tmpEnvPre, tmpEnvURI );
       root.addContent( elem );
       for ( i = 0 ; i < body.size() ; i++ ) {
-        Element  bod = ((SOAPBody)body.get(i)).getAsXML();
+        Element  bod = ((SOAPBody)body.get(i)).getRoot();
         if ( bod.getDocument() != null )
           bod = (Element) bod.clone();
         elem.addContent( bod );

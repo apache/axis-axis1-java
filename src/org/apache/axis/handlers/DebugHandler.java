@@ -75,11 +75,12 @@ public class DebugHandler extends BasicHandler {
             SOAPEnvelope  env = (SOAPEnvelope) msg.getAs( "SOAPEnvelope" );
             Vector        headers = null ;
             
-            headers = env.getHeadersByURI( Constants.URI_DEBUG );
+            headers = env.getHeadersByNameAndURI("Debug", Constants.URI_DEBUG);
 
             for ( int i = 0 ; headers != null && i < headers.size() ; i ++ ) {
                 SOAPHeader  header = (SOAPHeader) headers.get(i);
-                String      value = (String) header.getDataAtIndex( 0 );
+                Element     root   = header.getRoot();
+                String      value = root.getText();
                 if ( value != null ) {
                     int     debugVal = Integer.parseInt( value );
                     Debug.Print( 1, "Setting debug level to: " + debugVal );

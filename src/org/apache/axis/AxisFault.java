@@ -132,7 +132,7 @@ public class AxisFault extends Exception {
     return( (Element[]) faultDetails.toArray() );
   }
 
-  public Element getAsXML() {
+  public Element getElement() {
     Element  elem, root ;
     int      i ;
 

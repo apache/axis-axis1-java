@@ -8,7 +8,6 @@
 <!-- This file will be replaced by WSDD once it's ready           -->
 
 <undeploy>
-  <handler name="debug" />
   <handler name="authen"  />
   <handler name="author"  />
   <chain   name="checks"  />

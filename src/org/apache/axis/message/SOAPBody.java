@@ -59,6 +59,7 @@ package org.apache.axis.message ;
 
 import java.util.* ;
 import org.jdom.* ;
+import org.apache.axis.AxisFault ;
 import org.apache.axis.message.* ;
 
 /**
@@ -91,8 +92,16 @@ public class SOAPBody {
     this.root = r ;
   }
 
-  public Element getAsXML() {
-    return( root );
+  public org.w3c.dom.Element getAsDOMElement() throws AxisFault {
+    if ( root == null ) return( null );
+    try {
+      org.jdom.output.DOMOutputter outputter = null ;
+      outputter = new org.jdom.output.DOMOutputter();
+      return( outputter.output( root ) );
+    }
+    catch( Exception e ) {
+      throw new AxisFault( e );
+    }
   }
 
 };

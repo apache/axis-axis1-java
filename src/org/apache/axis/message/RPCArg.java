@@ -123,7 +123,7 @@ public class RPCArg {
   }
   public void   setType(String str) { type = str ; }
 
-  public Element getAsXML() {
+  public Element getElement() {
     Element   root ;
 
     if ( prefix != null )
