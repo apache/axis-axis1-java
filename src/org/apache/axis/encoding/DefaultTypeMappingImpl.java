@@ -291,11 +291,43 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
 
         // Mapping for xsd:time.  Map to Axis type Time
         myRegister(Constants.XSD_TIME,       org.apache.axis.types.Time.class,
-                   new TimeSerializerFactory(org.apache.axis.types.Time.class,
+                   new SimplePrimitiveSerializerFactory(org.apache.axis.types.Time.class,
                                              Constants.XSD_TIME),
-                   new TimeDeserializerFactory(org.apache.axis.types.Time.class,
+                   new SimpleDeserializerFactory(org.apache.axis.types.Time.class,
                                                Constants.XSD_TIME),
                    true);
+        // These are the g* types (gYearMonth, etc) which map to Axis types
+        myRegister(Constants.XSD_YEARMONTH, org.apache.axis.types.YearMonth.class,
+                   new SimplePrimitiveSerializerFactory(org.apache.axis.types.YearMonth.class,
+                                             Constants.XSD_YEARMONTH),
+                   new SimpleDeserializerFactory(org.apache.axis.types.YearMonth.class,
+                                             Constants.XSD_YEARMONTH),
+                   true);
+        myRegister(Constants.XSD_YEAR, org.apache.axis.types.Year.class,
+                   new SimplePrimitiveSerializerFactory(org.apache.axis.types.Year.class,
+                                             Constants.XSD_YEAR),
+                   new SimpleDeserializerFactory(org.apache.axis.types.Year.class,
+                                             Constants.XSD_YEAR),
+                   true);
+        myRegister(Constants.XSD_MONTH, org.apache.axis.types.Month.class,
+                   new SimplePrimitiveSerializerFactory(org.apache.axis.types.Month.class,
+                                             Constants.XSD_MONTH),
+                   new SimpleDeserializerFactory(org.apache.axis.types.Month.class,
+                                             Constants.XSD_MONTH),
+                   true);
+        myRegister(Constants.XSD_DAY, org.apache.axis.types.Day.class,
+                   new SimplePrimitiveSerializerFactory(org.apache.axis.types.Day.class,
+                                             Constants.XSD_YEARMONTH),
+                   new SimpleDeserializerFactory(org.apache.axis.types.Day.class,
+                                             Constants.XSD_YEARMONTH),
+                   true);
+        myRegister(Constants.XSD_MONTHDAY, org.apache.axis.types.MonthDay.class,
+                   new SimplePrimitiveSerializerFactory(org.apache.axis.types.MonthDay.class,
+                                             Constants.XSD_MONTHDAY),
+                   new SimpleDeserializerFactory(org.apache.axis.types.MonthDay.class,
+                                             Constants.XSD_MONTHDAY),
+                   true);
+        
         // Serialize all extensions of Map to SOAP_MAP
         // The SOAP_MAP will be deserialized into a HashMap by default.
         myRegister(Constants.SOAP_MAP,       java.util.HashMap.class,
