@@ -127,6 +127,13 @@ public abstract class SOAPSAXHandler extends DefaultHandler
                                             Attributes attributes,
                                             DeserializationContext context)
         {
+            if (localName.equals(Constants.ELEM_FAULT)) {
+                return SOAPFaultElement.getFactory().createElement(namespace,
+                                                                   localName,
+                                                                   attributes,
+                                                                   context);
+            }
+            
             ServiceDescription serviceDesc = context.getServiceDescription();
             if ((serviceDesc != null) && (!serviceDesc.isRPC())) {
                 return new SOAPBodyElement(namespace, localName, attributes, context);
@@ -161,7 +168,7 @@ public abstract class SOAPSAXHandler extends DefaultHandler
         this.context = new DeserializationContext(this,msgContext);
 
         // just testing...
-        headerRegistry.registerFactory("urn:myNS", "Debug", DebugHeader.getFactory());
+        headerRegistry.registerFactory(Constants.URI_DEBUG, "Debug", DebugHeader.getFactory());
     }
     
     public int getState()
@@ -618,6 +625,9 @@ public abstract class SOAPSAXHandler extends DefaultHandler
             //System.out.println("  depth is " + recordingDepth);
             
             elementHandler.endElement(namespace, localName, qName);
+            
+            if (recordingDepth == 1)
+                elementHandler.onEndChild(localName, null);
 
             if (recordingDepth == 0) {
                 DeserializerBase oldElementHandler = elementHandler;

@@ -86,17 +86,41 @@ public class SOAPFaultElement extends SOAPBodyElement
         return new FaultElementFactory();
     }
     
-    class FaultContentHandler extends DeserializerBase
+    String currentSubElement;
+    StringBuffer currentValue;
+    
+    public void onStartChild(String namespace, String name, String qName,
+                             Attributes attributes)
+        throws SAXException
     {
-        private boolean passedMyStart = false;
+        currentSubElement = name;
+        currentValue = new StringBuffer();
+    }
+    
+    public void characters(char [] chars, int start, int end)
+    {
+        currentValue.append(chars, start, end);
+    }
+
+    public void onEndChild(String localName, DeserializerBase deserializer)
+        throws SAXException
+    {
+        if (fault == null)
+            fault = new AxisFault();
         
-        public void startElement(String namespace, String name, String qName,
-                                 Attributes attributes)
-        {
-            // *** TBD ***
+        if (currentSubElement.equals("faultcode")) {
+            fault.setFaultCode(currentValue.toString());
+        } else if (currentSubElement.equals("faultstring")) {
+            fault.setFaultString(currentValue.toString());
+        } else if (currentSubElement.equals("faultactor")) {
+            fault.setFaultActor(currentValue.toString());
+        } else if (currentSubElement.equals("details")) {
+            // !!! Not supported yet
+            // fault.setFaultDetails(...);
         }
     }
-    public DeserializerBase getContentHandler() { return new FaultContentHandler(); }
+
+    public DeserializerBase getContentHandler() { return this; }
     
     ///////////////////////////////////////////////////////////////
     
