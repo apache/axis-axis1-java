@@ -63,7 +63,6 @@ import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.utils.ClassUtils;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 
 import org.apache.axis.components.logger.LogFactory;
@@ -199,7 +198,7 @@ public class EJBProvider extends RPCProvider
         
         // First try to get the interface class from the configuation
         String remoteName = 
-                (String) getStrOption(OPTION_REMOTEINTERFACENAME, service);
+                getStrOption(OPTION_REMOTEINTERFACENAME, service);
         try {
             ClassLoader cl = (msgContext != null) ?
                     msgContext.getClassLoader() :
@@ -215,7 +214,7 @@ public class EJBProvider extends RPCProvider
                 // Get the EJB Home object from JNDI
                 Object ejbHome = getEJBHome(service, msgContext, beanJndiName);
 
-                String homeName = (String)getStrOption(OPTION_HOMEINTERFACENAME,
+                String homeName = getStrOption(OPTION_HOMEINTERFACENAME,
                                                         service);
                 if (homeName == null)
                     throw new AxisFault(
@@ -275,7 +274,7 @@ public class EJBProvider extends RPCProvider
             // username, password, factoryclass, contextUrl
 
             // username
-            String username = (String)getStrOption(jndiUsername, serviceHandler);
+            String username = getStrOption(jndiUsername, serviceHandler);
             if ((username == null) && (msgContext != null))
                username = msgContext.getUsername();
             if (username != null) {
@@ -285,7 +284,7 @@ public class EJBProvider extends RPCProvider
             }
 
             // password
-            String password = (String)getStrOption(jndiPassword, serviceHandler);
+            String password = getStrOption(jndiPassword, serviceHandler);
             if ((password == null) && (msgContext != null))
                 password = msgContext.getPassword();
             if (password != null) {
@@ -295,7 +294,7 @@ public class EJBProvider extends RPCProvider
             }
 
             // factory class
-            String factoryClass = (String)getStrOption(jndiContextClass, serviceHandler);
+            String factoryClass = getStrOption(jndiContextClass, serviceHandler);
             if (factoryClass != null) {
                 if (properties == null)
                     properties = new Properties();
@@ -303,7 +302,7 @@ public class EJBProvider extends RPCProvider
             }
 
             // contextUrl
-            String contextUrl = (String)getStrOption(jndiURL, serviceHandler);
+            String contextUrl = getStrOption(jndiURL, serviceHandler);
             if (contextUrl != null) {
                 if (properties == null)
                     properties = new Properties();
