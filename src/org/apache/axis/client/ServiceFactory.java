@@ -247,6 +247,6 @@ public class ServiceFactory extends javax.xml.rpc.ServiceFactory
      */
     public javax.xml.rpc.Service createService(QName serviceName)
             throws ServiceException {
-        return new Service();
+        return new Service(serviceName);
     } // createService
 }
