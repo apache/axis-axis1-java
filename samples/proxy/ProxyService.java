@@ -78,7 +78,7 @@ public class ProxyService {
     /**
      * Process the given message, treating it as raw XML.
      */
-    public Document ProxyService(MessageContext msgContext)
+    public Document proxyService(MessageContext msgContext)
         throws AxisFault
     {
         try {
