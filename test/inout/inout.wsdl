@@ -1,16 +1,16 @@
 <?xml version="1.0" ?>
 
-<definitions name="http://www.ibm.com/inout"
-             targetNamespace="http://www.ibm.com/inout"
-	         xmlns:tns="http://www.ibm.com/inout"
-             xmlns:typens="http://www.ibm.com/inout"
+<definitions name="http://www.apache.org/inout"
+             targetNamespace="http://www.apache.org/inout"
+	         xmlns:tns="http://www.apache.org/inout"
+             xmlns:typens="http://www.apache.org/inout"
              xmlns:xsd="http://www.w3.org/1999/XMLSchema"
              xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
              xmlns="http://schemas.xmlsoap.org/wsdl/">
 
   <!-- type defs -->
   <types>
-    <xsd:schema targetNamespace="http://www.ibm.com/inout"
+    <xsd:schema targetNamespace="http://www.apache.org/inout"
                 xmlns:xsd="http://www.w3.org/1999/XMLSchema">
       <xsd:complexType name="phone">
         <xsd:all>
@@ -268,12 +268,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout" 
+                   namespace="http://www.apache.org/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout"
+                   namespace="http://www.apache.org/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -283,12 +283,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout" 
+                   namespace="http://www.apache.org/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout"
+                   namespace="http://www.apache.org/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -298,12 +298,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout" 
+                   namespace="http://www.apache.org/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout"
+                   namespace="http://www.apache.org/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -313,12 +313,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout" 
+                   namespace="http://www.apache.org/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout"
+                   namespace="http://www.apache.org/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -328,12 +328,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout" 
+                   namespace="http://www.apache.org/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout"
+                   namespace="http://www.apache.org/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -343,12 +343,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout" 
+                   namespace="http://www.apache.org/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout"
+                   namespace="http://www.apache.org/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -358,12 +358,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout" 
+                   namespace="http://www.apache.org/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout"
+                   namespace="http://www.apache.org/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -373,12 +373,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout" 
+                   namespace="http://www.apache.org/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout"
+                   namespace="http://www.apache.org/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -388,12 +388,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout" 
+                   namespace="http://www.apache.org/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout"
+                   namespace="http://www.apache.org/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -403,12 +403,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout" 
+                   namespace="http://www.apache.org/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout"
+                   namespace="http://www.apache.org/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -418,12 +418,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout" 
+                   namespace="http://www.apache.org/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout"
+                   namespace="http://www.apache.org/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -433,12 +433,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout" 
+                   namespace="http://www.apache.org/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout"
+                   namespace="http://www.apache.org/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -448,12 +448,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout" 
+                   namespace="http://www.apache.org/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout"
+                   namespace="http://www.apache.org/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -463,12 +463,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout" 
+                   namespace="http://www.apache.org/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout"
+                   namespace="http://www.apache.org/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -478,12 +478,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout" 
+                   namespace="http://www.apache.org/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout"
+                   namespace="http://www.apache.org/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -493,12 +493,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout" 
+                   namespace="http://www.apache.org/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout"
+                   namespace="http://www.apache.org/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -508,12 +508,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout" 
+                   namespace="http://www.apache.org/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout"
+                   namespace="http://www.apache.org/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -523,12 +523,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout" 
+                   namespace="http://www.apache.org/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout"
+                   namespace="http://www.apache.org/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -538,12 +538,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout" 
+                   namespace="http://www.apache.org/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout"
+                   namespace="http://www.apache.org/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -553,12 +553,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout" 
+                   namespace="http://www.apache.org/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout"
+                   namespace="http://www.apache.org/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -568,12 +568,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout" 
+                   namespace="http://www.apache.org/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout"
+                   namespace="http://www.apache.org/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -583,12 +583,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout" 
+                   namespace="http://www.apache.org/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout"
+                   namespace="http://www.apache.org/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -598,12 +598,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout" 
+                   namespace="http://www.apache.org/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout"
+                   namespace="http://www.apache.org/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -613,12 +613,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout" 
+                   namespace="http://www.apache.org/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout"
+                   namespace="http://www.apache.org/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -628,12 +628,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout" 
+                   namespace="http://www.apache.org/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout"
+                   namespace="http://www.apache.org/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -643,12 +643,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout" 
+                   namespace="http://www.apache.org/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout"
+                   namespace="http://www.apache.org/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
@@ -658,12 +658,12 @@
       <soap:operation soapAction=""/>
       <input>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout" 
+                   namespace="http://www.apache.org/inout" 
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </input>
       <output>
         <soap:body use="encoded" 
-                   namespace="http://www.ibm.com/inout"
+                   namespace="http://www.apache.org/inout"
                    encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
       <fault name="TestFailed">
