@@ -59,7 +59,7 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.apache.axis.encoding.DefaultTypeMappingImpl;
-import org.apache.axis.encoding.DefaultSOAP12TypeMappingImpl;
+import org.apache.axis.encoding.DefaultSOAPEncodingTypeMappingImpl;
 
 import java.util.HashMap;
 import java.io.StringWriter;
@@ -152,7 +152,7 @@ public class Java2WsdlAntTask extends Task
             if (tm.equals("1.1")) {
                 emitter.setDefaultTypeMapping(DefaultTypeMappingImpl.getSingleton());
             } else {
-                emitter.setDefaultTypeMapping(DefaultSOAP12TypeMappingImpl.create());
+                emitter.setDefaultTypeMapping(DefaultSOAPEncodingTypeMappingImpl.create());
             }
             if (style != null) {
                 emitter.setStyle(style);

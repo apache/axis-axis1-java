@@ -66,7 +66,7 @@ import java.util.Properties;
 import javax.xml.namespace.QName;
 import javax.wsdl.WSDLException;
 
-import org.apache.axis.encoding.DefaultSOAP12TypeMappingImpl;
+import org.apache.axis.encoding.DefaultSOAPEncodingTypeMappingImpl;
 import org.apache.axis.encoding.DefaultTypeMappingImpl;
 import org.apache.axis.encoding.TypeMapping;
 
@@ -467,7 +467,7 @@ public class Emitter extends Parser {
         } else {
             baseTypeMapping =
                     new BaseTypeMapping() {
-                        final TypeMapping defaultTM = DefaultSOAP12TypeMappingImpl.create();
+                        final TypeMapping defaultTM = DefaultSOAPEncodingTypeMappingImpl.create();
                         public String getBaseName(QName qNameIn) {
                             javax.xml.namespace.QName qName =
                                 new javax.xml.namespace.QName(

@@ -55,10 +55,6 @@
 
 package org.apache.axis.encoding;
 
-import org.apache.axis.Constants;
-import org.apache.axis.encoding.ser.Base64DeserializerFactory;
-import org.apache.axis.encoding.ser.Base64SerializerFactory;
-
 /**
  * @author Rich Scheuerle (scheu@us.ibm.com)
  * 
@@ -66,59 +62,20 @@ import org.apache.axis.encoding.ser.Base64SerializerFactory;
  * See DefaultTypeMapping for more information.
  * 
  */
-public class DefaultSOAP12TypeMappingImpl extends DefaultTypeMappingImpl { 
+public class DefaultSOAPEncodingTypeMappingImpl extends DefaultTypeMappingImpl {
     
-    private static DefaultSOAP12TypeMappingImpl tm = null;
+    private static DefaultSOAPEncodingTypeMappingImpl tm = null;
     /**
      * Construct TypeMapping
      */
     public static TypeMapping create() {
         if (tm == null) {
-            tm = new DefaultSOAP12TypeMappingImpl();
+            tm = new DefaultSOAPEncodingTypeMappingImpl();
         }
         return tm;
     }
 
-    protected DefaultSOAP12TypeMappingImpl() {
-        super();
-        // This default type mapping only contains the SOAP 1.2 differences.
-        // delegate to the DefaultTypeMapping as necessary.
-        delegate = DefaultTypeMappingImpl.getSingleton();
-
-        // Notes:
-        // 1) The registration statements are order dependent.  The last one
-        //    wins.  So if two javaTypes of String are registered, the 
-        //    ser factory for the last one registered will be chosen.  Likewise
-        //    if two javaTypes for XSD_DATE are registered, the deserializer 
-        //    factory for the last one registered will be chosen.
-        // 2) Even if the SOAP 1.1 format is used over the wire, an 
-        //    attempt is made to receive SOAP 1.2 format from the wire.
-        //    This is the reason why the soap encoded primitives are 
-        //    registered without serializers.
-
-        // SOAP Encoded strings are treated as primitives.
-        // Everything else is not.
-        myRegisterSimple(Constants.SOAP_STRING, java.lang.String.class);
-        myRegisterSimple(Constants.SOAP_BOOLEAN, java.lang.Boolean.class);
-        myRegisterSimple(Constants.SOAP_DOUBLE, java.lang.Double.class);
-        myRegisterSimple(Constants.SOAP_FLOAT, java.lang.Float.class);
-        myRegisterSimple(Constants.SOAP_INT, java.lang.Integer.class);
-        myRegisterSimple(Constants.SOAP_INTEGER, java.math.BigInteger.class);
-        myRegisterSimple(Constants.SOAP_DECIMAL, java.math.BigDecimal.class
-        );
-        myRegisterSimple(Constants.SOAP_LONG, java.lang.Long.class);
-        myRegisterSimple(Constants.SOAP_SHORT, java.lang.Short.class);
-        myRegisterSimple(Constants.SOAP_BYTE, java.lang.Byte.class);
-
-        // SOAP 1.2
-        // byte[] -ser-> SOAP_BASE64
-        // XSD_BASE64 -deser-> byte[]
-        // SOAP_BASE64 -deser->byte[]
-        myRegister(Constants.SOAP_BASE64,     byte[].class,     
-                   new Base64SerializerFactory(byte[].class,
-                                               Constants.SOAP_BASE64 ),
-                   new Base64DeserializerFactory(byte[].class, 
-                                                 Constants.SOAP_BASE64)
-        );
+    protected DefaultSOAPEncodingTypeMappingImpl() {
+        super(true);
     }
 }
