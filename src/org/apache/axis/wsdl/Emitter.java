@@ -127,6 +127,8 @@ public class Emitter {
     private HashMap delaySetMap = null;
     private TypeFactory emitFactory = null;
 
+    // portTypesInfo is a Hashmap of <PortType, HashMap2> pairs where HashMap2 is a
+    // Hashmap of <Operation, Parameters> pairs.
     private HashMap portTypesInfo = null;
 
     /**
@@ -231,20 +233,57 @@ public class Emitter {
             // Collect information about ports and operations
             wsdlAttr = new WsdlAttributes(def, new HashMap());
 
-            // PortTypes and Services can share the same name.  If they do in this Definition,
-            // force their names to be suffixed with _PortType and _Service, respectively.
-            resolvePortTypeServiceNameClashes();
+            firstPass();
 
-            // Output interfaces for portTypes - fill in the portTypesInfo HashMap
-            writePortTypes(portTypesInfo);
+            // Output interfaces for portTypes
+            writePortTypes();
 
             // Output Stub classes for bindings
-            writeBindings(portTypesInfo);
+            writeBindings();
 
             // Output factory classes for services
             writeServices();
         }
     } // emit
+
+    /**
+     * Do some cleanup of the 'symbol table' and add our own symbol table structures
+     */
+    private void firstPass() throws IOException {
+
+        // PortTypes and Services can share the same name.  If they do in this Definition,
+        // force their names to be suffixed with _PortType and _Service, respectively.
+        resolvePortTypeServiceNameClashes();
+
+        // portTypesInfo is a Hashmap of <PortType, HashMap2> pairs where HashMap2 is a
+        // Hashmap of <Operation, Parameters> pairs.  
+        createPortTypesInfo();
+    } // firstPass
+
+    // portTypesInfo is a Hashmap of <PortType, HashMap2> pairs where HashMap2 is a HashMap of
+    // <Operation, Parameters> pairs.  Walk through the symbol table and create this HashMap of
+    // a HashMap of Parameters.
+    private void createPortTypesInfo() throws IOException {
+        Iterator i = def.getPortTypes().values().iterator();
+        while (i.hasNext()) {
+            PortType portType = (PortType) i.next();
+
+            HashMap portTypeInfo = new HashMap();
+
+            // Remove Duplicates - happens with only a few WSDL's. No idea why!!! 
+            // (like http://www.xmethods.net/tmodels/InteropTest.wsdl) 
+            // TODO: Remove this patch...
+            // NOTE from RJB:  this is a WSDL4J bug and the WSDL4J guys have been notified.
+            Iterator operations = (new HashSet(portType.getOperations())).iterator();
+            while(operations.hasNext()) {
+                Operation operation = (Operation) operations.next();
+                String namespace = portType.getQName().getNamespaceURI();
+                Parameters parms = parameters(operation, namespace);
+                portTypeInfo.put(operation, parms);
+            }
+            portTypesInfo.put(portType, portTypeInfo);
+        }
+    } // createPortTypesInfo
 
     ///////////////////////////////////////////////////
     //
@@ -450,28 +489,26 @@ public class Emitter {
     } // resolvePortTypeServiceNameClashes
 
     /**
-     * Generate the bindings for all port types, and fill in the portTypesInfo HashMap.
+     * Generate the bindings for all port types.
      */
-    private void writePortTypes(HashMap portTypesInfo) throws IOException {
+    private void writePortTypes() throws IOException {
         Map portTypes = def.getPortTypes();
         Iterator i = portTypes.values().iterator();
 
         while (i.hasNext()) {
             PortType portType = (PortType) i.next();
 
-            HashMap portTypeInfo = writePortType(portType);
+            writePortType(portType);
             if (bEmitSkeleton && bMessageContext) {
                 writeAxisPortType(portType);
             }
-
-            portTypesInfo.put(portType, portTypeInfo);
         }
     } // writePortTypes
 
     /**
      * Generate the interface for the given port type.
      */
-    private HashMap writePortType(PortType portType) throws IOException {
+    private void writePortType(PortType portType) throws IOException {
         QName portTypeQName = portType.getQName();
         PrintWriter interfacePW = printWriter(portTypeQName, null, "java", "Generating portType interface:  ");
         String nameValue = xmlNameToJava(portTypeQName.getLocalPart());
@@ -479,22 +516,18 @@ public class Emitter {
         writeFileHeader(nameValue + ".java", namespaces.getCreate(portTypeQName.getNamespaceURI()), interfacePW);
         interfacePW.println("public interface " + nameValue + " extends java.rmi.Remote {");
 
-        HashMap portTypeInfo = new HashMap();
         // Remove Duplicates - happens with only a few WSDL's. No idea why!!! 
         // (like http://www.xmethods.net/tmodels/InteropTest.wsdl) 
         // TODO: Remove this patch...
+        // NOTE from RJB:  this is a WSDL4J bug and the WSDL4J guys have been notified.
         Iterator operations = (new HashSet(portType.getOperations())).iterator();
         while(operations.hasNext()) {
             Operation operation = (Operation) operations.next();
-            Parameters operationInfo = writeOperation(operation, portType.getQName().getNamespaceURI(), interfacePW);
-
-            portTypeInfo.put(operation, operationInfo);
+            writeOperation(portType, operation, portType.getQName().getNamespaceURI(), interfacePW);
         }
 
         interfacePW.println("}");
         interfacePW.close();
-
-        return portTypeInfo;
     } // writePortType
 
     /**
@@ -512,13 +545,11 @@ public class Emitter {
 
         for (int i = 0; i < operations.size(); ++i) {
             Operation operation = (Operation) operations.get(i);
-            Parameters operationInfo = writeOperationAxisSkelSignatures(operation, portType.getQName().getNamespaceURI(), interfacePW);
+            writeOperationAxisSkelSignatures(portType, operation, portType.getQName().getNamespaceURI(), interfacePW);
         }
 
         interfacePW.println("}");
         interfacePW.close();
-
-        return;
     } // writeAxisPortType
 
     /**
@@ -875,27 +906,19 @@ public class Emitter {
     /**
      * This method generates the interface signatures for the given operation.
      */
-    private Parameters writeOperation(Operation operation, String namespace, PrintWriter interfacePW) throws IOException {
-        String name = operation.getName();
-        Parameters parms = parameters(operation, namespace);
-
+    private void writeOperation(PortType portType, Operation operation, String namespace, PrintWriter interfacePW) throws IOException {
         writeComment(interfacePW, operation.getDocumentationElement());
+        Parameters parms = (Parameters) ((HashMap) portTypesInfo.get(portType)).get(operation);
         interfacePW.println(parms.signature + ";");
-
-        return parms;
     } // writeOperation
 
     /**
      * This method generates the axis server side impl interface signatures operation.
      */
-    private Parameters writeOperationAxisSkelSignatures(Operation operation, String namespace, PrintWriter interfacePW) throws IOException {
-        String name = operation.getName();
-        Parameters parms = parameters(operation, namespace);
-
+    private void writeOperationAxisSkelSignatures(PortType portType, Operation operation, String namespace, PrintWriter interfacePW) throws IOException {
+        Parameters parms = (Parameters) ((HashMap) portTypesInfo.get(portType)).get(operation);
         interfacePW.println(parms.axisSignature + ";");
-
-        return parms;
-    } // writeOperation
+    } // writeOperationAxisSkelSignatures
 
     /**
      * This generates an exception class for the given fault and returns the capitalized name of
@@ -942,7 +965,7 @@ public class Emitter {
     /**
      * Generate the stubs and skeletons for all binding tags.
      */
-    private void writeBindings(HashMap portTypesInfo) throws IOException {
+    private void writeBindings() throws IOException {
         Map bindings = def.getBindings();
         Iterator i = bindings.values().iterator();
 
