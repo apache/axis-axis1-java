@@ -77,8 +77,8 @@ public class SOAPHandler extends DefaultHandler
         if (!context.isDoneParsing()) {
             if (myElement == null) {
                 myElement = makeNewElement(namespace, localName, qName, attributes, context);
-                context.pushNewElement(myElement);
             }
+            context.pushNewElement(myElement);
         }
     }
 

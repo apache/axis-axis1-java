@@ -202,7 +202,7 @@ public class BodyBuilder extends SOAPHandler
 
         handler.myElement = element;
 
-        context.pushNewElement(element);
+        //context.pushNewElement(element);
 
         if (log.isDebugEnabled()) {
             log.debug("Exit: BodyBuilder::onStartChild()");
