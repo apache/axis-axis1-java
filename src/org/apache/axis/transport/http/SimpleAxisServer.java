@@ -229,7 +229,6 @@ public class SimpleAxisServer implements Runnable {
 
     /**
      * Server process.
-     * @parms args[1] port number (default is 8080)
      */
     public static void main(String args[]) {
 

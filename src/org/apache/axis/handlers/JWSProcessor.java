@@ -277,6 +277,7 @@ public class JWSProcessor extends BasicHandler
             if (rpc == null) {
                 rpc = new SOAPService(new RPCProvider());
                 rpc.setOption(RPCProvider.OPTION_CLASSNAME, clsName );
+                rpc.setEngine(msgContext.getAxisEngine());
 
                 // Support specification of "allowedMethods" as a parameter.
                 String allowed = (String)getOption(RPCProvider.OPTION_ALLOWEDMETHODS);

@@ -57,15 +57,12 @@ package org.apache.axis.message;
 import org.apache.axis.Constants;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.JavaUtils;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
-import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
-import javax.xml.namespace.QName;
 import javax.xml.soap.Name;
 
 /** 
@@ -79,7 +76,7 @@ public class SOAPHeaderElement extends MessageElement
     implements javax.xml.soap.SOAPHeaderElement {
     protected boolean   processed = false;
 
-    protected String    actor;
+    protected String    actor = "";
     protected boolean   mustUnderstand = false;
 
     public SOAPHeaderElement() {
@@ -110,6 +107,9 @@ public class SOAPHeaderElement extends MessageElement
 
         actor = elem.getAttributeNS(Constants.URI_SOAP11_ENV,
                                     Constants.ATTR_ACTOR);
+        if (actor == null) {
+            actor = "";
+        }
     }
 
     public void setParentElement(SOAPElement parent) throws SOAPException {
@@ -143,6 +143,9 @@ public class SOAPHeaderElement extends MessageElement
 
         actor = attributes.getValue(soapConstants.getEnvelopeURI(),
                                     Constants.ATTR_ACTOR);
+        if (actor == null) {
+            actor = "";
+        }
 
         processed = false;
     }

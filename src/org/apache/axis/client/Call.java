@@ -2168,6 +2168,7 @@ public class Call implements javax.xml.rpc.Call {
             // Call.  So when client-side Handlers get at the MessageContext,
             // the property scoping will be MC -> SOAPService -> Call
             service.setPropertyParent(scopedProperties);
+            service.setEngine(this.service.getAxisClient());
         }
     }
 
