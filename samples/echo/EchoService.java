@@ -137,7 +137,7 @@ public class EchoService {
     /**
      * This methods accepts a binary object and echoes it back to the client.
      */
-    public byte[] echo(byte[] input) {
+    public byte[] echoBase64(byte[] input) {
         return input;
     }
 
