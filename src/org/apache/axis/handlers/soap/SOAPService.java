@@ -183,81 +183,6 @@ public class SOAPService extends SimpleTargetedChain
         actors = new ArrayList(roles);
     }
 
-    /**
-     * MustUnderstandChecker is used to inject SOAP semantics just before
-     * the pivot handler.
-     */
-    private class MustUnderstandChecker extends BasicHandler {
-        public MustUnderstandChecker() {}
-
-        public void invoke(MessageContext msgContext) throws AxisFault {
-            // Do SOAP semantics here
-            if (log.isDebugEnabled()) {
-                log.debug( Messages.getMessage("semanticCheck00"));
-            }
-
-            ArrayList acts = getActors();
-
-            // 1. Check mustUnderstands
-            SOAPEnvelope env = msgContext.getRequestMessage().getSOAPEnvelope();
-            Vector headers = env.getHeadersByActor(acts);
-            Vector misunderstoodHeaders = null;
-            Enumeration enumeration = headers.elements();
-            while (enumeration.hasMoreElements()) {
-                SOAPHeaderElement header = (SOAPHeaderElement)enumeration.
-                                               nextElement();
-                if (header.getMustUnderstand() && !header.isProcessed()) {
-                    if (misunderstoodHeaders == null)
-                        misunderstoodHeaders = new Vector();
-                    misunderstoodHeaders.addElement(header);
-                }
-            }
-
-            SOAPConstants soapConstants = msgContext.getSOAPConstants();
-            // !!! we should indicate SOAP1.2 compliance via the
-            // MessageContext, not a boolean here....
-
-            if (misunderstoodHeaders != null) {
-                AxisFault fault =
-                        new AxisFault(soapConstants.getMustunderstandFaultQName(),
-                                      null, null,
-                                      null, null,
-                                      null);
-
-                StringBuffer whatWasMissUnderstood= new StringBuffer(256);
-
-                // !!! If SOAP 1.2, insert misunderstood fault headers here
-                if (soapConstants == SOAPConstants.SOAP12_CONSTANTS) {
-                    enumeration = misunderstoodHeaders.elements();
-                    while (enumeration.hasMoreElements()) {
-                        SOAPHeaderElement badHeader = (SOAPHeaderElement)enumeration.
-                                                          nextElement();
-                        QName badQName = new QName(badHeader.getNamespaceURI(),
-                                                   badHeader.getName());
-
-                        if(whatWasMissUnderstood.length() != 0) whatWasMissUnderstood.append(", ");
-                        whatWasMissUnderstood.append( badQName.toString() );
-
-                        SOAPHeaderElement newHeader = new
-                            SOAPHeaderElement(Constants.URI_SOAP12_ENV,
-                                              Constants.ELEM_NOTUNDERSTOOD);
-                        newHeader.addAttribute(null,
-                                               Constants.ATTR_QNAME,
-                                               badQName);
-
-                        fault.addHeader(newHeader);
-                    }
-                }
-
-                fault.setFaultString(
-                        Messages.getMessage("noUnderstand00",
-                                            whatWasMissUnderstood.toString()));
-
-                throw fault;
-            }
-        }
-    }
-
     /** Standard, no-arg constructor.
      */
     public SOAPService()
@@ -276,7 +201,7 @@ public class SOAPService extends SimpleTargetedChain
     public SOAPService(Handler reqHandler, Handler pivHandler,
                        Handler respHandler) {
         this();
-        init(reqHandler, new MustUnderstandChecker(), pivHandler, null, respHandler);
+        init(reqHandler, new MustUnderstandChecker(this), pivHandler, null, respHandler);
     }
 
     public TypeMappingRegistry getTypeMappingRegistry()
@@ -290,7 +215,7 @@ public class SOAPService extends SimpleTargetedChain
     public SOAPService(Handler serviceHandler)
     {
         this();
-        init(null, new MustUnderstandChecker(), serviceHandler, null, null);
+        init(null, new MustUnderstandChecker(this), serviceHandler, null, null);
     }
     
     /** Tell this service which engine it's deployed to.
