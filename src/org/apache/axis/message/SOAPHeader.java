@@ -171,14 +171,19 @@ public class SOAPHeader extends MessageElement
         String nextActor = soapVer.getNextRoleURI();
         while (i.hasNext()) {
             SOAPHeaderElement header = (SOAPHeaderElement)i.next();
+            String actor = header.getActor();
+            
+            // Skip it if we're SOAP 1.2 and it's the "none" role.
+            if (isSOAP12 && Constants.URI_SOAP12_NONE_ROLE.equals(actor)) {
+                continue;
+            }
             
             // Always process NEXT's, and then anything else in our list
             // For now, also always process ultimateReceiver role if SOAP 1.2
-            if (nextActor.equals(header.getActor()) ||
+            if (nextActor.equals(actor) ||
                 (isSOAP12 && 
-                    Constants.URI_SOAP12_ULTIMATE_ROLE.equals(
-                                                        header.getActor())) ||
-                (actors != null && actors.contains(header.getActor()))) {
+                    Constants.URI_SOAP12_ULTIMATE_ROLE.equals(actor)) ||
+                (actors != null && actors.contains(actor))) {
                 results.add(header);
             }
         }
