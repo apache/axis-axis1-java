@@ -57,8 +57,8 @@ package test.wsdl.multiref;
 
 import junit.framework.TestCase;
 import org.apache.axis.AxisFault;
+import org.apache.axis.AxisInternalServices;
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import test.wsdl.multiref.holders.NodeHolder;
 
 
@@ -66,7 +66,7 @@ import test.wsdl.multiref.holders.NodeHolder;
  */
 public class MultiRefTestCase extends TestCase {
     static Log log =
-            LogFactory.getLog(MultiRefTestCase.class.getName());
+            AxisInternalServices.getLog(MultiRefTestCase.class.getName());
 
     public MultiRefTestCase(String name) {
         super(name);

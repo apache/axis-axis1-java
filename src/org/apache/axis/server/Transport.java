@@ -54,10 +54,10 @@
 
 package org.apache.axis.server;
 
+import org.apache.axis.AxisInternalServices;
 import org.apache.axis.SimpleTargetedChain;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -71,6 +71,6 @@ import org.w3c.dom.Element;
 public class Transport extends SimpleTargetedChain
 {
     protected static Log log =
-        LogFactory.getLog(Transport.class.getName());
+        AxisInternalServices.getLog(Transport.class.getName());
 
 }

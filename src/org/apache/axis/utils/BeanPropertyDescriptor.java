@@ -54,19 +54,14 @@
  */
 package org.apache.axis.utils;
 
-import java.io.ByteArrayOutputStream;
-
-import org.apache.axis.utils.JavaUtils;
-
-import java.lang.reflect.Method;
-import java.beans.IntrospectionException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.Field;
 import java.lang.reflect.Array;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
+import org.apache.axis.AxisInternalServices;
+
+import org.apache.commons.logging.Log;
 
 /**
  * This class is essentially a copy of the PropertyDescriptor information, except
@@ -77,7 +72,7 @@ import java.lang.reflect.InvocationTargetException;
 public class BeanPropertyDescriptor
 {
     protected static Log log =
-        LogFactory.getLog(BeanPropertyDescriptor.class.getName());
+        AxisInternalServices.getLog(BeanPropertyDescriptor.class.getName());
 
     private String name = null;
     private Method getter = null;

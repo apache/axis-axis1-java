@@ -70,7 +70,6 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.LockableHashtable;
 import org.apache.axis.schema.SchemaVersion;
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.Call;
@@ -103,7 +102,7 @@ import java.util.Hashtable;
  */
 public class MessageContext implements SOAPMessageContext {
     protected static Log log =
-            LogFactory.getLog(MessageContext.class.getName());
+            AxisInternalServices.getLog(MessageContext.class.getName());
 
     /**
      * The request message.  If we're on the client, this is the outgoing
@@ -264,7 +263,7 @@ public class MessageContext implements SOAPMessageContext {
     protected static String systemTempDir= null;
     static {
         try {
-            systemTempDir=AxisEngine.getGlobalProperty(AxisEngine.ENV_ATTACHMENT_DIR);
+            systemTempDir=AxisInternalServices.getGlobalProperty(AxisEngine.ENV_ATTACHMENT_DIR);
         } catch(Throwable t) {
             systemTempDir= null;
         }

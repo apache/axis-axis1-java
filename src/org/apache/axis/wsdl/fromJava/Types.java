@@ -57,6 +57,7 @@
 package org.apache.axis.wsdl.fromJava;
 
 import org.apache.axis.AxisFault;
+import org.apache.axis.AxisInternalServices;
 import org.apache.axis.Constants;
 import org.apache.axis.wsdl.toJava.Utils;
 import org.apache.axis.encoding.Serializer;
@@ -67,7 +68,6 @@ import org.apache.axis.encoding.ser.BeanSerializerFactory;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -93,7 +93,7 @@ import java.util.List;
  * @author unascribed
  */
 public class Types {
-    protected static Log log = LogFactory.getLog(Types.class.getName());
+    protected static Log log = AxisInternalServices.getLog(Types.class.getName());
 
     Definition def;
     Namespaces namespaces = null;

@@ -57,8 +57,8 @@ package org.apache.axis.utils.compiler;
 
 import org.apache.axis.utils.JavaUtils;
 
+import org.apache.axis.AxisInternalServices;
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -82,7 +82,7 @@ import java.util.StringTokenizer;
 public class Jikes extends AbstractCompiler
 {
     protected static Log log =
-            LogFactory.getLog(Jikes.class.getName());
+            AxisInternalServices.getLog(Jikes.class.getName());
     
     static final int OUTPUT_BUFFER_SIZE = 1024;
     static final int BUFFER_SIZE = 512;

@@ -55,9 +55,9 @@
 
 package org.apache.axis.encoding.ser;
 
+import org.apache.axis.AxisInternalServices;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 
@@ -67,7 +67,8 @@ import javax.xml.namespace.QName;
  *  @author Rich Scheuerle (scheu@us.ibm.com)
  */
 public class JAFDataHandlerDeserializerFactory extends BaseDeserializerFactory {
-   protected static Log log = LogFactory.getLog(JAFDataHandlerDeserializerFactory.class.getName());
+    protected static Log log =
+            AxisInternalServices.getLog(JAFDataHandlerDeserializerFactory.class.getName());
 
     public JAFDataHandlerDeserializerFactory(Class javaType, QName xmlType) {
         super(JAFDataHandlerDeserializer.class, xmlType, javaType);

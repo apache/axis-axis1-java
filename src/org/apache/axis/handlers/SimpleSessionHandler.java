@@ -57,6 +57,7 @@ package org.apache.axis.handlers;
 
 import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
+import org.apache.axis.AxisInternalServices;
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
@@ -66,7 +67,6 @@ import org.apache.axis.session.SimpleSession;
 import org.apache.axis.utils.JavaUtils;
 
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.server.ServiceLifecycle;
@@ -117,7 +117,7 @@ import java.util.Enumeration;
 public class SimpleSessionHandler extends BasicHandler
 {
     protected static Log log =
-        LogFactory.getLog(SimpleSessionHandler.class.getName());
+        AxisInternalServices.getLog(SimpleSessionHandler.class.getName());
 
     public static final String SESSION_ID = "SimpleSession.id";
     public static final String SESSION_NS = "http://xml.apache.org/axis/session";

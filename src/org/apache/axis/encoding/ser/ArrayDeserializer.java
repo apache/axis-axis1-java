@@ -55,6 +55,7 @@
 
 package org.apache.axis.encoding.ser;
 
+import org.apache.axis.AxisInternalServices;
 import org.apache.axis.Constants;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
@@ -64,7 +65,6 @@ import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -90,7 +90,7 @@ import java.util.StringTokenizer;
 public class ArrayDeserializer extends DeserializerImpl
 {
     protected static Log log =
-        LogFactory.getLog(ArrayDeserializer.class.getName());
+        AxisInternalServices.getLog(ArrayDeserializer.class.getName());
 
     public QName arrayType = null;
     public int curIndex = 0;

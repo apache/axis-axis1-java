@@ -57,11 +57,11 @@ package test.functional;
 
 import junit.framework.TestCase;
 import org.apache.axis.AxisFault;
+import org.apache.axis.AxisInternalServices;
 import org.apache.axis.utils.Options;
 import org.apache.axis.deployment.wsdd.WSDDConstants;
 import org.apache.axis.client.AdminClient;
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import samples.misc.TestClient;
 
 import java.io.ByteArrayInputStream;
@@ -70,7 +70,7 @@ import java.io.ByteArrayInputStream;
  */
 public class TestMiscSample extends TestCase {
     static Log log =
-            LogFactory.getLog(TestMiscSample.class.getName());
+            AxisInternalServices.getLog(TestMiscSample.class.getName());
 
     static final String deployDoc =
             "<deployment xmlns=\"http://xml.apache.org/axis/wsdd/\" " +

@@ -55,13 +55,13 @@
 
 package org.apache.axis.encoding.ser;
 
+import org.apache.axis.AxisInternalServices;
 import org.apache.axis.Constants;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.wsdl.fromJava.Types;
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -85,7 +85,7 @@ import java.util.Iterator;
 public class ArraySerializer implements Serializer
 {
     protected static Log log =
-        LogFactory.getLog(ArraySerializer.class.getName());
+        AxisInternalServices.getLog(ArraySerializer.class.getName());
 
     QName componentQName;
     /**

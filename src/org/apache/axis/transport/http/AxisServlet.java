@@ -57,6 +57,7 @@ package org.apache.axis.transport.http ;
 
 import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
+import org.apache.axis.AxisInternalServices;
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
@@ -72,7 +73,6 @@ import org.apache.axis.utils.Admin;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 
 import javax.servlet.ServletConfig;
@@ -102,9 +102,9 @@ import java.util.ArrayList;
 public class AxisServlet extends HttpServlet
 {
     protected static Log log =
-        LogFactory.getLog(AxisServlet.class.getName());
+        AxisInternalServices.getLog(AxisServlet.class.getName());
     private static Log tlog =
-        LogFactory.getLog("org.apache.axis.TIME");
+        AxisInternalServices.getLog("org.apache.axis.TIME");
 
     public static final String INIT_PROPERTY_TRANSPORT_NAME =
         "transport.name";
@@ -789,7 +789,7 @@ public class AxisServlet extends HttpServlet
                              String param,
                              String dephault)
     {
-        String value = AxisEngine.getGlobalProperty(param);
+        String value = AxisInternalServices.getGlobalProperty(param);
 
         if (value == null)
             value = getInitParameter(param);

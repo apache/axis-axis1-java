@@ -55,9 +55,9 @@
 
 package org.apache.axis.utils;
 
+import org.apache.axis.AxisInternalServices;
 import org.apache.axis.encoding.Hex;
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -89,7 +89,7 @@ public class JavaUtils
     public static final String LS = System.getProperty("line.separator");
 
     protected static Log log =
-        LogFactory.getLog(JavaUtils.class.getName());
+        AxisInternalServices.getLog(JavaUtils.class.getName());
     
     public static Class getWrapperClass(Class primitive)
     {
