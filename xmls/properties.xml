@@ -42,6 +42,7 @@ them.
 <property name="commons-discovery.jar" location="${lib.dir}/commons-discovery.jar"/>
 <property name="log4j-core.jar" location="${lib.dir}/log4j-1.2.4.jar"/>
 <property name="junit.jar" location="${lib.dir}/junit.jar"/>
+<property name="jimi.jar" location="${lib.dir}/JimiProClasses.zip"/>
 
 <!-- this jar is only in the test lib dir -->
 <property name="regexp.jar" location="${test.dir}/lib/jakarta-oro-2.0.5.jar"/>
