@@ -61,7 +61,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.EngineConfiguration;
-import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
+import org.apache.axis.configuration.ServletEngineConfigurationFactory;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPFaultElement;
 import org.apache.axis.security.servlet.ServletSecurityProvider;
@@ -163,8 +163,8 @@ public class AxisServlet extends HttpServlet {
             String webInfPath = context.getRealPath("/WEB-INF");
 
             EngineConfiguration config =
-                (new DefaultEngineConfigurationFactory()).
-                getServerEngineConfig(context);
+                (new ServletEngineConfigurationFactory(context)).
+                getServerEngineConfig();
 
             Map environment = new HashMap();
             environment.put("servletContext", context);

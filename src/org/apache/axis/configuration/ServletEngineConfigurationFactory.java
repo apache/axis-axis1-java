@@ -59,11 +59,13 @@ import org.apache.axis.EngineConfigurationFactory;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.Constants;
 
+import javax.servlet.ServletContext;
+
 import java.io.File;
 import java.io.InputStream;
 
 /**
- * This is a default implementation of EngineConfigurationFactory.
+ * This is a default implementation of ServletEngineConfigurationFactory.
  * It is user-overrideable by a system property without affecting
  * the caller. If you decide to override it, use delegation if
  * you want to inherit the behaviour of this class as using
@@ -73,58 +75,19 @@ import java.io.InputStream;
  * methods to that instance when the default behaviour is
  * required.
  *
- * @author Glyn Normington (glyn@apache.org)
+ * @author Davanum Srinivas (dims@apache.org)
  */
-public class DefaultEngineConfigurationFactory implements EngineConfigurationFactory {
-    protected static final String CLIENT_CONFIG_FILE = "client-config.wsdd";
-    protected static final String SERVER_CONFIG_FILE = "server-config.wsdd";
+public class ServletEngineConfigurationFactory extends DefaultEngineConfigurationFactory {
 
-    protected EngineConfigurationFactory userFactory = null;
-
-    private String clientConfigFile;
-
-    private String serverConfigFile;
-
+    private ServletContext ctx;
+    
     /**
      * Create the default engine configuration and detect whether the user
      * has overridden this with their own.
      */
-    public DefaultEngineConfigurationFactory() {
-        String fClassName = System.getProperty("axis.EngineConfigFactory");
-
-        if (fClassName != null) {
-            try {
-                userFactory = (EngineConfigurationFactory)Class.
-                    forName(fClassName).newInstance();
-            } catch (Exception e) {
-                // Report diagnostics but use the default factory.
-                e.printStackTrace(System.err);
-            }
-        }
-
-        clientConfigFile = System.getProperty("axis.ClientConfigFile");
-        if (clientConfigFile == null) {
-            clientConfigFile = CLIENT_CONFIG_FILE;
-        }
-
-        serverConfigFile = System.getProperty("axis.ServerConfigFile");
-        if (serverConfigFile == null) {
-            serverConfigFile = SERVER_CONFIG_FILE;
-        }
-        
-    }
-
-     /**
-     * Get a default client engine configuration.
-     *
-     * @return a client EngineConfiguration
-     */
-    public EngineConfiguration getClientEngineConfig() {
-        if (userFactory == null) {
-            return new FileProvider(clientConfigFile);
-        } else {
-            return userFactory.getClientEngineConfig();
-        }
+    public ServletEngineConfigurationFactory(ServletContext ctx) {
+        super();
+        this.ctx = ctx;
     }
 
     /**
@@ -133,8 +96,36 @@ public class DefaultEngineConfigurationFactory implements EngineConfigurationFac
      * @return a server EngineConfiguration
      */
     public EngineConfiguration getServerEngineConfig() {
+        return getServerEngineConfig(ctx);
+    }
+
+    /**
+     * Get a default server engine configuration in a servlet environment.
+     *
+     * @param ctx a ServletContext
+     * @return a server EngineConfiguration
+     */
+    private EngineConfiguration getServerEngineConfig(ServletContext ctx) {
         if (userFactory == null) {
-            return new FileProvider(serverConfigFile);
+            /*
+             * Use the WEB-INF directory (so the config files can't get
+             * snooped by a browser)
+             */
+            String webInfPath = ctx.getRealPath("/WEB-INF");
+ 
+            FileProvider config = null ;
+
+            if (!(new File(webInfPath,
+                           SERVER_CONFIG_FILE)).exists()){
+                InputStream is = null ;
+                is = ctx.getResourceAsStream("/WEB-INF/"+
+                                                 SERVER_CONFIG_FILE);
+                if (is != null) config = new FileProvider(is);
+            }
+            if ( config == null )
+                config = new FileProvider(webInfPath,
+                                          SERVER_CONFIG_FILE);
+            return config;
         } else {
             return userFactory.getServerEngineConfig();
         }

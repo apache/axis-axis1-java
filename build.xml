@@ -210,6 +210,7 @@ Copyright:
       <exclude name="**/org/apache/axis/attachments/ManagedMemoryDataSource.java" unless="attachments.present"/>
       <exclude name="**/org/apache/axis/attachments/MultiPartRelatedInputStream.java" unless="attachments.present"/>
       <exclude name="**/org/apache/axis/attachments/BoundaryDelimitedStream.java" unless="attachments.present"/>
+      <exclude name="**/org/apache/axis/configuration/ServletEngineConfigurationFactory.java" unless="servlet.present"/>
       <exclude name="**/org/apache/axis/encoding/ser/JAFDataHandlerSerializer.java" unless="attachments.present"/>
       <exclude name="**/org/apache/axis/encoding/ser/JAFDataHandlerDeserializerFactory.java" unless="attachments.present"/>
       <exclude name="**/org/apache/axis/encoding/ser/JAFDataHandlerSerializerFactory.java" unless="attachments.present"/>

@@ -56,7 +56,7 @@
 package org.apache.axis.transport.http ;
 
 import org.apache.axis.EngineConfiguration;
-import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
+import org.apache.axis.configuration.ServletEngineConfigurationFactory;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.JavaUtils;
 
@@ -81,8 +81,8 @@ public class AdminServlet extends HttpServlet {
         ServletContext context = getServletContext();
         if (context.getAttribute("AxisEngine") == null) {
             EngineConfiguration config =
-                (new DefaultEngineConfigurationFactory()).
-                getServerEngineConfig(context);
+                (new ServletEngineConfigurationFactory(context)).
+                getServerEngineConfig();
 
             context.setAttribute("AxisEngine", new AxisServer(config));
         }
