@@ -54,13 +54,11 @@
  */
 package org.apache.axis.deployment.wsdd;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.apache.axis.utils.XMLUtils;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.Constants;
 import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.XMLUtils;
+import org.w3c.dom.Element;
 import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.rpc.namespace.QName;
@@ -96,8 +94,6 @@ public class WSDDTypeMapping
     public WSDDTypeMapping(Element e)
         throws WSDDException
     {
-        this(e, true);
-        
         serializer = e.getAttribute("serializer");
         deserializer = e.getAttribute("deserializer");
         encodingStyle = e.getAttribute("encodingStyle");
@@ -105,23 +101,11 @@ public class WSDDTypeMapping
             encodingStyle = Constants.URI_CURRENT_SOAP_ENC;
         }
 
-    }
-
-    /**
-     * Constructor for use only by ourselves and our subclasses.
-     *
-     * Differentiated by an extra (unused) boolean argument
-     */
-    protected WSDDTypeMapping(Element e, boolean b)
-        throws WSDDException
-    {
-        super(e);
-
         String qnameStr = e.getAttribute("qname");
         qname = XMLUtils.getQNameFromString(qnameStr, e);
 
         // JSR 109 v0.093 indicates that this attribute is named "type"
-        
+
         String typeStr = e.getAttribute("type");
         typeQName = XMLUtils.getQNameFromString(typeStr, e);
         if (typeStr == null || typeStr.equals("")) {
@@ -226,6 +210,9 @@ public class WSDDTypeMapping
                                         WSDDConstants.WSDD_JAVA));
             }
             String loadName = JavaUtils.getLoadableClassName(typeQName.getLocalPart());
+            if (JavaUtils.getWrapper(loadName) != null) {
+                // We're
+            }
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
             return Class.forName(loadName, true, cl);
         }
@@ -245,7 +232,7 @@ public class WSDDTypeMapping
 
     /**
      * Set javaType (type= attribute or languageSpecificType= attribute)
-     * @param lsType is the name of the class.  (For arrays this
+     * @param javaType is the name of the class.  (For arrays this
      * could be the form my.Foo[] or could be in the form [Lmy.Foo;
      */
     public void setLanguageSpecificType(String javaType)
