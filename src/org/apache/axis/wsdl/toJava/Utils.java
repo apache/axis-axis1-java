@@ -538,7 +538,11 @@ public class Utils {
         }
         // Anything else with [] gets its holder from the qname
         else if (typeValue.endsWith("[]")) {
-            return symbolTable.getJavaName(type.getQName()) + "Holder";
+            String name = symbolTable.getJavaName(type.getQName());
+            // This could be a special QName for a indexed property.
+            // If so, change the [] to Array.
+            name = JavaUtils.replace(name, "[]", "Array");
+            return name + "Holder";
         }
         // String also has a reserved holder
         else if (typeValue.equals("String")) {
