@@ -121,13 +121,15 @@ import java.util.Vector;
  * @author Rich Scheuerle (scheu@us.ibm.com)
  */
 public class Emitter {
-
+    // Generated WSDL Modes
     public static final int MODE_ALL = 0;
     public static final int MODE_INTERFACE = 1;
     public static final int MODE_IMPLEMENTATION = 2;
 
-    public static final int MODE_RPC = 0;
-    public static final int MODE_DOCUMENT = 1;
+    // Style Modes
+    public static final int STYLE_RPC = 0;
+    public static final int STYLE_DOCUMENT = 1;
+    public static final int STYLE_DOC_WRAPPED = 2;
 
     private Class cls;
     private Class implCls;                 // Optional implementation class
@@ -144,7 +146,7 @@ public class Emitter {
     private String serviceElementName;
     private String targetService = null;
     private String description;
-    private int mode = MODE_RPC;
+    private int mode = STYLE_RPC;
     private TypeMapping tm = null;        // Registered type mapping
     private TypeMapping defaultTM = null; // Default TM
     private Namespaces namespaces;
@@ -617,7 +619,7 @@ public class Emitter {
         binding.setQName(bindingQName);
 
         SOAPBinding soapBinding = new SOAPBindingImpl();
-        String modeStr = (mode == MODE_RPC) ? "rpc" : "document";
+        String modeStr = (mode == STYLE_RPC) ? "rpc" : "document";
         soapBinding.setStyle(modeStr);
         soapBinding.setTransportURI(Constants.URI_SOAP11_HTTP);
 
@@ -816,8 +818,12 @@ public class Emitter {
             names.add(param.getName());
         }
 
-        if (names.size() > 0)
+        if (names.size() > 0) {
+            if (mode == STYLE_DOC_WRAPPED) {
+                names.clear();
+            }
             oper.setParameterOrdering(names);
+        }
     }
 
     /** Create a Operation
@@ -899,7 +905,7 @@ public class Emitter {
     private ExtensibilityElement writeSOAPBody(QName operQName) {
         SOAPBody soapBody = new SOAPBodyImpl();
         // for now, if its document, it is literal use.
-        if (mode == MODE_RPC) {
+        if (mode == STYLE_RPC) {
             soapBody.setUse("encoded");
             soapBody.setEncodingStyles(encodingList);
         } else {
@@ -1074,30 +1080,84 @@ public class Emitter {
             javaType = JavaUtils.getHolderValueType(javaType);
         }
 
-        // Write the type representing the parameter type
-        QName elemQName = null;
-        if (mode != MODE_RPC)
-            elemQName = param.getQName();
-        if (mode == MODE_RPC) {
-            QName typeQName = types.writePartType(javaType,
-                                                  param.getTypeQName());
+        switch(mode) {
+        case STYLE_RPC: {
+            // Add the type representing the param
+            // For convenience, add an element for the param
+            // Write <part name=param_name type=param_type>
+            QName typeQName = 
+                types.writeTypeForPart(javaType,
+                                       param.getTypeQName());
+            QName elemQName = 
+                types.writeElementForPart(javaType,
+                                          param.getTypeQName());
             if (typeQName != null) {
-                part.setTypeName(typeQName);
                 part.setName(param.getName());
+                part.setTypeName(typeQName);
                 msg.addPart(part);
             }
-        } else if (elemQName != null) {
-            String namespaceURI = elemQName.getNamespaceURI();
-            if (namespaceURI != null && !namespaceURI.equals("")) {
-                def.addNamespace(namespaces.getCreatePrefix(namespaceURI),
-                        namespaceURI);
+            break;
+        }
+        case STYLE_DOCUMENT: {
+            // Write the type representing the param.
+            // Write the element representing the param
+            // If an element was written
+            //   Write <part name=param_name element=param_element>
+            // Else its a simple type, 
+            //   Write <part name=param_name type=param_type>
+            QName typeQName = 
+                types.writeTypeForPart(javaType,
+                                       param.getTypeQName());
+            QName elemQName = 
+                types.writeElementForPart(javaType,
+                                          param.getTypeQName());
+            if (elemQName != null) {
+                part.setName(param.getName());
+                part.setElementName(elemQName);
+                msg.addPart(part);
+            } else if (typeQName != null) {
+                part.setName(param.getName());
+                part.setTypeName(typeQName);
+                msg.addPart(part);
             }
-            part.setElementName(elemQName);
-            part.setName(param.getName());
-            msg.addPart(part);
-        } else {
-            // ?? Throw an exception here?  Must have an element if not
-            // RPC style?
+            break;
+        }
+        case STYLE_DOC_WRAPPED: {
+            // Write type representing the param
+            QName typeQName = 
+                types.writeTypeForPart(javaType,
+                                       param.getTypeQName());
+
+            // Get the QName of the wrapper element
+            QName wrapperQName = null;
+            if (request) {
+                wrapperQName = 
+                    new QName(
+                        msg.getQName().getNamespaceURI(),
+                        msg.getQName().getLocalPart().substring(0,
+                           msg.getQName().getLocalPart().indexOf("Request"))); 
+            } else {
+                wrapperQName = msg.getQName();
+            }
+            
+            if (typeQName != null) {
+                // Write/Get the wrapper element
+                // and append a child element repesenting
+                // the parameter
+                if (types.writeWrapperForPart(wrapperQName,
+                                              param.getName(),
+                                              typeQName)) {
+                    // If wrapper element is written
+                    // add <part name="body" element=wrapper_elem />
+                    part.setName("body");
+                    part.setElementName(wrapperQName);
+                    msg.addPart(part);
+                }
+            }
+            break;
+        }
+        default:
+            // ?? Throw an exception here?
         }
         return param.getName();
     }

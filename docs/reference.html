@@ -322,6 +322,10 @@ in this top level schema element.<br>
   &lt;argument></font></tt> <br>
   <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
   space or comma separated list of methods not to export</font></tt> <br>
+  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -y, --style 
+  &lt;argument></font></tt> <br>
+  <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+  the style of the wsdl document: RPC, DOCUMENT or WRAPPED</font></tt> <br>
   <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -c, --stopClasses 
   &lt;argument></font></tt> <br>
   <tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
@@ -416,6 +420,11 @@ WSDL.
   (No longer used.) 
 <p><b>-x, --exclude &lt;list></b> <br>
   List of methods to not exclude from the wsdl file. 
+<p><b>-y, --style &lt;argument></b> <br>
+  The style of the WSDL document:  RPC, DOCUMENT or WRAPPED.
+  If RPC, a rpc/encoded wsdl is generated.
+  If DOCUMENT, a document/literal wsdl is generated.
+  If WRAPPED, a document/literal wsdl is generated using the wrapped approach.
 <p><b>-c, --stopClasses &lt;list></b> <br>
   List of classes which stop the Java2WSDL inheritance search. 
 <p><b>-T, --typeMappingVersion &lt;version></b> <br>
