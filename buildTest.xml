@@ -182,6 +182,7 @@ Copyright:
       <jvmarg value="-Djavax.xml.parsers.DocumentBuilderFactory=${javax.xml.parsers.DocumentBuilderFactory}"/>
       <jvmarg value="-Djavax.xml.parsers.SAXParserFactory=${javax.xml.parsers.SAXParserFactory}"/>
       <jvmarg value="-Xbootclasspath:${sun.boot.class.path}"/>
+      <jvmarg value="-Djikes.class.path=${jikes.class.path}"/>
 
       <!-- Pass through the proxy parameters -->
       <jvmarg value="-Dhttp.proxyHost=${http.proxyHost}"/>

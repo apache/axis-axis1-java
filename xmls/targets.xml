@@ -12,6 +12,7 @@
        <jvmarg value="-Djavax.xml.parsers.DocumentBuilderFactory=${javax.xml.parsers.DocumentBuilderFactory}"/>
        <jvmarg value="-Djavax.xml.parsers.SAXParserFactory=${javax.xml.parsers.SAXParserFactory}"/>
        <jvmarg value="-Xbootclasspath:${sun.boot.class.path}"/>
+       <jvmarg value="-Djikes.class.path=${jikes.class.path}"/>
 
        <!-- Pass through the proxy parameters -->
        <jvmarg value="-Dhttp.proxyHost=${http.proxyHost}"/>
@@ -377,6 +378,7 @@
     <echo message="javax.xml.parsers.DocumentBuilderFactory=${javax.xml.parsers.DocumentBuilderFactory}"/>
     <echo message="javax.xml.parsers.SAXParserFactory=${javax.xml.parsers.SAXParserFactory}"/>
     <echo message="sun.boot.class.path=${sun.boot.class.path}"/>
+    <echo message="jikes.class.path=${jikes.class.path}"/>
 
     <echo message="" />
     <echo message="-- Network Settings ---"/>
