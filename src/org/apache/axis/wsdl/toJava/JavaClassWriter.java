@@ -54,6 +54,7 @@
  */
 package org.apache.axis.wsdl.toJava;
 
+import org.apache.axis.Version;
 import org.apache.axis.utils.Messages;
 
 import java.io.File;
@@ -210,7 +211,7 @@ public abstract class JavaClassWriter extends JavaWriter {
         pw.println(" * " + localFile);
         pw.println(" *");
         pw.println(" * " + Messages.getMessage("wsdlGenLine00"));
-        pw.println(" * " + Messages.getMessage("wsdlGenLine01"));
+        pw.println(" * " + Messages.getMessage("wsdlGenLine01",Version.getVersionText()));
         pw.println(" */");
         pw.println();
     } // writeHeaderComments
