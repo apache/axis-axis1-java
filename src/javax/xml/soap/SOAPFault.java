@@ -54,6 +54,8 @@
  */
 package javax.xml.soap;
 
+import java.util.Locale;
+
 /**
  * An element in the <CODE>SOAPBody</CODE> object that contains
  *   error and/or status information. This information may relate to
@@ -173,4 +175,12 @@ public interface SOAPFault extends SOAPBodyElement {
      *     <CODE>Detail</CODE> object
      */
     public abstract Detail addDetail() throws SOAPException;
+
+    public abstract void setFaultCode(Name name) throws SOAPException;
+
+    public abstract Name getFaultCodeAsName();
+
+    public abstract void setFaultString(String s, Locale locale) throws SOAPException;
+
+    public abstract Locale getFaultStringLocale();
 }

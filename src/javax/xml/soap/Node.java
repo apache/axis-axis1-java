@@ -60,7 +60,7 @@ package javax.xml.soap;
  * This interface provides methods for getting the value of a node, for
  * getting and setting the parent of a node, and for removing a node.
  */
-public interface Node {
+public interface Node extends org.w3c.dom.Node {
 
     /**
      * Returns the the value of the immediate child of this <code>Node</code>
@@ -113,4 +113,6 @@ public interface Node {
      * <code>detachNode</code> has been called previously.
      */
     public abstract void recycleNode();
+
+    public abstract void setValue(String s);
 }

@@ -200,9 +200,6 @@ public abstract class MessageFactory {
             throws IOException, SOAPException;
 
     /**  */
-    static Class clz = null;
-
-    /**  */
     private static final String DEFAULT_MESSAGE_FACTORY =
         "org.apache.axis.soap.MessageFactoryImpl";
 

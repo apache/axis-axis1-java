@@ -54,6 +54,10 @@
  */
 package javax.xml.soap;
 
+import org.w3c.dom.Document;
+
+import java.util.Locale;
+
 /**
  * An object that represents the contents of the SOAP body
  * element in a SOAP message. A SOAP body element consists of XML data
@@ -102,4 +106,10 @@ public interface SOAPBody extends SOAPElement {
      */
     public abstract SOAPBodyElement addBodyElement(Name name)
         throws SOAPException;
-}
+
+    public abstract SOAPFault addFault(Name name, String s, Locale locale) throws SOAPException;
+
+    public abstract SOAPFault addFault(Name name, String s) throws SOAPException;
+
+    public abstract SOAPBodyElement addDocument(Document document) throws SOAPException;
+    }

@@ -273,7 +273,7 @@ public abstract class AttachmentPart {
 
         String as[] = getMimeHeader("Content-Id");
 
-        if (as != null) {
+        if (as != null && as.length > 0) {
             return as[0];
         } else {
             return null;
@@ -291,7 +291,7 @@ public abstract class AttachmentPart {
 
         String as[] = getMimeHeader("Content-Location");
 
-        if (as != null) {
+        if (as != null && as.length > 0) {
             return as[0];
         } else {
             return null;
@@ -308,7 +308,7 @@ public abstract class AttachmentPart {
 
         String as[] = getMimeHeader("Content-Type");
 
-        if (as != null) {
+        if (as != null && as.length > 0) {
             return as[0];
         } else {
             return null;

@@ -67,6 +67,8 @@ import org.apache.commons.logging.Log;
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPHeader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -449,6 +451,22 @@ public class Message extends javax.xml.soap.SOAPMessage
                 log.error(Messages.getMessage("exception00"), e);
             }
         }
+    }
+
+    public SOAPBody getSOAPBody() throws SOAPException {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public SOAPHeader getSOAPHeader() throws SOAPException {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public void setProperty(String s, Object obj) throws SOAPException {
+        //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public Object getProperty(String s) throws SOAPException {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
     }
 
     /**

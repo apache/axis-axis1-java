@@ -65,7 +65,7 @@ import java.util.Iterator;
  * the base class for all of the classes that represent the SOAP objects as
  * defined in the SOAP specification.
  */
-public interface SOAPElement extends Node {
+public interface SOAPElement extends Node, org.w3c.dom.Element {
 
     /**
      * Creates a new <code>SOAPElement</code> object initialized with the
@@ -303,4 +303,8 @@ public interface SOAPElement extends Node {
      * @see #setEncodingStyle(java.lang.String) setEncodingStyle(java.lang.String)
      */
     public abstract String getEncodingStyle();
+
+    public abstract void removeContents();
+    
+    public abstract Iterator getVisibleNamespacePrefixes();
 }

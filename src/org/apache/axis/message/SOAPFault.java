@@ -71,8 +71,10 @@ import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.DetailEntry;
+import javax.xml.soap.Name;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Locale;
 
 /** A Fault body element.
  *
@@ -362,6 +364,21 @@ public class SOAPFault extends SOAPBodyElement implements javax.xml.soap.SOAPFau
         return detail;
     }
 
+    public void setFaultCode(Name name) throws SOAPException {
+        //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public Name getFaultCodeAsName() {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public void setFaultString(String s, Locale locale) throws SOAPException {
+        //TODO: Fix this for SAAJ 1.2 Implementation
+    }
+
+    public Locale getFaultStringLocale() {
+        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    }
 
     /**
      * Convert the details in an AxisFault to a Detail object
