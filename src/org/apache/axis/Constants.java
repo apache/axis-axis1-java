@@ -658,6 +658,11 @@ public class Constants {
     public static final QName QNAME_NO_SERVICE_FAULT_CODE
             = new QName(NS_URI_AXIS, "Server.NoService");
 
+    /**
+     * the provider for the service does not support WSDL generation
+     */
+    public static final QName QNAME_NO_WSDLGENERATOR_FAULT_CODE = new QName( NS_URI_AXIS, "Server.NoWSDLSupport");          
+    
     // Misc Strings
     //////////////////////////////////////////////////////////////////////////
 

@@ -136,9 +136,14 @@ public class QSWSDLHandler extends AbstractQueryStringHandler {
                 response.setStatus (HttpURLConnection.HTTP_NOT_FOUND);
 
                 reportNoWSDL (response, writer, "noWSDL01", axisFault);
-            }
-
-            else {
+                
+            } else if (axisFault.getFaultCode().equals(Constants.QNAME_NO_WSDLGENERATOR_FAULT_CODE)) {              
+              // the provider for the service doesn't support WSDL generation
+              response.setStatus (HttpURLConnection.HTTP_NOT_FOUND);
+           
+              // report WSDL support is missing                 
+              reportNoWSDL (response, writer, "noWSDL03", axisFault);
+            } else {
                 //all other faults get thrown
 
                 throw axisFault;
