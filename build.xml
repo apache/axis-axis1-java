@@ -530,6 +530,10 @@ Copyright:
     </ant>
   </target>
 
+  <!-- Security only tests, with full dependencies -->
+  <target name="secure-tests" depends="junit, functional-tests-secure-only">
+  </target>
+
   <!-- All tests -->
   <target name="all-tests" depends="junit, functional-tests">
   </target>
