@@ -188,10 +188,14 @@ public class TypeDesc {
                 TypeDesc superDesc = getTypeDescForClass(cls);
                 if (superDesc != null) {
                     FieldDesc [] parentFields = superDesc.getFields(true);
-                    FieldDesc [] ret = new FieldDesc[parentFields.length + fields.length];
-                    System.arraycopy(parentFields, 0, ret, 0, parentFields.length);
-                    System.arraycopy(fields, 0, ret, parentFields.length, fields.length);
-                    fields = ret;
+// START FIX http://nagoya.apache.org/bugzilla/show_bug.cgi?id=17188
+                    if (parentFields != null) {
+                      FieldDesc [] ret = new FieldDesc[parentFields.length + fields.length];
+                      System.arraycopy(parentFields, 0, ret, 0, parentFields.length);
+                      System.arraycopy(fields, 0, ret, parentFields.length, fields.length);
+                      fields = ret;
+                    }
+// END FIX http://nagoya.apache.org/bugzilla/show_bug.cgi?id=17188
                 }
             }
         }
