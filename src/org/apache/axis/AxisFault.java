@@ -63,18 +63,11 @@ import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
-import org.w3c.dom.Node;
-import org.w3c.dom.DOMException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.Vector;
-import java.rmi.RemoteException;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.util.Vector;
 
 /**
  * An exception which maps cleanly to a SOAP fault.
