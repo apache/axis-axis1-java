@@ -126,6 +126,9 @@ Copyright:
               <include name="**/*TestCase.class" />
               <exclude name="**/Interop3TestCase.class"/>
               <exclude name="**/test/wsdl/attachments/**/*.class" unless="attachments.present" />
+              <!-- Excluding test against WhiteMesa SOAP 1.2 server until they -->
+              <!-- move to the SOAP 1.2 Rec namespaces -->
+              <exclude name="**/test/wsdl/soap12/additional/*.class"/>
         </fileset>
       </batchtest>
     </junit>
