@@ -261,7 +261,7 @@ public class SchemaUtils {
         QName qName = getArrayElementQName_JAXRPC(node);
         if (qName != null)
             return qName;
-        qName = getArrayElementQName_nonJAXRPC(node);
+        // qName = getArrayElementQName_nonJAXRPC(node);
         return qName;
     }
 
