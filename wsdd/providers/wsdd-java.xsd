@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="http://xml.apache.org/axis/providers/java" xmlns:xsd="http://www.w3.org/2000/10/XMLSchema" xmlns:java="http://xml.apache.org/axis/providers/java" attributeFormDefault="qualified" version="1.0">
+	<xsd:attribute name="className" type="xsd:string"/>
+	<xsd:attribute name="isStatic" type="xsd:boolean" value="false"/>
+	<xsd:element name="provider">
+		<xsd:annotation>
+			<xsd:documentation>Java Provider Definition</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:attribute ref="java:className"/>
+			<xsd:attribute ref="java:isStatic"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="classPath">
+		<xsd:annotation>
+			<xsd:documentation>Allows defining a custom java classpath</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+</xsd:schema>

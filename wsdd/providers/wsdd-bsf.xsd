@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="http://xml.apache.org/axis/providers/bsf" xmlns:bsf="http://xml.apache.org/axis/providers/bsf" xmlns:xsd="http://www.w3.org/2000/10/XMLSchema" attributeFormDefault="qualified" version="1.0">
+	<xsd:attribute name="language" type="xsd:string"/>
+	<xsd:attribute name="src" type="xsd:uriReference"/>
+	<xsd:element name="provider">
+		<xsd:complexType mixed="true">
+			<xsd:attribute ref="bsf:language" use="required"/>
+			<xsd:attribute ref="bsf:src" use="optional"/>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>
