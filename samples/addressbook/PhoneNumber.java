@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 2000 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -20,11 +20,11 @@
  * 3. The end-user documentation included with the redistribution,
  *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
- *    Apache Software Foundation (http://www.apache.org/)."
+ *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
  *    if and wherever such third-party acknowledgments normally appear.
  *
- * 4. The names "Axis" and "Apache Software Foundation" must
+ * 4. The names "SOAP" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
  *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
@@ -48,75 +48,69 @@
  * ====================================================================
  *
  * This software consists of voluntary contributions made by many
- * individuals on behalf of the Apache Software Foundation.  For more
+ * individuals on behalf of the Apache Software Foundation and was
+ * originally based on software copyright (c) 2000, International
+ * Business Machines, Inc., http://www.apache.org.  For more
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.transport.http;
-
-import org.apache.axis.session.Session;
-import javax.servlet.http.HttpSession;
+package samples.addressbook;
 
 /**
- * An HTTP/Servlet implementation of Axis sessions.
+ * See \samples\addressbook\readme for info.
  *
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Matthew J. Duftler (duftler@us.ibm.com)
  */
-public class AxisHttpSession implements Session
+public class PhoneNumber
 {
-    private HttpSession rep;
+    private int    areaCode;
+    private String exchange;
+    private String number;
     
-    public AxisHttpSession(HttpSession realSession)
+    public PhoneNumber()
     {
-        rep = realSession;
     }
     
-    /** Set our internal HttpSession to the passed
-     * servlet HttpSession.  Not sure if we'll really
-     * need this method...
-     */
-    public void setRep(HttpSession realSession)
+    public PhoneNumber(int areaCode, String exchange, String number)
     {
-        rep = realSession;
+        this.areaCode = areaCode;
+        this.exchange = exchange;
+        this.number   = number;
     }
     
-    /** Get a property from the session
-     *
-     * @param key the name of the property desired.
-     */
-    public Object get(String key)
+    public void setAreaCode(int areaCode)
     {
-        return rep.getAttribute(key);
+        this.areaCode = areaCode;
     }
     
-    /** Set a property in the session
-     *
-     * @param key the name of the property to set.
-     * @param value the value of the property.
-     */
-    public void set(String key, Object value)
+    public int getAreaCode()
     {
-        rep.setAttribute(key, value);
+        return areaCode;
     }
     
-    /** Remove a property from the session
-     *
-     * @param key the name of the property desired.
-     */
-    public void remove(String key)
+    public void setExchange(String exchange)
     {
-        rep.removeAttribute(key);
+        this.exchange = exchange;
     }
     
-    /** Set the session's time-to-live.
-     *
-     * This is implementation-specific, but basically should be the #
-     * of seconds of inactivity which will cause the session to time
-     * out and invalidate.  "inactivity" is implementation-specific.
-     */
-    public void setTimeout(int timeout)
+    public String getExchange()
     {
-        rep.setMaxInactiveInterval(timeout);
+        return exchange;
+    }
+    
+    public void setNumber(String number)
+    {
+        this.number = number;
+    }
+    
+    public String getNumber()
+    {
+        return number;
+    }
+    
+    public String toString()
+    {
+        return "(" + areaCode + ") " + exchange + "-" + number;
     }
 }

@@ -37,6 +37,9 @@ System.out.println("Creating FunctionalTests suite.");
         // bid-buy test
         suite.addTestSuite(TestBidBuySample.class);
 
+        // address book test
+        suite.addTestSuite(TestAddressBookSample.class);
+
         return suite;
     }
 }

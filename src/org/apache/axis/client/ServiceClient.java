@@ -99,7 +99,7 @@ public class ServiceClient {
     public  boolean doLocal = false ;
     private static final boolean DEBUG_LOG = false;
     
-    // Our AxisClien
+    // Our AxisClient
     private AxisClient engine;
     
     // The description of our service
@@ -179,6 +179,13 @@ public class ServiceClient {
     
     public void setRequestMessage(Message msg) {
         msgContext.setRequestMessage(msg);
+    }
+    
+    /**
+     * pass through whether we are maintaining session state
+     */
+    public void setMaintainSession (boolean yesno) {
+        msgContext.setMaintainSession(yesno);
     }
     
     /**
@@ -300,8 +307,8 @@ public class ServiceClient {
         Debug.Print( 1, "Enter: ClientMessage::invoke(MessageContext)" );
         
         // If local is specified, override the transport handlers Once there
-        // is a convenient way for the client to specify the transport 
-        // handler, we might want to consider removing this code and doLocal 
+        // is a convenient way for the client to specify the transport
+        // handler, we might want to consider removing this code and doLocal
         // entirely.
         if (doLocal) {
             msgContext.setProperty(MessageContext.TRANS_INPUT, "LocalSender");

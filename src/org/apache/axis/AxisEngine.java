@@ -62,6 +62,8 @@ import org.apache.axis.utils.* ;
 import org.apache.axis.handlers.* ;
 import org.apache.axis.handlers.soap.* ;
 import org.apache.axis.registries.* ;
+import org.apache.axis.session.Session;
+import org.apache.axis.session.SimpleSession;
 import org.apache.axis.encoding.*;
 
 /**
@@ -88,9 +90,17 @@ public abstract class AxisEngine extends BasicHandler
     protected Properties props = new Properties();
     
     /**
+     * This engine's Session.  This Session supports "application scope"
+     * in the Apache SOAP sense... if you have a service with "application
+     * scope", have it store things in this Session.
+     */
+    private Session session = new SimpleSession();
+    
+    
+    /**
      * No-arg constructor.  Loads properties from the "axis.properties"
      * file if it exists.
-     * 
+     *
      */
     public AxisEngine()
     {
@@ -111,7 +121,7 @@ public abstract class AxisEngine extends BasicHandler
     /**
      * Allows the Listener to specify which handler/service registry
      * implementation they want to use.
-     * 
+     *
      * @param handlers the Handler registry.
      * @param services the Service registry.
      */
@@ -126,7 +136,7 @@ public abstract class AxisEngine extends BasicHandler
 
     /**
      * Constructor specifying registry filenames.
-     * 
+     *
      * @param handlerRegFilename the name of the Handler registry file.
      * @param serviceRegFilename the name of the Service registry file.
      */
@@ -273,5 +283,15 @@ public abstract class AxisEngine extends BasicHandler
     public void undeployService(String key)
     {
         getHandlerRegistry().remove(key);
+	}
+
+    /**
+     * accessor only, for application session
+     * (could call it "engine session" instead, but named with reference
+     * to Apache SOAP's notion of "application scope")
+     */
+    public Session getApplicationSession () {
+        return session;
     }
+
 };

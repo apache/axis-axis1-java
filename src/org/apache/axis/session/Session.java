@@ -57,34 +57,34 @@ package org.apache.axis.session;
 
 /**
  * An abstract interface to provide session storage to Axis services.
- * 
+ *
  * This is extremely basic at the moment.
- * 
+ *
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
 public interface Session
 {
     /** Get a property from the session
-     * 
+     *
      * @param key the name of the property desired.
      */
     public Object get(String key);
     
     /** Set a property in the session
-     * 
+     *
      * @param key the name of the property to set.
      * @param value the value of the property.
      */
-    public void put(String key, Object value);
+    public void set(String key, Object value);
     
     /** Remove a property from the session
-     * 
+     *
      * @param key the name of the property desired.
      */
     public void remove(String key);
 
     /** Set the session's time-to-live.
-     * 
+     *
      * This is implementation-specific, but basically should be the #
      * of seconds of inactivity which will cause the session to time
      * out and invalidate.  "inactivity" is implementation-specific.

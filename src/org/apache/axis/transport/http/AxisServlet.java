@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -166,8 +166,12 @@ public class AxisServlet extends HttpServlet {
       if ( "".equals(tmp) )
           tmp = req.getContextPath(); // Is this right?
       
-      if ( tmp != null ) 
+      if ( tmp != null )
         msgContext.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, tmp );
+        
+        // Create a Session wrapper for the HTTP session.
+        // These can/should be pooled at some point.  (Sam is Watching! :-)
+        msgContext.setSession(new AxisHttpSession(req.getSession()));
 
       /* Save the real path */
       /**********************/
@@ -189,7 +193,7 @@ public class AxisServlet extends HttpServlet {
         // It's been suggested that a lack of SOAPAction should produce some
         // other error code (in the 400s)...
       }
-      else 
+      else
         res.setStatus( HttpServletResponse.SC_INTERNAL_SERVER_ERROR );
       if ( !(e instanceof AxisFault) )
         e = new AxisFault( e );

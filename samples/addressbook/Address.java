@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 2000 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -20,11 +20,11 @@
  * 3. The end-user documentation included with the redistribution,
  *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
- *    Apache Software Foundation (http://www.apache.org/)."
+ *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
  *    if and wherever such third-party acknowledgments normally appear.
  *
- * 4. The names "Axis" and "Apache Software Foundation" must
+ * 4. The names "SOAP" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
  *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
@@ -48,75 +48,108 @@
  * ====================================================================
  *
  * This software consists of voluntary contributions made by many
- * individuals on behalf of the Apache Software Foundation.  For more
+ * individuals on behalf of the Apache Software Foundation and was
+ * originally based on software copyright (c) 2000, International
+ * Business Machines, Inc., http://www.apache.org.  For more
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.transport.http;
-
-import org.apache.axis.session.Session;
-import javax.servlet.http.HttpSession;
+package samples.addressbook;
 
 /**
- * An HTTP/Servlet implementation of Axis sessions.
+ * See \samples\addressbook\readme for info.
  *
- * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Matthew J. Duftler (duftler@us.ibm.com)
  */
-public class AxisHttpSession implements Session
+public class Address
 {
-    private HttpSession rep;
+    private int         streetNum;
+    private String      streetName;
+    private String      city;
+    private String      state;
+    private int         zip;
+    private PhoneNumber phoneNumber;
     
-    public AxisHttpSession(HttpSession realSession)
+    public Address()
     {
-        rep = realSession;
     }
     
-    /** Set our internal HttpSession to the passed
-     * servlet HttpSession.  Not sure if we'll really
-     * need this method...
-     */
-    public void setRep(HttpSession realSession)
+    public Address(int streetNum, String streetName, String city, String state,
+                   int zip, PhoneNumber phoneNumber)
     {
-        rep = realSession;
+        this.streetNum = streetNum;
+        this.streetName = streetName;
+        this.city = city;
+        this.state = state;
+        this.zip = zip;
+        this.phoneNumber = phoneNumber;
     }
     
-    /** Get a property from the session
-     *
-     * @param key the name of the property desired.
-     */
-    public Object get(String key)
+    public void setStreetNum(int streetNum)
     {
-        return rep.getAttribute(key);
+        this.streetNum = streetNum;
     }
     
-    /** Set a property in the session
-     *
-     * @param key the name of the property to set.
-     * @param value the value of the property.
-     */
-    public void set(String key, Object value)
+    public int getStreetNum()
     {
-        rep.setAttribute(key, value);
+        return streetNum;
     }
     
-    /** Remove a property from the session
-     *
-     * @param key the name of the property desired.
-     */
-    public void remove(String key)
+    public void setStreetName(String streetName)
     {
-        rep.removeAttribute(key);
+        this.streetName = streetName;
     }
     
-    /** Set the session's time-to-live.
-     *
-     * This is implementation-specific, but basically should be the #
-     * of seconds of inactivity which will cause the session to time
-     * out and invalidate.  "inactivity" is implementation-specific.
-     */
-    public void setTimeout(int timeout)
+    public String getStreetName()
     {
-        rep.setMaxInactiveInterval(timeout);
+        return streetName;
+    }
+    
+    public void setCity(String city)
+    {
+        this.city = city;
+    }
+    
+    public String getCity()
+    {
+        return city;
+    }
+    
+    public void setState(String state)
+    {
+        this.state = state;
+    }
+    
+    public String getState()
+    {
+        return state;
+    }
+    
+    public void setZip(int zip)
+    {
+        this.zip = zip;
+    }
+    
+    public int getZip()
+    {
+        return zip;
+    }
+    
+    public void setPhoneNumber(PhoneNumber phoneNumber)
+    {
+        this.phoneNumber = phoneNumber;
+    }
+    
+    public PhoneNumber getPhoneNumber()
+    {
+        return phoneNumber;
+    }
+    
+    public String toString()
+    {
+        return streetNum + " " + streetName + "\n" +
+            city + ", " + state + " " + zip + "\n" +
+            phoneNumber;
     }
 }

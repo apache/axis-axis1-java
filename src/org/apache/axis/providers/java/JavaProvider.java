@@ -84,12 +84,62 @@ public abstract class JavaProvider extends BasicProvider {
      * Get the service object whose method actually provides the service.
      * May look up in session table.
      */
-    public Object getServiceObject (MessageContext msgContext, String clsName, String methodName, JavaClass jc)
+    public Object getServiceObject (MessageContext msgContext, Handler service, JavaClass jc, String clsName)
         throws Exception
     {
-        // default is just to get new instance, for now
-        // soon, session support here
-        return jc.getJavaClass().newInstance();
+        String serviceName = msgContext.getTargetService();
+        
+        // scope can be "Request", "Session", "Application" (as with Apache SOAP)
+        String scope = (String)service.getOption("scope");
+        if (scope == null) {
+            // default is Request scope
+            scope = "Request";
+        }
+        
+        if (scope.equals("Request")) {
+            
+            // make a one-off
+            return jc.getJavaClass().newInstance();
+            
+        } else if (scope.equals("Session")) {
+            
+            // look in incoming session
+            if (msgContext.getSession() != null) {
+                // store service objects in session, indexed by class name
+                Object obj = msgContext.getSession().get(serviceName);
+                if (obj == null) {
+                    obj = jc.getJavaClass().newInstance();
+                    msgContext.getSession().set(serviceName, obj);
+                }
+                return obj;
+            } else {
+                // was no incoming session, sigh, treat as request scope
+                return jc.getJavaClass().newInstance();
+            }
+            
+        } else if (scope.equals("Application")) {
+            
+            // MUST be AxisEngine here!
+            AxisEngine engine = msgContext.getAxisEngine();
+            if (engine.getApplicationSession() != null) {
+                // store service objects in session, indexed by class name
+                Object obj = engine.getApplicationSession().get(serviceName);
+                if (obj == null) {
+                    obj = jc.getJavaClass().newInstance();
+                    engine.getApplicationSession().set(serviceName, obj);
+                }
+                return obj;
+            } else {
+                // was no incoming session, sigh, treat as request scope
+                return jc.getJavaClass().newInstance();
+            }
+            
+        } else {
+            
+            // NOTREACHED
+            return null;
+            
+        }
     }
     
     
@@ -140,7 +190,7 @@ public abstract class JavaProvider extends BasicProvider {
             AxisClassLoader cl     = msgContext.getClassLoader();
             JavaClass       jc     = cl.lookup(clsName);
             Class           cls    = jc.getJavaClass();
-            Object          obj    = getServiceObject(msgContext, clsName, methodName, jc);
+            Object          obj    = getServiceObject(msgContext, service, jc, clsName);
             
             Message         reqMsg  = msgContext.getRequestMessage();
             SOAPEnvelope    reqEnv  = (SOAPEnvelope) reqMsg.getAsSOAPEnvelope();
