@@ -738,150 +738,149 @@ public class SerializationContext implements javax.xml.rpc.encoding.Serializatio
         }
         boolean shouldSendType = shouldSendXSIType();
 
-        Boolean sendNullCache = this.sendNull;
-        if (sendNull != null) {
-            this.sendNull = sendNull;
-        } else {
-            sendNull = this.sendNull;
-        }
-
-        if (value == null) {
-            // If the value is null, the element is
-            // passed with xsi:nil="true" to indicate that no object is present.
-            if (this.sendNull.booleanValue()) {
-                AttributesImpl attrs = new AttributesImpl();
-                if (attributes != null && 0 < attributes.getLength())
-                    attrs.setAttributes(attributes);
-                if (shouldSendType)
-                    attrs = (AttributesImpl) setTypeAttribute(attrs, xmlType);
-                String nil = schemaVersion.getNilQName().getLocalPart();
-                attrs.addAttribute(schemaVersion.getXsiURI(), nil, "xsi:" + nil,
-                                   "CDATA", "true");
-                startElement(elemQName, attrs);
-                endElement();
+        try {
+            Boolean sendNullCache = this.sendNull;
+            if (sendNull != null) {
+                this.sendNull = sendNull;
+            } else {
+                sendNull = this.sendNull;
             }
-            sendXSIType = sendXSITypeCache;
-            this.sendNull = sendNullCache;
-            return;
-        }
 
-        Message msg= getCurrentMessage();
-        if(null != msg){
-            //Get attachments. returns null if no attachment support.
-            Attachments attachments= getCurrentMessage().getAttachmentsImpl();
-
-            if( null != attachments && attachments.isAttachment(value)){
-                //Attachment support and this is an object that should be treated as an attachment.
-
-                //Allow an the attachment to do its own serialization.
-                serializeActual(elemQName, attributes, value,
-                                xmlType, sendType);
-
-                //No need to add to mulitRefs. Attachment data stream handled by
-                // the message;
-                sendXSIType = sendXSITypeCache;
-                this.sendNull = sendNullCache;
-                return;
-            }
-        }
-
-        // If multi-reference is enabled and this object value is not a primitive
-        // and we are not forcing serialization of the object, then generate
-        // an element href (and store the object for subsequent outputMultiRef
-        // processing).
-
-        // NOTE : you'll notice that everywhere we register objects in the
-        // multiRefValues and secondLevelObjects collections, we key them
-        // using getIdentityKey(value) instead of the Object reference itself.
-        // THIS IS IMPORTANT, and please make sure you understand what's
-        // going on if you change any of this code.  It's this way to make
-        // sure that individual Objects are serialized separately even if the
-        // hashCode() and equals() methods have been overloaded to make two
-        // Objects appear equal.
-
-        if (doMultiRefs && isEncoded() &&
-                (value != forceSer) && !isPrimitive(value)) {
-            if (multiRefIndex == -1)
-                multiRefValues = new HashMap();
-
-            String id;
-
-            // Look for a multi-ref descriptor for this Object.
-            MultiRefItem mri = (MultiRefItem)multiRefValues.get(
-                                                        getIdentityKey(value));
-            if (mri == null) {
-                // Didn't find one, so create one, give it a new ID, and store
-                // it for next time.
-                multiRefIndex++;
-                id = "id" + multiRefIndex;
-                mri = new MultiRefItem (id, xmlType, sendType, value);
-                multiRefValues.put(getIdentityKey(value), mri);
-
-                /**
-                 * If we're SOAP 1.2, we can "inline" the serializations,
-                 * so put it out now, with it's ID.
-                 */
-                if (soapConstants == SOAPConstants.SOAP12_CONSTANTS) {
+            if (value == null) {
+                // If the value is null, the element is
+                // passed with xsi:nil="true" to indicate that no object is present.
+                if (this.sendNull.booleanValue()) {
                     AttributesImpl attrs = new AttributesImpl();
                     if (attributes != null && 0 < attributes.getLength())
                         attrs.setAttributes(attributes);
-                    attrs.addAttribute("", Constants.ATTR_ID, "id", "CDATA",
-                                       id);
-                    serializeActual(elemQName, attrs, value, xmlType, sendType);
-                    sendXSIType = sendXSITypeCache;
+                    if (shouldSendType)
+                        attrs = (AttributesImpl) setTypeAttribute(attrs, xmlType);
+                    String nil = schemaVersion.getNilQName().getLocalPart();
+                    attrs.addAttribute(schemaVersion.getXsiURI(), nil, "xsi:" + nil,
+                                       "CDATA", "true");
+                    startElement(elemQName, attrs);
+                    endElement();
+                }
+                this.sendNull = sendNullCache;
+                return;
+            }
+
+            Message msg= getCurrentMessage();
+            if(null != msg){
+                //Get attachments. returns null if no attachment support.
+                Attachments attachments= getCurrentMessage().getAttachmentsImpl();
+
+                if( null != attachments && attachments.isAttachment(value)){
+                    //Attachment support and this is an object that should be treated as an attachment.
+
+                    //Allow an the attachment to do its own serialization.
+                    serializeActual(elemQName, attributes, value,
+                                    xmlType, sendType);
+
+                    //No need to add to mulitRefs. Attachment data stream handled by
+                    // the message;
                     this.sendNull = sendNullCache;
                     return;
                 }
-
-
-                /** If we're in the middle of writing out
-                 * the multi-refs, we've already cloned the list of objects
-                 * and so even though we add a new one to multiRefValues,
-                 * it won't get serialized this time around.
-                 *
-                 * To deal with this, we maintain a list of "second level"
-                 * Objects - ones that need serializing as a result of
-                 * serializing the first level.  When outputMultiRefs() is
-                 * nearly finished, it checks to see if secondLevelObjects
-                 * is empty, and if not, it goes back and loops over those
-                 * Objects.  This can happen N times depending on how deep
-                 * the Object graph goes.
-                 */
-                if (outputMultiRefsFlag) {
-                    if (secondLevelObjects == null)
-                        secondLevelObjects = new HashSet();
-                    secondLevelObjects.add(getIdentityKey(value));
-                }
-            } else {
-                // Found one, remember it's ID
-                id = mri.id;
             }
 
-            // Serialize an HREF to our object
-            AttributesImpl attrs = new AttributesImpl();
-            if (attributes != null && 0 < attributes.getLength())
-                attrs.setAttributes(attributes);
-            attrs.addAttribute("", soapConstants.getAttrHref(), soapConstants.getAttrHref(),
-                               "CDATA", '#' + id);
+            // If multi-reference is enabled and this object value is not a primitive
+            // and we are not forcing serialization of the object, then generate
+            // an element href (and store the object for subsequent outputMultiRef
+            // processing).
 
-            startElement(elemQName, attrs);
-            endElement();
+            // NOTE : you'll notice that everywhere we register objects in the
+            // multiRefValues and secondLevelObjects collections, we key them
+            // using getIdentityKey(value) instead of the Object reference itself.
+            // THIS IS IMPORTANT, and please make sure you understand what's
+            // going on if you change any of this code.  It's this way to make
+            // sure that individual Objects are serialized separately even if the
+            // hashCode() and equals() methods have been overloaded to make two
+            // Objects appear equal.
+
+            if (doMultiRefs && isEncoded() &&
+                    (value != forceSer) && !isPrimitive(value)) {
+                if (multiRefIndex == -1)
+                    multiRefValues = new HashMap();
+
+                String id;
+
+                // Look for a multi-ref descriptor for this Object.
+                MultiRefItem mri = (MultiRefItem)multiRefValues.get(
+                        getIdentityKey(value));
+                if (mri == null) {
+                    // Didn't find one, so create one, give it a new ID, and store
+                    // it for next time.
+                    multiRefIndex++;
+                    id = "id" + multiRefIndex;
+                    mri = new MultiRefItem (id, xmlType, sendType, value);
+                    multiRefValues.put(getIdentityKey(value), mri);
+
+                    /**
+                     * If we're SOAP 1.2, we can "inline" the serializations,
+                     * so put it out now, with it's ID.
+                     */
+                    if (soapConstants == SOAPConstants.SOAP12_CONSTANTS) {
+                        AttributesImpl attrs = new AttributesImpl();
+                        if (attributes != null && 0 < attributes.getLength())
+                            attrs.setAttributes(attributes);
+                        attrs.addAttribute("", Constants.ATTR_ID, "id", "CDATA",
+                                           id);
+                        serializeActual(elemQName, attrs, value, xmlType, sendType);
+                        this.sendNull = sendNullCache;
+                        return;
+                    }
+
+
+                    /** If we're in the middle of writing out
+                     * the multi-refs, we've already cloned the list of objects
+                     * and so even though we add a new one to multiRefValues,
+                     * it won't get serialized this time around.
+                     *
+                     * To deal with this, we maintain a list of "second level"
+                     * Objects - ones that need serializing as a result of
+                     * serializing the first level.  When outputMultiRefs() is
+                     * nearly finished, it checks to see if secondLevelObjects
+                     * is empty, and if not, it goes back and loops over those
+                     * Objects.  This can happen N times depending on how deep
+                     * the Object graph goes.
+                     */
+                    if (outputMultiRefsFlag) {
+                        if (secondLevelObjects == null)
+                            secondLevelObjects = new HashSet();
+                        secondLevelObjects.add(getIdentityKey(value));
+                    }
+                } else {
+                    // Found one, remember it's ID
+                    id = mri.id;
+                }
+
+                // Serialize an HREF to our object
+                AttributesImpl attrs = new AttributesImpl();
+                if (attributes != null && 0 < attributes.getLength())
+                    attrs.setAttributes(attributes);
+                attrs.addAttribute("", soapConstants.getAttrHref(), soapConstants.getAttrHref(),
+                                   "CDATA", '#' + id);
+
+                startElement(elemQName, attrs);
+                endElement();
+                this.sendNull = sendNullCache;
+                return;
+            }
+
+            // The forceSer variable is set by outputMultiRefs to force
+            // serialization of this object via the serialize(...) call
+            // below.  However, if the forced object contains a self-reference, we
+            // get into an infinite loop..which is why it is set back to null
+            // before the actual serialization.
+            if (value == forceSer)
+                forceSer = null;
+
+            // Actually serialize the value.  (i.e. not an href like above)
+            serializeActual(elemQName, attributes, value, xmlType, sendType);
+        } finally {
             sendXSIType = sendXSITypeCache;
-            this.sendNull = sendNullCache;
-            return;
         }
-
-        // The forceSer variable is set by outputMultiRefs to force
-        // serialization of this object via the serialize(...) call
-        // below.  However, if the forced object contains a self-reference, we
-        // get into an infinite loop..which is why it is set back to null
-        // before the actual serialization.
-        if (value == forceSer)
-            forceSer = null;
-
-        // Actually serialize the value.  (i.e. not an href like above)
-        serializeActual(elemQName, attributes, value, xmlType, sendType);
-        sendXSIType = sendXSITypeCache;
     }
 
     /**
