@@ -225,34 +225,6 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
             propDesc = (BeanPropertyDescriptor) propertyMap.get(localName);
         }
 
-        // Currently the meta data does not consider inheritance.
-        // Glen is working on a fix.  In the meantime, the following 
-        // code attempts to get the meta data from the base class.  
-        // (this fix does not work in all cases, but is necessary to 
-        // get comprehensive tests Animal - Cat inheritance to work).
-        if (propDesc == null) { 
-            Class superClass = javaType;
-            while (superClass != null && propDesc == null) {
-                superClass = superClass.getSuperclass(); 
-                if (superClass != null) {
-                    TypeDesc td = TypeDesc.getTypeDescForClass(superClass);
-                    if (td != null) {
-                        String fieldName = 
-                            td.getFieldNameForElement(elemQName, 
-                                                      false);
-                        if (fieldName == null && 
-                            (prefix == null || prefix.equals(""))) {
-                            fieldName = 
-                                td.getFieldNameForElement(
-                                new QName("", elemQName.getLocalPart()), false);
-                        }
-                        
-                        propDesc = 
-                            (BeanPropertyDescriptor)propertyMap.get(fieldName);
-                    }
-                }
-            }
-        }
         // try and see if this is an xsd:any namespace="##any" element before reporting a problem
         QName qn = null;
         Deserializer dSer = null;
