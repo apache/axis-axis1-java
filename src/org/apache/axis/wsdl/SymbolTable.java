@@ -171,6 +171,7 @@ public class SymbolTable {
                 }
             }
             
+/* This is a bad idea right now
             // Messages
             Iterator i = def.getMessages().values().iterator();
             while (i.hasNext()) {
@@ -181,6 +182,7 @@ public class SymbolTable {
                                     message.getQName().getLocalPart()));
                 }
             }
+*/
         }
     }
     /**
