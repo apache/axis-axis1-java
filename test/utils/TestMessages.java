@@ -38,7 +38,7 @@ public class TestMessages extends TestCase {
         String arg0 = "arg0";
         String arg1 = "arg1";
         String[] args = {arg0, arg1, "arg2"};
-        Enumeration keys = Messages.getMessageBundle().getKeys();
+        Enumeration keys = Messages.getResourceBundle().getKeys();
         while (keys.hasMoreElements()) {
             String key = (String) keys.nextElement();
             try {
