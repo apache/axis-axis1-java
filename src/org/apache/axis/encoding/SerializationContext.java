@@ -359,9 +359,10 @@ public class SerializationContext
           indent--;
           for (int i=0; i<indent; i++) writer.write(' ');
         }
-        StringBuffer buf = new StringBuffer();
-        buf.append("</" + elementQName + ">\n");
-        writer.write(buf.toString());
+        writer.write("</");
+        writer.write(elementQName);
+        writer.write('>');
+        if (indent>0) writer.write('\n');
         writer.flush();
         onlyXML=true;
     }
