@@ -71,9 +71,11 @@ import java.util.Vector;
  * @author Rich Scheuerle (scheu@us.ibm.com)
  */
 public class Main {
-    static String name = "James Bond";
-    static String[] movies = new String[] { "Goldeneye", "View To A Kill", "To Russia With Love" };
-    static PersonalInfo pi = new PersonalInfo(name,movies);
+    static String name = "Joe Geek";
+    static String[] movies = new String[] { "Star Trek", "A.I." };
+    static String[] hobbies= new String[] { "programming", "reading about programming" };
+    static String[] pets   = new String[] { "Byte", "Nibbles" };
+    static PersonalInfo pi = new PersonalInfo(name,movies,hobbies,pets);
     
     private static void printPersonalInfo (PersonalInfo pi) {
         if (pi == null) {
@@ -85,21 +87,23 @@ public class Main {
         for(int i=0; i<fm.length; i++)
             System.err.println("\t\t" + (String) fm[i]);
 
+        Object[] h =pi.getHobbies();
+        System.err.println ("\tHobbies=");
+        for(int i=0; i<h.length; i++)
+            System.err.println("\t\t" + (String) h[i]);
+
+        Object[] pets =pi.getPets();
+        System.err.println ("\tPets=");
+        for(int i=0; i<pets.length; i++)
+            System.err.println("\t\t" + (String) pets[i]);
+
     }
     
     private static Object doit (PersonalInfoBook pib) throws Exception {
         System.err.println (">> Storing info for '" + name + "'");
         pib.addEntry (name, pi);
-        System.err.println (">> Querying address for '" + name + "'");
+        System.err.println (">> Querying info for '" + name + "'");
         PersonalInfo resp = pib.getPersonalInfoFromName (name);
-        System.err.println (">> Response is:");
-        printPersonalInfo (resp);
-        
-        // if we are NOT maintaining session, resp must be == null.
-        // If we ARE, resp must be != null.
-        
-        System.err.println (">> Querying address for '" + name + "' again");
-        resp = pib.getPersonalInfoFromName (name);
         System.err.println (">> Response is:");
         printPersonalInfo (resp);
         return resp;

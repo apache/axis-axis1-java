@@ -55,6 +55,7 @@
 package org.apache.axis.wsdl;
 
 import org.w3c.dom.Node;
+import org.w3c.dom.NamedNodeMap;
 
 import javax.wsdl.QName;
 import java.net.MalformedURLException;
@@ -63,6 +64,7 @@ import java.text.Collator;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.StringTokenizer;
+import java.util.Vector;
 
 
 /**
@@ -169,6 +171,10 @@ public class Utils {
         if (node == null) {
             return null;
         }
+
+        if (node.getAttributes() == null)
+            return getScopedAttribute(node.getParentNode(), attr);
+
         Node attrNode = node.getAttributes().getNamedItem(attr);
         if (attrNode != null) {
             return attrNode.getNodeValue();
@@ -183,7 +189,7 @@ public class Utils {
      * Returns null if the attribute is not found
      */
     public static String getAttribute(Node node, String attr) {
-        if (node == null) {
+        if (node == null || node.getAttributes() == null) {
             return null;
         }
 
@@ -194,6 +200,29 @@ public class Utils {
         else {
             return null;
         }
+    }
+
+    /**
+     * Given a node, return the attributes that have the specified local name.
+     * Returns null if the attribute is not found
+     */
+    public static Vector getAttributesWithLocalName(Node node, String localName) {
+        Vector v = new Vector();
+        if (node == null) {
+            return v;
+        }
+
+        NamedNodeMap map = node.getAttributes();
+        if (map != null) {
+            for (int i=0; i < map.getLength(); i++) {
+                Node attrNode =  map.item(i);
+                if (attrNode != null &&
+                    attrNode.getLocalName().equals(localName)) {
+                    v.add(attrNode);
+                }
+            }
+        }
+        return v;    
     }
 
     /**
@@ -283,18 +312,26 @@ public class Utils {
         if (node == null) {
             return null;
         }
-        String fullName = getAttribute(node, typeAttrName);
-        if (fullName == null) {
+        String prefixedName = getAttribute(node, typeAttrName);
+        if (prefixedName == null) {
             return null;
         }
-        String localName = fullName.substring(fullName.lastIndexOf(":")+1);
+        return getQNameFromPrefixedName(node,prefixedName);
+    }
+
+    /**
+     * Convert a prefixed name into a qname
+     */
+    public static QName getQNameFromPrefixedName(Node node, String prefixedName) {
+ 
+        String localName = prefixedName.substring(prefixedName.lastIndexOf(":")+1);
         String namespace = null;
         // Associate the namespace prefix with a namespace
-        if (fullName.length() == localName.length()) {
+        if (prefixedName.length() == localName.length()) {
            namespace = getScopedAttribute(node, "xmlns");  // Get namespace for unqualified reference
         }
         else {
-           namespace = getScopedAttribute(node, "xmlns:" + fullName.substring(0, fullName.lastIndexOf(":")));
+           namespace = getScopedAttribute(node, "xmlns:" + prefixedName.substring(0, prefixedName.lastIndexOf(":")));
         }
         return (new QName(namespace, localName));
     }

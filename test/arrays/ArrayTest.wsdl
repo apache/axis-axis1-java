@@ -7,6 +7,7 @@
              xmlns:xsd="http://www.w3.org/1999/XMLSchema"
              xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
              xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding"
+             xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
              xmlns="http://schemas.xmlsoap.org/wsdl/">
 
   <!-- type defs -->
@@ -14,11 +15,34 @@
     <xsd:schema targetNamespace="urn:ArrayTest2"
                 xmlns:xsd="http://www.w3.org/1999/XMLSchema">
 
+      <xsd:complexType name="hobbyArray">
+        <xsd:complexContent>
+          <xsd:restriction base="soapenc:Array">
+            <xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:string[]"/>
+          </xsd:restriction>
+        </xsd:complexContent>
+      </xsd:complexType>
+
+      <xsd:complexType name="petArray">
+        <xsd:complexContent>
+          <xsd:restriction base="soapenc:Array">
+            <xsd:sequence>
+              <xsd:element name="alias" type="xsd:string" maxOccurs="unbounded"/>
+            </xsd:sequence>
+          </xsd:restriction>
+        </xsd:complexContent>
+      </xsd:complexType>
+
       <xsd:complexType name="personalInfo">
-        <xsd:all>
+        <xsd:sequence>
             <xsd:element name="name" type="xsd:string"/>
+            <!-- Style 1: Array defined using soapenc:Array -->
             <xsd:element name="favoriteMovies" type="soapenc:Array"/>
-        </xsd:all>
+            <!-- Style 2: Array defined using derivation and wsdl:ArrayType -->
+            <xsd:element name="hobbies" type="typens:hobbyArray"/>
+            <!-- Style 3: Array defined using derivation of soapenc:Array -->
+            <xsd:element name="pets" type="typens:petArray"/>
+        </xsd:sequence>
       </xsd:complexType>
     </xsd:schema>
   </types>
