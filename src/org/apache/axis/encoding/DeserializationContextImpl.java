@@ -401,12 +401,9 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
      * @return true if xsi:nil is true
      */
     public boolean isNil(Attributes attrs) {
-        if (attrs == null) {
-            return false;
-        }
-        String nil = Constants.getValue(attrs, Constants.URIS_SCHEMA_XSI,
-                                        "nil");
-        return (nil != null && nil.equals("true"));
+        return JavaUtils.isTrueExplicitly(
+                    Constants.getValue(attrs, Constants.URIS_SCHEMA_XSI, "nil"),
+                    false);
     }
 
     /**

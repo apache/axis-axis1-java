@@ -644,24 +644,7 @@ public class MessageContext implements SOAPMessageContext {
      *   All other types return 'true'
      */
     public boolean isPropertyTrue(String propName) {
-        Object val = getProperty(propName);
-        if ( val == null ) return( false );
-        if ( val instanceof Boolean ) {
-            Boolean b = (Boolean) val ;
-            return( b.booleanValue() );
-        }
-        if ( val instanceof Integer ) {
-            Integer i = (Integer) val ;
-            if ( i.intValue() == 0 ) return( false );
-            return( true );
-        }
-        if ( val instanceof String ) {
-            String s = (String) val ;
-            if ( s.equalsIgnoreCase("false") ||
-                 s.equalsIgnoreCase("no") ) return( false );
-            return( true );
-        }
-        return( true );
+        return isPropertyTrue(propName, false);
     }
 
     /**
@@ -674,24 +657,7 @@ public class MessageContext implements SOAPMessageContext {
      *   All other types return 'true'
      */
     public boolean isPropertyTrue(String propName, boolean defaultVal) {
-        Object val = getProperty(propName);
-        if ( val == null ) return( defaultVal );
-        if ( val instanceof Boolean ) {
-            Boolean b = (Boolean) val ;
-            return( b.booleanValue() );
-        }
-        if ( val instanceof Integer ) {
-            Integer i = (Integer) val ;
-            if ( i.intValue() == 0 ) return( false );
-            return( true );
-        }
-        if ( val instanceof String ) {
-            String s = (String) val ;
-            if ( s.equalsIgnoreCase("false") ||
-                 s.equalsIgnoreCase("no") ) return( false );
-            return( true );
-        }
-        return( true );
+        return JavaUtils.isTrue(getProperty(propName), defaultVal);
     }
 
     /**

@@ -55,6 +55,7 @@
 package org.apache.axis.wsdl.symbolTable;
 
 import org.apache.axis.Constants;
+import org.apache.axis.utils.JavaUtils;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
@@ -367,8 +368,7 @@ public class Utils {
 
         // An alternate qname is returned if nillable
         if (typeAttrName.equals("type")) {
-            String nillable = getAttribute(node, "nillable");
-            if (nillable != null && nillable.equalsIgnoreCase("true")) {
+            if (JavaUtils.isTrue(getAttribute(node, "nillable"))) {
                 qName = getNillableQName(qName);
             }
         }

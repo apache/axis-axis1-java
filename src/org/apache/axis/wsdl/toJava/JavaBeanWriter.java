@@ -222,9 +222,7 @@ public class JavaBeanWriter extends JavaClassWriter {
     protected String getClassModifiers() {
         Node node = type.getNode();
         if (node != null) {
-            String abstractValue = Utils.getAttribute(node, "abstract");
-            if (abstractValue != null && 
-                abstractValue.equalsIgnoreCase("true")) {
+            if (JavaUtils.isTrue(Utils.getAttribute(node, "abstract"))) {
                 return super.getClassModifiers() + "abstract ";
             }
         }
