@@ -398,8 +398,14 @@ public abstract class Stub implements javax.xml.rpc.Stub {
         for(int i=0;i<headers.length;i++){
             call.addHeader(headers[i]);
         }
-    }  
+    }
 
+    /**
+     * copy the attachments from the stub to the call object. After doing so,
+     * the local set of attachments are cleared.
+     * @param call call object to configure
+     * @throws AxisFault
+     */
     protected void setAttachments(org.apache.axis.client.Call call) throws AxisFault {
         Object[] attachments = getAttachments();
         for(int i=0;i<attachments.length;i++){
