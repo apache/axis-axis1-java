@@ -110,14 +110,15 @@ handlers/chains as debug/administration aids.
                 <xsd:extension base="wsdd:DeployableItem">
                     <xsd:sequence>
                         <xsd:element ref="wsdd:namespace" minOccurs="0" maxOccurs="unbounded"/>
+                        <xsd:element name="wsdlFile"  type="xsd:string" minOccurs="0" maxOccurs="1"/>
+                        <xsd:element ref="wsdd:parameter" minOccurs="0" maxOccurs="unbounded"/>
+                        <xsd:element ref="wsdd:operation" minOccurs="0" maxOccurs="unbounded"/>
                         <xsd:element ref="wsdd:typeMapping" minOccurs="0" maxOccurs="unbounded"/>
                         <xsd:element ref="wsdd:beanMapping" minOccurs="0" maxOccurs="unbounded"/>
                         <xsd:element ref="wsdd:provider" minOccurs="0" maxOccurs="unbounded"/>
                         <xsd:element ref="wsdd:requestFlow" minOccurs="0" maxOccurs="unbounded"/>
                         <xsd:element ref="wsdd:responseFlow" minOccurs="0" maxOccurs="unbounded"/>
-                        <xsd:element ref="wsdd:operation" minOccurs="0" maxOccurs="unbounded"/>
                         <xsd:element ref="wsdd:faultFlow" minOccurs="0" maxOccurs="unbounded"/>
-                        <xsd:element ref="wsdd:parameter" minOccurs="0" maxOccurs="unbounded"/>
                         <xsd:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
                     </xsd:sequence>
                     <xsd:attribute name="description" type="xsd:string" use="optional"/>
