@@ -314,7 +314,15 @@ public abstract class AxisEngine extends BasicHandler
     static String [] booleanOptions = new String [] {
         PROP_DOMULTIREFS, PROP_SEND_XSI, PROP_XML_DECL
     };
-    
+
+    /**
+     * Deploy a WSDD document to this engine.  This will either add or
+     * remove Handlers/Services/Transports/etc. depending on whether the
+     * WSDD is a <deployment> or an <undeployment>
+     *
+     * @param doc the WSDD document to deploy.
+     * @throws DeploymentException if there is a problem.
+     */
     public void deployWSDD(WSDDDocument doc) throws DeploymentException
     {
         myRegistry.deploy(doc);
@@ -348,13 +356,7 @@ public abstract class AxisEngine extends BasicHandler
         }
     }
     
-    public void undeployWSDD(WSDDDocument doc)
-        throws DeploymentException
-    {
-        doc.undeploy(myRegistry);
-    }
-    
-    /**
+   /**
      * Deploy a Handler into our handler registry
      */
     public void deployHandler(String key, Handler handler)

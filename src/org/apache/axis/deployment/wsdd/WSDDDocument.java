@@ -76,12 +76,10 @@ import java.io.StringReader;
 public class WSDDDocument
     implements DeploymentDocument
 {
-
-    /** XXX */
     private Document doc;
 
-    /** XXX */
-    private WSDDDeployment dep;
+    private WSDDDeployment deployment;
+    private WSDDUndeployment undeployment;
 
     /**
      *
@@ -97,7 +95,12 @@ public class WSDDDocument
     public WSDDDocument(Document doc) throws WSDDException
     {
         this.doc = doc;
-        dep = new WSDDDeployment(doc.getDocumentElement());
+        Element docEl = doc.getDocumentElement();
+        if ("undeployment".equals(docEl.getLocalName())) {
+            undeployment = new WSDDUndeployment(docEl);
+        } else {
+            deployment = new WSDDDeployment(docEl);
+        }
     }
 
     /**
@@ -107,7 +110,11 @@ public class WSDDDocument
     public WSDDDocument(Element e) throws WSDDException
     {
         doc = e.getOwnerDocument();
-        dep = new WSDDDeployment(e);
+        if ("undeployment".equals(e.getLocalName())) {
+            undeployment = new WSDDUndeployment(e);
+        } else {
+            deployment = new WSDDDeployment(e);
+        }
     }
 
     /**
@@ -116,9 +123,9 @@ public class WSDDDocument
      */
     public WSDDDeployment getDeployment()
     {
-        if (dep == null)
-            dep = new WSDDDeployment();
-        return dep;
+        if (deployment == null)
+            deployment = new WSDDDeployment();
+        return deployment;
     }
 
     public Document getDOMDocument() throws DeploymentException {
@@ -126,7 +133,7 @@ public class WSDDDocument
         SerializationContext context = new SerializationContext(writer, null);
         context.setPretty(true);
         try {
-            dep.writeToContext(context);
+            deployment.writeToContext(context);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -152,45 +159,19 @@ public class WSDDDocument
     {
         doc = document;
 
-        dep = null;
+        deployment = null;
     }
 
     /**
      *
-     * @param registry XXX
-     * @throws DeploymentException XXX
      */
     public void deploy(DeploymentRegistry registry)
         throws DeploymentException
     {
-        getDeployment();
-
-        WSDDGlobalConfiguration global = dep.getGlobalConfiguration();
-
-        if (global != null) {
-            registry.setGlobalConfiguration(global);
-        }
-
-        WSDDHandler[]     handlers   = dep.getHandlers();
-        WSDDTransport[]   transports = dep.getTransports();
-        WSDDService[]     services   = dep.getServices();
-        WSDDTypeMapping[] mappings   = dep.getTypeMappings();
-
-        for (int n = 0; n < handlers.length; n++) {
-            handlers[n].deployToRegistry(registry);
-        }
-
-        for (int n = 0; n < transports.length; n++) {
-            transports[n].deployToRegistry(registry);
-        }
-
-        for (int n = 0; n < services.length; n++) {
-            services[n].deployToRegistry(registry);
-        }
-
-        for (int n = 0; n < mappings.length; n++) {
-            WSDDTypeMapping     mapping = mappings[n];
-            deployMappingToRegistry(mapping, registry);
+        if (deployment != null) {
+            deployment.deployToRegistry(registry);
+        } else {
+            undeployment.undeployFromRegistry(registry);
         }
     }
 
@@ -199,66 +180,30 @@ public class WSDDDocument
      */
     public void undeploy(DeploymentRegistry registry)
             throws DeploymentException {
-        WSDDHandler[]     handlers   = dep.getHandlers();
-        WSDDTransport[]   transports = dep.getTransports();
-        WSDDService[]     services   = dep.getServices();
-        WSDDTypeMapping[] mappings   = dep.getTypeMappings();
+
+        if (deployment == null)
+            throw new DeploymentException();
+
+        WSDDHandler[]     handlers   = deployment.getHandlers();
+        WSDDTransport[]   transports = deployment.getTransports();
+        WSDDService[]     services   = deployment.getServices();
+        WSDDTypeMapping[] mappings   = deployment.getTypeMappings();
         QName qname = null;
-        
+
         for (int n = 0; n < handlers.length; n++) {
             qname = handlers[n].getQName();
             if (qname != null)
                 registry.undeployHandler(qname);
         }
-
         for (int n = 0; n < transports.length; n++) {
             qname = transports[n].getQName();
             if (qname != null)
                 registry.undeployTransport(qname);
         }
-
         for (int n = 0; n < services.length; n++) {
             qname = services[n].getQName();
             if (qname != null)
                 registry.undeployService(qname);
-        }
-    }
-
-    public static void deployMappingToRegistry(WSDDTypeMapping mapping, 
-                                               DeploymentRegistry registry) 
-            throws DeploymentException {
-        TypeMappingRegistry tmr     =
-                registry.getTypeMappingRegistry(mapping.getEncodingStyle());
-        
-        if (tmr == null) {
-            tmr = new TypeMappingRegistry();
-            tmr.setParent(SOAPTypeMappingRegistry.getSingleton());
-
-            registry.addTypeMappingRegistry(mapping.getEncodingStyle(),
-                                            tmr);
-        }
-
-        Serializer          ser   = null;
-        DeserializerFactory deser = null;
-
-        try {
-            ser   = (Serializer) mapping.getSerializer().newInstance();
-            deser =
-                (DeserializerFactory) mapping.getDeserializer()
-                    .newInstance();
-
-            if (ser != null) {
-                tmr.addSerializer(mapping.getLanguageSpecificType(),
-                                  mapping.getQName(), ser);
-            }
-
-            if (deser != null) {
-                tmr.addDeserializerFactory(mapping.getQName(), mapping
-                    .getLanguageSpecificType(), deser);
-            }
-        }
-        catch (Exception e) {
-            throw new DeploymentException(e.getMessage());
         }
     }
 }

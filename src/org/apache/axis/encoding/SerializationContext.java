@@ -534,6 +534,21 @@ public class SerializationContext
         onlyXML=true;
     }
 
+    /**
+     * Convenience method for writing an element with no structure inside it.
+     * (this could be optimzed later to share logic with startElement())
+     *
+     * @param qName the qualified name of the new element
+     * @param attributes any attributes which should be written on the element
+     * @exception IOException if there is any trouble
+     */
+    public void writeElement(QName qName, Attributes attributes)
+        throws IOException
+    {
+        startElement(qName, attributes);
+        endElement();
+    }
+
     public void endElement()
         throws IOException
     {
