@@ -39,7 +39,7 @@ import java.util.Vector;
 public class SchemaUtils {
 
     /** Field VALUE_QNAME */
-    static final QName VALUE_QNAME = Utils.findQName("", "value");
+    static final QName VALUE_QNAME = Utils.findQName("", "_value");
 
     /**
      * This method checks mixed=true attribute is set either on
@@ -1566,6 +1566,12 @@ public class SchemaUtils {
         TypeEntry type = symbolTable.getTypeEntry(attributeType,
                 forElement.value);
 
+        // Try to get the corresponding global attribute ElementEntry
+        // from the symbol table.
+        if (type instanceof org.apache.axis.wsdl.symbolTable.Element) {
+        	type = ((org.apache.axis.wsdl.symbolTable.Element) type).getRefType();
+        }
+        
         // add type and name to vector, skip it if we couldn't parse it
         // XXX - this may need to be revisited.
         if ((type != null) && (attributeName != null)) {
