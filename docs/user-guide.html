@@ -929,6 +929,9 @@ Namespaces will be discussed in detail later.</p>
 </tr>
 </table>
 
+There is an <a href="ant/axis-wsdl2java.html">Ant Task</a> to integrate this
+action with an Ant based build process.
+
 <h4>Types</h4>
 <p>The Java class generated from a WSDL type will be named from the WSDL type.&nbsp;
 This class will typically, though not always, be a bean.&nbsp; For example,
@@ -1025,7 +1028,13 @@ public interface AddressBook extends java.rmi.Remote {
     public void addEntry(String name, Address address) throws java.rmi.RemoteException;
 }
 </pre>
-<p>A note about the name of the SDI.  The name of the SDI is typically the name of the portType.  However, to construct the SDI, WSDL2Java needs information from both the portType <b>and</b> the binding.  (This is unfortunate and is a topic of discussion for WSDL version 2.)
+
+<p>A note about the name of the SDI.  The name of the SDI is typically the 
+name of the portType.  However, to construct the SDI, WSDL2Java needs 
+information from both the portType <b>and</b> the binding.  
+(This is unfortunate and is a topic of discussion for WSDL version 2.)
+
+
 <p>JAX-RPC says (section 4.3.3):  "The name of the Java interface is mapped
 from the name attribute of the wsdl:portType element. ... If the mapping to
 a service definition interface uses elements of the wsdl:binding ..., then
@@ -1037,8 +1046,14 @@ RPC interface.  If information from the binding tells us otherwise (in
 other words, we use elements of the wsdl:binding), then the name of the
 interface is derived instead from the binding.
 <p>Why?  We could have one portType - pt - and two bindings - bRPC and
-bDoc.  Since document/literal changes what the interface looks like, we cannot use a single interface for both of these bindings, so we end up with 2 interfaces - one named pt and another named bDoc - and two stubs - bRPCStub (which implements pt) and bDocStub (which implements bDoc).
-<p>Ugly, isn't it?  But you can see why it's necessary.  Since document/literal changes what the interface looks like, and we could have more than one binding referring to a single portType, we have to create more than one interface, and each interface must have a unique name.
+bDoc.  Since document/literal changes what the interface looks like, we 
+cannot use a single interface for both of these bindings, so we end up with 
+2 interfaces - one named pt and another named bDoc - and two stubs - 
+bRPCStub (which implements pt) and bDocStub (which implements bDoc).
+<p>Ugly, isn't it?  But you can see why it's necessary.  Since 
+document/literal changes what the interface looks like, and we could 
+have more than one binding referring to a single portType, we have to 
+create more than one interface, and each interface must have a unique name.
 <br>&nbsp;
 <h4>
 Bindings</h4>
@@ -1298,7 +1313,11 @@ represent the classes and any nested/inherited types.&nbsp; The tool supports
 JAX-RPC complex types (bean classes), extension classes, enumeration classes,
 arrays and Holder classes.
 <p>The Java2WSDL tool has many additional options which are detailed in the <a href="reference.html#Java2WSDL">reference 
-  guide</a>. 
+  guide</a>.
+  
+There is an <a href="ant/axis-java2wsdl.html">Ant Task</a> to integrate this
+action with an Ant based build process.
+  
 <h4>
 Step 3: Create Bindings using WSDL2Java</h4>
 Use the generated WSDL file to build the appropriate client/server bindings
