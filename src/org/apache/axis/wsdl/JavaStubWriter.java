@@ -295,20 +295,20 @@ public class JavaStubWriter extends JavaWriter {
      */
     private HashSet getNestedTypes(Node type) {
         HashSet types = new HashSet();
-        if (type == null) {
-            return types;
-        }
+        getNestedTypes(type, types);
+        return types;
+    } // getNestedTypes
 
+    private void getNestedTypes(Node type, HashSet types) {
         Vector v = emitter.emitFactory.getComplexElementTypesAndNames(type);
         if (v != null) {
             for (int i = 0; i < v.size(); i+=2) {
                 if (!types.contains(v.get(i))) {
                     types.add(v.get(i));
-                    types.addAll(getNestedTypes(((Type) v.get(i)).getNode()));
+                    getNestedTypes(((Type) v.get(i)).getNode(), types);
                 }
             }
         }
-        return types;
     } // getNestedTypes
 
     /**
