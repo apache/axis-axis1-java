@@ -76,16 +76,16 @@ import org.apache.commons.logging.Log;
  *
  * @author Richard A. Sitze
  */
-public class EngineConfigurationFactoryFactory
+public class EngineConfigurationFactoryFinder
 {
     protected static Log log =
-        LogFactory.getLog(EngineConfigurationFactoryFactory.class.getName());
+        LogFactory.getLog(EngineConfigurationFactoryFinder.class.getName());
 
     /**
      * Create the default engine configuration and detect whether the user
      * has overridden this with their own.
      */
-    private EngineConfigurationFactoryFactory() {
+    private EngineConfigurationFactoryFinder() {
     }
 
     public static EngineConfigurationFactory newFactory() {

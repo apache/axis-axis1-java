@@ -61,7 +61,7 @@ import org.apache.axis.EngineConfigurationFactory;
 
 /**
  * This is a 'front' for replacement logic.
- * Use EngineConfigurationFactoryFactory.newFactory().
+ * Use EngineConfigurationFactoryFinder.newFactory().
  * 
  * @author Richard A. Sitze
  * @author Glyn Normington (glyn@apache.org)
@@ -82,7 +82,7 @@ public class DefaultEngineConfigurationFactory
      * has overridden this with their own.
      */
     public DefaultEngineConfigurationFactory() {
-        this(EngineConfigurationFactoryFactory.newFactory());
+        this(EngineConfigurationFactoryFinder.newFactory());
     }
 
      /**

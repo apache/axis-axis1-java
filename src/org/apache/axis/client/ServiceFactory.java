@@ -57,7 +57,7 @@ package org.apache.axis.client;
 
 import org.apache.axis.EngineConfiguration;
 
-import org.apache.axis.configuration.EngineConfigurationFactoryFactory;
+import org.apache.axis.configuration.EngineConfigurationFactoryFinder;
 import org.apache.axis.utils.ClassUtils;
 
 import javax.naming.Context;
@@ -110,7 +110,7 @@ public class ServiceFactory extends javax.xml.rpc.ServiceFactory
     private static EngineConfiguration getDefaultEngineConfig() {
         if (_defaultEngineConfig == null) {
             _defaultEngineConfig =
-                EngineConfigurationFactoryFactory.newFactory().getClientEngineConfig();
+                EngineConfigurationFactoryFinder.newFactory().getClientEngineConfig();
         }
         return _defaultEngineConfig;
     }
