@@ -145,7 +145,8 @@ public class SalesRankNPrice_ServiceTestCase extends junit.framework.TestCase {
             printit(binding.getAll(ISBN));
         } catch (java.rmi.RemoteException re) {
             if (!(re instanceof AxisFault &&
-                  ((AxisFault) re).detail instanceof java.net.ConnectException)) {
+                  ((((AxisFault) re).detail instanceof java.net.ConnectException)||
+                   (((AxisFault) re).getFaultCode().getLocalPart().equals("HTTP"))))) {
                 throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
             } else {
                 // A connection exception has been detected so report this and make the test succeed.
