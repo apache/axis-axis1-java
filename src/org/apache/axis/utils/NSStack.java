@@ -67,10 +67,16 @@ public class NSStack {
     
     private Stack stack = new Stack();
     
+    private NSStack parent = null;
+
     public NSStack() {}
     
     public NSStack(Hashtable table) {
         push(table);
+    }
+    
+    public NSStack(NSStack parent) {
+        this.parent = parent;
     }
     
     public void push() {
@@ -89,7 +95,11 @@ public class NSStack {
     
     public Hashtable peek() {
         if (stack.isEmpty())
-            return null;
+            if (parent != null)
+                return parent.peek();
+            else
+                return null;
+                
         
         return (Hashtable)stack.peek();
     }
@@ -98,6 +108,8 @@ public class NSStack {
         if (stack.isEmpty()) {
             if (DEBUG_LOG)
                 System.out.println("NSPop (empty)");
+            if (parent != null)
+                return parent.pop();
             return null;
         }
         
@@ -116,6 +128,9 @@ public class NSStack {
         table.put(namespaceURI, prefix);
     }
     
+    /**
+     * remove a namespace from the topmost hashtable on the stack
+     */
     public void remove(String namespaceURI) {
         if (stack.isEmpty()) return;
         peek().remove(namespaceURI);
@@ -131,6 +146,8 @@ public class NSStack {
             }
         }
         
+        if (parent != null)
+            return parent.getPrefix(namespaceURI);
         return null;
     }
     
@@ -150,6 +167,9 @@ public class NSStack {
             }
         }
         
+        if (parent != null)
+            return parent.getNamespaceURI(prefix);
+
         dump();
         System.out.println("didn't find prefix '" + prefix + "'");
         new Exception().printStackTrace();
@@ -168,6 +188,9 @@ public class NSStack {
             }
         }
         
+        if (parent != null)
+            return parent.searchTable(t, prefix);
+
         return null;
     }
     
@@ -179,6 +202,10 @@ public class NSStack {
                     return true;
             }
         }
+
+        if (parent != null)
+            return parent.isDeclared(namespaceURI);
+
         return false;
     }
     
@@ -198,6 +225,12 @@ public class NSStack {
                 System.out.println(key + " -> " + map.get(key));
             }
         }
+
+        if (parent != null) {
+            System.out.println("----parent");
+            parent.dump();
+        }
+
         System.out.println("----end");
     }
 }

@@ -59,9 +59,6 @@ import java.io.* ;
 import java.util.Properties;
 import org.w3c.dom.* ;
 import javax.xml.parsers.* ;
-import javax.xml.transform.*;
-import javax.xml.transform.dom.*;
-import javax.xml.transform.stream.*;
 import org.xml.sax.* ;
 import org.apache.axis.Constants;
 
@@ -163,44 +160,10 @@ public class XMLUtils {
     }
   }
 
-  /** Obtain a JAXP Transformer.
-   * 
-   * (I'm assuming that using the transformer API is the accepted JAXP-style
-   *  way to do XML serialization)
-   * 
-   * @return a JAXP Transformer
-   */
-  public static Transformer getTransformer()
-  {
-      try {
-          TransformerFactory factory = TransformerFactory.newInstance();
-          return factory.newTransformer();
-      } catch (TransformerConfigurationException e) {
-          e.printStackTrace();
-          return null;
-      }
-  }
-  
   private static String privateElementToString(Element element,
                                                boolean omitXMLDecl)
   {
-      try {
-        StringWriter sw = new StringWriter();
-        DOMSource source = new DOMSource(element);
-        StreamResult result = new StreamResult(sw);
-        Transformer transformer = getTransformer();
-        Properties p = new Properties();
-        p.put(OutputKeys.OMIT_XML_DECLARATION,
-              omitXMLDecl ? "yes" : "no");
-        transformer.setOutputProperties(p);
-        transformer.transform(source, result);
-        sw.close();
-        return sw.toString();
-      } 
-      catch( Exception e) {
-          e.printStackTrace();
-      }
-      return( null );
+      return DOM2Writer.nodeToString(element, omitXMLDecl);
   }
   
   public static String ElementToString(Element element) {
@@ -213,19 +176,8 @@ public class XMLUtils {
 
   public static void privateElementToStream(Element element, OutputStream out,
                                             boolean omitXMLDecl) {
-    try {
-      Transformer transformer = getTransformer();
-      DOMSource source = new DOMSource(element);
-      StreamResult result = new StreamResult(out);
-      Properties p = new Properties();
-      p.put(OutputKeys.OMIT_XML_DECLARATION,
-            omitXMLDecl ? "yes" : "no");
-      transformer.setOutputProperties(p);
-      transformer.transform(source, result);
-    }
-    catch( Exception e ) {
-      e.printStackTrace();
-    }
+      Writer writer = new OutputStreamWriter(out);
+      DOM2Writer.serializeAsXML(element, writer, omitXMLDecl);
   }
   
   public static void ElementToStream(Element element, OutputStream out) {
