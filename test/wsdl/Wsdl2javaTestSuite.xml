@@ -12,12 +12,12 @@
   </path>
 
   <taskdef name="wsdl2java"
-           classname="test.wsdl.Wsdl2javaAntTask">
+           classname="org.apache.axis.tools.ant.wsdl.Wsdl2javaAntTask">
       <classpath refid="test-classpath" />
   </taskdef>
 
   <taskdef name="java2wsdl"
-           classname="test.wsdl.Java2WsdlAntTask">
+           classname="org.apache.axis.tools.ant.wsdl.Java2WsdlAntTask">
       <classpath refid="test-classpath" />
   </taskdef>
 
