@@ -60,11 +60,33 @@ Copyright:
 <!-- =========================================================================== -->
   <target name="compile" depends="printEnv,copy">
     <!-- Compile the code -->
+    <antcall target="compileJunit"/>
+    <antcall target="compileFunctional"/>
+  </target>
+
+  <target name="compileJunit" depends="printEnv,copy">
+    <!-- Compile the code -->
     <foreach target="component-compile" fork="${foreach.fork}">
         <param name="file">
              <fileset dir="${axis.home}" >
                <patternset>
                  <include name="test/**/build.xml"/>
+                 <exclude name="test/wsdl/**/build.xml" />
+                 <exclude name="test/functional/build.xml"/>
+               </patternset>
+             </fileset>
+        </param>
+     </foreach>
+  </target>
+
+  <target name="compileFunctional" depends="printEnv,copy">
+    <!-- Compile the code -->
+    <foreach target="component-compile" fork="${foreach.fork}">
+        <param name="file">
+             <fileset dir="${axis.home}" >
+               <patternset>
+                 <include name="test/wsdl/**/build.xml" />
+                 <include name="test/functional/build.xml"/>
                  <exclude name="test/wsdl/attachments/**/build.xml" unless="attachments.present"/>
                  <exclude name="test/wsdl/interop3/**/build.xml" />
                </patternset>
@@ -134,12 +156,14 @@ Copyright:
           <path id="deploy.xml.files">
                 <fileset dir="${build.dir}/work">
                   <include name="**/deploy.wsdd"/>
+                  <exclude name="mssoapinterop/interop*/deploy.wsdd"/>
                 </fileset>
           </path>
 
           <path id="undeploy.xml.files">
                 <fileset dir="${build.dir}/work">
                   <include name="**/undeploy.wsdd"/>
+                  <exclude name="mssoapinterop/interop*/undeploy.wsdd"/>
                 </fileset>
           </path>
           <property name="deploy.xml.property" refid="deploy.xml.files"/>
