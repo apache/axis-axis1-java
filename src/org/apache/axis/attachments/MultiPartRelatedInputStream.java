@@ -70,6 +70,7 @@ import javax.activation.DataHandler;
 public class MultiPartRelatedInputStream extends java.io.FilterInputStream {
     public static final String MIME_MULTIPART_RELATED = "multipart/related";
     protected java.util.HashMap parts =  new java.util.HashMap();
+    protected java.util.LinkedList orderedParts =  new java.util.LinkedList();
     protected int rootPartLength = 0;
     protected boolean closed = false; //If true the stream has been closed.
     protected boolean eos = false;  //This is set once the SOAP packet has reached the end of stream.
@@ -162,14 +163,36 @@ public class MultiPartRelatedInputStream extends java.io.FilterInputStream {
                 contentType = headers.getHeader(HTTPConstants.HEADER_CONTENT_TYPE, null);
                 if (contentType != null) contentType = contentType.trim();
 
-                contentTransferEncoding = headers.getHeader("Content-Transfer-Encoding", null);
+                contentTransferEncoding = headers.getHeader(HTTPConstants.HEADER_CONTENT_TRANSFER_ENCODING, null);
                 if (contentTransferEncoding != null ) contentTransferEncoding = contentTransferEncoding.trim();
                 //TODO still need to add support for bas64 and quoted printable.
 
                 if (rootPartContentId != null && !rootPartContentId.equals( contentId)) { //This is a part that has come in prior to the root part. Need to buffer it up.
                     javax.activation.DataHandler dh = new javax.activation.DataHandler(new org.apache.axis.attachments.ManagedMemoryDataSource(boundaryDelimitedStream, 16 * 1024, contentType, true));
 
-                    addPart(contentId, contentLocation, dh);
+                    AttachmentPart ap= new AttachmentPart(dh);
+                    if(contentId != null) 
+                        ap.addMimeHeader(HTTPConstants.HEADER_CONTENT_ID, contentId); 
+
+                    if (contentLocation != null)
+                        ap.addMimeHeader(HTTPConstants.HEADER_CONTENT_LOCATION, contentLocation); 
+                    
+
+                    for( java.util.Enumeration en= headers.getNonMatchingHeaders(
+                            new String[]{HTTPConstants.HEADER_CONTENT_ID,
+                             HTTPConstants.HEADER_CONTENT_LOCATION,
+                             HTTPConstants.HEADER_CONTENT_TYPE }); en.hasMoreElements(); ){
+                             javax.mail.Header header= (javax.mail.Header) en.nextElement();
+                             String name= header.getName();
+                             String value= header.getValue();
+                             if(name != null && value != null){
+                                 name= name.trim();
+                                 if(name.length() != 0)
+                                     ap.addMimeHeader(name , value); 
+                             }
+                    }         
+
+                    addPart(contentId, contentLocation, ap);
                     boundaryDelimitedStream = boundaryDelimitedStream.getNextStream(); //Gets the next stream.
                 }
 
@@ -198,7 +221,9 @@ public class MultiPartRelatedInputStream extends java.io.FilterInputStream {
         //First see if we have read it in yet.
         DataHandler ret = null; 
         for(int i= id.length -1; ret== null && i > -1; --i){
-            ret = (DataHandler) parts.get(id[i]);
+            AttachmentPart p=(AttachmentPart) parts.get(id[i]);
+            if(null != p)
+               ret=  p.getActiviationDataHandler();
         }
 
         if ( null == ret) {
@@ -207,11 +232,22 @@ public class MultiPartRelatedInputStream extends java.io.FilterInputStream {
         return ret;
     }
 
-    protected void addPart(String contentId, String locationId, javax.activation.DataHandler dh) {
-        if (contentId != null && contentId.trim().length() != 0) parts.put(contentId, dh);
-        if (locationId != null && locationId.trim().length() != 0)parts.put(locationId, dh);
+    protected void addPart(String contentId, String locationId, AttachmentPart  ap) {
+        if (contentId != null && contentId.trim().length() != 0) parts.put(contentId, ap);
+        if (locationId != null && locationId.trim().length() != 0)parts.put(locationId, ap);
+        orderedParts.add(ap); 
     }
 
+    protected final static String[] READ_ALL= { " * \0 ".intern()}; //Shouldn't never match
+
+    protected void readAll( ) throws org.apache.axis.AxisFault {
+       readTillFound(READ_ALL ); 
+    }
+
+    public java.util.Collection getAttachments() throws org.apache.axis.AxisFault {
+       readAll();
+       return orderedParts; 
+    }
     /** 
      * This will read streams in till the one that is needed is found.
      * @param The id is the stream being sought. TODO today its only handles CID. all ContentId streams
@@ -258,16 +294,38 @@ public class MultiPartRelatedInputStream extends java.io.FilterInputStream {
                     if (contentId.endsWith(">")) contentId = contentId.substring(0, contentId.length() - 1);
                     if (!contentId.startsWith("cid:")) contentId = "cid:" + contentId;
                 }
-                contentType = headers.getHeader("Content-Type", null);
+                contentType = headers.getHeader(HTTPConstants.HEADER_CONTENT_TYPE, null);
                 if (contentType != null) contentType = contentType.trim();
-                contentLocation = headers.getHeader("Content-Location", null);
+                contentLocation = headers.getHeader(HTTPConstants.HEADER_CONTENT_LOCATION, null);
                 if (contentLocation != null) contentLocation = contentLocation.trim();
-                contentTransferEncoding = headers.getHeader("Content-Transfer-Encoding", null);
+                contentTransferEncoding = headers.getHeader(HTTPConstants.HEADER_CONTENT_TRANSFER_ENCODING , null);
                 if (contentTransferEncoding != null ) contentTransferEncoding = contentTransferEncoding.trim();
 
                 DataHandler dh= new DataHandler(new ManagedMemoryDataSource(boundaryDelimitedStream, 1024, contentType, true));
 
-                addPart(contentId, contentLocation, dh);
+                AttachmentPart ap= new AttachmentPart(dh);
+                if(contentId != null) 
+                    ap.addMimeHeader(HTTPConstants.HEADER_CONTENT_ID, contentId); 
+
+                if (contentLocation != null)
+                    ap.addMimeHeader(HTTPConstants.HEADER_CONTENT_LOCATION, contentLocation); 
+                
+
+                for( java.util.Enumeration en= headers.getNonMatchingHeaders(
+                        new String[]{HTTPConstants.HEADER_CONTENT_ID,
+                         HTTPConstants.HEADER_CONTENT_LOCATION,
+                         HTTPConstants.HEADER_CONTENT_TYPE }); en.hasMoreElements(); ){
+                         javax.mail.Header header= (javax.mail.Header) en.nextElement();
+                         String name= header.getName();
+                         String value= header.getValue();
+                         if(name != null && value != null){
+                             name= name.trim();
+                             if(name.length() != 0)
+                                 ap.addMimeHeader(name , value); 
+                         }
+                }         
+
+                addPart(contentId, contentLocation, ap);
 
                 for(int i= id.length -1; ret== null && i > -1; --i){
                     if (contentId != null && id[i].equals( contentId)) { //This is the part being sought

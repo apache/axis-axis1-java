@@ -194,6 +194,22 @@ public class AttachmentsImpl implements Attachments {
         }
         return  ret;
     }
+    
+    /**
+     * This method will return all attachments as a collection. 
+     * 
+     * @return A collection of attachments. 
+     */ 
+    public java.util.Collection getAttachments() throws org.apache.axis.AxisFault{
+        java.util.Collection ret= new java.util.LinkedList();
+
+        if(null != mpartStream){
+            java.util.Collection mc= mpartStream.getAttachments();
+            ret= new java.util.LinkedList( mc); // make a copy.
+        }
+
+       return ret;
+    }
 
     /**
      * From the complex stream return the root part. 
