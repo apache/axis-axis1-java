@@ -435,7 +435,7 @@ public class AxisServlet extends HttpServlet
             try {
                 engine = getEngine();
             } catch (AxisFault fault) {
-                log.debug(fault);
+                log.error(fault);
                 Message msg = new Message(fault);
                 res.setContentType( msg.getContentType() );
                 res.setContentLength( msg.getContentLength() );
@@ -542,7 +542,8 @@ public class AxisServlet extends HttpServlet
                     JavaUtils.getMessage("noHeader00", "SOAPAction"),
                     null, null );
 
-                 log.debug(af);
+                log.error(af);
+
                 throw af; 
             }
 
@@ -576,7 +577,8 @@ public class AxisServlet extends HttpServlet
             if(isDebug) log.debug("Return from Axis Engine.");
         }
         catch( Exception e ) {
-            log.debug(e);
+            log.error(e);
+
             if ( e instanceof AxisFault ) {
                 AxisFault  af = (AxisFault) e ;
                 // Should really be doing this with explicit AxisFault
