@@ -160,6 +160,9 @@ public abstract class TestClient {
             if (addMethodToAction) action += method;
             call.set(HTTPTransport.ACTION, action);
 
+            // safety first
+            call.setTimeout(60000);
+
             // issue the request
             Object got= call.invoke("http://soapinterop.org/",
                                     method.trim(),

@@ -173,6 +173,11 @@ public class HTTPSender extends BasicHandler {
                 Debug.Print( 1, "Created an insecure HTTP connection");
             }
 
+            // optionally set a timeout for the request
+            if (msgContext.getTimeout() != 0) {
+                sock.setSoTimeout(msgContext.getTimeout());
+            }
+
             reqEnv  = (String) msgContext.getRequestMessage().getAsString();
             
             //System.out.println("Msg: " + reqEnv);
