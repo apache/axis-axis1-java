@@ -72,11 +72,14 @@ public class Java2Wsdl {
     // Define our short one-letter option identifiers.
     protected static final int HELP_OPT = 'h';
     protected static final int OUTPUT_OPT = 'o';
+    protected static final int OUTPUT_IMPL_OPT = 'O';
+    protected static final int PACKAGE_OPT = 'p';
     protected static final int NAMESPACE_OPT = 'n';
-    protected static final int TARGET_NAMESPACE_OPT = 't';
+    protected static final int NAMESPACE_IMPL_OPT = 'N';
     protected static final int LOCATION_OPT = 'l';
+    protected static final int LOCATION_IMPORT_OPT = 'L';
     protected static final int CLASSDIR_OPT = 'c';
-    protected static final int ALLOWED_METHODS_OPT = 'm';
+    protected static final int METHODS_ALLOWED_OPT = 'm';
 
     /**
      *  Define the understood options. Each CLOptionDescriptor contains:
@@ -93,29 +96,41 @@ public class Java2Wsdl {
                 HELP_OPT,
                 "print this message and exit"),
         new CLOptionDescriptor("namespace",
-                CLOptionDescriptor.ARGUMENT_OPTIONAL,
-                TARGET_NAMESPACE_OPT,
+                CLOptionDescriptor.ARGUMENT_REQUIRED,
+                NAMESPACE_OPT,
                 "target namespace"),
+        new CLOptionDescriptor("namespaceImpl",
+                CLOptionDescriptor.ARGUMENT_REQUIRED,
+                NAMESPACE_IMPL_OPT,
+                "target namespace for implementation wsdl"),
         new CLOptionDescriptor("PkgtoNS",
                 CLOptionDescriptor.DUPLICATES_ALLOWED + CLOptionDescriptor.ARGUMENTS_REQUIRED_2,
-                NAMESPACE_OPT,
+                PACKAGE_OPT,
                 "package=namespace, name value pairs"),
         new CLOptionDescriptor("location",
-                CLOptionDescriptor.ARGUMENT_OPTIONAL,
+                CLOptionDescriptor.ARGUMENT_REQUIRED,
                 LOCATION_OPT,
                 "service location"),
-        new CLOptionDescriptor("allowed",
-                CLOptionDescriptor.ARGUMENT_OPTIONAL,
-                ALLOWED_METHODS_OPT,
+        new CLOptionDescriptor("locationImport",
+                CLOptionDescriptor.ARGUMENT_REQUIRED,
+                LOCATION_IMPORT_OPT,
+                "location of interface wsdl"),
+        new CLOptionDescriptor("methods",
+                CLOptionDescriptor.ARGUMENT_REQUIRED,
+                METHODS_ALLOWED_OPT,
                 "space seperated list of methods to export"),
         new CLOptionDescriptor("classDir",
-                CLOptionDescriptor.ARGUMENT_OPTIONAL,
+                CLOptionDescriptor.ARGUMENT_REQUIRED,
                 CLASSDIR_OPT,
                 "classes directory"),
         new CLOptionDescriptor("output",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 OUTPUT_OPT,
                 "output Wsdl filename"),
+        new CLOptionDescriptor("outputImpl",
+                CLOptionDescriptor.ARGUMENT_REQUIRED,
+                OUTPUT_IMPL_OPT,
+                "output Implementation Wsdl filename"),
     };
 
     /**
@@ -126,7 +141,7 @@ public class Java2Wsdl {
         String className = null;
         String classDir = null;
         String wsdlFilename = null;
-        String allowedMethods = null;
+        String wsdlImplFilename = null;
         HashMap namespaceMap = new HashMap();
 
         // Parse the arguments
@@ -159,8 +174,8 @@ public class Java2Wsdl {
                         className = option.getArgument();
                         break;
 
-                    case ALLOWED_METHODS_OPT:
-                        allowedMethods = option.getArgument();
+                    case METHODS_ALLOWED_OPT:
+                        emitter.setAllowedMethods(option.getArgument());
                         break;
 
                     case HELP_OPT:
@@ -175,21 +190,35 @@ public class Java2Wsdl {
                         wsdlFilename = option.getArgument();
                         break;
 
-                    case NAMESPACE_OPT:
-                        String namespace = option.getArgument(0);
-                        String packageName = option.getArgument(1);
-                        namespaceMap.put(namespace, packageName);
+                    case OUTPUT_IMPL_OPT:
+                        wsdlImplFilename = option.getArgument();
                         break;
 
-                    case TARGET_NAMESPACE_OPT:
-                        emitter.setTargetNamespace(option.getArgument());
+                    case PACKAGE_OPT:
+                        String packageName = option.getArgument(0);
+                        String namespace = option.getArgument(1);
+                        namespaceMap.put(packageName, namespace);
+                        break;
+
+                    case NAMESPACE_OPT:
+                        emitter.setIntfNamespace(option.getArgument());
+                        break;
+
+                    case NAMESPACE_IMPL_OPT:
+                        emitter.setImplNamespace(option.getArgument());
                         break;
 
                     case LOCATION_OPT:
                         emitter.setLocationUrl(option.getArgument());
                         break;
+
+                    case LOCATION_IMPORT_OPT:
+                        emitter.setImportUrl(option.getArgument());
+                        break;
                 }
             }
+
+            // Can't proceed without a class name and output file
             if ((className == null) || (wsdlFilename == null)) {
                 printUsage();
             }
@@ -197,7 +226,16 @@ public class Java2Wsdl {
             if (!namespaceMap.isEmpty()) {
                 emitter.setNamespaceMap(namespaceMap);
             }
-            emitter.emit(classDir, className, allowedMethods, wsdlFilename);
+
+            // Find the class using the name and optionally the classDir
+            emitter.setCls(className, classDir);
+
+            // Generate a full wsdl, or interface & implementation wsdls
+            if (wsdlImplFilename == null) {
+                emitter.emit(wsdlFilename);
+            } else {
+                emitter.emit(wsdlFilename, wsdlImplFilename);
+            }
         }
         catch (Throwable t) {
             t.printStackTrace();
