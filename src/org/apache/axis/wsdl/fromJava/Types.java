@@ -641,6 +641,8 @@ public class Types {
               type == java.math.BigDecimal.class ||
               type == javax.xml.namespace.QName.class ||
               type == java.util.Calendar.class ||
+              type == org.apache.axis.encoding.Token.class ||
+              type == org.apache.axis.encoding.NormalizedString.class ||
               //type == Byte[].class ||
               type == byte[].class);
     }
