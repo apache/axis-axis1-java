@@ -695,7 +695,7 @@ public class XMLUtils {
                 node = ((Document)node).getDocumentElement();
             }
             Element domElement = (Element)node;
-            PrettyElementToStream(domElement, baos);
+            ElementToStream(domElement, baos);
             InputSource  isource = new InputSource(source.getSystemId());
             isource.setByteStream(new ByteArrayInputStream(baos.toByteArray()));
             return isource;
