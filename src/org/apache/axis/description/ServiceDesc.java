@@ -385,7 +385,7 @@ public class ServiceDesc {
 
         return null;
     }
-    
+
     /**
      * Return all operations which match this QName (i.e. get all the
      * overloads)
@@ -423,7 +423,7 @@ public class ServiceDesc {
 
         getSyncedOperationsForName(implClass,
                                    ((OperationDesc)overloads.get(0)).getName());
-        
+
         OperationDesc [] array = new OperationDesc [overloads.size()];
         return (OperationDesc[])overloads.toArray(array);
     }
@@ -435,7 +435,7 @@ public class ServiceDesc {
             qname2OperationsMap = new HashMap();
             for (Iterator i = operations.iterator(); i.hasNext();) {
                 OperationDesc operationDesc = (OperationDesc) i.next();
-                ArrayList list = 
+                ArrayList list =
                         (ArrayList)qname2OperationsMap.get(operationDesc.
                                                           getElementQName());
                 if (list == null) {
@@ -492,8 +492,8 @@ public class ServiceDesc {
                         param.setTypeQName(typeQName);
                     } else {
                         // A type qname was specified - see if they match
-                        
-                        // Use the specified javaType or get one 
+
+                        // Use the specified javaType or get one
                         // from the type mapping registry.
                         Class paramClass = param.getJavaType();
                         if (paramClass == null) {
@@ -740,6 +740,35 @@ public class ServiceDesc {
             return;
         }
 
+        Class [] paramTypes = method.getParameterTypes();
+
+        // And if we've already got an exact match (i.e. an override),
+        // never mind
+
+        ArrayList overloads = name2OperationsMap == null ? null :
+                (ArrayList)name2OperationsMap.get(method.getName());
+        if (overloads != null && !overloads.isEmpty()) {
+            // Search each OperationDesc that already has a Method
+            // associated with it, and check for parameter type equivalence.
+            for (int i = 0; i < overloads.size(); i++) {
+                OperationDesc op = (OperationDesc)overloads.get(i);
+                Method checkMethod = op.getMethod();
+                if (checkMethod != null) {
+                    Class [] others = checkMethod.getParameterTypes();
+                    if (paramTypes.length == others.length) {
+                        int j = 0;
+                        for (; j < others.length; j++) {
+                            if (!others[j].equals(paramTypes[j]))
+                                break;
+                        }
+                        // If we got all the way through, we have a match.
+                        if (j == others.length)
+                            return;
+                    }
+                }
+            }
+        }
+
         // Make an OperationDesc, fill in common stuff
         OperationDesc operation = new OperationDesc();
         operation.setName(method.getName());
@@ -755,8 +784,7 @@ public class ServiceDesc {
         operation.setReturnClass(retClass);
         operation.setReturnType(tm.getTypeQName(method.getReturnType()));
 
-        Class [] paramTypes = method.getParameterTypes();
-        String [] paramNames = 
+        String [] paramNames =
                 ExtractorFactory.getExtractor().getParameterNamesFromDebugInfo(method);
 
         for (int k = 0; k < paramTypes.length; k++) {
@@ -798,21 +826,21 @@ public class ServiceDesc {
             if (ex != java.rmi.RemoteException.class &&
                 !ex.getName().startsWith("java.") &&
                 !ex.getName().startsWith("javax.")) {
-                
+
                 // For JSR 101 v.1.0, there is a simple fault mapping
                 // and a complexType fault mapping...both mappings
                 // generate a class that extends (directly or indirectly)
-                // Exception.  
-                // When converting java back to wsdl it is not possible 
+                // Exception.
+                // When converting java back to wsdl it is not possible
                 // to determine which way to do the mapping,
                 // so it is always mapped back using the complexType
                 // fault mapping because it is more useful (i.e. it
                 // establishes a hierarchy of exceptions).  Note that this
                 // will not cause any roundtripping problems.
                 // Rich
-                
 
-                /* Old Simple Type Mode                  
+
+                /* Old Simple Type Mode
                 Field[] f = ex.getDeclaredFields();
                 ArrayList exceptionParams = new ArrayList();
                 for (int j = 0; j < f.length; j++) {
@@ -831,10 +859,10 @@ public class ServiceDesc {
                 String pkgAndClsName = ex.getName();
                 FaultDesc fault = new FaultDesc();
                 fault.setName(pkgAndClsName);
-                fault.setParameters(exceptionParams);                
+                fault.setParameters(exceptionParams);
                 operation.addFault(fault);
                 */
-                
+
                 // Create a single part with the dummy name "fault"
                 // that locates the complexType for this exception.
                 ParameterDesc param = new ParameterDesc(
@@ -848,7 +876,7 @@ public class ServiceDesc {
                 String pkgAndClsName = ex.getName();
                 FaultDesc fault = new FaultDesc();
                 fault.setName(pkgAndClsName);
-                fault.setParameters(exceptionParams);                
+                fault.setParameters(exceptionParams);
                 operation.addFault(fault);
             }
         }
