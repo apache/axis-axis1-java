@@ -138,6 +138,7 @@ public class AdminClient
      *   <li><code>-p<i>password</i></code> sets the password</li>
      *   <li><code>-d</code> sets the debug flag (for instance, -ddd would
      *      set it to 3)</li>
+     *   <li><code>-t<i>name</i></code> sets the transport chain touse</li>
      *   <li><code>list</code> will list the currently deployed services</li>
      *   <li><code>quit</code> will quit (???)</li>
      *   <li><code>passwd <i>value</i></code> changes the admin password</li>
@@ -212,6 +213,10 @@ public class AdminClient
             
             client.set( Transport.USER, opts.getUser() );
             client.set( Transport.PASSWORD, opts.getPassword() );
+
+            String tName = opts.isValueSet( 't' );
+            if ( tName != null && !tName.equals("") )
+                client.setTransportName( tName );
             
             client.invoke();
             

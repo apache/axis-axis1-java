@@ -174,6 +174,7 @@ public class ServiceClient {
     
     // Our Transport, if any
     private Transport transport;
+    private String    transportName ;
 
     /**
      * Basic, no-argument constructor.
@@ -258,6 +259,13 @@ public class ServiceClient {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Set the name of the transport chain to use.
+     */
+    public void setTransportName(String name) {
+      transportName = name ;
     }
     
  /** Get the Transport registered for the given protocol.
@@ -538,6 +546,9 @@ public class ServiceClient {
         if (transport != null) {
             transport.setupMessageContext(msgContext, this, this.engine);
         }
+        // Pass along the transport chain name if given
+        if ( transportName != null ) 
+          msgContext.setTransportName( transportName );
         
         try {
             engine.invoke( msgContext );
