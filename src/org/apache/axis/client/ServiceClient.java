@@ -116,7 +116,8 @@ public class ServiceClient {
      * Set it up yourself!
      */
     public ServiceClient () {
-        this.setupEngine();
+        engine = new AxisClient();
+        engine.init();
         msgContext = new MessageContext(engine);
     }
     
@@ -124,10 +125,8 @@ public class ServiceClient {
      * Construct a ServiceClient with the given Transport.
      */
     public ServiceClient (Transport transport) {
+        this();
         this.transport = transport;
-        
-        this.setupEngine();
-        msgContext = new MessageContext(engine);
         
         // set up the message context with the transport
         try {
@@ -146,26 +145,6 @@ public class ServiceClient {
             System.err.println("ServiceClient(Transport): Faulted when initializing message context: "+f);
         }
     }
-    
-    /**
-     * Set up the engine as appropriate for client / server.
-     */
-    private void setupEngine () {
-        // For testing - skip HTTP layer
-        if (engine != null) {
-            return;
-        }
-        
-        if ( doLocal ) {
-            engine = new org.apache.axis.server.AxisServer();
-            engine.init();
-        } else {
-            engine = new AxisClient();
-            engine.init();
-        }
-    }
-    
-    
     
     /**
      * Set property; pass through to MessageContext.
@@ -348,19 +327,6 @@ public class ServiceClient {
         // local (if null) or pre-existing transport (if !null)
         Message              reqMsg = new Message( reqEnv, "SOAPEnvelope" );
         
-        /* Ok, this might seem strange, but here it is...                    */
-        /* Create a new AxisClient Engine and init it.  This will load any   */
-        /* registries that *might* be there.  We set the target service to   */
-        /* the service so that if it is registered here on the client        */
-        /* we'll find it's request/response chains and invoke them.  Next we */
-        /* check to see if there is any ServiceRegistry at all, or if there  */
-        /* is one, check to see if a chain called HTTP.input is there.  If   */
-        /* not then we need to default to just the simple HTTPDispatchHandler*/
-        /* to call the server.                                               */
-        /* The hard part about the client is that we can't assume *any*      */
-        /* configuration has happened at all so hard-coded defaults are      */
-        /* required.                                                         */
-        /*********************************************************************/
         if ( Debug.getDebugLevel() > 0  ) {
             DebugHeader  header = new DebugHeader(Debug.getDebugLevel());
             header.setActor( Constants.URI_NEXT_ACTOR );
@@ -377,9 +343,9 @@ public class ServiceClient {
             throw fault ;
         }
         
-        Message       resMsg = msgContext.getResponseMessage();
+        // Message       resMsg = msgContext.getResponseMessage();
         //SOAPEnvelope  resEnv = (SOAPEnvelope) resMsg.getAs( "SOAPEnvelope" );
-        msgContext.setResponseMessage(resMsg);
+        // msgContext.setResponseMessage(resMsg);
         /*
          SOAPBody      resBody = null; //resEnv.getFirstBody();
         
