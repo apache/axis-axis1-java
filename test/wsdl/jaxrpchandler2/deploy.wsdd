@@ -1,12 +1,21 @@
 <deployment name="test" xmlns="http://xml.apache.org/axis/wsdd/"
     xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
-  <service name="EchoService2" provider="java:RPC">
-    <parameter name="className" value="test.wsdl.jaxrpchandler2.EchoServiceImpl" />
-    <parameter name="allowedMethods" value="echo" />
-    <requestFlow>
-      <handler type="java:org.apache.axis.handlers.JAXRPCHandler">
-        <parameter name="className" value="test.wsdl.jaxrpchandler2.EchoServiceServerHandler" />
-      </handler>
-    </requestFlow>
-  </service>
+    <service name="EchoService2" provider="java:RPC">
+        <parameter name="className" value="test.wsdl.jaxrpchandler2.EchoServiceImpl"/>
+        <parameter name="allowedMethods" value="echo"/>
+        <requestFlow>
+            <handler type="java:org.apache.axis.handlers.JAXRPCHandler">
+                <parameter name="className" value="test.wsdl.jaxrpchandler2.EchoServiceServerHandler"/>
+            </handler>
+        </requestFlow>
+    </service>
+    <service name="EchoService3" provider="java:RPC">
+        <parameter name="className" value="test.wsdl.jaxrpchandler2.EchoServiceImpl"/>
+        <parameter name="allowedMethods" value="echo"/>
+        <requestFlow>
+            <handler type="java:org.apache.axis.handlers.JAXRPCHandler">
+                <parameter name="className" value="test.wsdl.jaxrpchandler2.EchoServiceServerHandler3"/>
+            </handler>
+        </requestFlow>
+    </service>
 </deployment>

@@ -28,7 +28,6 @@ public class EchoServiceServerHandler implements Handler {
 	    SOAPElement argElement = echoElement.addChildElement("arg0");
 	    argElement = argElement.addAttribute(soapEnvelope.createName("type", "xsi", "http://www.w3.org/2001/XMLSchema-instance"), "xsd:string");
 	    argElement.addTextNode("my echo string");
-	    soapMsg.saveChanges();
 	    
 	} catch (Exception e) {
 	    e.printStackTrace();

@@ -21,6 +21,7 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
+import javax.xml.soap.SOAPException;
 import java.util.Map;
 
 
@@ -48,10 +49,20 @@ public class JAXRPCHandler extends BasicHandler {
 
     public void invoke(MessageContext msgContext) throws AxisFault {
         log.debug("Enter: JAXRPCHandler::enter invoke");
-        if (!msgContext.getPastPivot()) {
-            impl.handleRequest(msgContext);
-        } else {
-            impl.handleResponse(msgContext);
+        try {
+            if (!msgContext.getPastPivot()) {
+                impl.handleRequest(msgContext);
+            } else {
+                impl.handleResponse(msgContext);
+            }
+        } finally {
+            if (msgContext.getMessage().saveRequired()) {
+                try {
+                    msgContext.getMessage().saveChanges();
+                } catch (SOAPException e) {
+                    AxisFault.makeFault(e);
+                }
+            }
         }
         log.debug("Enter: JAXRPCHandler::exit invoke");
     }

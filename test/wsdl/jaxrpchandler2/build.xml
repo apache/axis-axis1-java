@@ -59,7 +59,7 @@ Copyright:
       <fileset dir="${axis.home}/test/wsdl/jaxrpchandler2">
         <include name="*TestCase.java"/>
         <include name="*Impl.java"/>
-	<include name="*Handler.java"/>
+	<include name="*Handler*.java"/>
       </fileset>
     </copy>
 

@@ -76,6 +76,7 @@ public class Text extends NodeImpl implements javax.xml.soap.Text {
 
     // Overriding the MessageElement Method, where it throws exeptions.
     public void setNodeValue(String nodeValue) throws DOMException{
+        setDirty(true);
         textRep.setNodeValue(nodeValue);
     }
 
