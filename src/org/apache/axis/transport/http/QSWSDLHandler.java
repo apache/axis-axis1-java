@@ -70,7 +70,7 @@ public class QSWSDLHandler extends AbstractQueryStringHandler {
             Document doc = (Document) msgContext.getProperty ("WSDL");
 
             if (doc != null) {
-                response.setContentType ("text/xml");
+                response.setContentType ("text/xml; charset="+XMLUtils.getEncoding().toLowerCase());
                 XMLUtils.PrettyDocumentToWriter (doc, writer);
             }
 
