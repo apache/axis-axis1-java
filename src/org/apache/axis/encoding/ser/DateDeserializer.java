@@ -51,7 +51,7 @@ public class DateDeserializer extends SimpleDeserializer {
      * We just need to override makeValue().
      */
     public Object makeValue(String source) { 
-        Date result;
+        Object result;
         boolean bc = false;
         
         // validate fixed portion of format
@@ -85,9 +85,13 @@ public class DateDeserializer extends SimpleDeserializer {
             
             // support dates before the Christian era
             if (bc) {
-                calendar.setTime(result);
+                calendar.setTime((Date)result);
                 calendar.set(Calendar.ERA, GregorianCalendar.BC);
-                result = calendar.getTime();
+                if(javaType == Date.class) {
+                    result = calendar.getTime();
+                } else {
+                    result = calendar;
+                }
             }
         }
 

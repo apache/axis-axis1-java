@@ -59,7 +59,9 @@ public class DateSerializer implements SimpleValueSerializer {
     public String getValueAsString(Object value, SerializationContext context) {
         StringBuffer buf = new StringBuffer();
         synchronized (calendar) {
-            calendar.setTime((Date)value);
+            if(value instanceof Calendar) {
+                value = ((Calendar)value).getTime();
+            } 
             if (calendar.get(Calendar.ERA) == GregorianCalendar.BC) {
                 buf.append("-");
                 calendar.setTime((Date)value);
