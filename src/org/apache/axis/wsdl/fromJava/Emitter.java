@@ -72,7 +72,9 @@ import org.apache.axis.enum.Style;
 import org.apache.axis.enum.Use;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
+import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -284,6 +286,12 @@ public class Emitter {
                     newWSDLWriter().getDocument(def);
                 break;
         }
+
+        // Add Axis version info as comment to beginnning of generated WSDL
+        Comment wsdlVersion = doc.createComment(Messages.getMessage("wsdlCreated00",
+						Version.getVersion()));
+        doc.getDocumentElement().insertBefore(wsdlVersion,
+            doc.getDocumentElement().getFirstChild());
 
         // Return the document
         return doc;
