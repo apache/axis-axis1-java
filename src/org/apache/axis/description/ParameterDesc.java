@@ -87,6 +87,8 @@ public class ParameterDesc {
     private Class javaType = null;
     /** The order of this parameter (-1 indicates unordered) */
     private int order = -1;
+    /** Indicates if this ParameterDesc represents a return or normal parameter **/
+    private boolean isReturn = false;
 
     public ParameterDesc() {
     }
@@ -121,6 +123,7 @@ public class ParameterDesc {
         return "name:  " + name
                 + "\ntypeEntry:  " + typeEntry
                 + "\nmode:  " + (mode == IN ? "IN" : mode == INOUT ? "INOUT" : "OUT:  " + "position:" + order)
+                + "\nisReturn:" + isReturn
                 + "\ntypeQName:  " + typeQName
                 + "\njavaType:  " + javaType;
     } // toString
@@ -180,11 +183,33 @@ public class ParameterDesc {
         this.typeQName = typeQName;
     }
 
+    /** 
+     * Get the java type (note that this is javaType in the signature.)
+     * @return Class javaType
+     */
     public Class getJavaType() {
         return javaType;
     }
 
+    /** 
+     * Set the java type (note that this is javaType in the signature.) 
+     * @return Class javaType
+     */
     public void setJavaType(Class javaType) {
+        // The javaType must match the mode.  A Holder is expected for OUT/INOUT
+        // parameters that don't represent the return type.
+        if (javaType != null) {
+            if ((mode == IN || isReturn) &&
+                javax.xml.rpc.holders.Holder.class.isAssignableFrom(javaType) ||
+                mode != IN && !isReturn &&
+                !javax.xml.rpc.holders.Holder.class.isAssignableFrom(javaType)) {
+                throw new IllegalArgumentException(
+                     JavaUtils.getMessage("setJavaTypeErr00", 
+                                          javaType.getName(),
+                                          getModeAsString(mode)));
+            }             
+        }
+
         this.javaType = javaType;
     }
 
@@ -202,5 +227,20 @@ public class ParameterDesc {
 
     public void setOrder(int order) {
         this.order = order;
+    }
+
+    /**
+     * Indicates ParameterDesc represents return of OperationDesc
+     * @return true if return parameter of OperationDesc
+     */
+    public boolean getIsReturn() {
+        return isReturn;
+    }
+    /**
+     * Set to true to indicate return parameter of OperationDesc
+     * @param value boolean that indicates if return parameter of OperationDesc
+     */
+    public void setIsReturn(boolean value) {
+        isReturn = value; 
     }
 } // class Parameter

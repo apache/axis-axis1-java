@@ -22,6 +22,9 @@ import org.apache.axis.encoding.ser.BeanDeserializer;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.client.Call;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;

@@ -219,8 +219,13 @@ public class RPCProvider extends JavaProvider
             Object value = rpcParam.getValue();
             ParameterDesc paramDesc = rpcParam.getParamDesc();
             if (paramDesc != null && paramDesc.getJavaType() != null) {
+
+                // Get the type in the signature (java type or its holder)
+                Class sigType = paramDesc.getJavaType();
+
+                // Convert the value into the expected type in the signature
                 value = JavaUtils.convert(value,
-                                          paramDesc.getJavaType());
+                                          sigType);
                 rpcParam.setValue(value);
                 if (paramDesc.getMode() == ParameterDesc.INOUT)
                     outs.add(rpcParam);
@@ -247,7 +252,9 @@ public class RPCProvider extends JavaProvider
             for (int i = 0; i < outParams.size(); i++) {
                 ParameterDesc param = (ParameterDesc)outParams.get(i);
                 Class holderClass = param.getJavaType();
-                if (Holder.class.isAssignableFrom(holderClass)) {
+
+                if (holderClass != null &&
+                    Holder.class.isAssignableFrom(holderClass)) {
                     argValues[numArgs + i] = holderClass.newInstance();
                     // Store an RPCParam in the outs collection so we
                     // have an easy and consistent way to write these
@@ -255,7 +262,9 @@ public class RPCProvider extends JavaProvider
                     outs.add(new RPCParam(param.getQName(),
                                           argValues[numArgs + i]));
                 } else {
-                    // !!! Throw a fault here?
+                    throw new AxisFault(JavaUtils.getMessage("badOutParameter00",
+                                                             "" + param.getQName(),
+                                                             operation.getName()));
                 }
             }
         }

@@ -477,17 +477,15 @@ public class ServiceDesc {
                 int j;
                 for (j = 0; j < paramTypes.length; j++) {
                     Class type = paramTypes[j];
+                    Class heldType = type;
+                    if (Holder.class.isAssignableFrom(type)) {
+                        heldType = JavaUtils.getHolderValueType(type);
+                    }
                     ParameterDesc param = oper.getParameter(j);
                     // If no type is specified, just use the Java type
                     QName typeQName = param.getTypeQName();
                     if (typeQName == null) {
-                        if (Holder.class.isAssignableFrom(type)) {
-                            typeQName = tm.getTypeQName(
-                                            JavaUtils.getHolderValueType(type));
-                        } else {
-                            typeQName = tm.getTypeQName(type);
-                        }
-
+                        typeQName = tm.getTypeQName(heldType);
                         param.setJavaType(type);
                         param.setTypeQName(typeQName);
                     } else {
@@ -496,6 +494,10 @@ public class ServiceDesc {
                         // Use the specified javaType or get one
                         // from the type mapping registry.
                         Class paramClass = param.getJavaType();
+                        if (paramClass != null &&
+                            JavaUtils.getHolderValueType(paramClass) != null) {
+                            paramClass = JavaUtils.getHolderValueType(paramClass);
+                        }
                         if (paramClass == null) {
                             paramClass = tm.getClassForQName(param.getTypeQName());
                         }
@@ -503,9 +505,10 @@ public class ServiceDesc {
                         // This is a match if the paramClass is somehow
                         // convertable to the "real" parameter type.  If not,
                         // break out of this loop.
-                        if (!JavaUtils.isConvertable(paramClass, type))
+                        if (!JavaUtils.isConvertable(paramClass, heldType)) {
                             break;
-
+                        }
+                        
                         param.setJavaType(type);
                     }
                 }
@@ -805,12 +808,11 @@ public class ServiceDesc {
             if (heldClass != null) {
                 paramDesc.setMode(ParameterDesc.INOUT);
                 paramDesc.setTypeQName(tm.getTypeQName(heldClass));
-                paramDesc.setJavaType(heldClass);
             } else {
                 paramDesc.setMode(ParameterDesc.IN);
                 paramDesc.setTypeQName(tm.getTypeQName(type));
-                paramDesc.setJavaType(type);
             }
+            paramDesc.setJavaType(type);
             operation.addParameter(paramDesc);
         }
 
