@@ -57,7 +57,7 @@ Copyright:
                output="${axis.home}/build/work"
                serverSide="yes"
                skeletonDeploy="no"
-               testcase="yes">
+               testcase="no">
         <mapping namespace="urn:Thing" package="test.wsdl.wrapped_holders"/>
     </wsdl2java>
 
