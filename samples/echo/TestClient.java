@@ -56,6 +56,7 @@
 package samples.echo ;
 
 import org.apache.axis.AxisFault;
+import org.apache.axis.client.Stub;
 import org.apache.axis.types.HexBinary;
 import org.apache.axis.types.NegativeInteger;
 import org.apache.axis.types.NonNegativeInteger;
@@ -192,6 +193,14 @@ public abstract class TestClient {
         } catch (Exception exp) {
             throw AxisFault.makeFault(exp);
         }
+    }
+
+    void setUser(String user) {
+        ((Stub)binding).setUsername(user);
+    }
+
+    void setPassword(String password) {
+        ((Stub)binding).setPassword(password);        
     }
 
     /**
@@ -774,6 +783,8 @@ public abstract class TestClient {
 
         // set up the call object
         client.setURL(opts.getURL());
+        client.setUser(opts.getUser());
+        client.setPassword(opts.getPassword());
 
         if (testPerformance) {
             long startTime = System.currentTimeMillis();
