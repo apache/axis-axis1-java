@@ -1167,17 +1167,7 @@ public class JavaServiceDesc implements ServiceDesc {
             // For other styles, continue here.
             Class retClass = method.getReturnType();
             operation.setReturnClass(retClass);
-            QName typeQName = null;
-            if (style == Style.RPC) {
-                typeQName = tm.getTypeQName(retClass);
-            } else {
-                typeQName = tm.getTypeQNameExact(retClass);
-                if (typeQName == null && retClass.isArray()) {
-                    typeQName = tm.getTypeQName(retClass.getComponentType());
-                } else {
-                    typeQName = tm.getTypeQName(retClass);
-                }
-            }
+            QName typeQName = getTypeQName(retClass);
             operation.setReturnType(typeQName);
 
             String [] paramNames = getParamNames(method);
@@ -1204,10 +1194,10 @@ public class JavaServiceDesc implements ServiceDesc {
                 Class heldClass = JavaUtils.getHolderValueType(type);
                 if (heldClass != null) {
                     paramDesc.setMode(ParameterDesc.INOUT);
-                    paramDesc.setTypeQName(tm.getTypeQName(heldClass));
+                    paramDesc.setTypeQName(getTypeQName(heldClass));
                 } else {
                     paramDesc.setMode(ParameterDesc.IN);
-                    paramDesc.setTypeQName(tm.getTypeQName(type));
+                    paramDesc.setTypeQName(getTypeQName(type));
                 }
                 paramDesc.setJavaType(type);
                 operation.addParameter(paramDesc);
@@ -1218,6 +1208,21 @@ public class JavaServiceDesc implements ServiceDesc {
 
         addOperationDesc(operation);
         method2OperationMap.put(method, operation);
+    }
+
+    private QName getTypeQName(Class javaClass) {
+        QName typeQName = null;
+        if (style == Style.RPC) {
+            typeQName = tm.getTypeQName(javaClass);
+        } else {
+            typeQName = tm.getTypeQNameExact(javaClass);
+            if (typeQName == null && javaClass.isArray()) {
+                typeQName = tm.getTypeQName(javaClass.getComponentType());
+            } else {
+                typeQName = tm.getTypeQName(javaClass);
+            }
+        }
+        return typeQName;
     }
 
     private void createFaultMetadata(Method method, OperationDesc operation) {
