@@ -108,11 +108,6 @@ public abstract class JavaProvider extends BasicProvider
     public static final String OPTION_ALLOWEDMETHODS = "allowedMethods";
     public static final String OPTION_IS_STATIC = "isStatic";
     public static final String OPTION_CLASSPATH = "classPath";
-    public static final String OPTION_WSDL_PORTTYPE="wsdlPortType";
-    public static final String OPTION_WSDL_SERVICEELEMENT="wsdlServiceElement";
-    public static final String OPTION_WSDL_SERVICEPORT="wsdlServicePort";
-    public static final String OPTION_WSDL_TARGETNAMESPACE="wsdlTargetNamespace";
-    public static final String OPTION_WSDL_INPUTSCHEMA="wsdlInputSchema";
 
     public static final String OPTION_SCOPE = "scope";
 
