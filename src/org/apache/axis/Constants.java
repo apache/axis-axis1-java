@@ -56,6 +56,9 @@
 package org.apache.axis;
 
 import org.xml.sax.Attributes;
+import org.apache.axis.schema.SchemaVersion1999;
+import org.apache.axis.schema.SchemaVersion2000;
+import org.apache.axis.schema.SchemaVersion2001;
 
 import javax.xml.namespace.QName;
 
@@ -163,6 +166,28 @@ public class Constants {
     }
 
     /**
+     * Search an attribute collection for a list of QNames, returning
+     * the value of the first one found, or null if none were found.
+     *
+     * @param attributes
+     * @param search
+     * @return
+     */
+    public static String getValue(Attributes attributes,
+                                  QName [] search) {
+        if (attributes == null || search == null)
+            return null;
+
+        String value = null;
+        for (int i=0; (value == null) && (i < search.length); i++) {
+            value = attributes.getValue(search[i].getNamespaceURI(),
+                                        search[i].getLocalPart());
+        }
+
+        return value;
+    }
+
+    /**
      * equals
      * The first QName is the current version of the name.  The second qname is compared
      * with the first considering all namespace uri versions.
@@ -241,6 +266,11 @@ public class Constants {
         URI_1999_SCHEMA_XSD,
         URI_2000_SCHEMA_XSD,
         URI_2001_SCHEMA_XSD,
+    };
+    public static final QName [] QNAMES_NIL = {
+        SchemaVersion1999.QNAME_NIL,
+        SchemaVersion2000.QNAME_NIL,
+        SchemaVersion2001.QNAME_NIL
     };
 
     /**

@@ -67,6 +67,7 @@ import org.apache.axis.soap.SOAP11Constants;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.LockableHashtable;
+import org.apache.axis.schema.SchemaVersion;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -188,6 +189,8 @@ public class MessageContext implements SOAPMessageContext {
 
     /** Our SOAP namespaces and such - defaults to SOAP 1.1 */
     private SOAPConstants soapConstants = new SOAP11Constants();
+    /** Schema version information - defaults to 2001 */
+    private SchemaVersion schemaVersion = SchemaVersion.SCHEMA_2001;
 
     private OperationDesc currentOperation = null;
     
@@ -354,6 +357,18 @@ public class MessageContext implements SOAPMessageContext {
     }
 
     /**
+     * Schema version information
+     */
+
+    public SchemaVersion getSchemaVersion() {
+        return schemaVersion;
+    }
+
+    public void setSchemaVersion(SchemaVersion schemaVersion) {
+        this.schemaVersion = schemaVersion;
+    }
+
+    /**
      * Sessions
      */
     public Session getSession()
@@ -461,9 +476,6 @@ public class MessageContext implements SOAPMessageContext {
     /**
      *  Sets the SOAPMessage for this message context
      *  @param   message  Request SOAP message
-     *  @throws  JAXRPCException  If any error during the setting
-     *     of the request message or if invalid SOAPMessage
-     *     is set
      *  @throws java.lang.UnsupportedOperationException If this
      *     operation is not supported
      */

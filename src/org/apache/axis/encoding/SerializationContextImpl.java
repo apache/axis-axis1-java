@@ -59,6 +59,7 @@ import org.apache.axis.AxisEngine;
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.schema.SchemaVersion;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.enum.Style;
@@ -177,6 +178,11 @@ public class SerializationContextImpl implements SerializationContext
     private boolean outputMultiRefsFlag = false;
 
     /**
+     * Which schema version are we using?
+     */
+    SchemaVersion schemaVersion = SchemaVersion.SCHEMA_2001;
+
+    /**
      * Construct SerializationContextImpl with associated writer
      * @param writer java.io.Writer
      */
@@ -198,6 +204,9 @@ public class SerializationContextImpl implements SerializationContext
 
         AxisEngine engine = null ;
         if ( msgContext != null ) {
+            // Use whatever schema is associated with this MC
+            schemaVersion = msgContext.getSchemaVersion();
+
             engine = msgContext.getAxisEngine();
             Boolean shouldSendDecl = (Boolean)engine.getOption(
                                                   AxisEngine.PROP_XML_DECL);
@@ -556,7 +565,8 @@ public class SerializationContextImpl implements SerializationContext
                     attrs.setAttributes(attributes);
                 if (sendType)
                     attrs = (AttributesImpl) setTypeAttribute(attrs, xmlType);
-                attrs.addAttribute(Constants.URI_2001_SCHEMA_XSI, "nil", "xsi:nil",
+                String nil = schemaVersion.getNilQName().getLocalPart();
+                attrs.addAttribute(schemaVersion.getXsiURI(), nil, "xsi:" + nil,
                                    "CDATA", "true");
                 startElement(elemQName, attrs);
                 endElement();

@@ -318,17 +318,13 @@ public class DeserializerImpl extends SOAPHandler
     {
         super.startElement(namespace, localName, qName, attributes, context);
 
-        // If the xsi:nil attribute, set the value to null and return since
-        // there is nothing to deserialize.
+        // If the nil attribute is present and true, set the value to null
+        // and return since there is nothing to deserialize.
         if (JavaUtils.isTrueExplicitly(Constants.getValue(attributes,
-                                        Constants.URIS_SCHEMA_XSI,
-                                        "nil")) ||
-            JavaUtils.isTrueExplicitly(Constants.getValue(attributes,
-                                        Constants.URIS_SCHEMA_XSI,
-                                        "null"))) {
-          value = null;
-          isNil = true;
-          return;
+                                        Constants.QNAMES_NIL))) {
+            value = null;
+            isNil = true;
+            return;
         }
 
         // If this element has an id, then associate the value with the id.
