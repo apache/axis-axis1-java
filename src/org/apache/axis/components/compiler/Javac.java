@@ -27,6 +27,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -52,7 +54,7 @@ public class Javac extends AbstractCompiler
         LogFactory.getLog(Javac.class.getName());
 
     public static final String CLASSIC_CLASS = "sun.tools.javac.Main";
-    public static final String MODERN_CLASS = "com.sun.tools.javac.Main";
+    public static final String MODERN_CLASS = "com.sun.tools.javac.main.Main";
 
     private boolean modern = false;
 
@@ -106,20 +108,50 @@ public class Javac extends AbstractCompiler
 
         try {
             // Create an instance of the compiler, redirecting output to err
-            Class c = ClassUtils.forName("sun.tools.javac.Main", true, getClassLoader());
-            
-            Constructor cons =
-                c.getConstructor(new Class[] { OutputStream.class,
-                                               String.class });
-            Object compiler = cons.newInstance(new Object[] { err,
-                                                              "javac" });
+            Class c = ClassUtils.forName(modern ? MODERN_CLASS : CLASSIC_CLASS, 
+                                         true,
+                                         getClassLoader());
+
+            Constructor cons;
+            Object compiler;
+            if (modern) {
+                PrintWriter pw = new PrintWriter(new OutputStreamWriter(err));
+                cons = 
+                    c.getConstructor(new Class[] { String.class,
+                                                   PrintWriter.class});
+       
+                compiler = cons.newInstance(new Object[] { "javac", pw });
+            }
+            else {
+                cons =
+                    c.getConstructor(new Class[] { OutputStream.class,
+                                                   String.class });
+                compiler = cons.newInstance(new Object[] { err, "javac" });
+        
+            }
+              
             // Call the compile() method
             Method compile = c.getMethod("compile",
                                          new Class [] { String[].class });
-            Boolean ok =
-                (Boolean) compile.invoke(compiler,
-                                        new Object[] {toStringArray(fillArguments(new ArrayList()))});
-            result = ok.booleanValue();
+
+            if (modern) {
+                int compilationResult = 
+                    ((Integer)compile.invoke(compiler, new Object[] 
+                        {
+                            toStringArray(fillArguments
+                                          (new ArrayList()))})).intValue();
+
+                result = (compilationResult == 0);        
+                log.debug("Compilation Returned: " 
+                          + Integer.toString(compilationResult));
+            }
+            else {
+                Boolean ok = 
+                    (Boolean)compile.invoke(compiler, new Object[] 
+                        {toStringArray(fillArguments(new ArrayList()))});
+        
+                result = ok.booleanValue();
+            }
         } catch (Exception cnfe){
             log.error(Messages.getMessage("noCompiler00"), cnfe);
             throw new RuntimeException(Messages.getMessage("noCompiler00"));
