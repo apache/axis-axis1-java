@@ -260,7 +260,13 @@ public class ArraySerializer extends Deserializer
         if (attributes != null &&
             attributes.getIndex(Constants.URI_SOAP_ENC,
                                 Constants.ATTR_ARRAY_TYPE) == -1) {
-            context.registerPrefixForURI("SOAP-ENC", Constants.URI_SOAP_ENC);
+
+            // make sure that we don't reregister the prefix
+            if (context.getPrefixForURI(Constants.URI_SOAP_ENC) == null) {
+                context.registerPrefixForURI(Constants.NSPREFIX_SOAP_ENC, 
+                                             Constants.URI_SOAP_ENC);
+            }
+
             AttributesImpl attrImpl = new AttributesImpl(attributes);
             attrImpl.addAttribute(Constants.URI_SOAP_ENC, 
                                   Constants.ATTR_ARRAY_TYPE,
