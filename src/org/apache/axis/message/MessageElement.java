@@ -65,9 +65,10 @@ import org.xml.sax.helpers.AttributesImpl;
  * Note: it was made Serializable to help users of Apache SOAP who had
  * exploited the serializability of the DOM tree to migrate to Axis.
  */
-public class MessageElement implements SOAPElement, Serializable
-    ,org.w3c.dom.NodeList  // ADD Nodelist Interfaces for SAAJ 1.2
-    ,Cloneable
+public class MessageElement implements SOAPElement,
+        Serializable,
+        org.w3c.dom.NodeList,  // ADD Nodelist Interfaces for SAAJ 1.2
+        Cloneable
 {
     protected static Log log =
         LogFactory.getLog(MessageElement.class.getName());
@@ -354,7 +355,7 @@ public class MessageElement implements SOAPElement, Serializable
                     }
                 }
             }
-            return (Node)clonedSelf;
+            return clonedSelf;
         }
         catch(Exception e){
             return null;
@@ -526,7 +527,7 @@ public class MessageElement implements SOAPElement, Serializable
     public void setPrefix(String prefix) { this.prefix = prefix; }
 
     public Document getOwnerDocument() {
-        return (Document)soapPart;
+        return soapPart;
     }
 
     public NamedNodeMap getAttributes() {
@@ -554,9 +555,7 @@ public class MessageElement implements SOAPElement, Serializable
             NamedNodeMap domAttributes = new NamedNodeMapImpl();
             for(int i = 0; i < saxAttrs.getLength(); i++){
                 String uri = saxAttrs.getURI(i);
-                String local = saxAttrs.getLocalName(i);
                 String qname = saxAttrs.getQName(i);
-                String type = saxAttrs.getType(i);
                 String value = saxAttrs.getValue(i);
 
                 if(uri != null && uri.trim().length() > 0){
@@ -1229,7 +1228,7 @@ public class MessageElement implements SOAPElement, Serializable
 
     public void setValue(String value) {
         if(this instanceof org.apache.axis.message.Text){
-            ((org.apache.axis.message.Text)this).setNodeValue(value);
+            this.setNodeValue(value);
             return;
         }
         if(children != null)
@@ -1461,8 +1460,8 @@ public class MessageElement implements SOAPElement, Serializable
     }
 
     public void removeAttributeNS(String namespaceURI, String localName) throws DOMException {
-        AttributesImpl attributes = makeAttributesEditable();
-        Name name =  new PrefixedQName(namespaceURI, localName, (String)null);
+        makeAttributesEditable();
+        Name name =  new PrefixedQName(namespaceURI, localName, null);
         removeAttribute(name);
     }
 
@@ -1499,7 +1498,7 @@ public class MessageElement implements SOAPElement, Serializable
     }
 
     public Attr removeAttributeNode(Attr oldAttr) throws DOMException {
-        AttributesImpl attributes = makeAttributesEditable();
+        makeAttributesEditable();
         Name name =  new PrefixedQName(oldAttr.getNamespaceURI(), oldAttr.getLocalName(), oldAttr.getPrefix());
         removeAttribute(name);
         return oldAttr;
@@ -1580,8 +1579,6 @@ public class MessageElement implements SOAPElement, Serializable
 
     /**
      * helper method for recusively getting the element that has namespace URI and localname
-     * @param name
-     * @return
      */
     protected NodeList getElementsNS(org.w3c.dom.Element parent,
                                      String namespaceURI, String localName)

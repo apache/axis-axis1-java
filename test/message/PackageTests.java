@@ -43,6 +43,7 @@ public class PackageTests extends TestCase
         suite.addTestSuite(TestJavaSerialization.class);
         suite.addTestSuite(TestMessageSerialization.class);
         suite.addTestSuite(TestSOAPFault.class);
+        suite.addTestSuite(TestMUValues.class);
  
         return suite;
     }

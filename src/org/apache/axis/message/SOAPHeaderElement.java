@@ -78,10 +78,13 @@ public class SOAPHeaderElement extends MessageElement
         String val = elem.getAttributeNS(soapConstants.getEnvelopeURI(),
                                          Constants.ATTR_MUST_UNDERSTAND);
 
-        if (soapConstants == SOAPConstants.SOAP12_CONSTANTS)
-            mustUnderstand = ((val != null) && (val.equals("true") || val.equals("1"))) ? true : false;
-        else
-            mustUnderstand = ((val != null) && val.equals("1")) ? true : false;
+        try {
+            setMustUnderstandFromString(val, (soapConstants == 
+                                              SOAPConstants.SOAP12_CONSTANTS));
+        } catch (AxisFault axisFault) {
+            // Log the bad MU value, since this constructor can't throw
+            log.error(axisFault);
+        }
 
         QName roleQName = soapConstants.getRoleAttributeQName();
         actor = elem.getAttributeNS(roleQName.getNamespaceURI(),
@@ -109,13 +112,6 @@ public class SOAPHeaderElement extends MessageElement
         }
     }
 
-    public void detachNode() {
-        if (parent != null) {
-            ((SOAPHeader)parent).removeHeader(this);
-        }
-        super.detachNode();
-    }
-
     public SOAPHeaderElement(String namespace,
                              String localPart,
                              String prefix,
@@ -133,10 +129,8 @@ public class SOAPHeaderElement extends MessageElement
         String val = attributes.getValue(soapConstants.getEnvelopeURI(),
                                          Constants.ATTR_MUST_UNDERSTAND);
 
-        if (soapConstants == SOAPConstants.SOAP12_CONSTANTS)
-            mustUnderstand = ((val != null) && (val.equals("true") || val.equals("1"))) ? true : false;
-        else
-            mustUnderstand = ((val != null) && val.equals("1")) ? true : false;
+        setMustUnderstandFromString(val, (soapConstants == 
+                                          SOAPConstants.SOAP12_CONSTANTS));
 
         QName roleQName = soapConstants.getRoleAttributeQName();
         actor = attributes.getValue(roleQName.getNamespaceURI(),
@@ -155,6 +149,42 @@ public class SOAPHeaderElement extends MessageElement
         alreadySerialized = true;
     }
 
+    public void detachNode() {
+        if (parent != null) {
+            ((SOAPHeader)parent).removeHeader(this);
+        }
+        super.detachNode();
+    }
+
+    private void setMustUnderstandFromString(String val, boolean isSOAP12) 
+            throws AxisFault {
+        if (val != null) {
+            if ("0".equals(val)) {
+                mustUnderstand = false;
+            } else if ("1".equals(val)) {
+                mustUnderstand = true;
+            } else if (isSOAP12) {
+                if ("true".equalsIgnoreCase(val)) {
+                    mustUnderstand = true;
+                } else if ("false".equalsIgnoreCase(val)) {
+                    mustUnderstand = false;
+                } else {
+                    throw new AxisFault(
+                            Messages.getMessage("badMUVal",
+                                                val,
+                                                new QName(namespaceURI,
+                                                          name).toString()));
+                }
+            } else {
+                throw new AxisFault(
+                        Messages.getMessage("badMUVal",
+                                            val,
+                                            new QName(namespaceURI,
+                                                      name).toString()));
+            }
+        }
+    }
+    
     public boolean getMustUnderstand() { return( mustUnderstand ); }
     public void setMustUnderstand(boolean b) {
         mustUnderstand = b ;
