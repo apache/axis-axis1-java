@@ -63,7 +63,6 @@ import org.apache.axis.ime.MessageExchangeConstants;
 import org.apache.axis.ime.MessageExchangeFaultListener;
 import org.apache.axis.ime.MessageExchangeStatusListener;
 import org.apache.axis.ime.MessageExchangeCorrelator;
-import org.apache.axis.ime.MessageExchangeCorrelatorService;
 import org.apache.axis.ime.MessageContextListener;
 import org.apache.axis.ime.MessageExchangeLifecycle;
 import org.apache.axis.ime.internal.util.uuid.UUIDGenFactory;
@@ -74,15 +73,12 @@ import org.apache.axis.ime.internal.util.uuid.UUIDGenFactory;
 public class MessageExchangeImpl
         implements MessageExchange, MessageExchangeLifecycle {
 
-    private static final long NO_TIMEOUT = -1;
-    public static final long WORKER_COUNT = 5;
-    public static final long DEFAULT_TIMEOUT = 1000 * 20;
+    public static final long NO_TIMEOUT = -1;
+    public static final long DEFAULT_TIMEOUT = 1000 * 30;
 
-    private MessageWorkerGroup workers = new MessageWorkerGroup();
     private MessageExchangeFaultListener faultListener;
     private MessageExchangeStatusListener statusListener;
     private MessageExchangeProvider provider;
-    private boolean listening = false;
     protected Holder holder;
 
     public MessageExchangeImpl(
@@ -95,7 +91,7 @@ public class MessageExchangeImpl
     public MessageExchangeCorrelator send(
             MessageContext context)
             throws AxisFault {
-        return send(context,null); // should do default listener
+        return send(context,null);
     }
 
     /**
@@ -167,6 +163,7 @@ public class MessageExchangeImpl
             throws AxisFault {
         holder = new Holder();
         Listener listener = new Listener(holder);
+        setMessageExchangeFaultListener(listener);
         try {
             this.receive(correlator,listener);
             if (timeout != NO_TIMEOUT) 
@@ -227,6 +224,7 @@ public class MessageExchangeImpl
             throws AxisFault {
         holder = new Holder();
         Listener listener = new Listener(holder);
+        setMessageExchangeFaultListener(listener);
         try {
             this.send(context,listener);
             if (timeout != NO_TIMEOUT) 
@@ -245,6 +243,36 @@ public class MessageExchangeImpl
         return null;
     }
 
+    /**
+     * see org.apache.axis.ime.MessageExchange#setMessageExchangeFaultListener(MessageExchangeFaultListener)
+     */
+    public synchronized void setMessageExchangeFaultListener(
+            MessageExchangeFaultListener listener) {
+        this.faultListener = listener;
+    }
+
+    /**
+     * see org.apache.axis.ime.MessageExchange#getMessageExchangeFaultListener()
+     */    
+    public synchronized MessageExchangeFaultListener getMessageExchangeFaultListener() {
+        return this.faultListener;
+    }
+
+    /**
+     * see org.apache.axis.ime.MessageExchange#setMessageExchangeStatusListener(MessageExchangeStatusListener)
+     */    
+    public synchronized void setMessageExchangeStatusListener(
+            MessageExchangeStatusListener listener) {
+        this.statusListener = listener;
+    }
+
+    /**
+     * see org.apache.axis.ime.MessageExchange#getMessageExchangeStatusListener()
+     */        
+    public synchronized MessageExchangeStatusListener getMessageExchangeStatusListener() {
+        return this.statusListener;
+    }
+    
 
   // -- Utility Classes --- //
 
@@ -252,12 +280,14 @@ public class MessageExchangeImpl
         private MessageExchangeCorrelator correlator;
         private MessageContext context;
         private Throwable exception;
+        private boolean done = false;
 
         public synchronized void set(
                 MessageExchangeCorrelator correlator,
                 MessageContext context) {
             this.correlator = correlator;
             this.context = context;
+            done = true;
             notifyAll();
         }
 
@@ -266,25 +296,27 @@ public class MessageExchangeImpl
                 Throwable throwable) {
             this.correlator = correlator;
             this.exception = throwable;
+            done = true;
             notifyAll();
         }
 
         public synchronized void waitForNotify()
                 throws InterruptedException {
-            wait();
+            if (!done) wait();
             return;
         }
 
         public synchronized void waitForNotify(long timeout)
                 throws InterruptedException {
-            wait(timeout);
+            if (!done) wait(timeout);
             return;
         }
 
     }
 
-    public class Listener
-            extends MessageContextListener {
+    public class Listener 
+            extends MessageContextListener
+            implements MessageExchangeFaultListener {
 
         protected Holder holder;
 
@@ -353,21 +385,4 @@ public class MessageExchangeImpl
         provider.shutdown(force);
     }
 
-    public synchronized void setMessageExchangeFaultListener(
-            MessageExchangeFaultListener listener) {
-        this.faultListener = listener;
-    }
-    
-    public synchronized MessageExchangeFaultListener getMessageExchangeFaultListener() {
-        return this.faultListener;
-    }
-    
-    public synchronized void setMessageExchangeStatusListener(
-            MessageExchangeStatusListener listener) {
-        this.statusListener = listener;
-    }
-    
-    public synchronized MessageExchangeStatusListener getMessageExchangeStatusListener() {
-        return this.statusListener;
-    }
 }

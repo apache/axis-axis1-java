@@ -63,16 +63,8 @@ import org.apache.axis.MessageContext;
 public abstract class MessageContextListener
         implements Serializable {
 
-    public void onFault(
-            MessageExchangeCorrelator correlator,
-            Throwable exception) {}
-
     public void onReceive(
             MessageExchangeCorrelator correlator,
             MessageContext context) {}
-
-    public void onStatus(
-            MessageExchangeCorrelator correlator,
-            MessageExchangeStatus status) {}
 
 }

@@ -52,18 +52,41 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.ime;
+ package org.apache.axis.ime.internal.util.handler;
+
+import org.apache.axis.AxisFault;
+import org.apache.axis.MessageContext;
+import org.apache.axis.ime.MessageExchange;
+import org.apache.axis.handlers.BasicHandler;
 
 /**
+ * This could probably be a bit more sophisticated, 
+ * but it works for now
+ * 
  * @author James M Snell (jasnell@us.ibm.com)
  */
-public interface MessageExchangeCorrelatorService {
-
-    public void put(
-            MessageExchangeCorrelator correlator,
-            Object context);
-
-    public Object get(
-            MessageExchangeCorrelator correlator);
-
+public class MessageExchangeHandler 
+    extends BasicHandler {
+    
+    private MessageExchange messageExchange;   
+    
+    public MessageExchangeHandler() {}
+    
+    public MessageExchangeHandler(MessageExchange exchange) {
+        this.messageExchange = exchange;
+    }
+    
+    public void invoke(
+            MessageContext msgContext) 
+            throws AxisFault {
+        msgContext = messageExchange.sendAndReceive(msgContext);
+    }
+    
+    public MessageExchange getMessageExchange() {
+        return this.messageExchange;
+    }
+    
+    public void setMessageExchange(MessageExchange exchange) {
+        this.messageExchange = exchange;
+    }
 }
