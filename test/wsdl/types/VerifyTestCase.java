@@ -222,8 +222,7 @@ public class VerifyTestCase extends junit.framework.TestCase {
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
-        String[] strValue = new String[] {"abc", "def"};
-        String[][] optArray = new String[][] {strValue};
+        String[] optArray = new String[] {"abc", "def"};
         byte[][] byteArray = new byte[][] { new byte[] {'a', 'b', 'c'}, new byte[] {'x', 'y', 'z'} };
         B b = new B();
         A a = new A();

@@ -45,14 +45,23 @@
     <java2wsdl output="${basedir}/build/work/test/wsdl/interop3/emptysa.wsdl"
                className= "test.wsdl.interop3.emptysa.SoapInteropEmptySAPortType"
                namespace="http://soapinterop/"
-           location="http://localhost:8080/axis/services/SoapInteropImport1Port">
+           location="http://localhost:8080/axis/services/EmptySA">
         <mapping namespace="http://soapinterop/" package="test.wsdl.interop3.emptysa"/>
     </java2wsdl>
+
     <wsdl2java url="${basedir}/build/work/test/wsdl/interop3/emptysa.wsdl"
                output="${basedir}/build/work"
                skeleton="yes">
         <mapping namespace="http://soapinterop/" package="test.wsdl.interop3.emptysa.step6"/>
     </wsdl2java>
+
+    <copy file="test/wsdl/interop3/EmptySATestCase.java" todir="build/work/test/wsdl/interop3"/>
+
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}">
+        <classpath refid="test-classpath"/>
+        <include name="test/wsdl/interop3/emptysa/step6/*.java" />
+        <include name="test/wsdl/interop3/EmptySATestCase.java"/>
+    </javac>
 
     <!-- Step 7:  see test/wsdl/interop3/Import1TestCase.java -->
     <!-- Step 8:  see test/wsdl/interop3/Import1TestCase.java -->

@@ -488,6 +488,9 @@ public class Call implements javax.xml.rpc.Call {
      * @param namespaceURI URI of the encoding to use.
      */
     public void setEncodingStyle(String namespaceURI) {
+        if (namespaceURI == null)
+            namespaceURI = "";
+
         encodingStyle = namespaceURI;
     }
 
@@ -627,6 +630,34 @@ public class Call implements javax.xml.rpc.Call {
                 paramModes = new Vector();
             }
 
+            paramNames.add( new QName("", paramName) );
+            paramTypes.add( paramType );
+            paramModes.add( parameterMode );
+
+        }
+        else {
+            throw new JAXRPCException();
+        }
+    }
+    /**
+     * Adds the specified parameter to the list of parameters for the
+     * operation associated with this Call object.
+     *
+     * @param paramName      Name that will be used for the parameter in the XML
+     * @param paramType      XMLType of the parameter
+     * @param parameterMode  one of PARAM_MODE_IN, PARAM_MODE_OUT
+     *                       or PARAM_MODE_INOUT
+     */
+    public void addParameter(QName paramName, QName paramType,
+            ParameterMode parameterMode) {
+        if (parmAndRetReq) {
+
+            if ( paramNames == null ) {
+                paramNames = new Vector();
+                paramTypes = new Vector();
+                paramModes = new Vector();
+            }
+
             paramNames.add( paramName );
             paramTypes.add( paramType );
             paramModes.add( parameterMode );
@@ -640,18 +671,30 @@ public class Call implements javax.xml.rpc.Call {
     /**
      * Return the QName of the type of the parameters with the given name.
      *
-     * Note: Not part of JAX-RPC specification.
-     *
      * @param  paramName  name of the parameter to return
      * @return XMLType    XMLType of paramName, or null if not found.
      */
     public QName getParameterTypeByName(String paramName) {
         int  i ;
+        QName paramQName = new QName("", paramName);
 
+        return getParameterTypeByQName(paramQName);
+    }
+
+    /**
+     * Return the QName of the type of the parameters with the given name.
+     *
+     * Note: Not part of JAX-RPC specification.
+     *
+     * @param  paramQName  QName of the parameter to return
+     * @return XMLType    XMLType of paramQName, or null if not found.
+     */    
+    public QName getParameterTypeByQName(QName paramQName) {
+        int i;
         if ( paramNames == null ) return( null );
 
         for (i = 0 ; i< paramNames.size() ; i++ ) 
-            if ( ((String)paramNames.get(i)).equals(paramName) ) {
+            if ( ((QName)paramNames.get(i)).equals(paramQName) ) {
                 return (QName) paramTypes.get(i);
             }
         return( null );
@@ -1171,8 +1214,10 @@ public class Call implements javax.xml.rpc.Call {
         for ( i = 0 ; i < paramNames.size() ; i++ ) {
             if (paramModes.get(i) == ParameterMode.PARAM_MODE_OUT)
                 continue ;
-            RPCParam p = new RPCParam( (String) paramNames.get(i),
-                                          params[j++] );
+            QName paramQName = (QName)paramNames.get(i);
+            RPCParam p = new RPCParam(paramQName.getNamespaceURI(),
+                                      paramQName.getLocalPart(),
+                                      params[j++] );
             result.add( p );
         }
 
@@ -1316,13 +1361,13 @@ public class Call implements javax.xml.rpc.Call {
         TypeMappingRegistry tmr = msgContext.getTypeMappingRegistry();
 
         // If a TypeMapping is not available, add one.
-        TypeMapping tm = (TypeMapping) tmr.getTypeMapping(Constants.URI_CURRENT_SOAP_ENC); 
+        TypeMapping tm = (TypeMapping) tmr.getTypeMapping(encodingStyle); 
         TypeMapping defaultTM = (TypeMapping) tmr.getDefaultTypeMapping(); 
         try {
             if (tm == null || tm == defaultTM ) {
                 tm = (TypeMapping) tmr.createTypeMapping();
-                tm.setSupportedNamespaces(new String[] {Constants.URI_CURRENT_SOAP_ENC});
-                tmr.register(Constants.URI_CURRENT_SOAP_ENC, tm);
+                tm.setSupportedNamespaces(new String[] {encodingStyle});
+                tmr.register(msgContext.getEncodingStyle(), tm);
             }
             if (!force && tm.isRegistered(javaType, xmlType)) 
                 return;
@@ -1567,7 +1612,7 @@ public class Call implements javax.xml.rpc.Call {
         }
         msgContext.setMaintainSession(maintainSession);
         if (operationStyle != null) {
-            msgContext.setOperationStyle(operationStyle);
+            msgContext.setOperationStyle(MessageContext.getStyleFromString(operationStyle));
         }
         if (useSOAPAction) {
             msgContext.setUseSOAPAction(true);

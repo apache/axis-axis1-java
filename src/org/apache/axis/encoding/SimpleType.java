@@ -52,43 +52,15 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.wsdl.toJava;
 
-import javax.wsdl.QName;
-import java.util.Vector;
+package org.apache.axis.encoding;
 
 /**
-  * This class simply collects
-  */
-public class Parameter {
-
-    // constant values for the parameter mode.
-    public static final byte IN = 1;
-    public static final byte OUT = 2;
-    public static final byte INOUT = 3;
-
-    private QName name;
-    public TypeEntry type;
-    public byte mode = IN;
-
-    public String toString() {
-        return "(" + type + ", " + getName() + ", "
-                + (mode == IN ? "IN)" : mode == INOUT ? "INOUT)" : "OUT)");
-    } // toString
-
-    public QName getQName() {
-        return name;
-    }
-
-    public String getName() {
-        return name.getLocalPart();
-    }
-
-    public void setName(String name) {
-        this.name = new QName("", name);
-    }
-
-    public void setQName(QName name) {
-        this.name = name;
-    }
-} // class Parameter
+ * Marker interface to indicate that a bean is "really" a simple type
+ * (typically with attributes).
+ *
+ * @author Tom Jordahl (tomj@apache.org)
+ */
+public interface SimpleType {
+}
+    

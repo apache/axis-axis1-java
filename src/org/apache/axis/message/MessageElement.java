@@ -88,6 +88,10 @@ public class MessageElement
     protected static Log log =
         LogFactory.getLog(MessageElement.class.getName());
 
+    private static final Mapping encMapping =
+            new Mapping(Constants.URI_CURRENT_SOAP_ENC,
+                        "SOAP-ENC");
+
     protected String    name ;
     protected String    prefix ;
     protected String    namespaceURI ;
@@ -260,6 +264,12 @@ public class MessageElement
     public void setEncodingStyle(String encodingStyle) {
         if (encodingStyle == null) encodingStyle = "";
         this.encodingStyle = encodingStyle;
+
+        // Wherever we set the encoding style, map the SOAP-ENC prefix
+        // just for fun.
+        if (encodingStyle.equals(Constants.URI_CURRENT_SOAP_ENC)) {
+            addMapping(encMapping);
+        }
     }
 
     public MessageElement getParent() { return parent; }
@@ -575,6 +585,7 @@ public class MessageElement
     }
 
     public void addMapping(Mapping map) {
+        if (namespaces == null) namespaces = new ArrayList();
         namespaces.add(map);
     }
 }

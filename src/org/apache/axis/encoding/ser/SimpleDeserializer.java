@@ -59,6 +59,8 @@ import java.beans.IntrospectionException;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Vector;
+import java.util.HashMap;
 
 import org.apache.axis.InternalException;
 import org.apache.axis.message.SOAPHandler;
@@ -76,6 +78,8 @@ import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.DeserializerImpl;
+import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.encoding.SimpleType;
 
 /**
  * A deserializer for any simple type with a (String) constructor.  Note:
@@ -90,6 +94,8 @@ public class SimpleDeserializer extends DeserializerImpl {
 
     StringBuffer val = new StringBuffer();
     private Constructor constructor = null;
+    private BeanPropertyDescriptor[] pd = null;
+    private HashMap propertyMap = new HashMap();
 
     public QName xmlType;
     public Class javaType;
@@ -101,6 +107,17 @@ public class SimpleDeserializer extends DeserializerImpl {
     public SimpleDeserializer(Class javaType, QName xmlType) {
         this.xmlType = xmlType;
         this.javaType = javaType;
+        
+        // if this type is a SimpleType bean, get bean properties
+        if (SimpleType.class.isAssignableFrom(javaType)) {
+            this.pd = BeanSerializer.getPd(javaType);
+            // loop through properties and grab the names for later
+            for (int i = 0; i < pd.length; i++) {
+                BeanPropertyDescriptor descriptor = pd[i];
+                propertyMap.put(descriptor.getName(), descriptor);
+            }
+        }
+        
     }
         
     /** 
@@ -210,4 +227,92 @@ public class SimpleDeserializer extends DeserializerImpl {
         }    
         return constructor.newInstance(new Object [] { source });
     }
+
+    /**
+     * Set the bean properties that correspond to element attributes.
+     * 
+     * This method is invoked after startElement when the element requires
+     * deserialization (i.e. the element is not an href and the value is not nil.)
+     * @param namespace is the namespace of the element
+     * @param localName is the name of the element
+     * @param qName is the prefixed qName of the element
+     * @param attributes are the attributes on the element...used to get the type
+     * @param context is the DeserializationContext
+     */
+    public void onStartElement(String namespace, String localName,
+                               String qName, Attributes attributes,
+                               DeserializationContext context)
+            throws SAXException 
+    {
+
+        // if this isn't a simpleType bean, wont have attributes
+        if (! SimpleType.class.isAssignableFrom(javaType))
+            return;
+        
+        // get list of properties that are really attributes
+        Vector beanAttributeNames = BeanSerializer.getBeanAttributes(javaType);
+        
+        // loop through the attributes and set bean properties that 
+        // correspond to attributes
+        if (beanAttributeNames != null && 
+            beanAttributeNames.size() > 0) {
+            for (int i=0; i < attributes.getLength(); i++) {
+                String attrName = attributes.getLocalName(i);
+                String attrNameUp = BeanSerializer.format(attrName, BeanSerializer.FORCE_UPPER);
+                String attrNameLo = BeanSerializer.format(attrName, BeanSerializer.FORCE_LOWER);
+                String mangledName = JavaUtils.xmlNameToJava(attrName);
+
+                // See if the attribute is a beanAttribute name
+                if (!beanAttributeNames.contains(attrName) &&
+                    !beanAttributeNames.contains(attrNameUp) &&
+                    !beanAttributeNames.contains(attrNameLo))
+                    continue;
+
+                // look for the attribute property
+                BeanPropertyDescriptor bpd = 
+                    (BeanPropertyDescriptor) propertyMap.get(attrNameUp);
+                if (bpd == null)
+                    bpd = (BeanPropertyDescriptor) propertyMap.get(attrNameLo);
+                if (bpd == null)
+                    bpd = (BeanPropertyDescriptor) propertyMap.get(mangledName);
+                if (bpd != null) {
+                    if (bpd.getWriteMethod() == null ) continue ;
+                    
+                    // determine the QName for this child element
+                    TypeMapping tm = context.getTypeMapping();
+                    Class type = bpd.getType();
+                    QName qn = tm.getTypeQName(type);
+                    if (qn == null)
+                        throw new SAXException(
+                            JavaUtils.getMessage("unregistered00", type.toString()));
+                
+                    // get the deserializer
+                    Deserializer dSer = context.getDeserializerForType(qn);
+                    if (dSer == null)
+                        throw new SAXException(
+                            JavaUtils.getMessage("noDeser00", type.toString()));
+                    if (! (dSer instanceof SimpleDeserializer))
+                        throw new SAXException(
+                            JavaUtils.getMessage("AttrNotSimpleType00", 
+                                                 bpd.getName(), 
+                                                 type.toString()));
+                
+                    if (bpd.getWriteMethod().getParameterTypes().length == 1) {
+                        // Success!  Create an object from the string and set
+                        // it in the bean
+                        try {
+                            Object val = ((SimpleDeserializer)dSer).
+                                makeValue(attributes.getValue(i));
+                            bpd.getWriteMethod().invoke(value, new Object[] {val} );
+                        } catch (Exception e) {
+                            throw new SAXException(e);
+                        }
+                    }
+                
+                } // if bpd != null
+            } // attribute loop
+        } // if attributes exist
+    } // onStartElement
+
+
 }

@@ -54,24 +54,20 @@
  */
 package org.apache.axis.wsdl.toJava;
 
-import java.io.IOException;
-
-import java.util.Vector;
-
-import javax.wsdl.QName;
-
 import org.apache.axis.utils.JavaUtils;
-
 import org.w3c.dom.Node;
 
+import java.io.IOException;
+import java.util.Vector;
+
 /**
-* This is Wsdl2java's Complex Type Writer.  It writes the <typeName>.java file.
-*/
+ * This is Wsdl2java's Complex Type Writer.  It writes the <typeName>.java file.
+ */
 public class JavaComplexTypeWriter extends JavaWriter {
     private TypeEntry type;
     private Vector elements;
     private Vector attributes;
-    private TypeEntry extendType;  
+    private TypeEntry extendType;
 
     /**
      * Constructor.
@@ -82,25 +78,25 @@ public class JavaComplexTypeWriter extends JavaWriter {
      */
     protected JavaComplexTypeWriter(
             Emitter emitter,
-            TypeEntry type, 
-            Vector elements, 
+            TypeEntry type,
+            Vector elements,
             TypeEntry extendType,
-            Vector attributes)
-    {
+            Vector attributes) {
         super(emitter, type, "", "java",
-                JavaUtils.getMessage("genType00"), "complexType");
+              JavaUtils.getMessage("genType00"), "complexType");
         this.type = type;
         this.elements = elements;
         this.attributes = attributes;
         this.extendType = extendType;
     } // ctor
 
-   /**
+    /**
      * Generate the binding for the given complex type.
      * The elements vector contains the Types (even indices) and
      * element names (odd indices) of the contained elements
      */
     protected void writeFileBody() throws IOException {
+        String valueType = null;
         Node node = type.getNode();
 
         // See if this class extends another class
@@ -111,23 +107,29 @@ public class JavaComplexTypeWriter extends JavaWriter {
 
         // We are only interested in the java names of the types, so create a names list
         Vector names = new Vector();
-        for (int i=0; i < elements.size(); i+=2) {
+        for (int i = 0; i < elements.size(); i += 2) {
             names.add(((TypeEntry) elements.get(i)).getName());
-            names.add( Utils.xmlNameToJava((String) elements.get(i + 1)));
+            names.add(Utils.xmlNameToJava((String) elements.get(i + 1)));
         }
-       // add the attributes to the names list (which will be bean elements too)
-       if (attributes != null) {
-           for (int i=0; i < attributes.size(); i+=2) {
-               names.add(((TypeEntry) attributes.get(i)).getName());
-               names.add( Utils.xmlNameToJava((String) attributes.get(i + 1)));
-           }
-       }
-       
+        // add the attributes to the names list (which will be bean elements too)
+        if (attributes != null) {
+            for (int i = 0; i < attributes.size(); i += 2) {
+                names.add(((TypeEntry) attributes.get(i)).getName());
+                names.add(Utils.xmlNameToJava((String) attributes.get(i + 1)));
+            }
+        }
 
-        pw.println("public class " + className + extendsText + " implements java.io.Serializable {");
+        String implementsText = "";
+        if (type.isSimpleType())
+            implementsText = ", org.apache.axis.encoding.SimpleType";
+
+        pw.println("public class " + className + extendsText +
+                   " implements java.io.Serializable" + implementsText + " {");
 
         for (int i = 0; i < names.size(); i += 2) {
             String variable = (String) names.get(i + 1);
+            if (variable.equals("value"))
+                valueType = (String) names.get(i);
             pw.print("    private " + names.get(i) + " " + variable + ";");
             // label the attribute fields.
             if (i >= elements.size())
@@ -190,26 +192,26 @@ public class JavaComplexTypeWriter extends JavaWriter {
             // (It may be more efficient to handle this with an ArrayList...but
             // for the initial support it was easier to use an actual array.) 
             if (i < elements.size() &&
-                ((TypeEntry)elements.elementAt(i)).getQName().getLocalPart().indexOf("[")>0) {
+                    ((TypeEntry) elements.elementAt(i)).getQName().getLocalPart().indexOf("[") > 0) {
 
                 String compName = typeName.substring(0, typeName.lastIndexOf("["));
 
                 int bracketIndex = typeName.indexOf("[");
                 String newingName = typeName.substring(0, bracketIndex + 1);
                 String newingSuffix = typeName.substring(bracketIndex + 1);
-                                           
+
                 pw.println("    public " + compName + " " + get + capName + "(int i) {");
                 pw.println("        return " + name + "[i];");
                 pw.println("    }");
                 pw.println();
-                pw.println("    public void set"+capName+"(int i, "+compName+" value) {");
+                pw.println("    public void set" + capName + "(int i, " + compName + " value) {");
                 pw.println("        if (" + name + " == null ||");
                 pw.println("            " + name + ".length <= i) {");
                 pw.println("            " + typeName + " a = new " +
-                        newingName + "i + 1" + newingSuffix + ";");
+                           newingName + "i + 1" + newingSuffix + ";");
                 pw.println("            if (" + name + " != null) {");
-                pw.println("                for(int j=0; j<"+name+".length; j++)");
-                pw.println("                    a[j] = "+name+"[j];");
+                pw.println("                for(int j=0; j<" + name + ".length; j++)");
+                pw.println("                    a[j] = " + name + "[j];");
                 pw.println("            }");
                 pw.println("            " + name + " = a;");
                 pw.println("        }");
@@ -219,26 +221,42 @@ public class JavaComplexTypeWriter extends JavaWriter {
             }
         }
        
-       // if we have attributes, create metadata function which returns the
-       // list of properties that are attributes instead of elements
-       if (attributes != null) {
-           pw.println("    // List of fields that are XML attributes");
-           pw.println("    private static java.lang.String[] _attrs = new String[] {");
-           for (int i=0; i < attributes.size(); i+=2) {
-               pw.println("        \"" + Utils.xmlNameToJava((String) attributes.get(i + 1)) + "\", ");
-           }
-           pw.println("    };");
-           pw.println();
-           
-           pw.println("    /**");
-           pw.println("     * Return list of bean field names that are attributes");
-           pw.println("     */");
-           pw.println("    public static java.lang.String[] getAttributeElements() {");
-           pw.println("        return _attrs;");
-           pw.println("    }");
-           pw.println();
-       }
-       
+        // if we have attributes, create metadata function which returns the
+        // list of properties that are attributes instead of elements
+        if (attributes != null) {
+            pw.println("    // List of fields that are XML attributes");
+            pw.println("    private static java.lang.String[] _attrs = new String[] {");
+            for (int i = 0; i < attributes.size(); i += 2) {
+                pw.println("        \"" + Utils.xmlNameToJava((String) attributes.get(i + 1)) + "\", ");
+            }
+            pw.println("    };");
+            pw.println();
+
+            pw.println("    /**");
+            pw.println("     * Return list of bean field names that are attributes");
+            pw.println("     */");
+            pw.println("    public static java.lang.String[] getAttributeElements() {");
+            pw.println("        return _attrs;");
+            pw.println("    }");
+            pw.println();
+        }
+        
+        // if this is a simple type, we need to emit a toString and a string
+        // constructor
+        if (type.isSimpleType() && valueType != null) {
+            // emit contructors and toString().
+            pw.println("    // Simple Types must have a string constructor");
+            pw.println("    public " + className + "(java.lang.String value) {");
+            pw.println("        this.value = new " + valueType + "(value);");
+            pw.println("    }");
+            pw.println();            
+            pw.println("    // Simple Types must have a toString for serializing the value");
+            pw.println("    public String toString() {");
+            pw.println("        return value.toString();");
+            pw.println("    }");
+            pw.println();
+        }
+
         pw.println("}");
         pw.close();
     } // writeOperation

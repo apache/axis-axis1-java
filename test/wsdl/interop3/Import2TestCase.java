@@ -1,15 +1,9 @@
 package test.wsdl.interop3;
 
-/*
-Not working right now
 import test.wsdl.interop3.import2.Import2Locator;
-
 import test.wsdl.interop3.import2.definitions.SoapInteropImport2PortType;
-
 import test.wsdl.interop3.import2.step6.definitions.SoapInteropImport2PortTypeServiceLocator;
-
 import test.wsdl.interop3.import2.xsd.SOAPStruct;
-*/
 
 /*
     <!-- SOAP Builder's round III web services          -->
@@ -36,9 +30,6 @@ public class Import2TestCase extends junit.framework.TestCase {
         super(name);
     }
 
-    public void testStep3() {}
-    /* 
-       Not working right now
     public void testStep3() {
         SoapInteropImport2PortType binding;
         try {
@@ -95,7 +86,7 @@ public class Import2TestCase extends junit.framework.TestCase {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
         }
     }
-    */
+
 /* doesn't work yet
     public void testStep8() {
         SoapInteropImport2PortType binding;
