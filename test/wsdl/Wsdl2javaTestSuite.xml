@@ -16,7 +16,9 @@
   </taskdef>
 
   <target name="main">
-
+    <property name="test-classpath.property" refid="test-classpath"/>
+    <echo message="Classpath for wsdl2java task : ${test-classpath.property}"/>
+    
     <!-- AddressBook Sample -->
     <wsdl2java url="samples/addr/AddressBook.wsdl"
                deployscope="session"
