@@ -5,6 +5,8 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.apache.axis.utils.JavaUtils;
 
+import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -92,5 +94,10 @@ public class TestJavaUtils extends TestCase
         ret = JavaUtils.convert(array, Vector.class);
         assertTrue("Converted array not a Vector", (ret instanceof Vector));
         
+        HashMap m = new HashMap();
+        m.put("abcKey", "abcVal");
+        m.put("defKey", "defVal");
+        ret = JavaUtils.convert(m, Hashtable.class);
+        assertTrue("Converted HashMap not a Hashtable", (ret instanceof Hashtable));
     }
 }

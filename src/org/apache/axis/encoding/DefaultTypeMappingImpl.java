@@ -301,6 +301,11 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                    new MapDeserializerFactory(java.util.HashMap.class,
                                               Constants.SOAP_MAP),
                    false);
+        myRegister(Constants.SOAP_MAP,       java.util.Hashtable.class,
+                   new MapSerializerFactory(java.util.Hashtable.class,
+                                            Constants.SOAP_MAP),
+                   null,  // Make sure not to override the deser mapping
+                   false);
         myRegister(Constants.SOAP_MAP,       java.util.Map.class,
                    new MapSerializerFactory(java.util.Map.class,
                                             Constants.SOAP_MAP),

@@ -20,6 +20,7 @@ import javax.xml.namespace.QName;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -300,6 +301,23 @@ public class TestDeser extends TestCase {
                       "</item>" +
                     "</result>",
                     m);
+    }
+
+    public void testHashtable() throws Exception {
+        Hashtable ht = new Hashtable();
+        ht.put("abcKey", "abcVal");
+        ht.put("defKey", "defVal");
+        deserialize("<result xsi:type=\"xmlsoap:Map\" " +
+                    "xmlns:xmlsoap=\"http://xml.apache.org/xml-soap\"> " +
+                      "<item>" +
+                       "<key xsi:type=\"xsd:string\">abcKey</key>" +
+                       "<value xsi:type=\"xsd:string\">abcVal</value>" +
+                      "</item><item>" +
+                       "<key xsi:type=\"xsd:string\">defKey</key>" +
+                       "<value xsi:type=\"xsd:string\">defVal</value>" +
+                      "</item>" +
+                    "</result>",
+                    ht, true);
     }
 
     public void testUntyped() throws Exception {
