@@ -231,8 +231,7 @@ public class ServiceFactory extends javax.xml.rpc.ServiceFactory
      */
     public javax.xml.rpc.Service createService(URL wsdlDocumentLocation,
             QName serviceName) throws ServiceException {
-        throw new ServiceException(JavaUtils.getMessage(
-                "notImplemented00", "ServiceFactory.createService"));
+        return new Service(wsdlDocumentLocation, serviceName);
     } // createService
 
     /**
