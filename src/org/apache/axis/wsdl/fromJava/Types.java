@@ -1728,6 +1728,17 @@ public class Types {
                             "noContainerForAnonymousType", qName.toString()));
         }
 
+        // If we've already got this type (because it's a native type or
+        // because we've already written it), just add the type="" attribute
+        // (if appropriate) and return.
+        if (!addToTypesList(qName) && !anonymous) {
+        	if (containingElement != null) {
+                containingElement.setAttribute("type", getQNameString(qName));
+            }
+
+            return true;
+        }
+
         // look up the serializer in the TypeMappingRegistry
         SerializerFactory factory;
         if (tm != null) {
@@ -1757,17 +1768,6 @@ public class Types {
                     type.getName()));
         }
 
-        // If we've already got this type (because it's a native type or
-        // because we've already written it), just add the type="" attribute
-        // (if appropriate) and return.
-        if (!addToTypesList(qName) && !anonymous) {
-        	if (containingElement != null) {
-                containingElement.setAttribute("type", getQNameString(qName));
-            }
-
-            return true;
-        }
-        
         Element typeEl;
 
         try {

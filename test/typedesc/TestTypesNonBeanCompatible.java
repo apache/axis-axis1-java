@@ -28,27 +28,42 @@ public class TestTypesNonBeanCompatible extends TestCase {
 		types = new Types(def, tm, tm, namespaces, "any:name.space", new ArrayList(), serviceDesc);
 	}
 	
+/*
+    Commented out for now because the suggested patch breaks Object arrays
+    
+    // Tests for Axis-1720  - http://nagoya.apache.org/jira/browse/AXIS-1720
 	public void testWriteTypeNonBeanCompatibleOnce() throws Exception {
-		
+
 		String schema = types.writeType(Locale.class);
 		assertEquals("Schema should be null for non-bean-compatible types", null, schema);
 	}
-	
+
 	public void testWriteTypeNonBeanCompatibleTwice() throws Exception {
-		
+
 		String schema = types.writeType(Locale.class);
 		assertEquals("Schema should be null for non-bean-compatible types", null, schema);
-		
+
 		schema = types.writeType(Locale.class);
 		assertEquals("Schema should be null for non-bean-compatible types", null, schema);
 	}
-	
+
 	public void testWriteTypeNonBeanCompatibleDifferent() throws Exception {
-		
+
 		String schema = types.writeType(Locale.class);
 		assertEquals("Schema should be null for non-bean-compatible types", null, schema);
-		
+
 		schema = types.writeType(Locale.class);
 		assertEquals("Schema should be null for non-bean-compatible types", null, schema);
 	}
+*/
+
+    public void testWriteObjectType() throws Exception {
+
+        String schema = types.writeType(Object.class);
+        assertNotNull("Schema should NOT be null for Object class", schema);
+
+        schema = types.writeType(Object[].class);
+        assertNotNull("Schema should NOT be be null for Object[] class", schema);
+    }
+
 }
