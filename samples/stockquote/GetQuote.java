@@ -55,32 +55,36 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.client ;
+package samples.stockquote ;
 
 import java.net.*;
 import java.io.*;
 import java.util.*;
 
-public class GetQuoteClient {
+public class GetQuote {
 
   public static void main(String args[]) {
 
     String hdr = "POST /axis/servlet/AxisServlet HTTP/1.0\n" +
                  "Host: localhost:8080\n" +
                  "Content-Type: text/xml;charset=utf-8\n" +
-                 "SOAPAction: urn:GetQuote\n";
+                 "SOAPAction: urn:xmltoday-delayed-quotes\n";
 
-    String msg = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/1999/XMLSchema\">\n" +
-                 "<SOAP-ENV:Body>\n" +
-                 "<m:getQuote xmlns:m=\"urn:GetQuote\">" +
-                 "<symbol>IBM</symbol>" +
-                 "</m:getQuote>" +
-                 "</SOAP-ENV:Body>\n" +
-                 "</SOAP-ENV:Envelope>" ;
+    String msg ;
+    String msg1 = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"" +
+                  "http://schemas.xmlsoap.org/soap/envelope/\" " +
+                  "xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\"" + 
+                  " xmlns:xsd=\"http://www.w3.org/1999/XMLSchema\">\n" +
+                  "<SOAP-ENV:Body>\n" +
+                  "<m:getQuote xmlns:m=\"urn:xmltoday-delayed-quotes\">" ;
+    String msg2 = "</m:getQuote>" +
+                  "</SOAP-ENV:Body>\n" +
+                  "</SOAP-ENV:Envelope>" ;
 
     try {
-      String  host = "localhost" ;
-      int     port = 8080 ;
+      String  host   = "localhost" ;
+      int     port   = 8080 ;
+      String  symbol = null ;
 
       for ( int i = 0 ; i < args.length ; i++ ) {
         if ( args[i].charAt(0) == '-' ) {
@@ -96,7 +100,16 @@ public class GetQuoteClient {
                      System.exit(1);
           }
         }
+        else
+          symbol = args[i] ;
       }
+
+      if ( symbol == null ) {
+        System.err.println( "Usage: GetQuote <symbol>" );
+        System.exit(1);
+      }
+
+      msg = msg1 + "<symbol>" + symbol + "</symbol>" + msg2 ;
 
       String         cl = "Content-Length: " + msg.length() + "\n\n" ;
       Socket         sock = new Socket( host, port );
