@@ -533,10 +533,7 @@ public class BoundaryDelimitedStream extends java.io.FilterInputStream {
 
                     // If there really was no crlf at then end then this is not a boundary.
                     foundAt = BOUNDARY_NOT_FOUND;
-                } else if ((searchbuf[foundAt-1] == '-')
-                        && (searchbuf[foundAt-2] == '-')) {
-                    foundAt -= 2;
-                }
+                } 
             }
         }
 
