@@ -55,6 +55,7 @@
 package org.apache.axis.wsdl;
 
 import org.apache.axis.enum.Scope;
+import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.CLOption;
 import org.apache.axis.utils.CLOptionDescriptor;
 import org.apache.axis.utils.JavaUtils;
@@ -112,6 +113,8 @@ public class WSDL2Java extends WSDL2 {
     /** Field PASSWORD_OPT */
     protected static final int PASSWORD_OPT = 'P';
 
+    protected static final int CLASSPATH_OPT = 'X';
+
     /** Field bPackageOpt */
     protected boolean bPackageOpt = false;
 
@@ -127,6 +130,7 @@ public class WSDL2Java extends WSDL2 {
      * recognised.
      * - A description of the option for the usage message
      */
+
     protected static final CLOptionDescriptor[] options =
             new CLOptionDescriptor[]{
                 new CLOptionDescriptor("server-side",
@@ -138,7 +142,7 @@ public class WSDL2Java extends WSDL2 {
                         Messages.getMessage("optionSkeletonDeploy00")),
                 new CLOptionDescriptor("NStoPkg",
                         CLOptionDescriptor.DUPLICATES_ALLOWED
-            + CLOptionDescriptor.ARGUMENTS_REQUIRED_2,
+                        + CLOptionDescriptor.ARGUMENTS_REQUIRED_2,
                         NAMESPACE_OPT,
                         Messages.getMessage("optionNStoPkg00")),
                 new CLOptionDescriptor("fileNStoPkg",
@@ -176,7 +180,11 @@ public class WSDL2Java extends WSDL2 {
                 new CLOptionDescriptor("password",
                         CLOptionDescriptor.ARGUMENT_REQUIRED,
                         PASSWORD_OPT,
-                        Messages.getMessage("optionPassword"))
+                        Messages.getMessage("optionPassword")),
+                new CLOptionDescriptor("classpath",
+                        CLOptionDescriptor.ARGUMENT_OPTIONAL,
+                        CLASSPATH_OPT,
+                        Messages.getMessage("optionClasspath"))
             };
 
     /**
@@ -288,6 +296,12 @@ public class WSDL2Java extends WSDL2 {
 
             case PASSWORD_OPT:
                 emitter.setPassword(option.getArgument());
+                break;
+
+            case CLASSPATH_OPT:
+                ClassUtils.setDefaultClassLoader(ClassUtils.createClassLoader(
+                        option.getArgument(),
+                        this.getClass().getClassLoader()));
                 break;
 
             default :

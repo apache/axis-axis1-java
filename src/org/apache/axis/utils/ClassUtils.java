@@ -55,6 +55,10 @@
 package org.apache.axis.utils;
 
 import java.io.InputStream;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
@@ -62,16 +66,37 @@ import java.security.PrivilegedAction;
  * Utility methods for Class Loading.
  *
  * @author Davanum Srinvas (dims@yahoo.com)
+ * @author Matthew Pocock (matthew_pocock@yahoo.co.uk)
  */
 public final class ClassUtils {
+    /** default class loader */
+    private static ClassLoader defaultClassLoader
+            = ClassUtils.class.getClassLoader();
 
     /** hash table of class loaders */
     private static java.util.Hashtable classloaders = new java.util.Hashtable();
 
     /**
-     * Set the ClassLoader associated with the given className.
+     * Set the default ClassLoader. If loader is null, the default loader is
+     * not changed.
+     *
+     * @param loader  the new default ClassLoader
+     */
+    public static void setDefaultClassLoader(ClassLoader loader) {
+      if (loader != null)
+          defaultClassLoader = loader;
+    }
+
+    public static ClassLoader getDefaultClassLoader() {
+        return defaultClassLoader;
+    }
+
+    /**
+     * Set the ClassLoader associated with the given className. If either the
+     * class name or the loader are null, no action is performed.
      *
      * @param className the name of a class
+     * @param loader the ClassLoader for the class
      */
     public static void setClassLoader(String className, ClassLoader loader) {
         if (className != null && loader != null)
@@ -158,7 +183,8 @@ public final class ClassUtils {
     }
 
     /**
-     * Loads the class from the context class loader and then falls back to Class.forName
+     * Loads the class from the context class loader and then falls back to
+     * getDefaultClassLoader().forName
      *
      * @param _className Class name
      * @return java class
@@ -196,7 +222,8 @@ public final class ClassUtils {
                                 } catch (ClassNotFoundException cnfe3) {
                                     // Try the default class loader.
                                     try {
-                                        return Class.forName(className);
+                                        return defaultClassLoader.loadClass(
+                                                className);
                                     } catch (Throwable e) {
                                         // Still not found, return exception
                                         return e;
@@ -244,5 +271,40 @@ public final class ClassUtils {
             myInputStream = clazz.getResourceAsStream(resource);
         }
         return myInputStream;
+    }
+
+    /**
+     * Creates a new ClassLoader from a classpath specification and a parent
+     * class loader.
+     * The classpath string will be split using the system path seperator
+     * character (e.g. : or ;), just as the java system-wide class path is
+     * processed.
+     *
+     * @param classpath  the classpath String
+     * @param parent  the parent ClassLoader, or null if the default is to be
+     *     used
+     * @throws SecurityExcepiton if you don't have privilages to create
+     *         class loaders
+     * @throws IllegalArgumentException if your classpath string is silly
+     */
+    public static ClassLoader createClassLoader(String classpath,
+                                                ClassLoader parent)
+            throws SecurityException
+    {
+        String[] names = classpath.split(System.getProperty("path.seperator"));
+
+        URL[] urls = new URL[names.length];
+        try {
+            for(int i = 0; i < urls.length; i++)
+                urls[i] = new File(names[i]).toURL();
+        }
+        catch (MalformedURLException e) {
+          // I don't think this is possible, so I'm throwing this as an
+          // un-checked exception
+          throw (IllegalArgumentException) new IllegalArgumentException(
+                  "Unable to parse classpath: " + classpath).initCause(e);
+        }
+
+        return new URLClassLoader(urls, parent);
     }
 }

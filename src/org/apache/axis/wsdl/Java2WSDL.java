@@ -61,6 +61,7 @@ import org.apache.axis.utils.CLOption;
 import org.apache.axis.utils.CLOptionDescriptor;
 import org.apache.axis.utils.CLUtil;
 import org.apache.axis.utils.Messages;
+import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.wsdl.fromJava.Emitter;
 
 import java.util.HashMap;
@@ -147,6 +148,8 @@ public class Java2WSDL {
 
     /** Field METHODS_NOTALLOWED_OPT */
     protected static final int METHODS_NOTALLOWED_OPT = 'x';
+
+    protected static final int CLASSPATH_OPT = 'X';
 
     /** Field STYLE_OPT */
     protected static final int STYLE_OPT = 'y';
@@ -255,7 +258,11 @@ public class Java2WSDL {
         new CLOptionDescriptor("importSchema",
                 CLOptionDescriptor.ARGUMENT_OPTIONAL,
                 IMPORT_SCHEMA_OPT,
-                Messages.getMessage("j2woptImportSchema00"))
+                Messages.getMessage("j2woptImportSchema00")),
+        new CLOptionDescriptor("classpath",
+                CLOptionDescriptor.ARGUMENT_OPTIONAL,
+                CLASSPATH_OPT,
+                Messages.getMessage("optionClasspath"))
     };
 
     /** Field emitter */
@@ -513,6 +520,12 @@ public class Java2WSDL {
 
             case IMPORT_SCHEMA_OPT:
                 emitter.setInputSchema(option.getArgument());
+                break;
+
+            case CLASSPATH_OPT:
+                ClassUtils.setDefaultClassLoader(ClassUtils.createClassLoader(
+                        option.getArgument(),
+                        this.getClass().getClassLoader()));
                 break;
 
             default :
