@@ -135,9 +135,11 @@ public class NSStack {
     }
     
     /**
-     * Return a copy of the current frame.
+     * Return a copy of the current frame.  Returns null if none are present.
      */
     public ArrayList cloneFrame() {
+        if (stack[top] == null) return null;
+
         ArrayList clone = new ArrayList();
 
         for (Mapping map=topOfFrame(); map!=null; map=next()) {
