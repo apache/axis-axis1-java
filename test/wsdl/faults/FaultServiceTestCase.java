@@ -21,6 +21,7 @@ public class FaultServiceTestCase extends junit.framework.TestCase {
         FaultServiceTestCase tester = new FaultServiceTestCase("tester");
         tester.testFaultServiceGetQuote();
         tester.testFaultServiceThrowFault();
+        tester.testFaultServiceThrowExtensionFault();
     }
     
     public void testFaultServiceGetQuote() {
@@ -100,5 +101,42 @@ public class FaultServiceTestCase extends junit.framework.TestCase {
                     AssertionFailedError("Remote Exception caught: " + re );
         }
     }
+
+    public void testFaultServiceThrowExtensionFault() {
+        test.wsdl.faults.FaultServicePortType binding;
+        try {
+            binding = new FaultServiceLocator().getFaultService();
+        }
+        catch (javax.xml.rpc.ServiceException jre) {
+            throw new junit.framework.
+                    AssertionFailedError("JAX-RPC ServiceException caught: " + jre);            
+        }
+        assertTrue("binding is null", binding != null);
+        String description = "test";
+            
+        try {
+            int value = 0;
+            value = binding.throwExtensionFault(description);
+            fail("Should raise an ExtensionFault"); 
+        } 
+        catch (ExtensionFault e) {
+            try {
+                assertEquals("ExtensionFault extension element does not match original",
+                        description, e.getExtension().get_any()[0].getAsDOM().getTagName());
+            } catch (Exception domError) {
+                throw new junit.framework.
+                    AssertionFailedError("DOM Exception caught: " + domError);
+            }
+        }
+        catch (org.apache.axis.AxisFault e) {
+            throw new junit.framework.
+                    AssertionFailedError("AxisFault caught: " + e);            
+        }
+        catch (java.rmi.RemoteException re) {
+            throw new junit.framework.
+                    AssertionFailedError("Remote Exception caught: " + re );
+        }
+    }
+
 }
 

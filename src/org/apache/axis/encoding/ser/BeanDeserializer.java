@@ -240,7 +240,14 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
 
                     newElements[length] = thisEl;
                     propDesc.set(value, newElements);
-
+                    // if this is the first pass through the MessageContexts
+                    // make sure that the correct any element is set,
+                    // that is the child of the current MessageElement, however
+                    // on the first pass this child has not been set yet, so
+                    // defer it to the child SOAPHandler
+                    if (!localName.equals(thisEl.getName())) {
+                        return new SOAPHandler(newElements, length);
+                    }
                     return new SOAPHandler();
                 } catch (Exception e) {
                     throw new SAXException(e);
