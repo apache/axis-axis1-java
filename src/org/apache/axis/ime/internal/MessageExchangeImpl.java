@@ -315,6 +315,15 @@ public class MessageExchangeImpl
 
     /**
      * Unsupported for now
+     * @see org.apache.axis.ime.MessageExchange@isFeatureEnabled(featureId)
+     */
+    public String[] getSupportedFeatures()
+            throws AxisFault {
+        throw new UnsupportedOperationException(Messages.getMessage("unsupportedOperationException00"));
+    }
+
+    /**
+     * Unsupported for now
      * @see org.apache.axis.ime.MessageExchange@setProperty(String,Object)
      */
     public void setProperty(

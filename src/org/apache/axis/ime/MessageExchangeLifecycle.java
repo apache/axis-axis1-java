@@ -89,7 +89,7 @@ public interface MessageExchangeLifecycle {
 
     /**
      * Block indefinitely until shutdown is 
-     * complete
+     * complete.
      */
     public void awaitShutdown()
             throws InterruptedException;
