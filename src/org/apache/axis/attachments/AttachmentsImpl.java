@@ -53,48 +53,139 @@
  * <http://www.apache.org/>.
  */
 
+ /* @author Rob Jellinghaus (robj@unrealities.com) */
+ /* @author Rick Rineholt  */
+
 package org.apache.axis.attachments;
 
 import org.apache.axis.Message;
 import org.apache.axis.Part;
 
-import java.util.Hashtable;
 
 /**
- * Implements the Attachment interface, via an actual Hashtable of actual
+ * Implements the Attachment interface, via an actual Hashmap of actual
  * AttachmentParts.
- *
- * @author Rob Jellinghaus (robj@unrealities.com)
  */
 
 public class AttachmentsImpl implements Attachments {
     private Message msg;
     
-    private Hashtable attachments = new Hashtable();
+    
+    private java.util.HashMap attachments = new java.util.HashMap();
+
+    protected org.apache.axis.SOAPPart soapPart= null; 
+    /**
+     * The actual stream to manage the multi-related input stream.
+     */
+    protected org.apache.axis.attachments.MultiPartRelatedInputStream mpartStream= null;
     
     /**
      * Construct one of these on a parent Message.
      * Should only ever be called by Message constructor!
+     * @param msg the message associated 
+     * @param initialContents should be anything but today only a stream is supported.
+     * @param The mime content type of the stream for transports that provide it.
      */ 
-    public AttachmentsImpl (Message parent) {
-        msg = parent;
-    }
+    public AttachmentsImpl(Message msg, Object intialContents, String contentType) throws org.apache.axis.AxisFault {
+      this.msg= msg;
+      if(contentType  != null) {
+        if(contentType.equals(org.apache.axis.Message.MIME_UNKNOWN)){
+        //Process the input stream for headers to determine the mime type.
+        //TODO
+        }
+        else{
+          java.util.StringTokenizer st = new java.util.StringTokenizer(contentType, " \t;");
+           if(st.hasMoreTokens()) {
+               String mimetype= st.nextToken();
+               if(mimetype.equalsIgnoreCase(org.apache.axis.Message.MIME_MULTIPART_RELATED)){
+                 mpartStream= new org.apache.axis.attachments.MultiPartRelatedInputStream(contentType, (java.io.InputStream)intialContents);
 
-    public Part createAttachmentPart() {
-        return new AttachmentPart(msg);
+                soapPart= new org.apache.axis.SOAPPart(msg, mpartStream, false); 
+               }
+               else if(mimetype.equalsIgnoreCase(org.apache.axis.Message.MIME_APPLICATION_DIME)){ //do nothing today.
+                 //is= new DIMEInputStreamManager(is);
+               }
+           }
+         }
+      }
     }
 
     /**
-     * TODO: everything!
-     */ 
-    public Part getAttachmentById(String contentId) {
-        return null;
+     * Create an attachment part with a buried JAF data handler.
+     */
+    public Part createAttachmentPart(Object datahandler ) throws org.apache.axis.AxisFault{
+       if(!( datahandler  instanceof javax.activation.DataHandler )){
+            throw new org.apache.axis.AxisFault( "Unsupported attachment type \"" + datahandler.getClass().getName()
+             + "\" only supporting \"" + javax.activation.DataHandler.class.getName() +"\".");
+         }
+        Part ret= new AttachmentPart(msg, (javax.activation.DataHandler)datahandler);
+        String contentId= org.apache.axis.attachments.MimeUtils.getNewContentIdValue();
+        ret.setContentId(contentId);  
+        attachments.put(contentId, ret); 
+        return ret;
     }
 
     /**
-     * TODO: everything!
+     * This method should look at a refernce and determine if it is a CID: or url
+     * to look for attachment.
+     * @param  The reference in the xml that referers to an attachment.
+     * @return The part associated with the attachment.
      */ 
-    public Part getAttachmentByLocation(String contentLocation) {
-        return null;
+    public Part getAttachmentByReference(String reference) throws org.apache.axis.AxisFault {
+        //TODO should find what type of reference it is .. today only Content Ids are handled.
+        Part ret= (AttachmentPart)attachments.get(reference);
+        if(ret == null && mpartStream != null ){
+          //We need to still check if this coming in the input stream;
+          javax.activation.DataHandler dh =mpartStream.getAttachmentByReference(reference); 
+          if(dh != null){
+            ret= new AttachmentPart(msg, dh);
+          }
+        }
+        return  ret;
+    }
+
+    /**
+     * From the complex stream return the root part. 
+     * Today this is SOAP.
+     */ 
+    public Part getRootPart(){
+      return soapPart;
+    }
+
+    public javax.mail.internet.MimeMultipart multipart= null; 
+    
+    /**
+     * Get the content length of the stream. 
+     */ 
+    public int getContentLength() throws org.apache.axis.AxisFault {
+      try{
+        return (int) org.apache.axis.attachments.MimeUtils.getContentLength( multipart !=null ? multipart :
+        (multipart= org.apache.axis.attachments.MimeUtils.createMP(msg.getSOAPPart().getAsString(), attachments  )));
+      }  
+      catch(Exception e){
+          throw new org.apache.axis.AxisFault();
+      }
+    }
+
+    /**
+     * Write the content to the stream. 
+     */ 
+    public void writeContentToStream(java.io.OutputStream os) throws org.apache.axis.AxisFault {
+         org.apache.axis.attachments.MimeUtils.writeToMultiPartStream(os, multipart !=null ? multipart :
+      (multipart= org.apache.axis.attachments.MimeUtils.createMP(msg.getSOAPPart().getAsString(), attachments  )));
+    }
+    /**
+     * Gets the content type for the whole stream.
+     */
+    public String getContentType()throws org.apache.axis.AxisFault {
+       return org.apache.axis.attachments.MimeUtils.getContentType( multipart !=null ? multipart :
+      (multipart= org.apache.axis.attachments.MimeUtils.createMP(msg.getSOAPPart().getAsString(), attachments  )));
+    }
+
+    /**
+     *This is the number of attachments.
+     **/
+    public int getAttachmentCount(){
+       return attachments.size(); 
     }
 }

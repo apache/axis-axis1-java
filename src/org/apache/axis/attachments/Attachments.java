@@ -65,28 +65,50 @@ import org.apache.axis.Part;
  * will be compiled in org.apache.axis.attachments.
  *
  * @author Rob Jellinghaus (robj@unrealities.com)
+ * @author Rick Rineholt
  */
 
 public interface Attachments {
     /**
-     * Get a given attachment Part, by content id. 
-     * Will actually, and always, return an AttachmentPart.
+     * This method should look at a refernce and determine if it is a CID: or url
+     * to look for attachment.
+     * @param  The reference in the xml that referers to an attachment.
+     * @return The part associated with the attachment.
      */ 
-    public Part getAttachmentById (String contentId);
-    
-    /**
-     * Get a given attachment Part, by content location.
-     * Will actually, and always, return an AttachmentPart.
-     */ 
-    public Part getAttachmentByLocation (String contentLocation);
+    public Part getAttachmentByReference(String reference) throws org.apache.axis.AxisFault;
     
     /**
      * Create a new attachment Part in this Message.
      * Will actually, and always, return an AttachmentPart.
+     * @param The part that is referenced 
      */ 
-    public Part createAttachmentPart ();
-    
+    public Part createAttachmentPart(Object part) throws org.apache.axis.AxisFault;
+
     /**
-     * Coming soon: attachment enumeration!
+     * From the complex stream return the SOAP part. 
+     * @return will return the root part if the stream is supported,
+     *         otherwise null.
      */ 
+    public Part getRootPart();
+
+    /**
+     * Get the content length of the stream. 
+     */ 
+    public int getContentLength() throws org.apache.axis.AxisFault;
+
+    /**
+     * Write the content to the stream. 
+     */ 
+    public void writeContentToStream(java.io.OutputStream os) throws org.apache.axis.AxisFault;
+
+    /**
+     * Write the content to the stream. 
+     */ 
+    public String getContentType()throws org.apache.axis.AxisFault;
+
+    /**
+     *This is the number of attachments.
+     **/
+    public int getAttachmentCount();
+    
 }

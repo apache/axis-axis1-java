@@ -128,6 +128,17 @@ Copyright:
       classname="javax.activation.DataHandler"
       classpathref="classpath"/>
 
+    <available property="mailapi.present"
+      classname="javax.mail.internet.MimeMessage"
+      classpathref="classpath"/>
+
+    <condition property="attachments.present" >
+      <and>
+        <available classname="javax.activation.DataHandler" classpathref="classpath" />
+        <available classname="javax.mail.internet.MimeMessage" classpathref="classpath" />
+      </and>
+    </condition>
+
     <available property="post-compile.present" file="post-compile.xml" />
 
     <echo message="--- Build environment for ${Name} ---" />
@@ -143,6 +154,8 @@ Copyright:
     <echo message="servlet.present=${servlet.present}" />
     <echo message="junit.present=${junit.present}" />
     <echo message="activation.present=${activation.present}" />
+    <echo message="mailapi.present=${mailapi.present}" />
+    <echo message="attachments.present=${attachments.present}" />
     <echo message=""/>
     <echo message="--- Property values ---" />
     <echo message="debug=${debug}" />
@@ -164,9 +177,13 @@ Copyright:
       classpathref="classpath">
       <exclude name="**/old/**/*" />
       <exclude name="**/bak/**"/>
-      <exclude name="org/apache/axis/attachments/AttachmentsImpl.java" unless="activation.present"/>
-      <exclude name="org/apache/axis/attachments/AttachmentPart.java" unless="activation.present"/>
-      <exclude name="org/apache/axis/attachments/MimeUtil.java" unless="activation.present"/>
+      <exclude name="org/apache/axis/attachments/AttachmentsImpl.java" unless="attachments.present"/>
+      <exclude name="org/apache/axis/attachments/AttachmentPart.java" unless="attachments.present"/>
+      <exclude name="org/apache/axis/attachments/AttachmentUtils.java" unless="attachments.present"/>
+      <exclude name="org/apache/axis/attachments/MimeUtils.java" unless="attachments.present"/>
+      <exclude name="org/apache/axis/attachments/ManagedMemoryDataSource.java" unless="attachments.present"/>
+      <exclude name="org/apache/axis/handlers/MD5AttachHandler.java" unless="attachments.present"/>
+      <exclude name="org/apache/axis/attachments/MultiPartRelatedInputStream.java" unless="attachments.present"/>
       <exclude name="org/apache/axis/transport/http/AdminServlet.java" unless="servlet.present"/>
       <exclude name="org/apache/axis/transport/http/AxisHttpSession.java" unless="servlet.present"/>
       <exclude name="org/apache/axis/transport/http/AxisServlet.java" unless="servlet.present"/>
@@ -241,6 +258,7 @@ Copyright:
       <exclude name="test/inout/*.java" />
       <exclude name="test/multiref/*.java" />
       <exclude name="test/wsdl/Wsdl2javaTestSuite.java" unless="servlet.present"/>
+      <exclude name="test/md5attach/MD5AttachTest.java" unless="attachments.present"/>
     </javac>
   </target>
 

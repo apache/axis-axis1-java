@@ -54,77 +54,32 @@
  */
 
 package org.apache.axis.attachments;
-
-import org.apache.axis.Part;
-import org.apache.axis.Message;
-import org.apache.log4j.Category;
-
 import javax.activation.DataHandler;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.IOException;
+import org.apache.axis.Part;
+import org.apache.axis.AxisFault;
+
 
 /**
- * An AttachmentPart contains attachment data along with MIME
- * headers, and implements the standard Part API.
- * <p>
- * It provides access to attachment content via
- * javax.activation.DataHandlers, so it will not be built if Axis
- * is built without activation.jar, and core Axis code must not
- * import it (lest it also become dependent on axis.jar).
- * Attachment-aware code, of course, is no problem.
- * 
- * @author Rob Jellinghaus (robj@unrealities.com)
- * @author Rick Rineholt 
+ * This class allow access to the Jaf data handler in AttachmentPart. 
+ *
+ * @author Rick Rineholt
  */
-public class AttachmentPart extends Part {
-    static Category category = Category.getInstance(Message.class.getName());
-    javax.activation.DataHandler datahandler= null;
-    
-    /**
-     * Do not call this directly!  This should only be called by the
-     * AttachmentsImpl object.
-     */ 
 
-     
-    public AttachmentPart(Message parent) {
-        super(parent);
-    }
-
-    public AttachmentPart(Message parent, javax.activation.DataHandler dh ) {
-        super(parent);
-        datahandler= dh;
-    }
-
-    javax.activation.DataHandler getActiviationDataHandler(){
-      return datahandler;
-    }
+public class AttachmentUtils {
+    private AttachmentUtils(){};  //no one should create.
 
     /**
-     * TODO: everything!
-     */ 
-    public int getContentLength() {
-        return 0;
-    }
+     * Obtain the DataHandler from the part.
+     * @param part the part containing the Java Activiation Framework data source.
+     * @return The Java activiation data handler.
+     */
 
-    /**
-     * TODO: everything!
-     */ 
-    public String getContentType() {
-        return null;
-    }
-
-    /**
-     * TODO: everything!
-     */ 
-    public int getSize() {
-        return 0;
-    }
-
-    /**
-     * TODO: everything!
-     */ 
-    public void writeTo(OutputStream out) throws IOException {
+    public static DataHandler getActiviationDataHandler(Part part) throws AxisFault{
+       if(!( part instanceof AttachmentPart)){
+        throw new AxisFault( "Unsupported attachment type \"" +
+          part.getClass().getName()
+         + "\" only supporting \"" + AttachmentPart.class.getName() +"\".");
+       }
+       return ((AttachmentPart) part).getActiviationDataHandler();
     }
 }
-
