@@ -23,9 +23,9 @@ import org.apache.axis.session.Session;
 import org.apache.axis.session.SimpleSession;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.Options;
+import org.apache.axis.utils.NetworkUtils;
 import org.apache.axis.collections.LRUMap;
 import org.apache.axis.EngineConfiguration;
-import org.apache.axis.AxisFault;
 import org.apache.axis.management.ServiceAdmin;
 import org.apache.axis.configuration.EngineConfigurationFactoryFinder;
 import org.apache.commons.logging.Log;
@@ -207,7 +207,7 @@ public class SimpleAxisServer implements Runnable {
                 myConfig = EngineConfigurationFactoryFinder.newFactory().getServerEngineConfig();
             }
             myAxisServer = new AxisServer(myConfig);
-            ServiceAdmin.setEngine(myAxisServer);
+            ServiceAdmin.setEngine(myAxisServer, NetworkUtils.getLocalHostname() + "@" + serverSocket.getLocalPort());
         }
         return myAxisServer;
     }

@@ -184,7 +184,7 @@ public class AxisServlet extends AxisServletBase {
 
         // Setup the service admin
         try {
-            ServiceAdmin.setEngine(this.getEngine());
+            ServiceAdmin.setEngine(this.getEngine(), context.getServerInfo());
         } catch (AxisFault af) {
             exceptionLog.info("Exception setting AxisEngine on ServiceAdmin " +
                     af);

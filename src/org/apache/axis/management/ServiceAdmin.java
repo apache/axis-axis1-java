@@ -131,9 +131,9 @@ public class ServiceAdmin {
      * Set the singleton engine
      * @param axisSrv
      */ 
-    static public void setEngine(AxisServer axisSrv) {
+    static public void setEngine(AxisServer axisSrv, String name) {
         ServiceAdmin.axisServer = axisSrv;
-        //Registrar.register(new ServiceAdministrator(), "AxisServer:name=localhost,port=8080", "AxisServerContext");
+        Registrar.register(new ServiceAdministrator(), "AxisServer:name=" + name, "AxisServerContext");
     }
 
 }
