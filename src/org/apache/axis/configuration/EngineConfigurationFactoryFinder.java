@@ -162,7 +162,7 @@ public class EngineConfigurationFactoryFinder
                         if (factory == null) {
                             try {
                                 factory = EngineConfigurationFactoryServlet.newFactory(obj);
-                            } catch (Exception e) {
+                            } catch (RuntimeException e) {
                                 log.warn(Messages.getMessage("engineConfigInvokeNewFactory",
                                                               EngineConfigurationFactoryServlet.class.getName(),
                                                               requiredMethod), e);
@@ -172,7 +172,7 @@ public class EngineConfigurationFactoryFinder
                                 try {
                                     // should NEVER return null.
                                     factory = EngineConfigurationFactoryDefault.newFactory(obj);
-                                } catch (Exception e) {
+                                } catch (RuntimeException e) {
                                     log.warn(Messages.getMessage("engineConfigInvokeNewFactory",
                                                                   EngineConfigurationFactoryDefault.class.getName(),
                                                                   requiredMethod), e);

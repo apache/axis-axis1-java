@@ -510,12 +510,6 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
 
                 // Give it our best shot.
                 diskCacheFile.deleteOnExit();
-
-                try {
-                } catch (Exception e2) {
-
-                    // Gave it our best shot.
-                }
             }
         }
 

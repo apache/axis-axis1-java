@@ -537,7 +537,9 @@ public class ArrayDeserializer extends DeserializerImpl
                 if (arrayClass != null) {
                     value = JavaUtils.convert(value, arrayClass);
                 } 
-           } catch (Exception e) {}
+           } catch (RuntimeException e) {
+               // We must ignore exceptions from convert for Arrays with null - why?
+           }
         }     
          super.valueComplete();
     }
