@@ -686,7 +686,8 @@ public class JavaServiceDesc implements ServiceDesc {
                             paramClass = JavaUtils.getHolderValueType(paramClass);
                         }
                         if (paramClass == null) {
-                            paramClass = getTypeMapping().getClassForQName(param.getTypeQName());
+                            paramClass = getTypeMapping().getClassForQName(param.getTypeQName(),
+                                                                           type);
                         }
 
                         if (paramClass != null) {

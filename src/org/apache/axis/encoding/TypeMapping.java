@@ -95,6 +95,8 @@ public interface TypeMapping
      */
     public Class getClassForQName(QName xmlType);
 
+    public Class getClassForQName(QName xmlType, Class javaType);
+
     /**
      * Returns an array of all the classes contained within this mapping
      */

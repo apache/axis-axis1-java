@@ -52,7 +52,7 @@ public class SimpleDeserializer extends DeserializerImpl {
     private static final Class[] STRING_STRING_CLASS = 
         new Class [] {String.class, String.class};
 
-    private static final Class[] STRING_CLASS = 
+    public static final Class[] STRING_CLASS = 
         new Class [] {String.class};
 
     private final CharArrayWriter val = new CharArrayWriter();
@@ -98,8 +98,7 @@ public class SimpleDeserializer extends DeserializerImpl {
             if (typeDesc == null) {
                 typeDesc = TypeDesc.getTypeDescForClass(javaType);
             }
-        }
-        // Get the cached propertyDescriptor from the type or 
+        // Get the cached propertyDescriptor from the type or
         // generate a fresh one.
         if (typeDesc != null) {
             propertyMap = typeDesc.getPropertyDescriptorMap();
@@ -110,6 +109,7 @@ public class SimpleDeserializer extends DeserializerImpl {
                 BeanPropertyDescriptor descriptor = pd[i];
                 propertyMap.put(descriptor.getName(), descriptor);
             }
+        }
         }
     }
     
@@ -357,7 +357,10 @@ public class SimpleDeserializer extends DeserializerImpl {
                 typeDesc.getFieldNameForAttribute(attrQName);
                 if (fieldName == null)
                     continue;
-            } 
+            }
+
+            if (propertyMap == null)
+                continue;
             
             // look for the attribute property
             BeanPropertyDescriptor bpd =

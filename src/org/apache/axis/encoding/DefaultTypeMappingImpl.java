@@ -184,6 +184,8 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
         */
         // anySimpleType is mapped to java.lang.String according to JAX-RPC 1.1 spec.
         myRegisterSimple(Constants.XSD_ANYSIMPLETYPE, java.lang.String.class);
+        myRegisterSimple(Constants.XSD_LANGUAGE, java.lang.String.class);
+        myRegisterSimple(Constants.XSD_NAME, java.lang.String.class);
         
         // If SOAP 1.1 over the wire, map wrapper classes to XSD primitives.
         myRegisterSimple(Constants.XSD_STRING, java.lang.String.class);

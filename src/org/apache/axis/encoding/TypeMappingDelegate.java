@@ -167,6 +167,19 @@ class TypeMappingDelegate implements TypeMapping {
     }
 
     /**
+     * Gets the Class mapped to QName, preferring the passed Class if possible
+     * @param xmlType qname or null
+     * @param javaType a Java class
+     * @return javaType class for type or null for no mappingor delegate
+     */
+    public Class getClassForQName(QName xmlType, Class javaType) {
+        if (delegate != null) {
+            return delegate.getClassForQName(xmlType, javaType);
+        }
+        return null;
+    }
+
+    /**
      * Get the QName for this Java class, but only return a specific
      * mapping if there is one.  In other words, don't do special array
      * processing, etc.

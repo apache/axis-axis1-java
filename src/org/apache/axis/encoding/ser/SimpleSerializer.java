@@ -22,6 +22,7 @@ import org.apache.axis.description.FieldDesc;
 import org.apache.axis.description.TypeDesc;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.SimpleValueSerializer;
+import org.apache.axis.encoding.SimpleType;
 import org.apache.axis.utils.BeanPropertyDescriptor;
 import org.apache.axis.utils.BeanUtils;
 import org.apache.axis.utils.Messages;
@@ -32,8 +33,6 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.namespace.QName;
 import java.io.IOException;
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * Serializer for primitives and anything simple whose value is obtained with toString()
@@ -129,7 +128,7 @@ public class SimpleSerializer implements SimpleValueSerializer {
             return context.qName2String((QName)value);
         }
 
-        if(propertyDescriptor != null) {
+        if (propertyDescriptor != null && !(value instanceof SimpleType)) {
             BeanPropertyDescriptor pd = BeanUtils.getSpecificPD(propertyDescriptor, "_value");
             if(pd != null) {
                 try {

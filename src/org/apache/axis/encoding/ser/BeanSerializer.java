@@ -41,6 +41,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Constructor;
 import java.util.List;
 
 /**
@@ -57,6 +58,8 @@ public class BeanSerializer implements Serializer, Serializable {
 
     private static final QName MUST_UNDERSTAND_QNAME = 
         new QName(Constants.URI_SOAP11_ENV, Constants.ATTR_MUST_UNDERSTAND);
+    private static final Object[] ZERO_ARGS =
+        new Object [] { "0" };
 
     QName xmlType;
     Class javaType;
@@ -124,9 +127,11 @@ public class BeanSerializer implements Serializer, Serializable {
                     continue;
                 QName qname = null;
                 QName xmlType = null;
+                Class javaType = propertyDescriptor[i].getType();
+
                 boolean isOmittable = false;
                 // isNillable default value depends on the field type
-                boolean isNillable = Types.isNullable(propertyDescriptor[i].getType());
+                boolean isNillable = Types.isNullable(javaType);
 
                 // If we have type metadata, check to see what we're doing
                 // with this field.  If it's an attribute, skip it.  If it's
@@ -162,7 +167,7 @@ public class BeanSerializer implements Serializer, Serializable {
 
                 if (xmlType == null) {
                     // look up the type QName using the class
-                    xmlType = context.getQNameForClass(propertyDescriptor[i].getType());
+                    xmlType = context.getQNameForClass(javaType);
                 }
 
                 // Read the value from the property
@@ -172,13 +177,33 @@ public class BeanSerializer implements Serializer, Serializable {
                         Object propValue =
                             propertyDescriptor[i].get(value);
 
+
                         if (propValue == null) {
-                            // an element cannot be null if nillable property is set to 
+                            // an element cannot be null if nillable property is set to
                             // "false" and the element cannot be omitted
                             if (!isNillable && !isOmittable) {
-                                throw new IOException(Messages.getMessage("nullNonNillableElement", propName));
+                                if (Number.class.isAssignableFrom(javaType)) {
+                                    // If we have a null and it's a number, though,
+                                    // we might turn it into the appropriate kind of 0.
+                                    // TODO : Should be caching these constructors?
+                                    try {
+                                        Constructor constructor =
+                                                javaType.getConstructor(
+                                                        SimpleDeserializer.STRING_CLASS);
+                                        propValue = constructor.newInstance(ZERO_ARGS);
+                                    } catch (Exception e) {
+                                        // If anything goes wrong here, oh well we tried.
+                                    }
+                                }
+
+                                if (propValue == null) {
+                                    throw new IOException(
+                                            Messages.getMessage(
+                                                    "nullNonNillableElement",
+                                                    propName));
+                                }
                             }
-                            
+
                             // if meta data says minOccurs=0, then we can skip
                             // it if its value is null and we aren't doing SOAP
                             // encoding.
