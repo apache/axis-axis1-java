@@ -324,8 +324,14 @@ public class BeanSerializer implements Serializer, Serializable {
             e = complexType;
         }
 
-        // Add fields under all element
-        Element all = types.createElement("all");
+        // Add fields under sequence element.
+        // Note: In most situations it would be okay 
+        // to put the fields under an all element.
+        // However it is illegal schema to put an
+        // element with minOccurs=0 or maxOccurs>1 underneath
+        // an all element.  This is the reason why a sequence
+        // element is used.
+        Element all = types.createElement("sequence");
         e.appendChild(all);
 
         // Build a ClassRep that represents the bean class.  This

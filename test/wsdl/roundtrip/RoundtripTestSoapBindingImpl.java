@@ -130,6 +130,8 @@ public class RoundtripTestSoapBindingImpl implements RoundtripPortType {
         BondInvestment sendValue = new BondInvestment();
         
         sendValue.setOptions(callOptions);
+        sendValue.setOptions2(callOptions);
+        sendValue.setOptions3(callOptions[0]);
         sendValue.setWrapperShortArray(wrapperShortArray);
         sendValue.setWrapperByteArray(wrapperByteArray);
         sendValue.setWrapperDouble(new Double(33.232D));
@@ -160,6 +162,8 @@ public class RoundtripTestSoapBindingImpl implements RoundtripPortType {
 
         if ((in0.getOptions()[0].getCallDate().equals(new Date(1013441507388L))) &&
             (in0.getOptions()[1].getCallDate().equals(new Date(1013441507390L))) &&
+            (((CallOptions[])in0.getOptions2())[0].getCallDate().equals(new Date(1013441507388L))) &&
+            (((CallOptions[])in0.getOptions2())[1].getCallDate().equals(new Date(1013441507390L))) &&
             (in0.getWrapperShortArray()[0].equals(new Short((short) 23))) &&
             (in0.getWrapperShortArray()[1].equals(new Short((short) 56))) &&
             (in0.getWrapperByteArray()[0].equals(new Byte((byte) 2))) &&
@@ -204,6 +208,8 @@ public class RoundtripTestSoapBindingImpl implements RoundtripPortType {
         BondInvestment sendValue = new BondInvestment();
         
         sendValue.setOptions(callOptions);
+        sendValue.setOptions2(callOptions);
+        sendValue.setOptions3(callOptions[0]);
         sendValue.setWrapperShortArray(wrapperShortArray);
         sendValue.setWrapperByteArray(wrapperByteArray);
         sendValue.setWrapperDouble(new Double(33.232D));
@@ -233,6 +239,8 @@ public class RoundtripTestSoapBindingImpl implements RoundtripPortType {
 
         if (!((in0.getOptions()[0].getCallDate().equals(new Date(1013441507388L))) &&
               (in0.getOptions()[1].getCallDate().equals(new Date(1013441507390L))) &&
+              (((CallOptions[])in0.getOptions2())[0].getCallDate().equals(new Date(1013441507388L))) &&
+              (((CallOptions[])in0.getOptions2())[1].getCallDate().equals(new Date(1013441507390L))) &&
               (in0.getWrapperShortArray()[0].equals(new Short((short) 23))) &&
               (in0.getWrapperShortArray()[1].equals(new Short((short) 56))) &&
               (in0.getWrapperByteArray()[0].equals(new Byte((byte) 2))) &&

@@ -93,6 +93,8 @@ public class BondInvestment implements java.io.Serializable {
     public Byte[] wrapperByteArray;
     public Short[] wrapperShortArray;
     private CallOptions[] options;
+    public Object options2;
+    public Object options3;
 
     public BondInvestment() {
 

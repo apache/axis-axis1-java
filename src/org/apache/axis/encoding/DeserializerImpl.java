@@ -96,6 +96,9 @@ public class DeserializerImpl extends SOAPHandler implements Deserializer
 
     protected Vector targets = null;
 
+    protected QName defaultType = null;
+
+
     /** 
      * JAX-RPC compliant method which returns mechanism type.
      */
@@ -142,6 +145,22 @@ public class DeserializerImpl extends SOAPHandler implements Deserializer
     }
 
     /**
+     * In some circumstances an element may not have 
+     * a type attribute, but a default type qname is known from
+     * information in the container.  For example,
+     * an element of an array may not have a type= attribute, 
+     * so the default qname is the component type of the array.
+     * This method is used to communicate the default type information 
+     * to the deserializer.
+     */
+    public void setDefaultType(QName qName) {
+        defaultType = qName;
+    }
+    public QName getDefaultType() {
+        return defaultType;
+    }
+
+    /**
      * For deserializers of non-primitives, the value may not be
      * known until later (due to multi-referencing).  In such
      * cases the deserializer registers Target object(s).  When
@@ -168,7 +187,17 @@ public class DeserializerImpl extends SOAPHandler implements Deserializer
     }
     
     /**
-     * Add someone else's targets to our own (see DeserializationContext)
+     * Remove the Value Targets of the Deserializer.
+     */
+    public void removeValueTargets() {
+        if (targets != null) {
+            targets.clear();
+            targets = null;
+        }
+    }
+
+    /**
+     * Move someone else's targets to our own (see DeserializationContext)
      *
      * The DeserializationContext only allows one Deserializer to  
      * wait for a unknown multi-ref'ed value.  So to ensure
@@ -176,7 +205,7 @@ public class DeserializerImpl extends SOAPHandler implements Deserializer
      * to copy the Target objects to the waiting Deserializer.
      * @param other is the Deserializer to copy targets from.
      */
-    public void copyValueTargets(Deserializer other)
+    public void moveValueTargets(Deserializer other)
     {
         if ((other == null) || (other.getValueTargets() == null))
             return;
@@ -188,6 +217,7 @@ public class DeserializerImpl extends SOAPHandler implements Deserializer
         while (e.hasMoreElements()) {
             targets.addElement(e.nextElement());
         }
+        other.removeValueTargets();
     }
     
     /**
@@ -231,8 +261,7 @@ public class DeserializerImpl extends SOAPHandler implements Deserializer
                     }
                 }
                 // Don't need targets any more, so clear them
-                targets.clear();
-                targets = null;
+                removeValueTargets();
             }
         }
     }
@@ -303,13 +332,14 @@ public class DeserializerImpl extends SOAPHandler implements Deserializer
         // point will cause an infinite loop during deserialization if the 
         // current element contains child elements that cause an href back to this id.)
         // Also note that that endElement() method is responsible for the final
-        // assoication of this id with the completed value.
+        // association of this id with the completed value.
         id = attributes.getValue("id");
         if (id != null) {
             context.addObjectById(id, value);
             if (log.isDebugEnabled()) {
                 log.debug(JavaUtils.getMessage("deserInitPutValueDebug00", "" + value, id));
-            }     
+            }
+            context.registerFixup("#" + id, this);
         }
 
         String href = attributes.getValue("href");
@@ -372,6 +402,14 @@ public class DeserializerImpl extends SOAPHandler implements Deserializer
             QName type = context.getTypeFromAttributes(namespace,
                                                        localName,
                                                        attributes);
+            // If no type is specified, use the defaultType if available.
+            // xsd:string is used if no type is provided.
+            if (type == null) {
+                type = defaultType;
+                if (type == null) {
+                    type = Constants.XSD_STRING;
+                }
+            }
             
             if (log.isDebugEnabled()) {
                 log.debug(JavaUtils.getMessage("gotType00", "Deser", "" + type));
@@ -383,11 +421,15 @@ public class DeserializerImpl extends SOAPHandler implements Deserializer
             if (type != null) {
                 Deserializer dser = context.getDeserializerForType(type);
                 if (dser != null) {
-                    dser.copyValueTargets(this);
+                    // Move the value targets to the new deserializer
+                    dser.moveValueTargets(this);
                     context.replaceElementHandler((org.apache.axis.message.SOAPHandler) dser);
                     // And don't forget to give it the start event...
                     dser.startElement(namespace, localName, qName,
                                       attributes, context);
+                } else {
+                    throw new SAXException(
+                                           JavaUtils.getMessage("noDeser00", "" + type));
                 }
             } else {
                 startIdx = context.getCurrentRecordPos();
@@ -442,9 +484,9 @@ public class DeserializerImpl extends SOAPHandler implements Deserializer
         // Time to call valueComplete to copy the value to 
         // the targets.  First a call is made to componentsReady
         // to ensure that all components are ready.
-
-        if (componentsReady())
+        if (componentsReady()) {
             valueComplete();
+        }
 
         // If this element has an id, then associate the value with the id.
         // Subsequent hrefs to the id will obtain the value directly.
@@ -487,8 +529,9 @@ public class DeserializerImpl extends SOAPHandler implements Deserializer
             SAXOutputter so = null;
             so = new SAXOutputter(serContext);
             context.getCurElement().publishContents(so);
-            
-            value = writer.getBuffer().toString();
+            if (!isNil) {
+                value = writer.getBuffer().toString();
+            }
         }
     }
     

@@ -220,8 +220,7 @@ public class MapDeserializer extends DeserializerImpl implements Deserializer  {
                                                             attributes);
             Deserializer dser = context.getDeserializerForType(typeQName);
 
-            // If no deserializer, create DeserializerBase and let it worry
-            // about errors
+            // If no deserializer, use the base DeserializerImpl.
             if (dser == null)
                 dser = new DeserializerImpl();
 

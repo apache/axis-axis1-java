@@ -159,19 +159,25 @@ public class BeanDeserializer extends DeserializerImpl implements Deserializer, 
                 pd[i].getName().equals(localNameLo) ||
                 pd[i].getName().equals(mangledName)) {
 
-                // determine the QName for this child element
-                TypeMapping tm = context.getTypeMapping();
-                Class type = pd[i].getType();
-                QName qn = tm.getTypeQName(type);
-                if (qn == null)
-                    throw new SAXException(
-                            JavaUtils.getMessage("unregistered00", "" + type));
+                // Determine the QName for this child element.
+                // Look at the type attribute specified.  If this fails,
+                // use the javaType of the property to get the type qname.
+                QName qn = context.getTypeFromAttributes(namespace, localName, attributes);
 
                 // get the deserializer
                 Deserializer dSer = context.getDeserializerForType(qn);
-                if (dSer == null)
-                    throw new SAXException(
-                            JavaUtils.getMessage("noDeser00", "" + type));
+
+                // If no deserializer, use the base DeserializerImpl.
+                // There may not be enough information yet to choose the
+                // specific deserializer.
+                if (dSer == null) {
+                    dSer = new DeserializerImpl();
+                    // determine a default type for this child element
+                    TypeMapping tm = context.getTypeMapping();
+                    Class type = pd[i].getType();
+                    dSer.setDefaultType(tm.getTypeQName(type));
+                }
+                
 
                 if (pd[i].getWriteMethod().getParameterTypes().length == 1) {
                     // Success!  Register the target and deserializer.

@@ -134,6 +134,18 @@ public interface Deserializer extends javax.xml.rpc.encoding.Deserializer, Callb
      */
     public void setValue(Object value, Object hint) throws SAXException;
 
+   /**
+     * In some circumstances an element may not have 
+     * a type attribute, but a default type qname is known from
+     * information in the container.  For example,
+     * an element of an array may not have a type= attribute, 
+     * so the default qname is the component type of the array.
+     * This method is used to communicate the default type information 
+     * to the deserializer.
+     */
+    public void setDefaultType(QName qName);
+    public QName getDefaultType();
+
     /**
      * For deserializers of non-primitives, the value may not be
      * known until later (due to multi-referencing).  In such
@@ -152,8 +164,13 @@ public interface Deserializer extends javax.xml.rpc.encoding.Deserializer, Callb
      */
     public Vector getValueTargets();
 
+    /**
+     * Remove the Value Targets of the Deserializer.
+     */
+    public void removeValueTargets() ;
+
    /**
-     * Add someone else's targets to our own (see DeserializationContext)
+     * Move someone else's targets to our own (see DeserializationContext)
      *
      * The DeserializationContext only allows one Deserializer to  
      * wait for a unknown multi-ref'ed value.  So to ensure
@@ -161,7 +178,7 @@ public interface Deserializer extends javax.xml.rpc.encoding.Deserializer, Callb
      * to copy the Target objects to the waiting Deserializer.
      * @param other is the Deserializer to copy targets from.
      */
-    public void copyValueTargets(Deserializer other);
+    public void moveValueTargets(Deserializer other);
 
     /**
      * Some deserializers (ArrayDeserializer) require

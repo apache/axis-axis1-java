@@ -83,8 +83,8 @@ public interface SerializationContext extends javax.xml.rpc.encoding.Serializati
      * @param attributes are additional attributes
      * @param value is the object to serialize
      * @param javaType is the "real" type of the value.  For primitives, the value is the
-     * associated java.lang class.  So the javaType is needed to know that the value 
-     * is really a wrapped primitive.
+     * associated java.lang class.  So the javaType is needed to know that the value
+     * is really a wrapped primitive.     
      */
     public void serialize(QName qName, Attributes attributes, Object value, Class javaType) 
         throws IOException;

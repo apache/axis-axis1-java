@@ -215,6 +215,8 @@ public class RoundtripTestServiceTestCase extends TestCase {
             BondInvestment sendValue = new BondInvestment();
 
             sendValue.setOptions(callOptions);
+            sendValue.setOptions2(callOptions);
+            sendValue.setOptions3(callOptions[0]);
             sendValue.setWrapperShortArray(wrapperShortArray);
             sendValue.setWrapperByteArray(wrapperByteArray);
             sendValue.setWrapperDouble(new Double(2323.232D));
@@ -433,6 +435,8 @@ public class RoundtripTestServiceTestCase extends TestCase {
             BondInvestment sendValue = new BondInvestment();
             
             sendValue.setOptions(callOptions);
+            sendValue.setOptions2(callOptions);
+            sendValue.setOptions3(callOptions[0]);
             sendValue.setWrapperShortArray(wrapperShortArray);
             sendValue.setWrapperByteArray(wrapperByteArray);
             sendValue.setWrapperDouble(new Double(2323.232D));
