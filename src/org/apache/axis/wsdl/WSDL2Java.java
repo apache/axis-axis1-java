@@ -460,17 +460,16 @@ public class WSDL2Java {
                         wsdl2java.verbose(true);
                         break;
 
-                    case SERVER_OPT:
-                        bServer = true;
-                        wsdl2java.generateServerSide(true);
-                        break;
-
                     case SKELETON_DEPLOY_OPT:
                         skeletonDeploy = option.getArgument(0);
                         if (skeletonDeploy.equalsIgnoreCase("true"))
                             wsdl2java.deploySkeleton(true);
                         else
                             wsdl2java.deploySkeleton(false);
+
+                    case SERVER_OPT:
+                        bServer = true;
+                        wsdl2java.generateServerSide(true);
                         break;
 
                     case NAMESPACE_OPT:
