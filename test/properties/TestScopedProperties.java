@@ -140,7 +140,7 @@ public class TestScopedProperties extends TestCase {
 
         // Set a property on the Call which we expect to be available via
         // the MessageContext in the client-side handler.
-        call.setScopedProperty(PROP_NAME, CLIENT_VALUE);
+        call.setProperty(PROP_NAME, CLIENT_VALUE);
 
         LocalTransport transport = new LocalTransport(server);
         transport.setRemoteService("service");
@@ -206,7 +206,7 @@ public class TestScopedProperties extends TestCase {
 
         // Set a property on the Call which we expect to be available via
         // the MessageContext in the client-side handler.
-        call.setScopedProperty(PROP_NAME, CLIENT_VALUE);
+        call.setProperty(PROP_NAME, CLIENT_VALUE);
 
         LocalTransport transport = new LocalTransport(server);
         transport.setRemoteService("service");

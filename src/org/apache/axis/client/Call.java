@@ -450,58 +450,6 @@ public class Call implements javax.xml.rpc.Call {
      } // removeProperty
 
     /**
-     * Set a scoped property on the call (i.e. one that propagates down into
-     * the runtime).
-     *
-     * Deprecated, since setProperty() now does the right thing here.  Expect
-     * this to disappear in 1.1.
-     *
-     * @deprecated
-     * @param name
-     * @param value
-     */
-    public void setScopedProperty(String name, Object value) {
-        if (name == null || value == null) {
-            throw new JAXRPCException(
-                    Messages.getMessage(name == null ?
-                                         "badProp03" : "badProp04"));
-        }
-        myProperties.put(name, value);
-    } // setScopedProperty
-
-    /**
-     * Get a scoped property (i.e. one that propagates down into the runtime).
-     *
-     * Deprecated, since there's only one property bag now.  Expect this to
-     * disappear in 1.1.
-     *
-     * @deprecated
-     * @param name
-     * @return
-     */
-    public Object getScopedProperty(String name) {
-        if (name != null) {
-            return myProperties.get(name);
-        }
-        return null;
-    } // getScopedProperty
-
-    /**
-     * Remove a scoped property (i.e. one that propagates down into the
-     * runtime).
-     *
-     * Deprecated, since there's only one property bag now.  Expect this to
-     * disappear in 1.1.
-     *
-     * @deprecated
-     * @param name
-     */
-    public void removeScopedProperty(String name) {
-        if ( name == null || myProperties == null ) return ;
-        myProperties.remove( name );
-    } // removeScopedProperty
-
-    /**
      * Configurable properties supported by this Call object.
      */
     private static ArrayList propertyNames = new ArrayList();
