@@ -1,0 +1,999 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html>
+	<head>
+		<title>Web Service Deployment Descriptor</title>
+		<style type="text/css">
+		 .textElement { font-family: Arial; font-size: 8pt; color: #800000; }
+		 .textAttr { font-family: Arial; font-size: 8pt; color: #FF0000; }
+		 .textContents { font-family: Arial; font-size: 8pt; color: #000000; }
+		 .textOperator { font-family: Arial; font-size: 8pt; color: #0000FF; }
+		 .schemaHeader { font-family: Arial; font-size: 11pt; color: #000000; }
+		 .schemaHeader2 { font-family: Arial; font-size: 11pt; font-weight: bold; color: #000000; }
+		 .elementHeader { font-family: Arial; font-size: 10pt; color: #000000; }
+		 .elementHeader2 { font-family: Arial; font-size: 10pt; font-weight: bold; color: #000000; }
+		 .schemaName { font-family: Arial; font-size: 8pt; font-weight: bold; color: #000000; }
+		 .schemaSubTitle { font-family: Arial; font-size: 8pt; color: #808080; }
+		 .schemaSubData { font-family: Arial; font-size: 8pt; color: #000000; }
+		 pre { margin-bottom: 0 }
+		.header { font-family: arial; font-size: 14pt; }
+		.header2 { font-family: arial; font-size: 10pt; }
+		.header3 { font-family: arial; font-size: 8pt; }
+		</style>
+	</head>
+	<body>
+	
+		<span class="header">Web Services Deployment Descriptor</span> <br />
+		<span class="header2">Version 1.1</span>
+		<hr />
+			<span class="header3">James Snell (<a href="jasnell@us.ibm.com">jasnell@us.ibm.com</a>)</span><br />
+			<span class="header3">Steve Graham (<a href="sggraham@us.ibm.com">sggraham@us.ibm.com</a>)</span>
+		<hr />
+		<span class="schemaHeader">Schema </span>
+		<span class="schemaHeader2">WSDD.xsd</span>
+		<br />
+		<br />
+		<br />
+		<table cellspacing="0" cellpadding="0">
+			<tr valign="top">
+				<td align="left" bgcolor="#FFFFFF"><span class="schemaSubTitle">targetNamespace:&nbsp;</span></td>
+				<td align="left" bgcolor="#FFFFFF"><span class="schemaName">http://xml.apache.org/axis/wsdd/</span></td>
+			</tr>
+			<tr valign="top">
+				<td align="left" bgcolor="#FFFFFF"><span class="schemaSubTitle">&nbsp;</span></td>
+				<td align="left" bgcolor="#FFFFFF" />
+			</tr>
+		</table>
+		<table cellspacing="0" cellpadding="0">
+			<tr valign="top">
+				<td align="left" bgcolor="#FFFFFF"><span class="schemaSubTitle">Elements&nbsp;</span></td>
+				<td align="left" bgcolor="#FFFFFF"><span class="schemaSubTitle">Complex types&nbsp;</span></td>
+			</tr>
+			<tr valign="top">
+				<td align="left" bgcolor="#FFFFFF"><a href="#element_chain_Link01480788"><span class="schemaName">chain</span></a><span class="schemaName">&nbsp;</span></td>
+				<td align="left" bgcolor="#FFFFFF"><a href="#complexType_DeployableItem_Link014705A8"><span class="schemaName">DeployableItem</span></a><span class="schemaName">&nbsp;</span></td>
+			</tr>
+			<tr valign="top">
+				<td align="left" bgcolor="#FFFFFF"><a href="#element_deployment_Link014792B8"><span class="schemaName">deployment</span></a><span class="schemaName">&nbsp;</span></td>
+				<td align="left" bgcolor="#FFFFFF"><a href="#complexType_Flow_Link0146F710"><span class="schemaName">Flow</span></a><span class="schemaName">&nbsp;</span></td>
+			</tr>
+			<tr valign="top">
+				<td align="left" bgcolor="#FFFFFF"><a href="#element_documentation_Link014532F0"><span class="schemaName">documentation</span></a><span class="schemaName">&nbsp;</span></td>
+				<td align="left" bgcolor="#FFFFFF" />
+			</tr>
+			<tr valign="top">
+				<td align="left" bgcolor="#FFFFFF"><a href="#element_faultFlow_Link01480D40"><span class="schemaName">faultFlow</span></a><span class="schemaName">&nbsp;</span></td>
+				<td align="left" bgcolor="#FFFFFF" />
+			</tr>
+			<tr valign="top">
+				<td align="left" bgcolor="#FFFFFF"><a href="#element_globalConfiguration_Link01478AF8"><span class="schemaName">globalConfiguration</span></a><span class="schemaName">&nbsp;</span></td>
+				<td align="left" bgcolor="#FFFFFF" />
+			</tr>
+			<tr valign="top">
+				<td align="left" bgcolor="#FFFFFF"><a href="#element_handler_Link01480850"><span class="schemaName">handler</span></a><span class="schemaName">&nbsp;</span></td>
+				<td align="left" bgcolor="#FFFFFF" />
+			</tr>
+			<tr valign="top">
+				<td align="left" bgcolor="#FFFFFF"><a href="#element_operation_Link0146F540"><span class="schemaName">operation</span></a><span class="schemaName">&nbsp;</span></td>
+				<td align="left" bgcolor="#FFFFFF" />
+			</tr>
+			<tr valign="top">
+				<td align="left" bgcolor="#FFFFFF"><a href="#element_parameter_Link014533B8"><span class="schemaName">parameter</span></a><span class="schemaName">&nbsp;</span></td>
+				<td align="left" bgcolor="#FFFFFF" />
+			</tr>
+			<tr valign="top">
+				<td align="left" bgcolor="#FFFFFF"><a href="#element_provider_Link0146BAB0"><span class="schemaName">provider</span></a><span class="schemaName">&nbsp;</span></td>
+				<td align="left" bgcolor="#FFFFFF" />
+			</tr>
+			<tr valign="top">
+				<td align="left" bgcolor="#FFFFFF"><a href="#element_requestFlow_Link01480198"><span class="schemaName">requestFlow</span></a><span class="schemaName">&nbsp;</span></td>
+				<td align="left" bgcolor="#FFFFFF" />
+			</tr>
+			<tr valign="top">
+				<td align="left" bgcolor="#FFFFFF"><a href="#element_responseFlow_Link0147FE50"><span class="schemaName">responseFlow</span></a><span class="schemaName">&nbsp;</span></td>
+				<td align="left" bgcolor="#FFFFFF" />
+			</tr>
+			<tr valign="top">
+				<td align="left" bgcolor="#FFFFFF"><a href="#element_service_Link01453228"><span class="schemaName">service</span></a><span class="schemaName">&nbsp;</span></td>
+				<td align="left" bgcolor="#FFFFFF" />
+			</tr>
+			<tr valign="top">
+				<td align="left" bgcolor="#FFFFFF"><a href="#element_transport_Link0144EB48"><span class="schemaName">transport</span></a><span class="schemaName">&nbsp;</span></td>
+				<td align="left" bgcolor="#FFFFFF" />
+			</tr>
+			<tr valign="top">
+				<td align="left" bgcolor="#FFFFFF"><a href="#element_typeMapping_Link01467B38"><span class="schemaName">typeMapping</span></a><span class="schemaName">&nbsp;</span></td>
+				<td align="left" bgcolor="#FFFFFF" />
+			</tr>
+		</table>
+		<br />
+		<br />
+		<a name="element_chain_Link01480788" />
+		<span class="elementHeader">element </span>
+		<span class="elementHeader2">chain</span>
+		<table width="100%" cellspacing="0" cellpadding="5" border="1">
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">diagram</span></td>
+				<td width="90%" align="left" bgcolor="#FFFFFF"><map name="Map01480788"><area coords="125,12,244,26" href="#complexType_DeployableItem_Link014705A8" /><area coords="209,33,347,158" href="#element_documentation_Link014532F0" /><area coords="209,170,334,408" href="#element_parameter_Link014533B8" /><area coords="209,432,333,527" href="#element_handler_Link01480850" /><area coords="349,439,349,439" href="#complexType_DeployableItem_Link014705A8" /></map><img src="wsdd_p1.png" width="367" height="581" border="0" usemap="#Map01480788" /></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">namespace</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">http://xml.apache.org/axis/wsdd/</span></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">type</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">extension of </span><a href="#complexType_DeployableItem_Link014705A8"><span class="schemaName">wsdd:DeployableItem</span></a></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">children</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><a href="#element_documentation_Link014532F0"><span class="schemaName">wsdd:documentation</span></a><span class="schemaName"> </span><a href="#element_parameter_Link014533B8"><span class="schemaName">wsdd:parameter</span></a><span class="schemaName"> </span><a href="#element_handler_Link01480850"><span class="schemaName">wsdd:handler</span></a></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">used by</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">element&nbsp;</span></td><td align="left" bgcolor="#F0F0F0"><a href="#element_deployment_Link014792B8"><span class="schemaName">deployment</span></a></td></tr><tr valign="top"><td align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">complexType&nbsp;</span></td><td align="left" bgcolor="#F0F0F0"><a href="#complexType_Flow_Link0146F710"><span class="schemaName">Flow</span></a></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">attributes</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Name&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Type&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Use&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Value&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">name&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:NCName&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">optional&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">type&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:QName&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">optional&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">annotation</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">documentation&nbsp;</span></td><td align="left" bgcolor="#F0F0F0"><pre><span class="schemaSubData">The chain Element is a DeployableItem that describes a collection of handlers invoked sequentially 
+as a single unit.
+</span></pre></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">source</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><pre><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"chain</span><span class="textOperator">"&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;</span><span class="textElement">xsd:annotation</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:documentation</span><span class="textOperator">&gt;</span><span class="textContents">The chain Element is a DeployableItem that describes a collection of handlers invoked sequentially 
+as a single unit.
+</span><span class="textOperator">&lt;/</span><span class="textElement">xsd:documentation</span><span class="textOperator">&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:annotation</span><span class="textOperator">&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;</span><span class="textElement">xsd:complexType</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:complexContent</span><span class="textOperator">&gt;</span><span class="textContents">
+      </span><span class="textOperator">&lt;</span><span class="textElement">xsd:extension</span><span class="textAttr"> base</span><span class="textOperator">=</span><span class="textContents">"wsdd:DeployableItem</span><span class="textOperator">"&gt;</span><span class="textContents">
+        </span><span class="textOperator">&lt;</span><span class="textElement">xsd:sequence</span><span class="textOperator">&gt;</span><span class="textContents">
+          </span><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> ref</span><span class="textOperator">=</span><span class="textContents">"wsdd:handler</span><span class="textOperator">"</span><span class="textAttr"> minOccurs</span><span class="textOperator">=</span><span class="textContents">"0</span><span class="textOperator">"</span><span class="textAttr"> maxOccurs</span><span class="textOperator">=</span><span class="textContents">"unbounded</span><span class="textOperator">"/&gt;</span><span class="textContents">
+          </span><span class="textOperator">&lt;</span><span class="textElement">xsd:any</span><span class="textAttr"> namespace</span><span class="textOperator">=</span><span class="textContents">"##other</span><span class="textOperator">"</span><span class="textAttr"> minOccurs</span><span class="textOperator">=</span><span class="textContents">"0</span><span class="textOperator">"</span><span class="textAttr"> maxOccurs</span><span class="textOperator">=</span><span class="textContents">"unbounded</span><span class="textOperator">"/&gt;</span><span class="textContents">
+        </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:sequence</span><span class="textOperator">&gt;</span><span class="textContents">
+        </span><span class="textOperator">&lt;</span><span class="textElement">xsd:anyAttribute</span><span class="textAttr"> namespace</span><span class="textOperator">=</span><span class="textContents">"##other</span><span class="textOperator">"/&gt;</span><span class="textContents">
+      </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:extension</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:complexContent</span><span class="textOperator">&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:complexType</span><span class="textOperator">&gt;</span><span class="textContents">
+</span><span class="textOperator">&lt;/</span><span class="textElement">xsd:element</span><span class="textOperator">&gt;</span></pre></td>
+			</tr>
+		</table>
+		<br />
+		<a name="element_deployment_Link014792B8" />
+		<span class="elementHeader">element </span>
+		<span class="elementHeader2">deployment</span>
+		<table width="100%" cellspacing="0" cellpadding="5" border="1">
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">diagram</span></td>
+				<td width="90%" align="left" bgcolor="#FFFFFF"><map name="Map014792B8"><area coords="209,5,347,130" href="#element_documentation_Link014532F0" /><area coords="209,142,372,311" href="#element_globalConfiguration_Link01478AF8" /><area coords="388,149,388,149" href="#complexType_DeployableItem_Link014705A8" /><area coords="279,323,405,517" href="#element_typeMapping_Link01467B38" /><area coords="279,529,383,635" href="#element_chain_Link01480788" /><area coords="399,536,399,536" href="#complexType_DeployableItem_Link014705A8" /><area coords="279,647,403,742" href="#element_handler_Link01480850" /><area coords="419,654,419,654" href="#complexType_DeployableItem_Link014705A8" /><area coords="279,754,396,860" href="#element_transport_Link0144EB48" /><area coords="412,761,412,761" href="#complexType_DeployableItem_Link014705A8" /><area coords="279,872,403,1154" href="#element_service_Link01453228" /><area coords="419,879,419,879" href="#complexType_DeployableItem_Link014705A8" /></map><img src="wsdd_p2.png" width="425" height="1208" border="0" usemap="#Map014792B8" /></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">namespace</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">http://xml.apache.org/axis/wsdd/</span></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">children</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><a href="#element_documentation_Link014532F0"><span class="schemaName">wsdd:documentation</span></a><span class="schemaName"> </span><a href="#element_globalConfiguration_Link01478AF8"><span class="schemaName">wsdd:globalConfiguration</span></a><span class="schemaName"> </span><a href="#element_typeMapping_Link01467B38"><span class="schemaName">wsdd:typeMapping</span></a><span class="schemaName"> </span><a href="#element_chain_Link01480788"><span class="schemaName">wsdd:chain</span></a><span class="schemaName"> </span><a href="#element_handler_Link01480850"><span class="schemaName">wsdd:handler</span></a><span class="schemaName"> </span><a href="#element_transport_Link0144EB48"><span class="schemaName">wsdd:transport</span></a><span class="schemaName"> </span><a href="#element_service_Link01453228"><span class="schemaName">wsdd:service</span></a></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">attributes</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Name&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Type&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Use&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Value&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><a name="attribute_name_Link0144D120" /><span class="schemaSubData">name&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:NCName&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">optional&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">annotation</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">documentation&nbsp;</span></td><td align="left" bgcolor="#F0F0F0"><pre><span class="schemaSubData">This is the root element for WSDD.</span></pre></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">source</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><pre><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"deployment</span><span class="textOperator">"&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;</span><span class="textElement">xsd:annotation</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:documentation</span><span class="textOperator">&gt;</span><span class="textContents">This is the root element for WSDD.</span><span class="textOperator">&lt;/</span><span class="textElement">xsd:documentation</span><span class="textOperator">&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:annotation</span><span class="textOperator">&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;</span><span class="textElement">xsd:complexType</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:sequence</span><span class="textOperator">&gt;</span><span class="textContents">
+      </span><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> ref</span><span class="textOperator">=</span><span class="textContents">"wsdd:documentation</span><span class="textOperator">"</span><span class="textAttr"> minOccurs</span><span class="textOperator">=</span><span class="textContents">"0</span><span class="textOperator">"/&gt;</span><span class="textContents">
+      </span><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> ref</span><span class="textOperator">=</span><span class="textContents">"wsdd:globalConfiguration</span><span class="textOperator">"</span><span class="textAttr"> minOccurs</span><span class="textOperator">=</span><span class="textContents">"0</span><span class="textOperator">"/&gt;</span><span class="textContents">
+      </span><span class="textOperator">&lt;</span><span class="textElement">xsd:choice</span><span class="textAttr"> minOccurs</span><span class="textOperator">=</span><span class="textContents">"0</span><span class="textOperator">"</span><span class="textAttr"> maxOccurs</span><span class="textOperator">=</span><span class="textContents">"unbounded</span><span class="textOperator">"&gt;</span><span class="textContents">
+        </span><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> ref</span><span class="textOperator">=</span><span class="textContents">"wsdd:typeMapping</span><span class="textOperator">"</span><span class="textAttr"> minOccurs</span><span class="textOperator">=</span><span class="textContents">"0</span><span class="textOperator">"</span><span class="textAttr"> maxOccurs</span><span class="textOperator">=</span><span class="textContents">"unbounded</span><span class="textOperator">"/&gt;</span><span class="textContents">
+        </span><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> ref</span><span class="textOperator">=</span><span class="textContents">"wsdd:chain</span><span class="textOperator">"</span><span class="textAttr"> minOccurs</span><span class="textOperator">=</span><span class="textContents">"0</span><span class="textOperator">"</span><span class="textAttr"> maxOccurs</span><span class="textOperator">=</span><span class="textContents">"unbounded</span><span class="textOperator">"/&gt;</span><span class="textContents">
+        </span><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> ref</span><span class="textOperator">=</span><span class="textContents">"wsdd:handler</span><span class="textOperator">"</span><span class="textAttr"> minOccurs</span><span class="textOperator">=</span><span class="textContents">"0</span><span class="textOperator">"</span><span class="textAttr"> maxOccurs</span><span class="textOperator">=</span><span class="textContents">"unbounded</span><span class="textOperator">"/&gt;</span><span class="textContents">
+        </span><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> ref</span><span class="textOperator">=</span><span class="textContents">"wsdd:transport</span><span class="textOperator">"</span><span class="textAttr"> minOccurs</span><span class="textOperator">=</span><span class="textContents">"0</span><span class="textOperator">"</span><span class="textAttr"> maxOccurs</span><span class="textOperator">=</span><span class="textContents">"unbounded</span><span class="textOperator">"/&gt;</span><span class="textContents">
+        </span><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> ref</span><span class="textOperator">=</span><span class="textContents">"wsdd:service</span><span class="textOperator">"</span><span class="textAttr"> minOccurs</span><span class="textOperator">=</span><span class="textContents">"0</span><span class="textOperator">"</span><span class="textAttr"> maxOccurs</span><span class="textOperator">=</span><span class="textContents">"unbounded</span><span class="textOperator">"/&gt;</span><span class="textContents">
+      </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:choice</span><span class="textOperator">&gt;</span><span class="textContents">
+      </span><span class="textOperator">&lt;</span><span class="textElement">xsd:any</span><span class="textAttr"> namespace</span><span class="textOperator">=</span><span class="textContents">"##other</span><span class="textOperator">"</span><span class="textAttr"> minOccurs</span><span class="textOperator">=</span><span class="textContents">"0</span><span class="textOperator">"</span><span class="textAttr"> maxOccurs</span><span class="textOperator">=</span><span class="textContents">"unbounded</span><span class="textOperator">"/&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:sequence</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:attribute</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"name</span><span class="textOperator">"</span><span class="textAttr"> type</span><span class="textOperator">=</span><span class="textContents">"xsd:NCName</span><span class="textOperator">"</span><span class="textAttr"> use</span><span class="textOperator">=</span><span class="textContents">"optional</span><span class="textOperator">"/&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:anyAttribute</span><span class="textAttr"> namespace</span><span class="textOperator">=</span><span class="textContents">"##other</span><span class="textOperator">"/&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:complexType</span><span class="textOperator">&gt;</span><span class="textContents">
+</span><span class="textOperator">&lt;/</span><span class="textElement">xsd:element</span><span class="textOperator">&gt;</span></pre></td>
+			</tr>
+		</table>
+		<br />
+		<a name="element_documentation_Link014532F0" />
+		<span class="elementHeader">element </span>
+		<span class="elementHeader2">documentation</span>
+		<table width="100%" cellspacing="0" cellpadding="5" border="1">
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">diagram</span></td>
+				<td width="90%" align="left" bgcolor="#FFFFFF"><img src="wsdd_p3.png" width="313" height="195" border="0" /></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">namespace</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">http://xml.apache.org/axis/wsdd/</span></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">used by</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">elements&nbsp;</span></td><td align="left" bgcolor="#F0F0F0"><a href="#element_deployment_Link014792B8"><span class="schemaName">deployment</span></a><span class="schemaName"> </span><a href="#element_typeMapping_Link01467B38"><span class="schemaName">typeMapping</span></a></td></tr><tr valign="top"><td align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">complexType&nbsp;</span></td><td align="left" bgcolor="#F0F0F0"><a href="#complexType_DeployableItem_Link014705A8"><span class="schemaName">DeployableItem</span></a></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">attributes</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Name&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Type&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Use&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Value&nbsp;&nbsp;</span></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">annotation</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">documentation&nbsp;</span></td><td align="left" bgcolor="#F0F0F0"><pre><span class="schemaSubData">Documentation is whitespace as far as the handler generator at WSDD deploy time 
+is concerned. The generator may save documentation elements as properties of the generated 
+handlers/chains as debug/administration aids.
+</span></pre></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">source</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><pre><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"documentation</span><span class="textOperator">"&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;</span><span class="textElement">xsd:annotation</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:documentation</span><span class="textOperator">&gt;</span><span class="textContents">Documentation is whitespace as far as the handler generator at WSDD deploy time 
+is concerned. The generator may save documentation elements as properties of the generated 
+handlers/chains as debug/administration aids.
+</span><span class="textOperator">&lt;/</span><span class="textElement">xsd:documentation</span><span class="textOperator">&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:annotation</span><span class="textOperator">&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;</span><span class="textElement">xsd:complexType</span><span class="textAttr"> mixed</span><span class="textOperator">=</span><span class="textContents">"true</span><span class="textOperator">"&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:choice</span><span class="textAttr"> minOccurs</span><span class="textOperator">=</span><span class="textContents">"0</span><span class="textOperator">"</span><span class="textAttr"> maxOccurs</span><span class="textOperator">=</span><span class="textContents">"unbounded</span><span class="textOperator">"&gt;</span><span class="textContents">
+      </span><span class="textOperator">&lt;</span><span class="textElement">xsd:any</span><span class="textAttr"> namespace</span><span class="textOperator">=</span><span class="textContents">"##other</span><span class="textOperator">"</span><span class="textAttr"> processContents</span><span class="textOperator">=</span><span class="textContents">"lax</span><span class="textOperator">"</span><span class="textAttr"> minOccurs</span><span class="textOperator">=</span><span class="textContents">"0</span><span class="textOperator">"</span><span class="textAttr"> maxOccurs</span><span class="textOperator">=</span><span class="textContents">"unbounded</span><span class="textOperator">"/&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:choice</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:anyAttribute</span><span class="textAttr"> namespace</span><span class="textOperator">=</span><span class="textContents">"##other</span><span class="textOperator">"/&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:complexType</span><span class="textOperator">&gt;</span><span class="textContents">
+</span><span class="textOperator">&lt;/</span><span class="textElement">xsd:element</span><span class="textOperator">&gt;</span></pre></td>
+			</tr>
+		</table>
+		<br />
+		<a name="element_faultFlow_Link01480D40" />
+		<span class="elementHeader">element </span>
+		<span class="elementHeader2">faultFlow</span>
+		<table width="100%" cellspacing="0" cellpadding="5" border="1">
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">diagram</span></td>
+				<td width="90%" align="left" bgcolor="#FFFFFF"><map name="Map01480D40"><area coords="141,12,201,26" href="#complexType_Flow_Link0146F710" /><area coords="225,33,363,158" href="#element_documentation_Link014532F0" /><area coords="225,170,350,408" href="#element_parameter_Link014533B8" /><area coords="295,420,399,512" href="#element_chain_Link01480788" /><area coords="415,427,415,427" href="#complexType_DeployableItem_Link014705A8" /><area coords="295,524,419,605" href="#element_handler_Link01480850" /><area coords="435,531,435,531" href="#complexType_DeployableItem_Link014705A8" /></map><img src="wsdd_p4.png" width="439" height="671" border="0" usemap="#Map01480D40" /></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">namespace</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">http://xml.apache.org/axis/wsdd/</span></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">type</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><a href="#complexType_Flow_Link0146F710"><span class="schemaName">wsdd:Flow</span></a></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">children</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><a href="#element_documentation_Link014532F0"><span class="schemaName">wsdd:documentation</span></a><span class="schemaName"> </span><a href="#element_parameter_Link014533B8"><span class="schemaName">wsdd:parameter</span></a><span class="schemaName"> </span><a href="#element_chain_Link01480788"><span class="schemaName">wsdd:chain</span></a><span class="schemaName"> </span><a href="#element_handler_Link01480850"><span class="schemaName">wsdd:handler</span></a></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">used by</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">elements&nbsp;</span></td><td align="left" bgcolor="#F0F0F0"><a href="#element_globalConfiguration_Link01478AF8"><span class="schemaName">globalConfiguration</span></a><span class="schemaName"> </span><a href="#element_service_Link01453228"><span class="schemaName">service</span></a><span class="schemaName"> </span><a href="#element_transport_Link0144EB48"><span class="schemaName">transport</span></a></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">attributes</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Name&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Type&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Use&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Value&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">name&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:NCName&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">optional&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">type&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:QName&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">optional&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">annotation</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">documentation&nbsp;</span></td><td align="left" bgcolor="#F0F0F0"><pre><span class="schemaSubData">The faultFlow Element is a DeployableItem that describes a fault-processing flow.</span></pre></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">source</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><pre><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"faultFlow</span><span class="textOperator">"</span><span class="textAttr"> type</span><span class="textOperator">=</span><span class="textContents">"wsdd:Flow</span><span class="textOperator">"&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;</span><span class="textElement">xsd:annotation</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:documentation</span><span class="textOperator">&gt;</span><span class="textContents">The faultFlow Element is a DeployableItem that describes a fault-processing flow.</span><span class="textOperator">&lt;/</span><span class="textElement">xsd:documentation</span><span class="textOperator">&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:annotation</span><span class="textOperator">&gt;</span><span class="textContents">
+</span><span class="textOperator">&lt;/</span><span class="textElement">xsd:element</span><span class="textOperator">&gt;</span></pre></td>
+			</tr>
+		</table>
+		<br />
+		<a name="element_globalConfiguration_Link01478AF8" />
+		<span class="elementHeader">element </span>
+		<span class="elementHeader2">globalConfiguration</span>
+		<table width="100%" cellspacing="0" cellpadding="5" border="1">
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">diagram</span></td>
+				<td width="90%" align="left" bgcolor="#FFFFFF"><map name="Map01478AF8"><area coords="150,12,269,26" href="#complexType_DeployableItem_Link014705A8" /><area coords="234,33,372,158" href="#element_documentation_Link014532F0" /><area coords="234,170,359,408" href="#element_parameter_Link014533B8" /><area coords="234,432,351,538" href="#element_transport_Link0144EB48" /><area coords="367,439,367,439" href="#complexType_DeployableItem_Link014705A8" /><area coords="234,550,359,631" href="#element_requestFlow_Link01480198" /><area coords="375,557,375,557" href="#complexType_Flow_Link0146F710" /><area coords="234,643,349,713" href="#element_provider_Link0146BAB0" /><area coords="365,650,365,650" href="#complexType_DeployableItem_Link014705A8" /><area coords="234,725,369,795" href="#element_responseFlow_Link0147FE50" /><area coords="385,732,385,732" href="#complexType_Flow_Link0146F710" /><area coords="234,807,354,891" href="#element_faultFlow_Link01480D40" /><area coords="370,814,370,814" href="#complexType_Flow_Link0146F710" /></map><img src="wsdd_p5.png" width="392" height="945" border="0" usemap="#Map01478AF8" /></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">namespace</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">http://xml.apache.org/axis/wsdd/</span></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">type</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">extension of </span><a href="#complexType_DeployableItem_Link014705A8"><span class="schemaName">wsdd:DeployableItem</span></a></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">children</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><a href="#element_documentation_Link014532F0"><span class="schemaName">wsdd:documentation</span></a><span class="schemaName"> </span><a href="#element_parameter_Link014533B8"><span class="schemaName">wsdd:parameter</span></a><span class="schemaName"> </span><a href="#element_transport_Link0144EB48"><span class="schemaName">wsdd:transport</span></a><span class="schemaName"> </span><a href="#element_requestFlow_Link01480198"><span class="schemaName">wsdd:requestFlow</span></a><span class="schemaName"> </span><a href="#element_provider_Link0146BAB0"><span class="schemaName">wsdd:provider</span></a><span class="schemaName"> </span><a href="#element_responseFlow_Link0147FE50"><span class="schemaName">wsdd:responseFlow</span></a><span class="schemaName"> </span><a href="#element_faultFlow_Link01480D40"><span class="schemaName">wsdd:faultFlow</span></a></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">used by</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">element&nbsp;</span></td><td align="left" bgcolor="#F0F0F0"><a href="#element_deployment_Link014792B8"><span class="schemaName">deployment</span></a></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">attributes</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Name&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Type&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Use&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Value&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">name&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:NCName&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">optional&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">type&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:QName&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">optional&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><a name="attribute_type_Link01479230" /><span class="schemaSubData">type&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:QName&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">prohibited&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">annotation</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">documentation&nbsp;</span></td><td align="left" bgcolor="#F0F0F0"><pre><span class="schemaSubData">The globalConfiguration Element is a DeployableItem that describes the global configuration
+of the Axis Engine.  
+
+The globalConfiguration may define global request, response, fault and transport flows that apply to all services.
+
+The provider element describes the deployment of the Axis Engine implementation.
+</span></pre></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">source</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><pre><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"globalConfiguration</span><span class="textOperator">"&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;</span><span class="textElement">xsd:annotation</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:documentation</span><span class="textOperator">&gt;</span><span class="textContents">The globalConfiguration Element is a DeployableItem that describes the global configuration
+of the Axis Engine.  
+
+The globalConfiguration may define global request, response, fault and transport flows that apply to all services.
+
+The provider element describes the deployment of the Axis Engine implementation.
+</span><span class="textOperator">&lt;/</span><span class="textElement">xsd:documentation</span><span class="textOperator">&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:annotation</span><span class="textOperator">&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;</span><span class="textElement">xsd:complexType</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:complexContent</span><span class="textOperator">&gt;</span><span class="textContents">
+      </span><span class="textOperator">&lt;</span><span class="textElement">xsd:extension</span><span class="textAttr"> base</span><span class="textOperator">=</span><span class="textContents">"wsdd:DeployableItem</span><span class="textOperator">"&gt;</span><span class="textContents">
+        </span><span class="textOperator">&lt;</span><span class="textElement">xsd:sequence</span><span class="textOperator">&gt;</span><span class="textContents">
+          </span><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> ref</span><span class="textOperator">=</span><span class="textContents">"wsdd:transport</span><span class="textOperator">"</span><span class="textAttr"> minOccurs</span><span class="textOperator">=</span><span class="textContents">"0</span><span class="textOperator">"</span><span class="textAttr"> maxOccurs</span><span class="textOperator">=</span><span class="textContents">"unbounded</span><span class="textOperator">"/&gt;</span><span class="textContents">
+          </span><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> ref</span><span class="textOperator">=</span><span class="textContents">"wsdd:requestFlow</span><span class="textOperator">"</span><span class="textAttr"> minOccurs</span><span class="textOperator">=</span><span class="textContents">"0</span><span class="textOperator">"/&gt;</span><span class="textContents">
+          </span><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> ref</span><span class="textOperator">=</span><span class="textContents">"wsdd:provider</span><span class="textOperator">"/&gt;</span><span class="textContents">
+          </span><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> ref</span><span class="textOperator">=</span><span class="textContents">"wsdd:responseFlow</span><span class="textOperator">"</span><span class="textAttr"> minOccurs</span><span class="textOperator">=</span><span class="textContents">"0</span><span class="textOperator">"/&gt;</span><span class="textContents">
+          </span><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> ref</span><span class="textOperator">=</span><span class="textContents">"wsdd:faultFlow</span><span class="textOperator">"</span><span class="textAttr"> minOccurs</span><span class="textOperator">=</span><span class="textContents">"0</span><span class="textOperator">"</span><span class="textAttr"> maxOccurs</span><span class="textOperator">=</span><span class="textContents">"unbounded</span><span class="textOperator">"/&gt;</span><span class="textContents">
+          </span><span class="textOperator">&lt;</span><span class="textElement">xsd:any</span><span class="textAttr"> namespace</span><span class="textOperator">=</span><span class="textContents">"##other</span><span class="textOperator">"</span><span class="textAttr"> minOccurs</span><span class="textOperator">=</span><span class="textContents">"0</span><span class="textOperator">"</span><span class="textAttr"> maxOccurs</span><span class="textOperator">=</span><span class="textContents">"unbounded</span><span class="textOperator">"/&gt;</span><span class="textContents">
+        </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:sequence</span><span class="textOperator">&gt;</span><span class="textContents">
+        </span><span class="textOperator">&lt;</span><span class="textElement">xsd:attribute</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"type</span><span class="textOperator">"</span><span class="textAttr"> type</span><span class="textOperator">=</span><span class="textContents">"xsd:QName</span><span class="textOperator">"</span><span class="textAttr"> use</span><span class="textOperator">=</span><span class="textContents">"prohibited</span><span class="textOperator">"/&gt;</span><span class="textContents">
+      </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:extension</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:complexContent</span><span class="textOperator">&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:complexType</span><span class="textOperator">&gt;</span><span class="textContents">
+</span><span class="textOperator">&lt;/</span><span class="textElement">xsd:element</span><span class="textOperator">&gt;</span></pre></td>
+			</tr>
+		</table>
+		<br />
+		<a name="element_handler_Link01480850" />
+		<span class="elementHeader">element </span>
+		<span class="elementHeader2">handler</span>
+		<table width="100%" cellspacing="0" cellpadding="5" border="1">
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">diagram</span></td>
+				<td width="90%" align="left" bgcolor="#FFFFFF"><map name="Map01480850"><area coords="145,12,264,26" href="#complexType_DeployableItem_Link014705A8" /><area coords="229,33,367,158" href="#element_documentation_Link014532F0" /><area coords="229,170,354,408" href="#element_parameter_Link014533B8" /></map><img src="wsdd_p6.png" width="387" height="474" border="0" usemap="#Map01480850" /></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">namespace</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">http://xml.apache.org/axis/wsdd/</span></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">type</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">extension of </span><a href="#complexType_DeployableItem_Link014705A8"><span class="schemaName">wsdd:DeployableItem</span></a></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">children</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><a href="#element_documentation_Link014532F0"><span class="schemaName">wsdd:documentation</span></a><span class="schemaName"> </span><a href="#element_parameter_Link014533B8"><span class="schemaName">wsdd:parameter</span></a></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">used by</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">elements&nbsp;</span></td><td align="left" bgcolor="#F0F0F0"><a href="#element_chain_Link01480788"><span class="schemaName">chain</span></a><span class="schemaName"> </span><a href="#element_deployment_Link014792B8"><span class="schemaName">deployment</span></a></td></tr><tr valign="top"><td align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">complexType&nbsp;</span></td><td align="left" bgcolor="#F0F0F0"><a href="#complexType_Flow_Link0146F710"><span class="schemaName">Flow</span></a></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">attributes</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Name&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Type&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Use&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Value&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">name&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:NCName&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">optional&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">type&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:QName&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">optional&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">annotation</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">documentation&nbsp;</span></td><td align="left" bgcolor="#F0F0F0"><pre><span class="schemaSubData">The handler Element is a DeployableItem that describes the deployment of an individual
+handler component.
+</span></pre></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">source</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><pre><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"handler</span><span class="textOperator">"&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;</span><span class="textElement">xsd:annotation</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:documentation</span><span class="textOperator">&gt;</span><span class="textContents">The handler Element is a DeployableItem that describes the deployment of an individual
+handler component.
+</span><span class="textOperator">&lt;/</span><span class="textElement">xsd:documentation</span><span class="textOperator">&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:annotation</span><span class="textOperator">&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;</span><span class="textElement">xsd:complexType</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:complexContent</span><span class="textOperator">&gt;</span><span class="textContents">
+      </span><span class="textOperator">&lt;</span><span class="textElement">xsd:extension</span><span class="textAttr"> base</span><span class="textOperator">=</span><span class="textContents">"wsdd:DeployableItem</span><span class="textOperator">"&gt;</span><span class="textContents">
+        </span><span class="textOperator">&lt;</span><span class="textElement">xsd:sequence</span><span class="textOperator">&gt;</span><span class="textContents">
+          </span><span class="textOperator">&lt;</span><span class="textElement">xsd:any</span><span class="textAttr"> namespace</span><span class="textOperator">=</span><span class="textContents">"##other</span><span class="textOperator">"</span><span class="textAttr"> minOccurs</span><span class="textOperator">=</span><span class="textContents">"0</span><span class="textOperator">"</span><span class="textAttr"> maxOccurs</span><span class="textOperator">=</span><span class="textContents">"unbounded</span><span class="textOperator">"/&gt;</span><span class="textContents">
+        </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:sequence</span><span class="textOperator">&gt;</span><span class="textContents">
+        </span><span class="textOperator">&lt;</span><span class="textElement">xsd:anyAttribute</span><span class="textAttr"> namespace</span><span class="textOperator">=</span><span class="textContents">"##other</span><span class="textOperator">"/&gt;</span><span class="textContents">
+      </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:extension</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:complexContent</span><span class="textOperator">&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:complexType</span><span class="textOperator">&gt;</span><span class="textContents">
+</span><span class="textOperator">&lt;/</span><span class="textElement">xsd:element</span><span class="textOperator">&gt;</span></pre></td>
+			</tr>
+		</table>
+		<br />
+		<a name="element_operation_Link0146F540" />
+		<span class="elementHeader">element </span>
+		<span class="elementHeader2">operation</span>
+		<table width="100%" cellspacing="0" cellpadding="5" border="1">
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">diagram</span></td>
+				<td width="90%" align="left" bgcolor="#FFFFFF"><img src="wsdd_p7.png" width="135" height="168" border="0" /></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">namespace</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">http://xml.apache.org/axis/wsdd/</span></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">used by</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">element&nbsp;</span></td><td align="left" bgcolor="#F0F0F0"><a href="#element_provider_Link0146BAB0"><span class="schemaName">provider</span></a></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">attributes</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Name&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Type&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Use&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Value&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><a name="attribute_name_Link0146F608" /><span class="schemaSubData">name&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:NMTOKEN&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">required&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><a name="attribute_alias_Link0144EA38" /><span class="schemaSubData">alias&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:NMTOKEN&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">optional&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><a name="attribute_namespaceURI_Link0144EAC0" /><span class="schemaSubData">namespaceURI&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:uriReference&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">optional&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">annotation</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">documentation&nbsp;</span></td><td align="left" bgcolor="#F0F0F0"><pre><span class="schemaSubData">Defines an operation exposed by the Service Provider
+
+The optional "alias" attribute allows the name of the operation to be masked.
+
+The optional "namespaceURI" attributes allows the namespace of the operation explicitly set.
+</span></pre></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">source</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><pre><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"operation</span><span class="textOperator">"&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;</span><span class="textElement">xsd:annotation</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:documentation</span><span class="textOperator">&gt;</span><span class="textContents">Defines an operation exposed by the Service Provider
+
+The optional "alias" attribute allows the name of the operation to be masked.
+
+The optional "namespaceURI" attributes allows the namespace of the operation explicitly set.
+</span><span class="textOperator">&lt;/</span><span class="textElement">xsd:documentation</span><span class="textOperator">&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:annotation</span><span class="textOperator">&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;</span><span class="textElement">xsd:complexType</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:attribute</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"name</span><span class="textOperator">"</span><span class="textAttr"> type</span><span class="textOperator">=</span><span class="textContents">"xsd:NMTOKEN</span><span class="textOperator">"</span><span class="textAttr"> use</span><span class="textOperator">=</span><span class="textContents">"required</span><span class="textOperator">"/&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:attribute</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"alias</span><span class="textOperator">"</span><span class="textAttr"> type</span><span class="textOperator">=</span><span class="textContents">"xsd:NMTOKEN</span><span class="textOperator">"</span><span class="textAttr"> use</span><span class="textOperator">=</span><span class="textContents">"optional</span><span class="textOperator">"/&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:attribute</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"namespaceURI</span><span class="textOperator">"</span><span class="textAttr"> type</span><span class="textOperator">=</span><span class="textContents">"xsd:uriReference</span><span class="textOperator">"</span><span class="textAttr"> use</span><span class="textOperator">=</span><span class="textContents">"optional</span><span class="textOperator">"/&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:complexType</span><span class="textOperator">&gt;</span><span class="textContents">
+</span><span class="textOperator">&lt;/</span><span class="textElement">xsd:element</span><span class="textOperator">&gt;</span></pre></td>
+			</tr>
+		</table>
+		<br />
+		<a name="element_parameter_Link014533B8" />
+		<span class="elementHeader">element </span>
+		<span class="elementHeader2">parameter</span>
+		<table width="100%" cellspacing="0" cellpadding="5" border="1">
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">diagram</span></td>
+				<td width="90%" align="left" bgcolor="#FFFFFF"><img src="wsdd_p8.png" width="313" height="327" border="0" /></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">namespace</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">http://xml.apache.org/axis/wsdd/</span></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">used by</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">complexType&nbsp;</span></td><td align="left" bgcolor="#F0F0F0"><a href="#complexType_DeployableItem_Link014705A8"><span class="schemaName">DeployableItem</span></a></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">attributes</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Name&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Type&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Use&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Value&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><a name="attribute_name_Link0146FB70" /><span class="schemaSubData">name&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:NCName&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">required&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><a name="attribute_locked_Link0146FBF8" /><span class="schemaSubData">locked&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:boolean&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">optional&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">false&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><a name="attribute_value_Link0146FC80" /><span class="schemaSubData">value&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:CDATA&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">optional&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">annotation</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">documentation&nbsp;</span></td><td align="left" bgcolor="#F0F0F0"><pre><span class="schemaSubData">Parameters are name/value pairs that are used as configuration data for the handler or other 
+WSDD element during deployment and initialization.
+
+the "locked" attribute indicates whether or not the value of the parameter may be modified after configuration.  
+If locked=true, the value cannot be changed after deployment.  If locked=false, the value may be changed at 
+any time.
+</span></pre></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">source</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><pre><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"parameter</span><span class="textOperator">"&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;</span><span class="textElement">xsd:annotation</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:documentation</span><span class="textOperator">&gt;</span><span class="textContents">Parameters are name/value pairs that are used as configuration data for the handler or other 
+WSDD element during deployment and initialization.
+
+the "locked" attribute indicates whether or not the value of the parameter may be modified after configuration.  
+If locked=true, the value cannot be changed after deployment.  If locked=false, the value may be changed at 
+any time.
+</span><span class="textOperator">&lt;/</span><span class="textElement">xsd:documentation</span><span class="textOperator">&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:annotation</span><span class="textOperator">&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;</span><span class="textElement">xsd:complexType</span><span class="textAttr"> mixed</span><span class="textOperator">=</span><span class="textContents">"true</span><span class="textOperator">"&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:sequence</span><span class="textOperator">&gt;</span><span class="textContents">
+      </span><span class="textOperator">&lt;</span><span class="textElement">xsd:any</span><span class="textAttr"> namespace</span><span class="textOperator">=</span><span class="textContents">"##other</span><span class="textOperator">"</span><span class="textAttr"> processContents</span><span class="textOperator">=</span><span class="textContents">"lax</span><span class="textOperator">"</span><span class="textAttr"> minOccurs</span><span class="textOperator">=</span><span class="textContents">"0</span><span class="textOperator">"</span><span class="textAttr"> maxOccurs</span><span class="textOperator">=</span><span class="textContents">"unbounded</span><span class="textOperator">"/&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:sequence</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:attribute</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"name</span><span class="textOperator">"</span><span class="textAttr"> type</span><span class="textOperator">=</span><span class="textContents">"xsd:NCName</span><span class="textOperator">"</span><span class="textAttr"> use</span><span class="textOperator">=</span><span class="textContents">"required</span><span class="textOperator">"/&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:attribute</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"locked</span><span class="textOperator">"</span><span class="textAttr"> type</span><span class="textOperator">=</span><span class="textContents">"xsd:boolean</span><span class="textOperator">"</span><span class="textAttr"> use</span><span class="textOperator">=</span><span class="textContents">"optional</span><span class="textOperator">"</span><span class="textAttr"> value</span><span class="textOperator">=</span><span class="textContents">"false</span><span class="textOperator">"/&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:attribute</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"value</span><span class="textOperator">"</span><span class="textAttr"> type</span><span class="textOperator">=</span><span class="textContents">"xsd:CDATA</span><span class="textOperator">"</span><span class="textAttr"> use</span><span class="textOperator">=</span><span class="textContents">"optional</span><span class="textOperator">"/&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:anyAttribute</span><span class="textAttr"> namespace</span><span class="textOperator">=</span><span class="textContents">"##other</span><span class="textOperator">"/&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:complexType</span><span class="textOperator">&gt;</span><span class="textContents">
+</span><span class="textOperator">&lt;/</span><span class="textElement">xsd:element</span><span class="textOperator">&gt;</span></pre></td>
+			</tr>
+		</table>
+		<br />
+		<a name="element_provider_Link0146BAB0" />
+		<span class="elementHeader">element </span>
+		<span class="elementHeader2">provider</span>
+		<table width="100%" cellspacing="0" cellpadding="5" border="1">
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">diagram</span></td>
+				<td width="90%" align="left" bgcolor="#FFFFFF"><map name="Map0146BAB0"><area coords="136,12,255,26" href="#complexType_DeployableItem_Link014705A8" /><area coords="220,33,358,158" href="#element_documentation_Link014532F0" /><area coords="220,170,345,408" href="#element_parameter_Link014533B8" /><area coords="220,432,345,604" href="#element_operation_Link0146F540" /></map><img src="wsdd_p9.png" width="378" height="658" border="0" usemap="#Map0146BAB0" /></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">namespace</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">http://xml.apache.org/axis/wsdd/</span></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">type</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">extension of </span><a href="#complexType_DeployableItem_Link014705A8"><span class="schemaName">wsdd:DeployableItem</span></a></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">children</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><a href="#element_documentation_Link014532F0"><span class="schemaName">wsdd:documentation</span></a><span class="schemaName"> </span><a href="#element_parameter_Link014533B8"><span class="schemaName">wsdd:parameter</span></a><span class="schemaName"> </span><a href="#element_operation_Link0146F540"><span class="schemaName">wsdd:operation</span></a></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">used by</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">elements&nbsp;</span></td><td align="left" bgcolor="#F0F0F0"><a href="#element_globalConfiguration_Link01478AF8"><span class="schemaName">globalConfiguration</span></a><span class="schemaName"> </span><a href="#element_service_Link01453228"><span class="schemaName">service</span></a></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">attributes</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Name&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Type&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Use&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Value&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">name&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:NCName&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">optional&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">type&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:QName&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">optional&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">annotation</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">documentation&nbsp;</span></td><td align="left" bgcolor="#F0F0F0"><pre><span class="schemaSubData">The provider Element is a DeployableItem that describes the Axis Service Provider</span></pre></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">source</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><pre><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"provider</span><span class="textOperator">"&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;</span><span class="textElement">xsd:annotation</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:documentation</span><span class="textOperator">&gt;</span><span class="textContents">The provider Element is a DeployableItem that describes the Axis Service Provider</span><span class="textOperator">&lt;/</span><span class="textElement">xsd:documentation</span><span class="textOperator">&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:annotation</span><span class="textOperator">&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;</span><span class="textElement">xsd:complexType</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:complexContent</span><span class="textOperator">&gt;</span><span class="textContents">
+      </span><span class="textOperator">&lt;</span><span class="textElement">xsd:extension</span><span class="textAttr"> base</span><span class="textOperator">=</span><span class="textContents">"wsdd:DeployableItem</span><span class="textOperator">"&gt;</span><span class="textContents">
+        </span><span class="textOperator">&lt;</span><span class="textElement">xsd:sequence</span><span class="textOperator">&gt;</span><span class="textContents">
+          </span><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> ref</span><span class="textOperator">=</span><span class="textContents">"wsdd:operation</span><span class="textOperator">"</span><span class="textAttr"> minOccurs</span><span class="textOperator">=</span><span class="textContents">"0</span><span class="textOperator">"</span><span class="textAttr"> maxOccurs</span><span class="textOperator">=</span><span class="textContents">"unbounded</span><span class="textOperator">"/&gt;</span><span class="textContents">
+          </span><span class="textOperator">&lt;</span><span class="textElement">xsd:any</span><span class="textAttr"> namespace</span><span class="textOperator">=</span><span class="textContents">"##other</span><span class="textOperator">"</span><span class="textAttr"> minOccurs</span><span class="textOperator">=</span><span class="textContents">"0</span><span class="textOperator">"</span><span class="textAttr"> maxOccurs</span><span class="textOperator">=</span><span class="textContents">"unbounded</span><span class="textOperator">"/&gt;</span><span class="textContents">
+        </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:sequence</span><span class="textOperator">&gt;</span><span class="textContents">
+        </span><span class="textOperator">&lt;</span><span class="textElement">xsd:anyAttribute</span><span class="textAttr"> namespace</span><span class="textOperator">=</span><span class="textContents">"##other</span><span class="textOperator">"/&gt;</span><span class="textContents">
+      </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:extension</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:complexContent</span><span class="textOperator">&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:complexType</span><span class="textOperator">&gt;</span><span class="textContents">
+</span><span class="textOperator">&lt;/</span><span class="textElement">xsd:element</span><span class="textOperator">&gt;</span></pre></td>
+			</tr>
+		</table>
+		<br />
+		<a name="element_requestFlow_Link01480198" />
+		<span class="elementHeader">element </span>
+		<span class="elementHeader2">requestFlow</span>
+		<table width="100%" cellspacing="0" cellpadding="5" border="1">
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">diagram</span></td>
+				<td width="90%" align="left" bgcolor="#FFFFFF"><map name="Map01480198"><area coords="146,12,206,26" href="#complexType_Flow_Link0146F710" /><area coords="230,33,368,158" href="#element_documentation_Link014532F0" /><area coords="230,170,355,408" href="#element_parameter_Link014533B8" /><area coords="300,420,404,512" href="#element_chain_Link01480788" /><area coords="420,427,420,427" href="#complexType_DeployableItem_Link014705A8" /><area coords="300,524,424,605" href="#element_handler_Link01480850" /><area coords="440,531,440,531" href="#complexType_DeployableItem_Link014705A8" /></map><img src="wsdd_p10.png" width="444" height="671" border="0" usemap="#Map01480198" /></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">namespace</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">http://xml.apache.org/axis/wsdd/</span></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">type</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><a href="#complexType_Flow_Link0146F710"><span class="schemaName">wsdd:Flow</span></a></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">children</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><a href="#element_documentation_Link014532F0"><span class="schemaName">wsdd:documentation</span></a><span class="schemaName"> </span><a href="#element_parameter_Link014533B8"><span class="schemaName">wsdd:parameter</span></a><span class="schemaName"> </span><a href="#element_chain_Link01480788"><span class="schemaName">wsdd:chain</span></a><span class="schemaName"> </span><a href="#element_handler_Link01480850"><span class="schemaName">wsdd:handler</span></a></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">used by</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">elements&nbsp;</span></td><td align="left" bgcolor="#F0F0F0"><a href="#element_globalConfiguration_Link01478AF8"><span class="schemaName">globalConfiguration</span></a><span class="schemaName"> </span><a href="#element_service_Link01453228"><span class="schemaName">service</span></a><span class="schemaName"> </span><a href="#element_transport_Link0144EB48"><span class="schemaName">transport</span></a></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">attributes</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Name&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Type&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Use&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Value&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">name&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:NCName&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">optional&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">type&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:QName&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">optional&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">annotation</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">documentation&nbsp;</span></td><td align="left" bgcolor="#F0F0F0"><pre><span class="schemaSubData">The requestFlow Element is a DeployableItem that describes the inbound flow of a Message
+to the Service Provider.</span></pre></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">source</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><pre><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"requestFlow</span><span class="textOperator">"</span><span class="textAttr"> type</span><span class="textOperator">=</span><span class="textContents">"wsdd:Flow</span><span class="textOperator">"&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;</span><span class="textElement">xsd:annotation</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:documentation</span><span class="textOperator">&gt;</span><span class="textContents">The requestFlow Element is a DeployableItem that describes the inbound flow of a Message
+to the Service Provider.</span><span class="textOperator">&lt;/</span><span class="textElement">xsd:documentation</span><span class="textOperator">&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:annotation</span><span class="textOperator">&gt;</span><span class="textContents">
+</span><span class="textOperator">&lt;/</span><span class="textElement">xsd:element</span><span class="textOperator">&gt;</span></pre></td>
+			</tr>
+		</table>
+		<br />
+		<a name="element_responseFlow_Link0147FE50" />
+		<span class="elementHeader">element </span>
+		<span class="elementHeader2">responseFlow</span>
+		<table width="100%" cellspacing="0" cellpadding="5" border="1">
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">diagram</span></td>
+				<td width="90%" align="left" bgcolor="#FFFFFF"><map name="Map0147FE50"><area coords="142,12,202,26" href="#complexType_Flow_Link0146F710" /><area coords="226,33,364,158" href="#element_documentation_Link014532F0" /><area coords="226,170,351,408" href="#element_parameter_Link014533B8" /><area coords="296,420,400,512" href="#element_chain_Link01480788" /><area coords="416,427,416,427" href="#complexType_DeployableItem_Link014705A8" /><area coords="296,524,420,605" href="#element_handler_Link01480850" /><area coords="436,531,436,531" href="#complexType_DeployableItem_Link014705A8" /></map><img src="wsdd_p11.png" width="440" height="671" border="0" usemap="#Map0147FE50" /></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">namespace</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">http://xml.apache.org/axis/wsdd/</span></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">type</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><a href="#complexType_Flow_Link0146F710"><span class="schemaName">wsdd:Flow</span></a></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">children</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><a href="#element_documentation_Link014532F0"><span class="schemaName">wsdd:documentation</span></a><span class="schemaName"> </span><a href="#element_parameter_Link014533B8"><span class="schemaName">wsdd:parameter</span></a><span class="schemaName"> </span><a href="#element_chain_Link01480788"><span class="schemaName">wsdd:chain</span></a><span class="schemaName"> </span><a href="#element_handler_Link01480850"><span class="schemaName">wsdd:handler</span></a></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">used by</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">elements&nbsp;</span></td><td align="left" bgcolor="#F0F0F0"><a href="#element_globalConfiguration_Link01478AF8"><span class="schemaName">globalConfiguration</span></a><span class="schemaName"> </span><a href="#element_service_Link01453228"><span class="schemaName">service</span></a><span class="schemaName"> </span><a href="#element_transport_Link0144EB48"><span class="schemaName">transport</span></a></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">attributes</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Name&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Type&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Use&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Value&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">name&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:NCName&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">optional&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">type&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:QName&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">optional&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">annotation</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">documentation&nbsp;</span></td><td align="left" bgcolor="#F0F0F0"><pre><span class="schemaSubData">The responseFlow Element is a DeployableItem that describes the outward flow of a Message
+from the Service Provider</span></pre></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">source</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><pre><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"responseFlow</span><span class="textOperator">"</span><span class="textAttr"> type</span><span class="textOperator">=</span><span class="textContents">"wsdd:Flow</span><span class="textOperator">"&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;</span><span class="textElement">xsd:annotation</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:documentation</span><span class="textOperator">&gt;</span><span class="textContents">The responseFlow Element is a DeployableItem that describes the outward flow of a Message
+from the Service Provider</span><span class="textOperator">&lt;/</span><span class="textElement">xsd:documentation</span><span class="textOperator">&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:annotation</span><span class="textOperator">&gt;</span><span class="textContents">
+</span><span class="textOperator">&lt;/</span><span class="textElement">xsd:element</span><span class="textOperator">&gt;</span></pre></td>
+			</tr>
+		</table>
+		<br />
+		<a name="element_service_Link01453228" />
+		<span class="elementHeader">element </span>
+		<span class="elementHeader2">service</span>
+		<table width="100%" cellspacing="0" cellpadding="5" border="1">
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">diagram</span></td>
+				<td width="90%" align="left" bgcolor="#FFFFFF"><map name="Map01453228"><area coords="145,12,264,26" href="#complexType_DeployableItem_Link014705A8" /><area coords="229,33,367,158" href="#element_documentation_Link014532F0" /><area coords="229,170,354,408" href="#element_parameter_Link014533B8" /><area coords="229,432,355,626" href="#element_typeMapping_Link01467B38" /><area coords="229,638,354,719" href="#element_requestFlow_Link01480198" /><area coords="370,645,370,645" href="#complexType_Flow_Link0146F710" /><area coords="229,731,344,801" href="#element_provider_Link0146BAB0" /><area coords="360,738,360,738" href="#complexType_DeployableItem_Link014705A8" /><area coords="229,813,364,883" href="#element_responseFlow_Link0147FE50" /><area coords="380,820,380,820" href="#complexType_Flow_Link0146F710" /><area coords="229,895,349,979" href="#element_faultFlow_Link01480D40" /><area coords="365,902,365,902" href="#complexType_Flow_Link0146F710" /></map><img src="wsdd_p12.png" width="387" height="1033" border="0" usemap="#Map01453228" /></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">namespace</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">http://xml.apache.org/axis/wsdd/</span></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">type</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">extension of </span><a href="#complexType_DeployableItem_Link014705A8"><span class="schemaName">wsdd:DeployableItem</span></a></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">children</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><a href="#element_documentation_Link014532F0"><span class="schemaName">wsdd:documentation</span></a><span class="schemaName"> </span><a href="#element_parameter_Link014533B8"><span class="schemaName">wsdd:parameter</span></a><span class="schemaName"> </span><a href="#element_typeMapping_Link01467B38"><span class="schemaName">wsdd:typeMapping</span></a><span class="schemaName"> </span><a href="#element_requestFlow_Link01480198"><span class="schemaName">wsdd:requestFlow</span></a><span class="schemaName"> </span><a href="#element_provider_Link0146BAB0"><span class="schemaName">wsdd:provider</span></a><span class="schemaName"> </span><a href="#element_responseFlow_Link0147FE50"><span class="schemaName">wsdd:responseFlow</span></a><span class="schemaName"> </span><a href="#element_faultFlow_Link01480D40"><span class="schemaName">wsdd:faultFlow</span></a></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">used by</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">element&nbsp;</span></td><td align="left" bgcolor="#F0F0F0"><a href="#element_deployment_Link014792B8"><span class="schemaName">deployment</span></a></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">attributes</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Name&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Type&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Use&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Value&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">name&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:NCName&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">optional&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">type&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:QName&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">optional&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><a name="attribute_description_Link0146FFB0" /><span class="schemaSubData">description&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:uriReference&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">optional&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">annotation</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">documentation&nbsp;</span></td><td align="left" bgcolor="#F0F0F0"><pre><span class="schemaSubData">The service Element is a DeployableItem that describes the deployment of a Web Service.
+
+A service is structured as a Targeted Chain represented with a Request Flow, a Provider and a Response Flow.
+
+A service may define an optional collection of Fault Flow's and typeMappings.
+
+The optional description attribute provides a means to directly relate the deployed Service with an external 
+Service Description mechanism (such as WSDL).
+</span></pre></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">source</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><pre><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"service</span><span class="textOperator">"&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;</span><span class="textElement">xsd:annotation</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:documentation</span><span class="textOperator">&gt;</span><span class="textContents">The service Element is a DeployableItem that describes the deployment of a Web Service.
+
+A service is structured as a Targeted Chain represented with a Request Flow, a Provider and a Response Flow.
+
+A service may define an optional collection of Fault Flow's and typeMappings.
+
+The optional description attribute provides a means to directly relate the deployed Service with an external 
+Service Description mechanism (such as WSDL).
+</span><span class="textOperator">&lt;/</span><span class="textElement">xsd:documentation</span><span class="textOperator">&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:annotation</span><span class="textOperator">&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;</span><span class="textElement">xsd:complexType</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:complexContent</span><span class="textOperator">&gt;</span><span class="textContents">
+      </span><span class="textOperator">&lt;</span><span class="textElement">xsd:extension</span><span class="textAttr"> base</span><span class="textOperator">=</span><span class="textContents">"wsdd:DeployableItem</span><span class="textOperator">"&gt;</span><span class="textContents">
+        </span><span class="textOperator">&lt;</span><span class="textElement">xsd:sequence</span><span class="textOperator">&gt;</span><span class="textContents">
+          </span><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> ref</span><span class="textOperator">=</span><span class="textContents">"wsdd:typeMapping</span><span class="textOperator">"</span><span class="textAttr"> minOccurs</span><span class="textOperator">=</span><span class="textContents">"0</span><span class="textOperator">"</span><span class="textAttr"> maxOccurs</span><span class="textOperator">=</span><span class="textContents">"unbounded</span><span class="textOperator">"/&gt;</span><span class="textContents">
+          </span><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> ref</span><span class="textOperator">=</span><span class="textContents">"wsdd:requestFlow</span><span class="textOperator">"</span><span class="textAttr"> minOccurs</span><span class="textOperator">=</span><span class="textContents">"0</span><span class="textOperator">"/&gt;</span><span class="textContents">
+          </span><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> ref</span><span class="textOperator">=</span><span class="textContents">"wsdd:provider</span><span class="textOperator">"/&gt;</span><span class="textContents">
+          </span><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> ref</span><span class="textOperator">=</span><span class="textContents">"wsdd:responseFlow</span><span class="textOperator">"</span><span class="textAttr"> minOccurs</span><span class="textOperator">=</span><span class="textContents">"0</span><span class="textOperator">"/&gt;</span><span class="textContents">
+          </span><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> ref</span><span class="textOperator">=</span><span class="textContents">"wsdd:faultFlow</span><span class="textOperator">"</span><span class="textAttr"> minOccurs</span><span class="textOperator">=</span><span class="textContents">"0</span><span class="textOperator">"</span><span class="textAttr"> maxOccurs</span><span class="textOperator">=</span><span class="textContents">"unbounded</span><span class="textOperator">"/&gt;</span><span class="textContents">
+          </span><span class="textOperator">&lt;</span><span class="textElement">xsd:any</span><span class="textAttr"> namespace</span><span class="textOperator">=</span><span class="textContents">"##other</span><span class="textOperator">"</span><span class="textAttr"> minOccurs</span><span class="textOperator">=</span><span class="textContents">"0</span><span class="textOperator">"</span><span class="textAttr"> maxOccurs</span><span class="textOperator">=</span><span class="textContents">"unbounded</span><span class="textOperator">"/&gt;</span><span class="textContents">
+        </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:sequence</span><span class="textOperator">&gt;</span><span class="textContents">
+        </span><span class="textOperator">&lt;</span><span class="textElement">xsd:attribute</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"description</span><span class="textOperator">"</span><span class="textAttr"> type</span><span class="textOperator">=</span><span class="textContents">"xsd:uriReference</span><span class="textOperator">"</span><span class="textAttr"> use</span><span class="textOperator">=</span><span class="textContents">"optional</span><span class="textOperator">"/&gt;</span><span class="textContents">
+        </span><span class="textOperator">&lt;</span><span class="textElement">xsd:anyAttribute</span><span class="textAttr"> namespace</span><span class="textOperator">=</span><span class="textContents">"##other</span><span class="textOperator">"/&gt;</span><span class="textContents">
+      </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:extension</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:complexContent</span><span class="textOperator">&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:complexType</span><span class="textOperator">&gt;</span><span class="textContents">
+</span><span class="textOperator">&lt;/</span><span class="textElement">xsd:element</span><span class="textOperator">&gt;</span></pre></td>
+			</tr>
+		</table>
+		<br />
+		<a name="element_transport_Link0144EB48" />
+		<span class="elementHeader">element </span>
+		<span class="elementHeader2">transport</span>
+		<table width="100%" cellspacing="0" cellpadding="5" border="1">
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">diagram</span></td>
+				<td width="90%" align="left" bgcolor="#FFFFFF"><map name="Map0144EB48"><area coords="138,12,257,26" href="#complexType_DeployableItem_Link014705A8" /><area coords="222,33,360,158" href="#element_documentation_Link014532F0" /><area coords="222,170,347,408" href="#element_parameter_Link014533B8" /><area coords="222,432,347,513" href="#element_requestFlow_Link01480198" /><area coords="363,439,363,439" href="#complexType_Flow_Link0146F710" /><area coords="222,525,357,595" href="#element_responseFlow_Link0147FE50" /><area coords="373,532,373,532" href="#complexType_Flow_Link0146F710" /><area coords="222,607,342,691" href="#element_faultFlow_Link01480D40" /><area coords="358,614,358,614" href="#complexType_Flow_Link0146F710" /></map><img src="wsdd_p13.png" width="380" height="745" border="0" usemap="#Map0144EB48" /></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">namespace</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">http://xml.apache.org/axis/wsdd/</span></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">type</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">extension of </span><a href="#complexType_DeployableItem_Link014705A8"><span class="schemaName">wsdd:DeployableItem</span></a></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">children</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><a href="#element_documentation_Link014532F0"><span class="schemaName">wsdd:documentation</span></a><span class="schemaName"> </span><a href="#element_parameter_Link014533B8"><span class="schemaName">wsdd:parameter</span></a><span class="schemaName"> </span><a href="#element_requestFlow_Link01480198"><span class="schemaName">wsdd:requestFlow</span></a><span class="schemaName"> </span><a href="#element_responseFlow_Link0147FE50"><span class="schemaName">wsdd:responseFlow</span></a><span class="schemaName"> </span><a href="#element_faultFlow_Link01480D40"><span class="schemaName">wsdd:faultFlow</span></a></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">used by</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">elements&nbsp;</span></td><td align="left" bgcolor="#F0F0F0"><a href="#element_deployment_Link014792B8"><span class="schemaName">deployment</span></a><span class="schemaName"> </span><a href="#element_globalConfiguration_Link01478AF8"><span class="schemaName">globalConfiguration</span></a></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">attributes</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Name&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Type&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Use&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Value&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">name&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:NCName&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">optional&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">type&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:QName&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">optional&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><a name="attribute_type_Link01478A70" /><span class="schemaSubData">type&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:QName&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">prohibited&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">annotation</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">documentation&nbsp;</span></td><td align="left" bgcolor="#F0F0F0"><pre><span class="schemaSubData">The transport Element is a DeployableItem that describes the request, response, and
+fault Flows for a given transport mechanism. 
+</span></pre></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">source</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><pre><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"transport</span><span class="textOperator">"&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;</span><span class="textElement">xsd:annotation</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:documentation</span><span class="textOperator">&gt;</span><span class="textContents">The transport Element is a DeployableItem that describes the request, response, and
+fault Flows for a given transport mechanism. 
+</span><span class="textOperator">&lt;/</span><span class="textElement">xsd:documentation</span><span class="textOperator">&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:annotation</span><span class="textOperator">&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;</span><span class="textElement">xsd:complexType</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:complexContent</span><span class="textOperator">&gt;</span><span class="textContents">
+      </span><span class="textOperator">&lt;</span><span class="textElement">xsd:extension</span><span class="textAttr"> base</span><span class="textOperator">=</span><span class="textContents">"wsdd:DeployableItem</span><span class="textOperator">"&gt;</span><span class="textContents">
+        </span><span class="textOperator">&lt;</span><span class="textElement">xsd:sequence</span><span class="textOperator">&gt;</span><span class="textContents">
+          </span><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> ref</span><span class="textOperator">=</span><span class="textContents">"wsdd:requestFlow</span><span class="textOperator">"</span><span class="textAttr"> minOccurs</span><span class="textOperator">=</span><span class="textContents">"0</span><span class="textOperator">"/&gt;</span><span class="textContents">
+          </span><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> ref</span><span class="textOperator">=</span><span class="textContents">"wsdd:responseFlow</span><span class="textOperator">"</span><span class="textAttr"> minOccurs</span><span class="textOperator">=</span><span class="textContents">"0</span><span class="textOperator">"/&gt;</span><span class="textContents">
+          </span><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> ref</span><span class="textOperator">=</span><span class="textContents">"wsdd:faultFlow</span><span class="textOperator">"</span><span class="textAttr"> minOccurs</span><span class="textOperator">=</span><span class="textContents">"0</span><span class="textOperator">"</span><span class="textAttr"> maxOccurs</span><span class="textOperator">=</span><span class="textContents">"unbounded</span><span class="textOperator">"/&gt;</span><span class="textContents">
+          </span><span class="textOperator">&lt;</span><span class="textElement">xsd:any</span><span class="textAttr"> namespace</span><span class="textOperator">=</span><span class="textContents">"##other</span><span class="textOperator">"</span><span class="textAttr"> minOccurs</span><span class="textOperator">=</span><span class="textContents">"0</span><span class="textOperator">"</span><span class="textAttr"> maxOccurs</span><span class="textOperator">=</span><span class="textContents">"unbounded</span><span class="textOperator">"/&gt;</span><span class="textContents">
+        </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:sequence</span><span class="textOperator">&gt;</span><span class="textContents">
+        </span><span class="textOperator">&lt;</span><span class="textElement">xsd:attribute</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"type</span><span class="textOperator">"</span><span class="textAttr"> type</span><span class="textOperator">=</span><span class="textContents">"xsd:QName</span><span class="textOperator">"</span><span class="textAttr"> use</span><span class="textOperator">=</span><span class="textContents">"prohibited</span><span class="textOperator">"/&gt;</span><span class="textContents">
+        </span><span class="textOperator">&lt;</span><span class="textElement">xsd:anyAttribute</span><span class="textAttr"> namespace</span><span class="textOperator">=</span><span class="textContents">"##other</span><span class="textOperator">"/&gt;</span><span class="textContents">
+      </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:extension</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:complexContent</span><span class="textOperator">&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:complexType</span><span class="textOperator">&gt;</span><span class="textContents">
+</span><span class="textOperator">&lt;/</span><span class="textElement">xsd:element</span><span class="textOperator">&gt;</span></pre></td>
+			</tr>
+		</table>
+		<br />
+		<a name="element_typeMapping_Link01467B38" />
+		<span class="elementHeader">element </span>
+		<span class="elementHeader2">typeMapping</span>
+		<table width="100%" cellspacing="0" cellpadding="5" border="1">
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">diagram</span></td>
+				<td width="90%" align="left" bgcolor="#FFFFFF"><map name="Map01467B38"><area coords="213,8,351,133" href="#element_documentation_Link014532F0" /></map><img src="wsdd_p14.png" width="371" height="261" border="0" usemap="#Map01467B38" /></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">namespace</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">http://xml.apache.org/axis/wsdd/</span></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">children</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><a href="#element_documentation_Link014532F0"><span class="schemaName">wsdd:documentation</span></a></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">used by</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">elements&nbsp;</span></td><td align="left" bgcolor="#F0F0F0"><a href="#element_deployment_Link014792B8"><span class="schemaName">deployment</span></a><span class="schemaName"> </span><a href="#element_service_Link01453228"><span class="schemaName">service</span></a></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">attributes</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Name&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Type&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Use&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Value&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><a name="attribute_name_Link01476A80" /><span class="schemaSubData">name&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:NCName&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">optional&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><a name="attribute_ref_Link01476B08" /><span class="schemaSubData">ref&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:QName&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">optional&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><a name="attribute_encodingStyle_Link01476BB8" /><span class="schemaSubData">encodingStyle&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:uriReference&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">optional&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><a name="attribute_namespaceURI_Link01470280" /><span class="schemaSubData">namespaceURI&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:uriReference&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">optional&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><a name="attribute_localPart_Link014703A0" /><span class="schemaSubData">localPart&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:NCName&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">optional&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><a name="attribute_languageSpecificType_Link014704C8" /><span class="schemaSubData">languageSpecificType&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:QName&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">optional&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><a name="attribute_serializer_Link0146B900" /><span class="schemaSubData">serializer&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:QName&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">optional&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><a name="attribute_deserializer_Link0146BA00" /><span class="schemaSubData">deserializer&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:QName&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">optional&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">annotation</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">documentation&nbsp;</span></td><td align="left" bgcolor="#F0F0F0"><pre><span class="schemaSubData">This describes the mapping between XML and a programming language specific object.
+
+LanguageSpecificType refers to the type name in the programming language that is being coverted to/from XML.
+
+Serializer and deserializer refer to type names in the programming language.
+</span></pre></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">source</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><pre><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"typeMapping</span><span class="textOperator">"&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;</span><span class="textElement">xsd:annotation</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:documentation</span><span class="textOperator">&gt;</span><span class="textContents">This describes the mapping between XML and a programming language specific object.
+
+LanguageSpecificType refers to the type name in the programming language that is being coverted to/from XML.
+
+Serializer and deserializer refer to type names in the programming language.
+</span><span class="textOperator">&lt;/</span><span class="textElement">xsd:documentation</span><span class="textOperator">&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:annotation</span><span class="textOperator">&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;</span><span class="textElement">xsd:complexType</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:sequence</span><span class="textOperator">&gt;</span><span class="textContents">
+      </span><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> ref</span><span class="textOperator">=</span><span class="textContents">"wsdd:documentation</span><span class="textOperator">"</span><span class="textAttr"> minOccurs</span><span class="textOperator">=</span><span class="textContents">"0</span><span class="textOperator">"/&gt;</span><span class="textContents">
+      </span><span class="textOperator">&lt;</span><span class="textElement">xsd:any</span><span class="textAttr"> namespace</span><span class="textOperator">=</span><span class="textContents">"##other</span><span class="textOperator">"</span><span class="textAttr"> processContents</span><span class="textOperator">=</span><span class="textContents">"lax</span><span class="textOperator">"</span><span class="textAttr"> minOccurs</span><span class="textOperator">=</span><span class="textContents">"0</span><span class="textOperator">"</span><span class="textAttr"> maxOccurs</span><span class="textOperator">=</span><span class="textContents">"unbounded</span><span class="textOperator">"/&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:sequence</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:attribute</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"name</span><span class="textOperator">"</span><span class="textAttr"> type</span><span class="textOperator">=</span><span class="textContents">"xsd:NCName</span><span class="textOperator">"</span><span class="textAttr"> use</span><span class="textOperator">=</span><span class="textContents">"optional</span><span class="textOperator">"/&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:attribute</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"ref</span><span class="textOperator">"</span><span class="textAttr"> type</span><span class="textOperator">=</span><span class="textContents">"xsd:QName</span><span class="textOperator">"</span><span class="textAttr"> use</span><span class="textOperator">=</span><span class="textContents">"optional</span><span class="textOperator">"/&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:attribute</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"encodingStyle</span><span class="textOperator">"</span><span class="textAttr"> type</span><span class="textOperator">=</span><span class="textContents">"xsd:uriReference</span><span class="textOperator">"</span><span class="textAttr"> use</span><span class="textOperator">=</span><span class="textContents">"optional</span><span class="textOperator">"/&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:attribute</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"namespaceURI</span><span class="textOperator">"</span><span class="textAttr"> type</span><span class="textOperator">=</span><span class="textContents">"xsd:uriReference</span><span class="textOperator">"</span><span class="textAttr"> use</span><span class="textOperator">=</span><span class="textContents">"optional</span><span class="textOperator">"/&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:attribute</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"localPart</span><span class="textOperator">"</span><span class="textAttr"> type</span><span class="textOperator">=</span><span class="textContents">"xsd:NCName</span><span class="textOperator">"</span><span class="textAttr"> use</span><span class="textOperator">=</span><span class="textContents">"optional</span><span class="textOperator">"/&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:attribute</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"languageSpecificType</span><span class="textOperator">"</span><span class="textAttr"> type</span><span class="textOperator">=</span><span class="textContents">"xsd:QName</span><span class="textOperator">"</span><span class="textAttr"> use</span><span class="textOperator">=</span><span class="textContents">"optional</span><span class="textOperator">"/&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:attribute</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"serializer</span><span class="textOperator">"</span><span class="textAttr"> type</span><span class="textOperator">=</span><span class="textContents">"xsd:QName</span><span class="textOperator">"</span><span class="textAttr"> use</span><span class="textOperator">=</span><span class="textContents">"optional</span><span class="textOperator">"/&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:attribute</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"deserializer</span><span class="textOperator">"</span><span class="textAttr"> type</span><span class="textOperator">=</span><span class="textContents">"xsd:QName</span><span class="textOperator">"</span><span class="textAttr"> use</span><span class="textOperator">=</span><span class="textContents">"optional</span><span class="textOperator">"/&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:complexType</span><span class="textOperator">&gt;</span><span class="textContents">
+</span><span class="textOperator">&lt;/</span><span class="textElement">xsd:element</span><span class="textOperator">&gt;</span></pre></td>
+			</tr>
+		</table>
+		<br />
+		<a name="complexType_DeployableItem_Link014705A8" />
+		<span class="elementHeader">complexType </span>
+		<span class="elementHeader2">DeployableItem</span>
+		<table width="100%" cellspacing="0" cellpadding="5" border="1">
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">diagram</span></td>
+				<td width="90%" align="left" bgcolor="#FFFFFF"><map name="Map014705A8"><area coords="214,5,352,130" href="#element_documentation_Link014532F0" /><area coords="214,142,339,380" href="#element_parameter_Link014533B8" /></map><img src="wsdd_p15.png" width="372" height="385" border="0" usemap="#Map014705A8" /></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">namespace</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">http://xml.apache.org/axis/wsdd/</span></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">children</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><a href="#element_documentation_Link014532F0"><span class="schemaName">wsdd:documentation</span></a><span class="schemaName"> </span><a href="#element_parameter_Link014533B8"><span class="schemaName">wsdd:parameter</span></a></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">used by</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">elements&nbsp;</span></td><td align="left" bgcolor="#F0F0F0"><a href="#element_chain_Link01480788"><span class="schemaName">chain</span></a><span class="schemaName"> </span><a href="#element_globalConfiguration_Link01478AF8"><span class="schemaName">globalConfiguration</span></a><span class="schemaName"> </span><a href="#element_handler_Link01480850"><span class="schemaName">handler</span></a><span class="schemaName"> </span><a href="#element_provider_Link0146BAB0"><span class="schemaName">provider</span></a><span class="schemaName"> </span><a href="#element_service_Link01453228"><span class="schemaName">service</span></a><span class="schemaName"> </span><a href="#element_transport_Link0144EB48"><span class="schemaName">transport</span></a></td></tr><tr valign="top"><td align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">complexType&nbsp;</span></td><td align="left" bgcolor="#F0F0F0"><a href="#complexType_Flow_Link0146F710"><span class="schemaName">Flow</span></a></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">attributes</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Name&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Type&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Use&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Value&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><a name="attribute_name_Link0147EBB8" /><span class="schemaSubData">name&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:NCName&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">optional&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><a name="attribute_type_Link01477E10" /><span class="schemaSubData">type&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:QName&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">optional&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">annotation</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">documentation&nbsp;</span></td><td align="left" bgcolor="#F0F0F0"><pre><span class="schemaSubData">A DeployableItem is any individual component which may be deployed into the Axis runtime 
+environment.  Handlers, Chains, Flows, Providers, Services, Transports, and the global Axis Configuration are all
+DeployableItems.
+
+The optional name attribute is used to uniquely identify the DeployableItem within the scope of the given WSDD document.
+
+The optional type attribute is used to reference the implementation of this DeployableItem. 
+</span></pre></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">source</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><pre><span class="textOperator">&lt;</span><span class="textElement">xsd:complexType</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"DeployableItem</span><span class="textOperator">"&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;</span><span class="textElement">xsd:annotation</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:documentation</span><span class="textOperator">&gt;</span><span class="textContents">A DeployableItem is any individual component which may be deployed into the Axis runtime 
+environment.  Handlers, Chains, Flows, Providers, Services, Transports, and the global Axis Configuration are all
+DeployableItems.
+
+The optional name attribute is used to uniquely identify the DeployableItem within the scope of the given WSDD document.
+
+The optional type attribute is used to reference the implementation of this DeployableItem. 
+</span><span class="textOperator">&lt;/</span><span class="textElement">xsd:documentation</span><span class="textOperator">&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:annotation</span><span class="textOperator">&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;</span><span class="textElement">xsd:sequence</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> ref</span><span class="textOperator">=</span><span class="textContents">"wsdd:documentation</span><span class="textOperator">"</span><span class="textAttr"> minOccurs</span><span class="textOperator">=</span><span class="textContents">"0</span><span class="textOperator">"/&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> ref</span><span class="textOperator">=</span><span class="textContents">"wsdd:parameter</span><span class="textOperator">"</span><span class="textAttr"> minOccurs</span><span class="textOperator">=</span><span class="textContents">"0</span><span class="textOperator">"</span><span class="textAttr"> maxOccurs</span><span class="textOperator">=</span><span class="textContents">"unbounded</span><span class="textOperator">"/&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:sequence</span><span class="textOperator">&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;</span><span class="textElement">xsd:attribute</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"name</span><span class="textOperator">"</span><span class="textAttr"> type</span><span class="textOperator">=</span><span class="textContents">"xsd:NCName</span><span class="textOperator">"</span><span class="textAttr"> use</span><span class="textOperator">=</span><span class="textContents">"optional</span><span class="textOperator">"/&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;</span><span class="textElement">xsd:attribute</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"type</span><span class="textOperator">"</span><span class="textAttr"> type</span><span class="textOperator">=</span><span class="textContents">"xsd:QName</span><span class="textOperator">"</span><span class="textAttr"> use</span><span class="textOperator">=</span><span class="textContents">"optional</span><span class="textOperator">"/&gt;</span><span class="textContents">
+</span><span class="textOperator">&lt;/</span><span class="textElement">xsd:complexType</span><span class="textOperator">&gt;</span></pre></td>
+			</tr>
+		</table>
+		<br />
+		<a name="complexType_Flow_Link0146F710" />
+		<span class="elementHeader">complexType </span>
+		<span class="elementHeader2">Flow</span>
+		<table width="100%" cellspacing="0" cellpadding="5" border="1">
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">diagram</span></td>
+				<td width="90%" align="left" bgcolor="#FFFFFF"><map name="Map0146F710"><area coords="146,12,265,26" href="#complexType_DeployableItem_Link014705A8" /><area coords="230,33,368,158" href="#element_documentation_Link014532F0" /><area coords="230,170,355,408" href="#element_parameter_Link014533B8" /><area coords="300,432,404,524" href="#element_chain_Link01480788" /><area coords="420,439,420,439" href="#complexType_DeployableItem_Link014705A8" /><area coords="300,536,424,617" href="#element_handler_Link01480850" /><area coords="440,543,440,543" href="#complexType_DeployableItem_Link014705A8" /></map><img src="wsdd_p16.png" width="444" height="671" border="0" usemap="#Map0146F710" /></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">namespace</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">http://xml.apache.org/axis/wsdd/</span></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">type</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">extension of </span><a href="#complexType_DeployableItem_Link014705A8"><span class="schemaName">wsdd:DeployableItem</span></a></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">children</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><a href="#element_documentation_Link014532F0"><span class="schemaName">wsdd:documentation</span></a><span class="schemaName"> </span><a href="#element_parameter_Link014533B8"><span class="schemaName">wsdd:parameter</span></a><span class="schemaName"> </span><a href="#element_chain_Link01480788"><span class="schemaName">wsdd:chain</span></a><span class="schemaName"> </span><a href="#element_handler_Link01480850"><span class="schemaName">wsdd:handler</span></a></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">used by</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">elements&nbsp;</span></td><td align="left" bgcolor="#F0F0F0"><a href="#element_faultFlow_Link01480D40"><span class="schemaName">faultFlow</span></a><span class="schemaName"> </span><a href="#element_requestFlow_Link01480198"><span class="schemaName">requestFlow</span></a><span class="schemaName"> </span><a href="#element_responseFlow_Link0147FE50"><span class="schemaName">responseFlow</span></a></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">attributes</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Name&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Type&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Use&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubTitle">Value&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">name&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:NCName&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">optional&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr><tr valign="top"><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">type&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">xsd:QName&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">optional&nbsp;&nbsp;</span></td><td width="25%" align="left" bgcolor="#F0F0F0"><span class="schemaSubData">&nbsp;&nbsp;</span></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">annotation</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><table cellspacing="0" cellpadding="0"><tr valign="top"><td align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">documentation&nbsp;</span></td><td align="left" bgcolor="#F0F0F0"><pre><span class="schemaSubData">A Flow defines the sequential invocation of handlers and handler chains for a particular service.  
+The are generally three distinct types of Flows supported by Axis: request flows, response flows and fault flows.  
+
+The child elements are  aggregated together into a single handler chain of the specified type.  If the type attribute is 
+not set, then the default Axis flow type handler is used (org.apache.axis.SimpleChain).
+
+The optional name attribute is usually used to qualify the chains for multiple fault flows defined within a faultScope.
+</span></pre></td></tr></table></td>
+			</tr>
+			<tr valign="top">
+				<td width="10%" align="right" bgcolor="#F0F0F0"><span class="schemaSubTitle">source</span></td>
+				<td width="90%" align="left" bgcolor="#F0F0F0"><pre><span class="textOperator">&lt;</span><span class="textElement">xsd:complexType</span><span class="textAttr"> name</span><span class="textOperator">=</span><span class="textContents">"Flow</span><span class="textOperator">"&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;</span><span class="textElement">xsd:annotation</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:documentation</span><span class="textOperator">&gt;</span><span class="textContents">A Flow defines the sequential invocation of handlers and handler chains for a particular service.  
+The are generally three distinct types of Flows supported by Axis: request flows, response flows and fault flows.  
+
+The child elements are  aggregated together into a single handler chain of the specified type.  If the type attribute is 
+not set, then the default Axis flow type handler is used (org.apache.axis.SimpleChain).
+
+The optional name attribute is usually used to qualify the chains for multiple fault flows defined within a faultScope.
+</span><span class="textOperator">&lt;/</span><span class="textElement">xsd:documentation</span><span class="textOperator">&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:annotation</span><span class="textOperator">&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;</span><span class="textElement">xsd:complexContent</span><span class="textOperator">&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;</span><span class="textElement">xsd:extension</span><span class="textAttr"> base</span><span class="textOperator">=</span><span class="textContents">"wsdd:DeployableItem</span><span class="textOperator">"&gt;</span><span class="textContents">
+      </span><span class="textOperator">&lt;</span><span class="textElement">xsd:sequence</span><span class="textOperator">&gt;</span><span class="textContents">
+        </span><span class="textOperator">&lt;</span><span class="textElement">xsd:choice</span><span class="textAttr"> minOccurs</span><span class="textOperator">=</span><span class="textContents">"0</span><span class="textOperator">"</span><span class="textAttr"> maxOccurs</span><span class="textOperator">=</span><span class="textContents">"unbounded</span><span class="textOperator">"&gt;</span><span class="textContents">
+          </span><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> ref</span><span class="textOperator">=</span><span class="textContents">"wsdd:chain</span><span class="textOperator">"/&gt;</span><span class="textContents">
+          </span><span class="textOperator">&lt;</span><span class="textElement">xsd:element</span><span class="textAttr"> ref</span><span class="textOperator">=</span><span class="textContents">"wsdd:handler</span><span class="textOperator">"/&gt;</span><span class="textContents">
+        </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:choice</span><span class="textOperator">&gt;</span><span class="textContents">
+        </span><span class="textOperator">&lt;</span><span class="textElement">xsd:any</span><span class="textAttr"> namespace</span><span class="textOperator">=</span><span class="textContents">"##other</span><span class="textOperator">"</span><span class="textAttr"> minOccurs</span><span class="textOperator">=</span><span class="textContents">"0</span><span class="textOperator">"</span><span class="textAttr"> maxOccurs</span><span class="textOperator">=</span><span class="textContents">"unbounded</span><span class="textOperator">"/&gt;</span><span class="textContents">
+      </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:sequence</span><span class="textOperator">&gt;</span><span class="textContents">
+      </span><span class="textOperator">&lt;</span><span class="textElement">xsd:anyAttribute</span><span class="textAttr"> namespace</span><span class="textOperator">=</span><span class="textContents">"##other</span><span class="textOperator">"/&gt;</span><span class="textContents">
+    </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:extension</span><span class="textOperator">&gt;</span><span class="textContents">
+  </span><span class="textOperator">&lt;/</span><span class="textElement">xsd:complexContent</span><span class="textOperator">&gt;</span><span class="textContents">
+</span><span class="textOperator">&lt;/</span><span class="textElement">xsd:complexType</span><span class="textOperator">&gt;</span></pre></td>
+			</tr>
+		</table>
+		<br />
+		<br />
+	</body>
+</html>
