@@ -88,6 +88,9 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Serializable;
+import java.io.ObjectOutputStream;
+import java.io.ObjectInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Vector;
 import java.util.Iterator;
@@ -104,7 +107,7 @@ public class MessageElement implements SOAPElement, Serializable
     protected String    name ;
     protected String    prefix ;
     protected String    namespaceURI ;
-    protected AttributesImpl attributes = new AttributesImpl();
+    protected transient AttributesImpl attributes = new AttributesImpl();
     protected String    id;
     protected String    href;
     protected boolean   _isRoot = true;
@@ -773,6 +776,40 @@ public class MessageElement implements SOAPElement, Serializable
     public void addMapping(Mapping map) {
         if (namespaces == null) namespaces = new ArrayList();
         namespaces.add(map);
+    }
+
+    /*
+     * Handle transient fields.
+     * NB. order of writes in writeObject must match order of reads in
+     * readObject.
+     */
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        int n = attributes.getLength();
+        out.writeInt(n);
+        for (int i = 0; i < n; i++) {
+            out.writeObject(attributes.getLocalName(i));
+            out.writeObject(attributes.getQName(i));
+            out.writeObject(attributes.getURI(i));
+            out.writeObject(attributes.getType(i));
+            out.writeObject(attributes.getValue(i));
+        }
+        out.defaultWriteObject();
+    }
+
+    private void readObject(ObjectInputStream in)
+        throws IOException, ClassNotFoundException {
+        attributes = new AttributesImpl();
+        int n = in.readInt();
+        for (int i = 0; i < n; i++) {
+            String localName = (String)in.readObject();
+            String qName = (String)in.readObject();
+            String uri = (String)in.readObject();
+            String type = (String)in.readObject();
+            String value = (String)in.readObject();
+            attributes.addAttribute(uri, localName, qName, type, value);
+        }
+        in.defaultReadObject();
     }
 
     // JAXM Node methods...
