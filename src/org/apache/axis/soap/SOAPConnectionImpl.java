@@ -88,6 +88,7 @@ public class SOAPConnectionImpl extends javax.xml.soap.SOAPConnection {
         }
         try {
             Call call = new Call(endpoint.toString());
+            ((org.apache.axis.Message)request).setMessageContext(call.getMessageContext());
             SOAPEnvelope env = ((org.apache.axis.Message)request).getSOAPEnvelope();
             call.invoke(env);
             return call.getResponseMessage();
