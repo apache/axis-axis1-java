@@ -926,8 +926,14 @@ public class Emitter {
         String fileName = exceptionName + ".java";
 
         // check to make sure we haven't already emitted this fault
-        if (this.classList.contains(exceptionName) ) {
-            return exceptionName;
+        if (packageName == null) {
+            if ( this.classList.contains(exceptionName) ) {
+                return exceptionName;
+            }
+        } else {
+            if ( this.classList.contains(packageName + "." + exceptionName) ) {
+                return exceptionName;
+            }
         }
 
         this.fileList.add(packageDirName + fileName);
