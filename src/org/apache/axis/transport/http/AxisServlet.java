@@ -656,10 +656,12 @@ public class AxisServlet extends AxisServletBase {
                     t2=System.currentTimeMillis();
                 }
                 responseMsg = msgContext.getResponseMessage();
-                if (responseMsg == null) {
-                    //tell everyone that something is wrong
-                    throw new Exception(Messages.getMessage("noResponse01"));
-                }
+
+                // We used to throw exceptions on null response messages.
+                // They are actually OK in certain situations (asynchronous
+                // services), so fall through here and return an ACCEPTED
+                // status code below.  Might want to install a configurable
+                // error check for this later.
             } catch (AxisFault fault) {
                 //log and sanitize
                 processAxisFault(fault);
@@ -682,8 +684,7 @@ public class AxisServlet extends AxisServletBase {
                 responseMsg = new Message(fault);
             }
         }
-        //determine content type from message response
-        contentType = responseMsg.getContentType(msgContext.getSOAPConstants());
+        
         if( tlog.isDebugEnabled() ) {
             t3=System.currentTimeMillis();
         }
@@ -691,8 +692,13 @@ public class AxisServlet extends AxisServletBase {
         /* Send response back along the wire...  */
         /***********************************/
         if (responseMsg != null) {
+            //determine content type from message response
+            contentType = responseMsg.getContentType(msgContext.getSOAPConstants());
             sendResponse(getProtocolVersion(req), contentType,
                          res, responseMsg);
+        } else {
+            // No content, so just indicate accepted
+            res.setStatus(202);
         }
 
         if (isDebug) {
@@ -1098,7 +1104,7 @@ public class AxisServlet extends AxisServletBase {
                          // If the defined class name for this query string handler is blank,
                          // just return (the handler is "turned off" in effect).
                          
-                         if (((String) this.transport.getOption (queryHandler)).equals ("")) {
+                         if (this.transport.getOption (queryHandler).equals ("")) {
                               return false;
                          }
                          
