@@ -431,12 +431,19 @@ public class AxisServlet extends AxisServletBase {
                 response.setContentType("text/xml");
                 XMLUtils.DocumentToWriter(doc, writer);
             } else {
-                reportNoWSDL(response, writer);
+                if (log.isDebugEnabled()) {
+                    log.debug("processWsdlRequest: failed to create WSDL");
+                }
+                reportNoWSDL(response, writer, "noWSDL02", null);
             }
         } catch (AxisFault axisFault) {
             //the no-service fault is mapped to a no-wsdl error
             if(axisFault.getFaultCode() .equals(Constants.QNAME_NO_SERVICE_FAULT_CODE)) {
-                reportNoWSDL(response, writer);
+                //which we log before reporting.
+                if(log.isDebugEnabled()) {
+                    log.debug(Messages.getMessage("exception00"), axisFault);
+                }
+                reportNoWSDL(response, writer, "noWSDL01", axisFault);
             } else {
                 throw axisFault;
             }
@@ -553,8 +560,11 @@ public class AxisServlet extends AxisServletBase {
      * report that we have no WSDL
      * @param res
      * @param writer
+     * @param moreDetailCode optional name of a message to provide more detail
+     * @param axisFault optional fault string, for extra info at debug time only
      */
-    protected void reportNoWSDL(HttpServletResponse res, PrintWriter writer) {
+    protected void reportNoWSDL(HttpServletResponse res, PrintWriter writer,
+                                String moreDetailCode, AxisFault axisFault) {
         res.setStatus(HttpURLConnection.HTTP_NOT_FOUND);
         res.setContentType("text/html");
         writer.println("<h2>" +
@@ -563,6 +573,18 @@ public class AxisServlet extends AxisServletBase {
         writer.println("<p>" +
                        Messages.getMessage("noWSDL00") +
                        "</p>");
+        if(moreDetailCode!=null) {
+            writer.println("<p>"
+                    +Messages.getMessage(moreDetailCode)
+                    +"</p>");
+        }
+
+        if(axisFault!=null && isDevelopment()) {
+            //dev systems only give fault dumps
+            writer.println("<pre>Exception - " + axisFault.getLocalizedMessage()+ "<br>");
+            writer.println(axisFault.dumpToString());
+            writer.println("</pre>");
+        }
     }
 
     /**
