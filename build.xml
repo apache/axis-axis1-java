@@ -112,6 +112,7 @@ Copyright:
     <pathelement location="${regexp.jar}"/>
     <pathelement location="${junit.jar}"/>
     <pathelement location="${excalibur.jar}"/>
+    <pathelement location="${j2ee.jar}"/>
     <pathelement location="${java.home}/../lib/tools.jar"/>
     <fileset dir="lib">
      <include name="*.jar"/>
@@ -269,15 +270,15 @@ Copyright:
           toDir="${build.dest}/org/apache/axis/client"/>
     <copy file="${src.dir}/log4j.properties"
           toDir="${build.dest}"/>
-    <copy file="${src.dir}/org/apache/axis/utils/resources.properties"
+    <copy file="${src.dir}/org/apache/axis/utils/axis.nls.properties"
           toDir="${build.dest}/org/apache/axis/utils"/>
 
     <tstamp>
       <format property="build.time" pattern="MMM dd, yyyy (hh:mm:ss z)"/>
     </tstamp>
-    <replace file="${build.dest}/org/apache/axis/utils/resources.properties"
+    <replace file="${build.dest}/org/apache/axis/utils/axis.nls.properties"
              token="#today#" value="${build.time}"/>
-    <replace file="${build.dest}/org/apache/axis/utils/resources.properties"
+    <replace file="${build.dest}/org/apache/axis/utils/axis.nls.properties"
              token="#axisVersion#" value="${axis.version}"/>
   
     <jar jarfile="${build.lib}/${name}.jar" basedir="${build.dest}" >
