@@ -74,7 +74,7 @@ public interface HandlerChain extends List {
     /**
      * The <code>handleRequest</code> method initiates the request
      * processing for this handler chain.
-     * @param context - MessageContext parameter provides access to
+     * @param context MessageContext parameter provides access to
      *             the request SOAP message.
      * @return boolean Returns <code>true</code> if all handlers in
      *             chain have been processed. Returns <code>false</code>
@@ -82,7 +82,7 @@ public interface HandlerChain extends List {
      *             if a handler in the chain returned
      *             <code>false</code> from its handleRequest
      *             method.
-     * @throws JAXRPCException - if any processing error happens
+     * @throws JAXRPCException if any processing error happens
      */
     public boolean handleRequest(MessageContext context);
 
@@ -90,13 +90,13 @@ public interface HandlerChain extends List {
      * The <code>handleResponse</code> method initiates the response
      * processing for this handler chain.
      *
-     * @param context - MessageContext parameter provides access to the response
+     * @param context MessageContext parameter provides access to the response
      *                  SOAP message.
      * @return boolean Returns <code>true</code> if all handlers in
      *             chain have been processed. Returns <code>false</code>
      *             if a handler in the chain returned
      *             <code>false</code> from its handleResponse method.
-     * @throws JAXRPCException - if any processing error happens
+     * @throws JAXRPCException if any processing error happens
      */
     public boolean handleResponse(MessageContext context);
 
@@ -104,30 +104,30 @@ public interface HandlerChain extends List {
      * The <code>handleFault</code> method initiates the SOAP
      * fault processing for this handler chain.
      *
-     * @param  context - MessageContext parameter provides access to the SOAP
+     * @param  context MessageContext parameter provides access to the SOAP
      *         message.
      * @return Returns boolean Returns <code>true</code> if all handlers in
      *             chain have been processed. Returns <code>false</code>
      *             if a handler in the chain returned
      *             <code>false</code> from its handleFault method.
-     * @throws JAXRPCException - if any processing error happens
+     * @throws JAXRPCException if any processing error happens
      */
     public boolean handleFault(MessageContext context);
 
     /**
      * Initializes the configuration for a HandlerChain.
      *
-     * @param config - Configuration for the initialization of this handler
+     * @param config Configuration for the initialization of this handler
      *                 chain
      *
-     * @throws JAXRPCException - If any error during initialization
+     * @throws JAXRPCException If any error during initialization
      */
     public void init(Map config);
 
     /**
      * Indicates the end of lifecycle for a HandlerChain.
      *
-     * @throws JAXRPCException - If any error during destroy
+     * @throws JAXRPCException If any error during destroy
      */
     public void destroy();
 
@@ -143,7 +143,7 @@ public interface HandlerChain extends List {
      * specification for the URI name for this special SOAP actor.
      * There is no need to set this special role using this method.
      *
-     * @param soapActorNames - URIs for SOAP actor name
+     * @param soapActorNames URIs for SOAP actor name
      */
     public void setRoles(String[] soapActorNames);
 

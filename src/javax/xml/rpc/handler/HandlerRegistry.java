@@ -70,7 +70,7 @@ import javax.xml.namespace.QName;
  * specified service endpoint. The returned handler chain is
  * configured using the java.util.List interface. Each element
  * in this list is required to be of the Java type
- * <code>javax.xml.rpc.handler.HandlerInfo
+ * <code>javax.xml.rpc.handler.HandlerInfo</code>
  *
  * @version 1.0
  */

@@ -136,7 +136,7 @@ public interface Handler {
     /**
      * The <code>handleResponse</code> method processes the response SOAP message.
      *
-     * @param context - MessageContext parameter provides access to
+     * @param context MessageContext parameter provides access to
      *            the response SOAP message
      *
      * @return boolean Indicates the processing mode
