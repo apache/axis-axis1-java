@@ -1907,7 +1907,7 @@ public class Call implements javax.xml.rpc.Call {
                     Object value = param.getValue();
 
                     // Convert type if needed
-                    if (javaType != null &&
+                    if (javaType != null && value != null &&
                            !javaType.isAssignableFrom(value.getClass())) {
                         value = JavaUtils.convert(value, javaType);
                     }
