@@ -3,3 +3,4 @@ build
 client-config.wsdd
 server-config.wsdd
 test-reports
+junit*
