@@ -96,8 +96,10 @@ import java.io.FileOutputStream;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.Vector;
 
 /**
  * WSDL utility class, 1st cut.  Right now all the WSDL functionality for
@@ -499,19 +501,28 @@ public class Emitter {
      */
     private void writeMessages(Definition def, Operation oper, Method method) throws Exception{
         Input input = def.createInput();
+        Vector requestNames = new Vector();
+        Vector responseNames = new Vector();
 
-        Message msg = writeRequestMessage(def, method);
+        Message msg = writeRequestMessage(def, method, requestNames);
         input.setMessage(msg);
         oper.setInput(input);
 
         def.addMessage(msg);
 
-        msg = writeResponseMessage(def, method);
+        msg = writeResponseMessage(def, method, responseNames);
         Output output = def.createOutput();
         output.setMessage(msg);
         oper.setOutput(output);
 
         def.addMessage(msg);
+
+        // Currently all parameters are interpretted as in or inout (there are no
+        // inout parameters.  Thus it is safe to use the requestNames vector as the 
+        // parameter order.  (Note that we could have used the Part names from Message part,
+        // but sometimes WSDL4J does not preserve order.)
+        if (requestNames.size() > 0)
+            oper.setParameterOrdering(requestNames);
     }
 
     /** Create a Operation
@@ -568,10 +579,11 @@ public class Emitter {
     /** Create a Request Message
      *
      * @param def  
-     * @param method             
+     * @param method        
+     * @param list  Each parameter name is added to the list               
      * @throws Exception
      */
-    private Message writeRequestMessage(Definition def, Method method) throws Exception
+    private Message writeRequestMessage(Definition def, Method method, List list) throws Exception
     {
         Message msg = def.createMessage();
 
@@ -590,7 +602,11 @@ public class Emitter {
                 offset = 1;
                 continue;
             }
-            writePartToMessage(def, msg, true, (i-offset), parameters[i], null); 
+            String paramName = writePartToMessage(def, msg, true, (i-offset), parameters[i], null); 
+            if (list != null && paramName != null &&
+                !list.contains(paramName)) {
+                list.add(paramName);
+            }
         }
 
         return msg;
@@ -599,10 +615,11 @@ public class Emitter {
     /** Create a Response Message
      *
      * @param def  
-     * @param method             
+     * @param method   
+     * @param list  Each parameter name is added to the list          
      * @throws Exception
      */
-    private Message writeResponseMessage(Definition def, Method method) throws Exception
+    private Message writeResponseMessage(Definition def, Method method, List list) throws Exception
     {
         Message msg = def.createMessage();
 
@@ -612,6 +629,7 @@ public class Emitter {
         msg.setQName(qName);
         msg.setUndefined(false);
 
+        // Write the part, but don't add it to the list
         Class type = method.getReturnType();
         writePartToMessage(def, msg, false, -1, type, method.getName().concat("Result"));
 
@@ -624,7 +642,12 @@ public class Emitter {
                 offset = 1;
                 continue;
             }
-            writePartToMessage(def, msg, false, (i-offset), parameters[i], null); 
+            String paramName = writePartToMessage(def, msg, false, (i-offset), parameters[i], null); 
+            if (list != null && paramName != null &&
+                !list.contains(paramName)) {
+                list.add(paramName);
+            }
+                
         }
 
         return msg;
@@ -638,14 +661,15 @@ public class Emitter {
      * @param num         parm number (-1 if return value)     
      * @param param       Class type of parameter             
      * @param paramName   optional name of parameter  
+     * @return The parameter name added or null
      * @throws Exception
      */
-    public void writePartToMessage(Definition def, Message msg, boolean request, int num, Class param, String paramName) throws Exception
+    public String writePartToMessage(Definition def, Message msg, boolean request, int num, Class param, String paramName) throws Exception
     {
         // Return if this is a void type
         if (param == null ||
             param == java.lang.Void.TYPE)
-            return;
+            return null;
 
         // Determine if this is a Holder class.  
         boolean holder = false;
@@ -676,7 +700,7 @@ public class Emitter {
 
         // If Response message, only continue if holder or return
         if (!request && num >= 0 && !holder)
-            return;
+            return null;
 
         // Create a paramName
         if (paramName == null) {
@@ -698,6 +722,7 @@ public class Emitter {
             part.setName(paramName);
         }
         msg.addPart(part);
+        return paramName;
     }
 
     /*
