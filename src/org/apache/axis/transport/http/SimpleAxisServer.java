@@ -63,6 +63,7 @@ import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.Options;
 import org.apache.commons.logging.Log;
 
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -194,6 +195,12 @@ public class SimpleAxisServer implements Runnable {
      */
     public void setServerSocket(ServerSocket serverSocket) {
         this.serverSocket = serverSocket;
+        try {
+            Class [] clazzParms = new Class[]{boolean.class};
+            Object[] parms = new Object[] {Boolean.TRUE};
+            Method m = this.serverSocket.getClass().getMethod("setReuseAddress", clazzParms);
+            m.invoke(this.serverSocket, parms);
+        } catch (Exception e) {}
     }
 
     /**
