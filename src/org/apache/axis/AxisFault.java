@@ -87,6 +87,15 @@ public class AxisFault extends java.rmi.RemoteException {
         setFaultDetails( details );
     }
 
+    public AxisFault(String code, String str,
+                     String actor, String details) {
+        super (str);
+        setFaultCode( new QFault(Constants.AXIS_NS, code));
+        setFaultString( str );
+        setFaultActor( actor );
+        setFaultDetailsString( details );
+    }
+
     public AxisFault(QFault code, String str,
                      String actor, Element[] details) {
         super (str);
@@ -173,6 +182,13 @@ public class AxisFault extends java.rmi.RemoteException {
         faultDetails = new Vector( details.length );
         for ( int loop = 0 ; loop < details.length ; loop++ )
             faultDetails.add( details[loop] );
+    }
+
+    public void setFaultDetailsString(String details) {
+        faultDetails = new Vector();
+        Document doc = XMLUtils.newDocument();
+        Text text = doc.createTextNode(details);
+        faultDetails.add(text);
     }
 
     public Element[] getFaultDetails() {
