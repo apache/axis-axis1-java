@@ -238,17 +238,19 @@ public class SimpleDeserializer extends DeserializerImpl {
         }
         
         if(constructor.getParameterTypes().length==0){
-            Object obj = constructor.newInstance(new Object[]{});
-            obj.getClass().getMethod("set_value", new Class[]{String.class})
-                    .invoke(obj, new Object[]{source});
-            return obj;
-        } else {
-            if (args == null) {
-                args = new Object[] { source };
+            try {
+                Object obj = constructor.newInstance(new Object[]{});
+                obj.getClass().getMethod("set_value", new Class[]{String.class})
+                        .invoke(obj, new Object[]{source});
+                return obj;
+            } catch (Exception e){
+                //Ignore exception
             }
-            
-            return constructor.newInstance(args);
         }
+        if (args == null) {
+            args = new Object[]{source};
+        }
+        return constructor.newInstance(args);
     }
 
     private Object makeBasicValue(String source) throws Exception {

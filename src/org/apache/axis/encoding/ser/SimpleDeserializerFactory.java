@@ -16,7 +16,8 @@
 
 package org.apache.axis.encoding.ser;
 
-import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.BeanUtils;
+import org.apache.axis.utils.BeanPropertyDescriptor;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
@@ -62,6 +63,13 @@ public class SimpleDeserializerFactory extends BaseDeserializerFactory {
                 try {
                     constructor = 
                         javaType.getDeclaredConstructor(new Class[]{});
+                    BeanPropertyDescriptor[] pds = BeanUtils.getPd(javaType);
+                    if(pds != null) {
+                        if(BeanUtils.getSpecificPD(pds,"_value")!=null){
+                            return;
+                        }
+                    }
+                    throw new IllegalArgumentException(e.toString());
                 } catch (java.lang.NoSuchMethodException ex) {
                     throw new IllegalArgumentException(ex.toString());
                 } 
