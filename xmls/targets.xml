@@ -12,9 +12,12 @@
        =================================================================== -->
   <target name="component-compile">
         <echo message="${file}"/>
+        <ant antfile="${file}" target="compile"/>
+      <!--
         <exec executable="ant">
            <arg line="-buildfile ${file} compile"/>
         </exec>
+      -->
   </target>
 
   <!-- ===================================================================
@@ -23,9 +26,12 @@
        =================================================================== -->
   <target name="batch-component-test">
 	<antcall target="echo-file"/>
+	<ant antfile="${file}" target="component-junit-functional"/>
+      <!--
         <exec executable="ant">
            <arg line="-buildfile ${file} component-junit-functional"/>
         </exec>
+      -->
   </target>
 
   <!-- ===================================================================
@@ -33,9 +39,12 @@
        =================================================================== -->
   <target name="batch-component-run">
         <antcall target="echo-file"/>
+	<ant antfile="${file}" target="run"/>
+      <!--
         <exec executable="ant">
            <arg line="-buildfile ${file} run"/>
         </exec>
+      -->
   </target>
 
   <!-- =================================================================== -->
