@@ -190,8 +190,7 @@ public abstract class JavaProvider extends BasicProvider
 
     /**
      * Return a new service object which, if it implements the ServiceLifecycle
-     * interface, has been init()ed.  Right now we pass "null" as the context
-     * argument to init() - this might want to be the MessageContext?
+     * interface, has been init()ed. 
      *
      * @param msgContext the MessageContext
      * @param clsName the name of the class to instantiate
@@ -203,7 +202,8 @@ public abstract class JavaProvider extends BasicProvider
         Object serviceObject = makeNewServiceObject(msgContext, clsName);
         if (serviceObject != null &&
                 serviceObject instanceof ServiceLifecycle) {
-            ((ServiceLifecycle)serviceObject).init(null);
+            ((ServiceLifecycle)serviceObject).init(
+                  msgContext.getProperty(Constants.MC_SERVLET_ENDPOINT_CONTEXT));
         }
         return serviceObject;
     }
