@@ -279,22 +279,25 @@ public class Admin {
             /** For now, though - make sure we can only admin from our own
              * IP, unless the remoteAdmin option is set.
              */
-            String remoteAdmin = (String)msgContext.getServiceHandler().
+            Handler serviceHandler = msgContext.getServiceHandler();
+            if (serviceHandler != null) {
+                String remoteAdmin = (String)serviceHandler.
                                             getOption("enableRemoteAdmin");
-            if ((remoteAdmin == null) ||
-                !remoteAdmin.equals("true")) {
-                String remoteIP =
+                if ((remoteAdmin == null) ||
+                    !remoteAdmin.equals("true")) {
+                    String remoteIP =
                             msgContext.getStrProp(Constants.MC_REMOTE_ADDR);
-                if (remoteIP != null) {
-                    if (!remoteIP.equals("127.0.0.1")) {
-                        InetAddress myAddr = InetAddress.getLocalHost();
-                        InetAddress remoteAddr =
+                    if (remoteIP != null) {
+                        if (!remoteIP.equals("127.0.0.1")) {
+                            InetAddress myAddr = InetAddress.getLocalHost();
+                            InetAddress remoteAddr =
                                             InetAddress.getByName(remoteIP);
                         
-                        if (!myAddr.equals(remoteAddr))
-                            throw new AxisFault("Server.Unauthorized",
-                                "Remote admin access is not allowed! ",
-                                null, null);
+                            if (!myAddr.equals(remoteAddr))
+                                throw new AxisFault("Server.Unauthorized",
+                                    "Remote admin access is not allowed! ",
+                                    null, null);
+                        }
                     }
                 }
             }
