@@ -70,19 +70,20 @@ import org.apache.axis.utils.JavaUtils;
 * which contains the <portTypeName> interface.
 */
 public class JavaInterfaceWriter extends JavaWriter {
-    private PortType portType;
-    private HashMap  operationParameters;
+    private PortType      portType;
+    private PortTypeEntry ptEntry;
+    private SymbolTable   symbolTable;
 
     /**
      * Constructor.
      */
     protected JavaInterfaceWriter(
             Emitter emitter,
-            PortType portType, HashMap operationParameters) {
-        super(emitter, portType.getQName(), "", "java",
-                JavaUtils.getMessage("genIface00"));
-        this.portType = portType;
-        this.operationParameters = operationParameters;
+            PortTypeEntry ptEntry, SymbolTable symbolTable) {
+        super(emitter, ptEntry, "", "java", JavaUtils.getMessage("genIface00"));
+        this.ptEntry = ptEntry;
+        this.portType = ptEntry.getPortType();
+        this.symbolTable = symbolTable;
     } // ctor
 
     /**
@@ -110,7 +111,7 @@ public class JavaInterfaceWriter extends JavaWriter {
      */
     private void writeOperation(PortType portType, Operation operation, String namespace) throws IOException {
         writeComment(pw, operation.getDocumentationElement());
-        Parameters parms = (Parameters) operationParameters.get(operation.getName());
+        Parameters parms = ptEntry.getParameters(operation.getName());
         pw.println(parms.signature + ";");
     } // writeOperation
 

@@ -52,45 +52,45 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
+
 package org.apache.axis.wsdl;
 
-import java.io.IOException;
+import java.util.HashMap;
 
-import org.apache.axis.utils.JavaUtils;
+import javax.wsdl.PortType;
+import javax.wsdl.QName;
 
 /**
-* This is Wsdl2java's Holder Writer.  It writes the <typeName>Holder.java file.
+* This class represents a WSDL portType.  It encompasses the WSDL4J PortType object so it can
+* reside in the SymbolTable.  It also adds the parameter information, which is missing from the
+* WSDL4J PortType object.
 */
-public class JavaHolderWriter extends JavaWriter {
-    private Type type;
+public class PortTypeEntry extends SymTabEntry {
+    private PortType portType;
+    private HashMap  parameters = new HashMap ();
 
     /**
-     * Constructor.
+     * Construct a PortTypeEntry from a WSDL4J PortType object and a HashMap of Parameters objects,
+     * keyed off of the operation name.
      */
-    protected JavaHolderWriter(Emitter emitter, Type type) {
-        super(emitter, type, "Holder", "java",
-                JavaUtils.getMessage("genHolder00"));
-        this.type = type;
+    public PortTypeEntry(PortType portType, HashMap parameters) {
+        super(portType.getQName());
+        this.portType = portType;
+        this.parameters = parameters;
     } // ctor
 
     /**
-     * Generate the holder for the given complex type.
+     * Get this entry's PortType object.
      */
-    protected void writeFileBody() throws IOException {
-        String holderType = Utils.getJavaLocalName(type.getName());
-        pw.println("public final class " + className + " implements java.io.Serializable {");
-        pw.println("    public " + holderType + " _value;");
-        pw.println();
-        pw.println("    public " + className + "() {");
-        pw.println("    }");
-        pw.println();
-        pw.println("    public " + className + "(" + holderType + " value) {");
-        pw.println("        this._value = value;");
-        pw.println("    }");
-        pw.println();
-        pw.println("    // ?++?");
-        pw.println("}");
-        pw.close();
-    } // writeOperation
+    public PortType getPortType() {
+        return portType;
+    } // getPortType
 
-} // class JavaHolderWriter
+    /**
+     * Get the Parameters object for the given operation.
+     */
+    public Parameters getParameters(String operationName) {
+        return (Parameters) parameters.get(operationName);
+    } // getParameters
+
+} // class PortTypeEntry

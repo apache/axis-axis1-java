@@ -69,13 +69,15 @@ import org.apache.axis.utils.JavaUtils;
 */
 public class JavaFaultWriter extends JavaWriter {
     private Fault fault;
+    private SymbolTable symbolTable;
 
     /**
      * Constructor.
      */
-    protected JavaFaultWriter(Emitter emitter, QName qname, Fault fault) {
+    protected JavaFaultWriter(Emitter emitter, QName qname, Fault fault, SymbolTable symbolTable) {
         super(emitter, qname, "", "java", JavaUtils.getMessage("genFault00"));
         this.fault = fault;
+        this.symbolTable = symbolTable;
     } // ctor
 
     /**
@@ -86,7 +88,7 @@ public class JavaFaultWriter extends JavaWriter {
 
         Vector params = new Vector();
 
-        emitter.partStrings(params, fault.getMessage().getOrderedParts(null), false);
+        symbolTable.partStrings(params, fault.getMessage().getOrderedParts(null));
 
         for (int i = 0; i < params.size(); i += 2)
             pw.println("    public " + params.get(i) + " " + params.get(i + 1) + ";");

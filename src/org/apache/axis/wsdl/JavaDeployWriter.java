@@ -59,6 +59,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Vector;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
@@ -74,17 +75,19 @@ import org.apache.axis.utils.JavaUtils;
 */
 public class JavaDeployWriter extends JavaWriter {
     private Definition definition;
+    private SymbolTable symbolTable;
 
     /**
      * Constructor.
      */
-    protected JavaDeployWriter(Emitter emitter, Definition definition) {
+    protected JavaDeployWriter(Emitter emitter, Definition definition, SymbolTable symbolTable) {
         super(emitter,
                 new QName(definition.getTargetNamespace(), "deploy"),
                 "",
                 "xml",
                 JavaUtils.getMessage("genDeploy00"));
         this.definition = definition;
+        this.symbolTable = symbolTable;
     } // ctor
 
     /**
@@ -136,9 +139,9 @@ public class JavaDeployWriter extends JavaWriter {
      * Write out bean mappings for each type
      */
     private void writeDeployTypes() throws IOException {
-        HashMap types = emitter.getTypeFactory().getTypes();
+        Vector types = symbolTable.getTypes();
 
-        if (types.isEmpty()) return;
+        if (types.size() == 0) return;
 
         pw.println();
 
@@ -146,9 +149,8 @@ public class JavaDeployWriter extends JavaWriter {
         HashMap nsMap = new HashMap();
         int i = 1;
         String nsPrefix = null;
-        Iterator it = types.values().iterator();
-        while (it.hasNext()) {
-            Type type = (Type) it.next();
+        for (int j = 0; j < types.size(); ++j) {
+            Type type = (Type) types.elementAt(j);
             if (type.getBaseType() == null && type.getShouldEmit()) {
                 if (!nsMap.containsKey(type.getQName().getNamespaceURI())) {
                   pw.println("");
@@ -159,9 +161,8 @@ public class JavaDeployWriter extends JavaWriter {
             }
         }
         pw.println(">");
-        it = types.values().iterator();
-        while (it.hasNext()) {
-            Type type = (Type) it.next();
+        for (int j = 0; j < types.size(); ++j) {
+            Type type = (Type) types.elementAt(j);
             if (type.getBaseType() == null && type.getShouldEmit()) {
                 nsPrefix = (String)nsMap.get(type.getQName().getNamespaceURI());
                 pw.println("     <" + nsPrefix + ":" + Utils.capitalizeFirstChar(type.getQName().getLocalPart())
@@ -176,9 +177,10 @@ public class JavaDeployWriter extends JavaWriter {
      */
     private void writeDeployPort(Port port) throws IOException {
         Binding binding = port.getBinding();
+        BindingEntry bEntry = symbolTable.getBindingEntry(binding.getQName());
         String serviceName = port.getName();
 
-        boolean isRPC = (emitter.wsdlAttr.getBindingStyle(binding) == WsdlAttributes.STYLE_RPC);
+        boolean isRPC = (bEntry.getBindingStyle() == BindingEntry.STYLE_RPC);
 
         pw.println("   <service name=\"" + serviceName
                 + "\" pivot=\"" + (isRPC ? "RPCDispatcher" : "MsgDispatcher") + "\">");

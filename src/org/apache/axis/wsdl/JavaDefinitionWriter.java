@@ -76,15 +76,18 @@ public class JavaDefinitionWriter implements Writer {
     Writer undeployWriter = null;
     Emitter emitter;
     Definition definition;
+    SymbolTable symbolTable;
 
     /**
      * Constructor.
      */
-    protected JavaDefinitionWriter(Emitter emitter, Definition definition) {
-        deployWriter = new JavaDeployWriter(emitter, definition);
-        undeployWriter = new JavaUndeployWriter(emitter, definition);
+    protected JavaDefinitionWriter(Emitter emitter, Definition definition,
+            SymbolTable symbolTable) {
+        deployWriter = new JavaDeployWriter(emitter, definition, symbolTable);
+        undeployWriter = new JavaUndeployWriter(emitter, definition, symbolTable);
         this.emitter = emitter;
         this.definition = definition;
+        this.symbolTable = symbolTable;
     } // ctor
 
     /**
@@ -121,7 +124,7 @@ public class JavaDefinitionWriter implements Writer {
             Fault fault = (Fault) fi.next();
             String exceptionName = Utils.capitalizeFirstChar(Utils.xmlNameToJava(fault.getName()));
             QName faultName = new QName(definition.getTargetNamespace(), exceptionName);
-            new JavaFaultWriter(emitter, faultName, fault).write();
+            new JavaFaultWriter(emitter, faultName, fault, symbolTable).write();
         }
     } // writeFaults
 

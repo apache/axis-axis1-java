@@ -104,16 +104,17 @@ public abstract class JavaWriter implements Writer {
      */
     protected JavaWriter(
             Emitter emitter,
-            Type  type,
+            SymTabEntry entry,
             String suffix,
             String extension,
             String message) {
         this.emitter     = emitter;
-        this.qname       = type.getQName();
+        this.qname       = entry.getQName();
         this.namespaces  = emitter.getNamespaces();
-        this.className   = type.getJavaLocalName() + (suffix == null ? "" : suffix);
+        this.className   = Utils.getJavaLocalName(entry.getName())
+                + (suffix == null ? "" : suffix);
         this.fileName    = className + '.' + extension;
-        this.packageName = namespaces.getCreate(qname.getNamespaceURI());
+        this.packageName = Utils.getJavaPackageName(entry.getName());
         this.message     = message;
     } // ctor
 

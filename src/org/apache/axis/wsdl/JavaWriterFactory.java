@@ -55,9 +55,15 @@
 package org.apache.axis.wsdl;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Vector;
 
 import javax.wsdl.Binding;
 import javax.wsdl.Definition;
+import javax.wsdl.Message;
+import javax.wsdl.Operation;
 import javax.wsdl.PortType;
 import javax.wsdl.Service;
 
@@ -76,6 +82,17 @@ public class JavaWriterFactory implements WriterFactory {
     } // ctor
 
     /**
+     * Do the Wsdl2java writer pass:
+     * - resolve name clashes
+     * - construct signatures
+     */
+    public void writerPass(Definition def, SymbolTable symbolTable) {
+        javifyNames(symbolTable);
+        resolveNameClashes(symbolTable);
+        constructSignatures(def, symbolTable);
+    } // writerPass
+
+    /**
      * Provide the emitter object to this class.
      */
     public void setEmitter(Emitter emitter) {
@@ -83,37 +100,190 @@ public class JavaWriterFactory implements WriterFactory {
     } // setEmitter
 
     /**
+     * Since Wsdl2java doesn't emit anything for Messages, return the No-op writer.
+     */
+    public Writer getWriter(Message message, SymbolTable symbolTable) {
+        return new NoopWriter();
+    } // getWriter
+
+    /**
      * Return Wsdl2java's JavaPortTypeWriter object.
      */
-    public Writer getWriter(PortType portType, HashMap operationParameters) {
-        return new JavaPortTypeWriter(emitter, portType, operationParameters);
+    public Writer getWriter(PortType portType, SymbolTable symbolTable) {
+        return new JavaPortTypeWriter(emitter, portType, symbolTable);
     } // getWriter
 
     /**
      * Return Wsdl2java's JavaBindingWriter object.
      */
-    public Writer getWriter(Binding binding, HashMap operationParameters) {
-        return new JavaBindingWriter(emitter, binding, operationParameters);
+    public Writer getWriter(Binding binding, SymbolTable symbolTable) {
+        return new JavaBindingWriter(emitter, binding, symbolTable);
     } // getWriter
 
     /**
      * Return Wsdl2java's JavaServiceWriter object.
      */
-    public Writer getWriter(Service service, HashMap portTypeOperationParameters) {
-        return new JavaServiceWriter(emitter, service, portTypeOperationParameters);
+    public Writer getWriter(Service service, SymbolTable symbolTable) {
+        return new JavaServiceWriter(emitter, service, symbolTable);
     } // getWriter
 
     /**
      * Return Wsdl2java's JavaTypeWriter object.
      */
-    public Writer getWriter(Type type) {
-        return new JavaTypeWriter(emitter, type);
+    public Writer getWriter(Type type, SymbolTable symbolTable) {
+        return new JavaTypeWriter(emitter, type, symbolTable);
     } // getWriter
 
     /**
      * Return Wsdl2java's JavaDefinitionWriter object.
      */
-    public Writer getWriter(Definition definition) {
-        return new JavaDefinitionWriter(emitter, definition);
+    public Writer getWriter(Definition definition, SymbolTable symbolTable) {
+        return new JavaDefinitionWriter(emitter, definition, symbolTable);
     } // getWriter
+
+    /**
+     * Fill in the names of each SymTabEntry with the javaified name
+     */
+    private void javifyNames(SymbolTable symbolTable) {
+        Iterator it = symbolTable.getHashMap().values().iterator();
+        while (it.hasNext()) {
+            Vector v = (Vector) it.next();
+            for (int i = 0; i < v.size(); ++i) {
+                SymTabEntry entry = (SymTabEntry) v.elementAt(i);
+
+                // If entry instanceof Type, then the java name has already been filled in.
+                // Don't try to do it again.  This method should really be doing the filling in
+                // of ALL enty java names, but that's another step toward generalizing the
+                // framework that I don't have time for right now.
+                if (!(entry instanceof Type)) {
+                    entry.setName(symbolTable.getJavaName(entry.getQName()));
+                }
+            }
+        }
+    } // javifyNames
+
+    /**
+     * Messages, PortTypes, Bindings, and Services can share the same name.  If they do in this
+     * Definition, force their names to be suffixed with _PortType and _Service, respectively.
+     */
+    private void resolveNameClashes(SymbolTable symbolTable) {
+        Iterator it = symbolTable.getHashMap().values().iterator();
+        while (it.hasNext()) {
+            Vector v = (Vector) it.next();
+            if (v.size() > 1) {
+                for (int i = 0; i < v.size(); ++i) {
+                    SymTabEntry entry = (SymTabEntry) v.elementAt(i);
+                    if (entry instanceof Type) {
+                        entry.setName(entry.getName() + "_Type");
+                    }
+                    else if (entry instanceof PortTypeEntry) {
+                        entry.setName(entry.getName() + "_Port");
+                    }
+                    else if (entry instanceof ServiceEntry) {
+                        entry.setName(entry.getName() + "_Service");
+                    }
+                    // else if (entry instanceof MessageEntry) {
+                    //     we don't care about messages
+                    // }
+                    // else if (entry instanceof BindingEntry) {
+                    //     since files generated from bindings all append strings to the name,
+                    //     we don't care about bindings
+                    // }
+                }
+            }
+        }
+    } // resolveNameClashes
+
+    private void constructSignatures(Definition def, SymbolTable symbolTable) {
+        Map portTypes = def.getPortTypes();
+        Iterator i = portTypes.values().iterator();
+
+        while (i.hasNext()) {
+            PortType portType = (PortType) i.next();
+            PortTypeEntry ptEntry =
+                    symbolTable.getPortTypeEntry(portType.getQName());
+            if (ptEntry != null) {
+                // Remove Duplicates - happens with only a few WSDL's. No idea why!!! 
+                // (like http://www.xmethods.net/tmodels/InteropTest.wsdl) 
+                // TODO: Remove this patch...
+                // NOTE from RJB:  this is a WSDL4J bug and the WSDL4J guys have been notified.
+                Iterator operations =
+                        new HashSet(portType.getOperations()).iterator();
+                while(operations.hasNext()) {
+                    Operation operation = (Operation) operations.next();
+                    String name = operation.getName();
+                    constructSignatures(ptEntry.getParameters(name), name);
+                }
+                
+            }
+        }
+    } // constructSignatures
+
+    /**
+     * Construct the signatures.  signature is used by both the interface and the stub.
+     * skelSig is used by the skeleton.
+     */
+    private void constructSignatures(Parameters parms, String name) {
+        int allOuts = parms.outputs + parms.inouts;
+        String signature = "    public " + parms.returnType + " " + name + "(";
+        String axisSig = "    public " + parms.returnType + " " + name + "(";
+        String skelSig = null;
+
+        if (allOuts == 0)
+            skelSig = "    public void " + name + "(";
+        else
+            skelSig = "    public Object " + name + "(";
+
+        if (emitter.bMessageContext) {
+            skelSig = skelSig + "org.apache.axis.MessageContext ctx";
+            axisSig = axisSig + "org.apache.axis.MessageContext ctx";
+            if ((parms.inputs + parms.inouts) > 0) {
+                skelSig = skelSig + ", ";
+            }
+            if (parms.list.size() > 0) {
+                axisSig = axisSig + ", ";
+            }
+        }
+        boolean needComma = false;
+
+        for (int i = 0; i < parms.list.size(); ++i) {
+            Parameters.Parameter p = (Parameters.Parameter) parms.list.get(i);
+
+            if (needComma) {
+                signature = signature + ", ";
+                axisSig = axisSig + ", ";
+                if (p.mode != Parameters.Parameter.OUT)
+                    skelSig = skelSig + ", ";
+            }
+            else
+                needComma = true;
+            if (p.mode == Parameters.Parameter.IN) {
+                signature = signature + p.type + " " + p.name;
+                axisSig = axisSig + p.type + " " + p.name;
+                skelSig = skelSig + p.type + " " + p.name;
+            }
+            else if (p.mode == Parameters.Parameter.INOUT) {
+                signature = signature + Utils.holder(p.type) + " " + p.name;
+                axisSig = axisSig + Utils.holder(p.type) + " " + p.name;
+                skelSig = skelSig + p.type + " " + p.name;
+            }
+            else// (p.mode == Parameters.Parameter.OUT)
+            {
+                signature = signature + Utils.holder(p.type) + " " + p.name;
+                axisSig = axisSig + Utils.holder(p.type) + " " + p.name;
+            }
+        }
+        signature = signature + ") throws java.rmi.RemoteException";
+        axisSig = axisSig + ") throws java.rmi.RemoteException";
+        skelSig = skelSig + ") throws java.rmi.RemoteException";
+        if (parms.faultString != null) {
+            signature = signature + ", " + parms.faultString;
+            axisSig = axisSig + ", " + parms.faultString;
+            skelSig = skelSig + ", " + parms.faultString;
+        }
+        parms.signature = signature;
+        parms.axisSignature = axisSig;
+        parms.skelSignature = skelSig;
+    } // constructSignatures
+
 } // class JavaWriterFactory

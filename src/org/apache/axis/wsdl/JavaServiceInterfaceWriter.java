@@ -69,19 +69,19 @@ import org.apache.axis.utils.JavaUtils;
 */
 public class JavaServiceInterfaceWriter extends JavaWriter {
     private PortType portType;
-    private HashMap operationParameters;
+    private PortTypeEntry ptEntry;
 
     /**
      * Constructor.
      */
     protected JavaServiceInterfaceWriter(
             Emitter emitter,
-            PortType portType,
-            HashMap operationParameters) {
-        super(emitter, portType.getQName(), "AXIS", "java",
+            PortTypeEntry ptEntry,
+            SymbolTable symbolTable) {
+        super(emitter, ptEntry, "AXIS", "java",
                 JavaUtils.getMessage("genIface01"));
-        this.portType = portType;
-        this.operationParameters = operationParameters;
+        this.ptEntry = ptEntry;
+        this.portType = ptEntry.getPortType();
     } // ctor
 
     /**
@@ -105,7 +105,7 @@ public class JavaServiceInterfaceWriter extends JavaWriter {
      * This method generates the axis server side impl interface signatures operation.
      */
     private void writeOperationAxisSkelSignatures(Operation operation) throws IOException {
-        Parameters parms = (Parameters) operationParameters.get(operation.getName());
+        Parameters parms = ptEntry.getParameters(operation.getName());
         pw.println(parms.axisSignature + ";");
     } // writeOperationAxisSkelSignatures
 
