@@ -66,8 +66,10 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Vector;
+import java.util.StringTokenizer;
 import java.net.URL;
 import java.net.MalformedURLException;
+import java.net.URLDecoder;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
@@ -106,6 +108,8 @@ public class Emitter {
     private boolean bEmitSkeleton = false;
     private boolean bMessageContext = false;
     private boolean bVerbose = false;
+    private boolean bGeneratePackageName = false;
+    String packageName = null;
 
     /**
      * Call this method if you have a uri for the WSDL document
@@ -136,6 +140,13 @@ public class Emitter {
 
             def = reader.readWSDL(null, doc);
 
+            // Generate package name if desired
+            if (packageName == null  && bGeneratePackageName) {
+                makePackageName();
+            }
+            if (bVerbose && packageName != null) {
+                System.out.println("Using package name: " + packageName);
+            }
             writeTypes();
             HashMap portTypesInfo = writePortTypes();
             writeBindings(portTypesInfo);
@@ -147,6 +158,11 @@ public class Emitter {
             e.printStackTrace();
         }
     } // emit
+
+    ///////////////////////////////////////////////////
+    //
+    // Command line switches
+    //
 
     /**
      * Turn on/off server skeleton creation
@@ -171,6 +187,25 @@ public class Emitter {
     public void verbose(boolean value) {
         this.bVerbose = value;
     }
+
+    /**
+     * Turn on/off automatic package name generation
+     */
+    public void generatePackageName(boolean generatePackageName) {
+        this.bGeneratePackageName = generatePackageName;
+    }
+
+    /**
+     * Set the package name to use in emitted source files
+     */
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
+    }
+
+    ///////////////////////////////////////////////////
+    //
+    // Implementation
+    //
 
     /**
      * This method returns a set of all the complex types in a given PortType.  The elements of the returned HashSet are Strings.
@@ -287,11 +322,12 @@ public class Emitter {
      */
     private HashMap writePortType(PortType portType) throws IOException {
         String nameValue = portType.getQName().getLocalPart();
-        PrintWriter interfacePW = new PrintWriter(
-                new FileWriter(nameValue + ".java"));
+        String fileName = nameValue + ".java";
+        PrintWriter interfacePW = new PrintWriter(new FileWriter(fileName));
         if (bVerbose)
             System.out.println("Generating portType interface: " + nameValue + ".java");
 
+        writeFileHeader(fileName, interfacePW);
         interfacePW.println("public interface " + nameValue + " extends java.rmi.Remote {");
 
         HashMap portTypeInfo = new HashMap();
@@ -315,10 +351,11 @@ public class Emitter {
      */
     private void writeAxisPortType(PortType portType) throws IOException {
         String nameValue = portType.getQName().getLocalPart() + "Axis";
-        PrintWriter interfacePW = new PrintWriter(
-                new FileWriter(nameValue + ".java"));
+        String fileName = nameValue + ".java";
+        PrintWriter interfacePW = new PrintWriter(new FileWriter(fileName));
         if (bVerbose)
-            System.out.println("Generating server-side PortType interface: " + nameValue + ".java");
+            System.out.println("Generating server-side PortType interface: " + fileName);
+        writeFileHeader(fileName, interfacePW);
         interfacePW.println("public interface " + nameValue + " extends java.rmi.Remote {");
 
         List operations = portType.getOperations();
@@ -642,8 +679,13 @@ public class Emitter {
      */
     private String fault(Fault operation) throws IOException {
         String exceptionName = capitalize(operation.getName());
-        PrintWriter pw = new PrintWriter(new FileWriter(exceptionName + ".java"));
+        String fileName = exceptionName + ".java";
+        PrintWriter pw = new PrintWriter(new FileWriter(fileName));
 
+        if (bVerbose)
+            System.out.println("Generating Fault class: " + fileName);
+
+        writeFileHeader(fileName, pw);
         pw.println("public class " + exceptionName + " extends Exception {");
 
         Vector params = new Vector();
@@ -708,11 +750,13 @@ public class Emitter {
         String portTypeName = portType.getQName().getLocalPart();
 
         String stubName = name + "Stub";
-        PrintWriter stubPW = new PrintWriter(new FileWriter(stubName + ".java"));
+        String stubFileName = stubName + ".java";
+        PrintWriter stubPW = new PrintWriter(new FileWriter(stubFileName));
         if (bVerbose)
-            System.out.println("Generating client-side stub: " + stubName + ".java");
+            System.out.println("Generating client-side stub: " + stubFileName);
 
-        stubPW.println("public class " + stubName + " extends org.apache.axis.wsdl.Stub implements " + portTypeName + "{");
+        writeFileHeader(stubFileName, stubPW);
+        stubPW.println("public class " + stubName + " extends org.apache.axis.wsdl.Stub implements " + portTypeName + " {");
         stubPW.println("    private org.apache.axis.client.ServiceClient call = new org.apache.axis.client.ServiceClient(new org.apache.axis.transport.http.HTTPTransport());");
         stubPW.println("    private java.util.Hashtable properties = new java.util.Hashtable();");
         stubPW.println();
@@ -771,14 +815,16 @@ public class Emitter {
 
         if (bEmitSkeleton) {
             String skelName = name + "Skeleton";
-            skelPW = new PrintWriter(new FileWriter(skelName + ".java"));
+            String skelFileName = skelName + ".java";
+            skelPW = new PrintWriter(new FileWriter(skelFileName));
             String implType = portTypeName + " impl";
             if (bVerbose)
-                System.out.println("Generating server-side skeleton: " + skelName + ".java");
+                System.out.println("Generating server-side skeleton: " + skelFileName);
             if (bMessageContext) {
                 implType = portTypeName + "Axis impl";
             }
-            skelPW.println("public class " + skelName + "{");
+            writeFileHeader(skelFileName, skelPW);
+            skelPW.println("public class " + skelName + " {");
             skelPW.println("    private " + implType + ";");
             skelPW.println();
             // RJB WARNING! - is this OK?
@@ -1052,15 +1098,15 @@ public class Emitter {
      */
     private void writeService(Service service) throws IOException {
         String serviceName = service.getQName().getLocalPart();
-        PrintWriter servicePW = new PrintWriter(
-                new FileWriter(serviceName + ".java"));
+        String fileName = serviceName + ".java";
+        PrintWriter servicePW = new PrintWriter(new FileWriter(fileName));
         if (bVerbose)
-            System.out.println("Generating service class: " + serviceName + ".java");
+            System.out.println("Generating service class: " + fileName);
 
-        // imports (none right now)
+        writeFileHeader(fileName, servicePW);
 
         // declare class
-        servicePW.println("public class " + serviceName + "{");
+        servicePW.println("public class " + serviceName + " {");
 
         // get ports
         Map portMap = service.getPorts();
@@ -1079,7 +1125,7 @@ public class Emitter {
             String stubClass = binding.getQName().getLocalPart() + "Stub";
             String bindingType = binding.getPortType().getQName().getLocalPart();
 
-            // Get enpoint address and validate it
+            // Get endpoint address and validate it
             String address = getAddressFromPort(p);
             if (address == null) {
                 // now what?
@@ -1092,6 +1138,7 @@ public class Emitter {
                 throw new IOException("Emitter failure.  Invalid endpoint address in port " + portName + " in service " + serviceName + ": " + address);
             }
 
+            // Write out the get<PortName> methods
             servicePW.println();
             servicePW.println("    // Use to get a proxy class for " + portName);
             servicePW.println("    private final java.lang.String " + portName + "_address = \"" + address + "\";");
@@ -1345,10 +1392,12 @@ public class Emitter {
     private void writeType(Node node) throws IOException {
         NamedNodeMap attributes = node.getAttributes();
         String nameValue = capitalize(attributes.getNamedItem("name").getNodeValue());
-        PrintWriter typePW = new PrintWriter(new FileWriter(nameValue + ".java"));
+        String fileName = nameValue + ".java";
+        PrintWriter typePW = new PrintWriter(new FileWriter(fileName));
         if (bVerbose)
-            System.out.println("Generating type implementation: " + nameValue + ".java");
+            System.out.println("Generating type implementation: " + fileName);
 
+        writeFileHeader(fileName, typePW);
         typePW.println("public class " + nameValue + " implements java.io.Serializable {");
 
         Vector elements = findNameValues(node, "element");
@@ -1398,11 +1447,13 @@ public class Emitter {
         NamedNodeMap attributes = type.getAttributes();
         String typeName =
                 capitalize(attributes.getNamedItem("name").getNodeValue());
+        String fileName = typeName + "Holder.java";
         PrintWriter pw =
-                new PrintWriter(new FileWriter(typeName + "Holder.java"));
+                new PrintWriter(new FileWriter(fileName));
         if (bVerbose)
-            System.out.println("Generating type implementation holder: " + typeName + "Holder.java");
+            System.out.println("Generating type implementation holder: " + fileName);
 
+        writeFileHeader(fileName, pw);
         pw.println("public final class " + typeName + "Holder implements java.io.Serializable {");
         pw.println("    public " + typeName + " _value;");
         pw.println();
@@ -1580,5 +1631,64 @@ public class Emitter {
         }
     }
 
+    /**
+     * Write a common header, including the package name (if any) to the
+     * provided stream
+     */
+    private void writeFileHeader(String filename, PrintWriter pw) {
+        pw.println("/**");
+        pw.println(" * " + filename);
+        pw.println(" *");
+        pw.println(" * This file was auto-generated from WSDL");
+        pw.println(" * by the Apache Axis Wsdl2java emitter.");
+        pw.println(" */");
+        pw.println();
+
+        // print package declaration
+        if (packageName != null) {
+            pw.println("package " + packageName + ";");
+            pw.println();
+        }
+    }
+
+    private void makePackageName()
+    {
+        String hostname = null;
+
+        // get the target namespace of the document
+         String namespace = def.getTargetNamespace();
+         try {
+             hostname = new URL(namespace).getHost();
+         }
+         catch (MalformedURLException e) {
+             // do nothing
+             return;
+         }
+
+        // if we didn't file a hostname, bail
+        if (hostname == null) {
+            return;
+        }
+
+        // tokenize the hostname and reverse it
+        StringTokenizer st = new StringTokenizer( hostname, "." );
+        String[] words = new String[ st.countTokens() ];
+        for(int i = 0; i < words.length; ++i)
+            words[i] = st.nextToken();
+
+        StringBuffer sb = new StringBuffer(80);
+        for(int i = words.length-1; i >= 0; --i) {
+            String word = words[i];
+            // seperate with dot
+            if( i != words.length-1 )
+                sb.append('.');
+
+            // convert digits to underscores
+            if( Character.isDigit(word.charAt(0)) )
+                sb.append('_');
+            sb.append( word );
+        }
+        setPackageName(sb.toString());
+    }
 
 }

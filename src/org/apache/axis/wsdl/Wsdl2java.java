@@ -54,69 +54,154 @@
  */
 package org.apache.axis.wsdl;
 
+import java.util.List;
+
+import org.apache.avalon.excalibur.cli.CLArgsParser;
+import org.apache.avalon.excalibur.cli.CLOption;
+import org.apache.avalon.excalibur.cli.CLOptionDescriptor;
+import org.apache.avalon.excalibur.cli.CLUtil;
+
 /**
  * Command line interface to the wsdl2java utility
  *
  * @author Tom Jordahl (tjordahl@macromedia.com)
  */
 public class Wsdl2java {
+    // Define our short one-letter option identifiers.
+    protected static final int HELP_OPT = 'h';
+    protected static final int VERBOSE_OPT = 'v';
+    protected static final int MESSAGECONTEXT_OPT = 'm';
+    protected static final int SKELETON_OPT = 's';
+    protected static final int PACKAGE_OPT = 'p';
+
     /**
-     * print usage message
+     *  Define the understood options. Each CLOptionDescriptor contains:
+     * - The "long" version of the option. Eg, "help" means that "--help" will
+     * be recognised.
+     * - The option flags, governing the option's argument(s).
+     * - The "short" version of the option. Eg, 'h' means that "-h" will be
+     * recognised.
+     * - A description of the option for the usage message
      */
-    private static void usage() {
-        System.out.println("Usage: java org.apache.axis.wsdl.Wsdl2java [-verbose] [-skeleton [-messageContext]] WSDL-URI");
-        System.out.println("Switches:");
-        System.out.println("   -verbose - emit informational messages");
-        System.out.println("   -skeleton - emit skeleton class for web service");
-        System.out.println("   -messageContext - emit a MessageContext parameter in skeleton");
-        System.exit(-1);
-    }
+    protected static final CLOptionDescriptor[] options = new CLOptionDescriptor[]{
+        new CLOptionDescriptor("help",
+                CLOptionDescriptor.ARGUMENT_DISALLOWED,
+                HELP_OPT,
+                "print this message and exit"),
+        new CLOptionDescriptor("verbose",
+                CLOptionDescriptor.ARGUMENT_DISALLOWED,
+                VERBOSE_OPT,
+                "print informational messages"),
+        new CLOptionDescriptor("skeleton",
+                CLOptionDescriptor.ARGUMENT_DISALLOWED,
+                SKELETON_OPT,
+                "emit skeleton class for web service"),
+        new CLOptionDescriptor("messageContext",
+                CLOptionDescriptor.ARGUMENT_DISALLOWED,
+                MESSAGECONTEXT_OPT,
+                "emit a MessageContext parameter to skeleton methods"),
+        new CLOptionDescriptor("package",
+                CLOptionDescriptor.ARGUMENT_REQUIRED,
+                PACKAGE_OPT,
+                "package to put emitted files in"),
+    };
 
+    /**
+     * Main
+     */
+    public static void main(String args[]) {
+        boolean bSkeleton = false;
+        boolean bMessageContext = false;
+        boolean bVerbose = false;
+        String packageName = null;
+        String wsdlURI = null;
 
-    public static void main(String[] args) {
-        try {
-            boolean bSkeleton = false;
-            boolean bMessageContext = false;
-            boolean bVerbose = false;
-            int argcount = args.length;
-            int arg = 0;
+        // Parse the arguments
+        CLArgsParser parser = new CLArgsParser(args, options);
 
-            while (arg < (args.length - 1)) {
-                if (args[arg].startsWith("-skel")) {
-                    bSkeleton = true;
-                    --argcount;
-                }
-                if (args[arg].startsWith("-v")) {
+        // Print parser errors, if any
+        if (null != parser.getErrorString()) {
+            System.err.println("Error: " + parser.getErrorString());
+            printUsage();
+        }
+
+        // Get a list of parsed options
+        List clOptions = parser.getArguments();
+        int size = clOptions.size();
+
+        for (int i = 0; i < size; i++) {
+            CLOption option = (CLOption)clOptions.get(i);
+
+            switch (option.getId()) {
+                case CLOption.TEXT_ARGUMENT:
+                    if (wsdlURI != null) {
+                        printUsage();
+                    }
+                    wsdlURI = option.getArgument();
+                    break;
+
+                case HELP_OPT:
+                    printUsage();
+                    break;
+
+                case VERBOSE_OPT:
                     bVerbose = true;
-                    --argcount;
-                }
-                if (args[arg].startsWith("-messageContext")) {
+                    break;
+
+                case SKELETON_OPT:
+                    bSkeleton = true;
+                    break;
+
+                case MESSAGECONTEXT_OPT:
                     bMessageContext = true;
-                    --argcount;
-                }
-                ++arg;
+                    break;
+
+                case PACKAGE_OPT:
+                    packageName = option.getArgument();
+                    break;
             }
+        }
 
-            if (argcount != 1)
-                usage();
-            if (bMessageContext && !bSkeleton) {
-                System.out.println("Error: -messageContext switch only valid with -skeleton");
-                usage();
-            }
+        // validate argument combinations
+        //
+        if (bMessageContext && !bSkeleton) {
+            System.out.println("Error: --messageContext switch only valid with --skeleton");
+            printUsage();
+        }
+        if (wsdlURI == null) {
+            printUsage();
+        }
 
-            String uri = args[arg];
-            if (uri.startsWith("-"))
-                usage();
-
+        // Create an emitter, initialize settings and go
+        try {
             Emitter emitter = new Emitter();
             emitter.generateSkeleton(bSkeleton);
             emitter.verbose(bVerbose);
             emitter.generateMessageContext(bMessageContext);
-            emitter.emit(uri);
+            if (packageName != null)
+                emitter.setPackageName(packageName);
+
+            // Start writing code!
+            emitter.emit(wsdlURI);
         }
         catch (Throwable t) {
             t.printStackTrace();
         }
-    } // main
+
+    }
+
+    /**
+     * Print usage message and exit
+     */
+    private static void printUsage() {
+        String lSep = System.getProperty("line.separator");
+        StringBuffer msg = new StringBuffer();
+        msg.append("Wsdl2java stub generator").append(lSep);
+        msg.append("Usage: java " + Wsdl2java.class.getName() + " [options] WSDL-URI").append(lSep);
+        msg.append("Options: ").append(lSep);
+        msg.append(CLUtil.describeOptions(Wsdl2java.options).toString());
+        System.out.println(msg.toString());
+        System.exit(0);
+    }
 
 }
