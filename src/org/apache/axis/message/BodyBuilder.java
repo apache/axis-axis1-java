@@ -62,6 +62,7 @@ package org.apache.axis.message;
 
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.encoding.DeserializationContext;
@@ -197,7 +198,7 @@ public class BodyBuilder extends SOAPHandler
             if (style == Style.RPC &&
                     context.getMessageContext().getSOAPConstants() ==
                     SOAPConstants.SOAP12_CONSTANTS) {
-                throw new SAXException("Only one body allowed for SOAP 1.2 RPC");
+                throw new SAXException(JavaUtils.getMessage("onlyOneBodyFor12"));
             }
             element = new SOAPBodyElement(namespace, localName, prefix,
                                       attributes, context);
