@@ -76,7 +76,7 @@ public interface HandlerChain extends List {
      *
      * @throws JAXRPCException - if any processing error happens
      */
-    public void handleRequest(MessageContext context);
+    public boolean handleRequest(MessageContext context);
 
     /**
      * The handleResponse method initiates the response processing for this
@@ -87,7 +87,22 @@ public interface HandlerChain extends List {
      *
      * @throws JAXRPCException - if any processing error happens
      */
-    public void handleResponse(MessageContext context);
+    public boolean handleResponse(MessageContext context);
+
+    /**
+     * The handleFault method initiates the SOAP fault processing 
+     * for this handler chain.
+     *
+     * @param  context - MessageContext parameter provides access to the SOAP
+     *         message.
+     *
+     * @returns Returns true if all handlers in chain have been processed. 
+     *          Returns false  if a handler in the chain returned 
+     *          false from its handleFault method.
+     * 
+     * @throws JAXRPCException - if any processing error happens
+     */
+    public boolean handleFault(MessageContext context);
 
     /**
      * Initializes the configuration for a HandlerChain.

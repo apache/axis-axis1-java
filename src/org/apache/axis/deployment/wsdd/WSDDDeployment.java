@@ -311,7 +311,7 @@ public class WSDDDeployment
             TypeMapping df = (TypeMapping) tmr.getDefaultTypeMapping();
             if (tm == null || tm == df) {
                 tm = (TypeMapping) tmr.createTypeMapping();
-                tm.setSupportedNamespaces(new String[] {encodingStyle});
+                tm.setSupportedEncodings(new String[] {encodingStyle});
                 tmr.register(encodingStyle, tm);
             }
 

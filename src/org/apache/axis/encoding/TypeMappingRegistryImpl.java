@@ -193,7 +193,7 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
         if (secondaryTMR == null || secondaryTMR == this) {
             return;
         }
-        String[]  keys = secondaryTMR.getRegisteredNamespaces();
+        String[]  keys = secondaryTMR.getRegisteredEncodingStyleURIs();
 //        String[]  keys = null;
         if (keys != null) {
             for(int i=0; i < keys.length; i++) {
@@ -202,7 +202,7 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
                     TypeMapping tm = (TypeMapping) getTypeMapping(nsURI);
                     if (tm == null || tm == getDefaultTypeMapping() ) {
                         tm = (TypeMapping) createTypeMapping();
-                        tm.setSupportedNamespaces(new String[] { nsURI });
+                        tm.setSupportedEncodings(new String[] { nsURI });
                         register(nsURI, tm);
                     }
                     
@@ -335,7 +335,7 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
      */
     public boolean removeTypeMapping(
                                      javax.xml.rpc.encoding.TypeMapping mapping) {
-        String[] ns = getRegisteredNamespaces();
+        String[] ns = getRegisteredEncodingStyleURIs();
         boolean rc = false;
         for (int i=0; i < ns.length; i++) {
             if (getTypeMapping(ns[i]) == mapping) {
@@ -362,7 +362,7 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
      *
      * @return String[] containing names of all registered namespace URIs
      */
-    public String[] getRegisteredNamespaces() {
+    public String[] getRegisteredEncodingStyleURIs() {
         java.util.Set s = mapTM.keySet(); 
         if (s != null) { 
             String[] rc = new String[s.size()];

@@ -58,7 +58,7 @@ public class TestRoundTrip extends TestCase {
         super(name);
         TypeMappingRegistry tmr = server.getTypeMappingRegistry();
         TypeMapping tm = (TypeMapping) tmr.createTypeMapping();
-        tm.setSupportedNamespaces(new String[]{Constants.URI_CURRENT_SOAP_ENC});
+        tm.setSupportedEncodings(new String[]{Constants.URI_CURRENT_SOAP_ENC});
         tmr.register(Constants.URI_CURRENT_SOAP_ENC, tm);
         tm.register(test.encoding.RETURN.class,
                 new QName("urn:test.encoding", "RETURN"),

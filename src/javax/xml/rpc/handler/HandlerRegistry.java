@@ -74,7 +74,7 @@ public interface HandlerRegistry extends Serializable {
      *  @return  HandlerChain Returns the registered HandlerChain;
      *  @throws java.lang.IllegalArgumentException If an invalid portName is specified
      */
-    public HandlerChain getHandlerChain(QName portName);
+    public java.util.List getHandlerChain(QName portName);
 
     /**
      *  Sets the handler chain for the specified service endpoint.
@@ -90,5 +90,5 @@ public interface HandlerRegistry extends Serializable {
      *     portName is specified
      */
     public abstract void setRequestHandlerChain(
-            QName portName, HandlerChain chain);
+            QName portName, java.util.List chain);
 }

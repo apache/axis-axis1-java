@@ -406,6 +406,6 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
         throws JAXRPCException {
         throw new JAXRPCException();
     }
-    public void setSupportedNamespaces(String[] namespaceURIs) {
+    public void setSupportedEncodings(String[] namespaceURIs) {
     }
 }

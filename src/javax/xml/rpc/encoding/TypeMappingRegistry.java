@@ -157,7 +157,7 @@ public interface TypeMappingRegistry extends java.io.Serializable {
      *
      * @return String[] containing names of all registered namespace URIs
      */
-    public String[] getRegisteredNamespaces();
+    public String[] getRegisteredEncodingStyleURIs();
 
 
     /**

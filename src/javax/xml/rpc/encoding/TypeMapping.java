@@ -78,7 +78,7 @@ public interface TypeMapping {
      * @return  String[] of namespace URIs for the supported encoding 
      * styles and XML schema namespaces.
      */
-    public String[] getSupportedNamespaces();
+    public String[] getSupportedEncodings();
 
     /**
      * Sets the list of encoding styles supported by this
@@ -86,7 +86,7 @@ public interface TypeMapping {
      *
      * @param namespaceURIs String[] of namespace URI's                
      */
-    public void setSupportedNamespaces(String[] namespaceURIs);
+    public void setSupportedEncodings(String[] namespaceURIs);
 
     /**
      * isRegistered returns true if the [javaType, xmlType]
