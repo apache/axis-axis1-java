@@ -260,28 +260,34 @@ public class JavaComplexTypeWriter extends JavaWriter {
         pw.println("    public boolean equals(Object obj) {");
         pw.println("        // compare elements");
         pw.println("        " +  className + " other = (" + className + ") obj;");
-        pw.println("        return");
-        for (int i = 0; i < names.size(); i += 2) {
-            String variableType = (String) names.get(i);
-            String variable = (String) names.get(i + 1);
-            
-            if (variableType.equals("int") ||
-                variableType.equals("long") ||
-                variableType.equals("short") ||
-                variableType.equals("float") ||
-                variableType.equals("double") ||
-                variableType.equals("boolean") ||
-                variableType.equals("byte")) {
-                pw.print("            " + variable + " == other.get" + 
-                        Utils.capitalizeFirstChar(variable) + "()");
-            } else {
-                pw.print("            " + variable + ".equals(other.get" + 
-                        Utils.capitalizeFirstChar(variable) + "())");
+        pw.println("        if (this == obj) return true;");
+        pw.println("        if (! obj instanceof " + className + ") return false;");
+        if (names.size() == 0) {
+            pw.println("        return true;");
+        } else {
+            pw.println("        return");
+            for (int i = 0; i < names.size(); i += 2) {
+                String variableType = (String) names.get(i);
+                String variable = (String) names.get(i + 1);
+                
+                if (variableType.equals("int") ||
+                        variableType.equals("long") ||
+                        variableType.equals("short") ||
+                        variableType.equals("float") ||
+                        variableType.equals("double") ||
+                        variableType.equals("boolean") ||
+                        variableType.equals("byte")) {
+                    pw.print("            " + variable + " == other.get" + 
+                            Utils.capitalizeFirstChar(variable) + "()");
+                } else {
+                    pw.print("            " + variable + ".equals(other.get" + 
+                            Utils.capitalizeFirstChar(variable) + "())");
+                }
+                if (i == (names.size() - 2))
+                    pw.println(";");
+                else
+                    pw.println(" &&");
             }
-            if (i == (names.size() - 2))
-                pw.println(";");
-            else
-                pw.println(" &&");
         }
         pw.println("    }");
 
