@@ -61,6 +61,8 @@ package org.apache.axis.attachments;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.Part;
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
 
 
 /**
@@ -256,6 +258,14 @@ public class AttachmentsImpl implements Attachments {
             throws org.apache.axis.AxisFault {
         org.apache.axis.attachments.MimeUtils.writeToMultiPartStream(os, multipart != null ? multipart :
                                                                          (multipart = org.apache.axis.attachments.MimeUtils.createMP(msg.getSOAPPart().getAsString(), attachments)));
+        for( java.util.Iterator i= attachments.values().iterator(); i.hasNext(); ){
+          AttachmentPart part= (AttachmentPart)i.next();
+              DataHandler dh= AttachmentUtils.getActiviationDataHandler(part);
+              DataSource ds= dh.getDataSource();
+              if( ds != null && ds instanceof ManagedMemoryDataSource ){
+                  ((ManagedMemoryDataSource) ds).delete();
+              }
+        }
     }
 
     /**
@@ -263,7 +273,7 @@ public class AttachmentsImpl implements Attachments {
      */
     public String getContentType() throws org.apache.axis.AxisFault {
         return org.apache.axis.attachments.MimeUtils.getContentType(multipart != null ? multipart :
-                                                                    (multipart = org.apache.axis.attachments.MimeUtils.createMP(msg.getSOAPPart().getAsString(), attachments)));
+                (multipart = org.apache.axis.attachments.MimeUtils.createMP(msg.getSOAPPart().getAsString(), attachments)));
     }
 
     /**
@@ -285,4 +295,6 @@ public class AttachmentsImpl implements Attachments {
     public boolean isAttachment(Object value) {
         return AttachmentUtils.isAttachment(value);
     }
+
+
 }
