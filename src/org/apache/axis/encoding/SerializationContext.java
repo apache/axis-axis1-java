@@ -572,7 +572,7 @@ public class SerializationContext
             writer.write(">");
             writingStartTag = false;
         }
-        writer.write(p1, p2, p3);
+        writeSafeString(String.valueOf(p1,p2,p3));
         writer.flush();
         onlyXML=false;
     }
