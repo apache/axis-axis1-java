@@ -55,6 +55,7 @@
 
 package samples.security;
 
+import org.apache.axis.AxisFault;
 import org.apache.axis.MessageContext;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
@@ -65,25 +66,35 @@ import org.apache.axis.utils.XMLUtils;
 
 public class Client {
     static void main(String[] args) throws Exception {
-        Options opts = new Options(args);
+        try {
+            Options opts = new Options(args);
 
-        Service service = new Service();
-        Call call = (Call) service.createCall();
-        call.setTargetEndpointAddress(new java.net.URL(opts.getURL()));
+            Service service = new Service();
+            Call call = (Call) service.createCall();
+            call.setTargetEndpointAddress(new java.net.URL(opts.getURL()));
 
-        SOAPEnvelope env = new SOAPEnvelope();
-        SOAPBodyElement sbe = new SOAPBodyElement(XMLUtils.StringToElement("http://localhost:8080/LogTestService", "testMethod", ""));
-        env.addBodyElement(sbe);
+            SOAPEnvelope env = new SOAPEnvelope();
+            SOAPBodyElement sbe = new SOAPBodyElement(XMLUtils.StringToElement("http://localhost:8080/LogTestService", "testMethod", ""));
+            env.addBodyElement(sbe);
 
-        env = new SignedSOAPEnvelope(env, "http://xml-security");
+            env = new SignedSOAPEnvelope(env, "http://xml-security");
 
-        System.out.println("\n============= Request ==============");
-        XMLUtils.PrettyElementToStream(env.getAsDOM(), System.out);
+            System.out.println("\n============= Request ==============");
+            XMLUtils.PrettyElementToStream(env.getAsDOM(), System.out);
 
-        call.invoke(env);
+            call.invoke(env);
 
-        MessageContext mc = call.getMessageContext();
-        System.out.println("\n============= Response ==============");
-        XMLUtils.PrettyElementToStream(mc.getResponseMessage().getSOAPEnvelope().getAsDOM(), System.out);
+            MessageContext mc = call.getMessageContext();
+            System.out.println("\n============= Response ==============");
+            XMLUtils.PrettyElementToStream(mc.getResponseMessage().getSOAPEnvelope().getAsDOM(), System.out);
+        }
+        catch (Exception e) {
+            if (e instanceof AxisFault) {
+                System.err.println(((AxisFault) e).dumpToString());
+            }
+            else {
+                e.printStackTrace();
+            }
+        }
     }
 }
