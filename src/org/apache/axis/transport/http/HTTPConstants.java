@@ -48,9 +48,7 @@
  * ====================================================================
  *
  * This software consists of voluntary contributions made by many
- * individuals on behalf of the Apache Software Foundation and was
- * originally based on software copyright (c) 1999, International
- * Business Machines, Inc., http://www.ibm.com.  For more
+ * individuals on behalf of the Apache Software Foundation.  For more
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
@@ -70,4 +68,3 @@ public class HTTPConstants {
   public static final String HEADER_SOAP_ACTION = "SOAPAction";
   public static final String HEADER_AUTHORIZATION = "Authorization";
 }
-
