@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:s0="http://terraservice.net/terraserver/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" targetNamespace="http://terraservice.net/terraserver/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+<definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:s0="http://terraserver-usa.com/terraserver/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" targetNamespace="http://terraserver-usa.com/terraserver/" xmlns="http://schemas.xmlsoap.org/wsdl/">
   <types>
-    <s:schema elementFormDefault="qualified" targetNamespace="http://terraservice.net/terraserver/">
+    <s:schema elementFormDefault="qualified" targetNamespace="http://terraserver-usa.com/terraserver/">
       <s:element name="ConvertLonLatPtToNearestPlace">
         <s:complexType>
           <s:sequence>
@@ -662,7 +662,7 @@
   <binding name="TerraServiceSoap" type="s0:TerraServiceSoap">
     <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document" />
     <operation name="ConvertLonLatPtToNearestPlace">
-      <soap:operation soapAction="http://terraservice.net/terraserver/ConvertLonLatPtToNearestPlace" style="document" />
+      <soap:operation soapAction="http://terraserver-usa.com/terraserver/ConvertLonLatPtToNearestPlace" style="document" />
       <input>
         <soap:body use="literal" />
       </input>
@@ -671,7 +671,7 @@
       </output>
     </operation>
     <operation name="ConvertLonLatPtToUtmPt">
-      <soap:operation soapAction="http://terraservice.net/terraserver/ConvertLonLatPtToUtmPt" style="document" />
+      <soap:operation soapAction="http://terraserver-usa.com/terraserver/ConvertLonLatPtToUtmPt" style="document" />
       <input>
         <soap:body use="literal" />
       </input>
@@ -680,7 +680,7 @@
       </output>
     </operation>
     <operation name="ConvertUtmPtToLonLatPt">
-      <soap:operation soapAction="http://terraservice.net/terraserver/ConvertUtmPtToLonLatPt" style="document" />
+      <soap:operation soapAction="http://terraserver-usa.com/terraserver/ConvertUtmPtToLonLatPt" style="document" />
       <input>
         <soap:body use="literal" />
       </input>
@@ -689,7 +689,7 @@
       </output>
     </operation>
     <operation name="ConvertPlaceToLonLatPt">
-      <soap:operation soapAction="http://terraservice.net/terraserver/ConvertPlaceToLonLatPt" style="document" />
+      <soap:operation soapAction="http://terraserver-usa.com/terraserver/ConvertPlaceToLonLatPt" style="document" />
       <input>
         <soap:body use="literal" />
       </input>
@@ -698,7 +698,7 @@
       </output>
     </operation>
     <operation name="CountPlacesInRect">
-      <soap:operation soapAction="http://terraservice.net/terraserver/CountPlacesInRect" style="document" />
+      <soap:operation soapAction="http://terraserver-usa.com/terraserver/CountPlacesInRect" style="document" />
       <input>
         <soap:body use="literal" />
       </input>
@@ -707,7 +707,7 @@
       </output>
     </operation>
     <operation name="GetAreaFromPt">
-      <soap:operation soapAction="http://terraservice.net/terraserver/GetAreaFromPt" style="document" />
+      <soap:operation soapAction="http://terraserver-usa.com/terraserver/GetAreaFromPt" style="document" />
       <input>
         <soap:body use="literal" />
       </input>
@@ -716,7 +716,7 @@
       </output>
     </operation>
     <operation name="GetAreaFromRect">
-      <soap:operation soapAction="http://terraservice.net/terraserver/GetAreaFromRect" style="document" />
+      <soap:operation soapAction="http://terraserver-usa.com/terraserver/GetAreaFromRect" style="document" />
       <input>
         <soap:body use="literal" />
       </input>
@@ -725,7 +725,7 @@
       </output>
     </operation>
     <operation name="GetAreaFromTileId">
-      <soap:operation soapAction="http://terraservice.net/terraserver/GetAreaFromTileId" style="document" />
+      <soap:operation soapAction="http://terraserver-usa.com/terraserver/GetAreaFromTileId" style="document" />
       <input>
         <soap:body use="literal" />
       </input>
@@ -734,7 +734,7 @@
       </output>
     </operation>
     <operation name="GetLatLonMetrics">
-      <soap:operation soapAction="http://terraservice.net/terraserver/GetLatLonMetrics" style="document" />
+      <soap:operation soapAction="http://terraserver-usa.com/terraserver/GetLatLonMetrics" style="document" />
       <input>
         <soap:body use="literal" />
       </input>
@@ -743,7 +743,7 @@
       </output>
     </operation>
     <operation name="GetPlaceFacts">
-      <soap:operation soapAction="http://terraservice.net/terraserver/GetPlaceFacts" style="document" />
+      <soap:operation soapAction="http://terraserver-usa.com/terraserver/GetPlaceFacts" style="document" />
       <input>
         <soap:body use="literal" />
       </input>
@@ -752,7 +752,7 @@
       </output>
     </operation>
     <operation name="GetPlaceList">
-      <soap:operation soapAction="http://terraservice.net/terraserver/GetPlaceList" style="document" />
+      <soap:operation soapAction="http://terraserver-usa.com/terraserver/GetPlaceList" style="document" />
       <input>
         <soap:body use="literal" />
       </input>
@@ -761,7 +761,7 @@
       </output>
     </operation>
     <operation name="GetPlaceListInRect">
-      <soap:operation soapAction="http://terraservice.net/terraserver/GetPlaceListInRect" style="document" />
+      <soap:operation soapAction="http://terraserver-usa.com/terraserver/GetPlaceListInRect" style="document" />
       <input>
         <soap:body use="literal" />
       </input>
@@ -770,7 +770,7 @@
       </output>
     </operation>
     <operation name="GetTheme">
-      <soap:operation soapAction="http://terraservice.net/terraserver/GetTheme" style="document" />
+      <soap:operation soapAction="http://terraserver-usa.com/terraserver/GetTheme" style="document" />
       <input>
         <soap:body use="literal" />
       </input>
@@ -779,7 +779,7 @@
       </output>
     </operation>
     <operation name="GetTileMetaFromLonLatPt">
-      <soap:operation soapAction="http://terraservice.net/terraserver/GetTileMetaFromLonLatPt" style="document" />
+      <soap:operation soapAction="http://terraserver-usa.com/terraserver/GetTileMetaFromLonLatPt" style="document" />
       <input>
         <soap:body use="literal" />
       </input>
@@ -788,7 +788,7 @@
       </output>
     </operation>
     <operation name="GetTileMetaFromTileId">
-      <soap:operation soapAction="http://terraservice.net/terraserver/GetTileMetaFromTileId" style="document" />
+      <soap:operation soapAction="http://terraserver-usa.com/terraserver/GetTileMetaFromTileId" style="document" />
       <input>
         <soap:body use="literal" />
       </input>
@@ -797,7 +797,7 @@
       </output>
     </operation>
     <operation name="GetTile">
-      <soap:operation soapAction="http://terraservice.net/terraserver/GetTile" style="document" />
+      <soap:operation soapAction="http://terraserver-usa.com/terraserver/GetTile" style="document" />
       <input>
         <soap:body use="literal" />
       </input>
@@ -849,6 +849,7 @@
     </operation>
   </binding>
   <service name="TerraService">
+    <documentation>TerraServer Web Service</documentation>
     <port name="TerraServiceSoap" binding="s0:TerraServiceSoap">
       <soap:address location="http://terraservice.net/TerraService.asmx" />
     </port>
