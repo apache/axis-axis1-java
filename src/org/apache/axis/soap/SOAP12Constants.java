@@ -72,6 +72,11 @@ public class SOAP12Constants implements SOAPConstants {
                                                 Constants.ELEM_FAULT);
     private static QName roleQName = new QName(Constants.URI_SOAP12_ENV,
                                                 Constants.ATTR_ROLE);
+    
+    // Public constants for SOAP 1.2
+    
+    /** MessageContext property name for webmethod */
+    public static final String PROP_WEBMETHOD = "soap12.webmethod";
 
     public String getEnvelopeURI() {
         return Constants.URI_SOAP12_ENV;

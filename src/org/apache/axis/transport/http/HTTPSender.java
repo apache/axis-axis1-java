@@ -58,13 +58,14 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.soap.SOAP12Constants;
+import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.components.net.BooleanHolder;
 import org.apache.axis.components.net.SocketFactory;
 import org.apache.axis.components.net.SocketFactoryFactory;
 import org.apache.axis.encoding.Base64;
 import org.apache.axis.handlers.BasicHandler;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 
@@ -119,11 +120,13 @@ public class HTTPSender extends BasicHandler {
             }
 
             // Send the SOAP request to the server
-            InputStream  inp= writeToSocket(sock, msgContext, targetURL,
+            InputStream inp = writeToSocket(sock, msgContext, targetURL,
                         otherHeaders, host, port, useFullURL);
 
             // Read the response back from the server
-            readFromSocket(sock, msgContext, inp, null);
+            Hashtable headers = new Hashtable();
+            inp = readHeadersFromSocket(sock, msgContext, inp, headers);
+            readFromSocket(sock, msgContext, inp, headers);
         } catch (Exception e) {
             log.debug(e);
             throw AxisFault.makeFault(e);
@@ -177,7 +180,6 @@ public class HTTPSender extends BasicHandler {
         String userID = null;
         String passwd = null;
         String reqEnv = null;
-        InputStream inp= null;  //In case it is necessary to read before the full respose.
 
         userID = msgContext.getUsername();
         passwd = msgContext.getPassword();
@@ -231,10 +233,23 @@ public class HTTPSender extends BasicHandler {
                         .append(cookie2).append("\r\n");
             }
         }
+        
         StringBuffer header = new StringBuffer();
 
-        // byte[] request = reqEnv.getBytes();
-        header.append(HTTPConstants.HEADER_POST).append(" ");
+        String webMethod = null;
+        boolean posting = true;
+
+        // If we're SOAP 1.2, allow the web method to be set from the
+        // MessageContext.
+        if (msgContext.getSOAPConstants() == SOAPConstants.SOAP12_CONSTANTS)
+            webMethod = msgContext.getStrProp(SOAP12Constants.PROP_WEBMETHOD);
+        if (webMethod == null) {
+            webMethod = HTTPConstants.HEADER_POST;
+        } else {
+            posting = webMethod.equals(HTTPConstants.HEADER_POST);
+        }
+        
+        header.append(webMethod).append(" ");
         if (useFullURL.value) {
             header.append(tmpURL.toExternalForm());
         } else {
@@ -243,8 +258,6 @@ public class HTTPSender extends BasicHandler {
                     ? "/"
                     : tmpURL.getFile()));
         }
-
-
 
         Message reqMessage = msgContext.getRequestMessage();
 
@@ -324,12 +337,14 @@ public class HTTPSender extends BasicHandler {
         header.append(" ");
         header.append(http10 ? HTTPConstants.HEADER_PROTOCOL_10 :
                 HTTPConstants.HEADER_PROTOCOL_11)
-                .append("\r\n")
-                .append(HTTPConstants.HEADER_CONTENT_TYPE)
-                .append(": ")
-                .append(reqMessage.getContentType(msgContext.getSOAPConstants()))
-                .append("\r\n")
-                .append( HTTPConstants.HEADER_ACCEPT ) //Limit to the types that are meaningful to us.
+                .append("\r\n");
+        if (posting) {
+            header.append(HTTPConstants.HEADER_CONTENT_TYPE)
+                    .append(": ")
+                    .append(reqMessage.getContentType(msgContext.getSOAPConstants()))
+                    .append("\r\n");
+        }
+        header.append( HTTPConstants.HEADER_ACCEPT ) //Limit to the types that are meaningful to us.
                 .append( ": ")
                 .append( HTTPConstants.HEADER_ACCEPT_APPL_SOAP)
                 .append( ", ")
@@ -361,20 +376,22 @@ public class HTTPSender extends BasicHandler {
                 .append(action)
                 .append("\"\r\n");
 
-        if (!httpChunkStream) {
-            //Content length MUST be sent on HTTP 1.0 requests.
-            header.append(HTTPConstants.HEADER_CONTENT_LENGTH)
-                    .append(": ")
-                    .append(reqMessage.getContentLength())
-                    .append("\r\n");
-        } else {
-            //Do http chunking.
-            header.append(HTTPConstants.HEADER_TRANSFER_ENCODING)
-                    .append(": ")
-                    .append(HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED)
-                    .append("\r\n");
+        if (posting) {
+            if (!httpChunkStream) {
+                //Content length MUST be sent on HTTP 1.0 requests.
+                header.append(HTTPConstants.HEADER_CONTENT_LENGTH)
+                        .append(": ")
+                        .append(reqMessage.getContentLength())
+                        .append("\r\n");
+            } else {
+                //Do http chunking.
+                header.append(HTTPConstants.HEADER_TRANSFER_ENCODING)
+                        .append(": ")
+                        .append(HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED)
+                        .append("\r\n");
+            }
         }
-
+        
         if (null != httpConnection) {
             header.append(HTTPConstants.HEADER_CONNECTION);
             header.append(": ");
@@ -389,36 +406,46 @@ public class HTTPSender extends BasicHandler {
         header.append("\r\n"); //The empty line to start the BODY.
 
         OutputStream out = sock.getOutputStream();
+        
+        if (!posting) {
+            out.write(header.toString()
+                    .getBytes(HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING));
+            out.flush();
+            return null;
+        }
+        
+        InputStream inp = null;
 
         if (httpChunkStream) {
             out.write(header.toString()
                     .getBytes(HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING));
-            if(httpContinueExpected ){ //We need to get a reply from the server as to whether
-                                      // it wants us send anything more.
-                out.flush();
-                Hashtable cheaders= new Hashtable ();
-                inp=readFromSocket(sock, msgContext, null, cheaders);
-                int returnCode= -1;
-                Integer Irc= (Integer)msgContext.getProperty(HTTPConstants.MC_HTTP_STATUS_CODE);
-                if(null != Irc) returnCode= Irc.intValue();
-                if(100 == returnCode){  // got 100 we may continue.
-                    //Need todo a little msgContext house keeping....
-                    msgContext.removeProperty(HTTPConstants.MC_HTTP_STATUS_CODE);
-                    msgContext.removeProperty(HTTPConstants.MC_HTTP_STATUS_MESSAGE);
-                }
-                else{ //If no 100 Continue then we must not send anything!
-                    String statusMessage= (String)
-                        msgContext.getProperty(HTTPConstants.MC_HTTP_STATUS_MESSAGE);
-
-                    AxisFault fault = new AxisFault("HTTP", "(" + returnCode+ ")" + statusMessage, null, null);
-
-                    fault.setFaultDetailString(Messages.getMessage("return01",
-                            "" + returnCode, ""));
-                    throw fault;
-               }
-
-
+        }
+        
+        if(httpContinueExpected ){ //We need to get a reply from the server as to whether
+            // it wants us send anything more.
+            out.flush();
+            Hashtable cheaders= new Hashtable ();
+            inp = readHeadersFromSocket(sock, msgContext, null, cheaders);
+            int returnCode= -1;
+            Integer Irc= (Integer)msgContext.getProperty(HTTPConstants.MC_HTTP_STATUS_CODE);
+            if(null != Irc) returnCode= Irc.intValue();
+            if(100 == returnCode){  // got 100 we may continue.
+                //Need todo a little msgContext house keeping....
+                msgContext.removeProperty(HTTPConstants.MC_HTTP_STATUS_CODE);
+                msgContext.removeProperty(HTTPConstants.MC_HTTP_STATUS_MESSAGE);
             }
+            else{ //If no 100 Continue then we must not send anything!
+                String statusMessage= (String)
+                        msgContext.getProperty(HTTPConstants.MC_HTTP_STATUS_MESSAGE);
+                
+                AxisFault fault = new AxisFault("HTTP", "(" + returnCode+ ")" + statusMessage, null, null);
+                
+                fault.setFaultDetailString(Messages.getMessage("return01",
+                                                               "" + returnCode, ""));
+                throw fault;
+            }
+        }
+        if (httpChunkStream) {
             ChunkedOutputStream chunkedOutputStream = new ChunkedOutputStream(out);
             out = new BufferedOutputStream(chunkedOutputStream, 8 * 1024);
             try {
@@ -429,35 +456,6 @@ public class HTTPSender extends BasicHandler {
             out.flush();
             chunkedOutputStream.eos();
         } else {
-            //No chunking...
-            if(httpContinueExpected ){ //We need to get a reply from the server as to whether
-                                      // it wants us send anything more.
-                out.flush();
-                Hashtable cheaders= new Hashtable ();
-                inp=readFromSocket(sock, msgContext, null, cheaders);
-                int returnCode= -1;
-                Integer Irc=  (Integer) msgContext.getProperty(HTTPConstants.MC_HTTP_STATUS_CODE);
-                if(null != Irc) returnCode= Irc.intValue();
-                if(100 == returnCode){  // got 100 we may continue.
-                    //Need todo a little msgContext house keeping....
-                    msgContext.setProperty(HTTPConstants.MC_HTTP_STATUS_CODE,
-                            null);
-                    msgContext.setProperty(HTTPConstants.MC_HTTP_STATUS_MESSAGE,
-                            null);
-                }
-                else{ //If no 100 Continue then we must not send anything!
-                    String statusMessage= (String)
-                        msgContext.getProperty(HTTPConstants.MC_HTTP_STATUS_MESSAGE);
-
-                    AxisFault fault = new AxisFault("HTTP", "(" + returnCode+ ")" + statusMessage, null, null);
-
-                    fault.setFaultDetailString(Messages.getMessage("return01",
-                            "" + returnCode, ""));
-                    throw fault;
-               }
-
-
-            }
             out = new BufferedOutputStream(out, 8 * 1024);
             try {
                 out.write(header.toString()
@@ -474,33 +472,24 @@ public class HTTPSender extends BasicHandler {
             log.debug("---------------------------------------------------");
             log.debug(header + reqEnv);
         }
+        
         return inp;
     }
-
-    /**
-     * Reads the SOAP response back from the server
-     *
-     * @param sock socket
-     * @param msgContext message context
-     *
-     * @throws IOException
-     */
-    private InputStream readFromSocket(Socket sock, MessageContext msgContext,InputStream  inp, Hashtable headers )
+    
+    private InputStream readHeadersFromSocket(Socket sock,
+                                              MessageContext msgContext,
+                                              InputStream inp,
+                                              Hashtable headers) 
             throws IOException {
-        Message outMsg = null;
-        byte b;
+        byte b = 0;
         int len = 0;
         int colonIndex = -1;
-        boolean headersOnly= false;
-        if(null != headers){
-            headersOnly= true;
-        }else{
-            headers=  new Hashtable();
-        }
         String name, value;
-        String statusMessage = "";
         int returnCode = 0;
         if(null == inp) inp = new BufferedInputStream(sock.getInputStream());
+        
+        if (headers == null)
+            headers = new Hashtable();
 
         // Should help performance. Temporary fix only till its all stream oriented.
         // Need to add logic for getting the version # and the return code
@@ -509,7 +498,6 @@ public class HTTPSender extends BasicHandler {
         /* Logic to read HTTP response headers */
         boolean readTooMuch = false;
 
-        b = 0;
         for (ByteArrayOutputStream buf = new ByteArrayOutputStream(4097); ;) {
             if (!readTooMuch) {
                 b = (byte) inp.read();
@@ -572,18 +560,41 @@ public class HTTPSender extends BasicHandler {
                     returnCode = Integer.parseInt(tmp);
                     msgContext.setProperty(HTTPConstants.MC_HTTP_STATUS_CODE,
                             new Integer(returnCode));
-                    statusMessage = name.substring(start + end + 1);
                     msgContext.setProperty(HTTPConstants.MC_HTTP_STATUS_MESSAGE,
-                            statusMessage);
+                            name.substring(start + end + 1));
                 } else {
                     headers.put(name.toLowerCase(), value);
                 }
                 len = 0;
             }
         }
+        
+        return inp;
+    }
 
-        if(headersOnly){
-           return inp;
+    /**
+     * Reads the SOAP response back from the server
+     *
+     * @param sock socket
+     * @param msgContext message context
+     *
+     * @throws IOException
+     */
+    private InputStream readFromSocket(Socket sock,
+                                       MessageContext msgContext,
+                                       InputStream inp,
+                                       Hashtable headers)
+            throws IOException {
+        Message outMsg = null;
+        byte b;
+        
+        Integer rc = (Integer)msgContext.getProperty(
+                                            HTTPConstants.MC_HTTP_STATUS_CODE);
+        int returnCode = 0;
+        if (rc != null) {
+            returnCode = rc.intValue();
+        } else {
+            // No return code?? Should have one by now.
         }
 
         /* All HTTP headers have been read. */
@@ -607,52 +618,54 @@ public class HTTPSender extends BasicHandler {
             while (-1 != (b = (byte) inp.read())) {
                 buf.write(b);
             }
-            AxisFault fault = new AxisFault("HTTP", "(" + returnCode + ")" + statusMessage, null, null);
+            String statusMessage = msgContext.getStrProp(
+                                        HTTPConstants.MC_HTTP_STATUS_MESSAGE);
+            AxisFault fault = new AxisFault("HTTP", "(" + returnCode + ")" +
+                                                    statusMessage, null, null);
 
             fault.setFaultDetailString(Messages.getMessage("return01",
                     "" + returnCode, buf.toString()));
             throw fault;
         }
-        if (b != -1) {    // more data than just headers.
-            String contentLocation =
-                    (String) headers
-                    .get(HTTPConstants.HEADER_CONTENT_LOCATION.toLowerCase());
 
-            contentLocation = (null == contentLocation)
-                    ? null
-                    : contentLocation.trim();
-
-            String contentLength =
-                    (String) headers
-                    .get(HTTPConstants.HEADER_CONTENT_LENGTH.toLowerCase());
-
-            contentLength = (null == contentLength)
-                    ? null
-                    : contentLength.trim();
-
-            String transferEncoding =
-                    (String) headers
-                    .get(HTTPConstants.HEADER_TRANSFER_ENCODING.toLowerCase());
-            if (null != transferEncoding
-                    && transferEncoding.trim()
-                    .equals(HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED)) {
-                inp = new ChunkedInputStream(inp);
+        String contentLocation =
+                (String) headers
+                .get(HTTPConstants.HEADER_CONTENT_LOCATION.toLowerCase());
+        
+        contentLocation = (null == contentLocation)
+                ? null
+                : contentLocation.trim();
+        
+        String contentLength =
+                (String) headers
+                .get(HTTPConstants.HEADER_CONTENT_LENGTH.toLowerCase());
+        
+        contentLength = (null == contentLength)
+                ? null
+                : contentLength.trim();
+        
+        String transferEncoding =
+                (String) headers
+                .get(HTTPConstants.HEADER_TRANSFER_ENCODING.toLowerCase());
+        if (null != transferEncoding
+                && transferEncoding.trim()
+                .equals(HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED)) {
+            inp = new ChunkedInputStream(inp);
+        }
+        
+        
+        outMsg = new Message( new SocketInputStream(inp, sock), false,
+                              contentType, contentLocation);
+        outMsg.setMessageType(Message.RESPONSE);
+        msgContext.setResponseMessage(outMsg);
+        if (log.isDebugEnabled()) {
+            if (null == contentLength) {
+                log.debug("\n"
+                          + Messages.getMessage("no00", "Content-Length"));
             }
-
-
-            outMsg = new Message( new SocketInputStream(inp, sock), false, contentType,
-                    contentLocation);
-            outMsg.setMessageType(Message.RESPONSE);
-            msgContext.setResponseMessage(outMsg);
-            if (log.isDebugEnabled()) {
-                if (null == contentLength) {
-                    log.debug("\n"
-                            + Messages.getMessage("no00", "Content-Length"));
-                }
-                log.debug("\n" + Messages.getMessage("xmlRecd00"));
-                log.debug("-----------------------------------------------");
-                log.debug((String) outMsg.getSOAPPartAsString());
-            }
+            log.debug("\n" + Messages.getMessage("xmlRecd00"));
+            log.debug("-----------------------------------------------");
+            log.debug((String) outMsg.getSOAPPartAsString());
         }
 
         // if we are maintaining session state,
