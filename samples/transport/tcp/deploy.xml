@@ -1,0 +1,4 @@
+<m:deploy xmlns:m="AdminService">
+ <handler name="TCPSender" class="samples.transport.tcp.TCPSender"/>
+ <transport name="tcp" pivot="TCPSender"/>
+</m:deploy>

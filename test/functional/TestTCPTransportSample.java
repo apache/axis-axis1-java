@@ -61,7 +61,7 @@ import java.util.*;
 
 import org.apache.axis.AxisFault ;
 import samples.transport.tcp.TCPTransport;
-import org.apache.axis.client.AdminClient;
+import samples.transport.tcp.AdminClient;
 import org.apache.axis.utils.Admin;
 import org.apache.axis.client.ServiceClient;
 import org.apache.axis.encoding.ServiceDescription;
@@ -96,18 +96,9 @@ public class TestTCPTransportSample extends TestCase {
         try {
             System.out.println("Testing TCP stock service...");
             String   symbol = "XXX"; // args[0] ;
-            URL url = null;
-            // parse host, port out of URL by hand
-            // what to do about that URL format issue.....
-            try {
-                url = new URL("http://localhost:8088"); // (opts.getURL());
-            } catch (IOException ex) {
-                System.err.println("URL "+url+" hosed: "+ex);
-                System.exit(1);
-            }
-            
+
             ServiceClient call   = new ServiceClient
-                ( new TCPTransport(url.getHost(), ""+url.getPort()) );
+                ( new TCPTransport("localhost", "8088") );
             
             // reconstruct URL
             ServiceDescription sd = new ServiceDescription("stockQuotes", true);
@@ -163,6 +154,15 @@ public class TestTCPTransportSample extends TestCase {
             e.printStackTrace();
             throw new Exception("Fault returned from test: "+e);
         }
+    }
+    
+    public static void main(String [] args)
+    {
+      TestTCPTransportSample tester = new TestTCPTransportSample("TCP test");
+      try {
+        tester.testTCPTransportSample();
+      } catch (Exception e) {
+      }
     }
     
 }

@@ -61,8 +61,7 @@ import org.apache.axis.transport.http.HTTPConstants;
 import java.net.URL;
 
 /**
- * An admin client object, specific to TCP in that it sets
- * the TCP transport up.
+ * An admin client object, which will work with the TCP transport.
  *
  * @author Rob Jellinghaus (robj@unrealities.com)
  * @author Doug Davis (dug@us.ibm.com)
@@ -72,9 +71,9 @@ import java.net.URL;
 public class AdminClient extends org.apache.axis.client.AdminClient {
 
     public static void main(String args[]) {
-        /** !!! This shouldn't be hardcoded....
-         */
-        ServiceClient.setDefaultTransport(new TCPTransport("localhost", "8080"));
+      
+        System.setProperty("java.protocol.handler.pkgs", "samples.transport");
+        ServiceClient.setTransportForProtocol("tcp", new TCPTransport());
         
         try {
             org.apache.axis.client.AdminClient.main(args);

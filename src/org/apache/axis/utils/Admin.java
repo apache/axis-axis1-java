@@ -431,7 +431,7 @@ public class Admin {
       if ((request == null) &&
           (response == null) &&
           (pivot == null))
-        throw new AxisFault("No request/response/pivot for chain!");
+        throw new AxisFault("No request/response/pivot for chain '" + name + "'!");
       
       StringTokenizer      st = null ;
       Vector reqNames = new Vector();
