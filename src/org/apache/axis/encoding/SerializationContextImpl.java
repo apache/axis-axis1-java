@@ -85,6 +85,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.w3c.dom.CDATASection;
+import org.w3c.dom.CharacterData;
+import org.w3c.dom.Comment;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -1097,6 +1099,10 @@ public class SerializationContextImpl implements SerializationContext
                 writeString("<![CDATA[");
                 writeString(((Text)child).getData());
                 writeString("]]>");
+            } else if (child instanceof Comment) {
+                writeString("<!--");
+                writeString(((CharacterData)child).getData());
+                writeString("-->");
             } else if (child instanceof Text) {
                 writeSafeString(((Text)child).getData());
             }
