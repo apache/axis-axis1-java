@@ -60,7 +60,7 @@ package javax.xml.rpc.encoding;
  * processing mechanism specific manner. A deserializer uses this interface to access and maintain context information 
  * during the deserialization.. 
  *
- * @version 0.1
+ * @version 0.6
  */
 public interface DeserializationContext {}
 

@@ -56,19 +56,14 @@
 package javax.xml.rpc.encoding;
 
 /**
- * The javax.xml.rpc.encoding.Deserializer interface defines a base interface for deserializers. A Deserializer 
- * converts an XML representation to a Java object using a specific XML processing mechanism and based on the 
+ * The javax.xml.rpc.encoding.Deserializer interface defines a base interface for deserializers. 
+ * A Deserializer converts an XML representation to a Java object 
+ * using a specific XML processing mechanism and based on the 
  * specified type mapping and encoding style.
  *
- * @version 0.1
+ * @version 0.6
  */
 public interface Deserializer {
-
-    /**
-     * Gets the type of the XML processing mechanism and representation used by this Deserializer.
-     *
-     * @return XML processing mechanism type
-     */
     public String getMechanismType();
 }
 

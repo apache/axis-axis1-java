@@ -33,7 +33,7 @@
  *    nor may "Apache" appear in their name, without prior written
  *    permission of the Apache Software Foundation.
  *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
+ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED 
  * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED.  IN NO EVENT SHALL THE APACHE SOFTWARE FOUNDATION OR
@@ -59,61 +59,82 @@ import javax.xml.rpc.JAXRPCException;
 import java.util.Iterator;
 
 /**
- * The interface javax.xml.rpc.encoding.TypeMappingRegistry defines a registry for TypeMapping instances for 
+ * The interface javax.xml.rpc.encoding.TypeMappingRegistry 
+ * defines a registry for TypeMapping instances for 
  * the different encoding styles. 
  *
- * @version 0.1
+ * @version 0.6
  */
 public interface TypeMappingRegistry extends java.io.Serializable {
 
     /**
-     * The method register adds a TypeMapping instance for a specific encoding style or XML schema namespace to the 
+     * The method register adds a TypeMapping instance for a specific 
+     * encoding style or XML schema namespace to the 
      * type mapping registry.
      *
      * @param mapping - TypeMapping for a specific encoding style or XML schema namespace
-     * @param namespaceURI - Encoding style or XML schema namespace specified as an URI. An example is 
+     * @param namespaceURIs - Encoding styles or XML schema namespaces specified as an URI.
+     * An example is 
      * "http://schemas.xmlsoap.org/soap/encoding/"
      *
-     * @throws JAXRPCException - If there is any error in the registration of the TypeMapping for the specified namespace URI
+     * @throws JAXRPCException - If there is any error in the registration
+     * of the TypeMapping for the specified namespace URI
      * java.lang.IllegalArgumentException - if an invalid namespace URI is specified
      */
-    public void registry(TypeMapping mapping, String namespaceURI)
+    public void registry(TypeMapping mapping, String[] namespaceURIs)
         throws JAXRPCException;
 
     /**
-     * Gets a list of all TypeMapping objects registered with this TypeMappingRegistry.
+     * The method register adds a default TypeMapping instance.  If a specific
+     * TypeMapping is not found, the default TypeMapping is used.  
      *
-     * @return java.util.Iterator for the list of registered TypeMapping objects
+     * @param mapping - TypeMapping for a specific encoding style or XML schema namespace
+     *
+     * @throws JAXRPCException - If there is any error in the registration
+     * of the TypeMapping for the specified namespace URI
+     * java.lang.IllegalArgumentException - if an invalid namespace URI is specified
      */
-    public Iterator getTypeMappings();
+    public void registryDefault(TypeMapping mapping)
+        throws JAXRPCException;
 
     /**
-     * Gets a list of namespace URIs registered with this TypeMappingRegistry.
+     * Gets the TypeMapping for the namespace.  If not found, the default TypeMapping 
+     * is returned.
      *
-     * @return java.util.Iterator for the list of all registered namespace URIs
-     */
-    public Iterator getEncodingStyle();
-
-    /**
-     * Returns the registered TypeMapping for the specified encoding style or XML schema namespace.
-     *
-     * @param namespaceURI - Encoding style or XML schema namespace specified as an URI. An example is 
-     * "http://schemas.xmlsoap.org/soap/encoding/"
-     *
-     * @return The registered TypeMapping for the specified encoding style or XML schema namespace. If there is no 
-     * registered TypeMapping, this method returns null.
+     * @param namespaceURI - The namespace URI of a type
+     * @return The registered TypeMapping (which may be the default TypeMapping) or null.
      */
     public TypeMapping getTypeMapping(String namespaceURI);
 
     /**
+     * Removes the TypeMapping for the namespace.
+     *
+     * @param namespaceURI - The namespace URI of a type
+     * @return The registered TypeMapping (which may be the default TypeMapping) or null.
+     */
+    public TypeMapping removeTypeMapping(String namespaceURI);
+
+
+    /**
      * Creates a new empty TypeMapping object for the specified encoding style or XML schema namespace.
      *
-     * @param namespaceURI - Encoding style or XML schema namespace specified as an URI. An example is 
-     * "http://schemas.xmlsoap.org/soap/encoding/"
-     *
-     * @return An empty TypeMapping object
+     * @return An empty generic TypeMapping object
      */
-    public TypeMapping createTypeMapping(String namespaceURI);
+    public TypeMapping createTypeMapping();
+
+    /**
+     * Gets a list of namespace URIs registered with this TypeMappingRegistry.
+     *
+     * @return String[] containing names of all registered namespace URIs
+     */
+    public String[] getSupportedNamespaces();
+
+
+    /**
+     * Removes all registered TypeMappings from the registery                   
+     */
+    public TypeMapping clear(String namespaceURI);
+
 }
 
 
