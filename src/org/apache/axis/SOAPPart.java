@@ -269,7 +269,7 @@ public class SOAPPart extends Part {
 
         if ( currentForm == FORM_SOAPENVELOPE ||
              currentForm == FORM_FAULT )
-            getAsString();
+            return getAsString().getBytes();
 
         if ( currentForm == FORM_STRING ) {
             setCurrentMessage( ((String)currentMessage).getBytes(),

@@ -74,6 +74,7 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
     public static final QName XSD_DOUBLE = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "double");
     public static final QName XSD_FLOAT = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "float");
     public static final QName XSD_INT = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "int");
+    public static final QName XSD_INTEGER = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "integer");
     public static final QName XSD_LONG = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "long");
     public static final QName XSD_SHORT = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "short");
     public static final QName XSD_BYTE = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "byte");
@@ -81,6 +82,7 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
     public static final QName XSD_BASE64 = new QName(Constants.URI_2001_SCHEMA_XSD, "base64Binary");
     public static final QName XSD_HEXBIN = new QName(Constants.URI_2001_SCHEMA_XSD, "hexBinary");
     public static final QName XSD_ANYTYPE = new QName(Constants.URI_2001_SCHEMA_XSD, "anyType");
+    public static final QName XSD_QNAME = new QName(Constants.URI_2001_SCHEMA_XSD, "QName");
     public static final QName SOAP_BASE64 = new QName(Constants.URI_SOAP_ENC, "base64");
 
     public static final QName SOAP_STRING = new QName(Constants.URI_SOAP_ENC, "string");
@@ -91,6 +93,7 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
     public static final QName SOAP_LONG = new QName(Constants.URI_SOAP_ENC, "long");
     public static final QName SOAP_SHORT = new QName(Constants.URI_SOAP_ENC, "short");
     public static final QName SOAP_BYTE = new QName(Constants.URI_SOAP_ENC, "byte");
+    public static final QName SOAP_INTEGER = new QName(Constants.URI_SOAP_ENC, "integer");
     public static final QName SOAP_ARRAY = new QName(Constants.URI_SOAP_ENC, "Array");
 
     public static final QName TYPE_MAP = new QName("http://xml.apache.org/xml-soap", "Map");
@@ -249,9 +252,11 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
         addSerializer(java.lang.Double.class, XSD_DOUBLE, new FloatSerializer());
         addSerializer(java.lang.Float.class, XSD_FLOAT, new FloatSerializer());
         addSerializer(java.lang.Integer.class, XSD_INT, se);
+        addSerializer(java.math.BigInteger.class, XSD_INTEGER, se);
         addSerializer(java.lang.Long.class, XSD_LONG, se);
         addSerializer(java.lang.Short.class, XSD_SHORT, se);
-        addSerializer(java.lang.Byte.TYPE, XSD_BYTE, se);
+        addSerializer(java.lang.Byte.class, XSD_BYTE, se);
+        addSerializer(javax.xml.rpc.namespace.QName.class, XSD_QNAME, new BeanSerializer(javax.xml.rpc.namespace.QName.class));
         addSerializer(java.util.Date.class, XSD_DATE, new DateSerializer());
         addSerializer(byte[].class, XSD_BASE64, new Base64Serializer());
         addSerializer(Hex.class, XSD_HEXBIN, new HexSerializer());
@@ -259,6 +264,7 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
         
         addDeserializersFor(XSD_STRING, java.lang.String.class, factory);    
         addDeserializersFor(XSD_INT, java.lang.Integer.class, factory);
+        addDeserializersFor(XSD_INTEGER, java.math.BigInteger.class, factory);
         addDeserializersFor(XSD_LONG, java.lang.Long.class, factory);
         addDeserializersFor(XSD_SHORT, java.lang.Short.class, factory);
         addDeserializersFor(XSD_BYTE, java.lang.Byte.class, factory);
@@ -270,6 +276,9 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
             new FloatSerializer.FloatDeserializerFactory());
         addDeserializersFor(XSD_DOUBLE, java.lang.Double.class, 
             new FloatSerializer.FloatDeserializerFactory());
+
+        addDeserializerFactory(XSD_QNAME, javax.xml.rpc.namespace.QName.class,
+                BeanSerializer.getFactory());
 
         // handle the various datetime QNames...
         addDeserializerFactory(
