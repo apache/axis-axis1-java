@@ -471,7 +471,10 @@ public class JavaStubWriter extends JavaWriter {
             QName qn = p.type.getQName();
             if (p.type instanceof DefinedElement) {
                 Node node = symbolTable.getTypeEntry(p.type.getQName(), true).getNode();
-                qn = Utils.getNodeTypeRefQName(node, "type");
+                QName qn2 = Utils.getNodeTypeRefQName(node, "type");
+                if (qn2 != null) {
+                    qn = qn2;
+                }
             }
 
             String typeString = "new javax.xml.rpc.namespace.QName(\"" +
@@ -501,8 +504,11 @@ public class JavaStubWriter extends JavaWriter {
             QName qn = parms.returnType.getQName();
             if (parms.returnType instanceof DefinedElement) {
                 Node node = symbolTable.getTypeEntry(parms.returnType.getQName(), true).getNode();
-                qn = Utils.getNodeTypeRefQName(node, "type");
-            }
+                QName qn2 = Utils.getNodeTypeRefQName(node, "type");
+                if (qn2 != null) {
+                    qn = qn2;
+                }
+           }
             
             String outputType = "new javax.xml.rpc.namespace.QName(\"" +
                 qn.getNamespaceURI() + "\", \"" +
