@@ -40,6 +40,7 @@ public class PackageTests extends TestCase
         suite.addTestSuite(TestMultiRefIdentity.class);
         suite.addTestSuite(TestArray.class);
         suite.addTestSuite(TestCircularRefs.class);
+        suite.addTestSuite(TestAutoTypes.class);
         return suite;
     }
 }
