@@ -41,6 +41,7 @@ Table of Contents</h3>
       WSDL from Java</a></li>
   </ul>
   <li> <a href="#published interfaces">Published Interfaces</a></li>
+  <li> <a href="#newbie">Newbie Tips: Finding Your Way Around</a></li>
   <li> <a href="#tcpmon">Appendix : Using TCPMon</a></li>
   <li> <a href="#soapmon">Appendix : Using SOAP Monitor</a></li>
   <li> <a href="#Glossary">Glossary</a></li>
@@ -474,6 +475,60 @@ Add an option as follows:
 <p><b>WARNING: enabling remote administration may give unauthorized parties
 access to your machine. If you do this, please make sure to add security
 to your configuration!</b>
+<h3>Writing and Deploying Document-Style Message Services</h3>
+<p>The SOAP specification allows for message-oriented services as well as RPC. 
+  RPC defines strict encoding rules for passing serialized objects as method parameters 
+  and return values. Message services can receive and return arbitrary XML messages 
+  in the SOAP Body. If you want to work with the raw XML of the incoming and outgoing 
+  SOAP Bodies, write a message service.</p>
+<h4>What, Exactly, Is a Message Service?</h4>
+<p>I don't know. This is a very confusing subject and I haven't read enough of 
+  the SOAP spec. Axis developer people, help? Is it &quot;any service that does 
+  not use RPC&quot;? Is it &quot;all SOAP services, including those using RPC, 
+  which is really just a restricted form of SOAP messaging?&quot;</p>
+<h4>Method Signatures for a Message Service</h4>
+<p>Axis makes it easy to work with the raw XML in the SOAP Body. Message services 
+  are handled by <code>org.apache.axis.providers.java.MsgProvider</code>, which 
+  expects a class with one method having one of the following three signatures:</p>
+<p><code>public Element [] method(Vector v);<br>
+  public Document method(Document doc);<br>
+  public void method(MessageContext mc);</code></p>
+<p>Note: in future versions of Axis, the first method will likely be revised to 
+  one of the following:</p>
+<p><code>public Element [] method(Element[] e);<br>
+  public Vector method(Vector v);</code></p>
+<p>The first version allows multiple SOAP Body Elements (child elements of the 
+  SOAP Body); the second assumes that the request and response SOAP Bodies will 
+  each have only one SOAP Element. The third method signature leaves your method 
+  to dig all necessary information out of the MessageContext object, which essentially 
+  lets you get at everything Axis knows about the request and response.</p>
+<h4>Deploying a Message Service</h4>
+<p>A sample message service can be found in
+<a href="../samples/message/MessageService.java">samples/message/MessageService.java</a>. 
+  The service class, <code>MessageService</code>, has one public method, <code>echoElements</code>, 
+  which matches the first of the three method signatures above:</p>
+<pre class="example">public Element[] echoElements(Vector elems) </pre>
+<p>The <code>MsgProvider</code> handler calls the method with a <code>java.util.Vector</code> 
+  of <code>org.w3c.dom.Element</code> objects that correspond to the immediate 
+  children of the incoming message's SOAP Body. Often, this Vector will will be 
+  a single Element (perhaps the root element of some XML document conforming to 
+  some agreed-upon schema), but the SOAP Body can handle any number of children. 
+  The method returns an <code>Element[]</code> array to be returned in the SOAP 
+  body.</p>
+<p>Message services must be deployed with a WSDD file. Here is the full WSDD for 
+  the <code>MessageService</code> class:</p>
+<pre class="XML">
+&lt;deployment name=&quot;test&quot; xmlns=&quot;http://xml.apache.org/axis/wsdd/&quot;
+      xmlns:java=&quot;http://xml.apache.org/axis/wsdd/providers/java&quot;
+      xmlns:xsi=&quot;http://www.w3.org/2000/10/XMLSchema-instance&quot;&gt;
+	&lt;service name=&quot;MessageService&quot; provider=&quot;java:MSG&quot;&gt;
+    &lt;parameter name=&quot;className&quot; value=&quot;samples.message.MessageService&quot;/&gt;
+    &lt;parameter name=&quot;allowedMethods&quot; value=&quot;echoElements&quot;/&gt;
+  &lt;/service&gt;<br>&lt;/deployment&gt;</pre>
+<p>Note that the &quot;provider&quot; attribute is different from the RPC deployment 
+  example. &quot;java:MSG&quot; tells Axis that this service is to be handled 
+  by <code>org.apache.axis.providers.java.MsgProvider</code> rather than
+<code>org.apache.axis.providers.java.RPCProvider.</code></p>
 <h2>
 <a NAME="DataMapping"></a>XML &lt;-> Java Data Mapping in Axis</h2>
 
@@ -1324,6 +1379,100 @@ new versions of the specification are released.
 <li>org.apache.axis.wsdl.Java2WSDL</li>
 </ul>
 </ul>
+<h2><a name="newbie"></a>Newbie Tips: Finding Your Way Around</h2>
+<p>So you've skimmed the User's Guide and written your first .jws service, 
+and everything went perfectly! Now it's time to get to work on a real project,
+and you have something specific you need to do that the User's Guide didn't
+cover. 
+It's a simple thing, and you know it must be in Axis <em>somewhere</em>, but 
+you don't know what it's called or how to get at it. This section is meant to 
+give you some starting points for your search.</p>
+<h3>Places to Look for Clues</h3>
+<p>Here are the big categories.</p>
+<ul>
+  <li><a href="../samples/"><b>The samples.</b></a> These examples are
+  complete with deployment descriptors and often contain both client and
+  server code. 
+  </li>
+  <li><b>The Javadocs.</b> Full Javadocs are included with the binary
+distribution. 
+    The Javadocs can be intimidating at first, but once you know the major user
+    classes, they are one of the fastest ways to an answer.</li>
+  <li><b><a href="http://xml.apache.org/axis/mail.html">The mailing list
+archives.</a></b> 
+    If you know what you want but don't know what it's called in Axis, this is 
+    the best place to look. Chances are someone has wanted the same thing and 
+    someone else has used (or developed) Axis long enough know the name.</li>
+  <li> <b>WSDL2Java.</b> Point WSDL2Java at a known webservice that does some 
+    of the things you want to do. See what comes out. This is useful even if
+you 
+    will be writing the actual service or client from scratch. If you want
+nice, 
+    human-readable descriptions of existing web services, try
+<a href="http://www.xmethods.net">http://www.xmethods.net</a>.</li>
+</ul>
+<h3>Classes to Know</h3>
+<h4>org.apache.axis.MessageContext</h4>
+<p>The answer to most &quot;where do I find...&quot; questions for an Axis web 
+  service is &quot;in the MessageContext.&quot; Essentially everything Axis
+knows 
+  about a given request/response can be retrieved via the MessageContext. Here 
+  Axis stores:</p>
+<ul>
+  <li>A reference to the AxisEngine</li>
+  <li>The request and response messages (<code>org.apache.axis.Message</code> 
+    objects available via getter and setter methods)</li>
+  <li>Information about statefulness and service scope (whether the service is 
+    maintaining session information, etc.)</li>
+  <li>The current status of processing (whether or not the &quot;pivot&quot;
+has 
+    been passed, which determines whether the request or response is the
+current 
+    message)</li>
+  <li>Authentication information (username and password, which can be provided 
+    by a servlet container or other means)</li>
+  <li>Properties galore. Almost anything you would want to know about the
+message 
+    can be retrieved via <code>MessageContext.getProperty()</code>.
+You only need 
+    to know the name of the property. This can be tricky, but it is usually a 
+    constant, like those defined in
+<code>org.apache.axis.transport.http.HTTPConstants</code>. 
+    So, for example, to retrieve the ServletContext for the Axis Servlet, you 
+    would want: <code>((HttpServlet)msgC.getProperty(HTTPConstants.MC_HTTP_SERVLET)).getServletContext();</code><br>
+  </li>
+</ul>
+<p>From within your service, the current MessageContext object is always
+available 
+  via the static method <code>MessageContext.getCurrentContext()</code>. This 
+  allows you to do any needed customization of the request and response
+methods, 
+  even from within an RPC service that has no explicit reference to the
+MessageContext.</p>
+<h4>org.apache.axis.Message</h4>
+<p>An <code>org.apache.axis.Message</code> object is Axis's representation of 
+  a SOAP message. The request and response messages can be retrieved from the 
+  MessageContext as described above. A Message has:</p>
+<ul>
+  <li>MIME headers (if the message itself has MIME information)</li>
+  <li>Attachments (if the message itself has attachments)</li>
+  <li>A SOAPPart (and a convenience method for quick retrieval of the
+SOAPPart's 
+    SOAPEnvelope). The SOAPPart gives you access to the SOAP &quot;guts&quot; 
+    of the message (everything inside the &lt;soap:Envelope&gt; tags)</li>
+</ul>
+<h4>org.apache.axis.SOAPEnvelope</h4>
+<p>As you can see, starting with the MessageContext lets you work your way
+down 
+  through the API, discovering all the information available to you about a
+single 
+  request/response exchange. A MessageContext has two Messages, which each
+have 
+  a SOAPPart that contains a SOAPEnvelope. The SOAPEnvelope, in turn, holds
+objects 
+  a full representation of the SOAP Envelope that is sent over the wire. From 
+  here you can get and set the contents of the SOAP Header and the SOAP Body. 
+  See the Javadocs for a full list of the properties available.</p>
 <h2> <a NAME="tcpmon"></a>Appendix : Using the Axis TCP Monitor (tcpmon)</h2>
 The included "tcpmon" utility can be found in the org.apache.axis.utils
 package. To run it from the command line:
