@@ -436,8 +436,9 @@ public class JWSProcessor extends BasicHandler
         }
 
         // boot classpath isn't found in above search
-        if(AxisProperties.getProperty("sun.boot.class.path") != null) {
-            classpath.append(AxisProperties.getProperty("sun.boot.class.path"));
+        String bootClassPath = AxisProperties.getProperty("sun.boot.class.path");
+        if( bootClassPath != null) {
+            classpath.append(bootClassPath);
         }
 
         return classpath.toString();

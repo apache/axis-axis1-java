@@ -55,7 +55,6 @@
 package org.apache.axis.transport.http;
 
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisProperties;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.components.logger.LogFactory;
@@ -63,6 +62,8 @@ import org.apache.axis.components.net.BooleanHolder;
 import org.apache.axis.encoding.Base64;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.components.net.TransportClientProperties;
+import org.apache.axis.components.net.TransportClientPropertiesFactory;
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpConnection;
@@ -234,56 +235,36 @@ public class CommonsHTTPSender extends BasicHandler {
      */
     private HttpConnection getSecureConnection(
             HttpState state, String host, int port) throws Exception {
+        TransportClientProperties tcp = TransportClientPropertiesFactory.create("https");
 
         if (port == -1) {
             port = 443;
         }
 
-        // Get https.proxyXXX settings
-        String tunnelHost = AxisProperties.getProperty("https.proxyHost");
-        String tunnelPortStr = AxisProperties.getProperty("https.proxyPort");
-        String nonProxyHosts = AxisProperties.getProperty("https.nonProxyHosts");
-
-        // Use http.proxyXXX settings if https.proxyXXX is not set
-        if (tunnelHost == null) {
-            tunnelHost = AxisProperties.getProperty("http.proxyHost");
-        }
-        if (tunnelPortStr == null) {
-            tunnelPortStr = AxisProperties.getProperty("http.proxyPort");
-        }
-        if (nonProxyHosts == null) {
-            nonProxyHosts = AxisProperties.getProperty("http.nonProxyHosts");
-        }
         boolean hostInNonProxyList =
-                isHostInNonProxyList(host, nonProxyHosts);
+                isHostInNonProxyList(host, tcp.getNonProxyHosts());
 
-        if ((tunnelHost == null) || tunnelHost.equals("")
-                || hostInNonProxyList) {
+        if (tcp.getProxyHost().length() == 0 || hostInNonProxyList) {
             return new HttpConnection(host, port, true);
         } else {
 
             // Default proxy port is 80, even for https
-            int tunnelPort = ((tunnelPortStr != null)
-                    ? ((Integer.parseInt(tunnelPortStr) < 0)
-                    ? 80
-                    : Integer.parseInt(tunnelPortStr))
-                    : 80);
-            String tunnelUser = AxisProperties.getProperty("https.proxyUser");
-            String tunnelPassword = AxisProperties.getProperty("https.proxyPassword");
+            int tunnelPort = ((tcp.getProxyPort().length() != 0)
+                              ? Integer.parseInt(tcp.getProxyPort())
+                              : 80);
 
-            if (tunnelUser == null) {
-                tunnelUser = AxisProperties.getProperty("http.proxyUser");
-            }
-            if (tunnelPassword == null) {
-                tunnelPassword = AxisProperties.getProperty("http.proxyPassword");
-            }
-            if (tunnelUser != null) {
+            if (tunnelPort < 0)
+                tunnelPort = 80;
+                
+            if (tcp.getProxyUser().length() != 0) {
                 Credentials proxyCred =
-                        new UsernamePasswordCredentials(tunnelUser, tunnelPassword);
+                        new UsernamePasswordCredentials(tcp.getProxyUser(),
+                                                        tcp.getProxyPassword());
 
                 state.setProxyCredentials(null, proxyCred);
             }
-            return new HttpConnection(tunnelHost, tunnelPort, host, port, true);
+
+            return new HttpConnection(tcp.getProxyHost(), tunnelPort, host, port, true);
         }
     }
 
@@ -300,32 +281,29 @@ public class CommonsHTTPSender extends BasicHandler {
      */
     private HttpConnection getConnection(HttpState state, String host, int port)
             throws Exception {
+        TransportClientProperties tcp = TransportClientPropertiesFactory.create("http");
 
-        String proxyHost = AxisProperties.getProperty("http.proxyHost");
-        String proxyPort = AxisProperties.getProperty("http.proxyPort");
-        String nonProxyHosts = AxisProperties.getProperty("http.nonProxyHosts");
         boolean hostInNonProxyList =
-                isHostInNonProxyList(host, nonProxyHosts);
-        String proxyUsername = AxisProperties.getProperty("http.proxyUser");
-        String proxyPassword = AxisProperties.getProperty("http.proxyPassword");
+                isHostInNonProxyList(host, tcp.getNonProxyHosts());
 
         if (port == -1) {
             port = 80;
         }
-        if ((proxyHost == null) || proxyHost.equals("") || (proxyPort == null)
-                || proxyPort.equals("") || hostInNonProxyList) {
+        if (tcp.getProxyHost().length() == 0 ||
+            tcp.getProxyPort().length() == 0 ||
+            hostInNonProxyList) {
             return new HttpConnection(host, port);
         } else {
-            if (proxyUsername != null) {
+            if (tcp.getProxyUser().length() != 0) {
                 Credentials proxyCred =
-                        new UsernamePasswordCredentials(proxyUsername,
-                                proxyPassword);
+                        new UsernamePasswordCredentials(tcp.getProxyUser(),
+                                                        tcp.getProxyPassword());
 
                 state.setProxyCredentials(null, proxyCred);
             }
-            return new HttpConnection(proxyHost,
-                    new Integer(proxyPort).intValue(), host,
-                    port);
+            return new HttpConnection(tcp.getProxyHost(),
+                                      new Integer(tcp.getProxyPort()).intValue(), host,
+                                      port);
         }
     }
 

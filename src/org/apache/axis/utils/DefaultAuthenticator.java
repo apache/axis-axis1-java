@@ -54,12 +54,17 @@
 
 package org.apache.axis.utils;
 
+import org.apache.axis.components.net.TransportClientProperties;
+import org.apache.axis.components.net.TransportClientPropertiesFactory;
+
 
 /**
  * This class is used by WSDL2javaAntTask and WSDL2.
  * Supports the http.proxyUser and http.proxyPassword properties.
  */
 public class DefaultAuthenticator extends java.net.Authenticator {
+    private TransportClientProperties tcp = null;
+    
     private String user;
     private String password;
 
@@ -71,11 +76,18 @@ public class DefaultAuthenticator extends java.net.Authenticator {
     protected java.net.PasswordAuthentication getPasswordAuthentication() {
         // if user and password weren't provided, check the system properties
         if (user == null) {
-            user = System.getProperty("http.proxyUser", "");
+            user = getTransportClientProperties().getProxyUser();
         }
         if (password == null) {
-            password = System.getProperty("http.proxyPassword", "");
+            password = getTransportClientProperties().getProxyPassword();
         }
         return new java.net.PasswordAuthentication(user, password.toCharArray());
+    }
+    
+    private TransportClientProperties getTransportClientProperties() {
+        if (tcp == null) {
+            tcp = TransportClientPropertiesFactory.create("http");
+        }
+        return tcp;
     }
 }
