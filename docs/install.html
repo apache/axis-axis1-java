@@ -1,4 +1,4 @@
-<html>
+html>
   <head>
     <title>Axis installation instructions</title>
     <style type=text/css>
@@ -19,7 +19,7 @@
 <img border=0 align=left src="axis.jpg" />
 </a>
 <div class="head">
-Installing and deploying web applications using xml-soap and xml-axis
+Installing and deploying web applications using xml-axis
 </div>
 </td>
 </tr>
@@ -65,8 +65,8 @@ Contents
       <tr><td class="section">Introduction</td></tr>
     </table>
 
-    <p>This document describes how to install both the xml-soap and xml-axis
-    implementation side by side in as unobtrusive of a manner as possible.&nbsp;
+    <p>This document describes how to install xml-axis 
+    in as unobtrusive of a manner as possible.&nbsp;
     There will be no editing of configuration files, setting of server
     classpaths, or the
     like.&nbsp; Instead, these instructions will rely only on the automatic
@@ -80,9 +80,9 @@ Contents
 
     <p>In your servlet installation, you should find a directory into which web
     applications (webapps) are to be placed.&nbsp; Into this directory copy the
-    webapps/soap directory from the xml-soap distribution, and the webapps/axis
-    from the xml-axis distribution.&nbsp; You can actually name these
-    directories anything you want, just be aware that the names you choose will
+    webapps/axis directory 
+    from the xml-axis distribution.&nbsp; You can actually name this
+    directory anything you want, just be aware that the name you choose will
     form the basis for the URL by which clients will access your service.</p>
 
     <a name="depend"/>
@@ -90,30 +90,24 @@ Contents
       <tr><td class="section">Step 2: installing the dependencies</td></tr>
     </table>
 
-    <p>In each of the directories you just created, you will find a WEB-INF
-    directory.&nbsp; These contains some basic configuration information, but
+    <p>In the directory you just created, you will find a WEB-INF
+    directory.&nbsp; This contains some basic configuration information, but
     can also be used to contain the dependencies and web services you wish to
     deploy.&nbsp; This is actually the recommended way to deploy as the servlet
     engine will then keep each web application isolated from each other.</p>
-    <p>In each WEB-INF directory, create a &quot;lib&quot; directory.&nbsp; </p>
+    <p>In the WEB-INF directory, create a &quot;lib&quot; directory.&nbsp; </p>
     <ul>
-      <li>In the soap/WEB-INF/lib directory, copy the soap.jar from the xml-soap
-        distribution as well as the xerces.jar from the xml-xerces distribution,
-        mail.jar from javamail, and activation.jar from jaf.</li>
-      <li>In the axis/WEB-INF/lib directory, copy the axis.jar from the xml-axis
-        distribution as well as the xerces.jar from the xml-xerces distribution.
+      <li>In this directory, copy the axis.jar from the xml-axis
+        distribution as well the jars associated with the JAXP 1.1 XML
+        compliant parser of yourc chioce.  This generally means either the
+        xerces.jar from the xml-xerces distribution, or the crimson.jar and
+        jaxp.jar from the JAXP 1.1 reference implementation.
         </li>
     </ul>
 
     <p><span class="note">Note:</span> 
-    Note that there is no requirement that the xerces.jar's be at the same
-    level.&nbsp; Early versions of xml-soap will not work with later versions of
-    xml-xerces.&nbsp; If you are running with soap 2.1 or earlier, place a 1.3.0
-    or earlier version of xerces.jar into the soap/WEB-INF/lib directory, but
-    feel free to place a later version of xml-xerces in the corresponding
-    axis/WEB-INF/lib directory.&nbsp; The servlet engine will keep it all
-    straight.&nbsp; In fact, the servlet engine may very well use a different
-    xml-parser entirely!</p>
+    Note that there is no requirement that each webapp or the web server itself
+    use the same xml parsers.</p>
 
     <a name="websvc"/>
     <table width=100%>
@@ -123,9 +117,7 @@ Contents
     <p>If you got this far, the next step should be simple: </p>
     <p>In each WEB-INF directory, create a &quot;classes&quot; directory.&nbsp; </p>
     <ul>
-      <li>In the soap/WEB-INF/classes directory, copy the services you wish to
-        install, being careful to preserve the directory structure.</li>
-      <li>In the axis/WEB-INF/lib directory, copy the services you wish to
+      <li>In this directory, copy the services you wish to
         install, being careful to preserve the directory structure.</li>
     </ul>
     <p>Again, isolation is preserved.&nbsp; And, by the way, should your
@@ -159,16 +151,11 @@ Contents
     are a number of ways to do this, for now I'll simply describe one way that
     is suitable for automation.</p>
     <ul>
-      <li>Temporarily add soap.jar, xerces.jar, mail.jar, activation.jar, and
-        servlet.jar to your classpath.&nbsp; Locate the deployment descriptor
+      <li>Temporarily add axis.jar and the XML parser jar file or files (e.g.,
+        xerces.jar) to your
+        classpath.&nbsp; Locate the deployment descriptor
         for your service and execute the following command:
-        <blockquote><code>
-        java org.apache.soap.server.ServiceManagerClient http://localhost:8080/soap/servlet/rpcrouter deploy DeploymentDescriptor
-        </code></blockquote>
-        </li>
-      <li>Temporarily add axis.jar and xerces.jar to your classpath.&nbsp; Locate the deployment descriptor
-        for your service and execute the following command:
-        <blockquote><code>java org.apache.axis.client.http.AdminClient -lhttp://localhost:8080/axis/servlet/AxisServlet
+        <blockquote><code>java org.apache.axis.client.AdminClient -lhttp://localhost:8080/axis/servlet/AxisServlet
           deploy.xml</code></blockquote>
         </li>
         
@@ -187,14 +174,8 @@ Contents
     purposes, it is presumed that you have installed and deployed the stockquote
     demo.</p>
     <ul>
-      <li>Temporarily add soap.jar, xerces.jar, mail.jar, activation.jar as well
-        as &quot;.&quot; (your current working directory) to your classpath.&nbsp;
-        Change directory to the distribution directory for xml-soap and execute
-        the following command:
-        <blockquote><code>java samples.stockquote.GetQuote
-          http://localhost:8080/soap/servlet/rpcrouter IBM</code></blockquote>
-        </li>
-      <li>Temporarily add axis.jar, xerces.jar as well as &quot;.&quot; (your
+      <li>Temporarily add axis.jar, and the parser jar or jars (e.g.,
+        xerces.jar) as well as &quot;.&quot; (your
         current working directory) to your classpath.&nbsp; Change directory to
         the distribution directory for xml-axis and execute the following
         command:
