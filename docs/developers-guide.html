@@ -268,20 +268,37 @@ a <i>few</i> details are presented herein to get the developer going.
 <p>
 Configure Log4J using system properties and/or a properties file:
 <ul>
-<li><h6>log4j.configuration=<i>log4j.properties</i></h6></li>
+<li><strong>log4j.configuration=<i>log4j.properties</i></strong>
+<p>
 Use this system property to specify the name of a Log4J configuration file.
 If not specified, the default configuration file is <i>log4j.properties</i>.
-A <i>log4j.properties</i> file is provided in <code>axis.jar</code>,
-but can be overridden (?verify this still works?)
-by placing a file of the same name so as to
-appear before <code>axis.jar</code> in the CLASSPATH.
-
+A <i>log4j.properties</i> file is provided in <code>axis.jar</code>.
+<p>This properties file can sometimes be overridden by placing a file of
+the same name so as to appear before <code>axis.jar</code> in the CLASSPATH.
+However, the precise behaviour depends on the classloader that is in use
+at the time, so we don't recommend this technique.
+<p>
+A safe way of overriding the properties file is to replace it in axis.jar.
+However, this isn't very convenient, especially if you want to tweak the
+properties during a debug session to filter out unwanted log entries.
+A more convenient alternative is to use an absolute file path to specify
+the properties file. This will even ignore web app's and their classloaders.
+So, for example on Linux, you could specify the system property:
+<pre>
+log4j.configuration=file:/home/fred/log4j.props
+</pre>
+</li>
+<li><strong>log4j.debug</strong>
+A good way of telling where log4j is getting its configuration from is to
+set this system property and look at the messages on standard output.
 <br>&nbsp;
-<li><h6>log4j.rootCategory=<i>priority</i> [, <i>appender</i>]*</h6></li>
+</li>
+<li><strong>log4j.rootCategory=<i>priority</i> [, <i>appender</i>]*</strong>
 Set the default (root) logger priority.
 
 <br>&nbsp;
-<li><h6>log4j.logger.<i>logger.name</i>=<i>priority</i></h6></li>
+</li>
+<li><strong>log4j.logger.<i>logger.name</i>=<i>priority</i></strong>
 Set the priority for the named logger
 and all loggers hierarchically lower than, or below, the
 named logger.
@@ -305,8 +322,21 @@ Likewise, setting
 <code>log4j.logger.org.apache.axis=DEBUG</code>
 will enable debug message for all AXIS classes,
 but not for other Jakarta projects.
+<p>
+A combination of settings will enable you to see the log events that
+you are interested in and omit the others.
+For example, the combination:
+<pre>
+log4j.logger.org.apache.axis=DEBUG 
+log4j.logger.org.apache.axis.encoding=INFO
+log4j.logger.org.apache.axis.utils=INFO
+log4j.logger.org.apache.axis.message=INFO
+</pre>
+cuts down the number of a log entries produced by a single request to
+a manageable number.
 <br>&nbsp;
-<li><h6>log4j.appender.<i>appender</i>.Threshold=<i>priority</i></h6></li>
+</li>
+<li><strong>log4j.appender.<i>appender</i>.Threshold=<i>priority</i></strong>
 Log4J <i>appenders</i> correspond to different output devices:
 console, files, sockets, and others.
 If appender's <i>threshold</i>
@@ -317,6 +347,7 @@ at different log destinations.
 <p>
 For example: one can capture DEBUG (and higher) level information in a logfile,
 while limiting console output to INFO (and higher).
+</li>
 </ul>
 
 <h2>
