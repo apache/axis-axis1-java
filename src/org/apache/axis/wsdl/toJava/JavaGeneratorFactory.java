@@ -372,18 +372,25 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                             // the qName
                             tEntry.setName(emitter.getJavaName(typeQName));
                         } else {
-                            // This is an anonymous type name.
-                            // Axis uses '>' as a nesting token to generate
-                            // unique qnames for anonymous types.
-                            // Only consider the localName after the last '>' 
-                            // when generating the java name
-                            String localName = typeQName.getLocalPart();
-                            localName = 
-                                localName.substring(
-                                    localName.lastIndexOf(
-                                        SymbolTable.ANON_TOKEN)+1);
-                            typeQName = new QName(typeQName.getNamespaceURI(), 
-                                                  localName);
+                           String localName = typeQName.getLocalPart();
+                              
+                           // Check to see if this is an anonymous type,
+                           // if it is, replace Axis' ANON_TOKEN with
+                           // an underscore to make sure we don't run
+                           // into name collisions with similarly named
+                           // non-anonymous types                          
+                           StringBuffer sb = new StringBuffer(localName);
+                           int aidx = -1;
+                           while (
+                             (aidx = sb.indexOf(
+                               SymbolTable.ANON_TOKEN)) > -1) {
+                                 sb.replace(aidx, aidx+SymbolTable.ANON_TOKEN.length(), "_");
+                           }
+                           localName = sb.toString();
+                                                 
+                           typeQName = new QName(typeQName.getNamespaceURI(), 
+                                                 localName);
+                                                  
                             // If there is already an existing type,
                             // there will be a collision.  
                             // If there is an existing anon type, 
