@@ -6,7 +6,7 @@ import java.net.URL;
 import test.wsdl.interop3.compound2.xsd.Employee;
 import test.wsdl.interop3.compound2.xsd.Person;
 import test.wsdl.interop3.compound2.Compound2Locator;
-import test.wsdl.interop3.compound2.SoapInteropCompound2Binding;
+import test.wsdl.interop3.compound2.SoapInteropCompound2PortType;
 
 /*
     <!-- SOAP Builder's round III web services          -->
@@ -39,7 +39,7 @@ public class Compound2TestCase extends junit.framework.TestCase {
     }
 
     public void testStep3() {
-        SoapInteropCompound2Binding binding;
+        SoapInteropCompound2PortType binding;
         try {
             if (url != null) {
                 binding = new Compound2Locator().getSoapInteropCompound2Port(url);

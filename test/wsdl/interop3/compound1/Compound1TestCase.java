@@ -36,7 +36,7 @@ public class Compound1TestCase extends junit.framework.TestCase {
     }
 
     public void testStep3() {
-        SoapInteropCompound1Binding binding;
+        SoapInteropCompound1PortType binding;
         try {
             if (url != null) {
                 binding = new Compound1Locator().getSoapInteropCompound1Port(url);
@@ -73,7 +73,7 @@ public class Compound1TestCase extends junit.framework.TestCase {
 
     /*
     public void testStep5() {
-        SoapInteropCompound1Binding binding;
+        SoapInteropCompound1PortType binding;
         try {
             binding = new Compound1Locator().getSoapInteropCompound1Port(new java.net.URL("http://localhost:8080/axis/services/SoapInteropImport1Port"));
         }
