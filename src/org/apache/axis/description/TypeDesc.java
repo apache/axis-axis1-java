@@ -99,24 +99,30 @@ public class TypeDesc implements Serializable {
      * Eventually we may extend this to provide for external
      * metadata config (via files sitting in the classpath, etc).
      *
-     * (Could introduce a cache here for speed as an optimization)
      */
     public static TypeDesc getTypeDescForClass(Class cls)
     {
         // First see if we have one explicitly registered
+        // or cached from previous lookup
         TypeDesc result = (TypeDesc)classMap.get(cls);
-        if (result != null) {
-            return result;
+
+        if (result == null) {
+            try {
+                Method getTypeDesc = 
+                    MethodCache.getInstance().getMethod(cls, 
+                                                        "getTypeDesc", 
+                                                        noClasses);
+                if (getTypeDesc != null) {
+                    result = (TypeDesc)getTypeDesc.invoke(null, noObjects);
+                    if (result != null) {
+                        classMap.put(cls, result);
+                    }
+                }
+            } catch (Exception e) {
+            }
         }
         
-        try {
-            Method getTypeDesc = MethodCache.getInstance().getMethod(cls, "getTypeDesc", noClasses);
-            if (getTypeDesc != null) {
-                return (TypeDesc)getTypeDesc.invoke(null, noObjects);
-            }
-        } catch (Exception e) {
-        }
-        return null;
+        return result;
     }
 
     /** The Java class for this type */
