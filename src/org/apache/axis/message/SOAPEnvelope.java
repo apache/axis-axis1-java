@@ -672,4 +672,9 @@ public class SOAPEnvelope extends MessageElement
             setOwnerDocumentForChildren(node.getChildNodes(), sp);  // recursively
     	}
     }
+
+    public  String getValue() {
+        return getValueDOM();
+    }
+    
 }

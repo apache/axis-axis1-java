@@ -23,6 +23,7 @@ import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.TextSerializationContext;
 import org.apache.axis.enum.Style;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.Mapping;
@@ -2037,7 +2038,8 @@ public class MessageElement extends NodeImpl implements SOAPElement,
             if(child.getNodeType()==TEXT_NODE ||
                child.getNodeType()==CDATA_SECTION_NODE ||
                child.getNodeType()==COMMENT_NODE ) {
-                MessageElement childElement = new MessageElement((CharacterData)child);
+                org.apache.axis.message.Text childElement = 
+                    new org.apache.axis.message.Text((CharacterData)child);
                 dest.appendChild(childElement);
             } else {
                 PrefixedQName qname = new PrefixedQName(child.getNamespaceURI(),
@@ -2059,6 +2061,41 @@ public class MessageElement extends NodeImpl implements SOAPElement,
      * @see javax.xml.soap.Node#getValue() ;
      */
     public String getValue() {
+        if ((recorder != null) && (!_isDirty)) {
+            StringWriter writer = new StringWriter();
+            TextSerializationContext outputContext = 
+                new TextSerializationContext(writer);
+            try {
+                recorder.replay(startEventIndex,
+                                endEventIndex,
+                                new SAXOutputter(outputContext));
+            } catch (Exception t) {
+                log.debug("getValue()", t);
+                return null;
+            }
+            String value = writer.toString();
+            return (value.length() == 0) ? null : value;
+        } 
+
+        if (textRep != null) {
+            // weird case: error?
+            return textRep.getNodeValue();
+        }
+
+        if (objectValue != null) {
+            return getValueDOM();
+        }
+
+        if (children != null && !children.isEmpty()) {
+            if (children.get(0) instanceof org.apache.axis.message.Text) {
+                return ((org.apache.axis.message.Text)children.get(0)).getNodeValue();
+            }
+        }
+
+        return null;
+    }
+
+    protected String getValueDOM() {
         try {
             Element element = getAsDOM();
             if (element.hasChildNodes()) {
