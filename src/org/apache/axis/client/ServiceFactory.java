@@ -19,6 +19,7 @@ package org.apache.axis.client;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.configuration.EngineConfigurationFactoryFinder;
 import org.apache.axis.utils.ClassUtils;
+import org.apache.axis.utils.Messages;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -52,6 +53,9 @@ public class ServiceFactory extends javax.xml.rpc.ServiceFactory
     public static final String MAINTAIN_SESSION   = "maintain session";
     public static final String SERVICE_NAMESPACE  = "service namespace";
     public static final String SERVICE_LOCAL_PART = "service local part";
+    public static final String SERVICE_IMPLEMENTATION_NAME_PROPERTY = "serviceImplementationName";
+
+    private static final String SERVICE_IMPLEMENTATION_SUFFIX = "Locator";
 
     private static EngineConfiguration _defaultEngineConfig = null;
 
@@ -210,18 +214,110 @@ public class ServiceFactory extends javax.xml.rpc.ServiceFactory
         return new Service(serviceName);
     } // createService
 
-    public javax.xml.rpc.Service loadService(Class class1) throws ServiceException {
-        // TODO: Not yet implemented
-        return null;  
+    /**
+     * Create an instance of the generated service implementation class 
+     * for a given service interface, if available. 
+     *
+     *  @param   serviceInterface Service interface 
+     *  @return  Service.
+     *  @throws  ServiceException If there is any error while creating the specified service, 
+     *      including the case where a generated service implementation class cannot be located
+     */
+    public javax.xml.rpc.Service loadService(Class serviceInterface) throws ServiceException {
+        if (serviceInterface == null) {
+            throw new IllegalArgumentException(
+                    Messages.getMessage("serviceFactoryIllegalServiceInterface"));
+        }
+        if (!(javax.xml.rpc.Service.class).isAssignableFrom(serviceInterface))
+        {
+            throw new ServiceException(
+                    Messages.getMessage("serviceFactoryServiceInterfaceRequirement", serviceInterface.getName()));
+        } else {
+            String serviceImplementationName = serviceInterface.getName() + SERVICE_IMPLEMENTATION_SUFFIX;
+            Service service = createService(serviceImplementationName);
+            return service;
+        }
     }
 
-    public javax.xml.rpc.Service loadService(URL url, Class class1, Properties properties) throws ServiceException {
-        // TODO: Not yet implemented
-        return null;  
+    /**
+     * Create an instance of the generated service implementation class 
+     * for a given service interface, if available. 
+     * An implementation may use the provided wsdlDocumentLocation and properties 
+     * to help locate the generated implementation class. 
+     * If no such class is present, a ServiceException will be thrown.
+     *
+     *  @param   wsdlDocumentLocation URL for the WSDL document location for the service or null 
+     *  @param   serviceInterface Service interface 
+     *  @param   properties A set of implementation-specific properties 
+     *      to help locate the generated service implementation class 
+     *  @return  Service.
+     *  @throws  ServiceException If there is any error while creating the specified service, 
+     *      including the case where a generated service implementation class cannot be located
+     */
+    public javax.xml.rpc.Service loadService(URL wsdlDocumentLocation, 
+            Class serviceInterface, Properties properties) throws ServiceException {
+        if (serviceInterface == null) {
+            throw new IllegalArgumentException(
+                    Messages.getMessage("serviceFactoryIllegalServiceInterface"));
+        }
+        if (!(javax.xml.rpc.Service.class).isAssignableFrom(serviceInterface))
+        {
+            throw new ServiceException(
+                    Messages.getMessage("serviceFactoryServiceInterfaceRequirement", serviceInterface.getName()));
+        } else {
+            String serviceImplementationName = serviceInterface.getName() + SERVICE_IMPLEMENTATION_SUFFIX;
+            Service service = createService(serviceImplementationName);
+            return service;
+        }
     }
 
-    public javax.xml.rpc.Service loadService(URL url, QName qname, Properties properties) throws ServiceException {
-        // TODO: Not yet implemented
-        return null;  
+    /**
+     * Create an instance of the generated service implementation class 
+     * for a given service, if available. 
+     * The service is uniquely identified by the wsdlDocumentLocation and serviceName arguments. 
+     * An implementation may use the provided properties to help locate the generated implementation class. 
+     * If no such class is present, a ServiceException will be thrown. 
+     *
+     *  @param   wsdlDocumentLocation URL for the WSDL document location for the service or null 
+     *  @param   serviceName Qualified name for the service 
+     *  @param   properties A set of implementation-specific properties 
+     *      to help locate the generated service implementation class 
+     *  @return  Service.
+     *  @throws  ServiceException If there is any error while creating the specified service, 
+     *      including the case where a generated service implementation class cannot be located
+     */
+    public javax.xml.rpc.Service loadService(URL wsdlDocumentLocation, 
+            QName serviceName, Properties properties) throws ServiceException {
+        String serviceImplementationName = properties.getProperty(SERVICE_IMPLEMENTATION_NAME_PROPERTY);
+        javax.xml.rpc.Service service = createService(serviceImplementationName);
+        if (service.getServiceName().equals(serviceName)) {
+            return service;
+        } else {
+            throw new ServiceException(
+                    Messages.getMessage("serviceFactoryServiceImplementationNotFound", serviceImplementationName));
+        }
+    }
+
+    private Service createService(String serviceImplementationName) throws ServiceException {
+        try {
+            if(serviceImplementationName == null) {
+                throw new IllegalArgumentException();
+            }
+            Class serviceImplementationClass;
+            serviceImplementationClass = Thread.currentThread().getContextClassLoader().loadClass(serviceImplementationName);
+            if (!(org.apache.axis.client.Service.class).isAssignableFrom(serviceImplementationClass)) {
+                throw new ServiceException(
+                        Messages.getMessage("serviceFactoryServiceImplementationRequirement", serviceImplementationName));
+            }
+            Service service = (Service) serviceImplementationClass.newInstance();
+            if (service.getServiceName() != null) {
+                return service;
+            } else {
+                throw new ServiceException(Messages.getMessage("serviceFactoryInvalidServiceName"));
+            }
+        } catch (Exception e){
+            throw new ServiceException(e);
+        }
+        
     }
 }
