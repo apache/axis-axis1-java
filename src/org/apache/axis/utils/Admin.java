@@ -326,12 +326,14 @@ public class Admin
                     log.debug( Messages.getMessage("process00", args[i]) );
 
                 Document doc = XMLUtils.newDocument( new FileInputStream( args[i] ) );
-                admin.process(msgContext, doc.getDocumentElement());
+                Document result = admin.process(msgContext, doc.getDocumentElement());
+                if (result != null) {
+                    System.out.println(XMLUtils.DocumentToString(result));
+                }
             }
         }
         catch( Exception e ) {
             log.error( Messages.getMessage("errorProcess00", args[i]), e );
-            //System.exit( 1 );
             throw e;
         }
     }
