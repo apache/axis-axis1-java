@@ -179,15 +179,24 @@ public class ParamReader
             String[] paramNames = new String[paramTypes.length];
             int j = Modifier.isStatic(method.getModifiers()) ? 0 : 1;
 
+            boolean found = false;  // did we find any non-null names
             for (int i = 0; i < paramNames.length; i++) {
-                paramNames[i] = info.names[j++];
+                if (info.names[j] != null) {
+                    found = true;
+                    paramNames[i] = info.names[j];
+                }
+                j++;
                 if (paramTypes[i] == double.class || paramTypes[i] == long.class) {
                     // skip a slot for 64bit params
                     j++;
                 }
             }
 
-            return paramNames;
+            if (found) {
+                return paramNames;
+            } else {
+                return null;
+            }
         } else {
             return null;
         }
