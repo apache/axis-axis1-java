@@ -75,6 +75,7 @@ import org.apache.commons.logging.Log;
 
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
+import java.io.ByteArrayInputStream;
 import java.net.URL;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
@@ -132,7 +133,7 @@ public class CommonsHTTPSender extends BasicHandler {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
             reqMessage.writeTo(baos);
-            method.setRequestBody(bytesAsString(baos.toByteArray()));
+            method.setRequestBody(new ByteArrayInputStream(baos.toByteArray()));
             method.setUseExpectHeader(false); // workaround for
                                               // outbound chunking bug
                                               // in httpclient
@@ -216,15 +217,6 @@ public class CommonsHTTPSender extends BasicHandler {
             log.debug(Messages.getMessage("exit00",
                                           "CommonsHTTPSender::invoke"));
         }
-    }
-
-    private static String bytesAsString(byte[] b) {
-        try {
-            return new String(b, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            // always supported
-            throw new IllegalStateException(e.getMessage());
-        } // end of try-catch
     }
 
     /**
