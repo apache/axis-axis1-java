@@ -39,6 +39,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
+import org.w3c.dom.NamedNodeMap;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
@@ -60,11 +61,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-/*
+/**
  * MessageElement is the base type of nodes of the SOAP message parse tree.
  *
  * Note: it was made Serializable to help users of Apache SOAP who had
  * exploited the serializability of the DOM tree to migrate to Axis.
+ * @todo implement the NodeList methods properly, with tests. 
  */
 public class MessageElement extends NodeImpl implements SOAPElement,
         Serializable,
@@ -113,12 +115,23 @@ public class MessageElement extends NodeImpl implements SOAPElement,
     {
     }
 
+    /**
+     * constructor
+     * @param namespace namespace of element
+     * @param localPart local name
+     */
     public MessageElement(String namespace, String localPart)
     {
         namespaceURI = namespace;
         name = localPart;
     }
 
+    /**
+     * constructor. Automatically adds a namespace-prefix mapping to the mapping table
+     * @param localPart local name
+     * @param prefix prefix
+     * @param namespace namespace
+     */
     public MessageElement(String localPart, String prefix, String namespace)
     {
         this.namespaceURI = namespace;
@@ -127,28 +140,54 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         addMapping(new Mapping(namespace, prefix));
     }
 
+    /**
+     * construct using a {@link javax.xml.soap.Name} implementation,
+     * @see #MessageElement(String, String, String)
+     * @param eltName
+     */
     public MessageElement(Name eltName)
     {
         this(eltName.getLocalName(),eltName.getPrefix(), eltName.getURI());
     }
 
+    /**
+     * constructor binding the internal object value field to the
+     * value parameter
+     * @param namespace namespace of the element
+     * @param localPart local name
+     * @param value value of the node
+     */
     public MessageElement(String namespace, String localPart, Object value)
     {
         this(namespace, localPart);
         objectValue = value;
     }
 
+    /**
+     * constructor declaring the qualified name of the node
+     * @param name naming information
+     */
     public MessageElement(QName name)
     {
         this(name.getNamespaceURI(), name.getLocalPart());
     }
 
+    /**
+     * constructor declaring the qualified name of the node
+     * and its value
+     * @param name naming information
+     * @param value value of the node
+     */
     public MessageElement(QName name, Object value)
     {
         this(name.getNamespaceURI(), name.getLocalPart());
         objectValue = value;
     }
 
+    /**
+     * create a node through a deep copy of the passed in element.
+     * @param elem name to copy from
+     */
     public MessageElement(Element elem)
     {
         namespaceURI = elem.getNamespaceURI();
@@ -156,6 +195,10 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         copyNode(elem);
     }
 
+    /**
+     * construct a text element.
+     * @param text text data. This is <i>not</i> copied; it is referred to in the MessageElement.
+     */
     public MessageElement(CharacterData text)
     {
         textRep = text;
@@ -163,6 +206,29 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         name = text.getLocalName();
     }
 
+    /**
+     * Advanced constructor used for deserialization.
+     * <ol>
+     * <li>The context provides the mappings and Sax event recorder
+     * <li>The soap messaging style is determined from the current message context, defaulting
+     * to SOAP1.1 if there is no current context.
+     * <li>if there is an id attribute (any namespace), then the ID is registered
+     * with {@link DeserializationContext#registerElementByID(String, MessageElement)} ;a  new recorder is
+     * created if needed.
+     * <li>If there is an attribute "root" in the default SOAP namespace, then it is examined
+     * to see if it marks the element as root (value=="1" or not)
+     * <li>If there is an arrayType attribute then we assume we are an array and set our
+     * {@link #typeQName} field appropriately.
+     * <li>The {@link #href} field is set if there is a relevant href value
+     * </ol>
+     *
+     * @param namespace namespace namespace of element
+     * @param localPart local name local name of element
+     * @param prefix prefix prefix of element
+     * @param attributes attributes to save as our attributes
+     * @param context deserialization context for this message element
+     * @throws AxisFault if the encoding style is not recognized/supported
+     */
     public MessageElement(String namespace, String localPart, String prefix,
                    Attributes attributes, DeserializationContext context)
         throws AxisFault
@@ -188,13 +254,15 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         if (attributes != null && attributes.getLength() > 0) {
             this.attributes = attributes;
 
-            typeQName = context.getTypeFromAttributes(namespace,
+            this.typeQName = context.getTypeFromAttributes(namespace,
                                                       localPart,
                                                       attributes);
 
             String rootVal = attributes.getValue(Constants.URI_DEFAULT_SOAP_ENC, Constants.ATTR_ROOT);
-            if (rootVal != null)
-                _isRoot = rootVal.equals("1");
+
+            if (rootVal != null) {
+                _isRoot = "1".equals(rootVal);
+            }
 
             id = attributes.getValue(Constants.ATTR_ID);
             // Register this ID with the context.....
@@ -216,8 +284,9 @@ public class MessageElement extends NodeImpl implements SOAPElement,
             href = attributes.getValue(sc.getAttrHref());
 
             // If there's an arrayType attribute, we can pretty well guess that we're an Array???
-            if (attributes.getValue(Constants.URI_DEFAULT_SOAP_ENC, Constants.ATTR_ARRAY_TYPE) != null)
+            if (attributes.getValue(Constants.URI_DEFAULT_SOAP_ENC, Constants.ATTR_ARRAY_TYPE) != null) {
                 typeQName = Constants.SOAP_ARRAY;
+            }
 
 
             encodingStyle =
@@ -264,7 +333,7 @@ public class MessageElement extends NodeImpl implements SOAPElement,
 
     /** !!! TODO : Make sure this handles multiple targets
      */
-    Deserializer fixupDeserializer;
+    protected Deserializer fixupDeserializer;
 
     public void setFixupDeserializer(Deserializer dser)
     {
@@ -277,17 +346,39 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         return fixupDeserializer;
     }
 
+    /**
+     * record the end index of the SAX recording.
+     * @param endIndex end value
+     */
     public void setEndIndex(int endIndex)
     {
         endEventIndex = endIndex;
         //context.setRecorder(null);
     }
 
+    /**
+     * get the is-root flag
+     * @return true if the element is considered a document root.
+     */
     public boolean isRoot() { return _isRoot; }
+
+    /**
+     * get a saved ID
+     * @return ID or null for no ID
+     */
     public String getID() { return id; }
 
+    /**
+     * get a saved href
+     * @return href or null
+     */
     public String getHref() { return href; }
 
+    /**
+     * get the attributes
+     * @return attributes. If this equals {@link NullAttributes.singleton} it is null
+     *
+     */
     public Attributes getAttributesEx() { return attributes; }
 
 
@@ -318,9 +409,9 @@ public class MessageElement extends NodeImpl implements SOAPElement,
      */
     public Node cloneNode(boolean deep) {
         try{
-            MessageElement clonedSelf = (MessageElement) clonning();
+            MessageElement clonedSelf = (MessageElement) cloning();
 
-            if(deep == true){
+            if(deep){
                 if(children != null){
                     for(int i =0; i < children.size(); i++){
                         NodeImpl child = (NodeImpl)children.get(i);
@@ -367,7 +458,7 @@ public class MessageElement extends NodeImpl implements SOAPElement,
      * @return
      * @throws CloneNotSupportedException
      */
-    protected Object clonning() throws CloneNotSupportedException
+    protected Object cloning() throws CloneNotSupportedException
     {
         try{
             MessageElement clonedME = null;
@@ -396,7 +487,7 @@ public class MessageElement extends NodeImpl implements SOAPElement,
             // clonedME.setObjectValue(objectValue); // how to copy this???
             clonedME.setDirty(this._isDirty);
             if(encodingStyle != null){
-                clonedME.setEncodingStyle(new String(encodingStyle));
+                clonedME.setEncodingStyle(encodingStyle);
             }
             return clonedME;
         }catch(Exception ex){
@@ -404,11 +495,18 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         }
     }
 
-    // called in MESerialaizationContext
+
+    /**
+     * set all the attributes of this instance
+     * @param attrs a new attributes list
+     */
     public void setAllAttributes(Attributes attrs){
         attributes = attrs;
     }
 
+    /**
+     * remove all children.
+     */
     public void detachAllChildren()
     {
         removeContents();
@@ -421,14 +519,16 @@ public class MessageElement extends NodeImpl implements SOAPElement,
      * @return Attributes collection
      */
     public Attributes getCompleteAttributes() {
-        if (namespaces == null)
+        if (namespaces == null) {
             return attributes;
+        }
 
         AttributesImpl attrs = null;
-        if (attributes == NullAttributes.singleton)
+        if (attributes == NullAttributes.singleton) {
             attrs = new AttributesImpl();
-        else
+        } else {
             attrs = new AttributesImpl(attributes);
+        }
 
         for (Iterator iterator = namespaces.iterator(); iterator.hasNext();) {
             Mapping mapping = (Mapping) iterator.next();
@@ -440,17 +540,53 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         return attrs;
     }
 
-    public String getName() { return( name ); }
-    public void setName(String name) { this.name = name; }
+    /**
+     * get the local name of this element
+     * @return name
+     */
+    public String getName() {
+        return name;
+    }
 
-    public QName getQName() { return new QName(namespaceURI, name); }
+    /**
+     * set the local part of this element's name
+     * @param name
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * get the fully qualified name of this element
+     * @return a QName describing the name of thsi element
+     */
+    public QName getQName() {
+        return new QName(namespaceURI, name);
+    }
+
+    /**
+     * set the name and namespace of this element
+     * @param qName qualified name
+     */
     public void setQName(QName qName) {
         this.name = qName.getLocalPart();
         this.namespaceURI = qName.getNamespaceURI();
     }
 
-    public void setNamespaceURI(String nsURI) { namespaceURI = nsURI; }
+    /**
+     * set the namespace URI of the element
+     * @param nsURI new namespace URI
+     */
+    public void setNamespaceURI(String nsURI) {
+        namespaceURI = nsURI;
+    }
 
+    /**
+     * get the element's type.
+     * If we are a reference, we look up our target in the context and
+     * return (and cache) its type.
+     * @return
+     */
     public QName getType() {
         // Try to get the type from our target if we're a reference...
         if (typeQName == null && href != null && context != null) {
@@ -462,12 +598,29 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         return typeQName;
     }
 
+    /**
+     * set the element's type
+     * @param qname
+     */
     public void setType(QName qname) {
         typeQName = qname;
     }
 
-    public SAX2EventRecorder getRecorder() { return recorder; }
-    public void setRecorder(SAX2EventRecorder rec) { recorder = rec; }
+    /**
+     * get the event recorder
+     * @return recorder or null
+     */
+    public SAX2EventRecorder getRecorder() {
+        return recorder;
+    }
+
+    /**
+     * set the event recorder
+     * @param rec
+     */
+    public void setRecorder(SAX2EventRecorder rec) {
+        recorder = rec;
+    }
 
     /**
      * Get the encoding style.  If ours is null, walk up the hierarchy
@@ -477,20 +630,26 @@ public class MessageElement extends NodeImpl implements SOAPElement,
      */
     public String getEncodingStyle() {
         if (encodingStyle == null) {
-            if (parent == null)
+            if (parent == null) {
                 return "";
-            return ((MessageElement)parent).getEncodingStyle();
+            }
+            return ((MessageElement) parent).getEncodingStyle();
         }
         return encodingStyle;
     }
 
+    /**
+     * remove all chidlren.
+     * All SOAPExceptions which can get thrown in this process are ignored.
+     */
     public void removeContents() {
         // unlink
-        if(children != null) {
-            for(int i = 0; i < children.size(); i++){
-                try{
-                    ((NodeImpl)children.get(i)).setParent(null);
-                }catch(Exception e){
+        if (children != null) {
+            for (int i = 0; i < children.size(); i++) {
+                try {
+                    ((NodeImpl) children.get(i)).setParent(null);
+                } catch (SOAPException e) {
+                    log.debug("ignoring", e);
                 }
             }
             // empty the collection
@@ -499,6 +658,11 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         }
     }
 
+    /**
+     * get an iterator over visible prefixes. This includes all declared in
+     * parent elements
+     * @return an iterator.
+     */
     public Iterator getVisibleNamespacePrefixes() {
         Vector prefixes = new Vector();
 
@@ -565,61 +729,89 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         el.parent = this;
     }
 
+    /**
+     * get a list of children
+     * @return a list, or null if there are no children
+     */
     public List getChildren()
     {
         return children;
     }
 
+    /**
+     * set the index point of our content's starting in the
+     * event recording
+     * @param index index value of the first event of our recorder.
+     */
     public void setContentsIndex(int index)
     {
         startContentsIndex = index;
     }
 
+    /**
+     * set a new namespace mapping list
+     * @param namespaces
+     */
     public void setNSMappings(ArrayList namespaces)
     {
         this.namespaces = namespaces;
     }
 
-    public String getPrefix(String namespaceURI) {
-        if ((namespaceURI == null) || (namespaceURI.equals("")))
+    /**
+     * get the prefix for a given namespace URI
+     * @param searchNamespaceURI namespace
+     * @return null for null or emtpy uri, null for no match, and the prefix iff there is a match
+     */
+    public String getPrefix(String searchNamespaceURI) {
+        if ((searchNamespaceURI == null) || ("".equals(searchNamespaceURI)))
             return null;
 
         if (href != null && getRealElement() != null) {
-            return getRealElement().getPrefix(namespaceURI);
+            return getRealElement().getPrefix(searchNamespaceURI);
         }
 
         for (int i = 0; namespaces != null && i < namespaces.size(); i++) {
-            Mapping map = (Mapping)namespaces.get(i);
-            if (map.getNamespaceURI().equals(namespaceURI))
+            Mapping map = (Mapping) namespaces.get(i);
+            if (map.getNamespaceURI().equals(searchNamespaceURI)) {
                 return map.getPrefix();
+            }
         }
 
-        if (parent != null)
-            return ((MessageElement)parent).getPrefix(namespaceURI);
+        if (parent != null) {
+            return ((MessageElement) parent).getPrefix(searchNamespaceURI);
+        }
 
         return null;
     }
 
-    public String getNamespaceURI(String prefix) {
-        if (prefix == null)
-            prefix = "";
+    /**
+     * map from a prefix to a namespace.
+     * Will recurse <i>upward the element tree</i> until we get a match
+     * @param searchPrefix
+     * @return the prefix, or null for no match
+     */
+    public String getNamespaceURI(String searchPrefix) {
+        if (searchPrefix == null) {
+            searchPrefix = "";
+        }
 
         if (href != null && getRealElement() != null) {
-            return getRealElement().getNamespaceURI(prefix);
+            return getRealElement().getNamespaceURI(searchPrefix);
         }
 
         for (int i = 0; namespaces != null && i < namespaces.size(); i++) {
-            Mapping map = (Mapping)namespaces.get(i);
-            if (map.getPrefix().equals(prefix)) {
+            Mapping map = (Mapping) namespaces.get(i);
+            if (map.getPrefix().equals(searchPrefix)) {
                 return map.getNamespaceURI();
             }
         }
 
-        if (parent != null)
-            return ((MessageElement)parent).getNamespaceURI(prefix);
+        if (parent != null) {
+            return ((MessageElement) parent).getNamespaceURI(searchPrefix);
+        }
 
         if (log.isDebugEnabled()) {
-            log.debug(Messages.getMessage("noPrefix00", "" + this, prefix));
+            log.debug(Messages.getMessage("noPrefix00", "" + this, searchPrefix));
         }
 
         return null;
@@ -680,10 +872,20 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         return getValueAsType(type, null);
     }
 
+    /**
+     * This is deserialization logic mixed in to our element class.
+     * It is only valid we have a deserializer, which means that we were created
+     * using {@link MessageElement#MessageElement(String, String, String, org.xml.sax.Attributes, org.apache.axis.encoding.DeserializationContext)}
+     * @param type type to look up a deserializer for.
+     * @param cls class to use for looking up the deserializer. This takes precedence over the type field.
+     * @return the value of the deserializer
+     * @throws Exception
+     */
     public Object getValueAsType(QName type, Class cls) throws Exception
     {
-        if (context == null)
+        if (context == null) {
             throw new Exception(Messages.getMessage("noContext00"));
+        }
 
         Deserializer dser = null;
         if (cls == null) {
@@ -691,8 +893,9 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         } else {
             dser = context.getDeserializerForClass(cls);
         }
-        if (dser == null)
+        if (dser == null) {
             throw new Exception(Messages.getMessage("noDeser00", "" + type));
+        }
 
         boolean oldVal = context.isDoneParsing();
         context.deserializing(true);
@@ -705,16 +908,28 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         return dser.getValue();
     }
 
+    /**
+     * class that represents a qname in a the qNameAttrs vector.
+     */
     protected static class QNameAttr {
-        QName name;
-        QName value;
+        public QName name;
+        public QName value;
     }
+
+    /**
+     * add an attribute to the qname vector. This is a separate vector from the
+     * main attribute list.
+     * @param namespace
+     * @param localName
+     * @param value
+     */
 
     public void addAttribute(String namespace, String localName,
                              QName value)
     {
-        if (qNameAttrs == null)
+        if (qNameAttrs == null) {
             qNameAttrs = new Vector();
+        }
 
         QNameAttr attr = new QNameAttr();
         attr.name = new QName(namespace, localName);
@@ -724,6 +939,13 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         // !!! Add attribute to attributes!
     }
 
+    /**
+     * add a normal CDATA/text attribute.
+     * There is no check whether or not the attribute already exists.
+     * @param namespace namespace URI
+     * @param localName local anme
+     * @param value value
+     */
     public void addAttribute(String namespace, String localName,
                              String value)
     {
@@ -732,13 +954,22 @@ public class MessageElement extends NodeImpl implements SOAPElement,
                                 value);
     }
 
-    public void addAttribute(String prefix, String namespace, String localName,
+    /**
+     * add an attribute.
+     * Note that the prefix is not added to our mapping list.
+     * Also, there is no check whether or not the attribute already exists.
+     * @param attrPrefix prefix.
+     * @param namespace namespace URI
+     * @param localName
+     * @param value
+     */
+    public void addAttribute(String attrPrefix, String namespace, String localName,
                              String value)
     {
         AttributesImpl attributes = makeAttributesEditable();
         String attrName = localName;
-        if (prefix != null && prefix.length() > 0) {
-            attrName = prefix + ":" + localName;
+        if (attrPrefix != null && attrPrefix.length() > 0) {
+            attrName = attrPrefix + ":" + localName;
         }
         attributes.addAttribute(namespace, localName, attrName, "CDATA",
                                 value);
@@ -768,6 +999,11 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         addAttribute(namespace, localName, value);
     }
 
+    /**
+     * get the value of an attribute
+     * @param localName
+     * @return the value or null
+     */
     public String getAttributeValue(String localName)
     {
         if (attributes == null) {
@@ -776,44 +1012,77 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         return attributes.getValue(localName);
     }
 
+    /**
+     * bind a a new soap envelope. sets the dirty bit.
+     * @param env
+     */
     public void setEnvelope(SOAPEnvelope env)
     {
         env.setDirty(true);
         message = env;
     }
 
+    /**
+     * get our current envelope
+     * @return envelope or null.
+     */
     public SOAPEnvelope getEnvelope()
     {
         return message;
     }
 
+    /**
+     * get the 'real' element -will follow hrefs.
+     * @return the message element or null if there is a href to something
+     * that is not a MessageElemeent.
+     */
     public MessageElement getRealElement()
     {
-        if (href == null)
+        if (href == null) {
             return this;
+        }
 
         Object obj = context.getObjectByRef(href);
-        if (obj == null)
+        if (obj == null) {
             return null;
+        }
 
-        if (!(obj instanceof MessageElement))
+        if (!(obj instanceof MessageElement)) {
             return null;
+        }
 
-        return (MessageElement)obj;
+        return (MessageElement) obj;
     }
 
+    /**
+     * get the message element as a document.
+     * This serializes the element to a string and then parses it.
+     * @see #getAsString()
+     * @return
+     * @throws Exception
+     */
     public Document getAsDocument() throws Exception
     {
         String elementString = getAsString();
 
         Reader reader = new StringReader(elementString);
         Document doc = XMLUtils.newDocument(new InputSource(reader));
-        if (doc == null)
+        if (doc == null) {
             throw new Exception(
                     Messages.getMessage("noDoc00", elementString));
+        }
         return doc;
     }
 
+    /**
+     * get the message element as a string.
+     * This is not a cheap operation, as we have to serialise the
+     * entire message element to the current context, then
+     * convert it to a string.
+     * Nor is it cached; repeated calls repeat the operation.
+     * @return an XML fragment in a string.
+     * @throws Exception if anything went wrong
+     */
     public String getAsString() throws Exception {
         SerializationContext serializeContext = null;
         StringWriter writer = new StringWriter();
@@ -831,23 +1100,43 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         return writer.getBuffer().toString();
     }
 
+    /**
+     * create a DOM from the message element, by
+     * serializing and deserializing the element
+     * @see #getAsString()
+     * @see #getAsDocument()
+     * @return the root document element of the element
+     * @throws Exception
+     */
     public Element getAsDOM() throws Exception
     {
         return getAsDocument().getDocumentElement();
     }
 
+    /**
+     * replay the sax events to a handler
+     * @param handler
+     * @throws SAXException
+     */
     public void publishToHandler(ContentHandler handler) throws SAXException
     {
-        if (recorder == null)
+        if (recorder == null) {
             throw new SAXException(Messages.getMessage("noRecorder00"));
+        }
 
         recorder.replay(startEventIndex, endEventIndex, handler);
     }
 
+    /**
+     * replay the sax events to a SAX content handles
+     * @param handler
+     * @throws SAXException
+     */
     public void publishContents(ContentHandler handler) throws SAXException
     {
-        if (recorder == null)
+        if (recorder == null) {
             throw new SAXException(Messages.getMessage("noRecorder00"));
+        }
 
         recorder.replay(startContentsIndex, endEventIndex-1, handler);
     }
@@ -857,14 +1146,14 @@ public class MessageElement extends NodeImpl implements SOAPElement,
      * not, this method calls outputImpl() to allow subclasses and
      * programmatically created messages to serialize themselves.
      *
-     * @param context the SerializationContext we will write to.
+     * @param outputContext the SerializationContext we will write to.
      */
-    public final void output(SerializationContext context) throws Exception
+    public final void output(SerializationContext outputContext) throws Exception
     {
         if ((recorder != null) && (!_isDirty)) {
             recorder.replay(startEventIndex,
                             endEventIndex,
-                            new SAXOutputter(context));
+                            new SAXOutputter(outputContext));
             return;
         }
 
@@ -875,7 +1164,7 @@ public class MessageElement extends NodeImpl implements SOAPElement,
                 QName attrName = attr.name;
                 setAttribute(attrName.getNamespaceURI(),
                              attrName.getLocalPart(),
-                             context.qName2String(attr.value));
+                             outputContext.qName2String(attr.value));
             }
         }
 
@@ -884,13 +1173,13 @@ public class MessageElement extends NodeImpl implements SOAPElement,
          * whatever encoding style is in scope....
          */
         if (encodingStyle != null) {
-            MessageContext mc = context.getMessageContext();
+            MessageContext mc = outputContext.getMessageContext();
             SOAPConstants soapConstants = (mc != null) ?
                                             mc.getSOAPConstants() :
                                             SOAPConstants.SOAP11_CONSTANTS;
             if (parent == null) {
                 // don't emit an encoding style if its "" (literal)
-                if (!encodingStyle.equals("")) {
+                if (!"".equals(encodingStyle)) {
                     setAttribute(soapConstants.getEnvelopeURI(),
                                  Constants.ATTR_ENCODING_STYLE,
                                  encodingStyle);
@@ -902,83 +1191,118 @@ public class MessageElement extends NodeImpl implements SOAPElement,
             }
         }
 
-        outputImpl(context);
+        outputImpl(outputContext);
     }
 
-    /** Subclasses can override
+    /**
+     * override point -output to a serialization context.
+     * @param outputContext destination.
+     * @throws Exception if something went wrong.
      */
-    protected void outputImpl(SerializationContext context) throws Exception
+    protected void outputImpl(SerializationContext outputContext) throws Exception
     {
         if (textRep != null) {
-            boolean oldPretty = context.getPretty();
-            context.setPretty(false);
+            boolean oldPretty = outputContext.getPretty();
+            outputContext.setPretty(false);
             if (textRep instanceof CDATASection) {
-                context.writeString("<![CDATA[");
-                context.writeString(((Text)textRep).getData());
-                context.writeString("]]>");
+                outputContext.writeString("<![CDATA[");
+                outputContext.writeString(textRep.getData());
+                outputContext.writeString("]]>");
             } else if (textRep instanceof Comment) {
-                context.writeString("<!--");
-                context.writeString(((CharacterData)textRep).getData());
-                context.writeString("-->");
+                outputContext.writeString("<!--");
+                outputContext.writeString(textRep.getData());
+                outputContext.writeString("-->");
             } else if (textRep instanceof Text) {
-                context.writeSafeString(((Text)textRep).getData());
+                outputContext.writeSafeString(textRep.getData());
             }
-            context.setPretty(oldPretty);
+            outputContext.setPretty(oldPretty);
             return;
         }
 
         if (prefix != null)
-            context.registerPrefixForURI(prefix, namespaceURI);
+            outputContext.registerPrefixForURI(prefix, namespaceURI);
 
         if (namespaces != null) {
             for (Iterator i = namespaces.iterator(); i.hasNext();) {
                 Mapping mapping = (Mapping) i.next();
-                context.registerPrefixForURI(mapping.getPrefix(), mapping.getNamespaceURI());
+                outputContext.registerPrefixForURI(mapping.getPrefix(), mapping.getNamespaceURI());
             }
         }
 
         if (objectValue != null) {
-            context.serialize(new QName(namespaceURI, name),
+            outputContext.serialize(new QName(namespaceURI, name),
                               attributes,
                               objectValue, null, false, null);
             return;
         }
 
-        context.startElement(new QName(namespaceURI, name), attributes);
+        outputContext.startElement(new QName(namespaceURI, name), attributes);
         if (children != null) {
             for (Iterator it = children.iterator(); it.hasNext();) {
-                ((NodeImpl)it.next()).output(context);
+                ((NodeImpl)it.next()).output(outputContext);
             }
         }
-        context.endElement();
+        outputContext.endElement();
     }
 
+    /**
+     * Generate a string representation by serializing our contents
+     * This is not a lightweight operation, and is repeated whenever
+     * you call this method.
+     * If the serialization fails, an error is logged and the classic
+     * {@link Object#toString()} operation invoked instead.
+     * @return a string representing the class
+     */
     public String toString() {
         try {
             return getAsString();
         }
         catch( Exception exp ) {
+            //couldn't turn to a string.
+            //log it
             log.error(Messages.getMessage("exception00"), exp);
-            return null;
+            //then hand off to our superclass, which is probably object
+            return super.toString();
         }
     }
 
+    /**
+     * add a new namespace/prefix mapping
+     * @param map new mapping to add
+     * @todo: this code does not verify that the mapping does not exist already; it
+     * is possible to create duplicate mappings.
+     */
     public void addMapping(Mapping map) {
-        if (namespaces == null)
+        if (namespaces == null) {
             namespaces = new ArrayList();
+        }
         namespaces.add(map);
     }
 
     // JAXM SOAPElement methods...
 
-    public SOAPElement addChildElement(Name name) throws SOAPException {
-        MessageElement child = new MessageElement(name.getLocalName(),
-                                                  name.getPrefix(),
-                                                  name.getURI());
+    /**
+     * add the child element
+     * @param childName uri, prefix and local name of the element to add
+     * @return the child element
+     * @throws SOAPException
+     * @see javax.xml.soap.SOAPElement#addChildElement(javax.xml.soap.Name)
+     */
+    public SOAPElement addChildElement(Name childName) throws SOAPException {
+        MessageElement child = new MessageElement(childName.getLocalName(),
+                                                  childName.getPrefix(),
+                                                  childName.getURI());
         addChild(child);
         return child;
     }
 
+    /**
+     * add a child element in the message element's own namespace
+     * @param localName
+     * @return the child element
+     * @throws SOAPException
+     * @see javax.xml.soap.SOAPElement#addChildElement(String)
+     */
     public SOAPElement addChildElement(String localName) throws SOAPException {
         // Inherit parent's namespace
         MessageElement child = new MessageElement(getNamespaceURI(),
@@ -987,21 +1311,38 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         return child;
     }
 
+    /**
+     * add a child element
+     * @param localName
+     * @param prefixName
+     * @return the child element
+     * @throws SOAPException
+     * @see javax.xml.soap.SOAPElement#addChildElement(String, String)
+     */
     public SOAPElement addChildElement(String localName,
-                                       String prefix) throws SOAPException {
-        MessageElement child = new MessageElement(getNamespaceURI(prefix),
+                                       String prefixName) throws SOAPException {
+        MessageElement child = new MessageElement(getNamespaceURI(prefixName),
                                                   localName);
-        child.setPrefix(prefix);
+        child.setPrefix(prefixName);
         addChild(child);
         return child;
     }
 
+    /**
+     * add a child element
+     * @param localName
+     * @param childPrefix
+     * @param uri
+     * @return the child element
+     * @throws SOAPException
+     * @see javax.xml.soap.SOAPElement#addChildElement(String, String, String)
+     */
     public SOAPElement addChildElement(String localName,
-                                       String prefix,
+                                       String childPrefix,
                                        String uri) throws SOAPException {
         MessageElement child = new MessageElement(uri, localName);
-        child.setPrefix(prefix);
-        child.addNamespaceDeclaration(prefix, uri);
+        child.setPrefix(childPrefix);
+        child.addNamespaceDeclaration(childPrefix, uri);
         addChild(child);
         return child;
     }
@@ -1010,6 +1351,7 @@ public class MessageElement extends NodeImpl implements SOAPElement,
      * The added child must be an instance of MessageElement rather than
      * an abitrary SOAPElement otherwise a (wrapped) ClassCastException
      * will be thrown.
+     * @see javax.xml.soap.SOAPElement#addChildElement(javax.xml.soap.SOAPElement)
      */
     public SOAPElement addChildElement(SOAPElement element)
         throws SOAPException {
@@ -1023,7 +1365,9 @@ public class MessageElement extends NodeImpl implements SOAPElement,
     }
 
     /**
-     * Text nodes are not supported.
+     * add a text node to the document.
+     * @return ourselves
+     * @see javax.xml.soap.SOAPElement#addTextNode(String)
      */
     public SOAPElement addTextNode(String s) throws SOAPException {
         Text text = null;
@@ -1043,16 +1387,35 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         }
     }
 
-    public SOAPElement addAttribute(Name name, String value)
+    /**
+     * add a new attribute
+     * @param attrName name of the attribute
+     * @param value a string value
+     * @return ourselves
+     * @throws SOAPException
+     * @see javax.xml.soap.SOAPElement#addAttribute(javax.xml.soap.Name, String)
+     */
+    public SOAPElement addAttribute(Name attrName, String value)
         throws SOAPException {
         try {
-            addAttribute(name.getPrefix(), name.getURI(), name.getLocalName(), value);
+            addAttribute(attrName.getPrefix(), attrName.getURI(), attrName.getLocalName(), value);
         } catch (RuntimeException t) {
             throw new SOAPException(t);
         }
         return this;
     }
 
+    /**
+     * create a {@link Mapping} mapping and add to our namespace list.
+     * @param prefix
+     * @param uri
+     * @return
+     * @throws SOAPException for any {@link RuntimeException} caught
+     * @todo for some reason this logic catches all rutime exceptions and
+     * rethrows them as SOAPExceptions. This is unusual behavio, and should
+     * be looked at closely.
+     * @see javax.xml.soap.SOAPElement#addNamespaceDeclaration(String, String)
+     */
     public SOAPElement addNamespaceDeclaration(String prefix,
                                                String uri)
         throws SOAPException {
@@ -1060,15 +1423,30 @@ public class MessageElement extends NodeImpl implements SOAPElement,
             Mapping map = new Mapping(uri, prefix);
             addMapping(map);
         } catch (RuntimeException t) {
+            //TODO: why is this here? Nowhere else do we turn runtimes into SOAPExceptions.
             throw new SOAPException(t);
         }
         return this;
     }
 
-    public String getAttributeValue(Name name) {
-        return attributes.getValue(name.getURI(), name.getLocalName());
+    /**
+     * Get the value of an attribute whose namespace and local name are described.
+     * @param attrName qualified name of the attribute
+     * @return the attribute or null if there was no match
+     * @see SOAPElement#getAttributeValue(javax.xml.soap.Name)
+     */
+    public String getAttributeValue(Name attrName) {
+        return attributes.getValue(attrName.getURI(), attrName.getLocalName());
     }
 
+    /**
+     * Get an interator to all the attributes of the node.
+     * The iterator is over a static snapshot of the node names; if attributes
+     * are added or deleted during the iteration, this iterator will be not
+     * be updated to follow the changes.
+     * @return an iterator of the attributes.
+     * @see javax.xml.soap.SOAPElement#getAllAttributes()
+     */
     public Iterator getAllAttributes() {
         int num = attributes.getLength();
         Vector attrs = new Vector(num);
@@ -1093,6 +1471,12 @@ public class MessageElement extends NodeImpl implements SOAPElement,
 
     // getNamespaceURI implemented above
 
+    /**
+     * get an iterator of the prefixes. The iterator
+     * does not get updated in response to changes in the namespace list.
+     * @return an iterator over a vector of prefixes
+     * @see javax.xml.soap.SOAPElement#getNamespacePrefixes()
+     */
     public Iterator getNamespacePrefixes() {
         Vector prefixes = new Vector();
         for (int i = 0; namespaces != null && i < namespaces.size(); i++) {
@@ -1101,17 +1485,28 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         return prefixes.iterator();
     }
 
+    /**
+     * get the full name of the element
+     * @return
+     * @see javax.xml.soap.SOAPElement#getElementName()
+     */
     public Name getElementName() {
         return new PrefixedQName(getNamespaceURI(), getName(), getPrefix());
     }
 
-    public boolean removeAttribute(Name name) {
+    /**
+     * remove an element
+     * @param attrName name of the element
+     * @return true if the attribute was found and removed.
+     * @see javax.xml.soap.SOAPElement#removeAttribute(javax.xml.soap.Name)
+     */
+    public boolean removeAttribute(Name attrName) {
         AttributesImpl attributes = makeAttributesEditable();
         boolean removed = false;
 
         for (int i = 0; i < attributes.getLength() && !removed; i++) {
-            if (attributes.getURI(i).equals(name.getURI()) &&
-                attributes.getLocalName(i).equals(name.getLocalName())) {
+            if (attributes.getURI(i).equals(attrName.getURI()) &&
+                attributes.getLocalName(i).equals(attrName.getLocalName())) {
                 attributes.removeAttribute(i);
                 removed = true;
             }
@@ -1119,12 +1514,18 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         return removed;
     }
 
-    public boolean removeNamespaceDeclaration(String prefix) {
+    /**
+     * remove a namespace declaration.
+     * @param namespacePrefix
+     * @return true if the prefix was found and removed.
+     * @see javax.xml.soap.SOAPElement#removeNamespaceDeclaration(String)
+     */
+    public boolean removeNamespaceDeclaration(String namespacePrefix) {
         makeAttributesEditable();
         boolean removed = false;
 
         for (int i = 0; namespaces != null && i < namespaces.size() && !removed; i++) {
-            if (((Mapping)namespaces.get(i)).getPrefix().equals(prefix)) {
+            if (((Mapping)namespaces.get(i)).getPrefix().equals(namespacePrefix)) {
                 namespaces.remove(i);
                 removed = true;
             }
@@ -1132,6 +1533,13 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         return removed;
     }
 
+    /**
+     * get an iterator over the children
+     * This iterator <i>may</i> get confused if changes are made to the
+     * children while the iteration is in progress.
+     * @return an iterator over child elements.
+     * @see javax.xml.soap.SOAPElement#getChildElements()
+     */
     public Iterator getChildElements() {
         initializeChildren();
         return children.iterator();
@@ -1141,7 +1549,8 @@ public class MessageElement extends NodeImpl implements SOAPElement,
      * Convenience method to get the first matching child for a given QName.
      *
      * @param qname
-     * @return
+     * @return child element or null
+     * @see javax.xml.soap.SOAPElement#getChildElements()
      */
     public MessageElement getChildElement(QName qname) {
         if (children != null) {
@@ -1154,6 +1563,14 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         return null;
     }
 
+    /**
+     * get an iterator over child elements
+     * @param qname namespace/element name of parts to find.
+     * This iterator is not (currently) susceptible to change in the element
+     * list during its lifetime, though changes in the contents of the elements
+     * are picked up.
+     * @return an iterator.
+     */
     public Iterator getChildElements(QName qname) {
         initializeChildren();
         int num = children.size();
@@ -1169,17 +1586,38 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         return c.iterator();
     }
 
-    public Iterator getChildElements(Name name) {
-        return getChildElements(new QName(name.getURI(), name.getLocalName()));
+    /**
+     * get an iterator over child elements
+     * @param childName namespace/element name of parts to find.
+     * This iterator is not (currently) susceptible to change in the element
+     * list during its lifetime, though changes in the contents of the elements
+     * are picked up.
+     * @return an iterator.
+     * @see javax.xml.soap.SOAPElement#getChildElements(javax.xml.soap.Name)
+     */
+    public Iterator getChildElements(Name childName) {
+        return getChildElements(new QName(childName.getURI(), childName.getLocalName()));
     }
 
+    //DOM methods
+
+    /**
+     * @see org.w3c.dom.Element#getTagName()
+     * @return the name of the element
+     */
     public String getTagName() {
         return prefix == null ? name : prefix + ":" + name;
     }
 
-    public void removeAttribute(String name) throws DOMException {
+    /**
+     * remove a named attribute.
+     * @see org.w3c.dom.Element#removeAttribute(String)
+     * @param attrName name of the attributes
+     * @throws DOMException
+     */
+    public void removeAttribute(String attrName) throws DOMException {
         AttributesImpl impl =  (AttributesImpl)attributes;
-        int index = impl.getIndex(name);
+        int index = impl.getIndex(attrName);
         if(index >= 0){
             AttributesImpl newAttrs = new AttributesImpl();
             // copy except the removed attribute
@@ -1198,59 +1636,115 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         }
     }
 
-    public boolean hasAttribute(String name) {
-        if(name == null)  // Do I have to send an exception?
-            name = "";
+    /**
+     * test for an attribute existing
+     * @param attrName name of attribute (or null)
+     * @return true if it exists
+     * Note that the behaviour for a null parameter (returns false) is not guaranteed in future
+     * @see org.w3c.dom.Element#hasAttribute(String)
+     */
+    public boolean hasAttribute(String attrName) {
+        if(attrName == null)  // Do I have to send an exception?
+            attrName = "";
 
         for(int i = 0; i < attributes.getLength(); i++){
-            if(name.equals(attributes.getQName(i)))
+            if(attrName.equals(attributes.getQName(i)))
                 return true;
         }
         return false;
     }
 
-    public String getAttribute(String name) {
-        return attributes.getValue(name);
+    /**
+     * get an attribute by name
+     * @param attrName of attribute
+     * @return the attribute value or null
+     * @see org.w3c.dom.Element#getAttribute(String)
+     */
+    public String getAttribute(String attrName) {
+        return attributes.getValue(attrName);
     }
 
-    public void removeAttributeNS(String namespaceURI, String localName) throws DOMException {
+    /**
+     * Remove an attribute. If the removed
+     * attribute has a default value it is immediately replaced. The
+     * replacing attribute has the same namespace URI and local name, as
+     * well as the original prefix.
+     * If there is no matching attribute, the operation is a no-op.
+     * @see org.w3c.dom.Element#removeAttributeNS(String, String)
+     * @param namespace namespace of attr
+     * @param localName local name
+     * @throws DOMException
+     */
+    public void removeAttributeNS(String namespace, String localName) throws DOMException {
         makeAttributesEditable();
-        Name name =  new PrefixedQName(namespaceURI, localName, null);
+        Name name =  new PrefixedQName(namespace, localName, null);
         removeAttribute(name);
     }
 
+    /**
+     * set or update an attribute.
+     * @see org.w3c.dom.Element#setAttribute(String, String)
+     * @param name attribute name
+     * @param value attribute value
+     * @throws DOMException
+     */
     public void setAttribute(String name, String value) throws DOMException {
         AttributesImpl impl =  makeAttributesEditable();
         int index = impl.getIndex(name);
-        if(index < 0){ // not found
+        if (index < 0) { // not found
             String uri = "";
-            String localname  = name;
+            String localname = name;
             String qname = name;
             String type = "CDDATA";
-            impl.addAttribute(uri,localname,qname,type,value);
-        }else{         // found
+            impl.addAttribute(uri, localname, qname, type, value);
+        } else {         // found
             impl.setLocalName(index, value);
         }
     }
 
-    public boolean hasAttributeNS(String namespaceURI, String localName) {
-        if(namespaceURI == null)
-            namespaceURI ="";
-        if(localName == null)  // Do I have to send an exception? or just return false
+    /**
+     * Test for an attribute
+     * @see org.w3c.dom.Element#hasAttributeNS(String, String)
+     * @param namespace
+     * @param localName
+     * @return
+     */
+    public boolean hasAttributeNS(String namespace, String localName) {
+        if (namespace == null) {
+            namespace = "";
+        }
+        if (localName == null)  // Do I have to send an exception? or just return false
+        {
             localName = "";
+        }
 
         for(int i = 0; i < attributes.getLength(); i++){
-            if( namespaceURI.equals(attributes.getURI(i))
+            if( namespace.equals(attributes.getURI(i))
                     && localName.equals(attributes.getLocalName(i)))
                 return true;
         }
         return false;
     }
 
-    public Attr getAttributeNode(String name) {
-        return null;  //TODO: Fix this for SAAJ 1.2 Implementation
+    /**
+     * This unimplemented operation is meand to return an attribute as a node
+     * @see org.w3c.dom.Element#getAttributeNode(String)
+     * @param attrName
+     * @return null, always.
+     * @todo Fix this for SAAJ 1.2 Implementation. marked as deprecated to warn people
+     * it is broken
+     * @deprecated this is not implemented
+     */
+    public Attr getAttributeNode(String attrName) {
+        return null;
     }
 
+    /**
+     * remove a an attribue
+     * @param oldAttr
+     * @return oldAttr
+     * @throws DOMException
+     */
     public Attr removeAttributeNode(Attr oldAttr) throws DOMException {
         makeAttributesEditable();
         Name name =  new PrefixedQName(oldAttr.getNamespaceURI(), oldAttr.getLocalName(), oldAttr.getPrefix());
@@ -1258,10 +1752,27 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         return oldAttr;
     }
 
+    /**
+     * set the attribute node.
+     * @see org.w3c.dom.Element#setAttributeNode(org.w3c.dom.Attr)
+     * @param newAttr
+     * @return newAttr
+     * @throws DOMException
+     * @deprecated this is not implemented
+     * @todo implement
+     */
     public Attr setAttributeNode(Attr newAttr) throws DOMException {
         return newAttr;
     }
 
+    /**
+     * set an attribute as a node
+     * @see org.w3c.dom.Element#setAttributeNodeNS(org.w3c.dom.Attr)
+     * @todo implement properly.
+     * @param newAttr
+     * @return null
+     * @throws DOMException
+     */
     public Attr setAttributeNodeNS(Attr newAttr) throws DOMException {
         //attributes.
         AttributesImpl attributes = makeAttributesEditable();
@@ -1274,7 +1785,13 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         return null;
     }
 
-    public NodeList getElementsByTagName(String name) {
+    /**
+     * @see org.w3c.dom.Element#getElementsByTagName(String)
+     * @param tagName tag to look for.
+     * @return a list of elements
+     * @todo this code looks dubious. Is it tested yet?
+     */
+    public NodeList getElementsByTagName(String tagName) {
         //use this MessageElement class for Nodelist store
         MessageElement nodelist = new MessageElement();
 
@@ -1287,18 +1804,27 @@ public class MessageElement extends NodeImpl implements SOAPElement,
                 // add 3rd Generation
                 for(int i =0; i < children.size(); i++){
                     MessageElement child = (MessageElement)children.get(i);
-                    NodeList grandsons = child.getElementsByTagName(name);
-                    for(int j =0; j < children.size(); j++){
+                    NodeList grandsons = child.getElementsByTagName(tagName);
+                    for(int j =0; j < grandsons.getLength(); j++){
                         nodelist.addChild((MessageElement)grandsons.item(j));
                     }
                 }
             }
         }catch(SOAPException se){
-            // Shame on me
+            // TODO: handle properly
+            log.debug("silently ignoring",se);
         }
         return nodelist;
     }
 
+    /**
+     * get the attribute with namespace/local name match.
+     * @see org.w3c.dom.Element#getAttributeNS(String, String)
+     * @param namespaceURI namespace
+     * @param localName name
+     * @return string value or null if not found
+     * @todo: this could be refactored to use getAttributeValue()
+     */
     public String getAttributeNS(String namespaceURI, String localName) {
         for (int i = 0; i < attributes.getLength(); i++) {
             if (attributes.getURI(i).equals(namespaceURI) &&
@@ -1309,6 +1835,14 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         return null;
     }
 
+    /**
+     * set an attribute or alter an existing one
+     * @see org.w3c.dom.Element#setAttributeNS(String, String, String)
+     * @param namespaceURI namepsace
+     * @param qualifiedName qualified name of the attribue
+     * @param value value
+     * @throws DOMException
+     */
     public void setAttributeNS(String namespaceURI, String qualifiedName,
                                String value)
         throws DOMException
@@ -1316,7 +1850,7 @@ public class MessageElement extends NodeImpl implements SOAPElement,
         AttributesImpl attributes = makeAttributesEditable();
         String localName =  qualifiedName.substring(qualifiedName.indexOf(":")+1, qualifiedName.length());
 
-        if(namespaceURI == null){
+        if (namespaceURI == null) {
             namespaceURI = "intentionalNullURI";
         }
         attributes.addAttribute(namespaceURI,
@@ -1326,44 +1860,68 @@ public class MessageElement extends NodeImpl implements SOAPElement,
                 value);
     }
 
-    public Attr getAttributeNodeNS(String namespaceURI, String localName) {
+    /**
+     * @see org.w3c.dom.Element#getAttributeNS(String, String)
+     * @deprecated not implemented!
+     * @param namespace namespace
+     * @param localName local name
+     * @return null
+     */
+    public Attr getAttributeNodeNS(String namespace, String localName) {
         return null;  //TODO: Fix this for SAAJ 1.2 Implementation
     }
 
-    public NodeList getElementsByTagNameNS(String namespaceURI,
+    /**
+     * @see org.w3c.dom.Element#getElementsByTagNameNS(String, String)
+     * @param namespace namespace
+     * @param localName local name of element
+     * @return (potentially empty) list of elements that match the (namespace,localname) tuple
+     */
+    public NodeList getElementsByTagNameNS(String namespace,
                                            String localName)
     {
-        return getElementsNS(this,namespaceURI,localName);
+        return getElementsNS(this,namespace,localName);
     }
 
     /**
      * helper method for recusively getting the element that has namespace URI and localname
+     * @param parentElement parent element
+     * @param namespace namespace
+     * @param localName local name of element
+     * @return (potentially empty) list of elements that match the (namespace,localname) tuple
      */
-    protected NodeList getElementsNS(org.w3c.dom.Element parent,
-                                     String namespaceURI, String localName)
+    protected NodeList getElementsNS(org.w3c.dom.Element parentElement,
+                                     String namespace, String localName)
     {
-        NodeList children = parent.getChildNodes();
+        NodeList children = parentElement.getChildNodes();
         NodeListImpl matches = new NodeListImpl();
 
-        for(int i =0; i < children.getLength();  i++){
-            if(children.item(i) instanceof Text)
+        for (int i = 0; i < children.getLength(); i++) {
+            if (children.item(i) instanceof Text) {
                 continue;
+            }
             Element child = (Element) children.item(i);
-            if (namespaceURI.equals(child.getNamespaceURI()) &&
+            if (namespace.equals(child.getNamespaceURI()) &&
                     localName.equals(child.getLocalName())) {
                 matches.addNode(child);
             }
             // search the grand-children.
-            matches.addNodeList(child.getElementsByTagNameNS(namespaceURI,
+            matches.addNodeList(child.getElementsByTagNameNS(namespace,
                     localName));
         }
         return matches;
     }
 
+    /**
+     * get a child node
+     * @param index index value
+     * @return child or null for out of range value
+     * @see org.w3c.dom.NodeList#item(int)
+     */
     public Node item(int index) {
-        if(children !=null && children.size() > index){
-            return (Node)children.get(index);
-        }else{
+        if (children != null && children.size() > index) {
+            return (Node) children.get(index);
+        } else {
             return null;
         }
     }
@@ -1371,8 +1929,9 @@ public class MessageElement extends NodeImpl implements SOAPElement,
     /**
      * The number of nodes in the list. The range of valid child node indices
      * is 0 to <code>length-1</code> inclusive.
-     *
+     * @return number of children
      * @since SAAJ 1.2 : Nodelist Interface
+     * @see org.w3c.dom.NodeList#getLength()
      */
     public int getLength()
     {
@@ -1383,94 +1942,122 @@ public class MessageElement extends NodeImpl implements SOAPElement,
 
     // getEncodingStyle() implemented above
 
-    MessageElement findElement(Vector vec, String namespace,
+    protected MessageElement findElement(Vector vec, String namespace,
                                String localPart)
     {
-        if (vec.isEmpty())
+        if (vec.isEmpty()) {
             return null;
+        }
 
         QName qname = new QName(namespace, localPart);
         Enumeration e = vec.elements();
         MessageElement element;
         while (e.hasMoreElements()) {
-            element = (MessageElement)e.nextElement();
-            if (element.getQName().equals(qname))
+            element = (MessageElement) e.nextElement();
+            if (element.getQName().equals(qname)) {
                 return element;
+            }
         }
 
         return null;
     }
 
+    /**
+     * equality test. Does a string match of the two message elements,
+     * so is fairly brute force.
+     * @see #toString()
+     * @param obj
+     * @return
+     */
     public boolean equals(Object obj)
     {
-        if (obj == null || !(obj instanceof MessageElement))
+        if (obj == null || !(obj instanceof MessageElement)) {
             return false;
+        }
         return toString().equals(obj.toString());
     }
 
+    /**
+     * recursively copy.
+     * Note that this does not reset many of our fields, and must be used with caution.
+     * @param element
+     */
     private void copyNode(org.w3c.dom.Node element) {
         copyNode(this, element);
     }
 
-    private void copyNode(MessageElement parent, org.w3c.dom.Node element)
+    /**
+     * recursive copy
+     * @param dest element to copy into
+     * @param source child element
+     */
+    private void copyNode(MessageElement dest, org.w3c.dom.Node source)
     {
-        parent.setPrefix(element.getPrefix());
-        if(element.getLocalName() != null) {
-            parent.setQName(new QName(element.getNamespaceURI(), element.getLocalName()));
+        dest.setPrefix(source.getPrefix());
+        if(source.getLocalName() != null) {
+            dest.setQName(new QName(source.getNamespaceURI(), source.getLocalName()));
         }
 
-        org.w3c.dom.NamedNodeMap attrs = element.getAttributes();
+        NamedNodeMap attrs = source.getAttributes();
         for(int i = 0; i < attrs.getLength(); i++){
-            org.w3c.dom.Node att = attrs.item(i);
+            Node att = attrs.item(i);
         if (att.getNamespaceURI() != null &&
                 att.getPrefix() != null &&
                 att.getNamespaceURI().equals(Constants.NS_URI_XMLNS) &&
-                att.getPrefix().equals("xmlns")) {
+                "xmlns".equals(att.getPrefix())) {
                 Mapping map = new Mapping(att.getNodeValue(), att.getLocalName());
                 addMapping(map);
             }
             if(att.getLocalName() != null) {
-                parent.addAttribute(att.getPrefix(),
+                dest.addAttribute(att.getPrefix(),
                         att.getNamespaceURI(),
                         att.getLocalName(),
                         att.getNodeValue());
             } else if (att.getNodeName() != null) {
-                parent.addAttribute(att.getPrefix(),
+                dest.addAttribute(att.getPrefix(),
                         att.getNamespaceURI(),
                         att.getNodeName(),
                         att.getNodeValue());
             }
         }
 
-        org.w3c.dom.NodeList children = element.getChildNodes();
+        NodeList children = source.getChildNodes();
         for(int i = 0; i < children.getLength(); i++){
-            org.w3c.dom.Node child = children.item(i);
+            Node child = children.item(i);
             if(child.getNodeType()==TEXT_NODE ||
                child.getNodeType()==CDATA_SECTION_NODE ||
                child.getNodeType()==COMMENT_NODE ) {
                 MessageElement childElement = new MessageElement((CharacterData)child);
-                parent.appendChild(childElement);
+                dest.appendChild(childElement);
             } else {
                 PrefixedQName qname = new PrefixedQName(child.getNamespaceURI(),
                         child.getLocalName(),
                         child.getPrefix());
                 MessageElement childElement = new MessageElement(qname);
-                parent.appendChild(childElement);
+                dest.appendChild(childElement);
                 copyNode(childElement, child);
             }
         }
     }
 
+    /**
+     * Get the value of the doc as a string.
+     * This uses {@link #getAsDOM()} so is a heavyweight operation.
+     * @return the value of any child node, or null if there is no node/something went
+     * wrong during serialization. If the first child is text, the return value
+     * is the text itself.
+     * @see javax.xml.soap.Node#getValue() ;
+     */
     public String getValue() {
         try {
             Element element = getAsDOM();
-            if(element.hasChildNodes()){
-                org.w3c.dom.Node node = element.getFirstChild();
-                if(node.getNodeType()==org.w3c.dom.Node.TEXT_NODE){
+            if (element.hasChildNodes()) {
+                Node node = element.getFirstChild();
+                if (node.getNodeType() == Node.TEXT_NODE) {
                     return node.getNodeValue();
                 }
             }
-        } catch (Exception t){
+        } catch (Exception t) {
             log.debug("getValue()", t);
         }
         return null;
