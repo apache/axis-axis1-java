@@ -205,7 +205,7 @@ public class JavaServiceImplWriter extends JavaClassWriter {
 
 
             pw.println("" );
-            pw.println("    public String get" + portName + "Address() {" );
+            pw.println("    public java.lang.String get" + portName + "Address() {" );
             pw.println("        return " + portName + "_address;" );
             pw.println("    }" );
             pw.println("" );

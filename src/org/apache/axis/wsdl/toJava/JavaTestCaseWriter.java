@@ -111,7 +111,7 @@ public class JavaTestCaseWriter extends JavaClassWriter {
         // Write the constructor
         pw.print("    public ");
         pw.print(getClassName());
-        pw.println("(String name) {");
+        pw.println("(java.lang.String name) {");
         pw.println("        super(name);");
         pw.println("    }");
 

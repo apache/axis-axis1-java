@@ -163,7 +163,7 @@ public class JavaServiceIfaceWriter extends JavaClassWriter {
             String bindingType = (String) bEntry.getDynamicVar(JavaBindingWriter.INTERFACE_NAME);
 
             // Write out the get<PortName> methods
-            pw.println("    public String get" + portName + "Address();");
+            pw.println("    public java.lang.String get" + portName + "Address();");
             pw.println();
             pw.println("    public " + bindingType + " get" + portName
                     + "() throws " + javax.xml.rpc.ServiceException.class.getName() + ";");

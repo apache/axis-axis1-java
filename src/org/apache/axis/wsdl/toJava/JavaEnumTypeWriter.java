@@ -98,49 +98,49 @@ public class JavaEnumTypeWriter extends JavaClassWriter {
         // The first index is the base type.
         // The base type could be a non-object, if so get the corresponding Class.
         String baseType = ((TypeEntry) elements.get(0)).getName();
-        String baseClass = "Object";
+        String baseClass = "java.lang.Object";
         if (baseType.indexOf("String") >=0) {
-            baseClass = "String";
+            baseClass = "java.lang.String";
         } else if (baseType.equals("java.math.BigDecimal")) {
             baseClass = "java.math.BigDecimal";
         } else if (baseType.equals("java.math.BigInteger")) {
             baseClass = "java.math.BigInteger";
         } else if (baseType.indexOf("int") == 0) {
-            baseClass = "Integer";
+            baseClass = "java.lang.Integer";
         } else if (baseType.indexOf("char") == 0) {
-            baseClass = "Character";
+            baseClass = "java.lang.Character";
         } else if (baseType.indexOf("short") == 0) {
-            baseClass = "Short";
+            baseClass = "java.lang.Short";
         } else if (baseType.indexOf("long") == 0) {
-            baseClass = "Long";
+            baseClass = "java.lang.Long";
         } else if (baseType.indexOf("double") == 0) {
-            baseClass = "Double";
+            baseClass = "java.lang.Double";
         } else if (baseType.indexOf("float") == 0) {
-            baseClass = "Float";
+            baseClass = "java.lang.Float";
         }else if (baseType.indexOf("byte") == 0) {
-            baseClass = "Byte";
+            baseClass = "java.lang.Byte";
         }
         
         // Create a list of the literal values.
         Vector values = new Vector();
         for (int i=1; i < elements.size(); i++) {
             String value = (String) elements.get(i);
-            if (baseClass.equals("String")) {
+            if (baseClass.equals("java.lang.String")) {
                 value = "\"" + value + "\"";  // Surround literal with double quotes
             }
             if (baseClass.equals("java.math.BigDecimal") ||
                 baseClass.equals("java.math.BigInteger")) {
                 value = "new "+baseClass +"(\"" + value + "\")"; 
             }
-            else if (baseClass.equals("Character")) {
+            else if (baseClass.equals("java.lang.Character")) {
                 value = "'" + value + "'";
             }
-            else if (baseClass.equals("Float")) {
+            else if (baseClass.equals("java.lang.Float")) {
                 if (!value.endsWith("F") &&   // Indicate float literal so javac
                     !value.endsWith("f"))     // doesn't complain about precision.
                     value += "F";
             }
-            else if (baseClass.equals("Long")) {
+            else if (baseClass.equals("java.lang.Long")) {
                 if (!value.endsWith("L") &&   // Indicate float literal so javac
                     !value.endsWith("l"))     // doesn't complain about precision.
                     value += "L";
@@ -162,7 +162,7 @@ public class JavaEnumTypeWriter extends JavaClassWriter {
         pw.println("    // " + JavaUtils.getMessage("ctor00"));
         pw.println("    protected " + javaName + "(" + baseType + " value) {");
         pw.println("        _value_ = value;");
-        if (baseClass.equals("String") || 
+        if (baseClass.equals("java.lang.String") || 
             baseClass.equals("java.math.BigDecimal") ||
             baseClass.equals("java.math.BigInteger")) {
             pw.println("        _table_.put(_value_,this);");
@@ -192,7 +192,7 @@ public class JavaEnumTypeWriter extends JavaClassWriter {
         pw.println("    public static " + javaName+ " fromValue(" + baseType +" value)");
         pw.println("          throws java.lang.IllegalStateException {");
         pw.println("        "+javaName+" enum = ("+javaName+")");
-        if (baseClass.equals("String") || 
+        if (baseClass.equals("java.lang.String") || 
             baseClass.equals("java.math.BigDecimal") ||
             baseClass.equals("java.math.BigInteger")) {
             pw.println("            _table_.get(value);");
@@ -204,26 +204,27 @@ public class JavaEnumTypeWriter extends JavaClassWriter {
         pw.println("    }");
         
         // FromString returns the unique enumeration value object from a string representation
-        pw.println("    public static " + javaName+ " fromString(String value)");
+        pw.println("    public static " + javaName+ " fromString(java.lang.String value)");
         pw.println("          throws java.lang.IllegalStateException {");
-        if (baseClass.equals("String")) {
+        if (baseClass.equals("java.lang.String")) {
             pw.println("        return fromValue(value);");                                     
         } else if (baseClass.equals("java.math.BigDecimal") ||
                    baseClass.equals("java.math.BigInteger")) {
             pw.println("        return fromValue(new " + baseClass + "(value));");
-        } else if (baseClass.equals("Character")) {
+        } else if (baseClass.equals("java.lang.Character")) {
             pw.println("        if (value != null && value.length() == 1);");  
             pw.println("            return fromValue(value.charAt(0));");                     
             pw.println("        throw new java.lang.IllegalStateException();"); 
-        } else if (baseClass.equals("Integer")) {
+        } else if (baseClass.equals("java.lang.Integer")) {
             pw.println("        try {");
-            pw.println("            return fromValue(Integer.parseInt(value));");
+            pw.println("            return fromValue(java.lang.Integer.parseInt(value));");
             pw.println("        } catch (Exception e) {");
             pw.println("            throw new java.lang.IllegalStateException();"); 
             pw.println("        }");
         } else {
+            String parse = "parse" + baseClass.substring(baseClass.lastIndexOf(".")+1);
             pw.println("        try {");
-            pw.println("            return fromValue("+baseClass+".parse"+baseClass+"(value));");
+            pw.println("            return fromValue("+baseClass+"." + parse+"(value));");
             pw.println("        } catch (Exception e) {");
             pw.println("            throw new java.lang.IllegalStateException();"); 
             pw.println("        }");
@@ -232,19 +233,19 @@ public class JavaEnumTypeWriter extends JavaClassWriter {
 
         // Equals == to determine equality value.
         // Since enumeration values are singletons, == is appropriate for equals()
-        pw.println("    public boolean equals(Object obj) {return (obj == this);}");
+        pw.println("    public boolean equals(java.lang.Object obj) {return (obj == this);}");
         
         // Provide a reasonable hashCode method (hashCode of the string value of the enumeration)
         pw.println("    public int hashCode() { return toString().hashCode();}");
         
         // toString returns a string representation of the enumerated value
-        if (baseClass.equals("String")) {
-            pw.println("    public String toString() { return _value_;}");
+        if (baseClass.equals("java.lang.String")) {
+            pw.println("    public java.lang.String toString() { return _value_;}");
         } else if (baseClass.equals("java.math.BigDecimal") ||
                    baseClass.equals("java.math.BigInteger")) {
-            pw.println("    public String toString() { return _value_.toString();}");
+            pw.println("    public java.lang.String toString() { return _value_.toString();}");
         } else {                            
-            pw.println("    public String toString() { return String.valueOf(_value_);}");
+            pw.println("    public java.lang.String toString() { return java.lang.String.valueOf(_value_);}");
         }
     } // writeFileBody
 

@@ -307,8 +307,8 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
         pw.println("     * Get Custom Serializer");
         pw.println("     */");
         pw.println("    public static org.apache.axis.encoding.Serializer getSerializer(");
-        pw.println("           String mechType, ");
-        pw.println("           Class _javaType,  ");
+        pw.println("           java.lang.String mechType, ");
+        pw.println("           java.lang.Class _javaType,  ");
         pw.println("           javax.xml.namespace.QName _xmlType) {");
         pw.println("        return ");
         pw.println("          new " + ser +"(");
@@ -334,8 +334,8 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
         pw.println("     * Get Custom Deserializer");
         pw.println("     */");
         pw.println("    public static org.apache.axis.encoding.Deserializer getDeserializer(");
-        pw.println("           String mechType, ");
-        pw.println("           Class _javaType,  ");
+        pw.println("           java.lang.String mechType, ");
+        pw.println("           java.lang.Class _javaType,  ");
         pw.println("           javax.xml.namespace.QName _xmlType) {");
         pw.println("        return ");
         pw.println("          new " + dser + "(");

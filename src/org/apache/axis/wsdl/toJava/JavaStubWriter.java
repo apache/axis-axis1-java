@@ -200,7 +200,7 @@ public class JavaStubWriter extends JavaClassWriter {
         pw.println("            }");
         pw.println("            java.util.Enumeration keys = super.cachedProperties.keys();");
         pw.println("            while (keys.hasMoreElements()) {");
-        pw.println("                String key = (String) keys.nextElement();");
+        pw.println("                java.lang.String key = (java.lang.String) keys.nextElement();");
         pw.println("                if(_call.isPropertySupported(key))");
         pw.println("                    _call.setProperty(key, super.cachedProperties.get(key));");
         pw.println("                else");
@@ -226,12 +226,12 @@ public class JavaStubWriter extends JavaClassWriter {
             }
             
             pw.println("                    for (int i = 0; i < cachedSerFactories.size(); ++i) {");
-            pw.println("                        Class cls = (Class) cachedSerClasses.get(i);");
+            pw.println("                        java.lang.Class cls = (java.lang.Class) cachedSerClasses.get(i);");
             pw.println("                        javax.xml.namespace.QName qName =");
             pw.println("                                (javax.xml.namespace.QName) cachedSerQNames.get(i);");
-            pw.println("                        Class sf = (Class)");
+            pw.println("                        java.lang.Class sf = (java.lang.Class)");
             pw.println("                                 cachedSerFactories.get(i);");
-            pw.println("                        Class df = (Class)");
+            pw.println("                        java.lang.Class df = (java.lang.Class)");
             pw.println("                                 cachedDeserFactories.get(i);");
             pw.println("                        _call.registerTypeMapping(cls, qName, sf, df, false);");
             pw.println("                    }");
@@ -378,20 +378,20 @@ public class JavaStubWriter extends JavaClassWriter {
 
     private void writeSerializationDecls(PrintWriter pw, boolean hasMIME,
             String namespace) {
-        pw.println("            Class cls;" );
+        pw.println("            java.lang.Class cls;" );
         pw.println("            javax.xml.namespace.QName qName;" );
-        pw.println("            Class beansf = org.apache.axis.encoding.ser.BeanSerializerFactory.class;");
-        pw.println("            Class beandf = org.apache.axis.encoding.ser.BeanDeserializerFactory.class;");
-        pw.println("            Class enumsf = org.apache.axis.encoding.ser.EnumSerializerFactory.class;");
-        pw.println("            Class enumdf = org.apache.axis.encoding.ser.EnumDeserializerFactory.class;");
-        pw.println("            Class arraysf = org.apache.axis.encoding.ser.ArraySerializerFactory.class;");
-        pw.println("            Class arraydf = org.apache.axis.encoding.ser.ArrayDeserializerFactory.class;");
-        pw.println("            Class simplesf = org.apache.axis.encoding.ser.SimpleNonPrimitiveSerializerFactory.class;");
-        pw.println("            Class simpledf = org.apache.axis.encoding.ser.SimpleDeserializerFactory.class;");
+        pw.println("            java.lang.Class beansf = org.apache.axis.encoding.ser.BeanSerializerFactory.class;");
+        pw.println("            java.lang.Class beandf = org.apache.axis.encoding.ser.BeanDeserializerFactory.class;");
+        pw.println("            java.lang.Class enumsf = org.apache.axis.encoding.ser.EnumSerializerFactory.class;");
+        pw.println("            java.lang.Class enumdf = org.apache.axis.encoding.ser.EnumDeserializerFactory.class;");
+        pw.println("            java.lang.Class arraysf = org.apache.axis.encoding.ser.ArraySerializerFactory.class;");
+        pw.println("            java.lang.Class arraydf = org.apache.axis.encoding.ser.ArrayDeserializerFactory.class;");
+        pw.println("            java.lang.Class simplesf = org.apache.axis.encoding.ser.SimpleNonPrimitiveSerializerFactory.class;");
+        pw.println("            java.lang.Class simpledf = org.apache.axis.encoding.ser.SimpleDeserializerFactory.class;");
 
         if (hasMIME) {
-            pw.println("            Class mimesf = org.apache.axis.encoding.ser.JAFDataHandlerSerializerFactory.class;");
-            pw.println("            Class mimedf = org.apache.axis.encoding.ser.JAFDataHandlerDeserializerFactory.class;");
+            pw.println("            java.lang.Class mimesf = org.apache.axis.encoding.ser.JAFDataHandlerSerializerFactory.class;");
+            pw.println("            java.lang.Class mimedf = org.apache.axis.encoding.ser.JAFDataHandlerDeserializerFactory.class;");
             pw.println();
             QName qname = new QName(namespace, "DataHandler");
 
@@ -637,8 +637,8 @@ public class JavaStubWriter extends JavaClassWriter {
         
         // Invoke the operation
         pw.println();
-        pw.print("        Object _resp = _call.invoke(");
-        pw.print("new Object[] {");
+        pw.print("        java.lang.Object _resp = _call.invoke(");
+        pw.print("new java.lang.Object[] {");
 
         // Write the input and inout parameter list
         boolean needComma = false;
