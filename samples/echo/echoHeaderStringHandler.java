@@ -66,6 +66,8 @@ import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 
+import javax.xml.namespace.QName;
+
 
 /** This handler processes the SOAP header "echoMeString" defined in the 
  *  SOAPBuilder Round2C interop tests.
@@ -85,6 +87,16 @@ public class echoHeaderStringHandler extends BasicHandler
     public static final String HEADER_REQNAME = "echoMeStringRequest";
     public static final String HEADER_RESNAME = "echoMeStringResponse";
     public static final String ACTOR_NEXT = "http://schemas.xmlsoap.org/soap/actor/next";
+
+    public boolean canHandleBlock(QName qname) {
+        if (HEADER_NS.equals(qname.getNamespaceURI()) &&
+                HEADER_REQNAME.equals(qname.getLocalPart())) {
+            return true;
+        }
+        
+        return false;
+    }
+
     /**
      * Process a MessageContext.
      */
@@ -127,6 +139,7 @@ public class echoHeaderStringHandler extends BasicHandler
                     throw AxisFault.makeFault(e);
                 }
                 context.setProperty(ECHOHEADER_STRING_ID, strVal) ;
+                header.setProcessed(true);
             }
         }
     }
