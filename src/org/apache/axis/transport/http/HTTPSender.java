@@ -352,6 +352,7 @@ public class HTTPSender extends BasicHandler {
             }
         }
 
+        // Transfer MIME headers of SOAPMessage to HTTP headers. 
         MimeHeaders mimeHeaders = reqMessage.getMimeHeaders();
         if (mimeHeaders != null) {
             for (Iterator i = mimeHeaders.getAllHeaders(); i.hasNext(); ) {
