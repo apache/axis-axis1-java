@@ -358,6 +358,7 @@
         <mapping namespace="urn:importBinding1" package="test.wsdl.import.binding1"/>
         <mapping namespace="urn:importBinding2" package="test.wsdl.import.binding2"/>
     </wsdl2java>
+
     <!-- Import Test 2:  all namespace->package mappings from the -->
     <!--                 command line.                            -->
     <wsdl2java url="test/wsdl/_import/Import.wsdl"
@@ -384,6 +385,17 @@
                output="build/work"
                noimports="no">
         <mapping namespace="urn:types.import.test" package="test.import.test3"/>
+    </wsdl2java>
+
+    <!-- Another import test:  relative references via ../.. -->
+    <wsdl2java url="test/wsdl/import2/service1/service2/testimport.wsdl"
+               output="build/work"
+               serverSide="yes"
+               skeletonDeploy="yes"
+               noimports="no">
+        <mapping namespace="http://test.globus.org/importtest" package="test.wsdl.import2"/>
+        <mapping namespace="http://test.globus.org/interface" package="test.wsdl.import2.interface"/>
+        <mapping namespace="http://test.globus.org/types" package="test.wsdl.import2.types"/>
     </wsdl2java>
 
     <!-- InOut Sample -->

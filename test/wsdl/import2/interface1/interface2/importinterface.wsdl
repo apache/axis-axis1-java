@@ -1,0 +1,40 @@
+<definitions name="ImportTestDefinition"
+  targetNamespace="http://test.globus.org/interface"
+  xmlns:tns="http://test.globus.org/interface"
+  xmlns:types="http://test.globus.org/types"
+  xmlns="http://schemas.xmlsoap.org/wsdl/"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+
+<import namespace="http://http://test.globus.org/types"
+        location="../../types1/types2/importtypes.wsdl"/>
+
+<message name="sendStringRequest">
+  <part name="myInput" type="types:StringType"/>
+</message>
+<message name="sendStringResponse"/>
+
+<portType name="ImportTestPortType">
+  <operation name="sendString">
+    <input message="tns:sendStringRequest"/>
+    <output message="tns:sendStringResponse"/>
+  </operation>
+</portType>
+
+<binding name="ImportTestSOAPBinding" type="tns:ImportTestPortType">
+  <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+  <operation name="sendString">
+    <soap:operation soapAction="http://test.globus.org/importtest#sendString"/>
+    <input>
+      <soap:body use="encoded" namespace="http://test.globus.org/importtest" 
+                               encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+    </input>
+    <output>
+      <soap:body use="encoded" namespace="http://test.globus.org/importtest" 
+                               encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+    </output>
+  </operation>
+</binding>
+
+
+</definitions>
