@@ -178,8 +178,24 @@ public class JavaBindingWriter implements Generator {
                 if (emitter.isSkeletonWanted()) {
                     skelWriter = getJavaSkelWriter(emitter, bEntry, symbolTable);
                 }
-                implWriter = getJavaImplWriter(
-                        emitter, bEntry, symbolTable);
+                String fileName = Utils.getJavaLocalName(bEntry.getName())
+                        + "Impl.java";
+                try {
+                    if (Utils.fileExists(fileName,
+                            binding.getQName().getNamespaceURI(),
+                            emitter.getNamespaces())) {
+                        System.out.println(Messages.getMessage(
+                                "wontOverwrite", fileName));
+                    }
+                    else {
+                        implWriter = getJavaImplWriter(
+                                emitter, bEntry, symbolTable);
+                    }
+                }
+                catch (IOException ioe) {
+                    System.err.println(
+                            Messages.getMessage("fileExistError00", fileName));
+                }
             }
         }
 }
