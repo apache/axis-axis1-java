@@ -173,8 +173,6 @@ public class HTTPMessage {
     if ( doLocal ) {
       client = new org.apache.axis.server.AxisServer();
       client.init();
-      msgContext.setProperty(MessageContext.TRANS_INPUT , "HTTP.input" );
-      msgContext.setProperty(MessageContext.TRANS_OUTPUT, "HTTP.output" );
       msgContext.setTargetService( action );
     }
     else {
