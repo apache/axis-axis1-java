@@ -230,7 +230,7 @@ public class HTTPSender extends BasicHandler {
             .append(reqEnv.length() )
             .append( "\r\n" )
             .append( HTTPConstants.HEADER_CONTENT_TYPE )
-            .append( ": text/xml\r\n" )
+            .append( ": text/xml; charset=utf-8\r\n" )
             .append( (otherHeaders == null ? "" : otherHeaders.toString()))
             .append( HTTPConstants.HEADER_SOAP_ACTION )
             .append( ": \"" )
