@@ -133,6 +133,9 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
      */
     private Message msgObject;
 
+    /** Field contentSource */
+    private Source contentSource = null;
+
     /**
      * The original message.  Again, may be String, byte[], InputStream,
      * or SOAPEnvelope.
@@ -504,32 +507,20 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
     }
 
     /**
-         * Sets Content-Id of this part.
-         *  already defined.
-         * @param newCid new Content-Id
-         * @returns void
-         */
-        public void setContentId(String newCid){
-
-                setMimeHeader(HTTPConstants.HEADER_CONTENT_ID,newCid);
-        }
+     * Sets Content-Id of this part.
+     *  already defined.
+     * @param newCid new Content-Id
+     * @returns void
+     */
+    public void setContentId(String newCid){
+        setMimeHeader(HTTPConstants.HEADER_CONTENT_ID,newCid);
+    }
 
     /**
      * Content ID.
      */
     public String getContentId() {
-        String ret= getFirstMimeHeader(HTTPConstants.HEADER_CONTENT_ID);
-        //Do not let the contentID ever be empty.
-        if(ret == null){
-            ret=SessionUtils.generateSessionId();
-            setMimeHeader(HTTPConstants.HEADER_CONTENT_ID , ret);
-        }
-        ret= ret.trim();
-        if(ret.length() ==0){
-            ret=SessionUtils.generateSessionId();
-            setMimeHeader(HTTPConstants.HEADER_CONTENT_ID , ret);
-        }
-        return ret;
+        return getFirstMimeHeader(HTTPConstants.HEADER_CONTENT_ID);
     }
     /**
      * Content ID.
@@ -571,7 +562,8 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
         if(source == null)
             throw new SOAPException(JavaUtils.getMessage("illegalArgumentException00"));
 
-        InputSource in = org.apache.axis.utils.XMLUtils.sourceToInputSource(source);
+        contentSource = source;
+        InputSource in = org.apache.axis.utils.XMLUtils.sourceToInputSource(contentSource);
         setCurrentMessage(in.getByteStream(), FORM_INPUTSTREAM);
     }
 
@@ -585,8 +577,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
      * @see #setContent(javax.xml.transform.Source) setContent(javax.xml.transform.Source)
      */
     public Source getContent() throws SOAPException {
-        //TODO: Flesh this out.
-        return null;
+        return contentSource;
     }
 
     /**

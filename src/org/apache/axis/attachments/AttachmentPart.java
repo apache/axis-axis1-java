@@ -203,7 +203,6 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
      *     @returns void
      */
     public void setContentId(String newCid) {
-
         setMimeHeader(HTTPConstants.HEADER_CONTENT_ID, newCid);
     }
 
@@ -213,20 +212,7 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
      * @return
      */
     public String getContentId() {
-        String ret = getFirstMimeHeader(HTTPConstants.HEADER_CONTENT_ID);
-        // Do not let the contentID ever be empty.
-        if (ret == null) {
-            ret = SessionUtils.generateSessionId();
-            setMimeHeader(HTTPConstants.HEADER_CONTENT_ID, ret);
-        }
-
-        ret = ret.trim();
-        if (ret.length() == 0) {
-            ret = SessionUtils.generateSessionId();
-            setMimeHeader(HTTPConstants.HEADER_CONTENT_ID, ret);
-        }
-
-        return ret;
+        return getFirstMimeHeader(HTTPConstants.HEADER_CONTENT_ID);
     }
 
     /**
