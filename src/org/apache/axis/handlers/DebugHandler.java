@@ -69,77 +69,39 @@ import org.apache.axis.message.* ;
  *
  * @author Doug Davis (dug@us.ibm.com)
  */
-public class DebugHandler implements Handler {
-  protected Hashtable  options ;
+public class DebugHandler extends BasicHandler {
+    
+    public void invoke(MessageContext msgContext) throws AxisFault {
+        Debug.Print( 1, "Enter: DebugHandler::invoke" );
+        try {
+            Message       msg = msgContext.getIncomingMessage();
+            SOAPEnvelope  env = (SOAPEnvelope) msg.getAs( "SOAPEnvelope" );
+            Vector        headers = null ;
+            
+            headers = env.getHeadersByURI( Constants.URI_DEBUG );
 
-  public void init() {
-  }
-
-  public void cleanup() {
-  }
-
-  public void invoke(MessageContext msgContext) throws AxisFault {
-    Debug.Print( 1, "Enter: DebugHandler::invoke" );
-    try {
-      Message       msg = msgContext.getIncomingMessage();
-      SOAPEnvelope  env = (SOAPEnvelope) msg.getAs( "SOAPEnvelope" );
-      Vector        headers = null ;
-      
-      headers = env.getHeadersByURI( Constants.URI_DEBUG );
-
-      for ( int i = 0 ; headers != null && i < headers.size() ; i ++ ) {
-        SOAPHeader  header = (SOAPHeader) headers.get(i);
-        Node        node = header.getDataAtIndex( 0 );
-        if ( node != null ) {
-          String  value    = node.getNodeValue();
-          int     debugVal = Integer.parseInt( value );
-          Debug.Print( 1, "Settng debug level to: " + debugVal );
-          Debug.setDebugLevel( debugVal );
-          header.setProcessed( true );
+            for ( int i = 0 ; headers != null && i < headers.size() ; i ++ ) {
+                SOAPHeader  header = (SOAPHeader) headers.get(i);
+                Node        node = header.getDataAtIndex( 0 );
+                if ( node != null ) {
+                    String  value    = node.getNodeValue();
+                    int     debugVal = Integer.parseInt( value );
+                    Debug.Print( 1, "Settng debug level to: " + debugVal );
+                    Debug.setDebugLevel( debugVal );
+                    header.setProcessed( true );
+                }
+            }
         }
-      }
+        catch( Exception e ) {
+            Debug.Print( 1, e );
+            throw new AxisFault( e );
+        }
+        Debug.Print( 1, "Exit: DebugHandler::invoke" );
     }
-    catch( Exception e ) {
-      Debug.Print( 1, e );
-      throw new AxisFault( e );
+
+    public void undo(MessageContext msgContext) {
+        Debug.Print( 1, "Enter: DebugHandler::undo" );
+        Debug.Print( 1, "Exit: DebugHandler::undo" );
     }
-    Debug.Print( 1, "Exit: DebugHandler::invoke" );
-  }
-
-  public void undo(MessageContext msgContext) {
-    Debug.Print( 1, "Enter: DebugHandler::undo" );
-    Debug.Print( 1, "Exit: DebugHandler::undo" );
-  }
-
-  public boolean canHandleBlock(QName qname) {
-    return( false );
-  }
-
-  /**
-   * Add the given option (name/value) to this handler's bag of options
-   */
-  public void addOption(String name, Object value) {
-    if ( options == null ) options = new Hashtable();
-    options.put( name, value );
-  }
-
-  /**
-   * Returns the option corresponding to the 'name' given
-   */
-  public Object getOption(String name) {
-    if ( options == null ) return( null );
-    return( options.get(name) );
-  }
-
-  /**
-   * Return the entire list of options
-   */
-  public Hashtable getOptions() {
-    return( options );
-  }
-
-  public void setOptions(Hashtable opts) {
-    options = opts ;
-  }
-
+    
 };
