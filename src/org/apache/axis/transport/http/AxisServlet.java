@@ -93,7 +93,7 @@ public class AxisServlet extends HttpServlet {
     synchronized(context) {
       engine = (Handler) context.getAttribute( AXIS_ENGINE );
       if ( engine == null ) {
-        engine = new SimpleAxisEngine() ;   // Get name from config file
+        engine = new AxisServer();
         context.setAttribute( AXIS_ENGINE, engine );
         engine.init();
       }
@@ -108,19 +108,21 @@ public class AxisServlet extends HttpServlet {
     MessageContext    msgContext = new MessageContext();
     Message           msg        = new Message( req, "ServletRequest" );
 
-    msgContext.setProperty(MessageContext.TRANS_ID, HTTPConstants.TRANSPORT_ID);
+    /* Set the request(incoming) message field in the context */
+    /**********************************************************/
+    msgContext.setRequestMessage( msg );
+
+    /* Set the Transport Specific Input/Output chains IDs */
+    /******************************************************/
+    msgContext.setProperty(MessageContext.TRANS_INPUT , "HTTP.input" );
+    msgContext.setProperty(MessageContext.TRANS_OUTPUT, "HTTP.output" );
+
+    /* Save some HTTP specific info in the bag in case a handler needs it */
+    /**********************************************************************/
     msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLET, this );
     msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST, req );
     msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETRESPONSE, res );
     
-    msgContext.setRequestMessage( msg );
-    
-    /** Set the target which tells the engine where to dispatch.  In the
-     * real world, this would probably be gotten from the servlet
-     * configuration.
-     */
-    msgContext.setTargetService( Constants.SERVLET_TARGET );
-
     /* Save the SOAPAction header in the MessageContext bag - this will */
     /* be used to tell the Axis Engine which service is being invoked.  */
     /* This will save us the trouble of having to parse the Request     */

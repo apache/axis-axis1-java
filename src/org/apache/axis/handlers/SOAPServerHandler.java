@@ -1,8 +1,7 @@
 /*
  * The Apache Software License, Version 1.1
  *
- *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights 
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -53,64 +52,76 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.client ;
-
-import java.net.*;
-import java.io.*;
-import java.util.*;
+package org.apache.axis.handlers;
 
 import org.apache.axis.*;
-import org.apache.axis.server.SimpleAxisEngine;
+import org.apache.axis.utils.Debug;
 import org.apache.axis.transport.http.HTTPConstants;
+import org.apache.axis.registries.* ;
 
-/** This is a quick in-memory client to demonstrate how transport-dependent
- * routing works.  It pretends to be the AxisServlet with a SOAPAction header
- * of "EchoService".  This ends up calling the AxisServlet chain, which
- * sets the new TargetService to be the value of the SOAPAction header, and then
- * uses the Router handler to dispatch to the service.
- *
- * @author Glen Daniels (gdaniels@allaire.com)
+import javax.servlet.* ;
+import javax.servlet.http.* ;
+
+/** 
+ * @author Doug Davis (dug@us.ibm.com)
  */
-public class TransportRoutingClient {
+public class SOAPServerHandler extends BasicHandler 
+{
+    public void invoke(MessageContext msgContext) throws AxisFault
+    {
+        Debug.Print( 1, "Enter: SOAPServerHandler::invoke" );
+        SimpleTargetedChain stc = null ;
 
-    public static void main(String args[]) {
-
-        String msg = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/1999/XMLSchema\">\n" +
-                     "<SOAP-ENV:Header>\n" +
-                     "<t:Transaction xmlns:t=\"some-URI\" " +
-                     "SOAP-ENV:mustUnderstand=\"1\"> 5 </t:Transaction>" +
-                     "</SOAP-ENV:Header>\n" +
-                     "<SOAP-ENV:Body>\n" +
-                     "<m:GetLastTradePrice xmlns:m=\"Some-URI\">" +
-                     "<symbol>IBM</symbol>" +
-                     "</m:GetLastTradePrice>" +
-                     "</SOAP-ENV:Body>\n" +
-                     "</SOAP-ENV:Envelope>" ;
-
-        try {
-            org.apache.axis.utils.Debug.setDebugLevel(10);
-            SimpleAxisEngine engine = new SimpleAxisEngine();
-            MessageContext msgContext = new MessageContext();
-            Message message = new Message(msg, "String");
-            msgContext.setRequestMessage(message);
-            
-            /** The transport is http.
-             */
-            msgContext.setTargetService( Constants.SERVLET_TARGET );
-            
-            /** If we were a real servlet, we might have made the SOAPAction
-             * HTTP header available like this...
-             */
-            msgContext.setProperty(HTTPConstants.MC_HTTP_SOAPACTION, "EchoService");
-
-            engine.init();
-            engine.invoke(msgContext);
-            
-            System.out.println(msgContext.getResponseMessage().getAs("String"));
+        String target = msgContext.getTargetService();
+        if ( target == null ) {
+          Debug.Print( 1, "No target set - looking in the Body element" );
         }
-        catch( Exception e ) {
-            e.printStackTrace();
-        }
-    };
+        else
+          Debug.Print( 1, "Target: " + target );
+        
+        if ( target == null )
+          throw new AxisFault( "AxisServer.error",
+                               "No target field set", null, null );
 
-};
+        HandlerRegistry serviceReg = null ;
+        serviceReg = 
+          (HandlerRegistry)msgContext.getProperty(Constants.SERVICE_REGISTRY);
+
+        if ( serviceReg == null )
+          throw new AxisFault("AxisServer.error",
+                              "No service registry set", null, null );
+                         
+        Handler service  = serviceReg.find( target );
+        Handler h = null ;
+        if ( service == null )
+          throw new AxisFault("AxisSever.error",
+                              "Can't find target handler: " + target, 
+                              null, null );
+        msgContext.setProperty( MessageContext.SVC_HANDLER, service );
+        
+        if ( service instanceof SimpleTargetedChain ) {
+          stc = (SimpleTargetedChain) service ;
+          h = stc.getInputChain() ;
+          if ( h != null ) h.invoke(msgContext);
+        }
+
+        // Do SOAP semantics here
+
+        if ( stc != null ) {
+          h = stc.getPivotHandler();
+          if ( h != null ) h.invoke(msgContext);
+          h = stc.getOutputChain();
+          if ( h != null ) h.invoke(msgContext);
+        }
+        else
+          service.invoke(msgContext);
+
+        Debug.Print( 1, "Exit : SOAPServerHandler::invoke" );
+    }
+
+    public void undo(MessageContext msgContext) 
+    {
+        Debug.Print( 1, "Enter: SOAPServerHandler::undo" );
+        Debug.Print( 1, "Exit: SOAPServerHandler::undo" );
+    }
+}

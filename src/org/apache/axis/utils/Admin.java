@@ -147,6 +147,13 @@ public class Admin {
         }
   
         Handler  h       = null ;
+        String   hName ;
+        Handler  tmpH ;
+        String   flow    = elem.getAttributeValue( "flow" );
+        String   input   = elem.getAttributeValue( "input" );
+        String   pivot   = elem.getAttributeValue( "pivot" );
+        String   output  = elem.getAttributeValue( "output" );
+ 
   
         if ( type.equals( "handler" ) ) {
           String   cls   = elem.getAttributeValue( "class" );
@@ -174,14 +181,6 @@ public class Admin {
           }
         }
         else if ( type.equals( "chain" ) ) {
-          String   flow    = elem.getAttributeValue( "flow" );
-          String   input   = elem.getAttributeValue( "input" );
-          String   pivot   = elem.getAttributeValue( "pivot" );
-          String   output  = elem.getAttributeValue( "output" );
- 
-          String   hName ;
-          Handler  tmpH ;
-
           if ( flow != null && flow.length() > 0 ) {
             System.out.println( "Deploying chain: " + name );
             Chain    c       = (Chain) hr.find( name );
@@ -239,15 +238,49 @@ public class Admin {
           }
         }
         else if ( type.equals( "service" ) ) {
-          String   handler = elem.getAttributeValue( "handler" );
           System.out.println( "Deploying service: " + name );
-          Handler  hand  = hr.find(handler);
-          if( hand == null )
-            Error( "Can't find '" + handler + "' to deploy as a service");
-          ServiceHandler sh = new ServiceHandler();
-          sh.setHandler(hand);
-          getOptions( elem, sh );
-          sr.add( name, sh );
+          StringTokenizer      st = null ;
+          SimpleTargetedChain  cc = null ;
+          Chain                c  = null ;
+
+          if ( pivot == null )
+            Error( "Services must be use targetted chains" );
+
+          cc = (SimpleTargetedChain) hr.find( name );
+
+          if ( cc == null ) cc = new SimpleTargetedChain();
+          else              cc.clear();
+  
+          if ( input != null ) {
+            st = new StringTokenizer( input, " \t\n\r\f," );
+            c  = new SimpleChain();
+            cc.setInputChain( c );
+            while ( st.hasMoreElements() ) {
+              hName = st.nextToken();
+              tmpH = hr.find( hName );
+              if ( tmpH == null )
+                Error( "Unknown handler: " + hName );
+              c.addHandler( tmpH );
+            }
+          }
+          
+          cc.setPivotHandler( hr.find( pivot ) );
+  
+          if ( output != null ) {
+            st = new StringTokenizer( output, " \t\n\r\f," );
+            c  = new SimpleChain();
+            cc.setOutputChain( c );
+            while ( st.hasMoreElements() ) {
+              hName = st.nextToken();
+              tmpH = hr.find( hName );
+              if ( tmpH == null )
+                Error( "Unknown handler: " + hName );
+              c.addHandler( tmpH );
+            }
+          }
+          getOptions( elem, cc );
+          hr.add( name, cc );
+          sr.add( name, cc );
         }
         else 
           Error( "Unknown type to " + action + ": " + type );

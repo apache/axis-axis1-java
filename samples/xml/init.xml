@@ -4,26 +4,41 @@
 <!-- This file will be replaced by WSDD once it's ready -->
 
 <deploy>
+
+  <!-- A Debug Header Handler -->
   <handler name="debug"   class="org.apache.axis.handlers.DebugHandler" />
 
+  <!-- SOAP Server Protocol Handler -->
+  <handler name="SOAPServer" 
+           class="org.apache.axis.handlers.SOAPServerHandler"/>
+
+  <!-- Global input/output chains -->
+  <chain name="global.input" flow="debug" />
+  <!-- <chain name="global.output" flow="xxx" /> -->
+
+  <!-- Message processing dispatcher -->
   <handler name="MsgDispatcher"
            class="org.apache.axis.handlers.MsgDispatchHandler" />
 
+  <!-- RPC processing dispatcher -->
   <handler name="RPCDispatcher"
            class="org.apache.axis.handlers.RPCDispatchHandler" />
 
-  <handler name="router" class="org.apache.axis.handlers.Router" />
+  <!-- JWS file processor/executor and service -->
   <handler name="jwsprocessor" class="org.apache.axis.handlers.JWSProcessor" />
+  <service name="JWSProcessor" pivot="jwsprocessor" />
 
+  <!-- Handler that sets the Target field of the bag based on the -->
+  <!-- URL and/or the SOAPAction HTTP header field                -->
   <handler name="HTTPAction" 
            class="org.apache.axis.handlers.HTTPActionHandler" />
 
-  <chain name="HTTPTransport" flow="debug,HTTPAction,router" />
+  <!-- Define HTTP Transport Specific Input/Output Chains -->
+  <chain name="HTTP.input" flow="HTTPAction" />
+  <!-- <chain name="HTTP.output" flow="xxx" /> -->
 
-  <service name="JWSProcessor" handler="jwsprocessor" />
-  <service name="AxisServlet"  handler="HTTPTransport" />
-
-  <service name="AdminService" handler="MsgDispatcher">
+  <!-- Deploy the Admin Service so people can remotely deploy -->
+  <service name="AdminService" pivot="MsgDispatcher">
     <option name="className" value="org.apache.axis.utils.Admin" />
     <option name="methodName" value="AdminService" />
   </service>
