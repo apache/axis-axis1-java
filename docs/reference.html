@@ -586,6 +586,11 @@ namely "http://xml.apache.org/axis/wsdd/".
         this service. (Note that these are security roles, as opposed to SOAP 
         roles. Security roles control access, SOAP roles control which SOAP headers 
         are processed.)</li>
+      <li><b>extraClasses</b> : Specify a space or comma seperated list of class 
+        names which should be included in the <b>types</b> section of the WSDL document. 
+        This is useful in the case where your service interface references a base class
+        and you would like your WSDL to contain XML Schema type defintions for these other classes.
+      </li>
     </ul>
     <p> If you wish to define handlers which should be invoked either before or 
       after the service's provider, you may do so with the <b>&lt;requestFlow&gt;</b> 

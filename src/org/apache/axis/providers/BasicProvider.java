@@ -48,6 +48,7 @@ public abstract class BasicProvider extends BasicHandler {
     public static final String OPTION_WSDL_TARGETNAMESPACE = "wsdlTargetNamespace";
     public static final String OPTION_WSDL_INPUTSCHEMA = "wsdlInputSchema";
     public static final String OPTION_WSDL_SOAPACTION_MODE = "wsdlSoapActionMode";
+    public static final String OPTION_EXTRACLASSES = "extraClasses";
 
     protected static Log log =
             LogFactory.getLog(BasicProvider.class.getName());
@@ -213,6 +214,7 @@ public abstract class BasicProvider extends BasicHandler {
             String wsdlServicePort = (String) service.getOption(OPTION_WSDL_SERVICEPORT);
             String wsdlInputSchema = (String) service.getOption(OPTION_WSDL_INPUTSCHEMA);
             String wsdlSoapActinMode = (String) service.getOption(OPTION_WSDL_SOAPACTION_MODE);
+            String extraClasses = (String) service.getOption(OPTION_EXTRACLASSES);
 
             if (wsdlPortType != null && wsdlPortType.length() > 0) {
                 emitter.setPortTypeName(wsdlPortType);
@@ -229,7 +231,11 @@ public abstract class BasicProvider extends BasicHandler {
             if (wsdlSoapActinMode != null && wsdlSoapActinMode.length() > 0) {
                 emitter.setSoapAction(wsdlSoapActinMode);
             }
-            
+
+            if (extraClasses != null && extraClasses.length() > 0) {
+                emitter.setExtraClasses(extraClasses);
+            }
+
             if (msgContext.isPropertyTrue(AxisEngine.PROP_EMIT_ALL_TYPES)) {
                 emitter.setEmitAllTypes(true);
             }
