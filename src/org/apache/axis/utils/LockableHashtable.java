@@ -41,7 +41,7 @@ public class LockableHashtable extends Hashtable {
     /**
      * Stores the keys of the locked entries
      */
-    Vector lockedEntries = new Vector();
+    Vector lockedEntries;
 
     /** Place to look for properties which we don't find locally. */
     private Hashtable parent = null;
@@ -111,10 +111,17 @@ public class LockableHashtable extends Hashtable {
      * items added to the hashtable as locked.
      */
     public synchronized Object put(Object p1, Object p2, boolean locked) {
-        if (this.containsKey(p1) && lockedEntries.contains(p1)) {
+        if (lockedEntries != null && 
+            this.containsKey(p1) && 
+            lockedEntries.contains(p1)) {
             return null;
         }
-        if (locked) lockedEntries.add(p1);
+        if (locked) {
+            if (lockedEntries == null) {
+                lockedEntries = new Vector();
+            }
+            lockedEntries.add(p1);
+        }
         return super.put(p1, p2);
     }
 
@@ -129,7 +136,7 @@ public class LockableHashtable extends Hashtable {
      * Checks to see if an item is locked before it is removed.
      */
     public synchronized Object remove(Object p1) {
-        if (lockedEntries.contains(p1)) {
+        if (lockedEntries != null && lockedEntries.contains(p1)) {
             return null;
         }
         return super.remove(p1);
@@ -140,6 +147,6 @@ public class LockableHashtable extends Hashtable {
      */
     public boolean isKeyLocked(Object key)
     {
-        return lockedEntries.contains(key);
+        return lockedEntries != null && lockedEntries.contains(key);
     }
 }
