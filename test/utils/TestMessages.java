@@ -18,7 +18,7 @@ import org.apache.axis.utils.JavaUtils;
 
 /**
  * This TestCase verifies:
- *   - the contents of resources.properties for well-formedness, and
+ *   - the contents of axisNLS.properties for well-formedness, and
  *   - tests calls to JavaUtils.getMessage.
  */
 public class TestMessages extends TestCase {
@@ -31,7 +31,7 @@ public class TestMessages extends TestCase {
     }
 
     /**
-     * Call getMessage for each key in resources.properties to make sure they are all well formed.
+     * Call getMessage for each key in axisNLS.properties to make sure they are all well formed.
      */
     public void testAllMessages() {
         String arg0 = "arg0";
@@ -111,8 +111,8 @@ public class TestMessages extends TestCase {
     /**
      * If this test is run from xml-axis/java, then walk through the source tree looking for all
      * calls to JavaUtils.getMessage.  For each of these calls:
-     * 1.  Make sure the message key exists in resources.properties
-     * 2.  Make sure the actual number of parameters (in resources.properties) matches the
+     * 1.  Make sure the message key exists in axisNLS.properties
+     * 2.  Make sure the actual number of parameters (in axisNLS.properties) matches the
      *     excpected number of parameters (in the source code).
      */
     public void testForMissingMessages() {
@@ -146,8 +146,8 @@ public class TestMessages extends TestCase {
 
     /**
      * Check all calls to JavaUtils.getMessages:
-     * 1.  Make sure the message key exists in resources.properties
-     * 2.  Make sure the actual number of parameters (in resources.properties) matches the
+     * 1.  Make sure the message key exists in axisNLS.properties
+     * 2.  Make sure the actual number of parameters (in axisNLS.properties) matches the
      *     excpected number of parameters (in the source code).
      */
     private void checkMessages(File file) {
