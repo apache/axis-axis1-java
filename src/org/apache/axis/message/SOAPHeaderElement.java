@@ -199,7 +199,7 @@ public class SOAPHeaderElement extends MessageElement
                          roleQName.getLocalPart(), actor);
 
             String val;
-            if (context.getMessageContext().getSOAPConstants() == SOAPConstants.SOAP12_CONSTANTS)
+            if (context.getMessageContext() != null && context.getMessageContext().getSOAPConstants() == SOAPConstants.SOAP12_CONSTANTS)
                 val = mustUnderstand ? "true" : "false";
             else
                 val = mustUnderstand ? "1" : "0";
