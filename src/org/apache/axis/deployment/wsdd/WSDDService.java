@@ -272,6 +272,9 @@ public class WSDDService
     public void deployTypeMapping(WSDDTypeMapping mapping)
         throws WSDDException
     {
+        if (!typeMappings.contains(mapping)) {
+            typeMappings.add(mapping);
+        }
         if (tmr == null) {
             tmr = new TypeMappingRegistryImpl();
         }
