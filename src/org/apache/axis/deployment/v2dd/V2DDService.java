@@ -78,15 +78,16 @@ public class V2DDService extends V2DDElement {
             throw new V2DDException("The required provider element is missing");
         V2DDProvider provider = (V2DDProvider)getChild(e);
         if (provider == null) {
-            String type = null;            
+            String type = null;
             if (e.getAttribute("type").equals("script")) type = "script";
             if (e.getAttribute("type").equals("org.apache.soap.providers.com.RPCProvider")) type = "com";
             if (type == null) {
                 NodeList children = e.getElementsByTagNameNS(V2DDConstants.V2DD_NS, "java");
                 if (children.getLength() > 0) 
                     type = "java";
+                else
+                    type = "";
             }
-            type = "";            
             provider = V2DDProvider.getProvider(type,e);
             addChild(e,provider);
         }

@@ -58,14 +58,46 @@ import org.apache.axis.Handler;
 import org.apache.axis.deployment.wsdd.WSDDProvider;
 import org.apache.axis.deployment.wsdd.WSDDException;
 import org.apache.axis.deployment.DeploymentRegistry;
+import org.apache.axis.deployment.wsdd.WSDDConstants;
+import org.apache.axis.handlers.providers.JavaProvider;
+import org.apache.axis.handlers.providers.BasicProvider;
+import org.apache.axis.utils.QName;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 public class WSDDJavaProvider extends WSDDProvider { 
     
     public WSDDJavaProvider(Element e) throws WSDDException { super(e); }
     
     public Handler newProviderInstance(DeploymentRegistry registry) throws Exception {
-        return null;
+        String type;
+        type = (!(type = getType()).equals("") ? type : "org.apache.axis.handlers.providers.JavaProvider");
+        Class _class = Class.forName(type);
+        BasicProvider provider = (BasicProvider)_class.newInstance();
+        
+        // set the basic java provider deployment options
+        Element prov = (Element)getElement().getElementsByTagNameNS(WSDDConstants.WSDD_JAVA, "provider").item(0);
+        if (prov == null) {
+            throw new WSDDException("The Java Provider requires the presence of a java:provider element in the WSDD");
+        }
+        provider.addOption(JavaProvider.OPTION_CLASSNAME, prov.getAttribute("className"));
+        provider.addOption(JavaProvider.OPTION_IS_STATIC, new Boolean(prov.getAttribute("isStatic")));
+        
+        // set the classpath if present
+        Element cp = (Element)getElement().getElementsByTagNameNS(WSDDConstants.WSDD_JAVA, "classPath").item(0);
+        if (cp != null) {
+            provider.addOption(JavaProvider.OPTION_CLASSPATH, cp.getFirstChild().getNodeValue());
+        }
+        
+        // collect the information about the operations
+        NodeList nl = getElement().getElementsByTagNameNS(WSDDConstants.WSDD_NS, "operation");
+        for (int n = 0; n < nl.getLength(); n++) {
+            Element op = (Element)nl.item(n);
+            provider.addOperation(op.getAttribute("name"),
+                                  new QName(op.getAttribute("qName"),op));
+        }
+        
+        return provider;
     }
     
 }

@@ -94,12 +94,16 @@ public abstract class WSDDFlow extends WSDDDeployableItem {
     }
    
     public Handler newInstance(DeploymentRegistry registry) throws Exception {
-        Handler h = super.makeNewInstance(registry);
-        Chain c = (Chain)h;
-        WSDDHandler[] handlers = getHandlers();
-        for (int n = 0; n < handlers.length; n++) {
-            c.addHandler(handlers[n].newInstance(registry));
+        try {
+            Handler h = super.makeNewInstance(registry);
+            Chain c = (Chain)h;
+            WSDDHandler[] handlers = getHandlers();
+            for (int n = 0; n < handlers.length; n++) {
+                c.addHandler(handlers[n].newInstance(registry));
+            }
+            return c;
+        } catch (Exception e) {
+            return null;
         }
-        return c;
     }
 }

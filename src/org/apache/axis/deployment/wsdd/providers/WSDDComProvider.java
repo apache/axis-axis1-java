@@ -57,15 +57,45 @@ package org.apache.axis.deployment.wsdd.providers;
 import org.apache.axis.Handler;
 import org.apache.axis.deployment.wsdd.WSDDProvider;
 import org.apache.axis.deployment.wsdd.WSDDException;
+import org.apache.axis.deployment.wsdd.WSDDConstants;
 import org.apache.axis.deployment.DeploymentRegistry;
+import org.apache.axis.handlers.providers.ComProvider;
+import org.apache.axis.handlers.providers.BasicProvider;
+import org.apache.axis.utils.QName;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 public class WSDDComProvider extends WSDDProvider { 
     
     public WSDDComProvider(Element e) throws WSDDException { super(e); }    
   
     public Handler newProviderInstance(DeploymentRegistry registry) throws Exception {
-        return null;
+        String type;
+        type = (!(type = getType()).equals("") ? type : "org.apache.axis.handlers.providers.ComProvider");
+        Class _class = Class.forName(type);
+        BasicProvider provider = (BasicProvider)_class.newInstance();
+        
+        // set the basic java provider deployment options
+        Element prov = (Element)getElement().getElementsByTagNameNS(WSDDConstants.WSDD_COM, "provider").item(0);
+        if (prov == null) {
+            throw new WSDDException("The Com Provider requires the presence of a com:provider element in the WSDD");
+        }
+        String option = prov.getAttribute("ProgID");
+        if (!option.equals("")) provider.addOption(ComProvider.OPTION_PROGID, option);
+        option = prov.getAttribute("CLSID");
+        if (!option.equals("")) provider.addOption(ComProvider.OPTION_CLSID, option);
+        option = prov.getAttribute("threadingModel");
+        if (!option.equals("")) provider.addOption(ComProvider.OPTION_THREADING_MODEL, option);
+        
+        // collect the information about the operations
+        NodeList nl = getElement().getElementsByTagNameNS(WSDDConstants.WSDD_NS, "operation");
+        for (int n = 0; n < nl.getLength(); n++) {
+            Element op = (Element)nl.item(n);
+            provider.addOperation(op.getAttribute("name"),
+                                  new QName(op.getAttribute("qName"),op));
+        }
+        
+        return provider;
     }
    
 }
