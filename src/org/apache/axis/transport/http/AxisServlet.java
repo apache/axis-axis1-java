@@ -161,6 +161,8 @@ public class AxisServlet extends HttpServlet {
             msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST, req );
             msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETRESPONSE, res );
             msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETLOCATION, getServletContext().getRealPath("/WEB-INF") );
+            msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETPATHINFO, req.getPathInfo() );
+            msgContext.setProperty(HTTPConstants.HEADER_AUTHORIZATION, req.getHeader(HTTPConstants.HEADER_AUTHORIZATION) );
             msgContext.setProperty(Constants.MC_REMOTE_ADDR, req.getRemoteAddr());
 
             try {
@@ -329,6 +331,9 @@ public class AxisServlet extends HttpServlet {
         msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLET, this );
         msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST, req );
         msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETRESPONSE, res );
+        msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETLOCATION, getServletContext().getRealPath("/WEB-INF") );
+        msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETPATHINFO, req.getPathInfo() );
+        msgContext.setProperty(HTTPConstants.HEADER_AUTHORIZATION, req.getHeader(HTTPConstants.HEADER_AUTHORIZATION) );
         msgContext.setProperty(Constants.MC_REMOTE_ADDR, req.getRemoteAddr());
 
         if (securityProvider != null)

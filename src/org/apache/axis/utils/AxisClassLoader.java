@@ -147,7 +147,7 @@ public class AxisClassLoader extends ClassLoader {
             if ( obj != null )
                 return( ((JavaClass)obj).getJavaClass() );
         }
-
+    
         Class cls = super.loadClass( name );
         registerClass( name, cls );
         return cls;

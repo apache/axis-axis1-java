@@ -109,7 +109,6 @@ public class HTTPConstants {
     /** HttpServletResponse
      */
     public static String MC_HTTP_SERVLETRESPONSE= "transport.http.servletResponse";
-    /** HttpServletResponse
-     */
     public static String MC_HTTP_SERVLETLOCATION= "transport.http.servletLocation";
+    public static String MC_HTTP_SERVLETPATHINFO= "transport.http.servletPathInfo";
 }

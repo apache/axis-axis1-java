@@ -61,8 +61,6 @@ import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.log4j.Category;
 
-import javax.servlet.http.HttpServletRequest;
-
 /** An <code>HTTPAuthHandler</code> simply sets the context's username
  * and password properties from the HTTP auth headers.
  * 
@@ -78,12 +76,9 @@ public class HTTPAuthHandler extends BasicHandler
     {
         category.debug("Enter: HTTPAuthHandler::invoke" );
         
-        HttpServletRequest req = (HttpServletRequest)msgContext.getProperty(
-                                      HTTPConstants.MC_HTTP_SERVLETREQUEST);
-        
         /* Process the Basic Auth stuff in the headers */
         /***********************************************/
-        String tmp = (String)req.getHeader(HTTPConstants.HEADER_AUTHORIZATION);
+        String tmp = (String)msgContext.getProperty(HTTPConstants.HEADER_AUTHORIZATION);
         if ( tmp != null ) tmp = tmp.trim();
         if ( tmp != null && tmp.startsWith("Basic ") ) {
             String user=null ;
