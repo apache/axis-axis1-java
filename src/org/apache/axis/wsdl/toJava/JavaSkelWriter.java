@@ -150,7 +150,7 @@ public class JavaSkelWriter extends JavaWriter {
         for (int i = 0; i < operations.size(); ++i) {
             BindingOperation operation = (BindingOperation) operations.get(i);
             Parameters parameters =
-                    ptEntry.getParameters(operation.getOperation().getName());
+                    bEntry.getParameters(operation.getOperation().getName());
 
             if (parameters != null) {
                 // The invoked java name of the operation is stored.
@@ -176,7 +176,7 @@ public class JavaSkelWriter extends JavaWriter {
         for (int i = 0; i < operations.size(); ++i) {
             BindingOperation operation = (BindingOperation) operations.get(i);
             Parameters parameters =
-                    ptEntry.getParameters(operation.getOperation().getName());
+                    bEntry.getParameters(operation.getOperation().getName());
 
             // Get the soapAction from the <soap:operation>
             String soapAction = "";

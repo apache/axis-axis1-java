@@ -73,18 +73,43 @@ public class JavaInterfaceWriter extends JavaWriter {
     private PortType      portType;
     private PortTypeEntry ptEntry;
     private SymbolTable   symbolTable;
+    private BindingEntry  bEntry;
 
     /**
      * Constructor.
      */
     protected JavaInterfaceWriter(
             Emitter emitter,
-            PortTypeEntry ptEntry, SymbolTable symbolTable) {
+            PortTypeEntry ptEntry, BindingEntry bEntry, SymbolTable symbolTable) {
         super(emitter, ptEntry, "", "java", JavaUtils.getMessage("genIface00"), "interface");
         this.ptEntry = ptEntry;
         this.portType = ptEntry.getPortType();
         this.symbolTable = symbolTable;
+        this.bEntry = bEntry;
     } // ctor
+
+    /**
+     * Override write method to prevent duplicate interfaces because
+     * of two bindings referencing the same portType
+     */
+    public void write() throws IOException {
+        String fqClass = packageName + "." + className;
+        
+        // Do not emit the same portType/interface twice
+        // Warn the user and skip writing this class.
+        // XXX This would be the wrong thing if the two bindings
+        // XXX refer to the same port type, but describe it in a different way.
+        // XXX For example, one has use=literal, the other use=encoded.
+         if (emitter.fileInfo.getClassNames().contains(fqClass)) {
+             System.err.println(
+                     JavaUtils.getMessage("multipleBindings00", 
+                                          portType.getQName().toString()));
+             return;
+         }
+
+        // proceed normally
+        super.write();
+    } // write
 
     /**
      * Write the body of the portType interface file.
@@ -107,7 +132,7 @@ public class JavaInterfaceWriter extends JavaWriter {
      */
     private void writeOperation(Operation operation) throws IOException {
         writeComment(pw, operation.getDocumentationElement());
-        Parameters parms = ptEntry.getParameters(operation.getName());
+        Parameters parms = bEntry.getParameters(operation.getName());
         pw.println(parms.signature + ";");
     } // writeOperation
 

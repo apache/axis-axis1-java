@@ -266,7 +266,7 @@ public class JavaStubWriter extends JavaWriter {
         for (int i = 0; i < operations.size(); ++i) {
             BindingOperation operation = (BindingOperation) operations.get(i);
             Parameters parameters =
-                    ptEntry.getParameters(operation.getOperation().getName());
+                    bEntry.getParameters(operation.getOperation().getName());
 
             // Get the soapAction from the <soap:operation>
             String soapAction = "";
@@ -336,14 +336,12 @@ public class JavaStubWriter extends JavaWriter {
         HashSet types = new HashSet();
         HashSet firstPassTypes = new HashSet();
 
-        PortTypeEntry pe = symbolTable.getPortTypeEntry(portType.getQName());
-
         // Get all the types from all the operations
         List operations = portType.getOperations();
 
         for (int i = 0; i < operations.size(); ++i) {
             Operation op = (Operation) operations.get(i);
-            firstPassTypes.addAll(getTypesInOperation(op, pe));
+            firstPassTypes.addAll(getTypesInOperation(op));
         }
 
         // Extract those types which are complex types.
@@ -365,11 +363,11 @@ public class JavaStubWriter extends JavaWriter {
      * This method returns a set of all the TypeEntry in a given Operation.
      * The elements of the returned HashSet are TypeEntry.
      */
-    private HashSet getTypesInOperation(Operation operation, PortTypeEntry portEntry) {
+    private HashSet getTypesInOperation(Operation operation) {
         HashSet types = new HashSet();
         Vector v = new Vector();
 
-        Parameters params = portEntry.getParameters(operation.getName());
+        Parameters params = bEntry.getParameters(operation.getName());
         
         // Loop over parameter types for this operation
         for (int i=0; i < params.list.size(); i++) {

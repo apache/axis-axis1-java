@@ -306,6 +306,7 @@ public class SymbolTable {
         populate(contextURL, def, doc);
         setReferences(def, doc);
         checkForUndefined();
+        populateParameters();
     } // add
 
     /**
@@ -404,11 +405,8 @@ public class SymbolTable {
                 }
             }
             populateMessages(def);
-            // XXX binding must be before portType so we collect use info.
-            // XXX This will change when we generate parameters after the symbol
-            // XXX table is populated.
-            populateBindings(def);
             populatePortTypes(def);
+            populateBindings(def);
             populateServices(def);
         }
     } // populate
@@ -745,31 +743,53 @@ public class SymbolTable {
             // that didn't contain a portType, merely a binding that referred
             // to a non-existent port type.  Don't bother with it.
             if (!portType.isUndefined()) {
-                HashMap parameters = new HashMap();
-
-                Iterator operations = portType.getOperations().iterator();
- 
-                while(operations.hasNext()) {
-                    Operation operation = (Operation) operations.next();
-                    String namespace = portType.getQName().getNamespaceURI();
-                    Parameters parms = parameters(operation, 
-                                                  namespace, 
-                                                  getBindingEntryForPortType(def, portType));
-                    parameters.put(operation.getName(), parms);
-                }
-                PortTypeEntry ptEntry = new PortTypeEntry(portType, parameters);
+                PortTypeEntry ptEntry = new PortTypeEntry(portType);
                 symbolTablePut(ptEntry);
             }
         }
     } // populatePortTypes
 
     /**
+     * Create the parameters and store them in the bindingEntry.
+     */ 
+    private void populateParameters() throws IOException {
+        Iterator it = symbolTable.values().iterator();
+        while (it.hasNext()) {
+            Vector v = (Vector) it.next();
+            for (int i = 0; i < v.size(); ++i) {
+                if (v.get(i) instanceof BindingEntry) {
+                    BindingEntry bEntry = (BindingEntry) v.get(i);
+                    
+                    Binding binding = bEntry.getBinding();
+                    PortType portType = binding.getPortType();
+                    
+                    HashMap parameters = new HashMap();
+                    Iterator operations = portType.getOperations().iterator();
+                    
+                    // get parameters
+                    while(operations.hasNext()) {
+                        Operation operation = (Operation) operations.next();
+                        String namespace = portType.getQName().getNamespaceURI();
+                        Parameters parms = getOperationParameters(operation, 
+                                                                  namespace, 
+                                                                  bEntry);
+                        parameters.put(operation.getName(), parms);
+                    }
+                    bEntry.setParameters(parameters);
+                }
+            }
+        }
+    } // populate Parameters
+    
+    /**
      * For the given operation, this method returns the parameter info conveniently collated.
      * There is a bit of processing that is needed to write the interface, stub, and skeleton.
      * Rather than do that processing 3 times, it is done once, here, and stored in the
      * Parameters object.
      */
-    private Parameters parameters(Operation operation, String namespace, BindingEntry bindingEntry) throws IOException {
+    private Parameters getOperationParameters(Operation operation, 
+                                              String namespace, 
+                                              BindingEntry bindingEntry) throws IOException {
         Parameters parameters = new Parameters();
 
         // The input and output Vectors, when filled in, will be of the form:
@@ -1465,33 +1485,5 @@ public class SymbolTable {
                     JavaUtils.getMessage("alreadyExists00", "" + name));
         }
     } // symbolTablePut
-
-    /**
-     * Utility function to get the BindingEntry for the given portType.
-     * Does a reverse lookup of the portType in all the bindings.
-     */ 
-    public BindingEntry getBindingEntryForPortType(Definition def, PortType port) throws IOException {
-        BindingEntry b = null;
-        Iterator i = def.getBindings().values().iterator();
-        while (i.hasNext()) {
-            Binding binding = ((Binding) i.next());
-            QName bindingPort = binding.getPortType().getQName();
-            if (bindingPort.equals(port.getQName())) {
-                if (b != null) {
-                    // XXX - if more than one binding matches the portType
-                    // we can't do the right thing since interfaces are generated
-                    // from portTypes and the literal/encoded switch is in the
-                    // binding.
-                    throw new IOException(JavaUtils.getMessage("multipleBindings00"));
-                }
-                b = getBindingEntry(binding.getQName());
-            }
-        }
-        // DEBUG
-//        if ( b == null) {
-//            System.out.println("Lookup: can't find binding for portType " + port.getQName());
-//        }
-        return b;
-    }
 
 } // class SymbolTable

@@ -170,18 +170,18 @@ public class JavaTestCaseWriter extends JavaWriter {
                 JavaUtils.getMessage("null00", "binding") +
                 "\", binding != null);");
 
-        this.writePortTestCode(portType);
+        this.writePortTestCode(portType, bEntry);
 
         pw.println("    }");
     } // writeServiceTestCode
 
-    private final void writePortTestCode(PortType port) throws IOException {
+    private final void writePortTestCode(PortType port, BindingEntry bEntry) throws IOException {
         PortTypeEntry ptEntry = symbolTable.getPortTypeEntry(port.getQName());
         Iterator ops = port.getOperations().iterator();
         while (ops.hasNext()) {
             Operation op = (Operation) ops.next();
             OperationType type = op.getStyle();
-            Parameters params = ptEntry.getParameters(op.getName());
+            Parameters params = bEntry.getParameters(op.getName());
 
             // These operation types are not supported.  The signature
             // will be a string stating that fact.
