@@ -68,8 +68,9 @@ import java.util.Hashtable ;
  * @author Doug Davis (dug@us.ibm.com)
  */
 public class AxisClassLoader extends ClassLoader {
-  static Hashtable list         = new Hashtable() ;
   static Hashtable classLoaders = new Hashtable();
+
+  Hashtable list         = new Hashtable() ;
 
   public AxisClassLoader() {
     super();
