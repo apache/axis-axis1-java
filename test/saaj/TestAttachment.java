@@ -24,7 +24,6 @@ public class TestAttachment extends junit.framework.TestCase {
 
         attachment.setContent(stringContent, "text/plain");
         attachment.setContentId("update_address");
-
         message.addAttachmentPart(attachment);
         java.util.Iterator it = message.getAttachments();
         while (it.hasNext()) {
@@ -34,6 +33,8 @@ public class TestAttachment extends junit.framework.TestCase {
             System.out.println("Attachment " + id + " contains: " + content);
             assertEquals(content,stringContent);
         }
+        System.out.println("Here is what the XML message looks like:");
+        message.writeTo(System.out);
     }
 
     public static void main(String[] args) throws Exception {
