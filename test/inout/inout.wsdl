@@ -671,7 +671,7 @@
   <!-- service decln -->
   <service name="InoutService">
     <port name="SOAPPort" binding="tns:InoutSOAPBinding">
-      <soap:address location="http://localhost:9080/Inout/Inout"/>
+      <soap:address location="http://localhost:8080/axis/services/Inout"/>
     </port>
   </service>
 
