@@ -370,6 +370,8 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
                     }
                     if (elem.getNillable()) {
                         pw.println("        elemField.setNillable(true);");
+                    } else {
+                        pw.println("        elemField.setNillable(false);");
                     }
 
                     pw.println("        typeDesc.addFieldDesc(elemField);");
