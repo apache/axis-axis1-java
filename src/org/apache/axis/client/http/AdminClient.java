@@ -69,6 +69,7 @@ import org.apache.axis.Message ;
 import org.apache.axis.MessageContext ;
 import org.apache.axis.utils.Debug ;
 import org.apache.axis.encoding.ServiceDescription;
+import org.apache.axis.transport.http.HTTPConstants;
 
 /**
  * An admin client object, specific to HTTP.
@@ -93,6 +94,8 @@ public class AdminClient {
     public void doAdmin (String[] args)
         throws Exception
     {
+        org.apache.axis.AxisEngine.staticInit();
+        
         Options opts = new Options( args );
         
         Debug.setDebugLevel( opts.isFlagSet('d') );
@@ -121,25 +124,29 @@ public class AdminClient {
                 input = new FileInputStream( args[i] );
             }
             
-            ServiceClient     hMsg       =
-                new ServiceClient(new HTTPTransport(opts.getURL(), "AdminService"));
+            ServiceClient     client       =
+                new ServiceClient(opts.getURL());
+            
+            /** Set the action in case it's HTTP
+             */
+            client.set(HTTPConstants.MC_HTTP_SOAPACTION, "AdminService");
             
             Message         inMsg      = new Message( input, true );
-            hMsg.setRequestMessage( inMsg );
+            client.setRequestMessage( inMsg );
             
-            if ( opts.isFlagSet('t') > 0 ) hMsg.doLocal = true ;
-            hMsg.set( Transport.USER, opts.getUser() );
-            hMsg.set( Transport.PASSWORD, opts.getPassword() );
+            if ( opts.isFlagSet('t') > 0 ) client.doLocal = true ;
+            client.set( Transport.USER, opts.getUser() );
+            client.set( Transport.PASSWORD, opts.getPassword() );
             
-            hMsg.invoke();
+            client.invoke();
             
-            Message outMsg = hMsg.getMessageContext().getResponseMessage();
-            hMsg.getMessageContext().setServiceDescription(new ServiceDescription("Admin", false));
+            Message outMsg = client.getMessageContext().getResponseMessage();
+            client.getMessageContext().setServiceDescription(new ServiceDescription("Admin", false));
             input.close();
             SOAPEnvelope envelope = (SOAPEnvelope) outMsg.getAsSOAPEnvelope();
             SOAPBodyElement body = envelope.getFirstBody();
             StringWriter writer = new StringWriter();
-            SerializationContext ctx = new SerializationContext(writer, hMsg.getMessageContext());
+            SerializationContext ctx = new SerializationContext(writer, client.getMessageContext());
             body.output(ctx);
             System.out.println(writer.toString());
         }
