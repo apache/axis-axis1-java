@@ -628,6 +628,8 @@ public class HTTPSender extends BasicHandler {
                 ? null
                 : contentType.trim();
         if ((returnCode > 199) && (returnCode < 300)) {
+            if (returnCode == 202)
+                return inp;
             // SOAP return is OK - so fall through
         } else if (msgContext.getSOAPConstants() ==
                 SOAPConstants.SOAP12_CONSTANTS) {
