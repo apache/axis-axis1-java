@@ -2,7 +2,7 @@
 <html>
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-   <title>Axis User's Guide</title>
+   <title>Axis: further reading</title>
 <style type="text/css">
 <!--
 .example { background:#ccccff }
@@ -30,11 +30,15 @@ h1 {  margin-left: -30px}
     <a href="http://www.w3.org/TR/SOAP/">
     SOAP Version 1.1
     </a>
+    Remember that SOAP1.1 is not an official W3C standard. 
 </li>
 <li>
     <a href="http://www.w3.org/TR/soap12-part0/">
     SOAP Version 1.2 Part 0: Primer
     </a>
+    This and the follow-on sections cover what the W3C think SOAP 
+    is and how it should be used. 
+    
 </li>
 <li>
     <a href="http://www.w3.org/TR/wsdl">
@@ -50,6 +54,7 @@ h1 {  margin-left: -30px}
     <a href="http://java.sun.com/xml/downloads/jaxrpc.html">
     JAX-RPC Specification 1.0
     </a>
+    The public API for Web Services in Java. 
 </li>
 
 </ol>
@@ -85,6 +90,30 @@ h1 {  margin-left: -30px}
     JavaOne 2002,Web Services Today and Tomorrow </a>
     (Java Developer connection login required) 
 </li>    
+
+<li>
+    <a href="http://java.sun.com/webservices/docs/1.0/tutorial/doc/JAXRPC.html">
+    The Java Web Services Tutorial: Java API for XML-based RPC </a>
+    This is part of Sun's guide to their Java Web Services Developer Pack. 
+    The examples are all based on their JWSDP, but as Axis also implements 
+    JAX-RPC, they may all port to Axis.    
+    
+</li>    
+
+
+<li>
+    <a href="http://java.sun.com/blueprints/webservices/using/webservbp.html">
+    Using Web Services Effectively.</a>
+    
+    Blissfully ignoring issues such as versioning, robustness and security and 
+    all the other details a production Web Service needs, instead pushing EJB as 
+    the only way to process requests, this is Sun's guide to 
+    using web services in Java. It also assumes Java is at both ends, so manages 
+    to skirt round the interop problem.  
+    
+</li>    
+
+
 
 </ol>
 
