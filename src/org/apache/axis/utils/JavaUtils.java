@@ -1158,7 +1158,7 @@ public class JavaUtils
             return "javax.mail.internet.MimeMultipart";
         }
         else {
-            return null;
+            return "javax.activation.DataHandler";
         }
     } // mimeToJava
 
