@@ -101,7 +101,8 @@ Contents
         distribution as well as the xerces.jar from the xml-xerces distribution,
         mail.jar from javamail, and activation.jar from jaf.</li>
       <li>In the axis/WEB-INF/lib directory, copy the axis.jar from the xml-axis
-        distribution as well as the xerces.jar from the xml-xerces distribution.</li>
+        distribution as well as the xerces.jar from the xml-xerces distribution,
+        and xalan.jar from Xalan version 2.</li>
     </ul>
 
     <p><span class="note">Note:</span> 
@@ -165,7 +166,7 @@ Contents
         java org.apache.soap.server.ServiceManagerClient http://localhost:8080/soap/servlet/rpcrouter deploy DeploymentDescriptor
         </code></blockquote>
         </li>
-      <li>Temporarily add axis.jar and xerces.jar to your classpath.&nbsp; Locate the deployment descriptor
+      <li>Temporarily add axis.jar, xerces.jar, and xalan.jar to your classpath.&nbsp; Locate the deployment descriptor
         for your service and execute the following command:
         <blockquote><code>java org.apache.axis.client.AdminClient -lhttp://localhost:8080/axis/servlet/AxisServlet
           deploy.xml</code></blockquote>
