@@ -171,7 +171,7 @@ public class SymbolTable {
                 }
             }
             
-/* This is a bad idea right now
+/* tomj: This is a bad idea, faults seem to be undefined
             // Messages
             Iterator i = def.getMessages().values().iterator();
             while (i.hasNext()) {
@@ -480,16 +480,14 @@ public class SymbolTable {
         Input input = operation.getInput();
         if (input != null) {
             partStrings(inputs,
-                    input.getMessage().getOrderedParts(null)/*,
-                    (wsdlAttr.getInputBodyType(operation) == BindingEntry.USE_LITERAL)*/);
+                    input.getMessage().getOrderedParts(null));
         }
 
         // Collect all the output parameters
         Output output = operation.getOutput();
         if (output != null) {
             partStrings(outputs,
-                    output.getMessage().getOrderedParts(null)/*,
-                    (wsdlAttr.getOutputBodyType(operation) == BindingEntry.USE_LITERAL)*/);
+                    output.getMessage().getOrderedParts(null));
         }
 
         if (parameterOrder != null) {
@@ -611,31 +609,21 @@ public class SymbolTable {
      * This method returns a vector containing the Java types (even indices) and
      * names (odd indices) of the parts.
      */
-    protected void partStrings(Vector v, Collection parts/*, boolean literal*/) {
+    protected void partStrings(Vector v, Collection parts) {
         Iterator i = parts.iterator();
 
         while (i.hasNext()) {
             Part part = (Part) i.next();
             QName elementName = part.getElementName();
             QName typeName = part.getTypeName();
-/* The literal distinction doesn't belong here, it belongs in the writers - somewhere
-            if (literal) {
-                if (elementName != null) {
-                    v.add(Utils.capitalizeFirstChar(elementName.getLocalPart()));
-                    v.add(part.getName());
-                }
-            } else {
-*/
-                // Encoded
-                if (typeName != null) {
-                    v.add(getTypeEntry(typeName));
-                    v.add(part.getName());
-                } else if (elementName != null) {
-                    v.add(getElementTypeEntry(elementName));
-                    v.add(part.getName());
-                }
+            if (typeName != null) {
+                v.add(getTypeEntry(typeName));
+                v.add(part.getName());
+            } else if (elementName != null) {
+                v.add(getElementTypeEntry(elementName));
+                v.add(part.getName());
             }
-//        }
+        }
     } // partStrings
 
     /**
@@ -668,17 +656,6 @@ public class SymbolTable {
                     }
                 }
             }
-
-/* RJB:  I'm not sure about this attribute.  Waiting for Tom Jordahl's input.
-            PortType port = binding.getPortType();
-            PortTypeEntry ptEntry = (PortTypeEntry)symbolTable.get(port.getQName());
-
-            if (bindingType != BindingEntry.TYPE_SOAP) {
-                ptEntry.setIsInSoapBinding(true);
-            } else {
-                ptEntry.setIsInSoapBinding(false);
-            }
-*/
 
             // Check the Binding Operations for use="literal"
             HashMap attributes = new HashMap();

@@ -66,6 +66,7 @@ import java.util.StringTokenizer;
 */
 public class Namespaces extends HashMap {
     private String root;
+    private String defaultPackage = null;
 
     /**
      * Instantiate a Namespaces object whose packages will all reside under root.
@@ -81,6 +82,7 @@ public class Namespaces extends HashMap {
     private Namespaces(Namespaces clone) {
         super(clone);
         this.root = clone.root;
+        this.defaultPackage = clone.defaultPackage;
     } // ctor
 
     /**
@@ -95,6 +97,9 @@ public class Namespaces extends HashMap {
      * this namespace, create one.
      */
     public String getCreate(String key) {
+        if (defaultPackage != null) {
+            return defaultPackage;
+        }
         Object value = super.get(key);
         if (value == null) {
             value = Utils.makePackageName((String) key);
@@ -108,6 +113,9 @@ public class Namespaces extends HashMap {
      * doesn't exist in the HashMap, return "".
      */
     public String getAsDir(String key) {
+        if (defaultPackage != null) {
+            return toDir(defaultPackage);
+        }
         String pkg = (String) get(key);
         return toDir(pkg);
     } // getAsDir
@@ -171,4 +179,14 @@ public class Namespaces extends HashMap {
         File packageDir = new File(pkgDirString);
         packageDir.mkdirs();
     } // mkdir
+
+    /**
+     * Set a package name that overrides the namespace map
+     * 
+     * @param a java package name (e.g. com.foo)
+     */ 
+    public void setDefaultPackage(String defaultPackage) {
+        this.defaultPackage = defaultPackage;
+    }
+
 } // class Namespaces

@@ -142,8 +142,19 @@ public abstract class JavaWriter implements Writer {
      */
     public void write() throws IOException {
         String packageDirName = namespaces.toDir(packageName);
-        emitter.fileList.add(packageDirName + fileName);
-        emitter.classList.add(packageName + "." + className);
+        String path = packageDirName + fileName;
+        String fqClass = packageName + "." + className;
+        
+        // Check for duplicates, probably the result of namespace mapping
+        if (emitter.classList.contains(fqClass)) {
+            throw new IOException(JavaUtils.getMessage("duplicateClass00", fqClass));
+        }
+        if (emitter.fileList.contains(path)) {
+            throw new IOException(JavaUtils.getMessage("duplicateFile00", path));
+        }
+        
+        emitter.fileList.add(path);
+        emitter.classList.add(fqClass);
         namespaces.mkdir(packageName);
         File file = new File(packageDirName, fileName);
         if (emitter.bVerbose) {
