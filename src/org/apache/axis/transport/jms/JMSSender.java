@@ -20,6 +20,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.handlers.BasicHandler;
+import org.apache.axis.attachments.Attachments;
 
 import javax.jms.Destination;
 import java.io.ByteArrayOutputStream;
@@ -69,6 +70,21 @@ public class JMSSender extends BasicHandler
             msgContext.getRequestMessage().writeTo(out);
 
             HashMap props = createSendProperties(msgContext);
+
+            // If the request message contains attachments, set
+            // a contentType property to go in the outgoing message header
+            String ret = null;
+            Message message = msgContext.getRequestMessage();
+            Attachments mAttachments = message.getAttachmentsImpl();
+            if (mAttachments != null && 0 != mAttachments.getAttachmentCount()) 
+            {
+                String contentType = mAttachments.getContentType();
+                if(contentType != null && !contentType.trim().equals("")) 
+                {
+                    props.put("contentType", contentType);
+                }
+            }
+
             boolean waitForResponse = true;
             if(msgContext.containsProperty(JMSConstants.WAIT_FOR_RESPONSE))
                 waitForResponse =

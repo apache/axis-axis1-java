@@ -80,7 +80,29 @@ public class SimpleJMSWorker implements Runnable
 
         // create the msg and context and invoke the server
         AxisServer server = SimpleJMSListener.getAxisServer();
-        Message msg = new Message(in);
+
+        // if the incoming message has a contentType set,
+        // pass it to my new Message
+        String contentType = null;
+        try 
+        { 
+            contentType = message.getStringProperty("contentType");
+        } 
+        catch(Exception e) 
+        { 
+            e.printStackTrace();
+        }
+
+        Message msg = null;
+        if(contentType != null && !contentType.trim().equals("")) 
+        {
+            msg = new Message(in, true, contentType, null);
+        } 
+        else 
+        {
+            msg = new Message(in);
+        }
+
         MessageContext  msgContext = new MessageContext(server);
         msgContext.setRequestMessage( msg );
         try
