@@ -379,25 +379,31 @@ public class HTTPSender extends BasicHandler {
 
         OutputStream out = sock.getOutputStream();
 
-        out.write(header.toString()
-                .getBytes(HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING));
-        out.flush();
-        ChunkedOutputStream chunkedOutputStream = null;
         if (httpChunkStream) {
-            out = chunkedOutputStream = new ChunkedOutputStream(out);
-        }
-
-        out = new BufferedOutputStream(out, 8 * 1024);
-        try {
-            reqMessage.writeTo(out);
-        } catch (SOAPException e) {
-            log.error(JavaUtils.getMessage("exception00"), e);
-        }
-        if (null != chunkedOutputStream) {
+            out.write(header.toString()
+                    .getBytes(HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING));
+            out.flush();
+            ChunkedOutputStream chunkedOutputStream = new ChunkedOutputStream(out);
+            out = new BufferedOutputStream(chunkedOutputStream, 8 * 1024);
+            try {
+                reqMessage.writeTo(out);
+            } catch (SOAPException e) {
+                log.error(JavaUtils.getMessage("exception00"), e);
+            }
             out.flush();
             chunkedOutputStream.eos();
+        } else {
+            out = new BufferedOutputStream(out, 8 * 1024);
+            try {
+                out.write(header.toString()
+                        .getBytes(HTTPConstants.HEADER_DEFAULT_CHAR_ENCODING));
+                reqMessage.writeTo(out);
+            } catch (SOAPException e) {
+                log.error(JavaUtils.getMessage("exception00"), e);
+            }
+            // Flush ONLY once.
+            out.flush();
         }
-        out.flush();
         if (log.isDebugEnabled()) {
             log.debug(JavaUtils.getMessage("xmlSent00"));
             log.debug("---------------------------------------------------");

@@ -83,6 +83,9 @@ public class SOAPConnectionImpl extends javax.xml.soap.SOAPConnection {
      */
     public SOAPMessage call(SOAPMessage request, Object endpoint)
         throws SOAPException {
+        if(closed){
+            throw new SOAPException(org.apache.axis.utils.JavaUtils.getMessage("connectionClosed00"));
+        }
         try {
             Call call = new Call(endpoint.toString());
             SOAPEnvelope env = ((org.apache.axis.Message)request).getSOAPEnvelope();
