@@ -64,9 +64,10 @@ public class WSDDJAXRPCHandlerInfo
             throw new WSDDException(Messages.getMessage("noClassNameAttr00"));
         
         Element[] elements = getChildElements(e, ELEM_WSDD_PARAM);
+
+        // instanciate an empty Map
+        _map = new HashMap();
         if (elements.length != 0) {
-            _map = new HashMap();
-      
             // Load up the map
             for (int i = 0; i < elements.length; i++) {
                 Element param = elements[i];
