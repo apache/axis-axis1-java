@@ -40,9 +40,7 @@ import javax.xml.soap.SOAPMessage;
 
 import java.io.OutputStream;
 import java.io.ByteArrayInputStream;
-import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Iterator;
 

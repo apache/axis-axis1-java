@@ -21,8 +21,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
