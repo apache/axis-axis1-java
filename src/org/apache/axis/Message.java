@@ -56,6 +56,7 @@
 package org.apache.axis;
 
 import org.apache.axis.attachments.Attachments;
+import org.apache.axis.attachments.AttachmentsImpl;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.soap.SOAPConstants;
@@ -501,6 +502,13 @@ public class Message extends javax.xml.soap.SOAPMessage
      *     was a problem saving changes to this message.
      */
     public void saveChanges() throws SOAPException {
+        if (mAttachments != null && 0 < mAttachments.getAttachmentCount()) {
+            try {
+                headers.setHeader("Content-Type",mAttachments.getContentType());
+            } catch (AxisFault af){
+                log.error(Messages.getMessage("exception00"), af);
+            }
+        }
         saveRequired = false;
     }
 

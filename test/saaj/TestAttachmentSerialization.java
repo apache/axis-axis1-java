@@ -140,6 +140,15 @@ public class TestAttachmentSerialization extends TestCase {
         ap2.setContentType("image/jpg");
         msg.addAttachmentPart(ap2);
 
+        // Test for Bug #17664
+        if(msg.saveRequired()) {
+            msg.saveChanges();
+        }
+        MimeHeaders headers = msg.getMimeHeaders();
+        assertTrue(headers != null);
+        String [] contentType = headers.getHeader("Content-Type");  
+        assertTrue(contentType != null);
+        
         msg.writeTo(os);
         os.flush();
         return msg.countAttachments();
