@@ -229,8 +229,10 @@ public class TypeMappingImpl implements TypeMapping
                          javax.xml.rpc.encoding.DeserializerFactory dsf)
         throws JAXRPCException {
 
-       if (javaType == null || xmlType == null) {
-            // return false;
+        // Both javaType and xmlType must be specified, and
+        // at least a serializer or deserializer factory must be specified.
+        if (javaType == null || xmlType == null ||
+            (sf == null && dsf == null)) {
             throw new JAXRPCException();
         }
 
