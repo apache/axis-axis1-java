@@ -249,10 +249,12 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
 //        namespaceURI = "";
         if (mapping == null || 
             !(mapping instanceof TypeMapping)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(
+                    JavaUtils.getMessage("badTypeMapping"));
         } 
         if (namespaceURI == null) {
-            throw new java.lang.IllegalArgumentException();
+            throw new java.lang.IllegalArgumentException(
+                    JavaUtils.getMessage("nullNamespaceURI"));
         }
         // Get or create a TypeMappingDelegate and set it to 
         // delegate to the new mapping.
@@ -274,17 +276,24 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
      * @param mapping - TypeMapping for specific type namespaces
      *
      * java.lang.IllegalArgumentException - 
-     * if an invalid namespace URI is specified
+     * if an invalid type mapping is specified or the delegate is already set
      */
     public void registerDefault(javax.xml.rpc.encoding.TypeMapping mapping) {
         if (mapping == null || 
-            !(mapping instanceof TypeMapping) ||
-            // Don't allow this call after the delegate() method since
-            // the TMR's TypeMappings will be using the default type mapping
-            // of the secondary TMR.
-            defaultDelTM.getDelegate() instanceof TypeMappingDelegate) {
-            throw new IllegalArgumentException();
+            !(mapping instanceof TypeMapping)) {
+            throw new IllegalArgumentException(
+                    JavaUtils.getMessage("badTypeMapping"));
         }
+
+        /* Don't allow this call after the delegate() method since
+         * the TMR's TypeMappings will be using the default type mapping
+         * of the secondary TMR.
+         */
+        if (defaultDelTM.getDelegate() instanceof TypeMappingDelegate) {
+            throw new IllegalArgumentException(
+                    JavaUtils.getMessage("defaultTypeMappingSet"));
+        }
+
         defaultDelTM.setDelegate((TypeMapping) mapping);
     }
         

@@ -81,6 +81,8 @@ import org.apache.axis.wsdl.symbolTable.Parameters;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
 
+import org.apache.axis.utils.JavaUtils;
+
 /**
 * This is Wsdl2java's skeleton writer.  It writes the <BindingName>Skeleton.java
 * file which contains the <bindingName>Skeleton class.
@@ -171,7 +173,9 @@ public class JavaSkelWriter extends JavaClassWriter {
                             modeStr = "org.apache.axis.description.ParameterDesc.INOUT";
                             break;
                         default:
-                            throw new IOException();
+                            throw new IOException(
+                                JavaUtils.getMessage("badParmMode00", 
+                                        (new Byte(p.getMode())).toString()));
                     }
                     // Construct a parameter with the parameter name, mode, type qname
                     // a type javaType.

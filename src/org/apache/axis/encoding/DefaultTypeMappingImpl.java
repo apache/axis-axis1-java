@@ -57,6 +57,7 @@ package org.apache.axis.encoding;
 
 import org.apache.axis.Constants;
 import org.apache.axis.encoding.ser.*;
+import org.apache.axis.utils.JavaUtils;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
@@ -429,15 +430,15 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                          javax.xml.rpc.encoding.DeserializerFactory dsf)
         throws JAXRPCException {
 
-        throw new JAXRPCException();
+        throw new JAXRPCException(JavaUtils.getMessage("fixedTypeMapping"));
     }
     public void removeSerializer(Class javaType, QName xmlType)
         throws JAXRPCException {
-        throw new JAXRPCException();
+        throw new JAXRPCException(JavaUtils.getMessage("fixedTypeMapping"));
     }
     public void removeDeserializer(Class javaType, QName xmlType)
         throws JAXRPCException {
-        throw new JAXRPCException();
+        throw new JAXRPCException(JavaUtils.getMessage("fixedTypeMapping"));
     }
     public void setSupportedEncodings(String[] namespaceURIs) {
     }

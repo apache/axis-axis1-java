@@ -101,7 +101,11 @@ public class BeanPropertyDescriptor
         getter = _getter;
         setter = _setter;
         if (_getter == null || _setter == null || _name == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(
+                    JavaUtils.getMessage(_getter == null ?
+                                         "badGetter00" :
+                                         (_setter == null ?
+                                         "badSetter00" : "badProp03")));
         }
     }
 
@@ -123,7 +127,9 @@ public class BeanPropertyDescriptor
         getterIndexed = _getterIndexed;
         setterIndexed = _setterIndexed;
         if (_getterIndexed == null || _setterIndexed == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(
+                    JavaUtils.getMessage(_getterIndexed == null ?
+                                         "badAccessor00" : "badModifier00"));
         }
     }
 
@@ -138,7 +144,9 @@ public class BeanPropertyDescriptor
         name = _name;
         field = _field;
         if (_field == null || _name == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(
+                    JavaUtils.getMessage(_field == null ?
+                                         "badField00" : "badProp03"));
         }
     }
     

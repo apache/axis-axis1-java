@@ -259,7 +259,9 @@ public class Call implements javax.xml.rpc.Call {
      */
     public void setProperty(String name, Object value) {
         if (name == null || value == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(
+                    JavaUtils.getMessage(name == null ?
+                                         "badProp03" : "badProp04"));
         }
         else if (name.equals(USERNAME_PROPERTY)) {
             if (!(value instanceof String)) {
@@ -346,7 +348,8 @@ public class Call implements javax.xml.rpc.Call {
                 transport.setTransportName((String) value);
         }
         else {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(
+                    JavaUtils.getMessage("badProp05", name));
         }
         callProperties.put(name, value);
     } // setProperty
@@ -359,7 +362,9 @@ public class Call implements javax.xml.rpc.Call {
      */
     public Object getProperty(String name) {
         if (name == null || !isPropertySupported(name))
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(name == null ?
+                  JavaUtils.getMessage("badProp03") :
+                  JavaUtils.getMessage("badProp05", name));
         return callProperties.get(name);
     } // getProperty
 
@@ -375,7 +380,9 @@ public class Call implements javax.xml.rpc.Call {
 
     public void setScopedProperty(String name, Object value) {
         if (name == null || value == null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(
+                    JavaUtils.getMessage(name == null ?
+                                         "badProp03" : "badProp04"));
         }
         scopedProperties.put(name, value);
     } // setScopedProperty
@@ -705,7 +712,7 @@ public class Call implements javax.xml.rpc.Call {
             operation.addParameter(param);
         }
         else {
-            throw new JAXRPCException();
+            throw new JAXRPCException(JavaUtils.getMessage("noParmAndRetReq"));
         }
     }
 
@@ -788,7 +795,7 @@ public class Call implements javax.xml.rpc.Call {
             operation.setReturnClass(tm.getClassForQName(type));
         }
         else {
-            throw new JAXRPCException();
+            throw new JAXRPCException(JavaUtils.getMessage("noParmAndRetReq"));
         }
     }
 
@@ -847,7 +854,7 @@ public class Call implements javax.xml.rpc.Call {
             operation = new OperationDesc();
         }
         else {
-            throw new JAXRPCException();
+            throw new JAXRPCException(JavaUtils.getMessage("noParmAndRetReq"));
         }
     }
 

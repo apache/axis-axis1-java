@@ -55,6 +55,8 @@
 
 package org.apache.axis.description;
 
+import org.apache.axis.utils.JavaUtils;
+
 import javax.xml.namespace.QName;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -177,8 +179,14 @@ public class TypeDesc {
      */
     public void addFieldDesc(FieldDesc field)
     {
-        if (field == null)
-            throw new NullPointerException();
+        if (field == null) {
+            //XXX TypeDesc is published and should not throw NPEs
+            // An exception has been coded in the source code checks
+            // in test.utils.TestSrcContent which should be removed
+            // when this NPE is removed.
+            throw new NullPointerException(
+                    JavaUtils.getMessage("nullFieldDesc"));
+        }
         
         int numFields = 0;
         if (fields != null) {

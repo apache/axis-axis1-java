@@ -56,6 +56,7 @@
 package org.apache.axis.encoding;
 
 import org.apache.axis.Constants;
+import org.apache.axis.utils.JavaUtils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -202,7 +203,9 @@ public class TypeMappingImpl implements TypeMapping
         if (javaType == null || xmlType == null) {
             // REMOVED_FOR_TCK
             // return false;
-            throw new JAXRPCException();
+            throw new JAXRPCException(
+                    JavaUtils.getMessage(javaType == null ?
+                                         "badJavaType" : "badXmlType"));
         }
         if (pair2SF.keySet().contains(new Pair(javaType, xmlType))) {
             return true;
@@ -229,21 +232,28 @@ public class TypeMappingImpl implements TypeMapping
                          javax.xml.rpc.encoding.DeserializerFactory dsf)
         throws JAXRPCException {
 
-        // Both javaType and xmlType must be specified, and
-        // at least a serializer or deserializer factory must be specified.
-        if (javaType == null || xmlType == null ||
-            (sf == null && dsf == null)) {
-            throw new JAXRPCException();
+        // Both javaType and xmlType must be specified.
+        if (javaType == null || xmlType == null) {
+            throw new JAXRPCException(
+                    JavaUtils.getMessage(javaType == null ?
+                                         "badJavaType" : "badXmlType"));
+        }
+
+        // At least a serializer or deserializer factory must be specified.
+        if (sf == null && dsf == null) {
+            throw new JAXRPCException(
+                    JavaUtils.getMessage(sf == null ?
+                                         "badSerFac" : "badDeserFac"));
         }
 
         //REMOVED_FOR_TCK
         //if (sf != null &&
         //    !(sf instanceof javax.xml.rpc.encoding.SerializerFactory)) {
-        //    throw new JAXRPCException();
+        //    throw new JAXRPCException(message text);
         //}
         //if (dsf != null &&
         //    !(dsf instanceof javax.xml.rpc.encoding.DeserializerFactory)) {
-        //    throw new JAXRPCException();
+        //    throw new JAXRPCException(message text);
         //}
 
         Pair pair = new Pair(javaType, xmlType);
@@ -350,7 +360,9 @@ public class TypeMappingImpl implements TypeMapping
     public void removeSerializer(Class javaType, QName xmlType)
         throws JAXRPCException {
         if (javaType == null || xmlType == null) {
-            throw new JAXRPCException();
+            throw new JAXRPCException(
+                    JavaUtils.getMessage(javaType == null ?
+                                         "badJavaType" : "badXmlType"));
         }
 
         Pair pair = new Pair(javaType, xmlType);
@@ -370,7 +382,9 @@ public class TypeMappingImpl implements TypeMapping
     public void removeDeserializer(Class javaType, QName xmlType)
         throws JAXRPCException {
         if (javaType == null || xmlType == null) {
-            throw new JAXRPCException();
+            throw new JAXRPCException(
+                    JavaUtils.getMessage(javaType == null ?
+                                         "badJavaType" : "badXmlType"));
         }
         Pair pair = new Pair(javaType, xmlType);
         pair2DF.remove(pair);

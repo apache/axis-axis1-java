@@ -809,13 +809,13 @@ public class JavaUtils
      */
     public static Object getHolderValue(Object holder) throws HolderException {
         if (!(holder instanceof javax.xml.rpc.holders.Holder)) {
-            throw new HolderException();
+            throw new HolderException(getMessage("badHolder00"));
         }
         try {
             Field valueField = holder.getClass().getField("value");
             return valueField.get(holder);
         } catch (Exception e) {
-            throw new HolderException();
+          throw new HolderException(getMessage("exception01", e.getMessage()));
         }
     }
 
@@ -826,7 +826,7 @@ public class JavaUtils
      */
     public static void setHolderValue(Object holder, Object value) throws HolderException {
         if (!(holder instanceof javax.xml.rpc.holders.Holder)) {
-            throw new HolderException();
+            throw new HolderException(getMessage("badHolder00"));
         }
         try {
             Field valueField = holder.getClass().getField("value");
@@ -839,12 +839,13 @@ public class JavaUtils
                 valueField.set(holder, value);
             }
         } catch (Exception e) {
-            throw new HolderException();
+          throw new HolderException(getMessage("exception01", e.getMessage()));
         }
     }
     public static class HolderException extends Exception
     {
-        public HolderException () {}
+        private HolderException () {}
+        public HolderException(String msg) { super(msg); }
     };
 
 

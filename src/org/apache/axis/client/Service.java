@@ -509,7 +509,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      */
     public javax.xml.rpc.Call[] getCalls(QName portName) throws ServiceException {
         if (wsdlLocation == null) {
-            throw new ServiceException();
+            throw new ServiceException(JavaUtils.getMessage("wsdlMissing00"));
         }
         else {
             return new javax.xml.rpc.Call[0];
@@ -530,7 +530,8 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      *         HandlerRegistry.
      */
     public HandlerRegistry getHandlerRegistry() {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException(
+                JavaUtils.getMessage("handlerRegistryConfig"));
     }
 
     /**
