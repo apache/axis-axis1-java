@@ -410,7 +410,7 @@ A typical invocation of the AdminClient looks like this:
 &lt;Admin>Done processing&lt;/Admin></pre>
 This command has now made our service accessible via SOAP. Check it out
 by running the Client class - it should look like this:
-<pre class="example">% java samples.userguide.example3.Client "test me!"
+<pre class="example">% java samples.userguide.example3.Client -lhttp://localhost:8080/axis/services/MyService "test me!"
 You typed : test me!
 %</pre>
 If you want to prove to yourself that the deployment really worked, try
