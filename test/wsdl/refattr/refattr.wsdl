@@ -2,9 +2,9 @@
 
 <definitions 
     name="ref types test"
-    targetNamespace="ref.types.test"
-    xmlns:tns="ref.types.test"
-    xmlns:typens="ref.types"
+    targetNamespace="urn:ref.types.test"
+    xmlns:tns="urn:ref.types.test"
+    xmlns:typens="urn:ref.types"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
     xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
@@ -13,7 +13,7 @@
   <!-- type defs -->
   <types>
     <xsd:schema 
-        targetNamespace="ref.types"
+        targetNamespace="urn:ref.types"
         xmlns:xsd="http://www.w3.org/1999/XMLSchema">
 
       <xsd:simpleType name="enum">
