@@ -1046,6 +1046,12 @@ public class ServiceDesc {
         namespaceMappings = namespaces;
     }
 
+    public String getDefaultNamespace() {
+        if (namespaceMappings == null || namespaceMappings.isEmpty())
+            return null;
+        return (String)namespaceMappings.get(0);
+    }
+
     public void setDefaultNamespace(String namespace) {
         if (namespaceMappings == null)
             namespaceMappings = new ArrayList();
