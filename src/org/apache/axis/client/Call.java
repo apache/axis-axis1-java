@@ -449,6 +449,9 @@ public class Call implements javax.xml.rpc.Call {
                     list = sBody.getEncodingStyles();
                     if ( list != null && list.size() > 0 )
                         this.setEncodingStyle( (String) list.get(0) );
+                    String ns = sBody.getNamespaceURI();
+                    if (ns != null && !ns.equals(""))
+                      setOperationName( new QName( ns, opName ) );
                     break ;
                 }
             }
