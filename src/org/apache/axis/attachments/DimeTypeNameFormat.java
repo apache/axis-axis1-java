@@ -109,6 +109,10 @@ public final class DimeTypeNameFormat {
         return format;
     }
 
+    public int hashCode() {
+        return (int) format;
+    }
+
     public final boolean equals(final Object x) {
         if (x == null)  {
             return false;

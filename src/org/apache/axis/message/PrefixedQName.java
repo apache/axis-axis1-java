@@ -106,4 +106,8 @@ public class PrefixedQName implements Name {
         }
         return false;
     }
+
+    public int hashCode() {
+        return prefix.hashCode() + qName.hashCode();
+    }
 }
