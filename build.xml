@@ -126,6 +126,7 @@ Copyright:
       <exclude name="**/org/apache/axis/transport/http/ServletEndpointContextImpl.java" unless="servlet.present"/>
       <exclude name="**/org/apache/axis/transport/configuration/EngineConfigurationFactoryServlet.java" unless="servlet.present"/>
       <exclude name="**/org/apache/axis/transport/http/CommonsHTTPSender.java" unless="commons-httpclient.present"/>
+      <exclude name="**/org/apache/axis/transport/mail/*.java" unless="commons-httpclient.present"/>
       <exclude name="**/org/apache/axis/transport/jms/*" unless="jms.present"/>
       <exclude name="**/org/apache/axis/components/jms/BeanVendorAdapter.java" unless="jms.present"/>
       <exclude name="**/org/apache/axis/components/jms/JMSVendorAdapter.java" unless="jms.present"/>
