@@ -61,6 +61,7 @@ package org.apache.axis.message;
 
 import org.apache.axis.Constants;
 import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.utils.JavaUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -104,11 +105,12 @@ public class EnvelopeBuilder extends SOAPHandler
         throws SAXException
     {
         if (!namespace.equals(Constants.URI_SOAP_ENV))
-            throw new SAXException("Bad envelope namespace '" + namespace +
-                                         "'");
+            throw new SAXException(
+                    JavaUtils.getMessage("badNamespace00", namespace));
         
         if (!localName.equals(Constants.ELEM_ENVELOPE))
-            throw new SAXException("Bad envelope tag " + localName);
+            throw new SAXException(
+                    JavaUtils.getMessage("badTag00", localName));
 
         String prefix = "";
         int idx = qName.indexOf(":");
@@ -131,7 +133,7 @@ public class EnvelopeBuilder extends SOAPHandler
         QName thisQName = new QName(namespace, localName);
         if (thisQName.equals(headerQName)) {
             if (gotHeader)
-                throw new SAXException("Only one Header element allowed!");
+                throw new SAXException(JavaUtils.getMessage("only1Header00"));
             
             gotHeader = true;
             return new HeaderBuilder(envelope);
@@ -139,15 +141,14 @@ public class EnvelopeBuilder extends SOAPHandler
         
         if (thisQName.equals(bodyQName)) {
             if (gotBody)
-                throw new SAXException("Only one Body element allowed!");
+                throw new SAXException(JavaUtils.getMessage("only1Body00"));
             
             gotBody = true;
             return new BodyBuilder(envelope);
         }
         
         if (!gotBody)
-            throw new SAXException("No custom elements allowed at top level "+
-                                   "until after the <Body>");
+            throw new SAXException(JavaUtils.getMessage("noCustomElems00"));
 
         /*
         element = new MessageElement(namespace, localName, prefix,

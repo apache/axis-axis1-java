@@ -80,7 +80,7 @@ public class SAXOutputter extends DefaultHandler
     
     public void endDocument() throws SAXException {
         if (category.isDebugEnabled()) {
-            category.debug("SAXOutputter: end document.");
+            category.debug("SAXOutputter.endDocument");
         }
     }
     
@@ -94,8 +94,7 @@ public class SAXOutputter extends DefaultHandler
     
     public void characters(char[] p1, int p2, int p3) throws SAXException {
         if (category.isDebugEnabled()) {
-            category.debug("(out) characters ['" +
-                               new String(p1, p2, p3) + "']");
+            category.debug("SAXOutputter.characters ['" + new String(p1, p2, p3) + "']");
         }
         try {
             context.writeChars(p1, p2, p3);
@@ -122,7 +121,7 @@ public class SAXOutputter extends DefaultHandler
         throws SAXException
     {
         if (category.isDebugEnabled()) {
-            category.debug("(out) startElement ['" + namespace + "' " +
+            category.debug("SAXOutputter.startElement ['" + namespace + "' " +
                            localName + "]");
         }
 
@@ -137,7 +136,7 @@ public class SAXOutputter extends DefaultHandler
         throws SAXException
     {
         if (category.isDebugEnabled()) {
-            category.debug("(out) endElement ['" + namespace + "' " +
+            category.debug("SAXOutputter.endElement ['" + namespace + "' " +
                            localName + "]");
         }
         

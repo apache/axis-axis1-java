@@ -67,6 +67,7 @@ import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.utils.AxisClassLoader;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.cache.JavaClass;
 import org.apache.log4j.Category;
 import org.xml.sax.Attributes;
@@ -106,8 +107,8 @@ public class RPCHandler extends SOAPHandler
             Class           cls    = jc.getJavaClass();
             
             if (category.isDebugEnabled()) {
-                category.debug("Looking up method '" + methodName +
-                                   "' in class " + clsName);
+                category.debug(JavaUtils.getMessage(
+                        "lookup00", methodName, clsName));
             }
 
             // try to find the method without knowing the number of
@@ -142,7 +143,7 @@ public class RPCHandler extends SOAPHandler
          * - Cache service description
          */
         if (category.isDebugEnabled()) {
-            category.debug("In RPCHandler.onStartChild()");
+            category.debug(JavaUtils.getMessage("enter00", "RPCHandler.onStartChild()"));
         }
         
         Vector params = call.getParams();
@@ -157,7 +158,7 @@ public class RPCHandler extends SOAPHandler
                                                    localName,
                                                    attributes);
         if (category.isDebugEnabled()) {
-            category.debug("Type from attrs was " + type);
+            category.debug(JavaUtils.getMessage("typeFromAttr00", "" + type));
         }
         
         // xsi:type always overrides everything else
@@ -175,7 +176,7 @@ public class RPCHandler extends SOAPHandler
                     if (defaultParamTypes[0]==MessageContext.class) index++;
                 type = typeMap.getTypeQName(defaultParamTypes[index]);
                 if (category.isDebugEnabled()) {
-                    category.debug("Type from default parms was " + type);
+                    category.debug(JavaUtils.getMessage("typeFromParms00", "" + type));
                 }
             }
         }
@@ -188,8 +189,8 @@ public class RPCHandler extends SOAPHandler
         }
         
         if (dser == null) {
-            throw new SAXException("Deserializing param '" + localName +
-                "' : Couldn't find deserializer for type " + type);
+            throw new SAXException(JavaUtils.getMessage(
+                    "noDeser01", localName,"" + type));
         }
         
         String isNil = attributes.getValue(Constants.URI_2001_SCHEMA_XSI, "nil");
@@ -200,7 +201,7 @@ public class RPCHandler extends SOAPHandler
         }
         
         if (category.isDebugEnabled()) {
-            category.debug("Out RPCHandler.onStartChild()");
+            category.debug(JavaUtils.getMessage("exit00", "RPCHandler.onStartChild()"));
         }
         return dser;
     }
@@ -210,8 +211,8 @@ public class RPCHandler extends SOAPHandler
         throws SAXException
     {
         if (category.isDebugEnabled()) {
-            category.debug("Setting MessageContext property in " +
-                               "RPCHandler.endElement().");
+            category.debug(JavaUtils.getMessage("setProp00",
+                    "MessageContext", "RPCHandler.endElement()."));
         }
         context.getMessageContext().setProperty("RPC", call);
     }

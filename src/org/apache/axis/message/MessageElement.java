@@ -65,6 +65,7 @@ import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.utils.Mapping;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.log4j.Category;
 import org.w3c.dom.Document;
@@ -140,7 +141,7 @@ public class MessageElement
                    Attributes attributes, DeserializationContext context)
     {
         if (category.isDebugEnabled()) {
-            category.debug("New MessageElement (" + super.toString() + ") named " + qName);
+            category.debug(JavaUtils.getMessage("newElem00", super.toString(), "" + qName));
             for (int i = 0; attributes != null && i < attributes.getLength(); i++) {
                 category.debug("  " + attributes.getQName(i) + " = '" + attributes.getValue(i) + "'");
             }
@@ -278,7 +279,7 @@ public class MessageElement
             return parent.getNamespaceURI(prefix);
 
         if (category.isDebugEnabled()) {
-            category.debug(this + " didn't find prefix '" + prefix + "'");
+            category.debug(JavaUtils.getMessage("noPrefix00", "" + this, prefix));
         }
 
         return null;
@@ -287,14 +288,12 @@ public class MessageElement
     public Object getValueAsType(QName type) throws Exception
     {
         if (context == null)
-            throw new Exception(
-             "No deserialization context to use in getValueAsType()!");
+            throw new Exception(JavaUtils.getMessage("noContext00"));
 
         TypeMappingRegistry tmr = context.getTypeMappingRegistry();
         Deserializer dser = tmr.getDeserializer(type);
         if (dser == null)
-            throw new Exception("No deserializer for requested type " +
-                                type);
+            throw new Exception(JavaUtils.getMessage("noDeser00", "" + type));
 
         context.pushElementHandler(new EnvelopeHandler(dser));
 
@@ -375,8 +374,8 @@ public class MessageElement
         Reader reader = new StringReader(writer.getBuffer().toString());
         Document doc = XMLUtils.newDocument(new InputSource(reader));
         if (doc == null)
-            throw new Exception("Couldn't get DOM document: XML was \"" +
-                                writer.getBuffer().toString() + "\"");
+            throw new Exception(
+                    JavaUtils.getMessage("noDoc00", writer.getBuffer().toString()));
 
         return doc.getDocumentElement();
     }
@@ -384,7 +383,7 @@ public class MessageElement
     public void publishToHandler(ContentHandler handler) throws SAXException
     {
         if (recorder == null)
-            throw new SAXException("No event recorder inside element");
+            throw new SAXException(JavaUtils.getMessage("noRecorder00"));
 
         recorder.replay(startEventIndex, endEventIndex, handler);
     }
@@ -392,7 +391,7 @@ public class MessageElement
     public void publishContents(ContentHandler handler) throws SAXException
     {
         if (recorder == null)
-            throw new SAXException("No event recorder inside element");
+            throw new SAXException(JavaUtils.getMessage("noRecorder00"));
 
         recorder.replay(startContentsIndex, endEventIndex-1, handler);
     }
