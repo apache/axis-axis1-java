@@ -91,7 +91,7 @@ public class JavaFaultWriter extends JavaWriter {
         symbolTable.partStrings(params, fault.getMessage().getOrderedParts(null));
 
         for (int i = 0; i < params.size(); i += 2)
-            pw.println("    public " + params.get(i) + " " + params.get(i + 1) + ";");
+            pw.println("    public " + ((Type) params.get(i)).getName() + " " + params.get(i + 1) + ";");
 
         pw.println();
         pw.println("    public " + className + "() {");
@@ -101,7 +101,7 @@ public class JavaFaultWriter extends JavaWriter {
             pw.print("      public " + className + "(");
             for (int i = 0; i < params.size(); i += 2) {
                 if (i != 0) pw.print(", ");
-                pw.print(params.get(i) + " " + params.get(i + 1));
+                pw.print(((Type) params.get(i)).getName() + " " + params.get(i + 1));
             }
             pw.println(") {");
             for (int i = 1; i < params.size(); i += 2) {
