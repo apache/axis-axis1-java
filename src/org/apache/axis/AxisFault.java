@@ -79,7 +79,13 @@ import javax.xml.parsers.ParserConfigurationException;
 /**
  * An exception which maps cleanly to a SOAP fault.
  * This is a base class for exceptions which are mapped to faults.
- *
+ * SOAP faults contain
+ * <ol>
+ * <li>A fault string
+ * <li>A fault code
+ * <li>A fault actor
+ * <li>Fault details; an xml tree of fault specific stuff
+ * </ol>
  * @author Doug Davis (dug@us.ibm.com)
  * @author James Snell (jasnell@us.ibm.com)
  */
@@ -118,23 +124,34 @@ public class AxisFault extends java.rmi.RemoteException {
         
         return new AxisFault(e);
     }
-    
-    public AxisFault(String code, String str,
+
+    /**
+     * make a fault
+     * @param code fault code which will be pased into the Axis namespace
+     * @param faultString fault string
+     * @param actor fault actor
+     * @param details details; if null the current stack trace and classname is
+     * inserted into the details.
+     */
+    public AxisFault(String code, String faultString,
                      String actor, Element[] details) {
-        super (str);
-        setFaultCode( new QName(Constants.NS_URI_AXIS, code));
-        setFaultString( str );
-        setFaultActor( actor );
-        setFaultDetail( details );
-        if (details == null)
-            initFromException(this);
+        this(new QName(Constants.NS_URI_AXIS, code),
+                faultString, actor, details);
     }
 
-    public AxisFault(QName code, String str,
+    /**
+     * make a fault in any namespace
+     * @param code fault code which will be pased into the Axis namespace
+     * @param faultString fault string
+     * @param actor fault actor
+     * @param details details; if null the current stack trace and classname is
+     * inserted into the details.
+     */
+    public AxisFault(QName code, String faultString,
                      String actor, Element[] details) {
-        super (str);
+        super (faultString);
         setFaultCode( code );
-        setFaultString( str );
+        setFaultString( faultString );
         setFaultActor( actor );
         setFaultDetail( details );
         if (details == null)
@@ -153,6 +170,11 @@ public class AxisFault extends java.rmi.RemoteException {
         initFromException(target);
     }
 
+    /**
+     * create a simple axis fault from the message. Classname and stack trace
+     * go into the fault details.
+     * @param message
+     */
     public AxisFault(String message)
     {
         super (message);
@@ -171,6 +193,13 @@ public class AxisFault extends java.rmi.RemoteException {
         initFromException(this);
     }
 
+    /**
+     * create a fault from any throwable;
+     * When faulting a throwable (as opposed to an exception),
+     * stack trace information does not go into the fault.
+     * @param message any extra text to with the fault
+     * @param t whatever is to be turned into a fault
+     */
     public AxisFault (String message, Throwable t)
     {
         super (message, t);
@@ -178,13 +207,19 @@ public class AxisFault extends java.rmi.RemoteException {
         setFaultString(message);
     }
 
+    /**
+     * fill in soap fault details from the exception, unless
+     * this object already has a stack trace in its details.
+     * This method adds classname of the exception and the stack trace.
+     * @param target what went wrong
+     */
     private void initFromException(Exception target)
     {
         for (int i = 0; faultDetails != null && i < faultDetails.size(); i++) {
             Element element = (Element) faultDetails.elementAt(i);
             if ("stackTrace".equals(element.getLocalName()) &&
                 Constants.NS_URI_AXIS.equals(element.getNamespaceURI())) {
-                // ??? Should we replace it or just let it be?
+                // todo: Should we replace it or just let it be?
                 return;
             }
         }
@@ -216,12 +251,19 @@ public class AxisFault extends java.rmi.RemoteException {
 
         faultDetails.add(el);
     }
-    
+
+    /**
+     * dump the fault info to the log at debug level
+     */
     public void dump()
     {
         log.debug(dumpToString());
     }
 
+    /**
+     * turn the fault and details into a string
+     * @return stringified fault details
+     */
     public String dumpToString()
     {
         String details = new String();
@@ -243,18 +285,35 @@ public class AxisFault extends java.rmi.RemoteException {
             ;
     }
 
+    /**
+     * set the fault code
+     * @param code a new fault code
+     */
     public void setFaultCode(QName code) {
         faultCode = code ;
     }
 
+    /**
+     * set a fault code string that is turned into a qname
+     * in the axis namespace
+     * @param code fault code
+     */
     public void setFaultCodeAsString(String code) {
         faultCode = new QName(Constants.NS_URI_AXIS, code);
     }
 
+    /**
+     * get the fault code
+     * @return fault code QName or null
+     */
     public QName getFaultCode() {
         return( faultCode );
     }
 
+    /**
+     * set a fault string;
+     * @param str new fault string; null is turned into ""
+     */
     public void setFaultString(String str) {
         if (str != null) {
             faultString = str ;
@@ -263,25 +322,48 @@ public class AxisFault extends java.rmi.RemoteException {
         }
     }
 
+    /**
+     * get the fault string; this will never be null but may be the
+     * empty string
+     * @return a fault string
+     */
     public String getFaultString() {
         return( faultString );
     }
 
+    /**
+     * set the fault actor
+     * @param actor fault actor
+     */
     public void setFaultActor(String actor) {
         faultActor = actor ;
     }
 
+    /**
+     * get the fault actor
+     * @return actor or null
+     */
     public String getFaultActor() {
         return( faultActor );
     }
 
+    /**
+     * the fault detail element to the arrary of details
+     * @param details list of detail elements, can be null
+     */
     public void setFaultDetail(Element[] details) {
-        if ( details == null ) return ;
+        if ( details == null ) {
+            return ;
+        }
         faultDetails = new Vector( details.length );
         for ( int loop = 0 ; loop < details.length ; loop++ )
             faultDetails.add( details[loop] );
     }
 
+    /**
+     * turn a string containing an xml fragment into the fault details
+     * @param details XML fragment
+     */
     public void setFaultDetailString(String details) {
         faultDetails = new Vector();
         try {
@@ -296,6 +378,11 @@ public class AxisFault extends java.rmi.RemoteException {
         }
     }
 
+    /**
+     * parse an XML fragment and add it as a single element in the
+     * fault detail xml
+     * @param detail XML fragment
+     */
     public void addFaultDetailString(String detail) {
         if(faultDetails == null)
             faultDetails = new Vector(); 
@@ -311,6 +398,10 @@ public class AxisFault extends java.rmi.RemoteException {
         }
     }
 
+    /**
+     * get all the fault details
+     * @return an array of fault details, or null for none
+     */
     public Element[] getFaultDetails() {
         if (faultDetails == null) return null;
         Element result[] = new Element[faultDetails.size()];
@@ -318,7 +409,12 @@ public class AxisFault extends java.rmi.RemoteException {
             result[i] = (Element) faultDetails.elementAt(i);
         return result;
     }
-    
+
+    /**
+     * add this fault and any needed headers to the output context
+     * @param context
+     * @throws Exception
+     */
     public void output(SerializationContext context) throws Exception {
 
         SOAPEnvelope envelope = new SOAPEnvelope();
@@ -337,15 +433,29 @@ public class AxisFault extends java.rmi.RemoteException {
         envelope.output(context);
     }
 
+    /**
+     * string operator
+     * @return the current fault string; may be empty but never null
+     */
     public String toString() {
         return faultString;
     }
 
+    /**
+     * The override of the base class method prints out the
+     * fault info before the stack trace
+     * @param ps where to print
+     */
     public void printStackTrace(PrintStream ps) {
         ps.println(dumpToString());
         super.printStackTrace(ps);
     }
 
+    /**
+     * The override of the base class method prints out the
+     * fault info before the stack trace
+     * @param pw where to print
+     */
     public void printStackTrace(java.io.PrintWriter pw) {
         pw.println(dumpToString());
         super.printStackTrace(pw);
@@ -364,12 +474,16 @@ public class AxisFault extends java.rmi.RemoteException {
         faultHeaders.add(header);
     }
 
+    /**
+     * clear all fault headers
+     */
     public void clearHeaders() {
         faultHeaders = null;
     }
     
     /**
      *  Writes any exception data to the faultDetails
+     * This is for overriding; it is empty in the base AxisFault
      */
     public void writeDetails(QName qname, SerializationContext context) throws java.io.IOException {
         // no data in default Axis fault
