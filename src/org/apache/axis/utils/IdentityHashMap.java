@@ -57,7 +57,7 @@ public class IdentityHashMap extends HashMap
      */
     public Object get(Object key)
     {
-        return super.get(new IDKey(key).toString());
+        return super.get(new IDKey(key));
     }
 
     /**
@@ -65,7 +65,7 @@ public class IdentityHashMap extends HashMap
      */
     public Object put(Object key, Object value)
     {
-        return super.put(new IDKey(key).toString(), value);
+        return super.put(new IDKey(key), value);
     }
 
     /**
@@ -73,10 +73,10 @@ public class IdentityHashMap extends HashMap
      */
     public Object add(Object value)
     {
-        String oidString = new IDKey(value).toString();
-        if (! super.containsKey(oidString))
+        Object key = new IDKey(value);
+        if (! super.containsKey(key))
         {
-            return super.put(oidString, value);
+            return super.put(key, value);
         }
         else return null;
 
@@ -87,7 +87,7 @@ public class IdentityHashMap extends HashMap
      */
     public Object remove(Object key)
     {
-        return super.remove(new IDKey(key).toString());
+        return super.remove(new IDKey(key));
     }
 
     /**
@@ -95,6 +95,6 @@ public class IdentityHashMap extends HashMap
      */
     public boolean containsKey(Object key)
     {
-        return super.containsKey(new IDKey(key).toString());
+        return super.containsKey(new IDKey(key));
     }
 }
