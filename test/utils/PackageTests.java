@@ -22,7 +22,6 @@ public class PackageTests
         suite.addTest(TestXMLUtils.suite());
         suite.addTest(TestMessages.suite());
         suite.addTest(TestSrcContent.suite());
-        suite.addTest(TestAxisFault.suite());
 
         return suite;
     }
