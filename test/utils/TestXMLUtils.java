@@ -32,12 +32,6 @@ public class TestXMLUtils extends TestCase
     public void setup() {
     }
 
-    public void testInit()
-    {
-        //DocumentBuilderFactory dbf = XMLUtils.initDOMFactory();
-        //assertNotNull("Did not get a DocumentBuilder Factory", dbf);
-    }
-
     public void testNewDocumentNoArgConstructor()
     {
         Document doc = XMLUtils.newDocument();
