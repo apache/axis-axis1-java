@@ -25,6 +25,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.InternalException;
 import org.apache.axis.Version;
+import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.description.FaultDesc;
 import org.apache.axis.description.JavaServiceDesc;
 import org.apache.axis.description.OperationDesc;
@@ -38,6 +39,7 @@ import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
+import org.apache.commons.logging.Log;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -93,6 +95,8 @@ import java.util.Vector;
  */
 public class Emitter {
 
+    /** Field log */
+    protected static Log log = LogFactory.getLog(Types.class.getName());
     // Generated WSDL Modes
 
     /** Field MODE_ALL */
@@ -1809,10 +1813,14 @@ public class Emitter {
             QName qname = param.getQName();
 
             if (param.getTypeQName() == null) {
-                throw new AxisFault(
-                        Messages.getMessage(
-                                "registerTypeMappingFor01",
-                                param.getJavaType().getName()));
+                log.warn(Messages.getMessage("registerTypeMappingFor01",
+                        param.getJavaType().getName()));
+                QName qName = types.writeTypeForPart(param.getJavaType(),null);
+                if (qName != null) {
+                    param.setTypeQName(qName);                    
+                } else {
+                    param.setTypeQName(Constants.XSD_ANYTYPE);                    
+                }                    
             }
 
             if (param.getTypeQName().getNamespaceURI().equals("")) {
