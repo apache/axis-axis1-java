@@ -60,6 +60,7 @@ import org.apache.axis.components.image.ImageIOFactory;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.SessionUtils;
+import org.apache.axis.utils.IOUtils;
 import org.apache.commons.logging.Log;
 
 import javax.activation.DataHandler;
@@ -396,7 +397,7 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
         if (ds.getContentType().equals("text/plain")) {
             try {
                 byte[] bytes = new byte[is.available()];
-                is.read(bytes);
+                IOUtils.readFully(is, bytes);
                 return new String(bytes);
             } catch (java.io.IOException io) {
                 log.error(Messages.getMessage("javaIOException00"), io);

@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001-2003 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001-2003 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -53,43 +53,42 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.message;
-
-import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.utils.Messages;
-import org.apache.axis.utils.IOUtils;
-import org.apache.commons.logging.Log;
+package org.apache.axis.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-
-public class InputStreamBody extends SOAPBodyElement
+public class IOUtils
 {
-    protected static Log log =
-        LogFactory.getLog(InputStreamBody.class.getName());
-
-    protected InputStream inputStream;
-    
-    public InputStreamBody(InputStream inputStream)
+    /**
+     * Helper method, just calls <tt>readFully(in, b, 0, b.length)</tt>
+     */
+    public static int readFully(InputStream in, byte[] b)
+    throws IOException
     {
-        this.inputStream = inputStream;
+        return readFully(in, b, 0, b.length);
     }
-    
-    public void outputImpl(SerializationContext context) throws IOException
+
+    /**
+     * Same as the normal <tt>in.read(b, off, len)</tt>, but tries to ensure that
+     * the entire len number of bytes is read.
+     * <p>
+     * If the end of file is reached before any bytes are read, returns -1.
+     * Otherwise, returns the number of bytes read.
+     */
+    public static int readFully(InputStream in, byte[] b, int off, int len)
+    throws IOException
     {
-        try {
-            byte[]  buf = new byte[ inputStream.available() ];
-            IOUtils.readFully(inputStream,buf);
-            String contents = new String(buf);
-            context.writeString(contents);
+        int total = 0;
+        for (;;) {
+            int got = in.read(b, off + total, len - total);
+            if (got < 0) {
+                return (total == 0) ? -1 : total;
+            } else {
+                total += got;
+                if (total == len)
+                    return total;
+            }
         }
-        catch( IOException ex ) {
-            throw ex;
-        }
-        catch( Exception e ) {
-            log.error(Messages.getMessage("exception00"), e);
-        }        
     }
 }
