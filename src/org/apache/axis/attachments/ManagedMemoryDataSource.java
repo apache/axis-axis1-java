@@ -371,8 +371,6 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
 
         java.util.LinkedList ml = memorybuflist;
 
-        memorybuflist = null;
-
         log.debug(Messages.getMessage("maxCached", "" + maxCached,
                 "" + totalsz));
 
