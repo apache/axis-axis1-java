@@ -136,12 +136,17 @@ public class MessageContext {
      * Could potentially refactor this so that
      * maintainSession iff session != null...
      */
-    private boolean         maintainSession = false;
+    private boolean          maintainSession = false;
     
     /**
      * Are we doing request stuff, or response stuff?
      */
     private boolean          havePassedPivot = false;
+
+    /**
+     * Maximum amount of time to wait on a request, in milliseconds.
+     */
+    private int              timeout = 0;
 
     /**
      *
@@ -277,6 +282,24 @@ public class MessageContext {
         havePassedPivot = pastPivot;
     }
 
+    /**
+     * Set timeout in our MessageContext.
+     * 
+     * @param value the maximum amount of time, in milliseconds
+     */
+    public void setTimeout (int value) {
+        timeout = value;
+    }
+    
+    /**
+     * Get timeout from our MessageContext.
+     * 
+     * @return value the maximum amount of time, in milliseconds
+     */
+    public int getTimeout () {
+        return timeout;
+    }
+    
     public AxisClassLoader getClassLoader() {
         if ( classLoader == null )
             classLoader = AxisClassLoader.getClassLoader(null);

@@ -290,6 +290,24 @@ public class ServiceClient {
     public Object get (String name) {
         return msgContext.getProperty(name);
     }
+
+    /**
+     * Set timeout in our MessageContext.
+     * 
+     * @param value the maximum amount of time, in milliseconds
+     */
+    public void setTimeout (int value) {
+        msgContext.setTimeout(value);
+    }
+    
+    /**
+     * Get timeout from our MessageContext.
+     * 
+     * @return value the maximum amount of time, in milliseconds
+     */
+    public int getTimeout () {
+        return msgContext.getTimeout();
+    }
     
     /**
      * Directly set the request message in our MessageContext.
