@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -68,26 +68,26 @@ import java.util.HashMap;
 
 /**
  * @author Rich Scheuerle (scheu@us.ibm.com)
- * 
+ *
  * This is the implementation of the axis TypeMapping interface (which extends
  * the JAX-RPC TypeMapping interface).
- * 
+ *
  * A TypeMapping is obtained from the singleton TypeMappingRegistry using
  * the namespace of the webservice.  The TypeMapping contains the tuples
  * {Java type, SerializerFactory, DeserializerFactory, Type QName)
  *
- * So if you have a Web Service with the namespace "XYZ", you call 
+ * So if you have a Web Service with the namespace "XYZ", you call
  * the TypeMappingRegistry.getTypeMapping("XYZ").
  *
  * The wsdl in your web service will use a number of types.  The tuple
  * information for each of these will be accessed via the TypeMapping.
  *
- * Because every web service uses the soap, schema, wsdl primitives, we could 
- * pre-populate the TypeMapping with these standard tuples.  Instead, 
- * if the namespace/class matches is not found in the TypeMapping 
- * the request is delegated to the 
+ * Because every web service uses the soap, schema, wsdl primitives, we could
+ * pre-populate the TypeMapping with these standard tuples.  Instead,
+ * if the namespace/class matches is not found in the TypeMapping
+ * the request is delegated to the
  * Default TypeMapping or another TypeMapping
- * 
+ *
  */
 public class TypeMappingImpl implements TypeMapping
 {
@@ -122,8 +122,8 @@ public class TypeMappingImpl implements TypeMapping
         }
     }
 
-    private HashMap qName2Pair;     // QName to Pair Mapping                              
-    private HashMap class2Pair;     // Class Name to Pair Mapping                           
+    private HashMap qName2Pair;     // QName to Pair Mapping
+    private HashMap class2Pair;     // Class Name to Pair Mapping
     private HashMap pair2SF;        // Pair to Serialization Factory
     private HashMap pair2DF;        // Pair to Deserialization Factory
     protected TypeMapping delegate;   // Pointer to delegate or null
@@ -156,11 +156,11 @@ public class TypeMappingImpl implements TypeMapping
     }
 
     /********* JAX-RPC Compliant Method Definitions *****************/
-    
+
     /**
      * Gets the list of encoding styles supported by this TypeMapping object.
      *
-     * @return  String[] of namespace URIs for the supported encoding 
+     * @return  String[] of namespace URIs for the supported encoding
      * styles and XML schema namespaces.
      */
     public String[] getSupportedEncodings() {
@@ -173,7 +173,7 @@ public class TypeMappingImpl implements TypeMapping
      * (Not sure why this is useful...this information is automatically updated
      * during registration.
      *
-     * @param namespaceURIs String[] of namespace URI's                
+     * @param namespaceURIs String[] of namespace URI's
      */
     public void setSupportedEncodings(String[] namespaceURIs) {
         namespaces.clear();
@@ -210,9 +210,9 @@ public class TypeMappingImpl implements TypeMapping
         }
         return false;
     }
-    
+
     /**
-     * Registers SerializerFactory and DeserializerFactory for a 
+     * Registers SerializerFactory and DeserializerFactory for a
      * specific type mapping between an XML type and Java type.
      *
      * @param javaType - Class of the Java type
@@ -222,22 +222,33 @@ public class TypeMappingImpl implements TypeMapping
      *
      * @throws JAXRPCException - If any error during the registration
      */
-    public void register(Class javaType, QName xmlType, 
+    public void register(Class javaType, QName xmlType,
                          javax.xml.rpc.encoding.SerializerFactory sf,
-                         javax.xml.rpc.encoding.DeserializerFactory dsf) 
-        throws JAXRPCException {        
+                         javax.xml.rpc.encoding.DeserializerFactory dsf)
+        throws JAXRPCException {
+
+        //REMOVED_FOR_TCK
+        //if (sf != null &&
+        //    !(sf instanceof javax.xml.rpc.encoding.SerializerFactory)) {
+        //    throw new JAXRPCException();
+        //}
+        //if (dsf != null &&
+        //    !(dsf instanceof javax.xml.rpc.encoding.DeserializerFactory)) {
+        //    throw new JAXRPCException();
+        //}
+
         Pair pair = new Pair(javaType, xmlType);
 
         // Only register the appropriate mappings.
         if ((dsf != null) || (qName2Pair.get(xmlType) == null))
             qName2Pair.put(xmlType, pair);
         if ((sf != null) || (class2Pair.get(javaType) == null))
-            class2Pair.put(javaType, pair);   
-        
+            class2Pair.put(javaType, pair);
+
         pair2SF.put(pair, sf);
         pair2DF.put(pair, dsf);
     }
-    
+
     /**
      * Gets the SerializerFactory registered for the specified pair
      * of Java type and XML data type.
@@ -247,12 +258,12 @@ public class TypeMappingImpl implements TypeMapping
      *
      * @return Registered SerializerFactory
      *
-     * @throws JAXRPCException - If there is no registered SerializerFactory 
-     * for this pair of Java type and XML data type 
+     * @throws JAXRPCException - If there is no registered SerializerFactory
+     * for this pair of Java type and XML data type
      * java.lang.IllegalArgumentException -
      * If invalid or unsupported XML/Java type is specified
      */
-    public javax.xml.rpc.encoding.SerializerFactory 
+    public javax.xml.rpc.encoding.SerializerFactory
         getSerializer(Class javaType, QName xmlType)
         throws JAXRPCException
     {
@@ -278,20 +289,20 @@ public class TypeMappingImpl implements TypeMapping
             }
         }
         if (sf == null && delegate != null) {
-            sf = (SerializerFactory) 
+            sf = (SerializerFactory)
                 delegate.getSerializer(javaType, xmlType);
         }
         return sf;
     }
-    public javax.xml.rpc.encoding.SerializerFactory 
-        getSerializer(Class javaType) 
-        throws JAXRPCException 
+    public javax.xml.rpc.encoding.SerializerFactory
+        getSerializer(Class javaType)
+        throws JAXRPCException
     {
         return getSerializer(javaType, null);
     }
 
     /**
-     * Gets the DeserializerFactory registered for the specified pair 
+     * Gets the DeserializerFactory registered for the specified pair
      * of Java type and XML data type.
      *
      * @param javaType - Class of the Java type
@@ -300,8 +311,8 @@ public class TypeMappingImpl implements TypeMapping
      * @return Registered DeserializerFactory
      *
      * @throws JAXRPCException - If there is no registered DeserializerFactory
-     * for this pair of Java type and  XML data type 
-     * java.lang.IllegalArgumentException - 
+     * for this pair of Java type and  XML data type
+     * java.lang.IllegalArgumentException -
      * If invalid or unsupported XML/Java type is specified
      */
     public javax.xml.rpc.encoding.DeserializerFactory
@@ -314,29 +325,29 @@ public class TypeMappingImpl implements TypeMapping
         }
         if (pair.javaType != null) {
             df = (javax.xml.rpc.encoding.DeserializerFactory) pair2DF.get(pair);
-        } 
+        }
         if (df == null && delegate != null) {
             df = (javax.xml.rpc.encoding.DeserializerFactory)
                 delegate.getDeserializer(javaType, xmlType);
         }
         return df;
     }
-    public javax.xml.rpc.encoding.DeserializerFactory 
+    public javax.xml.rpc.encoding.DeserializerFactory
         getDeserializer(QName xmlType)
         throws JAXRPCException {
         return getDeserializer(null, xmlType);
     }
 
     /**
-     * Removes the SerializerFactory registered for the specified 
+     * Removes the SerializerFactory registered for the specified
      * pair of Java type and XML data type.
      *
      * @param javaType - Class of the Java type
      * @param xmlType - Qualified name of the XML data type
      *
-     * @throws JAXRPCException - If there is error in 
-     * removing the registered SerializerFactory 
-     * java.lang.IllegalArgumentException - 
+     * @throws JAXRPCException - If there is error in
+     * removing the registered SerializerFactory
+     * java.lang.IllegalArgumentException -
      * If invalid or unsupported XML/Java type is specified
      */
     public void removeSerializer(Class javaType, QName xmlType)
@@ -346,15 +357,15 @@ public class TypeMappingImpl implements TypeMapping
     }
 
     /**
-     * Removes the DeserializerFactory registered for the specified 
+     * Removes the DeserializerFactory registered for the specified
      * pair of Java type and XML data type.
      *
      * @param javaType - Class of the Java type
      * @param xmlType - Qualified name of the XML data type
      *
-     * @throws JAXRPCException - If there is error in 
+     * @throws JAXRPCException - If there is error in
      * removing the registered DeserializerFactory
-     * java.lang.IllegalArgumentException - 
+     * java.lang.IllegalArgumentException -
      * If invalid or unsupported XML/Java type is specified
      */
     public void removeDeserializer(Class javaType, QName xmlType)
@@ -365,7 +376,7 @@ public class TypeMappingImpl implements TypeMapping
 
 
      /********* End JAX-RPC Compliant Method Definitions *****************/
-     
+
     /**
      * Gets the QName for the type mapped to Class.
      * @param javaType class or type
@@ -380,11 +391,11 @@ public class TypeMappingImpl implements TypeMapping
         } else if (pair != null) {
             xmlType = pair.xmlType;
         }
-        
+
         //log.debug("getTypeQName xmlType =" + xmlType);
         return xmlType;
     }
-    
+
     /**
      * Gets the Class mapped to QName.
      * @param xmlType qname or null
