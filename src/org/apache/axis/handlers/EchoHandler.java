@@ -55,11 +55,17 @@
 
 package org.apache.axis.handlers ;
 
+import java.io.StringBufferInputStream;
+import javax.servlet.http.HttpServletRequest;
+
+
 import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.transport.http.AxisServlet;
+import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.commons.logging.Log;
@@ -87,8 +93,15 @@ public class EchoHandler extends BasicHandler {
         log.debug("Exit: EchoHandler::invoke");
     }
 
-    public String wsdlStart = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" +
-            "<definitions xmlns:s=\"http://www.w3.org/2001/XMLSchema\" xmlns:http=\"http://schemas.xmlsoap.org/wsdl/http/\" xmlns:mime=\"http://schemas.xmlsoap.org/wsdl/mime/\" xmlns:soap=\"http://schemas.xmlsoap.org/wsdl/soap/\" xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:s0=\"http://tempuri.org/EchoService\" targetNamespace=\"http://tempuri.org/EchoService\" xmlns=\"http://schemas.xmlsoap.org/wsdl/\">" +
+    public String wsdlStart1 = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" +
+            "<definitions xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" \n" +
+            "xmlns:http=\"http://schemas.xmlsoap.org/wsdl/http/\" \n" +
+            "xmlns:mime=\"http://schemas.xmlsoap.org/wsdl/mime/\" \n" +
+            "xmlns:soap=\"http://schemas.xmlsoap.org/wsdl/soap/\" \n" +
+            "xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\" \n" +
+            "xmlns:s0=\"http://tempuri.org/EchoService\" \n"+
+            "targetNamespace=\"http://tempuri.org/EchoService\" \n" +
+            "xmlns=\"http://schemas.xmlsoap.org/wsdl/\">" +
             "<message name=\"request\">" +
             "<part name=\"content\" type=\"xsd:anyType\" />" +
             "</message>" +
@@ -117,16 +130,72 @@ public class EchoHandler extends BasicHandler {
             "<port name=\"EchoSoap\" binding=\"s0:EchoSoap\">" +
             "<soap:address location=\"http://";
 
-    String wsdlEnd = "\" />" +
-            "</port>" +
-            "</service>" +
-            "</definitions>";
+
+    public String wsdlStart = 
+    "<?xml version=\"1.0\" encoding=\"UTF-8\"?> \n"+
+    "<wsdl:definitions targetNamespace=\"http://handlers.apache.org/EchoService\" \n"+ 
+    "xmlns=\"http://schemas.xmlsoap.org/wsdl/\" \n"+
+    "xmlns:apachesoap=\"http://xml.apache.org/xml-soap\"  \n"+
+    "xmlns:impl=\"http://handlers.apache.org/EchoService\"  \n"+
+    "xmlns:intf=\"http://handlers.apache.org/EchoService\"  \n"+
+    "xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\"  \n"+
+    "xmlns:wsdl=\"http://schemas.xmlsoap.org/wsdl/\"  \n"+
+    "xmlns:wsdlsoap=\"http://schemas.xmlsoap.org/wsdl/soap/\"  \n"+
+    "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"> \n"+
+    "<wsdl:types> \n"+
+    "<schema targetNamespace=\"http://handlers.apache.org/EchoService\" \n" +
+    "xmlns=\"http://www.w3.org/2001/XMLSchema\"> \n"+
+    "<xsd:import namespace=\"http://schemas.xmlsoap.org/soap/encoding/\"/> \n"+
+    "<xsd:complexType name=\"echoElements\"> \n" +
+    " <xsd:sequence> \n" + 
+    "   <xsd:element name=\"content\" type=\"xsd:anyType\"/> \n"+
+    " </xsd:sequence>\n"+
+    "</xsd:complexType> \n" +
+    "<xsd:complexType name=\"echoElementsReturn\"> \n" +
+    " <xsd:sequence> \n" + 
+    "   <xsd:element name=\"content\" type=\"xsd:anyType\"/> \n"+
+    " </xsd:sequence> \n" +
+    "</xsd:complexType> \n" +
+    "</schema> \n"+
+    "</wsdl:types> \n"+
+    "  <wsdl:message name=\"echoElementsResponse\"> \n"+
+    "    <wsdl:part type=\"impl:echoElementsReturn\" name=\"echoElementsReturn\"/> \n"+
+    "  </wsdl:message> \n"+
+    "  <wsdl:message name=\"echoElementsRequest\"> \n"+
+    "    <wsdl:part type=\"impl:echoElements\" name=\"part\"/> \n"+
+    "  </wsdl:message> \n"+
+    "  <wsdl:portType name=\"EchoService\"> \n"+
+    "    <wsdl:operation name=\"doIt\"> \n"+
+    "      <wsdl:input message=\"impl:echoElementsRequest\" name=\"echoElementsRequest\"/> \n"+
+    "      <wsdl:output message=\"impl:echoElementsResponse\" name=\"echoElementsResponse\"/> \n"+
+    "    </wsdl:operation> \n"+
+    "  </wsdl:portType> \n"+
+    "  <wsdl:binding name=\"EchoServiceSoapBinding\" type=\"impl:EchoService\"> \n"+
+    "    <wsdlsoap:binding style=\"document\" transport=\"http://schemas.xmlsoap.org/soap/http\"/> \n"+
+    "    <wsdl:operation name=\"doIt\"> \n"+
+    "      <wsdlsoap:operation soapAction=\"\"/> \n"+
+    "      <wsdl:input name=\"echoElementsRequest\"> \n"+
+    "        <wsdlsoap:body namespace=\"http://handlers.apache.org/EchoService\" use=\"literal\"/> \n"+
+    "      </wsdl:input> \n"+
+    "      <wsdl:output name=\"echoElementsResponse\"> \n"+
+    "        <wsdlsoap:body namespace=\"http://handlers.apache.org/EchoService\" use=\"literal\"/> \n"+
+    "      </wsdl:output> \n"+
+    "    </wsdl:operation> \n"+
+    "  </wsdl:binding> \n"+
+    "  <wsdl:service name=\"EchoService\"> \n"+
+    "    <wsdl:port binding=\"impl:EchoServiceSoapBinding\" name=\"EchoService\"> \n"+
+    "      <wsdlsoap:address location=\"";
+          
+        String wsdlEnd =  " \"/></wsdl:port>\n" +
+                          "</wsdl:service>\n" +
+                          "</wsdl:definitions>\n";
+
 
     public void generateWSDL(MessageContext msgContext) throws AxisFault {
         try {
-            String url = msgContext.getStrProp("hostname"); // !!! Get this for real
+            String url = msgContext.getStrProp(MessageContext.TRANS_URL);
             String wsdlString = wsdlStart + url + wsdlEnd;
-            Document doc = XMLUtils.newDocument(wsdlString);
+            Document doc = XMLUtils.newDocument(new StringBufferInputStream(wsdlString));
             msgContext.setProperty("WSDL", doc);
         } catch (Exception e) {
             throw AxisFault.makeFault(e);
