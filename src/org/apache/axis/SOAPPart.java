@@ -127,7 +127,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
      * object is."
      */
     private Object currentMessage ;
-
+    
     /**
      * Message object this part is tied to. Used for serialization settings.
      */
@@ -145,7 +145,9 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
      * "Just something to us working..."
      */
     public SOAPPart(Message parent, Object initialContents, boolean isBodyStream) {
-        mimeHeaders.setHeader("Content-Type", "text/xml");
+        addMimeHeader(HTTPConstants.HEADER_CONTENT_ID , SOAPUtils.getNewContentIdValue());
+
+
         msgObject=parent;
         // originalMessage = initialContents;
         int form = FORM_STRING;
@@ -169,7 +171,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
             log.debug("Exit: SOAPPart ctor()");
         }
     }
-    /* This could be rather costly with attachments.
+    /* This could be rather costly with attachments.  
 
     public Object getOriginalMessage() {
         return originalMessage;
@@ -213,15 +215,15 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
         }
     }
     /**
-     * This set the SOAP Envelope for this part.
-     *
+     * This set the SOAP Envelope for this part. 
+     * 
      * Note: It breaks the chicken/egg created.
      *  I need a message to create an attachment...
      *  From the attachment I should be able to get a reference...
      *  I now want to edit elements in the envelope in order to
      *    place the  attachment reference to it.
      *  How do I now update the SOAP envelope with what I've changed?
-     *
+     *  
      */
 
     public void setSOAPEnvelope(org.apache.axis.message.SOAPEnvelope env){
@@ -461,7 +463,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
         }
 
         setCurrentMessage(dser.getEnvelope(), FORM_SOAPENVELOPE);
-
+        
         log.debug("Exit: SOAPPart::getAsSOAPEnvelope");
         return (SOAPEnvelope)currentMessage;
     }
@@ -470,7 +472,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
      * Add the specified MIME header, as per JAXM.
      */
     public void addMimeHeader (String header, String value) {
-        mimeHeaders.addHeader(header, value);
+        mimeHeaders.setHeader(header, value);
     }
 
     /**
@@ -499,7 +501,7 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
      * Set content location.
      */
     public void setContentLocation(String loc) {
-        setMimeHeader(HTTPConstants.HEADER_CONTENT_LOCATION, loc);
+        addMimeHeader(HTTPConstants.HEADER_CONTENT_LOCATION, loc);
     }
 
     /**
@@ -509,14 +511,28 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
          * @returns void
          */
         public void setContentId(String newCid){
-                setMimeHeader(HTTPConstants.HEADER_CONTENT_ID,newCid);
+                if(newCid!=null && !newCid.toLowerCase().startsWith("cid:")){
+                        newCid="cid:"+newCid;
+                }
+                addMimeHeader(HTTPConstants.HEADER_CONTENT_ID,newCid);
         }
 
     /**
      * Content ID.
      */
     public String getContentId() {
-        return getFirstMimeHeader(HTTPConstants.HEADER_CONTENT_ID);
+        String ret= getFirstMimeHeader(HTTPConstants.HEADER_CONTENT_ID);
+        //Do not let the contentID ever be empty.
+        if(ret == null){
+            ret=SOAPUtils.getNewContentIdValue();
+            addMimeHeader(HTTPConstants.HEADER_CONTENT_ID , ret);
+        }
+        ret= ret.trim();
+        if(ret.length() ==0){
+            ret=SOAPUtils.getNewContentIdValue();
+            addMimeHeader(HTTPConstants.HEADER_CONTENT_ID , ret);
+        }
+        return ret;
     }
 
 
