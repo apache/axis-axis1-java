@@ -103,22 +103,15 @@ public class TestElementSample extends TestCase {
     }
 
     public void testElementService () throws Exception {
-        try {
-            log.info("Testing element sample.");
-            log.info("Testing deployment...");
-            doTestDeploy();
-            log.info("Testing service...");
-            doTestElement();
-            log.info("Testing undeployment...");
-            doTestUndeploy();
-            log.info("Test complete.");
-        }
-        catch( Exception e ) {
-            e.printStackTrace();
-            throw new Exception("Fault returned from test: "+e);
-        }
+        log.info("Testing element sample.");
+        log.info("Testing deployment...");
+        doTestDeploy();
+        log.info("Testing service...");
+        doTestElement();
+        log.info("Testing undeployment...");
+        doTestUndeploy();
+        log.info("Test complete.");
     }
-    
 }
 
 
