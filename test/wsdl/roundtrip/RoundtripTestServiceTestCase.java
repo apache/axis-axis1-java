@@ -72,7 +72,7 @@ import test.wsdl.roundtrip.BondInvestment;
 import test.wsdl.roundtrip.StockInvestment;
 import test.wsdl.roundtrip.PreferredStockInvestment;
 import test.wsdl.roundtrip.RoundtripPortType;
-import test.wsdl.roundtrip.RoundtripTestLocator;
+import test.wsdl.roundtrip.RoundtripPortTypeServiceLocator;
 import test.wsdl.roundtrip.CallOptions;
 
 /**
@@ -113,7 +113,7 @@ public class RoundtripTestServiceTestCase extends TestCase {
     public void setUp() {
 
         try {
-            binding = new RoundtripTestLocator().getRoundtripTest();
+            binding = new RoundtripPortTypeServiceLocator().getRoundtripTest();
         } catch (ServiceException jre) {
             fail("JAX-RPC ServiceException caught: " + jre);
         }
