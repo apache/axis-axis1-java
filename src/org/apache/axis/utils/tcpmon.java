@@ -443,8 +443,8 @@ public class tcpmon extends JFrame {
                 int         reqSaved = 0 ;
 
                 int   thisIndent, nextIndent=0 ;
-                inSocket.setSoTimeout(10 );
-                outSocket.setSoTimeout(10 );
+                if ( inSocket  != null ) inSocket.setSoTimeout( 10 );
+                if ( outSocket != null ) outSocket.setSoTimeout( 10 );
                 
                 for ( ;; ) {
                     if( done ) break;
@@ -457,14 +457,11 @@ public class tcpmon extends JFrame {
                     while( len1==0 ) {
                         try {
                             len1 = in.read(buffer,saved,len);
-                        } catch( java.io.InterruptedIOException ex ) {
-                            //System.out.println("Interrupted exception reading" + this +
-                            //                   " " + done);
+                        } catch( Exception ex ) {
                             len1=0;
                             if( done ) return;
                         }
                     }
-                    // System.out.println("XXX Read result: " + this + " "  +len1 + " " + out);
                     len=len1;
                     if ( len == -1 ) break ;
 
@@ -572,17 +569,17 @@ public class tcpmon extends JFrame {
         boolean      active ;
         String       fromHost ;
         String       time ;
-        JTextArea    inputText ;
-        JScrollPane  inputScroll ;
-        JTextArea    outputText ;
-        JScrollPane  outputScroll ;
-        Socket       inSocket ;
-        Socket       outSocket ;
-        Thread       clientThread ;
-        Thread       serverThread ;
-        SocketRR     rr1 = null ;
-        SocketRR     rr2 = null ;
-        InputStream  inputStream ;
+        JTextArea    inputText    = null ;
+        JScrollPane  inputScroll  = null ;
+        JTextArea    outputText   = null ;
+        JScrollPane  outputScroll = null ;
+        Socket       inSocket     = null ;
+        Socket       outSocket    = null ;
+        Thread       clientThread = null ;
+        Thread       serverThread = null ;
+        SocketRR     rr1          = null ;
+        SocketRR     rr2          = null ;
+        InputStream  inputStream  = null ;
 
         String       HTTPProxyHost = null ;
         int          HTTPProxyPort = 80 ;
@@ -620,13 +617,10 @@ public class tcpmon extends JFrame {
                     else HTTPProxyPort = Integer.parseInt( tmp );
                 }
 
-                if ( inSocket != null ) {
-                  InetAddress  h  = inSocket.getInetAddress();
-                  fromHost      = h.getHostName();
-                }
-                else {
+                if ( inSocket != null ) 
+                  fromHost = (inSocket.getInetAddress()).getHostName();
+                else 
                   fromHost = "resend" ;
-                }
 
                 DateFormat   df = new SimpleDateFormat("MM/dd/yy hh:mm:ss aa");
                 time = df.format( new Date() );
@@ -678,7 +672,7 @@ public class tcpmon extends JFrame {
 
                 int index = listener.connections.indexOf( this );
 
-                if ( listener.isProxyBox.isSelected() || HTTPProxyHost != null ) {
+                if (listener.isProxyBox.isSelected() || HTTPProxyHost != null) {
                     // Check if we're a proxy
                     byte[]       b = new byte[1];
                     buf = new StringBuffer();
