@@ -94,7 +94,6 @@ public class HTTPDispatchHandler extends BasicHandler {
       int      rc     = 0 ;
 
       host = tmpURL.getHost();
-      Debug.Print(0, "HOST: " + host );
       if ( (port = tmpURL.getPort()) == -1 ) port = 80;
 
       Socket             sock = null ;
