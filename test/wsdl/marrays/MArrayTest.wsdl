@@ -55,6 +55,16 @@
         </xsd:all>
       </xsd:complexType>
 
+      <xsd:complexType name="derivedFoo">
+          <xsd:complexContent>
+            <xsd:extension base="typens:foo" >
+              <xsd:all>
+                <xsd:element name="value2" type="xsd:int"/>
+              </xsd:all>
+            </xsd:extension>
+        </xsd:complexContent>
+      </xsd:complexType>
+
       <xsd:complexType name="Array1F">
         <xsd:complexContent>
           <xsd:restriction base="soapenc:Array">

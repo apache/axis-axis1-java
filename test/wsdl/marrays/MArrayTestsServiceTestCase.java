@@ -100,6 +100,29 @@ public class MArrayTestsServiceTestCase extends junit.framework.TestCase {
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
+
+        try {
+            // Test 3G: Combination of Foo and DerivedFoo.   
+            Foo[][][] in = new Foo[3][3][3];
+            Foo[][][] rc;
+            fillFoo(in);
+
+            // Diagonals are set to same Foo
+            in[0][0][0] = new DerivedFoo();
+            in[0][0][0].setValue(-1);
+            ((DerivedFoo)in[0][0][0]).setValue2(7);
+            in[1][1][1] = in[0][0][0];
+            in[2][2][2] = in[0][0][0];
+
+            rc = binding.testFooArray(in);
+            assertTrue("Test 3G Failed (a)", validateFoo(in, rc));
+            assertTrue("Test 3G Failed (b)", rc[0][0][0] == rc[1][1][1]);
+            assertTrue("Test 3G Failed (c)", rc[0][0][0] == rc[2][2][2]);
+            assertTrue("Test 3G Failed (d)", ((DerivedFoo)rc[2][2][2]).getValue2() == 7);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
+        }
+
         // This test is no longer valid if Axis treats arrays as always single-ref
         /*        
         try {
