@@ -734,6 +734,10 @@ public class Types {
                 importElem.setAttribute("namespace", Constants.URI_DEFAULT_SOAP_ENC);
             }
             
+            if(serviceDesc.getStyle() == Style.DOCUMENT || serviceDesc.getStyle() == Style.WRAPPED ) {
+                schemaElem.setAttribute("elementFormDefault","qualified");
+            }
+            
             writeTypeNamespace(namespaceURI);
         }
         schemaElem.appendChild(element);
