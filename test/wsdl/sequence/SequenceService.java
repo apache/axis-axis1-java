@@ -83,7 +83,7 @@ public class SequenceService {
      * @return a SOAP response in a DOM Element, either boolean true or false,
      *         indicating the success/failure of the test.
      */
-    public Element [] testSequence(Element [] elems) {
+    public Element [] testSequence(Element [] elems) throws Exception {
         Element zero = null;
         for (int i = 0; i < elems.length; i++) {
             zero = findTheZero(elems[i]);

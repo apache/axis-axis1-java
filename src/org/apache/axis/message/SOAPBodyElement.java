@@ -60,6 +60,7 @@ import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
+import org.apache.axis.InternalException;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -68,7 +69,6 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.Name;
 import java.io.InputStream;
-
 
 /** 
  * A Body element.
@@ -104,7 +104,15 @@ public class SOAPBodyElement extends MessageElement
 
     public SOAPBodyElement(InputStream input) 
     {
-        super( XMLUtils.newDocument(input).getDocumentElement() );
+        super( getDocumentElement(input) );
+    }
+
+    private static Element getDocumentElement(InputStream input) {
+        try {
+            return XMLUtils.newDocument(input).getDocumentElement();
+        } catch (Exception e) {
+            throw new InternalException(e);
+        }
     }
 
     public void setParentElement(SOAPElement parent) throws SOAPException {

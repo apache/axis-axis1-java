@@ -55,6 +55,8 @@
 
 package org.apache.axis.message;
 
+import org.apache.axis.InternalException;
+
 /**
  * A representation of a node whose value is text. A <CODE>
  *   Text</CODE> object may represent text that is content or text
@@ -65,8 +67,12 @@ package org.apache.axis.message;
 public class Text extends MessageElement implements javax.xml.soap.Text {
 
     public Text(String s) {
-        org.w3c.dom.Document doc = org.apache.axis.utils.XMLUtils.newDocument();
-        textRep = doc.createTextNode(s);
+        try {
+            org.w3c.dom.Document doc = org.apache.axis.utils.XMLUtils.newDocument();
+            textRep = doc.createTextNode(s);
+        } catch (javax.xml.parsers.ParserConfigurationException e) {
+            throw new InternalException(e);
+        }
     }
 
     /**

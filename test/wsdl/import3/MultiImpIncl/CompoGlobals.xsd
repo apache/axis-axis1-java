@@ -7,7 +7,7 @@
 
   <import
     namespace="http://www.axsone.com/webdemo/exec/schemas/AxsGlobals"
-    schemaLocation="../AxsGlobals.xsd"/>
+    schemaLocation="AxsGlobals.xsd"/>
 
  
   <simpleType name="DocActions">

@@ -126,9 +126,13 @@ public class EchoHandler extends BasicHandler {
             "</definitions>";
 
     public void generateWSDL(MessageContext msgContext) throws AxisFault {
-        String url = msgContext.getStrProp("hostname"); // !!! Get this for real
-        String wsdlString = wsdlStart + url + wsdlEnd;
-        Document doc = XMLUtils.newDocument(wsdlString);
-        msgContext.setProperty("WSDL", doc);
+        try {
+            String url = msgContext.getStrProp("hostname"); // !!! Get this for real
+            String wsdlString = wsdlStart + url + wsdlEnd;
+            Document doc = XMLUtils.newDocument(wsdlString);
+            msgContext.setProperty("WSDL", doc);
+        } catch (Exception e) {
+            throw AxisFault.makeFault(e);
+        }
     }
 };

@@ -268,7 +268,8 @@ public class Admin
         try {
             writer.close();
             return XMLUtils.newDocument(new InputSource(new StringReader(writer.getBuffer().toString())));
-        } catch (IOException e) {
+        } catch (Exception e) {
+            log.error("exception00", e);
             return null;
         }
     }

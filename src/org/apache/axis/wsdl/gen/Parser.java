@@ -66,6 +66,9 @@ import org.apache.axis.wsdl.symbolTable.Type;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
 import org.w3c.dom.Document;
 
+import javax.xml.parsers.ParserConfigurationException;
+import org.xml.sax.SAXException;
+
 import javax.wsdl.Binding;
 import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
@@ -257,7 +260,9 @@ public class Parser {
      * @param context context This is directory context for the Document.  If the Document were from file "/x/y/z.wsdl" then the context could be "/x/y" (even "/x/y/z.wsdl" would work).  If context is null, then the context becomes the current directory.
      * @param doc doc This is the XML Document containing the WSDL.
      */
-    public void run(String context, Document doc) throws IOException, WSDLException {
+    public void run(String context, Document doc) 
+        throws IOException, SAXException, WSDLException, 
+               ParserConfigurationException {
         if (getFactory() == null) {
             setFactory(new NoopFactory());
         }
