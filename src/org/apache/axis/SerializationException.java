@@ -64,6 +64,6 @@ public class SerializationException extends AxisFault
     public SerializationException (String type, Throwable t)
     {
         // This string must be internationalized.
-        super (JavaUtils.getMessage("exception00", type), t);
+        super (JavaUtils.getMessage("beanSerConfigFail00", type), t);
     } // ctor
 } // class SerializationException
