@@ -16,10 +16,10 @@ public class RefTestServiceTestCase extends junit.framework.TestCase {
     public void testRefTest() {
         test.wsdl.refattr.RefTest binding;
         try {
-            binding = new RefTestService().getRefTest();
+            binding = new RefTestServiceLocator().getRefTest();
         }
-        catch (javax.xml.rpc.JAXRPCException jre) {
-            throw new junit.framework.AssertionFailedError("JAX-RPC Exception caught: " + jre );
+        catch (javax.xml.rpc.ServiceException jre) {
+            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre );
         }
         
         // The following declarations are used to verify that unmangled classes

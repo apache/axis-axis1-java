@@ -25,11 +25,11 @@ public class FaultServiceTestCase extends junit.framework.TestCase {
     public void testFaultService() {
         test.wsdl.faults.FaultServicePortType binding;
         try {
-            binding = new FaultService().getFaultService();
+            binding = new FaultServiceLocator().getFaultService();
         }
-        catch (javax.xml.rpc.JAXRPCException jre) {
+        catch (javax.xml.rpc.ServiceException jre) {
             throw new junit.framework.
-                    AssertionFailedError("JAX-RPC Exception caught: " + jre);            
+                    AssertionFailedError("JAX-RPC ServiceException caught: " + jre);            
         }
         assertTrue("binding is null", binding != null);
         String symbol = new String("MACR");

@@ -114,9 +114,9 @@ public class SalesRankNPrice_ServiceTestCase extends junit.framework.TestCase {
         
         SalesRankNPriceSoap binding;
         try {
-            binding = new SalesRankNPrice_Service().getSalesRankNPriceSoap();
-        } catch (javax.xml.rpc.JAXRPCException jre) {
-            throw new junit.framework.AssertionFailedError("JAX-RPC Exception caught: " + jre );
+            binding = new SalesRankNPrice_ServiceLocator().getSalesRankNPriceSoap();
+        } catch (javax.xml.rpc.ServiceException jre) {
+            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre );
         }
 
         assertTrue("binding is null", binding != null);

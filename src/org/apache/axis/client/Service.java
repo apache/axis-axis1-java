@@ -59,12 +59,14 @@ import javax.wsdl.extensions.soap.SOAPAddress;
 import org.apache.axis.AxisEngine;
 import org.apache.axis.Constants;
 import org.apache.axis.EngineConfiguration;
-import org.apache.axis.AxisFault;
 import org.apache.axis.configuration.FileProvider;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.utils.AxisClassLoader;
 import org.w3c.dom.Document;
+
+import javax.naming.Reference;
+import javax.naming.Referenceable;
 
 import javax.wsdl.Binding;
 import javax.wsdl.Definition;
@@ -72,12 +74,13 @@ import javax.wsdl.Port;
 import javax.wsdl.PortType;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLReader;
-import javax.xml.rpc.JAXRPCException;
+import javax.xml.rpc.ServiceException;
 import javax.xml.rpc.encoding.TypeMappingRegistry;
 import javax.xml.rpc.namespace.QName;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -98,7 +101,7 @@ import java.lang.reflect.Proxy;
  * @author Doug Davis (dug@us.ibm.com)
  */
 
-public class Service implements javax.xml.rpc.Service {
+public class Service implements javax.xml.rpc.Service, Serializable, Referenceable {
     private AxisEngine          engine          = null;
 
     private URL                 wsdlLocation    = null ;
@@ -147,9 +150,9 @@ public class Service implements javax.xml.rpc.Service {
      *
      * @param wsdlDoc          URL of the WSDL document
      * @param serviceName      Qualified name of the desired service
-     * @throws JAXRPCExceptionIif there's an error finding or parsing the WSDL
+     * @throws ServiceException If there's an error finding or parsing the WSDL
      */
-    public Service(URL wsdlDoc, QName serviceName) throws JAXRPCException {
+    public Service(URL wsdlDoc, QName serviceName) throws ServiceException {
         engine = getAxisClient();
         Document doc = XMLUtils.newDocument(wsdlDoc.toString());
         initService(doc, serviceName);
@@ -164,10 +167,10 @@ public class Service implements javax.xml.rpc.Service {
      *
      * @param  wsdlLocation    Location of the WSDL relative to the current dir
      * @param  serviceName     Qualified name of the desired service
-     * @throws JAXRPCException If there's an error finding or parsing the WSDL
+     * @throws ServiceException If there's an error finding or parsing the WSDL
      */
     public Service(String wsdlLocation, QName serviceName)
-                           throws JAXRPCException {
+                           throws ServiceException {
         engine = getAxisClient();
         try {
             // Start by reading in the WSDL using WSDL4J
@@ -176,7 +179,7 @@ public class Service implements javax.xml.rpc.Service {
             initService(doc, serviceName);
         }
         catch( FileNotFoundException exp ) {
-            throw new JAXRPCException(
+            throw new ServiceException(
                     JavaUtils.getMessage("wsdlError00", "" + wsdlLocation, "\n" + exp) );
         }
     }
@@ -189,10 +192,10 @@ public class Service implements javax.xml.rpc.Service {
      *
      * @param  wsdlInputStream InputStream containing the WSDL
      * @param  serviceName     Qualified name of the desired service
-     * @throws JAXRPCException If there's an error finding or parsing the WSDL
+     * @throws ServiceException If there's an error finding or parsing the WSDL
      */
     public Service(InputStream wsdlInputStream, QName serviceName)
-                           throws JAXRPCException {
+                           throws ServiceException {
         engine = getAxisClient();
         Document doc = XMLUtils.newDocument(wsdlInputStream);
         initService(doc, serviceName);
@@ -203,10 +206,10 @@ public class Service implements javax.xml.rpc.Service {
      *
      * @param doc               A DOM document containing WSDL
      * @param serviceName       Qualified name of the desired service
-     * @throws JAXRPCException  If there's an error finding or parsing the WSDL
+     * @throws ServiceException  If there's an error finding or parsing the WSDL
      */
     private void initService(Document doc, QName serviceName)
-            throws JAXRPCException {
+            throws ServiceException {
         try {
             // Start by reading in the WSDL using WSDL4J
             WSDLReader           reader = WSDLFactory.newInstance()
@@ -224,11 +227,11 @@ public class Service implements javax.xml.rpc.Service {
 
             this.wsdlService    = def.getService( qn );
             if ( this.wsdlService == null )
-                throw new JAXRPCException(
+                throw new ServiceException(
                         JavaUtils.getMessage("noService00", "" + serviceName));
         }
         catch( Exception exp ) {
-            throw new JAXRPCException(
+            throw new ServiceException(
                     JavaUtils.getMessage("wsdlError00", "" + "", "\n" + exp) );
         }
     }
@@ -239,10 +242,10 @@ public class Service implements javax.xml.rpc.Service {
      * @param  portName        ...
      * @param  proxyInterface  ...
      * @return java.rmi.Remote ...
-     * @throws JAXRPCException If there's an error
+     * @throws ServiceException If there's an error
      */
     public java.rmi.Remote getPort(QName portName, Class proxyInterface)
-                           throws JAXRPCException {
+                           throws ServiceException {
         return( null );
     }
 
@@ -251,10 +254,10 @@ public class Service implements javax.xml.rpc.Service {
      *
      * @param  proxyInterface  ...
      * @return java.rmi.Remote ...
-     * @throws JAXRPCException If there's an error
+     * @throws ServiceException If there's an error
      */
     public java.rmi.Remote getPort(Class proxyInterface)
-            throws JAXRPCException {
+            throws ServiceException {
         return null;
     }
 
@@ -268,17 +271,17 @@ public class Service implements javax.xml.rpc.Service {
      * @param endpoint the URL which will be used as the SOAP endpoint
      * @param proxyInterface the interface class which we wish to mimic
      *                       via a dynamic proxy
-     * @throws JAXRPCException
+     * @throws ServiceException
      */
     public java.rmi.Remote getPort(String endpoint, Class proxyInterface)
-        throws JAXRPCException
+        throws ServiceException
     {
         if (!proxyInterface.isInterface()) {
-            throw new JAXRPCException(JavaUtils.getMessage("mustBeIface00"));
+            throw new ServiceException(JavaUtils.getMessage("mustBeIface00"));
         }
 
         if (!(java.rmi.Remote.class.isAssignableFrom(proxyInterface))) {
-            throw new JAXRPCException(
+            throw new ServiceException(
                             JavaUtils.getMessage("mustExtendRemote00"));
         }
 
@@ -289,7 +292,7 @@ public class Service implements javax.xml.rpc.Service {
                                                 new Class[] { proxyInterface },
                                                 new AxisClientProxy(call));
         } catch (Exception e) {
-            throw new JAXRPCException(e.toString());
+            throw new ServiceException(e.toString());
         }
     }
 
@@ -299,23 +302,23 @@ public class Service implements javax.xml.rpc.Service {
      *
      * @param  portName        PortName in the WSDL doc to search for
      * @return Call            Used for invoking the Web Service
-     * @throws JAXRPCException If there's an error
+     * @throws ServiceException If there's an error
      */
     public javax.xml.rpc.Call createCall(QName portName)
-                            throws JAXRPCException {
+                            throws ServiceException {
         javax.wsdl.QName qn = new javax.wsdl.QName( portName.getNamespaceURI(),
                                                     portName.getLocalPart() );
         if ( wsdlDefinition == null )
-            throw new JAXRPCException( JavaUtils.getMessage("wsdlMissing00") );
+            throw new ServiceException( JavaUtils.getMessage("wsdlMissing00") );
 
         Port port = wsdlService.getPort( portName.getLocalPart() );
         if ( port == null )
-            throw new JAXRPCException( JavaUtils.getMessage("noPort00", "" + portName) );
+            throw new ServiceException( JavaUtils.getMessage("noPort00", "" + portName) );
 
         Binding   binding  = port.getBinding();
         PortType  portType = binding.getPortType();
         if ( portType == null )
-            throw new JAXRPCException( JavaUtils.getMessage("noPortType00", "" + portName) );
+            throw new ServiceException( JavaUtils.getMessage("noPortType00", "" + portName) );
 
         org.apache.axis.client.Call call = new org.apache.axis.client.Call(this);
         call.setPortTypeName( portName );
@@ -332,7 +335,7 @@ public class Service implements javax.xml.rpc.Service {
                     call.setTargetEndpointAddress(url);
                 }
                 catch(Exception exp) {
-                    throw new JAXRPCException(
+                    throw new ServiceException(
                             JavaUtils.getMessage("cantSetURI00", "" + exp) );
                 }
             }
@@ -349,11 +352,11 @@ public class Service implements javax.xml.rpc.Service {
      * @param  portName        PortName in the WSDL doc to search for
      * @param  operationName   Operation(method) that's going to be invoked
      * @return Call            Used for invoking the Web Service
-     * @throws JAXRPCException If there's an error
+     * @throws ServiceException If there's an error
      */
     public javax.xml.rpc.Call createCall(QName portName,
                                          String operationName)
-                           throws JAXRPCException {
+                           throws ServiceException {
 
         org.apache.axis.client.Call call=new org.apache.axis.client.Call(this);
         call.setOperation( portName, operationName );
@@ -368,11 +371,11 @@ public class Service implements javax.xml.rpc.Service {
      * @param  portName        PortName in the WSDL doc to search for
      * @param  operationName   Operation(method) that's going to be invoked
      * @return Call            Used for invoking the Web Service
-     * @throws JAXRPCException If there's an error
+     * @throws ServiceException If there's an error
      */
     public javax.xml.rpc.Call createCall(QName portName,
                                          QName operationName)
-                           throws JAXRPCException {
+                           throws ServiceException {
 
         org.apache.axis.client.Call call=new org.apache.axis.client.Call(this);
         call.setOperation( portName, operationName.getLocalPart() );
@@ -385,9 +388,9 @@ public class Service implements javax.xml.rpc.Service {
      * any kind will be done against the WSDL.
      *
      * @return Call            Used for invoking the Web Service
-     * @throws JAXRPCException If there's an error
+     * @throws ServiceException If there's an error
      */
-    public javax.xml.rpc.Call createCall() throws JAXRPCException {
+    public javax.xml.rpc.Call createCall() throws ServiceException {
         return( new org.apache.axis.client.Call(this) );
     }
 
@@ -443,10 +446,10 @@ public class Service implements javax.xml.rpc.Service {
      * Defines the current Type Mappig Registry.
      *
      * @param  registry The TypeMappingRegistry
-     * @throws JAXRPCException if there's an error
+     * @throws ServiceException if there's an error
      */
     public void setTypeMappingRegistry(TypeMappingRegistry registry)
-                    throws JAXRPCException  {
+                    throws ServiceException  {
     }
 
     /**
@@ -459,12 +462,12 @@ public class Service implements javax.xml.rpc.Service {
     }
 
     /**
-     * Not implemented yet
+     * Returns a reference to this object.
      *
      * @return Reference ...
      */
-    public javax.naming.Reference getReference() {
-        return( null );
+    public Reference getReference() {
+        return new Reference(this.getClass().getName());
     }
 
     /**

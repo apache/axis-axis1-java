@@ -52,58 +52,61 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
+package javax.xml.rpc;
 
 /**
- * This tests the file generation of only the items that are referenced in WSDL
- * 
- */ 
-package test.wsdl.multibinding;
+ * The javax.xml.rpc.ServiceException is thrown from the core JAX-RPC APIs to
+ * indicate exceptions related to Service and ServiceFactory calls.
+ *
+ * @version 0.1
+ */
+public class ServiceException extends Exception {
 
-import java.io.File;
+    Throwable cause;
+    
+    /**
+     * Constructs a new exception with null as its detail message. 
+     */
+    public ServiceException() {}
 
-import java.util.HashSet;
-import java.util.Set;
-
-import test.wsdl.filegen.FileGenTestCase;
-
-public class VerifyFilesTestCase extends FileGenTestCase {
-    public VerifyFilesTestCase(String name) {
-        super(name);
+    /**
+     * Constructs a new exception with the specified detail message. 
+     *
+     * @param message exception message
+     */
+    public ServiceException(String message) {
+        super(message);
+    }
+    
+    /**
+     * Constructs a new exception which wraps another exception.
+     * 
+     * @param cause the exception to wrap
+     */ 
+    public ServiceException(Throwable cause) {
+        this.cause = cause;
+    }
+    
+    /**
+     * Contructs a new exception with the specified detail message and
+     * wraps another exception.
+     * 
+     * @param message exception message
+     * @param cause the exception to wrap
+     */ 
+    public ServiceException(String message, Throwable cause) {
+        super(message);
+        this.cause = cause;
     }
 
     /**
-     * List of files which should be generated.
-     */
-    protected Set shouldExist() {
-        HashSet set = new HashSet();
-        set.add("BindingAllLit.java");
-        set.add("BindingAllLitImpl.java");
-        set.add("BindingAllLitSkeleton.java");
-        set.add("BindingAllLitStub.java");
-        set.add("BindingNoLitImpl.java");
-        set.add("BindingNoLitSkeleton.java");
-        set.add("BindingNoLitStub.java");
-        set.add("BindingSomeLit.java");
-        set.add("BindingSomeLitImpl.java");
-        set.add("BindingSomeLitSkeleton.java");
-        set.add("BindingSomeLitStub.java");
-        set.add("MbPT.java");
-        set.add("MbService.java");
-        set.add("MbServiceLocator.java");
-        set.add("MbServiceTestCase.java");
-        set.add("VerifyFilesTestCase.java");
-        set.add("deploy.wsdd");
-        set.add("undeploy.wsdd");
-        return set;
-    } // shouldExist
+     * Returns the exception wrapped by this ServiceException
+     * 
+     * @return exception or null if none.
+     */ 
+    public Throwable getCause() {
+        return cause;
+    }
+}
 
-    /**
-     * The directory containing the files that should exist.
-     */
-    protected String rootDir() {
-        return "build" + File.separator + "work" + File.separator + 
-                "test" + File.separator + "wsdl" + File.separator +
-                "multibinding";
-    } // rootDir
 
-} // class VerifyFilesTestCase

@@ -75,7 +75,7 @@ import org.apache.axis.utils.JavaUtils;
 * This is Wsdl2java's TestCase writer.  It writes the <serviceName>TestCase.java file.
 */
 public class JavaTestCaseWriter extends JavaWriter {
-    private Service service;
+    private ServiceEntry sEntry;
     private SymbolTable symbolTable;
 
     /**
@@ -87,7 +87,7 @@ public class JavaTestCaseWriter extends JavaWriter {
             SymbolTable symbolTable) {
         super(emitter, sEntry, "TestCase", "java",
                 JavaUtils.getMessage("genTest00"), "testCase");
-        this.service = sEntry.getService();
+        this.sEntry = sEntry;
         this.symbolTable = symbolTable;
     } // ctor
 
@@ -113,7 +113,7 @@ public class JavaTestCaseWriter extends JavaWriter {
      */
     protected void writeFileBody() throws IOException {
         // get ports
-        Map portMap = service.getPorts();
+        Map portMap = sEntry.getService().getPorts();
         Iterator portIterator = portMap.values().iterator();
 
         while (portIterator.hasNext()) {
@@ -312,13 +312,11 @@ public class JavaTestCaseWriter extends JavaWriter {
             String bindingType, String portName) throws IOException {
         pw.println("        " + bindingType + " binding;");
         pw.println("        try {");
-        pw.print("            binding = new ");
-        pw.print(this.className.substring(
-                0, this.className.length() - "TestCase".length()));
-        pw.println("().get" + portName + "();");
+        pw.print("            binding = new " + sEntry.getName());
+        pw.print("Locator" + "().get" + portName + "();");
         pw.println("        }");
-        pw.println("        catch (javax.xml.rpc.JAXRPCException jre) {");
-        pw.println("            throw new junit.framework.AssertionFailedError(\"JAX-RPC Exception caught: \" + jre);");
+        pw.println("        catch (javax.xml.rpc.ServiceException jre) {");
+        pw.println("            throw new junit.framework.AssertionFailedError(\"JAX-RPC ServiceException caught: \" + jre);");
         pw.println("        }");
 
         pw.println("        assertTrue(\"" +

@@ -88,10 +88,10 @@ public interface Service
      *
      * @return Dynamic proxy object that supports the service definition interface that extends the java.rmi.Remote
      *
-     * @throws JAXRPCException - If the service class fails to create a dynamic proxy
+     * @throws ServiceException - If the service class fails to create a dynamic proxy
      */
     public java.rmi.Remote getPort(QName portName, Class proxyInterface)
-        throws JAXRPCException;
+        throws ServiceException;
 
     /**
      * The getPort method returns a dynamic proxy for a default service port. A service client uses this dynamic 
@@ -102,10 +102,10 @@ public interface Service
      *
      * @return Dynamic proxy object that supports the service definition interface that extends the java.rmi.Remote
      *
-     * @throws JAXRPCException - If the service class fails to create a dynamic proxy
+     * @throws ServiceException - If the service class fails to create a dynamic proxy
      */
     public java.rmi.Remote getPort(Class serviceDefInterface)
-            throws JAXRPCException;
+            throws ServiceException;
 
     /**
      * Creates a Call instance.
@@ -114,9 +114,9 @@ public interface Service
      *
      * @return Call object
      *
-     * @throws JAXRPCException - If the Service class fails to create a Call object
+     * @throws ServiceException - If the Service class fails to create a Call object
      */
-    public Call createCall(QName portName) throws JAXRPCException;
+    public Call createCall(QName portName) throws ServiceException;
 
     /**
      * Creates a Call instance.
@@ -126,10 +126,10 @@ public interface Service
      *
      * @return Call object
      *
-     * @throws JAXRPCException - If the Service class fails to create a Call object
+     * @throws ServiceException - If the Service class fails to create a Call object
      */
     public Call createCall(QName portName, String operationName)
-        throws JAXRPCException;
+        throws ServiceException;
 
     /**
      * Creates a Call instance.
@@ -139,19 +139,19 @@ public interface Service
      *
      * @return Call object
      *
-     * @throws JAXRPCException - If the Service class fails to create a Call object
+     * @throws ServiceException - If the Service class fails to create a Call object
      */
     public Call createCall(QName portName, QName operationName)
-        throws JAXRPCException;
+        throws ServiceException;
 
     /**
      * Creates an empty Call object that needs to be configured using the setter methods on the Call interface.
      *
      * @return  Call object
      *
-     * @throws JAXRPCException
+     * @throws ServiceException
      */
-    public Call createCall() throws JAXRPCException;
+    public Call createCall() throws ServiceException;
 
     /**
      * Gets location of the WSDL document for this Service.
@@ -179,10 +179,10 @@ public interface Service
      *
      * @param registry - TypeMappingRegistry object
      *
-     * @throws JAXRPCException - if there is an error in the configuration of the TypeMappingRegistry
+     * @throws ServiceException - if there is an error in the configuration of the TypeMappingRegistry
      */
     public void setTypeMappingRegistry(TypeMappingRegistry registry)
-        throws JAXRPCException;
+        throws ServiceException;
 
     /**
      * Gets the TypeMappingRegistry registered with this Service object

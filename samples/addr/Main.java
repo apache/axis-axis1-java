@@ -113,7 +113,7 @@ public class Main {
         
         System.err.println ("Using proxy without session maintenance.");
 
-        AddressBookService abs = new AddressBookService();
+        AddressBookService abs = new AddressBookServiceLocator();
         opts.setDefaultURL( abs.getAddressBookAddress() );
         URL serviceURL = new URL(opts.getURL());
 

@@ -66,7 +66,8 @@ import javax.wsdl.Service;
 * <serviceName>.java, <serviceName>TestCase.java.
 */
 public class JavaServiceWriter implements Writer {
-    Writer serviceWriter = null;
+    Writer serviceIfaceWriter = null;
+    Writer serviceImplWriter = null;
     Writer testCaseWriter = null;
 
     /**
@@ -78,7 +79,9 @@ public class JavaServiceWriter implements Writer {
             SymbolTable symbolTable) {
         ServiceEntry sEntry = symbolTable.getServiceEntry(service.getQName());
         if (sEntry.isReferenced()) {
-            serviceWriter =
+            serviceIfaceWriter =
+                    new JavaServiceIfaceWriter(emitter, sEntry, symbolTable);
+            serviceImplWriter =
                     new JavaServiceImplWriter(emitter, sEntry, symbolTable);
             if (emitter.bEmitTestCase) {
                 testCaseWriter =
@@ -91,8 +94,11 @@ public class JavaServiceWriter implements Writer {
      * Write all the service bindnigs:  service and testcase.
      */
     public void write() throws IOException {
-        if (serviceWriter != null) {
-            serviceWriter.write();
+        if (serviceIfaceWriter != null) {
+            serviceIfaceWriter.write();
+        }
+        if (serviceImplWriter != null) {
+            serviceImplWriter.write();
         }
         if (testCaseWriter != null) {
             testCaseWriter.write();

@@ -7,7 +7,7 @@
 
 package test.wsdl.types;
 
-import javax.xml.rpc.JAXRPCException;
+import javax.xml.rpc.ServiceException;
 
 import javax.xml.rpc.holders.BigDecimalHolder;
 import javax.xml.rpc.holders.BigIntegerHolder;
@@ -59,7 +59,7 @@ import test.wsdl.types.comprehensive_types2.A;
 import test.wsdl.types.comprehensive_types2.B;
 
 import test.wsdl.types.comprehensive_service.TypeTest;
-import test.wsdl.types.comprehensive_service.TypeTestService;
+import test.wsdl.types.comprehensive_service.TypeTestServiceLocator;
 
 public class VerifyTestCase extends junit.framework.TestCase {
     public VerifyTestCase(String name) {
@@ -69,10 +69,10 @@ public class VerifyTestCase extends junit.framework.TestCase {
     public void testTypeTest() {
         TypeTest binding;
         try {
-            binding = new TypeTestService().getTypeTest();
+            binding = new TypeTestServiceLocator().getTypeTest();
         }
-        catch (JAXRPCException jre) {
-            throw new junit.framework.AssertionFailedError("JAX-RPC Exception caught: " + jre);
+        catch (ServiceException jre) {
+            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
         }
         assertTrue("binding is null", binding != null);
         try {

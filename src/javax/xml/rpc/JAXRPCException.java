@@ -60,7 +60,7 @@ package javax.xml.rpc;
  *
  * @version 0.1
  */
-public class JAXRPCException extends Exception {
+public class JAXRPCException extends RuntimeException {
 
     Throwable cause;
     
