@@ -271,6 +271,9 @@ public class JavaStubWriter extends JavaWriter {
                 Object obj = bindingInputIterator.next();
                 if (obj instanceof SOAPBody) {
                     namespace = ((SOAPBody) obj).getNamespaceURI();
+                    if (namespace == null) {
+                        namespace = emitter.def.getTargetNamespace();
+                    }
                     if (namespace == null)
                         namespace = "";
                     break;
@@ -479,10 +482,9 @@ public class JavaStubWriter extends JavaWriter {
             pw.println("        call.setProperty(\"soap.http.soapaction.use\", Boolean.TRUE);");
             pw.println("        call.setProperty(\"soap.http.soapaction.uri\", \"" + soapAction + "\");");
         }
-        pw.println("        call.setProperty(org.apache.axis.client.Call.NAMESPACE, \""
-                   + namespace + "\");" );
+
         // Operation name
-        pw.println("        call.setOperationName(new javax.xml.rpc.namespace.QName(\"" + operation.getName() + "\"));" );
+        pw.println("        call.setOperationName(new javax.xml.rpc.namespace.QName(\"" + namespace + "\", \"" + operation.getName() + "\"));" );
         
         // Invoke the operation
         pw.println();

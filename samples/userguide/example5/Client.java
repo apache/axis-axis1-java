@@ -89,8 +89,7 @@ public class Client
         String result;
         try {
             call.setTargetEndpointAddress( new java.net.URL(options.getURL()) );
-            call.setProperty( Call.NAMESPACE, "OrderProcessor" );
-            call.setOperationName( "processOrder" );
+            call.setOperationName( new QName("OrderProcessor", "processOrder") );
             call.addParameter( "arg1", qn, ParameterMode.PARAM_MODE_IN );
 
             result = (String) call.invoke( new Object[] { order } );

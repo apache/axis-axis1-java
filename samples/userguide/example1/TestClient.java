@@ -58,6 +58,8 @@ package samples.userguide.example1;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 
+import javax.xml.rpc.namespace.QName;
+
 public class TestClient
 {
    public static void main(String [] args) {
@@ -69,8 +71,7 @@ public class TestClient
            Call     call    = (Call) service.createCall();
 
            call.setTargetEndpointAddress( new java.net.URL(endpoint) );
-           call.setOperationName( "echoString" );
-           call.setProperty( Call.NAMESPACE, "http://soapinterop.org/" );
+           call.setOperationName(new QName("http://soapinterop.org/", "echoString") );
 
            String ret = (String) call.invoke( new Object[] { "Hello!" } );
 

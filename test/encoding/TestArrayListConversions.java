@@ -8,6 +8,7 @@ import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.transport.local.LocalTransport;
 
+import javax.xml.rpc.namespace.QName;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -74,8 +75,7 @@ public class TestArrayListConversions extends TestCase {
     Vector v = new Vector();
     v.addElement("Hi there!");
     v.addElement("This'll be a SOAP Array and then a LinkedList!");
-    call.setOperationName( "echoLinkedList" );
-    call.setProperty( Call.NAMESPACE, SERVICE_NAME );
+    call.setOperationName( new QName(SERVICE_NAME, "echoLinkedList") );
     Object ret = call.invoke( new Object[] { v } );
     if (!equals(v, ret)) assertEquals("Echo LinkedList mangled the result.  Result is underneath.\n" + ret, v, ret);
   }
@@ -87,8 +87,7 @@ public class TestArrayListConversions extends TestCase {
     l.add("Second linked list item");
     l.add("This will be a SOAP Array then a Vector!");
 
-    call.setOperationName( "echoVector" );
-    call.setProperty( Call.NAMESPACE, SERVICE_NAME );
+    call.setOperationName( new QName(SERVICE_NAME, "echoVector") );
     Object ret = call.invoke( new Object[] { l } );
     if (!equals(l, ret)) assertEquals("Echo Vector mangled the result.  Result is underneath.\n" + ret, l, ret);
   }
@@ -99,8 +98,7 @@ public class TestArrayListConversions extends TestCase {
     v.addElement("Hi there!");
     v.addElement("This'll be a SOAP Array");
 
-    call.setOperationName( "echoArray" );
-    call.setProperty( Call.NAMESPACE, SERVICE_NAME );
+    call.setOperationName( new QName(SERVICE_NAME, "echoArray") );
     Object ret = call.invoke( new Object[] { v } );
     if (!equals(v, ret)) assertEquals("Echo Array mangled the result.  Result is underneath\n" + ret, v, ret);
   }

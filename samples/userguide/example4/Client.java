@@ -59,6 +59,8 @@ import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.apache.axis.utils.Options;
 
+import javax.xml.rpc.namespace.QName;
+
 public class Client
 {
     public static void main(String [] args)
@@ -72,8 +74,7 @@ public class Client
             Call     call    = (Call) service.createCall();
 
             call.setTargetEndpointAddress( new java.net.URL(endpointURL) );
-            call.setOperationName( "testMethod" );
-            call.setProperty( Call.NAMESPACE, "LogTestService" );
+            call.setOperationName( new QName("LogTestService", "testMethod") );
 
             String res = (String) call.invoke( new Object[] {} );
 

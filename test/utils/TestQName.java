@@ -6,6 +6,11 @@ import junit.framework.TestSuite;
 
 import javax.xml.rpc.namespace.QName;
 
+import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.Constants;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 public class TestQName extends TestCase
 {
     public TestQName (String name) {
@@ -36,20 +41,23 @@ public class TestQName extends TestCase
                      "article", qname.getLocalPart()); 
     }
 
-    /*
     public void testQNameStringElementConstructor()
     {
-        //need a fully implemented mock
-        //Element class to test this . . .
-        //Element elem = new MockElement();
-        QName qname = new QName("PREFIX:LOCALPART", elem);
+        String NAMESPACE = "namespace";
+        String PREFIX = "prefix";
+        String LOCALPART = "localPart";
+        String DEFAULTNS = "default";
+        
+        Document doc = XMLUtils.newDocument();
+        Element elem = doc.createElementNS(NAMESPACE, LOCALPART);
+        elem.setAttributeNS(Constants.NS_URI_XMLNS, "xmlns:"+PREFIX, NAMESPACE);
+        QName qname = new QName(PREFIX + ":" + LOCALPART, elem);
         assertNotNull("qname was null", qname); 
-        assertEquals("Namespace URI was not 'PREFIX', it was: " + qname.getNamespaceURI(),
-                     "PREFIX", qname.getNamespaceURI()); 
-        assertEquals("LocalPart was not 'LOCALPART', it was: " + qname.getLocalPart(),
-                     "LOCALPART", qname.getLocalPart()); 
+        assertEquals("Namespace URI did not match",
+                     NAMESPACE, qname.getNamespaceURI()); 
+        assertEquals("LocalPart did not match",
+                     LOCALPART, qname.getLocalPart()); 
     }
-     */
 
     public void testToString()
     {
@@ -90,5 +98,10 @@ public class TestQName extends TestCase
         QName contrast = new QName("xso", "text");
         assertEquals("control hashcode does not equal compare.hashcode", control.hashCode(), compare.hashCode());
         assertTrue("control hashcode is not equivalent to compare.hashcode", !(control.hashCode() == contrast.hashCode()));
+    }
+    
+    public static void main(String[] args) throws Exception {
+        TestQName tester = new TestQName("test");
+        tester.testQNameStringElementConstructor();
     }
 }

@@ -155,9 +155,8 @@ public class GetQuote1 {
       /***********************************************************/
       call.setTargetEndpointAddress( new URL(opts.getURL()) );
       call.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, "getQuote" );
-      call.setProperty( Call.NAMESPACE, "urn:xmltoday-delayed-quotes" );
       call.setEncodingStyle( "http://schemas.xmlsoap.org/soap/encoding/" );
-      call.setOperationName( "getQuote" );
+      call.setOperationName( new QName("urn:xmltoday-delayed-quotes", "getQuote") );
       call.addParameter( "symbol", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN );
       call.setReturnType( XMLType.XSD_FLOAT );
 

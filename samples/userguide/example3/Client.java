@@ -61,6 +61,7 @@ import org.apache.axis.encoding.XMLType;
 import org.apache.axis.utils.Options;
 
 import javax.xml.rpc.ParameterMode;
+import javax.xml.rpc.namespace.QName;
 
 public class Client
 {
@@ -83,8 +84,7 @@ public class Client
             Call     call    = (Call) service.createCall();
 
             call.setTargetEndpointAddress( new java.net.URL(endpointURL) );
-            call.setOperationName( "serviceMethod" );
-            call.setProperty( Call.NAMESPACE, "MyService" );
+            call.setOperationName( new QName("MyService", "serviceMethod") );
             call.addParameter( "arg1", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN);
 
             String ret = (String) call.invoke( new Object[] { textToSend } );

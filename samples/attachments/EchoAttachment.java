@@ -116,9 +116,7 @@ public class EchoAttachment {
 
         call.setTargetEndpointAddress( new URL(opts.getURL()) ); //Set the target service host and service location, 
 
-        call.setOperationName( "echo" ); //This is the target services method to invoke.
-
-        call.setProperty( Call.NAMESPACE, "urn:EchoAttachmentsService" );
+        call.setOperationName(new QName("urn:EchoAttachmentsService","echo") ); //This is the target services method to invoke.
 
         QName qnameAttachment = new QName("urn:EchoAttachmentsService", "DataHandler");
 
@@ -208,9 +206,7 @@ public class EchoAttachment {
 
         call.setTargetEndpointAddress( new URL(opts.getURL()) ); //Set the target service host and service location, 
 
-        call.setOperationName( "echoDir" ); //This is the target services method to invoke.
-
-        call.setProperty( Call.NAMESPACE, "urn:EchoAttachmentsService" ); //What the service is known by the server.
+        call.setOperationName( new QName("urn:EchoAttachmentsService", "echoDir") ); //This is the target services method to invoke.
 
         QName qnameAttachment = new QName("urn:EchoAttachmentsService", "DataHandler");
 

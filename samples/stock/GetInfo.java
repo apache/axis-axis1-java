@@ -64,6 +64,7 @@ import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.Options;
 
 import javax.xml.rpc.ParameterMode;
+import javax.xml.rpc.namespace.QName;
 
 /**
  *
@@ -87,10 +88,9 @@ public class GetInfo {
       Call     call    = (Call) service.createCall();
 
       call.setTargetEndpointAddress( new java.net.URL(opts.getURL()) );
-      call.setOperationName( "getInfo" );
+      call.setOperationName( new QName("urn:cominfo", "getInfo") );
       call.addParameter( "symbol", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN );
       call.addParameter( "info", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN );
-      call.setProperty( Call.NAMESPACE, "urn:cominfo" );
       call.setProperty( Transport.USER, opts.getUser() );
       call.setProperty( Transport.PASSWORD, opts.getPassword() );
       call.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, "" );

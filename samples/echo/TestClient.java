@@ -172,8 +172,7 @@ public abstract class TestClient {
             call.setProperty(Call.TIMEOUT, "60000");
 
             // issue the request
-            call.setProperty( Call.NAMESPACE, "http://soapinterop.org/" );
-            call.setOperationName( method.trim() );
+            call.setOperationName( new QName("http://soapinterop.org/", method.trim()) );
             Object got= call.invoke( args );
 
             // verify the result
