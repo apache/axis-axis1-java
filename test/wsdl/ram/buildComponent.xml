@@ -22,13 +22,13 @@
 
 <target name="clean"/>
 
-<target name="copy"/>
+<target name="copy" depends="setenv"/>
 
 <target name="compile" depends="copy">
   <echo message="Compilig test.wsdl.ram"/>
     <!-- This tests Bug 9642 -  Java Date not deserialize properly.  -->
-    <wsdl2java url="test/wsdl/ram/ram.wsdl"
-               output="build/work"
+    <wsdl2java url="${axis.home}/test/wsdl/ram/ram.wsdl"
+               output="${axis.home}/build/work"
                serverSide="yes"
                testcase="yes">
         <mapping namespace="urn:ram" package="test.wsdl.ram"/>
@@ -41,7 +41,7 @@
       <include name="test/wsdl/ram/*.java" />
     </javac>
 
-    <javac srcdir="." destdir="${build.dest}"
+    <javac srcdir="${axis.home}" destdir="${build.dest}"
            debug="${debug}">
       <include name="test/wsdl/ram/*.java" />
     </javac>
