@@ -18,7 +18,7 @@ h1 {  margin-left: -30px}
 <body bgcolor="#ffffff" text="#000000">
 <h1 align="center"><IMG height=96 src="axis.jpg" width=176></h1>
 <h1>Axis User's Guide</h1>
-<p><i>Alpha 2 Version</i></p>
+<p><i>Alpha 3 Version</i></p>
 <h3>Table of Contents</h3>
 <p><A href="#Introduction">Introduction</a><br>
   <A href="#Installation">Installing Axis</a><br>
@@ -32,11 +32,10 @@ h1 {  margin-left: -30px}
   <A href="#Glossary">Glossary</a></p>
 <h2><a name="Introduction"></a>Introduction</h2>
 <p>Welcome to Axis, the third generation of Apache SOAP! This is the <b>alpha 
-  2 </b> version, our first publically announced milestone. Please note that Axis 
-  is a work in progress, and although the basic functionality is there, there 
-  are still a lot of unfinished areas and rough edges. That said, we're very psyched 
-  about the package so far and would love to get your take on how we can make 
-  it better. </p>
+  3 </b> version. Please note that Axis is a work in progress, and although the 
+  basic functionality is there, there are still a lot of unfinished areas and 
+  rough edges. That said, we're very psyched about the package so far and would 
+  love to get your take on how we can make it better. </p>
 <h3>What is SOAP?</h3>
 <p>SOAP is an XML<i>-</i>based communitcation protocol and encoding format for 
   inter-application communication. Originally conceived by Microsoft and Userland 
@@ -104,8 +103,7 @@ h1 {  margin-left: -30px}
   <li>Support for the SOAP with Attachments specification 
   <li>Supprt for multi-dimensional arrays 
   <li>Support for the SOAP actor attribute 
-  <li>Support for generating complex type definitions in WSDL
-  <li>A final deployment descriptor syntax (WSDD)</li>
+  <li>Support for generating complex type definitions in WSDL 
 </ul>
 <p>All of these items are on the list for the final release.</p>
 <h2><a name="Installation"></a>Installing Axis and Using this Guide</h2>
@@ -193,12 +191,13 @@ Sent 'Hello!', got 'Hello!'
 <p>In the above example, the parameters are in the order in which we sent them, 
   but since we only passed the objects themselves, Axis automatically named the 
   XML-encoded arguments in the SOAP message "arg0", "arg1", etc. If you want to 
-  change this, it's easy! Before calling <code>invoke()</code> you need to 
-  call <code>addParameter</code> for each parameter, like so:
-
-<div class="example">
-<pre>  call.addParameter( "testParam", org.apache.axis.encoding.XMLType.XSD_STRING, Call.PARAM_MODE_IN );</pre>
-</div><p>
+  change this, it's easy! Before calling <code>invoke()</code> you need to call 
+  <code>addParameter</code> for each parameter, like so:
+<div class="example"><pre>
+  call.addParameter("testParam", 
+                    org.apache.axis.encoding.XMLType.XSD_STRING,
+                    Call.PARAM_MODE_IN);
+</pre></div><p>
 
 This will assign the name <b>testParam</b> to the 1st (and only) parameter
 on the invoke call.  This will also define the type of the parameter 
@@ -308,7 +307,7 @@ Got result : 1
 % </pre>
 (note that you may need to replace the &quot;-p8080&quot; with whatever port your 
 J2EE server is running on) 
-<h3>Custom Deployment - deploy.xml files and the AdminClient</h3>
+<h3>Custom Deployment - Introducing WSDD</h3>
 <p>JWS files are great quick ways to get your classes out there as Web Services, 
   but they're not always the best choice. For one thing, you need the source code 
   - there might be times when you want to expose a pre-existing class on your 
@@ -317,48 +316,46 @@ J2EE server is running on)
   mappings, or control which Handlers get invoked when people are using your service.</p>
 <h4><a name="descriptors"></a>Deploying via descriptors</h4>
 To really use the flexibility available to you in Axis, you should get familiar 
-with the Axis <b>deployment descriptor</b> format (<i>note: this particular XML 
-format is just for the alpha release. Axis plans to move to using WSDD (Web Service 
-Deployment Descriptor), a much more robust syntax, in the next release</i>). A 
-deployment descriptor contains a bunch of things you want to "deploy" into Axis 
-- i.e. make available to the Axis engine. The most common thing to deploy is a 
-Web Service, so let's start by taking a look at a deployment descriptor for a 
-basic service (this file is samples/userguide/example3/deploy.xml): 
+with the Axis <b>Web Service Deployment Descriptor (WSDD)</b> format. A deployment 
+descriptor contains a bunch of things you want to "deploy" into Axis - i.e. make 
+available to the Axis engine. The most common thing to deploy is a Web Service, 
+so let's start by taking a look at a deployment descriptor for a basic service 
+(this file is samples/userguide/example3/deploy.xml): 
 <div class="example"> 
-  <pre>&lt;admin:deploy xmlns:admin="AdminService"&gt;
- &lt;service name="MyService" pivot="RPCDispatcher"&gt;
-  &lt;option name="className" value="samples.userguide.example3.MyService"/&gt;
-  &lt;option name="methodName" value="*"/&gt;
+  <pre>&lt;deployment xmlns=&quot;http://xml.apache.org/axis/wsdd/&quot;
+            xmlns:java=&quot;http://xml.apache.org/axis/wsdd/providers/java&quot;&gt;
+ &lt;service name="MyService" provider=&quot;java:RPC&quot;&gt;
+  &lt;parameter name="className" value="samples.userguide.example3.MyService"/&gt;
+  &lt;parameter name="methodName" value="*"/&gt;
  &lt;/service&gt;
-&lt;/admin:deploy&gt;</pre>
+&lt;/deployment&gt;</pre>
 </div>
 
 <p>Pretty simple, really - the outermost element tells the engine that this is 
-  a deployment (other options are "undeploy" and "list" - 
-  see the deployment reference). Then the service element actually deploys
-  the service for us.  If you remember from the architecture overview,
-  a service is a <b>targeted chain</b>, which means it may have any/all of:
-  a request Handler, a pivot Handler, and a response Handler.  In this case,
-  our pivot handler is the RPCDispatcher, which is the Provider which handles
-  Java remote procedure call backends.</p>
-<p>We need to tell the RPCDispatcher that it should instantiate and call
-  the correct class (samples.userguide.example3.MyService), and we do so
-  by including an &lt;option&gt; tag, giving the service one option to
-  configure the class name, and another to tell the engine that any public
-  method on that class may be called via SOAP (that's what the "*" means; we
-  could also have restricted the SOAP-accessible methods by using a space
-  or comma separated list of available method names).</p>
+  a WSDD deployment, and defines the &quot;java&quot; namespace. Then the service 
+  element actually defines the service for us. If you remember from the architecture 
+  overview, a service is a <b>targeted chain</b>, which means it may have any/all 
+  of: a request Handler, a pivot Handler (which for a service is called a &quot;provider&quot;), 
+  and a response Handler. In this case, our provider is &quot;java:RPC&quot;, 
+  which is predefined to indicate a Java RPC service.</p>
+<p>We need to tell the RPCDispatcher that it should instantiate and call the correct 
+  class (e.g. samples.userguide.example3.MyService), and we do so by including 
+  a &lt;parameter&gt; tag, giving the service one parameter to configure the class 
+  name, and another to tell the engine that any public method on that class may 
+  be called via SOAP (that's what the "*" means; we could also have restricted 
+  the SOAP-accessible methods by using a space or comma separated list of available 
+  method names).</p>
 <h4>Using the AdminClient</h4>
 <p>Once we have this file, we need to send it to an Axis server in order to actually 
   deploy the described service. We do this with the AdminClient, or the "org.apache.axis.client.AdminClient" 
   class. An invocation of the AdminClient looks like this:</p>
-<pre>% java org.apache.axis.client.AdminClient deploy.xml
-&lt;admin&gt;done processing&lt;/admin&gt;</pre>
+<pre>% java org.apache.axis.client.AdminClient deploy.wsdd
+&lt;Admin&gt;Done processing&lt;/Admin&gt;</pre>
 <p>This command has now made our service accessible via 
 SOAP. Check it out by running the Client class -  it should look like this:</p><PRE>% java samples.userguide.example3.Client "test me!"<BR>You typed : test me!<BR>% </PRE>
 <P>If you want to prove to yourself that the deployment really worked, try undeploying 
-  the service and calling it again.&nbsp; There's an "undeploy.xml" file in the 
-  example3/ directory which you can use just as you did the deploy.xml file above.&nbsp; 
+  the service and calling it again.&nbsp; There's an "undeploy.wsdd" file in the 
+  example3/ directory which you can use just as you did the deploy.wsdd file above.&nbsp; 
   Run the AdminClient on that file, then try the service Client again and see 
   what happens.</P>
 <P>You can also use the AdminClient to get a listing of all the deployed 
@@ -369,40 +366,47 @@ components in the server:</P><PRE>% java org.apache.axis.client.AdminClient list
   Let's say you want to track how many times your service has been called. We've 
   included a sample handler in the samples/log directory to do just this. To use 
   a handler class like this, you first need to deploy the Handler itself, and 
-  then use the name that you give it in deploying a service. Here's a sample deploy.xml 
+  then use the name that you give it in deploying a service. Here's a sample deploy.wsdd 
   file: </p>
-<pre>&lt;admin:deploy xmlns:admin="AdminService"&gt;
+<pre>&lt;deployment xmlns=&quot;http://xml.apache.org/axis/wsdd/&quot;
+            xmlns:java=&quot;http://xml.apache.org/axis/wsdd/providers/java&quot;&gt;
+ 
  &lt;!-- define the logging handler configuration --&gt;
- &lt;handler name="track" class="samples.userguide.example4.LogHandler"&gt;
-  &lt;option name="filename" value="MyService.log"/&gt;
+ &lt;handler name="track" type="java:samples.userguide.example4.LogHandler"&gt;
+  &lt;parameter name="filename" value="MyService.log"/&gt;
  &lt;/handler&gt;
 
  &lt;!-- define the service, using the log handler we just defined --&gt;
- &lt;service name="LogTestService" <b>request="track"</b> pivot="RPCDispatcher"&gt;
-  &lt;option name="className" value="samples.userguide.example4.Service"/&gt;
-  &lt;option name="methodName" value="*"/&gt;
+ &lt;service name="LogTestService"<b> </b>provider=&quot;java:RPC"&gt;
+  &lt;requestFlow&gt;
+   &lt;handler type=&quot;track&quot;/&gt;
+  &lt;/requestFlow&gt;
+
+  &lt;parameter name="className" value="samples.userguide.example4.Service"/&gt;
+  &lt;parameter name="methodName" value="*"/&gt;
  &lt;/service&gt;
 &lt;/admin:deploy&gt;</pre>
 <p>The first section defines a Handler called "track" that is implemented by the 
   class samples.log.LogHandler. We give this Handler an option to let it know 
   which file to write its messages into.</p>
-<p>Then we define a service, MyService, which is an RPC server just like we saw 
-  above in our first example. The difference is the "request" attribute - this 
-  indicates a Handler (or set of Handlers) that should be invoked when the service 
-  is invoked, before the pivot handler. By setting this to "track", we ensure 
-  that the message will be logged each time this service is invoked.<br>
+<p>Then we define a service, MyService, which is an RPC service just like we saw 
+  above in our first example. The difference is the "requestFlow" element inside 
+  the &lt;service&gt; - this indicates a set of Handlers that should be invoked 
+  when the service is invoked, before the provider. By inserting a reference to 
+  "track", we ensure that the message will be logged each time this service is 
+  invoked.<br>
 </p>
 <h4>Remote Administration</h4>
 <p>Note that by default, the Axis server is configured to only accept administration 
   requests from the machine on which it resides - if you wish to enable remote 
-  administration, you must set the "enableRemoteAdmin" property of the 
-  AdminService to <b>true</b>. To do this, find the "server-config.xml" 
-  file in your webapp's WEB-INF directory. In it, you'll see a deployment for 
-  the AdminService. Add an option as follows:</p>
-<pre>&lt;service name="AdminService" pivot="RPCDispatcher"&gt;
- &lt;option name="className" value="org.apache.axis.util.Admin"/&gt;
- &lt;option name="methodName" value="*"/&gt;
- <b>&lt;option name="enableRemoteAdmin" value="true"/&gt;</b>
+  administration, you must set the "enableRemoteAdmin" property of the AdminService 
+  to <b>true</b>. To do this, find the "server-config.wsdd" file in your webapp's 
+  WEB-INF directory. In it, you'll see a deployment for the AdminService. Add 
+  an option as follows:</p>
+<pre>&lt;service name="AdminService" provider=&quot;java:MSG"&gt;
+ &lt;parameter name="className" value="org.apache.axis.util.Admin"/&gt;
+ &lt;parameter name="methodName" value="*"/&gt;
+ <b>&lt;parameter name="enableRemoteAdmin" value="true"/&gt;</b>
 &lt;/service&gt;</pre>
 <p><b>WARNING: enabling remote administration may give unauthorized parties access 
   to your machine. If you do this, please make sure to add security to your configuration!</b><br>
@@ -430,7 +434,7 @@ components in the server:</P><PRE>% java org.apache.axis.client.AdminClient list
   But if we put a beanMapping into our deployment, all will be well. Here's how 
   to run this example (from the example4 directory):</p>
 <pre class="example">% java org.apache.axis.client.AdminClient -llocal:// deploy.xml
-&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;Admin&gt;Done processing&lt;/Admin&gt;
+&lt;Admin&gt;Done processing&lt;/Admin&gt;
 
 % java Client -llocal:// -n "Glen"
 Hi, Glen!
