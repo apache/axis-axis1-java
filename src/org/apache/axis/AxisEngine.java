@@ -100,6 +100,7 @@ public abstract class AxisEngine extends BasicHandler
     public static final String PROP_DEFAULT_CONFIG_CLASS = "axis.engineConfigClass";
     public static final String PROP_SOAP_VERSION = "defaultSOAPVersion";
     public static final String PROP_TWOD_ARRAY_ENCODING = "enable2DArrayEncoding";
+    public static final String PROP_SEND_MINIMIZED_ELEMENTS = "sendMinimizedElements";
 
     public static final String DEFAULT_ATTACHMENT_IMPL="org.apache.axis.attachments.AttachmentsImpl";
 
@@ -351,7 +352,7 @@ public abstract class AxisEngine extends BasicHandler
      * web services.
      */
     private static final String [] BOOLEAN_OPTIONS = new String [] {
-        PROP_DOMULTIREFS, PROP_SEND_XSI, PROP_XML_DECL
+        PROP_DOMULTIREFS, PROP_SEND_XSI, PROP_XML_DECL, PROP_SEND_MINIMIZED_ELEMENTS
     };
 
     /**
