@@ -312,21 +312,21 @@ public class StringUtils {
     }
 
     /**
-     * <p>Unescapes any Java literals found in the <code>String</code>.
-     * For example, it will turn a sequence of <code>'\'</code> and
-     * <code>'n'</code> into a newline character, unless the <code>'\'</code>
-     * is preceded by another <code>'\'</code>.</p>
+     * <p>Unescapes numeric character referencs found in the <code>String</code>.</p>
+     *
+     * <p>For example, it will return a unicode string which means the specified numeric
+     *    character references looks like "&#x3088;&#x3046;&#x3053;&#x305d;".</p>
      * 
      * @param str  the <code>String</code> to unescape, may be null
      * @return a new unescaped <code>String</code>, <code>null</code> if null string input
      */
-    public static String unescapeJava(String str) {
+    public static String unescapeNumericChar(String str) {
         if (str == null) {
             return null;
         }
         try {
             StringWriter writer = new StringWriter(str.length());
-            unescapeJava(writer, str);
+            unescapeNumericChar(writer, str);
             return writer.toString();
         } catch (IOException ioe) {
             // this should never ever happen while writing to a StringWriter
@@ -334,14 +334,13 @@ public class StringUtils {
             return null;
         }
     }
-    
+
     /**
-     * <p>Unescapes any Java literals found in the <code>String</code> to a
+     * <p>Unescapes numeric character references found in the <code>String</code> to a
      * <code>Writer</code>.</p>
      *
-     * <p>For example, it will turn a sequence of <code>'\'</code> and
-     * <code>'n'</code> into a newline character, unless the <code>'\'</code>
-     * is preceded by another <code>'\'</code>.</p>
+     * <p>For example, it will return a unicode string which means the specified numeric
+     *    character references looks like "&#x3088;&#x3046;&#x3053;&#x305d;".</p>
      * 
      * <p>A <code>null</code> string input has no effect.</p>
      * 
@@ -350,87 +349,67 @@ public class StringUtils {
      * @throws IllegalArgumentException if the Writer is <code>null</code>
      * @throws java.io.IOException if error occurs on underlying Writer
      */
-    public static void unescapeJava(Writer out, String str) throws IOException {
+    public static void unescapeNumericChar(Writer out, String str) throws IOException {
         if (out == null) {
             throw new IllegalArgumentException("The Writer must not be null");
         }
         if (str == null) {
             return;
         }
+
         int sz = str.length();
         StringBuffer unicode = new StringBuffer(4);
-        boolean hadSlash = false;
+        StringBuffer escapes = new StringBuffer(3);
         boolean inUnicode = false;
+
         for (int i = 0; i < sz; i++) {
             char ch = str.charAt(i);
             if (inUnicode) {
                 // if in unicode, then we're reading unicode
                 // values in somehow
                 unicode.append(ch);
-                if (unicode.length() == 4) {
+                if (unicode.length() == 4 && str.charAt(i+1) == ';') {
                     // unicode now contains the four hex digits
                     // which represents our unicode character
                     try {
                         int value = Integer.parseInt(unicode.toString(), 16);
                         out.write((char) value);
                         unicode.setLength(0);
+                        // need to skip the delimiter - ';'
+                        i = i + 1;
                         inUnicode = false;
-                        hadSlash = false;
                     } catch (NumberFormatException nfe) {
                         throw new InternalException(nfe);
                     }
+                } else if (unicode.length() == 4) {
+                    // can't find the delimiter ';', thus it's an invalid unicode
+                    out.write(unicode.toString());
+                    unicode.setLength(0);
+                    inUnicode = false;
                 }
                 continue;
-            }
-            if (hadSlash) {
-                // handle an escaped value
-                hadSlash = false;
-                switch (ch) {
-                    case '\\':
-                        out.write('\\');
-                        break;
-                    case '\'':
-                        out.write('\'');
-                        break;
-                    case '\"':
-                        out.write('"');
-                        break;
-                    case 'r':
-                        out.write('\r');
-                        break;
-                    case 'f':
-                        out.write('\f');
-                        break;
-                    case 't':
-                        out.write('\t');
-                        break;
-                    case 'n':
-                        out.write('\n');
-                        break;
-                    case 'b':
-                        out.write('\b');
-                        break;
-                    case 'u':
-                        {
-                            // uh-oh, we're in unicode country....
-                            inUnicode = true;
-                            break;
-                        }
-                    default :
-                        out.write(ch);
-                        break;
+            } else if (ch=='&') {
+                // Start of the escape sequence ...
+                // At least, the numeric character references require 8 bytes to
+                // describe a Unicode character like as"&#xFFFF;"
+                if (i+7 <= sz) {
+                    escapes.append(ch);
+                    escapes.append(str.charAt(i+1));
+                    escapes.append(str.charAt(i+2));
+                    if (escapes.toString().equals("&#x")) {
+                        inUnicode = true;
+                    } else {
+                        out.write(escapes.toString());
+                    }
+                    escapes.setLength(0);
+                    // need to skip the escaping chars - '&#x'
+                    i = i + 2;
+                } else {
+                    out.write(ch);
                 }
-                continue;
-            } else if (ch == '\\') {
-                hadSlash = true;
                 continue;
             }
             out.write(ch);
-        }
-        if (hadSlash) {
-            // then we're in the weird case of a \ at the end of the
-            // string, let's output it anyway.
-            out.write('\\');
         }
     }
 }

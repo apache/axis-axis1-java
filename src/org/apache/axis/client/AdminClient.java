@@ -450,37 +450,6 @@ public class AdminClient
     }
 
     /**
-     * Unescape the specified String.
-     * @param message - to unescape String
-     * @return unescaped message
-     */
-    public String unescape(String message) {
-        StringBuffer buf = new StringBuffer();
-
-        int length = message.length();
-        char character;
-        for (int i = 0; i < length; i++) {
-            character = message.charAt( i );
-            if (character == '&') {
-                if (i+7 <= length)
-                if (message.charAt(i+1)=='#' && message.charAt(i+2)=='x' &&
-                                                message.charAt(i+7)==';') {
-                    buf.append("\\u");
-                    buf.append(message.charAt(i+3));
-                    buf.append(message.charAt(i+4));
-                    buf.append(message.charAt(i+5));
-                    buf.append(message.charAt(i+6));
-                    i+=7;
-                }
-            } else {
-                buf.append(character);
-            }
-        }
-
-        return StringUtils.unescapeJava(buf.toString());
-    }
-
-    /**
      * Creates in instance of <code>AdminClient</code> and
      * invokes <code>process(args)</code>.
      * <p>Diagnostic output goes to <code>log.info</code>.</p>
@@ -493,7 +462,7 @@ public class AdminClient
 
             String result = admin.process(args);
             if (result != null) {
-                System.out.println( admin.unescape(result) );
+                System.out.println( StringUtils.unescapeNumericChar(result) );
             } else {
                 System.exit(1);
             }
