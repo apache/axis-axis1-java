@@ -157,7 +157,10 @@ public interface EngineConfiguration {
     public Hashtable getGlobalOptions() throws ConfigurationException;
 
     /**
-     * Get an enumeration of the services deployed to this engine
+     * Get an enumeration of the services deployed to this engine,
+     * these are represented as ServiceDesc objects
+     * @see org.apache.axis.description.ServiceDesc
+     * @return something to iterate with
      */
     public Iterator getDeployedServices() throws ConfigurationException;
 }
