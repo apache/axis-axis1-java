@@ -58,6 +58,13 @@
 package org.apache.axis.utils ;
 
 public class Constants {
+  // MessageContext Property Names
+  //////////////////////////////////////////////////////////////////////////
+  public static String MC_TARGET       = "TargetAction" ;
+  public static String MC_SVC_HANDLER  = "ServiceHandler" ;
+
+  // Envelope Stuff
+  //////////////////////////////////////////////////////////////////////////
   public static String NSPREFIX_SOAP_ENV   = "SOAP-ENV" ;
   public static String NSPREFIX_SOAP_ENC   = "SOAP-ENC" ;
   public static String NSPREFIX_SCHEMA_XSI = "xsi" ;

@@ -62,6 +62,7 @@ import javax.servlet.* ;
 import javax.servlet.http.* ;
 import org.apache.axis.* ;
 import org.apache.axis.server.* ;
+import org.apache.axis.utils.* ;
 
 public class AxisServlet extends HttpServlet {
   public void init() {
@@ -91,7 +92,7 @@ public class AxisServlet extends HttpServlet {
     // Set some stuff in the 'bag'
     String  tmp ;
     tmp = (String) req.getHeader( "SOAPAction" );
-    if ( tmp != null ) msgContext.setProperty( "SOAPAction", tmp );
+    if ( tmp != null ) msgContext.setProperty( Constants.MC_TARGET, tmp );
 
     // Invoke the Axis engine...
     try {
