@@ -55,6 +55,7 @@
 package org.apache.axis.ime;
 
 import java.util.Map;
+import org.apache.axis.AxisFault;
 
 /**
  * Extends the basic MessageExchange interface to allow
@@ -69,23 +70,55 @@ import java.util.Map;
 public interface ConfigurableMessageExchange
         extends MessageExchange {
 
-    public void enableFeature(String featureId);
+    /**
+     * @param String The id of the feature to enable
+     * @throws AxisFault
+     */
+    public void enableFeature(String featureId)
+            throws AxisFault;
 
-    public void disableFeature(String featureId);
+    /**
+     * @param String The id of the feature to disable
+     * @throws AxisFault
+     */
+    public void disableFeature(String featureId)
+            throws AxisFault;
 
-    public boolean isFeatureEnabled(String featureId);
+    /**
+     * @param String The id of the feature to check
+     * @return boolean
+     * @throws AxisFault
+     */
+    public boolean isFeatureEnabled(String featureId)
+            throws AxisFault;
 
+    /**
+     * @param String The id of the property
+     * @param Object The value of the property
+     */
     public void setProperty(
             String propertyId,
             Object propertyValue);
 
+    /**
+     * @param String The id of the property
+     * @return Object The value of the property
+     */
     public Object getProperty(
             String propertyId);
 
+    /**
+     * @param String The id of the property
+     * @param Object The default value of the property
+     * @return Object The value of the property
+     */
     public Object getProperty(
             String propertyId,
             Object defaultValue);
 
+    /**
+     * @return java.lang.Map The collection of properties
+     */
     public Map getProperties();
 
     public void clearProperties();
