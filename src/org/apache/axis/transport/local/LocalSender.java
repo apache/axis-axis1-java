@@ -155,7 +155,7 @@ public class LocalSender extends BasicHandler {
         // copy back the response, and force its format to String in order to
         // exercise the deserializers.
         clientContext.setResponseMessage(serverContext.getResponseMessage());
-        //clientContext.getResponseMessage().getAsString();
+        clientContext.getResponseMessage().getSOAPPartAsString();
 
         if (log.isDebugEnabled()) {
             log.debug("Exit: LocalSender::invoke");
