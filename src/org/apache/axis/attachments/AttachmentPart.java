@@ -162,9 +162,9 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
      * TODO: Am not sure about the logic.
      */
     public boolean matches(javax.xml.soap.MimeHeaders headers) {
-        for (Iterator i = mimeHeaders.getAllHeaders(); i.hasNext();) {
+        for (Iterator i = headers.getAllHeaders(); i.hasNext();) {
             javax.xml.soap.MimeHeader hdr = (javax.xml.soap.MimeHeader) i.next();
-            String values[] = headers.getHeader(hdr.getName());
+            String values[] = mimeHeaders.getHeader(hdr.getName());
             boolean found = false;
             if (values != null) {
                 for (int j = 0; j < values.length; j++) {
