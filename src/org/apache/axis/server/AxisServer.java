@@ -283,8 +283,9 @@ public class AxisServer extends AxisEngine
                 }
                 /* Process the Global Request Chain */
                 /**********************************/
-                if ((h = getGlobalRequest()) != null )
+                if ((h = getGlobalRequest()) != null ) {
                     h.invoke(msgContext);
+                }
 
                 /**
                  * At this point, the service should have been set by someone
