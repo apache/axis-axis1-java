@@ -455,14 +455,6 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                                              Constants.XSD_ID)
         );
 
-        // a xsd:language
-        myRegister(Constants.XSD_LANGUAGE, org.apache.axis.types.Language.class,
-                   new SimpleSerializerFactory(org.apache.axis.types.Language.class,
-                                             Constants.XSD_LANGUAGE),
-                   new SimpleDeserializerFactory(org.apache.axis.types.Language.class,
-                                             Constants.XSD_LANGUAGE)
-        );
-
         // a xml:lang
         myRegister(Constants.XML_LANG, org.apache.axis.types.Language.class,
                    new SimpleSerializerFactory(org.apache.axis.types.Language.class,
@@ -471,6 +463,14 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                                              Constants.XML_LANG)
         );
         
+        // a xsd:language
+        myRegister(Constants.XSD_LANGUAGE, org.apache.axis.types.Language.class,
+                   new SimpleSerializerFactory(org.apache.axis.types.Language.class,
+                                             Constants.XSD_LANGUAGE),
+                   new SimpleDeserializerFactory(org.apache.axis.types.Language.class,
+                                             Constants.XSD_LANGUAGE)
+        );
+
         // a xsd:NmToken
         myRegister(Constants.XSD_NMTOKEN, org.apache.axis.types.NMToken.class,
                    new SimpleSerializerFactory(org.apache.axis.types.NMToken.class,
@@ -551,7 +551,7 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                                              Constants.XSD_SCHEMA)
         );
         
-        if(jaxrpc11Compliance) {
+        if (jaxrpc11Compliance) {
             // Table 4-1 of the JAXRPC 1.1 spec
             myRegisterSimple(Constants.XSD_UNSIGNEDINT, long.class);    
             myRegisterSimple(Constants.XSD_UNSIGNEDSHORT, int.class);    
