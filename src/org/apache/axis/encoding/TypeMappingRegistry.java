@@ -61,34 +61,76 @@ import org.apache.axis.utils.events.*;
 import org.apache.axis.message.*;
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
+import org.xml.sax.*;
 import java.io.*;
 
 /**
  * @author James Snell (jasnell@us.ibm.com)
  */
-public class TypeMappingRegistry implements Serializer, Deserializer { 
+public class TypeMappingRegistry implements Serializer { 
 
-    Hashtable s;
-    Hashtable d;
-    
-    public void addSerializer(Class _class, Serializer serializer) {
-        if (s == null) s = new Hashtable();
-        s.put(_class, serializer);
+    class SerializerDescriptor implements Serializable {
+        QName typeQName;
+        Serializer serializer;
+        SerializerDescriptor(QName typeQName, Serializer serializer)
+        {
+            this.typeQName = typeQName;
+            this.serializer = serializer;
+        }
     }
     
-    public void addDeserializer(QName qname, Deserializer deserializer) {
+    Hashtable s;
+    Hashtable d;
+    DeserializationContext context = null;
+    
+    public void setDeserializationContext(DeserializationContext context)
+    {
+        this.context = context;
+    }
+    
+    private String generateKey(QName qName)
+    {
+        return qName.getNamespaceURI() + " + " + qName.getLocalPart();
+    }
+    
+    public void addSerializer(Class _class, QName qName, Serializer serializer) {
+        if (s == null) s = new Hashtable();
+        s.put(_class, new SerializerDescriptor(qName, serializer));
+    }
+    
+    public void addDeserializerFactory(QName qname,
+                                       DeserializerFactory deserializerFactory) {
         if (d == null) d= new Hashtable();
-        d.put(qname, deserializer);
+        d.put(generateKey(qname), deserializerFactory);
     }
 
     public Serializer getSerializer(Class _class) {
-        if (s != null) return (Serializer)s.get(_class);
+        if (s == null)
+            return null;
+        SerializerDescriptor desc = (SerializerDescriptor)s.get(_class);
+        if (desc != null) return desc.serializer;
         return null;
     }
     
-    public Deserializer getDeserializer(QName qname) {
-        if (d != null) return (Deserializer)d.get(qname);
+    public QName getTypeQName(Class _class) {
+        if (s == null)
+            return null;
+        SerializerDescriptor desc = (SerializerDescriptor)s.get(_class);
+        if (desc != null) return desc.typeQName;
         return null;
+    }
+    
+    public DeserializerBase getDeserializer(QName qname) {
+        if (d == null)
+            return null;
+        
+        DeserializerFactory factory = (DeserializerFactory)d.get(generateKey(qname));
+        if (factory == null)
+            return null;
+        
+        DeserializerBase dSer = factory.getDeserializer();
+        dSer.setDeserializationContext(context);
+        return dSer;
     }
     
     public void removeSerializer(Class _class) {
@@ -136,24 +178,22 @@ public class TypeMappingRegistry implements Serializer, Deserializer {
         load(fis);
     }
 
-    public Element serialize(QName name, Object value, TypeMappingRegistry tmr, Document doc) {
+    public void serialize(QName name, Attributes attributes,
+                          Object value, SerializationContext context)
+        throws IOException
+    {
         if (value != null) {
             Class _class = value.getClass();
             Serializer ser = getSerializer(_class);
-            if (tmr == null) tmr = this;
-            return ser.serialize(name, value, tmr, doc);
+            if (ser != null) {
+                ser.serialize(name, attributes, value, context);
+            } else {
+                throw new IOException("No serializer found for class " + _class.getName());
+            }
         }
-        return null;
+        // !!! Write out a generic null, or get type info from somewhere else?
     }
 
-    public Object deserialize(Element element, TypeMappingRegistry tmr) {
-        QName q = new QName(element.getNamespaceURI(), element.getLocalName());
-        Deserializer des = getDeserializer(q);
-        if (tmr == null) tmr = this;
-        return des.deserialize(element, tmr);
-    }
-    
-    
     //public MessageElement serialize(QName name, Object value, NSStack nsStack, Message message) {
     //    if (value != null) {
     //        Class _class = value.getClass();

@@ -120,6 +120,13 @@ public class RPCParam extends MessageElement
         this.value = value;
     }
     
+    public RPCParam(String namespace, String name, Object value)
+    {
+        this.namespaceURI = namespace;
+        this.name = name;
+        this.value = value;
+    }
+    
     public void setRPCElement(RPCElement element)
     {
         myRPCElement = element;
@@ -142,8 +149,9 @@ public class RPCParam extends MessageElement
         // Look up type and return an appropriate deserializer
         if (typeQName != null) {
             deserializer = context.getDeserializer(typeQName);
-            if (deserializer != null)
+            if (deserializer != null) {
                 return deserializer;
+            }
         }
         
         // If we couldn't find one, just record...
@@ -153,7 +161,9 @@ public class RPCParam extends MessageElement
          * means)?  In that case we want an easy way to
          * squirt these SAX events to a deserializer.
          */
-        
+        if (DEBUG_LOG) {
+            System.err.println("Creating recorder for " + this.getName());
+        }
         value = new ElementRecorder();
         return (ElementRecorder)value;
     }
@@ -183,26 +193,34 @@ public class RPCParam extends MessageElement
     
     public void output(SerializationContext context) throws IOException
     {
-        AttributesImpl attrs = new AttributesImpl();
+        AttributesImpl attrs;
         if (deserializer != null) getValue();
         
-        if ((value != null) && (typeQName == null))
-            typeQName = context.getQNameForClass(value.getClass());
+        if (value instanceof ElementRecorder) {
+            try {
+                ((ElementRecorder)value).publishToHandler(new SAXOutputter(context));
+            } catch (SAXException ex) {
+                throw new IOException(ex.getMessage());
+            }
+            return;
+        } else {
+            if ((value != null) && (typeQName == null)) {
+                typeQName = context.getQNameForClass(value.getClass());
+            }
+        }
         
         if (attributes != null) {
             // Must be writing a message we parsed earlier, so just put out
             // what's already there.
-            for (int i = 0; i < attributes.getLength(); i++) {
-                attrs.addAttribute(attributes.getURI(i), attributes.getLocalName(i),
-                                   attributes.getQName(i), "CDATA",
-                                   attributes.getValue(i));
-            }
+            attrs = new AttributesImpl(attributes);
         } else {
             // Writing a message from memory out to XML...
             // !!! How do we set other attributes when serializing??
+            attrs = new AttributesImpl();
             
             ServiceDescription desc = getEnvelope().getServiceDescription();
             if ((desc == null) || desc.getSendTypeAttr()) {
+                
                 if (typeQName != null) {
                     attrs.addAttribute(Constants.URI_SCHEMA_XSI, "type", "xsi:type",
                                        "CDATA",
@@ -214,16 +232,10 @@ public class RPCParam extends MessageElement
                 attrs.addAttribute(Constants.URI_SCHEMA_XSI, "null", "xsi:null",
                                    "CDATA", "1");
         }
-        
-        context.startElement(new QName(getNamespaceURI(), getName()), attrs);
 
-        // Output the value...
-        if (value != null)
-            if (value instanceof ElementRecorder)
-                ((ElementRecorder)value).output(context);
-            else
-                context.writeString(value.toString());
+        if (typeQName == null)
+            typeQName = context.getQNameForClass(value.getClass());
         
-        context.endElement();
+        context.serialize(new QName(getNamespaceURI(), getName()), attrs, value);
     }
 }

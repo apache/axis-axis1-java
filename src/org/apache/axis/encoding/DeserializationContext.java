@@ -72,11 +72,12 @@ public class DeserializationContext
 {
     public SOAPSAXHandler baseHandler;
     public Hashtable idMappings = new Hashtable();
-    public TypeMapper typeMappings = new TypeMapper();
+    public TypeMappingRegistry mappingRegistry = new SOAPTypeMappingRegistry();
     
     public DeserializationContext(SOAPSAXHandler baseHandler)
     {
         this.baseHandler = baseHandler;
+        mappingRegistry.setDeserializationContext(this);
     }
     
     public void pushElementHandler(ContentHandler handler)
@@ -87,6 +88,19 @@ public class DeserializationContext
     public String getNamespaceURI(String prefix)
     {
         return (String)baseHandler.getNamespaceURI(prefix);
+    }
+    
+    public void setTypeMappingRegistry(TypeMappingRegistry reg)
+    {
+        mappingRegistry = reg;
+        if (reg != null) {
+            reg.setDeserializationContext(this);
+        }
+    }
+
+    public TypeMappingRegistry getTypeMappingRegistry()
+    {
+        return mappingRegistry;
     }
     
     public void registerID(String id, MessageElement element)
@@ -102,6 +116,6 @@ public class DeserializationContext
     
     public DeserializerBase getDeserializer(QName qName)
     {
-        return typeMappings.getDeserializer(qName);
+        return mappingRegistry.getDeserializer(qName);
     }
 }

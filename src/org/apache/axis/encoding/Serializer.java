@@ -58,15 +58,15 @@ package org.apache.axis.encoding;
 //import org.apache.axis.message.Message;
 //import org.apache.axis.message.MessageElement;
 //import org.apache.axis.utils.NSStack;
+import java.io.IOException;
 import org.apache.axis.utils.QName;
-import org.w3c.dom.Element;
-import org.w3c.dom.Document;
+import org.xml.sax.Attributes;
 
 /**
  * @author James Snell (jasnell@us.ibm.com)
  */
 public interface Serializer { 
-    
-    //public MessageElement serialize(QName name, Object value, NSStack nsStack, TypeMappingRegistry tmr, Message message);
-    public Element serialize(QName name, Object value, TypeMappingRegistry tmr, Document doc);
+    public void serialize(QName name, Attributes attributes,
+                          Object value, SerializationContext context)
+        throws IOException;
 }

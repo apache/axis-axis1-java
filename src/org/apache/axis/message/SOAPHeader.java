@@ -55,9 +55,11 @@
 
 package org.apache.axis.message ;
 
+import java.io.IOException;
 import java.util.* ;
 import org.apache.axis.* ;
 import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.encoding.SerializationContext;
 import org.xml.sax.Attributes;
 
 /** A simple header abstraction.  Extends MessageElement with header-specific
@@ -117,5 +119,10 @@ public class SOAPHeader extends MessageElement {
 
     public boolean isProcessed() {
         return( processed );
+    }
+
+    public void output(SerializationContext context) throws IOException
+    {
+        super.output(context);
     }
 };

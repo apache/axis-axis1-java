@@ -75,6 +75,7 @@ public class MessageElement
     protected String    namespaceURI ;
     protected AttributesImpl attributes;
     protected String    id;
+    protected String    href;
     protected boolean   isRoot = false;
     protected SOAPEnvelope message = null;
     protected DeserializationContext context = null;
@@ -123,6 +124,8 @@ public class MessageElement
         if (id != null) {
             context.registerID(id, this);
         }
+            
+        href = attributes.getValue(Constants.ATTR_HREF);
       }
     }
     

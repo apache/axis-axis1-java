@@ -74,80 +74,89 @@ import org.xml.sax.helpers.*;
 
 public class DeserializerBase extends DefaultHandler
 {
-    public static long STARTDOCUMENT  = 0x0002;
-    public static long ENDDOCUMENT    = 0x0004;
-    public static long STARTPREFIXMAP = 0x0008;
-    public static long ENDPREFIXMAP   = 0x0010;
-    public static long STARTELEMENT   = 0x0020;
-    public static long ENDELEMENT     = 0x0040;
-    public static long CHARACTERS     = 0x0080;
-    public static long WHITESPACE     = 0x0100;
-    public static long SKIPPEDENTITY  = 0x0200;
-    public static long PROCESSINGINST = 0x0400;
-    
-    private long allowedEvents = 0;
     protected Object value = null;
+    protected DeserializationContext context = null;
+    protected DeserializerBase parent = null;
     
     public Object getValue()
     {
         return value;
     }
     
-    protected void setAllowedEvents(long mask)
+    public void setDeserializationContext(DeserializationContext context)
     {
-        allowedEvents = mask;
+        this.context = context;
     }
     
+    public void setParent(DeserializerBase parent)
+    {
+        this.parent = parent;
+    }
+    
+    /** Deserialization structure handlers
+     */
+    public void onEndChild(String localName, DeserializerBase deserializer)
+        throws SAXException
+    {
+    }
+    
+    /** DEFAULT IMPLEMENTATIONS OF SAX EVENT HANDLERS
+     * 
+     * All of these throw errors at this level, so if you want to allow
+     * things like children, you need to override these methods in your
+     * deserializer.
+     */
     public void startDocument() throws SAXException {
-        if ((allowedEvents & STARTDOCUMENT) == 0)
-            throw new SAXException(
-                "StartDocument event not allowed in this context.");
+        throw new SAXException(
+            "StartDocument event not allowed in this context.");
     }
     
     public void endDocument() throws SAXException {
-        if ((allowedEvents & ENDDOCUMENT) == 0)
-            throw new SAXException(
-                "EndDocument event not allowed in this context.");
+        throw new SAXException(
+            "EndDocument event not allowed in this context.");
     }
     
     public void startPrefixMapping(String p1, String p2) throws SAXException {
-        if ((allowedEvents & STARTPREFIXMAP) == 0)
-            throw new SAXException(
-                "StartPrefixMapping event not allowed in this context.");
+        throw new SAXException(
+            "StartPrefixMapping event not allowed in this context.");
     }
     
     public void endPrefixMapping(String p1) throws SAXException {
-        if ((allowedEvents & ENDPREFIXMAP) == 0)
-            throw new SAXException(
-                "EndPrefixMapping event not allowed in this context.");
+        throw new SAXException(
+            "EndPrefixMapping event not allowed in this context.");
     }
     
     public void characters(char[] p1, int p2, int p3) throws SAXException {
-        if ((allowedEvents & CHARACTERS) == 0)
-            throw new SAXException(
-                "Characters event not allowed in this context.");
+        throw new SAXException(
+            "Characters event not allowed in this context.");
     }
     
     public void ignorableWhitespace(char[] p1, int p2, int p3) 
         throws SAXException
     {
-        if ((allowedEvents & WHITESPACE) == 0)
-            throw new SAXException(
-                "IgnorableWhitespace event not allowed in this context.");
+        throw new SAXException(
+            "IgnorableWhitespace event not allowed in this context.");
     }
- 
+    
     public void skippedEntity(String p1) throws SAXException {
-        if ((allowedEvents & SKIPPEDENTITY) == 0)
-            throw new SAXException(
-                "SkippedEntity event not allowed in this context.");
+        throw new SAXException(
+            "SkippedEntity event not allowed in this context.");
     }
     
     public void startElement(String namespace, String localName,
                              String qName, Attributes attributes)
         throws SAXException
     {
-        if ((allowedEvents & STARTELEMENT) == 0)
-            throw new SAXException(
-                "StartElement event not allowed in this context.");
+        throw new SAXException(
+            "StartElement event not allowed in this context.");
+    }
+
+    public void endElement(String namespace, String localName,
+                             String qName)
+        throws SAXException
+    {
+        if (parent != null) {
+            parent.onEndChild(localName, this);
+        }
     }
 }

@@ -91,4 +91,9 @@ public class CharactersEvent implements SAXEvent
     {
         context.writeChars(_characters, _start, _length);
     }
+    
+    public String toString()
+    {
+        return "[CharactersEvent '" + new String(_characters, _start, _length) + "']";
+    }
 }
