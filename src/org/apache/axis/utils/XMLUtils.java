@@ -70,7 +70,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
-import sun.misc.BASE64Encoder;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
@@ -91,6 +90,8 @@ import java.util.Stack;
 public class XMLUtils {
     protected static Log log =
         LogFactory.getLog(XMLUtils.class.getName());
+        
+    public static final String charEncoding = "ISO-8859-1";
 
     private static DocumentBuilderFactory dbf = initDOMFactory();
     private static SAXParserFactory       saxFactory;
@@ -550,23 +551,27 @@ public class XMLUtils {
         uconn.setDoOutput(false);
         uconn.setInstanceFollowRedirects(true);
         uconn.setUseCaches(false);
-        BASE64Encoder enc = new BASE64Encoder();
+
         // username/password info in the URL overrides passed in values 
+        String auth = null;
         if (userinfo != null) {
-            uconn.setRequestProperty("Authorization",
-                                     "Basic " + enc.encode(userinfo.getBytes("ISO-8859-1")));
+            auth = userinfo;
         } else if (username != null) {
-            String auth = username;
-            if (password != null) {
-                auth = username + ":" + password;
-            }
+            auth = (password == null) ? username : username + ":" + password;
+        }
+        
+        if (auth != null) {
             uconn.setRequestProperty("Authorization",
                                      "Basic " + 
-                                     enc.encode((auth).getBytes("ISO-8859-1")));
+                                     base64encode(auth.getBytes(charEncoding)));
         }
+        
         uconn.connect();
 
         return new InputSource(uconn.getInputStream());
     }
 
+    public static final String base64encode(byte[] bytes) {
+        return new String(Base64.encode(bytes));
+    }
 }

@@ -61,6 +61,7 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.encoding.Base64;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.XMLUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -289,10 +290,8 @@ public class HTTPSender extends BasicHandler {
                         + "User-Agent: AxisClient");
                 if ((tunnelUser != null) && (tunnelPassword != null)) {
                     // add basic authentication header for the proxy
-                    sun.misc.BASE64Encoder enc =
-                            new sun.misc.BASE64Encoder();
                     String encodedPassword =
-                            enc.encode((tunnelUser + ":"
+                            XMLUtils.base64encode((tunnelUser + ":"
                             + tunnelPassword).getBytes());
 
                     out.print("\nProxy-Authorization: Basic "
