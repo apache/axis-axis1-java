@@ -65,6 +65,7 @@ import org.w3c.dom.Document;
 
 import javax.naming.Reference;
 import javax.naming.Referenceable;
+import javax.naming.StringRefAddr;
 
 import javax.wsdl.Binding;
 import javax.wsdl.Definition;
@@ -79,6 +80,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -152,6 +154,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      */
     public Service(URL wsdlDoc, QName serviceName) throws ServiceException {
         engine = getAxisClient();
+        this.wsdlLocation = wsdlDoc;
         Document doc = XMLUtils.newDocument(wsdlDoc.toString());
         initService(doc, serviceName);
     }
@@ -170,6 +173,11 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
     public Service(String wsdlLocation, QName serviceName)
                            throws ServiceException {
         engine = getAxisClient();
+        try {
+            this.wsdlLocation = new URL(wsdlLocation);
+        }
+        catch (MalformedURLException mue) {
+        }
         try {
             // Start by reading in the WSDL using WSDL4J
             FileInputStream      fis = new FileInputStream(wsdlLocation);
@@ -215,7 +223,6 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
             reader.setFeature("javax.wsdl.verbose", false);
             Definition           def    = reader.readWSDL( null, doc );
 
-            this.wsdlLocation   = null ;
             this.wsdlDefinition = def ;
 
             // grrr!  Too many flavors of QName
@@ -466,7 +473,38 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      * @return Reference ...
      */
     public Reference getReference() {
-        return new Reference(this.getClass().getName());
+        String classname = this.getClass().getName();
+        Reference reference = new Reference(classname,
+                "org.apache.axis.client.ServiceFactory", null);
+        StringRefAddr addr = null;
+        if (!classname.equals("org.apache.axis.client.Service")) {
+            // This is a generated derived class.  Don't bother with
+            // all the Service instance variables.
+            addr = new StringRefAddr(
+                    ServiceFactory.SERVICE_CLASSNAME, classname);
+            reference.add(addr);
+        }
+        else {
+            if (wsdlLocation != null) {
+                addr = new StringRefAddr(
+                        ServiceFactory.WSDL_LOCATION, wsdlLocation.toString());
+                reference.add(addr);
+            }
+            QName serviceName = getServiceName();
+            if (serviceName != null) {
+                addr = new StringRefAddr(ServiceFactory.SERVICE_NAMESPACE,
+                        serviceName.getNamespaceURI());
+                reference.add(addr);
+                addr = new StringRefAddr(ServiceFactory.SERVICE_LOCAL_PART,
+                        serviceName.getLocalPart());
+                reference.add(addr);
+            }
+        }
+        if (maintainSession) {
+            addr = new StringRefAddr(ServiceFactory.MAINTAIN_SESSION, "true");
+            reference.add(addr);
+        }
+        return reference;
     }
 
     /**
