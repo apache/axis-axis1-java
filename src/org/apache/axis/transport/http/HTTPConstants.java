@@ -109,9 +109,9 @@ public class HTTPConstants {
     public static String MC_HTTP_SERVLETPATHINFO= "transport.http.servletPathInfo";
 
     /**
-     * @deprecated Should use org.apache.axis.client.Call.SOAPACTION_URI_PROPERTY instead.
+     * @deprecated Should use javax.xml.rpc.Call.SOAPACTION_URI_PROPERTY instead.
      */
-    public static String MC_HTTP_SOAPACTION = org.apache.axis.client.Call.SOAPACTION_URI_PROPERTY;
+    public static String MC_HTTP_SOAPACTION = javax.xml.rpc.Call.SOAPACTION_URI_PROPERTY;
 
     /** HTTP header field values
      */

@@ -82,6 +82,24 @@ import javax.xml.rpc.namespace.QName;
  */
 public interface Call {
 
+    // Constants for the standard properties
+    public static final String ENCODINGSTYLE_URI_PROPERTY =
+            "javax.xml.rpc.encodingstyle.namespace.uri";
+    public static final String ENDPOINT_ADDRESS_PROPERTY =
+            "javax.xml.rpc.service.endpoint.address";
+    public static final String OPERATION_STYLE_PROPERTY =
+            "javax.xml.rpc.soap.operation.style";
+    public static final String PASSWORD_PROPERTY =
+            "javax.xml.rpc.security.auth.password";
+    public static final String SESSION_MAINTAIN_PROPERTY =
+            "javax.xml.rpc.http.session.maintain";
+    public static final String SOAPACTION_URI_PROPERTY =
+            "javax.xml.rpc.soap.http.soapaction.uri";
+    public static final String SOAPACTION_USE_PROPERTY =
+            "javax.xml.rpc.soap.http.soapaction.use";
+    public static final String USERNAME_PROPERTY =
+            "javax.xml.rpc.security.auth.username";
+
     /**
      * Is the caller required to provide the parameter and return type
      * specification?  If true, then addParameter and setReturnType MUST be

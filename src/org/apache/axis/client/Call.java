@@ -121,7 +121,8 @@ import java.util.*;
  * It can be prefilled by a WSDL document (on the constructor to the Service
  * object) or you can fill in the data yourself.
  * <pre>
- * Standard properties defined by JAX-RPC
+ * Standard properties defined by JAX-RPC (NOTE!  These have been deprecated
+ * and will be going away in favor of the javax.xml.rpc.Call constants:
  *     USERNAME_PROPERTY        - User name for authentication
  *     PASSWORD_PROPERTY        - Password for authentication
  *     SESSION_PROPERTY         - Participate in a session with the endpoint?
@@ -186,20 +187,41 @@ public class Call implements javax.xml.rpc.Call {
     public static final String TRANSPORT_PROPERTY= "java.protocol.handler.pkgs";
 
     // Constants for the standard properties
+    /**
+     * @deprecated  Use javax.xml.rpc.Call.USERNAME_PROPERTY instead.
+     */
     public static final String USERNAME_PROPERTY =
-            "javax.xml.rpc.security.auth.username";
+            javax.xml.rpc.Call.USERNAME_PROPERTY;
+    /**
+     * @deprecated  Use javax.xml.rpc.Call.PASSWORD_PROPERTY instead.
+     */
     public static final String PASSWORD_PROPERTY =
-            "javax.xml.rpc.security.auth.password";
+            javax.xml.rpc.Call.PASSWORD_PROPERTY;
+    /**
+     * @deprecated  Use javax.xml.rpc.Call.SESSION_MAINTAIN_PROPERTY instead.
+     */
     public static final String SESSION_PROPERTY =
-            "javax.xml.rpc.http.session.maintain";
+            javax.xml.rpc.Call.SESSION_MAINTAIN_PROPERTY;
+    /**
+     * @deprecated  Use javax.xml.rpc.Call.OPERATION_STYLE_PROPERTY instead.
+     */
     public static final String OPERATION_STYLE_PROPERTY =
-            "javax.xml.rpc.soap.operation.style";
+            javax.xml.rpc.Call.OPERATION_STYLE_PROPERTY;
+    /**
+     * @deprecated  Use javax.xml.rpc.Call.SOAPACTION_USE_PROPERTY instead.
+     */
     public static final String SOAPACTION_USE_PROPERTY =
-            "javax.xml.rpc.soap.http.soapaction.use";
+            javax.xml.rpc.Call.SOAPACTION_USE_PROPERTY;
+    /**
+     * @deprecated  Use javax.xml.rpc.Call.SOAPACTION_URI_PROPERTY instead.
+     */
     public static final String SOAPACTION_URI_PROPERTY =
-            "javax.xml.rpc.soap.http.soapaction.uri";
+            javax.xml.rpc.Call.SOAPACTION_URI_PROPERTY;
+    /**
+     * @deprecated  Use javax.xml.rpc.Call.ENCODINGSTYLE_URI_PROPERTY instead.
+     */
     public static final String ENCODING_STYLE_PROPERTY =
-            "javax.xml.rpc.encodingstyle.namespace.uri";
+            javax.xml.rpc.Call.ENCODINGSTYLE_URI_PROPERTY;
 
     /**
      * A Hashtable mapping protocols (Strings) to Transports (classes)
@@ -285,7 +307,7 @@ public class Call implements javax.xml.rpc.Call {
             }
             setPassword((String) value);
         }
-        else if (name.equals(SESSION_PROPERTY)) {
+        else if (name.equals(SESSION_MAINTAIN_PROPERTY)) {
             if (!(value instanceof Boolean)) {
                 throw new IllegalArgumentException(
                         JavaUtils.getMessage("badProp00", new String[]
@@ -323,7 +345,7 @@ public class Call implements javax.xml.rpc.Call {
             }
             setSOAPActionURI((String) value);
         }
-        else if (name.equals(ENCODING_STYLE_PROPERTY)) {
+        else if (name.equals(ENCODINGSTYLE_URI_PROPERTY)) {
             if (!(value instanceof String)) {
                 throw new IllegalArgumentException(
                         JavaUtils.getMessage("badProp00", new String[]
@@ -362,7 +384,7 @@ public class Call implements javax.xml.rpc.Call {
             else if (name.equals(PASSWORD_PROPERTY)) {
                 return getPassword();
             }
-            else if (name.equals(SESSION_PROPERTY)) {
+            else if (name.equals(SESSION_MAINTAIN_PROPERTY)) {
                 return new Boolean(getMaintainSession());
             }
             else if (name.equals(OPERATION_STYLE_PROPERTY)) {
@@ -374,7 +396,7 @@ public class Call implements javax.xml.rpc.Call {
             else if (name.equals(SOAPACTION_URI_PROPERTY)) {
                 return getSOAPActionURI();
             }
-            else if (name.equals(ENCODING_STYLE_PROPERTY)) {
+            else if (name.equals(ENCODINGSTYLE_URI_PROPERTY)) {
                 return getEncodingStyle();
             }
             else if (name.equals(TRANSPORT_NAME)) {

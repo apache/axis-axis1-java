@@ -56,7 +56,6 @@
 package org.apache.axis ;
 
 import org.apache.axis.client.AxisClient;
-import org.apache.axis.client.Call;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.session.Session;
@@ -68,7 +67,10 @@ import org.apache.axis.description.ServiceDesc;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.xml.rpc.Call;
+
 import javax.xml.rpc.namespace.QName;
+
 import java.util.Hashtable;
 import java.io.File;
 
@@ -638,7 +640,7 @@ public class MessageContext {
             }
             setPassword((String) value);
         }
-        else if (name.equals(Call.SESSION_PROPERTY)) {
+        else if (name.equals(Call.SESSION_MAINTAIN_PROPERTY)) {
             if (!(value instanceof Boolean)) {
                 throw new IllegalArgumentException(
                         JavaUtils.getMessage("badProp00", new String[]
@@ -676,7 +678,7 @@ public class MessageContext {
             }
             setSOAPActionURI((String) value);
         }
-        else if (name.equals(Call.ENCODING_STYLE_PROPERTY)) {
+        else if (name.equals(Call.ENCODINGSTYLE_URI_PROPERTY)) {
             if (!(value instanceof String)) {
                 throw new IllegalArgumentException(
                         JavaUtils.getMessage("badProp00", new String[]
@@ -708,7 +710,7 @@ public class MessageContext {
             else if (name.equals(Call.PASSWORD_PROPERTY)) {
                 return getPassword();
             }
-            else if (name.equals(Call.SESSION_PROPERTY)) {
+            else if (name.equals(Call.SESSION_MAINTAIN_PROPERTY)) {
                 return new Boolean(getMaintainSession());
             }
             else if (name.equals(Call.OPERATION_STYLE_PROPERTY)) {
@@ -720,7 +722,7 @@ public class MessageContext {
             else if (name.equals(Call.SOAPACTION_URI_PROPERTY)) {
                 return getSOAPActionURI();
             }
-            else if (name.equals(Call.ENCODING_STYLE_PROPERTY)) {
+            else if (name.equals(Call.ENCODINGSTYLE_URI_PROPERTY)) {
                 return getEncodingStyle();
             }
             else if (bag == null) {
