@@ -70,6 +70,7 @@ import org.apache.axis.providers.java.RPCProvider;
 import org.apache.axis.providers.java.MsgProvider;
 
 import org.apache.axis.transport.http.* ;
+import org.apache.axis.transport.local.* ;
 
 /**
  *
@@ -138,7 +139,8 @@ public class DefaultHandlerRegistry extends SupplierRegistry {
 
     }
     else {
-      this.add( "HTTPSender", new HTTPDispatchHandler() );
+      this.add( "HTTPSender",  new HTTPDispatchHandler() );
+      this.add( "LocalSender", new LocalDispatchHandler() );
     }
 
     dontSave = false ;
