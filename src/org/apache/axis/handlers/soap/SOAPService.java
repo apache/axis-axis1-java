@@ -263,7 +263,7 @@ public class SOAPService extends SimpleTargetedChain
         return serviceDescription;
     }
 
-    public ServiceDesc getInitializedServiceDesc(MessageContext msgContext) {
+    public synchronized ServiceDesc getInitializedServiceDesc(MessageContext msgContext) {
         if (serviceDescription.getImplClass() == null) {
             String clsName = (String)getOption("className");
 
