@@ -99,8 +99,8 @@ public class EJBProvider extends RPCProvider
     public static final String jndiUsername = "jndiUser";
     public static final String jndiPassword = "jndiPassword";
     
-    private static final Class[] empty_class_array = new Class[0];
-    private static final Object[] empty_object_array = new Object[0];
+    protected static final Class[] empty_class_array = new Class[0];
+    protected static final Object[] empty_object_array = new Object[0];
     
     private static InitialContext cached_context = null;
 

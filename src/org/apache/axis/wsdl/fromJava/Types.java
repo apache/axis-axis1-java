@@ -314,7 +314,7 @@ public class Types {
      * @param javaType input javaType Class
      * @return QName
      */
-    private QName getTypeQName(Class javaType) {
+    public QName getTypeQName(Class javaType) {
         QName qName = null;
 
         // Use the typeMapping information to lookup the qName.
