@@ -74,7 +74,7 @@ import java.util.HashMap;
 public class Wsdl2javaAntTask extends Task
 {
     private boolean verbose = false;
-    private boolean skeleton = true ;
+    private boolean skeleton = false;
     private boolean testCase = false;
     private boolean noImports = false;
     private boolean all = false;
