@@ -115,6 +115,8 @@ public class HTTPCall {
     Vector               resArgs = null ;
     RPCArg               arg ;
 
+    body.setNamespace( "m" );
+    body.setNamespaceURI( action );
     reqEnv.addBody( body );
     msgContext.setProperty( "HTTP_URL", url );   // horrible name!
     msgContext.setProperty( "HTTP_ACTION", action );   // horrible name!
