@@ -76,6 +76,7 @@ public class EJBProvider extends RPCProvider
 {
     private static final String beanNameOption = "beanJndiName";
     private static final String homeInterfaceNameOption = "homeInterfaceName";
+    private static final String remoteInterfaceNameOption = "remoteInterfaceName";
     public static final String jndiContextClass = "jndiContextClass";
     public static final String jndiURL = "jndiURL";
     public static final String jndiUsername = "jndiUser";
@@ -161,7 +162,7 @@ public class EJBProvider extends RPCProvider
             value = (String)getOption(optionName);
         return value;
     }
-
+    
     /**
      * Get the class description for the EJB Remote Interface, which is what
      * we are interested in exposing to the world (i.e. in WSDL).
@@ -170,45 +171,57 @@ public class EJBProvider extends RPCProvider
      * @param beanJndiName the JNDI name of the EJB
      * @return the class info of the EJB remote interface
      */ 
-   protected Class getServiceClass(MessageContext msgContext, String beanJndiName) throws Exception {
+    protected Class getServiceClass(MessageContext msgContext, 
+                                    String beanJndiName) throws Exception 
+    {
         Handler serviceHandler = msgContext.getService();
-
-       // Get the EJB Home object from JNDI
-       Object ejbHome = getEJBHome(msgContext, beanJndiName);
+        Class interfaceClass = null;
         
-        String homeName = (String) getStrOption(homeInterfaceNameOption, 
-                                                serviceHandler);
-        if (homeName == null) 
-            throw new AxisFault(
-                    JavaUtils.getMessage("noOption00", 
-                                         homeInterfaceNameOption, 
-                                         msgContext.getTargetService()));
-       
-       // Load the Home class name given in the config file
-       Class homeClass = msgContext.getClassLoader().loadClass(homeName);
-
-       // Make sure the object we got back from JNDI is the same type
-       // as the what is specified in the config file
-       Object ehome = javax.rmi.PortableRemoteObject.narrow(ejbHome, homeClass);
-
-       // This code requires the use of ejb.jar, so we do the funny stuff below
-       //   EJBHome ejbHome = (EJBHome) ehome;
-       //   EJBMetaData meta = ejbHome.getEJBMetaData();
-       //   Class interfaceClass = meta.getRemoteInterfaceClass();
-       
-       // Invoke the getEJBMetaData method of the ejbHome class without actually
-       // touching any EJB classes (i.e. no cast to EJBHome)
-       Method getEJBMetaData = 
-               homeClass.getMethod("getEJBMetaData", empty_class_array);
-       Object metaData = 
-               getEJBMetaData.invoke(ehome, empty_object_array);
-       Method getRemoteInterfaceClass = 
-               metaData.getClass().getMethod("getRemoteInterfaceClass", 
-                                             empty_class_array);
-       Class interfaceClass = 
-               (Class) getRemoteInterfaceClass.invoke(metaData, 
-                                                      empty_object_array);
-       
+        // First try to get the interface class from the configuation
+        String remoteName = 
+                (String) getStrOption(remoteInterfaceNameOption, serviceHandler);
+        if(remoteName != null){
+            interfaceClass = msgContext.getClassLoader().loadClass(remoteName);
+        }
+        else
+        {
+            // Get the EJB Home object from JNDI
+            Object ejbHome = getEJBHome(msgContext, beanJndiName);
+            
+            String homeName = (String) getStrOption(homeInterfaceNameOption, 
+                                                    serviceHandler);
+            if (homeName == null) 
+                throw new AxisFault(
+                        JavaUtils.getMessage("noOption00", 
+                                             homeInterfaceNameOption, 
+                                             msgContext.getTargetService()));
+            
+            // Load the Home class name given in the config file
+            Class homeClass = msgContext.getClassLoader().loadClass(homeName);
+            
+            // Make sure the object we got back from JNDI is the same type
+            // as the what is specified in the config file
+            Object ehome = javax.rmi.PortableRemoteObject.narrow(ejbHome, homeClass);
+            
+            // This code requires the use of ejb.jar, so we do the stuff below
+            //   EJBHome ejbHome = (EJBHome) ehome;
+            //   EJBMetaData meta = ejbHome.getEJBMetaData();
+            //   Class interfaceClass = meta.getRemoteInterfaceClass();
+            
+            // Invoke the getEJBMetaData method of the ejbHome class without 
+            // actually touching any EJB classes (i.e. no cast to EJBHome)
+            Method getEJBMetaData = 
+                    homeClass.getMethod("getEJBMetaData", empty_class_array);
+            Object metaData = 
+                    getEJBMetaData.invoke(ehome, empty_object_array);
+            Method getRemoteInterfaceClass = 
+                    metaData.getClass().getMethod("getRemoteInterfaceClass", 
+                                                  empty_class_array);
+            interfaceClass = 
+                    (Class) getRemoteInterfaceClass.invoke(metaData, 
+                                                           empty_object_array);
+        }
+            
        // got it, return it
        return interfaceClass;
         
