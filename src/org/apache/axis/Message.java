@@ -56,6 +56,7 @@
 package org.apache.axis;
 
 import org.apache.axis.attachments.Attachments;
+import org.apache.axis.message.SOAPEnvelope;
 import org.apache.log4j.Category;
 
 import java.lang.reflect.Constructor;
@@ -265,6 +266,13 @@ public class Message {
         return mSOAPPart;
     }
 
+    /**
+     * Get this message's SOAPPart as a SOAPEnvelope 
+     */
+    public SOAPEnvelope getSOAPEnvelope() throws AxisFault {
+        return mSOAPPart.getAsSOAPEnvelope();
+    }
+    
     /**
      * Get the Attachments of this Message.
      * If this returns null, then NO ATTACHMENT SUPPORT EXISTS in this
