@@ -56,16 +56,15 @@
 package test.dynamic;
 
 import junit.framework.TestCase;
-
-import java.net.ConnectException;
-import java.net.URL;
-
 import org.apache.axis.AxisFault;
 
-import javax.xml.rpc.ServiceFactory;
-import javax.xml.rpc.Service;
-import javax.xml.rpc.Call;
 import javax.xml.namespace.QName;
+import javax.xml.rpc.Call;
+import javax.xml.rpc.Service;
+import javax.xml.rpc.ServiceFactory;
+import java.io.InterruptedIOException;
+import java.net.ConnectException;
+import java.net.URL;
 
 public class TestJAXRPCDII extends TestCase {
     public TestJAXRPCDII(String name) {
@@ -82,12 +81,14 @@ public class TestJAXRPCDII extends TestCase {
             Call[] calls = service.getCalls(new QName(wsdlNsp,"TemperaturePort"));
             assertTrue(calls != null);
             assertEquals(calls[0].getOperationName().getLocalPart(),"getTemp");
+            ((org.apache.axis.client.Call)calls[0]).setTimeout(new Integer(15*1000));
             Object ret = calls[0].invoke(new Object[]{"02067"});
             System.out.println("Temperature:" + ret);
         }  catch (java.rmi.RemoteException re) {
             if (re instanceof AxisFault) {
                 AxisFault fault = (AxisFault) re;
                 if (fault.detail instanceof ConnectException ||
+                    fault.detail instanceof InterruptedIOException ||
                     (fault.getFaultString().indexOf("Connection timed out") != -1) ||
                     fault.getFaultCode().getLocalPart().equals("HTTP")) {
                     System.err.println("getTemp HTTP error: " + fault);
