@@ -22,6 +22,7 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 
+import javax.xml.rpc.ServiceException;
 import java.io.File;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -264,7 +265,12 @@ public class AdminClientTask extends Task {
         }
 
         //now create a client and invoke it
-        AdminClient admin = new AdminClient();
+        AdminClient admin = null;
+        try {
+            admin = new AdminClient(true);
+        } catch (ServiceException e) {
+            throw new BuildException("failed to start the axis engine",e);
+        }
         String result = null;
         try {
             result = admin.process(args);
