@@ -1183,7 +1183,7 @@ public class Call implements javax.xml.rpc.Call {
      *
      * @return QName Fully qualified name of the port (or null if not set)
      *
-     * @deprected This is really the service's port name, not portType name.
+     * @deprecated This is really the service's port name, not portType name.
      *            Use getPortName instead.
      */
     public QName getPortTypeName() {
@@ -1197,7 +1197,7 @@ public class Call implements javax.xml.rpc.Call {
      *
      * @param portType Fully qualified name of the portType
      *
-     * @deprected This is really the service's port name, not portType name.
+     * @deprecated This is really the service's port name, not portType name.
      *            Use setPortName instead.
      */
     public void setPortTypeName(QName portType) {
