@@ -61,6 +61,7 @@ Copyright:
   <property name="src.dir" value="./src"/>
   <property name="docs.dir" value="./docs"/>
   <property name="samples.dir" value="./samples"/>
+  <property name="test.dir" value="./test"/>
 
   <property name="wsdl4j.jar" value="lib/wsdl4j.jar"/>
   <property name="log4j-core.jar" value="lib/log4j-core.jar"/>
@@ -153,6 +154,12 @@ Copyright:
       <srcfiles dir="${src.dir}/org/apache/axis/wsdl" includes="**/*.java"/>
     </uptodate>
 
+    <uptodate property="inout.uptodate" 
+              targetfile="${test.dir}/inout/InoutService.java">
+      <srcfiles dir="${samples.dir}/addr" includes="inout.wsdl"/>
+      <srcfiles dir="${src.dir}/org/apache/axis/wsdl" includes="**/*.java"/>
+    </uptodate>
+
   </target>
 
   <!-- =================================================================== -->
@@ -198,7 +205,7 @@ Copyright:
   <!-- =================================================================== -->
   <!-- Compiles the samples                                                -->
   <!-- =================================================================== -->
-  <target name="samples" depends="compile,buildAddrSample">
+  <target name="samples" depends="compile,buildAddrSample,buildInoutSample">
     <javac srcdir="." destdir="${build.dest}"
            debug="${debug}">
       <classpath>
@@ -206,6 +213,7 @@ Copyright:
         <path refid="classpath"/>
       </classpath>
       <include name="samples/**/*.java" />
+      <include name="test/**/*.java" />
       <exclude name="samples/**/*SMTP*.java" unless="smtp.present" />
       <exclude name="**/old/**/*.java" />
       <exclude name="samples/userguide/example2/*.java"/>
@@ -229,6 +237,21 @@ Copyright:
     </java>
   </target>
 
+  <target name="buildInoutSample" unless="inout.uptodate">
+    <antcall target="cleanInout"/>
+    <java classname="org.apache.axis.wsdl.Wsdl2java" dir="."
+          fork="true">
+      <classpath refid="classpath"/>
+      <classpath>
+        <pathelement location="${build.dest}"/>
+      </classpath>
+      <arg value="-s"/>
+      <arg value="test/inout/inout.wsdl"/>
+      <arg value="-p"/>
+      <arg value="test.inout"/>
+    </java>
+  </target>
+
   <target name="cleanAddr">
     <delete file="samples/addr/AddressBook.java" />
     <delete file="samples/addr/AddressBookService.java" />
@@ -242,6 +265,20 @@ Copyright:
     <delete file="samples/addr/undeploy.xml" />
   </target>
 
+  <target name="cleanInout">
+    <delete file="test/inout/Address.java"/>
+    <delete file="test/inout/AddressHolder.java"/>
+    <delete file="test/inout/Inout.java"/>
+    <delete file="test/inout/InoutSOAPBindingSkeleton.java"/>
+    <delete file="test/inout/InoutSOAPBindingStub.java"/>
+    <delete file="test/inout/InoutService.java"/>
+    <delete file="test/inout/Phone.java"/>
+    <delete file="test/inout/PhoneHolder.java"/>
+    <delete file="test/inout/TestFailed.java"/>
+    <delete file="test/inout/deploy.xml"/>
+    <delete file="test/inout/undeploy.xml"/>
+  </target>
+
   <!-- =================================================================== -->
   <!-- Compiles the JUnit testcases -->
   <!-- =================================================================== -->
@@ -253,25 +290,6 @@ Copyright:
 
   <target name="buildTest" if="junit.present" depends="compile,samples">
     <echo message="junit package found ..."/>
-
-    <!-- Tests are packaged as test.*, so source dir is main dir -->
-    <java classname="org.apache.axis.wsdl.Wsdl2java" dir="."
-          fork="true">
-      <classpath refid="classpath"/>
-      <classpath>
-        <pathelement location="${build.dest}"/>
-      </classpath>
-      <arg value="-s"/>
-      <arg value="test/inout/inout.wsdl"/>
-      <arg value="-p"/>
-      <arg value="test.inout"/>
-    </java>
-    <javac srcdir="${basedir}"
-      destdir="${build.dest}"
-      debug="on"> <!-- set debug on since it helps with line numbers when unit tests fail. -->
-      <include name="test/**/*.java" />
-      <classpath refid="test-classpath" />
-    </javac>
   </target>
 
 
@@ -431,5 +449,6 @@ Copyright:
     <delete dir="test-reports"/>
     <delete file="TEST-test.functional.FunctionalTests.txt"/>
     <antcall target="cleanAddr"/>
+    <antcall target="cleanInout"/>
   </target>
 </project>
