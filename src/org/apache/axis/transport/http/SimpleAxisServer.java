@@ -261,6 +261,11 @@ public class SimpleAxisServer implements Runnable {
                             fileName.toString();
                     msgContext.setProperty(MessageContext.TRANS_URL, url);
 
+                    String filePart = fileName.toString();
+                    if (filePart.startsWith("services/")) {
+                        msgContext.setTargetService(filePart.substring(9));
+                    }
+
                     if (authInfo.length() > 0) {
                         // Process authentication info
                         //authInfo = new StringBuffer("dXNlcjE6cGFzczE=");
