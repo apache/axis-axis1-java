@@ -48,7 +48,7 @@ public class JavaBeanFaultWriter extends JavaBeanWriter {
         temp.add("cause");
         temp.add("message");
         temp.add("localizedMessage");
-        temp.add("tackTrace");
+        temp.add("stackTrace");
         // AxisFault's properties.
         temp.add("faultActor");
         temp.add("faultCode");
