@@ -212,7 +212,7 @@ public class SAXOutputter extends DefaultHandler implements LexicalHandler
         try {
             context.writeString("<!--");
             context.writeChars(ch, start, length);
-            context.writeString(">");
+            context.writeString("-->");
         } catch (IOException e) {
             throw new SAXException(e);
         }
