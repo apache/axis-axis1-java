@@ -66,9 +66,9 @@ import java.io.IOException;
 * <serviceName>.java, <serviceName>TestCase.java.
 */
 public class JavaServiceWriter implements Generator {
-    Generator serviceIfaceWriter = null;
-    Generator serviceImplWriter = null;
-    Generator testCaseWriter = null;
+    protected Generator serviceIfaceWriter = null;
+    protected Generator serviceImplWriter = null;
+    protected Generator testCaseWriter = null;
 
     /**
      * Constructor.
