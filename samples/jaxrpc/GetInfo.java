@@ -93,8 +93,10 @@ public class GetInfo {
         call.addParameter("symbol", XMLType.XSD_STRING, ParameterMode.IN);
         call.addParameter("info", XMLType.XSD_STRING, ParameterMode.IN);
         call.setReturnType(XMLType.XSD_STRING);
-        call.setProperty(Call.USERNAME_PROPERTY, opts.getUser());
-        call.setProperty(Call.PASSWORD_PROPERTY, opts.getPassword());
+        if(opts.getUser()!=null)
+            call.setProperty(Call.USERNAME_PROPERTY, opts.getUser());
+        if(opts.getPassword()!=null)
+            call.setProperty(Call.PASSWORD_PROPERTY, opts.getPassword());
 
         String res = (String) call.invoke(new Object[] {args[0], args[1]});
 
