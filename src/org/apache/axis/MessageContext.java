@@ -252,7 +252,7 @@ public class MessageContext {
     protected static String systemTempDir= null;
     static {
             try{
-                systemTempDir=System.getProperty("axis.attachments.Directory");
+                systemTempDir=System.getProperty(AxisEngine.ENV_ATTACHMENT_DIR);
             } catch(Throwable t){systemTempDir= null;}
 
             if(systemTempDir== null)
