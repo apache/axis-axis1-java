@@ -86,6 +86,7 @@ Copyright:
              <fileset dir="${axis.home}" >
                <patternset>
                  <include name="test/wsdl/**/build.xml" />
+                 <include name="test/rpc/**/build.xml" />
                  <include name="test/functional/build.xml"/>
                  <exclude name="test/wsdl/attachments/**/build.xml" unless="attachments.present"/>
                  <exclude name="test/wsdl/interop3/**/build.xml" />
@@ -160,6 +161,8 @@ Copyright:
   <!-- Runs the JUnit functional test -->
   <!-- =================================================================== -->
   <target name="junit-functional" if="junit.present" depends="junit-functional-prepare">
+    <mkdir dir="${test.functional.reportdir}" />
+
     <java classname="org.apache.axis.client.AdminClient" fork="yes">
       <classpath refid="classpath" />
       <arg line="${deploy.xml.property}"/>

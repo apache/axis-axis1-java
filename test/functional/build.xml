@@ -75,6 +75,7 @@ Copyright:
    <path id="undeploy.xml.files">
        <fileset dir="${build.dir}">
           <include name="work/samples/**/undeploy.wsdd"/>
+          <include name="work/test/rpc/undeploy.wsdd"/>
        </fileset>
    </path>
 
