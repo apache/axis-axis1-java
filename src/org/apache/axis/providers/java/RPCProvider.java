@@ -71,66 +71,6 @@ import org.apache.axis.message.* ;
 public class RPCProvider extends JavaProvider {
     private static final boolean DEBUG_LOG = false;
     
-    /** Utility function to convert an Object to some desired Class.
-     * 
-     * Right now this only works for arrays -> Lists, but it might be
-     * expanded into a more general form (or pulled out into another
-     * class) later.
-     * 
-     * @param arg the array to convert
-     * @param destClass the actual class we want (must implement List)
-     */
-    public static Object convert(Object arg, Class destClass)
-    {
-      if (DEBUG_LOG) {
-        System.out.println("Converting " + arg + " to " + destClass.getName());
-      }
-      
-      if (!(arg instanceof List))
-        return arg;
-      
-      List list = (List)arg;
-      int length = list.size();
-      
-      if (destClass.isArray()) {
-        if (destClass.getComponentType().isPrimitive()) {
-          
-          Object array = Array.newInstance(destClass.getComponentType(), length);
-          for (int i = 0; i < length; i++) {
-            Array.set(array, i, list.get(i));
-          }
-          return array;
-          
-        } else {
-          Object [] array;
-          try {
-            array = (Object [])Array.newInstance(destClass.getComponentType(), length);
-          } catch (Exception e) {
-            return arg;
-          }
-          
-          return list.toArray(array);
-        }
-      }
-      
-      if (List.class.isAssignableFrom(destClass)) {
-        List newList = null;
-        try {
-          newList = (List)destClass.newInstance();
-        } catch (Exception e) {
-          // Couldn't build one for some reason... so forget it.
-          return arg;
-        }
-        
-        for (int j = 0; j < ((List)arg).size(); j++) {
-          newList.add(list.get(j));
-        }
-        return newList;
-      }
-      
-      return arg;
-    }
-    
     public void processMessage (MessageContext msgContext,
                                 String clsName,
                                 String methodName,
@@ -248,10 +188,7 @@ public class RPCProvider extends JavaProvider {
                 Object thisArg = argValues[i];
                 if (!params[i].isAssignableFrom(thisArg.getClass())) {
                   // Attempt conversion for each non-assignable argument
-                  Debug.Print(3, "Trying to convert " +
-                                 thisArg.getClass().getName() +
-                                 " to " + params[i].getName());
-                  Object newArg = convert(thisArg, params[i]);
+                  Object newArg = JavaUtils.convert(thisArg, params[i]);
                   if (newArg != thisArg)
                     argValues[i] = newArg;
                 }
