@@ -19,6 +19,13 @@
           <xsd:element name="sharedName" type="xsd:int"/>
         </xsd:all>
       </xsd:complexType>
+      <xsd:element name="myElement">
+        <xsd:complexType>
+          <all>
+            <element name="sharedName" type="xsd:int"/>
+          </all>
+        </xsd:complexType>
+      </xsd:element>
     </xsd:schema>
   </types>
 
@@ -27,6 +34,9 @@
 
   <message name="sharedName">
     <part name="sharedName" type="tns:sharedName"/>
+  </message>
+  <message name="literalMessage">
+    <part name="literalPart" element="tns:myElement"/>
   </message>
 
   <!-- port type declns -->
@@ -43,6 +53,22 @@
     <operation name="sharedName">
       <input name="empty" message="tns:empty"/>
       <output name="sharedName" message="tns:sharedName"/>
+    </operation>
+-->
+  </portType>
+  <portType name="literalPort">
+    <operation name="sharedName">
+      <input name="sharedName" message="tns:empty"/>
+      <output name="sharedName" message="tns:literalMessage"/>
+    </operation>
+<!-- a bug in WSDL4J doesn't allow overloaded operations 
+    <operation name="sharedName">
+      <input name="sharedName" message="tns:literalMessage"/>
+      <output name="empty" message="tns:empty"/>
+    </operation>
+    <operation name="sharedName">
+      <input name="empty" message="tns:empty"/>
+      <output name="sharedName" message="tns:literalMessage"/>
     </operation>
 -->
   </portType>
@@ -80,7 +106,7 @@
 -->
   </binding>
 
-  <binding name="sharedName" type="tns:sharedName">
+  <binding name="sharedName" type="tns:literalPort">
     <soap:binding
         style="rpc"
         transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -98,15 +124,15 @@
         <soap:body use="literal"/>
       </input>
       <output name="empty">
-        <soap:body use="encoded"/>
+        <soap:body use="literal"/>
       </output>
     </operation>
     <operation name="sharedName">
       <input name="empty">
-        <soap:body use="encoded"/>
+        <soap:body use="literal"/>
       </input>
       <output name="sharedName">
-        <soap:body use="encoded"/>
+        <soap:body use="literal"/>
       </output>
     </operation>
 -->
