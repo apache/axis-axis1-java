@@ -55,21 +55,17 @@
 package org.apache.axis.wsdl.toJava;
 
 import org.apache.axis.Constants;
-
-import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.Messages;
 import org.apache.axis.enum.Style;
-
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.CollectionTE;
 import org.apache.axis.wsdl.symbolTable.Element;
 import org.apache.axis.wsdl.symbolTable.MessageEntry;
 import org.apache.axis.wsdl.symbolTable.Parameter;
 import org.apache.axis.wsdl.symbolTable.Parameters;
+import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
-import org.apache.axis.wsdl.symbolTable.SchemaUtils;
-
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -79,20 +75,14 @@ import javax.wsdl.Input;
 import javax.wsdl.Message;
 import javax.wsdl.Operation;
 import javax.wsdl.Part;
-import javax.wsdl.BindingFault;
 import javax.wsdl.extensions.ExtensibilityElement;
 import javax.wsdl.extensions.soap.SOAPBody;
-import javax.wsdl.extensions.soap.SOAPFault;
-
 import javax.xml.namespace.QName;
 import javax.xml.rpc.holders.BooleanHolder;
-
 import java.io.File;
 import java.io.IOException;
-
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -225,7 +215,7 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
      * Given a fault message, return the fully qualified Java class name
      * of the exception to be generated from this fault
      * 
-     * @param message The WSDL fault message
+     * @param faultMessage The WSDL fault message
      * @param symbolTable the current symbol table
      * @return A Java class name for the fault
      */ 
@@ -238,7 +228,7 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
     /**
      * Given a fault message, return the XML type of the exception data.
      * 
-     * @param message The WSDL fault message object
+     * @param faultMessage The WSDL fault message object
      * @param symbolTable the current symbol table
      * @return A QName for the XML type of the data
      */ 
@@ -251,7 +241,7 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
     /**
      * Given a fault message, return TRUE if the fault is a complex type fault
      * 
-     * @param message The WSDL fault message object
+     * @param faultMessage The WSDL fault message object
      * @param symbolTable the current symbol table
      * @return A Java class name for the fault
      */ 
