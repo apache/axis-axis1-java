@@ -105,6 +105,7 @@ public class Types {
     HashMap schemaElementNames = null;
     HashMap schemaUniqueElementNames = null;
     List stopClasses = null;
+    List beanCompatErrs = new ArrayList();
 
     /**
      * This class serailizes a <code>Class</code> to XML Schema. The constructor
@@ -378,12 +379,18 @@ public class Types {
         } else {
             factory = (SerializerFactory)defaultTM.getSerializer(type);
         }
+
+        // If no factory is found, use the BeanSerializerFactory
+        // if applicable, otherwise issue errors and return anyType
         if (factory == null) {
-            // If no factory is found, try the BeanSerializerFactory if
-            // the type is not Throwable.  (There is no mapping for
-            // java types that extend Throwable.)
-            factory = new BeanSerializerFactory(type, getTypeQName(type));
+            if (isBeanCompatible(type, true)) {
+                factory = new BeanSerializerFactory(type, getTypeQName(type));
+            } else {
+                return Constants.NS_PREFIX_SCHEMA_XSD + ":" +
+                    Constants.XSD_ANYTYPE.getLocalPart();
+            }
         }
+
         if (factory != null) {
             ser = (Serializer)factory.getSerializerAs(Constants.AXIS_SAX);
         }
@@ -836,4 +843,74 @@ public class Types {
     {
         return docHolder.createElement(elementName);
     }
+    
+    /**
+     * isBeanCompatible
+     * @param type Class
+     * @param boolean issueMessages if not compatible
+     * Returns true if it appears that this class is a bean and
+     * can be mapped to a complexType
+     */
+    protected boolean isBeanCompatible(Class javaType,
+                                       boolean issueErrors) {
+
+        // Must be a non-primitive and non array
+        if (javaType.isArray() ||
+            javaType.isPrimitive()) {
+            if (issueErrors && 
+                !beanCompatErrs.contains(javaType)) {
+                log.error(JavaUtils.getMessage("beanCompatType00",
+                                               javaType.getName()));
+                beanCompatErrs.add(javaType);
+            }
+            return false;
+        }
+        
+        // Anything in the java or javax package that
+        // does not have a defined mapping is excluded.
+        if (javaType.getName().startsWith("java.") ||
+            javaType.getName().startsWith("javax.")) {
+            if (issueErrors && 
+                !beanCompatErrs.contains(javaType)) {
+                log.error(JavaUtils.getMessage("beanCompatPkg00",
+                                               javaType.getName()));
+                beanCompatErrs.add(javaType);
+            }
+            return false;
+        }
+
+        // Return true if appears to be an enum class
+        if (JavaUtils.isEnumClass(javaType)) {
+            return true;
+        }
+ 
+        // Must have a default public constructor if not
+        // Throwable
+        if (!java.lang.Throwable.class.isAssignableFrom(javaType)) {
+            try {
+                javaType.getConstructor(new Class[] {});
+            } catch (java.lang.NoSuchMethodException e) {
+                if (issueErrors && 
+                    !beanCompatErrs.contains(javaType)) {
+                    log.error(JavaUtils.getMessage("beanCompatConstructor00",
+                                                   javaType.getName()));
+                    beanCompatErrs.add(javaType);
+                }
+                return false;
+            }
+        }
+
+        // Make sure superclass is compatible
+        Class superClass = javaType.getSuperclass();
+        if (superClass != null &&
+            superClass != java.lang.Object.class &&
+            superClass != java.lang.Exception.class &&
+            superClass != org.apache.axis.AxisFault.class &&
+            (stopClasses == null ||
+             !(stopClasses.contains(superClass.getName()))) ) {
+            return isBeanCompatible(superClass, issueErrors);
+        }
+        return true;
+    }
+    
 }
