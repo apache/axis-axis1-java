@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001-2003 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001-2004 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -158,7 +158,7 @@ public class JavaInterfaceWriter extends JavaClassWriter {
     protected void writeOperation(PrintWriter pw, Operation operation)
             throws IOException {
 
-        writeComment(pw, operation.getDocumentationElement());
+        writeComment(pw, operation.getDocumentationElement(), true);
 
         Parameters parms = bEntry.getParameters(operation);
 

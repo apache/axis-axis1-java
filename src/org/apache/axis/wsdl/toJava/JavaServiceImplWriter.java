@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001-2003 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001-2004 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -131,7 +131,7 @@ public class JavaServiceImplWriter extends JavaClassWriter {
         Service service = sEntry.getService();
 
         // output comments
-        writeComment(pw, service.getDocumentationElement());
+        writeComment(pw, service.getDocumentationElement(), false);
 
         // Used to construct the getPort(Class) method.
         Vector getPortIfaces = new Vector();
@@ -301,7 +301,7 @@ public class JavaServiceImplWriter extends JavaClassWriter {
         // Write the private address field for this port
         pw.println();
         pw.println("    // " + Messages.getMessage("getProxy00", portName));
-        writeComment(pw, p.getDocumentationElement());
+        writeComment(pw, p.getDocumentationElement(), true);
         pw.println("    private java.lang.String " + portName + "_address = \""
                 + address + "\";");
 

@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001-2003 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001-2004 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -123,7 +123,7 @@ public class JavaServiceIfaceWriter extends JavaClassWriter {
     protected void writeFileBody(PrintWriter pw) throws IOException {
 
         // output comments
-        writeComment(pw, service.getDocumentationElement());
+        writeComment(pw, service.getDocumentationElement(), false);
 
         // get ports
         Map portMap = service.getPorts();
