@@ -116,6 +116,7 @@ public class ArraySerializer implements Serializer
             list = (Collection)value;
         }
 
+        // Get the componentType of the array/list
         Class componentType;
         if (list == null) {
             componentType = cls.getComponentType();
@@ -136,11 +137,25 @@ public class ArraySerializer implements Serializer
             dims += "[]";
         }
 
-
+        // Get the QName of the componentType.  
+        // If not found, look at the super classes
         componentQName = context.getQNameForClass(componentType);
-        if (componentQName == null)
+        if (componentQName == null) {
+            Class searchCls = componentType;
+            while(searchCls != null && componentQName == null) {
+                searchCls = searchCls.getSuperclass();
+                componentQName = context.getQNameForClass(searchCls);
+            }
+            if (componentQName != null) {
+                componentType = searchCls;
+            }
+        }
+
+        if (componentQName == null) {
             throw new IOException(
                     JavaUtils.getMessage("noType00", componentType.getName()));
+        }
+
         String prefix = context.getPrefixForURI(componentQName.getNamespaceURI());
         String compType = prefix + ":" + componentQName.getLocalPart();
         int len = (list == null) ? Array.getLength(value) : list.size();
