@@ -103,6 +103,7 @@ public class SimpleTargetedChain extends BasicHandler implements TargetedChain
                 requestHandler.undo( msgContext );
             throw (AxisFault) e ;
         }
+        msgContext.setPastPivot(true);
         try {
             if ( responseHandler != null )
                 responseHandler.invoke( msgContext );

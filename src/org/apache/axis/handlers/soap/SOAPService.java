@@ -161,6 +161,8 @@ public class SOAPService extends SimpleTargetedChain
                 msgContext.getTransportName() + ").",
                 null, null);
         
+        msgContext.setPastPivot(false);
+
         Handler h = getRequestHandler() ;
         if ( h != null ) {
             Debug.Print( 2, "Invoking request chain" );

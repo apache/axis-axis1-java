@@ -275,6 +275,14 @@ public class MessageContext {
     }
     
     /**
+     * Determin when we've past the pivot
+     */
+    public boolean getPastPivot()
+    {
+        return havePassedPivot;
+    }
+
+    /**
      * Indicate when we've past the pivot
      */
     public void setPastPivot(boolean pastPivot)
