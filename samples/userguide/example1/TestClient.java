@@ -73,6 +73,12 @@ public class TestClient
            call.setTargetEndpointAddress( new java.net.URL(endpoint) );
            call.setOperationName(new QName("http://soapinterop.org/", "echoString") );
 
+           // Call to addParameter/setReturnType as described in user-guide.html
+           //call.addParameter("testParam",
+           //                  org.apache.axis.Constants.XSD_STRING,
+           //                  javax.xml.rpc.ParameterMode.IN);
+           //call.setReturnType(org.apache.axis.Constants.XSD_STRING);
+
            String ret = (String) call.invoke( new Object[] { "Hello!" } );
 
            System.out.println("Sent 'Hello!', got '" + ret + "'");

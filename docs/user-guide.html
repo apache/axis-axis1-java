@@ -93,7 +93,8 @@ But Axis isn't just a SOAP engine -- it also includes:
 <ul>
   <li> a simple stand-alone server,
   <li> a server which plugs into servlet engines such as Tomcat,
-  <li> extensive support for the <i>Web Service Description Language</i>,
+  <li> extensive support for the <i>Web Service Description Language (WSDL)</i>,
+  <li> emitter tooling that generates Java classes from WSDL.
   <li> some sample programs, and
   <li> a tool for monitoring TCP/IP packets.
 </ul>
@@ -175,14 +176,14 @@ This release includes the following features:
 See the <a href="install.html">Axis Installation Guide</a>
 for instructions on installing Axis as a web application on your J2EE server.
 <p>Before running the examples in this guide, you'll need to make sure
-that your CLASSPATH includes (note:  if you build axis from a CVS checkout, these will be in xml-axis/java/build/lib instead of xml-axis-beta1/lib):
+that your CLASSPATH includes (note:  if you build axis from a CVS checkout, these will be in xml-axis/java/build/lib instead of xml-axis-beta2/lib):
 <ul>
-<li>xml-axis-beta1/lib/axis.jar</li>
-<li>xml-axis-beta1/lib/jaxrpc.jar</li>
-<li>xml-axis-beta1/lib/commons-logging.jar</li>
-<li>xml-axis-beta1/lib/tt-bytecode.jar</li>
-<li>xml-axis-beta1/lib/wsdl4j.jar</li>
-  <li>xml-axis-beta1/ <i><font color="#9966FF">(for the sample code)</font></i></li>
+<li>xml-axis-beta2/lib/axis.jar</li>
+<li>xml-axis-beta2/lib/jaxrpc.jar</li>
+<li>xml-axis-beta2/lib/commons-logging.jar</li>
+<li>xml-axis-beta2/lib/tt-bytecode.jar</li>
+<li>xml-axis-beta2/lib/wsdl4j.jar</li>
+  <li>xml-axis-beta2/ <i><font color="#9966FF">(for the sample code)</font></i></li>
   <li>A JAXP-1.1 compliant XML parser such as xerces or crimson</li>
 </ul>
 <h2>
@@ -251,12 +252,13 @@ for an overview.</i></p>
 In the above example, you can see that Axis automatically names the XML-encoded 
 arguments in the SOAP message "arg0", "arg1", etc. (in this case there's just 
 &quot;arg0&quot;) If you want to change this, it's easy! Before calling <tt>invoke()</tt> 
-you need to call <tt>addParameter</tt> for each parameter, like so: 
+you need to call <tt>addParameter</tt> for each parameter and <tt>setReturnType</tt> for the return, like so: 
 <pre class="example">&nbsp; call.addParameter("testParam",&nbsp;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; org.apache.axis.encoding.XMLType.XSD_STRING,
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; javax.xml.rpc.ParameterMode.IN);</pre>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; org.apache.axis.Constants.XSD_STRING,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; javax.xml.rpc.ParameterMode.IN);
+&nbsp; call.setReturnType(org.apache.axis.Constants.XSD_STRING);&nbsp;</pre>
 This will assign the name <b>testParam</b> to the 1st (and only) parameter
-on the invoke call. This will also define the type of the parameter (<tt>org.apache.axis.encoding.XMLType.XSD_STRING</tt>)
+on the invoke call. This will also define the type of the parameter (<tt>org.apache.axis.Constants.XSD_STRING</tt>)
 and whether it is an input, output or inout parameter - in this case its
 an input parameter. Now when you run the program you'll get a message that
 looks like this:
@@ -309,7 +311,7 @@ deserialize the &lt;result> element into? The answer is <b>metadata</b>
 - data about data. In this case, we need a <b>description</b> of the service
 that tells us what to expect as the return type. Here's how to do it on
 the client side in Axis:</p>
-<pre class="example">&nbsp; call.setReturnType( org.apache.axis.encoding.XMLType.XSD_STRING );</pre>
+<pre class="example">&nbsp; call.setReturnType( org.apache.axis.Constants.XSD_STRING );</pre>
 <p>This method will tell the Axis client that if the return element is not typed 
   then it should act as if the return value has an xsi:type attribute set to the 
   predefined SOAP String type. (You can see an example of this in action in the 
@@ -537,9 +539,10 @@ there also may be some custom XML schema types which you want to map into
 Java in particular ways. Axis gives you the ability to write custom serializers/deserializers,
 and some tools to help make your life easier when you do so.
 <p><i><font color="#FF0000">TBD - this section will be expanded in a future
-version! For now, take a look at the ArraySerializer, the BeanSerializer
-(both in org.apache.axis.encoding), and the DataSer example (in samples/encoding)
-to see how custom serializers work.</font></i>
+version! For now look at the DataSer/DataDeser 
+classes (in samples/encoding).  
+Also look at the BeanSerializer, BeanDeserializer, ArraySerializer, ArrayDeserializer and other classes in the org.apache.axis.encoding.ser package.
+</font></i>
 <h4>
 Deploying custom mappings - the &lt;typeMapping> tag</h4>
 Now that you've built your serializers and deserializers, you need to tell
@@ -552,13 +555,15 @@ tag in WSDD, which looks like this:
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/></pre>
 <p>This looks a lot like the &lt;beanMapping> tag we saw earlier, but there
 are three extra attributes. One, <b>serializer</b>, is the Java class name
-of the Serializer class which should be used to write the specified Java
-class (i.e. my.java.thingy) into XML. Two, <b>deserializer</b>, is
-the class name of a Deserializer <i>factory</i> that generates Deserializers
-which can be used to unmarshall XML into the correct Java class.  Finally, the encoding style, which is SOAP encoding.
+of the Serializer <i>factory</i> which gets the serializer to 
+be used to marshal an object of the specified Java class 
+(i.e. my.java.thingy) into XML. Two, <b>deserializer</b>, is
+the class name of a Deserializer <i>factory</i> that gets the deserializer
+to be used to unmarshall XML into the correct Java class.  Finally, the <b>encodingStyle</b>, which is SOAP encoding.
 <p>(The &lt;beanMapping> tag is really just shorthand for a &lt;typeMapping> tag 
-  with serializer="org.apache.axis.encoding.BeanSerializer", deserializer="org.apache.axis.encoding.BeanSerializer$BeanDeserFactory", 
-  and encodingStyle="http://schemas.xmlsoap.org/soap/encoding/", but clearly it 
+  with <tt>serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"</tt>,
+<tt>deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"</tt>, 
+  and <tt>encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"</tt>, but clearly it 
   can save a lot of typing!) 
 <h2>
 <a NAME="WSDL"></a>Using WSDL with Axis</h2>
@@ -696,6 +701,8 @@ public class Phone implements java.io.Serializable {
 &nbsp;&nbsp;&nbsp;&nbsp;public void setExchange(java.lang.String exchange) {...}
 &nbsp;&nbsp;&nbsp;&nbsp;public java.lang.String getNumber() {...}
 &nbsp;&nbsp;&nbsp;&nbsp;public void setNumber(java.lang.String number) {...}
+&nbsp;&nbsp;&nbsp;&nbsp;public boolean equals(Object obj) {...}
+&nbsp;&nbsp;&nbsp;&nbsp;public int hashCode() {...}
 }
 </pre>
 <h4>Mapping XML to Java types : Metadata</h4>
@@ -857,9 +864,10 @@ but you may also specify a different URL when you ask for the PortType.
 Server-side bindings</h4>
 Just as a stub is the client side of a Web Service represented in Java,
 a <b>skeleton</b> is a Java framework for the server side.&nbsp; To make
-skeleton classes, you just specify the "--skeleton" option to WSDL2Java.
+skeleton classes, you just specify the "--server-side --skeletonDeploy true" options
+to WSDL2Java.
 For instance, using the AddressBook.wsdl as we had above:
-<pre class="example">% java org.apache.axis.wsdl.WSDL2Java --skeleton AddressBook.wsdl</pre>
+<pre class="example">% java org.apache.axis.wsdl.WSDL2Java --server-side --skeletonDeploy true AddressBook.wsdl</pre>
 <p>You will see that WSDL2Java generates all the classes that were generated
 before for the client, but it generates a few new files:
 <br>&nbsp;
@@ -896,8 +904,46 @@ before for the client, but it generates a few new files:
 </tr>
 </table>
 
+<p>If you don't specify the "--skeletonDeploy true" option, a skeleton will not be
+generated.  Instead, the generated deploy.wsdd will indicate that the implementation
+class is deployed directly.  In such cases, the deploy.wsdd contains extra meta
+data describing the operations and parameters of the implementation class.
+
+Here is how you run WSDL2Java to deploy directly to the implementation:
+<pre class="example">% java org.apache.axis.wsdl.WSDL2Java --server-side AddressBook.wsdl</pre>
+<p>And here are the server side files that are generated:
+<br>&nbsp;
+<br>&nbsp;
+<table BORDER COLS=2 WIDTH="100%" >
+<tr>
+<td><b>WSDL clause</b></td>
+
+<td><b>Java class(es) generated</b></td>
+</tr>
+
+<tr>
+<td>For each binding</td>
+<td>An implementation template class</td>
+
+</tr>
+
+<tr>
+<td>For all services</td>
+
+<td>One deploy.wsdd file with operation meta data</td>
+</tr>
+
+<tr>
+<td></td>
+
+<td>One undeploy.wsdd file</td>
+</tr>
+</table>
+
 <h4>
 Bindings</h4>
+<h5>
+Skeleton Description (for Skeleton Deployment) </h5>
 The skeleton class is the class that sits between the AXIS engine and the
 actual service implementation.&nbsp; Its name is the binding name with
 suffix "Skeleton".&nbsp; For example, for the AddressBook binding, WSDL2Java
@@ -927,7 +973,9 @@ This implementation is either passed into the skeleton on construction,
 or an instance of the generated implementation is created.&nbsp; When the
 AXIS engine calls the skeleton's addEntry method, it simply delegates the
 invocation to the real implementation's addEntry method.
-<p>Besides the skeleton, WSDL2Java also generates an implementation template
+<h5>
+Implementation Template Description </h5>
+<p>WSDL2Java also generates an implementation template
 from the binding:
 <pre class="example">public class AddressBookSOAPBindingImpl implements AddressBook {
 <br>&nbsp;&nbsp;&nbsp; public void addEntry(String name, Address address)
@@ -937,7 +985,7 @@ from the binding:
 <p>This template could actually be used as a test implementation but, as
 you can see, it doesn't do anything.&nbsp; It is intended that the service
 writer fill out the implementation from this template.
-<p>When WSDL2Java is asked to generate the implementation template (via the --skeleton 
+<p>When WSDL2Java is asked to generate the implementation template (via the --server-side 
   flag), it will ONLY generate it if it does not already exist.&nbsp; If this 
   implementation already exists, it will not be overwritten. <br>
 <p>&nbsp;
@@ -966,7 +1014,7 @@ emit server-side bindings for web service
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 deploy skeleton (true) or implementation (false) in deploy.wsdd.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-Default is true.&nbsp; Assumes --server-side.
+Default is false.&nbsp; Assumes --server-side.
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -N, --NStoPkg &lt;argument>=&lt;value>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 mapping of namespace to package
@@ -996,10 +1044,10 @@ generate code for all elements, even unreferenced ones
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -D, --Debug
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 print debug information
-<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -T, --typeMappingVersion
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -F, --factory
 &lt;argument>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-indicate 1.1 or 1.2.&nbsp; The default is 1.2 (SOAP 1.2 JAX-RPC c
+name of the JavaWriterFactory class for extending Java generation functions
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 ompliant)
 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  -O, --timeout &lt;argument>
@@ -1140,6 +1188,10 @@ Print debug information, which currently is WSDL2Java's symbol table.
 <h4>
 -T, --typeMappingVersion &lt;argument></h4>
 Indicate 1.1 or 1.2.&nbsp; The default is 1.2 (SOAP 1.2 JAX-RPC compliant).
+<h4>
+-F, --factory &lt;argument></h4>
+Used to extend the functionality of the WSDL2Java emitter. The argument
+is the name of a class which extends JavaWriterFactory.
 <h4> -U, --user &lt;argument&gt;</h4>
 This username is used in resolving the WSDL-URI provided as the input to 
 WSDL2Java. &nbsp;If the URI contains a username, this will override the command
@@ -1224,9 +1276,17 @@ output WSDL filename</font></tt>
 <br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 service location url</font></tt>
 <br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
--s, --service &lt;argument></font></tt>
+-P, --portTypeName &lt;argument></font></tt>
 <br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-service name (obtained from --location if not specified)</font></tt>
+portType name (obtained from class-of-portType if not specified)</font></tt>
+<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-S, --serviceElementName &lt;argument></font></tt>
+<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+service element name (defaults to servicePortName value + "Service")</font></tt>
+<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-s, --servicePortName &lt;argument></font></tt>
+<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+service port name (obtained from --location if not specified)</font></tt>
 <br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 -n, --namespace &lt;argument></font></tt>
 <br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -1274,16 +1334,31 @@ class-of-portType.&nbsp; The debug information in the class is used</font></tt>
 to obtain the method parameter names, which are used to set</font></tt>
 <br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 the WSDL part names.</font></tt>
+<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-x, --exclude &lt;argument></font></tt>
+<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+space or comma separated list of methods not to export</font></tt>
+<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-c, --stopClasses &lt;argument></font></tt>
+<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+space or comma separated list of class names which stop inheritance search </font></tt>
+<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+if --all switch is enabled</font></tt>
+<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+-T, --typeMappingVersion &lt;argument></font></tt>
+<br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+indicate 1.1 or 1.2.  The default is 1.2 (SOAP 1.2 JAX-RPC compliant)</font></tt>
+
 <br><tt><font color="#993366">Details:</font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp; portType&nbsp;&nbsp;&nbsp; name=
-&lt;class-of-portType name></font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp; binding&nbsp;&nbsp;&nbsp;&nbsp;
-name= &lt;--service value>SoapBinding</font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp; service&nbsp;&nbsp;&nbsp;&nbsp;
-name= &lt;--service value>Service</font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp; port&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-name= &lt;--service value></font></tt>
-<br><tt><font color="#993366">&nbsp;&nbsp; address location= &lt;--location
+<br><tt><font color="#993366">&nbsp;&nbsp; portType element name=
+&lt.portTypeName value> OR &lt;class-of-portType name></font></tt>
+<br><tt><font color="#993366">&nbsp;&nbsp; binding element&nbsp;
+name= &lt;--servicePortName value>SoapBinding</font></tt>
+<br><tt><font color="#993366">&nbsp;&nbsp; service element&nbsp;
+name= &lt;--serviceElementName value> OR &lt;portTypeName value>Service</font></tt>
+<br><tt><font color="#993366">&nbsp;&nbsp; port element &nbsp;&nbsp;&nbsp;
+name= &lt;--servicePortName value></font></tt>
+<br><tt><font color="#993366">&nbsp;&nbsp; address location&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= &lt;--location
 value></font></tt>
 <br>&nbsp;
 <p><b>-h , --help</b>
@@ -1294,14 +1369,17 @@ a suitable default WSDL file is written into the current directory.
 <p><b>-l, --location &lt;location></b>
 <br>Indicates the url of the location of the service.&nbsp; The name after
 the last slash or backslash is the name of the service port (unless overriden
-by the -s option).&nbsp; The service port address location attributed is
+by the -s option).&nbsp; The service port address location attribute is
 assigned the specified value.
-<p><b>-s, -service &lt;name></b>
-<br>Indicates the name of the service.&nbsp; If not specified, the service
-name is derived from the --location value.&nbsp; The names of the WSDL
-binding, service, and port elements are derived from the service name as
-indicated in the <tt><font color="#993366">Details</font></tt> section
-above.
+<p><b>-p, --portTypeName &lt;name></b>
+<br>Indicates the name to use use for the portType element.  If not specified,
+the class-of-portType name is used. 
+<p><b>-s, -serviceElementName &lt;name></b>
+<br>Indicates the name of the service element.&nbsp; If not specified, the service
+element is the &lt;portTypeName>Service.&nbsp;
+<p><b>-s, -servicePortName &lt;name></b>
+<br>Indicates the name of the service port.&nbsp; If not specified, the service
+port name is derived from the --location value.&nbsp;
 <p><b>-n, --namespace &lt;target namespace></b>
 <br>Indicates the name of the target namespace of the WSDL.
 <p><b>-p, --PkgToNS &lt;package> &lt;namespace></b>
@@ -1342,21 +1420,27 @@ an implementation WSDL.
 file.&nbsp; If specified, Java2WSDL will produce interface and implementation
 WSDL files.&nbsp; If this option is used, the -w option is ignored.
 <p><b>-f, --factory &lt;class></b>
-<br>Use this expert option to extend and customize the WSDL2Java tool.
+<br>(No longer used.)
 <p><b>-i, --implClass &lt;impl-class></b>
-<br>The Java2WSLD tool uses method parameter names to construct the WSDL
-message part names.&nbsp; The message names are obtained from the debug
-information of the <b>&lt;class-of-portType> </b>class file.&nbsp; If that
-class file was compiled without debug information or if <b>&lt;class-of-portType></b>
-is an interface, the method parameter names are not available.&nbsp; In
-these cases, you can use the --implClass option to provide an alternative
-class from which to obtain method parameter names.&nbsp; The <b>&lt;impl-class></b>
-could be the actual implementation class, a stub class or a skeleton class.
+<br>
+Sometimes extra information is avalable in the implementation class file.
+Use this option to specify the implementation class.
+<p><b>-f, --factory &lt;class></b>
+<br>(No longer used.)
+<p><b>-x, --exclude &lt;list></b>
+<br>
+List of methods to not exclude from the wsdl file.
+<p><b>-c, --stopClasses &lt;list></b>
+<br>
+List of classes which stop the Java2WSDL inheritance search.
+<p><b>-T, --typeMappingVersion &lt;version></b>
+<br>
+Choose the default type mapping registry to use.  Either 1.1 or 1.2.
 <h4>
 Step 3: Create Bindings using WSDL2Java</h4>
 Use the generated WSDL file to build the appropriate client/server bindings
 for the web service (see <a href="#WSDL2Java: Building stubs, skeletons, and data">WSDL2Java</a>):
-<pre class="example">% java org.apache.axis.wsdl.WSDL2Java -o . -d Session -s&nbsp; -Nurn:Example6 samples.userguide.example6 wp.wsdl</pre>
+<pre class="example">% java org.apache.axis.wsdl.WSDL2Java -o . -d Session -s -S true&nbsp; -Nurn:Example6 samples.userguide.example6 wp.wsdl</pre>
 <p>This will generate the following files:
 <ul>
 <li>
@@ -1490,9 +1574,27 @@ JAX-RPC interfaces.  At the time of this writing, JAX-RPC is still in the public
 <li>org.apache.axis.description.TypeDesc</li>
 <li>org.apache.axis.description.AttributeDesc</li>
 <li>org.apache.aixs.description.ElementDesc</li>
+<li>org.apache.axis.encoding.DeserializationContext</li>
+<li>org.apache.axis.encoding.Deserializer</li>
+<li>org.apache.axis.encoding.DeserializerFactory</li>
+<li>org.apache.axis.encoding.DeserializerTarget</li>
+<li>org.apache.axis.encoding.FieldTarget</li>
+<li>org.apache.axis.encoding.MethodTarget</li>
 <li>org.apache.axis.encoding.SerializationContext</li>
+<li>org.apache.axis.encoding.Serializer</li>
+<li>org.apache.axis.encoding.SerializerFactory</li>
+<li>org.apache.axis.encoding.SimpleType</li>
+<li>org.apache.axis.encoding.Target</li>
+<li>org.apache.axis.encoding.TypeMapping</li>
+<li>org.apache.axis.encoding.TypeMappingRegistry</li>
+<li>org.apache.axis.encoding.ser.BaseDeserializerFactory</li>
+<li>org.apache.axis.encoding.ser.BaseSerializerFactory</li>
+<li>org.apache.axis.encoding.ser.BeanPropertyTarget</li>
+<li>org.apache.axis.encoding.ser.SimpleSerializer</li>
+<li>org.apache.axis.encoding.ser.SimpleDeserializer</li>
 <li>org.apache.axis.session.Session</li>
 <li>org.apache.axis.transport.http.SimpleAxisServer</li>
+<li>org.apache.axis.utils.BeanProperty</li>
 <li>org.apache.axis.wsdl.WSDL2Java</li>
 <li>org.apache.axis.wsdl.Java2WSDL</li>
 </ul>
