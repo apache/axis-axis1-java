@@ -58,6 +58,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.MessageContext;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.transport.http.HTTPConstants;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
 
 /** An <code>URLMapper</code> attempts to use the extra path info
@@ -72,7 +73,7 @@ public class URLMapper extends BasicHandler
 
     public void invoke(MessageContext msgContext) throws AxisFault
     {
-        category.debug("Enter: URLMapper::invoke" );
+        category.debug(JavaUtils.getMessage("enter00", "URLMapper::invoke") );
 
         /** If there's already a targetService then just return.
          */
@@ -86,7 +87,7 @@ public class URLMapper extends BasicHandler
             }
         }
 
-        category.debug("Exit : URLMapper::invoke" );
+        category.debug(JavaUtils.getMessage("exit00", "URLMapper::invoke") );
     }
 
     public void generateWSDL(MessageContext msgContext) throws AxisFault {
@@ -95,7 +96,7 @@ public class URLMapper extends BasicHandler
 
     public void undo(MessageContext msgContext)
     {
-        category.debug("Enter: URLMapper::undo" );
-        category.debug("Exit: URLMapper::undo" );
+        category.debug(JavaUtils.getMessage("enter00", "URLMapper::undo") );
+        category.debug(JavaUtils.getMessage("exit00", "URLMapper::undo") );
     }
 }

@@ -56,6 +56,7 @@
 package org.apache.axis.handlers;
 
 import org.apache.axis.MessageContext;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
 import org.apache.log4j.Priority;
 
@@ -81,7 +82,7 @@ public class LogMessage extends BasicHandler
     }
 
     public void undo(MessageContext msgContext) {
-        category.debug("Enter: LogMessage::undo" );
-        category.debug("Exit: LogMessage::undo" );
+        category.debug(JavaUtils.getMessage("enter00", "LogMessage::undo") );
+        category.debug(JavaUtils.getMessage("exit00", "LogMessage::undo") );
     }
 }

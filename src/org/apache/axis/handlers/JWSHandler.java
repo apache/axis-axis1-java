@@ -57,6 +57,7 @@ package org.apache.axis.handlers;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
 
 /** A <code>JWSHandler</code> sets the target service and JWS filename
@@ -73,7 +74,7 @@ public class JWSHandler extends BasicHandler
 
     public void invoke(MessageContext msgContext) throws AxisFault
     {
-        category.debug("Enter: JWSHandler::invoke" );
+        category.debug(JavaUtils.getMessage("enter00", "JWSHandler::invoke") );
 
         // FORCE the targetService to be JWS if the URL is right.
         String realpath = msgContext.getStrProp(Constants.MC_REALPATH);
@@ -82,7 +83,7 @@ public class JWSHandler extends BasicHandler
             msgContext.setTargetService(Constants.JWSPROCESSOR_TARGET) ;
         }
 
-        category.debug("Exit : JWSHandler::invoke" );
+        category.debug(JavaUtils.getMessage("exit00", "JWSHandler::invoke") );
     }
 
     public void generateWSDL(MessageContext msgContext) throws AxisFault {
@@ -91,7 +92,7 @@ public class JWSHandler extends BasicHandler
 
     public void undo(MessageContext msgContext)
     {
-        category.debug("Enter: JWSHandler::undo" );
-        category.debug("Exit: JWSHandler::undo" );
+        category.debug(JavaUtils.getMessage("enter00", "JWSHandler::undo") );
+        category.debug(JavaUtils.getMessage("exit00", "JWSHandler::undo") );
     }
 }

@@ -62,6 +62,7 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeader;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
 
 /**
@@ -73,7 +74,7 @@ public class DebugHandler extends BasicHandler {
             Category.getInstance(DebugHandler.class.getName());
 
     public void invoke(MessageContext msgContext) throws AxisFault {
-        category.debug("Enter: DebugHandler::invoke" );
+        category.debug(JavaUtils.getMessage("enter00", "DebugHandler::invoke") );
         try {
             Message       msg = msgContext.getRequestMessage();
 
@@ -85,10 +86,10 @@ public class DebugHandler extends BasicHandler {
                 Integer i = ((Integer)header
                              .getValueAsType(SOAPTypeMappingRegistry.XSD_INT));
                 if (i == null)
-                    throw new AxisFault("Couldn't convert value to int");
+                    throw new AxisFault(JavaUtils.getMessage("cantConvert03"));
 
                 int debugVal = i.intValue();
-                category.debug( "Setting debug level to: " + debugVal );
+                category.debug(JavaUtils.getMessage("debugLevel00", "" + debugVal) );
                 //Debug.setDebugLevel(debugVal);
                 header.setProcessed(true);
             }
@@ -97,12 +98,12 @@ public class DebugHandler extends BasicHandler {
             category.error( e );
             throw new AxisFault( e );
         }
-        category.debug("Exit: DebugHandler::invoke" );
+        category.debug(JavaUtils.getMessage("exit00", "DebugHandler::invoke") );
     }
 
     public void undo(MessageContext msgContext) {
-        category.debug("Enter: DebugHandler::undo" );
-        category.debug("Exit: DebugHandler::undo" );
+        category.debug(JavaUtils.getMessage("enter00", "DebugHandler::undo") );
+        category.debug(JavaUtils.getMessage("exit00", "DebugHandler::undo") );
     }
 
 };
