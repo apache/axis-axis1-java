@@ -124,7 +124,10 @@ public class SimpleAuthorizationHandler extends BasicHandler {
             return;
         }
 
-        SecurityProvider provider = SimpleAuthenticationHandler.provider;
+        SecurityProvider provider = (SecurityProvider)msgContext.getProperty("securityProvider");
+        if (provider == null)
+            throw new AxisFault("No security provider in MessageContext!");
+
         StringTokenizer st = new StringTokenizer(allowedRoles, ",");
         while (st.hasMoreTokens()) {
             String thisRole = st.nextToken();

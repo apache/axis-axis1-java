@@ -60,6 +60,7 @@ import java.util.* ;
 import org.apache.axis.* ;
 import org.apache.axis.security.simple.SimpleSecurityProvider;
 import org.apache.axis.security.AuthenticatedUser;
+import org.apache.axis.security.SecurityProvider;
 import org.apache.axis.utils.* ;
 import org.apache.axis.message.* ;
 import org.apache.log4j.Category;
@@ -79,16 +80,17 @@ public class SimpleAuthenticationHandler extends BasicHandler {
     static Category category =
             Category.getInstance(SimpleAuthenticationHandler.class.getName());
 
-    /** !!! Needs to be replaced with a configurable way of getting a
-     * security provider...
-     */
-    static SimpleSecurityProvider provider = new SimpleSecurityProvider();
-
     /**
      * Authenticate the user and password from the msgContext
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
         category.debug("Enter: SimpleAuthenticationHandler::invoke" );
+
+        SecurityProvider provider = (SecurityProvider)msgContext.getProperty("securityProvider");
+        if (provider == null) {
+            provider = new SimpleSecurityProvider();
+            msgContext.setProperty("securityProvider", provider);
+        }
 
         if (provider != null) {
             String  userID = (String) msgContext.getProperty( MessageContext.USERID );
@@ -103,7 +105,7 @@ public class SimpleAuthenticationHandler extends BasicHandler {
             String passwd = (String) msgContext.getProperty( MessageContext.PASSWORD );
             category.debug( "Pass: " + passwd );
 
-            AuthenticatedUser authUser = provider.authenticate(userID, passwd);
+            AuthenticatedUser authUser = provider.authenticate(msgContext);
 
             // if a password is defined, then it must match
             if ( authUser == null)
