@@ -79,8 +79,7 @@ public class WSDLUtils {
         for (ListIterator li = extensibilityList.listIterator(); li.hasNext();) {
             Object obj = li.next();
             if (obj instanceof SOAPAddress) {
-                return XMLUtils.xmlEncodeString(
-                        ((SOAPAddress) obj).getLocationURI());
+                return ((SOAPAddress) obj).getLocationURI();
             }
         }
         // didn't find it
