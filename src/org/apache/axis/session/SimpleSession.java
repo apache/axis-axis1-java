@@ -151,6 +151,15 @@ public class SimpleSession implements Session
         lastTouched = System.currentTimeMillis();
     }
 
+    /**
+     * invalidate the session
+     */
+    public void invalidate() {
+        rep = null;
+        lastTouched = System.currentTimeMillis();
+        timeout = -1;        
+    }
+    
     public long getLastAccessTime()
     {
         return lastTouched;

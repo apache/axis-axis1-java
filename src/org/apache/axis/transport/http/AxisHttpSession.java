@@ -166,6 +166,13 @@ public class AxisHttpSession implements Session
         // ???
     }
 
+    /**
+     * invalidate the session
+     */
+    public void invalidate() {
+        rep.invalidate();
+    }
+    
     protected void ensureSession() {
         if (rep == null) {
               rep = req.getSession();
