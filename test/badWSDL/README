@@ -1,0 +1,4 @@
+If you have a WSDL file which you expect WSDL2Java to fail on, and you want
+to test that failure, all you have to do is add your WSDL file to this
+directory.  This test picks up all WSDL files in this directory and runs them
+all through WSDL2Java, passing if WSDL2Java fails.
