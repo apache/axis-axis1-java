@@ -836,7 +836,7 @@ public class SerializationContextImpl implements SerializationContext
                 serialize(multirefQName, attrs, mri.value,
                           mri.xmlType,
                           true,
-                          null);   // mri.sendType
+                          Boolean.TRUE);   // mri.sendType
             }
 
             // Done processing the iterated values.  During the serialization
