@@ -1609,7 +1609,6 @@ public class SymbolTable {
             } // binding operations
 
             bEntry.setFaults(faultMap);
-            symbolTablePut(bEntry);
         }
     } // populateBindings
 
