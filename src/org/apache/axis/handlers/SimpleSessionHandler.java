@@ -70,6 +70,7 @@ import javax.xml.rpc.namespace.QName;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.HashSet;
 
 /** This handler uses SOAP headers to do simple session management.
  *
@@ -124,9 +125,12 @@ public class SimpleSessionHandler extends BasicHandler
     
     // Reap timed-out sessions on the first request after this many
     // milliseconds.
-    private long reapPeriodicity = 60000;
+    private long reapPeriodicity = 30000;
     private long lastReapTime = 0;
-    
+
+    // By default, sessions time out after 1 minute of inactivity
+    private int defaultSessionTimeout = 60;
+
     /**
      * Process a MessageContext.
      */
@@ -146,16 +150,25 @@ public class SimpleSessionHandler extends BasicHandler
         
         if (reap) {
             Set keys = activeSessions.keySet();
+            Set victims = new HashSet();
             Object key;
-            for (Iterator i = keys.iterator(); i.hasNext();) {
+            Iterator i;
+            for (i = keys.iterator(); i.hasNext();) {
                 key = i.next();
                 SimpleSession session = (SimpleSession)activeSessions.get(key);
-                if (session.getTimeout() >
+                if ((session.getTimeout() * 1000) >
                      (curTime - session.getLastAccessTime())) {
-                    category.debug(JavaUtils.getMessage("timeout00", "" + key));
-                    // Hashtable is synchronized, so this is safe.
-                    activeSessions.remove(key);
+                    category.debug(JavaUtils.getMessage("timeout00",
+                                                        key.toString()));
+
+                    // Don't modify the hashtable while we're iterating.
+                    victims.add(key);
                 }
+            }
+
+            // Now go remove all the victims we found during the iteration.
+            for (i = victims.iterator(); i.hasNext();) {
+                activeSessions.remove(i.next());
             }
         }
         
@@ -279,6 +292,7 @@ public class SimpleSessionHandler extends BasicHandler
     {
         Long id = new Long(curSessionID++);
         SimpleSession session = new SimpleSession();
+        session.setTimeout(defaultSessionTimeout);
         activeSessions.put(id, session);
         return id;
     }
@@ -286,5 +300,23 @@ public class SimpleSessionHandler extends BasicHandler
     public void undo(MessageContext msgContext) {
         category.debug(JavaUtils.getMessage("enter00", "SimpleSessionHandler::undo") );
         category.debug(JavaUtils.getMessage("exit00", "SimpleSessionHandler::undo") );
+    }
+
+    /**
+     * Set the reaper periodicity - convenience method for testing.
+     *
+     * !!! TODO: Should be able to set this via options on the Handler
+     * or perhaps the engine.
+     */
+    public void setReapPeriodicity(long reapTime)
+    {
+        reapPeriodicity = reapTime;
+    }
+
+    /**
+     * Set the default session timeout - again, for testing.
+     */
+    public void setDefaultSessionTimeout(int defaultSessionTimeout) {
+        this.defaultSessionTimeout = defaultSessionTimeout;
     }
 }

@@ -58,6 +58,7 @@ import org.apache.axis.Handler;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.deployment.DeployableItem;
 import org.apache.axis.deployment.DeploymentRegistry;
+import org.apache.axis.deployment.DeploymentException;
 import org.apache.axis.utils.LockableHashtable;
 import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Document;
@@ -129,9 +130,10 @@ public abstract class WSDDDeployableItem
         //!!! default namespace?
         
         String typeStr = e.getAttribute("type");
-        if (typeStr != null && !typeStr.equals(""))
+        if (typeStr != null && !typeStr.equals("")) {
             type = XMLUtils.getQNameFromString(typeStr, e);
-        
+        }
+
         // Figure out our scope - right now if a non-recognized scope
         // attribute appears, we will ignore it and use the default
         // scope.  Is this right, or should we throw an error?
