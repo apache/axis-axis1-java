@@ -652,11 +652,15 @@ public class Call implements javax.xml.rpc.Call {
     ////////////////////////////
 
     /**
-     * Is the caller required to provide the parameter and return type specification?  If true, then
-     * addParameter and setReturnType MUST be called to provide the meta data.  If false, then
-     * addParameter and setReturnType CANNOT be called because the Call object already has the meta
-     * data and the user is not allowed to mess with it.  These methods throw JAXRPCException if
-     * this method returns false.
+     * Is the caller required to provide the parameter and return type
+     * specification? 
+     * If true, then
+     *  addParameter and setReturnType MUST be called to provide the meta data.
+     * If false, then
+     *  addParameter and setReturnType SHOULD NOT be called because the 
+     *  Call object already has the meta data describing the 
+     *  parameters and return type. If addParameter is called, the specified 
+     *  parameter is added to the end of the list of parameters.
      */
     public boolean isParameterAndReturnSpecRequired(QName operationName) {
         return parmAndRetReq;
@@ -668,9 +672,9 @@ public class Call implements javax.xml.rpc.Call {
      *
      * Note: Not part of JAX-RPC specification.
      *
-     * @param paramName      Name that will be used for the parameter in the XML
-     * @param xmlType      XMLType of the parameter
-     * @param parameterMode  one of IN, OUT or INOUT
+     * @param paramName Name that will be used for the parameter in the XML
+     * @param xmlType XMLType of the parameter
+     * @param parameterMode one of IN, OUT or INOUT
      */
     public void addParameter(QName paramName, QName xmlType,
             ParameterMode parameterMode) {
@@ -689,31 +693,37 @@ public class Call implements javax.xml.rpc.Call {
      *
      * Note: Not part of JAX-RPC specification.
      *
-     * @param paramName      Name that will be used for the parameter in the XML
-     * @param xmlType      XMLType of the parameter
-     * @param javaType - The Java class of the parameter
-     * @param parameterMode  one of IN, OUT or INOUT
+     * @param paramName Name that will be used for the parameter in the XML
+     * @param xmlType XMLType of the parameter
+     * @param javaType The Java class of the parameter
+     * @param parameterMode one of IN, OUT or INOUT
      */
     public void addParameter(QName paramName, QName xmlType,
             Class javaType, ParameterMode parameterMode) {
-        if (parmAndRetReq) {
-            ParameterDesc param = new ParameterDesc();
-            param.setQName( paramName );
-            param.setTypeQName( xmlType );
-            param.setJavaType( javaType );
-            byte mode = ParameterDesc.IN;
-            if (parameterMode == ParameterMode.INOUT) {
-                mode = ParameterDesc.INOUT;
-            } else if (parameterMode == ParameterMode.OUT) {
-                mode = ParameterDesc.OUT;
-            }
-            param.setMode(mode);
+        // In order to allow any Call to be re-used, Axis
+        // chooses to allow parameters to be added when
+        // parmAndRetReq==false.  This does not conflict with
+        // JSR 101 which indicates an exception MAY be thrown.
 
-            operation.addParameter(param);
+        //if (parmAndRetReq) {
+        ParameterDesc param = new ParameterDesc();
+        param.setQName( paramName );
+        param.setTypeQName( xmlType );
+        param.setJavaType( javaType );
+        byte mode = ParameterDesc.IN;
+        if (parameterMode == ParameterMode.INOUT) {
+            mode = ParameterDesc.INOUT;
+        } else if (parameterMode == ParameterMode.OUT) {
+            mode = ParameterDesc.OUT;
         }
-        else {
-            throw new JAXRPCException(JavaUtils.getMessage("noParmAndRetReq"));
-        }
+        param.setMode(mode);
+        
+        operation.addParameter(param);
+        parmAndRetReq = true;
+        //}
+        //else {
+        //throw new JAXRPCException(JavaUtils.getMessage("noParmAndRetReq"));
+        //}
     }
 
     /**
@@ -746,8 +756,9 @@ public class Call implements javax.xml.rpc.Call {
      * @param javaType - The Java class of the parameter
      * @param parameterMode - Mode of the parameter-whether IN, OUT or INOUT
      * @exception JAXRPCException - if isParameterAndReturnSpecRequired returns
-     *                              false, then addParameter will throw
-     *                              JAXRPCException.
+     *                              false, then addParameter MAY throw
+     *                              JAXRPCException....actually Axis allows
+     *                              modification in such cases
      */
     public void addParameter(String paramName, QName xmlType,
                              Class javaType, ParameterMode parameterMode) {
@@ -788,15 +799,21 @@ public class Call implements javax.xml.rpc.Call {
      * @param type QName of the return value type.
      */
     public void setReturnType(QName type) {
-        if (parmAndRetReq) {
-            returnType = type ;
-            operation.setReturnType(type);
-            TypeMapping tm = getTypeMapping();
-            operation.setReturnClass(tm.getClassForQName(type));
-        }
-        else {
-            throw new JAXRPCException(JavaUtils.getMessage("noParmAndRetReq"));
-        }
+        // In order to allow any Call to be re-used, Axis
+        // chooses to allow setReturnType to be changed when
+        // parmAndRetReq==false.  This does not conflict with
+        // JSR 101 which indicates an exception MAY be thrown.
+
+        //if (parmAndRetReq) {
+        returnType = type ;
+        operation.setReturnType(type);
+        TypeMapping tm = getTypeMapping();
+        operation.setReturnClass(tm.getClassForQName(type));
+        parmAndRetReq = true;
+        //}
+        //else {
+        //throw new JAXRPCException(JavaUtils.getMessage("noParmAndRetReq"));
+        //}
     }
 
     /**
@@ -805,7 +822,8 @@ public class Call implements javax.xml.rpc.Call {
      * @param xmlType - QName of the data type of the return value
      * @param javaType - Java class of the return value
      * @exception JAXRPCException - if isParameterAndReturnSpecRequired returns
-     * false, then setReturnType will throw JAXRPCException.
+     * false, then setReturnType MAY throw JAXRPCException...Axis allows 
+     * modification without throwing the exception.
      */
     public void setReturnType(QName xmlType, Class javaType) {
         setReturnType(xmlType);
@@ -847,15 +865,17 @@ public class Call implements javax.xml.rpc.Call {
     /**
      * Clears the list of parameters.
      * @exception JAXRPCException - if isParameterAndReturnSpecRequired returns false, then
-     * removeAllParameters will throw JAXRPCException.
+     * removeAllParameters MAY throw JAXRPCException...Axis allows modification to
+     * the Call object without throwing an exception.
      */
     public void removeAllParameters() {
-        if (parmAndRetReq) {
-            operation = new OperationDesc();
-        }
-        else {
-            throw new JAXRPCException(JavaUtils.getMessage("noParmAndRetReq"));
-        }
+        //if (parmAndRetReq) {
+        operation = new OperationDesc();
+        parmAndRetReq = true;
+        //}
+        //else {
+        //throw new JAXRPCException(JavaUtils.getMessage("noParmAndRetReq"));
+        //}
     }
 
     /**
