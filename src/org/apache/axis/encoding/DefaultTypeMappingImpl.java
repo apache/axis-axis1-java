@@ -269,6 +269,15 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
 
         // See the SchemaVersion classes for where the registration of
         // dateTime (for 2001) and timeInstant (for 1999 & 2000) happen.
+        myRegister(Constants.XSD_DATE,       java.sql.Date.class,
+                   new DateSerializerFactory(java.sql.Date.class,
+                                             Constants.XSD_DATE),
+                   new DateDeserializerFactory(java.sql.Date.class,
+                                               Constants.XSD_DATE)
+        );
+
+        // See the SchemaVersion classes for where the registration of
+        // dateTime (for 2001) and timeInstant (for 1999 & 2000) happen.
         myRegister(Constants.XSD_DATE,       java.util.Date.class,
                    new DateSerializerFactory(java.util.Date.class,
                                              Constants.XSD_DATE),
@@ -587,6 +596,10 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                                              Constants.XSD_SCHEMA)
         );
         
+        myRegister(Constants.SOAP_ARRAY,     java.util.ArrayList.class,
+                   new ArraySerializerFactory(),
+                   new ArrayDeserializerFactory()
+        );
         // All array objects automatically get associated with the SOAP_ARRAY.
         // There is no way to do this with a hash table,
         // so it is done directly in getTypeQName.
@@ -598,10 +611,7 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                    new ArraySerializerFactory(),
                    new ArrayDeserializerFactory()
         );
-//        myRegister(Constants.SOAP_ARRAY,     java.util.ArrayList.class,
-//                   new ArraySerializerFactory(),
-//                   new ArrayDeserializerFactory(),
-//                   false);
+
         myRegister(Constants.SOAP_ARRAY,     Object[].class,
                    new ArraySerializerFactory(),
                    new ArrayDeserializerFactory()
@@ -609,6 +619,11 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
 
         // TODO: move it to the DefaultSOAPEncodingTypeMappingImpl class
         myRegister(Constants.SOAP_ARRAY12,     java.util.Collection.class,
+                   new ArraySerializerFactory(),
+                   new ArrayDeserializerFactory()
+        );
+        // TODO: move it to the DefaultSOAPEncodingTypeMappingImpl class
+        myRegister(Constants.SOAP_ARRAY12,     java.util.ArrayList.class,
                    new ArraySerializerFactory(),
                    new ArrayDeserializerFactory()
         );
