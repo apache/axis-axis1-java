@@ -359,7 +359,6 @@ public class AxisServlet extends HttpServlet
                     res.setContentType("text/html");
                     writer.println("<h1>" + req.getRequestURI() +
                             "</h1>");
-                    writer.println(configPath);
                     writer.println(
                             "<p>" +
                             JavaUtils.getMessage("axisService00") + "</p>");
@@ -548,7 +547,10 @@ public class AxisServlet extends HttpServlet
             log.debug(e);
             if ( e instanceof AxisFault ) {
                 AxisFault  af = (AxisFault) e ;
-                if ( "Server.Unauthorized".equals( af.getFaultCode() ) )
+                // Should really be doing this with explicit AxisFault
+                // sublcasses... --Glen
+                if ( "Server.Unauthorized".equals(
+                        af.getFaultCode().getLocalPart() ) )
                     res.setStatus( HttpServletResponse.SC_UNAUTHORIZED );
                 else
                     res.setStatus( HttpServletResponse.SC_INTERNAL_SERVER_ERROR );
