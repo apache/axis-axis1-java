@@ -240,7 +240,7 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                    new CalendarDeserializerFactory(java.util.Calendar.class,
                                                Constants.XSD_DATE3),
                    true);
-        myRegister(Constants.XSD_DATE1,       java.util.Calendar.class,
+        myRegister(Constants.XSD_DATE1,       java.util.Date.class,
                    new DateSerializerFactory(java.util.Date.class,
                                              Constants.XSD_DATE1),
                    new DateDeserializerFactory(java.util.Date.class,
