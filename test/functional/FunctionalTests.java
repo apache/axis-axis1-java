@@ -53,8 +53,12 @@ public class FunctionalTests extends TestCase
         suite.addTestSuite(TestMessageSample.class);
 
         // Attachments service test.
-        // Commented out for now since SimpleAxisServer doesn't support this
-        // suite.addTestSuite(TestAttachmentsSample.class);
+        try{
+          if( null !=  Class.forName("javax.activation.DataHandler") &&
+              null != Class.forName("javax.mail.internet.MimeMultipart")){
+                suite.addTestSuite(TestAttachmentsSample.class);
+          }
+        }catch( Throwable t){;}
 
         return suite;
     }

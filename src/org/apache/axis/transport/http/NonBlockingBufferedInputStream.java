@@ -198,5 +198,18 @@ public class NonBlockingBufferedInputStream extends InputStream {
     public void close() throws IOException {
         setInputStream(null);
     }
+
+    /**
+     * Just like read except byte is not removed from the buffer. 
+     * the data is buffered for efficiency.
+     * Was added to support multiline http headers. ;-)
+     * @return the byte read
+     */
+    public int peek() throws IOException {
+        if (in == null) return -1;
+        if (offset >= numbytes) refillBuffer();
+        if (offset >= numbytes) return -1;
+        return buffer[offset];
+    }
 }
 
