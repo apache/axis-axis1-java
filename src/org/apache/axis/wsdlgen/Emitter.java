@@ -544,7 +544,7 @@ public class Emitter {
                 offset = 1;
                 continue;
             }
-            writePartToMessage(def, msg, "arg" + (i - offset), parameters[i]);
+            writePartToMessage(def, msg, true, (i-offset), parameters[i], null); 
         }
 
         return msg;
@@ -567,7 +567,19 @@ public class Emitter {
         msg.setUndefined(false);
 
         Class type = method.getReturnType();
-        writePartToMessage(def, msg, method.getName().concat("Result"), type);
+        writePartToMessage(def, msg, false, -1, type, method.getName().concat("Result"));
+
+        Class[] parameters = method.getParameterTypes();
+        int offset = 0;
+        for(int i = 0, j = parameters.length; i < j; i++) {
+            // If the first param is a MessageContext, Axis will
+            // generate it for us - it shouldn't be in the WSDL.
+            if ((i == 0) && MessageContext.class.equals(parameters[i])) {
+                offset = 1;
+                continue;
+            }
+            writePartToMessage(def, msg, false, (i-offset), parameters[i], null); 
+        }
 
         return msg;
     }
@@ -576,17 +588,63 @@ public class Emitter {
      *
      * @param def  
      * @param msg             
-     * @param name String name of part             
-     * @param param  Class type of parameter             
+     * @param request     message is for a request
+     * @param num         parm number (-1 if return value)     
+     * @param param       Class type of parameter             
+     * @param paramName   optional name of parameter  
      * @throws Exception
      */
-    public void writePartToMessage(Definition def, Message msg, String name, Class param) throws Exception
+    public void writePartToMessage(Definition def, Message msg, boolean request, int num, Class param, String paramName) throws Exception
     {
+        // Determine if this is a Holder class.  
+        boolean holder = false;
+        if (num >= 0 &&
+            param.getName() != null &&
+            param.getName().endsWith("Holder")) {
+            // Holder is supposed to have a public value field.
+            // (It appears the Wsdl2Java emits a _value field ??)
+            java.lang.reflect.Field field;
+            try {
+                field = param.getField("value");
+            } catch (Exception e) {
+                field = null;
+            }
+            if (field == null) {
+                try {
+                    field = param.getField("_value");
+                } catch (Exception e) {
+                    field = null;
+                }
+            }
+            // If this is a holder, set the flag and change param to the held type.
+            if (field != null) {
+                holder = true;
+                param = field.getType();
+            }
+        }
+
+        // If Response message, only continue if holder or return
+        if (!request && num >= 0 && !holder)
+            return;
+
+        // Create a paramName
+        if (paramName == null) {
+            if (num == -1)
+                paramName = "return";
+            else if (holder)
+                paramName = "inOut" + num;
+            else
+                paramName = "in" + num;
+        }
+
+        // Create the Part
         Part part = def.createPart();
+
+        // Write the type representing the parameter type
         javax.wsdl.QName typeQName = types.writePartType(param);
         if (typeQName != null) {
             part.setTypeName(typeQName);
-            part.setName(name);
+            part.setName(paramName);
         }
         msg.addPart(part);
     }
