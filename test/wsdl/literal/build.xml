@@ -54,10 +54,10 @@ Copyright:
   <echo message="Compiling test.wsdl.literal"/>
 
 <!--
-    local version of the WSDL
-    <wsdl2java url="${axis.home}/test/wsdl/literal/SalesRankNPrice.wsdl"
--->
+    remote version of the WSDL
     <wsdl2java url="http://www.perfectxml.net/WebServices/SalesRankNPrice/BookService.asmx?WSDL"
+-->
+    <wsdl2java url="${axis.home}/test/wsdl/literal/SalesRankNPrice.wsdl"
                output="${axis.home}/build/work"
                verbose="no"
                serverSide="no"
