@@ -75,7 +75,7 @@ public class SOAPBodyElement extends MessageElement
          * element without an ID attribute (assuming that
          * ID'ed attributes are multi-ref encodings).
          */
-        if (getID() == null) {
+        if (context!= null && getID()==null) {
             MessageContext msgContext = context.getMessageContext();
             if (msgContext.getServiceHandler() == null) {
                 Debug.Print(2, "Dispatching to body namespace '",
