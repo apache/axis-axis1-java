@@ -251,7 +251,6 @@ public final class ClassUtils {
      * <li>the system classloader
      * <li>the class "clazz" itself
      * </ol>
-     * @todo we do not look at the context classloader: why is that? 
      * @param clazz class to use in the lookups
      * @param resource resource string to look for
      * @return input stream if found, or null
@@ -265,6 +264,10 @@ public final class ClassUtils {
         } else {
             // Try the system class loader.
             myInputStream = ClassLoader.getSystemClassLoader().getResourceAsStream(resource);
+        }
+        if (myInputStream == null && Thread.currentThread().getContextClassLoader() != null) {
+            // try the context class loader.
+            myInputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(resource);
         }
         if (myInputStream == null) {
             // if not found in classpath fall back to default
@@ -283,7 +286,7 @@ public final class ClassUtils {
      * @param classpath  the classpath String
      * @param parent  the parent ClassLoader, or null if the default is to be
      *     used
-     * @throws SecurityExcepiton if you don't have privilages to create
+     * @throws SecurityException if you don't have privilages to create
      *         class loaders
      * @throws IllegalArgumentException if your classpath string is silly
      */
@@ -291,7 +294,7 @@ public final class ClassUtils {
                                                 ClassLoader parent)
             throws SecurityException
     {
-        String[] names = classpath.split(System.getProperty("path.seperator"));
+        String[] names = StringUtils.split(classpath, System.getProperty("path.separator").charAt(0));
 
         URL[] urls = new URL[names.length];
         try {
@@ -302,7 +305,7 @@ public final class ClassUtils {
           // I don't think this is possible, so I'm throwing this as an
           // un-checked exception
           throw (IllegalArgumentException) new IllegalArgumentException(
-                  "Unable to parse classpath: " + classpath).initCause(e);
+                  "Unable to parse classpath: " + classpath);
         }
 
         return new URLClassLoader(urls, parent);
