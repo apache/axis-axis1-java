@@ -6,6 +6,8 @@ import org.apache.axis.Constants;
 import org.apache.axis.Handler;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.description.ServiceDesc;
+import org.apache.axis.description.OperationDesc;
 import org.apache.axis.providers.java.RPCProvider;
 import org.apache.axis.configuration.SimpleProvider;
 import org.apache.axis.encoding.ser.BeanSerializerFactory;
@@ -45,6 +47,9 @@ public class TestSerializedRPC extends TestCase {
 
     private SimpleProvider provider = new SimpleProvider();
     private AxisServer engine = new AxisServer(provider);
+    
+    String firstParamName = null;
+    String secondParamName = null;
 
     private String SOAPAction = "urn:reverse";
 
@@ -57,7 +62,7 @@ public class TestSerializedRPC extends TestCase {
         reverse.setOption("className", "test.RPCDispatch.Service");
         reverse.setOption("allowedMethods", "*");
         provider.deployService(SOAPAction, reverse);
-
+        
         // And deploy the type mapping
         Class javaType = Data.class;
         QName xmlType = new QName("urn:foo", "Data");
@@ -71,6 +76,20 @@ public class TestSerializedRPC extends TestCase {
             tmr.register(Constants.URI_CURRENT_SOAP_ENC, tm);
         }
         tm.register(javaType, xmlType, sf, df);
+
+        ServiceDesc desc = new ServiceDesc();
+        desc.loadServiceDescByIntrospection(Service.class, tm);
+        reverse.setServiceDescription(desc);
+        
+        // Now we've got the service description loaded up.  We're going to
+        // be testing parameter dispatch by name, so if debug info isn't
+        // compiled into the Service class, the names are going to be "in0",
+        // etc.  Make sure they match.
+        OperationDesc oper = desc.getOperationDescByName("concatenate");
+        assertNotNull(oper);
+        
+        firstParamName = oper.getParameter(0).getName();
+        secondParamName = oper.getParameter(1).getName();
     }
 
     /**
@@ -174,7 +193,9 @@ public class TestSerializedRPC extends TestCase {
      * Test out-of-order parameters, using the names to match
      */
     public void testOutOfOrderParams() throws Exception {
-        String body = "<a2>world!</a2><a1>Hello, </a1>";
+        String body = "<" + secondParamName + ">world!</" +
+                secondParamName + "><" + firstParamName + ">Hello, </" +
+                firstParamName + ">";
         String expected = "Hello, world!";
         assertEquals("Concatenated value was wrong",
                      expected,
