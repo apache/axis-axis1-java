@@ -110,7 +110,11 @@ public class ArraySerializer extends Deserializer
         if (DEBUG_LOG) {
             System.err.println("In ArraySerializer.startElement()");
         }
-        
+
+        if (attributes.getValue(Constants.URI_CURRENT_SCHEMA_XSI,  "nil") != null) {
+            return;
+        }
+
         QName arrayTypeValue = context.getQNameFromString(
                                   attributes.getValue(Constants.URI_SOAP_ENC,
                                                    Constants.ATTR_ARRAY_TYPE));
@@ -284,7 +288,11 @@ public class ArraySerializer extends Deserializer
         if (list == null) {
             componentType = cls.getComponentType();
         } else {
-            componentType = list.get(0).getClass();
+            if (list.isEmpty()) {
+                componentType = Object.class;
+            } else {
+                componentType = list.get(0).getClass();
+            }
         }
         
         QName componentQName = context.getQNameForClass(componentType);
