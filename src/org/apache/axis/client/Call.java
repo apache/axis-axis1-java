@@ -883,11 +883,18 @@ public class Call implements javax.xml.rpc.Call {
         if ( service == null )
             throw new JAXRPCException( JavaUtils.getMessage("noService04") );
 
-        Definition wsdlDefinition = service.getWSDLDefinition();
-        javax.wsdl.Service wsdlService = service.getWSDLService();
+        // Make sure we're making a fresh start.
+        this.setPortTypeName( portName );
+        this.setOperationName( opName );
+        this.setTargetEndpointAddress( (URL) null );
+        this.setEncodingStyle( null );
+        this.setReturnType( null );
+        this.removeAllParameters();
 
-        if ( wsdlDefinition == null )
-            throw new JAXRPCException( JavaUtils.getMessage("wsdlMissing00") );
+        javax.wsdl.Service wsdlService = service.getWSDLService();
+        // Nothing to do is the WSDL is not already set.
+        if(wsdlService == null)
+            return;
 
         Port port = wsdlService.getPort( portName.getLocalPart() );
         if ( port == null )
@@ -901,6 +908,7 @@ public class Call implements javax.xml.rpc.Call {
         List operations = portType.getOperations();
         if ( operations == null )
             throw new JAXRPCException( JavaUtils.getMessage("noOperation01", opName) );
+
         Operation op = null ;
         for ( int i = 0 ; i < operations.size() ; i++, op=null ) {
             op = (Operation) operations.get( i );
@@ -909,12 +917,8 @@ public class Call implements javax.xml.rpc.Call {
         if ( op == null )
             throw new JAXRPCException( JavaUtils.getMessage("noOperation01", opName) );
 
-        this.setPortTypeName( portName );
-        this.setOperationName( opName );
-
         // Get the URL
         ////////////////////////////////////////////////////////////////////
-        this.setTargetEndpointAddress( (URL) null );
         List list = port.getExtensibilityElements();
         for ( int i = 0 ; list != null && i < list.size() ; i++ ) {
             Object obj = list.get(i);
@@ -958,7 +962,6 @@ public class Call implements javax.xml.rpc.Call {
 
         // Get the body's namespace URI and encoding style
         ////////////////////////////////////////////////////////////////////
-        this.setEncodingStyle( null );
         BindingInput bIn = bop.getBindingInput();
         if ( bIn != null ) {
             list = bIn.getExtensibilityElements();
@@ -1001,7 +1004,6 @@ public class Call implements javax.xml.rpc.Call {
         javax.wsdl.Message message    = null ;
         List    parts      = null ;
 
-        this.removeAllParameters();
         if ( input   != null ) message = input.getMessage();
         if ( message != null ) parts   = message.getOrderedParts( paramOrder );
         if ( parts != null ) {
@@ -1037,7 +1039,6 @@ public class Call implements javax.xml.rpc.Call {
         if ( output  != null ) message = output.getMessage();
         if ( message != null ) parts   = message.getOrderedParts(null);
 
-        this.setReturnType( null ); //Make sure we're restarting from fresh.
 //      if (null != paramTypes) // attachments may have no parameters.
         if (operation != null && operation.getNumParams() > 0) // attachments may have no parameters.
           this.setReturnType( XMLType.AXIS_VOID );
@@ -1063,7 +1064,6 @@ public class Call implements javax.xml.rpc.Call {
                 break ;
             }
         }
-
     }
 
     /**
