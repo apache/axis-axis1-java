@@ -81,6 +81,7 @@ public class Message {
   private String currentForm ;
   private String messageType ;
   private ServiceDescription serviceDesc = null;
+  private MessageContext msgContext;
 
   /**
    * Just something to us working...
@@ -116,6 +117,16 @@ public class Message {
   public void setServiceDescription(ServiceDescription serviceDesc)
   {
       this.serviceDesc = serviceDesc;
+  }
+
+  public MessageContext getMessageContext()
+  {
+      if (msgContext == null) msgContext=new MessageContext();
+      return msgContext;
+  }
+  public void setMessageContext(MessageContext msgContext)
+  {
+      this.msgContext = msgContext;
   }
 
   public void setCurrentMessage(Object currMsg, String form) {
@@ -216,7 +227,7 @@ public class Message {
         StringWriter writer = new StringWriter();
         AxisFault env = (AxisFault)currentMessage;
         try {
-            env.output(new SerializationContext(writer));
+            env.output(new SerializationContext(writer, getMessageContext()));
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -229,7 +240,7 @@ public class Message {
         StringWriter writer = new StringWriter();
         SOAPEnvelope env = (SOAPEnvelope)currentMessage;
         try {
-            env.output(new SerializationContext(writer));
+            env.output(new SerializationContext(writer, getMessageContext()));
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -333,7 +344,8 @@ public class Message {
     // ThreadedSAXAdapter parser = 
     //    new ThreadedSAXAdapter(new org.apache.xerces.parsers.SAXParser(), is);
     SAXAdapter parser = 
-        new SAXAdapter(new org.apache.xerces.parsers.SAXParser(), is);
+        new SAXAdapter(new org.apache.xerces.parsers.SAXParser(), is, 
+                       getMessageContext());
     parser.setServiceDescription(serviceDesc);
     SOAPEnvelope env = parser.getEnvelope();
     env.setMessageType(messageType);

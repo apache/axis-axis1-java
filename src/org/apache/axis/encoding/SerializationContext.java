@@ -61,6 +61,7 @@ import org.xml.sax.*;
 import org.xml.sax.helpers.AttributesImpl;
 import org.apache.axis.message.*;
 import org.apache.axis.utils.*;
+import org.apache.axis.MessageContext;
 
 /** Manage a serialization, including keeping track of namespace mappings
  * and element stacks.
@@ -83,23 +84,18 @@ public class SerializationContext
     
     int lastPrefixIndex = 1;
     
-    private TypeMappingRegistry mappingRegistry = null;
+    private MessageContext msgContext;
     
-    public SerializationContext(Writer writer)
+    public SerializationContext(Writer writer, MessageContext msgContext)
     {
         this.writer = writer;
-    }
-    
-    public void setTypeMappingRegistry(TypeMappingRegistry reg)
-    {
-        mappingRegistry = reg;
+        this.msgContext = msgContext;
+        if (msgContext==null) throw new NullPointerException();
     }
     
     public TypeMappingRegistry getTypeMappingRegistry()
     {
-        if (mappingRegistry == null) 
-            mappingRegistry = new SOAPTypeMappingRegistry();
-        return mappingRegistry;
+        return msgContext.getTypeMappingRegistry();
     }
     
     public String getPrefixForURI(String uri)

@@ -1,5 +1,6 @@
 package test.encoding;
 
+import org.apache.axis.MessageContext;
 import org.apache.axis.message.*;
 import org.apache.axis.encoding.*;
 import org.apache.axis.utils.QName;
@@ -21,6 +22,7 @@ public class TestString extends TestCase {
     }
 
     private void runtest(String value, String expected) throws Exception {
+        MessageContext msgContext = new MessageContext();
         SOAPEnvelope msg = new SOAPEnvelope();
         RPCParam input = new RPCParam("urn:myNamespace", "testParam", value);
         
@@ -28,7 +30,7 @@ public class TestString extends TestCase {
         msg.addBodyElement(body);
         
         Writer stringWriter = new StringWriter();
-        SerializationContext context = new SerializationContext(stringWriter);
+        SerializationContext context = new SerializationContext(stringWriter, msgContext);
         
         msg.output(context);
         
@@ -36,7 +38,7 @@ public class TestString extends TestCase {
         
         StringReader reader = new StringReader(msgString);
         
-        SAXAdapter adapter = new SAXAdapter(new SAXParser(), new InputSource(reader));
+        SAXAdapter adapter = new SAXAdapter(new SAXParser(), new InputSource(reader), msgContext);
         SOAPEnvelope env = adapter.getEnvelope();
         RPCElement rpcElem = (RPCElement)env.getFirstBody();
         RPCParam output = rpcElem.getParam("testParam");

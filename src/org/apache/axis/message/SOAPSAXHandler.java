@@ -152,10 +152,10 @@ public abstract class SOAPSAXHandler extends DefaultHandler
     // Body factory. Only doing rpc bodies for right now...
     ElementFactory bodyFactory = new BodyFactory();
 
-    public SOAPSAXHandler()
+    public SOAPSAXHandler(MessageContext msgContext)
     {
         envelope = new SOAPEnvelope(this);
-        this.context = new DeserializationContext(this);
+        this.context = new DeserializationContext(this,msgContext);
 
         // just testing...
         headerRegistry.registerFactory("urn:myNS", "Debug", DebugHeader.getFactory());

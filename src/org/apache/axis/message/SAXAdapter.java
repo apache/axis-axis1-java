@@ -1,6 +1,7 @@
 package org.apache.axis.message;
 
 import org.xml.sax.*;
+import org.apache.axis.MessageContext;
 
 /** This class is an adapter for the Axis SAX-event system
  * which uses a SAX parser to parse on its own thread, synchronizing
@@ -14,8 +15,10 @@ public class SAXAdapter extends SOAPSAXHandler
     private XMLReader _parser;
     InputSource inputSource;
 
-    public SAXAdapter(XMLReader parser, InputSource inputSource)
+    public SAXAdapter(XMLReader parser, InputSource inputSource,
+                      MessageContext msgContext)
     {
+        super(msgContext);
         _parser = new org.apache.xerces.parsers.SAXParser();
         _parser.setContentHandler(this);
         
