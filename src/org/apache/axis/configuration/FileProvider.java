@@ -56,7 +56,6 @@
 package org.apache.axis.configuration;
 
 import org.apache.axis.AxisEngine;
-import org.apache.axis.AxisProperties;
 import org.apache.axis.ConfigurationException;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.Handler;
@@ -306,8 +305,9 @@ public class FileProvider implements EngineConfiguration {
      * Returns the global configuration options.
      */
     public Hashtable getGlobalOptions() throws ConfigurationException {
-        WSDDGlobalConfiguration globalConfig = deployment.
-            getGlobalConfiguration();
+        WSDDGlobalConfiguration globalConfig
+            = deployment.getGlobalConfiguration();
+            
         if (globalConfig != null)
             return globalConfig.getParametersTable();
 

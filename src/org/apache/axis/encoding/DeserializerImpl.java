@@ -55,7 +55,6 @@
 
 package org.apache.axis.encoding;
 
-import org.apache.axis.AxisProperties;
 import org.apache.axis.Constants;
 import org.apache.axis.message.EnvelopeHandler;
 import org.apache.axis.message.MessageElement;

@@ -62,7 +62,6 @@ import java.lang.reflect.Method;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import org.apache.axis.AxisProperties;
 import org.apache.axis.utils.JavaUtils;
 
 import org.apache.axis.components.logger.LogFactory;

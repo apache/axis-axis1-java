@@ -55,7 +55,6 @@
 
 package org.apache.axis.configuration;
 
-import org.apache.axis.AxisProperties;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.ConfigurationException;
 import org.apache.axis.utils.JavaUtils;
