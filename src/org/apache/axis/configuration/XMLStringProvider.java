@@ -105,7 +105,7 @@ public class XMLStringProvider extends FileProvider
     }
 
     public void configureEngine(AxisEngine engine) throws ConfigurationException {
-        myInputStream = new ByteArrayInputStream(xmlConfiguration.getBytes());
+        setInputStream(new ByteArrayInputStream(xmlConfiguration.getBytes()));
         super.configureEngine(engine);
     }
 }

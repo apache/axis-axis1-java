@@ -59,7 +59,7 @@ import javax.servlet.ServletContext;
 
 /**
  * This is a 'front' for replacement logic.
- * Use EngineConfigurationFactoryFinder.newServletFactory().
+ * Use EngineConfigurationFactoryFinder.newFactory(yourServletContext).
  * 
  * @author Richard A. Sitze
  * @author Glyn Normington (glyn@apache.org)

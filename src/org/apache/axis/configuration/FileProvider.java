@@ -100,19 +100,18 @@ public class FileProvider implements EngineConfiguration {
     protected static Log log =
         LogFactory.getLog(FileProvider.class.getName());
 
-    protected WSDDDeployment deployment = null;
+    private WSDDDeployment deployment = null;
 
-    private static final String CURRENT_DIR = ".";
-    protected String filename;
-    protected File configFile = null;
+    private String filename;
+    private File configFile = null;
 
-    protected InputStream myInputStream = null;
+    private InputStream myInputStream = null;
 
-    protected boolean readOnly = true;
+    private boolean readOnly = true;
 
     // Should we search the classpath for the file if we don't find it in
     // the specified location?
-    boolean searchClasspath = true;
+    private boolean searchClasspath = true;
 
     /**
      * Constructor which accesses a file in the current directory of the
@@ -169,7 +168,15 @@ public class FileProvider implements EngineConfiguration {
      * Note: The configuration will be read-only in this case!
      */
     public FileProvider(InputStream is) {
+        setInputStream(is);
+    }
+    
+    public void setInputStream(InputStream is) {
         myInputStream = is;
+    }
+    
+    private InputStream getInputStream() {
+        return myInputStream;
     }
 
     public WSDDDeployment getDeployment() {
@@ -193,28 +200,28 @@ public class FileProvider implements EngineConfiguration {
     public void configureEngine(AxisEngine engine)
         throws ConfigurationException {
         try {
-            if (myInputStream == null) {
+            if (getInputStream() == null) {
                 try {
-                    myInputStream = new FileInputStream(configFile);
+                    setInputStream(new FileInputStream(configFile));
                 } catch (Exception e) {
                     if (searchClasspath)
-                        myInputStream = ClassUtils.getResourceAsStream(engine.getClass(), filename);
+                        setInputStream(ClassUtils.getResourceAsStream(engine.getClass(), filename));
                 }
             }
 
-            if (myInputStream == null) {
+            if (getInputStream() == null) {
                 throw new ConfigurationException(
                         Messages.getMessage("noConfigFile"));
             }
 
             WSDDDocument doc = new WSDDDocument(XMLUtils.
-                                                newDocument(myInputStream));
+                                                newDocument(getInputStream()));
             deployment = doc.getDeployment();
 
             deployment.configureEngine(engine);
             engine.refreshGlobalOptions();
 
-            myInputStream = null;
+            setInputStream(null);
         } catch (Exception e) {
             throw new ConfigurationException(e);
         }

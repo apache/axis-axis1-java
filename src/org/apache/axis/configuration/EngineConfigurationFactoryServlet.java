@@ -145,38 +145,27 @@ public class EngineConfigurationFactoryServlet
      */
     private static EngineConfiguration getServerEngineConfig(ServletContext ctx) {
         /*
-         * Use the WEB-INF directory (so the config files can't get
-         * snooped by a browser)
+         * Use the WEB-INF directory
+         * (so the config files can't get snooped by a browser)
          */
-        String webInfPath = "/WEB-INF/";
-        String serverConfigFileName = webInfPath + SERVER_CONFIG_FILE;
+        String appWebInfPath = "/WEB-INF";
 
-        URL configURL;
-        try {
-            configURL = ctx.getResource(serverConfigFileName);
-        } catch (MalformedURLException e) {
-            configURL = null;
-        }
+        String realWebInfPath = ctx.getRealPath(appWebInfPath);
 
         FileProvider config = null;
-        if (configURL != null) {
-            config = new FileProvider(configURL.getFile().toString());
-        } else {
-            String realWebInfPath = ctx.getRealPath(webInfPath);
-            if (realWebInfPath != null  &&
-                (new File(realWebInfPath, SERVER_CONFIG_FILE)).exists()) {
+        if (realWebInfPath != null  &&
+            (new File(realWebInfPath, SERVER_CONFIG_FILE)).exists()) {
 
-                try {
-                    config = new FileProvider(realWebInfPath, SERVER_CONFIG_FILE);
-                } catch (ConfigurationException e) {
-                    log.error(Messages.getMessage("servletEngineWebInfError00"),
-                              e);
-                }
+            try {
+                config = new FileProvider(realWebInfPath, SERVER_CONFIG_FILE);
+            } catch (ConfigurationException e) {
+                log.error(Messages.getMessage("servletEngineWebInfError00"), e);
             }
         }
         
         if (config == null) {
-            InputStream is = ctx.getResourceAsStream(serverConfigFileName);
+            String appServerConfigFileName = appWebInfPath + "/" + SERVER_CONFIG_FILE;
+            InputStream is = ctx.getResourceAsStream(appServerConfigFileName);
             if (is != null) {
                 // FileProvider assumes responsibility for 'is':
                 // do NOT call is.close().
@@ -185,7 +174,7 @@ public class EngineConfigurationFactoryServlet
 
             if (config == null) {
                 log.error(Messages.getMessage("servletEngineWebInfError01",
-                                               serverConfigFileName));
+                                               appServerConfigFileName));
             }
         }
 
