@@ -477,7 +477,7 @@ public class SymbolTable {
     private void populate(URL context, Definition def, Document doc,
             String filename) throws IOException {
         if (doc != null) {
-            populateTypes(doc);
+            populateTypes(context, doc);
 
             if (addImports) {
                 // Add the symbols from any xsd:import'ed documents.
@@ -591,8 +591,8 @@ public class SymbolTable {
     /**
      * Populate the symbol table with all of the Types from the Document.
      */
-    private void populateTypes(Document doc) throws IOException {
-        addTypes(doc, ABOVE_SCHEMA_LEVEL);
+    private void populateTypes(URL context, Document doc) throws IOException {
+        addTypes(context, doc, ABOVE_SCHEMA_LEVEL);
     } // populateTypes
 
     /**
@@ -606,7 +606,7 @@ public class SymbolTable {
      */
     private static final int ABOVE_SCHEMA_LEVEL = -1;
     private static final int SCHEMA_LEVEL = 0;
-    private void addTypes(Node node, int level) throws IOException {
+    private void addTypes(URL context, Node node, int level) throws IOException {
         if (node == null) {
             return;
         }
@@ -693,6 +693,14 @@ public class SymbolTable {
                 // This is a wsdl part.  Create an TypeEntry representing the reference
                 createTypeFromRef(node);
             }
+            else if (isXSD && localPart.equals("include")) {
+                String includeName = Utils.getAttribute(node, "schemaLocation");
+                if (includeName != null) {
+                    URL url = getURL(context, includeName);
+                    Document includeDoc = XMLUtils.newDocument(url.toString());
+                    populate(url, (Definition) null, includeDoc, url.toString());
+                }
+            }
         }
 
         if (level == ABOVE_SCHEMA_LEVEL) {
@@ -707,7 +715,7 @@ public class SymbolTable {
         // Recurse through children nodes
         NodeList children = node.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
-            addTypes(children.item(i), level);
+            addTypes(context, children.item(i), level);
         }
     } // addTypes
 

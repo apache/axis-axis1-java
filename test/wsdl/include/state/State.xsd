@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<xsd:schema targetNamespace="urn:AddressFetcher2"
+              xmlns:xsd="http://www.w3.org/1999/XMLSchema">
+  <xsd:simpleType name="stateType">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="TX"/>                      
+      <xsd:enumeration value="IN"/>                    
+      <xsd:enumeration value="OH"/>                    
+    </xsd:restriction>
+  </xsd:simpleType>
+</xsd:schema>
