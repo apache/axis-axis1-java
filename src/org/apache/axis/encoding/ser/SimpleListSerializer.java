@@ -116,7 +116,7 @@ public class SimpleListSerializer implements SimpleValueSerializer {
           }
         } 
         else if (object instanceof QName) {
-          result.append( context.qName2String((QName)object) );
+          result.append(QNameSerializer.qName2String((QName)object, context));
         }
         else {
           result.append(object.toString());

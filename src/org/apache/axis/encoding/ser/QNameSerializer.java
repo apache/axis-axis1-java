@@ -46,10 +46,26 @@ public class QNameSerializer implements SimpleValueSerializer {
         context.endElement();
     }
 
-    public String getValueAsString(Object value, SerializationContext context) {
-        return context.qName2String((QName)value);
+    public static String qName2String(QName qname, 
+                                      SerializationContext context) {
+        String str = context.qName2String(qname);
+        // work around for default namespace
+        if (str == qname.getLocalPart()) {
+            String namespace = qname.getNamespaceURI();
+            if (namespace != null && namespace.length() > 0) {
+                String prefix = 
+                    context.getPrefixForURI(qname.getNamespaceURI(), 
+                                            null, true);
+                return prefix + ":" + str;
+            }
+        }
+        return str;
     }
 
+    public String getValueAsString(Object value, SerializationContext context) {
+        return qName2String((QName)value, context);
+    }
+    
     public String getMechanismType() { return Constants.AXIS_SAX; }
 
     /**
