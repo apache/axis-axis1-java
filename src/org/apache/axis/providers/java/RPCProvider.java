@@ -283,7 +283,11 @@ public class RPCProvider extends JavaProvider {
                     RPCParam param = new RPCParam(mName + "Result", objRes);
                     resBody.addParam(param);
                 }
+            } else if (method.getReturnType() != Void.TYPE) {
+                RPCParam param = new RPCParam(mName + "Result", objRes);
+                resBody.addParam(param);
             }
+
             resEnv.addBodyElement( resBody );
             resEnv.setEncodingStyleURI(Constants.URI_SOAP_ENC);
         }
