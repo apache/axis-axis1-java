@@ -686,4 +686,13 @@ public class RoundtripTestSoapBindingImpl implements RoundtripPortType {
 
     } // throwInvalidTradeExchange
 
+    public int getId(BondInvestment investment) 
+        throws java.rmi.RemoteException {
+        return investment.getId();
+    }
+    public int getId(Investment investment) 
+        throws java.rmi.RemoteException {
+        return investment.getId();
+    }
+
 } // End class RoundtripTypesTestSoapBindingImpl
