@@ -163,19 +163,14 @@ public class WSDDChain
     public Handler makeNewInstance(DeploymentRegistry registry)
         throws Exception
     {
-        try {
-            Chain         c        = new org.apache.axis.SimpleChain();
-
-            for (int n = 0; n < handlers.size(); n++) {
-                WSDDHandler handler = (WSDDHandler)handlers.get(n); 
-                c.addHandler(handler.getInstance(registry));
-            }
-
-            return c;
+        Chain         c        = new org.apache.axis.SimpleChain();
+        
+        for (int n = 0; n < handlers.size(); n++) {
+            WSDDHandler handler = (WSDDHandler)handlers.get(n); 
+            c.addHandler(handler.getInstance(registry));
         }
-        catch (Exception e) {
-            return null;
-        }
+        
+        return c;
     }
     
     /**
