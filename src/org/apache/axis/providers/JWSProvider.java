@@ -61,7 +61,4 @@ public class JWSProvider extends BasicProvider {
     
     public void invoke(MessageContext msgContext) {
     }
-
-    public void undo(MessageContext msgContext) {
-    }
 }

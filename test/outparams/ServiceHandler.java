@@ -68,11 +68,6 @@ public class ServiceHandler extends BasicHandler {
     public static final Float OUTPARAM2 = new Float(4.56);
     public static final Integer RESPONSE = new Integer(5);
 
-    /** Must implement this in subclasses.
-     */
-    public void undo(MessageContext msgContext) {
-    }
-
     public void invoke(MessageContext msgContext) throws AxisFault {
         SOAPEnvelope env = new SOAPEnvelope();
 

@@ -65,8 +65,5 @@ public class ComProvider extends BasicProvider {
     
     public void invoke(MessageContext msgContext) {
     }
-
-    public void undo(MessageContext msgContext) {
-    }
     
 }

@@ -209,12 +209,5 @@ public class AxisClient extends AxisEngine
                 "AxisClient::invoke") );
         }
     };
-
-    public void undo(MessageContext msgContext) {
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("enter00", "AxisClient::undo"));
-            category.debug(JavaUtils.getMessage("exit00", "AxisClient::undo") );
-        }
-    }
 }
 

@@ -130,17 +130,4 @@ public class SimpleAuthenticationHandler extends BasicHandler {
                 "SimpleAuthenticationHandler::invoke") );
         }
     }
-
-    /**
-     * Nothing to undo
-     */
-    public void undo(MessageContext msgContext) {
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("enter00", 
-                "SimpleAuthenticationHandler::undo") );
-        
-            category.debug(JavaUtils.getMessage("exit00", 
-                "SimpleAuthenticationHandler::undo") );
-        }
-    }
 };

@@ -96,7 +96,7 @@ public class SimpleChain extends BasicHandler implements Chain {
 
     /**
      * Iterate over the chain invoking each handler.  If there's a fault
-     * then call 'undo' for each completed handler in reverse order, then 
+     * then call 'onFault' for each completed handler in reverse order, then
      * rethrow the exception.
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
@@ -125,17 +125,22 @@ public class SimpleChain extends BasicHandler implements Chain {
         try {
             Vector localHandlers;
             // copies handlers to a local variable for thread-safe
+            // Unfortunately, localHandlers and handlers are references
+            // that point at the same Vector so this doesn't give
+            // thread safety.
             if ((localHandlers = handlers) != null) {
                 Enumeration enum = localHandlers.elements();
-                while (enum.hasMoreElements())
+                while (enum.hasMoreElements()) {
                     visitor.visit((Handler)enum.nextElement(), msgContext);
+                    i++;
+                }
             }
         }
         catch( Exception e ) {
-            // undo in reverse order - rethrow
+            // notify fault in reverse order and then rethrow
             category.error( e );
             while( --i >= 0 )
-                ((Handler) handlers.elementAt( i )).undo( msgContext );
+                ((Handler) handlers.elementAt( i )).onFault( msgContext );
             throw AxisFault.makeFault(e);
         }
 
@@ -146,20 +151,22 @@ public class SimpleChain extends BasicHandler implements Chain {
     }
 
     /**
-     * Undo all of the work this chain completed because some handler
-     * later on has faulted - in reverse order.
+     * Notify the handlers in this chain because some handler
+     * later on has faulted - in reverse order. If any handlers
+     * have been added since we visited the chain, they will get
+     * notified too!
      */
-    public void undo(MessageContext msgContext) {
+    public void onFault(MessageContext msgContext) {
         if (category.isDebugEnabled()) {
             category.debug(JavaUtils.getMessage("enter00", 
-                "SimpleChain::undo"));
+                "SimpleChain::onFault"));
         }
 
         for ( int i = handlers.size()-1 ; i >= 0 ; i-- )
-            ((Handler) handlers.elementAt( i )).undo( msgContext );
+            ((Handler) handlers.elementAt( i )).onFault( msgContext );
 
         if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("exit00", "SimpleChain::undo"));
+            category.debug(JavaUtils.getMessage("exit00", "SimpleChain::onFault"));
         }
     }
 

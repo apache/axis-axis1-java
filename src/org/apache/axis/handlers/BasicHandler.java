@@ -98,10 +98,9 @@ public abstract class BasicHandler implements Handler {
         return false;
     }
 
-    /** Must implement this in subclasses.
-     */
-    public abstract void undo(MessageContext msgContext);
-
+    public void onFault(MessageContext msgContext)
+    {
+    }
     /** Must implement this in subclasses.
      */
     public abstract void invoke(MessageContext msgContext) throws AxisFault;

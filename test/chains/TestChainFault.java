@@ -58,68 +58,125 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.apache.axis.InternalException;
 import org.apache.axis.SimpleChain;
 import org.apache.axis.Handler;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.MessageContext;
 import org.apache.axis.AxisFault;
 
-public class TestSimpleChain extends TestCase
+public class TestChainFault extends TestCase
 {
-    public TestSimpleChain (String name) {
+    public TestChainFault (String name) {
         super(name);
     }
 
     public static Test suite() {
-        return new TestSuite(TestSimpleChain.class);
+        return new TestSuite(TestChainFault.class);
     }
 
     protected void setup() {
     }
 
+    private class TestMessageContext extends MessageContext {
+
+        private int hcount = 0;
+
+        public TestMessageContext() {
+            // A null engine is good enough for this test
+            super(null);
+        }
+
+        public void incCount() {
+            hcount++;
+        }
+
+        public void decCount() {
+            hcount--;
+        }
+
+        public int count() {
+            return hcount;
+        }
+    }
+
     private class TestHandler extends BasicHandler {
-        public TestHandler() {}
-        public void invoke(MessageContext msgContext) throws AxisFault {}
+        private int chainPos;
+        private boolean doFault = false;
+
+        /* The following state really relates to a Message Context, so this Handler
+         * must not be used for more than one Message Context. However, it
+         * is sufficient for the purpose of this testcase.
+         */
+        private boolean invoked = false;
+
+        public TestHandler(int pos) {
+            chainPos = pos;
+        }
+
+        public void setToFault() {
+            doFault = true;
+        }
+
+        public void invoke(MessageContext msgContext) throws AxisFault {
+            TestMessageContext mc = (TestMessageContext)msgContext;
+            assertEquals("Handler.invoke out of sequence", chainPos, mc.count());
+            invoked = true;
+            if (doFault) {
+                throw new AxisFault();
+            }
+            mc.incCount();
+        }
+
+        public void onFault(MessageContext msgContext) {
+            TestMessageContext mc = (TestMessageContext)msgContext;
+            mc.decCount();
+            assertEquals("Handler.onFault out of sequence", chainPos, mc.count());
+            assertTrue("Handler.onFault protocol error", invoked);
+        }
     }
 
-    public void testSimpleChainAddHandler()
-    {
-        SimpleChain c = new SimpleChain();
-
-        Handler h1 = new TestHandler();
-        assertTrue("Empty chain has a handler", !c.contains(h1));
-
-        c.addHandler(h1);
-        assertTrue("Added handler not in chain", c.contains(h1));
-    }
-
-    public void testSimpleChainAddHandlerAfterInvoke()
+    public void testSimpleChainFaultAfterInvoke()
     {
         try {
             SimpleChain c = new SimpleChain();
-            Handler h1 = new TestHandler();
-            c.addHandler(h1);
-
-            // A null engine is good enough for this test
-            MessageContext mc = new MessageContext(null);
-            c.invoke(mc);
-
-            // while testing, disable noise
-            boolean oldLogging = InternalException.getLogging();
-            InternalException.setLogging(false);
-
-            try {
-                Handler h2 = new TestHandler();
-                c.addHandler(h2);
-                assertTrue("Handler added after chain invoked", false);
-            } catch (Exception e) {
-                // Correct behaviour. Exact exception isn't critical
+            
+            for (int i = 0; i < 5; i++) {
+                c.addHandler(new TestHandler(i));
             }
 
-            // resume noise
-            InternalException.setLogging(oldLogging);
-        } catch (AxisFault af) {
+            TestMessageContext mc = new TestMessageContext();
+            c.invoke(mc);
+            c.onFault(mc);
+            assertEquals("Some onFaults were missed", mc.count(), 0);
+
+        } catch (Exception ex) {
+            assertTrue("Unexpected exception", false);
+        }
+    }
+
+    public void testSimpleChainFaultDuringInvoke()
+    {
+        try {
+            SimpleChain c = new SimpleChain();
+            
+            for (int i = 0; i < 5; i++) {
+                TestHandler th = new TestHandler(i);
+                if (i == 3) {
+                    th.setToFault();
+                }
+                c.addHandler(th);
+            }
+            
+
+            TestMessageContext mc = new TestMessageContext();
+            try {
+                c.invoke(mc);
+                assertTrue("Testcase error - didn't throw fault", false);
+            } catch (AxisFault f) {
+                assertEquals("Some onFaults were missed", mc.count(), 0);
+            }
+
+        } catch (Exception ex) {
             assertTrue("Unexpected exception", false);
         }
     }

@@ -125,7 +125,4 @@ public class FileSender extends BasicHandler {
         throw new AxisFault("timeout");
 
   }
-
-  public void undo(MessageContext msgContext) {
-  }
 }

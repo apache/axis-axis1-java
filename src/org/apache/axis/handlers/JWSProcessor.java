@@ -259,14 +259,6 @@ public class JWSProcessor extends BasicHandler
         invokeImpl(msgContext, true);
     }
 
-    public void undo(MessageContext msgContext)
-    {
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("enter00", "JWSProcessor::undo"));
-            category.debug(JavaUtils.getMessage("exit00", "JWSProcessor::undo"));
-        }
-    }
-
     private String getDefaultClasspath(MessageContext msgContext)
     {
         StringBuffer classpath = new StringBuffer();

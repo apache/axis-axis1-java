@@ -111,8 +111,6 @@ public class SOAPService extends SimpleTargetedChain
     private class SOAPRequestHandler extends BasicHandler {
         public SOAPRequestHandler() {}
 
-        public void undo(MessageContext msgContext) {}
-
         public void invoke(MessageContext msgContext) throws AxisFault {
             // Do SOAP semantics here
             if (category.isDebugEnabled()) {

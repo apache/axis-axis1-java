@@ -95,12 +95,4 @@ public class JWSHandler extends BasicHandler
     public void generateWSDL(MessageContext msgContext) throws AxisFault {
         invoke(msgContext);
     }
-
-    public void undo(MessageContext msgContext)
-    {
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("enter00", "JWSHandler::undo"));
-            category.debug(JavaUtils.getMessage("exit00", "JWSHandler::undo"));
-        }
-    }
 }

@@ -16,6 +16,7 @@ public class PackageTests
         TestSuite suite = new TestSuite("All axis Chain tests");
 
         suite.addTest(TestSimpleChain.suite());
+        suite.addTest(TestChainFault.suite());
         return suite;
     }
 }

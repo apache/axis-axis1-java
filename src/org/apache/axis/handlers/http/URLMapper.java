@@ -93,10 +93,4 @@ public class URLMapper extends BasicHandler
     public void generateWSDL(MessageContext msgContext) throws AxisFault {
         invoke(msgContext);
     }
-
-    public void undo(MessageContext msgContext)
-    {
-        category.debug(JavaUtils.getMessage("enter00", "URLMapper::undo") );
-        category.debug(JavaUtils.getMessage("exit00", "URLMapper::undo") );
-    }
 }

@@ -86,8 +86,6 @@ public class SimpleTargetedChain extends SimpleChain implements TargetedChain
    private class PivotIndicator extends BasicHandler {
        public PivotIndicator() {}
 
-       public void undo(MessageContext msgContext) {}
-
        public void invoke(MessageContext msgContext) throws AxisFault {
            msgContext.setPastPivot(true);
        }

@@ -80,9 +80,4 @@ public class LogMessage extends BasicHandler
         if (msg != null)
             category.log(Priority.INFO, msg);
     }
-
-    public void undo(MessageContext msgContext) {
-        category.debug(JavaUtils.getMessage("enter00", "LogMessage::undo") );
-        category.debug(JavaUtils.getMessage("exit00", "LogMessage::undo") );
-    }
 }

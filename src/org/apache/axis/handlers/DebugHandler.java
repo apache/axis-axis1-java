@@ -101,9 +101,9 @@ public class DebugHandler extends BasicHandler {
         category.debug(JavaUtils.getMessage("exit00", "DebugHandler::invoke") );
     }
 
-    public void undo(MessageContext msgContext) {
-        category.debug(JavaUtils.getMessage("enter00", "DebugHandler::undo") );
-        category.debug(JavaUtils.getMessage("exit00", "DebugHandler::undo") );
+    public void onFault(MessageContext msgContext) {
+        category.debug(JavaUtils.getMessage("enter00", "DebugHandler::onFault") );
+        category.debug(JavaUtils.getMessage("exit00", "DebugHandler::onFault") );
     }
 
 };

@@ -244,10 +244,4 @@ public class MsgProvider extends JavaProvider {
             resEnv.addBodyElement(el);
         }
     }
-    
-    
-    public void undo(MessageContext msgContext) {
-        category.debug(JavaUtils.getMessage("enter00", "MsgDispatcherHandler::undo") );
-        category.debug(JavaUtils.getMessage("exit00", "MsgDispatcherHandler::undo") );
-    }
 };

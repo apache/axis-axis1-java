@@ -100,8 +100,4 @@ public class LogHandler extends BasicHandler {
             throw AxisFault.makeFault(e);
         }
     }
-    
-    public void undo(MessageContext msgContext)
-    {
-    }
 }

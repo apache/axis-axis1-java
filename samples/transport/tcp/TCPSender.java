@@ -140,9 +140,4 @@ public class TCPSender extends BasicHandler {
         }
         category.info( "Exit: TCPSender::invoke" );
     }
-
-    public void undo(MessageContext msgContext) {
-        category.debug("Enter: TCPSender::undo" );
-        category.debug("Exit: TCPSender::undo" );
-    }
 };

@@ -84,16 +84,16 @@ public interface Handler extends Serializable {
      * If there is a fault during the processing of this method it is
      * invoke's job to catch the exception and undo any partial work
      * that has been completed.  Once we leave 'invoke' if a fault
-     * is thrown, this classes 'undo' method will be called to undo
-     * the work that 'invoke' did.
-     * Invoke should rethrow any exceptions it catches.
+     * is thrown, this classes 'onFault' method will be called.
+     * Invoke should rethrow any exceptions it catches, wrapped in
+     * an AxisFault.
      */
     public void invoke(MessageContext msgContext) throws AxisFault ;
 
     /**
-     * Called when a fault occurs to 'undo' whatever 'invoke' did.
+     * Called when a subsequent handler throws a fault.
      */
-    public void undo(MessageContext msgContext);
+    public void onFault(MessageContext msgContext);
 
     /**
      * Can this Handler process this QName?
