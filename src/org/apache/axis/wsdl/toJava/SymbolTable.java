@@ -404,8 +404,11 @@ public class SymbolTable {
                 }
             }
             populateMessages(def);
-            populatePortTypes(def);
+            // XXX binding must be before portType so we collect use info.
+            // XXX This will change when we generate parameters after the symbol
+            // XXX table is populated.
             populateBindings(def);
+            populatePortTypes(def);
             populateServices(def);
         }
     } // populate
@@ -753,7 +756,9 @@ public class SymbolTable {
                 while(operations.hasNext()) {
                     Operation operation = (Operation) operations.next();
                     String namespace = portType.getQName().getNamespaceURI();
-                    Parameters parms = parameters(operation, namespace);
+                    Parameters parms = parameters(operation, 
+                                                  namespace, 
+                                                  getBindingEntryForPortType(def, portType));
                     parameters.put(operation.getName(), parms);
                 }
                 PortTypeEntry ptEntry = new PortTypeEntry(portType, parameters);
@@ -768,7 +773,7 @@ public class SymbolTable {
      * Rather than do that processing 3 times, it is done once, here, and stored in the
      * Parameters object.
      */
-    private Parameters parameters(Operation operation, String namespace) throws IOException {
+    private Parameters parameters(Operation operation, String namespace, BindingEntry bindingEntry) throws IOException {
         Parameters parameters = new Parameters();
 
         // The input and output Vectors, when filled in, will be of the form:
@@ -796,18 +801,27 @@ public class SymbolTable {
             }
         }
 
+        boolean literalInput = false;
+        boolean literalOutput = false;
+        if (bindingEntry != null) {
+            literalInput = (bindingEntry.getInputBodyType(operation) == BindingEntry.USE_LITERAL);
+            literalOutput = (bindingEntry.getOutputBodyType(operation) == BindingEntry.USE_LITERAL);
+        }
+        
         // Collect all the input parameters
         Input input = operation.getInput();
         if (input != null) {
             partStrings(inputs,
-                    input.getMessage().getOrderedParts(null));
+                    input.getMessage().getOrderedParts(null), 
+                    literalInput);
         }
 
         // Collect all the output parameters
         Output output = operation.getOutput();
         if (output != null) {
             partStrings(outputs,
-                    output.getMessage().getOrderedParts(null));
+                    output.getMessage().getOrderedParts(null), 
+                    literalOutput);
         }
 
         if (parameterOrder != null) {
@@ -934,7 +948,7 @@ public class SymbolTable {
      * This method returns a vector containing the Java types (even indices) and
      * names (odd indices) of the parts.
      */
-    protected void partStrings(Vector v, Collection parts) {
+    protected void partStrings(Vector v, Collection parts, boolean literal) {
         Iterator i = parts.iterator();
 
         while (i.hasNext()) {
@@ -945,8 +959,32 @@ public class SymbolTable {
                 v.add(getType(typeName));
                 v.add(part.getName());
             } else if (elementName != null) {
-                v.add(getElement(elementName));
-                v.add(part.getName());
+                // if literal use, try to map the elements
+                if (literal) {
+                    // See if we can map all the XML types to java types
+                    // if we can, we use these as the types
+                    
+                    // Get the Element
+                    Element e = getElement((elementName));
+                    
+                    // Get the nested type entries.
+                    Vector vTypes = SchemaUtils.getComplexElementTypesAndNames(
+                            getTypeEntry(elementName, true).getNode(), 
+                            this);
+                    
+                    if (vTypes != null) {
+                        // add the elements in this list
+                        v.addAll(vTypes);
+                    } else {
+                        // XXX - This should be a SOAPElement/SOAPBodyElement
+                        v.add(getElement(elementName));
+                        v.add(part.getName());
+                    }
+                } else {
+                    // not doing literal use, add this element name
+                    v.add(getElement(elementName));
+                    v.add(part.getName());
+                }
             }
         }
     } // partStrings
@@ -1406,5 +1444,32 @@ public class SymbolTable {
         }
     } // symbolTablePut
 
+    /**
+     * Utility function to get the BindingEntry for the given portType.
+     * Does a reverse lookup of the portType in all the bindings.
+     */ 
+    public BindingEntry getBindingEntryForPortType(Definition def, PortType port) throws IOException {
+        BindingEntry b = null;
+        Iterator i = def.getBindings().values().iterator();
+        while (i.hasNext()) {
+            Binding binding = ((Binding) i.next());
+            QName bindingPort = binding.getPortType().getQName();
+            if (bindingPort.equals(port.getQName())) {
+                if (b != null) {
+                    // XXX - if more than one binding matches the portType
+                    // we can't do the right thing since interfaces are generated
+                    // from portTypes and the literal/encoded switch is in the
+                    // binding.
+                    throw new IOException(JavaUtils.getMessage("multipleBindings00"));
+                }
+                b = getBindingEntry(binding.getQName());
+            }
+        }
+        // DEBUG
+//        if ( b == null) {
+//            System.out.println("Lookup: can't find binding for portType " + port.getQName());
+//        }
+        return b;
+    }
 
 } // class SymbolTable

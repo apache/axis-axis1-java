@@ -70,6 +70,9 @@ public class RPCElement extends SOAPBodyElement
     protected Vector params = new Vector();
     protected boolean needDeser = false;
     
+    // encoding style to put in soap body element
+    protected String encodingStyle = null;
+    
     public RPCElement(String namespace, String localName, String prefix,
                       Attributes attributes, DeserializationContext context)
     {
@@ -148,8 +151,32 @@ public class RPCElement extends SOAPBodyElement
         params.addElement(param);
     }
 
+    public void setEncodingStyle(String encodingStyle) {
+        this.encodingStyle = encodingStyle;
+    }
+
     protected void outputImpl(SerializationContext context) throws Exception
     {
+        if (encodingStyle != null) {
+            QName qn = new QName(Constants.URI_SOAP_ENC, 
+                                 Constants.ATTR_ENCODING_STYLE);
+            
+            if (attributes == null)
+                attributes = new AttributesImpl();
+            
+            attributes.addAttribute(Constants.URI_SOAP_ENC, 
+                                    Constants.ATTR_ENCODING_STYLE,
+                                    context.qName2String(qn),
+                                    "CDATA",
+                                    encodingStyle);
+        }
+        
+        // Set default namespace if appropriate (to avoid prefix mappings
+        // in literal style)
+        if (encodingStyle == null || encodingStyle.equals("")) {
+            context.registerPrefixForURI("", getNamespaceURI());
+        }
+        
         context.startElement(new QName(namespaceURI,name), attributes);
         for (int i = 0; i < params.size(); i++) {
             ((RPCParam)params.elementAt(i)).serialize(context);

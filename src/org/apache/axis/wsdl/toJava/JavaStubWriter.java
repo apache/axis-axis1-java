@@ -405,7 +405,24 @@ public class JavaStubWriter extends JavaWriter {
             if (literal) {
                 qType = part.getElementName();
                 if (qType != null) {
-                    v.add(symbolTable.getElement(qType));
+                    // Get the Element
+                    Element e = symbolTable.getElement((qType));
+                    
+                    // Get the nested type entries.
+                    // even indexes are TypeEntries, odd are names
+                    Vector vTypes = SchemaUtils.getComplexElementTypesAndNames(
+                            symbolTable.getTypeEntry(qType, true).getNode(), 
+                            symbolTable);
+                    
+                    if (vTypes != null) {
+                        // add the typeEntries in this list
+                        for (int j = 0; j < vTypes.size(); j +=2) {
+                            v.add(vTypes.get(j));
+                        }
+                    } else {
+                        // XXX This should probably be a SOAPElement/SOAPBodyElement
+                        v.add(symbolTable.getElement(qType));
+                    }
                 }
             } else {
                 qType = part.getTypeName(); 
@@ -476,7 +493,6 @@ public class JavaStubWriter extends JavaWriter {
         for (int i = 0; i < parms.list.size(); ++i) {
             Parameter p = (Parameter) parms.list.get(i);
 
-
             QName qn = p.type.getQName();
             String typeString = "new javax.xml.rpc.namespace.QName(\"" +
                     qn.getNamespaceURI() + "\", \"" +
@@ -508,12 +524,23 @@ public class JavaStubWriter extends JavaWriter {
                 JavaUtils.getMessage("badCall00") + "\");");
         pw.println("        }");
 
-        // SoapAction and Namespace
+        // SoapAction
         if (soapAction != null) {
             pw.println("        call.setProperty(\"soap.http.soapaction.use\", Boolean.TRUE);");
             pw.println("        call.setProperty(\"soap.http.soapaction.uri\", \"" + soapAction + "\");");
         }
 
+        // Encoding literal or encoded use.
+        int use = bEntry.getInputBodyType(operation.getOperation());
+        if (use == BindingEntry.USE_LITERAL) {
+            // Turn off encoding
+            pw.println("        ((org.apache.axis.client.Call)call).setEncodingStyle(null);");
+            // turn off multirefs
+            pw.println("        call.setProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);");
+            // turn off XSI types
+            pw.println("        call.setProperty(org.apache.axis.AxisEngine.PROP_SEND_XSI, Boolean.FALSE);");
+        }
+        
         // Operation name
         pw.println("        call.setOperationName(new javax.xml.rpc.namespace.QName(\"" + namespace + "\", \"" + operation.getName() + "\"));" );
         
