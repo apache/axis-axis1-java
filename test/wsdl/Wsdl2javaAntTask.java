@@ -86,6 +86,7 @@ public class Wsdl2javaAntTask extends Task
     private String deployScope = "";
     private String url = "";
     private String tm = "1.2";
+    private long timeout = 45000;
 
     // The method executing the task
     public void execute() throws BuildException {
@@ -102,7 +103,8 @@ public class Wsdl2javaAntTask extends Task
             log("\tURL:" + url, Project.MSG_VERBOSE);
             log("\tall:" + all, Project.MSG_VERBOSE);
             log("\ttypeMappingVersion:" + tm, Project.MSG_VERBOSE);
-            
+            log("\ttimeout:" + timeout, Project.MSG_VERBOSE);
+
             // Instantiate the emitter
             WSDL2Java emitter = new WSDL2Java();
 
@@ -133,15 +135,11 @@ public class Wsdl2javaAntTask extends Task
             emitter.verbose(verbose);
             emitter.setTypeMappingVersion(tm);
             emitter.setNStoPkg(project.resolveFile("NStoPkg.properties"));
-
-            Document doc;
+            emitter.setTimeout(timeout);
 
             log("WSDL2Java " + url, Project.MSG_INFO);
             try {
-                doc = XMLUtils.newDocument(url);
-                doc.getDocumentElement().getTagName();
-                // THIS IS WRONG - the one outside the try-catch block is right
-                emitter.emit(url, doc);
+                emitter.emit(url);
             } catch (Throwable e) {
                 if (url.startsWith("http://")) {
                     // What we have is either a network error or invalid XML -
@@ -153,8 +151,6 @@ public class Wsdl2javaAntTask extends Task
                 }
                 throw e;
             }
-
-            // emitter.emit(doc);
         } catch (Throwable t) {
             t.printStackTrace();
             throw new BuildException("Error while running " + getClass().getName(), t); 
@@ -213,6 +209,15 @@ public class Wsdl2javaAntTask extends Task
     // The setter for the "typeMappingVersion" attribute
     public void setTypeMappingVersion(String parameter) {
         this.tm = parameter;
+    }
+
+    // The setter for the "timeout" attribute
+    public void setTimeout(String parameter) {
+        try {
+            this.timeout = new Long(parameter).longValue();
+        } catch (NumberFormatException e) {
+            // Sorry, stick with default.
+        }
     }
 
     /** the command arguments */
