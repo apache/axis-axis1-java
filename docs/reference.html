@@ -93,6 +93,9 @@ h1 {  margin-left: -30px}
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -P, --password &lt;argument> <br>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
   password to access the WSDL-URI <br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -W, --noWrapped<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+  turn off support for &quot;wrapped&quot; document/literal<br>
   &nbsp; 
 <h4> -h, --help</h4>
 Print the usage statement and exit 
@@ -207,6 +210,23 @@ This username is used in resolving the WSDL-URI provided as the input to WSDL2Ja
 <h4> -P, --password &lt;argument&gt;</h4>
 This password is used in resolving the WSDL-URI provided as the input to WSDL2Java. 
 &nbsp;If the URI contains a password, this will override the command line switch.&nbsp; 
+<br>
+<h4>-W, --noWrapped</h4>
+This turns off the special treatment of what is called "wrapped" document/literal
+style operations. &nbsp;By default, WSDL2Java will recognize the following
+conditions:<br>
+<ul>
+  <li>If an input message has is a single part.</li>
+  <li>The part is an element.</li>
+  <li>The element has the same name as the operation</li>
+  <li>The element's complex type has no attributes<br>
+  </li>
+</ul>
+When it sees this, WSDL2Java will 'unwrap' the top level element, and treat each 
+of the components of the element as arguments to the operation. This type of WSDL 
+is the default for Microsoft .NET web services, which wrap up RPC style arguments 
+in this top level schema element.<br>
+
 <h3><a name="Java2WSDL"></a>Java2WSDL Reference</h3>
 <p>Here is the help message generated from the current tool: </p>
 <p><tt><font color="#993366">Java2WSDL emitter</font></tt> <br>

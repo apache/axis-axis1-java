@@ -146,6 +146,8 @@ public class SymbolTable {
     private BaseTypeMapping btm = null;
 
     // should we attempt to treat document/literal WSDL as "rpc-style"
+    private boolean nowrap;
+    // Did we encounter wraped mode WSDL
     private boolean wrapped = false;
 
     public static final String ANON_TOKEN = ">";
@@ -158,11 +160,12 @@ public class SymbolTable {
      * Construct a symbol table with the given Namespaces.
      */
     public SymbolTable(BaseTypeMapping btm, boolean addImports,
-            boolean verbose, boolean debug) {
+            boolean verbose, boolean debug, boolean nowrap) {
         this.btm = btm;
         this.addImports = addImports;
         this.verbose = verbose;
         this.debug = debug;
+        this.nowrap = nowrap;
     } // ctor
 
     /**
@@ -1149,8 +1152,20 @@ public class SymbolTable {
             String partName = part.getName();
 
             // Hack alert - Try to sense "wrapped" document literal mode
-            if (literal && !i.hasNext() && partName.equals("parameters"))
+            // if we haven't been told not to.
+            // Criteria:
+            //  - If there is a single part, 
+            //  - That part is an element
+            //  - That element has the same name as the operation
+            //  - That element has no attributes (check done below)
+            if (!nowrap &&
+                    literal && 
+                    !i.hasNext() &&
+                    elementName != null && 
+                    elementName.getLocalPart().equals(opName)) {
+                
                 wrapped = true;
+            }
             
             if (!literal || !wrapped) {
                 // We're either RPC or literal + not wrapped.
@@ -1164,7 +1179,15 @@ public class SymbolTable {
                     // Just an FYI: The WSDL spec says that for use=encoded
                     // that parts reference an abstract type using the type attr
                     // but we kinda do the right thing here, so let it go.
+                    // if (!literal)
+                    //   error...
                     param.setType(getElement(elementName));
+                } else {
+                    // no type or element
+                    throw new IOException(
+                            JavaUtils.getMessage("noTypeOrElement00", 
+                                                 new String[] {partName, 
+                                                               opName}));
                 }
                                 
                 v.add(param);
@@ -1224,11 +1247,23 @@ public class SymbolTable {
                                                  elementName.toString()}));                
             }
 
+            // check for attributes
+            Vector vAttrs = SchemaUtils.getContainedAttributeTypes(node, this);
+            if (vAttrs != null) {
+                // can't do wrapped mode
+                wrapped = false;
+            }
+            
             // Get the nested type entries.
+            // TODO - If we are unable to represent any of the types in the
+            // element, we need to use SOAPElement/SOAPBodyElement.
+            // I don't believe getContainedElementDecl does the right thing yet.
             Vector vTypes =
                     SchemaUtils.getContainedElementDeclarations(node, this);
 
-            if (vTypes != null) {
+            // if we got the types entries and we didn't find attributes
+            // use the tings is this element as the parameters
+            if (vTypes != null && wrapped) {
                 // add the elements in this list
                 for (int j = 0; j < vTypes.size(); j++) {
                     ElementDecl elem = (ElementDecl) vTypes.elementAt(j);
@@ -1238,7 +1273,8 @@ public class SymbolTable {
                     v.add(p);
                 }
             } else {
-                // XXX - This should be a SOAPElement/SOAPBodyElement
+                // we were unable to get the types, or we found attributes so
+                // we can't use wrapped mode.
                 Parameter p = new Parameter();
                 p.setName(partName);
                 
