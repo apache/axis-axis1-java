@@ -109,4 +109,9 @@ public interface SOAPConstants extends Serializable {
      * Obtain the MIME content type
      */
     public String getContentType();
+    
+    /**
+     * Obtain the "next" role/actor URI
+     */ 
+    public String getNextRoleURI();
 }

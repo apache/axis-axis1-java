@@ -115,8 +115,10 @@ public class SOAPHeader extends MessageElement
         if(parent == null)
             throw new IllegalArgumentException(Messages.getMessage("nullParent00")); 
         try {
+            SOAPEnvelope env = (SOAPEnvelope)parent;
             // cast to force exception if wrong type
-            super.setParentElement((SOAPEnvelope)parent);
+            super.setParentElement(env);
+            setEnvelope(env);
         } catch (Throwable t) {
             throw new SOAPException(t);
         }
@@ -167,10 +169,12 @@ public class SOAPHeader extends MessageElement
     Vector getHeadersByActor(ArrayList actors) {
         Vector results = new Vector();
         Iterator i = headers.iterator();
+        String nextActor = getEnvelope().getSOAPConstants().getNextRoleURI();
         while (i.hasNext()) {
             SOAPHeaderElement header = (SOAPHeaderElement)i.next();
+            
             // Always process NEXT's, and then anything else in our list
-            if (Constants.URI_SOAP11_NEXT_ACTOR.equals(header.getActor()) ||
+            if (nextActor.equals(header.getActor()) ||
                 (actors != null && actors.contains(header.getActor()))) {
                 results.add(header);
             }
@@ -213,14 +217,20 @@ public class SOAPHeader extends MessageElement
             if (mc != null) {
                 if (header != null) {
                     String actor = header.getActor();
+                    
+                    // Always respect "next" role
+                    String nextActor = 
+                            getEnvelope().getSOAPConstants().getNextRoleURI();
+                    if (nextActor.equals(actor))
+                        return header;
+                    
                     SOAPService soapService = mc.getService();
                     if (soapService != null) {
                         ArrayList actors = mc.getService().getActors();
                         if ((actor != null) && 
-                            !Constants.URI_SOAP11_NEXT_ACTOR.equals(actor) &&
-                            (actors == null || !actors.contains(actor))) {
+                                (actors == null || !actors.contains(actor))) {
                             header = null;
-                      }
+                        }
                     }
                 }
             }
@@ -270,6 +280,8 @@ public class SOAPHeader extends MessageElement
         Vector v = new Vector();
         Enumeration e = headers.elements();
         SOAPHeaderElement header;
+        String nextActor = getEnvelope().getSOAPConstants().getNextRoleURI();
+        
         while (e.hasMoreElements()) {
             header = (SOAPHeaderElement)e.nextElement();
             if (header.getNamespaceURI().equals(namespace) &&
@@ -286,8 +298,7 @@ public class SOAPHeader extends MessageElement
                     }
 
                     String actor = header.getActor();
-                    if ((actor != null) &&
-                            !Constants.URI_SOAP11_NEXT_ACTOR.equals(actor) &&
+                    if ((actor != null) && !nextActor.equals(actor) &&
                             (actors == null || !actors.contains(actor))) {
                         continue;
                     }

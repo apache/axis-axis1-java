@@ -106,4 +106,11 @@ public class SOAP11Constants implements SOAPConstants {
     public String getContentType() {
         return "text/xml; charset=utf-8";
     }
+
+    /**
+     * Obtain the "next" role/actor URI
+     */
+    public String getNextRoleURI() {
+        return Constants.URI_SOAP11_NEXT_ACTOR;
+    }
 }

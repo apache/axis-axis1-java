@@ -56,8 +56,6 @@
 package test.soap;
 
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
-import junit.framework.Test;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.SimpleTargetedChain;
@@ -72,8 +70,6 @@ import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.server.AxisServer;
 
 import java.util.Random;
-
-import test.RPCDispatch.Data;
 
 import org.apache.axis.client.Service;
 
@@ -147,7 +143,7 @@ public class TestHeaderAttrs extends TestCase {
         assertTrue("Bad result from test", runTest(badHeader, false));
         
         // 2. MU header to NEXT -> should fail
-        badHeader.setActor(Constants.URI_SOAP11_NEXT_ACTOR);
+        badHeader.setActor(soapVersion.getNextRoleURI());
         badHeader.setMustUnderstand(true);
         
         // Test (should produce MU failure)
@@ -170,7 +166,7 @@ public class TestHeaderAttrs extends TestCase {
      */ 
     public void testNonMUBadHeader() throws Exception
     {
-        badHeader.setActor(Constants.URI_SOAP11_NEXT_ACTOR);
+        badHeader.setActor(soapVersion.getNextRoleURI());
         badHeader.setMustUnderstand(false);
 
         assertTrue("Non-MU bad header to next actor returned bad result!",
@@ -187,7 +183,7 @@ public class TestHeaderAttrs extends TestCase {
      */ 
     public void testGoodHeader() throws Exception
     {
-        goodHeader.setActor(Constants.URI_SOAP11_NEXT_ACTOR);
+        goodHeader.setActor(soapVersion.getNextRoleURI());
         assertTrue("Good header with next actor returned bad result!",
                    runTest(goodHeader, true));
     }
