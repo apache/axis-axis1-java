@@ -346,6 +346,10 @@ public class MessageElement implements SOAPElement, Serializable
         return typeQName;
     }
 
+    public void setType(QName qname) {
+        typeQName = qname;
+    }
+
     public SAX2EventRecorder getRecorder() { return recorder; }
     public void setRecorder(SAX2EventRecorder rec) { recorder = rec; }
 

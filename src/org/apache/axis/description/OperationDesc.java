@@ -451,6 +451,21 @@ public class OperationDesc {
         }
         return null;
     }
+     /**
+     * Returns the FaultDesc for an XMLType. 
+     * Returns null if not found.
+     */ 
+    public FaultDesc getFaultByXmlType(QName xmlType) {
+        if (faults != null) {
+            for (Iterator iterator = faults.iterator(); iterator.hasNext();) {
+                FaultDesc desc = (FaultDesc) iterator.next();
+                if (xmlType.equals(desc.getXmlType())) {
+                    return desc;
+                }
+            }
+        }
+        return null;
+    }
     public ParameterDesc getReturnParamDesc() {
         return returnDesc;
     }
