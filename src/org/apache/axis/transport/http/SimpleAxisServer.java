@@ -235,7 +235,7 @@ public class SimpleAxisServer implements Runnable {
                     // wipe cookies if we're doing sessions
                     if (doSessions) {
                         cookie.delete(0, cookie.length());
-                        cookie2.delete(0, cookie.length());
+                        cookie2.delete(0, cookie2.length());
                     }
                     authInfo.delete(0, authInfo.length());
 
@@ -443,7 +443,7 @@ public class SimpleAxisServer implements Runnable {
                         .append(cooky)
                         .append("\r\nSet-Cookie2: ")
                         .append(cooky);
-                    // OH, THE HUMANITY!  yes this is inefficient.
+                    // OH, THE HUMILITY!  yes this is inefficient.
                     out.write(cookieOut.toString().getBytes());
                 }
 
