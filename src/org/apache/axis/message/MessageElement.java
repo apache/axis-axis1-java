@@ -531,12 +531,12 @@ public class MessageElement
             if (parent == null) {
                 // don't emit an encoding style if its "" (literal)
                 if (!encodingStyle.equals("")) { 
-                    setAttribute(Constants.URI_CURRENT_SOAP_ENC,
+                    setAttribute(Constants.URI_CURRENT_SOAP_ENV,
                                  Constants.ATTR_ENCODING_STYLE,
                                  encodingStyle);
                 }
             } else if (!encodingStyle.equals(parent.getEncodingStyle())) {
-                setAttribute(Constants.URI_CURRENT_SOAP_ENC,
+                setAttribute(Constants.URI_CURRENT_SOAP_ENV,
                              Constants.ATTR_ENCODING_STYLE,
                              encodingStyle);
             }
