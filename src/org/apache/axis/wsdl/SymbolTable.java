@@ -781,7 +781,7 @@ public class SymbolTable {
         Iterator i = def.getBindings().values().iterator();
         while (i.hasNext()) {
             int bindingStyle = BindingEntry.STYLE_RPC;
-            int bindingType = BindingEntry.TYPE_SOAP;
+            int bindingType = BindingEntry.TYPE_UNKNOWN;
             Binding binding = (Binding) i.next();
             Iterator extensibilityElementsIterator = binding.getExtensibilityElements().iterator();
             while (extensibilityElementsIterator.hasNext()) {
