@@ -77,9 +77,11 @@ public class QNameSerializer implements SimpleValueSerializer {
                           Object value, SerializationContext context)
         throws IOException
     {
-        QName qname = (QName) value;
+        // NOTE:  getValueAsString has the side-effect of priming the context
+        // with the QName's namespace, so it must be called BEFORE context.startElement.
+        String qnameString = getValueAsString(value, context);
         context.startElement(name, attributes);
-        context.writeString(getValueAsString(qname, context));
+        context.writeString(qnameString);
         context.endElement();
     }
 
