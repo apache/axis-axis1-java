@@ -70,61 +70,82 @@ import org.apache.axis.message.* ;
  * Replace this with your 'real' authenication code.
  *
  * @author Doug Davis (dug@us.ibm.com)
+ * @author Sam Ruby (rubys@us.ibm.com)
  */
 public class SimpleAuthenticationHandler extends BasicHandler {
-  public void invoke(MessageContext msgContext) throws AxisFault {
-    Debug.Print( 1, "Enter: SimpleAuthenticationHandler::invoke" );
     
+  // Simple hashtable of user and password.  Null means everybody
+  // will authenticate (replace with new Hashtable() if you want 
+  // the default to be that nobody will be authenticated.
+  static private Hashtable entries = null;
+
+  // load the users list
+  static {
     File userFile = new File("users.lst");
     if (userFile.exists()) {
+      entries = new Hashtable();
+
       try {
-        String  userID = (String) msgContext.getProperty( MessageContext.USERID );
-        String  passwd = (String) msgContext.getProperty( MessageContext.PASSWORD );
-        Debug.Print( 1, "User: " + userID );
-        Debug.Print( 2, "Pass: " + passwd );
 
         FileReader        fr   = new FileReader( userFile );
         LineNumberReader  lnr  = new LineNumberReader( fr );
         String            line = null ;
-        boolean           done = false ;
 
-        if ( userID == null || userID.equals("") )
-          throw new AxisFault( "Server.Unauthorized", 
-            "User not authorized",
-            null, null );
-
+        // parse lines into user and passwd tokens and add result to hash table
         while ( (line = lnr.readLine()) != null ) {
           StringTokenizer  st = new StringTokenizer( line );
-          String           u  = null ,
-            p  = null ;
+          if ( st.hasMoreTokens() ) {
+            String userID = st.nextToken();
+            String passwd = (st.hasMoreTokens()) ? st.nextToken() : "";
 
-          if ( st.hasMoreTokens() ) u = st.nextToken();
-          if ( st.hasMoreTokens() ) p = st.nextToken();
-          Debug.Print( 2, "From file: " + u + ":" + p );
-
-          if ( !userID.equals(u) ) continue ;
-          if ( passwd == null && p != null ) continue ;
-          if ( passwd != null && !passwd.equals(p) ) continue ;
-
-          Debug.Print( 1, "User '" + userID + "' authenticated to server" );
-          done = true ;
-          break ;
+            Debug.Print( 2, "From file: '" + userID + "':'" + passwd + "'" );
+            entries.put(userID, passwd);
+          }
         }
+
         lnr.close();
-        fr.close();
-        if ( !done ) 
-          throw new AxisFault( "Server.Unauthorized", 
-            "User not authenticated",
-            null, null );
-      }
-      catch( Exception e ) {
+
+      } catch( Exception e ) {
         Debug.Print( 1, e );
-        if ( !(e instanceof AxisFault) ) e = new AxisFault(e);
-        throw (AxisFault) e ;
       }
     }
+  }
+
+  /**
+   * Authenticate the user and password from the msgContext
+   */
+  public void invoke(MessageContext msgContext) throws AxisFault {
+    Debug.Print( 1, "Enter: SimpleAuthenticationHandler::invoke" );
+
+    if (entries != null) {
+      String  userID = (String) msgContext.getProperty( MessageContext.USERID );
+      Debug.Print( 1, "User: " + userID );
+
+      // in order to authenticate, the user must exist
+      if ( userID == null || userID.equals("") || !entries.containsKey(userID) )
+        throw new AxisFault( "Server.Unauthorized", 
+          "User not authorized",
+          null, null );
+  
+      String passwd = (String) msgContext.getProperty( MessageContext.PASSWORD );
+      String valid = (String) entries.get(userID);
+      Debug.Print( 2, "Pass: " + passwd );
+  
+      // if a password is defined, then it must match
+      if ( valid.length()>0 && !valid.equals(passwd) ) 
+        throw new AxisFault( "Server.Unauthorized", 
+          "User not authenticated",
+          null, null );
+
+      Debug.Print( 1, "User '" + userID + "' authenticated to server" );
+    }
+
     Debug.Print( 1, "Exit: SimpleAuthenticationHandler::invoke" );
   }
+
+  /**
+   * Nothing to undo
+   */
   public void undo(MessageContext msgContext) {
     Debug.Print( 1, "Enter: SimpleAuthenticationHandler::undo" );
     Debug.Print( 1, "Exit: SimpleAuthenticationHandler::undo" );
