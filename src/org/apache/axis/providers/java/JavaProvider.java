@@ -57,33 +57,28 @@ package org.apache.axis.providers.java;
 
 import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
+import org.apache.axis.Constants;
 import org.apache.axis.Handler;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.description.ServiceDesc;
+import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.enum.Scope;
+import org.apache.axis.enum.Style;
+import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.providers.BasicProvider;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.ClassUtils;
-import org.apache.axis.utils.cache.JavaClass;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.cache.ClassCache;
+import org.apache.axis.utils.cache.JavaClass;
 import org.apache.axis.wsdl.fromJava.Emitter;
-import org.apache.axis.encoding.TypeMapping;
-import org.apache.axis.enum.Style;
-import org.apache.axis.enum.Scope;
-import org.apache.axis.Constants;
-import org.apache.axis.description.ServiceDesc;
-import org.apache.axis.handlers.soap.SOAPService;
-
-import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
-
-import org.apache.axis.handlers.HandlerChainImpl;
-import org.apache.axis.handlers.HandlerInfoChainFactory;
-
 import org.w3c.dom.Document;
 
-import javax.xml.rpc.server.ServiceLifecycle;
 import javax.xml.rpc.holders.IntHolder;
+import javax.xml.rpc.server.ServiceLifecycle;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
@@ -268,11 +263,6 @@ public abstract class JavaProvider extends BasicProvider
                 msgContext.setResponseMessage( resMsg );
             }
 
-        HandlerInfoChainFactory handlerFactory = (HandlerInfoChainFactory) service.getOption(Constants.ATTR_HANDLERINFOCHAIN); 
-        HandlerChainImpl handlerImpl = null;
-        if (handlerFactory != null) handlerImpl = (HandlerChainImpl) handlerFactory.createHandlerChain(); 
-            if (handlerImpl != null) handlerImpl.handleRequest(msgContext);
-
             try {
                 processMessage(msgContext, reqEnv,
                                resEnv, obj);
@@ -286,12 +276,6 @@ public abstract class JavaProvider extends BasicProvider
                     ((ServiceLifecycle)obj).destroy();
                 }
             }
-
-            if ( handlerImpl != null) {
-                handlerImpl.handleResponse(msgContext);
-                handlerImpl.destroy();
-            }
-
         }
         catch( Exception exp ) {
             entLog.debug( JavaUtils.getMessage("toAxisFault00"), exp);
