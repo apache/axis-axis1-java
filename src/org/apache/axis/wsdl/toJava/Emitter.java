@@ -133,15 +133,7 @@ public class Emitter {
         if (bVerbose)
             System.out.println(JavaUtils.getMessage("parsing00", uri));
 
-        // calculate baseURI so that imported relative URI's work
-        int lastSeparator = uri.lastIndexOf(File.separatorChar);
-        int lastSlash = uri.lastIndexOf('/');
-        int index = (lastSlash > lastSeparator) ? lastSlash : lastSeparator;
-        String baseURI = null;
-        if (index > 0) {
-            baseURI = uri.substring(0, index + 1);
-        }
-        emit(baseURI, XMLUtils.newDocument(uri));
+        emit(uri, XMLUtils.newDocument(uri));
     } // emit
 
     /**
@@ -151,8 +143,7 @@ public class Emitter {
      */
     public void emit(String context, Document doc) throws IOException, WSDLException {
         WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
-        // The verbose option is no longer supported.
-        //reader.setFeature("verbose", bVerbose);
+        reader.setFeature("javax.wsdl.verbose", bVerbose);
         def = reader.readWSDL(context, doc);
         this.doc = doc;
         namespaces = new Namespaces(outputDir);
