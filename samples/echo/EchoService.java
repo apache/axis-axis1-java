@@ -143,6 +143,13 @@ public class EchoService {
     }
 
     /**
+     * This methods accepts a hex object and echoes it back to the client.
+     */
+    public org.apache.axis.encoding.Hex echoHex(org.apache.axis.encoding.Hex input) {
+        return input;
+    }
+
+    /**
      * This method accepts a Date/Time and echoes it back to the client.
      */
     public Date echoDate(Date input) {

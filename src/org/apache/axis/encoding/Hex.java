@@ -54,212 +54,181 @@
  */
 package org.apache.axis.encoding ;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
 
 /**
+ * Custom class for supporting primitive XSD data type hexBinary.
  *
- * @author TAMURA Kent &lt;kent@trl.ibm.co.jp&gt;
+ * @author Davanum Srinivas <dims@yahoo.com>
  */
-public class Hex {
-    private static final char[] S_HEXCHAR = {
-        '0', '1', '2', '3', '4', '5', '6', '7',
-        '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+public class Hex extends Object{
+
+    byte[] m_value = null;
+
+    public Hex() {
+    }
+
+    public Hex(String string){
+        m_value = decode(string);
+    }
+
+    public byte[] getBytes(){
+        return m_value;
+    }
+
+    public String toString(){
+        return encode(m_value);
+    }
+
+    public int hashCode(){
+        //TODO: How do we hash this?
+        return super.hashCode();
+    }
+
+    public boolean equals(java.lang.Object object){
+        //TODO: Is this good enough?
+        String s1 = object.toString();
+        String s2 = this.toString();
+        return s1.equals(s2);
+    }
+
+    public static final String ERROR_ODD_NUMBER_OF_DIGITS="Odd number of digits hex string";
+    public static final String ERROR_BAD_CHARACTER_IN_HEX_STRING="Bad character or insufficient number of characters in hex string";
+
+    // Code from Ajp11, from Apache's JServ
+
+    // Table for HEX to DEC byte translation
+    public static final int[] DEC = {
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+        00, 01, 02, 03, 04, 05, 06, 07,  8,  9, -1, -1, -1, -1, -1, -1,
+        -1, 10, 11, 12, 13, 14, 15, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, 10, 11, 12, 13, 14, 15, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+        -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
     };
-    private static final char S_HEXPAD = '=';
-    private static final byte[] S_DECODETABLE = new byte[32];
-    static {
-        for (int i = 0;  i < S_DECODETABLE.length;  i ++)
-            S_DECODETABLE[i] = Byte.MAX_VALUE;  // 127
-        for (int i = 0;  i < S_HEXCHAR.length;  i ++) // 0 to 15
-            S_DECODETABLE[S_HEXCHAR[i]] = (byte)i;
-    }
-
-    private static int decode0(char[] ibuf, byte[] obuf, int wp) {
-        int b0 = S_DECODETABLE[ibuf[0]];
-        int b1 = S_DECODETABLE[ibuf[1]];
-        obuf[wp] = (byte)(b0 << 2 & 0xfc | b1 >> 4 & 0x3);
-        return 1;
-    }
 
     /**
+     * Convert a String of hexadecimal digits into the corresponding
+     * byte array by encoding each two hexadecimal digits as a byte.
      *
-     */
-    public static byte[] decode(char[] data, int off, int len) {
-        char[] ibuf = new char[2];
-        int ibufcount = 0;
-        byte[] obuf = new byte[len/2*1+1];
-        int obufcount = 0;
-        for (int i = off;  i < off+len;  i ++) {
-            char ch = data[i];
-            if (ch == S_HEXPAD
-                || ch < S_DECODETABLE.length && S_DECODETABLE[ch] != Byte.MAX_VALUE) {
-                ibuf[ibufcount++] = ch;
-                if (ibufcount == ibuf.length) {
-                    ibufcount = 0;
-                    obufcount += decode0(ibuf, obuf, obufcount);
-                }
-            }
-        }
-        if (obufcount == obuf.length)
-            return obuf;
-        byte[] ret = new byte[obufcount];
-        System.arraycopy(obuf, 0, ret, 0, obufcount);
-        return ret;
-    }
-
-    /**
+     * @param digits Hexadecimal digits representation
      *
+     * @exception IllegalArgumentException if an invalid hexadecimal digit
+     *  is found, or the input string contains an odd number of hexadecimal
+     *  digits
      */
-    public static byte[] decode(String data) {
-        char[] ibuf = new char[2];
-        int ibufcount = 0;
-        byte[] obuf = new byte[data.length()/2*1+1];
-        int obufcount = 0;
-        for (int i = 0;  i < data.length();  i ++) {
-            char ch = data.charAt(i);
-            if (ch == S_HEXPAD
-                || ch < S_DECODETABLE.length && S_DECODETABLE[ch] != Byte.MAX_VALUE) {
-                ibuf[ibufcount++] = ch;
-                if (ibufcount == ibuf.length) {
-                    ibufcount = 0;
-                    obufcount += decode0(ibuf, obuf, obufcount);
-                }
-            }
+    public static byte[] decode(String digits) {
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        for (int i = 0; i < digits.length(); i += 2) {
+            char c1 = digits.charAt(i);
+            if ((i+1) >= digits.length())
+                throw new IllegalArgumentException
+                    (ERROR_ODD_NUMBER_OF_DIGITS);
+            char c2 = digits.charAt(i + 1);
+            byte b = 0;
+            if ((c1 >= '0') && (c1 <= '9'))
+                b += ((c1 - '0') * 16);
+            else if ((c1 >= 'a') && (c1 <= 'f'))
+                b += ((c1 - 'a' + 10) * 16);
+            else if ((c1 >= 'A') && (c1 <= 'F'))
+                b += ((c1 - 'A' + 10) * 16);
+            else
+                throw new IllegalArgumentException
+                    (ERROR_BAD_CHARACTER_IN_HEX_STRING);
+            if ((c2 >= '0') && (c2 <= '9'))
+                b += (c2 - '0');
+            else if ((c2 >= 'a') && (c2 <= 'f'))
+                b += (c2 - 'a' + 10);
+            else if ((c2 >= 'A') && (c2 <= 'F'))
+                b += (c2 - 'A' + 10);
+            else
+                throw new IllegalArgumentException
+                    (ERROR_BAD_CHARACTER_IN_HEX_STRING);
+            baos.write(b);
         }
-        if (obufcount == obuf.length)
-            return obuf;
-        byte[] ret = new byte[obufcount];
-        System.arraycopy(obuf, 0, ret, 0, obufcount);
-        return ret;
+        return (baos.toByteArray());
+
     }
 
+
     /**
+     * Convert a byte array into a printable format containing a
+     * String of hexadecimal digit characters (two per byte).
      *
+     * @param bytes Byte array representation
      */
-    public static void decode(char[] data, int off, int len, OutputStream ostream) throws IOException {
-        char[] ibuf = new char[2];
-        int ibufcount = 0;
-        byte[] obuf = new byte[1];
-        for (int i = off;  i < off+len;  i ++) {
-            char ch = data[i];
-            if (ch == S_HEXPAD
-                || ch < S_DECODETABLE.length && S_DECODETABLE[ch] != Byte.MAX_VALUE) {
-                ibuf[ibufcount++] = ch;
-                if (ibufcount == ibuf.length) {
-                    ibufcount = 0;
-                    int obufcount = decode0(ibuf, obuf, 0);
-                    ostream.write(obuf, 0, obufcount);
-                }
-            }
+    public static String encode(byte bytes[]) {
+
+        StringBuffer sb = new StringBuffer(bytes.length * 2);
+        for (int i = 0; i < bytes.length; i++) {
+            sb.append(convertDigit((int) (bytes[i] >> 4)));
+            sb.append(convertDigit((int) (bytes[i] & 0x0f)));
         }
+        return (sb.toString());
+
     }
 
     /**
+     * Convert 4 hex digits to an int, and return the number of converted
+     * bytes.
      *
+     * @param hex Byte array containing exactly four hexadecimal digits
+     *
+     * @exception IllegalArgumentException if an invalid hexadecimal digit
+     *  is included
      */
-    public static void decode(String data, OutputStream ostream) throws IOException {
-        char[] ibuf = new char[2];
-        int ibufcount = 0;
-        byte[] obuf = new byte[1];
-        for (int i = 0;  i < data.length();  i ++) {
-            char ch = data.charAt(i);
-            if (ch == S_HEXPAD
-                || ch < S_DECODETABLE.length && S_DECODETABLE[ch] != Byte.MAX_VALUE) {
-                ibuf[ibufcount++] = ch;
-                if (ibufcount == ibuf.length) {
-                    ibufcount = 0;
-                    int obufcount = decode0(ibuf, obuf, 0);
-                    ostream.write(obuf, 0, obufcount);
-                }
-            }
-        }
+    public static int convert2Int( byte[] hex ) {
+        // Code from Ajp11, from Apache's JServ
+
+        // assert b.length==4
+        // assert valid data
+        int len;
+        if(hex.length < 4 ) return 0;
+        if( DEC[hex[0]]<0 )
+            throw new IllegalArgumentException(ERROR_BAD_CHARACTER_IN_HEX_STRING);
+        len = DEC[hex[0]];
+        len = len << 4;
+        if( DEC[hex[1]]<0 )
+            throw new IllegalArgumentException(ERROR_BAD_CHARACTER_IN_HEX_STRING);
+        len += DEC[hex[1]];
+        len = len << 4;
+        if( DEC[hex[2]]<0 )
+            throw new IllegalArgumentException(ERROR_BAD_CHARACTER_IN_HEX_STRING);
+        len += DEC[hex[2]];
+        len = len << 4;
+        if( DEC[hex[3]]<0 )
+            throw new IllegalArgumentException(ERROR_BAD_CHARACTER_IN_HEX_STRING);
+        len += DEC[hex[3]];
+        return len;
     }
 
     /**
-     * Returns hex representation of specified byte array.
+     * [Private] Convert the specified value (0 .. 15) to the corresponding
+     * hexadecimal digit.
+     *
+     * @param value Value to be converted
      */
-    public static String encode(byte[] data) {
-        return encode(data, 0, data.length);
-    }
+    private static char convertDigit(int value) {
 
-    /**
-     * Returns hex representation of specified byte array.
-     */
-    public static String encode(byte[] data, int off, int len) {
-        if (len <= 0)  return "";
-        char[] out = new char[len/1*2+2];
-        int rindex = off;
-        int windex = 0;
-        int rest = len-off;
-        while (rest >= 1) {
-            int i = ((data[rindex]&0xff)<<8)
-                    +(data[rindex+1]&0xff);
-            out[windex++] = S_HEXCHAR[(i>>6)&0x3f];
-            out[windex++] = S_HEXCHAR[i&0x3f];
-            rindex += 3;
-            rest -= 3;
-        }
-        if (rest == 1) {
-            int i = data[rindex]&0xff;
-            out[windex++] = S_HEXCHAR[i>>2];
-            out[windex++] = S_HEXPAD;
-        }
-        return new String(out, 0, windex);
-    }
+        value &= 0x0f;
+        if (value >= 10)
+            return ((char) (value - 10 + 'a'));
+        else
+            return ((char) (value + '0'));
 
-    /**
-     * Outputs hex representation of the specified byte array to a byte stream.
-     */
-    public static void encode(byte[] data, int off, int len, OutputStream ostream) throws IOException {
-        if (len <= 0)  return;
-        byte[] out = new byte[4];
-        int rindex = off;
-        int rest = len-off;
-        while (rest >= 1) {
-            int i = ((data[rindex]&0xff)<<8)
-                    +(data[rindex+1]&0xff);
-            out[0] = (byte)S_HEXCHAR[(i>>6)&0x3f];
-            out[1] = (byte)S_HEXCHAR[i&0x3f];
-            ostream.write(out, 0, 2);
-            rindex += 1;
-            rest -= 1;
-        }
-        if (rest == 1) {
-            int i = data[rindex]&0xff;
-            out[0] = (byte)S_HEXCHAR[i>>2];
-            out[1] = (byte)S_HEXCHAR[(i<<4)&0x3f];
-            ostream.write(out, 0, 2);
-        }
-    }
-
-    /**
-     * Outputs hex representation of the specified byte array to a character stream.
-     */
-    public static void encode(byte[] data, int off, int len, Writer writer) throws IOException {
-        if (len <= 0)  return;
-        char[] out = new char[4];
-        int rindex = off;
-        int rest = len-off;
-        int output = 0;
-        while (rest >= 1) {
-            int i = ((data[rindex]&0xff)<<8)
-                    +(data[rindex+1]&0xff);
-            out[0] = S_HEXCHAR[(i>>6)&0x3f];
-            out[1] = S_HEXCHAR[i&0x3f];
-            writer.write(out, 0, 2);
-            rindex += 1;
-            rest -= 1;
-            output += 2;
-            if (output % 19 == 0)
-                writer.write("\n");
-        }
-        if (rest == 1) {
-            int i = data[rindex]&0xff;
-            out[0] = S_HEXCHAR[i>>2];
-            out[1] = S_HEXCHAR[(i<<4)&0x3f];
-            writer.write(out, 0, 2);
-        }
     }
 }
