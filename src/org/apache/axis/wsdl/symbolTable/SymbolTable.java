@@ -511,24 +511,16 @@ public class SymbolTable {
         // See if we have a good URL.
         URL url = null;
         try {
-            url = new URL(contextURL, path);
+            if (contextURL != null && contextURL.getProtocol().equals("file")) {
+                url = getFileURL(contextURL, path);
+            } else {
+                url = new URL(contextURL, path);
+            }
         }
         catch (MalformedURLException me)
         {
             // try treating is as a file pathname
-            if (contextURL == null) {
-                url = new URL("file", "", path);
-            } else {
-                // get the parent directory of the contextURL, and append
-                // the spec string to the end.
-                String contextFileName = contextURL.getFile();
-                String parentName = new File(contextFileName).getParent();
-                if (parentName != null) {
-                    url = new URL(new URL("file", "", parentName + '/'), path);
-                } else {
-                    url = new URL("file", "", path);
-                }
-            }
+            url = getFileURL(contextURL, path);
         }
 
         // Everything is OK with this URL, although a file url constructed
@@ -536,6 +528,21 @@ public class SymbolTable {
         // accessed.
         return url;
     } // getURL
+
+    private static URL getFileURL(URL contextURL, String path)
+            throws IOException {
+        if (contextURL != null) {
+            // get the parent directory of the contextURL, and append
+            // the spec string to the end.
+            String contextFileName = contextURL.getFile();
+            String parentName = new File(contextFileName).getParent();
+            if (parentName != null) {
+                return new URL("file", "",  parentName + "/" + path);
+            } 
+        }
+        return new URL("file", "", path);
+    } // getFileURL
+
     /**
      * Recursively find all xsd:import'ed objects and call populate for each one.
      */
