@@ -178,6 +178,9 @@ public class Emitter {
     /** Field exceptionMsg */
     private Map exceptionMsg = null;
 
+    /** Global element names already in use */
+    private Map usedElementNames;
+
     /** Field encodingList */
     private ArrayList encodingList;
 
@@ -224,6 +227,7 @@ public class Emitter {
 
         namespaces = new Namespaces();
         exceptionMsg = new HashMap();
+        usedElementNames = new HashMap();
     }
 
     /**
@@ -1840,6 +1844,19 @@ public class Emitter {
 
                 param.setQName(qname);
             }
+
+            // Make sure qname's value is unique.
+            ArrayList   names = (ArrayList)
+                    usedElementNames.get(qname.getNamespaceURI());
+            if (names == null) {
+                names = new ArrayList(1);
+                usedElementNames.put(qname.getNamespaceURI(), names);
+            }
+            else if (names.contains(qname.getLocalPart())) {
+                qname = new QName(qname.getNamespaceURI(),
+                    JavaUtils.getUniqueValue(names, qname.getLocalPart()));
+            }
+            names.add(qname.getLocalPart());
 
             types.writeElementDecl(qname, param.getJavaType(),
                     param.getTypeQName(), false, false);

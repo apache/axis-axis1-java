@@ -1191,4 +1191,60 @@ public class JavaUtils
 
         return attachmentSupportEnabled;
     } // isAttachmentSupported
+
+    /**
+     * Makes the value passed in <code>initValue</code> unique among the
+     * {@link String} values contained in <code>values</code> by suffixing
+     * it with a decimal digit suffix.
+     */
+    public static String  getUniqueValue(Collection values, String initValue) {
+
+        if (!values.contains(initValue))  {
+            return  initValue;
+        }
+        else  {
+
+            StringBuffer   unqVal = new StringBuffer(initValue);
+            int   beg = unqVal.length(),  cur,  end;
+            while (Character.isDigit(unqVal.charAt(beg - 1)))  {
+                beg--;
+            }
+            if (beg == unqVal.length())  {
+                unqVal.append('1');
+            }
+            cur = end = unqVal.length() - 1;
+
+            while (values.contains(unqVal.toString()))  {
+
+                if (unqVal.charAt(cur) < '9')  {
+                    unqVal.setCharAt(cur, (char) (unqVal.charAt(cur) + 1));
+                }
+
+                else  {
+
+                    while (cur-- > beg)  {
+                        if (unqVal.charAt(cur) < '9')  {
+                            unqVal.setCharAt(cur,
+                                (char) (unqVal.charAt(cur) + 1));
+                            break;
+                        }
+                    }
+
+                    // See if there's a need to insert a new digit.
+                    if (cur < beg)  {
+                        unqVal.insert(++cur, '1');     end++;
+                    }
+                    while (cur < end)  {
+                        unqVal.setCharAt(++cur, '0');
+                    }
+
+                }
+
+            }
+
+            return  unqVal.toString();
+
+        }  /*  For  else  clause  of  selection-statement   If(!values ...   */
+
+    }  /*  For  class  method   JavaUtils.getUniqueValue   */
 }
