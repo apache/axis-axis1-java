@@ -1,6 +1,3 @@
-/*=============================================================================*
- *  Confidential Copyright (c) 2004 Hewlett-Packard Development Company, L.P.  *
- *=============================================================================*/
 package test.saaj;
 
 import junit.framework.TestCase;
