@@ -179,46 +179,26 @@ public class SchemaUtils {
                 node = extension;  // Skip over complexContent and extension
             }
 
-            // Under the complexType (or extension) there should be a sequence or all group node.
+            // Under the complexType there may be choice, sequence, group and/or all nodes.      
             // (There may be other #text nodes, which we will ignore).
             children = node.getChildNodes();
-            Node groupNode = null;
-            for (int j = 0; j < children.getLength() && groupNode == null; j++) {
-                QName groupKind = Utils.getNodeQName(children.item(j));
-                if (groupKind != null &&
-                    (groupKind.getLocalPart().equals("sequence") ||
-                     groupKind.getLocalPart().equals("all")) &&
-                    Constants.isSchemaXSD(groupKind.getNamespaceURI()))
-                    groupNode = children.item(j);
-            }
-
-            if (groupNode == null) {
-                // didn't find anything
-                return new Vector();
-            }
-
-            if (groupNode != null) {
-                // Process each of the choice or element nodes under the sequence/all node
-                Vector v = new Vector();
-                NodeList elements = groupNode.getChildNodes();
-                for (int i=0; i < elements.getLength(); i++) {
-                    QName elementKind = Utils.getNodeQName(elements.item(i));
-                    if (elementKind != null &&
-                        Constants.isSchemaXSD(elementKind.getNamespaceURI())) {
-                        if ( elementKind.getLocalPart().equals("element")) {
-                            ElementDecl elem = 
-                                    processChildElementNode(elements.item(i), 
-                                                            symbolTable);
-                            if (elem != null)
-                                v.add(elem);
-                        } else if (elementKind.getLocalPart().equals("choice")) {
-                            Vector choiceElems = processChoiceNode(elements.item(i), symbolTable);
-                            v.addAll(choiceElems);
-                        }
+            Vector v = new Vector();
+            for (int j = 0; j < children.getLength(); j++) {
+                QName subNodeKind = Utils.getNodeQName(children.item(j));
+                if (subNodeKind != null &&
+                    Constants.isSchemaXSD(subNodeKind.getNamespaceURI())) {
+                    if (subNodeKind.getLocalPart().equals("sequence")) {
+                        v.addAll(processSequenceNode(children.item(j), symbolTable));
+                    } else if (subNodeKind.getLocalPart().equals("all")) {
+                        v.addAll(processAllNode(children.item(j), symbolTable));
+                    } else if (subNodeKind.getLocalPart().equals("choice")) {
+                        v.addAll(processChoiceNode(children.item(j), symbolTable));
+                    } else if (subNodeKind.getLocalPart().equals("group")) {
+                        v.addAll(processGroupNode(children.item(j), symbolTable));
                     }
                 }
-                return v;
             }
+            return v;
         } else {
             // This may be a simpleType, return the type with the name "value"
             QName simpleQName = getSimpleTypeBase(node, symbolTable);
