@@ -685,16 +685,12 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                             // the same (ignores [] ).
                             if (firstType) {
                                 firstType = false;
-                                Vector types = symbolTable.getTypes();
-                                for (int j = 0; j < types.size(); ++j) {
+                                Iterator types = symbolTable.getTypeIndex().values().iterator();
+                                while (types.hasNext()) {
                                     TypeEntry type = (TypeEntry)
-                                            types.elementAt(j);
-                                    if (type != entry && 
-                                            !(type instanceof Element) &&
-                                            type.getBaseType() == null &&
-                                            sameJavaClass(
-                                                    ((Type) entry).getName(),
-                                                    type.getName())) {
+                                            types.next();
+                                    if (type != entry && type.getBaseType() == null &&
+                                            sameJavaClass(entry.getName(), type.getName())) {
                                         v.add(type);  
                                     }
                                 }
