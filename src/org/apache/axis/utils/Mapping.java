@@ -18,6 +18,9 @@ package org.apache.axis.utils;
 
 import java.io.Serializable;
 
+/**
+ * this class represents a mapping from namespace to prefix
+ */
 public class Mapping implements Serializable {
     private String namespaceURI;
     private String prefix;
