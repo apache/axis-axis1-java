@@ -191,7 +191,11 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
      *                                  platform.
      */
     public String getNodeValue() throws DOMException {
-        return textRep.getData();
+        if (textRep == null) {
+            return null;
+        } else {
+            return textRep.getData();
+        }
     }
 
     /**
@@ -375,7 +379,7 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
      * <code>null</code>.
      */
     public Node getParentNode() {
-        return parent;
+        return (Node) getParent();
     }
 
     /**
@@ -384,12 +388,19 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
      */
     public Node getPreviousSibling() {
         SOAPElement parent = getParentElement();
-        Iterator iter = parent.getChildElements();
+        if (parent == null) {
+            return null;
+        }
+        NodeList nl = parent.getChildNodes();
+        int len = nl.getLength();
+        int i = 0;
         Node previousSibling = null;
-        while (iter.hasNext()) {
-            if (iter.next() == this) {
+        while (i < len) {
+            if (nl.item(i) == this) {
                 return previousSibling;
             }
+            previousSibling = nl.item(i);
+            i++;
         }
         return previousSibling; // should be null.
     }
@@ -472,10 +483,21 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
      *                                  from a different document than the one that created this node.
      *                                  <br>NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly or
      *                                  if the previous parent of the node being inserted is readonly.
+     *
      */
     public Node appendChild(Node newChild) throws DOMException {
+        if (newChild == null) {
+            throw new DOMException
+                    (DOMException.HIERARCHY_REQUEST_ERR,
+                            "Can't append a null node.");
+        }
         initializeChildren();
+        // per DOM spec - must remove from tree. If newChild.parent == null,
+        // detachNode() does nothing.  So this shouldn't hurt performace of
+        // serializers.
+        ((NodeImpl) newChild).detachNode();
         children.add(newChild);
+        ((NodeImpl) newChild).parent = this;
         return newChild;
     }
 
@@ -490,25 +512,26 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
      *                                  this node.
      */
     public Node removeChild(Node oldChild) throws DOMException {
-        if (children == null) {
-            return null;
+        if (removeNodeFromChildList((NodeImpl) oldChild)) {
+            setDirty(true);
+            return oldChild;
         }
+        throw new DOMException(DOMException.NOT_FOUND_ERR,
+                "NodeImpl Not found");
+    }
+
+    private boolean removeNodeFromChildList(NodeImpl n) {
         boolean removed = false;
+        initializeChildren();
         final Iterator itr = children.iterator();
         while (itr.hasNext()) {
-            final Node node = (Node) itr.next();
-            if (node == oldChild) {
+            final NodeImpl node = (NodeImpl) itr.next();
+            if (node == n) {
                 removed = true;
                 itr.remove();
             }
         }
-        if (!removed) {
-            throw new DOMException(DOMException.NOT_FOUND_ERR,
-                    "NodeImpl Not found");
-        } else {
-            setDirty(removed);
-        }
-        return oldChild;
+        return removed;
     }
 
     /**
@@ -754,7 +777,8 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
     }
 
     /**
-     * set the parent node
+     * Set the parent node and invoke appendChild(this) to 
+     * add this node to the parent's list of children.
      * @param parent
      * @throws SOAPException
      */ 
@@ -799,7 +823,9 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
      * get the dirty bit
      * @return
      */
-    public boolean isDirty() { return _isDirty; }
+    public boolean isDirty() {
+        return _isDirty;
+    }
 
     /**
      * set the dirty bit. will also set our parent as dirty, if there is one.
@@ -807,12 +833,10 @@ public class NodeImpl implements org.w3c.dom.Node, javax.xml.soap.Node,
      * @param dirty new value of the dirty bit
      */
     public void setDirty(boolean dirty)
-    { 
-        _isDirty = dirty; 
+    {
+        _isDirty = dirty;
         if (_isDirty && parent != null) {
-            ((NodeImpl)parent).setDirty(true);
+            ((NodeImpl) parent).setDirty(true);
         }
     }
-
-
 }

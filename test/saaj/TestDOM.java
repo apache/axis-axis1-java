@@ -166,6 +166,38 @@ public class TestDOM extends AxisTestBase {
         assertXMLEqual(xml, soapBodyElt.toString());
     }
 
+    public void testForParent() throws Exception {
+      String NL =  System.getProperty("line.separator");
+      String SOAP_STR = 
+	"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">"+NL+
+	"  <soapenv:Body>"+NL+
+	"    <rtnElement>"+NL+
+	"      <USAddress>"+NL+
+	"        <name>Robert Smith</name>"+NL+
+	"      </USAddress>"+NL+
+	"    </rtnElement>"+NL+
+	"  </soapenv:Body>"+NL+
+	"</soapenv:Envelope>";
+      java.io.InputStream is = 
+	new java.io.ByteArrayInputStream(SOAP_STR.getBytes());
+      org.apache.axis.Message msg = new org.apache.axis.Message
+	(is, false, "text/xml;charset=utf-8", null);
+      // get the SOAPEnvelope (a SAAJ instance)
+      javax.xml.soap.SOAPEnvelope senv = msg.getSOAPEnvelope();
+      javax.xml.soap.SOAPBody sbody = senv.getBody();
+      javax.xml.soap.SOAPElement rtnElement = 
+	(javax.xml.soap.SOAPElement) sbody.getChildElements().next();
+      javax.xml.soap.SOAPElement addrElement = 
+	(javax.xml.soap.SOAPElement) rtnElement.getChildElements().next();
+      javax.xml.soap.SOAPElement nameElement = 
+	(javax.xml.soap.SOAPElement) addrElement.getChildElements().next();
+      javax.xml.soap.Node textNode = 
+	(javax.xml.soap.Node) nameElement.getChildElements().next();
+      assertNotNull
+	("A DOM node parent (within a SOAPElement) should never be null.",
+	 (org.w3c.dom.Node) textNode.getParentNode());
+    }
+
     private String messageToString(SOAPMessage message) throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
         message.writeTo(baos);
