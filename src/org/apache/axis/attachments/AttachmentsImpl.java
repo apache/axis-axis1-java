@@ -103,6 +103,11 @@ public class AttachmentsImpl implements Attachments {
      */
     protected String contentLocation = null;
 
+	/**
+	 * The HashMap for DataHandler Managements 
+	 */
+	private HashMap stackDataHandler = new HashMap();
+
     /**
      * Construct one of these on a parent Message.
      * Should only ever be called by Message constructor!
@@ -273,6 +278,12 @@ public class AttachmentsImpl implements Attachments {
     public Part createAttachmentPart(Object datahandler)
             throws org.apache.axis.AxisFault {
 
+		// Searching for the same attachements
+		Integer key = new Integer(datahandler.hashCode());
+		if (stackDataHandler.containsKey(key)) {
+			return (Part)stackDataHandler.get(key);
+		}
+
         multipart = null;
 
         dimemultipart = null;
@@ -290,6 +301,9 @@ public class AttachmentsImpl implements Attachments {
                 new AttachmentPart((javax.activation.DataHandler) datahandler);
 
         addAttachmentPart(ret);
+
+		// Store the current DataHandler with its key
+		stackDataHandler.put(key, ret);
 
         return ret;
     }
@@ -585,6 +599,7 @@ public class AttachmentsImpl implements Attachments {
             mergeinAttachments();
             attachments.clear();
             orderedAttachments.clear();
+            stackDataHandler.clear();
         } catch (AxisFault af){
             log.warn(Messages.getMessage("exception00"));
         }
