@@ -265,12 +265,12 @@ public class tcpmon extends JFrame {
                 public void actionPerformed(ActionEvent event) {
                     if ("HTTP Proxy Support".equals(event.getActionCommand())) {
                         boolean b = HTTPProxyBox.isSelected();
-                        Color   c = b ? Color.black : Color.gray ;
+                        Color   color = b ? Color.black : Color.gray ;
 
                         HTTPProxyHost.setEnabled( b );
                         HTTPProxyPort.setEnabled( b );
-                        HTTPProxyHostLabel.setForeground( c );
-                        HTTPProxyPortLabel.setForeground( c );
+                        HTTPProxyHostLabel.setForeground( color );
+                        HTTPProxyPortLabel.setForeground( color );
                     }
                 };
             });
@@ -312,27 +312,27 @@ public class tcpmon extends JFrame {
             addButton.addActionListener( new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
                     if ( "Add".equals(event.getActionCommand()) ) {
-                        String   tmp ;
+                        String   text ;
                         Listener l = null ;
                         int      lPort = Integer.parseInt(port.getText());
                         String   tHost = host.getText();
                         int      tPort = 0 ;
 
-                        tmp = tport.getText();
-                        if ( tmp != null && !tmp.equals("") )
-                            tPort = Integer.parseInt(tmp );
+                        text = tport.getText();
+                        if ( text != null && !text.equals("") )
+                            tPort = Integer.parseInt(text);
                         l = new Listener( noteb, null, lPort, tHost, tPort, 
                                           proxyButton.isSelected() );
 
                         // Pick-up the HTTP Proxy settings
                         ///////////////////////////////////////////////////
-                        tmp = HTTPProxyHost.getText();
-                        if ( "".equals(tmp) ) tmp = null ;
-                        l.HTTPProxyHost = tmp ;
-                        tmp = HTTPProxyPort.getText();
-                        if ( "".equals(tmp) ) tmp = null ;
-                        if( tmp != null )
-                            l.HTTPProxyPort = Integer.parseInt(tmp);
+                        text = HTTPProxyHost.getText();
+                        if ( "".equals(text) ) text = null ;
+                        l.HTTPProxyHost = text ;
+                        text = HTTPProxyPort.getText();
+                        if ( "".equals(text) ) text = null ;
+                        if( text != null )
+                            l.HTTPProxyPort = Integer.parseInt(text);
 
                         port.setText(null);
                         host.setText(null);
