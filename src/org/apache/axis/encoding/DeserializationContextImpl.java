@@ -313,10 +313,18 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
     {
         QName typeQName = null;
         
-        // I am not sure why we are querying the name instead of the type?
         if (typeQName == null) {
+
+            // If the element is a SOAP-ENC element, the name of the element is the type.
+            // If the default type mapping accepts SOAP 1.2, then use then set
+            // the typeQName to the SOAP-ENC type.
+            // Else if the default type mapping accepts SOAP 1.1, then 
+            // convert the SOAP-ENC type to the appropriate XSD Schema Type.
             QName myQName = new QName(namespace, localName);
-            if (myQName.equals(Constants.SOAP_ARRAY)) {
+            if (Constants.URI_CURRENT_SOAP_ENC.equals(Constants.URI_SOAP12_ENC) &&
+                Constants.isSOAP_ENC(namespace)) {
+                typeQName = myQName;
+            } else if (myQName.equals(Constants.SOAP_ARRAY)) {
                 typeQName = Constants.SOAP_ARRAY;
             } else if (myQName.equals(Constants.SOAP_STRING)) {
                 typeQName = Constants.XSD_STRING;
