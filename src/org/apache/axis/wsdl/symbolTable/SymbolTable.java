@@ -1197,11 +1197,15 @@ public class SymbolTable {
 
                     if (isElement) {
                         if (!belowSchemaLevel) {
-                            defType = new DefinedElement(qName, refType, node,
-                                    dims);
+                            defType =
+                               new DefinedElement(qName, refType, node, dims);
+                            // Save component type for ArraySerializer
+                            defType.setComponentType(arrayEQName);
                         }
                     } else {
                         defType = new DefinedType(qName, refType, node, dims);
+                        // Save component type for ArraySerializer
+                        defType.setComponentType(arrayEQName);
                     }
 
                     if (defType != null) {
@@ -1706,7 +1710,7 @@ public class SymbolTable {
                     literalInput, operation.getName(),
                     bindingEntry);
         }
-        
+
         // Collect all the output parameters
         if ((output != null) && (output.getMessage() != null)) {
             getParametersFromParts(outputs,
@@ -1714,7 +1718,7 @@ public class SymbolTable {
                     literalOutput, operation.getName(),
                     bindingEntry);
         }
-        
+
         if (parameterOrder != null && !wrapped) {
 
             // Construct a list of the parameters in the parameterOrder list, determining the

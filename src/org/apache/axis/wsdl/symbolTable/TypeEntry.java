@@ -81,7 +81,9 @@ public abstract class TypeEntry extends SymTabEntry implements Serializable {
     /** Field dims */
     protected String dims = "";                        // If refType is an element, dims indicates
 
-    // the array dims (for example "[]").
+                                                       // the array dims (for example "[]").
+
+    protected QName componentType = null;              // If this is an array, the component type
 
     /** Field undefined */
     protected boolean undefined;                       // If refType is an Undefined type
@@ -373,6 +375,23 @@ public abstract class TypeEntry extends SymTabEntry implements Serializable {
     public String getDimensions() {
         return dims;
     }    // getDimensions
+
+    /**
+     * Return the QName of the component if this is an array type
+     * @return QName of array elements or null
+     */
+    public QName getComponentType()
+    {
+        return componentType;
+    }
+
+    /**
+     * Set the QName of the component if this is an array type
+     */ 
+    public void setComponentType(QName componentType)
+    {
+        this.componentType = componentType;
+    }
 
     /**
      * Get string representation.

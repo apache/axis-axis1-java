@@ -53,12 +53,27 @@ public class ArraySerializer implements Serializer
 {
     QName xmlType;
     Class javaType;
-    
+    QName componentType;
+
+    /**
+     * Constructor
+     *
+     */
     public ArraySerializer(Class javaType, QName xmlType) {
         this.javaType = javaType;
         this.xmlType = xmlType;
     }
-    
+
+    /**
+     * Constructor
+     * Special constructor that takes the component type of the array.
+     */
+    public ArraySerializer(Class javaType, QName xmlType, QName componentType) {
+        this.javaType = javaType;
+        this.xmlType = xmlType;
+        this.componentType = componentType;
+    }
+
     protected static Log log =
         LogFactory.getLog(ArraySerializer.class.getName());
 
@@ -98,11 +113,11 @@ public class ArraySerializer implements Serializer
         }
 
         // Get the componentType of the array/list
-        Class componentType;
+        Class componentClass;
         if (list == null) {
-            componentType = cls.getComponentType();
+            componentClass = cls.getComponentType();
         } else {
-            componentType = Object.class;
+            componentClass = Object.class;
         }
 
 
@@ -114,18 +129,20 @@ public class ArraySerializer implements Serializer
         //    This won't handle Lists of Lists or
         //    arrays of Lists....only arrays of arrays.
         String dims = "";
-        while (componentType.isArray()) {
-            componentType = componentType.getComponentType();
+        while (componentClass.isArray()) {
+            componentClass = componentClass.getComponentType();
             if (soap == SOAPConstants.SOAP12_CONSTANTS)
                 dims += "* ";
             else
                 dims += "[]";
         }
 
-        // Get the QName of the componentType.
-        // If not found, look at the super classes
-        QName componentQName = null;
-        if (!encoded) {
+        // Get the QName of the componentType
+        // if it wasn't passed in from the constructor
+        QName componentQName = this.componentType;
+
+        // Try the current XML type from the context
+        if (componentQName == null) {
             componentQName = context.getCurrentXMLType();
             if (componentQName != null) {
                 if ((componentQName.equals(xmlType) ||
@@ -135,24 +152,27 @@ public class ArraySerializer implements Serializer
             }
         }
 
+        // Then check the type mapping for the class
         if (componentQName == null) {
-            componentQName = context.getQNameForClass(componentType);
+            componentQName = context.getQNameForClass(componentClass);
         }
 
+        // If still not found, look at the super classes
         if (componentQName == null) {
-            Class searchCls = componentType;
+            Class searchCls = componentClass;
             while(searchCls != null && componentQName == null) {
                 searchCls = searchCls.getSuperclass();
                 componentQName = context.getQNameForClass(searchCls);
             }
             if (componentQName != null) {
-                componentType = searchCls;
+                componentClass = searchCls;
             }
         }
 
+        // Still can't find it?  Throw an error.
         if (componentQName == null) {
             throw new IOException(
-                    Messages.getMessage("noType00", componentType.getName()));
+                    Messages.getMessage("noType00", componentClass.getName()));
         }
 
         int len = (list == null) ? Array.getLength(value) : list.size();

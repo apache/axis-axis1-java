@@ -17,6 +17,7 @@
 package org.apache.axis.encoding.ser;
 
 import org.apache.axis.Constants;
+import org.apache.axis.encoding.Serializer;
 
 import javax.xml.namespace.QName;
 
@@ -32,5 +33,25 @@ public class ArraySerializerFactory extends BaseSerializerFactory {
     }
     public ArraySerializerFactory(Class javaType, QName xmlType) {
         super(ArraySerializer.class, xmlType, javaType);
+    }
+
+    private QName componentType;
+    public ArraySerializerFactory(QName componentType) {
+        super(ArraySerializer.class, Constants.SOAP_ARRAY, Object[].class);
+        this.componentType = componentType;
+    }
+
+    /**
+     * Obtains a serializer by invoking <constructor>(javaType, xmlType)
+     * on the serClass.
+     */
+    protected Serializer getGeneralPurpose(String mechanismType)
+    {
+        // Do something special only if we have an array component type
+
+        if (componentType == null)
+            return super.getGeneralPurpose(mechanismType);
+        else
+            return new ArraySerializer(javaType, xmlType, componentType);
     }
 }

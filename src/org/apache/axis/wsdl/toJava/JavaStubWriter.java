@@ -352,15 +352,35 @@ public class JavaStubWriter extends JavaClassWriter {
             pw.println(
                     "                                (javax.xml.namespace.QName) cachedSerQNames.get(i);");
             pw.println(
-                    "                        java.lang.Class sf = (java.lang.Class)");
+                    "                        Object x = cachedSerFactories.get(i);");
+            pw.println(
+                    "                        if (x instanceof Class) {");
+            pw.println(
+                    "                            java.lang.Class sf = (java.lang.Class)");
             pw.println(
                     "                                 cachedSerFactories.get(i);");
             pw.println(
-                    "                        java.lang.Class df = (java.lang.Class)");
+                    "                            java.lang.Class df = (java.lang.Class)");
             pw.println(
                     "                                 cachedDeserFactories.get(i);");
             pw.println(
-                    "                        _call.registerTypeMapping(cls, qName, sf, df, false);");
+                    "                            _call.registerTypeMapping(cls, qName, sf, df, false);");
+
+            pw.println("                        }");
+            pw.println(
+                    "                        else if (x instanceof javax.xml.rpc.encoding.SerializerFactory) {");
+            pw.println(
+                    "                            org.apache.axis.encoding.SerializerFactory sf = (org.apache.axis.encoding.SerializerFactory)");
+            pw.println(
+                    "                                 cachedSerFactories.get(i);");
+            pw.println(
+                    "                            org.apache.axis.encoding.DeserializerFactory df = (org.apache.axis.encoding.DeserializerFactory)");
+            pw.println(
+                    "                                 cachedDeserFactories.get(i);");
+            pw.println(
+                    "                            _call.registerTypeMapping(cls, qName, sf, df, false);");
+
+            pw.println("                        }");
             pw.println("                    }");
             pw.println("                }");
             pw.println("            }");
@@ -903,8 +923,19 @@ public class JavaStubWriter extends JavaClassWriter {
                 pw.println("            cachedSerFactories.add(simplelistsf);");
                 pw.println("            cachedDeserFactories.add(simplelistdf);");
             } else {
-                pw.println("            cachedSerFactories.add(arraysf);");
-                pw.println("            cachedDeserFactories.add(arraydf);");
+                // We use a custom serializer if WSDL told us the component type of the array.
+                // Both factories must be an instance, so we create a ArrayDeserializerFactory
+                if (type.getComponentType() != null) {
+                    QName ct = type.getComponentType();
+                    pw.println("            qName = new javax.xml.namespace.QName(\""
+                            + ct.getNamespaceURI() + "\", \"" + ct.getLocalPart()
+                            + "\");");
+                    pw.println("            cachedSerFactories.add(new org.apache.axis.encoding.ser.ArraySerializerFactory(qName));");
+                    pw.println("            cachedDeserFactories.add(new org.apache.axis.encoding.ser.ArrayDeserializerFactory());");
+                } else {
+                    pw.println("            cachedSerFactories.add(arraysf);");
+                    pw.println("            cachedDeserFactories.add(arraydf);");
+                }
             }
         } else if ((type.getNode() != null) && (Utils.getEnumerationBaseAndValues(
                 type.getNode(), symbolTable) != null)) {

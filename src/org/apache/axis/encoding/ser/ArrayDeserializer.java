@@ -239,16 +239,22 @@ public class ArrayDeserializer extends DeserializerImpl
                         offset ++;
                     }
                 } else {
-                dims += innerDimString;                
+                    // This might not be right because the arrayItemClass below
+                    // is going to have dimensions too..
+                    dims += innerDimString;
             }
         }
 
-        arrayItemClass = context.getTypeMapping().
-            getClassForQName(compQName);
+        arrayItemClass = context.getTypeMapping().getClassForQName(compQName);
         if (arrayItemClass != null) {
             try {
+                final String name = arrayItemClass.getName();
+                if (name.indexOf('[') != -1) {
+                    // Just add a single dimension
+                    dims = "[]";
+                }
                 String loadableArrayClassName = JavaUtils.getLoadableClassName(
-                                                    JavaUtils.getTextClassName(arrayItemClass.getName()) + dims);
+                                                    JavaUtils.getTextClassName(name) + dims);
                 arrayClass = ClassUtils.forName(loadableArrayClassName,
                                                     true,
                                                     arrayItemClass.getClassLoader());
