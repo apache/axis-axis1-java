@@ -60,7 +60,7 @@ public class TestArrayListConversions extends TestCase {
             service.setOption("className", "test.encoding.TestArrayListConversions");
             service.setOption("allowedMethods", "*");
 
-            ServiceDesc desc = service.getInitializedServiceDesc();
+            ServiceDesc desc = service.getInitializedServiceDesc(null);
             desc.setDefaultNamespace(SERVICE_NAME);
 
             provider.deployService(SERVICE_NAME, service);

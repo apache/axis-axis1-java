@@ -291,7 +291,8 @@ public class SOAPService extends SimpleTargetedChain
      *
      * Syncronized to prevent simutaneous modification of serviceDescription.
      */
-    public synchronized ServiceDesc getInitializedServiceDesc()
+    public synchronized ServiceDesc getInitializedServiceDesc(
+                                                     MessageContext msgContext)
             throws AxisFault {
 
         if (serviceDescription.getImplClass() == null) {
@@ -302,7 +303,7 @@ public class SOAPService extends SimpleTargetedChain
             // providers which don't strictly map to Java class backends
             // (BSFProvider, etc.), and as such we hand off here.
             if (pivotHandler instanceof BasicProvider) {
-                ((BasicProvider)pivotHandler).initServiceDesc(this);
+                ((BasicProvider)pivotHandler).initServiceDesc(this, msgContext);
             }
 
         }

@@ -61,6 +61,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
+import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 
@@ -187,26 +188,34 @@ public class EJBProvider extends RPCProvider
      * @param beanJndiName the JNDI name of the EJB
      * @return the class info of the EJB remote interface
      */ 
-    protected Class getServiceClass(MessageContext msgContext, String beanJndiName)
+    protected Class getServiceClass(String beanJndiName,
+                                    SOAPService service,
+                                    MessageContext msgContext)
         throws AxisFault
     {
-        Handler serviceHandler = msgContext.getService();
+        if (msgContext == null) {
+            // FIXME : what should we do here?
+            return null;
+        }
+
         Class interfaceClass = null;
         
         // First try to get the interface class from the configuation
         String remoteName = 
-                (String) getStrOption(OPTION_REMOTEINTERFACENAME, serviceHandler);
+                (String) getStrOption(OPTION_REMOTEINTERFACENAME, service);
         try {
             if(remoteName != null){
-                interfaceClass = ClassUtils.forName(remoteName, true, msgContext.getClassLoader());
+                interfaceClass = ClassUtils.forName(remoteName,
+                                                    true,
+                                                    msgContext.getClassLoader());
             }
             else
             {
                 // Get the EJB Home object from JNDI
                 Object ejbHome = getEJBHome(msgContext, beanJndiName);
 
-                String homeName = (String) getStrOption(OPTION_HOMEINTERFACENAME,
-                                                        serviceHandler);
+                String homeName = (String)getStrOption(OPTION_HOMEINTERFACENAME,
+                                                        service);
                 if (homeName == null)
                     throw new AxisFault(
                             JavaUtils.getMessage("noOption00",

@@ -101,11 +101,15 @@ public class RPCElement extends SOAPBodyElement
         if (operations == null) {
             SOAPService service    = msgContext.getService();
             if (service != null) {
-                ServiceDesc serviceDesc = service.getInitializedServiceDesc();
+                ServiceDesc serviceDesc =
+                        service.getInitializedServiceDesc(msgContext);
                 
                 String lc = Utils.xmlNameToJava(name);
                 if (serviceDesc == null) {
-                    AxisFault.makeFault(new ClassNotFoundException(JavaUtils.getMessage("noClassForService00", lc)));
+                    AxisFault.makeFault(
+                            new ClassNotFoundException(
+                                    JavaUtils.getMessage("noClassForService00",
+                                                         lc)));
                 }
 
                 operations = serviceDesc.getOperationsByName(lc);
