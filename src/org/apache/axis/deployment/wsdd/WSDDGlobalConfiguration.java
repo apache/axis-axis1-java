@@ -55,6 +55,7 @@
 package org.apache.axis.deployment.wsdd;
 
 import org.apache.axis.Handler;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.deployment.DeploymentRegistry;
 import org.w3c.dom.Document;
@@ -158,7 +159,7 @@ public class WSDDGlobalConfiguration
      */
     public void setType(String type) throws WSDDException
     {
-        throw new WSDDException("GlobalConfiguration disallows setting of Type");
+        throw new WSDDException(JavaUtils.getMessage("noTypeOnGlobalConfig00"));
     }
 
     /**

@@ -55,6 +55,7 @@
 package org.apache.axis.deployment.wsdd;
 
 import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.encoding.SerializationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -115,9 +116,9 @@ public abstract class WSDDElement
                 || (null == e.getLocalName())
                 ||!e.getNamespaceURI().equals(name.getNamespaceURI())
                 ||!e.getLocalName().equals(name.getLocalPart())) {
-            throw new WSDDException("Invalid WSDD Element '" + 
-                                    e.getLocalName() + "' (wanted '" +
-                                    name.getLocalPart() + "')");
+            throw new WSDDException(JavaUtils.getMessage("invalidWSDD00",
+                                    e.getLocalName(),
+                                    name.getLocalPart()));
         }
     }
 

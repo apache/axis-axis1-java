@@ -56,6 +56,7 @@ package org.apache.axis.deployment.wsdd;
 
 import org.apache.axis.Chain;
 import org.apache.axis.Handler;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.deployment.DeploymentRegistry;
 import org.w3c.dom.Document;
@@ -116,9 +117,9 @@ public class WSDDChain
         }
 
         if (handlers.isEmpty())
-            throw new WSDDException("No handlers in " + 
-                                    getElementName().getLocalPart() +
-                                    " '" + getQName() + "'");
+            throw new WSDDException(JavaUtils.getMessage("noHandlersInChain00", 
+                                    getElementName().getLocalPart(),
+                                    getQName().toString()));
     }
     
     protected QName getElementName()

@@ -55,6 +55,7 @@
 package org.apache.axis.deployment.wsdd;
 
 import org.apache.axis.Handler;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.deployment.wsdd.providers.WSDDBsfProvider;
 import org.apache.axis.deployment.wsdd.providers.WSDDComProvider;
@@ -137,12 +138,12 @@ public abstract class WSDDProvider
         throws Exception
     {
         if (providerType == null)
-            throw new WSDDException("Null provider type passed to WSDDProvider!");
+            throw new WSDDException(JavaUtils.getMessage("nullProvider00"));
         
         WSDDProvider provider = (WSDDProvider)providers.get(providerType);
         if (provider == null) {
-            throw new WSDDException("No provider type matches QName '" +
-                                    providerType + "'");
+            throw new WSDDException(JavaUtils.getMessage("noMatchingProvider00",
+                                    providerType.toString()));
         }
         
         return provider.newProviderInstance(service, registry);

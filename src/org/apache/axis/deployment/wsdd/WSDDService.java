@@ -58,6 +58,7 @@ import org.apache.axis.Handler;
 import org.apache.axis.TargetedChain;
 import org.apache.axis.FaultableHandler;
 import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.encoding.*;
 import org.apache.axis.deployment.DeploymentRegistry;
@@ -214,7 +215,8 @@ public class WSDDService
                                                                this,
                                                                registry);
             if (providerHandler == null)
-                throw new WSDDException("Couldn't construct provider.");
+                throw new WSDDException(
+                        JavaUtils.getMessage("couldntConstructProvider00"));
             
             service.setPivotHandler(providerHandler);
         }

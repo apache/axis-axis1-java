@@ -55,6 +55,7 @@
 package org.apache.axis.deployment.wsdd.providers;
 
 import org.apache.axis.Handler;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.deployment.DeploymentException;
 import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.deployment.wsdd.WSDDProvider;
@@ -76,14 +77,16 @@ public class WSDDHandlerProvider
     {
         String providerClass = service.getParameter("handlerClass");
         if (providerClass == null) {
-            throw new DeploymentException("No provider Handler class specified!");
+            throw new DeploymentException(JavaUtils.
+                                            getMessage("noHandlerClass00"));
         }
         
         Class _class = Class.forName(providerClass);
         
         if (!(Handler.class.isAssignableFrom(_class))) {
-            throw new DeploymentException("Class " + _class.getName() +
-                " is not a Handler!");
+            throw new DeploymentException(JavaUtils.
+                                            getMessage("badHandlerClass00",
+                                                       _class.getName()));
         }
 
         return (Handler)_class.newInstance();
