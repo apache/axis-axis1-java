@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001-2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -67,75 +67,75 @@ import java.util.Map;
  *
  */
 public class WSDDJAXRPCHandlerInfoChain extends WSDDHandler {
-	
-	private HandlerInfoChainFactory _hiChainFactory;
-	private String[] _roles;
+    
+    private HandlerInfoChainFactory _hiChainFactory;
+    private String[] _roles;
 
-	/**
-	 * Default constructor
-	 */
-	public WSDDJAXRPCHandlerInfoChain() {
-	}
+    /**
+     * Default constructor
+     */
+    public WSDDJAXRPCHandlerInfoChain() {
+    }
 
-	/**
-	 *
-	 * @param e (Element) XXX
-	 * @throws WSDDException XXX
-	 */
-	public WSDDJAXRPCHandlerInfoChain(Element e) throws WSDDException {
-		super(e);
+    /**
+     *
+     * @param e (Element) XXX
+     * @throws WSDDException XXX
+     */
+    public WSDDJAXRPCHandlerInfoChain(Element e) throws WSDDException {
+        super(e);
 
-		ArrayList infoList = new ArrayList();
-		Element[] elements = getChildElements(e, ELEM_WSDD_JAXRPC_HANDLERINFO);
-		if (elements.length != 0) {
-			for (int i = 0; i < elements.length; i++) {
-				WSDDJAXRPCHandlerInfo handlerInfo =
-					new WSDDJAXRPCHandlerInfo(elements[i]);
+        ArrayList infoList = new ArrayList();
+        Element[] elements = getChildElements(e, ELEM_WSDD_JAXRPC_HANDLERINFO);
+        if (elements.length != 0) {
+            for (int i = 0; i < elements.length; i++) {
+                WSDDJAXRPCHandlerInfo handlerInfo =
+                    new WSDDJAXRPCHandlerInfo(elements[i]);
 
-				String handlerClassName = handlerInfo.getHandlerClassName();
-				Class handlerClass = null;
-				try {
-					handlerClass = ClassUtils.forName(handlerClassName);
-				} catch (ClassNotFoundException cnf) { 
-					// GLT - do something here
-				}
+                String handlerClassName = handlerInfo.getHandlerClassName();
+                Class handlerClass = null;
+                try {
+                    handlerClass = ClassUtils.forName(handlerClassName);
+                } catch (ClassNotFoundException cnf) { 
+                    // GLT - do something here
+                }
 
-				Map handlerMap = handlerInfo.getHandlerMap();
-				QName[] headers = handlerInfo.getHeaders();
-				
-				if (handlerClass != null) {
-					HandlerInfo hi =
-						new HandlerInfo(handlerClass, handlerMap, headers);
-					infoList.add(hi);
-				}
-			}
-		}
-		_hiChainFactory = new HandlerInfoChainFactory(infoList);
-		
-		elements = getChildElements(e,  ELEM_WSDD_JAXRPC_ROLE);
-		if (elements.length != 0) {
-			ArrayList roleList = new ArrayList();
-			for (int i = 0; i < elements.length; i++) {
-				String role = elements[i].getAttribute( ATTR_SOAPACTORNAME);
-				roleList.add(role);
-			}
-			String [] roles =new String[roleList.size()]; 
-			roles = (String[]) roleList.toArray(roles);
-			_hiChainFactory.setRoles(roles);
-		}
-		
-	}
+                Map handlerMap = handlerInfo.getHandlerMap();
+                QName[] headers = handlerInfo.getHeaders();
+                
+                if (handlerClass != null) {
+                    HandlerInfo hi =
+                        new HandlerInfo(handlerClass, handlerMap, headers);
+                    infoList.add(hi);
+                }
+            }
+        }
+        _hiChainFactory = new HandlerInfoChainFactory(infoList);
+        
+        elements = getChildElements(e,  ELEM_WSDD_JAXRPC_ROLE);
+        if (elements.length != 0) {
+            ArrayList roleList = new ArrayList();
+            for (int i = 0; i < elements.length; i++) {
+                String role = elements[i].getAttribute( ATTR_SOAPACTORNAME);
+                roleList.add(role);
+            }
+            String [] roles =new String[roleList.size()]; 
+            roles = (String[]) roleList.toArray(roles);
+            _hiChainFactory.setRoles(roles);
+        }
+        
+    }
 
-	public HandlerInfoChainFactory getHandlerChainFactory() {
-		return _hiChainFactory;
-	}
+    public HandlerInfoChainFactory getHandlerChainFactory() {
+        return _hiChainFactory;
+    }
 
-	public void setHandlerChainFactory(HandlerInfoChainFactory handlerInfoChainFactory) {
-		_hiChainFactory = handlerInfoChainFactory;
-	}
+    public void setHandlerChainFactory(HandlerInfoChainFactory handlerInfoChainFactory) {
+        _hiChainFactory = handlerInfoChainFactory;
+    }
 
-	protected QName getElementName() {
-		return WSDDConstants.QNAME_JAXRPC_HANDLERINFOCHAIN;
-	}
-	
+    protected QName getElementName() {
+        return WSDDConstants.QNAME_JAXRPC_HANDLERINFOCHAIN;
+    }
+    
 }

@@ -72,10 +72,10 @@ import java.util.Map;
 public class WSDDJAXRPCHandlerInfo
     extends WSDDDeployableItem
 {
-	private String _classname;
-	private QName[] _headers;
-	private Map _map;
-	
+    private String _classname;
+    private QName[] _headers;
+    private Map _map;
+    
     /**
      * Default constructor
      */
@@ -93,7 +93,7 @@ public class WSDDJAXRPCHandlerInfo
     {
         super(e);
         
-		String classnameStr = e.getAttribute(ATTR_CLASSNAME);
+        String classnameStr = e.getAttribute(ATTR_CLASSNAME);
         if (classnameStr != null && !classnameStr.equals("")) {
             _classname = classnameStr;
         }
@@ -101,33 +101,33 @@ public class WSDDJAXRPCHandlerInfo
             throw new WSDDException(JavaUtils.getMessage("noClassNameAttr00"));
         
         Element[] elements = getChildElements(e, ELEM_WSDD_PARAM);
-		if (elements.length != 0) {
-			_map = new HashMap();
+        if (elements.length != 0) {
+            _map = new HashMap();
       
-	        // Load up the map
-	        for (int i = 0; i < elements.length; i++) {
-    	        Element param = elements[i];
-        	    String pname = param.getAttribute(ATTR_NAME);
-            	String value = param.getAttribute(ATTR_VALUE);
-            	parameters.put(pname, value); 
-        	}			
-		}
-		
-		elements = getChildElements(e, ELEM_WSDD_JAXRPC_HEADER);
-		if (elements.length != 0) {
-        	java.util.ArrayList headerList = new java.util.ArrayList();
-        	for (int i = 0; i < elements.length; i++) {
-        		Element qElem = elements[i];
-				String headerStr = qElem.getAttribute(ATTR_QNAME);
-		        if (headerStr == null ||  headerStr.equals("")) 
-		            throw new WSDDException(JavaUtils.getMessage("noValidHeader"));		
+            // Load up the map
+            for (int i = 0; i < elements.length; i++) {
+                Element param = elements[i];
+                String pname = param.getAttribute(ATTR_NAME);
+                String value = param.getAttribute(ATTR_VALUE);
+                parameters.put(pname, value); 
+            }           
+        }
+        
+        elements = getChildElements(e, ELEM_WSDD_JAXRPC_HEADER);
+        if (elements.length != 0) {
+            java.util.ArrayList headerList = new java.util.ArrayList();
+            for (int i = 0; i < elements.length; i++) {
+                Element qElem = elements[i];
+                String headerStr = qElem.getAttribute(ATTR_QNAME);
+                if (headerStr == null ||  headerStr.equals("")) 
+                    throw new WSDDException(JavaUtils.getMessage("noValidHeader"));     
 
-				QName headerQName = XMLUtils.getQNameFromString(headerStr, e);
-				headerList.add(headerQName); 
-  			}
-  			QName[] headers = new QName[headerList.size()];
-  			_headers = (QName[]) headerList.toArray(headers);
-		}		
+                QName headerQName = XMLUtils.getQNameFromString(headerStr, e);
+                headerList.add(headerQName); 
+            }
+            QName[] headers = new QName[headerList.size()];
+            _headers = (QName[]) headerList.toArray(headers);
+        }       
     }
 
     protected QName getElementName()
@@ -135,34 +135,34 @@ public class WSDDJAXRPCHandlerInfo
         return QNAME_JAXRPC_HANDLERINFO;
     }
 
-	public String getHandlerClassName() {
-		return _classname;
-	}
-	
-	public void setHandlerClassName(String classname) {
-		_classname = classname;
-	}
-	
-	public Map getHandlerMap() {
-		return _map;
-	}
-	
-	public void setHandlerMap(Map map) {
-		_map = map;
-	}
-	
-	public QName[] getHeaders() {
-		return _headers;
-	}
-	
-	public void setHeaders(QName[] headers) {
-		_headers = headers;
-	}
-	
+    public String getHandlerClassName() {
+        return _classname;
+    }
+    
+    public void setHandlerClassName(String classname) {
+        _classname = classname;
+    }
+    
+    public Map getHandlerMap() {
+        return _map;
+    }
+    
+    public void setHandlerMap(Map map) {
+        _map = map;
+    }
+    
+    public QName[] getHeaders() {
+        return _headers;
+    }
+    
+    public void setHeaders(QName[] headers) {
+        _headers = headers;
+    }
+    
     public void writeToContext(SerializationContext context)
         throws IOException
     {
-    	// GLT - FIX THIS UP
+        // GLT - FIX THIS UP
         AttributesImpl attrs = new AttributesImpl();
         QName name = getQName();
         if (name != null) {
