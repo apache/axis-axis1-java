@@ -59,47 +59,57 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The <code>javax.xml.rpc.handler.HandlerChain</code> represents an
- * ordered list of handlers. All elements in the HandlerChain are of
- * the type javax.xml.rpc.handler.HandlerInfo.
- * <p>An implementation class for the HandlerChain interface abstracts
- * the policy and mechanism for the invocation of the registered
- * handlers.
+ * The <code>javax.xml.rpc.handler.HandlerChain</code> represents
+ * a list of handlers. All elements in the HandlerChain are of
+ * the type <code>javax.xml.rpc.handler.Handler</code>.
+ * <p>
+ * An implementation class for the <code>HandlerChain</code>
+ * interface abstracts the policy and mechanism for the invocation
+ * of the registered handlers.
+ *
+ * @version 1.0
  */
 public interface HandlerChain extends List {
 
     /**
-     * The handleRequest method initiates the request processing for this
-     * handler chain.
-     * @param context - MessageContext parameter provides access to the request
-     *                  SOAP message.
+     * The <code>handleRequest</code> method initiates the request
+     * processing for this handler chain.
+     * @param context - MessageContext parameter provides access to
+     *             the request SOAP message.
+     * @return boolean Returns <code>true</code> if all handlers in
+     *             chain have been processed. Returns <code>false</code>
      *
+     *             if a handler in the chain returned
+     *             <code>false</code> from its handleRequest
+     *             method.
      * @throws JAXRPCException - if any processing error happens
      */
     public boolean handleRequest(MessageContext context);
 
     /**
-     * The handleResponse method initiates the response processing for this
-     * handler chain.
+     * The <code>handleResponse</code> method initiates the response
+     * processing for this handler chain.
      *
      * @param context - MessageContext parameter provides access to the response
      *                  SOAP message.
-     *
+     * @return boolean Returns <code>true</code> if all handlers in
+     *             chain have been processed. Returns <code>false</code>
+     *             if a handler in the chain returned
+     *             <code>false</code> from its handleResponse method.
      * @throws JAXRPCException - if any processing error happens
      */
     public boolean handleResponse(MessageContext context);
 
     /**
-     * The handleFault method initiates the SOAP fault processing 
-     * for this handler chain.
+     * The <code>handleFault</code> method initiates the SOAP
+     * fault processing for this handler chain.
      *
      * @param  context - MessageContext parameter provides access to the SOAP
      *         message.
-     *
-     * @returns Returns true if all handlers in chain have been processed. 
-     *          Returns false  if a handler in the chain returned 
-     *          false from its handleFault method.
-     * 
+     * @return Returns boolean Returns <code>true</code> if all handlers in
+     *             chain have been processed. Returns <code>false</code>
+     *             if a handler in the chain returned
+     *             <code>false</code> from its handleFault method.
      * @throws JAXRPCException - if any processing error happens
      */
     public boolean handleFault(MessageContext context);
@@ -122,22 +132,26 @@ public interface HandlerChain extends List {
     public void destroy();
 
     /**
-     * Sets SOAP Actor roles for this HandlerChain. This specifies the set of
-     * roles in which this HandlerChain is to act for the SOAP message
-     * processing at this SOAP node. These roles assumed by a HandlerChain must
-     * be invariant during the processing of an individual SOAP message.
+     * Sets SOAP Actor roles for this <code>HandlerChain</code>. This
+     * specifies the set of roles in which this HandlerChain is to act
+     * for the SOAP message processing at this SOAP node. These roles
+     * assumed by a HandlerChain must be invariant during the
+     * processing of an individual SOAP message through the HandlerChain.
      * <p>
-     * A HandlerChain always acts in the role of the special SOAP actor next.
-     * Refer to the SOAP specification for the URI name for this special SOAP
-     * actor. There is no need to set this special role using this method.
+     * A <code>HandlerChain</code> always acts in the role of the
+     * special SOAP actor <code>next</code>. Refer to the SOAP
+     * specification for the URI name for this special SOAP actor.
+     * There is no need to set this special role using this method.
      *
      * @param soapActorNames - URIs for SOAP actor name
      */
     public void setRoles(String[] soapActorNames);
 
     /**
-     * Gets SOAP actor roles registered for this HandlerChain at this SOAP node.
-     * The returned array includes the special SOAP actor next.
+     * Gets SOAP actor roles registered for this HandlerChain at
+     * this SOAP node. The returned array includes the special
+     * SOAP actor <code>next</code>.
+     * @return String[] SOAP Actor roles as URIs
      */
     public java.lang.String[] getRoles();
 }

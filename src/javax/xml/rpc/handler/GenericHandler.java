@@ -56,15 +56,23 @@ package javax.xml.rpc.handler;
 
 import javax.xml.namespace.QName;
 
-// Referenced classes of package javax.xml.rpc.handler:
-// Handler, MessageContext, HandlerInfo
-
 /**
- * The javax.xml.rpc.handler.GenericHandler class implements the Handler interface. SOAP Message Handler developers
- * should typically subclass GenericHandler class unless the Handler class needs another class as a superclass.
+ * The <code>javax.xml.rpc.handler.GenericHandler</code> class
+ * implements the <code>Handler</code> interface. SOAP Message
+ * Handler developers should typically subclass
+ * <code>GenericHandler</code> class unless the Handler class
+ * needs another class as a superclass.
+ *
  * <p>
- * The GenericHandler class is a convenience abstract class that makes writing Handlers easy. This class provides
- * default implementations of the lifecycle methods init and destroy and also different handle methods. A Handler developer should only override methods that it needs to specialize as part of the derived Handler implementation class.
+ * The <code>GenericHandler</code> class is a convenience abstract
+ * class that makes writing Handlers easy. This class provides
+ * default implementations of the lifecycle methods <code>init</code>
+ * and <code>destroy</code> and also different handle methods.
+ * A Handler developer should only override methods that it needs
+ * to specialize as part of the derived <code>Handler</code>
+ * implementation class.
+ *
+ * @version 1.0
  */
 public abstract class GenericHandler implements Handler {
 
@@ -74,12 +82,14 @@ public abstract class GenericHandler implements Handler {
     protected GenericHandler() {}
 
     /**
-     * The handleRequest method processes the request SOAP message. The default implementation of this method returns
-     * true. This indicates that the handler chain should continue processing of the request SOAP message. This method
-     * should be overridden if the derived Handler class needs to specialize implementation of this method.
+     * The <code>handleRequest</code> method processes the request
+     * SOAP message. The default implementation of this method returns
+     * <code>true</code>. This indicates that the handler chain
+     * should continue processing of the request SOAP message.
+     * This method should be overridden if the derived Handler class
+     * needs to specialize implementation of this method.
      *
      * @param context the message context
-     *
      * @return true/false
      */
     public boolean handleRequest(MessageContext context) {
@@ -87,12 +97,14 @@ public abstract class GenericHandler implements Handler {
     }
 
     /**
-     * The handleResponse method processes the response message. The default implementation of this method returns
-     * true. This indicates that the handler chain should continue processing of the response SOAP message. This
-     * method should be overridden if the derived Handler class needs to specialize implementation of this method.
+     * The <code>handleResponse</code> method processes the response
+     * message. The default implementation of this method returns
+     * <code>true</code>. This indicates that the handler chain
+     * should continue processing of the response SOAP message.
+     * This method should be overridden if the derived Handler class
+     * needs to specialize implementation of this method.
      *
      * @param context the message context
-     *
      * @return true/false
      */
     public boolean handleResponse(MessageContext context) {
@@ -100,13 +112,15 @@ public abstract class GenericHandler implements Handler {
     }
 
     /**
-     * The handleFault method processes the SOAP faults based on the SOAP message processing model. The default
-     * implementation of this method returns true. This indicates that the handler chain should continue processing
-     * of the SOAP fault. This method should be overridden if the derived Handler class needs to specialize
-     * implementation of this method.
+     * The <code>handleFault</code> method processes the SOAP faults
+     * based on the SOAP message processing model. The default
+     * implementation of this method returns <code>true</code>. This
+     * indicates that the handler chain should continue processing
+     * of the SOAP fault. This method should be overridden if
+     * the derived Handler class needs to specialize implementation
+     * of this method.
      *
      * @param context the message context
-     *
      * @return true/false
      */
     public boolean handleFault(MessageContext context) {
@@ -114,24 +128,28 @@ public abstract class GenericHandler implements Handler {
     }
 
     /**
-     * The init method to enable the Handler instance to initialize itself. This method should be overridden if the
-     * derived Handler class needs to specialize implementation of this method
+     * The <code>init</code> method to enable the Handler instance to
+     * initialize itself. This method should be overridden if
+     * the derived Handler class needs to specialize implementation
+     * of this method.
      *
      * @param config handler configuration
      */
     public void init(HandlerInfo config) {}
 
     /**
-     * The destroy method indicates the end of lifecycle for a Handler instance. This method should be overridden
-     * if the derived Handler class needs to specialize implementation of this method.
+     * The <code>destroy</code> method indicates the end of lifecycle
+     * for a Handler instance. This method should be overridden if
+     * the derived Handler class needs to specialize implementation
+     * of this method.
      */
     public void destroy() {}
 
     /**
      * Gets the header blocks processed by this Handler instance.
      *
-     * @return Array of QNames of header blocks processed by this handler instance. QName is the qualified name of
-     * the outermost element of the Header block.
+     * @return Array of QNames of header blocks processed by this handler instance.
+     * <code>QName</code> is the qualified name of the outermost element of the Header block.
      */
     public abstract QName[] getHeaders();
 }

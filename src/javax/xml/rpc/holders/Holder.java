@@ -55,9 +55,10 @@
 package javax.xml.rpc.holders;
 
 /**
- * Interface Holder
+ * The <code>java.xml.rpc.holders.Holder</code> interface represents the base interface for both standard and
+ * generated Holder classes. A generated Holder  class is required to implement this Holder interface.
  *
- * @version 0.7
+ * @version 1.0
  */
 public interface Holder {
 }
