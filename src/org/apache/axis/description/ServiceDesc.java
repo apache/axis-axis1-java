@@ -102,6 +102,7 @@ public class ServiceDesc {
 
     /** The name of this service */
     private String name = null;
+    private static final String ALL_METHODS= "*";
 
     /** List of allowed methods */
     /** null allows everything, an empty ArrayList allows nothing */
@@ -578,6 +579,7 @@ public class ServiceDesc {
 
                 if (style == Style.MESSAGE) {
                     int messageOperType = checkMessageMethod(method);
+                    if(messageOperType == OperationDesc.MSG_METHOD_NONCONFORMING) continue;
                     if (messageOperType == -1) {
                         throw new InternalException("Couldn't match method to any of the allowable message-style patterns!");
                     }
@@ -701,9 +703,10 @@ public class ServiceDesc {
                 return OperationDesc.MSG_METHOD_SOAPENVELOPE;
             }
         }
-
-        throw new InternalException (Messages.getMessage("badMsgMethodParams",
+        if( null != allowedMethods && !allowedMethods.isEmpty() )
+          throw new InternalException (Messages.getMessage("badMsgMethodParams",
                                                          method.getName()));
+        return    OperationDesc.MSG_METHOD_NONCONFORMING;                                              
     }
 
     /**
@@ -1020,6 +1023,7 @@ public class ServiceDesc {
         // appropriately.
         if (style == Style.MESSAGE) {
             int messageOperType = checkMessageMethod(method);
+            if(messageOperType == OperationDesc.MSG_METHOD_NONCONFORMING) return;
             if (messageOperType == -1) {
                 throw new InternalException("Couldn't match method to any of the allowable message-style patterns!");
             }
