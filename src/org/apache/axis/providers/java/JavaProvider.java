@@ -425,6 +425,9 @@ public abstract class JavaProvider extends BasicProvider
 
             Emitter emitter = new Emitter();
 
+            // Set the name for the target service.
+            //emitter.setServiceElementName(serviceDesc.getName());
+            
             // service alias may be provided if exact naming is required,
             // otherwise Axis will name it according to the implementing class name
             String alias = (String)service.getOption("alias");
