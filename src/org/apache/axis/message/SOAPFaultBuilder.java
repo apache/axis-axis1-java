@@ -115,7 +115,8 @@ public class SOAPFaultBuilder extends SOAPHandler implements Callback
         AxisFault f = null;
         if (faultClassName != null) {
             try {
-                Class exClass = Class.forName(faultClassName);
+                ClassLoader cl = context.getMessageContext().getClassLoader();
+                Class exClass = Class.forName(faultClassName, true, cl);
                 if (AxisFault.class.isAssignableFrom(exClass)) {
                     f = (AxisFault) exClass.newInstance();
                     f.setFaultCode(faultCode);
