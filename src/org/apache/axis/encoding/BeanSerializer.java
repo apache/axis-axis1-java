@@ -94,6 +94,7 @@ public class BeanSerializer extends Deserializer
      * Property Descriptors.  Retrieved once and cached in the serializer.
      */
     private PropertyDescriptor[] pd = null;
+    private EnumSerializer enumSerializer = null;
 
     protected PropertyDescriptor[] getPd() {
         if (pd==null) {
@@ -102,6 +103,10 @@ public class BeanSerializer extends Deserializer
             } catch (Exception e) {
                // this should never happen
                throw new NullPointerException(e.toString());
+            }
+            // If this is an enumeration class, delegate all serialization to the enum serializer
+            if (isEnumClass(cls)) {
+                enumSerializer = new EnumSerializer(cls);
             }
         }
 
@@ -118,6 +123,28 @@ public class BeanSerializer extends Deserializer
         this.pd = pd;
     }
 
+    /**
+     * Determine if the class is a JAX-RPC enum class.
+     * An enumeration class is recognized by
+     * a getValue() method, a fromValue(type) method and the lack
+     * of a setValue(type) method
+     */
+    protected static boolean isEnumClass(Class cls) {
+        try {
+            java.lang.reflect.Method m = cls.getMethod("getValue", null);
+            if (m != null &&
+                cls.getMethod("fromValue", new Class[] {m.getReturnType()}) != null) {
+                try {
+                    if (cls.getMethod("setValue",  new Class[] {m.getReturnType()}) == null)
+                        return true;
+                    return false;
+                } catch (java.lang.NoSuchMethodException e) {
+                    return true;  // getValue & fromValue exist.  setValue does not exist.  Thus return true. 
+                }
+            }
+        } catch (java.lang.NoSuchMethodException e) {}
+        return false;
+    }  
     /**
      * Default constructor.
      */
@@ -150,11 +177,10 @@ public class BeanSerializer extends Deserializer
      */
     public static class BeanSerFactory implements DeserializerFactory {
         private Hashtable propertyDescriptors = new Hashtable();
-
+      
         public Deserializer getDeserializer(Class cls) {
             PropertyDescriptor [] pd =
                   (PropertyDescriptor [])propertyDescriptors.get(cls);
-
             if (pd == null) {
               try {
                 pd = Introspector.getBeanInfo(cls).getPropertyDescriptors();
@@ -163,6 +189,11 @@ public class BeanSerializer extends Deserializer
               }
                 propertyDescriptors.put(cls, pd);
             }
+
+            // If an enum class.  Return the Deserializer for Enumeration
+            if (isEnumClass(cls)) {
+                return EnumSerializer.getFactory().getDeserializer(cls);
+            }                
 
             BeanSerializer bs = new BeanSerializer();
             bs.setCls(cls);
@@ -275,8 +306,13 @@ public class BeanSerializer extends Deserializer
                           Object value, SerializationContext context)
         throws IOException
     {
-        context.startElement(name, attributes);
         PropertyDescriptor[] pd = getPd(value);
+        if (enumSerializer != null) {
+          enumSerializer.serialize(name, attributes, value, context);
+          return;
+        }
+
+        context.startElement(name, attributes);
 
         try {
             for (int i=0; i<pd.length; i++) {
