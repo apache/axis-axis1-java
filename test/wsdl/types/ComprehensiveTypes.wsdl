@@ -320,6 +320,13 @@
         </xsd:restriction>
       </xsd:simpleType>
 
+      <xsd:simpleType name="AIDType">
+        <xsd:restriction base="xsd:hexBinary">
+          <xsd:maxLength value="16"/>
+          <xsd:minLength value="5"/>
+        </xsd:restriction>
+      </xsd:simpleType>
+
 <xsd:simpleType name="passModeType">
     <xsd:restriction base="xsd:string">
         <xsd:enumeration value="passByValue"/>
