@@ -64,6 +64,7 @@ import org.apache.commons.logging.Log;
 import javax.activation.DataHandler;
 import javax.xml.soap.SOAPException;
 import java.util.Iterator;
+import java.io.ByteArrayOutputStream;
 
 /**
  * Class AttachmentPart
@@ -82,12 +83,6 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
     /** Field mimeHeaders           */
     private javax.xml.soap.MimeHeaders mimeHeaders =
             new javax.xml.soap.MimeHeaders();
-
-    /** Field contentId           */
-    private String contentId;
-
-    /** Field contentLocation           */
-    private String contentLocation;
 
     /** Field contentObject */
     private Object contentObject;
@@ -198,7 +193,6 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
      *     Sets Content-Id of this part.
      *      already defined.
      *     @param newCid new Content-Id
-     *     @returns void
      */
     public void setContentId(String newCid) {
         setMimeHeader(HTTPConstants.HEADER_CONTENT_ID, newCid);
@@ -451,17 +445,14 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
     public int getSize() throws SOAPException {
         if (datahandler == null)
             return 0;
-        ByteBuffer bout = new ByteBuffer();
+        ByteArrayOutputStream bout = new ByteArrayOutputStream();
         try {
             datahandler.writeTo(bout);
         } catch (java.io.IOException ex) {
             log.error(Messages.getMessage("javaIOException00"), ex);
             throw new SOAPException(Messages.getMessage("javaIOException01", ex.getMessage()), ex);
         }
-        byte bytes[] = bout.getBytes();
-        if (bytes != null)
-            return bytes.length;
-        return -1;
+        return bout.size();
     }
 
     /**
@@ -477,11 +468,6 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
         return mimeHeaders.getHeader(name);
     }
 
-    private class ByteBuffer extends java.io.ByteArrayOutputStream {
-        byte[] getBytes() {
-            return super.buf;
-        }
-    }
     /**
      * Content ID.
      *
