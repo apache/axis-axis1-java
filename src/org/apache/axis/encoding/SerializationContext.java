@@ -90,24 +90,24 @@ import java.util.Stack;
 public class SerializationContext
 {
     private static final boolean DEBUG_LOG = false;
-    
+
     public NSStack nsStack = new NSStack();
-                                        
+
     boolean writingStartTag = false;
     boolean onlyXML = true;
     int indent=0;
     boolean startOfDocument = true;
-    
+
     Stack elementStack = new Stack();
     Writer writer;
-    
+
     int lastPrefixIndex = 1;
-    
+
     private MessageContext msgContext;
-    
+
     /**
      * Should the XML be "pretty" printed on serialization?  If false, the
-     * XML will be sent out verbatim.  If true, ignorable white space may be 
+     * XML will be sent out verbatim.  If true, ignorable white space may be
      * inserted or removed.
      */
     private boolean pretty = false;
@@ -129,7 +129,7 @@ public class SerializationContext
      * serializations of identical objects).
      */
     private boolean doMultiRefs = false;
-    
+
     /**
      * Should I send an XML declaration?
      */
@@ -146,7 +146,7 @@ public class SerializationContext
      */
     private HashMap multiRefValues = null;
     private int multiRefIndex = -1;
-    
+
     /**
      * These two let us deal with multi-level object graphs for multi-ref
      * serialization.  Each time around the serialization loop, we'll fill
@@ -155,7 +155,7 @@ public class SerializationContext
      */
     private Object currentSer = null;
     private HashSet secondLevelObjects = null;
-    
+
     public SerializationContext(Writer writer, MessageContext msgContext)
     {
         this.writer = writer;
@@ -176,12 +176,12 @@ public class SerializationContext
             sendXSIType = sd.getSendTypeAttr();
         }
     }
-    
+
     public void setSendDecl(boolean sendDecl)
     {
         sendXMLDecl = sendDecl;
     }
-    
+
     public boolean shouldSendXSIType() {
         return sendXSIType;
     }
@@ -190,34 +190,34 @@ public class SerializationContext
     {
         return msgContext.getServiceDescription();
     }
-    
+
     public TypeMappingRegistry getTypeMappingRegistry()
     {
         return msgContext.getTypeMappingRegistry();
     }
-    
+
     public String getPrefixForURI(String uri)
     {
         return getPrefixForURI(uri, "ns" + lastPrefixIndex++);
     }
-    
+
     public String getPrefixForURI(String uri, String defaultPrefix)
     {
         if ((uri == null) || (uri.equals("")))
             return null;
-        
+
         String prefix = nsStack.getPrefix(uri);
-        
+
         if (prefix == null && uri.equals(Constants.URI_SOAP_ENC)) {
             prefix = Constants.NSPREFIX_SOAP_ENC;
             registerPrefixForURI(prefix, uri);
         }
-        
+
         if (prefix == null) {
             prefix = defaultPrefix;
             registerPrefixForURI(prefix, uri);
         }
-        
+
         return prefix;
     }
 
@@ -226,29 +226,29 @@ public class SerializationContext
         if (DEBUG_LOG) {
             System.out.println("register '" + prefix + "' - '" + uri + "'");
         }
-        
+
         if ((uri != null) && (prefix != null)) {
             nsStack.add(uri, prefix);
         }
     }
-    
+
     public void endPrefix(String prefix)
     {
         // Do we need to do anything here?
     }
-    
+
     public String qName2String(QName qName)
     {
         String prefix = getPrefixForURI(qName.getNamespaceURI());
         return (((prefix != null)&&(!prefix.equals(""))) ? prefix + ":" : "") +
                qName.getLocalPart();
     }
-    
+
     public QName getQNameForClass(Class cls)
     {
         return getTypeMappingRegistry().getTypeQName(cls);
     }
-    
+
     /**
      * Classes which are known to not require multi-ref.  As multi-ref
      * requires additional parsing overhead and not all implementations
@@ -269,7 +269,7 @@ public class SerializationContext
         if (type.isPrimitive()) return true;
         return false;
     }
-    
+
     public void serialize(QName qName, Attributes attributes, Object value)
         throws IOException
     {
@@ -282,17 +282,17 @@ public class SerializationContext
             startElement(qName, attrs);
             endElement();
         }
-        
+
         if (doMultiRefs && (value != currentSer) && !isPrimitive(value)) {
             if (multiRefIndex == -1)
                 multiRefValues = new HashMap();
-            
+
             String href = (String)multiRefValues.get(value);
             if (href == null) {
                 multiRefIndex++;
                 href = "id" + multiRefIndex;
                 multiRefValues.put(value, href);
-                
+
                 /** Problem - if we're in the middle of writing out
                  * the multi-refs and hit another level of the
                  * object graph, we need to make sure this object
@@ -306,29 +306,29 @@ public class SerializationContext
                     secondLevelObjects.add(value);
                 }
             }
-            
+
             AttributesImpl attrs = new AttributesImpl();
             if (attributes != null)
                 attrs.setAttributes(attributes);
             attrs.addAttribute("", Constants.ATTR_HREF, "href",
                                "CDATA", "#" + href);
-            
+
             startElement(qName, attrs);
             endElement();
             return;
         }
-        
+
         getTypeMappingRegistry().serialize(qName, attributes, value, this);
     }
-    
+
     public void outputMultiRefs() throws IOException
     {
         if (!doMultiRefs || (multiRefValues == null))
             return;
-        
+
         AttributesImpl attrs = new AttributesImpl();
         attrs.addAttribute("","","","","");
-        
+
         Iterator i = ((HashMap)multiRefValues.clone()).keySet().iterator();
         while (i.hasNext()) {
             while (i.hasNext()) {
@@ -339,7 +339,7 @@ public class SerializationContext
                 currentSer = val;
                 serialize(new QName("","multiRef"), attrs, val);
             }
-            
+
             if (secondLevelObjects != null) {
                 i = secondLevelObjects.iterator();
                 secondLevelObjects = null;
@@ -347,7 +347,7 @@ public class SerializationContext
         }
         currentSer = null;
     }
-    
+
     public void startElement(QName qName, Attributes attributes)
         throws IOException
     {
@@ -359,29 +359,55 @@ public class SerializationContext
             writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
             startOfDocument = false;
         }
-        
+
         if (writingStartTag) {
             writer.write(">");
             if (pretty) writer.write("\n");
             indent++;
         }
-        
+
         if (pretty) for (int i=0; i<indent; i++) writer.write(' ');
         String elementQName = qName2String(qName);
         writer.write("<");
-        
+
         writer.write(elementQName);
-        
+
         if (attributes != null) {
             for (int i = 0; i < attributes.getLength(); i++) {
+                String qname = attributes.getQName(i);
                 writer.write(" ");
-                writer.write(attributes.getQName(i));
+
+                String prefix = "";
+                String uri = attributes.getURI(i);
+                if (uri != null && !uri.equals("")) {
+                    if (qname.equals("")) {
+                        // If qname isn't set, generate one
+                        prefix = getPrefixForURI(uri);
+                    } else {
+                        // If it is, make sure the prefix looks reasonable.
+                        int idx = qname.indexOf(':');
+                        if (idx > -1) {
+                            prefix = qname.substring(0, idx);
+                            prefix = getPrefixForURI(uri,
+                                                     prefix);
+                        }
+                    }
+                    if (!prefix.equals("")) {
+                        qname = prefix + ":" + attributes.getLocalName(i);
+                    } else {
+                        qname = attributes.getLocalName(i);
+                    }
+                } else {
+                    qname = attributes.getLocalName(i);
+                }
+
+                writer.write(qname);
                 writer.write("=\"");
                 writer.write(attributes.getValue(i));
                 writer.write("\"");
             }
         }
-        
+
         ArrayList currentMappings = nsStack.peek();
         for (int i = 0; i < currentMappings.size(); i++) {
             Mapping map = (Mapping)currentMappings.get(i);
@@ -396,23 +422,23 @@ public class SerializationContext
         }
 
         writingStartTag = true;
-        
+
         elementStack.push(elementQName);
         nsStack.push();
 
         writer.flush();
         onlyXML=true;
     }
-    
+
     public void endElement()
         throws IOException
     {
         String elementQName = (String)elementStack.pop();
-        
+
         if (DEBUG_LOG) {
             System.out.println("Out: Ending element " + elementQName);
         }
-        
+
         nsStack.pop();
         nsStack.peek().clear();
 
@@ -422,7 +448,7 @@ public class SerializationContext
             writingStartTag = false;
             return;
         }
-        
+
         if (onlyXML) {
           indent--;
           if (pretty) for (int i=0; i<indent; i++) writer.write(' ');
@@ -434,7 +460,7 @@ public class SerializationContext
         writer.flush();
         onlyXML=true;
     }
-    
+
     public void writeChars(char [] p1, int p2, int p3)
         throws IOException
     {
@@ -472,23 +498,23 @@ public class SerializationContext
     {
         AttributesImpl attributes = null;
         NamedNodeMap attrMap = el.getAttributes();
-        
+
         if (attrMap.getLength() > 0) {
             attributes = new AttributesImpl();
             for (int i = 0; i < attrMap.getLength(); i++) {
               Attr attr = (Attr)attrMap.item(i);
-                            
+
               attributes.addAttribute(attr.getNamespaceURI(),
                                       attr.getName(),
                                       attr.getName(),
                                       "CDATA", attr.getValue());
             }
         }
-        
+
         QName qName = new QName(el.getNamespaceURI(), el.getTagName());
-        
+
         startElement(qName, attributes);
-        
+
         NodeList children = el.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
             Node child = children.item(i);
@@ -498,8 +524,8 @@ public class SerializationContext
                 writeString(((Text)child).getData());
             }
         }
-        
+
         endElement();
     }
-    
+
 }
