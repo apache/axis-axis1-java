@@ -38,6 +38,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.io.Serializable;
 
 /**
  * <p>
@@ -67,7 +68,7 @@ import java.util.List;
  *
  * @author Rich Scheuerle (scheu@us.ibm.com)
  */
-public class TypeMappingImpl
+public class TypeMappingImpl implements Serializable
 {
     protected static Log log =
         LogFactory.getLog(TypeMappingImpl.class.getName());
@@ -80,7 +81,7 @@ public class TypeMappingImpl
      */
     public static boolean dotnet_soapenc_bugfix = false;
 
-    public static class Pair {
+    public static class Pair implements Serializable {
         public Class javaType;
         public QName xmlType;
         public Pair(Class javaType, QName xmlType) {

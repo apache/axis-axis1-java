@@ -23,8 +23,9 @@ import org.apache.axis.constants.Use;
 import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.Serializable;
 
-public interface ServiceDesc {
+public interface ServiceDesc extends Serializable {
     /**
      * What kind of service is this?
      * @return

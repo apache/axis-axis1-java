@@ -22,6 +22,7 @@ import org.apache.axis.utils.BeanPropertyDescriptor;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
 import java.lang.reflect.Constructor;
+import java.io.IOException;
 
 /**
  * A deserializer for any simple type with a (String) constructor.  Note:
@@ -40,7 +41,7 @@ public class SimpleDeserializerFactory extends BaseDeserializerFactory {
     private static final Class[] STRING_CLASS = 
         new Class [] {String.class};
 
-    private Constructor constructor = null;
+    private transient Constructor constructor = null;
     private boolean isBasicType = false;
     /**
      * Note that the factory is constructed with the QName and xmlType.  This is important
@@ -49,19 +50,23 @@ public class SimpleDeserializerFactory extends BaseDeserializerFactory {
     public SimpleDeserializerFactory(Class javaType, QName xmlType) {
         super(SimpleDeserializer.class, xmlType, javaType);
         this.isBasicType = isBasic(javaType);
+        initConstructor(javaType);
+    }
+
+    private void initConstructor(Class javaType) {
         if (!this.isBasicType) {
             // discover the constructor for non basic types
             try {
                 if (QName.class.isAssignableFrom(javaType)) {
-                    constructor = 
+                    constructor =
                         javaType.getDeclaredConstructor(STRING_STRING_CLASS);
                 } else {
-                    constructor = 
+                    constructor =
                         javaType.getDeclaredConstructor(STRING_CLASS);
                 }
-            } catch (java.lang.NoSuchMethodException e) {
+            } catch (NoSuchMethodException e) {
                 try {
-                    constructor = 
+                    constructor =
                         javaType.getDeclaredConstructor(new Class[]{});
                     BeanPropertyDescriptor[] pds = BeanUtils.getPd(javaType);
                     if(pds != null) {
@@ -70,13 +75,13 @@ public class SimpleDeserializerFactory extends BaseDeserializerFactory {
                         }
                     }
                     throw new IllegalArgumentException(e.toString());
-                } catch (java.lang.NoSuchMethodException ex) {
+                } catch (NoSuchMethodException ex) {
                     throw new IllegalArgumentException(ex.toString());
-                } 
-            } 
+                }
+            }
         }
     }
-    
+
     /*
      * Any builtin type that has a constructor that takes a String is a basic
      * type.
@@ -142,5 +147,10 @@ public class SimpleDeserializerFactory extends BaseDeserializerFactory {
             return deser;
         }
     }
-    
+
+    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        initConstructor(javaType);
+    }
+
 }

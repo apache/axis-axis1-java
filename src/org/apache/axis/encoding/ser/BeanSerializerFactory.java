@@ -16,6 +16,8 @@
 
 package org.apache.axis.encoding.ser;
 
+import java.io.IOException;
+
 import org.apache.axis.description.TypeDesc;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.utils.BeanPropertyDescriptor;
@@ -32,17 +34,22 @@ import javax.xml.rpc.JAXRPCException;
  */
 public class BeanSerializerFactory extends BaseSerializerFactory {
 
-    protected TypeDesc typeDesc = null;
-    protected BeanPropertyDescriptor[] propertyDescriptor = null;
+    protected transient TypeDesc typeDesc = null;
+    protected transient BeanPropertyDescriptor[] propertyDescriptor = null;
 
     public BeanSerializerFactory(Class javaType, QName xmlType) {
         super(BeanSerializer.class, xmlType, javaType);
+        init(javaType);
+
+    }
+
+    private void init(Class javaType) {
         // Sometimes an Enumeration class is registered as a Bean.
         // If this is the case, silently switch to the EnumSerializer
         if (JavaUtils.isEnumClass(javaType)) {
             serClass = EnumSerializer.class;
         }
-        
+
         typeDesc = TypeDesc.getTypeDescForClass(javaType);
 
         if (typeDesc != null) {
@@ -73,4 +80,10 @@ public class BeanSerializerFactory extends BaseSerializerFactory {
         return new BeanSerializer(javaType, xmlType, typeDesc, 
                                   propertyDescriptor);
     }
+
+    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        init(javaType);
+    }
+
 }

@@ -25,6 +25,7 @@ import org.apache.axis.utils.JavaUtils;
 import javax.xml.namespace.QName;
 import java.util.HashMap;
 import java.util.Map;
+import java.io.IOException;
 
 /**
  * DeserializerFactory for Bean
@@ -35,8 +36,8 @@ import java.util.Map;
 public class BeanDeserializerFactory extends BaseDeserializerFactory {
 
     /** Type metadata about this class for XML deserialization */
-    protected TypeDesc typeDesc = null;
-    protected Map propertyMap = null;
+    protected transient TypeDesc typeDesc = null;
+    protected transient Map propertyMap = null;
 
     public BeanDeserializerFactory(Class javaType, QName xmlType) {
         super(BeanDeserializer.class, xmlType, javaType);
@@ -86,5 +87,12 @@ public class BeanDeserializerFactory extends BaseDeserializerFactory {
         }
 
         return new BeanDeserializer(javaType, xmlType, typeDesc, propertyMap);
+    }
+
+
+    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        typeDesc = TypeDesc.getTypeDescForClass(javaType);
+        propertyMap = getProperties(javaType, typeDesc);
     }
 }
