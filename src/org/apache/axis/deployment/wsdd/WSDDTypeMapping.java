@@ -261,7 +261,8 @@ public class WSDDTypeMapping
     public Class getSerializer()
         throws ClassNotFoundException
     {
-        return Class.forName(serializer);
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        return Class.forName(serializer, true, cl);
     }
 
     /**
@@ -298,7 +299,8 @@ public class WSDDTypeMapping
     public Class getDeserializer()
         throws ClassNotFoundException
     {
-        return Class.forName(deserializer);
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        return Class.forName(deserializer, true, cl);
     }
 
     /**
