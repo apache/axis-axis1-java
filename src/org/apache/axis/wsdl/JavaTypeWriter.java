@@ -91,7 +91,8 @@ public class JavaTypeWriter implements Writer {
             Vector v = SchemaUtils.getComplexElementTypesAndNames(
                     node, symbolTable);
             if (v != null) {
-                typeWriter = new JavaComplexTypeWriter(emitter, type, v);
+                typeWriter = new JavaComplexTypeWriter(emitter, type, v,
+                    SchemaUtils.getComplexElementExtensionBase(node,symbolTable));
             }
             else {
                 v = SchemaUtils.getEnumerationBaseAndValues(node, symbolTable);

@@ -83,7 +83,14 @@ public class Main {
 
         // ----------------------
         // Create a simple tree
-        Node t = new Node(new Node(null, null, 1), new Node(null, null, 2), 0);
+        Node t = new Node();
+        t.setData(0);
+        Node l = new Node();
+        l.setData(1);
+        Node r = new Node();
+        r.setData(2);
+        t.setLeft(l);
+        t.setRight(r);
         NodeHolder holder = new NodeHolder(t);
         
         // Test for simple tree
@@ -106,8 +113,17 @@ public class Main {
 
         // ----------------------
         // Create a diamond
-        t = new Node(new Node(null, null, 1), new Node(null, null, 2), 0);
-        Node d = new Node(null, null, 3);
+        t = new Node();
+        t.setData(0);
+        l = new Node();
+        l.setData(1);
+        r = new Node();
+        r.setData(2);
+        t.setLeft(l);
+        t.setRight(r);
+
+        Node d = new Node();
+        d.setData(3);
         t.getLeft().setRight(d);
         t.getRight().setLeft(d);
         holder = new NodeHolder(t);
@@ -132,9 +148,20 @@ public class Main {
 
         // ----------------------
         // Create a 'loop' tree.  The children of the root have children that reference the root.
-        t = new Node(null, null, 0);
-        t.setLeft(new Node(t,t,1));
-        t.setRight(new Node(t,t,2));
+        t = new Node();
+        t.setData(0);
+        l = new Node();
+        l.setData(1);
+        r = new Node();
+        r.setData(2);
+        t.setLeft(l);
+        t.setRight(r);
+
+        l.setLeft(t);
+        l.setRight(t);
+        r.setLeft(t);
+        r.setRight(t);
+
         holder = new NodeHolder(t);
 
         // Test for loops
@@ -157,7 +184,8 @@ public class Main {
 
         // ----------------------
         // Test passing of the same node argument.
-        t = new Node(null, null, 0);
+        t = new Node();
+        t.setData(0);
         NodeHolder holder1 = new NodeHolder(t);
         NodeHolder holder2 = new NodeHolder(t);
 
@@ -181,9 +209,12 @@ public class Main {
 
         // ----------------------
         // Test args referencing same node.
-        Node t1 = new Node(null, null, 0);
-        Node t2 = new Node(null, null, 1);
-        Node s  = new Node(null, null, 2);
+        Node t1 = new Node();
+        t1.setData(0);
+        Node t2 = new Node();
+        t2.setData(1);
+        Node s  = new Node();
+        s.setData(1);
         t1.setRight(s);
         t2.setLeft(s);
         holder1 = new NodeHolder(t1);
@@ -208,8 +239,12 @@ public class Main {
         }
         // ----------------------
         // Test args referencing each other.
-        t1 = new Node(null, null, 0);
-        t2 = new Node(t1, t1, 1);
+        t1 = new Node();
+        t1.setData(0);
+        t2 = new Node();
+        t2.setData(1);
+        t2.setLeft(t1);
+        t2.setRight(t1);
         t1.setRight(t2);
         t1.setLeft(t2);
         holder1 = new NodeHolder(t1);
@@ -235,7 +270,8 @@ public class Main {
 
         // ----------------------
         // Create self referencing node
-        t = new Node(null, null, 0);
+        t = new Node();
+        t.setData(0);
         t.setLeft(t);
         t.setRight(t);
         holder = new NodeHolder(t);
