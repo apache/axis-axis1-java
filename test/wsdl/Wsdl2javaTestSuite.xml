@@ -104,6 +104,8 @@
 
     <!-- Roundtrip Test -->
     <!-- To test Java Value Types, copy over the base and subclasses -->
+    <delete dir="${build.dir}/classes/test/wsdl/roundtrip"/>
+    <delete dir="${build.dir}/work/test/wsdl/roundtrip"/>
     <copy todir="${build.dir}/work/test/wsdl/roundtrip" overwrite="yes">
       <fileset dir="${test.dir}/wsdl/roundtrip">
         <include name="RoundtripPortType.java"/>
