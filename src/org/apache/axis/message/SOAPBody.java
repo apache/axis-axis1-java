@@ -72,6 +72,7 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 import java.util.Enumeration;
 import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  * Holder for body elements.
@@ -88,11 +89,17 @@ public class SOAPBody extends MessageElement
     private SOAPConstants soapConstants;
 
     private boolean disableFormatting = false;
+    private boolean doSAAJEncodingCompliance = false;
+    private static ArrayList knownEncodingStyles = new ArrayList();
+    static {
+        knownEncodingStyles.add(Constants.URI_SOAP11_ENC);
+        knownEncodingStyles.add(Constants.URI_SOAP12_ENC);
+        knownEncodingStyles.add("");
+        knownEncodingStyles.add(Constants.URI_SOAP12_NOENC);
+    }
 
     SOAPBody(SOAPEnvelope env, SOAPConstants soapConsts) {
-       super(Constants.ELEM_BODY,
-             Constants.NS_PREFIX_SOAP_ENV,
-             soapConsts.getEnvelopeURI());
+       super(soapConsts.getEnvelopeURI(), Constants.ELEM_BODY);
        soapConstants = soapConsts;
         try {
             setParentElement(env);
@@ -127,6 +134,20 @@ public class SOAPBody extends MessageElement
    
     public void disableFormatting() {
         this.disableFormatting = true;
+    }
+
+    public void setEncodingStyle(String encodingStyle) throws SOAPException {
+        if (encodingStyle == null) {
+            encodingStyle = "";
+        }
+
+        if (doSAAJEncodingCompliance) {
+            // Make sure this matches a known encodingStyle.  This is
+            if (!knownEncodingStyles.contains(encodingStyle))
+                throw new IllegalArgumentException(Messages.getMessage("badEncodingStyle1", encodingStyle));
+        }
+
+        super.setEncodingStyle(encodingStyle);
     }
 
     protected void outputImpl(SerializationContext context) throws Exception {
@@ -306,9 +327,14 @@ public class SOAPBody extends MessageElement
      */ 
     public SOAPElement addChildElement(SOAPElement element) 
       throws SOAPException {
-      if (!(element instanceof javax.xml.soap.SOAPBodyElement)) {
-        throw new SOAPException(Messages.getMessage("badSOAPBodyElement00"));
-      } 
+// Commented out for SAAJ compatibility - gdaniels, 05/19/2003
+//      if (!(element instanceof javax.xml.soap.SOAPBodyElement)) {
+//        throw new SOAPException(Messages.getMessage("badSOAPBodyElement00"));
+//      }
       return super.addChildElement(element);
+    }
+
+    public void setSAAJEncodingCompliance(boolean comply) {
+        this.doSAAJEncodingCompliance = true;
     }
 }

@@ -626,4 +626,8 @@ public class SOAPEnvelope extends MessageElement
     public javax.xml.soap.SOAPHeader getHeader() throws SOAPException {
         return header;
     }
+
+    public void setSAAJEncodingCompliance(boolean comply) {
+        this.body.setSAAJEncodingCompliance(comply);
+    }
 }

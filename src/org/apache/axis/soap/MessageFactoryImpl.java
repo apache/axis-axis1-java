@@ -88,7 +88,9 @@ public class MessageFactoryImpl extends javax.xml.soap.MessageFactory {
      * @throws  SOAPException if a SOAP error occurs
      */
     public SOAPMessage createMessage() throws SOAPException {
-        Message message = new Message(new SOAPEnvelope());
+        SOAPEnvelope env = new SOAPEnvelope();
+        env.setSAAJEncodingCompliance(true);
+        Message message = new Message(env);
         message.setMessageType(Message.REQUEST);
         return message;
     }
