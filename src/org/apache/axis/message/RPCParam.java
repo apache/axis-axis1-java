@@ -124,6 +124,9 @@ public class RPCParam extends MessageElement
         // Look up type and return an appropriate deserializer
         if (typeQName != null) {
             deserializer = context.getDeserializer(typeQName);
+            if (DEBUG_LOG) {
+                System.err.println(typeQName + " maps to " + deserializer);
+            }
             if (deserializer != null) {
                 return deserializer;
             }

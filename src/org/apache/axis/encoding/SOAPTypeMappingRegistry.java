@@ -20,6 +20,7 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
     public static final QName SOAP_INT = new QName(Constants.URI_SOAP_ENC, "int");
     public static final QName SOAP_LONG = new QName(Constants.URI_SOAP_ENC, "long");
     public static final QName SOAP_SHORT = new QName(Constants.URI_SOAP_ENC, "short");
+    public static final QName SOAP_ARRAY = new QName(Constants.URI_SOAP_ENC, "Array");
     
     abstract class BasicDeser extends DeserializerBase {
         public void characters(char [] chars, int start, int end)
@@ -79,6 +80,8 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
     class ShortDeserializerFactory implements DeserializerFactory {
         public DeserializerBase getDeserializer() { return new ShortDeser(); }
     }
+    
+    private ArraySerializer arraySer = new ArraySerializer();
 
     /**
      * Alias common DeserializerFactories across the various popular schemas
@@ -96,6 +99,26 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
         }
     }
 
+    public Serializer getSerializer(Class _class) {
+        Serializer ser = super.getSerializer(_class);
+        
+        if ((ser == null) && (_class != null) &&
+            (_class.isArray())) {
+            ser = arraySer;
+        }
+        
+        return ser;
+    }
+
+    public QName getTypeQName(Class _class) {
+        QName qName = super.getTypeQName(_class);
+        if ((qName == null) && (_class != null) &&
+            (_class.isArray())) {
+            qName = SOAP_ARRAY;
+        }
+        return qName;
+    }
+    
     public SOAPTypeMappingRegistry() {
         SOAPEncoding se = new SOAPEncoding();
         addSerializer(java.lang.String.class, XSD_STRING, se);
@@ -114,6 +137,8 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
         addDeserializersFor(XSD_LONG, java.lang.Long.class, new LongDeserializerFactory());
         addDeserializersFor(XSD_SHORT, java.lang.Short.class, new ShortDeserializerFactory());
 
+        // !!! Seems a little weird to pass a null class here...?
+        addDeserializerFactory(SOAP_ARRAY, null, ArraySerializer.factory);
         /*
         addDeserializerFactory(SOAP_STRING, se);
         addDeserializerFactory(SOAP_BOOLEAN, se);
