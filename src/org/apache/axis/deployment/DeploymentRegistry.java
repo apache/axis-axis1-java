@@ -70,6 +70,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.util.Enumeration;
 
 /**
  * The DeploymentRegistry abstract class takes the place of the
@@ -324,4 +325,26 @@ public abstract class DeploymentRegistry
             in.close();
         }
     }
+
+    /**
+     * Returns an Enumeration of the QNames for the list of deployed services
+     * @return Enumeration of QNames
+     * @throws DeploymentException
+     */
+    public abstract Enumeration getServices() throws DeploymentException ;
+
+    /**
+     * Returns an Enumeration of the QNames for the list of deployed handlers
+     * @return Enumeration of QNames
+     * @throws DeploymentException
+     */
+    public abstract Enumeration getHandlers() throws DeploymentException ;
+
+    /**
+     * Returns an Enumeration of the QNames for the list of deployed transports
+     * @return Enumeration of QNames
+     * @throws DeploymentException
+     */
+    public abstract Enumeration getTransports() throws DeploymentException ;
+
 }

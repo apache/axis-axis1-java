@@ -71,6 +71,7 @@ import org.w3c.dom.Document;
 import javax.xml.rpc.namespace.QName;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Enumeration;
 import java.io.IOException;
 
 
@@ -379,4 +380,32 @@ public class SimpleDeploymentManager
         
         context.endElement();
     }
+
+    /**
+     * Returns an Enumeration of the QNames for the list of deployed services
+     * @return Enumeration of QNames
+     * @throws DeploymentException
+     */
+    public Enumeration getServices() throws DeploymentException {
+        return services == null ? null : services.keys();
+    }
+
+    /**
+     * Returns an Enumeration of the QNames for the list of deployed handlers
+     * @return Enumeration of QNames
+     * @throws DeploymentException
+     */
+    public Enumeration getHandlers() throws DeploymentException {
+        return handlers == null ? null : handlers.keys();
+    }
+
+    /**
+     * Returns an Enumeration of the QNames for the list of deployed transports
+     * @return Enumeration of QNames
+     * @throws DeploymentException
+     */
+    public Enumeration getTransports() throws DeploymentException {
+        return transports == null ? null : transports.keys();
+    }
+
 }
