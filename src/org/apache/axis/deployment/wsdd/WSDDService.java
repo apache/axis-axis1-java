@@ -221,10 +221,10 @@ public class WSDDService
             }
         }
 
-	// Add in JAX-RPC support for HandlerInfo chains
+        // Add in JAX-RPC support for HandlerInfo chains
         Element hcEl = getChildElement(e, ELEM_WSDD_JAXRPC_CHAIN);
         if (hcEl != null) {
-	    WSDDJAXRPCHandlerInfoChain wsddHIChain = new WSDDJAXRPCHandlerInfoChain(hcEl);
+        WSDDJAXRPCHandlerInfoChain wsddHIChain = new WSDDJAXRPCHandlerInfoChain(hcEl);
             _hiChainFactory = wsddHIChain.getHandlerChainFactory();
         }
 
