@@ -74,11 +74,10 @@ Copyright:
       <fileset dir="${axis.home}/test/wsdl/extensibility">
         <include name="*TestCase.java"/>
         <include name="*Impl.java"/>
-        <include name="server-deploy.wsdd"/>
       </fileset>
     </copy>
 
-    <copy todir="${build.dir}/classes/test/wsdl/extensibility" overwrite="yes">
+    <copy todir="${build.dest}/test/wsdl/extensibility" overwrite="yes">
       <fileset dir="${axis.home}/test/wsdl/extensibility">
         <include name="server-deploy.wsdd"/>
       </fileset>
