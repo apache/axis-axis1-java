@@ -143,7 +143,7 @@ public class SimpleAuthorizationHandler extends BasicHandler {
             if (provider.userMatches(user, thisRole)) {
 
                 if (log.isDebugEnabled()) {
-                    log.debug(Messages.getMessage("auth01", 
+                    log.debug(Messages.getMessage("auth01",
                         userID, serviceName));
                 }
 
@@ -162,10 +162,10 @@ public class SimpleAuthorizationHandler extends BasicHandler {
     /**
      * Nothing to undo
      */
-    public void undo(MessageContext msgContext) {
+    public void onFault(MessageContext msgContext) {
         if (log.isDebugEnabled()) {
-            log.debug("Enter: SimpleAuthorizationHandler::undo");
-            log.debug("Exit: SimpleAuthorizationHandler::undo");
+            log.debug("Enter: SimpleAuthorizationHandler::onFault");
+            log.debug("Exit: SimpleAuthorizationHandler::onFault");
         }
     }
 };

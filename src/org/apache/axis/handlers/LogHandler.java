@@ -88,7 +88,7 @@ public class LogHandler extends BasicHandler {
 
     public void init() {
         super.init();
-        
+
         Object opt = this.getOption("LogHandler.writeToConsole");
         if (opt != null && opt instanceof String &&
                 "true".equalsIgnoreCase((String)opt))
@@ -134,7 +134,7 @@ public class LogHandler extends BasicHandler {
               writer.close();
             }
             //END FIX: http://nagoya.apache.org/bugzilla/show_bug.cgi?id=16646
-            
+
         } catch( Exception e ) {
             log.error( Messages.getMessage("exception00"), e );
             throw AxisFault.makeFault(e);
@@ -158,23 +158,6 @@ public class LogHandler extends BasicHandler {
         return writer;
     }
 
-    public void undo(MessageContext msgContext) {
-        log.debug("Enter: LogHandler::undo");
-        try {
-            PrintWriter pw   = getWriter(msgContext);
-            pw.println( "=====================" );
-            pw.println( "= " + Messages.getMessage("fault00") );
-            pw.println( "=====================" );
-            //START FIX: http://nagoya.apache.org/bugzilla/show_bug.cgi?id=16646
-            if (!writeToConsole) {
-              pw.close();
-            }
-            // END FIX: http://nagoya.apache.org/bugzilla/show_bug.cgi?id=16646
-        } catch( Exception e ) {
-            log.error(Messages.getMessage("exception00"), e );
-        }
-        log.debug("Exit: LogHandler::undo");
-    }
 
     public void onFault(MessageContext msgContext) {
         try {
