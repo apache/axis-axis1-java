@@ -188,7 +188,7 @@ public class SimpleSerializer implements Serializer {
 
                 QName qname = field.getXmlName();
                 if (qname == null) {
-                    qname = new QName("", Utils.xmlNameToJava(propName));
+                    qname = new QName("", propName);
                 }
 
                 Method readMethod = propertyDescriptor[i].getReadMethod();
