@@ -98,34 +98,30 @@ public class Java2Wsdl {
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 HELP_OPT,
                 "print this message and exit"),
+        new CLOptionDescriptor("output",
+                CLOptionDescriptor.ARGUMENT_REQUIRED,
+                OUTPUT_OPT,
+                "output Wsdl filename"),
+        new CLOptionDescriptor("location",
+                CLOptionDescriptor.ARGUMENT_REQUIRED,
+                LOCATION_OPT,
+                "service location url"),
+        new CLOptionDescriptor("service",
+                CLOptionDescriptor.ARGUMENT_REQUIRED,
+                SERVICE_NAME_OPT,
+                "service name (obtained from --location if not specified)"),
         new CLOptionDescriptor("namespace",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 NAMESPACE_OPT,
                 "target namespace"),
-        new CLOptionDescriptor("namespaceImpl",
-                CLOptionDescriptor.ARGUMENT_REQUIRED,
-                NAMESPACE_IMPL_OPT,
-                "target namespace for implementation wsdl"),
         new CLOptionDescriptor("PkgtoNS",
                 CLOptionDescriptor.DUPLICATES_ALLOWED + CLOptionDescriptor.ARGUMENTS_REQUIRED_2,
                 PACKAGE_OPT,
                 "package=namespace, name value pairs"),
-        new CLOptionDescriptor("location",
-                CLOptionDescriptor.ARGUMENT_REQUIRED,
-                LOCATION_OPT,
-                "service location"),
-        new CLOptionDescriptor("service",
-                CLOptionDescriptor.ARGUMENT_REQUIRED,
-                SERVICE_NAME_OPT,
-                "service name"),
-        new CLOptionDescriptor("locationImport",
-                CLOptionDescriptor.ARGUMENT_REQUIRED,
-                LOCATION_IMPORT_OPT,
-                "location of interface wsdl"),
         new CLOptionDescriptor("methods",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 METHODS_ALLOWED_OPT,
-                "space seperated list of methods to export"),
+                "space separated list of methods to export"),
         new CLOptionDescriptor("methods",
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 INHERITED_CLASS_OPT,
@@ -140,10 +136,14 @@ public class Java2Wsdl {
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 OUTPUT_WSDL_MODE_OPT,
                 "output WSDL mode: All, Interface, Implementation"),
-        new CLOptionDescriptor("output",
+        new CLOptionDescriptor("locationImport",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
-                OUTPUT_OPT,
-                "output Wsdl filename"),
+                LOCATION_IMPORT_OPT,
+                "location of interface wsdl"),
+        new CLOptionDescriptor("namespaceImpl",
+                CLOptionDescriptor.ARGUMENT_REQUIRED,
+                NAMESPACE_IMPL_OPT,
+                "target namespace for implementation wsdl"),
         new CLOptionDescriptor("outputImpl",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 OUTPUT_IMPL_OPT,
@@ -293,9 +293,15 @@ public class Java2Wsdl {
         String lSep = System.getProperty("line.separator");
         StringBuffer msg = new StringBuffer();
         msg.append("Java2Wsdl generator").append(lSep);
-        msg.append("Usage: java " + Java2Wsdl.class.getName() + " [options] ClassName").append(lSep);
+        msg.append("Usage: java " + Java2Wsdl.class.getName() + " [options] class-of-portType").append(lSep);
         msg.append("Options: ").append(lSep);
         msg.append(CLUtil.describeOptions(Java2Wsdl.options).toString());
+        msg.append("Details: ").append(lSep);
+        msg.append("\tportType    name= <class-of-portType name>").append(lSep);
+        msg.append("\tbinding     name= <--service value>SoapBinding").append(lSep);
+        msg.append("\tservice     name= <--service value>Service").append(lSep);
+        msg.append("\tport        name= <--service value>").append(lSep);
+        msg.append("\taddress location= <--location value>").append(lSep);
         System.out.println(msg.toString());
         System.exit(0);
     }
