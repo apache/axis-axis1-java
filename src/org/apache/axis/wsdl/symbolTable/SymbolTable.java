@@ -83,11 +83,12 @@ import javax.wsdl.Output;
 import javax.wsdl.Part;
 import javax.wsdl.Port;
 import javax.wsdl.PortType;
-import javax.xml.namespace.QName;
 import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
 
 import javax.wsdl.factory.WSDLFactory;
+
+import javax.xml.namespace.QName;
 
 import javax.wsdl.xml.WSDLReader;
 
@@ -1102,7 +1103,9 @@ public class SymbolTable {
         // At this point we know the name and type of the parameter, and that it's at least an
         // in parameter.  Now check to see whether it's also in the outputs Vector.  If it is,
         // then it's an inout parameter.
-        if (outdex >= 0) {
+        // Don't bother doing this if the parameters are wrapped since their
+        // names won't be the part names.
+        if (outdex >= 0 && !wrapped) {
             Parameter outParam = (Parameter)outputs.get(outdex);
             if (p.getType().equals(outParam.getType())) {
                 outputs.remove(outdex);
@@ -1299,7 +1302,7 @@ public class SymbolTable {
                 v.add(p);
             }
         } // while
-        
+
     } // partStrings
 
     /**
