@@ -64,6 +64,7 @@ import junit.framework.TestCase;
 
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
+import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.SerializationContextImpl;
 import org.apache.axis.encoding.TypeMapping;
@@ -72,7 +73,6 @@ import org.apache.axis.encoding.ser.BeanDeserializerFactory;
 import org.apache.axis.encoding.ser.BeanSerializer;
 import org.apache.axis.encoding.ser.BeanSerializerFactory;
 import org.apache.axis.server.AxisServer;
-import org.apache.xerces.parsers.DOMParser;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -177,9 +177,7 @@ public class TestDerivatedBeanSerializer extends TestCase {
 		// Check the result
 		String msgString = stringWriter.toString();
 		StringReader reader = new StringReader(msgString);
-		DOMParser parser = new DOMParser();
-		parser.parse(new InputSource(reader));
-		Document doc = parser.getDocument();
+        Document doc = XMLUtils.newDocument(new InputSource(reader));
 		
 		NodeList nodes = doc.getFirstChild().getChildNodes();
 		assertEquals("1st Attribute", "zero", nodes.item(0).getLocalName());
