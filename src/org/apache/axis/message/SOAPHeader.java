@@ -393,4 +393,42 @@ public class SOAPHeader extends MessageElement
       } 
       return super.addChildElement(element);
     }
+
+    public SOAPElement addChildElement(Name name) throws SOAPException {
+        SOAPHeaderElement child = new SOAPHeaderElement(name.getURI(),
+                                                  name.getLocalName());
+        addChild(child);
+        child.setEnvelope(getEnvelope());
+        return child;
+    }
+
+    public SOAPElement addChildElement(String localName) throws SOAPException {
+        // Inherit parent's namespace
+        SOAPHeaderElement child = new SOAPHeaderElement(getNamespaceURI(),
+                                                  localName);
+        addChild(child);
+        child.setEnvelope(getEnvelope());
+        return child;
+    }
+
+    public SOAPElement addChildElement(String localName,
+                                       String prefix) throws SOAPException {
+        SOAPHeaderElement child = new SOAPHeaderElement(getNamespaceURI(prefix),
+                                                  localName);
+        addChild(child);
+        child.setEnvelope(getEnvelope());
+        return child;
+    }
+
+    public SOAPElement addChildElement(String localName,
+                                       String prefix,
+                                       String uri) throws SOAPException {
+        SOAPHeaderElement child = new SOAPHeaderElement(uri,
+                                                  localName);
+        child.setPrefix(prefix);
+        child.addNamespaceDeclaration(prefix, uri);
+        addChild(child);
+        child.setEnvelope(getEnvelope());
+        return child;
+    }
 }
