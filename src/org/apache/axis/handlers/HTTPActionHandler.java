@@ -55,7 +55,6 @@
 package org.apache.axis.handlers;
 
 import org.apache.axis.*;
-import org.apache.axis.registries.SimpleServiceRegistry;
 import org.apache.axis.utils.Debug;
 import org.apache.axis.transport.http.HTTPConstants;
 
@@ -75,9 +74,13 @@ public class HTTPActionHandler extends BasicHandler
     public void invoke(MessageContext msgContext) throws AxisFault
     {
         Debug.Print( 1, "Enter: HTTPActionHandler::invoke" );
-        String action = (String)msgContext.getProperty(HTTPConstants.MC_HTTP_SOAPACTION);
+        String action = (String) msgContext.getProperty(
+                                             HTTPConstants.MC_HTTP_SOAPACTION);
+        Debug.Print( 2, "  HTTP SOAPAction: " + action );
         if (action == null)
-            throw new AxisFault(new NullPointerException("HTTPActionHandler: No HTTPAction property in context!"));
+            throw new AxisFault( "Server.NoHTTPAction",
+                                 "No HTTPAction property in context",
+                                 null, null );
 
         msgContext.setProperty(MessageContext.TARGET_SERVICE, action);
         Debug.Print( 1, "Exit : HTTPActionHandler::invoke" );
