@@ -62,10 +62,13 @@ package org.apache.axis.message;
 
 import org.apache.axis.Constants;
 import org.apache.axis.Handler;
+import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.client.Call;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.encoding.XMLType;
 import org.apache.axis.utils.AxisClassLoader;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.cache.JavaClass;
@@ -168,8 +171,23 @@ public class RPCHandler extends SOAPHandler
             // NOTE : We don't check params.isEmpty() here because we
             //        must have added at least one above...
             //
-            if (type==null && defaultParamTypes!=null &&
+
+            // No xsi:type so in the return rpc case try to get it from
+            // the Call object
+            MessageContext msgContext = context.getMessageContext();
+            Message        msg = msgContext.getCurrentMessage();
+            if ( msg != null && msg.getMessageType() == Message.RESPONSE ) {
+                Call c = (Call) msgContext.getProperty( MessageContext.CALL );
+                if ( c != null ) {
+                    XMLType xmlType = (XMLType) c.getReturnType();
+                    if ( xmlType != null )
+                        type = xmlType.getType();
+                }
+            }
+
+            if (defaultParamTypes!=null &&
                 params.size()<=defaultParamTypes.length) {
+
                 TypeMappingRegistry typeMap = context.getTypeMappingRegistry();
                 int index = params.size()-1;
                 if (index+1<defaultParamTypes.length)
