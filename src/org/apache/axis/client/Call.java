@@ -1524,7 +1524,7 @@ public class Call implements javax.xml.rpc.Call {
             invoke();
         }
         catch( Exception e ) {
-            log.error( JavaUtils.getMessage("exception00"), e );
+            log.debug( JavaUtils.getMessage("exception00"), e );
             throw AxisFault.makeFault(e);
         }
 

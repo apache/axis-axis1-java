@@ -193,7 +193,7 @@ public class AxisClient extends AxisEngine {
 
         } catch( Exception e ) {
             // Should we even bother catching it ?
-            log.error(JavaUtils.getMessage("exception00"), e);
+            log.debug(JavaUtils.getMessage("exception00"), e);
             throw AxisFault.makeFault(e);
 
         } finally {
