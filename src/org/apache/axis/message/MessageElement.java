@@ -487,4 +487,8 @@ public class MessageElement
             return( null );
         }
     }
+
+    public void addMapping(Mapping map) {
+        namespaces.add(map);
+    }
 }
