@@ -73,7 +73,10 @@ public class SOAPBody {
   }
 
   public SOAPBody(Document doc) {
-    root = doc.getRootElement() ;
+    if ( doc != null )
+      root = doc.getRootElement() ;
+    else
+      root = null ;
   }
 
   public SOAPBody(Element elem) {

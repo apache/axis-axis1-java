@@ -100,6 +100,7 @@ public class SOAPServerHandler extends BasicHandler
         msgContext.setProperty( MessageContext.SVC_HANDLER, service );
         
         if ( service instanceof SimpleTargetedChain ) {
+          Debug.Print( 2, "Invoking input chain" );
           stc = (SimpleTargetedChain) service ;
           h = stc.getInputChain() ;
           if ( h != null ) h.invoke(msgContext);
@@ -109,12 +110,20 @@ public class SOAPServerHandler extends BasicHandler
 
         if ( stc != null ) {
           h = stc.getPivotHandler();
-          if ( h != null ) h.invoke(msgContext);
+          if ( h != null ) {
+            Debug.Print( 2, "Invoking service/pivot" );
+            h.invoke(msgContext);
+          }
           h = stc.getOutputChain();
-          if ( h != null ) h.invoke(msgContext);
+          if ( h != null ) {
+            Debug.Print( 2, "Invoking output chain" );
+            h.invoke(msgContext);
+          }
         }
-        else
+        else {
+          Debug.Print( 2, "Invoking service" );
           service.invoke(msgContext);
+        }
 
         Debug.Print( 1, "Exit : SOAPServerHandler::invoke" );
     }

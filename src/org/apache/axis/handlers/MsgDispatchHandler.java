@@ -105,6 +105,15 @@ public class MsgDispatchHandler extends BasicHandler {
                               (SOAPEnvelope)resMsg.getAs("SOAPEnvelope");
 
       Document      doc     = new Document( reqBody.getAsXML() );
+
+      /* If no methodName was specified during deployment then get it */
+      /* from the root of the Body element                            */
+      /* Hmmm, should we do this????                                  */
+      /****************************************************************/
+      if ( methodName == null || methodName.equals("") ) {
+        Element root = doc.getRootElement();
+        if ( root != null ) methodName = root.getName();
+      }
   
       argClasses[0] = cl.loadClass("org.apache.axis.MessageContext");
       argClasses[1] = cl.loadClass("org.jdom.Document");
@@ -115,8 +124,10 @@ public class MsgDispatchHandler extends BasicHandler {
 
       Document retDoc = (Document) method.invoke( obj, argObjects );
   
-      SOAPBody      resBody = new SOAPBody( retDoc );
-      resEnv.addBody(resBody);
+      if ( retDoc != null ) {
+        SOAPBody resBody = new SOAPBody( retDoc );
+        resEnv.addBody(resBody);
+      }
       
       if (resMsg == null) {
         resMsg = new Message(resEnv, "SOAPEnvelope");

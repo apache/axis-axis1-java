@@ -1,7 +1,7 @@
 /*
  * The Apache Software License, Version 1.1
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -9,7 +9,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *  notice, this list of conditions and the following disclaimer. 
+ *  notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *  notice, this list of conditions and the following disclaimer in
@@ -17,7 +17,7 @@
  *  distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *  if any, must include the following acknowledgment:  
+ *  if any, must include the following acknowledgment:
  *     "This product includes software developed by the
  *    Apache Software Foundation (http://www.apache.org/)."
  *  Alternately, this acknowledgment may appear in the software itself,
@@ -25,7 +25,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *  not be used to endorse or promote products derived from this
- *  software without prior written permission. For written 
+ *  software without prior written permission. For written
  *  permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -59,8 +59,10 @@ import java.io.* ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.Debug ;
 import org.apache.axis.utils.AxisClassLoader ;
+import sun.tools.javac.Main;
+import org.jdom.* ;
 
-/** 
+/**
  * This handler will use the JWSFileName property of the MsgContext to
  * locate a *.jws (JavaWebService) file.  If found it will copy it to a
  * *.java file, compile it and then run it using the RPCDispatchHandler.
@@ -68,11 +70,13 @@ import org.apache.axis.utils.AxisClassLoader ;
  * Todo:
  *   support msg instead of just rpc
  *   allow configurable handler (not just RPCDispatchHandler)
- * 
+ *
  * @author Doug Davis (dug@us.ibm.com)
  */
 public class JWSProcessor extends BasicHandler
 {
+  static String errFile = "jws.err" ;
+
   public void invoke(MessageContext msgContext) throws AxisFault
   {
     Debug.Print( 1, "Enter: JWSProcessor::invoke" );
@@ -87,10 +91,10 @@ public class JWSProcessor extends BasicHandler
       String   cFile   = jwsFile.substring(0, jwsFile.length()-3) + "class" ;
       Debug.Print( 2, "jFile: " + jFile );
       Debug.Print( 2, "cFile: " + cFile );
-  
+
       File  f1 = new File( cFile );
       File  f2 = new File( jwsFile );
-  
+
       /* Check to see if we need to recompile */
       /****************************************/
       if ( !f1.exists() || f2.lastModified() > f1.lastModified() ) {
@@ -111,24 +115,41 @@ public class JWSProcessor extends BasicHandler
         /* Now run javac on the *.java file */
         /************************************/
         Debug.Print(2, "javac " + jFile );
-        Process proc = rt.exec( "javac " + jFile );
-        proc.waitFor();
+        // Process proc = rt.exec( "javac " + jFile );
+        // proc.waitFor();
+        FileOutputStream  out      = new FileOutputStream( errFile );
+        Main              compiler = new Main( out, "javac" );
+        String            outdir   = f1.getParent();
+        String[]          args     = new String[] { "-d", outdir, jFile };
+        boolean           result   = compiler.compile( args );
 
         /* Delete the temporary *.java file and check the return code */
         /**************************************************************/
         (new File(jFile)).delete();
 
-        if ( proc.exitValue() != 0 ) {
+        // if ( proc.exitValue() != 0 ) {
+        if ( !result ) {
           /* Delete the *class file - sometimes it gets created even */
           /* when there are errors - so erase it so it doesn't       */
           /* confuse us.                                             */
           /***********************************************************/
           (new File(cFile)).delete();
+          Element         root = new Element( "Errors" );
+          StringBuffer    sbuf = new StringBuffer();
+          FileReader      inp  = new FileReader( errFile );
+
+          buf = new char[4096];
+
+          while ( (rc = inp.read(buf, 0, 4096)) > 0 )
+             sbuf.append( buf, 0, rc );
+          inp.close();
+          root.addContent( sbuf.toString() );
+          (new File(errFile)).delete();
           throw new AxisFault( "Server.compileError",
-                               "Error while compiling: " + jFile + 
-                               " rc=" + proc.exitValue(),
-                               null, null );
+                               "Error while compiling: " + jFile,
+                               null, new Element[] { root } );
         }
+        (new File(errFile)).delete();
       }
 
       /* Load the class */
@@ -142,7 +163,7 @@ public class JWSProcessor extends BasicHandler
       /* Create a new RPCDispatchHandler - this will be the "service"   */
       /* that we invoke.                                                */
       /******************************************************************/
-      RPCDispatchHandler rpc = new RPCDispatchHandler();
+      Handler rpc = new RPCDispatchHandler();
       msgContext.setProperty( MessageContext.SVC_HANDLER, rpc );
 
       rpc.addOption( "className", clsName );

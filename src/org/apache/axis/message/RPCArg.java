@@ -60,6 +60,9 @@ package org.apache.axis.message ;
 import java.util.* ;
 import org.jdom.* ;
 
+import org.apache.axis.utils.AxisClassLoader ;
+import org.apache.axis.utils.Debug ;
+
 /**
  *
  * @author Doug Davis (dug@us.ibm.com)
@@ -69,6 +72,7 @@ public class RPCArg {
   protected String   namespaceURI ;
   protected String   name ;
   protected String   value ;         // only support String for now
+  protected String   type ;
 
   public RPCArg() {} 
 
@@ -100,6 +104,24 @@ public class RPCArg {
 
   public String getValue() { return( value ); }
   public void   setValue(String val) { value = val ; }
+
+  public String getTypeAsString() { 
+    if ( type == null ) type = "java.lang.String" ;
+    return( type );
+  }
+  public Class  getTypeAsClass() { 
+    if ( type == null ) type = "java.lang.String" ;
+    AxisClassLoader cl     = new AxisClassLoader();
+    Class           cls    = null ;
+    try {
+      cl.loadClass(type);
+    }
+    catch( Exception e ) {
+      Debug.Print(0, e);
+    }
+    return( cls );
+  }
+  public void   setType(String str) { type = str ; }
 
   public Element getAsXML() {
     Element   root ;

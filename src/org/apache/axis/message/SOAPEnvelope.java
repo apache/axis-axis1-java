@@ -69,10 +69,20 @@ import org.apache.axis.* ;
  */
 public class SOAPEnvelope {
   protected String       prefix ;
+  protected String       namespaceURI ;
+  protected String       encodingStyleURI ;
   protected Vector       headers ;
   protected Vector       body ; // Vector of SOAPBody's
 
   public SOAPEnvelope() {
+  }
+
+  public void setEncodingStyleURI( String uri ) {
+    encodingStyleURI = uri ;
+  }
+
+  public String getEncodingStyleURI() {
+    return( encodingStyleURI );
   }
 
   public SOAPEnvelope(Document doc) {
@@ -94,6 +104,10 @@ public class SOAPEnvelope {
       body = null ;
       return ;
     }
+
+    prefix = elem.getNamespacePrefix();
+    namespaceURI = elem.getNamespace().getURI();
+    encodingStyleURI = elem.getAttributeValue( Constants.ATTR_ENCODING_STYLE );
 
     e = elem.getChild( Constants.ELEM_HEADER, elem.getNamespace() );
     if ( e != null ) {
@@ -145,6 +159,10 @@ public class SOAPEnvelope {
     headers.add( header );
   }
 
+  public int getNumBodies() {
+    return( body == null ? 0 : body.size() );
+  }
+
   /**
    * Returns a vector of SOAPBody's - could be more than one
    */
@@ -167,7 +185,6 @@ public class SOAPEnvelope {
    */
   public Vector  getAsRPCBody() {
     if ( body == null ) return( null );
-    SOAPBody b = (SOAPBody) body.get(0);
     for ( int i = 0 ; i < body.size() ; i++ )
       if ( !(body.get(i) instanceof RPCBody) )
         body.set(i, new RPCBody( (SOAPBody) body.get(i) ) );
@@ -179,14 +196,20 @@ public class SOAPEnvelope {
     Element  root ;
     int      i ;
 
-    root = new Element( Constants.ELEM_ENVELOPE, Constants.NSPREFIX_SOAP_ENV,
-                        Constants.URI_SOAP_ENV );
+    String tmpEnvPre = (prefix != null ? prefix : Constants.NSPREFIX_SOAP_ENV);
+    String tmpEnvURI = (namespaceURI != null ? namespaceURI :
+                                               Constants.URI_SOAP_ENV);
+    String tmpEnc    = (encodingStyleURI != null ? encodingStyleURI :
+                                                   Constants.URI_SOAP_ENC );
+
+    root = new Element( Constants.ELEM_ENVELOPE, tmpEnvPre, tmpEnvURI );
+    root.addAttribute( new Attribute( Constants.ATTR_ENCODING_STYLE,
+                                      tmpEnvPre, tmpEnvURI, tmpEnc ) );
     doc = new Document( root );
 
     if ( headers != null && headers.size() > 0 ) {
       Element elem = new Element( Constants.ELEM_HEADER, 
-                                  Constants.NSPREFIX_SOAP_ENV,
-                                  Constants.URI_SOAP_ENV );
+                                  tmpEnvPre, tmpEnvURI );
       root.addContent( elem );
       for ( i = 0 ; i < headers.size() ; i++ ) {
         SOAPHeader h = (SOAPHeader) headers.get(i);
@@ -195,8 +218,7 @@ public class SOAPEnvelope {
     } 
     if ( body != null ) {
       Element elem = new Element( Constants.ELEM_BODY, 
-                                  Constants.NSPREFIX_SOAP_ENV,
-                                  Constants.URI_SOAP_ENV );
+                                  tmpEnvPre, tmpEnvURI );
       root.addContent( elem );
       for ( i = 0 ; i < body.size() ; i++ ) {
         Element  bod = ((SOAPBody)body.get(i)).getAsXML();
