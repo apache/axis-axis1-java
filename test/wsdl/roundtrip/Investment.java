@@ -65,7 +65,7 @@ package test.wsdl.roundtrip;
  * @version   1.00  06 Feb 2002
  * @author    Brent Ulbricht
  */
-public class Investment implements java.io.Serializable {
+public abstract class Investment implements java.io.Serializable {
 
     public String name;
     private int id;

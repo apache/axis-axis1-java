@@ -141,7 +141,17 @@ public class JavaBeanWriter extends JavaWriter {
         if (type.isSimpleType())
             implementsText = ", org.apache.axis.encoding.SimpleType";
 
-        pw.println("public class " + className + extendsText +
+        // Support abstract attribute by mapping to an abstract class
+        String abstractText = "";
+        if (node != null) {
+            String abstractValue = Utils.getAttribute(node, "abstract");
+            if (abstractValue != null && 
+                abstractValue.equalsIgnoreCase("true")) {
+                abstractText = "abstract ";
+            }
+        }
+
+        pw.println("public " + abstractText + "class " + className + extendsText +
                    " implements java.io.Serializable" + implementsText + " {");
 
         for (int i = 0; i < names.size(); i += 2) {
