@@ -105,6 +105,8 @@
 
 <property name="test.functional.fail" value="yes" />
 
+<property name="javax.xml.parsers.DocumentBuilderFactory" value="org.apache.xerces.jaxp.DocumentBuilderFactoryImpl"/>
+<property name="javax.xml.parsers.SAXParserFactory" value="org.apache.xerces.jaxp.SAXParserFactoryImpl"/>
 
 <!-- Place Holder for proxy settings -->
 <property name="http.proxyHost" value=""/>

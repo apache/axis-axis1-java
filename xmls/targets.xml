@@ -5,6 +5,10 @@
    <target name="my-forking-ant">
      <echo message="Forking a JVM for target ${target} in file ${file}"/>
      <java classname="org.apache.tools.ant.Main" fork="yes" failonerror="true" dir="${dir}">
+       <!-- Pass the parser settings -->
+       <jvmarg value="-Djavax.xml.parsers.DocumentBuilderFactory=${javax.xml.parsers.DocumentBuilderFactory}"/>
+       <jvmarg value="-Djavax.xml.parsers.SAXParserFactory=${javax.xml.parsers.SAXParserFactory}"/>
+
        <!-- Pass through the proxy parameters -->
        <jvmarg value="-Dhttp.proxyHost=${http.proxyHost}"/>
        <jvmarg value="-Dhttp.proxyPort=${http.proxyPort}"/>
@@ -350,6 +354,8 @@
     <echo message="javac.fork=${javac.fork}" />
     <!-- Set environment variable axis_nojavadocs=true  to never generate javadocs. Case sensative! -->
     <echo message="axis_nojavadocs=${env.axis_nojavadocs}"/>
+    <echo message="javax.xml.parsers.DocumentBuilderFactory=${javax.xml.parsers.DocumentBuilderFactory}"/>
+    <echo message="javax.xml.parsers.SAXParserFactory=${javax.xml.parsers.SAXParserFactory}"/>
 
     <echo message="" />
     <echo message="-- Network Settings ---"/>

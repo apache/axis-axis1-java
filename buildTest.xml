@@ -170,6 +170,10 @@ Copyright:
 
     <!-- now, run the actual test -->
     <junit dir="${axis.home}" printsummary="yes" haltonfailure="${test.functional.fail}" fork="yes">
+      <!-- Pass the parser settings -->
+      <jvmarg value="-Djavax.xml.parsers.DocumentBuilderFactory=${javax.xml.parsers.DocumentBuilderFactory}"/>
+      <jvmarg value="-Djavax.xml.parsers.SAXParserFactory=${javax.xml.parsers.SAXParserFactory}"/>
+
       <!-- Pass through the proxy parameters -->
       <jvmarg value="-Dhttp.proxyHost=${http.proxyHost}"/>
       <jvmarg value="-Dhttp.proxyPort=${http.proxyPort}"/>
