@@ -54,7 +54,7 @@
  */
 package org.apache.axis.utils;
 
-import java.util.Hashtable;
+import java.util.ArrayList;
 import java.util.Stack;
 import java.util.Enumeration;
 
@@ -62,10 +62,28 @@ import java.util.Enumeration;
  * @author: James Snell
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
-public class NSStack { 
+public class NSStack {
+    public static class Mapping {
+        public String namespaceURI;
+        public String prefix;
+        public Mapping(String namespaceURI, String prefix)
+        {
+            this.namespaceURI = namespaceURI;
+            this.prefix = prefix;
+        }
+        
+        public String getNamespaceURI()
+        {
+            return namespaceURI;
+        }
+        public String getPrefix()
+        {
+            return prefix;
+        }
+    }
     private static final boolean DEBUG_LOG = false;
     
-    private static final Hashtable EMPTY = new Hashtable();
+    private static final ArrayList EMPTY = new ArrayList();
 
     private Stack stack = new Stack();
     
@@ -73,7 +91,7 @@ public class NSStack {
 
     public NSStack() {}
     
-    public NSStack(Hashtable table) {
+    public NSStack(ArrayList table) {
         push(table);
     }
     
@@ -88,7 +106,7 @@ public class NSStack {
         stack.push(EMPTY);
     }
     
-    public void push(Hashtable table) {
+    public void push(ArrayList table) {
         if (stack == null) stack = new Stack();
         if (DEBUG_LOG)
             System.out.println("NSPush (" + stack.size() + ")");
@@ -98,18 +116,18 @@ public class NSStack {
            stack.push(table);
     }
     
-    public Hashtable peek() {
+    public ArrayList peek() {
         if (stack.isEmpty())
             if (parent != null)
                 return parent.peek();
             else
-                return null;
+                return EMPTY;
                 
         
-        return (Hashtable)stack.peek();
+        return (ArrayList)stack.peek();
     }
     
-    public Hashtable pop() {
+    public ArrayList pop() {
         if (stack.isEmpty()) {
             if (DEBUG_LOG)
                 System.out.println("NSPop (empty)");
@@ -119,32 +137,41 @@ public class NSStack {
         }
         
         if (DEBUG_LOG) {
-            Hashtable t = (Hashtable)stack.pop();
+            ArrayList t = (ArrayList)stack.pop();
             System.out.println("NSPop (" + stack.size() + ")");
             return t;
         } else {
-            return (Hashtable)stack.pop();
+            return (ArrayList)stack.pop();
         }
     }
     
     public void add(String namespaceURI, String prefix) {
         if (stack.isEmpty()) push();
-        Hashtable table = peek();
+        ArrayList table = peek();
         if (table == EMPTY) {
-            table = new Hashtable();
+            table = new ArrayList();
             stack.pop();
             stack.push(table);
         }
-        table.put(namespaceURI, prefix);
+        table.add(new Mapping(namespaceURI, prefix));
     }
     
     /**
-     * remove a namespace from the topmost hashtable on the stack
+     * remove a namespace from the topmost table on the stack
      */
+    /*
     public void remove(String namespaceURI) {
         if (stack.isEmpty()) return;
-        peek().remove(namespaceURI);
+        ArrayList current = peek();
+        for (int i = 0; i < current.size(); i++) {
+            Mapping map = (Mapping)current.get(i);
+            if (map.getNamespaceURI().equals(namespaceURI)) {
+                current.removeElementAt(i);
+                return; // ???
+            }
+        }
     }
+    */
     
     public String getPrefix(String namespaceURI) {
         if ((namespaceURI == null) || (namespaceURI.equals("")))
@@ -152,10 +179,13 @@ public class NSStack {
         
         if (!stack.isEmpty()) {
             for (int n = stack.size() - 1; n >= 0; n--) {
-                Hashtable t = (Hashtable)stack.elementAt(n);
+                ArrayList t = (ArrayList)stack.get(n);
                 
-                if ((t != null) && (t != EMPTY) && t.containsKey(namespaceURI)) 
-                    return (String)t.get(namespaceURI);
+                for (int i = 0; i < t.size(); i++) {
+                    Mapping map = (Mapping)t.get(i);
+                    if (map.getNamespaceURI().equals(namespaceURI))
+                        return map.getPrefix();
+                }
             }
         }
         
@@ -164,18 +194,18 @@ public class NSStack {
         return null;
     }
     
-    /** This is expensive.  Use with caution.
-     */
     public String getNamespaceURI(String prefix) {
-        if (prefix != null) {
-            String uri = null;
-
-            if (!stack.isEmpty()) {
-                for (int i = stack.size() - 1; i >= 0; i--) {
-                    Hashtable t = (Hashtable)stack.elementAt(i);
-                    uri = searchTable(t, prefix);
-                    if (uri != null)
-                        return uri;
+        if (prefix == null)
+            prefix = "";
+        
+        if (!stack.isEmpty()) {
+            for (int n = stack.size() - 1; n >= 0; n--) {
+                ArrayList t = (ArrayList)stack.get(n);
+                
+                for (int i = 0; i < t.size(); i++) {
+                    Mapping map = (Mapping)t.get(i);
+                    if (map.getPrefix().equals(prefix))
+                        return map.getNamespaceURI();
                 }
             }
         }
@@ -183,27 +213,10 @@ public class NSStack {
         if (parent != null)
             return parent.getNamespaceURI(prefix);
 
-        dump();
         if (DEBUG_LOG) {
-          System.err.println("didn't find prefix '" + prefix + "'");
+            System.err.println("didn't find prefix '" + prefix + "'");
+            dump();
         }
-        return null;
-    }
-
-    private String searchTable(Hashtable t, String prefix)
-    {
-        if ((t != null) && (t != EMPTY) && (t.contains(prefix))) {
-            Enumeration e = t.keys();
-            while (e.hasMoreElements()) {
-                String uri = (String)e.nextElement();
-                String p = (String)t.get(uri);
-                if (p.equals(prefix))
-                    return uri;
-            }
-        }
-        
-        if (parent != null)
-            return parent.searchTable(t, prefix);
 
         return null;
     }
@@ -211,9 +224,14 @@ public class NSStack {
     public boolean isDeclared(String namespaceURI) {
         if (!stack.isEmpty()) {
             for (int n = stack.size() - 1; n >= 0; n--) {
-                Hashtable t = (Hashtable)stack.elementAt(n);
-                if ((t != null) && (t != EMPTY) && t.containsKey(namespaceURI))
-                    return true;
+                ArrayList t = (ArrayList)stack.get(n);
+                if ((t != null) && (t != EMPTY)) {
+                    for (int i = 0; i < t.size(); i++) {
+                        if (((Mapping)t.get(i)).getNamespaceURI().
+                                   equals(namespaceURI))
+                            return true;
+                    }
+                }
             }
         }
 
@@ -227,16 +245,16 @@ public class NSStack {
     {
         Enumeration e = stack.elements();
         while (e.hasMoreElements()) {
-            Hashtable map = (Hashtable)e.nextElement();
+            ArrayList list = (ArrayList)e.nextElement();
             System.out.println("----");
-            if (map == null) {
-                System.out.println("null table");
+            if (list == null) {
+                System.out.println("null table??");
                 continue;
             }
-            Enumeration sub = map.keys();
-            while (sub.hasMoreElements()) {
-                String key = (String)sub.nextElement();
-                System.out.println(key + " -> " + map.get(key));
+            for (int i = 0; i < list.size(); i++) {
+                Mapping map = (Mapping)list.get(i);
+                System.out.println(map.getNamespaceURI() + " -> " +
+                                   map.getPrefix());
             }
         }
 

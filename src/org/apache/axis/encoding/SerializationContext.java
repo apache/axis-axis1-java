@@ -78,7 +78,6 @@ public class SerializationContext
     
     public NSStack nsStack = new NSStack();
                                         
-    public Hashtable pendingNSMappings = new Hashtable();
     boolean writingStartTag = false;
     
     Stack elementStack = new Stack();
@@ -138,9 +137,6 @@ public class SerializationContext
         
         String prefix = nsStack.getPrefix(uri);
         
-        if (prefix == null)
-            prefix = (String)pendingNSMappings.get(uri);
-        
         if (prefix == null && uri.equals(Constants.URI_SOAP_ENC)) {
             prefix = Constants.NSPREFIX_SOAP_ENC;
             registerPrefixForURI(prefix, uri);
@@ -160,12 +156,8 @@ public class SerializationContext
             System.out.println("register '" + prefix + "' - '" + uri + "'");
         }
         
-        if ((uri != null) && (prefix != null) && !prefix.equals("") &&
-            !uri.equals("")) {
-            /*if ((pendingNSMappings.get(uri) != null) ||
-                (nsStack.getPrefix(uri) != null))
-                return;*/
-            pendingNSMappings.put(uri, prefix);
+        if ((uri != null) && (prefix != null)) {
+            nsStack.add(uri, prefix);
         }
     }
     
@@ -177,7 +169,7 @@ public class SerializationContext
     public String qName2String(QName qName)
     {
         String prefix = getPrefixForURI(qName.getNamespaceURI());
-        return ((prefix != null) ? prefix + ":" : "") +
+        return (((prefix != null)&&(!prefix.equals(""))) ? prefix + ":" : "") +
                qName.getLocalPart();
     }
     
@@ -276,12 +268,6 @@ public class SerializationContext
         
         buf.append(elementQName);
         
-        if (!pendingNSMappings.isEmpty()) {
-            nsStack.push((Hashtable)pendingNSMappings.clone());
-        } else {
-            nsStack.push();
-        }
-        
         if (attributes != null) {
             for (int i = 0; i < attributes.getLength(); i++) {
                 buf.append(" " + attributes.getQName(i) + "=\"" +
@@ -289,19 +275,21 @@ public class SerializationContext
             }
         }
         
-        Enumeration e = pendingNSMappings.keys();
-        while (e.hasMoreElements()) {
-            String uri = (String)e.nextElement();
-            String pref = (String)pendingNSMappings.get(uri);
-            buf.append(" xmlns:" + pref + "=\"" + uri + "\"");
+        ArrayList currentMappings = nsStack.peek();
+        for (int i = 0; i < currentMappings.size(); i++) {
+            NSStack.Mapping map = (NSStack.Mapping)currentMappings.get(i);
+            buf.append(" xmlns");
+            if (!map.getPrefix().equals("")) {
+                buf.append(":" + map.getPrefix());
+            }
+            buf.append("=\"" + map.getNamespaceURI() + "\"");
         }
 
         writingStartTag = true;
         
         elementStack.push(elementQName);
-        
-        pendingNSMappings.clear();
-        
+        nsStack.push();
+
         writer.write(buf.toString());
         writer.flush();
     }

@@ -219,6 +219,7 @@ public class BeanSerializer extends Deserializer
      */
     public SOAPHandler onStartChild(String namespace,
                                     String localName,
+                                    String prefix,
                                     Attributes attributes,
                                     DeserializationContext context)
         throws SAXException

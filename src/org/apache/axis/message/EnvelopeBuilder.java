@@ -33,11 +33,21 @@ public class EnvelopeBuilder extends SOAPHandler
         
         if (!localName.equals(Constants.ELEM_ENVELOPE))
             throw new SAXException("Bad envelope tag " + localName);
+
+        String prefix = "";
+        int idx = qName.indexOf(":");
+        if (idx > 0)
+            prefix = qName.substring(0, idx);
+
+        context.getEnvelope().setPrefix(prefix);
+        context.getEnvelope().setNamespaceURI(namespace);
     }
     
-    public SOAPHandler onStartChild(String namespace, String localName,
-                                     Attributes attributes,
-                                     DeserializationContext context)
+    public SOAPHandler onStartChild(String namespace,
+                                    String localName,
+                                    String prefix,
+                                    Attributes attributes,
+                                    DeserializationContext context)
         throws SAXException
     {
         QName thisQName = new QName(namespace, localName);
@@ -61,7 +71,7 @@ public class EnvelopeBuilder extends SOAPHandler
             throw new SAXException("No custom elements allowed at top level "+
                                    "until after the <Body>");
 
-        element = new MessageElement(namespace, localName,
+        element = new MessageElement(namespace, localName, prefix,
                                      attributes, context);
         
         if (element.getFixupDeserializer() != null)

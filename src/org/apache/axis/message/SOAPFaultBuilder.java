@@ -92,6 +92,7 @@ public class SOAPFaultBuilder extends SOAPHandler implements ValueReceiver
 
     public SOAPHandler onStartChild(String namespace,
                                     String name,
+                                    String prefix,
                                     Attributes attributes,
                                     DeserializationContext context)
         throws SAXException

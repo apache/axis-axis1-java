@@ -74,7 +74,7 @@ public class TestRPC extends TestCase {
         // Construct the soap request
         SOAPEnvelope envelope = new SOAPEnvelope();
         msgContext.setRequestMessage(new Message(envelope));
-        RPCElement body = new RPCElement(methodNS, method, null, deserContext);
+        RPCElement body = new RPCElement(methodNS, method, "", null, deserContext);
         envelope.addBodyElement(body);
         for (int i=0; i<parms.length; i++) {
             body.addParam(new RPCParam("arg"+i, parms[i]));

@@ -73,10 +73,10 @@ public class SOAPFaultElement extends SOAPBodyElement
 {
     protected AxisFault fault;    
     
-    public SOAPFaultElement(String namespace, String localName, Attributes attrs,
-                      DeserializationContext context)
+    public SOAPFaultElement(String namespace, String localName, String prefix,
+                            Attributes attrs, DeserializationContext context)
     {
-        super(namespace, localName, attrs, context);
+        super(namespace, localName, prefix, attrs, context);
     }
     
     public SOAPFaultElement(AxisFault fault)

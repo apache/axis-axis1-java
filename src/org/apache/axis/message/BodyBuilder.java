@@ -22,6 +22,7 @@ public class BodyBuilder extends SOAPHandler
     
     public SOAPHandler onStartChild(String namespace,
                                      String localName,
+                                     String prefix,
                                      Attributes attributes,
                                      DeserializationContext context)
         throws SAXException
@@ -60,7 +61,7 @@ public class BodyBuilder extends SOAPHandler
 
         if (localName.equals(Constants.ELEM_FAULT) &&
             namespace.equals(Constants.URI_SOAP_ENV)) {
-            element = new SOAPFaultElement(namespace, localName,
+            element = new SOAPFaultElement(namespace, localName, prefix,
                                            attributes, context);
             handler = new SOAPFaultBuilder((SOAPFaultElement)element,
                                            context);
@@ -68,11 +69,11 @@ public class BodyBuilder extends SOAPHandler
             isRoot && 
             ((serviceDesc == null) || (serviceDesc.isRPC()))) {
             gotRPCElement = true;
-            element = new RPCElement(namespace, localName,
+            element = new RPCElement(namespace, localName, prefix,
                                      attributes, context);
             handler = new RPCHandler((RPCElement)element);
         } else {
-            element = new SOAPBodyElement(namespace, localName,
+            element = new SOAPBodyElement(namespace, localName, prefix,
                                       attributes, context);
             if (element.getFixupDeserializer() != null)
                 handler = element.getFixupDeserializer();

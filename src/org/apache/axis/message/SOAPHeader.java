@@ -83,9 +83,9 @@ public class SOAPHeader extends MessageElement {
         setName(localPart);
     }
 
-    public SOAPHeader(String namespace, String localPart,
+    public SOAPHeader(String namespace, String localPart, String prefix,
                       Attributes attributes, DeserializationContext context) {
-        super(namespace, localPart, attributes, context);
+        super(namespace, localPart, prefix, attributes, context);
         
         // Check for mustUnderstand
         String val = attributes.getValue(Constants.URI_SOAP_ENV,
