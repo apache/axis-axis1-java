@@ -457,6 +457,7 @@ Copyright:
     <delete dir="test-reports"/>
     <delete file="TEST-test.functional.FunctionalTests.txt"/>
     <delete file="GetQuote.wsdl"/>
+    <property name="axis-ant.present" value="false"/>
   </target>
   
   <!-- =================================================================== -->
