@@ -246,14 +246,14 @@ public class Message extends javax.xml.soap.SOAPMessage
     private static Class attachImpl = null;
 
     //aviod testing and possibly failing everytime.
-    private static boolean checkForAttchmentSupport = true;
+    private static boolean checkForAttachmentSupport = true;
 
     private static boolean attachmentSupportEnabled = false;
 
     private static synchronized boolean isAttachmentSupportEnabled(MessageContext mc) {
-        if (checkForAttchmentSupport) {
+        if (checkForAttachmentSupport) {
             //aviod testing and possibly failing everytime.
-            checkForAttchmentSupport = false;
+            checkForAttachmentSupport = false;
             try {
                 String attachImpName= AxisEngine.DEFAULT_ATTACHMENT_IMPL;
                 if(null != mc){
