@@ -76,11 +76,13 @@ import javax.wsdl.Service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.Vector;
 
 /**
@@ -170,6 +172,11 @@ public class Emitter {
             reader.setVerbose(bVerbose);
             def = reader.readWSDL(null, doc);
             namespaces = new Namespaces(outputDir);
+
+            // First, read the namespace mapping file - NStoPkg.properties - if it
+            // exists, and load the namespaceMap HashMap with its data.
+            getNStoPkgFromPropsFile(namespaces);
+
             if (delaySetMap != null) {
                 namespaces.putAll(delaySetMap);
             }
@@ -240,6 +247,32 @@ public class Emitter {
             writeServices();
         }
     } // emit
+
+    /**
+     * Look for a NStoPkg.properties file in the CLASSPATH.  If it exists,
+     * then collect the namespace->package mappings from it.
+     */
+    private static void getNStoPkgFromPropsFile(HashMap namespaces)
+    {
+        try {
+            ResourceBundle mappings = ResourceBundle.getBundle("NStoPkg");
+System.out.println("mappings = " + mappings);
+            Enumeration keys = mappings.getKeys();
+            while (keys.hasMoreElements()) {
+                try {
+                    String key = (String) keys.nextElement();
+System.out.println("<" + key + ", " + mappings.getString(key) + ">");
+                    namespaces.put(key, mappings.getString(key));
+                }
+                catch (Throwable t) {
+t.printStackTrace();
+                }
+            }
+        }
+        catch (Throwable t) {
+t.printStackTrace();
+        }
+    } // getNStoPkgFromPropsFile
 
     /**
      * Do some cleanup of the 'symbol table' and add our own symbol table structures
