@@ -84,7 +84,8 @@ public class JavaBindingWriter implements Writer {
             skelWriter = new JavaSkelWriter(emitter, binding, operationParameters);
             String fileName = bindingQName.getLocalPart() + "Impl.java";
             try {
-                if (!emitter.fileExists (fileName, bindingQName.getNamespaceURI())) {
+                // NOTE:  Where does the fileExists method really belong?
+                if (!((JavaWriter) stubWriter).fileExists (fileName, bindingQName.getNamespaceURI())) {
                     implWriter = new JavaImplWriter(emitter, binding, operationParameters);
                 }
             }
