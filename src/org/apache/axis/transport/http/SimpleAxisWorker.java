@@ -93,6 +93,7 @@ public class SimpleAxisWorker implements Runnable {
 
     // HTTP status codes
     private static byte OK[] = ("200 " + Messages.getMessage("ok00")).getBytes();
+    private static byte NOCONTENT[] = ("202" + Messages.getMessage("ok00")).getBytes();
     private static byte UNAUTH[] = ("401 " + Messages.getMessage("unauth00")).getBytes();
     private static byte SENDER[] = "400".getBytes();
     private static byte ISE[] = ("500 " + Messages.getMessage("internalError01")).getBytes();
@@ -436,6 +437,10 @@ public class SimpleAxisWorker implements Runnable {
 
                 // Retrieve the response from Axis
                 responseMsg = msgContext.getResponseMessage();
+                
+                if (responseMsg == null) {
+                    status = NOCONTENT;
+                }
             } catch (Exception e) {
                 AxisFault af;
                 if (e instanceof AxisFault) {
