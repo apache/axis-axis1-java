@@ -66,6 +66,7 @@ import org.apache.axis.wsdl.symbolTable.Parameters;
 import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
+import org.apache.axis.wsdl.symbolTable.MimeInfo;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -94,26 +95,28 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
     /**
      * Given a type, return the Java mapping of that type's holder.
      */
-    public static String holder(String mimeType, TypeEntry type, Emitter emitter) {
+    public static String holder(MimeInfo mimeInfo, TypeEntry type, Emitter emitter) {
+        String mimeType = mimeInfo == null ? null : mimeInfo.getType();
+        String mimeDimensions = mimeInfo == null ? "" : mimeInfo.getDimensions();
 
         // Add the holders that JAX-RPC forgot about - the MIME type holders.
         if (mimeType != null) {
             if (mimeType.equals("image/gif") ||
                 mimeType.equals("image/jpeg")) {
-                return "org.apache.axis.holders.ImageHolder";
+                return "org.apache.axis.holders.ImageHolder" + mimeDimensions;
             }
             else if (mimeType.equals("text/plain")) {
-                return "javax.xml.rpc.holders.StringHolder";
+                return "javax.xml.rpc.holders.StringHolder" + mimeDimensions;
             }
             else if (mimeType.startsWith("multipart/")) {
-                return "org.apache.axis.holders.MimeMultipartHolder";
+                return "org.apache.axis.holders.MimeMultipartHolder" + mimeDimensions;
             }
             else if (mimeType.startsWith("application/octetstream")) {
-                return "org.apache.axis.holders.OctetStreamHolder";
+                return "org.apache.axis.holders.OctetStreamHolder" + mimeDimensions;
             }
             else if (mimeType.equals("text/xml") ||
                      mimeType.equals("application/xml")) {
-                return "org.apache.axis.holders.SourceHolder";
+                return "org.apache.axis.holders.SourceHolder" + mimeDimensions;
             }
         }
 
@@ -506,27 +509,29 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
      * Return the Object variable 'var' cast to the appropriate type
      * doing the right thing for the primitive types.
      */
-    public static String getResponseString(TypeEntry type, String mimeType,
+    public static String getResponseString(TypeEntry type, MimeInfo mimeInfo,
             String var) {
+        String mimeType = mimeInfo == null ? null : mimeInfo.getType();
+        String mimeDimensions = mimeInfo == null ? "" : mimeInfo.getDimensions();
         if (type == null) {
             return ";";
         }
         else if (mimeType != null) {
             if (mimeType.equals("image/jpeg")) {
-                return "(java.awt.Image) " + var + ";";
+                return "(java.awt.Image" + mimeDimensions + ") " + var + ";";
             }
             else if (mimeType.equals("text/plain")) {
-                return "(java.lang.String) " + var + ";";
+                return "(java.lang.String" + mimeDimensions + ") " + var + ";";
             }
             else if (mimeType.equals("text/xml") ||
                      mimeType.equals("application/xml")) {
-                return "(javax.xml.transform.Source) " + var + ";";
+                return "(javax.xml.transform.Source" + mimeDimensions + ") " + var + ";";
             }
             else if (mimeType.startsWith("multipart/")) {
-                return "(javax.mail.internet.MimeMultipart) " + var + ";";
+                return "(javax.mail.internet.MimeMultipart" + mimeDimensions + ") " + var + ";";
             }
             else if (mimeType.startsWith("application/octetstream")) {
-                return "(org.apache.axis.attachments.OctetStream) " + var + ";";
+                return "(org.apache.axis.attachments.OctetStream" + mimeDimensions + ") " + var + ";";
             }
             else {
                 return "(" + type.getName() + ") " + var + ";";
@@ -627,15 +632,17 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
      * use the name of the type itself.
      */
     public static String getParameterTypeName(Parameter parm) {
-        String mime = parm.getMIMEType();
         String ret;
-        if (mime == null) {
+        if (parm.getMIMEInfo() == null) {
             ret = parm.getType().getName();
         }
         else {
+            String mime = parm.getMIMEInfo().getType();
             ret = JavaUtils.mimeToJava(mime);
             if (ret == null) {
                 ret = parm.getType().getName();
+            } else {
+                ret += parm.getMIMEInfo().getDimensions();
             }
         }
         return ret;
@@ -648,8 +655,8 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
      * @return the QName of the parameter's xsi type
      */
     public static QName getXSIType(Parameter param) {
-        if (param.getMIMEType() != null) {
-            return getMIMETypeQName(param.getMIMEType());
+        if (param.getMIMEInfo() != null) {
+            return getMIMETypeQName(param.getMIMEInfo().getType());
         }
         return getXSIType(param.getType());
     } // getXSIType
@@ -740,7 +747,7 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
         if (parameters != null) {
             for (int idx = 0; idx < parameters.list.size(); ++idx) {
                 Parameter p = (Parameter) parameters.list.get(idx);
-                if (p.getMIMEType() != null) {
+                if (p.getMIMEInfo() != null) {
                     return true;
                 }
             }
@@ -817,7 +824,8 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
                                          BooleanHolder bThrow) {
         
         String paramType = param.getType().getName();
-        String mimeType = param.getMIMEType();
+        String mimeType = param.getMIMEInfo() == null ? null : param.getMIMEInfo().getType();
+        String mimeDimensions = param.getMIMEInfo() == null ? "" : param.getMIMEInfo().getDimensions();
         String out = null;
         
         // Handle mime types
@@ -828,10 +836,16 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
             }
             else if (mimeType.equals("text/xml") ||
                     mimeType.equals("application/xml")) {
-                return "new javax.xml.transform.stream.StreamSource()";
+                if(mimeDimensions.length() <= 0)
+                    return "new javax.xml.transform.stream.StreamSource()";
+                else
+                    return "new javax.xml.transform.stream.StreamSource[0]";
             }
             else if (mimeType.equals("application/octetstream")) {
-                return "new org.apache.axis.attachments.OctetStream()";
+                if(mimeDimensions.length() <= 0)
+                    return "new org.apache.axis.attachments.OctetStream()";
+                else
+                    return "new org.apache.axis.attachments.OctetStream[0]";
             }
             else {
                 return "new " + Utils.getParameterTypeName(param) + "()";

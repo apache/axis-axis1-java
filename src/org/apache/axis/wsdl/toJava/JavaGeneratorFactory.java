@@ -911,7 +911,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                 signature = signature + Utils.getParameterTypeName(p) + " " + javifiedName;
             }
             else {
-                signature = signature + Utils.holder(p.getMIMEType(), p.getType(), emitter) + " "
+                signature = signature + Utils.holder(p.getMIMEInfo(), p.getType(), emitter) + " "
                         + javifiedName;
             }
         }

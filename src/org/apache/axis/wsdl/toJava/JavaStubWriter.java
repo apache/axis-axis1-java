@@ -65,6 +65,7 @@ import org.apache.axis.wsdl.symbolTable.Parameter;
 import org.apache.axis.wsdl.symbolTable.Parameters;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.wsdl.symbolTable.TypeEntry;
+import org.apache.axis.wsdl.symbolTable.MimeInfo;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
@@ -76,6 +77,7 @@ import javax.wsdl.Part;
 import javax.wsdl.PortType;
 import javax.wsdl.extensions.soap.SOAPOperation;
 import javax.xml.namespace.QName;
+import javax.activation.DataHandler;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -367,15 +369,14 @@ public class JavaStubWriter extends JavaClassWriter {
             for (int j = 0; j < parameters.list.size(); ++j) {
                 Parameter p = (Parameter) parameters.list.get(j);
 
-                String mimeType = p.getMIMEType();
-
                 // Get the QName representing the parameter type
                 QName paramType = Utils.getXSIType(p);
 
                 // Set the javaType to the name of the type
                 String javaType = null;
-                if (mimeType != null) {
-                    javaType = "javax.activation.DataHandler.class, ";
+                if (p.getMIMEInfo() != null) {
+                    MimeInfo mimeInfo = p.getMIMEInfo();
+                    javaType = "javax.activation.DataHandler" + mimeInfo.getDimensions() + ".class, ";
                 }
                 else {
                     javaType = p.getType().getName();
@@ -407,8 +408,9 @@ public class JavaStubWriter extends JavaClassWriter {
 
                 // Get the javaType
                 String javaType = null;
-                if (parameters.returnParam.getMIMEType() != null) {
-                    javaType = "javax.activation.DataHandler";
+                if (parameters.returnParam.getMIMEInfo() != null) {
+                    MimeInfo mimeInfo = parameters.returnParam.getMIMEInfo();
+                    javaType = "javax.activation.DataHandler" + mimeInfo.getDimensions();
                 }
                 else {
                     javaType = parameters.returnParam.getType().getName();
@@ -775,7 +777,7 @@ public class JavaStubWriter extends JavaClassWriter {
                 if (p.getMode() != Parameter.IN) {
                     javifiedName += ".value";
                 }
-                if (p.getMIMEType() == null) {
+                if (p.getMIMEInfo() == null) {
                     javifiedName = Utils.wrapPrimitiveType(
                             p.getType(), javifiedName);
                 }
@@ -797,7 +799,7 @@ public class JavaStubWriter extends JavaClassWriter {
             if (allOuts == 1) {
                 if (parms.returnParam != null) {
                     writeOutputAssign(pw, "return ", parms.returnParam.getType(),
-                            parms.returnParam.getMIMEType(), "_resp");
+                            parms.returnParam.getMIMEInfo() , "_resp");
                 }
                 else {
                     // The resp object must go into a holder
@@ -813,7 +815,7 @@ public class JavaStubWriter extends JavaClassWriter {
                     pw.println("            java.util.Map _output;");
                     pw.println("            _output = _call.getOutputParams();");
                     writeOutputAssign(pw, javifiedName + ".value = ",
-                                      p.getType(), p.getMIMEType(),
+                                      p.getType(), p.getMIMEInfo(),
                                       "_output.get(" + qnameName + ")");
                 }
             }
@@ -827,13 +829,13 @@ public class JavaStubWriter extends JavaClassWriter {
                     String qnameName = Utils.getNewQName(p.getQName());
                     if (p.getMode() != Parameter.IN) {
                         writeOutputAssign(pw, javifiedName + ".value = ",
-                                          p.getType(), p.getMIMEType(),
+                                          p.getType(), p.getMIMEInfo(),
                                           "_output.get(" + qnameName + ")");
                     }
                 }
                 if (parms.returnParam != null) {
                     writeOutputAssign(pw, "return ", parms.returnParam.getType(),
-                            parms.returnParam.getMIMEType(), "_resp");
+                            parms.returnParam.getMIMEInfo(), "_resp");
                 }
 
             }
@@ -851,7 +853,7 @@ public class JavaStubWriter extends JavaClassWriter {
      *
      */
     private void writeOutputAssign(PrintWriter pw, String target,
-                                   TypeEntry type, String mimeType,
+                                   TypeEntry type, MimeInfo mimeInfo,
                                    String source) {
         if (type != null && type.getName() != null) {
             // Try casting the output to the expected output.
@@ -859,17 +861,17 @@ public class JavaStubWriter extends JavaClassWriter {
             pw.println("            try {");
 
             pw.println("                " + target +
-                    Utils.getResponseString(type, mimeType, source));
+                    Utils.getResponseString(type, mimeInfo, source));
 
             pw.println("            } catch (java.lang.Exception _exception) {");
             pw.println("                " + target +
-                    Utils.getResponseString(type, mimeType,
+                    Utils.getResponseString(type, mimeInfo,
                     "org.apache.axis.utils.JavaUtils.convert(" +
                     source + ", " + type.getName() + ".class)"));
             pw.println("            }");
         } else {
             pw.println("              " + target +
-                       Utils.getResponseString(type, mimeType, source));
+                       Utils.getResponseString(type, mimeInfo, source));
         }
     }
 
