@@ -87,6 +87,9 @@ public class Parser {
     protected String username = null;
     protected String password = null;
     
+    // Timeout, in milliseconds, to let the Emitter do its work
+    private long timeoutms = 45000; // 45 sec default
+
     private GeneratorFactory genFactory = null;
     private SymbolTable      symbolTable = null;
 
@@ -113,6 +116,20 @@ public class Parser {
     public void setVerbose(boolean verbose) {
         this.verbose = verbose;
     } // setVerbose
+
+    /**
+     * Return the current timeout setting
+     */
+    public long getTimeout() {
+        return timeoutms;
+    }
+
+    /**
+     * Set the timeout, in milliseconds
+     */
+    public void setTimeout(long timeout) {
+        this.timeoutms = timeout;
+    }
 
     public String getUsername() {
         return username;
@@ -162,7 +179,14 @@ public class Parser {
         return symbolTable == null ? null : symbolTable.getWSDLURI();
     } // getWSDLURI
 
-    public void run(String wsdlURI) throws IOException, WSDLException {
+    /**
+     * Parse a WSDL at a given URL.
+     *
+     * This method will time out after the number of milliseconds specified
+     * by our timeoutms member.
+     *
+     */
+    public void run(String wsdlURI) throws Exception {
         if (getFactory() == null) {
             setFactory(new NoopFactory());
         }
@@ -171,9 +195,53 @@ public class Parser {
                 imports,
                 verbose,
                 debug);
-        symbolTable.populate(wsdlURI, username, password);
-        generate(symbolTable);
+
+        // We run the actual Emitter in a thread that we can kill
+        WSDLRunnable runnable = new WSDLRunnable(symbolTable, wsdlURI);
+        Thread wsdlThread = new Thread(runnable);
+        wsdlThread.start();
+
+        try {
+            if (timeoutms > 0)
+                wsdlThread.join(timeoutms);
+            else
+                wsdlThread.join();
+        } catch (InterruptedException e) {
+        }
+
+        if (wsdlThread.isAlive()) {
+            wsdlThread.interrupt();
+            throw new IOException(JavaUtils.getMessage("timedOut"));
+        }
+
+        if (runnable.getFailure() != null) {
+            throw runnable.getFailure();
+        }
     } // run
+
+    private class WSDLRunnable implements Runnable {
+        private SymbolTable symbolTable;
+        private String wsdlURI;
+        private Exception failure = null;
+
+        public WSDLRunnable(SymbolTable symbolTable, String wsdlURI) {
+            this.symbolTable = symbolTable;
+            this.wsdlURI = wsdlURI;
+        } // ctor
+
+        public void run() {
+            try {
+                symbolTable.populate(wsdlURI, username, password);
+                generate(symbolTable);
+            } catch (Exception e) {
+                failure = e;
+            }
+        } // run
+
+        public Exception getFailure() {
+            return failure;
+        } // getFailure
+    } // WSDLRunnable
 
     /**
      * Call this method if your WSDL document has already been parsed as an XML DOM document.

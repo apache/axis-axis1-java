@@ -71,6 +71,7 @@ public class WSDL2 {
 
     protected static final int DEBUG_OPT = 'D';
     protected static final int HELP_OPT = 'h';
+    protected static final int NETWORK_TIMEOUT_OPT = 'O';
     protected static final int NOIMPORTS_OPT = 'n';
     protected static final int VERBOSE_OPT = 'v';
 
@@ -87,6 +88,10 @@ public class WSDL2 {
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 NOIMPORTS_OPT,
                 JavaUtils.getMessage("optionImport00")),
+        new CLOptionDescriptor("timeout",
+                CLOptionDescriptor.ARGUMENT_REQUIRED,
+                NETWORK_TIMEOUT_OPT,
+                JavaUtils.getMessage("optionTimeout00")),
         new CLOptionDescriptor("Debug",
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 DEBUG_OPT,
@@ -133,6 +138,15 @@ public class WSDL2 {
 
             case NOIMPORTS_OPT:
                 parser.setImports(false);
+                break;
+
+            case NETWORK_TIMEOUT_OPT:
+                String timeoutValue = option.getArgument();
+                long timeout = Long.parseLong(timeoutValue);
+                        // Convert seconds to milliseconds.
+                if(timeout > 0)
+                    timeout = timeout * 1000;
+                parser.setTimeout(timeout);
                 break;
 
             case VERBOSE_OPT:
