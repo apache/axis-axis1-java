@@ -53,11 +53,9 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.ime.internal;
+package org.apache.axis.ime.internal.util;
 
 import org.apache.axis.i18n.Messages;
-import org.apache.axis.ime.MessageChannel;
-import org.apache.axis.ime.MessageExchangeContextListener;
 
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -66,8 +64,10 @@ import java.util.Map;
 /**
  * @author James M Snell (jasnell@us.ibm.com)
  */
-public class MessageWorkerGroup {
+public class WorkerPool {
 
+    public static final long MAX_THREADS = 100;
+    
     protected Map threads = new Hashtable();
     protected boolean interrupt;
     protected long threadcount;
@@ -104,12 +104,10 @@ public class MessageWorkerGroup {
      * Adds a new worker to the pool
      */
     public void addWorker(
-            MessageChannel channel,
-            MessageExchangeContextListener listener) {
-        if (_shutdown)
+            Runnable worker) {
+        if (_shutdown ||
+            threadcount == MAX_THREADS)
             throw new IllegalStateException(Messages.getMessage("illegalStateException00"));
-        MessageWorker worker =
-                new MessageWorker(this, channel, listener);
         Thread thread = new Thread(worker);
         threads.put(worker, thread);
         threadcount++;
@@ -184,16 +182,14 @@ public class MessageWorkerGroup {
     /**
      * Used by MessageWorkers to notify the pool that it is done
      */
-    protected synchronized void workerDone(
-            MessageWorker worker) {
+    public synchronized void workerDone(
+            Runnable worker) {
         threads.remove(worker);
         if (--threadcount == 0 && _shutdown) {
             notifyAll();
         }
         if (!_shutdown) {
-            addWorker(
-                    worker.getMessageChannel(),
-                    worker.getMessageExchangeContextListener());
+            addWorker(worker);
         }
     }
 }

@@ -55,38 +55,68 @@
 
 package org.apache.axis.ime.internal;
 
-import org.apache.axis.ime.MessageChannel;
+import org.apache.axis.i18n.Messages;
+import org.apache.axis.MessageContext;
 import org.apache.axis.ime.MessageExchange;
+import org.apache.axis.ime.MessageContextListener;
+import org.apache.axis.ime.MessageExchangeCorrelator;
 import org.apache.axis.ime.MessageExchangeFactory;
+import org.apache.axis.ime.MessageExchangeFaultListener;
+import org.apache.axis.ime.internal.util.WorkerPool;
+import org.apache.axis.ime.internal.util.KeyedBuffer;
+import org.apache.axis.ime.internal.util.NonPersistentKeyedBuffer;
 
 /**
- * Serves as a base class for MessageExchangeProviders that
- * need to thread pooling on send AND receive message 
- * flows (as opposed to MessageExchangeProvider2 which only
- * does thread pooling on send flows).
- * 
  * @author James M Snell (jasnell@us.ibm.com)
  */
 public abstract class MessageExchangeProvider
         implements MessageExchangeFactory {
 
+    public static final long SELECT_TIMEOUT = 1000 * 30;
     public static final long DEFAULT_THREAD_COUNT = 5;
 
-    protected final MessageWorkerGroup WORKERS = new MessageWorkerGroup();
-    protected final MessageChannel SEND = new NonPersistentMessageChannel(WORKERS);
-    protected final MessageChannel RECEIVE = new NonPersistentMessageChannel(WORKERS);
+    protected final WorkerPool WORKERS = new WorkerPool();
+    protected final KeyedBuffer SEND = new NonPersistentKeyedBuffer(WORKERS);
+    protected final KeyedBuffer RECEIVE = new NonPersistentKeyedBuffer(WORKERS);
+    protected final KeyedBuffer RECEIVE_REQUESTS = new NonPersistentKeyedBuffer(WORKERS);
 
     protected boolean initialized = false;
 
+    protected abstract MessageExchangeSendListener getMessageExchangeSendListener();
+
+    protected abstract ReceivedMessageDispatchPolicy getReceivedMessageDispatchPolicy();
+
     public MessageExchange createMessageExchange() {
-        return new MessageExchangeImpl(this, SEND, RECEIVE);
+        return new MessageExchangeImpl(this);
     }
 
     public void init() {
         init(DEFAULT_THREAD_COUNT);
     }
 
-    public abstract void init(long THREAD_COUNT);
+    public void init(long THREAD_COUNT) {
+        if (initialized)
+            throw new IllegalStateException(Messages.getMessage("illegalStateException00"));
+        for (int n = 0; n < THREAD_COUNT; n++) {
+            WORKERS.addWorker(new MessageSender(WORKERS, SEND, getMessageExchangeSendListener()));
+            WORKERS.addWorker(new MessageReceiver(WORKERS, RECEIVE, getReceivedMessageDispatchPolicy()));
+        }
+        initialized = true;
+    }
+    
+    public void processReceive(
+            MessageExchangeReceiveContext context) {
+        RECEIVE_REQUESTS.put(
+            context.getMessageExchangeCorrelator(),
+            context);
+    }
+    
+    public void processSend(
+            MessageExchangeSendContext context) {
+        SEND.put(
+            context.getMessageExchangeCorrelator(),
+            context);
+    }
 
     public void shutdown() {
         shutdown(false);
@@ -108,6 +138,88 @@ public abstract class MessageExchangeProvider
     public void awaitShutdown(long shutdown)
             throws InterruptedException {
         WORKERS.awaitShutdown(shutdown);
+    }
+
+
+
+  // -- Worker Classes --- //
+    public static class MessageReceiver 
+            implements Runnable {
+        
+        protected WorkerPool pool;
+        protected KeyedBuffer channel;
+        protected ReceivedMessageDispatchPolicy policy;
+    
+        protected MessageReceiver(
+                WorkerPool pool,
+                KeyedBuffer channel,
+                ReceivedMessageDispatchPolicy policy) {
+            this.pool = pool;
+            this.channel = channel;
+            this.policy = policy;
+        }
+    
+        /**
+         * @see java.lang.Runnable#run()
+         */
+        public void run() {
+            try {
+                while (!pool.isShuttingDown()) {
+                    MessageExchangeSendContext context = (MessageExchangeSendContext)channel.select(SELECT_TIMEOUT);
+                    policy.dispatch(context);
+                }
+            } catch (Throwable t) {
+                // kill the thread if any type of exception occurs.
+                // don't worry, we'll create another one to replace it
+                // if we're not currently in the process of shutting down.
+                // once I get the logging function plugged in, we'll
+                // log whatever errors do occur
+            } finally {
+                pool.workerDone(this);
+            }
+        }
+    
+    }
+
+
+
+    public static class MessageSender 
+            implements Runnable {
+    
+        protected WorkerPool pool;
+        protected KeyedBuffer channel;
+        protected MessageExchangeSendListener listener;
+    
+        protected MessageSender(
+                WorkerPool pool,
+                KeyedBuffer channel,
+                MessageExchangeSendListener listener) {
+            this.pool = pool;
+            this.channel = channel;
+            this.listener = listener;
+        }
+        
+        /**
+         * @see java.lang.Runnable#run()
+         */
+        public void run() {
+            try {
+                while (!pool.isShuttingDown()) {
+                    MessageExchangeSendContext context = (MessageExchangeSendContext)channel.select(SELECT_TIMEOUT);
+                    if (context != null)
+                        listener.onSend(context);
+                }
+            } catch (Throwable t) {
+                // kill the thread if any type of exception occurs.
+                // don't worry, we'll create another one to replace it
+                // if we're not currently in the process of shutting down.
+                // once I get the logging function plugged in, we'll
+                // log whatever errors do occur
+            } finally {
+                pool.workerDone(this);
+            }
+        }
+    
     }
 
 }

@@ -52,63 +52,64 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-
 package org.apache.axis.ime.internal;
 
-import org.apache.axis.ime.MessageChannel;
-import org.apache.axis.ime.MessageExchangeContext;
-import org.apache.axis.ime.MessageExchangeContextListener;
+import org.apache.axis.MessageContext;
+import org.apache.axis.ime.MessageExchangeCorrelator;
+import org.apache.axis.ime.MessageContextListener;
+import org.apache.axis.ime.MessageExchangeFaultListener;
+import org.apache.axis.ime.internal.util.KeyedBuffer;
 
 /**
  * @author James M Snell (jasnell@us.ibm.com)
  */
-public class MessageWorker implements Runnable {
-
-    protected static final long SELECT_TIMEOUT = 1000 * 30;
-
-    protected MessageWorkerGroup pool;
-    protected MessageChannel channel;
-    protected MessageExchangeContextListener listener;
-
-    private MessageWorker() {
+public class FirstComeFirstServeDispatchPolicy
+        implements ReceivedMessageDispatchPolicy {
+  
+    protected KeyedBuffer RECEIVE_REQUESTS;
+    protected KeyedBuffer RECEIVE;
+    
+    public FirstComeFirstServeDispatchPolicy(
+            KeyedBuffer RECEIVE,
+            KeyedBuffer RECEIVE_REQUESTS) {
+        this.RECEIVE = RECEIVE;
+        this.RECEIVE_REQUESTS = RECEIVE_REQUESTS;
     }
-
-    public MessageWorker(
-            MessageWorkerGroup pool,
-            MessageChannel channel,
-            MessageExchangeContextListener listener) {
-        this.pool = pool;
-        this.channel = channel;
-        this.listener = listener;
-    }
-
-    public MessageExchangeContextListener getMessageExchangeContextListener() {
-        return this.listener;
-    }
-
-    public MessageChannel getMessageChannel() {
-        return this.channel;
-    }
-
-    /**
-     * @see java.lang.Runnable#run()
-     */
-    public void run() {
-        try {
-            while (!pool.isShuttingDown()) {
-                MessageExchangeContext context = channel.select(SELECT_TIMEOUT);
-                if (context != null)
-                    listener.onMessageExchangeContext(context);
+  
+    public void dispatch(
+            MessageExchangeSendContext context) {
+    
+      // 1. Get the correlator
+      // 2. See if there are any receive requests based on the correlator
+      // 3. If there are receive requests for the correlator, deliver to the first one
+      // 4. If there are no receive requests for the correlator, deliver to the first "anonymous" receive request
+      // 5. If there are no receive requests, put the message back on the Queue
+      
+        MessageExchangeReceiveContext receiveContext = null;
+        MessageExchangeCorrelator correlator =
+            context.getMessageExchangeCorrelator();
+        receiveContext = (MessageExchangeReceiveContext)RECEIVE_REQUESTS.get(correlator);
+        if (receiveContext == null) {
+            receiveContext = (MessageExchangeReceiveContext)RECEIVE_REQUESTS.get();
+        }
+        if (receiveContext == null) 
+            RECEIVE.put(correlator,context);
+        else {
+            MessageExchangeFaultListener faultListener = 
+              receiveContext.getMessageExchangeFaultListener();
+            MessageContextListener contextListener = 
+              receiveContext.getMessageContextListener();
+            MessageContext msgContext = 
+              context.getMessageContext();
+            try {
+                contextListener.onReceive(
+                    correlator, msgContext);       
+            } catch (Exception exception) {
+              if (faultListener != null)
+                  faultListener.onFault(
+                      correlator, exception);
             }
-        } catch (Throwable t) {
-            // kill the thread if any type of exception occurs.
-            // don't worry, we'll create another one to replace it
-            // if we're not currently in the process of shutting down.
-            // once I get the logging function plugged in, we'll
-            // log whatever errors do occur
-        } finally {
-            pool.workerDone(this);
         }
     }
-
+  
 }
