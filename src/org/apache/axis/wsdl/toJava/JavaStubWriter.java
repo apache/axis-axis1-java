@@ -259,38 +259,10 @@ public class JavaStubWriter extends JavaClassWriter {
                     break;
                 }
             }
-            // Get the namespace for the operation from the <soap:body>
+            // Get the namespace for the operation from the portType
             // RJB: is this the right thing to do?
-            String namespace = "";
-            Iterator bindingMsgIterator = null;
-            BindingInput input = operation.getBindingInput();
-            BindingOutput output;
-            if (input != null) {
-                bindingMsgIterator =
-                        input.getExtensibilityElements().iterator();
-            }
-            else {
-                output = operation.getBindingOutput();
-                if (output != null) {
-                    bindingMsgIterator =
-                            output.getExtensibilityElements().iterator();
-                }
-            }
-            if (bindingMsgIterator != null) {
-                for (; bindingMsgIterator.hasNext();) {
-                    Object obj = bindingMsgIterator.next();
-                    if (obj instanceof SOAPBody) {
-                        namespace = ((SOAPBody) obj).getNamespaceURI();
-                        if (namespace == null) {
-                            namespace = symbolTable.getDefinition().
-                                    getTargetNamespace();
-                        }
-                        if (namespace == null)
-                            namespace = "";
-                        break;
-                    }
-                }
-            }
+            String namespace = portType.getQName().getNamespaceURI();
+
             Operation ptOperation = operation.getOperation();
             OperationType type = ptOperation.getStyle();
 
