@@ -123,7 +123,8 @@ public class EJBProvider extends RPCProvider
         throws Exception
     {
         // Get the EJB Home object from JNDI
-        Object ejbHome = getEJBHome(msgContext, clsName);
+        Object ejbHome = getEJBHome(msgContext.getService(),
+                                    msgContext, clsName);
 
         // Get the Home class name from the configuration file
         // NOTE: Do we really need to have this in the config file
@@ -193,26 +194,25 @@ public class EJBProvider extends RPCProvider
                                     MessageContext msgContext)
         throws AxisFault
     {
-        if (msgContext == null) {
-            // FIXME : what should we do here?
-            return null;
-        }
-
         Class interfaceClass = null;
         
         // First try to get the interface class from the configuation
         String remoteName = 
                 (String) getStrOption(OPTION_REMOTEINTERFACENAME, service);
         try {
+            ClassLoader cl = (msgContext != null) ?
+                    msgContext.getClassLoader() :
+                    Thread.currentThread().getContextClassLoader();
+
             if(remoteName != null){
                 interfaceClass = ClassUtils.forName(remoteName,
                                                     true,
-                                                    msgContext.getClassLoader());
+                                                    cl);
             }
             else
             {
                 // Get the EJB Home object from JNDI
-                Object ejbHome = getEJBHome(msgContext, beanJndiName);
+                Object ejbHome = getEJBHome(service, msgContext, beanJndiName);
 
                 String homeName = (String)getStrOption(OPTION_HOMEINTERFACENAME,
                                                         service);
@@ -220,10 +220,10 @@ public class EJBProvider extends RPCProvider
                     throw new AxisFault(
                             JavaUtils.getMessage("noOption00",
                                                  OPTION_HOMEINTERFACENAME,
-                                                 msgContext.getTargetService()));
+                                                 service.getName()));
 
                 // Load the Home class name given in the config file
-                Class homeClass = ClassUtils.forName(homeName, true, msgContext.getClassLoader());
+                Class homeClass = ClassUtils.forName(homeName, true, cl);
 
                 // Make sure the object we got back from JNDI is the same type
                 // as the what is specified in the config file
@@ -259,14 +259,15 @@ public class EJBProvider extends RPCProvider
     /**
      * Common routine to do the JNDI lookup on the Home interface object
      */ 
-    private Object getEJBHome(MessageContext msgContext, String beanJndiName)
+    private Object getEJBHome(SOAPService serviceHandler,
+                              MessageContext msgContext,
+                              String beanJndiName)
         throws AxisFault
     {
         Object ejbHome = null;
         
         // Set up an InitialContext and use it get the beanJndiName from JNDI
         try {
-            Handler serviceHandler =  msgContext.getService();
             Properties properties = null;
 
             // collect all the properties we need to access JNDI:
@@ -274,7 +275,7 @@ public class EJBProvider extends RPCProvider
 
             // username
             String username = (String)getStrOption(jndiUsername, serviceHandler);
-            if (username == null) 
+            if ((username == null) && (msgContext != null))
                username = msgContext.getUsername();
             if (username != null) {
                 if (properties == null)
@@ -284,7 +285,7 @@ public class EJBProvider extends RPCProvider
 
             // password
             String password = (String)getStrOption(jndiPassword, serviceHandler);
-            if (password == null)
+            if ((password == null) && (msgContext != null))
                 password = msgContext.getPassword();
             if (password != null) {
                 if (properties == null)

@@ -318,12 +318,6 @@ public class FileProvider implements EngineConfiguration {
      * Get an enumeration of the services deployed to this engine
      */
     public Iterator getDeployedServices() throws ConfigurationException {
-        ArrayList serviceDescs = new ArrayList();
-        WSDDService [] services = this.deployment.getServices();
-        for (int i = 0; i < services.length; i++) {
-            WSDDService service = services[i];
-            serviceDescs.add(service.getServiceDesc());
-        }
-        return serviceDescs.iterator();
+        return deployment.getDeployedServices();
     }
 }

@@ -545,6 +545,7 @@ public class WSDDDeployment
         ArrayList serviceDescs = new ArrayList();
         for (Iterator i = services.values().iterator(); i.hasNext();) {
             WSDDService service = (WSDDService) i.next();
+            service.makeNewInstance(this);
             serviceDescs.add(service.getServiceDesc());
         }
         return serviceDescs.iterator();
