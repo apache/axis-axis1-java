@@ -202,6 +202,26 @@
                testcase="no">
         <mapping namespace="urn:InheritanceTest2" package="test.wsdl.inheritance"/>
     </wsdl2java>
+    
+    <!-- inheritance test (cont): Test the stopClass and exclude switches -->
+    <!-- Compile class files -->
+    <javac srcdir="${test.dir}/wsdl/inheritance" destdir="${build.dest}" debug="${debug}">
+        <include name="Baby*.java"/>
+        <include name="Child*.java"/>
+        <include name="Parent*.java"/>
+    </javac>
+    <!-- Generate the WSDL file that the test will validate.-->
+    <!-- We do not run WSDL2Java for this test -->
+    <java2wsdl output="build/work/test/wsdl/inheritance/StopExclude.wsdl"
+               className= "test.wsdl.inheritance.Baby"
+               namespace="urn:InheritanceTest3"
+               useInheritedMethods="true"
+               stopClasses="test.wsdl.inheritance.Parent,test.wsdl.inheritance.Parent_bean"
+               exclude="baby_excluded,child_excluded"
+               location="http://localhost:8080/axis/services/StopExcludeTest">
+        <mapping namespace="urn:InheritanceTest3" package="test.wsdl.inheritance"/>
+    </java2wsdl>
+    
 
     <!-- MArrayTests Test -->
     <wsdl2java url="test/wsdl/marrays/MArrayTest.wsdl"
