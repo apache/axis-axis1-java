@@ -116,6 +116,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
     private Definition          wsdlDefinition  = null ;
     private javax.wsdl.Service  wsdlService     = null ;
     private boolean             maintainSession = false ;
+    private HandlerRegistryImpl registry = new HandlerRegistryImpl();
 
     /**
      * Thread local storage used for storing the last call object
@@ -530,8 +531,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      *         HandlerRegistry.
      */
     public HandlerRegistry getHandlerRegistry() {
-        throw new UnsupportedOperationException(
-                JavaUtils.getMessage("handlerRegistryConfig"));
+        return registry;
     }
 
     /**
@@ -716,5 +716,22 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      */
     public void setCacheWSDL(boolean flag) {
       cachingWSDL = flag ;
+    }
+
+    protected static class HandlerRegistryImpl implements HandlerRegistry {
+        Map map = new HashMap();
+
+        public List getHandlerChain(QName portName) {
+            List list = (List)map.get(portName);
+            if(list == null) {
+                list = new java.util.ArrayList();
+                setHandlerChain(portName, list);
+            }
+            return list;
+        }
+
+        public void setHandlerChain(QName portName, List chain) {
+            map.put(portName, chain);
+        }
     }
 }
