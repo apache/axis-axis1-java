@@ -68,6 +68,7 @@ import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.DefaultTypeMappingImpl;
 import org.apache.axis.enum.Style;
 import org.apache.axis.providers.java.JavaProvider;
+import org.apache.axis.providers.BasicProvider;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeaderElement;
@@ -308,45 +309,20 @@ public class SOAPService extends SimpleTargetedChain
         return serviceDescription;
     }
 
+    /**
+     * Returns a service description with the implementation class filled in.
+     * 
+     * Syncronized to prevent simutaneous modification of serviceDescription.
+     */ 
     public synchronized ServiceDesc getInitializedServiceDesc(MessageContext msgContext) throws AxisFault {
         if (serviceDescription.getImplClass() == null) {
-            String clsName = (String)getOption(JavaProvider.OPTION_CLASSNAME);
-
-            if (clsName != null) {
-                ClassLoader cl = null;
-                if (msgContext == null) {
-                    cl = Thread.currentThread().getContextClassLoader();
-                } else {
-                    cl = msgContext.getClassLoader();
-                }
-                if (engine != null) {
-                    ClassCache cache     = engine.getClassCache();
-                    JavaClass       jc   = null;
-                    try {
-                        jc = cache.lookup(clsName, cl);
-                        serviceDescription.setImplClass(jc.getJavaClass());
-                    } catch (ClassNotFoundException e) {
-                        log.error(JavaUtils.getMessage("exception00"), e);
-                        throw new AxisFault(JavaUtils.getMessage("noClassForService00", clsName), e);
-                    }
-                } else {
-                    try {
-                        Class cls = ClassUtils.forName(clsName,true,cl);
-                        serviceDescription.setImplClass(cls);
-                    } catch (ClassNotFoundException e) {
-                        log.error(JavaUtils.getMessage("exception00"), e);
-                        throw new AxisFault(JavaUtils.getMessage("noClassForService00", clsName), e);
-                    }
-                }
-                TypeMapping tm;
-                if (msgContext == null) {
-                    tm = DefaultTypeMappingImpl.getSingleton();
-                } else {
-                    tm = msgContext.getTypeMapping();
-                }
-                serviceDescription.setTypeMapping(tm);
+            // Fill in the service class from the provider
+            if (pivotHandler instanceof BasicProvider) {
+                serviceDescription = 
+                     ((BasicProvider)pivotHandler).getServiceDesc(msgContext, serviceDescription);
             }
         }
+        
         return serviceDescription;
     }
 

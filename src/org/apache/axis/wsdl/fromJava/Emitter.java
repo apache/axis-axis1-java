@@ -395,6 +395,12 @@ public class Emitter {
                 serviceDesc.setTypeMapping(defaultTM);
             }
         }
+        
+        // If the provided service description does NOT have the implementaion
+        // class and we do, make sure to fill it in.
+        if (serviceDesc.getImplClass() == null && cls != null) {
+            serviceDesc.setImplClass(cls);
+        }
 
         serviceDesc.setStopClasses(stopClasses);
         serviceDesc.setAllowedMethods(allowedMethods);
