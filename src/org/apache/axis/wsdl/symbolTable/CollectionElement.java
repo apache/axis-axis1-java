@@ -59,15 +59,15 @@ import org.w3c.dom.Node;
 
 import javax.xml.namespace.QName;
 /**
- * This Type is for a QName that is a 'collection'.
+ * This Element is for a QName that is a 'collection'.
  * For example,
- *   <element name="foo" type="bar" maxOccurs="unbounded" />
+ *   <element ref="bar" maxOccurs="unbounded" />
  * We need a way to indicate in the symbol table that a foo is
- * 'collection of bars',  In such cases a collection type is 
+ * 'collection of bars',  In such cases a collection element is 
  * added with the special QName  <name>[<minOccurs>, <maxOccurs>]
  */
-public class CollectionType extends DefinedType implements CollectionTE {
-    public CollectionType(QName pqName, TypeEntry refType, Node pNode, String dims) {
+public class CollectionElement extends DefinedElement implements CollectionTE {
+    public CollectionElement(QName pqName, TypeEntry refType, Node pNode, String dims) {
         super(pqName, refType, pNode, dims);
     }
 };

@@ -879,20 +879,33 @@ public class SymbolTable {
             if (type == null) {
                 // See if this is a special QName for collections
                 if (qName.getLocalPart().indexOf("[") > 0) {
-                    // Get the TypeEntry for the collection element
                     QName typeAttr = Utils.getNodeTypeRefQName(node, "type");
-                    TypeEntry collEl = getTypeEntry(typeAttr, false);
-                    if (collEl == null) {
-                        // Collection Element Type not defined yet, add one.
-                        String baseName = btm.getBaseName(typeAttr);
-                        if (baseName != null) {
-                            collEl = new BaseType(typeAttr);
-                        } else {
-                            collEl = new UndefinedType(typeAttr);
+                    if (typeAttr != null) {
+                        // Case of type and maxOccurs
+                        TypeEntry collEl = getTypeEntry(typeAttr, false);
+                        if (collEl == null) {
+                            // Collection Element Type not defined yet, add one.
+                            String baseName = btm.getBaseName(typeAttr);
+                            if (baseName != null) {
+                                collEl = new BaseType(typeAttr);
+                            } else {
+                                collEl = new UndefinedType(typeAttr);
+                            }
+                            symbolTablePut(collEl);
                         }
-                        symbolTablePut(collEl);
+                        symbolTablePut(new CollectionType(qName, collEl, node, "[]"));
+                    } else {
+                        // Case of ref and maxOccurs
+                        QName refAttr = Utils.getNodeTypeRefQName(node, "ref");
+                        if (refAttr != null) {
+                            TypeEntry collEl = getTypeEntry(refAttr, true);
+                            if (collEl == null) {
+                                collEl = new UndefinedElement(refAttr);
+                                symbolTablePut(collEl);
+                            }
+                            symbolTablePut(new CollectionElement(qName, collEl, node, "[]"));
+                        }
                     }
-                    symbolTablePut(new CollectionType(qName, collEl, node, "[]"));
                 } else {
                     // Add a BaseType or Undefined Type/Element
                     String baseName = btm.getBaseName(qName);

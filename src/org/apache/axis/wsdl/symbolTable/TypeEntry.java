@@ -79,8 +79,8 @@ import org.w3c.dom.Node;
  *            Type                Element
  *             |                     |
  * (BaseType,                    (DefinedElement,
- *  CollectionType                UndefinedElement)
- *  DefinedType,
+ *  CollectionType                CollectionElement,
+ *  DefinedType,                  UndefinedElement)
  *  UndefinedType)
  *
  *  UndefinedType and UndefinedElement are placeholders when the real type or element

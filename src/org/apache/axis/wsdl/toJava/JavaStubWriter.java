@@ -78,7 +78,7 @@ import javax.wsdl.extensions.soap.SOAPOperation;
 import org.apache.axis.utils.JavaUtils;
 
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
-import org.apache.axis.wsdl.symbolTable.CollectionType;
+import org.apache.axis.wsdl.symbolTable.CollectionTE;
 import org.apache.axis.wsdl.symbolTable.Element;
 import org.apache.axis.wsdl.symbolTable.Parameter;
 import org.apache.axis.wsdl.symbolTable.Parameters;
@@ -420,7 +420,7 @@ public class JavaStubWriter extends JavaClassWriter {
         // 3) Don't register types that are not referenced
         //    or only referenced in a literal context.
         if ((type.getBaseType() != null && type.getRefType() == null) ||
-            type instanceof CollectionType ||
+            type instanceof CollectionTE ||
             type instanceof Element ||
             !type.isReferenced() ||
             type.isOnlyLiteralReferenced()) {

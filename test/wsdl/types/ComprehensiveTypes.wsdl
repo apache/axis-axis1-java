@@ -76,6 +76,7 @@
             <xsd:element name="one" type="typens:simple"/> <!-- Ref to a simple type -->
             <xsd:element name="two" type="typens2:fwd"/> <!-- Forward type use to dif namespace -->
             <xsd:element ref="typens2:three"/>           <!-- Forward ref use to a dif namespace -->
+            <xsd:element ref="typens:enumValue" maxOccurs="unbounded" /> <!-- ref & maxOccurs -->
             <xsd:element name="enum1" type="typens:enumString"/>
             <xsd:element name="enum2" type="typens:enumInt"/>
             <xsd:element name="enum3" type="typens:enumLong"/>
@@ -104,6 +105,8 @@
           </xsd:attribute>
         </xsd:complexType>
       </xsd:element>
+
+      <xsd:element name="enumValue" type="typens:enum"/>
 
       <xsd:complexType name="time">
         <xsd:simpleContent>

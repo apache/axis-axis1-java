@@ -273,12 +273,16 @@ public class Utils {
         if (node == null) return null;
         forElement.value = false; // Assume QName returned is for a type
 
-        // If the node has "type" and "maxOccurs" then the type is really
+        // If the node has "type"/"ref" and "maxOccurs" then the type is really
         // a collection.  There is no qname in the wsdl which we can use to represent
         // the collection, so we need to invent one.
         // The local part of the qname is changed to <local>[minOccurs, maxOccurs]
         // The namespace uri is changed to the targetNamespace of this node
         QName qName= getNodeTypeRefQName(node, "type");
+        if (qName == null) {
+            forElement.value = true;
+            qName = getNodeTypeRefQName(node, "ref");
+        }
         if (qName != null) {
             String maxOccursValue = getAttribute(node, "maxOccurs");
             String minOccursValue = getAttribute(node, "minOccurs");
@@ -294,21 +298,11 @@ public class Utils {
                 qName = getNillableQName(qName);
             } else if (!maxOccursValue.equals("1") || !minOccursValue.equals("1")) {
                 String localPart = qName.getLocalPart();
-//                localPart += "[" + minOccursValue + "," + maxOccursValue + "]";
-//                qName.setLocalPart(localPart);
-//                String namespace = getScopedAttribute(node, "targetNamespace");
-//                if (namespace != null)
-//                    qName.setNamespaceURI(namespace);
                 localPart += "[" + maxOccursValue + "]";
                 qName = new QName(qName.getNamespaceURI(), localPart);
             }
         }
 
-        // Both "ref" and "element" reference elements
-        if (qName == null) {
-            forElement.value = true;
-            qName = getNodeTypeRefQName(node, "ref");
-        }
         // A WSDL Part uses the element attribute instead of the ref attribute
         if (qName == null) {
             forElement.value = true;

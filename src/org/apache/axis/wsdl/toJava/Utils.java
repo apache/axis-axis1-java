@@ -59,7 +59,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.utils.JavaUtils;
 
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
-import org.apache.axis.wsdl.symbolTable.CollectionType;
+import org.apache.axis.wsdl.symbolTable.CollectionTE;
 import org.apache.axis.wsdl.symbolTable.Element;
 import org.apache.axis.wsdl.symbolTable.MessageEntry;
 import org.apache.axis.wsdl.symbolTable.Parameter;
@@ -638,7 +638,7 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
             te.getRefType() != null) {
             te = te.getRefType();
         } 
-        // If the TypeEntry is a CollectionType, use
+        // If the TypeEntry is a CollectionTE, use
         // the TypeEntry representing the component Type
         // So for example a parameter that takes a 
         // collection type for
@@ -648,7 +648,7 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
         //                   <QName of xsd:string>,
         //                   String[])
         if (te != null &&
-            te instanceof CollectionType &&
+            te instanceof CollectionTE &&
             te.getRefType() != null) {
             te = te.getRefType();
         }
