@@ -144,10 +144,6 @@ public class Constants {
   
   public static String JWSPROCESSOR_TARGET = "JWSProcessor" ;
 
-  public static String CLIENT_HANDLER_REGISTRY = "handler-client.reg" ;
-  public static String SERVER_HANDLER_REGISTRY = "handler-server.reg" ;
-  public static String CLIENT_SERVICE_REGISTRY = "service-client.reg" ;
-  public static String SERVER_SERVICE_REGISTRY = "service-server.reg" ;
-  public static String CLIENT_TRANSPORT_REGISTRY = "transport-client.reg" ;
-  public static String SERVER_TRANSPORT_REGISTRY = "transport-server.reg" ;
+  public static final String SERVER_CONFIG_FILE = "server-config.xml";
+  public static final String CLIENT_CONFIG_FILE = "client-config.xml";
 }

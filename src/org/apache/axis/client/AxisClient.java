@@ -76,7 +76,7 @@ public class AxisClient extends AxisEngine
 {
     public AxisClient()
     {
-        super();
+        super(Constants.CLIENT_CONFIG_FILE);
     }
     
     /**

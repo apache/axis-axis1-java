@@ -74,6 +74,11 @@ import org.apache.axis.providers.java.*;
  */
 public class AxisServer extends AxisEngine
 {
+    public AxisServer()
+    {
+        super(Constants.SERVER_CONFIG_FILE);
+    }
+    
     /** Lifecycle routines for managing a static AxisServer
      */
     private static AxisServer singleton = null;

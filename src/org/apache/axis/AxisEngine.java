@@ -173,7 +173,7 @@ public abstract class AxisEngine extends BasicHandler
         try {
           is = new FileInputStream(engineConfigFilename);
         } catch (Exception e) {
-          is = getResourceStream("engine-config.xml");
+          is = getResourceStream(engineConfigFilename);
         }
         
         if (is == null) {
@@ -189,8 +189,9 @@ public abstract class AxisEngine extends BasicHandler
           // ??? Clear registries first?
           Admin.processEngineConfig(doc, this);
         } catch (Exception e) {
+          System.err.println("Couldn't read engine config!");
           e.printStackTrace();
-          System.exit(-1);
+          return;
         }
 
         // Load the registry of deployed types
@@ -199,6 +200,21 @@ public abstract class AxisEngine extends BasicHandler
         _typeMappingRegistry = tmr;
         
         tmr.init();
+    }
+
+    /** Write out our engine configuration.
+     */
+    public void saveConfiguration()
+    {
+        try {
+          Document doc = Admin.listConfig(this);
+          FileOutputStream fos = new FileOutputStream(engineConfigFilename);
+          XMLUtils.DocumentToStream(doc, fos);
+          fos.close();
+        } catch (Exception e) {
+          System.err.println("Coudn't write engine config!");
+          e.printStackTrace();
+        }
     }
     
     private InputStream getResourceStream(String name)
