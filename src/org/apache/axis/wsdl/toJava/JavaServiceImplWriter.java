@@ -263,8 +263,7 @@ public class JavaServiceImplWriter extends JavaClassWriter {
         pw.println("            endpoint = new java.net.URL(" + portName + "_address);");
         pw.println("        }");
         pw.println("        catch (java.net.MalformedURLException e) {");
-        pw.println("            return null; // " +
-                   Messages.getMessage("unlikely00"));
+        pw.println("            throw new javax.xml.rpc.ServiceException(e);");
         pw.println("        }");
         pw.println("        return get" + portName + "(endpoint);");
         pw.println("    }");
