@@ -55,9 +55,12 @@
 
 package org.apache.axis.client;
 
-import org.apache.axis.EngineConfiguration;
 import org.apache.axis.AxisFault;
+import org.apache.axis.EngineConfiguration;
+
 import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
+
+import org.apache.axis.utils.JavaUtils;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -68,6 +71,8 @@ import javax.naming.Reference;
 import javax.naming.StringRefAddr;
 
 import javax.naming.spi.ObjectFactory;
+
+import javax.xml.rpc.ServiceException;
 
 import javax.xml.rpc.namespace.QName;
 
@@ -86,7 +91,8 @@ import java.util.Map;
  * @author Glen Daniels (gdaniels@macromedia.com)
  */ 
 
-public class ServiceFactory implements ObjectFactory {
+public class ServiceFactory extends javax.xml.rpc.ServiceFactory
+        implements ObjectFactory {
     // Constants for RefAddrs in the Reference.
     public static final String SERVICE_CLASSNAME  = "service classname";
     public static final String WSDL_LOCATION      = "WSDL location";
@@ -214,4 +220,33 @@ public class ServiceFactory implements ObjectFactory {
         }
         return instance;
     } // getObjectInstance
+
+    /**
+     *  Create a Service instance.
+     *  @param   wsdlDocumentLocation URL for the WSDL document location
+                              for the service
+     *  @param   serviceName  QName for the service.
+     *  @return  Service.
+     *  @throws  ServiceException If any error in creation of the specified service
+     */
+    public javax.xml.rpc.Service createService(URL wsdlDocumentLocation,
+            QName serviceName) throws ServiceException {
+        throw new ServiceException(JavaUtils.getMessage(
+                "notImplemented00", "ServiceFactory.createService"));
+    } // createService
+
+    /**
+     *  Create a Service instance.
+     *
+     *  Not yet implemented.
+     *
+     *  @param   serviceName QName for the service
+     *  @return  Service.
+     *  @throws  ServiceException If any error in creation of the specified service
+     */
+    public javax.xml.rpc.Service createService(QName serviceName)
+            throws ServiceException {
+        throw new ServiceException(JavaUtils.getMessage(
+                "notImplemented00", "ServiceFactory.createService"));
+    } // createService
 }

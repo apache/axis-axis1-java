@@ -72,6 +72,13 @@ public abstract class ServiceFactory {
     protected ServiceFactory() {}
 
     /**
+     * A constant representing the property used to lookup the name of a
+     * ServiceFactory implementation class.
+     */
+    public static final java.lang.String SERVICEFACTORY_PROPERTY =
+            "javax.xml.rpc.ServiceFactory";
+
+    /**
      * Gets an instance of the ServiceFactory.
      * <p>Only one copy of a factory exists and is returned to the
      * application each time this method is called.
@@ -83,7 +90,7 @@ public abstract class ServiceFactory {
     public static ServiceFactory newInstance() throws ServiceException {
         String factoryImplName =
             System.getProperty("javax.xml.rpc.ServiceFactory",
-                               "com.sun.xml.rpc.client.ServiceFactoryImpl");
+                               "org.apache.axis.client.ServiceFactory");
         try {
             Class clazz = Class.forName(factoryImplName);
             return (ServiceFactory) clazz.newInstance();
