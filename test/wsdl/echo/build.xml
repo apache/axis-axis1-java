@@ -52,7 +52,7 @@ Copyright:
 <target name="copy" depends="setenv,clean"/>
 
 <target name="compile" depends="copy">
-  <echo message="Compilig test.wsdl.echo"/>
+  <echo message="Compiling test.wsdl.echo"/>
     <!-- This tests holders for complextype Bug:10247 -->
     <wsdl2java url="${axis.home}/test/wsdl/echo/echo.wsdl"
                output="${axis.home}/build/work"

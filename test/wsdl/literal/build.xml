@@ -51,7 +51,7 @@ Copyright:
 <target name="copy" depends="setenv,clean"/>
 
 <target name="compile" depends="copy">
-  <echo message="Compilig test.wsdl.literal"/>
+  <echo message="Compiling test.wsdl.literal"/>
 
 <!--
     local version of the WSDL

@@ -53,7 +53,7 @@ Copyright:
 </target>
 
 <target name="compile" depends="copy">
-  <echo message="Compilig test.wsdl.names"/>
+  <echo message="Compiling test.wsdl.names"/>
     <!-- Check to make sure we map XML names that are illegal Java correctly -->
     <wsdl2java url="${axis.home}/test/wsdl/names/JavaNames.wsdl"
                output="${axis.home}/build/work"

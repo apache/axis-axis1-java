@@ -52,7 +52,7 @@ Copyright:
 <target name="copy" depends="setenv,clean"/>
 
 <target name="compile" depends="copy">
-  <echo message="Compilig test.wsdl.getPort"/>
+  <echo message="Compiling test.wsdl.getPort"/>
     <!-- This tests the getPort method in generated services.  -->
     <wsdl2java url="${axis.home}/test/wsdl/getPort/getPort.wsdl"
                output="${axis.home}/build/work"

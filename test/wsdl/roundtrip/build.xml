@@ -51,7 +51,7 @@ Copyright:
 <target name="copy" depends="setenv,clean"/>
 
 <target name="compile" depends="copy">
-  <echo message="Compilig test.wsdl.roundtrip"/>
+  <echo message="Compiling test.wsdl.roundtrip"/>
     <!-- Roundtrip Test -->
     <!-- To test Java Value Types, copy over the base and subclasses -->
     <copy todir="${build.dir}/work/test/wsdl/roundtrip" overwrite="yes">

@@ -51,7 +51,7 @@ Copyright:
 <target name="copy" depends="setenv,clean"/>
 
 <target name="compile" depends="copy">
-  <echo message="Compilig test.wsdl.inheritance"/>
+  <echo message="Compiling test.wsdl.inheritance"/>
     <!-- Inheritance Test -->
     <!-- Bootstrap to generate Java From WSDL to get stubs/skeletons -->
     <wsdl2java url="${axis.home}/test/wsdl/inheritance/InheritanceTest.wsdl"

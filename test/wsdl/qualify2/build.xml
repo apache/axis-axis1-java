@@ -51,7 +51,7 @@ Copyright:
 <target name="copy" depends="setenv,clean"/>
 
 <target name="compile" depends="copy">
-  <echo message="Compilig test.wsdl.qualify2"/>
+  <echo message="Compiling test.wsdl.qualify2"/>
     <!-- test for qualified or unqualified attributes -->
     <wsdl2java url="${axis.home}/test/wsdl/qualify2/attribute-qualify.wsdl"
                output="${axis.home}/build/work"
