@@ -29,6 +29,7 @@ Copyright:
   <!--The IP port the service will be targeted at.-->
   <property name="test.functional.ServicePort" value="8080"/>
   <property name="test.functional.fail" value="yes"/>
+  <property name="test.functional.testcase" value="**/FunctionalTests"/>
 
   <path id="test-classpath">
     <pathelement location="${build.dest}" />

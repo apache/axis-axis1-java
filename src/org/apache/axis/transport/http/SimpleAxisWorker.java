@@ -75,6 +75,7 @@ import org.w3c.dom.Document;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 
 public class SimpleAxisWorker implements Runnable {
@@ -273,18 +274,8 @@ public class SimpleAxisWorker implements Runnable {
                 msgContext.setProperty(Constants.MC_JWS_CLASSDIR,
                         "jwsClasses");
 
-                // FIXME
-                // This doesn't return anything but 0.0.0.0
-                //  String hostname = serverSocket.getInetAddress().getHostAddress();
-                // And this returns the hostname of the host on the other
-                // end of the socket:
-                //  String hostname = socket.getInetAddress().getHostName();
-                // This works for 99% of the uses of SimpleAxisServer,
-                // but is very stupid
-                String hostname = InetAddress.getLocalHost().getHostAddress();
-                //hostname="localhost";
                 // !!! Fix string concatenation
-                String url = "http://" + hostname + ":" +
+                String url = "http://" + getLocalHost() + ":" +
                         server.getServerSocket().getLocalPort() + "/" +
                         fileName.toString();
                 msgContext.setProperty(MessageContext.TRANS_URL, url);
@@ -695,5 +686,24 @@ public class SimpleAxisWorker implements Runnable {
             }
         }
         return count > 0 ? count : -1;
+    }
+
+    /**
+     * One method for all host name lookups.
+     */
+    public static String getLocalHost() {
+        // FIXME
+        // This doesn't return anything but 0.0.0.0
+        //  String hostname = serverSocket.getInetAddress().getHostAddress();
+        // And this returns the hostname of the host on the other
+        // end of the socket:
+        //  String hostname = socket.getInetAddress().getHostName();
+        // This works for 99% of the uses of SimpleAxisServer,
+        // but is very stupid
+        try {
+            return InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException uhe){
+            return "localhost";
+        }
     }
 }
