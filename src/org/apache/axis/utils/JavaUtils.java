@@ -55,17 +55,6 @@
 
 package org.apache.axis.utils;
 
-import org.apache.axis.attachments.AttachmentPart;
-import org.apache.axis.components.image.ImageIO;
-import org.apache.axis.components.image.ImageIOFactory;
-import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.types.HexBinary;
-import org.apache.commons.logging.Log;
-
-import javax.activation.DataHandler;
-import javax.xml.soap.SOAPException;
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
 import java.awt.Image;
 import java.beans.Introspector;
 import java.io.IOException;
@@ -89,6 +78,18 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.Vector;
+
+import javax.activation.DataHandler;
+import javax.xml.soap.SOAPException;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+import org.apache.axis.attachments.AttachmentPart;
+import org.apache.axis.components.image.ImageIO;
+import org.apache.axis.components.image.ImageIOFactory;
+import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.types.HexBinary;
+import org.apache.commons.logging.Log;
 
 /** Utility class to deal with Java language related issues, such
  * as type conversions.
@@ -786,33 +787,47 @@ public class JavaUtils
             || '\u06DE' == c;
     } // isPunctuation
 
+
+    /********************************************************************/
+    /*********************** i18n Message Support ***********************/
+     
     // Message resource bundle.
-    private static ResourceBundle messages = null;
+    private static Vector bundleNames = null;        // String
+    private static Vector messageBundles = null;     // ResourceBundle
+    
 
     /**
-     * Get the resource bundle that contains all of the AXIS translatable messages.
+     * Get the resource bundle that contains all
+     * of the AXIS translatable messages.
      */
-    public static ResourceBundle getMessageResourceBundle() {
-        if (messages == null) {
-            initializeMessages();
+    public static ResourceBundle getFirstMessageResourceBundle() {
+        if (messageBundles == null) {
+            initializeMessageBundles();
         }
-        return messages;
+        return (ResourceBundle)messageBundles.get(0);
     } // getMessageResourceBundle
 
     /**
-     * Get the message with the given key.  There are no arguments for this message.
+     * Get the message with the given key.
+     * There are no arguments for this message.
      */
     public static String getMessage(String key)
             throws MissingResourceException {
-        if (messages == null) {
-            initializeMessages();
+        if (messageBundles == null) {
+            initializeMessageBundles();
         }
-        return messages.getString(key);
+        
+        String msg = null;
+        for (int i = 0; msg == null  &&  i < messageBundles.size(); i++) {
+            msg = ((ResourceBundle)messageBundles.get(i)).getString(key);
+        }
+        return msg;
     } // getMessage
 
     /**
-     * Get the message with the given key.  If an argument is specified in the message (in the
-     * format of "{0}") then fill in that argument with the value of var.
+     * Get the message with the given key.  If an argument is specified
+     * in the message (in the format of "{0}") then fill in that argument
+     * with the value of var.
      */
     public static String getMessage(String key, String var)
             throws MissingResourceException {
@@ -821,8 +836,9 @@ public class JavaUtils
     } // getMessage
 
     /**
-     * Get the message with the given key.  If arguments are specified in the message (in the
-     * format of "{0} {1}") then fill them in with the values of var1 and var2, respectively.
+     * Get the message with the given key.  If arguments are specified
+     * in the message (in the format of "{0} {1}") then fill them in
+     * with the values of var1 and var2, respectively.
      */
     public static String getMessage(String key, String var1, String var2)
             throws MissingResourceException {
@@ -831,8 +847,9 @@ public class JavaUtils
     } // getMessage
 
     /**
-     * Get the message with the given key.  If arguments are specified in the message (in the
-     * format of "{0} {1}") then fill them in with the values of var1 and var2, respectively.
+     * Get the message with the given key.  If arguments are specified
+     * in the message (in the format of "{0} {1}") then fill them in
+     * with the values of var1 and var2, respectively.
      */
     public static String getMessage(String key, String var1, String var2, String var3)
             throws MissingResourceException {
@@ -840,9 +857,11 @@ public class JavaUtils
     } // getMessage
 
     /**
-     * Get the message with the given key.  Replace each "{X}" in the message with vars[X].  If
-     * there are more vars than {X}'s, then the extra vars are ignored.  If there are more {X}'s
-     * than vars, then a java.text.ParseException (subclass of RuntimeException) is thrown.
+     * Get the message with the given key.  Replace each "{X}" in the
+     * message with vars[X].  If there are more vars than {X}'s, then
+     * the extra vars are ignored.  If there are more {X}'s than vars,
+     * then a java.text.ParseException (subclass of RuntimeException)
+     * is thrown.
      */
     public static String getMessage(String key, String[] vars)
             throws MissingResourceException {
@@ -850,13 +869,36 @@ public class JavaUtils
     } // getMessage
 
     /**
-     * Load the resource bundle messages from the properties file.  This is ONLY done when it is
-     * needed.  If no messages are printed (for example, only Wsdl2java is being run in non-
+     * Add a ResourceBundle to list.
+     * ResourceBundle is not opened until needed.
+     */    
+    public static void addMessages(String resourceBundleName) {
+    }
+    
+    /**
+     * Load the resource bundle messages from the properties file.
+     * This is ONLY done when it is needed.  If no messages are
+     * printed (for example, only Wsdl2java is being run in non-
      * verbose mode) then there is no need to read the properties file.
      */
-    private static void initializeMessages() {
-        messages = ResourceBundle.getBundle("org.apache.axis.utils.axisNLS");
-    } // initializeMessages
+    private static void initializeMessageBundles() {
+        if (bundleNames == null) {
+            initializeBundleNames();
+        }
+        messageBundles = new Vector();
+        for (int i = 0; i < bundleNames.size(); i++) {
+            messageBundles.add(ResourceBundle.getBundle((String)bundleNames.get(i)));
+        }
+    } // initializeMessageBundles
+    
+    private static void initializeBundleNames() {
+        bundleNames = new Vector();
+        bundleNames.add("org.apache.axis.utils.axisNLS");
+    }
+
+    /********************* END i18n Message Support *********************/
+    /********************************************************************/
+
 
     /**
      * replace:
