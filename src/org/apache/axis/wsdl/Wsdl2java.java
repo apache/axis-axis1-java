@@ -73,6 +73,7 @@ public class Wsdl2java {
     protected static final int MESSAGECONTEXT_OPT = 'm';
     protected static final int SKELETON_OPT = 's';
     protected static final int PACKAGE_OPT = 'p';
+    protected static final int OUTPUT_OPT = 'o';
 
     /**
      *  Define the understood options. Each CLOptionDescriptor contains:
@@ -104,6 +105,10 @@ public class Wsdl2java {
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 PACKAGE_OPT,
                 "package to put emitted files in"),
+        new CLOptionDescriptor("output",
+                CLOptionDescriptor.ARGUMENT_REQUIRED,
+                OUTPUT_OPT,
+                "output dir for emitted files"),
     };
 
     /**
@@ -113,8 +118,10 @@ public class Wsdl2java {
         boolean bSkeleton = false;
         boolean bMessageContext = false;
         boolean bVerbose = false;
+        boolean bGeneratePackageName = false;
         String packageName = null;
         String wsdlURI = null;
+        String outputDir = null;
 
         // Parse the arguments
         CLArgsParser parser = new CLArgsParser(args, options);
@@ -158,6 +165,12 @@ public class Wsdl2java {
 
                 case PACKAGE_OPT:
                     packageName = option.getArgument();
+                    if (packageName == null)
+                      bGeneratePackageName = true;
+                    break;
+
+                case OUTPUT_OPT:
+                    outputDir = option.getArgument();
                     break;
             }
         }
@@ -178,9 +191,10 @@ public class Wsdl2java {
             emitter.generateSkeleton(bSkeleton);
             emitter.verbose(bVerbose);
             emitter.generateMessageContext(bMessageContext);
+            emitter.generatePackageName(bGeneratePackageName);
             if (packageName != null)
                 emitter.setPackageName(packageName);
-
+            emitter.setOutputDir(outputDir);
             // Start writing code!
             emitter.emit(wsdlURI);
         }

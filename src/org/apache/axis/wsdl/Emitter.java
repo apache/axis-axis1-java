@@ -54,6 +54,7 @@
  */
 package org.apache.axis.wsdl;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -111,6 +112,8 @@ public class Emitter {
     private boolean bVerbose = false;
     private boolean bGeneratePackageName = false;
     String packageName = null;
+    String packageDirName = "";
+    String outputDir = null;
 
     /**
      * Call this method if you have a uri for the WSDL document
@@ -145,6 +148,13 @@ public class Emitter {
             if (packageName == null  && bGeneratePackageName) {
                 makePackageName();
             }
+
+            // Make sure the directory that the files will go into exists
+            if (outputDir == null)
+                new File(packageDirName).mkdirs();
+            else
+                new File(outputDir + File.separatorChar + packageDirName).mkdirs();
+            
             if (bVerbose && packageName != null) {
                 System.out.println("Using package name: " + packageName);
             }
@@ -215,6 +225,23 @@ public class Emitter {
      */
     public void setPackageName(String packageName) {
         this.packageName = packageName;
+        this.packageDirName = getPackageDir();
+    }
+
+    private String getPackageDir() {
+        String value = (packageName == null ? "" : packageName.replace('.', File.separatorChar));
+        if("".equals(value))
+            return value;
+        else {
+            return value + File.separatorChar;
+        }
+    } // getPackageDir
+
+    /**
+     * Set the output directory to use in emitted source files
+     */
+    public void setOutputDir(String outputDir) {
+        this.outputDir = outputDir;
     }
 
     ///////////////////////////////////////////////////
@@ -328,8 +355,9 @@ public class Emitter {
             }
 
             HashMap portTypeInfo = writePortType(portType);
-            if (bEmitSkeleton && bMessageContext)
+            if (bEmitSkeleton && bMessageContext) {
                 writeAxisPortType(portType);
+            }
 
             portTypesInfo.put(portType, portTypeInfo);
         }
@@ -342,7 +370,7 @@ public class Emitter {
     private HashMap writePortType(PortType portType) throws IOException {
         String nameValue = portType.getQName().getLocalPart();
         String fileName = nameValue + ".java";
-        PrintWriter interfacePW = new PrintWriter(new FileWriter(fileName));
+        PrintWriter interfacePW = printWriter (fileName);
         if (bVerbose)
             System.out.println("Generating portType interface: " + fileName);
 
@@ -371,7 +399,7 @@ public class Emitter {
     private void writeAxisPortType(PortType portType) throws IOException {
         String nameValue = portType.getQName().getLocalPart() + "Axis";
         String fileName = nameValue + ".java";
-        PrintWriter interfacePW = new PrintWriter(new FileWriter(fileName));
+        PrintWriter interfacePW = printWriter(fileName);
         if (bVerbose)
             System.out.println("Generating server-side PortType interface: " + fileName);
         writeFileHeader(fileName, interfacePW);
@@ -716,7 +744,7 @@ public class Emitter {
     private String fault(Fault operation) throws IOException {
         String exceptionName = capitalize(operation.getName());
         String fileName = exceptionName + ".java";
-        PrintWriter pw = new PrintWriter(new FileWriter(fileName));
+        PrintWriter pw = printWriter(fileName);
 
         if (bVerbose)
             System.out.println("Generating Fault class: " + fileName);
@@ -788,7 +816,7 @@ public class Emitter {
 
         String stubName = name + "Stub";
         String stubFileName = stubName + ".java";
-        PrintWriter stubPW = new PrintWriter(new FileWriter(stubFileName));
+        PrintWriter stubPW = printWriter(stubFileName);
         if (bVerbose)
             System.out.println("Generating client-side stub: " + stubFileName);
 
@@ -849,12 +877,15 @@ public class Emitter {
 
         PrintWriter skelPW =
                 null;
+        PrintWriter implPW = null;
 
         if (bEmitSkeleton) {
             String skelName = name + "Skeleton";
             String skelFileName = skelName + ".java";
-            skelPW = new PrintWriter(new FileWriter(skelFileName));
+            skelPW = printWriter(skelFileName);
             String implType = portTypeName + " impl";
+            String implName = name + "Impl";
+            
             if (bVerbose)
                 System.out.println("Generating server-side skeleton: " + skelFileName);
             if (bMessageContext) {
@@ -866,13 +897,26 @@ public class Emitter {
             skelPW.println();
             // RJB WARNING! - is this OK?
             skelPW.println("    public " + skelName + "() {");
-            skelPW.println("        this.impl = new " + name + "Impl();");
+            skelPW.println("        this.impl = new " + implName + "();");
             skelPW.println("    }");
             skelPW.println();
             skelPW.println("    public " + skelName + "(" + implType + ") {");
             skelPW.println("        this.impl = impl;");
             skelPW.println("    }");
             skelPW.println();
+
+            String implFileName = implName + ".java";
+            if (!fileExists (implFileName)) {
+                implPW = printWriter(implFileName);
+                if (bVerbose)
+                    System.out.println("Generating server-side impl template: " + implFileName);
+                writeFileHeader(implFileName, implPW);
+                implPW.print("public class " + implName + " implements " + portTypeName);
+                if (bMessageContext) {
+                    implPW.print("Axis");
+                }
+                implPW.println(" {");
+            }
         }
 
         List operations = binding.getBindingOperations();
@@ -904,7 +948,7 @@ public class Emitter {
                 }
             }
 
-            writeBindingOperation(operation, parameters, soapAction, namespace, stubPW, skelPW);
+            writeBindingOperation(operation, parameters, soapAction, namespace, stubPW, skelPW, implPW);
         }
 
         stubPW.println("}");
@@ -914,6 +958,11 @@ public class Emitter {
             skelPW.println("}");
             skelPW.close();
         }
+        if (implPW != null) {
+            implPW.println("}");
+            implPW.close();
+        }
+
     } // writeBinding
 
     /**
@@ -938,15 +987,19 @@ public class Emitter {
      * Write the stub and skeleton code for the given BindingOperation.
      */
     private void writeBindingOperation(BindingOperation operation, Parameters parms,
-                                       String soapAction, String namespace, PrintWriter stubPW, PrintWriter skelPW)
+                                       String soapAction, String namespace,
+                                       PrintWriter stubPW, PrintWriter skelPW,
+                                       PrintWriter implPW)
             throws IOException {
 
         String name = operation.getName();
 
         writeComment(stubPW, operation.getDocumentationElement());
         writeStubOperation(name, parms, soapAction, namespace, stubPW);
-        if (bEmitSkeleton)
+        if (bEmitSkeleton) {
             writeSkeletonOperation(name, parms, skelPW);
+            writeImplOperation(name, parms, implPW);
+        }
     } // writeBindingOperation
 
     /**
@@ -1120,6 +1173,22 @@ public class Emitter {
     } // writeSkeletonOperation
 
     /**
+     * This method generates the axis server side dummy impl
+     */
+    private void writeImplOperation(String name, Parameters parms, PrintWriter pw) {
+        if (pw != null) {
+            if (bMessageContext) {
+                pw.println(parms.axisSignature + " {");
+            }
+            else {
+                pw.println(parms.signature + " {");
+            }
+            pw.println("        throw new java.rmi.RemoteException (\"Not Yet Implemented\");");
+            pw.println("    }");
+        }
+    } // writeImplOperation
+
+    /**
      * Create the service class or classes
      */
     private void writeServices() throws IOException {
@@ -1138,7 +1207,7 @@ public class Emitter {
     private void writeService(Service service) throws IOException {
         String serviceName = service.getQName().getLocalPart();
         String fileName = serviceName + ".java";
-        PrintWriter servicePW = new PrintWriter(new FileWriter(fileName));
+        PrintWriter servicePW = printWriter(fileName);
         if (bVerbose)
             System.out.println("Generating service class: " + fileName);
 
@@ -1237,11 +1306,11 @@ public class Emitter {
      */
     private void writeDeploymentXML() {
         try {
-            PrintWriter deployPW = new PrintWriter(new FileWriter("deploy.xml"));
+            PrintWriter deployPW = printWriter("deploy.xml");
             if (bVerbose)
                 System.out.println("Generating deployment document: deploy.xml");
             initializeDeploymentDoc(deployPW, "deploy");
-            PrintWriter undeployPW = new PrintWriter(new FileWriter("undeploy.xml"));
+            PrintWriter undeployPW = printWriter("undeploy.xml");
             if (bVerbose)
                 System.out.println("Generating deployment document: undeploy.xml");
             initializeDeploymentDoc(undeployPW, "undeploy");
@@ -1414,7 +1483,7 @@ public class Emitter {
         String nameValue = findTypeName(node);
 
         String fileName = nameValue + ".java";
-        PrintWriter typePW = new PrintWriter(new FileWriter(fileName));
+        PrintWriter typePW = printWriter(fileName);
         if (bVerbose)
             System.out.println("Generating type implementation: " + fileName);
 
@@ -1430,18 +1499,20 @@ public class Emitter {
         typePW.println("    public " + nameValue + "() {");
         typePW.println("    }");
         typePW.println();
-        typePW.print("    public " + nameValue + "(");
-        for (int i = 0; i < elements.size(); i += 2) {
-            if (i != 0) typePW.print(", ");
-            typePW.print((String) elements.get(i) + " " + elements.get(i + 1));
-        }
-        typePW.println(") {");
-        for (int i = 1; i < elements.size(); i += 2) {
-            String variable = (String) elements.get(i);
+        if (elements.size() > 0) {
+            typePW.print("    public " + nameValue + "(");
+            for (int i = 0; i < elements.size(); i += 2) {
+                if (i != 0) typePW.print(", ");
+                typePW.print((String) elements.get(i) + " " + elements.get(i + 1));
+            }
+            typePW.println(") {");
+            for (int i = 1; i < elements.size(); i += 2) {
+                String variable = (String) elements.get(i);
 
-            typePW.println("        this." + variable + " = " + variable + ";");
+                typePW.println("        this." + variable + " = " + variable + ";");
+            }
+            typePW.println("    }");
         }
-        typePW.println("    }");
         typePW.println();
         for (int i = 0; i < elements.size(); i += 2) {
             String type = (String) elements.get(i);
@@ -1500,8 +1571,7 @@ public class Emitter {
         String typeName = findTypeName(type);
 
         String fileName = typeName + "Holder.java";
-        PrintWriter pw =
-                new PrintWriter(new FileWriter(fileName));
+        PrintWriter pw = printWriter(fileName);
         if (bVerbose)
             System.out.println("Generating type implementation holder: " + fileName);
 
@@ -1591,6 +1661,35 @@ public class Emitter {
     //
 
     /**
+     * Does the given file already exist?
+     */
+    private boolean fileExists (String name) throws IOException
+    {
+        String fullName;
+        if (outputDir == null) {
+            fullName = packageDirName + name;
+        }
+        else {
+            fullName = outputDir + File.separatorChar + packageDirName + name;
+        }
+        return new File (fullName).exists();
+    } // fileExists
+
+    /**
+     * Get a PrintWriter attached to a file with the given name.  The location of this file
+     * is determined from the values of outputDir and packageDirName.
+     */
+    private PrintWriter printWriter(String name) throws IOException
+    {
+        if (outputDir == null) {
+            return new PrintWriter(new FileWriter(packageDirName + name));
+        }
+        else {
+            return new PrintWriter(new FileWriter(outputDir + File.separatorChar + packageDirName + name));
+        }
+    } // printWriter
+
+    /**
      * output documentation element as a Java comment
      */
     private void writeComment(PrintWriter pw, Element element) {
@@ -1643,6 +1742,10 @@ public class Emitter {
             return "String";
         else if (localName.equals("decimal"))
             return "java.math.BigDecimal";
+        else if (localName.equals("dateTime"))
+            return "java.util.Date";
+        else if (localName.equals("base64Binary"))
+            return "byte[]";
         else if (localName.equals("QName"))
             return "javax.xml.rpc.namespace.QName";
         else if (localName.equals("date"))
