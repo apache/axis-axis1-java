@@ -82,6 +82,8 @@ public class Constants {
   public static String URI_NEXT_ACTOR = 
                                "http://schemas.xmlsoap.org/soap/actor/next" ;
 
+  public static String NS_URI_XMLNS = 
+                               "http://www.w3.org/2000/xmlns/";
   
   // Schema namespaces
   public static final String URI_1999_SCHEMA_XSI =

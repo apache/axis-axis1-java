@@ -130,6 +130,10 @@ public class TypeMappingRegistry implements Serializer {
         this.parent = parent;
     }
 
+    public TypeMappingRegistry getParent() {
+        return parent;
+    }
+
     public void addSerializer(Class _class,
                               QName qName,
                               Serializer serializer) {

@@ -63,6 +63,7 @@ import org.apache.axis.handlers.* ;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.utils.* ;
 import org.apache.axis.suppliers.*;
+import org.apache.axis.encoding.*;
 
 import org.w3c.dom.* ;
 
@@ -73,6 +74,7 @@ import org.w3c.dom.* ;
 public class Admin {
   private static  DefaultHandlerRegistry  hr = null ;
   private static  DefaultServiceRegistry  sr = null ;
+  private static  TypeMappingRegistry     tmr = null ;
   private boolean onServer = true ;
 
   private void init() {
@@ -111,6 +113,7 @@ public class Admin {
     Debug.Print( 1, "Enter: Admin:AdminService" );
     hr = (DefaultHandlerRegistry)msgContext.getProperty(Constants.HANDLER_REGISTRY);
     sr = (DefaultServiceRegistry)msgContext.getProperty(Constants.SERVICE_REGISTRY);
+    tmr = msgContext.getTypeMappingRegistry();
     Document doc = process( xml );
     Debug.Print( 1, "Exit: Admin:AdminService" );
     return( doc );
@@ -383,6 +386,51 @@ public class Admin {
           hr.add( name, service ); // ???
           sr.add( name, service );
         }
+
+        // A streamlined means of deploying both a serializer and a deserializer
+        // for a bean at the same time.
+        else if ( type.equals( "bean" ) ) {
+          Debug.Print( 2, "Deploying bean: " + name );
+
+          // Resolve class name
+
+          Class cls;
+          try {
+            cls = Class.forName(name);
+          } catch (Exception e) {
+            throw new AxisFault( "Admin.error", e.toString(), null, null);
+          }
+
+          // Resolve qname based on prefix and localpart
+
+          String qname = elem.getAttribute( "qname" );
+          if (qname == null)
+            throw new AxisFault( "Admin.error", 
+                                 "Missing qname in bean " + name, null, null);
+
+          int pos = qname.indexOf(':'); 
+          if (pos < 0)
+            throw new AxisFault( "Admin.error", 
+                                 "Missing namespace in qname " + qname, 
+                                 null, null);
+
+          String prefix = qname.substring(0, pos);
+          String localPart = qname.substring(pos+1);
+          String namespace = XMLUtils.getNamespace(prefix, elem); 
+          if (namespace == null)
+            throw new AxisFault( "Admin.error", 
+                                 "Unknown namespace in qname " + qname, 
+                                 null, null);
+
+          QName qn = new QName(namespace, localPart);
+
+          // register both serializers and deserializers for this bean
+
+          TypeMappingRegistry map = tmr.getParent();
+          map.addSerializer(cls, qn, new BeanSerializer(cls));
+          map.addDeserializerFactory(qn, cls, BeanSerializer.getFactory(cls));
+          }
+
         else 
           throw new AxisFault( "Admin.error", 
                                "Unknown type to " + action + ": " + type,

@@ -60,6 +60,7 @@ import org.w3c.dom.* ;
 import javax.xml.parsers.* ;
 import org.apache.xml.serialize.* ;
 import org.xml.sax.* ;
+import org.apache.axis.Constants;
 
 public class XMLUtils {
   private static DocumentBuilder        db  ;
@@ -199,15 +200,9 @@ public class XMLUtils {
 
   public static String getNamespace(String prefix, Node e) {
       while (e != null && (e.getNodeType() == Node.ELEMENT_NODE)) {
-          NamedNodeMap attrs = e.getAttributes();
-          for (int n = 0; n < attrs.getLength(); n++) {
-              Attr a = (Attr)attrs.item(n);
-              String name;
-              if ((name = a.getName()).equals("xmlns:" + prefix)) {
-                  return a.getNodeValue();
-              }
-          }
-          
+          String name = 
+              ((Element)e).getAttributeNS(Constants.NS_URI_XMLNS, prefix);
+          if (name != null) return name;
           e = e.getParentNode();
       }
       return null;

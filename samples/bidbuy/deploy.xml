@@ -7,7 +7,7 @@
 <!--      after the axis server is running                      -->
 <!-- This file will be replaced by WSDD once it's ready         -->
 
-<deploy>
+<deploy xmlns:bid="http://www.soapinterop.org/Bid">
   <chain   name="bid"     flow="RPCDispatcher" />
 
   <service name="http://www.soapinterop.org/RequestForQuote" pivot="bid" >
@@ -30,4 +30,8 @@
     <option name="className" value="samples.bidbuy.BidService" />
     <option name="methodName" value="Ping" />
   </service>
+
+  <bean name="samples.bidbuy.PurchaseOrder" qname="bid:PurchaseOrder"/>
+  <bean name="samples.bidbuy.Address"       qname="bid:Address"/>
+  <bean name="samples.bidbuy.LineItem"      qname="bid:LineItem"/>
 </deploy>
