@@ -93,6 +93,7 @@ import javax.xml.rpc.namespace.QName;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -219,6 +220,24 @@ public class Emitter {
 
         // Return the document
         return doc;
+    }
+
+    /**
+     * Generates a String containing the WSDL for a given <code>Class</code>. The sections of
+     * the WSDL generated are controlled by the mode parameter 
+     * mode 0: All
+     * mode 1: Interface
+     * mode 2: Implementation
+     * 
+     * @param mode generation mode - all, interface, implementation                     
+     * @return String                     
+     * @throws Exception
+     */
+    public String emitToString(int mode) throws Exception {
+        Document doc = emit(mode);
+        StringWriter sw = new StringWriter();
+        XMLUtils.PrettyDocumentToWriter(doc, sw);
+        return sw.toString();
     }
 
     /**
