@@ -21,7 +21,7 @@ public class TestElem {
         ByteArrayInputStream bais = new ByteArrayInputStream(xml.getBytes());
 
         String  sURL = "http://" + args[0] + ":" + args[1] + "/axis/services/ElementService" ;
-        QName   sqn  = new QName(sURL, "ElementServiceService" );
+        QName   sqn  = new QName(sURL, "ElementService" );
         QName   pqn  = new QName(sURL, "ElementService" );
 
         //Service service=new Service(new URL("file:ElementService.wsdl"),sqn);
