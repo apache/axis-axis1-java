@@ -475,7 +475,7 @@ Copyright:
     >
 
     <!-- The Axis Ant task must be built (into ANT_HOME/lib)... -->
-    <ant antfile="test/build_ant.xml" />
+    <ant antfile="test/build_functional_tests.xml" target="functional-tests-only"/>
 
     <!--
     ...and then the functional tests can be run.  If this step yields a
