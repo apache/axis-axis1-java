@@ -1,6 +1,6 @@
 package samples.bidbuy ;
 
-public class Service {
+public class Service implements java.io.Serializable {
     private String ServiceName;
     private String ServiceUrl;
     private String ServiceType;
