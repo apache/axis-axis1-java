@@ -174,14 +174,4 @@ public class LocalSender extends BasicHandler {
                 "LocalSender::invoke"));
         }
     }
-
-    public void undo(MessageContext msgContext) {
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("enter00", 
-                "LocalSender::undo"));
-
-            category.debug(JavaUtils.getMessage("exit00", 
-                "LocalSender::undo"));
-        }
-    }
-};
+}

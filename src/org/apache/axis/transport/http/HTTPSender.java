@@ -723,15 +723,5 @@ public class HTTPSender extends BasicHandler {
         }
         return true;
     }
-
-
-    public void undo(MessageContext msgContext) {
-        if (category.isDebugEnabled()) {
-            category.debug( JavaUtils.getMessage("enter00", 
-                "HTTPDispatchHandler::undo") );
-            category.debug( JavaUtils.getMessage("exit00", 
-                "HTTPDispatchHandler::undo") );
-        }
-    }
-};
+}
 

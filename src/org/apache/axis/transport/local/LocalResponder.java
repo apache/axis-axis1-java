@@ -84,13 +84,4 @@ public class LocalResponder extends BasicHandler {
                 "LocalResponder::invoke") );
         }
     }
-
-    public void undo(MessageContext msgContext) {
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("enter00", 
-                "LocalResponder::undo") );
-            category.debug(JavaUtils.getMessage("exit00", 
-                "LocalResponder::undo") );
-        }
-    }
-};
+}

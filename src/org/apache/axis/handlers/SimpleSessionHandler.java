@@ -297,11 +297,6 @@ public class SimpleSessionHandler extends BasicHandler
         return id;
     }
 
-    public void undo(MessageContext msgContext) {
-        category.debug(JavaUtils.getMessage("enter00", "SimpleSessionHandler::undo") );
-        category.debug(JavaUtils.getMessage("exit00", "SimpleSessionHandler::undo") );
-    }
-
     /**
      * Set the reaper periodicity - convenience method for testing.
      *

@@ -103,10 +103,4 @@ public class HTTPAuthHandler extends BasicHandler
 
         category.debug(JavaUtils.getMessage("exit00", "HTTPAuthHandler::invoke") );
     }
-
-    public void undo(MessageContext msgContext) 
-    {
-        category.debug(JavaUtils.getMessage("enter00", "HTTPActionHandler::undo") );
-        category.debug(JavaUtils.getMessage("exit00", "HTTPActionHandler::undo") );
-    }
 }

@@ -158,9 +158,4 @@ public class MD5AttachHandler extends org.apache.axis.handlers.BasicHandler {
         category.debug(JavaUtils.getMessage("exit00", "EchoHandler::invoke") );
     }
 
-    public void undo(MessageContext msgContext) {
-        category.debug(JavaUtils.getMessage("enter00", "EchoHandler::undo") );
-        category.debug(JavaUtils.getMessage("exit00", "EchoHandler::undo") );
-    }
-
 }

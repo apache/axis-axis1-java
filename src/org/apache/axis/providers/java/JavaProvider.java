@@ -320,11 +320,6 @@ public abstract class JavaProvider extends BasicProvider {
 
 
 
-    public void undo(MessageContext msgContext) {
-        category.debug(JavaUtils.getMessage("enter00", "RPCDispatchHandler::undo") );
-        category.debug(JavaUtils.getMessage("exit00", "RPCDispatchHandler::undo") );
-    }
-
     ///////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////
     /////// Default methods for java classes. Override, eg, for

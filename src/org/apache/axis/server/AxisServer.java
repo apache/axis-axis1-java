@@ -462,11 +462,4 @@ public class AxisServer extends AxisEngine
                 "AxisServer::generateWSDL") );
         }
     }
-
-    public void undo(MessageContext msgContext) {
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("enter00", "AxisServer::undo"));
-            category.debug(JavaUtils.getMessage("exit00", "AxisServer::undo"));
-        }
-    };
-};
+}

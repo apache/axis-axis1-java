@@ -74,9 +74,4 @@ public class ErrorHandler extends BasicHandler {
         throw new AxisFault( "Server.Whatever", "ERROR", null, null );
     }
 
-    public void undo(MessageContext msgContext) {
-        category.debug(JavaUtils.getMessage("enter00", "ErrorHandler::undo") );
-        category.debug(JavaUtils.getMessage("exit00", "ErrorHandler::undo") );
-    }
-
 };

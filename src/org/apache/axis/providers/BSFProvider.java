@@ -66,7 +66,4 @@ public class BSFProvider extends BasicProvider {
     public void invoke(MessageContext msgContext) {
         System.out.println(getOption("Script"));
     }
-
-    public void undo(MessageContext msgContext) {
-    }
 }

@@ -98,7 +98,7 @@ public class FaultableHandler extends BasicHandler {
      * Invokes the specified handler.  If there's a fault the appropriate
      * key will be calculated and used to find the fault chain to be
      * invoked.  This assumes that the workHandler has caught the exception
-     * and already processed it's undo logic - as needed.
+     * and already done its fault processing - as needed.
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
         category.debug(JavaUtils.getMessage("enter00", "FaultableHandler::invoke"));
@@ -148,12 +148,12 @@ public class FaultableHandler extends BasicHandler {
     }
 
     /**
-     * Some handler later on has faulted so we need to undo our work.
+     * Some handler later on has faulted so we need to process the fault.
      */
-    public void undo(MessageContext msgContext) {
-        category.debug(JavaUtils.getMessage("enter00", "FaultableHandler::undo"));
-        workHandler.undo( msgContext );
-        category.debug(JavaUtils.getMessage("exit00", "FaultableHandler::undo"));
+    public void onFault(MessageContext msgContext) {
+        category.debug(JavaUtils.getMessage("enter00", "FaultableHandler::onFault"));
+        workHandler.onFault( msgContext );
+        category.debug(JavaUtils.getMessage("exit00", "FaultableHandler::onFault"));
     };
 
     public boolean canHandleBlock(QName qname) {
