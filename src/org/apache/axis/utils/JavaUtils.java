@@ -75,6 +75,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.ArrayList;
 import java.util.List;
+import java.beans.Introspector;
 
 /** Utility class to deal with Java language related issues, such
  * as type conversions.
@@ -563,9 +564,9 @@ public class JavaUtils
 
     /**
      * Map an XML name to a Java identifier per
-     * the mapping rules of JSR 101 (in
-     * version 0.7 this is
+     * the mapping rules of JSR 101 (in version 1.0 this is
      * "Chapter 20: Appendix: Mapping of XML Names"
+     * 
      * @param name is the xml name
      * @return the java name per JSR 101 specification
      */
@@ -580,33 +581,18 @@ public class JavaUtils
         StringBuffer result = new StringBuffer(nameLen);
         boolean wordStart = false;
 
-        // The mapping indicates to convert first
-        // character.
+        // The mapping indicates to convert first character.
         int i = 0;
-        int firstRealChar = 0;
         while (i < nameLen
                 && (isPunctuation(nameArray[i])
                 || !Character.isJavaIdentifierStart(nameArray[i]))) {
             i++;
-            firstRealChar++;
         }
         if (i < nameLen) {
-            // I've got to check for uppercaseness before lowercasing
-            // because toLowerCase will lowercase some characters that
-            // isUpperCase will return false for.  Like \u2160, Roman
-            // numeral one.
-
-            // Don't lowercase if this is the first character and the 2nd
-            // character is also uppercase, to follow Introspector rules.
-            if (Character.isUpperCase(nameArray[i]) &&
-                ((i != firstRealChar) ||
-                    (nameLen == 1) ||
-                    (nameLen > 1 && Character.isLowerCase(nameArray[1])))) {
-                result.append(Character.toLowerCase(nameArray[i]));
-            }
-            else {
-                result.append(nameArray[i]);
-            }
+            // Decapitalization code used to be here, but we use the
+            // Introspector function now after we filter out all bad chars.
+            
+            result.append(nameArray[i]);
             wordStart = !Character.isLetter(nameArray[i]);
         }
         else {
@@ -651,6 +637,11 @@ public class JavaUtils
 
         // covert back to a String
         String newName = result.toString();
+        
+        // Follow JavaBean rules, but we need to check if the first 
+        // letter is uppercase first
+        if (Character.isUpperCase(newName.charAt(0)))
+            newName = Introspector.decapitalize(newName);
 
         // check for Java keywords
         if (isJavaKeyword(newName))
