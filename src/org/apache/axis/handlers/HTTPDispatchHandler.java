@@ -87,10 +87,11 @@ public class HTTPDispatchHandler implements Handler {
     Debug.Print( 1, "Enter: HTTPDispatchHandler::invoke" );
     /* Find the service we're invoking so we can grab it's options */
     /***************************************************************/
-    String   targetURL = (String) msgContext.getProperty( "HTTP_URL" );
+    String   targetURL = null ;
     Message  outMsg    = null ;
     String   reqEnv    = null ;
 
+    targetURL = (String) msgContext.getProperty( Constants.MC_TRANS_URL);
     try {
       String   host ;
       int      port = 80 ;
