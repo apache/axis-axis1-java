@@ -248,8 +248,22 @@ public class XMLUtils {
         DOM2Writer.serializeAsXML(element, writer, omitXMLDecl, pretty);
     }
 
+    public static void ElementToStream(Element element, OutputStream out) {
+        Writer writer = new OutputStreamWriter(out);
+        privateElementToWriter(element, writer, true, false);
+    }
+
+    public static void PrettyElementToStream(Element element, OutputStream out) {
+        Writer writer = new OutputStreamWriter(out);
+        privateElementToWriter(element, writer, true, true);
+    }
+
     public static void ElementToWriter(Element element, Writer writer) {
         privateElementToWriter(element, writer, true, false);
+    }
+
+    public static void PrettyElementToWriter(Element element, Writer writer) {
+        privateElementToWriter(element, writer, true, true);
     }
 
     public static void DocumentToStream(Document doc, OutputStream out) {

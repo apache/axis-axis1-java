@@ -388,10 +388,16 @@ public class MessageElement
 
     public Element getAsDOM() throws Exception
     {
-        MessageContext msgContext = context.getMessageContext();
-
+        SerializationContext serializeContext = null;
         StringWriter writer = new StringWriter();
-        output(new SerializationContext(writer, msgContext));
+        if(context != null)
+        {
+            MessageContext msgContext = context.getMessageContext();
+            serializeContext = new SerializationContext(writer, msgContext);
+        } else {
+            serializeContext = new SerializationContext(writer);
+        }
+        output(serializeContext);
         writer.close();
 
         Reader reader = new StringReader(writer.getBuffer().toString());
