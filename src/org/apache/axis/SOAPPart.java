@@ -99,6 +99,12 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
     public static final int FORM_OPTIMIZED    = 7;
     private int currentForm;
 
+    /**
+     * property used to set SOAPEnvelope as default form
+     */
+    public static final String ALLOW_FORM_OPTIMIZATION = "axis.form.optimization";
+
+    
     //private Hashtable headers = new Hashtable();
     private MimeHeaders mimeHeaders = new MimeHeaders();
 
@@ -117,6 +123,11 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
      * object is."
      */
     private Object currentMessage ;
+
+    /**
+     * default message encoding charset
+     */
+    private String currentEncoding = "UTF-8";
 
     // These two fields are used for caching in getAsString and getAsBytes
     private String currentMessageAsString = null;
@@ -256,10 +267,15 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
             }
             os.write((byte[])currentMessage);
         } else if ( currentForm == FORM_OPTIMIZED ) {
-            if (incXMLDecl.equalsIgnoreCase("true")) {
-                os.write(("<?xml version=\"1.0\" encoding=\"" + charEncoding +
-                        "\"?>").getBytes());
-            }
+            // If the message already has XML declaration, don't write it again.
+            // TODO: FIXME. how do we do this better?
+            //ByteArray array = (ByteArray) currentMessage;
+            //String content = new String(array.toByteArray(), charEncoding);
+            //if (!content.startsWith("<?xml")) {
+                if (incXMLDecl.equalsIgnoreCase("true")) {
+                    os.write(("<?xml version=\"1.0\" encoding=\"" + charEncoding + "\"?>").getBytes());
+                }
+            //}
             ((ByteArray) currentMessage).writeTo(os);
         } else {
             Writer writer = new OutputStreamWriter(os,charEncoding);
@@ -349,13 +365,36 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
             log.debug(Messages.getMessage("setMsgForm", formNames[form],
                     "" + msgStr));
         }
-        currentMessage = currMsg ;
-        currentForm = form ;
-        if(currentForm == FORM_SOAPENVELOPE)
-          currentMessageAsEnvelope= (org.apache.axis.message.SOAPEnvelope )currMsg;
+
+        // only change form if allowed
+        if (isFormOptimizationAllowed()) {
+            currentMessage = currMsg;
+            currentForm = form;
+            if (currentForm == FORM_SOAPENVELOPE) {
+                    currentMessageAsEnvelope = (org.apache.axis.message.SOAPEnvelope) currMsg;
+            }
+        }
     }
 
-    
+    /**
+     * check if the allow optimization flag is on
+     * @return form optimization flag
+     */ 
+    private boolean isFormOptimizationAllowed() {
+        boolean allowFormOptimization = true;
+        Message msg = getMessage();
+        if (msg != null) {
+            MessageContext ctx = msg.getMessageContext();
+            if (ctx != null) {
+                Boolean propFormOptimization = (Boolean)ctx.getProperty(ALLOW_FORM_OPTIMIZATION);
+                if (propFormOptimization != null) {
+                    allowFormOptimization = propFormOptimization.booleanValue();
+                }
+            }
+        }
+        return allowFormOptimization;
+    }
+
     public int getCurrentForm() {
         return currentForm;
     }
@@ -423,11 +462,11 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
 
         if ( currentForm == FORM_SOAPENVELOPE ||
              currentForm == FORM_FAULT ){
-            String encoding = XMLUtils.getEncoding(msgObject, null);
+            currentEncoding = XMLUtils.getEncoding(msgObject, null);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             BufferedOutputStream os = new BufferedOutputStream(baos);
             try {
-                this.writeTo(os, encoding, "false");
+                this.writeTo(os, currentEncoding, "false");
                 os.flush();
             } catch (Exception e) {
                 throw AxisFault.makeFault(e);
@@ -453,8 +492,8 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
             // Save this message in case it is requested later in getAsString
             currentMessageAsString = (String) currentMessage;
             try{
-                String encoding = XMLUtils.getEncoding(msgObject, null);
-                setCurrentForm( ((String)currentMessage).getBytes(encoding),
+                currentEncoding = XMLUtils.getEncoding(msgObject, null);
+                setCurrentForm( ((String)currentMessage).getBytes(currentEncoding),
                     FORM_BYTES );
             }catch(UnsupportedEncodingException ue){
                setCurrentForm( ((String)currentMessage).getBytes(),
@@ -476,10 +515,10 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
         log.debug("Enter: SOAPPart::saveChanges");
         if ( currentForm == FORM_SOAPENVELOPE ||
              currentForm == FORM_FAULT ){
-            String encoding = XMLUtils.getEncoding(msgObject, null);
+            currentEncoding = XMLUtils.getEncoding(msgObject, null);
             ByteArray array = new ByteArray();
             try {
-                this.writeTo(array,encoding,"false");
+                this.writeTo(array, currentEncoding, "false");
                 array.flush();
             } catch (Exception e) {
                 throw AxisFault.makeFault(e);
@@ -521,8 +560,9 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
             }
 
             try{
-                setCurrentForm( new String((byte[]) currentMessageAsBytes,"UTF-8"),
-                                   FORM_STRING );
+                setCurrentForm(new String((byte[])currentMessageAsBytes,
+                                currentEncoding),
+                        FORM_STRING);
             }catch(UnsupportedEncodingException ue){
                 setCurrentForm( new String((byte[]) currentMessageAsBytes),
                                    FORM_STRING );
@@ -548,8 +588,9 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
             // Save this message in case it is requested later in getAsBytes
             currentMessageAsBytes = (byte[]) currentMessage;
             try{
-                setCurrentForm( new String((byte[]) currentMessage,"UTF-8"),
-                                   FORM_STRING );
+                setCurrentForm(new String((byte[])currentMessage,
+                                currentEncoding),
+                        FORM_STRING);
             }catch(UnsupportedEncodingException ue){
                 setCurrentForm( new String((byte[]) currentMessage),
                                    FORM_STRING );
@@ -631,7 +672,8 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
             is = new InputSource( (InputStream) currentMessage );
             String encoding = XMLUtils.getEncoding(msgObject, null, null);
             if (encoding != null) {
-                is.setEncoding(encoding);
+                currentEncoding = encoding;
+                is.setEncoding(currentEncoding);
             }
         } else {
             is = new InputSource(new StringReader(getAsString()));

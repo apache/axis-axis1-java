@@ -76,4 +76,8 @@ public class PrefixedQName implements Name {
     public int hashCode() {
         return prefix.hashCode() + qName.hashCode();
     }
+    
+    public String toString() {
+        return qName.toString();
+    }
 }
