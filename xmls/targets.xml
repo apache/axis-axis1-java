@@ -5,6 +5,12 @@
    <target name="my-forking-ant">
      <echo message="Forking a JVM for target ${target} in file ${file}"/>
      <java classname="org.apache.tools.ant.Main" fork="yes" failonerror="true" dir="${dir}">
+       <!-- Pass through the proxy parameters -->
+       <jvmarg value="-Dhttp.proxyHost=${http.proxyHost}"/>
+       <jvmarg value="-Dhttp.proxyPort=${http.proxyPort}"/>
+       <jvmarg value="-Dhttp.nonProxyHosts=${http.nonProxyHosts}"/>
+       <jvmarg value="-Dhttp.proxyUser=${http.proxyUser}"/>
+       <jvmarg value="-Dhttp.proxyPassword=${http.proxyPassword}"/>
        <classpath refid="classpath"/>
        <arg line="-buildfile ${file} ${target}"/>
      </java>
