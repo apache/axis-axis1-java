@@ -92,10 +92,18 @@ public class Utils {
         return name;
     } // capitalizeFirstChar
 
+
+
     /**
      * Some QNames represent base types.  This routine returns the 
      * name of the base java type or null.
-     * (These mappings based on JSR-101 version 0.5)
+     * (These mappings based on JSR-101 version 0.6 Public Draft)
+     * ----------------------------------------------------------
+     * Note that the Schema simple types map to different java types
+     * depending on whether the nillable flag is set.  This routine
+     * assumes nillable is false.
+     * ----------------------------------------------------------
+     * @param QName
      */
     public static String getBaseJavaName(QName qName) {
         String localName = qName.getLocalPart();
@@ -123,7 +131,7 @@ public class Utils {
             } else if (localName.equals("QName")) {
                 return "javax.xml.rpc.namespace.QName";
             } else if (localName.equals("dateTime")) {
-                return "java.util.Date";
+                return "java.util.Date";             // Should be Calendar, but Calendar is abstract!
             } else if (localName.equals("base64Binary")) {
                 return "byte[]";
             } else if (localName.equals("hexBinary")) {
@@ -138,19 +146,21 @@ public class Utils {
             if (localName.equals("string")) {
                 return "java.lang.String";
             } else if (localName.equals("int")) {
-                return "int";
+                return "java.lang.Integer";
             } else if (localName.equals("short")) {
-                return "short";
+                return "java.lang.Short";
             } else if (localName.equals("decimal")) {
                 return "java.math.BigDecimal";
             } else if (localName.equals("float")) {
-                return "float";
+                return "java.lang.Float";
             } else if (localName.equals("double")) {
-                return "double";
+                return "java.lang.Double";
             } else if (localName.equals("boolean")) {
-                return "boolean";
+                return "java.lang.Boolean";
             } else if (localName.equals("base64")) {
-                return "byte[]";
+                return "java.lang.Byte[]";
+            } else if (localName.equals("byte")) {     
+                return "java.lang.Byte";
             } else if (localName.equals("Array")) {    // Support for JAX-RPC Array
                 return "Object[]";
             } else if (localName.equals("Vector")) {   // Not defined in JSR-101
@@ -165,7 +175,38 @@ public class Utils {
         return null;
     }
 
-
+    /**
+     * getNillableQName returns the QName to use if the nillable=true
+     * attribute is used.                             
+     * For example:
+     *   The QName "xsd:int" maps to a java int.
+     *   However if an element with a type="xsd:int" also has the 
+     *   "nillable=true" attribute, the type should be an Integer (not an int).
+     *   So in these circumstances, this routine is called with xsd:int to 
+     *   get a suitable qname (soapenc:int) which maps to Integer.
+     * @param QName
+     */
+    public static QName getNillableQName(QName qName) {
+        QName rc = new QName(qName.getNamespaceURI(), qName.getLocalPart());
+        if (Utils.isSchemaNS(rc.getNamespaceURI())) {
+            String localName = rc.getLocalPart();
+            if (localName.equals("int") ||
+                localName.equals("long") ||
+                localName.equals("short") ||
+                localName.equals("float") ||
+                localName.equals("double") ||
+                localName.equals("boolean") ||
+                localName.equals("byte")) {
+                rc.setNamespaceURI(getSoapEncodingNS());
+            }
+            else if (localName.equals("base64Binary") ||
+                     localName.equals("hexBinary")) {
+                rc.setNamespaceURI(getSoapEncodingNS());
+                rc.setLocalPart("base64");
+            }
+        }
+       return rc;
+    }
     /**
      * Given a node, return the value of the given attribute.
      * If the attribute does not exist, searching continues through ancestor nodes until found.
@@ -302,6 +343,11 @@ public class Utils {
      * If you want the QName for just the "type" without analyzing 
      * minOccurs/maxOccurs then use:
      *    getNodeTypeRefQName(node, "type")
+     *
+     * Note 2: The getNodeTypeRefQName routines also inspect the 
+     *         "nillable" attribute and may return an alternate QName
+     *         if nillable is true.  
+     * 
      * @param node of the reference
      * @param forElement output parameter is set to true if QName is for an element
      *                   (i.e. ref= or element= attribute was used).
@@ -358,7 +404,12 @@ public class Utils {
     /**
      * Obtain the QName of the type/ref using the indicated attribute name.
      * For example, the "type" attribute in an XML enumeration struct is the 
-     * "base" attribute.  
+     * "base" attribute. 
+     * If the "type" attribute is requested, the "nillable" attribute is 
+     * also inspected to see if an alternate qname should be returned.
+     *
+     * @param node in the dom
+     * @param typeAttrName (type, base, element, ref)
      */
     public static QName getNodeTypeRefQName(Node node, String typeAttrName) {
         if (node == null) {
@@ -368,7 +419,17 @@ public class Utils {
         if (prefixedName == null) {
             return null;
         }
-        return getQNameFromPrefixedName(node,prefixedName);
+        // Change the prefixed name into a full qname
+        QName qName = getQNameFromPrefixedName(node,prefixedName);
+
+        // An alternate qname is returned if nillable
+        if (typeAttrName.equals("type")) {
+            String nillable = getAttribute(node, "nillable");
+            if (nillable != null && nillable.equalsIgnoreCase("true")) {
+                qName = getNillableQName(qName);
+            }
+        }
+        return qName;
     }
 
     /**
@@ -429,6 +490,9 @@ public class Utils {
         return (s.equals("http://schemas.xmlsoap.org/soap/encoding") ||
                 s.equals("http://schemas.xmlsoap.org/soap/encoding/") ||
                 s.equals("http://www.w3.org/2001/06/soap-encoding"));
+    }
+    public static String getSoapEncodingNS() {
+        return "http://www.w3.org/2001/06/soap-encoding";
     }
 
     /**
@@ -505,12 +569,50 @@ public class Utils {
     /**
      * Given a type, return the Java mapping of that type's holder.
      */
-
     public static String holder(TypeEntry type, SymbolTable symbolTable) {
         String typeValue = type.getName();
-        if (typeValue.equals("java.lang.String")) {
+
+        // byte[] and Byte[] have reserved holders
+        if (typeValue.equals("byte[]")) {
+            return "javax.xml.rpc.holders.ByteArrayHolder";
+        }
+        else if (typeValue.equals("java.lang.Byte[]")) {
+            return "javax.xml.rpc.holders.ByteClassArrayHolder";
+        }
+        // Anything else with [] gets its holder from the qname
+        else if (typeValue.endsWith("[]")) {
+            return symbolTable.getJavaName(type.getQName()) + "Holder";
+        }
+        // String also has a reserved holder
+        else if (typeValue.equals("String")) {
             return "javax.xml.rpc.holders.StringHolder";
         }
+        else if (typeValue.equals("java.lang.String")) {
+            return "javax.xml.rpc.holders.StringHolder";
+        }
+        // Java primitive types have reserved holders
+        else if (typeValue.equals("int")
+                 || typeValue.equals("long")
+                 || typeValue.equals("short")
+                 || typeValue.equals("float")
+                 || typeValue.equals("double")
+                 || typeValue.equals("boolean")
+                 || typeValue.equals("byte")) {
+            return "javax.xml.rpc.holders." + capitalizeFirstChar(typeValue) + "Holder";
+        }
+        // Java language classes have reserved holders (with ClassHolder)
+        else if (typeValue.startsWith("java.lang.")) {
+            return "javax.xml.rpc.holders" + 
+                typeValue.substring(typeValue.lastIndexOf(".")) +
+                "ClassHolder";
+        }
+        else if (typeValue.indexOf(".") < 0) {
+            return "javax.xml.rpc.holders" + 
+                typeValue +
+                "ClassHolder";
+        }
+        // The classes have reserved holders because they 
+        // represent schema/soap encoding primitives
         else if (typeValue.equals("java.math.BigDecimal")) {
             return "javax.xml.rpc.holders.BigDecimalHolder";
         }
@@ -520,23 +622,13 @@ public class Utils {
         else if (typeValue.equals("java.util.Date")) {
             return "javax.xml.rpc.holders.DateHolder";
         }
+        else if (typeValue.equals("java.util.Calendar")) {
+            return "javax.xml.rpc.holders.CalendarHolder";
+        }
         else if (typeValue.equals("javax.xml.rpc.namespace.QName")) {
             return "javax.xml.rpc.holders.QNameHolder";
         }
-        else if (typeValue.equals("byte[]")) {
-            return "javax.xml.rpc.holders.ByteArrayHolder";
-        }
-        else if (typeValue.endsWith("[]")) {
-            return symbolTable.getJavaName(type.getQName()) + "Holder";
-        }
-        else if (typeValue.equals("int")
-                || typeValue.equals("long")
-                || typeValue.equals("short")
-                || typeValue.equals("float")
-                || typeValue.equals("double")
-                || typeValue.equals("boolean")
-                || typeValue.equals("byte"))
-            return "javax.xml.rpc.holders." + capitalizeFirstChar(typeValue) + "Holder";
+        // For everything else simply append Holder
         else
             return typeValue + "Holder";
     } // holder

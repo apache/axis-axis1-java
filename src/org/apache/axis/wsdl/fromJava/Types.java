@@ -140,7 +140,7 @@ public class Types {
     public QName writePartType(Class type) throws Exception {
         if (type.getName().equals("void"))
           return null;
-        if (isPrimitiveWsdlType(type)) {
+        if (isSimpleType(type)) {
             javax.xml.rpc.namespace.QName qName = reg.getTypeQName(type);
             return getWsdlQName(qName);
         }else {
@@ -302,8 +302,10 @@ public class Types {
     private String writeType(Class type) throws Exception {
 
         // Quick return if schema type
-        if (isPrimitiveWsdlType(type))
+        if (isSimpleSchemaType(type))
             return "xsd:" + reg.getTypeQName(type).getLocalPart();
+        if (isSimpleSoapEncodingType(type))
+            return "soapenc:" + reg.getTypeQName(type).getLocalPart();
 
         // Write the namespace
         QName qName = writeTypeNamespace(type);
@@ -525,28 +527,54 @@ public class Types {
     }
 
     /**
-     * Is the given class one of the WSDL primitive types
+     * Is the given class one of the simple types defined by Schema
+     * (per JSR 101 v.0.6)
      * @param type input Class
-     * @return true if the type is primitive
+     * @return true if the type is a simple schema type
      */
-    boolean isPrimitiveWsdlType(Class type) {
-      return (type == java.lang.Boolean.class ||
+    boolean isSimpleSchemaType(Class type) {
+      return (type == java.lang.String.class ||
               type == java.lang.Boolean.TYPE  ||
-              type == java.lang.Byte.class ||
               type == java.lang.Byte.TYPE ||
-              type == java.lang.Character.class ||
-              type == java.lang.Character.TYPE ||
-              type == java.lang.Double.class ||
               type == java.lang.Double.TYPE ||
-              type == java.lang.Float.class ||
               type == java.lang.Float.TYPE ||
-              type == java.lang.Integer.class ||
               type == java.lang.Integer.TYPE ||
-              type == java.lang.Long.class ||
               type == java.lang.Long.TYPE ||
-              type == java.lang.Short.class ||
               type == java.lang.Short.TYPE ||
-              type == java.lang.String.class);
+              type == java.math.BigInteger.class ||
+              type == java.math.BigDecimal.class ||
+              type == javax.xml.rpc.namespace.QName.class ||
+              type == java.util.Calendar.class ||
+              type == byte[].class);
+    }
+
+    /**
+     * Is the given class one of the simple types defined by SoapEncoding.
+     * (per JSR 101 v.0.6)
+     * @param type input Class
+     * @return true if the type is a simple soap encoding type
+     */
+    boolean isSimpleSoapEncodingType(Class type) {
+      return (type == java.lang.String.class ||
+              type == java.lang.Boolean.class  ||
+              type == java.lang.Byte.class ||
+              type == java.lang.Double.class ||
+              type == java.lang.Float.class ||
+              type == java.lang.Integer.class ||
+              type == java.lang.Long.class ||
+              type == java.lang.Short.class ||
+              type == java.math.BigDecimal.class ||
+              type == java.lang.Byte[].class);
+    }
+
+    /**
+     * Is the given class one of the simple types
+     * @param type input Class
+     * @return true if the type is a simple type
+     */
+    boolean isSimpleType(Class type) {
+        return (isSimpleSchemaType(type) ||
+                isSimpleSoapEncodingType(type));
     }
 
     /**

@@ -68,8 +68,8 @@
             <!-- <xsd:element name="foods" type="typens:foodArray"/> -->
             <!-- Microsoft 2 (not JAX-RPC): Array defined using single unbounded element -->
             <!-- <xsd:element name="games" type="typens:gameArray"/> -->
-            <!-- Array of bytes -->                                           
-            <xsd:element name="nickName" type="soapenc:base64"/>
+            <!-- Array of Bytes (nillable=true causes byte[] to become Byte[])-->                 
+            <xsd:element name="nickName" type="xsd:hexBinary" nillable="true" />
 
         </xsd:sequence>
       </xsd:complexType>
