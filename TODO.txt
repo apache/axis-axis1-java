@@ -12,17 +12,6 @@ BETA 3 MUST DO LIST
 -------------------
 
 
-BETA 2 MUST DO LIST
--------------------
-* <Glen> Clean up User's Guide
-X <Russell> Clean up sample readme's
-X <Russell> beta1-to-beta2 document
-X <Russell> Grow the FAQ
-X <> Make sure the gump build works
-X <RickR/Doug> Make sure the attachment sample works
-* <Glen> Bugzilla 6872/7373
-X <Tom> 8395 (probably not but under investigation)
-
 
 MESSAGE PARSING / ENCODING
 --------------------------
@@ -124,6 +113,7 @@ X <Rich> Support for anonymous complexTypes and simpleTypes for elements and att
 
 Java2WSDL
 ---------
+! <> When generating from a skeleton, ignore the skeleton meta-data methods.
 ! <Russell?/Rich?> Java2WSDL "void op(boolean b1, Boolean b2)" maps to
    <wsdl:message name="op1Request">
       <wsdl:part name="in0" type="xsd:boolean"/>
