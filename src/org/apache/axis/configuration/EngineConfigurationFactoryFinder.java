@@ -176,7 +176,8 @@ public class EngineConfigurationFactoryFinder
         }
 
         if (factory != null) {
-            log.debug(JavaUtils.getMessage("engineFactory", factory.getClass().getName()));
+            if(log.isDebugEnabled())
+                log.debug(JavaUtils.getMessage("engineFactory", factory.getClass().getName()));
         } else {
             log.error(JavaUtils.getMessage("engineConfigFactoryMissing"));
             // we should be throwing an exception here,
