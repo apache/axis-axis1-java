@@ -10,6 +10,7 @@ import org.apache.axis.encoding.SerializationContextImpl;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.Constants;
+import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.SOAPEnvelope;
@@ -20,6 +21,9 @@ import org.apache.commons.logging.Log;
 
 import org.xml.sax.InputSource;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Node;
 
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
@@ -112,7 +116,7 @@ public class TestSer extends TestCase {
                                                "method",
                                                new Object [] { "argument" });
             env.addBodyElement(method);
-            String soapStr = env.toString();
+            env.toString();
         } catch (Exception e) {
             fail(e.getMessage());
         }
@@ -120,41 +124,107 @@ public class TestSer extends TestCase {
         // If there was no exception, we succeeded in serializing it.
     }
 
-    public void testEmptyXMLNS()
+    public void testEmptyXMLNS() throws Exception
     {
-        try {
-            MessageContext msgContext = new MessageContext(new AxisServer());
-            String req =
-                "<xsd1:A xmlns:xsd1='urn:myNamespace'>"
-                    + "<xsd1:B>"
-                    + "<xsd1:C>foo bar</xsd1:C>"
-                    + "</xsd1:B>"
-                    + "</xsd1:A>";
-
-            StringWriter stringWriter=new StringWriter();
-            StringReader reqReader = new StringReader(req);
-            InputSource reqSource = new InputSource(reqReader);
-
-            DocumentBuilder xdb = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            Document document = xdb.parse(reqSource );
-
-            String msgString = null;
-
-            SOAPEnvelope msg = new SOAPEnvelope();
-            RPCParam arg1 = new RPCParam("urn:myNamespace", "testParam", document.getFirstChild());
-            arg1.setXSITypeGeneration(Boolean.FALSE);
-
-            RPCElement body = new RPCElement("urn:myNamespace", "method1", new Object[] { arg1 });
-            msg.addBodyElement(body);
-            body.setEncodingStyle(Constants.URI_LITERAL_ENC);
-
-            SerializationContext context = new SerializationContextImpl(stringWriter, msgContext);
-            msg.output(context);
-
-            msgString = stringWriter.toString();
-            assertTrue(msgString.indexOf("xmlns=\"\"")==-1);
-        } catch (Exception e) {
-            fail(e.getMessage());
+        MessageContext msgContext = new MessageContext(new AxisServer());
+        String req =
+                "<xsd1:A xmlns:xsd1=\"urn:myNamespace\">"
+                + "<xsd1:B>"
+                + "<xsd1:C>foo bar</xsd1:C>"
+                + "</xsd1:B>"
+                + "</xsd1:A>";
+        
+        StringWriter stringWriter=new StringWriter();
+        StringReader reqReader = new StringReader(req);
+        InputSource reqSource = new InputSource(reqReader);
+        
+        Document document = XMLUtils.newDocument(reqSource);
+        
+        String msgString = null;
+        
+        SOAPEnvelope msg = new SOAPEnvelope();
+        RPCParam arg1 = new RPCParam("urn:myNamespace", "testParam", document.getFirstChild());
+        arg1.setXSITypeGeneration(Boolean.FALSE);
+        
+        RPCElement body = new RPCElement("urn:myNamespace", "method1", new Object[] { arg1 });
+        msg.addBodyElement(body);
+        body.setEncodingStyle(Constants.URI_LITERAL_ENC);
+        
+        SerializationContext context = new SerializationContextImpl(stringWriter, msgContext);
+        msg.output(context);
+        
+        msgString = stringWriter.toString();
+        assertTrue(msgString.indexOf("xmlns=\"\"")==-1);
+    }    
+    
+    /**
+     * Confirm that default namespaces when writing doc/lit messages don't
+     * trample namespace mappings.
+     * 
+     * @throws Exception
+     */ 
+    public void testDefaultNamespace() throws Exception
+    {
+        MessageContext msgContext = new MessageContext(new AxisServer());
+        String req =
+                "<xsd1:A xmlns:xsd1=\"urn:myNamespace\">"
+                + "<B>"  // Note that B and C are in no namespace!
+                + "<C>foo bar</C>"
+                + "</B>"
+                + "</xsd1:A>";
+        
+        StringWriter stringWriter=new StringWriter();
+        StringReader reqReader = new StringReader(req);
+        InputSource reqSource = new InputSource(reqReader);
+        
+        Document document = XMLUtils.newDocument(reqSource);
+        
+        String msgString = null;
+        
+        SOAPEnvelope msg = new SOAPEnvelope();
+        RPCParam arg1 = new RPCParam("urn:myNamespace", "testParam", document.getFirstChild());
+        arg1.setXSITypeGeneration(Boolean.FALSE);
+        
+        RPCElement body = new RPCElement("urn:myNamespace", "method1", new Object[] { arg1 });
+        msg.addBodyElement(body);
+        body.setEncodingStyle(Constants.URI_LITERAL_ENC);
+        
+        SerializationContext context = new SerializationContextImpl(stringWriter, msgContext);
+        msg.output(context);
+        
+        msgString = stringWriter.toString();
+        
+        // Now reparse into DOM so we can check namespaces.
+        StringReader resReader = new StringReader(msgString);
+        InputSource resSource = new InputSource(resReader);
+        Document doc = XMLUtils.newDocument(resSource);
+        
+        // Go make sure B and C are in fact in no namespace
+        Element el = findChildElementByLocalName(doc.getDocumentElement(),
+                                                 "B");
+        assertNotNull("Couldn't find <B> element!", el);
+        assertNull("Element <B> has a namespace!", el.getNamespaceURI());
+        el = findChildElementByLocalName(el, "C");
+        assertNotNull("Couldn't find <C> element!", el);
+        assertNull("Element <C> has a namespace!", el.getNamespaceURI());
+    }
+    
+    private Element findChildElementByLocalName(Element src, String localName) {
+        NodeList nl = src.getChildNodes();
+        for (int i = 0; i < nl.getLength(); i++) {
+            Node node = nl.item(i);
+            if (node instanceof Element) {
+                Element e = (Element)node;
+                if (e.getLocalName().equals(localName)) {
+                    return e;
+                }
+                // Depth-first search
+                e = findChildElementByLocalName(e, localName);
+                if (e != null) {
+                    return e;
+                }
+            }
         }
+        return null;
     }
 }

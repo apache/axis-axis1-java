@@ -420,9 +420,7 @@ public class SerializationContextImpl implements SerializationContext
         }
 
         if ((uri != null) && (prefix != null)) {
-            if (uri.length()>0 || prefix.length()>0) {
-                nsStack.add(uri, prefix);
-            }
+            nsStack.add(uri, prefix);
         }
     }
 
@@ -458,7 +456,7 @@ public class SerializationContextImpl implements SerializationContext
                 // If this is unqualified (i.e. prefix ""), set the default
                 // namespace to ""
                 String defaultNS = nsStack.getNamespaceURI("");
-                if (defaultNS != null) {
+                if (defaultNS != null && defaultNS.length() > 0) {
                     registerPrefixForURI("", "");
                 }
             }

@@ -66,7 +66,6 @@ import org.apache.axis.Constants;
 import org.apache.axis.wsdl.fromJava.Types;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 
 /**
@@ -87,16 +86,9 @@ public class ElementSerializer implements Serializer {
         if (!(value instanceof Element))
             throw new IOException(Messages.getMessage("cantSerialize01"));
 
-        // suppress xsd:any namespace="##any" elements
-        boolean suppressElement = (!context.getMessageContext().isEncoded() && 
-                                   name.getNamespaceURI().equals("") &&
-                                   name.getLocalPart().equals("any")); 
-
-        if (!suppressElement)
-            context.startElement(name, attributes);
+        context.startElement(name, attributes);
         context.writeDOMElement((Element)value);
-        if (!suppressElement)
-            context.endElement();
+        context.endElement();
     }
 
     public String getMechanismType() { return Constants.AXIS_SAX; }

@@ -84,8 +84,8 @@ public class TestMessageElement extends TestCase {
     // Test JAXM methods...
 
     public void testParentage() throws Exception {
-        SOAPElement parent = new MessageElement();
-        SOAPElement child = new MessageElement();
+        SOAPElement parent = new MessageElement("ns", "parent");
+        SOAPElement child = new MessageElement("ns", "child");
         child.setParentElement(parent);
         assertEquals("Parent is not as set", parent, child.getParentElement());
     }
@@ -95,7 +95,7 @@ public class TestMessageElement extends TestCase {
         EnvelopeBuilder eb = new EnvelopeBuilder(Message.REQUEST, sc);
         DeserializationContext dc = new DeserializationContextImpl(null,
                                                                    eb); 
-        SOAPElement parent = new MessageElement("parent.names",
+        MessageElement parent = new MessageElement("parent.names",
                                                 "parent",
                                                 "parns",
                                                 null,
@@ -107,7 +107,7 @@ public class TestMessageElement extends TestCase {
         SOAPElement child4 = parent.addChildElement("child4",
                                                     "c4ns",
                                                     "child4.names");
-        SOAPElement child5 = new MessageElement();
+        SOAPElement child5 = new MessageElement("ns", "child5");
         parent.addChildElement(child5);
         SOAPElement c[] = {child1, child2, child3, child4, child5}; 
         
