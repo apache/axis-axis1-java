@@ -77,13 +77,15 @@ import org.apache.axis.encoding.DeserializerImpl;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * Base class for Axis Serialization Factory classes for code reuse
  *
  * @author Rich Scheuerle <scheu@us.ibm.com>
  */
-public abstract class BaseSerializerFactory implements SerializerFactory {
+public abstract class BaseSerializerFactory 
+    implements SerializerFactory {
 
     static Vector mechanisms = null;
     
@@ -93,64 +95,137 @@ public abstract class BaseSerializerFactory implements SerializerFactory {
     protected QName xmlType = null;
     protected Class javaType = null;
     protected Constructor serClassConstructor = null;
+    protected Method getSerializer = null;
+    protected boolean firstCall = true;
 
     /**
      * Constructor
      * @param serClass is the class of the Serializer
-     * @param share indicates if serializers can be shared...i.e. getSerializerAs 
-     * will always return the same serializer object if share is true.  Sharing is
-     * only valid for xml primitives.
+     * @param share indicates if serializers can be shared. getSerializerAs 
+     * will always return the same serializer object if share is true.  
+     * Sharing is only valid for xml primitives.
      */
     public BaseSerializerFactory(Class serClass, boolean share) {
         this.serClass = serClass;
         this.share = share;
     }
-    public BaseSerializerFactory(Class serClass, boolean share, QName xmlType, Class javaType) {
+    public BaseSerializerFactory(Class serClass, boolean share, 
+                                 QName xmlType, Class javaType) {
         this.serClass = serClass;
         this.share = share;
         this.xmlType = xmlType;
         this.javaType = javaType;
     }
 
-    public javax.xml.rpc.encoding.Serializer getSerializerAs(String mechanismType)
+    public javax.xml.rpc.encoding.Serializer 
+        getSerializerAs(String mechanismType)
         throws JAXRPCException {
         // Need to add code to check against mechanisms vector.
         if (share && ser != null) {
             return ser;
         }
-        // First try to new up the serializer with qname, class arguments
         ser = null;
-        if (javaType != null && xmlType != null) {
-            try {
-                if (serClassConstructor == null) {
-                    serClassConstructor = 
-                        serClass.getConstructor(new Class[] {Class.class, QName.class});
-                }
-                ser = (Serializer) 
-                    serClassConstructor.newInstance(new Object[] {javaType, xmlType});
-            } catch (Exception e) {
-                // ignore this error and continue
-            }
-        }
-        // If not successfull, try newInstance with no arguments
-        if (ser == null) {
-            try {
-                ser = (Serializer) serClass.newInstance();
-            } catch (Exception e) {
-                throw new JAXRPCException(
-                        JavaUtils.getMessage("CantGetSerializer", 
-                                             serClass.getName()),
-                        e);
-            }
-        }
 
+        try {
+            // Try getting a specialized Serializer
+            ser = getSpecialized(mechanismType);
+            
+            // Try getting a general purpose Serializer via constructor
+            // invocation
+            if (ser == null) {
+                ser = getGeneralPurpose(mechanismType);
+            }
+            
+            // If not successfull, try newInstance
+            if (ser == null) {
+                ser = (Serializer) serClass.newInstance();
+            }
+        } catch (Exception e) {
+            throw new JAXRPCException(
+                JavaUtils.getMessage("CantGetSerializer", 
+                                     serClass.getName()),
+                e);
+        }
+        firstCall = false;
         return ser;
+    }
+    
+    /**
+     * Obtains a serializer by invoking <constructor>(javaType, xmlType) 
+     * on the serClass.
+     */
+    protected Serializer getGeneralPurpose(String mechanismType) {
+        if (javaType != null && xmlType != null) {
+            if (serClassConstructor == null && firstCall) {
+                try {
+                    serClassConstructor = 
+                        serClass.getConstructor(
+                            new Class[] {Class.class, QName.class});
+                } catch (NoSuchMethodException e) {}
+            }
+            if (serClassConstructor != null) {
+                try {
+                    return (Serializer) 
+                        serClassConstructor.newInstance(
+                            new Object[] {javaType, xmlType});
+                } catch (InstantiationException e) {
+                } catch (IllegalAccessException e) {
+                } catch (InvocationTargetException e) {}
+            }
+        }
+        return null;
     }
 
     /**
-     * Returns a list of all XML processing mechanism types supported by this SerializerFactory.
+     * Obtains a serializer by invoking getSerializer method in the 
+     * javaType class or its Helper class.
+     */
+    protected Serializer getSpecialized(String mechanismType) {
+        if (javaType != null && xmlType != null) {
+            if (getSerializer == null && firstCall) {
+                try {
+                    getSerializer = 
+                        javaType.getMethod("getSerialier",
+                                           new Class[] {String.class, 
+                                                        Class.class, 
+                                                        QName.class});
+                } catch (NoSuchMethodException e) {}
+                if (getSerializer == null) {
+                    try {
+                        ClassLoader cl = 
+                            Thread.currentThread().getContextClassLoader();
+                        Class helper = Class.forName(
+                            javaType.getName() + "_Helper", true, cl);
+                        getSerializer =
+                            helper.getMethod("getSerializer", 
+                                             new Class[] {String.class, 
+                                                          Class.class, 
+                                                          QName.class});
+                    } catch (NoSuchMethodException e) {
+                    } catch (ClassNotFoundException e) {}
+                }
+            }
+            if (getSerializer != null) {
+                try {
+                    return (Serializer) 
+                        getSerializer.invoke(
+                                             null,
+                                             new Object[] {mechanismType, 
+                                                           javaType, 
+                                                           xmlType});
+                } catch (IllegalAccessException e) {
+                } catch (InvocationTargetException e) {}
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns a list of all XML processing mechanism types supported
+     * by this SerializerFactory.
      *
-     * @return List of unique identifiers for the supported XML processing mechanism types
+     * @return List of unique identifiers for the supported XML 
+     * processing mechanism types
      */
     public Iterator getSupportedMechanismTypes() {
         if (mechanisms == null) {
@@ -170,27 +245,42 @@ public abstract class BaseSerializerFactory implements SerializerFactory {
      * @param QName xmlType
      * @param Class javaType
      */
-    public static SerializerFactory createFactory(Class factory, Class javaType, QName xmlType) {
+    public static SerializerFactory createFactory(Class factory, 
+                                                  Class javaType, 
+                                                  QName xmlType) {
 
         SerializerFactory sf = null;
         try {
-            Method method = factory.getMethod("create", new Class[] {Class.class, QName.class});
-            sf = (SerializerFactory) method.invoke(null, new Object[] {javaType, xmlType});
-        } catch (Exception e) {}
+            Method method = 
+                factory.getMethod(
+                    "create",
+                    new Class[] {Class.class, QName.class});
+            sf = (SerializerFactory) 
+                method.invoke(null, 
+                              new Object[] {javaType, xmlType});
+        } catch (NoSuchMethodException e) {
+        } catch (IllegalAccessException e) {
+        } catch (InvocationTargetException e) {}
 
         if (sf == null) {
             try {
                 Constructor constructor =  
-                    factory.getConstructor(new Class[] {Class.class, QName.class});
+                    factory.getConstructor(
+                        new Class[] {Class.class, QName.class});
                 sf = (SerializerFactory) 
-                    constructor.newInstance(new Object[] {javaType, xmlType});
-            } catch (Exception e) {}
+                    constructor.newInstance(
+                        new Object[] {javaType, xmlType});
+            } catch (NoSuchMethodException e) {
+            } catch (InstantiationException e) {
+            } catch (IllegalAccessException e) {
+            } catch (InvocationTargetException e) {}
         }
         
         if (sf == null) {
             try {
                 sf = (SerializerFactory) factory.newInstance();
-            } catch (Exception e) {}
+            } catch (InstantiationException e) {
+            } catch (IllegalAccessException e) {}
         }
         return sf;
     }

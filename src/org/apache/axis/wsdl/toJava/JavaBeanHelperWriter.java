@@ -67,11 +67,11 @@ import java.util.Iterator;
  * This is Wsdl2java's Helper Type Writer.  It writes the <typeName>.java file.
  */
 public class JavaBeanHelperWriter extends JavaWriter {
-    private TypeEntry type;
-    private Vector elements;
-    private Vector attributes;
-    private TypeEntry extendType;
-    private HashMap elementMappings = null;
+    protected TypeEntry type;
+    protected Vector elements;
+    protected Vector attributes;
+    protected TypeEntry extendType;
+    protected HashMap elementMappings = null;
 
     /**
      * Constructor.
@@ -107,7 +107,22 @@ public class JavaBeanHelperWriter extends JavaWriter {
             pw.println("public class " + className + " {");
         }
 
-        // Build elementMappings
+        writeMetaData();
+        writeSerializer();
+        writeDeserializer();
+
+        if (!embeddedCode) {
+            pw.println("}");
+            pw.close();
+        }
+        
+    } // writeFileBody
+
+    /**
+     * write MetaData code
+     */
+    protected void writeMetaData() {
+        // Collect elementMappings
         if (elements != null) {
             for (int i = 0; i < elements.size(); i++) {
                 ElementDecl elem = (ElementDecl)elements.get(i);
@@ -124,7 +139,6 @@ public class JavaBeanHelperWriter extends JavaWriter {
                 }
             }
         }
-
         // if we have attributes, create metadata function which returns the
         // list of properties that are attributes instead of elements
 
@@ -186,11 +200,59 @@ public class JavaBeanHelperWriter extends JavaWriter {
             pw.println("    }");
             pw.println();
         }
-        if (!embeddedCode) {
-            pw.println("}");
-            pw.close();
-        }
-        
-    } // writeFileBody
+    }
 
+    /**
+     * write Serializer getter code and pass in meta data to avoid
+     * undo introspection.
+     */
+    protected void writeSerializer() {
+        String typeDesc = null;
+        if (attributes != null || elementMappings != null) {
+            typeDesc = "typeDesc";
+        }
+        String ser = " org.apache.axis.encoding.ser.BeanSerializer";
+        if (type.isSimpleType()) {
+            ser = " org.apache.axis.encoding.ser.SimpleSerializer";
+        }
+        pw.println("    /**");
+        pw.println("     * Get Custom Serializer");
+        pw.println("     */");
+        pw.println("    public static org.apache.axis.encoding.Serializer getSerializer(");
+        pw.println("           String mechType, ");
+        pw.println("           Class _javaType,  ");
+        pw.println("           javax.xml.rpc.namespace.QName _xmlType) {");
+        pw.println("        return ");
+        pw.println("          new " + ser +"(");
+        pw.println("            _javaType, _xmlType," + typeDesc + ");");
+        pw.println("    };");
+        pw.println();
+    }
+
+    /**
+     * write Deserializer getter code and pass in meta data to avoid
+     * undo introspection.
+     */
+    protected void writeDeserializer() {
+        String typeDesc = null;
+        if (attributes != null || elementMappings != null) {
+            typeDesc = "typeDesc";
+        }
+        String dser = " org.apache.axis.encoding.ser.BeanDeserializer";
+        if (type.isSimpleType()) {
+            dser = " org.apache.axis.encoding.ser.SimpleDeserializer";
+        }
+        pw.println("    /**");
+        pw.println("     * Get Custom Deserializer");
+        pw.println("     */");
+        pw.println("    public static org.apache.axis.encoding.Deserializer getDeserializer(");
+        pw.println("           String mechType, ");
+        pw.println("           Class _javaType,  ");
+        pw.println("           javax.xml.rpc.namespace.QName _xmlType) {");
+        pw.println("        return ");
+        pw.println("          new " + dser + "(");
+        pw.println("            _javaType, _xmlType," + typeDesc + ");");
+        pw.println("    };");
+        pw.println();
+    }
 } // class JavaBeanHelperWriter

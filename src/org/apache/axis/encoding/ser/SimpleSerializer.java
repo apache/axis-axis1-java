@@ -108,6 +108,16 @@ public class SimpleSerializer implements Serializer {
             typeDesc = TypeDesc.getTypeDescForClass(javaType);
         }
     }
+    public SimpleSerializer(Class javaType, QName xmlType, TypeDesc typeDesc) {
+        this.xmlType = xmlType;
+        this.javaType = javaType;
+        this.typeDesc = typeDesc;
+        
+        if (SimpleType.class.isAssignableFrom(javaType)) {
+            // get the bean properties and the list of attributes from the bean
+            propertyDescriptor = BeanSerializer.getPd(javaType);
+        }
+    }
     /**
      * Serialize a primitive or simple value.
      * If the object to serialize is a primitive, the Object value below

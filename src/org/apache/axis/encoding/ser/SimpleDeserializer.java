@@ -125,10 +125,24 @@ public class SimpleDeserializer extends DeserializerImpl {
             }
 
             typeDesc = TypeDesc.getTypeDescForClass(javaType);
-        }
-        
+        }        
     }
+    public SimpleDeserializer(Class javaType, QName xmlType, TypeDesc typeDesc) {
+        this.xmlType = xmlType;
+        this.javaType = javaType;
+        this.typeDesc = typeDesc;
         
+        // if this type is a SimpleType bean, get bean properties
+        if (SimpleType.class.isAssignableFrom(javaType)) {
+            this.pd = BeanSerializer.getPd(javaType);
+            // loop through properties and grab the names for later
+            for (int i = 0; i < pd.length; i++) {
+                BeanPropertyDescriptor descriptor = pd[i];
+                propertyMap.put(descriptor.getName(), descriptor);
+            }
+        }        
+    }    
+      
     /** 
      * The Factory calls setConstructor.
      */
