@@ -74,6 +74,7 @@ them.
 <property name="test.functional.usefile" value="true" />
 <property name="test.functional.reportdir" location="${axis.home}/test-reports" />
 <property name="test.functional.SimpleAxisPort" value="8080" />
+<property name="test.functional.SimpleAxisServerPort" value="8088" />
 <property name="test.functional.fail" value="yes" />
 
 <!-- Place Holder for proxy settings -->
