@@ -77,10 +77,8 @@ import java.io.IOException;
  * 
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
-public class AdminServlet extends HttpServlet {
-    public AxisServer getEngine() throws AxisFault {
-        return AxisServlet.getEngine(this);
-    }
+public class AdminServlet extends AxisServletBase {
+
 
     public void doGet(HttpServletRequest req, HttpServletResponse res)
         throws ServletException, IOException {
@@ -104,6 +102,7 @@ public class AdminServlet extends HttpServlet {
         }
         str += "<p><a href=\"AdminServlet?cmd=start\">start server</a>";
         str += "<p><a href=\"AdminServlet?cmd=stop\">stop server</a>";
+        str += "<p>Current Load = "+getLoadCounter();
         res.getWriter().println( str );
     }
 }
