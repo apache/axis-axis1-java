@@ -368,17 +368,22 @@ public class ArraySerializer implements Serializer
                     Object aValue = Array.get(value, index);
 
                     // Serialize the element.
-                    context.serialize(elementName, serializeAttr, aValue,
-                                      componentQName); // prefered type QName
+                    context.serialize(elementName,
+                            (serializeAttr == null ?
+                            serializeAttr : new AttributesImpl(serializeAttr)),
+                            aValue,
+                            componentQName); // prefered type QName
                 }
             } else {
                 for (Iterator iterator = list.iterator(); iterator.hasNext();) {
                     Object aValue = iterator.next();
 
                     // Serialize the element.
-                    context.serialize(elementName, serializeAttr, aValue,
-                                      componentQName); // prefered type QName
-
+                    context.serialize(elementName,
+                            (serializeAttr == null ?
+                            serializeAttr : new AttributesImpl(serializeAttr)),
+                            aValue,
+                            componentQName); // prefered type QName
                 }
             }
         } else {
