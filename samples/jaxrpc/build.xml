@@ -85,6 +85,7 @@ Copyright:
     <copy todir="${build.dir}/work/samples/jaxrpc/hello" overwrite="yes">
       <fileset dir="${axis.home}/samples/jaxrpc/hello">
         <include name="ServerHandler.java"/>
+        <include name="ClientHandler.java"/>
       </fileset>
     </copy>
 

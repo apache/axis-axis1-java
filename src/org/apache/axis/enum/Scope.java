@@ -28,16 +28,16 @@ public class Scope extends Enum {
     public static final String REQUEST_STR = "Request";
     public static final String APPLICATION_STR = "Application";
     public static final String SESSION_STR = "Session";
+    public static final String FACTORY_STR = "Factory";
 
     public static final Scope REQUEST = type.getScope(REQUEST_STR);
     public static final Scope APPLICATION = type.getScope(APPLICATION_STR);
     public static final Scope SESSION = type.getScope(SESSION_STR);
-        
+    public static final Scope FACTORY = type.getScope(FACTORY_STR);
+
     public static final Scope DEFAULT = REQUEST;
 
-
     static { type.setDefault(DEFAULT); }
-
     
     // public int     getValue();
     // public String  getName();
@@ -74,7 +74,8 @@ public class Scope extends Enum {
             super("scope", new Enum[] {
                 new Scope(0, REQUEST_STR),
                 new Scope(1, APPLICATION_STR),
-                new Scope(2, SESSION_STR)
+                new Scope(2, SESSION_STR),
+                new Scope(3, FACTORY_STR)
             });
         }
 

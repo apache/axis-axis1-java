@@ -18,6 +18,8 @@ package org.apache.axis.types;
 
 import org.apache.axis.utils.Messages;
 
+import java.util.Calendar;
+
 
 /**
  * Implementation of the XML Schema type duration
@@ -324,5 +326,20 @@ public class Duration implements java.io.Serializable {
         hashCode += seconds;
 
         return hashCode;
+    }
+
+    public Calendar getAsCalendar() {
+        return getAsCalendar(Calendar.getInstance());
+    }
+
+    public Calendar getAsCalendar(Calendar startTime) {
+        Calendar ret = (Calendar)startTime.clone();
+        ret.add(Calendar.YEAR, years);
+        ret.add(Calendar.MONTH, months);
+        ret.add(Calendar.DATE, days);
+        ret.add(Calendar.HOUR, hours);
+        ret.add(Calendar.MINUTE, minutes);
+        ret.add(Calendar.SECOND, (int)seconds);
+        return ret;
     }
 }

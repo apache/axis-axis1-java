@@ -1371,4 +1371,8 @@ public class SerializationContextImpl implements SerializationContext
         SimpleValueSerializer simpleSer = (SimpleValueSerializer)ser;
         return simpleSer.getValueAsString(value, this);
     }
+
+    public void setWriteXMLType(QName type) {
+        writeXMLType = type;
+    }
 }

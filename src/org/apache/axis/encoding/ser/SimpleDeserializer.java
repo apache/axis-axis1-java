@@ -197,6 +197,10 @@ public class SimpleDeserializer extends DeserializerImpl {
      */
     public Object makeValue(String source) throws Exception
     {
+        // Trim whitespace if non-String
+        if (javaType != java.lang.String.class)
+            source = source.trim();
+
         if (source.length() == 0 && typeDesc == null &&
                 javaType != java.lang.String.class) {
             return null;

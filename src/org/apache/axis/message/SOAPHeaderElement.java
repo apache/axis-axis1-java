@@ -54,6 +54,11 @@ public class SOAPHeaderElement extends MessageElement
         super(name);
     }
 
+    public SOAPHeaderElement(QName qname)
+    {
+        super(qname);
+    }
+
     public SOAPHeaderElement(String namespace, String localPart, Object value)
     {
         super(namespace, localPart, value);

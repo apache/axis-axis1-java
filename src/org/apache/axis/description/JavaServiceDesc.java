@@ -606,6 +606,10 @@ public class JavaServiceDesc implements ServiceDesc {
                         throw new InternalException("Couldn't match method to any of the allowable message-style patterns!");
                     }
                     oper.setMessageOperationStyle(messageOperType);
+
+                    // Don't bother checking params if we're message style
+                    possibleMatch = method;
+                    break;
                 }
 
                 // Check params

@@ -149,6 +149,11 @@ public class MessageElement implements SOAPElement,
         objectValue = value;
     }
 
+    public MessageElement(QName name)
+    {
+        this(name.getNamespaceURI(), name.getLocalPart());
+    }
+
     public MessageElement(QName name, Object value)
     {
         this(name.getNamespaceURI(), name.getLocalPart());
@@ -1403,7 +1408,23 @@ public class MessageElement implements SOAPElement,
         return children.iterator();
     }
 
-    public Iterator getChildElements(Name name) {
+    /**
+     * Convenience method to get the first matching child for a given QName.
+     * 
+     * @param qname
+     * @return
+     */
+    public MessageElement getChildElement(QName qname) {
+        if (children == null) return null;
+        for (Iterator i = children.iterator(); i.hasNext();) {
+            MessageElement child = (MessageElement) i.next();
+            if (child.getQName().equals(qname))
+                return child;
+        }
+        return null;
+    }
+
+    public Iterator getChildElements(QName qname) {
         if (children == null)
             children = new ArrayList();
         int num = children.size();
@@ -1412,12 +1433,16 @@ public class MessageElement implements SOAPElement,
         for (int i = 0; i < num; i++) {
             MessageElement child = (MessageElement)children.get(i);
             Name cname = child.getElementName();
-            if (cname.getURI().equals(name.getURI()) &&
-                cname.getLocalName().equals(name.getLocalName())) {
+            if (cname.getURI().equals(qname.getNamespaceURI()) &&
+                cname.getLocalName().equals(qname.getLocalPart())) {
                 c.add(child);
             }
         }
         return c.iterator();
+    }
+
+    public Iterator getChildElements(Name name) {
+        return getChildElements(new QName(name.getURI(), name.getLocalName()));
     }
 
     public String getTagName() {
@@ -1457,7 +1482,7 @@ public class MessageElement implements SOAPElement,
     }
 
     public String getAttribute(String name) {
-        return  attributes.getValue(name);
+        return attributes.getValue(name);
     }
 
     public void removeAttributeNS(String namespaceURI, String localName) throws DOMException {
