@@ -757,13 +757,20 @@ java.rmi.Remote {
 <br>&nbsp;&nbsp;&nbsp; public void addEntry(String
 name, Address address) throws java.rmi.RemoteException;
 <br>}</font></div>
-<p>The name of the SDI is typically the name of the portType.&nbsp; However,&nbsp;
-if information in the binding affects the appearance of the SDI, then the
-name of the SDI is the name of the binding, not the name of the portType.&nbsp;
-(For example, JAX-RPC assumes that the bindings will be rpc/encoded - it
-IS an RPC specification, after all.&nbsp; If the binding specifies document/literal,
-then the signature of the Java methods will be different.&nbsp; See the
-JAX-RPC specification for details).
+<p>A note about the name of the SDI.  The name of the SDI is typically the name of the portType.  However, to construct the SDI, WSDL2Java needs information from both the portType <b>and</b> the binding.  (This is unfortunate and is a topic of discussion for WSDL version 2.)
+<p>JAX-RPC says (section 4.3.3):  "The name of the Java interface is mapped
+from the name attribute of the wsdl:portType element. ... If the mapping to
+a service definition interface uses elements of the wsdl:binding ..., then
+the name of the service definition interface is mapped from the name of the
+wsdel:binding element."
+<p>Note the name of the spec.  It contains the string "RPC".  So this spec,
+and WSDL2Java, assumes that the interface generated from the portType is an
+RPC interface.  If information from the binding tells us otherwise (in
+other words, we use elements of the wsdl:binding), then the name of the
+interface is derived instead from the binding.
+<p>Why?  We could have one portType - pt - and two bindings - bRPC and
+bDoc.  Since document/literal changes what the interface looks like, we cannot use a single interface for both of these bindings, so we end up with 2 interfaces - one named pt and another named bDoc - and two stubs - bRPCStub (which implements pt) and bDocStub (which implements bDoc).
+<p>Ugly, isn't it?  But you can see why it's necessary.  Since document/literal changes what the interface looks like, and we could have more than one binding referring to a single portType, we have to create more than one interface, and each interface must have a unique name.
 <br>&nbsp;
 <h4>
 Bindings</h4>
@@ -1447,40 +1454,30 @@ JAX-RPC interfaces.  At the time of this writing, JAX-RPC is still in the public
 <li>javax.xml.rpc.server.ServiceLifecycle</li>
 <li>javax.xml.rpc.soap.SOAPFault</li>
 <li>javax.xml.rpc.soap.SOAPHeaderFault</li>
-<li>javax.xml.soap.AttachmentPart</li>
-<li>javax.xml.soap.Detail</li>
-<li>javax.xml.soap.DetailEntry</li>
-<li>javax.xml.soap.FactoryFinder</li>
-<li>javax.xml.soap.MessageFactory</li>
-<li>javax.xml.soap.MimeHeader</li>
-<li>javax.xml.soap.MimeHeaders</li>
-<li>javax.xml.soap.Name</li>
-<li>javax.xml.soap.Node</li>
-<li>javax.xml.soap.SOAPBody</li>
-<li>javax.xml.soap.SOAPBodyElement</li>
-<li>javax.xml.soap.SOAPConnection</li>
-<li>javax.xml.soap.SOAPConnectionFactory</li>
-<li>javax.xml.soap.SOAPConstants</li>
-<li>javax.xml.soap.SOAPElement</li>
-<li>javax.xml.soap.SOAPElementFactory</li>
-<li>javax.xml.soap.SOAPEnvelope</li>
-<li>javax.xml.soap.SOAPException</li>
-<li>javax.xml.soap.SOAPFault</li>
-<li>javax.xml.soap.SOAPFaultElement</li>
-<li>javax.xml.soap.SOAPHeader</li>
-<li>javax.xml.soap.SOAPHeaderElement</li>
-<li>javax.xml.soap.SOAPMessage</li>
-<li>javax.xml.soap.SOAPPart</li>
-<li>javax.xml.soap.Text</li>
 <li>javax.xml.transform.Source</li>
 </ul>
 </li>
 <li>AXIS interfaces:
 <ul>
+<li>org.apache.axis.AxisFault</li>
+<li>org.apache.axis.Handler</li>
+<li>org.apache.axis.DefaultEngineConfigurationFactory</li>
+<li>org.apache.axis.EngineConfiguration</li>
+<li>org.apache.axis.EngineConfigurationFactory</li>
+<li>org.apache.axis.Message</li>
+<li>org.apache.axis.MessageContext</li>
+<li>org.apache.axis.SOAPPart</li>
 <li>org.apache.axis.client.Call</li>
 <li>org.apache.axis.client.Service</li>
 <li>org.apache.axis.client.ServiceFactory</li>
 <li>org.apache.axis.client.Stub</li>
+<li>org.apache.axis.client.Transport</li>
+<li>org.apache.axis.description.TypeDesc</li>
+<li>org.apache.axis.description.AttributeDesc</li>
+<li>org.apache.aixs.description.ElementDesc</li>
+<li>org.apache.axis.encoding.SerializationContext</li>
+<li>org.apache.axis.session.Session</li>
+<li>org.apache.axis.transport.http.SimpleAxisServer</li>
 <li>org.apache.axis.wsdl.WSDL2Java</li>
 <li>org.apache.axis.wsdl.Java2WSDL</li>
 </ul>
