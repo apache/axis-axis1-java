@@ -1189,8 +1189,8 @@ public class Call implements javax.xml.rpc.Call {
      */
     public void setTransport(Transport trans) {
         transport = trans;
-        if (log.isInfoEnabled())
-            log.info(JavaUtils.getMessage("transport00", "" + transport));
+        if (log.isDebugEnabled())
+            log.debug(JavaUtils.getMessage("transport00", "" + transport));
     }
 
     /** Get the Transport registered for the given protocol.

@@ -245,8 +245,8 @@ public class AxisServer extends AxisEngine
                 hName = msgContext.getTransportName();
                 SimpleTargetedChain transportChain = null;
 
-                if (log.isInfoEnabled())
-                    log.info(JavaUtils.getMessage("transport01", "AxisServer.invoke", hName));
+                if (log.isDebugEnabled())
+                    log.debug(JavaUtils.getMessage("transport01", "AxisServer.invoke", hName));
 
                 if ( hName != null && (h = getTransport( hName )) != null ) {
                     if (h instanceof SimpleTargetedChain) {
@@ -394,8 +394,8 @@ public class AxisServer extends AxisEngine
                 hName = msgContext.getTransportName();
                 SimpleTargetedChain transportChain = null;
 
-                if (log.isInfoEnabled())
-                    log.info(JavaUtils.getMessage("transport01", "AxisServer.invoke", hName));
+                if (log.isDebugEnabled())
+                    log.debug(JavaUtils.getMessage("transport01", "AxisServer.invoke", hName));
                 if ( hName != null && (h = getTransport( hName )) != null ) {
                     if (h instanceof SimpleTargetedChain) {
                         transportChain = (SimpleTargetedChain)h;

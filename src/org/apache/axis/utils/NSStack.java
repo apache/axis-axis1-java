@@ -87,15 +87,19 @@ public class NSStack {
     
     public void push() {
         if (stack == null) stack = new Stack();
+
         if (log.isDebugEnabled())
             log.debug("NSPush (" + stack.size() + ")");
+
         stack.push(EMPTY);
     }
     
     public void push(ArrayList table) {
         if (stack == null) stack = new Stack();
+
         if (log.isDebugEnabled())
             log.debug("NSPush (" + stack.size() + ")");
+
         if (table.size() == 0) 
            stack.push(EMPTY);
         else
@@ -117,8 +121,10 @@ public class NSStack {
         if (stack.isEmpty()) {
             if (log.isDebugEnabled())
                 log.debug("NSPop (" + JavaUtils.getMessage("empty00") + ")");
+
             if (parent != null)
                 return parent.pop();
+
             return null;
         }
         
@@ -201,6 +207,7 @@ public class NSStack {
 
         if (log.isDebugEnabled()){
             log.debug(JavaUtils.getMessage("noPrefix00", "" + this, prefix));
+
             dump();
         }
 
@@ -232,22 +239,24 @@ public class NSStack {
         Enumeration e = stack.elements();
         while (e.hasMoreElements()) {
             ArrayList list = (ArrayList)e.nextElement();
-            log.info("----");
+            log.debug("----");
+
             if (list == null) {
-                log.info(JavaUtils.getMessage("nullTable00"));
+                log.debug(JavaUtils.getMessage("nullTable00"));
                 continue;
             }
+
             for (int i = 0; i < list.size(); i++) {
                 Mapping map = (Mapping)list.get(i);
-                log.info(map.getNamespaceURI() + " -> " + map.getPrefix());
+                log.debug(map.getNamespaceURI() + " -> " + map.getPrefix());
             }
         }
 
         if (parent != null) {
-            log.info("----" + JavaUtils.getMessage("parent00"));
+            log.debug("----" + JavaUtils.getMessage("parent00"));
             parent.dump();
         }
 
-        log.info("----" + JavaUtils.getMessage("end00"));
+        log.debug("----" + JavaUtils.getMessage("end00"));
     }
 }

@@ -152,17 +152,18 @@ public class JWSProcessor extends BasicHandler
                 outDirectory.mkdirs();
             }
 
-            if (log.isInfoEnabled())
-                log.info("jwsFile: " + jwsFile );
+            if (log.isDebugEnabled())
+                log.debug("jwsFile: " + jwsFile );
+            
             String   jFile   = outdir + File.separator + file.substring(0, file.length()-3) +
                     "java" ;
             String   cFile   = outdir + File.separator + file.substring(0, file.length()-3) +
                     "class" ;
 
-            if (log.isInfoEnabled()) {
-                log.info("jFile: " + jFile );
-                log.info("cFile: " + cFile );
-                log.info("outdir: " + outdir);
+            if (log.isDebugEnabled()) {
+                log.debug("jFile: " + jFile );
+                log.debug("cFile: " + cFile );
+                log.debug("outdir: " + outdir);
             }
 
             File  f1 = new File( cFile );
@@ -179,8 +180,8 @@ public class JWSProcessor extends BasicHandler
             clsName = clsName.substring( 0, clsName.length()-4 );
             clsName = clsName.replace('/', '.');
 
-            if (log.isInfoEnabled())
-                log.info("ClsName: " + clsName );
+            if (log.isDebugEnabled())
+                log.debug("ClsName: " + clsName );
 
             /* Check to see if we need to recompile */
             /****************************************/
@@ -189,7 +190,7 @@ public class JWSProcessor extends BasicHandler
                 /* java file then recompile the java file.                 */
                 /* Start by copying the *.jws file to *.java               */
                 /***********************************************************/
-                log.info(JavaUtils.getMessage("compiling00", jwsFile) );
+                log.debug(JavaUtils.getMessage("compiling00", jwsFile) );
                 log.debug(JavaUtils.getMessage("copy00", jwsFile, jFile) );
                 FileReader fr = new FileReader( jwsFile );
                 FileWriter fw = new FileWriter( jFile );

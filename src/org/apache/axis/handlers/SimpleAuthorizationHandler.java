@@ -116,13 +116,13 @@ public class SimpleAuthorizationHandler extends BasicHandler {
         String allowedRoles = (String)serviceHandler.getOption("allowedRoles");
         if (allowedRoles == null) {
             if (allowByDefault) {
-                if (log.isInfoEnabled()) {
-                    log.info(JavaUtils.getMessage( "noRoles00"));
+                if (log.isDebugEnabled()) {
+                    log.debug(JavaUtils.getMessage( "noRoles00"));
                 }
             }
             else {
-                if (log.isInfoEnabled()) {
-                    log.info(JavaUtils.getMessage( "noRoles01"));
+                if (log.isDebugEnabled()) {
+                    log.debug(JavaUtils.getMessage( "noRoles01"));
                 }
 
                 throw new AxisFault( "Server.Unauthorized",
@@ -146,8 +146,8 @@ public class SimpleAuthorizationHandler extends BasicHandler {
             String thisRole = st.nextToken();
             if (provider.userMatches(user, thisRole)) {
 
-                if (log.isInfoEnabled()) {
-                    log.info(JavaUtils.getMessage("auth01", 
+                if (log.isDebugEnabled()) {
+                    log.debug(JavaUtils.getMessage("auth01", 
                         userID, serviceName));
                 }
 
