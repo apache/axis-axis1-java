@@ -836,6 +836,39 @@ public class ServiceDesc {
     }
 
     /**
+     * Is this method from ServiceLifeCycle interface?
+     * @param m
+     * @return true if this method is from ServiceLifeCycle interface
+     */ 
+    private boolean isServiceLifeCycleMethod(Class implClass, Method m) {
+        if(javax.xml.rpc.server.ServiceLifecycle.class.isAssignableFrom(implClass)) {
+            String methodName = m.getName(); 
+
+            if(methodName.equals("init")) {
+                // Check if the method signature is 
+                // "public abstract void init(Object context) throws ServiceException;"
+                Class[] classes = m.getParameterTypes(); 
+                if(classes != null && 
+                   classes.length == 1 && 
+                   classes[0] == Object.class && 
+                   m.getReturnType() == Void.TYPE) {
+                    return true;
+                }
+            } else if (methodName.equals("destroy")){
+                // Check if the method signature is 
+                // "public abstract void destroy();"
+                Class[] classes = m.getParameterTypes(); 
+                if(classes != null && 
+                   classes.length == 0 &&
+                   m.getReturnType() == Void.TYPE) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    /**
      * Recursive helper class for loadServiceDescByIntrospection
      */
     private void loadServiceDescByIntrospectionRecursive(Class implClass)
@@ -847,7 +880,7 @@ public class ServiceDesc {
         Method [] methods = implClass.getDeclaredMethods();
 
         for (int i = 0; i < methods.length; i++) {
-            if (Modifier.isPublic(methods[i].getModifiers())) {
+            if (Modifier.isPublic(methods[i].getModifiers()) && !isServiceLifeCycleMethod(implClass, methods[i])) {
                 getSyncedOperationsForName(implClass, methods[i].getName());
             }
         }
