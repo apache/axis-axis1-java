@@ -604,8 +604,9 @@ public class AxisFault extends java.rmi.RemoteException {
             return null;
         }
         Element result[] = new Element[faultDetails.size()];
-        for (int i=0; i<result.length; i++)
+        for (int i=0; i<result.length; i++) {
             result[i] = (Element) faultDetails.elementAt(i);
+        }
         return result;
     }
 
@@ -667,8 +668,9 @@ public class AxisFault extends java.rmi.RemoteException {
     public void output(SerializationContext context) throws Exception {
 
         SOAPConstants soapConstants = Constants.DEFAULT_SOAP_VERSION;
-        if (context.getMessageContext() != null)
+        if (context.getMessageContext() != null) {
             soapConstants = context.getMessageContext().getSOAPConstants();
+        }
 
         SOAPEnvelope envelope = new SOAPEnvelope(soapConstants);
 
@@ -750,10 +752,12 @@ public class AxisFault extends java.rmi.RemoteException {
      * The base implementation will attempt to serialize exception data
      * the fault was created from an Exception and a type mapping is found for it.
      */
-    public void writeDetails(QName qname, SerializationContext context) throws java.io.IOException {
+    public void writeDetails(QName qname, SerializationContext context)
+            throws java.io.IOException {
         Object detailObject = this.detail;
-        if (detailObject == null)
+        if (detailObject == null) {
             return;
+        }
 
         boolean haveSerializer = false;
         try {
