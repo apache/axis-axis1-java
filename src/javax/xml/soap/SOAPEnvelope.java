@@ -85,8 +85,8 @@ package javax.xml.soap;
  *   <P>It is possible to change the body or header of a <CODE>
  *   SOAPEnvelope</CODE> object by retrieving the current one,
  *   deleting it, and then adding a new body or header. The <CODE>
- *   javax.xml.soap.Node</CODE> method <CODE>deleteNode</CODE>
- *   deletes the XML element (node) on which it is called. For
+ *   javax.xml.soap.Node</CODE> method <CODE>detachNode</CODE>
+ *   detaches the XML element (node) on which it is called. For
  *   example, the following line of code deletes the <CODE>
  *   SOAPBody</CODE> object that is retrieved by the method <CODE>
  *   getBody</CODE>.</P>
