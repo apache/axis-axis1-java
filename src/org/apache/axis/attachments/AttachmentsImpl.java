@@ -604,7 +604,7 @@ public class AttachmentsImpl implements Attachments {
     public java.util.Iterator getAttachments(
             javax.xml.soap.MimeHeaders headers) {
         java.util.Vector vecParts = new java.util.Vector();
-        java.util.Iterator iterator = attachments.values().iterator();
+        java.util.Iterator iterator = GetAttachmentsIterator();
         while(iterator.hasNext()){
             Part part = (Part) iterator.next();
             if(part instanceof AttachmentPart){
@@ -614,6 +614,18 @@ public class AttachmentsImpl implements Attachments {
             }
         }
         return vecParts.iterator();
+    }
+
+    /**
+     * get an iterator over all attachments. This
+     * @return iterator of Part Objects; some of which may be
+     * AttachmentPart instances
+     * @see org.apache.axis.Part
+     * @see AttachmentPart
+     */
+    private java.util.Iterator GetAttachmentsIterator() {
+        java.util.Iterator iterator = attachments.values().iterator();
+        return iterator;
     }
 
     /**
@@ -638,6 +650,23 @@ public class AttachmentsImpl implements Attachments {
 
     public int getSendType(){
       return sendtype;
+    }
+
+    /**
+     * dispose of the attachments and their files; do not use the object
+     * after making this call.
+     */
+
+    public void dispose() {
+        java.util.Iterator iterator = GetAttachmentsIterator();
+        while (iterator.hasNext()) {
+            Part part = (Part) iterator.next();
+            if (part instanceof AttachmentPart) {
+                AttachmentPart apart=(AttachmentPart)part;
+                apart.dispose();
+            }
+        }
+
     }
 
     /**

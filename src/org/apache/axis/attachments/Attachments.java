@@ -266,4 +266,11 @@ public interface Attachments extends java.io.Serializable {
      */
 
     public int getSendType();
+
+    /**
+     * dispose of the attachments and their files; do not use the object
+     * after making this call.
+     */
+
+    public void dispose();
 }

@@ -65,7 +65,6 @@ import java.io.File;
 /**
  * This class allows small attachments to be cached in memory, while large ones are
  * cached out.  It implements a Java Activiation Data source interface.
- * TODO TODO TODO need to delete cached out data sources after a service ends.
  *
  * @author Rick Rineholt
  */

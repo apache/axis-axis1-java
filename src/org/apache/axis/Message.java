@@ -623,4 +623,13 @@ public class Message extends javax.xml.soap.SOAPMessage
         }
         return null;
     }
+
+    /**
+     * dispose of attachments
+     */
+    public void dispose() {
+        if(mAttachments!=null) {
+            mAttachments.dispose();
+        }
+    }
 }

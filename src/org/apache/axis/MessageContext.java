@@ -392,6 +392,14 @@ public class MessageContext implements SOAPMessageContext {
     }
 
     /**
+     * during finalization, the dispose() method is called.
+     * @see #dispose()
+     */
+    protected void finalize() {
+        dispose();
+    }
+
+    /**
      * Mappings of QNames to serializers/deserializers (and therfore
      * to Java types).
      */
@@ -516,7 +524,7 @@ public class MessageContext implements SOAPMessageContext {
      */
     public Message getRequestMessage() {
         return requestMessage ;
-    };
+    }
 
     /**
      * Set the request message, and make sure that message is associated
@@ -529,7 +537,7 @@ public class MessageContext implements SOAPMessageContext {
         if (requestMessage != null) {
             requestMessage.setMessageContext(this);
         }
-    };
+    }
 
     /**
      * Get the response message.
@@ -753,26 +761,26 @@ public class MessageContext implements SOAPMessageContext {
      *  (if it has been so configured - will our deployment
      *   tool do this by default?  - todo by Jacek)
      */
-    public final static String ENGINE_HANDLER      = "engine.handler";
+    public static final String ENGINE_HANDLER      = "engine.handler";
 
     /** This String is the URL that the message came to
      */
-    public final static String TRANS_URL           = "transport.url";
+    public static final String TRANS_URL           = "transport.url";
 
     /** Has a quit been requested? Hackish... but useful... -- RobJ */
-    public final static String QUIT_REQUESTED = "quit.requested";
+    public static final String QUIT_REQUESTED = "quit.requested";
 
     /** Place to store an AuthenticatedUser */
-    public final static String AUTHUSER            = "authenticatedUser";
+    public static final String AUTHUSER            = "authenticatedUser";
 
     /** If on the client - this is the Call object */
-    public final static String CALL                = "call_object" ;
+    public static final String CALL                = "call_object" ;
 
     /** Are we doing Msg vs RPC? - For Java Binding */
-    public final static String IS_MSG              = "isMsg" ;
+    public static final String IS_MSG              = "isMsg" ;
 
     /** The directory where in coming attachments are created. */
-    public final static String ATTACHMENTS_DIR   = "attachments.directory" ;
+    public static final String ATTACHMENTS_DIR   = "attachments.directory" ;
 
     /** A boolean param, to control whether we accept missing parameters
      * as nulls or refuse to acknowledge them.
@@ -782,13 +790,13 @@ public class MessageContext implements SOAPMessageContext {
     /** The value of the property is used by service WSDL generation (aka ?WSDL)
      * For the service's interface namespace if not set TRANS_URL property is used.
      */
-    public final static String WSDLGEN_INTFNAMESPACE      = "axis.wsdlgen.intfnamespace";
+    public static final String WSDLGEN_INTFNAMESPACE      = "axis.wsdlgen.intfnamespace";
 
     /** The value of the property is used by service WSDL generation (aka ?WSDL)
      * For the service's location if not set TRANS_URL property is used.
      *  (helps provide support through proxies.
      */
-    public final static String WSDLGEN_SERV_LOC_URL      = "axis.wsdlgen.serv.loc.url";
+    public static final String WSDLGEN_SERV_LOC_URL      = "axis.wsdlgen.serv.loc.url";
 
     /** The value of the property is used by service WSDL generation (aka ?WSDL)
      *  Set this property to request a certain level of HTTP.
@@ -797,7 +805,7 @@ public class MessageContext implements SOAPMessageContext {
      *  The values MUST use org.apache.axis.transport.http.HTTPConstants.HEADER_PROTOCOL_11
      *    for HTTP 1.1
      */
-    public final static String HTTP_TRANSPORT_VERSION  = "axis.transport.version";
+    public static final String HTTP_TRANSPORT_VERSION  = "axis.transport.version";
 
     public static final String SECURITY_PROVIDER = "securityProvider";
 
@@ -1138,5 +1146,22 @@ public class MessageContext implements SOAPMessageContext {
     public String[] getRoles() {
         //TODO: Flesh this out.
         return null;
+    }
+
+    /**
+     * if a message (or subclass) has any disposal needs, this method
+     * is where it goes. Subclasses *must* call super.dispose(), and
+     * be prepared to be called from the finalizer as well as earlier
+     */
+    public synchronized void dispose() {
+        log.debug("disposing of message context");
+        if(requestMessage!=null) {
+            requestMessage.dispose();
+            requestMessage=null;
+        }
+        if(responseMessage!=null) {
+            responseMessage.dispose();
+            responseMessage=null;
+        }
     }
 }
