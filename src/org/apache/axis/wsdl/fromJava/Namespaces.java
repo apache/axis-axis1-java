@@ -131,7 +131,7 @@ public class Namespaces extends HashMap {
         Iterator i = map.entrySet().iterator();
         while (i.hasNext()) {
             Map.Entry entry = (Map.Entry) i.next();
-            put(entry.getValue(), entry.getKey(), null);
+            put(entry.getKey(), entry.getValue(), null);
         }
     }
 
