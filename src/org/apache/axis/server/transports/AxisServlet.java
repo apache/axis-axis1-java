@@ -106,6 +106,6 @@ public class AxisServlet extends HttpServlet {
     // Send it back along the wire...
     msg = msgContext.getOutgoingMessage();
     res.setContentType( "text/xml" );
-    res.getWriter().println( msg !=  null ? msg.getAsString() : "No data" );
+    res.getWriter().println( msg !=  null ? msg.getAs("String") : "No data" );
   }
 }

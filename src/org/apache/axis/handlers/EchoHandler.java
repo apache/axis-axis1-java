@@ -57,8 +57,15 @@
 
 package org.apache.axis.handlers ;
 
+import org.w3c.dom.* ;
+import org.xml.sax.InputSource ;
+import org.apache.xerces.parsers.* ;
+import org.apache.xerces.framework.* ;
+import org.apache.xml.serialize.* ;
+
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
+import org.apache.axis.message.* ;
 
 public class EchoHandler implements Handler {
   public void init() {
@@ -68,8 +75,10 @@ public class EchoHandler implements Handler {
   }
 
   public void invoke(MessageContext msgContext) throws AxisFault {
-    System.err.println("In EchoHandler");
-    msgContext.setOutgoingMessage( msgContext.getIncomingMessage() );
+    System.err.println("In: EchoHandler");
+    Message  msg = msgContext.getIncomingMessage();
+    SOAPEnvelope env = (SOAPEnvelope) msg.getAs( "SOAPEnvelope" );
+    msgContext.setOutgoingMessage( new Message( env, "SOAPEnvelope" ) );
   }
 
   public void undo(MessageContext msgContext) {

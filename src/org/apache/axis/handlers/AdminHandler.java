@@ -71,7 +71,7 @@ public class AdminHandler implements Handler {
   public void invoke(MessageContext msgContext) throws AxisFault {
     System.err.println("In AdminHandler");
 
-    Document doc = msgContext.getIncomingMessage().getAsDOMDocument();
+    Document doc = (Document) msgContext.getIncomingMessage().getAs("Document");
     Admin    admin = new Admin();
 
     admin.process( doc );

@@ -86,7 +86,7 @@ public class FaultableHandler implements Handler {
     }
     catch( Exception e ) {
       // Is this a Java Exception? a SOAPException? an AxisException?
-      if ( !(e instanceof AxisFault) )
+      if ( !(e instanceof AxisFault) ) 
         e = new AxisFault( e );
 
       String   key          = "blah" ; // add logic to map from e -> key

@@ -65,6 +65,7 @@ import org.xml.sax.InputSource ;
 import org.apache.xerces.parsers.* ;
 import org.apache.xerces.framework.* ;
 import org.apache.xml.serialize.* ;
+import org.apache.axis.message.* ;
 
 public class Message {
   /**
@@ -104,7 +105,19 @@ public class Message {
   // Really should have a pluggable way of defining these but for
   // now I need something quick...
 
-  public byte[] getAsBytes() {
+  public Object getAs( String desiredType ) {
+    if ( currentForm.equals( desiredType ) ) return( currentMessage );
+
+    if ( desiredType.equals( "Bytes" )) return( getAsBytes() );
+    if ( desiredType.equals( "Document" )) return( getAsDOMDocument() );
+    if ( desiredType.equals( "String" )) return( getAsString() );
+    if ( desiredType.equals( "SOAPEnvelope" )) return( getAsSOAPEnvelope() );
+
+    System.err.println("Can't convert " + currentForm + " to " +desiredType);
+    return( null );
+  }
+
+  private byte[] getAsBytes() {
     if ( currentForm.equals("Bytes") ) return( (byte[]) currentMessage );
 
     if ( currentForm.equals("InputStream") ) {
@@ -135,6 +148,10 @@ public class Message {
       }
     }
 
+    if ( currentForm.equals("DOMDocument") ||
+         currentForm.equals("SOAPEnvelope") )
+      getAsString();
+
     if ( currentForm.equals("String") ) {
       setCurrentMessage( ((String)currentMessage).getBytes(), "Bytes" );
       return( (byte[]) currentMessage );
@@ -144,7 +161,7 @@ public class Message {
     return( null );
   }
 
-  public String getAsString() {
+  private String getAsString() {
     if ( currentForm.equals("String") ) return( (String) currentMessage );
 
     if ( currentForm.equals("InputStream") || 
@@ -157,6 +174,9 @@ public class Message {
       setCurrentMessage( new String((byte[]) currentMessage), "String" );
       return( (String) currentMessage );
     }
+
+    if ( currentForm.equals("SOAPEnvelope") )
+      getAsDOMDocument();
 
     if ( currentForm.equals("Document") ) { 
       try {
@@ -177,7 +197,7 @@ public class Message {
     return( null );
   }
 
-  public Document getAsDOMDocument() {
+  private Document getAsDOMDocument() {
     if ( currentForm.equals("Document") ) return( (Document) currentMessage );
 
     DOMParser  parser = new DOMParser();
@@ -193,6 +213,11 @@ public class Message {
         reader = new StringReader( (String) currentMessage );
       else if ( currentForm.equals("Bytes") ) 
         reader = new InputStreamReader( new ByteArrayInputStream((byte[])currentMessage ));
+      else if ( currentForm.equals("SOAPEnvelope") ) {
+        SOAPEnvelope  env = (SOAPEnvelope) currentMessage ;
+        setCurrentMessage( env.getAsDOM(), "Document" );
+        return( (Document) currentMessage );
+      }
       else {
         System.err.println("Can't convert " + currentForm + " to Document" );
         return( null );
@@ -206,6 +231,15 @@ public class Message {
       e.printStackTrace( System.err );
     }
     return( null );
+  }
+
+  private SOAPEnvelope getAsSOAPEnvelope() {
+    if ( currentForm.equals("SOAPEnvelope") ) 
+      return( (SOAPEnvelope) currentMessage );
+    getAsDOMDocument();
+    setCurrentMessage( new SOAPEnvelope( (Document) currentMessage ),
+                       "SOAPEnvelope" );
+    return( (SOAPEnvelope) currentMessage );
   }
 
 };

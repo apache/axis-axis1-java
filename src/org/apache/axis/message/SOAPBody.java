@@ -24,7 +24,7 @@
  *    Alternately, this acknowledgment may appear in the software itself,
  *    if and wherever such third-party acknowledgments normally appear.
  *
- * 4. The names "Axis" and "Apache Software Foundation" must
+ * 4. The names "Xerces" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
  *    software without prior written permission. For written 
  *    permission, please contact apache@apache.org.
@@ -55,68 +55,42 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.client ;
+package org.apache.axis.message ;
 
-import java.net.*;
-import java.io.*;
-import java.util.*;
+// !!!!***** Just a placeholder until we get the real stuff ***!!!!!
 
-public class EchoClient {
+import org.w3c.dom.* ;
+import org.xml.sax.InputSource ;
+import org.apache.xerces.parsers.* ;
+import org.apache.xerces.framework.* ;
+import org.apache.xml.serialize.* ;
+import org.apache.axis.message.* ;
 
-  public static void main(String args[]) {
+public class SOAPBody {
+  protected String    name ;
+  protected String    namespace ;
+  protected String    namespaceURI ;
+  protected NodeList  data ;
 
-    String hdr = "POST /axis/servlet/AxisServlet HTTP/1.0\n" +
-                 "Host: localhost:8080\n" +
-                 "Content-Type: text/xml;charset=utf-8\n" +
-                 "SOAPAction: EchoService\n";
+  public SOAPBody() {
+  }
 
-    String msg = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsi=\"http://www.w3.org/1999/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/1999/XMLSchema\">\n" +
-                 "<SOAP-ENV:Header>\n" +
-                 "<t:Transaction xmlns:t=\"some-URI\" " +
-                 "SOAP-ENV:mustUnderstand=\"1\"> 5 </t:Transaction>" +
-                 "</SOAP-ENV:Header>\n" +
-                 "<SOAP-ENV:Body>\n" +
-                 "<ns1:list xmlns:ns1=\"urn:xml-soap-service-management-service\" SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">\n" +
-                 "</ns1:list>\n" +
-                 "</SOAP-ENV:Body>\n" +
-                 "</SOAP-ENV:Envelope>" ;
+  public SOAPBody(Element elem) {
+    String  value ;
+    namespace = elem.getPrefix();
+    namespaceURI = elem.getNamespaceURI();
+    name = elem.getLocalName();
+    data = elem.getChildNodes();
+  }
 
-    try {
-      String  host = "localhost" ;
-      int     port = 8080 ;
+  public Element getAsXML(Document doc) {
+    Element   root = doc.createElementNS(namespace, namespace + ":" +
+                                         name );
+    root.setAttribute( "xmlns:" + namespace, namespaceURI );
 
-      for ( int i = 0 ; i < args.length ; i++ ) {
-        if ( args[i].charAt(0) == '-' ) {
-          switch( args[i].toLowerCase().charAt(1) ) {
-            case 'h': if ( args[i].length() > 2 )
-                        host = args[i].substring(2);
-                      break ;
-            case 'p': if ( args[i].length() > 2 )
-                        port = Integer.parseInt(args[i].substring(2));
-                      break ;
-            default: System.err.println( "Unknown option '" + 
-                                         args[i].charAt(1) + "'" );
-                     System.exit(1);
-          }
-        }
-      }
-
-      String         cl = "Content-Length: " + msg.length() + "\n\n" ;
-      Socket         sock = new Socket( host, port );
-      InputStream    inp = sock.getInputStream();
-      OutputStream   out = sock.getOutputStream();
-      byte           b ;
-
-      out.write( hdr.getBytes() );
-      out.write( cl.getBytes() );
-      out.write( msg.getBytes() );
-
-      while ( (b = (byte) inp.read()) != -1 ) 
-        System.out.write( b );
-    }
-    catch( Exception e ) {
-      System.err.println( e );
-    }
-  };
+    for ( int i = 0 ; data != null && i < data.getLength() ; i++ )
+      root.appendChild(doc.importNode( data.item(i), true ));
+    return( root );
+  }
 
 };
