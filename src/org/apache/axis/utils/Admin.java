@@ -503,6 +503,10 @@ public class Admin {
 
       System.err.println( "Where <xml-file> looks like:" );
       System.err.println( "<deploy>" );
+      /*
+      System.err.println( "  <transport name=a input=\"a,b,c\" sender=\"s\"");
+      System.err.println( "                    output=\"d,e\"/>" );
+      */
       System.err.println( "  <handler name=a class=className/>" );
       System.err.println( "  <chain name=a flow=\"a,b,c\" />" );
       System.err.println( "  <chain name=a input=\"a,b,c\" pivot=\"d\"" );

@@ -164,6 +164,11 @@ public class SerializationContext
         }
     }
     
+    public void endPrefix(String prefix)
+    {
+        // Do we need to do anything here?
+    }
+    
     public String qName2String(QName qName)
     {
         return getPrefixForURI(qName.getNamespaceURI()) +

@@ -218,7 +218,7 @@ public class ServiceClient {
         Debug.Print( 1, "Enter: ServiceClient::invoke(RPCElement)" );
         SOAPEnvelope         reqEnv = new SOAPEnvelope();
         SOAPEnvelope         resEnv = null ;
-        Message              reqMsg = new Message( reqEnv, "SOAPEnvelope" );
+        Message              reqMsg = new Message( reqEnv );
         Message              resMsg = null ;
         Vector               resBodies = null ;
         Vector               resArgs = null ;
@@ -273,7 +273,7 @@ public class ServiceClient {
          */
         resMsg.setMessageType(ServiceDescription.RESPONSE);
         
-        resEnv = (SOAPEnvelope)resMsg.getAs("SOAPEnvelope");
+        resEnv = (SOAPEnvelope)resMsg.getAsSOAPEnvelope();
 
         SOAPBodyElement respBody = resEnv.getFirstBody();
         if (respBody instanceof SOAPFaultElement) {
@@ -317,19 +317,15 @@ public class ServiceClient {
         
         SOAPEnvelope         reqEnv = null ;
         
-        if ( inMsg.getCurrentForm().equals("SOAPEnvelope") )
-            reqEnv = (SOAPEnvelope) inMsg.getAs("SOAPEnvelope");
-        else {
-            reqEnv = (SOAPEnvelope) inMsg.getAs("SOAPEnvelope");
-            if ( encodingStyleURI != null )
-                reqEnv.setEncodingStyleURI( encodingStyleURI );
-            
-            //SOAPBody  body = new SOAPBody( (Document) inMsg.getAs("Document") );
-            //!!!reqEnv.addBodyElement( body );
-        }
+        reqEnv = (SOAPEnvelope) inMsg.getAsSOAPEnvelope();
+        if ( encodingStyleURI != null )
+            reqEnv.setEncodingStyleURI( encodingStyleURI );
+        
+        //SOAPBody  body = new SOAPBody( (Document) inMsg.getAs("Document") );
+        //!!!reqEnv.addBodyElement( body );
         
         // local (if null) or pre-existing transport (if !null)
-        Message              reqMsg = new Message( reqEnv, "SOAPEnvelope" );
+        Message              reqMsg = new Message( reqEnv );
         
         if ( Debug.getDebugLevel() > 0  ) {
             DebugHeader  header = new DebugHeader(Debug.getDebugLevel());

@@ -143,16 +143,16 @@ public abstract class JavaProvider extends BasicProvider {
             Object          obj    = getServiceObject(msgContext, clsName, methodName, jc);
             
             Message         reqMsg  = msgContext.getRequestMessage();
-            SOAPEnvelope    reqEnv  = (SOAPEnvelope) reqMsg.getAs("SOAPEnvelope");
+            SOAPEnvelope    reqEnv  = (SOAPEnvelope) reqMsg.getAsSOAPEnvelope();
             Message         resMsg  = msgContext.getResponseMessage();
             SOAPEnvelope    resEnv  = (resMsg == null) ?
                 new SOAPEnvelope() :
-                (SOAPEnvelope)resMsg.getAs("SOAPEnvelope");
+                (SOAPEnvelope)resMsg.getAsSOAPEnvelope();
             
             processMessage(msgContext, serviceName, methodName, reqEnv, resEnv, jc, obj);
             
             if (resMsg == null) {
-                resMsg = new Message(resEnv, "SOAPEnvelope");
+                resMsg = new Message(resEnv);
                 msgContext.setResponseMessage( resMsg );
             }
         }

@@ -92,7 +92,7 @@ public class LocalDispatchHandler extends BasicHandler {
     // copy the request, and force its format to String in order to
     // exercise the serializers.
     serverContext.setRequestMessage(clientContext.getRequestMessage());
-    serverContext.getRequestMessage().getAs("String");
+    serverContext.getRequestMessage().getAsString();
 
     // copy soap action if it is present
     String action = clientContext.getStrProp(HTTPConstants.MC_HTTP_SOAPACTION);
@@ -107,7 +107,7 @@ public class LocalDispatchHandler extends BasicHandler {
     // copy back the response, and force its format to String in order to
     // exercise the deserializers.
     clientContext.setResponseMessage(serverContext.getResponseMessage());
-    clientContext.getResponseMessage().getAs("String");
+    clientContext.getResponseMessage().getAsString();
 
     Debug.Print( 1, "Exit: LocalDispatchHandler::invoke" );
   }

@@ -124,7 +124,7 @@ public class AdminClient {
             ServiceClient     hMsg       =
                 new ServiceClient(new HTTPTransport(opts.getURL(), "AdminService"));
             
-            Message         inMsg      = new Message( input, "BodyInputStream" );
+            Message         inMsg      = new Message( input, true );
             hMsg.setRequestMessage( inMsg );
             
             if ( opts.isFlagSet('t') > 0 ) hMsg.doLocal = true ;
@@ -136,7 +136,7 @@ public class AdminClient {
             Message outMsg = hMsg.getMessageContext().getResponseMessage();
             hMsg.getMessageContext().setServiceDescription(new ServiceDescription("Admin", false));
             input.close();
-            SOAPEnvelope envelope = (SOAPEnvelope) outMsg.getAs("SOAPEnvelope");
+            SOAPEnvelope envelope = (SOAPEnvelope) outMsg.getAsSOAPEnvelope();
             SOAPBodyElement body = envelope.getFirstBody();
             StringWriter writer = new StringWriter();
             SerializationContext ctx = new SerializationContext(writer, hMsg.getMessageContext());

@@ -165,7 +165,7 @@ public class HTTPDispatchHandler extends BasicHandler {
         Debug.Print( 1, "Created an insecure HTTP connection");
       }
 
-      reqEnv  = (String) msgContext.getRequestMessage().getAs("String");
+      reqEnv  = (String) msgContext.getRequestMessage().getAsString();
       
       //System.out.println("Msg: " + reqEnv);
 
@@ -280,21 +280,21 @@ public class HTTPDispatchHandler extends BasicHandler {
               len+= inp.read(data,len,data.length-len);
             String xml = new String(data);
   
-            outMsg = new Message( data, "Bytes" );
+            outMsg = new Message( data );
   
             Debug.Print( 1, "\nXML received:" );
             Debug.Print( 1, "-----------------------------------------------");
             Debug.Print( 1, xml );
           }
           else {
-            outMsg = new Message( inp, "InputStream" );
+            outMsg = new Message( inp );
             Debug.Print( 1, "\nNo Content-Length" );
             Debug.Print( 1, "\nXML received:" );
             Debug.Print( 1, "-----------------------------------------------");
-            Debug.Print( 1, (String) outMsg.getAs("String") );
+            Debug.Print( 1, (String) outMsg.getAsString() );
           }
         } else {
-          outMsg = new Message( inp, "InputStream" );
+          outMsg = new Message( inp );
         }
 
         msgContext.setResponseMessage( outMsg );

@@ -170,7 +170,7 @@ System.out.println(targetURL);
       }
        */
 
-      reqEnv  = (String) msgContext.getRequestMessage().getAs("String");
+      reqEnv  = (String) msgContext.getRequestMessage().getAsString();
       
       //System.out.println("Msg: " + reqEnv);
 
@@ -286,12 +286,12 @@ System.out.println(targetURL);
         System.err.println("");
       }
 
-      outMsg = new Message( inp, "InputStream" );
+      outMsg = new Message( inp );
       if (Debug.getDebugLevel() > 0) {
         Debug.Print( 1, "\nNo Content-Length" );
         Debug.Print( 1, "\nXML received:" );
         Debug.Print( 1, "-----------------------------------------------");
-        Debug.Print( 1, (String) outMsg.getAs("String") );
+        Debug.Print( 1, (String) outMsg.getAsString() );
       }
       
       msgContext.setResponseMessage( outMsg );

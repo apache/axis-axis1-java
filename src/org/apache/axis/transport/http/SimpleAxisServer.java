@@ -123,7 +123,7 @@ public class SimpleAxisServer implements Runnable {
 
         // create and initialize a message context
         MessageContext msgContext = new MessageContext(engine);
-        Message        requestMsg = new Message("", "String");
+        Message        requestMsg;
         msgContext.setProperty(MessageContext.TRANS_INPUT , transportInName);
         msgContext.setProperty(MessageContext.TRANS_OUTPUT, transportOutName);
 
@@ -134,9 +134,6 @@ public class SimpleAxisServer implements Runnable {
         // SoapAction
         StringBuffer soapAction = new StringBuffer();
         StringBuffer httpRequest = new StringBuffer();
-
-        // And, just in case it is needed...
-        Message faultMsg = new Message(null, "AxisFault");
 
         // Accept and process requests from the socket
         while (!stopped) {
@@ -150,9 +147,9 @@ public class SimpleAxisServer implements Runnable {
             //   requestMsg = new Message("", "String");
             msgContext.setServiceDescription(null);
             msgContext.setTargetService(null);
-            msgContext.setRequestMessage(requestMsg);
             msgContext.setResponseMessage(null);
             msgContext.clearProperties();
+            msgContext.setProperty("transport", "HTTPTransport");
             msgContext.setProperty(MessageContext.TRANS_INPUT, transportInName);
             msgContext.setProperty(MessageContext.TRANS_OUTPUT, transportOutName);
             try {
@@ -188,7 +185,8 @@ public class SimpleAxisServer implements Runnable {
                     
                     
                     String soapActionString = soapAction.toString();
-                    requestMsg.setCurrentMessage(is, "InputStream");
+                    requestMsg = new Message(is);
+                    msgContext.setRequestMessage(requestMsg);
                     msgContext.setTargetService(soapActionString);
                     msgContext.setProperty(HTTPConstants.MC_HTTP_SOAPACTION,
                                            soapActionString);
@@ -203,19 +201,17 @@ public class SimpleAxisServer implements Runnable {
                         status = UNAUTH; // SC_UNAUTHORIZED
                     }
 
-                    faultMsg.setCurrentMessage(af, "AxisFault");
-                    msgContext.setResponseMessage(faultMsg);
+                    msgContext.setResponseMessage(new Message(af));
 
                 } catch( Exception e ) {
                     status = ISE; // SC_INTERNAL_SERVER_ERROR
-                    faultMsg.setCurrentMessage(new AxisFault(e), "AxisFault");
-                    msgContext.setResponseMessage(faultMsg);
+                    msgContext.setResponseMessage(new Message(new AxisFault(e)));
                 }
 
 
                 // Retrieve the response from Axis
                 Message responseMsg = msgContext.getResponseMessage();
-                byte[] response = (byte[]) responseMsg.getAs("Bytes");
+                byte[] response = (byte[]) responseMsg.getAsBytes();
 
                 // Send it on its way...
                 OutputStream out = socket.getOutputStream();
@@ -461,6 +457,8 @@ public class SimpleAxisServer implements Runnable {
 
         SimpleAxisServer sas = new SimpleAxisServer();
 
+        //Debug.setDebugLevel(6);
+        
         try {
             int port = (args.length==0)? 8080 : Integer.parseInt(args[0]);
             ServerSocket ss = new ServerSocket(port);

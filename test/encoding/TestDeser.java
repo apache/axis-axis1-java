@@ -64,10 +64,10 @@ public class TestDeser extends TestCase {
      * Verify that a given XML deserialized produces the expected result
      */
     protected void deserialize(String data, Object expected) {
-       Message message = new Message(header + data + footer, "String");
+       Message message = new Message(header + data + footer);
        message.setMessageContext(new MessageContext(new AxisServer()));
 
-       SOAPEnvelope envelope = (SOAPEnvelope)message.getAs("SOAPEnvelope");
+       SOAPEnvelope envelope = (SOAPEnvelope)message.getAsSOAPEnvelope();
        assertNotNull("envelope", envelope);
 
        RPCElement body = (RPCElement)envelope.getFirstBody();

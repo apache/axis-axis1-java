@@ -264,7 +264,7 @@ public class MessageContext {
                 // another configurable piece of code to avoid SOAP
                 // specifics in this class.
                 SOAPEnvelope env = (SOAPEnvelope)
-                                    inMessage.getAs("SOAPEnvelope");
+                                    inMessage.getAsSOAPEnvelope();
                 Vector bodies = env.getBodyElements();
                 Enumeration e = bodies.elements();
                 while (e.hasMoreElements()) {

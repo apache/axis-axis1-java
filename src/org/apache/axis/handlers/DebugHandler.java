@@ -76,7 +76,7 @@ public class DebugHandler extends BasicHandler {
         try {
             Message       msg = msgContext.getRequestMessage();
             
-            SOAPEnvelope message = (SOAPEnvelope)msg.getAs("SOAPEnvelope");
+            SOAPEnvelope message = (SOAPEnvelope)msg.getAsSOAPEnvelope();
             SOAPHeader header = message.getHeaderByName(Constants.URI_DEBUG, 
                                                         "Debug");
             if ((header != null) && (header instanceof DebugHeader)) {
