@@ -287,15 +287,9 @@ public class Types {
      * @throws Exception
      */
     private void writeWsdlTypesElement() throws Exception {
-        NodeList nl = docFragment.getChildNodes();
-        for (int n = 0; n < nl.getLength(); n++) {
-            if (nl.item(n).getLocalName().equals("types")) {
-                wsdlTypesElem = (Element)nl.item(n);
-                return;
-            }
+        if (wsdlTypesElem == null) {
+            wsdlTypesElem = docHolder.createElement("types");
         }
-        wsdlTypesElem = docHolder.createElement("types");
-        docFragment.appendChild(wsdlTypesElem);
     }
 
     /**
@@ -698,20 +692,22 @@ public class Types {
      *
      *  Switch over notes: remove docHolder, docFragment in favor of wsdl4j Types
      */
-    DocumentFragment docFragment;
+    //DocumentFragment docFragment;
     Document docHolder;
 
     private void createDocumentFragment () {
         this.docHolder = XMLUtils.newDocument();
-        docFragment = docHolder.createDocumentFragment();
     }
+    
     /**
      * Inserts the type fragment into the given wsdl document
      * @param doc
      */
     public void insertTypesFragment(Document doc) {
-        doc.getDocumentElement().insertBefore(
-                          doc.importNode(docFragment, true),
+        if (wsdlTypesElem != null) {
+            doc.getDocumentElement().insertBefore(
+                          doc.importNode(wsdlTypesElem, true),
                           doc.getDocumentElement().getFirstChild());
+        }
     }
 }
