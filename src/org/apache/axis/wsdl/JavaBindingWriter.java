@@ -75,7 +75,7 @@ public class JavaBindingWriter implements Writer {
     /**
      * Constructor.
      */
-    protected JavaBindingWriter(
+    public JavaBindingWriter(
             Emitter emitter,
             Binding binding,
             SymbolTable symbolTable) {

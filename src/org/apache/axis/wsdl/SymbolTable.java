@@ -566,7 +566,7 @@ public class SymbolTable {
      * Add an in or inout parameter to the parameters object.
      */
     private void addInishParm(Vector inputs, Vector outputs, int index, int outdex, Parameters parameters, boolean trimInput) {
-        Parameters.Parameter p = new Parameters.Parameter();
+        Parameter p = new Parameter();
         p.name = (String) inputs.get(index);
         p.type = (Type) inputs.get(index - 1);
 
@@ -582,7 +582,7 @@ public class SymbolTable {
         if (outdex > 0 && p.type.equals(outputs.get(outdex - 1))) {
             outputs.remove(outdex);
             outputs.remove(outdex - 1);
-            p.mode = Parameters.Parameter.INOUT;
+            p.mode = Parameter.INOUT;
             ++parameters.inouts;
         }
         else {
@@ -595,14 +595,14 @@ public class SymbolTable {
      * Add an output parameter to the parameters object.
      */
     private void addOutParm(Vector outputs, int outdex, Parameters parameters, boolean trim) {
-        Parameters.Parameter p = new Parameters.Parameter();
+        Parameter p = new Parameter();
         p.name = (String) outputs.get(outdex);
         p.type = (Type) outputs.get(outdex - 1);
         if (trim) {
             outputs.remove(outdex);
             outputs.remove(outdex - 1);
         }
-        p.mode = Parameters.Parameter.OUT;
+        p.mode = Parameter.OUT;
         ++parameters.outputs;
         parameters.list.add(p);
     } // addOutParm

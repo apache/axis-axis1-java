@@ -83,7 +83,7 @@ public class JavaDefinitionWriter implements Writer {
     /**
      * Constructor.
      */
-    protected JavaDefinitionWriter(Emitter emitter, Definition definition,
+    public JavaDefinitionWriter(Emitter emitter, Definition definition,
             SymbolTable symbolTable) {
         deployWriter = new JavaDeployWriter(emitter, definition, symbolTable);
         undeployWriter = new JavaUndeployWriter(emitter, definition, symbolTable);

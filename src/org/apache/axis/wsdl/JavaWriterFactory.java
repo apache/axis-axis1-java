@@ -303,27 +303,27 @@ public class JavaWriterFactory implements WriterFactory {
         boolean needComma = false;
 
         for (int i = 0; i < parms.list.size(); ++i) {
-            Parameters.Parameter p = (Parameters.Parameter) parms.list.get(i);
+            Parameter p = (Parameter) parms.list.get(i);
 
             if (needComma) {
                 signature = signature + ", ";
                 axisSig = axisSig + ", ";
-                if (p.mode != Parameters.Parameter.OUT)
+                if (p.mode != Parameter.OUT)
                     skelSig = skelSig + ", ";
             }
             else
                 needComma = true;
-            if (p.mode == Parameters.Parameter.IN) {
+            if (p.mode == Parameter.IN) {
                 signature = signature + p.type.getName() + " " + p.name;
                 axisSig = axisSig + p.type.getName() + " " + p.name;
                 skelSig = skelSig + p.type.getName() + " " + p.name;
             }
-            else if (p.mode == Parameters.Parameter.INOUT) {
+            else if (p.mode == Parameter.INOUT) {
                 signature = signature + Utils.holder(p.type) + " " + p.name;
                 axisSig = axisSig + Utils.holder(p.type) + " " + p.name;
                 skelSig = skelSig + p.type.getName() + " " + p.name;
             }
-            else// (p.mode == Parameters.Parameter.OUT)
+            else// (p.mode == Parameter.OUT)
             {
                 signature = signature + Utils.holder(p.type) + " " + p.name;
                 axisSig = axisSig + Utils.holder(p.type) + " " + p.name;
@@ -360,12 +360,12 @@ public class JavaWriterFactory implements WriterFactory {
                     while (operations.hasNext()) {
                         Parameters parms = (Parameters) operations.next();
                         for (int j = 0; j < parms.list.size(); ++j) {
-                            Parameters.Parameter p =
-                                    (Parameters.Parameter)parms.list.get(j);
+                            Parameter p =
+                                    (Parameter)parms.list.get(j);
 
                             // If the given parameter is an inout or out parameter, then
                             // set a HOLDER_IS_NEEDED flag using the dynamicVar design.
-                            if (p.mode != Parameters.Parameter.IN) {
+                            if (p.mode != Parameter.IN) {
                                 p.type.setDynamicVar(
                                         JavaTypeWriter.HOLDER_IS_NEEDED,
                                         new Boolean(true));

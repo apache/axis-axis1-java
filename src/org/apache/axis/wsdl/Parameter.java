@@ -54,49 +54,24 @@
  */
 package org.apache.axis.wsdl;
 
-import java.io.IOException;
-
-import java.util.HashMap;
-
-import javax.wsdl.QName;
-import javax.wsdl.Service;
+import java.util.Vector;
 
 /**
-* This is Wsdl2java's Service Writer.  It writes the following files, as appropriate:
-* <serviceName>.java, <serviceName>TestCase.java.
-*/
-public class JavaServiceWriter implements Writer {
-    Writer serviceWriter = null;
-    Writer testCaseWriter = null;
+  * This class simply collects
+  */
+public class Parameter {
 
-    /**
-     * Constructor.
-     */
-    public JavaServiceWriter(
-            Emitter emitter,
-            Service service,
-            SymbolTable symbolTable) {
-        ServiceEntry sEntry = symbolTable.getServiceEntry(service.getQName());
-        if (sEntry.isReferenced()) {
-            serviceWriter =
-                    new JavaServiceImplWriter(emitter, sEntry, symbolTable);
-            if (emitter.bEmitTestCase) {
-                testCaseWriter =
-                        new JavaTestCaseWriter(emitter, sEntry, symbolTable);
-            }
-        }
-    } // ctor
+    // constant values for the parameter mode.
+    public static final byte IN = 1;
+    public static final byte OUT = 2;
+    public static final byte INOUT = 3;
 
-    /**
-     * Write all the service bindnigs:  service and testcase.
-     */
-    public void write() throws IOException {
-        if (serviceWriter != null) {
-            serviceWriter.write();
-        }
-        if (testCaseWriter != null) {
-            testCaseWriter.write();
-        }
-    } // write
+    public String name;
+    public Type type;
+    public byte mode = IN;
 
-} // class JavaServiceWriter
+    public String toString() {
+        return "(" + type + ", " + name + ", "
+                + (mode == IN ? "IN)" : mode == INOUT ? "INOUT)" : "OUT)");
+    } // toString
+} // class Parameter

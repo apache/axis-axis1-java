@@ -489,7 +489,7 @@ public class Utils {
     /**
      * Given a type, return the Java mapping of that type's holder.
      */
-    protected static String holder(Type type) {
+    public static String holder(Type type) {
         String typeValue = type.getName();
         if (typeValue.equals("java.lang.String")) {
             return "javax.xml.rpc.holders.StringHolder";

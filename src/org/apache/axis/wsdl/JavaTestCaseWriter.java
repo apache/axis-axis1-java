@@ -211,11 +211,11 @@ public class JavaTestCaseWriter extends JavaWriter {
                     pw.print(", ");
                 }
 
-                Parameters.Parameter param = (Parameters.Parameter) iparam.next();
+                Parameter param = (Parameter) iparam.next();
                 String paramType = null;
 
                 switch (param.mode) {
-                    case Parameters.Parameter.IN:
+                    case Parameter.IN:
                         paramType = param.type.getName();
                         break;
 
