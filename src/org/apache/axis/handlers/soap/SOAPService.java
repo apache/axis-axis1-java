@@ -58,7 +58,6 @@ import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.Handler;
-import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.SimpleTargetedChain;
 import org.apache.axis.attachments.Attachments;
@@ -72,7 +71,6 @@ import org.apache.axis.handlers.HandlerInfoChainFactory;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.providers.BasicProvider;
-import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.LockableHashtable;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
@@ -194,15 +192,15 @@ public class SOAPService extends SimpleTargetedChain
             boolean doMisunderstoodHeaders = true;
 
             if (misunderstoodHeaders != null) {
-                // !!! If SOAP 1.2, insert misunderstood fault header here
+                AxisFault fault =
+                        new AxisFault(Constants.FAULT_MUSTUNDERSTAND,
+                                      null,
+                                      null, null);
+
                 StringBuffer whatWasMissUnderstood= new StringBuffer(256);
+
+                // !!! If SOAP 1.2, insert misunderstood fault headers here
                 if (doMisunderstoodHeaders) {
-                    Message respMsg = msgContext.getResponseMessage();
-                    if (respMsg == null) {
-                        respMsg = new Message(new SOAPEnvelope());
-                        msgContext.setResponseMessage(respMsg);
-                    }
-                    env = respMsg.getSOAPEnvelope();
                     enum = misunderstoodHeaders.elements();
                     while (enum.hasMoreElements()) {
                         SOAPHeaderElement badHeader = (SOAPHeaderElement)enum.
@@ -211,7 +209,7 @@ public class SOAPService extends SimpleTargetedChain
                                                    badHeader.getName());
 
                         if(whatWasMissUnderstood.length() != 0) whatWasMissUnderstood.append(", ");
-                        whatWasMissUnderstood.append( badQName.toString() );                           
+                        whatWasMissUnderstood.append( badQName.toString() );
 
                         SOAPHeaderElement newHeader = new
                             SOAPHeaderElement(Constants.URI_SOAP12_FAULT,
@@ -220,13 +218,15 @@ public class SOAPService extends SimpleTargetedChain
                                                Constants.ATTR_QNAME,
                                                badQName);
 
-                        env.addHeader(newHeader);
+                        fault.addHeader(newHeader);
                     }
                 }
 
-                throw new AxisFault(Constants.FAULT_MUSTUNDERSTAND,
-                                    Messages.getMessage("noUnderstand00", whatWasMissUnderstood.toString()),
-                                    null, null);
+                fault.setFaultString(
+                        Messages.getMessage("noUnderstand00",
+                                            whatWasMissUnderstood.toString()));
+
+                throw fault;
             }
         }
     }
