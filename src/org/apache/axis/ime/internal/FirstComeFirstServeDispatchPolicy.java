@@ -59,12 +59,17 @@ import org.apache.axis.ime.MessageExchangeCorrelator;
 import org.apache.axis.ime.MessageContextListener;
 import org.apache.axis.ime.MessageExchangeFaultListener;
 import org.apache.axis.ime.internal.util.KeyedBuffer;
+import org.apache.axis.components.logger.LogFactory;
+import org.apache.commons.logging.Log;
 
 /**
  * @author James M Snell (jasnell@us.ibm.com)
  */
 public class FirstComeFirstServeDispatchPolicy
         implements ReceivedMessageDispatchPolicy {
+  
+    protected static Log log =
+        LogFactory.getLog(FirstComeFirstServeDispatchPolicy.class.getName());
   
     protected KeyedBuffer RECEIVE_REQUESTS;
     protected KeyedBuffer RECEIVE;
@@ -78,6 +83,10 @@ public class FirstComeFirstServeDispatchPolicy
   
     public void dispatch(
             MessageExchangeSendContext context) {
+
+        if (log.isDebugEnabled()) {
+            log.debug("Enter: FirstComeFirstServeDispatchPolicy::dispatch");
+        }
     
       // 1. Get the correlator
       // 2. See if there are any receive requests based on the correlator
@@ -110,6 +119,10 @@ public class FirstComeFirstServeDispatchPolicy
                       correlator, exception);
             }
         }
+        if (log.isDebugEnabled()) {
+            log.debug("Exit: FirstComeFirstServeDispatchPolicy::dispatch");
+        }
+        
     }
   
 }

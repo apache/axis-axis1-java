@@ -56,6 +56,9 @@
 package org.apache.axis.ime.internal.util;
 
 import org.apache.axis.i18n.Messages;
+import org.apache.axis.components.logger.LogFactory;
+import org.apache.commons.logging.Log;
+
 import java.util.Vector;
 
 /**
@@ -67,6 +70,9 @@ import java.util.Vector;
  */
 public class NonPersistentKeyedBuffer
         implements KeyedBuffer {
+
+    protected static Log log =
+        LogFactory.getLog(NonPersistentKeyedBuffer.class.getName());
 
     private final KeyedQueue messages = new KeyedQueue();
 
@@ -92,7 +98,9 @@ public class NonPersistentKeyedBuffer
     public void put(
             Object key,
             Object object) {
-
+        if (log.isDebugEnabled()) {
+            log.debug("Enter: KeyedBuffer::put");
+        }
         if (key == null ||
                 object == null)
             throw new IllegalArgumentException(Messages.getMessage("illegalArgumentException00"));
@@ -101,9 +109,15 @@ public class NonPersistentKeyedBuffer
             messages.put(new KeyedNode(key, object));
             messages.notify();
         }
+        if (log.isDebugEnabled()) {
+            log.debug("Exit: KeyedBuffer::put");
+        }
     }
 
     public Object cancel(Object key) {
+        if (log.isDebugEnabled()) {
+            log.debug("Enter: KeyedBuffer::cancel");
+        }
         if (key == null)
             throw new IllegalArgumentException(Messages.getMessage("illegalArgumentException00"));
         Object object = null;
@@ -114,10 +128,16 @@ public class NonPersistentKeyedBuffer
             node.key = null;
             node.value = null;
         }
+        if (log.isDebugEnabled()) {
+            log.debug("Exit: KeyedBuffer::cancel");
+        }
         return object;
     }
 
     public Object[] selectAll() {
+        if (log.isDebugEnabled()) {
+            log.debug("Enter: KeyedBuffer::selectAll");
+        }
         Vector v = new Vector();
         KeyedNode node = null;
         synchronized (messages) {
@@ -130,11 +150,17 @@ public class NonPersistentKeyedBuffer
         Object[] objects = new
                 Object[v.size()];
         v.copyInto(objects);
+        if (log.isDebugEnabled()) {
+            log.debug("Exit: KeyedBuffer::selectAll");
+        }
         return objects;
     }
 
     public Object select()
             throws InterruptedException {
+        if (log.isDebugEnabled()) {
+            log.debug("Enter: KeyedBuffer::select");
+        }
         for (; ;) {
             if (WORKERS.isShuttingDown())
                 throw new IllegalStateException(Messages.getMessage("illegalStateException00"));
@@ -146,6 +172,9 @@ public class NonPersistentKeyedBuffer
                 Object object = node.value;
                 node.key = null;
                 node.value = null;
+                if (log.isDebugEnabled()) {
+                    log.debug("Exit: KeyedBuffer::select");
+                }
                 return object;
             } else {
                 messages.wait();
@@ -155,6 +184,9 @@ public class NonPersistentKeyedBuffer
 
     public Object select(long timeout)
             throws InterruptedException {
+        if (log.isDebugEnabled()) {
+            log.debug("Enter: KeyedBuffer::select");
+        }
         for (; ;) {
             if (WORKERS.isShuttingDown())
                 throw new IllegalStateException(Messages.getMessage("illegalStateException00"));
@@ -166,6 +198,9 @@ public class NonPersistentKeyedBuffer
                 Object object = node.value;
                 node.key = null;
                 node.value = null;
+                if (log.isDebugEnabled()) {
+                    log.debug("Exit: KeyedBuffer::select");
+                }
                 return object;
             } else {
                 messages.wait(timeout);
@@ -175,6 +210,9 @@ public class NonPersistentKeyedBuffer
 
     public Object select(Object key)
             throws InterruptedException {
+        if (log.isDebugEnabled()) {
+            log.debug("Enter: KeyedBuffer::select");
+        }
         for (; ;) {
             if (WORKERS.isShuttingDown())
                 throw new IllegalStateException(Messages.getMessage("illegalStateException00"));
@@ -186,6 +224,9 @@ public class NonPersistentKeyedBuffer
                 Object object = node.value;
                 node.key = null;
                 node.value = null;
+                if (log.isDebugEnabled()) {
+                    log.debug("Exit: KeyedBuffer::select");
+                }
                 return object;
             } else {
                 messages.wait();
@@ -195,6 +236,9 @@ public class NonPersistentKeyedBuffer
 
     public Object select(Object key, long timeout)
             throws InterruptedException {
+        if (log.isDebugEnabled()) {
+            log.debug("Enter: KeyedBuffer::select");
+        }
         for (; ;) {
             if (WORKERS.isShuttingDown())
                 throw new IllegalStateException(Messages.getMessage("illegalStateException00"));
@@ -206,6 +250,9 @@ public class NonPersistentKeyedBuffer
                 Object object = node.value;
                 node.key = null;
                 node.value = null;
+                if (log.isDebugEnabled()) {
+                    log.debug("Exit: KeyedBuffer::select");
+                }
                 return object;
             } else {
                 messages.wait(timeout);
@@ -214,6 +261,9 @@ public class NonPersistentKeyedBuffer
     }
 
     public Object get() {
+        if (log.isDebugEnabled()) {
+            log.debug("Enter: KeyedBuffer::get");
+        }
         KeyedNode node = null;
         Object object = null;
         synchronized (messages) {
@@ -224,10 +274,16 @@ public class NonPersistentKeyedBuffer
             node.key = null;
             node.value = null;
         }
+        if (log.isDebugEnabled()) {
+            log.debug("Exit: KeyedBuffer::get");
+        }
         return object;
     }
 
     public Object get(Object key) {
+        if (log.isDebugEnabled()) {
+            log.debug("Enter: KeyedBuffer::get");
+        }
         KeyedNode node = null;
         Object object = null;
         synchronized (messages) {
@@ -237,6 +293,9 @@ public class NonPersistentKeyedBuffer
             object = node.value;
             node.key = null;
             node.value = null;
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Exit: KeyedBuffer::get");
         }
         return object;
     }

@@ -58,6 +58,8 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.MessageContext;
 import org.apache.axis.ime.MessageExchange;
 import org.apache.axis.handlers.BasicHandler;
+import org.apache.axis.components.logger.LogFactory;
+import org.apache.commons.logging.Log;
 
 /**
  * This could probably be a bit more sophisticated, 
@@ -67,6 +69,9 @@ import org.apache.axis.handlers.BasicHandler;
  */
 public class MessageExchangeHandler 
     extends BasicHandler {
+    
+    protected static Log log =
+        LogFactory.getLog(MessageExchangeHandler.class.getName());
     
     private MessageExchange messageExchange;   
     
@@ -79,7 +84,13 @@ public class MessageExchangeHandler
     public void invoke(
             MessageContext msgContext) 
             throws AxisFault {
+        if (log.isDebugEnabled()) {
+            log.debug("Enter: MessageExchangeHandler::invoke");
+        }
         msgContext = messageExchange.sendAndReceive(msgContext);
+        if (log.isDebugEnabled()) {
+            log.debug("Exit: MessageExchangeHandler::invoke");
+        }
     }
     
     public MessageExchange getMessageExchange() {

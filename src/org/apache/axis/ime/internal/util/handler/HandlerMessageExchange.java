@@ -65,6 +65,8 @@ import org.apache.axis.ime.internal.MessageExchangeSendContext;
 import org.apache.axis.ime.internal.MessageExchangeSendListener;
 import org.apache.axis.ime.internal.ReceivedMessageDispatchPolicy;
 import org.apache.axis.ime.internal.FirstComeFirstServeDispatchPolicy;
+import org.apache.axis.components.logger.LogFactory;
+import org.apache.commons.logging.Log;
 
 /**
  * Used to wrap synchronous handlers (e.g. Axis 1.0 transports)
@@ -73,6 +75,9 @@ import org.apache.axis.ime.internal.FirstComeFirstServeDispatchPolicy;
  */
 public class HandlerMessageExchange
         extends MessageExchangeProvider {
+
+    protected static Log log =
+        LogFactory.getLog(HandlerMessageExchange.class.getName());
 
     private Handler handler;
 
@@ -105,6 +110,9 @@ public class HandlerMessageExchange
          */
         public void onSend(
                 MessageExchangeSendContext context) {
+            if (log.isDebugEnabled()) {
+                log.debug("Enter: HandlerMessageExchange.Listener::onSend");
+            }
             MessageExchangeFaultListener listener = 
                 context.getMessageExchangeFaultListener();
             try {
@@ -123,6 +131,10 @@ public class HandlerMessageExchange
                     listener.onFault(
                             context.getMessageExchangeCorrelator(),
                             exception);
+            } finally {
+                if (log.isDebugEnabled()) {
+                    log.debug("Exit: HandlerMessageExchange.Listener::onSend");
+                }
             }
         }
     }
