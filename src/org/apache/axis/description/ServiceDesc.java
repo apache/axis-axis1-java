@@ -717,6 +717,7 @@ public class ServiceDesc {
         for (int i = 0; i < methods.length; i++) {
             Method method = methods[i];
             if (Modifier.isPublic(method.getModifiers()) &&
+                    !Modifier.isStatic(method.getModifiers()) &&
                     method.getName().equals(methodName)) {
                 createOperationForMethod(method);
             }
