@@ -111,7 +111,7 @@ Copyright:
   <!-- Generate code using Wsdl2java utility                               -->
   <!-- =================================================================== -->
   <target name="wsdl-setup" if="junit.present">
-    <ant antfile="src/org/apache/axis/wsdl/test/Wsdl2javaTestSuite.xml">
+    <ant antfile="test/wsdl/Wsdl2javaTestSuite.xml">
     </ant>
     <copy todir="${build.dir}/work/test" overwrite="yes">
       <fileset dir="${test.dir}">
