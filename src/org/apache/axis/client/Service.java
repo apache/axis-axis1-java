@@ -197,22 +197,15 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
         }
         catch (MalformedURLException mue) {
         }
-        try {
-            // Start by reading in the WSDL using WSDL4J
-            Definition def = null ;
-            if ( cachingWSDL && 
-                 (def = (Definition) cachedWSDL.get(this.wsdlLocation.toString())) != null ) {
-              initService( def, serviceName );
-            }
-            else {
-              FileInputStream  fis = new FileInputStream(wsdlLocation);
-              Document         doc = XMLUtils.newDocument(fis);
-              initService(doc, serviceName);
-            }
+        // Start by reading in the WSDL using WSDL4J
+        Definition def = null ;
+        if ( cachingWSDL &&
+             (def = (Definition) cachedWSDL.get(this.wsdlLocation.toString())) != null ) {
+          initService( def, serviceName );
         }
-        catch( FileNotFoundException exp ) {
-            throw new ServiceException(
-                    JavaUtils.getMessage("wsdlError00", "" + wsdlLocation, "\n" + exp) );
+        else {
+          Document doc = XMLUtils.newDocument(this.wsdlLocation.toString());
+          initService(doc, serviceName);
         }
     }
 

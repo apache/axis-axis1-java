@@ -73,7 +73,10 @@ public class TestElementSample extends TestCase {
     }
     
     public void doTestElement () throws Exception {
-        String[] args = {};
+        String thisHost = "127.0.0.1";
+        String thisPort = System.getProperty("test.functional.SimpleAxisPort","8080");
+
+        String[] args = {thisHost,thisPort};
         String   xml = "<x:hello xmlns:x=\"urn:foo\">a string</x:hello>";
         System.out.println("Sending : " + xml );
         String res = new TestElem().doit(args, xml);
