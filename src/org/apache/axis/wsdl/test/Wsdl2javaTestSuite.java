@@ -190,6 +190,10 @@ public class Wsdl2javaTestSuite extends TestSuite {
                 String curLine = reader.readLine();
                 int testNum = 0;
                 while (curLine != null) {
+                    if ( "".equals(curLine) ) {
+                        curLine = reader.readLine();
+                        continue;
+                    }
                     // Run Wsdl2java on the WSDL file.
                     // The test number is used to keep each WSDL file in a different package.
                     this.prepareTest(curLine.trim(), testNum);
