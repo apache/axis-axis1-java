@@ -799,8 +799,8 @@ public class Admin {
         Class cls;
         QName qn;
 
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
         try {
-            ClassLoader cl = Thread.currentThread().getContextClassLoader();
             cls = cl.loadClass(classname);
         } catch (Exception e) {
             throw new AxisFault( "Admin.error", e.toString(), null, null);
@@ -829,7 +829,7 @@ public class Admin {
             classname = elem.getAttribute("serializer");
             category.debug( "Serializer class is " + classname);
             try {
-                ser = (Serializer)Class.forName(classname).newInstance();
+                ser = (Serializer)cl.loadClass(classname).newInstance();
             } catch (Exception e) {
                 throw new AxisFault( "Admin.error",
                     "Couldn't load serializer class " + e.toString(),
@@ -838,7 +838,7 @@ public class Admin {
             classname = elem.getAttribute("deserializerFactory");
             category.debug( "DeserializerFactory class is " + classname);
             try {
-                dserFactory = (DeserializerFactory)Class.forName(classname).
+                dserFactory = (DeserializerFactory)cl.loadClass(classname).
                                                                             newInstance();
             } catch (Exception e) {
                 throw new AxisFault( "Admin.error",
