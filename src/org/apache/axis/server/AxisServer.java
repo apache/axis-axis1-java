@@ -377,14 +377,14 @@ public class AxisServer extends AxisEngine
                 hName = msgContext.getStrProp(MessageContext.TRANSPORT);
                 if ( hName != null ) {
                 if ((h = hr.find( hName )) != null ) {
-                h.editWSDL(msgContext);
+                h.generateWSDL(msgContext);
                 } else {
                 log.error(JavaUtils.getMessage("noTransport02", hName));
                 }
                 } else {
                 // No transport set, so use the default (probably just
                 // calls the global->service handlers)
-                defaultTransport.editWSDL(msgContext);
+                defaultTransport.generateWSDL(msgContext);
                 }
 
                 */
@@ -395,7 +395,9 @@ public class AxisServer extends AxisEngine
                 SimpleTargetedChain transportChain = null;
 
                 if (log.isDebugEnabled())
-                    log.debug(JavaUtils.getMessage("transport01", "AxisServer.invoke", hName));
+                    log.debug(JavaUtils.getMessage("transport01",
+                                                   "AxisServer.generateWSDL",
+                                                   hName));
                 if ( hName != null && (h = getTransport( hName )) != null ) {
                     if (h instanceof SimpleTargetedChain) {
                         transportChain = (SimpleTargetedChain)h;
