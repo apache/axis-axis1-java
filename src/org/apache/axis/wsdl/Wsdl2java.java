@@ -108,7 +108,7 @@ public class Wsdl2java {
         new CLOptionDescriptor("output",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 OUTPUT_OPT,
-                "output dir for emitted files"),
+                "output dir for emitted files")
     };
 
     /**
