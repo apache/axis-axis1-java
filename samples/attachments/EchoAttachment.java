@@ -236,7 +236,7 @@ public class EchoAttachment {
          *  Currently httpsender won't handle this situation, this will require the resp. which it will handle.
          */
         //myhttp.put(HTTPConstants.HEADER_EXPECT, HTTPConstants.HEADER_EXPECT_100_Continue);
-        call.setScopedProperty(HTTPConstants.REQUEST_HEADERS, myhttp);
+        call.setProperty(HTTPConstants.REQUEST_HEADERS, myhttp);
 
         call.setTargetEndpointAddress(new URL(opts.getURL())); //Set the target service host and service location, 
 
