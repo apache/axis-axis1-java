@@ -227,6 +227,7 @@ Copyright:
            debug="${debug}">
       <classpath refid="test-classpath" />
       <include name="**/*.java" />
+      <exclude name="test/wsdl/interop3/**/*.java" />
     </javac>
   </target>
 
