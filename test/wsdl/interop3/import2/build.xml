@@ -19,7 +19,7 @@
 
     <!-- generate skeletons -->
     <wsdl2java url="http://www.whitemesa.com/r3/${testname}.wsdl"
-               output="${root.dir}/build/work" skeletonDeploy="yes"
+               output="${root.dir}/build/work" skeletonDeploy="no"
                serverSide="yes"/>
 
     <mkdir dir="${build.dest}"/>
