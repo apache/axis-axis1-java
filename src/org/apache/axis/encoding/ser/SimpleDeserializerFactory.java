@@ -83,7 +83,7 @@ public class SimpleDeserializerFactory extends BaseDeserializerFactory {
      * This is for optimization purposes, so that we don't introspect
      * primitive java types or some basic Axis types.
      */
-    private static boolean isBasic(Class javaType) {
+    public static boolean isBasic(Class javaType) {
         return (javaType.isPrimitive() || 
                 javaType == java.lang.String.class ||
                 javaType == java.lang.Boolean.class ||

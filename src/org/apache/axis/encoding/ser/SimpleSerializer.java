@@ -72,7 +72,7 @@ public class SimpleSerializer implements SimpleValueSerializer {
         // generate a fresh one.
         if (typeDesc != null) {
             propertyDescriptor = typeDesc.getPropertyDescriptors();
-        } else {
+        } else if (!SimpleDeserializerFactory.isBasic(javaType)) {
             propertyDescriptor = BeanUtils.getPd(javaType, null);
         }
     }
@@ -129,11 +129,13 @@ public class SimpleSerializer implements SimpleValueSerializer {
             return context.qName2String((QName)value);
         }
 
-        BeanPropertyDescriptor pd = BeanUtils.getSpecificPD(propertyDescriptor, "_value");
-        if(pd != null) {
-            try {
-                return pd.get(value).toString();
-            } catch (Exception e) {
+        if(propertyDescriptor != null) {
+            BeanPropertyDescriptor pd = BeanUtils.getSpecificPD(propertyDescriptor, "_value");
+            if(pd != null) {
+                try {
+                    return pd.get(value).toString();
+                } catch (Exception e) {
+                }
             }
         }
         return value.toString();
@@ -157,7 +159,9 @@ public class SimpleSerializer implements SimpleValueSerializer {
         try {
             // Find each property that is an attribute
             // and add it to our attribute list
-            for (int i=0; i<propertyDescriptor.length; i++) {
+            for (int i = 0;
+                 propertyDescriptor != null && i < propertyDescriptor.length;
+                 i++) {
                 String propName = propertyDescriptor[i].getName();
                 if (propName.equals("class"))
                     continue;
@@ -234,7 +238,7 @@ public class SimpleSerializer implements SimpleValueSerializer {
 
         // Get the base type from the "value" element of the bean
         String base = "string";
-        for (int i=0; i<propertyDescriptor.length; i++) {
+        for (int i=0; propertyDescriptor != null && i<propertyDescriptor.length; i++) {
             String propName = propertyDescriptor[i].getName();
             if (!propName.equals("value")) {
                 if (typeDesc != null) {
