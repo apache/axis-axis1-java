@@ -451,6 +451,7 @@ public class MessageContext {
             TypeMappingRegistry tmr = service.getTypeMappingRegistry();
             setTypeMappingRegistry(tmr);
             setProperty(ISRPC, new Boolean(service.isRPC()));
+            setOperationStyle(service.getStyle());
             setEncodingStyle((service.getStyle() == SOAPService.STYLE_RPC) ?
                                         Constants.URI_CURRENT_SOAP_ENC : "");
         }
