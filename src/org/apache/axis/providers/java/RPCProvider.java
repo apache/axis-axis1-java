@@ -125,6 +125,29 @@ public class RPCProvider extends JavaProvider {
                 }
             }
             
+            // methodName may be a comma-delimited string of method names.
+            // If so, look for the one matching mname.
+            if (methodName != null && methodName.indexOf(' ') != -1) {
+                StringTokenizer tok = new StringTokenizer(methodName, " ");
+                String nextMethodName = null;
+                while (tok.hasMoreElements()) {
+                    String token = tok.nextToken();
+                    if (token.equals(mName)) {
+                        nextMethodName = token;
+                        break;
+                    }
+                }
+                // didn't find a matching one...
+                if (nextMethodName == null) {
+                    throw new AxisFault( "AxisServer.error",
+                                        "Method names don't match\n" +
+                                            "Body method name=" + mName + "\n" +
+                                            "Service method names=" + methodName,
+                                        null, null );  // should they??
+                }
+                methodName = nextMethodName;
+            }
+            
             if ( methodName != null && !methodName.equals(mName) )
                 throw new AxisFault( "AxisServer.error",
                                     "Method names don't match\n" +
@@ -150,8 +173,8 @@ public class RPCProvider extends JavaProvider {
             // If method has an additional parameter of the right parameter
             // type, add MessageContext as the first parameter
             Class params[] = method.getParameterTypes();
-            if (params.length > args.size() 
-              && params[0].equals(msgContext.getClass())) 
+            if (params.length > args.size()
+              && params[0].equals(msgContext.getClass()))
             {
               args.add( 0, msgContext );
               method = jc.getMethod(mName, args.size());

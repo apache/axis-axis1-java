@@ -16,7 +16,7 @@ public class TestSimpleSession extends TestCase {
     public void testSession() {
         SimpleSession session = new SimpleSession();
         Object val = new Float(5.6666);
-        session.put("test", val);
+        session.set("test", val);
         
         assertEquals(val, session.get("test"));
         

@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -20,7 +20,7 @@
  * 3. The end-user documentation included with the redistribution,
  *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
- *    Apache Software Foundation (http://www.apache.org/)."
+ *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
  *    if and wherever such third-party acknowledgments normally appear.
  *
@@ -53,70 +53,57 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.transport.http;
+package test.functional;
 
-import org.apache.axis.session.Session;
-import javax.servlet.http.HttpSession;
+import java.net.*;
+import java.io.*;
+import java.util.*;
 
-/**
- * An HTTP/Servlet implementation of Axis sessions.
- *
- * @author Glen Daniels (gdaniels@macromedia.com)
+import org.apache.axis.AxisFault ;
+import org.apache.axis.client.http.AdminClient;
+import org.apache.axis.utils.Debug ;
+import org.apache.axis.utils.Options ;
+import org.apache.axis.utils.QName ;
+import org.apache.axis.encoding.ServiceDescription;
+import org.apache.axis.encoding.SOAPTypeMappingRegistry;
+
+import junit.framework.TestCase;
+
+import samples.addressbook.Main;
+
+/** Test the address book sample code.
  */
-public class AxisHttpSession implements Session
-{
-    private HttpSession rep;
+public class TestAddressBookSample extends TestCase {
     
-    public AxisHttpSession(HttpSession realSession)
-    {
-        rep = realSession;
+    public TestAddressBookSample(String name) {
+        super(name);
     }
     
-    /** Set our internal HttpSession to the passed
-     * servlet HttpSession.  Not sure if we'll really
-     * need this method...
-     */
-    public void setRep(HttpSession realSession)
-    {
-        rep = realSession;
+    public void doTestDeploy () throws Exception {
+        String[] args = { "samples/addressbook/deploy.xml" };
+        new AdminClient().doAdmin(args);
     }
     
-    /** Get a property from the session
-     *
-     * @param key the name of the property desired.
-     */
-    public Object get(String key)
-    {
-        return rep.getAttribute(key);
+    public void doTest () throws Exception {
+        String[] args = {};
+        Main.main(args);
     }
     
-    /** Set a property in the session
-     *
-     * @param key the name of the property to set.
-     * @param value the value of the property.
-     */
-    public void set(String key, Object value)
-    {
-        rep.setAttribute(key, value);
+    public void testAddressBookService () throws Exception {
+        try {
+            System.out.println("Testing address book sample.");
+            System.out.println("Testing deployment...");
+            doTestDeploy();
+            System.out.println("Testing service...");
+            doTest();
+            System.out.println("Test complete.");
+        }
+        catch( Exception e ) {
+            if ( e instanceof AxisFault ) ((AxisFault)e).dump();
+            e.printStackTrace();
+            throw new Exception("Fault returned from test: "+e);
+        }
     }
     
-    /** Remove a property from the session
-     *
-     * @param key the name of the property desired.
-     */
-    public void remove(String key)
-    {
-        rep.removeAttribute(key);
-    }
-    
-    /** Set the session's time-to-live.
-     *
-     * This is implementation-specific, but basically should be the #
-     * of seconds of inactivity which will cause the session to time
-     * out and invalidate.  "inactivity" is implementation-specific.
-     */
-    public void setTimeout(int timeout)
-    {
-        rep.setMaxInactiveInterval(timeout);
-    }
 }
+

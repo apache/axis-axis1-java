@@ -1,9 +1,5 @@
 package samples.bidbuy;
 
-import org.apache.axis.utils.QName;
-import org.apache.axis.encoding.BeanSerializer;
-import org.apache.axis.encoding.TypeMappingRegistry;
-
 /**
  * Big/PurchaseOrder Service
  */
@@ -24,7 +20,7 @@ public class BidService {
            return 0.8 * quantity;
         } else {
            return 0.7 * quantity;
-        } 
+        }
  
     }
 

@@ -188,12 +188,33 @@ public class HTTPDispatchHandler extends BasicHandler {
                     .append( Base64.encode( tmpBuf.toString().getBytes() ) )
                     .append("\n" );
       }
+        
+        // don't forget the cookies!
+        // mmm... cookies
+        if (msgContext.getMaintainSession()) {
+            String cookie = msgContext.getStrProp(HTTPConstants.HEADER_COOKIE);
+            String cookie2 = msgContext.getStrProp(HTTPConstants.HEADER_COOKIE2);
+            
+            if (cookie != null) {
+                otherHeaders.append(HTTPConstants.HEADER_COOKIE)
+                    .append(": ")
+                    .append(cookie)
+                    .append("\r\n");
+            }
+         
+            if (cookie2 != null) {
+                otherHeaders.append(HTTPConstants.HEADER_COOKIE2)
+                    .append(": ")
+                    .append(cookie2)
+                    .append("\r\n");
+            }
+        }
      
       StringBuffer header = new StringBuffer();
 
       header.append( HTTPConstants.HEADER_POST )
             .append(" " )
-            .append( ((tmpURL.getFile() == null || 
+            .append( ((tmpURL.getFile() == null ||
                        tmpURL.getFile().equals(""))? "/": tmpURL.getFile()) )
             .append( " HTTP/1.0\r\n" )
             .append( HTTPConstants.HEADER_CONTENT_LENGTH )
@@ -298,6 +319,19 @@ public class HTTPDispatchHandler extends BasicHandler {
         }
 
         msgContext.setResponseMessage( outMsg );
+         
+          // if we are maintaining session state,
+          // handle cookies (if any)
+          if (msgContext.getMaintainSession()) {
+              handleCookie(HTTPConstants.HEADER_COOKIE,
+                           HTTPConstants.HEADER_SET_COOKIE,
+                           headers,
+                           msgContext);
+              handleCookie(HTTPConstants.HEADER_COOKIE2,
+                           HTTPConstants.HEADER_SET_COOKIE2,
+                           headers,
+                           msgContext);
+          }
       }
     }
     catch( Exception e ) {
@@ -308,9 +342,29 @@ public class HTTPDispatchHandler extends BasicHandler {
     }
     Debug.Print( 1, "Exit: HTTPDispatchHandler::invoke" );
   }
+    
+    // little helper function for cookies
+    public void handleCookie
+        (String cookieName, String setCookieName, Hashtable headers,
+         MessageContext msgContext)
+    {
+        if (headers.containsKey(setCookieName.toLowerCase())) {
+            String cookie = (String)headers.get(setCookieName.toLowerCase());
+            cookie = cookie.trim();
+            // chop after first ; a la Apache SOAP (see HTTPUtils.java there)
+            int index = cookie.indexOf(';');
+            if (index != -1) {
+                cookie = cookie.substring(0, index);
+            }
+            msgContext.setProperty(cookieName, cookie);
+        }
+    }
+             
+        
 
   public void undo(MessageContext msgContext) {
     Debug.Print( 1, "Enter: HTTPDispatchHandler::undo" );
     Debug.Print( 1, "Exit: HTTPDispatchHandler::undo" );
   }
 };
+

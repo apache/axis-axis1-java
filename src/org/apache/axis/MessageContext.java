@@ -123,6 +123,14 @@ public class MessageContext {
      * A Session associated with this request.
      */
     private Session          session;
+    
+    /**
+     * Should we track session state, or not?
+     * default is not.
+     * Could potentially refactor this so that
+     * maintainSession iff session != null...
+     */
+    private boolean         maintainSession = false;
 
     /**
      *
@@ -184,6 +192,20 @@ public class MessageContext {
     public void setSession(Session session)
     {
         this.session = session;
+    }
+    
+    /**
+     * Set whether we are maintaining session state
+     */
+    public void setMaintainSession (boolean yesno) {
+        maintainSession = yesno;
+    }
+    
+    /**
+     * Are we maintaining session state?
+     */
+    public boolean getMaintainSession () {
+        return maintainSession;
     }
 
     /**
@@ -299,9 +321,6 @@ public class MessageContext {
     /** Has a quit been requested? Hackish... but useful... -- RobJ */
     public static String QUIT_REQUESTED = "quit.requested";
   
-    /** Property name for session context */
-    public static String SESSION_CONTEXT = "session.context";
-
     /** A String with the user's ID (if available)
      */
     public static String USERID              = "user.id";
