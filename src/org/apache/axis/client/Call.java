@@ -1463,7 +1463,7 @@ public class Call implements javax.xml.rpc.Call {
 
         boolean hasMIME = Utils.hasMIME(bEntry, bop);
         Use use = bEntry.getInputBodyType(bop.getOperation());
-        Style style = Style.getStyle(opStyle, bEntry.getBindingStyle());
+        setOperationUse(use);
         if (use == Use.LITERAL) {
             // Turn off encoding
             setEncodingStyle(null);
@@ -1479,9 +1479,11 @@ public class Call implements javax.xml.rpc.Call {
             setProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);
         }
 
+        Style style = Style.getStyle(opStyle, bEntry.getBindingStyle());
         if (style == Style.DOCUMENT && symbolTable.isWrapped()) {
             style = Style.WRAPPED;
         }
+        setOperationStyle(style);
 
         // Operation name
         if (style == Style.WRAPPED) {
