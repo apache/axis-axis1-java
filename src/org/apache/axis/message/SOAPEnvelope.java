@@ -618,7 +618,39 @@ public class SOAPEnvelope extends MessageElement
         return super.removeChild(oldChild);
     }
 
+    public Node cloneNode(boolean deep)
+    {
+        SOAPEnvelope envelope = (SOAPEnvelope)super.cloneNode( deep );
 
+        if( !deep )
+        {
+            envelope.body = null;
+            envelope.header = null;
+        }
+
+        return envelope;
+    }
+
+    protected void childDeepCloned( NodeImpl oldNode, NodeImpl newNode )
+    {
+        if( oldNode == body )
+        {
+            body = (SOAPBody)newNode;
+
+            try {
+                body.setParentElement(this);
+            } catch (SOAPException ex) {
+                // class cast should never fail when parent is a SOAPEnvelope
+                log.fatal(Messages.getMessage("exception00"), ex);
+            }
+        }
+        else
+        if( oldNode == header )
+        {
+            header = (SOAPHeader)newNode;
+        }
+    }
+    
     public void setOwnerDocument(org.apache.axis.SOAPPart sp) {
         super.setOwnerDocument(sp);
         if(body != null) {

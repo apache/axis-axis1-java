@@ -419,6 +419,8 @@ public class MessageElement extends NodeImpl implements SOAPElement,
                             NodeImpl clonedChild = (NodeImpl)child.cloneNode(deep); // deep == true
                             clonedChild.setParent(clonedSelf);
                             clonedChild.setOwnerDocument(soapPart);
+                            
+                            clonedSelf.childDeepCloned( child, clonedChild );
                         }
                     }
                 }
@@ -429,6 +431,15 @@ public class MessageElement extends NodeImpl implements SOAPElement,
             return null;
         }
     }
+
+    // Called when a child is cloned from cloneNode().
+    //
+    // This is used by sub-classes to update internal state when specific elements
+    // are cloned.
+    protected void childDeepCloned( NodeImpl oldNode, NodeImpl newNode )
+    {
+    }
+
     /**
      *  protected clone method (not public)
      *
