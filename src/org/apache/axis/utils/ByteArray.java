@@ -147,7 +147,6 @@ public class ByteArray extends OutputStream {
      * @throws IOException
      */
     public void write(byte bytes[]) throws IOException {
-        count += bytes.length;
         write(bytes, 0, bytes.length);
     }
 
