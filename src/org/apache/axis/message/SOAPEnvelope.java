@@ -80,7 +80,9 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
 
-
+/**
+ * Implementation of a SOAP Envelope
+ */ 
 public class SOAPEnvelope extends MessageElement
     implements javax.xml.soap.SOAPEnvelope
 {
@@ -170,16 +172,29 @@ public class SOAPEnvelope extends MessageElement
         dser.parse();
     }
 
+    /**
+     * Get the Message Type (REQUEST/RESPONSE)
+     * @return message type
+     */ 
     public String getMessageType()
     {
         return messageType;
     }
 
+    /**
+     * Set the Message Type (REQUEST/RESPONSE)
+     * @param messageType
+     */ 
     public void setMessageType(String messageType)
     {
         this.messageType = messageType;
     }
 
+    /**
+     * Get all the BodyElement's in the soap body
+     * @return vector with body elements
+     * @throws AxisFault
+     */ 
     public Vector getBodyElements() throws AxisFault
     {
         if (body != null) {
@@ -189,11 +204,20 @@ public class SOAPEnvelope extends MessageElement
         }
     }
 
+    /**
+     * Return trailers
+     * @return
+     */ 
     public Vector getTrailers()
     {
         return trailers;
     }
 
+    /**
+     * Get the first BodyElement in the SOAP Body
+     * @return first Body Element
+     * @throws AxisFault
+     */ 
     public SOAPBodyElement getFirstBody() throws AxisFault
     {
         if (body == null) {
@@ -203,6 +227,11 @@ public class SOAPEnvelope extends MessageElement
         }
     }
 
+    /**
+     * Get Headers
+     * @return Vector containing Header's
+     * @throws AxisFault
+     */ 
     public Vector getHeaders() throws AxisFault
     {
         if (header != null) {
@@ -224,6 +253,10 @@ public class SOAPEnvelope extends MessageElement
         }
     }
 
+    /**
+     * Add a HeaderElement
+     * @param hdr
+     */ 
     public void addHeader(SOAPHeaderElement hdr)
     {
         if (header == null) {
@@ -234,6 +267,10 @@ public class SOAPEnvelope extends MessageElement
         _isDirty = true;
     }
 
+    /**
+     * Add a SOAP Body Element
+     * @param element
+     */ 
     public void addBodyElement(SOAPBodyElement element)
     {
         if (body == null) {
@@ -245,10 +282,17 @@ public class SOAPEnvelope extends MessageElement
         _isDirty = true;
     }
 
+    /**
+     * Remove all headers
+     */ 
     public void removeHeaders() {
         header = null;
     }
 
+    /**
+     * Set the SOAP Header
+     * @param hdr
+     */ 
     public void setHeader(SOAPHeader hdr) {
         header = hdr;
         try {
@@ -259,6 +303,10 @@ public class SOAPEnvelope extends MessageElement
         }
     }
 
+    /**
+     * Remove a Header Element from SOAP Header
+     * @param hdr
+     */ 
     public void removeHeader(SOAPHeaderElement hdr)
     {
         if (header != null) {
@@ -267,10 +315,17 @@ public class SOAPEnvelope extends MessageElement
         }
     }
 
+    /**
+     * Remove the SOAP Body
+     */ 
     public void removeBody() {
         body = null;
     }
 
+    /**
+     * Set the soap body
+     * @param body
+     */ 
     public void setBody(SOAPBody body) {
         this.body = body;
         try {
@@ -281,6 +336,10 @@ public class SOAPEnvelope extends MessageElement
         }
     }
 
+    /**
+     * Remove a Body Element from the soap body
+     * @param element
+     */ 
     public void removeBodyElement(SOAPBodyElement element)
     {
         if (body != null) {
@@ -289,6 +348,10 @@ public class SOAPEnvelope extends MessageElement
         }
     }
 
+    /**
+     * Remove an element from the trailer
+     * @param element
+     */ 
     public void removeTrailer(MessageElement element)
     {
         if (log.isDebugEnabled())
@@ -297,6 +360,9 @@ public class SOAPEnvelope extends MessageElement
         _isDirty = true;
     }
 
+    /**
+     * clear the elements in the soap body
+     */ 
     public void clearBody()
     {
         if (body != null) {
@@ -305,6 +371,10 @@ public class SOAPEnvelope extends MessageElement
         }
     }
 
+    /**
+     * Add an element to the trailer
+     * @param element
+     */ 
     public void addTrailer(MessageElement element)
     {
         if (log.isDebugEnabled())
@@ -343,6 +413,13 @@ public class SOAPEnvelope extends MessageElement
         }
     }
 
+    /**
+     * Get a body element given its name
+     * @param namespace
+     * @param localPart
+     * @return
+     * @throws AxisFault
+     */ 
     public SOAPBodyElement getBodyByName(String namespace, String localPart)
         throws AxisFault
     {
@@ -353,6 +430,13 @@ public class SOAPEnvelope extends MessageElement
         }
     }
 
+    /**
+     * Get an enumeration of header elements given the namespace and localpart
+     * @param namespace
+     * @param localPart
+     * @return
+     * @throws AxisFault
+     */ 
     public Enumeration getHeadersByName(String namespace, String localPart)
         throws AxisFault
     {
@@ -439,24 +523,43 @@ public class SOAPEnvelope extends MessageElement
         context.setPretty(oldPretty);
     }
 
+    /**
+     * Get the soap constants for this envelope
+     * @return
+     */ 
     public SOAPConstants getSOAPConstants() {
         return soapConstants;
     }
 
+    /**
+     * Set the soap constants for this envelope
+     * @param soapConstants
+     */ 
     public void setSoapConstants(SOAPConstants soapConstants) {
         this.soapConstants = soapConstants;
     }
 
+    /**
+     * Get the schema version for this envelope
+     * @return
+     */ 
     public SchemaVersion getSchemaVersion() {
         return schemaVersion;
     }
-
+ 
+    /**
+     * Set the schema version for this envelope
+     * @param schemaVersion
+     */ 
     public void setSchemaVersion(SchemaVersion schemaVersion) {
         this.schemaVersion = schemaVersion;
     }
 
-    // JAXM methods
-
+    /**
+     * Add a soap body if one does not exist
+     * @return
+     * @throws SOAPException
+     */ 
     public javax.xml.soap.SOAPBody addBody() throws SOAPException {
         if (body == null) {
             body = new SOAPBody(this, soapConstants);
@@ -466,6 +569,11 @@ public class SOAPEnvelope extends MessageElement
         }
     }
 
+    /**
+     * Add a soap header if one does not exist
+     * @return
+     * @throws SOAPException
+     */ 
     public javax.xml.soap.SOAPHeader addHeader() throws SOAPException {
         if (header == null) {
             header = new SOAPHeader(this, soapConstants);
@@ -475,12 +583,26 @@ public class SOAPEnvelope extends MessageElement
         }
     }
 
+    /**
+     * create a Name given the local part
+     * @param localName
+     * @return
+     * @throws SOAPException
+     */ 
     public javax.xml.soap.Name createName(String localName)
         throws SOAPException {
         // Ok to use the SOAP envelope's namespace URI and prefix?
         return new PrefixedQName(namespaceURI, localName, prefix);
     }
 
+    /**
+     * Create a name given local part, prefix and uri
+     * @param localName
+     * @param prefix
+     * @param uri
+     * @return
+     * @throws SOAPException
+     */ 
     public javax.xml.soap.Name createName(String localName,
                                           String prefix,
                                           String uri)
@@ -488,10 +610,20 @@ public class SOAPEnvelope extends MessageElement
         return new PrefixedQName(uri, localName, prefix);
     }
 
+    /**
+     * Get the soap body
+     * @return
+     * @throws SOAPException
+     */ 
     public javax.xml.soap.SOAPBody getBody() throws SOAPException {
         return body;
     }
 
+    /**
+     * Get the soap header
+     * @return
+     * @throws SOAPException
+     */ 
     public javax.xml.soap.SOAPHeader getHeader() throws SOAPException {
         return header;
     }
