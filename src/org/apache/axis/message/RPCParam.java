@@ -56,7 +56,6 @@ package org.apache.axis.message;
 
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.AxisProperties;
 import org.apache.axis.description.ParameterDesc;
 
 import org.apache.axis.components.logger.LogFactory;
@@ -88,7 +87,14 @@ public class RPCParam implements Serializable
     private int countSetCalls = 0; // counts number of calls to set
 
     private ParameterDesc paramDesc;
-    private boolean wantXSIType = true;
+
+    /**
+     * Do we definitely want (or don't want) to send xsi:types?  If null
+     * (the default), just do whatever our SerializationContext is configured
+     * to do.  If TRUE or FALSE, the SerializationContext will do what we
+     * want.
+     */
+    private Boolean wantXSIType = null;
 
     private static Method valueSetMethod;
     static {
@@ -186,11 +192,11 @@ public class RPCParam implements Serializable
         this.paramDesc = paramDesc;
     }
 
-    public void setXSITypeGeneration(boolean value) {
+    public void setXSITypeGeneration(Boolean value) {
         this.wantXSIType = value; 
     }
 
-    public boolean getXSITypeGeneration() {
+    public Boolean getXSITypeGeneration() {
         return this.wantXSIType;
     }
 
@@ -211,7 +217,7 @@ public class RPCParam implements Serializable
             } else if (!(javaType.equals(paramDesc.getJavaType()))) {
                 // This must (assumedly) be a polymorphic type - in ALL
                 // such cases, we must send an xsi:type attribute.
-                wantXSIType = true;
+                wantXSIType = Boolean.TRUE;
             }
             xmlType = paramDesc.getTypeQName();
         }

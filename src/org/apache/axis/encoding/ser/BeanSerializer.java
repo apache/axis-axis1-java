@@ -56,7 +56,6 @@
 package org.apache.axis.encoding.ser;
 
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisProperties;
 import org.apache.axis.Constants;
 import org.apache.axis.description.FieldDesc;
 import org.apache.axis.description.TypeDesc;
@@ -203,7 +202,7 @@ public class BeanSerializer implements Serializer, Serializable {
                                           javaType,
                                           context.getQNameForClass(javaType),
                                           true,
-                                          true);
+                                          null);
                     } else {
                         // Collection of properties: serialize each one
                         int j=0;
