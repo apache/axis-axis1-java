@@ -161,12 +161,14 @@ public class BeanDeserializer extends DeserializerImpl implements Deserializer, 
         }
 
         if (propDesc == null) {
-            // look for a field by this name.  Assumes the the number of
-            // properties in a bean is (relatively) small, so uses a linear
-            // search.
+            // look for a field by this name.
             propDesc = (BeanPropertyDescriptor) propertyMap.get(localName);
         }
-        
+        if (propDesc == null) {
+            // look for a field by the "adjusted" name.
+            propDesc = (BeanPropertyDescriptor) propertyMap.get(JavaUtils.xmlNameToJava(localName));
+        }
+
         if (propDesc == null) {
             // No such field
             throw new SAXException(
