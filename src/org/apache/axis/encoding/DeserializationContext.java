@@ -57,6 +57,7 @@ package org.apache.axis.encoding;
 
 import org.xml.sax.*;
 import java.util.*;
+import org.apache.axis.Constants;
 import org.apache.axis.encoding.*;
 import org.apache.axis.message.*;
 import org.apache.axis.utils.QName;
@@ -138,6 +139,37 @@ public class DeserializationContext
     public String getNamespaceURI(String prefix)
     {
         return (String)baseHandler.getNamespaceURI(prefix);
+    }
+    
+    public QName getQNameFromString(String qNameStr)
+    {
+        // OK, this is a QName, so look up the prefix in our current mappings.
+        
+        int i = qNameStr.indexOf(":");
+        if (i == -1)
+            return null;
+        
+        String nsURI = getNamespaceURI(qNameStr.substring(0, i));
+        
+        //System.out.println("namespace = " + nsURI);
+        
+        if (nsURI == null)
+            return null;  // ???
+        
+        return new QName(nsURI, qNameStr.substring(i + 1));
+    }
+    
+    public QName getTypeFromAttributes(Attributes attrs)
+    {
+        // Check for type
+        String type = null;
+        for (int i=0; i<Constants.URIS_SCHEMA_XSI.length && type==null; i++)
+            type = attrs.getValue(Constants.URIS_SCHEMA_XSI[i], "type");
+        
+        if (type == null)
+          return null;
+        
+        return getQNameFromString(type);
     }
     
     public void setTypeMappingRegistry(TypeMappingRegistry reg)

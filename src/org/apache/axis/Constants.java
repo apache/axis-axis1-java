@@ -126,6 +126,7 @@ public class Constants {
   public static String ATTR_ROOT            = "root" ;
   public static String ATTR_ID              = "id" ;
   public static String ATTR_HREF            = "href" ;
+  public static final String ATTR_ARRAY_TYPE = "arrayType";
 
   // Fault Codes
   //////////////////////////////////////////////////////////////////////////

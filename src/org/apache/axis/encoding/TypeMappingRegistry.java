@@ -78,19 +78,32 @@ public class TypeMappingRegistry implements Serializer {
             this.serializer = serializer;
         }
     }
+
+    class DeserializerDescriptor implements Serializable {
+        Class cls;
+        DeserializerFactory factory;
+        DeserializerDescriptor(Class cls, DeserializerFactory factory)
+        {
+            this.cls = cls;
+            this.factory = factory;
+        }
+    }
     
     Hashtable s;
     Hashtable d;
     
-    public void addSerializer(Class _class, QName qName, Serializer serializer) {
+    public void addSerializer(Class _class,
+                              QName qName,
+                              Serializer serializer) {
         if (s == null) s = new Hashtable();
         s.put(_class, new SerializerDescriptor(qName, serializer));
     }
     
     public void addDeserializerFactory(QName qname,
+                                       Class _class,
                                        DeserializerFactory deserializerFactory) {
         if (d == null) d= new Hashtable();
-        d.put(qname, deserializerFactory);
+        d.put(qname, new DeserializerDescriptor(_class, deserializerFactory));
     }
 
     public Serializer getSerializer(Class _class) {
@@ -109,15 +122,24 @@ public class TypeMappingRegistry implements Serializer {
         return null;
     }
     
+    public Class getClassForQName(QName type)
+    {
+        if (d == null)
+            return null;
+        DeserializerDescriptor desc = (DeserializerDescriptor)d.get(type);
+        if (desc != null) return desc.cls;
+        return null;
+    }
+    
     public DeserializerBase getDeserializer(QName qname) {
         if (d == null)
             return null;
         
-        DeserializerFactory factory = (DeserializerFactory)d.get(qname);
-        if (factory == null)
+        DeserializerDescriptor desc = (DeserializerDescriptor)d.get(qname);
+        if ((desc == null) || (desc.factory == null))
             return null;
         
-        DeserializerBase dSer = factory.getDeserializer();
+        DeserializerBase dSer = desc.factory.getDeserializer();
         return dSer;
     }
     

@@ -85,13 +85,13 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
      * @param base QName based on the current Schema namespace
      * @param factory common factory to be used across all schemas
      */
-    private void addDeserializersFor(QName base, DeserializerFactory factory) {
-        addDeserializerFactory(base, factory);
+    private void addDeserializersFor(QName base, Class cls, DeserializerFactory factory) {
+        addDeserializerFactory(base, cls, factory);
         String localPart = base.getLocalPart();
         for (int i=0; i<Constants.URIS_SCHEMA_XSD.length; i++) {
             if (!Constants.URIS_SCHEMA_XSD[i].equals(base.getNamespaceURI())) {
                QName qname = new QName(Constants.URIS_SCHEMA_XSD[i], localPart);
-               addDeserializerFactory(qname, factory);
+               addDeserializerFactory(qname, cls, factory);
             }
         }
     }
@@ -106,13 +106,13 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
         addSerializer(java.lang.Long.class, XSD_LONG, se);
         addSerializer(java.lang.Short.class, XSD_SHORT, se);
         
-        addDeserializersFor(XSD_STRING, new StringDeserializerFactory());    
-        addDeserializersFor(XSD_BOOLEAN, new BooleanDeserializerFactory());
-        addDeserializersFor(XSD_DOUBLE, new DoubleDeserializerFactory());
-        addDeserializersFor(XSD_FLOAT, new FloatDeserializerFactory());
-        addDeserializersFor(XSD_INT, new IntDeserializerFactory());
-        addDeserializersFor(XSD_LONG, new LongDeserializerFactory());
-        addDeserializersFor(XSD_SHORT, new ShortDeserializerFactory());
+        addDeserializersFor(XSD_STRING, java.lang.String.class, new StringDeserializerFactory());    
+        addDeserializersFor(XSD_BOOLEAN, java.lang.Boolean.class, new BooleanDeserializerFactory());
+        addDeserializersFor(XSD_DOUBLE, java.lang.Double.class, new DoubleDeserializerFactory());
+        addDeserializersFor(XSD_FLOAT, java.lang.Float.class, new FloatDeserializerFactory());
+        addDeserializersFor(XSD_INT, java.lang.Integer.class, new IntDeserializerFactory());
+        addDeserializersFor(XSD_LONG, java.lang.Long.class, new LongDeserializerFactory());
+        addDeserializersFor(XSD_SHORT, java.lang.Short.class, new ShortDeserializerFactory());
 
         /*
         addDeserializerFactory(SOAP_STRING, se);
