@@ -16,27 +16,7 @@
 
 package org.apache.axis.handlers;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.FileNotFoundException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.net.URLDecoder;
-import java.util.HashMap;
-import java.util.List;
-import java.util.StringTokenizer;
-import java.util.jar.Attributes;
-import java.util.jar.JarFile;
-import java.util.jar.JarInputStream;
-import java.util.jar.Manifest;
-
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisProperties;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
 import org.apache.axis.components.compiler.Compiler;
@@ -46,14 +26,21 @@ import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.enum.Scope;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.providers.java.RPCProvider;
-import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.ClassUtils;
+import org.apache.axis.utils.ClasspathUtils;
 import org.apache.axis.utils.JWSClassLoader;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.commons.logging.Log;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.util.HashMap;
+import java.util.List;
 
 /** A <code>JWSHandler</code> sets the target service and JWS filename
  * in the context depending on the JWS configuration and the target URL.
@@ -205,7 +192,7 @@ public class JWSHandler extends BasicHandler
                 // proc.waitFor();
                 Compiler          compiler = CompilerFactory.getCompiler();
                 
-                compiler.setClasspath(getDefaultClasspath(msgContext));
+                compiler.setClasspath(ClasspathUtils.getDefaultClasspath(msgContext));
                 compiler.setDestination(outdir);
                 compiler.addFile(jFile);
                 
@@ -302,195 +289,12 @@ public class JWSHandler extends BasicHandler
         }
     }
     
-    private String getDefaultClasspath(MessageContext msgContext)
-    {
-        StringBuffer classpath = new StringBuffer();
-
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
-        fillClassPath(cl, classpath);
-
-        // Just to be safe (the above doesn't seem to return the webapp
-        // classpath in all cases), manually do this:
-
-        String webBase = (String)msgContext.getProperty(
-                                         HTTPConstants.MC_HTTP_SERVLETLOCATION);
-        if (webBase != null) {
-            classpath.append(webBase + File.separatorChar + "classes" +
-                             File.pathSeparatorChar);
-            try {
-                String libBase = webBase + File.separatorChar + "lib";
-                File libDir = new File(libBase);
-                String [] jarFiles = libDir.list();
-                for (int i = 0; i < jarFiles.length; i++) {
-                    String jarFile = jarFiles[i];
-                    if (jarFile.endsWith(".jar")) {
-                        classpath.append(libBase +
-                                         File.separatorChar +
-                                         jarFile +
-                                         File.pathSeparatorChar);
-                    }
-                }
-            } catch (Exception e) {
-                // Oh well.  No big deal.
-            }
-        }
-
-        // axis.ext.dirs can be used in any appserver
-        getClassPathFromDirectoryProperty(classpath, "axis.ext.dirs");
-
-        // classpath used by Jasper 
-        getClassPathFromProperty(classpath, "org.apache.catalina.jsp_classpath");
-        
-        // websphere stuff.
-        getClassPathFromProperty(classpath, "ws.ext.dirs");
-        getClassPathFromProperty(classpath, "com.ibm.websphere.servlet.application.classpath");
-        
-        // java class path
-        getClassPathFromProperty(classpath, "java.class.path");
-        
-        // Load jars from java external directory
-        getClassPathFromDirectoryProperty(classpath, "java.ext.dirs");
-        
-        // boot classpath isn't found in above search
-        getClassPathFromProperty(classpath, "sun.boot.class.path");
-
-        return classpath.toString();
-    }
-
-    private void getClassPathFromDirectoryProperty(StringBuffer classpath, String property) {
-        String dirs = AxisProperties.getProperty(property);
-        String path = null;
-        try {
-            path = expandDirs(dirs);
-        } catch (Exception e) {
-            // Oh well.  No big deal.
-        }
-        if( path!= null) {
-            classpath.append(path);
-            classpath.append(File.pathSeparatorChar);
-        }
-    }
-
-    private void getClassPathFromProperty(StringBuffer classpath, String property) {
-        String path = AxisProperties.getProperty(property);
-        if( path  != null) {
-            classpath.append(path);
-            classpath.append(File.pathSeparatorChar);
-        }
-    }
-
-    /**
-     * Walk the classloader hierarchy and add to the classpath
-     * 
-     * @param cl
-     * @param classpath
-     */
-    private void fillClassPath(ClassLoader cl, StringBuffer classpath) {
-        while (cl != null) {
-            if (cl instanceof URLClassLoader) {
-                URL[] urls = ((URLClassLoader) cl).getURLs();
-                for (int i = 0; (urls != null) && i < urls.length; i++) {
-                    String path = urls[i].getPath();
-                    //If it is a drive letter, adjust accordingly.
-                    if (path.length() >= 3 && path.charAt(0) == '/' && path.charAt(2) == ':')
-                        path = path.substring(1);
-                    classpath.append(URLDecoder.decode(path));
-                    classpath.append(File.pathSeparatorChar);
-
-                    // if its a jar extract Class-Path entries from manifest
-                    File file = new File(urls[i].getFile());
-                    if (file.isFile()) {
-                        FileInputStream fis = null;
-                        try {
-                            fis = new FileInputStream(file);
-
-                            if (isJar(fis)) {
-                                JarFile jar = new JarFile(file);
-                                Manifest manifest = jar.getManifest();
-                                if (manifest != null) {
-                                    Attributes attributes = manifest.getMainAttributes();
-                                    if (attributes != null) {
-                                        String s = attributes.getValue(Attributes.Name.CLASS_PATH);
-                                        String base = file.getParent();
-
-                                        if (s != null) {
-                                            StringTokenizer st = new StringTokenizer(s, " ");
-                                            while (st.hasMoreTokens()) {
-                                                String t = st.nextToken();
-                                                classpath.append(base + File.separatorChar + t);
-                                                classpath.append(File.pathSeparatorChar);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        } catch (IOException ioe) {
-                            if (fis != null)
-                                try {
-                                    fis.close();
-                                } catch (IOException ioe2) {
-                                }
-                        }
-                    }
-                }
-            }
-            cl = cl.getParent();
-        }
-    }
-
-    /**
-     * Expand a directory path or list of directory paths (File.pathSeparator
-     * delimited) into a list of file paths of all the jar files in those
-     * directories.
-     *
-     * @param dirPaths The string containing the directory path or list of
-     *     	directory paths.
-     * @return The file paths of the jar files in the directories. This is an
-     *    	empty string if no files were found, and is terminated by an
-     *    	additional pathSeparator in all other cases.
-     */
-    private String expandDirs(String dirPaths) {
-        StringTokenizer st = new StringTokenizer(dirPaths, File.pathSeparator);
-        StringBuffer buffer = new StringBuffer();
-        while (st.hasMoreTokens()) {
-            String d = st.nextToken();
-            File dir = new File(d);
-            if (dir.isDirectory()) {
-                File[] files = dir.listFiles(new JavaArchiveFilter());
-                for (int i = 0; i < files.length; i++) {
-                    buffer.append(files[i]).append(File.pathSeparator);
-                }
-            }
-        }
-        return buffer.toString();
-    }
-
-    // an exception or emptiness signifies not a jar
-    public static boolean isJar(InputStream is) {
-        try {
-            JarInputStream jis = new JarInputStream(is);
-            if (jis.getNextEntry() != null) {
-                return true;
-            }
-        } catch (IOException ioe) {
-        }
-
-        return false;
-    }
-
     public void generateWSDL(MessageContext msgContext) throws AxisFault {
         try {
             setupService(msgContext);
         } catch (Exception e) {
             log.error( Messages.getMessage("exception00"), e );
             throw AxisFault.makeFault(e);
-        }
-    }
-
-    class JavaArchiveFilter implements FileFilter {
-        public boolean accept(File file) {
-            String name = file.getName().toLowerCase();
-            return (name.endsWith(".jar") || name.endsWith(".zip"));
         }
     }
 }

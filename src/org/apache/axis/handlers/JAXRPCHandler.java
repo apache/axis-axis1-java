@@ -21,6 +21,8 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
+import java.util.Map;
+
 
 /**
  * Handles JAXRPC style handlers.
@@ -30,15 +32,20 @@ public class JAXRPCHandler extends BasicHandler {
     protected static Log log =
             LogFactory.getLog(JAXRPCHandler.class.getName());
 
-    protected HandlerChainImpl impl = null;
+    protected HandlerChainImpl impl = new HandlerChainImpl();
 
     public void init() {
         super.init();
         String className = (String) getOption("className");
-        impl = new HandlerChainImpl();
-        impl.addNewHandler(className, getOptions());
+        if(className != null) {
+            addNewHandler(className,  getOptions());
+        }
     }
-    
+
+    public void addNewHandler(String className, Map options) {
+        impl.addNewHandler(className, options);
+    }
+
     public void invoke(MessageContext msgContext) throws AxisFault {
         log.debug("Enter: JAXRPCHandler::enter invoke");
         if (!msgContext.getPastPivot()) {
