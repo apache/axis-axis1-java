@@ -87,14 +87,15 @@ public class MappingSet implements Mapper {
 
     /**
      * execute by mapping everything iteratively and recursively
-     * @param owner
-     * @param map
+     * @param owner owner task
+     * @param map map to map into
+     * @param packageIsKey if the package is to be the key for the map
      */
-    public void execute(ProjectComponent owner, HashMap map) {
+    public void execute(ProjectComponent owner, HashMap map, boolean packageIsKey) {
         Iterator it=mappings.iterator();
         while (it.hasNext()) {
             Mapper mapper = (Mapper) it.next();
-            mapper.execute(owner,map);
+            mapper.execute(owner,map, packageIsKey);
         }
     }
 }

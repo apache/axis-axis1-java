@@ -69,7 +69,8 @@ public interface Mapper {
      * execute the mapping
      * @param owner owner object
      * @param map map to map to
+     * @param packageIsKey if the package is to be the key for the map
      * @throws BuildException in case of emergency
      */
-    void execute(ProjectComponent owner, HashMap map) throws BuildException;
+    void execute(ProjectComponent owner, HashMap map, boolean packageIsKey) throws BuildException;
 }
