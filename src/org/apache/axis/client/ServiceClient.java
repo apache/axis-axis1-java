@@ -321,6 +321,15 @@ public class ServiceClient {
     }
     
     /**
+     * Directly get the response message in our MessageContext.
+     * 
+     * Shortcut for having to go thru the msgContext
+     */
+    public void getResponseMessage() {
+        msgContext.getResponseMessage();
+    }
+    
+    /**
      * Determine whether we'd like to track sessions or not.
      * 
      * This just passes through the value into the MessageContext.
