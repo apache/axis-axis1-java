@@ -141,7 +141,7 @@ public class RunAxisFunctionalTestsTask extends Task
                 connection.disconnect();
             } catch (IOException e) {
                 // Server is not running. Make this task a no-op.
-                System.out.println(e);
+                System.out.println("Error from HTTP read: " + e);
                 return;
             }
             
