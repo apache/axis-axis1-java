@@ -112,29 +112,41 @@ public class DeserializerBase extends DefaultHandler
     //  Reflection-based insertion of values into target objects
     //  once deserialization is complete.
     //
-    //  !!! This needs to be expanded to deal with accessor methods
-    //      (i.e. Beans) as well, not to mention primitive types.
-    //
-    //
-    class FieldTarget {
-        public Object targetObject;
-        public Field targetField;
+    interface Target {
+        public void set(Object value) throws SAXException;
+
+    }
+
+    class FieldTarget implements Target {
+        private Object targetObject;
+        private Field targetField;
+
         public FieldTarget(Object targetObject, Field targetField)
         {
             this.targetObject = targetObject;
             this.targetField = targetField;
         }
+
+        public void set(Object value) throws SAXException {
+            try {
+                targetField.set(targetObject, value);
+            } catch (IllegalAccessException accEx) {
+                accEx.printStackTrace();
+                throw new SAXException(accEx);
+            } catch (IllegalArgumentException argEx) {
+                argEx.printStackTrace();
+                throw new SAXException(argEx);
+            }
+        }
     }
+
     protected Vector targets = null;
-    public void registerValueTarget(Object target, Field field)
+    public void registerValueTarget(Target target)
     {
-        if ((target == null) || (field == null))
-            return;
-        
         if (targets == null)
             targets = new Vector();
         
-        targets.addElement(new FieldTarget(target,field));
+        targets.addElement(target);
     }
     
     public void registerValueTarget(Object target, String fieldName)
@@ -143,7 +155,8 @@ public class DeserializerBase extends DefaultHandler
             Class cls = target.getClass();
             Field field = cls.getField(fieldName);
         
-            registerValueTarget(target, field);
+            if (field != null)
+                registerValueTarget(new FieldTarget(target, field));
         } catch (NoSuchFieldException ex) {
             ex.printStackTrace();
         }
@@ -163,8 +176,8 @@ public class DeserializerBase extends DefaultHandler
         }
     }
     
-    /** !!! Only works with object values right now.
-     * TODO: Get primitives working
+    /** 
+     * Store the value into the target
      */
     public void valueComplete() throws SAXException
     {
@@ -181,19 +194,9 @@ public class DeserializerBase extends DefaultHandler
         if (targets != null) {
             Enumeration e = targets.elements();
             while (e.hasMoreElements()) {
-                FieldTarget target = (FieldTarget)e.nextElement();
-                Field field = target.targetField;
-                Object object = target.targetObject;
+                Target target = (Target)e.nextElement();
+                target.set(value);
                 
-                try {
-                    field.set(object, value);
-                } catch (IllegalAccessException accEx) {
-                    accEx.printStackTrace();
-                    throw new SAXException(accEx);
-                } catch (IllegalArgumentException argEx) {
-                      argEx.printStackTrace();
-                      throw new SAXException(argEx);
-                }
             }
         }
     }

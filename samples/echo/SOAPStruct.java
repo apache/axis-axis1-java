@@ -64,8 +64,7 @@ public class SOAPStruct {
 
     // items of the structure.  Defined as Objects so as to permit nulls
     // Note: these need to be public in order to be directly set by the
-    // deserializer.  Bean accessors are also provided for a potential
-    // future BeanDeserializer.
+    // deserializer.
     public Integer varInt;
     public String varString;
     public Float varFloat;
