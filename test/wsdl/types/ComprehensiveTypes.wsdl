@@ -68,6 +68,7 @@
             <xsd:element name="enum6" type="typens:enumShort"/>
             <xsd:element name="enum7" type="typens:enumByte"/>
             <xsd:element name="nested" type="typens2:b"/>
+            <xsd:element name="optArray" minOccurs="0" maxOccurs="1" type="typens:array" />
           </xsd:all>
         </xsd:complexType>
       </xsd:element>
