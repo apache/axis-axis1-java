@@ -98,9 +98,7 @@ public class JavaEnumTypeWriter extends JavaClassWriter {
         // The base type could be a non-object, if so get the corresponding Class.
         String baseType = ((TypeEntry) elements.get(0)).getName();
         String baseClass = baseType;
-        if (baseType.indexOf("String") >=0) {
-            baseClass = "java.lang.String";
-        } else if (baseType.indexOf("int") == 0) {
+        if (baseType.indexOf("int") == 0) {
             baseClass = "java.lang.Integer";
         } else if (baseType.indexOf("char") == 0) {
             baseClass = "java.lang.Character";
