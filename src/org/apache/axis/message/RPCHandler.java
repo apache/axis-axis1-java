@@ -199,17 +199,21 @@ public class RPCHandler extends SOAPHandler
         if (log.isDebugEnabled()) {
             log.debug(JavaUtils.getMessage("typeFromAttr00", "" + type));
         }
+        
+
+        Class destClass = null;
 
         // If we have an operation descriptor, try to associate this parameter
         // with the appropriate ParameterDesc
         if (operation != null) {
+            
             // Try by name first
             if (isResponse) {
                 paramDesc = operation.getOutputParamByQName(qname);
             } else {
                 paramDesc = operation.getInputParamByQName(qname);
             }
-
+            
             // If that didn't work, try position
             // FIXME : Do we need to be in EITHER named OR positional
             //         mode?  I.e. will it screw us up to find something
@@ -218,28 +222,22 @@ public class RPCHandler extends SOAPHandler
             if (paramDesc == null) {
                 paramDesc = operation.getParameter(params.size() - 1);
             }
-
-            if (paramDesc != null) {
-                // Keep the association so we can use it later
-                // (see RPCProvider.processMessage())
-                currentParam.setParamDesc(paramDesc);
-
-                if (type == null) {
-                    type = paramDesc.getTypeQName();
-                } else if (paramDesc.getJavaType() != null) {
-                    // If we have an xsi:type, make sure it makes sense
-                    // with the current paramDesc type
-                    Class xsiClass = 
-                            context.getTypeMapping().getClassForQName(type);
-                    Class destClass = paramDesc.getJavaType();
-                    if (!JavaUtils.isConvertable(xsiClass, destClass)) {
-                        throw new SAXException("Bad types (" +
-                            xsiClass + " -> " + destClass + ")"); // FIXME!
-                    }
-                }
+            
+            
+            if (paramDesc == null) {
+                throw new SAXException("operation description is missing parameter description!");
+            }
+            destClass = paramDesc.getJavaType();
+            
+            // Keep the association so we can use it later
+            // (see RPCProvider.processMessage())
+            currentParam.setParamDesc(paramDesc);
+            
+            if (type == null) {
+                type = paramDesc.getTypeQName();
             }
         }
-
+            
         // If the nil attribute is set, just
         // return the base DeserializerImpl.
         // Register the value target to set the value
@@ -263,10 +261,23 @@ public class RPCHandler extends SOAPHandler
         Deserializer dser = null;
         if ((type == null) && (namespace != null) && (!namespace.equals(""))) {
             dser = context.getDeserializerForType(qname);
+        } else {
+            dser = context.getDeserializer(destClass, type);
         }
+        
         if (dser == null) {
           if (type != null) {
               dser = context.getDeserializerForType(type);
+              if (paramDesc != null && paramDesc.getJavaType() != null) {
+                  // If we have an xsi:type, make sure it makes sense
+                  // with the current paramDesc type
+                  Class xsiClass = 
+                          context.getTypeMapping().getClassForQName(type);
+                  if (!JavaUtils.isConvertable(xsiClass, destClass)) {
+                      throw new SAXException("Bad types (" +
+                                             xsiClass + " -> " + destClass + ")"); // FIXME!
+                  }
+              }
           } else {
               dser = new DeserializerImpl();
           }
