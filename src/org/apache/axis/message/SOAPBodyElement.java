@@ -56,17 +56,27 @@ package org.apache.axis.message;
 
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.utils.JavaUtils;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.Name;
 import java.io.InputStream;
 
-/** A Body element.
- * 
+/** 
+ * A Body element.
  */
 public class SOAPBodyElement extends MessageElement
     implements javax.xml.soap.SOAPBodyElement
 {
+    private static Log log = LogFactory.getLog(SOAPBodyElement.class.
+                                               getName());
+
     public SOAPBodyElement(String namespace,
                            String localPart,
                            String prefix,
@@ -74,6 +84,11 @@ public class SOAPBodyElement extends MessageElement
                            DeserializationContext context)
     {
         super(namespace, localPart, prefix, attributes, context);
+    }
+
+    public SOAPBodyElement(Name name)
+    {
+        super(name);
     }
     
     public SOAPBodyElement(Element elem)
@@ -88,5 +103,24 @@ public class SOAPBodyElement extends MessageElement
     public SOAPBodyElement(InputStream input) 
     {
         super( XMLUtils.newDocument(input).getDocumentElement() );
+    }
+
+    public void setParentElement(SOAPElement parent) throws SOAPException {
+        // migration aid
+        if (parent instanceof SOAPEnvelope) {
+            log.warn(JavaUtils.getMessage("bodyElementParent"));
+            parent = ((SOAPEnvelope)parent).getBody();
+        }
+        try {
+            // cast to force exception if wrong type
+            super.setParentElement((SOAPBody)parent);
+        } catch (Throwable t) {
+            throw new SOAPException(t);
+        }
+    }
+
+    public void detachNode() {
+        ((SOAPBody)parent).removeBodyElement(this);
+        super.detachNode();
     }
 }

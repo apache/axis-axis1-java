@@ -144,6 +144,12 @@ public class MessageElement implements SOAPElement
         name = localPart;
     }
 
+    MessageElement(Name eltName)
+    {
+        this(eltName.getURI(), eltName.getLocalName());
+        prefix = eltName.getPrefix();
+    }
+
     MessageElement(String namespace, String localPart, Object value)
     {
         this(namespace, localPart);

@@ -71,6 +71,7 @@ import org.apache.commons.logging.LogFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+import javax.xml.soap.SOAPException;
 import javax.xml.rpc.namespace.QName;
 
 public class BodyBuilder extends SOAPHandler
@@ -88,6 +89,22 @@ public class BodyBuilder extends SOAPHandler
         this.envelope = envelope;
     }
     
+    public void startElement(String namespace, String localName,
+                             String qName, Attributes attributes,
+                             DeserializationContext context)
+        throws SAXException
+    {
+        if (!context.isDoneParsing()) {
+            if (myElement == null) {
+                myElement = new SOAPBody(namespace, localName, qName,
+                                         attributes, context,
+                                         envelope.getSOAPConstants());
+                envelope.setBody((SOAPBody)myElement);
+            }
+            context.pushNewElement(myElement);
+        }
+    }
+
     public SOAPHandler onStartChild(String namespace,
                                      String localName,
                                      String prefix,

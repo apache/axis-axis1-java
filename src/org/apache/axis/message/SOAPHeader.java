@@ -59,11 +59,14 @@ import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.soap.SOAPConstants;
+import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.JavaUtils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import org.xml.sax.Attributes;
 
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.Name;
@@ -99,6 +102,13 @@ public class SOAPHeader extends MessageElement
         }
     }
 
+    public SOAPHeader(String namespace, String localPart, String qName,
+                      Attributes attributes, DeserializationContext context,
+                      SOAPConstants soapConsts) {
+        super(namespace, localPart, qName, attributes, context);
+        soapConstants = soapConsts;
+    }
+
     public void setParentElement(SOAPElement parent) throws SOAPException {
         try {
             // cast to force exception if wrong type
@@ -115,11 +125,27 @@ public class SOAPHeader extends MessageElement
 
     public javax.xml.soap.SOAPHeaderElement addHeaderElement(Name name)
         throws SOAPException {
-        return null; // to be implemented
+        SOAPHeaderElement headerElement = new SOAPHeaderElement(name);
+        addHeader(headerElement);
+        return headerElement;
     }
 
     public Iterator examineHeaderElements(String actor) {
-        return null; // to be implemented
+        Vector results = new Vector();
+        Iterator i = headers.iterator();
+
+        while (i.hasNext()) {
+            SOAPHeaderElement header = (SOAPHeaderElement)i.next();
+            String headerActor = header.getActor();
+            // Allow NEXT's and any headers with matching actor
+            if (Constants.ACTOR_NEXT.equals(headerActor) ||
+                (actor == headerActor) || 
+                (actor != null && actor.equals(headerActor))) {
+                results.add(header);
+            }
+        }
+
+        return results.iterator();
     }
 
     public Iterator extractHeaderElements(String actor) {
@@ -158,6 +184,12 @@ public class SOAPHeader extends MessageElement
         if (log.isDebugEnabled())
             log.debug(JavaUtils.getMessage("addHeader00"));
         headers.addElement(header);
+        try {
+            header.setParentElement(this);
+        } catch (SOAPException ex) {
+            // class cast should never fail when parent is a SOAPHeader
+            log.fatal(JavaUtils.getMessage("exception00"), ex);
+        }
     }
 
     void removeHeader(SOAPHeaderElement header) {
