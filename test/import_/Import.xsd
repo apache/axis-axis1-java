@@ -1,9 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema
-  targetNamespace="urn:types.import.test"
-    xmlns="http://www.w3.org/2001/XMLSchema">
-
-<types>
   <schema
     targetNamespace="urn:types.import.test"
     xmlns:tns="urn:types.import.test"
@@ -29,5 +24,3 @@
     </complexType>
 
   </schema>
-</types>
-</schema>
