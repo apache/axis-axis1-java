@@ -87,9 +87,10 @@ public interface WriterFactory {
 
     /**
      * Get a Writer implementation that will generate bindings for the given
-     * Service.
+     * Service and HashMap of (HashMap of Parameters keyed off of operations)
+     * keyed off of portTypes.
      */
-    public Writer getWriter(Service service);
+    public Writer getWriter(Service service, HashMap portTypeOperationParameters);
 
     /**
      * Get a Writer implementation that will generate bindings for the given

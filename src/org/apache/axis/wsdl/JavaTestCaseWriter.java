@@ -54,143 +54,142 @@
  */
 package org.apache.axis.wsdl;
 
-import javax.wsdl.Binding;
-import javax.wsdl.Fault;
-import javax.wsdl.Operation;
-import javax.wsdl.PortType;
 import java.io.IOException;
-import java.io.PrintWriter;
+
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.wsdl.Binding;
+import javax.wsdl.Fault;
+import javax.wsdl.Operation;
+import javax.wsdl.Port;
+import javax.wsdl.PortType;
+import javax.wsdl.Service;
+
 /**
- * Generate the TestCase code for use in testing services derived from the
- * generated stubs.
- *
- * @author <a href="bloritsch@apache.org">Berin Loritsch</a>
- * @version CVS $Revision$ $Date$
- */
-
-public class TestCaseEmitter extends JavaWriter {
-    private final static int IMPORTS = 1;
-    private final static int HEADER = 2;
-    private final static int TESTS = 3;
-    private final static int DONE = 4;
-
-    private final static String INDENT = "            ";
-
-    private final PrintWriter writer;
-    private final String className;
-    private final Emitter emitter;
-    private int state = IMPORTS;
-
-    public TestCaseEmitter(PrintWriter testCase, String className, Emitter emit) {
-        super(emit, new javax.wsdl.QName(), "", "", "");
-        this.emitter = emit;
-        this.writer = testCase;
-        this.className = className;
-    }
-
-    public void writeFileBody() {};
-
-    public final void writeHeader(String filename, String namespace) {
-        if (this.state > IMPORTS) {
-            throw new IllegalStateException("You cannot write the header now!");
-        }
-
-        emitter.writeFileHeader(filename, namespace, writer);
-        this.state = HEADER;
-
-        writer.print("public class ");
-        writer.print(this.className);
-        writer.println(" extends junit.framework.TestCase {");
-
-        writer.print("    public ");
-        writer.print(this.className);
-        writer.println("(String name) {");
-        writer.println("        super(name);");
-        writer.println("    }");
-    }
-
-    public final void finish() {
-        this.state = DONE;
-        writer.println("}");
-        writer.println();
-        writer.flush();
-        writer.close();
-    }
+* This is Wsdl2java's TestCase writer.  It writes the <serviceName>TestCase.java file.
+*/
+public class JavaTestCaseWriter extends JavaWriter {
+    private Service service;
+    private HashMap portTypeOperationParameters;
 
     /**
-     * Generate setUp()/tearDown() code for the TestCase
+     * Constructor.
      */
-    public final void writeInitCode() throws IOException {
-        if (this.state == DONE) {
-            throw new IllegalStateException("The test case is already done!");
-        }
+    protected JavaTestCaseWriter(
+            Emitter emitter,
+            Service service,
+            HashMap portTypeOperationParameters) {
+        super(emitter, service.getQName(), "TestCase", "java", "Generating service test case:  ");
+        this.service = service;
+        this.portTypeOperationParameters = portTypeOperationParameters;
+    } // ctor
 
-        this.state = TESTS;
-    }
+    /**
+     * Write the common header plus the ctors.
+     */
+    protected void writeFileHeader() throws IOException {
+        super.writeFileHeader();
+
+        pw.print("public class ");
+        pw.print(this.className);
+        pw.println(" extends junit.framework.TestCase {");
+
+        pw.print("    public ");
+        pw.print(this.className);
+        pw.println("(String name) {");
+        pw.println("        super(name);");
+        pw.println("    }");
+    } // writeFileHeader
+
+    /**
+     * Write the body of the TestCase file.
+     */
+    protected void writeFileBody() throws IOException {
+        // get ports
+        Map portMap = service.getPorts();
+        Iterator portIterator = portMap.values().iterator();
+
+        while (portIterator.hasNext()) {
+            Port p = (Port) portIterator.next();
+            Binding binding = p.getBinding();
+
+            // If this isn't an SOAP binding, skip it
+            if (emitter.wsdlAttr.getBindingType(binding) != WsdlAttributes.TYPE_SOAP) {
+                continue;
+            }
+
+            String portName = p.getName();
+
+            writeComment(pw, p.getDocumentationElement());
+            writeServiceTestCode(portName, binding);
+        }
+        finish();
+    } // writeFileBody
+
+    public final void finish() {
+        pw.println("}");
+        pw.println();
+        pw.flush();
+        pw.close();
+    } // finish
 
     public final void writeServiceTestCode(String portName, Binding binding) throws IOException {
-        if (this.state > TESTS) {
-            throw new IllegalStateException("You may not write any more tests!");
-        }
-
-        this.state = TESTS;
         PortType portType = binding.getPortType();
         String bindingType = emitter.getTypeFactory().getJavaName(portType.getQName());
 
-        writer.println();
-        writer.println("    public void test" + portName + "() {");
-        writer.print("        ");
-        writer.print(bindingType);
-        writer.print(" binding = new ");
-        writer.print(this.className.substring(0, this.className.length() - "TestCase".length()));
-        writer.print("().get");
-        writer.print(portName);
-        writer.println("();");
+        pw.println();
+        pw.println("    public void test" + portName + "() {");
+        pw.print("        ");
+        pw.print(bindingType);
+        pw.print(" binding = new ");
+        pw.print(this.className.substring(0, this.className.length() - "TestCase".length()));
+        pw.print("().get");
+        pw.print(portName);
+        pw.println("();");
 
-        writer.println("        assertTrue(\"Binding is null\", binding != null);");
+        pw.println("        assertTrue(\"Binding is null\", binding != null);");
 
         this.writePortTestCode(portType);
 
-        writer.println("    }");
-    }
+        pw.println("    }");
+    } // writeServiceTestCode
 
     private final void writePortTestCode(PortType port) throws IOException {
         Iterator ops = port.getOperations().iterator();
-
+        HashMap operationParameters = (HashMap) portTypeOperationParameters.get(port);
         while (ops.hasNext()) {
-            writer.println("        try {");
+            pw.println("        try {");
             Operation op = (Operation) ops.next();
             String namespace = (String) emitter.getNamespaces().get(port.getQName().getNamespaceURI());
-            Emitter.Parameters params = this.emitter.parameters(op, namespace);
+            Emitter.Parameters params = (Emitter.Parameters) operationParameters.get(op);
 
             if ( !"void".equals( params.returnType ) ) {
-                writer.print(INDENT);
-                writer.print(params.returnType);
-                writer.print(" value = ");
+                pw.print("            ");
+                pw.print(params.returnType);
+                pw.print(" value = ");
 
                 if (  isPrimitiveType( params.returnType ) ) {
                     if ( "boolean".equals( params.returnType ) ) {
-                        writer.println("false;");
+                        pw.println("false;");
                     } else {
-                        writer.println("-3;");
+                        pw.println("-3;");
                     }
                 } else {
-                    writer.println("null;");
+                    pw.println("null;");
                 }
             }
 
-            writer.print(INDENT);
+            pw.print("            ");
 
             if ( !"void".equals(params.returnType) ) {
-                writer.print("value = ");
+                pw.print("value = ");
             }
 
-            writer.print("binding.");
-            writer.print(op.getName());
-            writer.print("(");
+            pw.print("binding.");
+            pw.print(op.getName());
+            pw.print("(");
 
             Iterator iparam = params.list.iterator();
             boolean isFirst = true;
@@ -199,7 +198,7 @@ public class TestCaseEmitter extends JavaWriter {
                 if (isFirst) {
                     isFirst = false;
                 } else {
-                    writer.print(", ");
+                    pw.print(", ");
                 }
 
                 Emitter.Parameter param = (Emitter.Parameter) iparam.next();
@@ -216,39 +215,39 @@ public class TestCaseEmitter extends JavaWriter {
                 
                 if ( isPrimitiveType(paramType) ) {
                     if ( "boolean".equals(paramType) ) {
-                        writer.print("true");
+                        pw.print("true");
                     } else {
-                        writer.print("0");
+                        pw.print("0");
                     }
                 } else {
-                    writer.print("new ");
-                    writer.print(paramType);
-                    writer.print("()");
+                    pw.print("new ");
+                    pw.print(paramType);
+                    pw.print("()");
                 }
             }
 
-            writer.println(");");
+            pw.println(");");
 
 /* I'm not sure why we'd do this...
             if ( !"void".equals(params.returnType) ) {
-                writer.print(INDENT);
+                pw.print("            ");
 
                 if ( this.emitter.isPrimitiveType( params.returnType ) ) {
                     if ( "boolean".equals( params.returnType ) ) {
-                        writer.println("assertTrue(\"Value is still false\", value != false);");
+                        pw.println("assertTrue(\"Value is still false\", value != false);");
                     } else {
-                        writer.println("assertTrue(\"Value is still -3\", value != -3);");
+                        pw.println("assertTrue(\"Value is still -3\", value != -3);");
                     }
                 } else {
-                    writer.println("assertTrue(\"Value is null\", value != null);");
+                    pw.println("assertTrue(\"Value is null\", value != null);");
                 }
             }
 */
 
-            writer.println("        } catch (java.rmi.RemoteException re) {");
-            writer.print(INDENT);
-            writer.println("throw new junit.framework.AssertionFailedError(\"Remote Exception caught: \" + re );");
-            writer.print("        }");
+            pw.println("        } catch (java.rmi.RemoteException re) {");
+            pw.print("            ");
+            pw.println("throw new junit.framework.AssertionFailedError(\"Remote Exception caught: \" + re );");
+            pw.print("        }");
             
             Map faultMap = op.getFaults();
 
@@ -259,23 +258,16 @@ public class TestCaseEmitter extends JavaWriter {
                 while (i.hasNext()) {
                     count++;
                     Fault f = (Fault) i.next();
-                    writer.print(" catch (");
-                    writer.print(f.getName());
-                    writer.println(" e" + count + ") {");
-                    writer.print(INDENT);
-                    writer.println("throw new junit.framework.AssertionFailedError(\"" + f.getName() + " Exception caught: \" + e" + count + ");");
-                    writer.print("        }");
+                    pw.print(" catch (");
+                    pw.print(f.getName());
+                    pw.println(" e" + count + ") {");
+                    pw.print("            ");
+                    pw.println("throw new junit.framework.AssertionFailedError(\"" + f.getName() + " Exception caught: \" + e" + count + ");");
+                    pw.print("        }");
                 }
             }
-
-            writer.println();
+            pw.println();
         }
-    }
+    } // writePortTestCode
 
-    /**
-     * Get the writer
-     */
-    public final PrintWriter getWriter() {
-        return this.writer;
-    }
-}
+} // class JavaTestCasepw

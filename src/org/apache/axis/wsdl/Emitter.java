@@ -54,11 +54,10 @@
  */
 package org.apache.axis.wsdl;
 
-import com.ibm.wsdl.extensions.soap.SOAPAddress;
-import com.ibm.wsdl.extensions.soap.SOAPBody;
-import com.ibm.wsdl.extensions.soap.SOAPOperation;
 import com.ibm.wsdl.xml.WSDLReader;
+
 import org.apache.axis.utils.XMLUtils;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -81,15 +80,12 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Vector;
 
@@ -114,7 +110,7 @@ public class Emitter {
     protected WsdlAttributes wsdlAttr = null;
     protected boolean bEmitSkeleton = false;
     protected boolean bMessageContext = false;
-    private boolean bEmitTestCase = false;
+    protected boolean bEmitTestCase = false;
     protected boolean bVerbose = false;
     private boolean bGenerateImports = true;
     private String outputDir = null;
@@ -869,126 +865,8 @@ public class Emitter {
      * Write out a single service class
      */
     private void writeService(Service service) throws IOException {
-        QName serviceQName = service.getQName();
-        String serviceName = Utils.capitalize(Utils.xmlNameToJava(serviceQName.getLocalPart()));
-        String servicePackage = namespaces.getCreate(serviceQName.getNamespaceURI());
-        PrintWriter servicePW = printWriter(serviceQName, null, "java", "Generating service class:  ");
-
-        TestCaseEmitter testFactory = null;
-        if (this.bEmitTestCase) {
-            String className = serviceName + "TestCase";
-            testFactory = new TestCaseEmitter(printWriter(serviceQName, "TestCase", "java", "Generating service test class:  "), className, this);
-
-            testFactory.writeHeader(className, servicePackage);
-            testFactory.writeInitCode();
-        }
-
-        writeFileHeader(serviceName + ".java", servicePackage, servicePW);
-
-        // declare class
-        servicePW.println("public class " + serviceName + " {");
-
-        // output comments
-        writeComment(servicePW, service.getDocumentationElement());
-        if (this.bEmitTestCase) {
-            this.writeComment(testFactory.getWriter(), service.getDocumentationElement());
-        }
-
-        // get ports
-        Map portMap = service.getPorts();
-        Iterator portIterator = portMap.values().iterator();
-
-        // write a get method for each of the ports with a SOAP binding
-        while (portIterator.hasNext()) {
-            Port p = (Port) portIterator.next();
-            Binding binding = p.getBinding();
-
-            // If this isn't an SOAP binding, skip it
-            if (wsdlAttr.getBindingType(binding) != WsdlAttributes.TYPE_SOAP) {
-                continue;
-            }
-
-            String portName = p.getName();
-            String stubClass = emitFactory.getJavaName(binding.getQName()) + "Stub";
-            String bindingType = emitFactory.getJavaName(binding.getPortType().getQName());
-
-            // Get endpoint address and validate it
-            String address = getAddressFromPort(p);
-            if (address == null) {
-                // now what?
-                throw new IOException("Emitter failure.  Can't find endpoint address in port " + portName + " in service " + serviceName);
-            }
-            try {
-                URL ep = new URL(address);
-            }
-            catch (MalformedURLException e) {
-                throw new IOException("Emitter failure.  Invalid endpoint address in port " + portName + " in service " + serviceName + ": " + address);
-            }
-
-            // Write out the get<PortName> methods
-            servicePW.println();
-            servicePW.println("    // Use to get a proxy class for " + portName);
-            writeComment(servicePW, p.getDocumentationElement());
-            servicePW.println("    private final java.lang.String " + portName + "_address = \"" + address + "\";");
-
-
-            servicePW.println("" );
-            servicePW.println("    public String get" + portName + "Address() {" );
-            servicePW.println("        return " + portName + "_address;" );
-            servicePW.println("    }" );
-            servicePW.println("" );
-
-            servicePW.println("    public " + bindingType + " get" + portName + "() {");
-            servicePW.println("       java.net.URL endpoint;");
-            servicePW.println("        try {");
-            servicePW.println("            endpoint = new java.net.URL(" + portName + "_address);");
-            servicePW.println("        }");
-            servicePW.println("        catch (java.net.MalformedURLException e) {");
-            servicePW.println("            return null; // unlikely as URL was validated in wsdl2java");
-            servicePW.println("        }");
-            servicePW.println("        return get" + portName + "(endpoint);");
-            servicePW.println("    }");
-            servicePW.println();
-            servicePW.println("    public " + bindingType + " get" + portName + "(java.net.URL portAddress) {");
-            servicePW.println("        try {");
-            servicePW.println("            return new " + stubClass + "(portAddress);");
-            servicePW.println("        }");
-            servicePW.println("        catch (org.apache.axis.AxisFault e) {");
-            servicePW.println("            return null; // ???");
-            servicePW.println("        }");
-            servicePW.println("    }");
-
-            if (this.bEmitTestCase) {
-                this.writeComment(testFactory.getWriter(), p.getDocumentationElement());
-                testFactory.writeServiceTestCode(portName, binding);
-        }
-        }
-
-        // write out standard service methods (available in all services)
-        if (this.bEmitTestCase) {
-            testFactory.finish();
-        }
-
-        // all done
-        servicePW.println("}");
-        servicePW.close();
-    }
-
-
-    /**
-     * Return the endpoint address from a <soap:address location="..."> tag
-     */
-    private String getAddressFromPort(Port p) {
-        // Get the endpoint for a port
-        List extensibilityList = p.getExtensibilityElements();
-        for (ListIterator li = extensibilityList.listIterator(); li.hasNext();) {
-            Object obj = li.next();
-            if (obj instanceof SOAPAddress) {
-                return ((SOAPAddress) obj).getLocationURI();
-            }
-        }
-        // didn't find it
-        return null;
+        Writer writer = writerFactory.getWriter(service, portTypesInfo);
+        writer.write();
     }
 
     /**
@@ -1376,71 +1254,6 @@ public class Emitter {
         return new PrintWriter(new FileWriter(file));
     } // printWriter
 
-
-    /**
-     * output documentation element as a Java comment
-     */
-    private void writeComment(PrintWriter pw, Element element) {
-        // This controls how many characters per line
-        final int LINE_LENGTH = 65;
-
-        if (element == null)
-            return;
-
-        String comment = element.getFirstChild().getNodeValue();
-
-        // Strip out stuff that will really mess up our comments
-        comment = comment.replace('\r', ' ');
-        comment = comment.replace('\n', ' ');
-
-        if (comment != null) {
-            int start = 0;
-
-            pw.println();  // blank line
-
-            // make the comment look pretty
-            while (start < comment.length()) {
-                int end = start + LINE_LENGTH;
-                if (end > comment.length())
-                    end = comment.length();
-                // look for next whitespace
-                while (end < comment.length() &&
-                        !Character.isWhitespace(comment.charAt(end))) {
-                    end++;
-                }
-                pw.println("    // " + comment.substring(start, end).trim());
-                start = end + 1;
-            }
-        }
-    }
-
-    /**
-     * A simple map of the primitive types and their holder objects
-     */
-    private static HashMap TYPES = new HashMap(7);
-
-    static {
-        TYPES.put("int", "Integer");
-        TYPES.put("float", "Float");
-        TYPES.put("boolean", "Boolean");
-        TYPES.put("double", "Double");
-        TYPES.put("byte", "Byte");
-        TYPES.put("short", "Short");
-        TYPES.put("long", "Long");
-    }
-
-    /**
-     * Return a string with "var" wrapped as an Object type if needed
-     */
-    private String wrapPrimitiveType(String type, String var) {
-        String objType = (String) TYPES.get(type);
-        if (objType != null) {
-            return "new " + objType + "(" + var + ")";
-        }
-        else {
-            return var;
-        }
-    }
 
     /**
      * Write a common header, including the package name to the
