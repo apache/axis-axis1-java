@@ -19,26 +19,32 @@ finding some way to participate in the Axis community.</p>
 <p>On to the (soon-to-be) tests:</p>
 
 <table width=100% border=1 cellpadding=3>
-<tr>
- <th>Name of test</th>
- <th>Description of test</th>
- <th>Developer(s)</th>
- <th>Status</th>
-</tr>
-
-<tr>
- <td>SkeletonMethods</td>
- <td>confirm that the methods from the Skeleton interface are NOT exposed in the generated WSDL for services.</td>
- <td>Glen</td>
- <td>none</td>
-</tr>
-
-<tr>
- <td>SOAP 1.2</td>
- <td>Test SOAP 1.2 functionality - confirm namespaces, types, faults.</td>
- <td>Glen</td>
- <td>none</td>
-</tr>
-
+  <tr> 
+    <th>Name of test</th>
+    <th>Description of test</th>
+    <th>Developer(s)</th>
+    <th>Status</th>
+  </tr>
+  <tr> 
+    <td>SkeletonMethods</td>
+    <td>confirm that the methods from the Skeleton interface are NOT exposed in 
+      the generated WSDL for services.</td>
+    <td>Glen</td>
+    <td>none</td>
+  </tr>
+  <tr>
+    <td>soap12.Version</td>
+    <td>Test that when a service is sent a SOAP 1.2 message, we get back a SOAP 
+      1.2 response.</td>
+    <td>Glen</td>
+    <td>none</td>
+  </tr>
+  <tr> 
+    <td>soap12.RpcBody</td>
+    <td>Test that our SOAP 1.2 RPC implementation only allows a single body element 
+      (should fault otherwise).</td>
+    <td>Glen</td>
+    <td>none</td>
+  </tr>
 </table>
 </body>

@@ -56,12 +56,14 @@ package org.apache.axis.message;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.SerializationContext;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
 
 import javax.xml.namespace.QName;
+import javax.xml.soap.SOAPException;
 
 import java.io.IOException;
 
@@ -159,7 +161,7 @@ public class SOAPFault extends SOAPBodyElement implements javax.xml.soap.SOAPFau
      *     adding the <CODE>faultCode</CODE> to the underlying XML
      *     tree.
      */
-    public void setFaultCode(String faultCode) throws javax.xml.soap.SOAPException {
+    public void setFaultCode(String faultCode) throws SOAPException {
         fault.setFaultCode(faultCode);
     }
 
@@ -185,7 +187,7 @@ public class SOAPFault extends SOAPBodyElement implements javax.xml.soap.SOAPFau
      *     adding the <CODE>faultActor</CODE> to the underlying XML
      *     tree.
      */
-    public void setFaultActor(String faultActor) throws javax.xml.soap.SOAPException {
+    public void setFaultActor(String faultActor) throws SOAPException {
         fault.setFaultActor(faultActor);
     }
 
@@ -211,8 +213,7 @@ public class SOAPFault extends SOAPBodyElement implements javax.xml.soap.SOAPFau
      *     tree.
      * @see #getFaultString() getFaultString()
      */
-    public void setFaultString(String faultString)
-            throws javax.xml.soap.SOAPException {
+    public void setFaultString(String faultString) throws SOAPException {
         fault.setFaultString(faultString);
     }
 
@@ -255,9 +256,9 @@ public class SOAPFault extends SOAPBodyElement implements javax.xml.soap.SOAPFau
      *     <CODE>SOAPFaultException</CODE> object already contains a valid
      *     <CODE>Detail</CODE> object
      */
-    public javax.xml.soap.Detail addDetail() throws javax.xml.soap.SOAPException {
+    public javax.xml.soap.Detail addDetail() throws SOAPException {
         if(getDetail()!=null){
-            throw new javax.xml.soap.SOAPException(org.apache.axis.utils.JavaUtils.getMessage("valuePresent"));
+            throw new SOAPException(JavaUtils.getMessage("valuePresent"));
         }
         Detail detail = new Detail(fault);
         addChildElement(detail);
