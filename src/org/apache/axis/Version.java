@@ -66,8 +66,13 @@ import org.apache.axis.utils.JavaUtils;
  * @author Glen Daniels (gdaniels@apache.org)
  */ 
 public class Version {
+    public static String getVersion()
+    {
+        return JavaUtils.getMessage("axisVersion") + "\n" +
+               JavaUtils.getMessage("builtOn");
+    }
+    
     public static void main(String[] args) {
-        System.out.println(JavaUtils.getMessage("axisVersion"));
-        System.out.println(JavaUtils.getMessage("builtOn"));
+        System.out.println(getVersion());
     }
 }

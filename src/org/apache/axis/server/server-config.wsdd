@@ -17,14 +17,15 @@
  <handler type="java:org.apache.axis.handlers.SimpleAuthenticationHandler" name="Authenticate"/>
 
  <service name="AdminService" provider="java:MSG">
+  <namespace>http://xml.apache.org/axis/wsdd/</namespace>
   <parameter name="allowedMethods" value="AdminService"/>
   <parameter name="enableRemoteAdmin" value="false"/>
   <parameter name="className" value="org.apache.axis.utils.Admin"/>
  </service>
- <service name="http://xml.apache.org/axis/wsdd/" provider="java:MSG">
-  <parameter name="allowedMethods" value="AdminService"/>
-  <parameter name="enableRemoteAdmin" value="false"/>
-  <parameter name="className" value="org.apache.axis.utils.Admin"/>
+ 
+ <service name="Version" provider="java:RPC">
+  <parameter name="allowedMethods" value="getVersion"/>
+  <parameter name="className" value="org.apache.axis.Version"/>
  </service>
 
  <transport name="http">
