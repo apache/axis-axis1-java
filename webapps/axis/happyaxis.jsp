@@ -185,11 +185,10 @@
      * @param out
      * @param clazz
      * @return the jar file or path where a class was found
-     * @throws IOException
      */
 
     String getLocation(JspWriter out,
-                       Class clazz) throws IOException {
+                       Class clazz) {
         try {
             java.net.URL url = clazz.getProtectionDomain().getCodeSource().getLocation();
             String location = url.toString();
@@ -293,18 +292,15 @@
         return Integer.toString(major) + '.' + Integer.toString(minor);
     }
 
+
+
     /**
-     *
+     * what parser are we using.
      * @return the classname of the parser
      */
-    public String getParserName() throws Exception {
-        // Create a JAXP SAXParser
-        SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
-        if(saxParserFactory==null) {
-            return "no XML parser factory found";
-        }
-        SAXParser saxParser = saxParserFactory.newSAXParser();
-        if(saxParser==null) {
+    private String getParserName() {
+        SAXParser saxParser = getSAXParser();
+        if (saxParser == null) {
             return "Could not create an XML Parser";
         }
 
@@ -313,6 +309,36 @@
         return saxParserName;
     }
 
+    /**
+     * Create a JAXP SAXParser
+     * @return parser or null for trouble
+     */
+    private SAXParser getSAXParser() {
+        SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
+        if (saxParserFactory == null) {
+            return null;
+        }
+        SAXParser saxParser = null;
+        try {
+            saxParser = saxParserFactory.newSAXParser();
+        } catch (Exception e) {
+        }
+        return saxParser;
+    }
+
+    /**
+     * get the location of the parser
+     * @return path or null for trouble in tracking it down
+     */
+
+    private String getParserLocation(JspWriter out) {
+        SAXParser saxParser = getSAXParser();
+        if (saxParser == null) {
+            return null;
+        }
+        String location = getLocation(out,saxParser.getClass());
+        return location;
+    }
     %>
 <html><head><title>Axis Happiness Page</title></head>
 <body>
@@ -451,11 +477,13 @@
     <%
         String servletVersion=getServletVersion();
         String xmlParser=getParserName();
+        String xmlParserLocation = getParserLocation(out);
 
     %>
     <table>
         <tr><td>Servlet version</td><td><%= servletVersion %></td></tr>
         <tr><td>XML Parser</td><td><%= xmlParser %></td></tr>
+        <tr><td>XML ParserLocation</td><td><%= xmlParserLocation %></td></tr>
     </table>
 <% if(xmlParser.indexOf("crimson")>=0) { %>
     <p>
