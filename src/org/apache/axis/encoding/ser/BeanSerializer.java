@@ -150,6 +150,7 @@ public class BeanSerializer implements Serializer, Serializable {
                             qname = element.getXmlName();
                         }
                         isOmittable = element.isMinOccursZero();
+                        isNillable = element.isNillable();
                         xmlType = element.getXmlType();
                     }
                 }
