@@ -284,7 +284,7 @@ public class MessageElement implements SOAPElement, Serializable
     }
 
     public boolean isDirty() { return _isDirty; }
-    public void setDirty(boolean dirty) { _isDirty = dirty; };
+    public void setDirty(boolean dirty) { _isDirty = dirty; }
 
     public boolean isRoot() { return _isRoot; }
     public String getID() { return id; }

@@ -163,7 +163,7 @@ public class FaultableHandler extends BasicHandler {
         log.debug("Enter: FaultableHandler::onFault");
         workHandler.onFault( msgContext );
         log.debug("Exit: FaultableHandler::onFault");
-    };
+    }
 
     public boolean canHandleBlock(QName qname) {
         return( workHandler.canHandleBlock(qname) );

@@ -279,7 +279,7 @@ public interface SerializationContext extends javax.xml.rpc.encoding.Serializati
      * @param p2 starting index in array
      * @param p3 length to write
      */
-    public void writeChars(char [] p1, int p2, int p3) throws IOException;;
+    public void writeChars(char [] p1, int p2, int p3) throws IOException;
 
     /**
      * Convenience operation to write out (to Writer) the String

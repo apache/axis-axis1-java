@@ -389,7 +389,6 @@ public class tcpmon extends JFrame {
                         delayTimeLabel.setForeground(color);
                     }
                 }
-                ;
             }
             );
 
@@ -454,7 +453,6 @@ public class tcpmon extends JFrame {
                             */
                         }
                     }
-                    ;
                 }
             );
 
