@@ -405,7 +405,7 @@ components in the server:</P><PRE>% java org.apache.axis.client.AdminClient list
   of the element itself is the XML QName, and the value of the classname attribute 
   is the Java class name. So in this case, we'd be mapping the "my.java.thingy" 
   class to the XML QName [someNamespace]:[local].</p>
-<p>Let's take a look at how this works in practice. Go look at the docs/examples/example4/BeanService.java 
+<p>Let's take a look at how this works in practice. Go look at the samples/userguide/example5/BeanService.java 
   file. (we won't reproduce it here, it's pretty straightforward) The key thing 
   to notice is that the argument to the service method is an Order object. Since 
   Order is not a basic type which Axis understands by default, trying to run this 
