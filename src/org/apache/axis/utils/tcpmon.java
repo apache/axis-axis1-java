@@ -378,7 +378,7 @@ public class tcpmon extends JFrame {
                 listener.tableModel.insertRow(count+1, new Object[] { "Active",
                                               time,
                                               fromHost, 
-                                              "---" });
+                                              listener.hostField.getText() });
                 listener.connections.add( this );
                 inputText  = new JTextArea( null, null, 20, 80 );
                 inputScroll = new JScrollPane( inputText );
@@ -438,6 +438,7 @@ public class tcpmon extends JFrame {
                     }
 
                     bufferedData = buf.toString();
+                    inputText.append( bufferedData );
 
                     if ( bufferedData.startsWith( "GET " ) ||
                          bufferedData.startsWith( "POST " ) ) {
@@ -472,7 +473,6 @@ public class tcpmon extends JFrame {
                 if ( bufferedData != null ) {
                     byte[] b = bufferedData.getBytes();
                     tmpOut2.write( b );
-                    inputText.append( bufferedData );
                 }
 
                 boolean format = listener.xmlFormatBox.isSelected();
