@@ -916,7 +916,7 @@ public class Call implements javax.xml.rpc.Call {
         //////////////////////////////////////////////////
         Vector result = new Vector();
         int    j = 0 ;
-        for ( i = 0 ; i < numParams ; i++ ) {
+        for ( i = 0 ; i < paramNames.size() ; i++ ) {
             if (paramModes.get(i) == ParameterMode.PARAM_MODE_OUT)
                 continue ;
             RPCParam p = new RPCParam( (String) paramNames.get(i),
@@ -1171,7 +1171,7 @@ public class Call implements javax.xml.rpc.Call {
         Object               result = null ;
 
         // Clear the output params
-        outParams = null;
+        outParams = new HashMap();
 
         // If we have headers to insert, do so now.
         if (myHeaders != null) {
@@ -1207,18 +1207,38 @@ public class Call implements javax.xml.rpc.Call {
         }
 
         if (resArgs != null && resArgs.size() > 0) {
-            RPCParam param = (RPCParam)resArgs.get(0);
-            result = param.getValue();
 
-            /**
-             * Are there out-params?  If so, return a Vector instead.
-             */
-            if (resArgs.size() > 1) {
-                outParams = new HashMap();
-                for (int i = 1; i < resArgs.size(); i++) {
-                    param = (RPCParam) resArgs.get(i);
-                    outParams.put(param.getName(), param.getValue());
-                }
+            // If there is no return, then we start at index 0 to create the outParams Map.
+            // If there IS a return, then we start with 1.
+            int outParamStart = 0;
+
+            // If we have resArgs and the returnType is specified, then the first
+            // resArgs is the return.  If we have resArgs and neither returnType
+            // nor paramTypes are specified, then we assume that the caller is
+            // following the non-JAX-RPC AXIS shortcut of not having to specify
+            // the return, in which case we again assume the first resArgs is
+            // the return.
+            // NOTE 1:  the non-JAX-RPC AXIS shortcut allows a potential error
+            // to escape notice.  If the caller IS NOT following the non-JAX-RPC
+            // shortcut but instead intentionally leaves returnType and params
+            // null (ie., a method that takes no parameters and returns nothing)
+            // then, if we DO receive something it should be an error, but this
+            // code passes it through.  The ideal solution here is to require
+            // this caller to set the returnType to void, but there's no void
+            // type in XML.
+            // NOTE 2:  we should probably verify that the resArgs element
+            // types match the expected returnType and paramTypes, but I'm not
+            // sure how to do that since the resArgs value is a Java Object
+            // and the returnType and paramTypes are QNames.
+            if (returnType != null || paramTypes == null) {
+                RPCParam param = (RPCParam)resArgs.get(0);
+                result = param.getValue();
+                outParamStart = 1;
+            }
+
+            for (int i = outParamStart; i < resArgs.size(); i++) {
+                RPCParam param = (RPCParam) resArgs.get(i);
+                outParams.put(param.getName(), param.getValue());
             }
         }
 

@@ -1,0 +1,312 @@
+<?xml version="1.0" ?>
+
+<definitions 
+    name="parameterOrder test"
+    targetNamespace="parameterOrder.wsdl.test"
+    xmlns:tns="parameterOrder.wsdl.test"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+  <!-- message declns -->
+  <message name="empty"/>
+
+  <message name="1part">
+    <part name="one" type="xsd:int"/>
+  </message>
+
+  <message name="2parts">
+    <part name="one" type="xsd:int"/>
+    <part name="two" type="xsd:int"/>
+  </message>
+
+  <message name="3parts">
+    <part name="one" type="xsd:int"/>
+    <part name="two" type="xsd:int"/>
+    <part name="three" type="xsd:int"/>
+  </message>
+
+  <message name="4parts">
+    <part name="one" type="xsd:int"/>
+    <part name="two" type="xsd:int"/>
+    <part name="three" type="xsd:int"/>
+    <part name="four" type="xsd:int"/>
+  </message>
+
+  <message name="5parts">
+    <part name="one" type="xsd:int"/>
+    <part name="two" type="xsd:int"/>
+    <part name="three" type="xsd:int"/>
+    <part name="four" type="xsd:int"/>
+    <part name="five" type="xsd:int"/>
+  </message>
+
+  <!-- port type declns -->
+  <portType name="parameterOrderTest">
+    <operation name="oneIn" parameterOrder="one">
+      <input message="tns:1part"/>
+      <output message="tns:empty"/>
+    </operation>
+    <operation name="oneInout" parameterOrder="one">
+      <input message="tns:1part"/>
+      <output message="tns:1part"/>
+    </operation>
+    <operation name="oneOut" parameterOrder="one">
+      <input message="tns:empty"/>
+      <output message="tns:1part"/>
+    </operation>
+    <operation name="fiveInNoOrder">
+      <input message="tns:5parts"/>
+      <output message="tns:empty"/>
+    </operation>
+    <operation name="fiveInoutNoOrder">
+      <input message="tns:5parts"/>
+      <output message="tns:5parts"/>
+    </operation>
+    <operation name="fiveOutNoOrder">
+      <input message="tns:empty"/>
+      <output message="tns:5parts"/>
+    </operation>
+    <operation name="fiveIn" parameterOrder="five four three two one">
+      <input message="tns:5parts"/>
+      <output message="tns:empty"/>
+    </operation>
+    <operation name="fiveInout" parameterOrder="five four three two one">
+      <input message="tns:5parts"/>
+      <output message="tns:5parts"/>
+    </operation>
+    <operation name="fiveOut" parameterOrder="five four three two one">
+      <input message="tns:empty"/>
+      <output message="tns:5parts"/>
+    </operation>
+    <operation name="someInoutPartialOrder1" parameterOrder="four two one">
+      <input message="tns:2parts"/>
+      <output message="tns:4parts"/>
+    </operation>
+    <operation name="someInoutPartialOrder2" parameterOrder="four two one">
+      <input message="tns:2parts"/>
+      <output message="tns:5parts"/>
+    </operation>
+    <operation name="fourOutPartialOrder" parameterOrder="three one">
+      <input message="tns:empty"/>
+      <output message="tns:4parts"/>
+    </operation>
+    <operation name="oneReturn" parameterOrder="three one">
+      <input message="tns:empty"/>
+      <output message="tns:3parts"/>
+    </operation>
+  </portType>
+
+  <!-- binding declns -->
+  <binding name="parameterOrderBinding" type="tns:parameterOrderTest">
+    <soap:binding
+        style="rpc"
+        transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="oneIn">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="oneInout">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="oneOut">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="fiveInNoOrder">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="fiveInoutNoOrder">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="fiveOutNoOrder">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="fiveIn">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="fiveInout">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="fiveOut">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="someInoutPartialOrder1">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="someInoutPartialOrder2">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="fourOutPartialOrder">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="oneReturn">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+  </binding>
+
+  <!-- service decln -->
+  <service name="parameterOrderService">
+    <port name="parameterOrder" binding="tns:parameterOrderBinding">
+      <soap:address location="http://localhost:8080/axis/services/parameterOrder"/>
+    </port>
+  </service>
+
+</definitions>
+

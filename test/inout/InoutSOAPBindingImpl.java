@@ -1,5 +1,6 @@
 package test.inout;
 
+import javax.xml.rpc.holders.IntHolder;
 import javax.xml.rpc.holders.StringHolder;
 
 public class InoutSOAPBindingImpl implements Inout
@@ -353,24 +354,23 @@ public class InoutSOAPBindingImpl implements Inout
     }
 
 
-    public String outManyInout0In0 (AddressHolder address) throws org.apache.axis.AxisFault, TestFailed
+    public void outManyInout0In0 (StringHolder name, AddressHolder address) throws org.apache.axis.AxisFault, TestFailed
     {
-        if (address.value == null)
-        {
+        if (name.value == null && address.value == null) {
+            name.value = " arghhh!";
             address.value = returnAddress;
-            return " arghhh!";
         }
         else
             throw new TestFailed ();
     }
 
 
-    public int outManyInout0In1 (String name, StringHolder otherName) throws org.apache.axis.AxisFault, TestFailed
+    public void outManyInout0In1 (String name, IntHolder number, StringHolder otherName) throws org.apache.axis.AxisFault, TestFailed
     {
         if ("outManyInout0In1".equals (name) && otherName.value == null)
         {
+            number.value = returnNumber;
             otherName.value = " yo ho ho!";
-            return returnNumber;
         }
         else
         {
@@ -382,12 +382,12 @@ public class InoutSOAPBindingImpl implements Inout
     }
 
 
-    public int outManyInout0InMany (String name, Address address, StringHolder otherName) throws org.apache.axis.AxisFault, TestFailed
+    public void outManyInout0InMany (String name, Address address, IntHolder number, StringHolder otherName) throws org.apache.axis.AxisFault, TestFailed
     {
         if ("outManyInout0InMany".equals (name) && equals (address, expectedAddress) && otherName.value == null)
         {
+            number.value = returnNumber;
             otherName.value = " yo ho ho!";
-            return returnNumber;
         }
         else
         {
@@ -401,13 +401,13 @@ public class InoutSOAPBindingImpl implements Inout
     }
 
 
-    public int outManyInout1In0 (StringHolder name, StringHolder otherName) throws org.apache.axis.AxisFault, TestFailed
+    public void outManyInout1In0 (StringHolder name, IntHolder number, StringHolder otherName) throws org.apache.axis.AxisFault, TestFailed
     {
         if ("outManyInout1In0".equals (name.value) && otherName.value == null)
         {
+            number.value = returnNumber;
             name.value = name.value + " yo ho ho!";
             otherName.value = " yo ho ho!";
-            return returnNumber;
         }
         else
         {
@@ -419,13 +419,13 @@ public class InoutSOAPBindingImpl implements Inout
     }
 
 
-    public int outManyInout1In1 (StringHolder name, Address address, StringHolder otherName) throws org.apache.axis.AxisFault, TestFailed
+    public void outManyInout1In1 (StringHolder name, Address address, IntHolder number, StringHolder otherName) throws org.apache.axis.AxisFault, TestFailed
     {
         if (equals (address, expectedAddress) && "outManyInout1In1".equals (name.value) && otherName.value == null)
         {
+            number.value = returnNumber;
             name.value = name.value + " yo ho ho!";
             otherName.value = " yo ho ho!";
-            return returnNumber;
         }
         else
         {
@@ -441,13 +441,13 @@ public class InoutSOAPBindingImpl implements Inout
     }
 
 
-    public int outManyInout1InMany (String name, Address address, PhoneHolder phone, StringHolder otherName) throws org.apache.axis.AxisFault, TestFailed
+    public void outManyInout1InMany (String name, Address address, PhoneHolder phone, IntHolder number, StringHolder otherName) throws org.apache.axis.AxisFault, TestFailed
     {
         if ("outManyInout1InMany".equals (name) && equals (address, expectedAddress) && equals (phone.value, expectedPhone) && otherName.value == null)
         {
             phone.value = returnPhone;
+            number.value = returnNumber;
             otherName.value = " yo ho ho!";
-            return returnNumber;
         }
         else
         {
@@ -463,14 +463,14 @@ public class InoutSOAPBindingImpl implements Inout
     }
 
 
-    public int outManyInoutManyIn0 (StringHolder name, AddressHolder address, StringHolder otherName) throws org.apache.axis.AxisFault, TestFailed
+    public void outManyInoutManyIn0 (StringHolder name, AddressHolder address, IntHolder number, StringHolder otherName) throws org.apache.axis.AxisFault, TestFailed
     {
         if ("outManyInoutManyIn0".equals (name.value) && equals (address.value, expectedAddress) && otherName.value == null)
         {
             name.value = name.value + " yo ho ho!";
             address.value = returnAddress;
+            number.value = returnNumber;
             otherName.value = " yo ho ho!";
-            return returnNumber;
         }
         else
         {
@@ -484,14 +484,14 @@ public class InoutSOAPBindingImpl implements Inout
     }
 
 
-    public int outManyInoutManyIn1 (StringHolder name, AddressHolder address, Phone phone, StringHolder otherName) throws org.apache.axis.AxisFault, TestFailed
+    public void outManyInoutManyIn1 (StringHolder name, AddressHolder address, Phone phone, IntHolder number, StringHolder otherName) throws org.apache.axis.AxisFault, TestFailed
     {
         if (equals (phone, expectedPhone) && "outManyInoutManyIn1".equals (name.value) && equals (address.value, expectedAddress) && otherName.value == null)
         {
             name.value = name.value + " yo ho ho!";
             address.value = returnAddress;
+            number.value = returnNumber;
             otherName.value = " yo ho ho!";
-            return returnNumber;
         }
         else
         {
@@ -507,14 +507,14 @@ public class InoutSOAPBindingImpl implements Inout
     }
 
 
-    public int outManyInoutManyInMany (StringHolder name, AddressHolder address, Phone phone, int otherNumber, StringHolder otherName) throws org.apache.axis.AxisFault, TestFailed
+    public void outManyInoutManyInMany (StringHolder name, AddressHolder address, Phone phone, int otherNumber, IntHolder number, StringHolder otherName) throws org.apache.axis.AxisFault, TestFailed
     {
         if (equals (phone, expectedPhone) && expectedNumber == otherNumber && "outManyInoutManyInMany".equals (name.value) && equals (address.value, expectedAddress) && otherName.value == null)
         {
             name.value = name.value + " yo ho ho!";
             address.value = returnAddress;
+            number.value = returnNumber;
             otherName.value = " yo ho ho!";
-            return returnNumber;
         }
         else
         {
