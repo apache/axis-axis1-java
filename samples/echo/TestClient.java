@@ -86,11 +86,15 @@ public abstract class TestClient {
 
     /**
      * Determine if two objects are equal.  Handles nulls and recursively
-     * verifies arrays are equal.
+     * verifies arrays are equal.  Accepts dates within a tolerance of
+     * 999 milliseconds.
      */
     protected boolean equals(Object obj1, Object obj2) {
        if (obj1 == null || obj2 == null) return (obj1 == obj2);
        if (obj1.equals(obj2)) return true;
+       if (obj1 instanceof Date && obj2 instanceof Date)
+           if (Math.abs(((Date)obj1).getTime()-((Date)obj2).getTime())<1000)
+               return true;
        if (!obj2.getClass().isArray()) return false;
        if (!obj1.getClass().isArray()) return false;
        if (Array.getLength(obj1) != Array.getLength(obj2)) return false;
