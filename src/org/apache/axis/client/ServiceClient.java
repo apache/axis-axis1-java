@@ -57,18 +57,19 @@ package org.apache.axis.client ;
 
 import java.util.* ;
 import java.net.*;
-import org.apache.axis.encoding.ServiceDescription;
-import org.apache.axis.message.*;
-import org.apache.axis.handlers.* ;
-import org.apache.axis.utils.* ;
 import org.apache.axis.* ;
+import org.apache.axis.configuration.FileProvider;
+import org.apache.axis.encoding.DeserializerFactory;
+import org.apache.axis.encoding.Serializer;
+import org.apache.axis.encoding.ServiceDescription;
+import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.handlers.* ;
+import org.apache.axis.message.*;
+import org.apache.axis.registries.HandlerRegistry;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.transport.http.HTTPSender;
-import org.apache.axis.encoding.Serializer;
-import org.apache.axis.encoding.TypeMappingRegistry;
-import org.apache.axis.encoding.DeserializerFactory;
-import org.apache.axis.registries.HandlerRegistry;
 import org.apache.axis.transport.http.HTTPTransport;
+import org.apache.axis.utils.* ;
 
 import org.w3c.dom.* ;
 
@@ -175,12 +176,14 @@ public class ServiceClient {
     // Our Transport, if any
     private Transport transport;
     private String    transportName;
+    
+    private static FileProvider configProvider = new FileProvider("client-config.xml");
 
     /**
      * Basic, no-argument constructor.
      */
     public ServiceClient () {
-        this(new AxisClient());
+        this(new AxisClient(configProvider));
     }
     
     /**
@@ -202,7 +205,7 @@ public class ServiceClient {
      */
     public ServiceClient(String endpointURL)
     {
-        this(endpointURL, new AxisClient());
+        this(endpointURL, new AxisClient(configProvider));
     }
     
     /**
@@ -222,7 +225,7 @@ public class ServiceClient {
      *                  request
      */
     public ServiceClient (Transport transport) {
-        this(transport, new AxisClient());
+        this(transport, new AxisClient(configProvider));
     }
     
     /**

@@ -57,6 +57,7 @@ package org.apache.axis.server ;
 
 import java.util.* ;
 import org.apache.axis.* ;
+import org.apache.axis.configuration.FileProvider ;
 import org.apache.axis.utils.* ;
 import org.apache.axis.handlers.* ;
 import org.apache.axis.handlers.http.*;
@@ -85,32 +86,12 @@ public class AxisServer extends AxisEngine
     
     public AxisServer()
     {
-        super(null, Constants.SERVER_CONFIG_FILE);
+        this(new FileProvider(Constants.SERVER_CONFIG_FILE));
     }
     
-    public AxisServer(String basePath)
+    public AxisServer(ConfigurationProvider provider)
     {
-        super(basePath, Constants.SERVER_CONFIG_FILE);
-    }
-    
-    /** Lifecycle routines for managing a static AxisServer
-     */
-    private static AxisServer singleton = null;
-    private static String basePath = null;
-    
-    public static void setBasePath(String path)
-    {
-        basePath = path;
-    }
-    public static String getBasePath()
-    { return basePath; };
-    
-    public static synchronized AxisServer getSingleton()
-    {
-        if (singleton == null) {
-            singleton = new AxisServer(basePath);
-        }
-        return singleton;
+        super(provider);
     }
     
     /** Is this server active?  If this is false, any requests will
@@ -142,7 +123,7 @@ public class AxisServer extends AxisEngine
      */
     public synchronized AxisEngine getClientEngine () {
         if (clientEngine == null) {
-            clientEngine = new AxisClient(basePath);
+            clientEngine = new AxisClient(new FileProvider("client-config.xml")); // !!!!
         }
         return clientEngine;
     }

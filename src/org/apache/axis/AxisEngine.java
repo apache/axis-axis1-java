@@ -86,117 +86,69 @@ public abstract class AxisEngine extends BasicHandler
     public static final String PROP_DOMULTIREFS = "sendMultiRefs";
     public static final String PROP_PASSWORD = "adminPassword";
 
-    protected String sep = System.getProperty("file.separator");
-    
-    protected String engineConfigFilename = "engine-config.xml";
-    protected String engineBasePath;
-    
+    /** Our go-to guy for configuration... */
+    protected ConfigurationProvider configProvider;
+
     /** The handler registry this Engine uses. */
     protected HandlerRegistry _handlerRegistry = new SupplierRegistry();
-    
+
     /** The service registry this Engine uses. */
     protected HandlerRegistry _serviceRegistry = new SupplierRegistry();
-    
+
     /** A map of protocol names to "client" (sender) transports  */
     protected SupplierRegistry transportRegistry = new SupplierRegistry();
-    
+
     /** This Engine's global type mappings     */
     protected TypeMappingRegistry _typeMappingRegistry =
                                                  new TypeMappingRegistry();
-    
-    protected Properties props = new Properties();
-    
+
     /** Has the user changed the password yet? */
     protected boolean _hasSafePassword = false;
-    
+
     //protected SupplierRegistry listenerRegistry = new SupplierRegistry();
-    
+
     /**
      * This engine's Session.  This Session supports "application scope"
      * in the Apache SOAP sense... if you have a service with "application
      * scope", have it store things in this Session.
      */
     private Session session = new SimpleSession();
-    
+
     /**
      * No-arg constructor.
      *
      */
     public AxisEngine()
     {
+        // !!! Set up default configuration?
         init();
-        
+
         Debug.Print( 1, "Exit: AxisEngine no-arg constructor");
     }
-    
-    public AxisEngine(String basePath, String fileName)
+
+    public AxisEngine(ConfigurationProvider configProvider)
     {
-        if ((basePath == null) || (basePath.equals("")))
-            basePath = ".";
-        
-        engineBasePath = basePath;
-        engineConfigFilename = fileName;
+        this.configProvider = configProvider;
         init();
     }
-    
+
     /**
      * (re)initialize - What should really go in here???
      */
     public void init() {
-        /** Load properties 1st, so that debug level gets
-        * set ASAP.
-        */
-        try {
-            File propFile = new File(engineBasePath + sep +
-                                     "axis.properties");
-            if (propFile.exists()) {
-                FileInputStream propFileInputStream =
-                                               new FileInputStream(propFile);
-                props.load(propFileInputStream);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        
-        String propVal;
-        
-        if (!Debug.isLevelSet()) {
-            propVal = props.getProperty(PROP_DEBUG_LEVEL, "0");
-            Debug.setDebugLevel(Integer.parseInt(propVal));
-        }
-        
-        propVal = props.getProperty(PROP_DEBUG_FILE);
-        Debug.setToFile(propVal != null);
-        
-        // Should we send XML declarations in our messages?
-        // default is true, and currently the only accepted true value is
-        // "true".
-        propVal = props.getProperty(PROP_XML_DECL, "true");
-        addOption(PROP_XML_DECL, new Boolean(propVal.equals("true")));
-        
-        // Should we send multi-ref serializations in our messages?
-        propVal = props.getProperty(PROP_DOMULTIREFS, "true");
-        addOption(PROP_DOMULTIREFS, new Boolean(propVal.equals("true")));
-        
-        // The admin password (if it hasn't been set, we're "unsafe", and
-        // we shouldn't do anything in the admin but change it)
-        propVal = props.getProperty(PROP_PASSWORD);
-        if (propVal != null) {
-            addOption(PROP_PASSWORD, propVal);
-            _hasSafePassword = true;
-        } else {
-            addOption(PROP_PASSWORD, "admin");
-        }
-        
-        _typeMappingRegistry.setParent(SOAPTypeMappingRegistry.getSingleton());
-        
         Debug.Print( 1, "Enter: AxisEngine::init" );
-        
-        readConfiguration();
-        
+
+        _typeMappingRegistry.setParent(SOAPTypeMappingRegistry.getSingleton());
+
+        try {
+            configProvider.configureEngine(this);
+        } catch (Exception e) {
+            // !!! throw new EngineConfigException();
+        }
+
         Debug.Print( 1, "Exit: AxisEngine::init" );
     }
-    
+
     /**
      * Load up our engine's configuration of Handlers, Chains,
      * Services, etc.
@@ -211,6 +163,7 @@ public abstract class AxisEngine extends BasicHandler
      * We need to complete discussions about the packaging and deployment
      * patterns for Axis before this code solidifies.
      */
+    /*
     private void readConfiguration()
     {
         InputStream is;
@@ -220,7 +173,7 @@ public abstract class AxisEngine extends BasicHandler
         } catch (Exception e) {
             is = getResourceStream(engineConfigFilename);
         }
-        
+
         if (is == null) {
             // TODO: Deal with this in a nicer way...
             System.err.println("No engine configuration in " +
@@ -228,7 +181,7 @@ public abstract class AxisEngine extends BasicHandler
                                " - aborting!");
             return;
         }
-        
+
         Document doc = XMLUtils.newDocument(is);
         try {
             // ??? Clear registries first?
@@ -239,42 +192,28 @@ public abstract class AxisEngine extends BasicHandler
             return;
         }
     }
+    */
 
     /** Write out our engine configuration.
      */
     public void saveConfiguration()
     {
         try {
-            Document doc = Admin.listConfig(this);
-            FileOutputStream fos = new FileOutputStream(
-                                            engineBasePath + sep +
-                                            engineConfigFilename);
-            XMLUtils.DocumentToStream(doc, fos);
-            fos.close();
-            
-            props.store(new FileOutputStream(engineBasePath + sep +
-                                             "axis.properties"),
-                        "Axis engine properties");
+            configProvider.writeEngineConfig(this);
         } catch (Exception e) {
             System.err.println("Coudn't write engine config!");
             e.printStackTrace();
         }
     }
-    
-    private InputStream getResourceStream(String name)
-    {
-        return this.getClass().getResourceAsStream(name);
-    }
-    
+
     public boolean hasSafePassword()
     {
         return _hasSafePassword;
     }
-    
+
     public void setAdminPassword(String pw)
     {
         addOption(PROP_PASSWORD, pw);
-        props.put(PROP_PASSWORD, pw);
         _hasSafePassword = true;
         saveConfiguration();
     }
@@ -283,37 +222,37 @@ public abstract class AxisEngine extends BasicHandler
     {
         return _handlerRegistry;
     }
-    
+
     public void setHandlerRegistry(HandlerRegistry registry)
     {
         _handlerRegistry = registry;
     }
-    
+
     public HandlerRegistry getServiceRegistry()
     {
         return _serviceRegistry;
     }
-    
+
     public void setServiceRegistry(HandlerRegistry registry)
     {
         _serviceRegistry = registry;
     }
-    
+
     public SupplierRegistry getTransportRegistry()
     {
         return transportRegistry;
     }
-    
+
     public void setTransportRegistry(SupplierRegistry registry)
     {
         transportRegistry = registry;
     }
-    
+
     public TypeMappingRegistry getTypeMappingRegistry()
     {
         return _typeMappingRegistry;
     }
-    
+
     /*********************************************************************
      * Client engine access
      *
@@ -324,7 +263,7 @@ public abstract class AxisEngine extends BasicHandler
      * can access the AxisClient's deployed handlers and transports.
      *********************************************************************
      */
-    
+
     public abstract AxisEngine getClientEngine ();
 
     /*********************************************************************
@@ -335,7 +274,7 @@ public abstract class AxisEngine extends BasicHandler
     *
     *********************************************************************
     */
-    
+
     /**
      * Register a new global type mapping
      */
@@ -353,7 +292,7 @@ public abstract class AxisEngine extends BasicHandler
         if (serializer != null)
             _typeMappingRegistry.addSerializer(cls, qName, serializer);
     }
-    
+
     /**
      * Unregister a global type mapping
      */
@@ -362,7 +301,7 @@ public abstract class AxisEngine extends BasicHandler
         _typeMappingRegistry.removeDeserializer(qName);
         _typeMappingRegistry.removeSerializer(cls);
     }
-    
+
     /**
      * Deploy a Handler into our handler registry
      */
@@ -371,7 +310,7 @@ public abstract class AxisEngine extends BasicHandler
         handler.setName(key);
         getHandlerRegistry().add(key, handler);
     }
-    
+
     /**
      * Undeploy (remove) a Handler from the handler registry
      */
@@ -388,10 +327,10 @@ public abstract class AxisEngine extends BasicHandler
         Debug.Print(2, "Deploying service '" + key + "' into " + this);
         service.setName(key);
         service.setEngine(this);
-        
+
         getServiceRegistry().add(key, service);
     }
-    
+
     /**
      * Undeploy (remove) a Service from the handler registry
      */
@@ -408,7 +347,7 @@ public abstract class AxisEngine extends BasicHandler
         transport.setName(key);
         transportRegistry.add(key, transport);
     }
-    
+
     /**
      * Deploy a (client) Transport
      */
@@ -416,7 +355,7 @@ public abstract class AxisEngine extends BasicHandler
     {
         transportRegistry.add(key, supplier);
     }
-    
+
     /**
      * Undeploy (remove) a client Transport
      */

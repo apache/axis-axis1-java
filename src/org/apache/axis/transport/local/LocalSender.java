@@ -56,6 +56,7 @@
 package org.apache.axis.transport.local;
 
 import org.apache.axis.*;
+import org.apache.axis.configuration.FileProvider;
 import org.apache.axis.handlers.*;
 import org.apache.axis.server.*;
 import org.apache.axis.transport.http.*;
@@ -78,7 +79,7 @@ public class LocalSender extends BasicHandler {
      * Allocate an embedded Axis server to process requests and initialize it.
      */
     public synchronized void init() {
-        AxisServer server = new AxisServer();
+        AxisServer server = new AxisServer(new FileProvider("server-config.xml"));
         server.init();
         this.server=server;
     }

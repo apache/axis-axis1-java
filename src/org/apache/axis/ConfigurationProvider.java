@@ -52,56 +52,33 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-
-package org.apache.axis.transport.http ;
-
-import java.io.*;
-import javax.servlet.* ;
-import javax.servlet.http.* ;
-import org.apache.axis.* ;
-import org.apache.axis.configuration.*;
-import org.apache.axis.server.* ;
-import org.apache.axis.utils.* ;
+package org.apache.axis;
 
 /**
- * Proof-of-concept "management" servlet for Axis.
- * 
- * Point a browser here to administer the Axis installation.
- * 
- * Right now just starts and stops the server.
- * 
+ * ConfigurationProvider is an interface which represents a source of
+ * configuration information for an AxisEngine.  Concrete implementations
+ * of this interface will obtain configuration information from some source
+ * (examples might be files, Strings, or databases) and are responsible for
+ * writing it into an AxisEngine, and writing an AxisEngine's state back out
+ * to whatever storage medium is in use.
+ *
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
-public class AdminServlet extends HttpServlet {
-    private AxisServer server;
-    
-    public void init() {
-        // Set the base path for the AxisServer to our WEB-INF directory
-        // (so the config files can't get snooped by a browser)
-        FileProvider provider =
-               new FileProvider(getServletContext().getRealPath("/WEB-INF"),
-                                "server-config.xml");
-        
-        server = new AxisServer(provider);
-        getServletContext().setAttribute("AxisEngine", server);
-    }
+public interface ConfigurationProvider
+{
+    /**
+     * Configure this AxisEngine using whatever data source we have.
+     *
+     * @param engine the AxisEngine we'll deploy state to
+     * @throws Exeption if there was a problem
+     */
+    public void configureEngine(AxisEngine engine) throws Exception;
 
-    public void doGet(HttpServletRequest req, HttpServletResponse res)
-        throws ServletException, IOException {
-        res.setContentType("text/html");
-        String str = "";
-        
-        String cmd = req.getParameter("cmd");
-        if (cmd != null) {
-            if (cmd.equals("start"))
-                server.start();
-            else
-                server.stop();
-        }
-
-        str += "Server is " + (server.isRunning() ? "running" : "stopped");
-        str += "<p><a href=\"AdminServlet?cmd=start\">start server</a>";
-        str += "<p><a href=\"AdminServlet?cmd=stop\">stop server</a>";
-        res.getWriter().println( str );
-    }
+    /**
+     * Read the configuration from an engine, and store it somehow.
+     *
+     * @param engine the AxisEngine from which to read state.
+     * @throws Exception if there was a problem
+     */
+    public void writeEngineConfig(AxisEngine engine) throws Exception;
 }
