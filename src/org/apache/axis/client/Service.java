@@ -476,8 +476,10 @@ public class Service implements javax.xml.rpc.Service {
 
     /**
      * Determine whether we'd like to track sessions or not.
-     *
-     * This just passes through the value into the MessageContext.
+     * This information is passed to all Call objects created
+     * from this service.  Calling setMaintainSession will
+     * only affect future instantiations of the Call object,
+     * not those that already exist.
      *
      * Note: Not part of JAX-RPC specification.
      *
