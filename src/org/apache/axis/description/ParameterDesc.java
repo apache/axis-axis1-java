@@ -82,6 +82,8 @@ public class ParameterDesc {
     public byte mode = IN;
     /** The XML type of this parameter */
     private QName typeQName;
+    /** The Java type of this parameter */
+    private Class javaType;
     /** The order of this parameter (-1 indicates unordered) */
     private int order = -1;
 
@@ -141,6 +143,14 @@ public class ParameterDesc {
 
     public void setTypeQName(QName typeQName) {
         this.typeQName = typeQName;
+    }
+
+    public Class getJavaType() {
+        return javaType;
+    }
+
+    public void setJavaType(Class javaType) {
+        this.javaType = javaType;
     }
 
     public byte getMode() {

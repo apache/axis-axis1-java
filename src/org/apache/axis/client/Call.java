@@ -172,8 +172,11 @@ public class Call implements javax.xml.rpc.Call {
     private Transport          transport       = null ;
     private String             transportName   = null ;
 
-    // A place to store output parameters
+    // A couple places to store output parameters.
+    // As a HashMap, retrievable via QName (for getOutputParams).
     private HashMap            outParams       = null;
+    // As a list, retrievable by index (for getOutputValues).
+    private ArrayList          outParamsList   = null;
 
     // A place to store any client-specified headers
     private Vector             myHeaders       = null;
@@ -411,6 +414,28 @@ public class Call implements javax.xml.rpc.Call {
     }
 
     /**
+     * Gets the names of configurable properties supported by this Call object.
+     *
+     * @return Iterator for the property names
+     */
+    private static ArrayList propertyNames = null;
+
+    public Iterator getPropertyNames() {
+        if (propertyNames == null) {
+            propertyNames = new ArrayList();
+            propertyNames.add(USERNAME_PROPERTY);
+            propertyNames.add(PASSWORD_PROPERTY);
+            propertyNames.add(SESSION_MAINTAIN_PROPERTY);
+            propertyNames.add(OPERATION_STYLE_PROPERTY);
+            propertyNames.add(SOAPACTION_USE_PROPERTY);
+            propertyNames.add(SOAPACTION_URI_PROPERTY);
+            propertyNames.add(ENCODINGSTYLE_URI_PROPERTY);
+            propertyNames.add(TRANSPORT_NAME);
+        }
+        return propertyNames.iterator();
+    }
+
+    /**
      * Set the username.
      */
     public void setUsername(String username) {
@@ -544,7 +569,28 @@ public class Call implements javax.xml.rpc.Call {
     }
 
     /**
+     * Sets the endpoint address of the target service port. This address must
+     * correspond to the transport specified in the binding for this Call
+     * instance.
+     *
+     * @param address - Endpoint address of the target service port; specified
+     *                  as URI
+     */
+    public void setTargetEndpointAddress(String address) {
+        URL urlAddress;
+        try {
+            urlAddress = new URL(address);
+        }
+        catch (MalformedURLException mue) {
+            throw new JAXRPCException(mue);
+        }
+        setTargetEndpointAddress(urlAddress);
+    }
+
+    /**
      * Sets the URL of the target Web Service.
+     *
+     * Note: Not part of JAX-RPC specification.
      *
      * @param address URL of the target Web Service
      */
@@ -607,10 +653,10 @@ public class Call implements javax.xml.rpc.Call {
      *
      * @return URL URL of the target Web Service
      */
-    public java.net.URL getTargetEndpointAddress() {
+    public String getTargetEndpointAddress() {
         try {
             if ( transport == null ) return( null );
-            return( new java.net.URL( transport.getUrl() ) );
+            return( transport.getUrl() );
         }
         catch( Exception exp ) {
             return( null );
@@ -644,35 +690,42 @@ public class Call implements javax.xml.rpc.Call {
      * Adds the specified parameter to the list of parameters for the
      * operation associated with this Call object.
      *
+     * Note: Not part of JAX-RPC specification.
+     *
      * @param paramName      Name that will be used for the parameter in the XML
-     * @param paramType      XMLType of the parameter
+     * @param xmlType      XMLType of the parameter
      * @param parameterMode  one of PARAM_MODE_IN, PARAM_MODE_OUT
      *                       or PARAM_MODE_INOUT
      */
-    public void addParameter(String paramName, QName paramType,
+    public void addParameter(QName paramName, QName xmlType,
             ParameterMode parameterMode) {
-        addParameter(new QName("", paramName), paramType, parameterMode);
+        addParameter(paramName, xmlType, null, parameterMode);
     }
+
     /**
      * Adds the specified parameter to the list of parameters for the
      * operation associated with this Call object.
      *
+     *
+     * Note: Not part of JAX-RPC specification.
+     *
      * @param paramName      Name that will be used for the parameter in the XML
-     * @param paramType      XMLType of the parameter
+     * @param xmlType      XMLType of the parameter
+     * @param javaType - The Java class of the parameter
      * @param parameterMode  one of PARAM_MODE_IN, PARAM_MODE_OUT
      *                       or PARAM_MODE_INOUT
      */
-    public void addParameter(QName paramName, QName paramType,
-            ParameterMode parameterMode) {
+    public void addParameter(QName paramName, QName xmlType,
+            Class javaType, ParameterMode parameterMode) {
         if (parmAndRetReq) {
-
             if (operation == null) {
                 operation = new OperationDesc();
             }
 
             ParameterDesc param = new ParameterDesc();
             param.setQName( paramName );
-            param.setTypeQName( paramType );
+            param.setTypeQName( xmlType );
+            param.setJavaType( javaType );
             byte mode = ParameterDesc.IN;
             if (parameterMode == ParameterMode.PARAM_MODE_INOUT) {
                 mode = ParameterDesc.INOUT;
@@ -686,6 +739,41 @@ public class Call implements javax.xml.rpc.Call {
         else {
             throw new JAXRPCException();
         }
+    }
+
+    /**
+     * Adds the specified parameter to the list of parameters for the
+     * operation associated with this Call object.
+     *
+     * @param paramName      Name that will be used for the parameter in the XML
+     * @param xmlType      XMLType of the parameter
+     * @param parameterMode  one of PARAM_MODE_IN, PARAM_MODE_OUT
+     *                       or PARAM_MODE_INOUT
+     */
+    public void addParameter(String paramName, QName xmlType,
+            ParameterMode parameterMode) {
+        addParameter(new QName("", paramName), xmlType, null, parameterMode);
+    }
+
+    /**
+     * Adds a parameter type and mode for a specific operation. Note that the
+     * client code is not required to call any addParameter and setReturnType
+     * methods before calling the invoke method. A Call implementation class
+     * can determine the parameter types by using the Java reflection and
+     * configured type mapping registry.
+     *
+     * @param paramName - Name of the parameter
+     * @param xmlType - XML datatype of the parameter
+     * @param javaType - The Java class of the parameter
+     * @param parameterMode - Mode of the parameter-whether PARAM_MODE_IN,
+     *                        PARAM_MODE_OUT or PARAM_MODE_INOUT
+     * @exception JAXRPCException - if isParameterAndReturnSpecRequired returns
+     *                              false, then addParameter will throw
+     *                              JAXRPCException.
+     */
+    public void addParameter(String paramName, QName xmlType,
+                             Class javaType, ParameterMode parameterMode) {
+        addParameter(new QName("", paramName), xmlType, javaType, parameterMode);
     }
 
     /**
@@ -717,7 +805,6 @@ public class Call implements javax.xml.rpc.Call {
         if (param != null) {
             return param.getTypeQName();
         }
-
         return( null );
     }
 
@@ -734,6 +821,19 @@ public class Call implements javax.xml.rpc.Call {
         else {
             throw new JAXRPCException();
         }
+    }
+
+    /**
+     * Sets the return type for a specific operation.
+     *
+     * @param xmlType - QName of the data type of the return value
+     * @param javaType - Java class of the return value
+     * @exception JAXRPCException - if isParameterAndReturnSpecRequired returns
+     * false, then setReturnType will throw JAXRPCException.
+     */
+    public void setReturnType(QName xmlType, Class javaType) {
+        setReturnType(xmlType);
+        returnJavaType = javaType;
     }
 
     /**
@@ -759,12 +859,13 @@ public class Call implements javax.xml.rpc.Call {
      * and you'd get a Vector back from invoke() instead of having to do
      * the conversion yourself.
      *
+     * Note: Not part of JAX-RPC specification.  To be JAX-RPC compliant,
+     *       use setReturnType(QName, Class).
+     *
      * @param cls the desired return class.
      */
     public void setReturnClass(Class cls) {
         returnJavaType = cls;
-        // NOTE: Should be setting XML type based on this as well at some
-        // point, so you can just use this.
     }
 
     /**
@@ -846,7 +947,7 @@ public class Call implements javax.xml.rpc.Call {
 
         // Get the URL
         ////////////////////////////////////////////////////////////////////
-        this.setTargetEndpointAddress( null );
+        this.setTargetEndpointAddress( (URL) null );
         List list = port.getExtensibilityElements();
         for ( int i = 0 ; list != null && i < list.size() ; i++ ) {
             Object obj = list.get(i);
@@ -1260,7 +1361,7 @@ public class Call implements javax.xml.rpc.Call {
 
     /**
      * Convert the list of objects into RPCParam's based on the paramNames,
-     * paramTypes and paramModes variables.  If those aren't set then just
+     * paramXMLTypes and paramModes variables.  If those aren't set then just
      * return what was passed in.
      *
      * @param  params   Array of parameters to pass into the operation/method
@@ -1518,7 +1619,7 @@ public class Call implements javax.xml.rpc.Call {
         /**
          * Since JAX-RPC requires us to specify all or nothing, if setReturnType
          * was called (returnType != null) and we have args but addParameter
-         * wasn't called (paramTypes == null), then toss a fault.
+         * wasn't called (paramXMLTypes == null), then toss a fault.
          */
         if (returnType != null && args != null && args.length != 0
                 && operation == null) {
@@ -1589,6 +1690,7 @@ public class Call implements javax.xml.rpc.Call {
 
         // Clear the output params
         outParams = new HashMap();
+        outParamsList = new ArrayList();
 
         // If we have headers to insert, do so now.
         if (myHeaders != null) {
@@ -1633,7 +1735,7 @@ public class Call implements javax.xml.rpc.Call {
 
                 // If we have resArgs and the returnType is specified, then the first
                 // resArgs is the return.  If we have resArgs and neither returnType
-                // nor paramTypes are specified, then we assume that the caller is
+                // nor paramXMLTypes are specified, then we assume that the caller is
                 // following the non-JAX-RPC AXIS shortcut of not having to specify
                 // the return, in which case we again assume the first resArgs is
                 // the return.
@@ -1646,9 +1748,9 @@ public class Call implements javax.xml.rpc.Call {
                 // this caller to set the returnType to void, but there's no void
                 // type in XML.
                 // NOTE 2:  we should probably verify that the resArgs element
-                // types match the expected returnType and paramTypes, but I'm not
+                // types match the expected returnType and paramXMLTypes, but I'm not
                 // sure how to do that since the resArgs value is a Java Object
-                // and the returnType and paramTypes are QNames.
+                // and the returnType and paramXMLTypes are QNames.
 
                 // GD 03/15/02 : We're now checking for invalid metadata
                 // config at the top of this method, so don't need to do it
@@ -1661,7 +1763,18 @@ public class Call implements javax.xml.rpc.Call {
 
                 for (int i = outParamStart; i < resArgs.size(); i++) {
                     RPCParam param = (RPCParam) resArgs.get(i);
-                    outParams.put(param.getQName(), param.getValue());
+
+                    Class javaType = getJavaTypeForQName(param.getQName());
+                    Object value = param.getValue();
+
+                    // Convert type if needed
+                    if (javaType != null &&
+                           !javaType.isAssignableFrom(value.getClass())) {
+                        value = JavaUtils.convert(value, javaType);
+                    }
+
+                    outParams.put(param.getQName(), value);
+                    outParamsList.add(value);
                 }
             }
         } else {
@@ -1687,6 +1800,15 @@ public class Call implements javax.xml.rpc.Call {
         }
 
         return( result );
+    }
+
+    /**
+     * Get the javaType for a given parameter.
+     *
+     */
+    private Class getJavaTypeForQName(QName name) {
+        ParameterDesc param = operation.getOutputParamByQName(name);
+        return param == null ? null : param.getJavaType();
     }
 
     /**
@@ -1843,13 +1965,26 @@ public class Call implements javax.xml.rpc.Call {
      * name and value - if you want the value, you'll need to call
      * param.getValue().
      *
-     * Note: Not part of JAX-RPC specification.
-     *
      * @return Vector of RPCParams
      */
     public Map getOutputParams()
     {
         return this.outParams;
+    }
+
+    /**
+     * Returns a List values for the output parameters of the last
+     * invoked operation.
+     *
+     * @return Values for the output parameters. An empty List is
+     *         returned if there are no output values.
+     *
+     * @throws JAXRPCException - If this method is invoked for a
+     *                           one-way operation or is invoked
+     *                           before any invoke method has been called.
+     */
+    public List getOutputValues() {
+        return outParamsList;
     }
 
     /**

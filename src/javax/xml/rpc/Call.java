@@ -54,6 +54,8 @@
  */
 package javax.xml.rpc;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.rpc.namespace.QName;
@@ -118,15 +120,34 @@ public interface Call {
      * configured type mapping registry.
      *
      * @param paramName - Name of the parameter
-     * @param paramType - XML datatype of the parameter
+     * @param xmlType - XML datatype of the parameter
      * @param parameterMode - Mode of the parameter-whether PARAM_MODE_IN,
      *                        PARAM_MODE_OUT or PARAM_MODE_INOUT
      * @exception JAXRPCException - if isParameterAndReturnSpecRequired returns
      *                              false, then addParameter will throw
      *                              JAXRPCException.
      */
-    public void addParameter(String paramName, QName paramType,
+    public void addParameter(String paramName, QName xmlType,
             ParameterMode parameterMode);
+
+    /**
+     * Adds a parameter type and mode for a specific operation. Note that the
+     * client code is not required to call any addParameter and setReturnType
+     * methods before calling the invoke method. A Call implementation class
+     * can determine the parameter types by using the Java reflection and
+     * configured type mapping registry.
+     *
+     * @param paramName - Name of the parameter
+     * @param xmlType - XML datatype of the parameter
+     * @param javaType - The Java class of the parameter
+     * @param parameterMode - Mode of the parameter-whether PARAM_MODE_IN,
+     *                        PARAM_MODE_OUT or PARAM_MODE_INOUT
+     * @exception JAXRPCException - if isParameterAndReturnSpecRequired returns
+     *                              false, then addParameter will throw
+     *                              JAXRPCException.
+     */
+    public void addParameter(String paramName, QName xmlType,
+            Class javaType, ParameterMode parameterMode);
 
     /**
      * Given a parameter name, return the QName of its type. If the parameter
@@ -144,6 +165,16 @@ public interface Call {
      * false, then setReturnType will throw JAXRPCException.
      */
     public void setReturnType(QName xmlType);
+
+    /**
+     * Sets the return type for a specific operation.
+     *
+     * @param xmlType - QName of the data type of the return value
+     * @param javaType - Java class of the return value
+     * @exception JAXRPCException - if isParameterAndReturnSpecRequired returns
+     * false, then setReturnType will throw JAXRPCException.
+     */
+    public void setReturnType(QName xmlType, Class javaType);
 
     /**
      * Get the QName of the return type.
@@ -194,14 +225,14 @@ public interface Call {
      * @param address - Endpoint address of the target service port; specified
      *                  as URI
      */
-    public void setTargetEndpointAddress(java.net.URL address);
+    public void setTargetEndpointAddress(String address);
 
     /**
      * Gets the endpoint address of a target service port.
      *
      * @return Endpoint address of the target service port as an URI
      */
-    public java.net.URL getTargetEndpointAddress();
+    public String getTargetEndpointAddress();
 
     /**
      * Sets the value for a named property. JAX-RPC 1.0 specification 
@@ -240,6 +271,13 @@ public interface Call {
      * @param name - Name of the property
      */
     public void removeProperty(String name);
+
+    /**
+     * Gets the names of configurable properties supported by this Call object.
+     *
+     * @return Iterator for the property names
+     */
+    public Iterator getPropertyNames();
 
     // Remote Method Invocation methods
     /**
@@ -310,5 +348,18 @@ public interface Call {
      *                                         has been called.
      */
     public Map getOutputParams();
-}
 
+    /**
+     * Returns a List values for the output parameters of the last
+     * invoked operation.
+     *
+     * @return Values for the output parameters. An empty List is
+     *         returned if there are no output values.
+     *
+     * @throws JAXRPCException - If this method is invoked for a
+     *                           one-way operation or is invoked
+     *                           before any invoke method has been called.
+     */
+    public List getOutputValues();
+
+}
