@@ -114,6 +114,10 @@
     <available property="httpunit.present"
       classname="com.meterware.httpunit.GetMethodWebRequest"
       classpathref="classpath"/>
+      
+    <available property="jsse.present"
+      classname="javax.net.ssl.SSLSocketFactory"
+      classpathref="classpath"/> 
 
     <condition property="jdk14.jsse.present" >
       <and>
