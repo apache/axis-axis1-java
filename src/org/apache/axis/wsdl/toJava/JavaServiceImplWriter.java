@@ -97,7 +97,7 @@ public class JavaServiceImplWriter extends JavaWriter {
      */
     protected void writeFileBody() throws IOException {
         // declare class
-        pw.println("public class " + className + " {");
+        pw.println("public class " + className + " extends org.apache.axis.client.Service {");
 
         // output comments
         writeComment(pw, service.getDocumentationElement());
@@ -180,7 +180,7 @@ public class JavaServiceImplWriter extends JavaWriter {
             pw.println();
             pw.println("    public " + bindingType + " get" + portName + "(java.net.URL portAddress) {");
             pw.println("        try {");
-            pw.println("            return new " + stubClass + "(portAddress);");
+            pw.println("            return new " + stubClass + "(portAddress, this);");
             pw.println("        }");
             pw.println("        catch (org.apache.axis.AxisFault e) {");
             pw.println("            return null; // ???");
