@@ -276,7 +276,12 @@ public class SOAPService extends SimpleTargetedChain
      */
     public void setEngine(AxisEngine engine)
     {
+        if (engine == null)
+            throw new IllegalArgumentException(
+                    Messages.getMessage("nullEngine"));
+
         this.engine = engine;
+        getTypeMappingRegistry().delegate(engine.getTypeMappingRegistry());
     }
 
     public AxisEngine getEngine() {

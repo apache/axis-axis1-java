@@ -26,9 +26,7 @@
    -->
  </globalConfiguration>
 
- <handler type="java:org.apache.axis.providers.java.RPCProvider" name="RPCDispatcher"/>
  <handler type="java:org.apache.axis.handlers.http.URLMapper" name="URLMapper"/>
- <handler type="java:org.apache.axis.providers.java.MsgProvider" name="MsgDispatcher"/>
  <handler type="java:org.apache.axis.transport.local.LocalResponder" name="LocalResponder"/>
  <handler type="java:org.apache.axis.handlers.SimpleAuthenticationHandler" name="Authenticate"/>
 
@@ -53,7 +51,7 @@
 
  <transport name="local">
   <responseFlow>
-   <handler type="java:org.apache.axis.transport.local.LocalResponder"/>
+   <handler type="LocalResponder"/>
   </responseFlow>
  </transport>
 

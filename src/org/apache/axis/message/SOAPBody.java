@@ -143,7 +143,7 @@ public class SOAPBody extends MessageElement
             // Output this body element.
         }
         
-        // Output multi-refs
+        // Output multi-refs if appropriate
         context.outputMultiRefs();
         
         // Output </SOAP-ENV:Body>
