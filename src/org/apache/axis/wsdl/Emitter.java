@@ -677,14 +677,14 @@ public class Emitter {
                 skelSig = skelSig + p.type + " " + p.name;
             }
             else if (p.mode == Parameter.INOUT) {
-                signature = signature + p.type + "Holder " + p.name;
-                axisSig = axisSig + p.type + "Holder " + p.name;
+                signature = signature + holder(p.type) + " " + p.name;
+                axisSig = axisSig + holder(p.type) + " " + p.name;
                 skelSig = skelSig + p.type + " " + p.name;
             }
             else// (p.mode == Parameter.OUT)
             {
-                signature = signature + p.type + "Holder " + p.name;
-                axisSig = axisSig + p.type + "Holder " + p.name;
+                signature = signature + holder(p.type) + " " + p.name;
+                axisSig = axisSig + holder(p.type) + " " + p.name;
             }
         }
         signature = signature + ") throws java.rmi.RemoteException";
@@ -1122,10 +1122,13 @@ public class Emitter {
         for (int i = 0; i < parms.list.size(); ++i) {
             Parameter p = (Parameter) parms.list.get(i);
 
-            if (p.mode == Parameter.INOUT)
-                pw.println("        " + p.type + "Holder " + p.name + "Holder = new " + p.type + "Holder(" + p.name + ");");
-            else if (p.mode == Parameter.OUT)
-                pw.println("        " + p.type + "Holder " + p.name + "Holder = new " + p.type + "Holder();");
+            String holder = holder(p.type);
+            if (p.mode == Parameter.INOUT) {
+                pw.println("        " + holder + " " + p.name + "Holder = new " + holder + "(" + p.name + ");");
+            }
+            else if (p.mode == Parameter.OUT) {
+                pw.println("        " + holder + " " + p.name + "Holder = new " + holder + "();");
+            }
         }
 
         // Call the real implementation
@@ -1791,6 +1794,34 @@ public class Emitter {
         else
             return capitalize(localName);
     } // type
+
+    /**
+     * Given a type name, return the Java mapping of that type's holder.
+     */
+    private String holder(String typeValue) {
+        if (typeValue.equals("String")) {
+            return "org.apache.axis.wsdl.holders.StringHolder";
+        }
+        else if (typeValue.equals("java.math.BigDecimal")) {
+            return "org.apache.axis.wsdl.holders.BigDecimalHolder";
+        }
+        else if (typeValue.equals("java.util.Date")) {
+            return "org.apache.axis.wsdl.holders.DateHolder";
+        }
+        else if (typeValue.equals("javax.xml.rpc.namespace.QName")) {
+            return "org.apache.axis.wsdl.holders.QNameHolder";
+        }
+        else if (typeValue.equals("int")
+                || typeValue.equals("long")
+                || typeValue.equals("short")
+                || typeValue.equals("float")
+                || typeValue.equals("double")
+                || typeValue.equals("boolean")
+                || typeValue.equals("byte"))
+            return "org.apache.axis.wsdl.holders." + capitalize(typeValue) + "Holder";
+        else
+            return typeValue + "Holder";
+    } // holder
 
     /**
      * Capitalize the given name.
