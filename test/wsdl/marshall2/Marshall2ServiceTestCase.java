@@ -585,7 +585,17 @@ public class Marshall2ServiceTestCase extends junit.framework.TestCase {
         b.setMyInt(6);
         b.setMyLong(3);
         b.setMyString("sdfsdf");
-        b.setMyJavaBean(new JavaBean2(new BigDecimal(5),new BigInteger("4"),true,(byte)0x1,Calendar.getInstance(),(double)5,(float)3,(int)1,(long)2,(short)1,"xxx"));
+        b.setMyJavaBean(new JavaBean2(new BigDecimal(5),
+                                      (double)5,
+                                      (long)2,
+                                      (short)1,
+                                      (int)1,
+                                      Calendar.getInstance(),
+                                      (byte)0x1,
+                                      true,
+                                      "xxx",
+                                      new BigInteger("4"),
+                                      (float)3));
 
         JavaBean b2 = new JavaBean();
         b2.setMyBigDecimal(new BigDecimal(4));
@@ -598,7 +608,17 @@ public class Marshall2ServiceTestCase extends junit.framework.TestCase {
         b2.setMyInt(6);
         b2.setMyLong(3);
         b2.setMyString("sdfsdf");
-        b2.setMyJavaBean(new JavaBean2(new BigDecimal(5),new BigInteger("4"),true,(byte)0x1,Calendar.getInstance(),(double)5,(float)3,(int)1,(long)2,(short)1,"xxx"));
+        b2.setMyJavaBean(new JavaBean2(new BigDecimal(5),
+                                      (double)5,
+                                      (long)2,
+                                      (short)1,
+                                      (int)1,
+                                      Calendar.getInstance(),
+                                      (byte)0x1,
+                                      true,
+                                      "xxx",
+                                      new BigInteger("4"),
+                                      (float)3));
         
         
         // Test operation
@@ -631,7 +651,17 @@ public class Marshall2ServiceTestCase extends junit.framework.TestCase {
         b.setMyInt(6);
         b.setMyLong(3);
         b.setMyString("sdfsdf");
-        b.setMyJavaBean(new JavaBean2(new BigDecimal(5),new BigInteger("4"),true,(byte)0x1,Calendar.getInstance(),(double)5,(float)3,(int)1,(long)2,(short)1,"xxx"));
+        b.setMyJavaBean(new JavaBean2(new BigDecimal(5),
+                                      (double)5,
+                                      (long)2,
+                                      (short)1,
+                                      (int)1,
+                                      Calendar.getInstance(),
+                                      (byte)0x1,
+                                      true,
+                                      "xxx",
+                                      new BigInteger("4"),
+                                      (float)3));
         // Time out after a minute
         binding.setTimeout(60000);
 
