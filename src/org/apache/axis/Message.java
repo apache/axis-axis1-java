@@ -275,7 +275,13 @@ public class Message {
     if ( currentForm.equals("SOAPEnvelope") ) 
       return( (SOAPEnvelope) currentMessage );
     
-    InputSource is = new InputSource(new StringReader(getAsString()));
+    InputSource is;
+
+    if ( currentForm.equals("InputStream") ) {
+      is = new InputSource( (InputStream) currentMessage );
+    } else {
+      is = new InputSource(new StringReader(getAsString()));
+    }
     
     ThreadedSAXAdapter parser = 
         new ThreadedSAXAdapter(new org.apache.xerces.parsers.SAXParser(), is);
