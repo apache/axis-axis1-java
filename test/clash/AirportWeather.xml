@@ -30,7 +30,7 @@
       </xsd:all>
     </xsd:complexType>
 
-    <xsd:element name="SameForTypeAndElement" ref="SameForTypeAndElement"/>
+    <xsd:element name="SameForTypeAndElement" ref="xsd1:SameForTypeAndElement"/>
 
   </xsd:schema>
 </types>

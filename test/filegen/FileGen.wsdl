@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions targetNamespace="http://test.com/reference" 
+    xmlns:tns="http://test.com/reference"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
     xmlns:serviceNS="http://test.com/reference" 
     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
@@ -26,7 +27,7 @@
             <xsd:element name="streetNum" type="xsd:int"/>
             <xsd:element name="streetName" type="xsd:string"/>
             <xsd:element name="city" type="xsd:string"/>
-            <xsd:element name="state" type="typens:stateType"/>
+            <xsd:element name="state" type="tns:stateType"/>
             <xsd:element name="zip" type="xsd:int"/>
         </xsd:all>
       </xsd:complexType>
