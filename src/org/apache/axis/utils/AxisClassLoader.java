@@ -117,6 +117,7 @@ public class AxisClassLoader extends ClassLoader {
         return( (Class) obj );
     }
 
-    return( findSystemClass(name) );
+    ClassLoader cl = this.getClass().getClassLoader();
+    return( cl.loadClass( name ) );
   }
 };

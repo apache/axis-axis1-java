@@ -56,8 +56,6 @@
 package org.apache.axis ;
 
 import java.io.* ;
-import javax.servlet.* ;
-import javax.servlet.http.* ;
 
 import org.w3c.dom.* ;
 
@@ -148,20 +146,6 @@ public class Message {
       return( null );
     }
 
-    if ( currentForm.equals("ServletRequest") ) {
-      try {
-        HttpServletRequest req = (HttpServletRequest) currentMessage ;
-        byte[] buf = new byte[req.getContentLength()];
-        req.getInputStream().read( buf );
-        setCurrentMessage( buf, "Bytes" );
-        Debug.Print( 2, "Exit: Message::getAsBytes" );
-        return( (byte[]) currentMessage );
-      }
-      catch( Exception e ) {
-        e.printStackTrace( System.err );
-      }
-    }
-
     if ( currentForm.equals("Document") ||
          currentForm.equals("SOAPEnvelope") ||
          currentForm.equals("AxisFault") )
@@ -185,8 +169,7 @@ public class Message {
       return( (String) currentMessage );
     }
 
-    if ( currentForm.equals("InputStream") || 
-         currentForm.equals("ServletRequest")) {
+    if ( currentForm.equals("InputStream") ) {
       getAsBytes();
       // Fall thru to "Bytes"
     }
@@ -221,19 +204,6 @@ public class Message {
     try {
       if ( currentForm.equals("InputStream") )
         inp = (InputStream) currentMessage ;
-      else if ( currentForm.equals("ServletRequest") ) {
-        HttpServletRequest req = (HttpServletRequest)currentMessage;
-        inp = req.getInputStream();
-        
-        // int contentLength = req.getContentLength();
-        // Reader requestReader = req.getReader ();
-        // char[] payload       = new char[contentLength];
-        // int    offset        = 0;
-        // while (offset < contentLength) {
-           // offset+=requestReader.read(payload,offset,contentLength-offset);
-        // }
-        // reader = new CharArrayReader(payload);
-      }
       else if ( currentForm.equals("String") )  {
         // Reader reader = new StringReader( (String) currentMessage );
         ByteArrayInputStream bais =  null ;
