@@ -20,6 +20,7 @@ import org.apache.axis.utils.JavaUtils;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.holders.BooleanHolder;
@@ -39,6 +40,34 @@ public class SchemaUtils {
 
     /** Field VALUE_QNAME */
     static final QName VALUE_QNAME = Utils.findQName("", "value");
+
+    /**
+     * This method checks mixed=true attribute is set either on
+     * complexType or complexContent element.
+     */
+    public static boolean isMixed(Node node) {
+        // Expecting a schema complexType
+        if (isXSDNode(node, "complexType")) {
+            String mixed = ((Element)node).getAttribute("mixed");
+            if (mixed != null && mixed.length() > 0) {
+                return ("true".equalsIgnoreCase(mixed) ||
+                        "1".equals(mixed));
+            }
+            // Under the complexType there could be complexContent with
+            // mixed="true"
+            NodeList children = node.getChildNodes();
+            
+            for (int j = 0; j < children.getLength(); j++) {
+                Node kid = children.item(j);
+                if (isXSDNode(kid, "complexContent")) {
+                    mixed = ((Element)kid).getAttribute("mixed");
+                    return ("true".equalsIgnoreCase(mixed) ||
+                            "1".equals(mixed));
+                }
+            }
+        }
+        return false;
+    }
 
   /**
    * This method checks out if the given node satisfies the 3rd condition

@@ -83,56 +83,56 @@ public class ExtensibilityQueryBindingImpl implements ExtensibilityQueryPortType
     }
     
     public ExtensibilityType mixedQuery(ExtensibilityType query) 
-    throws RemoteException {
-    MessageElement [] elements = query.get_any();
-    if (elements == null) {
-        throw new RemoteException("No any");
-    }
-    if (elements.length != 3) {
-        throw new RemoteException("Expected: 3 got: " + elements.length +
-                      " element");
-    }
-
-    String expected = "123  456";
-    String received = elements[0].toString();
-
-    if (!expected.equals(received)) {
-        throw new RemoteException("Expected: " + expected + 
-                      " received: " + received);
-    }
-
-    Object obj = null;
+        throws RemoteException {
+        MessageElement [] elements = query.get_any();
+        if (elements == null) {
+            throw new RemoteException("No any");
+        }
+        if (elements.length != 3) {
+            throw new RemoteException("Expected: 3 got: " + elements.length +
+                                      " element");
+        }
+        
+        String expected = "123  456";
+        String received = elements[0].toString();
+        
+        if (!expected.equals(received)) {
+            throw new RemoteException("Expected: " + expected + 
+                                      " received: " + received);
+        }
+        
+        Object obj = null;
         try {
             obj = elements[1].getObjectValue(BookType.class);
         } catch (Exception e) {
             throw new RemoteException("Failed to deserialize", e);
         }
-    BookType bookQuery = (BookType)obj;
-    String subject = bookQuery.getSubject();
-    if (!"all".equals(subject)) {
-        throw new RemoteException("ExtensibilityQueryBindingImpl: Book subject query should be all, instead was " + subject);
-    }
-
-    expected = "789";
-    received = elements[2].toString();
-    
-    if (!expected.equals(received)) {
-        throw new RemoteException("Expected: " + expected + 
-                      " received: " + received);
-    }
-
-    ExtensibilityType reply = new ExtensibilityType(); 
-
-    MessageElement [] replyElements = new MessageElement[2];
-
-    BookType book = new BookType();
-    book.setSubject("gotAll");
-    QName elementName = _FindBooksQueryExpressionElement.getTypeDesc().getFields()[0].getXmlName();
-    replyElements[0] = new MessageElement(elementName.getNamespaceURI(), elementName.getLocalPart(), book);
-    replyElements[1] = new Text("ABCD");
-    
-    reply.set_any(replyElements);
-
-    return reply;
+        BookType bookQuery = (BookType)obj;
+        String subject = bookQuery.getSubject();
+        if (!"all".equals(subject)) {
+            throw new RemoteException("ExtensibilityQueryBindingImpl: Book subject query should be all, instead was " + subject);
+        }
+        
+        expected = "789";
+        received = elements[2].toString();
+        
+        if (!expected.equals(received)) {
+            throw new RemoteException("Expected: " + expected + 
+                                      " received: " + received);
+        }
+        
+        ExtensibilityType reply = new ExtensibilityType(); 
+        
+        MessageElement [] replyElements = new MessageElement[2];
+        
+        BookType book = new BookType();
+        book.setSubject("gotAll");
+        QName elementName = _FindBooksQueryExpressionElement.getTypeDesc().getFields()[0].getXmlName();
+        replyElements[0] = new MessageElement(elementName.getNamespaceURI(), elementName.getLocalPart(), book);
+        replyElements[1] = new Text("ABCD");
+        
+        reply.set_any(replyElements);
+        
+        return reply;
     }
 }

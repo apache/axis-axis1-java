@@ -15,6 +15,24 @@ xmlns:tns="urn:QueryTypes" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
         </xsd:complexType>
       </xsd:element>
 
+      <xsd:complexType name="MixedType1" mixed="1"> 
+         <xsd:complexContent>
+           <xsd:extension base="tns:BookType"/>
+         </xsd:complexContent>
+      </xsd:complexType>
+
+      <xsd:complexType name="MixedType2" mixed="1"> 
+         <xsd:complexContent>
+           <xsd:restriction base="tns:BookType"/>
+         </xsd:complexContent>
+      </xsd:complexType>
+
+      <xsd:complexType name="MixedType3"> 
+         <xsd:complexContent mixed="true">
+           <xsd:restriction base="tns:BookType"/>
+         </xsd:complexContent>
+      </xsd:complexType>
+
       <xsd:element name="QueryResultElement">
         <xsd:complexType>
             <xsd:sequence>
