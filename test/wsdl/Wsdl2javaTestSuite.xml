@@ -150,6 +150,61 @@
         <mapping namespace="urn:ArrayTest2" package="test.wsdl.arrays"/>
     </wsdl2java>
 
+    <!-- Inheritance Test -->
+    <!-- Bootstrap to generate Java From WSDL to get stubs/skeletons -->
+    <wsdl2java url="test/wsdl/inheritance/InheritanceTest.wsdl"
+               output="build/work"
+               deployscope="session"
+               skeleton="yes"
+               noimports="no"
+               verbose="no"
+               testcase="no">
+        <mapping namespace="urn:InheritanceTest2" package="test.wsdl.inheritance"/>
+    </wsdl2java>
+    <!-- To test inheritance, the InheritancePortType is changed to use inheritance -->
+    <copy todir="${build.dir}/work/test/wsdl/inheritance" overwrite="yes">
+      <fileset dir="${test.dir}/wsdl/inheritance">
+        <include name="InheritancePortType.java"/>
+        <include name="StockQuoteProvider.java"/>
+      </fileset>
+    </copy>
+    <!-- Compile the Web Service -->
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}">
+      <classpath refid="test-classpath" />
+      <include name="test/wsdl/inheritance/**.java" />
+      <exclude name="test/wsdl/inheritance/*TestCase.java" />
+      <exclude name="test/wsdl/inheritance/*Impl.java" />
+    </javac>
+    <!-- Now create the WSDL file specifying useInheritedMethods -->
+    <java2wsdl output="build/work/test/wsdl/inheritance/InheritanceTest.wsdl"
+               className= "test.wsdl.inheritance.InheritancePortType"
+               namespace="urn:InheritanceTest2"
+               useInheritedMethods="true"
+               location="http://localhost:8080/axis/services/InheritanceTest">
+        <mapping namespace="urn:InheritanceTest2" package="test.wsdl.inheritance"/>
+    </java2wsdl>
+    <!-- Delete the intermediate files so we recreate over a clean slate -->
+    <delete dir="${build.dir}/classes/test/wsdl/inheritance"/>
+    <!-- Recreate Java files from the new WSDL -->
+    <wsdl2java url="build/work/test/wsdl/inheritance/InheritanceTest.wsdl"
+               output="build/work"
+               deployscope="session"
+               skeleton="yes"
+               noimports="no"
+               verbose="no"
+               testcase="no">
+        <mapping namespace="urn:InheritanceTest2" package="test.wsdl.inheritance"/>
+    </wsdl2java>
+
+    <!-- MArrayTests Test -->
+    <wsdl2java url="test/wsdl/marrays/MArrayTest.wsdl"
+               output="build/work"
+               deployscope="session"
+               skeleton="yes"
+               testcase="yes">
+        <mapping namespace="urn:MArrayTests" package="test.wsdl.marrays"/>
+    </wsdl2java>
+
     <!-- MArrayTests Test -->
     <wsdl2java url="test/wsdl/marrays/MArrayTest.wsdl"
                output="build/work"
