@@ -1020,37 +1020,43 @@ public class DeserializationContextImpl extends DefaultHandler implements Lexica
                      java.lang.String systemId)
               throws SAXException
     {
-        recorder.startDTD(name, publicId, systemId);
+        if (recorder != null)
+            recorder.startDTD(name, publicId, systemId);
     }
     
     public void endDTD()
             throws SAXException
     {
-        recorder.endDTD();
+        if (recorder != null)
+            recorder.endDTD();
     }
     
     public void startEntity(java.lang.String name)
                  throws SAXException
     {
-        recorder.startEntity(name);
+        if (recorder != null)
+            recorder.startEntity(name);
     }
     
     public void endEntity(java.lang.String name)
                throws SAXException
     {
-        recorder.endEntity(name);
+        if (recorder != null)
+            recorder.endEntity(name);
     }
     
     public void startCDATA()
                 throws SAXException
     {
-        recorder.startCDATA();
+        if (recorder != null)
+            recorder.startCDATA();
     }
     
     public void endCDATA()
               throws SAXException
     {
-        recorder.endCDATA();
+        if (recorder != null)
+            recorder.endCDATA();
     }
     
     public void comment(char[] ch,
@@ -1058,7 +1064,8 @@ public class DeserializationContextImpl extends DefaultHandler implements Lexica
                     int length)
              throws SAXException
     {
-        recorder.comment(ch, start, length);
+        if (recorder != null)
+            recorder.comment(ch, start, length);
     }
 
     public InputSource resolveEntity(String publicId, String systemId) 
