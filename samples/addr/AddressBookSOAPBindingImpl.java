@@ -6,11 +6,11 @@
 
 package samples.addr;
 
-import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Map;
 
 public class AddressBookSOAPBindingImpl implements AddressBook {
-    private Map addresses = new HashMap();
+    private Map addresses = new Hashtable();
 
     public void addEntry(java.lang.String name, samples.addr.Address address) throws java.rmi.RemoteException {
         this.addresses.put(name, address);
