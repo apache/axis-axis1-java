@@ -105,6 +105,9 @@ public class JavaServiceImplWriter extends JavaClassWriter {
         Map portMap = service.getPorts();
         Iterator portIterator = portMap.values().iterator();
 
+        //Write the constructor for <servicename>Locator
+        writeConstructors(pw);
+        
         // write a get method for each of the ports with a SOAP binding
         while (portIterator.hasNext()) {
             Port p = (Port) portIterator.next();
@@ -255,6 +258,27 @@ public class JavaServiceImplWriter extends JavaClassWriter {
         writeGetPorts(pw, sEntry.getQName().getNamespaceURI(), getPortPortXmlNames);
         writeSetEndpointAddress(pw, getPortPortNames);
     }    // writeFileBody
+
+    /**
+     * write Constructors
+     *
+     * @param pw
+     */
+    protected void writeConstructors(PrintWriter pw) {
+        //Write the default constructor
+        pw.println();
+        pw.println("    public " + Utils.getJavaLocalName(sEntry.getName())
+                + "Locator() {");
+        pw.println("    }");
+        pw.println();
+    	
+        //Write a constructor that accepts an Engine Configuration 
+        pw.println();
+        pw.println("    public " + Utils.getJavaLocalName(sEntry.getName())
+                + "Locator(org.apache.axis.EngineConfiguration config) {");
+        pw.println("        super(config);");
+        pw.println("    }");
+    }
 
     /**
      * Write the private address field for this port and the public getter for it.
