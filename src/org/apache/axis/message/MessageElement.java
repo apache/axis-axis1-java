@@ -99,6 +99,12 @@ public class MessageElement extends DeserializerBase
     {
     }
     
+    MessageElement(String namespace, String localPart)
+    {
+        namespaceURI = namespace;
+        name = localPart;
+    }
+    
     MessageElement(String namespace, String localPart,
                     Attributes attributes, DeserializationContext context)
     {
@@ -131,6 +137,39 @@ public class MessageElement extends DeserializerBase
             
         href = attributes.getValue(Constants.ATTR_HREF);
       }
+
+      if (typeQName == null) {
+          QName myQName = new QName(namespaceURI, name);
+          if (myQName.equals(SOAPTypeMappingRegistry.SOAP_ARRAY)) {
+              typeQName = SOAPTypeMappingRegistry.SOAP_ARRAY;
+          } else if (myQName.equals(SOAPTypeMappingRegistry.SOAP_INT)) {
+              typeQName = SOAPTypeMappingRegistry.XSD_INT;
+          } else if (myQName.equals(SOAPTypeMappingRegistry.SOAP_BOOLEAN)) {
+              typeQName = SOAPTypeMappingRegistry.XSD_BOOLEAN;
+          } else if (myQName.equals(SOAPTypeMappingRegistry.SOAP_SHORT)) {
+              typeQName = SOAPTypeMappingRegistry.XSD_SHORT;
+          }
+      }
+      
+      if (typeQName == null) {
+          // No type inline, so check service description.
+          ServiceDescription serviceDesc = context.getServiceDescription();
+          if (serviceDesc != null) {
+              SOAPEnvelope env = getEnvelope();
+              if (env != null)
+                  setType(serviceDesc.getParamTypeByName(
+                                                         env.getMessageType(), name));
+          }
+      }
+      
+      // Look up type and set up an appropriate deserializer
+      if ((typeQName != null) && isDeserializing()) {
+          deserializer = context.getDeserializer(typeQName);
+          if (DEBUG_LOG) {
+              System.err.println(typeQName + " maps to " + deserializer);
+          }
+      }
+
     }
     
     public boolean isDeserializing()
@@ -185,8 +224,9 @@ public class MessageElement extends DeserializerBase
 
     public Object getValue()
     {
-        if (value != null)
+        if (value != null) {
             return value;
+        }
         
         if (href != null) {
             return getRealElement().getValue();
@@ -219,6 +259,7 @@ public class MessageElement extends DeserializerBase
       }
       
       DeserializerBase dser = realEl.context.getDeserializer(typeQName);
+      System.out.println(this + " got dser " + dser);
       if (dser == null)
         throw new AxisFault("No deserializer for type " + typeQName);
       
@@ -231,83 +272,15 @@ public class MessageElement extends DeserializerBase
       return dser.getValue();
     }
     
-    public void startElement(String namespace, String localName,
-                             String qName, Attributes attributes)
-        throws SAXException
-    {
-        if (DEBUG_LOG) {
-            System.err.println("Start element in MessageElement.");
-        }
- 
-        if (isDeserializing()) {
-            // We may have determined the default type from metadata and/or
-            // reflection for most messages of this type, but let the XML
-            // itself determine the xsi:type for THIS message.
-            QName typeQNameFromAttr = context.getTypeFromAttributes(attributes);
-            if (typeQNameFromAttr != null) typeQName = typeQNameFromAttr;
-
-            // !!! This check might not be complete; in the case of
-            //     a multi-ref, we might need to check BOTH the name
-            //     of the element with the href AND the referenced
-            //     one.  Right now this will just check the referenced one.
-            if (typeQName == null) {
-                QName myQName = new QName(namespace, localName);
-                if (myQName.equals(SOAPTypeMappingRegistry.SOAP_ARRAY)) {
-                    typeQName = SOAPTypeMappingRegistry.SOAP_ARRAY;
-                } else if (myQName.equals(SOAPTypeMappingRegistry.SOAP_INT)) {
-                    typeQName = SOAPTypeMappingRegistry.XSD_INT;
-                } else if (myQName.equals(SOAPTypeMappingRegistry.SOAP_BOOLEAN)) {
-                    typeQName = SOAPTypeMappingRegistry.XSD_BOOLEAN;
-                } else if (myQName.equals(SOAPTypeMappingRegistry.SOAP_SHORT)) {
-                    typeQName = SOAPTypeMappingRegistry.XSD_SHORT;
-                }
-            }
-            
-            if (typeQName == null) {
-                // No type inline, so check service description.
-                ServiceDescription serviceDesc = context.getServiceDescription();
-                if (serviceDesc != null) {
-                    SOAPEnvelope env = getEnvelope();
-                    if (env != null)
-                        setType(serviceDesc.getParamTypeByName(
-                                                 env.getMessageType(), name));
-                }
-            }
-
-            /** !!! If we have a service description and this is an
-            * explicitly-typed param, we might want to check here to
-            * see if the xsi:type val is indeed a subtype of the type
-            * we expect from the service description.
-            */
-
-            DeserializerBase dSer = getContentHandler();
-            
-            context.getSAXHandler().replaceElementHandler(dSer);
-            
-            if (dSer != this)
-                dSer.startElement(namespace,localName,qName,attributes);
-        }
-    }
- 
     public DeserializerBase getContentHandler()
     {
         if (isDeserializing()) {
-          
           if (href != null) {
             deserializer = context.getElementByID(href.substring(1));
             System.out.println("Got href dser " + deserializer);
             if (deserializer != null)
               return deserializer;
           }
-          
-            // Look up type and return an appropriate deserializer
-            if ((typeQName != null) && (deserializer == null)) {
-                deserializer = context.getDeserializer(typeQName);
-                if (DEBUG_LOG) {
-                    System.err.println(typeQName + " maps to " + deserializer);
-                }
-            }
-
             if (deserializer != null) {
                 return deserializer;
             }

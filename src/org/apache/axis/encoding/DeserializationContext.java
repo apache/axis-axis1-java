@@ -120,6 +120,9 @@ public class DeserializationContext
     
     public QName getTypeFromAttributes(Attributes attrs)
     {
+        if (attrs == null)
+            return null;
+        
         // Check for type
         String type = null;
         for (int i=0; i<Constants.URIS_SCHEMA_XSI.length && type==null; i++)
