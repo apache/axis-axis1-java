@@ -123,8 +123,6 @@ public abstract class TypeEntry extends SymTabEntry {
                                  // then the undefined flag is set.
                                  //  The java name cannot be determined
                                  // until the Undefined type is found.
-    protected boolean shouldEmit;// Indicates if this TypeEntry should 
-                                 // have code emitted for it.
     protected boolean isBaseType;// Indicates if represented by a 
                                  // java primitive or util class
 
@@ -152,7 +150,6 @@ public abstract class TypeEntry extends SymTabEntry {
             setName(refType.getName() + dims);             
             isBaseType = (refType.getBaseType() != null && dims.equals(""));
         }
-        shouldEmit = false;
         
         //System.out.println(toString());
 
@@ -167,7 +164,6 @@ public abstract class TypeEntry extends SymTabEntry {
         refType = null;
         undefined = false;
         dims = "";
-        shouldEmit  = (node != null);
         isBaseType = false;
         //System.out.println(toString());
     }
@@ -180,7 +176,6 @@ public abstract class TypeEntry extends SymTabEntry {
         node = null;
         undefined = false;
         dims = "";
-        shouldEmit = false;
         isBaseType = true;
         //System.out.println(toString());
     }
@@ -232,20 +227,6 @@ public abstract class TypeEntry extends SymTabEntry {
     }
 
     /**
-     * Query whether a Node should be emitted.
-     */
-    public boolean getShouldEmit() {
-        return shouldEmit;
-    }
-
-    /**
-     * Indicate whether a Node should be emitted.
-     */
-    public void setShouldEmit(boolean pShouldEmit) {
-        shouldEmit = pShouldEmit;
-    }
-
-    /**
      * Returns the Java Base Type Name.
      * For example if the Type represents a schema integer, "int" is returned.
      * If this is a user defined type, null is returned.
@@ -275,7 +256,6 @@ public abstract class TypeEntry extends SymTabEntry {
             refString = indent + "RefType:\n" + refType.toString(indent + "  ") + "\n";
         return super.toString(indent) + 
             indent + "Class:         " + this.getClass().getName() + "\n" + 
-            indent + "Emit?:         " + shouldEmit + "\n" + 
             indent + "Base?:         " + isBaseType + "\n" + 
             indent + "Undefined?:    " + undefined + "\n" + 
             indent + "Node:          " + getNode() + "\n" +

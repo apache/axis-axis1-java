@@ -532,11 +532,9 @@ public class SymbolTable {
             if (debug) {
                 System.out.println("Create Type From Def:" + qName);
             }
-
-            map(qName.getNamespaceURI());
-
+            
             // If the node has a type or ref attribute, get the 
-            // ref'd type
+            // qname representing the type
             QName refQName = Utils.getNodeTypeRefQName(node);
             if (refQName != null) {
                 // Discover whether type is from a type= or ref=/element=
@@ -547,22 +545,21 @@ public class SymbolTable {
                 // Now get the TypeEntry
                 TypeEntry refType = getTypeEntry(refQName, !typeAttr);
 
-                // Create a type from the referenced type
+                // Create a type from the referenced TypeEntry
                 if (!belowSchemaLevel) {
                     symbolTablePut(new DefinedElement(qName, refType, node, ""));
                 }
-
             }   
             else {
-
+                // Flow to here indicates no type= or ref= attribute.
+                
                 // See if this is an array definition.
                 QName arrayEQName = SchemaUtils.getArrayElementQName(node);
                 if (arrayEQName != null) {
-                    TypeEntry arrayType = null;
-                    // Get the TypeEntry for the element name
+                    // Get the TypeEntry for the array element type
                     TypeEntry arrayEType = getTypeEntry(arrayEQName, false);
                     if (arrayEType == null) {
-                        // Array Element Type not defined, add one
+                        // Array Element Type not defined yet, add one
                         if (debug) {
                             System.out.println("Create Type From Ref:" + arrayEQName);
                         }
@@ -575,6 +572,7 @@ public class SymbolTable {
                     }
 
                     // Create a defined type or element array of arrayEType.
+                    TypeEntry arrayType = null;
                     if (isElement) {
                         arrayType = new DefinedElement(qName, arrayEType, node, "[]");
                     } else {
@@ -583,16 +581,13 @@ public class SymbolTable {
                     symbolTablePut(arrayType);
                 }
                 else {
-                    // Create a TypeEntry representing a base type or non-base type
+                    // Create a TypeEntry representing this non-array type/element
                     String baseJavaName = Utils.getBaseJavaName(qName);
                     if (baseJavaName != null) {
                         symbolTablePut(new BaseJavaType(qName));
                     }
                     else if (isElement) {
-                        DefinedElement element = new DefinedElement(
-                                  qName, getJavaName(qName), node);
-                        symbolTablePut(element);
-                        element.setShouldEmit(true);
+                        symbolTablePut(new DefinedElement(qName, getJavaName(qName), node));
                     }
                     else {
                         symbolTablePut(new DefinedType(qName, getJavaName(qName), node));
@@ -619,17 +614,18 @@ public class SymbolTable {
             
             // A symbol table entry is created if the TypeEntry is not found    
             if (type == null) {
-                // See if this is a special qname for collections
+                // See if this is a special QName for collections
                 if (qName.getLocalPart().indexOf("[") > 0) {
                     // Get the TypeEntry for the collection element
                     TypeEntry collEl = getTypeEntry(typeAttr, false);
                     if (collEl == null) {
+                        // Collection Element Type not defined yet, add one.
                         if (debug) {
                             System.out.println("Create Type From Ref:" + typeAttr);
                         }
                         String baseJavaName = Utils.getBaseJavaName(typeAttr);
                         if (baseJavaName != null) {
-                            collEl =new BaseJavaType(typeAttr);
+                            collEl = new BaseJavaType(typeAttr);
                         } else {
                             collEl = new UndefinedType(typeAttr);
                         }
@@ -641,8 +637,6 @@ public class SymbolTable {
                     symbolTablePut(new CollectionType(qName, collEl, node, "[]"));
                 } else {
                     // Add a BaseJavaType or Undefined Type/Element
-                    
-                    // Type not defined, add a base java type or a refdType
                     if (debug) {
                         System.out.println("Create Type From Ref:" + qName);
                     }
@@ -654,15 +648,7 @@ public class SymbolTable {
                     else
                         symbolTablePut(new UndefinedElement(qName));
                 }
-            } else {
-                // Type exists, update shouldEmit flag if necessary
-                if (type instanceof DefinedElement &&
-                    type.getNode() != null &&
-                    type.getJavaName().indexOf("[") < 0) {
-                    type.setShouldEmit(true);
-                }
             }
-                
         }
     } // createTypeFromRef
 
@@ -670,6 +656,9 @@ public class SymbolTable {
      * Convert the specified QName into a full Java Name.
      */
     public String getJavaName(QName qName) {
+
+        // Get/Create a package for this namespace 
+        map(qName.getNamespaceURI());
 
         // If this is one of our special 'collection' qnames.
         // get the element type and append []

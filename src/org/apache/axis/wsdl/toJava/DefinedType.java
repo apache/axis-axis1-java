@@ -65,11 +65,9 @@ import javax.wsdl.QName;
 public class DefinedType extends Type {
     public DefinedType(QName pqName, String pjName, Node pNode) {
         super(pqName, pjName, pNode);
-        setShouldEmit(true);
     }
     public DefinedType(QName pqName, TypeEntry refType, Node pNode, String dims) {
         super(pqName, refType, pNode, dims);
-        setShouldEmit(true);
     }
 };
 

@@ -389,7 +389,16 @@ public class Emitter {
         Vector types = symbolTable.getTypes();
         for (int i = 0; i < types.size(); ++i) {
             TypeEntry type = (TypeEntry) types.elementAt(i);
-            if (type.getNode() != null && type.getShouldEmit() && type.getBaseType() == null) {
+
+            // Write out the type if and only if:
+            //  - we found its definition (getNode())
+            //  - it is referenced 
+            //  - it is not a base java type
+            // (Note that types that are arrays are passed to getWriter
+            //  because they may require a Holder)
+            if (type.getNode() != null &&   
+                type.isReferenced() && 
+                type.getBaseType() == null) {
                 Writer writer = writerFactory.getWriter(type, symbolTable);
                 writer.write();
             }
