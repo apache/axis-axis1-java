@@ -163,6 +163,7 @@
         <available classname="javax.net.SocketFactory" classpathref="classpath" />
         <available classname="com.ibm.net.ssl.SSLContext" classpathref="classpath" />
         <available classname="javax.net.ssl.SSLSocketFactory" classpathref="classpath" />
+        <available classname="com.ibm.crypto.provider.IBMJCE" classpathref="classpath" />
       </and>
     </condition>
 
