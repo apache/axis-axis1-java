@@ -465,10 +465,13 @@ public class BeanSerializer implements Serializer, Serializable {
             return attributes;
 
         AttributesImpl attrs;
-        if (attributes != null)
-            attrs = new AttributesImpl(attributes);
-        else
+        if (attributes == null) {
             attrs = new AttributesImpl();
+        } else if (attributes instanceof AttributesImpl) {
+            attrs = (AttributesImpl)attributes;
+        } else {
+            attrs = new AttributesImpl(attributes);
+        }
 
         try {
             // Find each property that is an attribute

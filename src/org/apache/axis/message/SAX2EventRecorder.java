@@ -57,7 +57,6 @@ package org.apache.axis.message;
 import org.apache.axis.encoding.DeserializationContext;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.AttributesImpl;
 
 import java.util.ArrayList;
 
@@ -124,7 +123,7 @@ public class SAX2EventRecorder {
             attrs = nattrs;
         }
         
-        attrs[numattrs++] = new AttributesImpl(p4);
+        attrs[numattrs++] = p4;
         return events.add(STATE_START_ELEMENT, st.addSymbol(p1), st.addSymbol(p2), st.addSymbol(p3), numattrs-1);
     }
     public int endElement(String p1, String p2, String p3) {

@@ -109,10 +109,12 @@ public class MessageElement implements SOAPElement, Serializable
             new Mapping(Constants.URI_DEFAULT_SOAP_ENC,
                         "SOAP-ENC");
 
+    private static final Attributes nullAttributes = new AttributesImpl();
+
     protected String    name ;
     protected String    prefix ;
     protected String    namespaceURI ;
-    protected transient AttributesImpl attributes = new AttributesImpl();
+    protected transient Attributes attributes = nullAttributes;
     protected String    id;
     protected String    href;
     protected boolean   _isRoot = true;
@@ -217,10 +219,8 @@ public class MessageElement implements SOAPElement, Serializable
 
         this.recorder = context.getRecorder();
 
-        if (attributes == null) {
-            this.attributes = new AttributesImpl();
-        } else {
-            this.attributes = new AttributesImpl(attributes);
+        if (attributes != null && attributes.getLength() > 0) {
+            this.attributes = attributes;
 
             typeQName = context.getTypeFromAttributes(namespace,
                                                       localPart,
@@ -560,12 +560,20 @@ public class MessageElement implements SOAPElement, Serializable
         // !!! Add attribute to attributes!
     }
 
+    protected AttributesImpl makeAttributesEditable() {
+        if (attributes == null || attributes == nullAttributes) {
+            attributes =  new AttributesImpl();
+        } else if (!(attributes instanceof AttributesImpl)) {
+            attributes = new AttributesImpl(attributes);
+        }
+
+        return (AttributesImpl) attributes;
+    }
+
     public void addAttribute(String namespace, String localName,
                              String value)
     {
-        if (attributes == null) {
-            attributes = new AttributesImpl();
-        }
+        AttributesImpl attributes = makeAttributesEditable();
         attributes.addAttribute(namespace, localName, "", "CDATA",
                                 value);
     }
@@ -578,19 +586,17 @@ public class MessageElement implements SOAPElement, Serializable
     public void setAttribute(String namespace, String localName,
                              String value)
     {
-        if (attributes != null) {
-            int idx = attributes.getIndex(namespace, localName);
-            if (idx > -1) {
-                // Got it, so replace it's value.
-                if (value != null) {
-                    attributes.setValue(idx, value);
-                } else {
-                    attributes.removeAttribute(idx);
-                }
-                return;
+        AttributesImpl attributes = makeAttributesEditable();
+
+        int idx = attributes.getIndex(namespace, localName);
+        if (idx > -1) {
+            // Got it, so replace it's value.
+            if (value != null) {
+                attributes.setValue(idx, value);
+            } else {
+                attributes.removeAttribute(idx);
             }
-        } else if (value != null) {
-            attributes = new AttributesImpl();
+            return;
         }
 
         addAttribute(namespace, localName, value);
@@ -826,7 +832,7 @@ public class MessageElement implements SOAPElement, Serializable
             typeQName = null;
         }
 
-        attributes = new AttributesImpl();
+        AttributesImpl attributes = makeAttributesEditable();
         int n = in.readInt();
         for (int i = 0; i < n; i++) {
             String localName = (String)in.readObject();
@@ -1017,6 +1023,7 @@ public class MessageElement implements SOAPElement, Serializable
     }
 
     public boolean removeAttribute(Name name) {
+        AttributesImpl attributes = makeAttributesEditable();
         boolean removed = false;
 
         for (int i = 0; i < attributes.getLength() && !removed; i++) {
@@ -1030,6 +1037,7 @@ public class MessageElement implements SOAPElement, Serializable
     }
 
     public boolean removeNamespaceDeclaration(String prefix) {
+        AttributesImpl attributes = makeAttributesEditable();
         boolean removed = false;
 
         for (int i = 0; i < namespaces.size() && !removed; i++) {
