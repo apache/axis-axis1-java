@@ -78,6 +78,12 @@ public class FaultableHandler extends BasicHandler {
     protected static Log log =
         LogFactory.getLog(FaultableHandler.class.getName());
 
+    // The enterprise category is for stuff that an enterprise product might
+    // want to track, but in a simple environment (like the AXIS build) would
+    // be nothing more than a nuisance.
+    protected static Log entLog =
+        LogFactory.getLog(Constants.ENTERPRISE_LOG_CATEGORY);
+
     protected Handler    workHandler ;
 
     /** Constructor
@@ -109,7 +115,7 @@ public class FaultableHandler extends BasicHandler {
             workHandler.invoke( msgContext );
         }
         catch( Exception e ) {
-            log.info(JavaUtils.getMessage("toAxisFault00"), e );
+            entLog.info(JavaUtils.getMessage("toAxisFault00"), e );
             AxisFault fault = AxisFault.makeFault(e);
 
 //            AxisEngine engine = msgContext.getAxisEngine();
