@@ -78,11 +78,11 @@ public class TestXsiType extends TestCase {
         // this class as a service there.
         
         AxisServer server = new AxisServer();
-        server.addOption(AxisEngine.PROP_SEND_XSI, Boolean.FALSE);
+        server.setOption(AxisEngine.PROP_SEND_XSI, Boolean.FALSE);
         
         SOAPService service = new SOAPService(new RPCProvider());
-        service.addOption("className", "test.encoding.TestXsiType");
-        service.addOption("methodName", "*");
+        service.setOption("className", "test.encoding.TestXsiType");
+        service.setOption("methodName", "*");
         server.deployService("TestService", service);
         
         // Call that same server, accessing a method we know returns

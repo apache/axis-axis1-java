@@ -71,7 +71,7 @@ public abstract class BasicProvider extends BasicHandler {
         Hashtable operations = (Hashtable)getOption("Operations");
         if (operations == null) {
             operations = new Hashtable();
-            addOption("Operations", operations);
+            setOption("Operations", operations);
         }
         operations.put(qname, name);
     }

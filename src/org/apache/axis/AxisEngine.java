@@ -221,7 +221,7 @@ public abstract class AxisEngine extends BasicHandler
 
     public void setAdminPassword(String pw)
     {
-        addOption(PROP_PASSWORD, pw);
+        setOption(PROP_PASSWORD, pw);
         _hasSafePassword = true;
         saveConfiguration();
     }
@@ -347,17 +347,17 @@ public abstract class AxisEngine extends BasicHandler
                     continue;
                 if (val instanceof String &&
                     "false".equalsIgnoreCase((String)val)) {
-                    addOption(booleanOptions[i], Boolean.FALSE);
+                    setOption(booleanOptions[i], Boolean.FALSE);
                     continue;
                 }
             }
             // If it was null or not "false"...
-            addOption(booleanOptions[i], Boolean.TRUE);
+            setOption(booleanOptions[i], Boolean.TRUE);
         }
         
         // Deal with admin password's default value.
         if (getOption(PROP_PASSWORD) == null) {
-            addOption(PROP_PASSWORD, "admin");
+            setOption(PROP_PASSWORD, "admin");
         } else {
             setAdminPassword((String)getOption(PROP_PASSWORD));
         }

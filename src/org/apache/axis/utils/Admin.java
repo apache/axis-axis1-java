@@ -122,7 +122,7 @@ public class Admin {
             String  value = elem.getAttribute( "value" );
 
             if ( name != null && value != null )
-                handler.addOption( name, value );
+                handler.setOption( name, value );
         }
     }
 

@@ -107,9 +107,9 @@ public abstract class BasicHandler implements Handler {
     public abstract void invoke(MessageContext msgContext) throws AxisFault;
 
     /**
-     * Add the given option (name/value) to this handler's bag of options
+     * Set the given option (name/value) in this handler's bag of options
      */
-    public void addOption(String name, Object value) {
+    public void setOption(String name, Object value) {
         if ( options == null ) options = new Hashtable();
         options.put( name, value );
     }

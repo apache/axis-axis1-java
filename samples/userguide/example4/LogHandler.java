@@ -91,7 +91,7 @@ public class LogHandler extends BasicHandler {
             String result = date + ": service " +
                             msgContext.getTargetService() +
                             " accessed " + numAccesses + " time(s).";
-            serviceHandler.addOption("accesses", numAccesses);
+            serviceHandler.setOption("accesses", numAccesses);
             
             writer.println(result);
             

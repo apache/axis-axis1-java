@@ -446,7 +446,7 @@ public class MessageElement
             StringWriter  writer = new StringWriter();
             SerializationContext serContext = null ;
             AxisClient     tmpEngine = new AxisClient(new NullProvider());
-            tmpEngine.addOption(tmpEngine.PROP_XML_DECL, new Boolean(false));
+            tmpEngine.setOption(tmpEngine.PROP_XML_DECL, new Boolean(false));
             MessageContext msgContext = new MessageContext(tmpEngine);
             serContext = new SerializationContext(writer, msgContext);
             this.output(serContext);

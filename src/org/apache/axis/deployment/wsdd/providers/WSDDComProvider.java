@@ -80,19 +80,19 @@ public class WSDDComProvider
         String option = service.getParameter("ProgID");
 
         if (!option.equals("")) {
-            provider.addOption(ComProvider.OPTION_PROGID, option);
+            provider.setOption(ComProvider.OPTION_PROGID, option);
         }
 
         option = service.getParameter("CLSID");
 
         if (!option.equals("")) {
-            provider.addOption(ComProvider.OPTION_CLSID, option);
+            provider.setOption(ComProvider.OPTION_CLSID, option);
         }
 
         option = service.getParameter("threadingModel");
 
         if (!option.equals("")) {
-            provider.addOption(ComProvider.OPTION_THREADING_MODEL, option);
+            provider.setOption(ComProvider.OPTION_THREADING_MODEL, option);
         }
 
         return provider;

@@ -90,17 +90,17 @@ public class V2DDComProvider
 
         for (int n = 0; n < options.length; n++) {
             if (options[n].getKey().equals("progid")) {
-                provider.addOption(ComProvider.OPTION_PROGID,
+                provider.setOption(ComProvider.OPTION_PROGID,
                                    options[n].getValue());
             }
 
             if (options[n].getKey().equals("threadingModel")) {
-                provider.addOption(ComProvider.OPTION_THREADING_MODEL,
+                provider.setOption(ComProvider.OPTION_THREADING_MODEL,
                                    options[n].getValue());
             }
 
             if (options[n].getKey().equals("clsid")) {
-                provider.addOption(ComProvider.OPTION_CLSID,
+                provider.setOption(ComProvider.OPTION_CLSID,
                                    options[n].getValue());
             }
         }

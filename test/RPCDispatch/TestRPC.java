@@ -105,8 +105,8 @@ public class TestRPC extends TestCase {
     public void testReverseString() throws Exception {
         // Register the reverseString service
         SOAPService reverse = new SOAPService(RPCDispatcher);
-        reverse.addOption("className", "test.RPCDispatch.Service");
-        reverse.addOption("methodName", "reverseString");
+        reverse.setOption("className", "test.RPCDispatch.Service");
+        reverse.setOption("methodName", "reverseString");
         engine.deployService(SOAPAction, reverse);
 
         // invoke the service and verify the result
@@ -119,8 +119,8 @@ public class TestRPC extends TestCase {
     public void testReverseData() throws Exception {
         // Register the reverseData service
         SOAPService reverse = new SOAPService(RPCDispatcher);
-        reverse.addOption("className", "test.RPCDispatch.Service");
-        reverse.addOption("methodName", "reverseData");
+        reverse.setOption("className", "test.RPCDispatch.Service");
+        reverse.setOption("methodName", "reverseData");
         engine.deployService(SOAPAction, reverse);
 
         // invoke the service and verify the result
@@ -135,8 +135,8 @@ public class TestRPC extends TestCase {
     public void testMessageContext() throws Exception {
         // Register the targetService service
         SOAPService tgtSvc = new SOAPService(RPCDispatcher);
-        tgtSvc.addOption("className", "test.RPCDispatch.Service");
-        tgtSvc.addOption("methodName", "targetService");
+        tgtSvc.setOption("className", "test.RPCDispatch.Service");
+        tgtSvc.setOption("methodName", "targetService");
         engine.deployService(SOAPAction, tgtSvc);
 
         // invoke the service and verify the result
@@ -149,8 +149,8 @@ public class TestRPC extends TestCase {
     public void testNull() throws Exception {
         // Register the echoInt service
         SOAPService echoInt = new SOAPService(RPCDispatcher);
-        echoInt.addOption("className", "test.RPCDispatch.Service");
-        echoInt.addOption("methodName", "echoInt");
+        echoInt.setOption("className", "test.RPCDispatch.Service");
+        echoInt.setOption("methodName", "echoInt");
         engine.deployService(SOAPAction, echoInt);
 
         // invoke the service and verify the result

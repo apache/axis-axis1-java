@@ -88,20 +88,20 @@ public class WSDDBsfProvider
         String option = service.getParameter("language");
 
         if (!option.equals("")) {
-            provider.addOption(BSFProvider.OPTION_LANGUAGE, option);
+            provider.setOption(BSFProvider.OPTION_LANGUAGE, option);
         }
 
         option = service.getParameter("src");
 
         if (!option.equals("")) {
-            provider.addOption(BSFProvider.OPTION_SRC, option);
+            provider.setOption(BSFProvider.OPTION_SRC, option);
         }
 
         // !!! What to do here?
         //option = XMLUtils.getInnerXMLString(prov);
 
         if (!option.equals("")) {
-            provider.addOption(BSFProvider.OPTION_SCRIPT, option);
+            provider.setOption(BSFProvider.OPTION_SCRIPT, option);
         }
 
         return provider;

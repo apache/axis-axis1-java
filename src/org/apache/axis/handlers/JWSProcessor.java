@@ -228,12 +228,12 @@ public class JWSProcessor extends BasicHandler
             Handler rpc = new RPCProvider();
             msgContext.setServiceHandler( rpc );
 
-            rpc.addOption( "className", clsName );
+            rpc.setOption( "className", clsName );
 
             /** For now, allow all methods - we probably want to have a way to
             * configure this in the future.
             */
-            rpc.addOption( "methodName", "*");
+            rpc.setOption( "methodName", "*");
 
             rpc.init();   // ??
             if (doWsdl)
