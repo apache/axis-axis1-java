@@ -66,6 +66,7 @@ import java.util.Vector;
 import java.util.Iterator;
 
 import org.apache.axis.Constants;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.SerializerFactory;
 import org.apache.axis.encoding.SerializationContext;
@@ -128,18 +129,21 @@ public abstract class BaseSerializerFactory implements SerializerFactory {
                 ser = (Serializer) 
                     serClassConstructor.newInstance(new Object[] {javaType, xmlType});
             } catch (Exception e) {
+                // ignore this error and continue
             }
         }
-        // If not successfull, try newInstance
+        // If not successfull, try newInstance with no arguments
         if (ser == null) {
             try {
                 ser = (Serializer) serClass.newInstance();
             } catch (Exception e) {
+                throw new JAXRPCException(
+                        JavaUtils.getMessage("CantGetSerializer", 
+                                             serClass.getName()),
+                        e);
             }
         }
-        if (ser == null) {
-            throw new JAXRPCException();
-        }
+
         return ser;
     }
 
