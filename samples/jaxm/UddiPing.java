@@ -52,54 +52,61 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.soap;
+package samples.jaxm;
 
+import javax.xml.messaging.URLEndpoint;
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPConnection;
+import javax.xml.soap.SOAPConnectionFactory;
+import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPException;
-import javax.xml.messaging.Endpoint;
 
-import org.apache.axis.client.Call;
-import org.apache.axis.message.SOAPEnvelope;
+public class UddiPing {
 
-/**
- * SOAP Connection implementation
- *
- * @author Davanum Srinivas (dims@yahoo.com)
- */
-public class SOAPConnectionImpl extends javax.xml.soap.SOAPConnection {
-    /**
-     * Sends the given message to the specified endpoint and
-     * blocks until it has returned the response.
-     * @param   request the <CODE>SOAPMessage</CODE>
-     *     object to be sent
-     * @param   endpoint a <CODE>URLEndpoint</CODE>
-     *     object giving the URL to which the message should be
-     *     sent
-     * @return the <CODE>SOAPMessage</CODE> object that is the
-     *     response to the message that was sent
-     * @throws  SOAPException if there is a SOAP error
-     */
-    public SOAPMessage call(SOAPMessage request, Endpoint endpoint)
-        throws SOAPException {
-        try {
-            Call call = new Call(endpoint.toString());
-            SOAPEnvelope env = ((org.apache.axis.Message)request).getSOAPEnvelope();
-            call.invoke(env);
-            return call.getResponseMessage();
-        } catch (java.net.MalformedURLException mue){
-            throw new SOAPException(mue);
-        } catch (org.apache.axis.AxisFault af){
-            throw new SOAPException(af);
-        } catch (java.rmi.RemoteException re){
-            throw new SOAPException(re);
+    public static void main(String[] args) throws Exception {
+        if (args.length != 2) {
+            System.err.println("Usage: UddiPing business-name uddi-url");
+            System.exit(1);
         }
+        searchUDDI(args[0], args[1]);
     }
 
-    /**
-     * Closes this <CODE>SOAPConnection</CODE> object.
-     * @throws  SOAPException if there is a SOAP error
-     */
-    public void close() throws SOAPException {
-        //TODO: Flesh this out.
+    public static void searchUDDI(String name, String url) throws Exception {
+        // Create the connection and the message factory.
+        SOAPConnectionFactory scf = SOAPConnectionFactory.newInstance();
+        SOAPConnection connection = scf.createConnection();
+        MessageFactory msgFactory = MessageFactory.newInstance();
+
+        // Create a message
+        SOAPMessage msg = msgFactory.createMessage();
+
+        // Create an envelope in the message
+        SOAPEnvelope envelope = msg.getSOAPPart().getEnvelope();
+
+        // Get hold of the the body
+        SOAPBody body = envelope.getBody();
+
+        javax.xml.soap.SOAPBodyElement bodyElement = body.addBodyElement(envelope.createName("find_business", "",
+                "urn:uddi-org:api"));
+
+        bodyElement.addAttribute(envelope.createName("generic"), "1.0")
+                .addAttribute(envelope.createName("maxRows"), "100")
+                .addChildElement("name")
+                .addTextNode(name);
+
+        URLEndpoint endpoint = new URLEndpoint(url);
+        msg.saveChanges();
+
+        SOAPMessage reply = connection.call(msg, endpoint);
+        //System.out.println("Received reply from: " + endpoint);
+        //reply.writeTo(System.out);
+        connection.close();
     }
 }
+
+
+
+
+
+

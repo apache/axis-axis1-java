@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2002 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -52,54 +52,41 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.soap;
 
-import javax.xml.soap.SOAPMessage;
-import javax.xml.soap.SOAPException;
-import javax.xml.messaging.Endpoint;
+package test.functional;
 
-import org.apache.axis.client.Call;
-import org.apache.axis.message.SOAPEnvelope;
+import junit.framework.TestCase;
+import org.apache.axis.AxisFault;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import samples.jaxm.UddiPing;
 
 /**
- * SOAP Connection implementation
- *
- * @author Davanum Srinivas (dims@yahoo.com)
+ * Test the JAX-RPC compliance samples.
  */
-public class SOAPConnectionImpl extends javax.xml.soap.SOAPConnection {
-    /**
-     * Sends the given message to the specified endpoint and
-     * blocks until it has returned the response.
-     * @param   request the <CODE>SOAPMessage</CODE>
-     *     object to be sent
-     * @param   endpoint a <CODE>URLEndpoint</CODE>
-     *     object giving the URL to which the message should be
-     *     sent
-     * @return the <CODE>SOAPMessage</CODE> object that is the
-     *     response to the message that was sent
-     * @throws  SOAPException if there is a SOAP error
-     */
-    public SOAPMessage call(SOAPMessage request, Endpoint endpoint)
-        throws SOAPException {
-        try {
-            Call call = new Call(endpoint.toString());
-            SOAPEnvelope env = ((org.apache.axis.Message)request).getSOAPEnvelope();
-            call.invoke(env);
-            return call.getResponseMessage();
-        } catch (java.net.MalformedURLException mue){
-            throw new SOAPException(mue);
-        } catch (org.apache.axis.AxisFault af){
-            throw new SOAPException(af);
-        } catch (java.rmi.RemoteException re){
-            throw new SOAPException(re);
-        }
-    }
+public class TestJAXMSamples extends TestCase {
+    static Log log = LogFactory.getLog(TestJAXMSamples.class.getName());
 
-    /**
-     * Closes this <CODE>SOAPConnection</CODE> object.
-     * @throws  SOAPException if there is a SOAP error
-     */
-    public void close() throws SOAPException {
-        //TODO: Flesh this out.
-    }
+    public TestJAXMSamples(String name) {
+        super(name);
+    } // ctor
+
+    public void testUddiPing() throws Exception {
+        try {
+            log.info("Testing JAXM UddiPing sample.");
+            UddiPing.searchUDDI("IBM", "http://www-3.ibm.com/services/uddi/testregistry/inquiryapi");
+            log.info("Test complete.");
+        } catch (Throwable t) {
+            if (t instanceof AxisFault) ((AxisFault) t).dump();
+            t.printStackTrace();
+            throw new Exception("Fault returned from test: " + t);
+        }
+    } // testGetQuote
+
+    public static void main(String args[]) throws Exception {
+        TestJAXMSamples tester = new TestJAXMSamples("tester");
+        tester.testUddiPing();
+    } // main
 }
+
+

@@ -63,6 +63,12 @@ package org.apache.axis.message;
  * @author Davanum Srinivas (dims@yahoo.com)
  */
 public class Text extends MessageElement implements javax.xml.soap.Text {
+
+    public Text(String s) {
+        org.w3c.dom.Document doc = org.apache.axis.utils.XMLUtils.newDocument();
+        textRep = doc.createTextNode(s);
+    }
+
     /**
      * Retrieves whether this <CODE>Text</CODE> object
      * represents a comment.
