@@ -356,6 +356,8 @@ public class ArraySerializer implements Serializer
                     dimString += "[]";
                     componentType = componentType.getComponentType();
                 }
+            } else {
+                types.writeType(componentType,null);
             }
             componentTypeName =
                     types.getQNameString(types.getTypeQName(componentType)) +
