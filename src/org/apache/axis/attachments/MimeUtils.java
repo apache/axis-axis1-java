@@ -210,7 +210,7 @@ public class MimeUtils {
                 int i=0;
                 for(; i < line.length() ; ++i ) {
                     char n = line.charAt(i);
-                    if(n != ' ' || n != '\t' ) break;
+                    if(n != ' ' && n != '\t' ) break;
                 }       
                 if( i >1 ) line= line.substring(i-1);
                 if(line.length() >0) ret.append(line);
