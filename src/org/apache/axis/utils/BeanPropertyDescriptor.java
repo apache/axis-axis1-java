@@ -87,12 +87,32 @@ public class BeanPropertyDescriptor
     public boolean isWriteable() {
         return (myPD.getWriteMethod() != null);
     }
-    /** 
-     * Query if property is indexed.
-     * @return true if indexed methods exist
+
+    /**
+     * Query if property is indexed 
+     * 
+     * @return true if indexed methods exist 
      */
     public boolean isIndexed() {
         return (myPD instanceof IndexedPropertyDescriptor);
+    }
+
+    /**
+     * Query if property is indexed or if it' an array.
+     *
+     * @return true if indexed methods exist or if it's an array
+     */
+    public boolean isIndexedOrArray() {
+        return (isIndexed() || isArray());
+    }
+
+    /**
+     * Query if property is an array (excluded byte[]).
+     * @return true if it's an array (excluded byte[])
+     */
+    public boolean isArray() {
+        return ((myPD.getPropertyType() != null) && myPD.getPropertyType()
+                                   .isArray());
     }
 
     /**
@@ -159,6 +179,7 @@ public class BeanPropertyDescriptor
                                               new Object[] {
                                                   new Integer(i), newValue});
         } else {
+            growArrayToSize(obj, myPD.getPropertyType().getComponentType(), i);
             Array.set(get(obj), i, newValue);
         }
     }
