@@ -786,6 +786,8 @@ public class MessageElement implements SOAPElement
     }
 
     public void setParentElement(SOAPElement parent) throws SOAPException {
+        if(parent == null)
+            throw new IllegalArgumentException(JavaUtils.getMessage("nullParent00")); 
         try {
             setParent((MessageElement)parent);
         } catch (Throwable t) {

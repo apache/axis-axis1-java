@@ -67,6 +67,8 @@ import org.apache.axis.message.SOAPEnvelope;
  * @author Davanum Srinivas (dims@yahoo.com)
  */
 public class SOAPConnectionImpl extends javax.xml.soap.SOAPConnection {
+    boolean closed = false;
+    
     /**
      * Sends the given message to the specified endpoint and
      * blocks until it has returned the response.
@@ -100,6 +102,9 @@ public class SOAPConnectionImpl extends javax.xml.soap.SOAPConnection {
      * @throws  SOAPException if there is a SOAP error
      */
     public void close() throws SOAPException {
-        //TODO: Flesh this out.
+        if(closed){
+            throw new SOAPException(org.apache.axis.utils.JavaUtils.getMessage("connectionClosed00"));
+        }
+        closed = true;
     }
 }

@@ -106,6 +106,8 @@ public class SOAPBodyElement extends MessageElement
     }
 
     public void setParentElement(SOAPElement parent) throws SOAPException {
+        if(parent == null)
+            throw new IllegalArgumentException(JavaUtils.getMessage("nullParent00")); 
         // migration aid
         if (parent instanceof SOAPEnvelope) {
             log.warn(JavaUtils.getMessage("bodyElementParent"));
