@@ -301,15 +301,15 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
                 // Success!  Register the target and deserializer.
                 collectionIndex = -1;
                 dSer.registerValueTarget(
-                    new BeanPropertyTarget(value, propDesc));
+                                         new BeanPropertyTarget(value, propDesc));
             } else {
                 // Success! This is a collection of properties so use the index
                 collectionIndex++;
                 dSer.registerValueTarget(
-                     new BeanPropertyTarget(value, 
+                                         new BeanPropertyTarget(value, 
                                             propDesc, 
                                             collectionIndex));
-        }
+            }
         }
         return (SOAPHandler)dSer;
     }

@@ -78,6 +78,7 @@ public class Java2WsdlAntTask extends Task
     private String output = "." ;
     private String className = "." ;
     private String servicePortName = null ;
+    private String portTypeName = null ;
     private String implClass = null;
     private boolean useInheritedMethods = false;
     private String exclude = null;
@@ -109,6 +110,8 @@ public class Java2WsdlAntTask extends Task
             }
             if (servicePortName != null)
                 emitter.setServicePortName(servicePortName);
+            if (portTypeName != null)
+                emitter.setPortTypeName(portTypeName);
             log("Java2WSDL " + className, Project.MSG_INFO);
             emitter.setCls(className);
             if (implClass != null)
@@ -165,6 +168,11 @@ public class Java2WsdlAntTask extends Task
     // The setter for the "servicePortName" attribute
     public void setServicePortName(String parameter) {
         this.servicePortName = parameter;
+    }
+
+    // The setter for the "portTypeName" attribute
+    public void setPortTypeName(String parameter) {
+        this.portTypeName = parameter;
     }
 
     // The setter for the "namespace" attribute

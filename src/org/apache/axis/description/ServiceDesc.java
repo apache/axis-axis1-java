@@ -740,7 +740,12 @@ public class ServiceDesc {
 
         for (int i=0; i < exceptionTypes.length; i++) {
             // Every remote method declares a java.rmi.RemoteException
-            if (exceptionTypes[i] != java.rmi.RemoteException.class) {
+            // Only interested in application specific exceptions.
+            // Ignore java and javax package exceptions.
+            Class ex = exceptionTypes[i];
+            if (ex != java.rmi.RemoteException.class &&
+                !ex.getName().startsWith("java.") &&
+                !ex.getName().startsWith("javax.")) {
                 
                 // For JSR 101 v.1.0, there is a simple fault mapping
                 // and a complexType fault mapping...both mappings
@@ -756,7 +761,7 @@ public class ServiceDesc {
                 
 
                 /* Old Simple Type Mode                  
-                Field[] f = exceptionTypes[i].getDeclaredFields();
+                Field[] f = ex.getDeclaredFields();
                 ArrayList exceptionParams = new ArrayList();
                 for (int j = 0; j < f.length; j++) {
                     int mod = f[j].getModifiers();
@@ -771,7 +776,7 @@ public class ServiceDesc {
                         exceptionParams.add(param);
                     }
                 }
-                String pkgAndClsName = exceptionTypes[i].getName();
+                String pkgAndClsName = ex.getName();
                 FaultDesc fault = new FaultDesc();
                 fault.setName(pkgAndClsName);
                 fault.setParameters(exceptionParams);                
@@ -783,12 +788,12 @@ public class ServiceDesc {
                 ParameterDesc param = new ParameterDesc(
                      new QName("", "fault"),
                      ParameterDesc.IN,
-                     tm.getTypeQName(exceptionTypes[i]));
-                param.setJavaType(exceptionTypes[i]);
+                     tm.getTypeQName(ex));
+                param.setJavaType(ex);
                 ArrayList exceptionParams = new ArrayList();
                 exceptionParams.add(param);
 
-                String pkgAndClsName = exceptionTypes[i].getName();
+                String pkgAndClsName = ex.getName();
                 FaultDesc fault = new FaultDesc();
                 fault.setName(pkgAndClsName);
                 fault.setParameters(exceptionParams);                

@@ -106,7 +106,7 @@ public class Main {
                                 ph.getExchange() + "-" + ph.getNumber());
     }
     
-    private static Object doit (AddressBook ab) throws Exception {
+    private static Object doit (AddressBookNoImplSEI ab) throws Exception {
         System.err.println (">> Storing address for '" + name1 + "'");
         ab.addEntry (name1, addr1);
         System.err.println (">> Querying address for '" + name1 + "'");
@@ -121,6 +121,19 @@ public class Main {
         resp = ab.getAddressFromName (name1);
         System.err.println (">> Response is:");
         printAddress (resp);
+        
+        // Test NPE
+        try {
+            ab.addEntry(null, null);
+            throw new Exception("Expected exception when calling addEntry with null params");
+        } catch (java.rmi.RemoteException e) {
+            if (e.detail instanceof java.lang.IllegalArgumentException) {
+                // Good! Expected this!
+            } else {
+                throw e;  // This is not right!
+            }            
+        }
+        
         return resp;
     }
     
@@ -131,11 +144,11 @@ public class Main {
             System.err.println ("Using proxy without session maintenance.");
             System.err.println ("(queries without session should say:  \"ADDRESS NOT FOUND!\")");
 
-            AddressBookService abs = new AddressBookServiceLocator();
+            AddressBookNoImplSEIService abs = new AddressBookNoImplSEIServiceLocator();
             opts.setDefaultURL( abs.getAddressBookNoImplSEIAddress() );
             URL serviceURL = new URL(opts.getURL());
 
-            AddressBook ab1 = null;
+            AddressBookNoImplSEI ab1 = null;
             if (serviceURL == null) {
                 ab1 = abs.getAddressBookNoImplSEI();
             }
@@ -148,14 +161,14 @@ public class Main {
             }
 
             System.err.println ("\n\nUsing proxy with session maintenance.");
-            AddressBook ab2 = null;
+            AddressBookNoImplSEI ab2 = null;
             if (serviceURL == null) {
                 ab2 = abs.getAddressBookNoImplSEI();
             }
             else {
                 ab2 = abs.getAddressBookNoImplSEI(serviceURL);
             }
-            ((AddressBookSOAPBindingStub) ab2).setMaintainSession (true);
+            ((AddressBookNoImplSEISoapBindingStub) ab2).setMaintainSession (true);
             ret = doit (ab2);
             if (ret == null) {
                 throw new Exception("session test expected non-null response, got "+ret);
