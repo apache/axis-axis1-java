@@ -84,11 +84,9 @@ public abstract class AxisEngine extends BasicHandler
 {
     /** The handler registry this Engine uses. */
     protected HandlerRegistry _handlerRegistry;
-    protected String handlerRegFilename;
     
     /** The service registry this Engine uses. */
     protected HandlerRegistry _serviceRegistry;
-    protected String serviceRegFilename;
     
     /** This Engine's global type mappings     */
     protected TypeMappingRegistry _typeMappingRegistry =
@@ -156,6 +154,8 @@ public abstract class AxisEngine extends BasicHandler
         services.init();
         setHandlerRegistry(handlers);
         setServiceRegistry(services);
+        
+        init();
     }
 
     /**
@@ -167,8 +167,21 @@ public abstract class AxisEngine extends BasicHandler
     public AxisEngine(String handlerRegFilename, String serviceRegFilename)
     {
         this();
-        this.handlerRegFilename = handlerRegFilename;
-        this.serviceRegFilename = serviceRegFilename;
+        DefaultHandlerRegistry  hr =
+                                    new DefaultHandlerRegistry(handlerRegFilename);
+        hr.setOnServer( isOnServer() );
+        hr.init();
+        setHandlerRegistry( hr );
+        
+        // Load the simple deployed services registry and init it
+        DefaultServiceRegistry  sr =
+                                    new DefaultServiceRegistry(serviceRegFilename);
+        sr.setHandlerRegistry( getHandlerRegistry() ); // needs to know about 'hr'
+        sr.setOnServer( isOnServer() );
+        sr.init();
+        setServiceRegistry( sr );
+        
+        init();
     }
 
 
@@ -178,8 +191,7 @@ public abstract class AxisEngine extends BasicHandler
     abstract public boolean isOnServer();
 
     /**
-     * Find/load the registries and save them so we don't need to do this
-     * each time we're called.
+     * (re)initialize - What should really go in here???
      */
     public void init() {
         // Load the simple handler registry and init it
@@ -188,24 +200,6 @@ public abstract class AxisEngine extends BasicHandler
         String propVal = props.getProperty("debugLevel", "0");
         Debug.setDebugLevel(Integer.parseInt(propVal));
         
-        if (getHandlerRegistry() == null) {
-            DefaultHandlerRegistry  hr =
-                         new DefaultHandlerRegistry(handlerRegFilename);
-            hr.setOnServer( isOnServer() );
-            hr.init();
-            setHandlerRegistry( hr );
-        }
-        
-        if (getServiceRegistry() == null) {
-            // Load the simple deployed services registry and init it
-            DefaultServiceRegistry  sr =
-                         new DefaultServiceRegistry(serviceRegFilename);
-            sr.setHandlerRegistry( getHandlerRegistry() ); // needs to know about 'hr'
-            sr.setOnServer( isOnServer() );
-            sr.init();
-            setServiceRegistry( sr );
-        }
-
         // Load the registry of deployed types
         TypeMappingRegistry tmr = new TypeMappingRegistry("typemap-supp.reg");
         tmr.setParent(new SOAPTypeMappingRegistry());
