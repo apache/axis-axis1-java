@@ -105,8 +105,12 @@ public class MessageElement implements SOAPElement, Serializable
     protected static Log log =
         LogFactory.getLog(MessageElement.class.getName());
 
-    private static final Mapping encMapping =
-            new Mapping(Constants.URI_DEFAULT_SOAP_ENC,
+    private static final Mapping enc11Mapping =
+            new Mapping(Constants.URI_SOAP11_ENC,
+                        "SOAP-ENC");
+
+    private static final Mapping enc12Mapping =
+            new Mapping(Constants.URI_SOAP12_ENC,
                         "SOAP-ENC");
 
     protected String    name ;
@@ -367,8 +371,10 @@ public class MessageElement implements SOAPElement, Serializable
 
         // Wherever we set the encoding style, map the SOAP-ENC prefix
         // just for fun.
-        if (encodingStyle.equals(Constants.URI_DEFAULT_SOAP_ENC)) {
-            addMapping(encMapping);
+        if (encodingStyle.equals(Constants.URI_SOAP11_ENC)) {
+            addMapping(enc11Mapping);
+        } else if (encodingStyle.equals(Constants.URI_SOAP12_ENC)) {
+            addMapping(enc12Mapping);
         }
     }
 
