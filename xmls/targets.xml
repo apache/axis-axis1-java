@@ -124,6 +124,15 @@
       </and>
     </condition>
 
+    <condition property="ibmjsse.present" >
+      <and>
+        <available classname="com.ibm.net.ssl.X509TrustManager" classpathref="classpath" />
+        <available classname="javax.net.SocketFactory" classpathref="classpath" />
+        <available classname="com.ibm.net.ssl.SSLContext" classpathref="classpath" />
+        <available classname="javax.net.ssl.SSLSocketFactory" classpathref="classpath" />
+      </and>
+    </condition>
+
     <condition property="attachments.present" >
       <and>
         <available classname="javax.activation.DataHandler" classpathref="classpath" />
