@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -54,70 +54,208 @@
  */
 package org.apache.axis.deployment.wsdd;
 
-import org.w3c.dom.Element; 
+import org.w3c.dom.Element;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+
 import org.apache.axis.Handler;
 import org.apache.axis.utils.QName;
 import org.apache.axis.deployment.wsdd.providers.*;
+
 import java.util.Hashtable;
+
 import org.apache.axis.deployment.DeploymentRegistry;
+
 
 /**
  * WSDD provider element
- * 
+ *
  * Represents the liason to the application being exposed
- * as a Web Service.  
- * 
- * Specific provider extension classes must be registered 
+ * as a Web Service.
+ *
+ * Specific provider extension classes must be registered
  * by namespace URI.
- * 
+ *
  * @author James Snell
  */
-public abstract class WSDDProvider extends WSDDDeployableItem { 
-    
+public abstract class WSDDProvider
+    extends WSDDDeployableItem
+{
+
 // ** STATIC PROVIDER REGISTRY ** //
+
+    /** XXX */
     private static Hashtable providers = new Hashtable();
+
     static {
         providers.put(WSDDConstants.WSDD_JAVA, WSDDJavaProvider.class);
         providers.put(WSDDConstants.WSDD_COM, WSDDComProvider.class);
         providers.put(WSDDConstants.WSDD_BSF, WSDDBsfProvider.class);
     }
-    public static void registerProvider(String uri, Class _class) {
+
+    /**
+     *
+     * @param uri XXX
+     * @param _class XXX
+     */
+    public static void registerProvider(String uri, Class _class)
+    {
         providers.put(uri, _class);
     }
-    public static Class getProviderClass(String uri) {
-        return (Class)providers.get(uri);
+
+    /**
+     *
+     * @param uri XXX
+     * @return XXX
+     */
+    public static Class getProviderClass(String uri)
+    {
+        return (Class) providers.get(uri);
     }
-    public static boolean hasProviderClass(String uri) {
+
+    /**
+     *
+     * @param uri XXX
+     * @return XXX
+     */
+    public static boolean hasProviderClass(String uri)
+    {
         return providers.containsKey(uri);
     }
+
 ////////////////////////////////////
-    
-    public WSDDProvider(Element e) throws WSDDException { super(e, "provider"); }
-    
-    public WSDDOperation[] getOperations() {
-        WSDDElement[] e = createArray("operation", WSDDOperation.class);
+
+    /**
+     * Wrap an extant DOM element in WSDD
+	 *
+     * @param e (Element) XXX
+     * @throws WSDDException XXX
+     */
+    public WSDDProvider(Element e)
+        throws WSDDException
+    {
+        super(e, "provider");
+    }
+
+    /**
+     *
+     * Create a new DOM element and wrap in WSDD
+     *
+     * @param d (Document) XXX
+     * @param n (Node) XXX
+     * @throws WSDDException XXX
+     */
+    public WSDDProvider(Document d, Node n)
+        throws WSDDException
+    {
+        super(d, n, "provider");
+    }
+
+    abstract protected Element getProviderElement()
+    	throws WSDDException;
+
+	/**
+	 *
+	 * @param name XXX
+	 * @return XXX
+	 */
+	public String getProviderAttribute(String name)
+		throws WSDDException
+	{
+		Element element = getProviderElement();
+
+	    return element.getAttribute(name);
+	}
+
+	/**
+	 *
+	 * @param name XXX
+	 * @param value XXX
+	 */
+	public void setProviderAttribute(String name, String value)
+		throws WSDDException
+	{
+		Element element = getProviderElement();
+
+	    try {
+	        element.setAttribute(name, value);
+	    }
+	    catch (Exception e) {
+
+	        throw new WSDDException(e);
+	    }
+	}
+
+
+    /**
+     *
+     * @return XXX
+     */
+    public WSDDOperation[] getOperations()
+    {
+        WSDDElement[]   e = createArray("operation", WSDDOperation.class);
         WSDDOperation[] t = new WSDDOperation[e.length];
-        System.arraycopy(e,0,t,0,e.length);
+
+        System.arraycopy(e, 0, t, 0, e.length);
+
         return t;
     }
-    
-    public WSDDOperation getOperation(String name) {
+
+    /**
+     *
+     * @param name XXX
+     * @return XXX
+     */
+    public WSDDOperation getOperation(String name)
+    {
         WSDDOperation[] t = getOperations();
+
         for (int n = 0; n < t.length; n++) {
-            if (t[n].getName().equals(name))
+            if (t[n].getName().equals(name)) {
                 return t[n];
-        } 
+            }
+        }
+
         return null;
     }
-    
-    public String getType() {
-        return super.getType();
+
+    /**
+     *
+     * @param name XXX
+     * @return the newly created / tree-ified item,
+	 *          so that the caller might mutate it
+     */
+    public WSDDOperation createOperation()
+    {
+        return (WSDDOperation) createChild(WSDDOperation.class);
     }
-    
-    public Handler newInstance(DeploymentRegistry registry) throws Exception {
+
+    /**
+     *
+     */
+    public void removeOperation(WSDDOperation victim)
+    {
+        removeChild(victim);
+    }
+
+    /**
+     *
+     * @param registry XXX
+     * @return XXX
+     * @throws Exception XXX
+     */
+    public Handler newInstance(DeploymentRegistry registry)
+        throws Exception
+    {
         return newProviderInstance(registry);
     }
-    
-    public abstract Handler newProviderInstance(DeploymentRegistry registry) throws Exception;
-    
+
+    /**
+     *
+     * @param registry XXX
+     * @return XXX
+     * @throws Exception XXX
+     */
+    public abstract Handler newProviderInstance(DeploymentRegistry registry)
+        throws Exception;
 }

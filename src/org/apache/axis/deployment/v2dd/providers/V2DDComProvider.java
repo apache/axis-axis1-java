@@ -1,8 +1,23 @@
+/*Copyright (c) 2001, Macromedia Inc. All Rights Reserved
+ *
+ *DO NOT DISTRIBUTE THIS SOFTWARE IN ANY WAY WITHOUT THE EXPRESS WRITTEN
+ *PERMISSION OF MACROMEDIA
+ */
+/*Copyright (c) 2001, Macromedia Inc. All Rights Reserved
+ *
+ *DO NOT DISTRIBUTE THIS SOFTWARE IN ANY WAY WITHOUT THE EXPRESS WRITTEN
+ *PERMISSION OF MACROMEDIA
+ */
+/*Copyright (c) 2001, Macromedia Inc. All Rights Reserved
+ *
+ *DO NOT DISTRIBUTE THIS SOFTWARE IN ANY WAY WITHOUT THE EXPRESS WRITTEN
+ *PERMISSION OF MACROMEDIA
+ */
 /*
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,29 +69,56 @@
  */
 package org.apache.axis.deployment.v2dd.providers;
 
-import org.apache.axis.deployment.v2dd.V2DDOption;
-import org.apache.axis.deployment.v2dd.V2DDProvider;
 import org.apache.axis.providers.BasicProvider;
+import org.apache.axis.deployment.v2dd.V2DDProvider;
+import org.apache.axis.deployment.v2dd.V2DDOption;
+import org.apache.axis.deployment.v2dd.V2DDConstants;
 import org.apache.axis.providers.ComProvider;
+
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
-public class V2DDComProvider extends V2DDProvider {
 
-    public V2DDComProvider(Element e) {
+/**
+ *
+ *@author Carl Woolf (woolf@macromedia.com)
+ */
+public class V2DDComProvider
+    extends V2DDProvider
+{
+
+    /**
+     *
+     * @param e (Element) ??????????????????
+     */
+    public V2DDComProvider(Element e)
+    {
         super(e);
     }
-    
-    public void newInstance(BasicProvider provider) {
+
+    /**
+     *
+     * @param provider ??????????????????
+     */
+    public void newInstance(BasicProvider provider)
+    {
+
         V2DDOption[] options = getOptions();
+
         for (int n = 0; n < options.length; n++) {
             if (options[n].getKey().equals("progid")) {
-                provider.addOption(ComProvider.OPTION_PROGID, options[n].getValue());
+                provider.addOption(ComProvider.OPTION_PROGID,
+                                   options[n].getValue());
             }
+
             if (options[n].getKey().equals("threadingModel")) {
-                provider.addOption(ComProvider.OPTION_THREADING_MODEL, options[n].getValue());
+                provider.addOption(ComProvider.OPTION_THREADING_MODEL,
+                                   options[n].getValue());
             }
+
             if (options[n].getKey().equals("clsid")) {
-                provider.addOption(ComProvider.OPTION_CLSID, options[n].getValue());
+                provider.addOption(ComProvider.OPTION_CLSID,
+                                   options[n].getValue());
             }
         }
     }

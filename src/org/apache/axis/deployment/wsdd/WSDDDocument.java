@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -54,95 +54,202 @@
  */
 package org.apache.axis.deployment.wsdd;
 
-import org.apache.axis.deployment.DeploymentDocument;
-import org.apache.axis.deployment.DeploymentException;
-import org.apache.axis.deployment.DeploymentRegistry;
-import org.apache.axis.encoding.DeserializerFactory;
-import org.apache.axis.encoding.Serializer;
-import org.apache.axis.encoding.TypeMappingRegistry;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import org.apache.axis.deployment.DeploymentDocument;
+import org.apache.axis.deployment.DeploymentRegistry;
+import org.apache.axis.deployment.DeploymentException;
+import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.encoding.Serializer;
+import org.apache.axis.encoding.DeserializerFactory;
+import org.apache.axis.utils.*;
 
 /**
  * represents a WSDD Document (this is the top level object in this object model)
  */
-public class WSDDDocument extends DeploymentDocument { 
-   
-    protected Document d;
-    protected WSDDDeployment dep;
-    
-    public WSDDDocument() {}
-    
-    public WSDDDocument(Document doc) {
+public class WSDDDocument
+    implements DeploymentDocument
+{
+
+    /** XXX */
+    private Document d;
+
+    /** XXX */
+    private WSDDDeployment dep;
+
+    /**
+     *
+     */
+    public WSDDDocument()
+    {
+    }
+
+    /**
+     *
+     * @param doc (Document) XXX
+     */
+    public WSDDDocument(Document doc)
+    {
         d = doc;
     }
-    
-    public WSDDDocument(Element e) {
+
+    /**
+     *
+     * @param e (Element) XXX
+     */
+    public WSDDDocument(Element e)
+    {
         d = e.getOwnerDocument();
     }
-    
-    public Document getDocument() {
-        return d;
-    }
-    
-    public WSDDDeployment getDeployment() throws WSDDException {
-        if (dep == null) {
-            dep = new WSDDDeployment(d.getDocumentElement());
+
+    /**
+     *
+     * @return XXX
+     */
+    public WSDDDeployment getDeployment()
+    {
+        getDocument();
+
+        if (null == dep) {
+            try {
+                Element deploymentElement = d.getDocumentElement();
+
+                if (null == deploymentElement) {
+                    // create both the DOM and WSDD deployment 'child'
+                    dep = new WSDDDeployment(d);
+                }
+                else {
+                    // create the WSDD 'child' from the given DOM deployment
+                    dep = new WSDDDeployment(deploymentElement);
+                }
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+
+                // log the stack trace?
+                //
+                // leave dep as null
+            }
         }
+
         return dep;
     }
-    
-    public void deploy(DeploymentRegistry registry) throws DeploymentException {
+
+    /**
+     *
+     * @return XXX
+     */
+    public Document getDocument()
+    {
+        if (null == d) {
+            d = XMLUtils.newDocument();
+        }
+
+        return d;
+    }
+
+    /**
+     *
+     * @param document XXX
+     */
+    public void setDocument(Document document)
+    {
+        d = document;
+
+        dep = null;
+    }
+
+    /**
+     * Remove both the DOM and WSDD deployment
+     */
+    public void removeDeployment()
+    {
+        if (null == dep) {
+            return;
+        }
+
+        Element e = dep.getElement();
+
+        e.getParentNode().removeChild(e);
+
+        dep = null;
+    }
+
+    /**
+     *
+     * @param registry XXX
+     * @throws DeploymentException XXX
+     */
+    public void deploy(DeploymentRegistry registry)
+        throws DeploymentException
+    {
+        getDeployment();
+
         WSDDGlobalConfiguration global = dep.getGlobalConfiguration();
+
         if (global != null) {
             registry.setGlobalConfiguration(global);
         }
-        
-        WSDDHandler[] handlers = dep.getHandlers();
-        WSDDChain[] chains = dep.getChains();
-        WSDDTransport[] transports = dep.getTransports();
-        WSDDService[] services = dep.getServices();
-        WSDDTypeMapping[] mappings = dep.getTypeMappings();
-        
+
+        WSDDHandler[]     handlers   = dep.getHandlers();
+        WSDDChain[]       chains     = dep.getChains();
+        WSDDTransport[]   transports = dep.getTransports();
+        WSDDService[]     services   = dep.getServices();
+        WSDDTypeMapping[] mappings   = dep.getTypeMappings();
+
         for (int n = 0; n < handlers.length; n++) {
             registry.deployItem(handlers[n]);
         }
+
         for (int n = 0; n < chains.length; n++) {
             registry.deployItem(chains[n]);
         }
+
         for (int n = 0; n < transports.length; n++) {
             registry.deployItem(transports[n]);
         }
+
         for (int n = 0; n < services.length; n++) {
             registry.deployItem(services[n]);
         }
-        
+
         for (int n = 0; n < mappings.length; n++) {
-            WSDDTypeMapping mapping = mappings[n];
-            TypeMappingRegistry tmr = registry.getTypeMappingRegistry(mapping.getEncodingStyle());
+            WSDDTypeMapping     mapping = mappings[n];
+            TypeMappingRegistry tmr     =
+                registry.getTypeMappingRegistry(mapping.getEncodingStyle());
+
             if (tmr == null) {
                 tmr = new TypeMappingRegistry();
-                registry.addTypeMappingRegistry(mapping.getEncodingStyle(), tmr);
+
+                registry.addTypeMappingRegistry(mapping.getEncodingStyle(),
+                                                tmr);
             }
 
-            Serializer ser = null;
+            Serializer          ser   = null;
             DeserializerFactory deser = null;
-            
+
             try {
-                ser = (Serializer)mapping.getSerializer().newInstance();
-                deser = (DeserializerFactory)mapping.getDeserializer().newInstance();
-            } catch (Exception e) {}
-            
+                ser   = (Serializer) mapping.getSerializer().newInstance();
+                deser =
+                    (DeserializerFactory) mapping.getDeserializer()
+                        .newInstance();
+            }
+            catch (Exception e) {
+            }
+
             try {
-                if (ser != null)
+                if (ser != null) {
                     tmr.addSerializer(mapping.getLanguageSpecificType(),
-                                    mapping.getQName(), ser);
-            
-                if (deser != null)
-                    tmr.addDeserializerFactory(mapping.getQName(),
-                                               mapping.getLanguageSpecificType(),
-                                               deser);
-            } catch (Exception e) {
+                                      mapping.getQName(), ser);
+                }
+
+                if (deser != null) {
+                    tmr.addDeserializerFactory(mapping.getQName(), mapping
+                        .getLanguageSpecificType(), deser);
+                }
+            }
+            catch (Exception e) {
                 throw new DeploymentException(e.getMessage());
             }
         }

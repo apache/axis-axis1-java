@@ -17,7 +17,7 @@ import org.apache.axis.deployment.DeploymentRegistry;
  * 
  * This is here just as a placeholder for now
  */
-public class ServiceMapping extends DeploymentDocument { 
+public class ServiceMapping implements DeploymentDocument { 
     
     public void deploy(DeploymentRegistry registry) {
         

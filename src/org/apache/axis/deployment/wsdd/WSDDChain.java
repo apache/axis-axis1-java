@@ -10,7 +10,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -18,7 +18,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -26,7 +26,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -54,60 +54,138 @@
  */
 package org.apache.axis.deployment.wsdd;
 
+import org.w3c.dom.Element;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 import org.apache.axis.Chain;
 import org.apache.axis.Handler;
-import org.apache.axis.deployment.DeployableItem;
 import org.apache.axis.deployment.DeploymentRegistry;
-import org.w3c.dom.Element;
+import org.apache.axis.deployment.DeployableItem;
+
 
 /**
  * WSDD chain element
- * 
- * @author James Snell
+ *
  */
-public class WSDDChain extends WSDDHandler implements DeployableItem { 
-    
-    public WSDDChain(Element e) throws WSDDException { super(e, "chain"); }
-    
-    
-    public WSDDHandler[] getHandlers() {
+public class WSDDChain
+    extends WSDDHandler
+{
+
+    /**
+     *
+     * @param e (Element) XXX
+     * @throws WSDDException XXX
+     */
+    public WSDDChain(Element e)
+        throws WSDDException
+    {
+        super(e, "chain");
+    }
+
+    /**
+     *
+     * @param d (Document) XXX
+     * @param n (Node) XXX
+     * @throws WSDDException XXX
+     */
+    public WSDDChain(Document d, Node n)
+        throws WSDDException
+    {
+        super(d, n, "chain");
+    }
+
+    /**
+     *
+     * @return XXX
+     */
+    public WSDDHandler[] getHandlers()
+    {
+
         WSDDElement[] w = createArray("handler", WSDDHandler.class);
         WSDDHandler[] h = new WSDDHandler[w.length];
-        System.arraycopy(w,0,h,0,w.length);
+
+        System.arraycopy(w, 0, h, 0, w.length);
+
         return h;
     }
-    
-    
-    public WSDDHandler getHandler(String name) {
+
+    /**
+     *
+     * @param name XXX
+     * @return XXX
+     */
+    public WSDDHandler getHandler(String name)
+    {
         WSDDHandler[] h = getHandlers();
+
         for (int n = 0; n < h.length; n++) {
-            if (h[n].getName().equals(name))
+            if (h[n].getName().equals(name)) {
                 return h[n];
+            }
         }
+
         return null;
     }
-    
-    
-    public String getType() {
+
+    /**
+     *
+     * @param name XXX
+     * @return the newly created / tree-ified item,
+	 *          so that the caller might mutate it
+     */
+    public WSDDHandler createHandler()
+    {
+        return (WSDDHandler) createChild(WSDDHandler.class);
+    }
+
+    /**
+     *
+     */
+    public void removeHandler(WSDDHandler victim)
+    {
+        removeChild(victim);
+    }
+
+    /**
+     *
+     * @return XXX
+     */
+    public String getType()
+    {
+
         String type = super.getType();
-        if (type.equals(""))
+
+        if (type.equals("")) {
             type = "java:org.apache.axis.SimpleChain";
+        }
+
         return type;
     }
-    
+
     /**
-     * Creates a new instance of this Chain 
+     * Creates a new instance of this Chain
+     * @param registry XXX
+     * @return XXX
+     * @throws Exception XXX
      */
-    public Handler newInstance(DeploymentRegistry registry) throws Exception {
+    public Handler newInstance(DeploymentRegistry registry)
+        throws Exception
+    {
+
         try {
-            Handler h = super.newInstance(registry);
-            Chain c = (Chain)h;
+            Handler       h        = super.newInstance(registry);
+            Chain         c        = (Chain) h;
             WSDDHandler[] handlers = getHandlers();
+
             for (int n = 0; n < handlers.length; n++) {
                 c.addHandler(handlers[n].newInstance(registry));
             }
+
             return c;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             return null;
         }
     }

@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights 
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,10 +54,9 @@
  */
 package org.apache.axis.deployment.v2dd;
 
-import org.w3c.dom.Element;
-
 import java.io.Serializable;
 import java.util.Hashtable;
+import org.w3c.dom.Element;
 
 public class V2DDElement implements Serializable { 
     

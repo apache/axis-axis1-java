@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -55,48 +55,127 @@
 package org.apache.axis.deployment.wsdd.providers;
 
 import org.apache.axis.Handler;
-import org.apache.axis.deployment.DeploymentRegistry;
-import org.apache.axis.deployment.wsdd.WSDDConstants;
-import org.apache.axis.deployment.wsdd.WSDDException;
 import org.apache.axis.deployment.wsdd.WSDDProvider;
+import org.apache.axis.deployment.wsdd.WSDDException;
+import org.apache.axis.deployment.wsdd.WSDDConstants;
+import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.providers.BSFProvider;
 import org.apache.axis.providers.BasicProvider;
 import org.apache.axis.utils.QName;
 import org.apache.axis.utils.XMLUtils;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
-public class WSDDBsfProvider extends WSDDProvider {
+
+/**
+ *
+ */
+public class WSDDBsfProvider
+    extends WSDDProvider
+{
+
+    /**
+     *
+     * Wrap an extant DOM element in WSDD
+     *
+     * @param e (Element) XXX
+     * @throws WSDDException XXX
+     */
+    public WSDDBsfProvider(Element e)
+        throws WSDDException
+    {
+        super(e);
+    }
+
+    /**
+     *
+     * Create a new DOM element and wrap in WSDD
+     *
+     * @param d (Document) XXX
+     * @param n (Node) XXX
+     * @throws WSDDException XXX
+     */
+    public WSDDBsfProvider(Document d, Node n)
+        throws WSDDException
+    {
+        super(d, n);
     
-    public WSDDBsfProvider(Element e) throws WSDDException { super(e); }
-    
-    public Handler newProviderInstance(DeploymentRegistry registry) throws Exception {
+	    Element specificProvider =
+	    	d.createElementNS(WSDDConstants.WSDD_BSF, "bsf:provider");
+	    getElement().appendChild(specificProvider);
+    }
+
+    protected Element getProviderElement()
+    	throws WSDDException
+    {
+	    Element prov =
+	        (Element) getElement()
+	            .getElementsByTagNameNS(WSDDConstants.WSDD_BSF, "provider")
+	            .item(0);
+
+	    if (prov == null) {
+	        throw new WSDDException(
+	            "The BSF Provider requires the presence of a bsf:provider element in the WSDD");
+	    }
+    	
+    	return prov;
+    }
+
+    /**
+     *
+     * @param registry XXX
+     * @return XXX
+     * @throws Exception XXX
+     */
+    public Handler newProviderInstance(DeploymentRegistry registry)
+        throws Exception
+    {
+
         String type;
-        type = (!(type = getType()).equals("") ? type : "org.apache.axis.handlers.providers.BSFProvider");
-        Class _class = Class.forName(type);
-        BasicProvider provider = (BasicProvider)_class.newInstance();
-        
+
+        type = (!(type = getType()).equals("")
+                ? type
+                : "org.apache.axis.handlers.providers.BSFProvider");
+
+        Class         _class   = Class.forName(type);
+        BasicProvider provider = (BasicProvider) _class.newInstance();
+
         // set the basic java provider deployment options
-        Element prov = (Element)getElement().getElementsByTagNameNS(WSDDConstants.WSDD_BSF, "provider").item(0);
-        if (prov == null) {
-            throw new WSDDException("The BSF Provider requires the presence of a bsf:provider element in the WSDD");
-        }
+        Element prov = getProviderElement();
+
         String option = prov.getAttribute("language");
-        if (!option.equals("")) provider.addOption(BSFProvider.OPTION_LANGUAGE, option);
-        option = prov.getAttribute("src");
-        if (!option.equals("")) provider.addOption(BSFProvider.OPTION_SRC, option);
-        option = XMLUtils.getInnerXMLString(prov);
-        if (!option.equals("")) provider.addOption(BSFProvider.OPTION_SCRIPT, option);
-        
-        // collect the information about the operations
-        NodeList nl = getElement().getElementsByTagNameNS(WSDDConstants.WSDD_NS, "operation");
-        for (int n = 0; n < nl.getLength(); n++) {
-            Element op = (Element)nl.item(n);
-            provider.addOperation(op.getAttribute("name"),
-                                  new QName(op.getAttribute("qName"),op));
+
+        if (!option.equals("")) {
+            provider.addOption(BSFProvider.OPTION_LANGUAGE, option);
         }
-        
+
+        option = prov.getAttribute("src");
+
+        if (!option.equals("")) {
+            provider.addOption(BSFProvider.OPTION_SRC, option);
+        }
+
+        option = XMLUtils.getInnerXMLString(prov);
+
+        if (!option.equals("")) {
+            provider.addOption(BSFProvider.OPTION_SCRIPT, option);
+        }
+
+        // collect the information about the operations
+        NodeList nl =
+            getElement().getElementsByTagNameNS(WSDDConstants.WSDD_NS,
+                                                "operation");
+
+        for (int n = 0; n < nl.getLength(); n++) {
+            Element op = (Element) nl.item(n);
+
+            provider.addOperation(op.getAttribute("name"),
+                                  new QName(op.getAttribute("qName"), op));
+        }
+
         return provider;
     }
-    
 }

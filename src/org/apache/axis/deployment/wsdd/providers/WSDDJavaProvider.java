@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 1999 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -55,49 +55,124 @@
 package org.apache.axis.deployment.wsdd.providers;
 
 import org.apache.axis.Handler;
+import org.apache.axis.deployment.wsdd.WSDDProvider;
+import org.apache.axis.deployment.wsdd.WSDDException;
 import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.deployment.wsdd.WSDDConstants;
-import org.apache.axis.deployment.wsdd.WSDDException;
-import org.apache.axis.deployment.wsdd.WSDDProvider;
-import org.apache.axis.providers.BasicProvider;
 import org.apache.axis.providers.java.JavaProvider;
+import org.apache.axis.providers.BasicProvider;
 import org.apache.axis.utils.QName;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
-public class WSDDJavaProvider extends WSDDProvider {
-    
-    public WSDDJavaProvider(Element e) throws WSDDException { super(e); }
-    
-    public Handler newProviderInstance(DeploymentRegistry registry) throws Exception {
+
+/**
+ *
+ */
+public class WSDDJavaProvider
+    extends WSDDProvider
+{
+
+    /**
+     *
+     * Wrap an extant DOM element in WSDD
+     *
+     * @param e (Element) XXX
+     * @throws WSDDException XXX
+     */
+    public WSDDJavaProvider(Element e)
+        throws WSDDException
+    {
+        super(e);
+    }
+
+    /**
+     *
+     * Create a new DOM element and wrap in WSDD
+     *
+     * @param d (Document) XXX
+     * @param n (Node) XXX
+     * @throws WSDDException XXX
+     */
+    public WSDDJavaProvider(Document d, Node n)
+        throws WSDDException
+    {
+        super(d, n);
+		
+		Element specificProvider =
+			d.createElementNS(WSDDConstants.WSDD_JAVA, "java:provider");
+		getElement().appendChild(specificProvider);
+    }
+
+	protected Element getProviderElement()
+		throws WSDDException
+	{
+		Element prov =
+		    (Element) getElement()
+		        .getElementsByTagNameNS(WSDDConstants.WSDD_JAVA, "provider")
+		        .item(0);
+
+		if (prov == null) {
+		    throw new WSDDException(
+		        "The Java Provider requires the presence of a java:provider element in the WSDD");
+		}
+		
+		return prov;
+	}
+	
+    /**
+     *
+     * @param registry XXX
+     * @return XXX
+     * @throws Exception XXX
+     */
+    public Handler newProviderInstance(DeploymentRegistry registry)
+        throws Exception
+    {
+
         String type;
-        type = (!(type = getType()).equals("") ? type : "org.apache.axis.handlers.providers.JavaProvider");
-        Class _class = Class.forName(type);
-        BasicProvider provider = (BasicProvider)_class.newInstance();
-        
+
+        type = (!(type = getType()).equals("")
+                ? type
+                : "org.apache.axis.handlers.providers.JavaProvider");
+
+        Class         _class   = Class.forName(type);
+        BasicProvider provider = (BasicProvider) _class.newInstance();
+
         // set the basic java provider deployment options
-        Element prov = (Element)getElement().getElementsByTagNameNS(WSDDConstants.WSDD_JAVA, "provider").item(0);
-        if (prov == null) {
-            throw new WSDDException("The Java Provider requires the presence of a java:provider element in the WSDD");
-        }
-        provider.addOption(JavaProvider.OPTION_CLASSNAME, prov.getAttribute("className"));
-        provider.addOption(JavaProvider.OPTION_IS_STATIC, new Boolean(prov.getAttribute("isStatic")));
-        
+        Element prov = getProviderElement();
+
+        provider.addOption(JavaProvider.OPTION_CLASSNAME,
+                           prov.getAttribute("className"));
+        provider.addOption(JavaProvider.OPTION_IS_STATIC,
+                           new Boolean(prov.getAttribute("isStatic")));
+
         // set the classpath if present
-        Element cp = (Element)getElement().getElementsByTagNameNS(WSDDConstants.WSDD_JAVA, "classPath").item(0);
+        Element cp =
+            (Element) getElement()
+                .getElementsByTagNameNS(WSDDConstants.WSDD_JAVA, "classPath")
+                .item(0);
+
         if (cp != null) {
-            provider.addOption(JavaProvider.OPTION_CLASSPATH, cp.getFirstChild().getNodeValue());
+            provider.addOption(JavaProvider.OPTION_CLASSPATH,
+                               cp.getFirstChild().getNodeValue());
         }
-        
+
         // collect the information about the operations
-        NodeList nl = getElement().getElementsByTagNameNS(WSDDConstants.WSDD_NS, "operation");
+        NodeList nl =
+            getElement().getElementsByTagNameNS(WSDDConstants.WSDD_NS,
+                                                "operation");
+
         for (int n = 0; n < nl.getLength(); n++) {
-            Element op = (Element)nl.item(n);
+            Element op = (Element) nl.item(n);
+
             provider.addOperation(op.getAttribute("name"),
-                                  new QName(op.getAttribute("qName"),op));
+                                  new QName(op.getAttribute("qName"), op));
         }
-        
+
         return provider;
     }
-    
 }

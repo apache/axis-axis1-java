@@ -52,102 +52,54 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.deployment.wsdd;
+package org.apache.axis.deployment;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
+import java.util.Hashtable;
 
-import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.deployment.wsdd.*;
+import org.apache.axis.Handler;
+import org.apache.axis.Constants;
+import org.apache.axis.utils.QName;
+import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 
 
 /**
  *
  */
-public class WSDDParameter
-    extends WSDDElement
+public class SimpleWsddDeploymentManager
+    extends SimpleDeploymentManager
 {
 
     /**
-     *
-     * @param e (Element) XXX
-     * @throws WSDDException XXX
-     */
-    public WSDDParameter(Element e)
-        throws WSDDException
-    {
-        super(e, "parameter");
-    }
-
-    /**
-     *
-     * @param d (Document) XXX
-     * @param n (Node) XXX
-     * @throws WSDDException XXX
-     */
-    public WSDDParameter(Document d, Node n)
-        throws WSDDException
-    {
-        super(d, n, "parameter");
-    }
-
-    /**
-     *
+     * Return the RAW deployed item
+     * @param qname XXX
      * @return XXX
+     * @throws DeploymentException XXX
      */
-    public String getName()
+    public WSDDDeployableItem getDeployedWsddItem(QName qname)
+        throws DeploymentException
     {
-        return getAttribute("name");
+        return getDeployedWsddItem(qname.toString());
     }
 
     /**
-     *
-     * @param newName XXX
-     */
-    public void setName(String newName)
-    {
-        setAttribute("name", newName);
-    }
-
-    /**
-     *
+     * Return the RAW deployed item
+     * @param name XXX
      * @return XXX
+     * @throws DeploymentException XXX
      */
-    public String getValue()
-    {
-        return getAttribute("value");
-    }
-
-    /**
-     *
-     * @param newValue XXX
-     */
-    public void setValue(String newValue)
-    {
-        setAttribute("value", newValue);
-    }
-	
-    /**
-     *
-     * @return XXX
-     */
-    public boolean getLocked()
+    public WSDDDeployableItem getDeployedWsddItem(String name)
+        throws DeploymentException
     {
 
-        String locked = getAttribute("locked");
+        try {
+            WSDDDeployableItem item = (WSDDDeployableItem) items.get(name);
 
-        return ((locked != null) && locked.equals("true"));
-    }
-
-    /**
-     *
-     * @param locked XXX
-     */
-    public void setLocked(boolean locked)
-    {
-
-        setAttribute("locked", (locked
-                                ? "true"
-                                : "false"));
+            return item;
+        }
+        catch (Exception e) {
+            throw new DeploymentException(e.getMessage());
+        }
     }
 }
