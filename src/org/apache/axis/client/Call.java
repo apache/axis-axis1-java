@@ -475,8 +475,8 @@ public class Call implements javax.xml.rpc.Call {
     }
 
     public boolean isPropertySupported(String name) {
-        return propertyNames.contains(name) || !name.startsWith("java.")
-               || !name.startsWith("javax.");
+        return propertyNames.contains(name) || (!name.startsWith("java.")
+               && !name.startsWith("javax."));
     }
 
     /**
