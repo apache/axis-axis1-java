@@ -84,7 +84,7 @@ public class Options {
   /**
    * Constructor - just pass in the <b>args</b> from the command line.
    */
-  public Options(String _args[]) {
+  public Options(String _args[]) throws MalformedURLException {
     args = _args ;
     
     ///////////////////////////////////////////////////////////////////////
@@ -92,7 +92,13 @@ public class Options {
 
     /* Process these well known options first */
     /******************************************/
-    getURL();
+    try {
+      getURL();
+    } catch( MalformedURLException e ) {
+      Debug.Print( 1, "getURL failed to correctly process URL; protocol not " +
+                      "supported" );
+      throw e ;
+    }
     getUser();
     getPassword();
 
@@ -215,24 +221,17 @@ public class Options {
 
   //////////////////////////////////////////////////////////////////////////
   // SOASS
-  public String getURL() {
+  public String getURL() throws MalformedURLException {
     String  tmp ;
     String  protocol = null ;
     URL     url = null ;
 
     if ( (tmp = isValueSet( 'l' )) != null ) {
-      try {
-        url = new URL( tmp );
-      }
-      catch( Exception e ) {
-        url = null ;
-      }
-      if ( url != null ) {
-        host = url.getHost();
-        port = "" + url.getPort();
-        servlet = url.getFile();
-        protocol = url.getProtocol();
-      }
+      url = new URL( tmp );
+      host = url.getHost();
+      port = "" + url.getPort();
+      servlet = url.getFile();
+      protocol = url.getProtocol();
     }
 
     tmp = isValueSet( 'h' ); if ( host == null ) host = tmp ;
@@ -251,6 +250,7 @@ public class Options {
       if ( port != null ) tmp += ":" + port ;
       if ( servlet != null ) tmp += servlet ;
     } else tmp = url.toString();
+    Debug.Print( 1, "getURL returned: " + tmp );
     return( tmp );
   }
 
