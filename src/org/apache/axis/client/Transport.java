@@ -118,6 +118,15 @@ public class Transport {
     }
 
     /**
+     * Allow the transport to grab any transport-specific stuff it might
+     * want from a returned MessageContext
+     */
+    public void processReturnedMessageContext(MessageContext context)
+    {
+        // Default impl does nothing
+    }
+
+    /**
      * Sets the transport chain name - to override the default.
      * @param name the name of the transport chain to use
      */

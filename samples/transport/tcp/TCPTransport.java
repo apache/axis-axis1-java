@@ -110,15 +110,15 @@ public class TCPTransport extends Transport
           String urlString = mc.getStrProp(MessageContext.TRANS_URL);
           if (urlString != null) {
             URL url = new URL(urlString);
-            mc.setProperty(HOST, url.getHost());
-            mc.setProperty(PORT, new Integer(url.getPort()).toString());
+            host = url.getHost();
+            port = new Integer(url.getPort()).toString();
           }
         } catch (java.net.MalformedURLException e) {
           // Do nothing here?
         }
 
-        if (host != null) serv.set(HOST, host);
-        if (port != null) serv.set(PORT, port);
+        if (host != null) mc.setProperty(HOST, host);
+        if (port != null) mc.setProperty(PORT, port);
 
         category.debug( "Port = " + mc.getStrProp(PORT));
         category.debug( "Host = " + mc.getStrProp(HOST));

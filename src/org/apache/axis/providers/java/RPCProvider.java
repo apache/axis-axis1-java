@@ -63,6 +63,7 @@ import org.apache.axis.utils.cache.* ;
 import org.apache.axis.message.* ;
 import org.apache.axis.server.ParamList;
 import org.apache.log4j.Category;
+import org.apache.log4j.Priority;
 
 /**
  * Implement message processing by walking over RPCElements of the
@@ -85,8 +86,11 @@ public class RPCProvider extends JavaProvider {
                                 Object obj)
         throws Exception
     {
+        category.debug("Enter::RPCProvider.processMessage()");
         Vector          bodies = reqEnv.getBodyElements();
-        
+        category.debug("There are " + bodies.size() + " body elements.");
+        category.debug("body is " + bodies.get(0));
+
         /* Loop over each entry in the SOAPBody - each one is a different */
         /* RPC call.                                                      */
         /******************************************************************/
@@ -106,9 +110,7 @@ public class RPCProvider extends JavaProvider {
                 for ( int i = 0 ; i < args.size() ; i++ ) {
                     argValues[i]  = ((RPCParam)args.get(i)).getValue() ;
                     
-                    if (DEBUG_LOG) {
-                        System.out.println("  value: " + argValues[i] );
-                    }
+                    category.debug("  value: " + argValues[i] );
                 }
             }
 
@@ -218,6 +220,8 @@ public class RPCProvider extends JavaProvider {
                 objRes = method.invoke( obj, argValues );
               }
             }
+
+            category.debug("Got result: " + objRes);
 
             /* Now put the result in the result SOAPEnvelope */
             /*************************************************/

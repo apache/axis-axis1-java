@@ -73,8 +73,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Enumeration;
 
 /**
@@ -175,6 +174,50 @@ public class AxisServlet extends HttpServlet {
                         XMLUtils.DocumentToWriter(doc, res.getWriter());
                         res.getWriter().close();
                     }
+                } else if (req.getParameterNames().hasMoreElements()) {
+                    Enumeration enum = req.getParameterNames();
+                    PrintWriter writer = res.getWriter();
+                    String method = null;
+                    String args = "";
+                    while (enum.hasMoreElements()) {
+                        String param = (String) enum.nextElement();
+                        if (param.equalsIgnoreCase("method")) {
+                            method = req.getParameter(param);
+                        } else {
+                            args += "<" + param + ">" +
+                                    req.getParameter(param) +
+                                    "</" + param + ">";
+                        }
+                    }
+                    if (method == null) {
+                        writer.println("<p>No method!</p>");
+                        writer.close();
+                        return;
+                    }
+                    String body = "<" + method + ">" + args +
+                                  "</" + method + ">";
+                    String msgtxt = "<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+                                 "<SOAP-ENV:Body>" + body + "</SOAP-ENV:Body>" +
+                                 "</SOAP-ENV:Envelope>";
+                    ByteArrayInputStream istream = new ByteArrayInputStream(
+                        msgtxt.getBytes());
+                    Message msg = new Message(istream, false);
+                    msgContext.setRequestMessage(msg);
+//                    if (msg != null) {
+//                        writer.println(msg.getAsString());
+//                        return;
+//                    }
+                    engine.invoke(msgContext);
+                    Message respMsg = msgContext.getResponseMessage();
+                    if (respMsg != null) {
+                        writer.println("<p>Got response message:</p>");
+                        writer.println(respMsg.getAsString());
+                        writer.close();
+                    } else {
+                        writer.println("<p>No response message!</p>");
+                        writer.close();
+                    }
+                    return;
                 } else {
                     res.setContentType("text/html");
                     res.getWriter().println("<h1>" + req.getRequestURI() +

@@ -114,13 +114,6 @@ public class LocalSender extends BasicHandler {
         serverContext.setRequestMessage(new Message(msgStr));
         serverContext.setTransportName("local");
 
-        // copy soap action if it is present
-        String action = clientContext.getStrProp(HTTPConstants.MC_HTTP_SOAPACTION);
-        if (action != null) {
-            serverContext.setProperty(HTTPConstants.MC_HTTP_SOAPACTION, action);
-            serverContext.setTransportName("http");
-        }
-
         // Also copy authentication info if present
         String user = clientContext.getStrProp(MessageContext.USERID);
         if (user != null) {
