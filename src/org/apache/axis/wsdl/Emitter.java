@@ -54,30 +54,22 @@
  */
 package org.apache.axis.wsdl;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Vector;
-import java.util.StringTokenizer;
-import java.net.URL;
-import java.net.MalformedURLException;
-import java.net.URLDecoder;
+import com.ibm.wsdl.extensions.soap.SOAPAddress;
+import com.ibm.wsdl.extensions.soap.SOAPBody;
+import com.ibm.wsdl.extensions.soap.SOAPOperation;
+import com.ibm.wsdl.xml.WSDLReader;
+import org.apache.axis.utils.XMLUtils;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
 import javax.wsdl.Definition;
 import javax.wsdl.Fault;
 import javax.wsdl.Input;
-import javax.wsdl.Message;
 import javax.wsdl.Operation;
 import javax.wsdl.Output;
 import javax.wsdl.Part;
@@ -86,21 +78,21 @@ import javax.wsdl.PortType;
 import javax.wsdl.QName;
 import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
-
-import org.apache.axis.utils.XMLUtils;
-
-import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import com.ibm.wsdl.xml.WSDLReader;
-import com.ibm.wsdl.extensions.soap.SOAPAddress;
-import com.ibm.wsdl.extensions.soap.SOAPOperation;
-import com.ibm.wsdl.extensions.soap.SOAPBody;
-import com.ibm.wsdl.extensions.soap.SOAPBinding;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 /**
  * This class produces java files for stubs, skeletons, and types from a
