@@ -301,8 +301,8 @@ public class MessageElement implements SOAPElement
         }
     }
 
-    public MessageElement getParent() { return parent; }
-    public void setParent(MessageElement parent) throws SOAPException
+    private MessageElement getParent() { return parent; }
+    private void setParent(MessageElement parent) throws SOAPException
     { 
         this.parent = parent;
         if (parent != null) {
@@ -813,37 +813,11 @@ public class MessageElement implements SOAPElement
                     prefix = q.substring(0, idx);
             }
 
-            attrs.add(new NameImpl(attributes.getURI(i),
-                                   attributes.getLocalName(i),
-                                   prefix));
+            attrs.add(new PrefixedQName(attributes.getURI(i),
+                                        attributes.getLocalName(i),
+                                        prefix));
         }
         return attrs.iterator();
-    }
-
-    protected static class NameImpl implements Name {
-        private QName qName;
-        private String prefix;
-
-        public NameImpl(String uri, String localName, String pre) {
-            qName = new QName(uri, localName);
-            prefix = pre;
-        }
-
-        public String getLocalName() {
-            return qName.getLocalPart();
-        }
-
-        public String getQualifiedName() {
-            return qName.toString();
-        }
-
-        public String getURI() {
-            return qName.getNamespaceURI();
-        }
-
-        public String getPrefix() {
-            return prefix;
-        }
     }
 
     // getNamespaceURI implemented above
@@ -858,7 +832,7 @@ public class MessageElement implements SOAPElement
     }
 
     public Name getElementName() {
-        return new NameImpl(getNamespaceURI(), getName(), getPrefix());
+        return new PrefixedQName(getNamespaceURI(), getName(), getPrefix());
     }
 
     public boolean removeAttribute(Name name) {
