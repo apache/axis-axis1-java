@@ -766,7 +766,7 @@ public class SymbolTable {
                 if (includeName != null) {
                     URL url = getURL(context, includeName);
                     Document includeDoc = XMLUtils.newDocument(url.toString());
-                    populate(url, (Definition) null, includeDoc, url.toString());
+                    populate(url, null, includeDoc, url.toString());
                 }
             }
         }
@@ -1152,7 +1152,7 @@ public class SymbolTable {
             parameters.returnParam.setMode(Parameter.OUT);
             if (parameters.returnParam.getType() instanceof DefinedElement) {
                 parameters.returnParam.setQName(
-                        ((DefinedElement)parameters.returnParam.getType())
+                        parameters.returnParam.getType()
                         .getQName());
             }
             ++parameters.outputs;
@@ -2103,7 +2103,7 @@ public class SymbolTable {
         Iterator ports = service.getPorts().values().iterator();
         while (ports.hasNext()) {
             Port port = (Port) ports.next();
-            Binding binding = (Binding) port.getBinding();
+            Binding binding = port.getBinding();
             BindingEntry bEntry = getBindingEntry(binding.getQName());
             if (bEntry != null) {
                 setBindingReferences(bEntry, def, doc);
