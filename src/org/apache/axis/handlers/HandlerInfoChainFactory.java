@@ -78,6 +78,7 @@ public class HandlerInfoChainFactory {
 
     public HandlerChain createHandlerChain() {
         HandlerChain hc = new HandlerChainImpl(handlerInfos);
+        hc.setRoles(getRoles());
         return hc;
         
     }

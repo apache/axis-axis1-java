@@ -82,7 +82,10 @@ public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler
     }
 
     public void setRoles(String[] roles) {
-        _roles = roles;
+        if(roles != null) {
+            // use clone for cheap array copy 
+            _roles = (String[])roles.clone();
+        }
     }
 
     public void init(Map map) {
@@ -90,7 +93,6 @@ public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler
     }
 
     protected List handlerInfos = new ArrayList();
-    String[] roles = null;
 
     public HandlerChainImpl() {
     }
@@ -127,6 +129,9 @@ public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler
     }
 
     public boolean handleRequest(MessageContext _context) {
+        
+        ((org.apache.axis.MessageContext)_context).setRoles(getRoles());
+        
         SOAPMessageContext context = (SOAPMessageContext) _context;
 
         falseIndex = -1;

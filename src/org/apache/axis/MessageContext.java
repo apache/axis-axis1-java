@@ -190,6 +190,11 @@ public class MessageContext implements SOAPMessageContext {
     private String  encodingStyle  = Use.ENCODED.getEncoding();
     private boolean useSOAPAction  = false;
     private String  SOAPActionURI  = null;
+    
+    /**
+     * SOAP Actor roles
+     */
+    private String[] roles;
 
     /** Our SOAP namespaces and such */
     private SOAPConstants soapConstants = Constants.DEFAULT_SOAP_VERSION;
@@ -1145,7 +1150,11 @@ public class MessageContext implements SOAPMessageContext {
      */
     public String[] getRoles() {
         //TODO: Flesh this out.
-        return null;
+        return roles;
+    }
+    
+    public void setRoles( String[] roles) {
+        this.roles = roles;
     }
 
     /**
