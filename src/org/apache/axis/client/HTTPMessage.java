@@ -188,8 +188,9 @@ public class HTTPMessage {
     Message       resMsg = msgContext.getResponseMessage();
     SOAPEnvelope  resEnv = (SOAPEnvelope) resMsg.getAs( "SOAPEnvelope" );
     SOAPBody      resBody = resEnv.getFirstBody();
+    Document      doc = new Document( resBody.getAsXML() );
 
-    mc.setResponseMessage( new Message(resBody.getAsDocument(), "Document") );
+    mc.setResponseMessage( new Message(doc, "Document") );
 
     Debug.Print( 1, "Exit: HTTPMessage.invoke" );
   }

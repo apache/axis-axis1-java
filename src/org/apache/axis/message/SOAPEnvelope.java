@@ -84,8 +84,9 @@ public class SOAPEnvelope {
   }
 
   public void setEnvelope(Element elem) {
-    List  list ;
-    int       i ;
+    List     list ;
+    Element  e ;
+    int      i ;
 
     if ( elem == null ) {
       prefix = null ;
@@ -93,22 +94,20 @@ public class SOAPEnvelope {
       body = null ;
       return ;
     }
-    list = elem.getChildren( Constants.ELEM_HEADER, elem.getNamespace());
-    if ( list != null && list.size() > 0 ) { 
-      Element h = (Element) list.get(0);
-      // list = h.getChildren();
-      list = h.getChildren();
+
+    e = elem.getChild( Constants.ELEM_HEADER, elem.getNamespace() );
+    if ( e != null ) {
+      list = e.getChildren();
       for ( i = 0 ; i < list.size() ; i++ ) {
-        h = (Element) list.get(i);
+        Element h = (Element) list.get(i);
         if ( headers == null ) headers = new Vector();
         headers.add( new SOAPHeader( h ) );
       }
     }
 
-    list = elem.getChildren( Constants.ELEM_BODY, elem.getNamespace() );
-    if ( list != null && list.size() > 0 ) { 
-      Element h = (Element) list.get(0);
-      list = h.getChildren();
+    e = elem.getChild( Constants.ELEM_BODY, elem.getNamespace() );
+    if ( e != null ) {
+      list = e.getChildren();
       if ( list != null ) {
         for ( i = 0 ; i < list.size() ; i++ ) {
           Object n = list.get(i);
@@ -177,32 +176,33 @@ public class SOAPEnvelope {
 
   public Document getAsXML() {
     Document doc = null ;
-    Element  elem ;
+    Element  root ;
     int      i ;
 
-    elem = new Element( Constants.ELEM_ENVELOPE, Constants.NSPREFIX_SOAP_ENV,
+    root = new Element( Constants.ELEM_ENVELOPE, Constants.NSPREFIX_SOAP_ENV,
                         Constants.URI_SOAP_ENV );
-    doc = new Document( elem );
+    doc = new Document( root );
 
     if ( headers != null && headers.size() > 0 ) {
-      Element root = new Element( Constants.ELEM_HEADER, 
+      Element elem = new Element( Constants.ELEM_HEADER, 
                                   Constants.NSPREFIX_SOAP_ENV,
                                   Constants.URI_SOAP_ENV );
-      elem.addContent( root );
+      root.addContent( elem );
       for ( i = 0 ; i < headers.size() ; i++ ) {
         SOAPHeader h = (SOAPHeader) headers.get(i);
-        root.addContent( h.getAsXML() );
+        elem.addContent( h.getAsXML() );
       }
     } 
     if ( body != null ) {
-      Element root = new Element( Constants.ELEM_BODY, 
+      Element elem = new Element( Constants.ELEM_BODY, 
                                   Constants.NSPREFIX_SOAP_ENV,
                                   Constants.URI_SOAP_ENV );
-      elem.addContent( root );
+      root.addContent( elem );
       for ( i = 0 ; i < body.size() ; i++ ) {
         Element  bod = ((SOAPBody)body.get(i)).getAsXML();
-        bod = (Element) bod.clone();
-        root.addContent( bod );
+        if ( bod.getDocument() != null )
+          bod = (Element) bod.clone();
+        elem.addContent( bod );
       }
     }
     return( doc );

@@ -108,11 +108,14 @@ public class RPCDispatchHandler extends BasicHandler {
                                  "Service name=" + methodName,
                                null, null );  // Should they??
   
+        Debug.Print( 2, "There are " + args.size() + " arg(s)" );
         Class[]  argClasses = new Class[ args.size() ];
         Object[] argValues  = new Object[ args.size()];
         for ( i = 0 ; i < args.size() ; i++ ) {
           argClasses[i] = cl.loadClass("java.lang.String") ;
           argValues[i]  = ((RPCArg)args.get(i)).getValue() ; // only String 4now
+          Debug.Print( 2, "  class: " + argClasses[i] );
+          Debug.Print( 2, "  value: " + argValues[i].toString() );
         }
   
         Method method = cls.getMethod( mName, argClasses );
