@@ -274,11 +274,7 @@ public class SimpleAxisServer implements Runnable {
                     msgContext.setProperty(Constants.MC_JWS_CLASSDIR,
                                            "jwsClasses");
 
-                    // FIXME - we need to get our hostname or IP
-                    // This doesn't work (returns 0.0.0.0).
                     String hostname = socket.getInetAddress().getHostName();
-                    //String hostname = "localhost";
-
                     // !!! Fix string concatenation
                     String url = "http://" + hostname + ":" +
                             this.getServerSocket().getLocalPort() + "/" +
