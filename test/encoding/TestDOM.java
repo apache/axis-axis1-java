@@ -8,6 +8,7 @@ import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.XMLUtils;
 
@@ -53,7 +54,7 @@ public class TestDOM extends TestCase {
        AxisEngine engine = new AxisServer();
        engine.init();
        MessageContext msgContext = new MessageContext(engine);
-        msgContext.setHighFidelity(true);
+       msgContext.setHighFidelity(true);
        Message message = new Message(request);
        message.setMessageContext(msgContext);
 
@@ -63,6 +64,35 @@ public class TestDOM extends TestCase {
        String result = message.getSOAPPartAsString();
 
        assertEquals("Request is not the same as the result.", request, result);
+    }
+
+    public void testHeaders() throws Exception {
+       AxisEngine engine = new AxisServer();
+       engine.init();
+       MessageContext msgContext = new MessageContext(engine);
+       msgContext.setHighFidelity(true);
+       Message message = new Message(request);
+       message.setMessageContext(msgContext);
+
+       // Now completely round trip it
+       SOAPEnvelope envelope = message.getSOAPEnvelope();
+       envelope.addHeader(new SOAPHeaderElement("foo1", "foo1"));
+       envelope.addHeader(new SOAPHeaderElement("foo2", "foo2"));
+       envelope.addHeader(new SOAPHeaderElement("foo3", "foo3"));
+       String result = message.getSOAPPartAsString();
+
+       assertTrue(result.indexOf("foo1")!=-1);
+       assertTrue(result.indexOf("foo2")!=-1);
+       assertTrue(result.indexOf("foo3")!=-1);
+
+       Message message2 = new Message(result);
+       message2.setMessageContext(msgContext);
+       SOAPEnvelope envelope2 = message2.getSOAPEnvelope();
+       String result2 = message2.getSOAPPartAsString();
+
+       assertTrue(result2.indexOf("foo1")!=-1);
+       assertTrue(result2.indexOf("foo2")!=-1);
+       assertTrue(result2.indexOf("foo3")!=-1);
     }
 
     public void testEmptyNode() throws Exception
@@ -82,6 +112,7 @@ public class TestDOM extends TestCase {
     public static void main(String [] args) throws Exception
     {
         TestDOM tester = new TestDOM("TestDOM");
+        tester.testHeaders();
         tester.testNodeWithAttribute();
         tester.testEmptyNode();
         tester.testDOM();
