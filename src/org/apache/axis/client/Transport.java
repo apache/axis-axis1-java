@@ -72,21 +72,6 @@ public abstract class Transport {
     public static String PASSWORD = MessageContext.PASSWORD;
     
     /**
-     * Initialize the given AxisClient with whatever transport state
-     * is appropriate.
-     */
-    public void init (AxisEngine client) {
-        // default is do nothing
-    }
-    
-    /**
-     * Initialize the given MessageContext with the correct handlers and registries.
-     */
-    public abstract void initMessageContext
-        (MessageContext context, ServiceClient message, AxisEngine engine)
-        throws AxisFault;
-    
-    /**
      * Set up any transport-specific derived properties in the message context.
      * @param context the context to set up
      * @param message the client service instance

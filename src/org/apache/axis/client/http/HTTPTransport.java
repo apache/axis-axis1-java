@@ -84,6 +84,7 @@ public class HTTPTransport extends Transport
     
     private String url;
     private String action;
+    private String transportName = "http";
     
     public HTTPTransport () {
     }
@@ -98,31 +99,16 @@ public class HTTPTransport extends Transport
     }
     
     /**
-     * Initialize the given MessageContext with the correct handlers and registries.
+     * Allows the user to set a particular transport Handler for sending this
+     * message.  Assumes the name passed is in fact a registered transport.
+     * 
+     * @param transportName the name of a transport Handler
      */
-    public void initMessageContext (MessageContext mc, ServiceClient serviceClient, AxisEngine engine)
-        throws AxisFault
+    public void setTransportName(String transportName)
     {
-        HandlerRegistry sr = engine.getServiceRegistry();
-        if ( sr == null || sr.find("HTTP.request") == null )
-            mc.setProperty( MessageContext.TRANS_REQUEST, "HTTPSender" );
-        else
-            mc.setProperty( MessageContext.TRANS_REQUEST, "HTTP.request" );
-        
-        mc.setProperty(MessageContext.TRANS_RESPONSE, "HTTP.response" );
-        
-        /* If there is Request Transport Chain then default to HTTP. */
-        /* In order for the client to override the transport chain */
-        /* they should just set the TRANS_REQUEST/RESPONSE fields in   */
-        /* the msgContext.                                         */
-        /***********************************************************/
-        if ( mc.getProperty( MessageContext.TRANS_REQUEST ) == null )
-            mc.setProperty( MessageContext.TRANS_REQUEST, "HTTPSender" );
-        
-        if ( mc.getProperty( MessageContext.TRANS_RESPONSE ) == null )
-            mc.setProperty( MessageContext.TRANS_RESPONSE, "HTTP.response" );
+        this.transportName = transportName;
     }
-        
+    
     /**
      * Set up any transport-specific derived properties in the message context.
      * @param context the context to set up
@@ -135,6 +121,10 @@ public class HTTPTransport extends Transport
     {
         if (url != null) mc.setProperty(URL, url);
         if (action != null) mc.setProperty(ACTION, action);
+        
+        mc.setTransportName(transportName);
+        
+        // !!! Not sure about this
         mc.setTargetService( (String)mc.getProperty(ACTION) );
     }
 }

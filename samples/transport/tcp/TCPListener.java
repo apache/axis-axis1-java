@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -147,8 +147,6 @@ public class TCPListener implements Runnable {
             if ( engine == null ) {
                 engine = new AxisServer();
                 engine.init();
-                
-                engine.addTransportForProtocol("tcp", new TCPTransport());
                 
                 HandlerRegistry hr = engine.getHandlerRegistry();
                 HandlerRegistry sr = engine.getServiceRegistry();

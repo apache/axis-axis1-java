@@ -71,8 +71,6 @@ import java.io.IOException;
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
 
-/** !!! FIRST CUT - INCOMPLETE (doesn't yet do serialization)
- */
 public class ArraySerializer extends DeserializerBase
     implements ValueReceiver, Serializer
 {

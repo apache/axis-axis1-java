@@ -62,7 +62,6 @@ import org.apache.axis.utils.Debug;
 
 /** A Body element.
  * 
- * Useful subclass right now is RPCElement.
  */
 public class SOAPBodyElement extends MessageElement
 {

@@ -69,6 +69,7 @@ import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.registries.HandlerRegistry;
 import org.apache.axis.message.DebugHeader;
+import org.apache.axis.client.http.HTTPTransport;
 
 import org.w3c.dom.* ;
 
@@ -97,7 +98,7 @@ public class ServiceClient {
     // For testing
     private static Handler localServer = null ;
     public  boolean doLocal = false ;
-    private static final boolean DEBUG_LOG = false;
+    private static final boolean DEBUG_LOG = true;
     
     // Our AxisClient
     private AxisClient engine;
@@ -110,7 +111,7 @@ public class ServiceClient {
     
     // Our Transport, if any
     private Transport transport;
-    
+
     /**
      * Construct a ServiceClient with no properties.
      * Set it up yourself!
@@ -130,7 +131,7 @@ public class ServiceClient {
         try {
             URL url = new URL(endpointURL);
             String protocol = url.getProtocol();
-            setTransport(engine.getTransportForProtocol(protocol));
+            setTransport(getTransportForProtocol(protocol));
             set(MessageContext.TRANS_URL, endpointURL);
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -149,17 +150,14 @@ public class ServiceClient {
     
     public void setTransport(Transport transport) {
         this.transport = transport;
-        
-        // set up the message context with the transport
-        try {
-            transport.init(engine);
-            
-            transport.initMessageContext(msgContext, this, engine);
-        } catch (AxisFault f) {
-            // this will happen if there is no appropriate service
-            // what?  system.err for now
-            System.err.println("ServiceClient(Transport): Faulted when initializing message context: "+f);
-        }
+    }
+    
+    public Transport getTransportForProtocol(String protocol)
+    {
+      if (protocol.equals("http"))
+        return new HTTPTransport();
+      
+      return null;
     }
     
     /**
@@ -231,6 +229,14 @@ public class ServiceClient {
         TypeMappingRegistry typeMap = msgContext.getTypeMappingRegistry();
         typeMap.addDeserializerFactory(qName, _class, deserializerFactory);
     }
+
+    public SOAPEnvelope invoke(SOAPEnvelope env) throws AxisFault
+    {
+        msgContext.clearProperties();
+        msgContext.setRequestMessage(new Message(env));
+        invoke();
+        return msgContext.getResponseMessage().getAsSOAPEnvelope();
+    }
     
     public Object invoke( String namespace, String method, Object[] args ) throws AxisFault {
         Debug.Print( 1, "Enter: ServiceClient::invoke(ns, meth, args)" );
@@ -241,24 +247,22 @@ public class ServiceClient {
     }
     
     public Object invoke( RPCElement body ) throws AxisFault {
-        // quote = HTTPCall.invoke( "getQuote", Object[] { "IBM" } );
         Debug.Print( 1, "Enter: ServiceClient::invoke(RPCElement)" );
         SOAPEnvelope         reqEnv = new SOAPEnvelope();
         SOAPEnvelope         resEnv = null ;
         Message              reqMsg = new Message( reqEnv );
         Message              resMsg = null ;
-        Vector               resBodies = null ;
         Vector               resArgs = null ;
         Object               result = null ;
         
         if ( encodingStyleURI != null )
             reqEnv.setEncodingStyleURI( encodingStyleURI );
         
-        msgContext.setServiceDescription(serviceDesc);
+        msgContext.clearProperties();
         msgContext.setRequestMessage(reqMsg);
-        reqEnv.setMessageType(ServiceDescription.REQUEST);
         
         reqEnv.addBodyElement(body);
+        reqEnv.setMessageType(ServiceDescription.REQUEST);
         
         if ( body.getPrefix() == null )       body.setPrefix( "m" );
         if ( body.getNamespaceURI() == null ) {
@@ -324,22 +328,18 @@ public class ServiceClient {
      * (perhaps because you called this.setRequestMessage())
      */
     public void invoke() throws AxisFault {
-        Debug.Print( 1, "Enter: ClientMessage::invoke(MessageContext)" );
+      Debug.setDebugLevel(5);
+        Debug.Print( 1, "Enter: Service::invoke()" );
         
-        // If local is specified, override the transport handlers Once there
-        // is a convenient way for the client to specify the transport
-        // handler, we might want to consider removing this code and doLocal
-        // entirely.
-        if (doLocal) {
-            msgContext.setProperty(MessageContext.TRANS_REQUEST, "LocalSender");
-            msgContext.clearProperty(MessageContext.TRANS_RESPONSE);
-        }
+        msgContext.setServiceDescription(serviceDesc);
 
         // set up message context if there is a transport
         if (transport != null) {
             transport.setupMessageContext(msgContext, this, this.engine);
         }
         
+        /* ??? --Glen
+
         Message              inMsg = msgContext.getRequestMessage();
         
         SOAPEnvelope         reqEnv = null ;
@@ -348,45 +348,31 @@ public class ServiceClient {
         if ( encodingStyleURI != null )
             reqEnv.setEncodingStyleURI( encodingStyleURI );
         
-        //SOAPBody  body = new SOAPBody( (Document) inMsg.getAs("Document") );
-        //!!!reqEnv.addBodyElement( body );
-        
-        // local (if null) or pre-existing transport (if !null)
         Message              reqMsg = new Message( reqEnv );
+        */
         
+        /*
+         * I don't think we should be doing this.  Debugging on the client
+         * doesn't necessarily map to debugging on the server.  Leaving
+         * it commented for now.  --Glen
+         *
         if ( Debug.getDebugLevel() > 0  ) {
             DebugHeader  header = new DebugHeader(Debug.getDebugLevel());
             header.setActor( Constants.URI_NEXT_ACTOR );
             
             reqEnv.addHeader( header );
         }
+        */
         
         try {
             engine.invoke( msgContext );
-            engine.cleanup();
         }
         catch( AxisFault fault ) {
             Debug.Print( 1,  fault );
             throw fault ;
         }
         
-        // Message       resMsg = msgContext.getResponseMessage();
-        //SOAPEnvelope  resEnv = (SOAPEnvelope) resMsg.getAs( "SOAPEnvelope" );
-        // msgContext.setResponseMessage(resMsg);
-        /*
-         SOAPBody      resBody = null; //resEnv.getFirstBody();
-        
-         doc = XMLUtils.newDocument();
-         Element  root = resBody.getRoot();
-         if ( root.getOwnerDocument() != doc )
-         doc.appendChild( doc.importNode( root, true ) );
-         else
-         doc.appendChild( root );
-        
-         mc.setResponseMessage( new Message(doc, "Document") );
-         */
-        
-        Debug.Print( 1, "Exit: ServiceClient::invoke(MessageContext)" );
+        Debug.Print( 1, "Exit: Service::invoke()" );
     }
     
 }

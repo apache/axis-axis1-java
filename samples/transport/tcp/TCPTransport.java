@@ -64,14 +64,7 @@ import org.apache.axis.client.Transport;
 import org.apache.axis.client.AxisClient;
 import org.apache.axis.client.ServiceClient;
 
-// UGLY!!!!! -- see below in setupMessageContext -- RobJ
-import org.apache.axis.client.Transport;
-import org.apache.axis.client.http.HTTPTransport;
-
 /**
- * Extends Client by implementing the setupMessageContext function to
- * set TCP-specific message context fields.  May not even be necessary
- * if we arrange things differently somehow.
  *
  * @author Rob Jellinghaus (robj@unrealities.com)
  * @author Doug Davis (dug@us.ibm.com)
@@ -79,10 +72,6 @@ import org.apache.axis.client.http.HTTPTransport;
  */
 public class TCPTransport extends Transport
 {
-    private Handler engine;
-    
-    static private boolean initedClient = false;
-    
     private String host;
     private String port;
     
@@ -95,41 +84,10 @@ public class TCPTransport extends Transport
     }
     
     /**
-     * Find/load the registries and save them so we don't need to do this
-     * each time we're called.
-     */
-    public void init(AxisEngine engine) {
-        this.engine = engine;
-        // Load the simple handler registry and init it
-        Debug.Print( 1, "Enter: TCPTransport::init" );
-        
-        // add the TCPSender
-        HandlerRegistry hr = engine.getHandlerRegistry();
-        hr.add("TCPSender", new TCPSender());
-        
-        SimpleChain c = new SimpleChain();
-        hr.add( "TCP.request", c );
-    }
-    
-    /**
      * TCP properties
      */
     static public String HOST = "tcp.host";
     static public String PORT = "tcp.port";
-    
-    /**
-     * Initialize the given MessageContext with the correct handlers and registries.
-     */
-    public void initMessageContext (MessageContext mc, ServiceClient serv, AxisEngine engine)
-    {
-        HandlerRegistry sr = engine.getServiceRegistry();
-        if ( sr == null || sr.find("TCP.request") == null )
-            mc.setProperty( MessageContext.TRANS_REQUEST, "TCPSender" );
-        else
-            mc.setProperty( MessageContext.TRANS_REQUEST, "TCP.request" );
-        mc.setProperty(MessageContext.TRANS_RESPONSE, "TCP.response" );
-    }
-        
     
     /**
      * Set up any transport-specific derived properties in the message context.
@@ -139,13 +97,16 @@ public class TCPTransport extends Transport
      */
     public void setupMessageContext (MessageContext mc, ServiceClient serv, AxisEngine engine)
     {
+        mc.setTransportName("tcp");
+        
         // kind of ugly... fake up a "http://host:port/" url to send down the chain
         // ROBJ TODO: clean this up so we use TCP transport properties all the way down
         // use serviceclient properties if any, otherwise use ours
         if (host != null) serv.set(HOST, host);
         if (port != null) serv.set(PORT, port);
         String url = "http://"+serv.get(HOST)+":"+serv.get(PORT);
-        serv.set(HTTPTransport.URL, url);
+        
+        mc.setProperty(MessageContext.TRANS_URL, url);
     }
 }
 

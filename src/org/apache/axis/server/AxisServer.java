@@ -152,7 +152,11 @@ public class AxisServer extends AxisEngine
       c = new SimpleChain();
       c.addHandler( _handlerRegistry.find( "HTTPAuth" ) );
       c.addHandler( _handlerRegistry.find( "HTTPAction" ) );
-      deployHandler( "HTTP.request", c );
+      // deployHandler( "HTTP.request", c );
+      
+      SimpleTargetedChain transport = new SimpleTargetedChain();
+      transport.setRequestHandler(c);
+      deployTransport("HTTP.request", transport);
     }
 
     protected void deployDefaultServices()
@@ -173,6 +177,11 @@ public class AxisServer extends AxisEngine
         deployService( "EchoService",  new SOAPService(h, "EchoHandler"));
     }
 
+    protected void deployDefaultTransports()
+    {
+      // Do nothing.
+    }
+    
     /**
      * Main routine of the AXIS server.  In short we locate the appropriate
      * handler for the desired service and invoke() it.
@@ -253,9 +262,18 @@ public class AxisServer extends AxisEngine
               
               /* Process the Transport Specific Request Chain */
               /**********************************************/
-              hName = msgContext.getStrProp(MessageContext.TRANS_REQUEST);
-              if ( hName != null && (h = hr.find( hName )) != null )
-                h.invoke(msgContext);
+              hName = msgContext.getTransportName();
+              HandlerRegistry tr = getTransportRegistry();
+              SimpleTargetedChain transportChain = null;
+              
+              if ( hName != null && (h = tr.find( hName )) != null ) {
+                if (h instanceof SimpleTargetedChain) {
+                  transportChain = (SimpleTargetedChain)h;
+                  h = transportChain.getRequestHandler();
+                  if (h != null)
+                    h.invoke(msgContext);
+                }
+              }
       
               /* Process the Global Request Chain */
               /**********************************/
@@ -296,9 +314,11 @@ public class AxisServer extends AxisEngine
       
               /* Process the Transport Specific Response Chain */
               /***********************************************/
-              hName = msgContext.getStrProp(MessageContext.TRANS_RESPONSE);
-              if ( hName != null  && (h = hr.find( hName )) != null )
-                h.invoke(msgContext);
+              if (transportChain != null) {
+                h = transportChain.getResponseHandler();
+                if (h != null)
+                  h.invoke(msgContext);
+              }
           }
         }
         catch( Exception e ) {
