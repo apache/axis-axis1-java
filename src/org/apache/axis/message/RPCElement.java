@@ -116,10 +116,8 @@ public class RPCElement extends SOAPBodyElement
         }
 
         if (operations != null && operations.length > 0) {
-            // IF we're doc/literal... we can't count on the element name
-            // being the method name.
-            elementIsFirstParam = (operations[0].getStyle() ==
-                                   Style.DOCUMENT);
+            // if we're document style, the top level element is important
+            elementIsFirstParam = (operations[0].getStyle() == Style.DOCUMENT);
         }
 
         this.operations = operations;
@@ -286,10 +284,10 @@ public class RPCElement extends SOAPBodyElement
              msgContext.getOperationStyle() == Style.RPC  ||
              msgContext.getOperationStyle() == Style.WRAPPED);
 
-        // I don't quite understand why this is necessary, but when
-        // I have MIME and a no-param document WSDL, if I don't check
+        // When I have MIME and a no-param document WSDL, if I don't check
         // for no params here, the server chokes with "can't find Body".
-        // Tom, maybe you have some insight?
+        // because it will be looking for the enclosing element always
+        // found in an RPC-style (and wrapped) request
         boolean noParams = params.size() == 0;
 
         if (isRPC || noParams) {
