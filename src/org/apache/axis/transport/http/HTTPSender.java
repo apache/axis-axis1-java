@@ -413,7 +413,6 @@ public class HTTPSender extends BasicHandler {
         }
         catch( Exception e ) {
             category.debug( e );
-            e.printStackTrace();
             if ( !(e instanceof AxisFault) ) e = new AxisFault(e);
             throw (AxisFault) e ;
         }
