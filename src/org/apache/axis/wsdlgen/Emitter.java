@@ -94,6 +94,7 @@ import javax.xml.rpc.namespace.QName;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -459,6 +460,8 @@ public class Emitter {
                 if (allowedMethods.indexOf(methods[i].getName()) == -1)
                     continue;
             }
+            if (!Modifier.isPublic(methods[i].getModifiers()))
+                continue;
             Operation oper = writeOperation(def, binding, methods[i].getName());
             writeMessages(def, oper, methods[i]);
             portType.addOperation(oper);

@@ -445,12 +445,12 @@ public class Types {
      * @return elementname
      */
     private String generateUniqueElementName(QName qName) {
-      Integer count = (Integer)schemaElementNames.get(qName);
+      Integer count = (Integer)schemaElementNames.get(qName.getNamespaceURI());
       if (count == null)
         count = new Integer(0);
       else
         count = new Integer(count.intValue() + 1);
-      schemaElementNames.put(qName, count);
+      schemaElementNames.put(qName.getNamespaceURI(), count);
       return "el" + count.intValue();
     }
 
