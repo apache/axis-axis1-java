@@ -684,10 +684,13 @@ public class Emitter {
         namespaces.putPrefix(Constants.NS_URI_WSDL11,
                              Constants.NS_PREFIX_WSDL);
 
-        def.addNamespace(Constants.NS_PREFIX_SOAP_ENC,
-                         Constants.URI_DEFAULT_SOAP_ENC);
-        namespaces.putPrefix(Constants.URI_DEFAULT_SOAP_ENC,
-                             Constants.NS_PREFIX_SOAP_ENC);
+        if (use == Use.ENCODED)
+        {
+            def.addNamespace(Constants.NS_PREFIX_SOAP_ENC,
+                             Constants.URI_DEFAULT_SOAP_ENC);
+            namespaces.putPrefix(Constants.URI_DEFAULT_SOAP_ENC,
+                                 Constants.NS_PREFIX_SOAP_ENC);
+        }
 
         def.addNamespace(Constants.NS_PREFIX_SCHEMA_XSD,
                          Constants.URI_DEFAULT_SCHEMA_XSD);
