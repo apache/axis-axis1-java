@@ -81,6 +81,7 @@ public class RPCDispatchHandler extends BasicHandler {
     /********************************************/
     String  clsName    = (String) service.getOption( "className" );
     String  methodName = (String) service.getOption( "methodName" );
+    String  typemap    = (String) service.getOption( "typemap" );
 
     try {
       /* We know we're doing a Java/RPC call so we can ask for the */
@@ -116,7 +117,7 @@ public class RPCDispatchHandler extends BasicHandler {
                                  "Body name=" + mName + "\n" +
                                  "Service name=" + methodName,
                                null, null );  // should they??
-  
+
         Debug.Print( 2, "mName: " + mName );
         Debug.Print( 2, "MethodName: " + methodName );
         Method       method = jc.getMethod(mName, args.size());
@@ -127,12 +128,20 @@ public class RPCDispatchHandler extends BasicHandler {
                                  "Service name=" + methodName,
                                null, null );
   
+        // if a method is registerd for defining typemaps, invoke it
+        if (typemap != null) {
+          Method typemapMethod = jc.getMethod(typemap, 1);
+          typemapMethod.invoke(obj, 
+            new Object[] {msgContext.getTypeMappingRegistry()});
+        }
+
         Object[] argValues  =  null ;
 
         if ( args != null && args.size() > 0 ) {
           argValues = new Object[ args.size()];
           for ( i = 0 ; i < args.size() ; i++ ) {
             argValues[i]  = ((RPCParam)args.get(i)).getValue() ;
+              System.out.println("  value: " + argValues[i] );
 
             if (DEBUG_LOG) {
               System.out.println("  value: " + argValues[i] );
