@@ -374,6 +374,7 @@ Copyright:
       <exclude name="**/old/**/*.java" />
       <exclude name="samples/userguide/example2/Calculator.java"/>
 <!--      <exclude name="samples/addr/*.java" /> -->
+      <exclude name="samples/addr/AddressBookTestCase.java" unless= "junit.present"/>
       <exclude name="samples/userguide/example6/Main.java" />
       <exclude name="samples/userguide/example6/*Impl.java" />
       <exclude name="samples/userguide/example6/*TestCase.java" />
