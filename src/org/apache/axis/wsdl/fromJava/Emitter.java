@@ -316,11 +316,12 @@ public class Emitter {
             throws IOException, WSDLException, SAXException,
             ParserConfigurationException {
 
-        Document doc = null;
-        Definition def = null;
+        Document doc;
+        Definition def;
 
         switch (mode) {
 
+            default:
             case MODE_ALL:
                 def = getWSDL();
 
@@ -1230,8 +1231,7 @@ public class Emitter {
         // soapAction to the name of the operation. If NONE,
         // force soapAction to "".
         // Otherwise use the information in the operationDesc.
-        String soapAction = "";
-
+        String soapAction;
         if (getSoapAction().equalsIgnoreCase("OPERATION")) {
             soapAction = oper.getName();
         } else if (getSoapAction().equalsIgnoreCase("NONE")) {
@@ -1252,8 +1252,7 @@ public class Emitter {
         bindingOper.addExtensibilityElement(soapOper);
 
         // Add soap:body element to the binding <input> element
-        ExtensibilityElement inputBody = null;
-        inputBody = writeSOAPBody(desc.getElementQName());
+        ExtensibilityElement inputBody = writeSOAPBody(desc.getElementQName());
         bindingInput.addExtensibilityElement(inputBody);
 
         // add soap:headers, if any, to binding <input> element
@@ -1261,8 +1260,7 @@ public class Emitter {
 
         // Add soap:body element to the binding <output> element
         if (bindingOutput != null) {
-            ExtensibilityElement outputBody = null;
-            outputBody = writeSOAPBody(desc.getReturnQName());
+            ExtensibilityElement outputBody = writeSOAPBody(desc.getReturnQName());
             bindingOutput.addExtensibilityElement(outputBody);
             bindingOper.setBindingOutput(bindingOutput);
 
@@ -1619,8 +1617,8 @@ public class Emitter {
         QName qname = request
                 ? getRequestQName(oper)
                 : getResponseQName(oper);
-        boolean hasParams = false;
 
+        boolean hasParams;
         if (request) {
             hasParams = (oper.getNumInParams() > 0);
         } else {

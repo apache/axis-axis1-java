@@ -21,11 +21,11 @@ import org.apache.axis.encoding.ser.Base64SerializerFactory;
 import org.apache.axis.encoding.ser.Base64DeserializerFactory;
 
 /**
- * @author Rich Scheuerle (scheu@us.ibm.com)
- * 
- * This is the implementation of the axis Default JAX-RPC SOAP 1.2 TypeMapping
+ *
+ * This is the implementation of the axis Default JAX-RPC SOAP Encoding TypeMapping
  * See DefaultTypeMapping for more information.
  * 
+ * @author Rich Scheuerle (scheu@us.ibm.com)
  */
 public class DefaultSOAPEncodingTypeMappingImpl extends DefaultTypeMappingImpl {
     

@@ -595,15 +595,18 @@ public class Types {
             return;
         }
 
-        if (javaType.isArray()) {
+        // JAX-RPC 1.1 says that byte[] should always be a Base64Binary
+        // This (rather strange) hack will ensure that we don't map it
+        // in to an maxoccurs=unbounded array.
+        if (javaType.isArray() && !javaType.equals(byte[].class)) {
             type = writeTypeForPart(javaType.getComponentType(), null);
         } else {
             type = writeTypeForPart(javaType, type);
         }
 
         if (type == null) {
-
-            // throw an Exception!!
+            // TODO: throw an Exception!!
+            return;
         }
 
         Element childElem;
@@ -624,7 +627,10 @@ public class Types {
 
             childElem.setAttribute("type", prefixedName);
 
-            if (javaType.isArray()) {
+            // JAX-RPC 1.1 says that byte[] should always be a Base64Binary
+            // This (rather strange) hack will ensure that we don't map it
+            // in to an maxoccurs=unbounded array.
+            if (javaType.isArray() && !javaType.equals(byte[].class)) {
                 childElem.setAttribute("maxOccurs", "unbounded");
             }
         }
@@ -1003,7 +1009,7 @@ public class Types {
      */
     public Element createArrayElement(String componentTypeName) {
 
-        SOAPConstants constants = null;
+        SOAPConstants constants;
         MessageContext mc = MessageContext.getCurrentContext();
         if(mc==null||mc.getSOAPConstants()==null){
             constants = SOAPConstants.SOAP11_CONSTANTS;    
@@ -1756,9 +1762,7 @@ public class Types {
         }
 
         // look up the serializer in the TypeMappingRegistry
-        Serializer ser = null;
-        SerializerFactory factory = null;
-
+        SerializerFactory factory;
         if (tm != null) {
             factory = (SerializerFactory) tm.getSerializer(type, qName);
         } else {
@@ -1777,9 +1781,8 @@ public class Types {
             }
         }
 
-        if (factory != null) {
-            ser = (Serializer) factory.getSerializerAs(Constants.AXIS_SAX);
-        }
+        // factory is not null
+        Serializer ser = (Serializer) factory.getSerializerAs(Constants.AXIS_SAX);
 
         // if we can't get a serializer, that is bad.
         if (ser == null) {
