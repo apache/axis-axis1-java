@@ -11,7 +11,6 @@ owner (if any) in "<>" brackets.  Example:
 MUST DO FOR BETA1
 -----------------
 ! <Doug> Doug's issue 1: Attachments are broken
-! <Doug> Doug's issue 2: A fault isn't being thrown anymore on the client when the server throws an exception - in the past it did work.
 ! <Russell> Published interfaces must be vetted.
 ! <?> getParameterName() should return a QName
 ! <?> Taras' fix to MessageElement (getValue-like method).
