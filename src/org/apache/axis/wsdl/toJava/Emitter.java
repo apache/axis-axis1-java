@@ -92,11 +92,6 @@ import org.w3c.dom.Document;
  * @author Steve Graham (sggraham@us.ibm.com)
  */
 public class Emitter extends Parser {
-//    public static final byte SCOPE_NOT_EXPLICIT = (byte)0xFF;
-//    public static final byte SCOPE_APPLICATION  = (byte)Scope.APPLICATION.getValue();
-//    public static final byte SCOPE_REQUEST      = (byte)Scope.REQUEST.getValue();
-//    public static final byte SCOPE_SESSION      = (byte)Scope.SESSION.getValue();
-
     protected HashMap namespaceMap = new HashMap();
     protected String typeMappingVersion = "1.1";
     protected BaseTypeMapping baseTypeMapping = null;
