@@ -270,12 +270,22 @@ public class SOAPPart extends Part {
         }
 
         if ( currentForm == FORM_SOAPENVELOPE ||
-             currentForm == FORM_FAULT )
-            return getAsString().getBytes();
+             currentForm == FORM_FAULT ){
+                try{
+                    return getAsString().getBytes("UTF-8");
+                 }catch(UnsupportedEncodingException ue){
+                return getAsString().getBytes();
+            }
+        }
 
         if ( currentForm == FORM_STRING ) {
-            setCurrentMessage( ((String)currentMessage).getBytes(),
+            try{
+                setCurrentMessage( ((String)currentMessage).getBytes("UTF-8"),
+               FORM_BYTES );
+            }catch(UnsupportedEncodingException ue){
+               setCurrentMessage( ((String)currentMessage).getBytes(),
                                FORM_BYTES );
+            }
             category.debug( "Exit: SOAPPart::getAsBytes" );
             return( (byte[]) currentMessage );
         }
@@ -304,8 +314,13 @@ public class SOAPPart extends Part {
         }
 
         if ( currentForm == FORM_BYTES ) {
+                        try{
+                                setCurrentMessage( new String((byte[]) currentMessage,"UTF-8"),
+                               FORM_STRING );
+                        }catch(UnsupportedEncodingException ue){
             setCurrentMessage( new String((byte[]) currentMessage),
                                FORM_STRING );
+                        }
             category.debug( "Exit: SOAPPart::getAsString, currentMessage is "+
                             currentMessage );
             return( (String) currentMessage );
