@@ -117,11 +117,19 @@ import java.util.*;
  * It can be prefilled by a WSDL document (on the constructor to the Service
  * object) or you can fill in the data yourself.
  * <pre>
- * Properties:
- *     NAMESPACE        - Namespace URI of RPC Body
- *     SEND_TYPE_ATTR   - Should we send the XSI type attributes (true/false)
- *     TIMEOUT          - Timeout used by transport sender in seconds
- *     TRANSPORT_NAME   - Name of transport handler to use
+ * Standard properties defined by JAX-RPC
+ *     USERNAME_PROPERTY        - User name for authentication
+ *     PASSWORD_PROPERTY        - Password for authentication
+ *     SESSION_PROPERTY         - Participate in a session with the endpoint?
+ *     OPERATION_STYLE_PROPERTY - "rpc" or "document"
+ *     SOAPACTION_USE_PROPERTY  - Should SOAPAction be used?
+ *     SOAPACTION_URI_PROPERTY  - If SOAPAction is used, this is that action
+ *     ENCODING_STYLE_PROPERTY  - Default is SOAP 1.1:  "http://schemas.xmlsoap.org/soap/encoding/"
+ *
+ * AXIS properties:
+ *     SEND_TYPE_ATTR - Should we send the XSI type attributes (true/false)
+ *     TIMEOUT        - Timeout used by transport sender in seconds
+ *     TRANSPORT_NAME - Name of transport handler to use
  * </pre>
  *
  * @author Doug Davis (dug@us.ibm.com)
