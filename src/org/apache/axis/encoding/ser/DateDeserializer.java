@@ -84,14 +84,18 @@ public class DateDeserializer extends SimpleDeserializer {
             }
             
             // support dates before the Christian era
+            calendar.setTime((Date)result);
             if (bc) {
-                calendar.setTime((Date)result);
                 calendar.set(Calendar.ERA, GregorianCalendar.BC);
-                if(javaType == Date.class) {
-                    result = calendar.getTime();
-                } else {
-                    result = calendar;
-                }
+            }
+
+            // Extract this from if (bc)
+            // seems logical that we return a Date or Calendar apart from
+            // the fact that the value is before christ or not
+            if(javaType == Date.class) {
+                result = calendar.getTime();
+            } else {
+                result = calendar;
             }
         }
 
