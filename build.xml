@@ -137,7 +137,9 @@ Copyright:
       <exclude name="org/apache/axis/handlers/HTTP*" unless="servlet.present"/>
       <exclude name="org/apache/axis/transport/http/*" unless="servlet.present"/>
     </javac>
-    <jar jarfile="${build.lib}/${name}.jar" basedir="${build.dest}" />
+    <jar jarfile="${build.lib}/${name}.jar" basedir="${build.dest}" >
+      <include name="org/**" />
+    </jar>
     <antcall target="post-compile"/>
   </target>
 
@@ -152,7 +154,7 @@ Copyright:
   <!-- Compiles the samples                                                -->
   <!-- =================================================================== -->
   <target name="samples" depends="compile">
-    <javac srcdir="." destdir="${build.dir}" 
+    <javac srcdir="." destdir="${build.dest}" 
            classpath="${build.lib}/${name}.jar" debug="${debug}">
       <include name="samples/**/*.java" />
       <exclude name="samples/**/*SMTP*.java" unless="smtp.present" />
