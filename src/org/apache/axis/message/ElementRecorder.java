@@ -84,7 +84,7 @@ class ElementRecorder extends org.xml.sax.helpers.DefaultHandler
         throws SAXException
     {
         if (DEBUG_LOG) {
-            System.out.println("(rec) startElement ['" + namespace + "' " +
+            System.err.println("(rec) startElement ['" + namespace + "' " +
                            localName + "]");
         }
         
@@ -95,7 +95,7 @@ class ElementRecorder extends org.xml.sax.helpers.DefaultHandler
         throws SAXException
     {
         if (DEBUG_LOG) {
-            System.out.println("(rec) endElement ['" + namespace + "' " +
+            System.err.println("(rec) endElement ['" + namespace + "' " +
                            localName + "]");
         }
 
@@ -106,7 +106,7 @@ class ElementRecorder extends org.xml.sax.helpers.DefaultHandler
         throws SAXException
     {
         if (DEBUG_LOG) {
-            System.out.println("(rec) characters ['" +
+            System.err.println("(rec) characters ['" +
                                new String(chars, start, length) + "']");
         }
         
@@ -123,6 +123,9 @@ class ElementRecorder extends org.xml.sax.helpers.DefaultHandler
         Enumeration e = _events.elements();
         while (e.hasMoreElements()) {
             SAXEvent event = (SAXEvent)e.nextElement();
+            if (DEBUG_LOG) {
+                System.err.println("Publishing : " + event);
+            }
             event.publishToHandler(handler);
         }
     }

@@ -117,8 +117,9 @@ public class SimpleDeploymentManager extends DeploymentRegistry implements Deplo
             if (tmr == null) tmr = new TypeMappingRegistry();
             Serializer s = (Serializer)t.getSerializer().newInstance();
             Deserializer d = (Deserializer)t.getDeserializer().newInstance();
-            tmr.addSerializer(t.getLanguageSpecificType(), s);
-            tmr.addDeserializer(t.getQName(), d);
+            // !!! FIXME - new serializer/deserializer system!
+            //tmr.addSerializer(t.getLanguageSpecificType(), s);
+            //tmr.addDeserializer(t.getQName(), d);
         }
         
         // deploy handlers

@@ -97,4 +97,9 @@ public class EndElementEvent implements SAXEvent
         context.writeString(_localPart);
         context.writeString(">");
     }
+    
+    public String toString()
+    {
+        return "[EndElementEvent " + _qName + " ]";
+    }
 }

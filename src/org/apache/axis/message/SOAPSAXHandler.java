@@ -176,6 +176,11 @@ public abstract class SOAPSAXHandler extends DefaultHandler
         return envelope;
     }
     
+    public DeserializationContext getContext()
+    {
+        return context;
+    }
+    
     /** Grab a namespace prefix
      */
     public String getNamespaceURI(String prefix)

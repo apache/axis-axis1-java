@@ -83,11 +83,21 @@ public class SerializationContext
     
     int lastPrefixIndex = 1;
     
-    TypeMapper typeMapper = new TypeMapper();
+    TypeMappingRegistry mappingRegistry = new SOAPTypeMappingRegistry();
     
     public SerializationContext(Writer writer)
     {
         this.writer = writer;
+    }
+    
+    public void setTypeMappingRegistry(TypeMappingRegistry reg)
+    {
+        mappingRegistry = reg;
+    }
+    
+    public TypeMappingRegistry getTypeMappingRegistry()
+    {
+        return mappingRegistry;
     }
     
     public String getPrefixForURI(String uri)
@@ -130,7 +140,13 @@ public class SerializationContext
     
     public QName getQNameForClass(Class cls)
     {
-        return typeMapper.getTypeQName(cls);
+        return mappingRegistry.getTypeQName(cls);
+    }
+    
+    public void serialize(QName qName, Attributes attributes, Object value)
+        throws IOException
+    {
+        mappingRegistry.serialize(qName, attributes, value, this);
     }
     
     public void startElement(QName qName, Attributes attributes)

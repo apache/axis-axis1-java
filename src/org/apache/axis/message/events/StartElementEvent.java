@@ -109,4 +109,9 @@ public class StartElementEvent implements SAXEvent
         }
         context.writeString(">");
     }
+    
+    public String toString()
+    {
+        return "[StartElementEvent " + _qName + " ]";
+    }
 }

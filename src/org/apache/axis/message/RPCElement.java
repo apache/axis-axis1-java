@@ -90,6 +90,7 @@ public class RPCElement extends SOAPBodyElement
         
         public void startElement(String namespace, String name, String qName,
                                  Attributes attributes)
+            throws SAXException
         {
             if (!passedMyStart) {
                 passedMyStart = true;
@@ -98,6 +99,7 @@ public class RPCElement extends SOAPBodyElement
             
             // Start of an arg...
             RPCParam param = new RPCParam(namespace, name, attributes, context);
+            
             params.addElement(param);
             if (param.getType() == null) {
                 // No type inline, so check service description.
@@ -114,7 +116,10 @@ public class RPCElement extends SOAPBodyElement
                  */
                 
             }
-            context.pushElementHandler(param.getContentHandler());
+            ContentHandler handler = param.getContentHandler();
+            
+            handler.startElement(namespace, name, qName, attributes);
+            context.pushElementHandler(handler);
         }
     }
     public ContentHandler getContentHandler() { return new RPCContentHandler(); }
