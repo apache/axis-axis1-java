@@ -174,6 +174,11 @@ public class RB {
                     name = fullName.substring(0, pos + 1).replace('.', '/') + name;
                 }
             }
+        } else {
+            // Try the shared default properties file...
+            if (name.indexOf("/") == -1) {
+                name = "org/apache/axis/default-resource";
+            }
         }
 
         Locale defaultLocale = Locale.getDefault();
@@ -694,6 +699,8 @@ public class RB {
         MissingResourceException firstEx = null;
         String fullName = null;
         Class curClass = null;
+        boolean didNull = false;
+        
         if (caller != null) {
             if(caller instanceof Class)
                 curClass = (Class) caller;
@@ -736,18 +743,23 @@ public class RB {
                 }
 
                 // Get the superclass
-                Class sc = curClass.getSuperclass();
-                if (sc == null) {
-                    throw firstEx;
+                curClass = curClass.getSuperclass();
+                if (curClass == null) {
+                    if (didNull)
+                        throw firstEx;
+                    didNull = true;
+                    caller = null;
+                } else {
+                    String cname = curClass.getName();
+                    if (cname.startsWith("java.") ||
+                        cname.startsWith("javax.")) {
+                        if (didNull)
+                            throw firstEx;
+                        didNull = true;
+                        caller = null;
+                        curClass = null;
+                    }
                 }
-                String cname = sc.getName();
-                if (cname.startsWith("java.") ||
-                    cname.startsWith("javax.")) {
-                    throw firstEx;
-                }
-
-                // Try the superclass package
-                curClass = sc;
             }
 
         }
