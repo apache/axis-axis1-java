@@ -64,6 +64,8 @@ import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.utils.* ;
 import org.apache.axis.suppliers.*;
 import org.apache.axis.encoding.*;
+import org.apache.axis.client.AxisClient;
+import org.apache.axis.server.AxisServer;
 
 import org.w3c.dom.* ;
 
@@ -72,41 +74,6 @@ import org.w3c.dom.* ;
  * @author Doug Davis (dug@us.ibm.com)
  */
 public class Admin {
-  private static  DefaultHandlerRegistry  hr = null ;
-  private static  DefaultServiceRegistry  sr = null ;
-  private static  TypeMappingRegistry     tmr = null ;
-  private boolean onServer = true ;
-    
-
-    /**
-     * Hacky tester function.  Wipe the statics so we can invoke this class
-     * multiple times within the same JVM.  For functional testing purposes.
-     * See test.functional.TestTransportSample
-     */
-    public static void wipe () {
-        hr = null;
-        sr = null;
-        tmr = null;
-    }
-
-  private void init() {
-    if ( hr == null ) {
-      if ( onServer )
-        hr = new DefaultHandlerRegistry(Constants.SERVER_HANDLER_REGISTRY);
-      else
-        hr = new DefaultHandlerRegistry(Constants.CLIENT_HANDLER_REGISTRY);
-      hr.setOnServer( onServer );
-      hr.init();
-    }
-    if ( sr == null ) {
-      if ( onServer )
-        sr = new DefaultServiceRegistry(Constants.SERVER_SERVICE_REGISTRY);
-      else
-        sr = new DefaultServiceRegistry(Constants.CLIENT_SERVICE_REGISTRY);
-      sr.setOnServer( onServer );
-      sr.init();
-    }
-  }
 
   private void getOptions(Element root, Handler handler) {
     NodeList  list = root.getChildNodes();
@@ -138,10 +105,6 @@ public class Admin {
                   throws AxisFault
   {
     Debug.Print( 1, "Enter: Admin:AdminService" );
-    AxisEngine engine =  msgContext.getAxisEngine();
-    hr = (DefaultHandlerRegistry)engine.getHandlerRegistry();
-    sr = (DefaultServiceRegistry)engine.getServiceRegistry();
-    tmr = msgContext.getTypeMappingRegistry();
     Document doc = process( msgContext, xml );
     Debug.Print( 1, "Exit: Admin:AdminService" );
     return( doc );
@@ -153,8 +116,12 @@ public class Admin {
 
   public Document process(MessageContext msgContext, Element root) throws AxisFault {
     Document doc = null ;
+
+    AxisEngine engine =  msgContext.getAxisEngine();
+    HandlerRegistry hr = engine.getHandlerRegistry();
+    HandlerRegistry sr = engine.getServiceRegistry();
+
     try {
-      init();
       AxisClassLoader   cl     = AxisClassLoader.getClassLoader();
       String            action = root.getTagName();
 
@@ -386,8 +353,10 @@ public class Admin {
           if ( service == null ) service = new SOAPService();
           else              service.clear();
           
-          if (tmr != null)
-            service.getTypeMappingRegistry().setParent(tmr.getParent());
+          // connect the deployed service's typemapping registry to the
+          // engine's typemapping registry
+          TypeMappingRegistry engineTypeMap = engine.getTypeMappingRegistry();
+          service.getTypeMappingRegistry().setParent(engineTypeMap);
 
           if ( input != null && !"".equals(input) ) {
             st = new StringTokenizer( input, " \t\n\r\f," );
@@ -437,7 +406,8 @@ public class Admin {
         // for a bean at the same time.
         else if ( type.equals( "bean" ) ) {
           Debug.Print( 2, "Deploying bean: " + name );
-          registerTypeMapping(elem, tmr.getParent());
+          TypeMappingRegistry engineTypeMap = engine.getTypeMappingRegistry();
+          registerTypeMapping(elem, engineTypeMap);
         } else
           throw new AxisFault( "Admin.error",
                                "Unknown type to " + action + ": " + type,
@@ -529,12 +499,19 @@ public class Admin {
 
     Admin admin = new Admin();
 
-    if ( args[0].equals("client") ) admin.onServer = false ;
+    AxisEngine engine;
+    if ( args[0].equals("client") ) 
+      engine = new AxisClient();
+    else
+      engine = new AxisServer();
+    engine.init();
+    MessageContext msgContext = new MessageContext(engine);
 
     try {
       for ( i = 1 ; i < args.length ; i++ ) {
         System.out.println( "Processing '" + args[i] + "'" );
-        admin.process(null, XMLUtils.newDocument( new FileInputStream( args[i] ) ));
+        Document doc = XMLUtils.newDocument( new FileInputStream( args[i] ) );
+        admin.process(msgContext, doc);
       }
     }
     catch( AxisFault e ) {

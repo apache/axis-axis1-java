@@ -84,13 +84,11 @@ public class TestTransportSample extends TestCase {
     public void doTestClientDeploy () throws Exception {
         String[] args = { "client", "samples/transport/client_deploy.xml" };
         Admin.main(args);
-        Admin.wipe(); // hack!  why are those statics in Admin anyway? -- RobJ
     }
     
     public void doTestDeploy () throws Exception {
         String[] args = { "server", "samples/transport/deploy.xml" };
         Admin.main(args);
-        Admin.wipe(); // hack!  why are those statics in Admin anyway? -- RobJ
     }
     
     public void doTestIBM () throws Exception {
