@@ -68,7 +68,7 @@ public class JavaHolderWriter extends JavaWriter {
      * Constructor.
      */
     protected JavaHolderWriter(Emitter emitter, Type type) {
-        super(emitter, type.getQName(), "Holder", "java",
+        super(emitter, type, "Holder", "java",
                 JavaUtils.getMessage("genHolder00"));
         this.type = type;
     } // ctor
@@ -77,7 +77,7 @@ public class JavaHolderWriter extends JavaWriter {
      * Generate the holder for the given complex type.
      */
     protected void writeFileBody() throws IOException {
-        String holderType = qname.getLocalPart();
+        String holderType = type.getJavaLocalName();
         pw.println("public final class " + className + " implements java.io.Serializable {");
         pw.println("    public " + holderType + " _value;");
         pw.println();

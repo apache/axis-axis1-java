@@ -111,7 +111,7 @@ public class TypeFactory {
      * All of the supported Types are identified and placed in the types HashMap.
      */
     public void buildTypes(Document doc) {
-        addTypes(doc, false);
+        addTypes(doc);
     }
 
     /**
@@ -129,15 +129,22 @@ public class TypeFactory {
     }
 
     /**
-     * Get the Type for the given Java Name
+     * Get the defined Type for the given Java Name
      * Return null if not found.
      */
-    public Type getType(String javaName) {
+    public Type getDefinedType(String javaName) {
         Iterator i = types.values().iterator();
         while (i.hasNext()) {
             Type et = (Type) i.next();
-            if (et.getJavaName().equals(javaName)) {
-                return et;
+            if(et.getJavaName().equals(javaName)) {
+                // There could be multiple types/elements with this
+                // name.  Get one that defines the name.
+                if (et instanceof BaseJavaType ||
+                    et instanceof DefinedType ||
+                    (et instanceof ElementType &&
+                     ((ElementType) et).getDefinedDirectly())) {
+                    return et;
+                }
             }
         }
         return null;
@@ -151,20 +158,16 @@ public class TypeFactory {
         while (i.hasNext()) {
             Type et = (Type) i.next();
             System.out.println("");
-            System.out.println("QName: " + et.getQName());
-            System.out.println("JName: " + et.getJavaName());
-            if (et.getNode() != null) {
-                System.out.println("Node: " + et.getNode());
-            }
+            System.out.println(et);
         }
     }
 
     /**
-     * If the specified node represents a supported JAX-RPC complexType,
+     * If the specified node represents a supported JAX-RPC complexType/element,
      * a Vector is returned which contains the child element types and
      * child element names.  The even indices are the element types (Types) and
      * the odd indices are the corresponding names (Strings).
-     * If the specified node is not a supported JAX-RPC complexType,
+     * If the specified node is not a supported JAX-RPC complexType/element
      * null is returned.
      */
     public Vector getComplexElementTypesAndNames(Node node) {
@@ -172,8 +175,26 @@ public class TypeFactory {
             return null;
         }
 
-        // Get the node kind, expecting a schema complexType
+        // If the node kind is an element, dive into it.
         QName nodeKind = Utils.getNodeQName(node);
+        if (nodeKind != null &&
+            nodeKind.getLocalPart().equals("element") &&
+            Utils.isSchemaNS(nodeKind.getNamespaceURI())) {
+            NodeList children = node.getChildNodes();
+            Node complexNode = null;
+            for (int j = 0; j < children.getLength() && complexNode == null; j++) {
+                QName complexKind = Utils.getNodeQName(children.item(j));
+                if (complexKind != null &&
+                    complexKind.getLocalPart().equals("complexType") &&
+                    Utils.isSchemaNS(complexKind.getNamespaceURI())) {
+                    complexNode = children.item(j);
+                    node = complexNode;
+                }
+            }
+        }
+
+        // Expecting a schema complexType
+        nodeKind = Utils.getNodeQName(node);
         if (nodeKind != null &&
             nodeKind.getLocalPart().equals("complexType") &&
             Utils.isSchemaNS(nodeKind.getNamespaceURI())) {
@@ -211,7 +232,7 @@ public class TypeFactory {
                         // used to retrieve the proper java name of the type.
                         Node elementNode = elements.item(i);
                         QName nodeName = Utils.getNodeNameQName(elementNode);
-                        QName nodeType = Utils.getNodeTypeQName(elementNode);
+                        QName nodeType = Utils.getNodeTypeRefQName(elementNode);
                         if (nodeType == null) { // The element may use an anonymous type
                             nodeType = nodeName;
                         }
@@ -241,8 +262,25 @@ public class TypeFactory {
             return null;
         }
 
-        // Get the node kind, expecting a schema simpleType
+        // If the node kind is an element, dive into it.
         QName nodeKind = Utils.getNodeQName(node);
+        if (nodeKind != null &&
+            nodeKind.getLocalPart().equals("element") &&
+            Utils.isSchemaNS(nodeKind.getNamespaceURI())) {
+            NodeList children = node.getChildNodes();
+            Node simpleNode = null;
+            for (int j = 0; j < children.getLength() && simpleNode == null; j++) {
+                QName simpleKind = Utils.getNodeQName(children.item(j));
+                if (simpleKind != null &&
+                    simpleKind.getLocalPart().equals("simpleType") &&
+                    Utils.isSchemaNS(simpleKind.getNamespaceURI())) {
+                    simpleNode = children.item(j);
+                    node = simpleNode;
+                }
+            }
+        }
+        // Get the node kind, expecting a schema simpleType
+        nodeKind = Utils.getNodeQName(node);
         if (nodeKind != null &&
             nodeKind.getLocalPart().equals("simpleType") &&
             Utils.isSchemaNS(nodeKind.getNamespaceURI())) {
@@ -265,10 +303,10 @@ public class TypeFactory {
             // this makes sense for string.
             Type baseEType = null;
             if (restrictionNode != null) {
-                QName baseType = Utils.getNodeTypeQName(restrictionNode, "base");
+                QName baseType = Utils.getNodeTypeRefQName(restrictionNode, "base");
                 baseEType = getType(baseType);
-                if (baseEType != null && baseEType.getBaseType() == null &&
-                    baseEType.getJavaLocalName().equals("String")) {
+                if (baseEType != null && 
+                    !baseEType.getJavaName().equals("java.lang.String")) {
                     baseEType = null;
                 }
             }
@@ -300,93 +338,134 @@ public class TypeFactory {
     }
 
     /**
-     * Utility method which walks the Document and creates Types.
-     * The inner parameter indicates that we are nested inside a complexType
-     * (which is the only context where we need to investigate elements).
+     * Utility method which walks the Document and creates Type objects for
+     * each complexType, simpleType, or element referenced or defined.
      */
-    private void addTypes(Node node, boolean inner) {
+    private void addTypes(Node node) {
         if (node == null) {
             return;
         }
         // Get the kind of node (complexType, wsdl:part, etc.)
         QName nodeKind = Utils.getNodeQName(node);
 
-
         if (nodeKind != null) {
             if (nodeKind.getLocalPart().equals("complexType") &&
                 Utils.isSchemaNS(nodeKind.getNamespaceURI())) {
 
                 // This is a definition of a complex type.
-                // create the type and indicate within complexType
-                createTypeFromDef(node);
-                inner = true;
+                // Create a Type.
+                createTypeFromDef(node, false);
             }
             if (nodeKind.getLocalPart().equals("simpleType") &&
                 Utils.isSchemaNS(nodeKind.getNamespaceURI())) {
 
                 // This is a definition of a simple type, which could be an enum
-                // Create the type.
-                createTypeFromDef(node);
+                // Create a Type.
+                createTypeFromDef(node, false);
             }
             else if (nodeKind.getLocalPart().equals("element") &&
                    Utils.isSchemaNS(nodeKind.getNamespaceURI())) {
-
-                // This is an element.  Currently we only process the
-                // elements that are inside a complex type.  This may need
-                // to be changed if we ever support "ref" attributes.
-                // If the type is specified, create an Type from the
-                // reference.  Otherwise this is an anonymous type which
-                // will be picked up as we proceed further down the tree.
-                if (inner) {
-                    if (Utils.getAttribute(node, "type") != null) {
-                        createTypeFromRef(node);
-                    }
+                // If the element has a type/ref attribute, create
+                // a Type representing the referenced type.
+                if (Utils.getAttribute(node, "type") != null ||
+                    Utils.getAttribute(node, "ref") != null) {
+                    createTypeFromRef(node);
                 }
+
+                // Create a type representing an element.  (This may
+                // seem like overkill, but is necessary to support ref=
+                // and element=.
+                createTypeFromDef(node, true);
             }
             else if (nodeKind.getLocalPart().equals("part") &&
                      Utils.isWsdlNS(nodeKind.getNamespaceURI())) {
 
-                // This is a wsdl part.  Create an Type from the reference
+                // This is a wsdl part.  Create an Type representing the reference
                 createTypeFromRef(node);
             }
         }
         // Recurse through children nodes
         NodeList children = node.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
-            addTypes(children.item(i), inner);
+            addTypes(children.item(i));
         }
     }
 
     /**
-     * Create a Type from the indicated node, which defines a supported type.
+     * Create a Type from the indicated node, which defines a type
+     * that represents a complexType, simpleType or element (for ref=).
      */
-    private void createTypeFromDef(Node node) {
+    private void createTypeFromDef(Node node, boolean isElement) {
+        // If this is not an element, make sure it is not an anonymous type.
+        // If it is, the the existing ElementType will be used.  If
+        // not, create a new type.
+        if (!isElement &&
+            Utils.getAttribute(node, "name") == null) {
+            return;
+        }
+
         // Get the QName of the node's name attribute value
         QName qName = Utils.getNodeNameQName(node);
         if (qName != null) {
             map(qName.getNamespaceURI());
-            String javaName = getJavaName(qName);
-            // Since this is a defining context, force this Type into the
-            // hash map and supply the defining node.
-            types.put(qName, new Type(qName, javaName, node));
-        }
-    }
 
+            // If the node has a type or ref attribute, get the 
+            // ultimate ref'd type
+            QName refQName = Utils.getNodeTypeRefQName(node);
+            if (refQName != null) {
+                Type refType = null;
+                while (refQName != null) {
+                    refType = getType(refQName);
+                    refQName = null;
+                    if (refType != null &&
+                        refType.getNode() != null) {
+                        refQName = Utils.getNodeTypeRefQName(refType.getNode());
+                    }                         
+                }
+                // Create a type from the referenced type
+                types.put(qName, new ElementType(qName, refType, node));
+
+            }   
+            else {
+                // Create a Type representing a base type or non-base type
+                String baseJavaName = Utils.getBaseJavaName(qName);
+                if (baseJavaName != null)
+                    types.put(qName, new BaseJavaType(qName));
+                else if (isElement)
+                    types.put(qName, new ElementType(qName, getJavaName(qName), node));
+                else
+                    types.put(qName, new DefinedType(qName, getJavaName(qName), node));
+            }
+        }
+    } // createTypeFromDef
+    
     /**
-     * Create an Type from the indicated node, which references a supported type.
+     * Node may contain a reference (via type=, ref=, or element= attributes) to 
+     * another type.  Create a Type object representing this referenced type.
      */
     private void createTypeFromRef(Node node) {
         // Get the QName of the node's type attribute value
-        QName qName = Utils.getNodeTypeQName(node);
+        QName qName = Utils.getNodeTypeRefQName(node);
         if (qName != null) {
             String javaName = getJavaName(qName);
-            // An Type for this type may already have been encountered
-            // via another reference or defining context.  Also note that if
-            // the Type represents a Base type, the Type will change
-            // java name to the appropriate java base name.
-            if (types.get(qName) == null) {
-                types.put(qName, new Type(qName, javaName, null));
+
+            Type type = (Type) types.get(qName);
+            if (type == null) {
+                // Type not defined, add a base java type or a refdType
+                String baseJavaName = Utils.getBaseJavaName(qName);
+                if (baseJavaName != null)
+                    types.put(qName, new BaseJavaType(qName));
+                else
+                    types.put(qName, new RefdType(qName, javaName));
+            } else {
+                // Type exists, update shouldEmit flag if necessary
+                if (type instanceof ElementType &&
+                    type.isDefined() &&
+                    ((ElementType) type).getDefinedDirectly()) {
+                    type.setShouldEmit(true);
+                }
             }
+                
         }
     }
 
@@ -409,15 +488,20 @@ public class TypeFactory {
      * Convert the specified QName into a full Java Name.
      */
     public String getJavaName(QName qName) {
-        String javaName = Utils.getJavaName(qName.getLocalPart());
+        // The QName may represent a base java name, so check this first
+        String fullJavaName = Utils.getBaseJavaName(qName);
+        if (fullJavaName != null) 
+            return fullJavaName;
+        
+        // Use the namespace uri to get the appropriate package
         String pkg = getPackage(qName.getNamespaceURI());
-        String fullJavaName = javaName;
         if (pkg != null) {
-           fullJavaName = pkg + "." + javaName;
+            fullJavaName = pkg + "." + Utils.capitalizeFirstChar(qName.getLocalPart());
+        } else {
+            fullJavaName = Utils.capitalizeFirstChar(qName.getLocalPart());
         }
         return fullJavaName;
     }
-
 }
 
 

@@ -73,9 +73,9 @@ import java.util.StringTokenizer;
 public class Utils {
 
     /**
-     * Capitalize the given name.
+     * Capitalize the first character of the name.
      */
-    public static String capitalize(String name) {
+    public static String capitalizeFirstChar(String name) {
         char start = name.charAt(0);
 
         if (Character.isLowerCase(start)) {
@@ -83,14 +83,79 @@ public class Utils {
             return start + name.substring(1);
         }
         return name;
-    } // capitalize
+    } // capitalizeFirstChar
 
     /**
-     * Convenience method to convert local name to Java name
+     * Some QNames represent base types.  This routine returns the 
+     * name of the base java type or null.
+     * (These mappings based on JSR-101 version 0.5)
      */
-    public static String getJavaName(String localName) {
-        return capitalize(localName);
+    public static String getBaseJavaName(QName qName) {
+        String localName = qName.getLocalPart();
+        if (Utils.isSchemaNS(qName.getNamespaceURI())) {
+            if (localName.equals("string")) {
+                return "java.lang.String";
+            } else if (localName.equals("integer")) {
+                return "java.math.BigInteger";
+            } else if (localName.equals("int")) {
+                return "int";
+            } else if (localName.equals("long")) {
+                return "long";
+            } else if (localName.equals("short")) {
+                return "short";
+            } else if (localName.equals("decimal")) {
+                return "java.math.BigDecimal";
+            } else if (localName.equals("float")) {
+                return "float";
+            } else if (localName.equals("double")) {
+                return "double";
+            } else if (localName.equals("boolean")) {
+                return "boolean";
+            } else if (localName.equals("byte")) {
+                return "byte";
+            } else if (localName.equals("QName")) {
+                return "javax.xml.rpc.namespace.QName";
+            } else if (localName.equals("dateTime")) {
+                return "java.util.Date";
+            } else if (localName.equals("base64Binary")) {
+                return "byte[]";
+            } else if (localName.equals("hexBinary")) {
+                return "byte[]";
+            } else if (localName.equals("date")) {   // Not defined in JSR-101
+                return "java.util.Date";
+            } else if (localName.equals("void")) {   // Not defined in JSR-101
+                return "void";
+            }
+        }
+        else if (Utils.isSoapEncodingNS(qName.getNamespaceURI())) {
+            if (localName.equals("string")) {
+                return "java.lang.String";
+            } else if (localName.equals("int")) {
+                return "int";
+            } else if (localName.equals("short")) {
+                return "short";
+            } else if (localName.equals("decimal")) {
+                return "java.math.BigDecimal";
+            } else if (localName.equals("float")) {
+                return "float";
+            } else if (localName.equals("double")) {
+                return "double";
+            } else if (localName.equals("boolean")) {
+                return "boolean";
+            } else if (localName.equals("base64")) {
+                return "byte[]";
+           } else if (localName.equals("Vector")) {   // Not defined in JSR-101
+                return "java.util.Vector";
+            }
+        }
+        // special "java" namesapce means straight java types
+        // So "java:void" maps to "void"
+        else if (qName.getNamespaceURI().equals("java")) {  // Not defined in JSR-101
+            return localName;
+        }
+        return null;
     }
+
 
     /**
      * Given a node, return the value of the given attribute.
@@ -102,7 +167,6 @@ public class Utils {
         if (node == null) {
             return null;
         }
-
         Node attrNode = node.getAttributes().getNamedItem(attr);
         if (attrNode != null) {
             return attrNode.getNodeValue();
@@ -158,27 +222,62 @@ public class Utils {
         if (node == null) {
             return null;
         }
+        String localName = null;
+        String namespace = null;
+
+        // First try to get the name directly
+        localName = getAttribute(node, "name");
+        
+        // If this fails and the node has a ref, use the ref name.
+        if (localName == null) {
+            QName ref = getNodeTypeRefQName(node, "ref");
+            if (ref != null) {
+                localName = ref.getLocalPart();
+                namespace = ref.getNamespaceURI();
+            }
+        }
+        
         // This routine may be called for complexType elements.  In some cases,
         // the complexType may be anonymous, which is why the getScopedAttribute
         // method is used.
-        String localName = getScopedAttribute(node, "name");
+        if (localName == null) {
+            localName = getScopedAttribute(node, "name");
+        }
         if (localName == null)
             return null;
 
-        String namespace = getScopedAttribute(node, "targetNamespace");
+        // Build and return the QName
+        if (namespace == null) {
+            namespace = getScopedAttribute(node, "targetNamespace");
+        }
         return (new QName(namespace, localName));
     }
 
     /**
-     * XML nodes may have a type attribute.
+     * XML nodes may have a type/ref attribute.
      * For example &lt.element name="foo" type="b:bar"&gt.
-     * has the type attribute value "b:bar".  This routine gets the QName of the type attribute value.
+     * has the type attribute value "b:bar".  This routine gets the QName of the type/ref attribute value.
      */
-    public static QName getNodeTypeQName(Node node) {
-        return getNodeTypeQName(node, "type");
+    public static QName getNodeTypeRefQName(Node node) {
+        if (node == null) return null;
+
+        QName qName= getNodeTypeRefQName(node, "type");
+        if (qName == null) {
+            qName = getNodeTypeRefQName(node, "ref");
+        }
+        // A WSDL Part uses the element attribute instead of the ref attribute
+        if (qName == null) {
+            qName = getNodeTypeRefQName(node, "element");
+        }
+        return qName;
     }
 
-    public static QName getNodeTypeQName(Node node, String typeAttrName) {
+    /**
+     * Obtain the QName of the type/ref using the indicated attribute name.
+     * For example, the "type" attribute in an XML enumeration struct is the 
+     * "base" attribute.  
+     */
+    public static QName getNodeTypeRefQName(Node node, String typeAttrName) {
         if (node == null) {
             return null;
         }
@@ -355,7 +454,7 @@ public class Utils {
                 || typeValue.equals("double")
                 || typeValue.equals("boolean")
                 || typeValue.equals("byte"))
-            return "javax.xml.rpc.holders." + Utils.capitalize(typeValue) + "Holder";
+            return "javax.xml.rpc.holders." + Utils.capitalizeFirstChar(typeValue) + "Holder";
         else
             return typeValue + "Holder";
     } // holder

@@ -77,7 +77,7 @@ public class JavaComplexTypeWriter extends JavaWriter {
     protected JavaComplexTypeWriter(
             Emitter emitter,
             Type type, Vector elements) {
-        super(emitter, type.getQName(), "", "java",
+        super(emitter, type, "", "java",
                 JavaUtils.getMessage("genType00"));
         this.type = type;
         this.elements = elements;
@@ -135,7 +135,7 @@ public class JavaComplexTypeWriter extends JavaWriter {
         for (int i = 0; i < elements.size(); i += 2) {
             String typeName = (String) elements.get(i);
             String name = (String) elements.get(i + 1);
-            String capName = Utils.capitalize(name);
+            String capName = Utils.capitalizeFirstChar(name);
 
             if (Utils.isJavaKeyword(name)) {
                 name = Utils.makeNonJavaKeyword(name);

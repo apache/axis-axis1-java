@@ -75,7 +75,7 @@ public class JavaEnumTypeWriter extends JavaWriter {
     protected JavaEnumTypeWriter(
             Emitter emitter,
             Type type, Vector elements) {
-        super(emitter, type.getQName(), "", "java",
+        super(emitter, type, "", "java",
                 JavaUtils.getMessage("genType00"));
         this.type = type;
         this.elements = elements;

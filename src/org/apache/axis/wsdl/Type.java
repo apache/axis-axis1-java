@@ -63,33 +63,52 @@ import javax.wsdl.QName;
  * This class represents a type that is supported by the WSDL2Java emitter.
  * A Type has a QName representing its XML name and a Java Name, which
  * is its full java name.  The Type may also have a Node, which locates
- * the definition of the emit type in the xml.
- * An Type is created by the TypeFactory object.
+ * the definition of the emit type in the xml.  
+ * A Type object is built by the TypeFactory for each XML complexType, simpleType,
+ * or element (necessary for ref=) that is defined or encountered.
  *
  * @author Rich Scheuerle  (scheu@us.ibm.com)
  */
 public class Type {
 
-    private QName  qName;        // QName of the element type
-    private String jName;        // Name of the Java Mapping (Class or primitive)
-    private Node   node;         // Element node
+    private QName   qName;       // QName of the element type
+    private String  jName;       // Name of the Java Mapping (Class or primitive)
+    private Node    node;        // Element node
+    private boolean shouldEmit;  // Indicates if this Type should have code emitted for it.
     private boolean isBaseType;  // Indicates if represented by a java primitive or util class
 
     /**
-     * Create an Emit Type with
+     * Create a Type object for an xml construct name that represents a base java type
      */
-    public Type(QName pqName, String pjName, Node pnode) {
+    protected Type(QName pqName) {
         qName = pqName;
-        node  = pnode;
-        // If the qName represents a base type, we override the
-        // java name with the name of the base java name.
-        jName = initBaseType();
-        if (jName == null) {
-            jName = pjName;
-            isBaseType = false;
-        } else {
-            isBaseType = true;
-        }
+        node = null;
+        jName = Utils.getBaseJavaName(qName);
+        shouldEmit = false;
+        isBaseType = true;
+    }
+       
+    /**
+     * Create a Type object for an xml construct that references another type.        
+     * The Type corresponding to the ultimate reference type is passed as refType
+     */  
+    protected Type(QName pqName, Type refType, Node pNode) {
+        qName = pqName;
+        node = pNode;
+        jName = refType.getJavaName();
+        shouldEmit = false;
+        isBaseType = (refType.getBaseType() != null);
+    }
+       
+    /**
+     * Create a Type object for an xml construct that is not a base java type
+     */  
+    protected Type(QName pqName, String pjName, Node pNode) {
+        qName = pqName;
+        node  = pNode;
+        jName = pjName;
+        shouldEmit  = (node != null);
+        isBaseType = false;
     }
 
     /**
@@ -97,13 +116,6 @@ public class Type {
      */
     public QName getQName() {
         return qName;
-    }
-
-    /**
-     * Set the QName
-     */
-    public void setQName(QName qName) {
-        this.qName = qName;
     }
 
     /**
@@ -147,6 +159,20 @@ public class Type {
     }
 
     /**
+     * Query whether a Node should be emitted.
+     */
+    public boolean getShouldEmit() {
+        return shouldEmit;
+    }
+
+    /**
+     * Indicate whether a Node should be emitted.
+     */
+    public void setShouldEmit(boolean pShouldEmit) {
+        shouldEmit = pShouldEmit;
+    }
+
+    /**
      * Returns the Java Base Type Name.
      * For example if the Type represents a schema integer, "int" is returned.
      * If this is a user defined type, null is returned.
@@ -161,73 +187,14 @@ public class Type {
     }
 
     /**
-     * Private method which returns the appropriate java type for each base type supported.
+     * Get string representation.
      */
-    private String initBaseType() {
-        String localName = qName.getLocalPart();
-        if (Utils.isSchemaNS(qName.getNamespaceURI())) {
-            if (localName.equals("string")) {
-                return "java.lang.String";
-            } else if (localName.equals("integer")) {
-                return "int";
-            } else if (localName.equals("int")) {
-                return "int";
-            } else if (localName.equals("long")) {
-                return "long";
-            } else if (localName.equals("short")) {
-                return "short";
-            } else if (localName.equals("decimal")) {
-                return "java.math.BigDecimal";
-            } else if (localName.equals("float")) {
-                return "float";
-            } else if (localName.equals("double")) {
-                return "double";
-            } else if (localName.equals("boolean")) {
-                return "boolean";
-            } else if (localName.equals("byte")) {
-                return "byte";
-            } else if (localName.equals("QName")) {
-                return "javax.xml.rpc.namespace.QName";
-            } else if (localName.equals("dateTime")) {
-                return "java.util.Date";
-            } else if (localName.equals("base64Binary")) {
-                return "byte[]";
-            } else if (localName.equals("hexBinary")) {
-                return "org.apache.axis.encoding.Hex";
-            } else if (localName.equals("date")) {
-                return "java.util.Date";
-            } else if (localName.equals("void")) {
-                return "void";
-            }
-        }
-        else if (Utils.isSoapEncodingNS(qName.getNamespaceURI())) {
-            if (localName.equals("string")) {
-                return "java.lang.String";
-            } else if (localName.equals("int")) {
-                return "int";
-            } else if (localName.equals("short")) {
-                return "short";
-            } else if (localName.equals("decimal")) {
-                return "java.math.BigDecimal";
-            } else if (localName.equals("float")) {
-                return "float";
-            } else if (localName.equals("double")) {
-                return "double";
-            } else if (localName.equals("boolean")) {
-                return "boolean";
-            } else if (localName.equals("Vector")) {
-                return "java.util.Vector";
-            }
-        }
-        // special "java" namesapce means straight java types
-        // So "java:void" maps to "void"
-        else if (qName.getNamespaceURI().equals("java")) {
-            return localName;
-        }
-        return null;
+    public String toString() {
+        return 
+            "QName: " + getQName() + "\n" +
+            "JName: " + getJavaName() + "\n" +
+            "Emit?: " + shouldEmit + "\n" +
+            "Base?: " + isBaseType + "\n" +
+            "Node:  " + getNode() + "\n";
     }
-}
-
-
-
-
+};
