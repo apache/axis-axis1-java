@@ -123,21 +123,6 @@ public interface SerializationContext extends javax.xml.rpc.encoding.Serializati
                           Boolean sendType)
         throws IOException;
 
-    /**
-     * Invoked to do the actual serialization of the qName (called by serialize above).
-     * additional attributes that will be serialized with the qName.
-     * @param elemQName is the QName of the element
-     * @param attributes are additional attributes
-     * @param value is the object to serialize
-     * @param xmlType (optional) is the desired type QName.
-     * @param sendType indicates whether the xsi:type attribute should be set.
-     */
-    public void serializeActual(QName elemQName, 
-                                Attributes attributes,
-                                Object value, 
-                                QName xmlType,
-                                Boolean sendType)
-        throws IOException;
 
     /**
      * Obtains the type attribute that should be serialized and returns the new list of Attributes

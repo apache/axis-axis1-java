@@ -1168,7 +1168,7 @@ public class SerializationContextImpl implements SerializationContext
      * @param xmlType (optional) is the desired type QName.
      * @param sendType indicates whether the xsi:type attribute should be set.
      */
-    public void serializeActual(QName elemQName,
+    private void serializeActual(QName elemQName,
                                 Attributes attributes,
                                 Object value,
                                 QName xmlType,
@@ -1195,7 +1195,7 @@ public class SerializationContextImpl implements SerializationContext
             currentXMLType = xmlType;
 
             // if we're looking for xsd:anyType, accept anything...
-            if (Constants.XSD_ANYTYPE.equals(xmlType)) {
+            if (Constants.equals(Constants.XSD_ANYTYPE,xmlType)){
                 xmlType = null;
                 shouldSendType = true;
             }
