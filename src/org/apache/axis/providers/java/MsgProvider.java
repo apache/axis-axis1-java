@@ -63,8 +63,10 @@ import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.i18n.Messages;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.message.MessageElement;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import javax.xml.namespace.QName;
 import java.lang.reflect.Method;
@@ -111,9 +113,15 @@ public class MsgProvider extends JavaProvider {
         ServiceDesc serviceDesc = service.getServiceDescription();
         
         if (operation == null) {
-            QName qname = new QName(reqEnv.getBody().getNamespaceURI(),
-                    reqEnv.getBody().getLocalName());
-            operation = serviceDesc.getOperationByElementQName(qname);
+            Vector bodyElements = reqEnv.getBodyElements();
+            if(bodyElements.size() > 0) {
+                MessageElement element = (MessageElement) bodyElements.get(0);
+                if (element != null) {
+                    QName qname = new QName(element.getNamespaceURI(),
+                            element.getLocalName());
+                    operation = serviceDesc.getOperationByElementQName(qname);
+                }
+            }
         }
 
         if (operation == null) {
