@@ -60,10 +60,10 @@ import java.text.NumberFormat;
 
 /**
  * Implementation of the XML Schema type gMonth
- * 
+ *
  * @author Tom Jordahl <tomj@macromedia.com>
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#gMonth">XML Schema 3.2.14</a>
- */ 
+ */
 public class Month implements java.io.Serializable {
     int month;
     String timezone = null;
@@ -71,7 +71,7 @@ public class Month implements java.io.Serializable {
     /**
      * Constructs a Month with the given values
      * No timezone is specified
-     */ 
+     */
     public Month(int month) throws NumberFormatException {
         setValue(month);
     }
@@ -79,21 +79,21 @@ public class Month implements java.io.Serializable {
     /**
      * Constructs a Month with the given values, including a timezone string
      * The timezone is validated but not used.
-     */ 
-    public Month(int month, String timezone) 
+     */
+    public Month(int month, String timezone)
         throws NumberFormatException {
         setValue(month, timezone);
     }
-    
+
     /**
      * Construct a Month from a String in the format --MM--[timezone]
-     */ 
+     */
     public Month(String source) throws NumberFormatException {
         if (source.length() < (6)) {
             throw new NumberFormatException(
                     Messages.getMessage("badMonth00"));
         }
-        
+
         if (source.charAt(0) != '-' ||
             source.charAt(1) != '-' ||
             source.charAt(4) != '-' ||
@@ -101,7 +101,7 @@ public class Month implements java.io.Serializable {
             throw new NumberFormatException(
                     Messages.getMessage("badMonth00"));
         }
-        
+
         setValue(Integer.parseInt(source.substring(2,4)),
                  source.substring(6));
     }
@@ -150,7 +150,7 @@ public class Month implements java.io.Serializable {
         setMonth(month);
         setTimezone(timezone);
     }
-    
+
     public void setValue(int month) throws NumberFormatException {
         setMonth(month);
     }
@@ -176,11 +176,21 @@ public class Month implements java.io.Serializable {
         Month other = (Month) obj;
         if (obj == null) return false;
         if (this == obj) return true;
-        
+
         boolean equals = (this.month == other.month);
         if (timezone != null) {
             equals = equals && timezone.equals(other.timezone);
         }
         return equals;
+    }
+
+    /**
+     * Return the value of month XORed with the hashCode of timezone
+     * iff one is defined.
+     *
+     * @return an <code>int</code> value
+     */
+    public int hashCode() {
+        return null == timezone ? month : month ^ timezone.hashCode();
     }
 }

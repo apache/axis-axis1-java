@@ -60,10 +60,10 @@ import java.text.NumberFormat;
 
 /**
  * Implementation of the XML Schema type gDay
- * 
+ *
  * @author Tom Jordahl <tomj@macromedia.com>
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#gDay">XML Schema 3.2.13</a>
- */ 
+ */
 public class Day implements java.io.Serializable {
     int day;
     String timezone = null;
@@ -71,7 +71,7 @@ public class Day implements java.io.Serializable {
     /**
      * Constructs a Day with the given values
      * No timezone is specified
-     */ 
+     */
     public Day(int day) throws NumberFormatException {
         setValue(day);
     }
@@ -79,28 +79,28 @@ public class Day implements java.io.Serializable {
     /**
      * Constructs a Day with the given values, including a timezone string
      * The timezone is validated but not used.
-     */ 
-    public Day(int day, String timezone) 
+     */
+    public Day(int day, String timezone)
         throws NumberFormatException {
         setValue(day, timezone);
     }
-    
+
     /**
      * Construct a Day from a String in the format ---DD[timezone]
-     */ 
+     */
     public Day(String source) throws NumberFormatException {
         if (source.length() < 5) {
             throw new NumberFormatException(
                     Messages.getMessage("badDay00"));
         }
-        
+
         if (source.charAt(0) != '-' ||
             source.charAt(1) != '-' ||
             source.charAt(2) != '-' ) {
             throw new NumberFormatException(
                     Messages.getMessage("badDay00"));
         }
-        
+
         setValue(Integer.parseInt(source.substring(3,5)),
                  source.substring(5));
     }
@@ -111,7 +111,7 @@ public class Day implements java.io.Serializable {
 
     /**
      * Set the day
-     */ 
+     */
     public void setDay(int day) {
         // validate day
         if (day < 1 || day > 31) {
@@ -148,12 +148,12 @@ public class Day implements java.io.Serializable {
         }
     }
 
-    public void setValue(int day, String timezone) 
+    public void setValue(int day, String timezone)
         throws NumberFormatException {
         setDay(day);
         setTimezone(timezone);
     }
-    
+
     public void setValue(int day) throws NumberFormatException {
         setDay(day);
     }
@@ -179,11 +179,21 @@ public class Day implements java.io.Serializable {
         Day other = (Day) obj;
         if (obj == null) return false;
         if (this == obj) return true;
-        
+
         boolean equals = (this.day == other.day);
         if (timezone != null) {
             equals = equals && timezone.equals(other.timezone);
         }
         return equals;
+    }
+
+    /**
+     * Return the value of day XORed with the hashCode of timezone
+     * iff one is defined.
+     *
+     * @return an <code>int</code> value
+     */
+    public int hashCode() {
+        return null == timezone ? day : day ^ timezone.hashCode();
     }
 }

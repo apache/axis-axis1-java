@@ -54,17 +54,20 @@
  */
 package org.apache.axis.types;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 /**
  * Custom class for supporting XSD data type IDRefs
- * 
+ *
  * @author Davanum Srinivas <dims@yahoo.com>
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#IDREFS">XML Schema 3.3.10 IDREFS</a>
  */
 public class IDRefs extends NCName {
     private IDRef[] idrefs;
-    
+
     public IDRefs() {
         super();
     }
@@ -86,16 +89,52 @@ public class IDRefs extends NCName {
     }
 
     public String toString() {
-        String val = "";
+        StringBuffer buf = new StringBuffer();
         for (int i = 0; i < idrefs.length; i++) {
             IDRef ref = idrefs[i];
-            if (i > 0) val += " ";
-            val += ref.toString();
+            if (i > 0) buf.append(" ");
+            buf.append(ref.toString());
         }
-        return val;
+        return buf.toString();
     }
 
+    /**
+     * IDREFs can be equal without having identical ordering because
+     * they represent a set of references.  Hence we have to compare
+     * values here as a set, not a list.
+     *
+     * @param object an <code>Object</code> value
+     * @return a <code>boolean</code> value
+     */
     public boolean equals(Object object) {
-        return (toString().equals(object.toString()));
+        if (object == this) {
+            return true;        // succeed quickly, when possible
+        }
+        if (object instanceof IDRefs) {
+            IDRefs that = (IDRefs)object;
+            if (this.idrefs.length == that.idrefs.length) {
+                Set ourSet = new HashSet(Arrays.asList(this.idrefs));
+                Set theirSet = new HashSet(Arrays.asList(that.idrefs));
+                return ourSet.equals(theirSet);
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Returns the sum of the hashcodes of the underlying idrefs, an
+     * operation which is not sensitive to ordering.
+     *
+     * @return an <code>int</code> value
+     */
+    public int hashCode() {
+        int hash = 0;
+        for (int i = 0; i < idrefs.length; i++) {
+            hash += idrefs[i].hashCode();
+        }
+        return hash;
     }
 }

@@ -60,10 +60,10 @@ import java.text.NumberFormat;
 
 /**
  * Implementation of the XML Schema type gYear
- * 
+ *
  * @author Tom Jordahl <tomj@macromedia.com>
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#gYear">XML Schema 3.2.11</a>
- */ 
+ */
 public class Year implements java.io.Serializable {
     int year;
     String timezone = null;
@@ -71,7 +71,7 @@ public class Year implements java.io.Serializable {
     /**
      * Constructs a Year with the given values
      * No timezone is specified
-     */ 
+     */
     public Year(int year) throws NumberFormatException {
         setValue(year);
     }
@@ -79,17 +79,17 @@ public class Year implements java.io.Serializable {
     /**
      * Constructs a Year with the given values, including a timezone string
      * The timezone is validated but not used.
-     */ 
+     */
     public Year(int year, String timezone) throws NumberFormatException {
         setValue(year, timezone);
     }
-    
+
     /**
      * Construct a Year from a String in the format [-]CCYY[timezone]
-     */ 
+     */
     public Year(String source) throws NumberFormatException {
         int negative = 0;
-        
+
         if (source.charAt(0) == '-') {
             negative = 1;
         }
@@ -97,13 +97,13 @@ public class Year implements java.io.Serializable {
             throw new NumberFormatException(
                     Messages.getMessage("badYear00"));
         }
-        
+
         // calculate how many more than 4 digits (if any) in the year
         int pos = 4 + negative;  // skip minus sign if present
         while (pos < source.length() && Character.isDigit(source.charAt(pos))) {
             ++pos;
         }
-        
+
         setValue(Integer.parseInt(source.substring(0,pos)),
                  source.substring(pos));
     }
@@ -118,7 +118,7 @@ public class Year implements java.io.Serializable {
             throw new NumberFormatException(
                     Messages.getMessage("badYear00"));
         }
-        
+
         this.year = year;
     }
 
@@ -149,12 +149,12 @@ public class Year implements java.io.Serializable {
         }
     }
 
-    public void setValue(int year, String timezone) 
+    public void setValue(int year, String timezone)
         throws NumberFormatException {
         setYear(year);
         setTimezone(timezone);
     }
-    
+
     public void setValue(int year) throws NumberFormatException {
         setYear(year);
     }
@@ -180,11 +180,21 @@ public class Year implements java.io.Serializable {
         Year other = (Year) obj;
         if (obj == null) return false;
         if (this == obj) return true;
-        
+
         boolean equals = (this.year == other.year);
         if (timezone != null) {
             equals = equals && timezone.equals(other.timezone);
         }
         return equals;
+    }
+
+    /**
+     * Return the value of year XORed with the hashCode of timezone
+     * iff one is defined.
+     *
+     * @return an <code>int</code> value
+     */
+    public int hashCode() {
+        return null == timezone ? year : year ^ timezone.hashCode();
     }
 }

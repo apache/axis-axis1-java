@@ -133,6 +133,29 @@ public class Notation implements java.io.Serializable {
         return true;
     }
 
+    /**
+     * Returns the sum of the hashcodes of {name,publicURI,systemURI}
+     * for whichever properties in that set is non null.  This is
+     * consistent with the implementation of equals, as required by
+     * {@link java.lang.Object#hashCode() Object.hashCode}.
+     *
+     * @return an <code>int</code> value
+     */
+    public int hashCode() {
+        int hash = 0;
+        if (null != name) {
+            hash += name.hashCode();
+        }
+        if (null != publicURI) {
+            hash += publicURI.hashCode();
+        }
+        if (null != systemURI) {
+            hash += systemURI.hashCode();
+        }
+        return hash;
+    }
+
+
     // Type metadata
     private static TypeDesc typeDesc;
 
