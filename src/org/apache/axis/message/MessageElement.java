@@ -259,7 +259,6 @@ public class MessageElement extends DeserializerBase
       }
       
       DeserializerBase dser = realEl.context.getDeserializer(typeQName);
-      System.out.println(this + " got dser " + dser);
       if (dser == null)
         throw new AxisFault("No deserializer for type " + typeQName);
       
