@@ -239,12 +239,12 @@ public class RPCProvider extends JavaProvider
                     argClasses += ",";
                 }
             }
-            log.info(JavaUtils.getMessage("dispatchIAE00",
-                                          methodSig, 
-                                          argClasses), e);
+            log.info(JavaUtils.getMessage("dispatchIAE00", 
+                                          new String[] {methodSig, argClasses}),
+                     e);
             throw new AxisFault(JavaUtils.getMessage("dispatchIAE00",
-                                            methodSig, 
-                                            argClasses), e);
+                                          new String[] {methodSig, argClasses}),
+                                e);
         }
 
         /* Now put the result in the result SOAPEnvelope */
