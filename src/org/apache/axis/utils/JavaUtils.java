@@ -428,11 +428,20 @@ public class JavaUtils
         // character.
         int i = 0;
         while (i < nameLen
-                && !Character.isLetter(nameArray[i])) {
+                && !Character.isJavaIdentifierStart(nameArray[i])) {
             i++;
         }
         if (i < nameLen) {
-            result.append(Character.toLowerCase(nameArray[i]));
+            // I've got to check for uppercaseness before lowercasing
+            // because toLowerCase will lowercase some characters that
+            // isUpperCase will return false for.  Like \u2160, Roman
+            // numeral one.
+            if (Character.isUpperCase(nameArray[i])) {
+                result.append(Character.toLowerCase(nameArray[i]));
+            }
+            else {
+                result.append(nameArray[i]);
+            }
         }
         else {
             result.append("_" + nameArray[0]);
@@ -444,14 +453,25 @@ public class JavaUtils
         // following a skipped character is 
         // upper-cased.
         boolean wordStart = false;
-        for(int j = i + 1; j < nameLen; ++j) {
-            char c = nameArray[j];
-            if( !Character.isLetterOrDigit(c)) {
+        for (++i; i < nameLen; ++i) {
+            char c = nameArray[i];
+
+            // if this is a bad char, skip it and remember to capitalize next
+            // good character we encounter
+            if (isPunctuation(c) || !Character.isJavaIdentifierPart(c)) {
                 wordStart = true;
                 continue;
             }
-            result.append( wordStart ? Character.toUpperCase(c) : c );
-            wordStart = false;
+            if (wordStart && Character.isLowerCase(c)) {
+                result.append(Character.toUpperCase(c));
+            }
+            else {
+                result.append(c);
+            }
+            // If c is not a character, but is a legal Java
+            // identifier character, capitalize the next character.
+            // For example:  "22hi" becomes "22Hi"
+            wordStart = !Character.isLetter(c);
         }
         
         // covert back to a String
@@ -463,6 +483,21 @@ public class JavaUtils
         
         return newName;
     } // xmlNameToJava
+
+    /**
+     * Is this an XML punctuation character?
+     */
+    private static boolean isPunctuation(char c)
+    {
+        return '-' == c
+            || '.' == c
+            || ':' == c
+            || '_' == c
+            || '\u00B7' == c
+            || '\u0387' == c
+            || '\u06DD' == c
+            || '\u06DE' == c;
+    } // isPunctuation
 
     // Message resource bundle.
     private static ResourceBundle messages = null;
