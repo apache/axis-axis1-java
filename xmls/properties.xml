@@ -4,6 +4,9 @@
 <!-- workaround for those IDEs that dont set ant.home as per the ant script -->
 <property name="ant.home" value="env.ANT_HOME" />
 
+<!-- set axis home up -->
+<property name="axis.home" location="."/>
+
 <!-- Give user a chance to override without editing this file
      (and without typing -D each time it compiles it) -->
 <property file="${axis.home}/build.properties"/>
@@ -27,7 +30,6 @@ them.
 <property name="deprecation" value="true" />
 
 <!-- directories -->
-<property name="axis.home" location="."/>
 <property name="src.dir" location="${axis.home}/src"/>
 <property name="docs.dir" location="${axis.home}/docs"/>
 <property name="samples.dir" location="${axis.home}/samples"/>
