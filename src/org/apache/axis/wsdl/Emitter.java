@@ -1053,6 +1053,8 @@ public class Emitter {
         stubPW.println("        try {" );
         stubPW.println("            service = new org.apache.axis.client.Service();");
         stubPW.println("            call = (org.apache.axis.client.Call) service.createCall();");
+        stubPW.println("            org.apache.axis.utils.QName qn;");
+        stubPW.println("            Class cls;");
         while (it.hasNext())
             writeSerializationInit(stubPW, (Type) it.next());
         stubPW.println("        }");
