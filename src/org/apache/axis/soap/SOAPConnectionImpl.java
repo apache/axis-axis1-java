@@ -61,6 +61,9 @@ import javax.xml.messaging.Endpoint;
 import org.apache.axis.client.Call;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.utils.Messages;
+import org.apache.axis.attachments.Attachments;
+
+import java.util.Iterator;
 
 /**
  * SOAP Connection implementation
@@ -91,6 +94,13 @@ public class SOAPConnectionImpl extends javax.xml.soap.SOAPConnection {
             Call call = new Call(endpoint.toString());
             ((org.apache.axis.Message)request).setMessageContext(call.getMessageContext());
             SOAPEnvelope env = ((org.apache.axis.Message)request).getSOAPEnvelope();
+            Attachments attachments = ((org.apache.axis.Message)
+                    request).getAttachmentsImpl();
+            Iterator iterator = attachments.getAttachments().iterator();
+            while(iterator.hasNext()){
+                Object attachment = iterator.next();
+                call.addAttachmentPart(attachment);
+            }
             call.invoke(env);
             return call.getResponseMessage();
         } catch (java.net.MalformedURLException mue){
