@@ -21,6 +21,7 @@ import org.apache.axis.client.Service;
 import org.apache.axis.configuration.BasicServerConfig;
 import org.apache.axis.configuration.SimpleProvider;
 import org.apache.axis.enum.Style;
+import org.apache.axis.enum.Use;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.providers.java.RPCProvider;
 import org.apache.axis.server.AxisServer;
@@ -121,6 +122,19 @@ public class GenericLocalTest extends TestCase {
         transport.setRemoteService(serviceName);
     }
 
+    public void deploy(String serviceName, Class target, Style style, Use use) {
+        String className = target.getName();
+
+        service = new SOAPService(new RPCProvider());
+        service.setStyle(style);
+        service.setUse(use);
+
+        service.setOption("className", className);
+        service.setOption("allowedMethods", "*");
+
+        config.deployService(serviceName, service);
+        transport.setRemoteService(serviceName);
+    }
     /**
      * Deploy a service to the local server we've set up, using a
      * Handler we provide as the pivot.
