@@ -190,6 +190,13 @@
         return strPattern;
     }
 
+    /**
+     * Get a replaced string by the specified message.
+     * @param source  The original message
+     * @param pattern The key message for replacing
+     * @param replace The message to place in the key variable - 'pattern'
+     * @return The replaced message
+     */
     String replaceAll(String source, String pattern, String replace)
     {
         int i=0;
@@ -204,7 +211,7 @@
             if (ret) {
                 buf.append(source.substring(0,i));
                 buf.append(replace);
-                buf.append(source.substring(i+3));
+                buf.append(source.substring(i+lenPattern));
                 source = replaceAll(buf.toString(), pattern, replace);
                 break;
             }
