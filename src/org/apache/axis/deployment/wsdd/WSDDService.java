@@ -179,10 +179,9 @@ public class WSDDService
         String className = this.getParameter("className");
         if (className != null) {
             try {
-// This is likely no good - need to figure out which classloader to use
-// and load the class when needed (for instance when the ServiceDesc is
-// requested....  --Glen
-                Class cls = Class.forName(className);
+                // Will this always be the right classloader?
+                ClassLoader cl = Thread.currentThread().getContextClassLoader();
+                Class cls = cl.loadClass(className);
                 desc.setImplClass(cls);
                 initTMR();
                 String encStyle = Constants.URI_SOAP_ENC;
