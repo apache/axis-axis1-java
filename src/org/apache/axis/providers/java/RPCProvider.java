@@ -126,12 +126,19 @@ public class RPCProvider extends JavaProvider
             // FIXME : There should be a cleaner way to do this...
             if (!(bodies.get(bNum) instanceof RPCElement)) {
                 SOAPBodyElement bodyEl = (SOAPBodyElement)bodies.get(bNum);
+                // igors: better check if bodyEl.getID() != null
+                // to make sure this loop does not step on SOAP-ENC objects
+                // that follow the parameters! FIXME?
                 if (bodyEl.isRoot() && operation != null) {
                     ParameterDesc param = operation.getParameter(bNum);
-                    Object val = bodyEl.getValueAsType(param.getTypeQName());
-                    body = new RPCElement("",
-                                          operation.getName(),
-                                          new Object [] { val });
+                    // at least do not step on non-existent parameters!
+                    if(param != null) {
+                        Object val = bodyEl.getValueAsType(param.getTypeQName());
+                        body = new RPCElement("",
+                                              operation.getName(),
+                                              new Object [] { val });
+                    }
+                    else continue;
                 } else {
                     continue;
                 }
