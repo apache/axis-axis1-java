@@ -1,17 +1,35 @@
-  <target name="echoThem">
+  <!-- ===================================================================
+ 	This is an accessory function to echo out fileNames 
+       =================================================================== --> 
+  <target name="echo-file">
         <basename property="fileName" file="${file}"/>
         <dirname property="dirName" file="${file}"/>
         <echo message="Dir: ${dirName} File: ${fileName}"/>
   </target>
 
-  <target name="buildThem">
+  <!-- ===================================================================
+        This is an accessory function to compile some given component
+       =================================================================== -->
+  <target name="component-compile">
         <echo message="${file}"/>
         <ant antfile="${file}" target="compile"/>
   </target>
 
-  <target name="runThem">
-	<antcall target="echoThem"/>
+  <!-- ===================================================================
+        This is an accessory function to exec JUST the testcase of a 
+	component.
+       =================================================================== -->
+  <target name="batch-component-test">
+	<antcall target="echo-file"/>
         <ant antfile="${file}" target="component-junit-functional" />
+  </target>
+
+  <!-- ===================================================================
+        This is an accessory function to execs the full component test
+       =================================================================== -->
+  <target name="batch-component-run">
+        <antcall target="echo-file"/>
+        <ant antfile="${file}" target="run" />
   </target>
 
   <!-- =================================================================== -->
