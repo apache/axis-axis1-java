@@ -33,6 +33,8 @@ Copyright:
 ==================================================================== -->
 
 <project default="compile">
+<property name="axis.home" location="../.." />
+<property name="componentName" value="samples/echo" />
 
         &properties;
         &paths;
@@ -46,8 +48,8 @@ Copyright:
 
 <target name="compile">
   <!-- Create java files for the echo sample -->
-  <wsdl2java url="samples/echo/InteropTest.wsdl"
-               output="build/work"
+  <wsdl2java url="${axis.home}/samples/echo/InteropTest.wsdl"
+               output="${axis.home}/build/work"
                deployscope="session"
                serverSide="no"
                noimports="no"
@@ -64,7 +66,7 @@ Copyright:
      <include name="samples/echo/**.java" />
   </javac>
 
-  <javac srcdir="." destdir="${build.dest}" debug="${debug}">
+  <javac srcdir="${axis.home}" destdir="${build.dest}" debug="${debug}">
     <classpath>
         <path refid="classpath"/>
     </classpath>

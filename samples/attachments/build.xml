@@ -33,6 +33,9 @@ Copyright:
 ==================================================================== -->
 
 <project default="compile">
+<property name="axis.home" location="../.." />
+<property name="componentName" value="samples/attachments" />
+
 
         &properties;
         &paths;
