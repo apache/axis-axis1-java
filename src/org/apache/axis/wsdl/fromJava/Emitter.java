@@ -102,11 +102,12 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 /**
- * WSDL utility class, 1st cut.  Right now all the WSDL functionality for
- * dynamic Java->WSDL is in here - it probably wants to move elsewhere when
- * a more solid design stabilizes.
+ * This class emits WSDL from Java classes.  It is used by the ?WSDL 
+ * Axis browser function and Java2WSDL commandline utility.
+ * See Java2WSDL and Java2WSDLFactory for more information.
  *
  * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Rich Scheuerle (scheu@us.ibm.com)
  */
 public class Emitter {
 
@@ -115,7 +116,7 @@ public class Emitter {
     public static final int MODE_IMPLEMENTATION = 2;
 
     private Class cls;
-    private String allowedMethods;
+    private Vector allowedMethods = null;  // Names of methods to consider
     private boolean useInheritedMethods = false;
     private String intfNS;          
     private String implNS;
@@ -130,6 +131,8 @@ public class Emitter {
     private ArrayList encodingList;
     private Types types;
     private String clsName;
+    
+    private Java2WSDLFactory factory;  // Factory for obtaining user provided extensions.
 
     /**
      * Construct Emitter.                                            
@@ -138,6 +141,7 @@ public class Emitter {
      */
     public Emitter () {
       namespaces = new Namespaces();
+      factory = new DefaultFactory(); 
     }
 
     /**
@@ -265,7 +269,7 @@ public class Emitter {
 
         // Write interface header
         writeDefinitions(def, intfNS);
-        types = new Types(def, reg, namespaces, intfNS);
+        types = new Types(def, reg, namespaces, intfNS, factory);
         Binding binding = writeBinding(def, true);
         writePortType(def, binding);
         writeService(def, binding);
@@ -287,7 +291,7 @@ public class Emitter {
 
         // Write interface header
         writeDefinitions(def, intfNS);
-        types = new Types(def, reg, namespaces, intfNS);
+        types = new Types(def, reg, namespaces, intfNS, factory);
         Binding binding = writeBinding(def, true);
         writePortType(def, binding);
         return def;
@@ -467,23 +471,17 @@ public class Emitter {
         // PortType name is the name of the class being processed
         portType.setQName(new javax.wsdl.QName(intfNS, clsName));
 
-        /** @todo should introduce allowInterfaces, to publish all methods from a interface */
-        /** @todo if allowedMethods is specified always look for inherited methods as well?? */
-        Method[] methods;
-        if (useInheritedMethods & (allowedMethods != null) && (allowedMethods.trim().length() > 0))
-          methods = cls.getMethods();
-        else
-          methods = cls.getDeclaredMethods();
+        // Get a ClassRep representing the portType class, and get the list of MethodRep
+        // objects representing the methods that should be contained in the portType.
+        // This allows users to provide their own method/parameter mapping.
+        BuilderPortTypeClassRep builder = factory.getBuilderPortTypeClassRep();
+        ClassRep classRep = builder.build(cls, useInheritedMethods);
+        Vector methods = builder.getResolvedMethods(classRep, allowedMethods);
 
-        for(int i = 0, j = methods.length; i < j; i++) {
-            if (allowedMethods != null) {
-                if (allowedMethods.indexOf(methods[i].getName()) == -1)
-                    continue;
-            }
-            if (!Modifier.isPublic(methods[i].getModifiers()))
-                continue;
-            Operation oper = writeOperation(def, binding, methods[i].getName());
-            writeMessages(def, oper, methods[i]);
+        for(int i=0; i<methods.size(); i++) {
+            MethodRep method = (MethodRep) methods.elementAt(i);
+            Operation oper = writeOperation(def, binding, method.getName());
+            writeMessages(def, oper, method);
             portType.addOperation(oper);
         }
 
@@ -496,33 +494,37 @@ public class Emitter {
      *
      * @param def  
      * @param oper                        
-     * @param method                        
+     * @param method (A MethodRep object)                       
      * @throws Exception
      */
-    private void writeMessages(Definition def, Operation oper, Method method) throws Exception{
+    private void writeMessages(Definition def, Operation oper, MethodRep method) throws Exception{
         Input input = def.createInput();
-        Vector requestNames = new Vector();
-        Vector responseNames = new Vector();
 
-        Message msg = writeRequestMessage(def, method, requestNames);
+        Message msg = writeRequestMessage(def, method);
         input.setMessage(msg);
         oper.setInput(input);
 
         def.addMessage(msg);
 
-        msg = writeResponseMessage(def, method, responseNames);
+        msg = writeResponseMessage(def, method);
         Output output = def.createOutput();
         output.setMessage(msg);
         oper.setOutput(output);
 
         def.addMessage(msg);
 
-        // Currently all parameters are interpretted as in or inout (there are no
-        // inout parameters.  Thus it is safe to use the requestNames vector as the 
-        // parameter order.  (Note that we could have used the Part names from Message part,
-        // but sometimes WSDL4J does not preserve order.)
-        if (requestNames.size() > 0)
-            oper.setParameterOrdering(requestNames);
+        // Set the parameter ordering using the parameter names
+        Vector names = new Vector();
+        for (int i=0; i<method.getParameters().size(); i++) {
+            ParamRep parameter = (ParamRep) method.getParameters().elementAt(i);
+            if ((i == 0) && MessageContext.class.equals(parameter.getType())) {
+                continue;
+            }
+            names.add(parameter.getName());
+        }
+
+        if (names.size() > 0)
+            oper.setParameterOrdering(names);
     }
 
     /** Create a Operation
@@ -579,11 +581,10 @@ public class Emitter {
     /** Create a Request Message
      *
      * @param def  
-     * @param method        
-     * @param list  Each parameter name is added to the list               
+     * @param method (a MethodRep object)       
      * @throws Exception
      */
-    private Message writeRequestMessage(Definition def, Method method, List list) throws Exception
+    private Message writeRequestMessage(Definition def, MethodRep method) throws Exception
     {
         Message msg = def.createMessage();
 
@@ -593,20 +594,15 @@ public class Emitter {
         msg.setQName(qName);
         msg.setUndefined(false);
 
-        Class[] parameters = method.getParameterTypes();
-        int offset = 0;
-        for(int i = 0, j = parameters.length; i < j; i++) {
+        Vector parameters = method.getParameters();
+        for(int i=0; i<parameters.size(); i++) {
+            ParamRep parameter = (ParamRep) parameters.elementAt(i);
             // If the first param is a MessageContext, Axis will
             // generate it for us - it shouldn't be in the WSDL.
-            if ((i == 0) && MessageContext.class.equals(parameters[i])) {
-                offset = 1;
+            if ((i == 0) && MessageContext.class.equals(parameter.getType())) {
                 continue;
             }
-            String paramName = writePartToMessage(def, msg, true, (i-offset), parameters[i], null); 
-            if (list != null && paramName != null &&
-                !list.contains(paramName)) {
-                list.add(paramName);
-            }
+            writePartToMessage(def, msg, true,parameter); 
         }
 
         return msg;
@@ -616,10 +612,9 @@ public class Emitter {
      *
      * @param def  
      * @param method   
-     * @param list  Each parameter name is added to the list          
      * @throws Exception
      */
-    private Message writeResponseMessage(Definition def, Method method, List list) throws Exception
+    private Message writeResponseMessage(Definition def, MethodRep method) throws Exception
     {
         Message msg = def.createMessage();
 
@@ -629,27 +624,20 @@ public class Emitter {
         msg.setQName(qName);
         msg.setUndefined(false);
 
-        // Write the part, but don't add it to the list
-        Class type = method.getReturnType();
-        writePartToMessage(def, msg, false, -1, type, method.getName().concat("Result"));
+        // Write the part
+        ParamRep retParam = method.getReturns();
+        writePartToMessage(def, msg, false, retParam);
 
-        Class[] parameters = method.getParameterTypes();
-        int offset = 0;
-        for(int i = 0, j = parameters.length; i < j; i++) {
+        Vector parameters = method.getParameters();
+        for(int i=0; i<parameters.size(); i++) {
+            ParamRep parameter = (ParamRep) parameters.elementAt(i);
             // If the first param is a MessageContext, Axis will
             // generate it for us - it shouldn't be in the WSDL.
-            if ((i == 0) && MessageContext.class.equals(parameters[i])) {
-                offset = 1;
+            if ((i == 0) && MessageContext.class.equals(parameter.getType())) {
                 continue;
             }
-            String paramName = writePartToMessage(def, msg, false, (i-offset), parameters[i], null); 
-            if (list != null && paramName != null &&
-                !list.contains(paramName)) {
-                list.add(paramName);
-            }
-                
+            writePartToMessage(def, msg, false,parameter); 
         }
-
         return msg;
     }
 
@@ -658,71 +646,38 @@ public class Emitter {
      * @param def  
      * @param msg             
      * @param request     message is for a request
-     * @param num         parm number (-1 if return value)     
-     * @param param       Class type of parameter             
-     * @param paramName   optional name of parameter  
+     * @param param       ParamRep object                     
      * @return The parameter name added or null
      * @throws Exception
      */
-    public String writePartToMessage(Definition def, Message msg, boolean request, int num, Class param, String paramName) throws Exception
+    public String writePartToMessage(Definition def, Message msg, boolean request,
+                                     ParamRep param) throws Exception
     {
         // Return if this is a void type
         if (param == null ||
-            param == java.lang.Void.TYPE)
+            param.getType() == java.lang.Void.TYPE)
             return null;
 
-        // Determine if this is a Holder class.  
-        boolean holder = false;
-        if (num >= 0 &&
-            param.getName() != null &&
-            param.getName().endsWith("Holder")) {
-            // Holder is supposed to have a public value field.
-            // (It appears the Wsdl2Java emits a _value field ??)
-            java.lang.reflect.Field field;
-            try {
-                field = param.getField("value");
-            } catch (Exception e) {
-                field = null;
-            }
-            if (field == null) {
-                try {
-                    field = param.getField("_value");
-                } catch (Exception e) {
-                    field = null;
-                }
-            }
-            // If this is a holder, set the flag and change param to the held type.
-            if (field != null) {
-                holder = true;
-                param = field.getType();
-            }
-        }
-
-        // If Response message, only continue if holder or return
-        if (!request && num >= 0 && !holder)
+        // If Request message, only continue if IN or INOUT
+        // If Response message, only continue if OUT or INOUT
+        if (request && 
+            param.getMode() == ParamRep.OUT)
             return null;
-
-        // Create a paramName
-        if (paramName == null) {
-            if (num == -1)
-                paramName = "return";
-            else if (holder)
-                paramName = "inOut" + num;
-            else
-                paramName = "in" + num;
-        }
+        if (!request && 
+            param.getMode() == ParamRep.IN)
+            return null;
 
         // Create the Part
         Part part = def.createPart();
 
         // Write the type representing the parameter type
-        javax.wsdl.QName typeQName = types.writePartType(param);
+        javax.wsdl.QName typeQName = types.writePartType(param.getType());
         if (typeQName != null) {
             part.setTypeName(typeQName);
-            part.setName(paramName);
+            part.setName(param.getName());
         }
         msg.addPart(part);
-        return paramName;
+        return param.getName();
     }
 
     /*
@@ -786,7 +741,7 @@ public class Emitter {
         // Get the constructors of the class
         java.lang.reflect.Constructor[] constructors = cls.getDeclaredConstructors();
         Class intf = null;
-        for (int i=0; i < constructors.length && intf == null; i++) {
+        for (int i=0; i<constructors.length && intf == null; i++) {
             Class[] parms = constructors[i].getParameterTypes();
             // If the constructor has a single parameter that is an interface which
             // matches the serviceName, then use this as the interface class.
@@ -824,6 +779,35 @@ public class Emitter {
         }
     }
 
+    /**
+     * Sets the <code>Java2WSDLFactory Class</code> to use
+     * @param className the name of the factory <code>Class</code> 
+     */
+    public void setFactory(String className) {
+        try {
+            factory = (Java2WSDLFactory) Class.forName(className).newInstance();
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    /**
+     * Sets the <code>Java2WSDLFactory Class</code> to use
+     * @param factory is the factory Class 
+     */
+    public void setFactory(Java2WSDLFactory factory) {
+        this.factory = factory;
+    }
+
+    /**
+     * Returns the <code>Java2WSDLFactory Class</code>
+     * @return the <code>Class</code>
+     */
+    public Java2WSDLFactory getFactory() {
+        return factory;
+    }
+
    /**
      * Returns the interface namespace
      * @return interface target namespace
@@ -857,21 +841,33 @@ public class Emitter {
     }
 
     /**
-     * Returns a list of a space separated list of methods to export
+     * Returns a vector of methods to export
      * @return a space separated list of methods to export
      */
-    public String getAllowedMethods() {
+    public Vector getAllowedMethods() {
         return allowedMethods;
     }
 
     /**
-     * Set a space separated list of methods to export
+     * Set a list of methods to export
      * @param allowedMethods a space separated list of methods to export
      */
-    public void setAllowedMethods(String allowedMethods) {
-        this.allowedMethods = allowedMethods;
+    public void setAllowedMethods(String text) {
+        StringTokenizer tokenizer = new StringTokenizer(text, " ,+");
+        allowedMethods = new Vector();
+        while (tokenizer.hasMoreTokens()) {
+            allowedMethods.add(tokenizer.nextToken());
+        }
     }
     
+    /**
+     * Set a Vector of methods to export
+     * @param allowedMethods a space separated list of methods to export
+     */
+    public void setAllowedMethods(Vector allowedMethods) {
+        this.allowedMethods = allowedMethods;
+    }
+
     public boolean getUseInheritedMethods() {
         return useInheritedMethods;
     }    

@@ -7,6 +7,8 @@ Group 1
 -------
 * Generate deployment - deploy.wsdd, undeploy.wsdd
 * Pluggable ParameterNameResolver for method parameters with complexType
+  -Rich: Users can now use Java2WSDLFactory to provide this mapping.
+         I may add a better default later.
 * Make PackageName=Namespace configurable using a properties file
 * Generate JAX-RPC style stub, skeleton and optionally refactor exporting 
   class as the impl class *** (see Note 1) ***
@@ -32,7 +34,10 @@ Group 3
 Group 4
 -------
 * Support method overloading
+  -Rich: Added a default overloading resolution mechanism.  Users can provide
+         their own using new Java2WSDLFactory mechanism.
 * support exporting by interface - in addition to allowed methods
+  -Rich: Users can provide their own resolution using Java2WSDLFactory mechanism.
 * Output mode currently has ALL, Interface, Implementation -- need to add Types
 * Output and OUTPUT_IMPL options are there to generate "split" files -- need to 
   add OUTPUT_TYPES as well 
