@@ -3,7 +3,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -11,7 +11,7 @@
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -19,7 +19,7 @@
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -27,7 +27,7 @@
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -71,113 +71,115 @@ import com.ibm.wsdl.extensions.soap.*;
  * WSDL utility class, 1st cut.  Right now all the WSDL functionality for
  * dynamic Java->WSDL is in here - it probably wants to move elsewhere when
  * a more solid design stabilizes.
- * 
+ *
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
 public class WSDLUtils {
     public static Document writeWSDLDoc(Class cls,
-                                    String url, 
-                                    String urn, 
+                                    String allowedMethods,
+                                    String url,
+                                    String urn,
                                     String description,
                                     MessageContext msgContext) throws Exception
     {
         TypeMappingRegistry reg = msgContext.getTypeMappingRegistry();
         String name = cls.getName();
-        
+
         DefinitionFactory factory = DefinitionFactory.
                 newInstance("com.ibm.wsdl.factory.DefinitionFactoryImpl");
         Definition def = factory.newDefinition();
         Binding binding = def.createBinding();
         Service service = def.createService();
-        
+
         def.setTargetNamespace(url); // !!! Probably not...
-        
+
         def.addNamespace("serviceNS", url);
         def.addNamespace("soap", "http://schemas.xmlsoap.org/wsdl/soap/");
 
         service.setQName(new javax.wsdl.QName(urn, name));
         def.addService(service);
-        
+
         PortType portType = def.createPortType();
         portType.setUndefined(false);
-        
+
         portType.setQName(new javax.wsdl.QName(url, name + "PortType"));
 
-        Method[] methods = cls.getDeclaredMethods();
+        Method[] methods = cls.getMethods();
         ArrayList encodingList = new ArrayList();
         encodingList.add(Constants.URI_SOAP_ENC);
-        
+
         Message msg;
         for(int i = 0, j = methods.length; i < j; i++) {
+
             Operation oper = def.createOperation();
             oper.setName(methods[i].getName());
             oper.setUndefined(false);
-            
+
             Input input = def.createInput();
-            
+
             msg = getRequestMessage(def, methods[i], reg);
             input.setMessage(msg);
             oper.setInput(input);
-            
+
             def.addMessage(msg);
-            
+
             msg = getResponseMessage(def, methods[i], reg);
             Output output = def.createOutput();
             output.setMessage(msg);
             oper.setOutput(output);
-            
+
             def.addMessage(msg);
-            
+
             portType.addOperation(oper);
-            
+
             BindingOperation bindingOper = def.createBindingOperation();
             BindingInput bindingInput = def.createBindingInput();
             BindingOutput bindingOutput = def.createBindingOutput();
-            
+
             bindingOper.setName(oper.getName());
-            
+
             SOAPOperation soapOper = new SOAPOperation();
             soapOper.setSoapActionURI("");
             soapOper.setStyle("rpc");
             bindingOper.addExtensibilityElement(soapOper);
-            
+
             SOAPBody soapBody = new SOAPBody();
             soapBody.setUse("encoded");
             soapBody.setEncodingStyles(encodingList);
-            
+
             bindingInput.addExtensibilityElement(soapBody);
             bindingOutput.addExtensibilityElement(soapBody);
-            
+
             bindingOper.setBindingInput(bindingInput);
             bindingOper.setBindingOutput(bindingOutput);
-            
+
             binding.addBindingOperation(bindingOper);
         }
-        
+
         def.addPortType(portType);
-        
+
         binding.setPortType(portType);
         binding.setUndefined(false);
         binding.setQName(new javax.wsdl.QName(url, name + "SoapBinding"));
-        
+
         SOAPBinding soapBinding = new SOAPBinding();
         soapBinding.setStyle("rpc");
         soapBinding.setTransportURI("http://schemas.xmlsoap.org/soap/http");
-        
+
         binding.addExtensibilityElement(soapBinding);
-        
+
         def.addBinding(binding);
-        
+
         Port port = def.createPort();
-        
+
         port.setBinding(binding);
         port.setName("foo");
-        
+
         SOAPAddress addr = new SOAPAddress();
         addr.setLocationURI(url);
-        
+
         port.addExtensibilityElement(addr);
-        
+
         service.addPort(port);
 
         return com.ibm.wsdl.xml.WSDLWriter.getDocument(def);
@@ -188,40 +190,40 @@ public class WSDLUtils {
                                             TypeMappingRegistry reg)
     {
         Message msg = def.createMessage();
-        
+
         javax.wsdl.QName qName = new javax.wsdl.QName("",
                                         method.getName().concat("Request"));
 
         msg.setQName(qName);
         msg.setUndefined(false);
-        
+
         Class[] parameters = method.getParameterTypes();
         for(int i = 0, j = parameters.length; i < j; i++) {
             addPartToMessage(def, msg, "arg" + i, parameters[i], reg);
         }
-        
+
         return msg;
     }
-    
+
     public static Message getResponseMessage(Definition def,
                                              Method method,
                                              TypeMappingRegistry reg)
     {
         Message msg = def.createMessage();
-        
+
         javax.wsdl.QName qName = new javax.wsdl.QName("",
                                         method.getName().concat("Response"));
 
         msg.setQName(qName);
         msg.setUndefined(false);
-        
+
         Class type = method.getReturnType();
         addPartToMessage(def, msg, method.getName().concat("Result"),
                 type, reg);
-        
+
         return msg;
     }
-    
+
     public static int n = 1;
 
     public static void addPartToMessage(Definition def,
@@ -232,6 +234,9 @@ public class WSDLUtils {
     {
         Part part = def.createPart();
         org.apache.axis.utils.QName qName = reg.getTypeQName(param);
+        if (qName == null) {
+            qName = new org.apache.axis.utils.QName("java", param.getName());
+        }
         String pref = def.getPrefix(qName.getNamespaceURI());
         if (pref == null) {
             def.addNamespace("ns" + n++, qName.getNamespaceURI());
