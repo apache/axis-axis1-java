@@ -46,6 +46,7 @@ public class QNameDeserializer extends SimpleDeserializer {
      * We just need to override makeValue().
      */
     public Object makeValue(String source) {
+        source = source.trim();
         int colon = source.lastIndexOf(":");
         String namespace = colon < 0 ? "" :
                 context.getNamespaceURI(source.substring(0, colon));
