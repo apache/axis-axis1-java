@@ -76,9 +76,9 @@ public abstract class AbstractXMLEncoder implements XMLEncoder {
     private static final byte[] QUOTE = "&quot;".getBytes();
     private static final byte[] LESS = "&lt;".getBytes();
     private static final byte[] GREATER = "&gt;".getBytes();
-    private static final byte[] LF = "&#xa;".getBytes();
-    private static final byte[] CR = "&#xd;".getBytes();
-    private static final byte[] TAB = "&#x9;".getBytes();
+    private static final byte[] LF = "\r".getBytes();
+    private static final byte[] CR = "\n".getBytes();
+    private static final byte[] TAB = "\t".getBytes();
 
     /**
      * Encode a string
