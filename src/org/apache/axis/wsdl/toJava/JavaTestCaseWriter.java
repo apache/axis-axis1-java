@@ -188,7 +188,7 @@ public class JavaTestCaseWriter extends JavaWriter {
                 pw.print(params.returnType.getName());
                 pw.print(" value = ");
 
-                if (  isPrimitiveType( params.returnType ) ) {
+                if ( Utils.isPrimitiveType( params.returnType ) ) {
                     if ( "boolean".equals( params.returnType.getName() ) ) {
                         pw.println("false;");
                     } else {
@@ -230,7 +230,7 @@ public class JavaTestCaseWriter extends JavaWriter {
                 }
 
                 if (param.getMode() != Parameter.OUT) {
-                    if ( isPrimitiveType(param.getType()) ) {
+                    if ( Utils.isPrimitiveType(param.getType()) ) {
                         if ( "boolean".equals(paramType) ) {
                             pw.print("true");
                         } else if ("byte".equals(paramType)) {
