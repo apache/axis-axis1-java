@@ -24,13 +24,13 @@ public class TestXMLUtils extends TestCase
     public void testInit()
     {
         DocumentBuilderFactory dbf = XMLUtils.initDOMFactory();
-        assertTrue(dbf instanceof DocumentBuilderFactory);
+        assertNotNull("Did not get a DocumentBuilder Factory", dbf);
     }
 
     public void testNewDocumentNoArgConstructor()
     {
         Document doc = XMLUtils.newDocument();
-        assertTrue(doc instanceof org.w3c.dom.Document);
+        assertNotNull("Did not get a new Document", doc);
     }
 
     public void testNewDocumentInputSource()
@@ -38,7 +38,7 @@ public class TestXMLUtils extends TestCase
         Reader reader = (Reader)this.getTestXml("reader");
         InputSource inputsrc = new InputSource(reader);
         Document doc = XMLUtils.newDocument(inputsrc);
-        assertTrue(doc instanceof org.w3c.dom.Document);
+        assertNotNull("Did not get a new Document", doc);
     }
 
     public void testNewDocumentInputStream()
@@ -46,7 +46,7 @@ public class TestXMLUtils extends TestCase
         InputStream iostream = (InputStream)this.getTestXml("inputstream");
         InputSource inputsrc = new InputSource(iostream);
         Document doc = XMLUtils.newDocument(inputsrc);
-        assertTrue(doc instanceof org.w3c.dom.Document);
+        assertNotNull("Did not get a new Document", doc);
     }
 
     /* This test will fail unless you are connected to the Web, so just skip
@@ -58,7 +58,7 @@ public class TestXMLUtils extends TestCase
     {
         String uri = "http://java.sun.com/j2ee/dtds/web-app_2.2.dtd";
         Document doc = XMLUtils.newDocument(uri);
-        assertTrue(doc instanceof org.w3c.dom.Document);
+        assertNotNull("Did not get a new Document", doc);
     }
     */
 
@@ -70,7 +70,7 @@ public class TestXMLUtils extends TestCase
 
         String xmlString = (String)this.getTestXml("string");
         String result = XMLUtils.DocumentToString(doc);
-        assertEquals(xmlString, result);
+        assertEquals("xmlString is not the same as result", xmlString, result);
     }
 
     /**
@@ -114,7 +114,7 @@ public class TestXMLUtils extends TestCase
         //don't forget to close this end of the pipe (ConsumerPipe closes the other end).
         out.close();
 
-        assertEquals(expected, result);
+        assertEquals("Did not get the expected result", expected, result);
     }
 
     /**
@@ -136,7 +136,7 @@ public class TestXMLUtils extends TestCase
         out.close();
 
         String expected = (String)this.getTestXml("string");
-        assertEquals(expected, result);
+        assertEquals("Did not get the expected result", expected, result);
     }
 
     public void testElementToString()
@@ -149,8 +149,9 @@ public class TestXMLUtils extends TestCase
         Element elem = (Element)nl.item(0);
         String expected = "<display-name>Apache-Axis</display-name>";
         String result = XMLUtils.ElementToString(elem);
-        assertEquals("display-name", elem.getTagName());
-        assertEquals(expected, result);
+        assertEquals("Element tag name is not 'display-name', it is: " + elem.getTagName(),
+                     "display-name", elem.getTagName());
+        assertEquals("Did not get the expected result", expected, result);
     }
 
     public void testGetInnerXMLString()
@@ -177,13 +178,13 @@ public class TestXMLUtils extends TestCase
 
         String expected = "svg";
         String result = XMLUtils.getPrefix("\"http://www.w3.org/2000/svg\"", elem);
-        assertEquals(expected, result);
+        assertEquals("Did not get the expected result", expected, result);
         expected = "xlink";
         result = XMLUtils.getPrefix("\"http://www.w3.org/1999/xlink\"", elem);
-        assertEquals(expected, result);
+        assertEquals("Did not get the expected result", expected, result);
         expected = "xhtml";
         result = XMLUtils.getPrefix("\"http://www.w3.org/1999/xhtml\"", elem);
-        assertEquals(expected, result);
+        assertEquals("Did not get the expected result", expected, result);
     }
 
     public void testGetNamespace()
@@ -191,14 +192,14 @@ public class TestXMLUtils extends TestCase
         String testDoc = "<svg xmlns:svg=\"http://www.w3.org/2000/svg\"/>";
         InputSource inputsrc = new InputSource(new StringReader(testDoc));
         Document doc = XMLUtils.newDocument(inputsrc);
-        assertNotNull(doc);
+        assertNotNull("Got a null document", doc);
 
         NodeList nl = doc.getElementsByTagName("svg");
         Element elem = (Element)nl.item(0);
 
         String expected = "http://www.w3.org/2000/svg";
         String result = XMLUtils.getNamespace("svg", elem);
-        assertEquals(expected, result);
+        assertEquals("Did not get the expected result", expected, result);
     }
 
     /**
