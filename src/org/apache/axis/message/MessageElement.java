@@ -77,7 +77,7 @@ public class MessageElement
     protected String    id;
     protected boolean   isRoot = false;
     protected SOAPEnvelope message = null;
-
+    protected DeserializationContext context = null;
     DeserializerBase deserializer;
     
     // The java Object value of this element.  This is either set by
@@ -107,6 +107,7 @@ public class MessageElement
         }
       this.namespaceURI = namespace;
       this.name = localPart;
+      this.context = context;
 
       if (attributes == null) {
         this.attributes = new AttributesImpl();
