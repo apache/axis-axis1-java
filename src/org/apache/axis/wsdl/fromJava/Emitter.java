@@ -63,6 +63,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.InternalException;
 import org.apache.axis.Version;
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.description.FaultDesc;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ParameterDesc;
@@ -791,6 +792,11 @@ public class Emitter {
             for (int i = 0; i < mappedTypes.length; i++) {
                 Class mappedType = mappedTypes[i];
                 QName name = tm.getTypeQName(mappedType);
+                if (name.getLocalPart().indexOf(SymbolTable.ANON_TOKEN) != -1) {
+                    // If this is an anonymous type, it doesn't need to be written out here
+                    // (and trying to do so will generate an error).  Skip it.
+                    continue;
+                }
 
                 /**
                  * If it's a non-standard type, make sure it shows up in

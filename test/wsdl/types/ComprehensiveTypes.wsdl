@@ -96,60 +96,6 @@
         </xsd:sequence>
       </xsd:complexType>
 
-      <xsd:element name="elemWComplex">
-        <xsd:complexType>
-          <xsd:all>
-            <xsd:element name="one" type="typens:simple"/> <!-- Ref to a simple type -->
-            <xsd:element name="dateone" type="typens:simpleDate"/>
-            <xsd:element name="datetwo" type="typens:simpleDateTime"/>
-            <xsd:element name="two" type="typens2:fwd"/> <!-- Forward type use to dif namespace -->
-            <xsd:element ref="typens2:three"/>           <!-- Forward ref use to a dif namespace -->
-            <xsd:element ref="typens:enumValue" maxOccurs="unbounded" /> <!-- ref & maxOccurs -->
-            <xsd:element name="enum1" type="typens:enumString"/>
-            <xsd:element name="enum2" type="typens:enumInt"/>
-            <xsd:element name="enum3" type="typens:enumLong"/>
-            <xsd:element name="enum4" type="typens:enumFloat"/>
-            <xsd:element name="enum5" type="typens:enumDouble"/>
-            <xsd:element name="enum6" type="typens:enumShort"/>
-            <xsd:element name="enum7" type="typens:enumByte"/>
-            <xsd:element name="enum8" type="typens:enumInteger"/>
-            <xsd:element name="enum9" type="typens:enumNMTOKEN"/>
-            <xsd:element name="soapint" type="soapenc:int"/>
-            <xsd:element name="nested" type="typens2:b"/>
-            <xsd:element name="D_TSENT" type="xsd:string"/> <!-- test strange name -->
-            <xsd:element name="optArray" minOccurs="0" maxOccurs="1" type="typens:array" />
-            <xsd:element name="byteArray" type="typens:array_of_base64" />
-            <xsd:element name="parm" type="typens:StringParameter" />
-
-            <!-- Test for types that are similarly named to common java lang classes -->
-            <xsd:element name="myObject" type="typens:Object" />
-            <xsd:element name="myString" type="typens:String" />
-            <xsd:element name="myClass" type="typens:Class" />
-
-            <!-- Test anonymous type with an element that has maxOccurs -->
-            <xsd:element name="logEntry" minOccurs="0" maxOccurs="unbounded">
-              <xsd:complexType>
-                <xsd:sequence>
-                   <xsd:element name="name" type="xsd:string"/>
-                   <xsd:element name="value" type="xsd:string"/>
-                </xsd:sequence>
-              </xsd:complexType>
-            </xsd:element>
-          </xsd:all>
-          <xsd:attribute name="attr" type="typens:enum" />
-          <xsd:attribute name="parmAttr" type="typens:StringParameter" />
-          <xsd:attribute name="enumAttr">
-            <xsd:simpleType>
-              <xsd:restriction base="xsd:string">
-                <xsd:enumeration value="one"/>                      
-                <xsd:enumeration value="two"/>                    
-                <xsd:enumeration value="three"/>                    
-              </xsd:restriction>
-            </xsd:simpleType>
-          </xsd:attribute>
-        </xsd:complexType>
-      </xsd:element>
-
       <xsd:element name="enumValue" type="typens:enum"/>
 
       <xsd:complexType name="time">
@@ -857,10 +803,6 @@
     <part name="complexSequence" type="typens:complexSequence"/>
   </message>
 
-  <message name="elemWComplex">
-    <part name="elemWComplex" element="typens:elemWComplex"/>
-  </message>
-
   <message name="complexWComplex">
     <part name="complexWComplex" type="typens:complexWComplex"/>
   </message>
@@ -1006,22 +948,6 @@
     <operation name="complexSequenceReturn">
       <input message="tns:empty"/>
       <output message="tns:complexSequence"/>
-    </operation>
-    <operation name="elemWComplexIn">
-      <input message="tns:elemWComplex"/>
-      <output message="tns:empty"/>
-    </operation>
-    <operation name="elemWComplexInout">
-      <input message="tns:elemWComplex"/>
-      <output message="tns:elemWComplex"/>
-    </operation>
-    <operation name="elemWComplexOut" parameterOrder="elemWComplex">
-      <input message="tns:empty"/>
-      <output message="tns:elemWComplex"/>
-    </operation>
-    <operation name="elemWComplexReturn">
-      <input message="tns:empty"/>
-      <output message="tns:elemWComplex"/>
     </operation>
     <operation name="complexWComplexIn">
       <input message="tns:complexWComplex"/>
@@ -1672,66 +1598,6 @@
       </output>
     </operation>
     <operation name="complexSequenceReturn">
-      <soap:operation soapAction=""/>
-      <input>
-        <soap:body
-            use="encoded"
-            namespace=""
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
-      </input>
-      <output>
-        <soap:body
-            use="encoded"
-            namespace=""
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
-      </output>
-    </operation>
-    <operation name="elemWComplexIn">
-      <soap:operation soapAction=""/>
-      <input>
-        <soap:body
-            use="encoded"
-            namespace=""
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
-      </input>
-      <output>
-        <soap:body
-            use="encoded"
-            namespace=""
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
-      </output>
-    </operation>
-    <operation name="elemWComplexInout">
-      <soap:operation soapAction=""/>
-      <input>
-        <soap:body
-            use="encoded"
-            namespace=""
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
-      </input>
-      <output>
-        <soap:body
-            use="encoded"
-            namespace=""
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
-      </output>
-    </operation>
-    <operation name="elemWComplexOut">
-      <soap:operation soapAction=""/>
-      <input>
-        <soap:body
-            use="encoded"
-            namespace=""
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
-      </input>
-      <output>
-        <soap:body
-            use="encoded"
-            namespace=""
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
-      </output>
-    </operation>
-    <operation name="elemWComplexReturn">
       <soap:operation soapAction=""/>
       <input>
         <soap:body
