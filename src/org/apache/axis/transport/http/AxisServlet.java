@@ -65,7 +65,7 @@ import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.configuration.ServletEngineConfigurationFactory;
 import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.message.SOAPFaultElement;
+import org.apache.axis.message.SOAPFault;
 import org.apache.axis.security.servlet.ServletSecurityProvider;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.Admin;

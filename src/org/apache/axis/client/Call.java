@@ -79,7 +79,7 @@ import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.message.SOAPFaultElement;
+import org.apache.axis.message.SOAPFault;
 import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.transport.http.HTTPTransport;
 import org.apache.axis.utils.JavaUtils;
@@ -1993,8 +1993,8 @@ public class Call implements javax.xml.rpc.Call {
         SOAPEnvelope resEnv = (SOAPEnvelope)resMsg.getSOAPEnvelope();
 
         SOAPBodyElement respBody = resEnv.getFirstBody();
-        if (respBody instanceof SOAPFaultElement) {
-            throw ((SOAPFaultElement)respBody).getFault();
+        if (respBody instanceof SOAPFault) {
+            throw ((SOAPFault)respBody).getFault();
         }
     }
 

@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2002 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -52,18 +52,100 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-
 package org.apache.axis.message;
 
-import javax.xml.soap.Detail;
-import javax.xml.soap.SOAPException;
+import org.apache.axis.AxisFault;
+import org.apache.axis.Constants;
+import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.encoding.SerializationContext;
+import org.w3c.dom.Element;
+import org.xml.sax.Attributes;
 
-/**
- * SOAP Fault implementation
+import javax.xml.namespace.QName;
+
+import java.io.IOException;
+
+/** A Fault body element.
  *
- * @author Davanum Srinivas (dims@yahoo.com)
+ * @author Sam Ruby (rubys@us.ibm.com)
+ * @author Glen Daniels (gdaniels@macromedia.com)
+ * @author Tom Jordahl (tomj@macromedia.com)
  */
-public class SOAPFault extends MessageElement implements javax.xml.soap.SOAPFault {
+public class SOAPFault extends SOAPBodyElement implements javax.xml.soap.SOAPFault
+{
+    protected AxisFault fault;
+
+    public SOAPFault(String namespace, String localName, String prefix,
+                            Attributes attrs, DeserializationContext context)
+    {
+        super(namespace, localName, prefix, attrs, context);
+        this.fault = fault;
+        namespaceURI = Constants.URI_SOAP11_ENV;
+        name = Constants.ELEM_FAULT;
+    }
+
+    public SOAPFault(AxisFault fault)
+    {
+        this.fault = fault;
+        namespaceURI = Constants.URI_SOAP11_ENV;
+        name = Constants.ELEM_FAULT;
+    }
+
+    public void outputImpl(SerializationContext context)
+        throws IOException
+    {
+        context.registerPrefixForURI(prefix, namespaceURI);
+        context.startElement(new QName(this.getNamespaceURI(),
+                                       this.getName()),
+                             attributes);
+
+        // XXX - Can fault be anything but an AxisFault here?
+         if (fault instanceof AxisFault) {
+            AxisFault axisFault = (AxisFault) fault;
+            if (axisFault.getFaultCode() != null) {
+                // Do this BEFORE starting the element, so the prefix gets
+                // registered if needed.
+                String faultCode = context.qName2String(axisFault.getFaultCode());
+                context.startElement(Constants.QNAME_FAULTCODE, null);
+                context.writeSafeString(faultCode);
+                context.endElement();
+            }
+
+            if (axisFault.getFaultString() != null) {
+                context.startElement(Constants.QNAME_FAULTSTRING, null);
+                context.writeSafeString(axisFault.getFaultString());
+                context.endElement();
+            }
+
+            if (axisFault.getFaultActor() != null) {
+                context.startElement(Constants.QNAME_FAULTACTOR, null);
+                context.writeSafeString(axisFault.getFaultActor());
+                context.endElement();
+            }
+
+            Element[] faultDetails = axisFault.getFaultDetails();
+            if (faultDetails != null) {
+                context.startElement(Constants.QNAME_FAULTDETAILS, null);
+                for (int i = 0; i < faultDetails.length; i++) {
+                    context.writeDOMElement(faultDetails[i]);
+                }
+                context.endElement();
+            }
+        }
+
+        context.endElement();
+    }
+
+    public AxisFault getFault()
+    {
+        return fault;
+    }
+
+    public void setFault(AxisFault fault)
+    {
+        this.fault = fault;
+    }
+
     /**
      * Sets this <CODE>SOAPFaultException</CODE> object with the given
      *   fault code.
@@ -77,8 +159,8 @@ public class SOAPFault extends MessageElement implements javax.xml.soap.SOAPFaul
      *     adding the <CODE>faultCode</CODE> to the underlying XML
      *     tree.
      */
-    public void setFaultCode(String faultCode) throws SOAPException {
-        //TODO: Flesh this out.
+    public void setFaultCode(String faultCode) throws javax.xml.soap.SOAPException {
+        fault.setFaultCode(faultCode);
     }
 
     /**
@@ -87,8 +169,7 @@ public class SOAPFault extends MessageElement implements javax.xml.soap.SOAPFaul
      * @return a <CODE>String</CODE> with the fault code
      */
     public String getFaultCode() {
-        //TODO: Flesh this out.
-        return null;
+        return fault.getFaultCode().toString();
     }
 
     /**
@@ -104,8 +185,8 @@ public class SOAPFault extends MessageElement implements javax.xml.soap.SOAPFaul
      *     adding the <CODE>faultActor</CODE> to the underlying XML
      *     tree.
      */
-    public void setFaultActor(String faultActor) throws SOAPException {
-        //TODO: Flesh this out.
+    public void setFaultActor(String faultActor) throws javax.xml.soap.SOAPException {
+        fault.setFaultActor(faultActor);
     }
 
     /**
@@ -116,8 +197,7 @@ public class SOAPFault extends MessageElement implements javax.xml.soap.SOAPFaul
      * @see #setFaultActor(java.lang.String) setFaultActor(java.lang.String)
      */
     public String getFaultActor() {
-        //TODO: Flesh this out.
-        return null;
+        return fault.getFaultActor();
     }
 
     /**
@@ -132,8 +212,8 @@ public class SOAPFault extends MessageElement implements javax.xml.soap.SOAPFaul
      * @see #getFaultString() getFaultString()
      */
     public void setFaultString(String faultString)
-            throws SOAPException {
-        //TODO: Flesh this out.
+            throws javax.xml.soap.SOAPException {
+        fault.setFaultString(faultString);
     }
 
     /**
@@ -143,8 +223,7 @@ public class SOAPFault extends MessageElement implements javax.xml.soap.SOAPFaul
      *     fault
      */
     public String getFaultString() {
-        //TODO: Flesh this out.
-        return null;
+        return fault.getFaultString();
     }
 
     /**
@@ -157,7 +236,7 @@ public class SOAPFault extends MessageElement implements javax.xml.soap.SOAPFaul
      * @return  a <CODE>Detail</CODE> object with
      *     application-specific error information
      */
-    public Detail getDetail() {
+    public javax.xml.soap.Detail getDetail() {
         //TODO: Flesh this out.
         return null;
     }
@@ -175,7 +254,7 @@ public class SOAPFault extends MessageElement implements javax.xml.soap.SOAPFaul
      *     <CODE>SOAPFaultException</CODE> object already contains a valid
      *     <CODE>Detail</CODE> object
      */
-    public Detail addDetail() throws SOAPException {
+    public javax.xml.soap.Detail addDetail() throws javax.xml.soap.SOAPException {
         //TODO: Flesh this out.
         return null;
     }

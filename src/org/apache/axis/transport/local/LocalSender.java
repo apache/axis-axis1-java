@@ -61,7 +61,7 @@ import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.message.SOAPFaultElement;
+import org.apache.axis.message.SOAPFault;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
@@ -162,7 +162,7 @@ public class LocalSender extends BasicHandler {
                 respMsg = new Message(fault);
                 serverContext.setResponseMessage(respMsg);
             } else {
-                SOAPFaultElement faultEl = new SOAPFaultElement(fault);
+                SOAPFault faultEl = new SOAPFault(fault);
                 SOAPEnvelope env = respMsg.getSOAPEnvelope();
                 env.clearBody();
                 env.addBodyElement(faultEl);

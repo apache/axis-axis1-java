@@ -57,7 +57,7 @@ package org.apache.axis ;
 
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.message.SOAPFaultElement;
+import org.apache.axis.message.SOAPFault;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 
@@ -299,8 +299,8 @@ public class AxisFault extends java.rmi.RemoteException {
 
         SOAPEnvelope envelope = new SOAPEnvelope();
 
-        SOAPFaultElement fault =
-                                new SOAPFaultElement(this);
+        SOAPFault fault =
+                                new SOAPFault(this);
         envelope.addBodyElement(fault);
 
         envelope.output(context);

@@ -54,9 +54,8 @@
  */
 package test.faults;
 
-import junit.framework.TestCase;
-import junit.framework.TestResult;
 import junit.framework.Test;
+import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import junit.textui.TestRunner;
 import org.apache.axis.AxisFault;
@@ -64,10 +63,11 @@ import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.message.SOAPFaultElement;
+import org.apache.axis.message.SOAPFault;
 import org.apache.axis.server.AxisServer;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
+
 import javax.xml.namespace.QName;
 
 /**
@@ -114,8 +114,8 @@ public class FaultDecode extends TestCase {
 
         SOAPBodyElement respBody = envelope.getFirstBody();
         assertTrue("respBody should be a SOAPFaultElement", respBody
-                        instanceof SOAPFaultElement);
-        AxisFault aFault = ((SOAPFaultElement) respBody).getFault();
+                        instanceof SOAPFault);
+        AxisFault aFault = ((SOAPFault) respBody).getFault();
 
         assertNotNull("Fault should not be null", aFault);
         

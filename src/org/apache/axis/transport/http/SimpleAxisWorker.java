@@ -61,7 +61,7 @@ import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.encoding.Base64;
 import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.message.SOAPFaultElement;
+import org.apache.axis.message.SOAPFault;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
@@ -420,7 +420,7 @@ public class SimpleAxisWorker implements Runnable {
                     try {
                         SOAPEnvelope env = responseMsg.getSOAPEnvelope();
                         env.clearBody();
-                        env.addBodyElement(new SOAPFaultElement((AxisFault) e));
+                        env.addBodyElement(new SOAPFault((AxisFault) e));
                     } catch (AxisFault fault) {
                         // Should never reach here!
                     }
