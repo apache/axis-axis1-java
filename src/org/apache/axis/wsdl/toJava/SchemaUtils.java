@@ -181,7 +181,7 @@ public class SchemaUtils {
                             typeAttr = true;
                         if (nodeType == null) { // The element may use an anonymous type
                             nodeType = nodeName;
-                            typeAttr = true;
+                            typeAttr = false;
                         }
 
                         Type Type = (Type) symbolTable.getTypeEntry(nodeType, !typeAttr);

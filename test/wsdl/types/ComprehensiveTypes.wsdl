@@ -8,6 +8,7 @@
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
     xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
     xmlns="http://schemas.xmlsoap.org/wsdl/">
 
   <!-- type defs -->
@@ -24,6 +25,14 @@
         </xsd:restriction>
       </xsd:simpleType>
 
+      <xsd:complexType name="array">
+        <xsd:complexContent>
+          <xsd:restriction base="soapenc:Array">
+            <xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:string[]"/>
+          </xsd:restriction>
+        </xsd:complexContent>
+      </xsd:complexType>
+
       <xsd:complexType name="complexAll">
         <xsd:all>
           <xsd:element name="areaCode" type="xsd:int"/>
@@ -37,6 +46,33 @@
           <xsd:element name="areaCode" type="xsd:int"/>
           <xsd:element name="exchange" type="xsd:string"/>
           <xsd:element name="number" type="xsd:string"/>
+        </xsd:sequence>
+      </xsd:complexType>
+
+      <xsd:element name="elemWComplex">
+        <xsd:complexType>
+          <xsd:all>
+            <xsd:element name="one" type="xsd:string"/>
+          </xsd:all>
+        </xsd:complexType>
+      </xsd:element>
+
+      <xsd:complexType name="complexWComplex">
+        <xsd:sequence>
+          <xsd:element name="stock_quote">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="symbol" type="xsd:string"/>
+                <xsd:element name="time" type="xsd:string"/>
+                <xsd:element name="last" type="xsd:string"/>
+                <xsd:element name="change" type="xsd:string"/>
+                <xsd:element name="pctchange" type="xsd:string"/>
+                <xsd:element name="bid" type="xsd:string"/>
+                <xsd:element name="ask" type="xsd:string"/>
+              </xsd:sequence>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="outside" type="xsd:int"/>
         </xsd:sequence>
       </xsd:complexType>
 
@@ -75,12 +111,24 @@
     <part name="enum" type="typens:enum"/>
   </message>
 
+  <message name="array">
+    <part name="array" type="typens:array"/>
+  </message>
+
   <message name="complexAll">
     <part name="complexAll" type="typens:complexAll"/>
   </message>
 
   <message name="complexSequence">
     <part name="complexSequence" type="typens:complexSequence"/>
+  </message>
+
+  <message name="elemWComplex">
+    <part name="elemWComplex" element="typens:elemWComplex"/>
+  </message>
+
+  <message name="complexWComplex">
+    <part name="complexWComplex" type="typens:complexWComplex"/>
   </message>
 
   <!-- port type declns -->
@@ -109,6 +157,20 @@
       <input message="tns:empty"/>
       <output message="tns:enum"/>
     </operation>
+<!--
+    <operation name="arrayIn">
+      <input message="tns:array"/>
+      <output message="tns:empty"/>
+    </operation>
+    <operation name="arrayInout">
+      <input message="tns:array"/>
+      <output message="tns:array"/>
+    </operation>
+    <operation name="arrayOut">
+      <input message="tns:empty"/>
+      <output message="tns:array"/>
+    </operation>
+-->
     <operation name="complexAllIn">
       <input message="tns:complexAll"/>
       <output message="tns:empty"/>
@@ -132,6 +194,30 @@
     <operation name="complexSequenceOut">
       <input message="tns:empty"/>
       <output message="tns:complexSequence"/>
+    </operation>
+    <operation name="elemWComplexIn">
+      <input message="tns:elemWComplex"/>
+      <output message="tns:empty"/>
+    </operation>
+    <operation name="elemWComplexInout">
+      <input message="tns:elemWComplex"/>
+      <output message="tns:elemWComplex"/>
+    </operation>
+    <operation name="elemWComplexOut">
+      <input message="tns:empty"/>
+      <output message="tns:elemWComplex"/>
+    </operation>
+    <operation name="complexWComplexIn">
+      <input message="tns:complexWComplex"/>
+      <output message="tns:empty"/>
+    </operation>
+    <operation name="complexWComplexInout">
+      <input message="tns:complexWComplex"/>
+      <output message="tns:complexWComplex"/>
+    </operation>
+    <operation name="complexWComplexOut">
+      <input message="tns:empty"/>
+      <output message="tns:complexWComplex"/>
     </operation>
   </portType>
 
@@ -230,6 +316,53 @@
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
     </operation>
+<!--
+    <operation name="arrayIn">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="arrayInout">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="arrayOut">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+-->
     <operation name="complexAllIn">
       <soap:operation soapAction=""/>
       <input>
@@ -306,6 +439,96 @@
       </output>
     </operation>
     <operation name="complexSequenceOut">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="elemWComplexIn">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="elemWComplexInout">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="elemWComplexOut">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="complexWComplexIn">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="complexWComplexInout">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="complexWComplexOut">
       <soap:operation soapAction=""/>
       <input>
         <soap:body
