@@ -52,62 +52,29 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
+
 package test.faults;
 
+import junit.framework.Test;
 import junit.framework.TestCase;
-import org.apache.axis.AxisFault;
-import org.apache.axis.Message;
-import org.apache.axis.MessageContext;
-import org.apache.axis.message.SOAPBodyElement;
-import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.message.SOAPFaultElement;
-import org.apache.axis.server.AxisServer;
+import junit.framework.TestSuite;
 
 /**
- * This class tests a case where the fault is not filled in..
+ *  Test package for faults
  *
  * @author Mark Roder <mroder@wamnet.com>
  */
+public class PackageTests extends TestCase {
 
-public class FaultDecode extends TestCase {
-
-    public FaultDecode(String name) {
+    public PackageTests(String name) {
         super(name);
-    } // ctor
+    }
 
-    public void testFault() throws Exception {
-        String messageText = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" soap:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">"
-            + "<soap:Header>"
-            + ""
-            + "</soap:Header> "
-            + "<soap:Body>  "
-            + "     <soap:Fault>"
-            + "              <faultcode>Some.FaultCode</faultcode>"
-            + "              <faultstring>This caused a fault</faultstring>"
-            + "              <detail>This was a really bad thing</detail>"
-            + "     </soap:Fault>"
-            + "</soap:Body>"
-            + "</soap:Envelope>";
+    public static Test suite() throws Exception {
+        TestSuite suite = new TestSuite();
 
-        AxisServer server = new AxisServer();
-        Message message = new Message(messageText);
-        message.setMessageContext(new MessageContext(server));
+        suite.addTestSuite(FaultDecode.class);
 
-        SOAPEnvelope envelope = (SOAPEnvelope) message.getSOAPPart().getAsSOAPEnvelope();
-        this.assertNotNull("envelope", envelope);
-
-        SOAPBodyElement respBody = envelope.getFirstBody();
-        this.assertTrue("respBody should be a SOAPFaultElement", respBody
-                        instanceof SOAPFaultElement);
-        AxisFault aFault = ((SOAPFaultElement) respBody).getAxisFault();
-
-        //Leave in until getFaultDetails is tested
-        System.out.println(aFault);
-
-        this.assertNotNull("Fault should not be null", aFault);
-        this.assertNotNull("faultCode should not be null", aFault.getFaultCode());
-        this.assertNotNull("faultString should not be null", aFault.getFaultString());
-        //7 Nov 01 comment out to get tests to pass to allow this to be integrated
-        //this.assertNotNull("faultDetails should not be null", aFault.getFaultDetails());
-    } // testFault
+        return suite;
+    }
 }
