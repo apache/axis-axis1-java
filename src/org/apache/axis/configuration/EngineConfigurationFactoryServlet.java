@@ -65,8 +65,10 @@ import javax.servlet.ServletContext;
 import org.apache.axis.ConfigurationException;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.EngineConfigurationFactory;
+import org.apache.axis.AxisEngine;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.utils.Messages;
+import org.apache.axis.utils.ClassUtils;
 import org.apache.commons.logging.Log;
 
 /**
@@ -182,12 +184,21 @@ public class EngineConfigurationFactoryServlet
                 }
             }
         }
-
+        
         if (config == null) {
             try {
                 config = new FileProvider(realWebInfPath, SERVER_CONFIG_FILE);
             } catch (ConfigurationException e) {
                 log.error(Messages.getMessage("servletEngineWebInfError00"), e);
+            }
+        }
+
+        if (config == null) {
+            try {
+                InputStream is = ClassUtils.getResourceAsStream(AxisEngine.class, SERVER_CONFIG_FILE);
+                config = new FileProvider(is);
+            } catch (Exception e) {
+                log.error(Messages.getMessage("servletEngineWebInfError02"), e);
             }
         }
 
