@@ -32,6 +32,7 @@ import java.net.MalformedURLException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Map;
+import java.io.IOException;
 
 /**
  * This is a simple implementation of an HTTP server for processing
@@ -39,6 +40,9 @@ import java.util.Map;
  * use.  Its intended uses are for demos, debugging, and performance
  * profiling.
  *
+ * Note this classes uses static objects to provide a thread pool, so you should
+ * not use multiple instances of this class in the same JVM/classloader unless
+ * you want bad things to happen at shutdown.
  * @author Sam Ruby (ruby@us.ibm.com)
  * @author Rob Jellinghaus (robj@unrealities.com)
  * @author Alireza Taherkordi (a_taherkordi@users.sourceforge.net)
@@ -57,24 +61,38 @@ public class SimpleAxisServer implements Runnable {
     private int maxSessions;
     public static final int MAX_SESSIONS_DEFAULT = 100;
 
+    /**
+     * get the thread pool
+     * @return
+     */
     public static ThreadPool getPool() {
         return pool;
     }
 
+    /**
+     * pool of threads
+     */
     private static ThreadPool pool;
 
-    // Are we doing threads?
+    /** Are we doing threads?
+     * */
     private static boolean doThreads = true;
 
-    // Are we doing sessions?
-    // Set this to false if you don't want any session overhead.
+    /* Are we doing sessions?
+     Set this to false if you don't want any session overhead.
+     */
     private static boolean doSessions = true;
 
+    /**
+     * create a server with the default threads and sessions.
+     */
     public SimpleAxisServer() {
         this(ThreadPool.DEFAULT_MAX_THREADS);
     }
 
     /**
+     * Create a server with a configurable pool side; sessions set to the default
+     * limit
      * @param maxPoolSize maximum thread pool size
      */
     public SimpleAxisServer(int maxPoolSize) {
@@ -83,6 +101,7 @@ public class SimpleAxisServer implements Runnable {
     
     /**
      * Constructor
+     * @param maxPoolSize max number of threads
      * @param maxSessions maximum sessions
      */
     public SimpleAxisServer(int maxPoolSize, int maxSessions) {
@@ -91,23 +110,42 @@ public class SimpleAxisServer implements Runnable {
         pool = new ThreadPool(maxPoolSize);
     }
 
+
+    /**
+     * stop the server if not already told to.
+     * @throws Throwable
+     */
+    protected void finalize() throws Throwable {
+        stop();
+        super.finalize();
+    }
+
+    /**
+     * get max session count
+     * @return
+     */
     public int getMaxSessions() {
         return maxSessions;
     }
 
     /**
+     * Resize the session map
      * @param maxSessions maximum sessions
      */
     public void setMaxSessions(int maxSessions) {
         this.maxSessions = maxSessions;
         ((LRUMap)sessions).setMaximumSize(maxSessions);
     }
-    //---------------------------------------------------
+     //---------------------------------------------------
 
     protected boolean isSessionUsed() {
         return doSessions;
     }
 
+    /**
+     * turn threading on or off. This sets a static value
+     * @param value
+     */
     public void setDoThreads(boolean value) {
         doThreads = value ;
     }
@@ -124,6 +162,11 @@ public class SimpleAxisServer implements Runnable {
         this.myConfig = myConfig;
     }
 
+    /**
+     * demand create a session if there is not already one for the string
+     * @param cooky
+     * @return a session.
+     */
     protected Session createSession(String cooky) {
 
         // is there a session already?
@@ -150,6 +193,12 @@ public class SimpleAxisServer implements Runnable {
 
     private EngineConfiguration myConfig = null;
 
+    /**
+     * demand create an axis server; return an existing one if one exists.
+     * The configuration for the axis server is derived from #myConfig if not null,
+     * the default config otherwise.
+     * @return
+     */
     public synchronized AxisServer getAxisServer() {
         if (myAxisServer == null) {
             if (myConfig == null) {
@@ -160,8 +209,10 @@ public class SimpleAxisServer implements Runnable {
         return myAxisServer;
     }
 
-    // are we stopped?
-    // latch to true if stop() is called
+    /**
+    are we stopped?
+    latch to true if stop() is called
+     */
     private boolean stopped = false;
 
     /**
@@ -194,7 +245,10 @@ public class SimpleAxisServer implements Runnable {
         log.info(Messages.getMessage("quit00", "SimpleAxisServer"));
     }
 
-    // per thread socket information
+    /**
+     * per thread socket information
+     */
+
     private ServerSocket serverSocket;
 
     /**
@@ -221,6 +275,7 @@ public class SimpleAxisServer implements Runnable {
      * @param daemon a boolean indicating if the thread should be a daemon.
      */
     public void start(boolean daemon) throws Exception {
+        stopped=false;
         if (doThreads) {
             Thread thread = new Thread(this);
             thread.setDaemon(daemon);
@@ -238,26 +293,35 @@ public class SimpleAxisServer implements Runnable {
     }
 
     /**
-     * Stop this server.
+     * Stop this server. Can be called safely if the system is already stopped,
+     * or if it was never started.
      *
      * This will interrupt any pending accept().
      */
-    public void stop() throws Exception {
-        /* 
+    public void stop() {
+        //recognise use before we are live
+        if(stopped ) {
+            return;
+        }
+        /*
          * Close the server socket cleanly, but avoid fresh accepts while
          * the socket is closing.
          */
         stopped = true;
+
         try {
-            serverSocket.close();
-        } catch (Exception e) {
+            if(serverSocket != null) {
+                serverSocket.close();
+            }
+        } catch (IOException e) {
             log.info(Messages.getMessage("exception00"), e);
+        } finally {
+            serverSocket=null;
         }
 
         log.info(Messages.getMessage("quit00", "SimpleAxisServer"));
 
-        // Kill the JVM, which will interrupt pending accepts even on linux.
-        //System.exit(0);
+        //shut down the pool
         pool.shutdown();
     }
 
@@ -289,13 +353,14 @@ public class SimpleAxisServer implements Runnable {
             int port = opts.getPort();
             ServerSocket ss = null;
             // Try five times
-            for (int i = 0; i < 5; i++) {
+            final int retries = 5;
+            for (int i = 0; i < retries; i++) {
                 try {
                     ss = new ServerSocket(port);
                     break;
                 } catch (java.net.BindException be){
                     log.debug(Messages.getMessage("exception00"), be);
-                    if (i < 4) {
+                    if (i < (retries-1)) {
                         // At 3 second intervals.
                         Thread.sleep(3000);
                     } else {
