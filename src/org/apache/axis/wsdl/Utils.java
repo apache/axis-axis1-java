@@ -544,94 +544,6 @@ public class Utils {
 
 
     /**
-     * If the specified node represents a supported JAX-RPC complexType/element,
-     * a Vector is returned which contains the child element types and
-     * child element names.  The even indices are the element types (Types) and
-     * the odd indices are the corresponding names (Strings).
-     * If the specified node is not a supported JAX-RPC complexType/element
-     * null is returned.
-     */
-    public static Vector getComplexElementTypesAndNames(Node node, SymbolTable symbolTable) {
-        if (node == null) {
-            return null;
-        }
-
-        // If the node kind is an element, dive into it.
-        QName nodeKind = Utils.getNodeQName(node);
-        if (nodeKind != null &&
-            nodeKind.getLocalPart().equals("element") &&
-            Utils.isSchemaNS(nodeKind.getNamespaceURI())) {
-            NodeList children = node.getChildNodes();
-            Node complexNode = null;
-            for (int j = 0; j < children.getLength() && complexNode == null; j++) {
-                QName complexKind = Utils.getNodeQName(children.item(j));
-                if (complexKind != null &&
-                    complexKind.getLocalPart().equals("complexType") &&
-                    Utils.isSchemaNS(complexKind.getNamespaceURI())) {
-                    complexNode = children.item(j);
-                    node = complexNode;
-                }
-            }
-        }
-
-        // Expecting a schema complexType
-        nodeKind = Utils.getNodeQName(node);
-        if (nodeKind != null &&
-            nodeKind.getLocalPart().equals("complexType") &&
-            Utils.isSchemaNS(nodeKind.getNamespaceURI())) {
-
-            // Under the complexType there should be a sequence or all group node.
-            // (There may be other #text nodes, which we will ignore).
-            NodeList children = node.getChildNodes();
-            Node groupNode = null;
-            for (int j = 0; j < children.getLength() && groupNode == null; j++) {
-                QName groupKind = Utils.getNodeQName(children.item(j));
-                if (groupKind != null &&
-                    (groupKind.getLocalPart().equals("sequence") ||
-                     groupKind.getLocalPart().equals("all")) &&
-                    Utils.isSchemaNS(groupKind.getNamespaceURI()))
-                    groupNode = children.item(j);
-            }
-
-            if (groupNode == null) {
-                return new Vector();
-            }
-            if (groupNode != null) {
-
-                // Process each of the element nodes under the group node
-                Vector v = new Vector();
-                NodeList elements = children.item(1).getChildNodes();
-                for (int i=0; i < elements.getLength(); i++) {
-                    QName elementKind = Utils.getNodeQName(elements.item(i));
-                    if (elementKind != null &&
-                        elementKind.getLocalPart().equals("element") &&
-                        Utils.isSchemaNS(elementKind.getNamespaceURI())) {
-
-                        // Get the name and type qnames.
-                        // The name of the element is the local part of the name's qname.
-                        // The type qname is used to locate the Type, which is then
-                        // used to retrieve the proper java name of the type.
-                        Node elementNode = elements.item(i);
-                        QName nodeName = Utils.getNodeNameQName(elementNode);
-                        QName nodeType = Utils.getNodeTypeRefQName(elementNode);
-                        if (nodeType == null) { // The element may use an anonymous type
-                            nodeType = nodeName;
-                        }
-
-                        Type Type = (Type) symbolTable.getTypeEntry(nodeType);
-                        if (Type != null) {
-                            v.add(Type);
-                            v.add(nodeName.getLocalPart());
-                        }
-                    }
-                }
-                return v;
-            }
-        }
-        return null;
-    }
-
-    /**
      * This method returns a set of all the nested Types.
      * The elements of the returned HashSet are Types.
      */
@@ -643,7 +555,7 @@ public class Utils {
 
     private static void getNestedTypes(
             Node type, HashSet types,SymbolTable symbolTable) {
-        Vector v = Utils.getComplexElementTypesAndNames(type, symbolTable);
+        Vector v = SchemaUtils.getComplexElementTypesAndNames(type, symbolTable);
         if (v != null) {
             for (int i = 0; i < v.size(); i+=2) {
                 if (!types.contains(v.get(i))) {
