@@ -120,12 +120,10 @@ public class ParameterDesc implements Serializable {
      * @param mode IN, OUT, INOUT
      * @param typeQName the parameter's XML type QName
      * @param javaType the parameter's javaType
-     * @param mimeType the parameter's MIME type, if any
      */
-    public ParameterDesc(QName name, byte mode, QName typeQName, Class javaType, String mimeType) {
+    public ParameterDesc(QName name, byte mode, QName typeQName, Class javaType) {
         this(name,mode,typeQName);
         this.javaType = javaType;
-        this.mimeType = mimeType;
     }
 
     public String toString() {
@@ -142,9 +140,6 @@ public class ParameterDesc implements Serializable {
         text+=indent + "isReturn:   " + isReturn + "\n";
         text+=indent + "typeQName:  " + typeQName + "\n";
         text+=indent + "javaType:   " + javaType + "\n";
-        if (mimeType != null) {
-            text+=indent + "MIMEType:   " + mimeType + "\n";
-        }
         return text;
     } // toString
     
@@ -236,11 +231,6 @@ public class ParameterDesc implements Serializable {
         }
 
         this.javaType = javaType;
-
-        // If it doesn't already exist, try to set the MIME type.
-        if (mimeType == null) {
-            mimeType = JavaUtils.javaToMIME(javaType);
-        }
     }
 
     public byte getMode() {
@@ -272,20 +262,6 @@ public class ParameterDesc implements Serializable {
      */
     public void setIsReturn(boolean value) {
         isReturn = value;
-    }
-
-    /**
-     * Get the MIME type of this parameter.
-     */
-    public String getMIMEType() {
-        return mimeType;
-    }
-
-    /**
-     * Set the MIME type of this parameter.
-     */
-    public void setMIMEType(String mimeType) {
-        this.mimeType = mimeType;
     }
 
     private void writeObject(ObjectOutputStream out)

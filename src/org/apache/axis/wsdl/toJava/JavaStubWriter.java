@@ -492,16 +492,13 @@ public class JavaStubWriter extends JavaClassWriter {
 
             String mimeType = p.getMIMEType();
 
-            // Get the QNames representing the parameter name and type
-            QName paramName;
-            QName paramType = Utils.getXSIType(p.getType());
+            // Get the QName representing the parameter type
+            QName paramType = Utils.getXSIType(p);
 
             // Set the javaType to the name of the type
             String javaType = null;
             if (mimeType != null) {
                 javaType = "javax.activation.DataHandler.class, ";
-                paramName = new QName (binding.getQName().getNamespaceURI(),
-                        "DataHandler");
             }
             else {
                 javaType = p.getType().getName();
@@ -510,11 +507,10 @@ public class JavaStubWriter extends JavaClassWriter {
                 } else {
                     javaType = "";
                 }
-                paramName = p.getQName();
             }
 
             // Get the text representing newing a QName for the name and type
-            String paramNameText = Utils.getNewQName(paramName);
+            String paramNameText = Utils.getNewQName(p.getQName());
             String paramTypeText = Utils.getNewQName(paramType);
 
             // Generate the addParameter call with the
@@ -537,20 +533,25 @@ public class JavaStubWriter extends JavaClassWriter {
         }
         // set output type
         if (parms.returnParam != null) {
-            TypeEntry returnType = parms.returnParam.getType();
 
             // Get the QName for the return Type
-            QName returnName = Utils.getXSIType(returnType);
+            QName returnName = Utils.getXSIType(parms.returnParam);
             
             // Get the javaType
-            String javaType = returnType.getName();
+            String javaType = null;
+            if (parms.returnParam.getMIMEType() != null) {
+                javaType = "javax.activation.DataHandler";
+            }
+            else {
+                javaType = parms.returnParam.getType().getName();
+            }
             if (javaType == null) {
                 pw.println("        _call.setReturnType(" + 
                            Utils.getNewQName(returnName) + ");");
             } else {
                 pw.println("        _call.setReturnType(" + 
                            Utils.getNewQName(returnName) + 
-                           "," + javaType + ".class);");
+                           " ," + javaType + ".class);");
             }
         }
         else {
@@ -790,14 +791,10 @@ public class JavaStubWriter extends JavaClassWriter {
     private void writeMIMETypeReturn(PrintWriter pw, String target,
             String source, TypeEntry type, String mimeType) {
         if (mimeType.equals("text/plain")) {
-            pw.println("                java.io.InputStream _DHIS = _returnDH.getInputStream();");
-            pw.println("                byte[] _DHISBytes = new byte[_DHIS.available()];");
-            pw.println("                _DHIS.read(_DHISBytes);");
-            pw.println("                " + target + "new String(_DHISBytes);");
+            pw.println("                " + target + "(java.lang.String) _returnDH.getContent();");
         }
         else if (mimeType.startsWith("multipart/")) {
-            pw.println("                " + target +
-                    "new javax.mail.internet.MimeMultipart(_returnDH.getDataSource());");
+            pw.println("                " + target + "(javax.mail.internet.MimeMultipart) _returnDH.getContent();");
         }
         else {
             pw.println("                " + target +

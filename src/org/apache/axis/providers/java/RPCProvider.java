@@ -79,7 +79,11 @@ import javax.activation.DataHandler;
 import javax.mail.internet.MimeMultipart;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.holders.Holder;
+
+import java.io.IOException;
+
 import java.lang.reflect.Method;
+
 import java.util.Vector;
 import java.util.Iterator;
 import java.util.ArrayList;
@@ -225,6 +229,11 @@ public class RPCProvider extends JavaProvider
                 // Convert the value into the expected type in the signature
                 value = JavaUtils.convert(value,
                                           sigType);
+
+                if (value instanceof DataHandler) {
+                    value = getDataFromDataHandler((DataHandler) value, paramDesc);
+                }
+
                 rpcParam.setValue(value);
                 if (paramDesc.getMode() == ParameterDesc.INOUT) {
                     outs.add(rpcParam);
@@ -319,17 +328,6 @@ public class RPCProvider extends JavaProvider
                 resBody.addParam(result);
             }
 
-            String mimeType = operation.getReturnParamDesc().getMIMEType();
-            if (mimeType != null) {
-                if (mimeType.equals("text/plain")) {
-                    objRes = new DataHandler(new PlainTextDataSource(
-                            "ret", (String) objRes));
-                }
-                else if (mimeType.startsWith("multipart/")) {
-                    objRes = new DataHandler(new MimeMultipartDataSource(
-                            "ret", (MimeMultipart) objRes));
-                }
-            }
             RPCParam param = new RPCParam(returnQName, objRes);
             param.setParamDesc(operation.getReturnParamDesc());
             resBody.addParam(param);
@@ -343,16 +341,24 @@ public class RPCProvider extends JavaProvider
                 Holder holder = (Holder)param.getValue();
                 Object value = JavaUtils.getHolderValue(holder);
                 ParameterDesc paramDesc = param.getParamDesc();
-                String mimeType = paramDesc == null ? null :
-                        paramDesc.getMIMEType();
-                if (mimeType != null) {
-                    if (mimeType.equals("text/plain")) {
+
+                // Check for a MIME attachment outputs
+                QName paramQName = paramDesc == null ? null : paramDesc.getTypeQName();
+                if (paramQName != null && paramQName.getNamespaceURI().equals(Constants.NS_URI_XMLSOAP)) {
+                    // We have a potential attachment, put the parameter
+                    // into a DataHandler.
+                    String MIMEName = paramQName.getLocalPart();
+                    if ("Image".equals(MIMEName)) {
+                    }
+                    else if ("PlainText".equals(MIMEName)) {
                         value = new DataHandler(
                                 new PlainTextDataSource("out", (String) value));
                     }
-                    else if (mimeType.startsWith("multipart/")) {
+                    else if ("Multipart".equals(MIMEName)) {
                         value = new DataHandler(new MimeMultipartDataSource(
                                 "out", (MimeMultipart) value));
+                    }
+                    else if ("Source".equals(MIMEName)) {
                     }
                 }
                 param.setValue(value);
@@ -362,6 +368,24 @@ public class RPCProvider extends JavaProvider
 
         resEnv.addBodyElement(resBody);
     }
+
+    private Object getDataFromDataHandler(DataHandler handler, ParameterDesc paramDesc) {
+        Object value = handler;
+        QName qname = paramDesc.getTypeQName();
+        if (qname != null &&
+                (qname.equals(Constants.MIME_IMAGE) ||
+                 qname.equals(Constants.MIME_PLAINTEXT) ||
+                 qname.equals(Constants.MIME_MULTIPART) ||
+                 qname.equals(Constants.MIME_SOURCE))) {
+            try {
+                value = handler.getContent();
+            }
+            catch (IOException ioe) {
+                // If there are any problems, just return the DataHandler.
+            }
+        }
+        return value;
+    } // getDataFromDataHandler
 
     /**
      * This method encapsulates the method invocation.             

@@ -178,21 +178,13 @@ public class JavaSkelWriter extends JavaClassWriter {
 
                     // Get the QNames representing the parameter name and type
                     QName paramName = p.getQName();
-                    QName paramType = Utils.getXSIType(p.getType());
-                    String mimeType = p.getMIMEType();
-                    if (mimeType == null) {
-                        mimeType = "null";
-                    }
-                    else {
-                        mimeType = '"' + mimeType + '"';
-                    }
+                    QName paramType = Utils.getXSIType(p);
                     pw.println("            " +
                         "new org.apache.axis.description.ParameterDesc(" +
                         Utils.getNewQName(paramName) +
                         ", " + modeStr +
                         ", " + Utils.getNewQName(paramType) +
-                        ", " + Utils.getParameterTypeName(p) + ".class" +
-                        ", " + mimeType + "), ");
+                        ", " + Utils.getParameterTypeName(p) + ".class), ");
                 }
 
                 pw.println("        };");
@@ -202,7 +194,7 @@ public class JavaSkelWriter extends JavaClassWriter {
                 QName retType = null;
                 if (parameters.returnParam != null) {
                     retName = parameters.returnParam.getQName();
-                    retType = Utils.getXSIType(parameters.returnParam.getType());
+                    retType = Utils.getXSIType(parameters.returnParam);
                 }
 
                 String returnStr;
@@ -217,12 +209,6 @@ public class JavaSkelWriter extends JavaClassWriter {
                 if (retType != null) {
                     pw.println("        _oper.setReturnType(" +
                                Utils.getNewQName(retType) + ");");            
-                }
-
-                // Is the return type a MIME type?
-                if (parameters.returnParam != null &&
-                            parameters.returnParam.getMIMEType() != null) {
-                    pw.println("        _oper.getReturnParamDesc().setMIMEType(\"" + parameters.returnParam.getMIMEType() + "\");");
                 }
 
                 // If we need to know the QName (if we have a namespace or

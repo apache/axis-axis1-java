@@ -55,10 +55,6 @@
 
 package org.apache.axis.wsdl.fromJava;
 
-import com.ibm.wsdl.extensions.mime.MIMEContentImpl;
-import com.ibm.wsdl.extensions.mime.MIMEPartImpl;
-import com.ibm.wsdl.extensions.mime.MIMEMultipartRelatedImpl;
-
 import com.ibm.wsdl.extensions.soap.SOAPAddressImpl;
 import com.ibm.wsdl.extensions.soap.SOAPBindingImpl;
 import com.ibm.wsdl.extensions.soap.SOAPBodyImpl;
@@ -94,10 +90,6 @@ import javax.wsdl.Fault;
 import javax.wsdl.WSDLException;
 
 import javax.wsdl.extensions.ExtensibilityElement;
-
-import javax.wsdl.extensions.mime.MIMEContent;
-import javax.wsdl.extensions.mime.MIMEPart;
-import javax.wsdl.extensions.mime.MIMEMultipartRelated;
 
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.wsdl.extensions.soap.SOAPBinding;
@@ -881,24 +873,13 @@ public class Emitter {
 
         // Input clause
         ExtensibilityElement input = null;
-        if (hasMIMEParameter(desc, ParameterDesc.IN)) {
-            input = writeMIMEMultipart(desc, ParameterDesc.IN,
-                    desc.getElementQName());
-        }
-        else {
-            input = writeSOAPBody(desc.getElementQName());
-        }
+        input = writeSOAPBody(desc.getElementQName());
         bindingInput.addExtensibilityElement(input);
 
         //Output clause
         ExtensibilityElement output = null;
-        if (hasMIMEParameter(desc, ParameterDesc.OUT)) {
-            output = writeMIMEMultipart(desc, ParameterDesc.OUT,
-                    desc.getReturnQName());
-        }
-        else {
-            output = writeSOAPBody(desc.getReturnQName());
-        }
+        output = writeSOAPBody(desc.getReturnQName());
+
         bindingOutput.addExtensibilityElement(output);
 
         bindingOper.setBindingInput(bindingInput);
@@ -908,77 +889,6 @@ public class Emitter {
 
         return bindingOper;
     }
-
-    private boolean hasMIMEParameter(OperationDesc oper, byte mode) {
-        ArrayList parameters = oper.getParameters();
-        for (int i = 0; i < parameters.size(); ++i) {
-            ParameterDesc parameter = (ParameterDesc) parameters.get(i);
-            if (parameter.getMIMEType() != null
-                    && (parameter.getMode() & mode) != 0) {
-                return true;
-            }
-        }
-        // We also have to look at the return if we want info about
-        // output parameters.
-        if (mode == ParameterDesc.OUT) {
-            ParameterDesc ret = oper.getReturnParamDesc();
-            if (ret != null && ret.getMIMEType() != null) {
-                return true;
-            }
-        }
-
-        return false;
-    } // hassMIMEParameter
-
-    private ExtensibilityElement writeMIMEMultipart(OperationDesc oper,
-            byte mode, QName operQName) {
-        MIMEMultipartRelated mprelated = new MIMEMultipartRelatedImpl();
-        ArrayList parameters = oper.getParameters();
-        for (int i = 0; i < parameters.size(); ++i) {
-            ParameterDesc parameter = (ParameterDesc) parameters.get(i);
-            if ((parameter.getMode() & mode) != 0) {
-                MIMEPart mimePart = writeMIMEPart(parameter, operQName);
-                mprelated.addMIMEPart(mimePart);
-            }
-        }
-
-        // We also have to look at the return if we want info about
-        // output parameters.
-        if (mode == ParameterDesc.OUT) {
-            ParameterDesc ret = oper.getReturnParamDesc();
-            if (ret != null) {
-                MIMEPart mimePart = writeMIMEPart(ret, operQName);
-                mprelated.addMIMEPart(mimePart);
-            }
-        }
-
-        return mprelated;
-    } // writeMIMEMultipart
-
-    private MIMEPart writeMIMEPart(ParameterDesc parameter, QName operQName) {
-        String mimeType = parameter.getMIMEType();
-        MIMEPart mimePart = new MIMEPartImpl();
-        ExtensibilityElement mimeContent = null;
-        if (mimeType == null) {
-            mimeContent = writeSOAPBody(operQName);
-        }
-        else {
-            mimeContent = writeMIMEContent(parameter.getName(), mimeType);
-        }
-        mimePart.addExtensibilityElement(mimeContent);
-        return mimePart;
-    } // writeMIMEPart
-
-    private MIMEContent writeMIMEContent(String part, String type) {
-        // If the part is null, then it MUST be a return part
-        if (part == null) {
-            part = "return";
-        }
-        MIMEContent mimeContent = new MIMEContentImpl();
-        mimeContent.setPart(part);
-        mimeContent.setType(type);
-        return mimeContent;
-    } // writeMIMEContent
 
     private ExtensibilityElement writeSOAPBody(QName operQName) {
         SOAPBody soapBody = new SOAPBodyImpl();
@@ -1156,15 +1066,6 @@ public class Emitter {
         if (param.getMode() != ParameterDesc.IN &&
             param.getIsReturn() == false) {
             javaType = JavaUtils.getHolderValueType(javaType);
-        }
-
-        // If this is a MIME type, make sure the MIME namespace is in
-        // the Definition
-        if (JavaUtils.javaToMIME(javaType) != null && def.getNamespace(Constants.NS_PREFIX_MIME) == null) {
-            def.addNamespace(Constants.NS_PREFIX_MIME,
-                    Constants.NS_URI_WSDL_MIME);
-            namespaces.putPrefix(Constants.NS_URI_WSDL_MIME,
-                    Constants.NS_PREFIX_MIME);
         }
 
         // Write the type representing the parameter type
