@@ -277,7 +277,7 @@ public class Emitter {
     //
 
     /**
-     * This method returns a set of all the Types in a given PortType. 
+     * This method returns a set of all the Types in a given PortType.
      * The elements of the returned HashSet are Types.
      */
     private HashSet getTypesInPortType(PortType portType) {
@@ -293,7 +293,6 @@ public class Emitter {
 
         // Extract those types which are complex types.
         Iterator i = firstPassTypes.iterator();
-
         while (i.hasNext()) {
             Type type = (Type) i.next();
             if (!types.contains(type)) {
@@ -307,7 +306,7 @@ public class Emitter {
     } // getTypesInPortType
 
     /**
-     * This method returns a set of all the Types in a given Operation. 
+     * This method returns a set of all the Types in a given Operation.
      * The elements of the returned HashSet are Types.
      */
     private HashSet getTypesInOperation(Operation operation) {
@@ -318,14 +317,18 @@ public class Emitter {
         Input input = operation.getInput();
 
         if (input != null) {
-            partTypes(v, input.getMessage().getOrderedParts(null));
+            partTypes(v,
+                    input.getMessage().getOrderedParts(null),
+                    (wsdlAttr.getInputBodyType(operation) == WsdlAttributes.USE_LITERAL));
         }
 
         // Collect all the output types
         Output output = operation.getOutput();
 
         if (output != null) {
-            partTypes(v, output.getMessage().getOrderedParts(null));
+            partTypes(v,
+                    output.getMessage().getOrderedParts(null),
+                    (wsdlAttr.getOutputBodyType(operation) == WsdlAttributes.USE_LITERAL));
         }
 
         // Collect all the types in faults
@@ -335,18 +338,21 @@ public class Emitter {
             Iterator i = faults.values().iterator();
 
             while (i.hasNext()) {
-                partTypes(v, ((Fault) i.next()).getMessage().getOrderedParts(null));
+                Fault f = (Fault) i.next();
+                partTypes(v,
+                        f.getMessage().getOrderedParts(null),
+                        (wsdlAttr.getFaultBodyType(operation, f.getName()) == WsdlAttributes.USE_LITERAL));
             }
         }
 
         // Put all these types into a set.  This operation eliminates all duplicates.
-        for (int i = 0; i < v.size(); i += 2)
+        for (int i = 0; i < v.size(); i++)
             types.add(v.get(i));
         return types;
     } // getTypesInOperation
 
     /**
-     * This method returns a set of all the nested Typese.
+     * This method returns a set of all the nested Types.
      * The elements of the returned HashSet are Types.
      */
     private HashSet getNestedTypes(Node type) {
@@ -533,21 +539,17 @@ public class Emitter {
         // Collect the input parts
         Input input = operation.getInput();
         if (input != null) {
-            if (wsdlAttr.getInputBodyType(operation) == WsdlAttributes.USE_LITERAL) {
-                partStrings(inputs, input.getMessage().getOrderedParts(parameterOrder), true);
-            } else {
-                partStrings(inputs, input.getMessage().getOrderedParts(parameterOrder), false);
-            }
+            partStrings(inputs,
+                    input.getMessage().getOrderedParts(parameterOrder),
+                    (wsdlAttr.getInputBodyType(operation) == WsdlAttributes.USE_LITERAL));
         }
 
         // Collect the output parts
         Output output = operation.getOutput();
         if (output != null) {
-            if (wsdlAttr.getOutputBodyType(operation) == WsdlAttributes.USE_LITERAL) {
-                partStrings(outputs, output.getMessage().getOrderedParts(parameterOrder), true);
-            } else {
-                partStrings(outputs, output.getMessage().getOrderedParts(parameterOrder), false);
-            }
+            partStrings(outputs,
+                    output.getMessage().getOrderedParts(parameterOrder),
+                    (wsdlAttr.getOutputBodyType(operation) == WsdlAttributes.USE_LITERAL));
         }
 
         if (parameterOrder == null) {
@@ -561,7 +563,8 @@ public class Emitter {
                 p.name = name;
                 p.type = (String) inputs.get(i - 1);
                 for (int j = 1; j < outputs.size(); j += 2) {
-                    if (name.equals(outputs.get(j))) {
+                    if (name.equals(outputs.get(j)) &&
+                            p.type.equals(outputs.get(j - 1))) {
                         p.mode = Parameter.INOUT;
                         outputs.remove(j);
                         outputs.remove(j - 1);
@@ -723,18 +726,21 @@ public class Emitter {
     } // constructSignatures
 
     /**
-     * This method returns a vector containing the Java types (even indices) and 
+     * This method returns a vector containing the Java types (even indices) and
      * names (odd indices) of the parts.
      */
-    private void partStrings(Vector v, Collection parts, boolean elements) {
+    private void partStrings(Vector v, Collection parts, boolean literal) {
         Iterator i = parts.iterator();
-        
+
         while (i.hasNext()) {
             Part part = (Part) i.next();
 
-            if (elements) {
-                v.add("org.w3c.dom.Element");
-                v.add(part.getName());
+            if (literal) {
+                QName elementName = part.getElementName();
+                if (elementName != null) {
+                    v.add(elementName.getLocalPart());
+                    v.add(part.getName());
+                }
             } else {
                 QName typeName = part.getTypeName();
                 if (typeName != null) {
@@ -753,13 +759,18 @@ public class Emitter {
     /**
      * This method returns a vector of Types for the parts.
      */
-    private void partTypes(Vector v, Collection parts) {
+    private void partTypes(Vector v, Collection parts, boolean literal) {
         Iterator i = parts.iterator();
-        
+
         while (i.hasNext()) {
             Part part = (Part) i.next();
 
-            QName qType = part.getTypeName();
+            QName qType;
+            if (literal) {
+                qType = part.getElementName();
+            } else {
+                qType = part.getTypeName();
+            }
             if (qType != null) {
                 v.add(emitFactory.getType(qType));
             }
@@ -867,6 +878,10 @@ public class Emitter {
         PortType portType = binding.getPortType();
         String name = xmlNameToJava(binding.getQName().getLocalPart());
         String portTypeName = portType.getQName().getLocalPart();
+        boolean isRPC = true;
+        if (wsdlAttr.getBindingStyle(binding) == WsdlAttributes.STYLE_DOCUMENT) {
+            isRPC = false;
+        }
 
         String stubName = name + "Stub";
         String stubFileName = stubName + ".java";
@@ -1002,7 +1017,7 @@ public class Emitter {
                 }
             }
 
-            writeBindingOperation(operation, parameters, soapAction, namespace, stubPW, skelPW, implPW);
+            writeBindingOperation(operation, parameters, soapAction, namespace, isRPC, stubPW, skelPW, implPW);
         }
 
         stubPW.println("}");
@@ -1043,7 +1058,8 @@ public class Emitter {
      * Write the stub and skeleton code for the given BindingOperation.
      */
     private void writeBindingOperation(BindingOperation operation, Parameters parms,
-                                       String soapAction, String namespace,
+                                        String soapAction, String namespace,
+                                       boolean isRPC,
                                        PrintWriter stubPW, PrintWriter skelPW,
                                        PrintWriter implPW)
             throws IOException {
@@ -1051,7 +1067,7 @@ public class Emitter {
         String name = operation.getName();
 
         writeComment(stubPW, operation.getDocumentationElement());
-        writeStubOperation(name, parms, soapAction, namespace, stubPW);
+        writeStubOperation(name, parms, soapAction, namespace, isRPC, stubPW);
         if (bEmitSkeleton) {
             writeSkeletonOperation(name, parms, skelPW);
             writeImplOperation(name, parms, implPW);
@@ -1062,12 +1078,50 @@ public class Emitter {
      * Write the stub code for the given operation.
      */
     private void writeStubOperation(String name, Parameters parms, String soapAction,
-                                    String namespace, PrintWriter pw) {
+                                    String namespace, boolean isRPC, PrintWriter pw) {
         pw.println(parms.signature + "{");
         pw.println("        if (call.get(org.apache.axis.transport.http.HTTPTransport.URL) == null) {");
         pw.println("            throw new org.apache.axis.NoEndPointException();");
         pw.println("        }");
 
+        // Create ServiceDescription
+        String isRpcArg = isRPC ? "true" : "false";
+        pw.println("        org.apache.axis.encoding.ServiceDescription sd ");
+        pw.println("            = new org.apache.axis.encoding.ServiceDescription(\"" + name + "\", " + isRpcArg +");");
+        // loop over paramters and set up in/out params
+        for (int i = 0; i < parms.list.size(); ++i) {
+            Parameter p = (Parameter) parms.list.get(i);
+
+
+            Type type = emitFactory.getType(p.type);
+            if (type == null) {
+                // XXX yikes, something is wrong
+            }
+            QName qn = type.getQName();
+            String typeString = "new org.apache.axis.utils.QName(\"" + qn.getNamespaceURI() + "\", \"" +
+                    qn.getLocalPart() + "\")";
+            if (p.mode == Parameter.IN) {
+                pw.println("        sd.addInputParam(\"" + p.name + "\", " + typeString + ");");
+            }
+            else if (p.mode == Parameter.INOUT) {
+                pw.println("        sd.addInputParam(\"" + p.name + "\", " + typeString + ");");
+                pw.println("        sd.addOuputParam(\"" + p.name + "\", " + typeString + ");");
+            }
+            else { // p.mode == Parameter.OUT
+                pw.println("        sd.addOutputParam(\"" + p.name + "\", " + typeString + ");");
+            }
+        }
+        // set output type
+        QName qn = emitFactory.getType(parms.returnType).getQName();
+        String outputType = "new org.apache.axis.utils.QName(\"" + qn.getNamespaceURI() + "\", \"" +
+                    qn.getLocalPart() + "\")";
+        pw.println("        sd.setOutputType(" + outputType + ");");
+
+        pw.println("        ");
+
+        // Set this service description for the call
+        pw.println("        call.setServiceDescription(sd);");
+        pw.println();
         pw.println("        call.set(org.apache.axis.transport.http.HTTPTransport.ACTION, \"" + soapAction + "\");");
         pw.print("        Object resp = call.invoke(");
 
@@ -1581,7 +1635,7 @@ public class Emitter {
 
    /**
      * Generate the binding for the given complex type.
-     * The elements vector contains the Types (even indices) and 
+     * The elements vector contains the Types (even indices) and
      * element names (odd indices) of the contained elements
      */
     private void writeComplexType(Type type, Vector elements) throws IOException {
@@ -1645,14 +1699,14 @@ public class Emitter {
 
    /**
      * Generate the binding for the given enumeration type.
-     * The values vector contains the base type (first index) and 
+     * The values vector contains the base type (first index) and
      * the values (subsequent Strings)
      */
     private void writeEnumType(Type eType, Vector values) throws IOException {
 
         Node node = eType.getNode();
 
-        // The first index is the base type.  Get its java name.                
+        // The first index is the base type.  Get its java name.
         String baseType = ((Type) values.get(0)).getJavaName();
 
         String javaName = eType.getJavaLocalName();
@@ -1665,7 +1719,7 @@ public class Emitter {
         writeFileHeader(fileName, typePW);
         typePW.println("public class " + javaName + " implements java.io.Serializable {");
         for (int i=1; i < values.size(); i++) {
-            typePW.println("    public static final " + baseType + " _" + values.get(i) 
+            typePW.println("    public static final " + baseType + " _" + values.get(i)
                            + " = \"" + values.get(i) + "\";");
         }
 
@@ -1839,6 +1893,9 @@ public class Emitter {
         String objType = (String) TYPES.get(type);
         if (objType != null) {
             return "((" + objType + ") " + var + ")." + type + "Value();";
+        }
+        else if (type.equals("void")) {
+            return ";";
         }
         else {
             return "(" + type + ") " + var + ";";

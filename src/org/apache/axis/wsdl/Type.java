@@ -63,7 +63,7 @@ import javax.wsdl.QName;
  * This class represents a type that is supported by the WSDL2Java emitter.
  * A Type has a QName representing its XML name and a Java Name, which
  * is its full java name.  The Type may also have a Node, which locates
- * the definition of the emit type in the xml.  
+ * the definition of the emit type in the xml.
  * An Type is created by the TypeFactory object.
  *
  * @author Rich Scheuerle  (scheu@us.ibm.com)
@@ -72,16 +72,16 @@ public class Type {
 
     private QName  qName;        // QName of the element type
     private String jName;        // Name of the Java Mapping (Class or primitive)
-    private Node   node;         // Element node  
+    private Node   node;         // Element node
     private boolean isBaseType;  // Indicates if represented by a java primitive or util class
 
     /**
-     * Create an Emit Type with 
+     * Create an Emit Type with
      */
     public Type(QName pqName, String pjName, Node pnode) {
         qName = pqName;
         node  = pnode;
-        // If the qName represents a base type, we override the 
+        // If the qName represents a base type, we override the
         // java name with the name of the base java name.
         jName = initBaseType();
         if (jName == null) {
@@ -209,6 +209,11 @@ public class Type {
             } else if (localName.equals("Vector")) {
                 return "java.util.Vector";
             }
+        }
+        // special "java" namesapce means straight java types
+        // So "java:void" maps to "void"
+        else if (qName.getNamespaceURI().equals("java")) {
+            return localName;
         }
         return null;
     }
