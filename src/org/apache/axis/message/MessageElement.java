@@ -87,11 +87,12 @@ import javax.xml.namespace.QName;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Vector;
 import java.util.Iterator;
 
-public class MessageElement implements SOAPElement
+public class MessageElement implements SOAPElement, Serializable
 {
     protected static Log log =
         LogFactory.getLog(MessageElement.class.getName());
