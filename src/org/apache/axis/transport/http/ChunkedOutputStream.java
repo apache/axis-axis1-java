@@ -113,7 +113,7 @@ public class ChunkedOutputStream extends FilterOutputStream {
             if (eos) return;
             eos = true;
         }
-        out.write("\r\n0\r\n".getBytes());
+        out.write("0\r\n\r\n".getBytes());
         out.flush();
     }
 
