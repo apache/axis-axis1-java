@@ -135,7 +135,7 @@ public class TestCaseEmitter {
 
         this.state = TESTS;
         PortType portType = binding.getPortType();
-        String bindingType = portType.getQName().getLocalPart();
+        String bindingType = emitter.getTypeFactory().getJavaName(portType.getQName());
 
         writer.println();
         writer.println("    public void test" + portName + "() {");

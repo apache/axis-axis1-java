@@ -956,7 +956,7 @@ public class Emitter {
 
         PortType portType = binding.getPortType();
         String name = xmlNameToJava(bindingQName.getLocalPart());
-        String portTypeName = portType.getQName().getLocalPart();
+        String portTypeName = emitFactory.getJavaName(portType.getQName());
         boolean isRPC = true;
         if (wsdlAttr.getBindingStyle(binding) == WsdlAttributes.STYLE_DOCUMENT) {
             isRPC = false;
@@ -1405,18 +1405,19 @@ public class Emitter {
     private void writeService(Service service) throws IOException {
         QName serviceQName = service.getQName();
         String serviceName = Utils.capitalize(xmlNameToJava(serviceQName.getLocalPart()));
+        String servicePackage = namespaces.getCreate(serviceQName.getNamespaceURI());
         PrintWriter servicePW = printWriter(serviceQName, null, "java", "Generating service class:  ");
 
         TestCaseEmitter testFactory = null;
         if (this.bEmitTestCase) {
-            String className = serviceName = "TestCase";
+            String className = serviceName + "TestCase";
             testFactory = new TestCaseEmitter(printWriter(serviceQName, "TestCase", "java", "Generating service test class:  "), className, this);
 
-            testFactory.writeHeader(className, serviceQName.getNamespaceURI());
+            testFactory.writeHeader(className, servicePackage);
             testFactory.writeInitCode();
         }
 
-        writeFileHeader(serviceName + ".java", namespaces.getCreate(serviceQName.getNamespaceURI()), servicePW);
+        writeFileHeader(serviceName + ".java", servicePackage, servicePW);
 
         // declare class
         servicePW.println("public class " + serviceName + " {");
@@ -1870,9 +1871,13 @@ public class Emitter {
     // Utility methods
     //
 
-    public Namespaces getNamespaces(){
+    public Namespaces getNamespaces() {
         return namespaces;
     } // getNamespaces
+
+    public TypeFactory getTypeFactory() {
+        return emitFactory;
+    } // getTypeFactory
 
     /**
      * Does the given file already exist?
