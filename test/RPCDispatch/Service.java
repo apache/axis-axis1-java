@@ -101,6 +101,30 @@ public class Service {
     }
 
     /**
+     * Return the Boolean value passed in
+     */
+    public Boolean testBoolean(Boolean b)
+    {
+        return b;
+    }
+
+    /**
+     * Return the Float value passed in
+     */
+    public Float testFloat(Float b)
+    {
+        return b;
+    }
+
+    /**
+     * Return the Double value passed in
+     */
+    public Double testDouble(Double b)
+    {
+        return b;
+    }
+
+    /**
      * Return the int passed in (this and the function above test overloaded
      * method dispatch)
      */

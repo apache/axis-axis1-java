@@ -207,6 +207,61 @@ public class TestSerializedRPC extends TestCase {
         assertEquals("Did not echo arg correctly.", arg, rpc("argAsDOM", arg, true));
     }
 
+    public void testWrappedTypes() throws Exception
+    {
+        // boolean
+        String arg = "<arg0>true</arg0>";
+        Object expected = Boolean.TRUE;
+        assertEquals("method test failed with a boolean",
+                     expected,
+                     rpc("testBoolean", arg, true));
+
+        // boolean
+        arg = "<arg0>1</arg0>";
+        expected = Boolean.TRUE;
+        assertEquals("method test failed with a boolean",
+                     expected,
+                     rpc("testBoolean", arg, true));
+
+        // float
+        arg = "<arg0>NaN</arg0>";
+        expected = new Float(Float.NaN);
+        assertEquals("method test failed with a float",
+                     expected,
+                     rpc("testFloat", arg, true));
+
+        arg = "<arg0>INF</arg0>";
+        expected = new Float(Float.POSITIVE_INFINITY);
+        assertEquals("method test failed with a float",
+                     expected,
+                     rpc("testFloat", arg, true));
+
+        arg = "<arg0>-INF</arg0>";
+        expected = new Float(Float.NEGATIVE_INFINITY);
+        assertEquals("method test failed with a float",
+                     expected,
+                     rpc("testFloat", arg, true));
+
+        // double
+        arg = "<arg0>NaN</arg0>";
+        expected = new Double(Double.NaN);
+        assertEquals("method test failed with a double",
+                     expected,
+                     rpc("testDouble", arg, true));
+
+        arg = "<arg0>INF</arg0>";
+        expected = new Double(Double.POSITIVE_INFINITY);
+        assertEquals("method test failed with a double",
+                     expected,
+                     rpc("testDouble", arg, true));
+
+        arg = "<arg0>-INF</arg0>";
+        expected = new Double(Double.NEGATIVE_INFINITY);
+        assertEquals("method test failed with a double",
+                     expected,
+                     rpc("testDouble", arg, true));
+    }
+
     /**
      * Test overloaded method dispatch without the benefit of xsi:types
      */
