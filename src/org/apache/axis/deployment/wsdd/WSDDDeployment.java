@@ -150,7 +150,13 @@ public class WSDDDeployment
             WSDDTypeMapping mapping = new WSDDTypeMapping(elements[i]);
             addTypeMapping(mapping);
         }
-        
+
+        elements = getChildElements(e, "beanMapping");
+        for (i = 0; i < elements.length; i++) {
+            WSDDBeanMapping mapping = new WSDDBeanMapping(elements[i]);
+            addTypeMapping(mapping);
+        }
+
         Element el = getChildElement(e, "globalConfiguration");
         if (el != null)
             globalConfig = new WSDDGlobalConfiguration(el);
