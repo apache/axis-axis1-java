@@ -805,7 +805,6 @@ public class ClassRep extends BaseRep {
                 return false;
             }
 
-            System.out.println("getter=" + setter);
             m = cls.getDeclaredMethod(getter, new Class[] {int.class});
             mod = m.getModifiers();
             if (!Modifier.isPublic(mod)) {
@@ -815,7 +814,6 @@ public class ClassRep extends BaseRep {
         catch (NoSuchMethodException ex) {
             return false;
         }
-        System.out.println("indexed property");
         return true;
     }
 };
