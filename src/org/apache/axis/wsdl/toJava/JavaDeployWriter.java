@@ -88,8 +88,8 @@ public class JavaDeployWriter extends JavaWriter {
     /**
      * Constructor.
      */
-    protected JavaDeployWriter(Emitter emitter, 
-                               Definition definition, 
+    protected JavaDeployWriter(Emitter emitter,
+                               Definition definition,
                                SymbolTable symbolTable) {
         super(emitter,
                 new QName(definition.getTargetNamespace(), "deploy"),
@@ -122,7 +122,7 @@ public class JavaDeployWriter extends JavaWriter {
     protected void writeDeployServices() throws IOException {
         //deploy the ports on each service
         Map serviceMap = definition.getServices();
-        for (Iterator mapIterator = serviceMap.values().iterator(); 
+        for (Iterator mapIterator = serviceMap.values().iterator();
              mapIterator.hasNext();) {
             Service myService = (Service) mapIterator.next();
 
@@ -135,7 +135,7 @@ public class JavaDeployWriter extends JavaWriter {
             for (Iterator portIterator = myService.getPorts().values().iterator();
                  portIterator.hasNext();) {
                 Port myPort = (Port) portIterator.next();
-                BindingEntry bEntry = 
+                BindingEntry bEntry =
                         symbolTable.getBindingEntry(
                                 myPort.getBinding().getQName());
 
@@ -164,7 +164,7 @@ public class JavaDeployWriter extends JavaWriter {
             // 1) Don't register types that are base (primitive) types.
             //    If the baseType != null && getRefType() != null this
             //    is a simpleType that must be registered.
-            // 2) Don't register the special types for collections 
+            // 2) Don't register the special types for collections
             //    (indexed properties) or element types
             // 3) Don't register types that are not referenced
             //    or only referenced in a literal context.
@@ -294,7 +294,7 @@ public class JavaDeployWriter extends JavaWriter {
                     }
                     QName defaultQName = new QName("", javaOperName);
                     if (! defaultQName.equals(elementQName)) {
-                        pw.print(" qname=\"" + 
+                        pw.print(" qname=\"" +
                                  Utils.genQNameAttributeString(elementQName, "operNS") +
                                  "\"");
                     }
@@ -303,8 +303,8 @@ public class JavaDeployWriter extends JavaWriter {
                 if (params.returnName != null)
                     returnQName = Utils.getWSDLQName(params.returnName);
                 if (returnQName != null) {
-                    pw.print(" returnQName=\"" + 
-                             Utils.genQNameAttributeString(returnQName, "retNS") + 
+                    pw.print(" returnQName=\"" +
+                             Utils.genQNameAttributeString(returnQName, "retNS") +
                              "\"");
                 }
                 pw.println(">");
@@ -320,21 +320,25 @@ public class JavaDeployWriter extends JavaWriter {
                     } else {
                         paramType = typeEntry.getQName();
                     }
-                    String mode = getModeString(param.getMode());
-                    pw.print("        <parameter ");
+                    pw.print("        <parameter");
                     if (paramQName == null || "".equals(paramQName.getNamespaceURI())) {
-                        pw.print("name=\"" + param.getName() + "\" " );
+                        pw.print(" name=\"" + param.getName() + "\"" );
                     } else {
-                        pw.print("qname=\"pns:" + paramQName.getLocalPart() +
-                                 "\" xmlns:pns=\"" + paramQName.getNamespaceURI() +
-                                 "\" ");
+                        pw.print(" qname=\"" +
+                                Utils.genQNameAttributeString(paramQName,
+                                        "pns") + "\"");
                     }
-                    pw.print("type=\"tns:" + paramType.getLocalPart() + "\" " );
-                    pw.print("xmlns:tns=\"" + paramType.getNamespaceURI() + "\" " );
-                    pw.print("mode=\"" + mode + "\"" );
+                    pw.print(" type=\"" +
+                                Utils.genQNameAttributeString(paramType,
+                                        "tns") + "\"");
+                    if (param.getMode() != Parameter.IN) {
+                        String mode = getModeString(param.getMode());
+                        pw.print(" mode=\"" + mode + "\"");
+                    }
+
                     pw.println("/>");
                 }
-                
+
                 pw.println("      </operation>");
             }
         }
