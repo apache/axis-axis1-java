@@ -70,10 +70,11 @@ Copyright:
                noimports="no"
                verbose="no"
                testcase="yes">
-        <mapping namespace="urn:import" package="test.wsdl.import"/>
-        <mapping namespace="urn:importBinding1" package="test.wsdl.import.binding1"/>
-        <mapping namespace="urn:importBinding2" package="test.wsdl.import.binding2"/>
+        <mapping namespace="urn:import" package="test.wsdl._import.test1"/>
+        <mapping namespace="urn:importBinding1" package="test.wsdl._import.test1.binding1"/>
+        <mapping namespace="urn:importBinding2" package="test.wsdl._import.test1.binding2"/>
     </wsdl2java>
+
     <!-- Import Test 2:  all namespace->package mappings from the -->
     <!--                 command line.                            -->
     <wsdl2java url="${axis.home}/test/wsdl/_import/Import.wsdl"
@@ -84,12 +85,12 @@ Copyright:
                noimports="no"
                verbose="no"
                testcase="yes">
-        <mapping namespace="urn:import" package="test.import2"/>
-        <mapping namespace="urn:importBinding1" package="test.import2.binding1"/>
-        <mapping namespace="urn:importBinding2" package="test.import2.binding2"/>
-        <mapping namespace="urn:types.import.test" package="test.import2.types"/>
-        <mapping namespace="urn:iface.import.test" package="test.import2.iface"/>
-        <mapping namespace="urn:messages.import.test" package="test.import2.messages"/>
+        <mapping namespace="urn:import" package="test.wsdl._import.test2"/>
+        <mapping namespace="urn:importBinding1" package="test.wsdl._import.test2.binding1"/>
+        <mapping namespace="urn:importBinding2" package="test.wsdl._import.test2.binding2"/>
+        <mapping namespace="urn:types.import.test" package="test.wsdl._import.test2.types"/>
+        <mapping namespace="urn:iface.import.test" package="test.wsdl._import.test2.iface"/>
+        <mapping namespace="urn:messages.import.test" package="test.wsdl._import.test2.messages"/>
     </wsdl2java>
 
     <!-- Import Test 3:  all namespace->package mappings from the -->
@@ -99,7 +100,7 @@ Copyright:
     <wsdl2java url="${axis.home}/test/wsdl/_import/ImportMessagesXSDImport.wsdl"
                output="${axis.home}/build/work"
                noimports="no">
-        <mapping namespace="urn:types.import.test" package="test.import.test3"/>
+        <mapping namespace="urn:types.import.test" package="test.wsdl._import.test3"/>
     </wsdl2java>
 
     <javac srcdir="${build.dir}/work" destdir="${build.dest}" fork="${javac.fork}"
