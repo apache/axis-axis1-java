@@ -2,15 +2,17 @@
   targetNamespace="http://test.globus.org/interface"
   xmlns:tns="http://test.globus.org/interface"
   xmlns:types="http://test.globus.org/types"
+  xmlns:bigType="http://test.globus.org/bigType"
   xmlns="http://schemas.xmlsoap.org/wsdl/"
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
   xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
 
-<import namespace="http://http://test.globus.org/types"
+<import namespace="http://test.globus.org/bigType"
         location="../../types1/types2/importtypes.wsdl"/>
 
 <message name="sendStringRequest">
   <part name="myInput" type="types:StringType"/>
+  <part name="myBigInput" type="bigType:BigType"/>
 </message>
 <message name="sendStringResponse"/>
 

@@ -578,10 +578,14 @@ public class SymbolTable {
                 }
                 Node importFile = attributes.getNamedItem("schemaLocation");
                 if (importFile != null) {
-                    String filename = getURL(context,
-                            importFile.getNodeValue()).toString();
-                    populate(context, null,
-                            XMLUtils.newDocument(filename), filename);
+                    URL url = getURL(context,
+                            importFile.getNodeValue());
+                    if (!importedFiles.contains(url)) {
+                        importedFiles.add(url);
+                        String filename = url.toString();
+                        populate(context, null,
+                                XMLUtils.newDocument(filename), filename);
+                    }
                 }
             }
             lookForImports(context, child);

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<schema targetNamespace="http://test.globus.org/types"
+        xmlns:tns="http://test.globus.org/types"
+        xmlns:soap-enc="http://schemas.xmlsoap.org/soap/encoding/"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+   <xsd:complexType name="StringType">
+    <xsd:sequence>
+      <xsd:element name="myString" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+    </xsd:sequence>
+  </xsd:complexType>
+</schema>
