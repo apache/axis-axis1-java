@@ -12,6 +12,15 @@
   <types>
     <xsd:schema targetNamespace="urn:AddressFetcher2"
                 xmlns:xsd="http://www.w3.org/1999/XMLSchema">
+
+      <xsd:simpleType name="stateType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="TX"/>                      
+            <xsd:enumeration value="IN"/>                    
+            <xsd:enumeration value="OH"/>                    
+        </xsd:restriction>
+      </xsd:simpleType>
+
       <xsd:complexType name="phone">
         <xsd:all>
             <xsd:element name="areaCode" type="xsd:int"/>
@@ -25,7 +34,7 @@
             <xsd:element name="streetNum" type="xsd:int"/>
             <xsd:element name="streetName" type="xsd:string"/>
             <xsd:element name="city" type="xsd:string"/>
-            <xsd:element name="state" type="xsd:string"/>
+            <xsd:element name="state" type="typens:stateType"/>
             <xsd:element name="zip" type="xsd:int"/>
             <xsd:element name="phoneNumber" type="typens:phone"/>
         </xsd:all>
