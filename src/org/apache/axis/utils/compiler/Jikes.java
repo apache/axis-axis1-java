@@ -55,6 +55,8 @@
 
 package org.apache.axis.utils.compiler;
 
+import org.apache.axis.utils.JavaUtils;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -271,9 +273,9 @@ public class Jikes extends AbstractCompiler
             endcolumn = Integer.parseInt(tokens.nextToken());
         } catch (Exception e) {
             // FIXME: VG: This is not needed anymore?
-            message.append("Please ensure that you have your JDK's rt.jar listed in your classpath. Jikes needs it to operate.");
+            message.append(JavaUtils.getMessage("compilerFail00"));
             type="error";
-            log.error(message.toString(), e);
+            log.error(JavaUtils.getMessage("compilerFail00"), e);
         }
 
         if ("".equals(message)) {

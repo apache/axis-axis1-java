@@ -203,7 +203,7 @@ public class BeanSerializer implements Serializer, Serializable {
                 }
             }
         } catch (Exception e) {
-            log.error("Exception: transforming to IOException: ", e);
+            log.error(JavaUtils.getMessage("exception00"), e);
             throw new IOException(e.toString());
         }
 

@@ -129,7 +129,7 @@ public class SOAPEnvelope extends MessageElement
             dser.parse();
         }
         catch( Exception e ) {
-            log.error("Exception: transforming to RuntimeException: ", e);
+            log.error(JavaUtils.getMessage("exception00"), e);
             throw new RuntimeException( e.toString() );
         }
     }

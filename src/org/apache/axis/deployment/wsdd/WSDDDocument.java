@@ -60,6 +60,7 @@ import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.deployment.DeployableItem;
 import org.apache.axis.encoding.*;
 import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.Constants;
 
 import org.apache.commons.logging.Log;
@@ -141,7 +142,7 @@ public class WSDDDocument
         try {
             deployment.writeToContext(context);
         } catch (Exception e) {
-            log.error("Caught Exception while writing to context: ", e);
+            log.error(JavaUtils.getMessage("exception00"), e);
         }
         try {
             writer.close();

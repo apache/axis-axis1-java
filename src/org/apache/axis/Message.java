@@ -57,6 +57,7 @@ package org.apache.axis;
 
 import org.apache.axis.attachments.Attachments;
 import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.utils.JavaUtils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -249,13 +250,16 @@ public class Message {
                 //If it can't support it, it wont have a root part.
                 mSOAPPart = (SOAPPart) mAttachments.getRootPart(); 
             } catch (InvocationTargetException ex) {
-                log.fatal(ex);
+                log.fatal(JavaUtils.getMessage("invocationTargetException00"),
+                          ex);
                 throw new RuntimeException(ex.getMessage());
             } catch (InstantiationException ex) {
-                log.fatal(ex);
+                log.fatal(JavaUtils.getMessage("instantiationException00"),
+                          ex);
                 throw new RuntimeException(ex.getMessage());
             } catch (IllegalAccessException ex) {
-                log.fatal(ex);
+                log.fatal(JavaUtils.getMessage("illegalAccessException00"),
+                          ex);
                 throw new RuntimeException(ex.getMessage());
             }
         }
@@ -325,13 +329,13 @@ public class Message {
             try {
                 os.write(mSOAPPart.getAsBytes());
             } catch (java.io.IOException e) {
-                log.error("IOException: ", e);
+                log.error(JavaUtils.getMessage("javaIOException00"), e);
             }
         } else {
             try {
                 mAttachments.writeContentToStream(os);
             } catch (java.lang.Exception e) {
-                log.error("Exception: ", e);
+                log.error(JavaUtils.getMessage("exception00"), e);
             }
         }
     }

@@ -396,13 +396,13 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
         try { 
             dserF = (DeserializerFactory) getTypeMapping().getDeserializer(xmlType);
         } catch (JAXRPCException e) {
-            log.error("!! No Factory for " + xmlType);
+            log.error(JavaUtils.getMessage("noFactory00", xmlType.toString()));
         }
         if (dserF != null) {
             try {
                 dser = (Deserializer) dserF.getDeserializerAs(Constants.AXIS_SAX);
             } catch (JAXRPCException e) {
-                log.error("!! No Deserializer for " + xmlType);
+                log.error(JavaUtils.getMessage("noDeser00", xmlType.toString()));
             }
         }
         return dser;

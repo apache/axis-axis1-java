@@ -55,6 +55,8 @@
 
 package org.apache.axis.utils.compiler;
 
+import org.apache.axis.utils.JavaUtils;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -100,8 +102,8 @@ public class Javac extends AbstractCompiler
             cl.loadClass(CLASSIC_CLASS);
             modern = false;
         } catch (Exception ex) {
-            log.error("No compiler found in your classpath. Make sure you added 'tools.jar'", ex);
-            throw new RuntimeException("No compiler found in your classpath. Make sure you added 'tools.jar'");
+            log.error(JavaUtils.getMessage("noCompiler00"), ex);
+            throw new RuntimeException(JavaUtils.getMessage("noCompiler00"));
         }
     }
     log.debug("Javac compiler class: " + (modern?MODERN_CLASS:CLASSIC_CLASS));

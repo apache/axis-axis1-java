@@ -83,7 +83,7 @@ public class EchoHandler extends BasicHandler {
             msgContext.setResponseMessage( new Message( env ) );
         }
         catch( Exception e ) {
-            log.error( e );
+            log.error( JavaUtils.getMessage("exception00"), e );
             throw AxisFault.makeFault(e);
         }
         log.debug(JavaUtils.getMessage("exit00", "EchoHandler::invoke") );

@@ -62,6 +62,7 @@ package org.apache.axis.attachments;
 
 
 import org.apache.axis.transport.http.HTTPConstants ;
+import org.apache.axis.utils.JavaUtils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -152,7 +153,7 @@ public class MimeUtils
             }
         }
         catch (Exception e) {
-            log.error("Exception: ", e);
+            log.error(JavaUtils.getMessage("exception00"), e);
         }
         return dataSize + headerLength;
     }
@@ -200,10 +201,10 @@ public class MimeUtils
 
         }
         catch (javax.mail.MessagingException e) {
-            log.error("javax.mail.MessagingException: ", e);
+            log.error(JavaUtils.getMessage("javaxMailMessagingException00"), e);
         }
         catch (java.io.IOException e) {
-            log.error("java.io.IOException: ", e);
+            log.error(JavaUtils.getMessage("javaIOException00"), e);
         }
     }
     /**
@@ -281,7 +282,7 @@ public class MimeUtils
             }
         }
         catch (javax.mail.MessagingException e) {
-            log.error("javax.mail.MessagingException: ", e);
+            log.error(JavaUtils.getMessage("javaxMailMessagingException00"), e);
         }
         return multipart ;
     }
@@ -301,7 +302,7 @@ public class MimeUtils
                 thisHost = java.net.InetAddress.getLocalHost().getHostName();
             } 
             catch (java.net.UnknownHostException e) {
-                log.error("java.net.UknownHostException: ", e);
+                log.error(JavaUtils.getMessage("javaNetUnknownHostException00"), e);
 
                 thisHost = "localhost";
             }

@@ -246,7 +246,7 @@ public class SOAPPart extends Part
             try {
                 getAsSOAPEnvelope();
             } catch (Exception e) {
-                log.fatal("Couldn't make envelope", e);
+                log.fatal(JavaUtils.getMessage("makeEnvFail00"), e);
                 return null;
             }
         }
@@ -296,7 +296,7 @@ public class SOAPPart extends Part
             return (byte[])currentMessage;
         }
 
-        log.error("Can't convert " + currentForm + " to Bytes" );
+        log.error(JavaUtils.getMessage("cantConvert00", ""+currentForm));
 
         log.debug( "Exit: SOAPPart::getAsBytes" );
         return null;
@@ -366,7 +366,7 @@ public class SOAPPart extends Part
             return (String)currentMessage;
         }
 
-        log.error("Can't convert form " + currentForm + " to String" );
+        log.error( JavaUtils.getMessage("cantConvert01", ""+currentForm));
 
         log.debug( "Exit: SOAPPart::getAsString" );
         return null;
@@ -382,6 +382,7 @@ public class SOAPPart extends Part
     {
         log.debug( "Enter: SOAPPart::getAsSOAPEnvelope; currentForm is "+
                         formNames[currentForm] );
+
         if ( currentForm == FORM_SOAPENVELOPE )
             return (SOAPEnvelope)currentMessage;
 

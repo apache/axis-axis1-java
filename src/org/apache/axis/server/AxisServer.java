@@ -93,7 +93,7 @@ public class AxisServer extends AxisEngine
                 } catch (Exception e) {
                     // If something goes wrong here, should we just fall
                     // through and use the default one?
-                    log.error("Exception: ", e);
+                    log.error(JavaUtils.getMessage("exception00"), e);
                 }
             }
             
@@ -230,7 +230,7 @@ public class AxisServer extends AxisEngine
                 if ((h = hr.find( hName )) != null ) {
                 h.invoke(msgContext);
                 } else {
-                log.error("Couldn't find transport " + hName);
+                log.error(JavaUtils.getMessage("noTransport02", hName));
                 }
                 } else {
                 // No transport set, so use the default (probably just
@@ -379,7 +379,7 @@ public class AxisServer extends AxisEngine
                 if ((h = hr.find( hName )) != null ) {
                 h.editWSDL(msgContext);
                 } else {
-                log.error("Couldn't find transport " + hName);
+                log.error(JavaUtils.getMessage("noTransport02", hName));
                 }
                 } else {
                 // No transport set, so use the default (probably just

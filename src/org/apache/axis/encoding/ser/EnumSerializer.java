@@ -70,6 +70,7 @@ import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.DeserializerImpl;
 import org.apache.axis.InternalException;
+import org.apache.axis.utils.JavaUtils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -114,7 +115,7 @@ public class EnumSerializer extends SimpleSerializer implements Serializer
             String propValue = (String) toStringMethod.invoke(value, null);
             context.writeString(propValue);
         } catch (Exception e) {
-            log.error("Exception: transforming to IOException: ", e);
+            log.error(JavaUtils.getMessage("exception00"), e);
             throw new IOException(e.toString());
         }
         

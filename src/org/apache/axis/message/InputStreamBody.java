@@ -56,6 +56,7 @@
 package org.apache.axis.message;
 
 import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.utils.JavaUtils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -87,7 +88,7 @@ public class InputStreamBody extends SOAPBodyElement
             throw ex;
         }
         catch( Exception e ) {
-            log.error("outputImpl: caught Exception: ", e);
+            log.error(JavaUtils.getMessage("exception00"), e);
         }        
     }
 }

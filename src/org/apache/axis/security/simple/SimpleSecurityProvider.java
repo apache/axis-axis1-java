@@ -123,7 +123,7 @@ public class SimpleSecurityProvider implements SecurityProvider {
                 lnr.close();
 
             } catch( Exception e ) {
-                log.error( e );
+                log.error( JavaUtils.getMessage("exception00"), e );
                 return;
             }
         }
