@@ -71,6 +71,7 @@ import java.util.List;
 public class Java2Wsdl {
     // Define our short one-letter option identifiers.
     protected static final int HELP_OPT = 'h';
+    protected static final int OUTPUT_WSDL_MODE_OPT = 'w';
     protected static final int OUTPUT_OPT = 'o';
     protected static final int OUTPUT_IMPL_OPT = 'O';
     protected static final int PACKAGE_OPT = 'p';
@@ -130,6 +131,10 @@ public class Java2Wsdl {
 //                CLOptionDescriptor.ARGUMENT_REQUIRED,
 //                CLASSDIR_OPT,
 //                "classes directory"),
+        new CLOptionDescriptor("outputWsdlMode",
+                CLOptionDescriptor.ARGUMENT_REQUIRED,
+                OUTPUT_WSDL_MODE_OPT,
+                "output WSDL mode: All, Interface, Implementation"),
         new CLOptionDescriptor("output",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 OUTPUT_OPT,
@@ -137,9 +142,10 @@ public class Java2Wsdl {
         new CLOptionDescriptor("outputImpl",
                 CLOptionDescriptor.ARGUMENT_REQUIRED,
                 OUTPUT_IMPL_OPT,
-                "output Implementation Wsdl filename"),
+                "output Implementation Wsdl filename, setting this causes --outputWsdlMode to be ignored"),
     };
 
+    
     /**
      * Main
      */
@@ -150,6 +156,7 @@ public class Java2Wsdl {
         String wsdlFilename = null;
         String wsdlImplFilename = null;
         HashMap namespaceMap = new HashMap();
+        int mode = Emitter.MODE_ALL;
 
         // Parse the arguments
         CLArgsParser parser = new CLArgsParser(args, options);
@@ -193,6 +200,22 @@ public class Java2Wsdl {
 //                        classDir = option.getArgument();
 //                        break;
 //
+                    case OUTPUT_WSDL_MODE_OPT:
+                        String modeArg = option.getArgument();
+                        if ("All".equals(modeArg))
+                            mode = Emitter.MODE_ALL;
+                        else if ("Interface".equals(modeArg))
+                            mode = Emitter.MODE_INTERFACE;
+                        else if ("Implementation".equals(modeArg))
+                            mode = Emitter.MODE_IMPLEMENTATION;
+                        else {
+                            mode = Emitter.MODE_ALL; 
+                            System.err.println("unrecognized mode : " + modeArg);
+                            System.err.println("use All, Interface and Implementation");
+                            System.err.println("using default: All");
+                        }
+                        break;
+
                     case OUTPUT_OPT:
                         wsdlFilename = option.getArgument();
                         break;
@@ -243,7 +266,7 @@ public class Java2Wsdl {
 
             // Generate a full wsdl, or interface & implementation wsdls
             if (wsdlImplFilename == null) {
-                emitter.emit(wsdlFilename);
+                emitter.emit(wsdlFilename, mode);
             } else {
                 emitter.emit(wsdlFilename, wsdlImplFilename);
             }
