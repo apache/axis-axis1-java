@@ -79,6 +79,21 @@ public class TestJAXMSamples extends TestCase {
             log.info("Testing JAXM UddiPing sample.");
             UddiPing.searchUDDI("IBM", "http://www-3.ibm.com/services/uddi/testregistry/inquiryapi");
             log.info("Test complete.");
+        } catch (javax.xml.soap.SOAPException e) {
+            Throwable t = e.getCause();
+            if (t != null) {
+                t.printStackTrace();
+                if (t instanceof AxisFault) {
+                    if (((AxisFault) t).detail instanceof ConnectException) {
+                        System.out.println("Connect failure caused JAXM UddiPing to be skipped.");
+                        return;
+                    }
+                }
+                throw new Exception("Fault returned from test: " + t);
+            } else {
+                e.printStackTrace();
+                throw new Exception("Exception returned from test: " + e);
+            }
         } catch (Throwable t) {
             t.printStackTrace();
             throw new Exception("Fault returned from test: " + t);
