@@ -71,9 +71,16 @@ public class Debug {
     private static int     debugLevel = 0 ;
     private static boolean toScreen   = true ;
     private static boolean toFile     = false ;
+    private static boolean levelSet   = false;
 
+    public static boolean isLevelSet()
+    {
+        return levelSet;
+    }
+    
     public static void setDebugLevel( int dl ) {
         debugLevel = dl ;
+        levelSet = true;
     }
 
     public static int getDebugLevel() {

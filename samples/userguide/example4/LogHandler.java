@@ -12,13 +12,20 @@ public class LogHandler extends BasicHandler {
          */
         try {
             Handler serviceHandler = msgContext.getServiceHandler();
-            String filename = (String)serviceHandler.getOption("filename");
+            String filename = (String)getOption("filename");
+            if ((filename == null) || (filename.equals("")))
+                throw new AxisFault("Server.NoLogFile",
+                                 "No log file configured for the LogHandler!",
+                                    null, null);
             FileOutputStream fos = new FileOutputStream(filename, true);
             
             PrintWriter writer = new PrintWriter(fos);
             
             Integer numAccesses =
                              (Integer)serviceHandler.getOption("accesses");
+            if (numAccesses == null)
+                numAccesses = new Integer(0);
+            
             numAccesses = new Integer(numAccesses.intValue() + 1);
             
             Date date = new Date();

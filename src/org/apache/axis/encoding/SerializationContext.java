@@ -59,6 +59,8 @@ import java.io.*;
 import java.util.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.AttributesImpl;
+import org.w3c.dom.*;
+
 import org.apache.axis.AxisEngine;
 import org.apache.axis.Constants;
 import org.apache.axis.message.*;
@@ -405,4 +407,40 @@ public class SerializationContext
     {
         writeString(XMLUtils.xmlEncodeString(string));
     }
+
+    /** Output a DOM representation to a SerializationContext
+     */
+    public void writeDOMElement(Element el)
+        throws IOException
+    {
+        AttributesImpl attributes = null;
+        NamedNodeMap attrMap = el.getAttributes();
+        
+        if (attrMap.getLength() > 0) {
+            attributes = new AttributesImpl();
+            for (int i = 0; i < attrMap.getLength(); i++) {
+              Attr attr = (Attr)attrMap.item(i);
+                            
+              attributes.addAttribute("", attr.getName(), attr.getName(),
+                                      "CDATA", attr.getValue());
+            }
+        }
+        
+        QName qName = new QName(el.getNamespaceURI(), el.getTagName());
+        
+        startElement(qName, attributes);
+        
+        NodeList children = el.getChildNodes();
+        for (int i = 0; i < children.getLength(); i++) {
+            Node child = children.item(i);
+            if (child instanceof Element) {
+                writeDOMElement((Element)child);
+            } else if (child instanceof Text) {
+                writeString(((Text)child).getData());
+            }
+        }
+        
+        endElement();
+    }
+    
 }
