@@ -397,7 +397,7 @@ public class SimpleAxisServer implements Runnable {
                     // FaultElement to it.  Otherwise, make a new one.
                     responseMsg = msgContext.getResponseMessage();
                     if (responseMsg == null) {
-                        responseMsg = new Message((AxisFault)e);
+                        responseMsg = new Message(af);
                     } else {
                         try {
                             SOAPEnvelope env = responseMsg.
