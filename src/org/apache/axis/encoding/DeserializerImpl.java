@@ -407,7 +407,7 @@ public class DeserializerImpl extends SOAPHandler
 
                 if( !href.startsWith("#") && defaultType != null && ref instanceof Part ){
                     //For attachments this is the end of the road-- invoke deserializer
-                    Deserializer dser = (Deserializer)context.getDeserializerForType(defaultType );
+                    Deserializer dser = context.getDeserializerForType(defaultType );
                     if(null != dser){          
                       dser.startElement(namespace, localName,
                              prefix, attributes,
@@ -470,7 +470,7 @@ public class DeserializerImpl extends SOAPHandler
             // a specific deserializer.  So create one using the
             // attribute type qname.
             if (type != null) {
-                Deserializer dser = (Deserializer)context.getDeserializerForType(type);
+                Deserializer dser = context.getDeserializerForType(type);
                 if (dser != null) {
                     // Move the value targets to the new deserializer
                     dser.moveValueTargets(this);

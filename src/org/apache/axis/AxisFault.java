@@ -772,7 +772,10 @@ public class AxisFault extends java.rmi.RemoteException {
             // the details.
         }
         if (haveSerializer) {
+            boolean oldMR = context.getDoMultiRefs();
+            context.setDoMultiRefs(false);
             context.serialize(qname, null, detailObject);
+            context.setDoMultiRefs(oldMR);
         }
     }
 
