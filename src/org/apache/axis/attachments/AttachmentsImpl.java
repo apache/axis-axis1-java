@@ -54,33 +54,40 @@
  */
 
 /* @author Rob Jellinghaus (robj@unrealities.com) */
-/* @author Rick Rineholt  */
-
+/* @author Rick Rineholt */
 package org.apache.axis.attachments;
 
 import org.apache.axis.AxisFault;
-import org.apache.axis.Message;
 import org.apache.axis.Part;
 import org.apache.axis.SOAPPart;
 import org.apache.axis.utils.JavaUtils;
+
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
-
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
 
 /**
  * Implements the Attachment interface, via an actual Hashmap of actual
  * AttachmentParts.
  */
-
 public class AttachmentsImpl implements Attachments {
+
+    /** Field attachments           */
     private HashMap attachments = new java.util.HashMap();
-    private LinkedList orderedAttachments=new LinkedList();
+
+    /** Field orderedAttachments           */
+    private LinkedList orderedAttachments = new LinkedList();
+
+    /** Field soapPart           */
     protected SOAPPart soapPart = null;
+
     /**
      * The actual stream to manage the multi-related input stream.
      */
-    protected org.apache.axis.attachments.MultiPartRelatedInputStream mpartStream = null;
+    protected org.apache.axis.attachments.MultiPartRelatedInputStream mpartStream =
+            null;
 
     /**
      * This is the content location as specified in SOAP with Attachments.
@@ -93,52 +100,71 @@ public class AttachmentsImpl implements Attachments {
      * Should only ever be called by Message constructor!
      * @param initialContents should be anything but today only a stream is
      *        supported.
-     * @param The mime content type of the stream for transports that provide 
+     * @param The mime content type of the stream for transports that provide
      *        it.
+     *
+     * @param intialContents
+     * @param contentType
+     * @param contentLocation
+     *
+     * @throws org.apache.axis.AxisFault
      */
-    public AttachmentsImpl(Object intialContents,
-                           String contentType,
-                           String contentLocation) 
-            throws org.apache.axis.AxisFault 
-    {
+    public AttachmentsImpl(
+            Object intialContents, String contentType, String contentLocation)
+            throws org.apache.axis.AxisFault {
+
         if (contentLocation != null) {
             contentLocation = contentLocation.trim();
-            if (contentLocation.length() == 0) contentLocation = null;
+
+            if (contentLocation.length() == 0) {
+                contentLocation = null;
+            }
         }
+
         this.contentLocation = contentLocation;
 
         if (contentType != null) {
             if (contentType.equals(org.apache.axis.Message.MIME_UNKNOWN)) {
-                //Process the input stream for headers to determine the mime
-                //type.
-                //TODO
+
+                // Process the input stream for headers to determine the mime
+                // type.
+                // TODO
             } else {
-                java.util.StringTokenizer st = 
+                java.util.StringTokenizer st =
                         new java.util.StringTokenizer(contentType, " \t;");
+
                 if (st.hasMoreTokens()) {
                     String mimetype = st.nextToken();
+
                     if (mimetype.equalsIgnoreCase(
                             org.apache.axis.Message.MIME_MULTIPART_RELATED)) {
-                        mpartStream = 
-                                new org.apache.axis.attachments.MultiPartRelatedInputStream(contentType,
-                                                                                            (java.io.InputStream) intialContents);
+                        mpartStream =
+                                new org.apache.axis.attachments.MultiPartRelatedInputStream(
+                                        contentType,
+                                        (java.io.InputStream) intialContents);
+
                         if (null == contentLocation) {
-                            //If the content location is not specified as
-                            //of the main message use the SOAP content location.
+
+                            // If the content location is not specified as
+                            // of the main message use the SOAP content location.
                             contentLocation = mpartStream.getContentLocation();
 
                             if (contentLocation != null) {
                                 contentLocation = contentLocation.trim();
-                                if (contentLocation.length() == 0) 
+
+                                if (contentLocation.length() == 0) {
                                     contentLocation = null;
+                                }
                             }
                         }
 
                         soapPart = new org.apache.axis.SOAPPart(null,
-                                                                mpartStream, 
-                                                                false);
-                    } else if (mimetype.equalsIgnoreCase(org.apache.axis.Message.MIME_APPLICATION_DIME)) { //do nothing today.
-                        //is= new DIMEInputStreamManager(is);
+                                mpartStream,
+                                false);
+                    } else if (mimetype.equalsIgnoreCase(
+                            org.apache.axis.Message.MIME_APPLICATION_DIME)) {    // do nothing today.
+
+                        // is= new DIMEInputStreamManager(is);
                     }
                 }
             }
@@ -148,136 +174,209 @@ public class AttachmentsImpl implements Attachments {
     /**
      * Copies attachment references from the multipartStream to local list.
      * Done only once per object creation.
+     *
+     * @throws AxisFault
      */
-     private void mergeinAttachments() throws AxisFault{
-                if(mpartStream!=null){
-                        Collection atts=mpartStream.getAttachments();
-                        mpartStream=null;
-                        setAttachmentParts(atts);
-                }
+    private void mergeinAttachments() throws AxisFault {
+
+        if (mpartStream != null) {
+            Collection atts = mpartStream.getAttachments();
+
+            mpartStream = null;
+
+            setAttachmentParts(atts);
         }
+    }
 
     /**
      * This method uses getAttacmentByReference() to look for attachment.
-         * If attachment has been found, it will be removed from the list, and
-         * returned to the user.
+     *     If attachment has been found, it will be removed from the list, and
+     *     returned to the user.
      * @param  The reference that referers to an attachment.
+     *
+     * @param reference
      * @return The part associated with the removed attachment, or null.
+     *
+     * @throws org.apache.axis.AxisFault
      */
-     public Part removeAttachmentPart(String reference) throws org.apache.axis.AxisFault{
-                mergeinAttachments();
-                Part removedPart=getAttachmentByReference(reference);
-                if(removedPart!=null){
-                        attachments.remove(removedPart.getContentId());
-                        attachments.remove(removedPart.getContentLocation());
-                        orderedAttachments.remove(removedPart);
-                }
-                return removedPart;
+    public Part removeAttachmentPart(String reference)
+            throws org.apache.axis.AxisFault {
+
+        mergeinAttachments();
+
+        Part removedPart = getAttachmentByReference(reference);
+
+        if (removedPart != null) {
+            attachments.remove(removedPart.getContentId());
+            attachments.remove(removedPart.getContentLocation());
+            orderedAttachments.remove(removedPart);
         }
 
-        /**
-         * Adds an existing attachment to this list.
-         * Note: Passed part will be bound to this message.
-         * @param newPart new part to add
-         * @returns Part old attachment with the same Content-ID, or null.
-         */
-        public Part addAttachmentPart(Part newPart) throws org.apache.axis.AxisFault{
-                mergeinAttachments();
-                Part oldPart=(Part)attachments.put(newPart.getContentId(),newPart);
-                if(oldPart!=null){
-                        orderedAttachments.remove(oldPart);
-                        attachments.remove(oldPart.getContentLocation());
-                }
-                orderedAttachments.add(newPart);
-                if(newPart.getContentLocation()!=null){
-                        attachments.put(newPart.getContentLocation(),newPart);
-                }
-                return oldPart;
+        return removedPart;
+    }
+
+    /**
+     * Adds an existing attachment to this list.
+     * Note: Passed part will be bound to this message.
+     * @param newPart new part to add
+     * @returns Part old attachment with the same Content-ID, or null.
+     *
+     * @return
+     *
+     * @throws org.apache.axis.AxisFault
+     */
+    public Part addAttachmentPart(Part newPart)
+            throws org.apache.axis.AxisFault {
+
+        mergeinAttachments();
+
+        Part oldPart = (Part) attachments.put(newPart.getContentId(), newPart);
+
+        if (oldPart != null) {
+            orderedAttachments.remove(oldPart);
+            attachments.remove(oldPart.getContentLocation());
         }
+
+        orderedAttachments.add(newPart);
+
+        if (newPart.getContentLocation() != null) {
+            attachments.put(newPart.getContentLocation(), newPart);
+        }
+
+        return oldPart;
+    }
 
     /**
      * Create an attachment part with a buried JAF data handler.
+     *
+     * @param datahandler
+     *
+     * @return
+     *
+     * @throws org.apache.axis.AxisFault
      */
-    public Part createAttachmentPart(Object datahandler) 
+    public Part createAttachmentPart(Object datahandler)
             throws org.apache.axis.AxisFault {
-                mergeinAttachments();
+
+        mergeinAttachments();
+
         if (!(datahandler instanceof javax.activation.DataHandler)) {
-            throw new org.apache.axis.AxisFault(JavaUtils.getMessage(
-                    "unsupportedAttach", datahandler.getClass().getName(),
-                    javax.activation.DataHandler.class.getName()));
+            throw new org.apache.axis.AxisFault(
+                    JavaUtils.getMessage(
+                            "unsupportedAttach", datahandler.getClass().getName(),
+                            javax.activation.DataHandler.class.getName()));
         }
-        Part ret = new AttachmentPart((javax.activation.DataHandler)datahandler);
+
+        Part ret =
+                new AttachmentPart((javax.activation.DataHandler) datahandler);
+
         addAttachmentPart(ret);
+
         return ret;
     }
 
     /**
-     * Add the collection of parts. 
+     * Add the collection of parts.
+     *
+     * @param parts
+     *
+     * @throws org.apache.axis.AxisFault
      */
-    public void setAttachmentParts(java.util.Collection parts) 
+    public void setAttachmentParts(java.util.Collection parts)
             throws org.apache.axis.AxisFault {
-                mergeinAttachments();
+
+        mergeinAttachments();
         attachments.clear();
-                orderedAttachments.clear();
-        if (parts != null && !parts.isEmpty()) {
+        orderedAttachments.clear();
+
+        if ((parts != null) && !parts.isEmpty()) {
             for (java.util.Iterator i = parts.iterator(); i.hasNext();) {
                 Part part = (Part) i.next();
+
                 if (null != part) {
-                        addAttachmentPart(part);
+                    addAttachmentPart(part);
                 }
             }
         }
     }
 
     /**
-     * This method should look at a refernce and determine if it is a CID: or 
+     * This method should look at a refernce and determine if it is a CID: or
      * url to look for attachment.
-         * <br>
-         * Note: if Content-Id or Content-Location headers have changed by outside
-         * code, lookup will not return proper values. In order to change these
-         * values attachment should be removed, then added again.
+     *     <br>
+     *     Note: if Content-Id or Content-Location headers have changed by outside
+     *     code, lookup will not return proper values. In order to change these
+     *     values attachment should be removed, then added again.
      * @param  The reference in the xml that referers to an attachment.
+     *
+     * @param reference
      * @return The part associated with the attachment.
+     *
+     * @throws org.apache.axis.AxisFault
      */
-    public Part getAttachmentByReference(String reference) 
+    public Part getAttachmentByReference(String reference)
             throws org.apache.axis.AxisFault {
-                mergeinAttachments();
-        if (null == reference) return null;
-        reference = reference.trim();
-        if (0 == reference.length()) return null;
 
-                Part ret = (Part) attachments.get(reference);
-                if(ret!=null)
-                        return ret;
+        mergeinAttachments();
+
+        if (null == reference) {
+            return null;
+        }
+
+        reference = reference.trim();
+
+        if (0 == reference.length()) {
+            return null;
+        }
+
+        Part ret = (Part) attachments.get(reference);
+
+        if (ret != null) {
+            return ret;
+        }
 
         String referenceLC = reference.toLowerCase();
-        if (!referenceLC.startsWith("cid:") && null != contentLocation) {
+
+        if (!referenceLC.startsWith("cid:") && (null != contentLocation)) {
             String fqreference = contentLocation;
-            if (!fqreference.endsWith("/")) fqreference += "/";
-            if (reference.startsWith("/"))
+
+            if (!fqreference.endsWith("/")) {
+                fqreference += "/";
+            }
+
+            if (reference.startsWith("/")) {
                 fqreference += reference.substring(1);
-            else
+            } else {
                 fqreference += reference;
-                        //lets see if we can get it as Content-Location
-                        ret = (AttachmentPart) attachments.get(fqreference);
+            }
+
+            // lets see if we can get it as Content-Location
+            ret = (AttachmentPart) attachments.get(fqreference);
         }
+
         return ret;
     }
 
     /**
-     * This method will return all attachments as a collection. 
-     * 
-     * @return A collection of attachments. 
+     * This method will return all attachments as a collection.
+     *
+     * @return A collection of attachments.
+     *
+     * @throws org.apache.axis.AxisFault
      */
-    public java.util.Collection getAttachments() 
+    public java.util.Collection getAttachments()
             throws org.apache.axis.AxisFault {
-                mergeinAttachments();
-                return new LinkedList(orderedAttachments);
-        }
+
+        mergeinAttachments();
+
+        return new LinkedList(orderedAttachments);
+    }
 
     /**
-     * From the complex stream return the root part. 
+     * From the complex stream return the root part.
      * Today this is SOAP.
+     *
+     * @return
      */
     public Part getRootPart() {
         return soapPart;
@@ -285,82 +384,121 @@ public class AttachmentsImpl implements Attachments {
 
     /**
      * Sets the root part of this multipart block
+     *
+     * @param newRoot
      */
-    public void setRootPart(Part newRoot){
+    public void setRootPart(Part newRoot) {
+
         try {
-            this.soapPart=(SOAPPart)newRoot;
-        } catch(ClassCastException e) {
+            this.soapPart = (SOAPPart) newRoot;
+        } catch (ClassCastException e) {
             throw new ClassCastException(JavaUtils.getMessage("onlySOAPParts"));
         }
     }
 
-
+    /** Field multipart           */
     public javax.mail.internet.MimeMultipart multipart = null;
 
     /**
-     * Get the content length of the stream. 
+     * Get the content length of the stream.
+     *
+     * @return
+     *
+     * @throws org.apache.axis.AxisFault
      */
     public int getContentLength() throws org.apache.axis.AxisFault {
-                mergeinAttachments();
+
+        mergeinAttachments();
+
         try {
-            return (int)org.apache.axis.attachments.MimeUtils.getContentLength(
-                              multipart != null ? multipart : (multipart = org.apache.axis.attachments.MimeUtils.createMP(soapPart.getAsString(), orderedAttachments)));
+            return (int) org.apache.axis.attachments.MimeUtils.getContentLength(
+                    (multipart != null)
+                    ? multipart
+                    : (multipart = org.apache.axis.attachments.MimeUtils.createMP(
+                            soapPart.getAsString(), orderedAttachments)));
         } catch (Exception e) {
             throw AxisFault.makeFault(e);
         }
     }
 
     /**
-     * Write the content to the stream. 
+     * Write the content to the stream.
+     *
+     * @param os
+     *
+     * @throws org.apache.axis.AxisFault
      */
-    public void writeContentToStream(java.io.OutputStream os) 
+    public void writeContentToStream(java.io.OutputStream os)
             throws org.apache.axis.AxisFault {
-                mergeinAttachments();
-        org.apache.axis.attachments.MimeUtils.writeToMultiPartStream(os, multipart != null ? multipart :
-                                                                         (multipart = org.apache.axis.attachments.MimeUtils.createMP(soapPart.getAsString(), orderedAttachments)));
-        for( java.util.Iterator i= orderedAttachments.iterator(); i.hasNext(); ){
-          AttachmentPart part= (AttachmentPart)i.next();
-              DataHandler dh= AttachmentUtils.getActivationDataHandler(part);
-              DataSource ds= dh.getDataSource();
-              if( ds != null && ds instanceof ManagedMemoryDataSource ){
-                  ((ManagedMemoryDataSource) ds).delete();
-              }
+
+        mergeinAttachments();
+        org.apache.axis.attachments.MimeUtils.writeToMultiPartStream(os,
+                (multipart != null)
+                ? multipart
+                : (multipart = org.apache.axis.attachments.MimeUtils.createMP(
+                        soapPart.getAsString(), orderedAttachments)));
+
+        for (java.util.Iterator i = orderedAttachments.iterator();
+             i.hasNext();) {
+            AttachmentPart part = (AttachmentPart) i.next();
+            DataHandler dh =
+                    AttachmentUtils.getActivationDataHandler(part);
+            DataSource ds = dh.getDataSource();
+
+            if ((ds != null) && (ds instanceof ManagedMemoryDataSource)) {
+                ((ManagedMemoryDataSource) ds).delete();
+            }
         }
     }
 
     /**
      * Gets the content type for the whole stream.
+     *
+     * @return
+     *
+     * @throws org.apache.axis.AxisFault
      */
     public String getContentType() throws org.apache.axis.AxisFault {
-                mergeinAttachments();
-        return org.apache.axis.attachments.MimeUtils.getContentType(multipart != null ? multipart :
-                (multipart = org.apache.axis.attachments.MimeUtils.createMP(soapPart.getAsString(), orderedAttachments)));
+
+        mergeinAttachments();
+
+        return org.apache.axis.attachments.MimeUtils.getContentType((multipart
+                != null)
+                ? multipart
+                : (multipart =
+                org.apache.axis.attachments.MimeUtils.createMP(
+                        soapPart.getAsString(),
+                        orderedAttachments)));
     }
 
     /**
-     *This is the number of attachments.
-     **/
+     * This is the number of attachments.
+     *
+     * @return
+     */
     public int getAttachmentCount() {
-                try{
-                        mergeinAttachments();
-                return orderedAttachments.size();
-                }catch(AxisFault e){}
-                return 0;
+
+        try {
+            mergeinAttachments();
+
+            return orderedAttachments.size();
+        } catch (AxisFault e) {
+        }
+
+        return 0;
     }
 
     /**
-     * Determine if an object is to be treated as an attchment. 
+     * Determine if an object is to be treated as an attchment.
      *
      * @param value the value that is to be determined if
      * its an attachment.
      *
-     * @return True if value should be treated as an attchment. 
+     * @return True if value should be treated as an attchment.
      */
-
     public boolean isAttachment(Object value) {
         return AttachmentUtils.isAttachment(value);
     }
-
 
     /**
      * Removes all <CODE>AttachmentPart</CODE> objects that have
@@ -369,7 +507,8 @@ public class AttachmentsImpl implements Attachments {
      *   <P>This method does not touch the SOAP part.</P>
      */
     public void removeAllAttachments() {
-        //TODO: Flesh it out.
+
+        // TODO: Flesh it out.
     }
 
     /**
@@ -383,14 +522,20 @@ public class AttachmentsImpl implements Attachments {
      * @return an iterator over all attachments that have a header
      *     that matches one of the given headers
      */
-    public java.util.Iterator getAttachments(javax.xml.soap.MimeHeaders headers) {
-        //TODO: Flesh it out.
+    public java.util.Iterator getAttachments(
+            javax.xml.soap.MimeHeaders headers) {
+
+        // TODO: Flesh it out.
         return null;
     }
 
     /**
      * Create a new attachment Part in this Message.
      * Will actually, and always, return an AttachmentPart.
+     *
+     * @return
+     *
+     * @throws org.apache.axis.AxisFault
      */
     public Part createAttachmentPart() throws org.apache.axis.AxisFault {
         return new AttachmentPart();
