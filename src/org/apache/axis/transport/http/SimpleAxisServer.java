@@ -261,7 +261,11 @@ public class SimpleAxisServer implements Runnable {
                             doWsdl = true;
                     }
 
+                    // Real and relative paths are the same for the
+                    // SimpleAxisServer
                     msgContext.setProperty(Constants.MC_REALPATH,
+                                           fileName.toString());
+                    msgContext.setProperty(Constants.MC_RELATIVE_PATH,
                                            fileName.toString());
 
                     // !!! Fix string concatenation

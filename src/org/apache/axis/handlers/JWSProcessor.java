@@ -117,12 +117,43 @@ public class JWSProcessor extends BasicHandler
             /* placed there by another handler (ie. HTTPActionHandler)     */
             /***************************************************************/
             Runtime  rt      = Runtime.getRuntime();
-            String   jwsFile = msgContext.getStrProp(Constants.MC_REALPATH);
+            String   jwsFile = msgContext.getStrProp(Constants.MC_RELATIVE_PATH);
+
+            int lastSlash = jwsFile.lastIndexOf('/');
+            String dir = null;
+
+            if (lastSlash > 0) {
+                dir = jwsFile.substring(0, lastSlash);
+            }
+
+            String file = jwsFile.substring(lastSlash + 1);
+
+            String outdir = msgContext.getStrProp( Constants.MC_JWS_CLASSDIR );
+            if ( outdir == null ) outdir = "." ;
+
+            // Build matching directory structure under the output
+            // directory.  In other words, if we have:
+            //    /webroot/jws1/Foo.jws
+            //
+            // That will be compiled to:
+            //    .../jwsOutputDirectory/jws1/Foo.class
+            if (dir != null) {
+                outdir = outdir + File.separator + dir;
+            }
+
+            // Confirm output directory exists.  If not, create it IF we're
+            // allowed to.
+            // !!! TODO: add a switch to control this.
+            File outDirectory = new File(outdir);
+            if (!outDirectory.exists()) {
+                outDirectory.mkdirs();
+            }
+
             if (category.isInfoEnabled())
                 category.info("jwsFile: " + jwsFile );
             String   jFile   = jwsFile.substring(0, jwsFile.length()-3) +
                     "java" ;
-            String   cFile   = jwsFile.substring(0, jwsFile.length()-3) +
+            String   cFile   = outdir + File.separator + file.substring(0, file.length()-3) +
                     "class" ;
 
             if (category.isInfoEnabled()) {
@@ -136,14 +167,14 @@ public class JWSProcessor extends BasicHandler
             /* Get the class */
             /*****************/
             String clsName = null ;
-            clsName = msgContext.getStrProp(Constants.MC_RELATIVE_PATH);
+            //clsName = msgContext.getStrProp(Constants.MC_RELATIVE_PATH);
             if ( clsName == null ) clsName = f2.getName();
             if ( clsName != null && clsName.charAt(0) == '/' )
                 clsName = clsName.substring(1);
 
             clsName = clsName.substring( 0, clsName.length()-4 );
             clsName = clsName.replace('/', '.');
-            
+
             if (category.isInfoEnabled())
                 category.info("ClsName: " + clsName );
 
@@ -171,19 +202,14 @@ public class JWSProcessor extends BasicHandler
                 // Process proc = rt.exec( "javac " + jFile );
                 // proc.waitFor();
                 Compiler          compiler = CompilerFactory.getCompiler();
-                String            outdir   = null ;
                 String[]          args     = null ;
-
-                outdir = msgContext.getStrProp( Constants.MC_HOME_DIR );
-                if ( outdir == null ) outdir = f1.getParent();
-                if ( outdir == null ) outdir = "." ;
 
                 compiler.setClasspath(getDefaultClasspath(msgContext));
                 compiler.setDestination(outdir);
                 compiler.setFile(jFile);
 
                 boolean result   = compiler.compile();
-                
+
                 /* Delete the temporary *.java file and check return code */
                 /**********************************************************/
                 (new File(jFile)).delete();

@@ -112,12 +112,21 @@ public class AxisServlet extends HttpServlet {
 
     private boolean isDebug= false;
 
+    // Cached path to our WEB-INF directory
+    private String webInfPath;
+    // Cached path to JWS output directory
+    private String jwsClassDir = null;
+
+    public AxisServlet() {
+    }
+
     public void init() {
+        webInfPath = getServletContext().getRealPath("/WEB-INF");
+
         isDebug= category.isDebugEnabled();
         if(isDebug) category.debug("In servlet init");
         String param = getInitParameter("transport.name");
         ServletContext context = getServletConfig().getServletContext();
-
 
         if (param == null)
             param = context.getInitParameter("transport.name");
@@ -133,6 +142,15 @@ public class AxisServlet extends HttpServlet {
         if (!(param == null) && (param.equalsIgnoreCase("true"))) {
             enableList = true;
         }
+
+        // Allow system property to override our default placement of
+        // JWS class files.
+        param = System.getProperty("axis.jws.servletClassDir");
+        if (param != null) {
+            jwsClassDir = param;
+        } else {
+            jwsClassDir = context.getRealPath("/");
+        }
     }
 
     public AxisServer getEngine() throws AxisFault {
@@ -144,7 +162,8 @@ public class AxisServlet extends HttpServlet {
             // (so the config files can't get snooped by a browser)
             FileProvider provider = null ;
 
-            if (!(new File(webInfPath, Constants.SERVER_CONFIG_FILE)).exists()){
+            if (!(new File(webInfPath,
+                           Constants.SERVER_CONFIG_FILE)).exists()){
                 InputStream is = null ;
                 is = context.getResourceAsStream("/WEB-INF/"+
                                                  Constants.SERVER_CONFIG_FILE);
@@ -197,10 +216,11 @@ public class AxisServlet extends HttpServlet {
         ServletContext context = getServletConfig().getServletContext();
         MessageContext msgContext = new MessageContext(engine);
 
-        msgContext.setProperty(Constants.MC_HOME_DIR, context.getRealPath("/"));
+        msgContext.setProperty(Constants.MC_JWS_CLASSDIR,
+                               jwsClassDir);
 
         String realpath = context.getRealPath(req.getServletPath());
-        String configPath = context.getRealPath("/WEB-INF");
+        String configPath = webInfPath;
         if (realpath != null) {
             msgContext.setProperty(Constants.MC_REALPATH, realpath);
             msgContext.setProperty(Constants.MC_CONFIGPATH, configPath);
@@ -209,15 +229,19 @@ public class AxisServlet extends HttpServlet {
             /*********************/
             msgContext.setTransportName(transportName);
 
-            /* Save some HTTP specific info in the bag in case a handler needs it */
-            /**********************************************************************/
+            /* Save some HTTP specific info in the bag in case we need it */
+            /**************************************************************/
             msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLET, this );
-            msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST, req );
-            msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETRESPONSE, res );
-            msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETLOCATION, getServletContext().getRealPath("/WEB-INF") );
-            msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETPATHINFO, req.getPathInfo() );
-            msgContext.setProperty(HTTPConstants.HEADER_AUTHORIZATION, req.getHeader(HTTPConstants.HEADER_AUTHORIZATION) );
-            msgContext.setProperty(Constants.MC_REMOTE_ADDR, req.getRemoteAddr());
+            msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST, req);
+            msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETRESPONSE, res);
+            msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETLOCATION,
+                                   webInfPath);
+            msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETPATHINFO,
+                                   req.getPathInfo() );
+            msgContext.setProperty(HTTPConstants.HEADER_AUTHORIZATION,
+                            req.getHeader(HTTPConstants.HEADER_AUTHORIZATION));
+            msgContext.setProperty(Constants.MC_REMOTE_ADDR,
+                                   req.getRemoteAddr());
 
             try {
                 String url = req.getScheme() + "://" +
@@ -262,7 +286,8 @@ public class AxisServlet extends HttpServlet {
                             writer.println("<h2>" +
                                     JavaUtils.getMessage("error00") + "</h2>");
                             writer.println("<p>" +
-                                    JavaUtils.getMessage("noDeploy00") + "</p>");
+                                           JavaUtils.getMessage("noDeploy00") +
+                                           "</p>");
                         }
                     } else {
                         res.setContentType("text/html");
@@ -287,9 +312,11 @@ public class AxisServlet extends HttpServlet {
                         }
                     }
                     if (method == null) {
-                        writer.println("<h2>" + JavaUtils.getMessage("error00") +
-                                ":  " +
-                                JavaUtils.getMessage("invokeGet00") + "</h2>");
+                        writer.println("<h2>" +
+                                       JavaUtils.getMessage("error00") +
+                                       ":  " +
+                                       JavaUtils.getMessage("invokeGet00") +
+                                       "</h2>");
                         writer.println("<p>" +
                                 JavaUtils.getMessage("noMethod01") + "</p>");
                         return;
@@ -311,7 +338,8 @@ public class AxisServlet extends HttpServlet {
                     Message respMsg = msgContext.getResponseMessage();
                     if (respMsg != null) {
                         writer.println("<p>" +
-                                JavaUtils.getMessage("gotResponse00") + "</p>");
+                                       JavaUtils.getMessage("gotResponse00") +
+                                       "</p>");
                         writer.println(respMsg.getSOAPPart().getAsString());
                     } else {
                         writer.println("<p>" +
@@ -326,7 +354,7 @@ public class AxisServlet extends HttpServlet {
                             "<p>" +
                             JavaUtils.getMessage("axisService00") + "</p>");
                     writer.println(
-                            "<i>" + JavaUtils.getMessage("perhaps00") + "</i>");
+                           "<i>" + JavaUtils.getMessage("perhaps00") + "</i>");
                 }
             } catch (AxisFault fault) {
                 res.setContentType("text/html");
@@ -384,7 +412,8 @@ public class AxisServlet extends HttpServlet {
 
         if (engine == null) {
             // !!! should return a SOAP fault...
-            ServletException se= new ServletException(JavaUtils.getMessage("noEngine00"));
+            ServletException se =
+                    new ServletException(JavaUtils.getMessage("noEngine00"));
             category.debug(se);
             throw se; 
         }
@@ -403,9 +432,10 @@ public class AxisServlet extends HttpServlet {
         if(isDebug) category.debug("HEADER_CONTENT_LOCATION:" +
           req.getHeader( HTTPConstants.HEADER_CONTENT_LOCATION));
 
-        Message           msg        = new Message( req.getInputStream(), false,
-           req.getHeader( HTTPConstants.HEADER_CONTENT_TYPE),
-            req.getHeader( HTTPConstants.HEADER_CONTENT_LOCATION));
+        Message msg = new Message( req.getInputStream(),
+                       false,
+                       req.getHeader( HTTPConstants.HEADER_CONTENT_TYPE),
+                       req.getHeader( HTTPConstants.HEADER_CONTENT_LOCATION));
         if(isDebug) category.debug("Message:" + msg);
 
         /* Set the request(incoming) message field in the context */
@@ -416,16 +446,20 @@ public class AxisServlet extends HttpServlet {
         /*********************/
         msgContext.setTransportName(transportName);
 
-        /* Save some HTTP specific info in the bag in case a handler needs it */
-        /**********************************************************************/
-        msgContext.setProperty(Constants.MC_HOME_DIR, context.getRealPath("/"));
-        msgContext.setProperty(Constants.MC_RELATIVE_PATH, req.getServletPath());
+        /* Save some HTTP specific info in the bag in case someone needs it */
+        /********************************************************************/
+        msgContext.setProperty(Constants.MC_JWS_CLASSDIR, jwsClassDir);
+        msgContext.setProperty(Constants.MC_RELATIVE_PATH,
+                               req.getServletPath());
         msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLET, this );
         msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST, req );
         msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETRESPONSE, res );
-        msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETLOCATION, getServletContext().getRealPath("/WEB-INF") );
-        msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETPATHINFO, req.getPathInfo() );
-        msgContext.setProperty(HTTPConstants.HEADER_AUTHORIZATION, req.getHeader(HTTPConstants.HEADER_AUTHORIZATION) );
+        msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETLOCATION,
+                               webInfPath );
+        msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETPATHINFO,
+                               req.getPathInfo() );
+        msgContext.setProperty(HTTPConstants.HEADER_AUTHORIZATION,
+                          req.getHeader(HTTPConstants.HEADER_AUTHORIZATION) );
         msgContext.setProperty(Constants.MC_REMOTE_ADDR, req.getRemoteAddr());
 
 
@@ -436,7 +470,7 @@ public class AxisServlet extends HttpServlet {
             category.debug("Constants.MC_HOME_DIR:" + context.getRealPath("/"));
             category.debug("Constants.MC_RELATIVE_PATH:"+req.getServletPath());
             category.debug("HTTPConstants.MC_HTTP_SERVLETLOCATION:"+
-               getServletContext().getRealPath("/WEB-INF") );
+                           webInfPath );
             category.debug("HTTPConstants.MC_HTTP_SERVLETPATHINFO:" + req.getPathInfo() );
             category.debug("HTTPConstants.HEADER_AUTHORIZATION:" + req.getHeader(HTTPConstants.HEADER_AUTHORIZATION));
             category.debug("Constants.MC_REMOTE_ADDR:"+req.getRemoteAddr());
@@ -486,7 +520,7 @@ public class AxisServlet extends HttpServlet {
             if (realpath != null)
                 msgContext.setProperty(Constants.MC_REALPATH, realpath);
 
-            String configPath = context.getRealPath("/WEB-INF");
+            String configPath = webInfPath;
             if(isDebug) category.debug("configPath:" + configPath);
 
             msgContext.setProperty(Constants.MC_CONFIGPATH, configPath);
