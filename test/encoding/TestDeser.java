@@ -96,20 +96,20 @@ public class TestDeser extends TestCase {
        message.setMessageContext(new MessageContext(server));
 
        SOAPEnvelope envelope = (SOAPEnvelope)message.getAsSOAPEnvelope();
-       assertNotNull("envelope", envelope);
+       assertNotNull("SOAP envelope should not be null", envelope);
 
        RPCElement body = (RPCElement)envelope.getFirstBody();
-       assertNotNull("body", body);
+       assertNotNull("SOAP body should not be null", body);
 
        Vector arglist = body.getParams();
        assertNotNull("arglist", arglist);
-       assertTrue("param.size()>0", arglist.size()>0);
+       assertTrue("param.size()<=0 {Should be > 0}", arglist.size()>0);
 
        RPCParam param = (RPCParam) arglist.get(0);
-       assertNotNull("param", param);
+       assertNotNull("SOAP param should not be null", param);
 
        Object result = param.getValue();
-       if (!equals(result, expected)) assertEquals(expected, result);
+       if (!equals(result, expected)) assertEquals("The result is not what is expected.", expected, result);
     }
 
     public void testString() throws Exception {

@@ -60,7 +60,7 @@ public class TestDOM extends TestCase {
        // Element dom = message.getAsDOM();
        String result = message.getAsString();
 
-       assertEquals(request, result);
+       assertEquals("Request is not the same as the result.", request, result);
     }
     
     public static void main(String [] args) throws Exception

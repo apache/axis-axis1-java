@@ -50,7 +50,7 @@ public class TestString extends TestCase {
         String result = (String)output.getValue();
         assertNotNull("No value for testParam param", result);
         
-        assertEquals(expected, result);
+        assertEquals("Expected result not received.", expected, result);
     }
 
     private void runtest(String value) throws Exception {
