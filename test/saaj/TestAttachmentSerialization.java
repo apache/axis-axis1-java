@@ -134,7 +134,7 @@ public class TestAttachmentSerialization extends TestCase {
         ap.setContent("some attachment text...", "text/plain");
         msg.addAttachmentPart(ap);
 
-        String jpgfilename = "docs/axis.jpg";
+        String jpgfilename = "docs/images/axis.jpg";
         File myfile = new File(jpgfilename);
         FileDataSource fds = new FileDataSource(myfile);
         DataHandler dh = new DataHandler(fds);
