@@ -53,29 +53,41 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.message;
-
-import java.io.Reader;
-import java.io.InputStream;
-import org.apache.axis.AxisFault;
-import org.apache.axis.utils.QName;
+package org.apache.axis.utils;
 
 /**
+ * This class allows us to easily implement extensible qualified fault codes
+ * as defined by the SOAP Specification. 
+ * 
  * @author James Snell (jasnell@us.ibm.com)
  */
-public interface Message { 
+public class QFault extends QName { 
     
-    public Reader getCharacterStream();
-    public InputStream getByteStream();
+    public QFault() {
+        super();
+    }
     
-    public MessageElement getEnvelope() throws AxisFault;
-    public MessageElement getHeader() throws AxisFault; 
-    public MessageElement getFirstHeaderEntry() throws AxisFault;
-    public MessageElement getFirstHeaderEntryNamed(QName qname) throws AxisFault;
-    public MessageElement getBody() throws AxisFault;
-    public MessageElement getFirstBodyEntry() throws AxisFault;
-    public MessageElement getFirstBodyEntryNamed(QName qname) throws AxisFault;
+    public QFault(String namespaceURI, String localPart) {
+        super(namespaceURI, localPart);
+    }
     
-    public String toString();
+    public QFault(String namespaceURI, String localPart, String minorCode) {
+        super(namespaceURI, localPart);
+        appendMinorCode(minorCode);
+    }
+    
+    public QFault(QFault qfault, String minorCode) {
+        super(qfault.getNamespaceURI(), qfault.getLocalPart());
+        appendMinorCode(minorCode);
+    }
+    
+    public QFault(QName qname, String minorCode) {
+        super(qname.getNamespaceURI(), qname.getLocalPart());
+        appendMinorCode(minorCode);
+    }
+    
+    public void appendMinorCode(String minorCode) {
+        this.setLocalPart(this.getLocalPart() + "." + minorCode);
+    }
     
 }

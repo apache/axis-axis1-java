@@ -57,23 +57,30 @@ package org.apache.axis ;
 
 import java.io.* ;
 import java.util.* ;
-
 import org.jdom.* ;
-
 import org.apache.axis.utils.* ;
 
 /** 
  *
- * @author Doug Davis (dug@us.ibm.com.com)
+ * @author Doug Davis (dug@us.ibm.com)
+ * @author James Snell (jasnell@us.ibm.com)
  */
 
 public class AxisFault extends Exception {
-  protected String    faultCode ;
+  protected QFault    faultCode ;
   protected String    faultString ;
   protected String    faultActor ;
   protected Vector    faultDetails ;  // vector of Element's
 
+  
   public AxisFault(String code, String str, String actor, Element[] details) {
+    setFaultCode( new QFault(Constants.AXIS_NS, code));
+    setFaultString( str );
+    setFaultActor( actor );
+    setFaultDetails( details );
+  }
+  
+  public AxisFault(QFault code, String str, String actor, Element[] details) {
     setFaultCode( code );
     setFaultString( str );
     setFaultActor( actor );
@@ -83,7 +90,7 @@ public class AxisFault extends Exception {
   public AxisFault(Exception e) {
     String  str ;
 
-    setFaultCode( "Server.generalException" );
+    setFaultCode( Constants.FAULT_SERVER_GENERAL );
     // setFaultString( e.toString() );
     // need to set details if we were in the body at the time!!
     ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -101,11 +108,11 @@ public class AxisFault extends Exception {
                         "  faultDetails: " + faultDetails + "\n"  );
   }
 
-  public void setFaultCode(String code) {
+  public void setFaultCode(QFault code) {
     faultCode = code ;
   }
 
-  public String getFaultCode() { 
+  public QFault getFaultCode() { 
     return( faultCode );
   }
 
@@ -139,7 +146,7 @@ public class AxisFault extends Exception {
     root = new Element( Constants.ELEM_FAULT, Constants.NSPREFIX_SOAP_ENV,
                         Constants.URI_SOAP_ENV );
     root.addContent( elem = new Element( Constants.ELEM_FAULT_CODE ) );
-    elem.addContent( faultCode );
+    elem.addContent( faultCode.getLocalPart() );
 
     root.addContent( elem = new Element(Constants.ELEM_FAULT_STRING) );
     elem.addContent( faultString );
