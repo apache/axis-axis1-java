@@ -224,6 +224,13 @@ public class WSDDService
         typeMappings.add(mapping);
     }
 
+    /**
+     * Add an WSDDOperation to the Service.
+     * @param mapping
+     **/
+    public void addOperation(WSDDOperation operation) {
+        operations.add(operation);
+    }
 
     protected QName getElementName()
     {

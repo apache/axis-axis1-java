@@ -88,6 +88,14 @@ public class WSDDOperation extends WSDDElement
     OperationDesc desc = new OperationDesc();
 
     /**
+     * Set operation descriptor 
+     * @throws WSDDException 
+     */
+    public WSDDOperation(OperationDesc desc) {
+        this.desc = desc;
+    }
+        
+    /**
      *
      * @param e (Element) XXX
      * @throws WSDDException XXX
