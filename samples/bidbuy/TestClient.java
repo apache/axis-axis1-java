@@ -104,8 +104,7 @@ public class TestClient {
         Options opts = new Options(args);
         Debug.setDebugLevel( opts.isFlagSet( 'd' ) );
         call = new ServiceClient(opts.getURL());
-        call.set(HTTPTransport.URL, opts.getURL());
-        call.set(HTTPTransport.ACTION, "http://www.soapinterop.org/Buy");
+        call.set(HTTPTransport.ACTION, "http://www.soapinterop.org/Bid");
 
         // register the PurchaseOrder class
         QName poqn = new QName("http://www.soapinterop.org/Bid",
@@ -147,7 +146,7 @@ public class TestClient {
 
             // issue the request
             String receipt = (String) call.invoke(
-                "http://www.soapinterop.org/Buy", "Buy",
+                "http://www.soapinterop.org/Bid", "Buy",
                 new Object[] {new RPCParam("PO", po)} );
 
             System.out.println(receipt);

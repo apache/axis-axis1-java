@@ -4,7 +4,7 @@ package org.apache.axis.encoding;
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -12,7 +12,7 @@ package org.apache.axis.encoding;
  * are met:
  *
  * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer. 
+ *    notice, this list of conditions and the following disclaimer.
  *
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in
@@ -20,7 +20,7 @@ package org.apache.axis.encoding;
  *    distribution.
  *
  * 3. The end-user documentation included with the redistribution,
- *    if any, must include the following acknowledgment:  
+ *    if any, must include the following acknowledgment:
  *       "This product includes software developed by the
  *        Apache Software Foundation (http://www.apache.org/)."
  *    Alternately, this acknowledgment may appear in the software itself,
@@ -28,7 +28,7 @@ package org.apache.axis.encoding;
  *
  * 4. The names "Axis" and "Apache Software Foundation" must
  *    not be used to endorse or promote products derived from this
- *    software without prior written permission. For written 
+ *    software without prior written permission. For written
  *    permission, please contact apache@apache.org.
  *
  * 5. Products derived from this software may not be called "Apache",
@@ -68,9 +68,9 @@ import org.apache.axis.encoding.ServiceDescription;
 
 /** Manage a serialization, including keeping track of namespace mappings
  * and element stacks.
- * 
+ *
  * WARNING : HIGHLY PRELIMINARY!!!
- * 
+ *
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
 public class SerializationContext
@@ -91,7 +91,7 @@ public class SerializationContext
     
     /**
      * Should I write out objects as multi-refs?
-     * 
+     *
      * !!! For now, this is an all-or-nothing flag.  Either ALL objects will
      * be written in-place as hrefs with the full serialization at the end
      * of the body, or we'll write everything inline (potentially repeating
