@@ -555,12 +555,12 @@ Copyright:
     depends="setenv" >
     <cvschangelog dir="."
                 destfile="${build.dest}/changelog.xml"
-                start="1 Dec 2003"
+                start="1 Apr 2004"
     />        
     <style in="${build.dest}/changelog.xml" 
            out="${axis.home}/docs/cvslog.html" 
            style="${axis.home}/tools/changelog.xsl">
-      <param name="title" expression="Apache Axis 1.2 Beta ChangeLog (Changes after 1.2 Alpha)"/>
+      <param name="title" expression="Apache Axis 1.2 RC ChangeLog (Changes after 1.2 Beta)"/>
       <param name="module" expression="ws-axis/java"/>
       <param name="cvsweb" expression="http://cvs.apache.org/viewcvs/"/>
     </style>
