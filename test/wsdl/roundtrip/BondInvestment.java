@@ -201,7 +201,7 @@ public class BondInvestment implements java.io.Serializable {
         return map;
     }
 
-    public void setOptions(HashMap map) {
+    public void setMap(HashMap map) {
         this.map = map;
     }
 } // BondInvestment 
