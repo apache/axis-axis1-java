@@ -66,20 +66,26 @@ import org.w3c.dom.Element;
 
 import javax.xml.rpc.namespace.QName;
 import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.Vector;
 
 /**
+ * A Simple Chain is a 'composite' Handler in that it aggregates a collection
+ * of Handlers and also acts as a Handler which delegates its operations to
+ * the collection.
+ * <p>
+ * A Simple Chain initially has no Handlers. Handlers may be added until the
+ * chain is invoke()d after which Handlers may not be added (and any attempt
+ * to do so will throw an exception).
  *
  * @author Doug Davis (dug@us.ibm.com)
+ * @author Glyn Normington (norm@uk.ibm.com)
  */
 public class SimpleChain extends BasicHandler implements Chain {
     static Category category =
             Category.getInstance(SimpleChain.class.getName());
 
-    protected Vector     handlers ;
-    protected Hashtable  options ;
-    protected boolean    invoked;
+    protected Vector handlers = new Vector();
+    protected boolean invoked = false;
 
     public void init() {
         for ( int i = 0 ; i < handlers.size() ; i++ )
@@ -91,8 +97,11 @@ public class SimpleChain extends BasicHandler implements Chain {
             ((Handler) handlers.elementAt( i )).cleanup();
     }
 
-    static InvocationStrategy iVisitor = new InvocationStrategy();
-    static WSDLGenStrategy wsdlVisitor = new WSDLGenStrategy();
+    private static final HandlerIterationStrategy iVisitor =
+        new InvocationStrategy();
+
+    private static final HandlerIterationStrategy wsdlVisitor =
+        new WSDLGenStrategy();
 
     /**
      * Iterate over the chain invoking each handler.  If there's a fault
@@ -100,53 +109,54 @@ public class SimpleChain extends BasicHandler implements Chain {
      * rethrow the exception.
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
-        invoked = true;
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("enter00",
+                                                "SimpleChain::invoke"));
+        }
+
+       invoked = true;
         doVisiting(msgContext, iVisitor);
-    }
+ 
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("exit00", 
+                "SimpleChain::invoke"));
+        }
+   }
 
     /**
      * Iterate over the chain letting each handler have a crack at
      * contributing to a WSDL description.
      */
     public void generateWSDL(MessageContext msgContext) throws AxisFault {
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("enter00",
+                                                "SimpleChain::generateWSDL"));
+        }
+
         invoked = true;
         doVisiting(msgContext, wsdlVisitor);
+
+        if (category.isDebugEnabled()) {
+            category.debug(JavaUtils.getMessage("exit00", 
+                "SimpleChain::generateWSDL"));
+        }
     }
 
     private void doVisiting(MessageContext msgContext,
                             HandlerIterationStrategy visitor) throws AxisFault {
-
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("enter00", 
-                "SimpleChain::invoke"));
-        }
-
         int i = 0 ;
         try {
-            Vector localHandlers;
-            // copies handlers to a local variable for thread-safe
-            // Unfortunately, localHandlers and handlers are references
-            // that point at the same Vector so this doesn't give
-            // thread safety.
-            if ((localHandlers = handlers) != null) {
-                Enumeration enum = localHandlers.elements();
-                while (enum.hasMoreElements()) {
-                    visitor.visit((Handler)enum.nextElement(), msgContext);
-                    i++;
-                }
+            Enumeration enum = handlers.elements();
+            while (enum.hasMoreElements()) {
+                visitor.visit((Handler)enum.nextElement(), msgContext);
+                i++;
             }
-        }
-        catch( Exception e ) {
+        } catch( AxisFault f ) {
             // notify fault in reverse order and then rethrow
-            category.error( e );
+            category.error( f );
             while( --i >= 0 )
                 ((Handler) handlers.elementAt( i )).onFault( msgContext );
-            throw AxisFault.makeFault(e);
-        }
-
-        if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("exit00", 
-                "SimpleChain::invoke"));
+            throw f;
         }
     }
 
@@ -166,7 +176,8 @@ public class SimpleChain extends BasicHandler implements Chain {
             ((Handler) handlers.elementAt( i )).onFault( msgContext );
 
         if (category.isDebugEnabled()) {
-            category.debug(JavaUtils.getMessage("exit00", "SimpleChain::onFault"));
+            category.debug(JavaUtils.getMessage("exit00",
+                                                "SimpleChain::onFault"));
         }
     }
 
@@ -180,22 +191,23 @@ public class SimpleChain extends BasicHandler implements Chain {
     public void addHandler(Handler handler) {
         if (handler == null)
             throw new InternalException(
-                    JavaUtils.getMessage("nullHandler00", "SimpleChain::addHandler"));
+                JavaUtils.getMessage("nullHandler00",
+                                     "SimpleChain::addHandler"));
 
         if (invoked)
             throw new InternalException(
-                    JavaUtils.getMessage("addAfterInvoke00", "SimpleChain::addHandler"));
+              JavaUtils.getMessage("addAfterInvoke00",
+                                   "SimpleChain::addHandler"));
         
-        if ( handlers == null ) handlers = new Vector();
         handlers.add( handler );
     }
 
     public boolean contains(Handler handler) {
-        return( handlers != null ? handlers.contains( handler ) : false );
+        return( handlers.contains( handler ));
     }
 
     public Handler[] getHandlers() {
-        if (handlers == null)
+        if (handlers.size() == 0)
             return null;
         
         Handler [] ret = new Handler[handlers.size()];
@@ -210,18 +222,18 @@ public class SimpleChain extends BasicHandler implements Chain {
 
         Element  root = doc.createElementNS("", "chain" );
 
-        if (handlers != null ) {
-            StringBuffer str = new StringBuffer();
-            Handler      h ;
-            for ( int i = 0 ; i < handlers.size() ; i++ ) {
-                if ( i != 0 ) str.append(",");
-                h = (Handler) handlers.elementAt(i);
-                str.append( h.getName() );
-            }
+        StringBuffer str = new StringBuffer();
+        int i = 0;
+        while (i < handlers.size()) {
+            if ( i != 0 ) str.append(",");
+            Handler h = (Handler) handlers.elementAt(i);
+            str.append( h.getName() );
+            i++;
+        }
+        if (i > 0) {
             root.setAttribute( "flow", str.toString() );
         }
 
-        options = this.getOptions();
         if ( options != null ) {
             Enumeration e = options.keys();
             while ( e.hasMoreElements() ) {
@@ -241,4 +253,4 @@ public class SimpleChain extends BasicHandler implements Chain {
 
         return( root );
     }
-};
+}
