@@ -18,7 +18,7 @@ _ 7407 - nice - Rich?
 _ 8419 - post
 X 8423 - pend - dims
 _ 8435 - post
-M 8476 - must - Rich
+_ 8476 - must - Rich
 _ 8480 - pend - Glen
 _ 8481 - pend - Glen
 _ 8578 - post
@@ -27,7 +27,7 @@ M 8646 - must - ?
 _ 8680 - close, fixed?
 _ 9045 - pend - Glen
 X 9239 - must - dims
-M 9393 - must - Rich
+_ 9393 - must - Rich
 M 9405 - must - Tom
 _ 9452 - post
 _ 9473 - post
