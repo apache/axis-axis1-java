@@ -56,6 +56,7 @@ package org.apache.axis.attachments;
 
 import org.apache.axis.Part;
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.components.image.ImageIOFactory;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.SessionUtils;
@@ -63,9 +64,11 @@ import org.apache.commons.logging.Log;
 
 import javax.activation.DataHandler;
 import javax.xml.soap.SOAPException;
+import javax.xml.transform.stream.StreamSource;
 import java.util.Iterator;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.InputStream;
 
 /**
  * Class AttachmentPart
@@ -383,22 +386,34 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
         }
 
         javax.activation.DataSource ds = datahandler.getDataSource();
-        if (ds instanceof ManagedMemoryDataSource) {
-
-            if (ds.getContentType().equals("text/plain")) {
-                try {
-                    java.io.InputStream is = ds.getInputStream();
-                    byte[] bytes = new byte[is.available()];
-
-                    is.read(bytes);
-
-                    return new String(bytes);
-                } catch (java.io.IOException io) {
-                    log.error(Messages.getMessage("javaIOException00"), io);
-                }
+        InputStream is = null;
+        try {
+            is = ds.getInputStream();;
+        } catch (java.io.IOException io) {
+            log.error(Messages.getMessage("javaIOException00"), io);
+            throw new SOAPException(io);
+        }
+        if (ds.getContentType().equals("text/plain")) {
+            try {
+                byte[] bytes = new byte[is.available()];
+                is.read(bytes);
+                return new String(bytes);
+            } catch (java.io.IOException io) {
+                log.error(Messages.getMessage("javaIOException00"), io);
+                throw new SOAPException(io);
+            }
+        } else if (ds.getContentType().equals("text/xml")) {
+            return new StreamSource(is);
+        } else if (ds.getContentType().equals("text/gif") ||
+                   ds.getContentType().equals("text/jpeg")) {
+            try {
+                return ImageIOFactory.getImageIO().loadImage(is);
+            } catch (Exception ex) {
+                log.error(Messages.getMessage("javaIOException00"), ex);
+                throw new SOAPException(ex);
             }
         }
-        return null;
+        return is;
     }
 
 
