@@ -125,33 +125,13 @@ public class RPCParam extends MessageElement
             System.err.println("Start element in RPCParam.");
         }
         typeQName = context.getTypeFromAttributes(attributes);
+
+        // !!! This check might not be complete; in the case of
+        //     a multi-ref, we might need to check BOTH the name
+        //     of the element with the href AND the referenced
+        //     one.  Right now this will just check the referenced one.
         if (typeQName == null) {
-            // No type inline, so check service description.
-            ServiceDescription serviceDesc = context.getServiceDescription();
-            if (serviceDesc != null) {
-                setType(serviceDesc.getParamTypeByName(getEnvelope().getMessageType(),
-                                                             name));
-            }
-        } else {
-            /** !!! If we have a service description and this is an
-            * explicitly-typed param, we might want to check here to
-            * see if the xsi:type val is indeed a subtype of the type
-            * we expect from the service description.
-            */
-        }
-        
-        DeserializerBase dSer = getContentHandler(context);
-        
-        context.getSAXHandler().replaceElementHandler(dSer);
-        
-        dSer.startElement(namespace,localName,qName,attributes);
-    }
-    
-    public DeserializerBase getContentHandler(DeserializationContext context)
-    {
-        // !!! Does this check want to live here?
-        if (typeQName == null) {
-            QName myQName = new QName(namespaceURI, name);
+            QName myQName = new QName(namespace, localName);
             if (myQName.equals(SOAPTypeMappingRegistry.SOAP_ARRAY)) {
                 typeQName = SOAPTypeMappingRegistry.SOAP_ARRAY;
             } else if (myQName.equals(SOAPTypeMappingRegistry.SOAP_INT)) {
@@ -162,7 +142,31 @@ public class RPCParam extends MessageElement
                 typeQName = SOAPTypeMappingRegistry.XSD_SHORT;
             }
         }
-
+        
+        if (typeQName == null) {
+            // No type inline, so check service description.
+            ServiceDescription serviceDesc = context.getServiceDescription();
+            if (serviceDesc != null) {
+                setType(serviceDesc.getParamTypeByName(getEnvelope().getMessageType(),
+                                                             name));
+            }
+        }
+        
+        /** !!! If we have a service description and this is an
+        * explicitly-typed param, we might want to check here to
+        * see if the xsi:type val is indeed a subtype of the type
+        * we expect from the service description.
+        */
+        
+        DeserializerBase dSer = getContentHandler(context);
+        
+        context.getSAXHandler().replaceElementHandler(dSer);
+        
+        dSer.startElement(namespace,localName,qName,attributes);
+    }
+    
+    public DeserializerBase getContentHandler(DeserializationContext context)
+    {
         // Look up type and return an appropriate deserializer
         if (typeQName != null) {
             deserializer = context.getDeserializer(typeQName);
