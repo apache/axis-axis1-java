@@ -65,6 +65,8 @@ import java.util.Enumeration;
 public class NSStack { 
     private static final boolean DEBUG_LOG = false;
     
+    private static final Hashtable EMPTY = new Hashtable();
+
     private Stack stack = new Stack();
     
     private NSStack parent = null;
@@ -83,14 +85,17 @@ public class NSStack {
         if (stack == null) stack = new Stack();
         if (DEBUG_LOG)
             System.out.println("NSPush (" + stack.size() + ")");
-        stack.push(new Hashtable());
+        stack.push(EMPTY);
     }
     
     public void push(Hashtable table) {
         if (stack == null) stack = new Stack();
         if (DEBUG_LOG)
             System.out.println("NSPush (" + stack.size() + ")");
-        stack.push(table);
+        if (table.size() == 0) 
+           stack.push(EMPTY);
+        else
+           stack.push(table);
     }
     
     public Hashtable peek() {
@@ -125,6 +130,11 @@ public class NSStack {
     public void add(String namespaceURI, String prefix) {
         if (stack.isEmpty()) push();
         Hashtable table = peek();
+        if (table == EMPTY) {
+            table = new Hashtable();
+            stack.pop();
+            stack.push(table);
+        }
         table.put(namespaceURI, prefix);
     }
     
@@ -141,7 +151,7 @@ public class NSStack {
             for (int n = stack.size() - 1; n >= 0; n--) {
                 Hashtable t = (Hashtable)stack.elementAt(n);
                 
-                if ((t != null) && t.containsKey(namespaceURI)) 
+                if ((t != null) && (t != EMPTY) && t.containsKey(namespaceURI)) 
                     return (String)t.get(namespaceURI);
             }
         }
@@ -178,7 +188,7 @@ public class NSStack {
 
     private String searchTable(Hashtable t, String prefix)
     {
-        if ((t != null) && (t.contains(prefix))) {
+        if ((t != null) && (t != EMPTY) && (t.contains(prefix))) {
             Enumeration e = t.keys();
             while (e.hasMoreElements()) {
                 String uri = (String)e.nextElement();
@@ -198,7 +208,7 @@ public class NSStack {
         if (!stack.isEmpty()) {
             for (int n = stack.size() - 1; n >= 0; n--) {
                 Hashtable t = (Hashtable)stack.elementAt(n);
-                if ((t != null) && t.containsKey(namespaceURI))
+                if ((t != null) && (t != EMPTY) && t.containsKey(namespaceURI))
                     return true;
             }
         }
