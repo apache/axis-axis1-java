@@ -90,7 +90,7 @@ public abstract class Stub implements javax.xml.rpc.Stub {
     /**
      * @deprecated  Use javax.xml.rpc.Call.SESSION_MAINTAIN_PROPERTY instead.
      */
-    public static final String SESSION_PROPERTY = Call.SESSION_PROPERTY;
+    public static final String SESSION_PROPERTY = Call.SESSION_MAINTAIN_PROPERTY;
 
     protected Service service = null;
 
