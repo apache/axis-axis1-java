@@ -79,30 +79,41 @@ import javax.xml.rpc.namespace.QName;
 public interface Service {
 
     /**
-     * The getPort method returns a dynamic proxy for the specified service port. A service client uses this dynamic 
-     * proxy to invoke operations on the target service port. The proxyInterface specifies the service definition 
-     * interface that is supported by the created dynamic proxy.
+     * The getPort method returns a dynamic proxy for the specified
+     * service port. A service client uses this dynamic proxy to invoke
+     * operations on the target service port. The proxyInterface
+     * specifies the service definition interface that is supported by
+     * the created dynamic proxy.
      *
-     * @param portName - Qualified name of the service port in the WSDL based service description
-     * @param proxyInterface - Service definition interface supported by the dynamic proxy
+     * @param portName - Qualified name of the service port in the WSDL
+     *                   based service description
+     * @param proxyInterface - Service definition interface supported by
+     *                         the dynamic proxy
      *
-     * @return Dynamic proxy object that supports the service definition interface that extends the java.rmi.Remote
+     * @return Dynamic proxy object that supports the service definition
+     *         interface that extends the java.rmi.Remote
      *
-     * @throws ServiceException - If the service class fails to create a dynamic proxy
+     * @throws ServiceException - If the service class fails to create a
+     *                            dynamic proxy
      */
     public java.rmi.Remote getPort(QName portName, Class proxyInterface)
         throws ServiceException;
 
     /**
-     * The getPort method returns a dynamic proxy for a default service port. A service client uses this dynamic 
-     * proxy to invoke operations on the target service port. The serviceDefInterface specifies the service definition 
-     * interface that is supported by the created dynamic proxy.
+     * The getPort method returns a dynamic proxy for a default service
+     * port. A service client uses this dynamic proxy to invoke operations
+     * on the target service port. The serviceDefInterface specifies the
+     * service definition interface that is supported by the created
+     * dynamic proxy.
      *
-     * @param serviceDefInterface - Service definition interface supported by the dynamic proxy
+     * @param serviceDefInterface - Service definition interface supported
+     *                              by the dynamic proxy
      *
-     * @return Dynamic proxy object that supports the service definition interface that extends the java.rmi.Remote
+     * @return Dynamic proxy object that supports the service definition
+     *         interface that extends the java.rmi.Remote
      *
-     * @throws ServiceException - If the service class fails to create a dynamic proxy
+     * @throws ServiceException - If the service class fails to create a
+     *                            dynamic proxy
      */
     public java.rmi.Remote getPort(Class serviceDefInterface)
             throws ServiceException;
@@ -114,7 +125,8 @@ public interface Service {
      *
      * @return Call object
      *
-     * @throws ServiceException - If the Service class fails to create a Call object
+     * @throws ServiceException - If the Service class fails to create
+     *                            a Call object
      */
     public Call createCall(QName portName) throws ServiceException;
 
@@ -122,11 +134,13 @@ public interface Service {
      * Creates a Call instance.
      *
      * @param portName - The qualified name for the target service port
-     * @param operationName - Name of the operation for which this Call object is created.
+     * @param operationName - Name of the operation for which this Call
+     *                        object is created.
      *
      * @return Call object
      *
-     * @throws ServiceException - If the Service class fails to create a Call object
+     * @throws ServiceException - If the Service class fails to create
+     *                            a Call object
      */
     public Call createCall(QName portName, String operationName)
         throws ServiceException;
@@ -135,17 +149,20 @@ public interface Service {
      * Creates a Call instance.
      *
      * @param portName - The qualified name for the target service port
-     * @param operationName - QName of the operation for which this Call object is created.
+     * @param operationName - QName of the operation for which this Call
+     *                        object is created.
      *
      * @return Call object
      *
-     * @throws ServiceException - If the Service class fails to create a Call object
+     * @throws ServiceException - If the Service class fails to create
+     *                            a Call object
      */
     public Call createCall(QName portName, QName operationName)
         throws ServiceException;
 
     /**
-     * Creates an empty Call object that needs to be configured using the setter methods on the Call interface.
+     * Creates an empty Call object that needs to be configured using
+     * the setter methods on the Call interface.
      *
      * @return  Call object
      *
@@ -199,14 +216,16 @@ public interface Service {
      * Gets the list of qualified names of the ports grouped by this service
      *
      * @return iterator containing list of qualified names of the ports  
-     * @throws ServiceException If this Service class does not have access to the required WSDL metadata
+     * @throws ServiceException If this Service class does not have access
+     *         to the required WSDL metadata
      */
     public java.util.Iterator getPorts() throws ServiceException;
 
     /**
      * Gets the TypeMappingRegistry registered with this Service object
      *
-     * @return  The configured TypeMappingRegistry or null if no TypeMappingRegistry has been set on the Service object
+     * @return  The configured TypeMappingRegistry or null if no
+     *          TypeMappingRegistry has been set on the Service object
      */
     public TypeMappingRegistry getTypeMappingRegistry();
 }
