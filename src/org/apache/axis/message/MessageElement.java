@@ -455,9 +455,7 @@ public class MessageElement implements SOAPElement,
 
     public void detachAllChildren()
     {
-        if (children != null) {
-            children.clear();
-        }
+        removeContents();
     }
     
     public NodeList getChildNodes() {

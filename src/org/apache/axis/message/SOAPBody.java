@@ -198,10 +198,7 @@ public class SOAPBody extends MessageElement
 
     void clearBody() 
     {
-        List bodyElements = getChildren();
-        if (bodyElements != null) {
-            bodyElements.clear();
-        }
+        removeContents();
     }
 
     SOAPBodyElement getBodyByName(String namespace, String localPart)
