@@ -54,11 +54,14 @@
  */
 package javax.xml.rpc.server;
 
-import javax.xml.rpc.JAXRPCException;
+import javax.xml.rpc.ServiceException;
 
 /**
- * The <code>javax.xml.rpc.server.ServiceLifecycle</code> defines
- * a lifecycle interface for servlet based JAX-RPC endpoint.
+ * The <code>javax.xml.rpc.server.ServiceLifecycle</code> defines a
+ * lifecycle interface for a JAX-RPC service endpoint. If the service
+ * endpoint class implements the <code>ServiceLifeycle</code> interface,
+ * the servlet container based JAX-RPC runtime system is required to
+ * manage the lifecycle of the corresponding service endpoint objects. 
  */
 public interface ServiceLifecycle {
 
@@ -71,11 +74,11 @@ public interface ServiceLifecycle {
      *  @param   context Initialization context for a JAX-RPC service
                  endpoint; Carries javax.servlet.ServletContext
                  for the servlet based JAX-RPC endpoints
-     *  @throws  JAXRPCException If any error in initialization of the
+     *  @throws  ServiceException If any error in initialization of the
                  service endpoint; or if any illegal context has
                  been provided in the init method
      */
-    public abstract void init(Object context) throws JAXRPCException;
+    public abstract void init(Object context) throws ServiceException;
 
     /**
      * JAX-RPC runtime system ends the lifecycle of a service endpoint

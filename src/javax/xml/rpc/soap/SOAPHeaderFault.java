@@ -78,15 +78,6 @@ public class SOAPHeaderFault extends RuntimeException {
     }
 
     /**
-     *  Sets the faultcode that provides an algorithmic mechanism
-     *  for the identification of a SOAP fault.
-     *  @param  faultcode  Qualified name of the faultcode
-     */
-    public void setFaultCode(QName faultcode) {
-        this.faultcode = faultcode;
-    }
-
-    /**
      *  Gets the faultcode element.
      *  @return  Qualified name of the faultcode element
      */
@@ -95,27 +86,11 @@ public class SOAPHeaderFault extends RuntimeException {
     }
 
     /**
-     *  Sets the faultstring element.
-     *  @param  faultstring  The faultstring element of the SOAP fault
-     */
-    public void setFaultString(String faultstring) {
-        this.faultstring = faultstring;
-    }
-
-    /**
      *  Gets the faultstring element.
      *  @return  faultstring element of the SOAP fault
      */
     public String getFaultString() {
         return faultstring;
-    }
-
-    /**
-     *  Sets the faultactor element.
-     *  @param faultactor element of the SOAP fault
-     */
-    public void setFaultActor(String faultactor) {
-        this.faultactor = faultactor;
     }
 
     /**
