@@ -113,7 +113,7 @@ public class JAFDataHandlerSerializer implements Serializer {
         String href= attachmentPart.getContentId();
 
         AttributesImpl attrs = new AttributesImpl();
-        if (attributes != null)
+        if (attributes != null && 0 < attributes.getLength())
             attrs.setAttributes(attributes); //copy the existing ones.
 
         int typeIndex=-1;
