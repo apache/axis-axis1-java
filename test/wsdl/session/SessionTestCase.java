@@ -78,9 +78,7 @@ public class SessionTestCase extends junit.framework.TestCase {
                         }
                     }
                 }
-            } catch (javax.xml.rpc.ServiceException e) {
-                e.printStackTrace();
-            } catch (java.rmi.RemoteException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             // checkout
