@@ -245,13 +245,12 @@ public abstract class AxisEngine extends BasicHandler
         return;
       }
       catch( Exception e ) {
-        System.err.println("No handler registry file!");
         if ( !(e instanceof FileNotFoundException) ) {
           e.printStackTrace( System.err );
         }
       }
       
-      System.err.println("Deploying default handlers...");
+      Debug.Print(2, "Deploying default handlers...");
       deployDefaultHandlers();
       saveHandlerRegistry();
     }
@@ -288,13 +287,12 @@ public abstract class AxisEngine extends BasicHandler
         return;
       }
       catch( Exception e ) {
-        System.err.println("No service registry file!");
         if ( !(e instanceof FileNotFoundException) ) {
           e.printStackTrace( System.err );
         }
       }
       
-      System.err.println("Deploying default services...");
+      Debug.Print(2, "Deploying default services...");
       deployDefaultServices();
       saveServiceRegistry();
     }
