@@ -1726,16 +1726,16 @@ public class tcpmon extends JFrame {
                                    (!(i.hasNext()) && lsm.getLeadSelectionIndex() == 0)) {
                         rc = Integer.parseInt( portField.getText() );
                         out.write("\n==============\n".getBytes());
-                        out.write( (new String(getMessage("listenPort01", "Listen Port:") + " " + rc + "\n" )).getBytes() );
-                        out.write( (new String(getMessage("targetHost01", "Target Host:") + " " + hostField.getText() +
-                                    "\n" )).getBytes() );
+                        out.write( ((getMessage("listenPort01", "Listen Port:") + " " + rc + "\n" )).getBytes() );
+                        out.write( (getMessage("targetHost01", "Target Host:") + " " + hostField.getText() +
+                                    "\n" ).getBytes() );
                         rc = Integer.parseInt( tPortField.getText() );
-                        out.write( (new String(getMessage("targetPort01", "Target Port:") + " " + rc + "\n" )).getBytes() );
+                        out.write( ((getMessage("targetPort01", "Target Port:") + " " + rc + "\n" )).getBytes() );
 
-                        out.write( (new String("==== " + getMessage("request01", "Request") + " ====\n" )).getBytes() );
+                        out.write( (("==== " + getMessage("request01", "Request") + " ====\n" )).getBytes() );
                         out.write( conn.inputText.getText().getBytes() );
 
-                        out.write( (new String("==== " + getMessage("response00", "Response") + " ====\n" )).getBytes() );
+                        out.write( (("==== " + getMessage("response00", "Response") + " ====\n" )).getBytes() );
                         out.write( conn.outputText.getText().getBytes() );
                         out.write("\n==============\n".getBytes());
                       }
