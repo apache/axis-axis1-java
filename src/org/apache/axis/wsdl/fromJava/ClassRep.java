@@ -220,31 +220,25 @@ public class ClassRep {
      */ 
     protected void addMethods(Class cls, boolean inhMethods, Vector stopList, Class implClass) {
         // Constructs a vector of all the public methods
-        Method[] m;
-        
-        if (inhMethods)
-            m = cls.getMethods();
-        else
-            m = cls.getDeclaredMethods();
-        
-        // add each method in this class to the list
-        for (int i=0; i < m.length; i++) {
-            int mod = m[i].getModifiers();
-            if (Modifier.isPublic(mod) &&
-                    // Ignore the getParameterName method from the Skeleton class
-                    (!m[i].getName().equals("getParameterName") ||
-                    !(Skeleton.class).isAssignableFrom(m[i].getDeclaringClass()))) {
-                short[] modes = getParameterModes(m[i]);
-                Class[] types = getParameterTypes(m[i]);
-                _methods.add(new MethodRep(m[i], types, modes,
-                                           getParameterNames(m[i], implClass, types)));
-            }
+
+        // walk class intheritance chain
+        walkInheritanceChain(cls, inhMethods, stopList, implClass);
+
+        // If we aren't doing inhertance, all done
+        if (!inhMethods) {
+            return;
         }
+        // add methods from interfaces
+        Class[] interfaces = cls.getInterfaces();
+        for (int i=0; i < interfaces.length; i++) {
+            walkInheritanceChain(interfaces[i], inhMethods, stopList, implClass);
+        } 
         
-        
-/*
-        // tomj - There is a problem here with interfaces
-        
+        return;
+    }
+
+    private void walkInheritanceChain(Class cls, boolean inhMethods, Vector stopList, Class implClass) {
+        Method[] m;
         // iterate up the inheritance chain and construct the list of methods
         Class currentClass = cls;
         while (currentClass != null &&
@@ -276,8 +270,6 @@ public class ClassRep {
             // move up the inhertance chain
             currentClass = currentClass.getSuperclass();
         }
-*/
-        return;
     }
 
     /**
