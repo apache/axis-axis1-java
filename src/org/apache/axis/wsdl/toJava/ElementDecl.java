@@ -54,53 +54,26 @@
  */
 package org.apache.axis.wsdl.toJava;
 
-import javax.wsdl.QName;
-import java.util.Vector;
+import javax.xml.rpc.namespace.QName;
 
 /**
-  * This class simply collects
-  */
-public class Parameter {
-
-    // constant values for the parameter mode.
-    public static final byte IN = 1;
-    public static final byte OUT = 2;
-    public static final byte INOUT = 3;
-
-    // The QName of the element associated with this param.  Defaults to
-    // null, which means it'll be new QName("", name)
-    private QName qname;
-    
-    // The part name of this parameter, just a string.
-    private String name;
-    
+ * Simple utility struct for holding element declarations.
+ * 
+ * This simply correlates a QName to a TypeEntry.
+ * 
+ * @author Glen Daniels (gdaniels@apache.org)
+ * @author Tom Jordahl (tomj@apache.org)
+ */
+public class ElementDecl {
+    private QName name;
     private TypeEntry type;
-    private byte mode = IN;
 
-    public String toString() {
-        return "(" + type + ", " + getName() + ", "
-                + (mode == IN ? "IN)" : mode == INOUT ? "INOUT)" : "OUT)");
-    } // toString
-
-    public QName getQName() {
-        return qname;
+    public ElementDecl() {
     }
 
-    public String getName() {
-        if (name == null && qname != null) {
-            return qname.getLocalPart();
-        }
-        return name;
-    }
-
-    public void setName(String name) {
+    public ElementDecl(TypeEntry type, QName name) {
+        this.type = type;
         this.name = name;
-        if (qname == null)
-            this.qname = new QName("", name);
-    }
-
-    public void setQName(QName qname) {
-        this.qname = qname;
     }
 
     public TypeEntry getType() {
@@ -111,11 +84,11 @@ public class Parameter {
         this.type = type;
     }
 
-    public byte getMode() {
-        return mode;
+    public QName getName() {
+        return name;
     }
 
-    public void setMode(byte mode) {
-        this.mode = mode;
+    public void setName(QName name) {
+        this.name = name;
     }
-} // class Parameter
+}

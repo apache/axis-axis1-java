@@ -866,8 +866,7 @@ public class SymbolTable {
                                               BindingEntry bindingEntry) throws IOException {
         Parameters parameters = new Parameters();
 
-        // The input and output Vectors, when filled in, will be of the form:
-        // {<parmType0>, <parmName0>, <parmType1>, <parmName1>, ..., <parmTypeN>, <parmNameN>}
+        // The input and output Vectors of Parameters
         Vector inputs = new Vector();
         Vector outputs = new Vector();
 
@@ -903,17 +902,17 @@ public class SymbolTable {
         // Collect all the input parameters
         Input input = operation.getInput();
         if (input != null) {
-            partStrings(inputs,
-                    input.getMessage().getOrderedParts(null), 
-                    literalInput, operation.getName(), bindingName);
+            getParametersFromParts(inputs,
+                        input.getMessage().getOrderedParts(null), 
+                        literalInput, operation.getName(), bindingName);
         }
 
         // Collect all the output parameters
         Output output = operation.getOutput();
         if (output != null) {
-            partStrings(outputs,
-                    output.getMessage().getOrderedParts(null), 
-                    literalOutput, operation.getName(), bindingName);
+            getParametersFromParts(outputs,
+                        output.getMessage().getOrderedParts(null), 
+                        literalOutput, operation.getName(), bindingName);
         }
 
         if (parameterOrder != null) {
@@ -928,11 +927,11 @@ public class SymbolTable {
                 // index in the outputs Vector of the given name, -1 if it doesn't exist.
                 int outdex = getPartIndex(name, outputs);
 
-                if (index > 0) {
+                if (index >= 0) {
                     // The mode of this parameter is either in or inout
                     addInishParm(inputs, outputs, index, outdex, parameters, true);
                 }
-                else if (outdex > 0) {
+                else if (outdex >= 0) {
                     addOutParm(outputs, outdex, parameters, true);
                 }
                 else {
@@ -941,32 +940,34 @@ public class SymbolTable {
             }
         }
 
-        // Get the mode info about those parts that aren't in the parameterOrder list.
-        // Since they're not in the parameterOrder list, the order is, first all in (and
-        // inout) parameters, then all out parameters, in the order they appear in the
-        // messages.
-        for (int i = 1; i < inputs.size(); i += 2) {
-            int outdex = getPartIndex((String) inputs.get(i), outputs);
+        // Get the mode info about those parts that aren't in the 
+        // parameterOrder list. Since they're not in the parameterOrder list,
+        // the order is, first all in (and inout) parameters, then all out
+        // parameters, in the order they appear in the messages.
+        for (int i = 0; i < inputs.size(); i++) {
+            Parameter p = (Parameter)inputs.get(i);
+            int outdex = getPartIndex(p.getName(), outputs);
             addInishParm(inputs, outputs, i, outdex, parameters, false);
         }
 
-        // Now that the remaining in and inout parameters are collected, determine the status of
-        // outputs.  If there is only 1, then it is the return value.  If there are more than 1,
-        // then they are out parameters.
-        if (outputs.size() == 2) {
-            parameters.returnType = (TypeEntry) outputs.get(0);
+        // Now that the remaining in and inout parameters are collected,
+        // determine the status of outputs.  If there is only 1, then it
+        // is the return value.  If there are more than 1, then they are 
+        // out parameters.
+        if (outputs.size() == 1) {
+            Parameter returnParam = (Parameter)outputs.get(0);
+            parameters.returnType = returnParam.getType();
             if (parameters.returnType instanceof DefinedElement) {
                 parameters.returnName = Utils.getAxisQName( 
                         ((DefinedElement)parameters.returnType).getQName());
             } else {
                 parameters.returnName = 
-                     new javax.xml.rpc.namespace.QName(null, 
-                                                       (String)outputs.get(1));
+                        Utils.getAxisQName(returnParam.getQName()); 
             }
             ++parameters.outputs;
         }
         else {
-            for (int i = 1; i < outputs.size(); i += 2) {
+            for (int i = 0; i < outputs.size(); i++) {
                 addOutParm(outputs, i, parameters, false);
             }
         }
@@ -990,8 +991,8 @@ public class SymbolTable {
      * Return the index of the given name in the given Vector, -1 if it doesn't exist.
      */
     private int getPartIndex(String name, Vector v) {
-        for (int i = 1; i < v.size(); i += 2) {
-            if (name.equals(v.get(i))) {
+        for (int i = 0; i < v.size(); i++) {
+            if (name.equals(((Parameter)v.get(i)).getName())) {
                 return i;
             }
         }
@@ -1001,71 +1002,84 @@ public class SymbolTable {
     /**
      * Add an in or inout parameter to the parameters object.
      */
-    private void addInishParm(Vector inputs, Vector outputs, int index, int outdex, Parameters parameters, boolean trimInput) {
-        Parameter p = new Parameter();
-        p.type = (TypeEntry) inputs.get(index - 1);
+    private void addInishParm(Vector inputs, 
+                              Vector outputs, 
+                              int index, 
+                              int outdex, 
+                              Parameters parameters, 
+                              boolean trimInput) {        
+        Parameter p = (Parameter)inputs.get(index);
         // If this is an element, we want the XML to reflect the element name
         // not the part name.
-        if (p.type instanceof DefinedElement) {
-            DefinedElement de = (DefinedElement)p.type;
+        if (p.getType() instanceof DefinedElement) {
+            DefinedElement de = (DefinedElement)p.getType();
             p.setQName(de.getQName());
-        } else {
-            p.setName((String) inputs.get(index));
         }
 
         // Should we remove the given parameter type/name entries from the Vector?
         if (trimInput) {
             inputs.remove(index);
-            inputs.remove(index - 1);
         }
 
         // At this point we know the name and type of the parameter, and that it's at least an
         // in parameter.  Now check to see whether it's also in the outputs Vector.  If it is,
         // then it's an inout parameter.
-        if (outdex > 0 && p.type.equals(outputs.get(outdex - 1))) {
-            outputs.remove(outdex);
-            outputs.remove(outdex - 1);
-            p.mode = Parameter.INOUT;
-            ++parameters.inouts;
-        }
-        else {
+        if (outdex >= 0) {
+            Parameter outParam = (Parameter)outputs.get(outdex);
+            if (p.getType().equals(outParam.getType())) {
+                outputs.remove(outdex);
+                p.setMode(Parameter.INOUT);
+                ++parameters.inouts;
+            } else {
+                // If we're here, we have both an input and an output
+                // part with the same name but different types.... guess
+                // it's not really an inout....
+                ++parameters.inputs;  // Is this OK??
+            }
+        } else {
             ++parameters.inputs;
         }
+        
         parameters.list.add(p);
     } // addInishParm
 
     /**
      * Add an output parameter to the parameters object.
      */
-    private void addOutParm(Vector outputs, int outdex, Parameters parameters, boolean trim) {
-        Parameter p = new Parameter();
-        p.type = (TypeEntry) outputs.get(outdex - 1);
+    private void addOutParm(Vector outputs, 
+                            int outdex, 
+                            Parameters parameters, 
+                            boolean trim) {
+        Parameter p = (Parameter)outputs.get(outdex);
 
-        if (p.type instanceof DefinedElement) {
-            DefinedElement de = (DefinedElement)p.type;
+        if (p.getType() instanceof DefinedElement) {
+            DefinedElement de = (DefinedElement)p.getType();
             p.setQName(de.getQName());
-        } else {
-            p.setName((String) outputs.get(outdex));
         }
 
         if (trim) {
             outputs.remove(outdex);
-            outputs.remove(outdex - 1);
         }
-        p.mode = Parameter.OUT;
+
+        p.setMode(Parameter.OUT);
         ++parameters.outputs;
         parameters.list.add(p);
     } // addOutParm
 
     /**
-     * This method returns a vector containing the Java types (even indices) and
-     * names (odd indices) of the parts.
+     * This method returns a vector containing Parameters which represent
+     * each Part (shouldn't we call these "Parts" or something?)
      */
-    protected void partStrings(Vector v, Collection parts, boolean literal, String opName, String bindingName) 
+    protected void getParametersFromParts(Vector v, 
+                                          Collection parts, 
+                                          boolean literal, 
+                                          String opName, 
+                                          String bindingName) 
             throws IOException {
         Iterator i = parts.iterator();
 
         while (i.hasNext()) {
+            Parameter param = new Parameter();
             Part part = (Part) i.next();
             QName elementName = part.getElementName();
             QName typeName = part.getTypeName();
@@ -1076,27 +1090,32 @@ public class SymbolTable {
                 wrapped = true;
             
             if (!literal || !wrapped) {
-                // not doing literal use, add this type or element name
+                // We're either RPC or literal + not wrapped.
+                
+                param.setName(partName);
+
+                // Add this type or element name
                 if (typeName != null) {
-                    v.add(getType(typeName));
-                    v.add(partName);
+                    param.setType(getType(typeName));
                 } else if (elementName != null) {
                     // Just an FYI: The WSDL spec says that for use=encoded
                     // that parts reference an abstract type using the type attr
                     // but we kinda do the right thing here, so let it go.
-                    v.add(getElement(elementName));
-                    v.add(partName);
+                    param.setType(getElement(elementName));
                 }
+                                
+                v.add(param);
+                
                 continue;   // next part
             }
             
-            // flow to here means literal use (no encoding)
+            // flow to here means literal + wrapped!
                 
             // See if we can map all the XML types to java types
             // if we can, we use these as the types
             Node node = null;
             Element e;
-            if (typeName != null && elementName == null) {
+            if (typeName != null) {
                 // Since we can't (yet?) make the Axis engine generate the right
                 // XML for literal parts that specify the type attribute,
                 // abort processing with an error if we encounter this case
@@ -1109,34 +1128,65 @@ public class SymbolTable {
                                                            bindingName}));
             }
             
-            if (elementName != null) {
-                node = getTypeEntry(elementName, true).getNode();
-                // Check if this element is of the form:
-                //    <element name="foo" type="tns:foo_type"/> 
-                QName type = Utils.getNodeTypeRefQName(node, "type");
-                if (type != null)
-                    node = getTypeEntry(type, false).getNode();
+            if (elementName == null) {
+                throw new IOException(
+                        JavaUtils.getMessage("noElemOrType", 
+                                             partName, 
+                                             opName));                
             }
             
-            if (node == null)
-                continue;  // ??? Skip this part, something is wrong
+            // Get the node which corresponds to the type entry for this
+            // element.  i.e.:
+            //  <part name="part" element="foo:bar"/>
+            //  ...
+            //  <schema targetNamespace="foo">
+            //    <element name="bar"...>  <--- This one
+            node = getTypeEntry(elementName, true).getNode();
+            
+            // Check if this element is of the form:
+            //    <element name="foo" type="tns:foo_type"/> 
+            QName type = Utils.getNodeTypeRefQName(node, "type");
+            if (type != null) {
+                // If in fact we have such a type, go get the node that
+                // corresponds to THAT definition.
+                node = getTypeEntry(type, false).getNode();
+            }
+            
+            // If we have nothing at this point, we're in trouble.
+            if (node == null) {
+                throw new IOException(
+                        JavaUtils.getMessage("badTypeNode", 
+                                             new String[] {
+                                                 partName, 
+                                                 opName,  
+                                                 elementName.toString()}));                
+            }
 
             // Get the nested type entries.
             Vector vTypes =
-                    SchemaUtils.getComplexElementTypesAndNames(node, this);
+                    SchemaUtils.getComplexElementDeclarations(node, this);
 
             if (vTypes != null) {
                 // add the elements in this list
-                v.addAll(vTypes);
+                for (int j = 0; j < vTypes.size(); j++) {
+                    ElementDecl elem = (ElementDecl) vTypes.elementAt(j);
+                    Parameter p = new Parameter();
+                    p.setQName(Utils.getWSDLQName(elem.getName()));
+                    p.setType(elem.getType());
+                    v.add(p);
+                }
             } else {
                 // XXX - This should be a SOAPElement/SOAPBodyElement
+                Parameter p = new Parameter();
+                p.setName(partName);
+                
                 if (typeName != null) {
-                    v.add(getType(typeName));
-                    v.add(partName);
+                    p.setType(getType(typeName));
                 } else if (elementName != null) {
-                    v.add(getElement(elementName));
-                    v.add(partName);
+                    p.setType(getElement(elementName));
                 }
+                
+                v.add(p);
             }
         } // while
         
@@ -1592,7 +1642,6 @@ public class SymbolTable {
         QName name = entry.getQName();
         if (get(name, entry.getClass()) == null) {
             // An entry of the given qname of the given type doesn't exist yet.
-
             if (entry instanceof Type && 
                 get(name, UndefinedType.class) != null) {
 

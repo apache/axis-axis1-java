@@ -13,18 +13,21 @@ package test.wsdl.literal;
 import org.apache.axis.AxisFault;
 import java.io.IOException;
 import java.io.File;
+import java.net.URL;
 
 public class SalesRankNPrice_ServiceTestCase extends junit.framework.TestCase {
+    
+    public static URL url;
+    
     public SalesRankNPrice_ServiceTestCase(String name) {
         super(name);
     }
     
-/*
     private void printit(String result) {
         System.out.println("Result: " + result);
     }
     
-    private void printit(SalesRankNPrice_Type r) {
+    private void printit(SalesRankNPrice1 r) {
         System.out.println("price: " + r.getPrice());
         System.out.println("rank: " + r.getSalesRank());
     }
@@ -52,13 +55,14 @@ public class SalesRankNPrice_ServiceTestCase extends junit.framework.TestCase {
     
     // List of files which should be generated
     private static String[] shouldExist= new String[] {
-        "All.java",
+        "SalesRankNPrice1.java",
+        "SalesRanks.java",
         "Prices.java",
-        "SalesRankNPrice_Service.java",
-        "SalesRankNPrice_Type.java",
+        "All.java",
         "SalesRankNPriceSoap.java",
         "SalesRankNPriceSoapStub.java",
-        "SalesRanks.java"
+        "SalesRankNPrice.java",
+        "SalesRankNPriceLocator.java"
         
     };
     
@@ -106,18 +110,20 @@ public class SalesRankNPrice_ServiceTestCase extends junit.framework.TestCase {
             assertTrue("File exist (and it should NOT): " + shouldNotExist[i], !f.exists()); 
         }
     }
-*/
     
     public void testSalesRankNPriceSoap() {
-/*
-        // This is the book to look up
-        java.lang.String ISBN = "1861005466";
+        // This is the book to look up...
+        // "Building Web Services With Java" :)
+        java.lang.String ISBN = "0672321815";
         
         boolean debug = true;
         
         SalesRankNPriceSoap binding;
         try {
-            binding = new SalesRankNPrice_ServiceLocator().getSalesRankNPriceSoap();
+            if (url != null)
+                binding = new SalesRankNPriceLocator().getSalesRankNPriceSoap(url);
+            else
+                binding = new SalesRankNPriceLocator().getSalesRankNPriceSoap();
         } catch (javax.xml.rpc.ServiceException jre) {
             throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre );
         }
@@ -127,7 +133,7 @@ public class SalesRankNPrice_ServiceTestCase extends junit.framework.TestCase {
         try {
             printit(binding.getAmazonSalesRank(ISBN));
             printit(binding.getAmazonUKSalesRank(ISBN));
-            printit(binding.getBNSalesRank(ISBN));
+            //printit(binding.getBNSalesRank(ISBN));
             printit(binding.getAmazonPrice(ISBN));
             printit(binding.getAmazonUKPrice(ISBN));
             printit(binding.getBNPrice(ISBN));
@@ -145,6 +151,17 @@ public class SalesRankNPrice_ServiceTestCase extends junit.framework.TestCase {
                 printit("Connect failure caused some of SalesRankNPrice_ServiceTestCase to be skipped.");
             }
         }
-*/
     }
+    
+    public static void main(String[] args) {
+        if (args.length == 1) {
+            try {
+                url = new URL(args[0]);
+            } catch (Exception e) {
+            }
+        }
+
+        junit.textui.TestRunner.run(new junit.framework.TestSuite(SalesRankNPrice_ServiceTestCase.class));
+    } // main
+    
 }

@@ -91,7 +91,7 @@ public class JavaTypeWriter implements Writer {
             if (!type.getName().endsWith("[]")) {
 
                 // Generate the proper class for either "complex" or "enumeration" types
-                Vector v = SchemaUtils.getComplexElementTypesAndNames(
+                Vector v = SchemaUtils.getComplexElementDeclarations(
                         node, symbolTable);
                 if (v != null) {
                     typeWriter = new 

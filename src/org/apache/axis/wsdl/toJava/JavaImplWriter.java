@@ -149,14 +149,14 @@ public class JavaImplWriter extends JavaWriter {
         Iterator iparam = parms.list.iterator();
         while (iparam.hasNext()) {
             Parameter param = (Parameter) iparam.next();
-            String paramType = param.type.getName();
+            String paramType = param.getType().getName();
 
             // Note that similar code is in JavaTestCaseWriter.
             // So please check both places if changes are made.
-            if (param.mode == Parameter.OUT) {
+            if (param.getMode() == Parameter.OUT) {
                 pw.print("        " + Utils.xmlNameToJava(param.getName())
                         + ".value = ");
-                if ( isPrimitiveType(param.type) ) {
+                if ( isPrimitiveType(param.getType()) ) {
                     if ( "boolean".equals(paramType) ) {
                         pw.print("false");
                     } else if ("byte".equals(paramType)) {

@@ -90,16 +90,17 @@ public class JavaFaultWriter extends JavaWriter {
 
         // XXX  Have to get use information (literal/encoded) for fault from
         // XXX  BindingEntry, which we don't have the QName for
-        symbolTable.partStrings(params, 
+        symbolTable.getParametersFromParts(params, 
                                 fault.getMessage().getOrderedParts(null), 
                                 false, 
                                 fault.getName(), 
                                 "unknown");
 
         // Write data members of the exception and getter methods for them
-        for (int i = 0; i < params.size(); i += 2) {
-            String type = ((TypeEntry) params.get(i)).getName();
-            String variable = (String) params.get(i + 1);
+        for (int i = 0; i < params.size(); i++) {
+            Parameter param = (Parameter)params.get(i);
+            String type = param.getType().getName();
+            String variable = param.getName();
             pw.println("    public " + type + " " + variable + ";");
             pw.println("    public " + type + " get" + Utils.capitalizeFirstChar(variable) + "() {");
             pw.println("        return this." + variable + ";");
@@ -115,14 +116,17 @@ public class JavaFaultWriter extends JavaWriter {
         // contructor that initializes data
         if (params.size() > 0) {
             pw.print("      public " + className + "(");
-            for (int i = 0; i < params.size(); i += 2) {
+            for (int i = 0; i < params.size(); i++) {
                 if (i != 0) pw.print(", ");
-                pw.print(((TypeEntry) params.get(i)).getName() + " " + params.get(i + 1));
+                Parameter param = (Parameter)params.get(i);
+                String type = param.getType().getName();
+                String variable = param.getName();
+                pw.print(type + " " + variable);
             }
             pw.println(") {");
-            for (int i = 1; i < params.size(); i += 2) {
-                String variable = (String) params.get(i);
-
+            for (int i = 0; i < params.size(); i++) {
+                Parameter param = (Parameter)params.get(i);
+                String variable = param.getName();
                 pw.println("        this." + variable + " = " + variable + ";");
             }
             pw.println("    }");
