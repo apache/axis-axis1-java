@@ -238,7 +238,7 @@ public class Call implements javax.xml.rpc.Call {
     /**
      * A Hashtable mapping addresses (URLs) to Transports (objects)
      */
-    private static Hashtable transportImpls = new Hashtable();
+    private Hashtable transportImpls = new Hashtable();
 
     /************************************************************************/
     /* Start of core JAX-RPC stuff                                          */
