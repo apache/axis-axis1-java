@@ -115,7 +115,9 @@ public abstract class WSDDElement
                 || (null == e.getLocalName())
                 ||!e.getNamespaceURI().equals(name.getNamespaceURI())
                 ||!e.getLocalName().equals(name.getLocalPart())) {
-            throw new WSDDException("Invalid WSDD Element '" + e.getLocalName() + "'");
+            throw new WSDDException("Invalid WSDD Element '" + 
+                                    e.getLocalName() + "' (wanted '" +
+                                    name.getLocalPart() + "')");
         }
     }
 
