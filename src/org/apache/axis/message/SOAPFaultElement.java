@@ -145,6 +145,8 @@ public class SOAPFaultElement extends SOAPBodyElement
     public SOAPFaultElement(AxisFault fault)
     {
         this.fault = fault;
+        namespaceURI = Constants.URI_SOAP_ENV;
+        name = Constants.ELEM_FAULT;
     }
     
     public void output(SerializationContext context)
