@@ -2,7 +2,6 @@
         <basename property="fileName" file="${file}"/>
         <dirname property="dirName" file="${file}"/>
         <echo message="Dir: ${dirName} File: ${fileName}"/>
-        <ant antfile="${file}" target="run" />
   </target>
 
   <target name="buildThem">
@@ -11,9 +10,8 @@
   </target>
 
   <target name="runThem">
-        <ant antfile="${file}" target="run" >
-           <property name="batch" value="true"/>
-        </ant>
+	<antcall target="echoThem"/>
+        <ant antfile="${file}" target="component-junit-functional" />
   </target>
 
   <!-- =================================================================== -->
@@ -158,6 +156,7 @@
     <echo message="test.functional.both = ${test.functional.both}" />
     <echo message="test.functional.reportdir = ${test.functional.reportdir}" />
     <echo message="test.functional.SimpleAxisPort = ${test.functional.SimpleAxisPort}" />
+    <echo message="test.functional.TCPListenerPort = ${test.functional.TCPListenerPort}" />
     <echo message="test.functional.fail = ${test.functional.fail}" />
     <echo message="" />
 
@@ -187,7 +186,7 @@
   <target name="start-functional-test-tcp-server" if="junit.present">
     <echo message="Starting test tcp server."/>
     <java classname="samples.transport.tcp.TCPListener" fork="yes" dir="${axis.home}/build">
-      <arg line="-p 8088" /> <!-- arbitrary port -->
+      <arg line="-p ${test.functional.TCPListenerPort}" /> <!-- arbitrary port -->
       <classpath refid="classpath" />
     </java>
   </target>
@@ -291,8 +290,11 @@
           <property name="undeploy.xml.property" refid="undeploy.xml.files"/>
   </target>
   
+<target name="component-test-run" if="junit.present" depends="start-signature-signing-and-verification">
+	<antcall target="component-junit-functional"/>
+</target>
 
-<target name="component-junit-functional" if="junit.present" depends="component-junit-functional-prepare,start-signature-signing-and-verification">
+<target name="component-junit-functional" if="junit.present" depends="component-junit-functional-prepare">
     <java classname="org.apache.axis.client.AdminClient" fork="yes">
       <classpath refid="classpath" />
       <arg line="${deploy.xml.property}"/>
@@ -318,10 +320,10 @@
 
 <target name="execute-Component"  depends="transport-layer" >
     <runaxisfunctionaltests
-      url="http://localhost:8088"
+      url="http://localhost:${test.functional.TCPListenerPort}"
       startTarget1="start-functional-test-tcp-server"
       startTarget2="start-functional-test-http-server"
-      testTarget="component-junit-functional"
+      testTarget="component-test-run"
       stopTarget="stop-functional-test-http-server" />
 </target>
 
