@@ -877,8 +877,10 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                                     "invalidNotif00", name));
                         }
                         else { // ONE_WAY or REQUEST_RESPONSE
-                            parameters.signature = constructSignature( 
-                                   parameters, name);
+                            if (parameters != null) {
+                                parameters.signature = constructSignature( 
+                                       parameters, name);
+                            }
                         }
                     }
                 }
@@ -893,14 +895,14 @@ public class JavaGeneratorFactory implements GeneratorFactory {
         String name = Utils.xmlNameToJava(opName);
 
         String ret = "void";
-        if (parms.returnParam != null) {
+        if (parms != null && parms.returnParam != null) {
             ret = Utils.getParameterTypeName(parms.returnParam);
         }
         String signature = "    public " + ret + " " + name + "(";
 
         boolean needComma = false;
 
-        for (int i = 0; i < parms.list.size(); ++i) {
+        for (int i = 0; parms!= null && i < parms.list.size(); ++i) {
             Parameter p = (Parameter) parms.list.get(i);
 
             if (needComma) {
@@ -920,7 +922,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
             }
         }
         signature = signature + ") throws java.rmi.RemoteException";
-        if (parms.faults != null) {
+        if (parms != null && parms.faults != null) {
             // Collect the list of faults into a single string, separated by commas.
             
             Iterator i = parms.faults.values().iterator();
