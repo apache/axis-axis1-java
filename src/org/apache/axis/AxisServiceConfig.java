@@ -70,5 +70,5 @@ public interface AxisServiceConfig
      * @return a space-delimited list of method names which may be called
      *         via SOAP.
      */
-    public String getMethods();
+    public String getAllowedMethods();
 }

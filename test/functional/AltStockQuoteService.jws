@@ -59,6 +59,7 @@ import java.net.URL;
 
 import org.w3c.dom.* ;
 import org.apache.axis.AxisServiceConfig;
+import org.apache.axis.AxisServiceConfigImpl;
 import org.apache.axis.utils.XMLUtils ;
 
 
@@ -69,11 +70,18 @@ import org.apache.axis.utils.XMLUtils ;
  * @author Sanjiva Weerawarana (sanjiva@watson.ibm.com)
  * @author Doug Davis (dug@us.ibm.com)
  */
-public class AltStockQuoteService implements AxisServiceConfig {
-  public String getMethods() {
-    return "echo";
+public class AltStockQuoteService {
+  private static AxisServiceConfigImpl myConfig;
+
+  static {
+    myConfig = new AxisServiceConfigImpl();
+    myConfig.setAllowedMethods("echo");
   }
-  
+
+  public static AxisServiceConfig getAxisServiceConfig() {
+    return myConfig;
+  }
+
   public String echo(String s)
   {
     return s;

@@ -72,6 +72,10 @@ import org.apache.axis.Constants;
 import org.apache.log4j.Category;
 import org.w3c.dom.Document;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.InvocationTargetException;
+
 /**
  * Base class for Java dispatching.  Fetches various fields out of envelope,
  * looks up service object (possibly using session state), and delegates
@@ -242,8 +246,9 @@ public abstract class JavaProvider extends BasicProvider {
             /** If the class knows what it should be exporting,
             * respect its wishes.
             */
-            if (obj instanceof AxisServiceConfig) {
-                allowedMethods = ((AxisServiceConfig)obj).getMethods();
+            AxisServiceConfig axisConfig = getConfiguration(obj);
+            if (axisConfig != null) {
+                allowedMethods = axisConfig.getAllowedMethods();
             }
 
             processMessage(msgContext, clsName, allowedMethods, reqEnv,
@@ -290,22 +295,20 @@ public abstract class JavaProvider extends BasicProvider {
         if (allowedMethods.equals("*"))
           allowedMethods = null;
 
-        /** If the class knows what it should be exporting,
-         * respect its wishes.
-         * XXX - this system (AxisSeriviceConfig interface) is going to be
-         * removed per the TODO list, so it wont work for WSDL right now
-         * tomj@macromedia.com
-         */
-//        if (obj instanceof AxisServiceConfig) {
-//            allowedMethods = ((AxisServiceConfig)obj).getMethods();
-//        }
-
         try {
             String url = msgContext.getStrProp(MessageContext.TRANS_URL);
             String urn = (String)msgContext.getTargetService();
             String description = "Service";
 
             Class cls = getServiceClass(msgContext, getServiceClassName(service));
+
+            // If the class knows what it should be exporting, respect it's
+            // wishes.
+            AxisServiceConfig axisConfig = getConfiguration(cls);
+            if (axisConfig != null) {
+                allowedMethods = axisConfig.getAllowedMethods();
+            }
+
             Emitter emitter = new Emitter();
             emitter.setClsSmart(cls,url);
             emitter.setAllowedMethods(allowedMethods);
@@ -386,4 +389,36 @@ public abstract class JavaProvider extends BasicProvider {
         return obj.getClass();
     }
 
+    /**
+     * For a given object or class, if there is a static method called
+     * "getAxisServiceConfig()", we call it and return the value as an
+     * AxisServiceConfig object.  This allows us to obtain metadata about
+     * a class' configuration without instantiating an object of that class.
+     *
+     * @param an object, which may be a Class
+     */
+    public AxisServiceConfig getConfiguration(Object obj)
+    {
+        Class cls;
+        if (obj instanceof Class) {
+            cls = (Class)obj;
+        } else {
+            cls = obj.getClass();
+        }
+
+        try {
+            Method method =
+                    cls.getDeclaredMethod("getAxisServiceConfig", new Class [] {});
+            if (method != null && Modifier.isStatic(method.getModifiers())) {
+                return (AxisServiceConfig)method.invoke(null, null);
+            }
+        } catch (NoSuchMethodException e) {
+        } catch (SecurityException e) {
+        } catch (IllegalAccessException e) {
+        } catch (IllegalArgumentException e) {
+        } catch (InvocationTargetException e) {
+        }
+
+        return null;
+    }
 }
