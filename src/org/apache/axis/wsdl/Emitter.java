@@ -82,8 +82,7 @@ import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
 
 import org.w3c.dom.*;
-
-import org.apache.xerces.parsers.DOMParser;
+import org.apache.axis.utils.XMLUtils;
 
 import com.ibm.wsdl.xml.WSDLReader;
 import com.ibm.wsdl.extensions.soap.SOAPAddress;
@@ -108,17 +107,9 @@ public class Emitter {
     public void emit(String uri) throws IOException {
         System.out.println ("Parsing XML File: " + uri + "\n\n");
 
-        DOMParser parser = new DOMParser ();
-
         try {
-            parser.setFeature ("http://xml.org/sax/features/validation", false);
-            parser.setFeature ("http://xml.org/sax/features/namespaces", true);
-            parser.parse (uri);
-
-            doc = parser.getDocument ();
-
+            doc = XMLUtils.newDocument(uri);
             emit (doc);
-
         }
         catch (Throwable t) {
             t.printStackTrace ();
