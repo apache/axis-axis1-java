@@ -63,15 +63,19 @@ package javax.xml.rpc.namespace;
  * Upgraded the implementation so that the namespaceURI and localPart are
  * always non-null.  This simplifies the implementation, increases performance,
  * and cleans up NullPointerException problems.
+ * 
+ * Upgraded the implemenation to make QName a final class, changed the 
+ * namespaceURI and localPart to final (and interned) Strings, changed equals()
+ * to use == comparison on interned Strings.
  * @version 0.1
  */
-public class QName {
+public final class QName {
 
     /** Field namespaceURI           */
-    private String namespaceURI = "";
+    private final String namespaceURI;
 
     /** Field localPart           */
-    private String localPart = "";
+    private final String localPart;
 
     /**
      * Constructor for the QName.
@@ -79,8 +83,7 @@ public class QName {
      * @param localPart - Local part of the QName
      */
     public QName(String localPart) {
-        setNamespaceURI("");
-        setLocalPart(localPart);
+        this("", localPart);
     }
     
     /**
@@ -90,20 +93,16 @@ public class QName {
      * @param localPart - Local part of the QName
      */
     public QName(String namespaceURI, String localPart) {
-        setNamespaceURI(namespaceURI);
-        setLocalPart(localPart);
-    }
-
-    /**
-     * Sets the Namespace URI for this QName
-     *
-     * @param namespaceURI
-     */
-    private void setNamespaceURI(String namespaceURI) {
-        if (namespaceURI == null)
-// should throw exception, but gotta clean up first            throw new IllegalArgumentException("namespaceURI == null");
-            namespaceURI = "";
-        this.namespaceURI = namespaceURI;
+        if (namespaceURI == null) {
+            this.namespaceURI = ""; 
+        } else {
+            this.namespaceURI = namespaceURI.intern();
+        }
+        if (localPart == null) {
+            this.localPart = ""; // This should really be an IllegalArgumentException
+        } else {
+            this.localPart = localPart.intern();
+        }
     }
 
     /**
@@ -112,19 +111,7 @@ public class QName {
      * @return namespaceURI
      */
     public String getNamespaceURI() {
-        return (namespaceURI);
-    }
-
-    /**
-     * Sets the Local part for this QName
-     *
-     * @param localPart
-     */
-    private void setLocalPart(String localPart) {
-        if (localPart == null)
-// should throw exception, but gotta clean up first            throw new IllegalArgumentException("localPart == null");
-            localPart = "";
-        this.localPart = localPart;
+        return namespaceURI;
     }
 
     /**
@@ -133,7 +120,7 @@ public class QName {
      * @return the Local part for this QName.
      */
     public String getLocalPart() {
-        return (localPart);
+        return localPart;
     }
 
     /**
@@ -146,7 +133,7 @@ public class QName {
         if (namespaceURI.equals("")) {
             return localPart;
         } else {
-            return namespaceURI + ":" + localPart;
+            return (namespaceURI + ":" + localPart);
         }
     }
 
@@ -165,11 +152,18 @@ public class QName {
         if (!(p1 instanceof QName)) {
             return false;
         }
-
-        if (namespaceURI.equals(((QName)p1).namespaceURI) &&
-            localPart.equals(((QName)p1).localPart)) {
+        
+        if (namespaceURI == ((QName)p1).namespaceURI &&
+            localPart == ((QName) p1).localPart) {
             return true;
         }
+
+        // Since the strings are interned, a direct == of the strings
+        // is all that is needed.  Here is the old code.
+        //    if (namespaceURI.equals(((QName)p1).namespaceURI) &&
+        //        localPart.equals(((QName)p1).localPart)) {
+        //        return true;
+        //    }
         return false;
     }
 
