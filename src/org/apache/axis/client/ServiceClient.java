@@ -328,17 +328,6 @@ public class ServiceClient {
     }
 
     /**
-     * Determine whether we'd like to track sessions or not.
-     *
-     * This just passes through the value into the MessageContext.
-     *
-     * @param yesno true if session state is desired, false if not.
-     */
-    public void setMaintainSession (boolean yesno) {
-        call.setMaintainSession(yesno);
-    }
-
-    /**
      * Obtain a reference to our MessageContext.
      *
      * @return the ServiceClient's MessageContext.

@@ -203,7 +203,9 @@ public class JavaStubWriter extends JavaWriter {
         pw.println("    // " +
                 JavaUtils.getMessage("from00", "javax.xml.rpc.Stub"));
         pw.println("    public synchronized void setMaintainSession(boolean session) {");
-        pw.println("        call.setMaintainSession(session);");
+        pw.println("        if (service instanceof org.apache.axis.client.Service) {");
+        pw.println("            ((org.apache.axis.client.Service) service).setMaintainSession(session);");
+        pw.println("        }");
         pw.println("    }");
         pw.println();
         pw.println("    // From javax.naming.Referenceable");
