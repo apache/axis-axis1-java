@@ -206,9 +206,12 @@ public class ArraySerializer implements Serializer
 
         // Check the message context to see if we should turn 2D processing ON
         // Default is OFF
-        boolean enable2Dim =
-            JavaUtils.isTrueExplicitly(context.getMessageContext().
-                getAxisEngine().getOption(AxisEngine.PROP_TWOD_ARRAY_ENCODING));
+		boolean enable2Dim = false;
+		
+		// Vidyanand : added this check
+		if( msgContext != null ) 
+	       enable2Dim = 
+            JavaUtils.isTrueExplicitly(msgContext.getAxisEngine().getOption(AxisEngine.PROP_TWOD_ARRAY_ENCODING));
 
         int dim2Len = -1;
         if (enable2Dim && !dims.equals("")) {
