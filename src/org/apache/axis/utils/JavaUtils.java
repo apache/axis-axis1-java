@@ -59,7 +59,6 @@ import org.apache.axis.attachments.AttachmentPart;
 import org.apache.axis.types.HexBinary;
 
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.commons.discovery.ManagedProperties;
 import org.apache.commons.logging.Log;
 
 import java.io.IOException;
