@@ -56,10 +56,16 @@
 
 package org.apache.axis.wsdlgen;
 
-import com.ibm.wsdl.extensions.soap.SOAPAddress;
-import com.ibm.wsdl.extensions.soap.SOAPBinding;
-import com.ibm.wsdl.extensions.soap.SOAPBody;
-import com.ibm.wsdl.extensions.soap.SOAPOperation;
+import javax.wsdl.extensions.soap.SOAPAddress;
+import javax.wsdl.extensions.soap.SOAPBinding;
+import javax.wsdl.extensions.soap.SOAPBody;
+import javax.wsdl.extensions.soap.SOAPOperation;
+
+import com.ibm.wsdl.extensions.soap.SOAPAddressImpl;
+import com.ibm.wsdl.extensions.soap.SOAPBindingImpl;
+import com.ibm.wsdl.extensions.soap.SOAPBodyImpl;
+import com.ibm.wsdl.extensions.soap.SOAPOperationImpl;
+
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
@@ -302,7 +308,7 @@ public class Emitter {
         binding.setUndefined(false);
         binding.setQName(new javax.wsdl.QName(intfNS, clsName + "SoapBinding"));
 
-        SOAPBinding soapBinding = new SOAPBinding();
+        SOAPBinding soapBinding = new SOAPBindingImpl();
         soapBinding.setStyle("rpc");
         soapBinding.setTransportURI("http://schemas.xmlsoap.org/soap/http");
 
@@ -333,7 +339,7 @@ public class Emitter {
         port.setBinding(binding);
         port.setName(clsName + "Port");
 
-        SOAPAddress addr = new SOAPAddress();
+        SOAPAddress addr = new SOAPAddressImpl();
         addr.setLocationURI(locationUrl);
 
         port.addExtensibilityElement(addr);
@@ -424,12 +430,12 @@ public class Emitter {
 
         bindingOper.setName(oper.getName());
 
-        SOAPOperation soapOper = new SOAPOperation();
+        SOAPOperation soapOper = new SOAPOperationImpl();
         soapOper.setSoapActionURI("");
         soapOper.setStyle("rpc");
         bindingOper.addExtensibilityElement(soapOper);
 
-        SOAPBody soapBody = new SOAPBody();
+        SOAPBody soapBody = new SOAPBodyImpl();
         soapBody.setUse("encoded");
         if (targetService == null)
             soapBody.setNamespaceURI(intfNS);

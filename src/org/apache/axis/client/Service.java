@@ -55,7 +55,7 @@
 
 package org.apache.axis.client ;
 
-import com.ibm.wsdl.extensions.soap.SOAPAddress;
+import javax.wsdl.extensions.soap.SOAPAddress;
 import org.apache.axis.AxisEngine;
 import org.apache.axis.Constants;
 import org.apache.axis.ConfigurationProvider;

@@ -78,8 +78,8 @@ import org.apache.axis.utils.JavaUtils;
 
 import org.w3c.dom.Node;
 
-import com.ibm.wsdl.extensions.soap.SOAPBody;
-import com.ibm.wsdl.extensions.soap.SOAPOperation;
+import javax.wsdl.extensions.soap.SOAPBody;
+import javax.wsdl.extensions.soap.SOAPOperation;
 
 /**
 * This is Wsdl2java's implementation template writer.  It writes the <BindingName>Impl.java

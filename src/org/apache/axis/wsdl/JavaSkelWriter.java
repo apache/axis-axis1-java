@@ -65,8 +65,11 @@ import javax.wsdl.BindingOperation;
 import javax.wsdl.PortType;
 import javax.wsdl.QName;
 
-import com.ibm.wsdl.extensions.soap.SOAPBody;
-import com.ibm.wsdl.extensions.soap.SOAPOperation;
+import javax.wsdl.extensions.soap.SOAPBody;
+import javax.wsdl.extensions.soap.SOAPOperation;
+
+import com.ibm.wsdl.extensions.soap.SOAPBodyImpl;
+import com.ibm.wsdl.extensions.soap.SOAPOperationImpl;
 
 import org.apache.axis.utils.JavaUtils;
 

@@ -68,7 +68,9 @@ import javax.wsdl.Binding;
 import javax.wsdl.Port;
 import javax.wsdl.Service;
 
-import com.ibm.wsdl.extensions.soap.SOAPAddress;
+import javax.wsdl.extensions.soap.SOAPAddress;
+
+import com.ibm.wsdl.extensions.soap.SOAPAddressImpl;
 
 import org.apache.axis.utils.JavaUtils;
 
