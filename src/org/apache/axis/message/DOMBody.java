@@ -30,6 +30,10 @@ public class DOMBody extends SOAPBodyElement
         if (attrMap.getLength() > 0) {
             attributes = new AttributesImpl();
             for (int i = 0; i < attrMap.getLength(); i++) {
+              Attr attr = (Attr)attrMap.item(i);
+                            
+              attributes.addAttribute("", attr.getName(), attr.getName(),
+                                      "CDATA", attr.getValue());
             }
         }
         
