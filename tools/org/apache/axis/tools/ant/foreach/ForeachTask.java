@@ -221,7 +221,7 @@ public class ForeachTask extends Task {
 
     public void execute() {
         if (subTarget == null) {
-            throw new BuildException("Attribute target is required.", location);
+            throw new BuildException("Attribute target is required.", getLocation());
         }
         executeParameters(0);
     }

@@ -180,9 +180,9 @@ System.out.println("Trying localhost:8080...");
     private void antcall (String taskName) {
         CallTarget callee;
         callee = (CallTarget) getProject().createTask("antcall");
-        callee.setOwningTarget(target);
+        callee.setOwningTarget(getOwningTarget());
         callee.setTaskName(getTaskName());
-        callee.setLocation(location);
+        callee.setLocation(getLocation());
         callee.init();
         callee.setTarget(taskName);
         callee.execute();
