@@ -61,7 +61,7 @@ import java.util.Date;
 
 import org.apache.axis.AxisFault ;
 import org.apache.axis.client.ServiceClient ;
-import org.apache.axis.client.http.HTTPTransport ;
+import org.apache.axis.transport.http.HTTPTransport ;
 import org.apache.axis.encoding.BeanSerializer;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.encoding.ServiceDescription;

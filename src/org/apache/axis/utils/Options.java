@@ -225,6 +225,9 @@ public class Options {
   public String getURL() throws MalformedURLException {
     String  tmp ;
     URL     url = null ;
+    
+    // Just in case...
+    org.apache.axis.client.ServiceClient.initialize();
 
     if ( (tmp = isValueSet( 'l' )) != null ) {
       url = new URL( tmp );
