@@ -316,14 +316,14 @@ public class SimpleAxisServer {
 
         // negative numbers
         if (value < 0) {
-            buf[--offset] = '-';
+            buf[--offset] = (byte) '-';
             value=-value;
             len++;
         }
 
         // zero
         if (value == 0) {
-            buf[--offset] = '0';
+            buf[--offset] = (byte) '0';
             len++;
         }
 
