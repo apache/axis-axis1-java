@@ -347,7 +347,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                 SymTabEntry entry = (SymTabEntry) v.elementAt(i);
 
                 // Use the type or the referenced type's QName to generate the java name.      
-                if (entry instanceof TypeEntry) {
+                if (entry instanceof TypeEntry && entry.getName() == null) {
                     TypeEntry tEntry = (TypeEntry) entry;
                     String dims = tEntry.getDimensions();
                     TypeEntry refType = tEntry.getRefType();
@@ -375,9 +375,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                         // collision.  If there is an existing anon type, there will be a 
                         // collision.  In both cases, the java type name should be mangled.
                         TypeEntry existing = symbolTable.getType(typeQName);
-                        if (anonQNames.get(typeQName) != null ||
-                                (existing != null && 
-                                !(existing instanceof DefinedElement))) {
+                        if (anonQNames.get(typeQName) != null) {
                             localName += "Type" + uniqueNum++;
                             typeQName = new QName(typeQName.getNamespaceURI(), localName);
                         } 
@@ -560,6 +558,10 @@ public class JavaGeneratorFactory implements GeneratorFactory {
      * Definition, force their names to be suffixed with _PortType and _Service, respectively.
      */
     protected void resolveNameClashes(SymbolTable symbolTable) {
+
+        // Keep a list of anonymous types so we don't try to resolve them twice.
+        HashSet anonTypes = new HashSet();
+
         Iterator it = symbolTable.getHashMap().values().iterator();
         while (it.hasNext()) {
             Vector v = new Vector((Vector) it.next());  // New vector we can temporarily add to it
@@ -623,6 +625,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                         if (entry instanceof Element) {
                             entry.setName(mangleName(entry.getName(),
                                     "_ElemType"));
+
                             // If this global element was defined using 
                             // an anonymous type, then need to change the
                             // java name of the anonymous type to match.
@@ -632,6 +635,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                             TypeEntry anonType = symbolTable.getType(anonQName);
                             if (anonType != null) {
                                 anonType.setName(entry.getName());
+                                anonTypes.add(anonType);
                             }
                         }
                         else if (entry instanceof TypeEntry) {
@@ -654,7 +658,11 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                                     }
                                 }
                             }
-                            entry.setName(mangleName(entry.getName(), "_Type"));
+                            // If this is an anonymous type, it's name was resolved in
+                            // the previous if block.  Don't reresolve it.
+                            if (!anonTypes.contains(entry)) {
+                                entry.setName(mangleName(entry.getName(), "_Type"));
+                            }
                         }
                         else if (entry instanceof PortTypeEntry) {
                             entry.setName(mangleName(entry.getName(), "_Port"));
