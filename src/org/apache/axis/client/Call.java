@@ -166,6 +166,9 @@ public class Call implements javax.xml.rpc.Call {
 
     private OperationDesc      operation       = new OperationDesc();
 
+    // Is this a one-way call?
+    private boolean invokeOneWay               = false;
+
     // Our Transport, if any
     private Transport          transport       = null ;
     private String             transportName   = null ;
@@ -1200,10 +1203,12 @@ public class Call implements javax.xml.rpc.Call {
      */
     public void invokeOneWay(Object[] params) {
         try {
+            invokeOneWay = true;
             invoke( params );
-        }
-        catch( Exception exp ) {
+        } catch( Exception exp ) {
             throw new JAXRPCException( exp.toString() );
+        } finally {
+            invokeOneWay = false;
         }
     }
 
@@ -1672,7 +1677,7 @@ public class Call implements javax.xml.rpc.Call {
          * parameter types, check for this case right now and toss a fault
          * if things don't look right.
          */
-        if (operation.getNumParams() > 0 && returnType == null) {
+        if (!invokeOneWay && operation.getNumParams() > 0 && returnType == null) {
             throw new AxisFault(JavaUtils.getMessage("mustSpecifyReturnType"));
         }
 
@@ -1924,7 +1929,18 @@ public class Call implements javax.xml.rpc.Call {
                 log.debug(writer.getBuffer().toString());
             }
         }
+        if(!invokeOneWay) {
+            invokeEngine(msgContext);
+        } else {
+            invokeEngineOneWay(msgContext);
+        }
 
+        if (log.isDebugEnabled()) {
+            log.debug("Exit: Call::invoke()");
+        }
+    }
+
+    private void invokeEngine(MessageContext msgContext) throws AxisFault {
         service.getEngine().invoke( msgContext );
 
         if (transport != null)
@@ -1950,10 +1966,20 @@ public class Call implements javax.xml.rpc.Call {
         if (respBody instanceof SOAPFaultElement) {
             throw ((SOAPFaultElement)respBody).getFault();
         }
+    }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Exit: Call::invoke()");
-        }
+    private void invokeEngineOneWay(final MessageContext msgContext) throws AxisFault {
+        Runnable runnable = new Runnable(){
+            public void run() {
+                try {
+                    service.getEngine().invoke( msgContext );
+                } catch (AxisFault af){
+                    log.debug(JavaUtils.getMessage("exceptionPrinting"), af);
+                }
+            }
+        };
+        Thread thread = new Thread(runnable);
+        thread.start();
     }
 
     /**
