@@ -59,12 +59,14 @@ import org.apache.axis.Constants;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.utils.Messages;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.wsdl.fromJava.Types;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import org.apache.axis.MessageContext;
+import org.apache.axis.AxisEngine;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.schema.SchemaVersion;
 
@@ -186,16 +188,29 @@ public class ArraySerializer implements Serializer
         //     referenced.  Transforming into a 2-dim array will cause the
         //     multi-referenced information to be lost.  Plus there is no
         //     way to determine whether the arrays are multi-referenced.
-        //     Thus the code is currently disabled (see enable2Dim below).
+        //   - .NET currently (Dec 2002) does not support 2D SOAP-encoded arrays
         //
-        // Currently the support is ENABLED because it is necessary for
+        // OLD Comment as to why this was ENABLED:
+        // It is necessary for
         // interoperability (echo2DStringArray).  It is 'safe' for now
         // because Axis treats arrays as non multi-ref (see the note
         // in SerializationContextImpl.isPrimitive(...) )
         // More complicated processing is necessary for 3-dim arrays, etc.
         //
+        // Axis 1.1 - December 2002
+        // Turned this OFF because Microsoft .NET can not deserialize
+        // multi-dimensional SOAP-encoded arrays, and this interopability
+        // is pretty high visibility. Make it a global configuration parameter:
+        //  <parameter name="enable2DEncoding" value="true"/>    (tomj)
+        //
+
+        // Check the message context to see if we should turn 2D processing ON
+        // Default is OFF
+        boolean enable2Dim =
+            JavaUtils.isTrueExplicitly(context.getMessageContext().
+                getAxisEngine().getOption(AxisEngine.PROP_TWOD_ARRAY_ENCODING));
+
         int dim2Len = -1;
-        boolean enable2Dim = true;  // Enabled 2-Dim processing
         if (enable2Dim && !dims.equals("")) {
             if (cls.isArray() && len > 0) {
                 boolean okay = true;
