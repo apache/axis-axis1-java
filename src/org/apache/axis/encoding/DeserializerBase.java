@@ -76,7 +76,6 @@ public class DeserializerBase extends DefaultHandler
 {
     protected Object value = null;
     protected DeserializationContext context = null;
-    protected DeserializerBase parent = null;
     
     public Object getValue()
     {
@@ -88,75 +87,19 @@ public class DeserializerBase extends DefaultHandler
         this.context = context;
     }
     
-    public void setParent(DeserializerBase parent)
-    {
-        this.parent = parent;
-    }
-    
     /** Deserialization structure handlers
      */
-    public void onEndChild(String localName, DeserializerBase deserializer)
-        throws SAXException
-    {
-    }
-    
-    /** DEFAULT IMPLEMENTATIONS OF SAX EVENT HANDLERS
-     * 
-     * All of these throw errors at this level, so if you want to allow
-     * things like children, you need to override these methods in your
-     * deserializer.
-     */
-    public void startDocument() throws SAXException {
-        throw new SAXException(
-            "StartDocument event not allowed in this context.");
-    }
-    
-    public void endDocument() throws SAXException {
-        throw new SAXException(
-            "EndDocument event not allowed in this context.");
-    }
-    
-    public void startPrefixMapping(String p1, String p2) throws SAXException {
-        throw new SAXException(
-            "StartPrefixMapping event not allowed in this context.");
-    }
-    
-    public void endPrefixMapping(String p1) throws SAXException {
-        throw new SAXException(
-            "EndPrefixMapping event not allowed in this context.");
-    }
-    
-    public void characters(char[] p1, int p2, int p3) throws SAXException {
-        throw new SAXException(
-            "Characters event not allowed in this context.");
-    }
-    
-    public void ignorableWhitespace(char[] p1, int p2, int p3) 
-        throws SAXException
-    {
-        throw new SAXException(
-            "IgnorableWhitespace event not allowed in this context.");
-    }
-    
-    public void skippedEntity(String p1) throws SAXException {
-        throw new SAXException(
-            "SkippedEntity event not allowed in this context.");
-    }
-    
-    public void startElement(String namespace, String localName,
+
+    public void onStartChild(String namespace, String localName,
                              String qName, Attributes attributes)
         throws SAXException
     {
-        throw new SAXException(
-            "StartElement event not allowed in this context.");
+        // Base does nothing
     }
-
-    public void endElement(String namespace, String localName,
-                             String qName)
+    
+    public void onEndChild(String localName, DeserializerBase deserializer)
         throws SAXException
     {
-        if (parent != null) {
-            parent.onEndChild(localName, this);
-        }
-    }
+        // Base does nothing
+    }    
 }

@@ -78,7 +78,7 @@ public class MessageElement
     protected String    href;
     protected boolean   isRoot = false;
     protected SOAPEnvelope message = null;
-    protected DeserializationContext context = null;
+    private DeserializationContext context = null;
     DeserializerBase deserializer;
     
     // The java Object value of this element.  This is either set by
@@ -108,7 +108,7 @@ public class MessageElement
         }
       this.namespaceURI = namespace;
       this.name = localPart;
-      this.context = context;
+      //this.context = context;
 
       if (attributes == null) {
         this.attributes = new AttributesImpl();
@@ -178,7 +178,7 @@ public class MessageElement
         value = val;
     }
     
-    public ContentHandler getContentHandler()
+    public DeserializerBase getContentHandler()
     {
         if (recorder == null)
             recorder = new ElementRecorder();

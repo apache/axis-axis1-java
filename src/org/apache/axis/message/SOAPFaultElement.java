@@ -86,7 +86,7 @@ public class SOAPFaultElement extends SOAPBodyElement
         return new FaultElementFactory();
     }
     
-    class FaultContentHandler extends DefaultHandler
+    class FaultContentHandler extends DeserializerBase
     {
         private boolean passedMyStart = false;
         
@@ -96,7 +96,7 @@ public class SOAPFaultElement extends SOAPBodyElement
             // *** TBD ***
         }
     }
-    public ContentHandler getContentHandler() { return new FaultContentHandler(); }
+    public DeserializerBase getContentHandler() { return new FaultContentHandler(); }
     
     ///////////////////////////////////////////////////////////////
     

@@ -80,7 +80,7 @@ public class DeserializationContext
         mappingRegistry.setDeserializationContext(this);
     }
     
-    public void pushElementHandler(ContentHandler handler)
+    public void pushElementHandler(DeserializerBase handler)
     {
         baseHandler.pushElementHandler(handler);    
     }

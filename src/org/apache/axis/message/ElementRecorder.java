@@ -68,7 +68,7 @@ import java.io.*;
  * 
  * @author Glen Daniels (gdaniels@allaire.com)
  */
-class ElementRecorder extends org.xml.sax.helpers.DefaultHandler
+class ElementRecorder extends DeserializerBase
 {
     private static final boolean DEBUG_LOG = false;
     
@@ -85,6 +85,17 @@ class ElementRecorder extends org.xml.sax.helpers.DefaultHandler
     {
         if (DEBUG_LOG) {
             System.err.println("(rec) startElement ['" + namespace + "' " +
+                           localName + "]");
+        }
+        
+        _events.addElement(new StartElementEvent(namespace, localName, qName, attributes));
+    }
+    
+    public void onStartChild(String namespace, String localName,
+                             String qName, Attributes attributes)
+    {
+        if (DEBUG_LOG) {
+            System.err.println("(rec) startChild ['" + namespace + "' " +
                            localName + "]");
         }
         

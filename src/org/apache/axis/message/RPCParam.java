@@ -144,7 +144,7 @@ public class RPCParam extends MessageElement
         return super.getEnvelope();
     }
     
-    public ContentHandler getContentHandler()
+    public DeserializerBase getContentHandler(DeserializationContext context)
     {
         // Look up type and return an appropriate deserializer
         if (typeQName != null) {
