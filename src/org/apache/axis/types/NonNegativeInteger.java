@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2002 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -52,43 +52,62 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
+package org.apache.axis.types;
 
-package test.types;
+import java.math.BigInteger;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import java.util.Random;
+
+import org.apache.axis.utils.JavaUtils;
 
 /**
- * test the axis specific type classes
+ * Custom class for supporting primitive XSD data type nonNegativeInteger
+ *
+ * @author Chris Haddad <chaddad@cobia.net>
+ * @see <a href="http://www.w3.org/TR/xmlschema-2/#nonNegativeInteger">XML Schema 3.3.22</a>
  */
-public class PackageTests extends TestCase
-{
-    public PackageTests(String name)
-    {
-        super(name);
+public class NonNegativeInteger extends BigInteger {
+
+    public NonNegativeInteger(byte[] val) {
+        super(val);
+        checkValidity();
+    } // ctor
+
+    public NonNegativeInteger(int signum, byte[] magnitude) {
+        super(signum, magnitude);
+        checkValidity();
+    } // ctor
+
+    public NonNegativeInteger(int bitLength, int certainty, Random rnd) {
+        super(bitLength, certainty, rnd);
+        checkValidity();
+    } // ctor
+
+    public NonNegativeInteger(int numBits, Random rnd) {
+        super(numBits, rnd);
+        checkValidity();
+    } // ctor
+
+    public NonNegativeInteger(String val) {
+        super(val);
+        checkValidity();
     }
 
-    public static Test suite() throws Exception
-    {
-        TestSuite suite = new TestSuite();
+    public NonNegativeInteger(String val, int radix) {
+        super(val, radix);
+        checkValidity();
+    } // ctor
 
-        suite.addTestSuite(TestNonNegativeInteger.class);
-        suite.addTestSuite(TestNormalizedString.class);
-        suite.addTestSuite(TestToken.class);
-        suite.addTestSuite(TestUnsignedLong.class);
-        suite.addTestSuite(TestUnsignedInt.class);
-        suite.addTestSuite(TestUnsignedShort.class);
-        suite.addTestSuite(TestUnsignedByte.class);
-        suite.addTestSuite(TestYearMonth.class);
-        suite.addTestSuite(TestYear.class);
-        suite.addTestSuite(TestMonth.class);
-        suite.addTestSuite(TestMonthDay.class);
-        suite.addTestSuite(TestDay.class);
-        suite.addTestSuite(TestName.class);
-        suite.addTestSuite(TestNCName.class);
-        suite.addTestSuite(TestNMToken.class);
-        suite.addTestSuite(TestDuration.class);
-        return suite;
-    }
-}
+    /**
+     * validate the value against the xsd definition
+     */
+    private BigInteger zero = new BigInteger("0");
+    private void checkValidity() {
+        if (compareTo(zero) < 0) {
+            throw new NumberFormatException(
+                    JavaUtils.getMessage("badNonNegInt00")
+                    + ":  " + this);
+        }
+    } // checkValidity
+
+} // class NonNegativeInteger

@@ -73,6 +73,7 @@ import test.wsdl.types.comprehensive_types2.holders.SimpleAnyURITypeHolder;
 
 import test.wsdl.types.comprehensive_service.TypeTest;
 import test.wsdl.types.comprehensive_service.TypeTestServiceLocator;
+import org.apache.axis.types.NonNegativeInteger;
 import org.apache.axis.types.UnsignedLong;
 import org.apache.axis.types.UnsignedInt;
 import org.apache.axis.types.UnsignedShort;
@@ -84,6 +85,7 @@ import org.apache.axis.types.Day;
 import org.apache.axis.types.YearMonth;
 import org.apache.axis.types.MonthDay;
 import org.apache.axis.holders.TimeHolder;
+import org.apache.axis.holders.NonNegativeIntegerHolder;
 import org.apache.axis.holders.UnsignedLongHolder;
 import org.apache.axis.holders.UnsignedByteHolder;
 import org.apache.axis.holders.UnsignedShortHolder;
@@ -115,6 +117,7 @@ public class VerifyTestCase extends junit.framework.TestCase {
         UnsignedInt uint = null;
         UnsignedShort ushort = null;
         UnsignedByte ubyte = null;
+        NonNegativeInteger nnint = null;
         URI uri = null;
         Year year = null;
         Month month = null;
@@ -127,6 +130,7 @@ public class VerifyTestCase extends junit.framework.TestCase {
             uint = new UnsignedInt(777);
             ushort = new UnsignedShort(77);
             ubyte = new UnsignedByte(7);
+            nnint = new NonNegativeInteger("7");
             uri = new URI("urn:this-is-a-test");
             year =  new Year(1995);
             month = new Month(7);
@@ -167,6 +171,7 @@ public class VerifyTestCase extends junit.framework.TestCase {
                     uint,
                     ushort,
                     ubyte,
+                    nnint,
                     uri,
                     year,
                     month,
@@ -206,6 +211,7 @@ public class VerifyTestCase extends junit.framework.TestCase {
                     new UnsignedIntHolder(uint),
                     new UnsignedShortHolder(ushort),
                     new UnsignedByteHolder(ubyte),
+                    new NonNegativeIntegerHolder(nnint),
                     new URIHolder(uri),
                     new YearHolder(year),
                     new MonthHolder(month),
@@ -245,6 +251,7 @@ public class VerifyTestCase extends junit.framework.TestCase {
                     new UnsignedIntHolder(),
                     new UnsignedShortHolder(),
                     new UnsignedByteHolder(),
+                    new NonNegativeIntegerHolder(),
                     new URIHolder(),
                     new YearHolder(),
                     new MonthHolder(),
@@ -712,6 +719,17 @@ public class VerifyTestCase extends junit.framework.TestCase {
             UnsignedByte actual = binding.methodUnsignedByte(sendValue, ch);
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("methodUnsignedByte Exception caught: " + re );
+        }
+        try {
+            NonNegativeInteger sendValue = null;
+            try {
+                sendValue = new NonNegativeInteger("246802468024680");
+            } catch (Exception e) {
+            }
+            NonNegativeIntegerHolder nnih = new NonNegativeIntegerHolder(sendValue);
+            NonNegativeInteger actual = binding.methodNonNegativeInteger(sendValue, nnih);
+        } catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("methodNonNegativeInteger Exception caught: " + re );
         }
         try {
             URI sendValue = null;

@@ -3,6 +3,7 @@ package test.encoding;
 import org.apache.axis.Constants;
 
 import org.apache.axis.types.HexBinary;
+import org.apache.axis.types.NonNegativeInteger;
 import org.apache.axis.types.NormalizedString;
 import org.apache.axis.types.Token;
 import org.apache.axis.types.UnsignedLong;
@@ -195,6 +196,11 @@ public class TestDeser2001 extends TestDeser {
     public void testUnsignedByte() throws Exception {
         deserialize("<result xsi:type=\"xsd:unsignedByte\">103</result>",
                     new UnsignedByte(103),true);
+    }
+
+    public void testNonNegativeInteger() throws Exception {
+        deserialize("<result xsi:type=\"xsd:nonNegativeInteger\">12345678901234567890</result>",
+                    new NonNegativeInteger("12345678901234567890"), true);
     }
 
     public void testName() throws Exception {

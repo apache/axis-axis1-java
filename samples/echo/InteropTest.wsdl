@@ -253,6 +253,13 @@
     <part name="return" type="xsd:unsignedByte"/>
   </message>
 
+  <message name="echoNonNegativeIntegerRequest">
+    <part name="inputNonNegativeInteger" type="xsd:nonNegativeInteger"/>
+  </message>
+  <message name="echoNonNegativeIntegerResponse">
+    <part name="return" type="xsd:nonNegativeInteger"/>
+  </message>
+
   <portType name="InteropTestPortType">
     <operation name="echoString" parameterOrder="inputString">
       <input message="tns:echoStringRequest"/>
@@ -368,6 +375,10 @@
     <operation name="echoUnsignedByte">
       <input message="tns:echoUnsignedByteRequest"/>
       <output message="tns:echoUnsignedByteResponse"/>
+    </operation>
+    <operation name="echoNonNegativeInteger">
+      <input message="tns:echoNonNegativeIntegerRequest"/>
+      <output message="tns:echoNonNegativeIntegerResponse"/>
     </operation>
   </portType>
 
@@ -614,6 +625,15 @@
       </output>
     </operation>
     <operation name="echoUnsignedByte">
+      <soap:operation soapAction="http://soapinterop.org/"/>
+      <input>
+        <soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+      <soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+    <operation name="echoNonNegativeInteger">
       <soap:operation soapAction="http://soapinterop.org/"/>
       <input>
         <soap:body use="encoded" namespace="http://soapinterop.org/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
