@@ -58,6 +58,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Field;
 import java.util.Vector;
+import java.util.HashMap;
 
 import org.apache.axis.utils.JavapUtils;
 
@@ -130,6 +131,7 @@ public class ClassRep {
     private Vector   _interfaces = new Vector();
     private Vector   _methods    = new Vector();
     private Vector   _fields     = new Vector();
+    private HashMap  _fieldNames = new HashMap();
     
 
     /**
@@ -239,17 +241,18 @@ public class ClassRep {
             if (Modifier.isPublic(mod) ||
                 isJavaBeanNormal(cls, f.getName(), f.getType()) ||
                 isJavaBeanIndexed(cls, f.getName(), f.getType())) {
-                if (!isJavaBeanIndexed(cls, f.getName(), f.getType())) {
-                    FieldRep fr = new FieldRep(f);
-                    if (!_fields.contains(fr))
-                        _fields.add(fr);
-                } else {
-                    FieldRep fr = new FieldRep();
-                    fr.setName(f.getName());
-                    fr.setType(f.getType().getComponentType());
-                    fr.setIndexed(true);
-                    if (!_fields.contains(fr))
-                        _fields.add(fr);
+                if (_fieldNames.get(f.getName().toLowerCase()) == null) {
+                    FieldRep fr;
+                    if (!isJavaBeanIndexed(cls, f.getName(), f.getType())) {
+                        fr = new FieldRep(f);
+                    } else {
+                        fr = new FieldRep();
+                        fr.setName(f.getName());
+                        fr.setType(f.getType().getComponentType());
+                        fr.setIndexed(true);
+                    }
+                    _fields.add(fr);
+                    _fieldNames.put(f.getName().toLowerCase(), fr);
                 }
             }
         }
@@ -268,21 +271,19 @@ public class ClassRep {
                     name = name.substring(3);
                 }
                 Class type = method.getReturnType();
-                if (isJavaBeanNormal(cls, name, type) ||
-                    isJavaBeanIndexed(cls, name, type)) {
-                    if (!isJavaBeanIndexed(cls, name, type)) {
+                if (_fieldNames.get(name.toLowerCase()) == null) {
+                    if (isJavaBeanNormal(cls, name, type) ||
+                            isJavaBeanIndexed(cls, name, type)) {
                         FieldRep fr = new FieldRep();
                         fr.setName(name);
-                        fr.setType(type);
-                        if (!_fields.contains(fr))
-                            _fields.add(fr);
-                    } else {
-                        FieldRep fr = new FieldRep();
-                        fr.setName(name);
-                        fr.setType(type.getComponentType());
-                        fr.setIndexed(true);
-                        if (!_fields.contains(fr))
-                            _fields.add(fr);
+                        if (!isJavaBeanIndexed(cls, name, type)) {
+                            fr.setType(type);
+                        } else {
+                            fr.setType(type.getComponentType());
+                            fr.setIndexed(true);
+                        }
+                        _fields.add(fr);
+                        _fieldNames.put(name.toLowerCase(), fr);
                     }
                 }
                 
