@@ -81,6 +81,7 @@ public class XMLUtils {
         "javax.xml.parsers.SAXParserFactory";
 
     private static DocumentBuilderFactory dbf = getDOMFactory();
+    private static Stack                  documentBuilders = new Stack(); 
     private static SAXParserFactory       saxFactory;
     private static Stack                  saxParsers = new Stack();
     private static DefaultHandler doNothingContentHandler = new DefaultHandler();
@@ -205,6 +206,36 @@ public class XMLUtils {
         }
         return( dbf );
     }
+
+    /**
+     * Gets a DocumentBuilder
+     * @return DocumentBuilder
+     * @throws ParserConfigurationException
+     */ 
+    public static DocumentBuilder getDocumentBuilder() throws ParserConfigurationException {
+        synchronized (documentBuilders) {
+            if (!documentBuilders.empty()) {
+                return (DocumentBuilder) documentBuilders.pop();
+            }
+        }
+        DocumentBuilder db = null;
+        synchronized (dbf) {
+            db = dbf.newDocumentBuilder();
+        }
+        return db;
+    }
+
+    /**
+     * Releases a DocumentBuilder
+     * @param db
+     */ 
+    public static void releaseDocumentBuilder(DocumentBuilder db) {
+        synchronized (documentBuilders) {
+            db.setErrorHandler(null); // setting implementation default
+            db.setEntityResolver(null); // setting implementation default
+            documentBuilders.push(db);
+        }
+    }
     
     private static boolean tryReset= true;
 
@@ -265,14 +296,22 @@ public class XMLUtils {
     }
     /**
      * Get an empty new Document
+     *
      * @return Document
      * @throws ParserConfigurationException if construction problems occur
      */
-    public static Document newDocument() 
-         throws ParserConfigurationException
-    {
-        synchronized (dbf) {
-            return dbf.newDocumentBuilder().newDocument();
+    public static Document newDocument()
+            throws ParserConfigurationException {
+        DocumentBuilder db = null;
+        try {
+            db = getDocumentBuilder();
+            Document doc = db.newDocument();
+            releaseDocumentBuilder(db);
+            return doc;
+        } finally {
+            if (db != null) {
+                releaseDocumentBuilder(db);
+            }
         }
     }
 
@@ -286,13 +325,19 @@ public class XMLUtils {
     public static Document newDocument(InputSource inp)
         throws ParserConfigurationException, SAXException, IOException
     {
-        DocumentBuilder db;
-        synchronized (dbf) {
-            db = dbf.newDocumentBuilder();
+        DocumentBuilder db = null;
+        try {
+            db = getDocumentBuilder();
+            db.setEntityResolver(new DefaultEntityResolver());
+            db.setErrorHandler(new ParserErrorHandler());
+            Document doc = db.parse(inp);
+            releaseDocumentBuilder(db);
+            return doc;
+        } finally {
+            if (db != null) {
+                releaseDocumentBuilder(db);
+            }
         }
-        db.setEntityResolver(new DefaultEntityResolver());
-        db.setErrorHandler( new ParserErrorHandler() );
-        return( db.parse( inp ) );
     }
 
     /**
