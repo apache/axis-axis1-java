@@ -1,18 +1,14 @@
 package samples.encoding;
 
-import java.io.ByteArrayInputStream;
-
-import java.net.URL;
-
-import javax.xml.namespace.QName;
-
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
-
 import org.apache.axis.utils.Options;
 import org.apache.axis.utils.XMLUtils;
-
 import org.w3c.dom.Element;
+
+import javax.xml.namespace.QName;
+import java.io.ByteArrayInputStream;
+import java.net.URL;
 
 public class TestElem {
     static String xml = "<x:hello xmlns:x=\"urn:foo\">a string</x:hello>" ;

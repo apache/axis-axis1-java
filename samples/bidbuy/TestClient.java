@@ -57,14 +57,13 @@ package samples.bidbuy ;
 
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
-import org.apache.axis.encoding.ser.BeanSerializerFactory;
-import org.apache.axis.encoding.ser.BeanDeserializerFactory;
 import org.apache.axis.encoding.XMLType;
+import org.apache.axis.encoding.ser.BeanDeserializerFactory;
+import org.apache.axis.encoding.ser.BeanSerializerFactory;
 import org.apache.axis.utils.Options;
 
-import javax.xml.rpc.ParameterMode;
-
 import javax.xml.namespace.QName;
+import javax.xml.rpc.ParameterMode;
 import java.net.URL;
 import java.util.Calendar;
 

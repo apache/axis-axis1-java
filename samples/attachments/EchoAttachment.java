@@ -57,7 +57,6 @@ package samples.attachments;
 
 
 import org.apache.axis.AxisFault;
-import org.apache.axis.attachments.Attachments;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.apache.axis.encoding.XMLType;
@@ -70,6 +69,7 @@ import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.ParameterMode;
+import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPBodyElement;
@@ -78,13 +78,12 @@ import javax.xml.soap.SOAPConnectionFactory;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
-import javax.xml.soap.AttachmentPart;
 import java.io.File;
 import java.net.URL;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.Vector;
-import java.util.Iterator;
 
 
 /**

@@ -57,28 +57,22 @@ package samples.attachments;
 
 
 import org.apache.axis.AxisFault;
+import org.apache.axis.attachments.AttachmentPart;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
-import org.apache.axis.MessageContext;
-import org.apache.axis.transport.http.HTTPConstants;
-import org.apache.axis.encoding.XMLType;
-import org.apache.axis.encoding.ser.JAFDataHandlerSerializerFactory;
-import org.apache.axis.encoding.ser.JAFDataHandlerDeserializerFactory;
-import org.apache.axis.utils.Options;
-import org.apache.axis.attachments.AttachmentPart;
 import org.apache.axis.message.SOAPBodyElement;
+import org.apache.axis.transport.http.HTTPConstants;
+import org.apache.axis.utils.Options;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
-import javax.xml.rpc.ParameterMode;
-import javax.xml.namespace.QName;
-import javax.activation.DataHandler;
-
+import java.io.ByteArrayInputStream;
 import java.net.URL;
 import java.util.Hashtable;
 import java.util.Vector;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import org.w3c.dom.*;
 
 
 /**

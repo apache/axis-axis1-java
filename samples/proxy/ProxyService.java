@@ -63,8 +63,8 @@ import org.apache.axis.SimpleTargetedChain;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.w3c.dom.Document;
-import samples.transport.tcp.TCPTransport;
 import samples.transport.tcp.TCPSender;
+import samples.transport.tcp.TCPTransport;
 
 /**
  * Proxy sample.  Relays message on to hardcoded URL.

@@ -54,15 +54,13 @@
  */
 package samples.integrationGuide.example2;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import javax.wsdl.Definition;
-
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
-
 import org.apache.axis.wsdl.toJava.Emitter;
 import org.apache.axis.wsdl.toJava.JavaWriter;
+
+import javax.wsdl.Definition;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 public class MyDeployWriter extends JavaWriter {
 

@@ -56,12 +56,8 @@ package samples.integrationGuide.example2;
 
 import org.apache.axis.utils.CLOption;
 import org.apache.axis.utils.CLOptionDescriptor;
-
 import org.apache.axis.wsdl.WSDL2Java;
-
 import org.apache.axis.wsdl.gen.Parser;
-
-import org.apache.axis.wsdl.toJava.Emitter;
 
 public class WSDL2Useless extends WSDL2Java {
 

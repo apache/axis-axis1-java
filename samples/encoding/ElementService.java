@@ -1,6 +1,6 @@
 package samples.encoding;
 
-import org.w3c.dom.Element ;
+import org.w3c.dom.Element;
 
 public class ElementService {
     public Element echoElement(String str, Element elem) {

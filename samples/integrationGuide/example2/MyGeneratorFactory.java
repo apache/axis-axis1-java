@@ -54,17 +54,11 @@
  */
 package samples.integrationGuide.example2;
 
-import javax.wsdl.Definition;
-
-import org.apache.axis.wsdl.gen.Generator;
-
-import org.apache.axis.wsdl.symbolTable.SymbolTable;
-import org.apache.axis.wsdl.symbolTable.TypeEntry;
-
-import org.apache.axis.wsdl.toJava.Emitter;
 import org.apache.axis.wsdl.toJava.JavaDefinitionWriter;
 import org.apache.axis.wsdl.toJava.JavaGeneratorFactory;
 import org.apache.axis.wsdl.toJava.JavaUndeployWriter;
+
+import javax.wsdl.Definition;
 
 /**
  * IBM Extension to WSDL2Java Emitter 

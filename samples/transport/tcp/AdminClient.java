@@ -55,13 +55,11 @@
 
 package samples.transport.tcp ;
 
-import org.apache.axis.client.Call;
-import org.apache.axis.SimpleTargetedChain;
 import org.apache.axis.EngineConfiguration;
+import org.apache.axis.SimpleTargetedChain;
+import org.apache.axis.client.Call;
 import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
 import org.apache.axis.configuration.SimpleProvider;
-
-import javax.xml.namespace.QName;
 
 /**
  * An admin client object, which will work with the TCP transport.

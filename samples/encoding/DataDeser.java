@@ -1,10 +1,10 @@
 package samples.encoding;
 
+import org.apache.axis.Constants;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.DeserializerImpl;
 import org.apache.axis.encoding.FieldTarget;
-import org.apache.axis.Constants;
 import org.apache.axis.message.SOAPHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;

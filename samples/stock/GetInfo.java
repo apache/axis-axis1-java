@@ -55,14 +55,13 @@
 
 package samples.stock ;
 
-import org.apache.axis.AxisFault;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.apache.axis.encoding.XMLType;
 import org.apache.axis.utils.Options;
 
-import javax.xml.rpc.ParameterMode;
 import javax.xml.namespace.QName;
+import javax.xml.rpc.ParameterMode;
 
 /**
  *
