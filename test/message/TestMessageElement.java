@@ -70,6 +70,12 @@ import org.xml.sax.Attributes;
 import javax.xml.namespace.QName;
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPElement;
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.SOAPPart;
+import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPBodyElement;
 import java.util.Iterator;
 import java.io.StringReader;
 
@@ -213,6 +219,45 @@ public class TestMessageElement extends TestCase {
         assertEquals("aNamespace",elem.getNamespaceURI("ns1"));
         assertEquals("ns1",elem.getPrefix("aNamespace"));
     }    
+    
+    public void testSOAPElementMessageDoesNotHavePrefix() throws Exception {
+            String A_TAG = "A";
+            String A_PREFIX = "a";
+            String A_NAMESPACE_URI = "http://schemas.com/a";
+            String AA_TAG = "AA";
+            String B_TAG = "B";
+            String B_PREFIX = "b";
+            String B_NAMESPACE_URI = "http://schemas.com/b";
+
+            MessageFactory messageFactory = MessageFactory.newInstance();
+            SOAPMessage message = messageFactory.createMessage();
+            SOAPPart part = message.getSOAPPart();
+            SOAPEnvelope envelope = part.getEnvelope();
+            SOAPBody body = envelope.getBody();
+
+            envelope.getHeader().detachNode();
+
+            Name aName = envelope.createName(A_TAG, A_PREFIX, A_NAMESPACE_URI);
+            SOAPBodyElement aBodyElement = body.addBodyElement(aName);
+            SOAPElement bElement = aBodyElement.addChildElement(AA_TAG, A_PREFIX);
+            String data = envelope.toString();
+
+            MessageContext ctx = new MessageContext(new AxisClient());
+            DeserializationContext dser = new DeserializationContextImpl(
+                    new org.xml.sax.InputSource(new StringReader(data)),
+                    ctx,
+                    Message.REQUEST);
+            dser.parse();
+            MessageElement elem = dser.getEnvelope().getBodyByName(A_NAMESPACE_URI, A_TAG);
+            Iterator iterator = elem.getChildElements();
+            while(iterator.hasNext()){
+                MessageElement elem2 = (MessageElement)iterator.next();
+                Name name = elem2.getElementName();
+                assertEquals(A_NAMESPACE_URI, name.getURI());
+                assertEquals(AA_TAG, name.getLocalName());
+            }    
+    }
+    
     public static void main(String[] args) throws Exception {
         TestMessageElement tester = new TestMessageElement("TestMessageElement");
         tester.testQNameAttrTest();

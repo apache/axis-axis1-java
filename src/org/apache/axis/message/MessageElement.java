@@ -164,12 +164,12 @@ public class MessageElement implements SOAPElement, Serializable
         this.namespaceURI = namespace;
         this.name = localPart;
         this.prefix = prefix;
+        addMapping(new Mapping(namespace, prefix));
     }
 
     public MessageElement(Name eltName)
     {
-        this(eltName.getURI(), eltName.getLocalName());
-        prefix = eltName.getPrefix();
+        this(eltName.getLocalName(),eltName.getPrefix(), eltName.getURI());
     }
 
     public MessageElement(String namespace, String localPart, Object value)
