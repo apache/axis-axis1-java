@@ -141,12 +141,10 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
 
     /**
      * Do not call this directly!  Should only be called by Message.
-     * As this method's comment once read:
-     * "Just something to us working..."
      */
     public SOAPPart(Message parent, Object initialContents, boolean isBodyStream) {
-        addMimeHeader(HTTPConstants.HEADER_CONTENT_ID , SOAPUtils.getNewContentIdValue());
 
+        addMimeHeader(HTTPConstants.HEADER_CONTENT_ID , SOAPUtils.getNewContentIdValue());
 
         msgObject=parent;
         // originalMessage = initialContents;
@@ -505,15 +503,13 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
     }
 
     /**
-         * Sets Content-Id of this part. "cid:" prefix will be added if one wan't
+         * Sets Content-Id of this part. 
          *  already defined.
          * @param newCid new Content-Id
          * @returns void
          */
         public void setContentId(String newCid){
-                if(newCid!=null && !newCid.toLowerCase().startsWith("cid:")){
-                        newCid="cid:"+newCid;
-                }
+                
                 addMimeHeader(HTTPConstants.HEADER_CONTENT_ID,newCid);
         }
 
@@ -533,6 +529,17 @@ public class SOAPPart extends javax.xml.soap.SOAPPart implements Part
             addMimeHeader(HTTPConstants.HEADER_CONTENT_ID , ret);
         }
         return ret;
+    }
+    /**
+     * Content ID.
+     *
+     * @return the contentId reference value that should be used directly
+     * as an href in a SOAP element to reference this attachment.
+     * <B>Not part of JAX-RPC, JAX-M, SAAJ, etc. </B>
+     */
+    public String getContentIdRef() {
+      return org.apache.axis.attachments.Attachments.CIDprefix +
+         getContentId();
     }
 
 

@@ -247,6 +247,9 @@ public interface Attachments {
     /** The default attatchment type. MIME */
     final int SEND_TYPE_DEFAULT = SEND_TYPE_MIME; 
 
+    /** The prefix used to assoc. attachments as content-id */
+    public final String CIDprefix= "cid:";
+
     /**
      * Set the format for attachments. 
      *

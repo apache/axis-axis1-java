@@ -273,10 +273,6 @@ public class MimeUtils {
         try {
             String rootCID = getNewContentIdValue();
 
-            if (rootCID.startsWith("cid:")) {
-                rootCID = rootCID.substring(4);
-            }
-
             multipart = new javax.mail.internet.MimeMultipart(
                     "related; type=\"text/xml\"; start=\"<" + rootCID + ">\"");
 
@@ -298,10 +294,6 @@ public class MimeUtils {
                         org.apache.axis.attachments.AttachmentUtils.getActivationDataHandler(
                                 part);
                 String contentID = part.getContentId();
-
-                if (contentID.startsWith("cid:")) {
-                    contentID = contentID.substring(4);
-                }
 
                 messageBodyPart = new javax.mail.internet.MimeBodyPart();
 
@@ -354,29 +346,6 @@ public class MimeUtils {
      */
     public static String getNewContentIdValue() {
 
-        int lcount;
-
-        synchronized (org.apache.axis.Message.class) {
-            lcount = ++count;
-        }
-
-        if (null == thisHost) {
-            try {
-                thisHost = java.net.InetAddress.getLocalHost().getHostName();
-            } catch (java.net.UnknownHostException e) {
-                log.error(JavaUtils.getMessage("javaNetUnknownHostException00"),
-                        e);
-
-                thisHost = "localhost";
-            }
-        }
-
-        StringBuffer s = new StringBuffer();
-
-        // Unique string is <hashcode>.<currentTime>.apache-soap.<hostname>
-        s.append("cid:").append(lcount).append(s.hashCode()).append('.').append(
-                System.currentTimeMillis()).append(".AXIS@").append(thisHost);
-
-        return s.toString();
+         return org.apache.axis.utils.SOAPUtils.getNewContentIdValue();
     }
 }

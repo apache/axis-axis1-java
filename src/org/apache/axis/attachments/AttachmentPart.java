@@ -197,15 +197,13 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
     }
 
     /**
-     *     Sets Content-Id of this part. "cid:" prefix will be added if one wan't
+     *     Sets Content-Id of this part. 
      *      already defined.
      *     @param newCid new Content-Id
      *     @returns void
      */
     public void setContentId(String newCid) {
-        if (newCid!=null && !newCid.toLowerCase().startsWith("cid:")) {
-            newCid = "cid:" + newCid;
-        }
+        
         setMimeHeader(HTTPConstants.HEADER_CONTENT_ID, newCid);
     }
 
@@ -499,5 +497,15 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
         byte[] getBytes() {
             return super.buf;
         }
+    }
+    /**
+     * Content ID.
+     *
+     * @return the contentId reference value that should be used directly
+     * as an href in a SOAP element to reference this attachment.
+     * <B>Not part of JAX-RPC, JAX-M, SAAJ, etc. </B>
+     */
+    public String getContentIdRef() {
+      return Attachments.CIDprefix + getContentId();
     }
 }
