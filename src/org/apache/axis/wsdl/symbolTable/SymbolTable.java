@@ -521,10 +521,15 @@ public class SymbolTable {
         // See if we have a good URL.
         URL url = null;
         try {
-            if (contextURL != null && contextURL.getProtocol().equals("file")) {
+            // first, try to treat spec as a full URL
+            url = new URL(contextURL, path);
+            
+            // if we are deail with files in both cases, create a url
+            // by using the directory of the context URL.
+            if (contextURL != null && 
+                    url.getProtocol().equals("file") &&
+                    contextURL.getProtocol().equals("file")) {
                 url = getFileURL(contextURL, path);
-            } else {
-                url = new URL(contextURL, path);
             }
         }
         catch (MalformedURLException me)
@@ -562,6 +567,12 @@ public class SymbolTable {
             Node child = children.item(i);
             if ("import".equals(child.getLocalName())) {
                 NamedNodeMap attributes = child.getAttributes();
+                Node namespace = attributes.getNamedItem("namespace");
+                // skip XSD import of soap encoding
+                if (namespace != null && 
+                        Constants.isSOAP_ENC(namespace.getNodeValue())) {
+                    continue;
+                }
                 Node importFile = attributes.getNamedItem("schemaLocation");
                 if (importFile != null) {
                     String filename = getURL(context,
