@@ -418,6 +418,7 @@ public class Constants {
     public static final String ATTR_OFFSET          = "offset";
     public static final String ATTR_POSITION        = "position";
     public static final String ATTR_TYPE            = "type";
+    public static final String ATTR_HANDLERINFOCHAIN = "handlerInfoChain";
 
     // Fault Codes
     //////////////////////////////////////////////////////////////////////////

@@ -77,6 +77,9 @@ import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
+import org.apache.axis.handlers.HandlerChainImpl;
+import org.apache.axis.handlers.HandlerInfoChainFactory;
+
 import org.w3c.dom.Document;
 
 import javax.xml.rpc.server.ServiceLifecycle;
@@ -265,6 +268,11 @@ public abstract class JavaProvider extends BasicProvider
                 msgContext.setResponseMessage( resMsg );
             }
 
+	    HandlerInfoChainFactory handlerFactory = (HandlerInfoChainFactory) service.getOption(Constants.ATTR_HANDLERINFOCHAIN); 
+	    HandlerChainImpl handlerImpl = null;
+	    if (handlerFactory != null) handlerImpl = (HandlerChainImpl) handlerFactory.createHandlerChain(); 
+            if (handlerImpl != null) handlerImpl.handleRequest(msgContext);
+
             try {
                 processMessage(msgContext, reqEnv,
                                resEnv, obj);
@@ -278,6 +286,12 @@ public abstract class JavaProvider extends BasicProvider
                     ((ServiceLifecycle)obj).destroy();
                 }
             }
+
+            if ( handlerImpl != null) {
+    	       	handlerImpl.handleResponse(msgContext);
+		        handlerImpl.destroy();
+            }
+
         }
         catch( Exception exp ) {
             entLog.debug( JavaUtils.getMessage("toAxisFault00"), exp);

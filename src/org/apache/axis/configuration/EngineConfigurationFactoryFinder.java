@@ -91,7 +91,7 @@ public class EngineConfigurationFactoryFinder
 
     private static final Class[] newFactoryParamTypes =
         new Class[] { Object.class };
-        
+
     private static final String requiredMethod =
         "public static EngineConfigurationFactory newFactory(Object)";
 
@@ -102,9 +102,9 @@ public class EngineConfigurationFactoryFinder
     /**
      * Create the default engine configuration and detect whether the user
      * has overridden this with their own.
-     * 
+     *
      * The discovery mechanism will use the following logic:
-     * 
+     *
      * - discover all available EngineConfigurationFactories
      *   - find all META-INF/services/org.apache.axis.EngineConfigurationFactory
      *     files available through class loaders.
@@ -119,13 +119,13 @@ public class EngineConfigurationFactoryFinder
      * - Try EngineConfigurationFactoryServlet.newFactory(obj)
      * - Try EngineConfigurationFactoryDefault.newFactory(obj)
      * - If zero found (all return null), throw exception
-     * 
+     *
      * ***
      * This needs more work: System.properties, etc.
      * Discovery will have more tools to help with that
      * (in the manner of use below) in the near future.
      * ***
-     * 
+     *
      */
     public static EngineConfigurationFactory newFactory(Object obj) {
         /**
@@ -141,14 +141,14 @@ public class EngineConfigurationFactoryFinder
          * Find and examine each service
          */
         EngineConfigurationFactory factory = null;
-        
+
         Enumeration services = sd.find(mySpi.getName());
         while (factory == null  &&  services.hasMoreElements()) {
             Class service = ((ClassInfo)services.nextElement()).getResourceClass();
-            
+
             factory = newFactory(service, newFactoryParamTypes, params);
         }
-        
+
         if (factory == null) {
             try {
                 factory = EngineConfigurationFactoryServlet.newFactory(obj);
@@ -157,7 +157,7 @@ public class EngineConfigurationFactoryFinder
                                               EngineConfigurationFactoryServlet.class.getName(),
                                               requiredMethod), e);
             }
-            
+
             if (factory == null) {
                 try {
                     // should NEVER return null.
@@ -169,12 +169,12 @@ public class EngineConfigurationFactoryFinder
                 }
             }
         }
-        
+
         if (factory != null) {
-            log.debug("Got EngineFactory: " + factory.getClass().getName());
+            log.debug(JavaUtils.getMessage("engineFactory", factory.getClass().getName()));
         } else {
             String msg = JavaUtils.getMessage("engineConfigFactoryMissing");
-            log.error(msg);
+            log.error(JavaUtils.getMessage("error01", msg));
             // we should be throwing an exception here,
             //
             // but again, requires more refactoring than we want to swallow
@@ -183,7 +183,7 @@ public class EngineConfigurationFactoryFinder
             // Testing will find this, as NullPointerExceptions will be generated
             // elsewhere.
         }
-        
+
         return factory;
     }
 
@@ -204,7 +204,7 @@ public class EngineConfigurationFactoryFinder
                                               "newFactory",
                                               paramTypes);
 
-        
+
         if (method == null) {
             log.warn(JavaUtils.getMessage("engineConfigMissingNewFactory",
                                           service.getName(),
@@ -218,7 +218,7 @@ public class EngineConfigurationFactoryFinder
                                               requiredMethod), e);
             }
         }
-        
+
         return null;
     }
 }

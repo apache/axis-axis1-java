@@ -67,6 +67,10 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
+import javax.xml.namespace.QName;
+import org.apache.axis.handlers.HandlerInfoChainFactory;
+import org.apache.axis.handlers.HandlerChainImpl;
+import org.apache.axis.Constants;
 
 /**
  * Provides the equivalent of an "Axis engine" on the client side.
@@ -209,6 +213,45 @@ public class AxisClient extends AxisEngine {
         if (log.isDebugEnabled()) {
             log.debug("Exit: AxisClient::invoke");
         }
+    }
+
+    protected void invokeJAXRPCHandlers(MessageContext context){
+        Service service
+            = (Service)context.getProperty(Call.WSDL_SERVICE);
+        if(service == null)
+            return;
+
+        QName portName = (QName) context.getProperty(Call.WSDL_PORT_NAME);
+        if(portName == null)
+            return;
+
+        javax.xml.rpc.handler.HandlerRegistry registry = service.getHandlerRegistry();
+        if(registry == null)
+            return;
+
+        java.util.List chain = registry.getHandlerChain(portName);
+
+        if(chain == null || chain.isEmpty())
+            return;
+
+        SOAPService    soapService = context.getService();
+        if (soapService != null) {
+        	// A client configuration exists for this service.  Check to see
+        	//  if there is a HandlerInfoChain configured upon it.
+        	java.util.List cfgChain = (java.util.List) soapService.getOption(Constants.ATTR_HANDLERINFOCHAIN); 
+        	// GLT - merge this w/an existing chain  
+        	//  for now... use the container version
+        	chain = cfgChain;
+        }
+        
+		HandlerInfoChainFactory _handlerChainFactory = new HandlerInfoChainFactory(chain);
+        HandlerChainImpl impl =  (HandlerChainImpl) _handlerChainFactory.createHandlerChain();
+
+        if(!context.getPastPivot())
+            impl.handleRequest(context);
+        else
+            impl.handleResponse(context);
+        impl.destroy();
     }
 }
 

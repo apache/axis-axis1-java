@@ -418,33 +418,5 @@ public abstract class AxisEngine extends BasicHandler
     public ClassCache getClassCache() {
         return classCache;
     }
-
-    protected void invokeJAXRPCHandlers(MessageContext context){
-        Service service
-            = (Service)context.getProperty(Call.WSDL_SERVICE);
-        if(service == null)
-            return;
-
-        QName portName = (QName) context.getProperty(Call.WSDL_PORT_NAME);
-        if(portName == null)
-            return;
-
-        javax.xml.rpc.handler.HandlerRegistry registry = service.getHandlerRegistry();
-        if(registry == null)
-            return;
-
-        java.util.List chain = registry.getHandlerChain(portName);
-
-        if(chain == null || chain.isEmpty())
-            return;
-
-        HandlerChainImpl impl
-            = new HandlerChainImpl(chain);
-
-        if(!context.getPastPivot())
-            impl.handleRequest(context);
-        else
-            impl.handleResponse(context);
-        impl.destroy();
-    }
+    
 }

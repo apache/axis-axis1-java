@@ -128,6 +128,10 @@ public class WSDDConstants
     public static final String ELEM_WSDD_WSDLFILE = "wsdlFile";
     public static final String ELEM_WSDD_NAMESPACE = "namespace";
     public static final String ELEM_WSDD_ENDPOINTURL = "endpointURL";
+    public static final String ELEM_WSDD_JAXRPC_HANDLERINFO = "handlerInfo";
+    public static final String ELEM_WSDD_JAXRPC_CHAIN = "handlerInfoChain";
+    public static final String ELEM_WSDD_JAXRPC_ROLE = "role";
+    public static final String ELEM_WSDD_JAXRPC_HEADER = "header";
 
     public static final QName QNAME_PARAM = new QName(URI_WSDD, ELEM_WSDD_PARAM);
     public static final QName QNAME_DOC = new QName(URI_WSDD, ELEM_WSDD_DOC);
@@ -148,6 +152,9 @@ public class WSDDConstants
     public static final QName QNAME_WSDLFILE = new QName(URI_WSDD, ELEM_WSDD_WSDLFILE);
     public static final QName QNAME_NAMESPACE = new QName(URI_WSDD, ELEM_WSDD_NAMESPACE);
     public static final QName QNAME_ENDPOINTURL = new QName(URI_WSDD, ELEM_WSDD_ENDPOINTURL);
+    public static final QName QNAME_JAXRPC_HANDLERINFO = new QName(URI_WSDD, ELEM_WSDD_JAXRPC_HANDLERINFO);
+    public static final QName QNAME_JAXRPC_HANDLERINFOCHAIN = new QName(URI_WSDD, ELEM_WSDD_JAXRPC_CHAIN);
+    public static final QName QNAME_JAXRPC_HEADER = new QName(URI_WSDD, ELEM_WSDD_JAXRPC_HEADER);
 
     public static final String ATTR_LANG_SPEC_TYPE = "languageSpecificType";
     public static final String ATTR_QNAME = "qname";
@@ -166,4 +173,6 @@ public class WSDDConstants
     public static final String ATTR_SERIALIZER = "serializer";
     public static final String ATTR_DESERIALIZER = "deserializer";
     public static final String ATTR_ENCSTYLE = "encodingStyle";
+    public static final String ATTR_SOAPACTORNAME = "soapActorName";
+    public static final String ATTR_CLASSNAME = "classname";
 }

@@ -79,6 +79,8 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Element;
 import org.xml.sax.helpers.AttributesImpl;
+import org.apache.axis.handlers.HandlerInfoChainFactory;
+import org.apache.axis.Constants;
 
 import javax.xml.namespace.QName;
 import java.io.IOException;
@@ -116,6 +118,8 @@ public class WSDDService
      * pivot (see getInstance() below)
      */
     private QName providerQName;
+
+    private HandlerInfoChainFactory _hiChainFactory;
 
     ServiceDesc desc = new ServiceDesc();
 
@@ -215,6 +219,13 @@ public class WSDDService
                 // Message style if message provider...
                 desc.setStyle(Style.MESSAGE);
             }
+        }
+
+	// Add in JAX-RPC support for HandlerInfo chains
+        Element hcEl = getChildElement(e, ELEM_WSDD_JAXRPC_CHAIN);
+        if (hcEl != null) {
+	    WSDDJAXRPCHandlerInfoChain wsddHIChain = new WSDDJAXRPCHandlerInfoChain(hcEl);
+            _hiChainFactory = wsddHIChain.getHandlerChainFactory();
         }
 
         initTMR();
@@ -411,6 +422,11 @@ public class WSDDService
             service.setOption(AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);
             service.setOption(AxisEngine.PROP_SEND_XSI, Boolean.FALSE);
         }
+
+	// Set handlerInfoChain
+	if (_hiChainFactory != null) {
+	    service.setOption(Constants.ATTR_HANDLERINFOCHAIN, _hiChainFactory);
+	}
 
         AxisEngine.normaliseOptions(service);
 
