@@ -75,7 +75,11 @@ public class UnsignedShort extends UnsignedInt {
      * @exception Exception will be thrown if validation fails
      */
     public UnsignedShort(long sValue) throws Exception {
-            setValue(sValue);
+      setValue(sValue);
+    }
+
+    public UnsignedShort(String sValue) throws Exception {
+      setValue(Long.parseLong(sValue));
     }
 
     /**

@@ -52,25 +52,83 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
+package org.apache.axis.types;
 
-package org.apache.axis.encoding.ser;
+import java.lang.Character;
 
-import org.apache.axis.encoding.ser.SimpleDeserializer;
-import org.apache.axis.types.UnsignedByte;
-import javax.xml.namespace.QName;
+import org.apache.axis.utils.JavaUtils;
 
 /**
- * Deserializer for xsd:unsignedByte elements
+ * Custom class for supporting XSD data type NCName
+ * NCName represents XML "non-colonized" Names
+ * The base type of NCName is Name.
  *
- * @author Chris Haddad (chaddad@cobia.net)
+ * @author Chris Haddad <chaddad@cobia.net>
+ * @see <a href="http://www.w3.org/TR/xmlschema-2/#NCName">XML Schema 3.3.7</a>
+ * @see <A href="http://www.w3.org/TR/1999/REC-xml-names-19990114/#NT-NCName">NCName Production</a>
  */
-public class UnsignedByteDeserializer extends SimpleDeserializer
-{
-    public Object makeValue(String source) throws Exception {
-        return new UnsignedByte(Long.parseLong(source));
-    } // makeValue
+public class NCName extends Name {
 
-    public UnsignedByteDeserializer(Class javaType, QName xmlType) {
-        super(javaType, xmlType);
+    public NCName() {
+        super();
+    }
+
+    /**
+     * ctor for NCName
+     * @exception Exception will be thrown if validation fails
+     */
+    public NCName(String stValue) throws Exception {
+        try {
+            setValue(stValue);
+        }
+        catch (Exception e) {
+            // recast normalizedString exception as token exception
+            throw new Exception(JavaUtils.getMessage("badNCNameType00") + "data=[" +
+                    stValue + "]");
+        }
+    }
+
+    /**
+    * validate against definition of NCNameChar
+    * NCNameChar ::=  Letter | Digit | '.' | '-' | '_' | CombiningChar | Extender
+    **/
+    public boolean isNameChar(Character cValue) {
+      if ( (Character.isDigit(cValue.charValue()) == true)   ||
+        (Character.isLetter(cValue.charValue()) == true) ||
+        (cValue.charValue() == '.') ||
+        (cValue.charValue() == '-') ||
+        (cValue.charValue() == '_') )
+      //TODO  CombineChar ||
+      //TODO  Extender
+          return true;
+        else
+          return false;
+    }
+
+    /**
+     *
+     * validate the value against the xsd definition
+     *
+     * NCName ::=  (Letter | '_') (NCNameChar)*
+     * NCNameChar ::=  Letter | Digit | '.' | '-' | '_' | CombiningChar | Extender
+     */
+    public boolean isValid(String stValue) {
+        int scan;
+        Character cValue;
+
+        for (scan=0; scan < stValue.length(); scan++) {
+          cValue = new Character(stValue.charAt(scan));
+          if (scan == 0) {
+                    // Name[0] = (Letter | '_' )
+            if ( (Character.isLetter(cValue.charValue()) != true) &&
+              (cValue.charValue() != '_') )
+                return false;
+            }
+          else
+            if (isNameChar(cValue) == false)
+              return false;
+        }
+
+        return true;
     }
 }

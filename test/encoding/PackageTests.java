@@ -48,6 +48,9 @@ public class PackageTests extends TestCase
         suite.addTestSuite(TestMonth.class);
         suite.addTestSuite(TestMonthDay.class);
         suite.addTestSuite(TestDay.class);
+        suite.addTestSuite(TestName.class);
+        suite.addTestSuite(TestNCName.class);
+        suite.addTestSuite(TestNMToken.class);
         return suite;
     }
 }
