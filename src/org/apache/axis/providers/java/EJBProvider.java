@@ -70,6 +70,7 @@ import java.util.Properties;
  * A basic EJB Provider
  *
  * @author Carl Woolf (cwoolf@macromedia.com)
+ * @author Tom Jordahl (tomj@macromedia.com)
  */
 public class EJBProvider extends RPCProvider
 {
@@ -91,84 +92,41 @@ public class EJBProvider extends RPCProvider
     ///////////////////////////////////////////////////////////////
 
     /**
-     *
+     * Return a object which implements the service.
+     * 
+     * @param msgContext the message context
+     * @param clsName The JNDI name of the EJB home class
+     * @return an object that implements the service
      */
     protected Object getNewServiceObject(MessageContext msgContext,
                                              String clsName)
         throws Exception
     {
         Handler serviceHandler = msgContext.getServiceHandler();
-        Object home;
-        Properties properties = null;
         
-        try
-        {
-            String username = (String)getStrOption(jndiUsername,
-                                                   serviceHandler);
-            if (username == null)
-               username = msgContext.getUsername();
-            if (username != null) {
-               if (properties == null) properties = new Properties();
-               properties.setProperty(Context.SECURITY_PRINCIPAL,
-                                  username);
-            }
+        // Get the EJB Home object from JNDI
+        Object ejbHome = getEJBHome(msgContext, clsName);
 
-            String password = (String)getStrOption(jndiPassword,
-                                                  serviceHandler);
-            if (password == null)
-                password = msgContext.getPassword();
-            if (password != null) {
-                if (properties == null) properties = new Properties();
-                properties.setProperty(Context.SECURITY_CREDENTIALS,
-                                       password);
-            }
-
-            String factoryClass = (String)getStrOption(jndiContextClass,
-                                                       serviceHandler);
-            if (factoryClass != null) {
-                if (properties == null) properties = new Properties();
-                properties.setProperty(Context.INITIAL_CONTEXT_FACTORY,
-                                   factoryClass);
-            }
-
-            String contextUrl = (String)getStrOption(jndiURL,
-                                                     serviceHandler);
-            if (contextUrl != null) {
-                if (properties == null) properties = new Properties();
-                properties.setProperty(Context.PROVIDER_URL,
-                                   contextUrl);
-            }
-
-            InitialContext context = null;
-            if (properties != null) 
-                context = new InitialContext(properties);
-            else
-            {
-                if (cached_context == null)
-                        cached_context = new InitialContext();
-                context = cached_context;
-            }
-
-            if (context == null)
-                throw new AxisFault( JavaUtils.getMessage("cannotCreateInitialContext00"));
-
-            home = context.lookup(clsName);
-            if (home == null)
-                throw new AxisFault( JavaUtils.getMessage("cannotFindJNDIHome00",clsName));
-        }
-        // Should probably catch javax.naming.NameNotFoundException here 
-        catch (Exception exception)
-        {
-            throw AxisFault.makeFault(exception);
-        }
-
+        // Get the Home class name from the configuration file
+        // NOTE: Do we really need to have this in the config file
+        // since we can get it from ejbHome.getClass()???
         String homeName = (String) getStrOption(homeInterfaceNameOption, 
-                                                                            serviceHandler);
+                                                serviceHandler);
         if (homeName == null) 
-            throw new AxisFault(JavaUtils.getMessage("noOption00", homeInterfaceNameOption, msgContext.getTargetService()));
+            throw new AxisFault(
+                    JavaUtils.getMessage("noOption00", 
+                                         homeInterfaceNameOption, 
+                                         msgContext.getTargetService()));
 
+        // Load the Home class name given in the config file
         Class homeClass = msgContext.getClassLoader().loadClass(homeName);
-        Object ehome = javax.rmi.PortableRemoteObject.narrow(home, homeClass);
+
+        // Make sure the object we got back from JNDI is the same type
+        // as the what is specified in the config file
+        Object ehome = javax.rmi.PortableRemoteObject.narrow(ejbHome, homeClass);
+
+        // Invoke the create method of the ejbHome class without actually
+        // touching any EJB classes (i.e. no cast to EJBHome)
         Method createMethod = homeClass.getMethod("create", empty_class_array);
         Object result = createMethod.invoke(ehome, empty_object_array);
 
@@ -176,7 +134,8 @@ public class EJBProvider extends RPCProvider
     }
 
     /**
-     *
+     * Return the option in the configuration that contains the service class
+     * name.  In the EJB case, it is the JNDI name of the bean.
      */
     protected String getServiceClassNameOptionName()
     {
@@ -202,4 +161,140 @@ public class EJBProvider extends RPCProvider
             value = (String)getOption(optionName);
         return value;
     }
+
+    /**
+     * Get the class description for the EJB Remote Interface, which is what
+     * we are interested in exposing to the world (i.e. in WSDL).
+     * 
+     * @param msgContext the message context
+     * @param beanJndiName the JNDI name of the EJB
+     * @return the class info of the EJB remote interface
+     */ 
+   protected Class getServiceClass(MessageContext msgContext, String beanJndiName) throws Exception {
+        Handler serviceHandler = msgContext.getServiceHandler();
+
+       // Get the EJB Home object from JNDI
+       Object ejbHome = getEJBHome(msgContext, beanJndiName);
+        
+        String homeName = (String) getStrOption(homeInterfaceNameOption, 
+                                                serviceHandler);
+        if (homeName == null) 
+            throw new AxisFault(
+                    JavaUtils.getMessage("noOption00", 
+                                         homeInterfaceNameOption, 
+                                         msgContext.getTargetService()));
+       
+       // Load the Home class name given in the config file
+       Class homeClass = msgContext.getClassLoader().loadClass(homeName);
+
+       // Make sure the object we got back from JNDI is the same type
+       // as the what is specified in the config file
+       Object ehome = javax.rmi.PortableRemoteObject.narrow(ejbHome, homeClass);
+
+       // This code requires the use of ejb.jar, so we do the funny stuff below
+       //   EJBHome ejbHome = (EJBHome) ehome;
+       //   EJBMetaData meta = ejbHome.getEJBMetaData();
+       //   Class interfaceClass = meta.getRemoteInterfaceClass();
+       
+       // Invoke the getEJBMetaData method of the ejbHome class without actually
+       // touching any EJB classes (i.e. no cast to EJBHome)
+       Method getEJBMetaData = 
+               homeClass.getMethod("getEJBMetaData", empty_class_array);
+       Object metaData = 
+               getEJBMetaData.invoke(ehome, empty_object_array);
+       Method getRemoteInterfaceClass = 
+               metaData.getClass().getMethod("getRemoteInterfaceClass", 
+                                             empty_class_array);
+       Class interfaceClass = 
+               (Class) getRemoteInterfaceClass.invoke(metaData, 
+                                                      empty_object_array);
+       
+       // got it, return it
+       return interfaceClass;
+        
+    }
+
+    /**
+     * Common routine to do the JNDI lookup on the Home interface object
+     */ 
+    private Object getEJBHome(MessageContext msgContext, String beanJndiName) throws AxisFault {
+        Handler serviceHandler =  msgContext.getServiceHandler();
+        Object ejbHome;
+        Properties properties = null;
+        
+        // Set up an InitialContext and use it get the beanJndiName from JNDI
+        try
+        {
+            // collect all the properties we need to access JNDI:
+            // username, password, factoryclass, contextUrl
+            String username = (String)getStrOption(jndiUsername,
+                                                   serviceHandler);
+            // username
+            if (username == null)
+               username = msgContext.getUsername();
+            if (username != null) {
+               if (properties == null) properties = new Properties();
+               properties.setProperty(Context.SECURITY_PRINCIPAL,
+                                  username);
+            }
+
+            // password
+            String password = (String)getStrOption(jndiPassword,
+                                                  serviceHandler);
+            if (password == null)
+                password = msgContext.getPassword();
+            if (password != null) {
+                if (properties == null) properties = new Properties();
+                properties.setProperty(Context.SECURITY_CREDENTIALS,
+                                       password);
+            }
+
+            // factory class
+            String factoryClass = (String)getStrOption(jndiContextClass,
+                                                       serviceHandler);
+            if (factoryClass != null) {
+                if (properties == null) properties = new Properties();
+                properties.setProperty(Context.INITIAL_CONTEXT_FACTORY,
+                                   factoryClass);
+            }
+
+            // contextUrl
+            String contextUrl = (String)getStrOption(jndiURL,
+                                                     serviceHandler);
+            if (contextUrl != null) {
+                if (properties == null) properties = new Properties();
+                properties.setProperty(Context.PROVIDER_URL,
+                                   contextUrl);
+            }
+
+            // if we got any stuff from the configuration file
+            // create a new context using these properties 
+            // otherwise, we can get a default context and cache it for next time
+            InitialContext context = null;
+            if (properties != null) { 
+                context = new InitialContext(properties);
+            } else {
+                if (cached_context == null)
+                        cached_context = new InitialContext();
+                context = cached_context;
+            }
+            
+            // if we didn't get a context, fail
+            if (context == null)
+                throw new AxisFault( JavaUtils.getMessage("cannotCreateInitialContext00"));
+
+            // Do the JNDI lookup
+            ejbHome = context.lookup(beanJndiName);
+            if (ejbHome == null)
+                throw new AxisFault( JavaUtils.getMessage("cannotFindJNDIHome00",beanJndiName));
+        }
+        // Should probably catch javax.naming.NameNotFoundException here 
+        catch (Exception exception)
+        {
+            throw AxisFault.makeFault(exception);
+        }
+        return ejbHome;
+    }
+
+
 }
