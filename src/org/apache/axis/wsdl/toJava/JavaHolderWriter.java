@@ -64,12 +64,12 @@ import org.apache.axis.utils.JavaUtils;
 * This is Wsdl2java's Holder Writer.  It writes the <typeName>Holder.java file.
 */
 public class JavaHolderWriter extends JavaWriter {
-    private Type type;
+    private TypeEntry type;
 
     /**
      * Constructor.
      */
-    protected JavaHolderWriter(Emitter emitter, Type type) {
+    protected JavaHolderWriter(Emitter emitter, TypeEntry type) {
         super(
                 emitter,
                 new QName(

@@ -137,7 +137,7 @@ public class JavaDeployWriter extends JavaWriter {
 
         pw.println();
         for (int i = 0; i < types.size(); ++i) {
-            Type type = (Type) types.elementAt(i);
+            TypeEntry type = (TypeEntry) types.elementAt(i);
             if (type.getBaseType() == null && type.isReferenced()
                     && !type.getJavaName().endsWith("[]")) {
                 pw.println("  <beanMapping");

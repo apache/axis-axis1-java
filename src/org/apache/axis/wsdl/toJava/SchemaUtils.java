@@ -81,7 +81,7 @@ public class SchemaUtils {
     /**
      * If the specified node represents a supported JAX-RPC complexType/element,
      * a Vector is returned which contains the child element types and
-     * child element names.  The even indices are the element types (Types) and
+     * child element names.  The even indices are the element types (TypeEntry) and
      * the odd indices are the corresponding names (Strings).
      * If the specified node is not a supported JAX-RPC complexType/element
      * null is returned.
@@ -171,7 +171,7 @@ public class SchemaUtils {
 
                         // Get the name and type qnames.
                         // The name of the element is the local part of the name's qname.
-                        // The type qname is used to locate the Type, which is then
+                        // The type qname is used to locate the TypeEntry, which is then
                         // used to retrieve the proper java name of the type.
                         Node elementNode = elements.item(i);
                         QName nodeName = Utils.getNodeNameQName(elementNode);
@@ -184,9 +184,9 @@ public class SchemaUtils {
                             typeAttr = false;
                         }
 
-                        Type Type = (Type) symbolTable.getTypeEntry(nodeType, !typeAttr);
-                        if (Type != null) {
-                            v.add(Type);
+                        TypeEntry type = (TypeEntry) symbolTable.getTypeEntry(nodeType, !typeAttr);
+                        if (type != null) {
+                            v.add(type);
                             v.add(nodeName.getLocalPart());
                         }
                     }
@@ -201,7 +201,7 @@ public class SchemaUtils {
      * If the specified node represents a supported JAX-RPC complexType/element
      * which extends another complexType.  The Type of the base is returned.
      */
-    public static Type getComplexElementExtensionBase(Node node, SymbolTable symbolTable) {
+    public static TypeEntry getComplexElementExtensionBase(Node node, SymbolTable symbolTable) {
         if (node == null) {
             return null;
         }
@@ -262,7 +262,7 @@ public class SchemaUtils {
                 return null; // No extension base
             }
             // Return associated Type
-            return (Type) symbolTable.getTypeEntry(extendsType);
+            return (TypeEntry) symbolTable.getType(extendsType);
         }
         return null;
     }
@@ -270,7 +270,7 @@ public class SchemaUtils {
     /**
      * If the specified node represents a supported JAX-RPC enumeration,
      * a Vector is returned which contains the base type and the enumeration values.
-     * The first element in the vector is the base type (an Type).
+     * The first element in the vector is the base type (an TypeEntry).
      * Subsequent elements are values (Strings).
      * If this is not an enumeration, null is returned.
      */
@@ -318,10 +318,10 @@ public class SchemaUtils {
             // (the base attribute contains this type).
             // The base type must be a built-in type...and we only think
             // this makes sense for string.
-            Type baseEType = null;
+            TypeEntry baseEType = null;
             if (restrictionNode != null) {
                 QName baseType = Utils.getNodeTypeRefQName(restrictionNode, "base");
-                baseEType = symbolTable.getTypeEntry(baseType);
+                baseEType = symbolTable.getType(baseType);
                 if (baseEType != null && 
                     !baseEType.getJavaName().equals("java.lang.String")) {
                     baseEType = null;

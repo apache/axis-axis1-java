@@ -139,7 +139,7 @@ public class JavaStubWriter extends JavaWriter {
         pw.println("            call = (org.apache.axis.client.Call) service.createCall();");
 
         while (it.hasNext()) {
-            writeSerializationInit((Type) it.next());
+            writeSerializationInit((TypeEntry) it.next());
         }
 
         pw.println("        }");
@@ -224,7 +224,7 @@ public class JavaStubWriter extends JavaWriter {
     } // writeFileBody
 
     /**
-     * This method returns a set of all the Types in a given PortType.
+     * This method returns a set of all the TypeEntry in a given PortType.
      * The elements of the returned HashSet are Types.
      */
     private HashSet getTypesInPortType(PortType portType) {
@@ -241,10 +241,10 @@ public class JavaStubWriter extends JavaWriter {
         // Extract those types which are complex types.
         Iterator i = firstPassTypes.iterator();
         while (i.hasNext()) {
-            Type type = (Type) i.next();
+            TypeEntry type = (TypeEntry) i.next();
             if (!types.contains(type)) {
                 types.add(type);
-                if (type.isDefined() && type.getBaseType() == null) {
+                if ((type.getNode() != null) && type.getBaseType() == null) {
                     types.addAll(
                             Utils.getNestedTypes(type.getNode(), symbolTable));
                 }
@@ -254,8 +254,8 @@ public class JavaStubWriter extends JavaWriter {
     } // getTypesInPortType
 
     /**
-     * This method returns a set of all the Types in a given Operation.
-     * The elements of the returned HashSet are Types.
+     * This method returns a set of all the TypeEntry in a given Operation.
+     * The elements of the returned HashSet are TypeEntry.
      */
     private HashSet getTypesInOperation(Operation operation) {
         HashSet types = new HashSet();
@@ -300,7 +300,7 @@ public class JavaStubWriter extends JavaWriter {
     } // getTypesInOperation
 
     /**
-     * This method returns a vector of Types for the parts.
+     * This method returns a vector of TypeEntry for the parts.
      */
     private void partTypes(Vector v, Collection parts, boolean literal) {
         Iterator i = parts.iterator();
@@ -312,19 +312,19 @@ public class JavaStubWriter extends JavaWriter {
             if (literal) {
                 qType = part.getElementName();
                 if (qType != null) {
-                    v.add(symbolTable.getElementTypeEntry(qType));
+                    v.add(symbolTable.getElement(qType));
                 }
             } else {
                 qType = part.getTypeName(); 
                 if (qType == null) {
                     qType = part.getElementName();
                     if (qType != null) {
-                        v.add(symbolTable.getElementTypeEntry(qType));
+                        v.add(symbolTable.getElement(qType));
                     }
                 }
                 else {
                     if (qType != null) {
-                        v.add(symbolTable.getTypeEntry(qType));
+                        v.add(symbolTable.getType(qType));
                     }
                 }
             }
@@ -336,7 +336,7 @@ public class JavaStubWriter extends JavaWriter {
      */
     private boolean firstSer = true ;
 
-    private void writeSerializationInit(Type type) throws IOException {
+    private void writeSerializationInit(TypeEntry type) throws IOException {
         if (type.getBaseType() != null || type.getName().endsWith("[]")) {
             return;
         }

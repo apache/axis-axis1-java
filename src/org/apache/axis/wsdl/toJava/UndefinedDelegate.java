@@ -54,77 +54,52 @@
  */
 package org.apache.axis.wsdl.toJava;
 
+
+
 import java.io.IOException;
-
 import java.util.Vector;
-
-import javax.wsdl.Fault;
 import javax.wsdl.QName;
-
-import org.apache.axis.utils.JavaUtils;
+import org.w3c.dom.Node;
 
 /**
-* This is Wsdl2java's Fault Writer.  It writes the <faultName>.java file.
-* NOTE:  this must be rewritten.  It doesn't follow JAX-RPC.
-*/
-public class JavaFaultWriter extends JavaWriter {
-    private Fault fault;
-    private SymbolTable symbolTable;
+ * This Undefined interface is implemented by UndefinedType and UndefinedElement.
+ */
+public class UndefinedDelegate implements Undefined {
+
+    private Vector list;
+    private TypeEntry undefinedType;
 
     /**
-     * Constructor.
+     * Constructor
      */
-    protected JavaFaultWriter(Emitter emitter, QName qname, Fault fault, SymbolTable symbolTable) {
-        super(emitter, qname, "", "java", JavaUtils.getMessage("genFault00"));
-        this.fault = fault;
-        this.symbolTable = symbolTable;
-    } // ctor
+    UndefinedDelegate(TypeEntry te) {
+        list = new Vector();
+        undefinedType = te;
+    }
+   /**
+     *  Register referrant TypeEntry so that 
+     *  the code can update the TypeEntry when the Undefined Element or Type is defined
+     */
+    public void register(TypeEntry referrant) {
+        list.add(referrant);
+    }
 
     /**
-     * Write the body of the Fault file.
+     *  Call update with the actual TypeEntry.  This updates all of the
+     *  referrant TypeEntry's that were registered.
      */
-    protected void writeFileBody() throws IOException {
-        pw.println("public class " + className + " extends org.apache.axis.AxisFault {");
+    public void update(TypeEntry def) throws IOException {
+        // Process list until every TypeEntry is defined
+        boolean done = false;
+        while (!done) {
+            done = true;  // Assume this is the last pass
 
-        Vector params = new Vector();
-
-        symbolTable.partStrings(params, fault.getMessage().getOrderedParts(null));
-
-        // Write data members of the exception and getter methods for them
-        for (int i = 0; i < params.size(); i += 2) {
-            String type = ((TypeEntry) params.get(i)).getName();
-            String variable = (String) params.get(i + 1);
-            pw.println("    public " + type + " " + variable + ";");
-            pw.println("    public " + type + " get" + Utils.capitalizeFirstChar(variable) + "() {");
-            pw.println("        return this." + variable + ";");
-            pw.println("    }");
-        }
-
-        // Default contructor
-        pw.println();
-        pw.println("    public " + className + "() {");
-        pw.println("    }");
-        pw.println();
-        
-        // contructor that initializes data
-        if (params.size() > 0) {
-            pw.print("      public " + className + "(");
-            for (int i = 0; i < params.size(); i += 2) {
-                if (i != 0) pw.print(", ");
-                pw.print(((TypeEntry) params.get(i)).getName() + " " + params.get(i + 1));
+            // Call updatedUndefined for all items on the list
+            for (int i=0; i < list.size() ; i++) {
+                TypeEntry te = (TypeEntry) list.elementAt(i);
+                if (te.updateUndefined(undefinedType, def))
+                    done = false;  // Items still undefined, need another pass
             }
-            pw.println(") {");
-            for (int i = 1; i < params.size(); i += 2) {
-                String variable = (String) params.get(i);
-
-                pw.println("        this." + variable + " = " + variable + ";");
-            }
-            pw.println("    }");
         }
-        
-        // Done with class
-        pw.println("}");
-        pw.close();
-    } // writeFileBody
-
-} // class JavaFaultWriter
+    }
+};

@@ -56,75 +56,38 @@ package org.apache.axis.wsdl.toJava;
 
 import java.io.IOException;
 
-import java.util.Vector;
-
-import javax.wsdl.Fault;
 import javax.wsdl.QName;
 
-import org.apache.axis.utils.JavaUtils;
-
 /**
-* This is Wsdl2java's Fault Writer.  It writes the <faultName>.java file.
-* NOTE:  this must be rewritten.  It doesn't follow JAX-RPC.
-*/
-public class JavaFaultWriter extends JavaWriter {
-    private Fault fault;
-    private SymbolTable symbolTable;
+ * This represents a QName found in a reference but is not defined.
+ * If the type is later defined, the UndefinedType is replaced with a new Type
+ */
+public class UndefinedType extends Type implements Undefined {
+
+   private UndefinedDelegate delegate = null;
 
     /**
-     * Constructor.
+     * Construct a referenced (but as of yet undefined) type 
      */
-    protected JavaFaultWriter(Emitter emitter, QName qname, Fault fault, SymbolTable symbolTable) {
-        super(emitter, qname, "", "java", JavaUtils.getMessage("genFault00"));
-        this.fault = fault;
-        this.symbolTable = symbolTable;
-    } // ctor
+    public UndefinedType(QName pqName) {
+        super(pqName, "", null);
+        undefined = true;
+        delegate = new UndefinedDelegate(this);
+    }
 
     /**
-     * Write the body of the Fault file.
+     *  Register referrant TypeEntry so that 
+     *  the code can update the TypeEntry when the Undefined Element or Type is defined
      */
-    protected void writeFileBody() throws IOException {
-        pw.println("public class " + className + " extends org.apache.axis.AxisFault {");
+    public void register(TypeEntry referrant) {
+        delegate.register(referrant);
+    }
 
-        Vector params = new Vector();
-
-        symbolTable.partStrings(params, fault.getMessage().getOrderedParts(null));
-
-        // Write data members of the exception and getter methods for them
-        for (int i = 0; i < params.size(); i += 2) {
-            String type = ((TypeEntry) params.get(i)).getName();
-            String variable = (String) params.get(i + 1);
-            pw.println("    public " + type + " " + variable + ";");
-            pw.println("    public " + type + " get" + Utils.capitalizeFirstChar(variable) + "() {");
-            pw.println("        return this." + variable + ";");
-            pw.println("    }");
-        }
-
-        // Default contructor
-        pw.println();
-        pw.println("    public " + className + "() {");
-        pw.println("    }");
-        pw.println();
-        
-        // contructor that initializes data
-        if (params.size() > 0) {
-            pw.print("      public " + className + "(");
-            for (int i = 0; i < params.size(); i += 2) {
-                if (i != 0) pw.print(", ");
-                pw.print(((TypeEntry) params.get(i)).getName() + " " + params.get(i + 1));
-            }
-            pw.println(") {");
-            for (int i = 1; i < params.size(); i += 2) {
-                String variable = (String) params.get(i);
-
-                pw.println("        this." + variable + " = " + variable + ";");
-            }
-            pw.println("    }");
-        }
-        
-        // Done with class
-        pw.println("}");
-        pw.close();
-    } // writeFileBody
-
-} // class JavaFaultWriter
+    /**
+     *  Call update with the actual TypeEntry.  This updates all of the
+     *  referrant TypeEntry's that were registered.
+     */
+    public void update(TypeEntry def) throws IOException {
+        delegate.update(def);
+    }
+};

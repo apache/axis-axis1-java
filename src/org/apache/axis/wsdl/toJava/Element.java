@@ -60,28 +60,24 @@ import org.w3c.dom.Node;
 import javax.wsdl.QName;
 
 /**
- * This Type is for a QName that is an element, these types are only emitted if 
- * referenced by a ref= or an element=.
- * An element type can be defined inline or it can be defined via
- * a ref/type attribute.
+ * This class represents a TypeEntry that is a type (complexType, simpleType, etc.
+ *
+ * @author Rich Scheuerle  (scheu@us.ibm.com)
  */
-public class ElementType extends Type {
-    private boolean definedDirectly;
+public abstract class Element extends TypeEntry {
+
     /**
-     * Create an element type defined by a ref/type attribute
-     */
-    public ElementType(QName pqName, Type refType, Node pNode) {
-        super(pqName, refType, pNode);
-        setShouldEmit(false);  // No need to emit since code will use ref info
-        definedDirectly = false;
-    };
-    /**
-     * Create an element type defined directly.               
-     */
-    public ElementType(QName pqName, String pjName, Node pNode) {
-        super(pqName, pjName, pNode);
-        setShouldEmit(false);  // Only emit if refd
-        definedDirectly = true;
+     * Create an Element object for an xml construct that references a type that has 
+     * not been defined yet.  Defer processing until refType is known.
+     */ 
+    protected Element(QName pqName, TypeEntry refType, Node pNode, String dims) {
+        super(pqName, refType, pNode, dims);
     }
-    public boolean getDefinedDirectly() {return definedDirectly;}
+       
+    /**
+     * Create a Element object for an xml construct that is not a base java type
+     */  
+    protected Element(QName pqName, String pjName, Node pNode) {
+        super(pqName, pjName, pNode);
+    }
 };
