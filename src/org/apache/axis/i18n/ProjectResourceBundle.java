@@ -56,7 +56,9 @@
 package org.apache.axis.i18n;
 
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -105,11 +107,44 @@ public class ProjectResourceBundle extends ResourceBundle {
     protected Object handleGetObject(String key)
         throws MissingResourceException
     {
-        return resourceBundle.getObject(key);
+        if (log.isDebugEnabled()) {
+            log.debug(this.toString() + "::handleGetObject(" + key + ")");
+        }
+//            return resourceBundle.handleGetObject(key);
+        Object obj;
+        try {
+            obj = resourceBundle.getObject(key);
+        } catch (MissingResourceException e) {
+            /* catch missing resource, ignore, & return null
+             * if this method doesn't return null, then parents
+             * are not searched
+             */
+            obj = null;
+        }
+        return obj;
     }
     
     public Enumeration getKeys() {
-        return resourceBundle.getKeys();
+        Enumeration myKeys = resourceBundle.getKeys();
+        if (parent == null) {
+            return myKeys;
+        } else {
+            final HashSet set = new HashSet();
+            while (myKeys.hasMoreElements()) {
+                set.add(myKeys.nextElement());
+            }
+            
+            Enumeration pKeys = parent.getKeys();
+            while (pKeys.hasMoreElements()) {
+                set.add(pKeys.nextElement());
+            }
+            
+            return new Enumeration() {
+                    private Iterator it = set.iterator();
+                    public boolean hasMoreElements() { return it.hasNext(); }
+                    public Object nextElement() { return it.next(); }
+                };
+        }
     }
     
 
@@ -265,10 +300,10 @@ public class ProjectResourceBundle extends ResourceBundle {
         throws MissingResourceException
     {
         if (log.isDebugEnabled()) {
-            log.debug("ProjectResourceBundle::getBundle(" + projectName + ","
-                                                          + packageName + ","
-                                                          + resourceName + ","
-                                                          + String.valueOf(locale) + ",...)");
+            log.debug("getBundle(" + projectName + ","
+                                   + packageName + ","
+                                   + resourceName + ","
+                                   + String.valueOf(locale) + ",...)");
         }
         
         Context context = new Context();
@@ -318,12 +353,18 @@ public class ProjectResourceBundle extends ResourceBundle {
             if (rb != null) {
                 prb = new ProjectResourceBundle(name, rb);
                 prb.setParent(parent);
+                if (log.isDebugEnabled()) {
+                    log.debug("Created " + prb + ", linked to parent " + String.valueOf(parent));
+                }
             } else {
                 if (parent != null) {
                     if (parent instanceof ProjectResourceBundle) {
                         prb = (ProjectResourceBundle)parent;
                     } else {
                         prb = new ProjectResourceBundle(name, parent);
+                    }
+                    if (log.isDebugEnabled()) {
+                        log.debug("Root package not found, cross link to " + parent);
                     }
                 }
             }
@@ -361,6 +402,10 @@ public class ProjectResourceBundle extends ResourceBundle {
     public static void clearCache()
     {
         bundleCache.clear();
+    }
+    
+    public String toString() {
+        return resourceName;
     }
 
 
@@ -408,7 +453,8 @@ public class ProjectResourceBundle extends ResourceBundle {
                                                 _locale,
                                                 _loader);
             } catch (MissingResourceException e) {
-                log.debug("loadBundle: Ignoring MissingResourceException", e);
+                // Deliberately surpressing print stack.. just the string for info.
+                log.debug("loadBundle: Ignoring MissingResourceException: " + e.getMessage());
             }
             return null;
         }
