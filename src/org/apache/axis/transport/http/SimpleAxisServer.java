@@ -394,7 +394,7 @@ public class SimpleAxisServer implements Runnable {
                     AxisFault af;
                     if (e instanceof AxisFault) {
                         af = (AxisFault)e;
-                        log.error(JavaUtils.getMessage("serverFault00"), af);
+                        log.debug(JavaUtils.getMessage("serverFault00"), af);
 
                         if ("Server.Unauthorized".equals(af.getFaultCode())) {
                             status = UNAUTH; // SC_UNAUTHORIZED
@@ -459,7 +459,7 @@ public class SimpleAxisServer implements Runnable {
             } catch (InterruptedIOException iie) {
                 break;
             } catch (Exception e) {
-                log.error(JavaUtils.getMessage("exception00"), e);
+                log.debug(JavaUtils.getMessage("exception00"), e);
             } finally {
                 try {
                     if (socket!=null) socket.close();
