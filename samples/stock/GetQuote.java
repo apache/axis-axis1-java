@@ -94,13 +94,17 @@ public class GetQuote {
           System.out.println("Iterating " + count + " times");
       }
 
+      URL url = new URL(opts.getURL());
+      String user = opts.getUser();
+      String passwd = opts.getPassword();
+
       Service  service = new Service();
 
       Float res = new Float(0.0F);
       for (int i=0; i<count; i++) {
           Call     call    = (Call) service.createCall();
 
-          call.setTargetEndpointAddress( new URL(opts.getURL()) );
+          call.setTargetEndpointAddress( url );
           call.setOperationName( "getQuote" );
           call.setProperty( Call.NAMESPACE, "urn:xmltoday-delayed-quotes" );
           call.addParameter( "symbol", XMLType.XSD_STRING, Call.PARAM_MODE_IN );
@@ -112,8 +116,8 @@ public class GetQuote {
               call.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, "" );
           }
 
-          call.setProperty( Transport.USER, opts.getUser() );
-          call.setProperty( Transport.PASSWORD, opts.getPassword() );
+          call.setProperty( Transport.USER, user );
+          call.setProperty( Transport.PASSWORD, passwd );
 
           Object ret = call.invoke( new Object[] {symbol} );
           if (ret instanceof String) {
