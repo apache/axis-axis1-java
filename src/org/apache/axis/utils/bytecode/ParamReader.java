@@ -58,6 +58,8 @@ import org.apache.axis.utils.Messages;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Member;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
@@ -159,6 +161,19 @@ public class ParamReader
     }
 
     /**
+     * return the names of the declared parameters for the given constructor.
+     * If we cannot determine the names, return null.  The returned array will
+     * have one name per parameter.  The length of the array will be the same
+     * as the length of the Class[] array returned by Constructor.getParameterTypes().
+     * @param ctor
+     * @return String[] array of names, one per parameter, or null
+     */
+    public String[] getParameterNames(Constructor ctor) {
+        paramTypes = ctor.getParameterTypes();
+        return getParameterNames(ctor, paramTypes);
+    }
+
+    /**
      * return the names of the declared parameters for the given method.
      * If we cannot determine the names, return null.  The returned array will
      * have one name per parameter.  The length of the array will be the same
@@ -168,16 +183,19 @@ public class ParamReader
      */
     public String[] getParameterNames(Method method) {
         paramTypes = method.getParameterTypes();
+        return getParameterNames(method, paramTypes);
+    }
 
+    protected String[] getParameterNames(Member member,Class [] paramTypes) {
         // look up the names for this method
-        MethodInfo info = (MethodInfo) methods.get(getSignature(method, paramTypes));
+        MethodInfo info = (MethodInfo) methods.get(getSignature(member, paramTypes));
 
         // we know all the local variable names, but we only need to return
         // the names of the parameters.
 
         if (info != null) {
             String[] paramNames = new String[paramTypes.length];
-            int j = Modifier.isStatic(method.getModifiers()) ? 0 : 1;
+            int j = Modifier.isStatic(member.getModifiers()) ? 0 : 1;
 
             boolean found = false;  // did we find any non-null names
             for (int i = 0; i < paramNames.length; i++) {
