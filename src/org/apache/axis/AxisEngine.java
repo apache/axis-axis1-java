@@ -270,10 +270,10 @@ public abstract class AxisEngine extends BasicHandler
      * Client engine access
      *
      * An AxisEngine may define another specific AxisEngine to be used
-     * by newly created ServiceClients.  For instance, a server may
+     * by newly created Clients.  For instance, a server may
      * create an AxisClient and allow deployment to it.  Then
-     * the server's services may create ServiceClient objects which
-     * can access the AxisClient's deployed handlers and transports.
+     * the server's services may access the AxisClient's deployed 
+     * handlers and transports.
      *********************************************************************
      */
 
