@@ -64,7 +64,7 @@ import java.text.NumberFormat;
  * @author Tom Jordahl <tomj@macromedia.com>
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#gDay">XML Schema 3.2.13</a>
  */ 
-public class Day {
+public class Day implements java.io.Serializable {
     int day;
     String timezone = null;
 

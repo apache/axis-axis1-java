@@ -64,7 +64,7 @@ import java.text.NumberFormat;
  * @author Tom Jordahl <tomj@macromedia.com>
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#gMonthDay">XML Schema 3.2.12</a>
  */ 
-public class MonthDay {
+public class MonthDay implements java.io.Serializable {
     int month;
     int day;
     String timezone = null;

@@ -67,7 +67,7 @@ import org.apache.axis.description.TypeDesc;
  * @see <a href="http://www.w3.org/TR/xmlschema-1/#element-notation">XML Schema Part 1: 3.12 Notation Declarations</a>
  */
 
-public class Notation {
+public class Notation implements java.io.Serializable {
     NCName name;
     URI publicURI;
     URI systemURI;

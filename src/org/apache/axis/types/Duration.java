@@ -64,7 +64,7 @@ import org.apache.axis.utils.Messages;
  * @author Wes Moulder <wes@themindelectric.com>
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#duration">XML Schema 3.2.6</a>
  */ 
-public class Duration {
+public class Duration implements java.io.Serializable {
     boolean isNegative = false;
     int years;
     int months;
