@@ -53,7 +53,11 @@
  * <http://www.apache.org/>.
  */
 
-import org.apache.axis.client.ServiceClient;
+package samples.userguide.example2 ;
+
+import org.apache.axis.client.Call;
+import org.apache.axis.client.Service;
+import org.apache.axis.encoding.XMLType;
 import org.apache.axis.utils.Options;
 
 public class CalcClient
@@ -66,7 +70,7 @@ public class CalcClient
        
        args = options.getRemainingArgs();
        
-       if (args.length != 3) {
+       if (args == null || args.length != 3) {
            System.err.println("Usage: CalcClient <add|subtract> arg1 arg2");
            return;
        }
@@ -80,10 +84,15 @@ public class CalcClient
        Integer i1 = new Integer(args[1]);
        Integer i2 = new Integer(args[2]);
 
-       ServiceClient client = new ServiceClient(endpoint);
-       Integer ret = (Integer)client.invoke("",
-                                          method,
-                                          new Object [] { i1, i2 });
+       Service  service = new Service();
+       Call     call    = (Call) service.createCall();
+
+       call.setTargetEndpointAddress( new java.net.URL(endpoint) );
+       call.setOperationName( method );
+       call.addParameter( "op1", XMLType.XSD_INT, Call.PARAM_MODE_IN );
+       call.addParameter( "op2", XMLType.XSD_INT, Call.PARAM_MODE_IN );
+
+       Integer ret = (Integer) call.invoke( new Object [] { i1, i2 });
        
        System.out.println("Got result : " + ret);
    }

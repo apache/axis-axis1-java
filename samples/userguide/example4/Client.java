@@ -55,7 +55,9 @@
 
 package samples.userguide.example4;
 
-import org.apache.axis.client.ServiceClient;
+import org.apache.axis.client.Call;
+import org.apache.axis.client.Service;
+import org.apache.axis.encoding.XMLType;
 import org.apache.axis.utils.Options;
 
 public class Client
@@ -67,9 +69,16 @@ public class Client
             
             String endpointURL = options.getURL();
             
-            ServiceClient client = new ServiceClient(endpointURL);
-            
-            client.invoke("LogTestService", "testMethod", new Object [] {});
+            Service  service = new Service();
+            Call     call    = (Call) service.createCall();
+
+            call.setTargetEndpointAddress( new java.net.URL(endpointURL) );
+            call.setOperationName( "testMethod" );
+            call.setProperty( Call.NAMESPACE, "LogTestService" );
+
+            String res = (String) call.invoke( new Object[] {} );
+
+            System.out.println( res );
         } catch (Exception e) {
             System.err.println(e.toString());
         }
