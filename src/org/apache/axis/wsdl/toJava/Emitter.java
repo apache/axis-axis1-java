@@ -208,7 +208,6 @@ public class Emitter {
                     // If the binding is undefined, then we're parsing a Definition
                     // that didn't contain a binding, merely a service that referred
                     // to a non-existent binding.  Don't bother writing it.
-                    // If this isn't a SOAP binding, don't bother writing it, either.
                     if (binding.isUndefined()) {
                         continue;
                     }
