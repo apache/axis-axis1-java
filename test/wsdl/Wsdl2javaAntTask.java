@@ -56,6 +56,8 @@ package test.wsdl;
 import org.apache.axis.providers.java.JavaProvider;
 import org.apache.axis.utils.DefaultAuthenticator;
 import org.apache.axis.wsdl.toJava.Emitter;
+import org.apache.axis.providers.java.JavaProvider;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
@@ -109,13 +111,13 @@ public class Wsdl2javaAntTask extends Task
             // Instantiate the emitter
             Emitter emitter = new Emitter();
 
-            if ("application".equalsIgnoreCase(deployScope)) {
+            if (JavaProvider.OPTION_SCOPE_APPLICATION.equalsIgnoreCase(deployScope)) {
                 emitter.setScope(JavaProvider.BYTE_SCOPE_APPLICATION);
             }
-            else if ("request".equalsIgnoreCase(deployScope)) {
+            else if (JavaProvider.OPTION_SCOPE_REQUEST.equalsIgnoreCase(deployScope)) {
                 emitter.setScope(JavaProvider.BYTE_SCOPE_REQUEST);
             }
-            else if ("session".equalsIgnoreCase(deployScope)) {
+            else if (JavaProvider.OPTION_SCOPE_SESSION.equalsIgnoreCase(deployScope)) {
                 emitter.setScope(JavaProvider.BYTE_SCOPE_SESSION);
             }
             else if ("none".equalsIgnoreCase(deployScope)) {
