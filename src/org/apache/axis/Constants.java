@@ -274,8 +274,10 @@ public class Constants {
     // Misc SOAP Namespaces / URIs
     public static final String URI_SOAP11_NEXT_ACTOR =
                                      "http://schemas.xmlsoap.org/soap/actor/next" ;
-    public static final String URI_SOAP12_NEXT_ACTOR =
+    public static final String URI_SOAP12_NEXT_ROLE =
                                      "http://www.w3.org/2002/12/soap-envelope/role/next";
+    /** @deprecated use URI_SOAP12_NEXT_ROLE */
+    public static final String URI_SOAP12_NEXT_ACTOR = URI_SOAP12_NEXT_ROLE;
 
     public static final String URI_SOAP12_FAULT =
                                      "http://www.w3.org/2002/12/soap-faults";
@@ -462,6 +464,7 @@ public class Constants {
     public static final String ATTR_ENCODING_STYLE  = "encodingStyle" ;
     public static final String ATTR_ACTOR           = "actor" ;
     public static final String ATTR_ROLE            = "role" ;
+    public static final String ATTR_RELAY           = "relay" ;    
     public static final String ATTR_ROOT            = "root" ;
     public static final String ATTR_ID              = "id" ;
     public static final String ATTR_HREF            = "href" ;
@@ -504,6 +507,12 @@ public class Constants {
 
     public static final QName FAULT_SOAP12_RECEIVER =
                                   new QName(URI_SOAP12_ENV, "Receiver");
+    
+    // SOAP 1.2 Fault subcodes
+    public static final QName FAULT_SUBCODE_BADARGS =
+            new QName(URI_SOAP12_RPC, "BadArguments");
+    public static final QName FAULT_SUBCODE_PROC_NOT_PRESENT =
+            new QName(URI_SOAP12_RPC, "ProcedureNotPresent");
 
     // QNames
     //////////////////////////////////////////////////////////////////////////

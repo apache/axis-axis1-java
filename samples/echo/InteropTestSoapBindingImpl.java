@@ -10,8 +10,11 @@
 
 package samples.echo;
 
+import org.apache.axis.MessageContext;
+
 public class InteropTestSoapBindingImpl implements samples.echo.InteropTestPortType {
     public java.lang.String echoString(java.lang.String inputString) throws java.rmi.RemoteException {
+        MessageContext.getCurrentContext().setProperty(echoHeaderStringHandler.ECHOHEADER_STRING_ID, "header text");
         return inputString;
     }
 

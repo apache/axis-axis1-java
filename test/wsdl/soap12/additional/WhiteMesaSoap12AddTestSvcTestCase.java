@@ -7,18 +7,22 @@
 
 package test.wsdl.soap12.additional;
 
-import org.apache.axis.Constants;
 import org.apache.axis.AxisFault;
-import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.soap.SOAPConstants;
-import org.apache.axis.soap.SOAP12Constants;
+import org.apache.axis.Constants;
+import org.apache.axis.client.Call;
+import org.apache.axis.encoding.ser.BeanDeserializerFactory;
+import org.apache.axis.encoding.ser.BeanSerializerFactory;
 import org.apache.axis.enum.Style;
 import org.apache.axis.enum.Use;
-import org.apache.axis.client.Call;
-import org.apache.axis.client.Service;
+import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.message.SOAPHeaderElement;
+import org.apache.axis.soap.SOAP12Constants;
+import org.apache.axis.soap.SOAPConstants;
+import test.wsdl.soap12.additional.xsd.SOAPStruct;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.ParameterMode;
+import java.util.Vector;
 
 /**
  * Additional SOAP 1.2 tests.
@@ -34,10 +38,46 @@ import javax.xml.rpc.ParameterMode;
 public class WhiteMesaSoap12AddTestSvcTestCase extends junit.framework.TestCase {
     public static final String STRING_VAL = "SOAP 1.2 is cool!";
     public static final float FLOAT_VAL = 3.14F;
+    public static final Float FLOAT_OBJVAL = new Float(FLOAT_VAL);
     public static final int INT_VAL = 69;
+    public static final Integer INT_OBJVAL = new Integer(INT_VAL);
+
+    public final String TEST_NS = "http://soapinterop.org/";
+    public final QName ECHO_STRING_QNAME = new QName(TEST_NS, "echoString");
     
+    // Endpoints
+    // TODO : Shouldn't be hardcoded!
+//    public static final String HOST = "http://localhost:8080";
+    public static final String HOST = "http://www.whitemesa.net";
+    public static final String RPC_ENDPOINT = HOST + "/soap12/add-test-rpc";
+    public static final String DOC_ENDPOINT = HOST + "/soap12/add-test-doc";
+    public static final String DOC_INT_ENDPOINT = HOST + "/soap12/add-test-doc-int";
+    private QName SOAPSTRUCT_QNAME = new QName("http://example.org/ts-tests/xsd", "SOAPStruct");
+
     public WhiteMesaSoap12AddTestSvcTestCase(java.lang.String name) {
         super(name);
+    }
+    
+    /**
+     * Test xmlp-1 - call echoString with no arguments (even though it expects
+     * one).  Confirm bad arguments fault from endpoint.
+     * 
+     * @throws Exception
+     */ 
+    public void testXMLP1() throws Exception {
+        Call call = new Call(RPC_ENDPOINT);
+        call.setSOAPVersion(SOAPConstants.SOAP12_CONSTANTS);
+        try {
+            call.invoke(ECHO_STRING_QNAME, null);
+        } catch (AxisFault fault) {
+            assertEquals(Constants.FAULT_SOAP12_SENDER, fault.getFaultCode());
+            QName [] subCodes = fault.getFaultSubCodes();
+            assertNotNull(subCodes);
+            assertEquals(1, subCodes.length);
+            assertEquals(Constants.FAULT_SUBCODE_BADARGS, subCodes[0]);
+            return;
+        }
+        fail("Didn't catch expected fault");
     }
     
     /**
@@ -77,29 +117,64 @@ public class WhiteMesaSoap12AddTestSvcTestCase extends junit.framework.TestCase 
         // gonna for now.
     }
     
-    public void test1Soap12AddTestDocPortEchoString() throws Exception {
-        test.wsdl.soap12.additional.Soap12AddTestDocBindingStub binding;
-        try {
-            binding = (test.wsdl.soap12.additional.Soap12AddTestDocBindingStub)
-                          new test.wsdl.soap12.additional.WhiteMesaSoap12AddTestSvcLocator().getSoap12AddTestDocPort();
-        }
-        catch (javax.xml.rpc.ServiceException jre) {
-            if(jre.getLinkedCause()!=null)
-                jre.getLinkedCause().printStackTrace();
-            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
-        }
-        assertNotNull("binding is null", binding);
-
-        // Time out after a minute
-        binding.setTimeout(60000);
-
-        // Test operation
-        java.lang.String value = null;
-        value = binding.echoString(STRING_VAL);
-        assertEquals(STRING_VAL, value);
+    public void textXMLP4() throws Exception {
+        Call call = new Call(RPC_ENDPOINT);
+        call.setSOAPVersion(SOAPConstants.SOAP12_CONSTANTS);
+        call.registerTypeMapping(SOAPStruct.class, SOAPSTRUCT_QNAME,
+                                 new BeanSerializerFactory(SOAPStruct.class, SOAPSTRUCT_QNAME),
+                                 new BeanDeserializerFactory(SOAPStruct.class, SOAPSTRUCT_QNAME));
+        call.addParameter(new QName("", "inputFloat"),
+                          Constants.XSD_FLOAT, ParameterMode.IN);
+        call.addParameter(new QName("", "inputInteger"),
+                          Constants.XSD_INT, ParameterMode.IN);
+        call.addParameter(new QName("", "inputString"),
+                          Constants.XSD_STRING, ParameterMode.IN);
+        call.setReturnType(SOAPSTRUCT_QNAME);
+        SOAPStruct ret = (SOAPStruct)call.invoke(
+                new QName(TEST_NS, "echoSimpleTypesAsStruct"),
+                new Object [] {
+                    new Float(FLOAT_VAL),
+                    new Integer(INT_VAL),
+                    STRING_VAL 
+                });
+        assertEquals(STRING_VAL, ret.getVarString());
+        assertEquals(FLOAT_VAL, ret.getVarFloat(), 0.0004F);
+        assertEquals(INT_VAL, ret.getVarInt());
     }
-
-    public void test2Soap12AddTestDocPortEchoSenderFault() throws Exception {
+    
+    public void testXMLP5() throws Exception {
+        Call call = new Call(RPC_ENDPOINT);
+        try {
+            call.invoke(new QName(TEST_NS, "echoVoid"), null);        
+        } catch (AxisFault fault) {
+            // Got the expected Fault - make sure it looks right
+            assertEquals(Constants.FAULT_VERSIONMISMATCH, fault.getFaultCode());
+            return;
+        }
+        fail("Didn't catch expected fault");
+    }
+    
+    public void testXMLP6() throws Exception {
+        Call call = new Call(RPC_ENDPOINT);
+        call.setSOAPVersion(SOAPConstants.SOAP12_CONSTANTS);
+        SOAPHeaderElement unknownHeader =
+                new SOAPHeaderElement("http://example.org",
+                                      "unknown",
+                                      "Nobody understands me!");
+        unknownHeader.setMustUnderstand(true);
+        call.addHeader(unknownHeader);
+        try {
+            call.invoke(new QName(TEST_NS, "echoVoid"), null);        
+        } catch (AxisFault fault) {
+            // Got the expected Fault - make sure it looks right
+            assertEquals(Constants.FAULT_SOAP12_MUSTUNDERSTAND,
+                         fault.getFaultCode());
+            return;
+        }
+        fail("Didn't catch expected fault");        
+    }
+    
+    public void testXMLP7() throws Exception {
         test.wsdl.soap12.additional.Soap12AddTestDocBindingStub binding;
         try {
             binding = (test.wsdl.soap12.additional.Soap12AddTestDocBindingStub)
@@ -129,8 +204,8 @@ public class WhiteMesaSoap12AddTestSvcTestCase extends junit.framework.TestCase 
         
         fail("Should have received sender fault!");
     }
-
-    public void test3Soap12AddTestDocPortEchoReceiverFault() throws Exception {
+    
+    public void testXMLP8() throws Exception {
         test.wsdl.soap12.additional.Soap12AddTestDocBindingStub binding;
         try {
             binding = (test.wsdl.soap12.additional.Soap12AddTestDocBindingStub)
@@ -160,253 +235,181 @@ public class WhiteMesaSoap12AddTestSvcTestCase extends junit.framework.TestCase 
         
         fail("Should have received receiver fault!");
     }
-
-    public void test4Soap12AddTestRpcPortEchoVoid() throws Exception {
-        test.wsdl.soap12.additional.Soap12AddTestRpcBindingStub binding;
-        try {
-            binding = (test.wsdl.soap12.additional.Soap12AddTestRpcBindingStub)
-                          new test.wsdl.soap12.additional.WhiteMesaSoap12AddTestSvcLocator().getSoap12AddTestRpcPort();
-        }
-        catch (javax.xml.rpc.ServiceException jre) {
-            if(jre.getLinkedCause()!=null)
-                jre.getLinkedCause().printStackTrace();
-            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
-        }
-        assertNotNull("binding is null", binding);
-
-        // Time out after a minute
-        binding.setTimeout(60000);
-
-        // Test operation
-        binding.echoVoid();
-    }
-
-    public void test5Soap12AddTestRpcPortEchoSimpleTypesAsStruct() throws Exception {
-        test.wsdl.soap12.additional.Soap12AddTestRpcBindingStub binding;
-        try {
-            binding = (test.wsdl.soap12.additional.Soap12AddTestRpcBindingStub)
-                          new test.wsdl.soap12.additional.WhiteMesaSoap12AddTestSvcLocator().getSoap12AddTestRpcPort();
-        }
-        catch (javax.xml.rpc.ServiceException jre) {
-            if(jre.getLinkedCause()!=null)
-                jre.getLinkedCause().printStackTrace();
-            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
-        }
-        assertNotNull("binding is null", binding);
-
-        // Time out after a minute
-        binding.setTimeout(60000);
-
-        // Test operation
-        test.wsdl.soap12.additional.xsd.SOAPStruct value = null;
-        value = binding.echoSimpleTypesAsStruct(STRING_VAL, INT_VAL, FLOAT_VAL);
-        assertEquals("Float values differ", FLOAT_VAL, value.getVarFloat(), 0.000001F);
-        assertEquals("Int values differ", INT_VAL, value.getVarInt());
-        assertEquals("String values differ", STRING_VAL, value.getVarString());
-    }
-
-    public void test6Soap12AddTestRpcPortEchoString() throws Exception {
-        test.wsdl.soap12.additional.Soap12AddTestRpcBindingStub binding;
-        try {
-            binding = (test.wsdl.soap12.additional.Soap12AddTestRpcBindingStub)
-                          new test.wsdl.soap12.additional.WhiteMesaSoap12AddTestSvcLocator().getSoap12AddTestRpcPort();
-        }
-        catch (javax.xml.rpc.ServiceException jre) {
-            if(jre.getLinkedCause()!=null)
-                jre.getLinkedCause().printStackTrace();
-            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
-        }
-        assertNotNull("binding is null", binding);
-
-        // Time out after a minute
-        binding.setTimeout(60000);
-
-        // Test operation
-        java.lang.String value = null;
-        value = binding.echoString(STRING_VAL);
-        assertEquals(STRING_VAL, value);
-    }
-
-    public void test7Soap12AddTestRpcPortEchoSimpleTypesAsStructOfSchemaTypes() throws Exception {
-        test.wsdl.soap12.additional.Soap12AddTestRpcBindingStub binding;
-        try {
-            binding = (test.wsdl.soap12.additional.Soap12AddTestRpcBindingStub)
-                          new test.wsdl.soap12.additional.WhiteMesaSoap12AddTestSvcLocator().getSoap12AddTestRpcPort();
-        }
-        catch (javax.xml.rpc.ServiceException jre) {
-            if(jre.getLinkedCause()!=null)
-                jre.getLinkedCause().printStackTrace();
-            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
-        }
-        assertNotNull("binding is null", binding);
-
-        // Time out after a minute
-        binding.setTimeout(60000);
-
-        // Test operation
-        test.wsdl.soap12.additional.xsd.SOAPStructTypes value = null;
-        value = binding.
-                  echoSimpleTypesAsStructOfSchemaTypes(STRING_VAL,
-                                                       new Integer(INT_VAL),
-                                                       new Float(FLOAT_VAL),
-                                                       "another string");
-        assertEquals(Constants.XSD_STRING, value.getType1());
-        assertEquals(Constants.XSD_INT, value.getType2());
-        assertEquals(Constants.XSD_FLOAT, value.getType3());
-        assertEquals(Constants.XSD_ANYTYPE, value.getType4());
-    }
-
-    public void test8Soap12AddTestRpcPortEchoInteger() throws Exception {
-        test.wsdl.soap12.additional.Soap12AddTestRpcBindingStub binding;
-        try {
-            binding = (test.wsdl.soap12.additional.Soap12AddTestRpcBindingStub)
-                          new test.wsdl.soap12.additional.WhiteMesaSoap12AddTestSvcLocator().getSoap12AddTestRpcPort();
-        }
-        catch (javax.xml.rpc.ServiceException jre) {
-            if(jre.getLinkedCause()!=null)
-                jre.getLinkedCause().printStackTrace();
-            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
-        }
-        assertNotNull("binding is null", binding);
-
-        // Time out after a minute
-        binding.setTimeout(60000);
-
-        // Test operation
-        int value;
-        value = binding.echoInteger(INT_VAL);
-        assertEquals(INT_VAL, value);
+    
+    public void testXMLP9() throws Exception {
+        
     }
     
-    // getTime is a notification style operation and is unsupported.
-    // getTime is a notification style operation and is unsupported.
-    public void test9Soap12AddTestDocUpperPortEchoString() throws Exception {
-        test.wsdl.soap12.additional.Soap12AddTestDocBindingStub binding;
-        try {
-            binding = (test.wsdl.soap12.additional.Soap12AddTestDocBindingStub)
-                    new test.wsdl.soap12.additional.WhiteMesaSoap12AddTestSvcLocator().getSoap12AddTestDocUpperPort();
-        }
-        catch (javax.xml.rpc.ServiceException jre) {
-            if(jre.getLinkedCause()!=null)
-                jre.getLinkedCause().printStackTrace();
-            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
-        }
-        assertNotNull("binding is null", binding);
+    public void testXMLP11() throws Exception {
         
-        // Time out after a minute
-        binding.setTimeout(60000);
-        
-        // Test operation
-        java.lang.String value = null;
-        value = binding.echoString(STRING_VAL);
-        assertEquals(STRING_VAL.toUpperCase(), value);
-    }
-
-    public void test10Soap12AddTestDocUpperPortEchoSenderFault() throws Exception {
-        test.wsdl.soap12.additional.Soap12AddTestDocBindingStub binding;
-        try {
-            binding = (test.wsdl.soap12.additional.Soap12AddTestDocBindingStub)
-                          new test.wsdl.soap12.additional.WhiteMesaSoap12AddTestSvcLocator().getSoap12AddTestDocUpperPort();
-        }
-        catch (javax.xml.rpc.ServiceException jre) {
-            if(jre.getLinkedCause()!=null)
-                jre.getLinkedCause().printStackTrace();
-            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
-        }
-        assertNotNull("binding is null", binding);
-
-        // Time out after a minute
-        binding.setTimeout(60000);
-
-        // Test operation
-        binding.echoSenderFault(new java.lang.String());
-        // TBD - validate results
-    }
-
-    public void test11Soap12AddTestDocUpperPortEchoReceiverFault() throws Exception {
-        test.wsdl.soap12.additional.Soap12AddTestDocBindingStub binding;
-        try {
-            binding = (test.wsdl.soap12.additional.Soap12AddTestDocBindingStub)
-                          new test.wsdl.soap12.additional.WhiteMesaSoap12AddTestSvcLocator().getSoap12AddTestDocUpperPort();
-        }
-        catch (javax.xml.rpc.ServiceException jre) {
-            if(jre.getLinkedCause()!=null)
-                jre.getLinkedCause().printStackTrace();
-            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
-        }
-        assertNotNull("binding is null", binding);
-
-        // Time out after a minute
-        binding.setTimeout(60000);
-
-        // Test operation
-        binding.echoReceiverFault(new java.lang.String());
-        // TBD - validate results
     }
     
-    // getTime is a notification style operation and is unsupported.
-    public void test12Soap12AddTestDocIntermediaryPortEchoString() throws Exception {
-        test.wsdl.soap12.additional.Soap12AddTestDocBindingStub binding;
+    public void testXMLP12() throws Exception {
+        Call call = new Call(RPC_ENDPOINT);
+        call.setSOAPVersion(SOAPConstants.SOAP12_CONSTANTS);
+        call.addParameter(new QName("inputInteger"), Constants.XSD_INT, ParameterMode.IN);
         try {
-            binding = (test.wsdl.soap12.additional.Soap12AddTestDocBindingStub)
-                    new test.wsdl.soap12.additional.WhiteMesaSoap12AddTestSvcLocator().getSoap12AddTestDocIntermediaryPort();
+            call.invoke(new QName(TEST_NS, "unknownFreakyMethod"), new Object [] { new Integer(5) });
+        } catch (AxisFault fault) {
+            assertEquals(Constants.FAULT_SOAP12_SENDER, fault.getFaultCode());
+            QName [] subCodes = fault.getFaultSubCodes();
+            assertNotNull(subCodes);
+            assertEquals(1, subCodes.length);
+            assertEquals(Constants.FAULT_SUBCODE_PROC_NOT_PRESENT, subCodes[0]);
+            return;
         }
-        catch (javax.xml.rpc.ServiceException jre) {
-            if(jre.getLinkedCause()!=null)
-                jre.getLinkedCause().printStackTrace();
-            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
-        }
-        assertNotNull("binding is null", binding);
+        fail("Didn't catch expected fault");
+    }
+    
+    /**
+     * Test xmlp-13 : doc/lit echoString which sends back the original
+     * message via a transparent "forwarding intermediary"
+     * 
+     */ 
+    public void testXMLP13() throws Exception {
         
-        // Time out after a minute
-        binding.setTimeout(60000);
+    }
+
+    /**
+     * Test xmlp-14 : doc/lit echoString which sends back the original
+     * message via an "active intermediary" (translating the string
+     * to uppercase)
+     * 
+     */ 
+    public void testXMLP14() throws Exception {
         
-        // Test operation
-        java.lang.String value = null;
-        value = binding.echoString(STRING_VAL);
-        assertEquals(STRING_VAL, value);
+    }
+    
+    public void testXMLP15() throws Exception {
+        String HEADER_VAL = "I'm going to be discarded!";
+        String HEADER_NS = "http://test-xmlp-15";
+        String HEADER_NAME = "unknown";
+        
+        Call call = new Call(DOC_INT_ENDPOINT);
+        call.setSOAPVersion(SOAPConstants.SOAP12_CONSTANTS);
+
+        SOAPHeaderElement header = new SOAPHeaderElement(HEADER_NS, HEADER_NAME);
+        header.setRole(Constants.URI_SOAP12_NEXT_ROLE);
+        header.setObjectValue(HEADER_VAL);
+        call.addHeader(header);
+        
+        call.invoke(ECHO_STRING_QNAME, new Object [] { "body string" });
+        
+        SOAPEnvelope respEnv = call.getMessageContext().getResponseMessage().getSOAPEnvelope();
+        
+        // Confirm we got no headers back
+        Vector headers = respEnv.getHeaders();
+        assertTrue("Headers Vector wasn't empty", headers.isEmpty());
+    }
+    
+    public void testXMLP16() throws Exception {
+        String HEADER_VAL = "I'm going all the way through!";
+        String HEADER_NS = "http://test-xmlp-16";
+        String HEADER_NAME = "unknown";
+        QName HEADER_QNAME = new QName(HEADER_NS, HEADER_NAME);
+        
+        Call call = new Call(DOC_INT_ENDPOINT);
+        call.setSOAPVersion(SOAPConstants.SOAP12_CONSTANTS);
+
+        SOAPHeaderElement header = new SOAPHeaderElement(HEADER_NS, HEADER_NAME);
+        header.setRole(Constants.URI_SOAP12_NONE_ROLE);
+        header.setObjectValue(HEADER_VAL);
+        call.addHeader(header);
+        
+        call.invoke(ECHO_STRING_QNAME, new Object [] { "body string" });
+        
+        SOAPEnvelope respEnv = call.getMessageContext().getResponseMessage().getSOAPEnvelope();
+        
+        // Confirm we got our header back
+        Vector headers = respEnv.getHeaders();
+        assertEquals(1, headers.size());
+        SOAPHeaderElement respHeader = (SOAPHeaderElement)headers.get(0);
+        assertEquals(Constants.URI_SOAP12_NONE_ROLE, respHeader.getRole());
+        assertEquals(HEADER_QNAME, respHeader.getQName());
+        assertEquals(HEADER_VAL, respHeader.getValue());
+    }
+    
+    public void testXMLP17() throws Exception {
+        String HEADER_VAL = "I'm going all the way through!";
+        String HEADER_NS = "http://test-xmlp-17";
+        String HEADER_NAME = "seekrit";
+        QName HEADER_QNAME = new QName(HEADER_NS, HEADER_NAME);
+        
+        Call call = new Call(DOC_INT_ENDPOINT);
+        call.setSOAPVersion(SOAPConstants.SOAP12_CONSTANTS);
+
+        SOAPHeaderElement header = new SOAPHeaderElement(HEADER_NS, HEADER_NAME);
+        header.setRole(Constants.URI_SOAP12_ULTIMATE_ROLE);
+        header.setObjectValue(HEADER_VAL);
+        call.addHeader(header);
+        
+        call.invoke(ECHO_STRING_QNAME, new Object [] { "body string" });
+        
+        SOAPEnvelope respEnv = call.getMessageContext().getResponseMessage().getSOAPEnvelope();
+        
+        // Confirm we got a single header back, targeted at the ultimate
+        // receiver
+        Vector headers = respEnv.getHeaders();
+        assertEquals(1, headers.size());
+        SOAPHeaderElement respHeader = (SOAPHeaderElement)headers.get(0);
+        assertEquals(Constants.URI_SOAP12_ULTIMATE_ROLE, respHeader.getRole());
+        assertEquals(HEADER_QNAME, respHeader.getQName());
+        assertEquals(HEADER_VAL, respHeader.getValue());
     }
 
-    public void test13Soap12AddTestDocIntermediaryPortEchoSenderFault() throws Exception {
-        test.wsdl.soap12.additional.Soap12AddTestDocBindingStub binding;
+    public void testXMLP18() throws Exception {
+        String HEADER_VAL = "I'm going all the way through!";
+        String HEADER_NS = "http://test-xmlp-17";
+        String HEADER_NAME = "seekrit";
+        QName HEADER_QNAME = new QName(HEADER_NS, HEADER_NAME);
+        
+        Call call = new Call(DOC_INT_ENDPOINT);
+        call.setSOAPVersion(SOAPConstants.SOAP12_CONSTANTS);
+
+        SOAPHeaderElement header = new SOAPHeaderElement(HEADER_NS, HEADER_NAME);
+        header.setRole(Constants.URI_SOAP12_NEXT_ROLE);
+        header.setRelay(true);
+        header.setObjectValue(HEADER_VAL);
+        call.addHeader(header);
+        
+        call.invoke(ECHO_STRING_QNAME, new Object [] { "body string" });
+        
+        SOAPEnvelope respEnv = call.getMessageContext().getResponseMessage().getSOAPEnvelope();
+        
+        // Confirm we got a single header back, targeted at the ultimate
+        // receiver
+        Vector headers = respEnv.getHeaders();
+        assertEquals(1, headers.size());
+        SOAPHeaderElement respHeader = (SOAPHeaderElement)headers.get(0);
+        assertEquals(Constants.URI_SOAP12_NEXT_ROLE, respHeader.getRole());
+        assertTrue(respHeader.getRelay());
+        assertEquals(HEADER_QNAME, respHeader.getQName());
+        assertEquals(HEADER_VAL, respHeader.getValue());
+    }
+
+    public void testXMLP19() throws Exception {
+        String HEADER_VAL = "I'm going to generate a fault!";
+        String HEADER_NS = "http://test-xmlp-17";
+        String HEADER_NAME = "seekrit";
+        
+        Call call = new Call(DOC_INT_ENDPOINT);
+        call.setSOAPVersion(SOAPConstants.SOAP12_CONSTANTS);
+
+        SOAPHeaderElement header = new SOAPHeaderElement(HEADER_NS, HEADER_NAME);
+        header.setRole(Constants.URI_SOAP12_NEXT_ROLE);
+        header.setMustUnderstand(true);
+        header.setObjectValue(HEADER_VAL);
+        call.addHeader(header);
+        
         try {
-            binding = (test.wsdl.soap12.additional.Soap12AddTestDocBindingStub)
-                          new test.wsdl.soap12.additional.WhiteMesaSoap12AddTestSvcLocator().getSoap12AddTestDocIntermediaryPort();
+            call.invoke(ECHO_STRING_QNAME, new Object [] { "body string" });
+        } catch (AxisFault fault) {
+            // Got the expected Fault - make sure it looks right
+            assertEquals(Constants.FAULT_SOAP12_MUSTUNDERSTAND,
+                         fault.getFaultCode());
+            return;
         }
-        catch (javax.xml.rpc.ServiceException jre) {
-            if(jre.getLinkedCause()!=null)
-                jre.getLinkedCause().printStackTrace();
-            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
-        }
-        assertNotNull("binding is null", binding);
 
-        // Time out after a minute
-        binding.setTimeout(60000);
-
-        // Test operation
-        binding.echoSenderFault(new java.lang.String());
-        // TBD - validate results
+        fail("Didn't catch expected fault");        
     }
-
-    public void test14Soap12AddTestDocIntermediaryPortEchoReceiverFault() throws Exception {
-        test.wsdl.soap12.additional.Soap12AddTestDocBindingStub binding;
-        try {
-            binding = (test.wsdl.soap12.additional.Soap12AddTestDocBindingStub)
-                          new test.wsdl.soap12.additional.WhiteMesaSoap12AddTestSvcLocator().getSoap12AddTestDocIntermediaryPort();
-        }
-        catch (javax.xml.rpc.ServiceException jre) {
-            if(jre.getLinkedCause()!=null)
-                jre.getLinkedCause().printStackTrace();
-            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
-        }
-        assertNotNull("binding is null", binding);
-
-        // Time out after a minute
-        binding.setTimeout(60000);
-
-        // Test operation
-        binding.echoReceiverFault(new java.lang.String());
-        // TBD - validate results
-    }
-
 }
