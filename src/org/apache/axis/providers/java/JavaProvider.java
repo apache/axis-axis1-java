@@ -216,16 +216,18 @@ public abstract class JavaProvider extends BasicProvider
         String  clsName    = getServiceClassName(service);
         String  allowedMethods = getAllowedMethods(service);
 
-        if ((clsName == null) || clsName.equals(""))
+        if ((clsName == null) || clsName.equals("")) {
             throw new AxisFault("Server.NoClassForService",
                 JavaUtils.getMessage("noOption00", getServiceClassNameOptionName(), serviceName),
                 null, null);
+        }
 
-        if ((allowedMethods == null) || allowedMethods.equals(""))
+        if ((allowedMethods == null) || allowedMethods.equals("")) {
             throw new AxisFault("Server.NoMethodConfig",
                 JavaUtils.getMessage("noOption00", 
                                      allowedMethodsOption, serviceName),
                 null, null);
+        }
 
         if (allowedMethods.equals("*"))
             allowedMethods = null;
@@ -263,7 +265,7 @@ public abstract class JavaProvider extends BasicProvider
                            resEnv, jc, obj);
         }
         catch( Exception exp ) {
-            log.debug( JavaUtils.getMessage("exception00"), exp );
+            log.info( JavaUtils.getMessage("toAxisFault00"), exp);
             throw AxisFault.makeFault(exp);
         }
         if (log.isDebugEnabled())
@@ -336,8 +338,10 @@ public abstract class JavaProvider extends BasicProvider
 
             msgContext.setProperty("WSDL", doc);
         } catch (NoClassDefFoundError e) {
+            log.info( JavaUtils.getMessage("toAxisFault00"), e );
             throw new AxisFault(e.toString(), e);
         } catch (Exception e) {
+            log.info( JavaUtils.getMessage("toAxisFault00"), e );
             throw AxisFault.makeFault(e);
         }
     
