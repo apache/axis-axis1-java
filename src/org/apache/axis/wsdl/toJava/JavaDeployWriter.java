@@ -424,10 +424,6 @@ public class JavaDeployWriter extends JavaWriter {
             QName paramQName = param.getQName();
             QName paramType = Utils.getXSIType(param);
 
-            if (param.getMIMEType() != null) {
-                paramType = Utils.getMIMETypeQName(param.getMIMEType());
-            }
-
             pw.print("        <parameter");
             if (paramQName == null || "".equals(paramQName.getNamespaceURI())) {
                 pw.print(" name=\"" + param.getName() + "\"" );
