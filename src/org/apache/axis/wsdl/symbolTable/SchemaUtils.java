@@ -69,6 +69,21 @@ public class SchemaUtils {
         return false;
     }
 
+    public static boolean isSimpleTypeWithUnion(Node node) {
+        // Expecting a schema complexType
+        if (isXSDNode(node, "simpleType")) {
+            // Under the simpleType there could be union
+            NodeList children = node.getChildNodes();
+            for (int j = 0; j < children.getLength(); j++) {
+                Node kid = children.item(j);
+                if (isXSDNode(kid, "union")) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
   /**
    * This method checks out if the given node satisfies the 3rd condition
    * of the "wrapper" style:
