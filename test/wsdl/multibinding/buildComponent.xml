@@ -34,7 +34,19 @@
                testcase="yes">
     </wsdl2java>
 
-    <copy file="${test.dir}/wsdl/multibinding/VerifyFilesTestCase.java" tofile="${build.dir}/build/work/test/wsdl/multibinding/VerifyFilesTestCase.java"/>
+    <copy todir="${build.dir}/work/test/wsdl/multibinding" overwrite="yes">
+      <fileset dir="${axis.home}/test/wsdl/multibinding">
+        <include name="**/*Impl.java"/>
+      </fileset>
+      <fileset dir="${axis.home}/test/wsdl/multibinding">
+        <include name="**/*TestCase.java"/>
+        <exclude name="**/EmptySATestCase.java"/>
+        <exclude name="**/SalesRankNPrice_ServiceTestCase.java"/>
+      </fileset>
+      <fileset dir="${axis.home}/test/wsdl/multibinding">
+        <include name="**/Main.java"/>
+      </fileset>
+    </copy>
 
     <javac srcdir="${build.dir}/work" destdir="${build.dest}"
            debug="${debug}">

@@ -66,6 +66,7 @@
                useInheritedMethods="false"
                namespace="http://roundtrip.wsdl.test"
                namespaceImpl="http://roundtrip.wsdl.test"
+               typeMappingVersion="1.2"
                location="http://localhost:8080/axis/services/RoundtripTest"
                locationImport="file://build/work/test/wsdl/roundtrip/RoundtripIntf.wsdl">
         <mapping namespace="http://roundtrip.wsdl.test" package="test.wsdl.roundtrip"/>
@@ -77,6 +78,7 @@
                className= "test.wsdl.roundtrip.RoundtripPortType"
                useInheritedMethods="false"
                namespace="http://roundtrip.wsdl.test"
+               typeMappingVersion="1.2"
                location="http://localhost:8080/axis/services/RoundtripTest">
         <mapping namespace="http://roundtrip.wsdl.test" package="test.wsdl.roundtrip"/>
     </java2wsdl>
@@ -89,6 +91,7 @@
                className= "test.wsdl.roundtrip.RoundtripPortType"
                useInheritedMethods="false"
                namespace="http://roundtrip.wsdl.test"
+               typeMappingVersion="1.2"
                location="http://localhost:8080/axis/services/RoundtripTest2">
         <mapping namespace="http://roundtrip.wsdl.test" package="test.wsdl.roundtrip"/>
     </java2wsdl>
@@ -107,20 +110,19 @@
         <mapping namespace="http://roundtrip.wsdl.test" package="test.wsdl.roundtrip"/>
     </wsdl2java>
 
+    <copy todir="${build.dir}/work/test/wsdl/roundtrip" overwrite="yes">
+      <fileset dir="${test.dir}/wsdl/roundtrip">
+        <include name="RoundtripTestServiceTestCase.java"/>
+      </fileset>
+    </copy>
+
     <javac srcdir="${build.dir}/work" destdir="${build.dest}"
            debug="${debug}">
       <classpath refid="classpath" />
       <include name="test/wsdl/roundtrip/*.java" />
       <include name="test/wsdl/roundtrip/**/*.java" />
     </javac>
-<!--
-    <javac srcdir="${axis.home}/" destdir="${build.dest}"
-           debug="${debug}">
-      <classpath refid="classpath" />
-      <include name="test/wsdl/roundtrip/*.java" />
-      <include name="test/wsdl/roundtrip/**/*.java" />
-    </javac>
--->
+
 </target>
 
 <target name="run" >

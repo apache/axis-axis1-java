@@ -31,7 +31,7 @@
     <classpath>
         <path refid="classpath"/>
     </classpath>
-    <include name="$(componentName}/*.java"/>
+    <include name="${componentName}/*.java"/>
   </javac>
 </target>
 

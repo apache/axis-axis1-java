@@ -38,17 +38,26 @@
         <mapping namespace="urn:MultiRefTest2" package="test.wsdl.multiref"/>
     </wsdl2java>
 
+    <copy todir="${build.dir}/work/test/wsdl/multiref" overwrite="yes">
+      <fileset dir="${axis.home}/test/wsdl/multiref">
+        <include name="**/*Impl.java"/>
+      </fileset>
+      <fileset dir="${axis.home}/test/wsdl/multiref">
+        <include name="**/*TestCase.java"/>
+        <exclude name="**/EmptySATestCase.java"/>
+        <exclude name="**/SalesRankNPrice_ServiceTestCase.java"/>
+      </fileset>
+      <fileset dir="${axis.home}/test/wsdl/multiref">
+        <include name="**/Main.java"/>
+      </fileset>
+    </copy>
+
     <javac srcdir="${build.dir}/work" destdir="${build.dest}"
            debug="${debug}">
       <classpath refid="classpath" />
       <include name="test/wsdl/multiref/*.java" />
     </javac>
 
-    <javac srcdir="${axis.home}" destdir="${build.dest}"
-           debug="${debug}">
-      <classpath refid="classpath" />
-      <include name="test/wsdl/multiref/*.java" />
-    </javac>
 </target>
 
 <target name="run" >

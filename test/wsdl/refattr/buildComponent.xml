@@ -26,11 +26,13 @@
 
 <target name="compile" depends="copy">
   <echo message="Compilig test.wsdl.refattr"/>
+
     <!-- RefAttr Test -->
     <wsdl2java url="${axis.home}/test/wsdl/refattr/refattr.wsdl"
                output="${axis.home}/build/work"
                deployscope="session"
                serverSide="yes"
+               skeletonDeploy="yes"
                noimports="no"
                verbose="no"
                testcase="no">
@@ -38,14 +40,23 @@
         <mapping namespace="urn:ref.types" package="test.wsdl.refattr"/>
     </wsdl2java>
 
+    <copy todir="${build.dir}/work/test/wsdl/refattr" overwrite="yes">
+      <fileset dir="${axis.home}/test/wsdl/refattr">
+        <include name="**/*Impl.java"/>
+      </fileset>
+      <fileset dir="${axis.home}/test/wsdl/refattr">
+        <include name="**/*TestCase.java"/>
+        <exclude name="**/EmptySATestCase.java"/>
+        <exclude name="**/SalesRankNPrice_ServiceTestCase.java"/>
+      </fileset>
+      <fileset dir="${axis.home}/test/wsdl/refattr/">
+        <include name="**/Main.java"/>
+      </fileset>
+    </copy>
+
     <javac srcdir="${build.dir}/work" destdir="${build.dest}"
            debug="${debug}">
       <classpath refid="classpath" />
-      <include name="test/wsdl/refattr/*.java" />
-    </javac>
-
-    <javac srcdir="${axis.home}" destdir="${build.dest}"
-           debug="${debug}">
       <include name="test/wsdl/refattr/*.java" />
     </javac>
 

@@ -49,6 +49,12 @@
                testcase="no">
     </wsdl2java>
 
+    <copy todir="${build.dir}/work/samples/jaxrpc/hello" overwrite="yes">
+      <fileset dir="${axis.home}/samples/jaxrpc/hello">
+        <include name="ServerHandler.java"/>
+      </fileset>
+    </copy>
+
     <!-- Compile the echo sample generated java files -->
     <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}">
       <classpath refid="classpath" />
