@@ -29,12 +29,16 @@ h1 {  margin-left: -30px}
   <A href="#DeploymentReference">Deployment Reference</a><br>
   <A href="#Glossary">Glossary</a></p>
 <h2><a name="Introduction"></a>Introduction</h2>
-Welcome to Axis! This is the <b>alpha 1</b> version, our first publically annouced 
-milestone. Please note that this is a work in progress, and although the basic 
-functionality is there, there are still a lot of unfinished areas and rough edges 
-- so watch your step, and don't expect perfection. That said, we're very psyched 
-about the package so far, and would love to get your take on how we can make it 
-better. 
+<ul>
+  <li>Bugzilla link</li>
+  <li>ServiceDescription desc.</li>
+</ul>
+<p>Welcome to Axis! This is the <b>alpha 1</b> version, our first publically annouced 
+  milestone. Please note that this is a work in progress, and although the basic 
+  functionality is there, there are still a lot of unfinished areas and rough 
+  edges - so watch your step, and don't expect perfection. That said, we're very 
+  psyched about the package so far, and would love to get your take on how we 
+  can make it better. </p>
 <h3>What is Axis?</h3>
 <p>Axis is the third generation of Apache SOAP, which began at IBM as "SOAP4J" 
   and then became Apache SOAP version 2. The committers on the v2 project began 
@@ -196,6 +200,57 @@ Now when you run the program you'll get a message that looks like this:
   
 </div>
 <p>You'll note the param is now named "testParam" as expected.</p>
+<h3>Interoperating with &quot;untyped&quot; servers</h3>
+<p>In the above examples, we've been casting the return type of invoke(), which 
+  is Object, to the appropriate &quot;real&quot; type - for instance, we know 
+  that the &quot;echoString&quot; method returns a String, so we expect to get 
+  one back from client.invoke(). Let's take a moment and investigate how this 
+  happens, which sheds light on a potential problem (to which, of course, we have 
+  a solution - so don't fret :)).</p>
+<p>Here's what a typical response might look like to the &quot;echoString&quot; 
+  method: </p>
+<pre><div class="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;SOAP-ENV:Envelope xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                   xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;
+  &lt;SOAP-ENV:Body&gt;
+    &lt;ns1:echoStringResponse xmlns:ns1="http://soapinterop.org/"&gt;
+      &lt;result <font color="#FF0000">xsi:type="xsd:string"</font>&gt;Hello!&lt;/result&gt;
+    &lt;/ns1:echoStringResponse&gt;
+  &lt;/SOAP-ENV:Body&gt;
+&lt;/SOAP-ENV:Envelope&gt;</div></pre>
+<p>Take a look at the bit which we've highlighted in red - that attribute is a 
+  schema <b>type declaration</b>, which Axis uses to figure out that the contents 
+  of that element are, in this case, deserializable into a Java String object. 
+  Many toolkits will put this kind of explicit typing information in the XML, 
+  to make the message &quot;self-describing&quot;. On the other hand, some toolkits 
+  will return responses that look like this:</p>
+<pre><div class="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;SOAP-ENV:Envelope xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                   xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;
+  &lt;SOAP-ENV:Body&gt;
+    &lt;ns1:echoStringResponse xmlns:ns1="http://soapinterop.org/"&gt;
+      &lt;result&gt;Hello!&lt;/result&gt;
+    &lt;/ns1:echoStringResponse&gt;
+  &lt;/SOAP-ENV:Body&gt;
+&lt;/SOAP-ENV:Envelope&gt;</div></pre>
+<p>There's no type in the message - so how do we know what Java object we should 
+  deserialize the &lt;result&gt; element into? The answer is <b>metadata</b> - 
+  data about data. In this case, we need a <b>description</b> of the service which 
+  tells us what to expect as the return type. Here's how to do it on the client 
+  side in Axis:</p>
+<div class="example">
+  <pre>  ServiceDescription sd = new ServiceDescription(&quot;name&quot;, true);
+  sd.setOutputType(new QName(Constants.SCHEMA_URI, &quot;string&quot;));
+  client.setServiceDescription(sd);</pre>
+</div>
+<p>The ServiceDescription constructor takes a name (can be anything) and a boolean 
+  as arguments; the boolean indicates if the service is RPC or not - in this case 
+  it is, so we use &quot;true&quot;. Then we call &quot;setOutputType()&quot;, 
+  which tells the ServiceDescription that if the return element is not typed, 
+  act as if the return value has an xsi:type attribute set to the QName which 
+  we supply.</p>
 <p>OK - so now you know the basics of accessing SOAP services as a client. But 
   how do you publish your own services?</p>
 <h2><a name="PublishingServices"></a>Publishing Web Services with Axis</h2>

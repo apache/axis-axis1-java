@@ -96,7 +96,7 @@ public class GetQuote {
       ServiceClient call = new ServiceClient(opts.getURL());
       ServiceDescription sd = new ServiceDescription("stockQuotes", true);
       sd.addInputParam("symbol", SOAPTypeMappingRegistry.XSD_STRING);
-      sd.setOutputParam(SOAPTypeMappingRegistry.XSD_FLOAT);
+      sd.setOutputType(SOAPTypeMappingRegistry.XSD_FLOAT);
       call.setServiceDescription(sd);
       
       // TESTING HACK BY ROBJ

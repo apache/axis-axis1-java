@@ -138,7 +138,7 @@ public class ServiceDescription
         outputParams.addElement(new Param(name, type));
     }
     
-    public void setOutputParam(QName type)
+    public void setOutputType(QName type)
     {
         outputParams.addElement(new Param(null, type));
     }
