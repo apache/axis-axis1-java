@@ -86,9 +86,15 @@ import javax.wsdl.PortType;
 import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
 
-import org.w3c.dom.*;
 import org.apache.axis.utils.XMLUtils;
 
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+ 
 import com.ibm.wsdl.xml.WSDLReader;
 import com.ibm.wsdl.extensions.soap.SOAPAddress;
 import com.ibm.wsdl.extensions.soap.SOAPOperation;
