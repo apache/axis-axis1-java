@@ -73,7 +73,7 @@ Copyright:
   <!-- =================================================================== -->
   <!-- Compiles the source directory                                       -->
   <!-- =================================================================== -->
-  <target name="compile" depends="printEnv">
+  <target name="compile" depends="printEnv" unless="compile.built">
     <javac srcdir="${src.dir}" destdir="${build.dest}" debug="${debug}"
       deprecation="${deprecation}"
       classpathref="classpath">
@@ -156,7 +156,9 @@ Copyright:
      <ant antfile="tools/build.xml" />
      <ant antfile="tools/build.xml" target="test"/>
 
-    <antcall target="post-compile"/>
+     <antcall target="post-compile"/>
+     <property name="compile.built" value="yes"/>
+     <echo message="Compile property set ${compile.built}"/>
   </target>
 
   <!-- =================================================================== -->
@@ -171,7 +173,12 @@ Copyright:
   <!-- =================================================================== -->
   <target name="samples" depends="compile" unless="samples.built"
     description="build the samples">
+    <exec executable="ant">
+      <arg line="-buildfile ${axis.home}/buildSamples.xml compile"/>
+    </exec> 
+    <!--
       <ant antfile="${axis.home}/buildSamples.xml" target="compile"/>
+    -->
       <property name="samples.built" value="yes"/>
       <echo message="Samples property set ${samples.built}"/>
   </target>
@@ -185,9 +192,14 @@ Copyright:
     <path refid="classpath"/>
   </path>
 
-  <target name="buildTest" if="junit.present" unless="tests.built">
+  <target name="buildTest" depends="compile" if="junit.present" unless="tests.built">
     <echo message="junit package found ..."/>
+    <!--
       <ant antfile="${axis.home}/buildTest.xml" target="compile"/>
+    -->
+    <exec executable="ant">
+      <arg line="-buildfile ${axis.home}/buildTest.xml compile"/>
+    </exec>
     <property name="tests.built" value="yes"/>
     <echo message="Tests property set ${tests.built}"/>
   </target>
@@ -209,7 +221,7 @@ Copyright:
   <!-- =================================================================== -->
   <!-- Runs the JUnit package testcases -->
   <!-- =================================================================== -->
-  <target name="junit" if="junit.present" depends="compile, buildTest">
+  <target name="junit" depends="buildTest" if="junit.present" >
     <mkdir dir="${test.functional.reportdir}" />
     <ant antfile="${axis.home}/buildTest.xml" target="junit"/>
   </target>
@@ -257,8 +269,7 @@ Copyright:
   <!-- =================================================================== -->
   <!-- Functional tests, with server                                       -->
   <!-- =================================================================== -->
-  <target name="functional-tests" depends="compile, buildTest"
-    description="functional tests">
+  <target name="functional-tests" description="functional tests">
     <ant antfile="${axis.home}/buildTest.xml" target="functional-tests"/>
   </target>
 
@@ -267,7 +278,7 @@ Copyright:
   </target>
 
   <!-- All tests -->
-  <target name="all-tests" depends="compile, buildTest, junit, functional-tests">
+  <target name="all-tests" depends="junit, functional-tests">
   </target>
 
   <!-- =================================================================== -->
