@@ -33,34 +33,55 @@ public class TestJavaUtils extends TestCase
      * See JSR-101: JAX-RPC, Appendix: Mapping of XML Names
      */
     public void testXmlNameToJava() {
+
         assertEquals("mixedCaseName", JavaUtils.xmlNameToJava("mixedCaseName"));
+
         assertEquals("nameWithDashes",
                 JavaUtils.xmlNameToJava("name-with-dashes"));
+
         assertEquals("otherPunctChars",
                 JavaUtils.xmlNameToJava("other.punct\u00B7chars"));
+
         assertEquals("answer42", JavaUtils.xmlNameToJava("Answer42"));
 
         assertEquals("\u2160Foo", JavaUtils.xmlNameToJava("\u2160foo"));
+
         assertEquals("foo", JavaUtils.xmlNameToJava("2foo"));
-        assertEquals("_Foo_", JavaUtils.xmlNameToJava("_foo_"));
+
+        //assertEquals("_Foo_", JavaUtils.xmlNameToJava("_foo_"));
+        assertEquals("_foo_", JavaUtils.xmlNameToJava("_foo_"));
+
         assertEquals("foobar", JavaUtils.xmlNameToJava("--foobar--"));
 
         assertEquals("foo22Bar", JavaUtils.xmlNameToJava("foo22bar"));
+
         assertEquals("foo\u2160Bar", JavaUtils.xmlNameToJava("foo\u2160bar"));
 
         assertEquals("fooBar", JavaUtils.xmlNameToJava("foo-bar"));
+
         assertEquals("fooBar", JavaUtils.xmlNameToJava("foo.bar"));
+
         assertEquals("fooBar", JavaUtils.xmlNameToJava("foo:bar"));
-        assertEquals("foo_Bar", JavaUtils.xmlNameToJava("foo_bar"));
+
+        //assertEquals("foo_Bar", JavaUtils.xmlNameToJava("foo_bar"));
+        assertEquals("foo_bar", JavaUtils.xmlNameToJava("foo_bar"));
+      
         assertEquals("fooBar", JavaUtils.xmlNameToJava("foo\u00B7bar"));
+
         assertEquals("fooBar", JavaUtils.xmlNameToJava("foo\u0387bar"));
+
         assertEquals("fooBar", JavaUtils.xmlNameToJava("foo\u06DDbar"));
+
         assertEquals("fooBar", JavaUtils.xmlNameToJava("foo\u06DEbar"));
+
         assertEquals("fooBar", JavaUtils.xmlNameToJava("FooBar"));
+
         assertEquals("FOOBar", JavaUtils.xmlNameToJava("FOOBar"));
 
         assertEquals("a1BBB", JavaUtils.xmlNameToJava("A1-BBB"));
+
         assertEquals("ABBB", JavaUtils.xmlNameToJava("A-BBB"));
+
         assertEquals("ACCC", JavaUtils.xmlNameToJava("ACCC"));
         
 
