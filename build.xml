@@ -323,7 +323,7 @@ Copyright:
              use="true"
              windowtitle="${Name} API"
              doctitle="${Name}"
-             bottom="Copyright &#169; ${year} Apache XML Project. All Rights Reserved."
+             bottom="Copyright &#169; ${year} Apache Web Services Project. All Rights Reserved."
     />
   </target>
 
