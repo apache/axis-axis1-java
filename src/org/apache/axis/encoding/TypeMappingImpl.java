@@ -225,22 +225,6 @@ public class TypeMappingImpl implements TypeMapping
                          javax.xml.rpc.encoding.SerializerFactory sf,
                          javax.xml.rpc.encoding.DeserializerFactory dsf) 
         throws JAXRPCException {        
-
-        //if (xmlType.getNamespaceURI() == null ||
-        //    xmlType.getNamespaceURI().equals("") ||
-        //    javaType == null ||
-        //    xmlType == null) {
-        //    throw new JAXRPCException();
-        //}
-        // Make sure the factories conform to the Axis interfaces
-        if (sf != null &&
-            !(sf instanceof javax.xml.rpc.encoding.SerializerFactory)) {
-            throw new JAXRPCException();
-        }
-        if (dsf != null &&
-            !(dsf instanceof javax.xml.rpc.encoding.DeserializerFactory)) {
-            throw new JAXRPCException();
-        }
         Pair pair = new Pair(javaType, xmlType);
 
         // Only register the appropriate mappings.
