@@ -217,9 +217,9 @@ public class SOAPService extends SimpleTargetedChain
             SOAPEnvelope env = msgContext.getRequestMessage().getSOAPEnvelope();
             Vector headers = env.getHeadersByActor(acts);
             Vector misunderstoodHeaders = null;
-            Enumeration enum = headers.elements();
-            while (enum.hasMoreElements()) {
-                SOAPHeaderElement header = (SOAPHeaderElement)enum.
+            Enumeration enumeration = headers.elements();
+            while (enumeration.hasMoreElements()) {
+                SOAPHeaderElement header = (SOAPHeaderElement)enumeration.
                                                nextElement();
                 if (header.getMustUnderstand() && !header.isProcessed()) {
                     if (misunderstoodHeaders == null)
@@ -243,9 +243,9 @@ public class SOAPService extends SimpleTargetedChain
 
                 // !!! If SOAP 1.2, insert misunderstood fault headers here
                 if (soapConstants == SOAPConstants.SOAP12_CONSTANTS) {
-                    enum = misunderstoodHeaders.elements();
-                    while (enum.hasMoreElements()) {
-                        SOAPHeaderElement badHeader = (SOAPHeaderElement)enum.
+                    enumeration = misunderstoodHeaders.elements();
+                    while (enumeration.hasMoreElements()) {
+                        SOAPHeaderElement badHeader = (SOAPHeaderElement)enumeration.
                                                           nextElement();
                         QName badQName = new QName(badHeader.getNamespaceURI(),
                                                    badHeader.getName());

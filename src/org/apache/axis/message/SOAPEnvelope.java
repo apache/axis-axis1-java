@@ -483,7 +483,7 @@ public class SOAPEnvelope extends MessageElement
             }
         }
 
-        Enumeration enum;
+        Enumeration enumeration;
 
         // Output <SOAP-ENV:Envelope>
         context.startElement(new QName(soapConstants.getEnvelopeURI(),
@@ -510,9 +510,9 @@ public class SOAPEnvelope extends MessageElement
         }
 
         // Output trailers
-        enum = trailers.elements();
-        while (enum.hasMoreElements()) {
-            MessageElement element = (MessageElement)enum.nextElement();
+        enumeration = trailers.elements();
+        while (enumeration.hasMoreElements()) {
+            MessageElement element = (MessageElement)enumeration.nextElement();
             element.output(context);
             // Output this independent element
         }

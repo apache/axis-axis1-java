@@ -350,10 +350,10 @@ public class SOAPHeader extends MessageElement
             // Output <SOAP-ENV:Header>
             context.startElement(new QName(soapConstants.getEnvelopeURI(),
                                            Constants.ELEM_HEADER), null);
-            Enumeration enum = headers.elements();
-            while (enum.hasMoreElements()) {
+            Enumeration enumeration = headers.elements();
+            while (enumeration.hasMoreElements()) {
                 // Output this header element
-                ((SOAPHeaderElement)enum.nextElement()).output(context);
+                ((SOAPHeaderElement)enumeration.nextElement()).output(context);
             }
             // Output </SOAP-ENV:Header>
             context.endElement();

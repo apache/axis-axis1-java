@@ -185,15 +185,15 @@ public class JavaEnumTypeWriter extends JavaClassWriter {
         // FromValue returns the unique enumeration value object from the table
         pw.println("    public static " + javaName+ " fromValue(" + baseType +" value)");
         pw.println("          throws java.lang.IllegalStateException {");
-        pw.println("        "+javaName+" enum = ("+javaName+")");
+        pw.println("        "+javaName+" enumeration = ("+javaName+")");
         if (baseClass.equals("java.lang.String") || 
             baseClass.equals(baseType)) {
             pw.println("            _table_.get(value);");
         } else {
             pw.println("            _table_.get(new " + baseClass + "(value));");
         }
-        pw.println("        if (enum==null) throw new java.lang.IllegalStateException();");
-        pw.println("        return enum;");
+        pw.println("        if (enumeration==null) throw new java.lang.IllegalStateException();");
+        pw.println("        return enumeration;");
         pw.println("    }");
         
         // FromString returns the unique enumeration value object from a string representation

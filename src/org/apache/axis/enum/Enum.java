@@ -148,8 +148,8 @@ public abstract class Enum implements java.io.Serializable {
         }
         
         public final boolean isValid(String enumName) {
-            for (int enum = 0; enum < enums.length; enum++) {
-                if (enums[enum].getName().equalsIgnoreCase(enumName))
+            for (int enumElt = 0; enumElt < enums.length; enumElt++) {
+                if (enums[enumElt].getName().equalsIgnoreCase(enumName))
                     return true;
             }
             
@@ -175,8 +175,8 @@ public abstract class Enum implements java.io.Serializable {
         /**
          * Returns name of enumerated value
          */
-        public final Enum getEnum(int enum) {
-            return (enum >= 0  &&  enum < enums.length) ? enums[enum] : null;
+        public final Enum getEnum(int enumElt) {
+            return (enumElt >= 0  &&  enumElt < enums.length) ? enums[enumElt] : null;
         }
         
         /**
@@ -201,8 +201,8 @@ public abstract class Enum implements java.io.Serializable {
          */
         public final Enum getEnum(String enumName, Enum dephault) {
             if (enumName != null  &&  enumName.length() > 0) {
-                for (int enum = 0; enum < enums.length; enum++) {
-                    Enum e = enums[enum];
+                for (int enumElt = 0; enumElt < enums.length; enumElt++) {
+                    Enum e = enums[enumElt];
                     if (e.getName().equalsIgnoreCase(enumName))
                         return e;
                 }

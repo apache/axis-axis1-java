@@ -129,13 +129,6 @@ public class Scope extends Enum {
             return (Scope)this.getEnum(scope, dephault);
         }
 
-        // public final String getName();
-        // public boolean isValid(String enumName);
-        // public final int size();
-        // public final String[] getEnumNames();
-        // public final Enum getEnum(int enum);
-        // public final Enum getEnum(String enumName);
-        // public final Enum getEnum(String enumName, Enum dephault);
     }
 
     private Scope(int value, String name) {
