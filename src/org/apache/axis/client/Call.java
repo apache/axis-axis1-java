@@ -177,7 +177,10 @@ public class Call implements javax.xml.rpc.Call {
     private String             SOAPActionURI   = null;
     private Integer            timeout         = null;
 
-    private OperationDesc      operation       = new OperationDesc();
+    /** Metadata for the operation associated with this Call */
+    private OperationDesc      operation       = null;
+    /** This will be true if an OperationDesc is handed to us whole */
+    private boolean operationSetManually       = false;
 
     // Is this a one-way call?
     private boolean invokeOneWay               = false;
@@ -440,14 +443,14 @@ public class Call implements javax.xml.rpc.Call {
     /**
      * Set a scoped property on the call (i.e. one that propagates down into
      * the runtime).
-     * 
+     *
      * Deprecated, since setProperty() now does the right thing here.  Expect
      * this to disappear in 1.1.
-     * 
+     *
      * @deprecated
      * @param name
      * @param value
-     */ 
+     */
     public void setScopedProperty(String name, Object value) {
         if (name == null || value == null) {
             throw new JAXRPCException(
@@ -459,14 +462,14 @@ public class Call implements javax.xml.rpc.Call {
 
     /**
      * Get a scoped property (i.e. one that propagates down into the runtime).
-     * 
+     *
      * Deprecated, since there's only one property bag now.  Expect this to
      * disappear in 1.1.
-     * 
+     *
      * @deprecated
      * @param name
      * @return
-     */ 
+     */
     public Object getScopedProperty(String name) {
         if (name != null) {
             return myProperties.get(name);
@@ -477,13 +480,13 @@ public class Call implements javax.xml.rpc.Call {
     /**
      * Remove a scoped property (i.e. one that propagates down into the
      * runtime).
-     * 
+     *
      * Deprecated, since there's only one property bag now.  Expect this to
      * disappear in 1.1.
-     * 
+     *
      * @deprecated
      * @param name
-     */ 
+     */
     public void removeScopedProperty(String name) {
         if ( name == null || myProperties == null ) return ;
         myProperties.remove( name );
@@ -567,10 +570,10 @@ public class Call implements javax.xml.rpc.Call {
      * @param operationStyle string designating style
      */
     public void setOperationStyle(String operationStyle) {
-        this.operationStyle = 
+        this.operationStyle =
             Style.getStyle(operationStyle, Style.DEFAULT);
     } // setOperationStyle
- 
+
     /**
      * Get the operation style.
      */
@@ -583,10 +586,10 @@ public class Call implements javax.xml.rpc.Call {
      * @param operationUse string designating use
      */
     public void setOperationUse(String operationUse) {
-        this.operationUse = 
+        this.operationUse =
             Use.getUse(operationUse, Use.DEFAULT);
     } // setOperationUse
- 
+
     /**
      * Get the operation use.
      */
@@ -799,6 +802,15 @@ public class Call implements javax.xml.rpc.Call {
      */
     public void addParameter(QName paramName, QName xmlType,
             Class javaType, ParameterMode parameterMode) {
+
+        if (operationSetManually) {
+            throw new RuntimeException(
+                    Messages.getMessage("operationAlreadySet"));
+        }
+
+        if (operation == null)
+            operation = new OperationDesc();
+
         // In order to allow any Call to be re-used, Axis
         // chooses to allow parameters to be added when
         // parmAndRetReq==false.  This does not conflict with
@@ -840,7 +852,8 @@ public class Call implements javax.xml.rpc.Call {
         if (tm != null) {
             javaType = tm.getClassForQName(xmlType);
         }
-        addParameter(new QName("", paramName), xmlType, javaType, parameterMode);
+        addParameter(new QName("", paramName), xmlType,
+                     javaType, parameterMode);
     }
 
     /**
@@ -861,7 +874,8 @@ public class Call implements javax.xml.rpc.Call {
      */
     public void addParameter(String paramName, QName xmlType,
                              Class javaType, ParameterMode parameterMode) {
-        addParameter(new QName("", paramName), xmlType, javaType, parameterMode);
+        addParameter(new QName("", paramName), xmlType,
+                     javaType, parameterMode);
     }
 
     /**
@@ -882,6 +896,14 @@ public class Call implements javax.xml.rpc.Call {
     public void addParameterAsHeader(QName paramName, QName xmlType,
             Class javaType, ParameterMode parameterMode,
             ParameterMode headerMode) {
+        if (operationSetManually) {
+            throw new RuntimeException(
+                    Messages.getMessage("operationAlreadySet"));
+        }
+
+        if (operation == null)
+            operation = new OperationDesc();
+
         ParameterDesc param = new ParameterDesc();
         param.setQName(paramName);
         param.setTypeQName(xmlType);
@@ -943,6 +965,14 @@ public class Call implements javax.xml.rpc.Call {
      * @param type QName of the return value type.
      */
     public void setReturnType(QName type) {
+        if (operationSetManually) {
+            throw new RuntimeException(
+                    Messages.getMessage("operationAlreadySet"));
+        }
+
+        if (operation == null)
+            operation = new OperationDesc();
+
         // In order to allow any Call to be re-used, Axis
         // chooses to allow setReturnType to be changed when
         // parmAndRetReq==false.  This does not conflict with
@@ -972,7 +1002,8 @@ public class Call implements javax.xml.rpc.Call {
     public void setReturnType(QName xmlType, Class javaType) {
         setReturnType(xmlType);
         returnJavaType = javaType;
-        operation.setReturnClass(javaType);  // Use specified type as the operation return
+        // Use specified type as the operation return
+        operation.setReturnClass(javaType);
     }
 
     /**
@@ -992,8 +1023,8 @@ public class Call implements javax.xml.rpc.Call {
     } // setReturnTypeAsHeader
 
     /**
-     * Returns the QName of the type of the return value of this Call - or null if
-     * not set.
+     * Returns the QName of the type of the return value of this Call - or null
+     * if not set.
      *
      * Note: Not part of JAX-RPC specification.
      *
@@ -1005,10 +1036,18 @@ public class Call implements javax.xml.rpc.Call {
 
     /**
      * Set the QName of the return element
-     * 
+     *
      * NOT part of JAX-RPC
-     */ 
+     */
     public void setReturnQName(QName qname) {
+        if (operationSetManually) {
+            throw new RuntimeException(
+                    Messages.getMessage("operationAlreadySet"));
+        }
+
+        if (operation == null)
+            operation = new OperationDesc();
+
         operation.setReturnQName(qname);
     }
     /**
@@ -1033,13 +1072,14 @@ public class Call implements javax.xml.rpc.Call {
 
     /**
      * Clears the list of parameters.
-     * @exception JAXRPCException - if isParameterAndReturnSpecRequired returns false, then
-     * removeAllParameters MAY throw JAXRPCException...Axis allows modification to
-     * the Call object without throwing an exception.
+     * @exception JAXRPCException - if isParameterAndReturnSpecRequired returns
+     *  false, then removeAllParameters MAY throw JAXRPCException...Axis allows
+     *  modification to the Call object without throwing an exception.
      */
     public void removeAllParameters() {
         //if (parmAndRetReq) {
         operation = new OperationDesc();
+        operationSetManually = false;
         parmAndRetReq = true;
         //}
         //else {
@@ -1068,8 +1108,9 @@ public class Call implements javax.xml.rpc.Call {
     }
 
     /**
-     * This is a convenience method.  If the user doesn't care about the QName of the operation, the
-     * user can call this method, which converts a String operation name to a QName.
+     * This is a convenience method.  If the user doesn't care about the QName
+     * of the operation, the user can call this method, which converts a String
+     * operation name to a QName.
      */
     public void setOperationName(String opName) {
         operationName = new QName(opName);
@@ -1094,16 +1135,19 @@ public class Call implements javax.xml.rpc.Call {
 
         Port port = wsdlService.getPort( portName.getLocalPart() );
         if ( port == null )
-            throw new JAXRPCException( Messages.getMessage("noPort00", "" + portName) );
+            throw new JAXRPCException( Messages.getMessage("noPort00", "" +
+                                                           portName) );
 
         Binding   binding  = port.getBinding();
         PortType  portType = binding.getPortType();
         if ( portType == null )
-            throw new JAXRPCException( Messages.getMessage("noPortType00", "" + portName) );
+            throw new JAXRPCException( Messages.getMessage("noPortType00", "" +
+                                                           portName) );
 
         List operations = portType.getOperations();
         if ( operations == null )
-            throw new JAXRPCException( Messages.getMessage("noOperation01", opName) );
+            throw new JAXRPCException( Messages.getMessage("noOperation01",
+                                                           opName) );
 
         Operation op = null ;
         for ( int i = 0 ; i < operations.size() ; i++, op=null ) {
@@ -1111,7 +1155,8 @@ public class Call implements javax.xml.rpc.Call {
             if ( opName.equals( op.getName() ) ) break ;
         }
         if ( op == null )
-            throw new JAXRPCException( Messages.getMessage("noOperation01", opName) );
+            throw new JAXRPCException( Messages.getMessage("noOperation01",
+                                                           opName) );
 
         // Get the URL
         ////////////////////////////////////////////////////////////////////
@@ -1163,7 +1208,8 @@ public class Call implements javax.xml.rpc.Call {
             list = bIn.getExtensibilityElements();
             for ( int i = 0 ; list != null && i < list.size() ; i++ ) {
                 Object obj = list.get(i);
-                if( obj instanceof javax.wsdl.extensions.mime.MIMEMultipartRelated){
+                if( obj instanceof
+                        javax.wsdl.extensions.mime.MIMEMultipartRelated){
                   javax.wsdl.extensions.mime.MIMEMultipartRelated mpr=
                   (javax.wsdl.extensions.mime.MIMEMultipartRelated) obj;
                   Object part= null;
@@ -1172,7 +1218,8 @@ public class Call implements javax.xml.rpc.Call {
                      javax.wsdl.extensions.mime.MIMEPart mp
                      = (javax.wsdl.extensions.mime.MIMEPart)l.get(j);
                      List ll= mp.getExtensibilityElements();
-                     for(int k=0; ll!= null && k< ll.size() && part== null; k++){
+                     for(int k=0; ll != null && k < ll.size() && part == null;
+                           k++){
                        part= ll.get(k);
                        if ( !(part instanceof SOAPBody)) part = null;
                      }
@@ -1235,8 +1282,8 @@ public class Call implements javax.xml.rpc.Call {
         if ( output  != null ) message = output.getMessage();
         if ( message != null ) parts   = message.getOrderedParts(null);
 
-//      if (null != paramTypes) // attachments may have no parameters.
-        if (operation != null && operation.getNumParams() > 0) // attachments may have no parameters.
+        // attachments may have no parameters.
+        if (operation != null && operation.getNumParams() > 0)
           this.setReturnType( XMLType.AXIS_VOID );
         if ( parts != null ) {
             for( int i = 0 ;i < parts.size() ; i++ ) {
@@ -1435,7 +1482,8 @@ public class Call implements javax.xml.rpc.Call {
         catch( Exception exp ) {
             //if ( exp instanceof AxisFault ) throw (AxisFault) exp ;
             entLog.info(Messages.getMessage("toAxisFault00"), exp);
-            throw new AxisFault( Messages.getMessage("errorInvoking00", "\n" + exp) );
+            throw new AxisFault(
+                    Messages.getMessage("errorInvoking00", "\n" + exp) );
         }
     }
 
@@ -1494,7 +1542,8 @@ public class Call implements javax.xml.rpc.Call {
             if ( exp instanceof AxisFault ) throw (AxisFault) exp ;
 
             entLog.info(Messages.getMessage("toAxisFault00"), exp);
-            throw new AxisFault( Messages.getMessage("errorInvoking00", "\n" + exp) );
+            throw new AxisFault(
+                    Messages.getMessage("errorInvoking00", "\n" + exp) );
         }
     }
 
@@ -1558,7 +1607,8 @@ public class Call implements javax.xml.rpc.Call {
     public static synchronized void addTransportPackage(String packageName) {
         if (transportPackages == null) {
             transportPackages = new ArrayList();
-            String currentPackages = AxisProperties.getProperty(TRANSPORT_PROPERTY);
+            String currentPackages =
+                    AxisProperties.getProperty(TRANSPORT_PROPERTY);
             if (currentPackages != null) {
                 StringTokenizer tok = new StringTokenizer(currentPackages,
                                                           "|");
@@ -1599,10 +1649,11 @@ public class Call implements javax.xml.rpc.Call {
         if (log.isDebugEnabled()) {
             log.debug( "operation=" + operation);
             if (operation != null)
-                log.debug("operation.getNumParams()=" + 
+                log.debug("operation.getNumParams()=" +
                           operation.getNumParams());
         }
-        if ( operation.getNumParams() == 0 ) return( params );
+        if ( operation == null || operation.getNumParams() == 0 )
+            return( params );
 
         // Count the number of IN and INOUT params, this needs to match the
         // number of params passed in - if not throw an error
@@ -1641,7 +1692,7 @@ public class Call implements javax.xml.rpc.Call {
                 // so that the serializer can use the (javaType, xmlType)
                 // information.
                 rpcParam.setParamDesc(param);
-                
+
                 // Add the param to the header or vector depending
                 // on whether it belongs in the header or body.
                 if (param.isInHeader()) {
@@ -1836,11 +1887,19 @@ public class Call implements javax.xml.rpc.Call {
                                     Class sfClass, Class dfClass) {
         registerTypeMapping(javaType, xmlType, sfClass, dfClass, true);
     }
-    public void registerTypeMapping(Class javaType, QName xmlType,
-                                    Class sfClass, Class dfClass, boolean force){
+
+    public void registerTypeMapping(Class javaType,
+                                    QName xmlType,
+                                    Class sfClass,
+                                    Class dfClass,
+                                    boolean force) {
         // Instantiate the factory using introspection.
-        SerializerFactory   sf = BaseSerializerFactory.createFactory  (sfClass, javaType, xmlType);
-        DeserializerFactory df = BaseDeserializerFactory.createFactory(dfClass, javaType, xmlType);
+        SerializerFactory   sf =
+                BaseSerializerFactory.createFactory(sfClass, javaType, xmlType);
+        DeserializerFactory df =
+                BaseDeserializerFactory.createFactory(dfClass,
+                                                      javaType,
+                                                      xmlType);
         if (sf != null || df != null) {
             registerTypeMapping(javaType, xmlType, sf, df, force);
         }
@@ -1884,7 +1943,7 @@ public class Call implements javax.xml.rpc.Call {
             throw new AxisFault(Messages.getMessage("mustSpecifyParms"));
         }
 
-        RPCElement  body = new RPCElement(namespace, method, getParamList(args));
+        RPCElement body = new RPCElement(namespace, method, getParamList(args));
 
         Object ret = invoke( body );
 
@@ -1933,14 +1992,16 @@ public class Call implements javax.xml.rpc.Call {
          * parameter types, check for this case right now and toss a fault
          * if things don't look right.
          */
-        if (!invokeOneWay && operation.getNumParams() > 0 && returnType == null) {
+        if (!invokeOneWay && operation != null &&
+                operation.getNumParams() > 0 && returnType == null) {
             // TCK:
             // Issue an error if the return type was not set, but continue processing.
             //throw new AxisFault(Messages.getMessage("mustSpecifyReturnType"));
             log.error(Messages.getMessage("mustSpecifyReturnType"));
         }
 
-        SOAPEnvelope         reqEnv = new SOAPEnvelope(msgContext.getSOAPConstants());
+        SOAPEnvelope         reqEnv =
+                new SOAPEnvelope(msgContext.getSOAPConstants());
         SOAPEnvelope         resEnv = null ;
         Message              reqMsg = new Message( reqEnv );
         Message              resMsg = null ;
@@ -2016,8 +2077,9 @@ public class Call implements javax.xml.rpc.Call {
                 // here.  Check for void return, though.
 
                 boolean findReturnParam = false;
-                QName returnParamQName = operation.getReturnQName();
-                
+                QName returnParamQName = null;
+                if (operation != null) operation.getReturnQName();
+
                 if (!XMLType.AXIS_VOID.equals(returnType)) {
                     if (returnParamQName == null) {
                         // Assume the first param is the return
@@ -2033,8 +2095,8 @@ public class Call implements javax.xml.rpc.Call {
 
                 // The following loop looks at the resargs and
                 // converts the value to the appropriate return/out parameter
-                // value.  If the return value is found, is value is 
-                // placed in result.  The remaining resargs are 
+                // value.  If the return value is found, is value is
+                // placed in result.  The remaining resargs are
                 // placed in the outParams list (note that if a resArg
                 // is found that does not match a operation parameter qname,
                 // it is still placed in the outParms list).
@@ -2050,7 +2112,7 @@ public class Call implements javax.xml.rpc.Call {
                         value = JavaUtils.convert(value, javaType);
                     }
 
-                    // Check if this parameter is our return 
+                    // Check if this parameter is our return
                     // otherwise just add it to our outputs
                     if (findReturnParam &&
                           returnParamQName.equals(param.getQName())) {
@@ -2062,11 +2124,11 @@ public class Call implements javax.xml.rpc.Call {
                         outParamsList.add(value);
                     }
                 }
-                
+
                 // added by scheu:
                 // If the return param is still not found, that means
                 // the returned value did not have the expected qname.
-                // The soap specification indicates that this should be 
+                // The soap specification indicates that this should be
                 // accepted (and we also fail interop tests if we are strict here).
                 // Look through the outParms and find one that
                 // does not match one of the operation parameters.
@@ -2074,21 +2136,22 @@ public class Call implements javax.xml.rpc.Call {
                     Iterator it = outParams.keySet().iterator();
                     while (it.hasNext() && findReturnParam) {
                         QName qname = (QName) it.next();
-                        ParameterDesc paramDesc = 
+                        ParameterDesc paramDesc =
                             operation.getOutputParamByQName(qname);
                         if (paramDesc == null) {
                             // Doesn't match a paramter, so use this for the return
                             findReturnParam = false;
                             result = outParams.remove(qname);
-                        }                            
+                        }
                     }
                 }
 
                 // If we were looking for a particular QName for the return and
                 // still didn't find it, throw an exception
                 if (findReturnParam) {
-                    String returnParamName = returnParamQName.toString(); 
-                    throw new AxisFault(Messages.getMessage("noReturnParam", returnParamName));
+                    String returnParamName = returnParamQName.toString();
+                    throw new AxisFault(Messages.getMessage("noReturnParam",
+                                                            returnParamName));
                 }
             }
         } else {
@@ -2119,6 +2182,8 @@ public class Call implements javax.xml.rpc.Call {
      *
      */
     private Class getJavaTypeForQName(QName name) {
+        if (operation == null) return null;
+
         ParameterDesc param = operation.getOutputParamByQName(name);
         return param == null ? null : param.getJavaType();
     }
@@ -2164,10 +2229,12 @@ public class Call implements javax.xml.rpc.Call {
         }
         msgContext.setMaintainSession(maintainSession);
 
-        msgContext.setOperation(operation);
+        if (operation != null) {
+            msgContext.setOperation(operation);
 
-        operation.setStyle(getOperationStyle());
-        operation.setUse(getOperationUse());
+            operation.setStyle(getOperationStyle());
+            operation.setUse(getOperationUse());
+        }
         msgContext.setOperationStyle(getOperationStyle());
         msgContext.setOperationUse(getOperationUse());
 
@@ -2227,13 +2294,13 @@ public class Call implements javax.xml.rpc.Call {
         Message requestMessage = msgContext.getRequestMessage();
         if (requestMessage != null) {
             reqEnv = requestMessage.getSOAPEnvelope();
-            
+
             // If we have headers to insert, do so now.
             for (int i = 0 ; myHeaders != null && i < myHeaders.size() ; i++ ) {
                 reqEnv.addHeader((SOAPHeaderElement)myHeaders.get(i));
             }
         }
-        
+
         // set up transport if there is one
         if (transport != null) {
             transport.setupMessageContext(msgContext, this, service.getEngine());
@@ -2308,7 +2375,7 @@ public class Call implements javax.xml.rpc.Call {
         Thread thread = new Thread(runnable);
         thread.start();
     }
-    
+
     /**
      * Get the output parameters (if any) from the last invocation.
      *
@@ -2391,18 +2458,44 @@ public class Call implements javax.xml.rpc.Call {
      public void addAttachmentPart( Object attachment){
          attachmentParts.add(attachment);
      }
-    
+
     /**
      * Add a fault for this operation
-     * 
+     *
      * Note: Not part of JAX-RPC specificaion
-     */ 
-    public void addFault(QName qname, Class cls, QName xmlType, boolean isComplex) {
+     */
+    public void addFault(QName qname, Class cls,
+                         QName xmlType, boolean isComplex) {
+        if (operationSetManually) {
+            throw new RuntimeException(
+                    Messages.getMessage("operationAlreadySet"));
+        }
+
+        if (operation == null)
+            operation = new OperationDesc();
+
         FaultDesc fault = new FaultDesc();
         fault.setQName(qname);
         fault.setClassName(cls.getName());
         fault.setXmlType(xmlType);
         fault.setComplex(isComplex);
         operation.addFault(fault);
+    }
+
+    /**
+     * Hand a complete OperationDesc to the Call, and note that this was
+     * done so that others don't try to mess with it by calling addParameter,
+     * setReturnType, etc.
+     *
+     * @param operation the OperationDesc to associate with this call.
+     */
+    public void setOperation(OperationDesc operation) {
+        this.operation = operation;
+        operationSetManually = true;
+    }
+
+    public void clearOperation() {
+        operation = null;
+        operationSetManually = false;
     }
 }
