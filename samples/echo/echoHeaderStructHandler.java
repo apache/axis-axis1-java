@@ -89,6 +89,16 @@ public class echoHeaderStructHandler extends BasicHandler
     public static final String STRUCT_NS = "http://soapinterop.org/xsd" ;
     public static final String STRUCT_NAME = "SOAPStruct";
     public static final QName SOAPStructType = new QName(STRUCT_NS, STRUCT_NAME);
+    
+    public boolean canHandleBlock(QName qname) {
+        if (HEADER_NS.equals(qname.getNamespaceURI()) &&
+                HEADER_REQNAME.equals(qname.getLocalPart())) {
+            return true;
+        }
+        
+        return false;
+    }    
+    
     /**
      * Process a MessageContext.
      */
@@ -131,6 +141,7 @@ public class echoHeaderStructHandler extends BasicHandler
                     throw AxisFault.makeFault(e);
                 }
                 context.setProperty(ECHOHEADER_STRUCT_ID, hdrVal) ;
+                header.setProcessed(true);
             }
         }
     }
