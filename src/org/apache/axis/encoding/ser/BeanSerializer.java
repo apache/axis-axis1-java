@@ -181,7 +181,7 @@ public class BeanSerializer implements Serializer, Serializable {
                         } else {
                             qname = field.getXmlName();
                         }
-                        isOmittable = field.isMinOccursIs0();
+                        isOmittable = field.isMinOccursZero();
                         xmlType = field.getXmlType();
                     }
                 }
@@ -389,7 +389,7 @@ public class BeanSerializer implements Serializer, Serializable {
                                    propName,
                                    fieldType,
                                    propertyDescriptor[i].isIndexed(),
-                                   field.isMinOccursIs0(),
+                                   field.isMinOccursZero(),
                                    all, isAnonymous);
                     }
                 } else {

@@ -231,9 +231,9 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
 
         // Add attribute and element field descriptors
         if (attributes != null || elementMetaData != null) {
-            boolean wroteFieldType = false;
-
             if (attributes != null) {
+                boolean wroteAttrDecl = false;
+
                 for (int i = 0; i < attributes.size(); i += 2) {
                     TypeEntry te = (TypeEntry) attributes.get(i);
                     QName attrName = (QName) attributes.get(i + 1);
@@ -242,21 +242,23 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
                     fieldName = getAsFieldName(fieldName);
                     QName attrXmlType = te.getQName();
                     pw.print("        ");
-                    if (!wroteFieldType) {
-                        pw.print("org.apache.axis.description.FieldDesc ");
-                        wroteFieldType = true;
+                    if (!wroteAttrDecl) {
+                        pw.print("org.apache.axis.description.AttributeDesc ");
+                        wroteAttrDecl = true;
                     }
-                    pw.println("field = new org.apache.axis.description.AttributeDesc();");
-                    pw.println("        field.setFieldName(\"" + fieldName + "\");");
-                    pw.println("        field.setXmlName(" + Utils.getNewQName(attrName) + ");");
+                    pw.println("attrField = new org.apache.axis.description.AttributeDesc();");
+                    pw.println("        attrField.setFieldName(\"" + fieldName + "\");");
+                    pw.println("        attrField.setXmlName(" + Utils.getNewQName(attrName) + ");");
                     if (attrXmlType != null) {
-                        pw.println("        field.setXmlType(" + Utils.getNewQName(attrXmlType) + ");");
+                        pw.println("        attrField.setXmlType(" + Utils.getNewQName(attrXmlType) + ");");
                     }
-                    pw.println("        typeDesc.addFieldDesc(field);");
+                    pw.println("        typeDesc.addFieldDesc(attrField);");
                 }
             }
 
             if (elementMetaData != null) {
+                boolean wroteElemDecl = false;
+                
                 for (int i=0; i<elementMetaData.size(); i++) {
                     ElementDecl elem = (ElementDecl) elementMetaData.elementAt(i);
 
@@ -281,20 +283,20 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
                     }
                     
                     pw.print("        ");
-                    if (!wroteFieldType) {
-                        pw.print("org.apache.axis.description.FieldDesc ");
-                        wroteFieldType = true;
+                    if (!wroteElemDecl) {
+                        pw.print("org.apache.axis.description.ElementDesc ");
+                        wroteElemDecl = true;
                     }
-                    pw.println("field = new org.apache.axis.description.ElementDesc();");
-                    pw.println("        field.setFieldName(\"" + fieldName + "\");");
-                    pw.println("        field.setXmlName(" + Utils.getNewQName(xmlName) + ");");
+                    pw.println("elemField = new org.apache.axis.description.ElementDesc();");
+                    pw.println("        elemField.setFieldName(\"" + fieldName + "\");");
+                    pw.println("        elemField.setXmlName(" + Utils.getNewQName(xmlName) + ");");
                     if (xmlType != null) {
-                        pw.println("        field.setXmlType(" + Utils.getNewQName(xmlType) + ");");
+                        pw.println("        elemField.setXmlType(" + Utils.getNewQName(xmlType) + ");");
                     }
                     if (elem.getMinOccursIs0()) {
-                        pw.println("        field.setMinOccursIs0(true);");
+                        pw.println("        elemField.setMinOccurs(0);");
                     }
-                    pw.println("        typeDesc.addFieldDesc(field);");
+                    pw.println("        typeDesc.addFieldDesc(elemField);");
                 }
             }
         }

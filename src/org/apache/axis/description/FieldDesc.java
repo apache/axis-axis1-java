@@ -155,10 +155,18 @@ public class FieldDesc {
     /**
      * Check if this field can be omitted.
      */ 
-    public boolean isMinOccursIs0() {
+    public boolean isMinOccursZero() {
         return minOccursIs0;
     }
 
+    /**
+     * 
+     * 
+     * @param minOccursIs0
+     * @deprecated this functionality, which is only relevant to ElementDescs,
+     *             now lives in ElementDesc and is more flexible (you can set
+     *             minOccurs and maxOccurs as you please)
+     */ 
     public void setMinOccursIs0(boolean minOccursIs0) {
         this.minOccursIs0 = minOccursIs0;
     }
