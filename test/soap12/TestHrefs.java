@@ -34,8 +34,8 @@ public class TestHrefs extends TestCase {
         HEAD =
                 "<?xml version=\"1.0\"?>\n" +
                 "<soap:Envelope " +
-                "xmlns:soap=\"http://www.w3.org/2002/06/soap-envelope\" " +
-                "xmlns:soapenc=\"http://www.w3.org/2002/06/soap-encoding\" " +
+                "xmlns:soap=\"http://www.w3.org/2002/12/soap-envelope\" " +
+                "xmlns:soapenc=\"http://www.w3.org/2002/12/soap-encoding\" " +
                 "xmlns:xsi=\"" + NS_XSI + "\" " +
                 "xmlns:xsd=\"" + NS_XSD + "\">\n" +
                 "<soap:Header>\n";

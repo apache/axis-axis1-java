@@ -136,6 +136,31 @@ public class FaultInfo {
         
     } // ctor
 
+    public FaultInfo(QName faultMessage, String faultPart, String faultUse, String faultNamespaceURI, SymbolTable symbolTable)
+            throws IOException {
+        MessageEntry mEntry = symbolTable.getMessageEntry(faultMessage);
+        if (mEntry == null) {
+            throw new IOException(Messages.getMessage("noMsg",
+                    faultMessage.toString()));
+        }
+        this.message = mEntry.getMessage();
+        Part part    = message.getPart(faultPart);
+        this.xmlType = getFaultType(symbolTable, part);
+        this.use     = Use.getUse(faultUse);
+
+        if (part == null) {
+            this.qName = null;
+        }
+        else if (part.getTypeName() != null) {
+            this.qName = new QName(faultNamespaceURI, part.getName());
+        }
+        else {
+            this.qName = part.getElementName();
+        }
+        this.name    = qName.getLocalPart();
+        
+    } // ctor
+
     public Message getMessage() {
         return message;
     } // getMessage

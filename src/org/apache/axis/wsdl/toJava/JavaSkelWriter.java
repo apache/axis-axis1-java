@@ -60,6 +60,7 @@ import org.apache.axis.wsdl.symbolTable.FaultInfo;
 import org.apache.axis.wsdl.symbolTable.Parameter;
 import org.apache.axis.wsdl.symbolTable.Parameters;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
+import org.apache.axis.Constants;
 
 import javax.wsdl.Binding;
 import javax.wsdl.BindingInput;
@@ -68,6 +69,7 @@ import javax.wsdl.BindingOutput;
 import javax.wsdl.Operation;
 import javax.wsdl.OperationType;
 import javax.wsdl.extensions.ExtensibilityElement;
+import javax.wsdl.extensions.UnknownExtensibilityElement;
 import javax.wsdl.extensions.soap.SOAPBody;
 import javax.wsdl.extensions.soap.SOAPOperation;
 import javax.xml.namespace.QName;
@@ -247,6 +249,18 @@ public class JavaSkelWriter extends JavaClassWriter {
                             pw.println("        _oper.setSoapAction(\"" + action + "\");");
                             found = true;
                         }
+                    } else if (elem instanceof UnknownExtensibilityElement) {
+                        //TODO: After WSDL4J supports soap12, change this code
+                        UnknownExtensibilityElement unkElement = (UnknownExtensibilityElement) elem;
+                        QName name = unkElement.getElementType();
+                        if(name.getNamespaceURI().equals(Constants.URI_WSDL12_SOAP) && 
+                           name.getLocalPart().equals("operation")){
+                            String action = unkElement.getElement().getAttribute("soapAction");
+                            if (action != null) {
+                                pw.println("        _oper.setSoapAction(\"" + action + "\");");
+                                found = true;
+                            }
+                        }                    
                     }
                 }
 
@@ -330,6 +344,16 @@ public class JavaSkelWriter extends JavaClassWriter {
                 if (obj instanceof SOAPOperation) {
                     soapAction = ((SOAPOperation) obj).getSoapActionURI();
                     break;
+                } else if (obj instanceof UnknownExtensibilityElement) {
+                    //TODO: After WSDL4J supports soap12, change this code
+                    UnknownExtensibilityElement unkElement = (UnknownExtensibilityElement) obj;
+                    QName name = unkElement.getElementType();
+                    if(name.getNamespaceURI().equals(Constants.URI_WSDL12_SOAP) && 
+                       name.getLocalPart().equals("operation")){
+                        if (unkElement.getElement().getAttribute("soapAction") != null) {
+                            soapAction = unkElement.getElement().getAttribute("soapAction");
+                        }
+                    }                    
                 }
             }
             // Get the namespace for the operation from the <soap:body>
@@ -360,6 +384,20 @@ public class JavaSkelWriter extends JavaClassWriter {
                         if (namespace == null)
                             namespace = "";
                         break;
+                    } else if (obj instanceof UnknownExtensibilityElement) {
+                        //TODO: After WSDL4J supports soap12, change this code
+                        UnknownExtensibilityElement unkElement = (UnknownExtensibilityElement) obj;
+                        QName name = unkElement.getElementType();
+                        if(name.getNamespaceURI().equals(Constants.URI_WSDL12_SOAP) && 
+                           name.getLocalPart().equals("body")){
+                            namespace = unkElement.getElement().getAttribute("namespace");
+                            if (namespace == null) {
+                                namespace = symbolTable.getDefinition().getTargetNamespace();
+                            }
+                            if (namespace == null)
+                                namespace = "";
+                            break;
+                        }                    
                     }
                 }
             }
