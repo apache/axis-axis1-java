@@ -152,11 +152,13 @@ public class AxisServletBase extends HttpServlet {
         if (axisServer != null) {
             //then we lock it
             synchronized(axisServer) {
-                //clean it up
-                axisServer.cleanup();
-                //and erase our history of it
-                axisServer =null;
-                storeEngine(getServletContext(),null);
+                if (axisServer != null) {
+                    //clean it up
+                    axisServer.cleanup();
+                    //and erase our history of it
+                    axisServer =null;
+                    storeEngine(getServletContext(),null);
+                }
             }
         }
     }
