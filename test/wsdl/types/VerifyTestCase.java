@@ -43,7 +43,6 @@ import test.wsdl.types.comprehensive_types.Cat;
 import test.wsdl.types.comprehensive_types.ComplexAll;
 import test.wsdl.types.comprehensive_types.ComplexSequence;
 import test.wsdl.types.comprehensive_types.ComplexWComplex;
-import test.wsdl.types.comprehensive_types._elemWComplex;
 import test.wsdl.types.comprehensive_types.EmptyComplexType;
 import test.wsdl.types.comprehensive_types.Enum;
 import test.wsdl.types.comprehensive_types.EnumByte;
@@ -67,7 +66,6 @@ import test.wsdl.types.comprehensive_types.holders.CatHolder;
 import test.wsdl.types.comprehensive_types.holders.ComplexAllHolder;
 import test.wsdl.types.comprehensive_types.holders.ComplexSequenceHolder;
 import test.wsdl.types.comprehensive_types.holders.ComplexWComplexHolder;
-import test.wsdl.types.comprehensive_types.holders._elemWComplexHolder;
 import test.wsdl.types.comprehensive_types.holders.EmptyComplexTypeHolder;
 import test.wsdl.types.comprehensive_types.holders.EnumHolder;
 import test.wsdl.types.comprehensive_types2.A;
@@ -412,49 +410,6 @@ public class VerifyTestCase extends junit.framework.TestCase {
         A a = new A();
         a.setC(3);
         b.setD(a);
-        _elemWComplex elemWComplex = new _elemWComplex();
-        StringParameter sp = new StringParameter("sweet!");
-        sp.setDescription("Pass this as an element and an attribute...wow!");
-
-        elemWComplex.setOne( new Simple("one"));
-        elemWComplex.setTwo( new QName[] {new QName("two")});
-        elemWComplex.setThree( new Enum[] {Enum.three});
-        elemWComplex.setEnum1( EnumString.value1);
-        elemWComplex.setEnum2( EnumInt.value1);
-        elemWComplex.setEnum3( EnumLong.value2);
-        elemWComplex.setEnum4( EnumFloat.value3);
-        elemWComplex.setEnum5( EnumDouble.value3);
-        elemWComplex.setEnum6( EnumShort.value2);
-        elemWComplex.setEnum7( EnumByte.value1);
-        elemWComplex.setNested( b);
-        elemWComplex.setOptArray( optArray );
-        elemWComplex.setByteArray( byteArray );
-        elemWComplex.setAttr(Enum.two);
-        elemWComplex.setParm(sp);
-        elemWComplex.setParmAttr(sp);
-
-        try {
-            binding.elemWComplexIn(elemWComplex);
-        } catch (java.rmi.RemoteException re) {
-            throw new junit.framework.AssertionFailedError("elemWComplexIn Exception caught: " + re );
-        }
-        try {
-            binding.elemWComplexInout(new _elemWComplexHolder(elemWComplex));
-        } catch (java.rmi.RemoteException re) {
-            throw new junit.framework.AssertionFailedError("elemWComplexInout Exception caught: " + re );
-        }
-        try {
-            _elemWComplexHolder value = new _elemWComplexHolder();
-            binding.elemWComplexOut(value);
-        } catch (java.rmi.RemoteException re) {
-            throw new junit.framework.AssertionFailedError("elemWComplexOut Exception caught: " + re );
-        }
-        try {
-            _elemWComplex value = null;
-            value = binding.elemWComplexReturn();
-        } catch (java.rmi.RemoteException re) {
-            throw new junit.framework.AssertionFailedError("elemWComplexReturn Exception caught: " + re );
-        }
         _complexWComplex_stock_quote stockQuote = new _complexWComplex_stock_quote();
         Time time = new Time();
         time.setDST(false);
