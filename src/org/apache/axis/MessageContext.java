@@ -275,7 +275,20 @@ public class MessageContext {
     }
     
     /**
-     * Determin when we've past the pivot
+     * Set the current (i.e. request before the pivot, response after)
+     * message.
+     */
+    public void setCurrentMessage(Message curMsg)
+    {
+        if (havePassedPivot) {
+            responseMessage = curMsg;
+        } else {
+            requestMessage = curMsg;
+        }
+    }
+    
+    /**
+     * Determine when we've past the pivot
      */
     public boolean getPastPivot()
     {
