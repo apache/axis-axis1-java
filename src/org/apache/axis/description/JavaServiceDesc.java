@@ -312,10 +312,19 @@ public class JavaServiceDesc implements ServiceDesc {
                 addOperationDesc(skelDesc);
             }
         } catch (IllegalAccessException e) {
+            if(log.isDebugEnabled()) {
+                log.debug(Messages.getMessage("exception00"), e);
+            }
             return;
         } catch (IllegalArgumentException e) {
+            if(log.isDebugEnabled()) {
+                log.debug(Messages.getMessage("exception00"), e);
+            }
             return;
         } catch (InvocationTargetException e) {
+            if(log.isDebugEnabled()) {
+                log.debug(Messages.getMessage("exception00"), e);
+            }
             return;
         }
         haveAllSkeletonMethods = true;
@@ -1029,10 +1038,19 @@ public class JavaServiceDesc implements ServiceDesc {
                     }
                 }
             } catch (IllegalAccessException e) {
+                if(log.isDebugEnabled()) {
+                    log.debug(Messages.getMessage("exception00"), e);
+                }
                 return;
             } catch (IllegalArgumentException e) {
+                if(log.isDebugEnabled()) {
+                    log.debug(Messages.getMessage("exception00"), e);
+                }
                 return;
             } catch (InvocationTargetException e) {
+                if(log.isDebugEnabled()) {
+                    log.debug(Messages.getMessage("exception00"), e);
+                }
                 return;
             }
         }
