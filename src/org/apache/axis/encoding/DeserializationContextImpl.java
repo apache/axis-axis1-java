@@ -58,6 +58,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.schema.SchemaVersion;
 import org.apache.axis.attachments.Attachments;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.message.EnvelopeBuilder;
@@ -100,6 +101,12 @@ public class DeserializationContextImpl extends DefaultHandler implements Lexica
     protected static Log log =
             LogFactory.getLog(DeserializationContextImpl.class.getName());
 
+    static final SchemaVersion schemaVersions[] = new SchemaVersion [] {
+        SchemaVersion.SCHEMA_1999,
+        SchemaVersion.SCHEMA_2000,
+        SchemaVersion.SCHEMA_2001,
+    };
+
     private NSStack namespaces = new NSStack();
 
     private Locator locator;
@@ -129,6 +136,11 @@ public class DeserializationContextImpl extends DefaultHandler implements Lexica
     private MessageElement curElement;
 
     protected int startOfMappingsPos = -1;
+    
+    // This is a hack to associate the first schema namespace we see with
+    // the correct SchemaVersion.  It assumes people won't often be mixing
+    // schema versions in a given document, which I think is OK. --Glen
+    protected boolean haveSeenSchemaNS = false;
     
     public void deserializing(boolean isDeserializing) {
         doneParsing = isDeserializing;
@@ -803,6 +815,22 @@ public class DeserializationContextImpl extends DefaultHandler implements Lexica
             namespaces.add(uri, "");
         }
 
+        if (!haveSeenSchemaNS && msgContext != null) {
+            // If we haven't yet seen a schema namespace, check if this
+            // is one.  If so, set the SchemaVersion appropriately.
+            // Hopefully the schema def is on the outermost element so we
+            // get this over with quickly.
+            for (int i = 0; !haveSeenSchemaNS && i < schemaVersions.length;
+                 i++) {
+                SchemaVersion schemaVersion = schemaVersions[i];
+                if (uri.equals(schemaVersion.getXsdURI()) ||
+                        uri.equals(schemaVersion.getXsiURI())) {
+                    msgContext.setSchemaVersion(schemaVersion);
+                    haveSeenSchemaNS = true;
+                }
+            }
+        }
+        
         if (topHandler != null) {
             topHandler.startPrefixMapping(prefix, uri);
         }
