@@ -33,6 +33,7 @@
                output="build/work"
                deployscope="session"
                serverSide="yes"
+               skeletonDeploy="yes"
                noimports="no"
                verbose="no"
                typeMappingVersion="1.1"
@@ -51,6 +52,7 @@
                output="build/work"
                deployscope="session"
                serverSide="yes"
+               skeletonDeploy="yes"
                noimports="no"
                verbose="no"
                testcase="yes">
@@ -61,6 +63,7 @@
     <wsdl2java url="test/wsdl/multibinding/multibinding.wsdl"
                output="build/work"
                serverSide="yes"
+               skeletonDeploy="yes"
                testcase="yes">
     </wsdl2java>
 
@@ -69,6 +72,7 @@
                output="build/work"
                deployscope="session"
                serverSide="yes"
+               skeletonDeploy="yes"
                noimports="no"
                verbose="no"
                testcase="no">
@@ -80,6 +84,7 @@
     <wsdl2java url="test/wsdl/opStyles/opStyles.wsdl"
                output="build/work"
                serverSide="yes"
+               skeletonDeploy="yes"
                testcase="yes">
     </wsdl2java>
 
@@ -88,6 +93,7 @@
                output="build/work"
                deployscope="session"
                serverSide="yes"
+               skeletonDeploy="yes"
                noimports="no"
                verbose="no"
                testcase="no">
@@ -136,6 +142,7 @@
                output="build/work"
                deployscope="session"
                serverSide="yes"
+               skeletonDeploy="yes"
                noimports="no"
                verbose="no"
                testcase="no">
@@ -181,6 +188,7 @@
                output="build/work"
                deployscope="session"
                serverSide="yes"
+               skeletonDeploy="yes"
                noimports="no"
                verbose="no"
                testcase="no">
@@ -192,6 +200,7 @@
                output="build/work"
                deployscope="session"
                serverSide="yes"
+               skeletonDeploy="yes"
                noimports="no"
                verbose="no"
                testcase="no">
@@ -204,6 +213,7 @@
                output="build/work"
                deployscope="session"
                serverSide="yes"
+               skeletonDeploy="yes"
                noimports="no"
                verbose="no"
                testcase="no">
@@ -238,6 +248,7 @@
                output="build/work"
                deployscope="session"
                serverSide="yes"
+               skeletonDeploy="yes"
                noimports="no"
                verbose="no"
                testcase="no">
@@ -269,6 +280,7 @@
                output="build/work"
                deployscope="session"
                serverSide="yes"
+               skeletonDeploy="yes"
                testcase="yes">
         <mapping namespace="urn:MArrayTests" package="test.wsdl.marrays"/>
     </wsdl2java>
@@ -278,6 +290,7 @@
                output="build/work"
                deployscope="session"
                serverSide="yes"
+               skeletonDeploy="yes"
                testcase="yes">
         <mapping namespace="urn:MArrayTests" package="test.wsdl.marrays"/>
     </wsdl2java>
@@ -287,6 +300,7 @@
                output="build/work"
                deployscope="session"
                serverSide="yes"
+               skeletonDeploy="yes"
                testcase="yes">
         <mapping namespace="urn:Nested" package="test.wsdl.nested"/>
     </wsdl2java>
@@ -296,6 +310,7 @@
                output="build/work"
                deployscope="session"
                serverSide="yes"
+               skeletonDeploy="yes"
                testcase="yes">
         <mapping namespace="urn:dataTypes" package="test.wsdl.datatypes"/>
     </wsdl2java>
@@ -305,6 +320,7 @@
                output="build/work"
                deployscope="session"
                serverSide="yes"
+               skeletonDeploy="yes"
                testcase="yes">
         <mapping namespace="urn:CityBBB" package="test.wsdl.wrapped"/>
     </wsdl2java>
@@ -316,6 +332,7 @@
                output="build/work"
                deployscope="none"
                serverSide="yes"
+               skeletonDeploy="yes"
                noimports="no"
                verbose="no"
                testcase="yes">
@@ -329,6 +346,7 @@
                output="build/work"
                deployscope="none"
                serverSide="yes"
+               skeletonDeploy="yes"
                noimports="no"
                verbose="no"
                testcase="yes">
@@ -355,6 +373,7 @@
                output="build/work"
                deployscope="none"
                serverSide="yes"
+               skeletonDeploy="yes"
                noimports="no"
                verbose="no"
                testcase="no">
@@ -367,6 +386,7 @@
                output="build/work"
                deployscope="none"
                serverSide="yes"
+               skeletonDeploy="yes"
                noimports="no"
                verbose="no"
                testcase="no">
@@ -380,6 +400,7 @@
                output="build/work"
                deployscope="none"
                serverSide="yes"
+               skeletonDeploy="yes"
                noimports="no"
                verbose="no"
                testcase="no">
@@ -390,6 +411,7 @@
                output="build/work"
                deployscope="none"
                serverSide="yes"
+               skeletonDeploy="yes"
                noimports="no"
                verbose="no"
                testcase="no">
@@ -403,6 +425,7 @@
                testcase="no"
                deployscope="none"
                serverSide="yes"
+               skeletonDeploy="yes"
                verbose="no"
                noimports="no">
         <mapping namespace="http://soapinterop.org/" package="interop.echoheadersvc"/>
@@ -415,6 +438,7 @@
                testcase="no"
                deployscope="none"
                serverSide="yes"
+               skeletonDeploy="yes"
                verbose="no"
                noimports="no">
         <mapping namespace="http://soapinterop.org/" package="mssoapinterop.interopb"/>
@@ -710,6 +734,7 @@
     <wsdl2java url="test/wsdl/types/ComprehensiveTypes.wsdl"
                output="build/work"
                serverSide="yes"
+               skeletonDeploy="yes"
                helperGen="yes"
                testcase="yes">
     </wsdl2java>
