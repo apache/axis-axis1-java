@@ -1581,6 +1581,14 @@ public class Emitter {
             servicePW.println("    // Use to get a proxy class for " + portName);
             writeComment(servicePW, p.getDocumentationElement());
             servicePW.println("    private final java.lang.String " + portName + "_address = \"" + address + "\";");
+
+
+            servicePW.println("" );
+            servicePW.println("    public String getAddress() {" );
+            servicePW.println("        return " + portName + "_address;" );
+            servicePW.println("    }" );
+            servicePW.println("" );
+
             servicePW.println("    public " + bindingType + " get" + portName + "() {");
             servicePW.println("       java.net.URL endpoint;");
             servicePW.println("        try {");

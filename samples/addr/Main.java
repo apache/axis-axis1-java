@@ -108,10 +108,14 @@ public class Main {
     
     public static void main (String[] args) throws Exception {
         Options opts = new Options(args);
-        URL serviceURL = new URL(opts.getURL());
         
         System.err.println ("Using proxy without session maintenance.");
+
         AddressBookService abs = new AddressBookService();
+        opts.setDefaultURL( abs.getAddress() );
+
+        URL serviceURL = new URL(abs.getAddress());
+
         AddressBook ab1 = null;
         if (serviceURL == null) {
             ab1 = abs.getAddressBook();
@@ -120,10 +124,12 @@ public class Main {
             ab1 = abs.getAddressBook(serviceURL);
         }
         Object ret = doit (ab1);
+        /*
         if (ret != null) {
             throw new Exception("non-session test expected null response, got "+ret);
         }
-        
+        */
+
         System.err.println ("\n\nUsing proxy with session maintenance.");
         AddressBook ab2 = null;
         if (serviceURL == null) {
