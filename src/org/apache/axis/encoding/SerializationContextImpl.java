@@ -461,9 +461,13 @@ public class SerializationContextImpl implements SerializationContext
             prefix = getPrefixForURI(qName.getNamespaceURI());
         }
 
-        return (((prefix != null) && (!prefix.equals(""))) ?
-                      prefix + ":" : "") +
-           qName.getLocalPart();
+        if ((prefix == null) || (prefix.length() == 0))
+           return qName.getLocalPart();
+
+        StringBuffer sb = new StringBuffer(prefix);
+        sb.append(':');
+        sb.append(qName.getLocalPart());
+        return sb.toString();
     }
 
     public String qName2String(QName qName)
