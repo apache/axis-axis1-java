@@ -504,8 +504,16 @@ public class SerializationContext
             for (int i = 0; i < attrMap.getLength(); i++) {
                 Attr attr = (Attr)attrMap.item(i);
                 String tmp = attr.getNamespaceURI();
-                if ( tmp != null && tmp.equals(Constants.NS_URI_XMLNS) )
+                if ( tmp != null && tmp.equals(Constants.NS_URI_XMLNS) ) {
+                    String prefix = attr.getLocalName();
+                    if (prefix != null) {
+                        if (prefix.equals("xmlns"))
+                            prefix = "";
+                        String nsURI = attr.getValue();
+                        registerPrefixForURI(prefix, nsURI);
+                    }
                     continue;
+                }
 
                 attributes.addAttribute(attr.getNamespaceURI(),
                                         attr.getName(),
