@@ -100,7 +100,7 @@ public class ClientSigningHandler extends BasicHandler {
 			requestMessage = new Message(signedEnvelope);
 			msgContext.setCurrentMessage(requestMessage);
             // and then pass on to next handler
-            requestMessage.getSOAPPart().writeTo(System.out);
+            //requestMessage.getSOAPPart().writeTo(System.out);
         } catch (Exception e) {
             throw AxisFault.makeFault(e);
 		}
