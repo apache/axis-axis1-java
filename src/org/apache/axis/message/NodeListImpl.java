@@ -16,8 +16,10 @@
 
 package org.apache.axis.message;
 
-import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import java.util.Collection;
 import java.util.Vector;
 
 /**
@@ -40,6 +42,10 @@ class NodeListImpl implements NodeList {
 
     NodeListImpl(Vector nodes) {
         mNodes = nodes;
+    }
+
+    NodeListImpl(Collection nodes) {
+        mNodes = new Vector(nodes);
     }
 
     void addNode(org.w3c.dom.Node node) {

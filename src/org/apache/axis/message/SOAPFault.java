@@ -29,13 +29,13 @@ import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPElement;
 import javax.xml.soap.DetailEntry;
 import javax.xml.soap.Name;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPException;
 import java.io.IOException;
-import java.util.Locale;
 import java.util.List;
+import java.util.Locale;
 
 /** A Fault body element.
  *

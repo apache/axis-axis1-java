@@ -19,17 +19,19 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
-import org.apache.axis.schema.SchemaVersion;
 import org.apache.axis.client.AxisClient;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.configuration.NullProvider;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.DeserializationContextImpl;
 import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.schema.SchemaVersion;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.Mapping;
 import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -459,7 +461,7 @@ public class SOAPEnvelope extends MessageElement
         // Output non-SOAPHeader and non-SOAPBody stuff.
         Iterator i = getChildElements();
         while (i.hasNext()) {
-            MessageElement element = (MessageElement)i.next();
+            NodeImpl element = (NodeImpl)i.next();
             if(element instanceof SOAPHeader ||
                element instanceof SOAPBody)
                 continue;
@@ -597,5 +599,14 @@ public class SOAPEnvelope extends MessageElement
 
     public void setSAAJEncodingCompliance(boolean comply) {
         this.body.setSAAJEncodingCompliance(comply);
+    }
+    
+    public Node removeChild(Node oldChild) throws DOMException {
+        if(oldChild == header) {
+            header = null;
+        } else if(oldChild == body) {
+            body = null;
+        }
+        return super.removeChild(oldChild);
     }
 }

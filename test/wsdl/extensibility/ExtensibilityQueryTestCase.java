@@ -97,15 +97,15 @@ public class ExtensibilityQueryTestCase extends junit.framework.TestCase {
             
             MessageElement [] elements = new MessageElement[4];
             
-            elements[0] = new Text("123");
-            elements[1] = new Text("  456");
+            elements[0] = new MessageElement(new Text("123"));
+            elements[1] = new MessageElement(new Text("  456"));
             
             BookType book = new BookType();
             book.setSubject("all");
             QName elementName = _FindBooksQueryExpressionElement.getTypeDesc().getFields()[0].getXmlName();
             elements[2] = new MessageElement(elementName.getNamespaceURI(), elementName.getLocalPart(), book);
             
-            elements[3] = new Text("789");
+            elements[3] = new MessageElement(new Text("789"));
             
             expression.set_any(elements);
             

@@ -16,10 +16,10 @@
 
 package org.apache.axis.message;
 
-import javax.xml.soap.Text;
-
 import org.w3c.dom.Comment;
 import org.w3c.dom.DOMException;
+
+import javax.xml.soap.Text;
 
 /**
  * Most of methods are inherited from TEXT, defined for its Interface Marker

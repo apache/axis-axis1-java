@@ -16,9 +16,9 @@
 
 package org.apache.axis.message;
 
+import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
-import org.apache.axis.AxisFault;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.SerializationContext;
@@ -32,11 +32,10 @@ import javax.xml.namespace.QName;
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
-
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 
@@ -84,13 +83,6 @@ public class SOAPHeader extends MessageElement
         } catch (Throwable t) {
             throw new SOAPException(t);
         }
-    }
-
-    public void detachNode() {
-        if (parent != null) {
-            ((SOAPEnvelope)parent).removeHeaders();
-        }
-        super.detachNode();
     }
 
     public javax.xml.soap.SOAPHeaderElement addHeaderElement(Name name)
@@ -157,15 +149,9 @@ public class SOAPHeader extends MessageElement
         return result.iterator();
     }
 
-    protected void initializeChildren() {
-        if (children == null) {
-            children = new Vector();
-        }
-    }
-
     Vector getHeaders() {
         initializeChildren();
-        return (Vector)getChildren();
+        return new Vector(getChildren());
     }
 
     /**
@@ -217,7 +203,7 @@ public class SOAPHeader extends MessageElement
     void removeHeader(SOAPHeaderElement header) {
         if (log.isDebugEnabled())
             log.debug(Messages.getMessage("removeHeader00"));
-        removeChild((MessageElement)header);
+        removeChild(header);
     }
 
     /**

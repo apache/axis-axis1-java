@@ -129,7 +129,7 @@ public class ExtensibilityQueryBindingImpl implements ExtensibilityQueryPortType
         book.setSubject("gotAll");
         QName elementName = _FindBooksQueryExpressionElement.getTypeDesc().getFields()[0].getXmlName();
         replyElements[0] = new MessageElement(elementName.getNamespaceURI(), elementName.getLocalPart(), book);
-        replyElements[1] = new Text("ABCD");
+        replyElements[1] = new MessageElement(new Text("ABCD"));
         
         reply.set_any(replyElements);
         

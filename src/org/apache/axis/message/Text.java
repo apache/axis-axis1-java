@@ -27,7 +27,7 @@ import org.w3c.dom.DOMException;
  * @author Davanum Srinivas (dims@yahoo.com)
  * @author Heejune Ahn      (cityboy@tmax.co.kr)
  */
-public class Text extends MessageElement implements javax.xml.soap.Text {
+public class Text extends NodeImpl implements javax.xml.soap.Text {
 
     public Text(String s) {
         try {

@@ -16,11 +16,14 @@
 
 package org.apache.axis.message;
 
+import org.w3c.dom.Attr;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.*;
+import org.w3c.dom.Node;
 
-import java.util.Vector;
 import java.util.Iterator;
+import java.util.Vector;
 
 /**
  * A W3C simple DOM NameNodeMap implementation

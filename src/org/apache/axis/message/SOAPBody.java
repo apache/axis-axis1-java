@@ -24,20 +24,19 @@ import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
-import org.xml.sax.Attributes;
-import org.w3c.dom.Element;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.Attributes;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
-import java.util.Enumeration;
-import java.util.Vector;
 import java.util.ArrayList;
-import java.util.Locale;
-import java.util.List;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Vector;
 
 /**
  * Holder for body elements.
@@ -93,13 +92,6 @@ public class SOAPBody extends MessageElement
         }
     }
 
-    public void detachNode() {
-        if (parent != null) {
-            ((SOAPEnvelope)parent).removeBody();
-        }
-        super.detachNode();
-    }
-   
     public void disableFormatting() {
         this.disableFormatting = true;
     }
@@ -158,16 +150,9 @@ public class SOAPBody extends MessageElement
         context.setPretty(oldPretty);
     }
 
-    protected void initializeChildren()
-    {
-        if (children == null) {
-            children = new Vector();
-        }
-    }
-    
     Vector getBodyElements() throws AxisFault {
         initializeChildren();
-        return (Vector)getChildren();
+        return new Vector(getChildren());
     }
 
     SOAPBodyElement getFirstBody() throws AxisFault
