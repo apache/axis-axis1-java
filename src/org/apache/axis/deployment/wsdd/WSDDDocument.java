@@ -33,27 +33,33 @@ import java.io.StringWriter;
 
 /**
  * represents a WSDD Document (this is the top level object in this object model)
+ * Only one of {@link #deployment} and {@link #undeployment} should be valid.
  */
 public class WSDDDocument extends WSDDConstants
 {
     protected static Log log =
         LogFactory.getLog(WSDDDocument.class.getName());
 
+    /** owner doc */
     private Document doc;
 
+    /**
+     *  deployment tree. may be null
+     */
     private WSDDDeployment deployment;
+    /** undeployment tree. may be null */
     private WSDDUndeployment undeployment;
 
     /**
-     *
+     * empty constructor
      */
     public WSDDDocument()
     {
     }
 
     /**
-     *
-     * @param doc (Document) XXX
+     * create and bind to a document
+     * @param document (Document) XXX
      */
     public WSDDDocument(Document document) throws WSDDException
     {
@@ -61,7 +67,7 @@ public class WSDDDocument extends WSDDConstants
     }
 
     /**
-     *
+     * bind to a sub-element in a document.
      * @param e (Element) XXX
      */
     public WSDDDocument(Element e) throws WSDDException
@@ -75,16 +81,23 @@ public class WSDDDocument extends WSDDConstants
     }
 
     /**
-     *
-     * @return XXX
+     * Get the deployment. If there is no deployment, create an empty one
+     * @return the deployment document
      */
     public WSDDDeployment getDeployment()
     {
-        if (deployment == null)
+        if (deployment == null) {
             deployment = new WSDDDeployment();
+        }
         return deployment;
     }
 
+    /**
+     * get the deployment as a DOM.
+     * Requires that the deployment member variable is not null.
+     * @return
+     * @throws ConfigurationException
+     */
     public Document getDOMDocument() throws ConfigurationException {
         StringWriter writer = new StringWriter();
         SerializationContext context = new SerializationContextImpl(writer, null);
@@ -102,6 +115,11 @@ public class WSDDDocument extends WSDDConstants
         }
     }
 
+    /**
+     * write the deployment to the supplied serialization context.
+     * @param context
+     * @throws IOException
+     */
     public void writeToContext(SerializationContext context)
         throws IOException
     {
@@ -109,7 +127,8 @@ public class WSDDDocument extends WSDDConstants
     }
 
     /**
-     *
+     * Bind to a new document, setting the undeployment nodes if it is an undeployment,
+     * the deployment tree if it is anything else.
      * @param document XXX
      */
     public void setDocument(Document document) throws WSDDException {
@@ -122,6 +141,12 @@ public class WSDDDocument extends WSDDConstants
         }
     }
 
+    /**
+     * do a deploy and/or undeploy, depending on what is in the document.
+     * If both trees are set, then undeploy follows deploy.
+     * @param registry
+     * @throws ConfigurationException
+     */
     public void deploy(WSDDDeployment registry) throws ConfigurationException {
         if (deployment != null) {
             deployment.deployToRegistry(registry);
