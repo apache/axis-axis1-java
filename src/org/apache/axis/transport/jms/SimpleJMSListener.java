@@ -58,8 +58,12 @@ package org.apache.axis.transport.jms;
 import java.io.InputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.BufferedInputStream;
+import java.io.IOException;
 
 import java.util.HashMap;
+import java.util.Properties;
 
 import javax.jms.MessageListener;
 import javax.jms.BytesMessage;
@@ -76,7 +80,9 @@ import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.Options;
 
 import org.apache.commons.logging.Log;
+
 import org.apache.axis.components.logger.LogFactory;
+
 
 /**
  * SimpleJMSListener implements the javax.jms.MessageListener interface. Its
@@ -97,52 +103,32 @@ public class SimpleJMSListener implements MessageListener
             LogFactory.getLog(SimpleJMSListener.class.getName());
 
     // Do we use (multiple) threads to process incoming messages?
-    private static boolean doThreads = true;
+    private static boolean doThreads;
 
     private JMSConnector connector;
     private JMSEndpoint endpoint;
     private AxisServer server;
 
-    public SimpleJMSListener(Options options)
+    public SimpleJMSListener(HashMap connectorMap, HashMap cfMap,
+                             String destination, String username,
+                             String password, boolean doThreads)
         throws Exception
     {
-        HashMap cfMap = new HashMap();
-        cfMap.put(SonicConstants.BROKER_URL, options.isValueSet('b'));
-
-        // do we have a jndi name?
-        String jndiName = options.isValueSet('n');
-        if (jndiName != null) {
-            cfMap.put(JMSConstants.CONNECTION_FACTORY_JNDI_NAME, jndiName);
-        } else {
-            // topics or queues?
-            String cf = null;
-            if (options.isFlagSet('t') > 0) {
-                cf = SonicConstants.TCF_CLASS;
-            } else {
-                cf = SonicConstants.QCF_CLASS;
-            }
-            cfMap.put(JMSConstants.CONNECTION_FACTORY_CLASS, cf);
-        }
-
-        // single-threaded?
-        if (options.isFlagSet('s') > 0) {
-            doThreads = false;
-        }
+        this.doThreads = doThreads;
 
         try {
             connector = JMSConnectorFactory.
-                                createServerConnector(null,
+                                createServerConnector(connectorMap,
                                                       cfMap,
-                                                      options.getUser(),
-                                                      options.getPassword());
+                                                      username,
+                                                      password);
         } catch (Exception e) {
             log.error(Messages.getMessage("exception00"), e);
             throw e;
         }
 
         // create the appropriate endpoint for the indicated destination
-        endpoint = connector.createEndpoint(options.isValueSet('d'));
-        endpoint.registerListener(this);
+        endpoint = connector.createEndpoint(destination);
     }
 
     // Axis server (shared between instances)
@@ -188,14 +174,42 @@ public class SimpleJMSListener implements MessageListener
     }
 
     public void start()
+        throws Exception
     {
+        endpoint.registerListener(this);
         connector.start();
     }
 
     public void shutdown()
+        throws Exception
     {
+        endpoint.unregisterListener(this);
         connector.stop();
         connector.shutdown();
+    }
+
+    public static final HashMap createConnectorMap(Options options)
+    {
+        HashMap connectorMap = new HashMap();
+        if (options.isFlagSet('t') > 0)
+        {
+            //queue is default so only setup map if topic domain is required
+            connectorMap.put(JMSConstants.DOMAIN, JMSConstants.DOMAIN_TOPIC);
+        }
+        return connectorMap;
+    }
+
+    public static final HashMap createCFMap(Options options)
+        throws IOException
+    {
+        String cfFile = options.isValueSet('c');
+        if(cfFile == null)
+            return null;
+
+        Properties cfProps = new Properties();
+        cfProps.load(new BufferedInputStream(new FileInputStream(cfFile)));
+        HashMap cfMap = new HashMap(cfProps);
+        return cfMap;
     }
 
     public static void main(String[] args) throws Exception
@@ -203,11 +217,15 @@ public class SimpleJMSListener implements MessageListener
         Options options = new Options(args);
 
         // first check if we should print usage
-        if ((options.isFlagSet('?') > 0) || (options.isFlagSet('h') > 0)) {
+        if ((options.isFlagSet('?') > 0) || (options.isFlagSet('h') > 0))
             printUsage();
-        }
 
-        SimpleJMSListener listener = new SimpleJMSListener(options);
+        SimpleJMSListener listener = new SimpleJMSListener(createConnectorMap(options),
+                                                           createCFMap(options),
+                                                           options.isValueSet('d'),
+                                                           options.getUser(),
+                                                           options.getPassword(),
+                                                           options.isFlagSet('s') > 0);
     }
 
     public static void printUsage()
@@ -215,15 +233,12 @@ public class SimpleJMSListener implements MessageListener
         System.out.println("Usage: SimpleJMSListener [options]");
         System.out.println(" Opts: -? this message");
         System.out.println();
-        System.out.println("       -b brokerurl");
-        System.out.println("       -u username");
-        System.out.println("       -w password");
-        System.out.println();
+        System.out.println("       -c connection factory properties filename");
         System.out.println("       -d destination");
         System.out.println("       -t topic [absence of -t indicates queue]");
         System.out.println();
-        System.out.println("       -n jndi name for connection factory");
-        System.out.println("          [jndi name obviates need for -t option]");
+        System.out.println("       -u username");
+        System.out.println("       -w password");
         System.out.println();
         System.out.println("       -s single-threaded listener");
         System.out.println("          [absence of option => multithreaded]");

@@ -81,7 +81,7 @@ import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 import javax.jms.ExceptionListener;
 
-import javax.naming.Context;
+import org.apache.axis.components.jms.JMSVendorAdapter;
 
 /**
  * TopicConnector is a concrete JMSConnector subclass that specifically handles
@@ -103,12 +103,12 @@ public class TopicConnector extends JMSConnector
                           String clientID,
                           String username,
                           String password,
-                          Context context)
+                          JMSVendorAdapter adapter)
         throws JMSException
     {
         super(factory, numRetries, numSessions, connectRetryInterval,
               interactRetryInterval, timeoutTime, allowReceive,
-              clientID, username, password, context);
+              clientID, username, password, adapter);
     }
 
     protected Connection internalConnect(ConnectionFactory connectionFactory,
@@ -150,7 +150,7 @@ public class TopicConnector extends JMSConnector
                                         clientID, username, password);
     }
 
-    protected JMSEndpoint internalCreateEndpoint(String destination)
+    public JMSEndpoint createEndpoint(String destination)
     {
         return new TopicEndpoint(destination);
     }
@@ -178,14 +178,14 @@ public class TopicConnector extends JMSConnector
     }
 
     private Topic createTopic(TopicSession session, String subject)
-        throws JMSException
+        throws Exception
     {
-        return session.createTopic(subject);
+        return m_adapter.getTopic(session, subject);
     }
 
     private TopicSubscriber createSubscriber(TopicSession session,
                                              TopicSubscription subscription)
-        throws JMSException
+        throws Exception
     {
         if(subscription.isDurable())
             return createDurableSubscriber(session,
@@ -241,7 +241,7 @@ public class TopicConnector extends JMSConnector
 
         protected ListenerSession createListenerSession(javax.jms.Connection connection,
                                                         Subscription subscription)
-            throws JMSException
+            throws Exception
         {
             TopicSession session = createTopicSession((TopicConnection)connection,
                                                       subscription.m_ackMode);
@@ -257,7 +257,7 @@ public class TopicConnector extends JMSConnector
             TopicListenerSession(TopicSession session,
                                  TopicSubscriber subscriber,
                                  TopicSubscription subscription)
-                throws JMSException
+                throws Exception
             {
                 super(session, subscriber, subscription);
             }
@@ -360,7 +360,7 @@ public class TopicConnector extends JMSConnector
         }
 
         Destination getDestination(Session session)
-            throws JMSException
+            throws Exception
         {
             return createTopic((TopicSession)session, m_topicName);
         }

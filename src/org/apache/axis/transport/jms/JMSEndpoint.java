@@ -79,7 +79,7 @@ public abstract class JMSEndpoint
     }
 
     abstract Destination getDestination(Session session)
-        throws JMSException;
+        throws Exception;
 
     /**
      * Send a message and wait for a response.
@@ -89,7 +89,7 @@ public abstract class JMSEndpoint
      * @return
      * @throws JMSException
      */
-    public byte[] call(byte[] message, long timeout)throws JMSException
+    public byte[] call(byte[] message, long timeout)throws Exception
     {
         return m_connector.getSendConnection().call(this, message, timeout, null);
     }
@@ -104,7 +104,7 @@ public abstract class JMSEndpoint
      * @throws JMSException
      */
     public byte[] call(byte[] message, long timeout, HashMap properties)
-        throws JMSException
+        throws Exception
     {
         if(properties != null)
             properties = (HashMap)properties.clone();
@@ -117,7 +117,7 @@ public abstract class JMSEndpoint
      * @param message
      * @throws JMSException
      */
-    public void send(byte[] message)throws JMSException
+    public void send(byte[] message)throws Exception
     {
         m_connector.getSendConnection().send(this, message, null);
     }
@@ -130,7 +130,7 @@ public abstract class JMSEndpoint
      * @throws JMSException
      */
     public void send(byte[] message, HashMap properties)
-        throws JMSException
+        throws Exception
     {
         if(properties != null)
             properties = (HashMap)properties.clone();
@@ -144,7 +144,7 @@ public abstract class JMSEndpoint
      * @throws JMSException
      */
     public void registerListener(MessageListener listener)
-        throws JMSException
+        throws Exception
     {
         m_connector.getReceiveConnection().subscribe(createSubscription(listener, null));
     }
@@ -157,7 +157,7 @@ public abstract class JMSEndpoint
      * @throws JMSException
      */
     public void registerListener(MessageListener listener, HashMap properties)
-        throws JMSException
+        throws Exception
     {
         if(properties != null)
             properties = (HashMap)properties.clone();

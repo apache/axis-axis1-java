@@ -89,7 +89,7 @@ public interface JMSConstants
     final static String WAIT_FOR_RESPONSE        = "transport.jms.WaitForResponse";
 
     /**
-     * <code>SonicConnectionFactory</code> parameter valid for either domain.  This should
+     * <code>JMSConnectorFactory</code> parameter valid for either domain.  This should
      * be used as a key in the environment map passed into calls to
      * <code>createConnector</code> in <code>JMSConnectorFactory</code>
      * This is a required property for durable subscribers.
@@ -102,11 +102,13 @@ public interface JMSConstants
 
     final static String CONNECTOR       = "transport.jms.Connector";
 
-    final static String CONNECTION_FACTORY_CLASS =
-        "transport.jms.ConnectionFactoryClass";
+    final static String DOMAIN          = "transport.jms.Domain";
 
-    final static String CONNECTION_FACTORY_JNDI_NAME =
-        "transport.jms.ConnectionFactoryJNDIName";
+    final static String DOMAIN_QUEUE    = "QUEUE";
+
+    final static String DOMAIN_TOPIC    = "TOPIC";
+
+    final static String DOMAIN_DEFAULT  = DOMAIN_QUEUE;
 
     /**
      * Key for properties used in the <code>send</code> and <code>call</code>

@@ -78,6 +78,8 @@ import javax.jms.BytesMessage;
 import javax.naming.Context;
 import javax.naming.NamingException;
 
+import org.apache.axis.components.jms.JMSVendorAdapter;
+
 // No vendor dependent exception classes
 //import progress.message.client.EUserAlreadyConnected;
 //import progress.message.jclient.ErrorCodes;
@@ -95,16 +97,16 @@ import javax.naming.NamingException;
  */
 public abstract class JMSConnector
 {
-    protected int             m_numRetries;
-    protected long            m_connectRetryInterval;
-    protected long            m_interactRetryInterval;
-    protected long            m_timeoutTime;
-    protected long            m_poolTimeout;
-    protected AsyncConnection m_receiveConnection;
-    protected SyncConnection  m_sendConnection;
-    protected int             m_numSessions;
-    protected boolean         m_allowReceive;
-    private   Context         m_context;
+    protected int               m_numRetries;
+    protected long              m_connectRetryInterval;
+    protected long              m_interactRetryInterval;
+    protected long              m_timeoutTime;
+    protected long              m_poolTimeout;
+    protected AsyncConnection   m_receiveConnection;
+    protected SyncConnection    m_sendConnection;
+    protected int               m_numSessions;
+    protected boolean           m_allowReceive;
+    protected JMSVendorAdapter  m_adapter;
 
     public JMSConnector(ConnectionFactory connectionFactory,
                         int numRetries,
@@ -116,7 +118,7 @@ public abstract class JMSConnector
                         String clientID,
                         String username,
                         String password,
-                        Context context)
+                        JMSVendorAdapter adapter)
         throws JMSException
     {
         m_numRetries = numRetries;
@@ -126,7 +128,7 @@ public abstract class JMSConnector
         m_poolTimeout = timeoutTime/(long)numRetries;
         m_numSessions = numSessions;
         m_allowReceive = allowReceive;
-        m_context = context;
+        m_adapter = adapter;
 
         // try to connect initially so we can fail fast
         // in the case of irrecoverable errors.
@@ -204,19 +206,7 @@ public abstract class JMSConnector
             m_receiveConnection.shutdown();
     }
 
-    public JMSEndpoint createEndpoint(String destinationName)
-        throws JMSException, NamingException
-    {
-        if(m_context == null)
-            return internalCreateEndpoint(destinationName);
-        else
-        {
-            Destination destination = (Destination)m_context.lookup(destinationName);
-            return createEndpoint(destination);
-        }
-    }
-
-    protected abstract JMSEndpoint internalCreateEndpoint(String destinationName)
+    public abstract JMSEndpoint createEndpoint(String destinationName)
         throws JMSException;
 
     public abstract JMSEndpoint createEndpoint(Destination destination)
@@ -325,7 +315,7 @@ public abstract class JMSConnector
                 {
                     internalOnConnect();
                 }
-                catch(JMSException e)
+                catch(Exception e)
                 {
                     // insert code to handle non recoverable errors
                     // simply retry
@@ -397,7 +387,7 @@ public abstract class JMSConnector
         }
 
         private final void internalOnConnect()
-            throws JMSException
+            throws Exception
         {
             onConnect();
             synchronized(m_lifecycleLock)
@@ -416,7 +406,7 @@ public abstract class JMSConnector
             try { m_connection.close(); } catch(Throwable e) { } // ignore
         }
 
-        protected abstract void onConnect()throws JMSException;
+        protected abstract void onConnect()throws Exception;
         protected abstract void onShutdown();
         protected abstract void onException();
     }
@@ -475,7 +465,7 @@ public abstract class JMSConnector
         }
 
         byte[] call(JMSEndpoint endpoint, byte[] message, long timeout, HashMap properties)
-            throws JMSException
+            throws Exception
         {
             long timeoutTime = System.currentTimeMillis() + timeout;
             while(true)
@@ -528,7 +518,7 @@ public abstract class JMSConnector
         /** @todo add in handling for security exceptions
          *  @todo add support for timeouts */
         void send(JMSEndpoint endpoint, byte[] message, HashMap properties)
-            throws JMSException
+            throws Exception
         {
             long timeoutTime = System.currentTimeMillis() + m_timeoutTime;
             while(true)
@@ -654,7 +644,7 @@ public abstract class JMSConnector
                 throws JMSException;
 
             void send(JMSEndpoint endpoint, byte[] message, HashMap properties)
-                throws JMSException
+                throws Exception
             {
                 BytesMessage jmsMessage = m_session.createBytesMessage();
                 jmsMessage.writeBytes(message);
@@ -678,7 +668,7 @@ public abstract class JMSConnector
 
             byte[] call(JMSEndpoint endpoint, byte[] message, long timeout,
                         HashMap properties)
-                throws JMSException
+                throws Exception
             {
                 Destination reply = createTemporaryDestination();
                 MessageConsumer subscriber = createConsumer(reply);
@@ -802,7 +792,7 @@ public abstract class JMSConnector
         protected abstract ListenerSession createListenerSession(
                                                 javax.jms.Connection connection,
                                                 Subscription subscription)
-            throws JMSException;
+            throws Exception;
 
         protected void onShutdown()
         {
@@ -829,7 +819,7 @@ public abstract class JMSConnector
          * @param subscription
          */
         void subscribe(Subscription subscription)
-            throws JMSException
+            throws Exception
         {
             long timeoutTime = System.currentTimeMillis() + m_timeoutTime;
             synchronized(m_subscriptionLock)
@@ -926,7 +916,7 @@ public abstract class JMSConnector
         }
 
         protected void onConnect()
-            throws JMSException
+            throws Exception
         {
             synchronized(m_subscriptionLock)
             {
@@ -968,7 +958,7 @@ public abstract class JMSConnector
             ListenerSession(Session session,
                             MessageConsumer consumer,
                             Subscription subscription)
-                throws JMSException
+                throws Exception
             {
                 super(session);
                 m_subscription = subscription;

@@ -67,7 +67,6 @@ import org.apache.axis.utils.Options;
 import org.apache.axis.transport.jms.JMSTransport;
 import org.apache.axis.transport.jms.JMSConstants;
 import org.apache.axis.transport.jms.SimpleJMSListener;
-import org.apache.axis.transport.jms.SonicConstants;
 
 import java.util.HashMap;
 
@@ -104,54 +103,31 @@ public class JMSTest {
         Options opts = new Options( args );
 
         // first check if we should print usage
-        if ((opts.isFlagSet('?') > 0) || (opts.isFlagSet('h') > 0)) {
+        if ((opts.isFlagSet('?') > 0) || (opts.isFlagSet('h') > 0))
             printUsage();
-        }
 
+        HashMap connectorMap = SimpleJMSListener.createConnectorMap(opts);
+        HashMap cfMap = SimpleJMSListener.createCFMap(opts);
+        String destination = opts.isValueSet('d');
+        String username = opts.getUser();
+        String password = opts.getPassword();
         // create the jms listener
-        SimpleJMSListener listener = new SimpleJMSListener(opts);
+        SimpleJMSListener listener = new SimpleJMSListener(connectorMap,
+                                                           cfMap,
+                                                           destination,
+                                                           username,
+                                                           password,
+                                                           false);
         listener.start();
 
         args = opts.getRemainingArgs();
-        if ( args == null ) {
+        if ( args == null || args.length == 0)
             printUsage();
-        }
-
-        int numArgs = args.length;
-        String[] symbols = new String[numArgs];
-        for (int i = 0; i < numArgs; i++) {
-            symbols[i] = args[i];
-        }
 
         Service  service = new Service(new XMLStringProvider(wsdd));
 
-        HashMap cfProps = new HashMap();
-        cfProps.put(SonicConstants.BROKER_URL, opts.isValueSet('b'));
-        cfProps.put(SonicConstants.DEFAULT_USERNAME, opts.getUser());
-        cfProps.put(SonicConstants.DEFAULT_PASSWORD, opts.getPassword());
-
-        // do we have a jndi name?
-        String jndiName = opts.isValueSet('n');
-        if (jndiName != null) {
-            // w/ a jndi name, we can get the appropriate connection factory
-            cfProps.put(JMSConstants.CONNECTION_FACTORY_JNDI_NAME, jndiName);
-        } else {
-            // w/o a jndi name, we default to using the Sonic-specific method
-            // for creating a connection factory, which is by specifying the
-            // appropriate connection factory class from SonicConstants.java
-
-            // topics or queues?
-            String cf = null;
-            if (opts.isFlagSet('t') > 0) {
-                cf = SonicConstants.TCF_CLASS;
-            } else {
-                cf = SonicConstants.QCF_CLASS;
-            }
-            cfProps.put(JMSConstants.CONNECTION_FACTORY_CLASS, cf);
-        }
-
         // create the transport
-        JMSTransport transport = new JMSTransport(null, cfProps);
+        JMSTransport transport = new JMSTransport(connectorMap, cfMap);
 
         // create a new Call object
         Call     call    = (Call) service.createCall();
@@ -162,25 +138,23 @@ public class JMSTest {
         call.setTransport(transport);
 
         // set additional params on the call if desired
-
-        //call.setUsername(opts.getUser() );
-        //call.setPassword(opts.getPassword() );
-
+        //call.setUsername(username );
+        //call.setPassword(password );
         //call.setProperty(JMSConstants.WAIT_FOR_RESPONSE, Boolean.FALSE);
         //call.setProperty(JMSConstants.PRIORITY, new Integer(5));
         //call.setProperty(JMSConstants.DELIVERY_MODE,
         //    new Integer(javax.jms.DeliveryMode.PERSISTENT));
         //call.setProperty(JMSConstants.TIME_TO_LIVE, new Long(20000));
 
-        call.setProperty(JMSConstants.DESTINATION, "SampleQ1");
+        call.setProperty(JMSConstants.DESTINATION, destination);
         call.setTimeout(new Integer(10000));
 
         Float res = new Float(0.0F);
 
         // invoke a call for each of the symbols and print out
-        for (int i = 0; i < symbols.length; i++) {
-            res = (Float) call.invoke(new Object[] {symbols[i]});
-            System.out.println(symbols[i] + ": " + res);
+        for (int i = 0; i < args.length; i++) {
+            res = (Float) call.invoke(new Object[] {args[i]});
+            System.out.println(args[i] + ": " + res);
         }
 
         // shutdown
@@ -194,18 +168,15 @@ public class JMSTest {
         System.out.println("  Usage: JMSTest <symbol 1> <symbol 2> <symbol 3> ...");
         System.out.println("   Opts: -? this message");
         System.out.println();
-        System.out.println("         -b brokerurl");
-        System.out.println("         -u username");
-        System.out.println("         -w password");
+        System.out.println("       -c connection factory properties filename");
+        System.out.println("       -d destination");
+        System.out.println("       -t topic [absence of -t indicates queue]");
         System.out.println();
-        System.out.println("         -d destination");
-        System.out.println("         -t topic [absence of -t indicates queue]");
+        System.out.println("       -u username");
+        System.out.println("       -w password");
         System.out.println();
-        System.out.println("         -n jndi name for connection factory");
-        System.out.println("            [jndi name obviates need for -t option]");
-        System.out.println();
-        System.out.println("         -s single-threaded listener");
-        System.out.println("            [absence of option => multithreaded]");
+        System.out.println("       -s single-threaded listener");
+        System.out.println("          [absence of option => multithreaded]");
 
         System.exit(1);
     }
