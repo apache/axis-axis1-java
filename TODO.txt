@@ -10,15 +10,14 @@ owner (if any) in "<>" brackets.  Example:
 
 BETA 2 MUST DO LIST
 -------------------
-! <Glen> Clean up User's Guide
+* <Glen> Clean up User's Guide
 X <Russell> Clean up sample readme's
 X <Russell> beta1-to-beta2 document
 X <Russell> Grow the FAQ
 X <> Make sure the gump build works
 X <RickR/Doug> Make sure the attachment sample works
-! <Glen> Cleanup of Java2WSDL ClassRep
-! <Glen> Bugzilla 6872/7373
-! <Tom> 8395 (probably not but under investigation)
+* <Glen> Bugzilla 6872/7373
+X <Tom> 8395 (probably not but under investigation)
 
 
 MESSAGE PARSING / ENCODING
