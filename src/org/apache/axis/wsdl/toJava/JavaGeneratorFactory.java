@@ -211,7 +211,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
     /**
      * Return Wsdl2java's JavaBindingWriter object.
      */
-    private Writers bindingWriters = new Writers();
+    protected Writers bindingWriters = new Writers();
 
     public Generator getGenerator(Binding binding, SymbolTable symbolTable) {
         Generator writer = new JavaBindingWriter(emitter, binding, symbolTable);
@@ -223,7 +223,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
     /**
      * Return Wsdl2java's JavaServiceWriter object.
      */
-    private Writers serviceWriters = new Writers();
+    protected Writers serviceWriters = new Writers();
 
     public Generator getGenerator(Service service, SymbolTable symbolTable) {
         Generator writer = new JavaServiceWriter(emitter, service, symbolTable);
@@ -254,7 +254,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
     } // getGenerator
 
     // Hack class just to play with the idea of adding writers
-    class Writers implements Generator {
+    protected class Writers implements Generator {
         Vector writers = new Vector();
         SymbolTable symbolTable = null;
         Generator baseWriter = null;

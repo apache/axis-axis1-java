@@ -879,7 +879,7 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
      * @param symbolTable used to lookup enumerations
      * @param bThrow set to true if contructor needs try/catch block
      */ 
-    static String getConstructorForParam(Parameter param, 
+    public static String getConstructorForParam(Parameter param, 
                                          SymbolTable symbolTable,
                                          BooleanHolder bThrow) {
         

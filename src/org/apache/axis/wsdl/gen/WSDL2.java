@@ -145,7 +145,35 @@ public class WSDL2 {
     } // addOptions
 
     /**
-     * Parse an option
+     * removeOption
+     * Remove an option description from the tool.
+     * @param name   the name of the CLOptionDescriptor to remove
+     */
+    protected void removeOption(String name) {
+        int foundOptionIndex = -1;
+        for (int i = 0; i < options.length; i++) {
+            if (options[i].getName().equals(name)) {
+                foundOptionIndex = i;
+                break;
+            }
+        }
+        if (foundOptionIndex != -1) {
+            CLOptionDescriptor[] newOptions =
+                new CLOptionDescriptor[options.length - 1];
+            System.arraycopy(options, 0, newOptions, 0, foundOptionIndex);
+            if (foundOptionIndex < newOptions.length) {
+                System.arraycopy(
+                    options,
+                    foundOptionIndex + 1,
+                    newOptions,
+                    foundOptionIndex,
+                    newOptions.length - foundOptionIndex);
+            }
+            options = newOptions;
+        }
+    } // removeOption
+
+    /**     * Parse an option
      * @param option CLOption is the option
      */
     protected void parseOption(CLOption option) {
