@@ -69,6 +69,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import org.apache.axis.encoding.Hex;
 
 /** Utility class to deal with Java language related issues, such
  * as type conversions.
@@ -128,6 +129,16 @@ public class JavaUtils
         if (arg != null) {
             argHeldType = getHolderValueType(arg.getClass());
         }
+
+        // Convert between Axis special purpose Hex and byte[]
+        if (arg instanceof Hex && 
+            destClass == byte[].class) {
+            return ((Hex) arg).getBytes();
+        } else if (arg instanceof byte[] &&
+                   destClass == Hex.class) {
+            return new Hex((byte[]) arg);
+        }
+
 
         // Return if no conversion is available
         if (!(arg instanceof List) && 
@@ -319,6 +330,45 @@ public class JavaUtils
         while (i > 0) {
             className = "[" + className;
             i = text.indexOf("]", i+1);
+        }
+        return className;
+    }
+
+    /**
+     * Converts text of the form
+     * [LFoo to the Foo[]
+     */
+    public static String getTextClassName(String text) {
+        if (text == null || 
+            text.indexOf("[") != 0)
+            return text;
+        String className = "";
+        int index = 0;
+        while(index < text.length() &&
+              text.charAt(index) == '[') {
+            index ++;
+            className += "[]";
+        }
+        if (index < text.length()) {
+            if (text.charAt(index)== 'B')
+                className = "byte" + className;
+            else if (text.charAt(index) == 'C')
+                className = "char" + className;
+            else if (text.charAt(index) == 'D')
+                className = "double" + className;
+            else if (text.charAt(index) == 'F')
+                className = "float" + className;
+            else if (text.charAt(index) == 'I')
+                className = "int" + className;
+            else if (text.charAt(index) == 'J')
+                className = "long" + className;
+            else if (text.charAt(index) == 'S')
+                className = "short" + className;
+            else if (text.charAt(index) == 'Z')
+                className = "boolean" + className;
+            else {
+                className = text.substring(index+1, text.indexOf(";")) + className;
+            }
         }
         return className;
     }
