@@ -314,17 +314,9 @@ public class JWSHandler extends BasicHandler
                 if (scope == null) scope = Scope.DEFAULT.getName();
                 rpc.setOption(RPCProvider.OPTION_SCOPE, scope);
                 
-                // Set up service description
-                ServiceDesc sd = rpc.getServiceDescription();
-                
-                TypeMappingRegistry tmr = msgContext.getAxisEngine().getTypeMappingRegistry();
-                sd.setTypeMappingRegistry(tmr);
-                sd.setTypeMapping(msgContext.getTypeMapping());
-                
                 rpc.getInitializedServiceDesc(msgContext);
                 
-                soapServices.put(clsName, rpc);
-                
+                soapServices.put(clsName, rpc);                
             }
             
             // Set engine, which hooks up type mappings.
