@@ -208,31 +208,10 @@ public class HTTPSender extends BasicHandler {
             }
         }
 
-        StringBuffer header = new StringBuffer();
+        StringBuffer header2 = new StringBuffer();
 
         String webMethod = null;
         boolean posting = true;
-
-        // If we're SOAP 1.2, allow the web method to be set from the
-        // MessageContext.
-        if (msgContext.getSOAPConstants() == SOAPConstants.SOAP12_CONSTANTS) {
-            webMethod = msgContext.getStrProp(SOAP12Constants.PROP_WEBMETHOD);
-        }
-        if (webMethod == null) {
-            webMethod = HTTPConstants.HEADER_POST;
-        } else {
-            posting = webMethod.equals(HTTPConstants.HEADER_POST);
-        }
-
-        header.append(webMethod).append(" ");
-        if (useFullURL.value) {
-            header.append(tmpURL.toExternalForm());
-        } else {
-            header.append((((tmpURL.getFile() == null)
-                    || tmpURL.getFile().equals(""))
-                    ? "/"
-                    : tmpURL.getFile()));
-        }
 
         Message reqMessage = msgContext.getRequestMessage();
 
@@ -300,17 +279,17 @@ public class HTTPSender extends BasicHandler {
             httpConnection = HTTPConstants.HEADER_CONNECTION_CLOSE;
         }
 
-        header.append(" ");
-        header.append(http10 ? HTTPConstants.HEADER_PROTOCOL_10 :
+        header2.append(" ");
+        header2.append(http10 ? HTTPConstants.HEADER_PROTOCOL_10 :
                 HTTPConstants.HEADER_PROTOCOL_11)
                 .append("\r\n");
         if (posting) {
-            header.append(HTTPConstants.HEADER_CONTENT_TYPE)
+            header2.append(HTTPConstants.HEADER_CONTENT_TYPE)
                     .append(": ")
                     .append(reqMessage.getContentType(msgContext.getSOAPConstants()))
                     .append("\r\n");
         }
-        header.append( HTTPConstants.HEADER_ACCEPT ) //Limit to the types that are meaningful to us.
+        header2.append( HTTPConstants.HEADER_ACCEPT ) //Limit to the types that are meaningful to us.
                 .append( ": ")
                 .append( HTTPConstants.HEADER_ACCEPT_APPL_SOAP)
                 .append( ", ")
@@ -345,13 +324,13 @@ public class HTTPSender extends BasicHandler {
         if (posting) {
             if (!httpChunkStream) {
                 //Content length MUST be sent on HTTP 1.0 requests.
-                header.append(HTTPConstants.HEADER_CONTENT_LENGTH)
+                header2.append(HTTPConstants.HEADER_CONTENT_LENGTH)
                         .append(": ")
                         .append(reqMessage.getContentLength())
                         .append("\r\n");
             } else {
                 //Do http chunking.
-                header.append(HTTPConstants.HEADER_TRANSFER_ENCODING)
+                header2.append(HTTPConstants.HEADER_TRANSFER_ENCODING)
                         .append(": ")
                         .append(HTTPConstants.HEADER_TRANSFER_ENCODING_CHUNKED)
                         .append("\r\n");
@@ -363,7 +342,7 @@ public class HTTPSender extends BasicHandler {
         if (mimeHeaders != null) {
             for (Iterator i = mimeHeaders.getAllHeaders(); i.hasNext(); ) {
                 MimeHeader mimeHeader = (MimeHeader) i.next();
-                header.append(mimeHeader.getName())
+                header2.append(mimeHeader.getName())
                 .append(": ")
                 .append(mimeHeader.getValue())
                 .append("\r\n");
@@ -371,23 +350,48 @@ public class HTTPSender extends BasicHandler {
         }
 
         if (null != httpConnection) {
-            header.append(HTTPConstants.HEADER_CONNECTION);
-            header.append(": ");
-            header.append(httpConnection);
-            header.append("\r\n");
+            header2.append(HTTPConstants.HEADER_CONNECTION);
+            header2.append(": ");
+            header2.append(httpConnection);
+            header2.append("\r\n");
         }
 
         if (null != otherHeaders) {
             //Add other headers to the end.
             //for pre java1.4 support, we have to turn the string buffer argument into
             //a string before appending.
-            header.append(otherHeaders.toString());
+            header2.append(otherHeaders.toString());
         }
 
 
-        header.append("\r\n"); //The empty line to start the BODY.
+        header2.append("\r\n"); //The empty line to start the BODY.
 
         getSocket(sockHolder, targetURL.getProtocol(), host, port, timeout, otherHeaders, useFullURL);
+        
+        StringBuffer header = new StringBuffer();
+        
+        // If we're SOAP 1.2, allow the web method to be set from the
+        // MessageContext.
+        if (msgContext.getSOAPConstants() == SOAPConstants.SOAP12_CONSTANTS) {
+            webMethod = msgContext.getStrProp(SOAP12Constants.PROP_WEBMETHOD);
+        }
+        if (webMethod == null) {
+            webMethod = HTTPConstants.HEADER_POST;
+        } else {
+            posting = webMethod.equals(HTTPConstants.HEADER_POST);
+        }
+
+        header.append(webMethod).append(" ");
+        if (useFullURL.value) {
+            header.append(tmpURL.toExternalForm());
+        } else {
+            header.append((((tmpURL.getFile() == null)
+                    || tmpURL.getFile().equals(""))
+                    ? "/"
+                    : tmpURL.getFile()));
+        }
+        header.append(header2);
+
         OutputStream out = sockHolder.getSocket().getOutputStream();
 
         if (!posting) {
