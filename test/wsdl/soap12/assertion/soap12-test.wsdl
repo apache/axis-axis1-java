@@ -682,13 +682,20 @@
 
 
 	<service name="WhiteMesaSoap12TestSvc">
-
+        <!--
   		<port name="Soap12TestDocPort" binding="tns:Soap12TestDocBinding">
     			<soap12:address location="http://www.whitemesa.net/soap12/test-doc"/>
   		</port>
   		<port name="Soap12TestRpcPort" binding="tns:Soap12TestRpcBinding">
     			<soap12:address location="http://www.whitemesa.net/soap12/test-rpc"/>
   		</port>
+        -->
+        <port name="Soap12TestDocPort" binding="tns:Soap12TestDocBinding">
+              <soap12:address location="http://localhost:8080/axis/services/Soap12TestDocPort"/>
+        </port>
+        <port name="Soap12TestRpcPort" binding="tns:Soap12TestRpcBinding">
+              <soap12:address location="http://localhost:8080/axis/services/Soap12TestRpcPort"/>
+        </port>
 
 	</service>
 

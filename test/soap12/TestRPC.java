@@ -4,6 +4,7 @@ import junit.framework.TestCase;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.enum.Use;
 import org.apache.axis.configuration.SimpleProvider;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.handlers.soap.SOAPService;
@@ -44,6 +45,7 @@ public class TestRPC extends TestCase {
         SOAPService service = new SOAPService(new RPCProvider());
         service.setOption("className", "test.soap12.Echo");
         service.setOption("allowedMethods", "*");
+        service.setOption("use", Use.ENCODED12);
 
         ServiceDesc desc = service.getInitializedServiceDesc(null);
         desc.setDefaultNamespace(method);
@@ -52,12 +54,13 @@ public class TestRPC extends TestCase {
 
         MessageContext msgContext = new MessageContext(server);
         msgContext.setSOAPConstants(SOAPConstants.SOAP12_CONSTANTS);
+        msgContext.setEncodingStyle(SOAPConstants.SOAP12_CONSTANTS.getEncodingURI());
 
         String methodNS = null;
         msgContext.setTargetService(SERVICE_NAME);
 
         // Construct the soap request
-        SOAPEnvelope envelope = new SOAPEnvelope();
+        SOAPEnvelope envelope = new SOAPEnvelope(msgContext.getSOAPConstants());
         msgContext.setRequestMessage(new Message(envelope));
         RPCElement body = new RPCElement(methodNS, method, params);
 

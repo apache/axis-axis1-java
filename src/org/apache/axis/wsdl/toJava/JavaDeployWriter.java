@@ -77,6 +77,8 @@ import javax.wsdl.Operation;
 import javax.wsdl.OperationType;
 import javax.wsdl.Port;
 import javax.wsdl.Service;
+import javax.wsdl.extensions.soap.SOAPBinding;
+import javax.wsdl.extensions.UnknownExtensibilityElement;
 import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -191,7 +193,8 @@ public class JavaDeployWriter extends JavaWriter {
     protected void writeDeployTypes(PrintWriter pw, 
                                     Binding binding,
                                     boolean hasLiteral, 
-                                    boolean hasMIME) throws IOException {
+                                    boolean hasMIME,
+                                    Use use) throws IOException {
         Vector types = symbolTable.getTypes();
 
         pw.println();
@@ -202,7 +205,7 @@ public class JavaDeployWriter extends JavaWriter {
                     "javax.activation.DataHandler",
                     "org.apache.axis.encoding.ser.JAFDataHandlerSerializerFactory",
                     "org.apache.axis.encoding.ser.JAFDataHandlerDeserializerFactory",
-                    Constants.URI_DEFAULT_SOAP_ENC);
+                    use.getEncoding());
         }
 
         for (int i = 0; i < types.size(); ++i) {
@@ -234,7 +237,7 @@ public class JavaDeployWriter extends JavaWriter {
                 String deserializerFactory;
                 String encodingStyle = "";
                 if (!hasLiteral) {
-                    encodingStyle = Constants.URI_DEFAULT_SOAP_ENC;
+                    encodingStyle = use.getEncoding();
                 }
 
                 if (javaType.endsWith("[]")) {
@@ -291,21 +294,38 @@ public class JavaDeployWriter extends JavaWriter {
 
         String prefix = WSDDConstants.NS_PREFIX_WSDD_JAVA;
         String styleStr = "";
-        String useStr = "";
+        Use use = Use.DEFAULT;
 
+        
+        Iterator iterator = bEntry.getBinding().getExtensibilityElements().iterator();
+        while (iterator.hasNext()) {
+            Object obj = iterator.next();
+            if (obj instanceof SOAPBinding) {
+                use = Use.ENCODED;
+            } else if (obj instanceof UnknownExtensibilityElement) {
+                //TODO: After WSDL4J supports soap12, change this code
+                UnknownExtensibilityElement unkElement = (UnknownExtensibilityElement) obj;
+                QName name = unkElement.getElementType();
+                if(name.getNamespaceURI().equals(Constants.URI_WSDL12_SOAP) && 
+                   name.getLocalPart().equals("binding")){
+                    use = Use.ENCODED12;
+                }
+            }
+        }
+        
         if (symbolTable.isWrapped()) {
             styleStr = " style=\"" + Style.WRAPPED + "\"";
-            useStr = " use=\"" + Use.LITERAL + "\"";
+            use = Use.LITERAL;
         } else {
             styleStr = " style=\"" + 
                 bEntry.getBindingStyle().getName() + "\"";
             if (hasLiteral) {
-                useStr = " use=\"" + Use.LITERAL + "\"";
-            } else {
-                useStr = " use=\"" + Use.ENCODED + "\"";
-            }
+                use = Use.LITERAL;
+            } 
         }
 
+        String useStr = " use=\"" + use + "\"";
+        
         pw.println("  <service name=\"" + serviceName
                 + "\" provider=\"" + prefix +":RPC"
                 + "\"" + styleStr + useStr + ">");
@@ -323,7 +343,7 @@ public class JavaDeployWriter extends JavaWriter {
         }
 
         writeDeployBinding(pw, bEntry);
-        writeDeployTypes(pw, bEntry.getBinding(), hasLiteral, hasMIME);
+        writeDeployTypes(pw, bEntry.getBinding(), hasLiteral, hasMIME, use);
 
         pw.println("  </service>");
     } //writeDeployPort

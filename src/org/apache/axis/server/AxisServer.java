@@ -64,6 +64,7 @@ import org.apache.axis.Handler;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.SimpleTargetedChain;
+import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.client.AxisClient;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.configuration.EngineConfigurationFactoryFinder;
@@ -300,6 +301,7 @@ public class AxisServer extends AxisEngine
                     // chain instead....
                     Message rm = msgContext.getRequestMessage();
                     rm.getSOAPEnvelope().getFirstBody();
+                    
                     h = msgContext.getService();
                     if (h == null)
                         throw new AxisFault("Server.NoService",
@@ -311,6 +313,12 @@ public class AxisServer extends AxisEngine
                     t3=System.currentTimeMillis();
                 }
 
+                // Ensure that if we get SOAP1.2, then reply using SOAP1.2 
+                if(msgContext.getRequestMessage().getSOAPEnvelope().getSOAPConstants() != null) {
+                    SOAPConstants soapConstants = msgContext.getRequestMessage().getSOAPEnvelope().getSOAPConstants();
+                    msgContext.setSOAPConstants(soapConstants);
+                }
+                    
                 h.invoke(msgContext);
 
                 if( tlog.isDebugEnabled() ) {
