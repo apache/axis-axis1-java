@@ -24,13 +24,13 @@ public class TestXMLUtils extends TestCase
     public void testInit()
     {
         DocumentBuilderFactory dbf = XMLUtils.init();
-        assert(dbf instanceof DocumentBuilderFactory);
+        assertTrue(dbf instanceof DocumentBuilderFactory);
     }
 
     public void testNewDocumentNoArgConstructor()
     {
         Document doc = XMLUtils.newDocument();
-        assert(doc instanceof org.w3c.dom.Document);
+        assertTrue(doc instanceof org.w3c.dom.Document);
     }
     
     public void testNewDocumentInputSource()
@@ -38,7 +38,7 @@ public class TestXMLUtils extends TestCase
         Reader reader = (Reader)this.getTestXml("reader");
         InputSource inputsrc = new InputSource(reader);
         Document doc = XMLUtils.newDocument(inputsrc);
-        assert(doc instanceof org.w3c.dom.Document);
+        assertTrue(doc instanceof org.w3c.dom.Document);
     }
 
     public void testNewDocumentInputStream()
@@ -46,7 +46,7 @@ public class TestXMLUtils extends TestCase
         InputStream iostream = (InputStream)this.getTestXml("inputstream");
         InputSource inputsrc = new InputSource(iostream);
         Document doc = XMLUtils.newDocument(inputsrc);
-        assert(doc instanceof org.w3c.dom.Document);
+        assertTrue(doc instanceof org.w3c.dom.Document);
     }
    
     /* This test will fail unless you are connected to the Web, so just skip
@@ -58,7 +58,7 @@ public class TestXMLUtils extends TestCase
     {
         String uri = "http://java.sun.com/j2ee/dtds/web-app_2.2.dtd";
         Document doc = XMLUtils.newDocument(uri);
-        assert(doc instanceof org.w3c.dom.Document);
+        assertTrue(doc instanceof org.w3c.dom.Document);
     }
     */
 

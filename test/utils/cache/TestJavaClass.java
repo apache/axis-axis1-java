@@ -22,8 +22,8 @@ public class TestJavaClass extends TestCase
         Class c = new java.util.Date().getClass(); 
         JavaClass jc = new JavaClass(c);
         assertNotNull(jc);
-        assert(jc.getJavaClass().getName().equals("java.util.Date"));
-        assert(!jc.getJavaClass().getName().equals("java.util.D"));
+        assertTrue(jc.getJavaClass().getName().equals("java.util.Date"));
+        assertTrue(!jc.getJavaClass().getName().equals("java.util.D"));
     }
 
     public void testGetMethod()

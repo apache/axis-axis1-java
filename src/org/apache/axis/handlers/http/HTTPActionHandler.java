@@ -100,7 +100,7 @@ public class HTTPActionHandler extends BasicHandler
 
             // handle empty SOAPAction
             if (action.length() > 0 && action.charAt(0) == '\"') {
-                // assert(action.endsWith("\"")
+                // assertTrue(action.endsWith("\"")
                 if (action.equals("\"\"")) {
                     action = "";
                 } else {
