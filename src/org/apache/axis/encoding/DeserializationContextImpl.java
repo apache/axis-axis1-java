@@ -392,6 +392,9 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
      * @return Deserializer
      */
     public final Deserializer getDeserializerForType(QName xmlType) {
+        if (xmlType == null)
+            return null;
+        
         DeserializerFactory dserF = null;
         Deserializer dser = null;
         try { 
