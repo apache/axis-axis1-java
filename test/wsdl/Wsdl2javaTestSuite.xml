@@ -102,16 +102,6 @@
     </wsdl2java>
 
     <!-- Roundtrip Test -->
-    <!-- Bootstrap to generate Java From WSDL to get stubs/skeletons -->
-    <wsdl2java url="test/wsdl/roundtrip/Roundtrip.wsdl"
-               output="build/work"
-               deployscope="session"
-               skeleton="yes"
-               noimports="no"
-               verbose="no"
-               testcase="no">
-        <mapping namespace="http://roundtrip.wsdl.test" package="test.wsdl.roundtrip"/>
-    </wsdl2java>
     <!-- To test Java Value Types, copy over the base and subclasses -->
     <copy todir="${build.dir}/work/test/wsdl/roundtrip" overwrite="yes">
       <fileset dir="${test.dir}/wsdl/roundtrip">
@@ -650,8 +640,8 @@
          We get this WSDL file from the internet on purpose, 
          file is only for reference.
      -->
-    <!-- <wsdl2java url="test/wsdl/literal/SalesRankNPrice.wsdl" -->
-    <wsdl2java url="http://www.perfectxml.net/WebServices/SalesRankNPrice/BookService.asmx?WSDL"
+    <!-- <wsdl2java url="http://www.perfectxml.net/WebServices/SalesRankNPrice/BookService.asmx?WSDL" -->
+    <wsdl2java url="test/wsdl/literal/SalesRankNPrice.wsdl"
                output="build/work"
                verbose="no"
                skeleton="no"
