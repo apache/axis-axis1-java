@@ -59,6 +59,7 @@ import org.apache.axis.ConfigurationException;
 import org.apache.axis.Constants;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.Handler;
+import org.apache.axis.utils.Messages;
 import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.SerializerFactory;
@@ -345,8 +346,9 @@ public class WSDDDeployment
             //log.debug("set dser factory");
             tm.register( mapping.getLanguageSpecificType(), mapping.getQName(), ser, deser);
             //log.debug("registered");
-        }
-        catch (Exception e) {
+        } catch (ClassNotFoundException e) {
+            log.info(Messages.getMessage("unabletoDeployTypemapping00", mapping.getQName().toString()), e);
+        } catch (Exception e) {
             throw new WSDDException(e);
         }
     }
