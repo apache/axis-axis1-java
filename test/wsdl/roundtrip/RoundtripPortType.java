@@ -164,5 +164,10 @@ public interface RoundtripPortType {
     public void throwInvalidTradeExchange()
         throws InvalidCompanyId, InvalidTradeExchange, InvalidTickerSymbol, 
                java.rmi.RemoteException;
+
+    // Overloading test
+    public int getId(BondInvestment investment) throws java.rmi.RemoteException;
+    public int getId(Investment investment) throws java.rmi.RemoteException;
+
 } // RoundtripPortType
 

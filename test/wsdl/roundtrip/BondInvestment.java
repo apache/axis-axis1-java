@@ -95,6 +95,7 @@ public class BondInvestment implements java.io.Serializable {
     private CallOptions[] options;
     public Object options2;
     public Object options3;
+    public int id;
 
     public BondInvestment() {
 

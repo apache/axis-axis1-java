@@ -517,6 +517,89 @@ public class RoundtripTestServiceTestCase extends TestCase {
     } // testBondInvestmentIn
 
     /**
+     *  Test the overloaded method getId with a BondInvestment.
+     */
+    public void testBondInvestmentGetId() {
+
+        try {
+
+            CallOptions[] callOptions = new CallOptions[2];
+            callOptions[0] = new CallOptions();
+            Calendar date = Calendar.getInstance();
+            TimeZone gmt = TimeZone.getTimeZone("GMT");
+            date.setTimeZone(gmt);
+            date.setTime(new Date(1013441507388L));
+            callOptions[0].setCallDate(date);
+            callOptions[1] = new CallOptions();
+            date = Calendar.getInstance();
+            date.setTimeZone(gmt);
+            date.setTime(new Date(1013441507390L));
+            callOptions[1].setCallDate(date);
+
+            short[] shortArray = {(short) 30};
+            byte[] byteArray = {(byte) 1};
+            Short[] wrapperShortArray = {new Short((short) 23), new Short((short) 56)};
+            Byte[] wrapperByteArray = {new Byte((byte) 2), new Byte((byte) 15)};
+
+            BondInvestment sendValue = new BondInvestment();
+            
+            sendValue.setOptions(callOptions);
+            sendValue.setOptions2(callOptions);
+            sendValue.setOptions3(callOptions[0]);
+            sendValue.setWrapperShortArray(wrapperShortArray);
+            sendValue.setWrapperByteArray(wrapperByteArray);
+            sendValue.setWrapperDouble(new Double(2323.232D));
+            sendValue.setWrapperFloat(new Float(23.023F));
+            sendValue.setWrapperInteger(new Integer(2093));
+            sendValue.setWrapperShort(new Short((short) 203));
+            sendValue.setWrapperByte(new Byte((byte) 20));
+            sendValue.setWrapperBoolean(new Boolean(true));
+            sendValue.setShortArray(shortArray);
+            sendValue.setByteArray(byteArray);
+            date = Calendar.getInstance();
+            date.setTimeZone(gmt);
+            date.setTime(new Date(1012937861996L));
+            sendValue.setCallableDate(date);
+            sendValue.setBondAmount(new BigDecimal("2675.23"));
+            sendValue.setPortfolioType(new BigInteger("2093"));
+            sendValue.setTradeExchange("NYSE");
+            sendValue.setFiftyTwoWeekHigh(45.012D);
+            sendValue.setLastTradePrice(87895.32F);
+            sendValue.setYield(5475L);
+            sendValue.setStockBeta(32);
+            sendValue.setDocType((short) 35);
+            sendValue.setTaxIndicator((byte) 3);
+            sendValue.setId(-123);
+
+            int id = binding.getId(sendValue);
+            assertEquals("The wrong id was sent back", -123, id);
+
+        } catch (RemoteException re) {
+            fail("Remote Exception caught: " + re);
+        }
+
+    } // testBondInvestmentGetId
+
+    /**
+     *  Test the overloaded method getId with a StockInvestment.
+     */
+    public void testInvestmentGetId() {
+
+        try {
+            StockInvestment stock = new StockInvestment();
+            stock.setName("International Business Machines");
+            stock.setId(1);
+            stock.setTradeExchange("NYSE");
+            stock.setLastTradePrice(200.55F);
+            int id = binding.getId(stock);
+            assertEquals("The wrong id was sent back", 1, id);            
+        } catch (RemoteException re) {
+            fail("Remote Exception caught: " + re);
+        }
+
+    } // testInvestmentGetId
+
+    /**
      *  Test to insure that a multiple array sent by a remote method can be
      *  received and its values match the expected values.
      */
