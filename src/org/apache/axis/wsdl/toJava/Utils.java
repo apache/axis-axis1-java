@@ -534,7 +534,7 @@ public class Utils {
             return "javax.xml.rpc.holders.ByteArrayHolder";
         }
         else if (typeValue.equals("java.lang.Byte[]")) {
-            return "javax.xml.rpc.holders.ByteClassArrayHolder";
+            return "javax.xml.rpc.holders.ByteWrapperArrayHolder";
         }
         // Anything else with [] gets its holder from the qname
         else if (typeValue.endsWith("[]")) {
@@ -551,6 +551,13 @@ public class Utils {
         else if (typeValue.equals("java.lang.String")) {
             return "javax.xml.rpc.holders.StringHolder";
         }
+        // Object also has a reserved holder
+        else if (typeValue.equals("Object")) {
+            return "javax.xml.rpc.holders.ObjectHolder";
+        }
+        else if (typeValue.equals("java.lang.Object")) {
+            return "javax.xml.rpc.holders.ObjectHolder";
+        }
         // Java primitive types have reserved holders
         else if (typeValue.equals("int")
                  || typeValue.equals("long")
@@ -565,12 +572,12 @@ public class Utils {
         else if (typeValue.startsWith("java.lang.")) {
             return "javax.xml.rpc.holders" + 
                 typeValue.substring(typeValue.lastIndexOf(".")) +
-                "ClassHolder";
+                "WrapperHolder";
         }
         else if (typeValue.indexOf(".") < 0) {
             return "javax.xml.rpc.holders" + 
                 typeValue +
-                "ClassHolder";
+                "WrapperHolder";
         }
         // The classes have reserved holders because they 
         // represent schema/soap encoding primitives

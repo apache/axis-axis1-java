@@ -57,9 +57,9 @@ package javax.xml.rpc.holders;
 /**
  * Class LongHolder
  *
- * @version 0.1
+ * @version 0.7
  */
-public final class LongHolder implements java.io.Serializable {
+public final class LongHolder implements Holder {
 
     /** Field _value           */
     public long value;

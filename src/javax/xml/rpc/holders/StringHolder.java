@@ -57,9 +57,9 @@ package javax.xml.rpc.holders;
 /**
  * Class StringHolder
  *
- * @version 0.1
+ * @version 0.7
  */
-public final class StringHolder implements java.io.Serializable {
+public final class StringHolder implements Holder {
 
     /** Field _value           */
     public String value;

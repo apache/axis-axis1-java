@@ -59,9 +59,9 @@ import java.math.BigDecimal;
 /**
  * Class BigDecimalHolder
  *
- * @version 0.1
+ * @version 0.7
  */
-public final class BigDecimalHolder implements java.io.Serializable {
+public final class BigDecimalHolder implements Holder {
 
     /** Field _value */
     public BigDecimal value;

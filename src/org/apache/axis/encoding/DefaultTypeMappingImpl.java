@@ -229,13 +229,17 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                    new HexSerializerFactory(),
                    new HexDeserializerFactory(),true);
 
-        // Use the Map Serialization for both Hashtables and HashMap objects
-        myRegister(Constants.SOAP_MAP,       java.util.HashMap.class,    
-                   new MapSerializerFactory(java.util.HashMap.class,Constants.SOAP_MAP),
-                   new MapDeserializerFactory(java.util.HashMap.class,Constants.SOAP_MAP), false);
+        // Use the Map Serialization for both Hashtables, Map and HashMap objects
+        // The SOAP_MAP will be deserialized into a HashMap
         myRegister(Constants.SOAP_MAP,       java.util.Hashtable.class,    
                    new MapSerializerFactory(java.util.Hashtable.class,Constants.SOAP_MAP),
                    new MapDeserializerFactory(java.util.Hashtable.class,Constants.SOAP_MAP), false);
+        myRegister(Constants.SOAP_MAP,       java.util.Map.class,    
+                   new MapSerializerFactory(java.util.Map.class,Constants.SOAP_MAP),
+                   new MapDeserializerFactory(java.util.Map.class,Constants.SOAP_MAP), false);
+        myRegister(Constants.SOAP_MAP,       java.util.HashMap.class,    
+                   new MapSerializerFactory(java.util.HashMap.class,Constants.SOAP_MAP),
+                   new MapDeserializerFactory(java.util.HashMap.class,Constants.SOAP_MAP), false);
 
         // Use the Element Serializeration for elements
         myRegister(Constants.SOAP_ELEMENT,   org.w3c.dom.Element.class,    
