@@ -53,7 +53,7 @@
  * <http://www.apache.org/>.
  */
 
-package test.multiref;
+package test.wsdl.multiref;
 
 import junit.framework.TestCase;
 import org.apache.axis.AxisFault;
@@ -71,7 +71,7 @@ public class MultiRefTestCase extends TestCase {
 
     public void doTest () throws Exception {
         String[] args = {};
-        test.multiref.Main.main(args);
+        test.wsdl.multiref.Main.main(args);
     }
 
     public void testMultiRefService () throws Exception {

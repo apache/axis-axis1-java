@@ -2,10 +2,10 @@
 
 <definitions 
     name="comprehensive types test"
-    targetNamespace="comprehensive.types.test"
-    xmlns:tns="comprehensive.types.test"
-    xmlns:typens="comprehensive.types"
-    xmlns:typens2="comprehensive.types.test2"
+    targetNamespace="comprehensive-service.types.wsdl.test"
+    xmlns:tns="comprehensive-service.types.wsdl.test"
+    xmlns:typens="comprehensive-types.types.wsdl.test"
+    xmlns:typens2="comprehensive-types2.types.wsdl.test"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
     xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
@@ -15,7 +15,7 @@
   <!-- type defs -->
   <types>
     <xsd:schema 
-        targetNamespace="comprehensive.types"
+        targetNamespace="comprehensive-types.types.wsdl.test"
         xmlns:xsd="http://www.w3.org/1999/XMLSchema">
 
       <xsd:simpleType name="enum">
@@ -164,7 +164,7 @@
 
 
     <xsd:schema 
-        targetNamespace="comprehensive.types.test2"
+        targetNamespace="comprehensive-types2.types.wsdl.test"
         xmlns:xsd="http://www.w3.org/1999/XMLSchema">
         <xsd:complexType name="fwd">
           <xsd:complexContent>

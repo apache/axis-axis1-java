@@ -5,7 +5,7 @@
  * @author: Rich Scheuerle (scheu@us.ibm.com)
  */
 
-package test.sequence;
+package test.wsdl.sequence;
 
 import java.util.Vector;
 
