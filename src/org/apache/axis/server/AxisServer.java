@@ -76,8 +76,11 @@ public class AxisServer extends AxisEngine
     private static AxisServer singleton = null;
     public static AxisServer getSingleton()
     {
-        if (singleton == null)
+        if (singleton == null) {
             singleton = new AxisServer();
+            singleton.init();
+            // ??? Why doesn't init just happen in the constructor?
+        }
         return singleton;
     }
     
@@ -92,6 +95,7 @@ public class AxisServer extends AxisEngine
      */
     public void start()
     {
+        init();
         running = true;
     }
     
