@@ -44,7 +44,7 @@ server, such as Tomcat or WebSphere, for example.&nbsp; AXIS has a number
 of Pluggable APIs that are necessary for such an integration.
 <p>
 The reader may find useful background information in the
-<a href="architecture-guide.html">Architecture Guide</a>. 
+<a href="architecture-guide.html">Architecture Guide</a>.
 
 <h2>
 <a NAME="Pluggable APIs"></a>Pluggable APIs</h2>
@@ -86,40 +86,128 @@ Default behavior if not plugged.</li>
 Example</li>
 </ul>
 
-<h3>
-<a NAME="Logging/Tracing Plug"></a>Logging/Tracing</h3>
-How can AXIS fit into existing logging/tracing systems other than log4j?
+<h3><a NAME="Logging/Tracing Plug"></a>Logging/Tracing</h3>
+AXIS logging and tracing is based on the Logging component of the
+<a href="http://jakarta.apache.org/commons/index.html">Jakarta Commons</a>
+project, or the Jakarta Commons Logging (JCL) SPI.
+The JCL provides a Log interface with thin-wrapper implementations for
+other logging tools, including
+<a href="http://jakarta.apache.org/log4j/docs/index.html">Log4J</a>,
+<a href="http://jakarta.apache.org/avalon/logkit/index.html">Avalon LogKit</a>,
+and
+<a>JDK 1.4</a>.
+The interface maps closely to Log4J and LogKit.
+
+<h4>Justification/Rationale</h4>
+A pluggable logging/trace facility enables
+AXIS to direct logging/trace messages to a host web application server's
+logging facility.
+A central logging facility with a single point of configuration/control
+is superior to distinct logging mechanisms for each of a multitude of
+middleware components that are to be integrated into
+a web application server.
+
+<h4>Integration</h4>
+The minimum requirement to integrate with another logger
+is to provide an implementation of the
+<code>org.apache.commons.logging.Log</code> interface.
+In addition, an implementation of the
+<code>org.apache.commons.logging.LogFactory</code> interface
+can be provided to meet
+specific requirements for connecting to, or instantiating, a logger.
 <ul>
-<li>
-Justification/Rationale - why is this plug point necessary?&nbsp; Spec
-compliance?</li>
-
-<li>
-Interfaces</li>
-
-<li>
-Mechanism</li>
-
+<li><h5>org.apache.commons.logging.Log</h5></li>
+The <code>Log</code> interface defines the following methods for use
+in writing log/trace messages to the log:
 <ul>
-<li>
-Life cycle</li>
-
-<li>
-Exception handling - in general; plug-in shouldn't throw any exceptions
-- does runtime ignore? Log?)</li>
-
-<li>
-Multiple thread support?&nbsp; Ie., is synchronization required?</li>
+<code>
+<br>log.fatal(Object message);
+<br>log.fatal(Object message, Throwable t);
+<br>log.error(Object message);
+<br>log.error(Object message, Throwable t);
+<br>log.warn(Object message);
+<br>log.warn(Object message, Throwable t);
+<br>log.info(Object message);
+<br>log.info(Object message, Throwable t);
+<br>log.debug(Object message);
+<br>log.debug(Object message, Throwable t);
+<br>log.trace(Object message);
+<br>log.trace(Object message, Throwable t);
+<br>&nbsp;
+<br>log.isFatalEnabled();
+<br>log.isErrorEnabled();
+<br>log.isWarnEnabled();
+<br>log.isInfoEnabled();
+<br>log.isDebugEnabled();
+<br>log.isTraceEnabled();
+<br>
+</code>
+</ul>
+<p>
+Semantics for these methods are such that it is expected
+that the severity of messages is ordered, from highest to lowest:
+<p>
+<ul>
+<li>fatal - Consider logging to console and system log.</li>
+<li>error - Consider logging to console and system log.</li>
+<li>warn - Consider logging to console and system log.</li>
+<li>info - Consider logging to console and system log.</li>
+<li>debug - Log to system log, if enabled.</li>
+<li>trace - Log to system log, if enabled.</li>
 </ul>
 
-<li>
-Configuration/reconfiguration</li>
+<br>&nbsp;
+<li><h5>org.apache.commons.logging.LogFactory</h5></li>
+If desired, the default implementation of the
+<code>org.apache.commons.logging.LogFactory</code>
+interface can be overridden,
+allowing the JDK 1.3 Service Provider discovery process
+to locate and create a LogFactory specific to the needs of the application.
+Review the Javadoc for the <code>LogFactoryImpl.java</code>
+for details.
+</ul>
 
-<li>
-Default behavior if not plugged.</li>
+<h4>Mechanism</h4>
+<ul>
+<li><h5>Life cycle</h5></li>
+The JCL LogFactory implementation must assume responsibility for
+either connecting/disconnecting to a logging toolkit,
+or instantiating/initializing/destroying a logging toolkit.
+<br>&nbsp;
+<li><h5>Exception handling</h5></li>
+The JCL Log interface doesn't specify any exceptions to be handled,
+the implementation must catch any exceptions.
+<br>&nbsp;
+<li><h5>Multiple threads</h5></li>
+The JCL Log and LogFactory implementations must ensure
+that any synchronization required by the logging toolkit
+is met.
+</ul>
 
-<li>
-Example</li>
+<h4>Logger Configuration</h4>
+<ul>
+<li><h5>Log</h5></li>
+The default <code>LogFactory</code> provided by JCL
+can be configured to instantiate a specific implementation of the
+<code>org.apache.commons.logging.Log</code> interface
+by setting the property <code>org.apache.commons.logging.Log</code>.
+This property can be specified as a system property,
+or in the <code>commons-logging.properties</code> file,
+which must exist in the CLASSPATH.
+<br>&nbsp;
+<li><h5>Default logger if not plugged</h5></li>
+The Jakarta Commons Logging SPI uses the
+implementation of the <code>org.apache.commons.logging.Log</code>
+interface specified by the system property
+<code>org.apache.commons.logging.Log</code>.
+If the property is not specified or the class is not available then the JCL
+provides access to a default logging toolkit by searching the CLASSPATH
+for the following toolkits, in order of preference:
+<ul>
+<li><a href="http://jakarta.apache.org/log4j/docs/index.html">Log4J</a></li>
+<li>JDK 1.4</li>
+<li>JCL SimpleLog</li>
+</ul>
 </ul>
 
 <h3>

@@ -3,7 +3,7 @@
 <head>
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
    <meta name="GENERATOR" content="Mozilla/4.72 [en] (Windows NT 5.0; U) [Netscape]">
-   <title>Axis System Integration Guide</title>
+   <title>Axis Developer's Guide</title>
 <!-- saved from url=(0022)http://internet.e-mail -->
 <style type="text/css">
 <!--
@@ -30,6 +30,7 @@ Table of Contents</h3>
 <a href="#Introduction">Introduction</a>
 <br><a href="#General Guidelines">General Guidelines</a>
 <br><a href="#Development Environment">Development Environment</a>
+<br><a href="#Logging/Tracing">Logging/Tracing</a>
 <br><a href="#Compile And Run">Compile and Run</a>
 <br><a href="#Internationalization">Internationalization</a>
 <br><a href="#Adding Testcases">Adding Testcases</a>
@@ -100,6 +101,226 @@ variable so that the Axis tests do the same. Set ANT_OPTS to, for example:
 <blockquote><tt><font color="#009900">-Dhttp.proxyHost=proxy.somewhere.com
 -Dhttp.proxyPort=80 -Dhttp.nonProxyHosts="localhost"</font></tt></blockquote>
 </blockquote>
+
+<h2>
+<a NAME="Logging/Tracing"></a>Logging/Tracing</h2>
+AXIS logging and tracing is based on the Logging component of the
+<a href="http://jakarta.apache.org/commons/index.html">Jakarta Commons</a>
+project, or the Jakarta Commons Logging (JCL) SPI.
+The JCL provides a Log interface with thin-wrapper implementations for
+other logging tools, including
+<a href="http://jakarta.apache.org/log4j/docs/index.html">Log4J</a>,
+<a href="http://jakarta.apache.org/avalon/logkit/index.html">Avalon LogKit</a>,
+and
+<a>JDK 1.4</a>.
+The interface maps closely to Log4J and LogKit.
+<h3>Using the Logger SPI</h3>
+<p>
+To use the JCL SPI from a Java class,
+include the following import statements:
+<ul>
+<code>
+import org.apache.commons.logging.Log;
+<br>
+import org.apache.commons.logging.LogFactory;
+<br>&nbsp;
+</code>
+</ul>
+For each class definition, declare and initialize a
+<code>log</code> attribute as follows:
+<ul>
+<code>
+public class CLASS
+<br>{
+<br>&nbsp;&nbsp;&nbsp;private static Log log = LogFactory.getLog(CLASS.class);
+<br>&nbsp;&nbsp;&nbsp;...
+<br>&nbsp;
+</code>
+</ul>
+<p>
+Messages are logged to a <i>logger</i>, such as <code>log</code>
+by invoking a method corresponding to <i>priority</i>:
+The <code>Log</code> interface defines the following methods for use
+in writing log/trace messages to the log:
+<ul>
+<code>
+log.fatal(Object message);
+<br>log.fatal(Object message, Throwable t);
+<br>log.error(Object message);
+<br>log.error(Object message, Throwable t);
+<br>log.warn(Object message);
+<br>log.warn(Object message, Throwable t);
+<br>log.info(Object message);
+<br>log.info(Object message, Throwable t);
+<br>log.debug(Object message);
+<br>log.debug(Object message, Throwable t);
+<br>log.trace(Object message);
+<br>log.trace(Object message, Throwable t);
+</code>
+</ul>
+While semantics for these methods are ultimately
+defined by the implementation of the Log interface,
+it is expected that the severity of messages is ordered
+as shown in the above list.
+<p>
+In addition to the logging methods, the following are provided:
+<ul>
+<code>
+log.isFatalEnabled();
+<br>log.isErrorEnabled();
+<br>log.isWarnEnabled();
+<br>log.isInfoEnabled();
+<br>log.isDebugEnabled();
+<br>log.isTraceEnabled();
+</code>
+</ul>
+These are typically used to guard code that
+only needs to execute in support of logging,
+and that introduces undesirable runtime overhead
+in the general case (logging disabled).
+
+<h3>Guidelines</h3>
+<h4>Message Priorities</h4>
+It is important to ensure that log message are
+appropriate in content and severity.
+The following guidelines are suggested:
+<ul>
+<li>fatal - Severe errors that cause the AXIS server to terminate prematurely.
+Expect these to be immediately visible on a console.</li>
+<br>&nbsp;
+<li>error - Other runtime errors or unexpected conditions.
+Expect these to be immediately visible on a console.</li>
+<br>&nbsp;
+<li>warn - Use of deprecated APIs, poor use of API, Almost errors, other
+runtime situations that are undesirable or unexpected, but not
+necessarily "wrong".
+Expect these to be immediately visible on a console.</li>
+<br>&nbsp;
+<li>info -
+Interesting runtime events (startup/shutdown).
+Expect these to be immediately visible on a console,
+so be conservative and keep to a minimum.</li>
+<br>&nbsp;
+<li>debug - detailed information on flow of through the system.
+Expect these to be written to logs only.</li>
+<br>&nbsp;
+<li>trace - more detailed information.
+Expect these to be written to logs only.</li>
+</ul>
+
+<h4>Debug Output</h4>
+Developers may be tempted to use <code>System.out.println</code>
+while debugging or analyzing a system.
+PLEASE DON'T.
+Remember that AXIS is targetted for use in a number
+of open-source and other web applications,
+and so it needs to be a good citizen.
+We strongly encourage you to use the following guidelines:
+<ul>
+<li>
+Take a few moments and introduce debug statements
+<code>log.debug("reasonably terse and meaningful message");</code>
+If they are useful for understanding a problem now,
+they may be again in the future to you or a peer.
+</li>
+
+<br>&nbsp;
+<li>
+You are saying: <i>"Yes, but I don't want to see ALL the debug output"</i>.
+Turn on DEBUG output ONLY for the package(s) or class(es)
+that you are interested in.
+In Log4J, leave the root (default) priority high,
+lower the threshold for either the
+<code>CONSOLE</code> or <code>LOGFILE</code>
+appenders (assuming your properties file is based on the
+<code>log4j.properties</code> file in AXIS) as you desire,
+and set the logger (class/package name) priority down to <code>DEBUG</code>.
+See <a href="#Configuring the Logger">Configuring the Logger</a>, below.
+</li>
+
+<br>&nbsp;
+<li>
+You are saying: <i>"OK, but I still have TO MUCH OUTPUT"</i>.
+Welcome to the real world :-).
+Seriously, consider logging to a file and using tools to
+extract the information you need (grep).
+Place key words in log messages that will help categorize them.
+At worst, try <code>log.debug("myname: my message");</code>.
+This last is also good for messages that you want to clean out when done,
+as it makes it easy to search for your specific debug statements.
+Regardless, remove <code>myname</code> from the message when done.
+</li>
+</ul>
+
+<h3><a NAME="Configuring the Logger">Configuring the Logger</a></h3>
+The Jakarta Commons Logging (JCL) SPI
+can be configured to use different logging toolkits.
+To configure which logger is used by the JCL, see the
+<a href="integration-guide.html">AXIS System Integration Guide</a>.
+<p>
+Configuration of the behavior of the JCL ultimately depends upon the
+logging toolkit being used.
+The JCL SPI (and hence AXIS) uses
+<a href="http://jakarta.apache.org/log4j/docs/index.html">Log4J</a>
+by default if it is available (in the CLASSPATH).
+<h4>Log4J</h4>
+As
+<a href="http://jakarta.apache.org/log4j/docs/index.html">Log4J</a>
+is the prefered/default logger for AXIS,
+a <i>few</i> details are presented herein to get the developer going.
+<p>
+Configure Log4J using system properties and/or a properties file:
+<ul>
+<li><h5>log4j.configuration=<i>log4j.properties</i></h5></li>
+Use this system property to specify the name of a Log4J configuration file.
+If not specified, the default configuration file is <i>log4j.properties</i>.
+A <i>log4j.properties</i> file is provided in <code>axis.jar</code>,
+but can be overridden (?verify this still works?)
+by placing a file of the same name so as to
+appear before <code>axis.jar</code> in the CLASSPATH.
+
+<br>&nbsp;
+<li><h5>log4j.rootCategory=<i>priority</i> [, <i>appender</i>]*</h5></li>
+Set the default (root) logger priority.
+
+<br>&nbsp;
+<li><h5>log4j.logger.<i>logger.name</i>=<i>priority</i></h5></li>
+Set the priority for the named logger
+and all loggers hierarchically lower than, or below, the
+named logger.
+<i>logger.name</i> corresponds to the parameter of
+<code>LogFactory.getLog(<i>logger.name</i>)</code>,
+used to create the logger instance.  Priorities are:
+<code>DEBUG</code>,
+<code>INFO</code>,
+<code>WARN</code>,
+<code>ERROR</code>,
+or <code>FATAL</code>.
+<p>
+Log4J understands hierarchical names,
+enabling control by package or high-level qualifiers:
+<code>log4j.logger.org.apache.axis.encoding=DEBUG</code>
+will enable debug messages for all classes in both
+<code>org.apache.axis.encoding</code>
+and
+<code>org.apache.axis.encoding.ser</code>.
+Likewise, setting
+<code>log4j.logger.org.apache.axis=DEBUG</code>
+will enable debug message for all AXIS classes,
+but not for other Jakarta projects.
+<br>&nbsp;
+<li><h5>log4j.appender.<i>appender</i>.Threshold=<i>priority</i></h5></li>
+Log4J <i>appenders</i> correspond to different output devices:
+console, files, sockets, and others.
+If appender's <i>threshold</i>
+is less than or equal to the message priority then
+the message is written by that appender.
+This allows different levels of detail to be appear
+at different log destinations.
+<p>
+For example: one can capture DEBUG (and higher) level information in a logfile,
+while limiting console output to INFO (and higher).
+</ul>
 
 <h2>
 <a NAME="Compile And Run"></a>Compile and Run</h2>
