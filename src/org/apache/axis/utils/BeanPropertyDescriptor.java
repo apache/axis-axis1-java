@@ -196,26 +196,26 @@ public class BeanPropertyDescriptor
         }
     }
 
-    protected void growArrayToSize(Object obj, Class componentType, int i)
-            throws InvocationTargetException, IllegalAccessException {
+    /**
+     * Grow the array 
+     * @param obj
+     * @param componentType
+     * @param i
+     * @throws InvocationTargetException
+     * @throws IllegalAccessException
+     */ 
+    protected void growArrayToSize(Object obj, Class componentType, int i) throws InvocationTargetException, IllegalAccessException {
         // Get the entire array and make sure it is large enough
         Object array = get(obj);
         if (array == null || Array.getLength(array) <= i) {
-            // Construct a larger array of the same type
-            Object newArray =
-                    Array.newInstance(componentType,i+1);
-
+            // Construct a larger array of the same type            
+            Object newArray = Array.newInstance(componentType, i + 1);
+            // Copy over the old elements
+            if (array != null) {
+                System.arraycopy(array, 0, newArray, 0, Array.getLength(array));
+            }
             // Set the object to use the larger array
             set(obj, newArray);
-
-            // Copy over the old elements
-            int len = 0;
-            if (array != null) {
-                len = Array.getLength(array);
-            }
-            for (int index=0; index<len; index++) {
-                set(obj, index, Array.get(array, index));
-            }
         }
     }
 
