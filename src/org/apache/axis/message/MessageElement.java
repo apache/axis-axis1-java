@@ -386,7 +386,7 @@ public class MessageElement
         return (MessageElement)obj;
     }
 
-    public Element getAsDOM() throws Exception
+    public Document getAsDocument() throws Exception
     {
         SerializationContext serializeContext = null;
         StringWriter writer = new StringWriter();
@@ -405,8 +405,12 @@ public class MessageElement
         if (doc == null)
             throw new Exception(
                     JavaUtils.getMessage("noDoc00", writer.getBuffer().toString()));
+        return doc;
+    }
 
-        return doc.getDocumentElement();
+    public Element getAsDOM() throws Exception
+    {
+        return getAsDocument().getDocumentElement();
     }
 
     public void publishToHandler(ContentHandler handler) throws SAXException
