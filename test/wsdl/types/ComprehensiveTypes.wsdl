@@ -85,6 +85,7 @@
             <xsd:element name="enum7" type="typens:enumByte"/>
             <xsd:element name="soapint" type="soapenc:int"/>
             <xsd:element name="nested" type="typens2:b"/>
+            <xsd:element name="D_TSENT" type="xsd:string"/> <!-- test strange name -->
             <xsd:element name="optArray" minOccurs="0" maxOccurs="1" type="typens:array" />
             <xsd:element name="byteArray" type="typens:array_of_base64" />
             <xsd:element name="parm" type="typens:StringParameter" />
