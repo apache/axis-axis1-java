@@ -1,6 +1,7 @@
 package test.wsdl.interop3.compound1;
 
 import test.wsdl.interop3.compound1.xsd.Document;
+import test.wsdl.interop3.compound1.xsd.Person;
 
 import java.net.URL;
 
@@ -54,8 +55,16 @@ public class Compound1TestCase extends junit.framework.TestCase {
             doc.setID("myID");
             Document newDoc = binding.echoDocument(doc);
 
-            assertEquals("Step 3 IDs didn't match!", doc.getID(), newDoc.getID());
-            assertEquals("Step 3 values didn't match!", doc.getValue(), newDoc.getValue());
+            assertEquals("Documents didn't match!", newDoc, doc);
+
+            Person person = new Person();
+            person.setAge(33);
+            person.setMale(true);
+            person.setName("Frodo");
+            person.setID(2.345F);
+            Person newPerson = binding.echoPerson(person);
+
+            assertEquals("Returned Person didn't match!", newPerson, person);
         }
         catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
