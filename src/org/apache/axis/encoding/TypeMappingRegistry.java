@@ -70,7 +70,7 @@ import java.io.*;
  * @author James Snell (jasnell@us.ibm.com)
  * @author Sam Ruby (rubys@us.ibm.com)
  */
-public class TypeMappingRegistry implements Serializer { 
+public class TypeMappingRegistry implements Serializer, Serializable { 
 
     // default location for save/load
     private String fileName = null;
@@ -128,6 +128,16 @@ public class TypeMappingRegistry implements Serializer {
      */
     public void setParent(TypeMappingRegistry parent) {
         this.parent = parent;
+        
+        // debug assertions: every tmr must have exactly one
+        // SOAPTypeMappingRegistry at the top.
+        if (parent == null)
+            new Exception("null parent!").printStackTrace();
+        if (this instanceof SOAPTypeMappingRegistry)
+            new Exception("SOAPTypeMappingRegistry w/parent").printStackTrace();
+        for (TypeMappingRegistry t = parent; t!=null; t=t.getParent())
+            if (t instanceof SOAPTypeMappingRegistry) return;
+        new Exception("no SOAPTypeMappingRegistry parent").printStackTrace();
     }
 
     public TypeMappingRegistry getParent() {
@@ -276,6 +286,21 @@ public class TypeMappingRegistry implements Serializer {
         // !!! Write out a generic null, or get type info from somewhere else?
     }
 
+    public void dump(PrintStream out, String header) {
+        out.println(header);
+        if (fileName != null) 
+           out.println("  File: " + fileName);
+        out.println("  Deserializers:");
+        if (d != null) {
+            java.util.Enumeration e = d.keys();
+            while (e.hasMoreElements()) {
+                Object key = e.nextElement();
+                out.println("    " + key + " => " + d.get(key));
+            }
+        }
+        if (parent != null)
+            parent.dump(out, "Parent");
+    }
     //public MessageElement serialize(QName name, Object value, NSStack nsStack, Message message) {
     //    if (value != null) {
     //        Class _class = value.getClass();

@@ -65,7 +65,7 @@ import org.xml.sax.Attributes;
 /**
  * @author James Snell (jasnell@us.ibm.com)
  */
-public interface Serializer { 
+public interface Serializer extends java.io.Serializable { 
     public void serialize(QName name, Attributes attributes,
                           Object value, SerializationContext context)
         throws IOException;

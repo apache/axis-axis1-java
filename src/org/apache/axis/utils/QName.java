@@ -61,7 +61,7 @@ import org.w3c.dom.Element;
  * @author Doug Davis (dug@us.ibm.com)
  * @author James Snell (jasnell@us.ibm.com)
  */
-public class QName {
+public class QName implements java.io.Serializable {
  
     private String namespaceURI ;
     private String localPart ;

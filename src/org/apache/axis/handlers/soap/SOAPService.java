@@ -70,20 +70,20 @@ import org.apache.axis.registries.* ;
 public class SOAPService extends SimpleTargetedChain
 {
     public static final String OPTION_PIVOT = "pivot";
-    
+
+    private static final SOAPTypeMappingRegistry soapTMR =
+        new SOAPTypeMappingRegistry();
+
     /** Service-specific type mappings
-     * 
-     * !!! This is just a test for now, these do not get serialized (and thus
-     * restored) with the registered services.  This should come out of our
-     * XML storage eventually.
-     * 
      */
-    private transient TypeMappingRegistry typeMap = new SOAPTypeMappingRegistry();
+    private TypeMappingRegistry typeMap;
     
     /** Standard, no-arg constructor.
      */
     public SOAPService()
     {
+        typeMap = new TypeMappingRegistry();
+        typeMap.setParent(soapTMR);
     }
     
     public TypeMappingRegistry getTypeMappingRegistry()
@@ -101,7 +101,7 @@ public class SOAPService extends SimpleTargetedChain
      */
     public SOAPService(Handler serviceHandler, String pivotName)
     {
-        super();
+        this();
         setPivotHandler(serviceHandler);
         addOption(OPTION_PIVOT, pivotName);
     }

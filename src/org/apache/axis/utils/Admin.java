@@ -385,6 +385,9 @@ public class Admin {
           if ( service == null ) service = new SOAPService();
           else              service.clear();
           
+          if (tmr != null)
+            service.getTypeMappingRegistry().setParent(tmr.getParent());
+
           if ( input != null && !"".equals(input) ) {
             st = new StringTokenizer( input, " \t\n\r\f," );
             c  = null ;
@@ -451,51 +454,43 @@ public class Admin {
     return( doc );
   }
 
-  private void registerTypeMapping(Element elem, TypeMappingRegistry map)
+  private void registerTypeMapping(Element root, TypeMappingRegistry map)
     throws Exception
   {
-    String name = elem.getAttribute("name");
-    if ((name == null) || name.equals(""))
-      throw new AxisFault("Server.Admin.error",
-                          "No name attribute in type mapping",
-                          null, null);
+    NodeList  list = root.getChildNodes();
+    for ( int i = 0 ; list != null && i < list.getLength() ; i++ ) {
+      Node    node  = list.item(i);
+      if ( node.getNodeType() != Node.ELEMENT_NODE ) continue ;
+      Element elem  = (Element) node ;
+
+      // Retrieve classname attribute
+
+      String classname = elem.getAttribute("classname");
+      if ((classname == null) || classname.equals(""))
+        throw new AxisFault("Server.Admin.error",
+                            "No classname attribute in bean mapping",
+                            null, null);
     
-    // Resolve class name
+      // Resolve class name
 
-    Class cls;
-    try {
-      cls = Class.forName(name);
-    } catch (Exception e) {
-      throw new AxisFault( "Admin.error", e.toString(), null, null);
+      Class cls;
+      try {
+        cls = Class.forName(classname);
+      } catch (Exception e) {
+        throw new AxisFault( "Admin.error", e.toString(), null, null);
+      }
+
+      // Resolve qname based on prefix and localpart
+
+      String namespaceURI = elem.getNamespaceURI();
+      String localName    = elem.getLocalName();
+      QName qn = new QName(namespaceURI, localName);
+
+      // register both serializers and deserializers for this bean
+
+      map.addSerializer(cls, qn, new BeanSerializer(cls));
+      map.addDeserializerFactory(qn, cls, BeanSerializer.getFactory(cls));
     }
-
-    // Resolve qname based on prefix and localpart
-
-    String qname = elem.getAttribute( "qname" );
-    if (qname == null)
-      throw new AxisFault( "Admin.error",
-        "Missing qname in bean " + name, null, null);
-
-    int pos = qname.indexOf(':');
-    if (pos < 0)
-      throw new AxisFault( "Admin.error",
-        "Missing namespace in qname " + qname,
-        null, null);
-
-    String prefix = qname.substring(0, pos);
-    String localPart = qname.substring(pos+1);
-    String namespace = XMLUtils.getNamespace(prefix, elem);
-    if (namespace == null)
-      throw new AxisFault( "Admin.error",
-        "Unknown namespace in qname " + qname,
-        null, null);
-
-    QName qn = new QName(namespace, localPart);
-
-    // register both serializers and deserializers for this bean
-
-    map.addSerializer(cls, qn, new BeanSerializer(cls));
-    map.addDeserializerFactory(qn, cls, BeanSerializer.getFactory(cls));
   }
   
   public static void main(String args[]) throws Exception {
