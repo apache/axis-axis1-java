@@ -167,8 +167,7 @@ public class Call implements javax.xml.rpc.Call {
     // Collection of properties to store and put in MessageContext at
     // invoke() time.  Known ones are stored in actual variables for
     // efficiency/type-consistency.  Unknown ones are in myProperties.
-    private Hashtable          callProperties  = new Hashtable();
-    private Hashtable          scopedProperties= new Hashtable();
+    private Hashtable          myProperties = new Hashtable();
     private String             username        = null;
     private String             password        = null;
     private boolean            maintainSession = false;
@@ -406,7 +405,7 @@ public class Call implements javax.xml.rpc.Call {
             throw new JAXRPCException(
                     Messages.getMessage("badProp05", name));
         }
-        callProperties.put(name, value);
+        myProperties.put(name, value);
     } // setProperty
 
     /**
@@ -421,7 +420,7 @@ public class Call implements javax.xml.rpc.Call {
                   Messages.getMessage("badProp03") :
                   Messages.getMessage("badProp05", name));
         }
-        return callProperties.get(name);
+        return myProperties.get(name);
     } // getProperty
 
     /**
@@ -435,28 +434,59 @@ public class Call implements javax.xml.rpc.Call {
                   Messages.getMessage("badProp03") :
                   Messages.getMessage("badProp05", name));
          }
-         callProperties.remove(name);
+         myProperties.remove(name);
      } // removeProperty
 
+    /**
+     * Set a scoped property on the call (i.e. one that propagates down into
+     * the runtime).
+     * 
+     * Deprecated, since setProperty() now does the right thing here.  Expect
+     * this to disappear in 1.1.
+     * 
+     * @deprecated
+     * @param name
+     * @param value
+     */ 
     public void setScopedProperty(String name, Object value) {
         if (name == null || value == null) {
             throw new JAXRPCException(
                     Messages.getMessage(name == null ?
                                          "badProp03" : "badProp04"));
         }
-        scopedProperties.put(name, value);
+        myProperties.put(name, value);
     } // setScopedProperty
 
+    /**
+     * Get a scoped property (i.e. one that propagates down into the runtime).
+     * 
+     * Deprecated, since there's only one property bag now.  Expect this to
+     * disappear in 1.1.
+     * 
+     * @deprecated
+     * @param name
+     * @return
+     */ 
     public Object getScopedProperty(String name) {
         if (name != null) {
-            return scopedProperties.get(name);
+            return myProperties.get(name);
         }
         return null;
     } // getScopedProperty
 
+    /**
+     * Remove a scoped property (i.e. one that propagates down into the
+     * runtime).
+     * 
+     * Deprecated, since there's only one property bag now.  Expect this to
+     * disappear in 1.1.
+     * 
+     * @deprecated
+     * @param name
+     */ 
     public void removeScopedProperty(String name) {
-        if ( name == null || scopedProperties == null ) return ;
-        scopedProperties.remove( name );
+        if ( name == null || myProperties == null ) return ;
+        myProperties.remove( name );
     } // removeScopedProperty
 
     /**
@@ -2191,9 +2221,9 @@ public class Call implements javax.xml.rpc.Call {
 
             SOAPService svc = msgContext.getService();
             if (svc != null) {
-                svc.setPropertyParent(scopedProperties);
+                svc.setPropertyParent(myProperties);
             } else {
-                msgContext.setPropertyParent(scopedProperties);
+                msgContext.setPropertyParent(myProperties);
             }
         }
         if (log.isDebugEnabled()) {
@@ -2339,7 +2369,7 @@ public class Call implements javax.xml.rpc.Call {
             // Set the service so that it defers missing property gets to the
             // Call.  So when client-side Handlers get at the MessageContext,
             // the property scoping will be MC -> SOAPService -> Call
-            service.setPropertyParent(scopedProperties);
+            service.setPropertyParent(myProperties);
             service.setEngine(this.service.getAxisClient());
         }
     }
