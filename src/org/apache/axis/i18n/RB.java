@@ -420,9 +420,9 @@ public class RB {
         }
 
         // Now merge. p1 takes precedence
-        Enumeration enum = p2.keys();
-        while (enum.hasMoreElements()) {
-            String key = (String) enum.nextElement();
+        Enumeration enumeration = p2.keys();
+        while (enumeration.hasMoreElements()) {
+            String key = (String) enumeration.nextElement();
             if (p1.getProperty(key) == null) {
                 p1.put(key, p2.getProperty(key));
             }

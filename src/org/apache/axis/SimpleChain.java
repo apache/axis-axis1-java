@@ -145,9 +145,9 @@ public class SimpleChain extends BasicHandler implements Chain {
                             HandlerIterationStrategy visitor) throws AxisFault {
         int i = 0 ;
         try {
-            Enumeration enum = handlers.elements();
-            while (enum.hasMoreElements()) {
-                visitor.visit((Handler)enum.nextElement(), msgContext);
+            Enumeration enumeration = handlers.elements();
+            while (enumeration.hasMoreElements()) {
+                visitor.visit((Handler)enumeration.nextElement(), msgContext);
                 i++;
             }
         } catch( AxisFault f ) {
