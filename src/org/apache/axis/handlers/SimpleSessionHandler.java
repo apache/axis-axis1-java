@@ -1,5 +1,3 @@
-package org.apache.axis.handlers;
-
 /*
  * The Apache Software License, Version 1.1
  *
@@ -54,6 +52,8 @@ package org.apache.axis.handlers;
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
+
+package org.apache.axis.handlers;
 
 import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;

@@ -1,5 +1,3 @@
-package org.apache.axis.message;
-
 /*
  * The Apache Software License, Version 1.1
  *
@@ -55,6 +53,7 @@ package org.apache.axis.message;
  * <http://www.apache.org/>.
  */
 
+package org.apache.axis.message;
 
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;

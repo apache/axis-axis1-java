@@ -1,5 +1,3 @@
-package org.apache.axis.message;
-
 /*
  * The Apache Software License, Version 1.1
  *
@@ -54,6 +52,7 @@ package org.apache.axis.message;
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
+package org.apache.axis.message;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.encoding.DeserializationContext;
