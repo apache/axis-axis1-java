@@ -61,6 +61,7 @@ import org.apache.axis.Handler;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.SimpleTargetedChain;
+import org.apache.axis.providers.java.MsgProvider;
 import org.apache.axis.encoding.DeserializerFactory;
 import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.encoding.Serializer;
@@ -136,7 +137,19 @@ public class SOAPService extends SimpleTargetedChain
     {
       typeMap.setParent(engine.getTypeMappingRegistry());
     }
-    
+
+    /**
+     * Is this an RPC service?  Right now, we default to yes, unless
+     * the provider is in fact a MsgProvider.
+     *
+     * @return true if the service is RPC, false if document-oriented
+     */
+    public boolean isRPC()
+    {
+        return ((pivotHandler != null) &&
+                (pivotHandler.getClass() != MsgProvider.class));
+    }
+
     public boolean availableFromTransport(String transportName)
     {
         if (validTransports != null) {
