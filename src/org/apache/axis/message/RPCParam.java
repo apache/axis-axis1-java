@@ -23,6 +23,9 @@ import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 
 import javax.xml.namespace.QName;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPException;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -67,20 +70,26 @@ public class RPCParam extends MessageElement implements Serializable
      */
     public RPCParam(String name, Object value)
     {
-        super(new QName("", name));
-        this.value = value;
+        this(new QName("", name), value);
     }
 
     public RPCParam(QName qname, Object value)
     {
         super(qname);
-        this.value = value;
+        if (value instanceof java.lang.String) {
+            try {
+                this.addTextNode((String) value);
+            } catch (SOAPException e) {
+                throw new RuntimeException(Messages.getMessage("cannotCreateTextNode00"));
+            } 
+        } else {
+            this.value = value;
+        }
     }
 
     public RPCParam(String namespace, String name, Object value)
     {
-        super(new QName(namespace, name));
-        this.value = value;
+        this(new QName(namespace, name), value);
     }
     
     public void setRPCCall(RPCElement call)
@@ -210,4 +219,18 @@ public class RPCParam extends MessageElement implements Serializable
         return getValueDOM();
     }
 
+    /**
+     * @see javax.xml.soap.SOAPElement#addTextNode(java.lang.String)
+     */
+    public SOAPElement addTextNode(String s) throws SOAPException {
+        value = s;
+        return super.addTextNode(s);
+    }
+    /**
+     * @see javax.xml.soap.Node#setValue(java.lang.String)
+     */
+    public void setValue(String value) {
+        this.value = value;
+        super.setValue(value);
+    }
 }
