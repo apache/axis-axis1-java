@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights 
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -58,19 +58,33 @@ package org.apache.axis ;
 import java.util.*;
 import java.io.Serializable ;
 import org.apache.axis.* ;
+import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.utils.* ;
 
 import javax.xml.parsers.* ;
 import org.w3c.dom.* ;
 
 /**
+ * A <code>FaultableHandler</code> is essentially a wrapper for any other
+ * Handler which provides flexible fault handling semantics.
+ * 
  *
  * @author Doug Davis (dug@us.ibm.com)
+ * @author Glen Daniels (gdaniels@macromedia.com)
  */
-public class FaultableHandler implements Handler {
+public class FaultableHandler extends BasicHandler {
   protected Handler    workHandler ;
   protected Hashtable  faultHandlers ;
-  protected Hashtable  options ;
+  
+  /** Constructor
+   * 
+   * @param workHandler the Handler we're going to wrap with Fault semantics.
+   */
+  public FaultableHandler(Handler workHandler)
+  {
+    this.workHandler = workHandler;
+    faultHandlers = new Hashtable();
+  }
 
   public void init() {
     workHandler.init();
@@ -93,15 +107,32 @@ public class FaultableHandler implements Handler {
     }
     catch( Exception e ) {
       Debug.Print( 1, e );
+      AxisFault fault;
       // Is this a Java Exception? a SOAPException? an AxisException?
-      if ( !(e instanceof AxisFault) ) 
-        e = new AxisFault( e );
+      if ( e instanceof AxisFault ) {
+        fault = (AxisFault)e;
+      } else {
+        fault = new AxisFault( e );
+      }
 
-      String   key          = "blah" ; // add logic to map from e -> key
+      /** Index off fault code.
+       * 
+       * !!! TODO: This needs to be able to handle searching by faultcode
+       * hierarchy, i.e.  "Server.General.*" or "Server.*", with the
+       * most specific match winning.
+       */
+      QFault   key          = fault.getFaultCode() ;
       Handler  faultHandler = (Handler) faultHandlers.get( key );
-      if ( faultHandler != null )
+      if ( faultHandler != null ) {
+        /** faultHandler will (re)throw if it's appropriate, but it might
+         * also eat the fault.  Which brings up another issue - should
+         * we have a way to pass the Fault directly to the faultHandler?
+         * Maybe another well-known MessageContext property?
+         */
         faultHandler.invoke( msgContext );
-      throw (AxisFault) e ;
+      } else {
+        throw (AxisFault) e ;
+      }
     }
     Debug.Print( 1, "Exit: FaultableHandler::invoke" );
   }
@@ -118,54 +149,4 @@ public class FaultableHandler implements Handler {
   public boolean canHandleBlock(QName qname) {
     return( workHandler.canHandleBlock(qname) );
   }
-
-  /**
-   * Add the given option (name/value) to this handler's bag of options
-   */
-  public void addOption(String name, Object value) {
-    if ( options == null ) options = new Hashtable();
-    options.put( name, value );
-  }
-
-  /**
-   * Returns the option corresponding to the 'name' given
-   */
-  public Object getOption(String name) {
-    if ( options == null ) return( null );
-    return( options.get(name) );
-  }
-
-  /**
-   * Return the entire list of options
-   */
-  public Hashtable getOptions() {
-    return( options );
-  }
-
-  public void setOptions(Hashtable opts) {
-    options = opts ;
-  }
-
-  public Element getDeploymentData(Document doc) {
-    Debug.Print( 1, "Enter: FaultableHandler::getDeploymentData" );
-
-    Element  root = doc.createElement( "handler" );
-    root.setAttribute( "class", this.getClass().getName() );
-
-    options = this.getOptions();
-    if ( options != null ) {
-      Enumeration e = options.keys();
-      while ( e.hasMoreElements() ) {
-        String k = (String) e.nextElement();
-        Object v = options.get(k);
-        Element e1 = doc.createElement( "option" );
-        e1.setAttribute( "name", k );
-        e1.setAttribute( "value", v.toString() );
-        root.appendChild( e1 );
-      }
-    }
-    Debug.Print( 1, "Exit: FaultableHandler::getDeploymentData" );
-    return( root );
-  }
-
 };
