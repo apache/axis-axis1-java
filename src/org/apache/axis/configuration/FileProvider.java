@@ -83,6 +83,10 @@ public class FileProvider implements ConfigurationProvider
     String filename;
     
     InputStream myInputStream = null;
+    
+    // Should we search the classpath for the file if we don't find it in
+    // the specified location?
+    boolean searchClasspath = true;
 
     /**
      * Constructor which accesses a file in the current directory of the
@@ -110,6 +114,17 @@ public class FileProvider implements ConfigurationProvider
     {
         myInputStream = is;
     }
+    
+    /**
+     * Determine whether or not we will look for a "server-config.wsdd" file
+     * on the classpath if we don't find it in the specified location.
+     * 
+     * @param searchClasspath true if we should search the classpath
+     */ 
+    public void setSearchClasspath(boolean searchClasspath)
+    {
+        this.searchClasspath = searchClasspath;
+    }
 
     public void configureEngine(AxisEngine engine) throws Exception
     {
@@ -117,8 +132,10 @@ public class FileProvider implements ConfigurationProvider
             try {
                 myInputStream = new FileInputStream(basepath + sep + filename);
             } catch (Exception e) {
-                myInputStream = engine.
+                if (searchClasspath) {
+                    myInputStream = engine.
                                     getClass().getResourceAsStream(filename);
+                }
             }
         }
         
