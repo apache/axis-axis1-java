@@ -387,6 +387,7 @@ public class BeanSerializer implements Serializer, Serializable {
                     } else {
                         writeField(types,
                                    propName,
+                                   fieldXmlType,
                                    fieldType,
                                    propertyDescriptor[i].isIndexed(),
                                    field.isMinOccursZero(),
@@ -395,12 +396,14 @@ public class BeanSerializer implements Serializer, Serializable {
                 } else {
                     writeField(types,
                                propName,
+                               null,
                                fieldType,
                                propertyDescriptor[i].isIndexed(), false, all, false);
                 }
             } else {
                 writeField(types,
                            propName,
+                           null,
                            fieldType,
                            propertyDescriptor[i].isIndexed(), false, all, false);
             }
@@ -414,6 +417,7 @@ public class BeanSerializer implements Serializer, Serializable {
      * write a schema representation of the given Class field and append it to
      * the where Node, recurse on complex types
      * @param fieldName name of the field
+     * @param xmlType the schema type of the field
      * @param fieldType type of the field
      * @param isUnbounded causes maxOccurs="unbounded" if set
      * @param where location for the generated schema node
@@ -421,6 +425,7 @@ public class BeanSerializer implements Serializer, Serializable {
      */
     protected void writeField(Types types,
                               String fieldName,
+                              QName xmlType,
                               Class fieldType,
                               boolean isUnbounded,
                               boolean isOmittable,
@@ -431,7 +436,11 @@ public class BeanSerializer implements Serializer, Serializable {
             elem = types.createElementWithAnonymousType(fieldName,
             fieldType, isOmittable, where.getOwnerDocument());
         } else {
-            String elementType = types.writeType(fieldType);
+            if (Types.isArray(fieldType)) {
+                xmlType = null;
+            }
+            
+            String elementType = types.writeType(fieldType, xmlType);
 
             if (elementType == null) {
                 // If writeType returns null, then emit an anytype in such situations.
