@@ -105,6 +105,7 @@ public class NonBlockingBufferedInputStream extends InputStream {
         numbytes = in.available();
         if (numbytes <= 0) numbytes = 1;
         if (numbytes > remainingContent) numbytes=remainingContent;
+        if (numbytes > buffer.length) numbytes=buffer.length;
 
         // actually attempt to read those bytes
         numbytes = in.read(buffer, 0, numbytes);
