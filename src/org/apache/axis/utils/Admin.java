@@ -231,10 +231,14 @@ public class Admin {
             if ("factory".equals(lifeCycle)) {
               supplier = new FactorySupplier(cl.loadClass(cls), new Hashtable());
             } else if ("static".equals(lifeCycle)) {
-              supplier = new SimpleSupplier((Handler)cl.loadClass(cls).newInstance());
+              h = (Handler) cl.loadClass(cls).newInstance();
+              getOptions( elem, h );
+              supplier = new SimpleSupplier( h );
             } else {
               // Default to static for now
-              supplier = new SimpleSupplier((Handler)cl.loadClass(cls).newInstance());
+              h = (Handler) cl.loadClass(cls).newInstance();
+              getOptions( elem, h );
+              supplier = new SimpleSupplier( h );
             }
             
             ((SupplierRegistry)hr).add(name, supplier);
