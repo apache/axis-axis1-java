@@ -490,7 +490,7 @@ public class Types {
      * @param qName qname of the type
      */
     private void writeTypeNamespace(QName qName) {
-        if (qName != null) {
+        if (qName != null && !qName.getNamespaceURI().equals("")) {
             String pref = def.getPrefix(qName.getNamespaceURI());
             if (pref == null)
                 def.addNamespace(namespaces.getCreatePrefix(qName.getNamespaceURI()),

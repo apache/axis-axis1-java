@@ -1088,11 +1088,29 @@ public class Emitter {
         
         msg.setQName(qName);
         msg.setUndefined(false);
-
-        ArrayList parameters = oper.getParameters();
-        for(int i=0; i<parameters.size(); i++) {
-            ParameterDesc parameter = (ParameterDesc) parameters.get(i);
-            writePartToMessage(def, msg, true, parameter);
+        
+        if (oper.getStyle() == Style.MESSAGE) {
+            // If this is a MESSAGE-style operation, just write out
+            // <xsd:any> for now.
+            // TODO: Support custom schema in WSDD for these operations
+            QName qname = oper.getElementQName();
+            Element el = types.createElementDecl(qname.getLocalPart(),
+                                                 Object.class,
+                                                 Constants.XSD_ANYTYPE,
+                                                 false, false);
+            types.writeSchemaElement(qname, el);
+            
+            Part part = def.createPart();
+            part.setName("part");
+            part.setElementName(qname);
+            msg.addPart(part);
+        } else {
+            // Otherwise, write parts for the parameters.
+            ArrayList parameters = oper.getParameters();
+            for(int i=0; i<parameters.size(); i++) {
+                ParameterDesc parameter = (ParameterDesc) parameters.get(i);
+                writePartToMessage(def, msg, true, parameter);
+            }
         }
 
         return msg;
