@@ -151,7 +151,7 @@ public abstract class TestClient {
 
                 // Default return type based on what we expect
                 ServiceDescription sd = new ServiceDescription(method, true);
-                sd.setOutputType(map.getTypeQName(toSend.getClass()));
+                sd.setReturnType(map.getTypeQName(toSend.getClass()));
                 call.setServiceDescription(sd);
             }
 
