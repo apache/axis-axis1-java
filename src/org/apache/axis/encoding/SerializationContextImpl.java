@@ -964,7 +964,6 @@ public class SerializationContextImpl implements SerializationContext
         }
 
         nsStack.pop();
-        nsStack.clearFrame();
 
         if (writingStartTag) {
             writer.write("/>");

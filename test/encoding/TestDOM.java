@@ -1,7 +1,5 @@
 package test.encoding;
 
-
-
 import junit.framework.TestCase;
 import org.apache.axis.AxisEngine;
 import org.apache.axis.Message;
@@ -12,8 +10,6 @@ import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.XMLUtils;
-
-import java.util.Iterator;
 
 /**
 
@@ -70,7 +66,7 @@ public class TestDOM extends TestCase {
        message.setMessageContext(msgContext);
 
        // Now completely round trip it
-       SOAPEnvelope envelope = message.getSOAPEnvelope();
+       message.getSOAPEnvelope();
        // Element dom = message.getAsDOM();
        String result = message.getSOAPPartAsString();
 
@@ -99,7 +95,7 @@ public class TestDOM extends TestCase {
 
        Message message2 = new Message(result);
        message2.setMessageContext(msgContext);
-       SOAPEnvelope envelope2 = message2.getSOAPEnvelope();
+       message2.getSOAPEnvelope();
        String result2 = message2.getSOAPPartAsString();
 
        assertTrue(result2.indexOf("foo1")!=-1);
