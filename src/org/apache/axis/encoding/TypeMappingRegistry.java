@@ -248,6 +248,8 @@ public class TypeMappingRegistry implements Serializer {
             // Check the most common case first
             ser = getSerializer( _class = value.getClass() );
             if ( ser == null ) {
+                // Use a Vector and remove(0) because it MUST be 
+                // first-in-first-out
                 Vector  classes = new Vector();
                 classes.add( _class );
         
@@ -259,7 +261,15 @@ public class TypeMappingRegistry implements Serializer {
                     for (int i = 0 ; i < ifaces.length ; i++ ) 
                         classes.add( ifaces[i] );
                     _class = _class.getSuperclass();
-                    if ( _class != null ) classes.add( _class );
+
+                    // Add any non-null (and non-Object) class.  We skip
+                    // the Object class because if we reach that then
+                    // there's an error and this error message return 
+                    // here is better than the one returned by the
+                    // ObjSerializer.
+                    if ( _class != null &&
+                         !_class.getName().equals("java.lang.Object")) 
+                       classes.add( _class );
                 }
             }
 
