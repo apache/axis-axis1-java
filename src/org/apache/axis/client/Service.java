@@ -720,6 +720,29 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      * now, this is basically a no-op.  Putting it in now so that we can make
      * lazy engine instantiation work, and not have to duplicate every single
      * Service constructor with a EngineConfiguration argument.
+     * <p>
+     * If you need to use a non-default <code>EngineConfiguration</code>, do 
+     * the following before calling the Service constructor:<p><code>
+     * 
+     *   AxisProperties.setProperty(EngineConfigurationFactory.SYSTEM_PROPERTY_NAME, 
+     *                              "classname.of.new.EngineConfigurationFactory");
+     * </code><p>
+     * Where the second parameter is the name of your new class that implements
+     * <code>EngineConfigurationFactory</code> and a<code><br>
+     *  public static EngineConfigurationFactory newFactory(Object param)
+     * </code>
+     * method. See <code>EngineConfigurationFactoryDefault</code> for an example
+     * of how to do this.<p>
+     *
+     * This way, when the Service class constructor calls<br><code>
+     *
+     *   EngineConfigurationFactoryFinder.newFactory().getClientEngineConfig()
+     * </code>
+     * the getClientEngineConfig() of your own EngineConfigurationFactory will be
+     * called, and your configuration will be used in the constructed Service object.<p>
+     *
+     * Another way is to use the "discovery" method of 
+     * <code>EngineConfigurationFactoryFinder</code>.
      *
      * @param config the EngineConfiguration we want to use.
      */
