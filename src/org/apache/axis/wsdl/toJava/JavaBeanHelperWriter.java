@@ -273,17 +273,18 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
                     
                     // Some special handling for arrays
                     TypeEntry elemType = elem.getType();
-                    while (elemType.getRefType() != null) {
+                    while (elemType.getRefType() != null &&
+                           !(elem.getType().getDimensions().indexOf("[") > -1)) {
                         elemType = elemType.getRefType();
                     }
                     
                     QName xmlType = elemType.getQName();
                     
-                    if (xmlType != null && xmlType.getLocalPart().indexOf("[") > 0) {
+                    if ((xmlType != null && xmlType.getLocalPart().indexOf("[") > 0)) {
                         // Skip array types, because they are special
                         xmlType = null;
                     }
-                    
+
                     pw.print("        ");
                     if (!wroteElemDecl) {
                         pw.print("org.apache.axis.description.ElementDesc ");
