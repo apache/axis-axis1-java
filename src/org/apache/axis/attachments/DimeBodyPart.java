@@ -456,10 +456,13 @@ public class DimeBodyPart {
                     // and reset the stream pointer to the first byte
                     in.reset();
                 } else {
+                    //FIXME: bug http://nagoya.apache.org/jira/secure/ViewIssue.jspa?key=AXIS-1126
+                    //if we close this then how can we read the file? eh?
                     in.close();
                 }
             }
         } catch (Exception e) {
+            //TODO: why are exceptions swallowed here?
             log.error(Messages.getMessage("exception00"), e);
         }
         return dataSize;
