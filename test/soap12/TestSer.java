@@ -51,6 +51,8 @@ public class TestSer extends TestCase {
     public void doTestData (boolean multiref) throws Exception {
         MessageContext msgContext = new MessageContext(new AxisServer());
         msgContext.setSOAPConstants(SOAPConstants.SOAP12_CONSTANTS);
+        msgContext.setProperty(Constants.MC_NO_OPERATION_OK, Boolean.TRUE);
+        
         SOAPEnvelope msg = new SOAPEnvelope(SOAPConstants.SOAP12_CONSTANTS);
         RPCParam arg1 = new RPCParam("urn:myNamespace", "testParam", "this is a string");
 
@@ -126,6 +128,8 @@ public class TestSer extends TestCase {
         try {
             MessageContext msgContext = new MessageContext(new AxisServer());
             msgContext.setSOAPConstants(SOAPConstants.SOAP12_CONSTANTS);
+            msgContext.setProperty(Constants.MC_NO_OPERATION_OK, Boolean.TRUE);
+            
             String req =
                 "<xsd1:A xmlns:xsd1=\"urn:myNamespace\">"
                     + "<xsd1:B>"

@@ -53,7 +53,9 @@ public class TestHrefs extends TestCase {
             throws Exception
     {
         Message message = new Message(data);
-        message.setMessageContext(new MessageContext(new AxisServer()));
+        MessageContext context = new MessageContext(new AxisServer());
+        message.setMessageContext(context);
+        context.setProperty(Constants.MC_NO_OPERATION_OK, Boolean.TRUE);
 
         SOAPEnvelope envelope = (SOAPEnvelope)message.getSOAPEnvelope();
         assertNotNull("SOAP envelope should not be null", envelope);

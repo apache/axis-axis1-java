@@ -6,6 +6,7 @@ import junit.framework.TestSuite;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.Constants;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.SerializationContextImpl;
 import org.apache.axis.message.SOAPBodyElement;
@@ -46,6 +47,8 @@ public class TestFault extends TestCase {
         // Serialize
         MessageContext msgContext = new MessageContext(new AxisServer());
         msgContext.setSOAPConstants(SOAPConstants.SOAP12_CONSTANTS);
+        msgContext.setProperty(Constants.MC_NO_OPERATION_OK, Boolean.TRUE);
+        
         SOAPEnvelope msg = new SOAPEnvelope(SOAPConstants.SOAP12_CONSTANTS);
 
         SOAPFault fault = new SOAPFault(new AxisFault(FAULTCODE, FAULTSUBCODE,
