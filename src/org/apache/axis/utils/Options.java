@@ -115,6 +115,21 @@ public class Options {
         getUser();
         getPassword();
 
+        // Increase log4j verbosity based on number of "-d" options specified.
+        int debug = isFlagSet('d');
+        if (debug>0) {
+            Priority[] allPriorities = Priority.getAllPossiblePriorities(); 
+            Priority currentPriority = Category.getRoot().getPriority();
+            for (int i=0; i<allPriorities.length; i++) {
+                if (currentPriority == allPriorities[i]) {
+                    i += debug;
+                    if (i>=allPriorities.length) i=allPriorities.length-1;
+                    Category.getRoot().setPriority(allPriorities[i]);
+                    break;
+                }
+            }
+        }
+
         // EOASS
         ///////////////////////////////////////////////////////////////////////
     }
