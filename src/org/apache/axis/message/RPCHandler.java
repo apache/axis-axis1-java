@@ -37,6 +37,7 @@ import org.apache.axis.soap.SOAPConstants;
 import org.apache.commons.logging.Log;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
 import java.util.Vector;
@@ -262,7 +263,7 @@ public class RPCHandler extends SOAPHandler
         if (dser == null) {
           if (type != null) {
               dser = context.getDeserializerForType(type);
-              if(null != destClass && dser == null && destClass.isAssignableFrom( org.w3c.dom.Element.class )){
+              if(null != destClass && dser == null && Element.class.isAssignableFrom(destClass)){
                 //If a DOM element is expected, as last resort always allow direct mapping 
                 // of parameter's SOAP xml to a DOM element.  Support of literal  parms by default.
                 dser = context.getDeserializerForType(Constants.SOAP_ELEMENT);
