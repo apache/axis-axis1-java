@@ -121,21 +121,7 @@ public class JavaStubWriter extends JavaWriter {
             isRPC = false;
         }
 
-        pw.println("public class " + className + " extends javax.xml.rpc.Stub implements " + portTypeName + " {");
-
-        pw.println("    private javax.xml.rpc.Service service = null;");
-        pw.println();
-        pw.println("    // If maintainSessionSet is true, then setMaintainSession");
-        pw.println("    // was called and it set the value of maintainSession.");
-        pw.println("    // Use that value when getting the new Call object.");
-        pw.println("    // If maintainSession HAS NOT been set, then the");
-        pw.println("    // Call object uses the default maintainSession");
-        pw.println("    // from the Service.");
-        pw.println("    private boolean maintainSessionSet = false;");
-        pw.println("    private boolean maintainSession = false;");
-        pw.println();
-        pw.println("    private java.net.URL cachedEndpoint = null;");
-        pw.println("    private java.util.Properties cachedProperties = new java.util.Properties();");
+        pw.println("public class " + className + " extends org.apache.axis.client.Stub implements " + portTypeName + " {");
 
         HashSet types = getTypesInPortType(portType);
         if (types.size() > 0) {
@@ -153,16 +139,16 @@ public class JavaStubWriter extends JavaWriter {
 
         pw.println("    public " + className + "(java.net.URL endpointURL, javax.xml.rpc.Service service) throws org.apache.axis.AxisFault {");
         pw.println("         this(service);");
-        pw.println("         cachedEndpoint = endpointURL;");
+        pw.println("         super.cachedEndpoint = endpointURL;");
         pw.println("    }");
         pw.println();
 
         pw.println("    public " + className + "(javax.xml.rpc.Service service) throws org.apache.axis.AxisFault {");
         pw.println("        try {" );
         pw.println("            if (service == null) {");
-        pw.println("                this.service = new org.apache.axis.client.Service();");
+        pw.println("                super.service = new org.apache.axis.client.Service();");
         pw.println("            } else {");
-        pw.println("                this.service = service;");
+        pw.println("                super.service = service;");
         pw.println("            }");
 
         Iterator it = types.iterator();
@@ -177,67 +163,21 @@ public class JavaStubWriter extends JavaWriter {
 
         pw.println("    }");
         pw.println();
-        pw.println("    /**");
-        pw.println("     * Sets the value for a named property. JAX-RPC 1.0 specification"); 
-        pw.println("     * specifies a standard set of properties that may be passed ");
-        pw.println("     * <UL>");
-        pw.println("     * <LI>http.auth.username: Username for the HTTP Basic Authentication");
-        pw.println("     * <LI>http.auth.password: Password for the HTTP Basic Authentication");
-        pw.println("     * <LI>security.auth.subject: JAAS Subject that carries client principal and its credentials");
-        pw.println("     * <LI>encodingstyle.namespace.uri: Encoding style specified as a namespace URI");
-        //pw.println("     * <LI>[TBD: Additional properties]");
-        pw.println("     * </UL>");
-        pw.println("     *");
-        pw.println("     * @param name - Name of the property");
-        pw.println("     * @param value - Value of the property");
-        pw.println("     */");
-        pw.println("    public void _setProperty(String name, Object value) {");
-        pw.println("        cachedProperties.put(name, value);");
-        pw.println("    }");
-        pw.println();
-        pw.println("    // " +
-                JavaUtils.getMessage("from00", "javax.xml.rpc.Stub"));
-        pw.println("    public Object _getProperty(String name) {");
-        pw.println("        return cachedProperties.get(name);");
-        pw.println("    }");
-        pw.println();
-        pw.println("    // " +
-                JavaUtils.getMessage("from00", "javax.xml.rpc.Stub"));
-        pw.println("    public void _setTargetEndpoint(java.net.URL address) {");
-        pw.println("        cachedEndpoint = address;");
-        pw.println("    }");
-        pw.println();
-        pw.println("    // " +
-                JavaUtils.getMessage("from00", "javax.xml.rpc.Stub"));
-        pw.println("    public java.net.URL _getTargetEndpoint() {");
-        pw.println("        return cachedEndpoint;");
-        pw.println("    }");
-        pw.println();
-        pw.println("    public void setMaintainSession(boolean session) {");
-        pw.println("        maintainSessionSet = true;");
-        pw.println("        maintainSession = session;");
-        pw.println("    }");
-        pw.println();
-        pw.println("    // From javax.naming.Referenceable");
-        pw.println("    public javax.naming.Reference getReference() {");
-        pw.println("        return null; // ???");
-        pw.println("    }");
-        pw.println();
         pw.println("    private javax.xml.rpc.Call getCall() throws java.rmi.RemoteException {");
         pw.println("        try {");
         pw.println("            org.apache.axis.client.Call call =");
-        pw.println("                    (org.apache.axis.client.Call) this.service.createCall();");
+        pw.println("                    (org.apache.axis.client.Call) super.service.createCall();");
         pw.println("            if (maintainSessionSet) {");
         pw.println("                call.setMaintainSession(maintainSession);");
         pw.println("            }");
-        pw.println("            if (cachedEndpoint != null) {");
-        pw.println("                call.setTargetEndpointAddress(cachedEndpoint);");
-        pw.println("                call.setProperty(org.apache.axis.transport.http.HTTPTransport.URL, cachedEndpoint.toString());");
+        pw.println("            if (super.cachedEndpoint != null) {");
+        pw.println("                call.setTargetEndpointAddress(super.cachedEndpoint);");
+        pw.println("                call.setProperty(org.apache.axis.transport.http.HTTPTransport.URL, super.cachedEndpoint.toString());");
         pw.println("            }");
-        pw.println("            java.util.Enumeration keys = cachedProperties.keys();");
+        pw.println("            java.util.Enumeration keys = super.cachedProperties.keys();");
         pw.println("            while (keys.hasMoreElements()) {");
         pw.println("                String key = (String) keys.nextElement();");
-        pw.println("                call.setProperty(key, cachedProperties.get(key));");
+        pw.println("                call.setProperty(key, super.cachedProperties.get(key));");
         pw.println("            }");
         if (types.size() > 0) {
             pw.println("            for (int i = 0; i < cachedSerFactories.size(); ++i) {");
@@ -461,7 +401,7 @@ public class JavaStubWriter extends JavaWriter {
         writeComment(pw, operation.getDocumentationElement());
 
         pw.println(parms.signature + "{");
-        pw.println("        if (cachedEndpoint == null) {");
+        pw.println("        if (super.cachedEndpoint == null) {");
         pw.println("            throw new org.apache.axis.NoEndPointException();");
         pw.println("        }");
         pw.println("        javax.xml.rpc.Call call = getCall();");

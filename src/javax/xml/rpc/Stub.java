@@ -54,31 +54,28 @@
  */
 package javax.xml.rpc;
 
-import javax.naming.Referenceable;
-import java.io.Serializable;
-import java.net.URL;
+import java.util.Iterator;
 
 /**
- * Base class for generating Web Service stubs from WSDL. 
+ * Interface for Web Service stubs generated from WSDL. 
  */
-public abstract class Stub implements Serializable, Referenceable {
+public interface Stub {
 
     /**
      * Sets the value for a named property. JAX-RPC 1.0 specification 
      * specifies a standard set of properties that may be passed 
      * to the Stub._setProperty method. These properties include:
      * <UL>
-     * <LI>http.auth.username: Username for the HTTP Basic Authentication
-     * <LI>http.auth.password: Password for the HTTP Basic Authentication
-     * <LI>security.auth.subject: JAAS Subject that carries client principal and its credentials
-     * <LI>encodingstyle.namespace.uri: Encoding style specified as a namespace URI
+     * <LI>javax.xml.rpc.security.auth.username: Username for the HTTP Basic Authentication
+     * <LI>javax.xml.rpc.security.auth.password: Password for the HTTP Basic Authentication
+     * <LI>javax.xml.rpc.service.endpoint.address: Target service endpoint address.
      * <LI>[TBD: Additional properties]
      * </UL>
      *
      * @param name - Name of the property
      * @param value - Value of the property
      */
-    public abstract void _setProperty(String name, Object value);
+    public void _setProperty(String name, Object value);
 
     /**
      * Gets the value of a named property.
@@ -87,22 +84,13 @@ public abstract class Stub implements Serializable, Referenceable {
      *
      * @return the value of a named property.
      */
-    public abstract Object _getProperty(String name);
+    public Object _getProperty(String name);
 
     /**
-     * Sets the endpoint address for the target service port that is to be invoked using a stub instance.
-     *
-     * @param address - String parameter specifies the target endpoint address. The URI scheme for the address must 
-     * correspond to the transport binding for this stub class.
+     * Return the names of configurable properties for this stub class.
      */
-    public abstract void _setTargetEndpoint(URL address);
+    public Iterator _getPropertyNames();
 
-    /**
-     * Gets the endpoint address for a target service port.
-     *
-     * @return Endpoint address configured for this stub instance
-     */
-    public abstract URL _getTargetEndpoint();
-}    // abstract class Stub
+} // interface Stub
 
 
