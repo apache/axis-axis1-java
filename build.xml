@@ -60,7 +60,7 @@ Copyright:
   <property file="build.properties"/>
   <property file="${user.home}/build.properties"/>
 
-  <property name="axis.version" value="beta2+"/>
+  <property name="axis.version" value="beta3"/>
 
   <property name="name" value="axis"/>
   <property name="Name" value="Axis"/>
