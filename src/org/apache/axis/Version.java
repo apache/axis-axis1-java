@@ -74,6 +74,16 @@ public class Version {
     }
     
     /**
+     *  Returns the Axis Version number and build date.
+     *
+     *  Example output: 1.1 Jul 08, 2003 (09:00:12 EDT)
+     **/
+    public static String getVersionText()
+    {
+        return Messages.getMessage("axisVersionRaw") + " " + Messages.getMessage("axisBuiltOnRaw");
+    }
+
+    /**
      * Entry point.
      * 
      * Calling this with no arguments returns the version of the client-side
