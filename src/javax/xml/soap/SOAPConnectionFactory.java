@@ -71,9 +71,8 @@ public abstract class SOAPConnectionFactory {
     public static SOAPConnectionFactory newInstance() throws SOAPException {
 
         try {
-            return (SOAPConnectionFactory) FactoryFinder.find(
-                "javax.xml.soap.SOAPConnectionFactory",
-                "com.sun.xml.messaging.client.p2p.HttpSOAPConnectionFactory");
+            return (SOAPConnectionFactory) FactoryFinder.
+                find(SF_PROPERTY, DEFAULT_SOAP_CONNECTION_FACTORY);
         } catch (Exception exception) {
             throw new SOAPException("Unable to create SOAP connection factory: "
                                     + exception.getMessage());
