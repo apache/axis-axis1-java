@@ -72,6 +72,29 @@ import java.io.*;
  */
 public class TypeMappingRegistry implements Serializer { 
 
+    // default location for save/load
+    private String fileName = null;
+
+    /**
+     * Constructor for persistent registries
+     */
+    public TypeMappingRegistry(String fileName) {
+        this();
+        this.fileName = fileName;
+    }
+
+    /**
+     * Default constructor (transient registry)
+     */
+    public TypeMappingRegistry() {}
+
+    /**
+     * Init (ie. load settings...)
+     */
+    public void init() {
+        // load();
+    }
+
     class SerializerDescriptor implements Serializable {
         QName typeQName;
         Serializer serializer;
@@ -112,6 +135,7 @@ public class TypeMappingRegistry implements Serializer {
                               Serializer serializer) {
         if (s == null) s = new Hashtable();
         s.put(_class, new SerializerDescriptor(qName, serializer));
+        save();
     }
     
     public void addDeserializerFactory(QName qname,
@@ -119,6 +143,7 @@ public class TypeMappingRegistry implements Serializer {
                                        DeserializerFactory deserializerFactory) {
         if (d == null) d= new Hashtable();
         d.put(qname, new DeserializerDescriptor(_class, deserializerFactory));
+        save();
     }
 
     public Serializer getSerializer(Class _class) {
@@ -160,10 +185,12 @@ public class TypeMappingRegistry implements Serializer {
     
     public void removeSerializer(Class _class) {
         if (s != null) s.remove(_class);
+        save();
     }
     
     public void removeDeserializer(QName qname) {
         if (d != null) d.remove(qname);
+        save();
     }
     
     public boolean hasSerializer(Class _class) {
@@ -178,33 +205,38 @@ public class TypeMappingRegistry implements Serializer {
         return false;
     }
     
-    public void save(OutputStream out) throws Exception {
-        Hashtable reg = new Hashtable();
-        reg.put("SERIALIZERS", s);
-        reg.put("DESERIALIZERS", d);
-        ObjectOutputStream oos = new ObjectOutputStream(out);
-        oos.writeObject(reg);
-        oos.close();
-    }
-    
-    public void load(InputStream in) throws Exception {
-        ObjectInputStream ois = new ObjectInputStream(in);
-        Hashtable reg = (Hashtable)ois.readObject();
-        s = (Hashtable)reg.get("SERIALIZERS");
-        d = (Hashtable)reg.get("DESERIALIZERS");
-        ois.close();
-    }
-    
-    public void save(String filename) throws Exception {
-        FileOutputStream fos = new FileOutputStream(filename);
-        save(fos);
-    }
-    
-    public void load(String filename) throws Exception {
-        FileInputStream fis = new FileInputStream(filename);
-        load(fis);
-    }
+    public void save() {
+        if (fileName == null) return;
 
+        try {
+            FileOutputStream out = new FileOutputStream(fileName);
+            Hashtable reg = new Hashtable();
+            if (s!=null) reg.put("SERIALIZERS", s);
+            if (d!=null) reg.put("DESERIALIZERS", d);
+            ObjectOutputStream oos = new ObjectOutputStream(out);
+            oos.writeObject(reg);
+            oos.close();
+        } catch (Exception e) {
+            e.printStackTrace( System.err );
+        }
+    }
+    
+    private void load() {
+        if (fileName == null) return;
+
+        try {
+            FileInputStream in = new FileInputStream(fileName);
+            ObjectInputStream ois = new ObjectInputStream(in);
+            Hashtable reg = (Hashtable)ois.readObject();
+            s = (Hashtable)reg.get("SERIALIZERS");
+            d = (Hashtable)reg.get("DESERIALIZERS");
+            ois.close();
+        } catch (FileNotFoundException fnfe) {
+        } catch (Exception e) {
+            e.printStackTrace( System.err );
+        }
+    }
+    
     public Attributes setTypeAttribute(Attributes attributes, QName type,
                                        SerializationContext context)
     {
