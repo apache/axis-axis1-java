@@ -6,7 +6,6 @@ import org.apache.axis.configuration.XMLStringProvider;
 import org.apache.axis.deployment.wsdd.WSDDConstants;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
-import org.apache.axis.client.Transport;
 import org.apache.axis.encoding.XMLType;
 import org.apache.axis.utils.Options;
 
@@ -53,8 +52,8 @@ public class FileTest {
         call.addParameter( "symbol", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN );
         call.setReturnType( XMLType.XSD_FLOAT );
         call.setTransport( new FileTransport() );
-        call.setProperty(Transport.USER, opts.getUser() );
-        call.setProperty(Transport.PASSWORD, opts.getPassword() );
+        call.setUsername(opts.getUser() );
+        call.setPassword(opts.getPassword() );
         call.setProperty(Call.TIMEOUT, "10000");
 
         Float res = new Float(0.0F);

@@ -141,8 +141,8 @@ public class SimpleSecurityProvider implements SecurityProvider {
             initialize(msgContext);
         }
 
-        String username = msgContext.getStrProp(MessageContext.USERID);
-        String password = msgContext.getStrProp(MessageContext.PASSWORD);
+        String username = msgContext.getUsername();
+        String password = msgContext.getPassword();
 
         if (users != null) {
             if (category.isDebugEnabled()) {

@@ -70,7 +70,6 @@ import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.SOAPHeader;
 import org.apache.axis.client.ServiceClient;
-import org.apache.axis.transport.http.HTTPTransport ;
 import org.apache.axis.utils.*;
 import org.apache.xml.security.signature.XMLSignature;
 import org.w3c.dom.Element;
@@ -84,8 +83,6 @@ public class Client
 	Service service = new Service();
 	Call call = (Call) service.createCall();
 	call.setTargetEndpointAddress(new java.net.URL(opts.getURL()));
-
-	call.setProperty( HTTPTransport.ACTION, "");
 
         SOAPEnvelope env = new SOAPEnvelope();
         SOAPBodyElement sbe = new SOAPBodyElement(XMLUtils.StringToElement("http://localhost:8080/LogTestService","testMethod", ""));

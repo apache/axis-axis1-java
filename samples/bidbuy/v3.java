@@ -5,7 +5,6 @@ import org.apache.axis.client.Service;
 import org.apache.axis.encoding.ser.BeanSerializerFactory;
 import org.apache.axis.encoding.ser.BeanDeserializerFactory;
 import org.apache.axis.encoding.XMLType;
-import org.apache.axis.transport.http.HTTPConstants;
 
 import javax.xml.rpc.ParameterMode;
 import javax.xml.rpc.namespace.QName;
@@ -60,8 +59,8 @@ public class v3 implements vInterface {
       Call     call    = (Call) service.createCall();
 
       call.setTargetEndpointAddress( new URL(serverURL) );
-      call.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, 
-                        "http://www.soapinterop.org/Ping" );
+      call.setUseSOAPAction( true );
+      call.setSOAPActionURI( "http://www.soapinterop.org/Ping" );
       call.setOperationName( new QName("http://www.soapinterop.org/Bid", "Ping" ));
       call.invoke( (Object[]) null );
       return( new Boolean(true) );
@@ -79,8 +78,8 @@ public class v3 implements vInterface {
       Call     call    = (Call) service.createCall();
 
       call.setTargetEndpointAddress( new URL(registryURL) );
-      call.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, 
-                        "http://www.soapinterop.org/LookupAsString" );
+      call.setUseSOAPAction( true );
+      call.setSOAPActionURI( "http://www.soapinterop.org/LookupAsString" );
       call.setOperationName( new QName("http://www.soapinterop.org/Registry", "LookupAsString" ));
       call.addParameter( "ServiceType", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN);
       call.setReturnType( XMLType.XSD_DOUBLE );
@@ -128,8 +127,8 @@ public class v3 implements vInterface {
       call.setTargetEndpointAddress( new URL(serverURL) );
       call.setOperationName(new QName("http://www.soapinterop.org/Bid", "RequestForQuote") );
       call.setReturnType( XMLType.XSD_DOUBLE );
-      call.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, 
-                        "http://www.soapinterop.org/RequestForQuote" );
+      call.setUseSOAPAction( true );
+      call.setSOAPActionURI( "http://www.soapinterop.org/RequestForQuote" );
       call.addParameter( "ProductName", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN);
       call.addParameter( "Quantity", XMLType.XSD_INT, ParameterMode.PARAM_MODE_IN);
       Object r = call.invoke( new Object[] { "widget", new Integer(10) } );
@@ -160,8 +159,8 @@ public class v3 implements vInterface {
       Call     call    = (Call) service.createCall();
 
       call.setTargetEndpointAddress( new URL(serverURL) );
-      call.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, 
-                        "http://www.soapinterop.org/SimpleBuy" );
+      call.setUseSOAPAction( true );
+      call.setSOAPActionURI( "http://www.soapinterop.org/SimpleBuy" );
       call.setOperationName( new QName("http://www.soapinterop.org/Bid", "SimpleBuy") );
       call.setReturnType( XMLType.XSD_STRING );
       call.addParameter( "Address", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN );
@@ -197,8 +196,8 @@ public class v3 implements vInterface {
       Call     call    = (Call) service.createCall();
 
       call.setTargetEndpointAddress( new URL(serverURL) );
-      call.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, 
-                        "http://www.soapinterop.org/Buy" );
+      call.setUseSOAPAction( true );
+      call.setSOAPActionURI( "http://www.soapinterop.org/Buy" );
       call.setReturnType( XMLType.XSD_STRING );
 
       /* sd.addOutputParam("BuyResult",

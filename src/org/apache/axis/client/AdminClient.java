@@ -58,7 +58,6 @@ package org.apache.axis.client ;
 import org.apache.axis.AxisFault;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.message.SOAPBodyElement;
-import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Options;
 import org.apache.log4j.Category;
@@ -308,8 +307,8 @@ public class AdminClient
             throw new Exception(JavaUtils.getMessage("nullCall00"));
 
         call.setTargetEndpointAddress( new URL(opts.getURL()) );
-        call.setProperty( Transport.USER, opts.getUser() );
-        call.setProperty( Transport.PASSWORD, opts.getPassword() );
+        call.setUsername( opts.getUser() );
+        call.setPassword( opts.getPassword() );
 
         String tName = opts.isValueSet( 't' );
         if ( tName != null && !tName.equals("") )
@@ -342,7 +341,8 @@ public class AdminClient
 
         if ( opts != null ) processOpts( opts );
         
-        call.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, "AdminService");
+        call.setUseSOAPAction( true);
+        call.setSOAPActionURI( "AdminService");
 
         Vector result = null ;
         Object[]  params = new Object[] { new SOAPBodyElement(input) };

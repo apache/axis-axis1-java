@@ -58,9 +58,7 @@ package samples.stock ;
 import org.apache.axis.AxisFault;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
-import org.apache.axis.client.Transport;
 import org.apache.axis.encoding.XMLType;
-import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.Options;
 
 import javax.xml.rpc.ParameterMode;
@@ -91,9 +89,8 @@ public class GetInfo {
       call.setOperationName( new QName("urn:cominfo", "getInfo") );
       call.addParameter( "symbol", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN );
       call.addParameter( "info", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN );
-      call.setProperty( Transport.USER, opts.getUser() );
-      call.setProperty( Transport.PASSWORD, opts.getPassword() );
-      call.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, "" );
+      call.setUsername( opts.getUser() );
+      call.setPassword( opts.getPassword() );
 
       String res = (String) call.invoke( new Object[] { args[0], args[1] } );
 

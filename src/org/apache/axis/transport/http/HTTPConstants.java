@@ -95,12 +95,6 @@ public class HTTPConstants {
      */
     public static String MC_HTTP_STATUS_MESSAGE = "transport.http.statusMessage";
 
-    /** String
-     *  This can be moved to MessageContext.TRANS_SOAPACTION if more transports
-     *  have it.
-     */
-    public static String MC_HTTP_SOAPACTION = org.apache.axis.client.Call.SOAPACTION_URI_PROPERTY;
-
     /** HttpServlet
      */
     public static String MC_HTTP_SERVLET        = "transport.http.servlet" ;

@@ -124,12 +124,12 @@ public class LocalSender extends BasicHandler {
         serverContext.setTransportName("local");
 
         // Also copy authentication info if present
-        String user = clientContext.getStrProp(MessageContext.USERID);
+        String user = clientContext.getUsername();
         if (user != null) {
-            serverContext.setProperty(MessageContext.USERID, user);
-            String pass = clientContext.getStrProp(MessageContext.PASSWORD);
+            serverContext.setUsername(user);
+            String pass = clientContext.getPassword();
             if (pass != null)
-                serverContext.setProperty(MessageContext.PASSWORD, pass);
+                serverContext.setPassword(pass);
         }
 
         // set the realpath if possible

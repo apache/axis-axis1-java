@@ -57,7 +57,6 @@ package org.apache.axis.handlers.http;
 import org.apache.axis.AxisFault;
 import org.apache.axis.MessageContext;
 import org.apache.axis.handlers.BasicHandler;
-import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
 
@@ -84,8 +83,7 @@ public class HTTPActionHandler extends BasicHandler
         /** If there's already a targetService then just return.
         */
         if ( msgContext.getServiceHandler() == null ) {
-            String action = (String) msgContext.getProperty(
-                                                            HTTPConstants.MC_HTTP_SOAPACTION);
+            String action = (String) msgContext.getSOAPActionURI();
             category.debug( "  HTTP SOAPAction: " + action );
             
             /** The idea is that this handler only goes in the chain IF this

@@ -62,12 +62,6 @@ import org.apache.axis.MessageContext;
 public class Transport {
 
     /**
-     * Synonyms for MessageContext userid / password.
-     */
-    public static String USER = MessageContext.USERID;
-    public static String PASSWORD = MessageContext.PASSWORD;
-
-    /**
      * Transport Chain Name - so users can change the default.
      */
     public String transportName = null ;
