@@ -292,6 +292,15 @@
     <echo message="axis_nojavadocs=${env.axis_nojavadocs}"/>
 
     <echo message="" />
+    <echo message="-- Network Settings ---"/>
+    <echo message="" />
+    <echo message="http.proxyHost = ${http.proxyHost}" />
+    <echo message="http.proxyPort = ${http.proxyPort}" />
+    <echo message="http.nonProxyHosts = ${http.nonProxyHosts}" />
+    <echo message="http.proxyUser = ${http.proxyUser}" />
+    <echo message="http.proxyPassword = ${http.proxyPassword}" />
+    <echo message="" />
+    
     <echo message="-- Test Environment for AXIS ---"/>
     <echo message="" />
     <echo message="test.functional.remote = ${test.functional.remote}" />
