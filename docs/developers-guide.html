@@ -36,6 +36,7 @@ Table of Contents</h3>
 <br><a href="#Compile And Run">Compile and Run</a>
 <br><a href="#Internationalization">Internationalization</a>
 <br><a href="#Adding Testcases">Adding Testcases</a>
+<br><a href="#CodeChecks">Adding Source Code Checks</a>
 <br><a href="#Debugging">Debugging</a>
 <br><a href="#TCK">Running the JAX-RPC Compatibility Tests</a>
 <br>&nbsp;
@@ -708,6 +709,29 @@ functional-tests</font><font color="#000000"> </font></tt><font color="#000000">
 verify.&nbsp; Check in your test.</font></li>
 
 <br>&nbsp;</ol>
+
+<h2>
+<a NAME="CodeChecks"></a>Adding Source Code Checks</h2>
+The Axis build performs certain automated checks of the files in the
+source directory (java/src) to make sure certain conventions are
+followed such as using internationalised strings when issuing messages.
+<p>
+If a convention can be reduced to a regular expression match,
+it can be enforced at build time by updating
+java/test/utils/TestSrcContent.java.
+<p>
+All that is necessary is to add a pattern to the static FileNameContentPattern
+array.
+Each pattern has three parameters:
+<ol>
+<li>a pattern that matches filenames that are to be checked,</li>
+<li>a pattern to be searched for in the chosen files, and</li>
+<li>a boolean indicating whether the pattern is to be allowed
+(typically false indicating not allowed).</li>
+</ol>
+<p>
+A reasonable summary of the regular expression notation is provided in
+the <a href="http://jakarta.apache.org/oro/api/org/apache/oro/text/regex/package-summary.html">Jakarta ORO javadocs</a>.
 
 <h2>
 <a NAME="Debugging"></a>Debugging</h2>

@@ -132,8 +132,12 @@ public class TestSrcContent extends TestCase {
     };
 
     /**
-     * Check for the following in the input file:
-     *     "org.apache.log4j"
+     * Patterns to be checked. Each pattern has three parameters:
+     *   (i) a pattern that matches filenames that are to be checked,
+     *  (ii) a pattern to be searched for in the chosen files
+     * (iii) whether the pattern is to be allowed (typically false indicating
+     *       not allowed)
+     * See the Axis Developer's Guide for more information.
      */
     private static final FileNameContentPattern avoidPatterns[] =
         {
