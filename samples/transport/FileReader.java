@@ -91,9 +91,15 @@ public class FileReader extends Thread {
 
         Thread.sleep( 100 );   // let the other side finish writing
         FileInputStream fis = new FileInputStream( file );
+
         int thisNum = nextNum++; // increment early to avoid infinite loops
         
         Message msg = new Message( fis );
+        msg.getAsBytes();
+
+        fis.close();
+        file.delete();
+
         MessageContext  msgContext = new MessageContext(server);
         msgContext.setRequestMessage( msg );
 
@@ -112,9 +118,6 @@ public class FileReader extends Thread {
         FileOutputStream fos = new FileOutputStream( "xml" + thisNum + ".res" );
         fos.write( buf );
         fos.close();
-
-        fis.close();
-        file.delete();
       }
       catch( Exception e ) {
         if ( !(e instanceof FileNotFoundException) )
