@@ -189,7 +189,7 @@ public class TestMessages extends TestCase {
                     // The providedParms count is the number of arguments to
                     // getMessage, minus the first argument (key).
                     int providedParms = msgArgs.length - 1;
-                    if (realParms != expectedParms) {
+                    if (realParms != providedParms) {
                         errors = errors + "File:  '" + file.getPath() + "', Key '" + key + "' specifies " + realParms + " {X} parameters, but " + providedParms + " parameter(s) provided." + LS;
                     }
                 }
