@@ -64,6 +64,7 @@ import org.apache.axis.types.HexBinary;
 import org.apache.axis.schema.SchemaVersion;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
+import org.apache.axis.wsdl.symbolTable.SchemaUtils;
 import org.apache.axis.enum.Style;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.attachments.Attachments;
@@ -549,16 +550,7 @@ public class SerializationContextImpl implements SerializationContext
         // and multi-ref'd).
         QName qName = getQNameForClass(javaType);
         if (qName != null && Constants.isSchemaXSD(qName.getNamespaceURI())) {
-            if (qName.equals(Constants.XSD_BOOLEAN) ||
-                qName.equals(Constants.XSD_DOUBLE) ||
-                qName.equals(Constants.XSD_FLOAT) ||
-                qName.equals(Constants.XSD_INT) ||
-                qName.equals(Constants.XSD_LONG) ||
-                qName.equals(Constants.XSD_SHORT) ||
-                qName.equals(Constants.XSD_BYTE) ||
-                qName.equals(Constants.XSD_STRING) ||
-                qName.equals(Constants.XSD_INTEGER) ||
-                qName.equals(Constants.XSD_DECIMAL)) {
+            if (SchemaUtils.isSimpleSchemaType(qName)) {
                 return true;
             }
         }

@@ -68,7 +68,7 @@ import org.apache.axis.utils.JavaUtils;
  */
 public class UnsignedInt extends java.lang.Number implements java.lang.Comparable {
 
-    protected Long lValue;
+    protected Long lValue = new Long(0);
 
     public UnsignedInt() {
     }

@@ -165,6 +165,7 @@ public class JavaTestCaseWriter extends JavaClassWriter {
             Operation op = (Operation) ops.next();
             OperationType type = op.getStyle();
             Parameters params = bEntry.getParameters(op);
+            boolean unsigned = false;  // did we emit an Unsigned constructor
 
             // These operation types are not supported.  The signature
             // will be a string stating that fact.
@@ -279,6 +280,20 @@ public class JavaTestCaseWriter extends JavaClassWriter {
                     } else if (paramType.endsWith("[]")) {
                         pw.print("new "
                                  + JavaUtils.replace(paramType, "[]", "[0]"));
+                    } else if (paramType.equals("org.apache.axis.types.Time")) {
+                        pw.print("new org.apache.axis.types.Time(\"15:45:45.275Z\")");
+                    } else if (paramType.equals("org.apache.axis.types.UnsignedLong")) {
+                        unsigned = true;
+                        pw.print("new org.apache.axis.types.UnsignedLong(0)");
+                    } else if (paramType.equals("org.apache.axis.types.UnsignedInt")) {
+                        unsigned = true;
+                        pw.print("new org.apache.axis.types.UnsignedInt(0)");
+                    } else if (paramType.equals("org.apache.axis.types.UnsignedShort")) {
+                        unsigned = true;
+                        pw.print("new org.apache.axis.types.UnsignedShort(0)");
+                    } else if (paramType.equals("org.apache.axis.types.UnsignedByte")) {
+                        unsigned = true;
+                        pw.print("new org.apache.axis.types.UnsignedByte(0)");
                     } else {
 
                         // We have some constructed type.
@@ -327,6 +342,11 @@ public class JavaTestCaseWriter extends JavaClassWriter {
             pw.print("            ");
             pw.println("throw new junit.framework.AssertionFailedError(\"Remote Exception caught: \" + re);");
             pw.println("        }");
+            if (unsigned) {
+                pw.println("        catch (Exception e) {");
+                pw.println("            // Unsigned constructors can throw - ignore");
+                pw.println("        }");
+            }
             pw.println("    }");
             pw.println();
         }
