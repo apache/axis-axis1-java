@@ -53,7 +53,7 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.handlers ;
+package org.apache.axis.transport.http;
 
 import java.io.* ;
 import java.net.* ;
@@ -62,9 +62,9 @@ import org.w3c.dom.* ;
 import org.xml.sax.InputSource ;
 import org.apache.xerces.parsers.DOMParser ;
 import org.apache.axis.* ;
-import org.apache.axis.transport.http.HTTPConstants ;
 import org.apache.axis.utils.* ;
 import org.apache.axis.message.* ;
+import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.encoding.Base64 ;
 
 /**
@@ -81,11 +81,11 @@ public class HTTPDispatchHandler extends BasicHandler {
     Message  outMsg    = null ;
     String   reqEnv    = null ;
 
-    targetURL = (String) msgContext.getProperty( Constants.MC_TRANS_URL);
+    targetURL = (String) msgContext.getProperty( MessageContext.TRANS_URL);
     try {
       String   host ;
       int      port = 80 ;
-      String   action = (String) msgContext.getProperty( Constants.MC_HTTP_SOAPACTION );
+      String   action = (String) msgContext.getProperty( HTTPConstants.MC_HTTP_SOAPACTION );
       URL      tmpURL        = new URL( targetURL );
       byte[]   buf           = new byte[4097];
       int      rc            = 0 ;
@@ -104,8 +104,8 @@ public class HTTPDispatchHandler extends BasicHandler {
       String        userID = null ;
       String        passwd = null ;
       
-      userID = (String) msgContext.getProperty( Constants.MC_USERID );
-      passwd = (String) msgContext.getProperty( Constants.MC_PASSWORD );
+      userID = (String) msgContext.getProperty( MessageContext.USERID );
+      passwd = (String) msgContext.getProperty( MessageContext.PASSWORD );
 
       if ( userID != null )
         otherHeaders = HTTPConstants.HEADER_AUTHORIZATION + ": Basic " + 
@@ -156,14 +156,14 @@ public class HTTPDispatchHandler extends BasicHandler {
             value = "" ;
           }
           Debug.Print( 2, name + value );
-          if ( msgContext.getProperty(Constants.MC_HTTP_STATUS_CODE) == null ) {
+          if ( msgContext.getProperty(HTTPConstants.MC_HTTP_STATUS_CODE) == null ) {
             // Reader status code
             int start = name.indexOf( ' ' ) + 1 ;
             int end   = name.indexOf( ' ', start ) ;
             rc = Integer.parseInt( name.substring(start, end) );
-            msgContext.setProperty( Constants.MC_HTTP_STATUS_CODE, 
+            msgContext.setProperty( HTTPConstants.MC_HTTP_STATUS_CODE, 
                                     new Integer(rc) );
-            msgContext.setProperty( Constants.MC_HTTP_STATUS_MESSAGE, 
+            msgContext.setProperty( HTTPConstants.MC_HTTP_STATUS_MESSAGE, 
                                     name.substring(end+1));
           }
           else 

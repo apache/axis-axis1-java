@@ -63,6 +63,8 @@ import org.apache.axis.message.* ;
 import org.apache.axis.handlers.* ;
 import org.apache.axis.utils.* ;
 import org.apache.axis.* ;
+import org.apache.axis.transport.http.HTTPConstants;
+import org.apache.axis.transport.http.HTTPDispatchHandler;
 
 /**
  *
@@ -130,7 +132,7 @@ public class HTTPCall {
     RPCBody              body   = new RPCBody( method, args );
     SOAPEnvelope         reqEnv = new SOAPEnvelope();
     SOAPEnvelope         resEnv = null ;
-    HTTPDispatchHandler  client = new HTTPDispatchHandler();
+    Handler              client = new HTTPDispatchHandler();
     Message              reqMsg = new Message( reqEnv, "SOAPEnvelope" );
     Message              resMsg = null ;
     MessageContext       msgContext = new MessageContext( reqMsg );
@@ -156,12 +158,12 @@ public class HTTPCall {
       reqEnv.addHeader( header );
     }
 
-    msgContext.setProperty( Constants.MC_TRANS_URL, url );
-    msgContext.setProperty( Constants.MC_HTTP_SOAPACTION, action );
+    msgContext.setProperty( MessageContext.TRANS_URL, url );
+    msgContext.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, action );
     if ( userID != null ) {
-      msgContext.setProperty( Constants.MC_USERID, userID );
+      msgContext.setProperty( MessageContext.USERID, userID );
       if ( passwd != null )
-        msgContext.setProperty( Constants.MC_PASSWORD, passwd );
+        msgContext.setProperty( MessageContext.PASSWORD, passwd );
     }
     try {
       client.init();

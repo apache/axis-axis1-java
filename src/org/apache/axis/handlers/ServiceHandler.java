@@ -84,7 +84,7 @@ public class ServiceHandler extends BasicHandler {
 
   public void invoke(MessageContext msgContext) throws AxisFault {
     // Let our "real" handler know where we are, so it can get options.
-    msgContext.setProperty( Constants.MC_SVC_HANDLER, this );
+    msgContext.setProperty( MessageContext.SVC_HANDLER, this );
         
     handler.invoke(msgContext);
   }

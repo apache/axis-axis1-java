@@ -64,27 +64,6 @@ public class Constants {
   public static String HANDLER_REGISTRY = "HandlerRegistry" ;
   public static String SERVICE_REGISTRY = "ServiceRegistry" ;
 
-  // MessageContext Property Names
-  // (A hierarchical namespace is strongly suggested 
-  //  in order to lower the chance for conflicts)
-  //////////////////////////////////////////////////////////////////////////
-  public static String MC_SVC_HANDLER   = "service.handler" ;   // Handler
-  
-  public static String MC_TARGET        = "service.target";
-
-  public static String MC_HTTP_STATUS_CODE    = "transport.http.statusCode" ;    
-                                                              // Integer
-  public static String MC_HTTP_STATUS_MESSAGE = "transport.http.statusMessage" ; 
-                                                              // String
-  public static String MC_TRANS_URL           = "transport.url" ;
-                                                              // String
-  // this can be put into MC_TRANS_SOAPACTION if more transports have it
-  public static String MC_HTTP_SOAPACTION     = "transport.soapAction" ;      
-                                                              // String
-  
-  public static String MC_USERID   = "user.id" ;              // String
-  public static String MC_PASSWORD = "user.password" ;        // String
-
   // Envelope Stuff
   //////////////////////////////////////////////////////////////////////////
   public static String NSPREFIX_SOAP_ENV   = "SOAP-ENV" ;

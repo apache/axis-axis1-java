@@ -59,8 +59,27 @@ import java.util.* ;
 import org.apache.axis.* ;
 
 /**
+ * Some more general docs will go here.
+ *
+ * This class also contains constants for accessing some
+ * well-known properties. Using a hierarchical namespace is
+ * strongly suggested in order to lower the chance for
+ * conflicts.
+ *
+ * (These constants should be viewed as an explicit list of well
+ *  known and widely used context keys, there's nothing wrong
+ *  with directly using the key strings. This is the reason for
+ *  the hierarchical constant namespace.
+ *
+ *  Actually I think we might just list the keys in the docs and
+ *  provide no such constants since they create yet another
+ *  namespace, but we'd have no compile-time checks then. 
+ *
+ *  Whaddya think? - todo by Jacek)
+ *
  *
  * @author Doug Davis (dug@us.ibm.com)
+ * @author Jacek Kopecky (jacek@idoox.com)
  */
 public class MessageContext {
     /**
@@ -112,6 +131,40 @@ public class MessageContext {
         outMessage = inMsg ;
     };
 
+    /** Contains an instance of Handler, which is the
+     *  ServiceContext and the entrypoint of this service.
+     *
+     *  (if it has been so configured - will our deployment
+     *   tool do this by default?  - todo by Jacek)
+     */
+    public static String SVC_HANDLER         = "service.handler";
+
+    /** Contains a String that should uniquely identify the
+     *  service that the current message is being sent to
+     */
+    public static String TARGET_SERVICE      = "service.target";
+
+
+    /** This String is the URL that the message came to
+     */
+    public static String TRANS_URL           = "transport.url";
+
+    /** This String identifies the transport through which this
+     *  message has come. This will be (todo) used for
+     *  identifying the transport chain.
+     */
+    public static String TRANS_ID            = "transport.id";
+
+   
+    /** A String with the user's ID (if available)
+     */
+    public static String USERID              = "user.id";
+
+    /** A String with the user's password (if available)
+     */
+    public static String PASSWORD            = "user.password";
+
+   
     public Object getProperty(String propName) {
         if ( bag == null ) return( null );
         return( bag.get(propName) );
