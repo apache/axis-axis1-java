@@ -111,11 +111,11 @@ public class RPCDispatchHandler extends BasicHandler {
                                  "Service name=" + methodName,
                                null, null );  // Should they??
   
-        Debug.Print( 2, "There are " + args.size() + " arg(s)" );
         Class[]  argClasses = null ;
         Object[] argValues  =  null ;
 
         if ( args != null && args.size() > 0 ) {
+          Debug.Print( 2, "There are " + args.size() + " arg(s)" );
           argClasses = new Class[ args.size() ];
           argValues = new Object[ args.size()];
           for ( i = 0 ; i < args.size() ; i++ ) {

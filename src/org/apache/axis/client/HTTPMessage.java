@@ -80,10 +80,11 @@ import org.apache.axis.transport.http.HTTPDispatchHandler;
 // Only supports String
 
 public class HTTPMessage {
-  private String  url    = null ;
-  private String  action = null ;
-  private String  userID = null ;
-  private String  passwd = null ;
+  private String  url              = null ;
+  private String  action           = null ;
+  private String  userID           = null ;
+  private String  passwd           = null ;
+  private String  encodingStyleURI = null ;
 
   // For testing
   public boolean doLocal = false ;
@@ -124,6 +125,14 @@ public class HTTPMessage {
     return( passwd );
   }
 
+  public void setEncodingStyleURI( String uri ) {
+    encodingStyleURI = uri ;
+  }
+
+  public String getEncodingStyleURI() {
+    return( encodingStyleURI );
+  }
+
   public static void invoke(String url, String act, MessageContext mc ) 
       throws AxisFault
   {
@@ -143,6 +152,8 @@ public class HTTPMessage {
       reqEnv = (SOAPEnvelope) inMsg.getAs("SOAPEnvelope");
     else {
       reqEnv = new SOAPEnvelope();
+      if ( encodingStyleURI != null )
+        reqEnv.setEncodingStyleURI( encodingStyleURI );
       SOAPBody  body = new SOAPBody( (Document) inMsg.getAs("Document") );
       reqEnv.addBody( body );
     }
@@ -187,7 +198,7 @@ public class HTTPMessage {
       msgContext.setProperty(MessageContext.TRANS_OUTPUT, "HTTP.output" );
     }
 
-    if ( true ) { // Debug.getDebugLevel() > 0  ) {
+    if ( false ) { // Debug.getDebugLevel() > 0  ) {
       SOAPHeader  header = new SOAPHeader();
       header.setPrefix("d");
       header.setName("Debug");

@@ -82,6 +82,7 @@ public class HTTPCall {
   private String  action ;
   private String  userID ;
   private String  passwd ;
+  private String  encodingStyleURI ;
 
   // For testing
   public  boolean doLocal = false ;
@@ -122,6 +123,14 @@ public class HTTPCall {
     return( passwd );
   }
 
+  public void setEncodingStyleURI( String uri ) {
+    encodingStyleURI = uri ;
+  }
+
+  public String getEncodingStyleURI() {
+    return( encodingStyleURI );
+  }
+
   public static Object invoke(String url, String act, String m, Object[] args) 
       throws AxisFault
   {
@@ -132,9 +141,13 @@ public class HTTPCall {
   }
 
   public Object invoke( String method, Object[] args ) throws AxisFault {
+    RPCBody  body  = new RPCBody( method, args );
+    return( invoke( body ) );
+  }
+
+  public Object invoke( RPCBody body ) throws AxisFault {
     // quote = HTTPCall.invoke( "getQuote", Object[] { "IBM" } );
     Debug.Print( 1, "Enter: HTTPCall.invoke" );
-    RPCBody              body   = new RPCBody( method, args );
     SOAPEnvelope         reqEnv = new SOAPEnvelope();
     SOAPEnvelope         resEnv = null ;
     HTTPMessage          hMsg   = new HTTPMessage( url, action );
@@ -148,12 +161,14 @@ public class HTTPCall {
 
     hMsg.setUserID( userID );
     hMsg.setPassword( passwd );
+    if ( encodingStyleURI != null ) 
+      reqEnv.setEncodingStyleURI( encodingStyleURI );
 
     // for testing - skip HTTP layer
     hMsg.doLocal = this.doLocal ;
 
-    body.setPrefix( "m" );
-    body.setNamespaceURI( action );
+    if ( body.getPrefix() == null )       body.setPrefix( "m" );
+    if ( body.getNamespaceURI() == null ) body.setNamespaceURI( action );
     reqEnv.addBody( body.getAsSOAPBody() );
 
     try {
@@ -169,7 +184,7 @@ public class HTTPCall {
     Document doc = (Document) resMsg.getAs("Document");
     body = new RPCBody( doc.getRootElement() );
     resArgs = body.getArgs();
-    if ( args != null && resArgs.size() > 0 )
+    if ( resArgs != null && resArgs.size() > 0 )
       result = (String) ((RPCArg) resArgs.get(0)).getValue() ;
     Debug.Print( 1, "Exit: HTTPCall.invoke" );
     return( result );
