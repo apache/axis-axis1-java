@@ -123,59 +123,17 @@ public class JavaSkelWriter extends JavaWriter {
 
         // Declare private impl and skeleton base delegates
         pw.println("    private " + implType + ";");
-        pw.println("    private static org.apache.axis.wsdl.SkeletonImpl skel = null;");
+        pw.println("    private static java.util.Hashtable _myOperations = new java.util.Hashtable();");
+        pw.println();
+        pw.println("    public static org.apache.axis.description.OperationDesc getOperationDescByName(String methodName) {");
+        pw.println("        return (org.apache.axis.description.OperationDesc)_myOperations.get(methodName);");
+        pw.println("    }");
         pw.println();
 
-        // Skeleton constructors
-        pw.println("    public " + className + "() {");
-        pw.println("        this.impl = new " + bEntry.getName() + "Impl();");
-        pw.println("        init();");
-        pw.println("    }");
-        pw.println();
-        pw.println("    public " + className + "(" + implType + ") {");
-        pw.println("        this.impl = impl;");
-        pw.println("        init();");
-        pw.println("    }");
-
-        // Initialize operation parameter names & modes
-        pw.println("    public javax.xml.rpc.namespace.QName getParameterName(String opName, int i) {");
-        pw.println("        return skel.getParameterName(opName, i);");
-        pw.println("    }");
-        pw.println();
-        pw.println("    public static javax.xml.rpc.namespace.QName getParameterNameStatic(String opName, int i) {");
-        pw.println("        init();");
-        pw.println("        return skel.getParameterName(opName, i);");
-        pw.println("    }");
-        pw.println();
-        pw.println("    public javax.xml.rpc.ParameterMode getParameterMode(String opName, int i) {");
-        pw.println("        return skel.getParameterMode(opName, i);");
-        pw.println("    }");
-        pw.println();
-        pw.println("    public static javax.xml.rpc.ParameterMode getParameterModeStatic(String opName, int i) {");
-        pw.println("        init();");
-        pw.println("        return skel.getParameterMode(opName, i);");
-        pw.println("    }");
-        pw.println();
-        pw.println("    public static String getInputNamespaceStatic(String opName) {");
-        pw.println("        init();");
-        pw.println("        return skel.getInputNamespace(opName);");
-        pw.println("    }");
-        pw.println();
-        pw.println("    public static String getOutputNamespaceStatic(String opName) {");
-        pw.println("        init();");
-        pw.println("        return skel.getOutputNamespace(opName);");
-        pw.println("    }");
-        pw.println();
-        pw.println("    public static String getSOAPAction(String opName) {");
-        pw.println("        init();");
-        pw.println("        return skel.getSOAPAction(opName);");
-        pw.println("    }");
-        pw.println();
         // Initialize operation parameter names
-        pw.println("    protected static void init() {");
-        pw.println("        if (skel != null) ");
-        pw.println("            return;");
-        pw.println("        skel = new org.apache.axis.wsdl.SkeletonImpl();");
+        pw.println("    static {");
+        pw.println("        org.apache.axis.description.OperationDesc _oper;");
+        pw.println("        org.apache.axis.description.ParameterDesc [] _params;");
         List operations = binding.getBindingOperations();
         for (int i = 0; i < operations.size(); ++i) {
             BindingOperation operation = (BindingOperation) operations.get(i);
@@ -185,89 +143,99 @@ public class JavaSkelWriter extends JavaWriter {
             if (parameters != null) {
                 // The invoked java name of the operation is stored.
                 String opName = Utils.xmlNameToJava(operation.getOperation().getName());
-                pw.println("        skel.add(\"" + opName + "\",");
-                pw.println("                 new javax.xml.rpc.namespace.QName[] {");
-                if (parameters.returnType != null) {
-                    pw.println("                   " + 
-                               Utils.getNewQName(parameters.returnName) + ",");
-                } else {
-                    pw.println("                   null,");
-                }
+                pw.println("        _params = new org.apache.axis.description.ParameterDesc [] {");
+
                 for (int j=0; j < parameters.list.size(); j++) {
                     Parameter p = (Parameter) parameters.list.get(j);
-                    pw.println("                   " + 
+                    String modeStr;
+                    switch (p.getMode()) {
+                        case Parameter.IN:
+                            modeStr = "org.apache.axis.description.ParameterDesc.IN";
+                            break;
+                        case Parameter.OUT:
+                            modeStr = "org.apache.axis.description.ParameterDesc.OUT";
+                            break;
+                        case Parameter.INOUT:
+                            modeStr = "org.apache.axis.description.ParameterDesc.INOUT";
+                            break;
+                        default:
+                            throw new IOException();
+                    }
+                    pw.println("            new org.apache.axis.description.ParameterDesc(" +
                        Utils.getNewQName(Utils.getAxisQName(p.getQName())) +
-                       ",");
+                       ", " + modeStr + ", null),");
                 }
-                pw.println("                 },"); 
-                pw.println("                 new javax.xml.rpc.ParameterMode[] {");
+
+                pw.println("        };");
+//                if (parameters.returnType != null) {
+//                    pw.println("                   " +
+//                               Utils.getNewQName(parameters.returnName) + ",");
+//                } else {
+//                    pw.println("                   null,");
+//                }
+
+//                // Find the input clause's namespace
+//                BindingInput input = operation.getBindingInput();
+//                if (input == null) {
+//                    pw.println("                 null,");
+//                }
+//                else {
+//                    List elems = input.getExtensibilityElements();
+//                    boolean found = false;
+//                    Iterator it = elems.iterator();
+//                    while (!found && it.hasNext()) {
+//                        ExtensibilityElement elem = (ExtensibilityElement) it.next();
+//                        if (elem instanceof SOAPBody) {
+//                            SOAPBody body = (SOAPBody) elem;
+//                            String ns = body.getNamespaceURI();
+//                            if (ns != null) {
+//                                pw.println("                 \"" + ns + "\",");
+//                                found = true;
+//                            }
+//                        }
+//                    }
+//                    if (!found) {
+//                        pw.println("                 null,");
+//                    }
+//                }
+//
+//                // Find the output clause's namespace
+//                BindingOutput output = operation.getBindingOutput();
+//                if (output == null) {
+//                    pw.println("                 null,");
+//                }
+//                else {
+//                    List elems = output.getExtensibilityElements();
+//                    Iterator it = elems.iterator();
+//                    boolean found = false;
+//                    while (!found && it.hasNext()) {
+//                        ExtensibilityElement elem = (ExtensibilityElement) it.next();
+//                        if (elem instanceof SOAPBody) {
+//                            SOAPBody body = (SOAPBody) elem;
+//                            String ns = body.getNamespaceURI();
+//                            if (ns != null) {
+//                                pw.println("                 \"" + ns + "\",");
+//                                found = true;
+//                            }
+//                        }
+//                    }
+//                    if (!found) {
+//                        pw.println("                 null,");
+//                    }
+//                }
+//
+//                if (!found) {
+//                    pw.println("                 null);");
+//                }
+                String returnStr;
                 if (parameters.returnType != null) {
-                    pw.println("                   javax.xml.rpc.ParameterMode.OUT,");
+                    returnStr = Utils.getNewQName(parameters.returnName);
                 } else {
-                    pw.println("                   null,");
+                    returnStr = "null";
                 }
-                for (int j=0; j < parameters.list.size(); j++) {
-                    Parameter p = (Parameter) parameters.list.get(j);
-                    if (p.getMode() == Parameter.IN)
-                        pw.println("                   javax.xml.rpc.ParameterMode.IN,");
-                    else if (p.getMode() == Parameter.OUT) 
-                        pw.println("                   javax.xml.rpc.ParameterMode.INOUT,");
-                    else
-                        pw.println("                   javax.xml.rpc.ParameterMode.OUT,");
+                pw.println("        _oper = new org.apache.axis.description.OperationDesc(\"" +
+                            opName + "\", _params, " + returnStr + ");");
 
-                }
-                pw.println("                 },");
-
-                // Find the input clause's namespace
-                BindingInput input = operation.getBindingInput();
-                if (input == null) {
-                    pw.println("                 null,");
-                }
-                else {
-                    List elems = input.getExtensibilityElements();
-                    boolean found = false;
-                    Iterator it = elems.iterator();
-                    while (!found && it.hasNext()) {
-                        ExtensibilityElement elem = (ExtensibilityElement) it.next();
-                        if (elem instanceof SOAPBody) {
-                            SOAPBody body = (SOAPBody) elem;
-                            String ns = body.getNamespaceURI();
-                            if (ns != null) {
-                                pw.println("                 \"" + ns + "\",");
-                                found = true;
-                            }
-                        }
-                    }
-                    if (!found) {
-                        pw.println("                 null,");
-                    }
-                }
-                
-                // Find the output clause's namespace
-                BindingOutput output = operation.getBindingOutput();
-                if (output == null) {
-                    pw.println("                 null,");
-                }
-                else {
-                    List elems = output.getExtensibilityElements();
-                    Iterator it = elems.iterator();
-                    boolean found = false;
-                    while (!found && it.hasNext()) {
-                        ExtensibilityElement elem = (ExtensibilityElement) it.next();
-                        if (elem instanceof SOAPBody) {
-                            SOAPBody body = (SOAPBody) elem;
-                            String ns = body.getNamespaceURI();
-                            if (ns != null) {
-                                pw.println("                 \"" + ns + "\",");
-                                found = true;
-                            }
-                        }
-                    }
-                    if (!found) {
-                        pw.println("                 null,");
-                    }
-                }
-                
                 // Find the SOAPAction.
                 List elems = operation.getExtensibilityElements();
                 Iterator it = elems.iterator();
@@ -278,18 +246,26 @@ public class JavaSkelWriter extends JavaWriter {
                         SOAPOperation soapOp = (SOAPOperation) elem;
                         String action = soapOp.getSoapActionURI();
                         if (action != null) {
-                            pw.println("                 \"" + action + "\");");
+                            pw.println("        _oper.setSoapAction(\"" + action + "\");");
                             found = true;
                         }
                     }
                 }
-                if (!found) {
-                    pw.println("                 null);");
-                }
-            }       
+
+                pw.println("        _myOperations.put(\"" + opName + "\", _oper);");
+            }
         }
         pw.println("    }");
         pw.println();
+
+        // Skeleton constructors
+        pw.println("    public " + className + "() {");
+        pw.println("        this.impl = new " + bEntry.getName() + "Impl();");
+        pw.println("    }");
+        pw.println();
+        pw.println("    public " + className + "(" + implType + ") {");
+        pw.println("        this.impl = impl;");
+        pw.println("    }");
 
         // Now write each of the operation methods
         for (int i = 0; i < operations.size(); ++i) {

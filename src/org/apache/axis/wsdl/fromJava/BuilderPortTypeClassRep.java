@@ -55,6 +55,7 @@
 package org.apache.axis.wsdl.fromJava;
 
 import java.util.Vector;
+import java.util.List;
 
 /**
  * BuilderPortTypeClassRep:
@@ -77,7 +78,7 @@ public interface BuilderPortTypeClassRep {
      * @param implClass  An optional implClass can be passed in that implements/extends cls.
      *                   The purpose of the implClass is to find method parameter names.             
      **/
-    public ClassRep build(Class cls, boolean inhMethods, Vector stopClasses, Class implClass);
+    public ClassRep build(Class cls, boolean inhMethods, List stopClasses, Class implClass);
 
     /**
      * Returns a list of MethodReps to be used for portType operation processing.

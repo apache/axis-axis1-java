@@ -55,6 +55,7 @@
 package org.apache.axis.wsdl.fromJava;
 
 import java.util.Vector;
+import java.util.List;
 
 /**
  * DefaultBuilderPortTypeClassRep:
@@ -80,7 +81,7 @@ public class DefaultBuilderPortTypeClassRep implements BuilderPortTypeClassRep {
      * @param implClass  An optional implClass can be passed in that implements/extends cls.
      *                   The purpose of the implClass is to find method parameter names.             
      **/
-    public ClassRep build(Class cls, boolean inhMethods, Vector stopClasses, Class implClass) {
+    public ClassRep build(Class cls, boolean inhMethods, List stopClasses, Class implClass) {
         // Constructs a default ClassRep from the class
         // The Java2WSDL code examines the names/methods/params in ClassRep (and its super classes)
         // when constructing complexTypes.  So if you want to change the WSDL

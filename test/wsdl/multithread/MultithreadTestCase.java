@@ -34,6 +34,12 @@ public class MultithreadTestCase extends TestCase {
             LogFactory.getLog(MultithreadTestCase.class.getName());
 
     private AddressBook binding;
+    private static int successCount = 0;
+
+    static synchronized void addSuccess()
+    {
+        successCount++;
+    }
 
     public MultithreadTestCase(String name) {
         super(name);
@@ -86,6 +92,8 @@ public class MultithreadTestCase extends TestCase {
                     
                     binding.addEntry("hi", address); 
                     Address addressRet = binding.getAddressFromName("hi");
+                    // succeeded, count it.
+                    addSuccess();
                 }
             } catch (Throwable t) {
                 // There are bound to be connection refused exceptions when the
@@ -113,18 +121,22 @@ public class MultithreadTestCase extends TestCase {
         }
         assertTrue("binding is null", binding != null);
         ((AddressBookSOAPBindingStub) binding).setMaintainSession(true);
-        Thread[] threads = new Thread[100];
-        for (int i = 0; i < 100; ++i) {
+        int NUM_THREADS = 100;
+        Thread[] threads = new Thread[NUM_THREADS];
+        for (int i = 0; i < NUM_THREADS; ++i) {
             threads[i] = new Thread(new Run());
             threads[i].start();
         }
-        for (int i = 0; i < 100; ++i) {
+        for (int i = 0; i < NUM_THREADS; ++i) {
             try {
                 threads[i].join();
             }
             catch (InterruptedException ie) {
             }
         }
+        System.out.println("Had " + successCount +
+                           " successes (of a possible " +
+                           (NUM_THREADS * 4) + ")");
         if (error != null) {
             throw error;
         }

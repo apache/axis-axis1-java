@@ -100,6 +100,12 @@ public class OperationDesc {
     /** The number of "in" params (i.e. IN or INOUT) for this operation */
     private int numInParams = 0;
 
+    /** A unique SOAPAction value for this operation */
+    private String soapAction = null;
+
+    /** Faults for this operation */
+    private ArrayList faults = null;
+
     /**
      * Default constructor.
      */
@@ -169,6 +175,14 @@ public class OperationDesc {
 
     public void setParent(ServiceDesc parent) {
         this.parent = parent;
+    }
+
+    public String getSoapAction() {
+        return soapAction;
+    }
+
+    public void setSoapAction(String soapAction) {
+        this.soapAction = soapAction;
     }
 
     public void setStyle(int style)
@@ -299,6 +313,18 @@ public class OperationDesc {
             }
         }
         return result;
+    }
+
+    public void addFault(FaultDesc fault)
+    {
+        if (faults == null)
+            faults = new ArrayList();
+        faults.add(fault);
+    }
+
+    public ArrayList getFaults()
+    {
+        return faults;
     }
 }
 

@@ -182,8 +182,8 @@ public class WSDDService
 // This is likely no good - need to figure out which classloader to use
 // and load the class when needed (for instance when the ServiceDesc is
 // requested....  --Glen
-//                Class cls = Class.forName(className);
-//                desc.setImplClass(cls);
+                Class cls = Class.forName(className);
+                desc.setImplClass(cls);
                 initTMR();
                 String encStyle = Constants.URI_SOAP_ENC;
                 desc.setTypeMapping((TypeMapping)tmr.getTypeMapping(encStyle));
