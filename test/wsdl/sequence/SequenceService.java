@@ -78,7 +78,7 @@ public class SequenceService {
                 success = true;
         }
 
-        resultElement = retDoc.createElement("return");
+        resultElement = retDoc.createElementNS(null,"return");
 
         String resultStr = "false";
         if (success) {

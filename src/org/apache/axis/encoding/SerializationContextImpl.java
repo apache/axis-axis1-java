@@ -403,6 +403,9 @@ public class SerializationContextImpl implements SerializationContext
             if (prefix == null) {
                 if (defaultPrefix == null) {
                     prefix = "ns" + lastPrefixIndex++;
+                    while(nsStack.getNamespaceURI(prefix)!=null) {
+                        prefix = "ns" + lastPrefixIndex++;    
+                    }
                 } else {
                     prefix = defaultPrefix;
                 }

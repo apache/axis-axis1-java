@@ -23,7 +23,7 @@ public class FaultServiceSoapBindingImpl implements test.wsdl.faults.FaultServic
     public int throwExtensionFault(java.lang.String description) throws java.rmi.RemoteException, test.wsdl.faults.ExtensionFault {
         ExtensionType extension = new ExtensionType();
         try {
-            extension.set_any(new MessageElement[] {new MessageElement(XMLUtils.newDocument().createElement(description))});
+            extension.set_any(new MessageElement[] {new MessageElement(XMLUtils.newDocument().createElementNS(null,description))});
         } catch (Exception e) {
             throw new java.rmi.RemoteException(e.getMessage());
         }
