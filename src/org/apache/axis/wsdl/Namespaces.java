@@ -55,7 +55,6 @@
 package org.apache.axis.wsdl;
 
 import java.io.File;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;

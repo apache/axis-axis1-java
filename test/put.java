@@ -1,7 +1,6 @@
 package test;
 
 import org.apache.axis.Message;
-import org.apache.axis.MessageContext;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.apache.axis.transport.http.HTTPTransport;

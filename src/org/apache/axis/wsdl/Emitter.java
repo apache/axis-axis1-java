@@ -59,10 +59,8 @@ import com.ibm.wsdl.extensions.soap.SOAPBody;
 import com.ibm.wsdl.extensions.soap.SOAPOperation;
 import com.ibm.wsdl.xml.WSDLReader;
 import org.apache.axis.utils.XMLUtils;
-import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 import javax.wsdl.Binding;
@@ -87,15 +85,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
-import java.util.StringTokenizer;
 import java.util.Vector;
 
 /**

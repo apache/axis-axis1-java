@@ -55,9 +55,9 @@
 
 package org.apache.axis.encoding;
 
-import javax.xml.rpc.namespace.QName;
 import org.xml.sax.Attributes;
 
+import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;

@@ -55,10 +55,10 @@
 
 package org.apache.axis ;
 
-import javax.xml.rpc.namespace.QName;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import javax.xml.rpc.namespace.QName;
 import java.io.Serializable;
 import java.util.Hashtable;
 

@@ -55,10 +55,10 @@
 
 package org.apache.axis.encoding;
 
-import javax.xml.rpc.namespace.QName;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
 
 /**

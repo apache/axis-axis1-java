@@ -1,10 +1,9 @@
 package org.apache.axis.resolver.sd.schema;
 
-import java.util.HashMap;
-import javax.xml.rpc.namespace.QName;
 import org.apache.axis.Handler;
 import org.apache.axis.SimpleTargetedChain;
 
+import javax.xml.rpc.namespace.QName;
 import java.util.HashMap;
 
 /**

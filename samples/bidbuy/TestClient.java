@@ -55,16 +55,16 @@
 
 package samples.bidbuy ;
 
-import org.apache.axis.client.Service;
 import org.apache.axis.client.Call;
+import org.apache.axis.client.Service;
 import org.apache.axis.encoding.BeanSerializer;
+import org.apache.axis.encoding.XMLType;
 import org.apache.axis.transport.http.HTTPTransport;
 import org.apache.axis.utils.Options;
-import org.apache.axis.encoding.XMLType;
-import javax.xml.rpc.namespace.QName;
 
-import java.util.Date;
+import javax.xml.rpc.namespace.QName;
 import java.net.URL;
+import java.util.Date;
 
 
 /**

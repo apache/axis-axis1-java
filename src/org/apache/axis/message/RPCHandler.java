@@ -12,12 +12,12 @@ import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.utils.AxisClassLoader;
-import javax.xml.rpc.namespace.QName;
 import org.apache.axis.utils.cache.JavaClass;
 import org.apache.log4j.Category;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+import javax.xml.rpc.namespace.QName;
 import java.lang.reflect.Method;
 import java.util.Vector;
 

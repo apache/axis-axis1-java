@@ -56,11 +56,11 @@
 package org.apache.axis ;
 
 import org.apache.axis.handlers.BasicHandler;
-import javax.xml.rpc.namespace.QName;
 import org.apache.log4j.Category;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import javax.xml.rpc.namespace.QName;
 import java.util.Enumeration;
 
 /**

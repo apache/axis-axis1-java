@@ -56,6 +56,7 @@
 package org.apache.axis;
 
 import org.apache.axis.utils.QFault;
+
 import javax.xml.rpc.namespace.QName;
 
 public class Constants {

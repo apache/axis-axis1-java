@@ -57,7 +57,6 @@ package samples.userguide.example4;
 
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
-import org.apache.axis.encoding.XMLType;
 import org.apache.axis.utils.Options;
 
 public class Client

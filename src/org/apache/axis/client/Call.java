@@ -71,11 +71,11 @@ import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPFaultElement;
 import org.apache.axis.message.SOAPHeader;
-import javax.xml.rpc.encoding.XMLType;
-import javax.xml.rpc.namespace.QName;
 import org.apache.axis.transport.http.HTTPTransport;
 import org.apache.log4j.Category;
 
+import javax.xml.rpc.encoding.XMLType;
+import javax.xml.rpc.namespace.QName;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.MalformedURLException;

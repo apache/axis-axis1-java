@@ -59,28 +59,17 @@ import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
-import org.apache.axis.configuration.FileProvider;
 import org.apache.axis.encoding.DeserializerFactory;
-import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.ServiceDescription;
-import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.message.RPCElement;
-import org.apache.axis.message.RPCParam;
-import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.message.SOAPFaultElement;
 import org.apache.axis.message.SOAPHeader;
-import org.apache.axis.transport.http.HTTPTransport;
-import javax.xml.rpc.namespace.QName;
 import org.apache.log4j.Category;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import javax.xml.rpc.namespace.QName;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.Vector;
 
 /**

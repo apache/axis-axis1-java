@@ -60,11 +60,11 @@ import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.SAX2EventRecorder;
 import org.apache.axis.message.SAXOutputter;
 import org.apache.axis.message.SOAPHandler;
-import javax.xml.rpc.namespace.QName;
 import org.apache.log4j.Category;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+import javax.xml.rpc.namespace.QName;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;

@@ -58,8 +58,6 @@ import org.apache.axis.Handler;
 import org.apache.axis.SimpleTargetedChain;
 import org.apache.axis.deployment.DeployableItem;
 import org.apache.axis.deployment.DeploymentRegistry;
-import javax.xml.rpc.namespace.QName;
-
 import org.apache.axis.deployment.v2dd.providers.V2DDComProvider;
 import org.apache.axis.deployment.v2dd.providers.V2DDScriptProvider;
 import org.apache.axis.providers.BSFProvider;
@@ -67,6 +65,7 @@ import org.apache.axis.providers.BasicProvider;
 import org.apache.axis.providers.ComProvider;
 import org.apache.axis.providers.java.RPCProvider;
 
+import javax.xml.rpc.namespace.QName;
 import java.io.Serializable;
 
 /**

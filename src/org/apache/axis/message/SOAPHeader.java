@@ -58,10 +58,11 @@ package org.apache.axis.message;
 import org.apache.axis.Constants;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.SerializationContext;
-import javax.xml.rpc.namespace.QName;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
+
+import javax.xml.rpc.namespace.QName;
 
 /** A simple header abstraction.  Extends MessageElement with header-specific
  * stuff like mustUnderstand, actor, and a 'processed' flag.

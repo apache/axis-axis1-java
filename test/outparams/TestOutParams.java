@@ -2,11 +2,11 @@ package test.outparams;
 
 import junit.framework.TestCase;
 import org.apache.axis.Constants;
-import org.apache.axis.encoding.XMLType;
 import org.apache.axis.Handler;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.client.Call;
+import org.apache.axis.encoding.XMLType;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.SOAPEnvelope;

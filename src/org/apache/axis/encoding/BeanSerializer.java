@@ -57,11 +57,11 @@ package org.apache.axis.encoding;
 
 import org.apache.axis.message.SOAPHandler;
 import org.apache.axis.utils.JavaUtils;
-import javax.xml.rpc.namespace.QName;
 import org.apache.log4j.Category;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+import javax.xml.rpc.namespace.QName;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;

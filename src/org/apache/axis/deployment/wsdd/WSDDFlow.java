@@ -55,12 +55,13 @@
 package org.apache.axis.deployment.wsdd;
 
 import org.apache.axis.Chain;
-import javax.xml.rpc.namespace.QName;
 import org.apache.axis.Handler;
 import org.apache.axis.deployment.DeploymentRegistry;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+
+import javax.xml.rpc.namespace.QName;
 
 
 /**

@@ -7,11 +7,10 @@
 
 package test.import_.binding1;
 
-import java.rmi.RemoteException;
-
 import test.import_.iface.Import;
-
 import test.import_.types.Address;
+
+import java.rmi.RemoteException;
 
 public class ImportBinding1Impl implements Import {
     public void addEntry(String key, Address value) throws RemoteException {

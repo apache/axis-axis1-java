@@ -1,21 +1,17 @@
 package samples.bidbuy ;
 
-import org.apache.axis.client.Service;
 import org.apache.axis.client.Call;
+import org.apache.axis.client.Service;
 import org.apache.axis.encoding.BeanSerializer;
-import org.apache.axis.encoding.SOAPTypeMappingRegistry;
-import org.apache.axis.message.RPCElement;
-import org.apache.axis.message.RPCParam;
-import org.apache.axis.transport.http.HTTPTransport;
-import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.encoding.XMLType;
-import javax.xml.rpc.namespace.QName;
+import org.apache.axis.transport.http.HTTPConstants;
 
+import javax.xml.rpc.namespace.QName;
 import java.math.BigDecimal;
+import java.net.URL;
 import java.util.Date;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import java.net.URL;
 
 public class v3 implements vInterface {
   public void register(String registryURL, samples.bidbuy.Service s) 

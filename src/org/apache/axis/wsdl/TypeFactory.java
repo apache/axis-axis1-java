@@ -59,7 +59,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.wsdl.QName;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;

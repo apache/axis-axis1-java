@@ -1,10 +1,10 @@
 package org.apache.axis.resolver.sd.schema;
 
 import org.apache.axis.Handler;
-import javax.xml.rpc.namespace.QName;
 import org.apache.axis.resolver.Resolver;
 import org.xml.sax.helpers.DefaultHandler;
 
+import javax.xml.rpc.namespace.QName;
 import java.util.HashMap;
 
 /**
