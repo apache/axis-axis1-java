@@ -676,15 +676,6 @@ public class Emitter {
                          Constants.NS_URI_XMLSOAP);
         namespaces.putPrefix(Constants.NS_URI_XMLSOAP,
                              Constants.NS_PREFIX_XMLSOAP);
-        
-        // This is a temporary fix to address a regression (from 1.0 to 1.1
-        // in the way org.w3c.dom.Document objects are handled.  Without
-        // this namespace declaration, Java2WSDL throws a fit.  We need to 
-        // find an appropriate mapping for Document objects (they should
-        // be treated the same as Element objects) and rework the code
-        // accordingly.                     
-        def.addNamespace("w3c", "http://dom.w3c.org");
-        namespaces.putPrefix("http://dom.w3c.org", "w3c");
     }
 
    /**

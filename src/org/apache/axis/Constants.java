@@ -619,6 +619,7 @@ public class Constants {
 
     public static final QName SOAP_MAP = new QName(NS_URI_XMLSOAP, "Map");
     public static final QName SOAP_ELEMENT = new QName(NS_URI_XMLSOAP, "Element");
+    public static final QName SOAP_DOCUMENT = new QName(NS_URI_XMLSOAP, "Document");
     public static final QName SOAP_VECTOR = new QName(NS_URI_XMLSOAP, "Vector");
     public static final QName MIME_IMAGE = new QName(NS_URI_XMLSOAP, "Image");
     public static final QName MIME_PLAINTEXT = new QName(NS_URI_XMLSOAP, "PlainText");
