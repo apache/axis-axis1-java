@@ -190,7 +190,7 @@ public class JWSProcessor extends BasicHandler
 
                     Document doc = XMLUtils.newDocument();
 
-                    Element         root = doc.createElement( "Errors" );
+                    Element         root = doc.createElementNS("", "Errors");
                     StringBuffer    sbuf = new StringBuffer();
                     FileReader      inp  = new FileReader( errFile );
 
