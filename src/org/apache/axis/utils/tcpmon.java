@@ -377,6 +377,10 @@ public class tcpmon extends JFrame {
         SocketRR     rr2 = null ;
         InputStream  inputStream ;
 
+        String       proxyHost = null ;
+        int          proxyPort = 80 ;
+
+
         public Connection(Listener l, Socket s ) {
             listener = l ;
             inSocket = s ;
@@ -392,6 +396,17 @@ public class tcpmon extends JFrame {
         public void run() {
             try {
                 active        = true ;
+
+                proxyHost = System.getProperty( "http.proxyHost" );
+                if ( proxyHost != null && proxyHost.equals("") )
+                    proxyHost = null ;
+                
+                if ( proxyHost != null ) {
+                    String tmp = System.getProperty( "http.proxyPort" );
+                    if ( tmp != null && tmp.equals("") ) tmp = null ;
+                    if ( tmp == null ) proxyPort = 80 ;
+                    else proxyPort = Integer.parseInt( tmp );
+                }
 
                 if ( inSocket != null ) {
                   InetAddress  h  = inSocket.getInetAddress();
@@ -449,7 +464,7 @@ public class tcpmon extends JFrame {
                 String         bufferedData = null ;
                 StringBuffer   buf = null ;
 
-                if ( listener.isProxyBox.isSelected() ) {
+                if ( listener.isProxyBox.isSelected() || proxyHost != null ) {
                     // Check if we're a proxy
                     int          ch ;
                     byte[]       b = new byte[1];
@@ -480,17 +495,35 @@ public class tcpmon extends JFrame {
                         end   = bufferedData.indexOf( ' ', start );
                         String tmp = bufferedData.substring( start, end );
                         if ( tmp.charAt(0) == '/' ) tmp = tmp.substring(1);
-                        url = new URL( tmp );
-                        targetHost = url.getHost();
-                        targetPort = url.getPort();
-                        if ( targetPort == -1 ) targetPort = 80 ;
-                        int index = listener.connections.indexOf( this );
-                        listener.tableModel.setValueAt( targetHost, index+1, 
-                                                        OUTHOST_COLUMN );
 
-                        bufferedData = bufferedData.substring( 0, start) +
-                                       url.getFile() +
-                                       bufferedData.substring( end );
+                        int index = listener.connections.indexOf( this );
+
+                        if ( listener.isProxyBox.isSelected() ) {
+                            url = new URL( tmp );
+                            targetHost = url.getHost();
+                            targetPort = url.getPort();
+                            if ( targetPort == -1 ) targetPort = 80 ;
+
+                            listener.tableModel.setValueAt( targetHost, index+1,
+                                                            OUTHOST_COLUMN );
+                            bufferedData = bufferedData.substring( 0, start) +
+                                           url.getFile() +
+                                           bufferedData.substring( end );
+                        }
+                        else {
+                            url = new URL( "http://" + targetHost + ":" + 
+                                           targetPort + "/" + tmp );
+
+                            listener.tableModel.setValueAt( targetHost, index+1,
+                                                            OUTHOST_COLUMN );
+                            bufferedData = bufferedData.substring( 0, start) +
+                                           url.toExternalForm() + 
+                                           bufferedData.substring( end );
+
+                            targetHost = proxyHost ;
+                            targetPort = proxyPort ;
+                        }
+
                     }
                 }
 
