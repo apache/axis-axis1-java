@@ -237,9 +237,9 @@ public abstract class TestClient {
         test("String      ", "abcdefg");
         test("StringArray ", new String[] {"abc", "def"});
         test("Integer     ", new Integer(42));
-        test("IntegerArray", new Integer[] {new Integer(42)});
+        test("IntegerArray", new int[] {42});
         test("Float       ", new Float(3.7F));
-        test("FloatArray  ", new Float[] {new Float(3.7F), new Float(7F)});
+        test("FloatArray  ", new float[] {3.7F, 7F});
         test("Struct      ", new SOAPStruct(5, "Hello", 10.3F));
         test("StructArray ", new SOAPStruct[] {
           new SOAPStruct(1, "one", 1.1F),
@@ -305,7 +305,8 @@ public abstract class TestClient {
                             ((Exception)gotBack).printStackTrace();
                         }
                     }
-                    System.out.println(method + "\t " + message + gotBack);
+                    System.out.println(method + "\t " + message +
+                                       gotBack + " expected " + sent);
                 }
             }
         };

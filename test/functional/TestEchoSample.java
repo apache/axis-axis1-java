@@ -87,7 +87,7 @@ public class TestEchoSample extends TestCase {
         // define the tests using JUnit assert facilities
         TestClient client = new TestClient() {
             public void verify(String method, Object sent, Object gotBack) {
-                assertTrue("What was sent was not recieved--" + method + ": " + gotBack, equals(sent, gotBack));
+                assertTrue("What was sent was not received--" + method + ": " + gotBack, equals(sent, gotBack));
             }
         };
 

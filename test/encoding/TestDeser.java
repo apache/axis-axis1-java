@@ -8,7 +8,15 @@ import org.apache.axis.message.RPCElement;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.server.AxisServer;
-
+import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.encoding.TypeMapping;
+import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.encoding.TypeMappingRegistryImpl;
+import org.apache.axis.encoding.ser.ArraySerializerFactory;
+import org.apache.axis.encoding.ser.ArrayDeserializerFactory;
+import org.apache.axis.encoding.ser.BeanSerializerFactory;
+import org.apache.axis.encoding.ser.BeanDeserializerFactory;
+import javax.xml.rpc.namespace.QName;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,6 +48,7 @@ public class TestDeser extends TestCase {
             "<soap:Envelope " +
               "xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" " +
               "xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\" " +
+              "xmlns:me=\"urn:me\" " +
               "xmlns:xsi=\"" + NS_XSI + "\" " +
               "xmlns:xsd=\"" + NS_XSD + "\">\n" +
               "<soap:Body>\n" +
@@ -49,6 +58,31 @@ public class TestDeser extends TestCase {
                 "</methodResult>\n" +
               "</soap:Body>\n" +
             "</soap:Envelope>\n";
+
+        TypeMappingRegistry tmr = server.getTypeMappingRegistry();
+        TypeMapping tm = (TypeMapping) tmr.createTypeMapping();
+        tm.setSupportedNamespaces(new String[] {Constants.URI_CURRENT_SOAP_ENC});
+        tmr.register(Constants.URI_CURRENT_SOAP_ENC, tm);
+        tm.register(java.lang.String[].class, 
+                    new QName("urn:me", "ArrayOfString"),
+                    new org.apache.axis.encoding.ser.ArraySerializerFactory(),
+                    new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
+        tm.register(java.lang.Object[].class, 
+                    new QName("urn:me", "ArrayOfObject"),
+                    new org.apache.axis.encoding.ser.ArraySerializerFactory(),
+                    new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
+        tm.register(samples.echo.SOAPStruct.class, 
+                    new QName("urn:me", "SOAPStruct"),
+                    new org.apache.axis.encoding.ser.BeanSerializerFactory(
+                          samples.echo.SOAPStruct.class,
+                          new QName("urn:me", "SOAPStruct")),
+                    new org.apache.axis.encoding.ser.BeanDeserializerFactory(
+                          samples.echo.SOAPStruct.class,
+                          new QName("urn:me", "SOAPStruct")));
+        tm.register(samples.echo.SOAPStruct[].class, 
+                    new QName("urn:me", "ArrayOfSOAPStruct"),
+                    new org.apache.axis.encoding.ser.ArraySerializerFactory(),
+                    new org.apache.axis.encoding.ser.ArrayDeserializerFactory());
     }
 
     /**
@@ -94,6 +128,10 @@ public class TestDeser extends TestCase {
      * Verify that a given XML deserialized produces the expected result
      */
     protected void deserialize(String data, Object expected)
+        throws Exception {
+        deserialize(data, expected, false);
+    }
+    protected void deserialize(String data, Object expected, boolean tryConvert)
        throws Exception
     {
        Message message = new Message(header + data + footer);
@@ -113,7 +151,17 @@ public class TestDeser extends TestCase {
        assertNotNull("SOAP param should not be null", param);
 
        Object result = param.getValue();
-       if (!equals(result, expected)) assertEquals("The result is not what is expected.", expected, result);
+       if (!equals(result, expected)) {
+           // Try to convert to the expected class
+           if (tryConvert) {
+               Object result2 = JavaUtils.convert(result, expected.getClass());
+               if (!equals(result2, expected)) {
+                   assertEquals("The result is not what is expected.", expected, result);
+               }
+           } else {
+               assertEquals("The result is not what is expected.", expected, result);
+           }
+       }
     }
 
     public void testString() throws Exception {
@@ -291,5 +339,162 @@ public class TestDeser extends TestCase {
     {
         TestDeser tester = new TestDeser("test");
         tester.testString();
+    }
+
+    // Complicated array tests
+
+    // type=soapenc:Array
+    public void testArrayA() throws Exception {
+        String[] s = new String[] {"abc", "def"};
+        deserialize("<result xsi:type=\"soapenc:Array\" " +
+                            "soapenc:arrayType=\"xsd:string[2]\"> " +
+                       "<item xsi:type=\"xsd:string\">abc</item>" +
+                       "<item xsi:type=\"xsd:string\">def</item>" +
+                    "</result>",
+                    s, true);
+    }
+
+    // Like above but missing [2] dimension
+    public void testArrayB() throws Exception {
+        String[] s = new String[] {"abc", "def"};
+        deserialize("<result xsi:type=\"soapenc:Array\" " +
+                            "soapenc:arrayType=\"xsd:string[]\"> " +
+                       "<item xsi:type=\"xsd:string\">abc</item>" +
+                       "<item xsi:type=\"xsd:string\">def</item>" +
+                    "</result>",
+                    s, true);
+    }
+
+
+    // Like above but no xsi:type on elements
+    public void testArrayC() throws Exception {
+        String[] s = new String[] {"abc", "def"};
+        deserialize("<result xsi:type=\"soapenc:Array\" " +
+                            "soapenc:arrayType=\"xsd:string[]\"> " +
+                       "<item>abc</item>" +
+                       "<item>def</item>" +
+                    "</result>",
+                    s, true);
+    }
+
+    // Now try with arrayType=xsd:anyType
+    public void testArrayD() throws Exception {
+        String[] s = new String[] {"abc", "def"};
+        deserialize("<result xsi:type=\"soapenc:Array\" " +
+                       "soapenc:arrayType=\"xsd:anyType[]\"> " +
+                       "<item xsi:type=\"xsd:string\">abc</item>" +
+                       "<item xsi:type=\"xsd:string\">def</item>" +
+                    "</result>",
+                    s, true);
+    }
+
+    // Now try without arrayType
+    public void testArrayE() throws Exception {
+        String[] s = new String[] {"abc", "def"};
+        deserialize("<result xsi:type=\"soapenc:Array\" " +
+                       "> " +
+                       "<item xsi:type=\"xsd:string\">abc</item>" +
+                       "<item xsi:type=\"xsd:string\">def</item>" +
+                    "</result>",
+                    s, true);
+    }
+
+    // Use a specific array type, not soapenc:Array
+    public void testArrayF() throws Exception {
+        String[] s = new String[] {"abc", "def"};
+        deserialize("<result xsi:type=\"me:ArrayOfString\" " +
+                       "> " +
+                       "<item xsi:type=\"xsd:string\">abc</item>" +
+                       "<item xsi:type=\"xsd:string\">def</item>" +
+                    "</result>",
+                    s, true);
+    }
+
+    // Same as above without individual item types
+    public void testArrayG() throws Exception {
+        String[] s = new String[] {"abc", "def"};
+        deserialize("<result xsi:type=\"me:ArrayOfString\" " +
+                       "> " +
+                       "<item>abc</item>" +
+                       "<item>def</item>" +
+                    "</result>",
+                    s, true);
+    }
+
+    // Same as above except result is an Object[]
+    public void testArrayH() throws Exception {
+        Object[] s = new Object[] {new String("abc"), new String("def")};
+        deserialize("<result xsi:type=\"me:ArrayOfString\" " +
+                       "> " +
+                       "<item>abc</item>" +
+                       "<item>def</item>" +
+                    "</result>",
+                    s, true);
+    }
+
+    // Ooh La La
+    // Array of Object containing a String and an Integer
+    public void testArrayI() throws Exception {
+        Object[] s = new Object[] {new String("abc"), new Integer(123)};
+        deserialize("<result xsi:type=\"me:ArrayOfObject\" " +
+                       "> " +
+                       "<item xsi:type=\"xsd:string\">abc</item>" +
+                       "<item xsi:type=\"soapenc:int\">123</item>" +
+                    "</result>",
+                    s, true);
+    }
+
+    // Same as above using arrayType=xsd:anyType
+    public void testArrayJ() throws Exception {
+        Object[] s = new Object[] {new String("abc"), new Integer(123)};
+        deserialize("<result xsi:type=\"me:ArrayOfObject\" " +
+                       "soapenc:arrayType=\"xsd:anyType[]\"> " +
+                       "<item xsi:type=\"xsd:string\">abc</item>" +
+                       "<item xsi:type=\"soapenc:int\">123</item>" +
+                    "</result>",
+                    s, true);
+    }
+
+    // Same as above using type=soapenc:Array and no arrayType...bare bones
+    public void testArrayK() throws Exception {
+        Object[] s = new Object[] {new String("abc"), new Integer(123)};
+        deserialize("<result xsi:type=\"soapenc:Array\" " +
+                       "> " +
+                       "<item xsi:type=\"xsd:string\">abc</item>" +
+                       "<item xsi:type=\"soapenc:int\">123</item>" +
+                    "</result>",
+                    s, true);
+    }
+
+    // This was created from a return received from a .NET service
+    public void testArrayL() throws Exception {
+        samples.echo.SOAPStruct[] s = new samples.echo.SOAPStruct[]
+            {new samples.echo.SOAPStruct(1, "one",   1.1F),
+             new samples.echo.SOAPStruct(2, "two",   2.2F),
+             new samples.echo.SOAPStruct(3, "three", 3.3F)};
+        deserialize("<soapenc:Array id=\"ref-7\" soapenc:arrayType=\"me:SOAPStruct[3]\">" +
+                    "<item href=\"#ref-8\"/>" + 
+                    "<item href=\"#ref-9\"/>" +
+                    "<item href=\"#ref-10\"/>" + 
+                    "</soapenc:Array>" +
+
+                    "<me:SOAPStruct id=\"ref-8\">" +
+                    "<varString xsi:type=\"xsd:string\">one</varString>" +
+                    "<varInt xsi:type=\"xsd:int\">1</varInt>" +
+                    "<varFloat xsi:type=\"xsd:float\">1.1</varFloat>" +
+                    "</me:SOAPStruct>" +
+
+                    "<me:SOAPStruct id=\"ref-9\">" +
+                    "<varString xsi:type=\"xsd:string\">two</varString>" +
+                    "<varInt xsi:type=\"xsd:int\">2</varInt>" +
+                    "<varFloat xsi:type=\"xsd:float\">2.2</varFloat>" +
+                    "</me:SOAPStruct>" +
+
+                    "<me:SOAPStruct id=\"ref-10\">" +
+                    "<varString xsi:type=\"xsd:string\">three</varString>" +
+                    "<varInt xsi:type=\"xsd:int\">3</varInt>" +
+                    "<varFloat xsi:type=\"xsd:float\">3.3</varFloat>" +
+                    "</me:SOAPStruct>",
+                    s, true);
     }
 }

@@ -92,6 +92,10 @@ public class JavaUtils
          **/
         public void setConvertedValue(Class cls, Object value);
         public Object getConvertedValue(Class cls);
+        /**
+         * Get the destination array class described by the xml
+         **/         
+        public Class getDestClass();
     }
 
     /** Utility function to convert an Object to some desired Class.
@@ -153,8 +157,24 @@ public class JavaUtils
                 return arg;
             }
         }
-            
+
         // Flow to here indicates that neither arg or destClass is a Holder
+        
+        // Check to see if the argument has a prefered destination class.
+        if (arg instanceof ConvertCache &&
+            (( ConvertCache) arg).getDestClass() != destClass) {
+            Class hintClass = ((ConvertCache) arg).getDestClass();
+            if (hintClass != null &&
+                hintClass.isArray() &&
+                destClass.isArray() &&
+                destClass.isAssignableFrom(hintClass)) {
+                destClass = hintClass;
+                destValue = ((ConvertCache) arg).getConvertedValue(destClass);
+                if (destValue != null)
+                    return destValue;
+            }
+        }
+            
         List list = (List)arg;
         int length = list.size();
         
