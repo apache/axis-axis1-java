@@ -81,7 +81,11 @@ public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler
     public boolean handleFault(MessageContext _context) {
         SOAPMessageContext context = (SOAPMessageContext) _context;
 
-        for (int i = size() - 1; i >= 0; i--) {
+        int endIdx = size() - 1;
+        if (falseIndex != -1) {
+            endIdx = falseIndex;
+        }
+        for (int i = endIdx; i >= 0; i--) {
             if (getHandlerInstance(i).handleFault(context) == false) {
                 return false;
             }
@@ -95,7 +99,6 @@ public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler
         
         SOAPMessageContext context = (SOAPMessageContext) _context;
 
-        falseIndex = -1;
         for (int i = 0; i < size(); i++) {
             Handler currentHandler = getHandlerInstance(i);
             try {
@@ -104,7 +107,7 @@ public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler
                     return false;
                 }
             } catch (SOAPFaultException sfe) {
-                currentHandler.handleFault(context);
+                falseIndex = i;
                 throw sfe;
             }
         }
@@ -128,6 +131,7 @@ public class HandlerChainImpl extends ArrayList implements javax.xml.rpc.handler
         for (int i = 0; i < size(); i++) {
             getHandlerInstance(i).destroy();
         }
+        falseIndex = -1;
         clear();
     }
 

@@ -437,10 +437,17 @@ public class SOAPService extends SimpleTargetedChain
         HandlerChainImpl handlerImpl = null;
         if (handlerFactory != null) handlerImpl = (HandlerChainImpl) handlerFactory.createHandlerChain();
         boolean result = true;
-        
+
         try {
             if (handlerImpl != null) {
-                result = handlerImpl.handleRequest(msgContext);
+                try {
+                    result = handlerImpl.handleRequest(msgContext);
+                }
+                catch (SOAPFaultException e) {
+                    handlerImpl.handleFault(msgContext);
+                    msgContext.setPastPivot(true);
+                    return;
+                }
             }
 
             if (result) {
@@ -450,22 +457,20 @@ public class SOAPService extends SimpleTargetedChain
                     msgContext.setPastPivot(true);
                     if (handlerImpl != null) {
                         handlerImpl.handleFault(msgContext);
-                        handlerImpl.destroy();
                     }
                     throw e;
                 }
             } else {
                 msgContext.setPastPivot(true);
             }
- 
+
             if ( handlerImpl != null) {
                 handlerImpl.handleResponse(msgContext);
-                handlerImpl.destroy();
             }
         } catch (SOAPFaultException e) {
             msgContext.setPastPivot(true);
             throw AxisFault.makeFault(e);
-            
+
         } catch (RuntimeException e) {
             SOAPFault fault = new SOAPFault(new AxisFault("Server", "Server Error", null, null));
             SOAPEnvelope env = new SOAPEnvelope();
@@ -474,6 +479,11 @@ public class SOAPService extends SimpleTargetedChain
             message.setMessageType(Message.RESPONSE);
             msgContext.setResponseMessage(message);
             throw AxisFault.makeFault(e);
+        }
+        finally {
+            if (handlerImpl != null) {
+                handlerImpl.destroy();
+            }
         }
     }
 }
