@@ -231,8 +231,14 @@ public class XMLUtils {
      */ 
     public static void releaseDocumentBuilder(DocumentBuilder db) {
         synchronized (documentBuilders) {
-            db.setErrorHandler(null); // setting implementation default
-            db.setEntityResolver(null); // setting implementation default
+            try {
+                db.setErrorHandler(null); // setting implementation default
+            } catch (Throwable t) {
+            }
+            try {
+                db.setEntityResolver(null); // setting implementation default
+            } catch (Throwable t) {
+            }
             documentBuilders.push(db);
         }
     }
