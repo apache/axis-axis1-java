@@ -361,6 +361,29 @@ public class JavaBeanWriter extends JavaClassWriter {
             names.add(typeName);
             names.add(variableName);
         }
+
+        // Check for duplicate names and make them unique
+        // Start at index 2 and go by twos
+        for (int i = 1; i < names.size(); i +=2)
+        {
+            int suffix = 2;     // the number we append to the name
+            String s = (String) names.elementAt(i);
+            if (i < names.size() - 2)
+            {
+                int dup = names.indexOf(s, i+1);
+                while (dup > 0)
+                {
+                    // duplicate name, tack a number on the end
+                    names.set(dup, names.get(dup) + Integer.toString(suffix));
+                    suffix++;
+                    // get out if we don't have more
+                    if (i >= names.size() - 2)
+                        break;
+                    dup = names.indexOf(s, dup+1);
+                }
+            }
+
+        }
     }
 
     /**

@@ -10,6 +10,8 @@
     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
     xmlns="http://schemas.xmlsoap.org/wsdl/">
 
+    <!-- Test Name clases in WSDL to make sure we munge names correctly -->
+
   <!-- type defs -->
   <types>
     <xsd:schema targetNamespace="urn:clash.wsdl.test"
@@ -33,6 +35,15 @@
           </xsd:all>
         </xsd:complexType>
       </xsd:element>
+        <!-- This element shares the same element and attribute name -->
+        <!-- WSDL2Java should munge the duplicate name and make it unque -->
+        <xsd:complexType name="sayHello">
+          <xsd:sequence>
+            <xsd:element name="string_1" type="xsd:string" nillable="true"/>
+            <xsd:element name="string_2" type="xsd:string" nillable="true"/>
+          </xsd:sequence>
+          <xsd:attribute name="string_1" type="xsd:string" use="required"/>
+        </xsd:complexType>
     </xsd:schema>
   </types>
 
@@ -45,11 +56,8 @@
   <message name="anotherMessage">
     <part name="sharedName" type="xsd:int"/>
   </message>
-  <message name="literalMessage">
-    <part name="literalPart" element="tns:sharedName"/>
-  </message>
-  <message name="anotherLitMessage">
-    <part name="sharedName" element="tns:another"/>
+  <message name="InputMessage">
+      <part name="in1" type="tns:sayHello"/>
   </message>
 
   <!-- port type declns -->
@@ -66,21 +74,10 @@
       <input name="anotherIn3" message="tns:anotherMessage"/>
       <output name="emptyOut3" message="tns:empty"/>
     </operation>
-  </portType>
-
-  <portType name="literalPort">
-    <operation name="sharedName">
-      <input name="sharedNameIn" message="tns:empty"/>
-      <output name="sharedNameOut" message="tns:literalMessage"/>
-    </operation>
-    <operation name="sharedName">
-      <input name="sharedNameIn2" message="tns:literalMessage"/>
-      <output name="emptyOut2" message="tns:empty"/>
-    </operation>
-    <operation name="sharedName">
-      <input name="anotherIn3" message="tns:anotherLitMessage"/>
-      <output name="emptyOut3" message="tns:empty"/>
-    </operation>
+      <operation name="op1">
+          <input name="In4" message="tns:InputMessage"/>
+          <output name="Out4" message="tns:empty"/>
+      </operation>
   </portType>
 
   <!-- binding declns -->
@@ -90,61 +87,38 @@
         transport="http://schemas.xmlsoap.org/soap/http"/>
     <operation name="sharedName">
       <input name="sharedNameIn">
-        <soap:body use="encoded"/>
+        <soap:body use="encoded" namespace="urn:clash.wsdl.test"/>
       </input>
       <output name="sharedNameOut">
-        <soap:body use="encoded"/>
+        <soap:body use="encoded" namespace="urn:clash.wsdl.test"/>
       </output>
     </operation>
     <operation name="sharedName">
       <input name="sharedNameIn2">
-        <soap:body use="encoded"/>
+        <soap:body use="encoded" namespace="urn:clash.wsdl.test"/>
       </input>
       <output name="emptyOut2">
-        <soap:body use="encoded"/>
+        <soap:body use="encoded" namespace="urn:clash.wsdl.test"/>
       </output>
     </operation>
     <operation name="sharedName">
       <input name="anotherIn3">
-        <soap:body use="encoded"/>
+        <soap:body use="encoded" namespace="urn:clash.wsdl.test"/>
       </input>
       <output name="emptyOut3">
-        <soap:body use="encoded"/>
+        <soap:body use="encoded" namespace="urn:clash.wsdl.test"/>
       </output>
     </operation>
+      <operation name="op1">
+        <input name="In4">
+          <soap:body use="encoded" namespace="urn:clash.wsdl.test"/>
+        </input>
+        <output name="Out4">
+          <soap:body use="encoded" namespace="urn:clash.wsdl.test"/>
+        </output>
+      </operation>
   </binding>
 
-<!-- don't do this one just yet...
-  <binding name="sharedName" type="tns:literalPort">
-    <soap:binding
-        style="rpc"
-        transport="http://schemas.xmlsoap.org/soap/http"/>
-    <operation name="sharedName">
-      <input name="sharedNameIn">
-        <soap:body use="literal"/>
-      </input>
-      <output name="sharedNameOut">
-        <soap:body use="literal"/>
-      </output>
-    </operation>
-    <operation name="sharedName">
-      <input name="sharedNameIn2">
-        <soap:body use="literal"/>
-      </input>
-      <output name="emptyOut2">
-        <soap:body use="literal"/>
-      </output>
-    </operation>
-    <operation name="sharedName">
-      <input name="anotherIn3">
-        <soap:body use="literal"/>
-      </input>
-      <output name="emptyOut3">
-        <soap:body use="literal"/>
-      </output>
-    </operation>
-  </binding>
--->
 
   <binding name="anotherNonSharedName" type="tns:sharedName">
     <soap:binding
@@ -152,31 +126,39 @@
         transport="http://schemas.xmlsoap.org/soap/http"/>
     <operation name="sharedName">
       <input name="sharedNameIn">
-        <soap:body use="encoded"/>
+        <soap:body use="encoded" namespace="urn:clash.wsdl.test"/>
       </input>
       <output name="sharedNameOut">
-        <soap:body use="encoded"/>
+        <soap:body use="encoded" namespace="urn:clash.wsdl.test"/>
       </output>
     </operation>
     <operation name="sharedName">
       <input name="sharedNameIn2">
-        <soap:body use="encoded"/>
+        <soap:body use="encoded" namespace="urn:clash.wsdl.test"/>
       </input>
       <output name="emptyOut2">
-        <soap:body use="encoded"/>
+        <soap:body use="encoded" namespace="urn:clash.wsdl.test"/>
       </output>
     </operation>
     <operation name="sharedName">
       <input name="anotherIn3">
-        <soap:body use="encoded"/>
+        <soap:body use="encoded" namespace="urn:clash.wsdl.test"/>
       </input>
       <output name="emptyOut3">
-        <soap:body use="encoded"/>
+        <soap:body use="encoded" namespace="urn:clash.wsdl.test"/>
       </output>
+    </operation>
+    <operation name="op1">
+       <input name="In4">
+         <soap:body use="encoded" namespace="urn:clash.wsdl.test"/>
+       </input>
+       <output name="Out4">
+         <soap:body use="encoded" namespace="urn:clash.wsdl.test"/>
+       </output>
     </operation>
   </binding>
 
-  <!-- service decln -->
+  <!-- service declarations -->
   <service name="sharedName">
     <port name="nonSharedName" binding="tns:nonSharedName">
       <soap:address location="http://localhost:8080/axis/services/nonSharedName"/>
@@ -184,11 +166,6 @@
     <port name="anotherNonSharedName" binding="tns:anotherNonSharedName">
       <soap:address location="http://localhost:8080/axis/services/anotherNonSharedName"/>
     </port>
-<!-- don't do this just yet...
-    <port name="sharedName" binding="tns:sharedName">
-      <soap:address location="http://localhost:8080/axis/services/sharedName"/>
-    </port>
--->
   </service>
 
 </definitions>
