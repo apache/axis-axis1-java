@@ -321,7 +321,7 @@ implements org.w3c.dom.Document, java.io.Serializable {
                             localName);
                 }
                 SOAPBody body =
-                    (org.apache.axis.message.SOAPBody) soapEnv.getHeader();
+                    (org.apache.axis.message.SOAPBody) soapEnv.getBody();
                 if (body != null) {
                     return body.getElementsByTagNameNS(
                             namespaceURI,
