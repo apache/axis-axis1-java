@@ -30,8 +30,11 @@
 <property name="docs.dir" location="${axis.home}/docs"/>
 <property name="samples.dir" location="${axis.home}/samples"/>
 <property name="test.dir" location="${axis.home}/test"/>
-<property name="lib.dir" location="${axis.home}/lib"/>
-<property name="axis.lib.dir" location="${lib.dir}"/>
+
+<!-- we resolve the lib dir twice, to ensure that any
+  paths from Gump are absolute -->
+<property name="axis.lib.dir" location="${axis.home}/lib"/>
+<property name="lib.dir" location="${axis.lib.dir}"/>
 
 <!-- jar files -->
 <property name="wsdl4j.jar" location="${lib.dir}/wsdl4j.jar"/>
