@@ -78,7 +78,7 @@ import javax.wsdl.Part;
 import javax.wsdl.Port;
 import javax.wsdl.PortType;
 import javax.wsdl.Service;
-import javax.wsdl.factory.DefinitionFactory;
+import javax.wsdl.factory.WSDLFactory;
 import javax.xml.rpc.namespace.QName;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -105,9 +105,7 @@ public class WSDLUtils {
         if ((serviceName == null) || ("JWSProcessor".equals(serviceName)))
             serviceName = "";
 
-        DefinitionFactory factory = DefinitionFactory.
-                newInstance("com.ibm.wsdl.factory.DefinitionFactoryImpl");
-        Definition def = factory.newDefinition();
+        Definition def = WSDLFactory.newInstance().newDefinition();
         Binding binding = def.createBinding();
         Service service = def.createService();
 
@@ -208,7 +206,7 @@ public class WSDLUtils {
 
         service.addPort(port);
 
-        return com.ibm.wsdl.xml.WSDLWriter.getDocument(def);
+        return WSDLFactory.newInstance().newWSDLWriter().getDocument(def);
     }
 
     public static Message getRequestMessage(Definition def,

@@ -56,35 +56,24 @@
 package org.apache.axis.client ;
 
 import com.ibm.wsdl.extensions.soap.SOAPAddress;
-import com.ibm.wsdl.extensions.soap.SOAPBody;
-import com.ibm.wsdl.extensions.soap.SOAPOperation;
-import com.ibm.wsdl.xml.WSDLReader;
-import org.apache.axis.Constants;
 import org.apache.axis.AxisEngine;
-import org.apache.axis.encoding.XMLType;
+import org.apache.axis.Constants;
 import org.apache.axis.configuration.FileProvider;
-import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Document;
 
 import javax.wsdl.Binding;
-import javax.wsdl.BindingInput;
-import javax.wsdl.BindingOperation;
 import javax.wsdl.Definition;
-import javax.wsdl.Input;
-import javax.wsdl.Message;
-import javax.wsdl.Operation;
-import javax.wsdl.Output;
-import javax.wsdl.Part;
 import javax.wsdl.Port;
 import javax.wsdl.PortType;
+import javax.wsdl.factory.WSDLFactory;
 import javax.xml.rpc.JAXRPCException;
 import javax.xml.rpc.encoding.TypeMappingRegistry;
 import javax.xml.rpc.namespace.QName;
 import java.io.FileInputStream;
-import java.io.InputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -198,8 +187,7 @@ public class Service implements javax.xml.rpc.Service {
             throws JAXRPCException {
         try {
             // Start by reading in the WSDL using WSDL4J
-            WSDLReader           reader = new WSDLReader();
-            Definition           def    = reader.readWSDL( null, doc );
+            Definition           def    = WSDLFactory.newInstance().newWSDLReader().readWSDL( null, doc );
 
             this.wsdlLocation   = null ;
             this.wsdlDefinition = def ;
