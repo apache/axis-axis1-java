@@ -88,14 +88,66 @@ public class JavaEnumTypeWriter extends JavaWriter {
 
         // The first index is the base type.  Get its java name.
         String baseType = ((Type) elements.get(0)).getJavaName();
+        String javaName = type.getJavaLocalName();
 
-        pw.println("public class " + className + " implements java.io.Serializable {");
+        // Note:
+        // The current JAX-RPC spec indicates that enumeration is supported for all simple types.
+        // However, the mapping in JAX-RPC will only work for Strings :-)
+        // I am sure that the JAX-RPC mapping will change -or- the JAX-RPC spec will be changed to 
+        // support only the enumeration of Strings.
+        // The current state of the AXIS code only supports enumerations of Strings.  If JAX-RPC
+        // does introduce new bindings, changes will be required in this method, in EnumSerialization,
+        // and in TypeFactory.getEnumerationBaseAndValues.
+        pw.println("public class " + javaName + " implements java.io.Serializable {");
+
+        // Each object has a private _value_ variable to store the base value
+        pw.println("    private " + baseType + " _value_;");
+
+        // The enumeration values are kept in a hashtable
+        pw.println("    private static java.util.HashMap _table_ = new java.util.HashMap();");
+        pw.println("");
+
+        // A protected constructor is used to create the static enumeration values
+        pw.println("    // Constructor");
+        pw.println("    protected " + javaName + "(" + baseType + " value) {");
+        pw.println("        _value_ = value;");
+        pw.println("        _table_.put(_value_,this);");
+        pw.println("    };");
+        pw.println("");
+
+        // A public static variable of the base type is generated for each enumeration value.
+        // Each variable is preceded by an _.
         for (int i=1; i < elements.size(); i++) {
             pw.println("    public static final " + baseType + " _" + elements.get(i)
                            + " = \"" + elements.get(i) + "\";");
         }
 
+        // A public static variable is generated for each enumeration value.
+        for (int i=1; i < elements.size(); i++) {
+            pw.println("    public static final " + javaName + " " + elements.get(i)
+                           + " = new " + javaName + "(_" + elements.get(i) + ");");
+        }
+        // Getter that returns the base value of the enumeration value
+        pw.println("    public " + baseType+ " getValue() { return _value_;}");
+
+        // FromValue returns the unique enumeration value object from the table
+        pw.println("    public static " + javaName+ " fromValue(" + baseType +" value)");
+        pw.println("          throws java.lang.IllegalStateException {");
+        pw.println("        "+javaName+" enum = ("+javaName+")_table_.get(value);");
+        pw.println("        if (enum==null) throw new java.lang.IllegalStateException();");
+        pw.println("        return enum;");
+        pw.println("    }");
+
+        // Equals == to determine equality  value
+        pw.println("    public boolean equals(Object obj) {return (obj == this);}");
+
+        // Provide a reasonable hashCode method             
+        pw.println("    public int hashCode() { return _value_.hashCode();}");
+
+        // Provide a reasonable toString method.
+        pw.println("    public String toString() { return _value_;}");
         pw.println("}");
+
         pw.close();
     } // writeOperation
 
