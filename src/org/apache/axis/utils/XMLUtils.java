@@ -266,6 +266,9 @@ public class XMLUtils {
         privateElementToWriter(doc.getDocumentElement(), writer, false, false);
     }
 
+    public static void PrettyDocumentToWriter(Document doc, Writer writer) {
+        privateElementToWriter(doc.getDocumentElement(), writer, false, true);
+    }
     /**
      * Convert a simple string to an element with a text node
      * 
