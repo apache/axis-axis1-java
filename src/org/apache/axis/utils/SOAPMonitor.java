@@ -707,8 +707,10 @@ public class SOAPMonitor extends JFrame implements ActionListener, ChangeListene
         final String reqFlow = "requestFlow";
         final String handler = "handler";
         final String type = "type";
-        final String auth =
+        final String authentication =
                 "java:org.apache.axis.handlers.SimpleAuthenticationHandler";
+        final String authorization =
+                "java:org.apache.axis.handlers.SimpleAuthorizationHandler";
         final String param = "parameter";
         final String name = "name";
         final String role = "allowedRoles";
@@ -726,14 +728,14 @@ public class SOAPMonitor extends JFrame implements ActionListener, ChangeListene
             doc.getDocumentElement().insertBefore(newNode, node);
         }
 
-        // Add "SimpleAuthenticationHandler"
-        // (i.e. <handler type="java:org.apache.axis.handlers.SimpleAuthenticationHandler"/>)
+        // Add "SimpleAuthorizationHandler"
+        // (i.e. <handler type="java:org.apache.axis.handlers.SimpleAuthorizationHandler"/>)
         nl = doc.getElementsByTagName(handler);
         for (int i = 0; i < nl.getLength(); i++) {
             node = nl.item(i);
             NamedNodeMap map = node.getAttributes();
             ret = map.getNamedItem(type).getNodeValue();
-            if (ret.equals(auth)) {
+            if (ret.equals(authorization)) {
                 authNode = true;
                 break;
             }
@@ -742,7 +744,28 @@ public class SOAPMonitor extends JFrame implements ActionListener, ChangeListene
             nl = doc.getElementsByTagName(reqFlow);
             node = nl.item(0).getFirstChild();
             newNode = doc.createElement(handler);
-            ((Element) newNode).setAttribute(type, auth);
+            ((Element) newNode).setAttribute(type, authorization);
+            nl.item(0).insertBefore(newNode, node);
+        }        
+
+        // Add "SimpleAuthenticationHandler"
+        // (i.e. <handler type="java:org.apache.axis.handlers.SimpleAuthenticationHandler"/>)
+        authNode = false;
+        nl = doc.getElementsByTagName(handler);
+        for (int i = 0; i < nl.getLength(); i++) {
+            node = nl.item(i);
+            NamedNodeMap map = node.getAttributes();
+            ret = map.getNamedItem(type).getNodeValue();
+            if (ret.equals(authentication)) {
+                authNode = true;
+                break;
+            }
+        }
+        if (!authNode) {
+            nl = doc.getElementsByTagName(reqFlow);
+            node = nl.item(0).getFirstChild();
+            newNode = doc.createElement(handler);
+            ((Element) newNode).setAttribute(type, authentication);
             nl.item(0).insertBefore(newNode, node);
         }
 
