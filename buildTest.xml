@@ -337,7 +337,7 @@ Copyright:
         <param name="file">
              <fileset dir="." >
                 <patternset>
-                 <include name="test/**/buildComponent.xml"/>
+                 <include name="test/wsdl/**/buildComponent.xml"/>
                 </patternset>
              </fileset>
         </param>
