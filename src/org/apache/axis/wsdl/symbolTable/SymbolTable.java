@@ -1832,7 +1832,13 @@ public class SymbolTable {
                 if (obj instanceof MIMEContent) {
                     MIMEContent content = (MIMEContent) obj;
                     TypeEntry typeEntry = findPart(op, content.getPart());
-                    bEntry.setMIMEInfo(op.getName(), content.getPart(), content.getType(), typeEntry.getDimensions());
+                    String dims = typeEntry.getDimensions(); 
+                    if(dims.length() <=0 && typeEntry.getRefType() != null) {
+                        Node node = typeEntry.getRefType().getNode();
+                        if(getCollectionComponentQName(node)!=null)
+                            dims += "[]";    
+                    }
+                    bEntry.setMIMEInfo(op.getName(), content.getPart(), content.getType(), dims);
                 }
                 else if (obj instanceof SOAPBody) {
                     String use = ((SOAPBody) obj).getUse();
@@ -2305,4 +2311,23 @@ public class SymbolTable {
                     Messages.getMessage("alreadyExists00", "" + name));
         }
     } // symbolTablePut
+
+    private static QName getCollectionComponentQName(Node node) {
+        if (node == null) {
+            return null;
+        }
+        
+        QName name = SchemaUtils.getCollectionComponentQName(node);
+        if(name != null)
+            return name;
+
+        // Dive into the node if necessary
+        NodeList children = node.getChildNodes();
+        for(int i=0;i<children.getLength();i++){
+            name = getCollectionComponentQName(children.item(i));
+            if(name != null)
+                return name;
+        }
+        return null;
+    }
 } // class SymbolTable

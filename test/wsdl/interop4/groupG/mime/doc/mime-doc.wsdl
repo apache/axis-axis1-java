@@ -177,4 +177,9 @@
 			</wsdl:output>
 		</wsdl:operation>
 	</wsdl:binding>
+    <wsdl:service name="MimeDOCInterop">
+	    <wsdl:port name="MimeDOCSoapPort" binding="AttachmentsBinding">
+            <soap:address location="http://localhost:8080/axis/services/MimeDOCSoapPort"/>
+        </wsdl:port>
+    </wsdl:service>
 </wsdl:definitions>	
