@@ -56,6 +56,7 @@
 package samples.jms;
 
 import org.apache.axis.AxisEngine;
+import org.apache.axis.AxisFault;
 import org.apache.axis.SimpleTargetedChain;
 import org.apache.axis.configuration.XMLStringProvider;
 import org.apache.axis.deployment.wsdd.WSDDConstants;
@@ -152,9 +153,17 @@ public class JMSTest {
         Float res = new Float(0.0F);
 
         // invoke a call for each of the symbols and print out
-        for (int i = 0; i < args.length; i++) {
+        for (int i = 0; i < args.length; i++)
+        {
+            try
+            {
             res = (Float) call.invoke(new Object[] {args[i]});
             System.out.println(args[i] + ": " + res);
+            }
+            catch(AxisFault af)
+            {
+                System.out.println(af.dumpToString());
+            }
         }
 
         // shutdown

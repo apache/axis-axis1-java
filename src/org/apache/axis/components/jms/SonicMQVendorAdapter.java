@@ -60,6 +60,12 @@ import java.util.HashMap;
 import javax.jms.ConnectionFactory;
 import javax.jms.QueueConnectionFactory;
 import javax.jms.TopicConnectionFactory;
+import javax.jms.JMSException;
+
+import progress.message.client.EUserAlreadyConnected;
+import progress.message.client.ENetworkFailure;
+
+import progress.message.jclient.ErrorCodes;
 
 /**
  * Defines SonicMQ specific constants for connnection factory creation.
@@ -219,5 +225,75 @@ public class SonicMQVendorAdapter extends BeanVendorAdapter
         cfConfig = (HashMap)cfConfig.clone();
         cfConfig.put(CONNECTION_FACTORY_CLASS, TCF_CLASS);
         return super.getTopicConnectionFactory(cfConfig);
+    }
+
+    public boolean isRecoverable(Throwable thrown, int action)
+    {
+        //the super class cannot be trusted for on exception because it always
+        //returns false
+        if(action != ON_EXCEPTION_ACTION && !super.isRecoverable(thrown, action))
+            return false;
+
+        if(!(thrown instanceof JMSException))
+            return true;
+
+        JMSException jmse = (JMSException)thrown;
+        switch(action)
+        {
+            case CONNECT_ACTION:
+                if(isNetworkFailure(jmse))
+                    return false;
+                break;
+            case SUBSCRIBE_ACTION:
+
+                if(isQueueMissing(jmse) || isAnotherSubscriberConnected(jmse))
+                    return false;
+                break;
+
+            case ON_EXCEPTION_ACTION:
+                if(isConnectionDropped(jmse))
+                    return false;
+                break;
+
+        }
+
+        return true;
+    }
+
+    public boolean isConnectionDropped(JMSException jmse)
+    {
+        return ErrorCodes.testException(jmse, ErrorCodes.ERR_CONNECTION_DROPPED);
+    }
+
+    private boolean isQueueMissing(JMSException jmse)
+    {
+        String message = jmse.getMessage();
+        if(message != null && message.startsWith("Queue not found"))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isAnotherSubscriberConnected(JMSException jmse)
+    {
+        Exception linkedException = jmse.getLinkedException();
+        if(linkedException != null &&
+           linkedException instanceof EUserAlreadyConnected)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isNetworkFailure(JMSException jmse)
+    {
+        Exception linkedException = jmse.getLinkedException();
+        if(linkedException != null &&
+           linkedException instanceof ENetworkFailure)
+        {
+            return true;
+        }
+        return false;
     }
 }

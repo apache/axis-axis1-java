@@ -63,6 +63,9 @@ import javax.jms.Queue;
 import javax.jms.QueueSession;
 import javax.jms.Topic;
 import javax.jms.TopicSession;
+import javax.jms.JMSException;
+import javax.jms.JMSSecurityException;
+import javax.jms.InvalidDestinationException;
 
 /**
  * SPI Interface that all JMSVendorAdaptors must implement.  Allows for
@@ -72,6 +75,12 @@ import javax.jms.TopicSession;
  */
 public abstract class JMSVendorAdapter
 {
+
+    public static final int SEND_ACTION = 0;
+    public static final int CONNECT_ACTION = 1;
+    public static final int SUBSCRIBE_ACTION = 2;
+    public static final int RECEIVE_ACTION = 3;
+    public static final int ON_EXCEPTION_ACTION = 4;
 
     public abstract QueueConnectionFactory getQueueConnectionFactory(HashMap cfProps)
         throws Exception;
@@ -91,5 +100,17 @@ public abstract class JMSVendorAdapter
         return session.createTopic(name);
     }
 
+
+    public boolean isRecoverable(Throwable thrown, int action)
+    {
+        if(thrown instanceof RuntimeException ||
+           thrown instanceof Error ||
+           thrown instanceof JMSSecurityException ||
+           thrown instanceof InvalidDestinationException)
+            return false;
+        if(action == ON_EXCEPTION_ACTION)
+            return false;
+        return true;
+    }
 
 }

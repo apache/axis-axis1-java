@@ -63,8 +63,6 @@ import java.util.Iterator;
 import java.io.ByteArrayOutputStream;
 
 import javax.jms.JMSException;
-import javax.jms.JMSSecurityException;
-import javax.jms.InvalidDestinationException;
 import javax.jms.ExceptionListener;
 import javax.jms.ConnectionFactory;
 import javax.jms.MessageConsumer;
@@ -176,7 +174,7 @@ public abstract class JMSConnector
             }
             catch(JMSException jmse)
             {
-                if(isIrrecoverable(jmse) || numTries == m_numRetries)
+                if(!m_adapter.isRecoverable(jmse, JMSVendorAdapter.CONNECT_ACTION) || numTries == m_numRetries)
                     throw jmse;
                 else
                     try{Thread.sleep(m_connectRetryInterval);}catch(InterruptedException ie){};
@@ -212,15 +210,6 @@ public abstract class JMSConnector
     public abstract JMSEndpoint createEndpoint(Destination destination)
         throws JMSException;
 
-
-    /**
-     *
-     * @todo decide what constitutes an irrecoverable error
-     */
-    private boolean isIrrecoverable(JMSException jmsException)
-    {
-        return jmsException instanceof JMSSecurityException;
-    }
 
     protected abstract javax.jms.Connection internalConnect(
                                                 ConnectionFactory connectionFactory,
@@ -369,16 +358,9 @@ public abstract class JMSConnector
 
         public void onException(JMSException exception)
         {
-            //right now we will blindly reconnect even if the connection hasn't
-            //dropped.  This is an area that can be improved with a vendor
-            //specific exception mapping like the one below
-
-            //let's see if the connection really dropped
-            //this could be another type of problem that
-            //doesn't require the reestablishment of context
-            //if(!ErrorCodes.testException(exception, ErrorCodes.ERR_CONNECTION_DROPPED))
-            //    return;
-
+            if(m_adapter.isRecoverable(exception,
+                                       JMSVendorAdapter.ON_EXCEPTION_ACTION))
+                return;
             onException();
             synchronized(m_jmsLock)
             {
@@ -492,10 +474,7 @@ public abstract class JMSConnector
                 }
                 catch(JMSException jmse)
                 {
-                    //for now we will assume this is a reconnect related issue
-                    //and let the sender be collected
-                    if(jmse instanceof JMSSecurityException ||
-                       jmse instanceof InvalidDestinationException)
+                    if(!m_adapter.isRecoverable(jmse, JMSVendorAdapter.SEND_ACTION))
                     {
                         //this we cannot recover from
                         //but it does not invalidate the session
@@ -503,6 +482,8 @@ public abstract class JMSConnector
                         throw jmse;
                     }
 
+                    //for now we will assume this is a reconnect related issue
+                    //and let the sender be collected
                     //give the reconnect thread a chance to fill the pool
                     Thread.yield();
                     continue;
@@ -537,16 +518,15 @@ public abstract class JMSConnector
                 }
                 catch(JMSException jmse)
                 {
-                    //for now we will assume this is a reconnect related issue
-                    //and let the sender be collected
-                    if(jmse instanceof JMSSecurityException ||
-                       jmse instanceof InvalidDestinationException)
+                    if(!m_adapter.isRecoverable(jmse, JMSVendorAdapter.SEND_ACTION))
                     {
                         //this we cannot recover from
                         //but it does not invalidate the session
                         returnSessionToPool(sendSession);
                         throw jmse;
                     }
+                    //for now we will assume this is a reconnect related issue
+                    //and let the sender be collected
                     //give the reconnect thread a chance to fill the pool
                     Thread.yield();
                     continue;
@@ -842,25 +822,11 @@ public abstract class JMSConnector
                     }
                     catch(JMSException jmse)
                     {
-                        //we MAY be reconnecting or something else is screwy
-                        if(jmse instanceof JMSSecurityException ||
-                           jmse instanceof InvalidDestinationException)
+                        if(!m_adapter.isRecoverable(jmse, JMSVendorAdapter.SUBSCRIBE_ACTION))
                         {
                             throw jmse;
                         }
-                        /* If we had a vendor specific exception mapping this
-                        would help when doing stuff like this
-                        String message = jmse.getMessage();
-                        if(message != null && message.startsWith("Queue not found"))
-                        {
-                            throw jmse;
-                        }
-                        Exception linkedException = jmse.getLinkedException();
-                        if(linkedException != null &&
-                           linkedException instanceof EUserAlreadyConnected)
-                        {
-                            throw jmse;
-                        }*/
+
                         try{m_subscriptionLock.wait(m_interactRetryInterval);}
                         catch(InterruptedException ignore){}
                         //give reconnect a chance
