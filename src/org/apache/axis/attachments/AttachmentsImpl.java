@@ -173,10 +173,11 @@ public class AttachmentsImpl implements Attachments {
         if(null == reference ) return null;
         reference= reference.trim();
         if(0== reference.length()) return null;
+
         String[]id= null;
         String referenceLC= reference.toLowerCase();
         if(!referenceLC.startsWith("cid:") && null != contentLocation){
-            String  fqreference= contentLocation;
+            String  fqreference= contentLocation; 
             if(!fqreference.endsWith("/")) fqreference += "/";
             if(reference.startsWith("/")) fqreference += reference.substring(1); 
             else fqreference += reference;
@@ -187,10 +188,7 @@ public class AttachmentsImpl implements Attachments {
         Part ret= (AttachmentPart)attachments.get(id);
         if(ret == null && mpartStream != null ){
           //We need to still check if this coming in the input stream;
-          javax.activation.DataHandler dh =mpartStream.getAttachmentByReference(id); 
-          if(dh != null){
-            ret= new AttachmentPart(msg, dh);
-          }
+          ret= mpartStream.getAttachmentByReference(id); 
         }
         return  ret;
     }
