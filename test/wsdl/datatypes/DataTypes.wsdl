@@ -6,6 +6,7 @@
              xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" 
              xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" 
              xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" 
+             xmlns:wsp="http://schemas.xmlsoap.org/ws/2002/12/policy"
              targetNamespace="urn:dataTypes" 
              xmlns="http://schemas.xmlsoap.org/wsdl/">
   <types>
@@ -65,6 +66,25 @@
           <s:enumeration value="Off" />
         </s:restriction>
       </s:simpleType>
+      <s:element name="GetUsageType">
+        <s:complexType />
+      </s:element>
+      <s:element name="GetUsageTypeResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="GetUsageTypeResult" type="s0:UsageType" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:simpleType name="UsageType">
+		<s:restriction base="s:QName">
+			<s:enumeration value="wsp:Required"/>
+			<s:enumeration value="wsp:Optional"/>
+			<s:enumeration value="wsp:Rejected"/>
+			<s:enumeration value="wsp:Ignored"/>
+			<s:enumeration value="wsp:Observed"/>
+		</s:restriction>
+      </s:simpleType>
       <s:element name="GetOrder">
         <s:complexType />
       </s:element>
@@ -99,6 +119,7 @@
       <s:element name="string" nillable="true" type="s:string" />
       <s:element name="ArrayOfInt" nillable="true" type="s0:ArrayOfInt" />
       <s:element name="Mode" type="s0:Mode" />
+      <s:element name="UsageType" type="s0:UsageType" />
       <s:element name="Order" nillable="true" type="s0:Order" />
       <s:element name="ArrayOfOrder" nillable="true" type="s0:ArrayOfOrder" />
       <s:element name="GetSimpleList">
@@ -144,6 +165,12 @@
   <message name="GetModeSoapOut">
     <part name="parameters" element="s0:GetModeResponse" />
   </message>
+  <message name="GetUsageTypeSoapIn">
+    <part name="parameters" element="s0:GetUsageType" />
+  </message>
+  <message name="GetUsageTypeSoapOut">
+    <part name="parameters" element="s0:GetUsageTypeResponse" />
+  </message>
   <message name="GetOrderSoapIn">
     <part name="parameters" element="s0:GetOrder" />
   </message>
@@ -178,6 +205,10 @@
     <operation name="GetMode">
       <input message="s0:GetModeSoapIn" />
       <output message="s0:GetModeSoapOut" />
+    </operation>
+    <operation name="GetUsageType">
+      <input message="s0:GetUsageTypeSoapIn" />
+      <output message="s0:GetUsageTypeSoapOut" />
     </operation>
     <operation name="GetOrder">
       <input message="s0:GetOrderSoapIn" />
@@ -222,6 +253,15 @@
       </output>
     </operation>
     <operation name="GetMode">
+      <soap:operation soapAction="" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="GetUsageType">
       <soap:operation soapAction="" style="document" />
       <input>
         <soap:body use="literal" />

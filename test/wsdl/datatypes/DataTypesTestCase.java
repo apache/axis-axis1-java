@@ -7,6 +7,8 @@
 
 package test.wsdl.datatypes;
 
+import javax.xml.namespace.QName;
+
 public class DataTypesTestCase extends junit.framework.TestCase {
     public DataTypesTestCase(String name) {
         super(name);
@@ -173,6 +175,26 @@ public class DataTypesTestCase extends junit.framework.TestCase {
         catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
         }
+    }
+
+    public void test5DataTypesGetUsageType() throws Exception {
+        DataTypes_Port binding;
+        try {
+            binding = new DataTypes_ServiceLocator().getDataTypes();
+        }
+        catch (javax.xml.rpc.ServiceException jre) {
+            if(jre.getLinkedCause()!=null)
+                jre.getLinkedCause().printStackTrace();
+            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
+        }
+        assertNotNull("binding is null", binding);
+
+        // Test operation
+        UsageType value = null;
+        value = binding.getUsageType();
+        System.out.println(value);
+        assertEquals(value.getValue(), new QName("http://schemas.xmlsoap.org/ws/2002/12/policy","Required"));
+        // TBD - validate results
     }
 }
 
