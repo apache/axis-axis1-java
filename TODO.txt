@@ -27,6 +27,7 @@ PERFORMANCE
 DOCUMENTATION
 -------------
 * <Glyn/Glen> Architecture doc
+! <> Install doc. to mention placing Axis's javax... classes in Tomcat's classpath (e.g. in setclasspath.sh) as Tomcat won't load these classes from WEB-INF
 
 SOAP SPEC COMPLIANCE
 --------------------
