@@ -957,7 +957,7 @@ public class XMLUtils {
         if(msgContext != null && encoding == null){
             encoding = (String) msgContext.getProperty(SOAPMessage.CHARACTER_SET_ENCODING);
         }
-        if (msgContext != null && encoding == null) {
+        if (msgContext != null && encoding == null && msgContext.getAxisEngine() != null) {
             encoding = (String) msgContext.getAxisEngine().getOption(AxisEngine.PROP_XML_ENCODING);
         }
         if (encoding == null && defaultEncoder != null) {

@@ -286,9 +286,9 @@ public class SOAPHeader extends MessageElement
                     if (firstTime) {
                         // Do one-time setup
                         MessageContext mc = MessageContext.getCurrentContext();
-                        if (mc != null)
+                        if (mc != null &&  mc.getAxisEngine() != null) {
                             actors = mc.getAxisEngine().getActorURIs();
-                            
+                        }
                         firstTime = false;
                     }
 

@@ -701,10 +701,10 @@ public class TypeMappingImpl
         MessageContext msgContext = MessageContext.getCurrentContext();
         if(msgContext != null) {
             if (msgContext.isPropertyTrue("axis.doAutoTypes") ||
-                    JavaUtils.isTrue(msgContext.getAxisEngine().getOption("axis.doAutoTypes"))) {
+                    (msgContext.getAxisEngine() != null && JavaUtils.isTrue(msgContext.getAxisEngine().getOption("axis.doAutoTypes")))) {
                 doAutoTypes = Boolean.TRUE;
             }
-        } 
+        }
         if(doAutoTypes == null){
             doAutoTypes = AxisProperties.getProperty("axis.doAutoTypes",
                     "false")
