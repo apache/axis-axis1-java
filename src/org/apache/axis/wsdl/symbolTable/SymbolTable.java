@@ -617,7 +617,7 @@ public class SymbolTable {
                 Node namespace = attributes.getNamedItem("namespace");
                 // skip XSD import of soap encoding
                 if (namespace != null &&
-                        Constants.isSOAP_ENC(namespace.getNodeValue())) {
+                        isKnownNamespace(namespace.getNodeValue())) {
                     continue;
                 }
                 Node importFile = attributes.getNamedItem("schemaLocation");
@@ -635,6 +635,23 @@ public class SymbolTable {
             lookForImports(context, child);
         }
     } // lookForImports
+    
+    /**
+     * Check if this is a known namespace (soap-enc or schema xsd or schema xsi or xml)
+     * @param namespace
+     * @return true if this is a know namespace.
+     */ 
+    public boolean isKnownNamespace(String namespace) {
+        if (Constants.isSOAP_ENC(namespace)) 
+            return true;
+        if (Constants.isSchemaXSD(namespace)) 
+            return true;
+        if (Constants.isSchemaXSI(namespace)) 
+            return true;
+        if (namespace.equals(Constants.NS_URI_XML)) 
+            return true;
+        return false;
+    }
 
     /**
      * Populate the symbol table with all of the Types from the Document.
