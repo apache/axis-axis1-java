@@ -125,7 +125,7 @@ public class EchoAttachment {
 
                                  
         call.addParameter( "source", qnameAttachment,
-                ParameterMode.PARAM_MODE_IN ); //Add the file.
+                ParameterMode.IN ); //Add the file.
 
         call.setReturnType( qnameAttachment);
 
@@ -213,7 +213,7 @@ public class EchoAttachment {
                                  JAFDataHandlerDeserializerFactory.class);
 
         call.addParameter( "source",   XMLType.SOAP_ARRAY , // new XMLType(qnameAttachment),
-            ParameterMode.PARAM_MODE_IN ); //Add the file.
+            ParameterMode.IN ); //Add the file.
 
         call.setReturnType(XMLType.SOAP_ARRAY); // new XMLType(qnameAttachment));
 

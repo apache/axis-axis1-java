@@ -108,8 +108,8 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
                      "inputString"
                  },
                  new ParameterMode[] {
-                     ParameterMode.PARAM_MODE_OUT,
-                     ParameterMode.PARAM_MODE_IN                     
+                     ParameterMode.OUT,
+                     ParameterMode.IN                     
                  }, null, null, null);
         skel.add("echoStringArray",
                  new String[] {
@@ -117,8 +117,8 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
                      "inputStringArray"
                  },
                  new ParameterMode[] {
-                     ParameterMode.PARAM_MODE_OUT,
-                     ParameterMode.PARAM_MODE_IN                     
+                     ParameterMode.OUT,
+                     ParameterMode.IN                     
                  }, null, null, null);
         skel.add("echoInteger",
                  new String[] {
@@ -126,8 +126,8 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
                      "inputInteger"
                  },
                  new ParameterMode[] {
-                     ParameterMode.PARAM_MODE_OUT,
-                     ParameterMode.PARAM_MODE_IN                     
+                     ParameterMode.OUT,
+                     ParameterMode.IN                     
                  }, null, null, null);
         skel.add("echoIntegerArray",
                  new String[] {
@@ -135,8 +135,8 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
                      "inputIntegerArray"
                  },
                  new ParameterMode[] {
-                     ParameterMode.PARAM_MODE_OUT,
-                     ParameterMode.PARAM_MODE_IN                     
+                     ParameterMode.OUT,
+                     ParameterMode.IN                     
                  }, null, null, null);
         skel.add("echoFloat",
                  new String[] {
@@ -144,8 +144,8 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
                      "inputFloat"
                  },
                  new ParameterMode[] {
-                     ParameterMode.PARAM_MODE_OUT,
-                     ParameterMode.PARAM_MODE_IN                     
+                     ParameterMode.OUT,
+                     ParameterMode.IN                     
                  }, null, null, null);
         skel.add("echoFloatArray",
                  new String[] {
@@ -153,8 +153,8 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
                      "inputFloatArray"
                  },
                  new ParameterMode[] {
-                     ParameterMode.PARAM_MODE_OUT,
-                     ParameterMode.PARAM_MODE_IN                     
+                     ParameterMode.OUT,
+                     ParameterMode.IN                     
                  }, null, null, null);
         skel.add("echoStruct",
                  new String[] {
@@ -162,8 +162,8 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
                      "inputStruct"
                  },
                  new ParameterMode[] {
-                     ParameterMode.PARAM_MODE_OUT,
-                     ParameterMode.PARAM_MODE_IN                     
+                     ParameterMode.OUT,
+                     ParameterMode.IN                     
                  }, null, null, null);
         skel.add("echoStructArray",
                  new String[] {
@@ -171,8 +171,8 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
                      "inputStructArray"
                  },
                  new ParameterMode[] {
-                     ParameterMode.PARAM_MODE_OUT,
-                     ParameterMode.PARAM_MODE_IN                     
+                     ParameterMode.OUT,
+                     ParameterMode.IN                     
                  }, null, null, null);
         skel.add("echoVoid",
                  new String[] {
@@ -184,8 +184,8 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
                      "inputBase64"
                  },
                  new ParameterMode[] {
-                     ParameterMode.PARAM_MODE_OUT,
-                     ParameterMode.PARAM_MODE_IN                     
+                     ParameterMode.OUT,
+                     ParameterMode.IN                     
                  }, null, null, null);
         skel.add("echoHexBinary",
                  new String[] {
@@ -193,8 +193,8 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
                      "inputHexBinary"
                  },
                  new ParameterMode[] {
-                     ParameterMode.PARAM_MODE_OUT,
-                     ParameterMode.PARAM_MODE_IN                     
+                     ParameterMode.OUT,
+                     ParameterMode.IN                     
                  }, null, null, null);
         skel.add("echoDate",
                  new String[] {
@@ -202,8 +202,8 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
                      "inputDate"
                  },
                  new ParameterMode[] {
-                     ParameterMode.PARAM_MODE_OUT,
-                     ParameterMode.PARAM_MODE_IN                     
+                     ParameterMode.OUT,
+                     ParameterMode.IN                     
                  }, null, null, null);
         skel.add("echoDecimal",
                  new String[] {
@@ -211,8 +211,8 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
                      "inputDecimal"
                  },
                  new ParameterMode[] {
-                     ParameterMode.PARAM_MODE_OUT,
-                     ParameterMode.PARAM_MODE_IN                     
+                     ParameterMode.OUT,
+                     ParameterMode.IN                     
                  }, null, null, null);
         skel.add("echoBoolean",
                  new String[] {
@@ -220,8 +220,8 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
                      "inputBoolean"
                  },
                  new ParameterMode[] {
-                     ParameterMode.PARAM_MODE_OUT,
-                     ParameterMode.PARAM_MODE_IN                     
+                     ParameterMode.OUT,
+                     ParameterMode.IN                     
                  }, null, null, null);
         skel.add("echoMap",
                  new String[] {
@@ -229,8 +229,8 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
                      "inputMap"
                  },
                  new ParameterMode[] {
-                     ParameterMode.PARAM_MODE_OUT,
-                     ParameterMode.PARAM_MODE_IN                     
+                     ParameterMode.OUT,
+                     ParameterMode.IN                     
                  }, null, null, null);
         skel.add("echoMapArray",
                  new String[] {
@@ -238,8 +238,8 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
                      "inputMapArray"
                  },
                  new ParameterMode[] {
-                     ParameterMode.PARAM_MODE_OUT,
-                     ParameterMode.PARAM_MODE_IN                     
+                     ParameterMode.OUT,
+                     ParameterMode.IN                     
                  }, null, null, null);
         skel.add("echoStructAsSimpleTypes",
                  new String[] {
@@ -251,10 +251,10 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
                  },
                  new ParameterMode[] {
                      null,
-                     ParameterMode.PARAM_MODE_IN,                     
-                     ParameterMode.PARAM_MODE_OUT,
-                     ParameterMode.PARAM_MODE_OUT,
-                     ParameterMode.PARAM_MODE_OUT,
+                     ParameterMode.IN,                     
+                     ParameterMode.OUT,
+                     ParameterMode.OUT,
+                     ParameterMode.OUT,
                  }, null, null, null);
         skel.add("echoSimpleTypesAsStruct",
                  new String[] {
@@ -264,10 +264,10 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
                  "inputFloat",
                  },
                  new ParameterMode[] {
-                     ParameterMode.PARAM_MODE_OUT,
-                     ParameterMode.PARAM_MODE_IN,                     
-                     ParameterMode.PARAM_MODE_IN,                     
-                     ParameterMode.PARAM_MODE_IN,                     
+                     ParameterMode.OUT,
+                     ParameterMode.IN,                     
+                     ParameterMode.IN,                     
+                     ParameterMode.IN,                     
                  }, null, null, null);
         skel.add("echo2DStringArray",
                  new String[] {
@@ -275,8 +275,8 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
                  "input2DStringArray",
                  },
                  new ParameterMode[] {
-                     ParameterMode.PARAM_MODE_OUT,
-                     ParameterMode.PARAM_MODE_IN                     
+                     ParameterMode.OUT,
+                     ParameterMode.IN                     
                  }, null, null, null);
         skel.add("echoNestedStruct",
                  new String[] {
@@ -284,8 +284,8 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
                  "inputStruct",
                  },
                  new ParameterMode[] {
-                     ParameterMode.PARAM_MODE_OUT,
-                     ParameterMode.PARAM_MODE_IN                     
+                     ParameterMode.OUT,
+                     ParameterMode.IN                     
                  }, null, null, null);
         skel.add("echoNestedArray",
                  new String[] {
@@ -293,8 +293,8 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
                  "inputStruct",
                  },
                  new ParameterMode[] {
-                     ParameterMode.PARAM_MODE_OUT,
-                     ParameterMode.PARAM_MODE_IN                     
+                     ParameterMode.OUT,
+                     ParameterMode.IN                     
                  }, null, null, null);
     }
     

@@ -61,12 +61,23 @@ package javax.xml.rpc;
 public class ParameterMode {
     private final String mode;
 
-    public static final ParameterMode PARAM_MODE_IN =
-            new ParameterMode("PARAM_MODE_IN");
-    public static final ParameterMode PARAM_MODE_INOUT =
-            new ParameterMode("PARAM_MODE_INOUT");
-    public static final ParameterMode PARAM_MODE_OUT =
-            new ParameterMode("PARAM_MODE_OUT");
+    public static final ParameterMode IN = new ParameterMode("IN");
+    public static final ParameterMode INOUT = new ParameterMode("INOUT");
+    public static final ParameterMode OUT = new ParameterMode("OUT");
+
+    /**
+     * @deprecated  Use ParameterMode.IN instead.
+     */
+//    public static final ParameterMode PARAM_MODE_IN = IN;
+    /**
+     * @deprecated  Use ParameterMode.INOUT instead.
+     */
+//    public static final ParameterMode PARAM_MODE_INOUT = INOUT;
+    /**
+     * @deprecated  Use ParameterMode.OUT instead.
+     */
+//    public static final ParameterMode PARAM_MODE_OUT = OUT;
+
 
     private ParameterMode(String mode) {
         this.mode = mode;

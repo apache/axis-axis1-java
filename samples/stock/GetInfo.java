@@ -87,8 +87,8 @@ public class GetInfo {
 
       call.setTargetEndpointAddress( new java.net.URL(opts.getURL()) );
       call.setOperationName( new QName("urn:cominfo", "getInfo") );
-      call.addParameter( "symbol", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN );
-      call.addParameter( "info", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN );
+      call.addParameter( "symbol", XMLType.XSD_STRING, ParameterMode.IN );
+      call.addParameter( "info", XMLType.XSD_STRING, ParameterMode.IN );
       call.setUsername( opts.getUser() );
       call.setPassword( opts.getPassword() );
 

@@ -23,10 +23,10 @@ public class v3 implements vInterface {
 
       call.setTargetEndpointAddress( new URL(registryURL) );
       call.setOperationName( new QName("http://www.soapinterop.org/Register", "Register" ));
-      call.addParameter("ServiceName", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN);
-      call.addParameter("ServiceUrl", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN);
-      call.addParameter("ServiceType", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN);
-      call.addParameter("ServiceWSDL", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN);
+      call.addParameter("ServiceName", XMLType.XSD_STRING, ParameterMode.IN);
+      call.addParameter("ServiceUrl", XMLType.XSD_STRING, ParameterMode.IN);
+      call.addParameter("ServiceType", XMLType.XSD_STRING, ParameterMode.IN);
+      call.addParameter("ServiceWSDL", XMLType.XSD_STRING, ParameterMode.IN);
       
       call.invoke( new Object[] { s.getServiceName(), s.getServiceUrl(),
                                   s.getServiceType(), s.getServiceWsdl() } );
@@ -44,7 +44,7 @@ public class v3 implements vInterface {
 
       call.setTargetEndpointAddress( new URL(registryURL) );
       call.setOperationName( new QName("http://www.soapinterop.org/Unregister", "Unregister" ));
-      call.addParameter( "ServiceName", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN);
+      call.addParameter( "ServiceName", XMLType.XSD_STRING, ParameterMode.IN);
       call.invoke( new Object[] { name } );
     }
     catch( Exception e ) {
@@ -81,7 +81,7 @@ public class v3 implements vInterface {
       call.setUseSOAPAction( true );
       call.setSOAPActionURI( "http://www.soapinterop.org/LookupAsString" );
       call.setOperationName( new QName("http://www.soapinterop.org/Registry", "LookupAsString" ));
-      call.addParameter( "ServiceType", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN);
+      call.addParameter( "ServiceType", XMLType.XSD_STRING, ParameterMode.IN);
       call.setReturnType( XMLType.XSD_DOUBLE );
 
       String res= (String) call.invoke( new Object[] { "Bid" } );
@@ -129,8 +129,8 @@ public class v3 implements vInterface {
       call.setReturnType( XMLType.XSD_DOUBLE );
       call.setUseSOAPAction( true );
       call.setSOAPActionURI( "http://www.soapinterop.org/RequestForQuote" );
-      call.addParameter( "ProductName", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN);
-      call.addParameter( "Quantity", XMLType.XSD_INT, ParameterMode.PARAM_MODE_IN);
+      call.addParameter( "ProductName", XMLType.XSD_STRING, ParameterMode.IN);
+      call.addParameter( "Quantity", XMLType.XSD_INT, ParameterMode.IN);
       Object r = call.invoke( new Object[] { "widget", new Integer(10) } );
 
 /*
@@ -163,9 +163,9 @@ public class v3 implements vInterface {
       call.setSOAPActionURI( "http://www.soapinterop.org/SimpleBuy" );
       call.setOperationName( new QName("http://www.soapinterop.org/Bid", "SimpleBuy") );
       call.setReturnType( XMLType.XSD_STRING );
-      call.addParameter( "Address", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN );
-      call.addParameter( "ProductName", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN);
-      call.addParameter( "Quantity", XMLType.XSD_INT, ParameterMode.PARAM_MODE_IN );
+      call.addParameter( "Address", XMLType.XSD_STRING, ParameterMode.IN );
+      call.addParameter( "ProductName", XMLType.XSD_STRING, ParameterMode.IN);
+      call.addParameter( "Quantity", XMLType.XSD_INT, ParameterMode.IN );
       
       String res = (String) call.invoke(new Object[] { "123 Main St.",
                                                        "Widget",
@@ -243,7 +243,7 @@ public class v3 implements vInterface {
                                                          "06883"),
                                              lineItems );
 
-      call.addParameter( "PO", poqn, ParameterMode.PARAM_MODE_IN );
+      call.addParameter( "PO", poqn, ParameterMode.IN );
       call.setOperationName( new QName("http://www.soapinterop.org/Bid", "Buy") );
 
       String res = (String) call.invoke( new Object[] { po } );

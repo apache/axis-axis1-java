@@ -519,15 +519,15 @@ public class JavaStubWriter extends JavaWriter {
                     paramQName.getLocalPart() + "\");");
             if (p.getMode() == Parameter.IN) {
                 pw.println("        call.addParameter(" + qnName + ", "
-                           + typeString + ", javax.xml.rpc.ParameterMode.PARAM_MODE_IN);");
+                           + typeString + ", javax.xml.rpc.ParameterMode.IN);");
             }
             else if (p.getMode() == Parameter.INOUT) {
                 pw.println("        call.addParameter(" + qnName + ", "
-                           + typeString + ", javax.xml.rpc.ParameterMode.PARAM_MODE_INOUT);");
+                           + typeString + ", javax.xml.rpc.ParameterMode.INOUT);");
             }
             else { // p.getMode() == Parameter.OUT
                 pw.println("        call.addParameter(" + qnName + ", "
-                           + typeString + ", javax.xml.rpc.ParameterMode.PARAM_MODE_OUT);");
+                           + typeString + ", javax.xml.rpc.ParameterMode.OUT);");
             }
         }
         // set output type

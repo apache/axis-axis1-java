@@ -107,7 +107,7 @@ public class GetQuote {
 
           call.setTargetEndpointAddress( url );
           call.setOperationName( new QName("urn:xmltoday-delayed-quotes", "getQuote") );
-          call.addParameter( "symbol", XMLType.XSD_STRING, ParameterMode.PARAM_MODE_IN );
+          call.addParameter( "symbol", XMLType.XSD_STRING, ParameterMode.IN );
           call.setReturnType( XMLType.XSD_FLOAT );
 
           // TESTING HACK BY ROBJ
