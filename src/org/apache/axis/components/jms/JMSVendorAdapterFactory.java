@@ -53,24 +53,27 @@
  * <http://www.apache.org/>.
  */
 
- package org.apache.axis.components.jms;
+package org.apache.axis.components.jms;
 
 import org.apache.axis.AxisProperties;
+import java.util.HashMap;
 
 /**
  * Discovery class used to locate vendor adapters.  Switch the default
  * JNDI-based implementation by using the
- * org.apache.axis.components.jms.JMSVendorAdapter  system property
+ * org.apache.axis.components.jms.JMSVendorAdapter system property
  *
  * @author Jaime Meritt (jmeritt@sonicsoftware.com)
+ * @author Ray Chun (rchun@sonicsoftware.com)
  */
 public class JMSVendorAdapterFactory
 {
-    static {
-//        AxisProperties.setClassOverrideProperty(JMSVendorAdapter.class, "?");
+    private static HashMap s_adapters = new HashMap();
+    private final static String VENDOR_PKG = "org.apache.axis.components.jms";
 
+    static {
         AxisProperties.setClassDefault(JMSVendorAdapter.class,
-                                       "org.apache.axis.components.jms.JNDIVendorAdapter");
+                                       VENDOR_PKG + ".JNDIVendorAdapter");
     }
 
     public static final JMSVendorAdapter getJMSVendorAdapter()
@@ -78,4 +81,42 @@ public class JMSVendorAdapterFactory
         return (JMSVendorAdapter)AxisProperties.newInstance(JMSVendorAdapter.class);
     }
 
+    public static final JMSVendorAdapter getJMSVendorAdapter(String vendorId)
+    {
+        // check to see if the adapter has already been instantiated
+        if (s_adapters.containsKey(vendorId))
+            return (JMSVendorAdapter)s_adapters.get(vendorId);
+
+        // create a new instance
+        JMSVendorAdapter adapter = null;
+        try
+        {
+            Class vendorClass = Class.forName(getVendorAdapterClassname(vendorId));
+            adapter = (JMSVendorAdapter)vendorClass.newInstance();
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
+
+        synchronized (s_adapters)
+        {
+            if (s_adapters.containsKey(vendorId))
+                return (JMSVendorAdapter)s_adapters.get(vendorId);
+
+            if (adapter != null)
+                s_adapters.put(vendorId, adapter);
+        }
+
+        return adapter;
+    }
+
+    private static String getVendorAdapterClassname(String vendorId)
+    {
+        StringBuffer sb = new StringBuffer(VENDOR_PKG).append(".");
+        sb.append(vendorId);
+        sb.append("VendorAdapter");
+
+        return sb.toString();
+    }
 }

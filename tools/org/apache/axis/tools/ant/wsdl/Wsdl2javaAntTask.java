@@ -56,9 +56,12 @@ package org.apache.axis.tools.ant.wsdl;
 import org.apache.axis.enum.Scope;
 import org.apache.axis.utils.DefaultAuthenticator;
 import org.apache.axis.wsdl.toJava.Emitter;
+import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
+import org.apache.tools.ant.types.Path;
+import org.apache.axis.utils.ClassUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -118,6 +121,7 @@ public class Wsdl2javaAntTask extends Task
     private String factory = null;
     private HashMap namespaceMap = new HashMap();
     private String output = "." ;
+    private String protocolHandlerPkgs = "";
     private String deployScope = "";
     private String url = "";
     private String typeMappingVersion = TypeMappingVersionEnum.DEFAULT_VERSION;
@@ -176,6 +180,7 @@ public class Wsdl2javaAntTask extends Task
         log("\tnoImports:" + noImports, logLevel);
         log("\tNStoPkg:" + namespaceMap, logLevel);
         log("\toutput:" + output, logLevel);
+        log("\tprotocolHandlerPkgs:" + protocolHandlerPkgs, logLevel);
         log("\tdeployScope:" + deployScope, logLevel);
         log("\tURL:" + url, logLevel);
         log("\tall:" + all, logLevel);
@@ -351,6 +356,22 @@ public class Wsdl2javaAntTask extends Task
     }
 
     /**
+     * append any protocol handler pkgs specified with the task
+     */
+    public void setProtocolHandlerPkgs(String handlerPkgs) {
+        String currentPkgs = System.getProperty("java.protocol.handler.pkgs");
+        String newPkgs = null;
+
+        if (currentPkgs == null)
+            newPkgs = handlerPkgs;
+        else
+            // append to the existing list
+            newPkgs = currentPkgs + "|" + handlerPkgs;
+
+        System.setProperty("java.protocol.handler.pkgs", newPkgs);
+    }
+
+    /**
      * add scope to deploy.xml: "Application", "Request", "Session"
      * optional;
      */
@@ -484,5 +505,4 @@ public class Wsdl2javaAntTask extends Task
         traceSystemSetting("socks.proxyPort", logLevel);
     }
 }
-
 

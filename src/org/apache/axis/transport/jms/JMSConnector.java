@@ -87,6 +87,7 @@ import java.util.Map;
  * @author Jaime Meritt  (jmeritt@sonicsoftware.com)
  * @author Richard Chung (rchung@sonicsoftware.com)
  * @author Dave Chappell (chappell@sonicsoftware.com)
+ * @author Ray Chun (rchun@sonicsoftware.com)
  */
 public abstract class JMSConnector
 {
@@ -100,6 +101,7 @@ public abstract class JMSConnector
     protected int               m_numSessions;
     protected boolean           m_allowReceive;
     protected JMSVendorAdapter  m_adapter;
+    protected JMSURLHelper      m_jmsurl;
 
     public JMSConnector(ConnectionFactory connectionFactory,
                         int numRetries,
@@ -111,7 +113,8 @@ public abstract class JMSConnector
                         String clientID,
                         String username,
                         String password,
-                        JMSVendorAdapter adapter)
+                        JMSVendorAdapter adapter,
+                        JMSURLHelper jmsurl)
         throws JMSException
     {
         m_numRetries = numRetries;
@@ -122,6 +125,7 @@ public abstract class JMSConnector
         m_numSessions = numSessions;
         m_allowReceive = allowReceive;
         m_adapter = adapter;
+        m_jmsurl = jmsurl;
 
         // try to connect initially so we can fail fast
         // in the case of irrecoverable errors.
@@ -154,6 +158,47 @@ public abstract class JMSConnector
         }
     }
 
+    public int getNumRetries()
+    {
+        return m_numRetries;
+    }
+
+    public int numSessions()
+    {
+        return m_numSessions;
+    }
+
+    public ConnectionFactory getConnectionFactory()
+    {
+        // there is always a send connection
+        return getSendConnection().getConnectionFactory();
+    }
+
+    public String getClientID()
+    {
+        return getSendConnection().getClientID();
+    }
+
+    public String getUsername()
+    {
+        return getSendConnection().getUsername();
+    }
+
+    public String getPassword()
+    {
+        return getSendConnection().getPassword();
+    }
+
+    public JMSVendorAdapter getVendorAdapter()
+    {
+        return m_adapter;
+    }
+
+    public JMSURLHelper getJMSURL()
+    {
+        return m_jmsurl;
+    }
+
     protected javax.jms.Connection createConnectionWithRetry(
                                             ConnectionFactory connectionFactory,
                                             String username,
@@ -180,6 +225,8 @@ public abstract class JMSConnector
 
     public void stop()
     {
+        JMSConnectorManager.getInstance().removeConnectorFromPool(this);
+
         m_sendConnection.stopConnection();
         if(m_allowReceive)
             m_receiveConnection.stopConnection();
@@ -190,6 +237,8 @@ public abstract class JMSConnector
         m_sendConnection.startConnection();
         if(m_allowReceive)
             m_receiveConnection.startConnection();
+
+        JMSConnectorManager.getInstance().addConnectorToPool(this);
     }
 
     public void shutdown()
@@ -227,7 +276,6 @@ public abstract class JMSConnector
         private Object m_jmsLock;
         private Object m_lifecycleLock;
 
-
         protected Connection(ConnectionFactory connectionFactory,
                              javax.jms.Connection connection,
                              String threadName,
@@ -260,6 +308,24 @@ public abstract class JMSConnector
             }
 
             m_isActive = true;
+        }
+
+        public ConnectionFactory getConnectionFactory()
+        {
+            return m_connectionFactory;
+        }
+
+        public String getClientID()
+        {
+            return m_clientID;
+        }
+        public String getUsername()
+        {
+            return m_username;
+        }
+        public String getPassword()
+        {
+            return m_password;
         }
 
         /**
@@ -937,8 +1003,6 @@ public abstract class JMSConnector
         }
     }
 
-
-
     private abstract class ConnectorSession
     {
         Session m_session;
@@ -948,7 +1012,5 @@ public abstract class JMSConnector
         {
             m_session = session;
         }
-
     }
-
 }

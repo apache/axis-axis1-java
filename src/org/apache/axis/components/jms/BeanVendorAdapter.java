@@ -74,7 +74,7 @@ import java.util.HashMap;
  *
  * @author Jaime Meritt (jmeritt@sonicsoftware.com)
  */
-public class BeanVendorAdapter extends JMSVendorAdapter
+public abstract class BeanVendorAdapter extends JMSVendorAdapter
 {
     protected final static String CONNECTION_FACTORY_CLASS =
                                         "transport.jms.ConnectionFactoryClass";

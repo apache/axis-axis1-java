@@ -89,14 +89,15 @@ public class JMSSender extends BasicHandler
      */
     public void invoke(MessageContext msgContext) throws AxisFault
     {
+        JMSConnector connector = null;
         try
         {
             Object destination = msgContext.getProperty(JMSConstants.DESTINATION);
             if(destination == null)
                 throw new AxisFault("noDestination");
 
-            JMSConnector connector = (JMSConnector)msgContext.getProperty(
-                                                    JMSConstants.CONNECTOR);
+            connector = (JMSConnector)msgContext.getProperty(JMSConstants.CONNECTOR);
+
             JMSEndpoint endpoint = null;
             if(destination instanceof String)
                 endpoint = connector.createEndpoint((String)destination);
@@ -127,6 +128,11 @@ public class JMSSender extends BasicHandler
         catch(Exception e)
         {
             throw new AxisFault("failedSend", e);
+        }
+        finally
+        {
+            if (connector != null)
+                JMSConnectorManager.getInstance().release(connector);
         }
     }
 

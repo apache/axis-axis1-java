@@ -95,12 +95,13 @@ public class QueueConnector extends JMSConnector
                           String clientID,
                           String username,
                           String password,
-                          JMSVendorAdapter adapter)
+                          JMSVendorAdapter adapter,
+                          JMSURLHelper jmsurl)
         throws JMSException
     {
         super(factory, numRetries, numSessions, connectRetryInterval,
               interactRetryInterval, timeoutTime, allowReceive, clientID,
-              username, password, adapter);
+              username, password, adapter, jmsurl);
     }
 
     public JMSEndpoint createEndpoint(String destination)
