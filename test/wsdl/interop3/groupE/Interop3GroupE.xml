@@ -83,7 +83,7 @@ Copyright:
             className="test.wsdl.interop3.groupE.InteropTestList"
             namespace="http://soapinterop.org/WSDLInteropTestList"
             location="http://localhost:8080/axis/services/InteropTestList">
-            <mapping namespace="http://soapinterop.org/WSDLInteropTestList"
+            <mapping namespace="http://soapinterop.org/xsd"
                      package="test.wsdl.interop3.groupE"/>
         </java2wsdl>
 
@@ -116,6 +116,8 @@ Copyright:
                    verbose="no"
                    testcase="no">
             <mapping namespace="http://soapinterop.org/WSDLInteropTestList"
+                     package="test.wsdl.interop3.groupE.client"/>
+            <mapping namespace="http://soapinterop.org/xsd"
                      package="test.wsdl.interop3.groupE.client"/>
         </wsdl2java>
 

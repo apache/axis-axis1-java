@@ -68,7 +68,7 @@
       <parameter name="scope" value="Session"/>
 
       <typeMapping
-        xmlns:ns="http://soapinterop.org/WSDLInteropTestList"
+        xmlns:ns="http://soapinterop.org/xsd"
         qname="ns:List"
         type="java:test.wsdl.interop3.groupE.List"
         serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
