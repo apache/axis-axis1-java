@@ -24,7 +24,7 @@ import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.TextSerializationContext;
-import org.apache.axis.enum.Style;
+import org.apache.axis.constants.Style;
 import org.apache.axis.soap.SOAPConstants;
 import org.apache.axis.utils.Mapping;
 import org.apache.axis.utils.Messages;

@@ -15,7 +15,7 @@
  */
 package org.apache.axis.client.async;
 
-import org.apache.axis.enum.Enum;
+import org.apache.axis.constants.Enum;
 
 /**
  * Status of the async request

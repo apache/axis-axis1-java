@@ -13,7 +13,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
 import org.apache.axis.AxisFault;
 import org.apache.axis.soap.SOAPConstants;
-import org.apache.axis.enum.Style;
+import org.apache.axis.constants.Style;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 

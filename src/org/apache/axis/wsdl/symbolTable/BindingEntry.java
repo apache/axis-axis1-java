@@ -15,8 +15,8 @@
  */
 package org.apache.axis.wsdl.symbolTable;
 
-import org.apache.axis.enum.Style;
-import org.apache.axis.enum.Use;
+import org.apache.axis.constants.Style;
+import org.apache.axis.constants.Use;
 
 import javax.wsdl.Binding;
 import javax.wsdl.Operation;

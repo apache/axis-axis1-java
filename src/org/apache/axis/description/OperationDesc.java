@@ -16,8 +16,8 @@
 package org.apache.axis.description;
 
 import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.enum.Style;
-import org.apache.axis.enum.Use;
+import org.apache.axis.constants.Style;
+import org.apache.axis.constants.Use;
 import org.apache.commons.logging.Log;
 
 import javax.xml.namespace.QName;

@@ -15,7 +15,7 @@
  */
 package org.apache.axis.wsdl;
 
-import org.apache.axis.enum.Scope;
+import org.apache.axis.constants.Scope;
 import org.apache.axis.utils.CLOption;
 import org.apache.axis.utils.CLOptionDescriptor;
 import org.apache.axis.utils.ClassUtils;

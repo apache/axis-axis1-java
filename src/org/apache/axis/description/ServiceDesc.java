@@ -17,8 +17,8 @@ package org.apache.axis.description;
 
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.TypeMappingRegistry;
-import org.apache.axis.enum.Style;
-import org.apache.axis.enum.Use;
+import org.apache.axis.constants.Style;
+import org.apache.axis.constants.Use;
 
 import javax.xml.namespace.QName;
 import java.util.ArrayList;

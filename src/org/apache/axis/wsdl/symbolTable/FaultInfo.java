@@ -15,7 +15,7 @@
  */
 package org.apache.axis.wsdl.symbolTable;
 
-import org.apache.axis.enum.Use;
+import org.apache.axis.constants.Use;
 import org.apache.axis.utils.Messages;
 
 import javax.wsdl.Fault;

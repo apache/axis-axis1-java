@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.axis.enum.Scope;
+import org.apache.axis.constants.Scope;
 import org.apache.axis.utils.DefaultAuthenticator;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.wsdl.toJava.Emitter;

@@ -20,7 +20,7 @@ import org.apache.axis.client.Call;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.ser.BeanDeserializerFactory;
 import org.apache.axis.encoding.ser.BeanSerializerFactory;
-import org.apache.axis.enum.Style;
+import org.apache.axis.constants.Style;
 import org.apache.axis.Constants;
 import org.apache.axis.AxisFault;
 import test.GenericLocalTest;

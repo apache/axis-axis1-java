@@ -16,8 +16,8 @@
 package org.apache.axis.wsdl.symbolTable;
 
 import org.apache.axis.Constants;
-import org.apache.axis.enum.Style;
-import org.apache.axis.enum.Use;
+import org.apache.axis.constants.Style;
+import org.apache.axis.constants.Use;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.URLHashSet;
 import org.apache.axis.utils.XMLUtils;

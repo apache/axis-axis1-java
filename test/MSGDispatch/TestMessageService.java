@@ -21,7 +21,7 @@ import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.apache.axis.configuration.SimpleProvider;
 import org.apache.axis.configuration.BasicServerConfig;
-import org.apache.axis.enum.Style;
+import org.apache.axis.constants.Style;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.message.SOAPEnvelope;

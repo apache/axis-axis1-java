@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.axis.enum;
+package org.apache.axis.constants;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.utils.Messages;

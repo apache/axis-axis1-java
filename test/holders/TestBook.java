@@ -19,8 +19,8 @@ import org.apache.axis.client.Call;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.ser.BeanDeserializerFactory;
 import org.apache.axis.encoding.ser.BeanSerializerFactory;
-import org.apache.axis.enum.Style;
-import org.apache.axis.enum.Use;
+import org.apache.axis.constants.Style;
+import org.apache.axis.constants.Use;
 import test.GenericLocalTest;
 
 import javax.xml.namespace.QName;

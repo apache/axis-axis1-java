@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
-import org.apache.axis.enum.Use;
+import org.apache.axis.constants.Use;
 import org.apache.axis.configuration.SimpleProvider;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.handlers.soap.SOAPService;

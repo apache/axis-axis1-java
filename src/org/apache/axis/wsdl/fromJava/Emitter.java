@@ -35,8 +35,8 @@ import org.apache.axis.encoding.DefaultTypeMappingImpl;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.encoding.DefaultSOAPEncodingTypeMappingImpl;
 import org.apache.axis.encoding.DefaultJAXRPC11TypeMappingImpl;
-import org.apache.axis.enum.Style;
-import org.apache.axis.enum.Use;
+import org.apache.axis.constants.Style;
+import org.apache.axis.constants.Use;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
@@ -2574,7 +2574,7 @@ public class Emitter {
      *              Note that the case of the string is not important. "document" and "DOCUMENT"
      *              are both treated as document style.
      *              If the value is not a know style, the default setting is used.
-     *              See org.apache.axis.enum.Style for a description of the interaction between
+     *              See org.apache.axis.constants.Style for a description of the interaction between
      *              Style/Use
      *              <br>NOTE: If style is specified as "wrapped", use is set to literal.
      */
@@ -2612,7 +2612,7 @@ public class Emitter {
      *              Note that the case of the string is not important. "literal" and "LITERAL"
      *              are both treated as literal use.
      *              If the value is not a know use, the default setting is used.
-     *              See org.apache.axis.enum.Style for a description of the interaction between
+     *              See org.apache.axis.constants.Style for a description of the interaction between
      *              Style/Use
      */
     public void setUse(String value) {

@@ -44,7 +44,7 @@ import org.apache.axis.components.encoding.XMLEncoder;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.TypeDesc;
 import org.apache.axis.encoding.ser.BaseSerializerFactory;
-import org.apache.axis.enum.Use;
+import org.apache.axis.constants.Use;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.schema.SchemaVersion;
 import org.apache.axis.soap.SOAPConstants;

@@ -17,9 +17,9 @@ package org.apache.axis.wsdl.toJava;
 
 import org.apache.axis.Constants;
 import org.apache.axis.deployment.wsdd.WSDDConstants;
-import org.apache.axis.enum.Scope;
-import org.apache.axis.enum.Style;
-import org.apache.axis.enum.Use;
+import org.apache.axis.constants.Scope;
+import org.apache.axis.constants.Style;
+import org.apache.axis.constants.Use;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.wsdl.symbolTable.BindingEntry;

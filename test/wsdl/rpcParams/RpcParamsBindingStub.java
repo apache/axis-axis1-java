@@ -127,8 +127,8 @@ public class RpcParamsBindingStub extends Stub implements RpcParamsTest {
         operation.setReturnType(new QName("urn:rpcParams.wsdl.test", "EchoStruct"));
         operation.setReturnClass(EchoStruct.class);
         operation.setReturnQName(new QName("", "echoReturn"));
-        operation.setStyle(org.apache.axis.enum.Style.RPC);
-        operation.setUse(org.apache.axis.enum.Use.ENCODED);
+        operation.setStyle(org.apache.axis.constants.Style.RPC);
+        operation.setUse(org.apache.axis.constants.Use.ENCODED);
 
         org.apache.axis.client.Call _call = createCall();
         _call.setOperation(operation);
@@ -183,8 +183,8 @@ public class RpcParamsBindingStub extends Stub implements RpcParamsTest {
         operation.setReturnType(new QName("urn:rpcParams.wsdl.test", "EchoStruct"));
         operation.setReturnClass(EchoStruct.class);
         operation.setReturnQName(new QName("", "echoReturn"));
-        operation.setStyle(org.apache.axis.enum.Style.RPC);
-        operation.setUse(org.apache.axis.enum.Use.ENCODED);
+        operation.setStyle(org.apache.axis.constants.Style.RPC);
+        operation.setUse(org.apache.axis.constants.Use.ENCODED);
 
         org.apache.axis.client.Call _call = createCall();
         _call.setOperation(operation);
