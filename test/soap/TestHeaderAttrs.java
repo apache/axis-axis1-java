@@ -152,7 +152,7 @@ public class TestHeaderAttrs extends TestCase {
             assertTrue("Non AxisFault Exception : " + e, 
                        e instanceof AxisFault);
             AxisFault fault = (AxisFault)e;
-            assertEquals("Bad fault code!", Constants.FAULT_MUSTUNDERSTAND,
+            assertEquals("Bad fault code!", soapVersion.getMustunderstandFaultQName(),
                          fault.getFaultCode());
             return;
         }

@@ -130,4 +130,9 @@ public interface SOAPConstants extends Serializable {
      */
     public QName getVerMismatchFaultCodeQName();
 
+    /**
+     * Obtain the Qname of Mustunderstand fault code
+     */
+    public QName getMustunderstandFaultQName();
+
 }

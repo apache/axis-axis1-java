@@ -159,7 +159,6 @@ public class TestEncodingStyle extends TestCase {
         try {
             SOAPEnvelope envelope = message.getSOAPEnvelope();
         } catch (AxisFault af) {
-            expectedFault = true;
             return af.getFaultString().indexOf(expected_str) != -1 &&
                    expected_code.equals(af.getFaultCode());
         }
