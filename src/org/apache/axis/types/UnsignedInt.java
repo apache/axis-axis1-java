@@ -74,13 +74,13 @@ public class UnsignedInt extends java.lang.Number implements java.lang.Comparabl
 
     /**
      * ctor for UnsignedInt
-     * @exception Exception will be thrown if validation fails
+     * @exception NumberFormatException will be thrown if validation fails
      */
-    public UnsignedInt(long iValue) throws Exception {
+    public UnsignedInt(long iValue) throws NumberFormatException {
       setValue(iValue);
     }
 
-    public UnsignedInt(String stValue) throws Exception {
+    public UnsignedInt(String stValue) throws NumberFormatException {
       setValue(Long.parseLong(stValue));
     }
 
@@ -91,9 +91,10 @@ public class UnsignedInt extends java.lang.Number implements java.lang.Comparabl
      *
      * @param int value
      */
-    public void setValue(long iValue) throws Exception {
+    public void setValue(long iValue) throws NumberFormatException {
       if (isValid(iValue) == false)
-            throw new Exception(Messages.getMessage("badUnsignedInt00") +
+            throw new NumberFormatException(
+                    Messages.getMessage("badUnsignedInt00") +
                     String.valueOf(iValue) + "]");
       lValue = new Long(iValue);
     }

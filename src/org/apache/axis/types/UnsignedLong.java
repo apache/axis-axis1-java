@@ -75,13 +75,13 @@ public class UnsignedLong extends java.lang.Number implements java.lang.Comparab
 
     /**
      * ctor for UnsignedLong
-     * @exception Exception will be thrown if validation fails
+     * @exception NumberFormatException will be thrown if validation fails
      */
-    public UnsignedLong(double lValue) throws Exception {
+    public UnsignedLong(double lValue) throws NumberFormatException {
       setValue(lValue);
     }
 
-    public UnsignedLong(String stValue) throws Exception {
+    public UnsignedLong(String stValue) throws NumberFormatException {
       setValue(Double.parseDouble(stValue));
     }
 
@@ -91,9 +91,10 @@ public class UnsignedLong extends java.lang.Number implements java.lang.Comparab
      *
      * @param long value
      */
-    public void setValue(double lValue) throws Exception {
+    public void setValue(double lValue) throws NumberFormatException {
         if (isValid(lValue) == false)
-            throw new Exception(Messages.getMessage("badUnsignedLong00") +
+            throw new NumberFormatException(
+                    Messages.getMessage("badUnsignedLong00") +
                     String.valueOf(lValue) + "]");
         this.lValue = new Double(lValue);
     }

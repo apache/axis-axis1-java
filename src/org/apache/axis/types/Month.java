@@ -76,7 +76,7 @@ public class Month {
      * Constructs a Month with the given values
      * No timezone is specified
      */ 
-    public Month(int month) throws Exception {
+    public Month(int month) throws NumberFormatException {
         setValue(month);
     }
 
@@ -84,7 +84,8 @@ public class Month {
      * Constructs a Month with the given values, including a timezone string
      * The timezone is validated but not used.
      */ 
-    public Month(int month, String timezone) throws Exception {
+    public Month(int month, String timezone) 
+        throws NumberFormatException {
         setValue(month, timezone);
     }
     

@@ -76,22 +76,24 @@ public class NormalizedString extends Object {
     /**
      *
      * ctor for NormalizedString
-     * NOTE: null will be returned if validation fails
+     * @param stValue is the String value
+     * @throws IllegalArgumentException if invalid format
      */
-    public NormalizedString(String stValue) throws Exception {
+    public NormalizedString(String stValue) throws IllegalArgumentException {
         setValue(stValue);
     }
 
     /**
      *
      * validates the data and sets the value for the object.
-     *
-     * @param normalizedString value
+     * @param normalizedString String value
+     * @throws IllegalArgumentException if invalid format
      */
-    public void setValue(String stValue) throws Exception {
+    public void setValue(String stValue) throws IllegalArgumentException {
         if (isValid(stValue) == false)
-            throw new Exception(Messages.getMessage("badNormalizedString00") +
-                    " data=[" + stValue + "]");
+            throw new IllegalArgumentException(
+               Messages.getMessage("badNormalizedString00") +
+               " data=[" + stValue + "]");
         m_value = stValue;
     }
 
@@ -100,7 +102,6 @@ public class NormalizedString extends Object {
     }
 
     public int hashCode(){
-        //TODO: How do we hash this?
         return m_value.hashCode();
     }
 

@@ -79,16 +79,17 @@ public class NMToken extends Token {
 
     /**
      * ctor for NMToken
-     * @exception Exception will be thrown if validation fails
+     * @exception IllegalArgumentException will be thrown if validation fails
      */
-    public NMToken(String stValue) throws Exception {
+    public NMToken(String stValue) throws IllegalArgumentException {
         try {
             setValue(stValue);
         }
-        catch (Exception e) {
+        catch (IllegalArgumentException e) {
             // recast normalizedString exception as token exception
-            throw new Exception(Messages.getMessage("badNmtoken00") + "data=[" +
-                    stValue + "]");
+            throw new IllegalArgumentException(
+                Messages.getMessage("badNmtoken00") + "data=[" +
+                stValue + "]");
         }
     }
 

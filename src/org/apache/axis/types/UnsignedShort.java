@@ -73,13 +73,13 @@ public class UnsignedShort extends UnsignedInt {
 
     /**
      * ctor for UnsignedShort
-     * @exception Exception will be thrown if validation fails
+     * @exception NumberFormatException will be thrown if validation fails
      */
-    public UnsignedShort(long sValue) throws Exception {
+    public UnsignedShort(long sValue) throws NumberFormatException {
       setValue(sValue);
     }
 
-    public UnsignedShort(String sValue) throws Exception {
+    public UnsignedShort(String sValue) throws NumberFormatException {
       setValue(Long.parseLong(sValue));
     }
 
@@ -89,9 +89,10 @@ public class UnsignedShort extends UnsignedInt {
      *
      * @param short value
      */
-    public void setValue(long sValue) throws Exception {
+    public void setValue(long sValue) throws NumberFormatException {
         if (isValid(sValue) == false)
-            throw new Exception(Messages.getMessage("badUnsignedShort00") +
+            throw new NumberFormatException(
+                Messages.getMessage("badUnsignedShort00") +
                     String.valueOf(sValue) + "]");
         lValue = new Long(sValue);
     }

@@ -76,16 +76,17 @@ public class Name extends Token {
 
     /**
      * ctor for Name
-     * @exception Exception will be thrown if validation fails
+     * @exception IllegalArgumentException will be thrown if validation fails
      */
-    public Name(String stValue) throws Exception {
+    public Name(String stValue) throws IllegalArgumentException {
         try {
             setValue(stValue);
         }
-        catch (Exception e) {
+        catch (IllegalArgumentException e) {
             // recast normalizedString exception as token exception
-            throw new Exception(Messages.getMessage("badNameType00") + "data=[" +
-                    stValue + "]");
+            throw new IllegalArgumentException(
+                 Messages.getMessage("badNameType00") + "data=[" +
+                 stValue + "]");
         }
     }
 

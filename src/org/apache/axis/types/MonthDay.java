@@ -77,7 +77,8 @@ public class MonthDay {
      * Constructs a MonthDay with the given values
      * No timezone is specified
      */ 
-    public MonthDay(int month, int day) throws Exception {
+    public MonthDay(int month, int day) 
+        throws NumberFormatException {
         setValue(month, day);
     }
 
@@ -85,7 +86,8 @@ public class MonthDay {
      * Constructs a MonthDay with the given values, including a timezone string
      * The timezone is validated but not used.
      */ 
-    public MonthDay(int month, int day, String timezone) throws Exception {
+    public MonthDay(int month, int day, String timezone) 
+        throws NumberFormatException {
         setValue(month, day, timezone);
     }
     
@@ -174,7 +176,8 @@ public class MonthDay {
         }
     }
 
-    public void setValue(int month, int day, String timezone) throws NumberFormatException {
+    public void setValue(int month, int day, String timezone)
+        throws NumberFormatException {
         setMonth(month);
         setDay(day);
         setTimezone(timezone);
