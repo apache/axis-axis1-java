@@ -413,7 +413,6 @@ public class SymbolTable {
                         arrayType = new DefinedType(qName, javaName, node);
                     }
                     symbolTablePut(arrayType);
-                    arrayType.setShouldEmit(false);
                 }
                 else {
                     // Create a Type representing a base type or non-base type

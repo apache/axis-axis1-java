@@ -138,7 +138,8 @@ public class JavaDeployWriter extends JavaWriter {
         pw.println();
         for (int i = 0; i < types.size(); ++i) {
             Type type = (Type) types.elementAt(i);
-            if (type.getBaseType() == null && type.isReferenced() && type.getShouldEmit()) {
+            if (type.getBaseType() == null && type.isReferenced()
+                    && !type.getJavaName().endsWith("[]")) {
                 pw.println("  <beanMapping");
                 pw.println("    xmlns:ns=\"" + type.getQName().getNamespaceURI() + "\"");
                 pw.println("    qname=\"ns:" + type.getQName().getLocalPart() + '"');

@@ -337,7 +337,7 @@ public class JavaStubWriter extends JavaWriter {
     private boolean firstSer = true ;
 
     private void writeSerializationInit(Type type) throws IOException {
-        if (type.getBaseType() != null || !type.getShouldEmit()) {
+        if (type.getBaseType() != null || type.getName().endsWith("[]")) {
             return;
         }
         if ( firstSer ) {
@@ -445,7 +445,19 @@ public class JavaStubWriter extends JavaWriter {
                     while (p.mode != Parameter.INOUT) {
                         p = (Parameter) parms.list.get(++i);
                     }
-                    pw.println ("            " + Utils.xmlNameToJava(p.name) + "._value = " + getResponseString(p.type, "resp"));
+                    String javifiedName = Utils.xmlNameToJava(p.name);
+                    // duplicate scheu's quick fix from a couple dozen lines up...
+                    if (p.type.getName().endsWith("[]")) {
+                        pw.println("             // REVISIT THIS!");
+                        pw.println ("            " + javifiedName
+                                    + "._value = (" + p.type.getName()
+                                    + ") org.apache.axis.utils.JavaUtils.convert(resp, "
+                                    + p.type.getName() + ".class);");
+                    }
+                    else {
+                        pw.println ("            " + javifiedName + "._value = "
+                                + getResponseString(p.type, "resp"));
+                    }
                 }
                 else {
                     // (parms.outputs == 1)
@@ -478,9 +490,19 @@ public class JavaStubWriter extends JavaWriter {
                     if (p.mode != Parameter.IN) {
                         if (firstInoutIsResp) {
                             firstInoutIsResp = false;
-                            pw.println ("            " + javifiedName
-                                    + "._value = "
-                                    + getResponseString(p.type,  "resp"));
+                            // duplicate scheu's quick fix from a couple dozen lines up...
+                            if (p.type.getName().endsWith("[]")) {
+                                pw.println("             // REVISIT THIS!");
+                                pw.println ("            " + javifiedName
+                                        + "._value = (" + p.type.getName()
+                                        + ") org.apache.axis.utils.JavaUtils.convert(resp, "
+                                        + p.type.getName() + ".class);");
+                            }
+                            else {
+                                pw.println ("            " + javifiedName +
+                                            "._value = " +
+                                            getResponseString(p.type,  "resp"));
+                            }
                         }
                         else {
                             pw.println ("            " + javifiedName

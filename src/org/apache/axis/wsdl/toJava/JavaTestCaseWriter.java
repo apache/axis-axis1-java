@@ -217,7 +217,8 @@ public class JavaTestCaseWriter extends JavaWriter {
                 String suffix = "";
 
                 if (param.mode != Parameter.IN) {
-                    pw.print("new " + Utils.holder(param.type) + "(");
+                    pw.print("new " + Utils.holder(param.type, symbolTable)
+                            + "(");
                     suffix = ")";
                 }
 
@@ -238,6 +239,10 @@ public class JavaTestCaseWriter extends JavaWriter {
                         pw.print("new java.math.BigInteger(\"0\")");
                     } else if (paramType.equals("byte[]")) {
                         pw.print("new byte[0]");
+                    } else if (paramType.endsWith("[]")) {
+                        pw.print("new "
+                                + paramType.substring(0, paramType.length() - 1)
+                                + "0]");
                     } else {
 
                         // We have some constructed type.

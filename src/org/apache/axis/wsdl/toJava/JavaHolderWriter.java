@@ -56,6 +56,8 @@ package org.apache.axis.wsdl.toJava;
 
 import java.io.IOException;
 
+import javax.wsdl.QName;
+
 import org.apache.axis.utils.JavaUtils;
 
 /**
@@ -68,7 +70,13 @@ public class JavaHolderWriter extends JavaWriter {
      * Constructor.
      */
     protected JavaHolderWriter(Emitter emitter, Type type) {
-        super(emitter, type, "Holder", "java",
+        super(
+                emitter,
+                new QName(
+                        type.getQName().getNamespaceURI(),
+                        Utils.xmlNameToJavaClass(type.getQName().getLocalPart())),
+                "Holder",
+                "java",
                 JavaUtils.getMessage("genHolder00"));
         this.type = type;
     } // ctor

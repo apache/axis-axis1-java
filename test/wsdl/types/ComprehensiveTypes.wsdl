@@ -157,7 +157,6 @@
       <input message="tns:empty"/>
       <output message="tns:enum"/>
     </operation>
-<!--
     <operation name="arrayIn">
       <input message="tns:array"/>
       <output message="tns:empty"/>
@@ -170,7 +169,6 @@
       <input message="tns:empty"/>
       <output message="tns:array"/>
     </operation>
--->
     <operation name="complexAllIn">
       <input message="tns:complexAll"/>
       <output message="tns:empty"/>
@@ -316,7 +314,6 @@
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
     </operation>
-<!--
     <operation name="arrayIn">
       <soap:operation soapAction=""/>
       <input>
@@ -362,7 +359,6 @@
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
       </output>
     </operation>
--->
     <operation name="complexAllIn">
       <soap:operation soapAction=""/>
       <input>

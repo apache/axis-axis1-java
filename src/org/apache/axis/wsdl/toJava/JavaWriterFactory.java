@@ -73,7 +73,8 @@ import javax.wsdl.Service;
 */
 
 public class JavaWriterFactory implements WriterFactory {
-    private Emitter emitter;
+    private Emitter     emitter;
+    private SymbolTable symbolTable;
 
     /**
      * Default constructor.  Note that this class is unusable until setEmitter
@@ -88,6 +89,7 @@ public class JavaWriterFactory implements WriterFactory {
      * - construct signatures
      */
     public void writerPass(Definition def, SymbolTable symbolTable) {
+        this.symbolTable = symbolTable;
         javifyNames(symbolTable);
         resolveNameClashes(symbolTable);
         ignoreNonSOAPBindingPortTypes(symbolTable);
@@ -400,14 +402,14 @@ public class JavaWriterFactory implements WriterFactory {
                 skelSig = skelSig + p.type.getName() + " " + javifiedName;
             }
             else if (p.mode == Parameter.INOUT) {
-                signature = signature + Utils.holder(p.type) + " " +
-                        javifiedName;
+                signature = signature + Utils.holder(p.type, symbolTable) + " "
+                        + javifiedName;
                 skelSig = skelSig + p.type.getName() + " " + javifiedName;
             }
             else// (p.mode == Parameter.OUT)
             {
-                signature = signature + Utils.holder(p.type) + " " +
-                        javifiedName;
+                signature = signature + Utils.holder(p.type, symbolTable) + " "
+                        + javifiedName;
             }
         }
         signature = signature + ") throws java.rmi.RemoteException";

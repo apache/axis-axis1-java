@@ -173,7 +173,7 @@ public class JavaSkelWriter extends JavaWriter {
         for (int i = 0; i < parms.list.size(); ++i) {
             Parameter p = (Parameter) parms.list.get(i);
 
-            String holder = Utils.holder(p.type);
+            String holder = Utils.holder(p.type, symbolTable);
             if (p.mode == Parameter.INOUT) {
                 pw.println("        " + holder + " " + p.name + "Holder = new " + holder + "(" + Utils.xmlNameToJava(p.name) + ");");
             }
