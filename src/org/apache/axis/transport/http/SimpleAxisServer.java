@@ -194,6 +194,8 @@ public class SimpleAxisServer implements Runnable {
         StringBuffer cookie = new StringBuffer();
         StringBuffer cookie2 = new StringBuffer();
         StringBuffer authInfo = new StringBuffer();
+        
+        Message responseMsg = null;
 
         // Accept and process requests from the socket
         while (!stopped) {
@@ -210,6 +212,8 @@ public class SimpleAxisServer implements Runnable {
             msgContext.reset();
             //msgContext.setProperty("transport", "HTTPTransport");
             msgContext.setTransportName(transportName);
+            
+            responseMsg = null;
 
             try {
                 try {
@@ -365,6 +369,12 @@ public class SimpleAxisServer implements Runnable {
 
                     // invoke the Axis engine
                     engine.invoke(msgContext);
+                    
+                    // Retrieve the response from Axis
+                    responseMsg = msgContext.getResponseMessage();
+                    if (responseMsg == null) {
+                        throw new AxisFault(JavaUtils.getMessage("nullResponse00"));
+                    }
 
                 } catch( Exception e ) {
                     AxisFault af;
@@ -385,13 +395,14 @@ public class SimpleAxisServer implements Runnable {
                     // There may be headers we want to preserve in the
                     // response message - so if it's there, just add the
                     // FaultElement to it.  Otherwise, make a new one.
-                    Message msg = msgContext.getResponseMessage();
-                    if (msg == null) {
-                        msg = new Message((AxisFault)e);
-                        msgContext.setResponseMessage(msg);
+                    responseMsg = msgContext.getResponseMessage();
+                    if (responseMsg == null) {
+                        responseMsg = new Message((AxisFault)e);
                     } else {
                         try {
-                            SOAPEnvelope env = msg.getSOAPPart().getAsSOAPEnvelope();
+                            SOAPEnvelope env = responseMsg.
+                                                getSOAPPart().
+                                                getAsSOAPEnvelope();
                             env.clearBody();
                             env.addBodyElement(new SOAPFaultElement((AxisFault)e));
                         } catch (AxisFault fault) {
@@ -400,8 +411,6 @@ public class SimpleAxisServer implements Runnable {
                     }
                 }
 
-                // Retrieve the response from Axis
-                Message responseMsg = msgContext.getResponseMessage();
                 byte[] response = (byte[]) responseMsg.getSOAPPart().getAsBytes();
 
                 // Send it on its way...
