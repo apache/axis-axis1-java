@@ -259,7 +259,7 @@ Copyright:
 
     <!-- Tests are packaged as test.*, so source dir is main dir -->
     <javac srcdir="${basedir}"
-      destdir="${build.dir}"
+      destdir="${build.dir}/classes"
       debug="on"> <!-- set debug on since it helps with line numbers when unit tests fail. -->
       <include name="test/**/*.java" />
       <classpath refid="test-classpath" />
