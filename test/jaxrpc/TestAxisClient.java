@@ -369,8 +369,8 @@ public class TestAxisClient extends AJAXRPC {
             AAAHandler handlerOne = factory.getHandlers()[1];
             AAAHandler handlerTwo = factory.getHandlers()[2];
             assertHandlerRuntime("handlerZero", handlerZero, 1, 0, 0);
-            assertHandlerRuntime("handlerOne", handlerOne, 1, 0, 1);
-            assertHandlerRuntime("handlerTwo", handlerTwo, 1, 0, 1);   
+            assertHandlerRuntime("handlerOne", handlerOne, 1, 0, 0);
+            assertHandlerRuntime("handlerTwo", handlerTwo, 1, 0, 0);
         }
     }
 
@@ -412,8 +412,8 @@ public class TestAxisClient extends AJAXRPC {
             AAAHandler handlerOne = factory.getHandlers()[1];
             AAAHandler handlerTwo = factory.getHandlers()[2];
             assertHandlerRuntime("handlerZero", handlerZero, 1, 0, 0);
-            assertHandlerRuntime("handlerOne", handlerOne, 1, 0, 1);
-            assertHandlerRuntime("handlerTwo", handlerTwo, 1, 0, 1);
+            assertHandlerRuntime("handlerOne", handlerOne, 1, 0, 0);
+            assertHandlerRuntime("handlerTwo", handlerTwo, 1, 0, 0);
         }
     }
 
@@ -456,8 +456,8 @@ public class TestAxisClient extends AJAXRPC {
             AAAHandler handlerOne = factory.getHandlers()[1];
             AAAHandler handlerTwo = factory.getHandlers()[2];
             assertHandlerRuntime("handlerZero", handlerZero, 1, 0, 0);
-            assertHandlerRuntime("handlerOne", handlerOne, 1, 0, 1);
-            assertHandlerRuntime("handlerTwo", handlerTwo, 1, 0, 1);
+            assertHandlerRuntime("handlerOne", handlerOne, 1, 0, 0);
+            assertHandlerRuntime("handlerTwo", handlerTwo, 1, 0, 0);
         }
     }
 
@@ -497,9 +497,9 @@ public class TestAxisClient extends AJAXRPC {
             AAAHandler handlerZero = factory.getHandlers()[0];
             AAAHandler handlerOne = factory.getHandlers()[1];
             AAAHandler handlerTwo = factory.getHandlers()[2];
-            assertHandlerRuntime("handlerZero", handlerZero, 1, 0, 1);
-            assertHandlerRuntime("handlerOne", handlerOne, 1, 0, 1);
-            assertHandlerRuntime("handlerTwo", handlerTwo, 1, 0, 1);
+            assertHandlerRuntime("handlerZero", handlerZero, 1, 0, 0);
+            assertHandlerRuntime("handlerOne", handlerOne, 1, 0, 0);
+            assertHandlerRuntime("handlerTwo", handlerTwo, 1, 0, 0);
         }
     }
     
