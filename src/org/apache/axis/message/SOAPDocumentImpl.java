@@ -41,11 +41,13 @@
 
 package org.apache.axis.message;
 
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.soap.SOAPException;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.SOAPPart;
+import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Comment;
@@ -87,7 +89,11 @@ implements org.w3c.dom.Document, java.io.Serializable {
      * @param soapPart
      */
     public SOAPDocumentImpl(SOAPPart sp) {
-        delegate = new org.apache.xerces.dom.CoreDocumentImpl();
+        try {
+            delegate = XMLUtils.newDocument();
+        } catch (ParserConfigurationException e) {
+            // Do nothing
+        }
         soapPart = sp;
     }
 
