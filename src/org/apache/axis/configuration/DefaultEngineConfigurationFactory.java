@@ -58,6 +58,7 @@ package org.apache.axis.configuration;
 import org.apache.axis.AxisEngine;
 import org.apache.axis.EngineConfigurationFactory;
 import org.apache.axis.EngineConfiguration;
+import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 
 import org.apache.commons.logging.Log;
@@ -100,8 +101,8 @@ public class DefaultEngineConfigurationFactory implements EngineConfigurationFac
 
         if (fClassName != null) {
             try {
-                userFactory = (EngineConfigurationFactory)Class.
-                    forName(fClassName).newInstance();
+                userFactory = (EngineConfigurationFactory)
+                        ClassUtils.forName(fClassName).newInstance();
             } catch (Exception e) {
                 // Report diagnostics but use the default factory.
                 log.error(JavaUtils.getMessage("exception00"), e);

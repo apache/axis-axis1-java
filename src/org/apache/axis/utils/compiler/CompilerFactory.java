@@ -55,6 +55,7 @@
 
 package org.apache.axis.utils.compiler;
 
+import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 
 import org.apache.commons.logging.Log;
@@ -77,7 +78,7 @@ public class CompilerFactory {
             log.debug("axis.Compiler:" + compilerClassName);
             if (compilerClassName != null) {
                 try {
-                    Class compilerClass = Class.forName(compilerClassName);
+                    Class compilerClass = ClassUtils.forName(compilerClassName);
                     if (Compiler.class.isAssignableFrom(compilerClass))
                         return (Compiler)compilerClass.newInstance();
                 } catch (Exception e) {

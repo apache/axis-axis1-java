@@ -58,6 +58,7 @@ package org.apache.axis.server;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.AxisFault;
 import org.apache.axis.AxisEngine;
+import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 
 import org.apache.commons.logging.Log;
@@ -181,7 +182,7 @@ public class DefaultAxisServerFactory implements AxisServerFactory {
                     // Got one - so try to make it (which means it had better have
                     // a default constructor - may make it possible later to pass
                     // in some kind of environmental parameters...)
-                    Class cls = Class.forName(configClass);
+                    Class cls = ClassUtils.forName(configClass);
                     config = (EngineConfiguration)cls.newInstance();
                 } catch (ClassNotFoundException e) {
                     log.warn(JavaUtils.getMessage("engineConfigNoClass00", configClass), e);

@@ -60,6 +60,7 @@ import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.encoding.Base64;
 import org.apache.axis.handlers.BasicHandler;
+import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.commons.logging.Log;
@@ -209,8 +210,8 @@ public class HTTPSender extends BasicHandler {
         try {
 
             // Use java reflection to create a secure socket.
-            Class SSLSocketFactoryClass = Class.forName("javax.net.ssl.SSLSocketFactory");
-            Class SSLSocketClass = Class.forName("javax.net.ssl.SSLSocket");
+            Class SSLSocketFactoryClass = ClassUtils.forName("javax.net.ssl.SSLSocketFactory");
+            Class SSLSocketClass = ClassUtils.forName("javax.net.ssl.SSLSocket");
             Method createSocketMethod =
                     SSLSocketFactoryClass.getMethod("createSocket",
                             new Class[]{String.class,
@@ -226,7 +227,7 @@ public class HTTPSender extends BasicHandler {
             String socketFactoryClass = AxisEngine.getGlobalProperty("axis.socketFactory");
             if (socketFactoryClass != null) {
                 try {
-                    Class c1 = Class.forName(socketFactoryClass);
+                    Class c1 = ClassUtils.forName(socketFactoryClass);
                     SocketFactoryFactory sff = (SocketFactoryFactory) c1.newInstance();
                     factory = sff.createFactory();
                     if (log.isDebugEnabled()) {

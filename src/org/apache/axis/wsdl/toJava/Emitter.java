@@ -73,6 +73,7 @@ import org.apache.axis.encoding.TypeMapping;
 
 import org.apache.axis.enum.Scope;
 
+import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 
 import org.apache.axis.wsdl.gen.GeneratorFactory;
@@ -287,7 +288,7 @@ public class Emitter extends Parser {
         try {
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
             setFactory((GeneratorFactory)
-                       Class.forName(factory, true, cl).newInstance());
+                       ClassUtils.forName(factory).newInstance());
         }
         catch (Exception ex) {
             ex.printStackTrace();

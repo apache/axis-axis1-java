@@ -60,6 +60,7 @@ import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.Callback;
 import org.apache.axis.encoding.CallbackTarget;
+import org.apache.axis.utils.ClassUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.w3c.dom.Element;
@@ -115,8 +116,7 @@ public class SOAPFaultBuilder extends SOAPHandler implements Callback
         AxisFault f = null;
         if (faultClassName != null) {
             try {
-                ClassLoader cl = context.getMessageContext().getClassLoader();
-                Class exClass = Class.forName(faultClassName, true, cl);
+                Class exClass = ClassUtils.forName(faultClassName);
                 if (AxisFault.class.isAssignableFrom(exClass)) {
                     f = (AxisFault) exClass.newInstance();
                     f.setFaultCode(faultCode);

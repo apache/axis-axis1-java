@@ -59,7 +59,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.EngineConfiguration;
 
 import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
-
+import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 
 import javax.naming.Context;
@@ -177,7 +177,7 @@ public class ServiceFactory extends javax.xml.rpc.ServiceFactory
             // If an explicit service classname is provided, then this is a
             // generated Service class.  Just use its default constructor.
             if (addr != null && (obj = addr.getContent()) instanceof String) {
-                instance = Class.forName((String) obj).newInstance();
+                instance = ClassUtils.forName((String) obj).newInstance();
             }
             // else this is an instance of the Service class, so grab the
             // reference data...

@@ -59,6 +59,7 @@ import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.cache.JavaClass;
 import org.w3c.dom.Document;
@@ -134,7 +135,7 @@ public class MsgProvider extends JavaProvider {
             /////////////////////////////////////////////////////////////////
             argClasses = new Class[1];
             argObjects = new Object[1];
-            argClasses[0] = clsLoader.loadClass("java.util.Vector");
+            argClasses[0] = ClassUtils.forName("java.util.Vector", true, clsLoader);
             argObjects[0] = bodies ;
 
             try {
@@ -154,7 +155,7 @@ public class MsgProvider extends JavaProvider {
               /////////////////////////////////////////////////////////////////
                 argClasses = new Class[1];
                 argObjects = new Object[1];
-                argClasses[0] = clsLoader.loadClass("org.w3c.dom.Document");
+                argClasses[0] = ClassUtils.forName("org.w3c.dom.Document", true, clsLoader);
                 argObjects[0] = doc ;
 
                 try {
@@ -175,7 +176,7 @@ public class MsgProvider extends JavaProvider {
             // pass *just* the MessageContext (maybe don't even parse!!!)
             argClasses = new Class[1];
             argObjects = new Object[1];
-            argClasses[0] = clsLoader.loadClass("org.apache.axis.MessageContext");
+            argClasses[0] = ClassUtils.forName("org.apache.axis.MessageContext", true, clsLoader);
             argObjects[0] = msgContext ;
             try {
                 method = jc.getJavaClass().getMethod( methodName, argClasses );

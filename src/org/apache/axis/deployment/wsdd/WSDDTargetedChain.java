@@ -59,6 +59,7 @@ import org.apache.axis.TargetedChain;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.ConfigurationException;
 import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.transport.http.HTTPSender;
@@ -199,7 +200,7 @@ public abstract class WSDDTargetedChain
         if (pivotQName != null) {
             if (URI_WSDD_JAVA.equals(pivotQName.getNamespaceURI())) {
                 try {
-                    pivot = (Handler)Class.forName(pivotQName.getLocalPart()).newInstance();
+                    pivot = (Handler)ClassUtils.forName(pivotQName.getLocalPart()).newInstance();
                 } catch (InstantiationException e) {
                     throw new ConfigurationException(e);
                 } catch (IllegalAccessException e) {

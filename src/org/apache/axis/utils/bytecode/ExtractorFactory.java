@@ -55,6 +55,7 @@
 
 package org.apache.axis.utils.bytecode;
 
+import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -74,7 +75,7 @@ public class ExtractorFactory {
         log.debug("axis.Extractor:" + extractorClassName);
         Extractor extractor = null;
         try {
-            Class extractorClass = Class.forName(extractorClassName);
+            Class extractorClass = ClassUtils.forName(extractorClassName);
             if (Extractor.class.isAssignableFrom(extractorClass))
                 return (Extractor) extractorClass.newInstance();
         } catch (Exception e) {

@@ -57,6 +57,7 @@ package org.apache.axis;
 
 import org.apache.axis.attachments.Attachments;
 import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 
 import org.apache.commons.logging.Log;
@@ -224,11 +225,10 @@ public class Message extends javax.xml.soap.SOAPMessage {
                 /**
                  * Attempt to resolve class name, verify that these are present...
                  */
-                Class.forName("javax.activation.DataHandler");
-                Class.forName("javax.mail.internet.MimeMultipart");
+                ClassUtils.forName("javax.activation.DataHandler");
+                ClassUtils.forName("javax.mail.internet.MimeMultipart");
 
-                attachImpl =
-                        Class.forName(attachImpName);
+                attachImpl = ClassUtils.forName(attachImpName);
 
                 attachmentSupportEnabled = true;
             } catch (ClassNotFoundException ex) {

@@ -62,6 +62,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
 
+import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 
 import javax.naming.Context;
@@ -127,7 +128,7 @@ public class EJBProvider extends RPCProvider
                                          msgContext.getTargetService()));
 
         // Load the Home class name given in the config file
-        Class homeClass = msgContext.getClassLoader().loadClass(homeName);
+        Class homeClass = ClassUtils.forName(homeName, true, msgContext.getClassLoader());
 
         // Make sure the object we got back from JNDI is the same type
         // as the what is specified in the config file
@@ -188,7 +189,7 @@ public class EJBProvider extends RPCProvider
         String remoteName = 
                 (String) getStrOption(OPTION_REMOTEINTERFACENAME, serviceHandler);
         if(remoteName != null){
-            interfaceClass = msgContext.getClassLoader().loadClass(remoteName);
+            interfaceClass = ClassUtils.forName(remoteName, true, msgContext.getClassLoader());
         }
         else
         {
@@ -204,7 +205,7 @@ public class EJBProvider extends RPCProvider
                                              msgContext.getTargetService()));
             
             // Load the Home class name given in the config file
-            Class homeClass = msgContext.getClassLoader().loadClass(homeName);
+            Class homeClass = ClassUtils.forName(homeName, true, msgContext.getClassLoader());
             
             // Make sure the object we got back from JNDI is the same type
             // as the what is specified in the config file

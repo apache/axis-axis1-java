@@ -58,6 +58,7 @@ package org.apache.axis.encoding.ser;
 import org.apache.axis.Constants;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.DeserializerFactory;
+import org.apache.axis.utils.ClassUtils;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.JAXRPCException;
@@ -168,10 +169,8 @@ public abstract class BaseDeserializerFactory
                 } catch (NoSuchMethodException e) {}
                 if (getDeserializer == null) {
                     try {
-                        ClassLoader cl = 
-                            Thread.currentThread().getContextClassLoader();
-                        Class helper = Class.forName(
-                            javaType.getName() + "_Helper", true, cl);
+                        Class helper = ClassUtils.forName(
+                            javaType.getName() + "_Helper");
                         getDeserializer =
                             helper.getMethod("getDeserializer", 
                                              new Class[] {String.class, 

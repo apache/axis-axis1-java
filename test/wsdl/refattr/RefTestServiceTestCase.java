@@ -8,6 +8,8 @@
 
 package test.wsdl.refattr;
 
+import org.apache.axis.utils.ClassUtils;
+
 public class RefTestServiceTestCase extends junit.framework.TestCase {
     public RefTestServiceTestCase(String name) {
         super(name);
@@ -35,7 +37,7 @@ public class RefTestServiceTestCase extends junit.framework.TestCase {
         Mangle_Type mangle_type = new Mangle_Type();
         Mangle_ElemType mangle_elem_type = new Mangle_ElemType();
         try {
-            Class cls = Class.forName("test.wsdl.refattr.Mangle");
+            Class cls = ClassUtils.forName("test.wsdl.refattr.Mangle");
             assertTrue("Found unmangled class test.wsdl.refattr.Mangle", false);
         } catch (Exception e) {
             // Okay expect to get an exception

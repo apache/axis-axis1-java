@@ -71,6 +71,7 @@ import org.apache.axis.providers.java.JavaProvider;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeaderElement;
+import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.LockableHashtable;
 import org.apache.axis.utils.XMLUtils;
@@ -294,7 +295,7 @@ public class SOAPService extends SimpleTargetedChain
                     }
                 } else {
                     try {
-                        Class cls = cl.loadClass(clsName);
+                        Class cls = ClassUtils.forName(clsName,true,cl);
                         serviceDescription.setImplClass(cls);
                     } catch (ClassNotFoundException e) {
                         log.error(JavaUtils.getMessage("exception00"), e);

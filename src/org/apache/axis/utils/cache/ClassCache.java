@@ -54,6 +54,7 @@
 
 package org.apache.axis.utils.cache;
 
+import org.apache.axis.utils.ClassUtils;
 import java.util.Hashtable;
 
 /**
@@ -118,7 +119,7 @@ public class ClassCache {
         JavaClass jc = (JavaClass) classCache.get(className);
         if ((jc == null) && (cl != null)) {
             // Try to load the class with the specified classloader
-            Class cls = cl.loadClass(className);
+            Class cls = ClassUtils.forName(className, true, cl);
             jc = new JavaClass(cls);
         }
         return jc;
