@@ -1,0 +1,47 @@
+<property environment="env"/>
+
+<property name="axis.version" value="beta2+" />
+<property name="name" value="axis" />
+<property name="Name" value="Axis" />
+<property name="year" value="2002" />
+<property name="jaxrpc" value="jaxrpc" />
+<!-- debug flag for ant javac, values are "on" and "off" -->
+<property name="debug" value="on" />
+<property name="deprecation" value="true" />
+<property name="src.dir" value="./src" />
+<property name="docs.dir" value="./docs" />
+<property name="samples.dir" value="./samples" />
+<property name="test.dir" value="./test" />
+<property name="lib.dir" value="./lib" />
+<property name="wsdl4j.jar" value="lib/wsdl4j.jar" />
+<property name="jsse.jar" location="lib/jsse.jar"/>
+<property name="commons-logging.jar" value="lib/commons-logging.jar" />
+<property name="log4j-core.jar" value="lib/log4j-core.jar" />
+<property name="tt-bytecode.jar" value="lib/tt-bytecode.jar" />
+<property name="regexp.jar" value="test/lib/jakarta-oro-2.0.5.jar" />
+<property name="junit.jar" value="lib/junit.jar" />
+<property name="tools.jar" location="${java.home}/../lib/tools.jar"/>
+
+<property name="packages" value="org.*,javax.*" />
+<property name="jaxrpc" value="jaxrpc" />
+<property name="build.file" value="build.xml" />
+<property name="build.dir" value="build" />
+<property name="build.dest" value="build/classes" />
+<property name="build.lib" value="build/lib" />
+<property name="build.samples" value="build/classes/samples" />
+<property name="build.javadocs" value="build/javadocs" />
+<property name="build.webapp" value="build/webapps/axis" />
+<property name="webapp" value="webapps/axis" />
+<property name="dist.dir" value="axis-1_0" />
+<property name="axis.lib.dir" location="lib"/>
+
+<property name="test.dir" value="./test" />
+<property name="test.setup.dir" value="./test/setup" />
+<property name="test.functional.remote" value="no" />
+<property name="test.functional.local" value="yes" />
+<property name="test.functional.both" value="no" />
+<property name="test.functional.usefile" value="true" />
+<property name="test.functional.reportdir" value="test-reports" />
+<property name="test.functional.SimpleAxisPort" value="8080" />
+<property name="test.functional.fail" value="yes" />
+

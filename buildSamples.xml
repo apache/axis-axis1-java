@@ -1,0 +1,203 @@
+<?xml version="1.0"?>
+<!DOCTYPE project [
+        <!ENTITY properties SYSTEM "file:xmls/properties.xml">
+        <!ENTITY paths  SYSTEM "file:xmls/path_refs.xml">
+        <!ENTITY taskdefs SYSTEM "file:xmls/taskdefs.xml">
+        <!ENTITY taskdefs_post_compile SYSTEM "file:xmls/taskdefs_post_compile.xml">
+]>
+
+<!-- ===================================================================
+==================================================================== -->
+
+<project default="printEnv" basedir=".">
+
+        &properties;
+        &paths;
+        &taskdefs;
+        &taskdefs_post_compile;
+
+  <!-- Give user a chance to override without editing this file
+       (and without typing -D each time it compiles it) -->
+  <property file="${user.home}/build.properties"/>
+
+  <property environment="env"/>
+  
+  <!-- =================================================================== -->
+  <!-- Determine what dependencies are present                             -->
+  <!-- =================================================================== -->
+
+  <target name="setenv">
+
+    <available property="servlet.present"
+      classname="javax.servlet.Servlet"
+      classpathref="classpath"/>
+
+    <available property="regexp.present"
+      classname="org.apache.oro.text.regex.Pattern"
+      classpathref="classpath"/>
+
+    <available property="junit.present"
+      classname="junit.framework.TestCase"
+      classpathref="classpath"/>
+
+    <available property="wsdl4j.present"
+      classname="javax.wsdl.Definition"
+      classpathref="classpath"/>
+
+    <available property="commons-logging.present"
+      classname="org.apache.commons.logging.Log"
+      classpathref="classpath"/>
+
+    <available property="log4j.present"
+      classname="org.apache.log4j.Category"
+      classpathref="classpath"/>
+
+    <available property="tt-bytecode.present"
+      classname="com.techtrader.modules.tools.bytecode.BCClass"
+      classpathref="classpath"/>
+
+    <available property="serp.present"
+      classname="serp.bytecode.Project"
+      classpathref="classpath"/>
+
+    <available property="activation.present"
+      classname="javax.activation.DataHandler"
+      classpathref="classpath"/>
+
+    <available property="security.present"
+      classname="org.apache.xml.security.Init"
+      classpathref="classpath"/>
+
+    <available property="mailapi.present"
+      classname="javax.mail.internet.MimeMessage"
+      classpathref="classpath"/>
+
+    <condition property="attachments.present" >
+      <and>
+        <available classname="javax.activation.DataHandler" classpathref="classpath" />
+        <available classname="javax.mail.internet.MimeMessage" classpathref="classpath" />
+      </and>
+    </condition>
+
+    <available property="post-compile.present" file="post-compile.xml" />
+
+    <property environment="env"/>
+    <condition property="debug" value="on">
+    <and>
+      <equals arg1="on" arg2="${env.debug}"/>
+    </and>
+    </condition>
+
+  </target>
+
+  <target name="printEnv" depends="setenv" >
+    <echo message="--- Build environment for ${Name} ---" />
+    <echo message="--- Flags (Note: If the {property name} is displayed, "/>
+    <echo message="           then the component is not present)" />
+    <echo message=""/>
+    <echo message="build.dir = ${build.dir}"/>
+    <echo message="build.dest = ${build.dest}"/>
+    <echo message=""/>
+    <echo message="=== Required Libraries ===" />
+    <echo message="wsdl4j.present=${wsdl4j.present}" />
+    <echo message="commons-logging.present=${commons-logging.present}" />
+    <echo message="log4j.present=${log4j.present}" />
+    <echo message="tt-bytecode.present=${tt-bytecode.present}" />
+    <echo message=""/>
+    <echo message="--- Optional Libraries ---" />
+    <echo message="servlet.present=${servlet.present}" />
+    <echo message="regexp.present=${regexp.present}" />
+    <echo message="junit.present=${junit.present}" />
+    <echo message="activation.present=${activation.present}" />
+    <echo message="mailapi.present=${mailapi.present}" />
+    <echo message="attachments.present=${attachments.present}" />
+    <echo message="security.present=${security.present}" />
+    <echo message=""/>
+    <echo message="--- Property values ---" />
+    <echo message="debug=${debug}" />
+    <echo message="deprecation=${deprecation}" />
+    <echo message="" />
+
+    <uptodate property="javadoc.notrequired"
+              targetfile="${build.javadocs}/index.html">
+      <srcfiles dir="${src.dir}" includes="**/*.java" />
+    </uptodate>
+
+  </target>
+
+  <target name="bidbuy" depends="setenv">
+    <ant inheritAll="true" antfile="samples/bidbuy/buildComponent.xml"/>
+  </target>
+
+  <target name="echo" depends="setenv">
+    <ant inheritAll="true" antfile="samples/echo/buildComponent.xml"/>
+  </target>
+
+  <target name="encoding" depends="setenv">
+    <ant inheritAll="true" antfile="samples/encoding/buildComponent.xml"/>
+  </target>
+
+  <target name="message" depends="setenv">
+    <ant inheritAll="true" antfile="samples/message/buildComponent.xml"/>
+  </target>
+
+  <target name="misc" depends="setenv">
+    <ant inheritAll="true" antfile="samples/misc/buildComponent.xml"/>
+  </target>
+
+  <target name="stock" depends="setenv">
+    <ant inheritAll="true" antfile="samples/stock/buildComponent.xml"/>
+  </target>
+
+  <target name="transport" depends="setenv">
+    <ant inheritAll="true" antfile="samples/transport/buildComponent.xml"/>
+  </target>
+
+  <target name="userguide" depends="setenv">
+    <ant inheritAll="true" antfile="samples/userguide/buildComponent.xml"/>
+  </target>
+
+  <target name="addr" depends="setenv">
+    <ant inheritAll="true" antfile="samples/addr/buildComponent.xml"/>
+  </target>
+
+  <target name="attachments" depends="setenv">
+    <ant inheritAll="true" antfile="samples/attachments/buildComponent.xml"/>
+  </target>
+
+  <target name="proxy" depends="setenv">
+    <ant inheritAll="true" antfile="samples/proxy/buildComponent.xml"/>
+  </target>
+
+  <target name="security" depends="setenv">
+    <ant inheritAll="true" antfile="samples/security/buildComponent.xml"/>
+  </target>
+
+<!-- =========================================================================== -->
+  <target name="copy"/>
+
+<!-- =========================================================================== -->
+  <taskdef name="foreach" classname="test.functional.ant.ForeachTask">
+	<classpath refid="classpath"/>
+  </taskdef>
+
+  <target name="compile" depends="printEnv,copy">
+    <!-- Compile the sample code -->
+    <foreach target="buildThem">
+        <param name="file">
+             <fileset dir="samples/" includes="**/buildComponent.xml"/>
+        </param>
+     </foreach>
+  </target>
+
+  <target name="buildThem">
+        <echo message="samples/${file}"/>
+	<ant inheritAll="true" antfile="samples/${file}"/>
+  </target>
+
+<!-- =========================================================================== -->
+  <target name="clean" depends="setenv">
+    <delete dir="${build.dest}/samples"/>
+  </target>
+
+</project>

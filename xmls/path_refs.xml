@@ -1,0 +1,19 @@
+  <path id="classpath">
+    <pathelement location="${xerces.jar}"/>
+    <pathelement location="${regexp.jar}"/>
+    <pathelement location="${junit.jar}"/>
+    <pathelement location="${excalibur.jar}"/>
+    <pathelement location="${j2ee.jar}"/>
+    <pathelement location="${jsse.jar}"/>
+    <pathelement location="${tools.jar}"/>
+    <fileset dir="lib">
+        <include name="*.jar"/>
+    </fileset>
+    <pathelement path="${java.class.path}"/>
+    <pathelement location="test/foreachTask/bsf.jar" />
+    <pathelement location="test/foreachTask/js.jar" />
+    <pathelement location="${build.dest}" />
+    <pathelement location="build/work" />
+    <pathelement location="${env.ANT_HOME}/lib" />
+  </path>
+

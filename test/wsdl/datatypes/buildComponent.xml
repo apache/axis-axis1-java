@@ -1,0 +1,41 @@
+<?xml version="1.0" ?>
+<!DOCTYPE project [
+        <!ENTITY properties SYSTEM "file:../../../xmls/properties.xml">
+        <!ENTITY paths  SYSTEM "file:../../../xmls/path_refs.xml">
+        <!ENTITY taskdefs SYSTEM "file:../../../xmls/taskdefs.xml">
+        <!ENTITY taskdefs_post_compile SYSTEM "file:../../../xmls/taskdefs_post_compile.xml">
+]>
+
+<!-- ===================================================================
+==================================================================== -->
+
+<project default="compile">
+
+        &properties;
+        &paths;
+        &taskdefs;
+        &taskdefs_post_compile;
+
+<target name="clean"/>
+
+<target name="copy"/>
+
+<target name="compile" depends="copy">
+  <echo message="Compilig test.wsdl.datatypes"/>
+    <!-- DataType Structure Test -->
+    <wsdl2java url="test/wsdl/datatypes/DataTypes.wsdl"
+               output="build/work"
+               deployscope="session"
+               serverSide="yes"
+               testcase="yes">
+        <mapping namespace="urn:dataTypes" package="test.wsdl.datatypes"/>
+    </wsdl2java>
+</target>
+
+<target name="deploy"/>
+
+<target name="run"  depends="compile" />
+
+<target name="undeploy"/>
+
+</project>
