@@ -106,4 +106,6 @@ public class Constants {
   /** For demonstration purposes only... --Glen
    */
   public static String SERVLET_TARGET = "AxisServlet";
+
+  public static String JWSPROCESSOR_TARGET = "JWSProcessor" ;
 }

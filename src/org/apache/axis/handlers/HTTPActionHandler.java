@@ -58,6 +58,9 @@ import org.apache.axis.*;
 import org.apache.axis.utils.Debug;
 import org.apache.axis.transport.http.HTTPConstants;
 
+import javax.servlet.* ;
+import javax.servlet.http.* ;
+
 /** An <code>HTTPActionHandler</code> simply sets the context's TargetService
  * property from the HTTPAction property.  We expect there to be a
  * Router on the chain after us, to dispatch to the service named in
@@ -74,13 +77,31 @@ public class HTTPActionHandler extends BasicHandler
     public void invoke(MessageContext msgContext) throws AxisFault
     {
         Debug.Print( 1, "Enter: HTTPActionHandler::invoke" );
-        String action = (String) msgContext.getProperty(
+        String action = null ;
+        HttpServlet        servlet = (HttpServlet) msgContext.getProperty(
+                                             HTTPConstants.MC_HTTP_SERVLET);
+        ServletConfig      config  = servlet.getServletConfig();
+        ServletContext     context = config.getServletContext();
+        HttpServletRequest req = (HttpServletRequest) msgContext.getProperty(
+                                        HTTPConstants.MC_HTTP_SERVLETREQUEST);
+        String URL = req.getServletPath();
+        Debug.Print(3, "URL: " + URL );
+
+        if ( URL.endsWith(".jws") ) {
+            String pathName = context.getRealPath( URL );
+            Debug.Print(2, "Path: " + pathName );
+            msgContext.setProperty( "JWSFileName", pathName );
+            action = Constants.JWSPROCESSOR_TARGET ;
+        }
+        else {
+            action = (String) msgContext.getProperty(
                                              HTTPConstants.MC_HTTP_SOAPACTION);
-        Debug.Print( 2, "  HTTP SOAPAction: " + action );
-        if (action == null)
-            throw new AxisFault( "Server.NoHTTPAction",
-                                 "No HTTPAction property in context",
-                                 null, null );
+            Debug.Print( 2, "  HTTP SOAPAction: " + action );
+            if (action == null)
+                throw new AxisFault( "Server.NoHTTPAction",
+                                     "No HTTPAction property in context",
+                                     null, null );
+        }
 
         msgContext.setTargetService( action );
         Debug.Print( 1, "Exit : HTTPActionHandler::invoke" );
