@@ -80,6 +80,7 @@ public class Wsdl2java {
     protected static final int TEST_OPT = 't';
     protected static final int NOIMPORTS_OPT = 'n';
     protected static final int PACKAGE_OPT = 'p';
+    protected static final int DEBUG_OPT = 'D';
 
     /**
      *  Define the understood options. Each CLOptionDescriptor contains:
@@ -126,7 +127,11 @@ public class Wsdl2java {
         new CLOptionDescriptor("noImports",
                 CLOptionDescriptor.ARGUMENT_DISALLOWED,
                 NOIMPORTS_OPT,
-                JavaUtils.getMessage("optionImport00"))
+                JavaUtils.getMessage("optionImport00")),
+        new CLOptionDescriptor("Debug",
+                CLOptionDescriptor.ARGUMENT_DISALLOWED,
+                DEBUG_OPT,
+                JavaUtils.getMessage("optionDebug00"))
     };
 
     /**
@@ -224,6 +229,10 @@ public class Wsdl2java {
 
                     case NOIMPORTS_OPT:
                         emitter.generateImports(false);
+                        break;
+
+                    case DEBUG_OPT:
+                        emitter.debug(true);
                         break;
                 }
             }
