@@ -63,6 +63,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.message.events.*;
 import org.apache.axis.encoding.*;
 import org.apache.axis.utils.QName;
+import org.apache.axis.utils.DOM2Writer;
 import java.util.*;
 import java.io.*;
 
@@ -347,7 +348,7 @@ public class MessageElement extends DeserializerBase
             context.startElement(new QName(getNamespaceURI(), getName()), attrs);
             // Output the value...
             if (val != null)
-                context.writeString(value.toString());
+                context.writeString(DOM2Writer.normalize(value.toString()));
             
             context.endElement();
         }
