@@ -46,7 +46,7 @@
   <!-- service decln -->
   <service name="GetQuoteService">
     <port name="GetQuote" binding="tns:GetQuoteBinding">
-      <soap:address location="http://localhost:81/axis/servlet/AxisServlet"/>
+      <soap:address location="http://localhost:8080/axis/servlet/AxisServlet"/>
     </port>
   </service>
 

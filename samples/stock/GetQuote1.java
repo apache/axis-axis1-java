@@ -78,15 +78,6 @@ public class GetQuote1 {
     public  String symbol ;
     
     public float getQuote (String args[]) throws Exception {
-      Options opts = new Options( args );
-
-      args = opts.getRemainingArgs();
-
-      if ( args == null ) {
-        System.err.println( "Usage: GetQuote <symbol>" );
-        System.exit(1);
-      }
-
       // Define the service QName and port QName
       /////////////////////////////////////////////////////////////////////////
       QName servQN = new QName("urn:xmltoday-delayed-quotes","GetQuoteService");
@@ -94,6 +85,17 @@ public class GetQuote1 {
 
       Service service = new Service( new URL("file:GetQuote.wsdl"), servQN );
       Call    call    = service.createCall( portQN, "getQuote" );
+
+      Options opts = new Options( args );
+      opts.setDefaultURL( call.getTargetEndpointAddress() );
+      call.setTargetEndpointAddress( new URL(opts.getURL()) );
+
+      args = opts.getRemainingArgs();
+
+      if ( args == null ) {
+        System.err.println( "Usage: GetQuote <symbol>" );
+        System.exit(1);
+      }
 
       // Define some service and Axis specific properties
       ////////////////////////////////////////////////////////////////////////
