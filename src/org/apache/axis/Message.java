@@ -89,9 +89,6 @@ public class Message {
     originalMessage = origMsg ;
     currentMessage = origMsg ;
     currentForm = form ;
-
-    // if (msgContext == null) throw new NullPointerException();
-    // this.msgContext = msgContext;
   }
 
   public Object getOriginalMessage() {
@@ -113,7 +110,6 @@ public class Message {
   
   public MessageContext getMessageContext()
   {
-      if (msgContext == null) msgContext=new MessageContext();
       return msgContext;
   }
   public void setMessageContext(MessageContext msgContext)
@@ -219,7 +215,7 @@ public class Message {
         StringWriter writer = new StringWriter();
         AxisFault env = (AxisFault)currentMessage;
         try {
-            env.output(new SerializationContext(writer, getMessageContext()));
+            env.output(new SerializationContext(writer, msgContext));
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -232,7 +228,7 @@ public class Message {
         StringWriter writer = new StringWriter();
         SOAPEnvelope env = (SOAPEnvelope)currentMessage;
         try {
-            env.output(new SerializationContext(writer, getMessageContext()));
+            env.output(new SerializationContext(writer, msgContext));
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -337,7 +333,7 @@ public class Message {
     //    new ThreadedSAXAdapter(new org.apache.xerces.parsers.SAXParser(), is);
     SAXAdapter parser = 
         new SAXAdapter(new org.apache.xerces.parsers.SAXParser(), is, 
-                       getMessageContext());
+                       msgContext);
     SOAPEnvelope env = parser.getEnvelope();
     env.setMessageType(messageType);
     

@@ -158,7 +158,7 @@ public class MessageContext {
      */
     public void setRequestMessage(Message inMsg) { 
         inMessage = inMsg ; 
-        inMessage.setMessageContext(this);
+        if (inMessage != null) inMessage.setMessageContext(this);
     };
 
     /**
@@ -171,7 +171,7 @@ public class MessageContext {
      */
     public void setResponseMessage(Message outMsg) { 
         outMessage = outMsg ;
-        outMessage.setMessageContext(this);
+        if (outMessage != null) outMessage.setMessageContext(this);
     };
 
     public AxisClassLoader getClassLoader() {
