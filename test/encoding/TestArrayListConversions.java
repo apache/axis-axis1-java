@@ -40,8 +40,9 @@ public class TestArrayListConversions extends TestCase {
       if (!(array[i].equals(iter.next()))) {
           return false;
       }
-      return true;
     }
+
+    return true;
   }
 
   public void init()
@@ -78,7 +79,7 @@ public class TestArrayListConversions extends TestCase {
 
     Object ret = client.invoke(SERVICE_NAME, "echoVector",
                         new Object [] { l });
-    if (!equals(l, ret)) assertEquals(l, ret);
+    if (!equals(l, ret)) assertEquals("Echo Vector mangled the result.  Result is underneath.\n" + ret, l, ret);
   }
       
   public void testArrayConversion() throws Exception
@@ -89,7 +90,7 @@ public class TestArrayListConversions extends TestCase {
 
     Object ret = client.invoke(SERVICE_NAME, "echoArray",
                         new Object [] { v });
-    if (!equals(v, ret)) assertEquals(v, ret);
+    if (!equals(v, ret)) assertEquals("Echo Array mangled the result.  Result is underneath\n" + ret, v, ret);
   }
 
   public static void main(String [] args)
