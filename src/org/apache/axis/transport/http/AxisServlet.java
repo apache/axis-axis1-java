@@ -190,6 +190,9 @@ public class AxisServlet extends HttpServlet {
     /***********************************/
     msg = msgContext.getResponseMessage();
     res.setContentType( "text/xml" );
-    res.getWriter().println( msg !=  null ? msg.getAs("String") : "No data" );
+    String response = (String) msg.getAs("String");
+    if (msg == null) msg="No data";
+    res.setContentLength( response.length() );
+    res.getWriter().print( response );
   }
 }
