@@ -258,7 +258,7 @@ public class HTTPSender extends BasicHandler {
             for ( ;; ) {
                 if ( (b = (byte) inp.read()) == -1 ) break ;
                 if ( b != '\r' && b != '\n' ) {
-                    if ( b == ':' ) colonIndex = len ;
+                    if ( b == ':' && colonIndex == -1 ) colonIndex = len ;
                     lastB = (buf[len++] = b);
                 }
                 else if ( b == '\r' )
@@ -268,6 +268,7 @@ public class HTTPSender extends BasicHandler {
                     if ( colonIndex != -1 ) {
                         name = new String( buf, 0, colonIndex );
                         value = new String( buf, colonIndex+1, len-1-colonIndex );
+                        colonIndex = -1 ;
                     }
                     else {
                         name = new String( buf, 0, len );
