@@ -157,6 +157,7 @@ public class EngineConfigurationFactoryFinder
                         EngineConfigurationFactory factory = null;
 
                         while (factory == null  &&  services.hasNext()) {
+                          try {
                             Class service = services.nextResourceClass().loadClass();
                 
                             /* service == null
@@ -165,6 +166,13 @@ public class EngineConfigurationFactoryFinder
                             if (service != null) {
                                 factory = newFactory(service, newFactoryParamTypes, params);
                             }
+                          } catch (Exception e) {
+                            // there was an exception creating the factory
+                            // the most likely cause was the JDK 1.4 problem
+                            // in the discovery code that requires servlet.jar
+                            // to be in the client classpath.  For now, fall
+                            // through to the next factory
+                          }
                         }
                 
                         if (factory != null) {
