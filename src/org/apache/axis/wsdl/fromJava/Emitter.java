@@ -1080,13 +1080,8 @@ public class Emitter {
      * Sets the <code>Class</code> to export
      * @param className the name of the <code>Class</code> to export
      */
-    public void setCls(String className) {
-        try {
-            cls = Class.forName(className);
-        }
-        catch (Exception ex) {
-            ex.printStackTrace();
-        }
+    public void setCls(String className) throws ClassNotFoundException {
+        cls = Class.forName(className);
     }
 
     /**
