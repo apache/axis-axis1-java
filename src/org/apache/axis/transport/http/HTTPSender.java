@@ -401,7 +401,7 @@ public class HTTPSender extends BasicHandler {
                     ? "/"
                     : tmpURL.getFile()));
         }
-        header.append(header2);
+        header.append(header2.toString());
 
         OutputStream out = sockHolder.getSocket().getOutputStream();
 
