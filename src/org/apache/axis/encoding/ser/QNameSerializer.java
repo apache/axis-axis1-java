@@ -55,17 +55,14 @@
 
 package org.apache.axis.encoding.ser;
 
+import org.apache.axis.Constants;
+import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.Serializer;
+import org.apache.axis.wsdl.fromJava.Types;
 import org.xml.sax.Attributes;
-
-import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
-
-import org.apache.axis.Constants;
-import org.apache.axis.wsdl.fromJava.Types;
-import org.apache.axis.encoding.Serializer;
-import org.apache.axis.encoding.SerializationContext;
 
 /**
  * Serializer for QNames.
@@ -80,10 +77,9 @@ public class QNameSerializer implements Serializer {
         throws IOException
     {
         QName qname = (QName) value;
-        AttributesImpl attrImpl = new AttributesImpl(attributes);
-        attrImpl.addAttribute(null, null, "xmlns:qns", null, qname.getNamespaceURI());
-        context.startElement(name, attrImpl);
-        context.writeString("qns:" + qname.getLocalPart());
+        String str = context.qName2String(qname);
+        context.startElement(name, null);
+        context.writeString(str);
         context.endElement();
     }
 
