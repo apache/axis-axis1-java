@@ -81,6 +81,14 @@ public class AxisHttpSession implements Session
         rep = realSession;
     }
     
+    /** Get the internal HttpSession.
+     */
+    public HttpSession getRep()
+    {
+        ensureSession();
+        return rep;
+    }
+    
     /** Set our internal HttpSession to the passed
      * servlet HttpSession.  Not sure if we'll really
      * need this method...

@@ -768,7 +768,7 @@ public class AxisServlet extends HttpServlet
 
         // Set up a javax.xml.rpc.server.ServletEndpointContext
         ServletEndpointContextImpl sec = 
-                new ServletEndpointContextImpl(req.getSession(),
+                new ServletEndpointContextImpl(new AxisHttpSession(req),
                                                msgContext,
                                                req.getUserPrincipal(),
                                                getServletConfig().getServletContext());
