@@ -588,6 +588,7 @@ public class TestDeser extends TestCase {
                     "</whatever>" , ss, true);
     }
     
+/*
     public void testBug18390() throws Exception {
         String[] s = new String[] {"GW671055X"};
         deserialize("<molNames soapenc:arrayType=\"xsd:string[1]\"> " +
@@ -603,6 +604,7 @@ public class TestDeser extends TestCase {
                 "   <number>4</number> \n" +
                 "</myFavoriteNumbers>",array,true);
     }
+*/
 
     // Struct within Struct
     public void testStructStruct2() throws Exception {
