@@ -232,11 +232,6 @@ public class AxisProperties {
             });
     }
 
-    
-    public static Object newInstance(Class spiClass, Class defaultClass)
-    {
-        return newInstance(new SPInterface(spiClass), new DefaultClassHolder(defaultClass));
-    }
         
     /**
      * Get value for property bound to the current thread context class loader.
@@ -325,6 +320,12 @@ public class AxisProperties {
      */
     public static Properties getProperties() {
         return ManagedProperties.getProperties();
+    }
+
+
+    public static Object newInstance(Class spiClass, Class defaultClass)
+    {
+        return newInstance(new SPInterface(spiClass), new DefaultClassHolder(defaultClass));
     }
 
     /**
