@@ -20,9 +20,31 @@ h1 {  margin-left: -30px}
   of the <a href="http://xml.apache.org/axis"> Axis SOAP library</a>.</p>
 
 <h3>About this release</h3>
-<p>This is Axis 1.1. <em>&lt;TBD&gt;</em></p>
+<p>This release is primarily an upgrade to fix a number of bugs in the 1.0 release. 
+  Since it took longer than we expected, you'll also find a bunch of new features 
+  in there.</p>
+<p>We still have a *lot* of <a href="http://nagoya.apache.org/bugzilla/">open 
+  bugs</a> on the books, so please realize that this is not a completely polished 
+  work yet. After 1.1 ships we hope / plan to do a lot of work cleaning things 
+  up and adding some much-needed functionality which is currently missing, in 
+  hopes of releasing a much better 1.2 release in the not-too-distant future.</p>
+<p>We say this a lot, but it's worth repeating - you can help! If you've got coding 
+  skill, interest, and a little free time, we'd love to have you join the Axis 
+  community and help make the product better - see below.</p>
 <h3>Changes From 1.0 to 1.1</h3>
-<p><em>&lt;TBD&gt;</em></p>
+<ul>
+  <li>Vastly improved SOAP 1.2 support</li>
+  <li>Added an email transport</li>
+  <li>Added serializers/deserializers for Castor compatibility</li>
+  <li>Improved WSDL schema generation APIs for custom types</li>
+  <li>Misnamed org.apache.axis.encoding.DefaultSOAP12TypeMappingImpl is now called 
+    DefaultSOAPEncodingTypeMappingImpl</li>
+  <li>Added CORBA and RMI providers</li>
+  <li>Improved EJBProvider's ability to be a &quot;good EJB citizen&quot;</li>
+  <li>Improved multiref deserialization code</li>
+  <li>Improved fault handling and serialization / deserialization</li>
+  <li>Various bugfixes</li>
+</ul>
 <p>However, this is far from the end of the road for Axis: there is more documentation 
   to be written, and major functional enhancements and architectural improvements 
   are being considered.</p>
@@ -36,11 +58,12 @@ h1 {  margin-left: -30px}
 <p>Please check out the included documentation and the <a href="http://xml.apache.org/axis/faq.html">FAQ</a> 
   for more information.</p>
 <h3>How You Can Help</h3>
-<p>We particularly encourage you to submit improvements to the documentation, 
+<p>Coding, testing, and helping to answer questions on axis-user are all greatly 
+  appreciated. We particularly encourage you to submit improvements to the documentation, 
   however large or small and in any format, to axis-dev@xml.apache.org. Also, 
   interoperability is always a concern, so please report all <i>replicable</i> 
   bugs.</p>
-<p>Thanks for trying Axis!</p>
+<p>Thanks for your interest in Axis!</p>
 <p>-- The Axis Development Team</p>
 <p>&nbsp;</p>
 </body>
