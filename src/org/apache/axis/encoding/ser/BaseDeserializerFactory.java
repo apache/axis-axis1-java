@@ -76,13 +76,15 @@ import org.apache.axis.encoding.DeserializerImpl;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * Base class for Axis Deserialization Factory classes for code reuse
  *
  * @author Rich Scheuerle <scheu@us.ibm.com>
  */
-public abstract class BaseDeserializerFactory implements DeserializerFactory {
+public abstract class BaseDeserializerFactory 
+    implements DeserializerFactory {
 
     static Vector mechanisms = null;
     
@@ -91,55 +93,126 @@ public abstract class BaseDeserializerFactory implements DeserializerFactory {
     protected Deserializer deser = null;
     protected QName xmlType = null;
     protected Class javaType = null;
-    protected Constructor dserClassConstructor = null;
+    protected Constructor deserClassConstructor = null;
+    protected Method getDeserializer = null;
+    protected boolean firstCall = true;
 
     /**
      * Constructor
      * @param deserClass is the class of the Deserializer
-     * @param share indicates if deserializers can be shared...i.e. getDeserializerAs 
-     * will always return the same deserializer object if share is true.  Sharing is
-     * only valid for xml primitives.
+     * @param share indicates if deserializers can be shared. getDeserializerAs 
+     * will always return the same deserializer object if share is true.  
+     * Sharing is only valid for xml primitives.
      */
     public BaseDeserializerFactory(Class deserClass, boolean share) {
         this.deserClass = deserClass;
         this.share = share;
     }
-    public BaseDeserializerFactory(Class deserClass, boolean share, QName xmlType, Class javaType) {
+    public BaseDeserializerFactory(Class deserClass, boolean share, 
+                                   QName xmlType, Class javaType) {
         this.deserClass = deserClass;
         this.share = share;
         this.xmlType = xmlType;
         this.javaType = javaType;
     }
 
-    public javax.xml.rpc.encoding.Deserializer getDeserializerAs(String mechanismType)
+    public javax.xml.rpc.encoding.Deserializer 
+        getDeserializerAs(String mechanismType)
         throws JAXRPCException {
         // Need to add code to check against mechanisms vector.
         if (share && deser != null) {
             return deser;
         }
-        // First try to new up the deserializer with qname, class arguments
         deser = null;
-        if (javaType != null && xmlType != null) {
-            try {
-                if (dserClassConstructor == null) {
-                    dserClassConstructor = 
-                        deserClass.getConstructor(new Class[] {Class.class, QName.class});
-                }
-                deser = (Deserializer) 
-                    dserClassConstructor.newInstance(new Object[] {javaType, xmlType});
-            } catch (Exception e) {}
-        }
-
-        // If not successfull, try newInstance
-        if (deser == null) {
-            try {
+        try {
+            // Try getting a specialized Deserializer
+            deser = getSpecialized(mechanismType);
+            
+            // Try getting a general purpose Deserializer via constructor
+            // invocation
+            if (deser == null) {
+                deser = getGeneralPurpose(mechanismType);
+            }
+            
+            // If not successfull, try newInstance
+            if (deser == null) {
                 deser = (Deserializer) deserClass.newInstance();
-            } catch (Exception e) {}
+            }
+        } catch (Exception e) {
+            throw new JAXRPCException(e);
         }
-        if (deser == null) {
-            throw new JAXRPCException();
-        }
+        firstCall = false;
         return deser;
+    }
+
+   /**
+     * Obtains a deserializer by invoking <constructor>(javaType, xmlType) 
+     * on the deserClass.
+     */
+    protected Deserializer getGeneralPurpose(String mechanismType) {
+        if (javaType != null && xmlType != null) {
+            if (deserClassConstructor == null && firstCall) {
+                try {
+                    deserClassConstructor = 
+                        deserClass.getConstructor(
+                            new Class[] {Class.class, QName.class});
+                } catch (NoSuchMethodException e) {}
+            }
+            if (deserClassConstructor != null) {
+                try {
+                    return (Deserializer) 
+                        deserClassConstructor.newInstance(
+                            new Object[] {javaType, xmlType});
+                } catch (InstantiationException e) {
+                } catch (IllegalAccessException e) {
+                } catch (InvocationTargetException e) {}
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Obtains a deserializer by invoking getDeserializer method in the 
+     * javaType class or its Helper class.
+     */
+    protected Deserializer getSpecialized(String mechanismType) {
+        if (javaType != null && xmlType != null) {
+            if (getDeserializer == null && firstCall) {
+                try {
+                    getDeserializer = 
+                        javaType.getMethod("getDeserialier",
+                                           new Class[] {String.class, 
+                                                        Class.class, 
+                                                        QName.class});
+                } catch (NoSuchMethodException e) {}
+                if (getDeserializer == null) {
+                    try {
+                        ClassLoader cl = 
+                            Thread.currentThread().getContextClassLoader();
+                        Class helper = Class.forName(
+                            javaType.getName() + "_Helper", true, cl);
+                        getDeserializer =
+                            helper.getMethod("getDeserializer", 
+                                             new Class[] {String.class, 
+                                                          Class.class, 
+                                                          QName.class});
+                    } catch (NoSuchMethodException e) {
+                    } catch (ClassNotFoundException e) {}
+                }
+            }
+            if (getDeserializer != null) {
+                try {
+                    return (Deserializer) 
+                        getDeserializer.invoke(
+                                             null,
+                                             new Object[] {mechanismType, 
+                                                           javaType, 
+                                                           xmlType});
+                } catch (IllegalAccessException e) {
+                } catch (InvocationTargetException e) {}
+            }
+        }
+        return null;
     }
 
     /**
@@ -165,27 +238,42 @@ public abstract class BaseDeserializerFactory implements DeserializerFactory {
      * @param QName xmlType
      * @param Class javaType
      */
-    public static DeserializerFactory createFactory(Class factory, Class javaType, QName xmlType) {
+    public static DeserializerFactory createFactory(Class factory, 
+                                                    Class javaType, 
+                                                    QName xmlType) {
 
         DeserializerFactory df = null;
         try {
-            Method method = factory.getMethod("create", new Class[] {Class.class, QName.class});
-            df = (DeserializerFactory) method.invoke(null, new Object[] {javaType, xmlType});
-        } catch (Exception e) {}
+            Method method = 
+                factory.getMethod(
+                    "create", 
+                    new Class[] {Class.class, QName.class});
+            df = (DeserializerFactory) 
+                method.invoke(null, 
+                              new Object[] {javaType, xmlType});
+        } catch (NoSuchMethodException e) {
+        } catch (IllegalAccessException e) {
+        } catch (InvocationTargetException e) {}
 
         if (df == null) {
             try {
                 Constructor constructor =  
-                    factory.getConstructor(new Class[] {Class.class, QName.class});
+                    factory.getConstructor(
+                        new Class[] {Class.class, QName.class});
                 df = (DeserializerFactory) 
-                    constructor.newInstance(new Object[] {javaType, xmlType});
-            } catch (Exception e) {}
+                    constructor.newInstance(
+                        new Object[] {javaType, xmlType});
+            } catch (NoSuchMethodException e) {
+            } catch (InstantiationException e) {
+            } catch (IllegalAccessException e) {
+            } catch (InvocationTargetException e) {}
         }
         
         if (df == null) {
             try {
                 df = (DeserializerFactory) factory.newInstance();
-            } catch (Exception e) {}
+            } catch (InstantiationException e) {
+            } catch (IllegalAccessException e) {}
         }
         return df;
     }

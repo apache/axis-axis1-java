@@ -101,18 +101,24 @@ public class BeanDeserializer extends DeserializerImpl implements Deserializer, 
 
     QName xmlType;
     Class javaType;
-    private HashMap propertyMap = new HashMap();
+    protected HashMap propertyMap = new HashMap();
     
     /** Type metadata about this class for XML deserialization */
-    private TypeDesc typeDesc = null;
+    protected TypeDesc typeDesc = null;
 
     // This counter is updated to deal with deserialize collection properties
     protected int collectionIndex = -1;
 
     // Construct BeanSerializer for the indicated class/qname
     public BeanDeserializer(Class javaType, QName xmlType) {
+        this(javaType, xmlType, TypeDesc.getTypeDescForClass(javaType));
+    }
+
+    // Construct BeanSerializer for the indicated class/qname and meta Data
+    public BeanDeserializer(Class javaType, QName xmlType, TypeDesc typeDesc ) {
         this.xmlType = xmlType;
         this.javaType = javaType;
+        this.typeDesc = typeDesc;
         // Get a list of the bean properties
         BeanPropertyDescriptor[] pd = BeanSerializer.getPd(javaType);
         // loop through properties and grab the names for later
@@ -120,8 +126,6 @@ public class BeanDeserializer extends DeserializerImpl implements Deserializer, 
             BeanPropertyDescriptor descriptor = pd[i];
             propertyMap.put(descriptor.getName(), descriptor);
         }
-
-        typeDesc = TypeDesc.getTypeDescForClass(javaType);
 
         // create a value
         try {

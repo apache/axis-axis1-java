@@ -118,17 +118,21 @@ public class BeanSerializer implements Serializer, Serializable {
     QName xmlType;
     Class javaType;
 
-    private BeanPropertyDescriptor[] propertyDescriptor = null;
-    private TypeDesc typeDesc = null;
+    protected BeanPropertyDescriptor[] propertyDescriptor = null;
+    protected TypeDesc typeDesc = null;
 
 
     // Construct BeanSerializer for the indicated class/qname
     public BeanSerializer(Class javaType, QName xmlType) {
+        this(javaType, xmlType, TypeDesc.getTypeDescForClass(javaType));
+    }
+
+    // Construct BeanSerializer for the indicated class/qname
+    public BeanSerializer(Class javaType, QName xmlType, TypeDesc typeDesc) {
         this.xmlType = xmlType;
         this.javaType = javaType;
+        this.typeDesc = typeDesc;
         propertyDescriptor = getPd(javaType);
-
-        typeDesc = TypeDesc.getTypeDescForClass(javaType);
     }
 
     /**
@@ -386,7 +390,7 @@ public class BeanSerializer implements Serializer, Serializable {
      * @param where location for the generated schema node
      * @throws Exception
      */
-    private void writeField(Types types, String fieldName,
+    protected void writeField(Types types, String fieldName,
                             Class fieldType,
                             boolean isUnbounded,
                             Element where) throws Exception {
@@ -408,7 +412,7 @@ public class BeanSerializer implements Serializer, Serializable {
      * @param where location for the generated schema node
      * @throws Exception
      */
-    private void writeAttribute(Types types,
+    protected void writeAttribute(Types types,
                                 String fieldName,
                                 Class fieldType,
                                 Element where) throws Exception {
@@ -436,7 +440,7 @@ public class BeanSerializer implements Serializer, Serializable {
      * @param pd the properties of this class
      * @return attributes for this element, null if none
      */
-    private Attributes getObjectAttributes(Object value,
+    protected Attributes getObjectAttributes(Object value,
                                            Attributes attributes,
                                            SerializationContext context) {
 
