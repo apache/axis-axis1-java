@@ -2,7 +2,7 @@
 * The Apache Software License, Version 1.1
 *
 *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+* Copyright (c) 2001 The Apache Software Foundation.  All rights
 * reserved.
 *
 * Redistribution and use in source and binary forms, with or without
@@ -1146,14 +1146,27 @@ public class Call implements javax.xml.rpc.Call {
         operationName = new QName(opName);
     }
 
-    public void setOperation(QName portName, String opName) {
+    /**
+     * Prefill as much info from the WSDL as it can.  
+     * Right now it's SOAPAction, operation qname, parameter types 
+     * and return type of the Web Service.
+     *
+     * This methods considers that port name and target endpoint address have
+     * already been set. This is useful when you want to use the same Call 
+     * instance for several calls on the same Port
+     *
+     * Note: Not part of JAX-RPC specification.
+     * 
+     * @param  portName        PortName in the WSDL doc to search for
+     * @param  opName          Operation(method) that's going to be invoked
+     */     
+    public void setOperation(String opName) {
         if ( service == null )
             throw new JAXRPCException( Messages.getMessage("noService04") );
 
-        // Make sure we're making a fresh start.
-        this.setPortName( portName );
+        // remove all settings concerning an operation
+        // leave portName and targetEndPoint as they are
         this.setOperationName( opName );
-        this.setTargetEndpointAddress( (URL) null );
         this.setEncodingStyle( null );
         this.setReturnType( null );
         this.removeAllParameters();
@@ -1188,26 +1201,9 @@ public class Call implements javax.xml.rpc.Call {
             throw new JAXRPCException( Messages.getMessage("noOperation01",
                                                            opName) );
 
-        // Get the URL
-        ////////////////////////////////////////////////////////////////////
-        List list = port.getExtensibilityElements();
-        for ( int i = 0 ; list != null && i < list.size() ; i++ ) {
-            Object obj = list.get(i);
-            if ( obj instanceof SOAPAddress ) {
-                try {
-                    SOAPAddress addr = (SOAPAddress) obj ;
-                    URL         url  = new URL(addr.getLocationURI());
-                    this.setTargetEndpointAddress(url);
-                }
-                catch(Exception exp) {
-                    throw new JAXRPCException(
-                            Messages.getMessage("cantSetURI00", "" + exp) );
-                }
-            }
-        }
-
         // Get the SOAPAction
         ////////////////////////////////////////////////////////////////////
+        List list = port.getExtensibilityElements();
         String opStyle = null;
         BindingOperation bop = binding.getBindingOperation(opName,
                                                            null, null);
@@ -1360,6 +1356,98 @@ public class Call implements javax.xml.rpc.Call {
         // need to be specified with addParameter calls.
         parmAndRetReq = false;
         return;
+     
+    }
+
+
+    /**
+     * prefill as much info from the WSDL as it can.  
+     * Right now it's target URL, SOAPAction, Parameter types,
+     * and return type of the Web Service.
+     * 
+     * If wsdl is not present, this function set port name and operation name
+     * and does not modify target endpoint address.
+     *
+     * Note: Not part of JAX-RPC specification.
+     * 
+     * @param  portName        PortName in the WSDL doc to search for
+     * @param  opName          Operation(method) that's going to be invoked
+     */
+    public void setOperation(QName portName, String opName) {
+        if ( service == null )
+            throw new JAXRPCException( Messages.getMessage("noService04") );
+
+        // Make sure we're making a fresh start.
+        this.setPortName( portName );
+        this.setOperationName( opName );
+        this.setEncodingStyle( null );
+        this.setReturnType( null );
+        this.removeAllParameters();
+
+        javax.wsdl.Service wsdlService = service.getWSDLService();
+        // Nothing to do is the WSDL is not already set.
+        if(wsdlService == null)
+            return;
+
+        // we reinitialize target endpoint only if we have wsdl
+        this.setTargetEndpointAddress( (URL) null );
+
+        Port port = wsdlService.getPort( portName.getLocalPart() );
+        if ( port == null )
+            throw new JAXRPCException( Messages.getMessage("noPort00", "" +
+                                                           portName) );
+
+        Binding   binding  = port.getBinding();
+        PortType  portType = binding.getPortType();
+        if ( portType == null )
+            throw new JAXRPCException( Messages.getMessage("noPortType00", "" +
+                                                           portName) );
+
+        // Get the URL
+        ////////////////////////////////////////////////////////////////////
+        List list = port.getExtensibilityElements();
+        for ( int i = 0 ; list != null && i < list.size() ; i++ ) {
+            Object obj = list.get(i);
+            if ( obj instanceof SOAPAddress ) {
+                try {
+                    SOAPAddress addr = (SOAPAddress) obj ;
+                    URL         url  = new URL(addr.getLocationURI());
+                    this.setTargetEndpointAddress(url);
+                }
+                catch(Exception exp) {
+                    throw new JAXRPCException(
+                            Messages.getMessage("cantSetURI00", "" + exp) );
+                }
+            }
+        }
+
+        // Get the SOAPAction
+        ////////////////////////////////////////////////////////////////////
+        String opStyle = null;
+        BindingOperation bop = binding.getBindingOperation(opName,
+                                                           null, null);
+        if ( bop == null )
+            throw new JAXRPCException( Messages.getMessage("noOperation02",
+                                                            opName ));
+        list = bop.getExtensibilityElements();
+        for ( int i = 0 ; list != null && i < list.size() ; i++ ) {
+            Object obj = list.get(i);
+            if ( obj instanceof SOAPOperation ) {
+                SOAPOperation sop    = (SOAPOperation) obj ;
+                opStyle = ((SOAPOperation) obj).getStyle();
+                String        action = sop.getSoapActionURI();
+                if ( action != null ) {
+                    setUseSOAPAction(true);
+                    setSOAPActionURI(action);
+                }
+                else {
+                    setUseSOAPAction(false);
+                    setSOAPActionURI(null);
+                }
+                break ;
+            }
+        }
+        setOperation(opName);
     }
 
     /**
@@ -2539,6 +2627,11 @@ public class Call implements javax.xml.rpc.Call {
     public void setOperation(OperationDesc operation) {
         this.operation = operation;
         operationSetManually = true;
+    }
+    
+    public OperationDesc getOperation()
+    {
+        return operation;  
     }
 
     public void clearOperation() {
