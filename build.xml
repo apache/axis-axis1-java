@@ -278,7 +278,7 @@ Copyright:
   </target>
 
   <!-- All tests -->
-  <target name="all-tests" depends="junit, functional-tests">
+  <target name="all-tests" depends="samples, junit, functional-tests">
   </target>
 
   <!-- =================================================================== -->
