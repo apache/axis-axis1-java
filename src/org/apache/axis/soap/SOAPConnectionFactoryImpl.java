@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -52,46 +52,25 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package javax.xml.soap;
+package org.apache.axis.soap;
 
-/**  */
-public abstract class SOAPConnectionFactory {
+import javax.xml.soap.SOAPConnection;
+import javax.xml.soap.SOAPException;
 
-    /**  */
-    public SOAPConnectionFactory() {}
-
-    /**
-     * Creates an instance of the default <CODE>
-     * SOAPConnectionFactory</CODE> object.
-     * @return a new instance of a default <CODE>
-     *     SOAPConnectionFactory</CODE> object
-     * @throws  SOAPException  if there was an error creating
-     *     the <CODE>SOAPConnectionFactory
-     */
-    public static SOAPConnectionFactory newInstance() throws SOAPException {
-
-        try {
-            return (SOAPConnectionFactory) FactoryFinder.
-                find(SF_PROPERTY, DEFAULT_SOAP_CONNECTION_FACTORY);
-        } catch (Exception exception) {
-            throw new SOAPException("Unable to create SOAP connection factory: "
-                                    + exception.getMessage());
-        }
-    }
-
+/**
+ * SOAP Connection Factory implementation
+ *
+ * @author Davanum Srinivas (dims@yahoo.com)
+ */
+public class SOAPConnectionFactoryImpl extends javax.xml.soap.SOAPConnectionFactory {
     /**
      * Create a new <CODE>SOAPConnection</CODE>.
      * @return the new <CODE>SOAPConnection</CODE> object.
      * @throws  SOAPException if there was an exception
      *     creating the <CODE>SOAPConnection</CODE> object.
      */
-    public abstract SOAPConnection createConnection() throws SOAPException;
-
-    /**  */
-    private static final String DEFAULT_SOAP_CONNECTION_FACTORY =
-        "org.apache.axis.soap.SOAPConnectionFactoryImpl";
-
-    /**  */
-    private static final String SF_PROPERTY =
-        "javax.xml.soap.SOAPConnectionFactory";
+    public SOAPConnection createConnection() throws SOAPException {
+        //TODO:Flesh this out.
+        return null;
+    }
 }

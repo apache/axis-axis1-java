@@ -138,5 +138,5 @@ public abstract class SOAPElementFactory {
 
     /**  */
     private static final String DEFAULT_SEF =
-        "com.sun.xml.messaging.soap.SOAPElementFactoryImpl";
+        "org.apache.axis.soap.SOAPElementFactoryImpl";
 }

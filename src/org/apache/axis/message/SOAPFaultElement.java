@@ -70,7 +70,7 @@ import java.io.IOException;
  * @author Glen Daniels (gdaniels@macromedia.com)
  * @author Tom Jordahl (tomj@macromedia.com)
  */
-public class SOAPFaultElement extends SOAPBodyElement
+public class SOAPFaultElement extends SOAPBodyElement implements javax.xml.soap.SOAPFaultElement
 {
     protected AxisFault fault;    
     

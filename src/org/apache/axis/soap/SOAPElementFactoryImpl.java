@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -52,46 +52,66 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package javax.xml.soap;
+package org.apache.axis.soap;
 
-/**  */
-public abstract class SOAPConnectionFactory {
+import javax.xml.soap.Name;
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPException;
 
-    /**  */
-    public SOAPConnectionFactory() {}
-
+/**
+ * SOAP Element Factory implementation
+ *
+ * @author Davanum Srinivas (dims@yahoo.com)
+ */
+public class SOAPElementFactoryImpl extends javax.xml.soap.SOAPElementFactory {
     /**
-     * Creates an instance of the default <CODE>
-     * SOAPConnectionFactory</CODE> object.
-     * @return a new instance of a default <CODE>
-     *     SOAPConnectionFactory</CODE> object
-     * @throws  SOAPException  if there was an error creating
-     *     the <CODE>SOAPConnectionFactory
+     * Create a <CODE>SOAPElement</CODE> object initialized with
+     * the given <CODE>Name</CODE> object.
+     * @param   name a <CODE>Name</CODE> object with
+     *     the XML name for the new element
+     * @return the new <CODE>SOAPElement</CODE> object that was
+     *     created
+     * @throws  SOAPException if there is an error in
+     *     creating the <CODE>SOAPElement</CODE> object
      */
-    public static SOAPConnectionFactory newInstance() throws SOAPException {
-
-        try {
-            return (SOAPConnectionFactory) FactoryFinder.
-                find(SF_PROPERTY, DEFAULT_SOAP_CONNECTION_FACTORY);
-        } catch (Exception exception) {
-            throw new SOAPException("Unable to create SOAP connection factory: "
-                                    + exception.getMessage());
-        }
+    public SOAPElement create(Name name) throws SOAPException {
+        //TODO: Flesh this out.
+        return null;
     }
 
     /**
-     * Create a new <CODE>SOAPConnection</CODE>.
-     * @return the new <CODE>SOAPConnection</CODE> object.
-     * @throws  SOAPException if there was an exception
-     *     creating the <CODE>SOAPConnection</CODE> object.
+     * Create a <CODE>SOAPElement</CODE> object initialized with
+     * the given local name.
+     * @param   localName a <CODE>String</CODE> giving
+     *     the local name for the new element
+     * @return the new <CODE>SOAPElement</CODE> object that was
+     *     created
+     * @throws  SOAPException if there is an error in
+     *     creating the <CODE>SOAPElement</CODE> object
      */
-    public abstract SOAPConnection createConnection() throws SOAPException;
+    public SOAPElement create(String localName) throws SOAPException {
+        //TODO: Flesh this out.
+        return null;
+    }
 
-    /**  */
-    private static final String DEFAULT_SOAP_CONNECTION_FACTORY =
-        "org.apache.axis.soap.SOAPConnectionFactoryImpl";
-
-    /**  */
-    private static final String SF_PROPERTY =
-        "javax.xml.soap.SOAPConnectionFactory";
+    /**
+     * Create a new <CODE>SOAPElement</CODE> object with the
+     * given local name, prefix and uri.
+     * @param   localName a <CODE>String</CODE> giving
+     *     the local name for the new element
+     * @param   prefix the prefix for this <CODE>
+     *     SOAPElement</CODE>
+     * @param   uri a <CODE>String</CODE> giving the
+     *     URI of the namespace to which the new element
+     *     belongs
+     * @return the new <CODE>SOAPElement</CODE> object that was
+     *     created
+     * @throws  SOAPException if there is an error in
+     *     creating the <CODE>SOAPElement</CODE> object
+     */
+    public SOAPElement create(
+            String localName, String prefix, String uri) throws SOAPException {
+        //TODO: Flesh this out.
+        return null;
+    }
 }

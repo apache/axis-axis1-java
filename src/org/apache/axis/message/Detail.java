@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -52,46 +52,53 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package javax.xml.soap;
 
-/**  */
-public abstract class SOAPConnectionFactory {
+package org.apache.axis.message;
 
-    /**  */
-    public SOAPConnectionFactory() {}
+import org.apache.axis.AxisFault;
+import org.apache.axis.encoding.DeserializationContext;
+import org.xml.sax.Attributes;
 
-    /**
-     * Creates an instance of the default <CODE>
-     * SOAPConnectionFactory</CODE> object.
-     * @return a new instance of a default <CODE>
-     *     SOAPConnectionFactory</CODE> object
-     * @throws  SOAPException  if there was an error creating
-     *     the <CODE>SOAPConnectionFactory
-     */
-    public static SOAPConnectionFactory newInstance() throws SOAPException {
+import javax.xml.soap.DetailEntry;
+import javax.xml.soap.Name;
+import javax.xml.soap.SOAPException;
+import java.util.Iterator;
 
-        try {
-            return (SOAPConnectionFactory) FactoryFinder.
-                find(SF_PROPERTY, DEFAULT_SOAP_CONNECTION_FACTORY);
-        } catch (Exception exception) {
-            throw new SOAPException("Unable to create SOAP connection factory: "
-                                    + exception.getMessage());
-        }
+/**
+ * Detail Container implementation
+ *
+ * @author Davanum Srinivas (dims@yahoo.com)
+ */
+public class Detail extends SOAPFaultElement implements javax.xml.soap.Detail {
+
+    public Detail(String namespace, String localName, String prefix,
+                  Attributes attrs, DeserializationContext context) {
+        super(namespace, localName, prefix, attrs, context);
+    }
+
+    public Detail(AxisFault fault) {
+        super(fault);
     }
 
     /**
-     * Create a new <CODE>SOAPConnection</CODE>.
-     * @return the new <CODE>SOAPConnection</CODE> object.
-     * @throws  SOAPException if there was an exception
-     *     creating the <CODE>SOAPConnection</CODE> object.
+     * Creates a new <code>DetailEntry</code> object with the given
+     * name and adds it to this <code>Detail</code> object.
+     * @param   name a <code>Name</code> object identifying the new <code>DetailEntry</code> object
+     * @return DetailEntry.
+     * @throws SOAPException  thrown when there is a problem in adding a DetailEntry object to this Detail object.
      */
-    public abstract SOAPConnection createConnection() throws SOAPException;
+    public DetailEntry addDetailEntry(Name name) throws SOAPException {
+        //TODO: Flesh this out.
+        return null;
+    }
 
-    /**  */
-    private static final String DEFAULT_SOAP_CONNECTION_FACTORY =
-        "org.apache.axis.soap.SOAPConnectionFactoryImpl";
-
-    /**  */
-    private static final String SF_PROPERTY =
-        "javax.xml.soap.SOAPConnectionFactory";
+    /**
+     * Gets a list of the detail entries in this <code>Detail</code> object.
+     * @return  an <code>Iterator</code> object over the <code>DetailEntry</code>
+     *        objects in this <code>Detail</code> object
+     */
+    public Iterator getDetailEntries() {
+        //TODO: Flesh this out.
+        return null;
+    }
 }

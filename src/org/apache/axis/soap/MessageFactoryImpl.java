@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -52,46 +52,62 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package javax.xml.soap;
+package org.apache.axis.soap;
 
-/**  */
-public abstract class SOAPConnectionFactory {
+import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPMessage;
+import java.io.IOException;
+import java.io.InputStream;
 
-    /**  */
-    public SOAPConnectionFactory() {}
-
+/**
+ * Message Factory implementation
+ *
+ * @author Davanum Srinivas (dims@yahoo.com)
+ */
+public class MessageFactoryImpl extends javax.xml.soap.MessageFactory {
     /**
-     * Creates an instance of the default <CODE>
-     * SOAPConnectionFactory</CODE> object.
-     * @return a new instance of a default <CODE>
-     *     SOAPConnectionFactory</CODE> object
-     * @throws  SOAPException  if there was an error creating
-     *     the <CODE>SOAPConnectionFactory
+     * Creates a new <CODE>SOAPMessage</CODE> object with the
+     *   default <CODE>SOAPPart</CODE>, <CODE>SOAPEnvelope</CODE>,
+     *   <CODE>SOAPBody</CODE>, and <CODE>SOAPHeader</CODE> objects.
+     *   Profile-specific message factories can choose to
+     *   prepopulate the <CODE>SOAPMessage</CODE> object with
+     *   profile-specific headers.
+     *
+     *   <P>Content can be added to this message's <CODE>
+     *   SOAPPart</CODE> object, and the message can be sent "as is"
+     *   when a message containing only a SOAP part is sufficient.
+     *   Otherwise, the <CODE>SOAPMessage</CODE> object needs to
+     *   create one or more <CODE>AttachmentPart</CODE> objects and
+     *   add them to itself. Any content that is not in XML format
+     *   must be in an <CODE>AttachmentPart</CODE> object.</P>
+     * @return  a new <CODE>SOAPMessage</CODE> object
+     * @throws  SOAPException if a SOAP error occurs
      */
-    public static SOAPConnectionFactory newInstance() throws SOAPException {
-
-        try {
-            return (SOAPConnectionFactory) FactoryFinder.
-                find(SF_PROPERTY, DEFAULT_SOAP_CONNECTION_FACTORY);
-        } catch (Exception exception) {
-            throw new SOAPException("Unable to create SOAP connection factory: "
-                                    + exception.getMessage());
-        }
+    public SOAPMessage createMessage() throws SOAPException {
+        //TODO:Flesh this out.
+        return null;
     }
 
     /**
-     * Create a new <CODE>SOAPConnection</CODE>.
-     * @return the new <CODE>SOAPConnection</CODE> object.
-     * @throws  SOAPException if there was an exception
-     *     creating the <CODE>SOAPConnection</CODE> object.
+     * Internalizes the contents of the given <CODE>
+     * InputStream</CODE> object into a new <CODE>SOAPMessage</CODE>
+     * object and returns the <CODE>SOAPMessage</CODE> object.
+     * @param   mimeheaders    the transport-specific headers
+     *     passed to the message in a transport-independent fashion
+     *     for creation of the message
+     * @param   inputstream    the <CODE>InputStream</CODE> object
+     *     that contains the data for a message
+     * @return a new <CODE>SOAPMessage</CODE> object containing the
+     *     data from the given <CODE>InputStream</CODE> object
+     * @throws  IOException    if there is a
+     *     problem in reading data from the input stream
+     * @throws  SOAPException  if the message is invalid
      */
-    public abstract SOAPConnection createConnection() throws SOAPException;
-
-    /**  */
-    private static final String DEFAULT_SOAP_CONNECTION_FACTORY =
-        "org.apache.axis.soap.SOAPConnectionFactoryImpl";
-
-    /**  */
-    private static final String SF_PROPERTY =
-        "javax.xml.soap.SOAPConnectionFactory";
+    public SOAPMessage createMessage(
+            MimeHeaders mimeheaders, InputStream inputstream)
+            throws IOException, SOAPException {
+        //TODO:Flesh this out.
+        return null;
+    }
 }
