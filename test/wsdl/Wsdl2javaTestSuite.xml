@@ -324,7 +324,7 @@
     
     <!-- Check to make sure we map XML names that are illegal Java correctly -->
 
-    <!-- We have a problem.  The functional-tests fail.  This test contains  -->
+    <!-- We have a problem. This test contains                               -->
     <!-- operations "new" and "public".  These are Java keywords so the      -->
     <!-- method names become "_new" and "_public".  But "new"/"public" are   -->
     <!-- sent over the wire and "new"/"public" are in deploy.wsdd.  When the -->
@@ -337,18 +337,19 @@
     <!--                                                                     -->
     <!-- What we need is some sort of method mapping, probably in            -->
     <!-- deploy.wsdd, that the server-side runtime can use.                  -->
+    <!--                                                                     -->
+    <!-- Short term solution, turn off testcase generation to prevent any    -->
+    <!-- client/server opertations from taking place                         -->
 
-    <!--
     <wsdl2java url="test/wsdl/names/JavaNames.wsdl"
                output="build/work"
                deployscope="none"
                skeleton="yes"
                noimports="no"
                verbose="yes"
-               testcase="yes">
+               testcase="no">
         <mapping namespace="http://test.com/reference" package="test.filegen"/>
     </wsdl2java>
-    -->
 
     <!--
     <wsdl2java url="http://www.lemurlabs.com/projects/soap/fortune/FortuneService.wsdl"
