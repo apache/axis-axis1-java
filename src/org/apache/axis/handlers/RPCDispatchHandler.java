@@ -75,7 +75,7 @@ public class RPCDispatchHandler extends BasicHandler {
     /* Find the service we're invoking so we can grab it's options */
     /***************************************************************/
     Handler service ;
-    service = (Handler) msgContext.getProperty( MessageContext.SVC_HANDLER );
+    service = msgContext.getServiceHandler();
 
     /* Now get the service (RPC) specific info  */
     /********************************************/

@@ -143,8 +143,7 @@ public class RPCElement extends SOAPBodyElement
      */
 
     public void setContext(MessageContext msgContext) {
-        Handler service    =
-            (Handler) msgContext.getProperty(MessageContext.SVC_HANDLER);
+        Handler service    = msgContext.getServiceHandler();
         if (service == null) return;
 
         String  clsName    = (String) service.getOption( "className" );

@@ -178,7 +178,7 @@ public class JWSProcessor extends BasicHandler
       /* that we invoke.                                                */
       /******************************************************************/
       Handler rpc = new RPCDispatchHandler();
-      msgContext.setProperty( MessageContext.SVC_HANDLER, rpc );
+      msgContext.setServiceHandler( rpc );
 
       rpc.addOption( "className", clsName );
 
