@@ -125,15 +125,15 @@ or discovery mechanism, for the logger component/service.
 <p>
 The <code>org.apache.axis.components.image</code> package demonstrates
 both a factory, and supporting classes for different image tools used
-by AXIS.  This is representative of a pluggable component that uses
-external tooling, isolating it behind a 'thin' wrapper to AXIS that
-provides only a limited interface to meet AXIS minimal requirements.
+by Axis.  This is representative of a pluggable component that uses
+external tooling, isolating it behind a 'thin' wrapper to Axis that
+provides only a limited interface to meet Axis minimal requirements.
 This allows future designers
-and implementors to gain an explicit understanding of the AXIS's
+and implementors to gain an explicit understanding of the Axis's
 specific requirements on these tools.
 <h3>
 <a NAME="Logging/Tracing"></a>Logging/Tracing</h3>
-AXIS logging and tracing is based on the Logging component of the
+Axis logging and tracing is based on the Logging component of the
 <a href="http://jakarta.apache.org/commons/index.html">Jakarta Commons</a>
 project, or the Jakarta Commons Logging (JCL) SPI.
 The JCL provides a Log interface with thin-wrapper implementations for
@@ -214,7 +214,7 @@ It is important to ensure that log message are
 appropriate in content and severity.
 The following guidelines are suggested:
 <ul>
-<li>fatal - Severe errors that cause the AXIS server to terminate prematurely.
+<li>fatal - Severe errors that cause the Axis server to terminate prematurely.
 Expect these to be immediately visible on a console,
 and MUST be internationalized.</li>
 <br>&nbsp;
@@ -247,17 +247,17 @@ These NEED NOT be internationalized, but it never hurts...</li>
 The Jakarta Commons Logging (JCL) SPI
 can be configured to use different logging toolkits.
 To configure which logger is used by the JCL, see the
-<a href="integration-guide.html">AXIS System Integration Guide</a>.
+<a href="integration-guide.html">Axis System Integration Guide</a>.
 <p>
 Configuration of the behavior of the JCL ultimately depends upon the
 logging toolkit being used.
-The JCL SPI (and hence AXIS) uses
+The JCL SPI (and hence Axis) uses
 <a href="http://jakarta.apache.org/log4j/docs/index.html">Log4J</a>
 by default if it is available (in the CLASSPATH).
 <h5>Log4J</h5>
 As
 <a href="http://jakarta.apache.org/log4j/docs/index.html">Log4J</a>
-is the prefered/default logger for AXIS,
+is the prefered/default logger for Axis,
 a <i>few</i> details are presented herein to get the developer going.
 <p>
 Configure Log4J using system properties and/or a properties file:
@@ -314,7 +314,7 @@ and
 <code>org.apache.axis.encoding.ser</code>.
 Likewise, setting
 <code>log4j.logger.org.apache.axis=DEBUG</code>
-will enable debug message for all AXIS classes,
+will enable debug message for all Axis classes,
 but not for other Jakarta projects.
 <p>
 A combination of settings will enable you to see the log events that
@@ -346,7 +346,7 @@ while limiting console output to INFO (and higher).
 
 <h2>
 <a NAME="Configuration Properties"></a>Configuration Properties</h2>
-AXIS is in the process of moving away from using system properties
+Axis is in the process of moving away from using system properties
 as the primary point of internal configuration.
 Avoid calling <code>System.getProperty()</code>,
 and instead call <code>AxisProperties.getProperty</code>.
@@ -356,14 +356,14 @@ query other sources of configuration information.
 <p>
 Using this central point of access will allow the
 global configuration system to be redesigned
-to better support multiple AXIS engines in a
+to better support multiple Axis engines in a
 single JVM.
 
 <h2>
 <a NAME="Exception Handling"></a>Exception Handling</h2>
-Guidelines for AXIS Exception Handling are based on best-practices
+Guidelines for Axis Exception Handling are based on best-practices
 for Exception Handling.
-While there are details specific to AXIS in these guidelines,
+While there are details specific to Axis in these guidelines,
 they apply in principle to any project;
 they are included here for two reasons.
 First, because they are not listed elsewhere in the
@@ -405,19 +405,19 @@ Ultimately, all exceptions must be dealt with at one level or another.
 For command-line tools, this means the <code>main</code>
 method or program.
 For a middleware component, this is the entry point(s) into the component.
-For AXIS this is <code>AxisServlet</code> or equivalent.
+For Axis this is <code>AxisServlet</code> or equivalent.
 <p>
 After catching specific exceptions which can be resolved internally,
 the outermost code must ensure that all internally generated exceptions
 are caught and handled.
 While there is generally not much that can be done,
 at a minimum the code should <u>log the exception</u>.
-In addition to logging, the AXIS Server wraps all such exceptions
+In addition to logging, the Axis Server wraps all such exceptions
 in AxisFaults and returns them
 to the client code.
 <p>
 This may seem contrary to the primary rule,
-but in fact we are claiming that AXIS does know
+but in fact we are claiming that Axis does know
 what to do with this type of exception:
 exit gracefully.
 </ul>
@@ -474,20 +474,20 @@ This implies a well designed server interface.
 <p>
 <ul>
 <li><h4>Isolate System Logic from Business Logic</h4></li>
-Exceptions generated by the AXIS runtime
+Exceptions generated by the Axis runtime
 should be handled, where possible,
-within the AXIS runtime.
+within the Axis runtime.
 In the worst case the details of an exception are to be logged
-by the AXIS runtime,
+by the Axis runtime,
 and a generally descriptive Exception raised to the Business Logic.
 <p>
 Exceptions raised in the business logic
-(this includes the server and AXIS handlers)
+(this includes the server and Axis handlers)
 must be delivered to the client code.
 <p>
 <li><h4>Protect System Code from User Code</h4></li>
-Protect the AXIS runtime from uncontrolled user business logic.
-For AXIS, this means that dynamically configurable
+Protect the Axis runtime from uncontrolled user business logic.
+For Axis, this means that dynamically configurable
 <code>handlers</code>, <code>providers</code> and other
 user controllable hook-points must be guarded
 by <code>catch(Exception ...)</code>.
@@ -503,7 +503,7 @@ and more a general exception thrown to the client.
 This prevents clues as to the nature of the server
 (such as handlers, providers, etc)
 from being revealed to client code.
-The AXIS component boundries that should be respected are:
+The Axis component boundries that should be respected are:
 <ul>
 <li>Client Code <--> AxisClient</li>
 <li>AxisClient <--> AxisServlet (AxisServer/AxisEngine)</li>
@@ -645,12 +645,12 @@ throw new AxisFault(Messages.getMessage("noOperation"));</code>
 <h3>
 <a NAME="Interface"></a>Interface</h3>
 
-AXIS uses the standard Java internationalization class
+Axis uses the standard Java internationalization class
 <code>java.util.ResourceBundle</code>
 to access property files and message strings,
 and uses <code>java.text.MessageFormat</code>
 to format the strings using variables.
-AXIS provides a single class <code>org.apache.axis.i18n.Messages</code>
+Axis provides a single class <code>org.apache.axis.i18n.Messages</code>
 that manages both ResourceBundle and MessageFormat classes.
 Messages methods are:
 
@@ -660,7 +660,7 @@ Messages methods are:
 <p><code>public static String getMessage(String key, String var1, String var2) throws java.util.MissingResourceException;</code>
 <p><code>public static String getMessage(String key, String[] vars) throws java.util.MissingResourceException;</code>
 
-<p>AXIS programmers can work with the resource bundle directly via a call
+<p>Axis programmers can work with the resource bundle directly via a call
 to <code>Messages.getResourceBundle()</code>,
 but the <code>getMessage()</code>
 methods should be used instead for two reasons:
@@ -710,10 +710,10 @@ so the caller doesn't have to explicitly catch them.
 <h3>
 <a NAME="Extending Message Files"></a>Extending Message Files</h3>
 Generally,
-within AXIS all messages are placed in
+within Axis all messages are placed in
 org.apache.axis.i18n.resource.properties.
 There are facilities for extending the messages without
-modifying this file for integration or 3rd party extensions to AXIS.
+modifying this file for integration or 3rd party extensions to Axis.
 See the <a href="integration-guide.html#Extending Message Files"/>Integration Guide</a> for details.
 
 <h2>
@@ -1011,7 +1011,7 @@ indicate that functional-tests should continue if a failure occurs.
 The SOAP messages for all of the tests should appear in the tcpmon window.
 <p>
 <code>tcpmon</code> is described in more detail in the
-<a href="user-guide.html#tcpmon">AXIS User's Guide</a>.
+<a href="user-guide.html#tcpmon">Axis User's Guide</a>.
 
 <h4>Using <code>SOAP Monitor</code> to Monitor Functional Tests.</h4>
 <p>
@@ -1025,7 +1025,7 @@ As you run your tests, the SOAP messages should appear in the SOAP
 monitor window.
 <p>
 <code>SOAP Monitor</code> is described in more detail in the
-<a href="user-guide.html#soapmon">AXIS User's Guide</a>.
+<a href="user-guide.html#soapmon">Axis User's Guide</a>.
 
 <h4>Running a Single Functional Test</h4>
 In one window start the server:
@@ -1037,7 +1037,7 @@ Then bring up the JUnit user interface with your test.  For example, to run the 
 <blockquote><tt>java junit.swingui.TestRunner -noloading test.wsdl.multithread.MultithreadTestCase</tt></blockquote>
 
 <h4>Turning on Debug Output</h4>
-This section is oriented to the AXIS default logger: Log4J.
+This section is oriented to the Axis default logger: Log4J.
 For additional information on Log4J, see the section
 <a href="#Configuring the Logger">Configuring the Logger</a>.
 <p>
@@ -1068,12 +1068,12 @@ prior to <code>axis.jar</code> in the <code>CLASSPATH</code>.
 <p>
 <li>
 If you are building and executing your programs using <code>ant</code>
-(this includes building AXIS and running it's tests),
+(this includes building Axis and running it's tests),
 set the environment variable <code>ANT_OPTS</code> to <code>-Dlog4j.configuration=<i>yourConfigFile</i></code>.
 </li>
 <p>
 <li>
-If you are building AXIS, you can change <code>src/log4j.properties</code>
+If you are building Axis, you can change <code>src/log4j.properties</code>
 directly.  Be sure NOT to commit your change(s).
 </li>
 </ul>
@@ -1088,7 +1088,7 @@ Set the <code>log4j.rootCategory</code> <i>priority</i> to
 <p>
 <li>
 Set the <i>priority</i> threshold for an appender to <code>DEBUG</code>
-(The <code>log4j.properties</code> file in AXIS defines two appenders:
+(The <code>log4j.properties</code> file in Axis defines two appenders:
 <code>CONSOLE</code> and <code>LOGFILE</code>).
 </li>
 </ul>
@@ -1108,7 +1108,7 @@ Set the <code>log4j.logger.<i>logger.name</i></code> <i>priority</i> to
 <p>
 <li>
 Set the <i>priority</i> threshold for an appender to <code>DEBUG</code>
-(The <code>log4j.properties</code> file in AXIS defines two appenders:
+(The <code>log4j.properties</code> file in Axis defines two appenders:
 <code>CONSOLE</code> and <code>LOGFILE</code>).
 </li>
 <p>
@@ -1124,7 +1124,7 @@ search for them in log messages.
 </ul>
 
 <h4>Writing Temporary Output</h4>
-Remember that AXIS is targetted for use in a number
+Remember that Axis is targetted for use in a number
 of open-source and other web applications,
 and so it needs to be a good citizen.
 Writing output using <code>System.out.println</code> or
