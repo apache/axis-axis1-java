@@ -918,9 +918,13 @@ public class Call implements javax.xml.rpc.Call {
             /**
              * Are there out-params?  If so, return a Vector instead.
              */
-            if (resArgs.size() > 1) {
+            int outParamIdx = 1;
+            if (returnType == null)
+                outParamIdx = 0;
+
+            if (resArgs.size() > outParamIdx) {
                 outParams = new Vector();
-                for (int i = 1; i < resArgs.size(); i++) {
+                for (int i = outParamIdx; i < resArgs.size(); i++) {
                     outParams.add(resArgs.get(i));
                 }
             }
