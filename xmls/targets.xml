@@ -111,6 +111,10 @@
       <available classname="com.sun.jimi.core.Jimi" classpathref="classpath" />
     </condition>
 
+    <condition property="merlinio.present" >
+      <available classname="javax.imageio.ImageIO" classpathref="classpath" />
+    </condition>
+
     <condition property="jimiAndAttachments.present">
       <and>
         <available classname="javax.activation.DataHandler" classpathref="classpath" />
