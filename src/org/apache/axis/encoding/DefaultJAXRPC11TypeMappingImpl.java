@@ -24,7 +24,7 @@ import org.apache.axis.encoding.ser.DateSerializerFactory;
  * This is the implementation of the axis Default JAX-RPC SOAP Encoding TypeMapping
  * See DefaultTypeMapping for more information.
  */
-public class DefaultJAXRPC11TypeMappingImpl extends DefaultTypeMappingImpl {
+public class DefaultJAXRPC11TypeMappingImpl extends DefaultSOAPEncodingTypeMappingImpl {
 
     private static DefaultJAXRPC11TypeMappingImpl tm = null;
 
