@@ -57,7 +57,6 @@ package org.apache.axis.providers.java;
 
 import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisProperties;
 import org.apache.axis.AxisServiceConfig;
 import org.apache.axis.Handler;
 import org.apache.axis.Message;
@@ -72,14 +71,13 @@ import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.enum.Style;
 import org.apache.axis.enum.Scope;
 import org.apache.axis.Constants;
+import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.handlers.soap.SOAPService;
-import org.apache.axis.deployment.wsdd.WSDDConstants;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import org.w3c.dom.Document;
-import org.apache.axis.deployment.wsdd.WSDDService;
 
 import javax.xml.rpc.server.ServiceLifecycle;
 import javax.xml.rpc.holders.IntHolder;
@@ -325,6 +323,7 @@ public abstract class JavaProvider extends BasicProvider
         /***************************************************************/
         String serviceName = msgContext.getTargetService();
         SOAPService service = msgContext.getService();
+        ServiceDesc serviceDesc = service.getInitializedServiceDesc(msgContext);
 
         /* Now get the service (RPC) specific info  */
         /********************************************/
@@ -353,7 +352,11 @@ public abstract class JavaProvider extends BasicProvider
             }
             String locationUrl = 
                     msgContext.getStrProp(MessageContext.WSDLGEN_SERV_LOC_URL);
-            
+
+            if (locationUrl == null) {
+                locationUrl = serviceDesc.getEndpointURL();
+            }
+
             if (locationUrl == null) {
                 locationUrl = url;
             } else {
@@ -406,7 +409,7 @@ public abstract class JavaProvider extends BasicProvider
             emitter.setIntfNamespace(targetNamespace);
 
             emitter.setLocationUrl(locationUrl);
-            emitter.setServiceDesc(msgContext.getService().getInitializedServiceDesc(msgContext));
+            emitter.setServiceDesc(serviceDesc);
             emitter.setTypeMapping((TypeMapping)msgContext.getTypeMappingRegistry().
                                    getTypeMapping(Constants.URI_DEFAULT_SOAP_ENC));
             emitter.setDefaultTypeMapping((TypeMapping)msgContext.getTypeMappingRegistry().

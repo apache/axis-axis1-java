@@ -67,7 +67,6 @@ import com.ibm.wsdl.extensions.soap.SOAPOperationImpl;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
-import org.apache.axis.wsdl.toJava.Utils;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.description.ParameterDesc;
