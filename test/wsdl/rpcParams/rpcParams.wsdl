@@ -1,0 +1,71 @@
+<?xml version="1.0" ?>
+
+<definitions
+    name="rpcParams test"
+    targetNamespace="urn:rpcParams.wsdl.test"
+    xmlns:tns="urn:rpcParams.wsdl.test"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema">
+            <import namespace="http://schemas.xmlsoap.org/soap/encoding/" />
+            <complexType name="EchoStruct">
+                <sequence>
+                    <element name="first" nillable="true" type="xsd:string" />
+                    <element name="second" nillable="true" type="xsd:string" />
+                </sequence>
+            </complexType>
+        </schema>
+    </types>
+
+  <!-- message declns -->
+  <message name="echoRequest">
+      <part name="first" type="xsd:string"/>
+      <part name="second" type="xsd:string"/>
+  </message>
+
+  <message name="echoResponse">
+      <part name="echoReturn" type="tns:EchoStruct"/>
+  </message>
+
+  <!-- port type declns -->
+  <portType name="rpcParamsTest">
+    <operation name="echo" parameterOrder="first second">
+      <input message="tns:echoRequest" name="echoRequest"/>
+      <output message="tns:echoResponse" name="echoResponse"/>
+    </operation>
+  </portType>
+
+  <!-- binding declns -->
+  <binding name="rpcParamsBinding" type="tns:rpcParamsTest">
+    <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="echo">
+      <soap:operation soapAction=""/>
+      <input name="echoRequest">
+        <soap:body
+            use="encoded"
+            namespace="urn:rpcParams.wsdl.test"
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body name="echoResponse"
+            use="encoded"
+            namespace="urn:rpcParams.wsdl.test"
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+  </binding>
+
+  <!-- service decln -->
+  <service name="rpcParamsService">
+    <port name="RpcParams" binding="tns:rpcParamsBinding">
+      <soap:address location="http://localhost:8080/axis/services/RpcParams"/>
+    </port>
+  </service>
+
+</definitions>
+
