@@ -86,6 +86,9 @@ public class TypeDesc {
     /** Can this instance search for metadata in parents of the type it describes? */
     private boolean canSearchParents = true;
     private boolean hasSearchedParents = false;
+    
+    /** My superclass TypeDesc */
+    private TypeDesc parentDesc = null;
 
     /**
      * Creates a new <code>TypeDesc</code> instance.  The type desc can search
@@ -107,6 +110,10 @@ public class TypeDesc {
     public TypeDesc(Class javaClass, boolean canSearchParents) {
         this.javaClass = javaClass;
         this.canSearchParents = canSearchParents;
+        Class cls = javaClass.getSuperclass();
+        if (cls != null && !cls.getName().startsWith("java.")) {
+            parentDesc = getTypeDescForClass(cls);
+        }        
     }
 
     /**
@@ -198,23 +205,19 @@ public class TypeDesc {
         // derivation-by-restriction
         if (canSearchParents && searchParents && !hasSearchedParents) {
             // check superclasses if they exist
-            Class cls = javaClass.getSuperclass();
-            if (cls != null && !cls.getName().startsWith("java.")) {
-                TypeDesc superDesc = getTypeDescForClass(cls);
-                if (superDesc != null) {
-                    FieldDesc [] parentFields = superDesc.getFields(true);
+            if (parentDesc != null) {
+                FieldDesc [] parentFields = parentDesc.getFields(true);
 // START FIX http://nagoya.apache.org/bugzilla/show_bug.cgi?id=17188
-                    if (parentFields != null) {
-                        if (fields != null) {
-                            FieldDesc [] ret = new FieldDesc[parentFields.length + fields.length];
-                            System.arraycopy(parentFields, 0, ret, 0, parentFields.length);
-                            System.arraycopy(fields, 0, ret, parentFields.length, fields.length);
-                            fields = ret;
-                        } else {
-                            FieldDesc [] ret = new FieldDesc[parentFields.length];
-                            System.arraycopy(parentFields, 0, ret, 0, parentFields.length);
-                            fields = ret;
-                        }
+                if (parentFields != null) {
+                    if (fields != null) {
+                        FieldDesc [] ret = new FieldDesc[parentFields.length + fields.length];
+                        System.arraycopy(parentFields, 0, ret, 0, parentFields.length);
+                        System.arraycopy(fields, 0, ret, parentFields.length, fields.length);
+                        fields = ret;
+                    } else {
+                        FieldDesc [] ret = new FieldDesc[parentFields.length];
+                        System.arraycopy(parentFields, 0, ret, 0, parentFields.length);
+                        fields = ret;
                     }
 // END FIX http://nagoya.apache.org/bugzilla/show_bug.cgi?id=17188
                 }
@@ -286,12 +289,8 @@ public class TypeDesc {
             // check superclasses if they exist
             // and we are allowed to look
             if (canSearchParents) {
-                Class cls = javaClass.getSuperclass();
-                if (cls != null && !cls.getName().startsWith("java.")) {
-                    TypeDesc superDesc = getTypeDescForClass(cls);
-                    if (superDesc != null) {
-                        return superDesc.getElementNameForField(fieldName);
-                    }
+                if (parentDesc != null) {
+                    return parentDesc.getElementNameForField(fieldName);
                 }
             }
         } else if (!desc.isElement()) {
@@ -311,12 +310,8 @@ public class TypeDesc {
             // check superclasses if they exist
             // and we are allowed to look
             if (canSearchParents) {
-                Class cls = javaClass.getSuperclass();
-                if (cls != null && !cls.getName().startsWith("java.")) {
-                    TypeDesc superDesc = getTypeDescForClass(cls);
-                    if (superDesc != null) {
-                        return superDesc.getAttributeNameForField(fieldName);
-                    }
+                if (parentDesc != null) {
+                    return parentDesc.getAttributeNameForField(fieldName);
                 }
             }
         } else if (desc.isElement()) {
@@ -364,12 +359,8 @@ public class TypeDesc {
         // check superclasses if they exist
         // and we are allowed to look
         if (result == null && canSearchParents) {
-            Class cls = javaClass.getSuperclass();
-            if (cls != null && !cls.getName().startsWith("java.")) {
-                TypeDesc superDesc = getTypeDescForClass(cls);
-                if (superDesc != null) {
-                    result = superDesc.getFieldNameForElement(qname, ignoreNS);
-                }
+            if (parentDesc != null) {
+                result = parentDesc.getFieldNameForElement(qname, ignoreNS);
             }
         }
 
@@ -410,12 +401,8 @@ public class TypeDesc {
         if (possibleMatch == null && canSearchParents) {
             // check superclasses if they exist
             // and we are allowed to look
-            Class cls = javaClass.getSuperclass();
-            if (cls != null && !cls.getName().startsWith("java.")) {
-                TypeDesc superDesc = getTypeDescForClass(cls);
-                if (superDesc != null) {
-                    possibleMatch = superDesc.getFieldNameForAttribute(qname);
-                }
+            if (parentDesc != null) {
+                possibleMatch = parentDesc.getFieldNameForAttribute(qname);
             }
         }
         
@@ -429,12 +416,8 @@ public class TypeDesc {
     {
         FieldDesc ret = (FieldDesc)fieldNameMap.get(name);
         if (ret == null && canSearchParents) {
-            Class cls = javaClass.getSuperclass();
-            if (cls != null && !cls.getName().startsWith("java.")) {
-                TypeDesc superDesc = getTypeDescForClass(cls);
-                if (superDesc != null) {
-                    ret = superDesc.getFieldByName(name);
-                }
+            if (parentDesc != null) {
+                ret = parentDesc.getFieldByName(name);
             }
         }
         return ret;
@@ -444,7 +427,16 @@ public class TypeDesc {
      * Do we have any FieldDescs marked as attributes?
      */
     public boolean hasAttributes() {
-        return _hasAttributes;
+        if (_hasAttributes)
+            return true;
+        
+        if (canSearchParents) {
+            if (parentDesc != null) {
+                return parentDesc.hasAttributes();
+            }
+        }
+
+        return false;
     }
 
     public QName getXmlType() {
