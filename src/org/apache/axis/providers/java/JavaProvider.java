@@ -160,7 +160,7 @@ public abstract class JavaProvider extends BasicProvider
             AxisEngine engine = msgContext.getAxisEngine();
             Session appSession = engine.getApplicationSession();
             if (appSession != null) {
-                return getSessionServiceObject(appSession, serviceName, 
+                return getSessionServiceObject(appSession, serviceName,
                                                msgContext, clsName);
             } else {
                 // was no application session, sigh, treat as request scope
@@ -173,19 +173,19 @@ public abstract class JavaProvider extends BasicProvider
             return null;
         }
     }
-    
+
     /**
      * Simple utility class for dealing with synchronization issues.
-     */ 
+     */
     class LockObject {
         private boolean completed = false;
-        
+
         synchronized void waitUntilComplete() throws InterruptedException {
             while (!completed) {
                 wait();
             }
         }
-        
+
         synchronized void complete() {
             completed = true;
             notifyAll();
@@ -197,19 +197,19 @@ public abstract class JavaProvider extends BasicProvider
      * issues when multiple threads might be accessing the same session
      * object, and ensures only one thread gets to create the service
      * object if there isn't one already.
-     */ 
+     */
     private Object getSessionServiceObject(Session session,
                                            String serviceName,
                                            MessageContext msgContext,
                                            String clsName) throws Exception {
         Object obj = null;
         boolean makeNewObject = false;
-                
-        // This is a little tricky.  
+
+        // This is a little tricky.
         synchronized (session.getLockObject()) {
             // store service objects in session, indexed by class name
             obj = session.get(serviceName);
-            
+
             // If nothing there, put in a placeholder object so
             // other threads wait for us to create the real
             // service object.
@@ -217,16 +217,16 @@ public abstract class JavaProvider extends BasicProvider
                 obj = new LockObject();
                 makeNewObject = true;
                 session.set(serviceName, obj);
-            }            
+            }
         }
-        
+
         // OK, we DEFINITELY have something in obj at this point.  Either
         // it's the service object or it's a LockObject (ours or someone
         // else's).
-        
+
         if (LockObject.class == obj.getClass()) {
             LockObject lock = (LockObject)obj;
-            
+
             // If we were the lucky thread who got to install the
             // placeholder, create a new service object and install it
             // instead, then notify anyone waiting on the LockObject.
@@ -238,13 +238,13 @@ public abstract class JavaProvider extends BasicProvider
                 // It's someone else's LockObject, so wait around until
                 // it's completed.
                 lock.waitUntilComplete();
-                
+
                 // Now we are guaranteed there is a service object in the
                 // session, so this next part doesn't need syncing
                 obj = session.get(serviceName);
             }
         }
-        
+
         return obj;
     }
 
@@ -312,7 +312,7 @@ public abstract class JavaProvider extends BasicProvider
 
         try {
             serviceObject = getServiceObject(msgContext, service, clsName, scope);
-    
+
             Message        resMsg  = msgContext.getResponseMessage();
             SOAPEnvelope   resEnv;
 
@@ -323,11 +323,11 @@ public abstract class JavaProvider extends BasicProvider
                 resMsg = new Message(resEnv);
                 msgContext.setResponseMessage( resMsg );
             } else {
-                resEnv  = (SOAPEnvelope)resMsg.getSOAPEnvelope();
+                resEnv  = resMsg.getSOAPEnvelope();
             }
 
             Message        reqMsg  = msgContext.getRequestMessage();
-            SOAPEnvelope   reqEnv  = (SOAPEnvelope)reqMsg.getSOAPEnvelope();
+            SOAPEnvelope   reqEnv  = reqMsg.getSOAPEnvelope();
 
             processMessage(msgContext, reqEnv, resEnv, serviceObject);
         }
@@ -466,7 +466,7 @@ public abstract class JavaProvider extends BasicProvider
                 emitter.setServicePortName(wsdlServicePort);
             }
 
-            String wsdlInputSchema = (String) 
+            String wsdlInputSchema = (String)
                 service.getOption(OPTION_WSDL_INPUTSCHEMA);
             if (null != wsdlInputSchema && wsdlInputSchema.length() > 0) {
                 emitter.setInputSchema(wsdlInputSchema);
@@ -555,7 +555,7 @@ public abstract class JavaProvider extends BasicProvider
         } else {
             cl = Thread.currentThread().getContextClassLoader();
         }
-        
+
         // If we have an engine, use its class cache
         if (engine != null) {
             ClassCache cache     = engine.getClassCache();
