@@ -198,15 +198,16 @@ public class MultiPartDimeInputStream extends  MultiPartInputStream {
                     if (type != null && !dimeDelimitedStream.getDimeTypeNameFormat().equals(DimeTypeNameFormat.MIME)) {
                         type = "application/uri; uri=\"" + type + "\"";
                     }
-                      
-                    DataHandler dh = new DataHandler(
-                      new ManagedMemoryDataSource(dimeDelimitedStream,
-                      ManagedMemoryDataSource.MAX_MEMORY_DISK_CACHED, type, true));
+
+
+                    ManagedMemoryDataSource source = new ManagedMemoryDataSource(dimeDelimitedStream,
+                                          ManagedMemoryDataSource.MAX_MEMORY_DISK_CACHED, type, true);
+                    DataHandler dh = new DataHandler(source);
 
                     AttachmentPart ap = new AttachmentPart(dh);
-
-                    if (contentId != null) 
+                    if (contentId != null) {
                         ap.setMimeHeader(HTTPConstants.HEADER_CONTENT_ID, contentId);
+                    }
 
                     addPart(contentId, "", ap);
 

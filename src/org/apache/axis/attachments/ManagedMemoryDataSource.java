@@ -426,9 +426,11 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
                             : new File(
                                     attdir));
 
-                    log.debug(
+                    if(log.isDebugEnabled()) {
+                        log.debug(
                             Messages.getMessage(
                                     "diskCache", diskCacheFile.getAbsolutePath()));
+                     }
 
                     cachediskstream = new java.io.BufferedOutputStream(
                             new java.io.FileOutputStream(diskCacheFile));
@@ -947,5 +949,13 @@ public class ManagedMemoryDataSource implements javax.activation.DataSource {
         } catch (java.lang.Exception e) {
             log.error(Messages.getMessage("exception00"), e);
         }
+    }
+
+    /**
+     * get the filename of the content if it is cached to disk.
+     * @return file object pointing to file, or null for memory-stored content
+     */
+    public File getDiskCacheFile() {
+        return diskCacheFile;
     }
 }

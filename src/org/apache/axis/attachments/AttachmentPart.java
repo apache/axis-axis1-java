@@ -65,6 +65,7 @@ import javax.activation.DataHandler;
 import javax.xml.soap.SOAPException;
 import java.util.Iterator;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 
 /**
  * Class AttachmentPart
@@ -77,7 +78,9 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
     protected static Log log =
             LogFactory.getLog(AttachmentPart.class.getName());
 
-    /** Field datahandler           */
+    /** Field datahandler
+     * TODO: make private?
+     * */
     javax.activation.DataHandler datahandler = null;
 
     /** Field mimeHeaders           */
@@ -86,6 +89,11 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
 
     /** Field contentObject */
     private Object contentObject;
+
+    /**
+     * the name of a file used to store the data
+     */
+    private String attachmentFile;
 
     /**
      * Constructor AttachmentPart
@@ -103,8 +111,17 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
         setMimeHeader(HTTPConstants.HEADER_CONTENT_ID,
                 SessionUtils.generateSessionId());
         datahandler = dh;
-        if(dh != null)
+        if(dh != null) {
             setMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE, dh.getContentType());
+        }
+    }
+
+    /**
+     * on death, we clean up our file
+     * @throws Throwable
+     */
+    protected void finalize() throws Throwable {
+        dispose();
     }
 
     /**
@@ -161,14 +178,16 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
             boolean found = false;
             if (values != null) {
                 for (int j = 0; j < values.length; j++) {
-                    if (!hdr.getValue().equalsIgnoreCase(values[j]))
+                    if (!hdr.getValue().equalsIgnoreCase(values[j])) {
                         continue;
+                    }
                     found = true;
                     break;
                 }
             }
-            if (!found)
+            if (!found) {
                 return false;
+            }
         }
         return true;
     }
@@ -305,11 +324,20 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
      *     DataHandler</CODE> object
      */
     public void setDataHandler(DataHandler datahandler) {
-        if(datahandler == null)
+        if(datahandler == null) {
             throw new java.lang.IllegalArgumentException(
                 Messages.getMessage("illegalArgumentException00"));
+        }
         this.datahandler = datahandler;
         setMimeHeader(HTTPConstants.HEADER_CONTENT_TYPE, datahandler.getContentType());
+        //now look at the source of the data
+        javax.activation.DataSource ds = datahandler.getDataSource();
+        if (ds instanceof ManagedMemoryDataSource) {
+            //and get the filename if appropriate
+            extractFilename((ManagedMemoryDataSource)ds);
+        }
+
+
     }
 
     /**
@@ -346,8 +374,9 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
      *     was a data transformation error
      */
     public Object getContent() throws SOAPException {
-        if(contentObject != null)
+        if(contentObject != null) {
             return contentObject;
+        }
 
         if(datahandler == null) {
             throw new SOAPException(Messages.getMessage("noContent"));
@@ -355,7 +384,6 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
 
         javax.activation.DataSource ds = datahandler.getDataSource();
         if (ds instanceof ManagedMemoryDataSource) {
-            ManagedMemoryDataSource mds = (ManagedMemoryDataSource) ds;
 
             if (ds.getContentType().equals("text/plain")) {
                 try {
@@ -372,6 +400,7 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
         }
         return null;
     }
+
 
     /**
      * Sets the content of this attachment part to that of the
@@ -408,8 +437,9 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
             }
         } else if (object instanceof java.io.InputStream) {
                 try {
-                    datahandler = new DataHandler(new ManagedMemoryDataSource((java.io.InputStream)object,
-                            ManagedMemoryDataSource.MAX_MEMORY_DISK_CACHED, contentType, true));
+                    ManagedMemoryDataSource source = new ManagedMemoryDataSource((java.io.InputStream)object,
+                                                ManagedMemoryDataSource.MAX_MEMORY_DISK_CACHED, contentType, true);
+                    datahandler = new DataHandler(source);
                     contentObject = object;
                     return;
                 } catch (java.io.IOException io) {
@@ -443,8 +473,9 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
      *     while trying to determine the size.
      */
     public int getSize() throws SOAPException {
-        if (datahandler == null)
+        if (datahandler == null) {
             return 0;
+        }
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         try {
             datahandler.writeTo(bout);
@@ -477,5 +508,54 @@ public class AttachmentPart extends javax.xml.soap.AttachmentPart
      */
     public String getContentIdRef() {
       return Attachments.CIDprefix + getContentId();
+    }
+
+    /**
+     * maybe add file name to the attachment
+     * @param source the source of the data
+     */
+
+    private void extractFilename(ManagedMemoryDataSource source) {
+        //check for there being a file
+        if(source.getDiskCacheFile()!=null) {
+            String path = source.getDiskCacheFile().getAbsolutePath();
+            setAttachmentFile(path);
+        }
+    }
+
+    /**
+     * set the filename of this attachment part
+     * @param path
+     */
+    protected void setAttachmentFile(String path) {
+        attachmentFile=path;
+    }
+
+    /**
+     * detach the attachment file from this class, so it is not cleaned up
+     */
+    public void detachAttachmentFile() {
+        attachmentFile=null;
+    }
+    /**
+     * get the filename of this attachment
+     * @return the filename or null for an uncached file
+     */
+    public String getAttachmentFile() {
+        return attachmentFile;
+    }
+
+    /**
+     * when an attachment part is disposed, any associated files
+     * are deleted
+     */
+    public synchronized void dispose() {
+        if(attachmentFile!=null) {
+            File f=new File(attachmentFile);
+            //no need to check for existence here.
+            f.delete();
+            //set the filename to null to stop repeated use
+            setAttachmentFile(null);
+        }
     }
 }
