@@ -374,4 +374,34 @@ public class XMLUtils {
 
         return winner;
     }
+
+  /**
+   * Concat all the text and cdata node children of this elem and return
+   * the resulting text.
+   *
+   * @param parentEl the element whose cdata/text node values are to
+   *                 be combined.
+   * @return the concatanated string.
+   * @author Matt Duftler
+   */
+  static public String getChildCharacterData (Element parentEl) {
+    if (parentEl == null) {
+      return null;
+    }
+    Node          tempNode = parentEl.getFirstChild();
+    StringBuffer  strBuf   = new StringBuffer();
+    CharacterData charData;
+
+    while (tempNode != null) {
+      switch (tempNode.getNodeType()) {
+        case Node.TEXT_NODE :
+        case Node.CDATA_SECTION_NODE : charData = (CharacterData)tempNode;
+                                       strBuf.append(charData.getData());
+                                       break;
+      }
+      tempNode = tempNode.getNextSibling();
+    }
+    return strBuf.toString();
+  }
+
  }
