@@ -58,11 +58,9 @@ package org.apache.axis.client ;
 import java.util.* ;
 
 import org.apache.axis.* ;
-import org.apache.axis.message.RPCArg;
-import org.apache.axis.message.RPCBody;
-import org.apache.axis.message.SOAPBody;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeader;
+import org.apache.axis.message.DebugHeader;
 import org.apache.axis.handlers.* ;
 import org.apache.axis.registries.* ;
 import org.apache.axis.utils.* ;
@@ -78,6 +76,7 @@ import org.w3c.dom.* ;
  * connect to the server and send a Messaging SOAP request.
  *
  * @author Doug Davis (dug@us.ibm.com)
+ * @author Glen Daniels (gdaniels@macromedia.com)
  */
 
 
@@ -156,11 +155,12 @@ public class HTTPMessage {
     if ( inMsg.getCurrentForm().equals("SOAPEnvelope") )
       reqEnv = (SOAPEnvelope) inMsg.getAs("SOAPEnvelope");
     else {
-      reqEnv = new SOAPEnvelope();
+      reqEnv = (SOAPEnvelope) inMsg.getAs("SOAPEnvelope");
       if ( encodingStyleURI != null )
         reqEnv.setEncodingStyleURI( encodingStyleURI );
-      SOAPBody  body = new SOAPBody( (Document) inMsg.getAs("Document") );
-      reqEnv.addBody( body );
+      
+      //SOAPBody  body = new SOAPBody( (Document) inMsg.getAs("Document") );
+      //!!!reqEnv.addBodyElement( body );
     }
 
     Handler              client = null ;
@@ -204,10 +204,7 @@ public class HTTPMessage {
     }
 
     if ( Debug.getDebugLevel() > 0  ) {
-      Element  elem = doc.createElementNS( Constants.URI_DEBUG, "d:Debug" );
-      elem.setAttribute( "xmlns:d", Constants.URI_DEBUG );
-      elem.appendChild( doc.createTextNode( ""+Debug.getDebugLevel() ) );
-      SOAPHeader  header = new SOAPHeader(elem);
+      DebugHeader  header = new DebugHeader(Debug.getDebugLevel());
       header.setActor( Constants.URI_NEXT_ACTOR );
 
       reqEnv.addHeader( header );
@@ -232,7 +229,9 @@ public class HTTPMessage {
 
     Message       resMsg = msgContext.getResponseMessage();
     SOAPEnvelope  resEnv = (SOAPEnvelope) resMsg.getAs( "SOAPEnvelope" );
-    SOAPBody      resBody = resEnv.getFirstBody();
+    mc.setResponseMessage(resMsg);
+    /*
+    SOAPBody      resBody = null; //resEnv.getFirstBody();
 
     doc = XMLUtils.newDocument();
     Element  root = resBody.getRoot();
@@ -242,6 +241,7 @@ public class HTTPMessage {
       doc.appendChild( root );
 
     mc.setResponseMessage( new Message(doc, "Document") );
+    */
 
     Debug.Print( 1, "Exit: HTTPMessage.invoke" );
   }

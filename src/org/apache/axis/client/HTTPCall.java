@@ -56,9 +56,9 @@
 package org.apache.axis.client ;
 
 import java.util.* ;
-import org.apache.axis.message.RPCArg;
-import org.apache.axis.message.RPCBody;
-import org.apache.axis.message.SOAPBody;
+import org.apache.axis.encoding.ServiceDescription;
+import org.apache.axis.message.RPCElement;
+import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPHeader;
 import org.apache.axis.handlers.* ;
@@ -69,12 +69,16 @@ import org.apache.axis.transport.http.HTTPDispatchHandler;
 
 import org.w3c.dom.* ;
 
+import java.io.*;
+import org.apache.axis.encoding.SerializationContext;
+
 /**
  * This class is meant to be the interface that client/requestor code
  * uses to access the SOAP server.  In this class, we'll use HTTP to
  * connect to the server and send an RPC SOAP request.
  *
  * @author Doug Davis (dug@us.ibm.com)
+ * @author Glen Daniels (gdaniels@macromedia.com)
  */
 
 
@@ -87,6 +91,7 @@ public class HTTPCall {
   private String  userID ;
   private String  passwd ;
   private String  encodingStyleURI ;
+  private ServiceDescription serviceDesc;
 
   // For testing
   public  boolean doLocal = false ;
@@ -134,6 +139,11 @@ public class HTTPCall {
   public String getEncodingStyleURI() {
     return( encodingStyleURI );
   }
+  
+  public void setServiceDescription(ServiceDescription serviceDesc)
+  {
+    this.serviceDesc = serviceDesc;
+  }
 
   public static Object invoke(String url, String act, String m, Object[] args) 
       throws AxisFault
@@ -141,15 +151,16 @@ public class HTTPCall {
     HTTPCall  ahc = new HTTPCall();
     ahc.setURL( url );
     ahc.setAction( act );
-    return( ahc.invoke( m, args ) );
+    return( ahc.invoke( null, m, args ) );
   }
 
-  public Object invoke( String method, Object[] args ) throws AxisFault {
-    RPCBody  body  = new RPCBody( method, args );
+  public Object invoke( String namespace, String method, Object[] args ) throws AxisFault {
+    RPCElement  body  = new RPCElement( method, args );
+    body.setNamespaceURI(namespace);
     return( invoke( body ) );
   }
 
-  public Object invoke( RPCBody body ) throws AxisFault {
+  public Object invoke( RPCElement body ) throws AxisFault {
     // quote = HTTPCall.invoke( "getQuote", Object[] { "IBM" } );
     Debug.Print( 1, "Enter: HTTPCall.invoke" );
     SOAPEnvelope         reqEnv = new SOAPEnvelope();
@@ -160,21 +171,32 @@ public class HTTPCall {
     MessageContext       msgContext = new MessageContext( reqMsg );
     Vector               resBodies = null ;
     Vector               resArgs = null ;
-    RPCArg               arg  = null ;
     Object               result = null ;
 
     hMsg.setUserID( userID );
     hMsg.setPassword( passwd );
     if ( encodingStyleURI != null ) 
       reqEnv.setEncodingStyleURI( encodingStyleURI );
+    
+    reqEnv.setServiceDescription(serviceDesc);
+    reqEnv.setMessageType(ServiceDescription.REQUEST);
+    
+    reqEnv.addBodyElement(body);
 
     // for testing - skip HTTP layer
     hMsg.doLocal = this.doLocal ;
-
+    
     if ( body.getPrefix() == null )       body.setPrefix( "m" );
     if ( body.getNamespaceURI() == null ) body.setNamespaceURI( action );
-    reqEnv.addBody( body.getAsSOAPBody() );
 
+    try {
+        SerializationContext ctx = new SerializationContext(new PrintWriter(System.out));
+        reqEnv.output(ctx);
+    } catch (Exception e) {
+        e.printStackTrace();
+        System.exit(1);
+    }
+    
     try {
       hMsg.invoke( msgContext );
     }
@@ -185,12 +207,26 @@ public class HTTPCall {
     }
 
     resMsg = msgContext.getResponseMessage();
-    Document doc = (Document) resMsg.getAs("Document");
+    
+    if (resMsg == null)
+        throw new AxisFault(new Exception("Null response message!"));
+    
+    resEnv = (SOAPEnvelope)resMsg.getAs("SOAPEnvelope");
+    
+    /** This must happen before deserialization...
+     */
+    resEnv.setServiceDescription(serviceDesc);
+    resEnv.setMessageType(ServiceDescription.RESPONSE);
+    
+    body = (RPCElement)resEnv.getFirstBody();
+    resArgs = body.getParams();
 
-    body = new RPCBody( doc.getDocumentElement() );
-    resArgs = body.getArgs();
-    if ( resArgs != null && resArgs.size() > 0 )
-      result = (String) ((RPCArg) resArgs.get(0)).getValue() ;
+    if (resArgs != null && resArgs.size() > 0) {
+        RPCParam param = (RPCParam)resArgs.get(0);
+        System.out.println("Got param '" + param.getName() + "' = " + param.getValue());
+        result = param.getValue();
+    }
+
     Debug.Print( 1, "Exit: HTTPCall.invoke" );
     return( result );
   }
