@@ -1480,14 +1480,27 @@ public class SymbolTable {
         }
 
         Input input = operation.getInput();
-
+        Message message;
+        
         if (input != null) {
-            ensureOperationMessageValid(input.getMessage());
+            message = input.getMessage();
+            if (message == null) {
+                throw new IOException(
+                        "No 'message' attribute in <input> for operation '" +
+                        operation.getName() + "'");
+            }
+            ensureOperationMessageValid(message);
         }
 
         Output output = operation.getOutput();
 
         if (output != null) {
+            message = output.getMessage();
+            if (message == null) {
+                throw new IOException(
+                        "No 'message' attribute in <output> for operation '" +
+                        operation.getName() + "'");
+            }
             ensureOperationMessageValid(output.getMessage());
         }
 
@@ -1497,7 +1510,15 @@ public class SymbolTable {
             Iterator it = faults.values().iterator();
 
             while (it.hasNext()) {
-                ensureOperationMessageValid(((Fault) it.next()).getMessage());
+                Fault fault = (Fault)it.next();
+                message = fault.getMessage();
+                if (message == null) {
+                    throw new IOException(
+                            "No 'message' attribute in <fault> named '" + 
+                            fault.getName() + "' for operation '" +
+                            operation.getName() + "'");
+                }
+                ensureOperationMessageValid(message);
             }
         }
     }

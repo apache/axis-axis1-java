@@ -384,6 +384,8 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
             if (fieldName == null)
                 continue;
 
+            FieldDesc fieldDesc = typeDesc.getFieldByName(fieldName);
+            
             // look for the attribute property
             BeanPropertyDescriptor bpd =
                     (BeanPropertyDescriptor) propertyMap.get(fieldName);
@@ -391,8 +393,10 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
                 if (!bpd.isWriteable() || bpd.isIndexed() ) continue ;
                 
                 // Get the Deserializer for the attribute
-                Deserializer dSer = getDeserializer(null, bpd.getType(), 
-                                                    null, context);
+                Deserializer dSer = getDeserializer(fieldDesc.getXmlType(),
+                                                    bpd.getType(), 
+                                                    null,
+                                                    context);
                 if (dSer == null) {
                     dSer = context.getDeserializerForClass(bpd.getType());
                 }

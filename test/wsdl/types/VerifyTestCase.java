@@ -30,14 +30,13 @@ import org.apache.axis.types.NonNegativeInteger;
 import org.apache.axis.types.NonPositiveInteger;
 import org.apache.axis.types.PositiveInteger;
 import org.apache.axis.types.URI;
+import org.apache.axis.types.URI.MalformedURIException;
 import org.apache.axis.types.UnsignedByte;
 import org.apache.axis.types.UnsignedInt;
 import org.apache.axis.types.UnsignedLong;
 import org.apache.axis.types.UnsignedShort;
 import org.apache.axis.types.Year;
 import org.apache.axis.types.YearMonth;
-import org.apache.axis.types.URI.MalformedURIException;
-
 import test.wsdl.types.comprehensive_service.TypeTest;
 import test.wsdl.types.comprehensive_service.TypeTestServiceLocator;
 import test.wsdl.types.comprehensive_types.Animal;
@@ -47,18 +46,10 @@ import test.wsdl.types.comprehensive_types.ComplexSequence;
 import test.wsdl.types.comprehensive_types.ComplexWComplex;
 import test.wsdl.types.comprehensive_types.EmptyComplexType;
 import test.wsdl.types.comprehensive_types.Enum;
-import test.wsdl.types.comprehensive_types.EnumByte;
-import test.wsdl.types.comprehensive_types.EnumDouble;
-import test.wsdl.types.comprehensive_types.EnumFloat;
-import test.wsdl.types.comprehensive_types.EnumInt;
-import test.wsdl.types.comprehensive_types.EnumLong;
-import test.wsdl.types.comprehensive_types.EnumShort;
-import test.wsdl.types.comprehensive_types.EnumString;
 import test.wsdl.types.comprehensive_types.PersionCat;
-import test.wsdl.types.comprehensive_types._complexWComplex_stock_quote;
-import test.wsdl.types.comprehensive_types.StringParameter;
 import test.wsdl.types.comprehensive_types.Time;
 import test.wsdl.types.comprehensive_types.Yarn;
+import test.wsdl.types.comprehensive_types._complexWComplex_stock_quote;
 import test.wsdl.types.comprehensive_types.holders.AnimalHolder;
 import test.wsdl.types.comprehensive_types.holders.ArrayHolder;
 import test.wsdl.types.comprehensive_types.holders.ArrayMHolder;
@@ -109,7 +100,7 @@ public class VerifyTestCase extends junit.framework.TestCase {
     }
     */
     
-    public void testTypeTest() {
+    public void testTypeTest() throws Exception {
         TypeTest binding;
         try {
             binding = new TypeTestServiceLocator().getTypeTest();
@@ -421,11 +412,9 @@ public class VerifyTestCase extends junit.framework.TestCase {
         ComplexWComplex complexWComplex = new ComplexWComplex();
         complexWComplex.setStock_quote(stockQuote);
         complexWComplex.setOutside(22);
-        try {
-            binding.complexWComplexIn(complexWComplex);
-        } catch (java.rmi.RemoteException re) {
-            throw new junit.framework.AssertionFailedError("complexWComplexIn Exception caught: " + re );
-        }
+        
+        binding.complexWComplexIn(complexWComplex);
+
         try {
             binding.complexWComplexInout(new ComplexWComplexHolder(complexWComplex));
         } catch (java.rmi.RemoteException re) {
