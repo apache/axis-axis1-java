@@ -57,6 +57,8 @@ package org.apache.axis.ime;
 import org.apache.axis.AxisFault;
 import org.apache.axis.MessageContext;
 
+import java.util.Map;
+
 /**
  * Represents the boundary interface through which messages
  * are exchanged.  This interface supports both push and pull
@@ -195,4 +197,64 @@ public interface MessageExchange {
             
     public MessageExchangeStatusListener getMessageExchangeStatusListener();
         
+        
+
+    /**
+     * @param String The id of the feature to enable
+     * @throws AxisFault
+     */
+    public void enableFeature(String featureId)
+            throws AxisFault;
+
+    /**
+     * @param String The id of the feature to disable
+     * @throws AxisFault
+     */
+    public void disableFeature(String featureId)
+            throws AxisFault;
+
+    /**
+     * @param String The id of the feature to check
+     * @return boolean
+     * @throws AxisFault
+     */
+    public boolean isFeatureEnabled(String featureId)
+            throws AxisFault;
+
+    /**
+     * @param String The id of the property
+     * @param Object The value of the property
+     */
+    public void setProperty(
+            String propertyId,
+            Object propertyValue);
+
+    /**
+     * @param String The id of the property
+     * @return Object The value of the property
+     */
+    public Object getProperty(
+            String propertyId);
+
+    /**
+     * @param String The id of the property
+     * @param Object The default value of the property
+     * @return Object The value of the property
+     */
+    public Object getProperty(
+            String propertyId,
+            Object defaultValue);
+
+    /**
+     * @return java.lang.Map The collection of properties
+     */
+    public Map getProperties();
+
+    /**
+     * @param java.lang.Map The collection of properties
+     */
+    public void setProperties(Map properties);
+
+    public void clearProperties();
+
 }

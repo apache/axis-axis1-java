@@ -56,6 +56,8 @@ package org.apache.axis.ime;
 
 import org.apache.axis.AxisFault;
 
+import java.util.Map;
+
 /**
  * @author James M Snell (jasnell@us.ibm.com)
  */
@@ -68,4 +70,13 @@ public interface MessageExchangeFactory {
     public MessageExchange createMessageExchange()
             throws AxisFault;
 
+    /**
+     * @param java.lang.Map Collection of properties
+     * @param String Array of feature id's to enable
+     * @return ConfigurableMessageExchange
+     */
+    public MessageExchange createMessageExchange(
+            Map properties,
+            String[] enabledFeatures)
+              throws AxisFault;
 }
