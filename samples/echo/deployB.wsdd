@@ -12,6 +12,7 @@
 			xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance">
   <service name="echoB" provider="java:RPC" >
     <namespace>http://soapinterop.org/</namespace>
+    <parameter name="wsdlTargetNamespace" value="http://soapinterop.org/" />
     <parameter name="className" value="samples.echo.InteropTestSoapBindingImpl" />
     <parameter name="allowedMethods" value="echoStructAsSimpleTypes 
         echoSimpleTypesAsStruct 
