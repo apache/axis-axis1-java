@@ -954,6 +954,11 @@ public class SymbolTable {
                     createTypeFromRef(re);
                 }
 
+                Node list = SchemaUtils.getListNode(node);
+                if (list != null && Utils.getAttribute(list,"itemType") != null) {
+                    createTypeFromRef(list);
+                }
+
                 Node union = SchemaUtils.getUnionNode(node);
                 if (union != null) {
                     QName [] memberTypes = Utils.getMemberTypeQNames(union);

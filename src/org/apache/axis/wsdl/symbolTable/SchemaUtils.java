@@ -84,6 +84,21 @@ public class SchemaUtils {
         return null;
     }
     
+    public static Node getListNode(Node node) {
+        // Expecting a schema simpleType 
+        if (isXSDNode(node, "simpleType")) {
+            // Under the simpleType there could be list
+            NodeList children = node.getChildNodes();
+            for (int j = 0; j < children.getLength(); j++) {
+                Node kid = children.item(j);
+                if (isXSDNode(kid, "list")) {
+                    return kid;
+                }
+            }
+        }
+        return null;
+    }
+
     public static boolean isSimpleTypeWithUnion(Node node) {
         return (getUnionNode(node) != null);
     }
@@ -1924,6 +1939,16 @@ public class SchemaUtils {
                     (org.w3c.dom.Element) listNode;
                     String type = listElement.getAttribute("itemType");
                     if (type.equals("")) {
+                        Node localType = null;
+                        children = listNode.getChildNodes();
+                        for (j = 0; j < children.getLength() && localType == null; j++) {
+                            if (isXSDNode(children.item(j), "simpleType")) {
+                                localType = children.item(j);
+                            }
+                        }
+                        if (localType != null) {
+                            return getSimpleTypeBase(localType);
+                        }
                         return null;
                     }
                     //int colonIndex = type.lastIndexOf(":");

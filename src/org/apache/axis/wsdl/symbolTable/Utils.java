@@ -302,11 +302,17 @@ public class Utils {
             // a ref can be for an element or attributeGroup
             if ((localName != null)
                 && !(localName.equals("attributeGroup") ||
-                     localName.equals("group"))) {
+                        localName.equals("group") ||
+                        localName.equals("list"))) {
                 forElement.value = true;
             }
 
             qName = getTypeQNameFromAttr(node, "ref");
+        }
+
+        // in case of a list get the itemType
+        if (qName == null) {
+            qName = getTypeQNameFromAttr(node, "itemType");
         }
 
         // If the node has "type"/"ref" and "maxOccurs" then the type is really
