@@ -137,7 +137,7 @@ public class AxisServletBase extends HttpServlet {
     /**
      * our initialize routine; subclasses should call this if they override it
      */
-    public void init() {
+    public void init() throws javax.servlet.ServletException {
         ServletContext context = getServletConfig().getServletContext();
 
         webInfPath = context.getRealPath("/WEB-INF");
