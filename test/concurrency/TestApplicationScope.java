@@ -64,6 +64,9 @@ import org.apache.axis.transport.local.LocalTransport;
 import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.apache.axis.AxisFault;
+import org.apache.axis.MessageContext;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Test the "application" scope option - lots of threads call the same service
@@ -73,6 +76,9 @@ import org.apache.axis.AxisFault;
  * @author Glen Daniels (gdaniels@apache.org)
  */
 public class TestApplicationScope extends TestCase {
+    protected static Log log =
+        LogFactory.getLog(TestApplicationScope.class.getName());
+
     private BasicServerConfig config;
     private AxisServer server;
     private String SERVICE_NAME = "TestService";
@@ -114,8 +120,20 @@ public class TestApplicationScope extends TestCase {
             for (int i = 0; i < reps; i++) {
                 try {
                     String ret = (String)call.invoke("hello", null);
+                    if (ret == null) {
+                        MessageContext msgContext = call.getMessageContext();
+                        String respStr = msgContext.getResponseMessage().getSOAPPart().getAsString();
+
+                        String reqStr = msgContext.getRequestMessage().getSOAPPart().getAsString();
+                        log.fatal("Got null response! Request message:\r\n" + reqStr + "\r\n\r\n" +
+                                  "Response message:\r\n" + respStr);
+                    }
                     if (!ret.equals(TestService.MESSAGE)) {
-                        setError(new Exception("Messages didn't match!"));
+                        setError(new Exception("Messages didn't match (got '" +
+                                               ret +
+                                               "' wanted '" +
+                                               TestService.MESSAGE +
+                                               "'!"));
                         return;
                     }
                 } catch (AxisFault axisFault) {
