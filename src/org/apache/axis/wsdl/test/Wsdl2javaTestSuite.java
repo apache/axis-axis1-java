@@ -60,6 +60,7 @@ import junit.framework.TestSuite;
 import org.apache.axis.client.AdminClient;
 import org.apache.axis.transport.http.SimpleAxisServer;
 import org.apache.axis.utils.Options;
+import org.apache.axis.utils.AxisClassLoader;
 import org.apache.axis.wsdl.Emitter;
 import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Project;
@@ -73,7 +74,6 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -90,7 +90,7 @@ public class Wsdl2javaTestSuite extends TestSuite {
     private static Project testSuiteProject = null;
     private static List classNames = null;
     private static List fileNames = null;
-    private static ClassLoader loader = null;
+    private static final AxisClassLoader loader = new AxisClassLoader();
 
     public Wsdl2javaTestSuite() {
         super();
@@ -122,6 +122,13 @@ public class Wsdl2javaTestSuite extends TestSuite {
                     Iterator names = ((List) Wsdl2javaTestSuite.classNames.get(testNum)).iterator();
                     while (names.hasNext()) {
                         String className = (String) names.next();
+
+                        if ( !loader.isClassRegistered(className) ) {
+                            String classFile = Wsdl2javaTestSuite.WORK_DIR;
+                            classFile += className.replace('.', File.separatorChar) + ".java";
+                            loader.registerClass(className, classFile);
+                        }
+
                         if (className.endsWith("TestCase")) {
                             try {
                                 this.addTestSuite(loader.loadClass(className));
@@ -220,16 +227,7 @@ public class Wsdl2javaTestSuite extends TestSuite {
     }
 
     public static void main(String[] args) {
-        junit.swingui.TestRunner runner = null;
-        try {
-            loader = new URLClassLoader(new URL[] {new File(Wsdl2javaTestSuite.WORK_DIR).toURL()},
-                Wsdl2javaTestSuite.class.getClassLoader());
-            runner = (junit.swingui.TestRunner) loader.loadClass("junit.swingui.TestRunner").newInstance();
-        } catch (Exception e) {
-            System.exit(1);
-        }
-        runner.start(new String[] {"-noloading", Wsdl2javaTestSuite.class.getName()});
-        runner.runSuite();
+        junit.swingui.TestRunner.main(new String[] {"-noloading", Wsdl2javaTestSuite.class.getName()});
     } //public static void main(String[] args)
 
     public void run(TestResult result) {
