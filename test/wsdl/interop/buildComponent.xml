@@ -309,6 +309,11 @@
         <mapping namespace="http://soapinterop.org/xsd" package="test.wsdl.interop3.import3.step6.xsd"/>
         <mapping namespace="http://soapinterop.org/xsd2" package="test.wsdl.interop3.import3.step6.xsd2"/>
     </wsdl2java>
+    
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="on">
+      <classpath refid="classpath" />
+      <include name="test/wsdl/interop3/import3/step6/**/*.java" />
+    </javac>
     <!-- Step 7:  see test/wsdl/interop3/Import2TestCase.java -->
     <!-- Step 8:  see test/wsdl/interop3/Import2TestCase.java -->
     <ant antfile="${axis.home}/test/wsdl/interop3/groupE/Interop3GroupE.xml"/>
