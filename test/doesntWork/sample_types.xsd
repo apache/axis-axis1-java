@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="http://www.test.org/sample_types"
+            xmlns:tns="http://www.test.org/sample_types"
+            xmlns:soap-enc="http://www.w3.org/2001/09/soap-encoding"
+	    xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  
+  <!-- 
+    These will cause errors in generation but are necessary for an XML schema validator
+    like IBM Schema Quality Checker 
+
+    <xsd:import namespace="http://schemas.xmlsoap.org/soap/encoding/"
+                schemaLocation="http://schemas.xmlsoap.org/soap/encoding/"/>
+    <xsd:import namespace="http://www.w3.org/2001/09/soap-encoding"
+                schemaLocation="http://www.w3.org/2001/09/soap-encoding"/>
+  -->
+
+  <xsd:simpleType name="StringPatternType">
+   <xsd:restriction base="xsd:string">
+     <xsd:pattern value="[A-Z]*"/>
+   </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:group name="StringIntGroup">
+    <xsd:sequence>
+      <xsd:element name="stringMember" type="xsd:string"/>
+      <xsd:element name="intMember" type="xsd:int"/>
+    </xsd:sequence>
+  </xsd:group>
+  
+  <xsd:complexType name="ArrayOfString">
+    <xsd:complexContent>
+      <xsd:restriction base="soap-enc:Array">
+        <xsd:sequence>
+          <xsd:element name="stringElement" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+        <xsd:attributeGroup ref="soap-enc:arrayAttributes"/>
+        <xsd:attributeGroup ref="soap-enc:commonAttributes"/>
+      </xsd:restriction>
+    </xsd:complexContent>
+  </xsd:complexType> 
+
+  <xsd:complexType name="ExtensibilityType">
+      <xsd:sequence>
+          <xsd:any namespace="##any" minOccurs="0"/>
+      </xsd:sequence>
+  </xsd:complexType>
+
+
+  <xsd:complexType name="SampleType">
+    <xsd:sequence>
+      <xsd:group ref="tns:StringIntGroup"/>
+      <xsd:element name="pattern" type="tns:StringPatternType"/>
+      <!-- Will cause error already in generation --> 
+      <xsd:element name="uri" type="xsd:anyURI"/> 
+      <xsd:element name="strings" type="tns:ArrayOfString"/>
+      <xsd:element name="extension" type="tns:ExtensibilityType"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+</xsd:schema>
