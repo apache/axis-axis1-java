@@ -603,7 +603,7 @@ public class MultiPartRelatedInputStream extends MultiPartInputStream{
 
                     DataHandler dh = new DataHandler(
                             new ManagedMemoryDataSource(
-                                    decodedStream, 1024, contentType, true));
+                                    decodedStream, ManagedMemoryDataSource.MAX_MEMORY_DISK_CACHED, contentType, true));
                     AttachmentPart ap = new AttachmentPart(dh);
 
                     if (contentId != null) {
