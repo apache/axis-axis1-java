@@ -200,31 +200,33 @@ public class AxisServlet extends HttpServlet
      */
     static public AxisServer getEngine(HttpServlet servlet) throws AxisFault
     {
+        AxisServer engine = null;
         if (isDebug)
             log.debug("Enter: getEngine()");
 
         ServletContext context = servlet.getServletContext();
+        synchronized (servlet) {
+            engine = (AxisServer)context.getAttribute(ATTR_AXIS_ENGINE);
+            if (engine == null) {
+                Map environment = getEngineEnvironment(servlet);
 
-        AxisServer engine = (AxisServer)context.getAttribute(ATTR_AXIS_ENGINE);
-        if (engine == null) {
-            Map environment = getEngineEnvironment(servlet);
-
-            // Obtain an AxisServer by using whatever AxisServerFactory is
-            // registered.  The default one will just use the provider we
-            // passed in, and presumably JNDI ones will use the ServletContext
-            // to figure out a JNDI name to look up.
-            //
-            // The point of doing this rather than just creating the server
-            // manually with the provider above is that we will then support
-            // configurations where the server instance is managed by the
-            // container, and pre-registered in JNDI at deployment time.  It
-            // also means we put the standard configuration pattern in one
-            // place.
-            engine = AxisServer.getServer(environment);
-            context.setAttribute(ATTR_AXIS_ENGINE, engine);
+                // Obtain an AxisServer by using whatever AxisServerFactory is
+                // registered.  The default one will just use the provider we
+                // passed in, and presumably JNDI ones will use the ServletContext
+                // to figure out a JNDI name to look up.
+                //
+                // The point of doing this rather than just creating the server
+                // manually with the provider above is that we will then support
+                // configurations where the server instance is managed by the
+                // container, and pre-registered in JNDI at deployment time.  It
+                // also means we put the standard configuration pattern in one
+                // place.
+                engine = AxisServer.getServer(environment);
+                context.setAttribute(ATTR_AXIS_ENGINE, engine);
+            }
         }
 
-        if (isDebug) 
+        if (isDebug)
             log.debug("Exit: getEngine()");
 
         return engine;
@@ -267,19 +269,6 @@ public class AxisServlet extends HttpServlet
         try
         {
             AxisEngine engine = getEngine();
-            try {
-                engine = getEngine();
-            } catch (AxisFault fault) {
-                res.setContentType("text/html");
-                writer.println("<h2>" +
-                               JavaUtils.getMessage("error00") + "</h2>");
-                writer.println("<p>" +
-                               JavaUtils.getMessage("somethingWrong00") +
-                               "</p>");
-                writer.println("<pre>" + fault.toString() + " </pre>");
-                return;
-            }
-
             ServletContext servletContext =
                 getServletConfig().getServletContext();
             
