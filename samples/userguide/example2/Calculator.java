@@ -52,6 +52,8 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
+ 
+package samples.userguide.example2;
 
 public class Calculator {
   public int add(int i1, int i2)
