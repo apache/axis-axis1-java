@@ -60,6 +60,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Properties;
+import org.apache.commons.discovery.ManagedProperties;
 
 
 /**
@@ -101,16 +102,18 @@ public class AxisProperties {
      * The prefered line separator
      */
     public static final String LS = System.getProperty("line.separator",
-                                                        (new Character(NL)).toString());
+                                                       (new Character(NL)).toString());
 
-    /**
-     * Cache of AXIS Properties, keyed by (thread-context) class loaders.
-     * Use <code>HashMap</code> because it allows 'null' keys, which
-     * allows us to account for the (null) bootstrap classloader.
-     */
-    private static final HashMap axisPropertiesCache = new HashMap();
-
-
+    private static String commonsGroupContext = null;
+    
+    public static void setCommonsGroupContext(String groupContext) {
+        commonsGroupContext  = groupContext;
+    }
+    
+    public static String getCommonsGroupContext() {
+        return commonsGroupContext ;
+    }
+        
     /**
      * Get value for property bound to the current thread context class loader.
      *
@@ -118,14 +121,7 @@ public class AxisProperties {
      * @return property value if found, otherwise default.
      */
     public static String getProperty(String propertyName) {
-        String value = System.getProperty(propertyName);
-        if (value == null) {
-            Value val = getValueProperty(getThreadContextClassLoader(), propertyName);
-            if (val != null) {
-                value = val.value;
-            }
-        }
-        return value;
+        return ManagedProperties.getProperty(propertyName);
     }
 
     /**
@@ -137,8 +133,7 @@ public class AxisProperties {
      * @return property value if found, otherwise default.
      */
     public static String getProperty(String propertyName, String dephault) {
-        String value = getProperty(propertyName);
-        return (value == null) ? dephault : value;
+        return ManagedProperties.getProperty(propertyName, dephault);
     }
 
     /**
@@ -147,7 +142,7 @@ public class AxisProperties {
      * @param value property value (non-default)  If null, remove the property.
      */
     public static void setProperty(String propertyName, String value) {
-        setProperty(propertyName, value, false);
+        ManagedProperties.setProperty(propertyName, value);
     }
 
     /**
@@ -161,23 +156,7 @@ public class AxisProperties {
      *        a decendent class loader.
      */
     public static void setProperty(String propertyName, String value, boolean isDefault) {
-        if (propertyName != null) {
-            synchronized (axisPropertiesCache) {
-                ClassLoader classLoader = getThreadContextClassLoader();
-                HashMap properties = (HashMap)axisPropertiesCache.get(classLoader);
-
-                if (value == null) {
-                    properties.remove(propertyName);
-                } else {
-                    if (properties == null) {
-                        properties = new HashMap();
-                        axisPropertiesCache.put(classLoader, properties);
-                    }
-
-                    properties.put(propertyName, new Value(value, isDefault));
-                }
-            }
-        }
+        ManagedProperties.setProperty(propertyName, value, isDefault);
     }
 
     /**
@@ -187,7 +166,7 @@ public class AxisProperties {
      * @param newProperties name/value pairs to be bound
      */
     public static void setProperties(Map newProperties) {
-        setProperties(newProperties, false);
+        ManagedProperties.setProperties(newProperties);
     }
 
 
@@ -203,46 +182,12 @@ public class AxisProperties {
      *        a decendent class loader.
      */
     public static void setProperties(Map newProperties, boolean isDefault) {
-        java.util.Iterator it = newProperties.entrySet().iterator();
-
-        /**
-         * Each entry must be mapped to a Property.
-         * 'setProperty' does this for us.
-         */
-        while (it.hasNext()) {
-            Map.Entry entry = (Map.Entry)it.next();
-            setProperty( String.valueOf(entry.getKey()),
-                         String.valueOf(entry.getValue()),
-                         isDefault);
-        }
+        ManagedProperties.setProperties(newProperties, isDefault);
     }
 
     
     public static Enumeration propertyNames() {
-        Hashtable allProps = new Hashtable();
-
-        ClassLoader classLoader = getThreadContextClassLoader();
-
-        /**
-         * Order doesn't matter, we are only going to use
-         * the set of all keys...
-         */
-        while (true) {
-            HashMap properties = null;
-
-            synchronized (axisPropertiesCache) {
-                properties = (HashMap)axisPropertiesCache.get(classLoader);
-            }
-
-            if (properties != null) {
-                allProps.putAll(properties);
-            }
-
-            if (classLoader == null) break;
-            classLoader = classLoader.getParent();
-        }
-        
-        return allProps.keys();
+        return ManagedProperties.propertyNames();
     }
     
     /**
@@ -255,66 +200,6 @@ public class AxisProperties {
      * returned value will not effect the scoped properties.
      */
     public static Properties getProperties() {
-        Properties p = new Properties();
-        
-        Enumeration names = propertyNames();
-        while (names.hasMoreElements()) {
-            String name = (String)names.nextElement();
-            p.put(name, getProperty(name));
-        }
-        
-        return p;
-    }
-
-    /***************** INTERNAL IMPLEMENTATION *****************/
-
-    private static class Value {
-        final String value;
-        final boolean isDefault;
-
-        Value(String value, boolean isDefault) {
-            this.value = value;
-            this.isDefault = isDefault;
-        }
-    }
-
-    /**
-     * Get value for properties bound to the class loader.
-     * Explore up the tree first, as higher-level class
-     * loaders take precedence over lower-level class loaders.
-     */
-    private static Value getValueProperty(ClassLoader classLoader, String propertyName) {
-        Value value = null;
-
-        if (propertyName != null) {
-            /**
-             * If classLoader isn't bootstrap loader (==null),
-             * then get up-tree value.
-             */
-            if (classLoader != null) {
-                value = getValueProperty(classLoader.getParent(), propertyName);
-            }
-
-            if (value == null  ||  value.isDefault) {
-                synchronized (axisPropertiesCache) {
-                    HashMap properties = (HashMap)axisPropertiesCache.get(classLoader);
-
-                    if (properties != null) {
-                        Value altValue = (Value)properties.get(propertyName);
-
-                        // set value only if override exists..
-                        // otherwise pass default (or null) on..
-                        if (altValue != null)
-                            value = altValue;
-                    }
-                }
-            }
-        }
-
-        return value;
-    }
-
-    private static final ClassLoader getThreadContextClassLoader() {
-        return Thread.currentThread().getContextClassLoader();
+        return ManagedProperties.getProperties();
     }
 }
