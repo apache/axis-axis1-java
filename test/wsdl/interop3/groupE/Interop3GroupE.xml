@@ -72,22 +72,22 @@ Copyright:
         </javac>
 
         <!-- Now create WSDL files from the Java classes -->
-        <echo message="test/wsdl/interop3/groupE/InteropTestDocLit is rpc/enc and should be doc/lit"/>
-        <java2wsdl output="build/work/test/wsdl/interop3/groupE/InteropTestDocLit.wsdl"
+        <echo message="${axis.home}/test/wsdl/interop3/groupE/InteropTestDocLit is rpc/enc and should be doc/lit"/>
+        <java2wsdl output="${axis.home}/build/work/test/wsdl/interop3/groupE/InteropTestDocLit.wsdl"
             className="test.wsdl.interop3.groupE.InteropTestDocLit"
             namespace="http://soapinterop.org/WSDLInteropTestDocLit"
             location="http://localhost:8080/axis/services/InteropTestDocLit">
             <mapping namespace="http://soapinterop.org/xsd"
                      package="test.wsdl.interop3.groupE"/>
         </java2wsdl>
-        <java2wsdl output="build/work/test/wsdl/interop3/groupE/InteropTestRpcEnc.wsdl"
+        <java2wsdl output="${axis.home}/build/work/test/wsdl/interop3/groupE/InteropTestRpcEnc.wsdl"
             className="test.wsdl.interop3.groupE.InteropTestRpcEnc"
             namespace="http://soapinterop.org/WSDLInteropTestRpcEnc"
             location="http://localhost:8080/axis/services/InteropTestRpcEnc">
             <mapping namespace="http://soapinterop.org/xsd"
                      package="test.wsdl.interop3.groupE"/>
         </java2wsdl>
-        <java2wsdl output="build/work/test/wsdl/interop3/groupE/InteropTestList.wsdl"
+        <java2wsdl output="${axis.home}/build/work/test/wsdl/interop3/groupE/InteropTestList.wsdl"
             className="test.wsdl.interop3.groupE.InteropTestList"
             namespace="http://soapinterop.org/WSDLInteropTestList"
             location="http://localhost:8080/axis/services/InteropTestList">
@@ -96,8 +96,8 @@ Copyright:
         </java2wsdl>
 
         <!-- Create Java files from the WSDL -->
-        <wsdl2java url="build/work/test/wsdl/interop3/groupE/InteropTestDocLit.wsdl"
-                   output="build/work"
+        <wsdl2java url="${axis.home}/build/work/test/wsdl/interop3/groupE/InteropTestDocLit.wsdl"
+                   output="${axis.home}/build/work"
                    deployscope="session"
                    noimports="no"
                    verbose="no"
@@ -107,8 +107,8 @@ Copyright:
             <mapping namespace="http://soapinterop.org/xsd"
                      package="test.wsdl.interop3.groupE.client"/>
         </wsdl2java>
-        <wsdl2java url="build/work/test/wsdl/interop3/groupE/InteropTestRpcEnc.wsdl"
-                   output="build/work"
+        <wsdl2java url="${axis.home}/build/work/test/wsdl/interop3/groupE/InteropTestRpcEnc.wsdl"
+                   output="${axis.home}/build/work"
                    deployscope="session"
                    noimports="no"
                    verbose="no"
@@ -118,8 +118,8 @@ Copyright:
             <mapping namespace="http://soapinterop.org/xsd"
                      package="test.wsdl.interop3.groupE.client"/>
         </wsdl2java>
-        <wsdl2java url="build/work/test/wsdl/interop3/groupE/InteropTestList.wsdl"
-                   output="build/work"
+        <wsdl2java url="${axis.home}/build/work/test/wsdl/interop3/groupE/InteropTestList.wsdl"
+                   output="${axis.home}/build/work"
                    deployscope="session"
                    noimports="no"
                    verbose="no"
