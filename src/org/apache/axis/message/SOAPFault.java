@@ -61,6 +61,7 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.soap.SOAPConstants;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
 
@@ -84,21 +85,24 @@ public class SOAPFault extends SOAPBodyElement implements javax.xml.soap.SOAPFau
     {
         super(namespace, localName, prefix, attrs, context);
         this.fault = fault;
-        namespaceURI = Constants.URI_SOAP11_ENV;
-        name = Constants.ELEM_FAULT;
     }
     
     public SOAPFault(AxisFault fault)
     {
         this.fault = fault;
-        namespaceURI = Constants.URI_SOAP11_ENV;
-        name = Constants.ELEM_FAULT;
     }
     
     public void outputImpl(SerializationContext context)
             throws IOException
     {
-        context.registerPrefixForURI(prefix, namespaceURI);
+        SOAPConstants soapConstants = context.getMessageContext() == null ?
+                                        SOAPConstants.SOAP11_CONSTANTS :
+                                        context.getMessageContext().getSOAPConstants();
+
+        namespaceURI = soapConstants.getEnvelopeURI();
+        name = Constants.ELEM_FAULT;
+        
+        context.registerPrefixForURI(prefix, soapConstants.getEnvelopeURI());
         context.startElement(new QName(this.getNamespaceURI(),
                                        this.getName()),
                              attributes);
@@ -109,22 +113,60 @@ public class SOAPFault extends SOAPBodyElement implements javax.xml.soap.SOAPFau
             if (axisFault.getFaultCode() != null) {
                 // Do this BEFORE starting the element, so the prefix gets
                 // registered if needed.
-                String faultCode = context.qName2String(axisFault.getFaultCode());
-                context.startElement(Constants.QNAME_FAULTCODE, null);
-                context.writeSafeString(faultCode);
-                context.endElement();
+                if (soapConstants == SOAPConstants.SOAP12_CONSTANTS) {
+                    String faultCode = context.qName2String(axisFault.getFaultCode());
+                    context.startElement(Constants.QNAME_FAULTCODE_SOAP12, null);
+                    context.startElement(Constants.QNAME_FAULTVALUE_SOAP12, null);
+                    context.writeSafeString(faultCode);
+                    context.endElement();
+                    QName[] subcodes = axisFault.getFaultSubCodes();
+                    if (subcodes != null) {
+                        for (int i = 0; i < subcodes.length; i++) {
+                            faultCode = context.qName2String(subcodes[i]);
+                            context.startElement(Constants.QNAME_FAULTSUBCODE_SOAP12, null);
+                            context.startElement(Constants.QNAME_FAULTVALUE_SOAP12, null);
+                            context.writeSafeString(faultCode);
+                            context.endElement();
+                        }
+
+                        for (int i = 0; i < subcodes.length; i++)
+                            context.endElement();
+
+                    }
+                    context.endElement();
+                } else {
+                    String faultCode = context.qName2String(axisFault.getFaultCode());
+                    context.startElement(Constants.QNAME_FAULTCODE, null);
+                    context.writeSafeString(faultCode);
+                    context.endElement();
+                }
             }
             
             if (axisFault.getFaultString() != null) {
-                context.startElement(Constants.QNAME_FAULTSTRING, null);
+                if (soapConstants == SOAPConstants.SOAP12_CONSTANTS)
+                    context.startElement(Constants.QNAME_FAULTREASON_SOAP12, null);
+                else
+                    context.startElement(Constants.QNAME_FAULTSTRING, null);
                 context.writeSafeString(axisFault.getFaultString());
                 context.endElement();
             }
             
             if (axisFault.getFaultActor() != null) {
-                context.startElement(Constants.QNAME_FAULTACTOR, null);
+                if (soapConstants == SOAPConstants.SOAP12_CONSTANTS)
+                    context.startElement(Constants.QNAME_FAULTROLE_SOAP12, null);
+                else
+                    context.startElement(Constants.QNAME_FAULTACTOR, null);
+
                 context.writeSafeString(axisFault.getFaultActor());
                 context.endElement();
+            }
+
+            if (axisFault.getFaultNode() != null) {
+                if (soapConstants == SOAPConstants.SOAP12_CONSTANTS) {
+                    context.startElement(Constants.QNAME_FAULTNODE_SOAP12, null);
+                    context.writeSafeString(axisFault.getFaultNode());
+                    context.endElement();
+                }
             }
             
             // get the QName for this faults detail element
@@ -141,7 +183,11 @@ public class SOAPFault extends SOAPBodyElement implements javax.xml.soap.SOAPFau
             }
             Element[] faultDetails = axisFault.getFaultDetails();
             if (faultDetails != null) {
-                context.startElement(Constants.QNAME_FAULTDETAILS, null);
+                if (soapConstants == SOAPConstants.SOAP12_CONSTANTS)
+                    context.startElement(Constants.QNAME_FAULTDETAIL_SOAP12, null);
+                else
+                    context.startElement(Constants.QNAME_FAULTDETAILS, null);
+
                 // Allow the fault to write its data, if any
                 axisFault.writeDetails(qname, context);
                 // Then output any other elements
