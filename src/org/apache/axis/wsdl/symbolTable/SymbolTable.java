@@ -2879,6 +2879,10 @@ public class SymbolTable {
                 if (obj instanceof MIMEContent) {
                     MIMEContent content = (MIMEContent) obj;
                     TypeEntry typeEntry = findPart(op, content.getPart());
+                    if (typeEntry == null) {
+                        throw new RuntimeException(Messages.getMessage("cannotFindPartForOperation00", content.getPart(),
+                                op.getName(), content.getType()));
+                    }
                     String dims = typeEntry.getDimensions();
 
                     if ((dims.length() <= 0)
