@@ -608,25 +608,45 @@ public class HTTPSender extends BasicHandler {
             // No return code?? Should have one by now.
         }
 
-        /* All HTTP headers have been read. */
-        String contentType =
-                (String) headers
-                .get(HTTPConstants.HEADER_CONTENT_TYPE.toLowerCase());
+		/* All HTTP headers have been read. */
+		String contentType =
+				(String) headers
+				.get(HTTPConstants.HEADER_CONTENT_TYPE.toLowerCase());
+						
+		contentType = (null == contentType)
+				? null
+				: contentType.trim();
+                
+		String location =
+				(String) headers
+				.get(HTTPConstants.HEADER_LOCATION.toLowerCase());
 
-        contentType = (null == contentType)
-                ? null
-                : contentType.trim();
-        if ((returnCode > 199) && (returnCode < 300)) {
-            if (returnCode == 202)
-                return inp;
-            // SOAP return is OK - so fall through
-        } else if (msgContext.getSOAPConstants() ==
-                SOAPConstants.SOAP12_CONSTANTS) {
-            // For now, if we're SOAP 1.2, fall through, since the range of
-            // valid result codes is much greater
-        } else if ((contentType != null) && !contentType.startsWith("text/html")
-                && ((returnCode > 499) && (returnCode < 600))) {
-            // SOAP Fault should be in here - so fall through
+		location = (null == location)
+				? null
+				: location.trim();
+                
+		if ((returnCode > 199) && (returnCode < 300)) {
+			if (returnCode == 202)
+				return inp;
+			// SOAP return is OK - so fall through
+		} else if (msgContext.getSOAPConstants() ==
+				SOAPConstants.SOAP12_CONSTANTS) {
+			// For now, if we're SOAP 1.2, fall through, since the range of
+			// valid result codes is much greater
+		} else if ((contentType != null) && !contentType.startsWith("text/html")
+				&& ((returnCode > 499) && (returnCode < 600))) {
+			// SOAP Fault should be in here - so fall through
+		} else if ((location != null) && (returnCode == 307)) {
+			// Temporary Redirect (HTTP: 307)			
+			// close old connection
+			inp.close();
+			sock.close();	
+			// remove former result and set new target url
+			msgContext.removeProperty(HTTPConstants.MC_HTTP_STATUS_CODE);
+			msgContext.setProperty(MessageContext.TRANS_URL, location);
+			// next try
+			invoke(msgContext);			
+			return inp;
         } else {
             // Unknown return code - so wrap up the content into a
             // SOAP Fault.
