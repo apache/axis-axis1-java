@@ -14,7 +14,8 @@
  </handlers>
 
  <transports>
-  <transport name="http" pivot="HTTPSender"/>
+  <transport name="http" request="URLMapper"/>
+  <transport name="SimpleHttp" request="URLMapper"/>
   <transport name="local" response="LocalResponder"/>
  </transports>
 

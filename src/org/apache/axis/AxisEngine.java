@@ -79,6 +79,12 @@ import org.w3c.dom.*;
  */
 public abstract class AxisEngine extends BasicHandler
 {
+    // Engine property names
+    public static final String PROP_XML_DECL = "sendXMLDeclaration";
+    public static final String PROP_DEBUG_LEVEL = "debugLevel";
+    public static final String PROP_DEBUG_FILE = "debugFile";
+    
+    
     protected String engineConfigFilename = "engine-config.xml";
     
     /** The handler registry this Engine uses. */
@@ -140,11 +146,17 @@ public abstract class AxisEngine extends BasicHandler
             e.printStackTrace();
         }
         
-        String propVal = props.getProperty("debugLevel", "0");
+        String propVal = props.getProperty(PROP_DEBUG_LEVEL, "0");
         Debug.setDebugLevel(Integer.parseInt(propVal));
         
-        propVal = props.getProperty("debugFile");
+        propVal = props.getProperty(PROP_DEBUG_FILE);
         Debug.setToFile(propVal != null);
+        
+        // Should we send XML declarations in our messages?
+        // default is true, and currently the only accepted true value is
+        // "true".
+        propVal = props.getProperty(PROP_XML_DECL, "true");
+        addOption(PROP_XML_DECL, new Boolean(propVal.equals("true")));
         
         _typeMappingRegistry.setParent(SOAPTypeMappingRegistry.getSingleton());
         
