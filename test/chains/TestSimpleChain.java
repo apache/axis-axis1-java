@@ -58,14 +58,12 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.apache.axis.InternalException;
 import org.apache.axis.SimpleChain;
 import org.apache.axis.Handler;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.MessageContext;
 import org.apache.axis.AxisFault;
-
-import org.apache.log4j.Category;
-import org.apache.log4j.Priority;
 
 public class TestSimpleChain extends TestCase
 {
@@ -109,10 +107,8 @@ public class TestSimpleChain extends TestCase
             c.invoke(mc);
 
             // while testing, disable noise
-            Category category = Category.getInstance(
-                org.apache.axis.InternalException.class.getName());
-            Priority oldPriority = category.getPriority();
-            category.setPriority(Priority.OFF);
+            boolean oldLogging = InternalException.getLogging();
+            InternalException.setLogging(false);
 
             try {
                 Handler h2 = new TestHandler();
@@ -122,7 +118,8 @@ public class TestSimpleChain extends TestCase
                 // Correct behaviour. Exact exception isn't critical
             }
 
-            category.setPriority(oldPriority);
+            // resume noise
+            InternalException.setLogging(oldLogging);
         } catch (AxisFault af) {
             assertTrue("Unexpected exception", false);
         }
