@@ -263,8 +263,6 @@ public class ManagedMemoryDataSource implements  javax.activation.DataSource {
                     System.arraycopy(currentMemoryBuf, 0, tmp, 0,
                        currentMemoryBufSz);
                     memorybuflist.set( memorybuflist.size() - 1, tmp);  //Now replace the last buffer with this size.
-                 }else{
-                    memorybuflist.remove( memorybuflist.size() - 1);  //Now replace the last buffer with this size.
                  }
 
                 currentMemoryBuf = null; //No need for this anymore.
