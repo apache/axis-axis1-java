@@ -61,7 +61,6 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.Message;
 import org.apache.axis.message.EnvelopeBuilder;
 import org.apache.axis.message.EnvelopeHandler;
-import org.apache.axis.message.HandlerFactory;
 import org.apache.axis.message.IDResolver;
 import org.apache.axis.message.MessageElement;
 import org.apache.axis.message.SAX2EventRecorder;
@@ -120,8 +119,6 @@ public class DeserializationContextImpl extends DefaultHandler implements Deseri
     static final SOAPHandler nullHandler = new SOAPHandler();
     
     protected MessageContext msgContext;
-    
-    protected HandlerFactory initialFactory;
     
     private boolean doneParsing = false;
     protected InputSource inputSource = null;
