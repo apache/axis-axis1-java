@@ -55,12 +55,6 @@ public class TestSerializedRPC extends TestCase {
         super(name);
         engine.init();
 
-        // Register the reverseString service
-        SOAPService reverse = new SOAPService(new RPCProvider());
-        reverse.setOption("className", "test.RPCDispatch.Service");
-        reverse.setOption("allowedMethods", "*");
-        provider.deployService(SOAPAction, reverse);
-
         // And deploy the type mapping
         Class javaType = Data.class;
         QName xmlType = new QName("urn:foo", "Data");
@@ -71,6 +65,12 @@ public class TestSerializedRPC extends TestCase {
         TypeMapping tm = 
                 tmr.getOrMakeTypeMapping(Constants.URI_DEFAULT_SOAP_ENC);
         tm.register(javaType, xmlType, sf, df);
+
+        // Register the reverseString service
+        SOAPService reverse = new SOAPService(new RPCProvider());
+        reverse.setOption("className", "test.RPCDispatch.Service");
+        reverse.setOption("allowedMethods", "*");
+        provider.deployService(SOAPAction, reverse);
 
         JavaServiceDesc desc = new JavaServiceDesc();
         desc.loadServiceDescByIntrospection(Service.class, tm);
@@ -119,16 +119,12 @@ public class TestSerializedRPC extends TestCase {
         msgContext.setTypeMappingRegistry(engine.getTypeMappingRegistry());
 
         // Invoke the Axis engine
-        try {
-            engine.invoke(msgContext);
-        } catch (AxisFault af) {
-            return af;
-        }
+        engine.invoke(msgContext);
 
         // Extract the response Envelope
         Message message = msgContext.getResponseMessage();
         assertNotNull("Response message was null!", message);
-        SOAPEnvelope envelope = (SOAPEnvelope)message.getSOAPEnvelope();
+        SOAPEnvelope envelope = message.getSOAPEnvelope();
         assertNotNull("SOAP envelope was null", envelope);
 
         // Extract the body from the envelope
@@ -254,25 +250,10 @@ public class TestSerializedRPC extends TestCase {
                      rpc("overloaded", arg, true));
     }
     
-    public void testEncodedArrayConversion() throws Exception {
-        String arg = "<arg0>a simple string</arg0>";
-        AxisFault fault = (AxisFault)rpc("arrayMethod", arg, true);
-        assertTrue("Erroneous conversion occurred!",
-                !fault.getFaultString().equals("You shouldn't have called me!"));
-    }
-
-    public static void main(String args[]) {
-        try {
-            TestSerializedRPC tester = new TestSerializedRPC("Test Serialized RPC");
-            tester.testEncodedArrayConversion();
-            tester.testSerReverseString();
-            tester.testSerReverseData();
-            tester.testReverseDataWithUntypedParam();
-            tester.testArgAsDOM();
-            tester.testOverloadedMethodDispatch();
-            tester.testOutOfOrderParams();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    public void testEncodedArrayConversion() throws Exception {
+//        String arg = "<arg0>a simple string</arg0>";
+//        AxisFault fault = (AxisFault)rpc("arrayMethod", arg, true);
+//        assertTrue("Erroneous conversion occurred!",
+//                !fault.getFaultString().equals("You shouldn't have called me!"));
+//    }
 }

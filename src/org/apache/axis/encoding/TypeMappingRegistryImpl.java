@@ -176,13 +176,9 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
      */
     public TypeMappingRegistryImpl() {
         mapTM = new HashMap();
-        if (Constants.URI_DEFAULT_SOAP_ENC.equals(Constants.URI_SOAP11_ENC)) {
-            defaultDelTM = 
-                new TypeMappingImpl(DefaultTypeMappingImpl.getSingleton());
-        } else {
-            defaultDelTM = 
-                new TypeMappingImpl(DefaultSOAPEncodingTypeMappingImpl.create());
-        }
+        defaultDelTM = 
+                new TypeMappingDelegate(DefaultTypeMappingImpl.getSingleton());
+        register(Constants.URI_SOAP11_ENC, new DefaultSOAPEncodingTypeMappingImpl());
     }
     
     /**
@@ -244,8 +240,6 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
      * @return Previous TypeMapping associated with the specified namespaceURI,
      * or null if there was no TypeMapping associated with the specified namespaceURI
      *
-     * @throws JAXRPCException - If there is any error in the registration
-     * of the TypeMapping for the specified namespace URI
      */
     public javax.xml.rpc.encoding.TypeMapping register(String namespaceURI,
                          javax.xml.rpc.encoding.TypeMapping mapping) {
@@ -266,7 +260,9 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
         if (del == null) {
             del = new TypeMappingDelegate((TypeMapping) mapping);
             mapTM.put(namespaceURI, del);
+            ((TypeMapping)mapping).setDelegate(defaultDelTM.getDelegate());
         } else {
+            ((TypeMapping)mapping).setDelegate(del.getDelegate());
             del.setDelegate((TypeMapping) mapping);
         }
         return null; // Needs works
@@ -336,7 +332,7 @@ public class TypeMappingRegistryImpl implements TypeMappingRegistry {
         if (del != null) {
             tm = del.getDelegate();
         }
-        if (tm == null) {
+        if (tm == null || tm instanceof DefaultTypeMappingImpl) {
             tm = (TypeMapping)createTypeMapping();
             tm.setSupportedEncodings(new String[] {encodingStyle});
             register(encodingStyle, tm);

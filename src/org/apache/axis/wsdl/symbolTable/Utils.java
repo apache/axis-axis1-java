@@ -407,7 +407,7 @@ public class Utils {
 
                     // If we have a minoccurs="0"/maxoccurs="1", this is just
                     // like a nillable single value, so treat it as such.
-                    qName = getNillableQName(qName);
+//                    qName = getNillableQName(qName);
                 } else if (!maxOccursValue.equals("1")
                         || !minOccursValue.equals("1")) {
                     String localPart = qName.getLocalPart();
@@ -536,11 +536,11 @@ public class Utils {
         QName qName = getQNameFromPrefixedName(node, prefixedName);
 
         // An alternate qname is returned if nillable
-        if (typeAttrName.equals("type")) {
-            if (JavaUtils.isTrueExplicitly(getAttribute(node, "nillable"))) {
-                qName = getNillableQName(qName);
-            }
-        }
+//        if (typeAttrName.equals("type")) {
+//            if (JavaUtils.isTrueExplicitly(getAttribute(node, "nillable"))) {
+//                qName = getNillableQName(qName);
+//            }
+//        }
 
         return qName;
     }

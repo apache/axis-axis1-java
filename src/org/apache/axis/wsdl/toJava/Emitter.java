@@ -648,50 +648,26 @@ public class Emitter extends Parser {
      * @param typeMappingVersion 
      */
     public void setTypeMappingVersion(String typeMappingVersion) {
+        baseTypeMapping = new BaseTypeMapping() {
 
-        if (typeMappingVersion.equals("1.1")) {
-            baseTypeMapping = new BaseTypeMapping() {
+            final TypeMapping defaultTM =
+                    DefaultSOAPEncodingTypeMappingImpl.createWithDelegate();
 
-                final TypeMapping defaultTM =
-                        DefaultTypeMappingImpl.getSingleton();
+            public String getBaseName(QName qNameIn) {
 
-                public String getBaseName(QName qNameIn) {
+                javax.xml.namespace.QName qName =
+                        new javax.xml.namespace.QName(qNameIn.getNamespaceURI(),
+                                qNameIn.getLocalPart());
+                Class cls =
+                        defaultTM.getClassForQName(qName);
 
-                    javax.xml.namespace.QName qName =
-                            new javax.xml.namespace.QName(qNameIn.getNamespaceURI(),
-                                    qNameIn.getLocalPart());
-                    Class cls =
-                            defaultTM.getClassForQName(qName);
-
-                    if (cls == null) {
-                        return null;
-                    } else {
-                        return JavaUtils.getTextClassName(cls.getName());
-                    }
+                if (cls == null) {
+                    return null;
+                } else {
+                    return JavaUtils.getTextClassName(cls.getName());
                 }
-            };
-        } else {
-            baseTypeMapping = new BaseTypeMapping() {
-
-                final TypeMapping defaultTM =
-                        DefaultSOAPEncodingTypeMappingImpl.create();
-
-                public String getBaseName(QName qNameIn) {
-
-                    javax.xml.namespace.QName qName =
-                            new javax.xml.namespace.QName(qNameIn.getNamespaceURI(),
-                                    qNameIn.getLocalPart());
-                    Class cls =
-                            defaultTM.getClassForQName(qName);
-
-                    if (cls == null) {
-                        return null;
-                    } else {
-                        return JavaUtils.getTextClassName(cls.getName());
-                    }
-                }
-            };
-        }
+            }
+        };
     }
 
     // The remainder are deprecated methods.

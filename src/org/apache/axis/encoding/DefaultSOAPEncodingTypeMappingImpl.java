@@ -55,6 +55,10 @@
 
 package org.apache.axis.encoding;
 
+import org.apache.axis.Constants;
+import org.apache.axis.encoding.ser.Base64SerializerFactory;
+import org.apache.axis.encoding.ser.Base64DeserializerFactory;
+
 /**
  * @author Rich Scheuerle (scheu@us.ibm.com)
  * 
@@ -74,8 +78,45 @@ public class DefaultSOAPEncodingTypeMappingImpl extends DefaultTypeMappingImpl {
         }
         return tm;
     }
+    
+    public static TypeMapping createWithDelegate() {
+        TypeMapping ret = new DefaultSOAPEncodingTypeMappingImpl();
+        ret.setDelegate(DefaultTypeMappingImpl.getSingleton());
+        return ret;
+    }
 
     protected DefaultSOAPEncodingTypeMappingImpl() {
-        super(true);
+        registerSOAPTypes();        
+    }
+
+    /**
+     * Register the SOAP encoding data types.  This is split out into a
+     * method so it can happen either before or after the XSD mappings.
+     */
+    private void registerSOAPTypes() {
+        // SOAP Encoded strings are treated as primitives.
+        // Everything else is not.
+        myRegisterSimple(Constants.SOAP_STRING, java.lang.String.class);
+        myRegisterSimple(Constants.SOAP_BOOLEAN, java.lang.Boolean.class);
+        myRegisterSimple(Constants.SOAP_DOUBLE, java.lang.Double.class);
+        myRegisterSimple(Constants.SOAP_FLOAT, java.lang.Float.class);
+        myRegisterSimple(Constants.SOAP_INT, java.lang.Integer.class);
+        myRegisterSimple(Constants.SOAP_INTEGER, java.math.BigInteger.class);
+        myRegisterSimple(Constants.SOAP_DECIMAL, java.math.BigDecimal.class);
+        myRegisterSimple(Constants.SOAP_LONG, java.lang.Long.class);
+        myRegisterSimple(Constants.SOAP_SHORT, java.lang.Short.class);
+        myRegisterSimple(Constants.SOAP_BYTE, java.lang.Byte.class);
+        myRegister(Constants.SOAP_BASE64,     byte[].class,
+                   new Base64SerializerFactory(byte[].class,
+                                               Constants.SOAP_BASE64 ),
+                   new Base64DeserializerFactory(byte[].class,
+                                                 Constants.SOAP_BASE64)
+        );
+        myRegister(Constants.SOAP_BASE64BINARY,     byte[].class,
+                   new Base64SerializerFactory(byte[].class,
+                                               Constants.SOAP_BASE64 ),
+                   new Base64DeserializerFactory(byte[].class,
+                                                 Constants.SOAP_BASE64)
+        );
     }
 }
