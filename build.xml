@@ -175,11 +175,13 @@ Copyright:
   <target name="samples" depends="compile" unless="samples.built"
     description="build the samples">
     <!--
-    <exec executable="ant">
-      <arg line="-buildfile ${axis.home}/buildSamples.xml compile"/>
-    </exec> 
-    -->
       <ant antfile="${axis.home}/buildSamples.xml" target="compile"/>
+    -->
+     <antcall target="my-forking-ant">
+       <param name="dir" value="${axis.home}"/>
+       <param name="file" value="buildSamples.xml"/>
+       <param name="target" value="compile"/>
+     </antcall>
       <property name="samples.built" value="yes"/>
       <echo message="Samples property set ${samples.built}"/>
   </target>
@@ -195,11 +197,13 @@ Copyright:
 
   <target name="buildTest" depends="compile" if="junit.present" unless="tests.built">
     <echo message="junit package found ..."/>
-      <ant antfile="${axis.home}/buildTest.xml" target="compile"/>
+     <antcall target="my-forking-ant">
+       <param name="dir" value="${axis.home}"/>
+       <param name="file" value="buildTest.xml"/>
+       <param name="target" value="compile"/>
+     </antcall>
     <!--
-    <exec executable="ant">
-      <arg line="-buildfile ${axis.home}/buildTest.xml compile"/>
-    </exec>
+      <ant antfile="${axis.home}/buildTest.xml" target="compile"/>
     -->
     <property name="tests.built" value="yes"/>
     <echo message="Tests property set ${tests.built}"/>
