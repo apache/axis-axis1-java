@@ -649,7 +649,7 @@ public class Emitter {
             pw.println("    public " + params.get(i) + " " + params.get(i + 1) + ";");
 
         pw.println();
-        pw.println("    public " + exceptionName + "() }");
+        pw.println("    public " + exceptionName + "() {");
         pw.println("    }");
         pw.println();
         if (params.size() > 0) {
@@ -738,7 +738,7 @@ public class Emitter {
         stubPW.println("    // From org.apache.axis.wsdl.Stub");
         stubPW.println("    public java.net.URL _getTargetEndpoint() {");
         stubPW.println("        try {");
-        stubPW.println("            return new java.net.URL((String) call.get (org.apache.axis.transport.http.HTTPTransport.URL));");
+        stubPW.println("            return new java.net.URL((String) call.get(org.apache.axis.transport.http.HTTPTransport.URL));");
         stubPW.println("        }");
         stubPW.println("        catch (java.net.MalformedURLException mue) {");
         stubPW.println("            return null; // ???");
