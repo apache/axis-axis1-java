@@ -1324,7 +1324,7 @@ public class JavaServiceDesc implements ServiceDesc {
                 operation.addFault(fault);
                 */
 
-                FaultDesc fault = operation.getFaultByClass(ex);
+                FaultDesc fault = operation.getFaultByClass(ex, false);
                 boolean isNew;
                 
                 // If we didn't find one, create a new one
