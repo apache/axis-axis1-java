@@ -20,8 +20,8 @@ To run the encoding samples, you must do the following:
 
 4.  Run the samples.
     Finally, to run the clients, run:
-        java samples.encoding.TestElement
+        java samples.encoding.TestElem
 	java samples.encoding.TestSer
 
-Note:  Only TestElement needs the server and the deploy step.  TestSer can
+Note:  Only TestElem needs the server and the deploy step.  TestSer can
        run without those steps.
