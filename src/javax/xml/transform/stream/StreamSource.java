@@ -63,7 +63,7 @@ import java.io.File;
 /**
  * Acts as an holder for a transformation Source in the form
  * of a stream of XML markup.
- *
+ * @author unknown
  */
 public class StreamSource implements Source {
 
@@ -268,14 +268,16 @@ public class StreamSource implements Source {
      * @param f Must a non-null File reference.
      */
     public void setSystemId(File f) {
-	String fpath=f.getAbsolutePath();
-	if (File.separatorChar != '/') {
-	    fpath = fpath.replace(File.separatorChar, '/');
-	}
-        if( fpath.startsWith("/"))
-	  this.systemId= "file://" + fpath;
-	else
-	  this.systemId = "file:///" + fpath;
+        String fpath=f.getAbsolutePath();
+        if (File.separatorChar != '/') {
+            fpath = fpath.replace(File.separatorChar, '/');
+        }
+        if( fpath.startsWith("/")) {
+          this.systemId = "file://" + fpath;
+        }
+        else {
+          this.systemId = "file:///" + fpath;
+        }
     }
 
     //////////////////////////////////////////////////////////////////////
