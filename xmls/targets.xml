@@ -364,6 +364,7 @@
     <echo message="axis_nojavadocs=${env.axis_nojavadocs}"/>
     <echo message="javax.xml.parsers.DocumentBuilderFactory=${javax.xml.parsers.DocumentBuilderFactory}"/>
     <echo message="javax.xml.parsers.SAXParserFactory=${javax.xml.parsers.SAXParserFactory}"/>
+    <echo message="sun.boot.class.path=${sun.boot.class.path}"/>
 
     <echo message="" />
     <echo message="-- Network Settings ---"/>
