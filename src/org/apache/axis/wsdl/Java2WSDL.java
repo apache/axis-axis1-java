@@ -380,7 +380,7 @@ public class Java2WSDL {
                 } else if (value.equalsIgnoreCase("RPC")) {
                     emitter.setMode(Emitter.MODE_RPC);
                 } else {
-                    System.out.println(JavaUtils.getMessage("j2wBadSoapAction00"));
+                    System.out.println(JavaUtils.getMessage("j2woptBadStyle00"));
                 }
             break;
 
