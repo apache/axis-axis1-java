@@ -39,6 +39,10 @@ import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPBodyElement;
 import java.util.Iterator;
 import java.io.StringReader;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ObjectInputStream;
 
 /**
  * Test MessageElement class.
@@ -217,6 +221,26 @@ public class TestMessageElement extends TestCase {
                 assertEquals(A_NAMESPACE_URI, name.getURI());
                 assertEquals(AA_TAG, name.getLocalName());
             }    
+    }
+
+    public void testSerializable() throws Exception
+    {
+        MessageElement m1 = 
+            new MessageElement("http://www.wolfram.com","Test");
+        
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
+
+        oos.writeObject(m1);
+        oos.flush();
+        oos.close();
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        ObjectInputStream ois = new ObjectInputStream(bais);
+        MessageElement m2 = (MessageElement)ois.readObject();
+
+        assertEquals("m1 is not the same as m2", m1, m2);
+        assertEquals("m2 is not the same as m1", m2, m1);
     }
     
     public static void main(String[] args) throws Exception {

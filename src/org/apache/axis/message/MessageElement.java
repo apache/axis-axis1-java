@@ -1651,4 +1651,11 @@ public class MessageElement implements SOAPElement,
         
         return null;
     }
+    
+    public boolean equals(Object obj)
+    {
+        if (obj == null || !(obj instanceof MessageElement))
+            return false;
+        return toString().equals(obj.toString());
+    }
 }
