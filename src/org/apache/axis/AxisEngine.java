@@ -57,15 +57,12 @@ package org.apache.axis;
 
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.handlers.BasicHandler;
-import org.apache.axis.handlers.HandlerChainImpl;
 import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.session.Session;
 import org.apache.axis.session.SimpleSession;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Messages;
 import org.apache.axis.utils.cache.ClassCache;
-import org.apache.axis.client.Service;
-import org.apache.axis.client.Call;
 
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
@@ -103,6 +100,7 @@ public abstract class AxisEngine extends BasicHandler
     public static final String PROP_ATTACHMENT_CLEANUP = "attachment.DirectoryCleanUp";
     public static final String PROP_DEFAULT_CONFIG_CLASS = "axis.engineConfigClass";
     public static final String PROP_SOAP_VERSION = "defaultSOAPVersion";
+    public static final String PROP_TWOD_ARRAY_ENCODING = "enable2DArrayEncoding";
 
     public static final String DEFAULT_ATTACHMENT_IMPL="org.apache.axis.attachments.AttachmentsImpl";
 
