@@ -663,8 +663,9 @@ public class HTTPSender extends BasicHandler {
         } else if ((contentType != null) && !contentType.startsWith("text/html")
                 && ((returnCode > 499) && (returnCode < 600))) {
             // SOAP Fault should be in here - so fall through
-        } else if ((location != null) && (returnCode == 307)) {
-            // Temporary Redirect (HTTP: 307)            
+        } else if ((location != null) &&
+                ((returnCode == 302) || (returnCode == 307))) {
+            // Temporary Redirect (HTTP: 302/307)            
             // close old connection
                 inp.close();
                 socketHolder.getSocket().close();    
