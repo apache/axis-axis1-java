@@ -84,6 +84,7 @@ public class FileGenTestCase extends junit.framework.TestCase {
         set.add("OpFault.java");
         set.add("PortTypeSoap.java");
         set.add("ReferenceService.java");
+        set.add("ReferenceServiceLocator.java");
         set.add("ReferenceSoapBindingStub.java");
         return set;
     }

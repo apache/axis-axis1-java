@@ -6,7 +6,7 @@ import junit.swingui.TestRunner;
 
 import org.apache.axis.utils.Options;
 
-import javax.xml.rpc.JAXRPCException;
+import javax.xml.rpc.ServiceException;
 
 import javax.xml.rpc.holders.IntHolder;
 import javax.xml.rpc.holders.StringHolder;
@@ -25,10 +25,10 @@ public class DetailedInoutTestCase extends TestCase
     public DetailedInoutTestCase(String name) {
         super(name);
         try {
-            io = new InoutService().getInoutService();
+            io = new InoutServiceLocator().getInoutService();
         }
-        catch (JAXRPCException jre) {
-            throw new AssertionFailedError("JAX-RPC Exception:  " + jre);
+        catch (ServiceException jre) {
+            throw new AssertionFailedError("JAX-RPC ServiceException:  " + jre);
         }
     }
 

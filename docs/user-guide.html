@@ -664,8 +664,7 @@ the SOAP invocations - in this version of Axis we won't go into more detail
 about these, though you can read the code if you're inclined.</li>
 
 <li>
-The Service class serves as a factory for obtaining Stub instances - MyService
-for our example. The Service class will by default make a Stub which points
+The Service interface - MyService for our example - defines a get method for each port listed in the service element of the WSDL.  The implementation of this service interface - MyServiceLocator for our example - implements these get methods.  It serves as a locator for obtaining Stub instances.  The Service class will by default make a Stub which points
 to the endpoint URL described in the WSDL file, but you may also specify
 a different URL when you ask for the PortType.</li>
 </ul>
@@ -674,7 +673,7 @@ So a typical usage of the stub classes would be as follows:
 &nbsp; public static void main(String [] args) throws Exception
 &nbsp; {
 &nbsp;&nbsp;&nbsp; // Make a service (PortType factory)
-&nbsp;&nbsp;&nbsp; MyService service = new MyService();
+&nbsp;&nbsp;&nbsp; MyService service = new MyServiceLocator();
 
 
 &nbsp;&nbsp;&nbsp; // Now use the service to get a PortType that we can call.

@@ -73,23 +73,22 @@ import javax.wsdl.extensions.soap.SOAPAddress;
 import org.apache.axis.utils.JavaUtils;
 
 /**
-* This is Wsdl2java's service implementation writer.
-* It writes the <serviceName>Locator.java file.
+* This is Wsdl2java's service writer.  It writes the <serviceName>.java file.
 */
-public class JavaServiceImplWriter extends JavaWriter {
-    private ServiceEntry sEntry;
-    private SymbolTable  symbolTable;
+public class JavaServiceIfaceWriter extends JavaWriter {
+    private Service service;
+    private SymbolTable symbolTable;
 
     /**
      * Constructor.
      */
-    protected JavaServiceImplWriter(
+    protected JavaServiceIfaceWriter(
             Emitter emitter,
             ServiceEntry sEntry,
             SymbolTable symbolTable) {
-        super(emitter, sEntry, "Locator", "java",
+        super(emitter, sEntry, "", "java",
                 JavaUtils.getMessage("genService00"), "service");
-        this.sEntry = sEntry;
+        this.service = sEntry.getService();
         this.symbolTable = symbolTable;
     } // ctor
 
@@ -97,12 +96,9 @@ public class JavaServiceImplWriter extends JavaWriter {
      * Write the body of the service file.
      */
     protected void writeFileBody() throws IOException {
-        Service service = sEntry.getService();
-
         // declare class
-        pw.println("public class " + className
-                + " extends org.apache.axis.client.Service implements "
-                + sEntry.getName() + " {");
+        pw.println("public interface " + className
+                + " extends javax.xml.rpc.Service {");
 
         // output comments
         writeComment(pw, service.getDocumentationElement());
@@ -123,15 +119,18 @@ public class JavaServiceImplWriter extends JavaWriter {
             BindingEntry bEntry =
                     symbolTable.getBindingEntry(binding.getQName());
             if (bEntry == null) {
-                throw new IOException(JavaUtils.getMessage("emitFailNoBindingEntry01",
+                throw new IOException(JavaUtils.getMessage(
+                        "emitFailNoBindingEntry01",
                         new String[] {binding.getQName().toString()}));
             }
 
             PortTypeEntry ptEntry = symbolTable.getPortTypeEntry(
                     binding.getPortType().getQName());
             if (ptEntry == null) {
-                throw new IOException(JavaUtils.getMessage("emitFailNoPortType01",
-                        new String[] {binding.getPortType().getQName().toString()}));
+                throw new IOException(JavaUtils.getMessage(
+                        "emitFailNoPortType01",
+                        new String[]
+                        {binding.getPortType().getQName().toString()}));
             }
 
             // If this isn't an SOAP binding, skip it
@@ -140,81 +139,24 @@ public class JavaServiceImplWriter extends JavaWriter {
             }
 
             String portName = Utils.xmlNameToJavaClass(p.getName());
-            String stubClass = bEntry.getName() + "Stub";
 
             // If there is not literal use, the interface name is the portType name.
             // Otherwise it is the binding name.
             String bindingType = bEntry.hasLiteral() ?
                     bEntry.getName() : ptEntry.getName();
 
-            // Get endpoint address and validate it
-            String address = getAddressFromPort(p);
-            if (address == null) {
-                // now what?
-                throw new IOException(JavaUtils.getMessage("emitFail02",
-                        portName, className));
-            }
-            try {
-                URL ep = new URL(address);
-            }
-            catch (MalformedURLException e) {
-                throw new IOException(JavaUtils.getMessage("emitFail03",
-                        new String[] {portName, className, address}));
-            }
-
             // Write out the get<PortName> methods
+            pw.println("    public String get" + portName + "Address();");
             pw.println();
-            pw.println("    // " + JavaUtils.getMessage("getProxy00", portName));
-            writeComment(pw, p.getDocumentationElement());
-            pw.println("    private final java.lang.String " + portName + "_address = \"" + address + "\";");
-
-
-            pw.println("" );
-            pw.println("    public String get" + portName + "Address() {" );
-            pw.println("        return " + portName + "_address;" );
-            pw.println("    }" );
-            pw.println("" );
-
-            pw.println("    public " + bindingType + " get" + portName + "() throws javax.xml.rpc.ServiceException {");
-            pw.println("       java.net.URL endpoint;");
-            pw.println("        try {");
-            pw.println("            endpoint = new java.net.URL(" + portName + "_address);");
-            pw.println("        }");
-            pw.println("        catch (java.net.MalformedURLException e) {");
-            pw.println("            return null; // " +
-                    JavaUtils.getMessage("unlikely00"));
-            pw.println("        }");
-            pw.println("        return get" + portName + "(endpoint);");
-            pw.println("    }");
+            pw.println("    public " + bindingType + " get" + portName
+                    + "() throws javax.xml.rpc.ServiceException;");
             pw.println();
-            pw.println("    public " + bindingType + " get" + portName + "(java.net.URL portAddress) throws javax.xml.rpc.ServiceException {");
-            pw.println("        try {");
-            pw.println("            return new " + stubClass + "(portAddress, this);");
-            pw.println("        }");
-            pw.println("        catch (org.apache.axis.AxisFault e) {");
-            pw.println("            return null; // ???");
-            pw.println("        }");
-            pw.println("    }");
+            pw.println("    public " + bindingType + " get" + portName
+                    + "(java.net.URL portAddress) throws javax.xml.rpc.ServiceException;");
         }
         // all done
         pw.println("}");
         pw.close();
     } // writeFileBody
 
-    /**
-     * Return the endpoint address from a <soap:address location="..."> tag
-     */
-    private String getAddressFromPort(Port p) {
-        // Get the endpoint for a port
-        List extensibilityList = p.getExtensibilityElements();
-        for (ListIterator li = extensibilityList.listIterator(); li.hasNext();) {
-            Object obj = li.next();
-            if (obj instanceof SOAPAddress) {
-                return ((SOAPAddress) obj).getLocationURI();
-            }
-        }
-        // didn't find it
-        return null;
-    } // getAddressFromPort
-
-} // class JavaServiceImplWriter
+} // class JavaServiceIfaceWriter

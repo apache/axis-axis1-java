@@ -15,10 +15,10 @@ public class MArrayTestsServiceTestCase extends junit.framework.TestCase {
     public void testMArrayTests() {
         test.wsdl.marrays.MArrayTests binding;
         try {
-            binding = new MArrayTestsService().getMArrayTests();
+            binding = new MArrayTestsServiceLocator().getMArrayTests();
         }
-        catch (javax.xml.rpc.JAXRPCException jre) {
-            throw new junit.framework.AssertionFailedError("JAX-RPC Exception caught: " + jre );
+        catch (javax.xml.rpc.ServiceException jre) {
+            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre );
         }
         assertTrue("binding is null", binding != null);
 

@@ -63,7 +63,7 @@ import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Options;
 import org.apache.log4j.Category;
 
-import javax.xml.rpc.JAXRPCException;
+import javax.xml.rpc.ServiceException;
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -126,7 +126,7 @@ public class AdminClient
                 service = new Service();
             }
             call = (Call) service.createCall();
-        } catch (JAXRPCException e) {
+        } catch (ServiceException e) {
             category.fatal(JavaUtils.getMessage("couldntCall00"), e);
             call = null;
         }

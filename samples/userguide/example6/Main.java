@@ -65,7 +65,7 @@ package samples.userguide.example6;
 public class Main {
 
     public static void main (String[] args) throws Exception {
-        samples.userguide.example6.WidgetPrice binding = new WidgetPriceService().getWidgetPrice();
+        samples.userguide.example6.WidgetPrice binding = new WidgetPriceServiceLocator().getWidgetPrice();
         ((WidgetPriceSoapBindingStub)binding).setMaintainSession(true);
         try {
             ((WidgetPriceSoapBindingStub) binding).setWidgetPrice("FOO", "$1.00");

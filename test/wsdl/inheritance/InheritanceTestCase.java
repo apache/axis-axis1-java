@@ -55,7 +55,7 @@
 
 package test.wsdl.inheritance;
 
-import javax.xml.rpc.JAXRPCException;
+import javax.xml.rpc.ServiceException;
 
 /**
  * This class contains the methods necessary for testing that the use inherited methods
@@ -93,10 +93,10 @@ public class InheritanceTestCase extends junit.framework.TestCase {
     public void testInheritanceTest() {
         test.wsdl.inheritance.InheritancePortType binding;
         try {
-            binding = new InheritanceTest().getInheritanceTest();
+            binding = new InheritanceTestLocator().getInheritanceTest();
         }
-        catch (JAXRPCException jre) {
-            throw new junit.framework.AssertionFailedError("JAX-RPC Exception caught: " + jre);
+        catch (ServiceException jre) {
+            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
         }
         assertTrue("binding is null", binding != null);
 

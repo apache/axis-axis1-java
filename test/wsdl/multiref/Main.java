@@ -73,7 +73,7 @@ public class Main {
     public static void main (String[] args) throws Exception {
         Options opts = new Options(args);
         
-        MultiRefTestService service = new MultiRefTestService();
+        MultiRefTestService service = new MultiRefTestServiceLocator();
         opts.setDefaultURL( service.getMultiRefTestAddress() );
         URL serviceURL = new URL(opts.getURL());
         if (serviceURL == null)

@@ -4,7 +4,7 @@ import java.net.ConnectException;
 
 import java.rmi.RemoteException;
 
-import javax.xml.rpc.JAXRPCException;
+import javax.xml.rpc.ServiceException;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
@@ -12,7 +12,7 @@ import junit.framework.TestCase;
 import org.apache.axis.AxisFault;
 
 import samples.addr.AddressBook;
-import samples.addr.AddressBookService;
+import samples.addr.AddressBookServiceLocator;
 import samples.addr.AddressBookSOAPBindingStub;
 import samples.addr.Address;
 import samples.addr.Phone;
@@ -21,7 +21,7 @@ import samples.addr.StateType;
 /**
 * This test calls the stub multiple times from multiple threads.  Before the
 * stub was made threadsafe, there was a good chance this test would fail with an
-* IllegalStateException or "javax.xml.rpc.JAXRPCException: Number of parameters
+* IllegalStateException or "javax.xml.rpc.ServiceException: Number of parameters
 * passed in (2) doesn't match the number of IN/INOUT parameters (4) from the
 * addParameter() calls" or something else just as cryptic.
 */
@@ -87,10 +87,10 @@ public class MultithreadTestCase extends TestCase {
 
     public void testMultithreading() {
         try {
-            binding = new AddressBookService().getAddressBook();
+            binding = new AddressBookServiceLocator().getAddressBook();
         }
-        catch (JAXRPCException jre) {
-            throw new AssertionFailedError("JAXRPCException caught: " + jre);
+        catch (ServiceException jre) {
+            throw new AssertionFailedError("ServiceException caught: " + jre);
         }
         assertTrue("binding is null", binding != null);
         ((AddressBookSOAPBindingStub) binding).setMaintainSession(true);
