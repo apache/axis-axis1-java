@@ -45,4 +45,26 @@ public class TestJavaClass extends TestCase
         assertEquals("boolean", add1.getReturnType().getName());
         assertEquals("void", add2.getReturnType().getName());
     }
+
+    public void testNoSuchMethod()
+    {
+        Class v = new java.util.Vector().getClass(); 
+        JavaClass jcVec = new JavaClass(v);
+
+        Method add7 = jcVec.getMethod("add", 7);
+        assertNull(add7);
+    }
+
+    public void testUnknownNumberOfArgs()
+    {
+        Class v = new java.util.Vector().getClass(); 
+        JavaClass jcVec = new JavaClass(v);
+
+        Method add7 = jcVec.getMethod("add", -1);
+        assertNull(add7);
+
+        Method insertElementAt = jcVec.getMethod("insertElementAt", -1);
+        assertEquals(2, insertElementAt.getParameterTypes().length);
+        assertEquals("void", insertElementAt.getReturnType().getName());
+    }
 }

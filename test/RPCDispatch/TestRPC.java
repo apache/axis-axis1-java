@@ -132,4 +132,18 @@ public class TestRPC extends TestCase {
         Data expected = new Data(3, "cba", 5);
         assertEquals(expected, rpc("reverseData", new Object[] {input}));
     }
+
+    /**
+     * Test a simple method that returns a field from the message context
+     */
+    public void testMessageContext() throws Exception {
+        // Register the reverseString service
+        SOAPService reverse = new SOAPService(RPCDispatcher, "RPCDispatcher");
+        reverse.addOption("className", "test.RPCDispatch.Service");
+        reverse.addOption("methodName", "targetService");
+        sr.add(SOAPAction, reverse);
+
+        // invoke the service and verify the result
+        assertEquals(SOAPAction, rpc("targetService", new Object[] {}));
+    }
 }

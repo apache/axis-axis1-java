@@ -132,13 +132,29 @@ public class RPCProvider extends JavaProvider {
                                         "Service name=" + methodName,
                                     null, null );  // should they??
             
-            Debug.Print( 2, "mName: " + mName );
-            Debug.Print( 2, "MethodName: " + methodName );
+            Debug.Print( 2, "mName: ", mName );
+            Debug.Print( 2, "MethodName: ", methodName );
             Method       method = jc.getMethod(mName, args.size());
 
-            if ( method == null ) {
-              // If method wasn't found using the args that were passed 
-              // in then try again, this time with MessageContext frist
+            // if the method wasn't found, try with one more parameter...
+            if ( method == null ) method = jc.getMethod(mName, args.size()+1);
+
+
+            if ( method == null )
+                throw new AxisFault( "AxisServer.error",
+                                    "Method not found\n" +
+                                        "Method name=" + methodName + "\n" +
+                                        "Service name=" + msgContext.getTargetService(),
+                                    null, null );
+            
+            // If method has an additional parameter of the right parameter
+            // type, add MessageContext as the first parameter
+            Class params[] = method.getParameterTypes();
+            System.out.println("params:" + params.length);
+            System.out.println("args:" + args.size());
+            if (params.length > args.size() 
+              && params[0].equals(msgContext.getClass())) 
+            {
               args.add( 0, msgContext );
               method = jc.getMethod(mName, args.size());
               if ( method != null ) {
@@ -150,15 +166,8 @@ public class RPCProvider extends JavaProvider {
               }
             }
 
-            if ( method == null )
-                throw new AxisFault( "AxisServer.error",
-                                    "Method not found\n" +
-                                        "Method name=" + methodName + "\n" +
-                                        "Service name=" + msgContext.getTargetService(),
-                                    null, null );
-            
             Object objRes = method.invoke( obj, argValues );
-            
+
             /* Now put the result in the result SOAPEnvelope */
             /*************************************************/
             RPCElement resBody = new RPCElement(mName + "Response");

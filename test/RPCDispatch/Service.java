@@ -1,5 +1,7 @@
 package test.RPCDispatch;
 
+import org.apache.axis.MessageContext;
+
 /**
  * Test WebService
  */
@@ -23,5 +25,12 @@ public class Service {
        result.setField2(reverseString(input.getField2()));
        result.setField3(input.getField1());
        return result;
+    }
+
+    /**
+     * Return the target service (should be this!)
+     */
+    public String targetService(MessageContext mc) throws Exception {
+       return mc.getTargetService();
     }
 }
