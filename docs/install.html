@@ -5,13 +5,62 @@
       body { 
         background-color: #ffffff; color: #000000 } 
         .note { font-weight:bold;  }
+        .head { font-weight:bold; font-size: 240%; text-align: center; }
         td.section { background-color: #82ADF6; font-size: 180%; text-align: center; font-weight: bold; } 
       }
     </style>
   </head>
   
   <body>
+<table cellspacing=0 width=100% border=0>
+<tr>
+<td colspan=2>
+<a href="http://xml.apache.org/axis">
+<img border=0 align=left src="axis.jpg" />
+</a>
+<div class="head">
+Installing and deploying web applications using xml-soap and xml-axis
+</div>
+</td>
+</tr>
+</table>
+<table cellspacing=4 width=100% border=0>
+<tr>
+<td colspan=2>
+<hr size=1 noshade= />
+</td>
+</tr>
+<tr>
+<td class=sidebar nowrap=true valign=top>
+<strong>
+Contents
+</strong>
+<ul>
+<li>
+<a href="#intro">Introduction</a>
+</li>
+<li>
+<a href="#webapp">Creating Webapps</a>
+</li>
+<li>
+<a href="#depend">Installing Dependencies</a>
+</li>
+<li>
+<a href="#websvc">Installing Web Services</a>
+</li>
+<li>
+<a href="#start">Starting the web server</a>
+</li>
+<li>
+<a href="#deploy">Deploying web services</a>
+</li>
+<li>
+<a href="#test">Testing</a>
+</li>
+</td>
+<td valign=top align=left>
 
+    <a name="intro"/>
     <table width=100%>
       <tr><td class="section">Introduction</td></tr>
     </table>
@@ -24,6 +73,7 @@
     configuration and isolation that every implementation compliant with the
     servlet 2.3 specification is required to support.</p>
 
+    <a name="webapp"/>
     <table width=100%>
       <tr><td class="section">Step 1: creating the webapps</td></tr>
     </table>
@@ -35,6 +85,7 @@
     directories anything you want, just be aware that the names you choose will
     form the basis for the URL by which clients will access your service.</p>
 
+    <a name="depend"/>
     <table width=100%>
       <tr><td class="section">Step 2: installing the dependencies</td></tr>
     </table>
@@ -63,6 +114,7 @@
     straight.&nbsp; In fact, the servlet engine may very well use a different
     xml-parser entirely!</p>
 
+    <a name="websvc"/>
     <table width=100%>
       <tr><td class="section">Step 3: installing the web services</td></tr>
     </table>
@@ -86,6 +138,7 @@
     use), then you will need to copy the corresponding perms.lst and users.lst
     files into the current working directory of your servlet engine.</p>
 
+    <a name="start"/>
     <table width=100% height="20">
       <tr><td class="section" height="16">Step 4: starting the web server</td></tr>
     </table>
@@ -94,6 +147,7 @@
     simple as double clicking on a startup icon or running a simple command from
     the command line.</p>
 
+    <a name="deploy"/>
     <table width=100% height="20">
       <tr><td class="section" height="16">Step 5: deploying the web services</td></tr>
     </table>
@@ -123,6 +177,7 @@
     You may need to replace localhost with your host name, and 8080 with the
     port number used by your web server.</p>
 
+    <a name="test"/>
     <table width=100% height="20">
       <tr><td class="section" height="16">Step 6: testing</td></tr>
     </table>
@@ -152,5 +207,18 @@
     Again, you may need to replace localhost with your host name, and 8080 with
     the port number used by your web server.</p>
 
+</td>
+</tr>
+<tr>
+<td colspan=2>
+<hr size=1 noshade= />
+</td>
+</tr>
+<tr>
+<td colspan=2>
+<div class=copyright align=center>Copyright &#169; 2001, Apache Software Foundation</div>
+</td>
+</tr>
+</table>
   </body>
 </html>
