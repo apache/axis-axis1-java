@@ -165,7 +165,14 @@ public class WSDDChain
         
         for (int n = 0; n < handlers.size(); n++) {
             WSDDHandler handler = (WSDDHandler)handlers.get(n); 
-            c.addHandler(handler.getInstance(registry));
+            Handler h = handler.getInstance(registry);
+            if ( h != null )
+              c.addHandler(h);
+            else
+              throw new ConfigurationException("Can't find handler name:'" +
+                                               handler.getQName() + "' type:'"+
+                                               handler.getType() +
+                                               "' in the registry");
         }
         
         return c;
