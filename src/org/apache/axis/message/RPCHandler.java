@@ -13,7 +13,7 @@ import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.ServiceDescription;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.utils.AxisClassLoader;
-import org.apache.axis.rpc.namespace.QName;
+import javax.rpc.namespace.QName;
 import org.apache.axis.utils.cache.JavaClass;
 import org.apache.log4j.Category;
 import org.xml.sax.Attributes;

@@ -73,7 +73,7 @@ import org.apache.axis.TargetedChain;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.deployment.wsdd.WSDDGlobalConfiguration;
 import org.apache.axis.deployment.wsdd.WSDDDeployableItem;
-import org.apache.axis.rpc.namespace.QName;
+import javax.rpc.namespace.QName;
 
 /**
  * The DeploymentRegistry abstract class takes the place of the

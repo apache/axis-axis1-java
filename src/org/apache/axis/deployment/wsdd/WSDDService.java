@@ -56,7 +56,7 @@ package org.apache.axis.deployment.wsdd;
 
 import org.apache.axis.Handler;
 import org.apache.axis.TargetedChain;
-import org.apache.axis.rpc.namespace.QName;
+import javax.rpc.namespace.QName;
 import org.apache.axis.deployment.DeploymentRegistry;
 import org.apache.axis.description.ServiceDescription;
 import org.w3c.dom.Document;

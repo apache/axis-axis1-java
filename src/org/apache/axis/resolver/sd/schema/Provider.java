@@ -1,7 +1,7 @@
 package org.apache.axis.resolver.sd.schema;
 
 import org.apache.axis.Handler;
-import org.apache.axis.rpc.namespace.QName;
+import javax.rpc.namespace.QName;
 import org.apache.axis.resolver.Resolver;
 import org.xml.sax.helpers.DefaultHandler;
 

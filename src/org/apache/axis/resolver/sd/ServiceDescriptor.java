@@ -7,7 +7,7 @@ import org.apache.axis.resolver.sd.schema.Fault;
 import org.apache.axis.resolver.sd.schema.HandlerList;
 import org.apache.axis.resolver.sd.schema.Provider;
 import org.apache.axis.resolver.sd.schema.SDConstants;
-import org.apache.axis.rpc.namespace.QName;
+import javax.rpc.namespace.QName;
 import org.apache.axis.utils.NSStack;
 import org.apache.axis.resolver.sd.schema.SDElement;
 import org.apache.axis.resolver.sd.schema.Service;

@@ -61,7 +61,7 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.client.Call;
 import org.apache.axis.utils.Mapping;
 import org.apache.axis.utils.NSStack;
-import org.apache.axis.rpc.namespace.QName;
+import javax.rpc.namespace.QName;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.log4j.Category;
 import org.w3c.dom.Attr;

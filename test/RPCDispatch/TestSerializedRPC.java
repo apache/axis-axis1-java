@@ -14,7 +14,7 @@ import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.registries.HandlerRegistry;
 import org.apache.axis.server.AxisServer;
-import org.apache.axis.rpc.namespace.QName;
+import javax.rpc.namespace.QName;
 
 import java.util.Vector;
 

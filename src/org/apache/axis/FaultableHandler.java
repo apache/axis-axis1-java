@@ -57,7 +57,7 @@ package org.apache.axis ;
 
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.registries.HandlerRegistry;
-import org.apache.axis.rpc.namespace.QName;
+import javax.rpc.namespace.QName;
 import org.apache.log4j.Category;
 
 import java.util.Enumeration;

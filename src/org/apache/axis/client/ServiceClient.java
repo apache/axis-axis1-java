@@ -125,7 +125,7 @@ import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPFaultElement;
 import org.apache.axis.message.SOAPHeader;
 import org.apache.axis.transport.http.HTTPTransport;
-import org.apache.axis.rpc.namespace.QName;
+import javax.rpc.namespace.QName;
 import org.apache.log4j.Category;
 
 import java.io.PrintWriter;
