@@ -59,6 +59,8 @@ import org.apache.axis.Constants;
 import org.apache.axis.utils.QName;
 import org.xml.sax.*;
 
+import java.lang.reflect.Constructor;
+
 import java.util.Date;
 import java.util.List;
 import java.math.BigDecimal;
@@ -98,71 +100,63 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
     }
 
     public static abstract class BasicDeser extends DeserializerBase {
+        StringBuffer val = new StringBuffer();
+        
         public void characters(char [] chars, int start, int end)
             throws SAXException
         {
-            value = makeValue(new String(chars, start, end));
+            val.append(chars, start, end);
+        }
+        public void endElement(String namespace, String localName,
+                               String qName)
+            throws SAXException
+        {
+            value = makeValue(val.toString());
             valueComplete();
         }
+        
         abstract Object makeValue(String source);
     }
-    class IntDeser extends BasicDeser {
-        Object makeValue(String source) { return new Integer(source); }
-    }
-    class IntDeserializerFactory implements DeserializerFactory {
-        public DeserializerBase getDeserializer() { return new IntDeser(); }
-    }
-    class FloatDeser extends BasicDeser {
-        Object makeValue(String source) { return new Float(source); }
-    }
-    class FloatDeserializerFactory implements DeserializerFactory {
-        public DeserializerBase getDeserializer() { return new FloatDeser(); }
-    }
-    class LongDeser extends BasicDeser {
-        Object makeValue(String source) { return new Long(source); }
-    }
-    class LongDeserializerFactory implements DeserializerFactory {
-        public DeserializerBase getDeserializer() { return new LongDeser(); }
-    }
-    class StringDeser extends BasicDeser {
-        public void characters(char [] chars, int start, int end) {
-            String work = new String(chars, start, end);
-            if (value == null)
-                value = work;
-            else
-                value = (String)value + work;
+    
+    /** A deserializer for any simple type with a (String) constructor.
+     * 
+     * The factory below will build one of these configured for the
+     * desired Class each time.
+     */
+    public static class BasicDeserializer extends BasicDeser {
+        Constructor constructor;
+        public BasicDeserializer(Class cls)
+        {
+            try {
+                constructor = cls.getDeclaredConstructor(
+                                   new Class [] { String.class });
+            } catch (Exception e) {
+                // TODO : Handle errors / throw?
+                e.printStackTrace();
+            }
         }
-        Object makeValue(String source) { return null; }
-    }
-    class StringDeserializerFactory implements DeserializerFactory {
-        public DeserializerBase getDeserializer() { return new StringDeser(); }
-    }
-    class DoubleDeser extends BasicDeser {
-        Object makeValue(String source) { return new Double(source); }
-    }
-    class DoubleDeserializerFactory implements DeserializerFactory {
-        public DeserializerBase getDeserializer() { return new DoubleDeser(); }
-    }
-    class ShortDeser extends BasicDeser {
-        Object makeValue(String source) { return new Short(source); }
-    }
-    class ShortDeserializerFactory implements DeserializerFactory {
-        public DeserializerBase getDeserializer() { return new ShortDeser(); }
-    }
-    class ByteDeser extends BasicDeser {
-        Object makeValue(String source) { return new Byte(source); }
-    }
-    class ByteDeserializerFactory implements DeserializerFactory {
-        public DeserializerBase getDeserializer() { return new ByteDeser(); }
-    }
-    class DecimalDeser extends BasicDeser {
-        Object makeValue(String source) { return new BigDecimal(source); }
-    }
-    class DecimalDeserializerFactory implements DeserializerFactory {
-        public DeserializerBase getDeserializer() { return new DecimalDeser(); }
+        
+        public Object makeValue(String source)
+        {
+            try {
+                return constructor.newInstance(new Object [] { source });
+            } catch (Exception e) {
+                // TODO: Handle errors / throw?
+                e.printStackTrace();
+                return null;
+            }
+        }
     }
     
+    public static class BasicDeserializerFactory implements DeserializerFactory {
+        public DeserializerBase getDeserializer(Class cls)
+        {
+            return new BasicDeserializer(cls);
+        }
+    }
+
     private ArraySerializer arraySer = new ArraySerializer();
+    private BasicDeserializerFactory factory = new BasicDeserializerFactory();
 
     /**
      * Alias common DeserializerFactories across the various popular schemas
@@ -223,15 +217,16 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
         addSerializer(byte[].class, XSD_BASE64, new Base64Serializer());
         addSerializer(java.math.BigDecimal.class, XSD_DECIMAL, se);
         
-        addDeserializersFor(XSD_STRING, java.lang.String.class, new StringDeserializerFactory());    
-        addDeserializersFor(XSD_BOOLEAN, java.lang.Boolean.class, new BooleanDeserializerFactory());
-        addDeserializersFor(XSD_DOUBLE, java.lang.Double.class, new DoubleDeserializerFactory());
-        addDeserializersFor(XSD_FLOAT, java.lang.Float.class, new FloatDeserializerFactory());
-        addDeserializersFor(XSD_INT, java.lang.Integer.class, new IntDeserializerFactory());
-        addDeserializersFor(XSD_LONG, java.lang.Long.class, new LongDeserializerFactory());
-        addDeserializersFor(XSD_SHORT, java.lang.Short.class, new ShortDeserializerFactory());
-        addDeserializersFor(XSD_BYTE, java.lang.Byte.class, new ByteDeserializerFactory());
-        addDeserializersFor(XSD_DECIMAL, java.math.BigDecimal.class, new DecimalDeserializerFactory());
+        addDeserializersFor(XSD_STRING, java.lang.String.class, factory);    
+        addDeserializersFor(XSD_BOOLEAN, java.lang.Boolean.class, factory);
+        addDeserializersFor(XSD_DOUBLE, java.lang.Double.class, factory);
+        addDeserializersFor(XSD_FLOAT, java.lang.Float.class, factory);
+        addDeserializersFor(XSD_INT, java.lang.Integer.class, factory);
+        addDeserializersFor(XSD_LONG, java.lang.Long.class, factory);
+        addDeserializersFor(XSD_SHORT, java.lang.Short.class, factory);
+        addDeserializersFor(XSD_BYTE, java.lang.Byte.class, factory);
+        addDeserializersFor(XSD_DECIMAL, java.math.BigDecimal.class, factory);
+        
         addDeserializersFor(XSD_BASE64, byte[].class, new Base64Serializer.Base64DeserializerFactory());
 
         // handle the various datetime QNames...

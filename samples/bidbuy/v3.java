@@ -197,19 +197,19 @@ public class v3 implements vInterface {
                              "PurchaseOrder");
       Class cls = PurchaseOrder.class;
       call.addSerializer(cls, poqn, new BeanSerializer(cls));
-      call.addDeserializerFactory(poqn, cls, BeanSerializer.getFactory(cls));
+      call.addDeserializerFactory(poqn, cls, BeanSerializer.getFactory());
 
       // register the Address class
       QName aqn = new QName("http://www.soapinterop.org/Bid", "Address");
       cls = Address.class;
       call.addSerializer(cls, aqn, new BeanSerializer(cls));
-      call.addDeserializerFactory(aqn, cls, BeanSerializer.getFactory(cls));
+      call.addDeserializerFactory(aqn, cls, BeanSerializer.getFactory());
 
       // register the LineItem class
       QName liqn = new QName("http://www.soapinterop.org/Bid", "LineItem");
       cls = LineItem.class;
       call.addSerializer(cls, liqn, new BeanSerializer(cls));
-      call.addDeserializerFactory(liqn, cls, BeanSerializer.getFactory(cls));
+      call.addDeserializerFactory(liqn, cls, BeanSerializer.getFactory());
 
       LineItem[]     lineItems = new LineItem[numItems];
       

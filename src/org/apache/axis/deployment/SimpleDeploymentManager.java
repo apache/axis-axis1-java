@@ -104,6 +104,7 @@ public class SimpleDeploymentManager extends DeploymentRegistry {
      * Deploy the given WSDD Deployable Item
      */
     public void deployItem(DeployableItem item) throws DeploymentException {
+      System.out.println("Deploying '" +item.getQName().toString()+"', "+item);
         items.put(item.getQName().toString(), item);
     }
 

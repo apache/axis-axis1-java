@@ -64,6 +64,7 @@ import org.apache.axis.encoding.ServiceDescription;
 import org.apache.axis.utils.NSStack;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
+import org.apache.axis.utils.Debug;
 
 /** The main SOAP envelope parsing class.  This whole system is based on
  * SAX event-style parsing, and this is the core "engine".  Subclasses
@@ -134,11 +135,37 @@ public abstract class SOAPSAXHandler extends DefaultHandler
                                                                    context);
             }
             
+            /** We're about to create a body element.  So we really need
+             * to know at this point if this is an RPC service or not.  It's
+             * possible that no one has set the service up until this point,
+             * so if that's the case we should attempt to set it based on the
+             * namespace of the first body element without an ID (assuming
+             * that ID'ed attributes are multi-ref encodings).  Setting the
+             * service may (should?) result in setting the service
+             * description, which can then tell us what to create.
+             */
+            String id = attributes.getValue("id");
+
+            if (id == null &&
+                context.getMessageContext().getServiceHandler() == null) {
+                Debug.Print(2, "Dispatching to body namespace '",
+                            namespace, "'");
+                context.getMessageContext().setTargetService(namespace);
+            }
+            
+            /** Now we make a plain SOAPBodyElement IF we either:
+             * a) have an ID attribute, or
+             * b) have a non-RPC service
+             */
             ServiceDescription serviceDesc = context.getServiceDescription();
-            if ((serviceDesc != null) && (!serviceDesc.isRPC())) {
+            if (((serviceDesc != null) &&
+                (!serviceDesc.isRPC())) ||
+                (id != null)) {
                 return new SOAPBodyElement(namespace, localName, attributes, context);
             }
 
+            /** We're RPC, so make an RPCElement.
+             */
             RPCElement body = (RPCElement) 
                 RPCElement.getFactory().createElement(namespace,
                                                      localName,
@@ -149,26 +176,17 @@ public abstract class SOAPSAXHandler extends DefaultHandler
         }
     }
 
-    /** These guys know how to create the right MessageElements (and thus
-     * sub-handlers) for particular XML elements.  Right now the headers
-     * can be registered (see DebugHeader for an example), but the bodies
-     * are fixed as RPCElements.
-     */
-    
     // Header factory.
     ElementRegistry headerRegistry =
                             new ElementRegistry(SOAPHeader.factory());
     
-    // Body factory. Only doing rpc bodies for right now...
+    // Body factory.
     ElementFactory bodyFactory = new BodyFactory();
 
     public SOAPSAXHandler(MessageContext msgContext)
     {
         envelope = new SOAPEnvelope(this);
         this.context = new DeserializationContext(this,msgContext);
-
-        // just testing...
-        headerRegistry.registerFactory(Constants.URI_DEBUG, "Debug", DebugHeader.getFactory());
     }
     
     public int getState()
@@ -449,7 +467,6 @@ public abstract class SOAPSAXHandler extends DefaultHandler
                 return false;
             }
             
-            context.addFixupHandler(href.substring(1), elementHandler);
             return false;
         }
 
@@ -587,23 +604,8 @@ public abstract class SOAPSAXHandler extends DefaultHandler
                 
                 element.setEnvelope(envelope);
                 element.setPrefix(namespaces.getPrefix(namespace));
-                
-                DeserializerBase handler = null;
-                if (context.unresolvedHrefs() && (element.getID() != null)) {
-                    handler = context.getHandlerForID(element.getID());
-                    if (handler == null) {
-                        handler = element.getContentHandler();
-                    }  else {
-                        if (DEBUG_LOG) {
-                            System.out.println("found handler for ID " + element.getID() + " : " + handler);
-                        }
-                        element.setContentHandler(handler);
-                    }
-                } else {
-                    handler = element.getContentHandler();
-                }
-                
-                pushElementHandler(handler);
+
+                pushElementHandler(element.getContentHandler());
 
                 elementHandler.setDeserializationContext(context);
                 

@@ -63,6 +63,7 @@ import org.apache.axis.utils.events.*;
 import org.apache.axis.message.*;
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 import org.xml.sax.*;
 import org.xml.sax.helpers.AttributesImpl;
 import java.io.*;
@@ -71,30 +72,11 @@ import java.io.*;
  * @author James Snell (jasnell@us.ibm.com)
  * @author Sam Ruby (rubys@us.ibm.com)
  */
-public class TypeMappingRegistry implements Serializer, Serializable { 
-
-    // default location for save/load
-    private String fileName = null;
-
-    /**
-     * Constructor for persistent registries
-     */
-    public TypeMappingRegistry(String fileName) {
-        this();
-        this.fileName = fileName;
-    }
-
+public class TypeMappingRegistry implements Serializer { 
     /**
      * Default constructor (transient registry)
      */
     public TypeMappingRegistry() {}
-
-    /**
-     * Init (ie. load settings...)
-     */
-    public void init() {
-       load();
-    }
 
     static class SerializerDescriptor implements Serializable {
         QName typeQName;
@@ -119,6 +101,11 @@ public class TypeMappingRegistry implements Serializer, Serializable {
     TypeMappingRegistry parent = null;
     Hashtable s;
     Hashtable d;
+    
+    public boolean isEmpty()
+    {
+      return (d == null || d.isEmpty());
+    }
     
     /**
      * Define a "parent" TypeMappingRegistry that will be used to service
@@ -150,7 +137,6 @@ public class TypeMappingRegistry implements Serializer, Serializable {
                               Serializer serializer) {
         if (s == null) s = new Hashtable();
         s.put(_class, new SerializerDescriptor(qName, serializer));
-        save();
     }
     
     public void addDeserializerFactory(QName qname,
@@ -158,7 +144,6 @@ public class TypeMappingRegistry implements Serializer, Serializable {
                                        DeserializerFactory deserializerFactory) {
         if (d == null) d= new Hashtable();
         d.put(qname, new DeserializerDescriptor(_class, deserializerFactory));
-        save();
     }
 
     public Serializer getSerializer(Class _class) {
@@ -192,7 +177,7 @@ public class TypeMappingRegistry implements Serializer, Serializable {
         if (d != null) {
             DeserializerDescriptor desc = (DeserializerDescriptor)d.get(qname);
             if ((desc != null) && (desc.factory != null))
-               return desc.factory.getDeserializer();
+               return desc.factory.getDeserializer(desc.cls);
         }
         if (parent != null) return parent.getDeserializer(qname);
         return null;
@@ -200,12 +185,10 @@ public class TypeMappingRegistry implements Serializer, Serializable {
     
     public void removeSerializer(Class _class) {
         if (s != null) s.remove(_class);
-        save();
     }
     
     public void removeDeserializer(QName qname) {
         if (d != null) d.remove(qname);
-        save();
     }
     
     public boolean hasSerializer(Class _class) {
@@ -218,38 +201,6 @@ public class TypeMappingRegistry implements Serializer, Serializable {
         if (d != null && d.containsKey(qname)) return true;
         if (parent != null) return parent.hasDeserializer(qname);
         return false;
-    }
-    
-    public void save() {
-        if (fileName == null) return;
-        
-        try {
-            FileOutputStream out = new FileOutputStream(fileName);
-            Hashtable reg = new Hashtable();
-            if (s!=null) reg.put("SERIALIZERS", s);
-            if (d!=null) reg.put("DESERIALIZERS", d);
-            ObjectOutputStream oos = new ObjectOutputStream(out);
-            oos.writeObject(reg);
-            oos.close();
-        } catch (Exception e) {
-            e.printStackTrace( System.err );
-        }
-    }
-    
-    private void load() {
-        if (fileName == null) return;
-
-        try {
-            FileInputStream in = new FileInputStream(fileName);
-            ObjectInputStream ois = new ObjectInputStream(in);
-            Hashtable reg = (Hashtable)ois.readObject();
-            s = (Hashtable)reg.get("SERIALIZERS");
-            d = (Hashtable)reg.get("DESERIALIZERS");
-            ois.close();
-        } catch (FileNotFoundException fnfe) {
-        } catch (Exception e) {
-            e.printStackTrace( System.err );
-        }
     }
     
     public Attributes setTypeAttribute(Attributes attributes, QName type,
@@ -289,8 +240,6 @@ public class TypeMappingRegistry implements Serializer, Serializable {
     
     public void dump(PrintStream out, String header) {
         out.println(header);
-        if (fileName != null) 
-           out.println("  File: " + fileName);
         out.println("  Deserializers:");
         if (d != null) {
             java.util.Enumeration e = d.keys();
@@ -303,5 +252,81 @@ public class TypeMappingRegistry implements Serializer, Serializable {
         }
         if (parent != null)
             parent.dump(out, "Parent");
+    }
+
+    public static final QName typeMappingQName = new QName("axis",
+                                                           "typeMapping");
+    
+    public void dumpToSerializationContext(SerializationContext ctx)
+      throws IOException
+    {
+      if (d == null) {
+        return;
+      }
+      
+      Enumeration enum = d.keys();
+      while (enum.hasMoreElements()) {
+        QName typeQName = (QName)enum.nextElement();
+        DeserializerDescriptor desc = 
+                                    (DeserializerDescriptor)d.get(typeQName);
+        if (desc.cls == null)
+          continue;
+
+        AttributesImpl attrs = new AttributesImpl();
+        attrs.addAttribute("", "type", "type",
+                           "CDATA", ctx.qName2String(typeQName));
+        attrs.addAttribute("", "class", "class",
+                           "CDATA", desc.cls.getName());
+        
+        String dser = desc.factory.getClass().getName();
+        attrs.addAttribute("", "dser", "dser",
+                           "CDATA", dser);
+        
+        SerializerDescriptor serDesc = (SerializerDescriptor)s.get(desc.cls);
+        if (serDesc != null) {
+          attrs.addAttribute("", "ser", "ser",
+                             "CDATA",
+          serDesc.serializer.getClass().getName());
+        }
+        
+        ctx.startElement(typeMappingQName, attrs);
+        ctx.endElement();
+      }
+    }
+
+    public void dumpToElement(Element root)
+    {
+      if ((d == null) || (parent == null)) {
+        return;
+      }
+
+      Document doc = root.getOwnerDocument();
+      
+      Enumeration enum = d.keys();
+      while (enum.hasMoreElements()) {
+        QName typeQName = (QName)enum.nextElement();
+        DeserializerDescriptor desc = 
+                                    (DeserializerDescriptor)d.get(typeQName);
+        if (desc.cls == null)
+          continue;
+        
+        Element mapEl = doc.createElement("typeMapping");
+
+        mapEl.setAttribute("type", "ns:" + typeQName.getLocalPart());
+        mapEl.setAttribute("xmlns:ns", typeQName.getNamespaceURI());
+        
+        mapEl.setAttribute("classname", desc.cls.getName());
+        
+        String dser = desc.factory.getClass().getName();
+        mapEl.setAttribute("deserializerFactory", dser);
+        
+        SerializerDescriptor serDesc = (SerializerDescriptor)s.get(desc.cls);
+        if (serDesc != null) {
+          mapEl.setAttribute("serializer", serDesc.serializer.
+                                                   getClass().getName());
+        }
+
+        root.appendChild(mapEl);
+      }
     }
 }

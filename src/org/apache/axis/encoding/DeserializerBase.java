@@ -57,6 +57,8 @@ package org.apache.axis.encoding;
 
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
+
+import org.apache.axis.Constants;
 import org.apache.axis.message.*;
 
 import java.util.*;
@@ -206,7 +208,7 @@ public class DeserializerBase extends DefaultHandler
         this.context = context;
     }
     
-    /** Base-class startElement() handler.  Deals with HREFs
+    /** Base-class startElement() handler.
      */
     public void startElement(String namespace, String localName,
                              String qName, Attributes attributes)

@@ -94,6 +94,6 @@ public class BooleanDeserializerFactory implements DeserializerFactory {
         }
     }
 
-    public DeserializerBase getDeserializer() { return new BooleanDeser(); }
+    public DeserializerBase getDeserializer(Class cls) { return new BooleanDeser(); }
 
 }

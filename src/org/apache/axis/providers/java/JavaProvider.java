@@ -220,6 +220,13 @@ public abstract class JavaProvider extends BasicProvider {
                 new SOAPEnvelope() :
                 (SOAPEnvelope)resMsg.getAsSOAPEnvelope();
             
+            /** If the class knows what it should be exporting,
+             * respect its wishes.
+             */
+            if (obj instanceof AxisServiceConfig) {
+              methodName = ((AxisServiceConfig)obj).getMethods();
+            }
+            
             processMessage(msgContext, serviceName, methodName, reqEnv, resEnv, jc, obj);
             
             if (resMsg == null) {

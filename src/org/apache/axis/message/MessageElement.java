@@ -60,8 +60,10 @@ import org.xml.sax.*;
 import org.xml.sax.helpers.AttributesImpl;
 import org.w3c.dom.*;
 import org.apache.axis.Constants;
+import org.apache.axis.AxisFault;
 import org.apache.axis.message.events.*;
 import org.apache.axis.encoding.*;
+import org.apache.axis.utils.Debug;
 import org.apache.axis.utils.QName;
 import org.apache.axis.utils.DOM2Writer;
 import java.util.*;
@@ -172,29 +174,61 @@ public class MessageElement extends DeserializerBase
     {
         return null;
     }
+    
+    public MessageElement getRealElement()
+    {
+      if (href == null)
+        return this;
+      
+      return context.getElementByID(href.substring(1));
+    }
 
     public Object getValue()
     {
-        if (value instanceof ElementRecorder) {
-            // !!! Lazy deserialization here... We have the SAX events,
-            //     but haven't run them through a deserializer yet.
-            StringWriter xml = new StringWriter();
-            try {
-               SerializationContext xmlContext = new SerializationContext(xml, context.getMessageContext());
-               ((ElementRecorder)value).outputChildren(xmlContext);
-            } catch (Exception e) {
-               if (DEBUG_LOG) e.printStackTrace();
-               return null;
-            }
-            return xml.getBuffer().toString();
+        if (value != null)
+            return value;
+        
+        if (href != null) {
+            return getRealElement().getValue();
         }
         
         if (deserializer != null) {
             value = deserializer.getValue();
             deserializer = null;
+        } else {
+            // No attached deserializer, try it as a String...
+            try {
+                value = getValueAsType(SOAPTypeMappingRegistry.XSD_STRING);
+            } catch (AxisFault fault) {
+                Debug.Print(1, "Couldn't deserialize as String : " + fault);
+            }
         }
         
         return value;
+    }
+
+    public Object getValueAsType(QName typeQName) throws AxisFault
+    {
+      MessageElement realEl = getRealElement();
+      
+      if (realEl.typeQName != null) {
+          if (!realEl.typeQName.equals(typeQName))
+            throw new AxisFault("Couldn't convert " + realEl.typeQName +
+                                " to requested type " + typeQName);
+          return getValue();
+      }
+      
+      DeserializerBase dser = realEl.context.getDeserializer(typeQName);
+      if (dser == null)
+        throw new AxisFault("No deserializer for type " + typeQName);
+      
+      try {
+        realEl.publishToHandler(dser);
+      } catch (SAXException e) {
+        throw new AxisFault(e);
+      }
+      
+      return dser.getValue();
     }
     
     public void startElement(String namespace, String localName,
@@ -258,6 +292,14 @@ public class MessageElement extends DeserializerBase
     public DeserializerBase getContentHandler()
     {
         if (isDeserializing()) {
+          
+          if (href != null) {
+            deserializer = context.getElementByID(href.substring(1));
+            System.out.println("Got href dser " + deserializer);
+            if (deserializer != null)
+              return deserializer;
+          }
+          
             // Look up type and return an appropriate deserializer
             if ((typeQName != null) && (deserializer == null)) {
                 deserializer = context.getDeserializer(typeQName);
@@ -279,9 +321,8 @@ public class MessageElement extends DeserializerBase
         if (DEBUG_LOG) {
             System.err.println("Creating recorder for " + this.getName());
         }
-        value = new ElementRecorder();
-        recorder = (ElementRecorder)value;
-        return (ElementRecorder)value;
+        recorder = new ElementRecorder();
+        return recorder;
     }
     
     public void setContentHandler(DeserializerBase handler)

@@ -131,7 +131,7 @@ public class TestSerializedRPC extends TestCase {
      */
     public void testSerReverseData() throws Exception {
         BeanSerializer ser = new BeanSerializer(Data.class);
-        DeserializerFactory dSerFactory = ser.getFactory(Data.class);
+        DeserializerFactory dSerFactory = BeanSerializer.getFactory();
         QName qName = new QName("urn:foo", "Data");
         engine.registerTypeMapping(qName, Data.class, dSerFactory,
                                    ser);

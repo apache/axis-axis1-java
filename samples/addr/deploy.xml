@@ -17,10 +17,10 @@
     <option name="scope" value="Session" />
   </service>
 
-  <bean xmlns:book2="urn:AddressFetcher2">
+  <beanMappings xmlns:book2="urn:AddressFetcher2">
     <book2:Address       classname="samples.addr.Address"/>
     <book2:PhoneNumber      classname="samples.addr.PhoneNumber"/>
-  </bean>
+  </beanMappings>
 
 <!--
 Commented out this test for now. This seems to conflict somehow with the first
@@ -36,10 +36,10 @@ See commented-out code in Main.main() - RobJ
     <option name="scope" value="Application" />
   </service>
 
-  <bean xmlns:book3="urn:AddressFetcher3">
+  <beanMappings xmlns:book3="urn:AddressFetcher3">
     <book3:Address       classname="samples.addr.Address"/>
     <book3:PhoneNumber      classname="samples.addr.PhoneNumber"/>
-  </bean>
+  </beanMappings>
 -->
 
 </m:deploy>

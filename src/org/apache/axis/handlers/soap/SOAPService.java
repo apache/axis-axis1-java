@@ -85,6 +85,10 @@ public class SOAPService extends SimpleTargetedChain
      */
     private TypeMappingRegistry typeMap;
     
+    /** Our service description
+     */
+    private ServiceDescription serviceDescription;
+    
     /** Standard, no-arg constructor.
      */
     public SOAPService()
@@ -101,6 +105,16 @@ public class SOAPService extends SimpleTargetedChain
     public void setTypeMappingRegistry(TypeMappingRegistry map)
     {
         typeMap = map;
+    }
+    
+    public ServiceDescription getServiceDescription()
+    {
+      return serviceDescription;
+    }
+    
+    public void setServiceDescription(ServiceDescription sd)
+    {
+      serviceDescription = sd;
     }
     
     /** Convenience constructor for wrapping SOAP semantics around
@@ -188,6 +202,12 @@ public class SOAPService extends SimpleTargetedChain
       Element  root = doc.createElement( "service" );
 
       fillInDeploymentData(root);
+      
+      if (!getTypeMappingRegistry().isEmpty()) {
+        Element elem = doc.createElement("typeMappings");
+        getTypeMappingRegistry().dumpToElement(elem);
+        root.appendChild(elem);
+      }
       
       Debug.Print( 1, "Exit: SOAPService::getDeploymentData" );
       return( root );

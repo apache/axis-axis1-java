@@ -93,18 +93,6 @@ public class MsgProvider extends JavaProvider {
         Class[]         argClasses = new Class[2];
         Object[]        argObjects = new Object[2];
         
-        /** !!! KLUDGE WARNING
-         * We need some way of associating ServiceDescriptions with actual
-         * services... and then at the point when we figure out which service
-         * we'll be calling (which might be right away (static dispatch), after
-         * looking at the URL (transport-level dispatch), or even after looking
-         * into the SOAP message itself...)
-         */
-        if (clsName.equals("org.apache.axis.utils.Admin")) {
-            ServiceDescription sd = new ServiceDescription("Admin", false);
-            msgContext.setServiceDescription(sd);
-        }
-        
         SOAPBodyElement reqBody = reqEnv.getFirstBody();
         
         StringWriter writer = new StringWriter();
