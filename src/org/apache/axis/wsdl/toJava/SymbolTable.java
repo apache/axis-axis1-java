@@ -91,6 +91,7 @@ import javax.wsdl.extensions.soap.SOAPBinding;
 import javax.wsdl.extensions.soap.SOAPBody;
 
 import javax.xml.rpc.holders.BooleanHolder;
+import javax.xml.rpc.holders.IntHolder;
 
 import org.apache.axis.Constants;
 
@@ -607,7 +608,9 @@ public class SymbolTable {
                 // Flow to here indicates no type= or ref= attribute.
                 
                 // See if this is an array or simple type definition.
-                QName arrayEQName = SchemaUtils.getArrayElementQName(node);
+                IntHolder numDims = new IntHolder();
+                numDims.value = 0;
+                QName arrayEQName = SchemaUtils.getArrayElementQName(node, numDims);
                 QName simpleQName = SchemaUtils.getSimpleTypeBase(node, this);
 
                 if (arrayEQName != null || simpleQName != null) {
@@ -626,9 +629,11 @@ public class SymbolTable {
 
                     // Create a defined type or element that references refType
                     String dims = "";
-                    if (arrayEQName != null) {
-                        dims = "[]";
+                    while (numDims.value > 0) {
+                        dims += "[]";
+                        numDims.value--;
                     }
+
                     TypeEntry defType = null;
                     if (isElement) {
                         if (!belowSchemaLevel) { 

@@ -522,7 +522,7 @@ public class JavaStubWriter extends JavaWriter {
                 if (p.mode == Parameter.IN) {
                     pw.print(wrapPrimitiveType(p.type, javifiedName));
                 }
-                else { // p.mode == Parameter.INOUT
+                else { 
                     pw.print(wrapPrimitiveType(p.type, javifiedName + ".value"));
                 }
             }

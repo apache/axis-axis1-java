@@ -93,42 +93,42 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
         skel.add("echoString",
                  new String[] {
                      "return",
-                     "input"
+                     "inputString"
                  });
         skel.add("echoStringArray",
                  new String[] {
                      "return",
-                     "input"
+                     "inputStringArray"
                  });
         skel.add("echoInteger",
                  new String[] {
                      "return",
-                     "input"
+                     "inputInteger"
                  });
         skel.add("echoIntegerArray",
                  new String[] {
                      "return",
-                     "input"
+                     "inputIntegerArray"
                  });
         skel.add("echoFloat",
                  new String[] {
                      "return",
-                     "input"
+                     "inputFloat"
                  });
         skel.add("echoFloatArray",
                  new String[] {
                      "return",
-                     "input"
+                     "inputFloatArray"
                  });
         skel.add("echoStruct",
                  new String[] {
                      "return",
-                     "input"
+                     "inputStruct"
                  });
         skel.add("echoStructArray",
                  new String[] {
                      "return",
-                     "input"
+                     "inputStructArray"
                  });
         skel.add("echoVoid",
                  new String[] {
@@ -136,42 +136,37 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
         skel.add("echoBase64",
                  new String[] {
                      "return",
-                     "input"
+                     "inputBase64"
                  });
         skel.add("echoHexBinary",
                  new String[] {
                      "return",
-                     "input"
+                     "inputHexBinary"
                  });
         skel.add("echoDate",
                  new String[] {
                      "return",
-                     "input"
+                     "inputDate"
                  });
         skel.add("echoDecimal",
                  new String[] {
                      "return",
-                     "input"
-                 });
-        skel.add("echoMapArray",
-                 new String[] {
-                     "return",
-                     "input"
+                     "inputDecimal"
                  });
         skel.add("echoBoolean",
                  new String[] {
                      "return",
-                     "input"
+                     "inputBoolean"
                  });
         skel.add("echoMap",
                  new String[] {
                      "return",
-                     "input"
+                     "inputMap"
                  });
         skel.add("echoMapArray",
                  new String[] {
                      "return",
-                     "input"
+                     "inputMapArray"
                  });
         skel.add("echoStructAsSimpleTypes",
                  new String[] {
@@ -335,7 +330,7 @@ public class EchoService implements org.apache.axis.wsdl.Skeleton {
         return s ;
     }
 
-    public java.lang.String[] echo2DStringArray(java.lang.String[] input2DStringArray) {
+    public java.lang.String[][] echo2DStringArray(java.lang.String[][] input2DStringArray) {
         return input2DStringArray ;
     }
 

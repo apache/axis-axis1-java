@@ -13,32 +13,72 @@
     <namespace>http://soapinterop.org/</namespace>
     <parameter name="className" value="samples.echo.EchoService" />
     <parameter name="allowedMethods" value="*" />
-    <beanMapping xmlns:echo="http://soapinterop.org/xsd" qname="echo:SOAPStructStruct"
-      languageSpecificType="java:samples.echo.SOAPStructStruct"/>    
-    <beanMapping xmlns:echo="http://soapinterop.org/xsd" qname="echo:SOAPArrayStruct"
-      languageSpecificType="java:samples.echo.SOAPArrayStruct"/>   
-    <beanMapping xmlns:echo="http://soapinterop.org/xsd" qname="echo:SOAPStruct"
-      languageSpecificType="java:samples.echo.SOAPStruct"/>    
-    <typeMapping xmlns:echo="http://soapinterop.org/xsd"
-      qname="echo:ArrayOfSOAPStruct"
-      type="java:samples.echo.SOAPStruct[]"
-      serializer="org.apache.axis.encoding.ser.ArraySerializerFactory"
-      deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory" />
-    <typeMapping xmlns:echo="http://soapinterop.org/xsd"
-      qname="echo:ArrayOfstring"
-      type="java:java.lang.String[]"
-      serializer="org.apache.axis.encoding.ser.ArraySerializerFactory"
-      deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory" />
-    <typeMapping xmlns:echo="http://soapinterop.org/xsd"
-      qname="echo:ArrayOfint"
-      type="java:int[]"
-      serializer="org.apache.axis.encoding.ser.ArraySerializerFactory"
-      deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory" />
-    <typeMapping xmlns:echo="http://soapinterop.org/xsd"
-      qname="echo:ArrayOffloat"
-      type="java:float[]"
-      serializer="org.apache.axis.encoding.ser.ArraySerializerFactory"
-      deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory" />
+
+      <typeMapping
+        xmlns:ns="http://soapinterop.org/xsd"
+        qname="ns:ArrayOfstring"
+        type="java:java.lang.String[]"
+        serializer="org.apache.axis.encoding.ser.ArraySerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://soapinterop.org/xsd"
+        qname="ns:ArrayOfString2D"
+        type="java:java.lang.String[][]"
+        serializer="org.apache.axis.encoding.ser.ArraySerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://soapinterop.org/xsd"
+        qname="ns:ArrayOfint"
+        type="java:int[]"
+        serializer="org.apache.axis.encoding.ser.ArraySerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://soapinterop.org/xsd"
+        qname="ns:ArrayOffloat"
+        type="java:float[]"
+        serializer="org.apache.axis.encoding.ser.ArraySerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://soapinterop.org/xsd"
+        qname="ns:SOAPStruct"
+        type="java:samples.echo.SOAPStruct"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://soapinterop.org/xsd"
+        qname="ns:ArrayOfSOAPStruct"
+        type="java:samples.echo.SOAPStruct[]"
+        serializer="org.apache.axis.encoding.ser.ArraySerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://soapinterop.org/xsd"
+        qname="ns:SOAPStructStruct"
+        type="java:samples.echo.SOAPStructStruct"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="http://soapinterop.org/xsd"
+        qname="ns:SOAPArrayStruct"
+        type="java:samples.echo.SOAPArrayStruct"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+
     <requestFlow>
         <handler type="java:samples.echo.echoHeaderStringHandler"/>
         <handler type="java:samples.echo.echoHeaderStructHandler"/>

@@ -62,6 +62,7 @@ import javax.wsdl.QName;
 import javax.wsdl.Fault;
 import javax.wsdl.Message;
 import javax.xml.rpc.holders.BooleanHolder;
+import javax.xml.rpc.holders.IntHolder;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.Collator;
@@ -504,13 +505,16 @@ public class SchemaUtils {
     /**
      * If the specified node represents an array encoding of one of the following
      * forms, then return the qname repesenting the element type of the array.
+     * @param node is the node
+     * @param dims is the output value that contains the number of dimensions if return is not null
+     * @return QName or null
      */
-    public static QName getArrayElementQName(Node node) {
+    public static QName getArrayElementQName(Node node, IntHolder dims) {
+        dims.value = 1;  // assume 1 dimension
         QName qName = getCollectionElementQName(node);
-        if (qName == null)
-            qName = getArrayElementQName_JAXRPC(node);
-        // if (qName == null)
-        //   qName = getArrayElementQName_nonJAXRPC(node);
+        if (qName == null) {
+            qName = getArrayElementQName_JAXRPC(node, dims);
+        }
         return qName;
     }
 
@@ -550,6 +554,10 @@ public class SchemaUtils {
      * If the specified node represents an array encoding of one of the following
      * forms, then return the qname repesenting the element type of the array.
      *
+     * @param node is the node
+     * @param dims is the output value that contains the number of dimensions if return is not null
+     * @return QName or null
+     *
      * JAX-RPC Style 2:
      *<xsd:complexType name="hobbyArray">
      *  <xsd:complexContent>
@@ -571,7 +579,8 @@ public class SchemaUtils {
      *</xsd:complexType>
      *
      */
-    private static QName getArrayElementQName_JAXRPC(Node node) {
+    private static QName getArrayElementQName_JAXRPC(Node node, IntHolder dims) {
+        dims.value = 0;  // Assume 0
         if (node == null) {
             return null;
         }
@@ -657,41 +666,47 @@ public class SchemaUtils {
                     if (kind != null &&
                         kind.getLocalPart().equals("attribute") &&
                         Constants.isSchemaXSD(kind.getNamespaceURI())) {
-                        attributeNode = children.item(j);
+                        // If the attribute node does not have ref="soapenc:arrayType"
+                        // then keep looking.
+                        QName refQName = Utils.getNodeTypeRefQName(children.item(j), "ref");
+                        if (refQName != null &&
+                            refQName.getLocalPart().equals("arrayType") &&
+                            Constants.isSOAP_ENC(refQName.getNamespaceURI())) {
+                            attributeNode = children.item(j);
+                        }
                     }
                 }
             }
 
-            // If there is an attribute node, it must have a ref of soapenc:array and
-            // a wsdl:arrayType attribute.
+            // If there is an attribute node, look at wsdl:arrayType to get the element type
             if (attributeNode != null) {
-                QName refQName = Utils.getNodeTypeRefQName(attributeNode, "ref");
-                if (refQName != null &&
-                    refQName.getLocalPart().equals("arrayType") &&
-                    Constants.isSOAP_ENC(refQName.getNamespaceURI()))
-                    ; // Okay
-                else
-                    refQName = null;  // Did not find ref="soapenc:arrayType"
-
                 String wsdlArrayTypeValue = null;
-                if (refQName != null) {
-                    Vector attrs = Utils.getAttributesWithLocalName(attributeNode, "arrayType");
-                    for (int i=0; i < attrs.size() && wsdlArrayTypeValue == null; i++) {
-                        Node attrNode = (Node) attrs.elementAt(i);
-                        String attrName = attrNode.getNodeName();
-                        QName attrQName = Utils.getQNameFromPrefixedName(attributeNode, attrName);
-                        if (Constants.isWSDL(attrQName.getNamespaceURI())) {
-                            wsdlArrayTypeValue = attrNode.getNodeValue();
-                        }
+                Vector attrs = Utils.getAttributesWithLocalName(attributeNode, "arrayType");
+                for (int i=0; i < attrs.size() && wsdlArrayTypeValue == null; i++) {
+                    Node attrNode = (Node) attrs.elementAt(i);
+                    String attrName = attrNode.getNodeName();
+                    QName attrQName = Utils.getQNameFromPrefixedName(attributeNode, attrName);
+                    if (Constants.isWSDL(attrQName.getNamespaceURI())) {
+                        wsdlArrayTypeValue = attrNode.getNodeValue();
                     }
                 }
-                
-                // The value should have [] on the end, strip these off.
-                // The convert the prefixed name into a qname, and return
+
+                // The value could have any number of [] or [,] on the end
+                // Strip these off to get the prefixed name.
+                // The convert the prefixed name into a qname.
+                // Count the number of [ and , to get the dim information.
                 if (wsdlArrayTypeValue != null) {
-                    int i = wsdlArrayTypeValue.indexOf("[");
+                    int i = wsdlArrayTypeValue.indexOf('[');
                     if (i > 0) {
                         String prefixedName = wsdlArrayTypeValue.substring(0,i);
+                        String mangledString = wsdlArrayTypeValue.replace(',', '[');
+                        dims.value = 0;
+                        int index = mangledString.indexOf('[');
+                        while (index > 0) {
+                            dims.value++;
+                            index = mangledString.indexOf('[',index+1);
+                        }
+                        
                         return Utils.getQNameFromPrefixedName(restrictionNode, prefixedName);
                     }
                 }
@@ -716,6 +731,7 @@ public class SchemaUtils {
                     if (maxOccursValue != null &&
                         maxOccursValue.equalsIgnoreCase("unbounded")) {
                         // Get the QName of just the type
+                        dims.value = 1;
                         return Utils.getNodeTypeRefQName(elementNode, "type");
                     }
                 }
@@ -725,95 +741,5 @@ public class SchemaUtils {
         return null;
     }
 
-    /**
-     * If the specified node represents an array encoding of one of the following
-     * forms, then return the qname repesenting the element type of the array.
-     *
-     * Microsoft Encoding #1:
-     *<xsd:complexType name="billArray">
-     *      <xsd:sequence>
-     *        <xsd:element name="alias" type="xsd:string" maxOccurs="unbounded"/>
-     *      </xsd:sequence>
-     *</xsd:complexType>
-     *
-     * Microsoft Encoding #2:
-     *<xsd:complexType name="gatesArray">
-     *        <xsd:element name="alias" type="xsd:string" maxOccurs="unbounded"/>
-     *</xsd:complexType>
-     *
-     */
-    private static QName getArrayElementQName_nonJAXRPC(Node node) {
-        if (node == null) {
-            return null;
-        }
-
-        // If the node kind is an element, dive into it.
-        QName nodeKind = Utils.getNodeQName(node);
-        if (nodeKind != null &&
-            nodeKind.getLocalPart().equals("element") &&
-            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
-            NodeList children = node.getChildNodes();
-            Node complexNode = null;
-            for (int j = 0; j < children.getLength() && complexNode == null; j++) {
-                QName complexKind = Utils.getNodeQName(children.item(j));
-                if (complexKind != null &&
-                    complexKind.getLocalPart().equals("complexType") &&
-                    Constants.isSchemaXSD(complexKind.getNamespaceURI())) {
-                    complexNode = children.item(j);
-                    node = complexNode;
-                }
-            }
-        }
-        // Get the node kind, expecting a schema complexType
-        nodeKind = Utils.getNodeQName(node);
-        if (nodeKind != null &&
-            nodeKind.getLocalPart().equals("complexType") &&
-            Constants.isSchemaXSD(nodeKind.getNamespaceURI())) {
-
-            // Inder the complexType there could be a group node.
-            // (There may be other #text nodes, which we will ignore).
-            NodeList children = node.getChildNodes();
-            Node groupNode = null;
-            for (int j = 0;
-                 j < children.getLength() && groupNode == null;
-                 j++) {
-                QName kind = Utils.getNodeQName(children.item(j));
-                if (kind != null &&
-                           (kind.getLocalPart().equals("sequence") ||
-                            kind.getLocalPart().equals("all")) &&
-                           Constants.isSchemaXSD(kind.getNamespaceURI())) {
-                    groupNode = children.item(j);
-                }
-            }
-
-            // If a group node, a single element should be underneath
-            if (groupNode != null) {
-                children = groupNode.getChildNodes();
-            }
-
-            // Now get the element node.  There can only be one element node.      
-            Node elementNode = null;
-            int elementNodeCount = 0;
-            for (int i=0; i < children.getLength(); i++) {
-                QName elementKind = Utils.getNodeQName(children.item(i));
-                if (elementKind != null &&
-                    elementKind.getLocalPart().equals("element") &&
-                    Constants.isSchemaXSD(elementKind.getNamespaceURI())) {
-                    elementNode = children.item(i);
-                    elementNodeCount++;
-                }
-            }
-
-            // The single element node should have maxOccurs="unbounded" and a type
-            if (elementNodeCount == 1) {
-                String maxOccursValue = Utils.getAttribute(elementNode, "maxOccurs");
-                if (maxOccursValue != null &&
-                    maxOccursValue.equalsIgnoreCase("unbounded")) {
-                    return Utils.getNodeTypeRefQName(elementNode, "type");
-                }
-            }
-        }
-        return null;
-    }
 
 }

@@ -61,18 +61,22 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Node;
 
 /**
- * QName class represents a qualified name based on "Namespaces in XML" specification. A QName is represented as: 
+ * QName class represents a qualified name based on "Namespaces in XML" specification. 
+ * A QName is represented as: 
  * QName ::= (Prefix ':') ? LocalPart 
  *
+ * Upgraded the implementation so that the namespaceURI and localPart are
+ * always non-null.  This simplifies the implementation, increases performance,
+ * and cleans up NullPointerException problems.
  * @version 0.1
  */
 public class QName {
 
     /** Field namespaceURI           */
-    private String namespaceURI = null;
+    private String namespaceURI = "";
 
     /** Field localPart           */
-    private String localPart = null;
+    private String localPart = "";
 
     /**
      * Constructor for the QName.
@@ -126,6 +130,8 @@ public class QName {
      * @param localPart
      */
     public void setLocalPart(String localPart) {
+        if (localPart == null)
+            localPart = "";
         this.localPart = localPart;
     }
 
@@ -145,7 +151,7 @@ public class QName {
      */
     public String toString() {
 
-        if (namespaceURI == null || namespaceURI.equals("")) {
+        if (namespaceURI.equals("")) {
             return localPart;
         } else {
             return namespaceURI + ":" + localPart;
@@ -160,31 +166,19 @@ public class QName {
      * @return true if this object is the same as the obj argument; false otherwise.
      */
     public boolean equals(Object p1) {
+        if (p1 == this) {
+            return true;
+        }
 
         if (!(p1 instanceof QName)) {
             return false;
         }
 
-        if (namespaceURI == null) {
-            if (((QName) p1).namespaceURI != null) {
-                return false;
-            }
-        } else {
-            if (!namespaceURI.equals(((QName) p1).namespaceURI)) {
-                return false;
-            }
+        if (namespaceURI.equals(((QName)p1).namespaceURI) &&
+            localPart.equals(((QName)p1).localPart)) {
+            return true;
         }
-
-        if (localPart == null) {
-            if (((QName) p1).localPart != null) {
-                return false;
-            }
-            else {
-                return true;
-            }
-        }
-
-        return localPart.equals(((QName) p1).localPart);
+        return false;
     }
 
     /**
@@ -193,20 +187,7 @@ public class QName {
      * @return a hash code value for this Qname object
      */
     public int hashCode() {
-        if (namespaceURI == null) {
-            if (localPart == null) {
-                return 0;
-            }
-            else {
-                return localPart.hashCode();
-            }
-        }
-        else if (localPart == null) {
-            return namespaceURI.hashCode();
-        }
-        else {
-            return namespaceURI.hashCode() ^ localPart.hashCode();
-        }
+        return namespaceURI.hashCode() ^ localPart.hashCode();
     }
 
     // temporary!!
