@@ -53,49 +53,23 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.encoding.ser;
+package org.apache.axis.attachments;
 
-import org.apache.axis.attachments.OctetStream;
+public class OctetStream {
+    private byte[] bytes = null;
 
-import javax.mail.internet.MimeMultipart;
-import javax.xml.namespace.QName;
-import javax.xml.transform.Source;
-import java.awt.*;
-
-/**
- * A JAFDataHandlerSerializer Factory
- *
- *  @author Rich Scheuerle (scheu@us.ibm.com)
- */
-public class JAFDataHandlerSerializerFactory extends BaseSerializerFactory {
-
-    public JAFDataHandlerSerializerFactory(Class javaType, QName xmlType) {
-        super(getSerializerClass(javaType, xmlType), xmlType, javaType);
-    }
-    public JAFDataHandlerSerializerFactory() {
-        super(JAFDataHandlerSerializer.class);
+    public OctetStream() {
     }
 
-    private static Class getSerializerClass(Class javaType, QName xmlType) {
-        Class ser;
-        if (Image.class.isAssignableFrom(javaType)) {
-            ser = ImageDataHandlerSerializer.class;
-        }
-        else if (String.class.isAssignableFrom(javaType)) {
-            ser = PlainTextDataHandlerSerializer.class;
-        }
-        else if (Source.class.isAssignableFrom(javaType)) {
-            ser = SourceDataHandlerSerializer.class;
-        }
-        else if (MimeMultipart.class.isAssignableFrom(javaType)) {
-            ser = MimeMultipartDataHandlerSerializer.class;
-        }
-        else if (OctetStream.class.isAssignableFrom(javaType)) {
-            ser = OctetStreamDataHandlerSerializer.class;
-        }
-        else {
-            ser = JAFDataHandlerSerializer.class;
-        }
-        return ser;
-    } // getSerializerClass
+    public OctetStream(byte[] bytes) {
+        this.bytes = bytes;
+    }
+
+    public byte[] getBytes() {
+        return this.bytes;
+    }
+
+    public void setBytes(byte[] bytes) {
+        this.bytes = bytes;
+    }
 }

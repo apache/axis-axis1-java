@@ -56,6 +56,7 @@
 package org.apache.axis.encoding;
 
 import org.apache.axis.Constants;
+import org.apache.axis.attachments.OctetStream;
 import org.apache.axis.encoding.ser.ArrayDeserializerFactory;
 import org.apache.axis.encoding.ser.ArraySerializerFactory;
 import org.apache.axis.encoding.ser.Base64DeserializerFactory;
@@ -366,9 +367,13 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                     new JAFDataHandlerDeserializerFactory(
                             javax.xml.transform.Source.class,
                             Constants.MIME_SOURCE));
-            myRegister(Constants.MIME_OCTETSTREAM, javax.activation.DataHandler.class,
-                    new JAFDataHandlerSerializerFactory(),
-                    new JAFDataHandlerDeserializerFactory());
+            myRegister(Constants.MIME_OCTETSTREAM, OctetStream.class,
+                    new JAFDataHandlerSerializerFactory(
+                            OctetStream.class,
+                            Constants.MIME_OCTETSTREAM),
+                    new JAFDataHandlerDeserializerFactory(
+                            OctetStream.class,
+                            Constants.MIME_OCTETSTREAM));
             myRegister(Constants.MIME_DATA_HANDLER, javax.activation.DataHandler.class,
                     new JAFDataHandlerSerializerFactory(),
                     new JAFDataHandlerDeserializerFactory());

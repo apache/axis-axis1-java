@@ -7,21 +7,23 @@
 
 package test.wsdl.interop4.groupG.mime.rpc;
 
+import org.apache.axis.attachments.OctetStream;
+
 public class AttachmentsBindingImpl implements test.wsdl.interop4.groupG.mime.rpc.AttachmentsPortType{
-    public byte[] echoAttachment(byte[] in) throws java.rmi.RemoteException {
+    public OctetStream echoAttachment(OctetStream in) throws java.rmi.RemoteException {
         return in;
     }
 
-    public byte[][] echoAttachments(byte[][] in) throws java.rmi.RemoteException {
+    public OctetStream echoAttachments(OctetStream in) throws java.rmi.RemoteException {
         return in;
     }
 
-    public byte[] echoAttachmentAsBase64(byte[] in) throws java.rmi.RemoteException {
-        return in;
+    public byte[] echoAttachmentAsBase64(OctetStream in) throws java.rmi.RemoteException {
+        return in.getBytes();
     }
 
-    public byte[] echoBase64AsAttachment(byte[] in) throws java.rmi.RemoteException {
-        return in;
+    public OctetStream echoBase64AsAttachment(byte[] in) throws java.rmi.RemoteException {
+        return new OctetStream(in);
     }
 
 }

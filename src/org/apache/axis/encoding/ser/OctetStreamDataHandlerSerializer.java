@@ -56,46 +56,33 @@
 package org.apache.axis.encoding.ser;
 
 import org.apache.axis.attachments.OctetStream;
+import org.apache.axis.attachments.OctetStreamDataSource;
+import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.encoding.SerializationContext;
+import org.apache.commons.logging.Log;
+import org.xml.sax.Attributes;
 
-import javax.mail.internet.MimeMultipart;
+import javax.activation.DataHandler;
 import javax.xml.namespace.QName;
-import javax.xml.transform.Source;
-import java.awt.*;
+import java.io.IOException;
 
 /**
- * A JAFDataHandlerSerializer Factory
- *
- *  @author Rich Scheuerle (scheu@us.ibm.com)
+ * application/octetstream DataHandler Serializer
+ * @author Davanum Srinivas (dims@yahoo.com)
  */
-public class JAFDataHandlerSerializerFactory extends BaseSerializerFactory {
+public class OctetStreamDataHandlerSerializer extends JAFDataHandlerSerializer {
 
-    public JAFDataHandlerSerializerFactory(Class javaType, QName xmlType) {
-        super(getSerializerClass(javaType, xmlType), xmlType, javaType);
-    }
-    public JAFDataHandlerSerializerFactory() {
-        super(JAFDataHandlerSerializer.class);
-    }
+    protected static Log log =
+            LogFactory.getLog(OctetStreamDataHandlerSerializer.class.getName());
 
-    private static Class getSerializerClass(Class javaType, QName xmlType) {
-        Class ser;
-        if (Image.class.isAssignableFrom(javaType)) {
-            ser = ImageDataHandlerSerializer.class;
-        }
-        else if (String.class.isAssignableFrom(javaType)) {
-            ser = PlainTextDataHandlerSerializer.class;
-        }
-        else if (Source.class.isAssignableFrom(javaType)) {
-            ser = SourceDataHandlerSerializer.class;
-        }
-        else if (MimeMultipart.class.isAssignableFrom(javaType)) {
-            ser = MimeMultipartDataHandlerSerializer.class;
-        }
-        else if (OctetStream.class.isAssignableFrom(javaType)) {
-            ser = OctetStreamDataHandlerSerializer.class;
-        }
-        else {
-            ser = JAFDataHandlerSerializer.class;
-        }
-        return ser;
-    } // getSerializerClass
-}
+    /**
+     * Serialize a Source DataHandler quantity.
+     */
+    public void serialize(QName name, Attributes attributes,
+                          Object value, SerializationContext context)
+            throws IOException {
+        DataHandler dh = new DataHandler(
+                new OctetStreamDataSource("source", (OctetStream) value));
+        super.serialize(name, attributes, dh, context);
+    } // serialize
+} // class PlainTextDataHandlerSerializer
