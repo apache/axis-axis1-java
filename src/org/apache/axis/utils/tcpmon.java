@@ -865,7 +865,8 @@ public class tcpmon extends JFrame {
                     }
                     if ( bufferedData != null ) {
                         inputText.append( bufferedData );
-                        s1 = bufferedData.substring( 0, 50 );
+                        int idx = bufferedData.length() < 50 ? bufferedData.length() : 50;
+                        s1 = bufferedData.substring( 0, idx );
                         int i = s1.indexOf('\n');
 
                         if ( i > 0 ) s1 = s1.substring(0, i - 1);
