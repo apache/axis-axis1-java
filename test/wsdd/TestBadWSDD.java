@@ -77,7 +77,7 @@ public class TestBadWSDD extends TestCase
         Handler h1 = server.getHandler(HANDLER_NAME);
         assertNotNull("Couldn't get logger handler from engine!", h1);
 
-        AdminClient client = new AdminClient();
+        AdminClient client = new AdminClient(true);
         String doc = header + badHandler + footer;
         ByteArrayInputStream stream = new ByteArrayInputStream(doc.getBytes());
         

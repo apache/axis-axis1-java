@@ -68,7 +68,7 @@ public class TestAdminService extends TestCase
         Handler handler = server.getHandler("other");
         assertNotNull("Couldn't get handler", handler);
 
-        AdminClient client = new AdminClient();
+        AdminClient client = new AdminClient(true);
         Call call = client.getCall();
         LocalTransport transport = new LocalTransport(server);
         transport.setRemoteService("AdminService");

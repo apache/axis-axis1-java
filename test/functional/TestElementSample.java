@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 import org.apache.axis.client.AdminClient;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.transport.http.SimpleAxisWorker;
+import org.apache.axis.utils.NetworkUtils;
 import org.apache.commons.logging.Log;
 import samples.encoding.TestElem;
 
@@ -35,13 +36,13 @@ public class TestElementSample extends TestCase {
     }
     
     public void doTestElement () throws Exception {
-        String thisHost = SimpleAxisWorker.getLocalHost();
+        String thisHost = NetworkUtils.getLocalHostname();
         String thisPort = System.getProperty("test.functional.ServicePort","8080");
 
         String[] args = {thisHost,thisPort};
         String   xml = "<x:hello xmlns:x=\"urn:foo\">a string</x:hello>";
         System.out.println("Sending : " + xml );
-        String res = new TestElem().doit(args, xml);
+        String res = TestElem.doit(args, xml);
         System.out.println("Received: " + res );
         assertEquals("TestElementSample.doit(): xml must match", res, xml);
     }
