@@ -154,13 +154,13 @@ public class JavaBeanWriter extends JavaClassWriter {
     
         try
         {
-            String comments = SchemaUtils.getTextByPath(type.getNode(), "annotation/documentation");
+            String comments = SchemaUtils.getAnnotationDocumentation(type.getNode());
             comments = getJavadocDescriptionPart(comments, false);
             if (comments != null && comments.trim().length() > 0)
             {
                 pw.println();
                 pw.println("/**");
-                pw.println(" * " + comments);
+                pw.println(comments);
                 pw.println(" */");
             }
         }
@@ -440,7 +440,8 @@ public class JavaBeanWriter extends JavaClassWriter {
             // Declare the bean element
             if (comments != null && comments.trim().length() > 0)
             {
-                String flatComments = getJavadocDescriptionPart(comments, true);
+                String flatComments = getJavadocDescriptionPart(comments, false).substring(3);
+                // it will be flat if it fits on one line
                 pw.println("    /** " + flatComments.trim() + " */");
             }
             pw.print("    private " + typeName + " " + variable + ";");
@@ -804,14 +805,18 @@ public class JavaBeanWriter extends JavaClassWriter {
                 get = "is";
             }
 
+            String comment = getJavadocDescriptionPart(documentation, false);
+            if (comment.length() > 3) {
+                // remove the " *" at the front of the first line
+                comment = comment.substring(2);
+            }
             if (enableGetters) {
                 try {
-                    String comments = "Gets the " + name + " value for this " + getClassName() + ".";
                     pw.println();
                     pw.println("    /**");
-                    pw.println("     * " + comments);
+                    pw.println("     * Gets the " + name + " value for this " + getClassName() + ".");
                     pw.println("     * ");
-                    pw.println("     * @return " + name + " " + getJavadocDescriptionPart(documentation, true));
+                    pw.println("     * @return " + name + comment);
                     pw.println("     */");
                 } catch (DOMException e) {
                     // no comment
@@ -832,12 +837,11 @@ public class JavaBeanWriter extends JavaClassWriter {
             if (enableSetters) {
                 try
                 {
-                    String comments = "Sets the " + name + " value for this " + getClassName() + ".";
                     pw.println();
                     pw.println("    /**");
-                    pw.println("     * " + comments);
+                    pw.println("     * Sets the " + name + " value for this " + getClassName() + ".");
                     pw.println("     * ");
-                    pw.println("     * @param " + name + " " + getJavadocDescriptionPart(documentation, true));
+                    pw.println("     * @param " + name + comment);
                     pw.println("     */");
                 }
                 catch (DOMException e)

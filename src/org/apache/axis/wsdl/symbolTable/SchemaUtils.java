@@ -430,6 +430,55 @@ public class SchemaUtils {
     }
 
     /**
+     * Returns the complete text of the child xsd:annotation/xsd:documentation 
+     * element from the provided node.  Only the first annotation element and 
+     * the first documentation element in the annotation element will be used.
+     * 
+     * @param root Parent node.
+     * @param path Path of element names to text of interest, delimited by "/". 
+     */
+    public static String getAnnotationDocumentation(Node typeNode) {
+        Node annotationNode = typeNode.getFirstChild();
+        while (annotationNode != null) {
+            if (isXSDNode(annotationNode, "annotation")) {
+                break;
+            }
+            annotationNode = annotationNode.getNextSibling();
+        }
+        Node documentationNode;
+        if (annotationNode != null) {
+            documentationNode = annotationNode.getFirstChild();
+            while (documentationNode != null) {
+                if (isXSDNode(documentationNode, "documentation")) {
+                    break;
+                }
+                documentationNode = documentationNode.getNextSibling();
+            }
+        } else {
+            documentationNode = null;
+        }
+        
+        // should have found the node if it exists
+        String text = "";
+        if (documentationNode != null) {
+            NodeList children = documentationNode.getChildNodes();
+            if (children != null) {
+                for (int i = 0; i < children.getLength(); i++) {
+                    Node child = children.item(i);
+                    if (child != null) {
+                        if (child.getNodeName() != null
+                                && (child.getNodeName().equals("#text")
+                                || child.getNodeName().equals("#cdata-section"))) {
+                            text += child.getNodeValue();
+                        }
+                    }
+                }
+            }
+        }
+        return text;
+    }
+
+    /**
      * Invoked by getContainedElementDeclarations to get the child element types
      * and child element names underneath a Sequence Node
      * 
@@ -571,11 +620,7 @@ public class SchemaUtils {
         QName nodeName = Utils.getNodeNameQName(elementNode);
         BooleanHolder forElement = new BooleanHolder();
         String comments = null;
-        try {
-            comments = getTextByPath(elementNode, "annotation/documentation");
-        } catch (DOMException e) {
-            // no comments
-        }
+        comments = getAnnotationDocumentation(elementNode);
         
         // The type qname is used to locate the TypeEntry, which is then
         // used to retrieve the proper java name of the type.
