@@ -5,6 +5,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.apache.axis.utils.JavaUtils;
 
+import javax.xml.rpc.holders.LongHolder;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -97,5 +98,29 @@ public class TestJavaUtils extends TestCase
         m.put("defKey", "defVal");
         ret = JavaUtils.convert(m, Hashtable.class);
         assertTrue("Converted HashMap not a Hashtable", (ret instanceof Hashtable));
+
+        LongHolder holder = new LongHolder(1);
+        ret = JavaUtils.convert(holder, Object.class);
+        assertTrue(ret != null);
+        assertTrue(Long.class.isInstance(ret));
+    }
+
+    /**
+     * test the isConvertable() function
+     */
+    public void testIsConvert() {
+        assertTrue(JavaUtils.isConvertable(new Long(1),Long.class));
+        assertTrue(JavaUtils.isConvertable(new Long(1),long.class));
+        assertTrue(JavaUtils.isConvertable(new Long(1),Object.class));
+        assertFalse(JavaUtils.isConvertable(new Long(1),Float.class));
+        Class clazz = long.class;
+        assertTrue(JavaUtils.isConvertable(clazz,Long.class));
+        assertTrue(JavaUtils.isConvertable(clazz,Object.class));
+    }
+
+    public static void main(String args[]){
+        TestJavaUtils tester = new TestJavaUtils("TestJavaUtils");
+        tester.testIsConvert();
+        tester.testConvert();
     }
 }

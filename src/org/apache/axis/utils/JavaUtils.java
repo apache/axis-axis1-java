@@ -209,8 +209,13 @@ public class JavaUtils
         if (destClass == null) {
             return arg;
         }
-        
-        if (arg != null && destClass.isAssignableFrom(arg.getClass())) {
+
+        Class argHeldType = null;
+        if (arg != null) {
+            argHeldType = getHolderValueType(arg.getClass());
+        }
+
+        if (arg != null && argHeldType == null && destClass.isAssignableFrom(arg.getClass())) {
             return arg;
         }
 
@@ -230,10 +235,6 @@ public class JavaUtils
 
         // Get the destination held type or the argument held type if they exist
         Class destHeldType = getHolderValueType(destClass);
-        Class argHeldType = null;
-        if (arg != null) {
-            argHeldType = getHolderValueType(arg.getClass());
-        }
 
         // Convert between Axis special purpose HexBinary and byte[]
         if (arg instanceof HexBinary &&
@@ -538,6 +539,9 @@ public class JavaUtils
                 return true;
         }
 
+        if (src.isPrimitive()) {
+            return isConvertable(getWrapperClass(src),dest);
+        }
         return false;
     }
 
