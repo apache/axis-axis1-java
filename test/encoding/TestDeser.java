@@ -122,7 +122,13 @@ public class TestDeser extends TestCase {
     }
 
     public void testBoolean() throws Exception {
+        deserialize("<result xsi:type=\"xsd:boolean\">false</result>",
+                    new Boolean(false));
         deserialize("<result xsi:type=\"xsd:boolean\">true</result>",
+                    new Boolean(true));
+        deserialize("<result xsi:type=\"xsd:boolean\">0</result>",
+                    new Boolean(false));
+        deserialize("<result xsi:type=\"xsd:boolean\">1</result>",
                     new Boolean(true));
     }
 
