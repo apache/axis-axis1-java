@@ -59,7 +59,7 @@ import javax.servlet.ServletContext;
 
 /**
  * This is a 'front' for replacement logic.
- * Use EngineConfigurationFactoryFactory.newServletFactory().
+ * Use EngineConfigurationFactoryFinder.newServletFactory().
  * 
  * @author Richard A. Sitze
  * @author Glyn Normington (glyn@apache.org)
@@ -70,6 +70,6 @@ public class ServletEngineConfigurationFactory
     extends DefaultEngineConfigurationFactory
 {
     public ServletEngineConfigurationFactory(ServletContext ctx) {
-        super(EngineConfigurationFactoryFactory.newServletFactory(ctx));
+        super(EngineConfigurationFactoryFinder.newServletFactory(ctx));
     }
 }
