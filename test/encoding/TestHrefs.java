@@ -93,12 +93,11 @@ public class TestHrefs extends TestCase {
     }
 
     public void testStringReference() throws Exception {
-        deserialize("<result id=\"1\" xsi:type=\"xsd:string\">abc</result>",
-                    "abc", 0);
-        deserialize("<result id=\"1\" xsi:type=\"xsd:string\">abc</result>",
-                    "abc", 1);
-        deserialize("<result id=\"1\" xsi:type=\"xsd:string\">abc</result>",
-                    "abc", 2);
+        String result = 
+            "<result root=\"0\" id=\"1\" xsi:type=\"xsd:string\">abc</result>";
+        deserialize(result, "abc", 0);
+        deserialize(result, "abc", 1);
+        deserialize(result, "abc", 2);
     }
 
     /*
