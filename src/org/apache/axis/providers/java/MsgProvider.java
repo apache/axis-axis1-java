@@ -82,7 +82,7 @@ public class MsgProvider extends JavaProvider {
      * take the Request xml file and call the Admin processing.
      */
     public void processMessage (MessageContext msgContext,
-                                String serviceUrn,
+                                String serviceName,
                                 String methodName,
                                 SOAPEnvelope reqEnv,
                                 SOAPEnvelope resEnv,
@@ -106,18 +106,6 @@ public class MsgProvider extends JavaProvider {
         
         Class[]         argClasses;
         Object[]        argObjects;
-        
-        /** !!! KLUDGE WARNING
-         * We need some way of associating ServiceDescriptions with actual
-         * services... and then at the point when we figure out which service
-         * we'll be calling (which might be right away (static dispatch), after
-         * looking at the URL (transport-level dispatch), or even after looking
-         * into the SOAP message itself...)
-         */
-        if (serviceUrn.equals("org.apache.axis.utils.Admin")) {
-            ServiceDescription sd = new ServiceDescription("Admin", false);
-            msgContext.setServiceDescription(sd);
-        }
         
         // the document which is the contents of the first body element
         // (generated only if we are not an envelope service)

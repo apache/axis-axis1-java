@@ -161,7 +161,7 @@ public abstract class JavaProvider extends BasicProvider {
      * @param obj the service object itself
      */
     public abstract void processMessage (MessageContext msgContext,
-                                         String serviceUrn,
+                                         String serviceName,
                                          String allowedMethods,
                                          SOAPEnvelope reqEnv,
                                          SOAPEnvelope resEnv,
@@ -180,7 +180,7 @@ public abstract class JavaProvider extends BasicProvider {
 
         /* Find the service we're invoking so we can grab it's options */
         /***************************************************************/
-        String serviceUrn = msgContext.getTargetService();
+        String serviceName = msgContext.getTargetService();
         Handler service = msgContext.getServiceHandler();
 
         /* Now get the service (RPC) specific info  */
@@ -193,7 +193,7 @@ public abstract class JavaProvider extends BasicProvider {
                 "No '" +
                 getServiceClassNameOptionName() +
                 "' option was configured for the service '" +
-                serviceUrn + "'",
+                serviceName + "'",
                 null, null);
 
         /** ??? Should we enforce setting allowedMethods?  As it was,
@@ -207,7 +207,7 @@ public abstract class JavaProvider extends BasicProvider {
                 "No '" +
                 getServiceAllowedMethodsOptionName() +
                 "' option was configured for the service '" +
-                serviceUrn + "'",
+                serviceName + "'",
                 null, null);
 
         if (allowedMethods.equals("*"))
@@ -235,7 +235,7 @@ public abstract class JavaProvider extends BasicProvider {
                 allowedMethods = ((AxisServiceConfig)obj).getMethods();
             }
 
-            processMessage(msgContext, serviceUrn, allowedMethods, reqEnv,
+            processMessage(msgContext, serviceName, allowedMethods, reqEnv,
                            resEnv, jc, obj);
 
             // get the response message again! It may have been explicitly set!
