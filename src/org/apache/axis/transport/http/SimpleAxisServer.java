@@ -432,7 +432,7 @@ public class SimpleAxisServer implements Runnable {
                     }
                 }
 
-                byte[] response = (byte[]) responseMsg.getSOAPPart().getAsBytes();
+//                byte[] response = (byte[]) responseMsg.getSOAPPart().getAsBytes();
 
                 // Send it on its way...
                 OutputStream out = socket.getOutputStream();
@@ -626,7 +626,6 @@ public class SimpleAxisServer implements Runnable {
             throw new IOException(JavaUtils.getMessage("badRequest00"));
         }
 
-        StringBuffer lastbuf=null; 
         while ((n=readLine(is,buf,0,buf.length)) > 0) {
 
             if ((n<=2) && (buf[0]=='\n'||buf[0]=='\r') && (len>0)) break;

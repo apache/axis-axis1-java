@@ -270,7 +270,7 @@ public final class CLArgsParser
 
             final CLOption option = (CLOption)arguments.elementAt( i );
             final int id = option.getId();
-            final CLOptionDescriptor descriptor = getDescriptorFor( id );
+//            final CLOptionDescriptor descriptor = getDescriptorFor( id );
 
             for( int j = 0; j < incompatible.length; j++ )
             {

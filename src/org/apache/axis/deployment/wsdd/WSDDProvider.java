@@ -124,8 +124,6 @@ public abstract class WSDDProvider
      */
     public WSDDOperation getOperation(String name)
     {
-        WSDDOperation[] t = getOperations();
-
         return null;
     }
 

@@ -176,7 +176,8 @@ public class JavaServiceImplWriter extends JavaWriter {
                         portName, className));
             }
             try {
-                URL ep = new URL(address);
+//                URL ep = new URL(address);
+                new URL(address);
             }
             catch (MalformedURLException e) {
                 throw new IOException(JavaUtils.getMessage("emitFail03",

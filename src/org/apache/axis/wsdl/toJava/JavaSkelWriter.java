@@ -107,9 +107,9 @@ public class JavaSkelWriter extends JavaWriter {
      * Write the body of the binding's stub file.
      */
     protected void writeFileBody() throws IOException {
-        PortType portType = binding.getPortType();
-        PortTypeEntry ptEntry =
-                symbolTable.getPortTypeEntry(portType.getQName());
+//        PortType portType = binding.getPortType();
+//        PortTypeEntry ptEntry =
+//                symbolTable.getPortTypeEntry(portType.getQName());
 
         String portTypeName = (String) bEntry.getDynamicVar(JavaBindingWriter.INTERFACE_NAME);
         boolean isRPC = true;

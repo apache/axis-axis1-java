@@ -137,8 +137,6 @@ public class JavaUndeployWriter extends JavaWriter {
      * Write out deployment and undeployment instructions for given WSDL port
      */
     private void writeDeployPort(Port port) throws IOException {
-        Binding binding = port.getBinding();
-        BindingEntry bEntry = symbolTable.getBindingEntry(binding.getQName());
         String serviceName = port.getName();
 
         pw.println("  <service name=\"" + serviceName + "\"/>");

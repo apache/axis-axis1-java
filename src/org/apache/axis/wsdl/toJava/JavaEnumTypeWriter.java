@@ -89,8 +89,6 @@ public class JavaEnumTypeWriter extends JavaWriter {
      * the values (subsequent Strings)
      */
     protected void writeFileBody() throws IOException {
-        Node node = type.getNode();
-
         // Get the java name of the type
         String javaName = Utils.getJavaLocalName(type.getName());
 

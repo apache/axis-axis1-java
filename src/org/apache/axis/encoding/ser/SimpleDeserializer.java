@@ -274,8 +274,6 @@ public class SimpleDeserializer extends DeserializerImpl {
             if (fieldName == null)
                 continue;
 
-            String attrName = attributes.getLocalName(i);
-
             // look for the attribute property
             BeanPropertyDescriptor bpd =
                     (BeanPropertyDescriptor) propertyMap.get(fieldName);

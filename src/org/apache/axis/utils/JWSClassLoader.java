@@ -105,7 +105,8 @@ public class JWSClassLoader extends ClassLoader {
         /* Create a new Class object from it */
         /*************************************/
         byte[] data = baos.toByteArray();
-        Class  cls  = defineClass( name, data, 0, data.length );
+//        Class  cls =
+        defineClass( name, data, 0, data.length );
 
         classloaders.put(name, this);
     }

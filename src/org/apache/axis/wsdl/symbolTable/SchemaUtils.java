@@ -455,7 +455,6 @@ public class SchemaUtils {
             NodeList children = node.getChildNodes();
             Node complexContent = null;
             Node simpleContent = null;
-            Node extension = null;
             for (int j = 0; j < children.getLength() && complexContent == null; j++) {
                 QName complexContentKind = Utils.getNodeQName(children.item(j));
                 if (complexContentKind != null &&
@@ -661,7 +660,6 @@ public class SchemaUtils {
             // Under the complexType there could be a complexContent.
             NodeList children = node.getChildNodes();
             Node complexContent = null;
-            Node extension = null;
             if (nodeKind.getLocalPart().equals("complexType")) {
                 for (int j = 0; j < children.getLength() && complexContent == null; j++) {
                     QName complexContentKind = Utils.getNodeQName(children.item(j));

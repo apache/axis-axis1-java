@@ -120,8 +120,6 @@ public class JavaStubWriter extends JavaWriter {
      */
     protected void writeFileBody() throws IOException {
         PortType portType = binding.getPortType();
-        PortTypeEntry ptEntry =
-                symbolTable.getPortTypeEntry(portType.getQName());
 
         String portTypeName = 
                 (String) bEntry.getDynamicVar(JavaBindingWriter.INTERFACE_NAME);

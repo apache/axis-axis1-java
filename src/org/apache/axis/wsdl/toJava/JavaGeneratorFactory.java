@@ -426,9 +426,7 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                     // Inspect the Operations of the PortType
                     while(operations.hasNext()) {
                         Operation operation = (Operation) operations.next();
-                        OperationType type = operation.getStyle();
                         // Get the associated parameters of the operation.
-                        String name = operation.getName();
                         Parameters parameters = bEntry.getParameters(operation);
 
                         // Inspect the faults of the operation
@@ -890,8 +888,8 @@ public class JavaGeneratorFactory implements GeneratorFactory {
                     // If entry is a BindingEntry, look at all the Parameters
                     // in its portType
                     BindingEntry bEntry = (BindingEntry) v.get(i);
-                    PortTypeEntry ptEntry = 
-                            symbolTable.getPortTypeEntry(bEntry.getBinding().getPortType().getQName());
+//                    PortTypeEntry ptEntry = 
+//                            symbolTable.getPortTypeEntry(bEntry.getBinding().getPortType().getQName());
                     Iterator operations =
                             bEntry.getParameters().values().iterator();
                     while (operations.hasNext()) {

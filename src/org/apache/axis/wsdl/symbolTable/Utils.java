@@ -578,7 +578,6 @@ public class Utils {
      * Usage:  println("name=\"" + genXMLQNameString(qname, "foo") + "\""
      */ 
     public static String genQNameAttributeString(QName qname, String prefix) {
-        String result;
         if (qname.getNamespaceURI() == null || qname.getNamespaceURI().equals(""))
             return qname.getLocalPart();
         

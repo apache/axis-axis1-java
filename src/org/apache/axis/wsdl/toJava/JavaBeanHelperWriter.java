@@ -132,7 +132,6 @@ public class JavaBeanHelperWriter extends JavaWriter {
         if (elements != null) {
             for (int i = 0; i < elements.size(); i++) {
                 ElementDecl elem = (ElementDecl)elements.get(i);
-                TypeEntry type = elem.getType();
                 String elemName = elem.getName().getLocalPart();
                 String javaName = Utils.xmlNameToJava(elemName);
 

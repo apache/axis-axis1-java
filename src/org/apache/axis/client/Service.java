@@ -362,8 +362,6 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      */
     public javax.xml.rpc.Call createCall(QName portName)
                             throws ServiceException {
-        javax.wsdl.QName qn = new javax.wsdl.QName( portName.getNamespaceURI(),
-                                                    portName.getLocalPart() );
         if ( wsdlDefinition == null )
             throw new ServiceException( JavaUtils.getMessage("wsdlMissing00") );
 
