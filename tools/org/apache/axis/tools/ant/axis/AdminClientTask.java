@@ -428,16 +428,16 @@ public class AdminClientTask extends MatchingTask {
     }
 
     /**
-     * Set the optional classpath to the XSL processor
+     * Set the optional classpath 
      *
-     * @param classpath the classpath to use when loading the XSL processor
+     * @param classpath the classpath to use when loading class
      */
     public void setClasspath(Path classpath) {
         createClasspath().append(classpath);
     }
 
     /**
-     * Set the optional classpath to the XSL processor
+     * Set the optional classpath 
      *
      * @return a path instance to be configured by the Ant core.
      */
@@ -449,10 +449,9 @@ public class AdminClientTask extends MatchingTask {
     }
 
     /**
-     * Set the reference to an optional classpath to the XSL processor
+     * Set the reference to an optional classpath 
      *
      * @param r the id of the Ant path instance to act as the classpath
-     *          for loading the XSL processor
      */
     public void setClasspathRef(Reference r) {
         createClasspath().setRefid(r);
