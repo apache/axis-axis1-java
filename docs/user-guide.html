@@ -189,9 +189,9 @@ method on the public Axis server at Apache.
 <div class="example">
 <pre>1&nbsp;&nbsp; import org.apache.axis.client.Call;
 2&nbsp;&nbsp; import org.apache.axis.client.Service;
-3&nbsp;&nbsp;&nbsp;
-4&nbsp;&nbsp; public class TestClient
-5&nbsp;&nbsp; {
+3&nbsp;&nbsp; import javax.xml.rpc.namespace.QName;
+4&nbsp;&nbsp;&nbsp;
+5&nbsp;&nbsp; public class TestClient {
 6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public static void main(String [] args) {
 7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; try {
 8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String endpoint =
@@ -1142,13 +1142,13 @@ from the interface described in the previous section:
 <p>Where:
 <ul>
 <li>
--o indicates the name of the <b><i>output wsdl</i></b> file</li>
+-o indicates the name of the <b><i>output WSDL</i></b> file</li>
 
 <li>
 -l indicates the<b><i> location of the service</i></b></li>
 
 <li>
--n is the target <b><i>namespace</i></b> of the wsdl file</li>
+-n is the target <b><i>namespace</i></b> of the WSDL file</li>
 
 <li>
 -p indicates a mapping from the <b><i>package to a namespace</i></b>.&nbsp;
@@ -1157,7 +1157,7 @@ There may be multiple mappings.</li>
 <li>
 the class specified contains the interface of the webservice.</li>
 </ul>
-The output wsld document will contain the appropriate wsdl types, messages,
+The output WSDL document will contain the appropriate WSDL types, messages,
 portType, bindings and service descriptions to support a SOAP rpc, encoding
 web service.&nbsp; If your specified interface methods reference other
 classes, the Java2WSDL tool will generate the appropriate xml types to
@@ -1180,7 +1180,7 @@ print this message and exit</font></tt>
 <br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 -o, --output &lt;argument></font></tt>
 <br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-output Wsdl filename</font></tt>
+output WSDL filename</font></tt>
 <br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 -l, --location &lt;argument></font></tt>
 <br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -1212,15 +1212,15 @@ output WSDL mode: All, Interface, Implementation</font></tt>
 <br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 -L, --locationImport &lt;argument></font></tt>
 <br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-location of interface wsdl</font></tt>
+location of interface WSDL</font></tt>
 <br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 -N, --namespaceImpl &lt;argument></font></tt>
 <br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-target namespace for implementation wsdl</font></tt>
+target namespace for implementation WSDL</font></tt>
 <br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 -O, --outputImpl &lt;argument></font></tt>
 <br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-output Implementation Wsdl filename, setting this causes --outputWsdlMode
+output Implementation WSDL filename, setting this causes --outputWsdlMode
 to be ignored</font></tt>
 <br><tt><font color="#993366">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 -f, --factory &lt;argument></font></tt>
@@ -1250,9 +1250,9 @@ value></font></tt>
 <br>&nbsp;
 <p><b>-h , --help</b>
 <br>Prints the help message.
-<p><b>-o, --output &lt;wsdl file></b>
-<br>Indicates the name of the output wsdl file.&nbsp; If not specified,
-a suitable default wsdl file is written into the current directory.
+<p><b>-o, --output &lt;WSDL file></b>
+<br>Indicates the name of the output WSDL file.&nbsp; If not specified,
+a suitable default WSDL file is written into the current directory.
 <p><b>-l, --location &lt;location></b>
 <br>Indicates the url of the location of the service.&nbsp; The name after
 the last slash or backslash is the name of the service port (unless overriden
@@ -1260,12 +1260,12 @@ by the -s option).&nbsp; The service port address location attributed is
 assigned the specified value.
 <p><b>-s, -service &lt;name></b>
 <br>Indicates the name of the service.&nbsp; If not specified, the service
-name is derived from the --location value.&nbsp; The names of the wsdl
+name is derived from the --location value.&nbsp; The names of the WSDL
 binding, service, and port elements are derived from the service name as
 indicated in the <tt><font color="#993366">Details</font></tt> section
 above.
 <p><b>-n, --namespace &lt;target namespace></b>
-<br>Indicates the name of the target namespace of the wsdl.
+<br>Indicates the name of the target namespace of the WSDL.
 <p><b>-p, --PkgToNS &lt;package> &lt;namespace></b>
 <br>Indicates the mapping of a package to a namespace.&nbsp; If a package
 is encountered that does not have a namespace, the Java2WSDL emitter will
@@ -1273,36 +1273,36 @@ generate a suitable namespace name.&nbsp; This option may be specified
 multiple times.
 <p><b>-m, --methods &lt;arguments></b>
 <br>If this option is specified, only the indicated methods in your interface
-class will be exported into the wsdl file.&nbsp; The methods list must
+class will be exported into the WSDL file.&nbsp; The methods list must
 be comma separated.&nbsp; If not specified, all methods declared in the
-interface class will be exported into the wsdl file.
+interface class will be exported into the WSDL file.
 <p><b>-a, --all</b>
 <br>If this option is specified, the Java2WSDL parser will look into extended
-classes to determine the list of methods to export into the wsdl file.
+classes to determine the list of methods to export into the WSDL file.
 <p><b>-w, --outputWSDLMode &lt;mode></b>
-<br>Indicates the kind of wsdl to generate.&nbsp; Accepted values are:
+<br>Indicates the kind of WSDL to generate.&nbsp; Accepted values are:
 <ul>
 <li>
 All --- (default) Generates wsld containing both interface and implementation
-wsdl constructs.</li>
+WSDL constructs.</li>
 
 <li>
-Interface --- Generates a wsdl containing the interface constructs (no
+Interface --- Generates a WSDL containing the interface constructs (no
 service element).</li>
 
 <li>
-Implementation -- Generates a wsdl containing the implementation.&nbsp;
-The interface wsdl is imported via the -L option.</li>
+Implementation -- Generates a WSDL containing the implementation.&nbsp;
+The interface WSDL is imported via the -L option.</li>
 </ul>
 <b>-L, --locationImport &lt;url></b>
-<br>Used to indicate the location of the interface wsdl when generating
-an implementation wsdl.
+<br>Used to indicate the location of the interface WSDL when generating
+an implementation WSDL.
 <p><b>-N, --namespaceImpl &lt;namespace></b>
-<br>Namespace of the implementation wsdl.
-<p><b>-O, --outputImpl &lt;wsdl file></b>
-<br>Use this option to indicate the name of the output implementation wsdl
+<br>Namespace of the implementation WSDL.
+<p><b>-O, --outputImpl &lt;WSDL file></b>
+<br>Use this option to indicate the name of the output implementation WSDL
 file.&nbsp; If specified, Java2WSDL will produce interface and implementation
-wsdl files.&nbsp; If this option is used, the -w option is ignored.
+WSDL files.&nbsp; If this option is used, the -w option is ignored.
 <p><b>-f, --factory &lt;class></b>
 <br>Use this expert option to extend and customize the WSDL2Java tool.
 <p><b>-i, --implClass &lt;impl-class></b>
@@ -1316,7 +1316,7 @@ class from which to obtain method parameter names.&nbsp; The <b>&lt;impl-class><
 could be the actual implementation class, a stub class or a skeleton class.
 <h4>
 Step 3: Create Bindings using WSDL2Java</h4>
-Use the generated wsdl file to build the appropriate client/server bindings
+Use the generated WSDL file to build the appropriate client/server bindings
 for the web service (see <a href="#WSDL2Java: Building stubs, skeletons, and data">WSDL2Java</a>):
 <div class="example"><br><font face="Courier New,Courier">% java org.apache.axis.wsdl.Wsdl2java -o . -d session -s&nbsp; -Nurn:Example6 samples.userguide.example6 ws.wsdl</font></div>
 <p>This will generate the following files:
@@ -1485,6 +1485,8 @@ or choose to save to a file for later viewing.
 and record a new response. This is particularly handy in that you can edit
 the XML in the request window before resending - so you can use this as
 a great tool for testing the effects of different XML on SOAP servers.
+Note that you may need to change the content-length HTTP header value
+before resending an edited request.
 <dl>
 <dt>
 </dt>
