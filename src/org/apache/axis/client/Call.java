@@ -873,6 +873,7 @@ public class Call implements javax.xml.rpc.Call {
     public void setReturnType(QName xmlType, Class javaType) {
         setReturnType(xmlType);
         returnJavaType = javaType;
+        operation.setReturnClass(javaType);  // Use specified type as the operation return
     }
 
     /**
@@ -1851,6 +1852,9 @@ public class Call implements javax.xml.rpc.Call {
         SOAPBodyElement bodyEl = resEnv.getFirstBody();
         if (bodyEl instanceof RPCElement) {
             try {
+                // Combine the arguments for the same parameter 
+                // and get the vector containing the result arguments.
+                ((RPCElement) bodyEl).combineParams();
                 resArgs = ((RPCElement) bodyEl).getParams();
             } catch (Exception e) {
                 log.error(JavaUtils.getMessage("exception00"), e);

@@ -46,4 +46,15 @@ public class City_BBBBindingImpl implements City_BBBBinding {
                             " that fills that human heart with gladness. Merry Christmas to ya, New Orleans style.");
         return attraction;
     }
+
+    public Attraction[] getAttractions(String[] attnames) throws java.rmi.RemoteException {
+        Attraction[] attractions = null;
+        if (attnames != null) {
+            attractions = new Attraction[attnames.length]; 
+            for (int i=0; i < attnames.length; i++) {
+                attractions[i] = getAttraction(attnames[i]);
+            }
+        }
+        return attractions;
+    }
 }
