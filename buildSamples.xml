@@ -110,7 +110,7 @@ Copyright:
 
   <target name="compile" depends="printEnv,copy">
     <!-- Compile the sample code -->
-    <foreach target="component-compile">
+    <foreach target="component-compile" fork="${foreach.fork}">
         <param name="file">
              <fileset dir="${axis.home}" includes="samples/**/build.xml"/>
         </param>
@@ -126,13 +126,9 @@ Copyright:
   <!--   This simply echos the component files, for sanity checks -->
   <!-- =================================================================== -->
   <target name="echoTest" >
-    <foreach target="echo-file">
+    <foreach target="echo-file" fork="${foreach.fork}">
         <param name="file">
-             <fileset dir="${axis.home}" >
-                <patternset>
-                 <include name="samples/**/build.xml"/>
-                </patternset>
-             </fileset>
+             <fileset dir="${axis.home}" includes="samples/**/build.xml"/>
         </param>
      </foreach>
   </target>
