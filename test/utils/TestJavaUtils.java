@@ -63,9 +63,8 @@ public class TestJavaUtils extends TestCase
     }
     
     /**
-     * test the convert() function which converts:
-     *     arrays <-> Lists,
-     *     Holders <-> held values
+     * test the convert() function 
+     * verify that we can convert to the Collection, List, and Set interfaces
      */ 
     public void testConvert() {
         Integer[] array = new Integer[4];
@@ -73,17 +72,17 @@ public class TestJavaUtils extends TestCase
         array[2] = new Integer(3); array[3] = new Integer(2);
         
         Object ret = JavaUtils.convert(array, List.class);
-        assertTrue("Converted array not an ArrayList", (ret instanceof ArrayList));
-        ArrayList al = (ArrayList)ret;
+        assertTrue("Converted array not a List", (ret instanceof List));
+        List list = (List)ret;
         for (int i = 0; i < array.length; i++) {
-            assertEquals(array[i], al.get(i));
+            assertEquals(array[i], list.get(i));
         }
         
         ret = JavaUtils.convert(array, Collection.class);
-        assertTrue("Converted array not an ArrayList", (ret instanceof ArrayList));
+        assertTrue("Converted array is not a Collection", (ret instanceof Collection));
         
         ret = JavaUtils.convert(array, Set.class);
-        assertTrue("Converted array not a HashSet", (ret instanceof HashSet));
+        assertTrue("Converted array not a Set", (ret instanceof Set));
         
         ret = JavaUtils.convert(array, Vector.class);
         assertTrue("Converted array not a Vector", (ret instanceof Vector));
