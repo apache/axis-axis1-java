@@ -199,6 +199,16 @@ public class JavaStubWriter extends JavaWriter {
             pw.println("            // the TypeMappingRegistry of the service, which");
             pw.println("            // is the reason why registration is only needed for the first call.");
             pw.println("            if (firstCall()) {");
+            
+            // Hack alert - we need to establish the encoding style before we register type mappings due
+            // to the fact that TypeMappings key off of encoding style
+            pw.println("                // must set encoding style before registering serializers");
+            if (bEntry.hasLiteral()) {
+                pw.println("                call.setEncodingStyle(null);");
+            } else {
+                pw.println("                call.setEncodingStyle(org.apache.axis.Constants.URI_SOAP_ENC);");
+            }
+            
             pw.println("                for (int i = 0; i < cachedSerFactories.size(); ++i) {");
             pw.println("                    Class cls = (Class) cachedSerClasses.get(i);");
             pw.println("                    javax.xml.rpc.namespace.QName qName =");
@@ -392,9 +402,9 @@ public class JavaStubWriter extends JavaWriter {
             return;
         }
         
-        if (type instanceof Element) {
-            return;
-        }
+//        if (type instanceof Element) {
+//            return;
+//        }
         
         if ( firstSer ) {
             pw.println("            Class cls;" );
