@@ -55,19 +55,30 @@
 
 package org.apache.axis.transport.http ;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Iterator;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpUtils;
+import javax.xml.soap.SOAPException;
+
 import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
-import org.apache.axis.AxisProperties;
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
-import org.apache.axis.EngineConfiguration;
-import org.apache.axis.handlers.soap.SOAPService;
-import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.description.OperationDesc;
-import org.apache.axis.configuration.ServletEngineConfigurationFactory;
+import org.apache.axis.description.ServiceDesc;
+import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.security.servlet.ServletSecurityProvider;
-import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.Admin;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
@@ -76,25 +87,6 @@ import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import org.w3c.dom.Document;
-
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpUtils;
-import javax.xml.soap.SOAPException;
-
-import java.io.File;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Iterator;
-import java.util.ArrayList;
 
 /**
  *

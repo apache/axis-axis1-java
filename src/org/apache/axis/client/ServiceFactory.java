@@ -57,7 +57,7 @@ package org.apache.axis.client;
 
 import org.apache.axis.EngineConfiguration;
 
-import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
+import org.apache.axis.configuration.EngineConfigurationFactoryFactory;
 import org.apache.axis.utils.ClassUtils;
 
 import javax.naming.Context;
@@ -98,7 +98,8 @@ public class ServiceFactory extends javax.xml.rpc.ServiceFactory
     public static final String SERVICE_LOCAL_PART = "service local part";
 
     private static EngineConfiguration defaultEngineConfig =
-        (new DefaultEngineConfigurationFactory()).getClientEngineConfig();
+        EngineConfigurationFactoryFactory.newFactory().getClientEngineConfig();
+
     private static ThreadLocal threadDefaultConfig = new ThreadLocal();
 
     public static void setThreadDefaultConfig(EngineConfiguration config)

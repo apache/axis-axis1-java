@@ -58,7 +58,7 @@ package org.apache.axis.client ;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import org.apache.axis.AxisEngine;
 import org.apache.axis.EngineConfiguration;
-import org.apache.axis.configuration.DefaultEngineConfigurationFactory;
+import org.apache.axis.configuration.EngineConfigurationFactoryFactory;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.WSDLUtils;
@@ -108,7 +108,7 @@ import java.util.Hashtable;
 public class Service implements javax.xml.rpc.Service, Serializable, Referenceable {
     private transient AxisEngine          engine = null;
     private transient EngineConfiguration config =
-        (new DefaultEngineConfigurationFactory()).getClientEngineConfig();
+        EngineConfigurationFactoryFactory.newFactory().getClientEngineConfig();
 
     private QName               serviceName     = null ;
     private URL                 wsdlLocation    = null ;
