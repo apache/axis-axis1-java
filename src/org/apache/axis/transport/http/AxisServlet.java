@@ -109,6 +109,9 @@ public class AxisServlet extends HttpServlet {
     Message           msg        = new Message( req, "ServletRequest" );
 
     msgContext.setProperty(MessageContext.TRANS_ID, HTTPConstants.TRANSPORT_ID);
+    msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLET, this );
+    msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETREQUEST, req );
+    msgContext.setProperty(HTTPConstants.MC_HTTP_SERVLETRESPONSE, res );
     
     msgContext.setIncomingMessage( msg );
     
@@ -132,8 +135,11 @@ public class AxisServlet extends HttpServlet {
     tmp = (String) req.getHeader( HTTPConstants.HEADER_SOAP_ACTION );
     if ( tmp != null && "".equals(tmp) )
       tmp = req.getContextPath(); // Is this right?
-    if ( tmp != null ) msgContext.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, tmp );
+    if ( tmp != null ) 
+      msgContext.setProperty( HTTPConstants.MC_HTTP_SOAPACTION, tmp );
 
+    /* Process the Basic Auth stuff in the headers */
+    /***********************************************/
     tmp = (String) req.getHeader( HTTPConstants.HEADER_AUTHORIZATION );
     if ( tmp != null ) tmp = tmp.trim();
     if ( tmp != null && tmp.startsWith("Basic ") ) {
@@ -153,7 +159,8 @@ public class AxisServlet extends HttpServlet {
       }
     }
 
-    // Invoke the Axis engine...
+    /* Invoke the Axis engine... */
+    /*****************************/
     try {
       engine.invoke( msgContext );
     }
@@ -167,7 +174,6 @@ public class AxisServlet extends HttpServlet {
       }
       else 
         res.setStatus( HttpServletResponse.SC_INTERNAL_SERVER_ERROR );
-      // msgContext.setOutgoingMessage( new Message(e.toString(), "String" ) );
       if ( !(e instanceof AxisFault) )
         e = new AxisFault( e );
       msgContext.setOutgoingMessage( new Message(e, "AxisFault") );

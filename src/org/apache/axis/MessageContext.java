@@ -163,7 +163,6 @@ public class MessageContext {
      */
     public static String TRANS_ID            = "transport.id";
 
-   
     /** A String with the user's ID (if available)
      */
     public static String USERID              = "user.id";
@@ -172,7 +171,6 @@ public class MessageContext {
      */
     public static String PASSWORD            = "user.password";
 
-   
     public Object getProperty(String propName) {
         if ( bag == null ) return( null );
         return( bag.get(propName) );
