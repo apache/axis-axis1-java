@@ -425,6 +425,12 @@ public class SerializationContext
         AttributesImpl attrs = new AttributesImpl();
         attrs.addAttribute("","","","","");
 
+        // explicitly state that this attribute is not a root
+        String prefix = getPrefixForURI(Constants.URI_SOAP_ENC);
+        String root = prefix + ":root";
+        attrs.addAttribute(Constants.URI_SOAP_ENC, Constants.ATTR_ROOT, root, 
+                           "CDATA", "0");
+
         Iterator i = ((HashMap)multiRefValues.clone()).keySet().iterator();
         while (i.hasNext()) {
             while (i.hasNext()) {
