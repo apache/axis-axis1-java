@@ -437,7 +437,7 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
                     Thread.currentThread().getContextClassLoader();
             return (Remote)Proxy.newProxyInstance(classLoader,
                     new Class[] { proxyInterface, javax.xml.rpc.Stub.class },
-                    new AxisClientProxy(call));
+                    new AxisClientProxy(call, portName));
         } catch (Exception e) {
             throw new ServiceException(e.toString());
         }
