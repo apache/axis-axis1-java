@@ -136,21 +136,45 @@ Copyright:
   <available property="xdocs.found" file="${xdocs.dir}/build.xml"/>
 </target>
 
+<target name="want-xdocs" depends="probe-xdocs">
+  <fail unless="xdocs.found">
+    We need the proposal/xdocs source tree from Ant in ${env.ANT_HOME}/proposal/xdocs
+   </fail>
+</target>
 
+  <property name="build.antdocs.dir" location="${build.dir}/xdocs"/>
+  <property name="gen.dir" location="${build.antdocs.dir}/gen"/>
+  <property name="gen.dir" location="${build.antdocs.dir}/gen"/>
+  <property name="build.docs.dir" location="${build.antdocs.dir}/docs"/>
+  <property name="build.xdocs.dir" location="${build.antdocs.dir}/xdocs"/>
 
-<target name="xdocs" depends="probe-xdocs,compile"
+<target name="xdocs" depends="want-xdocs,compile"
   description="Run xdoclet over the ant tasks to create doc pages"
   if="xdocs.found">
   <echo>
     running xdocs with classpath=${xdoclet.extra.classpath.asprop}
   </echo>  
-  <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${xdocs.dir}">
+
+  <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${xdocs.dir}" 
+      target="gen-and-prepare-for-docs">
     <property name="src.dir" location="org/apache/axis/tools/ant/"/>
     <property name="src.root" location="."/>
     <property name="xdoclet.extra.classpath" 
       value="${xdoclet.extra.classpath.asprop}"/>
+    <property name="gen.dir" location="${gen.dir}"/>
+    <property name="xdocs.dir" location="${build.xdocs.dir}"/>
+    <property name="build.docs.dir" location="${build.docs.dir}"/>
   </ant>
 </target>
 
-  
+<target name="dvsl" depends="want-xdocs">
+  <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${xdocs.dir}/dvsl">
+    <property name="src.dir" location="org/apache/axis/tools/ant/"/>
+    <property name="build.dir" location="${build.antdocs.dir}"/>
+    <property name="taskdocs.src" location="${gen.dir}"/>
+    <property name="xdocs.dir" location="${build.xdocs.dir}"/>
+    <property name="docs.dest" location="${build.docs.dir}"/>
+  </ant>  
+</target>
+
 </project>
