@@ -55,28 +55,49 @@
 
 package test.dynamic;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
-/**
- *  Test package for DII
- *
- * @author Mark Roder <mroder@wamnet.com>
- */
-public class PackageTests extends TestCase {
+import java.net.ConnectException;
+import java.net.URL;
 
-    public PackageTests(String name) {
+import org.apache.axis.AxisFault;
+
+import javax.xml.rpc.ServiceFactory;
+import javax.xml.rpc.Service;
+import javax.xml.rpc.Call;
+import javax.xml.namespace.QName;
+
+public class TestJAXRPCDII extends TestCase {
+    public TestJAXRPCDII(String name) {
         super(name);
-    }
+    } // ctor
 
-    public static Test suite() throws Exception {
-        TestSuite suite = new TestSuite();
-
-        suite.addTestSuite(ServiceGetPort.class);
-        suite.addTestSuite(TestDynamicInvoker.class);
-        suite.addTestSuite(TestJAXRPCDII.class);
-
-        return suite;
+    public void test1() throws Exception {
+        try {
+            String wsdlLocation = "http://www.xmethods.net/sd/2001/TemperatureService.wsdl";
+            String wsdlNsp = "http://www.xmethods.net/sd/TemperatureService.wsdl";
+            ServiceFactory factory = ServiceFactory.newInstance();
+            Service service = factory.createService(new URL(wsdlLocation),
+                                  new QName(wsdlNsp, "TemperatureService"));
+            Call[] calls = service.getCalls(new QName(wsdlNsp,"TemperaturePort"));
+            assertTrue(calls != null);
+            assertEquals(calls[0].getOperationName().getLocalPart(),"getTemp");
+            Object ret = calls[0].invoke(new Object[]{"02067"});
+            System.out.println("Temperature:" + ret);
+        }  catch (java.rmi.RemoteException re) {
+            if (re instanceof AxisFault) {
+                AxisFault fault = (AxisFault) re;
+                if (fault.detail instanceof ConnectException ||
+                    (fault.getFaultString().indexOf("Connection timed out") != -1) ||
+                    fault.getFaultCode().getLocalPart().equals("HTTP")) {
+                    System.err.println("getTemp HTTP error: " + fault);
+                    return;
+                }
+            }
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
+        }  catch (java.io.IOException ioe) {
+            System.err.println("getTemp connect error: " + ioe);
+            return;
+        }
     }
 }

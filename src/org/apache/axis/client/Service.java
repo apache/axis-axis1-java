@@ -64,6 +64,9 @@ import org.apache.axis.utils.WSDLUtils;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.wsdl.gen.Parser;
 import org.apache.axis.wsdl.symbolTable.ServiceEntry;
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
+import org.apache.axis.wsdl.symbolTable.BindingEntry;
+import org.apache.axis.wsdl.symbolTable.Parameters;
 import org.w3c.dom.Document;
 
 import javax.naming.Reference;
@@ -72,6 +75,7 @@ import javax.naming.StringRefAddr;
 import javax.wsdl.Binding;
 import javax.wsdl.Port;
 import javax.wsdl.PortType;
+import javax.wsdl.Operation;
 import javax.wsdl.extensions.soap.SOAPAddress;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.ServiceException;
@@ -574,8 +578,6 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
      * This method requires the Service implementation class to have access
      * to the WSDL related metadata.
      *
-     * Not implemented.
-     *
      * @throws ServiceException - If this Service class does not have access
      * to the required WSDL metadata or if an illegal portName is specified.
      */
@@ -586,7 +588,25 @@ public class Service implements javax.xml.rpc.Service, Serializable, Referenceab
         if (wsdlService == null)
             throw new ServiceException(Messages.getMessage("wsdlMissing00"));
 
-        javax.xml.rpc.Call[] array = new javax.xml.rpc.Call[]{createCall(portName)};
+        Port port = wsdlService.getPort(portName.getLocalPart());
+        if (port == null)
+            throw new ServiceException(Messages.getMessage("noPort00", "" + portName));
+
+        Binding binding = port.getBinding();
+        SymbolTable symbolTable = wsdlParser.getSymbolTable();
+        BindingEntry bEntry =
+                symbolTable.getBindingEntry(binding.getQName());
+        Iterator i = bEntry.getParameters().keySet().iterator();
+
+        Vector calls = new Vector();
+        while (i.hasNext()) {
+            Operation operation = (Operation) i.next();
+            javax.xml.rpc.Call call = createCall(QName.valueOf(port.getName()),
+                                   QName.valueOf(operation.getName()));
+            calls.add(call);
+        }        
+        javax.xml.rpc.Call[] array = new javax.xml.rpc.Call[calls.size()];
+        calls.toArray(array);
         return array;
     }
 
