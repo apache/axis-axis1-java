@@ -251,7 +251,7 @@ public class Wsdl2javaTestSuite extends TestSuite {
         if (implDir.isDirectory()) {
             File[] files = implDir.listFiles();
             for (int i = 0; i < files.length; i++) {
-                if (files[i].getName().endsWith("Impl.java") || files[i].getName().endsWith("TestCase.java"))) {
+                if (files[i].getName().endsWith("Impl.java") || files[i].getName().endsWith("TestCase.java")) {
                     File subDir = new File(Wsdl2javaTestSuite.WORK_DIR, implDir.toString());
                     subDir.mkdirs();
                     File newFile = new File(subDir, files[i].getName());
