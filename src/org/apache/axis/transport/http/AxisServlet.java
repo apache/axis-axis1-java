@@ -652,22 +652,22 @@ public class AxisServlet extends AxisServletBase {
                 //          responseMsg.getContentLength());
             }
 
-            res.setContentType(responseMsg.getContentType());
-
-            /* My understand of Content-Length
-             * HTTP 1.0
-             *   -Required for requests, but optional for responses.
-             * HTTP 1.1
-             *  - Either Content-Length or HTTP Chunking is required.
-             *   Most servlet engines will do chunking if content-length is not specified.
-             *
-             *
-             */
-
-            //if(clientVersion == HTTPConstants.HEADER_PROTOCOL_V10) //do chunking if necessary.
-           //     res.setContentLength(responseMsg.getContentLength());
-
             try {
+                res.setContentType(responseMsg.getContentType());
+
+                /* My understand of Content-Length
+                 * HTTP 1.0
+                 *   -Required for requests, but optional for responses.
+                 * HTTP 1.1
+                 *  - Either Content-Length or HTTP Chunking is required.
+                 *   Most servlet engines will do chunking if content-length is not specified.
+                 *
+                 *
+                 */
+
+                //if(clientVersion == HTTPConstants.HEADER_PROTOCOL_V10) //do chunking if necessary.
+                //     res.setContentLength(responseMsg.getContentLength());
+
                 responseMsg.writeTo(res.getOutputStream());
             } catch (SOAPException e){
                 log.error(JavaUtils.getMessage("exception00"), e);
