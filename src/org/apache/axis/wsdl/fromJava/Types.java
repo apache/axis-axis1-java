@@ -243,32 +243,30 @@ public class Types {
         if (type.getName().equals("void")) {
           return null;
         }
+
         if (Holder.class.isAssignableFrom(type)) {
             type = JavaUtils.getHolderValueType(type);
         }
+
+        /**
+         * No need to do anything if this is a simple type (i.e. in the
+         * xsd or soap-enc schemas already)
+         */
         if (isSimpleType(type)) {
-            // Still need to write any element declaration...
-            if (qname != null) {
-                String elementType = writeType(type, qname);
-                Element element = createElementDecl(qname, elementType, false);
-                if (element != null) {
-                    writeSchemaElement(qname,element);
-                }
-            }
-            return qname;
-        }else {
-            if (wsdlTypesElem == null) {
-                writeWsdlTypesElement();
-            }
-            // If writeTypeAsElement returns null, then
-            // then no element was written due to problems.
-            // return an anytype in such situations.
-            qname = writeTypeAsElement(type, qname);
-            if (qname == null) {
-                qname = Constants.XSD_ANYTYPE;
-            }
             return qname;
         }
+
+        if (wsdlTypesElem == null) {
+            writeWsdlTypesElement();
+        }
+        // If writeTypeAsElement returns null, then
+        // then no element was written due to problems.
+        // return an anytype in such situations.
+        qname = writeTypeAsElement(type, qname);
+        if (qname == null) {
+            qname = Constants.XSD_ANYTYPE;
+        }
+        return qname;
     }
 
     /**
