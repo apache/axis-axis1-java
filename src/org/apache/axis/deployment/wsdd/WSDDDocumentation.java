@@ -55,6 +55,7 @@
 package org.apache.axis.deployment.wsdd;
 
 import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.utils.XMLUtils;
 import org.w3c.dom.Element;
 
 import javax.xml.namespace.QName;
@@ -62,16 +63,23 @@ import java.io.IOException;
 
 
 /**
- *
+ * represents a WSDD documentation 
+ * All WSDDElement can have a documentation but it is used only for 
+ * Services, Operations and Parameters for now
  */
 public class WSDDDocumentation
     extends WSDDElement
 {
-    private String value;
+    private String value; /** the documentation */
  
     protected QName getElementName()
     {
         return WSDDConstants.QNAME_DOC;
+    }
+    
+    public WSDDDocumentation(String value)
+    {
+    	this.value = value;
     }
     
     /**
@@ -83,11 +91,11 @@ public class WSDDDocumentation
         throws WSDDException
     {
         super(e);
+        value = XMLUtils.getChildCharacterData(e);
     }
 
     /**
-     *
-     * @return XXX
+     * get the documentation
      */
     public String getValue()
     {
@@ -95,8 +103,7 @@ public class WSDDDocumentation
     }
 
     /**
-     *
-     * @param value XXX
+     * set the documentation
      */
     public void setValue(String value)
     {
