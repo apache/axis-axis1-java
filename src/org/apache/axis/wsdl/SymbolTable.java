@@ -345,13 +345,21 @@ public class SymbolTable {
             // ultimate ref'd type
             QName refQName = Utils.getNodeTypeRefQName(node);
             if (refQName != null) {
+                // Discover whether type is from a type= or ref=/element=
+                boolean typeAttr = false;
+                if (Utils.getNodeTypeRefQName(node, "type") != null)
+                    typeAttr = true;
+
                 Type refType = null;
                 while (refQName != null) {
-                    refType = getTypeEntry(refQName);
+                    refType = getTypeEntry(refQName, !typeAttr);
                     refQName = null;
                     if (refType != null &&
                         refType.getNode() != null) {
                         refQName = Utils.getNodeTypeRefQName(refType.getNode());
+                        typeAttr = false;
+                        if (Utils.getNodeTypeRefQName(node, "type") != null)
+                            typeAttr = true;
                         // A 'collection' type has a node that refers to itself.
                         // so we need to break out of the loop to avoid an infinite loop.
                         if (refQName != null && refQName.equals(refType.getQName()))
@@ -359,7 +367,7 @@ public class SymbolTable {
                     }                         
                 }
                 // Create a type from the referenced type
-                if (!belowSchemaLevel) {
+                if (!belowSchemaLevel && refType != null) {
                     symbolTablePut(new ElementType(qName, refType, node));
                 }
 
@@ -404,10 +412,19 @@ public class SymbolTable {
         // Get the QName of the node's type attribute value
         QName qName = Utils.getNodeTypeRefQName(node);
         if (qName != null) {
+
+            // Discover whether type is from a type= or ref=/element=
+            boolean typeAttr = false;
+            if (Utils.getNodeTypeRefQName(node, "type") != null)
+                typeAttr = true;
+
+            // Get Type or ElementType depending on whether type attr was used.
+            Type type = getTypeEntry(qName, !typeAttr);
             String javaName = getJavaName(qName);
 
-            Type type = getTypeEntry(qName);
-            if (type == null) {
+            // A symbol table entry is only created if type= and the type is not
+            // found
+            if (type == null && typeAttr) {
                 // Type not defined, add a base java type or a refdType
                 if (debug) {
                     System.out.println("Create Type From Ref:" + qName);
@@ -417,7 +434,7 @@ public class SymbolTable {
                     symbolTablePut(new BaseJavaType(qName));
                 else if (javaName.indexOf("[") > 0)
                     symbolTablePut(new CollectionType(qName, javaName, node));
-                else
+                else 
                     symbolTablePut(new RefdType(qName, javaName));
             } else {
                 // Type exists, update shouldEmit flag if necessary
@@ -881,7 +898,12 @@ public class SymbolTable {
             if (entry instanceof ElementType) {
                 QName referentName = Utils.getNodeTypeRefQName(entry.getNode());
                 if (referentName != null) {
-                    Type referent = getTypeEntry(referentName);
+                    // Discover whether type is from a type= or ref=/element=
+                    boolean typeAttr = false;
+                    if (Utils.getNodeTypeRefQName(entry.getNode(), "type") != null)
+                        typeAttr = true;
+
+                    Type referent = getTypeEntry(referentName, !typeAttr);
                     if (referent != null) {
                         setTypeReferences(referent, doc);
                     }
@@ -1065,7 +1087,7 @@ public class SymbolTable {
     } // setServiceReferences
 
     /**
-     * Put the given SymTabEntry into the symbol table, if appropriate.  If 
+     * Put the given SymTabEntry into the symbol table, if appropriate.  
      */
     private void symbolTablePut(SymTabEntry entry) throws IOException {
         QName name = entry.getQName();
@@ -1146,6 +1168,19 @@ public class SymbolTable {
             return null;
         }
     } // get
+
+
+    /**
+     * Get the type entry for the given qname.
+     * @param qname
+     * @param wantElementType boolean that indicates type or element (for type= or ref=)
+     */
+    public Type getTypeEntry(QName qname, boolean wantElementType) {
+        if (wantElementType) {
+            return getElementTypeEntry(qname);
+        } else
+            return getTypeEntry(qname);
+    } // getTypeEntry
 
     /**
      * Get the non-ElementType TypeEntry with the given QName.  If it doesn't exist, return null.

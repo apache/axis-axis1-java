@@ -50,6 +50,18 @@
         <mapping namespace="urn:MultiRefTest2" package="test.multiref"/>
     </wsdl2java>
 
+    <!-- MultiRef Test -->
+    <wsdl2java url="test/refattr/refattr.wsdl"
+               output="build/work"
+               deployscope="session"
+               skeleton="yes"
+               noimports="no"
+               verbose="no"
+               testcase="no">
+        <mapping namespace="ref.types.test" package="test.refattr"/>
+        <mapping namespace="ref.types" package="test.refattr"/>
+    </wsdl2java>
+
     <!-- Sequence Test -->
     <!-- Generate Java From WSDL -->
     <wsdl2java url="test/sequence/SequenceTest.wsdl"

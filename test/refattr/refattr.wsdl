@@ -1,0 +1,149 @@
+<?xml version="1.0" ?>
+
+<definitions 
+    name="ref types test"
+    targetNamespace="ref.types.test"
+    xmlns:tns="ref.types.test"
+    xmlns:typens="ref.types"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+    xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+  <!-- type defs -->
+  <types>
+    <xsd:schema 
+        targetNamespace="ref.types"
+        xmlns:xsd="http://www.w3.org/1999/XMLSchema">
+
+      <xsd:simpleType name="enum">
+        <xsd:restriction base="xsd:string">
+          <xsd:enumeration value="one"/>                      
+          <xsd:enumeration value="two"/>                    
+          <xsd:enumeration value="three"/>                    
+        </xsd:restriction>
+      </xsd:simpleType>
+
+      <xsd:complexType name="phone">
+        <xsd:all>
+          <xsd:element name="areaCode" type="xsd:int"/>
+          <xsd:element name="exchange" type="xsd:string"/>
+          <xsd:element name="number" type="xsd:string"/>
+        </xsd:all>
+      </xsd:complexType>
+
+      <xsd:complexType name="example">
+        <xsd:all>
+          <xsd:element name="address" type="soapenc:string"/>
+        </xsd:all>
+      </xsd:complexType>
+
+      <!-- element has the same name as the type.  This is allowed by xlm schema -->
+      <!-- note that the Phone element is a collection of Phone types -->
+      <!-- no mangling should occur since the same underlying java type is used -->
+      <xsd:element name="phone" type="typens:phone" maxOccurs="unbounded"/>
+
+      <!-- enum element which is the same as the enum type -->
+      <!-- no mangling should occur since the same java type is used -->
+      <xsd:element name="enum" type="typens:enum"/>
+
+      <!-- The following are illegal.  Should not generate anything. But should not cause abend -->
+      <xsd:element name="self"  ref="typens:self" />
+      <xsd:element name="foo"   ref="typens:undefined_element" />
+
+      <!-- This is a 'forward use' of a type.  Not sure if this is legal, but we currently accept it -->
+      <xsd:element name="forward"  type="typens:forward" />
+      <xsd:complexType name="forward">
+        <xsd:all>
+          <xsd:element name="address" type="soapenc:string"/>
+        </xsd:all>
+      </xsd:complexType>
+
+      <!-- The following have same qname but different java types (NoMangle and Example). -->
+      <!--  No mangling should occur -->
+      <xsd:complexType name="noMangle">
+        <xsd:all>
+          <xsd:element name="address" type="soapenc:string"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:element name="noMangle" type="typens:example" />
+
+      <!-- The following two have same qname and same java names (for different java types). -->
+      <!--  angling should occur -->
+      <!-- Note the use of the 'mangle collection' in info..which should be properly mangled -->
+      <xsd:complexType name="mangle">
+        <xsd:all>
+          <xsd:element name="one" type="soapenc:string"/>
+        </xsd:all>
+      </xsd:complexType>
+      <xsd:element name="mangle" >
+        <xsd:complexType>
+          <xsd:all>
+            <xsd:element name="two" type="soapenc:string"/>
+          </xsd:all>
+        </xsd:complexType>
+      </xsd:element >
+
+      <xsd:complexType name="info">
+        <xsd:all> 
+          <!-- This is a reference to phone.  It should be a collection since the
+              phone element has the unbounded attribute -->
+          <xsd:element ref="typens:phone"/>
+          <xsd:element ref="typens:enum"/>
+          <xsd:element name="forward" type="typens:forward"/>
+          <xsd:element ref="typens:noMangle"/>
+          <xsd:element name="noMangle2" type="typens:noMangle"/>
+          <xsd:element ref="typens:mangle"/>
+          <!-- The following better be Mangle_Type[], not Mangle[] -->
+          <xsd:element name="mangle2" type="typens:mangle" maxOccurs="unbounded" />
+        </xsd:all>
+      </xsd:complexType>
+
+    </xsd:schema>
+  </types>
+
+  <!-- message declns -->
+  <message name="empty" />
+  <message name="message">
+    <part name="arg" type="typens:info" />
+  </message>
+
+  <!-- port type declns -->
+  <portType name="RefTest">
+    <operation name="test">
+      <input message="tns:message"/>
+      <output message="tns:empty"/>
+    </operation>
+  </portType>
+
+  <!-- binding declns -->
+  <binding name="RefTestBinding" type="tns:RefTest">
+    <soap:binding
+        style="rpc"
+        transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="test">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </input>
+      <output>
+        <soap:body
+            use="encoded"
+            namespace=""
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+      </output>
+    </operation>
+  </binding>
+
+  <!-- service decln -->
+  <service name="RefTestService">
+    <port name="RefTest" binding="tns:RefTestBinding">
+      <soap:address location="http://localhost:8080/axis/services/RefTest"/>
+    </port>
+  </service>
+
+</definitions>
+

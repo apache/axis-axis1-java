@@ -65,6 +65,7 @@ import javax.wsdl.Definition;
 import javax.wsdl.Message;
 import javax.wsdl.Operation;
 import javax.wsdl.PortType;
+import javax.wsdl.QName;
 import javax.wsdl.Service;
 
 /**
@@ -171,33 +172,120 @@ public class JavaWriterFactory implements WriterFactory {
     private void resolveNameClashes(SymbolTable symbolTable) {
         Iterator it = symbolTable.getHashMap().values().iterator();
         while (it.hasNext()) {
-            Vector v = (Vector) it.next();
+            Vector v = new Vector((Vector) it.next());  // New vector we can temporarily add to it
             if (v.size() > 1) {
-                for (int i = 0; i < v.size(); ++i) {
-                    SymTabEntry entry = (SymTabEntry) v.elementAt(i);
-                    if (entry instanceof ElementType) {
-                        entry.setName(entry.getName() + "_ElemType");
+                boolean resolve = true;
+                // Common Special Case:
+                // If a Type and ElementType have the same QName, and the ElementType
+                // uses type= to reference the Type, then they are the same class so 
+                // don't bother mangling.
+                if (v.size() == 2 &&
+                    ((v.elementAt(0) instanceof ElementType &&
+                      v.elementAt(1) instanceof Type) ||
+                     (v.elementAt(1) instanceof ElementType &&
+                      v.elementAt(0) instanceof Type))) {
+                    ElementType e = null;
+                    if (v.elementAt(0) instanceof ElementType) {
+                        e = (ElementType)v.elementAt(0);
+                    } else {
+                        e = (ElementType)v.elementAt(1);
                     }
-                    else if (entry instanceof Type) {
-                        entry.setName(entry.getName() + "_Type");
+                    QName eType = Utils.getNodeTypeRefQName(e.getNode(), "type");
+                    if (eType != null && eType.equals(e.getQName()))
+                        resolve = false;
+                }
+                // Other Special Case:
+                // If the names are already different, no mangling is needed.
+                if (resolve) {
+                    resolve = false;  // Assume false
+                    String name = null;
+                    for (int i = 0; i < v.size() && !resolve; ++i) {
+                        SymTabEntry entry = (SymTabEntry) v.elementAt(i);
+                         if (entry instanceof MessageEntry ||
+                             entry instanceof BindingEntry) {
+                             ; // Don't process these
+                         } else if (name== null) {
+                             name = entry.getName();
+                         } else if (name.equals(entry.getName())) {
+                             resolve = true;  // Need to do resolution
+                         } 
+
                     }
-                    else if (entry instanceof PortTypeEntry) {
-                        entry.setName(entry.getName() + "_Port");
+                }
+
+                    
+                // Full Mangle if resolution is necessary.
+                if (resolve) {
+                    boolean firstType = true;
+                    for (int i = 0; i < v.size(); ++i) {
+                        SymTabEntry entry = (SymTabEntry) v.elementAt(i);
+                        if (entry instanceof ElementType) {
+                            entry.setName(mangleName(entry.getName() , "_ElemType"));
+                        }
+                        else if (entry instanceof Type) {
+                            // Search all other types for java names that match this one.
+                            // The sameJavaClass method returns true if the java names are
+                            // the same (ignores [] ).
+                            if (firstType) {
+                                firstType = false;
+                                Vector types = symbolTable.getTypes();
+                                for (int j = 0; j < types.size(); ++j) {
+                                    Type type = (Type) types.elementAt(j);
+                                    if (type != entry && 
+                                        !(type instanceof ElementType) &&
+                                        type.getBaseType() == null &&
+                                        sameJavaClass(((Type)entry).getName(), type.getName())) {
+                                        v.add(type);  
+                                    }
+                                }
+                            }
+                            entry.setName(mangleName(entry.getName() , "_Type"));
+                        }
+                        else if (entry instanceof PortTypeEntry) {
+                            entry.setName(mangleName(entry.getName() , "_Port"));
+                        }
+                        else if (entry instanceof ServiceEntry) {
+                            entry.setName(mangleName(entry.getName() , "_Service"));
+                        }
+                        // else if (entry instanceof MessageEntry) {
+                        //     we don't care about messages
+                        // }
+                        // else if (entry instanceof BindingEntry) {
+                        //     since files generated from bindings all append strings to the name,
+                        //     we don't care about bindings
+                        // }
                     }
-                    else if (entry instanceof ServiceEntry) {
-                        entry.setName(entry.getName() + "_Service");
-                    }
-                    // else if (entry instanceof MessageEntry) {
-                    //     we don't care about messages
-                    // }
-                    // else if (entry instanceof BindingEntry) {
-                    //     since files generated from bindings all append strings to the name,
-                    //     we don't care about bindings
-                    // }
                 }
             }
         }
     } // resolveNameClashes
+
+    /**
+     * Change the indicated type name into a mangled form using the mangle string.
+     */
+    private String mangleName(String name, String mangle) {
+        int index = name.indexOf("[");
+        if (index >= 0) {
+            String pre = name.substring(0, index);
+            String post = name.substring(index);
+            return pre + mangle + post;
+        }
+        else
+            return name + mangle;
+    }
+
+    /**
+     * Returns true if same java class, ignore []                                 
+     */
+    private boolean sameJavaClass(String one, String two) {     
+        int index1 = one.indexOf("[");
+        int index2 = two.indexOf("[");
+        if (index1 > 0)
+            one = one.substring(0, index1);
+        if (index2 > 0)
+            two = two.substring(0, index2);
+        return one.equals(two);
+    }
 
     /**
      * If a binding's type is not TYPE_SOAP, then we don't use that binding's portType.
