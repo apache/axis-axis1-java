@@ -10,6 +10,8 @@ owner (if any) in "<>" brackets.  Example:
 
 MESSAGE PARSING / ENCODING
 --------------------------
+! <Glen> Finish support for different encodingStyles
+! <> Support literalxml encodingStyle
 ! <> Multi-dimensional array support
 
 CLIENT API
