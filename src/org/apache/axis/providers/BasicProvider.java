@@ -23,6 +23,7 @@ import javax.xml.namespace.QName;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
+import org.apache.axis.AxisEngine;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.description.JavaServiceDesc;
@@ -227,6 +228,10 @@ public abstract class BasicProvider extends BasicHandler {
             }
             if (wsdlSoapActinMode != null && wsdlSoapActinMode.length() > 0) {
                 emitter.setSoapAction(wsdlSoapActinMode);
+            }
+            
+            if (msgContext.isPropertyTrue(AxisEngine.PROP_EMIT_ALL_TYPES)) {
+                emitter.setEmitAllTypes(true);
             }
 
             Document doc = emitter.emit(Emitter.MODE_ALL);

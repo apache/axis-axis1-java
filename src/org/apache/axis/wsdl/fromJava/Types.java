@@ -114,7 +114,8 @@ public class Types {
     /** Keep track of the element QNames we've written to avoid dups */
     private Set writtenElementQNames = new HashSet();
     
-    private Class [] mappedTypes = null;
+    /** Which types have we already written? */
+    Class [] mappedTypes = null;
 
     public static boolean isArray(Class clazz)
     {

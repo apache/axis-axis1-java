@@ -25,6 +25,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.InternalException;
 import org.apache.axis.Version;
+import org.apache.axis.wsdl.symbolTable.SymbolTable;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.description.FaultDesc;
 import org.apache.axis.description.JavaServiceDesc;
@@ -204,6 +205,9 @@ public class Emitter {
 
     /** Field soapAction */
     private String soapAction = "DEFAULT";
+    
+    /** Should we emit all mapped types in every WSDL? */
+    private boolean emitAllTypes = false;
 
     // Style Modes
 
@@ -758,7 +762,31 @@ public class Emitter {
                 types.loadInputSchema(token);
             }
         }
-
+        
+        // If we're supposed to emit all mapped types, do it now.
+        if (emitAllTypes && tm != null) { 
+            Class[] mappedTypes = tm.getAllClasses(); 
+            
+            for (int i = 0; i < mappedTypes.length; i++) { 
+                Class mappedType = mappedTypes[i]; 
+                QName name = tm.getTypeQName(mappedType); 
+                if (name.getLocalPart().indexOf(SymbolTable.ANON_TOKEN) != -1) { 
+                    // If this is an anonymous type, it doesn't need to be
+                    // written out here (and trying to do so will generate an
+                    // error). Skip it. 
+                    continue; 
+                } 
+                
+                /** 
+                 * If it's a non-standard type, make sure it shows up in 
+                 * our WSDL 
+                 */ 
+                if (standardTypes.getSerializer(mappedType) == null) { 
+                    types.writeTypeForPart(mappedType, name); 
+                } 
+            } 
+        }
+        
         return types;
     }
     
@@ -2674,5 +2702,9 @@ public class Emitter {
 
         // set the member variable
         this.extraClasses = ec;
+    }
+
+    public void setEmitAllTypes(boolean emitAllTypes) {
+        this.emitAllTypes = emitAllTypes;
     }
 }
