@@ -56,6 +56,7 @@ package org.apache.axis.utils;
 
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.io.InputStream;
 
 /**
  * Utility methods for Class Loading.
@@ -211,5 +212,22 @@ public final class ClassUtils {
         } else {
             throw new ClassNotFoundException(_className);
         }
+    }
+
+    public static InputStream getResourceAsStream(Class clazz, String resource) {
+        InputStream myInputStream = null;
+
+        if(clazz.getClass().getClassLoader()!=null) {
+            // Try the class loader that loaded this class.
+            myInputStream = clazz.getClassLoader().getResourceAsStream(resource);
+        } else {
+            // Try the system class loader.
+            myInputStream = ClassLoader.getSystemClassLoader().getResourceAsStream(resource);
+        }
+        if (myInputStream == null) {
+            // if not found in classpath fall back to default
+            myInputStream = clazz.getResourceAsStream(resource);
+        }
+        return myInputStream;
     }
 }

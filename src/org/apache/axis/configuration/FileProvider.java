@@ -69,6 +69,7 @@ import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.utils.Admin;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.InternalException;
 
 import org.apache.axis.components.logger.LogFactory;
@@ -196,16 +197,8 @@ public class FileProvider implements EngineConfiguration {
                 try {
                     myInputStream = new FileInputStream(configFile);
                 } catch (Exception e) {
-                    if (searchClasspath) {
-                        // look for custom configuration files outside of engine package
-                        myInputStream = engine.getClass().getClassLoader().
-                                getResourceAsStream(filename);
-                        if (myInputStream == null) { 
-                            // if not found in classpath fall back to default config file in engine package
-                            myInputStream = engine.getClass().
-                                getResourceAsStream(filename);
-                        }
-                    }
+                    if (searchClasspath)
+                        myInputStream = ClassUtils.getResourceAsStream(engine.getClass(), filename);
                 }
             }
 
