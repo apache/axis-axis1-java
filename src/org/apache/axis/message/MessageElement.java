@@ -661,6 +661,7 @@ public class MessageElement implements SOAPElement, Serializable
 
     public void setEnvelope(SOAPEnvelope env)
     {
+        env.setDirty(true);
         message = env;
     }
     public SOAPEnvelope getEnvelope()
