@@ -79,6 +79,9 @@ public class EJBProvider extends RPCProvider
     public static final String jndiURL = "jndiURL";
     public static final String jndiUsername = "jndiUser";
     public static final String jndiPassword = "jndiPassword";
+    public static InitialContext cached_context = null;
+    public static final Class[] empty_class_array = new Class[0];
+    public static final Object[] empty_object_array = new Object[0];
 
     ///////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////
@@ -96,57 +99,65 @@ public class EJBProvider extends RPCProvider
     {
         Handler serviceHandler = msgContext.getServiceHandler();
         Object home;
-
+        Properties properties = null;
+        
         try
         {
             String username = (String)getStrOption(jndiUsername,
                                                    serviceHandler);
+            if (username == null)
+               username = msgContext.getStrProp( MessageContext.USERID );
+            if (username != null) {
+               if (properties == null) properties = new Properties();
+               properties.setProperty(Context.SECURITY_PRINCIPAL,
+                                  username);
+            }
+
             String password = (String)getStrOption(jndiPassword,
-                                                   serviceHandler);
-
-            if (null == username)
-            {
-                username =
-                    msgContext.getStrProp( MessageContext.USERID );
-                password =
-                    msgContext.getStrProp( MessageContext.PASSWORD );
-            }
-            if (null == username)
-            {
-                throw new IllegalArgumentException(
-                        JavaUtils.getMessage("nullEJBUser00"));
-            }
-
+                                                  serviceHandler);
             if (password == null)
-                password = "";
+                password = msgContext.getStrProp( MessageContext.PASSWORD );
+            if (password != null) {
+                if (properties == null) properties = new Properties();
+                properties.setProperty(Context.SECURITY_CREDENTIALS,
+                                       password);
+            }
 
             String factoryClass = (String)getStrOption(jndiContextClass,
                                                        serviceHandler);
-            String contextUrl = (String)getStrOption(jndiURL,
-                                                     serviceHandler);
-
-            Properties properties = new Properties();
-
-            properties.setProperty(Context.INITIAL_CONTEXT_FACTORY,
+            if (factoryClass != null) {
+                if (properties == null) properties = new Properties();
+                properties.setProperty(Context.INITIAL_CONTEXT_FACTORY,
                                    factoryClass);
-            properties.setProperty(Context.PROVIDER_URL,
-                                   contextUrl);
-
-            properties.setProperty(Context.SECURITY_PRINCIPAL,
-                                   username);
-            properties.setProperty(Context.SECURITY_CREDENTIALS,
-                                   password);
-
-            Context context = new InitialContext(properties);
-            if (null == context)
-            {
-                throw new AxisFault(JavaUtils.getMessage("noContext01"));
             }
 
-            home =  context.lookup(clsName);
-            if (null == home)
+            String contextUrl = (String)getStrOption(jndiURL,
+                                                     serviceHandler);
+            if (contextUrl != null) {
+                if (properties == null) properties = new Properties();
+                properties.setProperty(Context.PROVIDER_URL,
+                                   contextUrl);
+            }
+
+            InitialContext context = null;
+            if (properties != null) 
+                context = new InitialContext(properties);
+            else
             {
-                throw new AxisFault(JavaUtils.getMessage("noBeanHome00"));
+                if (cached_context == null)
+                        cached_context = new InitialContext();
+                context = cached_context;
+            }
+
+            if (context == null)
+            {
+                throw new AxisFault("EJBProvider can't get Context");
+            }
+
+            home = context.lookup(clsName);
+            if (home == null)
+            {
+                throw new AxisFault("EJBProvider can't get Bean Home");
             }
         }
         catch (Exception exception)
@@ -155,11 +166,8 @@ public class EJBProvider extends RPCProvider
         }
 
         Class homeClass = home.getClass();
-        Class params[] = new Class[0];
-        Method createMethod = homeClass.getMethod("create", params);
-
-        Object args[] = new Object[0];
-        Object result = createMethod.invoke(home, args);
+        Method createMethod = homeClass.getMethod("create", empty_class_array);
+        Object result = createMethod.invoke(home, empty_object_array);
 
         return result;
     }
