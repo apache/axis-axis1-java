@@ -93,7 +93,7 @@ public class EchoService {
      * This method accepts an array of integers and echoes it back to the 
      * client.
      */
-    public Integer[] echoIntegerArray(Integer[] input) {
+    public int[] echoIntegerArray(int[] input) {
         return input;
     }
 
@@ -107,7 +107,7 @@ public class EchoService {
     /**
      * This method accepts an array of floats and echoes it back to the client.
      */
-    public Float[] echoFloatArray(Float[] input) {
+    public float[] echoFloatArray(float[] input) {
         return input;
     }
 

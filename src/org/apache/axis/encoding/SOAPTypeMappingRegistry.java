@@ -72,6 +72,7 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
     public static final QName XSD_INT = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "int");
     public static final QName XSD_LONG = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "long");
     public static final QName XSD_SHORT = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "short");
+    public static final QName XSD_BYTE = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "byte");
     public static final QName XSD_DECIMAL = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "decimal");
     public static final QName XSD_BASE64 = new QName(Constants.URI_CURRENT_SCHEMA_XSD, "base64");
 
@@ -82,6 +83,7 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
     public static final QName SOAP_INT = new QName(Constants.URI_SOAP_ENC, "int");
     public static final QName SOAP_LONG = new QName(Constants.URI_SOAP_ENC, "long");
     public static final QName SOAP_SHORT = new QName(Constants.URI_SOAP_ENC, "short");
+    public static final QName SOAP_BYTE = new QName(Constants.URI_SOAP_ENC, "byte");
     public static final QName SOAP_ARRAY = new QName(Constants.URI_SOAP_ENC, "Array");
 
     public static       QName XSD_DATE;
@@ -147,6 +149,12 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
     class ShortDeserializerFactory implements DeserializerFactory {
         public DeserializerBase getDeserializer() { return new ShortDeser(); }
     }
+    class ByteDeser extends BasicDeser {
+        Object makeValue(String source) { return new Byte(source); }
+    }
+    class ByteDeserializerFactory implements DeserializerFactory {
+        public DeserializerBase getDeserializer() { return new ByteDeser(); }
+    }
     class DecimalDeser extends BasicDeser {
         Object makeValue(String source) { return new BigDecimal(source); }
     }
@@ -196,6 +204,7 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
             if (_class == int.class)     qName = XSD_INT;
             if (_class == long.class)    qName = XSD_LONG;
             if (_class == short.class)   qName = XSD_SHORT;
+            if (_class == byte.class)    qName = XSD_BYTE;
         }
         return qName;
     }
@@ -209,6 +218,7 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
         addSerializer(java.lang.Integer.class, XSD_INT, se);
         addSerializer(java.lang.Long.class, XSD_LONG, se);
         addSerializer(java.lang.Short.class, XSD_SHORT, se);
+        addSerializer(java.lang.Byte.TYPE, XSD_BYTE, se);
         addSerializer(java.util.Date.class, XSD_DATE, new DateSerializer());
         addSerializer(byte[].class, XSD_BASE64, new Base64Serializer());
         addSerializer(java.math.BigDecimal.class, XSD_DECIMAL, se);
@@ -220,6 +230,7 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
         addDeserializersFor(XSD_INT, java.lang.Integer.class, new IntDeserializerFactory());
         addDeserializersFor(XSD_LONG, java.lang.Long.class, new LongDeserializerFactory());
         addDeserializersFor(XSD_SHORT, java.lang.Short.class, new ShortDeserializerFactory());
+        addDeserializersFor(XSD_BYTE, java.lang.Byte.class, new ByteDeserializerFactory());
         addDeserializersFor(XSD_DECIMAL, java.math.BigDecimal.class, new DecimalDeserializerFactory());
         addDeserializersFor(XSD_BASE64, byte[].class, new Base64Serializer.Base64DeserializerFactory());
 
