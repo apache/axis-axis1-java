@@ -177,30 +177,35 @@ public class AxisClient extends AxisEngine {
                  * this is the pivot point in the Transport chain.
                  */
                 hName = msgContext.getTransportName();
-                if ( hName != null && (h = getTransport( hName )) != null )
+                if ( hName != null && (h = getTransport( hName )) != null ) {
                     h.invoke(msgContext);
-                else
-                    throw new AxisFault(JavaUtils.getMessage("noTransport00", hName));
+                }
+                else {
+                    throw new AxisFault(
+                        JavaUtils.getMessage("noTransport00", hName));
+                }
 
                 /* Process the JAXRPC Handlers */
                 invokeJAXRPCHandlers(msgContext);
 
                 /* Process the Global Response Chain */
                 /***********************************/
-                if ((h = getGlobalResponse()) != null)
+                if ((h = getGlobalResponse()) != null) {
                     h.invoke(msgContext);
+                }
 
                 if ( service != null ) {
                     h = service.getResponseHandler();
-                    if ( h != null )
+                    if ( h != null ) {
                         h.invoke(msgContext);
+                    }
                 }
 
                 // Do SOAP Semantics checks here - this needs to be a call to
                 // a pluggable object/handler/something
             }
 
-        } catch( Exception e ) {
+        } catch ( Exception e ) {
             // Should we even bother catching it ?
             log.debug(JavaUtils.getMessage("exception00"), e);
             throw AxisFault.makeFault(e);
@@ -218,16 +223,20 @@ public class AxisClient extends AxisEngine {
     protected void invokeJAXRPCHandlers(MessageContext context){
         Service service
             = (Service)context.getProperty(Call.WSDL_SERVICE);
-        if(service == null)
+        if(service == null) {
             return;
+        }
 
         QName portName = (QName) context.getProperty(Call.WSDL_PORT_NAME);
-        if(portName == null)
+        if(portName == null) {
             return;
+        }
 
-        javax.xml.rpc.handler.HandlerRegistry registry = service.getHandlerRegistry();
-        if(registry == null)
+        javax.xml.rpc.handler.HandlerRegistry registry;
+        registry = service.getHandlerRegistry();
+        if(registry == null) {
             return;
+        }
 
         java.util.List chain = registry.getHandlerChain(portName);
 
@@ -236,21 +245,23 @@ public class AxisClient extends AxisEngine {
 
         SOAPService    soapService = context.getService();
         if (soapService != null) {
-        	// A client configuration exists for this service.  Check to see
-        	//  if there is a HandlerInfoChain configured upon it.
-        	java.util.List cfgChain = (java.util.List) soapService.getOption(Constants.ATTR_HANDLERINFOCHAIN); 
-        	// GLT - merge this w/an existing chain  
-        	//  for now... use the container version
-        	chain = cfgChain;
+            // A client configuration exists for this service.  Check to see
+            //  if there is a HandlerInfoChain configured upon it.
+            java.util.List cfgChain = (java.util.List) soapService.getOption(Constants.ATTR_HANDLERINFOCHAIN); 
+            // GLT - merge this w/an existing chain  
+            //  for now... use the container version
+            chain = cfgChain;
         }
         
-		HandlerInfoChainFactory _handlerChainFactory = new HandlerInfoChainFactory(chain);
-        HandlerChainImpl impl =  (HandlerChainImpl) _handlerChainFactory.createHandlerChain();
+        HandlerInfoChainFactory handlerChainFactory = new HandlerInfoChainFactory(chain);
+        HandlerChainImpl impl =  (HandlerChainImpl) handlerChainFactory.createHandlerChain();
 
-        if(!context.getPastPivot())
+        if(!context.getPastPivot()) {
             impl.handleRequest(context);
-        else
+        }
+        else {
             impl.handleResponse(context);
+        }
         impl.destroy();
     }
 }
