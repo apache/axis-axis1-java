@@ -136,7 +136,7 @@ public class SupplierRegistry implements HandlerRegistry {
           return null;
         }
         Handler h = supplier.getHandler();
-        Debug.Print( 2, "Exit: SupplierRegistry::find - h=" + h );
+        Debug.Print( 2, "Exit: SupplierRegistry::find"  );
         return h ;
     }
 

@@ -74,7 +74,6 @@ public class SimpleSupplier implements Supplier
     
     public Handler getHandler()
     {
-        Debug.Print(1, "SimpleSupplier returning " + _handler);
         return _handler;
     }
 }
