@@ -180,18 +180,9 @@ public class SOAPFault extends SOAPBodyElement implements javax.xml.soap.SOAPFau
             }
             
             // get the QName for this faults detail element
-            Class cls = fault.getClass();
-            QName qname = null;
-            if (! cls.equals(AxisFault.class)) {
-				FaultDesc faultDesc = null;
-                OperationDesc op = context.getMessageContext().getOperation();
-                if(op != null) {
-					faultDesc = op.getFaultByClass(cls);
-                }
-                
-				if (faultDesc != null) {
-                    qname = faultDesc.getQName();
-                }
+            QName qname = getFaultQName(fault.getClass(), context);
+            if (qname == null && fault.getWrapped() != null) {
+                qname = getFaultQName(fault.getWrapped().getClass(), context);
             }
             if (qname == null) {
                 // not the greatest, but...
@@ -216,7 +207,23 @@ public class SOAPFault extends SOAPBodyElement implements javax.xml.soap.SOAPFau
         
         context.endElement();
     }
-    
+
+    private QName getFaultQName(Class cls, SerializationContext context) {
+        QName qname = null;       
+        if (! cls.equals(AxisFault.class)) {
+            FaultDesc faultDesc = null;
+            OperationDesc op = context.getMessageContext().getOperation();
+            if(op != null) {
+                faultDesc = op.getFaultByClass(cls);
+            }
+                
+            if (faultDesc != null) {
+                qname = faultDesc.getQName();
+            }
+        }
+        return qname;
+    }
+
     public AxisFault getFault()
     {
         return fault;

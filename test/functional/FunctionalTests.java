@@ -61,6 +61,9 @@ public class FunctionalTests extends TestCase
         
         // test.rpc test
         suite.addTestSuite(TestIF3SOAP.class);
+        
+        // samples.fault test
+        suite.addTestSuite(TestFaultsSample.class);
 
         // Attachments service test.
         try{
