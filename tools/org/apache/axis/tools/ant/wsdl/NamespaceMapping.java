@@ -119,7 +119,7 @@ public class NamespaceMapping implements Mapper {
                        String packName,
                        String nspace) {
         owner.log("mapping "+nspace+" to "+packName, Project.MSG_VERBOSE);
-        map.put(packName, nspace);
+        map.put(nspace, packName);
     }
     /**
      * validate the option set
