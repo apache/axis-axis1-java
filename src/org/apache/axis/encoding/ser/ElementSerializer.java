@@ -64,10 +64,10 @@ import java.io.IOException;
 
 import org.apache.axis.Constants;
 import org.apache.axis.wsdl.fromJava.Types;
+import org.apache.axis.components.i18n.Messages;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.Messages;
 
 /**
  * Serializer for DOM elements

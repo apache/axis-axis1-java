@@ -53,44 +53,11 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.utils;
+package org.apache.axis.components.i18n;
 
-import java.awt.Image;
-import java.beans.Introspector;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringReader;
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.text.Collator;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.Vector;
-
-import javax.activation.DataHandler;
-import javax.xml.soap.SOAPException;
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
-
-import org.apache.axis.attachments.AttachmentPart;
-import org.apache.axis.components.image.ImageIO;
-import org.apache.axis.components.image.ImageIOFactory;
-import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.types.HexBinary;
-import org.apache.commons.logging.Log;
 
 
 /**
@@ -101,9 +68,11 @@ import org.apache.commons.logging.Log;
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
 public class Messages {
+    private static final String DEFAULT_PROPERTIES_RESOURCE_NAME =
+        "org.apache.axis.utils.axisNLS";
+
     // Message resource bundle.
-    private static Vector bundleNames = null;        // String
-    private static Vector messageBundles = null;     // ResourceBundle
+    private static ResourceBundle messageBundle = null;
 
     
     /**
@@ -114,11 +83,11 @@ public class Messages {
      * axisNLS.properties.  So, it will return the first in the message
      * list (axisNLS.properties)... name changed to reflect.
      */
-    public static ResourceBundle getFirstMessageResourceBundle() {
-        if (messageBundles == null) {
-            initializeMessageBundles();
+    public static ResourceBundle getMessageResourceBundle() {
+        if (messageBundle == null) {
+            initializeMessageBundle();
         }
-        return (ResourceBundle)messageBundles.get(0);
+        return messageBundle;
     } // getMessageResourceBundle
 
 
@@ -129,15 +98,11 @@ public class Messages {
      */
     public static String getMessage(String key)
             throws MissingResourceException {
-        if (messageBundles == null) {
-            initializeMessageBundles();
+        if (messageBundle == null) {
+            initializeMessageBundle();
         }
         
-        String msg = null;
-        for (int i = 0; msg == null  &&  i < messageBundles.size(); i++) {
-            msg = ((ResourceBundle)messageBundles.get(i)).getString(key);
-        }
-        return msg;
+        return messageBundle.getString(key);
     } // getMessage
 
 
@@ -195,38 +160,12 @@ public class Messages {
 
 
     /**
-     * Add a ResourceBundle to list.
-     * ResourceBundle is not opened until needed.
-     */    
-    public static void addMessages(String resourceBundleName) {
-        if (bundleNames == null) {
-            initializeBundleNames();
-        }
-        bundleNames.add(resourceBundleName);
-        if (messageBundles != null) {
-            messageBundles.add(ResourceBundle.getBundle(resourceBundleName));
-        }
-    }
-
-
-    /**
      * Load the resource bundle messages from the properties file.
      * This is ONLY done when it is needed.  If no messages are
      * printed (for example, only Wsdl2java is being run in non-
      * verbose mode) then there is no need to read the properties file.
      */
-    private static void initializeMessageBundles() {
-        if (bundleNames == null) {
-            initializeBundleNames();
-        }
-        messageBundles = new Vector();
-        for (int i = 0; i < bundleNames.size(); i++) {
-            messageBundles.add(ResourceBundle.getBundle((String)bundleNames.get(i)));
-        }
-    } // initializeMessageBundles
-    
-    private static void initializeBundleNames() {
-        bundleNames = new Vector();
-        bundleNames.add("org.apache.axis.utils.axisNLS");
-    }
+    private static void initializeMessageBundle() {
+        messageBundle = ResourceBundle.getBundle(DEFAULT_PROPERTIES_RESOURCE_NAME);
+    } // initializeMessageBundle
 }

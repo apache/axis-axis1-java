@@ -68,7 +68,7 @@ import java.util.Iterator;
 import org.apache.axis.Constants;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.Messages;
+import org.apache.axis.components.i18n.Messages;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.SerializerFactory;
 import org.apache.axis.encoding.SerializationContext;

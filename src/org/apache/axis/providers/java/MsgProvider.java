@@ -59,7 +59,7 @@ import org.apache.axis.Handler;
 import org.apache.axis.MessageContext;
 import org.apache.axis.AxisFault;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.Messages;
+import org.apache.axis.components.i18n.Messages;
 import org.apache.axis.description.OperationDesc;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.message.SOAPEnvelope;

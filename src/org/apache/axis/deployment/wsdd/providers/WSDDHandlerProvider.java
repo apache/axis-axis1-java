@@ -57,11 +57,11 @@ package org.apache.axis.deployment.wsdd.providers;
 import org.apache.axis.ConfigurationException;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.Handler;
+import org.apache.axis.components.i18n.Messages;
 import org.apache.axis.deployment.wsdd.WSDDProvider;
 import org.apache.axis.deployment.wsdd.WSDDService;
 import org.apache.axis.utils.ClassUtils;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.Messages;
 
 /**
  * This is a simple provider for using Handler-based services which don't

@@ -58,8 +58,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
 
+import org.apache.axis.components.i18n.Messages;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.Messages;
 
 /**
  *

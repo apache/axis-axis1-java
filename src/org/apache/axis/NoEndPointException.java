@@ -54,8 +54,8 @@
  */
 package org.apache.axis;
 
+import org.apache.axis.components.i18n.Messages;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.Messages;
 
 /**
  * @author Russell Butek (butek@us.ibm.com)

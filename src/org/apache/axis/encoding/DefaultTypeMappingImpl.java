@@ -58,6 +58,7 @@ package org.apache.axis.encoding;
 import org.apache.axis.Constants;
 import org.apache.axis.types.HexBinary;
 import org.apache.axis.schema.SchemaVersion;
+import org.apache.axis.components.i18n.Messages;
 import org.apache.axis.encoding.ser.ArrayDeserializerFactory;
 import org.apache.axis.encoding.ser.ArraySerializerFactory;
 import org.apache.axis.encoding.ser.Base64DeserializerFactory;
@@ -80,7 +81,6 @@ import org.apache.axis.encoding.ser.SimplePrimitiveSerializerFactory;
 import org.apache.axis.encoding.ser.VectorDeserializerFactory;
 import org.apache.axis.encoding.ser.VectorSerializerFactory;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.Messages;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.JAXRPCException;

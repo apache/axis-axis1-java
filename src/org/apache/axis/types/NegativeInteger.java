@@ -58,9 +58,8 @@ import java.math.BigInteger;
 
 import java.util.Random;
 
-import org.apache.axis.types.NonPositiveInteger;
+import org.apache.axis.components.i18n.Messages;
 import org.apache.axis.utils.JavaUtils;
-import org.apache.axis.utils.Messages;
 
 /**
  * Custom class for supporting primitive XSD data type negativeinteger

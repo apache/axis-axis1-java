@@ -62,9 +62,9 @@ import org.apache.axis.AxisEngine;
 import org.apache.axis.client.Transport;
 import org.apache.axis.client.Call;
 
-import org.apache.axis.utils.Messages;
 import org.apache.commons.logging.Log;
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.components.i18n.Messages;
 
 import javax.jms.Destination;
 
