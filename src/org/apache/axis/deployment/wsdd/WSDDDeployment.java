@@ -150,6 +150,10 @@ public class WSDDDeployment
             WSDDTypeMapping mapping = new WSDDTypeMapping(elements[i]);
             addTypeMapping(mapping);
         }
+        
+        Element el = getChildElement(e, "globalConfig");
+        if (el != null)
+            globalConfig = new WSDDGlobalConfiguration(e);
     }
 
     protected QName getElementName()
