@@ -216,21 +216,27 @@ public class XMLUtils {
     }
 
     public static void privateElementToWriter(Element element, Writer writer,
-                                              boolean omitXMLDecl) {
-        DOM2Writer.serializeAsXML(element, writer, omitXMLDecl);
+                                              boolean omitXMLDecl,
+                                              boolean pretty) {
+        DOM2Writer.serializeAsXML(element, writer, omitXMLDecl, pretty);
     }
     
     public static void ElementToWriter(Element element, Writer writer) {
-        privateElementToWriter(element, writer, true);
+        privateElementToWriter(element, writer, true, false);
     }
     
     public static void DocumentToStream(Document doc, OutputStream out) {
         Writer writer = new OutputStreamWriter(out);
-        privateElementToWriter(doc.getDocumentElement(), writer, false);
+        privateElementToWriter(doc.getDocumentElement(), writer, false, false);
     }
-    
+
+    public static void PrettyDocumentToStream(Document doc, OutputStream out) {
+        Writer writer = new OutputStreamWriter(out);
+        privateElementToWriter(doc.getDocumentElement(), writer, false, true);
+    }
+
     public static void DocumentToWriter(Document doc, Writer writer) {
-        privateElementToWriter(doc.getDocumentElement(), writer, false);
+        privateElementToWriter(doc.getDocumentElement(), writer, false, false);
     }
 
     public static String getInnerXMLString(Element element) {
