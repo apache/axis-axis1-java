@@ -280,7 +280,7 @@ Copyright:
   <!-- =================================================================== -->
   <!-- Run functional tests                                                -->
   <!-- =================================================================== -->
-  <target name="functional-tests" depends="printEnv,compile,transport-layer" if="junit.present" >
+  <target name="functional-tests" depends="printEnv,transport-layer" if="junit.present" >
     <!-- This uses a custom Ant task.  See test/functional/ant/RunAxisFunctionalTests.java -->
     <!-- This pattern taken from Cactus, http://jakarta.apache.org/commons/cactus -->
 
