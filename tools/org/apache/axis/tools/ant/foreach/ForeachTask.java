@@ -68,22 +68,25 @@ import java.util.Vector;
 
 /**
  * Call a target foreach entry in a set of parameters based on a fileset.
+ * <p>
+ * <i>For Axis development; there is no support or stability associated 
+ *  with this task</i> 
  *  <pre>
- *    <target name="target1">
- *      <foreach target="target2">
- *        <param name="param1">
- *            <fileset refid="fset1"/>
- *        </param>
- *        <param name="param2">
- *          <item value="jar" />
- *          <item value="zip" />
- *        </param>
- *       </foreach>
- *    </target>
+ *    &lt;target name=&quot;target1&quot;&gt;
+ *      &lt;foreach target=&quot;target2&quot;&gt;
+ *        &lt;param name=&quot;param1&quot;&gt;
+ *            &lt;fileset refid=&quot;fset1&quot;/&gt;
+ *        &lt;/param&gt;
+ *        &lt;param name=&quot;param2&quot;&gt;
+ *          &lt;item value=&quot;jar&quot; /&gt;
+ *          &lt;item value=&quot;zip&quot; /&gt;
+ *        &lt;/param&gt;
+ *       &lt;/foreach&gt;
+ *    &lt;/target&gt;
  *
- *    <target name="target2">
- *      <echo message="prop is ${param1}.${param2}" />
- *    </target>
+ *    &lt;target name=&quot;target2&quot;&gt;
+ *      &lt;echo message=&quot;prop is ${param1}.${param2}&quot; /&gt;
+ *    &lt;/target&gt;  
  * </pre>
  * <br>
  * Really this just a wrapper around "AntCall"
@@ -92,7 +95,7 @@ import java.util.Vector;
  * in <code>ExecuteOn</code>.  It allows the user
  * to specify whether directories, files, or both directories and files
  * from the filesets are included as entries in the parameter set.
- *
+ * @ant.task category="axis" 
  * @author <a href="mailto:tpv@spamcop.net">Tim Vernum</a>
  * @author Davanum Srinivas
  */

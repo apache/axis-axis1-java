@@ -64,6 +64,7 @@ Copyright:
     <!-- build my ForEach task -->
   <echo message="Building ForEach" />
   <javac srcdir="${tools.dir}/${componentName}/foreach" 
+    debug="${debug}"
       destdir="${tools.build.dir}">
     <classpath refid="classpath"/>
     <include name="*.java" />
@@ -72,6 +73,7 @@ Copyright:
     <!-- build the RunAxisFunctionalTest task -->
   <echo message="Building RunAxisFunctionalTest" />
   <javac srcdir="${tools.dir}/${componentName}/axis" 
+    debug="${debug}"
       destdir="${tools.build.dir}">
     <classpath refid="classpath"/>
     <include name="*.java" />
@@ -79,7 +81,8 @@ Copyright:
 
     <!-- build the wsdl2java and java2wsdl tasks -->
   <echo message="Building WSDL tasks" />
-  <javac srcdir="${tools.dir}/${componentName}/wsdl" 
+  <javac srcdir="${tools.dir}/${componentName}/wsdl"
+    debug="${debug}"
     destdir="${tools.build.dir}">
     <classpath>
       <pathelement location="${build.lib}/${name}.jar"/>
@@ -108,8 +111,11 @@ Copyright:
 
 <property name="xdocs.dir" location="${env.ANT_HOME}/proposal/xdocs" />
 <path id="xdoclet.extra.classpath">
-  <pathelement location="${build.lib}/axis.jar"/>
+  <fileset dir="${build.lib}">
+    <include name="**/*.jar"/>
+  </fileset>
 </path>
+
 <property name="xdoclet.extra.classpath.asprop"
   refid="xdoclet.extra.classpath"/>
 
@@ -120,19 +126,19 @@ Copyright:
 
 
 
-<target name="xdocs" depends="probe-xdocs"
+<target name="xdocs" depends="probe-xdocs,compile"
   description="Run xdoclet over the ant tasks to create doc pages"
   if="xdocs.found">
   <echo>
     running xdocs with classpath=${xdoclet.extra.classpath.asprop}
   </echo>  
   <ant inheritAll="${ant.inheritAll}" inheritRefs="${ant.inheritRefs}" dir="${xdocs.dir}">
-    <property name="src.dir" location="org/apache/axis/tools/ant"/>
+    <property name="src.dir" location="org/apache/axis/tools/ant/"/>
     <property name="src.root" location="."/>
     <property name="xdoclet.extra.classpath" 
       value="${xdoclet.extra.classpath.asprop}"/>
   </ant>
 </target>
-  
+
   
 </project>
