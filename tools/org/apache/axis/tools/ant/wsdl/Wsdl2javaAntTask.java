@@ -98,7 +98,7 @@ public class Wsdl2javaAntTask extends Task
     /**
      * do we print a stack trace when something goes wrong?
      */
-    private boolean printStackTraceOnFailure=false;
+    private boolean printStackTraceOnFailure=true;
     /**
      * what action to take when there was a failure and the source was some
      * URL
@@ -218,7 +218,7 @@ public class Wsdl2javaAntTask extends Task
                 traceParams(Project.MSG_INFO);
                 t.printStackTrace();
             }
-            throw new BuildException("Error while generating WSDL for "+url,t); 
+            throw new BuildException("Error while processing WSDL in Wsdl2javaAntTask for "+url,t); 
         }
 
     }
