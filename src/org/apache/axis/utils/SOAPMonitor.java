@@ -56,6 +56,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.event.ChangeListener;
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -76,8 +77,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.MalformedURLException;
 import java.text.DateFormat;
 import java.util.Collection;
 import java.util.Date;
@@ -94,7 +95,7 @@ import java.util.Vector;
  * @author Toshiyuki Kimura (toshi@apache.org)
  * @author Brian Price (pricebe@us.ibm.com)
  */
-public class SOAPMonitor extends JFrame implements ActionListener {
+public class SOAPMonitor extends JFrame implements ActionListener, ChangeListener {
 
     /**
      * Private data
@@ -127,9 +128,9 @@ public class SOAPMonitor extends JFrame implements ActionListener {
     private int axisPort = 8080;
 
     /**
-     * Field axisURI
+     * Field axisURL
      */
-    private String axisURI = null;
+    private String axisURL = null;
 
     /**
      * Field pages
@@ -234,20 +235,18 @@ public class SOAPMonitor extends JFrame implements ActionListener {
         // Create an instance
         soapMonitor = new SOAPMonitor();
 
-        // GET Axis URI.
+        // GET Axis URL.
         // The default is "http://localhost:8080/axis/servlet/AxisServlet"
-        soapMonitor.axisURI = opts.getURL();
-        URI uri = new URI(soapMonitor.axisURI);
-        soapMonitor.axisHost = uri.getHost();
+        soapMonitor.axisURL = opts.getURL();
+        URL url = new URL(soapMonitor.axisURL);
+        soapMonitor.axisHost = url.getHost();
 
         // GET User name & Password
         axisUser = opts.getUser();
         axisPass = opts.getPassword();
 
         // Login and start application
-        if (soapMonitor.doLogin()) {
-            soapMonitor.start();
-        }
+        soapMonitor.doLogin();
     }
 
     /**
@@ -350,6 +349,7 @@ public class SOAPMonitor extends JFrame implements ActionListener {
         // Create the notebook
         tabbed_pane = new JTabbedPane(JTabbedPane.TOP);
         main_panel.add(tabbed_pane, BorderLayout.CENTER);
+        top_pane.addChangeListener(this);
         top_pane.setEnabled(false);
         setVisible(true);
     }
@@ -374,17 +374,26 @@ public class SOAPMonitor extends JFrame implements ActionListener {
         login_btn.setEnabled(false);
 
         // Get the axisHost & axisPort to be used
-        String uri_str = login.getURI();
+        String url_str = login.getURL();
         try {
-            URI uri = new URI(uri_str);
-            axisHost = uri.getHost();
-            axisPort = uri.getPort();
+            URL url = new URL(url_str);
+            axisHost = url.getHost();
+            axisPort = url.getPort();
             if (axisPort == -1) {
                 axisPort = 8080;
             }
-            String axisPath = uri.getPath();
-            axisURI = "http://" + axisHost + ":" + axisPort + axisPath;
-        } catch (URISyntaxException e) {
+            String axisPath = url.getPath();
+            axisURL = "http://" + axisHost + ":" + axisPort + axisPath;
+        } catch (MalformedURLException e) {
+            JOptionPane pane = new JOptionPane();
+            String msg = e.toString();
+            pane.setMessageType(JOptionPane.WARNING_MESSAGE);
+            pane.setMessage(msg);
+            pane.setOptions(new String[]{"OK"});
+            JDialog dlg = pane.createDialog(null, "Login status");
+            dlg.setVisible(true);
+            login_btn.setEnabled(true);
+            return false;
         }
         titleLabel.setText(titleStr + " for [" + axisHost + ":" + axisPort
                 + "]");
@@ -448,7 +457,7 @@ public class SOAPMonitor extends JFrame implements ActionListener {
         /**
          * Field wait
          */
-        private int wait = 50;
+        private int wait = 100;
 
         /**
          * Field progressBar
@@ -496,7 +505,7 @@ public class SOAPMonitor extends JFrame implements ActionListener {
         Document doc = null;
         try {
             String[] param = new String[]{"-u" + axisUser, "-w" + axisPass,
-                                          "-l " + axisURI, "list"};
+                                          "-l " + axisURL, "list"};
             String ret = adminClient.process(param);
             doc = XMLUtils.newDocument(
                     new ByteArrayInputStream(ret.getBytes()));
@@ -521,10 +530,10 @@ public class SOAPMonitor extends JFrame implements ActionListener {
     private boolean doDeploy(Document wsdd) {
         String deploy = null;
         Options opt = null;
-        deploy = XMLUtils.ElementToString(wsdd.getDocumentElement());
+        deploy = XMLUtils.DocumentToString(wsdd);
         try {
             String[] param = new String[]{"-u" + axisUser, "-w" + axisPass,
-                                          "-l " + axisURI, ""};
+                                          "-l " + axisURL, ""};
             opt = new Options(param);
             adminClient.process(opt,
                     new ByteArrayInputStream(deploy.getBytes()));
@@ -603,6 +612,7 @@ public class SOAPMonitor extends JFrame implements ActionListener {
         newNode = doc.createElement(handler);
         ((Element) newNode).setAttribute(type, monitor);
         nl.item(0).insertBefore(newNode, node);
+        
         return (Node) doc.getDocumentElement();
     }
 
@@ -647,6 +657,7 @@ public class SOAPMonitor extends JFrame implements ActionListener {
                 child.getParentNode().removeChild(child);
             }
         }
+
         return (Node) doc.getDocumentElement();
     }
 
@@ -752,9 +763,9 @@ public class SOAPMonitor extends JFrame implements ActionListener {
         if (!roleNode) {
             nl = doc.getElementsByTagName(param);
             newNode = doc.createElement(param);
-            ((Element) newNode).setAttribute(type, role);
+            ((Element) newNode).setAttribute(name, role);
             ((Element) newNode).setAttribute(value, admin);
-            doc.insertBefore(newNode, nl.item(0));
+            doc.getDocumentElement().insertBefore(newNode, nl.item(0));
         }
         return (Node) doc.getDocumentElement();
     }
@@ -850,9 +861,9 @@ public class SOAPMonitor extends JFrame implements ActionListener {
         private JPasswordField pass = new JPasswordField(20);
 
         /**
-         * Field uri
+         * Field url
          */
-        private JTextField uri = new JTextField(20);
+        private JTextField url = new JTextField(20);
 
         /**
          * Field loginState
@@ -871,20 +882,20 @@ public class SOAPMonitor extends JFrame implements ActionListener {
             cancel_button = new JButton("Cancel");
             cancel_button.addActionListener(this);
 
-            // default URI for AxisServlet
-            uri.setText(axisURI);
+            // default URL for AxisServlet
+            url.setText(axisURL);
             JLabel userLabel = new JLabel("User:");
             JLabel passLabel = new JLabel("Password:");
-            JLabel uriLabel = new JLabel("Axis URI:");
+            JLabel urlLabel = new JLabel("Axis URL:");
             userLabel.setHorizontalAlignment(JTextField.RIGHT);
             passLabel.setHorizontalAlignment(JTextField.RIGHT);
-            uriLabel.setHorizontalAlignment(JTextField.RIGHT);
+            urlLabel.setHorizontalAlignment(JTextField.RIGHT);
             panel.add(userLabel);
             panel.add(user);
             panel.add(passLabel);
             panel.add(pass);
-            panel.add(uriLabel);
-            panel.add(uri);
+            panel.add(urlLabel);
+            panel.add(url);
             panel.add(ok_button);
             panel.add(cancel_button);
             setContentPane(panel);
@@ -920,12 +931,12 @@ public class SOAPMonitor extends JFrame implements ActionListener {
         }
 
         /**
-         * Get the URI of the AxisServlet we are using
+         * Get the URL of the AxisServlet we are using
          * 
          * @return 
          */
-        public String getURI() {
-            return uri.getText();
+        public String getURL() {
+            return url.getText();
         }
 
         /**
@@ -2851,15 +2862,12 @@ public class SOAPMonitor extends JFrame implements ActionListener {
             JDialog dlg = null;
             String msg = null;
             final String title = "Deployment status";
-            final String deploy =
-                    "<deployment name=\"SOAPMonitor\""
-                    + " xmlns=\"http://xml.apache.org/axis/wsdd/\""
-                    +
-                    " xmlns:java=\"http://xml.apache.org/axis/wsdd/providers/java\">\n"
-                    + " <handler name=\"soapmonitor\""
-                    +
-                    " type=\"java:org.apache.axis.handlers.SOAPMonitorHandler\" />\n"
-                    + " </deployment>";
+            final String deploy = "<deployment name=\"SOAPMonitor\""
+              + " xmlns=\"http://xml.apache.org/axis/wsdd/\""
+              + " xmlns:java=\"http://xml.apache.org/axis/wsdd/providers/java\">\n"
+              + " <handler name=\"soapmonitor\""
+              + " type=\"java:org.apache.axis.handlers.SOAPMonitorHandler\" />\n"
+              + " </deployment>";
 
             // Create a new wsdd document
             try {
@@ -2891,7 +2899,7 @@ public class SOAPMonitor extends JFrame implements ActionListener {
                 if (service.equals("AdminService")) {
                     // Add "SimpleAuthenticationHandler" and "allowedRoles" parameter
                     // with "admin" as a user account
-                    addAuthenticate(node);
+                    impNode = wsdd.importNode(addAuthenticate(impNode), true);
                 }
                 wsdd.getDocumentElement().appendChild(impNode);
             }
@@ -2909,6 +2917,21 @@ public class SOAPMonitor extends JFrame implements ActionListener {
             pane.setMessage(msg);
             dlg = pane.createDialog(null, title);
             dlg.setVisible(true);
+        }
+    }
+
+    /**
+     * ChangeListener to handle tab actions
+     * 
+     * @param e 
+     */
+    public void stateChanged( javax.swing.event.ChangeEvent e ){
+        JTabbedPane tab = (JTabbedPane)e.getSource();
+        int item = tab.getSelectedIndex();
+        if (item==1) { // "Monitoring" tab is selected.
+            start();
+        } else {       // "Setting" tab is selected.
+            stop();
         }
     }
 }
