@@ -71,6 +71,8 @@
      * but here we want to validate JSP compilation too, and have a drop-in
      * page for easy re-use
      * @author Steve 'configuration problems' Loughran
+     * @author dims
+     * @author Brian Ewins
      */
 
 
@@ -136,28 +138,45 @@
                    String description,
                    String errorText,
                    String homePage) throws IOException {
-
-       Class clazz = classExists(classname);
-       if(clazz == null)  {
+        try {
+            Class clazz = classExists(classname);
+            if(clazz == null)  {
+               String url="";
+               if(homePage!=null) {
+                  url="<br>  See <a href="+homePage+">"+homePage+"</a>";
+               }
+               out.write("<p>"+category+": could not find class "+classname
+                   +" from file <b>"+jarFile
+                   +"</b><br>  "+errorText
+                   +url
+                   +"<p>");
+               return 1;
+            } else {
+               String location = getLocation(out, clazz);
+               if(location == null) {
+                  out.write("Found "+ description + " (" + classname + ")<br>");
+               }
+               else {
+                  out.write("Found "+ description + " (" + classname + ") at " + location + "<br>");
+               }
+               return 0;
+            }
+        } catch(NoClassDefFoundError ncdfe) { 
             String url="";
             if(homePage!=null) {
                 url="<br>  See <a href="+homePage+">"+homePage+"</a>";
             }
-            out.write("<p>"+category+": could not find class "+classname
+            out.write("<p>"+category+": could not find a dependency"
+                    +" of class "+classname
                     +" from file <b>"+jarFile
-                    +"</b><br>  "+errorText
+                    +"</b><br> "+errorText
                     +url
+                    +"<br>The root cause was: "+ncdfe.getMessage()
+                    +"<br>This can happen e.g. if "+classname+" is in" 
+                    +" the 'common' classpath, but a dependency like "
+                    +" activation.jar is only in the webapp classpath."
                     +"<p>");
             return 1;
-        } else {
-            String location = getLocation(out, clazz);
-            if(location == null) {
-                out.write("Found "+ description + " (" + classname + ")<br>");
-            }
-            else {
-                out.write("Found "+ description + " (" + classname + ") at " + location + "<br>");
-            }
-            return 0;
         }
     }
 
