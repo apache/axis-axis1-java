@@ -156,7 +156,15 @@ public abstract class AbstractXMLEncoder implements XMLEncoder {
                     break;
             }
         }
-        return (out == null) ? xmlString : out.toString();
+        if (out == null) {
+            return xmlString;
+        }
+        try {
+            return out.toString(getEncoding());
+        } catch (UnsupportedEncodingException e) {
+            // we tested it ealier, should work.
+            throw new IllegalStateException(Messages.getMessage("encodingDisappeared00", getEncoding()));
+        }
     }
 
     public abstract String getEncoding();

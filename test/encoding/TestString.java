@@ -86,17 +86,24 @@ public class TestString extends TestCase {
     public void testWhitespace() throws Exception {
         runtest(" \n \t "); // note: \r fails
     }
-/*    
+
     public void testFrenchAccents() throws Exception {
         runtest("\u00e0\u00e2\u00e4\u00e7\u00e8\u00e9\u00ea\u00eb\u00ee\u00ef\u00f4\u00f6\u00f9\u00fb\u00fc");
     }
     
     public void testFrenchAccents2() throws Exception {
-        runtest("Une chaÃ®ne avec des caractÃ¨res accentuÃ©s");
+        runtest("Une chaîne avec des caractères accentués");
     }
     
     public void testGermanUmlauts() throws Exception {
         runtest(" Some text \u00df with \u00fc special \u00f6 chars \u00e4.");
     }
-*/    
+    
+    public void testWelcomeUnicode() throws Exception {
+        // welcome in several languages
+        runtest(
+          "Chinese (trad.) : \u6b61\u8fce  \n" +
+          "Greek : \u03ba\u03b1\u03bb\u03ce\u03c2 \u03bf\u03c1\u03af\u03c3\u03b1\u03c4\u03b5 \n"+
+          "Japanese : \u3088\u3046\u3053\u305d");
+    }
 }
