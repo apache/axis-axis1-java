@@ -81,6 +81,9 @@ public class Base64Deserializer extends DeserializerImpl implements Deserializer
 
     public QName xmlType;
     public Class javaType;
+
+    StringBuffer buf = null;
+
     public Base64Deserializer(Class javaType, QName xmlType) {
         this.xmlType = xmlType;
         this.javaType = javaType;
@@ -92,15 +95,12 @@ public class Base64Deserializer extends DeserializerImpl implements Deserializer
     public void characters(char [] chars, int start, int end)
         throws SAXException
     {
-        value = Base64.decode(chars, start, end);
-        if (javaType == Byte[].class) {
-            Byte[] data = new Byte[ ((byte[])value).length ];
-            for (int i=0; i<data.length; i++) {
-                byte b = ((byte[]) value)[i];
-                data[i] = new Byte(b);
-            }
-            value = data;
+        // Characters are collected in a buffer because 
+        // SAX may chunk the data.
+        if (buf == null) {
+            buf = new StringBuffer();
         }
+        buf.append(chars, start, end); 
     }
     
     /**
@@ -110,7 +110,21 @@ public class Base64Deserializer extends DeserializerImpl implements Deserializer
                              DeserializationContext context)
         throws SAXException
     {
+        // Decode the collected characters
+        if (buf != null) {
+            value = Base64.decode(buf.toString());
+            if (javaType == Byte[].class) {
+                Byte[] data = new Byte[ ((byte[])value).length ];
+                for (int i=0; i<data.length; i++) {
+                    byte b = ((byte[]) value)[i];
+                    data[i] = new Byte(b);
+                }
+                value = data;
+            }
+        }
+
         super.onEndElement(namespace,localName, context);
+        // If no value was specified, return a zero length byte or Byte array
         if (value == null) {
             if (javaType == byte[].class) {
                 value = new byte[0];
