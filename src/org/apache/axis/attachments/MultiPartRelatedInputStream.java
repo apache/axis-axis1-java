@@ -83,7 +83,7 @@ public class MultiPartRelatedInputStream extends java.io.FilterInputStream
     protected int rootPartLength = 0;
     protected boolean closed = false; //If true the stream has been closed.
     protected boolean eos = false;  //This is set once the SOAP packet has reached the end of stream.
-    protected java.io.InputStream is = null; //The orginal multipart/related stream.
+    // protected java.io.InputStream is = null; //The orginal multipart/related stream.
     //This stream controls and manages the  boundary.
     protected org.apache.axis.attachments.BoundaryDelimitedStream boundaryDelimitedStream = null;
     protected java.io.InputStream soapStream = null; //Set the soap stream once found.
@@ -100,9 +100,8 @@ public class MultiPartRelatedInputStream extends java.io.FilterInputStream
      * @param is the true input stream from where the source.
      */
     public MultiPartRelatedInputStream ( String contentType, java.io.InputStream is) throws org.apache.axis.AxisFault {
-        super (is);
+        super (null); //don't cache this stream.
         try {
-            this.is = is;
             //First find the start and boundary parameters. There are real weird rules regard what
             // can be in real headers what needs to be escaped etc  let mail parse it.
             javax.mail.internet.ContentType ct = new javax.mail.internet.ContentType(contentType);
@@ -305,6 +304,7 @@ public class MultiPartRelatedInputStream extends java.io.FilterInputStream
             }
                //Now start searching for the data.
 
+            if(null!= boundaryDelimitedStream )
             do {
                 String contentType = null;
                 String contentId = null;

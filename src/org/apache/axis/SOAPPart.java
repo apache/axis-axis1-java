@@ -124,7 +124,7 @@ public class SOAPPart extends Part
      * The original message.  Again, may be String, byte[], InputStream,
      * or SOAPEnvelope.
      */
-    private Object originalMessage ;
+    // private Object originalMessage ; //free up reference  this is not in use.
 
     /**
      * Do not call this directly!  Should only be called by Message.
@@ -134,7 +134,7 @@ public class SOAPPart extends Part
     public SOAPPart(Message parent, Object initialContents, boolean isBodyStream) {
         super();
         msgObject=parent;
-        originalMessage = initialContents;
+        // originalMessage = initialContents;
         int form = FORM_STRING;
         if (initialContents instanceof SOAPEnvelope) {
             form = FORM_SOAPENVELOPE;
