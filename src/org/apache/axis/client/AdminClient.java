@@ -58,18 +58,19 @@ package org.apache.axis.client ;
 import java.net.*;
 import java.io.*;
 import java.util.*;
+import org.jdom.output.XMLOutputter ;
+import org.jdom.Document ;
 
 import org.apache.axis.utils.Options ;
+import org.apache.axis.Message ;
+import org.apache.axis.MessageContext ;
+import org.apache.axis.client.HTTPMessage ;
+import org.apache.axis.utils.Debug ;
 
 /**
  *
  * @author Doug Davis (dug@us.ibm.com)
  */
-
-import org.apache.axis.Message ;
-import org.apache.axis.MessageContext ;
-import org.apache.axis.client.HTTPMessage ;
-import org.apache.axis.utils.Debug ;
 
 public class AdminClient {
   public static void main(String args[]) {
@@ -113,7 +114,13 @@ public class AdminClient {
 
         outMsg = msgContext.getResponseMessage();
         input.close();
-        System.err.println( outMsg.getAs( "String" ) );
+        if ( args[i].equals("list") ) {
+          XMLOutputter out = new XMLOutputter("  ", true);
+          Document doc = (Document) outMsg.getAs("Document");
+          out.output(doc, System.out);
+        }
+        else
+          System.err.println( outMsg.getAs( "String" ) );
       }
     }
     catch( Exception e ) {

@@ -55,9 +55,12 @@
 package org.apache.axis.handlers;
 
 import java.util.Hashtable;
+import java.util.Enumeration;
 import org.apache.axis.*;
 import org.apache.axis.utils.QName;
 import org.apache.axis.utils.Debug;
+
+import org.jdom.Element ;
 
 /** <code>BasicHandler</code> is a utility class which implements simple
  * property setting/getting behavior, and stubs out a lot of the Handler
@@ -120,5 +123,26 @@ public abstract class BasicHandler implements Handler {
 
     public void setOptions(Hashtable opts) {
         options = opts ;
+    }
+
+    public Element getDeploymentData() {
+      Debug.Print( 1, "Enter: BasicHandler::getDeploymentData" );
+      Element  root = new Element( "handler" );
+
+      root.addAttribute( "class", this.getClass().getName() );
+      options = this.getOptions();
+      if ( options != null ) {
+        Enumeration e = options.keys();
+        while ( e.hasMoreElements() ) {
+          String k = (String) e.nextElement();
+          Object v = options.get(k);
+          Element e1 = new Element( "option" );
+          e1.addAttribute( "name", k );
+          e1.addAttribute( "value", v.toString() );
+          root.addContent( e1 );
+        }
+      }
+      Debug.Print( 1, "Exit: BasicHandler::getDeploymentData" );
+      return( root );
     }
 }

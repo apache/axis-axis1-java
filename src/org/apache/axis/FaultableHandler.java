@@ -59,6 +59,7 @@ import java.util.*;
 import java.io.Serializable ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
+import org.jdom.Element ;
 
 /**
  *
@@ -141,6 +142,27 @@ public class FaultableHandler implements Handler {
 
   public void setOptions(Hashtable opts) {
     options = opts ;
+  }
+
+  public Element getDeploymentData() {
+    Debug.Print( 1, "Enter: FaultableHandler::getDeploymentData" );
+    Element  root = new Element( "handler" );
+
+    root.addAttribute( "class", this.getClass().getName() );
+    options = this.getOptions();
+    if ( options != null ) {
+      Enumeration e = options.keys();
+      while ( e.hasMoreElements() ) {
+        String k = (String) e.nextElement();
+        Object v = options.get(k);
+        Element e1 = new Element( "option" );
+        e1.addAttribute( "name", k );
+        e1.addAttribute( "value", v.toString() );
+        root.addContent( e1 );
+      }
+    }
+    Debug.Print( 1, "Exit: FaultableHandler::getDeploymentData" );
+    return( root );
   }
 
 };

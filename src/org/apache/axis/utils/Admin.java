@@ -148,24 +148,27 @@ public class Admin {
 
           for( i = 0 ; i < names.length ; i++ ) {
             h = hr.find(names[i]);
-            if ( loop == 1 ) 
-              elem = new Element( "service" );
-            else 
-              elem = new Element( "handler" );
-            elem.addAttribute( "class", h.getClass().getName() );
-            root.addContent( elem );
-            opts = h.getOptions();
-            if ( opts != null ) {
-              Enumeration e = opts.keys();
-              while ( e.hasMoreElements() ) {
-                String k = (String) e.nextElement();
-                Object v = opts.get(k);
-                Element e1 = new Element( "option" );
-                e1.addAttribute( "name", k );
-                e1.addAttribute( "value", v.toString() );
-                elem.addContent( e1 );
-              }
+            elem = h.getDeploymentData();
+
+            if ( elem == null ) continue ;
+
+            if ( loop == 1 ) {
+              // Apparently there isn't anyway to change the name
+              // on an Element in JDom.   Strange.
+              Element tmpElem = new Element( "service" );
+              tmpElem.setChildren( elem.getChildren() );
+              tmpElem.setAttributes( elem.getAttributes() );
+              elem.removeChildren();
+              elem = tmpElem ;
             }
+
+            if ( elem.getName().equals("chain") )
+              elem.removeAttribute( "class" );
+
+            List l = elem.getAttributes();
+            l.add( 0, new Attribute( "name", names[i] ) );
+            elem.setAttributes( l );
+            root.addContent( elem );
           }
         }
         return( doc );

@@ -59,6 +59,7 @@ import java.util.* ;
 import java.io.Serializable ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
+import org.jdom.Element ;
 
 /**
  *
@@ -117,4 +118,14 @@ public interface Handler extends Serializable {
    * Sets a whole list of options
    */
   public void setOptions(Hashtable opts);
+
+  /**
+   * This will return the root element of an XML doc that describes the
+   * deployment information about this handler.  This is NOT the WSDL,
+   * this is all of the static internal data use by Axis - WSDL takes into
+   * account run-time information (like which service we're talking about)
+   * this is just the data that's stored in the registry.  Used by the
+   * 'list' Admin function.
+   */
+  public Element getDeploymentData();
 };

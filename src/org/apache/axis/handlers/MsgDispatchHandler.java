@@ -81,7 +81,7 @@ public class MsgDispatchHandler extends BasicHandler {
     Handler service ;
     service = (Handler) msgContext.getProperty( MessageContext.SVC_HANDLER );
 
-    /* Now get the service (RPC) specific info  */
+    /* Now get the service (MSG) specific info  */
     /********************************************/
     String  clsName    = (String) service.getOption( "className" );
     String  methodName = (String) service.getOption( "methodName" );
@@ -124,7 +124,9 @@ public class MsgDispatchHandler extends BasicHandler {
       }
     }
     catch( Exception exp ) {
-      exp.printStackTrace();
+      Debug.Print( 1, exp );
+      if ( !(exp instanceof AxisFault) ) exp = new AxisFault(exp);
+      throw (AxisFault) exp ;
     }
 
     Debug.Print( 1, "Exit: MsgDispatcherHandler::invoke" );

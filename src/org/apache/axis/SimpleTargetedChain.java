@@ -56,6 +56,7 @@
 package org.apache.axis ;
 
 import java.util.* ;
+import org.jdom.Element ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
 import org.apache.axis.handlers.* ;
@@ -146,6 +147,53 @@ public class SimpleTargetedChain extends BasicHandler {
     inputChain = null ;
     pivotHandler = null ;
     outputChain = null ;
+  }
+
+  public Element getDeploymentData() {
+    Debug.Print( 1, "Enter: SimpleTargetedChain::getDeploymentData" );
+    StringBuffer str  = new StringBuffer();
+    Element      root = new Element( "chain");
+    Handler      h ;
+
+    if ( inputChain != null ) {
+      Handler[]  handlers = inputChain.getHandlers();
+      str = new StringBuffer();
+      for ( int i = 0 ; i < handlers.length ; i++ ) {
+        h = (Handler) handlers[i];
+        if ( i != 0 ) str.append(",");
+        str.append( h.getClass().getName() );
+      }
+      root.addAttribute( "input", str.toString() );
+    }
+    if ( pivotHandler != null ) {
+      root.addAttribute( "pivot", pivotHandler.getClass().getName() );
+    }
+    if ( outputChain != null ) {
+      Handler[]  handlers = inputChain.getHandlers();
+      str = new StringBuffer();
+      for ( int i = 0 ; i < handlers.length ; i++ ) {
+        h = (Handler) handlers[i];
+        if ( i != 0 ) str.append(",");
+        str.append( h.getClass().getName() );
+      }
+      root.addAttribute( "input", str.toString() );
+    }
+
+    options = this.getOptions();
+    if ( options != null ) {
+      Enumeration e = options.keys();
+      while ( e.hasMoreElements() ) {
+        String k = (String) e.nextElement();
+        Object v = options.get(k);
+        Element e1 = new Element( "option" );
+        e1.addAttribute( "name", k );
+        e1.addAttribute( "value", v.toString() );
+        root.addContent( e1 );
+      }
+    }
+
+    Debug.Print( 1, "Exit: SimpleTargetedChain::getDeploymentData" );
+    return( root );
   }
 
 };

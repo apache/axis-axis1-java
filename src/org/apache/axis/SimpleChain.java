@@ -58,6 +58,7 @@ package org.apache.axis ;
 import java.util.* ;
 import org.apache.axis.* ;
 import org.apache.axis.utils.* ;
+import org.jdom.Element ;
 
 /**
  *
@@ -166,5 +167,37 @@ public class SimpleChain implements Chain {
 
   public Handler[] getHandlers() {
     return( (Handler[]) handlers.toArray() );
+  }
+
+  public Element getDeploymentData() {
+    Debug.Print( 1, "Enter: SimpleChain::getDeploymentData" );
+    Element root = new Element( "chain");
+
+    if (handlers != null ) {
+      StringBuffer str = new StringBuffer();
+      Handler      h ;
+      for ( int i = 0 ; i < handlers.size() ; i++ ) {
+        if ( i != 0 ) str.append(",");
+        h = (Handler) handlers.elementAt(i);
+        str.append( h.getClass().getName() );
+      }
+      root.addAttribute( "flow", str.toString() );
+    }
+
+    options = this.getOptions();
+    if ( options != null ) {
+      Enumeration e = options.keys();
+      while ( e.hasMoreElements() ) {
+        String k = (String) e.nextElement();
+        Object v = options.get(k);
+        Element e1 = new Element( "option" );
+        e1.addAttribute( "name", k );
+        e1.addAttribute( "value", v.toString() );
+        root.addContent( e1 );
+      }
+    }
+
+    Debug.Print( 1, "Exit: SimpleChain::getDeploymentData" );
+    return( root );
   }
 };
