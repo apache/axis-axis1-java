@@ -86,12 +86,12 @@ public class GetQuote1 {
         System.exit(1);
       }
 
-      FileInputStream  fis = new FileInputStream( "GetQuote.wsdl" );
-      Service service = new Service( fis, 
-                                     new QName("urn:xmltoday-delayed-quotes",
-                                               "GetQuoteService") );
-      QName   qn      = new QName( "urn:xmltoday-delayed-quotes", "GetQuote" );
-      Call    call    = service.createCall( qn, "getQuote" );
+      // Define the service QName and port QName
+      QName servQN = new QName("urn:xmltoday-delayed-quotes","GetQuoteService");
+      QName portQN = new QName("urn:xmltoday-delayed-quotes","GetQuote");
+
+      Service service = new Service( "GetQuote.wsdl", servQN );
+      Call    call    = service.createCall( portQN, "getQuote" );
 
       //  set params, return-type   - dug
 
@@ -101,7 +101,6 @@ public class GetQuote1 {
 
       Object result = call.invoke( new Object[] { symbol = args[0] } );
 
-      fis.close();
       return( ((Float) result).floatValue() );
     }
 

@@ -168,7 +168,7 @@ public class Service implements org.apache.axis.rpc.Service {
             WSDLReader           reader = new WSDLReader();
             Definition           def    = reader.readWSDL( null, doc );
 
-            this.wsdlLocation = new URL(wsdlLocation) ;
+            this.wsdlLocation   = null ;
             this.wsdlDefinition = def ;
 
             // grrr!  Too many flavors of QName
@@ -180,10 +180,6 @@ public class Service implements org.apache.axis.rpc.Service {
             if ( this.wsdlService == null )
                 throw new JAXRPCException( "Can't find service: " + 
                                            serviceName );
-        }
-        catch( java.net.MalformedURLException exp ) {
-            throw new JAXRPCException( "Malformed WSDL URI: " + wsdlLocation +
-                                       "\n" + exp.toString() );
         }
         catch( Exception exp ) {
             throw new JAXRPCException( "Error processing WSDL document: " + 
