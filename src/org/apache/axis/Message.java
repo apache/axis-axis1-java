@@ -56,7 +56,6 @@
 package org.apache.axis;
 
 import org.apache.axis.attachments.Attachments;
-import org.apache.axis.attachments.AttachmentsImpl;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.soap.SOAPConstants;
@@ -133,7 +132,7 @@ public class Message extends javax.xml.soap.SOAPMessage
 
     /**
      * Returns name of the class prividing Attachment Implementation
-     * @returns class Name
+     * @return class Name
      */
     public static String getAttachmentImplClassName(){
         return mAttachmentsImplClassName;
@@ -172,7 +171,7 @@ public class Message extends javax.xml.soap.SOAPMessage
      *                     containing just the SOAP body (no SOAP-ENV).
      */
     public Message(Object initialContents, boolean bodyInStream) {
-        setup(initialContents, bodyInStream, (String) null, (String) null, null);
+        setup(initialContents, bodyInStream, null, null, null);
     }
 
     /**
@@ -191,7 +190,7 @@ public class Message extends javax.xml.soap.SOAPMessage
      * @param headers Mime Headers.
      */
     public Message(Object initialContents, boolean bodyInStream, MimeHeaders headers) {
-        setup(initialContents, bodyInStream, (String) null, (String) null, headers);
+        setup(initialContents, bodyInStream, null, null, headers);
     }
     
     /**
@@ -205,8 +204,7 @@ public class Message extends javax.xml.soap.SOAPMessage
      *
      * @param initialContents may be String, byte[], InputStream, SOAPEnvelope,
      *                        or AxisFault.
-     * @param bodyInStream is true if initialContents is an InputStream
-     *                     containing just the SOAP body (no SOAP-ENV).
+     * @param headers Mime Headers.
      */
     public Message(Object initialContents, MimeHeaders headers) {
         setup(initialContents, true, (String) null, (String) null, headers);
@@ -424,12 +422,12 @@ public class Message extends javax.xml.soap.SOAPMessage
      *   <P>If there are no attachments, just an XML stream is
      *   written out. For those messages that have attachments,
      *   <CODE>writeTo</CODE> writes a MIME-encoded byte stream.</P>
-     * @param   out the <CODE>OutputStream</CODE>
+     * @param os the <CODE>OutputStream</CODE>
      *     object to which this <CODE>SOAPMessage</CODE> object will
      *     be written
-     * @throws  SOAPException  if there was a problem in
+     * @throws SOAPException  if there was a problem in
      *     externalizing this SOAP message
-     * @throws  IOException  if an I/O error
+     * @throws IOException  if an I/O error
      *     occurs
      */
     public void writeTo(java.io.OutputStream os) throws SOAPException, IOException {
