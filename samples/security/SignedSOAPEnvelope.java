@@ -96,7 +96,7 @@ public class SignedSOAPEnvelope extends SOAPEnvelope
         org.apache.xml.security.Init.init();
     }
 
-    public SignedSOAPEnvelope (SOAPEnvelope env) {
+    public SignedSOAPEnvelope (SOAPEnvelope env, String baseURI) {
         try {
             env.addMapping(new Mapping(SOAPSECNS,SOAPSECprefix));
             env.addAttribute(Constants.URI_SOAP_ENV,"actor","some-uri");
@@ -117,8 +117,7 @@ public class SignedSOAPEnvelope extends SOAPEnvelope
 
             Element soapHeaderElement = (Element)((Element)doc.getFirstChild()).getElementsByTagNameNS("*","Header").item(0);
             Element soapSignatureElement = (Element)soapHeaderElement.getElementsByTagNameNS("*","Signature").item(0);
-            String BaseURI = "http://xml-security";
-            XMLSignature sig = new XMLSignature(doc, BaseURI,
+            XMLSignature sig = new XMLSignature(doc, baseURI,
                                                 XMLSignature.ALGO_ID_SIGNATURE_DSA);
             soapSignatureElement.appendChild(sig.getElement());
             sig.addDocument("#Body");
