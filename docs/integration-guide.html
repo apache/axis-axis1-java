@@ -29,7 +29,8 @@ Axis System Integration Guide</h1>
 Table of Contents</h3>
 <a href="#Introduction">Introduction</a>
 <br><a href="#Pluggable APIs">Pluggable APIs</a>
-<br>&nbsp; <a href="#System Management Plug">System Management</a>
+<!-- <br>&nbsp; <a href="#System Management Plug">System Management</a>
+-->
 <br>&nbsp; <a href="#Logging/Tracing Plug">Logging/Tracing</a>
 <br>&nbsp; <a href="#Configuration Plug">Configuration</a>
 <br>&nbsp; <a href="#Handlers Plug">Handlers</a>
@@ -52,6 +53,7 @@ The reader may find useful background information in the
 <a NAME="Pluggable APIs"></a>Pluggable APIs</h2>
 The following are the points that are pluggable in order to integrate AXIS
 into a web application server.
+<!--
 <h3>
 <a NAME="System Management Plug"></a>System Management</h3>
 What points are necessary to manage AXIS?
@@ -87,6 +89,7 @@ Default behavior if not plugged.</li>
 <li>
 Example</li>
 </ul>
+-->
 
 <h3><a NAME="Logging/Tracing Plug"></a>Logging/Tracing</h3>
 AXIS logging and tracing is based on the Logging component of the
@@ -251,7 +254,7 @@ configuration information and initialize AXIS is as follows:
 <code>AxisClient = new AxisClient(config);</code>
 </ul>
 <br>The details may vary (server versus client, whether other factories are involved, etc).
-Regardless, the point is that user code is responsible for
+Regardless, the point is that integration code is responsible for
 calling <code>EngineConfigurationFactoryFinder(someContext)</code>
 and ensuring that the results are handed to AXIS.&nbsp;
 <code>someContext</code> is key to how the factory finder
@@ -274,8 +277,8 @@ The value of the system property
 </li>
 <li>Locate all resources named
 <code>META-INF/services/org.apache.axis.EngineConfigurationFactory</code>.
-Each line of such a file identifies the name of a class
-implementing the interface.
+Each line of such a resource identifies the name of a class
+implementing the interface ('#' comments, through end-of-line).
 </li>
 <li>
 <code>org.apache.axis.configuration.EngineConfigurationFactoryServlet</code>
@@ -301,7 +304,7 @@ This method is called, passing <code>someContext</code> as the parameter.
 <li>
 The implementation class is required to examine runtime environment
 (to optionally include the parameter).
-If the environment can provide informatin required by
+If the environment can provide information required by
 an EngineConfigurationFactory,
 then the <code>newFactory()</code> may return in instance of that factory.
 Otherwise, <code>newFactory()</code> must return null.
@@ -332,13 +335,15 @@ to load the WSDD file <code>client-config.wsdd</code>
 from the current working directory!).
 
 <p>The default Servlet factory will open the Web Application resource
-<code>/WEB-INF/server-config.wsdd</code>:
+<code>/WEB-INF/server-config.wsdd</code>
+(The name of this file may be changed using the
+system property <code>axis.ServerConfigFile</code>):
 <ul>
 <li>
-If it exists as a accessible file (i.e. not in a JAR/WAR file),
-then it opens it as a file
-(this allows changes to be saved,
-if changes are allowed & made using the Admin tools).
+If it exists as an accessible file (i.e. not in a JAR/WAR file),
+then it opens it as a file.
+This allows changes to be saved,
+if changes are allowed & made using the Admin tools.
 </li>
 <li>
 If it does not exist as a file, then an attempt is made
@@ -380,39 +385,8 @@ respectively.
 
 <h3>
 <a NAME="Handlers Plug"></a>Handlers</h3>
-What new handlers might a system integrator wish to implement?
-<ul>
-<li>
-Justification/Rationale - why is this plug point necessary?&nbsp; Spec
-compliance?</li>
-
-<li>
-Interfaces</li>
-
-<li>
-Mechanism</li>
-
-<ul>
-<li>
-Life cycle</li>
-
-<li>
-Exception handling - in general; plug-in shouldn't throw any exceptions
-- does runtime ignore? Log?)</li>
-
-<li>
-Multiple thread support?&nbsp; Ie., is synchronization required?</li>
-</ul>
-
-<li>
-Configuration/reconfiguration</li>
-
-<li>
-Default behavior if not plugged.</li>
-
-<li>
-Example</li>
-</ul>
+See the <a href="architecture-guide.html">Architecture 
+Guide</a> for current information on Handlers.
 
 <h3>
 <a NAME="Internationalization Plug"></a>Internationalization</h3>
@@ -592,7 +566,8 @@ is to fall back to the AXIS properties file
 
 <h3>
 <a NAME="Performance Monitoring Plug"></a>Performance Monitoring</h3>
-How can we monitor the performance of AXIS?
+AXIS does not yet include specific Performance Monitoring Plugs.
+<!--
 <ul>
 <li>
 Justification/Rationale - why is this plug point necessary?&nbsp; Spec
@@ -625,9 +600,12 @@ Default behavior if not plugged.</li>
 <li>
 Example</li>
 </ul>
+-->
 
 <h3>
 <a NAME="Encoding Plug"></a>Encoding</h3>
+AXIS does not yet include an Encoding Plug.
+<!--
 How can a system integrator plug in other encoding mechanisms such as SOAP
 1.2 or optimized XML-based encoding?
 <ul>
@@ -662,7 +640,9 @@ Default behavior if not plugged.</li>
 <li>
 Example</li>
 </ul>
+-->
 
+<!--
 <h3>
 <a NAME="Compiler"></a>Compiler</h3>
 How can a system integrator plug in other encoding mechanisms such as SOAP
@@ -699,6 +679,7 @@ Default behavior if not plugged.</li>
 <li>
 Example</li>
 </ul>
+-->
 
 <h3>
 <a NAME="WSDL plug"></a>WSDL Parser and Code Generator Framework</h3>
