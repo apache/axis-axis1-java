@@ -112,34 +112,42 @@ public abstract class BaseSerializerFactory
     }
     public BaseSerializerFactory(Class serClass, boolean share, 
                                  QName xmlType, Class javaType) {
-        this.serClass = serClass;
-        this.share = share;
+        this(serClass, share);
         this.xmlType = xmlType;
         this.javaType = javaType;
+        this.serClassConstructor = getConstructor(serClass);
+        this.getSerializer = getSerializerMethod(javaType);
     }
 
     public javax.xml.rpc.encoding.Serializer 
         getSerializerAs(String mechanismType)
         throws JAXRPCException {
-        // Need to add code to check against mechanisms vector.
-        if (share && ser != null) {
+        if (!share) {
+            return getSerializerAsInternal(mechanismType);
+        }
+        synchronized (this) {
+            if (ser==null) {
+                ser = getSerializerAsInternal(mechanismType);
+            }
             return ser;
         }
-        ser = null;
-
+    }
+    
+    protected Serializer getSerializerAsInternal(String mechanismType)
+        throws JAXRPCException {
         // Try getting a specialized Serializer
-        ser = getSpecialized(mechanismType);
+        Serializer serializer = getSpecialized(mechanismType);
         
         // Try getting a general purpose Serializer via constructor
         // invocation
-        if (ser == null) {
-            ser = getGeneralPurpose(mechanismType);
+        if (serializer == null) {
+            serializer = getGeneralPurpose(mechanismType);
         }
 
         try {            
             // If not successfull, try newInstance
-            if (ser == null) {
-                ser = (Serializer) serClass.newInstance();
+            if (serializer == null) {
+                serializer = (Serializer) serClass.newInstance();
             }
         } catch (Exception e) {
             throw new JAXRPCException(
@@ -147,7 +155,7 @@ public abstract class BaseSerializerFactory
                                      serClass.getName()),
                 e);
         }
-        return ser;
+        return serializer;
     }
     
     /**
@@ -156,10 +164,6 @@ public abstract class BaseSerializerFactory
      */
     protected Serializer getGeneralPurpose(String mechanismType) {
         if (javaType != null && xmlType != null) {
-            if (serClassConstructor == null) {
-                serClassConstructor = getConstructor(serClass);
-            }
-
             if (serClassConstructor != null) {
                 try {
                     return (Serializer) 
@@ -190,12 +194,6 @@ public abstract class BaseSerializerFactory
      */
     protected Serializer getSpecialized(String mechanismType) {
         if (javaType != null && xmlType != null) {
-            // Ensure that getSerializerMethod is called only once.
-            synchronized (this) {
-                if (getSerializer == null) {
-                    getSerializer = getSerializerMethod(javaType);
-                }
-            }
             if (getSerializer != null) {
                 try {
                     return (Serializer) 
