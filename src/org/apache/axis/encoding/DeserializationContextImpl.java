@@ -220,7 +220,7 @@ public class DeserializationContextImpl extends DefaultHandler implements Lexica
                 try {
                     // cleanup - so that the parser can be reused.
                     parser.setProperty("http://xml.org/sax/properties/lexical-handler", null);
-                } catch (SAXException se){
+                } catch (Exception e){
                     // Ignore.
                 }
 
