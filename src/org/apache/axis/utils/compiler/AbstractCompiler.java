@@ -60,6 +60,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
+import java.util.ArrayList;
 
 /**
  * This class implements the functionality common to all Java compilers.
@@ -71,9 +72,9 @@ import java.util.List;
 public abstract class AbstractCompiler implements Compiler {
 
   /**
-   * The source program filename
+   * The source program filenames
    */
-  protected String    file;
+  protected ArrayList  fileList = new ArrayList();
 
   /**
    * The name of the directory containing the source program file
@@ -102,12 +103,12 @@ public abstract class AbstractCompiler implements Compiler {
   protected InputStream errors;
 
   /**
-   * Set the name of the file containing the source program
+   * Add the name of the file containing the source program to the file list
    *
    * @param file The name of the file containing the source program
    */
-  public void setFile(String file) {
-    this.file = file;
+  public void addFile(String file) {
+    this.fileList.add(file);
   }
 
   /**
@@ -214,14 +215,15 @@ public abstract class AbstractCompiler implements Compiler {
    */
   protected String[] toStringArray(List arguments) {
     int    i;
-    String[] args = new String[arguments.size() + 1];
+    String[] args = new String[arguments.size() + fileList.size()];
 
     for (i = 0; i < arguments.size(); i++) {
       args[i] = (String) arguments.get(i);
     }
 
-    args[i] = file;
-
+    for (int j=0; j < fileList.size(); i++,j++) {
+        args[i] = (String)fileList.get(j);
+    }
     return args;
   }
 }

@@ -211,7 +211,7 @@ public class JWSProcessor extends BasicHandler
 
                 compiler.setClasspath(getDefaultClasspath(msgContext));
                 compiler.setDestination(outdir);
-                compiler.setFile(jFile);
+                compiler.addFile(jFile);
 
                 boolean result   = compiler.compile();
 
