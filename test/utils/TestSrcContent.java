@@ -155,12 +155,14 @@ public class TestSrcContent extends TestCase {
             //   - providers/BSFProvider.java
             //   - utils/CLArgsParser.java
             //   - Version.java
-            //   - tooling in 'org/apache/axis/wsdl'
-            //
+            //   - tooling in 'org/apache/axis/wsdl'            
+            //   - client/AdminClient.java
+            //   - utils/Admin.java
             new FileNameContentPattern(".+([\\\\/])"
                                        + "java\\1src\\1org\\1apache\\1axis\\1"
                                        + "(?!utils\\1tcpmon\\.java"
                                        + "|client\\1AdminClient\\.java"
+                                       + "|utils\\1Admin\\.java"
                                        + "|providers\\1BSFProvider\\.java"
                                        + "|ime\\1internal\\1util\\1uuid\\1TestUUID\\.java"
                                        + "|utils\\1CLArgsParser\\.java"
