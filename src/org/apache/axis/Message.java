@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 1999 The Apache Software Foundation.  All rights 
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights 
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -77,20 +77,58 @@ public class Message {
    */
   private Object originalMessage ;
   private Object currentMessage ;
-  private String currentForm ;
+  
+  private static final int FORM_STRING       = 1;
+  private static final int FORM_INPUTSTREAM  = 2;
+  private static final int FORM_SOAPENVELOPE = 3;
+  private static final int FORM_BYTES        = 4;
+  private static final int FORM_BODYINSTREAM = 5;
+  private static final int FORM_FAULT        = 6;
+  private int currentForm ;
+  
   private String messageType ;
   private MessageContext msgContext;
 
   /**
    * Just something to us working...
    */
-  public Message(Object origMsg, String form) {
-    Debug.Print( 2, "Enter Message ctor, form: ",  form );
-    originalMessage = origMsg ;
-    currentMessage = origMsg ;
-    currentForm = form ;
+  public Message(String stringForm) {
+    Debug.Print( 2, "Enter Message ctor (String)" );
+    originalMessage = stringForm;
+    setCurrentMessage(stringForm, FORM_STRING);
   }
-
+  
+  public Message(SOAPEnvelope env) {
+    Debug.Print( 2, "Enter Message ctor (SOAPEnvelope)" );
+    originalMessage = env;
+    setCurrentMessage(env, FORM_SOAPENVELOPE);
+  }
+  
+  public Message(InputStream inputStream) {
+    Debug.Print( 2, "Enter Message ctor (InputStream)" );
+    originalMessage = inputStream;
+    setCurrentMessage(inputStream, FORM_INPUTSTREAM);
+  }
+  
+  public Message(InputStream inputStream, boolean isBody) {
+    Debug.Print( 2, "Enter Message ctor (BodyInputStream)" );
+    originalMessage = inputStream;
+    setCurrentMessage(inputStream, isBody ? FORM_BODYINSTREAM :
+                                            FORM_INPUTSTREAM);
+  }
+  
+  public Message(byte [] bytes) {
+    Debug.Print(2, "Enter Message ctor (byte[])" );
+    originalMessage = bytes;
+    setCurrentMessage(bytes, FORM_BYTES);
+  }
+    
+  public Message(AxisFault fault) {
+    Debug.Print(2, "Enter Message ctor (AxisFault)" );
+    originalMessage = fault;
+    setCurrentMessage(fault, FORM_FAULT);
+  }
+  
   public Object getOriginalMessage() {
     return( originalMessage );
   }
@@ -99,7 +137,7 @@ public class Message {
     return( currentMessage );
   }
 
-  public String getCurrentForm() {
+  private int getCurrentForm() {
     return( currentForm );
   }
   
@@ -117,42 +155,24 @@ public class Message {
       this.msgContext = msgContext;
   }
 
-  public void setCurrentMessage(Object currMsg, String form) {
-    Debug.Print( 2, "Setting current message form to: ",  form );
+  private void setCurrentMessage(Object currMsg, int form) {
+    Debug.Print( 2, "Setting current message form to: " + form );
     currentMessage = currMsg ;
     currentForm = form ;
   }
 
-  // Really should have a pluggable way of defining these but for
-  // now I need something quick...
-
-  public Object getAs( String desiredType ) {
-    Debug.Print( 2, "Enter: Message::getAs(", desiredType, ")" );
-    Debug.Print( 2, " current form: ",  currentForm );
-    if ( currentForm.equals( desiredType ) ) return( currentMessage );
-
-    if ( desiredType.equals( "Bytes" )) return( getAsBytes() );
-    if ( desiredType.equals( "Document" )) return( getAsDocument() );
-    if ( desiredType.equals( "String" )) return( getAsString() );
-    if ( desiredType.equals( "SOAPEnvelope" )) return( getAsSOAPEnvelope() );
-    // ??? if ( desiredType.equals( "BodyInputStream" )) return( getAsBodyInputStream() );
-
-    System.err.println("Can't convert " + currentForm + " to " +desiredType);
-    return( null );
-  }
-
-  private byte[] getAsBytes() {
-    Debug.Print( 2, "Enter: Message::getAsByes" );
-    if ( currentForm.equals("Bytes") ) {
-      Debug.Print( 2, "Exit: Message::getAsByes" );
+  public byte[] getAsBytes() {
+    Debug.Print( 2, "Enter: Message::getAsBytes" );
+    if ( currentForm == FORM_BYTES ) {
+      Debug.Print( 2, "Exit: Message::getAsBytes" );
       return( (byte[]) currentMessage );
     }
     
-    if ( currentForm.equals("BodyInputStream") ) {
+    if ( currentForm == FORM_BODYINSTREAM ) {
         getAsSOAPEnvelope();
     }
 
-    if ( currentForm.equals("InputStream") ) {
+    if ( currentForm == FORM_INPUTSTREAM ) {
       // Assumes we don't need a content length
       try {
         InputStream  inp = (InputStream) currentMessage ;
@@ -165,7 +185,7 @@ public class Message {
         // int len = inp.available();
         // byte[]  buf = new byte[ len ];
         // inp.read( buf );
-        setCurrentMessage( buf, "Bytes" );
+        setCurrentMessage( buf, FORM_BYTES );
         Debug.Print( 2, "Exit: Message::getAsByes" );
         return( (byte[]) currentMessage );
       }
@@ -176,13 +196,12 @@ public class Message {
       return( null );
     }
 
-    if ( currentForm.equals("Document") ||
-         currentForm.equals("SOAPEnvelope") ||
-         currentForm.equals("AxisFault") )
+    if ( currentForm == FORM_SOAPENVELOPE ||
+         currentForm == FORM_FAULT )
       getAsString();
 
-    if ( currentForm.equals("String") ) {
-      setCurrentMessage( ((String)currentMessage).getBytes(), "Bytes" );
+    if ( currentForm == FORM_STRING ) {
+      setCurrentMessage( ((String)currentMessage).getBytes(), FORM_BYTES );
       Debug.Print( 2, "Exit: Message::getAsBytes" );
       return( (byte[]) currentMessage );
     }
@@ -192,26 +211,26 @@ public class Message {
     return( null );
   }
 
-  private String getAsString() {
+  public String getAsString() {
     Debug.Print( 2, "Enter: Message::getAsString" );
-    if ( currentForm.equals("String") ) {
+    if ( currentForm == FORM_STRING ) {
       Debug.Print( 2, "Exit: Message::getAsString" );
       return( (String) currentMessage );
     }
 
-    if ( currentForm.equals("InputStream") ||
-         currentForm.equals("BodyInputStream") ) {
+    if ( currentForm == FORM_INPUTSTREAM ||
+         currentForm == FORM_BODYINSTREAM ) {
       getAsBytes();
       // Fall thru to "Bytes"
     }
 
-    if ( currentForm.equals("Bytes") ) {
-      setCurrentMessage( new String((byte[]) currentMessage), "String" );
+    if ( currentForm == FORM_BYTES ) {
+      setCurrentMessage( new String((byte[]) currentMessage), FORM_STRING );
       Debug.Print( 2, "Exit: Message::getAsString" );
       return( (String) currentMessage );
     }
 
-    if ( currentForm.equals("AxisFault") ) {
+    if ( currentForm == FORM_FAULT ) {
         StringWriter writer = new StringWriter();
         AxisFault env = (AxisFault)currentMessage;
         try {
@@ -220,11 +239,11 @@ public class Message {
             e.printStackTrace();
             return null;
         }
-        setCurrentMessage(writer.getBuffer().toString(), "String");
+        setCurrentMessage(writer.getBuffer().toString(), FORM_STRING);
         return (String)currentMessage;
     }
 
-    if ( currentForm.equals("SOAPEnvelope") ) {
+    if ( currentForm == FORM_SOAPENVELOPE ) {
         StringWriter writer = new StringWriter();
         SOAPEnvelope env = (SOAPEnvelope)currentMessage;
         try {
@@ -233,97 +252,31 @@ public class Message {
             e.printStackTrace();
             return null;
         }
-        setCurrentMessage(writer.getBuffer().toString(), "String");
+        setCurrentMessage(writer.getBuffer().toString(), FORM_STRING);
         return (String)currentMessage;
     }
 
-    if ( currentForm.equals("Document") ) { 
-      currentForm = "String" ;
-      currentMessage = XMLUtils.DocumentToString( (Document) currentMessage );
-      return( (String) currentMessage );
-    }
-
-    System.err.println("Can't convert " + currentForm + " to String" );
+    System.err.println("Can't convert form " + currentForm + " to String" );
     Debug.Print( 2, "Exit: Message::getAsString" );
     return( null );
   }
 
-  private Document getAsDocument() {
-    Debug.Print( 2, "Enter: Message::getAsDocument" );
-    if ( currentForm.equals("Document") ) return( (Document) currentMessage );
-
-    InputStream inp     = null ;
-
-    try {
-      if ( currentForm.equals("InputStream") )
-        inp = (InputStream) currentMessage ;
-      else if ( currentForm.equals("String") )  {
-        // Reader reader = new StringReader( (String) currentMessage );
-        ByteArrayInputStream bais =  null ;
-        bais = new ByteArrayInputStream( ((String)currentMessage).getBytes() );
-        setCurrentMessage( XMLUtils.newDocument( bais ), "Document" );
-        Debug.Print( 2, "Exit: Message::getAsDocument" );
-        return( (Document) currentMessage );
-      }
-      else if ( currentForm.equals("Bytes") )  {
-        ByteArrayInputStream  bais ;
-        inp = new ByteArrayInputStream((byte[])currentMessage );
-      }
-      else if ( currentForm.equals("AxisFault") ) {
-        AxisFault     fault = (AxisFault) currentMessage ;
-        SOAPEnvelope  env   = new SOAPEnvelope();
-        //SOAPBody      body  = new SOAPBody( fault.getElement(null) );
-
-        // !!! env.addBodyElement( body );
-
-        // !!! setCurrentMessage( env.getDocument(), "Document" );
-        Debug.Print( 2, "Exit: Message::getAsDocument" );
-        return( (Document) currentMessage );
-      }
-      else if ( currentForm.equals("SOAPEnvelope") ) {
-        System.err.println("Can't convert " + currentForm + " to Document" );
-        Debug.Print( 2, "Exit: Message::getAsDocument" );
-        return( null );
-        /*
-        SOAPEnvelope  env = (SOAPEnvelope) currentMessage ;
-        // !!! setCurrentMessage( env.getDocument(), "Document" );
-        Debug.Print( 2, "Exit: Message::getAsDocument" );
-        return( (Document) currentMessage );
-        */
-      }
-      else {
-        System.err.println("Can't convert " + currentForm + " to Document" );
-        Debug.Print( 2, "Exit: Message::getAsDocument" );
-        return( null );
-      }
-  
-      setCurrentMessage( XMLUtils.newDocument( inp ), "Document" );
-      Debug.Print( 2, "Exit: Message::getAsDocument" );
-      return( (Document) currentMessage );
-    }
-    catch( Exception e ) {
-      e.printStackTrace( System.err );
-    }
-    Debug.Print( 2, "Exit: Message::getAsDocument" );
-    return( null );
-  }
-
-  private SOAPEnvelope getAsSOAPEnvelope() {
+  public SOAPEnvelope getAsSOAPEnvelope() {
     Debug.Print( 2, "Enter: Message::getAsSOAPEnvelope" );
-    if ( currentForm.equals("SOAPEnvelope") ) 
+    if ( currentForm == FORM_SOAPENVELOPE ) 
       return( (SOAPEnvelope) currentMessage );
     
-    if (currentForm.equals("BodyInputStream")) {
+    if (currentForm == FORM_BODYINSTREAM) {
       InputStreamBody bodyEl = new InputStreamBody((InputStream)currentMessage);
       SOAPEnvelope env = new SOAPEnvelope();
       env.addBodyElement(bodyEl);
-      setCurrentMessage(env, "SOAPEnvelope");
+      setCurrentMessage(env, FORM_SOAPENVELOPE);
       return env;
     }
     
     InputSource is;
 
-    if ( currentForm.equals("InputStream") ) {
+    if ( currentForm == FORM_INPUTSTREAM ) {
       is = new InputSource( (InputStream) currentMessage );
     } else {
       is = new InputSource(new StringReader(getAsString()));
@@ -333,7 +286,7 @@ public class Message {
     SOAPEnvelope env = parser.getEnvelope();
     env.setMessageType(messageType);
     
-    setCurrentMessage( env, "SOAPEnvelope" );
+    setCurrentMessage( env, FORM_SOAPENVELOPE );
     Debug.Print( 2, "Exit: Message::getAsSOAPEnvelope" );
     return( (SOAPEnvelope) currentMessage );
   }

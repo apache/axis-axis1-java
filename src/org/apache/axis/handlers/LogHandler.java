@@ -79,9 +79,9 @@ public class LogHandler extends BasicHandler {
       pw.println( "=======================================================" );
       pw.println( "= " + ( new Time(System.currentTimeMillis()) ).toString() );
       pw.println( "= InMsg: " + inMsg );
-      pw.println( "= InMsg: " + (inMsg == null ? "-" : inMsg.getAs("String")));
+      pw.println( "= InMsg: " + (inMsg == null ? "-" : inMsg.getAsString()));
       pw.println( "= OutMsg: " + outMsg );
-      pw.println( "= OutMsg: " + (outMsg == null ? "-" : outMsg.getAs("String")));
+      pw.println( "= OutMsg: " + (outMsg == null ? "-" : outMsg.getAsString()));
       pw.println( "=======================================================" );
   
       pw.close();

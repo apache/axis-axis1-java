@@ -109,7 +109,7 @@ public class TCPActionHandler extends BasicHandler
       // For now, I'm trying to implement the TCP transport without
       // patching *any* existing files.  -- RobJ
       
-      SOAPEnvelope    env    = (SOAPEnvelope) msgContext.getRequestMessage().getAs("SOAPEnvelope");
+      SOAPEnvelope    env    = (SOAPEnvelope) msgContext.getRequestMessage().getAsSOAPEnvelope();
 
       Vector          bodies = env.getBodyElements();
       for ( int bNum = 0 ; bNum < bodies.size() ; bNum++ ) {
@@ -163,7 +163,7 @@ public class TCPActionHandler extends BasicHandler
     // YOW, THIS WORKS!
     // ROBJ 911 remove this once I verify that getAs("SOAPEnvelope") twice in a row is a
     // Bad Thing.  (and once I figure out what else I should be doing!)
-    String test = (String)msgContext.getRequestMessage().getAs("String");
+    String test = (String)msgContext.getRequestMessage().getAsString();
     
     Debug.Print( 1, "Exit: TCPActionHandler::invoke" );
   }

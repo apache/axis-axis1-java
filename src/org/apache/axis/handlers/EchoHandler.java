@@ -69,8 +69,8 @@ public class EchoHandler extends BasicHandler {
         Debug.Print( 1, "Enter: EchoHandler::invoke" );
         try {
             Message  msg = msgContext.getRequestMessage();
-            SOAPEnvelope env = (SOAPEnvelope) msg.getAs( "SOAPEnvelope" );
-            msgContext.setResponseMessage( new Message( env, "SOAPEnvelope" ) );
+            SOAPEnvelope env = (SOAPEnvelope) msg.getAsSOAPEnvelope();
+            msgContext.setResponseMessage( new Message( env ) );
         }
         catch( Exception e ) {
             Debug.Print( 1, e );

@@ -69,7 +69,7 @@ public class TestRPC extends TestCase {
 
         // Create a message context with the action and message
         MessageContext msgContext = new MessageContext(engine);
-        msgContext.setRequestMessage(new Message(envelope, "SOAPEnvelope"));
+        msgContext.setRequestMessage(new Message(envelope));
         if (setService) {
             msgContext.setTargetService(SOAPAction);
         }
@@ -83,7 +83,7 @@ public class TestRPC extends TestCase {
 
         // Extract the response Envelope
         Message message = msgContext.getResponseMessage();
-        envelope = (SOAPEnvelope)message.getAs("SOAPEnvelope");
+        envelope = (SOAPEnvelope)message.getAsSOAPEnvelope();
         assertNotNull("envelope", envelope);
 
         // Extract the body from the envelope

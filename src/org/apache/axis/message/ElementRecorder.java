@@ -75,6 +75,9 @@ public class ElementRecorder extends DeserializerBase
     // The recorded list of SAX events "inside" this element
     protected Vector _events = new Vector();
     
+    // If non-null, pass events to this guy after recording.
+    private DeserializerBase nextHandler = null;
+    
     public ElementRecorder()
     {
         if (DEBUG_LOG)
@@ -91,6 +94,9 @@ public class ElementRecorder extends DeserializerBase
         }
         
         _events.addElement(new StartElementEvent(namespace, localName, qName, attributes));
+        
+        if (nextHandler != null)
+            nextHandler.startElement(namespace, localName, qName, attributes);
     }
     
     public void endElement(String namespace, String localName, String qName)
@@ -102,6 +108,9 @@ public class ElementRecorder extends DeserializerBase
         }
 
         _events.addElement(new EndElementEvent(namespace, localName, qName));
+
+        if (nextHandler != null)
+            nextHandler.endElement(namespace, localName, qName);
     }
     
     public void characters(char [] chars, int start, int length)
@@ -113,6 +122,9 @@ public class ElementRecorder extends DeserializerBase
         }
         
         _events.addElement(new CharactersEvent(chars, start, length));
+
+        if (nextHandler != null)
+            nextHandler.characters(chars, start, length);
     }
 
     /** Someone wants to deal with the XML inside me using SAX.

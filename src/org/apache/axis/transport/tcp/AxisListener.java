@@ -231,7 +231,7 @@ public class AxisListener implements Runnable {
                 
                 byte[] mBytes = new byte[len];
                 inp.read(mBytes);
-                msg = new Message(new ByteArrayInputStream(mBytes), "InputStream");
+                msg = new Message(new ByteArrayInputStream(mBytes));
             } catch (IOException ex) {
                 System.err.println("Couldn't read from socket input stream: "+ex);
                 return;
@@ -255,13 +255,13 @@ public class AxisListener implements Runnable {
             catch( Exception e ) {
                 if ( !(e instanceof AxisFault) )
                     e = new AxisFault( e );
-                msgContext.setResponseMessage( new Message(e, "AxisFault") );
+                msgContext.setResponseMessage( new Message((AxisFault)e) );
             }
             
             /* Send it back along the wire...  */
             /***********************************/
             msg = msgContext.getResponseMessage();
-            String response = (String) msg.getAs("String");
+            String response = (String) msg.getAsString();
             if (msg == null) response="No data";
             try {
                 OutputStream buf = new BufferedOutputStream(socket.getOutputStream());

@@ -93,7 +93,7 @@ public class FileReader extends Thread {
         FileOutputStream fos = new FileOutputStream( "xml" + nextNum + ".res" );
         nextNum++ ;
 
-        Message msg = new Message( fis, "InputStream" );
+        Message msg = new Message( fis );
         MessageContext  msgContext = new MessageContext(server);
         msgContext.setRequestMessage( msg );
 
@@ -108,12 +108,12 @@ public class FileReader extends Thread {
             server.invoke( msgContext );
             msg = msgContext.getResponseMessage();
         } catch (AxisFault af) {
-            msg = new Message(af, "AxisFault");
+            msg = new Message(af);
         } catch (Exception e) {
-            msg = new Message(new AxisFault(e.toString()), "AxisFault");
+            msg = new Message(new AxisFault(e.toString()));
         }
 
-        buf = (byte[]) msg.getAs( "Bytes" );
+        buf = (byte[]) msg.getAsBytes();
         System.out.println("msg=" + new String(buf));
         fos.write( buf );
         fos.close();

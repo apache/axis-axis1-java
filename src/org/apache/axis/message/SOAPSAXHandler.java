@@ -376,11 +376,17 @@ public abstract class SOAPSAXHandler extends DefaultHandler
     public void startPrefixMapping(String prefix, String uri)
         throws SAXException
     {
-       namespaces.add(uri, prefix);
+        if (prefix != null) {
+            namespaces.add(uri, prefix);
+        } else {
+            namespaces.add(uri, "");
+        }
        
-       // System.out.println("Mapping '" + prefix +"' to '" + uri + "'");
-       
-       if (elementHandler != null) elementHandler.startPrefixMapping(prefix, uri);
+        if (DEBUG_LOG) {
+            System.err.println("StartPrefixMapping '" + prefix + "'->'" + uri + "'");
+        }
+        
+        if (elementHandler != null) elementHandler.startPrefixMapping(prefix, uri);
     }
     
     public void endPrefixMapping(String prefix)

@@ -70,10 +70,10 @@ public class TestHrefs extends TestCase {
            msgString += messageParts[i];
        }
        
-       Message message = new Message(msgString, "String");
+       Message message = new Message(msgString);
        message.setMessageContext(new MessageContext(new AxisServer()));
 
-       SOAPEnvelope envelope = (SOAPEnvelope)message.getAs("SOAPEnvelope");
+       SOAPEnvelope envelope = (SOAPEnvelope)message.getAsSOAPEnvelope();
        assertNotNull("envelope", envelope);
 
        RPCElement body = (RPCElement)envelope.getFirstBody();

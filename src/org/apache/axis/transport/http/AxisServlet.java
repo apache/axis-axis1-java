@@ -123,7 +123,7 @@ public class AxisServlet extends HttpServlet {
     /*******************************************************************/
     MessageContext    msgContext = new MessageContext(engine);
     InputStream       inp        = req.getInputStream();
-    Message           msg        = new Message( inp, "InputStream" );
+    Message           msg        = new Message( inp );
 
     /* Set the request(incoming) message field in the context */
     /**********************************************************/
@@ -187,7 +187,7 @@ public class AxisServlet extends HttpServlet {
         res.setStatus( HttpServletResponse.SC_INTERNAL_SERVER_ERROR );
       if ( !(e instanceof AxisFault) )
         e = new AxisFault( e );
-      msgContext.setResponseMessage( new Message(e, "AxisFault") );
+      msgContext.setResponseMessage( new Message((AxisFault)e) );
     }
 
     /* Send it back along the wire...  */
@@ -198,7 +198,7 @@ public class AxisServlet extends HttpServlet {
     if (msg == null) {
         response="No data";
     } else {
-        response = (String)msg.getAs("String");
+        response = (String)msg.getAsString();
     }
     res.setContentLength( response.length() );
     res.getWriter().print( response );

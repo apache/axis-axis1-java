@@ -91,7 +91,7 @@ public class TestClient {
 
       if ( opts.isFlagSet('t') > 0 ) hMsg.doLocal = true ;
 
-      Message        inMsg      = new Message( msg, "String" );
+      Message        inMsg      = new Message( msg );
       Message        outMsg     = null ;
 
       System.out.println( "Request:\n" + msg );
@@ -100,8 +100,8 @@ public class TestClient {
       hMsg.invoke();
       outMsg = hMsg.getMessageContext().getResponseMessage();
 
-      System.out.println( "Response:\n" + outMsg.getAs( "String" ) );
-        return (String)outMsg.getAs("String");
+      System.out.println( "Response:\n" + outMsg.getAsString() );
+        return (String)outMsg.getAsString();
     }
     
   public static void main(String args[]) {
