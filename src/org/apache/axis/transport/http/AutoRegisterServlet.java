@@ -65,6 +65,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.ConfigurationException;
 import org.apache.axis.EngineConfiguration;
 import org.apache.axis.WSDDEngineConfiguration;
+import org.apache.axis.i18n.Messages;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -91,7 +92,7 @@ public class AutoRegisterServlet extends AxisServletBase {
      * init by registering
      */
     public void init() {
-        log.debug("Auto registering WSDD files");
+        log.debug(Messages.getMessage("autoRegServletInit00"));
         autoRegister();
     }
 
@@ -172,21 +173,12 @@ public class AutoRegisterServlet extends AxisServletBase {
     }
 
     /**
-     * handler for logging trouble, defaults to handing off to logging
-     * @param item what were we loading?
-     * @param throwable
-     */
-    protected void logException(String item,Throwable throwable) {
-        log.error(item,throwable);
-    }
-
-    /**
      * handler for logging success, defaults to handing off to logging
      * at debug level
      * @param item what were we loading?
      */
     protected void logSuccess(String item) {
-        log.debug("Loaded "+item);
+        log.debug(Messages.getMessage("autoRegServletLoaded01",item));
     }
 
     /**
@@ -205,7 +197,7 @@ public class AutoRegisterServlet extends AxisServletBase {
         try {
             applyAndSaveSettings();
         } catch (Exception e) {
-            logException("applyAndSaveSettings()", e);
+            log.error(Messages.getMessage("autoRegServletApplyAndSaveSettings00"), e);
         }
     }
 
@@ -224,7 +216,7 @@ public class AutoRegisterServlet extends AxisServletBase {
             registerResource(resource);
             logSuccess(resource);
         } catch (Exception e) {
-            logException(resource,e);
+            log.error(Messages.getMessage("autoRegServletLoadFailed01",resource),e);
         }
     }
 
