@@ -615,10 +615,18 @@ public class SimpleAxisServer implements Runnable {
 
         SimpleAxisServer sas = new SimpleAxisServer();
 
-        //Debug.setDebugLevel(6);
+        Options opts = null;
+        try {
+            opts = new Options(args);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            return;
+        }
+        
+        Debug.setDebugLevel(opts.isFlagSet('d'));
         
         try {
-            int port = (args.length==0)? 8080 : Integer.parseInt(args[0]);
+            int port = opts.getPort();
             ServerSocket ss = new ServerSocket(port);
             sas.setServerSocket(ss);
             sas.run();
