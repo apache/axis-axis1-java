@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import javax.xml.namespace.QName;
 import javax.wsdl.OperationType;
 import java.io.Serializable;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -77,7 +78,7 @@ public class OperationDesc implements Serializable {
     private QName elementQName;
 
     /** The actual Java method associated with this operation, if known */
-    private Method method;
+    private transient Method method;
 
     /** This operation's style/use. If null, we default to our parent's */
     private Style style = null;
@@ -590,6 +591,31 @@ public class OperationDesc implements Serializable {
         OperationType newMep = (OperationType)mepStrings.get(mepString);
         if (newMep != null) {
             mep = newMep;
+        }
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+        out.defaultWriteObject();
+        if (method != null){
+            out.writeObject(method.getDeclaringClass());
+            out.writeObject(method.getName());
+            out.writeObject(method.getParameterTypes());
+        } else {
+            out.writeObject(null);
+        }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException{
+        in.defaultReadObject();
+        Class clazz = (Class) in.readObject();
+        if (clazz != null){
+            String methodName = (String) in.readObject();
+            Class[] parameterTypes = (Class[]) in.readObject();
+            try {
+                method = clazz.getMethod(methodName, parameterTypes);
+            } catch (NoSuchMethodException e) {
+                throw new IOException("Unable to deserialize the operation's method: "+ methodName);
+            }
         }
     }
 }
