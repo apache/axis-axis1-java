@@ -64,6 +64,13 @@ import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
+import org.apache.xml.security.signature.XMLSignature;
+import org.apache.xml.security.utils.Constants;
+import org.apache.xpath.CachedXPathAPI;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 
 import java.io.FileWriter;
 import java.io.PrintWriter;
@@ -90,7 +97,7 @@ public class LogHandler extends BasicHandler {
                                     null, null);
             FileOutputStream fos = new FileOutputStream(filename, true);
             
-            PrintWriter writer = new PrintWriter(fos);
+	    PrintWriter writer = new PrintWriter(fos);
             
             Integer numAccesses =
                              (Integer)serviceHandler.getOption("accesses");
@@ -109,6 +116,26 @@ public class LogHandler extends BasicHandler {
             Message inMsg = msgContext.getRequestMessage();
             Message outMsg = msgContext.getResponseMessage();
 
+	    // verify signed message
+	       
+	    Document doc = inMsg.getSOAPPart().getAsSOAPEnvelope().getAsDocument();
+            String BaseURI = "http://xml-security";
+            CachedXPathAPI xpathAPI = new CachedXPathAPI();
+
+            Element nsctx = doc.createElement("nsctx");
+            nsctx.setAttribute("xmlns:ds", Constants.SignatureSpecNS);
+	    
+            Element signatureElem = (Element) xpathAPI.selectSingleNode(doc,
+									"//ds:Signature", nsctx);
+            XMLSignature sig = new XMLSignature(signatureElem, BaseURI);
+	    
+            boolean verify = sig.checkSignatureValue(sig.getKeyInfo().getPublicKey());
+
+            writer.println("The signature is" + (verify
+                                               ? " "
+                                               : " not ") + "valid");
+	    // end verify
+
             writer.println( "=======================================================" );
             writer.println( "= " + JavaUtils.getMessage("elapsed00",
                  "" + (System.currentTimeMillis() - start)));
@@ -124,7 +151,8 @@ public class LogHandler extends BasicHandler {
             writer.close();
         } catch (Exception e) {
             throw AxisFault.makeFault(e);
-        }
+	}
+	
     }
     
     public void undo(MessageContext msgContext)

@@ -81,24 +81,24 @@ public class Client
     static void main(String[] args) throws Exception {
         Options opts = new Options(args);
 
-        ServiceClient sc = new ServiceClient(opts.getURL());
-        sc.set(HTTPTransport.ACTION, "");
+	Service service = new Service();
+	Call call = (Call) service.createCall();
+	call.setTargetEndpointAddress(new java.net.URL(opts.getURL()));
+
+	call.setProperty( HTTPTransport.ACTION, "");
 
         SOAPEnvelope env = new SOAPEnvelope();
         SOAPBodyElement sbe = new SOAPBodyElement(XMLUtils.StringToElement("http://localhost:8080/LogTestService","testMethod", ""));
         env.addBodyElement(sbe);
 
-        env = new SignedSOAPEnvelope(env);
+        env = new SignedSOAPEnvelope(env,"http://xml-security");
 
         System.out.println("\n============= Request ==============");
         XMLUtils.PrettyElementToStream(env.getAsDOM(), System.out);
 
-        Message msg = new Message(env);
+	call.invoke(env);
 
-        sc.setRequestMessage(msg);
-        sc.invoke();
-
-        MessageContext mc = sc.getMessageContext();
+	MessageContext mc = call.getMessageContext();
         System.out.println("\n============= Response ==============");
         XMLUtils.PrettyElementToStream(mc.getResponseMessage().getSOAPEnvelope().getAsDOM(), System.out);
     }
