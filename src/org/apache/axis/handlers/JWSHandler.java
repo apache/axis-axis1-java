@@ -52,21 +52,20 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.handlers.http;
+package org.apache.axis.handlers;
 
-import org.apache.axis.*;
+import org.apache.axis.AxisFault;
+import org.apache.axis.Constants;
 import org.apache.axis.handlers.BasicHandler;
+import org.apache.axis.MessageContext;
 import org.apache.axis.utils.Debug;
-import org.apache.axis.transport.http.HTTPConstants;
-
-import javax.servlet.* ;
-import javax.servlet.http.* ;
 
 /** A <code>JWSHandler</code> sets the target service and JWS filename
  * in the context depending on the JWS configuration and the target URL.
  * 
  * @author Glen Daniels (gdaniels@allaire.com)
  * @author Doug Davis (dug@us.ibm.com)
+ * @author Sam Ruby (rubys@us.ibm.com)
  */
 public class JWSHandler extends BasicHandler
 {
@@ -74,30 +73,12 @@ public class JWSHandler extends BasicHandler
     {
         Debug.Print( 1, "Enter: JWSHandler::invoke" );
 
-        /** If there's already a targetService just return.
-         */
-        if ( msgContext.getServiceHandler() == null ) {
-            HttpServlet        servlet = (HttpServlet) msgContext.getProperty(
-                                               HTTPConstants.MC_HTTP_SERVLET);
-            ServletConfig      config  = servlet.getServletConfig();
-            ServletContext     context = config.getServletContext();
-            HttpServletRequest req = (HttpServletRequest)msgContext.getProperty(
-                                          HTTPConstants.MC_HTTP_SERVLETREQUEST);
-            String URL = req.getServletPath();
-            Debug.Print(3, "URL: " + URL );
+        // If there's already a targetService just return.
+        if (msgContext.getServiceHandler() == null) {
+            String realpath = msgContext.getStrProp(Constants.MC_REALPATH);
     
-            String   opt     = (String) getOption("JWSProcessor");
-            boolean  skipJWS = false ;
-            Debug.Print(3, "JWSProcessor Opt: " + opt );
-            if (opt != null && (opt.equals("0") || opt.equalsIgnoreCase("NO") ||
-                                 opt.equalsIgnoreCase("OFF")) )
-              skipJWS = true ;
-    
-            if ( !skipJWS && URL.endsWith(".jws") ) {
-                String pathName = context.getRealPath( URL );
-                Debug.Print(2, "Path: " + pathName );
-                msgContext.setProperty( "JWSFileName", pathName );
-                msgContext.setTargetService( Constants.JWSPROCESSOR_TARGET ) ;
+            if ((realpath!=null) && (realpath.endsWith(".jws"))) {
+                msgContext.setTargetService(Constants.JWSPROCESSOR_TARGET) ;
             }
         }
 

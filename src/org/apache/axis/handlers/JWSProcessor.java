@@ -67,7 +67,7 @@ import sun.tools.javac.Main;
 import org.w3c.dom.* ;
 
 /**
- * This handler will use the JWSFileName property of the MsgContext to
+ * This handler will use the MC_REALPATH property of the MsgContext to
  * locate a *.jws (JavaWebService) file.  If found it will copy it to a
  * *.java file, compile it and then run it using the RPCDispatchHandler.
  *
@@ -89,7 +89,7 @@ public class JWSProcessor extends BasicHandler
       /* placed there by another handler (ie. HTTPActionHandler)     */
       /***************************************************************/
       Runtime  rt      = Runtime.getRuntime();
-      String   jwsFile = (String)msgContext.getProperty( "JWSFileName" );
+      String   jwsFile = msgContext.getStrProp(Constants.MC_REALPATH);
       Debug.Print( 2, "jwsFile: " + jwsFile );
       String   jFile   = jwsFile.substring(0, jwsFile.length()-3) + "java" ;
       String   cFile   = jwsFile.substring(0, jwsFile.length()-3) + "class" ;
