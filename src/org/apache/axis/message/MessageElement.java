@@ -746,7 +746,11 @@ public class MessageElement implements SOAPElement, Serializable
                              String value)
     {
         AttributesImpl attributes = makeAttributesEditable();
-        attributes.addAttribute(namespace, localName, prefix, "CDATA",
+        String attrName = localName;
+        if (prefix != null && prefix.length() > 0) {
+            attrName = prefix + ":" + localName;
+        }
+        attributes.addAttribute(namespace, localName, attrName, "CDATA",
                                 value);
     }
     /**
