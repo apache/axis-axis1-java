@@ -375,6 +375,15 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
     } // capitalizeFirstChar
 
     /**
+     * Prepend an underscore to the name
+     */
+    public static String addUnderscore(String name) {
+      if (name == null || name.equals(""))
+          return name;
+      return "_" + name;
+    }
+
+    /**
      * Map an XML name to a valid Java identifier
      */
     public static String xmlNameToJava(String name)
