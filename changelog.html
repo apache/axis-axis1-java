@@ -22,6 +22,11 @@ h1 {  margin-left: -30px}
 <ul>
   <li>Preliminary SAAJ 1.2 support!</li>
   <li>Improved doc/literal support</li>
+  <li>Improved handling of array types + WSDL generation</li>
+  <li>More logical type mapping registration (SOAP-ENC types are in a separate registry which then delegates to the default one)</li>
+  <li>Improved schema support (we deal with lists and groups now)</li>
+  <li>ServiceDesc metadata is now more generic - ServiceDesc is an interface and JavaServiceDesc implements it to do specific Java processing.</li>
+  <li>Throw fault when bad values for "mustUnderstand" attribute are parsed</li>
   <li>log4j.properties is no longer in axis.jar. This is to avoid conflicts
    with the configuration files in other bits of the application.</li>
   <li>Many bugfixes.</li>
