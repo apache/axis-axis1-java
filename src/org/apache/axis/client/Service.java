@@ -70,6 +70,7 @@ import org.apache.axis.Constants ;
 import org.apache.axis.encoding.XMLType ;
 import org.apache.axis.rpc.JAXRPCException ;
 import org.apache.axis.rpc.namespace.QName ;
+import org.apache.axis.rpc.encoding.TypeMappingRegistry ;
 import org.apache.axis.transport.http.HTTPConstants ;
 import org.apache.axis.utils.XMLUtils ;
 
@@ -492,6 +493,25 @@ public class Service implements org.apache.axis.rpc.Service {
         }
         if ( ports == null ) return( null );
         return( ports.iterator() );
+    }
+
+    /**
+     * Defines the current Type Mappig Registry.
+     *
+     * @param  registry The TypeMappingRegistry
+     * @throws JAXRPCException if there's an error
+     */
+    public void setTypeMappingRegistry(TypeMappingRegistry registry)
+                    throws JAXRPCException  {
+    }
+
+    /**
+     * Returns the current TypeMappingRegistry or null.
+     *
+     * @return TypeMappingRegistry The registry
+     */
+    public TypeMappingRegistry getTypeMappingRegistry() {
+        return( null );
     }
 
     /**

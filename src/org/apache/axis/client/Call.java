@@ -124,10 +124,6 @@ public class Call implements org.apache.axis.rpc.Call {
     private Vector             myHeaders       = null;
 
 
-    /***************************************************************
-     * Static stuff
-     */
-
     public static final String TRANSPORT_PROPERTY="java.protocol.handler.pkgs";
 
     /**
@@ -139,68 +135,10 @@ public class Call implements org.apache.axis.rpc.Call {
     private static FileProvider configProvider = 
                            new FileProvider(Constants.CLIENT_CONFIG_FILE);
 
-    /** Register a Transport that should be used for URLs of the specified
-     * protocol.
-     *
-     * @param protocol the URL protocol (i.e. "tcp" for "tcp://" urls)
-     * @param transportClass the class of a Transport type which will be used
-     *                       for matching URLs.
-     */
-    public static void setTransportForProtocol(String protocol,
-                                               Class transportClass) {
-        if (Transport.class.isAssignableFrom(transportClass))
-            transports.put(protocol, transportClass);
-        else
-            throw new NullPointerException();
-    }
 
-    /**
-     * Set up the default transport URL mappings.
-     *
-     * This must be called BEFORE doing non-standard URL parsing (i.e. if you
-     * want the system to accept a "local:" URL).  This is why the Options class
-     * calls it before parsing the command-line URL argument.
-     */
-    public static synchronized void initialize() {
-        if (!initialized) {
-            addTransportPackage("org.apache.axis.transport");
-
-            setTransportForProtocol("local", 
-                         org.apache.axis.transport.local.LocalTransport.class);
-            setTransportForProtocol("http", HTTPTransport.class);
-            setTransportForProtocol("https", HTTPTransport.class);
-
-            initialized = true;
-        }
-    }
-
-    /** Add a package to the system protocol handler search path.  This
-     * enables users to create their own URLStreamHandler classes, and thus
-     * allow custom protocols to be used in Axis (typically on the client
-     * command line).
-     *
-     * For instance, if you add "samples.transport" to the packages property,
-     * and have a class samples.transport.tcp.Handler, the system will be able
-     * to parse URLs of the form "tcp://host:port..."
-     *
-     * @param packageName the package in which to search for protocol names.
-     */
-    public static synchronized void addTransportPackage(String packageName) {
-        String currentPackages = System.getProperty(TRANSPORT_PROPERTY);
-        if (currentPackages == null) {
-            currentPackages = "";
-        } else {
-            currentPackages += "|";
-        }
-        currentPackages += packageName;
-
-        System.setProperty(TRANSPORT_PROPERTY, currentPackages);
-    }
-
-    /*
-     * END STATICS
-     ***********************************************************************/
-
+    /************************************************************************/
+    /* Start of core JAX-RPC stuff                                          */
+    /************************************************************************/
 
     /**
      * Default constructor - not much else to say.
@@ -209,28 +147,6 @@ public class Call implements org.apache.axis.rpc.Call {
         serviceDesc = new ServiceDescription(null, true);
         setEngine( new AxisClient(configProvider) );
         if ( !initialized ) initialize();
-    }
-
-    /**
-     * Change the AxisEngine being used by this Call object.  This should
-     * be called right away after creating the Call object since any 
-     * values in the old msgContext object associated with the old engine
-     * will NOT be carried over to the new msgContext of this new engine.
-     *
-     * @param newEngine the new AxisEngine to use
-     */
-    public void setEngine(AxisEngine newEngine) {
-        engine = newEngine ;
-        msgContext = new MessageContext( engine );
-    }
-
-    /**
-     * Returns the current AxisEngine being used by this Call object.
-     *
-     * @return AxisEngine the current AxisEngine
-     */
-    public AxisEngine getEngine() {
-        return( engine );
     }
 
     /**
@@ -459,6 +375,101 @@ public class Call implements org.apache.axis.rpc.Call {
         }
     }
 
+    /************************************************************************/
+    /* End of core JAX-RPC stuff                                            */
+    /************************************************************************/
+
+    /** Register a Transport that should be used for URLs of the specified
+     * protocol.
+     *
+     * Note: Not part of JAX-RPC specification.
+     *
+     * @param protocol the URL protocol (i.e. "tcp" for "tcp://" urls)
+     * @param transportClass the class of a Transport type which will be used
+     *                       for matching URLs.
+     */
+    public static void setTransportForProtocol(String protocol,
+                                               Class transportClass) {
+        if (Transport.class.isAssignableFrom(transportClass))
+            transports.put(protocol, transportClass);
+        else
+            throw new NullPointerException();
+    }
+
+    /**
+     * Set up the default transport URL mappings.
+     *
+     * This must be called BEFORE doing non-standard URL parsing (i.e. if you
+     * want the system to accept a "local:" URL).  This is why the Options class
+     * calls it before parsing the command-line URL argument.
+     *
+     * Note: Not part of JAX-RPC specification.
+     */
+    public static synchronized void initialize() {
+        if (!initialized) {
+            addTransportPackage("org.apache.axis.transport");
+
+            setTransportForProtocol("local", 
+                         org.apache.axis.transport.local.LocalTransport.class);
+            setTransportForProtocol("http", HTTPTransport.class);
+            setTransportForProtocol("https", HTTPTransport.class);
+
+            initialized = true;
+        }
+    }
+
+    /** Add a package to the system protocol handler search path.  This
+     * enables users to create their own URLStreamHandler classes, and thus
+     * allow custom protocols to be used in Axis (typically on the client
+     * command line).
+     *
+     * For instance, if you add "samples.transport" to the packages property,
+     * and have a class samples.transport.tcp.Handler, the system will be able
+     * to parse URLs of the form "tcp://host:port..."
+     *
+     * Note: Not part of JAX-RPC specification.
+     *
+     * @param packageName the package in which to search for protocol names.
+     */
+    public static synchronized void addTransportPackage(String packageName) {
+        String currentPackages = System.getProperty(TRANSPORT_PROPERTY);
+        if (currentPackages == null) {
+            currentPackages = "";
+        } else {
+            currentPackages += "|";
+        }
+        currentPackages += packageName;
+
+        System.setProperty(TRANSPORT_PROPERTY, currentPackages);
+    }
+
+    /**
+     * Change the AxisEngine being used by this Call object.  This should
+     * be called right away after creating the Call object since any 
+     * values in the old msgContext object associated with the old engine
+     * will NOT be carried over to the new msgContext of this new engine.
+     *
+     * Note: Not part of JAX-RPC specification.
+     *
+     * @param newEngine the new AxisEngine to use
+     */
+    public void setEngine(AxisEngine newEngine) {
+        engine = newEngine ;
+        msgContext = new MessageContext( engine );
+    }
+
+    /**
+     * Returns the current AxisEngine being used by this Call object.
+     *
+     * Note: Not part of JAX-RPC specification.
+     *
+     * @return AxisEngine the current AxisEngine
+     */
+    public AxisEngine getEngine() {
+        return( engine );
+    }
+
+
     /**
      * Convert the list of objects into RPCParam's based on the paramNames,
      * paramTypes and paramModes variables.  If those aren't set then just
@@ -508,9 +519,10 @@ public class Call implements org.apache.axis.rpc.Call {
         return( result.toArray() );
     }
 
-    // Old ServiceClient stuff
     /**
      * Set the Transport 
+     *
+     * Note: Not part of JAX-RPC specification.
      *
      * @param transport the Transport object we'll use to set up
      *                  MessageContext properties.
@@ -523,6 +535,8 @@ public class Call implements org.apache.axis.rpc.Call {
 
     /**
      * Set the name of the transport chain to use.
+     *
+     * Note: Not part of JAX-RPC specification.
      */
     public void setTransportName(String name) {
         transportName = name ;
@@ -531,6 +545,8 @@ public class Call implements org.apache.axis.rpc.Call {
     }
 
     /** Get the Transport registered for the given protocol.
+     *
+     * Note: Not part of JAX-RPC specification.
      *
      * @param protocol a protocol such as "http" or "local" which may
      *                 have a Transport object associated with it.
@@ -553,6 +569,8 @@ public class Call implements org.apache.axis.rpc.Call {
     /**
      * Set timeout in our MessageContext.
      *
+     * Note: Not part of JAX-RPC specification.
+     *
      * @param value the maximum amount of time, in milliseconds
      */
     public void setTimeout (int value) {
@@ -561,6 +579,8 @@ public class Call implements org.apache.axis.rpc.Call {
 
     /**
      * Get timeout from our MessageContext.
+     *
+     * Note: Not part of JAX-RPC specification.
      *
      * @return value the maximum amount of time, in milliseconds
      */
@@ -573,6 +593,8 @@ public class Call implements org.apache.axis.rpc.Call {
      *
      * This allows custom message creation.
      *
+     * Note: Not part of JAX-RPC specification.
+     *
      * @param msg the new request message.
      */
     public void setRequestMessage(Message msg) {
@@ -583,6 +605,8 @@ public class Call implements org.apache.axis.rpc.Call {
      * Directly get the response message in our MessageContext.
      *
      * Shortcut for having to go thru the msgContext
+     *
+     * Note: Not part of JAX-RPC specification.
      *
      * @return the response Message object in the msgContext
      */
@@ -595,6 +619,8 @@ public class Call implements org.apache.axis.rpc.Call {
      *
      * This just passes through the value into the MessageContext.
      *
+     * Note: Not part of JAX-RPC specification.
+     *
      * @param yesno true if session state is desired, false if not.
      */
     public void setMaintainSession (boolean yesno) {
@@ -603,6 +629,8 @@ public class Call implements org.apache.axis.rpc.Call {
 
     /**
      * Obtain a reference to our MessageContext.
+     *
+     * Note: Not part of JAX-RPC specification.
      *
      * @return the MessageContext.
      */
@@ -613,6 +641,8 @@ public class Call implements org.apache.axis.rpc.Call {
     /**
      * Add a header which should be inserted into each outgoing message
      * we generate.
+     *
+     * Note: Not part of JAX-RPC specification.
      *
      * @param header a SOAPHeader to be inserted into messages
      */
@@ -626,6 +656,8 @@ public class Call implements org.apache.axis.rpc.Call {
 
     /**
      * Clear the list of headers which we insert into each message
+     *
+     * Note: Not part of JAX-RPC specification.
      */
     public void clearHeaders()
     {
@@ -635,11 +667,14 @@ public class Call implements org.apache.axis.rpc.Call {
     /**
      * Map a type for serialization.
      *
+     * Note: Not part of JAX-RPC specification.
+     *
      * @param _class the Java class of the data type.
      * @param qName the xsi:type QName of the associated XML type.
      * @param serializer a Serializer which will be used to write the XML.
      */
-    public void addSerializer(Class _class, org.apache.axis.utils.QName qName, Serializer serializer){
+    public void addSerializer(Class _class, org.apache.axis.utils.QName qName, 
+                              Serializer serializer){
         TypeMappingRegistry typeMap = msgContext.getTypeMappingRegistry();
         typeMap.addSerializer(_class, qName, serializer);
     }
@@ -647,15 +682,18 @@ public class Call implements org.apache.axis.rpc.Call {
     /**
      * Map a type for deserialization.
      *
+     * Note: Not part of JAX-RPC specification.
+     *
      * @param qName the xsi:type QName of an XML Schema type.
      * @param _class the class of the associated Java data type.
      * @param deserializerFactory a factory which can create deserializer
      *                            instances for this type.
      */
-    public void addDeserializerFactory(org.apache.axis.utils.QName qName, Class _class,
-                                       DeserializerFactory deserializerFactory){
+    public void addDeserializerFactory(org.apache.axis.utils.QName qName, 
+                                       Class _class,
+                                       DeserializerFactory deserFactory){
         TypeMappingRegistry typeMap = msgContext.getTypeMappingRegistry();
-        typeMap.addDeserializerFactory(qName, _class, deserializerFactory);
+        typeMap.addDeserializerFactory(qName, _class, deserFactory);
     }
 
     /************************************************
@@ -663,6 +701,8 @@ public class Call implements org.apache.axis.rpc.Call {
      */
 
     /** Invoke the service with a custom SOAPEnvelope.
+     *
+     * Note: Not part of JAX-RPC specification.
      *
      * @param env a SOAPEnvelope to send.
      * @exception AxisFault
@@ -680,6 +720,8 @@ public class Call implements org.apache.axis.rpc.Call {
      * This will call the service, serializing all the arguments, and
      * then deserialize the return value.
      *
+     * Note: Not part of JAX-RPC specification.
+     *
      * @param namespace the desired namespace URI of the method element
      * @param method the method name
      * @param args an array of Objects representing the arguments to the
@@ -690,7 +732,8 @@ public class Call implements org.apache.axis.rpc.Call {
      * @return a deserialized Java Object containing the return value
      * @exception AxisFault
      */
-    public Object invoke( String namespace, String method, Object[] args ) throws AxisFault {
+    public Object invoke(String namespace, String method, Object[] args) 
+                    throws AxisFault {
         category.debug("Enter: Call::invoke(ns, meth, args)" );
         RPCElement  body = new RPCElement(namespace, method, args, serviceDesc);
         Object ret = invoke( body );
@@ -700,6 +743,8 @@ public class Call implements org.apache.axis.rpc.Call {
 
     /** Convenience method to invoke a method with a default (empty)
      * namespace.  Calls invoke() above.
+     *
+     * Note: Not part of JAX-RPC specification.
      *
      * @param method the method name
      * @param args an array of Objects representing the arguments to the
@@ -716,6 +761,8 @@ public class Call implements org.apache.axis.rpc.Call {
     }
 
     /** Invoke an RPC service with a pre-constructed RPCElement.
+     *
+     * Note: Not part of JAX-RPC specification.
      *
      * @param body an RPCElement containing all the information about
      *             this call.
@@ -753,7 +800,8 @@ public class Call implements org.apache.axis.rpc.Call {
 
         if ( body.getPrefix() == null )       body.setPrefix( "m" );
         if ( body.getNamespaceURI() == null ) {
-            throw new AxisFault("Call.invoke", "Cannot invoke Call with null namespace URI for method "+body.getMethodName(),
+            throw new AxisFault("Call.invoke", "Cannot invoke Call with " +
+                    "null namespace URI for method "+body.getMethodName(),
                     null, null);
         } else if (msgContext.getServiceHandler() == null) {
             msgContext.setTargetService(body.getNamespaceURI());
@@ -823,6 +871,8 @@ public class Call implements org.apache.axis.rpc.Call {
 
     /**
      * Set engine option.
+     *
+     * Note: Not part of JAX-RPC specification.
      */
     public void addOption(String name, Object value) {
         engine.addOption(name, value);
@@ -831,6 +881,8 @@ public class Call implements org.apache.axis.rpc.Call {
     /**
      * Invoke this Call with its established MessageContext
      * (perhaps because you called this.setRequestMessage())
+     *
+     * Note: Not part of JAX-RPC specification.
      *
      * @exception AxisFault
      */
@@ -881,6 +933,8 @@ public class Call implements org.apache.axis.rpc.Call {
      * NOTE that the params returned are all RPCParams, containing
      * name and value - if you want the value, you'll need to call
      * param.getValue().
+     *
+     * Note: Not part of JAX-RPC specification.
      *
      * @return a Vector of RPCParams
      */
