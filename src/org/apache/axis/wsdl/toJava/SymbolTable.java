@@ -747,11 +747,7 @@ public class SymbolTable {
             if (!portType.isUndefined()) {
                 HashMap parameters = new HashMap();
 
-                // Remove Duplicates - happens with only a few WSDL's. No idea why!!! 
-                // (like http://www.xmethods.net/tmodels/InteropTest.wsdl) 
-                // TODO: Remove this patch...
-                // NOTE from RJB:  this is a WSDL4J bug and the WSDL4J guys have been notified.
-                Iterator operations = (new HashSet(portType.getOperations())).iterator();
+                Iterator operations = portType.getOperations().iterator();
  
                 while(operations.hasNext()) {
                     Operation operation = (Operation) operations.next();
