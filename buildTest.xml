@@ -58,65 +58,6 @@ Copyright:
   <property file="${user.home}/test.properties"/>
 
 <!-- =========================================================================== -->
-<!-- TESTS -->
-
-  <target name="filegen" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/test/wsdl/filegen/build.xml"/>
-  </target>
-
-  <target name="chains" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/test/chains/build.xml"/>
-  </target>
-
-  <target name="faults" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/test/faults/build.xml"/>
-  </target>
-
-  <target name="functional" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/test/functional/build.xml"/>
-  </target>
-
-  <target name="session" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/test/session/build.xml" target="run" />
-  </target>
-
-  <target name="refattr" depends="setenv" >
-    <ant inheritAll="true" antfile="${axis.home}/test/wsdl/refattr/build.xml" target="run" />
-  </target>
-
-  <target name="outparams" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/test/outparams/build.xml"/>
-  </target>
-
-  <target name="soap" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/test/soap/build.xml"/>
-  </target>
-
-  <target name="utils" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/test/utils/build.xml"/>
-  </target>
-
-  <target name="RPCDispatch" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/test/RPCDispatch/build.xml"/>
-  </target>
-
-  <target name="encoding" depends="setenv">
-    <ant inheritAll="true" antfile="${axis.home}/test/encoding/build.xml"/>
-  </target>
-
-  <target name="md5attach" depends="setenv">
-     <ant inheritAll="true" antfile="${axis.home}/test/md5attach/build.xml"/>
-  </target>
-
-  <target name="wsdd" depends="setenv">
-     <ant inheritAll="true" antfile="${axis.home}/test/wsdd/build.xml"/>
-  </target>
-
-  <target name="wsdl" depends="setenv">
-     <ant inheritAll="true" antfile="${axis.home}/test/wsdl/build.xml"/>
-  </target>
-
-<!-- =========================================================================== -->
   <target name="compile" depends="printEnv,copy">
     <!-- Compile the code -->
     <foreach target="component-compile">
@@ -124,7 +65,6 @@ Copyright:
              <fileset dir="${axis.home}" >
                <patternset>
                  <include name="test/**/build.xml"/>
-		 <exclude name="test/httpunit/build.xml"/>
 		 <exclude name="test/wsdl/interop3/compound1/build.xml" />
                  <exclude name="test/wsdl/interop3/compound2/build.xml" />
                  <exclude name="test/wsdl/interop3/docLit/build.xml" />
@@ -146,8 +86,8 @@ Copyright:
   <!-- =================================================================== -->
   <!-- Runs the JUnit package testcases -->
   <!-- =================================================================== -->
-  <target name="junit" if="junit.present" depends="compile">
-    <junit printsummary="yes" haltonfailure="yes" fork="yes">
+  <target name="junit" if="junit.present">
+    <junit printsummary="yes" haltonfailure="${test.functional.fail}" fork="yes">
       <classpath refid="classpath" />
       <formatter type="xml" />
       <batchtest todir="${test.functional.reportdir}">
@@ -164,7 +104,7 @@ Copyright:
   <!-- =================================================================== -->
   <!-- Functional tests, no server (for testing under debugger)            -->
   <!-- =================================================================== -->
-  <target name="functional-tests-noserver" depends="compile">
+  <target name="functional-tests-noserver">
     <ant antfile="test/build_functional_tests.xml" target="junit-functional-noserver">
       <property name="test.functional.usefile" value="${test.functional.usefile}"/>
     </ant>
@@ -362,7 +302,6 @@ Copyright:
              <fileset dir="${axis.home}" >
                 <patternset>
                  <include name="test/**/build.xml"/>
-                 <exclude name="test/httpunit/build.xml"/>
                  <exclude name="test/wsdl/interop3/compound1/build.xml" />
                  <exclude name="test/wsdl/interop3/compound2/build.xml" />
                  <exclude name="test/wsdl/interop3/docLit/build.xml" />
