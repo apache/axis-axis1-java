@@ -10,11 +10,11 @@ owner (if any) in "<>" brackets.  Example:
 
 MUST DO FOR BETA1
 -----------------
-! <Doug> Doug's issue 1: Attachments are broken
-! <Russell> Published interfaces must be vetted.
+X <Doug> Doug's issue 1: Attachments are broken
+X <Russell> Published interfaces must be vetted.
 X <Glen> getParameterName() should return a QName
 X <Glyn> Taras' fix to MessageElement (getValue-like method).
-! <?> getParameterName() should return a QName
+! <Russell> Make sure no English-language strings are left in the code.
 
 MESSAGE PARSING / ENCODING
 --------------------------
