@@ -1387,8 +1387,15 @@ public class Emitter {
             // declaration whose name and type may be found in the
             // ParameterDesc.
             QName qname = param.getQName();
+            if(param.getTypeQName() == null) {
+                throw new AxisFault(Messages.getMessage("registerTypeMappingFor01", param.getJavaType().getName()));
+            }
             if (param.getTypeQName().getNamespaceURI().equals("")) {
                 param.setTypeQName(new QName(intfNS,param.getTypeQName().getLocalPart()));
+            }
+            if (param.getQName().getNamespaceURI().equals("")) {
+                qname = new QName(intfNS,param.getQName().getLocalPart());
+                param.setQName(qname);
             }
             Element el = types.createElementDecl(qname.getLocalPart(),
                                                  param.getJavaType(),
