@@ -197,7 +197,6 @@ public class Emitter {
 
         // Generate types from doc
         if (doc != null) {
-            emitFactory.setNamespacePrefix(packageName);
             emitFactory.map(def.getTargetNamespace(), packageName);
             emitFactory.buildTypes(doc);
             if (bVerbose) {
@@ -1344,7 +1343,7 @@ public class Emitter {
 
                     while (p.mode != Parameter.INOUT)
                         p = (Parameter) parms.list.get(++i);
-                    if (parms.returnName != null) {
+                    if (parms.returnName == null) {
                         pw.println ("            " + p.name + "._value = " + getResponseString(p.type, "((org.apache.axis.message.RPCParam) call.getOutputParams().get(" + 0 + ")).getValue()"));
                         pw.println("             return " + getResponseString(parms.returnType, "resp"));
                     }
@@ -1742,15 +1741,15 @@ public class Emitter {
         while (it.hasNext()) {
             Type type = (Type) it.next();
             if (type.getBaseType() == null) {
-                pw.println("");
                 if (!nsMap.containsKey(type.getQName().getNamespaceURI())) {
+                  pw.println("");
                   nsPrefix = "ns" + i++;
                   nsMap.put(type.getQName().getNamespaceURI(), nsPrefix);
                   pw.print("     xmlns:" + nsPrefix  + "=\"" + type.getQName().getNamespaceURI() + "\"");
                 }
             }
         }
-        pw.println(" >");
+        pw.println(">");
         it = types.values().iterator();
         while (it.hasNext()) {
             Type type = (Type) it.next();
