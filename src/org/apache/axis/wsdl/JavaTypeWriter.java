@@ -78,7 +78,7 @@ public class JavaTypeWriter implements Writer {
     /**
      * Constructor.
      */
-    protected JavaTypeWriter(
+    public JavaTypeWriter(
             Emitter emitter,
             Type type,
             SymbolTable symbolTable) {

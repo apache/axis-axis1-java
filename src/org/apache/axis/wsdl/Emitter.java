@@ -294,6 +294,18 @@ public class Emitter {
     }
 
     /**
+     * Is Message Context parm creation flag set
+     * @return boolean value
+     */
+    public boolean getMessageContext() {
+        return this.bMessageContext;
+    }
+
+    public Definition getCurrentDefinition() {
+        return this.def;
+    }
+    
+    /**
      * Turn on/off generation of elements from imported files.
      * @param boolean generateImports
      */
@@ -309,6 +321,10 @@ public class Emitter {
         this.bVerbose = value;
     }
 
+    public boolean getVerbose() {
+        return this.bVerbose;
+    }
+
     public void setNamespaceMap(HashMap map) {
         delaySetMap = map;
     }
@@ -321,6 +337,13 @@ public class Emitter {
         this.outputDir = outputDir;
     }
 
+    /**
+     * Get the output directory to use for emitted source files
+     */
+    public String getOutputDir() {
+        return this.outputDir;
+    }
+    
     /**
      * Set the scope for the deploy.xml file.
      * @param scope One of Emitter.NO_EXPLICIT_SCOPE, Emitter.APPLICATION_SCOPE, Emitter.REQUEST_SCOPE, Emitter.SESSION_SCOPE.  Anything else is equivalent to NO_EXPLICIT_SCOPE and no explicit scope tag will appear in deploy.xml.

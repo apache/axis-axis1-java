@@ -73,7 +73,7 @@ public class JavaPortTypeWriter implements Writer {
     /**
      * Constructor.
      */
-    protected JavaPortTypeWriter(
+    public JavaPortTypeWriter(
             Emitter emitter,
             PortType portType, SymbolTable symbolTable) {
         PortTypeEntry ptEntry = symbolTable.getPortTypeEntry(portType.getQName());

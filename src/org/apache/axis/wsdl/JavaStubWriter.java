@@ -376,16 +376,16 @@ public class JavaStubWriter extends JavaWriter {
 
         // loop over paramters and set up in/out params
         for (int i = 0; i < parms.list.size(); ++i) {
-            Parameters.Parameter p = (Parameters.Parameter) parms.list.get(i);
+            Parameter p = (Parameter) parms.list.get(i);
 
 
             QName qn = p.type.getQName();
             String typeString = "new org.apache.axis.encoding.XMLType( new javax.xml.rpc.namespace.QName(\"" + qn.getNamespaceURI() + "\", \"" +
                     qn.getLocalPart() + "\"))";
-            if (p.mode == Parameters.Parameter.IN) {
+            if (p.mode == Parameter.IN) {
                 pw.println("        call.addParameter(\"" + p.name + "\", " + typeString + ", org.apache.axis.client.Call.PARAM_MODE_IN);");
             }
-            else if (p.mode == Parameters.Parameter.INOUT) {
+            else if (p.mode == Parameter.INOUT) {
                 pw.println("        call.addParameter(\"" + p.name + "\", " + typeString + ", call.PARAM_MODE_INOUT);");
             }
             else { // p.mode == Parameter.OUT
@@ -412,17 +412,17 @@ public class JavaStubWriter extends JavaWriter {
         // Write the input and inout parameter list
         boolean needComma = false;
         for (int i = 0; i < parms.list.size(); ++i) {
-            Parameters.Parameter p = (Parameters.Parameter) parms.list.get(i);
+            Parameter p = (Parameter) parms.list.get(i);
 
             if (needComma) {
-                if (p.mode != Parameters.Parameter.OUT)
+                if (p.mode != Parameter.OUT)
                     pw.print(", ");
             }
             else
                 needComma = true;
-            if (p.mode == Parameters.Parameter.IN)
+            if (p.mode == Parameter.IN)
                 pw.print(wrapPrimitiveType(p.type, p.name));
-            else if (p.mode == Parameters.Parameter.INOUT)
+            else if (p.mode == Parameter.INOUT)
                 pw.print(wrapPrimitiveType(p.type, p.name + "._value"));
         }
         pw.println("});");
@@ -439,10 +439,10 @@ public class JavaStubWriter extends JavaWriter {
                     // There is only one output and it is an inout, so the resp object
                     // must go into the inout holder.
                     int i = 0;
-                    Parameters.Parameter p = (Parameters.Parameter) parms.list.get(i);
+                    Parameter p = (Parameter) parms.list.get(i);
 
-                    while (p.mode != Parameters.Parameter.INOUT)
-                        p = (Parameters.Parameter) parms.list.get(++i);
+                    while (p.mode != Parameter.INOUT)
+                        p = (Parameter) parms.list.get(++i);
                     pw.println ("            " + p.name + "._value = " + getResponseString(p.type, "resp"));
                 }
                 else {
@@ -460,8 +460,8 @@ public class JavaStubWriter extends JavaWriter {
                 int outdex = 0;
                 boolean firstInoutIsResp = (parms.outputs == 0);
                 for (int i = 0; i < parms.list.size (); ++i) {
-                    Parameters.Parameter p = (Parameters.Parameter) parms.list.get (i);
-                    if (p.mode != Parameters.Parameter.IN) {
+                    Parameter p = (Parameter) parms.list.get (i);
+                    if (p.mode != Parameter.IN) {
                         if (firstInoutIsResp) {
                             firstInoutIsResp = false;
                             pw.println ("            " + p.name + "._value = " + getResponseString(p.type,  "resp"));

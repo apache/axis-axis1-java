@@ -174,13 +174,13 @@ public class JavaSkelWriter extends JavaWriter {
 
         // Instantiate the holders
         for (int i = 0; i < parms.list.size(); ++i) {
-            Parameters.Parameter p = (Parameters.Parameter) parms.list.get(i);
+            Parameter p = (Parameter) parms.list.get(i);
 
             String holder = Utils.holder(p.type);
-            if (p.mode == Parameters.Parameter.INOUT) {
+            if (p.mode == Parameter.INOUT) {
                 pw.println("        " + holder + " " + p.name + "Holder = new " + holder + "(" + p.name + ");");
             }
-            else if (p.mode == Parameters.Parameter.OUT) {
+            else if (p.mode == Parameter.OUT) {
                 pw.println("        " + holder + " " + p.name + "Holder = new " + holder + "();");
             }
         }
@@ -203,9 +203,9 @@ public class JavaSkelWriter extends JavaWriter {
                 call = call + ", ";
             else
                 needComma = true;
-            Parameters.Parameter p = (Parameters.Parameter) parms.list.get(i);
+            Parameter p = (Parameter) parms.list.get(i);
 
-            if (p.mode == Parameters.Parameter.IN)
+            if (p.mode == Parameter.IN)
                 call = call + p.name;
             else
                 call = call + p.name + "Holder";
@@ -225,9 +225,9 @@ public class JavaSkelWriter extends JavaWriter {
                 // There is only one inout parameter.  Find it in the parms list and write
                 // its return
                 int i = 0;
-                Parameters.Parameter p = (Parameters.Parameter) parms.list.get(i);
-                while (p.mode != Parameters.Parameter.INOUT)
-                    p = (Parameters.Parameter) parms.list.get(++i);
+                Parameter p = (Parameter) parms.list.get(i);
+                while (p.mode != Parameter.INOUT)
+                    p = (Parameter) parms.list.get(++i);
                 pw.println("        return " + wrapPrimitiveType(p.type, p.name + "Holder._value") + ";");
             }
             else {
@@ -236,9 +236,9 @@ public class JavaSkelWriter extends JavaWriter {
                 if (parms.returnType != null)
                     pw.println("        list.add(new org.apache.axis.message.RPCParam(\"" + parms.returnName + "\", ret));");
                 for (int i = 0; i < parms.list.size(); ++i) {
-                    Parameters.Parameter p = (Parameters.Parameter) parms.list.get(i);
+                    Parameter p = (Parameter) parms.list.get(i);
 
-                    if (p.mode != Parameters.Parameter.IN)
+                    if (p.mode != Parameter.IN)
                         pw.println("        list.add(new org.apache.axis.message.RPCParam(\"" + p.name + "\", " + wrapPrimitiveType(p.type, p.name + "Holder._value") +"));");
                 }
                 pw.println("        return list;");
