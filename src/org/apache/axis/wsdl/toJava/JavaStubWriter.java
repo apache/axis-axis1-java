@@ -160,7 +160,8 @@ public class JavaStubWriter extends JavaClassWriter {
             writeSerializationDecls(pw, hasMIME, binding.getQName().getNamespaceURI());
             Iterator it = types.iterator();
             while (it.hasNext()) {
-                writeSerializationInit(pw, (TypeEntry) it.next());
+                TypeEntry te = (TypeEntry) it.next();
+                writeSerializationInit(pw, te);
             }
         }
 

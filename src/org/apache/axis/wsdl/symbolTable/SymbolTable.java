@@ -660,12 +660,8 @@ public class SymbolTable {
                 createTypeFromDef(node, false, false);
             }
             else if (isXSD && localPart.equals("element")) {
-                // If the element has a type/ref attribute, create
-                // a Type representing the referenced type.
-                if (Utils.getNodeTypeRefQName(node, "type") != null ||
-                    Utils.getNodeTypeRefQName(node, "ref") != null) {
-                    createTypeFromRef(node);
-                }
+                // Create a type entry for the referenced type
+                createTypeFromRef(node);
 
                 // If an extension or restriction is present,
                 // create a type for the reference
@@ -681,29 +677,30 @@ public class SymbolTable {
                 createTypeFromDef(node, true, level > SCHEMA_LEVEL);
             }
             else if (isXSD && localPart.equals("attribute")) {
-                // If the attribute has a type/ref attribute, create
-                // a Type representing the referenced type.
-                if (Utils.getNodeTypeRefQName(node, "type") != null) {
+                // Create a type entry for the referenced type
+                BooleanHolder forElement = new BooleanHolder();
+                QName refQName = Utils.getTypeQName(node, forElement, false);
+                
+                if (refQName != null && !forElement.value) {
                     createTypeFromRef(node);
-                }
-
-                // Get the symbol table entry and make sure it is a simple 
-                // type
-                QName refQName = Utils.getNodeTypeRefQName(node, "type");
-                if (refQName != null) {
-                    TypeEntry refType = getTypeEntry(refQName, false);
-                    if (refType != null &&
-                        refType instanceof Undefined) {
-                        // Don't know what the type is.
-                        // It better be simple so set it as simple
-                        refType.setSimpleType(true);
-                    } else if (refType == null ||
-                               (!(refType instanceof BaseType) &&
-                                !refType.isSimpleType())) {
-                        // Problem if not simple
-                        throw new IOException(
-                                              JavaUtils.getMessage("AttrNotSimpleType01",
-                                                                   refQName.toString()));
+                    
+                    // Get the symbol table entry and make sure it is a simple 
+                    // type
+                    if (refQName != null) {
+                        TypeEntry refType = getTypeEntry(refQName, false);
+                        if (refType != null &&
+                            refType instanceof Undefined) {
+                            // Don't know what the type is.
+                            // It better be simple so set it as simple
+                            refType.setSimpleType(true);
+                        } else if (refType == null ||
+                                   (!(refType instanceof BaseType) &&
+                                    !refType.isSimpleType())) {
+                            // Problem if not simple
+                            throw new IOException(
+                                                  JavaUtils.getMessage("AttrNotSimpleType01",
+                                                                       refQName.toString()));
+                        }
                     }
                 }
             }
@@ -765,7 +762,7 @@ public class SymbolTable {
             // If the node has a type or ref attribute, get the 
             // qname representing the type
             BooleanHolder forElement = new BooleanHolder();
-            QName refQName = Utils.getNodeTypeRefQName(node, forElement);
+            QName refQName = Utils.getTypeQName(node, forElement, false);
 
             if (refQName != null) {
                 // Now get the TypeEntry
@@ -868,7 +865,7 @@ public class SymbolTable {
     private void createTypeFromRef(Node node) throws IOException {
         // Get the QName of the node's type attribute value
         BooleanHolder forElement = new BooleanHolder();
-        QName qName = Utils.getNodeTypeRefQName(node, forElement);
+        QName qName = Utils.getTypeQName(node, forElement, false);
         if (qName != null) {
             
             // Get Type or Element depending on whether type attr was used.
@@ -878,32 +875,28 @@ public class SymbolTable {
             if (type == null) {
                 // See if this is a special QName for collections
                 if (qName.getLocalPart().indexOf("[") > 0) {
-                    QName typeAttr = Utils.getNodeTypeRefQName(node, "type");
-                    if (typeAttr != null) {
+                    QName containedQName = Utils.getTypeQName(node, forElement, true);
+                    TypeEntry containedTE = getTypeEntry(containedQName, forElement.value);
+                    if (!forElement.value) {
                         // Case of type and maxOccurs
-                        TypeEntry collEl = getTypeEntry(typeAttr, false);
-                        if (collEl == null) {
+                        if (containedTE == null) {
                             // Collection Element Type not defined yet, add one.
-                            String baseName = btm.getBaseName(typeAttr);
+                            String baseName = btm.getBaseName(containedQName);
                             if (baseName != null) {
-                                collEl = new BaseType(typeAttr);
+                                containedTE = new BaseType(containedQName);
                             } else {
-                                collEl = new UndefinedType(typeAttr);
+                                containedTE = new UndefinedType(containedQName);
                             }
-                            symbolTablePut(collEl);
+                            symbolTablePut(containedTE);
                         }
-                        symbolTablePut(new CollectionType(qName, collEl, node, "[]"));
+                        symbolTablePut(new CollectionType(qName, containedTE, node, "[]"));
                     } else {
                         // Case of ref and maxOccurs
-                        QName refAttr = Utils.getNodeTypeRefQName(node, "ref");
-                        if (refAttr != null) {
-                            TypeEntry collEl = getTypeEntry(refAttr, true);
-                            if (collEl == null) {
-                                collEl = new UndefinedElement(refAttr);
-                                symbolTablePut(collEl);
-                            }
-                            symbolTablePut(new CollectionElement(qName, collEl, node, "[]"));
+                        if (containedTE == null) {
+                            containedTE = new UndefinedElement(containedQName);
+                            symbolTablePut(containedTE);
                         }
+                        symbolTablePut(new CollectionElement(qName, containedTE, node, "[]"));
                     }
                 } else {
                     // Add a BaseType or Undefined Type/Element
@@ -1305,8 +1298,9 @@ public class SymbolTable {
             
             // Check if this element is of the form:
             //    <element name="foo" type="tns:foo_type"/> 
-            QName type = Utils.getNodeTypeRefQName(node, "type");
-            if (type != null) {
+            BooleanHolder forElement = new BooleanHolder();
+            QName type = Utils.getTypeQName(node, forElement, false);
+            if (type != null && !forElement.value) {
                 // If in fact we have such a type, go get the node that
                 // corresponds to THAT definition.
                 node = getTypeEntry(type, false).getNode();
@@ -1715,7 +1709,7 @@ public class SymbolTable {
             entry.setIsReferenced(true);
             if (entry instanceof DefinedElement) {
                 BooleanHolder forElement = new BooleanHolder();
-                QName referentName = Utils.getNodeTypeRefQName(node, forElement);
+                QName referentName = Utils.getTypeQName(node, forElement, false);
                 if (referentName != null) {
                     TypeEntry referent = getTypeEntry(referentName, forElement.value);
                     if (referent != null) {
@@ -1779,7 +1773,6 @@ public class SymbolTable {
             type = getElement(part.getElementName());
             if (type != null) {
                 setTypeReferences(type, doc, literal);
-                //QName ref = Utils.getNodeTypeRefQName(type.getNode(), "type");
                 TypeEntry refType = type.getRefType();
                 if (refType != null) {
                   setTypeReferences(refType, doc, literal);

@@ -108,9 +108,21 @@
             <xsd:element name="optArray" minOccurs="0" maxOccurs="1" type="typens:array" />
             <xsd:element name="byteArray" type="typens:array_of_base64" />
             <xsd:element name="parm" type="typens:StringParameter" />
+
+            <!-- Test for types that are similarly named to common java lang classes -->
             <xsd:element name="myObject" type="typens:Object" />
             <xsd:element name="myString" type="typens:String" />
             <xsd:element name="myClass" type="typens:Class" />
+
+            <!-- Test anonymous type with an element that has maxOccurs -->
+            <xsd:element name="logEntry" minOccurs="0" maxOccurs="unbounded">
+              <xsd:complexType>
+                <xsd:sequence>
+                   <xsd:element name="name" type="xsd:string"/>
+                   <xsd:element name="value" type="xsd:string"/>
+                </xsd:sequence>
+              </xsd:complexType>
+            </xsd:element>
           </xsd:all>
           <xsd:attribute name="attr" type="typens:enum" />
           <xsd:attribute name="parmAttr" type="typens:StringParameter" />

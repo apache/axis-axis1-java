@@ -206,7 +206,7 @@ public class Utils {
         
         // If this fails and the node has a ref, use the ref name.
         if (localName == null) {
-            QName ref = getNodeTypeRefQName(node, "ref");
+            QName ref = getTypeQNameFromAttr(node, "ref");
             if (ref != null) {
                 localName = ref.getLocalPart();
                 namespace = ref.getNamespaceURI();
@@ -248,100 +248,130 @@ public class Utils {
     }
 
     /**
-     * XML nodes may have a type/ref attribute.
-     * For example &lt.element name="foo" type="b:bar"&gt.
-     * has the type attribute value "b:bar". 
-     * This routine gets the QName of the type/ref attribute value.
+     * An XML element or attribute node has several ways of 
+     * identifying the type of the element or attribute:
+     *  - use the type attribute to reference a complexType/simpleType
+     *  - use the ref attribute to reference another element
+     *  - use of an anonymous type (i.e. a nested type underneath itself)
+     *  - a wsdl:part can use the element attribute.
+     *  - an extension can use the base attribute.
      *
-     * Note: If the "minOccurs" and "maxOccurs" are set such that the 
+     * This routine returns a QName representing this "type".
+     * The forElement value is also returned to indicate whether the 
+     * QName represents an element (i.e. obtained using the ref attribute)
+     * or a type.
+     *
+     * Other attributes affect the QName that is returned.
+     * If the "minOccurs" and "maxOccurs" are set such that the 
      * type is a collection of "types", then an artificial qname is
      * returned to represent the collection.
-     * 
-     * If you want the QName for just the "type" without analyzing 
-     * minOccurs/maxOccurs then use:
-     *    getNodeTypeRefQName(node, "type")
-     *
-     * Note 2: The getNodeTypeRefQName routines also inspect the 
-     *         "nillable" attribute and may return an alternate QName
-     *         if nillable is true.  
      * 
      * @param node of the reference
      * @param forElement output parameter is set to true if QName is for an element
      *                   (i.e. ref= or element= attribute was used).
+     * @param ignoreMaxOccurs indicates whether minOccurs/maxOccurs affects the QName
+     * @return QName representing the type of this element
      */
-    public static QName getNodeTypeRefQName(Node node, BooleanHolder forElement) {
+    public static QName getTypeQName(Node node, BooleanHolder forElement, boolean ignoreMaxOccurs) {
         if (node == null) return null;
         forElement.value = false; // Assume QName returned is for a type
+
+        // Try getting the QName of the type attribute.
+        // Note this also retrieves the type if an anonymous type is used.
+        QName qName= getTypeQNameFromAttr(node, "type");
+
+        // If not successful, try using the ref attribute.
+        if (qName == null) {
+            forElement.value = true;
+            qName = getTypeQNameFromAttr(node, "ref");
+        }
 
         // If the node has "type"/"ref" and "maxOccurs" then the type is really
         // a collection.  There is no qname in the wsdl which we can use to represent
         // the collection, so we need to invent one.
         // The local part of the qname is changed to <local>[minOccurs, maxOccurs]
         // The namespace uri is changed to the targetNamespace of this node
-        QName qName= getNodeTypeRefQName(node, "type");
-        if (qName == null) {
-            forElement.value = true;
-            qName = getNodeTypeRefQName(node, "ref");
-        }
-        if (qName != null) {
-            String maxOccursValue = getAttribute(node, "maxOccurs");
-            String minOccursValue = getAttribute(node, "minOccurs");
-            if (maxOccursValue == null) {
-                maxOccursValue = "1";
-            }
-            if (minOccursValue == null) {
-                minOccursValue = "1";
-            }
-            if (minOccursValue.equals("0") && maxOccursValue.equals("1")) {
-                // If we have a minoccurs="0"/maxoccurs="1", this is just
-                // like a nillable single value, so treat it as such.
-                qName = getNillableQName(qName);
-            } else if (!maxOccursValue.equals("1") || !minOccursValue.equals("1")) {
-                String localPart = qName.getLocalPart();
-                localPart += "[" + maxOccursValue + "]";
-                qName = new QName(qName.getNamespaceURI(), localPart);
+        if (!ignoreMaxOccurs) {
+            if (qName != null) {
+                String maxOccursValue = getAttribute(node, "maxOccurs");
+                String minOccursValue = getAttribute(node, "minOccurs");
+                if (maxOccursValue == null) {
+                    maxOccursValue = "1";
+                }
+                if (minOccursValue == null) {
+                    minOccursValue = "1";
+                }
+                if (minOccursValue.equals("0") && maxOccursValue.equals("1")) {
+                    // If we have a minoccurs="0"/maxoccurs="1", this is just
+                    // like a nillable single value, so treat it as such.
+                    qName = getNillableQName(qName);
+                } else if (!maxOccursValue.equals("1") || !minOccursValue.equals("1")) {
+                    String localPart = qName.getLocalPart();
+                    localPart += "[" + maxOccursValue + "]";
+                    qName = new QName(qName.getNamespaceURI(), localPart);
+                }
             }
         }
 
         // A WSDL Part uses the element attribute instead of the ref attribute
         if (qName == null) {
             forElement.value = true;
-            qName = getNodeTypeRefQName(node, "element");
+            qName = getTypeQNameFromAttr(node, "element");
         }
 
         // "base" references a "type"
         if (qName == null) {
             forElement.value = false;
-            qName = getNodeTypeRefQName(node, "base");
+            qName = getTypeQNameFromAttr(node, "base");
         }
         return qName;
     }
 
     /**
-     * Obtain the QName of the type/ref using the indicated attribute name.
-     * For example, the "type" attribute in an XML enumeration struct is the 
-     * "base" attribute. 
-     * If the "type" attribute is requested, the "nillable" attribute is 
-     * also inspected to see if an alternate qname should be returned.
+     * Gets the QName of the type of the node via the specified attribute
+     * name.
+     *
+     * If "type", the QName represented by the type attribute's value is 
+     * returned.  If the type attribute is not set, the anonymous type
+     * or anyType is returned if no other type information is available.
+     * Note that the QName returned in these cases is affected by
+     * the presence of the nillable attribute.
+     *
+     * If "ref", the QName represented by the ref attribute's value is 
+     * returned.
+     * 
+     * If "base" or "element", the QName represented by the base/element
+     * attribute's value is returned.
      *
      * @param node in the dom
      * @param typeAttrName (type, base, element, ref)
      */
-    public static QName getNodeTypeRefQName(Node node, String typeAttrName) {
+    private static QName getTypeQNameFromAttr(Node node, String typeAttrName) {
         if (node == null) {
             return null;
         }
+        // Get the raw prefixed value
         String prefixedName = getAttribute(node, typeAttrName);
 
-        // The type attribute defaults to xsd:anyType if there
-        // are no other conflicting attributes and no anonymous type.
+        // If "type" was specified but there is no type attribute,
+        // check for an anonymous type.  If no anonymous type
+        // then the type is anyType.
         if (prefixedName == null &&
             typeAttrName.equals("type")) {
             if (getAttribute(node, "ref") == null &&
                 getAttribute(node, "base") == null && 
-                getAttribute(node, "element") == null &&
-                SchemaUtils.getElementAnonQName(node) == null &&
-                SchemaUtils.getAttributeAnonQName(node) == null) {
+                getAttribute(node, "element") == null) {
+                
+                // Try getting the anonymous qname
+                QName anonQName = SchemaUtils.getElementAnonQName(node);
+                if (anonQName == null) {
+                    anonQName = SchemaUtils.getAttributeAnonQName(node);
+                }
+                if (anonQName != null) {
+                    return anonQName;
+                }
+
+                // Try returning anyType
                 QName nodeName = getNodeQName(node);
                 if (nodeName != null &&
                     Constants.isSchemaXSD(nodeName.getNamespaceURI()) &&
@@ -502,6 +532,15 @@ public class Utils {
             }
         }
         
+        // Process referenced types
+        if (type.getRefType() != null &&
+            !types.contains(type.getRefType())) {
+            types.add(type.getRefType());
+            getNestedTypes(type.getRefType(), types, symbolTable, derivedFlag);
+        }
+
+        /* Anonymous processing and should be automatically handled by the 
+           reference processing above
         // Get the anonymous type of the element
         QName anonQName = SchemaUtils.getElementAnonQName(node);
         if (anonQName != null) {
@@ -519,6 +558,8 @@ public class Utils {
                 types.add(anonType);
             }
         }
+        */
+
         // Process extended types
         TypeEntry extendType = SchemaUtils.getComplexElementExtensionBase(node, symbolTable);
         if (extendType != null) {
@@ -528,6 +569,8 @@ public class Utils {
             }
         }
 
+        /* Array component processing should be automatically handled by the
+           reference processing above.
         // Process array components
         QName componentQName = SchemaUtils.getArrayComponentQName(node, new IntHolder(0));
         TypeEntry componentType = symbolTable.getType(componentQName);
@@ -540,6 +583,8 @@ public class Utils {
                 getNestedTypes(componentType, types, symbolTable, derivedFlag);
             }
         }
+        */
+
     } // getNestedTypes
 
     /**

@@ -288,7 +288,7 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
             // The base type must be a built-in type, and not boolean
             TypeEntry baseEType = null;
             if (restrictionNode != null) {
-                QName baseType = Utils.getNodeTypeRefQName(restrictionNode, "base");
+                QName baseType = Utils.getTypeQName(restrictionNode, new BooleanHolder(), false);
                 baseEType = symbolTable.getType(baseType);
                 if (baseEType != null) {
                     String javaName = baseEType.getName();
