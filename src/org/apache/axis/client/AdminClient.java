@@ -288,7 +288,7 @@ public class AdminClient
             }
             else {
                 if(args[i].indexOf(java.io.File.pathSeparatorChar)==-1){
-                    log.info( Messages.getMessage("processFile00", args[i]) );
+                    System.out.println( Messages.getMessage("processFile00", args[i]) );
                     sb.append( process(opts, args[i] ) );
                 } else {
                     java.util.StringTokenizer tokenizer = null ;
@@ -296,7 +296,7 @@ public class AdminClient
                                                  java.io.File.pathSeparator);
                     while(tokenizer.hasMoreTokens()) {
                         String file = tokenizer.nextToken();
-                        log.info( Messages.getMessage("processFile00", file) );
+                        System.out.println( Messages.getMessage("processFile00", file) );
                         sb.append( process(opts, file) );
                         if(tokenizer.hasMoreTokens())
                             sb.append("\n");
@@ -375,10 +375,11 @@ public class AdminClient
             AdminClient admin = new AdminClient();
 
             String result = admin.process(args);
-            if (result != null)
-                log.info(result);
-            else
+            if (result != null) {
+                System.out.println(result);
+            } else {
                 System.exit(1);
+            }
         } catch (Exception e) {
             log.error(Messages.getMessage("exception00"), e);
             System.exit(1);
