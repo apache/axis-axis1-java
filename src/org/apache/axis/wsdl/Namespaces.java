@@ -116,12 +116,20 @@ public class Namespaces extends HashMap {
      * Return the given package name in directory format (dots replaced by slashes).  If pkg is null,
      * "" is returned.
      */
-    public static String toDir(String pkg) {
-        if (pkg == null || pkg.equals("")) {
+    public String toDir(String pkg) {
+        String dir = null;
+        if (root == null) {
+            dir = pkg;
+        }
+        else {
+            dir = root + File.separatorChar + pkg;
+        }
+
+        if (dir == null || dir.equals("")) {
             return "";
         }
         else {
-            return pkg.replace('.', File.separatorChar) + File.separatorChar;
+            return dir.replace('.', File.separatorChar) + File.separatorChar;
         }
     } // toDir
 
@@ -133,12 +141,7 @@ public class Namespaces extends HashMap {
         if (get(key) == null) {
             mkdir((String) value);
         }
-        if (root == null) {
-            return super.put(key, value);
-        }
-        else {
-            return super.put(key, root.replace(File.separatorChar, '.') + '.' + value);
-        }
+        return super.put(key, value);
     } // put
 
     /**
@@ -159,7 +162,7 @@ public class Namespaces extends HashMap {
      */
     private void mkdir(String pkg) {
         String pkgDirString = toDir(pkg);
-        File packageDir = root == null ? new File(pkgDirString) : new File(root, pkgDirString);
+        File packageDir = new File(pkgDirString);
         packageDir.mkdirs();
     } // mkdir
 } // class Namespaces
