@@ -186,6 +186,7 @@ public class TestSerializedRPC extends TestCase {
         TestSerializedRPC tester = new TestSerializedRPC("Test Serialized RPC");
         tester.testSerReverseString();
         tester.testSerReverseData();
+        tester.testArgAsDOM();
       } catch (Exception e) {
         e.printStackTrace();
       }

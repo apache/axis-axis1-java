@@ -141,7 +141,7 @@ public class MessageElement
             this.prefix = qName.substring(0, idx);
         
         this.context = context;
-        this.startEventIndex = context.getCurrentRecordPos();
+        this.startEventIndex = context.getStartOfMappingsPos();
         this.recorder = context.getRecorder();
 
         if (attributes == null) {
@@ -274,6 +274,7 @@ public class MessageElement
         
         StringWriter writer = new StringWriter();
         output(new SerializationContext(writer, msgContext));
+        writer.close();
         
         Reader reader = new StringReader(writer.getBuffer().toString());
         Document doc = XMLUtils.newDocument(new InputSource(reader));
