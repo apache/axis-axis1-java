@@ -296,7 +296,7 @@ public class tcpmon extends JFrame {
             if ( tmp != null ) {
                 HTTPProxyBox.setSelected( true );
                 HTTPProxyHost.setText( tmp );
-                tmp = System.getProperty( "http.HTTPProxyPort" );
+                tmp = System.getProperty( "http.proxyPort" );
                 if ( tmp != null && tmp.equals("") ) tmp = null ;
                 if ( tmp == null ) tmp = "80" ;
                 HTTPProxyPort.setText( tmp );
@@ -589,7 +589,7 @@ public class tcpmon extends JFrame {
                     HTTPProxyHost = null ;
                 
                 if ( HTTPProxyHost != null ) {
-                    String tmp = System.getProperty( "http.HTTPProxyPort" );
+                    String tmp = System.getProperty( "http.proxyPort" );
                     if ( tmp != null && tmp.equals("") ) tmp = null ;
                     if ( tmp == null ) HTTPProxyPort = 80 ;
                     else HTTPProxyPort = Integer.parseInt( tmp );
@@ -1221,7 +1221,7 @@ public class tcpmon extends JFrame {
                 l.HTTPProxyHost = null ;
                 
             if ( l.HTTPProxyHost != null ) {
-                String tmp = System.getProperty( "http.HTTPProxyPort" );
+                String tmp = System.getProperty( "http.proxyPort" );
                 if ( tmp != null && tmp.equals("") ) tmp = null ;
                 if ( tmp == null ) l.HTTPProxyPort = 80 ;
                 else l.HTTPProxyPort = Integer.parseInt( tmp );
