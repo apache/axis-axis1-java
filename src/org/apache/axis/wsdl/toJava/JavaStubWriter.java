@@ -121,7 +121,6 @@ public class JavaStubWriter extends JavaWriter {
         pw.println("public class " + className + " extends javax.xml.rpc.Stub implements " + portTypeName + " {");
         pw.println("    private org.apache.axis.client.Service service = null ;");
         pw.println("    private org.apache.axis.client.Call call = null ;");
-        pw.println("    private java.util.Hashtable properties = new java.util.Hashtable();");
         pw.println();
         pw.println("    public " + className + "(java.net.URL endpointURL) throws org.apache.axis.AxisFault {");
         pw.println("         this();");
@@ -164,13 +163,13 @@ public class JavaStubWriter extends JavaWriter {
         pw.println("     * @param value - Value of the property");
         pw.println("     */");
         pw.println("    public void _setProperty(String name, Object value) {");
-        pw.println("        properties.put(name, value);");
+        pw.println("        call.setProperty(name, value);");
         pw.println("    }");
         pw.println();
         pw.println("    // " +
                 JavaUtils.getMessage("from00", "javax.xml.rpc.Stub"));
         pw.println("    public Object _getProperty(String name) {");
-        pw.println("        return properties.get(name);");
+        pw.println("        return call.getProperty(name);");
         pw.println("    }");
         pw.println();
         pw.println("    // " +
@@ -415,10 +414,6 @@ public class JavaStubWriter extends JavaWriter {
 
             pw.println();
         }
-
-        // username and password
-        pw.println("        call.setProperty(\"http.auth.username\", _getProperty(\"http.auth.username\"));");
-        pw.println("        call.setProperty(\"http.auth.password\", _getProperty(\"http.auth.password\"));");
 
         // SoapAction and Namespace
         if (soapAction != null) {
