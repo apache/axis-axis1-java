@@ -54,10 +54,9 @@
  */
 package org.apache.axis.soap;
 
-import org.apache.axis.Constants;
-import org.apache.axis.utils.XMLUtils;
-
 import javax.xml.namespace.QName;
+
+import org.apache.axis.Constants;
 
 /**
  * SOAP 1.1 constants
