@@ -1214,7 +1214,7 @@ public class Emitter {
             }
             else if (p.mode == Parameter.INOUT) {
                 pw.println("        sd.addInputParam(\"" + p.name + "\", " + typeString + ");");
-                pw.println("        sd.addOuputParam(\"" + p.name + "\", " + typeString + ");");
+                pw.println("        sd.addOutputParam(\"" + p.name + "\", " + typeString + ");");
             }
             else { // p.mode == Parameter.OUT
                 pw.println("        sd.addOutputParam(\"" + p.name + "\", " + typeString + ");");
