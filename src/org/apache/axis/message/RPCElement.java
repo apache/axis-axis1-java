@@ -140,6 +140,11 @@ public class RPCElement extends SOAPBodyElement
         this.operations = msgContext.getPossibleOperationsByQName(getQName());
     }
 
+    public OperationDesc[] getOperations()
+    {
+        return this.operations;
+    }
+
     public String getMethodName()
     {
         return name;
