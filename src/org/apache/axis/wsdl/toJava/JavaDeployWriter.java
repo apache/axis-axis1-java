@@ -391,7 +391,8 @@ public class JavaDeployWriter extends JavaWriter {
             QName paramType = null;
 
             // Get the parameter type QName
-            if (typeEntry instanceof DefinedElement) {
+            if (typeEntry instanceof DefinedElement && 
+                typeEntry.getRefType() != null) {
                 paramType = typeEntry.getRefType().getQName();
             } else {
                 paramType = typeEntry.getQName();

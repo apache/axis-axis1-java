@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2002 The Apache Software Foundation.  All rights
+ * Copyright (c) 2001 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -53,99 +53,61 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.description;
-
-import javax.xml.rpc.namespace.QName;
-
 /**
- * FieldDescs are metadata objects which control the mapping of a given
- * Java field to/from XML.
+ * OmitTestCase.java
  *
- * @author Glen Daniels (gdaniels@apache.org)
+ * This tests the omitting of elements when minOccurs=0 and the value 
+ * of the element is Null.
+ * 
+ * For instance:
+ *  <Phone>
+ *   <prefix>555</prefix>
+ *   <number>1212</number>
+ *  </Phone>
+ *
+ * This would normally have the additional areaCode element: 
+ *   <areaCode xsi:nil=true/>
+ * 
  */
-public class FieldDesc {
-    /** The name of the Java field in question */
-    private String fieldName;
-    /** The XML QName this field maps to */
-    private QName xmlName;
-    /** The XML Type this field maps to/from */
-    private QName xmlType;
-    /** The Java type of this field */
-    private Class javaType;
 
-    /** An indication of whether this should be an element or an attribute */
-    // Q : should this be a boolean, or just "instanceof ElementDesc", etc.
-    private boolean _isElement = true;
+package test.wsdl.omit;
 
-    /** An indication that minoccurs is zero */
-    private boolean minOccursIs0 = false;
-    
-    /**
-     * Can't construct the base class directly, must construct either an
-     * ElementDesc or an AttributeDesc.
-     */
-    protected FieldDesc(boolean isElement)
-    {
-        _isElement = isElement;
+public class OmitTestCase extends junit.framework.TestCase {
+    public OmitTestCase(String name) {
+        super(name);
+    }
+    public void test1OmitEchoPhone() {
+        test.wsdl.omit.Omit binding;
+        try {
+            binding = new test.wsdl.omit.OmitTestLocator().getOmit();
+        }
+        catch (javax.xml.rpc.ServiceException jre) {
+            throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
+        }
+        assertTrue("binding is null", binding != null);
+
+        try {
+            test.wsdl.omit.Phone input = new test.wsdl.omit.Phone();
+            input.setPrefix("555");
+            input.setNumber("1212");
+
+            test.wsdl.omit.Phone out = binding.echoPhone(input);
+            
+            // TODO: Verify the XML omitted the element
+            assertNotNull("The return value from the operation was null", out);
+            assertNull("areacode is not null", out.getAreaCode());
+            assertEquals("prefix is incorrect", "555", out.getPrefix());
+            assertEquals("number is incorrect", "1212", out.getNumber());
+            
+        }
+        catch (java.rmi.RemoteException re) {
+            throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
+        }
     }
 
-    /**
-     * Obtain the field name.
-     */
-    public String getFieldName() {
-        return fieldName;
-    }
-
-    /**
-     * Set the field name.
-     */
-    public void setFieldName(String fieldName) {
-        this.fieldName = fieldName;
-    }
-
-    /**
-     * Obtain the XML QName for this field
-     */
-    public QName getXmlName() {
-        return xmlName;
-    }
-
-    /**
-     * Set the XML QName for this field
-     */
-    public void setXmlName(QName xmlName) {
-        this.xmlName = xmlName;
-    }
-
-    public Class getJavaType() {
-        return javaType;
-    }
-
-    public void setJavaType(Class javaType) {
-        this.javaType = javaType;
-    }
-
-    /**
-     * Check if this is an element or an attribute.
-     *
-     * @return true if this is an ElementDesc, or false if an AttributeDesc
-     */
-    public boolean isElement() {
-        return _isElement;
-    }
-
-    public boolean isIndexed() {
-        return false;
-    }
-
-    /**
-     * Check if this field can be omitted.
-     */ 
-    public boolean isMinOccursIs0() {
-        return minOccursIs0;
-    }
-
-    public void setMinOccursIs0(boolean minOccursIs0) {
-        this.minOccursIs0 = minOccursIs0;
+    public static void main(String[] args) {
+        OmitTestCase tester = new OmitTestCase("tester");
+        tester.test1OmitEchoPhone();
     }
 }
+

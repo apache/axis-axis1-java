@@ -498,7 +498,8 @@ public class JavaStubWriter extends JavaWriter {
             // We need to use the Qname of the actual type, not the QName of the element
             TypeEntry type = p.getType();
             if (type instanceof DefinedElement) {
-                type = type.getRefType();
+                if (type.getRefType() != null)
+                    type = type.getRefType();
             }
             QName qn = type.getQName();
             String javaType = type.getName();
@@ -538,10 +539,9 @@ public class JavaStubWriter extends JavaWriter {
             // We need to use the Qname of the actual type, not the QName of the element
             QName qn = parms.returnType.getQName();
             if (parms.returnType instanceof DefinedElement) {
-                Node node = symbolTable.getTypeEntry(parms.returnType.getQName(), true).getNode();
-                QName qn2 = Utils.getNodeTypeRefQName(node, "type");
-                if (qn2 != null) {
-                    qn = qn2;
+                TypeEntry type = ((DefinedElement)parms.returnType).getRefType();
+                if (type != null && type.getQName() != null) {
+                    qn = type.getQName();
                 }
             }
  

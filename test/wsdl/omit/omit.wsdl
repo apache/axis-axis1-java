@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  This tests the omission of an element which has minOccurs=0
+-->
+<definitions name="OmitTest" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:s0="http://omit.wsdl.test/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://omit.wsdl.test/">
+<types>
+    <s:schema targetNamespace="http://omit.wsdl.test/" elementFormDefault="qualified">
+        <s:element name="Phone">
+            <s:complexType>
+                <s:sequence>
+                    <s:element name="areaCode" type="s:string" maxOccurs="1" minOccurs="0"/>
+                    <s:element name="prefix" type="s:string" maxOccurs="1" minOccurs="0"/>
+                    <s:element name="number" type="s:string" maxOccurs="1" minOccurs="0"/>
+                </s:sequence>
+            </s:complexType>
+        </s:element>
+    </s:schema>
+    </types>
+    <message name="echoPhoneIn">
+        <part name="in" element="s0:Phone"/>
+    </message>
+    <message name="echoPhoneOut">
+        <part name="out" element="s0:Phone"/>
+    </message>
+    <portType name="omit">
+        <operation name="echoPhone">
+            <input message="s0:echoPhoneIn"/>
+            <output message="s0:echoPhoneOut"/>
+        </operation>
+    </portType>
+    <binding name="omit" type="s0:omit">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="echoPhone">
+            <soap:operation style="document" soapAction="http://tempuri.org/echoPhone"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="omitTest">
+        <port name="omit" binding="s0:omit">
+            <soap:address location="http://localhost:8080/axis/services/omit"/>
+        </port>
+    </service>
+</definitions>
