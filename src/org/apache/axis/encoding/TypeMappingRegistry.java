@@ -96,7 +96,7 @@ public class TypeMappingRegistry implements Serializer, Serializable {
        load();
     }
 
-    class SerializerDescriptor implements Serializable {
+    static class SerializerDescriptor implements Serializable {
         QName typeQName;
         Serializer serializer;
         SerializerDescriptor(QName typeQName, Serializer serializer)
@@ -106,7 +106,7 @@ public class TypeMappingRegistry implements Serializer, Serializable {
         }
     }
 
-    class DeserializerDescriptor implements Serializable {
+    static class DeserializerDescriptor implements Serializable {
         Class cls;
         DeserializerFactory factory;
         DeserializerDescriptor(Class cls, DeserializerFactory factory)
