@@ -178,7 +178,7 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
             return "javax.xml.rpc.holders.BigIntegerHolder";
         }
         else if  (typeValue.equals("java.util.Date")) {
-            return "javax.xml.rpc.holders.DateHolder";
+            return "org.apache.axis.holders.DateHolder";
         }
         else if (typeValue.equals("java.util.Calendar")) {
             return "javax.xml.rpc.holders.CalendarHolder";

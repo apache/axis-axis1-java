@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -53,85 +53,33 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.encoding.ser;
+package org.apache.axis.holders;
 
-import org.apache.axis.utils.JavaUtils;
-
-import javax.xml.namespace.QName;
-
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import javax.xml.rpc.holders.Holder;
 import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.TimeZone;
+
 /**
- * The DateSerializer deserializes a Date.  Much of the work is done in the 
- * base class.                                               
+ * Class DateHolder
  *
- * @author Sam Ruby (rubys@us.ibm.com)
- * Modified for JAX-RPC @author Rich Scheuerle (scheu@us.ibm.com)
  */
-public class DateDeserializer extends SimpleDeserializer {
+public final class DateHolder implements Holder {
 
-    private static SimpleDateFormat zulu = 
-        new SimpleDateFormat("yyyy-MM-dd");
-                          //  0123456789 0 123456789
-
-    private static Calendar calendar = Calendar.getInstance();
+    /** Field _value */
+    public Date value;
 
     /**
-     * The Deserializer is constructed with the xmlType and 
-     * javaType
+     * Constructor DateHolder
      */
-    public DateDeserializer(Class javaType, QName xmlType) {
-        super(javaType, xmlType);
+    public DateHolder() {
     }
 
     /**
-     * The simple deserializer provides most of the stuff.
-     * We just need to override makeValue().
+     * Constructor DateHolder
+     *
+     * @param value
      */
-    public Object makeValue(String source) { 
-        Date result;
-        boolean bc = false;
-        
-        // validate fixed portion of format
-        if ( source != null ) {
-            if (source.charAt(0) == '+')
-                source = source.substring(1);
-            
-            if (source.charAt(0) == '-') {
-                source = source.substring(1);
-                bc = true;
-            }
-            
-            if (source.length() < 10) 
-                throw new NumberFormatException(
-                           JavaUtils.getMessage("badDate00"));
-    
-            if (source.charAt(4) != '-' || source.charAt(7) != '-')
-                throw new NumberFormatException(
-                                                JavaUtils.getMessage("badDate00"));
-            
-        }
-        
-        synchronized (calendar) {
-            // convert what we have validated so far
-            try {
-                result = zulu.parse(source == null ? null :
-                                    (source.substring(0,10)) );
-            } catch (Exception e) {
-                throw new NumberFormatException(e.toString());
-            }
-            
-            // support dates before the Christian era
-            if (bc) {
-                calendar.setTime(result);
-                calendar.set(Calendar.ERA, GregorianCalendar.BC);
-                result = calendar.getTime();
-            }
-        }
-
-        return result;
+    public DateHolder(Date value) {
+        this.value = value;
     }
 }
+
