@@ -189,6 +189,9 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
         else if (typeValue.equals("javax.xml.namespace.QName")) {
             return "javax.xml.rpc.holders.QNameHolder";
         }
+        else if (typeValue.equals("javax.activation.DataHandler")) {
+            return "org.apache.axis.holders.DataHandlerHolder";
+        }
         // Check for Axis specific types and return their holders
         else if (typeValue.startsWith("org.apache.axis.types.")) {
             int i = typeValue.lastIndexOf('.');
