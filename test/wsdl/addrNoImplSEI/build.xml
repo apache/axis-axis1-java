@@ -1,0 +1,121 @@
+<?xml version="1.0" ?>
+<!DOCTYPE project [
+        <!ENTITY properties SYSTEM "file:../../../xmls/properties.xml">
+        <!ENTITY paths  SYSTEM "file:../../../xmls/path_refs.xml">
+        <!ENTITY taskdefs SYSTEM "file:../../../xmls/taskdefs.xml">
+        <!ENTITY taskdefs_post_compile SYSTEM "file:../../../xmls/taskdefs_post_compile.xml">
+        <!ENTITY targets SYSTEM "file:../../../xmls/targets.xml">
+]>
+
+<!-- ===================================================================
+<description>
+   Test/Sample Component file for Axis
+
+Notes:
+   This is a build file for use with the Jakarta Ant build tool.
+
+Prerequisites:
+
+   jakarta-ant from http://jakarta.apache.org
+
+Build Instructions:
+   To compile
+        ant compile
+   To execute
+        ant run
+
+Author:
+  Matt Seibert mseibert@us.ibm.com
+
+Copyright:
+  Copyright (c) 2002-2003 Apache Software Foundation.
+</description>
+==================================================================== -->
+
+<project default="compile">
+
+<property name="axis.home" location="../../.." />
+<property name="componentName" value="test/wsdl/addrNoImplSEI" />
+        &properties;
+        &paths;
+        &taskdefs;
+        &taskdefs_post_compile;
+        &targets;
+
+<target name="clean"/>
+
+<target name="copy" depends="setenv"/>
+
+<target name="compile" depends="copy">
+  <echo message="Compilig test.wsdl.addrNoImplSEI"/>
+
+    <delete dir="${build.dir}/classes/test/wsdl/addrNoImplSEI"/>
+    <delete dir="${build.dir}/work/test/wsdl/addrNoImplSEI"/>
+    <wsdl2java url="${axis.home}/test/wsdl/addrNoImplSEI/AddressBook.wsdl"
+               output="${axis.home}/build/work"
+               deployscope="session"
+               serverSide="yes"
+               skeletonDeploy="no"
+               noimports="no"
+               verbose="no"
+               typeMappingVersion="1.1"
+               testcase="no">
+        <mapping namespace="urn:AddrNoImplSEI" package="test.wsdl.addrNoImplSEI"/>
+    </wsdl2java>
+
+    <!-- Copy over original classes -->
+    <copy todir="${build.dir}/work/test/wsdl/addrNoImplSEI" overwrite="yes">
+      <fileset dir="${test.dir}/wsdl/addrNoImplSEI">
+        <include name="*.java"/>
+      </fileset>
+    </copy>
+
+    <!-- Compile the Web Service -->
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}">
+      <classpath refid="classpath" />
+      <include name="test/wsdl/addrNoImplSEI/**.java" />
+      <exclude name="test/wsdl/addrNoImplSEI/*TestCase.java" />
+      <exclude name="test/wsdl/addrNoImplSEI/Main.java" />
+    </javac>
+
+    <!-- Now run java to wsdl to make sure we don't have any strange artifacts -->
+    <java2wsdl output="${axis.home}/build/work/test/wsdl/addrNoImplSEI/AddressBook.wsdl"
+               className= "test.wsdl.addrNoImplSEI.AddressBookNoImplSEISoapBindingImpl"
+               useInheritedMethods="false"
+               portTypeName="AddressBookNoImplSEI"
+               namespace="http://addrNoImplSEI.wsdl.test"
+               location="http://localhost:8080/axis/services/AddressBookNoImplSEI">
+        <mapping namespace="urn:AddrNoImplSEI" package="test.wsdl.addrNoImplSEI"/>
+    </java2wsdl>
+
+    <!-- Now run wsdl to java to make sure we don't have any strange artifacts -->
+    <wsdl2java url="${axis.home}/build/work/test/wsdl/addrNoImplSEI/AddressBook.wsdl"
+               output="${axis.home}/build/work"
+               deployscope="session"
+               serverSide="yes"
+               skeletonDeploy="no"
+               noimports="no"
+               verbose="no"
+               typeMappingVersion="1.1"
+               testcase="no">
+        <mapping namespace="urn:AddrNoImplSEI" package="test.wsdl.addrNoImplSEI"/>
+    </wsdl2java>
+    <!-- Copy over original classes -->
+    <copy todir="${build.dir}/work/test/wsdl/addrNoImplSEI" overwrite="yes">
+      <fileset dir="${test.dir}/wsdl/addrNoImplSEI">
+        <include name="*.java"/>
+      </fileset>
+    </copy>
+
+    <javac srcdir="${axis.home}" destdir="${build.dest}"
+           debug="${debug}">
+      <include name="test/wsdl/addrNoImplSEI/*.java" />
+    </javac>
+
+</target>
+
+<target name="run" >
+  <antcall target="execute-Component" />
+</target>
+
+</project>

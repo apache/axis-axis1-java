@@ -1,0 +1,154 @@
+<?xml version="1.0" ?>
+<!DOCTYPE project [
+        <!ENTITY properties SYSTEM "file:../../../xmls/properties.xml">
+        <!ENTITY paths  SYSTEM "file:../../../xmls/path_refs.xml">
+        <!ENTITY taskdefs SYSTEM "file:../../../xmls/taskdefs.xml">
+        <!ENTITY taskdefs_post_compile SYSTEM "file:../../../xmls/taskdefs_post_compile.xml">
+        <!ENTITY targets SYSTEM "file:../../../xmls/targets.xml">
+]>
+
+<!-- ===================================================================
+<description>
+   Test/Sample Component file for Axis
+
+Notes:
+   This is a build file for use with the Jakarta Ant build tool.
+
+Prerequisites:
+
+   jakarta-ant from http://jakarta.apache.org
+
+Build Instructions:
+   To compile
+        ant compile
+   To execute
+        ant run
+
+Author:
+  Matt Seibert mseibert@us.ibm.com
+
+Copyright:
+  Copyright (c) 2002-2003 Apache Software Foundation.
+</description>
+==================================================================== -->
+
+<project default="compile">
+
+<property name="axis.home" location="../../.." />
+<property name="componentName" value="test/wsdl/roundtrip" />
+        &properties;
+        &paths;
+        &taskdefs;
+        &taskdefs_post_compile;
+        &targets;
+
+<target name="clean"/>
+
+<target name="copy" depends="setenv"/>
+
+<target name="compile" depends="copy">
+  <echo message="Compilig test.wsdl.roundtrip"/>
+    <!-- Roundtrip Test -->
+    <!-- To test Java Value Types, copy over the base and subclasses -->
+    <delete dir="${build.dir}/classes/test/wsdl/roundtrip"/>
+    <delete dir="${build.dir}/work/test/wsdl/roundtrip"/>
+    <copy todir="${build.dir}/work/test/wsdl/roundtrip" overwrite="yes">
+      <fileset dir="${test.dir}/wsdl/roundtrip">
+        <include name="RoundtripPortTypeA.java"/>
+        <include name="RoundtripPortTypeB.java"/>
+        <include name="RoundtripPortType.java"/>
+        <include name="Investment.java"/>
+        <include name="StockInvestment.java"/>
+        <include name="BondInvestment.java"/>
+        <include name="PreferredStockInvestment.java"/>
+        <include name="CallOptions.java"/>
+        <include name="InvalidTickerSymbol.java"/>
+        <include name="InvalidTradeExchange.java"/>
+        <include name="InvalidCompanyId.java"/>
+      </fileset>
+    </copy>
+    <copy todir="${build.dir}/work/test/wsdl/roundtrip/holders" overwrite="yes">
+      <fileset dir="${test.dir}/wsdl/roundtrip/holders">
+        <include name="BondInvestmentHolder.java"/>
+     </fileset>
+    </copy>
+    <!-- Compile the Web Service -->
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}" debug="${debug}">
+      <classpath refid="classpath" />
+      <include name="test/wsdl/roundtrip/**.java" />
+      <exclude name="test/wsdl/roundtrip/*TestCase.java" />
+      <exclude name="test/wsdl/roundtrip/*Impl.java" />
+    </javac>
+    <!-- The following invocation of java2wsdl simply tests whether the
+         split wsdl function works.  The generated wsdl files are not used. -->
+
+    <java2wsdl output="${axis.home}/build/work/test/wsdl/roundtrip/RoundtripIntf.wsdl"
+               outputImpl="${axis.home}/build/work/test/wsdl/roundtrip/RoundtripImpl.wsdl"
+               className= "test.wsdl.roundtrip.RoundtripPortType"
+               useInheritedMethods="false"
+               namespace="http://roundtrip.wsdl.test"
+               namespaceImpl="http://roundtrip.wsdl.test"
+               typeMappingVersion="1.2"
+               location="http://localhost:8080/axis/services/RoundtripTest"
+               locationImport="file://build/work/test/wsdl/roundtrip/RoundtripIntf.wsdl">
+        <mapping namespace="http://roundtrip.wsdl.test" package="test.wsdl.roundtrip"/>
+    </java2wsdl>
+
+    <!-- Now create the real WSDL file -->
+    <!-- The className must be the RoundtripPortType to properly test multi-inherits -->
+    <java2wsdl output="${axis.home}/build/work/test/wsdl/roundtrip/Roundtrip.wsdl"
+               className= "test.wsdl.roundtrip.RoundtripPortType"
+               useInheritedMethods="false"
+               namespace="http://roundtrip.wsdl.test"
+               typeMappingVersion="1.2"
+               location="http://localhost:8080/axis/services/RoundtripTest">
+        <mapping namespace="http://roundtrip.wsdl.test" package="test.wsdl.roundtrip"/>
+    </java2wsdl>
+    <!-- Test adding a second port (RoundtripTest2) to the wsdl file -->
+    <java2wsdl output="${axis.home}/build/work/test/wsdl/roundtrip/Roundtrip.wsdl"
+               input="${axis.home}/build/work/test/wsdl/roundtrip/Roundtrip.wsdl"
+               portTypeName="RoundtripPortType"
+               servicePortName="RoundtripTest2"
+               bindingName="RoundtripTestSoapBinding"
+               className= "test.wsdl.roundtrip.RoundtripPortType"
+               useInheritedMethods="false"
+               namespace="http://roundtrip.wsdl.test"
+               typeMappingVersion="1.2"
+               location="http://localhost:8080/axis/services/RoundtripTest2">
+        <mapping namespace="http://roundtrip.wsdl.test" package="test.wsdl.roundtrip"/>
+    </java2wsdl>
+
+    <!-- Delete the intermediate files so we recreate over a clean slate -->
+    <delete dir="${build.dir}/classes/test/wsdl/roundtrip"/>
+    <!-- Recreate Java files from the new WSDL -->
+    <wsdl2java url="${axis.home}/build/work/test/wsdl/roundtrip/Roundtrip.wsdl"
+               output="${axis.home}/build/work"
+               deployscope="session"
+               serverSide="yes"
+               skeletonDeploy="yes"
+               noimports="no"
+               verbose="no"
+               testcase="no">
+        <mapping namespace="http://roundtrip.wsdl.test" package="test.wsdl.roundtrip"/>
+    </wsdl2java>
+
+    <copy todir="${build.dir}/work/test/wsdl/roundtrip" overwrite="yes">
+      <fileset dir="${test.dir}/wsdl/roundtrip">
+        <include name="RoundtripTestServiceTestCase.java"/>
+      </fileset>
+    </copy>
+
+    <javac srcdir="${build.dir}/work" destdir="${build.dest}"
+           debug="${debug}">
+      <classpath refid="classpath" />
+      <include name="test/wsdl/roundtrip/*.java" />
+      <include name="test/wsdl/roundtrip/**/*.java" />
+    </javac>
+
+</target>
+
+<target name="run" >
+  <antcall target="execute-Component" />
+</target>
+
+</project>
