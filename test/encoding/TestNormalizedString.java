@@ -57,7 +57,7 @@ package test.encoding;
 
 import junit.framework.TestCase;
 
-import org.apache.axis.encoding.NormalizedString;
+import org.apache.axis.types.NormalizedString;
 
 /**
  * Test validation of encoding.NormalizedString

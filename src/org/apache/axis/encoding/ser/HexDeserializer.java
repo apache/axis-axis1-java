@@ -56,7 +56,7 @@
 package org.apache.axis.encoding.ser;
 
 import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.encoding.Hex;
+import org.apache.axis.types.HexBinary;
 import org.apache.axis.encoding.DeserializerImpl;
 import org.xml.sax.SAXException;
 
@@ -103,12 +103,12 @@ public class HexDeserializer extends DeserializerImpl {
     {
         if (buf != null) {
             if (javaType == byte[].class) {
-                value = Hex.decode(buf.toString());
+                value = HexBinary.decode(buf.toString());
             } else {
-                value = new Hex(buf.toString());
+                value = new HexBinary(buf.toString());
             }
         }
         super.onEndElement(namespace,localName, context);
-        if (value == null) value = new Hex("");
+        if (value == null) value = new HexBinary("");
     }
 }

@@ -60,7 +60,7 @@ import org.apache.axis.wsdl.fromJava.Types;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.SerializerFactory;
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.Token;
+import org.apache.axis.types.Token;
 import org.apache.axis.utils.JavaUtils;
 import org.xml.sax.Attributes;
 

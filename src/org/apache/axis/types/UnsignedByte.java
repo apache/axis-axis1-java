@@ -52,25 +52,56 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
+package org.apache.axis.types;
 
-package org.apache.axis.encoding.ser;
+import java.lang.Number;
 
-import org.apache.axis.types.Token;
-import org.apache.axis.encoding.ser.SimpleDeserializer;
-import javax.xml.namespace.QName;
+import org.apache.axis.utils.JavaUtils;
 
 /**
- * Deserializer for xsd:token elements
+ * Custom class for supporting primitive XSD data type UnsignedByte
  *
- * @author Chris Haddad (chaddad@cobia.net)
+ * @author Chris Haddad <chaddad@cobia.net>
+ * @see <a href="http://www.w3.org/TR/xmlschema-2/#unsignedByte">XML Schema 3.3.24</a>
  */
-public class TokenDeserializer extends SimpleDeserializer
-{
-    public Object makeValue(String source) throws Exception {
-        return new Token(source);
-    } // makeValue
+public class UnsignedByte extends UnsignedShort {
 
-    public TokenDeserializer(Class javaType, QName xmlType) {
-        super(javaType, xmlType);
+
+    public UnsignedByte() {
+
     }
+
+    /**
+     * ctor for UnsignedByte
+     * @exception Exception will be thrown if validation fails
+     */
+    public UnsignedByte(long sValue) throws Exception {
+            setValue(sValue);
+    }
+
+    /**
+     *
+     * validates the data and sets the value for the object.
+     *
+     * @param sValue the number to set
+     */
+    public void setValue(long sValue) throws Exception {
+        if (isValid(sValue) == false)
+            throw new Exception(JavaUtils.getMessage("badUnsignedByte00") +
+                    String.valueOf(sValue) + "]");
+        lValue = new Long(sValue);
+    }
+
+    /**
+     *
+     * validate the value against the xsd value space definition
+     * @param sValue number to check against range
+     */
+    public boolean isValid(long sValue) {
+      if ( (sValue < 0L ) ||  (sValue > 255L) )
+        return false;
+      else
+        return true;
+    }
+
 }

@@ -55,7 +55,7 @@
 
 package org.apache.axis.encoding.ser;
 
-import org.apache.axis.encoding.NormalizedString;
+import org.apache.axis.types.NormalizedString;
 import org.apache.axis.encoding.ser.SimpleDeserializer;
 
 import javax.xml.namespace.QName;

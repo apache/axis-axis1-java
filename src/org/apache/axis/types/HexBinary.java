@@ -52,7 +52,7 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.encoding ;
+package org.apache.axis.types ;
 
 import java.io.ByteArrayOutputStream;
 
@@ -63,18 +63,18 @@ import org.apache.axis.utils.JavaUtils;
  *
  * @author Davanum Srinivas <dims@yahoo.com>
  */
-public class Hex extends Object{
+public class HexBinary extends Object{
 
     byte[] m_value = null;
 
-    public Hex() {
+    public HexBinary() {
     }
 
-    public Hex(String string){
+    public HexBinary(String string){
         m_value = decode(string);
     }
 
-    public Hex(byte[] bytes){
+    public HexBinary(byte[] bytes){
         m_value = bytes;
     }
 
@@ -91,7 +91,7 @@ public class Hex extends Object{
         return super.hashCode();
     }
 
-    public boolean equals(java.lang.Object object){
+    public boolean equals(Object object){
         //TODO: Is this good enough?
         String s1 = object.toString();
         String s2 = this.toString();

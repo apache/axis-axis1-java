@@ -55,22 +55,27 @@
 
 package org.apache.axis.encoding.ser;
 
-import org.apache.axis.types.Token;
-import org.apache.axis.encoding.ser.SimpleDeserializer;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+
 import javax.xml.namespace.QName;
 
-/**
- * Deserializer for xsd:token elements
- *
- * @author Chris Haddad (chaddad@cobia.net)
- */
-public class TokenDeserializer extends SimpleDeserializer
-{
-    public Object makeValue(String source) throws Exception {
-        return new Token(source);
-    } // makeValue
+import java.io.IOException;
 
-    public TokenDeserializer(Class javaType, QName xmlType) {
-        super(javaType, xmlType);
+import org.apache.axis.encoding.Serializer;
+import org.apache.axis.encoding.SerializerFactory;
+import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.encoding.Deserializer;
+import org.apache.axis.encoding.DeserializerFactory;
+import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.encoding.Deserializer;
+/**
+ * SerializerFactory for Time
+ *
+ * @author Tom Jordahl (tomj@macromedia.com)
+ */
+public class TimeSerializerFactory extends BaseSerializerFactory {
+    public TimeSerializerFactory(Class javaType, QName xmlType) {
+        super(TimeSerializer.class, true, xmlType, javaType);   // true indicates shared class
     }
 }

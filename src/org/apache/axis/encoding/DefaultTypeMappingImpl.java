@@ -56,6 +56,7 @@
 package org.apache.axis.encoding;
 
 import org.apache.axis.Constants;
+import org.apache.axis.types.HexBinary;
 import org.apache.axis.schema.SchemaVersion;
 import org.apache.axis.encoding.ser.*;
 import org.apache.axis.utils.JavaUtils;
@@ -143,12 +144,12 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
         myRegister(Constants.SOAP_BYTE,       java.lang.Byte.class,
                    null, null, false);
 
-        // Hex binary data needs to use the hex binary serializer/deserializer
-        myRegister(Constants.XSD_HEXBIN,     Hex.class,
+        // HexBinary binary data needs to use the hex binary serializer/deserializer
+        myRegister(Constants.XSD_HEXBIN,     HexBinary.class,
                    new HexSerializerFactory(
-                        Hex.class, Constants.XSD_HEXBIN),
+                        HexBinary.class, Constants.XSD_HEXBIN),
                    new HexDeserializerFactory(
-                        Hex.class, Constants.XSD_HEXBIN),true);
+                        HexBinary.class, Constants.XSD_HEXBIN),true);
         myRegister(Constants.XSD_HEXBIN,     byte[].class,
                    new HexSerializerFactory(
                         byte[].class, Constants.XSD_HEXBIN),
@@ -159,13 +160,13 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
         // byte[] -ser-> XSD_BASE64
         // XSD_BASE64 -deser-> byte[]
         // SOAP_BASE64 -deser->byte[]
-        // 
+        //
         // Special case:
         // If serialization is requested for xsd:byte with byte[],
         // the array serializer is used.  If deserialization
         // is specifically requested for xsd:byte with byte[], the
-        // simple deserializer is used.  This is necessary 
-        // to support the serialization/deserialization 
+        // simple deserializer is used.  This is necessary
+        // to support the serialization/deserialization
         // of <element name="a" type="xsd:byte" maxOccurs="unbounded" />
         // as discrete bytes without interference with XSD_BASE64.
         myRegister(Constants.XSD_BYTE,       byte[].class,
@@ -194,7 +195,7 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
         // XSD_BASE64 -deser-> byte[]
         // SOAP_BASE64 -deser->byte[]
         //
-        // NOTE: If the following code is enabled, the 
+        // NOTE: If the following code is enabled, the
         // commented out code "//type == Byte[].class ||"
         // code in org.apache.axis.wsdl.fromJava.Types also needs to be enabled.
 
@@ -267,7 +268,7 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
         myRegister(Constants.XSD_ANYTYPE,    java.lang.Object.class,
                    null, null, false);
 
-        // This is the special type for the xsd:any element used for 
+        // This is the special type for the xsd:any element used for
         // extensibility.
         myRegister(Constants.XSD_ANY,    java.lang.Object.class,
                    new ElementSerializerFactory(),
@@ -282,6 +283,13 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                                                Constants.XSD_DATE),
                    true);
 
+        // Mapping for xsd:time.  Map to Axis type Time
+        myRegister(Constants.XSD_TIME,       org.apache.axis.types.Time.class,
+                   new TimeSerializerFactory(org.apache.axis.types.Time.class,
+                                             Constants.XSD_TIME),
+                   new TimeDeserializerFactory(org.apache.axis.types.Time.class,
+                                               Constants.XSD_TIME),
+                   true);
         // Serialize all extensions of Map to SOAP_MAP
         // The SOAP_MAP will be deserialized into a HashMap by default.
         myRegister(Constants.SOAP_MAP,       java.util.HashMap.class,
@@ -313,23 +321,67 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                    false);
 
         // xsd:token
-        myRegister(Constants.XSD_TOKEN, org.apache.axis.encoding.Token.class,
-                new TokenSerializerFactory(org.apache.axis.encoding.Token.class,
+        myRegister(Constants.XSD_TOKEN, org.apache.axis.types.Token.class,
+                new TokenSerializerFactory(org.apache.axis.types.Token.class,
                     Constants.XSD_TOKEN),
                 new TokenDeserializerFactory(
-                    org.apache.axis.encoding.Token.class,
+                    org.apache.axis.types.Token.class,
                     Constants.XSD_TOKEN),
                 false);
 
         // a xsd:normalizedString
         myRegister(Constants.XSD_NORMALIZEDSTRING,
-                org.apache.axis.encoding.NormalizedString.class,
+                org.apache.axis.types.NormalizedString.class,
                 new NormalizedStringSerializerFactory(
-                    org.apache.axis.encoding.NormalizedString.class,
+                    org.apache.axis.types.NormalizedString.class,
                     Constants.XSD_NORMALIZEDSTRING),
                 new NormalizedStringDeserializerFactory(
-                    org.apache.axis.encoding.NormalizedString.class,
+                    org.apache.axis.types.NormalizedString.class,
                     Constants.XSD_NORMALIZEDSTRING),
+                false);
+
+        // a xsd:unsignedLong
+        myRegister(Constants.XSD_UNSIGNEDLONG,
+                org.apache.axis.types.UnsignedLong.class,
+                new UnsignedLongSerializerFactory(
+                    org.apache.axis.types.UnsignedLong.class,
+                    Constants.XSD_UNSIGNEDLONG),
+                new UnsignedLongDeserializerFactory(
+                    org.apache.axis.types.UnsignedLong.class,
+                    Constants.XSD_UNSIGNEDLONG),
+                false);
+
+        // a xsd:unsignedInt
+        myRegister(Constants.XSD_UNSIGNEDINT,
+                org.apache.axis.types.UnsignedInt.class,
+                new UnsignedIntSerializerFactory(
+                    org.apache.axis.types.UnsignedInt.class,
+                    Constants.XSD_UNSIGNEDINT),
+                new UnsignedIntDeserializerFactory(
+                    org.apache.axis.types.UnsignedInt.class,
+                    Constants.XSD_UNSIGNEDINT),
+                false);
+
+        // a xsd:unsignedShort
+        myRegister(Constants.XSD_UNSIGNEDSHORT,
+                org.apache.axis.types.UnsignedShort.class,
+                new UnsignedShortSerializerFactory(
+                    org.apache.axis.types.UnsignedShort.class,
+                    Constants.XSD_UNSIGNEDSHORT),
+                new UnsignedShortDeserializerFactory(
+                    org.apache.axis.types.UnsignedShort.class,
+                    Constants.XSD_UNSIGNEDSHORT),
+                false);
+
+        // a xsd:unsignedByte
+        myRegister(Constants.XSD_UNSIGNEDBYTE,
+                org.apache.axis.types.UnsignedByte.class,
+                new UnsignedByteSerializerFactory(
+                    org.apache.axis.types.UnsignedByte.class,
+                    Constants.XSD_UNSIGNEDBYTE),
+                new UnsignedByteDeserializerFactory(
+                    org.apache.axis.types.UnsignedByte.class,
+                    Constants.XSD_UNSIGNEDBYTE),
                 false);
 
         // All array objects automatically get associated with the SOAP_ARRAY.
@@ -351,7 +403,7 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
                    new ArraySerializerFactory(),
                    new ArrayDeserializerFactory(),
                    false);
-        
+
         //
         // Now register the schema specific types
         //
@@ -367,7 +419,7 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
      * in 99% of the cases.  The other cases that are Schema version specific
      * (i.e. timeInstant vs. dateTime) are handled by the SchemaVersion
      * Interface registerSchemaSpecificTypes().
-     * 
+     *
      * @param xmlType is the QName type
      * @param javaType is the java type
      * @param sf is the ser factory (if null, the simple factory is used)
@@ -386,7 +438,7 @@ public class DefaultTypeMappingImpl extends TypeMappingImpl {
      * in 99% of the cases.  The other cases that are Schema version specific
      * (i.e. timeInstant vs. dateTime) are handled by the SchemaVersion
      * Interface registerSchemaSpecificTypes().
-     * 
+     *
      * @param xmlType is the QName type
      * @param javaType is the java type
      * @param sf is the ser factory (if null, the simple factory is used)

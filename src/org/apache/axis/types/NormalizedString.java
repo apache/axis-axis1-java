@@ -52,7 +52,7 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.encoding;
+package org.apache.axis.types;
 
 import org.apache.axis.utils.JavaUtils;
 
@@ -66,7 +66,7 @@ import org.apache.axis.utils.JavaUtils;
  */
 public class NormalizedString extends Object {
 
-    java.lang.String m_value = null;   // JAX-RPC maps xsd:string to java.lang.String
+    String m_value = null;   // JAX-RPC maps xsd:string to java.lang.String
 
     public NormalizedString() {
         super();
@@ -77,7 +77,7 @@ public class NormalizedString extends Object {
      * ctor for NormalizedString
      * NOTE: null will be returned if validation fails
      */
-    public NormalizedString(java.lang.String stValue) throws Exception {
+    public NormalizedString(String stValue) throws Exception {
         setValue(stValue);
     }
 
@@ -87,14 +87,14 @@ public class NormalizedString extends Object {
      *
      * @param normalizedString value
      */
-    public void setValue(java.lang.String stValue) throws Exception {
+    public void setValue(String stValue) throws Exception {
         if (isValid(stValue) == false)
             throw new Exception(JavaUtils.getMessage("badNormalizedString00") +
                     " data=[" + stValue + "]");
         m_value = stValue;
     }
 
-    public java.lang.String toString(){
+    public String toString(){
         return m_value;
     }
 
@@ -116,7 +116,7 @@ public class NormalizedString extends Object {
      * @param the String to test
      * @returns true if valid normalizedString
      */
-    public boolean isValid(java.lang.String stValue)  {
+    public boolean isValid(String stValue)  {
         int scan;
 
         for (scan = 0; scan < stValue.length(); scan++) {
@@ -133,8 +133,8 @@ public class NormalizedString extends Object {
         return true;
     }
 
-    public boolean equals(java.lang.Object object)  {
-        java.lang.String s1 = object.toString();
+    public boolean equals(Object object)  {
+        String s1 = object.toString();
         return s1.equals(m_value);
     }
 }

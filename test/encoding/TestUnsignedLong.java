@@ -53,24 +53,89 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.encoding.ser;
+package test.encoding;
 
-import org.apache.axis.types.Token;
-import org.apache.axis.encoding.ser.SimpleDeserializer;
-import javax.xml.namespace.QName;
+import junit.framework.TestCase;
+
+import org.apache.axis.types.UnsignedLong;
 
 /**
- * Deserializer for xsd:token elements
- *
- * @author Chris Haddad (chaddad@cobia.net)
+ * Test validation of types.UnsignedLong
  */
-public class TokenDeserializer extends SimpleDeserializer
-{
-    public Object makeValue(String source) throws Exception {
-        return new Token(source);
-    } // makeValue
+public class TestUnsignedLong extends TestCase {
 
-    public TokenDeserializer(Class javaType, QName xmlType) {
-        super(javaType, xmlType);
+    public TestUnsignedLong(String name) {
+        super(name);
     }
+
+    /**
+     * Run a failure test.  value should be invalid.
+     */
+    private void runFailTest(double value) throws Exception {
+        UnsignedLong oUnsignedLong = null;
+        try {
+            oUnsignedLong = new UnsignedLong(value);
+        }
+        catch (Exception e) { // catch the validation exception
+        }
+        // object is not iNstantiated on bad data value
+        assertNull("validation restriction failed [" +
+                String.valueOf(value) + "]. did not restrict bad value.", oUnsignedLong);
+    }
+
+    /**
+     * Run a successful test.  value should be valid.
+     */
+    private void runPassTest(double value) throws Exception {
+        UnsignedLong oUnsignedLong = null;
+        try {
+            oUnsignedLong = new UnsignedLong(value);
+        }
+        catch (Exception e) { // catch the validation exception
+        }
+        String stRetval = String.valueOf(value);  // contains .0
+        stRetval = stRetval.substring(0,stRetval.lastIndexOf('.'));
+        assertEquals("unsigned long not equal" +
+                String.valueOf(value), oUnsignedLong.toString(),stRetval);
+    }
+
+    /**
+     * Test that a positive value succeeeds
+     */
+    public void testPositiveValue() throws Exception {
+        runPassTest(100);
+    }
+
+    /**
+     * Test that a negative number fails
+     */
+    public void testNegativeValue() throws Exception {
+        runFailTest(-100);
+    }
+
+
+    /**
+    * Test that a number over MaxInclusive fails
+    */
+    public void testMaxInclusive() throws Exception {
+      runPassTest(18446744073709551615D);
+    }
+
+    /**
+    * Test that a number at MaxInclusive succeeds
+    */
+//    public void testMaxOver() throws Exception {
+      // actual MaxOver should be 18446744073709551615D
+      // but we are running into a precision issue
+//      runFailTest(18446744073709551616D);
+//    }
+
+    /**
+    * Test that a number at MinInclusive succeeds
+    */
+    public void testMinExclusive() throws Exception {
+       runPassTest(0L);
+    }
+
+
 }

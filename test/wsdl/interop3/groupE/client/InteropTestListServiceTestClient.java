@@ -56,7 +56,7 @@
 package test.wsdl.interop3.groupE.client;
 
 import org.apache.axis.AxisFault;
-import org.apache.axis.encoding.Hex;
+import org.apache.axis.types.HexBinary;
 import org.apache.axis.encoding.ser.BeanSerializerFactory;
 import org.apache.axis.encoding.ser.BeanDeserializerFactory;
 import org.apache.axis.utils.JavaUtils;
@@ -111,12 +111,12 @@ public abstract class InteropTestListServiceTestClient {
        if (obj1.equals(obj2)) return true;
 
        // For comparison purposes, get the array of bytes representing
-       // the Hex object.
-       if (obj1 instanceof Hex) {
-           obj1 = ((Hex) obj1).getBytes();
+        // the HexBinary object.
+       if (obj1 instanceof HexBinary) {
+           obj1 = ((HexBinary) obj1).getBytes();
        }
-       if (obj2 instanceof Hex) {
-           obj2 = ((Hex) obj2).getBytes();
+       if (obj2 instanceof HexBinary) {
+           obj2 = ((HexBinary) obj2).getBytes();
        }
 
        if (obj1 instanceof Date && obj2 instanceof Date)

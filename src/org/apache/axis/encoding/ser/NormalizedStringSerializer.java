@@ -67,7 +67,7 @@ import org.apache.axis.wsdl.fromJava.Types;
 import org.apache.axis.encoding.Serializer;
 import org.apache.axis.encoding.SerializerFactory;
 import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.NormalizedString;
+import org.apache.axis.types.NormalizedString;
 import org.apache.axis.utils.JavaUtils;
 /**
  * Serializer for xsd:normalizedString

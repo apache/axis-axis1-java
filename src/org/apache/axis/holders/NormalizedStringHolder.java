@@ -2,7 +2,7 @@
  * The Apache Software License, Version 1.1
  *
  *
- * Copyright (c) 2001 The Apache Software Foundation.  All rights
+ * Copyright (c) 2002 The Apache Software Foundation.  All rights
  * reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -53,24 +53,34 @@
  * <http://www.apache.org/>.
  */
 
-package org.apache.axis.encoding.ser;
+package org.apache.axis.holders;
 
-import org.apache.axis.types.Token;
-import org.apache.axis.encoding.ser.SimpleDeserializer;
-import javax.xml.namespace.QName;
+import org.apache.axis.types.NormalizedString;
+
+import javax.xml.rpc.holders.Holder;
 
 /**
- * Deserializer for xsd:token elements
+ * Class NormalizedStringHolder
  *
- * @author Chris Haddad (chaddad@cobia.net)
  */
-public class TokenDeserializer extends SimpleDeserializer
-{
-    public Object makeValue(String source) throws Exception {
-        return new Token(source);
-    } // makeValue
+public final class NormalizedStringHolder implements Holder {
 
-    public TokenDeserializer(Class javaType, QName xmlType) {
-        super(javaType, xmlType);
+    /** Field _value */
+    public NormalizedString value;
+
+    /**
+     * Constructor NormalizedStringHolder
+     */
+    public NormalizedStringHolder() {
+    }
+
+    /**
+     * Constructor NormalizedStringHolder
+     *
+     * @param value
+     */
+    public NormalizedStringHolder(NormalizedString value) {
+        this.value = value;
     }
 }
+

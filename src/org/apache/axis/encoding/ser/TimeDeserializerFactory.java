@@ -55,22 +55,16 @@
 
 package org.apache.axis.encoding.ser;
 
-import org.apache.axis.types.Token;
-import org.apache.axis.encoding.ser.SimpleDeserializer;
 import javax.xml.namespace.QName;
 
 /**
- * Deserializer for xsd:token elements
+ * A TimeDeserializer Factory
  *
- * @author Chris Haddad (chaddad@cobia.net)
+ *  @author Tom Jordahl (tomj@macromedia.com)
  */
-public class TokenDeserializer extends SimpleDeserializer
-{
-    public Object makeValue(String source) throws Exception {
-        return new Token(source);
-    } // makeValue
+public class TimeDeserializerFactory extends BaseDeserializerFactory {
 
-    public TokenDeserializer(Class javaType, QName xmlType) {
-        super(javaType, xmlType);
+    public TimeDeserializerFactory(Class javaType, QName xmlType) {
+        super(TimeDeserializer.class, xmlType, javaType);
     }
 }

@@ -52,25 +52,55 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
+package org.apache.axis.types;
 
-package org.apache.axis.encoding.ser;
+import java.util.ArrayList;
 
-import org.apache.axis.types.Token;
-import org.apache.axis.encoding.ser.SimpleDeserializer;
-import javax.xml.namespace.QName;
+import org.apache.axis.utils.JavaUtils;
 
 /**
- * Deserializer for xsd:token elements
+ * Custom class for supporting primitive XSD data type UnsignedShort
  *
- * @author Chris Haddad (chaddad@cobia.net)
+ * @author Chris Haddad <chaddad@cobia.net>
+ * @see <a href="http://www.w3.org/TR/xmlschema-2/#unsignedShort">XML Schema 3.3.23</a>
  */
-public class TokenDeserializer extends SimpleDeserializer
-{
-    public Object makeValue(String source) throws Exception {
-        return new Token(source);
-    } // makeValue
+public class UnsignedShort extends UnsignedInt {
 
-    public TokenDeserializer(Class javaType, QName xmlType) {
-        super(javaType, xmlType);
+    public UnsignedShort() {
+
     }
+
+    /**
+     * ctor for UnsignedShort
+     * @exception Exception will be thrown if validation fails
+     */
+    public UnsignedShort(long sValue) throws Exception {
+            setValue(sValue);
+    }
+
+    /**
+     *
+     * validates the data and sets the value for the object.
+     *
+     * @param short value
+     */
+    public void setValue(long sValue) throws Exception {
+        if (isValid(sValue) == false)
+            throw new Exception(JavaUtils.getMessage("badUnsignedShort00") +
+                    String.valueOf(sValue) + "]");
+        lValue = new Long(sValue);
+    }
+
+    /**
+     *
+     * validate the value against the xsd definition
+     *
+     */
+    public boolean isValid(long sValue) {
+      if ( (sValue < 0L  ) || (sValue > 65535L) )
+        return false;
+      else
+        return true;
+    }
+
 }

@@ -52,81 +52,25 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.encoding;
 
-import java.util.ArrayList;
+package org.apache.axis.encoding.ser;
 
-import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.encoding.ser.SimpleDeserializer;
+import org.apache.axis.types.UnsignedByte;
+import javax.xml.namespace.QName;
 
 /**
- * Custom class for supporting primitive XSD data type Token.
- * token represents tokenized strings.
- * The base type of token is normalizedString.
+ * Deserializer for xsd:unsignedByte elements
  *
- * @author Chris Haddad <chaddad@cobia.net>
- * @see <a href="http://www.w3.org/TR/xmlschema-2/#token">XML Schema 3.3.2</a>
+ * @author Chris Haddad (chaddad@cobia.net)
  */
-public class Token extends NormalizedString {
+public class UnsignedByteDeserializer extends SimpleDeserializer
+{
+    public Object makeValue(String source) throws Exception {
+        return new UnsignedByte(Long.parseLong(source));
+    } // makeValue
 
-    public Token() {
-        super();
-    }
-
-    /**
-     * ctor for Token
-     * @exception Exception will be thrown if validation fails
-     */
-    public Token(String stValue) throws Exception {
-        try {
-            setValue(stValue);
-        }
-        catch (Exception e) {
-            // recast normalizedString exception as token exception
-            throw new Exception(JavaUtils.getMessage("badToken00") + "data=[" +
-                    stValue + "]");
-        }
-    }
-
-    /**
-     *
-     * validate the value against the xsd definition
-     *
-     * The value space of token is the set of strings that do not
-     * contain the line feed (#xA) nor tab (#x9) characters, that
-     * have no leading or trailing spaces (#x20) and that have no
-     * internal sequences of two or more spaces. The lexical space
-     * of token is the set of strings that do not contain the line
-     * feed (#xA) nor tab (#x9) characters, that have no leading or
-     * trailing spaces (#x20) and that have no internal sequences of two
-     * or more spaces.
-     */
-    public boolean isValid(java.lang.String stValue) {
-        int scan;
-
-        // no leading space
-        if (stValue.charAt(0) == 0x20)
-            return false;
-
-        // no trail space
-        if (stValue.charAt(stValue.length() - 1) == 0x20)
-            return false;
-
-        for (scan=0; scan < stValue.length(); scan++) {
-            char cDigit = stValue.charAt(scan);
-            switch (cDigit) {
-                case 0x09:
-                case 0x0A:
-                    return false;
-                case 0x20:
-                   // no doublspace
-                    if (scan+1 < stValue.length())
-                        if (stValue.charAt(scan + 1) == 0x20) {
-                            return false;
-                        }
-                default:
-                    break;
-            }
-        }
-        return true;
+    public UnsignedByteDeserializer(Class javaType, QName xmlType) {
+        super(javaType, xmlType);
     }
 }

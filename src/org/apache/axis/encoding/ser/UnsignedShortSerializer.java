@@ -55,22 +55,61 @@
 
 package org.apache.axis.encoding.ser;
 
-import org.apache.axis.types.Token;
-import org.apache.axis.encoding.ser.SimpleDeserializer;
+import org.apache.axis.Constants;
+import org.apache.axis.wsdl.fromJava.Types;
+import org.apache.axis.encoding.Serializer;
+import org.apache.axis.encoding.SerializerFactory;
+import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.types.UnsignedShort;
+import org.apache.axis.utils.JavaUtils;
+import org.xml.sax.Attributes;
+
+import java.io.IOException;
 import javax.xml.namespace.QName;
 
 /**
- * Deserializer for xsd:token elements
+ * Serializer for xsd:unsignedShort
  *
- * @author Chris Haddad (chaddad@cobia.net)
+ * @author Chris Haddad <chaddad@cobia.net>
+ * @see <a href="http://www.w3.org/TR/xmlschema-2/#unsignedShort">XML Schema 3.3.23</a>
  */
-public class TokenDeserializer extends SimpleDeserializer
-{
-    public Object makeValue(String source) throws Exception {
-        return new Token(source);
-    } // makeValue
+public class UnsignedShortSerializer implements Serializer {
 
-    public TokenDeserializer(Class javaType, QName xmlType) {
-        super(javaType, xmlType);
+    public QName xmlType;
+    public Class javaType;
+    public UnsignedShortSerializer(Class javaType, QName xmlType) {
+        this.xmlType = xmlType;
+        this.javaType = javaType;
+    }
+
+    /**
+     * Serialize an unsigned integer quantity.
+     */
+    public void serialize(QName name, Attributes attributes,
+                          Object value, SerializationContext context)
+        throws IOException
+    {
+        context.startElement(name, attributes);
+
+        value = JavaUtils.convert(value, javaType);
+        if (javaType == UnsignedShort.class) {
+            context.writeString(value.toString());
+        }
+        context.endElement();
+    }
+
+    public String getMechanismType() { return Constants.AXIS_SAX; }
+
+    /**
+     * Return XML schema for the specified type, suitable for insertion into
+     * the <types> element of a WSDL document.
+     *
+     * @param types the Java2WSDL Types object which holds the context
+     *              for the WSDL being generated.
+     * @return true if we wrote a schema, false if we didn't.
+     * @see org.apache.axis.wsdl.fromJava.Types
+     */
+    public boolean writeSchema(Types types) throws Exception {
+        return false;
     }
 }

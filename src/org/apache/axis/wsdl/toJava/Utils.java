@@ -186,7 +186,12 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
         else if (typeValue.equals("javax.xml.namespace.QName")) {
             return "javax.xml.rpc.holders.QNameHolder";
         }
-
+        // Check for Axis specific types and return their holders
+        else if (typeValue.startsWith("org.apache.axis.types.")) {
+            int i = typeValue.lastIndexOf('.');
+            String t = typeValue.substring(i+1);
+            return "org.apache.axis.holders." + t + "Holder";
+        }
         // For everything else add "holders" package and append
         // holder to the class name.
         else {
@@ -474,8 +479,8 @@ public class Utils extends org.apache.axis.wsdl.symbolTable.Utils {
         } else if (type != null && 
                    type.getName().equals("byte[]") &&
                    type.getQName().getLocalPart().equals("hexBinary")) {
-            // Need to wrap byte[] in special Hex object to get the correct serialization
-            return "new org.apache.axis.encoding.Hex(" + var + ")";
+            // Need to wrap byte[] in special HexBinary object to get the correct serialization
+            return "new org.apache.axis.types.HexBinary(" + var + ")";
         } else {
             return var;
         }

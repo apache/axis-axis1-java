@@ -56,7 +56,7 @@
 package test.encoding;
 
 import junit.framework.TestCase;
-import org.apache.axis.encoding.Token;
+import org.apache.axis.types.Token;
 
 /**
  * Test validation of encoding.Token
