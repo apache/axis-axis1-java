@@ -736,6 +736,9 @@ public class JavaStubWriter extends JavaClassWriter {
         // Set the headers
         pw.println("        setRequestHeaders(_call);");
         
+        // Set the attachments
+        pw.println("        setAttachments(_call);");
+        
         // Set DIME flag if needed 
         if(bEntry.isOperationDIME(operation.getOperation().getName())) {
             pw.println("        _call.setProperty(_call.ATTACHMENT_ENCAPSULATION_FORMAT, _call.ATTACHMENT_ENCAPSULATION_FORMAT_DIME);");
@@ -796,6 +799,7 @@ public class JavaStubWriter extends JavaClassWriter {
         if (allOuts > 0) {
             pw.println("        else {");
             pw.println("            getResponseHeaders(_call);");
+            pw.println("            extractAttachments(_call);");
         
             if (allOuts == 1) {
                 if (parms.returnParam != null) {
@@ -843,6 +847,7 @@ public class JavaStubWriter extends JavaClassWriter {
             pw.println("        }");
         } else {
             pw.println("        getResponseHeaders(_call);");
+            pw.println("        extractAttachments(_call);");
         }
     } // writeResponseHandling
 

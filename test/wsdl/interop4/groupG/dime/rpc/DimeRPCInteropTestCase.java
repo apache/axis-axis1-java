@@ -8,9 +8,16 @@
 package test.wsdl.interop4.groupG.dime.rpc;
 
 import org.apache.axis.attachments.OctetStream;
+import org.apache.axis.client.Call;
 
+import javax.activation.DataSource;
+import javax.activation.DataHandler;
 import java.net.URL;
 import java.util.Arrays;
+import java.io.InputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.ByteArrayInputStream;
 
 public class DimeRPCInteropTestCase extends junit.framework.TestCase {
     public DimeRPCInteropTestCase(java.lang.String name) {
@@ -119,9 +126,39 @@ public class DimeRPCInteropTestCase extends junit.framework.TestCase {
         }
         assertTrue("binding is null", binding != null);
 
+        class Src implements DataSource{
+            InputStream m_src;
+            String m_type;
+
+            public Src(InputStream data, String type){
+                m_src=data;
+                m_type=type;
+            }
+            public String getContentType(){
+                return m_type;
+            }
+            public InputStream getInputStream() throws IOException{
+                m_src.reset();
+                return m_src;
+            }
+            public String getName(){
+                return "Some-Data";
+            }
+            public OutputStream getOutputStream(){
+                throw new UnsupportedOperationException("I don't give output streams");
+            }
+        }
+        ByteArrayInputStream ins=new ByteArrayInputStream("EchoUnrefAttachments".getBytes());
+        DataHandler dh=new DataHandler(new Src(ins,"application/octetstream"));
+
+        
+        ((org.apache.axis.client.Stub)binding).addAttachment(dh);
+        ((org.apache.axis.client.Stub)binding)._setProperty(Call.ATTACHMENT_ENCAPSULATION_FORMAT, Call.ATTACHMENT_ENCAPSULATION_FORMAT_DIME);
         // Test operation
         binding.echoUnrefAttachments();
         // TBD - validate results
+        Object attachments[] = ((org.apache.axis.client.Stub)binding).getAttachments();
+        assertEquals(1, attachments.length);
     }
 
     public void test6DimeRPCSoapPortEchoAttachmentAsString() throws Exception {

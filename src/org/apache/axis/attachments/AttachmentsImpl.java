@@ -308,10 +308,13 @@ public class AttachmentsImpl implements Attachments {
 
         if ((parts != null) && !parts.isEmpty()) {
             for (java.util.Iterator i = parts.iterator(); i.hasNext();) {
-                Part part = (Part) i.next();
+                Object part = i.next();
 
                 if (null != part) {
-                    addAttachmentPart(part);
+                    if(part instanceof Part)
+                        addAttachmentPart((Part)part);
+                    else 
+                        createAttachmentPart(part);
                 }
             }
         }
