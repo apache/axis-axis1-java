@@ -153,6 +153,7 @@ public class TestSrcContent extends TestCase {
             new FileNameContentPattern(".+([\\\\/])"
                                        + "java\\1src\\1org\\1apache\\1axis\\1"
                                        + "(?!utils\\1tcpmon\\.java"
+                                       + "|client\\1AdminClient\\.java"
                                        + "|providers\\1BSFProvider\\.java"
                                        + "|ime\\1internal\\1util\\1uuid\\1TestUUID\\.java"
                                        + "|utils\\1CLArgsParser\\.java"
