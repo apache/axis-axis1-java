@@ -34,7 +34,7 @@ public class NonBlockingBufferedInputStream extends InputStream {
      * @param value the Content Length
      */
     public void setContentLength (int value) {
-        if (in != null) this.remainingContent = value;
+        if (in != null) this.remainingContent = value - (numbytes-offset);
     }
 
     /**
