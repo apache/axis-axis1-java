@@ -641,6 +641,16 @@ public class Constants {
      */
     public static final QName QNAME_FAULTDETAIL_HTTPERRORCODE = new QName(NS_URI_AXIS, "HttpErrorCode");
 
+    /**
+     * QName of a nested fault in an axis fault detail.
+     */
+    public static final QName QNAME_FAULTDETAIL_NESTEDFAULT = new QName(NS_URI_AXIS, "nestedFault");
+
+    /**
+     * QName of a hostname in an axis fault detail.
+     */
+    public static final QName QNAME_FAULTDETAIL_HOSTNAME = new QName(NS_URI_AXIS, "hostname");
+
     //QNames of well known faults
     /**
      * The no-service fault value.
