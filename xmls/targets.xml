@@ -234,6 +234,14 @@
       <available classname="org.exolab.castor.xml.MarshalException" classpathref="classpath" />
     </condition>
 
+    <condition property="xmlbeans.present" >
+      <and>
+        <available classname="org.apache.xmlbeans.XmlObject" classpathref="classpath" />
+        <available classname="org.xmlsoap.schemas.wsdl.DefinitionsDocument" classpathref="classpath" />
+        <available classname="javax.xml.stream.XMLStreamReader" classpathref="classpath" />
+      </and>
+    </condition>
+
     <condition property="bsf.present" >
       <available classname="org.apache.bsf.BSFManager" classpathref="classpath" />
     </condition>
@@ -362,6 +370,7 @@
     <echo message="security.present=${security.present}" />
     <echo message="servlet.present=${servlet.present}" />
     <echo message="sun.jsse.present=${sun.jsse.present}" />
+    <echo message="xmlbeans.present=${xmlbeans.present}" />
     <echo message=""/>
     <echo message="--- Miscellaneous (for running tests) ---" />
     <echo message="axis-ant.present=${axis-ant.present}" />
