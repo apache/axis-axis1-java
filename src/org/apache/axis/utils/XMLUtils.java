@@ -21,6 +21,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.InternalException;
 import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
+import org.apache.axis.AxisProperties;
 import org.apache.axis.components.encoding.XMLEncoder;
 import org.apache.axis.components.encoding.XMLEncoderFactory;
 import org.apache.axis.components.logger.LogFactory;
@@ -87,9 +88,21 @@ public class XMLUtils {
     private static String EMPTY = "";
     private static ByteArrayInputStream bais = new ByteArrayInputStream(EMPTY.getBytes());
 
+    protected static boolean enableParserReuse = false;
+    
     static {
         // Initialize SAX Parser factory defaults
         initSAXFactory(null, true, false);
+
+        String value = AxisProperties.getProperty(AxisEngine.PROP_XML_REUSE_SAX_PARSERS,
+                "" + false);
+        if (value.equalsIgnoreCase("true") ||
+                value.equals("1") ||
+                value.equalsIgnoreCase("yes")) {
+            enableParserReuse = true;
+        } else {
+            enableParserReuse = false;
+        }
     }
 
     /** 
@@ -200,7 +213,7 @@ public class XMLUtils {
      * @return a SAXParser instance.
      */
     public static synchronized SAXParser getSAXParser() {
-        if(!saxParsers.empty()) {
+        if(enableParserReuse && !saxParsers.empty()) {
             return (SAXParser )saxParsers.pop();
         }
 
@@ -229,7 +242,7 @@ public class XMLUtils {
      * @param parser A SAX parser that is available for reuse
      */
     public static void releaseSAXParser(SAXParser parser) {
-        if(!tryReset) return;
+        if(!tryReset || !enableParserReuse) return;
 
         //Free up possible ref. held by past contenthandler.
         try{
