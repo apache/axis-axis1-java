@@ -76,7 +76,23 @@ public class MethodTarget implements Target
     private Object targetObject;
     private Method targetMethod;
     private static final Class [] objArg = new Class [] { Object.class };
-    
+
+    /**
+     * Construct a target whose value is set via a method
+     * @param targetObject is the object containing the value to be set
+     * @param targetMethod is the Method used to set the value
+     */
+    public MethodTarget(Object targetObject, Method targetMethod)
+    {
+        this.targetObject = targetObject;
+        this.targetMethod = targetMethod;
+    }
+
+    /**
+     * Construct a target whose value is set via a method
+     * @param targetObject is the object containing the value to be set
+     * @param methodName is the name of the Method
+     */
     public MethodTarget(Object targetObject, String methodName)
         throws NoSuchMethodException
     {
@@ -85,6 +101,10 @@ public class MethodTarget implements Target
         targetMethod = cls.getMethod(methodName, objArg);
     }
     
+    /**
+     * Set the target's value by invoking the targetMethod.
+     * @param value is the new Object value
+     */
     public void set(Object value) throws SAXException {
         try {
             targetMethod.invoke(targetObject, new Object [] { value });

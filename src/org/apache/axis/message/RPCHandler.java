@@ -67,7 +67,7 @@ import org.apache.axis.description.ParameterDesc;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.Deserializer;
-import org.apache.axis.encoding.FieldTarget;
+import org.apache.axis.encoding.MethodTarget;
 import org.apache.axis.encoding.DeserializerImpl;
 import org.apache.axis.utils.JavaUtils;
 
@@ -101,7 +101,7 @@ public class RPCHandler extends SOAPHandler
         LogFactory.getLog(RPCHandler.class.getName());
     
     private RPCElement rpcElem;
-    private RPCParam currentParam;
+    private RPCParam currentParam = null;
     private boolean isResponse;
     private OperationDesc operation;
 
@@ -114,6 +114,25 @@ public class RPCHandler extends SOAPHandler
 
     public void setOperation(OperationDesc myOperation) {
         this.operation = myOperation;
+    }
+
+    /**
+     * This method is invoked when an element start tag is encountered.
+     * The purpose of this method in RPCHandler is to reset variables
+     * (this allows re-use of RPCHandlers)
+     * @param namespace is the namespace of the element
+     * @param localName is the name of the element
+     * @param qName is the prefixed qName of the element
+     * @param attributes are the attributes on the element...used to get the type
+     * @param context is the DeserializationContext
+     */
+    public void startElement(String namespace, String localName,
+                             String qName, Attributes attributes,
+                             DeserializationContext context)
+        throws SAXException
+    {
+        super.startElement(namespace, localName, qName, attributes, context);
+        currentParam = null;
     }
 
     /**
@@ -145,16 +164,19 @@ public class RPCHandler extends SOAPHandler
         QName type = null;
         QName qname = new QName(namespace, localName);
         ParameterDesc paramDesc = null;
-        boolean isCollection = false;
 
         Vector params = rpcElem.getParams();
         
         // SAR: for now, ignore RPC Result elements
         if (qname.equals(Constants.QNAME_RPC_RESULT)) return this;
 
-        // This is a param.
-        currentParam = new RPCParam(namespace, localName, null);
-        rpcElem.addParam(currentParam);
+        // Create a new param if not the same element
+        if (currentParam == null ||
+            !currentParam.getQName().getNamespaceURI().equals(namespace) ||
+            !currentParam.getQName().getLocalPart().equals(localName)) {
+            currentParam = new RPCParam(namespace, localName, null);
+            rpcElem.addParam(currentParam);
+        }
 
         // Grab xsi:type attribute if present, on either this element or
         // the referent (if it's an href).
@@ -202,49 +224,14 @@ public class RPCHandler extends SOAPHandler
                 // (see RPCProvider.processMessage())
                 currentParam.setParamDesc(paramDesc);
 
-                // It is possible that the type qname is "xsd:string"
-                // and the paramDesc type is a collection of 
-                // strings using a special axis qname ("xsd:string[unbounded]").
-                // Here is a specific example:
-                //  <getAttractions xmlns="urn:CityBBB">
-                //      <attname>Christmas</attname>
-                //      <attname>Xmas</attname>
-                //   </getAttractions>
-                //
-                //  for getAttractions(String[] attName)
-                //
-                //  In the example, we are processing one of the <attname>
-                //  children, so the type variable is set to the component
-                //  type, and isCollection is turned on to 
-                //  indicate collection processing.
-                boolean haveXSIType = (type != null);
-                if (paramDesc.getTypeQName() != null &&
-                    paramDesc.getTypeQName().getLocalPart().indexOf("[") > 0) {
-                    if (type==null) {
-                        type = new QName(paramDesc.getTypeQName().
-                                           getNamespaceURI(),
-                                         paramDesc.getTypeQName().
-                                           getLocalPart().
-                                           substring(0,
-                                                     paramDesc.getTypeQName().
-                                                     getLocalPart().indexOf("[")));
-                    }
-                    isCollection = true;
-                }
-                
                 if (type == null) {
                     type = paramDesc.getTypeQName();
-                } 
-
-                if (haveXSIType && paramDesc.getJavaType() != null) {
+                } else if (paramDesc.getJavaType() != null) {
                     // If we have an xsi:type, make sure it makes sense
                     // with the current paramDesc type
                     Class xsiClass = 
                             context.getTypeMapping().getClassForQName(type);
                     Class destClass = paramDesc.getJavaType();
-                    if (isCollection) {
-                        destClass = destClass.getComponentType();
-                    }
                     if (!JavaUtils.isConvertable(xsiClass, destClass)) {
                         throw new SAXException("Bad types (" +
                             xsiClass + " -> " + destClass + ")"); // FIXME!
@@ -253,9 +240,26 @@ public class RPCHandler extends SOAPHandler
             }
         }
 
-
-        if (JavaUtils.isTrueExplicitly(attributes.getValue(Constants.URI_2001_SCHEMA_XSI, "nil")))
-          return new DeserializerImpl();
+        // If the nil attribute is set, just
+        // return the base DeserializerImpl.
+        // Register the value target to set the value
+        // on the RPCParam.  This is necessary for cases like
+        //  <method>
+        //    <foo>123</foo>
+        //    <foo>456</foo>
+        //    <foo xsi:nil="true" />
+        //  </method>
+        // so that a list of 3 items is created.
+        // Failure to register the target would result in the last
+        // item not being added to the list
+        if (JavaUtils.isTrueExplicitly(
+           attributes.getValue(Constants.URI_2001_SCHEMA_XSI, "nil"))) {
+          Deserializer nilDSer =  new DeserializerImpl();
+          nilDSer.registerValueTarget(
+             new MethodTarget(currentParam,
+                              RPCParam.getValueSetMethod()));
+          return (SOAPHandler) nilDSer;
+        }
         
         Deserializer dser = null;
         if ((type == null) && (namespace != null) && (!namespace.equals(""))) {
@@ -277,8 +281,8 @@ public class RPCHandler extends SOAPHandler
         dser.setDefaultType(type);
 
         dser.registerValueTarget(
-             new FieldTarget(currentParam,
-                 RPCParam.getValueField()));
+             new MethodTarget(currentParam,
+                 RPCParam.getValueSetMethod()));
 
         if (log.isDebugEnabled()) {
             log.debug("Exit: RPCHandler.onStartChild()");

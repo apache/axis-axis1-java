@@ -686,7 +686,7 @@ public class Emitter {
 
             OperationDesc messageOper = thisOper;
             if (serviceDesc2 != null) {
-                // If a serviceDesc contain an impl class is provided,
+                // If a serviceDesc containing an impl class is provided,
                 // try and locate the corresponding operation
                 // (same name, same parm types and modes).  If a
                 // corresponding operation is found, it is sent

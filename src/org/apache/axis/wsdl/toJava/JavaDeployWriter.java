@@ -392,21 +392,23 @@ public class JavaDeployWriter extends JavaWriter {
         Vector paramList = params.list;
         for (int i = 0; i < paramList.size(); i++) {
             Parameter param = (Parameter) paramList.elementAt(i);
+
+            // Get the typeEntry for the parameter.
+            // Use the referenced type if an Element
+            // Use the referenced type (the component type) if a Collection
             TypeEntry typeEntry = param.getType();
-
-            QName paramQName = null;
-            QName paramType = null;
-
-            // Get the parameter type QName
             if (typeEntry instanceof DefinedElement &&
                 typeEntry.getRefType() != null) {
-                paramType = typeEntry.getRefType().getQName();
-            } else {
-                paramType = typeEntry.getQName();
+                typeEntry = typeEntry.getRefType();
+            } 
+            if (typeEntry instanceof CollectionType &&
+                typeEntry.getRefType() != null) {
+                typeEntry = typeEntry.getRefType();
             }
 
             // Get the parameter name QName
-            paramQName = param.getQName();
+            QName paramQName = param.getQName();
+            QName paramType = typeEntry.getQName();
 
             pw.print("        <parameter");
             if (paramQName == null || "".equals(paramQName.getNamespaceURI())) {

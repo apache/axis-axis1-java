@@ -468,6 +468,71 @@ public class ServiceDesc {
      */
     private void syncOperationToClass(OperationDesc oper, Class implClass)
     {
+        // ------------------------------------------------
+        // Developer Note:
+        //
+        // The goal of the sync code is to associate
+        // the OperationDesc/ParamterDesc with the 
+        // target Method.  There are a number of ways to get to this
+        // point depending on what information
+        // is available.  Here are the main scenarios:
+        //
+        // A) Deployment with wsdd (non-skeleton):
+        //   * OperationDesc/ParameterDesc loaded from deploy.wsdd
+        //   * Loaded ParameterDesc does not have javaType,
+        //     so it is discovered using the TypeMappingRegistry
+        //     (also loaded via deploy.wsdd) and the 
+        //     typeQName specified by the ParameterDesc.
+        //   * Sync occurs using the discovered
+        //     javaTypes and the javaTypes of the Method
+        //     parameters
+        //
+        // B) Deployment with no wsdd OperationDesc info (non-skeleton):
+        //   * Implementation Class introspected to build 
+        //     OperationDesc/ParameterDesc.
+        //   * ParameterDesc is known via introspection.
+        //   * ParameterDesc are discovered using javaType 
+        //     and TypeMappingRegistry.
+        //   * Sync occurs using the introspected
+        //     javaTypes and the javaTypes of the Method
+        //     parameters
+        //
+        // C) Deployment with wsdd (skeleton):
+        //   * OperationDesc/ParameterDesc loaded from the Skeleton
+        //   * In this scenario the ParameterDescs' already
+        //     have javaTypes (see E below).
+        //   * Sync occurs using the ParameterDesc
+        //     javaTypes and the javaTypes of the Method 
+        //     parameters.
+        //
+        // D) Commandline Java2WSDL loading non-Skeleton Class/Interface
+        //   * Class/Interface introspected to build 
+        //     OperationDesc/ParameterDesc.
+        //   * The javaTypes of the ParameterDesc are set using introspection.  
+        //   * typeQNames are determined for built-in types using
+        //     from the default TypeMappingRegistry.  Other
+        //     typeQNames are guessed from the javaType.  Note
+        //     that there is no loaded TypeMappingRegistry.
+        //   * Sync occurs using the ParameterDesc
+        //     javaTypes and the javaTypes of the Method
+        //     parameters.
+        //
+        // E) Commandline Java2WSDL loading Skeleton Class 
+        //   * OperationDesc/ParameterDesc loaded from Skeleton
+        //   * Each ParameterDesc has an appropriate typeQName
+        //   * Each ParameterDesc also has a javaType, which is
+        //     essential for sync'ing up with the
+        //     method since there is no loaded TypeMappingRegistry.
+        //   * Syncronization occurs using the ParameterDesc
+        //     javaTypes and the javaTypes of the Method
+        //     parameters.
+        //
+        // So in each scenario, the ultimate sync'ing occurs
+        // using the javaTypes of the ParameterDescs and the
+        // javaTypes of the Method parameters.
+        // 
+        // ------------------------------------------------
+        
         // If we're already mapped to a Java method, no need to do anything.
         if (oper.getMethod() != null)
             return;
@@ -491,17 +556,24 @@ public class ServiceDesc {
                         heldType = JavaUtils.getHolderValueType(type);
                     }
                     ParameterDesc param = oper.getParameter(j);
-                    // If no type is specified, just use the Java type
                     QName typeQName = param.getTypeQName();
                     if (typeQName == null) {
+                        // No typeQName is available.  Set it using
+                        // information from the held type.
+                        // (Scenarios B and D)
+                        // There is no need to try and match with
+                        // the Method parameter javaType because
+                        // the ParameterDesc is being constructed
+                        // by introspecting the Method.
                         typeQName = tm.getTypeQName(heldType);
-                        param.setJavaType(type);
                         param.setTypeQName(typeQName);
                     } else {
-                        // A type qname was specified - see if they match
-
-                        // Use the specified javaType or get one
-                        // from the type mapping registry.
+                        // A type qname is available.
+                        // Ensure that the ParameterDesc javaType
+                        // is convertable to the Method parameter type
+                        //
+                        // Use the available javaType (Scenarios C and E)
+                        // or get one from the TMR (Scenario A).
                         Class paramClass = param.getJavaType();
                         if (paramClass != null &&
                             JavaUtils.getHolderValueType(paramClass) != null) {
@@ -517,9 +589,11 @@ public class ServiceDesc {
                         if (!JavaUtils.isConvertable(paramClass, heldType)) {
                             break;
                         }
-
-                        param.setJavaType(type);
                     }
+                    // In all scenarios the ParameterDesc javaType is set to
+                    // match the javaType in the corresponding parameter.
+                    // This is essential.
+                    param.setJavaType(type);
                 }
 
                 if (j != paramTypes.length) {

@@ -235,6 +235,18 @@ public class JavaUtils
             return new Hashtable((HashMap)arg);
         }
 
+        // If the destination is an array and the source
+        // is a suitable component, return an array with 
+        // the single item.
+        if (arg != null &&
+            destClass.isArray() &&
+            !destClass.getComponentType().equals(Object.class) &&
+            destClass.getComponentType().isAssignableFrom(arg.getClass())) {
+            Object array = 
+                Array.newInstance(destClass.getComponentType(), 1);
+            Array.set(array, 0, arg);
+            return array;
+        }
 
         // Return if no conversion is available
         if (!(arg instanceof Collection ||
@@ -282,12 +294,12 @@ public class JavaUtils
                     return destValue;
             }
         }
-
+        
         if (arg == null) {
             return arg;
         }
 
-        // The arg may be an array or List
+        // The arg may be an array or List 
         int length = 0;
         if (arg.getClass().isArray()) {
             length = Array.getLength(arg);
@@ -410,11 +422,17 @@ public class JavaUtils
                 (Collection.class.isAssignableFrom(dest) || dest.isArray()))
                 return true;
             
+            // If destination is an array, and src is a component, we're good.
+            if (dest.isArray() &&
+                !dest.getComponentType().equals(Object.class) &&
+                dest.getComponentType().isAssignableFrom(src)) 
+                return true;
+
             if ((src == Hex.class && dest == byte[].class) ||
                 (src == byte[].class && dest == Hex.class))
                 return true;
             
-            // Allow mapping of HashMaps to Hasttables
+            // Allow mapping of HashMaps to Hashtables
             if (src == HashMap.class && dest == Hashtable.class)
                 return true;
         }

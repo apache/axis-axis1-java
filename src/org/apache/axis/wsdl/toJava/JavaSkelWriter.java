@@ -76,6 +76,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.axis.wsdl.symbolTable.BindingEntry;
 import org.apache.axis.wsdl.symbolTable.Element;
+import org.apache.axis.wsdl.symbolTable.CollectionType;
 import org.apache.axis.wsdl.symbolTable.Parameter;
 import org.apache.axis.wsdl.symbolTable.Parameters;
 import org.apache.axis.wsdl.symbolTable.SymbolTable;
@@ -177,10 +178,24 @@ public class JavaSkelWriter extends JavaClassWriter {
                                 JavaUtils.getMessage("badParmMode00", 
                                         (new Byte(p.getMode())).toString()));
                     }
-                    // Construct a parameter with the parameter name, mode, type qname
-                    // a type javaType.
+                    // Construct a parameter with the parameter name, 
+                    // mode, type qname and type javaType.
                     TypeEntry paramType = p.getType();
                     if (paramType instanceof Element && 
+                        paramType.getRefType() != null) {
+                        paramType = paramType.getRefType();
+                    }
+                    // For collections, set the paramType to the 
+                    // component type QName.
+                    // The javaType is the type expected by the method.
+                    // So for example a parameter that takes a 
+                    // collection type for
+                    // <element name="A" type="xsd:string" maxOccurs="unbounded"/>
+                    // will be 
+                    // new ParameterDesc(<QName of A>, IN,
+                    //                   <QName of xsd:string>,
+                    //                   String[])
+                    if (paramType instanceof CollectionType &&
                         paramType.getRefType() != null) {
                         paramType = paramType.getRefType();
                     }

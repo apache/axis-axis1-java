@@ -476,14 +476,25 @@ public class JavaStubWriter extends JavaClassWriter {
         for (int i = 0; i < parms.list.size(); ++i) {
             Parameter p = (Parameter) parms.list.get(i);
 
-            // We need to use the Qname of the actual type, not the QName of the element
+            // Get the TypeEntry of the actual type not the Element.
             TypeEntry type = p.getType();
-            if (type instanceof DefinedElement
-                    && type.getRefType() != null) {
+            if (type instanceof DefinedElement &&
+                type.getRefType() != null) {
+                type = type.getRefType();
+            }
+            // Set the javaType to the name of the type
+            String javaType = type.getName();
+
+            // If the TypeEntry is a collectionType then
+            // set use the QName of the componentType.
+            // So for example if the following is the expected parameter:
+            // <element name="A" type="xsd:string" maxOccurs="unbounded"/>
+            // then the QName type is "xsd:string" and the javaType=String[]
+            if (type instanceof CollectionType &&
+                type.getRefType() != null) {
                 type = type.getRefType();
             }
             QName qn = type.getQName();
-            String javaType = type.getName();
 
             if (javaType != null) {
                 javaType += ".class, ";
@@ -517,18 +528,29 @@ public class JavaStubWriter extends JavaClassWriter {
         }
         // set output type
         if (parms.returnType != null) {
-            // We need to use the Qname of the actual type, not the QName of the element
-            // Also get the corresponding javaType
-            QName qn = parms.returnType.getQName();
-            String javaType = parms.returnType.getName();
 
-            if (parms.returnType instanceof DefinedElement) {
-                TypeEntry type = ((DefinedElement) parms.returnType).getRefType();
-                if (type != null && type.getQName() != null) {
-                    qn = type.getQName();
-                    javaType = type.getName();
-                }
+            // Get the TypeEntry of the actual type not the Element.
+            TypeEntry returnTE = parms.returnType;
+            if (returnTE instanceof DefinedElement &&
+                returnTE.getRefType() != null) {
+                returnTE = returnTE.getRefType();
             }
+            // Set the javaType to the name of the type
+            String javaType = returnTE.getName();
+
+            // If the return TypeEntry is a collectionType then
+            // set the use the QName of the componentType.
+            // So for example if the following is the expected return:
+            // <element name="A" type="xsd:string" maxOccurs="unbounded"/>
+            // this is generated:
+            // setReturnType(<QName of xsd:string>, String[]);
+            if (returnTE instanceof CollectionType &&
+                returnTE.getRefType() != null) {
+                returnTE = returnTE.getRefType();
+            }
+            
+            // Get the QName and Java Class name
+            QName qn = returnTE.getQName();
  
             String outputType = "new javax.xml.namespace.QName(\"" +
                 qn.getNamespaceURI() + "\", \"" +
