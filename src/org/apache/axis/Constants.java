@@ -78,9 +78,9 @@ public class Constants {
   public static String URI_SOAP_ENC =
                                "http://schemas.xmlsoap.org/soap/encoding/" ;
   public static String URI_SCHEMA_XSI =
-                               "http://www.w3.org/1999/XMLSchema/instance/" ;
+                               "http://www.w3.org/1999/XMLSchema-instance" ;
   public static String URI_SCHEMA_XSD =
-                               "http://www.w3.org/1999/XMLSchema/" ;
+                               "http://www.w3.org/1999/XMLSchema" ;
   public static String URI_NEXT_ACTOR = 
                                "http://schemas.xmlsoap.org/soap/actor/next" ;
 
