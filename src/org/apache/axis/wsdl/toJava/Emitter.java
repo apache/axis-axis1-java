@@ -160,7 +160,11 @@ public class Emitter {
         if (bVerbose)
             System.out.println(JavaUtils.getMessage("parsing00", uri));
 
-        emit(uri, XMLUtils.newDocument(uri));
+        Document doc = XMLUtils.newDocument(uri);
+        if (doc == null) {
+            throw new IOException(JavaUtils.getMessage("cantGetDoc00", uri));
+        }
+        emit(uri, doc);
     } // emit
 
     /**
