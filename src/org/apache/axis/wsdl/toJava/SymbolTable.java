@@ -462,46 +462,32 @@ public class SymbolTable {
     private static URL getURL(URL contextURL, String spec) throws IOException {
         URL url = null;
         try {
+            // See if we have a good URL
             url = new URL(contextURL, spec);
-
-            try {
-                url.openStream();
-            }
-            catch (IOException ioe) {
-                throw new MalformedURLException();
-            }
         }
         catch (MalformedURLException me)
         {
-            url = new URL("file", "", spec);
-
-            try {
-                url.openStream();
-            }
-            catch (IOException ioe) {
-                if (contextURL != null) {
-                    String contextFileName = contextURL.getFile();
-                    String parentName = new File(contextFileName).getParent();
-                    if (parentName != null) {
-                        url = new URL(new URL("file", "", parentName + '/'),
-                                spec);
-                        try {
-                            url.openStream();
-                        }
-                        catch (IOException secondioe) {
-                            throw new FileNotFoundException(url.toString());
-                        }
-                    }
-                    else {
-                        throw new FileNotFoundException(url.toString());
-                    }
+            if (contextURL == null) {
+                url = new URL("file", "", spec);
+            } else {
+                // get the parent directory of the contextURL, and append
+                // the spec string to the end.
+                String contextFileName = contextURL.getFile();
+                String parentName = new File(contextFileName).getParent();
+                if (parentName != null) {
+                    url = new URL(new URL("file", "", parentName + '/'), spec);
                 }
                 else {
                     throw new FileNotFoundException(url.toString());
                 }
             }
         }
+        
+        // Everything is OK with this URL, although a file url constructed 
+        // above may not exist.  This will be caught later when the URL is
+        // accessed.
         return url;
+        
     } // getURL
     /**
      * Recursively find all xsd:import'ed objects and call populate for each one.

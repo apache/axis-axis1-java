@@ -114,6 +114,8 @@ public class Emitter {
     protected String currentWSDLURI = null;
     protected String NStoPkgFilename = "NStoPkg.properties";
     protected File NStoPkgFile = null;
+    protected String username = null;
+    protected String password = null;
 
 
     /**
@@ -149,7 +151,8 @@ public class Emitter {
         if (bVerbose)
             System.out.println(JavaUtils.getMessage("parsing00", uri));
 
-        Document doc = XMLUtils.newDocument(uri);
+        Document doc = XMLUtils.newDocument(uri, username, password);
+
         if (doc == null) {
             throw new IOException(JavaUtils.getMessage("cantGetDoc00", uri));
         }
@@ -462,6 +465,33 @@ public class Emitter {
         this.NStoPkgFile = NStoPkgFile;
     } // setNStoPkg
 
+    /**
+     * Get the username needed to access the WSDL
+     */ 
+    public String getUsername() {
+        return username;
+    }
+
+    /**
+     * Set the username needed to access the WSDL
+     */ 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    /**
+     * Get the password needed to access the WSDL
+     */ 
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * Set the username needed to access the WSDL
+     */ 
+    public void setPassword(String password) {
+        this.password = password;
+    }
     ///////////////////////////////////////////////////
     //
     // Implementation
@@ -536,6 +566,8 @@ public class Emitter {
     public String getWSDLURI() {
         return currentWSDLURI;
     }
+
+
 
     //
     // Utility methods
