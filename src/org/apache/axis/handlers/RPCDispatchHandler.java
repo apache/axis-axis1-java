@@ -67,6 +67,8 @@ import org.apache.axis.message.* ;
  */
 public class RPCDispatchHandler extends BasicHandler {
 
+  private static AxisClassLoader cl = new AxisClassLoader();
+
   private static final boolean DEBUG_LOG = false;
 
   public void invoke(MessageContext msgContext) throws AxisFault {
@@ -87,7 +89,6 @@ public class RPCDispatchHandler extends BasicHandler {
       /* SOAPBody as an RPCBody and process it accordingly.        */
       /*************************************************************/
       int             i ;
-      AxisClassLoader cl     = new AxisClassLoader();
       Class           cls    = cl.loadClass(clsName); 
       Object          obj    = cls.newInstance();
       Message         inMsg  = msgContext.getRequestMessage();
