@@ -56,11 +56,7 @@
 package org.apache.axis.utils ;
 
 import org.apache.axis.Constants;
-import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
+import org.w3c.dom.*;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -195,8 +191,7 @@ public class XMLUtils {
 
     public static Document newDocument(InputSource inp) {
         try {
-            Document doc = dbf.newDocumentBuilder().parse( inp );
-            return( doc );
+            return( dbf.newDocumentBuilder().parse( inp ) );
         }
         catch( Exception e ) {
             e.printStackTrace();
