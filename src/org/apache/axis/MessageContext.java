@@ -259,7 +259,6 @@ public class MessageContext {
         if (bag != null) {
             bag.remove(propName);
         }
-        serviceHandler = null;
     }
     
     public void clearProperties()
@@ -267,6 +266,7 @@ public class MessageContext {
         if (bag != null) {
             bag.clear();
         }
+        serviceHandler = null;
     }
 
 };
