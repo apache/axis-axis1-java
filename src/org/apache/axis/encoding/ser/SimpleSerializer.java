@@ -63,9 +63,13 @@ import javax.xml.rpc.namespace.QName;
 import java.io.IOException;
 import java.util.Vector;
 import java.lang.reflect.Method;
+import java.lang.reflect.Field;
 
 import org.apache.axis.Constants;
+import org.apache.axis.AxisFault;
 import org.apache.axis.wsdl.fromJava.Types;
+import org.apache.axis.wsdl.fromJava.ClassRep;
+import org.apache.axis.wsdl.fromJava.FieldRep;
 import org.apache.axis.wsdl.toJava.Utils;
 import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
@@ -88,9 +92,19 @@ public class SimpleSerializer implements Serializer {
 
     public QName xmlType;
     public Class javaType;
+    
+    private BeanPropertyDescriptor[] propertyDescriptor = null;
+    private Vector beanAttributeNames = null;
+    
     public SimpleSerializer(Class javaType, QName xmlType) {
         this.xmlType = xmlType;
         this.javaType = javaType;
+        
+        if (SimpleType.class.isAssignableFrom(javaType)) {
+            // get the bean properties and the list of attributes from the bean
+            propertyDescriptor = BeanSerializer.getPd(javaType);
+            beanAttributeNames = BeanSerializer.getBeanAttributes(javaType);
+        }
     }
     /**
      * Serialize a primitive or simple value.
@@ -147,10 +161,6 @@ public class SimpleSerializer implements Serializer {
 
     private Attributes getObjectAttributes(Object value, Attributes attributes) {
         
-        // get the list of attributes from the bean
-        Vector beanAttributeNames = 
-                BeanSerializer.getBeanAttributes(value.getClass());
-
         // if nothing, return
         if (beanAttributeNames.isEmpty())
             return attributes;
@@ -160,9 +170,6 @@ public class SimpleSerializer implements Serializer {
             attrs = new AttributesImpl(attributes);
         else
             attrs = new AttributesImpl();
-        
-        BeanPropertyDescriptor propertyDescriptor[] = 
-                BeanSerializer.getPd(value.getClass());
         
         try {
             // Find each property that is an attribute 
@@ -207,6 +214,77 @@ public class SimpleSerializer implements Serializer {
      * @see org.apache.axis.wsdl.fromJava.Types
      */
     public boolean writeSchema(Types types) throws Exception {
-        return false;
+        // Let the caller generate WSDL if this is not a SimpleType
+        if (!SimpleType.class.isAssignableFrom(javaType))
+            return false;
+        
+        // Emit WSDL for simpleContent
+        javax.wsdl.QName qName = types.getWsdlQName(xmlType);
+
+        // ComplexType representation of SimpleType bean class
+        Element complexType = types.createElement("complexType");
+        types.writeSchemaElement(qName, complexType);
+        complexType.setAttribute("name", qName.getLocalPart());
+
+        // Produce simpleContent extending base type.
+        Element simpleContent = types.createElement("simpleContent");
+        complexType.appendChild(simpleContent);
+        Element extension = types.createElement("extension");
+        simpleContent.appendChild(extension);
+        
+        // Get the base type from the "value" element of the bean
+        String base = "string";
+        for (int i=0; i<propertyDescriptor.length; i++) {
+            if (! propertyDescriptor[i].getName().equals("value"))
+                continue;
+            
+            BeanPropertyDescriptor bpd = propertyDescriptor[i];
+            Class type = bpd.getType();
+            // Attribute must extend a simple type.
+            if (!types.isSimpleSchemaType(type))
+                throw new AxisFault(JavaUtils.getMessage("AttrNotSimpleType01", 
+                        type.getName()));
+            
+            base = types.writeType(type);
+        }
+        extension.setAttribute("base", base);
+
+        // Build a ClassRep that represents the bean class.  This
+        // allows users to provide their own field mapping.
+        ClassRep clsRep = types.getBeanBuilder().build(javaType);
+
+        // Write out fields
+        Vector fields = clsRep.getFields();
+        for (int i=0; i < fields.size(); i++) {
+            FieldRep field = (FieldRep) fields.elementAt(i);
+
+            String fieldName = field.getName();
+            
+            // if bean fields are attributes, write attribute element
+            if (!beanAttributeNames.contains(fieldName)) {
+                continue;
+            }
+            //  write attribute element
+            Class fieldType = field.getType();
+            
+            // Attribute must be a simple type.
+            if (!types.isSimpleSchemaType(fieldType))
+                throw new AxisFault(JavaUtils.getMessage("AttrNotSimpleType00", 
+                        fieldName,
+                        fieldType.getName()));
+            
+            // write attribute element
+            // TODO the attribute name needs to be preserved from the XML
+            String elementType = types.writeType(fieldType);
+            Element elem = types.createAttributeElement(fieldName,
+                    elementType,
+                    false,
+                    extension.getOwnerDocument());
+            extension.appendChild(elem);
+        }
+            
+        // done
+        return true;
+        
     }
 }
