@@ -77,6 +77,7 @@ public class PackageTests extends TestCase
         
         suite.addTestSuite(TestMessageElement.class);
         suite.addTestSuite(TestSOAPEnvelope.class);
+        suite.addTestSuite(TestSOAPHeader.class);
  
         return suite;
     }
