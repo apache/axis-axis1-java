@@ -151,6 +151,17 @@ public class ParameterDesc implements Serializable {
         this.outHeader = outHeader;
     }
 
+    /**
+     * @deprecated
+     * @param name the parameter's fully qualified XML name
+     * @param mode IN, OUT, INOUT
+     * @param typeQName the parameter's XML type QName
+     * @param javaType the parameter's javaType
+     */
+    public ParameterDesc(QName name, byte mode, QName typeQName, Class javaType) {
+      this(name,mode,typeQName,javaType,false,false);
+    }
+
     public String toString() {
         return toString("");
     }
