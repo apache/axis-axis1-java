@@ -56,8 +56,6 @@
 package org.apache.axis.encoding.ser;
 
 import org.apache.axis.Constants;
-import org.apache.axis.MessageContext;
-import org.apache.axis.schema.SchemaVersion;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.Serializer;
@@ -89,7 +87,6 @@ public class MapSerializer implements Serializer
 
     // QNames we deal with
     private static final QName QNAME_KEY = new QName("","key");
-    private static final QName QNAME_ITEMS = new QName("", "items");
     private static final QName QNAME_ITEM = new QName("", "item");
     private static final QName QNAME_VALUE = new QName("", "value");
 
@@ -124,7 +121,6 @@ public class MapSerializer implements Serializer
                                    "CDATA", encodingPrefix + ":Array");        
         itemsAttributes.addAttribute(encodingURI, "arrayType", encodingPrefix + ":arrayType",
                                    "CDATA", soapPrefix + ":item["+map.size()+"]");        
-        context.startElement(QNAME_ITEMS, itemsAttributes);
 
         for (Iterator i = map.entrySet().iterator(); i.hasNext(); )
         {
@@ -140,7 +136,6 @@ public class MapSerializer implements Serializer
             context.endElement();
         }
 
-        context.endElement();
         context.endElement();
     }
 
@@ -163,27 +158,14 @@ public class MapSerializer implements Serializer
         Element seq = types.createElement("sequence");
         complexType.appendChild(seq);
         Element element = types.createElement("element");
-        element.setAttribute("name", "items");
-        element.setAttribute("nillable", "true");
-        element.setAttribute("type", types.getQNameString(new QName(Constants.NS_URI_XMLSOAP,"ArrayOfitem")));
+        element.setAttribute("name", "item");
+        element.setAttribute("minOccurs", "0");
+        element.setAttribute("maxOccurs", "unbounded");
+        element.setAttribute("type", types.getQNameString(new QName(Constants.NS_URI_XMLSOAP,"mapItem")));
         seq.appendChild(element);
-        types.writeSchemaElement(Constants.SOAP_MAP, complexType);
     
-        Element arrayType = types.createElement("complexType");
-        arrayType.setAttribute("name", "ArrayOfitem");
-        Element complexContent = types.createElement("complexContent");
-        arrayType.appendChild(complexContent);
-        Element restriction = types.createElement("restriction");
-        restriction.setAttribute("base", "soapenc:Array");
-        complexContent.appendChild(restriction);
-        Element attribute = types.createElement("attribute");
-        attribute.setAttribute("ref","soapenc:arrayType");
-        attribute.setAttribute("wsdl:arrayType",types.getQNameString(new QName(Constants.NS_URI_XMLSOAP,"item[]")));
-        restriction.appendChild(attribute);
-        types.writeSchemaElement(Constants.SOAP_MAP, arrayType);
-
         Element itemType = types.createElement("complexType");
-        itemType.setAttribute("name", "item");
+        itemType.setAttribute("name", "mapItem");
         Element seq2 = types.createElement("sequence");
         itemType.appendChild(seq2);
         Element element2 = types.createElement("element");
@@ -197,6 +179,7 @@ public class MapSerializer implements Serializer
         element3.setAttribute("type", "xsd:string");
         seq2.appendChild(element3);
         types.writeSchemaElement(Constants.SOAP_MAP, itemType);
+
         return complexType;
     }
 }
