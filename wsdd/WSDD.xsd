@@ -2,7 +2,7 @@
 <!--// 
             Web Services Deployment Descriptor (WSDD) Version 1.1 (Proposal)
 //-->
-<xsd:schema targetNamespace="http://xml.apache.org/axis/wsdd/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdd="http://xml.apache.org/axis/wsdd/" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.1">
+<xsd:schema targetNamespace="http://xml.apache.org/axis/wsdd/" xmlns:wsdd="http://xml.apache.org/axis/wsdd/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.1">
     <!-- ==================================================================== -->
     <!-- DeployableItem-->
     <!-- ==================================================================== -->
@@ -71,6 +71,7 @@ The optional name attribute is usually used to qualify the chains for multiple f
             <xsd:attribute name="name" type="xsd:NCName" use="required"/>
             <xsd:attribute name="locked" type="xsd:boolean" use="optional" default="false"/>
             <xsd:attribute name="value" type="xsd:string" use="optional"/>
+            <xsd:attribute name="type" type="xsd:QName" use="optional"/>
             <xsd:anyAttribute namespace="##other"/>
         </xsd:complexType>
     </xsd:element>
@@ -110,7 +111,7 @@ handlers/chains as debug/administration aids.
                 <xsd:extension base="wsdd:DeployableItem">
                     <xsd:sequence>
                         <xsd:element ref="wsdd:namespace" minOccurs="0" maxOccurs="unbounded"/>
-                        <xsd:element name="wsdlFile"  type="xsd:string" minOccurs="0" maxOccurs="1"/>
+                        <xsd:element name="wsdlFile" type="xsd:string" minOccurs="0"/>
                         <xsd:element ref="wsdd:parameter" minOccurs="0" maxOccurs="unbounded"/>
                         <xsd:element ref="wsdd:operation" minOccurs="0" maxOccurs="unbounded"/>
                         <xsd:element ref="wsdd:typeMapping" minOccurs="0" maxOccurs="unbounded"/>
@@ -237,6 +238,7 @@ from the Service Provider</xsd:documentation>
             <xsd:attribute name="serializer" type="xsd:anyURI" use="optional"/>
             <xsd:attribute name="deserializer" type="xsd:anyURI" use="optional"/>
             <xsd:attribute name="type" type="xsd:anyURI"/>
+            <xsd:attribute name="name" type="xsd:anyURI" use="optional"/>
         </xsd:complexType>
     </xsd:element>
     <!-- ==================================================================== -->
@@ -298,6 +300,7 @@ fault Flows for a given transport mechanism.
                         <xsd:element ref="wsdd:faultFlow" minOccurs="0" maxOccurs="unbounded"/>
                         <xsd:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
                     </xsd:sequence>
+                    <xsd:attribute name="pivot" type="xsd:NCName" use="optional"/>
                     <xsd:anyAttribute namespace="##other"/>
                 </xsd:extension>
             </xsd:complexContent>
@@ -331,29 +334,47 @@ The provider element describes the deployment of the Axis Engine implementation.
             </xsd:complexContent>
         </xsd:complexType>
     </xsd:element>
+    <xsd:complexType name="DeploymentDescriptor">
+        <xsd:sequence>
+            <xsd:element ref="wsdd:documentation" minOccurs="0"/>
+            <xsd:element ref="wsdd:globalConfiguration" minOccurs="0"/>
+            <xsd:choice minOccurs="0" maxOccurs="unbounded">
+                <xsd:element ref="wsdd:typeMapping" minOccurs="0" maxOccurs="unbounded"/>
+                <xsd:element ref="wsdd:beanMapping" minOccurs="0" maxOccurs="unbounded"/>
+                <xsd:element ref="wsdd:chain" minOccurs="0" maxOccurs="unbounded"/>
+                <xsd:element ref="wsdd:handler" minOccurs="0" maxOccurs="unbounded"/>
+                <xsd:element ref="wsdd:transport" minOccurs="0" maxOccurs="unbounded"/>
+                <xsd:element ref="wsdd:service" minOccurs="0" maxOccurs="unbounded"/>
+            </xsd:choice>
+            <xsd:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+        <xsd:attribute name="name" type="xsd:NCName" use="optional"/>
+        <xsd:anyAttribute namespace="##other"/>
+    </xsd:complexType>
     <!-- ==================================================================== -->
     <!-- deployment -->
     <!-- ==================================================================== -->
-    <xsd:element name="deployment">
+    <xsd:element name="deployment" type="wsdd:DeploymentDescriptor">
         <xsd:annotation>
             <xsd:documentation>This is the root element for WSDD.</xsd:documentation>
         </xsd:annotation>
+    </xsd:element>
+    <xsd:element name="undeployment" type="wsdd:DeploymentDescriptor">
+        <xsd:annotation>
+            <xsd:documentation>undeployment</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <!-- ==================================================================== -->
+    <!-- undeployment -->
+    <!-- ==================================================================== -->
+    <xsd:element name="undeployment0">
+        <xsd:annotation>
+            <xsd:documentation>This is the other root element for WSDD.</xsd:documentation>
+        </xsd:annotation>
         <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element ref="wsdd:documentation" minOccurs="0"/>
-                <xsd:element ref="wsdd:globalConfiguration" minOccurs="0"/>
-                <xsd:choice minOccurs="0" maxOccurs="unbounded">
-                    <xsd:element ref="wsdd:typeMapping" minOccurs="0" maxOccurs="unbounded"/>
-                    <xsd:element ref="wsdd:beanMapping" minOccurs="0" maxOccurs="unbounded"/>
-                    <xsd:element ref="wsdd:chain" minOccurs="0" maxOccurs="unbounded"/>
-                    <xsd:element ref="wsdd:handler" minOccurs="0" maxOccurs="unbounded"/>
-                    <xsd:element ref="wsdd:transport" minOccurs="0" maxOccurs="unbounded"/>
-                    <xsd:element ref="wsdd:service" minOccurs="0" maxOccurs="unbounded"/>
-                </xsd:choice>
-                <xsd:any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
-            </xsd:sequence>
-            <xsd:attribute name="name" type="xsd:NCName" use="optional"/>
-            <xsd:anyAttribute namespace="##other"/>
+            <xsd:complexContent>
+                <xsd:extension base="wsdd:DeployableItem"/>
+            </xsd:complexContent>
         </xsd:complexType>
     </xsd:element>
     <!-- ==================================================================== -->
