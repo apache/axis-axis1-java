@@ -356,6 +356,7 @@ public class MessageContext {
     }
 
     public void setProperty(String propName, Object propValue) {
+        if (propValue == null) return;
         if ( bag == null ) bag = new Hashtable() ;
         bag.put( propName, propValue );
     }
