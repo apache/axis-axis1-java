@@ -64,8 +64,11 @@ import javax.xml.namespace.QName;
 
 /**
  * The <code>javax.xml.rpc.handler.HandlerInfo</code> represents
- * information about a handler in the HandlerChain. All elements
- * in the HandlerChain are of the type HandlerInfo.
+ * information about a handler in the HandlerChain. A HandlerInfo
+ * instance is passed in the <code>Handler.init</code> method to
+ * initialize a <code>Handler</code> instance.
+ *
+ * @version 1.0
  * @see HandlerChain
  */
 public class HandlerInfo implements Serializable {
@@ -79,7 +82,7 @@ public class HandlerInfo implements Serializable {
     /**
      *  Constructor for HandlerInfo
      *  <p>
-     *  @param  handlerClass Class for the Handler
+     *  @param  handlerClass Java Class for the Handler
      *  @param  config Handler Configuration as a java.util.Map
      *  @param  headers QNames for the header blocks processed
      *          by this Handler.  QName is the qualified name
@@ -109,7 +112,7 @@ public class HandlerInfo implements Serializable {
     }
 
     /**
-     *  Sets the Handler configuration map
+     *  Sets the Handler configuration as <code>java.util.Map</code>
      *  @param  config Configuration map
      */
     public void setHandlerConfig(Map config) {
@@ -117,7 +120,7 @@ public class HandlerInfo implements Serializable {
     }
 
     /**
-     *  Gets the Handler configuration map
+     *  Gets the Handler configuration
      *  @return  Returns empty Map if no configuration map
      *     has been set; otherwise returns the set configuration map
      */
@@ -126,14 +129,20 @@ public class HandlerInfo implements Serializable {
     }
 
     /**
-     * Set the header blocks.
+     * Sets the header blocks processed by this Handler.
+     * @param headers QNames of the header blocks. QName
+     *            is the qualified name of the outermost
+     *            element of the SOAP header block
      */
     public void setHeaders(QName[] headers) {
         this.headers = headers;
     }
 
     /**
-     * Get the header blocks.
+     * Gets the header blocks processed by this Handler.
+     * @return Array of QNames for the header blocks. Returns
+     *      <code>null</code> if no header blocks have been
+     *      set using the <code>setHeaders</code> method.
      */
     public QName[] getHeaders() {
         return headers;

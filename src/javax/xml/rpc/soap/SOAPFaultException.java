@@ -58,22 +58,34 @@ import javax.xml.namespace.QName;
 import javax.xml.soap.Detail;
 
 /**
- * SOAPFaultException exception class is used for the mapping of the
- * SOAP faults. If the use attribute in the soap:fault is
- * literal, the soap:fault maps to the SOAPFaultException exception.
- * This class extends the exception class java.lang.Exception
- * and is declared as a checked exception in the service
- * definition interface.
+ * The <code>SOAPFaultException</code> exception represents a
+ * SOAP fault.
+ * <p>
+ * The message part in the SOAP fault maps to the contents of
+ * <code>faultdetail</code> element accessible through the
+ * <code>getDetail</code> method on the <code>SOAPFaultException</code>.
+ * The method <code>createDetail</code> on the
+ * <code>javax.xml.soap.SOAPFactory</code> creates an instance
+ * of the <code>javax.xml.soap.Detail</code>.
+ * <p>
+ * The <code>faultstring</code> provides a human-readable
+ * description of the SOAP fault. The <code>faultcode</code>
+ * element provides an algorithmic mapping of the SOAP fault.
+ * <p>
+ * Refer to SOAP 1.1 and WSDL 1.1 specifications for more
+ * details of the SOAP faults.
+ *
+ * @version 1.0
  */
 public class SOAPFaultException extends RuntimeException {
 
     /**
      *  Constructor for SOAPFaultException
      *  <p>
-     *  @param  faultcode    Qualified name of the faultcode
-     *  @param  faultstring  The faultstring element of the SOAP fault
-     *  @param  faultactor   faultactor element of the SOAP fault
-     *  @param  detail       detail element of the SOAP fault
+     *  @param  faultcode    <code>QName</code> for the SOAP faultcode
+     *  @param  faultstring  <code>faultstring</code> element of SOAP fault
+     *  @param  faultactor   <code>faultactor</code> element of SOAP fault
+     *  @param  detail       <code>faultdetail</code> element of SOAP fault
      */
     public SOAPFaultException(QName faultcode, String faultstring, String faultactor,
                      Detail detail) {
@@ -85,32 +97,37 @@ public class SOAPFaultException extends RuntimeException {
     }
 
     /**
-     *  Gets the faultcode element.
-     *  @return  Qualified name of the faultcode element
+     * Gets the <code>faultcode</code> element. The <code>faultcode</code> element provides an algorithmic
+     * mechanism for identifying the fault. SOAP defines a small set of SOAP fault codes covering
+     * basic SOAP faults.
+     * @return  QName of the faultcode element
      */
     public QName getFaultCode() {
         return faultcode;
     }
 
     /**
-     *  Gets the faultstring element.
-     *  @return  faultstring element of the SOAP fault
+     * Gets the <code>faultstring</code> element. The faultstring  provides a human-readable description of
+     * the SOAP fault and is not intended for algorithmic processing.
+     * @return <code>faultstring</code> element of the SOAP fault
      */
     public String getFaultString() {
         return faultstring;
     }
 
     /**
-     *  Gets the faultactor element.
-     *  @return faultactor element of the SOAP fault
+     * Gets the <code>faultactor</code> element. The <code>faultactor</code> element provides information
+     * about which SOAP node on the SOAP message path caused the fault to happen. It indicates the source of the fault.
+     * @return <code>faultactor</code> element of the SOAP fault
      */
     public String getFaultActor() {
         return faultactor;
     }
 
     /**
-     *  Gets the detail element.
-     *  @return  detail element of the SOAP fault
+     * Gets the detail element. The detail element is intended for carrying application specific error
+     * information related to the SOAP Body.
+     * @return <code>detail</code> element of the SOAP fault
      */
     public Detail getDetail() {
         return detail;

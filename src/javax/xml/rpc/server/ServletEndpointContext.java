@@ -54,75 +54,100 @@
  */
 package javax.xml.rpc.server;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
+import javax.xml.rpc.handler.MessageContext;
 import java.security.Principal;
 
-import javax.servlet.http.HttpSession;
-
-import javax.servlet.ServletContext;
-
-import javax.xml.rpc.handler.MessageContext;
-
 /**
- * The ServletEndpointContext provides an endpoint context maintained by the
- * underlying servlet container based JAX-RPC runtime system. For service
- * endpoints deployed on a servlet container based JAX-RPC runtime system, the
- * context parameter in the ServiceLifecycle.init method is required to be of
- * the Java type <code>javax.xml.rpc.server.ServletEndpointContext</code>. 
+ * The <code>ServletEndpointContext</code> provides an endpoint
+ * context maintained by the underlying servlet container based
+ * JAX-RPC runtime system. For service endpoints deployed on a
+ * servlet container based JAX-RPC runtime system, the context
+ * parameter in the <code>ServiceLifecycle.init</code> method is
+ * required to be of the Java type
+ * <code>javax.xml.rpc.server.ServletEndpointContext</code>.
  * <p>
- * A servlet container based JAX-RPC runtime system implements the
- * <code>ServletEndpointContext</code> interface. The JAX-RPC runtime system is
- * required to provide appropriate session, message context, servlet context and
- * user principal information per method invocation on the endpoint class.
+ * A servlet container based JAX-RPC runtime system implements
+ * the <code>ServletEndpointContext</code> interface. The JAX-RPC
+ * runtime system is required to provide appropriate session,
+ * message context, servlet context and user principal information
+ * per method invocation on the endpoint class.
+ *
+ * @version 1.0
  */
 
 public interface ServletEndpointContext {
 
     /**
-     * The method getMessageContext returns the MessageContext targeted for this
-     * endpoint object. This enables the endpoint object to acccess the
-     * MessageContext propagated by request HandlerChain (and its contained
-     * Handler instances) to the target endpoint object and to share any SOAP
-     * message processing related context.  The endpoint object can access and
-     * manipulate the MessageContext and share the SOAP message processing
-     * related context with the response HandlerChain.
+     * The method <code>getMessageContext</code> returns the
+     * <code>MessageContext</code> targeted for this endpoint instance.
+     * This enables the service endpoint instance to acccess the
+     * <code>MessageContext</code> propagated by request
+     * <code>HandlerChain</code> (and its contained <code>Handler</code>
+     * instances) to the target endpoint instance and to share any
+     * SOAP message processing related context. The endpoint instance
+     * can access and manipulate the <code>MessageContext</code>
+     * and share the SOAP message processing related context with
+     * the response <code>HandlerChain</code>.
      *
-     * @throws java.lang.IllegalStateException - if this method is invoked
-     * outside a remote method implementation by an endpoint object.
+     * @return MessageContext; If there is no associated
+     *     <code>MessageContext</code>, this method returns
+     *     <code>null</code>.
+     * @throws java.lang.IllegalStateException if this method is invoked outside a
+     * remote method implementation by a service endpoint instance.
      */
     public MessageContext getMessageContext();
 
     /**
-     * Returns a <code>java.security.Principal</code> instance that contains the
-     * name of the authenticated user for the current method invocation on the
-     * endpoint object. This method returns null if there is no associated
-     * principal yet. The underlying JAX-RPC runtime system takes the
-     * responsibility of providing the appropriate authenticated principal for a
-     * remote method invocation on the service endpoint object.
+     * Returns a <code>java.security.Principal</code> instance that
+     * contains the name of the authenticated user for the current
+     * method invocation on the endpoint instance. This method returns
+     * <code>null</code> if there is no associated principal yet.
+     * The underlying JAX-RPC runtime system takes the responsibility
+     * of providing the appropriate authenticated principal for a
+     * remote method invocation on the service endpoint instance.
+     *
+     * @return A <code>java.security.Principal</code> for the
+     * authenticated principal associated with the current
+     * invocation on the servlet endpoint instance;
+     * Returns <code>null</code> if there no authenticated
+     * user associated with a method invocation.
      */
     public Principal getUserPrincipal();
 
     /**
-     * The getHttpSession method returns the current HTTP session (as a
-     * javax.servlet.http.HTTPSession). When invoked by the service endpoint
-     * within a remote method implementation, the getHttpSession returns the
-     * HTTP session associated currently with this method invocation. This
-     * method returns null if there is no HTTP session currently active and
-     * associated with this service endpoint.  An endpoint class should not rely
-     * on an active HTTP session being always there; the underlying JAX-RPC
-     * runtime system is responsible for managing whether or not there is an
-     * active HTTP session.
+     * The <code>getHttpSession</code> method returns the current
+     * HTTP session (as a <code>javax.servlet.http.HTTPSession</code>).
+     * When invoked by the service endpoint within a remote method
+     * implementation, the <code>getHttpSession</code> returns the
+     * HTTP session associated currently with this method invocation.
+     * This method returns <code>null</code> if there is no HTTP
+     * session currently active and associated with this service
+     * endpoint. An endpoint class should not rely on an active
+     * HTTP session being always there; the underlying JAX-RPC
+     * runtime system is responsible for managing whether or not
+     * there is an active HTTP session.
+     * <p>
+     * The getHttpSession method throws <code>JAXRPCException</code>
+     * if invoked by an non HTTP bound endpoint.
      *
+     * @return The HTTP session associated with the current
+     * invocation or <code>null</code> if there is no active session.
      * @throws JAXRPCException - If this method invoked by a non-HTTP bound
      *         endpoints.
      */
     public HttpSession getHttpSession();
 
     /**
-     * The method getServletContext returns the ServletContext associated with
-     * the web application that contain this endpoint. According to the Servlet
-     * specification.  There is one context per web application (installed as a
-     * WAR) per JVM . A servlet based service endpoint is deployed as part of a
-     * web application.
+     * The method <code>getServletContext</code> returns the
+     * <code>ServletContex</code>t associated with the web
+     * application that contain this endpoint. According to
+     * the Servlet specification, There is one context per web
+     * application (installed as a WAR) per JVM . A servlet
+     * based service endpoint is deployed as part of a web
+     * application.
+     * @return <code>ServletContext</code>
      */
     public ServletContext getServletContext();
 }

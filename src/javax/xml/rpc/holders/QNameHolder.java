@@ -59,7 +59,7 @@ import javax.xml.namespace.QName;
 /**
  * Class QNameHolder
  *
- * @version 0.7
+ * @version 1.0
  */
 public final class QNameHolder implements Holder {
 

@@ -58,20 +58,26 @@ package javax.xml.rpc.handler;
 import java.util.Iterator;
 
 /**
- * The interface MessageContext abstracts the message context that
- * is processed by a handler in the <code>handle</code> method.
+ * The interface <code>MessageContext</code> abstracts the message
+ * context that is processed by a handler in the <code>handle</code>
+ * method.
  *
- * <p>The MessageContext interface provides methods to manage a
- * property set. MessageContext properties enable handlers in an
- * handler chain to share processing related state.
+ * <p>The <code>MessageContext</code> interface provides methods to
+ * manage a property set. <code>MessageContext</code> properties
+ * enable handlers in a handler chain to share processing related
+ * state.
+ *
+ * @version 1.0
  */
 public interface MessageContext {
 
     /**
      * Sets the name and value of a property associated with the
-     * MessageContext. If the MessageContext contains a value of
-     * the same property, the old value is replaced.
-     * @param  name Name of the property associated with the MessageContext
+     * <code>MessageContext</code>. If the <code>MessageContext</code>
+     * contains a value of the same property, the old value is replaced.
+     *
+     * @param  name ame of the property associated with the
+     *         <code>MessageContext</code>
      * @param  value Value of the property
      * @throws java.lang.IllegalArgumentException If some aspect
      *         the property is prevents it from being stored
@@ -82,34 +88,36 @@ public interface MessageContext {
     public abstract void setProperty(String name, Object value);
 
     /**
-     *  Gets the value of a specific property from the MessageContext
-     *  @param name Name of the property whose value is to be
-     *         retrieved
-     *  @return Value of the property
-     *  @throws java.lang.IllegalArgumentException if an illegal
+     * Gets the value of a specific property from the <code>MessageContext</code>
+     * @param name Name of the property whose value is to be
+     *        retrieved
+     * @return Value of the property
+     * @throws java.lang.IllegalArgumentException if an illegal
      *        property name is specified
      */
     public abstract Object getProperty(String name);
 
     /**
-     *  Removes a property (name-value pair) from the message context
-     *  @param  name Name of the property to be removed
-     *  @throws java.lang.IllegalArgumentException if an illegal
+     * Removes a property (name-value pair) from the <code>MessageContext</code>
+     * @param  name Name of the property to be removed
+     * @throws java.lang.IllegalArgumentException if an illegal
      *        property name is specified
      */
     public abstract void removeProperty(String nae);
 
     /**
-     *  Returns true if the MessageContext contains a property with the specified name.
-     *  @param   name Name of the property whose presense is to be tested
-     *  @return  Returns true if the MessageContext contains the
-          property; otherwise false
+     * Returns true if the <code>MessageContext</code> contains a property
+     * with the specified name.
+     * @param   name Name of the property whose presense is to be tested
+     * @return  Returns true if the MessageContext contains the
+     *     property; otherwise false
      */
     public abstract boolean containsProperty(String name);
 
     /**
-     *  Returns an Iterator view of the names of the properties in this MessageContext
-     *  @return Iterator for the property names
+     * Returns an Iterator view of the names of the properties
+     * in this <code>MessageContext</code>
+     * @return Iterator for the property names
      */
     public abstract Iterator getPropertyNames();
 }

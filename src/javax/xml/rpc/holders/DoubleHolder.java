@@ -57,7 +57,7 @@ package javax.xml.rpc.holders;
 /**
  * Class DoubleHolder
  *
- * @version 0.7
+ * @version 1.0
  */
 public final class DoubleHolder implements Holder {
 

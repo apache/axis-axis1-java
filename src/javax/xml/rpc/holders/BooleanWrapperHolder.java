@@ -57,7 +57,7 @@ package javax.xml.rpc.holders;
 /**
  * Class BooleanWrapperHolder
  *
- * @version 0.7
+ * @version 1.0
  */
 public final class BooleanWrapperHolder implements Holder {
 

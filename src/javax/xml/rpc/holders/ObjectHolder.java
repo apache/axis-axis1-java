@@ -57,7 +57,7 @@ package javax.xml.rpc.holders;
 /**
  * Class ObjectHolder
  *
- * @version 0.7
+ * @version 1.0
  */
 public final class ObjectHolder implements Holder {
 

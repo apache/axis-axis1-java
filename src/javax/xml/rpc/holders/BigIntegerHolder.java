@@ -59,7 +59,7 @@ import java.math.BigInteger;
 /**
  * Class BigIntegerHolder
  *
- * @version 0.7
+ * @version 1.0
  */
 public final class BigIntegerHolder implements Holder {
 

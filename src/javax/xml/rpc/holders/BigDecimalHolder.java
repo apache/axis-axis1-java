@@ -59,7 +59,7 @@ import java.math.BigDecimal;
 /**
  * Class BigDecimalHolder
  *
- * @version 0.7
+ * @version 1.0
  */
 public final class BigDecimalHolder implements Holder {
 
