@@ -273,7 +273,8 @@ public class JavaBeanHelperWriter extends JavaClassWriter {
                     
                     // Some special handling for arrays
                     TypeEntry elemType = elem.getType();
-                    while (elemType.getRefType() != null) {
+                    while (elemType.getRefType() != null &&
+                           !(elem.getType().getDimensions().indexOf("[") > -1)) {
                         elemType = elemType.getRefType();
                     }
                     
