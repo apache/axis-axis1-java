@@ -74,6 +74,7 @@ import org.apache.axis.encoding.Hex;
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
 import org.apache.axis.encoding.Base64;
+import org.apache.axis.utils.JavaUtils;
 /**
  * Serializer for hexBinary.
  *
@@ -98,6 +99,8 @@ public class HexSerializer implements Serializer {
         throws IOException
     {
         context.startElement(name, attributes);
+        
+        value = JavaUtils.convert(value, javaType);
         if (javaType == Hex.class) {
             context.writeString(((Hex) value).toString());
         } else {

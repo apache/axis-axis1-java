@@ -1364,6 +1364,10 @@ public class Call implements javax.xml.rpc.Call {
             RPCParam p = new RPCParam(paramQName.getNamespaceURI(),
                                       paramQName.getLocalPart(),
                                       params[j++] );
+            // Attach the ParameterDescription to the RPCParam
+            // so that the serializer can use the (javaType, xmlType) 
+            // information.
+            p.setParamDesc(param);
             result.add( p );
         }
 

@@ -155,10 +155,22 @@ public class RPCParam
     public void serialize(SerializationContext context)
         throws IOException
     {
-        if (value != null) {
-            context.serialize(qname, null, value, value.getClass());
-        } else {
-            context.serialize(qname, null, value, null);
+        // Set the javaType to value's class unless 
+        // parameter description information exists.
+        // Set the xmlType using the parameter description
+        // information.  (an xmlType=null causes the
+        // serialize method to search for a compatible xmlType)
+        Class javaType = value == null ? null: value.getClass();
+        QName xmlType = null;
+        if (paramDesc != null) {
+            javaType = paramDesc.getJavaType() != null ? 
+                paramDesc.getJavaType(): javaType;
+            xmlType = paramDesc.getTypeQName();
         }
+        context.serialize(qname,  // element qname
+                          null,   // no extra attrs
+                          value,  // value
+                          javaType, xmlType, // java/xml type
+                          true, true); 
     }
 }
