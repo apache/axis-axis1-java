@@ -218,7 +218,6 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
         addSerializer(java.math.BigDecimal.class, XSD_DECIMAL, se);
         
         addDeserializersFor(XSD_STRING, java.lang.String.class, factory);    
-        addDeserializersFor(XSD_BOOLEAN, java.lang.Boolean.class, factory);
         addDeserializersFor(XSD_DOUBLE, java.lang.Double.class, factory);
         addDeserializersFor(XSD_FLOAT, java.lang.Float.class, factory);
         addDeserializersFor(XSD_INT, java.lang.Integer.class, factory);
@@ -227,6 +226,7 @@ public class SOAPTypeMappingRegistry extends TypeMappingRegistry {
         addDeserializersFor(XSD_BYTE, java.lang.Byte.class, factory);
         addDeserializersFor(XSD_DECIMAL, java.math.BigDecimal.class, factory);
         
+        addDeserializersFor(XSD_BOOLEAN, java.lang.Boolean.class, new BooleanDeserializerFactory());
         addDeserializersFor(XSD_BASE64, byte[].class, new Base64Serializer.Base64DeserializerFactory());
 
         // handle the various datetime QNames...
