@@ -324,14 +324,14 @@
     -->
 
     <!-- Verify files generated based on what is referenced in WSDL -->
-    <wsdl2java url="test/filegen/FileGen.wsdl"
+    <wsdl2java url="test/wsdl/filegen/FileGen.wsdl"
                output="build/work"
                deployscope="none"
                skeleton="no"
                noimports="no"
                verbose="no"
                testcase="no">
-        <mapping namespace="http://test.com/reference" package="test.filegen"/>
+        <mapping namespace="http://test.com/reference" package="test.wsdl.filegen"/>
     </wsdl2java>
     
     <!-- Check to make sure we map XML names that are illegal Java correctly -->

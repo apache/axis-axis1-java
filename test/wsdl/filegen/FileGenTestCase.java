@@ -58,7 +58,7 @@
  * 
  * @author Tom Jordahl (tomj@macromedia.com)
  */ 
-package test.filegen;
+package test.wsdl.filegen;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -93,7 +93,7 @@ public class FileGenTestCase extends junit.framework.TestCase {
 
     public void testFileGen() throws IOException {
         String rootDir = "build"+ File.separator + "work" + File.separator + 
-                "test" + File.separator + "filegen";
+                "test" + File.separator + "wsdl" + File.separator + "filegen";
         // open up the output directory and check what files exist.
         File outputDir = new File(rootDir);
         
