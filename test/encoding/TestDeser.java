@@ -2,6 +2,7 @@ package test.encoding;
 
 import org.apache.axis.Constants;
 import org.apache.axis.Message;
+import org.apache.axis.MessageContext;
 import org.apache.axis.message.*;
 import org.apache.axis.encoding.*;
 import org.apache.axis.utils.QName;
@@ -46,6 +47,7 @@ public class TestDeser extends TestCase {
 
     private void deserialize(String data, Object expected) {
        Message message = new Message(header + data + footer, "String");
+       message.setMessageContext(new MessageContext());
 
        SOAPEnvelope envelope = (SOAPEnvelope)message.getAs("SOAPEnvelope");
        assertNotNull("envelope", envelope);
