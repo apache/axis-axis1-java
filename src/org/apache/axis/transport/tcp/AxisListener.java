@@ -211,7 +211,9 @@ public class AxisListener implements Runnable {
                     // peacefully die
                     socket.getOutputStream().write(new String("\n").getBytes());
                     socket.close();
-                    srvSocket.close();
+                    // The following appears to deadlock.  It will get cleaned
+                    // up on exit anyway...
+                    // srvSocket.close();
                     System.err.println("AxisListener quitting.");
                     System.exit(0);
                 }
