@@ -30,15 +30,15 @@ public class Wrapped_HoldersTestCase extends junit.framework.TestCase {
         assertTrue("binding is null", binding != null);
 
         // expected results
-        test.wsdl.wrapped_holders.AThing[] things = new test.wsdl.wrapped_holders.AThing[2];
-        things[0] = new AThing("Thing one");
-        things[1] = new AThing("Thing two");
-        test.wsdl.wrapped_holders.OtherData[] others = new test.wsdl.wrapped_holders.OtherData[2];
-        others[0] = new OtherData("Other 1");
-        others[1] = new OtherData("Other 2");
+        String[] things = new String[2];
+        things[0] = new String("Thing one");
+        things[1] = new String("Thing two");
+        String[] others = new String[2];
+        others[0] = new String("Other 1");
+        others[1] = new String("Other 2");
         
         // input arguments
-        AThing AthingInput = new AThing("This is a test");
+        String AthingInput = new String("This is a test");
         test.wsdl.wrapped_holders.holders.AThingArrayHolder AThingsOut = new test.wsdl.wrapped_holders.holders.AThingArrayHolder();
         test.wsdl.wrapped_holders.holders.OtherDataArrayHolder OtherDataOut = new test.wsdl.wrapped_holders.holders.OtherDataArrayHolder();
 
