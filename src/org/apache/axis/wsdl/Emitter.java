@@ -2142,4 +2142,7 @@ public class Emitter {
         setPackageName(sb.toString());
     }
 
+    protected boolean isPrimitiveType(String type) {
+        return TYPES.get(type) != null;
+    }
 }
