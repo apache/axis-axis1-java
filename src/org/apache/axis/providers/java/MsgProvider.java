@@ -57,13 +57,16 @@ package org.apache.axis.providers.java;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.MessageContext;
+import org.apache.axis.handlers.soap.SOAPService;
 import org.apache.axis.description.OperationDesc;
+import org.apache.axis.description.ServiceDesc;
 import org.apache.axis.i18n.Messages;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.message.SOAPEnvelope;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import javax.xml.namespace.QName;
 import java.lang.reflect.Method;
 import java.util.Vector;
 
@@ -104,6 +107,15 @@ public class MsgProvider extends JavaProvider {
         throws Exception
     {
         OperationDesc operation = msgContext.getOperation();
+        SOAPService service = msgContext.getService();
+        ServiceDesc serviceDesc = service.getServiceDescription();
+        
+        if (operation == null) {
+            QName qname = new QName(reqEnv.getBody().getNamespaceURI(),
+                    reqEnv.getBody().getLocalName());
+            operation = serviceDesc.getOperationByElementQName(qname);
+        }
+
         if (operation == null) {
             throw new AxisFault(Messages.getMessage("noOperationForQName",
                                                     reqEnv.getFirstBody().
