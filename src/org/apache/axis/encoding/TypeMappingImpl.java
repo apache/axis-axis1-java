@@ -118,7 +118,7 @@ public class TypeMappingImpl implements TypeMapping
                     p.javaType.equals(this.javaType));
         }
         public int hashCode() {
-            return javaType.hashCode() + xmlType.hashCode();
+            return javaType.hashCode() ^ xmlType.hashCode();
         }
     }
 
