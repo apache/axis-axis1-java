@@ -328,6 +328,7 @@ Copyright:
       <exclude name="test/lib/*.java"/>
       <exclude name="test/inout/*.java" />
       <exclude name="test/wsdl/*/*.java" />
+      <exclude name="test/wsdl/interop3/groupE/**/*.java" />
       <exclude name="test/wsdl/interop3/**/*.java" />
       <exclude name="test/wsdl/Wsdl2javaTestSuite.java" unless="servlet.present"/>
       <exclude name="test/md5attach/*.java" unless="attachments.present"/>
@@ -516,25 +517,10 @@ Copyright:
   </target>
 
   <!-- =================================================================== -->
-  <!-- Interop 3                                                           -->
-  <!-- =================================================================== -->
-  <target name="interop3" depends="buildTest">
-    <ant dir="test/wsdl/interop3/import1"/>
-    <ant dir="test/wsdl/interop3/import2"/>
-    <ant dir="test/wsdl/interop3/import3"/>
-    <ant dir="test/wsdl/interop3/compound1"/>
-    <ant dir="test/wsdl/interop3/compound2"/>
-    <ant dir="test/wsdl/interop3/docLit"/>
-    <ant dir="test/wsdl/interop3/docLitParam"/>
-    <ant dir="test/wsdl/interop3/rpcEnc"/>
-  </target>
-
-  <!-- =================================================================== -->
   <!-- Cleans everything                                                   -->
   <!-- =================================================================== -->
   <target name="clean">
     <delete dir="${build.dir}"/>
-    <delete dir="${test.dir}/build"/>
     <delete dir="${dist.dir}"/>
     <delete file="client-config.wsdd"/>
     <delete file="server-config.wsdd"/>
