@@ -63,7 +63,7 @@ import org.apache.axis.utils.JavaUtils;
 /**
  * Custom class for supporting primitive XSD data type nonNegativeInteger
  *
- * @author Chris Haddad <chaddad@cobia.net>
+ * @author Russell Butek <butek@us.ibm.com>
  * @see <a href="http://www.w3.org/TR/xmlschema-2/#nonNegativeInteger">XML Schema 3.3.22</a>
  */
 public class NonNegativeInteger extends BigInteger {
