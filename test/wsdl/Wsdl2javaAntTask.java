@@ -55,8 +55,7 @@ package test.wsdl;
 
 import org.apache.axis.utils.XMLUtils;
 
-import org.apache.axis.wsdl.toJava.Emitter;
-import org.apache.axis.wsdl.toJava.JavaWriterFactory;
+import org.apache.axis.wsdl.WSDL2Java;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -97,21 +96,19 @@ public class Wsdl2javaAntTask extends Task
             log("\tURL:" + url, Project.MSG_VERBOSE);
             
             // Instantiate the emitter
-            JavaWriterFactory writerFactory = new JavaWriterFactory();
-            Emitter emitter = new Emitter(writerFactory);
-            writerFactory.setEmitter(emitter);
+            WSDL2Java emitter = new WSDL2Java();
 
             if ("application".equalsIgnoreCase(deployScope)) {
-                emitter.setScope(Emitter.APPLICATION_SCOPE);
+                emitter.setScope(emitter.APPLICATION_SCOPE);
             }
             else if ("request".equalsIgnoreCase(deployScope)) {
-                emitter.setScope(Emitter.REQUEST_SCOPE);
+                emitter.setScope(emitter.REQUEST_SCOPE);
             }
             else if ("session".equalsIgnoreCase(deployScope)) {
-                emitter.setScope(Emitter.SESSION_SCOPE);
+                emitter.setScope(emitter.SESSION_SCOPE);
             }
             else if ("none".equalsIgnoreCase(deployScope)) {
-                emitter.setScope(Emitter.NO_EXPLICIT_SCOPE);
+                emitter.setScope(emitter.NO_EXPLICIT_SCOPE);
             }
             else {
                 log("Unrecognized scope:  " + deployScope + ".  Ignoring it.", Project.MSG_VERBOSE);
