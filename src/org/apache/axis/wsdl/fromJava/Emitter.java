@@ -1270,14 +1270,16 @@ public class Emitter {
             soapBody.setUse("literal");
         }
 
-        if (targetService == null) {
-            soapBody.setNamespaceURI(intfNS);
-        } else {
-            soapBody.setNamespaceURI(targetService);
-        }
-
-        if ((operQName != null) && !operQName.getNamespaceURI().equals("")) {
-            soapBody.setNamespaceURI(operQName.getNamespaceURI());
+        if (style == Style.RPC) {
+            if (targetService == null) {
+                soapBody.setNamespaceURI(intfNS);
+            } else {
+                soapBody.setNamespaceURI(targetService);
+            }
+    
+            if ((operQName != null) && !operQName.getNamespaceURI().equals("")) {
+                soapBody.setNamespaceURI(operQName.getNamespaceURI());
+            }
         }
 
         // The parts attribute will get set if we have headers.
