@@ -59,6 +59,7 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
 import org.apache.axis.attachments.AttachmentPart;
+import org.apache.axis.attachments.MimeMultipartDataSource;
 import org.apache.axis.attachments.PlainTextDataSource;
 import org.apache.axis.enum.Style;
 import org.apache.axis.description.OperationDesc;
@@ -77,6 +78,7 @@ import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 
 import javax.activation.DataHandler;
+import javax.mail.internet.MimeMultipart;
 import javax.xml.namespace.QName;
 import javax.xml.rpc.holders.Holder;
 import java.lang.reflect.Method;
@@ -331,6 +333,10 @@ public class RPCProvider extends JavaProvider
                     objRes = new DataHandler(new PlainTextDataSource(
                             "ret", (String) objRes));
                 }
+                else if (mimeType.startsWith("multipart/")) {
+                    objRes = new DataHandler(new MimeMultipartDataSource(
+                            "ret", (MimeMultipart) objRes));
+                }
             }
             RPCParam param = new RPCParam(returnQName, objRes);
             param.setParamDesc(operation.getReturnParamDesc());
@@ -351,6 +357,10 @@ public class RPCProvider extends JavaProvider
                     if (mimeType.equals("text/plain")) {
                         value = new DataHandler(
                                 new PlainTextDataSource("out", (String) value));
+                    }
+                    else if (mimeType.startsWith("multipart/")) {
+                        value = new DataHandler(new MimeMultipartDataSource(
+                                "out", (MimeMultipart) value));
                     }
                 }
                 param.setValue(value);
