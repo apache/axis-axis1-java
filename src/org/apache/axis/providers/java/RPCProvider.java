@@ -242,6 +242,7 @@ public class RPCProvider extends JavaProvider
                     returnQName = new QName("", methodName + "Return");
                 }
                 RPCParam param = new RPCParam(returnQName, objRes);
+                param.setParamDesc(operation.getReturnParamDesc());
                 resBody.addParam(param);
             }
 
