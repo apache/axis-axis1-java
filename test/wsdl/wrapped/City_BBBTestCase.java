@@ -7,14 +7,14 @@
 
 package test.wsdl.wrapped;
 
-public class CityBBBTestCase extends junit.framework.TestCase {
-    public CityBBBTestCase(String name) {
+public class City_BBBTestCase extends junit.framework.TestCase {
+    public City_BBBTestCase(String name) {
         super(name);
     }
     public void test1CityBBBPortGetAttraction() {
-        CityBBBBinding binding;
+        City_BBBBinding binding;
         try {
-            binding = new CityBBBLocator().getCityBBBPort();
+            binding = new City_BBBLocator().getCity_BBBPort();
         }
         catch (javax.xml.rpc.ServiceException jre) {
             throw new junit.framework.AssertionFailedError("JAX-RPC ServiceException caught: " + jre);
@@ -23,8 +23,8 @@ public class CityBBBTestCase extends junit.framework.TestCase {
 
         try {
             Attraction value = binding.getAttraction("Christmas");
-            assertEquals("OID value was wrong", value.getOID(),
-                         CityBBBBindingImpl.OID_STRING);
+            assertEquals("OID value was wrong", value.get_OID(),
+                         City_BBBBindingImpl.OID_STRING);
         }
         catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);

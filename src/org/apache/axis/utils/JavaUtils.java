@@ -668,7 +668,6 @@ public class JavaUtils
         return '-' == c
             || '.' == c
             || ':' == c
-            || '_' == c
             || '\u00B7' == c
             || '\u0387' == c
             || '\u06DD' == c
@@ -861,7 +860,6 @@ public class JavaUtils
     }
     public static class HolderException extends Exception
     {
-        private HolderException () {}
         public HolderException(String msg) { super(msg); }
     };
 

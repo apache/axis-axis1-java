@@ -52,7 +52,6 @@ import test.wsdl.types.comprehensive_types.ElemWComplex;
 import test.wsdl.types.comprehensive_types.holders.ElemWComplexHolder;
 import test.wsdl.types.comprehensive_types.EmptyComplexType;
 import test.wsdl.types.comprehensive_types.holders.EmptyComplexTypeHolder;
-import test.wsdl.types.comprehensive_types.EmptyFault;
 import test.wsdl.types.comprehensive_types.Enum;
 import test.wsdl.types.comprehensive_types.holders.EnumHolder;
 import test.wsdl.types.comprehensive_types.EnumByte;
@@ -62,7 +61,7 @@ import test.wsdl.types.comprehensive_types.EnumInt;
 import test.wsdl.types.comprehensive_types.EnumLong;
 import test.wsdl.types.comprehensive_types.EnumShort;
 import test.wsdl.types.comprehensive_types.EnumString;
-import test.wsdl.types.comprehensive_types.StockQuote;
+import test.wsdl.types.comprehensive_types.Stock_Quote;
 import test.wsdl.types.comprehensive_types.Simple;
 import test.wsdl.types.comprehensive_types.SimpleFwd;
 import test.wsdl.types.comprehensive_types.Time;
@@ -334,7 +333,7 @@ public class VerifyTestCase extends junit.framework.TestCase {
         } catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re );
         }
-        StockQuote stockQuote = new StockQuote();
+        Stock_Quote stockQuote = new Stock_Quote();
         Time time = new Time();
         time.setDST(false);
         stockQuote.setTime(time);
@@ -345,7 +344,7 @@ public class VerifyTestCase extends junit.framework.TestCase {
         stockQuote.setSymbol("AXS");
         stockQuote.setLast("5");
         ComplexWComplex complexWComplex = new ComplexWComplex();
-        complexWComplex.setStockQuote(stockQuote);
+        complexWComplex.setStock_Quote(stockQuote);
         complexWComplex.setOutside(22);
         try {
             binding.complexWComplexIn(complexWComplex);

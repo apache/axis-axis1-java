@@ -394,6 +394,8 @@ public class WSDDService
             service.setOption(AxisEngine.PROP_SEND_XSI, Boolean.FALSE);
         }
 
+        AxisEngine.normaliseOptions(service);
+
         initTMR();
         service.setTypeMappingRegistry(tmr);
         tmr.delegate(registry.getTypeMappingRegistry());

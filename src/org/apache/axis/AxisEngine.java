@@ -350,27 +350,32 @@ public abstract class AxisEngine extends BasicHandler
      * any ommitted boolean options to TRUE. Default the admin.
      * password.
      */
-    private void normaliseOptions() {
+    public static void normaliseOptions(Handler handler) {
         // Convert boolean options to Booleans so we don't need to use
         // string comparisons.  Default is "true".
 
         for (int i = 0; i < BOOLEAN_OPTIONS.length; i++) {
-            Object val = getOption(BOOLEAN_OPTIONS[i]);
+            Object val = handler.getOption(BOOLEAN_OPTIONS[i]);
             if (val != null) {
                 if (val instanceof Boolean)
                     continue;
                 if (JavaUtils.isFalse(val)) {
-                    setOption(BOOLEAN_OPTIONS[i], Boolean.FALSE);
+                    handler.setOption(BOOLEAN_OPTIONS[i], Boolean.FALSE);
                     continue;
                 }
             }
             // If it was null or not "false"...
-            setOption(BOOLEAN_OPTIONS[i], Boolean.TRUE);
+            handler.setOption(BOOLEAN_OPTIONS[i], Boolean.TRUE);
         }
 
         // Deal with admin password's default value.
-        if (!setOptionDefault(PROP_PASSWORD, DEFAULT_ADMIN_PASSWORD)) {
-            setAdminPassword((String)getOption(PROP_PASSWORD));
+        if (handler instanceof AxisEngine) {
+            AxisEngine engine = (AxisEngine)handler;
+            if (!engine.setOptionDefault(PROP_PASSWORD,
+                                         DEFAULT_ADMIN_PASSWORD)) {
+                engine.setAdminPassword(
+                        (String)engine.getOption(PROP_PASSWORD));
+            }
         }
     }
 
@@ -382,7 +387,7 @@ public abstract class AxisEngine extends BasicHandler
         if (globalOptions != null)
             setOptions(globalOptions);
 
-        normaliseOptions();
+        normaliseOptions(this);
     }
 
     /**

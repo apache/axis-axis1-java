@@ -6,7 +6,7 @@
  */
 
 package test.wsdl.nested;
-import test.wsdl.nested.holders.PEADDRESSHolder;
+import test.wsdl.nested.holders.PE_ADDRESSHolder;
 import test.wsdl.nested.holders.RETURNHolder;
 
 public class Nested2ServiceTestCase extends junit.framework.TestCase {
@@ -24,21 +24,21 @@ public class Nested2ServiceTestCase extends junit.framework.TestCase {
         assertTrue("binding is null", binding != null);
 
         try {
-            PEADDRESSHolder pEADDRESS = new PEADDRESSHolder();
+            PE_ADDRESSHolder pE_ADDRESS = new PE_ADDRESSHolder();
             RETURNHolder rETURN = new RETURNHolder();
             binding.nestedSvc2(new java.lang.String("0000001000"),
                                new java.lang.String("01"),
                                new java.lang.String("00"),
                                new java.lang.String(""),
                                new java.lang.String("1000"),
-                               pEADDRESS,
+                               pE_ADDRESS,
                                rETURN);
-            PEADDRESS address = pEADDRESS.value;
+            PE_ADDRESS address = pE_ADDRESS.value;
             RETURN ret = rETURN.value;
             System.out.println("NAME:" + address.getNAME());
             assertTrue("NAME is wrong", address.getNAME().equals("Becker Berlin"));
-            System.out.println("LOGMSGNO:" + ret.getLOGMSGNO());
-            assertTrue("LOGMSGNO is wrong", ret.getLOGMSGNO().equals("123456"));
+            System.out.println("LOGMSGNO:" + ret.getLOG_MSG_NO());
+            assertTrue("LOGMSGNO is wrong", ret.getLOG_MSG_NO().equals("123456"));
         }
         catch (java.rmi.RemoteException re) {
             throw new junit.framework.AssertionFailedError("Remote Exception caught: " + re);
