@@ -2,8 +2,8 @@
 
 <definitions 
     name="name clash test"
-    targetNamespace="clash.wsdl.test"
-    xmlns:tns="clash.wsdl.test"
+    targetNamespace="urn:clash.wsdl.test"
+    xmlns:tns="urn:clash.wsdl.test"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
     xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
@@ -12,7 +12,7 @@
 
   <!-- type defs -->
   <types>
-    <xsd:schema targetNamespace="clash.wsdl.test"
+    <xsd:schema targetNamespace="urn:clash.wsdl.test"
                 xmlns:xsd="http://www.w3.org/2001/XMLSchema">
       <xsd:complexType name="sharedName">
         <xsd:all>
