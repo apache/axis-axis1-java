@@ -120,6 +120,34 @@ public class SimpleTargetedChain extends BasicHandler implements TargetedChain
         Debug.Print( 1, "Exit: SimpleTargetedChain::invoke" );
     }
 
+    public void generateWSDL(MessageContext msgContext) throws AxisFault {
+        Debug.Print( 1, "Enter: SimpleTargetedChain::editWSDL" );
+        if ( requestHandler != null ) requestHandler.generateWSDL( msgContext );
+        try {
+            if ( pivotHandler != null ) pivotHandler.generateWSDL( msgContext );
+        }
+        catch( Exception e ) {
+            Debug.Print( 1, e );
+            if ( !(e instanceof AxisFault ) )
+                e = new AxisFault( e );
+            if ( requestHandler != null )
+                requestHandler.undo( msgContext );
+            throw (AxisFault) e ;
+        }
+        msgContext.setPastPivot(true);
+        try {
+            if ( responseHandler != null )
+                responseHandler.generateWSDL( msgContext );
+        }
+        catch( Exception e ) {
+            Debug.Print( 1, e );
+            if ( !(e instanceof AxisFault ) )
+                e = new AxisFault( e );
+            throw (AxisFault) e ;
+        }
+        Debug.Print( 1, "Exit: SimpleTargetedChain::editWSDL" );
+    }
+
     /**
      * Undo all of the work - in reverse order.
      */

@@ -67,6 +67,8 @@ import org.apache.axis.utils.* ;
 import org.apache.axis.session.Session;
 import org.apache.axis.session.SimpleSession;
 
+import org.w3c.dom.Document;
+
 /**
  * This is a single threaded implementation of an HTTP server for processing
  * SOAP requests via Apache's xml-axis.  This is not intended for production
@@ -210,19 +212,43 @@ public class SimpleAxisServer implements Runnable {
                         fileName, cookie, cookie2);
                     is.setContentLength(contentLength);
 
+                    msgContext.setProperty(Constants.MC_REALPATH,
+                                           fileName.toString());
+
+                    // !!! Fix string concatenation
+                    String url = "http://localhost:" +
+                            this.getServerSocket().getLocalPort() + "/" +
+                            fileName.toString();
+                    msgContext.setProperty(MessageContext.TRANS_URL, url);
+
                     // if get, then return simpleton document as response
                     if (httpRequest.toString().equals("GET")) {
+                        engine.generateWSDL(msgContext);
+
+                        Document doc = (Document)msgContext.getProperty("WSDL");
+
                         OutputStream out = socket.getOutputStream();
                         out.write(HTTP);
                         out.write(status);
                         out.write(MIME_STUFF);
-                        putInt(out, cannedResponse.length);
-                        out.write(SEPARATOR);
-                        out.write(cannedResponse);
+
+                        if (doc != null) {
+                            String response = XMLUtils.DocumentToString(doc);
+                            byte [] respBytes = response.getBytes();
+
+                            putInt(out, respBytes.length);
+                            out.write(SEPARATOR);
+                            out.write(respBytes);
+                        } else {
+                            putInt(out, cannedResponse.length);
+                            out.write(SEPARATOR);
+                            out.write(cannedResponse);
+                        }
+
                         out.flush();
                         continue;
                     }
-                        
+
                     // this may be "" if either SOAPAction: "" or if no SOAPAction at all.
                     // for now, do not complain if no SOAPAction at all
                     String soapActionString = soapAction.toString();
@@ -230,9 +256,7 @@ public class SimpleAxisServer implements Runnable {
                                            soapActionString);
                     requestMsg = new Message(is);
                     msgContext.setRequestMessage(requestMsg);
-                    msgContext.setProperty(Constants.MC_REALPATH,
-                                           fileName.toString());
-                    
+
                     // set up session, if any
                     if (doSessions) {
                         // did we get a cookie?
@@ -241,7 +265,7 @@ public class SimpleAxisServer implements Runnable {
                         } else if (cookie2.length() > 0) {
                             cooky = cookie2.toString().trim();
                         }
-                        
+
                         // if cooky is null, cook up a cooky
                         if (cooky == null) {
                             // fake one up!
@@ -250,7 +274,7 @@ public class SimpleAxisServer implements Runnable {
                             int i = sessionIndex++;
                             cooky = "" + i;
                         }
-                            
+
                         // is there a session already?
                         Session session = null;
                         if (sessions.containsKey(cooky)) {
@@ -258,11 +282,11 @@ public class SimpleAxisServer implements Runnable {
                         } else {
                             // no session for this cooky, bummer
                             session = new SimpleSession();
-                            
+
                             // ADD CLEANUP LOGIC HERE if needed
                             sessions.put(cooky, session);
                         }
-                        
+
                         msgContext.setSession(session);
                     }
 
@@ -294,7 +318,7 @@ public class SimpleAxisServer implements Runnable {
                 out.write(status);
                 out.write(MIME_STUFF);
                 putInt(out, response.length);
-                
+
                 if (doSessions) {
                     // write cookie headers, if any
                     // don't sweat efficiency *too* badly
@@ -307,11 +331,11 @@ public class SimpleAxisServer implements Runnable {
                     // OH, THE HUMANITY!  yes this is inefficient.
                     out.write(cookieOut.toString().getBytes());
                 }
-                
+
                 out.write(SEPARATOR);
                 out.write(response);
                 out.flush();
-            
+
                 if (msgContext.getProperty(msgContext.QUIT_REQUESTED) != null) {
                     // why then, quit!
                     this.stop();
@@ -338,7 +362,7 @@ public class SimpleAxisServer implements Runnable {
         for (int i = 0; i < 256; i++) {
             toLower[i] = (byte)i;
         }
-    
+
         for (int lc = 'a'; lc <= 'z'; lc++) {
             toLower[lc + 'A' - 'a']=(byte)lc;
         }
@@ -351,21 +375,21 @@ public class SimpleAxisServer implements Runnable {
     // mime header for soap action
     private static final byte actionHeader[] = "soapaction: ".getBytes();
     private static final int actionLen = actionHeader.length;
-    
+
     // mime header for cookie
     private static final byte cookieHeader[] = "cookie: ".getBytes();
     private static final int cookieLen = cookieHeader.length;
-    
+
     // mime header for cookie2
     private static final byte cookie2Header[] = "cookie2: ".getBytes();
     private static final int cookie2Len = cookie2Header.length;
-    
+
     // mime header for GET
     private static final byte getHeader[] = "GET".getBytes();
 
     // mime header for POST
     private static final byte postHeader[] = "POST".getBytes();
-    
+
     // header ender
     private static final byte headerEnder[] = ": ".getBytes();
 
@@ -427,7 +451,18 @@ public class SimpleAxisServer implements Runnable {
         
         if (buf[0] == getHeader[0]) {
             httpRequest.append("GET");
-            // return immediately, don't look for more headers
+            for (int i = 0; i < n - 5; i++) {
+                char c = (char)(buf[i + 5] & 0x7f);
+                if (c == ' ')
+                    break;
+                if (c == '?') {
+                    // !!! eventually process args, for now always assume
+                    // WSDL....
+                    break;
+                }
+                fileName.append(c);
+            }
+            Debug.Print(2, "SimpleAxisServer: req filename='" + fileName.toString() + "'");
             return 0;
         } else if (buf[0] == postHeader[0]) {
             httpRequest.append("POST");

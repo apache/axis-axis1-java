@@ -90,7 +90,11 @@ public class URLMapper extends BasicHandler
         Debug.Print( 1, "Exit : URLMapper::invoke" );
     }
 
-    public void undo(MessageContext msgContext) 
+    public void generateWSDL(MessageContext msgContext) throws AxisFault {
+        invoke(msgContext);
+    }
+
+    public void undo(MessageContext msgContext)
     {
         Debug.Print( 1, "Enter: URLMapper::undo" );
         Debug.Print( 1, "Exit: URLMapper::undo" );

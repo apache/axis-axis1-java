@@ -62,6 +62,7 @@ import java.util.ArrayList;
 import javax.wsdl.*;
 import javax.wsdl.factory.DefinitionFactory;
 import org.apache.axis.Constants;
+import org.apache.axis.MessageContext;
 import org.apache.axis.encoding.TypeMappingRegistry;
 import org.w3c.dom.*;
 import com.ibm.wsdl.extensions.soap.*;
@@ -74,17 +75,13 @@ import com.ibm.wsdl.extensions.soap.*;
  * @author Glen Daniels (gdaniels@macromedia.com)
  */
 public class WSDLUtils {
-    public static TypeMappingRegistry reg;
-    
-    public static void writeWSDLDoc(Class cls,
+    public static Document writeWSDLDoc(Class cls,
                                     String url, 
                                     String urn, 
                                     String description,
-                                    TypeMappingRegistry typeMap,
-                                    Writer writer) throws Exception
+                                    MessageContext msgContext) throws Exception
     {
-        reg = typeMap;
-        
+        TypeMappingRegistry reg = msgContext.getTypeMappingRegistry();
         String name = cls.getName();
         
         DefinitionFactory factory = DefinitionFactory.newInstance("com.ibm.wsdl.factory.DefinitionFactoryImpl");
@@ -117,13 +114,13 @@ public class WSDLUtils {
             
             Input input = def.createInput();
             
-            msg = getRequestMessage(def, methods[i]);
+            msg = getRequestMessage(def, methods[i], reg);
             input.setMessage(msg);
             oper.setInput(input);
             
             def.addMessage(msg);
             
-            msg = getResponseMessage(def, methods[i]);
+            msg = getResponseMessage(def, methods[i], reg);
             Output output = def.createOutput();
             output.setMessage(msg);
             oper.setOutput(output);
@@ -181,11 +178,13 @@ public class WSDLUtils {
         port.addExtensibilityElement(addr);
         
         service.addPort(port);
-        
-        com.ibm.wsdl.xml.WSDLWriter.writeWSDL(def, writer);
+
+        return com.ibm.wsdl.xml.WSDLWriter.getDocument(def);
     }
 
-    public static Message getRequestMessage(Definition def, Method method)
+    public static Message getRequestMessage(Definition def,
+                                            Method method,
+                                            TypeMappingRegistry reg)
     {
         Message msg = def.createMessage();
         
@@ -196,13 +195,15 @@ public class WSDLUtils {
         
         Class[] parameters = method.getParameterTypes();
         for(int i = 0, j = parameters.length; i < j; i++) {
-            addPartToMessage(def, msg, "arg" + i, parameters[i]);
+            addPartToMessage(def, msg, "arg" + i, parameters[i], reg);
         }
         
         return msg;
     }
     
-    public static Message getResponseMessage(Definition def, Method method)
+    public static Message getResponseMessage(Definition def,
+                                             Method method,
+                                             TypeMappingRegistry reg)
     {
         Message msg = def.createMessage();
         
@@ -212,14 +213,18 @@ public class WSDLUtils {
         msg.setUndefined(false);
         
         Class type = method.getReturnType();
-        addPartToMessage(def, msg, "result", type);
+        addPartToMessage(def, msg, "result", type, reg);
         
         return msg;
     }
     
     public static int n = 1;
-    
-    public static void addPartToMessage(Definition def, Message msg, String name, Class param)
+
+    public static void addPartToMessage(Definition def,
+                                        Message msg,
+                                        String name,
+                                        Class param,
+                                        TypeMappingRegistry reg)
     {
         Part part = def.createPart();
         org.apache.axis.utils.QName qName = reg.getTypeQName(param);
@@ -227,13 +232,13 @@ public class WSDLUtils {
         if (pref == null) {
             def.addNamespace("ns" + n++, qName.getNamespaceURI());
         }
-        
+
         javax.wsdl.QName typeQName = new javax.wsdl.QName(qName.getNamespaceURI(),
                                                           qName.getLocalPart());
-        
+
         part.setTypeName(typeQName);
         part.setName(name);
-        
+
         msg.addPart(part);
     }
 }

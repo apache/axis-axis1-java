@@ -164,4 +164,8 @@ public abstract class BasicHandler implements Handler {
         Debug.Print( 1, "Exit: BasicHandler::getDeploymentData" );
         return( root );
     }
+
+    public void generateWSDL(MessageContext msgContext) throws AxisFault
+    {
+    }
 }
