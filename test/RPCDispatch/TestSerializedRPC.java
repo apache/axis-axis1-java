@@ -144,6 +144,24 @@ public class TestSerializedRPC extends TestCase {
         assertEquals(expected, rpc("reverseData", arg, true));
     }
     
+    /**
+     * Test a method that reverses a data structure
+     */
+    public void testReverseDataWithUntypedParam() throws Exception {
+        BeanSerializer ser = new BeanSerializer(Data.class);
+        DeserializerFactory dSerFactory = BeanSerializer.getFactory();
+        QName qName = new QName("urn:foo", "Data");
+        engine.registerTypeMapping(qName, Data.class, dSerFactory,
+                                   ser);
+        
+        // invoke the service and verify the result
+        String arg = "<arg0 xmlns:foo=\"urn:foo\">";
+        arg += "<field1>5</field1><field2>abc</field2><field3>3</field3>";
+        arg += "</arg0>";
+        Data expected = new Data(3, "cba", 5);
+        assertEquals(expected, rpc("reverseData", arg, true));
+    }
+    
     public static void main(String args[]) {
       try {
         TestSerializedRPC tester = new TestSerializedRPC("Test Serialized RPC");

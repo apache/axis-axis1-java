@@ -45,6 +45,11 @@ public class RPCHandler extends SOAPHandler
             AxisClassLoader cl     = msgContext.getClassLoader();
             JavaClass       jc     = cl.lookup(clsName);
             Class           cls    = jc.getJavaClass();
+            
+            if (DEBUG_LOG) {
+                System.err.println("Looking up method '" + methodName +
+                                   "' in class " + clsName);
+            }
 
             // try to find the method without knowing the number of
             // parameters.  If we are successful, we can make better
@@ -86,7 +91,7 @@ public class RPCHandler extends SOAPHandler
         
         Vector params = call.getParams();
         if (serviceDesc == null && params.isEmpty()) {
-            determineDefaultParams(localName, context);
+            determineDefaultParams(call.getMethodName(), context);
         }
         
         // This is a param.
@@ -107,15 +112,25 @@ public class RPCHandler extends SOAPHandler
             if (serviceDesc != null) {
                 String msgType = context.getEnvelope().getMessageType();
                 type = serviceDesc.getParamTypeByName(msgType, localName);
+                if (DEBUG_LOG) {
+                    System.err.println("Type from service desc was " + type);
+                }
             }
             
             // and if we still don't know, check the introspected types
-            if (type==null && defaultParamTypes!=null && 
-                params.size()<defaultParamTypes.length) {
+            //
+            // NOTE : We don't check params.isEmpty() here because we
+            //        must have added at least one above...
+            //
+            if (type==null && defaultParamTypes!=null &&
+                params.size()<=defaultParamTypes.length) {
                 TypeMappingRegistry typeMap = context.
                                                   getTypeMappingRegistry();
                 type = typeMap.getTypeQName(
-                                         defaultParamTypes[params.size()]);
+                                         defaultParamTypes[params.size()-1]);
+                if (DEBUG_LOG) {
+                    System.err.println("Type from default parms was " + type);
+                }
             }
         }
         
