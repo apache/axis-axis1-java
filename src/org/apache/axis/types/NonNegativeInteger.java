@@ -56,6 +56,7 @@ package org.apache.axis.types;
 
 import org.apache.axis.utils.Messages;
 
+import java.io.ObjectStreamException;
 import java.math.BigInteger;
 import java.util.Random;
 
@@ -108,5 +109,23 @@ public class NonNegativeInteger extends BigInteger {
                     + ":  " + this);
         }
     } // checkValidity
-
+    
+    /**
+     * Work-around for http://developer.java.sun.com/developer/bugParade/bugs/4378370.html
+     * @return BigIntegerRep
+     * @throws ObjectStreamException
+     */ 
+    public Object writeReplace() throws ObjectStreamException {
+        return new BigIntegerRep(toByteArray());
+    }
+    
+    protected static class BigIntegerRep implements java.io.Serializable {
+        private byte[] array;
+        protected BigIntegerRep(byte[] array) {
+            this.array = array;
+        }
+        protected Object readResolve() throws java.io.ObjectStreamException {
+            return new NonNegativeInteger(array);
+        }
+    }
 } // class NonNegativeInteger
