@@ -20,4 +20,4 @@ java samples.stock.GetQuote -uuser3 -wpass3 XXX %*
 java samples.stock.GetQuote -d -uuser1 -wpass1 XXX %*
 
 @echo Now undeploy everything
-java org.apache.axis.client.AdminClient undeploy.xml %*
+java org.apache.axis.client.AdminClient undeploy.wsdd %*

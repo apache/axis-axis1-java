@@ -18,4 +18,4 @@ echo "This should work but print debug info on the client and server"
 java samples.stock.GetQuote -d -uuser1 -wpass1 XXX $*
 
 # Now undeploy everything
-java org.apache.axis.client.AdminClient undeploy.xml $*
+java org.apache.axis.client.AdminClient undeploy.wsdd $*
