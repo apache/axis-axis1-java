@@ -321,6 +321,5 @@ Copyright:
     <delete dir="${dist.dir}"/>
     <delete file="client-config.xml"/>
     <delete file="server-config.xml"/>
-    <delete file="typemap-supp.reg"/>
   </target>
 </project>
