@@ -331,6 +331,8 @@ public class Message {
     
     // ThreadedSAXAdapter parser = 
     //    new ThreadedSAXAdapter(new org.apache.xerces.parsers.SAXParser(), is);
+    if (msgContext == null)
+        msgContext = new MessageContext();
     SAXAdapter parser = 
         new SAXAdapter(new org.apache.xerces.parsers.SAXParser(), is, 
                        msgContext);
