@@ -14,7 +14,7 @@ public class AttachmentsBindingImpl implements test.wsdl.interop4.groupG.mime.rp
         return in;
     }
 
-    public OctetStream echoAttachments(OctetStream in) throws java.rmi.RemoteException {
+    public OctetStream[] echoAttachments(OctetStream in[]) throws java.rmi.RemoteException {
         return in;
     }
 

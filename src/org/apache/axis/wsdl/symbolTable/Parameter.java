@@ -74,7 +74,7 @@ public class Parameter {
     private String name;
 
     // The MIME type of this parameter, null if it isn't a MIME type.
-    private String mimeType = null;
+    private MimeInfo mimeInfo = null;
     
     private TypeEntry type;
     private byte mode = IN;
@@ -86,7 +86,7 @@ public class Parameter {
 
     public String toString() {
         return "(" + type
-                + (mimeType == null ? "" : "(" + mimeType + ")")
+                + (mimeInfo == null ? "" : "(" + mimeInfo + ")")
                 + ", " + getName() + ", "
                 + (mode == IN ? "IN)" : mode == INOUT ? "INOUT)" : "OUT)"
                 + (inHeader ? "(IN soap:header)" : "")
@@ -131,15 +131,15 @@ public class Parameter {
     /**
      * Get the MIME type of the parameter.
      */
-    public String getMIMEType() {
-        return mimeType;
+    public MimeInfo getMIMEInfo() {
+        return mimeInfo;
     } // getMIMEType
 
     /**
      * Set the MIME type of the parameter.
      */
-    public void setMIMEType(String mimeType) {
-        this.mimeType = mimeType;
+    public void setMIMEInfo(MimeInfo mimeInfo) {
+        this.mimeInfo = mimeInfo;
     } // setMIMEType
 
     /**

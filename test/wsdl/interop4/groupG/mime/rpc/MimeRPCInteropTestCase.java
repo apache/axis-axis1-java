@@ -60,11 +60,10 @@ public class MimeRPCInteropTestCase extends junit.framework.TestCase {
         
         // Test operation
         OctetStream[] output = null;
-        // TODO: Fix this echoAttachments sig is wrong.
-        //output = binding.echoAttachments(input);
+        output = binding.echoAttachments(input);
         // TBD - validate results
-        //assertTrue(Arrays.equals(input[0].getBytes(), output[0].getBytes()));
-        //assertTrue(Arrays.equals(input[1].getBytes(), output[1].getBytes()));
+        assertTrue(Arrays.equals(input[0].getBytes(), output[0].getBytes()));
+        assertTrue(Arrays.equals(input[1].getBytes(), output[1].getBytes()));
     }
 
     public void test3MimeRPCSoapPortEchoAttachmentAsBase64() throws Exception {

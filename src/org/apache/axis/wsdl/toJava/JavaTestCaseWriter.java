@@ -196,7 +196,7 @@ public class JavaTestCaseWriter extends JavaClassWriter {
                 pw.print(Utils.getParameterTypeName(params.returnParam));
                 pw.print(" value = ");
 
-                if (params.returnParam.getMIMEType() == null &&
+                if (params.returnParam.getMIMEInfo() == null &&
                         Utils.isPrimitiveType(returnType)) {
                     if ("boolean".equals(returnType.getName())) {
                         pw.println("false;");
@@ -229,13 +229,11 @@ public class JavaTestCaseWriter extends JavaClassWriter {
                 }
 
                 Parameter param = (Parameter) iparam.next();
-                String paramType = param.getType().getName();
-                String mimeType = param.getMIMEType();
                 String suffix = "";
 
                 // if we have an out or in/out, we are passing in a holder
                 if (param.getMode() != Parameter.IN) {
-                    pw.print("new " + Utils.holder(mimeType, param.getType(), emitter)
+                    pw.print("new " + Utils.holder(param.getMIMEInfo(), param.getType(), emitter)
                             + "(");
                     suffix = ")";
                 }

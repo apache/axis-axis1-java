@@ -7,7 +7,10 @@
 
 package test.wsdl.interop4.groupG.dime.rpc;
 
+import org.apache.axis.attachments.OctetStream;
+
 import java.net.URL;
+import java.util.Arrays;
 
 public class DimeRPCInteropTestCase extends junit.framework.TestCase {
     public DimeRPCInteropTestCase(java.lang.String name) {
@@ -32,10 +35,11 @@ public class DimeRPCInteropTestCase extends junit.framework.TestCase {
         assertTrue("binding is null", binding != null);
 
         // Test operation
-        org.apache.axis.attachments.OctetStream input = new org.apache.axis.attachments.OctetStream("EchoAttachment".getBytes());
-        org.apache.axis.attachments.OctetStream output = null;
+        OctetStream input = new OctetStream("EchoAttachment".getBytes());
+        OctetStream output = null;
         output = binding.echoAttachment(input);
         // TBD - validate results
+        assertTrue(Arrays.equals(input.getBytes(), output.getBytes()));
     }
 
     public void test2DimeRPCSoapPortEchoAttachments() throws Exception {
@@ -50,13 +54,17 @@ public class DimeRPCInteropTestCase extends junit.framework.TestCase {
         }
         assertTrue("binding is null", binding != null);
 
+        OctetStream[] input = new OctetStream[2];
+
+        input[0] = new OctetStream("EchoAttachments0".getBytes());
+        input[1] = new OctetStream("EchoAttachments1".getBytes());
+        
         // Test operation
-        test.wsdl.interop4.groupG.dime.rpc.xsd.ReferencedBinary[] input = new test.wsdl.interop4.groupG.dime.rpc.xsd.ReferencedBinary[2];
-        input[0] = new test.wsdl.interop4.groupG.dime.rpc.xsd.ReferencedBinary("EchoAttachments0".getBytes());
-        input[1] = new test.wsdl.interop4.groupG.dime.rpc.xsd.ReferencedBinary("EchoAttachments1".getBytes());
-        test.wsdl.interop4.groupG.dime.rpc.xsd.ReferencedBinary[] output = null;
+        OctetStream[] output = null;
         output = binding.echoAttachments(input);
         // TBD - validate results
+        assertTrue(Arrays.equals(input[0].getBytes(), output[0].getBytes()));
+        assertTrue(Arrays.equals(input[1].getBytes(), output[1].getBytes()));
     }
 
     public void test3DimeRPCSoapPortEchoAttachmentAsBase64() throws Exception {
@@ -71,11 +79,12 @@ public class DimeRPCInteropTestCase extends junit.framework.TestCase {
         }
         assertTrue("binding is null", binding != null);
 
-        org.apache.axis.attachments.OctetStream input = new org.apache.axis.attachments.OctetStream("EchoAttachmentAsBase64".getBytes());
+        OctetStream input = new OctetStream("EchoAttachmentAsBase64".getBytes()); 
         // Test operation
-        byte[] value = null;
-        value = binding.echoAttachmentAsBase64(input);
+        byte[] output = null;
+        output = binding.echoAttachmentAsBase64(input);
         // TBD - validate results
+        assertTrue(Arrays.equals(input.getBytes(), output));
     }
 
     public void test4DimeRPCSoapPortEchoBase64AsAttachment() throws Exception {
@@ -90,11 +99,12 @@ public class DimeRPCInteropTestCase extends junit.framework.TestCase {
         }
         assertTrue("binding is null", binding != null);
 
-        byte[] input = "EchoBase64AsAttachment".getBytes();
+        byte[] input = "EchoBase64AsAttachment".getBytes(); 
         // Test operation
-        org.apache.axis.attachments.OctetStream output = null;
+        OctetStream output = null;
         output = binding.echoBase64AsAttachment(input);
         // TBD - validate results
+        assertTrue(Arrays.equals(input, output.getBytes()));
     }
 
     public void test5DimeRPCSoapPortEchoUnrefAttachments() throws Exception {
@@ -132,6 +142,7 @@ public class DimeRPCInteropTestCase extends junit.framework.TestCase {
         java.lang.String output = null;
         output = binding.echoAttachmentAsString(input);
         // TBD - validate results
+        assertEquals(input, output);
     }
 
     public static URL url = null;

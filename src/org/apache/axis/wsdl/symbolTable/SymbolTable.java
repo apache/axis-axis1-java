@@ -1377,8 +1377,8 @@ public class SymbolTable {
                                                  new String[] {partName,
                                                                opName}));
                 }
-                setMIMEType(param, bindingEntry == null ? null :
-                        bindingEntry.getMIMEType(opName, partName));
+                setMIMEInfo(param, bindingEntry == null ? null :
+                        bindingEntry.getMIMEInfo(opName, partName));
                 if (bindingEntry != null &&
                     bindingEntry.isInHeaderPart(opName, partName)) {
                     param.setInHeader(true);
@@ -1465,8 +1465,8 @@ public class SymbolTable {
                     Parameter p = new Parameter();
                     p.setQName(elem.getName());
                     p.setType(elem.getType());
-                    setMIMEType(p, bindingEntry == null ? null :
-                            bindingEntry.getMIMEType(opName, partName));
+                    setMIMEInfo(p, bindingEntry == null ? null :
+                            bindingEntry.getMIMEInfo(opName, partName));
                     if (bindingEntry.isInHeaderPart(opName, partName)) {
                         p.setInHeader(true);
                     }
@@ -1486,8 +1486,8 @@ public class SymbolTable {
                 } else if (elementName != null) {
                     param.setType(getElement(elementName));
                 }
-                setMIMEType(param, bindingEntry == null ? null :
-                        bindingEntry.getMIMEType(opName, partName));
+                setMIMEInfo(param, bindingEntry == null ? null :
+                        bindingEntry.getMIMEInfo(opName, partName));
                 if (bindingEntry.isInHeaderPart(opName, partName)) {
                     param.setInHeader(true);
                 }
@@ -1506,30 +1506,30 @@ public class SymbolTable {
      * 1.  From WSDL 1.1 MIME constructs on the binding (passed in);
      * 2.  From AXIS-specific xml MIME types.
      */
-    private void setMIMEType(Parameter p, String mimeType) {
+    private void setMIMEInfo(Parameter p, MimeInfo mimeInfo) {
         // If there is no binding MIME construct (ie., the mimeType parameter is
         // null), then get the MIME type from the AXIS-specific xml MIME type.
-        if (mimeType == null) {
+        if (mimeInfo == null) {
             QName mimeQName = p.getType().getQName();
             if (mimeQName.getNamespaceURI().equals(Constants.NS_URI_XMLSOAP)) {
                 if (Constants.MIME_IMAGE.equals(mimeQName)) {
-                    mimeType = "image/jpeg";
+                    mimeInfo = new MimeInfo("image/jpeg","");
                 }
                 else if (Constants.MIME_PLAINTEXT.equals(mimeQName)) {
-                    mimeType = "text/plain";
+                    mimeInfo = new MimeInfo("text/plain","");
                 }
                 else if (Constants.MIME_MULTIPART.equals(mimeQName)) {
-                    mimeType = "multipart/related";
+                    mimeInfo = new MimeInfo("multipart/related","");
                 }
                 else if (Constants.MIME_SOURCE.equals(mimeQName)) {
-                    mimeType = "text/xml";
+                    mimeInfo = new MimeInfo("text/xml","");
                 } 
                 else if (Constants.MIME_OCTETSTREAM.equals(mimeQName)) {
-                    mimeType = "application/octetstream";
+                    mimeInfo = new MimeInfo("application/octetstream","");
                 }
             }
         }
-        p.setMIMEType(mimeType);
+        p.setMIMEInfo(mimeInfo);
     } // setMIMEType
 
     /**
@@ -1712,19 +1712,28 @@ public class SymbolTable {
              while(iterator.hasNext()){
                  Part part = (Part) iterator.next();
                  if(part != null){
+                     String dims = "";
                      org.w3c.dom.Element element = null;
                      if(part.getTypeName() != null) {
-                         Type partType = getType(part.getTypeName());
+                         TypeEntry partType = getType(part.getTypeName());
+                         if(partType.getDimensions().length()>0){
+                             dims = partType.getDimensions();
+                             partType = partType.getRefType();
+                         }
                          element = (org.w3c.dom.Element) partType.getNode();
                      } else if(part.getElementName() != null) {
-                         Element partElement = getElement(part.getElementName());
+                         TypeEntry partElement = getElement(part.getElementName());
+                         if(partElement.getDimensions().length()>0){
+                             dims = partElement.getDimensions();
+                             partElement = partElement.getRefType();
+                         }
                          element = (org.w3c.dom.Element) partElement.getNode();
                      }
                      org.w3c.dom.Element e = (org.w3c.dom.Element)XMLUtils.findNode(element, new QName(Constants.URI_DIME_CONTENT, "mediaType"));
                      if(e != null){
                          String value = e.getAttribute("value");
                          bEntry.setOperationDIME(operation.getName());
-                         bEntry.setMIMEType(operation.getName(), part.getName(), value);
+                         bEntry.setMIMEInfo(operation.getName(), part.getName(), value, dims);
                      }
                  }
              }
@@ -1822,7 +1831,8 @@ public class SymbolTable {
                 Object obj = j.next();
                 if (obj instanceof MIMEContent) {
                     MIMEContent content = (MIMEContent) obj;
-                    bEntry.setMIMEType(op.getName(), content.getPart(), content.getType());
+                    TypeEntry typeEntry = findPart(op, content.getPart());
+                    bEntry.setMIMEInfo(op.getName(), content.getPart(), content.getType(), typeEntry.getDimensions());
                 }
                 else if (obj instanceof SOAPBody) {
                     String use = ((SOAPBody) obj).getUse();
@@ -1839,6 +1849,38 @@ public class SymbolTable {
         return bodyType;
     } // addMIMETypes
 
+    private TypeEntry findPart(Operation operation, String partName)
+    {
+        Map parts = operation.getInput().getMessage().getParts();                       
+        Iterator iterator = parts.values().iterator();
+        TypeEntry part = findPart(iterator, partName);
+        
+        if(part == null) {
+            parts = operation.getOutput().getMessage().getParts();                       
+            iterator = parts.values().iterator();
+            part = findPart(iterator, partName);
+        }
+        return part;
+    }
+
+    private TypeEntry findPart(Iterator iterator, String partName)
+    {
+        while(iterator.hasNext()){
+            Part part = (Part) iterator.next();
+            if(part != null){
+                String typeName = part.getName();
+                if(partName.equals(typeName)) {
+                    if(part.getTypeName() != null) {
+                        return getType(part.getTypeName());
+                    } else if(part.getElementName() != null) {
+                        return getElement(part.getElementName());
+                    }
+                }
+             }
+        }
+        return null;
+    }
+    
     /**
      * Populate the symbol table with all of the ServiceEntry's from the Definition.
      */

@@ -191,13 +191,13 @@ The caller of this constructor should
      * Get the mime mapping for the given parameter name.
      * If there is none, this returns null.
      */
-    public String getMIMEType(String operationName, String parameterName) {
+    public MimeInfo getMIMEInfo(String operationName, String parameterName) {
         Map opMap = (Map) mimeTypes.get(operationName);
         if (opMap == null) {
             return null;
         }
         else {
-            return (String) opMap.get(parameterName);
+            return (MimeInfo) opMap.get(parameterName);
         }
     } // getMIMEType
 
@@ -211,13 +211,13 @@ The caller of this constructor should
     /**
      * Set the mime mapping for the given parameter name.
      */
-    public void setMIMEType(String operationName, String parameterName, String type) {
+    public void setMIMEInfo(String operationName, String parameterName, String type, String dims) {
         Map opMap = (Map) mimeTypes.get(operationName);
         if (opMap == null) {
             opMap = new HashMap();
             mimeTypes.put(operationName, opMap);
         }
-        opMap.put(parameterName, type);
+        opMap.put(parameterName, new MimeInfo(type,dims));
     } // setMIMEType
 
     /**
