@@ -19,12 +19,19 @@ package org.apache.axis.transport.http ;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.axis.server.AxisServer;
 import org.apache.axis.utils.Messages;
+import org.apache.axis.AxisFault;
+import org.apache.axis.ConfigurationException;
+import org.apache.axis.handlers.soap.SOAPService;
+import org.apache.axis.description.ServiceDesc;
 import org.apache.commons.logging.Log;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.namespace.QName;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.ArrayList;
 
 /**
  * Proof-of-concept "management" servlet for Axis.
@@ -74,7 +81,19 @@ public class AdminServlet extends AxisServletBase {
                 else if (cmd.equals("stop")) {
                     log.info(Messages.getMessage("adminServiceStop", callerIP));
                     server.stop();
-                }
+                } 
+                else if (cmd.equals("suspend")) {
+                    String name = request.getParameter("service"); 
+                    log.info(Messages.getMessage("adminServiceSuspend", name, callerIP));
+                    SOAPService service = server.getConfig().getService(new QName("",name));
+                    service.stop();
+                } 
+                else if (cmd.equals("resume")) {
+                    String name = request.getParameter("service"); 
+                    log.info(Messages.getMessage("adminServiceResume", name, callerIP));
+                    SOAPService service = server.getConfig().getService(new QName("",name));
+                    service.start();
+                } 
             } else {
                 //in production we log a hostile probe. Remember: logs can be
                 //used for DoS attacks themselves.
@@ -84,15 +103,51 @@ public class AdminServlet extends AxisServletBase {
 
         // display status
         if (server.isRunning()) {
+            buffer.append("<H2>");
             buffer.append(Messages.getMessage("serverRun00"));
+            buffer.append("</H2>");
         }
         else {
+            buffer.append("<H2>");
             buffer.append(Messages.getMessage("serverStop00"));
+            buffer.append("</H2>");
         }
         //add commands
         if(isDevelopment()) {
             buffer.append("<p><a href=\"AdminServlet?cmd=start\">start server</a>\n");
             buffer.append("<p><a href=\"AdminServlet?cmd=stop\">stop server</a>\n");
+
+            Iterator i;
+            try {
+                i = server.getConfig().getDeployedServices();
+            } catch (ConfigurationException configException) {
+                //turn any internal configuration exceptions back into axis faults
+                //if that is what they are
+                if(configException.getContainedException() instanceof AxisFault) {
+                    throw (AxisFault) configException.getContainedException();
+                } else {
+                    throw configException;
+                }
+            }
+            
+            buffer.append("<p><h2>Services</h2>");
+            buffer.append("<ul>");
+            while (i.hasNext()) {
+                ServiceDesc sd = (ServiceDesc)i.next();
+                StringBuffer sb = new StringBuffer();
+                sb.append("<li>");
+                String name = sd.getName();
+                sb.append(name);
+                SOAPService service = server.getConfig().getService(new QName("",name));
+                if(service.isRunning()) {
+                    sb.append("&nbsp;&nbsp;<a href=\"AdminServlet?cmd=suspend&service=" + name + "\">suspend</a>\n");
+                } else {
+                    sb.append("&nbsp;&nbsp;<a href=\"AdminServlet?cmd=resume&service=" + name + "\">resume</a>\n");
+                }
+                sb.append("</li>");
+                buffer.append(sb.toString());
+            }
+            buffer.append("</ul>");
         }
         //print load
         buffer.append("<p>");
