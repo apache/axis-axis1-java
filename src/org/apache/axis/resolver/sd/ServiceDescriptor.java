@@ -64,6 +64,7 @@ import org.apache.axis.resolver.sd.schema.Provider;
 import org.apache.axis.resolver.sd.schema.SDConstants;
 import org.apache.axis.resolver.sd.schema.SDElement;
 import org.apache.axis.resolver.sd.schema.Service;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.Mapping;
 import org.apache.axis.utils.NSStack;
 import org.xml.sax.SAXException;
@@ -195,7 +196,8 @@ public class ServiceDescriptor {
             if (SDConstants.SDNS.equals(uri)) {
                 if ("service".equals(ln)) {
                     if (current != null) {
-                        throw new SAXException("Unexpected service descriptor");
+                        throw new SAXException(
+                                JavaUtils.getMessage("unexpectedDesc00", "service"));
                     }
                     current = new Service();
                     stack.push(current);
@@ -203,9 +205,11 @@ public class ServiceDescriptor {
                 }
                 if ("request".equals(ln)) {
                     if (current == null)
-                        throw new SAXException("Unexpected request descriptor");
+                        throw new SAXException(
+                                JavaUtils.getMessage("unexpectedDesc00", "request"));
                     if (!(current instanceof Service))
-                        throw new SAXException("Unexpected request descriptor");
+                        throw new SAXException(
+                                JavaUtils.getMessage("unexpectedDesc00", "request"));
                     Service service = (Service)current;
                     current = new HandlerList();
                     service.setRequest((HandlerList)current);
@@ -213,9 +217,11 @@ public class ServiceDescriptor {
                 }
                 if ("response".equals(ln)) {
                     if (current == null)
-                        throw new SAXException("Unexpected response descriptor");
+                        throw new SAXException(
+                                JavaUtils.getMessage("unexpectedDesc00", "response"));
                     if (!(current instanceof Service))
-                        throw new SAXException("Unexpected response descriptor");
+                        throw new SAXException(
+                                JavaUtils.getMessage("unexpectedDesc00", "response"));
                     Service service = (Service)current;
                     current = new HandlerList();
                     service.setResponse((HandlerList)current);
@@ -223,9 +229,11 @@ public class ServiceDescriptor {
                 }
                 if ("fault".equals(ln)) {
                     if (current == null)
-                        throw new SAXException("Unexpected fault descriptor");
+                        throw new SAXException(
+                                JavaUtils.getMessage("unexpectedDesc00", "fault"));
                     if (!(current instanceof Service))
-                        throw new SAXException("Unexpected fault descriptor");
+                        throw new SAXException(
+                                JavaUtils.getMessage("unexpectedDesc00", "fault"));
                     Service service = (Service)current;
                     Fault fault = new Fault();
                     String qname = attr.getValue("faultCode");
@@ -238,9 +246,11 @@ public class ServiceDescriptor {
                 }
                 if ("handler".equals(ln)) {
                     if (current == null) 
-                        throw new SAXException("Unexpected handler descriptor");
+                        throw new SAXException(
+                                JavaUtils.getMessage("unexpectedDesc00", "handler"));
                     if (!(current instanceof HandlerList))
-                        throw new SAXException("Unexpected handler descriptor");
+                        throw new SAXException(
+                                JavaUtils.getMessage("unexpectedDesc00", "handler"));
                     HandlerList handlerList = (HandlerList)current;
                     try {
                         String key = attr.getValue("key");
@@ -276,18 +286,22 @@ public class ServiceDescriptor {
                             if (h != null) {
                                 handlerList.addHandler(h);
                             } else {
-                                throw new SAXException("Cannot resolve chain");
+                                throw new SAXException(
+                                        JavaUtils.getMessage("cantResolve00"));
                             }
                         }
                     } catch (Exception e) {
-                        throw new SAXException("Cannot resolve chain");
+                        throw new SAXException(
+                                JavaUtils.getMessage("cantResolve00"));
                     }
                 }
             } else {
                 if (current == null)
-                    throw new SAXException("Unexpected unknown element");
+                    throw new SAXException(
+                            JavaUtils.getMessage("unexpectedUnknown00"));
                 if (!(current instanceof Service))
-                    throw new SAXException("Unexpected unknown element");
+                    throw new SAXException(
+                            JavaUtils.getMessage("unexpectedUnknown00"));
                 QName type = new QName(uri, ln);
                 Provider provider = Provider.newProvider(type);
                 provider.setResolver(resolver);
@@ -296,7 +310,8 @@ public class ServiceDescriptor {
                     handler = provider.getDefaultHandler();
                     handler.startElement(uri, ln, rn, attr);
                 } else {
-                    throw new SAXException("Unexpected unknown element");
+                    throw new SAXException(
+                            JavaUtils.getMessage("unexpectedUnknown00"));
                 }
             }
         }

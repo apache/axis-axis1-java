@@ -60,6 +60,7 @@ import org.apache.axis.Handler;
 import org.apache.axis.SimpleChain;
 import org.apache.axis.Supplier;
 import org.apache.axis.AxisEngine;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
 
 import java.util.Hashtable;
@@ -95,9 +96,7 @@ public class SimpleChainSupplier implements Supplier
     {
         if (_chain == null) {
             if (category.isDebugEnabled())
-                category.debug( "SimpleChainSupplier: Building chain '" +
-                                _myName +
-                                "'");
+                category.debug( JavaUtils.getMessage("buildChain00", "SimpleChainSupplier:", _myName));
             Chain c = new SimpleChain();
             c.setOptions(_options);
             c.setName(_myName);
@@ -116,8 +115,7 @@ public class SimpleChainSupplier implements Supplier
         }
 
         if (category.isDebugEnabled())
-            category.debug("SimpleChainSupplier: returning chain '" + _myName +
-                           "'");
+            category.debug(JavaUtils.getMessage("returnChain00", "SimpleChainSupplier:", _myName));
         
         return _chain;
     }

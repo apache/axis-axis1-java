@@ -59,6 +59,7 @@ import org.apache.axis.Handler;
 import org.apache.axis.Supplier;
 import org.apache.axis.AxisFault;
 import org.apache.axis.suppliers.SimpleSupplier;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
 
 import java.util.Enumeration;
@@ -86,16 +87,16 @@ public class SupplierRegistry implements HandlerRegistry {
      */
     public void add(String key, Handler handler) {
         if (category.isDebugEnabled())
-            category.debug("Registry " + this + " adding '" + key +
-                               "' (" + handler + ")");
+            category.debug(JavaUtils.getMessage("registryAdd00",
+                        new String[] {"" + this, key, "" + handler}));
         if ( suppliers == null ) suppliers = new Hashtable();
         suppliers.put( key, new SimpleSupplier(handler) );
     }
     
     public void add(String key, Supplier supplier) {
         if (category.isDebugEnabled())
-            category.debug("Registry " + this + " adding '" + key +
-                               "' (" + supplier + ")");
+            category.debug(JavaUtils.getMessage("registryAdd00",
+                        new String[] {"" + this, key, "" + supplier}));
         if ( suppliers == null ) suppliers = new Hashtable();
         suppliers.put( key, supplier );
     }
@@ -117,21 +118,21 @@ public class SupplierRegistry implements HandlerRegistry {
      */
     public Handler find(String key) {
         if (category.isDebugEnabled())
-            category.debug("Enter: SupplierRegistry::find(" + key + ")" );
+            category.debug(JavaUtils.getMessage("enter00", "SupplierRegistry::find(" + key + ")") );
         if (key == null) {
             if (category.isDebugEnabled())
-                category.debug("Exit: SupplierRegistry::find - key is null" );
+                category.debug(JavaUtils.getMessage("exit02", "SupplierRegistry::find", "key") );
             return( null );
         }
         if ( suppliers == null ) {
             if (category.isDebugEnabled())
-                category.debug("Exit: SupplierRegistry::find - suppliers is null" );
+                category.debug(JavaUtils.getMessage("exit02", "SupplierRegistry::find", "suppliers") );
             return( null );
         }
         Supplier supplier = (Supplier)suppliers.get(key);
         if (supplier == null) {
             if (category.isDebugEnabled())
-                category.debug( "Exit: SupplierRegistry::find - supplier is null" );
+                category.debug(JavaUtils.getMessage("exit02", "SupplierRegistry::find", "supplier") );
             return null;
         }
         Handler h = null;
@@ -142,7 +143,7 @@ public class SupplierRegistry implements HandlerRegistry {
         }
         
         if (category.isDebugEnabled())
-            category.debug( "Exit: SupplierRegistry::find"  );
+            category.debug(JavaUtils.getMessage("exit00", "SupplierRegistry::find") );
         return h ;
     }
 

@@ -115,7 +115,7 @@ public class NSStack {
     public ArrayList pop() {
         if (stack.isEmpty()) {
             if (category.isDebugEnabled())
-                category.debug("NSPop (empty)");
+                category.debug("NSPop (" + JavaUtils.getMessage("empty00") + ")");
             if (parent != null)
                 return parent.pop();
             return null;
@@ -199,7 +199,7 @@ public class NSStack {
             return parent.getNamespaceURI(prefix);
 
         if (category.isDebugEnabled()){
-            category.debug("didn't find prefix '" + prefix + "'");
+            category.debug(JavaUtils.getMessage("noPrefix00", prefix));
             dump();
         }
 
@@ -233,7 +233,7 @@ public class NSStack {
             ArrayList list = (ArrayList)e.nextElement();
             System.out.println("----");
             if (list == null) {
-                System.out.println("null table??");
+                System.out.println(JavaUtils.getMessage("nullTable00"));
                 continue;
             }
             for (int i = 0; i < list.size(); i++) {
@@ -244,10 +244,10 @@ public class NSStack {
         }
 
         if (parent != null) {
-            System.out.println("----parent");
+            System.out.println("----" + JavaUtils.getMessage("parent00"));
             parent.dump();
         }
 
-        System.out.println("----end");
+        System.out.println("----" + JavaUtils.getMessage("end00"));
     }
 }

@@ -55,6 +55,7 @@
 package org.apache.axis.server;
 
 import org.apache.axis.SimpleTargetedChain;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -72,13 +73,13 @@ public class Transport extends SimpleTargetedChain
             Category.getInstance(Transport.class.getName());
 
     public Element getDeploymentData(Document doc) {
-        category.debug("Enter: Transport::getDeploymentData");
+        category.debug(JavaUtils.getMessage("enter00", "Transport::getDeploymentData"));
 
         Element  root = doc.createElementNS("", "transport");
 
         fillInDeploymentData(root);
 
-        category.debug("Exit: Transport::getDeploymentData");
+        category.debug(JavaUtils.getMessage("exit00", "Transport::getDeploymentData"));
         return( root );
     }
 }

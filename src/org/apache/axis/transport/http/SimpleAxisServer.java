@@ -67,6 +67,7 @@ import org.apache.axis.server.AxisServer;
 import org.apache.axis.session.Session;
 import org.apache.axis.session.SimpleSession;
 import org.apache.axis.utils.Options;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.axis.utils.XMLUtils;
 import org.apache.log4j.Category;
 import org.w3c.dom.Document;
@@ -133,9 +134,9 @@ public class SimpleAxisServer implements Runnable {
     private static byte HTTP[]   = "HTTP/1.0 ".getBytes();
 
     // HTTP status codes
-    private static byte OK[]     = "200 OK".getBytes();
-    private static byte UNAUTH[] = "401 Unauthorized".getBytes();
-    private static byte ISE[]    = "500 Internal Server Error".getBytes();
+    private static byte OK[]     = ("200 " + JavaUtils.getMessage("ok00")).getBytes();
+    private static byte UNAUTH[] = ("401 " + JavaUtils.getMessage("unauth00")).getBytes();
+    private static byte ISE[]    = ("500 " + JavaUtils.getMessage("internalError01")).getBytes();
 
     // Standard MIME headers for XML payload
     private static byte XML_MIME_STUFF[] =
@@ -154,7 +155,7 @@ public class SimpleAxisServer implements Runnable {
     private static final String responseStr =
             "<html><head><title>SimpleAxisServer</title></head>" +
             "<body><h1>SimpleAxisServer</h1>" +
-            "You've reached the SimpleAxisServer." +
+            JavaUtils.getMessage("reachedServer00") +
             "</html>";
     private static byte cannedHTMLResponse[] = responseStr.getBytes();
 
@@ -172,7 +173,7 @@ public class SimpleAxisServer implements Runnable {
      * Axis engine for processing.
      */
     public void run() {
-        category.debug("SimpleAxisServer starting up.");
+        category.debug(JavaUtils.getMessage("start00", "SimpleAxisServer"));
 
         // create an Axis server
         AxisServer engine = getAxisServer();
@@ -247,8 +248,8 @@ public class SimpleAxisServer implements Runnable {
                         // Got params
                         String params = fileName.substring(paramIdx + 1);
                         fileName.setLength(paramIdx);
-                        category.debug("Filename is " + fileName.toString());
-                        category.debug("Params is " + params);
+                        category.debug(JavaUtils.getMessage("filename00", "" + fileName.toString()));
+                        category.debug(JavaUtils.getMessage("params00", params));
                         if ("wsdl".equalsIgnoreCase(params))
                             doWsdl = true;
                     }
@@ -281,8 +282,8 @@ public class SimpleAxisServer implements Runnable {
                             }
                             authBuf.append((char)(decoded[i] & 0x7f));
                         }
-                        category.info("Username : " + userBuf.toString());
-                        category.info("Password : " + pwBuf.toString());
+                        category.info(JavaUtils.getMessage("user00", userBuf.toString()));
+                        category.info(JavaUtils.getMessage("password00", pwBuf.toString()));
                         msgContext.setProperty(MessageContext.USERID,
                                                userBuf.toString());
                         msgContext.setProperty(MessageContext.PASSWORD,
@@ -369,7 +370,7 @@ public class SimpleAxisServer implements Runnable {
                     AxisFault af;
                     if (e instanceof AxisFault) {
                         af = (AxisFault)e;
-                        category.error("HTTP server fault", af);
+                        category.error(JavaUtils.getMessage("serverFault00"), af);
 
                         if ("Server.Unauthorized".equals(af.getFaultCode())) {
                             status = UNAUTH; // SC_UNAUTHORIZED
@@ -443,7 +444,7 @@ public class SimpleAxisServer implements Runnable {
                 }
             }
         }
-        System.out.println("SimpleAxisServer quitting.");
+        System.out.println(JavaUtils.getMessage("quit00", "SimpleAxisServer"));
     }
 
     // ASCII character mapping to lower case
@@ -541,7 +542,7 @@ public class SimpleAxisServer implements Runnable {
         n=this.readLine(is, buf, 0, buf.length);
         if (n < 0) {
             // nothing!
-            throw new IOException("Unexpected end of stream");
+            throw new IOException(JavaUtils.getMessage("unexpectedEOS00"));
         }
 
         // which does it begin with?
@@ -556,7 +557,7 @@ public class SimpleAxisServer implements Runnable {
                     break;
                 fileName.append(c);
             }
-            category.debug( "SimpleAxisServer: req filename='" + fileName.toString() + "'");
+            category.debug( JavaUtils.getMessage("filename01", "SimpleAxisServer", fileName.toString()));
             return 0;
         } else if (buf[0] == postHeader[0]) {
             httpRequest.append("POST");
@@ -566,9 +567,9 @@ public class SimpleAxisServer implements Runnable {
                     break;
                 fileName.append(c);
             }
-            category.debug( "SimpleAxisServer: req filename='" + fileName.toString() + "'");
+            category.debug( JavaUtils.getMessage("filename01", "SimpleAxisServer", fileName.toString()));
         } else {
-            throw new IOException("Cannot handle non-GET, non-POST request");
+            throw new IOException(JavaUtils.getMessage("badRequest00"));
         }
 
         while ((n=readLine(is,buf,0,buf.length)) > 0) {
@@ -642,7 +643,8 @@ public class SimpleAxisServer implements Runnable {
                         authInfo.append((char)(buf[i] & 0x7f));
                     }
                 } else {
-                    throw new IOException("Bad authentication type (I can only handle Basic).");
+                    throw new IOException(
+                            JavaUtils.getMessage("badAuth00"));
                 }
             }
 

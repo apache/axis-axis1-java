@@ -63,6 +63,7 @@ import org.apache.axis.Supplier;
 import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
 import org.apache.axis.registries.HandlerRegistry;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
 
 import java.util.Enumeration;
@@ -125,8 +126,7 @@ public class TargetedChainSupplier implements Supplier
     {
         if (_chain == null) {
             if (category.isDebugEnabled())
-                category.debug("TargetedChainSupplier: Building chain '" + _myName +
-                               "'");
+                category.debug(JavaUtils.getMessage("buildChain00", "TargetedChainSupplier:", _myName));
 
             Handler h;
             SimpleTargetedChain c = getNewChain();
@@ -162,8 +162,7 @@ public class TargetedChainSupplier implements Supplier
         }
 
         if (category.isDebugEnabled())
-            category.debug( "TargetedChainSupplier: Returning chain '" + _myName +
-                            "'");
+            category.debug( JavaUtils.getMessage("returnChain00", "TargetedChainSupplier:", _myName));
         return _chain;
     }
 }

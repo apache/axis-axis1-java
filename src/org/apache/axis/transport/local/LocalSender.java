@@ -64,6 +64,7 @@ import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPFaultElement;
 import org.apache.axis.server.AxisServer;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
 
 import java.net.URL;
@@ -88,11 +89,11 @@ public class LocalSender extends BasicHandler {
     }
 
     public void invoke(MessageContext clientContext) throws AxisFault {
-        category.debug("Enter: LocalSender::invoke" );
+        category.debug(JavaUtils.getMessage("enter00", "LocalSender::invoke") );
 
         AxisServer targetServer = (AxisServer)clientContext.
                                                             getProperty(LocalTransport.LOCAL_SERVER);
-        category.debug( "LocalSender using server " + targetServer);
+        category.debug( JavaUtils.getMessage("usingServer00", "LocalSender", "" + targetServer));
 
         if (targetServer == null) {
             // This should have already been done, but it doesn't appear to be
@@ -108,7 +109,7 @@ public class LocalSender extends BasicHandler {
         // exercise the serializers.
         String msgStr = clientContext.getRequestMessage().getSOAPPart().getAsString();
 
-        category.debug( "LocalSender sending XML:");
+        category.debug( JavaUtils.getMessage("sendingXML00"));
         category.debug( msgStr);
 
         serverContext.setRequestMessage(new Message(msgStr));
@@ -158,11 +159,11 @@ public class LocalSender extends BasicHandler {
         clientContext.setResponseMessage(serverContext.getResponseMessage());
         //clientContext.getResponseMessage().getAsString();
 
-        category.debug("Exit: LocalSender::invoke" );
+        category.debug(JavaUtils.getMessage("exit00", "LocalSender::invoke") );
     }
 
     public void undo(MessageContext msgContext) {
-        category.debug("Enter: LocalSender::undo" );
-        category.debug("Exit: LocalSender::undo" );
+        category.debug(JavaUtils.getMessage("enter00", "LocalSender::undo") );
+        category.debug(JavaUtils.getMessage("exit00", "LocalSender::undo") );
     }
 };

@@ -61,6 +61,7 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.encoding.Base64;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.message.MessageElement;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
 
 import java.io.BufferedInputStream;
@@ -87,7 +88,7 @@ public class HTTPSender extends BasicHandler {
             Category.getInstance(HTTPSender.class.getName());
 
     public void invoke(MessageContext msgContext) throws AxisFault {
-        category.debug( "Enter: HTTPSender::invoke" );
+        category.debug( JavaUtils.getMessage("enter00", "HTTPSender::invoke") );
         /* Find the service we're invoking so we can grab it's options */
         /***************************************************************/
         String   targetURL = null ;
@@ -159,28 +160,30 @@ public class HTTPSender extends BasicHandler {
                         InputStream tunnelInputStream = (InputStream)SSLSocketClass.getMethod("getInputStream", new Class[] {}).invoke(tunnel, new Object[] {});
                         //BufferedReader in = new BufferedReader(new InputStreamReader(tunnelInputStream));
                         //DataInputStream in = new DataInputStream(tunnelInputStream);
-                        category.debug("Is tunnelInputStream null? " + String.valueOf(tunnelInputStream == null));
+                        category.debug(JavaUtils.getMessage("isNull00", "tunnelInputStream", "" + (tunnelInputStream == null)));
                         String replyStr = ""; int i;
                         while ((i = tunnelInputStream.read()) != '\n' && i != '\r' && i != -1) { replyStr += String.valueOf((char)i); }
                         if (!replyStr.startsWith("HTTP/1.0 200") && !replyStr.startsWith("HTTP/1.1 200")) {
-                            throw new IOException("Unable to tunnel through " + tunnelHost + ":" + tunnelPort + ".  Proxy returns \"" + replyStr + "\"");
+                            throw new IOException(JavaUtils.getMessage("cantTunnel00",
+                                    new String[] {tunnelHost, "" + tunnelPort, replyStr}));
                         }
                         // End of condensed reflective tunnel handshake method
                         sslSocket = createSocketMethod2.invoke(factory,
                                                                new Object[] {tunnel, host, new Integer(port), new Boolean(true)});
-                        category.debug( "Set up SSL tunnelling through " + tunnelHost + ":" +tunnelPort);
+                        category.debug(JavaUtils.getMessage(
+                                "setupTunnel00", tunnelHost, "" + tunnelPort));
                     }
                     // must shake out hidden errors!
                     startHandshakeMethod.invoke(sslSocket, new Object[] {});
                     sock = (Socket)sslSocket;
                 } catch (ClassNotFoundException cnfe) {
-                    category.debug( "SSL feature disallowed: JSSE files not installed or present in classpath");
+                    category.debug( JavaUtils.getMessage("noJSSE00"));
                     throw new AxisFault(cnfe);
                 } catch (NumberFormatException nfe) {
-                      category.debug( "Proxy port number, \"" + tunnelPortStr + "\", incorrectly formatted");
+                      category.debug( JavaUtils.getMessage("badProxy00", tunnelPortStr));
                       throw new AxisFault(nfe);
                 }
-                category.debug( "Created an SSL connection");
+                category.debug( JavaUtils.getMessage("createdSSL00"));
             } else {
                 String proxyHost = System.getProperty("http.proxyHost");
                 String proxyPort = System.getProperty("http.proxyPort");
@@ -193,10 +196,10 @@ public class HTTPSender extends BasicHandler {
                     || proxyPort == null || proxyPort.equals("")
                     || hostInNonProxyList) {
                     sock = new Socket( host, port );
-                    category.debug( "Created an insecure HTTP connection");
+                    category.debug( JavaUtils.getMessage("createdHTTP00"));
                 } else {
                     sock = new Socket( proxyHost, new Integer(proxyPort).intValue() );
-                    category.debug( "Created an insecure HTTP connection using proxy "+proxyHost+" port "+proxyPort);
+                    category.debug( JavaUtils.getMessage("createdHTTP01", proxyHost, proxyPort));
                     useFullURL = true;
                 }
             }
@@ -288,7 +291,7 @@ public class HTTPSender extends BasicHandler {
             reqMessage.writeContentToStream(out);
             out.flush();
 
-            category.debug( "XML sent:" );
+            category.debug( JavaUtils.getMessage("xmlSent00") );
             category.debug( "---------------------------------------------------");
             category.debug( header + reqEnv );
 
@@ -359,8 +362,8 @@ public class HTTPSender extends BasicHandler {
                                                 statusMessage,
                                                 null,
                                                 null);
-                fault.setFaultDetailsString("return code:" + returnCode + "\n"+
-                                            new String(buf, 0, len));
+                fault.setFaultDetailsString(JavaUtils.getMessage("return01",
+                        "" + returnCode, new String(buf, 0, len)));
                 throw fault;
             }
 
@@ -376,14 +379,14 @@ public class HTTPSender extends BasicHandler {
 
                         outMsg = new Message( data );
 
-                        category.debug( "\nXML received:" );
+                        category.debug( "\n" + JavaUtils.getMessage("xmlrecd00") );
                         category.debug( "-----------------------------------------------");
                         category.debug( xml );
                     }
                     else {
                         outMsg = new Message( inp );
-                        category.debug( "\nNo Content-Length" );
-                        category.debug( "\nXML received:" );
+                        category.debug( "\n" + JavaUtils.getMessage("no00", "Content-Length") );
+                        category.debug( "\n" + JavaUtils.getMessage("xmlrecd00") );
                         category.debug( "-----------------------------------------------");
                         category.debug( (String) outMsg.getSOAPPart().getAsString() );
                     }
@@ -414,7 +417,7 @@ public class HTTPSender extends BasicHandler {
             if ( !(e instanceof AxisFault) ) e = new AxisFault(e);
             throw (AxisFault) e ;
         }
-        category.debug( "Exit: HTTPDispatchHandler::invoke" );
+        category.debug( JavaUtils.getMessage("exit00", "HTTPDispatchHandler::invoke") );
     }
 
     // little helper function for cookies
@@ -441,7 +444,9 @@ public class HTTPSender extends BasicHandler {
         StringTokenizer tokenizer = new StringTokenizer(nonProxyHosts,"|");
         while(tokenizer.hasMoreTokens()) {
             String pattern = tokenizer.nextToken();
-            category.debug( "HTTPSender match Host: " + host + " Pattern:" + pattern);
+            category.debug( JavaUtils.getMessage(
+                    "match00",
+                    new String[] {"HTTPSender", host, pattern}));
             if(match(pattern, host, false))
                 return true;
         }
@@ -602,8 +607,8 @@ public class HTTPSender extends BasicHandler {
 
 
     public void undo(MessageContext msgContext) {
-        category.debug( "Enter: HTTPDispatchHandler::undo" );
-        category.debug( "Exit: HTTPDispatchHandler::undo" );
+        category.debug( JavaUtils.getMessage("enter00", "HTTPDispatchHandler::undo") );
+        category.debug( JavaUtils.getMessage("exit00", "HTTPDispatchHandler::undo") );
     }
 };
 

@@ -59,6 +59,7 @@ import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
 import org.apache.axis.security.AuthenticatedUser;
 import org.apache.axis.security.SecurityProvider;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
 
 import java.io.File;
@@ -109,8 +110,7 @@ public class SimpleSecurityProvider implements SecurityProvider {
                         String userID = st.nextToken();
                         String passwd = (st.hasMoreTokens()) ? st.nextToken() : "";
 
-                        category.debug( "From file: '" + userID +
-                                        "':'" + passwd + "'" );
+                        category.debug( JavaUtils.getMessage("fromFile00", userID, passwd) );
                         users.put(userID, passwd);
                     }
                 }
@@ -141,7 +141,7 @@ public class SimpleSecurityProvider implements SecurityProvider {
         String password = msgContext.getStrProp(MessageContext.PASSWORD);
 
         if (users != null) {
-            category.debug( "User: " + username );
+            category.debug( JavaUtils.getMessage("user00", username) );
 
             // in order to authenticate, the user must exist
             if ( username == null ||
@@ -150,13 +150,13 @@ public class SimpleSecurityProvider implements SecurityProvider {
                 return null;
 
             String valid = (String) users.get(username);
-            category.debug( "Pass: " + password );
+            category.debug( JavaUtils.getMessage("password00", password) );
 
             // if a password is defined, then it must match
             if ( valid.length()>0 && !valid.equals(password) )
                 return null;
 
-            category.debug( "User '" + username + "' authenticated to server" );
+            category.debug( JavaUtils.getMessage("auth00", username) );
             return new SimpleAuthenticatedUser(username);
         }
 

@@ -59,6 +59,7 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.security.AuthenticatedUser;
 import org.apache.axis.security.SecurityProvider;
 import org.apache.axis.transport.http.HTTPConstants;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
 
 import javax.servlet.http.HttpServletRequest;
@@ -95,15 +96,15 @@ public class ServletSecurityProvider implements SecurityProvider {
         if (req == null)
             return null;
 
-        category.debug("Got HttpServletRequest");
+        category.debug(JavaUtils.getMessage("got00", "HttpServletRequest"));
 
         Principal principal = req.getUserPrincipal();
         if (principal == null) {
-            category.debug("No principal!");
+            category.debug(JavaUtils.getMessage("noPrincipal00"));
             return null;
         }
 
-        category.debug("Got principal : " + principal.getName());
+        category.debug(JavaUtils.getMessage("gotPrincipal00",  principal.getName()));
 
         return new ServletAuthenticatedUser(req);
     }

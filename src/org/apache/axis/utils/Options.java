@@ -100,8 +100,7 @@ public class Options {
         try {
             getURL();
         } catch( MalformedURLException e ) {
-            category.error( "getURL failed to correctly process URL; protocol not " +
-                            "supported" );
+            category.error( JavaUtils.getMessage("cantDoURL00") );
             throw e ;
         }
         getUser();
@@ -314,7 +313,7 @@ public class Options {
             if ( port != null && !port.equals("-1")) tmp += ":" + port ;
             if ( servlet != null ) tmp += servlet ;
         } else tmp = url.toString();
-        category.debug( "getURL returned: " + tmp );
+        category.debug( JavaUtils.getMessage("return02", "getURL", tmp) );
         return( tmp );
     }
     

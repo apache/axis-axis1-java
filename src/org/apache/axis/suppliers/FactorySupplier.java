@@ -57,6 +57,7 @@ package org.apache.axis.suppliers;
 
 import org.apache.axis.Handler;
 import org.apache.axis.Supplier;
+import org.apache.axis.utils.JavaUtils;
 import org.apache.log4j.Category;
 
 import java.util.Hashtable;
@@ -84,7 +85,7 @@ public class FactorySupplier implements Supplier
             Handler handler = (Handler)_class.newInstance();
             handler.setOptions(_options);
             if (category.isDebugEnabled())
-                category.debug("FactorySupplier returning new instance of " + _class.getName());
+                category.debug(JavaUtils.getMessage("return00", _class.getName()));
             return handler;
         } catch (IllegalAccessException e1) {
             e1.printStackTrace();
