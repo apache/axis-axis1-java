@@ -57,12 +57,25 @@ package test.functional;
 
 import junit.framework.TestCase;
 import org.apache.axis.AxisFault;
+import org.apache.axis.client.Call;
 import org.apache.axis.components.logger.LogFactory;
 import org.apache.commons.logging.Log;
 import samples.jaxm.DelayedStockQuote;
 import samples.jaxm.SOAPFaultTest;
 import samples.jaxm.UddiPing;
 
+import javax.xml.soap.SOAPConnectionFactory;
+import javax.xml.soap.SOAPConnection;
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.SOAPPart;
+import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPHeader;
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.Name;
+import javax.xml.soap.SOAPBodyElement;
+import javax.xml.soap.SOAPElement;
+import javax.xml.messaging.URLEndpoint;
 import java.net.SocketException;
 
 
@@ -137,10 +150,33 @@ public class TestJAXMSamples extends TestCase {
             throw new Exception("Fault returned from test: " + t);
         }
     } // testGetQuote
+    
+    public void testJWSFault() throws Exception {
+        SOAPConnectionFactory scFactory = SOAPConnectionFactory.newInstance();
+        SOAPConnection con = scFactory.createConnection();
+
+        MessageFactory factory = MessageFactory.newInstance();
+        SOAPMessage message = factory.createMessage();
+
+        SOAPEnvelope envelope = message.getSOAPPart().getEnvelope();
+        SOAPBody body = envelope.getBody();
+
+        Name bodyName = envelope.createName("echo");
+        SOAPBodyElement bodyElement = body.addBodyElement(bodyName);
+
+        Name name = envelope.createName("arg0");
+        SOAPElement symbol = bodyElement.addChildElement(name);
+        symbol.addTextNode("Hello");
+
+        URLEndpoint endpoint = new URLEndpoint("http://localhost:8080/jws/FaultTest.jws");
+        SOAPMessage response = con.call(message, endpoint);
+        SOAPBody respBody = response.getSOAPPart().getEnvelope().getBody();
+        assertTrue(respBody.hasFault());
+    }
 
     public static void main(String args[]) throws Exception {
         TestJAXMSamples tester = new TestJAXMSamples("tester");
-        tester.testSOAPFaultTest();
+        tester.testJWSFault();
     } // main
 }
 
