@@ -54,7 +54,6 @@
 
 package org.apache.axis.encoding.ser;
 
-import org.apache.axis.MessageContext;
 import org.apache.axis.Constants;
 import org.apache.axis.description.TypeDesc;
 import org.apache.axis.encoding.DeserializationContext;
@@ -62,6 +61,7 @@ import org.apache.axis.encoding.Deserializer;
 import org.apache.axis.encoding.DeserializerImpl;
 import org.apache.axis.encoding.TypeMapping;
 import org.apache.axis.message.SOAPHandler;
+import org.apache.axis.message.MessageElement;
 import org.apache.axis.utils.BeanPropertyDescriptor;
 import org.apache.axis.utils.JavaUtils;
 
@@ -191,7 +191,6 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
         QName elemQName = new QName(namespace, localName);
         // The collectionIndex needs to be reset for Beans with multiple arrays
         if ((prevQName == null) || (!prevQName.equals(elemQName))) {
-            prevQName = elemQName;
             collectionIndex = -1;
         }  
         prevQName = elemQName;
@@ -213,22 +212,30 @@ public class BeanDeserializer extends DeserializerImpl implements Serializable
         // reporting a problem
         QName qn = null;
         Deserializer dSer = null;
-        MessageContext messageContext = context.getMessageContext();
         if (propDesc == null) {
             // try to put unknown elements into a SOAPElement property, if
             // appropriate
             propDesc = getAnyPropertyDesc();
             if (propDesc != null) {
-                dSer = context.getDeserializerForType(elemQName);
-                if (dSer == null)  {
-                    qn = Constants.XSD_ANY;
-                    // make sure that the Element Deserializer deserializes
-                    // the current element and not the child
-                    messageContext.setProperty(ElementDeserializer.
-                                                    DESERIALIZE_CURRENT_ELEMENT,
-                                               Boolean.TRUE);
-                } else {
-                    qn = elemQName;
+                try {
+                    MessageElement [] curElements = (MessageElement[])propDesc.get(value);
+                    int length = 0;
+                    if (curElements != null) {
+                        length = curElements.length;
+                    }
+                    MessageElement [] newElements = new MessageElement[length + 1];
+                    if (curElements != null) {
+                        System.arraycopy(curElements, 0,
+                                         newElements, 0, length);
+                    }
+                    MessageElement thisEl = context.getCurElement();
+
+                    newElements[length] = thisEl;
+                    propDesc.set(value, newElements);
+
+                    return new SOAPHandler();
+                } catch (Exception e) {
+                    throw new SAXException(e);
                 }
             }
         }

@@ -708,11 +708,10 @@ public class SymbolTable {
                 }
             }
             else if (isXSD && localPart.equals("any")) {
-                // Map xsd:any element to any xsd:any so that
-                // it gets serialized using the ElementSerializer.
-                QName anyQName = Constants.XSD_ANY;
-                if (getType(anyQName) == null) {
-                    symbolTablePut(new BaseType(anyQName));
+                // Map xsd:any element to special xsd:any "type"
+                if (getType(Constants.XSD_ANY) == null) {
+                    Type type = new BaseType(Constants.XSD_ANY);
+                    symbolTablePut(type);
                 }
             }
             else if (localPart.equals("part") &&

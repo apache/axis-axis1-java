@@ -13,6 +13,7 @@ import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.message.RPCParam;
 import org.apache.axis.message.RPCElement;
+import org.apache.axis.message.MessageElement;
 import org.apache.axis.encoding.SerializationContextImpl;
 import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.DeserializationContext;
@@ -45,7 +46,7 @@ public class ExtensibilityQueryBindingImpl implements ExtensibilityQueryPortType
 
     public ExtensibilityType query(ExtensibilityType query) throws RemoteException {
         ExtensibilityType result = new ExtensibilityType();
-        Object obj = query.getAny();
+        Object obj = query.get_any()[0].getObjectValue();
         if (obj instanceof FindBooksQueryExpressionElement) {
             BookType bookQuery = ((FindBooksQueryExpressionElement)obj).getBookQuery();
             String subject = bookQuery.getSubject();
@@ -64,7 +65,8 @@ public class ExtensibilityQueryBindingImpl implements ExtensibilityQueryPortType
                 queryResult[i].setQueryType(new QName("urn:QueryType","BookQuery"));
             }
             resultList.setResult(queryResult);
-            result.setAny(resultElement);
+            MessageElement me = new MessageElement("foo", "bar", resultElement);
+            result.set_any(new MessageElement [] { me });
         } else {
             throw new RemoteException("Failed to get FindBooksQueryExpressionElement. Got: " + obj.getClass().getName() + ":" + obj.toString());
         }
