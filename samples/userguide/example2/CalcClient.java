@@ -93,6 +93,7 @@ public class CalcClient
        call.setOperationName( method );
        call.addParameter( "op1", XMLType.XSD_INT, ParameterMode.PARAM_MODE_IN );
        call.addParameter( "op2", XMLType.XSD_INT, ParameterMode.PARAM_MODE_IN );
+       call.setReturnType( XMLType.XSD_INT );
 
        Integer ret = (Integer) call.invoke( new Object [] { i1, i2 });
        
