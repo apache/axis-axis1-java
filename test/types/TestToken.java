@@ -152,4 +152,18 @@ public class TestToken extends TestCase {
     public void testDoubleSpace() throws Exception {
         runFailTest("a   B"); // note: \r fails
     }
+    
+    /**
+     * Test an empty string
+     */
+    public void testEmptyString() throws Exception {
+        runPassTest(""); 
+    }
+    
+    /**
+     * Test an empty string
+     */
+    public void testNull() throws Exception {
+        runPassTest(null); 
+    }
 }

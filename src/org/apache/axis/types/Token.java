@@ -101,7 +101,10 @@ public class Token extends NormalizedString {
      */
     public boolean isValid(String stValue) {
         int scan;
-
+        // check to see if we have a string to review
+        if (  (stValue == null) || (stValue.length() == 0)  )
+            return true;
+            
         // no leading space
         if (stValue.charAt(0) == 0x20)
             return false;
