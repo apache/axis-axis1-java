@@ -56,6 +56,7 @@
 package org.apache.axis.transport.http;
 
 import org.apache.axis.session.Session;
+
 import javax.servlet.http.HttpSession;
 
 /**

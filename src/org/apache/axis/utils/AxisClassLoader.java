@@ -55,9 +55,13 @@
 
 package org.apache.axis.utils ;
 
-import java.io.* ;
-import java.util.Hashtable ;
-import org.apache.axis.utils.cache.JavaClass ;
+import org.apache.axis.utils.cache.JavaClass;
+
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Hashtable;
 
 /**
  * This allows us to specify that certain classes, the ones we register

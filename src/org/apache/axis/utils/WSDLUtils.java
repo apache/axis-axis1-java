@@ -56,16 +56,31 @@
 
 package org.apache.axis.utils ;
 
-import java.io.* ;
-import java.lang.reflect.*;
-import java.util.ArrayList;
-import javax.wsdl.*;
-import javax.wsdl.factory.DefinitionFactory;
+import com.ibm.wsdl.extensions.soap.SOAPAddress;
+import com.ibm.wsdl.extensions.soap.SOAPBinding;
+import com.ibm.wsdl.extensions.soap.SOAPBody;
+import com.ibm.wsdl.extensions.soap.SOAPOperation;
 import org.apache.axis.Constants;
 import org.apache.axis.MessageContext;
 import org.apache.axis.encoding.TypeMappingRegistry;
-import org.w3c.dom.*;
-import com.ibm.wsdl.extensions.soap.*;
+import org.w3c.dom.Document;
+
+import javax.wsdl.Binding;
+import javax.wsdl.BindingInput;
+import javax.wsdl.BindingOperation;
+import javax.wsdl.BindingOutput;
+import javax.wsdl.Definition;
+import javax.wsdl.Input;
+import javax.wsdl.Message;
+import javax.wsdl.Operation;
+import javax.wsdl.Output;
+import javax.wsdl.Part;
+import javax.wsdl.Port;
+import javax.wsdl.PortType;
+import javax.wsdl.Service;
+import javax.wsdl.factory.DefinitionFactory;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 
 /**
  * WSDL utility class, 1st cut.  Right now all the WSDL functionality for

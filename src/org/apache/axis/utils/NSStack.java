@@ -55,8 +55,8 @@
 package org.apache.axis.utils;
 
 import java.util.ArrayList;
-import java.util.Stack;
 import java.util.Enumeration;
+import java.util.Stack;
 
 /**
  * @author: James Snell

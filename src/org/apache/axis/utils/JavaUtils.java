@@ -57,8 +57,8 @@ package org.apache.axis.utils;
 
 import org.apache.log4j.Category;
 
-import java.lang.reflect.*;
-import java.util.*;
+import java.lang.reflect.Array;
+import java.util.List;
 
 /** Utility class to deal with Java language related issues, such
  * as type conversions.

@@ -55,22 +55,28 @@
 
 package org.apache.axis.transport.http ;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
-
-import org.apache.axis.* ;
+import org.apache.axis.AxisFault;
+import org.apache.axis.Constants;
+import org.apache.axis.Message;
+import org.apache.axis.MessageContext;
+import org.apache.axis.configuration.FileProvider;
 import org.apache.axis.encoding.Base64;
-import org.apache.axis.configuration.*;
-import org.apache.axis.server.* ;
-import org.apache.axis.utils.* ;
-
+import org.apache.axis.server.AxisServer;
 import org.apache.axis.session.Session;
 import org.apache.axis.session.SimpleSession;
+import org.apache.axis.utils.Options;
+import org.apache.axis.utils.XMLUtils;
 import org.apache.log4j.Category;
-import org.apache.log4j.Priority;
-
 import org.w3c.dom.Document;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InterruptedIOException;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.Hashtable;
 
 /**
  * This is a single threaded implementation of an HTTP server for processing

@@ -55,11 +55,15 @@ package org.apache.axis.message;
  * <http://www.apache.org/>.
  */
 
-import org.xml.sax.*;
 import org.apache.axis.AxisFault;
-import org.apache.axis.encoding.*;
+import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.encoding.Deserializer;
+import org.apache.axis.encoding.SOAPTypeMappingRegistry;
+import org.apache.axis.encoding.ValueReceiver;
 import org.apache.axis.utils.QFault;
 import org.apache.axis.utils.QName;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
 
 import java.util.HashMap;
 

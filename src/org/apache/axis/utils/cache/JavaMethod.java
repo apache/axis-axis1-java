@@ -55,8 +55,8 @@
 
 package org.apache.axis.utils.cache;
 
-import java.util.Vector;
 import java.lang.reflect.Method;
+import java.util.Vector;
 
 /**
  * A simple cache of previously loaded methods

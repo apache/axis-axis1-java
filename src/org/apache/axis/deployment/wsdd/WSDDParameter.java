@@ -54,8 +54,8 @@
  */
 package org.apache.axis.deployment.wsdd;
 
-import org.w3c.dom.Element;
 import org.apache.axis.utils.XMLUtils;
+import org.w3c.dom.Element;
 
 public class WSDDParameter extends WSDDElement { 
     

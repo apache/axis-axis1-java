@@ -55,17 +55,13 @@
 
 package org.apache.axis.registries ;
 
-import java.io.* ;
-import java.util.* ;
-import org.apache.axis.* ;
-
-import org.apache.axis.suppliers.* ;
-import org.apache.axis.registries.* ;
-
-import org.apache.axis.utils.Admin;
-import org.apache.axis.utils.XMLUtils;
+import org.apache.axis.Handler;
+import org.apache.axis.Supplier;
+import org.apache.axis.suppliers.SimpleSupplier;
 import org.apache.log4j.Category;
-import org.w3c.dom.*;
+
+import java.util.Enumeration;
+import java.util.Hashtable;
 
 /** A <code>SupplierRegistry</code> contains Suppliers, which are used
  * by the find() method to obtain actual Handler references.  This

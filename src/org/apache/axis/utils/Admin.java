@@ -55,23 +55,38 @@
 
 package org.apache.axis.utils ;
 
-import java.io.* ;
-import java.net.*;
-import java.util.* ;
-import org.apache.axis.* ;
-import org.apache.axis.configuration.*;
-import org.apache.axis.registries.* ;
-import org.apache.axis.handlers.* ;
-import org.apache.axis.handlers.soap.SOAPService;
-import org.apache.axis.utils.* ;
-import org.apache.axis.suppliers.*;
-import org.apache.axis.encoding.*;
+import org.apache.axis.AxisEngine;
+import org.apache.axis.AxisFault;
+import org.apache.axis.Chain;
+import org.apache.axis.Constants;
+import org.apache.axis.Handler;
+import org.apache.axis.MessageContext;
+import org.apache.axis.SimpleChain;
 import org.apache.axis.client.AxisClient;
-import org.apache.axis.client.Transport;
+import org.apache.axis.configuration.FileProvider;
+import org.apache.axis.encoding.BeanSerializer;
+import org.apache.axis.encoding.DeserializerFactory;
+import org.apache.axis.encoding.Serializer;
+import org.apache.axis.encoding.ServiceDescription;
+import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.handlers.soap.SOAPService;
+import org.apache.axis.registries.HandlerRegistry;
+import org.apache.axis.registries.SupplierRegistry;
 import org.apache.axis.server.AxisServer;
+import org.apache.axis.suppliers.SimpleChainSupplier;
+import org.apache.axis.suppliers.TargetedChainSupplier;
+import org.apache.axis.suppliers.TransportSupplier;
 import org.apache.log4j.Category;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
-import org.w3c.dom.* ;
+import java.io.FileInputStream;
+import java.net.InetAddress;
+import java.util.Hashtable;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 /**
  * Handy static utility functions for turning XML into

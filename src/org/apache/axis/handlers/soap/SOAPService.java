@@ -54,17 +54,27 @@
 
 package org.apache.axis.handlers.soap;
 
-import java.util.Vector;
-import java.util.Enumeration;
-import org.apache.axis.*;
-import org.apache.axis.encoding.*;
-import org.apache.axis.message.*;
-
+import org.apache.axis.AxisEngine;
+import org.apache.axis.AxisFault;
+import org.apache.axis.Constants;
+import org.apache.axis.Handler;
+import org.apache.axis.Message;
+import org.apache.axis.MessageContext;
+import org.apache.axis.SimpleTargetedChain;
+import org.apache.axis.encoding.DeserializerFactory;
+import org.apache.axis.encoding.SOAPTypeMappingRegistry;
+import org.apache.axis.encoding.Serializer;
+import org.apache.axis.encoding.ServiceDescription;
+import org.apache.axis.encoding.TypeMappingRegistry;
+import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.message.SOAPHeader;
 import org.apache.axis.utils.QName;
-import org.apache.axis.transport.http.HTTPConstants;
-import org.apache.axis.registries.* ;
 import org.apache.log4j.Category;
-import org.w3c.dom.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import java.util.Enumeration;
+import java.util.Vector;
 
 /** A <code>SOAPService</code> is a Handler which encapsulates a SOAP
  * invocation.  It has an request chain, an response chain, and a pivot-point,

@@ -10,9 +10,10 @@ package org.apache.axis.message;
  * @author Glen Daniels (gdaniels@allaire.com)
  */
 
-import org.xml.sax.helpers.DefaultHandler;
-import org.xml.sax.*;
 import org.apache.axis.encoding.DeserializationContext;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 public class SOAPHandler extends DefaultHandler
 {

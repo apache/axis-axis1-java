@@ -54,11 +54,9 @@
  */
 package org.apache.axis.rpc;
 
-import java.io.Serializable;
-
-import java.net.URL;
-
 import javax.naming.Referenceable;
+import java.io.Serializable;
+import java.net.URL;
 
 /**
  * Base class for generating Web Service stubs from WSDL.

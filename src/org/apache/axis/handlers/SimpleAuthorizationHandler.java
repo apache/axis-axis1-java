@@ -56,16 +56,12 @@
 package org.apache.axis.handlers ;
 
 import org.apache.axis.AxisFault;
-import org.apache.axis.MessageContext;
 import org.apache.axis.Handler;
+import org.apache.axis.MessageContext;
 import org.apache.axis.security.AuthenticatedUser;
 import org.apache.axis.security.SecurityProvider;
 import org.apache.log4j.Category;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.LineNumberReader;
-import java.util.Hashtable;
 import java.util.StringTokenizer;
 
 /**

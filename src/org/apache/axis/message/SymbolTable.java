@@ -1,6 +1,7 @@
 package org.apache.axis.message;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * This was swiped from xerces2, I stripped the comments

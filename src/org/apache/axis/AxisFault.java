@@ -55,15 +55,18 @@
 
 package org.apache.axis ;
 
-import java.io.* ;
-import java.util.* ;
-
-import javax.xml.parsers.* ;
-import org.w3c.dom.* ;
-
-import org.apache.axis.utils.* ;
-import org.apache.axis.message.* ;
 import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.message.SOAPEnvelope;
+import org.apache.axis.message.SOAPFaultElement;
+import org.apache.axis.utils.QFault;
+import org.apache.axis.utils.XMLUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Text;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.Vector;
 
 /**
  * An exception which maps cleanly to a SOAP fault.

@@ -55,10 +55,10 @@
 package org.apache.axis.deployment.wsdd.providers;
 
 import org.apache.axis.Handler;
-import org.apache.axis.deployment.wsdd.WSDDProvider;
-import org.apache.axis.deployment.wsdd.WSDDException;
-import org.apache.axis.deployment.wsdd.WSDDConstants;
 import org.apache.axis.deployment.DeploymentRegistry;
+import org.apache.axis.deployment.wsdd.WSDDConstants;
+import org.apache.axis.deployment.wsdd.WSDDException;
+import org.apache.axis.deployment.wsdd.WSDDProvider;
 import org.apache.axis.providers.BSFProvider;
 import org.apache.axis.providers.BasicProvider;
 import org.apache.axis.utils.QName;

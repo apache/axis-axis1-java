@@ -56,9 +56,7 @@ package org.apache.axis.handlers;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
-import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.MessageContext;
-
 import org.apache.log4j.Category;
 
 /** A <code>JWSHandler</code> sets the target service and JWS filename

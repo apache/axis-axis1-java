@@ -4,11 +4,12 @@ package org.apache.axis.message;
  * 
  * @author Glen Daniels (gdaniels@allaire.com)
  */
-import java.util.*;
-import java.lang.reflect.*;
 import org.apache.axis.encoding.DeserializationContext;
 import org.apache.axis.utils.QName;
-import org.xml.sax.*;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+
+import java.util.HashMap;
 
 public class SimpleHandlerFactory implements HandlerFactory
 {

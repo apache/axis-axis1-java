@@ -54,14 +54,14 @@
  */
 package org.apache.axis.deployment.wsdd;
 
+import org.apache.axis.deployment.DeploymentDocument;
+import org.apache.axis.deployment.DeploymentException;
+import org.apache.axis.deployment.DeploymentRegistry;
+import org.apache.axis.encoding.DeserializerFactory;
+import org.apache.axis.encoding.Serializer;
+import org.apache.axis.encoding.TypeMappingRegistry;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.apache.axis.deployment.DeploymentDocument;
-import org.apache.axis.deployment.DeploymentRegistry;
-import org.apache.axis.deployment.DeploymentException;
-import org.apache.axis.encoding.TypeMappingRegistry;
-import org.apache.axis.encoding.Serializer;
-import org.apache.axis.encoding.DeserializerFactory;
 
 /**
  * represents a WSDD Document (this is the top level object in this object model)

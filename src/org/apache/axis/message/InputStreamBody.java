@@ -1,9 +1,9 @@
 package org.apache.axis.message;
 
-import java.io.*;
-import java.util.*;
-import org.apache.axis.encoding.*;
-import org.xml.sax.*;
+import org.apache.axis.encoding.SerializationContext;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 public class InputStreamBody extends SOAPBodyElement
 {

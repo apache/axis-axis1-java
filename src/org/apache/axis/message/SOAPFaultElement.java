@@ -55,14 +55,15 @@ package org.apache.axis.message;
  * <http://www.apache.org/>.
  */
 
-import org.w3c.dom.Element;
-import org.xml.sax.*;
 import org.apache.axis.AxisFault;
 import org.apache.axis.Constants;
-import org.apache.axis.encoding.*;
+import org.apache.axis.encoding.DeserializationContext;
+import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.utils.QName;
-import org.apache.axis.utils.QFault;
-import java.io.*;
+import org.w3c.dom.Element;
+import org.xml.sax.Attributes;
+
+import java.io.IOException;
 
 /** An Fault body element.
  * 

@@ -55,22 +55,15 @@
 
 package org.apache.axis.providers.java;
 
-import java.io.* ;
-import java.util.* ;
-import java.lang.reflect.* ;
-import org.apache.axis.* ;
-import org.apache.axis.utils.* ;
-import org.apache.axis.utils.cache.JavaClass;
-import org.apache.axis.encoding.SerializationContext;
-import org.apache.axis.encoding.ServiceDescription;
+import org.apache.axis.Handler;
+import org.apache.axis.MessageContext;
 import org.apache.axis.message.SOAPBodyElement;
 import org.apache.axis.message.SOAPEnvelope;
-import org.apache.axis.message.SOAPHeader;
-import org.apache.axis.handlers.* ;
-import org.apache.axis.Handler;
+import org.apache.axis.utils.cache.JavaClass;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
-import org.w3c.dom.* ;
-import org.xml.sax.*;
+import java.lang.reflect.Method;
 
 /**
  *

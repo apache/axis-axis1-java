@@ -55,13 +55,13 @@
 
 package org.apache.axis ;
 
-import java.util.* ;
-import org.apache.axis.* ;
-import org.apache.axis.utils.* ;
-import org.apache.axis.handlers.* ;
+import org.apache.axis.handlers.BasicHandler;
+import org.apache.axis.utils.QName;
 import org.apache.log4j.Category;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
-import org.w3c.dom.* ;
+import java.util.Enumeration;
 
 /**
  *

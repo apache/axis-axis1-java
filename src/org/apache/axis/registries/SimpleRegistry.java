@@ -55,10 +55,15 @@
 
 package org.apache.axis.registries ;
 
-import java.io.* ;
-import java.util.* ;
-import org.apache.axis.* ;
-import org.apache.axis.registries.* ;
+import org.apache.axis.Handler;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
 /**
  *

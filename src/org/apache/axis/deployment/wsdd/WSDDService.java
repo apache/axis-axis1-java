@@ -54,16 +54,14 @@
  */
 package org.apache.axis.deployment.wsdd;
 
-import java.net.URL;
+import org.apache.axis.Handler;
+import org.apache.axis.TargetedChain;
+import org.apache.axis.deployment.DeployableItem;
+import org.apache.axis.deployment.DeploymentRegistry;
+import org.apache.axis.description.ServiceDescription;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.apache.axis.Handler;
-import org.apache.axis.Chain;
-import org.apache.axis.TargetedChain;
-import org.apache.axis.deployment.DeploymentRegistry;
-import org.apache.axis.deployment.DeployableItem;
-import org.apache.axis.description.ServiceDescription;
 
 public class WSDDService extends WSDDDeployableItem implements DeployableItem { 
     

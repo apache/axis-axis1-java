@@ -55,14 +55,14 @@
 
  package org.apache.axis.configuration;
 
-import java.io.*;
-import java.util.*;
-import org.apache.axis.ConfigurationProvider;
 import org.apache.axis.AxisEngine;
+import org.apache.axis.ConfigurationProvider;
 import org.apache.axis.utils.Admin;
 import org.apache.axis.utils.XMLUtils;
-import org.xml.sax.InputSource;
 import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+
+import java.io.StringReader;
 
 /**
  * A simple ConfigurationProvider that uses the Admin class to

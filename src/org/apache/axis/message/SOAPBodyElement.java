@@ -55,11 +55,9 @@ package org.apache.axis.message;
  * <http://www.apache.org/>.
  */
 
-import org.xml.sax.Attributes;
 import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.MessageContext;
-
 import org.w3c.dom.Element;
+import org.xml.sax.Attributes;
 
 /** A Body element.
  * 

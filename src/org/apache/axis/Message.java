@@ -55,17 +55,18 @@
 
 package org.apache.axis ;
 
-import java.io.* ;
-
-import org.w3c.dom.* ;
-import org.xml.sax.*;
-import javax.xml.parsers.SAXParser;
-
-import org.apache.axis.encoding.SerializationContext;
 import org.apache.axis.encoding.DeserializationContext;
-import org.apache.axis.message.* ;
-import org.apache.axis.utils.XMLUtils ;
+import org.apache.axis.encoding.SerializationContext;
+import org.apache.axis.message.InputStreamBody;
+import org.apache.axis.message.SOAPEnvelope;
 import org.apache.log4j.Category;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.StringReader;
+import java.io.StringWriter;
 
 /**
  *

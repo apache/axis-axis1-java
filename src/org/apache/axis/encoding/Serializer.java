@@ -58,9 +58,10 @@ package org.apache.axis.encoding;
 //import org.apache.axis.message.Message;
 //import org.apache.axis.message.MessageElement;
 //import org.apache.axis.utils.NSStack;
-import java.io.IOException;
 import org.apache.axis.utils.QName;
 import org.xml.sax.Attributes;
+
+import java.io.IOException;
 
 /**
  * @author James Snell (jasnell@us.ibm.com)

@@ -55,12 +55,11 @@
 
 package org.apache.axis.encoding;
 
-import java.io.IOException;
-
-import org.apache.axis.encoding.*;
 import org.apache.axis.utils.QName;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
 
-import org.xml.sax.*;
+import java.io.IOException;
 
 /**
  * General purpose serializer/deserializerFactory for an arbitrary java bean.

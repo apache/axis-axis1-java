@@ -1,8 +1,9 @@
 package org.apache.axis.providers;
 
-import java.util.Hashtable;
 import org.apache.axis.handlers.BasicHandler;
 import org.apache.axis.utils.QName;
+
+import java.util.Hashtable;
 
 /**
  * This class has one way of keeping track of the

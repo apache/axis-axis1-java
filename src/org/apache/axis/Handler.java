@@ -55,12 +55,12 @@
 
 package org.apache.axis ;
 
-import java.util.* ;
-import java.io.Serializable ;
-import org.apache.axis.* ;
-import org.apache.axis.utils.* ;
+import org.apache.axis.utils.QName;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
-import org.w3c.dom.* ;
+import java.io.Serializable;
+import java.util.Hashtable;
 
 /**
  *

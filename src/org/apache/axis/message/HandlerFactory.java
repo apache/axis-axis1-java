@@ -55,9 +55,9 @@ package org.apache.axis.message;
  * <http://www.apache.org/>.
  */
 
+import org.apache.axis.encoding.DeserializationContext;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
-import org.apache.axis.encoding.DeserializationContext;
 
 /** A simple handler factory interface
  * 

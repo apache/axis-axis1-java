@@ -55,18 +55,15 @@
 
 package org.apache.axis ;
 
-import java.util.* ;
-import org.apache.axis.* ;
-import org.apache.axis.utils.AxisClassLoader ;
-
-import org.apache.axis.encoding.TypeMappingRegistry;
-import org.apache.axis.encoding.SOAPTypeMappingRegistry;
 import org.apache.axis.encoding.ServiceDescription;
-import org.apache.axis.registries.HandlerRegistry;
+import org.apache.axis.encoding.TypeMappingRegistry;
 import org.apache.axis.handlers.soap.SOAPService;
-import org.apache.axis.message.*;
+import org.apache.axis.registries.HandlerRegistry;
 import org.apache.axis.session.Session;
+import org.apache.axis.utils.AxisClassLoader;
 import org.apache.log4j.Category;
+
+import java.util.Hashtable;
 
 /**
  * Some more general docs will go here.

@@ -55,8 +55,8 @@
 
 package org.apache.axis.suppliers;
 
-import org.apache.axis.Supplier;
 import org.apache.axis.Handler;
+import org.apache.axis.Supplier;
 
 
 /** A <code>SimpleSupplier</code> just returns a single static instance.

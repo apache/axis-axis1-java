@@ -54,27 +54,34 @@
 
 package org.apache.axis.handlers;
 
-import java.io.* ;
-import java.util.StringTokenizer;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.jar.*;
-import java.net.URL;
-import java.net.URLClassLoader;
-
-import org.apache.axis.* ;
-import org.apache.axis.transport.http.HTTPConstants;
-
-import org.apache.axis.utils.XMLUtils ;
-import org.apache.axis.utils.AxisClassLoader ;
+import org.apache.axis.AxisFault;
+import org.apache.axis.Constants;
+import org.apache.axis.Handler;
+import org.apache.axis.MessageContext;
 import org.apache.axis.providers.java.RPCProvider;
+import org.apache.axis.transport.http.HTTPConstants;
+import org.apache.axis.utils.AxisClassLoader;
+import org.apache.axis.utils.XMLUtils;
 import org.apache.log4j.Category;
-
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import sun.tools.javac.Main;
 
-import org.w3c.dom.* ;
-
 import javax.servlet.http.HttpServlet;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.StringTokenizer;
+import java.util.jar.Attributes;
+import java.util.jar.JarFile;
+import java.util.jar.JarInputStream;
+import java.util.jar.Manifest;
 
 /**
  * This handler will use the MC_REALPATH property of the MsgContext to

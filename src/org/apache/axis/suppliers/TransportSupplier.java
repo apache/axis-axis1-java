@@ -55,11 +55,12 @@
 
 package org.apache.axis.suppliers;
 
-import java.util.Hashtable;
-import java.util.Vector;
-import org.apache.axis.*;
+import org.apache.axis.SimpleTargetedChain;
 import org.apache.axis.registries.HandlerRegistry;
 import org.apache.axis.server.Transport;
+
+import java.util.Hashtable;
+import java.util.Vector;
 
 /** This supplier knows how to construct Transports in particular.
  * 

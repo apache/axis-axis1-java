@@ -54,13 +54,11 @@
  */
 package org.apache.axis.deployment.v2dd.providers;
 
-import org.apache.axis.providers.BasicProvider;
-import org.apache.axis.deployment.v2dd.V2DDProvider;
 import org.apache.axis.deployment.v2dd.V2DDOption;
-import org.apache.axis.deployment.v2dd.V2DDConstants;
+import org.apache.axis.deployment.v2dd.V2DDProvider;
+import org.apache.axis.providers.BasicProvider;
 import org.apache.axis.providers.ComProvider;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 public class V2DDComProvider extends V2DDProvider {
 

@@ -54,10 +54,10 @@
  */
 package org.apache.axis.deployment.wsdd;
 
-import org.w3c.dom.Element;
-import org.apache.axis.Handler;
 import org.apache.axis.Chain;
+import org.apache.axis.Handler;
 import org.apache.axis.deployment.DeploymentRegistry;
+import org.w3c.dom.Element;
 
 /**
  * WSDD Flow complexType
