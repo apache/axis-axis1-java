@@ -93,6 +93,10 @@
       classname="javax.mail.internet.MimeMessage"
       classpathref="classpath"/>
 
+    <available property="httpunit.present"
+      classname="com.meterware.httpunit.GetMethodWebRequest"
+      classpathref="classpath"/>
+
     <condition property="jsse.present" >
       <and>
         <available classname="com.sun.net.ssl.X509TrustManager" classpathref="classpath" />
@@ -173,6 +177,7 @@
     <echo message="jsse.present=${jsse.present}" />
     <echo message="commons-httpclient.present=${commons-httpclient.present}" />
     <echo message="axis-ant.present=${axis-ant.present}" />
+    <echo message="httpunit.present=${httpunit.present}" />
     <echo message=""/>
     <echo message="--- Property values ---" />
     <echo message="debug=${debug}" />
