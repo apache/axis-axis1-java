@@ -227,7 +227,7 @@ public class RPCHandler extends SOAPHandler
             }
         }
 
-        if (type.equals(XMLType.AXIS_VOID)) {
+        if (type != null && type.equals(XMLType.AXIS_VOID)) {
             Deserializer nilDSer =  new DeserializerImpl();
             return (SOAPHandler) nilDSer;
         }
