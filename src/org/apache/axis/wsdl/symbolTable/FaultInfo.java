@@ -69,7 +69,7 @@ public class FaultInfo {
 
         this.message = fault.getMessage();
         this.xmlType = getFaultType(symbolTable, getFaultPart());
-        this.use = use;
+        this.use = (use != null) ? use : Use.LITERAL; 
         this.name = fault.getName();
 
         Part part = getFaultPart();
