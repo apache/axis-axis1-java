@@ -52,71 +52,37 @@
  * information on the Apache Software Foundation, please see
  * <http://www.apache.org/>.
  */
-package org.apache.axis.attachments;
 
-import org.apache.axis.components.image.ImageIOFactory;
-import org.apache.axis.components.logger.LogFactory;
-import org.apache.axis.utils.JavaUtils;
-import org.apache.commons.logging.Log;
+package org.apache.axis.components.image;
 
-import javax.activation.DataSource;
 import java.awt.Image;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class ImageDataSource implements DataSource {
-    protected static Log log =
-        LogFactory.getLog(ImageDataSource.class.getName());
-    
-    public static final String CONTENT_TYPE = "image/jpeg";
+/**
+ * This interface defines a ImageIO modules functionality
+ * @author <a href="mailto:dims@yahoo.com">Davanum Srinivas</a>
+ * @version $Revision$ $Date$
+ * @since 2.0
+ */
+public interface ImageIO {
+    /**
+     * Save an image.
+     * @param id the mime-type of the format to save the image
+     * @param image the image to save
+     * @param os the output stream to write to
+     * @exception Exception if an error prevents image encoding
+     */
 
-    private final String name;
-    private final String contentType;
-    private byte[] data;
-    private ByteArrayInputStream is;
-    private ByteArrayOutputStream os;
+    public void saveImage(String id, Image image, OutputStream os)
+            throws Exception;
 
-    public ImageDataSource(String name, Image data) {
-        this(name, CONTENT_TYPE, data);
-    } // ctor
+    /**
+     * Load an Image.
+     * @param in the stream to load the image
+     * @return the Image
+     */
+    public Image loadImage(InputStream in)
+            throws Exception;
+}
 
-    public ImageDataSource(String name, String contentType, Image data) {
-        this.name = name;
-        this.contentType = contentType == null ? CONTENT_TYPE : contentType;
-        os = new ByteArrayOutputStream();
-        try {
-            if (data != null)
-                ImageIOFactory.getImageIO().saveImage(this.contentType, data, os);
-        }
-        catch (Exception e) {
-            log.error(JavaUtils.getMessage("exception00"), e);
-        }
-    } // ctor
-
-    public String getName() {
-        return name;
-    } // getName
-
-    public String getContentType() {
-        return contentType;
-    } // getContentType
-
-    public InputStream getInputStream() throws IOException {
-        if (os.size() != 0) {
-            data = os.toByteArray();
-            os.reset();
-        }
-        return new ByteArrayInputStream(data == null ? new byte[0] : data);
-    } // getInputStream
-
-    public OutputStream getOutputStream() throws IOException {
-        if (os.size() != 0) {
-            data = os.toByteArray();
-            os.reset();
-        }
-        return os;
-    } // getOutputStream
-} // class ImageDataSource

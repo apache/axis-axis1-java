@@ -56,44 +56,36 @@
 package org.apache.axis.utils;
 
 import org.apache.axis.attachments.AttachmentPart;
-import org.apache.axis.types.HexBinary;
-
+import org.apache.axis.components.image.ImageIO;
+import org.apache.axis.components.image.ImageIOFactory;
 import org.apache.axis.components.logger.LogFactory;
+import org.apache.axis.types.HexBinary;
 import org.apache.commons.logging.Log;
 
+import javax.activation.DataHandler;
+import javax.xml.soap.SOAPException;
 import java.awt.Image;
-
-import java.io.InputStream;
+import java.beans.Introspector;
 import java.io.IOException;
-
+import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-
 import java.text.Collator;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Locale;
-import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.Properties;
-import java.util.ResourceBundle;
 import java.util.Collection;
-import java.util.Iterator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.Set;
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.beans.Introspector;
-
-import javax.activation.DataHandler;
-
-import javax.xml.soap.SOAPException;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+import java.util.Set;
 
 /** Utility class to deal with Java language related issues, such
  * as type conversions.
@@ -275,20 +267,21 @@ public class JavaUtils
                         handler = (DataHandler) arg;
                     }
                     if (destClass == Image.class) {
-                        // Note:  JIMI is required to process an Image
+                        // Note:  An ImageIO component is required to process an Image
                         // attachment, but if the image would be null
-                        // (is.available == 0) then JIMI isn't needed
+                        // (is.available == 0) then ImageIO component isn't needed
                         // and we can return null.
                         InputStream is = (InputStream) handler.getContent();
                         if (is.available() == 0) {
                             return null;
                         }
                         else {
-                            if (isImageSupported()) {
+                            ImageIO imageIO = ImageIOFactory.getImageIO();
+                            if (imageIO != null) {
                                 return getImageFromStream(is);
                             }
                             else {
-                                log.info(JavaUtils.getMessage("needJIMI"));
+                                log.info(JavaUtils.getMessage("needImageIO"));
                                 return arg;
                             }
                         }
@@ -539,11 +532,7 @@ public class JavaUtils
 
     public static Image getImageFromStream(InputStream is) {
         try {
-            Class jimi = ClassUtils.forName("com.sun.jimi.core.Jimi");
-            Class[] formalArgs = {InputStream.class};
-            Method getImage = jimi.getDeclaredMethod("getImage", formalArgs);
-            Object[] actualArgs = {is};
-            return (Image) getImage.invoke(null, actualArgs);
+            return ImageIOFactory.getImageIO().loadImage(is);
         }
         catch (Throwable t) {
             return null;
@@ -1190,30 +1179,4 @@ public class JavaUtils
                 attachmentSupportEnabled);
         return attachmentSupportEnabled;
     } // isAttachmentSupported
-
-    //avoid testing and possibly failing everytime.
-    private static boolean checkForImageSupport = true;
-    private static boolean imageSupportEnabled = false;
-
-    /**
-     * Determine whether image attachments are supported by checking
-     * if the following class is available:  com.sun.jimi.core.Jimi.
-     */
-    public static synchronized boolean isImageSupported() {
-        if (checkForImageSupport) {
-            //aviod testing and possibly failing everytime.
-            checkForImageSupport = false;
-            try {
-                // Attempt to resolve Jimi, necessary for full
-                // image attachment support
-                ClassUtils.forName("com.sun.jimi.core.Jimi");
-                imageSupportEnabled = true;
-            } catch (Throwable t) {
-            }
-        }
-
-        log.debug(JavaUtils.getMessage("imageEnabled") + "  " +
-                imageSupportEnabled);
-        return imageSupportEnabled;
-    } // isImageSupported
 }
