@@ -78,6 +78,7 @@ public class SimpleChain extends BasicHandler implements Chain {
 
     protected Vector     handlers ;
     protected Hashtable  options ;
+    protected boolean    invoked;
 
     public void init() {
         for ( int i = 0 ; i < handlers.size() ; i++ )
@@ -98,6 +99,7 @@ public class SimpleChain extends BasicHandler implements Chain {
      * rethrow the exception.
      */
     public void invoke(MessageContext msgContext) throws AxisFault {
+        invoked = true;
         doVisiting(msgContext, iVisitor);
     }
 
@@ -106,6 +108,7 @@ public class SimpleChain extends BasicHandler implements Chain {
      * contributing to a WSDL description.
      */
     public void generateWSDL(MessageContext msgContext) throws AxisFault {
+        invoked = true;
         doVisiting(msgContext, wsdlVisitor);
     }
 
@@ -170,18 +173,13 @@ public class SimpleChain extends BasicHandler implements Chain {
         if (handler == null)
             throw new NullPointerException(
                     JavaUtils.getMessage("nullHandler00", "SimpleChain::addHandler"));
+
+        if (invoked)
+            throw new NullPointerException(
+                    JavaUtils.getMessage("addAfterInvoke00", "SimpleChain::addHandler"));
         
         if ( handlers == null ) handlers = new Vector();
         handlers.add( handler );
-    }
-
-    public void removeHandler(int index) {
-        if ( handlers != null )
-            handlers.removeElementAt( index );
-    }
-
-    public void clear() {
-        handlers.clear();
     }
 
     public boolean contains(Handler handler) {
