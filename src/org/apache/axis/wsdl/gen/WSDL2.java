@@ -91,7 +91,7 @@ public class WSDL2 {
     protected String wsdlURI = null;
     protected Parser parser;
 
-    public WSDL2 () {
+    protected WSDL2 () {
         parser = createParser();
     } // ctor
 
@@ -99,7 +99,7 @@ public class WSDL2 {
         return new Parser();
     } // createParser
 
-    public Parser getParser() {
+    protected Parser getParser() {
         return parser;
     } // getParser
 
@@ -158,7 +158,7 @@ public class WSDL2 {
         System.exit(1);
     } // printUsage
 
-    public void run(String[] args) {
+    protected void run(String[] args) {
         // Parse the arguments
         CLArgsParser argsParser = new CLArgsParser(args, options);
 
