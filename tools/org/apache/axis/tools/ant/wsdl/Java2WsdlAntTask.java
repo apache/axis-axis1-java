@@ -137,10 +137,9 @@ public class Java2WsdlAntTask extends Task
      * @throws BuildException
      */
     public void execute() throws BuildException {
-        Path p = createClasspath();
         AntClassLoader cl = new AntClassLoader(getClass().getClassLoader(),
                 getProject(),
-                p,
+                classpath == null ? createClasspath() : classpath,
                 false);
 
         ClassUtils.setDefaultClassLoader(cl);
