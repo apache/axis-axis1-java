@@ -166,7 +166,15 @@ public class WSDDDeployment
      */
     public void undeployService(QName qname)
     {
-        services.remove(qname);
+        WSDDService service = (WSDDService)services.get(qname);
+        if (service != null) {
+            Vector namespaces = service.getNamespaces();
+            for (Iterator i = namespaces.iterator(); i.hasNext();) {
+                String namespace = (String) i.next();
+                namespaceToServices.remove(namespace);
+            }
+            services.remove(qname);
+        }
     }
 
     /**
