@@ -60,7 +60,9 @@ import org.apache.axis.Message;
 import org.apache.axis.MessageContext;
 import org.apache.axis.message.SOAPEnvelope;
 import org.apache.axis.utils.JavaUtils;
+import org.apache.axis.utils.XMLUtils;
 import org.apache.log4j.Category;
+import org.w3c.dom.Document;
 
 /**
  *
@@ -84,4 +86,45 @@ public class EchoHandler extends BasicHandler {
         category.debug(JavaUtils.getMessage("exit00", "EchoHandler::invoke") );
     }
 
+    public String wsdlStart = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>" +
+            "<definitions xmlns:s=\"http://www.w3.org/2001/XMLSchema\" xmlns:http=\"http://schemas.xmlsoap.org/wsdl/http/\" xmlns:mime=\"http://schemas.xmlsoap.org/wsdl/mime/\" xmlns:soap=\"http://schemas.xmlsoap.org/wsdl/soap/\" xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:s0=\"http://tempuri.org/EchoService\" targetNamespace=\"http://tempuri.org/EchoService\" xmlns=\"http://schemas.xmlsoap.org/wsdl/\">" +
+            "<message name=\"request\">" +
+            "<part name=\"content\" type=\"xsd:anyType\" />" +
+            "</message>" +
+            "<message name=\"response\">" +
+            "<part name=\"content\" element=\"xsd:anyType\" />" +
+            "</message>" +
+            "<portType name=\"EchoSoap\">" +
+            "<operation name=\"doIt\">" +
+            "<input message=\"s0:request\" /> " +
+            "<output message=\"s0:response\" /> " +
+            "</operation>" +
+            "</portType>" +
+            "<binding name=\"EchoSoap\" type=\"s0:EchoSoap\">" +
+            "<soap:binding transport=\"http://schemas.xmlsoap.org/soap/http\" style=\"document\" />" +
+            "<operation name=\"doIt\">" +
+            "<soap:operation soapAction=\"http://tempuri.org/Echo\" style=\"document\" />" +
+            "<input>" +
+            "<soap:body use=\"literal\" />" +
+            "</input>" +
+            "<output>" +
+            "<soap:body use=\"literal\" />" +
+            "</output>" +
+            "</operation>" +
+            "</binding>" +
+            "<service name=\"Echo\">" +
+            "<port name=\"EchoSoap\" binding=\"s0:EchoSoap\">" +
+            "<soap:address location=\"http://";
+
+    String wsdlEnd = "\" />" +
+            "</port>" +
+            "</service>" +
+            "</definitions>";
+
+    public void generateWSDL(MessageContext msgContext) throws AxisFault {
+        String url = msgContext.getStrProp("hostname"); // !!! Get this for real
+        String wsdlString = wsdlStart + url + wsdlEnd;
+        Document doc = XMLUtils.newDocument(wsdlString);
+        msgContext.setProperty("WSDL", doc);
+    }
 };
