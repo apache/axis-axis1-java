@@ -329,13 +329,8 @@ public class MessageContext {
     
     public AxisClassLoader getClassLoader() {
         if ( classLoader == null )
-            classLoader = AxisClassLoader.getClassLoader(null);
+            classLoader = AxisClassLoader.getClassLoader();
         return( classLoader );
-    }
-
-    public AxisClassLoader getClassLoader(String name) {
-        if ( name == null ) return( getClassLoader() );
-        return( AxisClassLoader.getClassLoader(name) );
     }
 
     public void setClassLoader(AxisClassLoader cl ) {

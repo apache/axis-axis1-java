@@ -77,16 +77,12 @@ public class AxisClassLoader extends ClassLoader {
         super(Thread.currentThread().getContextClassLoader());
     }
 
-    static public AxisClassLoader getClassLoader() {
-        return( getClassLoader(null) );
-    }
-
-    static public AxisClassLoader getClassLoader(String name) {
+    static synchronized public AxisClassLoader getClassLoader() {
+        ClassLoader baseCL = Thread.currentThread().getContextClassLoader();
         AxisClassLoader cl = null ;
-        if ( name == null ) name = "<default_class_loader>" ;
-        cl = (AxisClassLoader) classLoaders.get( name );
+        cl = (AxisClassLoader) classLoaders.get( baseCL );
         if ( cl == null ) 
-            classLoaders.put( name, cl = new AxisClassLoader() );
+            classLoaders.put( baseCL, cl = new AxisClassLoader() );
         return( cl );
     }
     

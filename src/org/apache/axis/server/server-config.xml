@@ -10,7 +10,10 @@
   <handler name="JWSHandler" class="org.apache.axis.handlers.JWSHandler"/>
   <handler name="LocalResponder" class="org.apache.axis.transport.local.LocalResponder"/>
   <handler name="URLMapper" class="org.apache.axis.handlers.http.URLMapper"/>
+  <handler name="Authenticate" class="org.apache.axis.handlers.SimpleAuthenticationHandler"/>
+  <handler name="Authorize" class="org.apache.axis.handlers.SimpleAuthorizationHandler"/>
 
+  <chain name="authChecks" flow="Authenticate,Authorize"/>
   <chain name="global.request" flow="JWSHandler,debug"/>
  </handlers>
 
