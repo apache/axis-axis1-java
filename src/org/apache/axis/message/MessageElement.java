@@ -2021,12 +2021,12 @@ public class MessageElement extends NodeImpl implements SOAPElement,
             }
             if(att.getLocalName() != null) {
                 dest.addAttribute(att.getPrefix(),
-                        att.getNamespaceURI(),
+                        (att.getNamespaceURI() != null ? att.getNamespaceURI() : ""),
                         att.getLocalName(),
                         att.getNodeValue());
             } else if (att.getNodeName() != null) {
                 dest.addAttribute(att.getPrefix(),
-                        att.getNamespaceURI(),
+                        (att.getNamespaceURI() != null ? att.getNamespaceURI() : ""),
                         att.getNodeName(),
                         att.getNodeValue());
             }
