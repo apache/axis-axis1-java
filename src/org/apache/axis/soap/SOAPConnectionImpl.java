@@ -94,10 +94,12 @@ public class SOAPConnectionImpl extends javax.xml.soap.SOAPConnection {
             SOAPEnvelope env = ((org.apache.axis.Message)request).getSOAPEnvelope();
             Attachments attachments = ((org.apache.axis.Message)
                     request).getAttachmentsImpl();
-            Iterator iterator = attachments.getAttachments().iterator();
-            while(iterator.hasNext()){
-                Object attachment = iterator.next();
-                call.addAttachmentPart(attachment);
+            if (attachments != null) {
+                Iterator iterator = attachments.getAttachments().iterator();
+                while (iterator.hasNext()) {
+                    Object attachment = iterator.next();
+                    call.addAttachmentPart(attachment);
+                }
             }
             call.setReturnClass(SOAPMessage.class);
             call.invoke(env);
