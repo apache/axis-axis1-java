@@ -115,10 +115,6 @@ public class WSDDChain
             }
         }
 
-        if (handlers.isEmpty())
-            throw new WSDDException(Messages.getMessage("noHandlersInChain00", 
-                                    getElementName().getLocalPart(),
-                                    (getQName()!=null)?getQName().toString():"null"));
     }
     
     protected QName getElementName()
