@@ -55,14 +55,11 @@
 
 package org.apache.axis;
 
-import java.util.Map;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Hashtable;
+import java.util.Map;
 import java.util.Properties;
 
-import org.apache.axis.utils.JavaUtils;
-import org.apache.commons.discovery.ManagedProperties;
+import org.apache.commons.discovery.tools.ManagedProperties;
 
 
 /**
