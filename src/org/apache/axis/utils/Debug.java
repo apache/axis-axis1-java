@@ -139,4 +139,30 @@ public class Debug {
       }
     }
   }
+
+  public static void Print( int level, String msg1, Object msg2 ) {
+    if ( debugLevel >= level ) {
+      Print(level, msg1 + msg2);
+    }
+  }
+
+  public static void Print( int level, String msg1, Object msg2, Object msg3 ) {
+    if ( debugLevel >= level ) {
+      Print(level, msg1 + msg2 + msg3);
+    }
+  }
+
+  public static void Print( int level, String msg1, Object msg2, Object msg3,
+                                       Object msg4) {
+    if ( debugLevel >= level ) {
+      Print(level, msg1 + msg2 + msg3 + msg4);
+    }
+  }
+
+  public static void Print( int level, String msg1, Object msg2, Object msg3,
+                                       Object msg4, Object msg5) {
+    if ( debugLevel >= level ) {
+      Print(level, msg1 + msg2 + msg3 + msg4 + msg5);
+    }
+  }
 }

@@ -98,7 +98,7 @@ public class SimpleAuthenticationHandler extends BasicHandler {
             String userID = st.nextToken();
             String passwd = (st.hasMoreTokens()) ? st.nextToken() : "";
 
-            Debug.Print( 2, "From file: '" + userID + "':'" + passwd + "'" );
+            Debug.Print( 2, "From file: '", userID, "':'", passwd, "'" );
             entries.put(userID, passwd);
           }
         }
@@ -119,7 +119,7 @@ public class SimpleAuthenticationHandler extends BasicHandler {
 
     if (entries != null) {
       String  userID = (String) msgContext.getProperty( MessageContext.USERID );
-      Debug.Print( 1, "User: " + userID );
+      Debug.Print( 1, "User: ",  userID );
 
       // in order to authenticate, the user must exist
       if ( userID == null || userID.equals("") || !entries.containsKey(userID) )
@@ -129,7 +129,7 @@ public class SimpleAuthenticationHandler extends BasicHandler {
   
       String passwd = (String) msgContext.getProperty( MessageContext.PASSWORD );
       String valid = (String) entries.get(userID);
-      Debug.Print( 2, "Pass: " + passwd );
+      Debug.Print( 2, "Pass: ", passwd );
   
       // if a password is defined, then it must match
       if ( valid.length()>0 && !valid.equals(passwd) ) 
@@ -137,7 +137,7 @@ public class SimpleAuthenticationHandler extends BasicHandler {
           "User not authenticated",
           null, null );
 
-      Debug.Print( 1, "User '" + userID + "' authenticated to server" );
+      Debug.Print( 1, "User '", userID, "' authenticated to server" );
     }
 
     Debug.Print( 1, "Exit: SimpleAuthenticationHandler::invoke" );

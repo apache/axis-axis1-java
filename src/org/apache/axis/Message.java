@@ -86,7 +86,7 @@ public class Message {
    * Just something to us working...
    */
   public Message(Object origMsg, String form) {
-    Debug.Print( 2, "Enter Message ctor, form: " + form );
+    Debug.Print( 2, "Enter Message ctor, form: ",  form );
     originalMessage = origMsg ;
     currentMessage = origMsg ;
     currentForm = form ;
@@ -119,7 +119,7 @@ public class Message {
   }
 
   public void setCurrentMessage(Object currMsg, String form) {
-    Debug.Print( 2, "Setting current message form to: " + form );
+    Debug.Print( 2, "Setting current message form to: ",  form );
     currentMessage = currMsg ;
     currentForm = form ;
   }
@@ -128,8 +128,8 @@ public class Message {
   // now I need something quick...
 
   public Object getAs( String desiredType ) {
-    Debug.Print( 2, "Enter: Message::getAs(" +desiredType+ ")" );
-    Debug.Print( 2, " current form: " + currentForm );
+    Debug.Print( 2, "Enter: Message::getAs(", desiredType, ")" );
+    Debug.Print( 2, " current form: ",  currentForm );
     if ( currentForm.equals( desiredType ) ) return( currentMessage );
 
     if ( desiredType.equals( "Bytes" )) return( getAsBytes() );
