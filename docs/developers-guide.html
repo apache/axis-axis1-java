@@ -87,6 +87,15 @@ code:
 <br><tt><font color="#009900">G:\\xml-axis\\java\\build\\classes</font></tt></blockquote>
 </blockquote>
 
+If you access the internet via a proxy server, you'll need to set an environment
+variable so that the Axis tests do the same. Set ANT_OPTS to, for example:
+<blockquote>
+<blockquote>
+<tt><font color="#009900">-Dhttp.proxyHost=proxy.somewhere.com
+-Dhttp.proxyPort=80 -Dhttp.nonProxyHosts="localhost"</font></tt>
+</blockquote>
+</blockquote>
+
 <h2>
 <a NAME="Compile And Run"></a>Compile and Run</h2>
 The <tt>xml-axis/java/build.xml</tt> file is the primary 'make' file used
@@ -114,6 +123,12 @@ To compile the source code:
 To run the tests:
 <blockquote><tt>cd xml-axis/java</tt>
 <br><tt>ant functional-tests</tt></blockquote>
+
+<b>Note: </b>these tests start a
+server on port 8080. If this clashes with the port used by your web application
+server (such as Tomcat), you'll need to change one of the ports or
+stop your web application server when running the tests.<br><br>
+
 <b>Please run <tt><font color="#009900">ant functional-tests</font></tt>
 and <tt><font color="#009900">ant all-tests</font></tt> before checking
 in new code.</b>
